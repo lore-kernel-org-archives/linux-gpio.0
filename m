@@ -1,53 +1,72 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH 0/7] Use devm_request_region
-Date: Tue, 2 Feb 2016 19:46:34 -0500
-Message-ID: <56B14DEA.2060104@gmail.com>
-References: <cover.1454342087.git.vilhelm.gray@gmail.com>
- <CAAVeFu+3u7aDfDHSkQ84JE_Av9hHGR0y4RRmEOi6s9XVtqMUhA@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH v2 5/5] pinctrl: sunxi: Use pin number when calling sunxi_pmx_set
+Date: Wed, 3 Feb 2016 15:02:03 +0800
+Message-ID: <CAGb2v66+cmHv-NBHCnYcZ_K42qxM=5+kvhazHSy2AykL8cF8tw@mail.gmail.com>
+References: <1454448113-18810-1-git-send-email-k@japko.eu> <1454448113-18810-6-git-send-email-k@japko.eu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFu+3u7aDfDHSkQ84JE_Av9hHGR0y4RRmEOi6s9XVtqMUhA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:36532 "EHLO
+	smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933047AbcBCHC0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Feb 2016 02:02:26 -0500
+In-Reply-To: <1454448113-18810-6-git-send-email-k@japko.eu>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Krzysztof Adamski <k@japko.eu>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>, Hans de Goede <hdegoede@redhat.com>, Vishnu Patekar <vishnupatekar0510@gmail.com>, Jens Kuske <jenskuske@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-sunxi <linux-sunxi@googlegroups.com>
 
-On 02/02/2016 07:26 PM, Alexandre Courbot wrote:
-> On Tue, Feb 2, 2016 at 8:54 AM, William Breathitt Gray
-> <vilhelm.gray@gmail.com> wrote:
->> By the time request_region is called in several GPIO drivers, a
->> corresponding device structure has already been allocated. The
->> devm_request_region function should be used to help simplify the cleanup
->> code and reduce the possible points of failure.
->>
->> William Breathitt Gray (7):
->>   gpio: 104-dio-48e: Use devm_request_region
->>   gpio: 104-idi-48: Use devm_request_region
->>   gpio: 104-idio-16: Use devm_request_region
->>   gpio: amd8111: Use devm_request_region
->>   gpio: ich: Use devm_request_region
->>   gpio: sch311x: Use devm_request_region
->>   gpio: ws16c48: Use devm_request_region
->>
->>  drivers/gpio/gpio-104-dio-48e.c | 22 +++++++-----------
->>  drivers/gpio/gpio-104-idi-48.c  | 22 +++++++-----------
->>  drivers/gpio/gpio-104-idio-16.c | 22 +++++++-----------
->>  drivers/gpio/gpio-amd8111.c     |  7 +++---
->>  drivers/gpio/gpio-ich.c         | 51 ++++++++---------------------------------
->>  drivers/gpio/gpio-sch311x.c     |  7 +++---
->>  drivers/gpio/gpio-ws16c48.c     | 22 +++++++-----------
->>  7 files changed, 47 insertions(+), 106 deletions(-)
-> 
-> Did a quick review and this looks all good, modulo the compile warning
-> on patch 6.
-> 
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Hi,
 
-The compile warning for patch 6 appears to be benign and preexisting: an 
-unused variable. Since the warning is unrelated to this patchset, I'll   
-submit a separate patch to remove the unused variable so that this        
-warning will no longer show up on later compiles.                        
-                                                                         
-William Breathitt Gray
+On Wed, Feb 3, 2016 at 5:21 AM, Krzysztof Adamski <k@japko.eu> wrote:
+> sunxi_pmx_set accepts pin number and then calculates offset by
+> subtracting pin_base from it. sunxi_pinctrl_gpio_get, on the other hand,
+> gets offset so we have to convert it to pin number so we won't get
+> negative value in sunxi_pmx_set.
+>
+> This was only used on A10 so far, where there is only one GPIO chip with
+> pin_base set to 0 so it didn't matter. However H3 also requires this
+> workaround but have two pinmux sections, triggering problem for PL port.
+>
+> Signed-off-by: Krzysztof Adamski <k@japko.eu>
+> ---
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> index 7a2465f..9e5bac9 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> @@ -460,14 +460,17 @@ static int sunxi_pinctrl_gpio_get(struct gpio_chip *chip, unsigned offset)
+>         u32 set_mux = pctl->desc->irq_read_needs_mux &&
+>                         test_bit(FLAG_USED_AS_IRQ, &chip->desc[offset].flags);
+>         u32 val;
+> +       u32 pin;
+>
+> -       if (set_mux)
+> -               sunxi_pmx_set(pctl->pctl_dev, offset, SUN4I_FUNC_INPUT);
+> +       if (set_mux) {
+> +               pin = offset + pctl->desc->pin_base;
+
+You can use chip->base directly. It's value is set to pin_base in the
+init function.
+You could also move this out of the if block, and not add the braces.
+
+Otherwise this looks good.
+
+ChenYu
+
+> +               sunxi_pmx_set(pctl->pctl_dev, pin, SUN4I_FUNC_INPUT);
+> +       }
+>
+>         val = (readl(pctl->membase + reg) >> index) & DATA_PINS_MASK;
+>
+>         if (set_mux)
+> -               sunxi_pmx_set(pctl->pctl_dev, offset, SUN4I_FUNC_IRQ);
+> +               sunxi_pmx_set(pctl->pctl_dev, pin, SUN4I_FUNC_IRQ);
+>
+>         return !!val;
+>  }
+> --
+> 2.1.4
+>
