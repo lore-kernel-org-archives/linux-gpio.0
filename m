@@ -1,396 +1,336 @@
-From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
-Subject: [PATCH v2 2/3] selftest/gpio: add gpio test case
-Date: Wed,  3 Feb 2016 20:14:35 +0800
-Message-ID: <1454501676-19900-3-git-send-email-bamvor.zhangjian@linaro.org>
+From: Bamvor Zhang Jian <bamvor.zhangjian@linaro.org>
+Subject: Re: [PATCH v2 1/3] gpio/mockup: add virtual gpio device
+Date: Wed, 3 Feb 2016 20:21:12 +0800
+Message-ID: <CAFy1USTnE4ZReU8U9b42pdDY_u1wKkGv8ZUsPOFGnXDaMqJqbg@mail.gmail.com>
 References: <1454501676-19900-1-git-send-email-bamvor.zhangjian@linaro.org>
+	<1454501676-19900-2-git-send-email-bamvor.zhangjian@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:36546 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754496AbcBCMPJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Feb 2016 07:15:09 -0500
-Received: by mail-pa0-f45.google.com with SMTP id yy13so12754365pab.3
-        for <linux-gpio@vger.kernel.org>; Wed, 03 Feb 2016 04:15:08 -0800 (PST)
-In-Reply-To: <1454501676-19900-1-git-send-email-bamvor.zhangjian@linaro.org>
+Received: from mail-io0-f179.google.com ([209.85.223.179]:34081 "EHLO
+	mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751372AbcBCMVN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Feb 2016 07:21:13 -0500
+Received: by mail-io0-f179.google.com with SMTP id 9so53170359iom.1
+        for <linux-gpio@vger.kernel.org>; Wed, 03 Feb 2016 04:21:13 -0800 (PST)
+In-Reply-To: <1454501676-19900-2-git-send-email-bamvor.zhangjian@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, broonie@kernel.org, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Kamlakant Patel <kamlakant.patel@broadcom.com>, Bamvor Zhang Jian <bamvor.zhangjian@linaro.org>
 
-This test script try to do whitebox testing for gpio subsystem(
-based on gpiolib). It manipulate gpio-mockup device through sysfs
-or char device and check the result from debugfs.
+Update email address for kamlakant.patel@broadcom.com
 
-Test the following things:
-1.  Add single, multi gpiochip with the checking of overlap.
-2.  Test direction and output value for valid pin.
-3.  Test dynamic allocation of gpio base.
+On 02/03/2016 08:14 PM, Bamvor Jian Zhang wrote:
+> This patch add basic structure of a virtual gpio device(gpio-mockup)
+> for testing gpio subsystem. The tester could manipulate such device
+> through userspace(sysfs or char device) and check the result from
+> debugfs.
+>
+> Currently, it support one or more gpiochip(determined by module
+> parameters with base,ngpio pair). One could test the overlap of
+> different gpiochip and test the direction and/or output values of
+> these chips.
+>
+> Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
+> Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+> ---
+>  Documentation/kernel-parameters.txt |   4 +
+>  drivers/gpio/Kconfig                |  12 ++
+>  drivers/gpio/Makefile               |   1 +
+>  drivers/gpio/gpio-mockup.c          | 230 ++++++++++++++++++++++++++++++++++++
+>  4 files changed, 247 insertions(+)
+>  create mode 100644 drivers/gpio/gpio-mockup.c
+>
+> diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-parameters.txt
+> index 742f69d..cc0ce8a 100644
+> --- a/Documentation/kernel-parameters.txt
+> +++ b/Documentation/kernel-parameters.txt
+> @@ -1278,6 +1278,10 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
+>   Format: <unsigned int> such that (rxsize & ~0x1fffc0) == 0.
+>   Default: 1024
+>
+> + gpio-mockup.gpio_mockup_ranges
+> + [HW] Sets the ranges of gpiochip of for this device.
+> + Format: <start1>,<end1>,<start2>,<end2>...
+> +
+>   hardlockup_all_cpu_backtrace=
+>   [KNL] Should the hard-lockup detector generate
+>   backtraces on all cpus.
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index cb212eb..59bebca 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -268,6 +268,18 @@ config GPIO_MM_LANTIQ
+>    (EBU) found on Lantiq SoCs. The gpios are output only as they are
+>    created by attaching a 16bit latch to the bus.
+>
+> +config GPIO_MOCKUP
+> + tristate "GPIO Testing Driver"
+> + depends on GPIOLIB
+> + select GPIO_SYSFS
+> + help
+> +  This enables GPIO Testing driver, which provides a way to test GPIO
+> +  subsystem through sysfs(or char device) and debugfs. GPIO_SYSFS
+> +  must be selected for this test.
+> +  User could use it through the script in
+> +  tools/testing/selftests/gpio/gpio-mockup.sh. Reference the usage in
+> +  it.
+> +
+>  config GPIO_MOXART
+>   bool "MOXART GPIO support"
+>   depends on ARCH_MOXART
+> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> index 548e9b5..2635e4a 100644
+> --- a/drivers/gpio/Makefile
+> +++ b/drivers/gpio/Makefile
+> @@ -63,6 +63,7 @@ obj-$(CONFIG_GPIO_MC9S08DZ60) += gpio-mc9s08dz60.o
+>  obj-$(CONFIG_GPIO_MCP23S08) += gpio-mcp23s08.o
+>  obj-$(CONFIG_GPIO_ML_IOH) += gpio-ml-ioh.o
+>  obj-$(CONFIG_GPIO_MM_LANTIQ) += gpio-mm-lantiq.o
+> +obj-$(CONFIG_GPIO_MOCKUP)      += gpio-mockup.o
+>  obj-$(CONFIG_GPIO_MOXART) += gpio-moxart.o
+>  obj-$(CONFIG_GPIO_MPC5200) += gpio-mpc5200.o
+>  obj-$(CONFIG_GPIO_MPC8XXX) += gpio-mpc8xxx.o
+> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+> new file mode 100644
+> index 0000000..33b4b6a
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-mockup.c
+> @@ -0,0 +1,230 @@
+> +/*
+> + * GPIO Testing Device Driver
+> + *
+> + * Copyright (C) 2014  Kamlakant Patel <kamlakant.patel@broadcom.com>
+> + * Copyright (C) 2015-2016  Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+> + *
+> + * This program is free software; you can redistribute  it and/or modify it
+> + * under  the terms of  the GNU General  Public License as published by the
+> + * Free Software Foundation;  either version 2 of the  License, or (at your
+> + * option) any later version.
+> + *
+> + */
+> +
+> +#include <linux/init.h>
+> +#include <linux/module.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define GPIO_NAME "gpio-mockup"
+> +#define MAX_GC 10
+> +
+> +enum direction {
+> + IN,
+> + OUT
+> +};
+> +
+> +/*
+> + * struct gpio_pin_status - structure describing a GPIO status
+> + * @dir:       Configures direction of gpio as "in" or "out", 0=in, 1=out
+> + * @value:     Configures status of the gpio as 0(low) or 1(high)
+> + */
+> +struct gpio_pin_status {
+> + enum direction dir;
+> + bool value;
+> +};
+> +
+> +struct mockup_gpio_controller {
+> + struct gpio_chip gc;
+> + struct gpio_pin_status *stats;
+> +};
+> +
+> +static int gpio_mockup_ranges[MAX_GC << 1];
+> +static int gpio_mockup_params_nr;
+> +module_param_array(gpio_mockup_ranges, int, &gpio_mockup_params_nr, 0400);
+> +
+> +static const char *pins_name_start = "A";
+> +
+> +static int
+> +mockup_gpio_get(struct gpio_chip *gc, unsigned offset)
+> +{
+> + struct mockup_gpio_controller *cntr = container_of(gc,
+> + struct mockup_gpio_controller, gc);
+> +
+> + return cntr->stats[offset].value;
+> +}
+> +
+> +static void
+> +mockup_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
+> +{
+> + struct mockup_gpio_controller *cntr = container_of(gc,
+> + struct mockup_gpio_controller, gc);
+> +
+> + cntr->stats[offset].value = !!value;
+> +}
+> +
+> +static int
+> +mockup_gpio_dirout(struct gpio_chip *gc, unsigned offset, int value)
+> +{
+> + struct mockup_gpio_controller *cntr = container_of(gc,
+> + struct mockup_gpio_controller, gc);
+> +
+> + mockup_gpio_set(gc, offset, value);
+> + cntr->stats[offset].dir = OUT;
+> + return 0;
+> +}
+> +
+> +static int
+> +mockup_gpio_dirin(struct gpio_chip *gc, unsigned offset)
+> +{
+> + struct mockup_gpio_controller *cntr = container_of(gc,
+> + struct mockup_gpio_controller, gc);
+> +
+> + cntr->stats[offset].dir = IN;
+> + return 0;
+> +}
+> +
+> +static int
+> +mockup_gpio_add(struct device *dev, struct mockup_gpio_controller *cntr,
+> + const char *name, int base, int ngpio)
+> +{
+> + int ret;
+> +
+> + cntr->gc.base = base;
+> + cntr->gc.ngpio = ngpio;
+> + cntr->gc.label = name;
+> + cntr->gc.owner = THIS_MODULE;
+> + cntr->gc.parent = dev;
+> + cntr->gc.get = mockup_gpio_get;
+> + cntr->gc.set = mockup_gpio_set;
+> + cntr->gc.direction_output = mockup_gpio_dirout;
+> + cntr->gc.direction_input = mockup_gpio_dirin;
+> + cntr->stats = devm_kzalloc(dev, sizeof(*cntr->stats) * cntr->gc.ngpio,
+> + GFP_KERNEL);
+> + if (!cntr->stats) {
+> + ret = -ENOMEM;
+> + goto err;
+> + }
+> + ret = gpiochip_add(&cntr->gc);
+> + if (ret)
+> + goto err;
+> +
+> + dev_info(dev, "gpio<%d..%d> add successful!", base, base + ngpio);
+> + return 0;
+> +err:
+> + dev_err(dev, "gpio<%d..%d> add failed!", base, base + ngpio);
+> + return ret;
+> +}
+> +
+> +static int
+> +mockup_gpio_probe(struct platform_device *pdev)
+> +{
+> + struct device *dev = &pdev->dev;
+> + struct mockup_gpio_controller *cntr;
+> + int ret;
+> + int i, j;
+> + int base;
+> + int ngpio;
+> +
+> + if (gpio_mockup_params_nr < 2)
+> + return -EINVAL;
+> +
+> + cntr = devm_kzalloc(dev, sizeof(*cntr) * (gpio_mockup_params_nr >> 1),
+> + GFP_KERNEL);
+> + if (!cntr)
+> + return -ENOMEM;
+> +
+> + platform_set_drvdata(pdev, cntr);
+> +
+> + for (i = 0; i < gpio_mockup_params_nr >> 1; i++) {
+> + base = gpio_mockup_ranges[i * 2];
+> + if (base == -1)
+> + ngpio = gpio_mockup_ranges[i * 2 + 1];
+> + else
+> + ngpio = gpio_mockup_ranges[i * 2 + 1] - base;
+> +
+> + if (ngpio >= 0)
+> + ret = mockup_gpio_add(dev, &cntr[i],
+> + pins_name_start + i,
+> + base, ngpio);
+> + else
+> + ret = -1;
+> +
+> + if (ret) {
+> + if (base < 0)
+> + dev_err(dev, "gpio<%d..%d> add failed, remove added gpio\n",
+> + base, ngpio);
+> + else
+> + dev_err(dev, "gpio<%d..%d> add failed, remove added gpio\n",
+> + base, base + ngpio);
+> +
+> + for (j = 0; j < i; j++)
+> + gpiochip_remove(&cntr[j].gc);
+> +
+> + return ret;
+> + }
+> + }
+> +
+> + return 0;
+> +}
+> +
+> +static int
+> +mockup_gpio_remove(struct platform_device *pdev)
+> +{
+> + struct mockup_gpio_controller *cntr = platform_get_drvdata(pdev);
+> + int i;
+> +
+> + for (i = 0; i < gpio_mockup_params_nr >> 1; i++)
+> + gpiochip_remove(&cntr[i].gc);
+> +
+> + return 0;
+> +}
+> +
+> +static struct platform_driver mockup_gpio_driver = {
+> + .driver = {
+> + .name           = GPIO_NAME,
+> + },
+> + .probe = mockup_gpio_probe,
+> + .remove = mockup_gpio_remove,
+> +};
+> +
+> +static struct platform_device *pdev;
+> +static int __init
+> +mock_device_init(void)
+> +{
+> + int err;
+> +
+> + pdev = platform_device_alloc(GPIO_NAME, -1);
+> + if (!pdev)
+> + return -ENOMEM;
+> +
+> + err = platform_device_add(pdev);
+> + if (err) {
+> + platform_device_put(pdev);
+> + return err;
+> + }
+> +
+> + err = platform_driver_register(&mockup_gpio_driver);
+> + if (err) {
+> + platform_device_unregister(pdev);
+> + return err;
+> + }
+> +
+> + return 0;
+> +}
+> +
+> +static void __exit
+> +mock_device_exit(void)
+> +{
+> + platform_driver_unregister(&mockup_gpio_driver);
+> + platform_device_unregister(pdev);
+> +}
+> +
+> +module_init(mock_device_init);
+> +module_exit(mock_device_exit);
+> +
+> +MODULE_AUTHOR("Kamlakant Patel <kamlakant.patel@broadcom.com>");
+> +MODULE_AUTHOR("Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>");
+> +MODULE_DESCRIPTION("GPIO Testing driver");
+> +MODULE_LICENSE("GPL v2");
+> +
+>
 
-Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
----
- tools/testing/selftests/Makefile                  |   1 +
- tools/testing/selftests/gpio/Makefile             |  10 ++
- tools/testing/selftests/gpio/gpio-mockup-sysfs.sh | 117 +++++++++++++
- tools/testing/selftests/gpio/gpio-mockup.sh       | 198 ++++++++++++++++++++++
- 4 files changed, 326 insertions(+)
- create mode 100644 tools/testing/selftests/gpio/Makefile
- create mode 100644 tools/testing/selftests/gpio/gpio-mockup-sysfs.sh
- create mode 100755 tools/testing/selftests/gpio/gpio-mockup.sh
-
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index c8edff6..27eba31 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -5,6 +5,7 @@ TARGETS += exec
- TARGETS += firmware
- TARGETS += ftrace
- TARGETS += futex
-+TARGETS += gpio
- TARGETS += kcmp
- TARGETS += lib
- TARGETS += membarrier
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-new file mode 100644
-index 0000000..0689481
---- /dev/null
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -0,0 +1,10 @@
-+
-+all:
-+
-+TEST_PROGS := gpio-mockup.sh
-+TEST_FILES := gpio-mockup-sysfs.sh
-+
-+include ../lib.mk
-+
-+clean:
-+
-diff --git a/tools/testing/selftests/gpio/gpio-mockup-sysfs.sh b/tools/testing/selftests/gpio/gpio-mockup-sysfs.sh
-new file mode 100644
-index 0000000..06831f8
---- /dev/null
-+++ b/tools/testing/selftests/gpio/gpio-mockup-sysfs.sh
-@@ -0,0 +1,117 @@
-+
-+is_consistent()
-+{
-+	val=
-+
-+	active_low_sysfs=`cat $GPIO_SYSFS/gpio$nr/active_low`
-+	val_sysfs=`cat $GPIO_SYSFS/gpio$nr/value`
-+	dir_sysfs=`cat $GPIO_SYSFS/gpio$nr/direction`
-+
-+	gpio_this_debugfs=`cat $GPIO_DEBUGFS |grep "gpio-$nr" | sed "s/(.*)//g"`
-+	dir_debugfs=`echo $gpio_this_debugfs | awk '{print $2}'`
-+	val_debugfs=`echo $gpio_this_debugfs | awk '{print $3}'`
-+	if [ $val_debugfs = "lo" ]; then
-+		val=0
-+	elif [ $val_debugfs = "hi" ]; then
-+		val=1
-+	fi
-+
-+	if [ $active_low_sysfs = "1" ]; then
-+		if [ $val = "0" ]; then
-+			val="1"
-+		else
-+			val="0"
-+		fi
-+	fi
-+
-+	if [ $val_sysfs = $val ] && [ $dir_sysfs = $dir_debugfs ]; then
-+		echo -n "."
-+	else
-+		echo "test fail, exit"
-+		die
-+	fi
-+}
-+
-+test_pin_logic()
-+{
-+	nr=$1
-+	direction=$2
-+	active_low=$3
-+	value=$4
-+
-+	echo $direction > $GPIO_SYSFS/gpio$nr/direction
-+	echo $active_low > $GPIO_SYSFS/gpio$nr/active_low
-+	if [ $direction = "out" ]; then
-+		echo $value > $GPIO_SYSFS/gpio$nr/value
-+	fi
-+	is_consistent $nr
-+}
-+
-+test_one_pin()
-+{
-+	nr=$1
-+
-+	echo -n "test pin<$nr>"
-+
-+	echo $nr > $GPIO_SYSFS/export 2>/dev/null
-+
-+	if [ X$? != X0 ]; then
-+		echo "test GPIO pin $nr failed"
-+		die
-+	fi
-+
-+	#"Checking if the sysfs is consistent with debugfs: "
-+	is_consistent $nr
-+
-+	#"Checking the logic of active_low: "
-+	test_pin_logic $nr out 1 1
-+	test_pin_logic $nr out 1 0
-+	test_pin_logic $nr out 0 1
-+	test_pin_logic $nr out 0 0
-+
-+	#"Checking the logic of direction: "
-+	test_pin_logic $nr in 1 1
-+	test_pin_logic $nr out 1 0
-+	test_pin_logic $nr low 0 1
-+	test_pin_logic $nr high 0 0
-+
-+	echo $nr > $GPIO_SYSFS/unexport
-+
-+	echo "successful"
-+}
-+
-+test_one_pin_fail()
-+{
-+	nr=$1
-+
-+	echo $nr > $GPIO_SYSFS/export 2>/dev/null
-+
-+	if [ X$? != X0 ]; then
-+		echo "test invalid pin $nr successful"
-+	else
-+		echo "test invalid pin $nr failed"
-+		echo $nr > $GPIO_SYSFS/unexport 2>/dev/null
-+		die
-+	fi
-+}
-+
-+list_chip_sysfs()
-+{
-+	echo `ls -d $GPIO_DRV_SYSFS/gpiochip* 2>/dev/null`
-+}
-+
-+test_chip_sysfs()
-+{
-+	chip=$1
-+	name=`basename $chip`
-+	base=`cat $chip/base`
-+	ngpio=`cat $chip/ngpio`
-+	printf "%-10s %-5s %-5s\n" $name $base $ngpio
-+	if [ $ngpio = "0" ]; then
-+		echo "number of gpio is zero is not allowed".
-+	fi
-+	test_one_pin $base
-+	test_one_pin $(($base + $ngpio - 1))
-+	test_one_pin $((( RANDOM % $ngpio )  + $base ))
-+}
-+
-diff --git a/tools/testing/selftests/gpio/gpio-mockup.sh b/tools/testing/selftests/gpio/gpio-mockup.sh
-new file mode 100755
-index 0000000..327ca73
---- /dev/null
-+++ b/tools/testing/selftests/gpio/gpio-mockup.sh
-@@ -0,0 +1,198 @@
-+#!/bin/bash
-+
-+#exit status
-+#1: run as non-root user
-+#2: sysfs/debugfs not mount
-+#3: insert module fail when gpio-mockup is a module.
-+#4: other reason.
-+
-+SYSFS=
-+GPIO_SYSFS=
-+GPIO_DRV_SYSFS=
-+DEBUGFS=
-+GPIO_DEBUGFS=
-+dev_type=
-+module=
-+
-+usage()
-+{
-+	echo "Usage:"
-+	echo "$0 [-f] [-m name] [-t type]"
-+	echo "-f:  full test. It maybe conflict with existence gpio device."
-+	echo "-m:  module name, default name is gpio-mockup. It could alse test"
-+	echo "     other gpio device."
-+	echo "-t:  interface type: sysfs or char device. The latter one is not"
-+	echo "     upstreamed."
-+	echo ""
-+	echo "$0 -h"
-+	echo "This usage"
-+}
-+
-+prerequisite()
-+{
-+	msg="skip all tests:"
-+	if [ $UID != 0 ]; then
-+		echo $msg must be run as root >&2
-+		exit 1
-+	fi
-+	SYSFS=`mount -t sysfs | head -1 | awk '{ print $3 }'`
-+	if [ ! -d "$SYSFS" ]; then
-+		echo $msg sysfs is not mounted >&2
-+		exit 2
-+	fi
-+	GPIO_SYSFS=`echo $SYSFS/class/gpio`
-+	GPIO_DRV_SYSFS=`echo $SYSFS/devices/platform/$module/gpio`
-+	DEBUGFS=`mount -t debugfs | head -1 | awk '{ print $3 }'`
-+	if [ ! -d "$DEBUGFS" ]; then
-+		echo $msg debugfs is not mounted >&2
-+		exit 2
-+	fi
-+	GPIO_DEBUGFS=`echo $DEBUGFS/gpio`
-+	source gpio-mockup-sysfs.sh
-+}
-+
-+try_insert_module()
-+{
-+	if [ -d "$GPIO_DRV_SYSFS" ]; then
-+		echo "$GPIO_DRV_SYSFS exist. Skip insert module"
-+	else
-+		modprobe -q $module $1
-+		if [ X$? != X0 ]; then
-+			echo $msg insmod $module failed >&2
-+			exit 3
-+		fi
-+	fi
-+}
-+
-+remove_module()
-+{
-+	modprobe -r -q $module
-+}
-+
-+die()
-+{
-+	remove_module
-+	exit 4
-+}
-+
-+list_chip()
-+{
-+	name=$1
-+	if [ X$dev_type = Xsysfs ]; then
-+		gc=`list_chip_sysfs $name`
-+	else
-+		#FIXME: gpio chardev could not check for specific gpio driver.
-+		gc=`lsgpio 2>/dev/null`
-+	fi
-+	echo $gc
-+}
-+
-+test_chip()
-+{
-+	if [ X$dev_type = Xsysfs ]; then
-+		test_chip_sysfs $*
-+	fi
-+}
-+
-+gpio_test()
-+{
-+	param=$1
-+	valid=$2
-+
-+	if [ X"$param" = X ]; then
-+		die
-+	fi
-+	try_insert_module "gpio_mockup_ranges=$param"
-+	echo -n "GPIO $module test with ranges: <"
-+	echo "$param>: "
-+	printf "%-10s %s\n" $param
-+	gpiochip=`list_chip $module`
-+	if [ X"$gpiochip" = X ]; then
-+		if [ X"$valid" = Xfalse ]; then
-+			echo "successful"
-+		else
-+			echo "fail"
-+			die
-+		fi
-+	else
-+		for chip in $gpiochip; do
-+			test_chip $chip
-+		done
-+	fi
-+	remove_module
-+}
-+
-+while getopts fhm:t: opt; do
-+	case $opt in
-+	f)
-+		full_test=true
-+		;;
-+	h)
-+		usage
-+		exit
-+		;;
-+	m)
-+		module=$OPTARG
-+		;;
-+	t)
-+		dev_type=$OPTARG
-+		;;
-+	esac done
-+
-+if [ X"$module" = X ]; then
-+	module="gpio-mockup"
-+fi
-+
-+#TODO: force to chardev after it upstream
-+if [ X"$dev_type" = X ] || [ X"$dev_type" != Xsysfs ] \
-+	   || [ X"$dev_type" = Xchardev ]; then
-+	dev_type="sysfs"
-+fi
-+
-+prerequisite
-+
-+echo "1.  Test dynamic allocation of gpio successful means insert gpiochip and"
-+echo "    manipulate gpio pin successful"
-+gpio_test "-1,32" true
-+gpio_test "-1,32,-1,32" true
-+gpio_test "-1,32,-1,32,-1,32" true
-+if [ X$full_test = Xtrue ]; then
-+	gpio_test "-1,32,32,64" true
-+	gpio_test "-1,32,40,64,-1,5" true
-+	gpio_test "-1,32,32,64,-1,32" true
-+	gpio_test "0,32,32,64,-1,32,-1,32" true
-+	echo "2.  Do basic test: successful means insert gpiochip and manipulate"
-+	echo "    gpio pin successful"
-+	gpio_test "0,32" true
-+	gpio_test "0,32,32,64" true
-+	gpio_test "0,32,40,64,64,96" true
-+fi
-+echo "3.  Error test: successful means insert gpiochip failed"
-+echo "3.1 Test number of gpio overflow"
-+#Currently: The max number of gpio(1024) is defined in arm architecture.
-+gpio_test "-1,32,-1,1024" false
-+if [ X$full_test = Xtrue ]; then
-+	echo "3.2 Test zero line of gpio"
-+	gpio_test "0,0" false
-+	echo "3.3 Test range overlap"
-+	echo "3.3.1 Test corner case"
-+	gpio_test "0,32,0,1" false
-+	gpio_test "0,32,32,64,32,40" false
-+	gpio_test "0,32,35,64,35,45" false
-+	gpio_test "0,32,31,32" false
-+	gpio_test "0,32,32,64,36,37" false
-+	gpio_test "0,32,35,64,34,36" false
-+	echo "3.3.2 Test inserting invalid second gpiochip"
-+	gpio_test "0,32,30,35" false
-+	gpio_test "0,32,1,5" false
-+	gpio_test "10,32,9,14" false
-+	gpio_test "10,32,30,35" false
-+	echo "3.3.3 Test others"
-+	gpio_test "0,32,40,56,39,45" false
-+	gpio_test "0,32,40,56,30,33" false
-+	gpio_test "0,32,40,56,30,41" false
-+	gpio_test "0,32,40,56,20,21" false
-+fi
-+
-+echo GPIO test PASS
-+
 -- 
-2.1.4
-
+-----------------------------
+   blog: http://aarch64.me
+-----------------------------
