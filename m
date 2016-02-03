@@ -1,14 +1,11 @@
 From: Krzysztof Adamski <k@japko.eu>
-Subject: [PATCH v3 4/5] ARM: dts: sun8i-h3: Add R_PIO controller
- node to the dtsi
-Date: Thu,  4 Feb 2016 00:33:49 +0100
-Message-ID: <1454542430-16572-5-git-send-email-k@japko.eu>
-References: <1454542430-16572-1-git-send-email-k@japko.eu>
+Subject: [PATCH v3 0/5] pinctrl: sunxi: Add H3 R_PIO controller support
+Date: Thu,  4 Feb 2016 00:33:45 +0100
+Message-ID: <1454542430-16572-1-git-send-email-k@japko.eu>
 Reply-To: k@japko.eu
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDIL57GUWIARB4U4ZK2QKGQERYKPP2A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1454542430-16572-1-git-send-email-k-P4rZei/IPtg@public.gmane.org>
+Return-path: <linux-sunxi+bncBDIL57GUWIARB4M4ZK2QKGQEBPN7G5Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Archive: <https://groups.google.com/group/linux-sunxi
@@ -20,35 +17,48 @@ To: inus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime
 Cc: Krzysztof Adamski <k@japko.eu>
 List-Id: linux-gpio@vger.kernel.org
 
-Add the corresponding device node for R_PIO on H3 to the dtsi. Support
-for the controller was added in earlier commit.
+This patch series is extension of my original single patch with the same
+subject. It adds support for R_PIO so that GPIO port L can be used in H3
+based devices. It was tested on OrangePi PC where PL is connected amount
+others to an onboard led, a switch, an IR receiver and some VCC
+controllers.
 
-Signed-off-by: Krzysztof Adamski <k@japko.eu>
----
- arch/arm/boot/dts/sun8i-h3.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Patchset is based on next-20160129.
 
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index bb37f52..f618a95 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -517,5 +517,17 @@
- 			compatible = "allwinner,sun6i-a31-clock-reset";
- 			#reset-cells = <1>;
- 		};
-+
-+		r_pio: pinctrl@01f02c00 {
-+			compatible = "allwinner,sun8i-h3-r-pinctrl";
-+			reg = <0x01f02c00 0x400>;
-+			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&apb0_gates 0>;
-+			resets = <&apb0_reset 0>;
-+			gpio-controller;
-+			#gpio-cells = <3>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
- 	};
- };
+--- 
+
+Changes since v2:
+- fixed apb0 parrent clocks list
+- moved binding documentation change to the proper patch
+- simplified sunxi_pinctrl_gpio_get according to ChenYu suggestions
+- fixed ordering in sunxi binding documentation
+
+Changes since v1:
+- splited patch to two separate - dtsi and c files
+- added APB0 clocks a parent for R_PIO
+- added fix in sunxi_pinctrl_gpio_get for getting pin value when in irq
+  mode and on 2nd pinctrl
+- fixed a "pwn" > "pwm" typo
+- fixed order in allwinner,sunxi-pinctrl.txt
+
+
+Krzysztof Adamski (5):
+  clk: sunxi: Add apb0 gates for H3
+  dts: sun8i-h3: Add APB0 related clocks and resets
+  pinctrl: sunxi: Add H3 R_PIO controller support
+  ARM: dts: sun8i-h3: Add R_PIO controller node to the dtsi
+  pinctrl: sunxi: Use pin number when calling sunxi_pmx_set
+
+ Documentation/devicetree/bindings/clock/sunxi.txt  |   1 +
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+ arch/arm/boot/dts/sun8i-h3.dtsi                    |  36 +++++++
+ drivers/clk/sunxi/clk-simple-gates.c               |   2 +
+ drivers/pinctrl/sunxi/Kconfig                      |   4 +
+ drivers/pinctrl/sunxi/Makefile                     |   1 +
+ drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c         | 106 +++++++++++++++++++++
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c              |   5 +-
+ 8 files changed, 154 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c
+
 -- 
 2.1.4
