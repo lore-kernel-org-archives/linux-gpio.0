@@ -1,71 +1,144 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v2 4/7] gpio: amd8111: Use devm_request_region
-Date: Wed,  3 Feb 2016 15:17:13 -0500
-Message-ID: <2bfef1171bc4ef3f038b5560f1913f4bbb8ab171.1454530144.git.vilhelm.gray@gmail.com>
+Subject: [PATCH v2 5/7] gpio: ich: Use devm_request_region
+Date: Wed,  3 Feb 2016 15:17:27 -0500
+Message-ID: <e36f676d444b9327fc50ea95fe6993f7645641cf.1454530144.git.vilhelm.gray@gmail.com>
 References: <cover.1454530144.git.vilhelm.gray@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:34455 "EHLO
+	mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932595AbcBCURf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Feb 2016 15:17:35 -0500
 In-Reply-To: <cover.1454530144.git.vilhelm.gray@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Tyser <ptyser@xes-inc.com>
 
-By the time request_region is called in the AMD 8111 GPIO driver, a
-corresponding device structure has already been allocated. The
+By the time request_region is called in the Intel ICH series GPIO
+driver, a corresponding device structure has already been allocated. The
 devm_request_region function should be used to help simplify the cleanup
 code and reduce the possible points of failure.
 
+Cc: Peter Tyser <ptyser@xes-inc.com>
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/gpio/gpio-amd8111.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/gpio/gpio-ich.c | 51 +++++++++----------------------------------------
+ 1 file changed, 9 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd8111.c
-index c7040ff..30ad7d7 100644
---- a/drivers/gpio/gpio-amd8111.c
-+++ b/drivers/gpio/gpio-amd8111.c
-@@ -25,6 +25,7 @@
-  * License version 2. This program is licensed "as is" without any
-  * warranty of any kind, whether express or implied.
-  */
+diff --git a/drivers/gpio/gpio-ich.c b/drivers/gpio/gpio-ich.c
+index a489338..4f6d643 100644
+--- a/drivers/gpio/gpio-ich.c
++++ b/drivers/gpio/gpio-ich.c
+@@ -20,6 +20,7 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
 +#include <linux/ioport.h>
  #include <linux/module.h>
- #include <linux/kernel.h>
+ #include <linux/pci.h>
  #include <linux/gpio.h>
-@@ -204,7 +205,8 @@ found:
- 	gp.pmbase &= 0x0000FF00;
- 	if (gp.pmbase == 0)
- 		goto out;
--	if (!request_region(gp.pmbase + PMBASE_OFFSET, PMBASE_SIZE, "AMD GPIO")) {
-+	if (!devm_request_region(&pdev->dev, gp.pmbase + PMBASE_OFFSET,
-+		PMBASE_SIZE, "AMD GPIO")) {
- 		dev_err(&pdev->dev, "AMD GPIO region 0x%x already in use!\n",
- 			gp.pmbase + PMBASE_OFFSET);
- 		err = -EBUSY;
-@@ -213,7 +215,6 @@ found:
- 	gp.pm = ioport_map(gp.pmbase + PMBASE_OFFSET, PMBASE_SIZE);
- 	if (!gp.pm) {
- 		dev_err(&pdev->dev, "Couldn't map io port into io memory\n");
--		release_region(gp.pmbase + PMBASE_OFFSET, PMBASE_SIZE);
- 		err = -ENOMEM;
- 		goto out;
- 	}
-@@ -228,7 +229,6 @@ found:
- 		printk(KERN_ERR "GPIO registering failed (%d)\n",
- 		       err);
- 		ioport_unmap(gp.pm);
--		release_region(gp.pmbase + PMBASE_OFFSET, PMBASE_SIZE);
- 		goto out;
- 	}
- out:
-@@ -239,7 +239,6 @@ static void __exit amd_gpio_exit(void)
+@@ -384,8 +385,8 @@ static struct ichx_desc avoton_desc = {
+ 	.use_outlvl_cache = true,
+ };
+ 
+-static int ichx_gpio_request_regions(struct resource *res_base,
+-						const char *name, u8 use_gpio)
++static int ichx_gpio_request_regions(struct device *dev,
++	struct resource *res_base, const char *name, u8 use_gpio)
  {
- 	gpiochip_remove(&gp.chip);
- 	ioport_unmap(gp.pm);
--	release_region(gp.pmbase + PMBASE_OFFSET, PMBASE_SIZE);
+ 	int i;
+ 
+@@ -395,34 +396,12 @@ static int ichx_gpio_request_regions(struct resource *res_base,
+ 	for (i = 0; i < ARRAY_SIZE(ichx_priv.desc->regs[0]); i++) {
+ 		if (!(use_gpio & (1 << i)))
+ 			continue;
+-		if (!request_region(
++		if (!devm_request_region(dev,
+ 				res_base->start + ichx_priv.desc->regs[0][i],
+ 				ichx_priv.desc->reglen[i], name))
+-			goto request_err;
++			return -EBUSY;
+ 	}
+ 	return 0;
+-
+-request_err:
+-	/* Clean up: release already requested regions, if any */
+-	for (i--; i >= 0; i--) {
+-		if (!(use_gpio & (1 << i)))
+-			continue;
+-		release_region(res_base->start + ichx_priv.desc->regs[0][i],
+-			       ichx_priv.desc->reglen[i]);
+-	}
+-	return -EBUSY;
+-}
+-
+-static void ichx_gpio_release_regions(struct resource *res_base, u8 use_gpio)
+-{
+-	int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(ichx_priv.desc->regs[0]); i++) {
+-		if (!(use_gpio & (1 << i)))
+-			continue;
+-		release_region(res_base->start + ichx_priv.desc->regs[0][i],
+-			       ichx_priv.desc->reglen[i]);
+-	}
  }
  
- module_init(amd_gpio_init);
+ static int ichx_gpio_probe(struct platform_device *pdev)
+@@ -468,7 +447,7 @@ static int ichx_gpio_probe(struct platform_device *pdev)
+ 	spin_lock_init(&ichx_priv.lock);
+ 	res_base = platform_get_resource(pdev, IORESOURCE_IO, ICH_RES_GPIO);
+ 	ichx_priv.use_gpio = ich_info->use_gpio;
+-	err = ichx_gpio_request_regions(res_base, pdev->name,
++	err = ichx_gpio_request_regions(&pdev->dev, res_base, pdev->name,
+ 					ichx_priv.use_gpio);
+ 	if (err)
+ 		return err;
+@@ -489,8 +468,8 @@ static int ichx_gpio_probe(struct platform_device *pdev)
+ 		goto init;
+ 	}
+ 
+-	if (!request_region(res_pm->start, resource_size(res_pm),
+-			pdev->name)) {
++	if (!devm_request_region(&pdev->dev, res_pm->start,
++			resource_size(res_pm), pdev->name)) {
+ 		pr_warn("ACPI BAR is busy, GPI 0 - 15 unavailable\n");
+ 		goto init;
+ 	}
+@@ -502,31 +481,19 @@ init:
+ 	err = gpiochip_add_data(&ichx_priv.chip, NULL);
+ 	if (err) {
+ 		pr_err("Failed to register GPIOs\n");
+-		goto add_err;
++		return err;
+ 	}
+ 
+ 	pr_info("GPIO from %d to %d on %s\n", ichx_priv.chip.base,
+ 	       ichx_priv.chip.base + ichx_priv.chip.ngpio - 1, DRV_NAME);
+ 
+ 	return 0;
+-
+-add_err:
+-	ichx_gpio_release_regions(ichx_priv.gpio_base, ichx_priv.use_gpio);
+-	if (ichx_priv.pm_base)
+-		release_region(ichx_priv.pm_base->start,
+-				resource_size(ichx_priv.pm_base));
+-	return err;
+ }
+ 
+ static int ichx_gpio_remove(struct platform_device *pdev)
+ {
+ 	gpiochip_remove(&ichx_priv.chip);
+ 
+-	ichx_gpio_release_regions(ichx_priv.gpio_base, ichx_priv.use_gpio);
+-	if (ichx_priv.pm_base)
+-		release_region(ichx_priv.pm_base->start,
+-				resource_size(ichx_priv.pm_base));
+-
+ 	return 0;
+ }
+ 
 -- 
 2.4.10
+
