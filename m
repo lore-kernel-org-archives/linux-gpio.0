@@ -1,7 +1,8 @@
 From: Krzysztof Adamski <k@japko.eu>
-Subject: [PATCH v3 1/5] clk: sunxi: Add apb0 gates for H3
-Date: Thu,  4 Feb 2016 00:33:46 +0100
-Message-ID: <1454542430-16572-2-git-send-email-k@japko.eu>
+Subject: [PATCH v3 5/5] pinctrl: sunxi: Use pin number when
+ calling sunxi_pmx_set
+Date: Thu,  4 Feb 2016 00:33:50 +0100
+Message-ID: <1454542430-16572-6-git-send-email-k@japko.eu>
 References: <1454542430-16572-1-git-send-email-k@japko.eu>
 Reply-To: k@japko.eu
 Mime-Version: 1.0
@@ -19,40 +20,42 @@ To: inus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime
 Cc: Krzysztof Adamski <k@japko.eu>
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds support for APB0 in H3. It seems to be compatible with
-earlier SOCs. apb0 gates controls R_ block peripherals (R_PIO, R_IR,
-etc).
+sunxi_pmx_set accepts pin number and then calculates offset by
+subtracting pin_base from it. sunxi_pinctrl_gpio_get, on the other hand,
+gets offset so we have to convert it to pin number so we won't get
+negative value in sunxi_pmx_set.
+
+This was only used on A10 so far, where there is only one GPIO chip with
+pin_base set to 0 so it didn't matter. However H3 also requires this
+workaround but have two pinmux sections, triggering problem for PL port.
 
 Signed-off-by: Krzysztof Adamski <k@japko.eu>
 ---
- Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
- drivers/clk/sunxi/clk-simple-gates.c              | 2 ++
- 2 files changed, 3 insertions(+)
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index e59f57b..751c8b9f0 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -45,6 +45,7 @@ Required properties:
- 	"allwinner,sun6i-a31-apb0-gates-clk" - for the APB0 gates on A31
- 	"allwinner,sun7i-a20-apb0-gates-clk" - for the APB0 gates on A20
- 	"allwinner,sun8i-a23-apb0-gates-clk" - for the APB0 gates on A23
-+	"allwinner,sun8i-h3-apb0-gates-clk" - for the APB0 gates on H3
- 	"allwinner,sun9i-a80-apb0-gates-clk" - for the APB0 gates on A80
- 	"allwinner,sun4i-a10-apb1-clk" - for the APB1 clock
- 	"allwinner,sun9i-a80-apb1-clk" - for the APB1 bus clock on A80
-diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
-index f4da52b..6753c87 100644
---- a/drivers/clk/sunxi/clk-simple-gates.c
-+++ b/drivers/clk/sunxi/clk-simple-gates.c
-@@ -130,6 +130,8 @@ CLK_OF_DECLARE(sun8i_a23_apb2, "allwinner,sun8i-a23-apb2-gates-clk",
- 	       sunxi_simple_gates_init);
- CLK_OF_DECLARE(sun8i_a33_ahb1, "allwinner,sun8i-a33-ahb1-gates-clk",
- 	       sunxi_simple_gates_init);
-+CLK_OF_DECLARE(sun8i_h3_apb0, "allwinner,sun8i-h3-apb0-gates-clk",
-+	       sunxi_simple_gates_init);
- CLK_OF_DECLARE(sun9i_a80_ahb0, "allwinner,sun9i-a80-ahb0-gates-clk",
- 	       sunxi_simple_gates_init);
- CLK_OF_DECLARE(sun9i_a80_ahb1, "allwinner,sun9i-a80-ahb1-gates-clk",
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 7a2465f..96f64a1 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -459,15 +459,16 @@ static int sunxi_pinctrl_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	u8 index = sunxi_data_offset(offset);
+ 	u32 set_mux = pctl->desc->irq_read_needs_mux &&
+ 			test_bit(FLAG_USED_AS_IRQ, &chip->desc[offset].flags);
++	u32 pin = offset + chip->base;
+ 	u32 val;
+ 
+ 	if (set_mux)
+-		sunxi_pmx_set(pctl->pctl_dev, offset, SUN4I_FUNC_INPUT);
++		sunxi_pmx_set(pctl->pctl_dev, pin, SUN4I_FUNC_INPUT);
+ 
+ 	val = (readl(pctl->membase + reg) >> index) & DATA_PINS_MASK;
+ 
+ 	if (set_mux)
+-		sunxi_pmx_set(pctl->pctl_dev, offset, SUN4I_FUNC_IRQ);
++		sunxi_pmx_set(pctl->pctl_dev, pin, SUN4I_FUNC_IRQ);
+ 
+ 	return !!val;
+ }
 -- 
 2.1.4
