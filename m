@@ -1,29 +1,47 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 2/2] gpio: Remove unused asm/gpio.h files
-Date: Wed, 3 Feb 2016 09:03:16 +0900
-Message-ID: <CAAVeFu+A4OKZL4WuR7R9fLcDc9W9rF7GLywQw0oYjUa-vWM+mA@mail.gmail.com>
-References: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
- <20160202195330.10827.68542.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Subject: Re: [PATCH 0/7] Use devm_request_region
+Date: Wed, 3 Feb 2016 09:26:13 +0900
+Message-ID: <CAAVeFu+3u7aDfDHSkQ84JE_Av9hHGR0y4RRmEOi6s9XVtqMUhA@mail.gmail.com>
+References: <cover.1454342087.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <20160202195330.10827.68542.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arch <linux-arch@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:37039 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752339AbcBCA0e (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Feb 2016 19:26:34 -0500
+In-Reply-To: <cover.1454342087.git.vilhelm.gray@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, Feb 3, 2016 at 4:53 AM, Bjorn Helgaas <bhelgaas@google.com> wrote:
-> asm/gpio.h is included only by linux/gpio.h, and then only when the arch
-> selects ARCH_HAVE_CUSTOM_GPIO_H.  Only the following arches select it: arm
-> avr32 blackfin m68k (COLDFIRE only) sh unicore32.
+On Tue, Feb 2, 2016 at 8:54 AM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
+> By the time request_region is called in several GPIO drivers, a
+> corresponding device structure has already been allocated. The
+> devm_request_region function should be used to help simplify the cleanup
+> code and reduce the possible points of failure.
 >
-> Remove the unused asm/gpio.h files for the arches that do not select
-> ARCH_HAVE_CUSTOM_GPIO_H.
+> William Breathitt Gray (7):
+>   gpio: 104-dio-48e: Use devm_request_region
+>   gpio: 104-idi-48: Use devm_request_region
+>   gpio: 104-idio-16: Use devm_request_region
+>   gpio: amd8111: Use devm_request_region
+>   gpio: ich: Use devm_request_region
+>   gpio: sch311x: Use devm_request_region
+>   gpio: ws16c48: Use devm_request_region
 >
-> This is a follow-on to 7563bbf89d06 ("gpiolib/arches: Centralise
-> bolierplate asm/gpio.h").
+>  drivers/gpio/gpio-104-dio-48e.c | 22 +++++++-----------
+>  drivers/gpio/gpio-104-idi-48.c  | 22 +++++++-----------
+>  drivers/gpio/gpio-104-idio-16.c | 22 +++++++-----------
+>  drivers/gpio/gpio-amd8111.c     |  7 +++---
+>  drivers/gpio/gpio-ich.c         | 51 ++++++++---------------------------------
+>  drivers/gpio/gpio-sch311x.c     |  7 +++---
+>  drivers/gpio/gpio-ws16c48.c     | 22 +++++++-----------
+>  7 files changed, 47 insertions(+), 106 deletions(-)
 
-Very nice.
+Did a quick review and this looks all good, modulo the compile warning
+on patch 6.
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
