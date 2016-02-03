@@ -1,72 +1,66 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v2 5/5] pinctrl: sunxi: Use pin number when calling sunxi_pmx_set
-Date: Wed, 3 Feb 2016 15:02:03 +0800
-Message-ID: <CAGb2v66+cmHv-NBHCnYcZ_K42qxM=5+kvhazHSy2AykL8cF8tw@mail.gmail.com>
-References: <1454448113-18810-1-git-send-email-k@japko.eu> <1454448113-18810-6-git-send-email-k@japko.eu>
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: Re: [PATCH v2 1/5] clk: sunxi: Add apb0 gates for H3
+Date: Wed, 3 Feb 2016 15:04:25 +0800
+Message-ID: <CAGb2v65pKkXXsFg6Yki_OPBb7C0us5DDGBMtbOwb1tVR7oi9Uw@mail.gmail.com>
+References: <1454448113-18810-1-git-send-email-k@japko.eu> <1454448113-18810-2-git-send-email-k@japko.eu>
+Reply-To: wens-jdAy2FN1RRM@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:36532 "EHLO
-	smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933047AbcBCHC0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Feb 2016 02:02:26 -0500
-In-Reply-To: <1454448113-18810-6-git-send-email-k@japko.eu>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-sunxi+bncBCMILY6JWQBBBEGNY22QKGQE3MTJRMA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <1454448113-18810-2-git-send-email-k-P4rZei/IPtg@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
 To: Krzysztof Adamski <k@japko.eu>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>, Hans de Goede <hdegoede@redhat.com>, Vishnu Patekar <vishnupatekar0510@gmail.com>, Jens Kuske <jenskuske@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-
-Hi,
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Id: linux-gpio@vger.kernel.org
 
 On Wed, Feb 3, 2016 at 5:21 AM, Krzysztof Adamski <k@japko.eu> wrote:
-> sunxi_pmx_set accepts pin number and then calculates offset by
-> subtracting pin_base from it. sunxi_pinctrl_gpio_get, on the other hand,
-> gets offset so we have to convert it to pin number so we won't get
-> negative value in sunxi_pmx_set.
->
-> This was only used on A10 so far, where there is only one GPIO chip with
-> pin_base set to 0 so it didn't matter. However H3 also requires this
-> workaround but have two pinmux sections, triggering problem for PL port.
+> This patch adds support for APB0 in H3. It seems to be compatible with
+> earlier SOCs. apb0 gates controls R_ block peripherals (R_PIO, R_IR,
+> etc).
 >
 > Signed-off-by: Krzysztof Adamski <k@japko.eu>
 > ---
->  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+>  Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
+>  drivers/clk/sunxi/clk-simple-gates.c              | 2 ++
+>  2 files changed, 3 insertions(+)
 >
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> index 7a2465f..9e5bac9 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> @@ -460,14 +460,17 @@ static int sunxi_pinctrl_gpio_get(struct gpio_chip *chip, unsigned offset)
->         u32 set_mux = pctl->desc->irq_read_needs_mux &&
->                         test_bit(FLAG_USED_AS_IRQ, &chip->desc[offset].flags);
->         u32 val;
-> +       u32 pin;
->
-> -       if (set_mux)
-> -               sunxi_pmx_set(pctl->pctl_dev, offset, SUN4I_FUNC_INPUT);
-> +       if (set_mux) {
-> +               pin = offset + pctl->desc->pin_base;
+> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+> index e59f57b..6ee6875 100644
+> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
+> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+> @@ -32,6 +32,7 @@ Required properties:
+>         "allwinner,sun8i-h3-ahb2-clk" - for the AHB2 clock on H3
+>         "allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
+>         "allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
+> +       "allwinner,sun8i-h3-abp0-gates-clk" - for the APB0 gates on H3
 
-You can use chip->base directly. It's value is set to pin_base in the
-init function.
-You could also move this out of the if block, and not add the braces.
-
-Otherwise this looks good.
+The list is grouped by clock type (AHB/APB/...) then family then SoC.
+Please put this in the apb0 section below.
 
 ChenYu
 
-> +               sunxi_pmx_set(pctl->pctl_dev, pin, SUN4I_FUNC_INPUT);
-> +       }
->
->         val = (readl(pctl->membase + reg) >> index) & DATA_PINS_MASK;
->
->         if (set_mux)
-> -               sunxi_pmx_set(pctl->pctl_dev, offset, SUN4I_FUNC_IRQ);
-> +               sunxi_pmx_set(pctl->pctl_dev, pin, SUN4I_FUNC_IRQ);
->
->         return !!val;
->  }
+>         "allwinner,sun9i-a80-ahb0-gates-clk" - for the AHB0 gates on A80
+>         "allwinner,sun9i-a80-ahb1-gates-clk" - for the AHB1 gates on A80
+>         "allwinner,sun9i-a80-ahb2-gates-clk" - for the AHB2 gates on A80
+> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
+> index f4da52b..8a1fa3e 100644
+> --- a/drivers/clk/sunxi/clk-simple-gates.c
+> +++ b/drivers/clk/sunxi/clk-simple-gates.c
+> @@ -130,6 +130,8 @@ CLK_OF_DECLARE(sun8i_a23_apb2, "allwinner,sun8i-a23-apb2-gates-clk",
+>                sunxi_simple_gates_init);
+>  CLK_OF_DECLARE(sun8i_a33_ahb1, "allwinner,sun8i-a33-ahb1-gates-clk",
+>                sunxi_simple_gates_init);
+> +CLK_OF_DECLARE(sun8i_h3_abp0, "allwinner,sun8i-h3-abp0-gates-clk",
+> +              sunxi_simple_gates_init);
+>  CLK_OF_DECLARE(sun9i_a80_ahb0, "allwinner,sun9i-a80-ahb0-gates-clk",
+>                sunxi_simple_gates_init);
+>  CLK_OF_DECLARE(sun9i_a80_ahb1, "allwinner,sun9i-a80-ahb1-gates-clk",
 > --
 > 2.1.4
 >
