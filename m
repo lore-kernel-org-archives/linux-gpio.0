@@ -1,33 +1,24 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 0/2] GPIO: Clean up asm/gpio.h
-Date: Wed, 3 Feb 2016 09:19:55 +0100 (CET)
-Message-ID: <alpine.DEB.2.11.1602030919190.25254@nanos>
-References: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+From: Biao Huang <biao.huang@mediatek.com>
+Subject: [PATCH 0/2] pinctrl: mediatek: Add direction control and gpio_request_enable Support
+Date: Wed, 3 Feb 2016 09:24:44 +0800
+Message-ID: <1454462686-770-1-git-send-email-biao.huang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:54886 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933572AbcBCIVF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Feb 2016 03:21:05 -0500
-In-Reply-To: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arch@vger.kernel.org, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
 
-On Tue, 2 Feb 2016, Bjorn Helgaas wrote:
+1. Set direction to input when do input-enable/disable and input-schmitt-enable/disable properties.
+2. Add gpio_request_enable support to set pin to gpio function.
 
-> Many arches supply an asm/gpio.h that contains only this:
-> 
->   #warning Include linux/gpio.h instead of asm/gpio.h
->   #include <linux/gpio.h>
-> 
-> These two patches change all the places that include asm/gpio.h
-> so they include linux/gpio.h instead, and then remove the asm/gpio.h
-> files.
-> 
-> There are several arches that supply asm/gpio.h with useful
-> arch-specific content; I didn't touch those.
+Biao Huang (2):
+  pinctrl: mediatek: fix direction control issue
+  pinctrl: mediatek: Add gpio_request_enable support
 
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   38 +++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+-- 
+1.7.9.5
