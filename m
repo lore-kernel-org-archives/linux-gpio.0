@@ -1,46 +1,57 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 2/2] gpio: add TS-4800 fpga GPIO support
-Date: Thu, 4 Feb 2016 09:16:06 +0900
-Message-ID: <CAAVeFuJXUyKDXign_wGbCxdKgXE1DHHjPdsw0zm+n6gNtB_3RQ@mail.gmail.com>
-References: <1452704263-16763-1-git-send-email-julien.grossholtz@savoirfairelinux.com>
- <1452704263-16763-2-git-send-email-julien.grossholtz@savoirfairelinux.com> <880790340.75681.1454338503610.JavaMail.zimbra@savoirfairelinux.com>
+From: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 1/2] pinctrl: mediatek: fix direction control issue
+Date: Wed, 3 Feb 2016 19:03:35 -0800
+Message-ID: <1454555015.4618.10.camel@mussux00>
+References: <1454462686-770-1-git-send-email-biao.huang@mediatek.com>
+ <1454462686-770-2-git-send-email-biao.huang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f177.google.com ([209.85.213.177]:35419 "EHLO
-	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751494AbcBDAQ0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Feb 2016 19:16:26 -0500
-In-Reply-To: <880790340.75681.1454338503610.JavaMail.zimbra@savoirfairelinux.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1454462686-770-2-git-send-email-biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Eddie Huang <eddie.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
-Cc: linus walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel@savoirfairelinux.com
 
-On Mon, Feb 1, 2016 at 11:55 PM, Julien Grossholtz
-<julien.grossholtz@savoirfairelinux.com> wrote:
-> Hello,
->
-> Any chance to get feedback on this ?
->
-> Thanks,
->
-> Julien Grossholtz
->
-> ----- Original Message -----
-> From: "Julien Grossholtz" <julien.grossholtz@savoirfairelinux.com>
-> To: "linus walleij" <linus.walleij@linaro.org>, gnurou@gmail.com
-> Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@savoirfairelinux.com, "Julien Grossholtz" <julien.grossholtz@savoirfairelinux.com>
-> Sent: Wednesday, January 13, 2016 11:57:43 AM
-> Subject: [PATCH 2/2] gpio: add TS-4800 fpga GPIO support
->
-> The TS-4800 GPIO driver provide support for the GPIOs available
-> on the Technologic Sytems board FPGA. It allows to set
-> direction and read/write states.
->
-> It uses the generic gpio driver.
+On Wed, 2016-02-03 at 09:24 +0800, Biao Huang wrote:
+> Since input-enable/disable and input-schmitt-enable/disable are
+> workable when gpio direction is input, so add direction setting
+> when do input-enable/disable and input-schmitt-enable/disable
+> properties.
+> 
+> Signed-off-by: Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> ---
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> index 8cac73d..6eb01c9 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> @@ -352,6 +352,7 @@ static int mtk_pconf_parse_conf(struct pinctrl_dev *pctldev,
+>  		ret = mtk_pconf_set_pull_select(pctl, pin, true, false, arg);
+>  		break;
+>  	case PIN_CONFIG_INPUT_ENABLE:
+> +		mtk_pmx_gpio_set_direction(pctldev, NULL, pin, true);
+>  		ret = mtk_pconf_set_ies_smt(pctl, pin, arg, param);
 
-No fancy stuff here, looks good to me but let's see what Linus says as
-I am not too familiar with the generic GPIO driver.
+Hi Linus,
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+>From pinctrl-bindings.txt, 'input-enable' property defined as following:
+input-enable        - enable input on pin (no effect on output)
+
+Since input enable and input direction are two different settings on our
+SOC, could you tell me the exact meaning of this property? Input enable
+only? Or set input direction at the same time?
+
+Thanks,
+Hongzhou
