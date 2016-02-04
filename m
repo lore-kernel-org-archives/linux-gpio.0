@@ -1,41 +1,222 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH] pinctrl: zynq: fix typo in group name for qspi1
-Date: Thu, 4 Feb 2016 09:19:44 -0800
-Message-ID: <20160204171944.GX4215@xsjsorenbubuntu>
-References: <1454573648-21751-1-git-send-email-helmut.buchsbaum@gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v3 1/2] pinctrl: sh-pfc: Improve pinmux macros documentation
+Date: Thu, 04 Feb 2016 20:43:06 +0200
+Message-ID: <4029813.xaXaFntOiW@avalon>
+References: <1448890332-773-1-git-send-email-geert+renesas@glider.be> <1448890332-773-2-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bl2nam02on0045.outbound.protection.outlook.com ([104.47.38.45]:41376
-	"EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1756836AbcBDRvn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 4 Feb 2016 12:51:43 -0500
-Content-Disposition: inline
-In-Reply-To: <1454573648-21751-1-git-send-email-helmut.buchsbaum@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1448890332-773-2-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Niklas =?ISO-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>, Magnus Damm <damm@opensource.se>, Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Thu, 2016-02-04 at 09:14:08 +0100, Helmut Buchsbaum wrote:
-> Due to a typo Zynq pin controller does not set pin function of qspi1
-> when using function qspi1. So pin group for qspi1 has to be renamed t=
-o
-> "qspi1_0_grp" as outlined in the corresponding bindings documentation=
-=2E
->=20
-> This also removes kernel message:
->   zynq-pinctrl 700.pinctrl: invalid group "qspi1_0_grp" for function =
-"qspi1"
->=20
-> Signed-off-by: Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
-Acked-by: S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>
+Hi Geert,
 
-	S=C3=B6ren
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thank you for the patch.
+
+On Monday 30 November 2015 14:32:11 Geert Uytterhoeven wrote:
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> v3:
+>   - Add Acked-by,
+>   - Document function names referring to IPSR fields,
+>   - Replace "configuration register" by more specific terms,
+>   - Rename "ms" to "msel" or "gsel",
+>   - EMEV2 PINMUX_IPSR_NOFN() pinmux configurations have a GPIO function,
+> 
+> v2:
+>   - Clarify same width vs. different widths,
+>   - Mention GPSR for PINMUX_IPSR_DATA(),
+>   - Document NOGM (= NOGP + MSEL),
+>   - Fix s/ispr/ipsr/ typos.
+> ---
+>  drivers/pinctrl/sh-pfc/sh_pfc.h | 94 ++++++++++++++++++++++++++++++++++----
+>  1 file changed, 86 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> b/drivers/pinctrl/sh-pfc/sh_pfc.h index 6b8180fbdf86a637..d430ee9a652a4a03
+> 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -100,10 +100,31 @@ struct pinmux_cfg_reg {
+>  	const u8 *var_field_width;
+>  };
+> 
+> +/*
+> + * Describe a config register consisting of several fields of the same
+> width
+> + *   - name: Register name (unused, for documentation purposes only)
+> + *   - r: Physical register address
+> + *   - r_width: Width of the register (in bits)
+> + *   - f_width: Width of the fixed-width register fields (in bits)
+> + * This macro must be followed by initialization data: For each register
+> field
+> + * (from left to right, i.e. MSB to LSB), 2^f_width enum IDs must be
+> specified,
+> + * one for each possible combination of the register field bit values.
+> + */
+>  #define PINMUX_CFG_REG(name, r, r_width, f_width) \
+>  	.reg = r, .reg_width = r_width, .field_width = f_width,		\
+>  	.enum_ids = (const u16 [(r_width / f_width) * (1 << f_width)])
+> 
+> +/*
+> + * Describe a config register consisting of several fields of different
+> widths
+> + *   - name: Register name (unused, for documentation purposes only)
+> + *   - r: Physical register address
+> + *   - r_width: Width of the register (in bits)
+> + *   - var_fw0, var_fwn...: List of widths of the register fields (in
+> bits),
+> + *                          From left to right (i.e. MSB to LSB)
+> + * This macro must be followed by initialization data: For each register
+> field
+> + * (from left to right, i.e. MSB to LSB), 2^var_fwi enum IDs must be
+> specified,
+> + * one for each possible combination of the register field bit values.
+> + */
+>  #define PINMUX_CFG_REG_VAR(name, r, r_width, var_fw0, var_fwn...) \
+>  	.reg = r, .reg_width = r_width,	\
+>  	.var_field_width = (const u8 [r_width]) \
+> @@ -116,6 +137,14 @@ struct pinmux_data_reg {
+>  	const u16 *enum_ids;
+>  };
+> 
+> +/*
+> + * Describe a data register
+> + *   - name: Register name (unused, for documentation purposes only)
+> + *   - r: Physical register address
+> + *   - r_width: Width of the register (in bits)
+> + * This macro must be followed by initialization data: For each register
+> bit
+> + * (from left to right, i.e. MSB to LSB), one enum ID must be specified.
+> + */
+>  #define PINMUX_DATA_REG(name, r, r_width) \
+>  	.reg = r, .reg_width = r_width,	\
+>  	.enum_ids = (const u16 [r_width]) \
+> @@ -124,6 +153,10 @@ struct pinmux_irq {
+>  	const short *gpios;
+>  };
+> 
+> +/*
+> + * Describe the mapping from GPIOs to a single IRQ
+> + *   - ids...: List of GPIOs that are mapped to the same IRQ
+> + */
+>  #define PINMUX_IRQ(ids...)			   \
+>  	{ .gpios = (const short []) { ids, -1 } }
+> 
+> @@ -185,18 +218,63 @@ struct sh_pfc_soc_info {
+>   * sh_pfc_soc_info pinmux_data array macros
+>   */
+> 
+> +/*
+> + * Describe generic pinmux data
+> + *   - data_or_mark: *_DATA or *_MARK enum ID
+> + *   - ids...: List of enum IDs to associate with data_or_mark
+> + */
+>  #define PINMUX_DATA(data_or_mark, ids...)	data_or_mark, ids, 0
+> 
+> -#define PINMUX_IPSR_NOGP(ispr, fn)					\
+> +/*
+> + * Describe a pinmux configuration without GPIO function that needs
+> + * configuration in a Peripheral Function Select Register (IPSR)
+> + *   - ipsr: IPSR field (unused, for documentation purposes only)
+> + *   - fn: Function name, referring to a field in the IPSR
+> + */
+> +#define PINMUX_IPSR_NOGP(ipsr, fn)					\
+>  	PINMUX_DATA(fn##_MARK, FN_##fn)
+> +
+> +/*
+> + * Describe a pinmux configuration with GPIO function that needs
+> configuration
+> + * in both a Peripheral Function Select Register (IPSR) and in a
+> + * GPIO/Peripheral Function Select Register 1 (GPSR)
+
+s/Register 1/Register/ ?
+
+> + *   - ipsr: IPSR field
+> + *   - fn: Function name, also referring to the IPSR field
+> + */
+>  #define PINMUX_IPSR_DATA(ipsr, fn)					\
+>  	PINMUX_DATA(fn##_MARK, FN_##fn, FN_##ipsr)
+> -#define PINMUX_IPSR_NOGM(ispr, fn, ms)					\
+> -	PINMUX_DATA(fn##_MARK, FN_##fn, FN_##ms)
+> -#define PINMUX_IPSR_NOFN(ipsr, fn, ms)					\
+> -	PINMUX_DATA(fn##_MARK, FN_##ipsr, FN_##ms)
+> -#define PINMUX_IPSR_MSEL(ipsr, fn, ms)					\
+> -	PINMUX_DATA(fn##_MARK, FN_##ms, FN_##ipsr, FN_##fn)
+> +
+> +/*
+> + * Describe a pinmux configuration without GPIO function that needs
+> + * configuration in a Peripheral Function Select Register (IPSR), and where
+> the
+> + * pinmux function has a representation in a Module Select Register
+> (MOD_SEL).
+> + *   - ipsr: IPSR field
+
+To be consistent with the NOGP macro,
+
+ *   - ipsr: IPSR field (unused, for documentation purposes only)
+
+> + *   - fn: Function name, also referring to the IPSR field
+> + *   - msel: Module selector
+> + */
+> +#define PINMUX_IPSR_NOGM(ipsr, fn, msel)				\
+> +	PINMUX_DATA(fn##_MARK, FN_##fn, FN_##msel)
+> +
+> +/*
+> + * Describe a pinmux configuration with GPIO function where the pinmux
+> function
+> + * has no representation in a Peripheral Function Select Register (IPSR),
+> but
+> + * instead solely depends on a group selection.
+> + *   - gpsr: GPSR field
+> + *   - fn: Function name, also referring to the GPSR field
+> + *   - gsel: Group selector
+> + */
+> +#define PINMUX_IPSR_NOFN(gpsr, fn, gsel)				\
+> +	PINMUX_DATA(fn##_MARK, FN_##gpsr, FN_##gsel)
+> +
+> +/*
+> + * Describe a pinmux configuration where the pinmux function has a
+> + * representation in a Module Select Register (MOD_SEL).
+
+If I'm not mistaken this macro is used for pins that are controlled through 
+all three of IPSR, GPSR and MSEL. How about
+
+ * Describe a pinmux configuration with GPIO function that needs configuration
+ * in both a Peripheral Function Select Register (IPSR) and a GPIO/Peripheral
+ * Function Select Register (GPSR), and where the pinmux function has a
+ * representation in a Module Select Register (MOD_SEL).
+
+With those changes,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> + *   - ipsr: IPSR field
+> + *   - fn: Function name, also referring to the IPSR field
+> + *   - msel: Module selector
+> + */
+> +#define PINMUX_IPSR_MSEL(ipsr, fn, msel)				\
+> +	PINMUX_DATA(fn##_MARK, FN_##msel, FN_##ipsr, FN_##fn)
+> 
+>  /*
+>   * Describe a pinmux configuration for a single-function pin.
+> @@ -334,7 +412,7 @@ struct sh_pfc_soc_info {
+>  	PINMUX_GPIO_FN(GPIO_FN_##str, PINMUX_FN_BASE, str##_MARK)
+> 
+>  /*
+> - * PORTnCR macro
+> + * PORTnCR helper macro for SH-Mobile/R-Mobile
+>   */
+>  #define PORTCR(nr, reg)							\
+>  	{								\
+
+-- 
+Regards,
+
+Laurent Pinchart
+
