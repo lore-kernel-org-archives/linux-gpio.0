@@ -1,44 +1,49 @@
-From: Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
-Subject: [PATCH] pinctrl: zynq: fix typo in group name for qspi1
-Date: Thu,  4 Feb 2016 09:14:08 +0100
-Message-ID: <1454573648-21751-1-git-send-email-helmut.buchsbaum@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:37147 "EHLO
-	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752421AbcBDIOZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Feb 2016 03:14:25 -0500
-Received: by mail-wm0-f42.google.com with SMTP id l66so105201789wml.0
-        for <linux-gpio@vger.kernel.org>; Thu, 04 Feb 2016 00:14:24 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 06/14] ARM: dts: sun8i-a83t: Correct low
+ speed oscillator clocks
+Date: Thu, 4 Feb 2016 16:51:06 +0800
+Message-ID: <CAEzqOZvcy58T_uxvymGxuQXh_Goj3yHmgkmL4VL+x2_bycMgNg@mail.gmail.com>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-7-git-send-email-vishnupatekar0510@gmail.com> <20160202131947.GS4652@lukather>
+Reply-To: vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBD64TFVR3YIBBDVCZS2QKGQEVFBACVY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <20160202131947.GS4652@lukather>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Emilio Lopez <emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Rein
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
 
-Due to a typo Zynq pin controller does not set pin function of qspi1
-when using function qspi1. So pin group for qspi1 has to be renamed to
-"qspi1_0_grp" as outlined in the corresponding bindings documentation.
+Hello Maxime,
 
-This also removes kernel message:
-  zynq-pinctrl 700.pinctrl: invalid group "qspi1_0_grp" for function "qspi1"
 
-Signed-off-by: Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
----
- drivers/pinctrl/pinctrl-zynq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
-index af726b9..9150303 100644
---- a/drivers/pinctrl/pinctrl-zynq.c
-+++ b/drivers/pinctrl/pinctrl-zynq.c
-@@ -590,7 +590,7 @@ static const char * const usb1_groups[] = {"usb1_0_grp"};
- static const char * const mdio0_groups[] = {"mdio0_0_grp"};
- static const char * const mdio1_groups[] = {"mdio1_0_grp"};
- static const char * const qspi0_groups[] = {"qspi0_0_grp"};
--static const char * const qspi1_groups[] = {"qspi0_1_grp"};
-+static const char * const qspi1_groups[] = {"qspi1_0_grp"};
- static const char * const qspi_fbclk_groups[] = {"qspi_fbclk_grp"};
- static const char * const qspi_cs1_groups[] = {"qspi_cs1_grp"};
- static const char * const spi0_groups[] = {"spi0_0_grp", "spi0_1_grp",
--- 
-2.1.4
-
+On Tue, Feb 2, 2016 at 9:19 PM, Maxime Ripard
+<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+> On Sun, Jan 31, 2016 at 09:20:58AM +0800, Vishnu Patekar wrote:
+>> From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+>>
+>> The A83T does not have a 32.768 kHz low speed oscillator, either as
+>> an external crystal or input. It has a 16 MHz RC-based (inaccurate)
+>> internal oscillator, which is then divided by 512 for a clock close
+>> to 32 kHz.
+>>
+>> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+>
+> You should have your SoB here.
+>
+> Is it ok to add it?
+Yes, please add.
+>
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
