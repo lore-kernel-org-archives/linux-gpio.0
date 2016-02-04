@@ -1,46 +1,46 @@
-From: Krzysztof Adamski <k@japko.eu>
-Subject: Re: [PATCH v2 2/5] dts: sun8i-h3: Add APB0 related
- clocks and resets
-Date: Thu, 4 Feb 2016 00:44:04 +0100
-Message-ID: <20160203234403.GB12071@box2.japko.eu>
-References: <1454448113-18810-1-git-send-email-k@japko.eu>
- <1454448113-18810-3-git-send-email-k@japko.eu>
- <20160203123534.GG4652@lukather>
- <20160203222117.GA12071@box2.japko.eu>
-Reply-To: k@japko.eu
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 2/2] gpio: add TS-4800 fpga GPIO support
+Date: Thu, 4 Feb 2016 09:16:06 +0900
+Message-ID: <CAAVeFuJXUyKDXign_wGbCxdKgXE1DHHjPdsw0zm+n6gNtB_3RQ@mail.gmail.com>
+References: <1452704263-16763-1-git-send-email-julien.grossholtz@savoirfairelinux.com>
+ <1452704263-16763-2-git-send-email-julien.grossholtz@savoirfairelinux.com> <880790340.75681.1454338503610.JavaMail.zimbra@savoirfairelinux.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Return-path: <linux-sunxi+bncBDIL57GUWIARBS5BZK2QKGQEKV5ETUI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160203222117.GA12071-xLeyfSbClftGit24Ens98Q@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f177.google.com ([209.85.213.177]:35419 "EHLO
+	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751494AbcBDAQ0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Feb 2016 19:16:26 -0500
+In-Reply-To: <880790340.75681.1454338503610.JavaMail.zimbra@savoirfairelinux.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
+Cc: linus walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel@savoirfairelinux.com
 
-On Wed, Feb 03, 2016 at 11:21:17PM +0100, Krzysztof Adamski wrote:
->On Wed, Feb 03, 2016 at 01:35:34PM +0100, Maxime Ripard wrote:
->>Hi,
->>
->>I'm not sure what you mean there. The fixed factor clocks only take a
->>single parent, and you provided two.
+On Mon, Feb 1, 2016 at 11:55 PM, Julien Grossholtz
+<julien.grossholtz@savoirfairelinux.com> wrote:
+> Hello,
 >
->True, I that's actually some stupid leftover. As mentioned in the 
->commit message I didn't really know how the clock tree looks like here 
->so I wanted to just pretend it's connectet to osc24M. After some 
->experiments I think that 0x01f0140c register does not exist on H3 and 
->I was finally (hopefully) able to understand how this clock is set up 
->in Allwinner's code. So I changed the clock to factors clock with 
->possible osc32k and osc24M parrents. Will send it in v3.
+> Any chance to get feedback on this ?
+>
+> Thanks,
+>
+> Julien Grossholtz
+>
+> ----- Original Message -----
+> From: "Julien Grossholtz" <julien.grossholtz@savoirfairelinux.com>
+> To: "linus walleij" <linus.walleij@linaro.org>, gnurou@gmail.com
+> Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@savoirfairelinux.com, "Julien Grossholtz" <julien.grossholtz@savoirfairelinux.com>
+> Sent: Wednesday, January 13, 2016 11:57:43 AM
+> Subject: [PATCH 2/2] gpio: add TS-4800 fpga GPIO support
+>
+> The TS-4800 GPIO driver provide support for the GPIOs available
+> on the Technologic Sytems board FPGA. It allows to set
+> direction and read/write states.
+>
+> It uses the generic gpio driver.
 
-I've changed my mind about using factors clock. The clock I was thinking 
-about is only setup for CIR peripheral and I have no information on how 
-r_pio is clocked other than the fact it works by default so I assume 
-it's clocked from 24M oscillator. New patchset send, let me know what 
-you think.
+No fancy stuff here, looks good to me but let's see what Linus says as
+I am not too familiar with the generic GPIO driver.
+
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
