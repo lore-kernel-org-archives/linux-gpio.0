@@ -1,61 +1,44 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 04/14] clk: sunxi: add ahb1 clock for A83T
-Date: Thu, 4 Feb 2016 09:01:09 +0100
-Message-ID: <20160204080109.GA4270@lukather>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com>
- <20160202131725.GQ4652@lukather>
- <CAEzqOZuBz2jexvZvvtkvjbE8UtzUMKL9nT5JJ9JcvMPmzEKTcQ@mail.gmail.com>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
-Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBRUKZS2QKGQETK34XRI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAEzqOZuBz2jexvZvvtkvjbE8UtzUMKL9nT5JJ9JcvMPmzEKTcQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Emilio Lopez <emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Reinde
+From: Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
+Subject: [PATCH] pinctrl: zynq: fix typo in group name for qspi1
+Date: Thu,  4 Feb 2016 09:14:08 +0100
+Message-ID: <1454573648-21751-1-git-send-email-helmut.buchsbaum@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:37147 "EHLO
+	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752421AbcBDIOZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Feb 2016 03:14:25 -0500
+Received: by mail-wm0-f42.google.com with SMTP id l66so105201789wml.0
+        for <linux-gpio@vger.kernel.org>; Thu, 04 Feb 2016 00:14:24 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
 
---ikeVEW9yuYc//A+q
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Due to a typo Zynq pin controller does not set pin function of qspi1
+when using function qspi1. So pin group for qspi1 has to be renamed to
+"qspi1_0_grp" as outlined in the corresponding bindings documentation.
 
-On Thu, Feb 04, 2016 at 02:06:45PM +0800, Vishnu Patekar wrote:
-> Hello Maxime,
-> 
-> 
-> On Tue, Feb 2, 2016 at 9:17 PM, Maxime Ripard
-> <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> > Hi,
-> >
-> > On Sun, Jan 31, 2016 at 09:20:56AM +0800, Vishnu Patekar wrote:
-> >> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
-> >> clock index 0b1x is PLL6.
-> >>
-> >> Signed-off-by: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >
-> > If the clock is the same but the parents are different, then we don't
-> > need to duplicate all the logic. Simply add the number of parents to
-> > mux_data, and you're all set.
-> 
-> Problem here is: parent 0b10 for A31 ahb1 is AXI, 0b11 is pll6/pre_div.
-> 0b10 and 0b11 is pll6/pre_div.
-> So, just adding number of parents to mux_data will not solve problem.
+This also removes kernel message:
+  zynq-pinctrl 700.pinctrl: invalid group "qspi1_0_grp" for function "qspi1"
 
-Is anyone using 0b11 ? Can't we just ignore it?
+Signed-off-by: Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
+---
+ drivers/pinctrl/pinctrl-zynq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Maxime
-
+diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
+index af726b9..9150303 100644
+--- a/drivers/pinctrl/pinctrl-zynq.c
++++ b/drivers/pinctrl/pinctrl-zynq.c
+@@ -590,7 +590,7 @@ static const char * const usb1_groups[] = {"usb1_0_grp"};
+ static const char * const mdio0_groups[] = {"mdio0_0_grp"};
+ static const char * const mdio1_groups[] = {"mdio1_0_grp"};
+ static const char * const qspi0_groups[] = {"qspi0_0_grp"};
+-static const char * const qspi1_groups[] = {"qspi0_1_grp"};
++static const char * const qspi1_groups[] = {"qspi1_0_grp"};
+ static const char * const qspi_fbclk_groups[] = {"qspi_fbclk_grp"};
+ static const char * const qspi_cs1_groups[] = {"qspi_cs1_grp"};
+ static const char * const spi0_groups[] = {"spi0_0_grp", "spi0_1_grp",
 -- 
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
---ikeVEW9yuYc//A+q--
+2.1.4
+
