@@ -1,61 +1,183 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 06/14] ARM: dts: sun8i-a83t: Correct low
- speed oscillator clocks
-Date: Thu, 4 Feb 2016 13:04:07 +0100
-Message-ID: <20160204120407.GB4270@lukather>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-7-git-send-email-vishnupatekar0510@gmail.com>
- <20160202131947.GS4652@lukather>
- <CAEzqOZvcy58T_uxvymGxuQXh_Goj3yHmgkmL4VL+x2_bycMgNg@mail.gmail.com>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH 3/3] ARM: OMAP2+: remove misuse of IRQF_NO_SUSPEND flag
+Date: Thu, 4 Feb 2016 15:14:31 +0200
+Message-ID: <56B34EB7.4080005@ti.com>
+References: <1454351299-27440-1-git-send-email-sudeep.holla@arm.com>
+ <1454351299-27440-4-git-send-email-sudeep.holla@arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3lcZGd9BuhuYXNfi"
-Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBDECZW2QKGQEND5KZTQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAEzqOZvcy58T_uxvymGxuQXh_Goj3yHmgkmL4VL+x2_bycMgNg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Emilio Lopez <emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Reinde
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:41383 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933871AbcBDNPD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Feb 2016 08:15:03 -0500
+In-Reply-To: <1454351299-27440-4-git-send-email-sudeep.holla@arm.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sudeep Holla <sudeep.holla@arm.com>, linux-arm-kernel@lists.infradead.org, Tony Lindgren <tony@atomide.com>
+Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
 
---3lcZGd9BuhuYXNfi
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Hi Sudeep,
 
-On Thu, Feb 04, 2016 at 04:51:06PM +0800, Vishnu Patekar wrote:
-> Hello Maxime,
+On 02/01/2016 08:28 PM, Sudeep Holla wrote:
+> The IRQF_NO_SUSPEND flag is used to identify the interrupts that should
+> be left enabled so as to allow them to work as expected during the
+> suspend-resume cycle, but doesn't guarantee that it will wake the system
+> from a suspended state, enable_irq_wake is recommended to be used for
+> the wakeup.
 > 
+> This patch removes the use of IRQF_NO_SUSPEND flags replacing it with
+> enable_irq_wake instead.
+
+And sorry for delayed reply - I've spent some time investigating it, but
+It was during Christmas holidays and finally I lost track of it :)
+
+So, what we have:
+1) bad news: it will not work :(
+
+The PRCM wake up is handled in the following way on OMAP3+
+-- PRCM IRQ omap_prcm_irq_handler()
+   |- (a) "wkup" event -> _prcm_int_handle_wakeup()
+   |- "io" event (shared)
+       |- (b) _prcm_int_handle_io()
+       |- (c) pcs_irq_handler()
+(mux is for legacy platform - can be ignored for now)
+
+All "wkup"/"io" events must be handled in PRCM registers before
+PRCM IRQ status bits can be acked and reset.
+
+It means that all IRQs (a), (b) (c) have to be enabled at the
+moment when PRCM IRQ is fired. Unfortunately this can't be 
+guaranteed by IR PM core and omap_prcm_irq_handler() 
+will stuck forever on Resume :(.
+
+Resume example:
+ omap_prcm_irq_handler()
+[1] -> prcm_irq_setup->read_pending_irqs(pending);
+    -> is there pending irqs?
+	-> io event
+	    -> (c) pcs_irq (enabled | wakeup src)
+		-> irq_pm_check_wakeup() 
+		   -> (disabled | suspended| pending)
+			pcs_irq_handler() not run
+   ->  goto [1] ----- OOps dead-loop
+	  
+
+2) Potential good news: It could be fixed the same way as it's done
+omap34xx (and as it was before :
+
+diff --git a/arch/arm/mach-omap2/pm.c b/arch/arm/mach-omap2/pm.c
+index 58920bc..a0f8265 100644
+--- a/arch/arm/mach-omap2/pm.c
++++ b/arch/arm/mach-omap2/pm.c
+@@ -221,8 +221,7 @@ static int omap_pm_enter(suspend_state_t suspend_state)
+ static int omap_pm_begin(suspend_state_t state)
+ {
+        cpu_idle_poll_ctrl(true);
+-       if (cpu_is_omap34xx())
+-               omap_prcm_irq_prepare();
++       omap_prcm_irq_prepare();
+        return 0;
+ }
+ 
+@@ -233,8 +232,7 @@ static void omap_pm_end(void)
+ 
+ static void omap_pm_finish(void)
+ {
+-       if (cpu_is_omap34xx())
+-               omap_prcm_irq_complete();
++       omap_prcm_irq_complete();
+ }
+
+Another option is to convert omap_prcm_irq_handler to the generic handler
+(now chained) and, probably, make it threaded and all cascaded IRQs as
+nested threaded (this is just a theory).
+
+I'll be on business trip next two weeks and will not be able to help more with it
+Sorry.
+
+
+
 > 
-> On Tue, Feb 2, 2016 at 9:19 PM, Maxime Ripard
-> <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> > On Sun, Jan 31, 2016 at 09:20:58AM +0800, Vishnu Patekar wrote:
-> >> From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-> >>
-> >> The A83T does not have a 32.768 kHz low speed oscillator, either as
-> >> an external crystal or input. It has a 16 MHz RC-based (inaccurate)
-> >> internal oscillator, which is then divided by 512 for a clock close
-> >> to 32 kHz.
-> >>
-> >> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-> >
-> > You should have your SoB here.
-> >
-> > Is it ok to add it?
-> Yes, please add.
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>   arch/arm/mach-omap2/mux.c        | 4 ++--
+>   arch/arm/mach-omap2/pm34xx.c     | 9 ++++-----
+>   arch/arm/mach-omap2/prm_common.c | 1 +
+>   3 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm/mach-omap2/mux.c b/arch/arm/mach-omap2/mux.c
+> index 176eef6ef338..12012bef8e63 100644
+> --- a/arch/arm/mach-omap2/mux.c
+> +++ b/arch/arm/mach-omap2/mux.c
+> @@ -810,13 +810,13 @@ int __init omap_mux_late_init(void)
+>   		return 0;
+>   
+>   	ret = request_irq(omap_prcm_event_to_irq("io"),
+> -		omap_hwmod_mux_handle_irq, IRQF_SHARED | IRQF_NO_SUSPEND,
+> +		omap_hwmod_mux_handle_irq, IRQF_SHARED,
+>   			"hwmod_io", omap_mux_late_init);
+>   
+>   	if (ret)
+>   		pr_warn("mux: Failed to setup hwmod io irq %d\n", ret);
+>   
+> -	return 0;
+> +	return enable_irq_wake(omap_prcm_event_to_irq("io"));
+>   }
+>   
+>   static void __init omap_mux_package_fixup(struct omap_mux *p,
+> diff --git a/arch/arm/mach-omap2/pm34xx.c b/arch/arm/mach-omap2/pm34xx.c
+> index 2dbd3785ee6f..49604e0023c4 100644
+> --- a/arch/arm/mach-omap2/pm34xx.c
+> +++ b/arch/arm/mach-omap2/pm34xx.c
+> @@ -472,23 +472,22 @@ int __init omap3_pm_init(void)
+>   	prcm_setup_regs();
+>   
+>   	ret = request_irq(omap_prcm_event_to_irq("wkup"),
+> -		_prcm_int_handle_wakeup, IRQF_NO_SUSPEND, "pm_wkup", NULL);
+> +		_prcm_int_handle_wakeup, 0, "pm_wkup", NULL);
+>   
+>   	if (ret) {
+>   		pr_err("pm: Failed to request pm_wkup irq\n");
+>   		goto err1;
+>   	}
+> +	enable_irq_wake(omap_prcm_event_to_irq("wkup"));
+>   
+>   	/* IO interrupt is shared with mux code */
+>   	ret = request_irq(omap_prcm_event_to_irq("io"),
+> -		_prcm_int_handle_io, IRQF_SHARED | IRQF_NO_SUSPEND, "pm_io",
+> -		omap3_pm_init);
+> -	enable_irq(omap_prcm_event_to_irq("io"));
+> -
+> +		_prcm_int_handle_io, IRQF_SHARED, "pm_io", omap3_pm_init);
+>   	if (ret) {
+>   		pr_err("pm: Failed to request pm_io irq\n");
+>   		goto err2;
+>   	}
+> +	enable_irq_wake(omap_prcm_event_to_irq("io"));
+>   
+>   	ret = pwrdm_for_each(pwrdms_setup, NULL);
+>   	if (ret) {
+> diff --git a/arch/arm/mach-omap2/prm_common.c b/arch/arm/mach-omap2/prm_common.c
+> index 5b2f5138d938..7af688273e0d 100644
+> --- a/arch/arm/mach-omap2/prm_common.c
+> +++ b/arch/arm/mach-omap2/prm_common.c
+> @@ -338,6 +338,7 @@ int omap_prcm_register_chain_handler(struct omap_prcm_irq_setup *irq_setup)
+>   		ct->chip.irq_ack = irq_gc_ack_set_bit;
+>   		ct->chip.irq_mask = irq_gc_mask_clr_bit;
+>   		ct->chip.irq_unmask = irq_gc_mask_set_bit;
+> +		ct->chip.flags = IRQCHIP_SKIP_SET_WAKE;
+>   
+>   		ct->regs.ack = irq_setup->ack + i * 4;
+>   		ct->regs.mask = irq_setup->mask + i * 4;
+> 
 
-Done, thanks.
-
-Maxime
 
 -- 
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
---3lcZGd9BuhuYXNfi--
+regards,
+-grygorii
