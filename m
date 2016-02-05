@@ -1,29 +1,62 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v3 5/5] pinctrl: sunxi: Use pin number when calling sunxi_pmx_set
-Date: Fri, 5 Feb 2016 17:45:12 +0800
-Message-ID: <CAGb2v67Wd_ZSJEdKm7b6dRzqAzGO3i61c1akVH+62xYnRF8Sfw@mail.gmail.com>
-References: <1454542430-16572-1-git-send-email-k@japko.eu> <1454542430-16572-6-git-send-email-k@japko.eu>
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: Re: [PATCH v3 4/5] ARM: dts: sun8i-h3: Add R_PIO
+ controller node to the dtsi
+Date: Fri, 5 Feb 2016 17:46:32 +0800
+Message-ID: <CAGb2v67ftGhjPHjHKQ0iYnOeRbi5qcqyT2P1gePW=UoMm5QRig@mail.gmail.com>
+References: <1454542430-16572-1-git-send-email-k@japko.eu> <1454542430-16572-5-git-send-email-k@japko.eu>
+Reply-To: wens-jdAy2FN1RRM@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1454542430-16572-6-git-send-email-k@japko.eu>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-sunxi+bncBCMILY6JWQBBBDW72G2QKGQEOCVQNEI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <1454542430-16572-5-git-send-email-k-P4rZei/IPtg@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
 To: Krzysztof Adamski <k@japko.eu>
-Cc: inus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Fabian Frederick <fabf@skynet.be>, Vishnu Patekar <vishnupatekar0510@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
 On Thu, Feb 4, 2016 at 7:33 AM, Krzysztof Adamski <k@japko.eu> wrote:
-> sunxi_pmx_set accepts pin number and then calculates offset by
-> subtracting pin_base from it. sunxi_pinctrl_gpio_get, on the other hand,
-> gets offset so we have to convert it to pin number so we won't get
-> negative value in sunxi_pmx_set.
->
-> This was only used on A10 so far, where there is only one GPIO chip with
-> pin_base set to 0 so it didn't matter. However H3 also requires this
-> workaround but have two pinmux sections, triggering problem for PL port.
+> Add the corresponding device node for R_PIO on H3 to the dtsi. Support
+> for the controller was added in earlier commit.
 >
 > Signed-off-by: Krzysztof Adamski <k@japko.eu>
+> ---
+>  arch/arm/boot/dts/sun8i-h3.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+> index bb37f52..f618a95 100644
+> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+> @@ -517,5 +517,17 @@
+>                         compatible = "allwinner,sun6i-a31-clock-reset";
+>                         #reset-cells = <1>;
+>                 };
+> +
+> +               r_pio: pinctrl@01f02c00 {
+> +                       compatible = "allwinner,sun8i-h3-r-pinctrl";
+> +                       reg = <0x01f02c00 0x400>;
+> +                       interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&apb0_gates 0>;
+> +                       resets = <&apb0_reset 0>;
+> +                       gpio-controller;
+> +                       #gpio-cells = <3>;
+> +                       interrupt-controller;
+> +                       #interrupt-cells = <2>;
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+This should be 3: bank number + pin number + flags.
+The rest looks good.
 
 (resent as my mail setup failed to deliver)
+
+> +               };
+>         };
+>  };
+> --
+> 2.1.4
+>
