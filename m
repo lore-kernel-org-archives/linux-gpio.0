@@ -1,36 +1,42 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2] pinctrl: sunxi: H3 requires irq_read_needs_mux
-Date: Fri, 5 Feb 2016 14:39:23 +0100
-Message-ID: <CACRpkdbVtLYRku03bbnT=f7Ex1FoJqBv4Z6nY7pWkHy6wvHUfg@mail.gmail.com>
-References: <20160203075713.GA23312@box2.japko.eu>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/2] GPIO: Clean up asm/gpio.h
+Date: Fri, 5 Feb 2016 14:43:20 +0100
+Message-ID: <CACRpkdY-8+vhsCsQGL7YUOgoXA=+_6c=69ZB=aowQgNun8bXqw@mail.gmail.com>
+References: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBC6M2K2QKGQENUIZWBI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <20160203075713.GA23312-xLeyfSbClftGit24Ens98Q@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Krzysztof Adamski <k@japko.eu>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:33023 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751672AbcBENnU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Feb 2016 08:43:20 -0500
+Received: by mail-ob0-f174.google.com with SMTP id is5so87855678obc.0
+        for <linux-gpio@vger.kernel.org>; Fri, 05 Feb 2016 05:43:20 -0800 (PST)
+In-Reply-To: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Feb 3, 2016 at 8:57 AM, Krzysztof Adamski <k@japko.eu> wrote:
+On Tue, Feb 2, 2016 at 8:53 PM, Bjorn Helgaas <bhelgaas@google.com> wrote:
 
-> It seems that on H3, just like on A10, when GPIOs are configured as
-> external interrupt data registers does not contain their value.  When
-> value is read, GPIO function must be temporary switched to input for
-> reads.
+> Many arches supply an asm/gpio.h that contains only this:
 >
-> Signed-off-by: Krzysztof Adamski <k@japko.eu>
+>   #warning Include linux/gpio.h instead of asm/gpio.h
+>   #include <linux/gpio.h>
+>
+> These two patches change all the places that include asm/gpio.h
+> so they include linux/gpio.h instead, and then remove the asm/gpio.h
+> files.
+>
+> There are several arches that supply asm/gpio.h with useful
+> arch-specific content; I didn't touch those.
+>
+> I assume Mark was heading this direction with 7563bbf89d06
+> ("gpiolib/arches: Centralise bolierplate asm/gpio.h").
 
-1. Waiting for Maxime's ACK on this patch.
-
-2. Is this a regression that need to go in to fixes?
+Sweet, if I can get the arch maintainers ACK on this I can
+merge it into the GPIO tree, Arnd?
 
 Yours,
 Linus Walleij
