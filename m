@@ -1,33 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: mediatek: Add gpio_request_enable support
-Date: Fri, 5 Feb 2016 14:58:28 +0100
-Message-ID: <CACRpkdZPTOPfsqx34yr9-bSyg4-N_dR+beqAXjJc1NjK2xh4Jw@mail.gmail.com>
-References: <1454462686-770-1-git-send-email-biao.huang@mediatek.com>
-	<1454462686-770-3-git-send-email-biao.huang@mediatek.com>
+Subject: Re: [PATCH v4 0/5] pinctrl: mediatek: add pinctrl/GPIO/EINT driver
+ for mt2701
+Date: Fri, 5 Feb 2016 14:59:30 +0100
+Message-ID: <CACRpkdYrU3cz_Kh2J3Z=iptwmZO_nOEpweK0rDXkACDmL+eDtQ@mail.gmail.com>
+References: <1453857883-28436-1-git-send-email-biao.huang@mediatek.com>
+	<CACRpkdbxpc19bdzGDUDoqseTA-TW3V8dAA4Oe+G860qTsHd-dQ@mail.gmail.com>
+	<1454018920.14802.41.camel@mhfsdcap03>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:34729 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753029AbcBEN62 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Feb 2016 08:58:28 -0500
-Received: by mail-ob0-f172.google.com with SMTP id wb13so90235761obb.1
-        for <linux-gpio@vger.kernel.org>; Fri, 05 Feb 2016 05:58:28 -0800 (PST)
-In-Reply-To: <1454462686-770-3-git-send-email-biao.huang@mediatek.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1454018920.14802.41.camel@mhfsdcap03>
+Sender: linux-kernel-owner@vger.kernel.org
+To: biao huang <biao.huang@mediatek.com>
+Cc: John Crispin <blogic@openwrt.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Matthias Brugger <matthias.bgg@gmail.com>, Erin Lo <erin.lo@mediatek.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, srv_heupstream@mediatek.com, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, "arm@kernel.org" <arm@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Biao Huang <biao.huang@mediatek.com>, John Crispin <blogic@openwrt.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, srv_heupstream@mediatek.com, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>
 
-On Wed, Feb 3, 2016 at 2:24 AM, Biao Huang <biao.huang@mediatek.com> wrote:
+On Thu, Jan 28, 2016 at 11:08 PM, biao huang <biao.huang@mediatek.com> wrote:
 
-> Implement the .gpio_request_enable() callbacks in struct pinmux_ops
-> in mediatek pinctrl driver. Make sure that when gpio_request is called,
-> GPIO on the pin is enabled.
->
-> Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+> Hi Linus,
+>         [PATCH v4 1/5] pinctrl: mediatek: fix direction control issue
+>         this patch is also a pinctrl patch, and it seems not merged in
+> devel-mt2701 branch.
 
-Patch applied to my devel-mt2701 branch.
+Sorry I screwed up.
+
+Applied this for fixes.
 
 Yours,
 Linus Walleij
