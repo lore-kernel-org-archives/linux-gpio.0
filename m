@@ -1,39 +1,94 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [rtc-linux] [PATCH V7 5/8] gpio: add DT binding doc for gpio of
- PMIC max77620/max20024
-Date: Fri, 5 Feb 2016 15:48:48 +0100
-Message-ID: <CACRpkdYNBHvefR_qdjZ7hWr=cFzhv1gEgb5jBCrqHdWzNWgV6w@mail.gmail.com>
-References: <1454171931-27752-1-git-send-email-ldewangan@nvidia.com>
-	<1454171931-27752-6-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:35286 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753849AbcBEOst (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Feb 2016 09:48:49 -0500
-Received: by mail-ob0-f178.google.com with SMTP id xk3so90220146obc.2
-        for <linux-gpio@vger.kernel.org>; Fri, 05 Feb 2016 06:48:48 -0800 (PST)
-In-Reply-To: <1454171931-27752-6-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: [PATCH] pinctrl: stm32: fix compile error and modernize
+Date: Fri,  5 Feb 2016 23:49:28 +0100
+Message-ID: <1454712568-6301-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Patrice Chotard <patrice.chotard@st.com>
 List-Id: linux-gpio@vger.kernel.org
-To: "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>
-Cc: Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Liam Girdwood <lgirdwood@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, vreddytalla@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>
 
-On Sat, Jan 30, 2016 at 5:38 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+- Fix the dev->parent assignment compile error
+- Use gpiochip_get_data() to get the data pointer for the
+  banks
 
-> Maxim Semiconductor's PMIC MAX77620/MAX20024 has 8 GPIO pins
-> which act as GPIO as well as special function mode.
->
-> Add DT binding document to support these pins in GPIO
-> mode via GPIO framework.
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Acked-by: Rob Herring <robh@kernel.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+I don't even know how to compile test this, I hope it works,
+Maxime can you verify?
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Lee can merge this too.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index d25d4a064bad..9a08222ecb72 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -6,7 +6,7 @@
+  * Heavily based on Mediatek's pinctrl driver
+  */
+ #include <linux/clk.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/driver.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+@@ -46,9 +46,6 @@
+ #define gpio_range_to_bank(chip) \
+ 		container_of(chip, struct stm32_gpio_bank, range)
+ 
+-#define gpio_chip_to_bank(chip) \
+-		container_of(chip, struct stm32_gpio_bank, gpio_chip)
+-
+ static const char * const stm32_gpio_functions[] = {
+ 	"gpio", "af0", "af1",
+ 	"af2", "af3", "af4",
+@@ -144,7 +141,7 @@ static void stm32_gpio_free(struct gpio_chip *chip, unsigned offset)
+ 
+ static int stm32_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+-	struct stm32_gpio_bank *bank = gpio_chip_to_bank(chip);
++	struct stm32_gpio_bank *bank = gpiochip_get_data(chip);
+ 	int ret;
+ 
+ 	clk_enable(bank->clk);
+@@ -158,7 +155,7 @@ static int stm32_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 
+ static void stm32_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ {
+-	struct stm32_gpio_bank *bank = gpio_chip_to_bank(chip);
++	struct stm32_gpio_bank *bank = gpiochip_get_data(chip);
+ 
+ 	__stm32_gpio_set(bank, offset, value);
+ }
+@@ -171,7 +168,7 @@ static int stm32_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ static int stm32_gpio_direction_output(struct gpio_chip *chip,
+ 	unsigned offset, int value)
+ {
+-	struct stm32_gpio_bank *bank = gpio_chip_to_bank(chip);
++	struct stm32_gpio_bank *bank = gpiochip_get_data(chip);
+ 
+ 	__stm32_gpio_set(bank, offset, value);
+ 	pinctrl_gpio_direction_output(chip->base + offset);
+@@ -689,7 +686,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl,
+ 	bank->gpio_chip.base = bank_nr * STM32_GPIO_PINS_PER_BANK;
+ 	bank->gpio_chip.ngpio = npins;
+ 	bank->gpio_chip.of_node = np;
+-	bank->gpio_chip.dev = dev;
++	bank->gpio_chip.parent = dev;
+ 	spin_lock_init(&bank->lock);
+ 
+ 	of_property_read_string(np, "st,bank-name", &range->name);
+@@ -699,7 +696,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl,
+ 	range->pin_base = range->base = range->id * STM32_GPIO_PINS_PER_BANK;
+ 	range->npins = bank->gpio_chip.ngpio;
+ 	range->gc = &bank->gpio_chip;
+-	err  = gpiochip_add(&bank->gpio_chip);
++	err = gpiochip_add_data(&bank->gpio_chip, bank);
+ 	if (err) {
+ 		dev_err(dev, "Failed to add gpiochip(%d)!\n", bank_nr);
+ 		return err;
+-- 
+2.4.3
