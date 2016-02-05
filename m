@@ -1,26 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: tegra: move Tegra pinctrl drivers to sub-directory
-Date: Fri, 5 Feb 2016 15:17:34 +0100
-Message-ID: <CACRpkdawE1_b-7AW+2ZF94DF4k+JOkv=XXDB5bD6y084maDo6g@mail.gmail.com>
-References: <1453563008-30106-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v6 3/3] gpio: tps65086: Add GPO driver for the TPS65086 PMIC
+Date: Fri, 5 Feb 2016 15:43:55 +0100
+Message-ID: <CACRpkdY9P=opTEzsMJ42dqMUV-kVmDzLuVq_vSgr3on3=9LtqQ@mail.gmail.com>
+References: <1453737012-3130-1-git-send-email-afd@ti.com>
+	<1453737012-3130-4-git-send-email-afd@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1453563008-30106-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:34046 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750811AbcBEOn4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Feb 2016 09:43:56 -0500
+Received: by mail-ob0-f179.google.com with SMTP id wb13so91362702obb.1
+        for <linux-gpio@vger.kernel.org>; Fri, 05 Feb 2016 06:43:56 -0800 (PST)
+In-Reply-To: <1453737012-3130-4-git-send-email-afd@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sat, Jan 23, 2016 at 4:30 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Mon, Jan 25, 2016 at 4:50 PM, Andrew F. Davis <afd@ti.com> wrote:
 
-> Tegra has several pinctrl drivers.  Now it is reasonable enough to
-> move them into drivers/pinctrl/tegra/.
+> Add support for the TPS65086 PMIC GPOs.
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> TPS65086 has four configurable GPOs that can be used for several
+> purposes. These are output only.
+>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+(...)
+> +static inline struct tps65086_gpio *to_tps65086_gpio(struct gpio_chip *chip)
+> +{
+> +       return container_of(chip, struct tps65086_gpio, chip);
+> +}
 
-Patch applied with Thierry's ACK.
+Remove this and use gpiochip_get_data() instead.
+
+> +       ret = gpiochip_add(&gpio->chip);
+
+And use gpiochip_add_data() to pass what gpiochip_get_data()
+will return.
+
+Apart from that no strong opinions.
+
+If there is a header file dependency this either has to go to
+Lee's tree with my ACK, or wait until the next kernel cycle.
+But first change the above.
 
 Yours,
 Linus Walleij
