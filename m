@@ -1,44 +1,59 @@
-From: weiyj_lk@163.com
-Subject: [PATCH] pinctrl: Fix return value check in amd_gpio_probe()
-Date: Sat,  6 Feb 2016 22:56:36 +0800
-Message-ID: <1454770596-11299-1-git-send-email-weiyj_lk@163.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: Re: [PATCH v6 3/3] gpio: tps65086: Add GPO driver for the TPS65086
+ PMIC
+Date: Sat, 6 Feb 2016 10:11:23 -0600
+Message-ID: <56B61B2B.2020001@ti.com>
+References: <1453737012-3130-1-git-send-email-afd@ti.com>
+ <1453737012-3130-4-git-send-email-afd@ti.com>
+ <CACRpkdY9P=opTEzsMJ42dqMUV-kVmDzLuVq_vSgr3on3=9LtqQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from m12-15.163.com ([220.181.12.15]:51750 "EHLO m12-15.163.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750779AbcBFO6E (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 6 Feb 2016 09:58:04 -0500
+Received: from devils.ext.ti.com ([198.47.26.153]:50447 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751923AbcBFQLh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 6 Feb 2016 11:11:37 -0500
+In-Reply-To: <CACRpkdY9P=opTEzsMJ42dqMUV-kVmDzLuVq_vSgr3on3=9LtqQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-gpio@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+On 02/05/2016 08:43 AM, Linus Walleij wrote:
+> On Mon, Jan 25, 2016 at 4:50 PM, Andrew F. Davis <afd@ti.com> wrote:
+>
+>> Add support for the TPS65086 PMIC GPOs.
+>>
+>> TPS65086 has four configurable GPOs that can be used for several
+>> purposes. These are output only.
+>>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> (...)
+>> +static inline struct tps65086_gpio *to_tps65086_gpio(struct gpio_chip *chip)
+>> +{
+>> +       return container_of(chip, struct tps65086_gpio, chip);
+>> +}
+>
+> Remove this and use gpiochip_get_data() instead.
+>
+>> +       ret = gpiochip_add(&gpio->chip);
+>
+> And use gpiochip_add_data() to pass what gpiochip_get_data()
+> will return.
+>
+> Apart from that no strong opinions.
+>
+> If there is a header file dependency this either has to go to
+> Lee's tree with my ACK, or wait until the next kernel cycle.
+> But first change the above.
+>
+> Yours,
+> Linus Walleij
+>
 
-In case of error, the function devm_ioremap_nocache() returns NULL
-pointer not ERR_PTR(). The IS_ERR() test in the return value check
-should be replaced with NULL test.
+Changes made, I will resend this part as its own patch as the other components
+have been taken.
 
-Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
----
- drivers/pinctrl/pinctrl-amd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 6574494..5c025f5 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -753,8 +753,8 @@ static int amd_gpio_probe(struct platform_device *pdev)
- 
- 	gpio_dev->base = devm_ioremap_nocache(&pdev->dev, res->start,
- 						resource_size(res));
--	if (IS_ERR(gpio_dev->base))
--		return PTR_ERR(gpio_dev->base);
-+	if (!gpio_dev->base)
-+		return -ENOMEM;
- 
- 	irq_base = platform_get_irq(pdev, 0);
- 	if (irq_base < 0) {
-
+Thanks,
+Andrew
