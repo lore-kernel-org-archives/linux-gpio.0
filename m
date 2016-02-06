@@ -1,39 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 2/2] pinctrl: pinctrl-pic32: Add PIC32 pin control driver
-Date: Fri, 5 Feb 2016 23:57:35 +0100
-Message-ID: <CACRpkdYfBNgX8sqOdUfU=qfJkm8MyO88c3PwiOVex=Gpu3s3gg@mail.gmail.com>
-References: <1454366916-10925-1-git-send-email-joshua.henderson@microchip.com>
-	<1454366916-10925-2-git-send-email-joshua.henderson@microchip.com>
+From: Jean-Francois Moine <moinejf-GANU6spQydw@public.gmane.org>
+Subject: Re: [PATCH v3 1/5] clk: sunxi: Add apb0 gates for H3
+Date: Sat, 6 Feb 2016 11:26:05 +0100
+Message-ID: <20160206112605.4005784d1d0962c8adfe58a0@free.fr>
+References: <1454542430-16572-1-git-send-email-k@japko.eu>
+	<1454542430-16572-2-git-send-email-k@japko.eu>
+	<20160204154752.4df7808be3364a98c496c030@free.fr>
+	<20160205111152.GA31506@lukather>
+Reply-To: moinejf-GANU6spQydw@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:34895 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751076AbcBEW5g (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Feb 2016 17:57:36 -0500
-Received: by mail-oi0-f41.google.com with SMTP id s2so50935739oie.2
-        for <linux-gpio@vger.kernel.org>; Fri, 05 Feb 2016 14:57:36 -0800 (PST)
-In-Reply-To: <1454366916-10925-2-git-send-email-joshua.henderson@microchip.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-sunxi+bncBCV6DL6LYMNBBQUU262QKGQECKL42NQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <20160205111152.GA31506@lukather>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Krzysztof Adamski <k@japko.eu>, inus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Joshua Henderson <joshua.henderson@microchip.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Feb 1, 2016 at 11:48 PM, Joshua Henderson
-<joshua.henderson@microchip.com> wrote:
+On Fri, 5 Feb 2016 12:11:52 +0100
+Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
 
-> Add a driver for the pin controller present on the Microchip PIC32
-> including the specific variant PIC32MZDA. This driver provides pinmux
-> and pinconfig operations as well as GPIO and IRQ chips for the GPIO
-> banks.
->
-> Signed-off-by: Joshua Henderson <joshua.henderson@microchip.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Changes since v5:
+> However, I'd like to keep per-soc and per-clocks compatibles in the
+> DT, in case we need to protect a clock in the future.
 
-Patch applied.
+What do you mean by "protect a clock"?
 
-Yours,
-Linus Walleij
+--=20
+Ken ar c'henta=C3=B1	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
+
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
