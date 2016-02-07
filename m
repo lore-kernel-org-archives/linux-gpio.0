@@ -1,44 +1,34 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH v8 0/5] mfd: tps65912: Driver rewrite with DT support
-Date: Sat, 6 Feb 2016 10:21:24 -0600
-Message-ID: <56B61D84.9000709@ti.com>
-References: <1453736627-2634-1-git-send-email-afd@ti.com>
- <20160128064149.GM3368@x1> <20160128114026.GB6078@sirena.org.uk>
- <20160128120423.GP3368@x1> <20160128124525.GF6078@sirena.org.uk>
- <20160128133049.GQ3368@x1> <56B0C559.7060204@ti.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v5] serial: 8250: add gpio support to exar
+Date: Sat, 6 Feb 2016 22:44:07 -0800
+Message-ID: <20160207064407.GA24131@kroah.com>
+References: <1453183595-17996-1-git-send-email-sudipm.mukherjee@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:50617 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751174AbcBFQVg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 6 Feb 2016 11:21:36 -0500
-In-Reply-To: <56B0C559.7060204@ti.com>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56873 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753383AbcBGGoH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 7 Feb 2016 01:44:07 -0500
+Content-Disposition: inline
+In-Reply-To: <1453183595-17996-1-git-send-email-sudipm.mukherjee@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, gnomes@lxorguk.ukuu.org.uk, andy.shevchenko@gmail.com, Rob Groner <rgroner@rtd.com>
 
-On 02/02/2016 09:03 AM, Andrew F. Davis wrote:
-> On 01/28/2016 07:30 AM, Lee Jones wrote:
->> On Thu, 28 Jan 2016, Mark Brown wrote:
->>
->>> On Thu, Jan 28, 2016 at 12:04:23PM +0000, Lee Jones wrote:
->>>> On Thu, 28 Jan 2016, Mark Brown wrote:
->>>
->>>>> Please be more specific?  What is it that you are looking for beyond the
->>>>> review I already did for the regulator driver?
->>>
->>>> Patch 2.
->>>
->>> I reviewed that *ages* ago.
->>
->> Link or it didn't happen. ;)
->>
->
-> Might be best to take his ack for the new regulator driver
-> as approval to remove the old one. :)
+On Tue, Jan 19, 2016 at 11:36:35AM +0530, Sudip Mukherjee wrote:
+> Exar XR17V352/354/358 chips have 16 multi-purpose inputs/outputs which
+> can be controlled using gpio interface.
+> Add support to use these pins.
+> 
+> Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+> ---
 
-If not, is there anything I can do to help keep this from getting
-delayed another cycle?
+I need an ack from the gpio maintainer before I can take this.
+
+Or was it going to be reworked again?
+
+thanks,
+
+greg k-h
