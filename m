@@ -1,31 +1,35 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 174/182] serial: sc16is7xx: use gpiochip data pointer
-Date: Sat, 6 Feb 2016 23:20:57 -0800
-Message-ID: <20160207072057.GB16215@kroah.com>
-References: <1449669025-6929-1-git-send-email-linus.walleij@linaro.org>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: Re: [PATCH v5] serial: 8250: add gpio support to exar
+Date: Sun, 07 Feb 2016 19:24:15 +0530
+Message-ID: <56B74C87.3080301@gmail.com>
+References: <1453183595-17996-1-git-send-email-sudipm.mukherjee@gmail.com> <20160207064407.GA24131@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59814 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753354AbcBGHU6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 7 Feb 2016 02:20:58 -0500
-Content-Disposition: inline
-In-Reply-To: <1449669025-6929-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160207064407.GA24131@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, gnomes@lxorguk.ukuu.org.uk, andy.shevchenko@gmail.com, Rob Groner <rgroner@rtd.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Jiri Slaby <jslaby@suse.com>
 
-On Wed, Dec 09, 2015 at 02:50:25PM +0100, Linus Walleij wrote:
-> This makes the driver use the data pointer added to the gpio_chip
-> to store a pointer to the state container instead of relying on
-> container_of().
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jiri Slaby <jslaby@suse.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Greg, please ACK this so I can take it through the GPIO tree.
+On Sunday 07 February 2016 12:14 PM, Greg Kroah-Hartman wrote:
+> On Tue, Jan 19, 2016 at 11:36:35AM +0530, Sudip Mukherjee wrote:
+>> Exar XR17V352/354/358 chips have 16 multi-purpose inputs/outputs which
+>> can be controlled using gpio interface.
+>> Add support to use these pins.
+>>
+>> Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+>> ---
+>
+> I need an ack from the gpio maintainer before I can take this.
+>
+> Or was it going to be reworked again?
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I have not yet started with the rework, but Andy wants me to split out 
+the exar related code from 8250_pci and create its own driver. But at 
+the initial discussion you were against having a separate driver for it.
+what will you suggest?
+
+regards
+sudip
