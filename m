@@ -1,55 +1,43 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 2/2] Input: Allow compile test of Goodix and Colibri VF50 if !GPIOLIB
-Date: Sun,  7 Feb 2016 15:18:07 +0100
-Message-ID: <1454854687-21114-2-git-send-email-geert@linux-m68k.org>
-References: <1454854687-21114-1-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH] spi: Allow compile test of bcm2835aux if !GPIOLIB
+Date: Sun,  7 Feb 2016 15:12:29 +0100
+Message-ID: <1454854349-20780-1-git-send-email-geert@linux-m68k.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:36451 "EHLO
+Received: from andre.telenet-ops.be ([195.130.132.53]:36447 "EHLO
 	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755278AbcBHH7p (ORCPT
+	with ESMTP id S1755517AbcBHH7p (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2016 02:59:45 -0500
-In-Reply-To: <1454854687-21114-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bastien Nocera <hadess@hadess.net>, Sanchayan Maity <maitysanchayan@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Mark Brown <broonie@kernel.org>, Martin Sperl <kernel@martin.sperl.org>
+Cc: linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
 The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
 not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
 functionality only, can still be compiled if GPIOLIB is not enabled.
 
-If COMPILE_TEST is enabled, relax the dependency on GPIOLIB for the
-recently introduced or relaxed symbols TOUCHSCREEN_GOODIX and
-TOUCHSCREEN_COLIBRI_VF50.
+Relax the dependency of SPI_BCM2835AUX on GPIOLIB if COMPILE_TEST is
+enabled.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- drivers/input/touchscreen/Kconfig | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/spi/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-index 66c62641b59a31cf..fba4d5665857221b 100644
---- a/drivers/input/touchscreen/Kconfig
-+++ b/drivers/input/touchscreen/Kconfig
-@@ -334,7 +334,7 @@ config TOUCHSCREEN_FUJITSU
- config TOUCHSCREEN_GOODIX
- 	tristate "Goodix I2C touchscreen"
- 	depends on I2C
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	help
- 	  Say Y here if you have the Goodix touchscreen (such as one
- 	  installed in Onda v975w tablets) connected to your
-@@ -1112,7 +1112,8 @@ config TOUCHSCREEN_ZFORCE
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 77064160dd762c26..4e08d42a9fa1b2c4 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -90,8 +90,7 @@ config SPI_BCM2835
  
- config TOUCHSCREEN_COLIBRI_VF50
- 	tristate "Toradex Colibri on board touchscreen driver"
--	depends on GPIOLIB && IIO && VF610_ADC
-+	depends on IIO && VF610_ADC
-+	depends on GPIOLIB || COMPILE_TEST
+ config SPI_BCM2835AUX
+ 	tristate "BCM2835 SPI auxiliary controller"
+-	depends on ARCH_BCM2835 || COMPILE_TEST
+-	depends on GPIOLIB
++	depends on (ARCH_BCM2835 && GPIOLIB) || COMPILE_TEST
  	help
- 	  Say Y here if you have a Colibri VF50 and plan to use
- 	  the on-board provided 4-wire touchscreen driver.
+ 	  This selects a driver for the Broadcom BCM2835 SPI aux master.
+ 
 -- 
 1.9.1
 
