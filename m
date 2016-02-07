@@ -1,43 +1,51 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] spi: Allow compile test of bcm2835aux if !GPIOLIB
-Date: Sun,  7 Feb 2016 15:12:29 +0100
-Message-ID: <1454854349-20780-1-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH 1/2] Input: Colibri VF50 - Add missing #include <linux/of.h>
+Date: Sun,  7 Feb 2016 15:18:06 +0100
+Message-ID: <1454854687-21114-1-git-send-email-geert@linux-m68k.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:36447 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755517AbcBHH7p (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2016 02:59:45 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:42668 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755542AbcBHH7q (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2016 02:59:46 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Martin Sperl <kernel@martin.sperl.org>
-Cc: linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bastien Nocera <hadess@hadess.net>, Sanchayan Maity <maitysanchayan@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
-not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
-functionality only, can still be compiled if GPIOLIB is not enabled.
-
-Relax the dependency of SPI_BCM2835AUX on GPIOLIB if COMPILE_TEST is
-enabled.
+drivers/input/touchscreen/colibri-vf50-ts.c: In function =E2=80=98vf50_=
+ts_probe=E2=80=99:
+drivers/input/touchscreen/colibri-vf50-ts.c:302: error: implicit declar=
+ation of function =E2=80=98of_property_read_u32=E2=80=99
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- drivers/spi/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Seen with "[PATCH 2/2] Input: Allow compile test of Goodix and Colibri
+VF50 if !GPIOLIB" on m68k/allmodconfig
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 77064160dd762c26..4e08d42a9fa1b2c4 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -90,8 +90,7 @@ config SPI_BCM2835
- 
- config SPI_BCM2835AUX
- 	tristate "BCM2835 SPI auxiliary controller"
--	depends on ARCH_BCM2835 || COMPILE_TEST
--	depends on GPIOLIB
-+	depends on (ARCH_BCM2835 && GPIOLIB) || COMPILE_TEST
- 	help
- 	  This selects a driver for the Broadcom BCM2835 SPI aux master.
- 
--- 
+ drivers/input/touchscreen/colibri-vf50-ts.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/input/touchscreen/colibri-vf50-ts.c b/drivers/inpu=
+t/touchscreen/colibri-vf50-ts.c
+index 5d4903a402cc6a5f..69828d015d45ffa4 100644
+--- a/drivers/input/touchscreen/colibri-vf50-ts.c
++++ b/drivers/input/touchscreen/colibri-vf50-ts.c
+@@ -21,6 +21,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+--=20
 1.9.1
 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
