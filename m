@@ -1,34 +1,32 @@
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v5] serial: 8250: add gpio support to exar
-Date: Sat, 6 Feb 2016 22:44:07 -0800
-Message-ID: <20160207064407.GA24131@kroah.com>
-References: <1453183595-17996-1-git-send-email-sudipm.mukherjee@gmail.com>
+Subject: Re: [PATCH 173/182] serial: max310x: use gpiochip data pointer
+Date: Sat, 6 Feb 2016 23:20:52 -0800
+Message-ID: <20160207072052.GA16215@kroah.com>
+References: <1449669016-6882-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56873 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59807 "EHLO
 	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753383AbcBGGoH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 7 Feb 2016 01:44:07 -0500
+	with ESMTP id S1753354AbcBGHUw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 7 Feb 2016 02:20:52 -0500
 Content-Disposition: inline
-In-Reply-To: <1453183595-17996-1-git-send-email-sudipm.mukherjee@gmail.com>
+In-Reply-To: <1449669016-6882-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, gnomes@lxorguk.ukuu.org.uk, andy.shevchenko@gmail.com, Rob Groner <rgroner@rtd.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Jiri Slaby <jslaby@suse.com>
 
-On Tue, Jan 19, 2016 at 11:36:35AM +0530, Sudip Mukherjee wrote:
-> Exar XR17V352/354/358 chips have 16 multi-purpose inputs/outputs which
-> can be controlled using gpio interface.
-> Add support to use these pins.
+On Wed, Dec 09, 2015 at 02:50:16PM +0100, Linus Walleij wrote:
+> This makes the driver use the data pointer added to the gpio_chip
+> to store a pointer to the state container instead of relying on
+> container_of().
 > 
-> Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jiri Slaby <jslaby@suse.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
+> Greg, please ACK this so I can take it through the GPIO tree.
 
-I need an ack from the gpio maintainer before I can take this.
 
-Or was it going to be reworked again?
-
-thanks,
-
-greg k-h
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
