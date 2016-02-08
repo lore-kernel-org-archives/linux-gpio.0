@@ -1,60 +1,70 @@
-From: Krzysztof Adamski <k@japko.eu>
-Subject: Re: [PATCH v3 4/5] ARM: dts: sun8i-h3: Add R_PIO
- controller node to the dtsi
-Date: Mon, 8 Feb 2016 09:39:12 +0100
-Message-ID: <20160208083912.GF12071@box2.japko.eu>
-References: <1454542430-16572-1-git-send-email-k@japko.eu>
- <1454542430-16572-5-git-send-email-k@japko.eu>
- <CAGb2v67ftGhjPHjHKQ0iYnOeRbi5qcqyT2P1gePW=UoMm5QRig@mail.gmail.com>
-Reply-To: k@japko.eu
+From: Keerthy <a0393675@ti.com>
+Subject: Re: [PATCH 2/2] gpio: davinci: Fix the number of controllers
+ allocated
+Date: Mon, 8 Feb 2016 15:17:46 +0530
+Message-ID: <56B86442.4030301@ti.com>
+References: <1453988331-17111-1-git-send-email-j-keerthy@ti.com>
+ <1453988331-17111-3-git-send-email-j-keerthy@ti.com>
+ <56AA234C.4010707@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Return-path: <linux-sunxi+bncBDIL57GUWIARBR5I4G2QKGQEDGFONDI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAGb2v67ftGhjPHjHKQ0iYnOeRbi5qcqyT2P1gePW=UoMm5QRig-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <56AA234C.4010707@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>, Keerthy <j-keerthy@ti.com>, linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, lokeshvutla@ti.com, Santosh Shilimkar <ssantosh@kernel.org>, Sekhar Nori <nsekhar@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Feb 05, 2016 at 05:46:32PM +0800, Chen-Yu Tsai wrote:
->On Thu, Feb 4, 2016 at 7:33 AM, Krzysztof Adamski <k@japko.eu> wrote:
->> Add the corresponding device node for R_PIO on H3 to the dtsi. Support
->> for the controller was added in earlier commit.
->>
->> Signed-off-by: Krzysztof Adamski <k@japko.eu>
->> ---
->>  arch/arm/boot/dts/sun8i-h3.dtsi | 12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
->> index bb37f52..f618a95 100644
->> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
->> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
->> @@ -517,5 +517,17 @@
->>                         compatible = "allwinner,sun6i-a31-clock-reset";
->>                         #reset-cells = <1>;
->>                 };
->> +
->> +               r_pio: pinctrl@01f02c00 {
->> +                       compatible = "allwinner,sun8i-h3-r-pinctrl";
->> +                       reg = <0x01f02c00 0x400>;
->> +                       interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
->> +                       clocks = <&apb0_gates 0>;
->> +                       resets = <&apb0_reset 0>;
->> +                       gpio-controller;
->> +                       #gpio-cells = <3>;
->> +                       interrupt-controller;
->> +                       #interrupt-cells = <2>;
->
->This should be 3: bank number + pin number + flags.
->The rest looks good.
 
-Nicly spotted. I took it from pio description in the same file. So 
-there's a bug there too.
+
+On Thursday 28 January 2016 07:48 PM, Grygorii Strashko wrote:
+> On 01/28/2016 03:38 PM, Keerthy wrote:
+>> From: Lokesh Vutla <lokeshvutla@ti.com>
+>>
+>> Driver only needs to allocate for [ngpio / 32] controllers,
+>> as each controller handles 32 gpios. But the current driver
+>> allocates for ngpio of which the extra allocated are unused.
+>> Fix it be registering only the required number of controllers.
+>>
+>> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>
+> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+
+A gentle ping on this patch. Thanks Grygorii for the review.
+
+>
+>> ---
+>>   drivers/gpio/gpio-davinci.c | 5 +++--
+>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+>> index c889f31..cd007a6 100644
+>> --- a/drivers/gpio/gpio-davinci.c
+>> +++ b/drivers/gpio/gpio-davinci.c
+>> @@ -195,7 +195,7 @@ static int davinci_gpio_of_xlate(struct gpio_chip
+>> *gc,
+>>   static int davinci_gpio_probe(struct platform_device *pdev)
+>>   {
+>>       int i, base;
+>> -    unsigned ngpio;
+>> +    unsigned ngpio, nbank;
+>>       struct davinci_gpio_controller *chips;
+>>       struct davinci_gpio_platform_data *pdata;
+>>       struct davinci_gpio_regs __iomem *regs;
+>> @@ -224,8 +224,9 @@ static int davinci_gpio_probe(struct
+>> platform_device *pdev)
+>>       if (WARN_ON(ARCH_NR_GPIOS < ngpio))
+>>           ngpio = ARCH_NR_GPIOS;
+>>
+>> +    nbank = DIV_ROUND_UP(ngpio, 32);
+>>       chips = devm_kzalloc(dev,
+>> -                 ngpio * sizeof(struct davinci_gpio_controller),
+>> +                 nbank * sizeof(struct davinci_gpio_controller),
+>>                    GFP_KERNEL);
+>>       if (!chips)
+>>           return -ENOMEM;
+>>
+>
+>
