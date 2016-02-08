@@ -1,45 +1,37 @@
 From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v5 0/9] Add STM32 pinctrl/GPIO driver
-Date: Mon, 8 Feb 2016 18:50:25 +0100
-Message-ID: <CALszF6D_2zcg0SsV8HQ8kiSMypau1SV28L08fuz+Pziqyu8QKg@mail.gmail.com>
-References: <1454497485-464-1-git-send-email-mcoquelin.stm32@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH 0/2] pinctrl: stm32; Fix build issue in -next and make compile-testing possible
+Date: Mon,  8 Feb 2016 18:57:37 +0100
+Message-ID: <1454954259-4923-1-git-send-email-mcoquelin.stm32@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qg0-f49.google.com ([209.85.192.49]:35655 "EHLO
-	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753024AbcBHRu0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2016 12:50:26 -0500
-In-Reply-To: <1454497485-464-1-git-send-email-mcoquelin.stm32@gmail.com>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35208 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754640AbcBHR5v (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2016 12:57:51 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Patrice Chotard <patrice.chotard@st.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>
+To: patrice.chotard@st.com, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, afaerber@suse.de, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com
 
-2016-02-03 12:04 GMT+01:00 Maxime Coquelin <mcoquelin.stm32@gmail.com>:
-> Hi Linus,
->
-> This is the fifth round of STM32 pinctrl series, which is rebased on top of
-> v4.5-rc1 and removes no more needed dependency between DT and driver.
->
-> Also, it fixes the Makefile so that it is really built when COMPILE_TEST is
-> set and not ARCH_STM32.
->
-> The STM32 family has 16 pins per GPIO bank, and the number of bank varies
-> depending on the model.
->
-> Pins can be multiplexed either in GPIO mode, alternate function (up to 15
-> functions per pin) or analog (for ADC/DAC).
->
-> Changes since v4:
-> -----------------
->  - Rebase on v4.5-rc1
->  - Fix compilation breakage due to gpio_chip struct .dev field renaming
->  - Move the macros from includes/dt-bindings to STM32 pinctrl driver directory
-> to avoid uneeded dependency between DT and driver.
->  - Fix Makefile so that driver is built with COMPILE_TEST set
-
-Please discard this series, the changes above are being handled on top of v4.
+This two-patches series fixes two problems on stm32 pinctrl driver:
+	1 - As reported by Arnd, there is a missing dependency with DT Bindings
+headers on Linus' pinctrl/devel branch. This dependency is in fact not needed,
+so the first patch removes it.
+	2 - The driver could be selected for compile testing via menuconfig, but
+the Makefile only selected stm32 driver directory if ARCH_STM32 was selected.
+The second patch selects the stm32 driver if PINCTRL_STM32 is selected.
 
 Regards,
 Maxime
+
+Maxime Coquelin (2):
+  pinctrl: stm32: Remove dependency with DT bindings header files
+  pinctrl: stm32: Fix compile testing selection
+
+ drivers/pinctrl/Makefile              | 2 +-
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 2 --
+ drivers/pinctrl/stm32/pinctrl-stm32.h | 8 ++++++++
+ 3 files changed, 9 insertions(+), 3 deletions(-)
+
+-- 
+1.9.1
+
