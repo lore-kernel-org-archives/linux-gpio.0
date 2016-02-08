@@ -1,61 +1,54 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3 1/2] pinctrl: sh-pfc: Improve pinmux macros documentation
-Date: Mon, 8 Feb 2016 16:48:55 +0100
-Message-ID: <CAMuHMdW_XbzfFcfRod4usntwgkg7-aYqUxvzXoNBOSegwa2E+Q@mail.gmail.com>
-References: <1448890332-773-1-git-send-email-geert+renesas@glider.be>
-	<1448890332-773-2-git-send-email-geert+renesas@glider.be>
-	<4029813.xaXaFntOiW@avalon>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 05/11] drivers: pinctrl: add driver for
+ Allwinner A64 SoC
+Date: Mon, 8 Feb 2016 09:54:05 -0600
+Message-ID: <20160208155405.GA4677@rob-hp-laptop>
+References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
+ <1454348370-3816-6-git-send-email-andre.przywara@arm.com>
+ <20160201182754.GA14737@excalibur.cnev.de>
+ <56AFE0EC.8080207@arm.com>
+ <20160202100046.GM4652@lukather>
+ <56B0DF26.10203@arm.com>
+ <20160204165151.GK4270@lukather>
+Reply-To: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f195.google.com ([209.85.213.195]:34147 "EHLO
-	mail-ig0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752783AbcBHPs4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2016 10:48:56 -0500
-In-Reply-To: <4029813.xaXaFntOiW@avalon>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sunxi+bncBDJIP47K7MERBIXU4K2QKGQEWXDZLSI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160204165151.GK4270@lukather>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, Karsten Merker <merker-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Magnus Damm <damm@opensource.se>, Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Laurent,
+On Thu, Feb 04, 2016 at 05:51:51PM +0100, Maxime Ripard wrote:
+> Hi Andre,
+> 
+> On Tue, Feb 02, 2016 at 04:53:58PM +0000, Andre Przywara wrote:
+> > > So, droping it in the filenames, why not. But I'd really like to keep
+> > > the same compatible scheme.
+> > 
+> > And I still don't get this: in the DT compatible scheme we always have a
+> > vendor prefix, so allwinner,a64 is surely not a mysterious ARM Ltd. core
+> > or a new Apple SoC. Instead it is the A64 from Allwinner, full stop. So
+> > why should we add an arbitrary and confusing sun50i naming to it (when
+> > it actually should be more like "sun8i-a64").
+> 
+> I don't decide on their marketing names. And I know you want to start
+> anew with the arm64 SoCs, but the truth is, you don't. Most of the
+> compatibles in the DTSI are from earlier SoCs, and we have to keep
+> that legacy and remain consistent with it. With all the good and bad
+> things a legacy imply.
 
-On Thu, Feb 4, 2016 at 7:43 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Monday 30 November 2015 14:32:11 Geert Uytterhoeven wrote:
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->> v3:
->>   - Add Acked-by,
->>   - Document function names referring to IPSR fields,
->>   - Replace "configuration register" by more specific terms,
->>   - Rename "ms" to "msel" or "gsel",
->>   - EMEV2 PINMUX_IPSR_NOFN() pinmux configurations have a GPIO function,
->>
->> v2:
->>   - Clarify same width vs. different widths,
->>   - Mention GPSR for PINMUX_IPSR_DATA(),
->>   - Document NOGM (= NOGP + MSEL),
->>   - Fix s/ispr/ipsr/ typos.
+I have to agree. Unless there is some agreement to move to another 
+naming scheme, then just follow the same pattern. If sunXi is just a 
+made up name outside of Allwinner to provide some logical grouping of 
+SoCs, then yes, that probably should not have been done.
 
-[...]
-
-> With those changes,
->
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Thanks a lot!
-
-Will queue for next renesas-drivers and v4.6.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
