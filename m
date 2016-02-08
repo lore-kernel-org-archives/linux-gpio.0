@@ -1,37 +1,48 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH] pinctrl: stm32: fix compile error and modernize
-Date: Mon, 8 Feb 2016 18:23:16 +0100
-Message-ID: <CALszF6CYa50SZGys4KmCxkRa0Kp6n1OHdRPUA9C+Lj7erSBjWw@mail.gmail.com>
-References: <1454712568-6301-1-git-send-email-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V4] drivers/gpio: Switch gpio-mpc8xxx to use gpio-generic
+Date: Mon, 8 Feb 2016 18:34:29 +0100
+Message-ID: <CACRpkdYSwSW+kd+QyvfabNoPyAXx9VDWJaYD79p3krpgmX8iOg@mail.gmail.com>
+References: <1454498854-33169-1-git-send-email-Gang.Liu@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1454712568-6301-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Patrice Chotard <patrice.chotard@st.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:35324 "EHLO
+	mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752362AbcBHRea (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2016 12:34:30 -0500
+Received: by mail-lf0-f54.google.com with SMTP id l143so100160394lfe.2
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Feb 2016 09:34:30 -0800 (PST)
+In-Reply-To: <1454498854-33169-1-git-send-email-Gang.Liu@nxp.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Liu Gang <Gang.Liu@nxp.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, bhupesh.sharma@nxp.com, scott.wood@nxp.com, Leo.Li@nxp.com
 
-2016-02-05 23:49 GMT+01:00 Linus Walleij <linus.walleij@linaro.org>:
-> - Fix the dev->parent assignment compile error
-> - Use gpiochip_get_data() to get the data pointer for the
->   banks
+On Wed, Feb 3, 2016 at 12:27 PM, Liu Gang <Gang.Liu@nxp.com> wrote:
+
+> The new Layerscape platforms has the same ip block/controller
+> as GPIO on PowerPC platforms(MPC8XXX), but the GPIO registers
+> may be big or little endian. So the code needs to get the
+> endian property from DTB, then make additional functions to
+> fit all the PowerPC/Layerscape GPIO register read/write
+> operations.
 >
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Patrice Chotard <patrice.chotard@st.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> gpio-generic.c provides an universal infrastructure for both
+> big and little endian register operations. So switch the
+> gpio-mpc8xxx to use gpio-generic can simplify the driver and
+> reduce a lot of code.
+>
+> The IRQ and some workaround parts in gpio-mpc8xxx.c will be
+> updated with the new API interfaces but following the
+> original functionalities.
+>
+> Signed-off-by: Liu Gang <Gang.Liu@nxp.com>
 > ---
-> I don't even know how to compile test this, I hope it works,
-> Maxime can you verify?
+> -V4: Rebase the kernel to v4.5-rc1 for the new gpio-generic
+>      infrastructure based on Linus Walleij comments.
 
-Thanks Linus, I just tested your patch with success:
-Tested-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Patch applied, I guess this also silences the compile errors I've
+been getting about the be32 accessors.
 
-About the compile testing, I have identified the problem last week,
-and sent a v5 of the series.
-I will discard this series, and will send you a patch that fixes
-compile testing,
-and also unneeded dependency with DT bindings header file.
-
-Regards,
-Maxime
+Yours,
+Linus Walleij
