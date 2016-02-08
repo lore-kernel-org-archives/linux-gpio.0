@@ -1,47 +1,132 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v5] serial: 8250: add gpio support to exar
-Date: Sun, 7 Feb 2016 13:35:28 -0800
-Message-ID: <20160207213528.GA2018@kroah.com>
-References: <1453183595-17996-1-git-send-email-sudipm.mukherjee@gmail.com>
- <20160207064407.GA24131@kroah.com>
- <56B74C87.3080301@gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpio/sysfs: Add ID parameter for GPIO lines
+Date: Mon, 8 Feb 2016 11:50:47 +0900
+Message-ID: <CAAVeFuJ69u473qGBatQpnsZ=S78mMP+68wyHGBq4otQtj=Xm-A@mail.gmail.com>
+References: <1450370892-2517-1-git-send-email-ricardo.ribalda@gmail.com> <CAPybu_1JQDszYpdmnVTX9OmksjikV=wXRprLmxvWDo8KTHRAkQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52234 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750997AbcBGVf3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 7 Feb 2016 16:35:29 -0500
-Content-Disposition: inline
-In-Reply-To: <56B74C87.3080301@gmail.com>
+Received: from mail-io0-f177.google.com ([209.85.223.177]:35866 "EHLO
+	mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754681AbcBHCvH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 7 Feb 2016 21:51:07 -0500
+In-Reply-To: <CAPybu_1JQDszYpdmnVTX9OmksjikV=wXRprLmxvWDo8KTHRAkQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, gnomes@lxorguk.ukuu.org.uk, andy.shevchenko@gmail.com, Rob Groner <rgroner@rtd.com>
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Sun, Feb 07, 2016 at 07:24:15PM +0530, Sudip Mukherjee wrote:
-> On Sunday 07 February 2016 12:14 PM, Greg Kroah-Hartman wrote:
-> >On Tue, Jan 19, 2016 at 11:36:35AM +0530, Sudip Mukherjee wrote:
-> >>Exar XR17V352/354/358 chips have 16 multi-purpose inputs/outputs which
-> >>can be controlled using gpio interface.
-> >>Add support to use these pins.
-> >>
-> >>Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
-> >>---
-> >
-> >I need an ack from the gpio maintainer before I can take this.
-> >
-> >Or was it going to be reworked again?
-> 
-> I have not yet started with the rework, but Andy wants me to split out the
-> exar related code from 8250_pci and create its own driver. But at the
-> initial discussion you were against having a separate driver for it.
-> what will you suggest?
+On Tue, Jan 26, 2016 at 7:25 PM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
+> Hello!
+>
+> Any comment on this?
 
-I don't remember what my initial suggestion was at all, sorry.  But I
-like what Peter was doing with the other tty driver splitout, so that
-might be the correct thing to do here.
+Oops, sorry for the delay...
 
-thanks,
+>
+>
+> Thanks!
+>
+> On Thu, Dec 17, 2015 at 5:48 PM, Ricardo Ribalda Delgado
+> <ricardo.ribalda@gmail.com> wrote:
+>> On named GPIOs there is currently no find out their numerical id.
+>>
+>> Because of this, a GPIO pin named like:
+>> /sys/class/gpio/PROG_B
+>>
+>> cannot be unexported by an application different than the one that
+>> exported it.
 
-greg k-h
+On the other hand, do you want other applications to be able to
+arbitrarily unexport GPIOs they don't own? Well, it's not like it is
+not already possible anyway.
+
+>>
+>> This patch adds a new parameter to the GPIO line called id, that
+>> shows the numerical id of a given GPIO. E.g.:
+>>
+>> $ cat /sys/class/gpio/PROG_B/id
+>> 496
+>> $ echo 496 > unexport
+
+What we *really* ought to do is have GPIOs behave like other resources
+and be automatically freed when the application using them exits. This
+will be made possible by the chardev interface, but is impossible to
+achieve using sysfs by design.
+
+Adding Linus to get his thoughts, but this simple read-only attribute
+does make sense to me.
+
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+
+>>
+>> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+>> ---
+>>  Documentation/ABI/testing/sysfs-gpio |  1 +
+>>  Documentation/gpio/sysfs.txt         |  3 +++
+>>  drivers/gpio/gpiolib-sysfs.c         | 10 ++++++++++
+>>  3 files changed, 14 insertions(+)
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-gpio b/Documentation/ABI/testing/sysfs-gpio
+>> index 55ffa2df1c10..53d78abef4f3 100644
+>> --- a/Documentation/ABI/testing/sysfs-gpio
+>> +++ b/Documentation/ABI/testing/sysfs-gpio
+>> @@ -21,6 +21,7 @@ Description:
+>>             /value ... always readable, writes fail for input GPIOs
+>>             /direction ... r/w as: in, out (default low); write: high, low
+>>             /edge ... r/w as: none, falling, rising, both
+>> +           /id ... r only, GPIO number
+>>         /gpiochipN ... for each gpiochip; #N is its first GPIO
+>>             /base ... (r/o) same as N
+>>             /label ... (r/o) descriptive, not necessarily unique
+>> diff --git a/Documentation/gpio/sysfs.txt b/Documentation/gpio/sysfs.txt
+>> index aeab01aa4d00..68e1b16e747b 100644
+>> --- a/Documentation/gpio/sysfs.txt
+>> +++ b/Documentation/gpio/sysfs.txt
+>> @@ -96,6 +96,9 @@ and have the following read/write attributes:
+>>                 for "rising" and "falling" edges will follow this
+>>                 setting.
+>>
+>> +       "id" ... ID used for export/unxexport the GPIO. This value may
+>> +               be used by named GPIOs, to find out their numerical id.
+>> +
+>>  GPIO controllers have paths like /sys/class/gpio/gpiochip42/ (for the
+>>  controller implementing GPIOs starting at #42) and have the following
+>>  read-only attributes:
+>> diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+>> index b57ed8e55ab5..3fc5c7231aae 100644
+>> --- a/drivers/gpio/gpiolib-sysfs.c
+>> +++ b/drivers/gpio/gpiolib-sysfs.c
+>> @@ -350,6 +350,15 @@ static ssize_t active_low_store(struct device *dev,
+>>  }
+>>  static DEVICE_ATTR_RW(active_low);
+>>
+>> +static ssize_t id_show(struct device *dev,
+>> +               struct device_attribute *attr, char *buf)
+>> +{
+>> +       struct gpiod_data *data = dev_get_drvdata(dev);
+>> +
+>> +       return  sprintf(buf, "%d\n", desc_to_gpio(data->desc));
+>> +}
+>> +static DEVICE_ATTR_RO(id);
+>> +
+>>  static umode_t gpio_is_visible(struct kobject *kobj, struct attribute *attr,
+>>                                int n)
+>>  {
+>> @@ -377,6 +386,7 @@ static struct attribute *gpio_attrs[] = {
+>>         &dev_attr_edge.attr,
+>>         &dev_attr_value.attr,
+>>         &dev_attr_active_low.attr,
+>> +       &dev_attr_id.attr,
+>>         NULL,
+>>  };
+>>
+>> --
+>> 2.6.4
+>>
+>
+>
+>
+> --
+> Ricardo Ribalda
