@@ -1,48 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V4] drivers/gpio: Switch gpio-mpc8xxx to use gpio-generic
-Date: Mon, 8 Feb 2016 18:34:29 +0100
-Message-ID: <CACRpkdYSwSW+kd+QyvfabNoPyAXx9VDWJaYD79p3krpgmX8iOg@mail.gmail.com>
-References: <1454498854-33169-1-git-send-email-Gang.Liu@nxp.com>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v5 0/9] Add STM32 pinctrl/GPIO driver
+Date: Mon, 8 Feb 2016 18:50:25 +0100
+Message-ID: <CALszF6D_2zcg0SsV8HQ8kiSMypau1SV28L08fuz+Pziqyu8QKg@mail.gmail.com>
+References: <1454497485-464-1-git-send-email-mcoquelin.stm32@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:35324 "EHLO
-	mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752362AbcBHRea (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2016 12:34:30 -0500
-Received: by mail-lf0-f54.google.com with SMTP id l143so100160394lfe.2
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Feb 2016 09:34:30 -0800 (PST)
-In-Reply-To: <1454498854-33169-1-git-send-email-Gang.Liu@nxp.com>
+Received: from mail-qg0-f49.google.com ([209.85.192.49]:35655 "EHLO
+	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753024AbcBHRu0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Feb 2016 12:50:26 -0500
+In-Reply-To: <1454497485-464-1-git-send-email-mcoquelin.stm32@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Liu Gang <Gang.Liu@nxp.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, bhupesh.sharma@nxp.com, scott.wood@nxp.com, Leo.Li@nxp.com
+To: Patrice Chotard <patrice.chotard@st.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>
 
-On Wed, Feb 3, 2016 at 12:27 PM, Liu Gang <Gang.Liu@nxp.com> wrote:
-
-> The new Layerscape platforms has the same ip block/controller
-> as GPIO on PowerPC platforms(MPC8XXX), but the GPIO registers
-> may be big or little endian. So the code needs to get the
-> endian property from DTB, then make additional functions to
-> fit all the PowerPC/Layerscape GPIO register read/write
-> operations.
+2016-02-03 12:04 GMT+01:00 Maxime Coquelin <mcoquelin.stm32@gmail.com>:
+> Hi Linus,
 >
-> gpio-generic.c provides an universal infrastructure for both
-> big and little endian register operations. So switch the
-> gpio-mpc8xxx to use gpio-generic can simplify the driver and
-> reduce a lot of code.
+> This is the fifth round of STM32 pinctrl series, which is rebased on top of
+> v4.5-rc1 and removes no more needed dependency between DT and driver.
 >
-> The IRQ and some workaround parts in gpio-mpc8xxx.c will be
-> updated with the new API interfaces but following the
-> original functionalities.
+> Also, it fixes the Makefile so that it is really built when COMPILE_TEST is
+> set and not ARCH_STM32.
 >
-> Signed-off-by: Liu Gang <Gang.Liu@nxp.com>
-> ---
-> -V4: Rebase the kernel to v4.5-rc1 for the new gpio-generic
->      infrastructure based on Linus Walleij comments.
+> The STM32 family has 16 pins per GPIO bank, and the number of bank varies
+> depending on the model.
+>
+> Pins can be multiplexed either in GPIO mode, alternate function (up to 15
+> functions per pin) or analog (for ADC/DAC).
+>
+> Changes since v4:
+> -----------------
+>  - Rebase on v4.5-rc1
+>  - Fix compilation breakage due to gpio_chip struct .dev field renaming
+>  - Move the macros from includes/dt-bindings to STM32 pinctrl driver directory
+> to avoid uneeded dependency between DT and driver.
+>  - Fix Makefile so that driver is built with COMPILE_TEST set
 
-Patch applied, I guess this also silences the compile errors I've
-been getting about the be32 accessors.
+Please discard this series, the changes above are being handled on top of v4.
 
-Yours,
-Linus Walleij
+Regards,
+Maxime
