@@ -1,62 +1,36 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: Salvator-X ravb failure with v4.5-rc3 due to irqchip power down
-Date: Mon, 8 Feb 2016 21:04:30 +0100
-Message-ID: <20160208200430.GB1997@tetsubishi>
-References: <CAMuHMdUHiBfYDrA_=wq3DwyN1dOb-af_cuhCNaWZjvHSmMfg2Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] pinctrl: stm32: Remove dependency with DT bindings
+ header files
+Date: Tue, 9 Feb 2016 10:53:01 +0100
+Message-ID: <CACRpkdb+V8O8H1gjkWwgqSimFtgJ2rFnwdY0sCChEjFSCkOO8w@mail.gmail.com>
+References: <1454954259-4923-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1454954259-4923-2-git-send-email-mcoquelin.stm32@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="p4qYPpj5QlsIQJ0K"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUHiBfYDrA_=wq3DwyN1dOb-af_cuhCNaWZjvHSmMfg2Q@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:33915 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753107AbcBIJxC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Feb 2016 04:53:02 -0500
+Received: by mail-ob0-f176.google.com with SMTP id wb13so183508499obb.1
+        for <linux-gpio@vger.kernel.org>; Tue, 09 Feb 2016 01:53:01 -0800 (PST)
+In-Reply-To: <1454954259-4923-2-git-send-email-mcoquelin.stm32@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Patrice CHOTARD <patrice.chotard@st.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>
 
+On Mon, Feb 8, 2016 at 6:57 PM, Maxime Coquelin
+<mcoquelin.stm32@gmail.com> wrote:
 
---p4qYPpj5QlsIQJ0K
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-
-> The real problem is that the PHY interrupt is wired to an on-chip GPIO
-> controller, which is disabled by PM Runtime if no GPIOs are in use, and
-> interrupts are not taken into account (the irqchip subsystem is not (yet) PM
-> Runtime aware) for GPIO use.
+> Some macros where defined in DT bindings headers, whereas only used
+> in the driver.
 >
-> Adding a call to
+> This patch moves these macros to the driver side.
 >
->     pm_runtime_get_sync(dev);
->
-> to gpio_rcar_probe() fixes the problem, but keeps the GPIO modules enabled
-> all the time.
->
-> IIRC, we have a similar issue with HDMI on r8a7791/koelsch...
+> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 
-Exactly, the interrupt for 'EDID read done' never arrived because of
-this.
+Patch applied.
 
-
---p4qYPpj5QlsIQJ0K
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWuPTNAAoJEBQN5MwUoCm2zRwP/RPSYPc/rLcf5P4JEjzLcock
-gZZTAJtpewC7FqTlbdvPkEXr3IbU2n+yp7kmUVOMFk1PV/RvzttUgNte6ySPUrpG
-jmzfUSPZDMkeSQKPhyvKSYvhvSoNFguQcv7lTm8k3XuvCGofhdstHPqrKOIds3ed
-6nlioLNouvjK2wf/MlTGvQnrQ683fgKqaTBch5UG8mH4MEl5yAsLoI/4RqTdHzK7
-dDBFND/PoHqZJS6oVU2kWZjsXvxYwsdnzKjxvO8zjNX9pVmtyFGZ/fEK1gDu8IhA
-2rPVXFi8X6weqhwfLpyxuiTnBMlAuA0Dvd8ukGXBI27bMU6ieblRtW5T9BAVf50I
-Kv/W741q5WvxS5SotfPAgQgk/Bd5hISIfMjXcCxUHqKIbOBfXtl2k1ohCUNSJKAw
-UjgIX+P9nUMVnWtiDPIH606KfqT9hTosOF8MxsQhzBztpsM4PjSAuqarO6ouUoP0
-TNpShPE3taWICmwS3ta/CrbJ/C8IaOYzCXreYa2s2YcZTpzDEDMtEpy5J3C5KvWZ
-pqoVbZhaqQ4YjUAgzDpJ8XWnoUIP5rGM+c9vRU/OetCGlSyQ+DPjXXx9k/nCTQF4
-jqYW22ijLzFLWwYYARrWhylibc2cFd4o1Nw2zBJV2smK3HvIZrRlGA3/mItdYVvT
-p1MVlLmZxyTRlAr5UuEN
-=UuD0
------END PGP SIGNATURE-----
-
---p4qYPpj5QlsIQJ0K--
+Yours,
+Linus Walleij
