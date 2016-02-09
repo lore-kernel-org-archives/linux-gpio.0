@@ -1,35 +1,31 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/2] pinctrl: stm32: Fix compile testing selection
-Date: Tue, 9 Feb 2016 10:53:57 +0100
-Message-ID: <CACRpkdb87qRD9OofJgkLUvMmcQSqXcu6xFsP7X7ztPueSKzPhw@mail.gmail.com>
-References: <1454954259-4923-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1454954259-4923-3-git-send-email-mcoquelin.stm32@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/6 v3] gpio: make the gpiochip a real device
+Date: Tue, 9 Feb 2016 11:03:13 +0100
+Message-ID: <CACRpkdZNX0s5EOkovLiDJQHj8s=SrrLPm2zeTLRQeTzd25z4og@mail.gmail.com>
+References: <1454941947-25415-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1454954259-4923-3-git-send-email-mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Patrice CHOTARD <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bruno Herrera <bruherrera-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:33481 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755949AbcBIKDO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Feb 2016 05:03:14 -0500
+Received: by mail-oi0-f42.google.com with SMTP id w5so12276023oie.0
+        for <linux-gpio@vger.kernel.org>; Tue, 09 Feb 2016 02:03:14 -0800 (PST)
+In-Reply-To: <1454941947-25415-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
+Cc: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Mon, Feb 8, 2016 at 6:57 PM, Maxime Coquelin
-<mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+On Mon, Feb 8, 2016 at 3:32 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> While selecting the driver for compile testing seemed possible,
-> the driver was not compiled because the driver directory was only
-> added if ARCH_STM32 was selected.
->
-> This patch now makes the pinctrl Makefile to add stm32 directory if
-> PINCTRL_STM32 is selected.
->
-> Signed-off-by: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> For a proper userspace ABI we need gpiochips to *always have a
+> populated struct device, so add this in the gpio_chip struct.
+> The name "dev" is unfortunately already take so we use "device"
+> to name it.
 
-Patch applied.
+Bah old comment. Stripping it, and merging these patches.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
