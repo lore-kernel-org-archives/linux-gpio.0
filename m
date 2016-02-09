@@ -1,64 +1,58 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v8 0/5] mfd: tps65912: Driver rewrite with DT support
-Date: Tue, 9 Feb 2016 10:24:03 +0000
-Message-ID: <20160209102403.GB24522@x1>
-References: <1453736627-2634-1-git-send-email-afd@ti.com>
- <20160128064149.GM3368@x1>
- <20160128114026.GB6078@sirena.org.uk>
- <20160128120423.GP3368@x1>
- <20160128124525.GF6078@sirena.org.uk>
- <20160128133049.GQ3368@x1>
- <56B0C559.7060204@ti.com>
- <56B61D84.9000709@ti.com>
+Subject: Re: [rtc-linux] [PATCH V7 5/8] gpio: add DT binding doc for gpio of
+ PMIC max77620/max20024
+Date: Tue, 9 Feb 2016 14:29:03 +0000
+Message-ID: <20160209142903.GE24522@x1>
+References: <1454171931-27752-1-git-send-email-ldewangan@nvidia.com>
+ <1454171931-27752-6-git-send-email-ldewangan@nvidia.com>
+ <CACRpkdYNBHvefR_qdjZ7hWr=cFzhv1gEgb5jBCrqHdWzNWgV6w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:37072 "EHLO
+	mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755556AbcBIO3I (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Feb 2016 09:29:08 -0500
+Received: by mail-wm0-f49.google.com with SMTP id g62so25798298wme.0
+        for <linux-gpio@vger.kernel.org>; Tue, 09 Feb 2016 06:29:08 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <56B61D84.9000709@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <CACRpkdYNBHvefR_qdjZ7hWr=cFzhv1gEgb5jBCrqHdWzNWgV6w@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>, Rob Herring <robh+dt@kernel.org>, =?utf-8?B?UGF3ZcWC?= Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Liam Girdwood <lgirdwood@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>, Krzysztof =?utf-8?Q?Koz=C5=82owski?= <k.kozlowski@samsung.com>, vreddytalla@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>
 
-On Sat, 06 Feb 2016, Andrew F. Davis wrote:
+On Fri, 05 Feb 2016, Linus Walleij wrote:
 
-> On 02/02/2016 09:03 AM, Andrew F. Davis wrote:
-> >On 01/28/2016 07:30 AM, Lee Jones wrote:
-> >>On Thu, 28 Jan 2016, Mark Brown wrote:
-> >>
-> >>>On Thu, Jan 28, 2016 at 12:04:23PM +0000, Lee Jones wrote:
-> >>>>On Thu, 28 Jan 2016, Mark Brown wrote:
-> >>>
-> >>>>>Please be more specific?  What is it that you are looking for be=
-yond the
-> >>>>>review I already did for the regulator driver?
-> >>>
-> >>>>Patch 2.
-> >>>
-> >>>I reviewed that *ages* ago.
-> >>
-> >>Link or it didn't happen. ;)
-> >>
-> >
-> >Might be best to take his ack for the new regulator driver
-> >as approval to remove the old one. :)
+> On Sat, Jan 30, 2016 at 5:38 PM, Laxman Dewangan <ldewangan@nvidia.co=
+m> wrote:
 >=20
-> If not, is there anything I can do to help keep this from getting
-> delayed another cycle?
+> > Maxim Semiconductor's PMIC MAX77620/MAX20024 has 8 GPIO pins
+> > which act as GPIO as well as special function mode.
+> >
+> > Add DT binding document to support these pins in GPIO
+> > mode via GPIO framework.
+> >
+> > Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> > Acked-by: Rob Herring <robh@kernel.org>
+>=20
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>=20
+> Lee can merge this too.
 
-I don't normally like to assume Acks, but as Mark has been so
-insistent that he's already conducted the review, I'm happy to take
-that as one.  If there is any fall-out over this, I will be pointing
-everyone back to this thread,
+Ths set needs a re-work anyway.
 
-Leave it with me.  This will go in [*].
-
-[*] When I dig myself back out of the pile of emails I have in my
-    inbox presently.
+Laxman, just apply your collected Acks and re-submit when you're
+ready.
 
 --=20
 Lee Jones
 Linaro STMicroelectronics Landing Team Lead
 Linaro.org =E2=94=82 Open source software for ARM SoCs
 =46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
