@@ -1,63 +1,47 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 2/2] Input: Allow compile test of Goodix and Colibri VF50
- if !GPIOLIB
-Date: Tue, 9 Feb 2016 10:34:09 -0800
-Message-ID: <20160209183409.GF40460@dtor-ws>
-References: <1454854687-21114-1-git-send-email-geert@linux-m68k.org>
- <1454854687-21114-2-git-send-email-geert@linux-m68k.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: re: gpio: add TS-4800 fpga GPIO support
+Date: Tue, 9 Feb 2016 22:26:46 +0300
+Message-ID: <20160209192646.GA17803@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:21812 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932162AbcBIT05 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Feb 2016 14:26:57 -0500
 Content-Disposition: inline
-In-Reply-To: <1454854687-21114-2-git-send-email-geert@linux-m68k.org>
-Sender: linux-input-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Bastien Nocera <hadess@hadess.net>, Sanchayan Maity <maitysanchayan@gmail.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: julien.grossholtz@savoirfairelinux.com
+Cc: linux-gpio@vger.kernel.org
 
-On Sun, Feb 07, 2016 at 03:18:07PM +0100, Geert Uytterhoeven wrote:
-> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
-> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
-> functionality only, can still be compiled if GPIOLIB is not enabled.
-> 
-> If COMPILE_TEST is enabled, relax the dependency on GPIOLIB for the
-> recently introduced or relaxed symbols TOUCHSCREEN_GOODIX and
-> TOUCHSCREEN_COLIBRI_VF50.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Hello Julien Grossholtz,
 
-Applied, thank you.
+The patch 5041e791440a: "gpio: add TS-4800 fpga GPIO support" from
+Jan 13, 2016, leads to the following static checker warning:
 
-> ---
->  drivers/input/touchscreen/Kconfig | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-> index 66c62641b59a31cf..fba4d5665857221b 100644
-> --- a/drivers/input/touchscreen/Kconfig
-> +++ b/drivers/input/touchscreen/Kconfig
-> @@ -334,7 +334,7 @@ config TOUCHSCREEN_FUJITSU
->  config TOUCHSCREEN_GOODIX
->  	tristate "Goodix I2C touchscreen"
->  	depends on I2C
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  Say Y here if you have the Goodix touchscreen (such as one
->  	  installed in Onda v975w tablets) connected to your
-> @@ -1112,7 +1112,8 @@ config TOUCHSCREEN_ZFORCE
->  
->  config TOUCHSCREEN_COLIBRI_VF50
->  	tristate "Toradex Colibri on board touchscreen driver"
-> -	depends on GPIOLIB && IIO && VF610_ADC
-> +	depends on IIO && VF610_ADC
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  Say Y here if you have a Colibri VF50 and plan to use
->  	  the on-board provided 4-wire touchscreen driver.
-> -- 
-> 1.9.1
-> 
+	drivers/gpio/gpio-ts4800.c:52 ts4800_gpio_probe()
+	warn: odd binop '0x1 & 0x8'
 
--- 
-Dmitry
+drivers/gpio/gpio-ts4800.c
+    43          retval = of_property_read_u32(node, "ngpios", &ngpios);
+    44          if (retval == -EINVAL)
+    45                  ngpios = DEFAULT_PIN_NUMBER;
+    46          else if (retval)
+    47                  return retval;
+    48  
+    49          retval = bgpio_init(chip, &pdev->dev, 2, base_addr + INPUT_REG_OFFSET,
+    50                              base_addr + OUTPUT_REG_OFFSET, NULL,
+    51                              base_addr + DIRECTION_REG_OFFSET, NULL,
+    52                              BGPIOF_BIG_ENDIAN & BGPIOF_BIG_ENDIAN_BYTE_ORDER);
+
+Probably | was intended instead of &.
+
+    53          if (retval) {
+    54                  dev_err(&pdev->dev, "bgpio_init failed\n");
+    55                  return retval;
+    56          }
+    57  
+
+regards,
+dan carpenter
