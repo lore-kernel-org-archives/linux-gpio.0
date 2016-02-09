@@ -1,19 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: re: gpio: add TS-4800 fpga GPIO support
-Date: Tue, 9 Feb 2016 22:26:46 +0300
-Message-ID: <20160209192646.GA17803@mwanda>
+From: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
+Subject: Re: gpio: add TS-4800 fpga GPIO support
+Date: Tue, 9 Feb 2016 18:20:16 -0500 (EST)
+Message-ID: <1337284402.592467.1455060016500.JavaMail.zimbra@savoirfairelinux.com>
+References: <20160209192646.GA17803@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:21812 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932162AbcBIT05 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Feb 2016 14:26:57 -0500
-Content-Disposition: inline
+Received: from mail.savoirfairelinux.com ([208.88.110.44]:50786 "EHLO
+	mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752411AbcBIXUU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Feb 2016 18:20:20 -0500
+In-Reply-To: <20160209192646.GA17803@mwanda>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: julien.grossholtz@savoirfairelinux.com
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: linux-gpio@vger.kernel.org
+
+Hello Dan,
+
+Thank you for pointing that out. It made me figure out there
+is no need for any of those flags for this driver.
+
+I will send a fix for this soon.
+
+Julien Grossholtz
+
+----- Original Message -----
+From: "Dan Carpenter" <dan.carpenter@oracle.com>
+To: "julien grossholtz" <julien.grossholtz@savoirfairelinux.com>
+Cc: linux-gpio@vger.kernel.org
+Sent: Tuesday, February 9, 2016 2:26:46 PM
+Subject: re: gpio: add TS-4800 fpga GPIO support
 
 Hello Julien Grossholtz,
 
