@@ -1,69 +1,80 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v3 1/5] clk: sunxi: Add apb0 gates for H3
-Date: Tue, 9 Feb 2016 18:11:01 +0100
-Message-ID: <20160209171101.GS31506@lukather>
-References: <1454542430-16572-1-git-send-email-k@japko.eu>
- <1454542430-16572-2-git-send-email-k@japko.eu>
- <20160204154752.4df7808be3364a98c496c030@free.fr>
- <20160205111152.GA31506@lukather>
- <20160206112605.4005784d1d0962c8adfe58a0@free.fr>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH 05/11] drivers: pinctrl: add driver for
+ Allwinner A64 SoC
+Date: Tue, 9 Feb 2016 18:12:15 +0100
+Message-ID: <20160209171215.GT31506@lukather>
+References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
+ <1454348370-3816-6-git-send-email-andre.przywara@arm.com>
+ <20160201182754.GA14737@excalibur.cnev.de>
+ <56AFE0EC.8080207@arm.com>
+ <20160202100046.GM4652@lukather>
+ <56B0DF26.10203@arm.com>
+ <20160204165151.GK4270@lukather>
+ <20160208155405.GA4677@rob-hp-laptop>
+ <56B8BB1A.8010705@arm.com>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uX7BrQs69PbBafpd"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:39199 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932193AbcBIRLD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Feb 2016 12:11:03 -0500
+	protocol="application/pgp-signature"; boundary="mW9eGbZzDIYYWqGs"
+Return-path: <linux-sunxi+bncBD2ZNBF5VYJRB4F35C2QKGQEMACQKCY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20160206112605.4005784d1d0962c8adfe58a0@free.fr>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <56B8BB1A.8010705-5wv7dgnIgG8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Karsten Merker <merker-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Krzysztof Adamski <k@japko.eu>, inus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Fabian Frederick <fabf@skynet.be>, Vishnu Patekar <vishnupatekar0510@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 
-
---uX7BrQs69PbBafpd
-Content-Type: text/plain; charset=us-ascii
+--mW9eGbZzDIYYWqGs
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 06, 2016 at 11:26:05AM +0100, Jean-Francois Moine wrote:
-> On Fri, 5 Feb 2016 12:11:52 +0100
-> Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
->=20
-> > However, I'd like to keep per-soc and per-clocks compatibles in the
-> > DT, in case we need to protect a clock in the future.
->=20
-> What do you mean by "protect a clock"?
+On Mon, Feb 08, 2016 at 03:58:18PM +0000, Andre Przywara wrote:
+> Hi,
+> 
+> On 08/02/16 15:54, Rob Herring wrote:
+> > On Thu, Feb 04, 2016 at 05:51:51PM +0100, Maxime Ripard wrote:
+> >> Hi Andre,
+> >>
+> >> On Tue, Feb 02, 2016 at 04:53:58PM +0000, Andre Przywara wrote:
+> >>>> So, droping it in the filenames, why not. But I'd really like to keep
+> >>>> the same compatible scheme.
+> >>>
+> >>> And I still don't get this: in the DT compatible scheme we always have a
+> >>> vendor prefix, so allwinner,a64 is surely not a mysterious ARM Ltd. core
+> >>> or a new Apple SoC. Instead it is the A64 from Allwinner, full stop. So
+> >>> why should we add an arbitrary and confusing sun50i naming to it (when
+> >>> it actually should be more like "sun8i-a64").
+> >>
+> >> I don't decide on their marketing names. And I know you want to start
+> >> anew with the arm64 SoCs, but the truth is, you don't. Most of the
+> >> compatibles in the DTSI are from earlier SoCs, and we have to keep
+> >> that legacy and remain consistent with it. With all the good and bad
+> >> things a legacy imply.
+> > 
+> > I have to agree. Unless there is some agreement to move to another 
+> > naming scheme, then just follow the same pattern. If sunXi is just a 
+> > made up name outside of Allwinner to provide some logical grouping of 
+> > SoCs, then yes, that probably should not have been done.
+> 
+> So I still don't like it, but will not waste my time or energy on that
+> front.
+> 
+> Maxime, do you want "allwinner,sun50i-a64" or would
+> "allwinner,sunxi-a64" be OK as well?
 
-Prevent it from shutting down.
+The former will be fine.
 
---=20
+Thanks!
+Maxime
+
+-- 
 Maxime Ripard, Free Electrons
 Embedded Linux, Kernel and Android engineering
 http://free-electrons.com
-
---uX7BrQs69PbBafpd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWuh2lAAoJEBx+YmzsjxAgy/oQAJag/VCpMK9xw3DPesan7cTi
-G0QlllSMHBMq1JYjuQaImj003x8wvVJ+7W59wulAOto5gJkIoC+fv7Xby0NUCGga
-SxloZxQqB0hThM/Y4okJ2nHKeTb/Ts3dJ4Efts2vZQtkCU1dTWSZ6CCz+6r0WZAi
-W3cAbG52XQy6/+S8E73G4j0k+Lvy83gzJ3TR/tC7fFcMJCx0N+MuDvFZeYTQiBNn
-e0j7c1rpJb2JNs3eMZrynUXCawLqoTSOVrpKHrHznsLBZGfmYgWmbqTbet6oTuw9
-cviuAL1sFtNDXgBza6+0FVZy3vbHOca3i70N963DoldkmMXOAKGdo6BQs6KLuYmC
-lepxA54APpvyP6LmVHwOn+Ce+FX2KjQVewlucY9brrnmVQ8lYIWN7jgMnqemkQmI
-twcbZlJ+igXJEt5IzLg+HHgMGMxm0foUslllqL0prFnKEn/ozl3ppMgVjmDCnkmN
-0B+hiD9o92G5h+qWxDVOKVR62rQcQchQm5C5J1C0u+RIgnF1GqlFdlI3iCxQLfNx
-dmhAKt1YzbVgmucOkMEQpgczREH+5m7zMSyY4QNXqGruv6s+yGbOPyhTZ6E2p/Sh
-l3sxng5wRhr4weLXiT/DPMIdE7Ek1YhJZPG522KgmXRWNzi4K2Lp1xBvNDI47mNy
-JwaqEGXh4TUIk2zBN9NH
-=T3FH
------END PGP SIGNATURE-----
-
---uX7BrQs69PbBafpd--
+--mW9eGbZzDIYYWqGs--
