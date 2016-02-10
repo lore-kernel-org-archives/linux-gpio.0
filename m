@@ -1,32 +1,49 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: tps65086: Add GPO driver for the TPS65086 PMIC
-Date: Wed, 10 Feb 2016 15:25:10 +0100
-Message-ID: <CACRpkdZqe6gBoPMq0otn13HFx0pHGij0em1KD6BS6bNLFE_Vdg@mail.gmail.com>
-References: <1454775130-15995-1-git-send-email-afd@ti.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2] gpio: Add driver for TI TPIC2810
+Date: Wed, 10 Feb 2016 16:29:46 +0200
+Message-ID: <CAHp75VfTofe13JCcJmFq=yex7zRdmzTSMMSX8Tap5cBZ80rJ2Q@mail.gmail.com>
+References: <1453738452-23633-1-git-send-email-afd@ti.com>
+	<CACRpkdbkwd4K3rav+gfoSO_TqVQqfPXykGF2TWLQ7xWFOOtSaA@mail.gmail.com>
+	<56AA2C30.2040708@ti.com>
+	<CAHp75Vd_CxDmPbFWX7jaNd=ukOdE2hN13RhhMC5D+H_grM_Xiw@mail.gmail.com>
+	<CACRpkdbh3coAedusUHgEZQu=3WkVyS4JW6=jUWAtbSxgUVhNiw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1454775130-15995-1-git-send-email-afd@ti.com>
+In-Reply-To: <CACRpkdbh3coAedusUHgEZQu=3WkVyS4JW6=jUWAtbSxgUVhNiw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Lee Jones <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "Andrew F. Davis" <afd@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Feb 6, 2016 at 5:12 PM, Andrew F. Davis <afd@ti.com> wrote:
-
-> Add support for the TPS65086 PMIC GPOs.
+On Wed, Feb 10, 2016 at 4:21 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Sun, Jan 31, 2016 at 11:52 PM, Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
 >
-> TPS65086 has four configurable GPOs that can be used for several
-> purposes. These are output only.
+>> It reminds me how 12 channel PWM chip is used on Intel Galileo Gen 2.
+>> Half pins are PWM, the other half is GPIO used for discrete based pin
+>> muxing and control. Nevertheless I think it's a userspace issue for
+>> now, otherwise we have to provide some 'semi-virtual' way of
+>> presenting pins as GPIO lines.
 >
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> ---
-> This is the last component of the tps65086 series, other parts have
-> been taken already, this will probably need to be taken through the
-> MFD tree due to header dependencies.
+> That sounds like an MFD spawning a GPIO and a PWM cell.
+> That it is called "a PWM chip" is no big deal, it should be
+> modeled according to what it is, not what it claims to be.
 
-Lee: go ahead.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Although I agree with model I barely imagine how in this case drivers
+should access PWM chip registers in non-race way (take into account
+that PWM itself is connected to i2c bus).
 
-Yours,
-Linus Walleij
+> (Which makes me wanna merge this present patch as a GPIO
+> driver since it claims to be a LED driver but is a GPO.)
+>
+> See the ST Multipurpose Expander for an example
+> drivers/mfd/stmpe.c
+> drivers/gpio/gpio-stmpe.c
+> drivers/input/keyboard/stmpe-keypad.c
+
+I will look to the example later, thanks.
+
+-- 
+With Best Regards,
+Andy Shevchenko
