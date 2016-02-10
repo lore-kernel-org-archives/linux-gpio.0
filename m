@@ -1,52 +1,22 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 1/2] Input: Colibri VF50 - Add missing #include
- <linux/of.h>
-Date: Wed, 10 Feb 2016 11:38:16 -0800
-Message-ID: <20160210193816.GA17738@dtor-glaptop>
-References: <1454854687-21114-1-git-send-email-geert@linux-m68k.org>
- <20160209183324.GE40460@dtor-ws>
- <CAMuHMdU3oWoCTgy14mhuFAE33Bne0a18xErLRjYv_pugq4_V5Q@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/2] Add Renesas R8A7794 audio PFC support
+Date: Thu, 11 Feb 2016 01:37:42 +0300
+Message-ID: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f65.google.com ([209.85.220.65]:34940 "EHLO
-	mail-pa0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751712AbcBJTiS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Feb 2016 14:38:18 -0500
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdU3oWoCTgy14mhuFAE33Bne0a18xErLRjYv_pugq4_V5Q@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org, geert+renesas@glider.be
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Bastien Nocera <hadess@hadess.net>, Sanchayan Maity <maitysanchayan@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Feb 10, 2016 at 10:52:39AM +0100, Geert Uytterhoeven wrote:
-> On Tue, Feb 9, 2016 at 7:33 PM, Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> > On Sun, Feb 07, 2016 at 03:18:06PM +0100, Geert Uytterhoeven wrote:
-> >> drivers/input/touchscreen/colibri-vf50-ts.c: In function =E2=80=98=
-vf50_ts_probe=E2=80=99:
-> >> drivers/input/touchscreen/colibri-vf50-ts.c:302: error: implicit d=
-eclaration of function =E2=80=98of_property_read_u32=E2=80=99
-> >>
-> >> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> >
-> > Applied, thank you.
->=20
-> Apparently you only applied patch 2/2, causing the abovementioned
-> breakage in -next?
+Hello.
 
-Hmm, I applied both, the Kconfig change went to next and include went i=
-nto
-for-linus and they both should have ended up in linux-next...
+   Here's the set of 2 patches against the 'devel' branch of Linus Walleij's
+'linux-pinctrl.git' repo. Here we add the PFC support for the Renesas R8A7794
+SSI devices and audio clocks.
 
-Thanks.
+[1/2] pinctrl: sh-pfc: r8a7794: add SSI pin groups
+[2/2] pinctrl: sh-pfc: r8a7794: add audio clock pin groups
 
---=20
-Dmitry
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+WBR, Sergei
