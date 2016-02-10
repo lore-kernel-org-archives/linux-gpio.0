@@ -1,32 +1,70 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 5/5] gpio: ath79: Update the copyright notice
-Date: Wed, 10 Feb 2016 11:38:56 +0100
-Message-ID: <CACRpkdYMPH96eBNKUFSkoz-mP0Jp-06nT2Rw3iyFPZcD2nd+MA@mail.gmail.com>
-References: <1454010273-21513-1-git-send-email-albeu@free.fr>
-	<1454010273-21513-5-git-send-email-albeu@free.fr>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 1/3] gpio: xgene: Enable X-Gene standby GPIO as
+ interrupt controller
+Date: Wed, 10 Feb 2016 11:58:46 +0100
+Message-ID: <CACRpkdZXFVgtQfMM_r+xxceiAuiUDsxH-XGBOpEA9Am0BF+gRQ@mail.gmail.com>
+References: <1454041735-8434-1-git-send-email-qnguyen@apm.com>
+	<1454041735-8434-2-git-send-email-qnguyen@apm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:35714 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753300AbcBJKi4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Feb 2016 05:38:56 -0500
-Received: by mail-ob0-f170.google.com with SMTP id xk3so21102140obc.2
-        for <linux-gpio@vger.kernel.org>; Wed, 10 Feb 2016 02:38:56 -0800 (PST)
-In-Reply-To: <1454010273-21513-5-git-send-email-albeu@free.fr>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1454041735-8434-2-git-send-email-qnguyen-qTEPVZfXA3Y@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Quan Nguyen <qnguyen-qTEPVZfXA3Y@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>, Phong Vo <pvo-qTEPVZfXA3Y@public.gmane.org>, Loc Ho <lho-qTEPVZfXA3Y@public.gmane.org>, Feng Kan <fkan-qTEPVZfXA3Y@public.gmane.org>, Duc Dang <dhdang-qTEPVZfXA3Y@public.gmane.org>, patches <patches-qTEPVZfXA3Y@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alban Bedel <albeu@free.fr>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Antony Pavlov <antonynpavlov@gmail.com>, Gabor Juhos <juhosg@openwrt.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Jan 28, 2016 at 8:44 PM, Alban Bedel <albeu@free.fr> wrote:
+On Fri, Jan 29, 2016 at 5:28 AM, Quan Nguyen <qnguyen-qTEPVZfXA3Y@public.gmane.org> wrote:
 
-> Add myself to the copyright list and remove the reference to Atheros'
-> BSP as nothing is left of this code.
+> Enable X-Gene standby GPIO controller as interrupt controller to provide
+> its own resources. This avoids ambiguity where GIC interrupt resource is
+> use as X-Gene standby GPIO interrupt resource in user driver.
 >
-> Signed-off-by: Alban Bedel <albeu@free.fr>
+> Signed-off-by: Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>
+> Signed-off-by: Quan Nguyen <qnguyen-qTEPVZfXA3Y@public.gmane.org>
 
-Patch applied.
+I want Marc's ACK on this before I merge it.
+
+But it is looking way more acceptable than earlier incarnations! :)
+
+> +       /* Propagate IRQ type setting to parent */
+> +       if (type & IRQ_TYPE_EDGE_BOTH)
+> +               return irq_chip_set_type_parent(d, IRQ_TYPE_EDGE_RISING);
+> +       else
+> +               return irq_chip_set_type_parent(d, IRQ_TYPE_LEVEL_HIGH);
+
+This makes it look much more solid, nice.
+
+> +static void xgene_gpio_sb_irq_shutdown(struct irq_data *d)
+> +{
+> +       struct xgene_gpio_sb *priv = irq_data_get_irq_chip_data(d);
+> +
+> +       gpiochip_unlock_as_irq(&priv->gc, HWIRQ_TO_GPIO(priv, d->hwirq));
+
+Oh really. Well.
+
+> +       if (is_of_node(domain->parent->fwnode)) {
+> +               parent_fwspec.fwnode = domain->parent->fwnode;
+> +               parent_fwspec.param_count = 3;
+> +               parent_fwspec.param[0] = 0;/* SPI */
+> +               /* Skip SGIs and PPIs*/
+> +               parent_fwspec.param[1] = hwirq + priv->parent_irq_base - 32;
+> +               parent_fwspec.param[2] = fwspec->param[1];
+> +       } else if (is_fwnode_irqchip(domain->parent->fwnode)) {
+> +               parent_fwspec.fwnode = domain->parent->fwnode;
+> +               parent_fwspec.param_count = 2;
+> +               parent_fwspec.param[0] = hwirq + priv->parent_irq_base;
+> +               parent_fwspec.param[1] = fwspec->param[1];
+> +       } else
+> +               return -EINVAL;
+
+This kind of stuff hardcodes knowledge of the GIC into this controller,
+like that the SGI+PPI occupy the first 32 hwIRQs. But maybe there is
+no better way to do it?
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
