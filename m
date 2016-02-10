@@ -1,53 +1,116 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 1/2] Input: Colibri VF50 - Add missing #include <linux/of.h>
-Date: Wed, 10 Feb 2016 10:52:39 +0100
-Message-ID: <CAMuHMdU3oWoCTgy14mhuFAE33Bne0a18xErLRjYv_pugq4_V5Q@mail.gmail.com>
-References: <1454854687-21114-1-git-send-email-geert@linux-m68k.org>
-	<20160209183324.GE40460@dtor-ws>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v2] pinctrl: mediatek: guard sub-directory with CONFIG_PINCTRL_MTK
+Date: Wed, 10 Feb 2016 18:54:32 +0900
+Message-ID: <1455098072-13112-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:32865 "EHLO
-	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752146AbcBJJwk convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Feb 2016 04:52:40 -0500
-In-Reply-To: <20160209183324.GE40460@dtor-ws>
+Received: from conuserg011.nifty.com ([202.248.44.37]:32731 "EHLO
+	conuserg011-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751702AbcBJJyi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Feb 2016 04:54:38 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Bastien Nocera <hadess@hadess.net>, Sanchayan Maity <maitysanchayan@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
 
-On Tue, Feb 9, 2016 at 7:33 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> On Sun, Feb 07, 2016 at 03:18:06PM +0100, Geert Uytterhoeven wrote:
->> drivers/input/touchscreen/colibri-vf50-ts.c: In function =E2=80=98vf=
-50_ts_probe=E2=80=99:
->> drivers/input/touchscreen/colibri-vf50-ts.c:302: error: implicit dec=
-laration of function =E2=80=98of_property_read_u32=E2=80=99
->>
->> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
->
-> Applied, thank you.
+CONFIG_PINCTRL_MTK is more suitable than CONFIG_ARCH_MEDIATEK
+to guard the drivers/pinctrl/mediatek/ directory.
+(I renamed CONFIG_PINCTRL_MTK_COMMON to CONFIG_PINCTRL_MTK.)
 
-Apparently you only applied patch 2/2, causing the abovementioned
-breakage in -next?
+This allows COMPILE_TEST to descend into drivers/pinctrl/mediatek
+without CONFIG_ARCH_MEDIATEK define.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-                        Geert
+Series-changes: 2
+  - Rebase onto linux-pinctrl/devel
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+ drivers/pinctrl/Makefile          |  2 +-
+ drivers/pinctrl/mediatek/Kconfig  | 12 ++++++------
+ drivers/pinctrl/mediatek/Makefile | 12 ++++++------
+ 3 files changed, 13 insertions(+), 13 deletions(-)
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-                                -- Linus Torvalds
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index 7ea62ef..e4bc115 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -50,4 +50,4 @@ obj-$(CONFIG_PINCTRL_STM32)	+= stm32/
+ obj-$(CONFIG_PINCTRL_SUNXI)	+= sunxi/
+ obj-$(CONFIG_PINCTRL_UNIPHIER)	+= uniphier/
+ obj-$(CONFIG_ARCH_VT8500)	+= vt8500/
+-obj-$(CONFIG_ARCH_MEDIATEK)	+= mediatek/
++obj-$(CONFIG_PINCTRL_MTK)	+= mediatek/
+diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+index 13e9939..e4fbc58 100644
+--- a/drivers/pinctrl/mediatek/Kconfig
++++ b/drivers/pinctrl/mediatek/Kconfig
+@@ -1,6 +1,6 @@
+ if ARCH_MEDIATEK || COMPILE_TEST
+ 
+-config PINCTRL_MTK_COMMON
++config PINCTRL_MTK
+ 	bool
+ 	depends on OF
+ 	select PINMUX
+@@ -13,19 +13,19 @@ config PINCTRL_MT2701
+ 	bool "Mediatek MT2701 pin control" if COMPILE_TEST && !MACH_MT2701
+ 	depends on OF
+ 	default MACH_MT2701
+-	select PINCTRL_MTK_COMMON
++	select PINCTRL_MTK
+ 
+ config PINCTRL_MT8135
+ 	bool "Mediatek MT8135 pin control" if COMPILE_TEST && !MACH_MT8135
+ 	depends on OF
+ 	default MACH_MT8135
+-	select PINCTRL_MTK_COMMON
++	select PINCTRL_MTK
+ 
+ config PINCTRL_MT8127
+ 	bool "Mediatek MT8127 pin control" if COMPILE_TEST && !MACH_MT8127
+ 	depends on OF
+ 	default MACH_MT8127
+-	select PINCTRL_MTK_COMMON
++	select PINCTRL_MTK
+ 
+ # For ARMv8 SoCs
+ config PINCTRL_MT8173
+@@ -33,13 +33,13 @@ config PINCTRL_MT8173
+ 	depends on OF
+ 	depends on ARM64 || COMPILE_TEST
+ 	default ARM64 && ARCH_MEDIATEK
+-	select PINCTRL_MTK_COMMON
++	select PINCTRL_MTK
+ 
+ # For PMIC
+ config PINCTRL_MT6397
+ 	bool "Mediatek MT6397 pin control" if COMPILE_TEST && !MFD_MT6397
+ 	depends on OF
+ 	default MFD_MT6397
+-	select PINCTRL_MTK_COMMON
++	select PINCTRL_MTK
+ 
+ endif
+diff --git a/drivers/pinctrl/mediatek/Makefile b/drivers/pinctrl/mediatek/Makefile
+index da30314..e59c613 100644
+--- a/drivers/pinctrl/mediatek/Makefile
++++ b/drivers/pinctrl/mediatek/Makefile
+@@ -1,9 +1,9 @@
+ # Core
+-obj-$(CONFIG_PINCTRL_MTK_COMMON)	+= pinctrl-mtk-common.o
++obj-y				+= pinctrl-mtk-common.o
+ 
+ # SoC Drivers
+-obj-$(CONFIG_PINCTRL_MT2701)		+= pinctrl-mt2701.o
+-obj-$(CONFIG_PINCTRL_MT8135)		+= pinctrl-mt8135.o
+-obj-$(CONFIG_PINCTRL_MT8127)		+= pinctrl-mt8127.o
+-obj-$(CONFIG_PINCTRL_MT8173)		+= pinctrl-mt8173.o
+-obj-$(CONFIG_PINCTRL_MT6397)		+= pinctrl-mt6397.o
++obj-$(CONFIG_PINCTRL_MT2701)	+= pinctrl-mt2701.o
++obj-$(CONFIG_PINCTRL_MT8135)	+= pinctrl-mt8135.o
++obj-$(CONFIG_PINCTRL_MT8127)	+= pinctrl-mt8127.o
++obj-$(CONFIG_PINCTRL_MT8173)	+= pinctrl-mt8173.o
++obj-$(CONFIG_PINCTRL_MT6397)	+= pinctrl-mt6397.o
+-- 
+1.9.1
+
