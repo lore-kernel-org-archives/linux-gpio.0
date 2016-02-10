@@ -1,37 +1,52 @@
-From: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
-Subject: [PATCH v2] gpio: TS-4800: remove useless bgpio_init flags
-Date: Wed, 10 Feb 2016 12:20:34 -0500
-Message-ID: <1455124834-18224-1-git-send-email-julien.grossholtz@savoirfairelinux.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, dan.carpenter@oracle.com, kernel@savoirfairelinux.com, julien.grossholtz@savoirfairelinux.com
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 1/2] Input: Colibri VF50 - Add missing #include
+ <linux/of.h>
+Date: Wed, 10 Feb 2016 11:38:16 -0800
+Message-ID: <20160210193816.GA17738@dtor-glaptop>
+References: <1454854687-21114-1-git-send-email-geert@linux-m68k.org>
+ <20160209183324.GE40460@dtor-ws>
+ <CAMuHMdU3oWoCTgy14mhuFAE33Bne0a18xErLRjYv_pugq4_V5Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f65.google.com ([209.85.220.65]:34940 "EHLO
+	mail-pa0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751712AbcBJTiS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Feb 2016 14:38:18 -0500
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU3oWoCTgy14mhuFAE33Bne0a18xErLRjYv_pugq4_V5Q@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Bastien Nocera <hadess@hadess.net>, Sanchayan Maity <maitysanchayan@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-No flags are required for bgpio_init in the TS-4800 gpio driver. This
-patch set zero instead. The driver will have the same behaviour since
-the & operator between the flags already resulted to zero.
+On Wed, Feb 10, 2016 at 10:52:39AM +0100, Geert Uytterhoeven wrote:
+> On Tue, Feb 9, 2016 at 7:33 PM, Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+> > On Sun, Feb 07, 2016 at 03:18:06PM +0100, Geert Uytterhoeven wrote:
+> >> drivers/input/touchscreen/colibri-vf50-ts.c: In function =E2=80=98=
+vf50_ts_probe=E2=80=99:
+> >> drivers/input/touchscreen/colibri-vf50-ts.c:302: error: implicit d=
+eclaration of function =E2=80=98of_property_read_u32=E2=80=99
+> >>
+> >> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> >
+> > Applied, thank you.
+>=20
+> Apparently you only applied patch 2/2, causing the abovementioned
+> breakage in -next?
 
-Fixes: 5041e791440a ("gpio: add TS-4800 fpga GPIO support")
+Hmm, I applied both, the Kconfig change went to next and include went i=
+nto
+for-linus and they both should have ended up in linux-next...
 
-Signed-off-by: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
----
- drivers/gpio/gpio-ts4800.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thanks.
 
-diff --git a/drivers/gpio/gpio-ts4800.c b/drivers/gpio/gpio-ts4800.c
-index c4908a4..9da79e4 100644
---- a/drivers/gpio/gpio-ts4800.c
-+++ b/drivers/gpio/gpio-ts4800.c
-@@ -48,8 +48,7 @@ static int ts4800_gpio_probe(struct platform_device *pdev)
- 
- 	retval = bgpio_init(chip, &pdev->dev, 2, base_addr + INPUT_REG_OFFSET,
- 			    base_addr + OUTPUT_REG_OFFSET, NULL,
--			    base_addr + DIRECTION_REG_OFFSET, NULL,
--			    BGPIOF_BIG_ENDIAN & BGPIOF_BIG_ENDIAN_BYTE_ORDER);
-+			    base_addr + DIRECTION_REG_OFFSET, NULL, 0);
- 	if (retval) {
- 		dev_err(&pdev->dev, "bgpio_init failed\n");
- 		return retval;
--- 
-2.5.0
+--=20
+Dmitry
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
