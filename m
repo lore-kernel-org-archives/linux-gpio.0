@@ -1,70 +1,72 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5 1/3] gpio: xgene: Enable X-Gene standby GPIO as
- interrupt controller
-Date: Wed, 10 Feb 2016 11:58:46 +0100
-Message-ID: <CACRpkdZXFVgtQfMM_r+xxceiAuiUDsxH-XGBOpEA9Am0BF+gRQ@mail.gmail.com>
-References: <1454041735-8434-1-git-send-email-qnguyen@apm.com>
-	<1454041735-8434-2-git-send-email-qnguyen@apm.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH V7 1/8] mfd: add device-tree binding doc for PMIC
+ max77620/max20024
+Date: Wed, 10 Feb 2016 13:23:33 +0000
+Message-ID: <20160210132333.GG24522@x1>
+References: <1454171931-27752-1-git-send-email-ldewangan@nvidia.com>
+ <1454171931-27752-2-git-send-email-ldewangan@nvidia.com>
+ <20160209154215.GF24522@x1>
+ <56BA2859.2040605@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1454041735-8434-2-git-send-email-qnguyen-qTEPVZfXA3Y@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Quan Nguyen <qnguyen-qTEPVZfXA3Y@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>, Phong Vo <pvo-qTEPVZfXA3Y@public.gmane.org>, Loc Ho <lho-qTEPVZfXA3Y@public.gmane.org>, Feng Kan <fkan-qTEPVZfXA3Y@public.gmane.org>, Duc Dang <dhdang-qTEPVZfXA3Y@public.gmane.org>, patches <patches-qTEPVZfXA3Y@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <56BA2859.2040605@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, k.kozlowski@samsung.com, vreddytalla@nvidia.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jan 29, 2016 at 5:28 AM, Quan Nguyen <qnguyen-qTEPVZfXA3Y@public.gmane.org> wrote:
+On Tue, 09 Feb 2016, Laxman Dewangan wrote:
 
-> Enable X-Gene standby GPIO controller as interrupt controller to provide
-> its own resources. This avoids ambiguity where GIC interrupt resource is
-> use as X-Gene standby GPIO interrupt resource in user driver.
->
-> Signed-off-by: Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>
-> Signed-off-by: Quan Nguyen <qnguyen-qTEPVZfXA3Y@public.gmane.org>
+>=20
+> On Tuesday 09 February 2016 09:12 PM, Lee Jones wrote:
+> >On Sat, 30 Jan 2016, Laxman Dewangan wrote:
+> >
+> >+	Normal mode also called as active mode on which all step-down
+> >+		regulators, all linear regulators, GPIOs, and the 32kHz
+> >+		oscillator are in normal active mode.
+> >+	sleep mode: Regulators/GPIOs/clock can go on OFF state based on
+> >"can go on OFF state"?
+>=20
+> Regulator/GPIO has two states, enable and disable. If sleep mode is
+> configured for these resource and external signal triggers to sleep
+> then this get disabled.
 
-I want Marc's ACK on this before I merge it.
+It's the English that I'm unhappy with.
 
-But it is looking way more acceptable than earlier incarnations! :)
+"can go on OFF state" doesn't sound right.
 
-> +       /* Propagate IRQ type setting to parent */
-> +       if (type & IRQ_TYPE_EDGE_BOTH)
-> +               return irq_chip_set_type_parent(d, IRQ_TYPE_EDGE_RISING);
-> +       else
-> +               return irq_chip_set_type_parent(d, IRQ_TYPE_LEVEL_HIGH);
+> >>+			source gets the control signal for ON and OFF.
+> >>+	Power on slot: 	Slot number on which resource is ON once FPS sour=
+ce
+> >>+			get ON signal.
+> >Can you find another way of explaining this please?
+>=20
+> Hmm..
+> Does it look fine:
+> There is 8 slots for each FPS on which resource can get enabled.
+> This property provides the slot number on which resource gets
+> enabled after FPS sequence started.
 
-This makes it look much more solid, nice.
+It's a bit better, yes.  Although it's still a little difficult to
+read.  In fact, I can't even recommend a suitable alternative, since I
+still do not understand exactly what it is you're trying to say.
 
-> +static void xgene_gpio_sb_irq_shutdown(struct irq_data *d)
-> +{
-> +       struct xgene_gpio_sb *priv = irq_data_get_irq_chip_data(d);
-> +
-> +       gpiochip_unlock_as_irq(&priv->gc, HWIRQ_TO_GPIO(priv, d->hwirq));
+> >+
+> >+-maxim,enable-sleep: 		    Boolean, enable sleep state of PMIC
+> >We already have bindings for sleeping.  Please use a generic one.
+>=20
+> Which property? Saw sleep property with vendor prefix.
 
-Oh really. Well.
+I guess there are too many '.*sleep.*' properties now, each with
+slightly different syntax and meaning.  The situation is exacerbated
+by one of the key examples is using the property with cells expected
+i.e. non-bool.
 
-> +       if (is_of_node(domain->parent->fwnode)) {
-> +               parent_fwspec.fwnode = domain->parent->fwnode;
-> +               parent_fwspec.param_count = 3;
-> +               parent_fwspec.param[0] = 0;/* SPI */
-> +               /* Skip SGIs and PPIs*/
-> +               parent_fwspec.param[1] = hwirq + priv->parent_irq_base - 32;
-> +               parent_fwspec.param[2] = fwspec->param[1];
-> +       } else if (is_fwnode_irqchip(domain->parent->fwnode)) {
-> +               parent_fwspec.fwnode = domain->parent->fwnode;
-> +               parent_fwspec.param_count = 2;
-> +               parent_fwspec.param[0] = hwirq + priv->parent_irq_base;
-> +               parent_fwspec.param[1] = fwspec->param[1];
-> +       } else
-> +               return -EINVAL;
-
-This kind of stuff hardcodes knowledge of the GIC into this controller,
-like that the SGI+PPI occupy the first 32 hwIRQs. But maybe there is
-no better way to do it?
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
