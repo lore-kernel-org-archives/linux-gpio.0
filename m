@@ -1,36 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5] pinctrl: rockchip: add support for the rk3399
-Date: Wed, 10 Feb 2016 16:42:04 +0100
-Message-ID: <CACRpkdYsYse-EYQ2YJFbRRMVrfp-0k-CctvCZtGtzNgJNyo1Bg@mail.gmail.com>
-References: <1454295501-32165-1-git-send-email-david.wu@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:33517 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751360AbcBJPmF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Feb 2016 10:42:05 -0500
-Received: by mail-ob0-f177.google.com with SMTP id is5so32284480obc.0
-        for <linux-gpio@vger.kernel.org>; Wed, 10 Feb 2016 07:42:05 -0800 (PST)
-In-Reply-To: <1454295501-32165-1-git-send-email-david.wu@rock-chips.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
+Subject: [PATCH] gpio: TS-4800: remove useless bgpio_init flags
+Date: Wed, 10 Feb 2016 11:58:34 -0500
+Message-ID: <1455123514-17152-1-git-send-email-julien.grossholtz@savoirfairelinux.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, dan.carpenter@oracle.com, kernel@savoirfairelinux.com, Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
 List-Id: linux-gpio@vger.kernel.org
-To: David Wu <david.wu@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Tao Huang <huangtao@rock-chips.com>, Chris Zhong <zyw@rock-chips.com>, Eddie Cai <cf@rock-chips.com>, Jianqun Xu <xjq@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Feb 1, 2016 at 3:58 AM, David Wu <david.wu@rock-chips.com> wrote:
+No flags are required for bgpio_init in the TS-4800 gpio driver. This
+patch set zero instead. The driver will have the same behaviour since
+the | operator between the flags already resulted to zero.
 
-> The pinctrl of rk3399 is much different from other's,
-> especially the 3bits of drive strength.
->
-> Signed-off-by: David Wu <david.wu@rock-chips.com>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> Changes in v5:
-> - merge the binding-doc-addition in one patch (Linus Heiko)
-> - fix the comment of bit15 drive setting (Heiko)
+Fixes: 5041e791440a ("gpio: add TS-4800 fpga GPIO support")
 
-Patch applied.
+Signed-off-by: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
+---
+ drivers/gpio/gpio-ts4800.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpio-ts4800.c b/drivers/gpio/gpio-ts4800.c
+index c4908a4..9da79e4 100644
+--- a/drivers/gpio/gpio-ts4800.c
++++ b/drivers/gpio/gpio-ts4800.c
+@@ -48,8 +48,7 @@ static int ts4800_gpio_probe(struct platform_device *pdev)
+ 
+ 	retval = bgpio_init(chip, &pdev->dev, 2, base_addr + INPUT_REG_OFFSET,
+ 			    base_addr + OUTPUT_REG_OFFSET, NULL,
+-			    base_addr + DIRECTION_REG_OFFSET, NULL,
+-			    BGPIOF_BIG_ENDIAN & BGPIOF_BIG_ENDIAN_BYTE_ORDER);
++			    base_addr + DIRECTION_REG_OFFSET, NULL, 0);
+ 	if (retval) {
+ 		dev_err(&pdev->dev, "bgpio_init failed\n");
+ 		return retval;
+-- 
+2.5.0
