@@ -1,64 +1,35 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] pinctrl: mediatek: guard sub-directory with CONFIG_PINCTRL_MTK
-Date: Wed, 10 Feb 2016 18:56:45 +0900
-Message-ID: <CAK7LNATxUjsEtVmD3i4ZByC3kjnOk7gMf29hOn7ZfQa2MB9Gqw@mail.gmail.com>
-References: <1453563204-30407-1-git-send-email-yamada.masahiro@socionext.com>
-	<CACRpkdbrJ5P8Ro4RQUquMOTuXhN+54ZHYGbLqrbwW6tbwCC7Mg@mail.gmail.com>
-	<CAK7LNAQ_8o0FiRpb7D6RBmA+7WxRMFhWJjo2f4E_NH5qAGYb4A@mail.gmail.com>
-	<CACRpkdaA37GXf8c=EznSpocLp33CaU8dYqb8V0pua4dVfZa_2w@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: davinci: Add the missing of-node pointer in the
+ irq_domain_add_legacy function call
+Date: Wed, 10 Feb 2016 11:00:01 +0100
+Message-ID: <CACRpkdaO+SmOTFNkcte+ByUeiU+zk7+7xONX_27oYvRjCkt-8g@mail.gmail.com>
+References: <1453988331-17111-1-git-send-email-j-keerthy@ti.com>
+	<1453988331-17111-2-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaA37GXf8c=EznSpocLp33CaU8dYqb8V0pua4dVfZa_2w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:34789 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757267AbcBJKAB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Feb 2016 05:00:01 -0500
+Received: by mail-ob0-f177.google.com with SMTP id wb13so20185472obb.1
+        for <linux-gpio@vger.kernel.org>; Wed, 10 Feb 2016 02:00:01 -0800 (PST)
+In-Reply-To: <1453988331-17111-2-git-send-email-j-keerthy@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>
 
-Hi Linus,
+On Thu, Jan 28, 2016 at 2:38 PM, Keerthy <j-keerthy@ti.com> wrote:
 
-
-2016-02-10 18:29 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Thu, Jan 28, 2016 at 5:22 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> Hi Linus
->>
->> 2016-01-27 23:11 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
->>> On Sat, Jan 23, 2016 at 4:33 PM, Masahiro Yamada
->>> <yamada.masahiro@socionext.com> wrote:
->>>
->>>> CONFIG_PINCTRL_MTK is more suitable than CONFIG_ARCH_MEDIATEK
->>>> to guard the drivers/pinctrl/mediatek/ directory.
->>>> (I renamed CONFIG_PINCTRL_MTK_COMMON to CONFIG_PINCTRL_MTK.)
->>>>
->>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>
->>> This patch does not apply to linux v4.5-rc1, please rebase the
->>> patch and resend.
->>
->>
->> These two patches can be applied in this order:
->> https://patchwork.kernel.org/patch/8097541/
->> https://patchwork.kernel.org/patch/8097551/
->>
->> (Sorry, I should have sent them as a series.)
+> Currently the first parameter of irq_domain_add_legacy is NULL.
+> irq_find_host function returns NULL when we do not populate the of_node
+> and hence irq_of_parse_and_map call fails whenever we want to request a
+> gpio irq. This fixes the request_irq failures for gpio interrupts.
 >
-> No order works for me and I have merged quite a lot of other stuff
-> that had higher priority.
->
-> But please rebase both patches on my "devel" branch and resend
-> and I will apply them.
->
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
 
-Sure.
+Patch applied for fixes with Grygorii's review tag.
 
-The first one is already in your devel branch.
-
-I've rebased and posted the second one.
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Yours,
+Linus Walleij
