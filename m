@@ -1,49 +1,91 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2] gpio: Add driver for TI TPIC2810
-Date: Wed, 10 Feb 2016 16:29:46 +0200
-Message-ID: <CAHp75VfTofe13JCcJmFq=yex7zRdmzTSMMSX8Tap5cBZ80rJ2Q@mail.gmail.com>
-References: <1453738452-23633-1-git-send-email-afd@ti.com>
-	<CACRpkdbkwd4K3rav+gfoSO_TqVQqfPXykGF2TWLQ7xWFOOtSaA@mail.gmail.com>
-	<56AA2C30.2040708@ti.com>
-	<CAHp75Vd_CxDmPbFWX7jaNd=ukOdE2hN13RhhMC5D+H_grM_Xiw@mail.gmail.com>
-	<CACRpkdbh3coAedusUHgEZQu=3WkVyS4JW6=jUWAtbSxgUVhNiw@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: Re: [PATCH v3 1/5] clk: sunxi: Add apb0 gates for H3
+Date: Wed, 10 Feb 2016 16:06:43 +0100
+Message-ID: <20160210150643.GG31506@lukather>
+References: <1454542430-16572-1-git-send-email-k@japko.eu>
+ <1454542430-16572-2-git-send-email-k@japko.eu>
+ <20160204154752.4df7808be3364a98c496c030@free.fr>
+ <20160205111152.GA31506@lukather>
+ <20160205115837.GD12071@box2.japko.eu>
+ <20160209171040.GR31506@lukather>
+ <20160210071713.GA19622@box2.japko.eu>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbh3coAedusUHgEZQu=3WkVyS4JW6=jUWAtbSxgUVhNiw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "Andrew F. Davis" <afd@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="k7W93gQNhKgsYkEv"
+Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBBNE5W2QKGQEWTVNJLI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160210071713.GA19622-xLeyfSbClftGit24Ens98Q@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Krzysztof Adamski <k@japko.eu>
+Cc: Jean-Francois Moine <moinejf-GANU6spQydw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 10, 2016 at 4:21 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Sun, Jan 31, 2016 at 11:52 PM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->
->> It reminds me how 12 channel PWM chip is used on Intel Galileo Gen 2.
->> Half pins are PWM, the other half is GPIO used for discrete based pin
->> muxing and control. Nevertheless I think it's a userspace issue for
->> now, otherwise we have to provide some 'semi-virtual' way of
->> presenting pins as GPIO lines.
->
-> That sounds like an MFD spawning a GPIO and a PWM cell.
-> That it is called "a PWM chip" is no big deal, it should be
-> modeled according to what it is, not what it claims to be.
+--k7W93gQNhKgsYkEv
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 
-Although I agree with model I barely imagine how in this case drivers
-should access PWM chip registers in non-race way (take into account
-that PWM itself is connected to i2c bus).
+Hi,
 
-> (Which makes me wanna merge this present patch as a GPIO
-> driver since it claims to be a LED driver but is a GPO.)
->
-> See the ST Multipurpose Expander for an example
-> drivers/mfd/stmpe.c
-> drivers/gpio/gpio-stmpe.c
-> drivers/input/keyboard/stmpe-keypad.c
+On Wed, Feb 10, 2016 at 08:17:14AM +0100, Krzysztof Adamski wrote:
+> On Tue, Feb 09, 2016 at 06:10:40PM +0100, Maxime Ripard wrote:
+> >>>>It seems that the other compatible strings are there for historical
+> >>>>reasons. Why do you need a new one with such a specific name?
+> >>>>
+> >>>>It would have been more sensible to add a generic compatible string as
+> >>>>"allwinner,apb-gates", letting the removal of the other strings for a
+> >>>>later patch...
+> >>>
+> >>>Yeah, it's a good idea, and it's probably time that we move to that.
+> >>>
+> >>>However, I'd like to keep per-soc and per-clocks compatibles in the
+> >>>DT, in case we need to protect a clock in the future. That doesn't
+> >>>prevent to have two compatibles thoughe, the specific and the generic.
+> >>>
+> >>
+> >>So now I'm not sure what you mean. You suggest that I should keep using
+> >>specific (sun8i_h3_apb0) or change to generic (apb-gates) in my patch?
+> >
+> >Both.
+> >
+> >To have something like that:
+> >
+> >compatible = "allwinner,sun8i-h3-apb0-gates-clk", "allwinner,sun4i-a10-gates-clk";
+> >
+> >sun4i-a10-gates-clk being the generic compatible that we would use,
+> >and we can always match against the h3 specific compatible if we need
+> >to have a different behaviour.
+> 
+> This seems like a good idea to me but since this is new thing anyways (other
+> sunxi SoCs don't do this right now) shouldn't we introduce other
+> more generic name for generic clock (like "allwinner,apb-gates" mentioned
+> earlier, or maybe "allwinner,simple-apb-gates")?
 
-I will look to the example later, thanks.
+This is not specific to the APB bus, and the earlier SoC that
+introduced those kind of clocks was the A10, hence why I was
+suggesting that compatible (since we generally try to use the SoC that
+introduced that hardware block in the compatible name).
+
+> Also, wouldn't this be cleaner if I use only specific compatible string
+> right now and provide separate patch that adds generic compatible string to
+> all current SoCs at once? The downside of this is that it's easier to get
+> merge conflicts unless I wait for applying this patchset.
+
+I'd prefer if you added the generic one and were using it in your
+subsequent patches. We can always mass convert the existing drivers
+later on.
+
+Thanks!
+Maxime
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+--k7W93gQNhKgsYkEv--
