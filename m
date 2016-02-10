@@ -1,54 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mediatek: guard sub-directory with CONFIG_PINCTRL_MTK
-Date: Wed, 10 Feb 2016 10:29:13 +0100
-Message-ID: <CACRpkdaA37GXf8c=EznSpocLp33CaU8dYqb8V0pua4dVfZa_2w@mail.gmail.com>
-References: <1453563204-30407-1-git-send-email-yamada.masahiro@socionext.com>
-	<CACRpkdbrJ5P8Ro4RQUquMOTuXhN+54ZHYGbLqrbwW6tbwCC7Mg@mail.gmail.com>
-	<CAK7LNAQ_8o0FiRpb7D6RBmA+7WxRMFhWJjo2f4E_NH5qAGYb4A@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/2] Input: Colibri VF50 - Add missing #include <linux/of.h>
+Date: Wed, 10 Feb 2016 10:52:39 +0100
+Message-ID: <CAMuHMdU3oWoCTgy14mhuFAE33Bne0a18xErLRjYv_pugq4_V5Q@mail.gmail.com>
+References: <1454854687-21114-1-git-send-email-geert@linux-m68k.org>
+	<20160209183324.GE40460@dtor-ws>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:34923 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756639AbcBJJ3N (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Feb 2016 04:29:13 -0500
-Received: by mail-ob0-f179.google.com with SMTP id xk3so19125280obc.2
-        for <linux-gpio@vger.kernel.org>; Wed, 10 Feb 2016 01:29:13 -0800 (PST)
-In-Reply-To: <CAK7LNAQ_8o0FiRpb7D6RBmA+7WxRMFhWJjo2f4E_NH5qAGYb4A@mail.gmail.com>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:32865 "EHLO
+	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752146AbcBJJwk convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Feb 2016 04:52:40 -0500
+In-Reply-To: <20160209183324.GE40460@dtor-ws>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Bastien Nocera <hadess@hadess.net>, Sanchayan Maity <maitysanchayan@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Jan 28, 2016 at 5:22 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Hi Linus
->
-> 2016-01-27 23:11 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
->> On Sat, Jan 23, 2016 at 4:33 PM, Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
+On Tue, Feb 9, 2016 at 7:33 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> On Sun, Feb 07, 2016 at 03:18:06PM +0100, Geert Uytterhoeven wrote:
+>> drivers/input/touchscreen/colibri-vf50-ts.c: In function =E2=80=98vf=
+50_ts_probe=E2=80=99:
+>> drivers/input/touchscreen/colibri-vf50-ts.c:302: error: implicit dec=
+laration of function =E2=80=98of_property_read_u32=E2=80=99
 >>
->>> CONFIG_PINCTRL_MTK is more suitable than CONFIG_ARCH_MEDIATEK
->>> to guard the drivers/pinctrl/mediatek/ directory.
->>> (I renamed CONFIG_PINCTRL_MTK_COMMON to CONFIG_PINCTRL_MTK.)
->>>
->>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>
->> This patch does not apply to linux v4.5-rc1, please rebase the
->> patch and resend.
+>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 >
->
-> These two patches can be applied in this order:
-> https://patchwork.kernel.org/patch/8097541/
-> https://patchwork.kernel.org/patch/8097551/
->
-> (Sorry, I should have sent them as a series.)
+> Applied, thank you.
 
-No order works for me and I have merged quite a lot of other stuff
-that had higher priority.
+Apparently you only applied patch 2/2, causing the abovementioned
+breakage in -next?
 
-But please rebase both patches on my "devel" branch and resend
-and I will apply them.
+Gr{oetje,eeting}s,
 
-Yours,
-Linus Walleij
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+                                -- Linus Torvalds
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
