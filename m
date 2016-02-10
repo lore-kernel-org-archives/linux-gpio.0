@@ -1,91 +1,416 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: Re: [PATCH v3 1/5] clk: sunxi: Add apb0 gates for H3
-Date: Wed, 10 Feb 2016 16:06:43 +0100
-Message-ID: <20160210150643.GG31506@lukather>
-References: <1454542430-16572-1-git-send-email-k@japko.eu>
- <1454542430-16572-2-git-send-email-k@japko.eu>
- <20160204154752.4df7808be3364a98c496c030@free.fr>
- <20160205111152.GA31506@lukather>
- <20160205115837.GD12071@box2.japko.eu>
- <20160209171040.GR31506@lukather>
- <20160210071713.GA19622@box2.japko.eu>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v5 1/3] gpio: xgene: Enable X-Gene standby GPIO as
+ interrupt controller
+Date: Wed, 10 Feb 2016 15:09:44 +0000
+Message-ID: <56BB52B8.4040501@arm.com>
+References: <1454041735-8434-1-git-send-email-qnguyen@apm.com>
+ <1454041735-8434-2-git-send-email-qnguyen@apm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="k7W93gQNhKgsYkEv"
-Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBBNE5W2QKGQEWTVNJLI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160210071713.GA19622-xLeyfSbClftGit24Ens98Q@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Krzysztof Adamski <k@japko.eu>
-Cc: Jean-Francois Moine <moinejf-GANU6spQydw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:48170 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752305AbcBJPJs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 10 Feb 2016 10:09:48 -0500
+In-Reply-To: <1454041735-8434-2-git-send-email-qnguyen@apm.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Quan Nguyen <qnguyen@apm.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>
+Cc: Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches@apm.com
 
---k7W93gQNhKgsYkEv
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Quan,
 
-Hi,
+This is getting better. Some comments below.
 
-On Wed, Feb 10, 2016 at 08:17:14AM +0100, Krzysztof Adamski wrote:
-> On Tue, Feb 09, 2016 at 06:10:40PM +0100, Maxime Ripard wrote:
-> >>>>It seems that the other compatible strings are there for historical
-> >>>>reasons. Why do you need a new one with such a specific name?
-> >>>>
-> >>>>It would have been more sensible to add a generic compatible string as
-> >>>>"allwinner,apb-gates", letting the removal of the other strings for a
-> >>>>later patch...
-> >>>
-> >>>Yeah, it's a good idea, and it's probably time that we move to that.
-> >>>
-> >>>However, I'd like to keep per-soc and per-clocks compatibles in the
-> >>>DT, in case we need to protect a clock in the future. That doesn't
-> >>>prevent to have two compatibles thoughe, the specific and the generic.
-> >>>
-> >>
-> >>So now I'm not sure what you mean. You suggest that I should keep using
-> >>specific (sun8i_h3_apb0) or change to generic (apb-gates) in my patch?
-> >
-> >Both.
-> >
-> >To have something like that:
-> >
-> >compatible = "allwinner,sun8i-h3-apb0-gates-clk", "allwinner,sun4i-a10-gates-clk";
-> >
-> >sun4i-a10-gates-clk being the generic compatible that we would use,
-> >and we can always match against the h3 specific compatible if we need
-> >to have a different behaviour.
+On 29/01/16 04:28, Quan Nguyen wrote:
+> Enable X-Gene standby GPIO controller as interrupt controller to provide
+> its own resources. This avoids ambiguity where GIC interrupt resource is
+> use as X-Gene standby GPIO interrupt resource in user driver.
 > 
-> This seems like a good idea to me but since this is new thing anyways (other
-> sunxi SoCs don't do this right now) shouldn't we introduce other
-> more generic name for generic clock (like "allwinner,apb-gates" mentioned
-> earlier, or maybe "allwinner,simple-apb-gates")?
+> Signed-off-by: Y Vo <yvo@apm.com>
+> Signed-off-by: Quan Nguyen <qnguyen@apm.com>
+> ---
+>  drivers/gpio/gpio-xgene-sb.c | 275 ++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 243 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
+> index 282004d..026da90 100644
+> --- a/drivers/gpio/gpio-xgene-sb.c
+> +++ b/drivers/gpio/gpio-xgene-sb.c
+> @@ -2,8 +2,9 @@
+>   * AppliedMicro X-Gene SoC GPIO-Standby Driver
+>   *
+>   * Copyright (c) 2014, Applied Micro Circuits Corporation
+> - * Author: 	Tin Huynh <tnhuynh@apm.com>.
+> - * 		Y Vo <yvo@apm.com>.
+> + * Author:	Tin Huynh <tnhuynh@apm.com>.
+> + *		Y Vo <yvo@apm.com>.
+> + *		Quan Nguyen <qnguyen@apm.com>.
+>   *
+>   * This program is free software; you can redistribute  it and/or modify it
+>   * under  the terms of  the GNU General  Public License as published by the
+> @@ -28,9 +29,14 @@
+>  
+>  #include "gpiolib.h"
+>  
+> -#define XGENE_MAX_GPIO_DS		22
+> -#define XGENE_MAX_GPIO_DS_IRQ		6
+> +/* Common property names */
+> +#define XGENE_NIRQ_PROPERTY		"apm,nr-irqs"
+> +#define XGENE_NGPIO_PROPERTY		"apm,nr-gpios"
+> +#define XGENE_IRQ_START_PROPERTY	"apm,irq-start"
+>  
+> +#define XGENE_DFLT_MAX_NGPIO		22
+> +#define XGENE_DFLT_MAX_NIRQ		6
+> +#define XGENE_DFLT_IRQ_START_PIN	8
+>  #define GPIO_MASK(x)			(1U << ((x) % 32))
+>  
+>  #define MPA_GPIO_INT_LVL		0x0290
+> @@ -39,19 +45,32 @@
+>  #define MPA_GPIO_IN_ADDR 		0x02a4
+>  #define MPA_GPIO_SEL_LO 		0x0294
+>  
+> +#define GPIO_INT_LEVEL_H	0x000001
+> +#define GPIO_INT_LEVEL_L	0x000000
+> +
+>  /**
+>   * struct xgene_gpio_sb - GPIO-Standby private data structure.
+>   * @gc:				memory-mapped GPIO controllers.
+> - * @irq:			Mapping GPIO pins and interrupt number
+> - * nirq:			Number of GPIO pins that supports interrupt
+> + * @regs:			GPIO register base offset
+> + * @irq_domain:			GPIO interrupt domain
+> + * @irq_start:			GPIO pin that start support interrupt
+> + * @nirq:			Number of GPIO pins that supports interrupt
+> + * @parent_irq_base:		Start parent HWIRQ
+>   */
+>  struct xgene_gpio_sb {
+>  	struct gpio_chip	gc;
+> -	u32 *irq;
+> -	u32 nirq;
+> +	void __iomem		*regs;
+> +	struct irq_domain	*irq_domain;
+> +	u16			irq_start;
+> +	u16			nirq;
+> +	u16			parent_irq_base;
+>  };
+>  
+> -static void xgene_gpio_set_bit(struct gpio_chip *gc, void __iomem *reg, u32 gpio, int val)
+> +#define HWIRQ_TO_GPIO(priv, hwirq) ((hwirq) + (priv)->irq_start)
+> +#define GPIO_TO_HWIRQ(priv, gpio) ((gpio) - (priv)->irq_start)
+> +
+> +static void xgene_gpio_set_bit(struct gpio_chip *gc,
+> +				void __iomem *reg, u32 gpio, int val)
+>  {
+>  	u32 data;
+>  
+> @@ -63,23 +82,180 @@ static void xgene_gpio_set_bit(struct gpio_chip *gc, void __iomem *reg, u32 gpio
+>  	gc->write_reg(reg, data);
+>  }
+>  
+> -static int apm_gpio_sb_to_irq(struct gpio_chip *gc, u32 gpio)
+> +static int xgene_gpio_sb_irq_set_type(struct irq_data *d, unsigned int type)
+> +{
+> +	struct xgene_gpio_sb *priv = irq_data_get_irq_chip_data(d);
+> +	int gpio = HWIRQ_TO_GPIO(priv, d->hwirq);
+> +	int lvl_type = GPIO_INT_LEVEL_H;
+> +
+> +	switch (type & IRQ_TYPE_SENSE_MASK) {
+> +	case IRQ_TYPE_EDGE_RISING:
+> +	case IRQ_TYPE_LEVEL_HIGH:
+> +		lvl_type = GPIO_INT_LEVEL_H;
+> +		break;
+> +	case IRQ_TYPE_EDGE_FALLING:
+> +	case IRQ_TYPE_LEVEL_LOW:
+> +		lvl_type = GPIO_INT_LEVEL_L;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	xgene_gpio_set_bit(&priv->gc, priv->regs + MPA_GPIO_SEL_LO,
+> +			gpio * 2, 1);
+> +	xgene_gpio_set_bit(&priv->gc, priv->regs + MPA_GPIO_INT_LVL,
+> +			d->hwirq, lvl_type);
+> +
+> +	/* Propagate IRQ type setting to parent */
+> +	if (type & IRQ_TYPE_EDGE_BOTH)
+> +		return irq_chip_set_type_parent(d, IRQ_TYPE_EDGE_RISING);
+> +	else
+> +		return irq_chip_set_type_parent(d, IRQ_TYPE_LEVEL_HIGH);
+> +}
+> +
+> +static void xgene_gpio_sb_irq_shutdown(struct irq_data *d)
+> +{
+> +	struct xgene_gpio_sb *priv = irq_data_get_irq_chip_data(d);
+> +
+> +	gpiochip_unlock_as_irq(&priv->gc, HWIRQ_TO_GPIO(priv, d->hwirq));
+> +}
+> +
+> +static struct irq_chip xgene_gpio_sb_irq_chip = {
+> +	.name           = "sbgpio",
+> +	.irq_ack        = irq_chip_ack_parent,
 
-This is not specific to the APB bus, and the earlier SoC that
-introduced those kind of clocks was the A10, hence why I was
-suggesting that compatible (since we generally try to use the SoC that
-introduced that hardware block in the compatible name).
+There is no point calling irq_chip_ack_parent, as the GIC doesn't
+implement an irq_ack method at all.
 
-> Also, wouldn't this be cleaner if I use only specific compatible string
-> right now and provide separate patch that adds generic compatible string to
-> all current SoCs at once? The downside of this is that it's easier to get
-> merge conflicts unless I wait for applying this patchset.
+> +	.irq_eoi	= irq_chip_eoi_parent,
+> +	.irq_mask       = irq_chip_mask_parent,
+> +	.irq_unmask     = irq_chip_unmask_parent,
+> +	.irq_set_type   = xgene_gpio_sb_irq_set_type,
+> +	.irq_shutdown   = xgene_gpio_sb_irq_shutdown,
+> +};
+> +
+> +static int xgene_gpio_sb_to_irq(struct gpio_chip *gc, u32 gpio)
+>  {
+>  	struct xgene_gpio_sb *priv = gpiochip_get_data(gc);
+> +	struct irq_fwspec fwspec;
+> +
+> +	if ((gpio < priv->irq_start) ||
+> +			(gpio > HWIRQ_TO_GPIO(priv, priv->nirq)))
+> +		return -ENXIO;
+> +
+> +	if (gc->parent->of_node)
+> +		fwspec.fwnode = of_node_to_fwnode(gc->parent->of_node);
+> +	else
+> +		fwspec.fwnode = gc->parent->fwnode;
+> +	fwspec.param_count = 2;
+> +	fwspec.param[0] = GPIO_TO_HWIRQ(priv, gpio);
+> +	fwspec.param[1] = IRQ_TYPE_NONE;
+> +	return irq_create_fwspec_mapping(&fwspec);
+> +}
+> +
+> +static void xgene_gpio_sb_domain_activate(struct irq_domain *d,
+> +		struct irq_data *irq_data)
+> +{
+> +	struct xgene_gpio_sb *priv = d->host_data;
+> +	u32 gpio = HWIRQ_TO_GPIO(priv, irq_data->hwirq);
+> +
+> +	if (gpiochip_lock_as_irq(&priv->gc, gpio)) {
+> +		dev_err(priv->gc.parent,
+> +		"Unable to configure XGene GPIO standby pin %d as IRQ\n",
+> +				gpio);
+> +		return;
+> +	}
+> +
+> +	xgene_gpio_set_bit(&priv->gc, priv->regs + MPA_GPIO_SEL_LO,
+> +			gpio * 2, 1);
+> +}
+> +
+> +static void xgene_gpio_sb_domain_deactivate(struct irq_domain *d,
+> +		struct irq_data *irq_data)
+> +{
+> +	struct xgene_gpio_sb *priv = d->host_data;
+> +	u32 gpio = HWIRQ_TO_GPIO(priv, irq_data->hwirq);
+> +
+> +	gpiochip_unlock_as_irq(&priv->gc, gpio);
 
-I'd prefer if you added the generic one and were using it in your
-subsequent patches. We can always mass convert the existing drivers
-later on.
+Is it right to do the unlock both in irq_shutdown and domain_deactivate?
+This seems a bit odd to me to have such an inbalance. My hunch is that
+you should either implement irq_startup, do the locking there and drop
+the unlock drop deactivate, or kill irq_shutdown.
 
-Thanks!
-Maxime
+Linus, what do you think?
 
+> +	xgene_gpio_set_bit(&priv->gc, priv->regs + MPA_GPIO_SEL_LO,
+> +			gpio * 2, 0);
+> +}
+>  
+> -	if (priv->irq[gpio])
+> -		return priv->irq[gpio];
+> +static int xgene_gpio_sb_domain_translate(struct irq_domain *d,
+> +		struct irq_fwspec *fwspec,
+> +		unsigned long *hwirq,
+> +		unsigned int *type)
+> +{
+> +	struct xgene_gpio_sb *priv = d->host_data;
+> +
+> +	if ((fwspec->param_count != 2) ||
+> +		(fwspec->param[0] >= priv->nirq))
+> +		return -EINVAL;
+> +	*hwirq = fwspec->param[0];
+> +	*type = fwspec->param[1];
+> +	return 0;
+> +}
+> +
+> +static int xgene_gpio_sb_domain_alloc(struct irq_domain *domain,
+> +					unsigned int virq,
+> +					unsigned int nr_irqs, void *data)
+> +{
+> +	struct irq_fwspec *fwspec = data;
+> +	struct irq_fwspec parent_fwspec;
+> +	struct xgene_gpio_sb *priv = domain->host_data;
+> +	irq_hw_number_t hwirq;
+> +	unsigned int i;
+> +
+> +	hwirq = fwspec->param[0];
+> +	for (i = 0; i < nr_irqs; i++)
+> +		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
+> +				&xgene_gpio_sb_irq_chip, priv);
+> +
+> +	if (is_of_node(domain->parent->fwnode)) {
+> +		parent_fwspec.fwnode = domain->parent->fwnode;
+> +		parent_fwspec.param_count = 3;
+> +		parent_fwspec.param[0] = 0;/* SPI */
+> +		/* Skip SGIs and PPIs*/
+> +		parent_fwspec.param[1] = hwirq + priv->parent_irq_base - 32;
+> +		parent_fwspec.param[2] = fwspec->param[1];
+> +	} else if (is_fwnode_irqchip(domain->parent->fwnode)) {
+> +		parent_fwspec.fwnode = domain->parent->fwnode;
+
+nit: You can move this out of the if/else, and always assign the fwnode.
+
+> +		parent_fwspec.param_count = 2;
+> +		parent_fwspec.param[0] = hwirq + priv->parent_irq_base;
+> +		parent_fwspec.param[1] = fwspec->param[1];
+> +	} else
+> +		return -EINVAL;
+>  
+> -	return -ENXIO;
+> +	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
+> +			&parent_fwspec);
+>  }
+>  
+> +static void xgene_gpio_sb_domain_free(struct irq_domain *domain,
+> +		unsigned int virq,
+> +		unsigned int nr_irqs)
+> +{
+> +	struct irq_data *d;
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < nr_irqs; i++) {
+> +		d = irq_domain_get_irq_data(domain, virq + i);
+> +		irq_domain_reset_irq_data(d);
+> +	}
+> +}
+> +
+> +static const struct irq_domain_ops xgene_gpio_sb_domain_ops = {
+> +	.translate      = xgene_gpio_sb_domain_translate,
+> +	.alloc          = xgene_gpio_sb_domain_alloc,
+> +	.free           = xgene_gpio_sb_domain_free,
+> +	.activate	= xgene_gpio_sb_domain_activate,
+> +	.deactivate	= xgene_gpio_sb_domain_deactivate,
+> +};
+> +
+>  static int xgene_gpio_sb_probe(struct platform_device *pdev)
+>  {
+>  	struct xgene_gpio_sb *priv;
+> -	u32 ret, i;
+> -	u32 default_lines[] = {0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D};
+> +	u32 ret;
+>  	struct resource *res;
+>  	void __iomem *regs;
+> +	struct irq_domain *parent_domain = NULL;
+> +	struct fwnode_handle *fwnode;
+> +	u32 val32;
+>  
+>  	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+>  	if (!priv)
+> @@ -90,6 +266,18 @@ static int xgene_gpio_sb_probe(struct platform_device *pdev)
+>  	if (IS_ERR(regs))
+>  		return PTR_ERR(regs);
+>  
+> +	priv->regs = regs;
+> +
+> +	ret = platform_get_irq(pdev, 0);
+> +	if (ret > 0) {
+> +		priv->parent_irq_base = irq_get_irq_data(ret)->hwirq;
+> +		parent_domain = irq_get_irq_data(ret)->domain;
+> +	}
+> +	if (!parent_domain) {
+> +		dev_err(&pdev->dev, "unable to obtain parent domain\n");
+> +		return -ENODEV;
+> +	}
+> +
+>  	ret = bgpio_init(&priv->gc, &pdev->dev, 4,
+>  			regs + MPA_GPIO_IN_ADDR,
+>  			regs + MPA_GPIO_OUT_ADDR, NULL,
+> @@ -97,30 +285,51 @@ static int xgene_gpio_sb_probe(struct platform_device *pdev)
+>          if (ret)
+>                  return ret;
+>  
+> -	priv->gc.to_irq = apm_gpio_sb_to_irq;
+> -	priv->gc.ngpio = XGENE_MAX_GPIO_DS;
+> +	priv->gc.to_irq = xgene_gpio_sb_to_irq;
+>  
+> -	priv->nirq = XGENE_MAX_GPIO_DS_IRQ;
+> +	/* Retrieve start irq pin, use default if property not found */
+> +	priv->irq_start = XGENE_DFLT_IRQ_START_PIN;
+> +	if (!device_property_read_u32(&pdev->dev,
+> +					XGENE_IRQ_START_PROPERTY, &val32))
+
+Is that for ACPI as well?
+
+> +		priv->irq_start = val32;
+>  
+> -	priv->irq = devm_kzalloc(&pdev->dev, sizeof(u32) * XGENE_MAX_GPIO_DS,
+> -				   GFP_KERNEL);
+> -	if (!priv->irq)
+> -		return -ENOMEM;
+> +	/* Retrieve number irqs, use default if property not found */
+> +	priv->nirq = XGENE_DFLT_MAX_NIRQ;
+> +	if (!device_property_read_u32(&pdev->dev, XGENE_NIRQ_PROPERTY, &val32))
+> +		priv->nirq = val32;
+>  
+> -	for (i = 0; i < priv->nirq; i++) {
+> -		priv->irq[default_lines[i]] = platform_get_irq(pdev, i);
+> -		xgene_gpio_set_bit(&priv->gc, regs + MPA_GPIO_SEL_LO,
+> -                                   default_lines[i] * 2, 1);
+> -		xgene_gpio_set_bit(&priv->gc, regs + MPA_GPIO_INT_LVL, i, 1);
+> -	}
+> +	/* Retrieve number gpio, use default if property not found */
+> +	priv->gc.ngpio = XGENE_DFLT_MAX_NGPIO;
+> +	if (!device_property_read_u32(&pdev->dev, XGENE_NGPIO_PROPERTY, &val32))
+> +		priv->gc.ngpio = val32;
+> +
+> +	dev_info(&pdev->dev, "Support %d gpios, %d irqs start from pin %d\n",
+> +			priv->gc.ngpio, priv->nirq, priv->irq_start);
+>  
+>  	platform_set_drvdata(pdev, priv);
+>  
+> -	ret = gpiochip_add_data(&priv->gc, priv);
+> -	if (ret)
+> -		dev_err(&pdev->dev, "failed to register X-Gene GPIO Standby driver\n");
+> +	if (pdev->dev.of_node)
+> +		fwnode = of_node_to_fwnode(pdev->dev.of_node);
+>  	else
+> -		dev_info(&pdev->dev, "X-Gene GPIO Standby driver registered\n");
+> +		fwnode = pdev->dev.fwnode;
+> +
+> +	priv->irq_domain = irq_domain_create_hierarchy(parent_domain,
+> +					0, priv->nirq, fwnode,
+> +					&xgene_gpio_sb_domain_ops, priv);
+> +	if (!priv->irq_domain)
+> +		return -ENODEV;
+> +
+> +	priv->gc.irqdomain = priv->irq_domain;
+> +
+> +	ret = gpiochip_add_data(&priv->gc, priv);
+> +	if (ret) {
+> +		dev_err(&pdev->dev,
+> +			"failed to register X-Gene GPIO Standby driver\n");
+> +		irq_domain_remove(priv->irq_domain);
+> +		return ret;
+> +	}
+> +
+> +	dev_info(&pdev->dev, "X-Gene GPIO Standby driver registered\n");
+>  
+>  	if (priv->nirq > 0) {
+>  		/* Register interrupt handlers for gpio signaled acpi events */
+> @@ -138,6 +347,8 @@ static int xgene_gpio_sb_remove(struct platform_device *pdev)
+>  		acpi_gpiochip_free_interrupts(&priv->gc);
+>  	}
+>  
+> +	irq_domain_remove(priv->irq_domain);
+> +
+>  	gpiochip_remove(&priv->gc);
+>  	return 0;
+>  }
+> 
+
+Thanks,
+
+	M.
 -- 
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
---k7W93gQNhKgsYkEv--
+Jazz is not dead. It just smells funny...
