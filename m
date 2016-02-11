@@ -1,183 +1,58 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7794: add audio clock pin groups
-Date: Thu, 11 Feb 2016 01:39:46 +0300
-Message-ID: <1876448.Lp5JdyxM73@wasted.cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH] gpio: tps65086: Add GPO driver for the TPS65086 PMIC
+Date: Thu, 11 Feb 2016 09:20:43 +0000
+Message-ID: <20160211092043.GF3782@x1>
+References: <1454775130-15995-1-git-send-email-afd@ti.com>
+ <CACRpkdZqe6gBoPMq0otn13HFx0pHGij0em1KD6BS6bNLFE_Vdg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org, geert+renesas@glider.be
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:38621 "EHLO
+	mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750800AbcBKJUr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Feb 2016 04:20:47 -0500
+Received: by mail-wm0-f44.google.com with SMTP id p63so59547509wmp.1
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Feb 2016 01:20:46 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZqe6gBoPMq0otn13HFx0pHGij0em1KD6BS6bNLFE_Vdg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "Andrew F. Davis" <afd@ti.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Ryo Kataoka <ryo.kataoka.wt@renesas.com>
+On Wed, 10 Feb 2016, Linus Walleij wrote:
 
-Add the audio clock pin groups to the R8A7794 PFC driver.
+> On Sat, Feb 6, 2016 at 5:12 PM, Andrew F. Davis <afd@ti.com> wrote:
+>=20
+> > Add support for the TPS65086 PMIC GPOs.
+> >
+> > TPS65086 has four configurable GPOs that can be used for several
+> > purposes. These are output only.
+> >
+> > Signed-off-by: Andrew F. Davis <afd@ti.com>
+> > ---
+> > This is the last component of the tps65086 series, other parts have
+> > been taken already, this will probably need to be taken through the
+> > MFD tree due to header dependencies.
+>=20
+> Lee: go ahead.
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-[Sergei:  fixed pin group names to reflect the reality, fixed pin names in
-the comments to *_pins[], lowercased the separator comment, resolved rejects,
-added the changelog, renamed the patch.]
+Very well, applied.
 
-Signed-off-by: Ryo Kataoka <ryo.kataoka.wt@renesas.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+I also know Linus W likes dicing with death, so this is going into my
+main branch.  As this is a new driver, it shouldn't be an issue;
+however, it does mean that any changes you make (hopefully none)
+during this cycle will also have to come through the MFD tree.
 
----
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  122 +++++++++++++++++++++++++++++++++++
- 1 file changed, 122 insertions(+)
-
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -1491,6 +1491,98 @@ static const struct sh_pfc_pin pinmux_pi
- 	PINMUX_GPIO_GP_ALL(),
- };
- 
-+/* - Audio Clock ------------------------------------------------------------ */
-+static const unsigned int audio_clka_pins[] = {
-+	/* CLKA */
-+	RCAR_GP_PIN(5, 20),
-+};
-+static const unsigned int audio_clka_mux[] = {
-+	AUDIO_CLKA_MARK,
-+};
-+static const unsigned int audio_clka_b_pins[] = {
-+	/* CLKA */
-+	RCAR_GP_PIN(3, 25),
-+};
-+static const unsigned int audio_clka_b_mux[] = {
-+	AUDIO_CLKA_B_MARK,
-+};
-+static const unsigned int audio_clka_c_pins[] = {
-+	/* CLKA */
-+	RCAR_GP_PIN(4, 20),
-+};
-+static const unsigned int audio_clka_c_mux[] = {
-+	AUDIO_CLKA_C_MARK,
-+};
-+static const unsigned int audio_clka_d_pins[] = {
-+	/* CLKA */
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int audio_clka_d_mux[] = {
-+	AUDIO_CLKA_D_MARK,
-+};
-+static const unsigned int audio_clkb_pins[] = {
-+	/* CLKB */
-+	RCAR_GP_PIN(5, 21),
-+};
-+static const unsigned int audio_clkb_mux[] = {
-+	AUDIO_CLKB_MARK,
-+};
-+static const unsigned int audio_clkb_b_pins[] = {
-+	/* CLKB */
-+	RCAR_GP_PIN(3, 26),
-+};
-+static const unsigned int audio_clkb_b_mux[] = {
-+	AUDIO_CLKB_B_MARK,
-+};
-+static const unsigned int audio_clkb_c_pins[] = {
-+	/* CLKB */
-+	RCAR_GP_PIN(4, 21),
-+};
-+static const unsigned int audio_clkb_c_mux[] = {
-+	AUDIO_CLKB_C_MARK,
-+};
-+static const unsigned int audio_clkc_pins[] = {
-+	/* CLKC */
-+	RCAR_GP_PIN(5, 22),
-+};
-+static const unsigned int audio_clkc_mux[] = {
-+	AUDIO_CLKC_MARK,
-+};
-+static const unsigned int audio_clkc_b_pins[] = {
-+	/* CLKC */
-+	RCAR_GP_PIN(3, 29),
-+};
-+static const unsigned int audio_clkc_b_mux[] = {
-+	AUDIO_CLKC_B_MARK,
-+};
-+static const unsigned int audio_clkc_c_pins[] = {
-+	/* CLKC */
-+	RCAR_GP_PIN(4, 22),
-+};
-+static const unsigned int audio_clkc_c_mux[] = {
-+	AUDIO_CLKC_C_MARK,
-+};
-+static const unsigned int audio_clkout_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(5, 23),
-+};
-+static const unsigned int audio_clkout_mux[] = {
-+	AUDIO_CLKOUT_MARK,
-+};
-+static const unsigned int audio_clkout_b_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(3, 12),
-+};
-+static const unsigned int audio_clkout_b_mux[] = {
-+	AUDIO_CLKOUT_B_MARK,
-+};
-+static const unsigned int audio_clkout_c_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(4, 23),
-+};
-+static const unsigned int audio_clkout_c_mux[] = {
-+	AUDIO_CLKOUT_C_MARK,
-+};
- /* - ETH -------------------------------------------------------------------- */
- static const unsigned int eth_link_pins[] = {
- 	/* LINK */
-@@ -3150,6 +3242,19 @@ static const unsigned int vin1_clk_mux[]
- };
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(audio_clka),
-+	SH_PFC_PIN_GROUP(audio_clka_b),
-+	SH_PFC_PIN_GROUP(audio_clka_c),
-+	SH_PFC_PIN_GROUP(audio_clka_d),
-+	SH_PFC_PIN_GROUP(audio_clkb),
-+	SH_PFC_PIN_GROUP(audio_clkb_b),
-+	SH_PFC_PIN_GROUP(audio_clkb_c),
-+	SH_PFC_PIN_GROUP(audio_clkc),
-+	SH_PFC_PIN_GROUP(audio_clkc_b),
-+	SH_PFC_PIN_GROUP(audio_clkc_c),
-+	SH_PFC_PIN_GROUP(audio_clkout),
-+	SH_PFC_PIN_GROUP(audio_clkout_b),
-+	SH_PFC_PIN_GROUP(audio_clkout_c),
- 	SH_PFC_PIN_GROUP(eth_link),
- 	SH_PFC_PIN_GROUP(eth_magic),
- 	SH_PFC_PIN_GROUP(eth_mdio),
-@@ -3379,6 +3484,22 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(vin1_clk),
- };
- 
-+static const char * const audio_clk_groups[] = {
-+	"audio_clka",
-+	"audio_clka_b",
-+	"audio_clka_c",
-+	"audio_clka_d",
-+	"audio_clkb",
-+	"audio_clkb_b",
-+	"audio_clkb_c",
-+	"audio_clkc",
-+	"audio_clkc_b",
-+	"audio_clkc_c",
-+	"audio_clkout",
-+	"audio_clkout_b",
-+	"audio_clkout_c",
-+};
-+
- static const char * const eth_groups[] = {
- 	"eth_link",
- 	"eth_magic",
-@@ -3724,6 +3845,7 @@ static const char * const vin1_groups[]
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(eth),
- 	SH_PFC_FUNCTION(hscif0),
- 	SH_PFC_FUNCTION(hscif1),
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
