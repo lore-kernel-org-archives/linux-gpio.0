@@ -1,55 +1,55 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: intel: Turn Baytrail support to tristate
-Date: Thu, 11 Feb 2016 13:23:17 +0200
-Message-ID: <20160211112317.GT16826@lahna.fi.intel.com>
-References: <20160211120551.4d8224a4@endymion>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: add tps65218 gpio
+Date: Thu, 11 Feb 2016 12:25:57 +0100
+Message-ID: <CACRpkdZqZ946xQcnh_cmGgx4P4_ovSk7HQWuwnzZtJUzFw8n3Q@mail.gmail.com>
+References: <1454173604-22334-1-git-send-email-nicolassaenzj@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:49044 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751240AbcBKLXV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 11 Feb 2016 06:23:21 -0500
-Content-Disposition: inline
-In-Reply-To: <20160211120551.4d8224a4@endymion>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:34208 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751248AbcBKLZ6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Feb 2016 06:25:58 -0500
+Received: by mail-ob0-f169.google.com with SMTP id wb13so69600958obb.1
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Feb 2016 03:25:58 -0800 (PST)
+In-Reply-To: <1454173604-22334-1-git-send-email-nicolassaenzj@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: linux-gpio@vger.kernel.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@intel.com>
+To: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Feb 11, 2016 at 12:05:51PM +0100, Jean Delvare wrote:
-> The pinctrl-baytrail driver builds just fine as a module so give
-> users this option.
+On Sat, Jan 30, 2016 at 6:06 PM, Nicolas Saenz Julienne
+<nicolassaenzj@gmail.com> wrote:
 
-IIRC the reason why this is built-in is that there are all kind of ACPI
-GPIO magic happening behind the scenes on Baytrail-T based machines
-(such as Asus T100) and it does not work without the GPIO driver. Some
-of the stuff is done pretty early too.
+> Driver for the GPIO block found in ti's tps65218 pmics.
+>
+> The device has two GPIOs and one GPO pin which can be configured as follows:
+> GPIO1:
+>         -general-purpose, open-drain output controlled by GPO1 user bit and/or
+>          sequencer
+>         -DDR3 reset input signal from SOC. Signal is either latched or
+>          passed-trough to GPO2 pin. See below for details.
+> GPO2:
+>         -general-purpose output controlled by GPO2 user bit
+>         -DDR3 reset output signal. Signal is controlled by GPIO1 and PGOOD.
+>          See below for details.
+>         -Output buffer can be configured as open-drain or push-pull.
+> GPIO3:
+>         -general-purpose, open-drain output controlled by GPO3 user bit and/or
+>          sequencer
+>         -reset input-signal for DCDC1 and DCDC2.
+>
+> The input configurations are not meant to be used by the user so the driver
+> only offers GPOs.
+>
+> v2: Added request routine that evaluates the fw config flags and removed module
+>     owner
+> v3: Added .direction_input() routine, and took care of all Linus Walleij
+> suggestions (clamp to bool, use proper include)
+>
+> Signed-off-by: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
 
-I'm adding Mathias the original author of the driver if he remembers
-the details better.
+OK nice! Patch applied.
 
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/pinctrl/intel/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- linux-4.5-rc3.orig/drivers/pinctrl/intel/Kconfig	2016-01-11 00:01:32.000000000 +0100
-> +++ linux-4.5-rc3/drivers/pinctrl/intel/Kconfig	2016-02-11 10:55:54.817711599 +0100
-> @@ -3,7 +3,7 @@
->  #
->  
->  config PINCTRL_BAYTRAIL
-> -	bool "Intel Baytrail GPIO pin control"
-> +	tristate "Intel Baytrail GPIO pin control"
->  	depends on GPIOLIB && ACPI
->  	select GPIOLIB_IRQCHIP
->  	help
-> 
-> 
-> -- 
-> Jean Delvare
-> SUSE L3 Support
+Yours,
+Linus Walleij
