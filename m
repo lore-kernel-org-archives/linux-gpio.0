@@ -1,71 +1,103 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: [GIT PULL] Immutable branch between MFD, GPIO and Regulator due for
- v4.6
-Date: Thu, 11 Feb 2016 16:54:51 +0000
-Message-ID: <20160211165451.GC20693@x1>
-References: <1453736627-2634-1-git-send-email-afd@ti.com>
+Subject: Re: [PATCH 2/3] mfd: lpc_ich: use a correct mask for the GPIO base
+ address
+Date: Thu, 11 Feb 2016 17:12:38 +0000
+Message-ID: <20160211171238.GJ20693@x1>
+References: <1453566729-30220-1-git-send-email-antoine.tenart@free-electrons.com>
+ <1453566729-30220-3-git-send-email-antoine.tenart@free-electrons.com>
+ <20160125124444.GJ3368@x1>
+ <1453738070.1770.74.camel@xes-inc.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:36073 "EHLO
-	mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751113AbcBKQy4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Feb 2016 11:54:56 -0500
-Received: by mail-wm0-f53.google.com with SMTP id p63so82327225wmp.1
-        for <linux-gpio@vger.kernel.org>; Thu, 11 Feb 2016 08:54:56 -0800 (PST)
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:38749 "EHLO
+	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750863AbcBKRMn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Feb 2016 12:12:43 -0500
+Received: by mail-wm0-f47.google.com with SMTP id p63so77516375wmp.1
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Feb 2016 09:12:42 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1453736627-2634-1-git-send-email-afd@ti.com>
+In-Reply-To: <1453738070.1770.74.camel@xes-inc.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Tyser <ptyser@xes-inc.com>
+Cc: Antoine Tenart <antoine.tenart@free-electrons.com>, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Enjoy!
+On Mon, 25 Jan 2016, Peter Tyser wrote:
 
-The following changes since commit 36f90b0a2ddd60823fe193a85e60ff1906c2=
-a9b3:
+>=20
+> On Mon, 2016-01-25 at 12:44 +0000, Lee Jones wrote:
+> > On Sat, 23 Jan 2016, Antoine Tenart wrote:
+> >=20
+> > > The GPIO base address is read from the GPIOBASE register. The fir=
+st
+> > > bit must be cleared as it can be hardwired to 1 to represent the =
+i/o
+> > > space. Other bits are either containing the base address of are
+> > > reserved. They should not be cleared as all the chipsets do not h=
+ave
+> > > the same reserved bits.
+> > >=20
+> > > Signed-off-by: Antoine Tenart tenart@free-electrons.com>
+> > > ---
+> > >  drivers/mfd/lpc_ich.c | 5 ++++-
+> > >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >=20
+> > Applied, thanks.
+>=20
+> Is it possible to hold off on the application of the change Lee?
 
-  Linux 4.5-rc2 (2016-01-31 18:12:16 -0800)
+Patch unapplied.
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd=
--regulator-gpio-v4.5
-
-for you to fetch changes up to ca801a22f465eae39fadc770e15b5b7e82595f81=
-:
-
-  gpio: tps65912: Add GPIO driver for the TPS65912 PMIC (2016-02-11 16:=
-31:12 +0000)
-
-----------------------------------------------------------------
-Immutable branch between MFD, GPIO and Regulator due for v4.6
-
-----------------------------------------------------------------
-Andrew F. Davis (5):
-      Documentation: tps65912: Add DT bindings for the TPS65912 PMIC
-      mfd: tps65912: Remove old driver in preparation for new driver
-      mfd: tps65912: Add driver for the TPS65912 PMIC
-      regulator: tps65912: Add regulator driver for the TPS65912 PMIC
-      gpio: tps65912: Add GPIO driver for the TPS65912 PMIC
-
- Documentation/devicetree/bindings/mfd/tps65912.txt |  50 ++
- drivers/gpio/Kconfig                               |   2 +-
- drivers/gpio/gpio-tps65912.c                       | 171 +++---
- drivers/mfd/Kconfig                                |  20 +-
- drivers/mfd/Makefile                               |   3 +-
- drivers/mfd/tps65912-core.c                        | 240 +++-----
- drivers/mfd/tps65912-i2c.c                         | 162 ++----
- drivers/mfd/tps65912-irq.c                         | 217 --------
- drivers/mfd/tps65912-spi.c                         | 160 ++----
- drivers/regulator/Kconfig                          |   2 +-
- drivers/regulator/tps65912-regulator.c             | 613 ++++---------=
---------
- include/linux/mfd/tps65912.h                       | 209 +++----
- 12 files changed, 570 insertions(+), 1279 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/tps65912.txt
- delete mode 100644 drivers/mfd/tps65912-irq.c
+> > > diff --git a/drivers/mfd/lpc_ich.c b/drivers/mfd/lpc_ich.c
+> > > index b514f3cf140d..f13a5ded3958 100644
+> > > --- a/drivers/mfd/lpc_ich.c
+> > > +++ b/drivers/mfd/lpc_ich.c
+> > > @@ -921,7 +921,10 @@ static int lpc_ich_init_gpio(struct pci_dev =
+*dev)
+> > >  gpe0_done:
+> > >         /* Setup GPIO base register */
+> > >         pci_read_config_dword(dev, priv->gbase, &base_addr_cfg);
+> > > -       base_addr =3D base_addr_cfg & 0x0000ff80;
+> > > +
+> > > +       /* Clear the i/o flag */
+> > > +       base_addr =3D base_addr_cfg & ~BIT(0);
+> > > +
+>=20
+>=20
+> Does this patch work around an issue you are seeing?  Looking at the =
+Bay=20
+> Trail EDS, the GPIO base address register looks like it should work f=
+ine=20
+> with the original code (it uses 0xff00 as a mask for the address, and=
+=20
+> reserves 0x80 which reads as a 0).  Also, Bay Trail bit 1 is an enabl=
+e=20
+> flag, which this patch wouldn't mask off.  Eg if the BIOS enables the=
+ GPIO=20
+> controller and sets the enable bit, I think things would break with t=
+his=20
+> patch.
+>=20
+> It's also scary to not mask off the reserved bits on other Intel chip=
+sets -
+> you're assuming they all read as 0 and I'm not sure if this is true o=
+r=20
+> not.  The patch also doesn't make the same change to the other base=20
+> register reads either, and ideally they'd be kept in sync.
+>=20
+> Seems like things should be left as-is, or use an accurate chip-speci=
+fic=20
+> mask.
+>=20
+> I'd leave as-is personally.  Like Mika mentioned, Baytrail GPIO shoul=
+d=20
+> already be supported elsewhere, which should make this change unneces=
+sary.
+>=20
+> Regards,
+> Peter
 
 --=20
 Lee Jones
