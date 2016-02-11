@@ -1,83 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio/pinctrl: sunxi: stop poking around in private vars
-Date: Thu, 11 Feb 2016 20:29:03 +0100
-Message-ID: <1455218943-25917-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:36214 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750974AbcBKT3K (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Feb 2016 14:29:10 -0500
-Received: by mail-lb0-f171.google.com with SMTP id tk3so21253966lbb.3
-        for <linux-gpio@vger.kernel.org>; Thu, 11 Feb 2016 11:29:09 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v3 5/5] arm: dts: Add pinctrl/GPIO/EINT node for mt2701
+Date: Fri, 12 Feb 2016 00:27:40 +0100
+Message-ID: <56BD18EC.3090601@gmail.com>
+References: <1451286546-5920-1-git-send-email-biao.huang@mediatek.com>
+ <1451286546-5920-6-git-send-email-biao.huang@mediatek.com>
+ <5685104D.7070008@gmail.com>
+ <CACRpkdbc-tNaeMzzX2riwUFPp0-XjVfvjuM6knWzVVwP89ECdA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbc-tNaeMzzX2riwUFPp0-XjVfvjuM6knWzVVwP89ECdA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Biao Huang <biao.huang@mediatek.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, srv_heupstream@mediatek.com, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
 
-This kind of hacks disturbs the refactoring of the gpiolib.
 
-The descriptor table belongs to the gpiolib, if we want to know
-something about something in it, use or define the proper accessor
-functions. Let's add this gpiochip_lins_is_irq() to do what the
-sunxi driver is trying at so we can privatize the descriptors
-properly.
 
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib.c                | 9 +++++++++
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 4 ++--
- include/linux/gpio/driver.h           | 1 +
- 3 files changed, 12 insertions(+), 2 deletions(-)
+On 07/01/16 11:14, Linus Walleij wrote:
+> On Thu, Dec 31, 2015 at 12:23 PM, Matthias Brugger
+> <matthias.bgg@gmail.com> wrote:
+>> On 28/12/15 08:09, Biao Huang wrote:
+>>>
+>>> Add pinctrl and GPIO node to mt2701.dtsi
+>>>
+>>> Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+>>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>>> ---
+>>>    arch/arm/boot/dts/mt2701.dtsi |   19 +++++++++++++++++++
+>>>    1 file changed, 19 insertions(+)
+>>>
+>>
+>> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+>>
+>> Linus, will you take this patch through your branch?
+>
+> No I prefer anything in arch/arm/boot/dts/* to go in through
+> the ARM SoC tree.
+>
+> It can usually be merged orthogonally anyways.
+>
+> I take Documenation/devicetree/bindings/* and patches
+> to the driver itself in drivers/pinctrl/*
+>
+> Yours,
+> Linus Walleij
+>
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index a60c6f28675e..aa4a60e19339 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1892,6 +1892,15 @@ void gpiochip_unlock_as_irq(struct gpio_chip *chip, unsigned int offset)
- }
- EXPORT_SYMBOL_GPL(gpiochip_unlock_as_irq);
- 
-+bool gpiochip_line_is_irq(struct gpio_chip *chip, unsigned int offset)
-+{
-+	if (offset >= chip->ngpio)
-+		return false;
-+
-+	return test_bit(FLAG_USED_AS_IRQ, &chip->gpiodev->descs[offset].flags);
-+}
-+EXPORT_SYMBOL_GPL(gpiochip_line_is_irq);
-+
- /**
-  * gpiod_get_raw_value_cansleep() - return a gpio's raw value
-  * @desc: gpio whose value will be returned
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 7a2465f5e71e..3e95bfe66a06 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -457,8 +457,8 @@ static int sunxi_pinctrl_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	struct sunxi_pinctrl *pctl = gpiochip_get_data(chip);
- 	u32 reg = sunxi_data_reg(offset);
- 	u8 index = sunxi_data_offset(offset);
--	u32 set_mux = pctl->desc->irq_read_needs_mux &&
--			test_bit(FLAG_USED_AS_IRQ, &chip->desc[offset].flags);
-+	bool set_mux = pctl->desc->irq_read_needs_mux &&
-+		gpiochip_line_is_irq(chip, offset);
- 	u32 val;
- 
- 	if (set_mux)
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 363bf0eab6d0..b92ab9efdb69 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -197,6 +197,7 @@ extern struct gpio_chip *gpiochip_find(void *data,
- /* lock/unlock as IRQ */
- int gpiochip_lock_as_irq(struct gpio_chip *chip, unsigned int offset);
- void gpiochip_unlock_as_irq(struct gpio_chip *chip, unsigned int offset);
-+bool gpiochip_line_is_irq(struct gpio_chip *chip, unsigned int offset);
- 
- /* get driver data */
- void *gpiochip_get_data(struct gpio_chip *chip);
--- 
-2.4.3
-
+Applied, thanks.
