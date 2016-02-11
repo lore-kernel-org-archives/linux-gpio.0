@@ -1,17 +1,17 @@
 From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 01/14] pinctrl: sunxi: Add A83T R_PIO
- controller support
-Date: Thu, 11 Feb 2016 14:47:57 +0100
-Message-ID: <CACRpkdaGZ4-S1A9zUUaBXXEazyJf_uZ4ESiBhw-CpozXMxfDHg@mail.gmail.com>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
-	<1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
-	<CACRpkdbCgOBQw28d=qc1fAURY3x8UdoWqiMtXMZ=uWLaQj-nbg@mail.gmail.com>
-	<20160211123648.GN31506@lukather>
+Subject: Re: Re: [PATCH v2 5/5] pinctrl: sunxi: Use pin number
+ when calling sunxi_pmx_set
+Date: Thu, 11 Feb 2016 14:50:43 +0100
+Message-ID: <CACRpkdZ889rktgaR3o--9cSsouORocV8TeBRGVkiwHpK3VNSGw@mail.gmail.com>
+References: <1454448113-18810-1-git-send-email-k@japko.eu>
+	<1454448113-18810-6-git-send-email-k@japko.eu>
+	<CACRpkdbc0SfKiCGwUGA2fAPPsUhGv=qGV607Lht6ByYKKgTHjA@mail.gmail.com>
+	<20160211132054.GC19622@box2.japko.eu>
 Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBDVC6K2QKGQER2DI4DY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <20160211123648.GN31506@lukather>
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBM5D6K2QKGQEAPOVR7A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <20160211132054.GC19622-xLeyfSbClftGit24Ens98Q@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Archive: <https://groups.google.com/group/linux-sunxi
@@ -19,33 +19,37 @@ Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
  <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Emilio Lopez <emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Reind
+To: Krzysztof Adamski <k@japko.eu>
+Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 11, 2016 at 1:36 PM, Maxime Ripard
-<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> On Thu, Feb 11, 2016 at 12:59:47PM +0100, Linus Walleij wrote:
->> On Sun, Jan 31, 2016 at 2:20 AM, Vishnu Patekar
->> <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+On Thu, Feb 11, 2016 at 2:20 PM, Krzysztof Adamski <k@japko.eu> wrote:
+> On Thu, Feb 11, 2016 at 02:17:41PM +0100, Linus Walleij wrote:
 >>
->> > The A83T has R_PIO pin controller, it's same as A23, execpt A83T
->> > interrupt bit is 6th and A83T has one extra pin PL12.
->> >
->> > Signed-off-by: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> On Tue, Feb 2, 2016 at 10:21 PM, Krzysztof Adamski <k@japko.eu> wrote:
 >>
->> Maxime, can you look at this patch?
+>>> sunxi_pmx_set accepts pin number and then calculates offset by
+>>> subtracting pin_base from it. sunxi_pinctrl_gpio_get, on the other hand,
+>>> gets offset so we have to convert it to pin number so we won't get
+>>> negative value in sunxi_pmx_set.
+>>>
+>>> This was only used on A10 so far, where there is only one GPIO chip with
+>>> pin_base set to 0 so it didn't matter. However H3 also requires this
+>>> workaround but have two pinmux sections, triggering problem for PL port.
+>>>
+>>> Signed-off-by: Krzysztof Adamski <k@japko.eu>
+>>
+>>
+>> Waiting for Maxime to review this. I guess this patch can be merged
+>> independently of the other patches?
 >
-> Chen-Yu had one minor comment on it,
+> Yes it can but it won't have any effect, as stated in the commit message,
+> since other SoCs either don't use this flag or have only one port so theri
+> pin_base=0.
 
-OK waiting for a new version.
+Who cares as long as it will be used eventually.
 
-> and he's also the Allwinner
-> maintainer now, so you can trust his Acked-by just like you would
-> trust mine ;)
-
-Can you guys supply a MAINTAINERS entry for the sunxi
-stuff?
+Merged v4 as stated earlier.
 
 Yours,
 Linus Walleij
