@@ -1,55 +1,41 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: Re: [PATCH v2 5/5] pinctrl: sunxi: Use pin number
- when calling sunxi_pmx_set
-Date: Thu, 11 Feb 2016 14:50:43 +0100
-Message-ID: <CACRpkdZ889rktgaR3o--9cSsouORocV8TeBRGVkiwHpK3VNSGw@mail.gmail.com>
-References: <1454448113-18810-1-git-send-email-k@japko.eu>
-	<1454448113-18810-6-git-send-email-k@japko.eu>
-	<CACRpkdbc0SfKiCGwUGA2fAPPsUhGv=qGV607Lht6ByYKKgTHjA@mail.gmail.com>
-	<20160211132054.GC19622@box2.japko.eu>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 2/2] dt-bindings: rockchip-pinctrl: Support the RK3399
+ SoCs compatible
+Date: Thu, 11 Feb 2016 14:52:42 +0100
+Message-ID: <CACRpkdZvS2RY2LqFQ1dMz8vecMgG7zmxw8JEj5KLTiqYCSsJ=w@mail.gmail.com>
+References: <1451997055-47655-1-git-send-email-wdc@rock-chips.com>
+	<1454153517-52969-1-git-send-email-david.wu@rock-chips.com>
+	<1454153517-52969-3-git-send-email-david.wu@rock-chips.com>
+	<14543443.RsRWh5K5Uv@phil>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBM5D6K2QKGQEAPOVR7A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <20160211132054.GC19622-xLeyfSbClftGit24Ens98Q@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Krzysztof Adamski <k@japko.eu>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:36364 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752252AbcBKNwm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Feb 2016 08:52:42 -0500
+Received: by mail-ob0-f172.google.com with SMTP id ba1so73475037obb.3
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Feb 2016 05:52:42 -0800 (PST)
+In-Reply-To: <14543443.RsRWh5K5Uv@phil>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: David Wu <david.wu@rock-chips.com>, Tao Huang <huangtao@rock-chips.com>, Chris Zhong <zyw@rock-chips.com>, Eddie Cai <cf@rock-chips.com>, Jianqun Xu <xjq@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Feb 11, 2016 at 2:20 PM, Krzysztof Adamski <k@japko.eu> wrote:
-> On Thu, Feb 11, 2016 at 02:17:41PM +0100, Linus Walleij wrote:
->>
->> On Tue, Feb 2, 2016 at 10:21 PM, Krzysztof Adamski <k@japko.eu> wrote:
->>
->>> sunxi_pmx_set accepts pin number and then calculates offset by
->>> subtracting pin_base from it. sunxi_pinctrl_gpio_get, on the other hand,
->>> gets offset so we have to convert it to pin number so we won't get
->>> negative value in sunxi_pmx_set.
->>>
->>> This was only used on A10 so far, where there is only one GPIO chip with
->>> pin_base set to 0 so it didn't matter. However H3 also requires this
->>> workaround but have two pinmux sections, triggering problem for PL port.
->>>
->>> Signed-off-by: Krzysztof Adamski <k@japko.eu>
->>
->>
->> Waiting for Maxime to review this. I guess this patch can be merged
->> independently of the other patches?
+On Sat, Jan 30, 2016 at 1:16 PM, Heiko Stuebner <heiko@sntech.de> wrote:
+> Hi David,
 >
-> Yes it can but it won't have any effect, as stated in the commit message,
-> since other SoCs either don't use this flag or have only one port so theri
-> pin_base=0.
+> Am Samstag, 30. Januar 2016, 19:31:57 schrieb David Wu:
+>> Change-Id: Ic1bdb3dc358837e97d7b48dd58be2f8d9d08d766
+>
+> please no Change-Id, it's missing the Signed-off, and as Linus Walleij said,
+> the compatible addition to the documentation can maybe stay in the pinctrl-
+> patch itself.
+>
+> I think both Linus and me overlooked that the binding-doc-addition was
+> already correctly included in your v2 patch at the top :-)
 
-Who cares as long as it will be used eventually.
-
-Merged v4 as stated earlier.
+Yeah I merged that now anyways so the string is there.
 
 Yours,
 Linus Walleij
