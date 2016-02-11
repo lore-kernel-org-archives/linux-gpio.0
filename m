@@ -1,64 +1,51 @@
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: Re: Can't pinctrl-baytrail be a module?
-Date: Thu, 11 Feb 2016 15:44:28 +0200
-Message-ID: <56BC903C.9000008@linux.intel.com>
-References: <s5hwpqbh0v7.wl-tiwai@suse.de>	<20160211125645.GU16826@lahna.fi.intel.com> <s5hpow3gzt3.wl-tiwai@suse.de>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 01/14] pinctrl: sunxi: Add A83T R_PIO
+ controller support
+Date: Thu, 11 Feb 2016 14:47:57 +0100
+Message-ID: <CACRpkdaGZ4-S1A9zUUaBXXEazyJf_uZ4ESiBhw-CpozXMxfDHg@mail.gmail.com>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+	<1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
+	<CACRpkdbCgOBQw28d=qc1fAURY3x8UdoWqiMtXMZ=uWLaQj-nbg@mail.gmail.com>
+	<20160211123648.GN31506@lukather>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:51007 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751558AbcBKNie (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 11 Feb 2016 08:38:34 -0500
-In-Reply-To: <s5hpow3gzt3.wl-tiwai@suse.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBDVC6K2QKGQER2DI4DY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <20160211123648.GN31506@lukather>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Emilio Lopez <emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Reind
 List-Id: linux-gpio@vger.kernel.org
-To: Takashi Iwai <tiwai@suse.de>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jean Delvare <jdelvare@suse.de>
 
-On 11.02.2016 15:08, Takashi Iwai wrote:
-> On Thu, 11 Feb 2016 13:56:45 +0100,
-> Mika Westerberg wrote:
+On Thu, Feb 11, 2016 at 1:36 PM, Maxime Ripard
+<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+> On Thu, Feb 11, 2016 at 12:59:47PM +0100, Linus Walleij wrote:
+>> On Sun, Jan 31, 2016 at 2:20 AM, Vishnu Patekar
+>> <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 >>
->> +Jean and Mathias
+>> > The A83T has R_PIO pin controller, it's same as A23, execpt A83T
+>> > interrupt bit is 6th and A83T has one extra pin PL12.
+>> >
+>> > Signed-off-by: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 >>
->> On Thu, Feb 11, 2016 at 01:45:16PM +0100, Takashi Iwai wrote:
->>> Hi,
->>>
->>> while discussing whether to enable pinctrl drivers on openSUSE distro
->>> kernels, I wonder why pinctrl-baytrail is built-in only.  Basically
->>> the forced built-in is the only reason against the enablement in
->>> distro kernels.
->>>
->>> The other Intel pinctrl drivers seem to be tristate.
->>> Any missing piece there?
->>
->> Jean sent a patch against this couple of hours ago.
+>> Maxime, can you look at this patch?
 >
-> I noticed it right after I send my mail, too, sorry :)
->
->> I explained to him
->> that there is some ACPI GPIO magic happening on Baytrail-T based
->> machines such as Asus T100 where the GPIO driver is needed early at
->> boot, or something along those lines. I've CC'd Mathias Nyman the
->> original author who hopefully remembers this better.
->
-> I know of pinctrl-cherryview is needed before others like shdci, but
-> for Baytrail-T, it's more than that?
->
+> Chen-Yu had one minor comment on it,
 
-If I remember correctly the reason was that the gpio driver was supposed
-to work with Hardware reduced ACPI events (in ACPI 5).
-Basically ACPI telling operating system it wants an ACPI event handler run
-when a certain gpio interrupt is triggered, and the HW reduced ACPI expects the OS gpio driver to do it.
+OK waiting for a new version.
 
-I haven't followed up on this at all. Can't say if we have any HW reduced baytrail variants out there.
+> and he's also the Allwinner
+> maintainer now, so you can trust his Acked-by just like you would
+> trust mine ;)
 
-For Lynxpoint there was also some issue that pnpacpi reserved the IO resources before a modular gpio driver could get it,
-I think it was fixed, might be that baytrail would face same issue.
+Can you guys supply a MAINTAINERS entry for the sunxi
+stuff?
 
--Mathias  
-
-
-
+Yours,
+Linus Walleij
