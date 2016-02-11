@@ -1,30 +1,44 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v4 5/5] arm: dts: Add pinctrl/GPIO/EINT node for mt2701
-Date: Thu, 11 Feb 2016 11:55:18 +0100
-Message-ID: <56BC6896.6070108@gmail.com>
-References: <1453857883-28436-1-git-send-email-biao.huang@mediatek.com>
- <1453857883-28436-6-git-send-email-biao.huang@mediatek.com>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: [PATCH] pinctrl: intel: Turn Baytrail support to tristate
+Date: Thu, 11 Feb 2016 12:05:51 +0100
+Message-ID: <20160211120551.4d8224a4@endymion>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:36506 "EHLO
-	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751503AbcBKKzX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Feb 2016 05:55:23 -0500
-In-Reply-To: <1453857883-28436-6-git-send-email-biao.huang@mediatek.com>
+Received: from mx2.suse.de ([195.135.220.15]:41343 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751212AbcBKLFy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 11 Feb 2016 06:05:54 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Biao Huang <biao.huang@mediatek.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Erin Lo <erin.lo@mediatek.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>
+To: linux-gpio@vger.kernel.org
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+
+The pinctrl-baytrail driver builds just fine as a module so give
+users this option.
+
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/intel/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-4.5-rc3.orig/drivers/pinctrl/intel/Kconfig	2016-01-11 00:01:32.000000000 +0100
++++ linux-4.5-rc3/drivers/pinctrl/intel/Kconfig	2016-02-11 10:55:54.817711599 +0100
+@@ -3,7 +3,7 @@
+ #
+ 
+ config PINCTRL_BAYTRAIL
+-	bool "Intel Baytrail GPIO pin control"
++	tristate "Intel Baytrail GPIO pin control"
+ 	depends on GPIOLIB && ACPI
+ 	select GPIOLIB_IRQCHIP
+ 	help
 
 
-
-On 27/01/16 02:24, Biao Huang wrote:
-> Add pinctrl and GPIO node to mt2701.dtsi
->
-> Signed-off-by: Biao Huang <biao.huang@mediatek.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-
-Applied, thanks.
+-- 
+Jean Delvare
+SUSE L3 Support
