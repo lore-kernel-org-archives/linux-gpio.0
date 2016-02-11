@@ -1,111 +1,83 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 2/3] mfd: lpc_ich: use a correct mask for the GPIO base
- address
-Date: Thu, 11 Feb 2016 17:12:38 +0000
-Message-ID: <20160211171238.GJ20693@x1>
-References: <1453566729-30220-1-git-send-email-antoine.tenart@free-electrons.com>
- <1453566729-30220-3-git-send-email-antoine.tenart@free-electrons.com>
- <20160125124444.GJ3368@x1>
- <1453738070.1770.74.camel@xes-inc.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio/pinctrl: sunxi: stop poking around in private vars
+Date: Thu, 11 Feb 2016 20:29:03 +0100
+Message-ID: <1455218943-25917-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:38749 "EHLO
-	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750863AbcBKRMn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Feb 2016 12:12:43 -0500
-Received: by mail-wm0-f47.google.com with SMTP id p63so77516375wmp.1
-        for <linux-gpio@vger.kernel.org>; Thu, 11 Feb 2016 09:12:42 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1453738070.1770.74.camel@xes-inc.com>
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:36214 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750974AbcBKT3K (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Feb 2016 14:29:10 -0500
+Received: by mail-lb0-f171.google.com with SMTP id tk3so21253966lbb.3
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Feb 2016 11:29:09 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Tyser <ptyser@xes-inc.com>
-Cc: Antoine Tenart <antoine.tenart@free-electrons.com>, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
 
-On Mon, 25 Jan 2016, Peter Tyser wrote:
+This kind of hacks disturbs the refactoring of the gpiolib.
 
->=20
-> On Mon, 2016-01-25 at 12:44 +0000, Lee Jones wrote:
-> > On Sat, 23 Jan 2016, Antoine Tenart wrote:
-> >=20
-> > > The GPIO base address is read from the GPIOBASE register. The fir=
-st
-> > > bit must be cleared as it can be hardwired to 1 to represent the =
-i/o
-> > > space. Other bits are either containing the base address of are
-> > > reserved. They should not be cleared as all the chipsets do not h=
-ave
-> > > the same reserved bits.
-> > >=20
-> > > Signed-off-by: Antoine Tenart tenart@free-electrons.com>
-> > > ---
-> > >  drivers/mfd/lpc_ich.c | 5 ++++-
-> > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >=20
-> > Applied, thanks.
->=20
-> Is it possible to hold off on the application of the change Lee?
+The descriptor table belongs to the gpiolib, if we want to know
+something about something in it, use or define the proper accessor
+functions. Let's add this gpiochip_lins_is_irq() to do what the
+sunxi driver is trying at so we can privatize the descriptors
+properly.
 
-Patch unapplied.
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpiolib.c                | 9 +++++++++
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 4 ++--
+ include/linux/gpio/driver.h           | 1 +
+ 3 files changed, 12 insertions(+), 2 deletions(-)
 
-> > > diff --git a/drivers/mfd/lpc_ich.c b/drivers/mfd/lpc_ich.c
-> > > index b514f3cf140d..f13a5ded3958 100644
-> > > --- a/drivers/mfd/lpc_ich.c
-> > > +++ b/drivers/mfd/lpc_ich.c
-> > > @@ -921,7 +921,10 @@ static int lpc_ich_init_gpio(struct pci_dev =
-*dev)
-> > >  gpe0_done:
-> > >         /* Setup GPIO base register */
-> > >         pci_read_config_dword(dev, priv->gbase, &base_addr_cfg);
-> > > -       base_addr =3D base_addr_cfg & 0x0000ff80;
-> > > +
-> > > +       /* Clear the i/o flag */
-> > > +       base_addr =3D base_addr_cfg & ~BIT(0);
-> > > +
->=20
->=20
-> Does this patch work around an issue you are seeing?  Looking at the =
-Bay=20
-> Trail EDS, the GPIO base address register looks like it should work f=
-ine=20
-> with the original code (it uses 0xff00 as a mask for the address, and=
-=20
-> reserves 0x80 which reads as a 0).  Also, Bay Trail bit 1 is an enabl=
-e=20
-> flag, which this patch wouldn't mask off.  Eg if the BIOS enables the=
- GPIO=20
-> controller and sets the enable bit, I think things would break with t=
-his=20
-> patch.
->=20
-> It's also scary to not mask off the reserved bits on other Intel chip=
-sets -
-> you're assuming they all read as 0 and I'm not sure if this is true o=
-r=20
-> not.  The patch also doesn't make the same change to the other base=20
-> register reads either, and ideally they'd be kept in sync.
->=20
-> Seems like things should be left as-is, or use an accurate chip-speci=
-fic=20
-> mask.
->=20
-> I'd leave as-is personally.  Like Mika mentioned, Baytrail GPIO shoul=
-d=20
-> already be supported elsewhere, which should make this change unneces=
-sary.
->=20
-> Regards,
-> Peter
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index a60c6f28675e..aa4a60e19339 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1892,6 +1892,15 @@ void gpiochip_unlock_as_irq(struct gpio_chip *chip, unsigned int offset)
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_unlock_as_irq);
+ 
++bool gpiochip_line_is_irq(struct gpio_chip *chip, unsigned int offset)
++{
++	if (offset >= chip->ngpio)
++		return false;
++
++	return test_bit(FLAG_USED_AS_IRQ, &chip->gpiodev->descs[offset].flags);
++}
++EXPORT_SYMBOL_GPL(gpiochip_line_is_irq);
++
+ /**
+  * gpiod_get_raw_value_cansleep() - return a gpio's raw value
+  * @desc: gpio whose value will be returned
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 7a2465f5e71e..3e95bfe66a06 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -457,8 +457,8 @@ static int sunxi_pinctrl_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	struct sunxi_pinctrl *pctl = gpiochip_get_data(chip);
+ 	u32 reg = sunxi_data_reg(offset);
+ 	u8 index = sunxi_data_offset(offset);
+-	u32 set_mux = pctl->desc->irq_read_needs_mux &&
+-			test_bit(FLAG_USED_AS_IRQ, &chip->desc[offset].flags);
++	bool set_mux = pctl->desc->irq_read_needs_mux &&
++		gpiochip_line_is_irq(chip, offset);
+ 	u32 val;
+ 
+ 	if (set_mux)
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 363bf0eab6d0..b92ab9efdb69 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -197,6 +197,7 @@ extern struct gpio_chip *gpiochip_find(void *data,
+ /* lock/unlock as IRQ */
+ int gpiochip_lock_as_irq(struct gpio_chip *chip, unsigned int offset);
+ void gpiochip_unlock_as_irq(struct gpio_chip *chip, unsigned int offset);
++bool gpiochip_line_is_irq(struct gpio_chip *chip, unsigned int offset);
+ 
+ /* get driver data */
+ void *gpiochip_get_data(struct gpio_chip *chip);
+-- 
+2.4.3
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
