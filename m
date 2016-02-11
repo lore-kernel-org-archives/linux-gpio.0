@@ -1,43 +1,64 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 5/5] pinctrl: sunxi: Use pin number when
- calling sunxi_pmx_set
-Date: Thu, 11 Feb 2016 14:30:57 +0100
-Message-ID: <CACRpkdbKVVxFs7aSE_2gRgtNSUJ0hsE++FATyD6uWcwxXvTjTw@mail.gmail.com>
-References: <1455029929-18547-1-git-send-email-k@japko.eu>
-	<1455029929-18547-6-git-send-email-k@japko.eu>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: Re: Can't pinctrl-baytrail be a module?
+Date: Thu, 11 Feb 2016 15:44:28 +0200
+Message-ID: <56BC903C.9000008@linux.intel.com>
+References: <s5hwpqbh0v7.wl-tiwai@suse.de>	<20160211125645.GU16826@lahna.fi.intel.com> <s5hpow3gzt3.wl-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBEU26K2QKGQERCMCMVQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1455029929-18547-6-git-send-email-k-P4rZei/IPtg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Krzysztof Adamski <krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, Krzysztof Adamski <k@japko.eu>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:51007 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751558AbcBKNie (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 11 Feb 2016 08:38:34 -0500
+In-Reply-To: <s5hpow3gzt3.wl-tiwai@suse.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jean Delvare <jdelvare@suse.de>
 
-On Tue, Feb 9, 2016 at 3:58 PM, Krzysztof Adamski
-<krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org> wrote:
-
-> sunxi_pmx_set accepts pin number and then calculates offset by
-> subtracting pin_base from it. sunxi_pinctrl_gpio_get, on the other hand,
-> gets offset so we have to convert it to pin number so we won't get
-> negative value in sunxi_pmx_set.
+On 11.02.2016 15:08, Takashi Iwai wrote:
+> On Thu, 11 Feb 2016 13:56:45 +0100,
+> Mika Westerberg wrote:
+>>
+>> +Jean and Mathias
+>>
+>> On Thu, Feb 11, 2016 at 01:45:16PM +0100, Takashi Iwai wrote:
+>>> Hi,
+>>>
+>>> while discussing whether to enable pinctrl drivers on openSUSE distro
+>>> kernels, I wonder why pinctrl-baytrail is built-in only.  Basically
+>>> the forced built-in is the only reason against the enablement in
+>>> distro kernels.
+>>>
+>>> The other Intel pinctrl drivers seem to be tristate.
+>>> Any missing piece there?
+>>
+>> Jean sent a patch against this couple of hours ago.
 >
-> This was only used on A10 so far, where there is only one GPIO chip with
-> pin_base set to 0 so it didn't matter. However H3 also requires this
-> workaround but have two pinmux sections, triggering problem for PL port.
+> I noticed it right after I send my mail, too, sorry :)
 >
-> Signed-off-by: Krzysztof Adamski <k@japko.eu>
-> Acked-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-> Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+>> I explained to him
+>> that there is some ACPI GPIO magic happening on Baytrail-T based
+>> machines such as Asus T100 where the GPIO driver is needed early at
+>> boot, or something along those lines. I've CC'd Mathias Nyman the
+>> original author who hopefully remembers this better.
+>
+> I know of pinctrl-cherryview is needed before others like shdci, but
+> for Baytrail-T, it's more than that?
+>
 
-OK applied this version that has Maxime's ACK.
+If I remember correctly the reason was that the gpio driver was supposed
+to work with Hardware reduced ACPI events (in ACPI 5).
+Basically ACPI telling operating system it wants an ACPI event handler run
+when a certain gpio interrupt is triggered, and the HW reduced ACPI expects the OS gpio driver to do it.
 
-Yours,
-Linus Walleij
+I haven't followed up on this at all. Can't say if we have any HW reduced baytrail variants out there.
+
+For Lynxpoint there was also some issue that pnpacpi reserved the IO resources before a modular gpio driver could get it,
+I think it was fixed, might be that baytrail would face same issue.
+
+-Mathias  
+
+
+
