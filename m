@@ -1,73 +1,63 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 6/6] gpio: move the pin ranges into gpio_device
-Date: Thu, 11 Feb 2016 11:26:23 +0100
-Message-ID: <1455186383-28004-7-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 5/6] gpio: reference count the gpio device for each desc
+Date: Thu, 11 Feb 2016 11:26:22 +0100
+Message-ID: <1455186383-28004-6-git-send-email-linus.walleij@linaro.org>
 References: <1455186383-28004-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:38532 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751158AbcBKK0s (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Feb 2016 05:26:48 -0500
-Received: by mail-wm0-f51.google.com with SMTP id p63so61849795wmp.1
-        for <linux-gpio@vger.kernel.org>; Thu, 11 Feb 2016 02:26:48 -0800 (PST)
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:34385 "EHLO
+	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751149AbcBKK0p (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Feb 2016 05:26:45 -0500
+Received: by mail-wm0-f42.google.com with SMTP id 128so14686171wmz.1
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Feb 2016 02:26:45 -0800 (PST)
 In-Reply-To: <1455186383-28004-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
 Cc: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 
-Instead of keeping this reference to the pin ranges in the
-client driver-supplied gpio_chip, move it to the internal
-gpio_device as the drivers have no need to inspect this.
+Every time a descriptor is retrieved from the gpiolib, we issue
+module_get() to reference count the module supplying the GPIOs.
+We also need to call device_get() and device_put() as we also
+reference the backing gpio_device when doing this.
+
+Since the sysfs GPIO interface is using gpiod_get() this will
+also reference count the sysfs requests until all GPIOs are
+unexported.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpiolib.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpio/gpiolib.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 157ab40d19b1..08e93857a7d5 100644
+index cbc9c764a7fb..157ab40d19b1 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -532,8 +532,7 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 	spin_unlock_irqrestore(&gpio_lock, flags);
+@@ -1205,6 +1205,8 @@ int gpiod_request(struct gpio_desc *desc, const char *label)
+ 		status = __gpiod_request(desc, label);
+ 		if (status < 0)
+ 			module_put(gdev->owner);
++		else
++			get_device(&gdev->dev);
+ 	}
  
- #ifdef CONFIG_PINCTRL
--	/* FIXME: move pin ranges to gpio_device */
--	INIT_LIST_HEAD(&chip->pin_ranges);
-+	INIT_LIST_HEAD(&gdev->pin_ranges);
- #endif
+ 	if (status)
+@@ -1248,10 +1250,12 @@ static bool __gpiod_free(struct gpio_desc *desc)
  
- 	status = gpiochip_set_desc_names(chip);
-@@ -1036,7 +1035,7 @@ int gpiochip_add_pingroup_range(struct gpio_chip *chip,
- 		 gpio_offset, gpio_offset + pin_range->range.npins - 1,
- 		 pinctrl_dev_get_devname(pctldev), pin_group);
- 
--	list_add_tail(&pin_range->node, &chip->pin_ranges);
-+	list_add_tail(&pin_range->node, &gdev->pin_ranges);
- 
- 	return 0;
- }
-@@ -1085,7 +1084,7 @@ int gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
- 		 pinctl_name,
- 		 pin_offset, pin_offset + npins - 1);
- 
--	list_add_tail(&pin_range->node, &chip->pin_ranges);
-+	list_add_tail(&pin_range->node, &gdev->pin_ranges);
- 
- 	return 0;
- }
-@@ -1098,8 +1097,9 @@ EXPORT_SYMBOL_GPL(gpiochip_add_pin_range);
- void gpiochip_remove_pin_ranges(struct gpio_chip *chip)
+ void gpiod_free(struct gpio_desc *desc)
  {
- 	struct gpio_pin_range *pin_range, *tmp;
-+	struct gpio_device *gdev = chip->gpiodev;
+-	if (desc && __gpiod_free(desc))
++	if (desc && desc->gdev && __gpiod_free(desc)) {
+ 		module_put(desc->gdev->owner);
+-	else
++		put_device(&desc->gdev->dev);
++	} else {
+ 		WARN_ON(extra_checks);
++	}
+ }
  
--	list_for_each_entry_safe(pin_range, tmp, &chip->pin_ranges, node) {
-+	list_for_each_entry_safe(pin_range, tmp, &gdev->pin_ranges, node) {
- 		list_del(&pin_range->node);
- 		pinctrl_remove_gpio_range(pin_range->pctldev,
- 				&pin_range->range);
+ /**
 -- 
 2.4.3
 
