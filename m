@@ -1,59 +1,88 @@
-From: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 04/14] clk: sunxi: add ahb1 clock for A83T
-Date: Fri, 12 Feb 2016 13:24:39 +0800
-Message-ID: <CAEzqOZsCkGDxma77H0Te+9PLau6Ybu19cdG_yNTiEhEbwQQrhw@mail.gmail.com>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com>
- <20160202131725.GQ4652@lukather> <CAEzqOZuBz2jexvZvvtkvjbE8UtzUMKL9nT5JJ9JcvMPmzEKTcQ@mail.gmail.com>
- <20160204080109.GA4270@lukather>
-Reply-To: vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBD64TFVR3YIBBK6Z6W2QKGQEDMMWJVI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <20160204080109.GA4270@lukather>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Emilio Lopez <emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Rein
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: sirf/atlas7: stop poking around in GPIO internals
+Date: Fri, 12 Feb 2016 09:31:13 +0100
+Message-ID: <1455265873-21534-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:34377 "EHLO
+	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750816AbcBLIbZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Feb 2016 03:31:25 -0500
+Received: by mail-lf0-f52.google.com with SMTP id j78so47180562lfb.1
+        for <linux-gpio@vger.kernel.org>; Fri, 12 Feb 2016 00:31:25 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Barry Song <Baohua.Song@csr.com>, Barry Song <baohua@kernel.org>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Guoying Zhang <Guoying.Zhang@csr.com>, Wei Chen <Wei.Chen@csr.com>
 
-Hello Maxime,
+This code is poking around in the gpio_chip:s internal structures
+to achieve some kind of pin to GPIO mappings.
 
-On Thu, Feb 4, 2016 at 4:01 PM, Maxime Ripard
-<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> On Thu, Feb 04, 2016 at 02:06:45PM +0800, Vishnu Patekar wrote:
->> Hello Maxime,
->>
->>
->> On Tue, Feb 2, 2016 at 9:17 PM, Maxime Ripard
->> <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
->> > Hi,
->> >
->> > On Sun, Jan 31, 2016 at 09:20:56AM +0800, Vishnu Patekar wrote:
->> >> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
->> >> clock index 0b1x is PLL6.
->> >>
->> >> Signed-off-by: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> >
->> > If the clock is the same but the parents are different, then we don't
->> > need to duplicate all the logic. Simply add the number of parents to
->> > mux_data, and you're all set.
->>
->> Problem here is: parent 0b10 for A31 ahb1 is AXI, 0b11 is pll6/pre_div.
->> 0b10 and 0b11 is pll6/pre_div.
->> So, just adding number of parents to mux_data will not solve problem.
->
-> Is anyone using 0b11 ? Can't we just ignore it?
-Yes, it's used, 0b11 is pll6 parent in case of A31.
->
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+- It is wrong to poke around in these structs and the pinctrl
+  maintainer was stupid to let it pass unnoticed, mea culpa.
+
+- The right interface to use is gpiochip_add_pin_range()
+
+- The code appears unused: the pin control part of the driver
+  is not adding any ranges, so we're iterating over an empty
+  list. Maybe it is poking around in some other pin controllers
+  GPIO ranges, and that's just totally wrong, again use
+  gpiochip_add_pin_range() and specify the right pin
+  controller.
+
+Cc: Barry Song <baohua@kernel.org>
+Cc: Guoying Zhang <Guoying.Zhang@csr.com>
+Cc: Wei Chen <Wei.Chen@csr.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+SiRF maintainers: look at this immediately and explain what is
+going on.
+---
+ drivers/pinctrl/sirf/pinctrl-atlas7.c | 18 ------------------
+ 1 file changed, 18 deletions(-)
+
+diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+index beb024c31a5d..3d233fc3448a 100644
+--- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
++++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+@@ -338,7 +338,6 @@ struct atlas7_pinctrl_data {
+ #define ATLAS7_GPIO_CTL_DATAIN_MASK		BIT(7)
+ 
+ struct atlas7_gpio_bank {
+-	struct pinctrl_dev *pctldev;
+ 	int id;
+ 	int irq;
+ 	void __iomem *base;
+@@ -6070,7 +6069,6 @@ static int atlas7_gpio_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	for (idx = 0; idx < nbank; idx++) {
+-		struct gpio_pin_range *pin_range;
+ 		struct atlas7_gpio_bank *bank;
+ 
+ 		bank = &a7gc->banks[idx];
+@@ -6088,22 +6086,6 @@ static int atlas7_gpio_probe(struct platform_device *pdev)
+ 
+ 		gpiochip_set_chained_irqchip(chip, &atlas7_gpio_irq_chip,
+ 					bank->irq, atlas7_gpio_handle_irq);
+-
+-		/* Records gpio_pin_range to a7gc */
+-		list_for_each_entry(pin_range, &chip->pin_ranges, node) {
+-			struct pinctrl_gpio_range *range;
+-
+-			range = &pin_range->range;
+-			if (range->id == NGPIO_OF_BANK * idx) {
+-				bank->gpio_offset = range->id;
+-				bank->ngpio = range->npins;
+-				bank->gpio_pins = range->pins;
+-				bank->pctldev = pin_range->pctldev;
+-				break;
+-			}
+-		}
+-
+-		BUG_ON(!bank->pctldev);
+ 	}
+ 
+ 	platform_set_drvdata(pdev, a7gc);
+-- 
+2.4.3
+
