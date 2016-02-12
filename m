@@ -1,58 +1,50 @@
-From: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: mediatek: fix handling return value of
- mtk_pmx_find_gpio_mode
-Date: Thu, 11 Feb 2016 18:59:38 -0800
-Message-ID: <1455245978.12131.0.camel@mussux00>
-References: <1455201248-4988-1-git-send-email-a.hajda@samsung.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH RFT] gpio: ts4800: Fixup flags argument for bgpio_init
+Date: Fri, 12 Feb 2016 12:16:30 +0800
+Message-ID: <1455250590.9777.1.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1455201248-4988-1-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f180.google.com ([209.85.192.180]:33012 "EHLO
+	mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751768AbcBLEQg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Feb 2016 23:16:36 -0500
+Received: by mail-pf0-f180.google.com with SMTP id q63so40753573pfb.0
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Feb 2016 20:16:35 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On Thu, 2016-02-11 at 15:34 +0100, Andrzej Hajda wrote:
-> The function can return negative values, so its result should
-> be assigned to signed variable.
-> 
-> The problem has been detected using coccinelle semantic patch
-> scripts/coccinelle/tests/assign_signed_to_unsigned.cocci.
-> 
-> Fixes: 59ee9c9 ('pinctrl: mediatek: Add gpio_request_enable support')
-> Signed-off-by: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> index cbc2204..ddc9217 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> @@ -755,7 +755,7 @@ static int mtk_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
->  				    struct pinctrl_gpio_range *range,
->  				    unsigned offset)
->  {
-> -	unsigned long muxval;
-> +	int muxval;
->  	struct mtk_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
->  
->  	muxval = mtk_pmx_find_gpio_mode(pctl, offset);
+BGPIOF_BIG_ENDIAN & BGPIOF_BIG_ENDIAN_BYTE_ORDER is 0.
+Fixup the trivial typo.
+
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+Hi Julien,
+I don't have this h/w, can you review and test if this patch works.
+Thanks,
+Axel
+
+ drivers/gpio/gpio-ts4800.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-ts4800.c b/drivers/gpio/gpio-ts4800.c
+index c4908a4..c244c31 100644
+--- a/drivers/gpio/gpio-ts4800.c
++++ b/drivers/gpio/gpio-ts4800.c
+@@ -49,7 +49,7 @@ static int ts4800_gpio_probe(struct platform_device *pdev)
+ 	retval = bgpio_init(chip, &pdev->dev, 2, base_addr + INPUT_REG_OFFSET,
+ 			    base_addr + OUTPUT_REG_OFFSET, NULL,
+ 			    base_addr + DIRECTION_REG_OFFSET, NULL,
+-			    BGPIOF_BIG_ENDIAN & BGPIOF_BIG_ENDIAN_BYTE_ORDER);
++			    BGPIOF_BIG_ENDIAN | BGPIOF_BIG_ENDIAN_BYTE_ORDER);
+ 	if (retval) {
+ 		dev_err(&pdev->dev, "bgpio_init failed\n");
+ 		return retval;
+-- 
+2.1.4
 
 
-Thank you very much.
 
-Acked-by: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-
-Yours,
-Hongzhou
