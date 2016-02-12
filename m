@@ -1,92 +1,70 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 2/3] Documentation: gpio: Update description for
- X-Gene standby GPIO controller DTS binding
-Date: Fri, 12 Feb 2016 08:36:16 -0600
-Message-ID: <20160212143616.GA1603@rob-hp-laptop>
-References: <1454041735-8434-1-git-send-email-qnguyen@apm.com>
- <1454041735-8434-3-git-send-email-qnguyen@apm.com>
- <20160201153502.GA19725@rob-hp-laptop>
- <CAFopSPQBjXQZwG-Phfc+xJ5Kn6dXPakT6Hg5qT-ByXG06p8wgg@mail.gmail.com>
+From: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
+Subject: Re: [PATCH RFT] gpio: ts4800: Fixup flags argument for bgpio_init
+Date: Fri, 12 Feb 2016 09:42:22 -0500 (EST)
+Message-ID: <1960742682.183296.1455288142200.JavaMail.zimbra@savoirfairelinux.com>
+References: <1455250590.9777.1.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:39084 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750904AbcBLOgV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 12 Feb 2016 09:36:21 -0500
-Content-Disposition: inline
-In-Reply-To: <CAFopSPQBjXQZwG-Phfc+xJ5Kn6dXPakT6Hg5qT-ByXG06p8wgg@mail.gmail.com>
+Received: from mail.savoirfairelinux.com ([208.88.110.44]:59425 "EHLO
+	mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750802AbcBLOmZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Feb 2016 09:42:25 -0500
+In-Reply-To: <1455250590.9777.1.camel@ingics.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Quan Nguyen <qnguyen@apm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On Tue, Feb 02, 2016 at 08:46:25AM +0700, Quan Nguyen wrote:
-> On Mon, Feb 1, 2016 at 10:35 PM, Rob Herring <robh@kernel.org> wrote:
-> > On Fri, Jan 29, 2016 at 11:28:54AM +0700, Quan Nguyen wrote:
-> >> Update description for X-Gene standby GPIO controller DTS binding to
-> >> support GPIO line configuration as input, output or external IRQ pin.
-> >>
-> >> Signed-off-by: Y Vo <yvo@apm.com>
-> >> Signed-off-by: Quan Nguyen <qnguyen@apm.com>
-> >> ---
-> >>  .../devicetree/bindings/gpio/gpio-xgene-sb.txt     | 47 ++++++++++++++++++----
-> >>  1 file changed, 40 insertions(+), 7 deletions(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
-> >> index dae1300..7b8b4cb 100644
-> >> --- a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
-> >> +++ b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
-> >> @@ -1,10 +1,20 @@
-> >>  APM X-Gene Standby GPIO controller bindings
-> >>
-> >> -This is a gpio controller in the standby domain.
-> >> -
-> >> -There are 20 GPIO pins from 0..21. There is no GPIO_DS14 or GPIO_DS15,
-> >> -only GPIO_DS8..GPIO_DS13 support interrupts. The IRQ mapping
-> >> -is currently 1-to-1 on interrupts 0x28 thru 0x2d.
-> >> +This is a gpio controller in the standby domain. It also supports interrupt in
-> >> +some particular pins which are sourced to its parent interrupt controller
-> >> +as diagram below:
-> >> +                           +-----------------+
-> >> +                           | X-Gene standby  |
-> >> +                           | GPIO controller +--------- GPIO_0
-> >> ++------------+             |                 | ...
-> >> +| Parent IRQ |             |                 +--------- GPIO_8/EXT_INT_0
-> >> +| controller |  EXT_INT_0  |                 | ...
-> >> +| (GICv2)    +-------------+                 +--------- GPIO_[N+8]/EXT_INT_N
-> >> +|            |  ...        |                 |
-> >> +|            |  EXT_INT_N  |                 +--------- GPIO_[N+9]
-> >> +|            +-------------+                 | ...
-> >> +|            |             |                 +--------- GPIO_MAX
-> >> ++------------+             +-----------------+
-> >>
-> >>  Required properties:
-> >>  - compatible: "apm,xgene-gpio-sb" for the X-Gene Standby GPIO controller
-> >> @@ -15,10 +25,18 @@ Required properties:
-> >>               0 = active high
-> >>               1 = active low
-> >>  - gpio-controller: Marks the device node as a GPIO controller.
-> >> -- interrupts: Shall contain exactly 6 interrupts.
-> >> +- interrupts: The EXT_INT_0 parent interrupt resource must be listed first.
-> >> +- interrupt-parent: Phandle of the parent interrupt controller.
-> >> +- interrupt-cells: Should be two.
-> >> +       - first cell is 0-N coresponding for EXT_INT_0 to EXT_INT_N.
-> >> +       - second cell is used to specify flags.
-> >> +- interrupt-controller: Marks the device node as an interrupt controller.
-> >> +- apm,nr-gpios: Optional, specify number of gpios pin.
-> >> +- apm,nr-irqs: Optional, specify number of interrupt pins.
-> >
-> > When is this not 6?
-> >
-> Hi Rob,  by default, this should be 6, but I think this property can
-> help in cases:
-> + Used only 5(or less) first pin as interrupt.
-> + For similar device which has different interrupt pins (8 for example).
-> My idea is to make it a bit more generic by using this optional property.
+Hi Alex,
 
-What is similar device? Another SoC? board? Is 6 fixed in the SoC? I 
-think you need more specific compatible string with the SoC name in it 
-to determine these setting rather than trying to do something generic.
 
-Rob
+----- Original Message -----
+> From: "Axel Lin" <axel.lin@ingics.com>
+> To: "Linus Walleij" <linus.walleij@linaro.org>
+> Cc: "Julien Grossholtz" <julien.grossholtz@savoirfairelinux.com>, "Alexandre Courbot" <gnurou@gmail.com>,
+> linux-gpio@vger.kernel.org
+> Sent: Thursday, February 11, 2016 11:16:30 PM
+> Subject: [PATCH RFT] gpio: ts4800: Fixup flags argument for bgpio_init
+
+> BGPIOF_BIG_ENDIAN & BGPIOF_BIG_ENDIAN_BYTE_ORDER is 0.
+> Fixup the trivial typo.
+> 
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
+> Hi Julien,
+> I don't have this h/w, can you review and test if this patch works.
+
+No, this patch is not working. The big endian flags where a mistake.
+Therefore I submitted a patch to remove them:
+[PATCH v2] gpio: TS-4800: remove useless bgpio_init flags. 
+
+There is no flag required at all for bgpio_init,
+I ran my tests and it worked as expected.
+
+Thank you for proposing a solution.
+
+
+
+> Thanks,
+> Axel
+> 
+> drivers/gpio/gpio-ts4800.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-ts4800.c b/drivers/gpio/gpio-ts4800.c
+> index c4908a4..c244c31 100644
+> --- a/drivers/gpio/gpio-ts4800.c
+> +++ b/drivers/gpio/gpio-ts4800.c
+> @@ -49,7 +49,7 @@ static int ts4800_gpio_probe(struct platform_device *pdev)
+> 	retval = bgpio_init(chip, &pdev->dev, 2, base_addr + INPUT_REG_OFFSET,
+> 			    base_addr + OUTPUT_REG_OFFSET, NULL,
+> 			    base_addr + DIRECTION_REG_OFFSET, NULL,
+> -			    BGPIOF_BIG_ENDIAN & BGPIOF_BIG_ENDIAN_BYTE_ORDER);
+> +			    BGPIOF_BIG_ENDIAN | BGPIOF_BIG_ENDIAN_BYTE_ORDER);
+> 	if (retval) {
+> 		dev_err(&pdev->dev, "bgpio_init failed\n");
+> 		return retval;
+> --
+> 2.1.4
