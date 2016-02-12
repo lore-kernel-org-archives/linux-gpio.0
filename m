@@ -1,123 +1,293 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 10/14] ARM: dts: sun8i-a83t: Add PRCM related clocks and resets
-Date: Sat, 13 Feb 2016 00:43:27 +0800
-Message-ID: <CAGb2v65cfG=cJ91+9G5uS5XcUh0nx6-7ZnMr7RjSGqXPHjyxpQ@mail.gmail.com>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-11-git-send-email-vishnupatekar0510@gmail.com>
- <CAGb2v67iO-816KaLttWRRPL2f7hpfgJ1--p69tD_oOrewmOjCA@mail.gmail.com> <CAEzqOZtsdHC2tCgjC=Bj5q3RFip2Uyni8bFC16u03PRLCra5KA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: add userspace ABI for GPIO line information
+Date: Fri, 12 Feb 2016 22:39:22 +0100
+Message-ID: <1455313162-22956-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:43834 "EHLO
-	smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751217AbcBLQny (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Feb 2016 11:43:54 -0500
-In-Reply-To: <CAEzqOZtsdHC2tCgjC=Bj5q3RFip2Uyni8bFC16u03PRLCra5KA@mail.gmail.com>
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:33418 "EHLO
+	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751065AbcBLVj2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Feb 2016 16:39:28 -0500
+Received: by mail-lf0-f47.google.com with SMTP id m1so59948501lfg.0
+        for <linux-gpio@vger.kernel.org>; Fri, 12 Feb 2016 13:39:27 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>, Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>, linux-cl
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
+Cc: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 
-On Sat, Feb 13, 2016 at 12:06 AM, Vishnu Patekar
-<vishnupatekar0510@gmail.com> wrote:
-> Hello Wens,
->
->
-> On Tue, Feb 2, 2016 at 2:44 PM, Chen-Yu Tsai <wens@csie.org> wrote:
->> On Sun, Jan 31, 2016 at 9:21 AM, Vishnu Patekar
->> <vishnupatekar0510@gmail.com> wrote:
->>> This adds A83T PRCM related clocks, clock resets.
->>>
->>> As a83t apb0 gates clock support is added earlier, this enables it.
->>> Apart from apb0 gates, other added clocks are compatible with
->>> earlier sun8i socs.
->>>
->>> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
->>> ---
->>>  arch/arm/boot/dts/sun8i-a83t.dtsi | 44 +++++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 44 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
->>> index ac96aa1..5ea20ff 100644
->>> --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
->>> +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
->>> @@ -268,6 +268,44 @@
->>>                                              "mmc2_output",
->>>                                              "mmc2_sample";
->>>                 };
->>> +
->>> +               cpus_clk: clk@01f01400 {
->>> +                       compatible = "allwinner,sun9i-a80-cpus-clk";
->>> +                       reg = <0x01f01400 0x4>;
->>> +                       #clock-cells = <0>;
->>> +                       clocks = <&osc16Md512>, <&osc24M>, <&pll6>, <&osc16M>;
->>> +                       clock-output-names = "cpus";
->>> +               };
->>> +
->>> +               ahb0: ahb0_clk {
->>> +                       compatible = "fixed-factor-clock";
->>> +                       #clock-cells = <0>;
->>> +                       clock-div = <1>;
->>> +                       clock-mult = <1>;
->>> +                       clocks = <&cpus_clk>;
->>> +                       clock-output-names = "ahb0";
->>> +               };
->>> +
->>> +               apb0: clk@01f0140c {
->>> +                       compatible = "allwinner,sun8i-a23-apb0-clk";
->>
->> This is actually wrong, as it is wrong in sun9i-a80.dtsi.
->> I've sent a patch series for it.
-> A83T apb0 is different from A80, and it's same as A23, so this should
-> be correct.
-> Please correct me in case I'm missing something.
+This adds a GPIO line ABI for getting name, label and a few select
+flags from the kernel.
 
-My user manual (v1.5.1) says A83T apb0 dividers (page. 246) are
-/1, /2, /3, /4, while the A23 is /1, /2, /4, /8.
+This hides the kernel internals and only tells userspace what it
+may need to know: the different in-kernel consumers are masked
+behind the flag "kernel" and that is all userspace needs to know.
 
-ChenYu
+However electric characteristics like active low, open drain etc
+are reflected to userspace, as this is important information.
 
->> Also the drivers for "allwinner,sun9i-a80-cpus-clk" and
->> "allwinner,sun9i-a80-apbs-clk"
->> are only compiled for CONFIG_MACH_SUN9I. Please add a patch to address this.
-> Okie.
->>
->> Regards
->> ChenYu
->>
->>> +                       reg = <0x01f0140c 0x4>;
->>> +                       #clock-cells = <0>;
->>> +                       clocks = <&ahb0>;
->>> +                       clock-output-names = "apb0";
->>> +               };
->>> +
->>> +               apb0_gates: clk@01f01428 {
->>> +                       compatible = "allwinner,sun8i-a83t-apb0-gates-clk";
->>> +                       reg = <0x01f01428 0x4>;
->>> +                       #clock-cells = <1>;
->>> +                       clocks = <&apb0>;
->>> +                       clock-indices = <0>, <1>,
->>> +                                       <2>, <3>,
->>> +                                       <4>, <6>, <7>;
->>> +                       clock-output-names = "apb0_pio", "apb0_ir",
->>> +                                       "apb0_timer", "apb0_rsb",
->>> +                                       "apb0_uart", "apb0_i2c0", "apb0_twd";
->>> +               };
->>>         };
->>>
->>>         soc {
->>> @@ -434,5 +472,11 @@
->>>                         #interrupt-cells = <3>;
->>>                         interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
->>>                 };
->>> +
->>> +               apb0_reset: reset@01f014b0 {
->>> +                       reg = <0x01f014b0 0x4>;
->>> +                       compatible = "allwinner,sun6i-a31-clock-reset";
->>> +                       #reset-cells = <1>;
->>> +               };
->>>         };
->>>  };
->>> --
->>> 1.9.1
->>>
+We provide information on all lines on all chips, later on we will
+likely add a flag for the chardev consumer so we can filter and
+display only the lines userspace actually uses in e.g. lsgpio,
+but then we first need an ABI for userspace to grab and use
+(get/set/select direction) a GPIO line.
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpiolib.c    | 50 +++++++++++++++++++++++++--
+ include/uapi/linux/gpio.h | 26 ++++++++++++++
+ tools/gpio/gpio-utils.h   |  2 ++
+ tools/gpio/lsgpio.c       | 88 ++++++++++++++++++++++++++++++++++++++++-------
+ 4 files changed, 152 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index a022e9249f69..6138df74f148 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -331,14 +331,15 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	struct gpio_device *gdev = filp->private_data;
+ 	struct gpio_chip *chip = gdev->chip;
+ 	int __user *ip = (int __user *)arg;
+-	struct gpiochip_info chipinfo;
+ 
+ 	/* We fail any subsequent ioctl():s when the chip is gone */
+ 	if (!chip)
+ 		return -ENODEV;
+ 
++	/* Fill in the struct and pass to userspace */
+ 	if (cmd == GPIO_GET_CHIPINFO_IOCTL) {
+-		/* Fill in the struct and pass to userspace */
++		struct gpiochip_info chipinfo;
++
+ 		strncpy(chipinfo.name, dev_name(&gdev->dev),
+ 			sizeof(chipinfo.name));
+ 		chipinfo.name[sizeof(chipinfo.name)-1] = '\0';
+@@ -349,6 +350,51 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		if (copy_to_user(ip, &chipinfo, sizeof(chipinfo)))
+ 			return -EFAULT;
+ 		return 0;
++	} else if (cmd == GPIO_GET_LINEINFO_IOCTL) {
++		struct gpioline_info lineinfo;
++		struct gpio_desc *desc;
++
++		if (copy_from_user(&lineinfo, ip, sizeof(lineinfo)))
++			return -EFAULT;
++		if (lineinfo.line_offset > gdev->ngpio)
++			return -EINVAL;
++
++		desc = &gdev->descs[lineinfo.line_offset];
++		if (desc->name) {
++			strncpy(lineinfo.name, desc->name,
++				sizeof(lineinfo.name));
++			lineinfo.name[sizeof(lineinfo.name)-1] = '\0';
++		} else {
++			lineinfo.name[0] = '\0';
++		}
++		if (desc->label) {
++			strncpy(lineinfo.label, desc->label,
++				sizeof(lineinfo.label));
++			lineinfo.label[sizeof(lineinfo.label)-1] = '\0';
++		} else {
++			lineinfo.label[0] = '\0';
++		}
++
++		/*
++		 * Userspace only need to know that the kernel is using
++		 * this GPIO so it can't use it.
++		 */
++		if (desc->flags & (FLAG_REQUESTED | FLAG_IS_HOGGED |
++				   FLAG_USED_AS_IRQ | FLAG_EXPORT |
++				   FLAG_SYSFS))
++			lineinfo.flags |= GPIOLINE_FLAG_KERNEL;
++		if (desc->flags & FLAG_IS_OUT)
++			lineinfo.flags |= GPIOLINE_FLAG_IS_OUT;
++		if (desc->flags & FLAG_ACTIVE_LOW)
++			lineinfo.flags |= GPIOLINE_FLAG_ACTIVE_LOW;
++		if (desc->flags & FLAG_OPEN_DRAIN)
++			lineinfo.flags |= GPIOLINE_FLAG_OPEN_DRAIN;
++		if (desc->flags & FLAG_OPEN_SOURCE)
++			lineinfo.flags |= GPIOLINE_FLAG_OPEN_SOURCE;
++
++		if (copy_to_user(ip, &lineinfo, sizeof(lineinfo)))
++			return -EFAULT;
++		return 0;
+ 	}
+ 	return -EINVAL;
+ }
+diff --git a/include/uapi/linux/gpio.h b/include/uapi/linux/gpio.h
+index 3f93e1bcd3dd..416ce47f2291 100644
+--- a/include/uapi/linux/gpio.h
++++ b/include/uapi/linux/gpio.h
+@@ -25,6 +25,32 @@ struct gpiochip_info {
+ 	__u32 lines;
+ };
+ 
++/* Line is in use by the kernel */
++#define GPIOLINE_FLAG_KERNEL		(1UL << 0)
++#define GPIOLINE_FLAG_IS_OUT		(1UL << 1)
++#define GPIOLINE_FLAG_ACTIVE_LOW	(1UL << 2)
++#define GPIOLINE_FLAG_OPEN_DRAIN	(1UL << 3)
++#define GPIOLINE_FLAG_OPEN_SOURCE	(1UL << 4)
++
++/**
++ * struct gpioline_info - Information about a certain GPIO line
++ * @line_offset: the local offset on this GPIO device, fill in when
++ * requesting information from the kernel
++ * @flags: various flags for this line
++ * @name: the name of this GPIO line
++ * @label: a functional name for this GPIO line
++ * @kernel: this GPIO is in use by the kernel
++ * @out: this GPIO is an output line (false means it is an input)
++ * @active_low: this GPIO is active low
++ */
++struct gpioline_info {
++	__u32 line_offset;
++	__u32 flags;
++	char name[32];
++	char label[32];
++};
++
+ #define GPIO_GET_CHIPINFO_IOCTL _IOR('o', 0x01, struct gpiochip_info)
++#define GPIO_GET_LINEINFO_IOCTL _IOWR('o', 0x02, struct gpioline_info)
+ 
+ #endif /* _UAPI_GPIO_H_ */
+diff --git a/tools/gpio/gpio-utils.h b/tools/gpio/gpio-utils.h
+index b18209a45ad3..5f57133b8c04 100644
+--- a/tools/gpio/gpio-utils.h
++++ b/tools/gpio/gpio-utils.h
+@@ -16,6 +16,8 @@
+ 
+ #include <string.h>
+ 
++#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
++
+ static inline int check_prefix(const char *str, const char *prefix)
+ {
+ 	return strlen(str) > strlen(prefix) &&
+diff --git a/tools/gpio/lsgpio.c b/tools/gpio/lsgpio.c
+index 692233f561fb..908535cbc403 100644
+--- a/tools/gpio/lsgpio.c
++++ b/tools/gpio/lsgpio.c
+@@ -26,12 +26,56 @@
+ 
+ #include "gpio-utils.h"
+ 
++struct gpio_flag {
++	char *name;
++	unsigned long mask;
++};
++
++struct gpio_flag flagnames[] = {
++	{
++		.name = "kernel",
++		.mask = GPIOLINE_FLAG_KERNEL,
++	},
++	{
++		.name = "output",
++		.mask = GPIOLINE_FLAG_IS_OUT,
++	},
++	{
++		.name = "active-low",
++		.mask = GPIOLINE_FLAG_ACTIVE_LOW,
++	},
++	{
++		.name = "open-drain",
++		.mask = GPIOLINE_FLAG_OPEN_DRAIN,
++	},
++	{
++		.name = "open-source",
++		.mask = GPIOLINE_FLAG_OPEN_SOURCE,
++	},
++};
++
++void print_flags(unsigned long flags)
++{
++	int i;
++	int printed = 0;
++
++	for (i = 0; i < ARRAY_SIZE(flagnames); i++) {
++		if (flags & flagnames[i].mask) {
++			if (printed)
++				fprintf(stdout, " ");
++			fprintf(stdout, "%s", flagnames[i].name);
++			printed++;
++		}
++	}
++}
++
+ int list_device(const char *device_name)
+ {
+ 	struct gpiochip_info cinfo;
+ 	char *chrdev_name;
+ 	int fd;
+ 	int ret;
++	int i;
+ 
+ 	ret = asprintf(&chrdev_name, "/dev/%s", device_name);
+ 	if (ret < 0)
+@@ -41,32 +85,52 @@ int list_device(const char *device_name)
+ 	if (fd == -1) {
+ 		ret = -errno;
+ 		fprintf(stderr, "Failed to open %s\n", chrdev_name);
+-		goto free_chrdev_name;
++		goto exit_close_error;
+ 	}
+ 
+ 	/* Inspect this GPIO chip */
+ 	ret = ioctl(fd, GPIO_GET_CHIPINFO_IOCTL, &cinfo);
+ 	if (ret == -1) {
+ 		ret = -errno;
+-		fprintf(stderr, "Failed to retrieve GPIO fd\n");
+-		if (close(fd) == -1)
+-			perror("Failed to close GPIO character device file");
+-
+-		goto free_chrdev_name;
++		perror("Failed to issue CHIPINFO IOCTL\n");
++		goto exit_close_error;
+ 	}
+ 	fprintf(stdout, "GPIO chip: %s, \"%s\", %u GPIO lines\n",
+ 		cinfo.name, cinfo.label, cinfo.lines);
+ 
+-	if (close(fd) == -1)  {
+-		ret = -errno;
+-		goto free_chrdev_name;
++	/* Loop over the lines and print info */
++	for (i = 0; i < cinfo.lines; i++) {
++		struct gpioline_info linfo;
++
++		ret = ioctl(fd, GPIO_GET_LINEINFO_IOCTL, &linfo);
++		if (ret == -1) {
++			ret = -errno;
++			perror("Failed to issue LINEINFO IOCTL\n");
++			goto exit_close_error;
++		}
++		fprintf(stdout, "\tline %d:", i);
++		if (linfo.name[0])
++			fprintf(stdout, " %s", linfo.name);
++		else
++			fprintf(stdout, " unnamed");
++		if (linfo.label[0])
++			fprintf(stdout, "\"%s\"", linfo.label);
++		else
++			fprintf(stdout, " unlabeled");
++		if (linfo.flags) {
++			fprintf(stdout, "[");
++			print_flags(linfo.flags);
++			fprintf(stdout, "]");
++		}
++		fprintf(stdout, "\n");
++
+ 	}
+ 
+-free_chrdev_name:
++exit_close_error:
++	if (close(fd) == -1)
++		perror("Failed to close GPIO character device file");
+ 	free(chrdev_name);
+-
+ 	return ret;
+-
+ }
+ 
+ void print_usage(void)
+-- 
+2.4.3
+
