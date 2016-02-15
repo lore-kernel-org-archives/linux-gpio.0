@@ -1,45 +1,58 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: zynq: fix typo in group name for qspi1
-Date: Mon, 15 Feb 2016 19:19:41 +0100
-Message-ID: <CACRpkdY4qx1xNfmE9WZ-YpCxM4XL-7rq6uuka5D3ZP3mQHscRQ@mail.gmail.com>
-References: <1454573648-21751-1-git-send-email-helmut.buchsbaum@gmail.com>
+Subject: Re: [RFC PATCH] GPIO/ACPI: DesignWare: Add GPIO-signaled ACPI events
+ support for power button
+Date: Mon, 15 Feb 2016 19:25:23 +0100
+Message-ID: <CACRpkdZNCt_TtA6SR86dVCR7vq5cpVmbzxeTguc7go6vVRkuTg@mail.gmail.com>
+References: <1454653542-122055-1-git-send-email-qiujiang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:35116 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751828AbcBOSTl convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Feb 2016 13:19:41 -0500
-Received: by mail-ob0-f177.google.com with SMTP id xk3so222641151obc.2
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Feb 2016 10:19:41 -0800 (PST)
-In-Reply-To: <1454573648-21751-1-git-send-email-helmut.buchsbaum@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1454653542-122055-1-git-send-email-qiujiang@huawei.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: qiujiang <qiujiang@huawei.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
 List-Id: linux-gpio@vger.kernel.org
-To: Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
-Cc: =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Feb 4, 2016 at 9:14 AM, Helmut Buchsbaum
-<helmut.buchsbaum@gmail.com> wrote:
+Mika can you help out looking at this patch. Tell me if you need a copy
+of the whole patch, I'm not smart with ACPI.
 
-> Due to a typo Zynq pin controller does not set pin function of qspi1
-> when using function qspi1. So pin group for qspi1 has to be renamed t=
-o
-> "qspi1_0_grp" as outlined in the corresponding bindings documentation=
-=2E
+On Fri, Feb 5, 2016 at 7:25 AM, qiujiang <qiujiang@huawei.com> wrote:
+
+> This patch modifies the DesignWare GPIO controller driver to
+> support the GPIO-signaled ACPI Events. This is used for power
+> button function on ARM server.
 >
-> This also removes kernel message:
->   zynq-pinctrl 700.pinctrl: invalid group "qspi1_0_grp" for function =
-"qspi1"
+> To make it work, the _AEI and _EVT object must be defined in
+> the corresponding GPIO driver's dsdt table in UEFI. At the same
+> time, ACPI daemon component is also necessary.
 >
-> Signed-off-by: Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
+> Signed-off-by: qiujiang <qiujiang@huawei.com>
 
-Patch applied with S=C3=B6ren's ACK.
+(...)
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -23,6 +23,11 @@
+>  #include <linux/spinlock.h>
+>  #include <linux/platform_data/gpio-dwapb.h>
+>  #include <linux/slab.h>
+> +#include <linux/acpi.h>
+> +#include <linux/gpio.h>
+
+You should only need <linux/driver.h>
+
+> +#include "gpiolib.h"
+
+I guess this is for some acpi_gpiochip* functions that ACPI GPIO
+drivers need like this:
+
+> +       /* Add GPIO-signaled ACPI event support */
+> +       if (pp->irq)
+> +               acpi_gpiochip_request_interrupts(&(port->bgc.gc));
+
+Hm, maybe these should be in "gpiolib-acpi.h" or so.
+
+Overall the patch looks sane to me, but I need some ACPI
+person to tell.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
