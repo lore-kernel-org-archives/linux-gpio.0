@@ -1,44 +1,34 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 0/4] pinctrl: sh-pfc: More PINMUX_SINGLE() conversions
-Date: Mon, 15 Feb 2016 19:39:00 +0100
-Message-ID: <CAMuHMdWuMLd+xah5H8a7XY2WY1QcCus+x+jcju2p9Mw4Q1yGVg@mail.gmail.com>
-References: <1448890865-1856-1-git-send-email-geert+renesas@glider.be>
-	<CACRpkdZp8n_QMa+X36VNqn4Vueh60nwD4=6HuEWjJvnV4g_KEw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: Fix return value check in amd_gpio_probe()
+Date: Mon, 15 Feb 2016 19:43:11 +0100
+Message-ID: <CACRpkdaKhReWzQ_UOukD7AY=UFFVUOPVw7YoexM4k8YE2Zw+Nw@mail.gmail.com>
+References: <1454770596-11299-1-git-send-email-weiyj_lk@163.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34324 "EHLO
-	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752143AbcBOSjB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Feb 2016 13:39:01 -0500
-In-Reply-To: <CACRpkdZp8n_QMa+X36VNqn4Vueh60nwD4=6HuEWjJvnV4g_KEw@mail.gmail.com>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:35668 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752642AbcBOSnM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Feb 2016 13:43:12 -0500
+Received: by mail-ob0-f173.google.com with SMTP id xk3so223508395obc.2
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Feb 2016 10:43:11 -0800 (PST)
+In-Reply-To: <1454770596-11299-1-git-send-email-weiyj_lk@163.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: weiyj_lk@163.com
+Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+On Sat, Feb 6, 2016 at 3:56 PM,  <weiyj_lk@163.com> wrote:
 
-On Mon, Feb 15, 2016 at 7:26 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Nov 30, 2015 at 2:41 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->> This patch series converts pin control data for a few more Renesas SoCs
->> to the recently-introduced PINMUX_SINGLE() macro.
->> As such this series depends on "[PATCH/RFC 0/4] pinctrl: sh-pfc: Add
->> PINMUX_SINGLE()".
+> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 >
-> Looks good to me (TM)
-> Please queue them and send with a pull request incl. Laurent's ACKs.
+> In case of error, the function devm_ioremap_nocache() returns NULL
+> pointer not ERR_PTR(). The IS_ERR() test in the return value check
+> should be replaced with NULL test.
+>
+> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-Been there, done that. This series is already in v4.5-rc1 ;-)
+Patch applied.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
