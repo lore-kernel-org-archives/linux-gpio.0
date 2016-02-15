@@ -1,51 +1,48 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: Re: [PATCH v2 3/5] pinctrl: sunxi: Add H3 R_PIO
- controller support
-Date: Mon, 15 Feb 2016 10:17:23 +0100
-Message-ID: <CACRpkdbfNeh7_=3ReQtJc7OxkkQEn+BUhZ0O0SKnFsRD=WZiUQ@mail.gmail.com>
-References: <1454448113-18810-1-git-send-email-k@japko.eu>
-	<1454448113-18810-4-git-send-email-k@japko.eu>
-	<CACRpkdZkSzcb0fmghkvsfRHpsU-SsSGPP6YvstAW7387HS0xJw@mail.gmail.com>
-	<20160215080816.GA6426@box2.japko.eu>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBI5PQ23AKGQEVKGLUYQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <20160215080816.GA6426-xLeyfSbClftGit24Ens98Q@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Krzysztof Adamski <k@japko.eu>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: [PATCH 1/1] gpio: pisosr: Don't use magic numbers
+Date: Mon, 15 Feb 2016 10:14:00 +0100
+Message-ID: <1455527640-10446-1-git-send-email-alexander.stein@systec-electronic.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from webbox1416.server-home.net ([77.236.96.61]:57103 "EHLO
+	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751481AbcBOJXE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 15 Feb 2016 04:23:04 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org
 
-On Mon, Feb 15, 2016 at 9:08 AM, Krzysztof Adamski <k@japko.eu> wrote:
-> On Thu, Feb 11, 2016 at 02:21:15PM +0100, Linus Walleij wrote:
->>
->> On Tue, Feb 2, 2016 at 10:21 PM, Krzysztof Adamski <k@japko.eu> wrote:
->>
->>> H3 has additional PIO controller similar to what we can find on A23.
->>> It's a 12 pin port, described in H3 Datasheet rev 1.1, pages 345-350.
->>>
->>> Signed-off-by: Krzysztof Adamski <k@japko.eu>
->>
->>
->> Patch applied with Maxime's ACK.
->
->
-> Hi Linus,
->
-> You took v2 which does not add documentation for
-> allwinner,sun8i-h3-r-pinctrl compatible that is added in this patch.  This
-> was fixed in v3. Should I prepare a patch for you that only adds this to the
-> documentation or you can handle this by taking v3/v4 instead of this patch?
+At first view I thought this function returned an error, but actually
+it is the input direction. Use the define for input which makes reading
+the code much easier.
 
-Ooops please send a fixup patch, I don't like to rebase the
-tree if possible. Sorry for the mess and thanks for your help.
+Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+---
+ drivers/gpio/gpio-pisosr.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
+index 58ea08d..068de54 100644
+--- a/drivers/gpio/gpio-pisosr.c
++++ b/drivers/gpio/gpio-pisosr.c
+@@ -13,6 +13,7 @@
+  */
+ 
+ #include <linux/delay.h>
++#include <linux/gpio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
+@@ -65,7 +66,7 @@ static int pisosr_gpio_get_direction(struct gpio_chip *chip,
+ 				     unsigned offset)
+ {
+ 	/* This device always input */
+-	return 1;
++	return GPIOF_DIR_IN;
+ }
+ 
+ static int pisosr_gpio_direction_input(struct gpio_chip *chip,
+-- 
+2.4.10
+
