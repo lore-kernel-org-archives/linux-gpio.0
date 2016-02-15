@@ -1,42 +1,246 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 0/2] Add Renesas R8A7794 audio PFC support
-Date: Mon, 15 Feb 2016 12:01:54 +0100
-Message-ID: <CAMuHMdVy-oopkgKx0c64c-WhGY-4u8fUUm2XayBPaiW8Q09FgQ@mail.gmail.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH] pinctrl: sh-pfc: Rework PFC GPIO support
+Date: Mon, 15 Feb 2016 21:04:38 +0900
+Message-ID: <20160215120438.24670.15402.sendpatchset@little-apple>
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, horms@verge.net.au, geert@glider.be, laurent.pinchart@ideasonboard.com, Magnus Damm <magnus.damm@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Sergei,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-On Wed, Feb 10, 2016 at 11:37 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
->    Here's the set of 2 patches against the 'devel' branch of Linus Walleij's
-> 'linux-pinctrl.git' repo. Here we add the PFC support for the Renesas R8A7794
-> SSI devices and audio clocks.
+The sh-pfc Pinctrl driver is currently handling SoC-specific
+PFC hardware blocks on Arm64, Arm and SH architectures.
 
-Thanks!
+For older SoCs using SH cores and some 32-bit Arm SoCs the PFC
+hardware also provides GPIO functionality. On the majority of
+32-bit Arm SoCs from Renesas and so far all Arm64 SoCs the GPIO
+feature is provided by separate hardware blocks.
 
-> [1/2] pinctrl: sh-pfc: r8a7794: add SSI pin groups
-> [2/2] pinctrl: sh-pfc: r8a7794: add audio clock pin groups
+So far GPIO support in the PFC driver has been compiled-in for
+the majority of the SoCs, but with this patch applied the SoCs
+with PFC support may select from one of the following:
+ - CONFIG_PINCTRL_SH_PFC - Used if PFC lacks GPIO hardware
+ - CONFIG_PINCTRL_SH_PFC_GPIO - Used if PFC includes GPIO support
 
-Both
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch results in the following changes:
+ - The GPIO functionality is only compiled-in on relevant SoCs
+ - The number of lines of code is reduced
 
-Will queue for renesas-drivers, and sh-pfc-for-v4.6.
+Build tested using the following configurations:
+ - r8a7795 -> CONFIG_PINCTRL_SH_PFC_GPIO=n -> Ok (Arm64)
+ - r8a7790 -> CONFIG_PINCTRL_SH_PFC_GPIO=n -> Ok (Arm)
+ - r8a7790 + r8a7740 -> CONFIG_PINCTRL_SH_PFC_GPIO=y -> Ok (Arm)
+ - r8a7740 -> CONFIG_PINCTRL_SH_PFC_GPIO=y -> Ok (Arm)
 
-Gr{oetje,eeting}s,
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-                        Geert
+ drivers/pinctrl/sh-pfc/Kconfig  |   54 ++++++++++++++-------------------------
+ drivers/pinctrl/sh-pfc/Makefile |   33 ++++++++++-------------
+ drivers/pinctrl/sh-pfc/core.c   |    4 +-
+ 3 files changed, 37 insertions(+), 54 deletions(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--- 0001/drivers/pinctrl/sh-pfc/Kconfig
++++ work/drivers/pinctrl/sh-pfc/Kconfig	2016-02-15 19:59:35.080513000 +0900
+@@ -5,7 +5,6 @@
+ if ARCH_SHMOBILE || SUPERH
+ 
+ config PINCTRL_SH_PFC
+-	select GPIO_SH_PFC if ARCH_REQUIRE_GPIOLIB
+ 	select PINMUX
+ 	select PINCONF
+ 	select GENERIC_PINCONF
+@@ -13,12 +12,12 @@ config PINCTRL_SH_PFC
+ 	help
+ 	  This enables pin control drivers for SH and SH Mobile platforms
+ 
+-config GPIO_SH_PFC
+-	bool "SuperH PFC GPIO support"
+-	depends on PINCTRL_SH_PFC && GPIOLIB
++config PINCTRL_SH_PFC_GPIO
++	select GPIOLIB
++	select PINCTRL_SH_PFC
++	def_bool n
+ 	help
+-	  This enables support for GPIOs within the SoC's pin function
+-	  controller.
++	  This enables pin control and GPIO drivers for SH/SH Mobile platforms
+ 
+ config PINCTRL_PFC_EMEV2
+ 	def_bool y
+@@ -28,12 +27,12 @@ config PINCTRL_PFC_EMEV2
+ config PINCTRL_PFC_R8A73A4
+ 	def_bool y
+ 	depends on ARCH_R8A73A4
+-	select PINCTRL_SH_PFC
++	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_R8A7740
+ 	def_bool y
+ 	depends on ARCH_R8A7740
+-	select PINCTRL_SH_PFC
++	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_R8A7778
+ 	def_bool y
+@@ -73,79 +72,66 @@ config PINCTRL_PFC_R8A7795
+ config PINCTRL_PFC_SH7203
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7203
+-	depends on GPIOLIB
+-	select PINCTRL_SH_PFC
++	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_SH7264
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7264
+-	depends on GPIOLIB
+-	select PINCTRL_SH_PFC
++	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_SH7269
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7269
+-	depends on GPIOLIB
+-	select PINCTRL_SH_PFC
++	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_SH73A0
+ 	def_bool y
+ 	depends on ARCH_SH73A0
+-	select PINCTRL_SH_PFC
++	select PINCTRL_SH_PFC_GPIO
+ 	select REGULATOR
+ 
+ config PINCTRL_PFC_SH7720
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7720
+-	depends on GPIOLIB
+-	select PINCTRL_SH_PFC
++	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_SH7722
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7722
+-	depends on GPIOLIB
+-	select PINCTRL_SH_PFC
++	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_SH7723
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7723
+-	depends on GPIOLIB
+-	select PINCTRL_SH_PFC
++	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_SH7724
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7724
+-	depends on GPIOLIB
+-	select PINCTRL_SH_PFC
++	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_SH7734
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7734
+-	depends on GPIOLIB
+-	select PINCTRL_SH_PFC
++	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_SH7757
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7757
+-	depends on GPIOLIB
+-	select PINCTRL_SH_PFC
++	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_SH7785
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7785
+-	depends on GPIOLIB
+-	select PINCTRL_SH_PFC
++	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_SH7786
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7786
+-	depends on GPIOLIB
+-	select PINCTRL_SH_PFC
++	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_SHX3
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SHX3
+-	depends on GPIOLIB
+-	select PINCTRL_SH_PFC
+-
++	select PINCTRL_SH_PFC_GPIO
+ endif
+--- 0001/drivers/pinctrl/sh-pfc/Makefile
++++ work/drivers/pinctrl/sh-pfc/Makefile	2016-02-15 19:56:50.720513000 +0900
+@@ -1,11 +1,8 @@
+ sh-pfc-objs			= core.o pinctrl.o
+-ifeq ($(CONFIG_GPIO_SH_PFC),y)
+-sh-pfc-objs			+= gpio.o
+-endif
+ obj-$(CONFIG_PINCTRL_SH_PFC)	+= sh-pfc.o
+ obj-$(CONFIG_PINCTRL_PFC_EMEV2)	+= pfc-emev2.o
+-obj-$(CONFIG_PINCTRL_PFC_R8A73A4)	+= pfc-r8a73a4.o
+-obj-$(CONFIG_PINCTRL_PFC_R8A7740)	+= pfc-r8a7740.o
++obj-$(CONFIG_PINCTRL_PFC_R8A73A4)	+= pfc-r8a73a4.o gpio.o
++obj-$(CONFIG_PINCTRL_PFC_R8A7740)	+= pfc-r8a7740.o gpio.o
+ obj-$(CONFIG_PINCTRL_PFC_R8A7778)	+= pfc-r8a7778.o
+ obj-$(CONFIG_PINCTRL_PFC_R8A7779)	+= pfc-r8a7779.o
+ obj-$(CONFIG_PINCTRL_PFC_R8A7790)	+= pfc-r8a7790.o
+@@ -13,16 +10,16 @@ obj-$(CONFIG_PINCTRL_PFC_R8A7791)	+= pfc
+ obj-$(CONFIG_PINCTRL_PFC_R8A7793)	+= pfc-r8a7791.o
+ obj-$(CONFIG_PINCTRL_PFC_R8A7794)	+= pfc-r8a7794.o
+ obj-$(CONFIG_PINCTRL_PFC_R8A7795)	+= pfc-r8a7795.o
+-obj-$(CONFIG_PINCTRL_PFC_SH7203)	+= pfc-sh7203.o
+-obj-$(CONFIG_PINCTRL_PFC_SH7264)	+= pfc-sh7264.o
+-obj-$(CONFIG_PINCTRL_PFC_SH7269)	+= pfc-sh7269.o
+-obj-$(CONFIG_PINCTRL_PFC_SH73A0)	+= pfc-sh73a0.o
+-obj-$(CONFIG_PINCTRL_PFC_SH7720)	+= pfc-sh7720.o
+-obj-$(CONFIG_PINCTRL_PFC_SH7722)	+= pfc-sh7722.o
+-obj-$(CONFIG_PINCTRL_PFC_SH7723)	+= pfc-sh7723.o
+-obj-$(CONFIG_PINCTRL_PFC_SH7724)	+= pfc-sh7724.o
+-obj-$(CONFIG_PINCTRL_PFC_SH7734)	+= pfc-sh7734.o
+-obj-$(CONFIG_PINCTRL_PFC_SH7757)	+= pfc-sh7757.o
+-obj-$(CONFIG_PINCTRL_PFC_SH7785)	+= pfc-sh7785.o
+-obj-$(CONFIG_PINCTRL_PFC_SH7786)	+= pfc-sh7786.o
+-obj-$(CONFIG_PINCTRL_PFC_SHX3)		+= pfc-shx3.o
++obj-$(CONFIG_PINCTRL_PFC_SH7203)	+= pfc-sh7203.o gpio.o
++obj-$(CONFIG_PINCTRL_PFC_SH7264)	+= pfc-sh7264.o gpio.o
++obj-$(CONFIG_PINCTRL_PFC_SH7269)	+= pfc-sh7269.o gpio.o
++obj-$(CONFIG_PINCTRL_PFC_SH73A0)	+= pfc-sh73a0.o gpio.o
++obj-$(CONFIG_PINCTRL_PFC_SH7720)	+= pfc-sh7720.o gpio.o
++obj-$(CONFIG_PINCTRL_PFC_SH7722)	+= pfc-sh7722.o gpio.o
++obj-$(CONFIG_PINCTRL_PFC_SH7723)	+= pfc-sh7723.o gpio.o
++obj-$(CONFIG_PINCTRL_PFC_SH7724)	+= pfc-sh7724.o gpio.o
++obj-$(CONFIG_PINCTRL_PFC_SH7734)	+= pfc-sh7734.o gpio.o
++obj-$(CONFIG_PINCTRL_PFC_SH7757)	+= pfc-sh7757.o gpio.o
++obj-$(CONFIG_PINCTRL_PFC_SH7785)	+= pfc-sh7785.o gpio.o
++obj-$(CONFIG_PINCTRL_PFC_SH7786)	+= pfc-sh7786.o gpio.o
++obj-$(CONFIG_PINCTRL_PFC_SHX3)		+= pfc-shx3.o gpio.o
+--- 0001/drivers/pinctrl/sh-pfc/core.c
++++ work/drivers/pinctrl/sh-pfc/core.c	2016-02-15 19:51:47.570513000 +0900
+@@ -558,7 +558,7 @@ static int sh_pfc_probe(struct platform_
+ 	if (unlikely(ret != 0))
+ 		return ret;
+ 
+-#ifdef CONFIG_GPIO_SH_PFC
++#ifdef CONFIG_PINCTRL_SH_PFC_GPIO
+ 	/*
+ 	 * Then the GPIO chip
+ 	 */
+@@ -584,7 +584,7 @@ static int sh_pfc_remove(struct platform
+ {
+ 	struct sh_pfc *pfc = platform_get_drvdata(pdev);
+ 
+-#ifdef CONFIG_GPIO_SH_PFC
++#ifdef CONFIG_PINCTRL_SH_PFC_GPIO
+ 	sh_pfc_unregister_gpiochip(pfc);
+ #endif
+ 	sh_pfc_unregister_pinctrl(pfc);
