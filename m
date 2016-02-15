@@ -1,101 +1,44 @@
 From: Quan Nguyen <qnguyen@apm.com>
-Subject: [PATCH v6 2/3] Documentation: gpio: Update description for X-Gene standby GPIO controller DTS binding
-Date: Mon, 15 Feb 2016 11:57:42 +0700
-Message-ID: <1455512263-18183-3-git-send-email-qnguyen@apm.com>
+Subject: [PATCH v6 3/3] arm64: dts: Update X-Gene standby GPIO controller DTS entries
+Date: Mon, 15 Feb 2016 11:57:43 +0700
+Message-ID: <1455512263-18183-4-git-send-email-qnguyen@apm.com>
 References: <1455512263-18183-1-git-send-email-qnguyen@apm.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f178.google.com ([209.85.192.178]:32808 "EHLO
-	mail-pf0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751579AbcBOE6D (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Feb 2016 23:58:03 -0500
-Received: by mail-pf0-f178.google.com with SMTP id q63so80886090pfb.0
-        for <linux-gpio@vger.kernel.org>; Sun, 14 Feb 2016 20:58:02 -0800 (PST)
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:35082 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751579AbcBOE6G (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Feb 2016 23:58:06 -0500
+Received: by mail-pa0-f53.google.com with SMTP id ho8so80247412pac.2
+        for <linux-gpio@vger.kernel.org>; Sun, 14 Feb 2016 20:58:06 -0800 (PST)
 In-Reply-To: <1455512263-18183-1-git-send-email-qnguyen@apm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>
 Cc: Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches@apm.com, Quan Nguyen <qnguyen@apm.com>
 
-Update description for X-Gene standby GPIO controller DTS binding to
-support GPIO line configuration as input, output or external IRQ pin.
+Update APM X-Gene standby GPIO controller DTS entries to enable it
+as interrupt controller.
 
 Signed-off-by: Y Vo <yvo@apm.com>
 Signed-off-by: Quan Nguyen <qnguyen@apm.com>
 ---
- .../devicetree/bindings/gpio/gpio-xgene-sb.txt     | 47 ++++++++++++++++++----
- 1 file changed, 40 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/apm/apm-storm.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
-index dae1300..7b8b4cb 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
-@@ -1,10 +1,20 @@
- APM X-Gene Standby GPIO controller bindings
+diff --git a/arch/arm64/boot/dts/apm/apm-storm.dtsi b/arch/arm64/boot/dts/apm/apm-storm.dtsi
+index fe30f76..0f733da 100644
+--- a/arch/arm64/boot/dts/apm/apm-storm.dtsi
++++ b/arch/arm64/boot/dts/apm/apm-storm.dtsi
+@@ -883,6 +883,9 @@
+ 					<0x0 0x2b 0x1>,
+ 					<0x0 0x2c 0x1>,
+ 					<0x0 0x2d 0x1>;
++			interrupt-parent = <&gic>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
+ 		};
  
--This is a gpio controller in the standby domain.
--
--There are 20 GPIO pins from 0..21. There is no GPIO_DS14 or GPIO_DS15,
--only GPIO_DS8..GPIO_DS13 support interrupts. The IRQ mapping
--is currently 1-to-1 on interrupts 0x28 thru 0x2d.
-+This is a gpio controller in the standby domain. It also supports interrupt in
-+some particular pins which are sourced to its parent interrupt controller
-+as diagram below:
-+                           +-----------------+
-+                           | X-Gene standby  |
-+                           | GPIO controller +--------- GPIO_0
-++------------+             |                 | ...
-+| Parent IRQ |             |                 +--------- GPIO_8/EXT_INT_0
-+| controller |  EXT_INT_0  |                 | ...
-+| (GICv2)    +-------------+                 +--------- GPIO_[N+8]/EXT_INT_N
-+|            |  ...        |                 |
-+|            |  EXT_INT_N  |                 +--------- GPIO_[N+9]
-+|            +-------------+                 | ...
-+|            |             |                 +--------- GPIO_MAX
-++------------+             +-----------------+
- 
- Required properties:
- - compatible: "apm,xgene-gpio-sb" for the X-Gene Standby GPIO controller
-@@ -15,10 +25,18 @@ Required properties:
- 		0 = active high
- 		1 = active low
- - gpio-controller: Marks the device node as a GPIO controller.
--- interrupts: Shall contain exactly 6 interrupts.
-+- interrupts: The EXT_INT_0 parent interrupt resource must be listed first.
-+- interrupt-parent: Phandle of the parent interrupt controller.
-+- interrupt-cells: Should be two.
-+       - first cell is 0-N coresponding for EXT_INT_0 to EXT_INT_N.
-+       - second cell is used to specify flags.
-+- interrupt-controller: Marks the device node as an interrupt controller.
-+- apm,nr-gpios: Optional, specify number of gpios pin.
-+- apm,nr-irqs: Optional, specify number of interrupt pins.
-+- apm,irq-start: Optional, specify lowest gpio pin support interrupt.
- 
- Example:
--	sbgpio: sbgpio@17001000 {
-+	sbgpio: gpio@17001000{
- 		compatible = "apm,xgene-gpio-sb";
- 		reg = <0x0 0x17001000 0x0 0x400>;
- 		#gpio-cells = <2>;
-@@ -29,4 +47,19 @@ Example:
- 				<0x0 0x2b 0x1>,
- 				<0x0 0x2c 0x1>,
- 				<0x0 0x2d 0x1>;
-+		interrupt-parent = <&gic>;
-+		#interrupt-cells = <2>;
-+		interrupt-controller;
-+		apm,nr-gpios = <22>;
-+		apm,nr-irqs = <6>;
-+		apm,irq-start = <8>;
-+	};
-+
-+	testuser {
-+		compatible = "example,testuser";
-+		/* Use the GPIO_13/EXT_INT_5 line as an active high triggered
-+		 * level interrupt
-+		 */
-+		interrupts = <5 4>;
-+		interrupt-parent = <&sbgpio>;
- 	};
+ 		rtc: rtc@10510000 {
 -- 
 1.7.12.4
 
