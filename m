@@ -1,66 +1,127 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 4/4] ARM: remove asm/gpio.h
-Date: Mon, 15 Feb 2016 16:03:06 +0000
-Message-ID: <20160215160305.GG10826@n2100.arm.linux.org.uk>
-References: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
- <1455551208-2825510-1-git-send-email-arnd@arndb.de>
- <1455551208-2825510-5-git-send-email-arnd@arndb.de>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v6 2/3] Documentation: gpio: Update description for X-Gene
+ standby GPIO controller DTS binding
+Date: Mon, 15 Feb 2016 16:08:12 +0000
+Message-ID: <56C1F7EC.3020701@arm.com>
+References: <1455512263-18183-1-git-send-email-qnguyen@apm.com>
+ <1455512263-18183-3-git-send-email-qnguyen@apm.com>
+ <56C1CA6E.1060606@arm.com>
+ <CAFopSPRwd8cHnH8efegYVv52hPVTyk=VW9OrZZtSCj6Szj-K4Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arch-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1455551208-2825510-5-git-send-email-arnd@arndb.de>
-Sender: linux-arch-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:46194 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752286AbcBOQIQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 15 Feb 2016 11:08:16 -0500
+In-Reply-To: <CAFopSPRwd8cHnH8efegYVv52hPVTyk=VW9OrZZtSCj6Szj-K4Q@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Quan Nguyen <qnguyen@apm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>
 
-On Mon, Feb 15, 2016 at 04:46:31PM +0100, Arnd Bergmann wrote:
-> -#if CONFIG_ARCH_NR_GPIO > 0
-> -#define ARCH_NR_GPIOS CONFIG_ARCH_NR_GPIO
-> -#endif
-...
-> diff --git a/include/asm-generic/gpio.h b/include/asm-generic/gpio.h
-> index 40ec1433f05d..2d04b321db13 100644
-> --- a/include/asm-generic/gpio.h
-> +++ b/include/asm-generic/gpio.h
-> @@ -26,8 +26,12 @@
->   */
->  
->  #ifndef ARCH_NR_GPIOS
-> +#ifdef CONFIG_ARCH_NR_GPIO
-> +#define ARCH_NR_GPIOS CONFIG_ARCH_NR_GPIO
-> +#else
->  #define ARCH_NR_GPIOS		512
->  #endif
-> +#endif
+On 15/02/16 15:31, Quan Nguyen wrote:
+> On Mon, Feb 15, 2016 at 7:54 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>> On 15/02/16 04:57, Quan Nguyen wrote:
+>>> Update description for X-Gene standby GPIO controller DTS binding to
+>>> support GPIO line configuration as input, output or external IRQ pin.
+>>>
+>>> Signed-off-by: Y Vo <yvo@apm.com>
+>>> Signed-off-by: Quan Nguyen <qnguyen@apm.com>
+>>> ---
+>>>  .../devicetree/bindings/gpio/gpio-xgene-sb.txt     | 47 ++++++++++++++++++----
+>>>  1 file changed, 40 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+>>> index dae1300..7b8b4cb 100644
+>>> --- a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+>>> +++ b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+>>> @@ -1,10 +1,20 @@
+>>>  APM X-Gene Standby GPIO controller bindings
+>>>
+>>> -This is a gpio controller in the standby domain.
+>>> -
+>>> -There are 20 GPIO pins from 0..21. There is no GPIO_DS14 or GPIO_DS15,
+>>> -only GPIO_DS8..GPIO_DS13 support interrupts. The IRQ mapping
+>>> -is currently 1-to-1 on interrupts 0x28 thru 0x2d.
+>>> +This is a gpio controller in the standby domain. It also supports interrupt in
+>>> +some particular pins which are sourced to its parent interrupt controller
+>>> +as diagram below:
+>>> +                           +-----------------+
+>>> +                           | X-Gene standby  |
+>>> +                           | GPIO controller +--------- GPIO_0
+>>> ++------------+             |                 | ...
+>>> +| Parent IRQ |             |                 +--------- GPIO_8/EXT_INT_0
+>>> +| controller |  EXT_INT_0  |                 | ...
+>>> +| (GICv2)    +-------------+                 +--------- GPIO_[N+8]/EXT_INT_N
+>>> +|            |  ...        |                 |
+>>> +|            |  EXT_INT_N  |                 +--------- GPIO_[N+9]
+>>> +|            +-------------+                 | ...
+>>> +|            |             |                 +--------- GPIO_MAX
+>>> ++------------+             +-----------------+
+>>>
+>>>  Required properties:
+>>>  - compatible: "apm,xgene-gpio-sb" for the X-Gene Standby GPIO controller
+>>> @@ -15,10 +25,18 @@ Required properties:
+>>>               0 = active high
+>>>               1 = active low
+>>>  - gpio-controller: Marks the device node as a GPIO controller.
+>>> -- interrupts: Shall contain exactly 6 interrupts.
+>>> +- interrupts: The EXT_INT_0 parent interrupt resource must be listed first.
+>>> +- interrupt-parent: Phandle of the parent interrupt controller.
+>>> +- interrupt-cells: Should be two.
+>>> +       - first cell is 0-N coresponding for EXT_INT_0 to EXT_INT_N.
+>>> +       - second cell is used to specify flags.
+>>> +- interrupt-controller: Marks the device node as an interrupt controller.
+>>> +- apm,nr-gpios: Optional, specify number of gpios pin.
+>>> +- apm,nr-irqs: Optional, specify number of interrupt pins.
+>>> +- apm,irq-start: Optional, specify lowest gpio pin support interrupt.
+>>
+>> This is quite ambiguous. Is that relative to the GIC? Assuming this is
+>> the case, you should then document it, specify the type of interrupt
+>> (SPI?), and whether this is 0- or 32-based (the code seems to indicate
+>> that is is 0-based).
+>>
+> 
+> Hi Marc, Let me explain by diagram below.
+> As you can also see in diagram above, the lowest gpio pin that
+> supports interrupt is GPIO_8 (EXT_INT_0),
+> and hence, apm,irq-start=<8> as default.
+> 
+>                                            +-----------------+
+>                                            | X-Gene standby  |
+>                                            | GPIO controller +--------- GPIO_0
+> +------------+                             |                 | ...
+> | Parent IRQ |                             |
+> +--------- GPIO_[apm,irq-start]/EXT_INT_0
+> | controller |  EXT_INT_0                  |                 | ...
+> | (GICv2)    +-----------------------------+
+> +--------- GPIO_[apm,nr-irqs + apm,irq-start - 1]/EXT_INT_[apm,nr-irqs
+> - 1]
+> |            |  ...                        |                 |
+> |            |  EXT_INT_[apm,nr-irqs - 1]  |
+> +--------- GPIO_[apm,nr-irqs + apm,irq-start]
+> |            +-----------------------------+                 | ...
+> |            |                             |                 +--------- GPIO_MAX
+> +------------+                             +-----------------+
+> 
+> To fix this ambiguity, I'm thinking to change it to:
+> "apm,irq-start: Optional, specify index of first gpio pin
+> corresponding to EXT_INT_0, default is 8."
 
-This really isn't the same thing, especially when you look at:
+I think you are missing the point I'm trying to make. There are two ways
+to refer to an SPI: either by its absolute number (INT32 for example) or
+by its relative number (SPI0). SPI0 and INT32 are the same interrupt.
+Just with a different base.
 
-config ARCH_NR_GPIO
-        int
-        default 1024 if ARCH_BRCMSTB || ARCH_SHMOBILE || ARCH_TEGRA || \
-                ARCH_ZYNQ
-        default 512 if ARCH_EXYNOS || ARCH_KEYSTONE || SOC_OMAP5 || \
-                SOC_DRA7XX || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
-        default 416 if ARCH_SUNXI
-        default 392 if ARCH_U8500
-        default 352 if ARCH_VT8500
-        default 288 if ARCH_ROCKCHIP
-        default 264 if MACH_H4700
-        default 0
+My question is: which base are you using? By looking at the code, I
+think you're using the absolute version (INTx). And as your controller
+seems to be very GIC specific, you should add a pointer to the GIC
+documentation.
 
-This has the effect of causing anything not mentioned above to end up
-with ARCH_NR_GPIOS set to zero.
+Thanks,
 
-You really should _not_ be making these kinds of functional changes
-when moving code around.  Separate the two changes: either first move
-the code, and have a separate patch to make the functional changes, or
-make the functional changes first, and then move the code around.
-
-I'd have thought you would've known this by now...
-
+	M.
 -- 
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+Jazz is not dead. It just smells funny...
