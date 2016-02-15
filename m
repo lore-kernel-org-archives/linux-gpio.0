@@ -1,29 +1,132 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: TS-4800: remove useless bgpio_init flags
-Date: Mon, 15 Feb 2016 14:22:53 +0100
-Message-ID: <CACRpkdbEadqrvfTF7jDbAVxaa5puoWYUBKCjQrksi8J4thWQVg@mail.gmail.com>
-References: <1455124834-18224-1-git-send-email-julien.grossholtz@savoirfairelinux.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 1/1] gpio: add devm_ apis for gpio_chip_add and remove
+Date: Mon, 15 Feb 2016 18:47:26 +0530
+Message-ID: <1455542246-16761-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1455124834-18224-1-git-send-email-julien.grossholtz@savoirfairelinux.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, kernel <kernel@savoirfairelinux.com>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:16540 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751431AbcBON3Z (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Feb 2016 08:29:25 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 
-On Wed, Feb 10, 2016 at 6:20 PM, Julien Grossholtz
-<julien.grossholtz@savoirfairelinux.com> wrote:
+Add device managed APIs devm_gpiochip_add_data() and
+devm_gpiochip_remove() for the APIs gpiochip_add_data()
+and gpiochip_remove().
 
-> No flags are required for bgpio_init in the TS-4800 gpio driver. This
-> patch set zero instead. The driver will have the same behaviour since
-> the & operator between the flags already resulted to zero.
->
-> Fixes: 5041e791440a ("gpio: add TS-4800 fpga GPIO support")
->
-> Signed-off-by: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
+This helps in reducing code in error path and sometimes
+removal of .remove callback for driver unbind.
 
-Patch applied.
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+ drivers/gpio/gpiolib.c      | 74 +++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/gpio/driver.h |  4 +++
+ 2 files changed, 78 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 5c1ba87..d9a40bc 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -462,6 +462,80 @@ void gpiochip_remove(struct gpio_chip *chip)
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_remove);
+ 
++static void devm_gpio_chip_release(struct device *dev, void *res)
++{
++	struct gpio_chip *chip = *(struct gpio_chip **)res;
++
++	gpiochip_remove(chip);
++}
++
++static int devm_gpio_chip_match(struct device *dev, void *res, void *data)
++
++{
++	struct gpio_chip **r = res;
++
++	if (!r || !*r) {
++		WARN_ON(!r || !*r);
++		return 0;
++	}
++
++	return *r == data;
++}
++
++/**
++ * devm_gpiochip_add_data() - Resource manager piochip_add_data()
++ * @dev: the device pointer on which irq_chip belongs to.
++ * @chip: the chip to register, with chip->base initialized
++ * Context: potentially before irqs will work
++ *
++ * Returns a negative errno if the chip can't be registered, such as
++ * because the chip->base is invalid or already associated with a
++ * different chip.  Otherwise it returns zero as a success code.
++ *
++ * The gpio chip automatically be released when the device is unbound.
++ */
++int devm_gpiochip_add_data(struct device *dev, struct gpio_chip *chip,
++			   void *data)
++{
++	struct gpio_chip **ptr;
++	int ret;
++
++	ptr = devres_alloc(devm_gpio_chip_release, sizeof(*ptr),
++			     GFP_KERNEL);
++	if (!ptr)
++		return -ENOMEM;
++
++	ret = gpiochip_add_data(chip, data);
++	if (ret < 0) {
++		devres_free(ptr);
++		return ret;
++	}
++
++	*ptr = chip;
++	devres_add(dev, ptr);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(devm_gpiochip_add_data);
++
++/**
++ * devm_gpiochip_remove() - Resource manager of gpiochip_remove()
++ * @dev: device for which which resource was allocated
++ * @chip: the chip to remove
++ *
++ * A gpio_chip with any GPIOs still requested may not be removed.
++ */
++void devm_gpiochip_remove(struct device *dev, struct gpio_chip *chip)
++{
++	int ret;
++
++	ret = devres_release(dev, devm_gpio_chip_release,
++			     devm_gpio_chip_match, chip);
++	if (!ret)
++		WARN_ON(ret);
++}
++EXPORT_SYMBOL_GPL(devm_gpiochip_remove);
++
+ /**
+  * gpiochip_find() - iterator for locating a specific gpio_chip
+  * @data: data to pass to match function
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 82fda48..d5d19cc 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -205,6 +205,10 @@ static inline int gpiochip_add(struct gpio_chip *chip)
+ 	return gpiochip_add_data(chip, NULL);
+ }
+ extern void gpiochip_remove(struct gpio_chip *chip);
++extern int devm_gpiochip_add_data(struct device *dev, struct gpio_chip *chip,
++				  void *data);
++extern void devm_gpiochip_remove(struct device *dev, struct gpio_chip *chip);
++
+ extern struct gpio_chip *gpiochip_find(void *data,
+ 			      int (*match)(struct gpio_chip *chip, void *data));
+ 
+-- 
+2.1.4
+
