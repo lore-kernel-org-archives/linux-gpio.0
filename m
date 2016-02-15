@@ -1,42 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: Include linux/gpio.h instead of asm/gpio.h
-Date: Mon, 15 Feb 2016 14:35:51 +0100
-Message-ID: <CACRpkdYYtvTa91WW10oNs9KkqMfPCJhpZLcW5ksfyxG6F1cO7w@mail.gmail.com>
-References: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-	<20160202195323.10827.26654.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Subject: Re: [PATCH] davinci:Fix possible NULL pointer deference in the
+ function davinci_gpio_probe
+Date: Mon, 15 Feb 2016 14:38:56 +0100
+Message-ID: <CACRpkdabV8dfHcn8MCCrc3zA+yDO0zK0ko0QG5bN=fDoHZo+dQ@mail.gmail.com>
+References: <1454458679-11165-1-git-send-email-xerofoify@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:33497 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753119AbcBONfv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Feb 2016 08:35:51 -0500
-Received: by mail-ob0-f172.google.com with SMTP id jq7so27267429obb.0
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Feb 2016 05:35:51 -0800 (PST)
-In-Reply-To: <20160202195323.10827.26654.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1454458679-11165-1-git-send-email-xerofoify@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nicholas Krause <xerofoify@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Feb 2, 2016 at 8:53 PM, Bjorn Helgaas <bhelgaas@google.com> wrote:
+On Wed, Feb 3, 2016 at 1:17 AM, Nicholas Krause <xerofoify@gmail.com> wrote:
 
-> Most arches have an asm/gpio.h that merely includes linux/gpio.h.  The
-> others select ARCH_HAVE_CUSTOM_GPIO_H, and when that's selected,
-> linux/gpio.h includes asm/gpio.h.
+> This fixes a possible NULL pointer deference in the function,
+> davinci_gpio_probe due to the function, gpio2regs being able
+> to return a NULL pointer if it rans to get the registers for
+> the gpio devices on a davinci board. Furthermore if this does
+> arise return -ENXIO to signal callers that this case has arisen
+> and avoiding setting the regs or other pointer values on the
 >
-> Therefore, code should include linux/gpio.h instead of including asm/gpio.h
-> directly.
->
-> Remove includes of asm/gpio.h, adding an include of linux/gpio.h when
-> necessary.
->
-> This is a follow-on to 7563bbf89d06 ("gpiolib/arches: Centralise
-> bolierplate asm/gpio.h").
->
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
 
-Patch applied after getting Arnds ACK over IRC.
+Patch applied with Alex' review tag.
 
 Yours,
 Linus Walleij
