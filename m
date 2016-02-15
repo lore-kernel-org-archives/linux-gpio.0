@@ -1,44 +1,42 @@
-From: Quan Nguyen <qnguyen@apm.com>
-Subject: [PATCH v6 3/3] arm64: dts: Update X-Gene standby GPIO controller DTS entries
-Date: Mon, 15 Feb 2016 11:57:43 +0700
-Message-ID: <1455512263-18183-4-git-send-email-qnguyen@apm.com>
-References: <1455512263-18183-1-git-send-email-qnguyen@apm.com>
+From: Krzysztof Adamski <k@japko.eu>
+Subject: Re: [linux-sunxi] Re: [PATCH v2 3/5] pinctrl: sunxi: Add H3 R_PIO
+ controller support
+Date: Mon, 15 Feb 2016 09:08:17 +0100
+Message-ID: <20160215080816.GA6426@box2.japko.eu>
+References: <1454448113-18810-1-git-send-email-k@japko.eu>
+ <1454448113-18810-4-git-send-email-k@japko.eu>
+ <CACRpkdZkSzcb0fmghkvsfRHpsU-SsSGPP6YvstAW7387HS0xJw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:35082 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751579AbcBOE6G (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Feb 2016 23:58:06 -0500
-Received: by mail-pa0-f53.google.com with SMTP id ho8so80247412pac.2
-        for <linux-gpio@vger.kernel.org>; Sun, 14 Feb 2016 20:58:06 -0800 (PST)
-In-Reply-To: <1455512263-18183-1-git-send-email-qnguyen@apm.com>
+Received: from box2.japko.eu ([91.121.152.53]:54578 "EHLO box2.japko.eu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751944AbcBOIJJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 15 Feb 2016 03:09:09 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZkSzcb0fmghkvsfRHpsU-SsSGPP6YvstAW7387HS0xJw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches@apm.com, Quan Nguyen <qnguyen@apm.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>, Hans de Goede <hdegoede@redhat.com>, Vishnu Patekar <vishnupatekar0510@gmail.com>, Jens Kuske <jenskuske@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-sunxi <linux-sunxi@googlegroups.com>
 
-Update APM X-Gene standby GPIO controller DTS entries to enable it
-as interrupt controller.
+On Thu, Feb 11, 2016 at 02:21:15PM +0100, Linus Walleij wrote:
+>On Tue, Feb 2, 2016 at 10:21 PM, Krzysztof Adamski <k@japko.eu> wrote:
+>
+>> H3 has additional PIO controller similar to what we can find on A23.
+>> It's a 12 pin port, described in H3 Datasheet rev 1.1, pages 345-350.
+>>
+>> Signed-off-by: Krzysztof Adamski <k@japko.eu>
+>
+>Patch applied with Maxime's ACK.
 
-Signed-off-by: Y Vo <yvo@apm.com>
-Signed-off-by: Quan Nguyen <qnguyen@apm.com>
----
- arch/arm64/boot/dts/apm/apm-storm.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+Hi Linus,
 
-diff --git a/arch/arm64/boot/dts/apm/apm-storm.dtsi b/arch/arm64/boot/dts/apm/apm-storm.dtsi
-index fe30f76..0f733da 100644
---- a/arch/arm64/boot/dts/apm/apm-storm.dtsi
-+++ b/arch/arm64/boot/dts/apm/apm-storm.dtsi
-@@ -883,6 +883,9 @@
- 					<0x0 0x2b 0x1>,
- 					<0x0 0x2c 0x1>,
- 					<0x0 0x2d 0x1>;
-+			interrupt-parent = <&gic>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
- 		};
- 
- 		rtc: rtc@10510000 {
--- 
-1.7.12.4
+You took v2 which does not add documentation for 
+allwinner,sun8i-h3-r-pinctrl compatible that is added in this patch.  
+This was fixed in v3. Should I prepare a patch for you that only adds 
+this to the documentation or you can handle this by taking v3/v4 instead 
+of this patch?
 
+Best regards,
+Krzysztof Adamski
