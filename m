@@ -1,168 +1,45 @@
-From: Quan Nguyen <qnguyen@apm.com>
-Subject: Re: [PATCH v6 2/3] Documentation: gpio: Update description for X-Gene
- standby GPIO controller DTS binding
-Date: Tue, 16 Feb 2016 00:38:08 +0700
-Message-ID: <CAFopSPSh6AApYgZ7vmQgGYWekpAB8ktywC9T4xdfCiJbbSCQ8Q@mail.gmail.com>
-References: <1455512263-18183-1-git-send-email-qnguyen@apm.com>
-	<1455512263-18183-3-git-send-email-qnguyen@apm.com>
-	<56C1CA6E.1060606@arm.com>
-	<CAFopSPRwd8cHnH8efegYVv52hPVTyk=VW9OrZZtSCj6Szj-K4Q@mail.gmail.com>
-	<56C1F7EC.3020701@arm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: zynq: fix typo in group name for qspi1
+Date: Mon, 15 Feb 2016 19:19:41 +0100
+Message-ID: <CACRpkdY4qx1xNfmE9WZ-YpCxM4XL-7rq6uuka5D3ZP3mQHscRQ@mail.gmail.com>
+References: <1454573648-21751-1-git-send-email-helmut.buchsbaum@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vk0-f49.google.com ([209.85.213.49]:35263 "EHLO
-	mail-vk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752610AbcBORiJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Feb 2016 12:38:09 -0500
-Received: by mail-vk0-f49.google.com with SMTP id e6so112810253vkh.2
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Feb 2016 09:38:09 -0800 (PST)
-In-Reply-To: <56C1F7EC.3020701@arm.com>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:35116 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751828AbcBOSTl convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Feb 2016 13:19:41 -0500
+Received: by mail-ob0-f177.google.com with SMTP id xk3so222641151obc.2
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Feb 2016 10:19:41 -0800 (PST)
+In-Reply-To: <1454573648-21751-1-git-send-email-helmut.buchsbaum@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>
+To: Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
+Cc: =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Feb 15, 2016 at 11:08 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> On 15/02/16 15:31, Quan Nguyen wrote:
->> On Mon, Feb 15, 2016 at 7:54 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
->>> On 15/02/16 04:57, Quan Nguyen wrote:
->>>> Update description for X-Gene standby GPIO controller DTS binding to
->>>> support GPIO line configuration as input, output or external IRQ pin.
->>>>
->>>> Signed-off-by: Y Vo <yvo@apm.com>
->>>> Signed-off-by: Quan Nguyen <qnguyen@apm.com>
->>>> ---
->>>>  .../devicetree/bindings/gpio/gpio-xgene-sb.txt     | 47 ++++++++++++++++++----
->>>>  1 file changed, 40 insertions(+), 7 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
->>>> index dae1300..7b8b4cb 100644
->>>> --- a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
->>>> +++ b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
->>>> @@ -1,10 +1,20 @@
->>>>  APM X-Gene Standby GPIO controller bindings
->>>>
->>>> -This is a gpio controller in the standby domain.
->>>> -
->>>> -There are 20 GPIO pins from 0..21. There is no GPIO_DS14 or GPIO_DS15,
->>>> -only GPIO_DS8..GPIO_DS13 support interrupts. The IRQ mapping
->>>> -is currently 1-to-1 on interrupts 0x28 thru 0x2d.
->>>> +This is a gpio controller in the standby domain. It also supports interrupt in
->>>> +some particular pins which are sourced to its parent interrupt controller
->>>> +as diagram below:
->>>> +                           +-----------------+
->>>> +                           | X-Gene standby  |
->>>> +                           | GPIO controller +--------- GPIO_0
->>>> ++------------+             |                 | ...
->>>> +| Parent IRQ |             |                 +--------- GPIO_8/EXT_INT_0
->>>> +| controller |  EXT_INT_0  |                 | ...
->>>> +| (GICv2)    +-------------+                 +--------- GPIO_[N+8]/EXT_INT_N
->>>> +|            |  ...        |                 |
->>>> +|            |  EXT_INT_N  |                 +--------- GPIO_[N+9]
->>>> +|            +-------------+                 | ...
->>>> +|            |             |                 +--------- GPIO_MAX
->>>> ++------------+             +-----------------+
->>>>
->>>>  Required properties:
->>>>  - compatible: "apm,xgene-gpio-sb" for the X-Gene Standby GPIO controller
->>>> @@ -15,10 +25,18 @@ Required properties:
->>>>               0 = active high
->>>>               1 = active low
->>>>  - gpio-controller: Marks the device node as a GPIO controller.
->>>> -- interrupts: Shall contain exactly 6 interrupts.
->>>> +- interrupts: The EXT_INT_0 parent interrupt resource must be listed first.
->>>> +- interrupt-parent: Phandle of the parent interrupt controller.
->>>> +- interrupt-cells: Should be two.
->>>> +       - first cell is 0-N coresponding for EXT_INT_0 to EXT_INT_N.
->>>> +       - second cell is used to specify flags.
->>>> +- interrupt-controller: Marks the device node as an interrupt controller.
->>>> +- apm,nr-gpios: Optional, specify number of gpios pin.
->>>> +- apm,nr-irqs: Optional, specify number of interrupt pins.
->>>> +- apm,irq-start: Optional, specify lowest gpio pin support interrupt.
->>>
->>> This is quite ambiguous. Is that relative to the GIC? Assuming this is
->>> the case, you should then document it, specify the type of interrupt
->>> (SPI?), and whether this is 0- or 32-based (the code seems to indicate
->>> that is is 0-based).
->>>
->>
->> Hi Marc, Let me explain by diagram below.
->> As you can also see in diagram above, the lowest gpio pin that
->> supports interrupt is GPIO_8 (EXT_INT_0),
->> and hence, apm,irq-start=<8> as default.
->>
->>                                            +-----------------+
->>                                            | X-Gene standby  |
->>                                            | GPIO controller +--------- GPIO_0
->> +------------+                             |                 | ...
->> | Parent IRQ |                             |
->> +--------- GPIO_[apm,irq-start]/EXT_INT_0
->> | controller |  EXT_INT_0                  |                 | ...
->> | (GICv2)    +-----------------------------+
->> +--------- GPIO_[apm,nr-irqs + apm,irq-start - 1]/EXT_INT_[apm,nr-irqs
->> - 1]
->> |            |  ...                        |                 |
->> |            |  EXT_INT_[apm,nr-irqs - 1]  |
->> +--------- GPIO_[apm,nr-irqs + apm,irq-start]
->> |            +-----------------------------+                 | ...
->> |            |                             |                 +--------- GPIO_MAX
->> +------------+                             +-----------------+
->>
->> To fix this ambiguity, I'm thinking to change it to:
->> "apm,irq-start: Optional, specify index of first gpio pin
->> corresponding to EXT_INT_0, default is 8."
+On Thu, Feb 4, 2016 at 9:14 AM, Helmut Buchsbaum
+<helmut.buchsbaum@gmail.com> wrote:
+
+> Due to a typo Zynq pin controller does not set pin function of qspi1
+> when using function qspi1. So pin group for qspi1 has to be renamed t=
+o
+> "qspi1_0_grp" as outlined in the corresponding bindings documentation=
+=2E
 >
-> I think you are missing the point I'm trying to make. There are two ways
-> to refer to an SPI: either by its absolute number (INT32 for example) or
-> by its relative number (SPI0). SPI0 and INT32 are the same interrupt.
-> Just with a different base.
+> This also removes kernel message:
+>   zynq-pinctrl 700.pinctrl: invalid group "qspi1_0_grp" for function =
+"qspi1"
 >
-> My question is: which base are you using? By looking at the code, I
-> think you're using the absolute version (INTx). And as your controller
-> seems to be very GIC specific, you should add a pointer to the GIC
-> documentation.
->
+> Signed-off-by: Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
 
-Sorry, Marc, I was misunderstood.
+Patch applied with S=C3=B6ren's ACK.
 
-It is relative number, EXT_INT_0 corresponding with SPI40 and so on.
-So, how about adding more specific description into the diagram as below ?
-
---- a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
-@@ -3,18 +3,18 @@ APM X-Gene Standby GPIO controller bindings
- This is a gpio controller in the standby domain. It also supports interrupt in
- some particular pins which are sourced to its parent interrupt controller
- as diagram below:
--                           +-----------------+
--                           | X-Gene standby  |
--                           | GPIO controller +--------- GPIO_0
--+------------+             |                 | ...
--| Parent IRQ |             |                 +--------- GPIO_8/EXT_INT_0
--| controller |  EXT_INT_0  |                 | ...
--| (GICv2)    +-------------+                 +--------- GPIO_[N+8]/EXT_INT_N
--|            |  ...        |                 |
--|            |  EXT_INT_N  |                 +--------- GPIO_[N+9]
--|            +-------------+                 | ...
--|            |             |                 +--------- GPIO_MAX
--+------------+             +-----------------+
-+                            +-----------------+
-+                            | X-Gene standby  |
-+                            | GPIO controller +------ GPIO_0
-++------------+              |                 | ...
-+| Parent IRQ | EXT_INT_0    |                 +------ GPIO_8/EXT_INT_0
-+| controller | (SPI40)      |                 | ...
-+| (GICv2)    +--------------+                 +------ GPIO_[N+8]/EXT_INT_N
-+|            |   ...        |                 |
-+|            | EXT_INT_N    |                 +------ GPIO_[N+9]
-+|            | (SPI[40 + N])|                 | ...
-+|            +--------------+                 +------ GPIO_MAX
-++------------+              +-----------------+
-
- Required properties:
- - compatible: "apm,xgene-gpio-sb" for the X-Gene Standby GPIO controller
-
-
-Thanks,
--- Quan Nguyen
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
