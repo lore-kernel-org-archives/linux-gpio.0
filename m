@@ -1,56 +1,42 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 0/3] OMAP/pinmux: remove misuse of IRQF_NO_SUSPEND flag
-Date: Mon, 15 Feb 2016 10:01:34 +0000
-Message-ID: <56C1A1FE.3080403@arm.com>
-References: <1454351299-27440-1-git-send-email-sudeep.holla@arm.com>
- <CACRpkdYzJ9Hy0sH6gK6RzpLE6juS4WfPjbt7nh43vR9YTuGZWA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 0/2] Add Renesas R8A7794 audio PFC support
+Date: Mon, 15 Feb 2016 12:01:54 +0100
+Message-ID: <CAMuHMdVy-oopkgKx0c64c-WhGY-4u8fUUm2XayBPaiW8Q09FgQ@mail.gmail.com>
+References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:43774 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750925AbcBOKBh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 15 Feb 2016 05:01:37 -0500
-In-Reply-To: <CACRpkdYzJ9Hy0sH6gK6RzpLE6juS4WfPjbt7nh43vR9YTuGZWA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tony Lindgren <tony@atomide.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+Hi Sergei,
 
-On 13/02/16 14:42, Linus Walleij wrote:
-> On Mon, Feb 1, 2016 at 7:28 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->
->>    pinctrl: single: Use a separate lockdep class
->>    pinctrl: single: remove misuse of IRQF_NO_SUSPEND flag
->>    ARM: OMAP2+: remove misuse of IRQF_NO_SUSPEND flag
->>
->>   arch/arm/mach-omap2/mux.c        |  4 ++--
->>   arch/arm/mach-omap2/pm34xx.c     |  9 ++++-----
->>   arch/arm/mach-omap2/prm_common.c |  1 +
->>   drivers/pinctrl/pinctrl-single.c | 15 ++++++++++++---
->
-> Are these patches orthogonal so I can merge the pinctrl patch independently
-> of the OMAP patches if Tony ACKs this?
->
+On Wed, Feb 10, 2016 at 11:37 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+>    Here's the set of 2 patches against the 'devel' branch of Linus Walleij's
+> 'linux-pinctrl.git' repo. Here we add the PFC support for the Renesas R8A7794
+> SSI devices and audio clocks.
 
-Thanks for the follow up.
-IIUC they are dependent and remember Tony/Grygorii wanted them to be
-merged together(at-least for bisectibility)
+Thanks!
 
-> If not: should it be merged by me or through ARM SoC/Tony?
->
+> [1/2] pinctrl: sh-pfc: r8a7794: add SSI pin groups
+> [2/2] pinctrl: sh-pfc: r8a7794: add audio clock pin groups
 
-I think so.
+Both
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> Anyways waiting for maintainer feedback, but the above is good to know.
->
+Will queue for renesas-drivers, and sh-pfc-for-v4.6.
 
-Grygorii was still not sure if this works and he couldn't give it a
-test. He was traveling and may need more time to get back on this.
+Gr{oetje,eeting}s,
 
--- 
-Regards,
-Sudeep
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
