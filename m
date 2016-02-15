@@ -1,30 +1,63 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] davinci:Fix possible NULL pointer deference in the
- function davinci_gpio_probe
-Date: Mon, 15 Feb 2016 14:38:56 +0100
-Message-ID: <CACRpkdabV8dfHcn8MCCrc3zA+yDO0zK0ko0QG5bN=fDoHZo+dQ@mail.gmail.com>
-References: <1454458679-11165-1-git-send-email-xerofoify@gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 0/3] OMAP/pinmux: remove misuse of IRQF_NO_SUSPEND flag
+Date: Mon, 15 Feb 2016 07:27:52 -0800
+Message-ID: <20160215152751.GT19432@atomide.com>
+References: <1454351299-27440-1-git-send-email-sudeep.holla@arm.com>
+ <CACRpkdYzJ9Hy0sH6gK6RzpLE6juS4WfPjbt7nh43vR9YTuGZWA@mail.gmail.com>
+ <56C1A1FE.3080403@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1454458679-11165-1-git-send-email-xerofoify@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nicholas Krause <xerofoify@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:34806 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751202AbcBOP1y (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 15 Feb 2016 10:27:54 -0500
+Content-Disposition: inline
+In-Reply-To: <56C1A1FE.3080403@arm.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Feb 3, 2016 at 1:17 AM, Nicholas Krause <xerofoify@gmail.com> wrote:
+* Sudeep Holla <sudeep.holla@arm.com> [160215 02:03]:
+> Hi Linus,
+> 
+> On 13/02/16 14:42, Linus Walleij wrote:
+> >On Mon, Feb 1, 2016 at 7:28 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> >
+> >>   pinctrl: single: Use a separate lockdep class
+> >>   pinctrl: single: remove misuse of IRQF_NO_SUSPEND flag
+> >>   ARM: OMAP2+: remove misuse of IRQF_NO_SUSPEND flag
+> >>
+> >>  arch/arm/mach-omap2/mux.c        |  4 ++--
+> >>  arch/arm/mach-omap2/pm34xx.c     |  9 ++++-----
+> >>  arch/arm/mach-omap2/prm_common.c |  1 +
+> >>  drivers/pinctrl/pinctrl-single.c | 15 ++++++++++++---
+> >
+> >Are these patches orthogonal so I can merge the pinctrl patch independently
+> >of the OMAP patches if Tony ACKs this?
+> >
+> 
+> Thanks for the follow up.
+> IIUC they are dependent and remember Tony/Grygorii wanted them to be
+> merged together(at-least for bisectibility)
 
-> This fixes a possible NULL pointer deference in the function,
-> davinci_gpio_probe due to the function, gpio2regs being able
-> to return a NULL pointer if it rans to get the registers for
-> the gpio devices on a davinci board. Furthermore if this does
-> arise return -ENXIO to signal callers that this case has arisen
-> and avoiding setting the regs or other pointer values on the
->
-> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+AFAIK this series needs to be kept together to keep things
+working.
 
-Patch applied with Alex' review tag.
+> >If not: should it be merged by me or through ARM SoC/Tony?
+> >
+> 
+> I think so.
+> 
+> >Anyways waiting for maintainer feedback, but the above is good to know.
+> >
+> 
+> Grygorii was still not sure if this works and he couldn't give it a
+> test. He was traveling and may need more time to get back on this.
 
-Yours,
-Linus Walleij
+He said it does not work so clearly more work is needed.
+
+Regards,
+
+Tony
