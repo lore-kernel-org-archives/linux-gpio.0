@@ -1,120 +1,115 @@
-From: Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Add support for INTC-EX IRQ pins
-Date: Mon, 15 Feb 2016 21:17:19 +0900
-Message-ID: <20160215121719.27056.43809.sendpatchset@little-apple>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: linux-renesas-soc@vger.kernel.org
-Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, horms@verge.net.au, geert@glider.be, laurent.pinchart@ideasonboard.com, Magnus Damm <magnus.damm@gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v6 2/3] Documentation: gpio: Update description for X-Gene
+ standby GPIO controller DTS binding
+Date: Mon, 15 Feb 2016 12:54:06 +0000
+Message-ID: <56C1CA6E.1060606@arm.com>
+References: <1455512263-18183-1-git-send-email-qnguyen@apm.com>
+ <1455512263-18183-3-git-send-email-qnguyen@apm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:45041 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752896AbcBOMyK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 15 Feb 2016 07:54:10 -0500
+In-Reply-To: <1455512263-18183-3-git-send-email-qnguyen@apm.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Quan Nguyen <qnguyen@apm.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>
+Cc: Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches@apm.com
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 15/02/16 04:57, Quan Nguyen wrote:
+> Update description for X-Gene standby GPIO controller DTS binding to
+> support GPIO line configuration as input, output or external IRQ pin.
+> 
+> Signed-off-by: Y Vo <yvo@apm.com>
+> Signed-off-by: Quan Nguyen <qnguyen@apm.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio-xgene-sb.txt     | 47 ++++++++++++++++++----
+>  1 file changed, 40 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+> index dae1300..7b8b4cb 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+> @@ -1,10 +1,20 @@
+>  APM X-Gene Standby GPIO controller bindings
+>  
+> -This is a gpio controller in the standby domain.
+> -
+> -There are 20 GPIO pins from 0..21. There is no GPIO_DS14 or GPIO_DS15,
+> -only GPIO_DS8..GPIO_DS13 support interrupts. The IRQ mapping
+> -is currently 1-to-1 on interrupts 0x28 thru 0x2d.
+> +This is a gpio controller in the standby domain. It also supports interrupt in
+> +some particular pins which are sourced to its parent interrupt controller
+> +as diagram below:
+> +                           +-----------------+
+> +                           | X-Gene standby  |
+> +                           | GPIO controller +--------- GPIO_0
+> ++------------+             |                 | ...
+> +| Parent IRQ |             |                 +--------- GPIO_8/EXT_INT_0
+> +| controller |  EXT_INT_0  |                 | ...
+> +| (GICv2)    +-------------+                 +--------- GPIO_[N+8]/EXT_INT_N
+> +|            |  ...        |                 |
+> +|            |  EXT_INT_N  |                 +--------- GPIO_[N+9]
+> +|            +-------------+                 | ...
+> +|            |             |                 +--------- GPIO_MAX
+> ++------------+             +-----------------+
+>  
+>  Required properties:
+>  - compatible: "apm,xgene-gpio-sb" for the X-Gene Standby GPIO controller
+> @@ -15,10 +25,18 @@ Required properties:
+>  		0 = active high
+>  		1 = active low
+>  - gpio-controller: Marks the device node as a GPIO controller.
+> -- interrupts: Shall contain exactly 6 interrupts.
+> +- interrupts: The EXT_INT_0 parent interrupt resource must be listed first.
+> +- interrupt-parent: Phandle of the parent interrupt controller.
+> +- interrupt-cells: Should be two.
+> +       - first cell is 0-N coresponding for EXT_INT_0 to EXT_INT_N.
+> +       - second cell is used to specify flags.
+> +- interrupt-controller: Marks the device node as an interrupt controller.
+> +- apm,nr-gpios: Optional, specify number of gpios pin.
+> +- apm,nr-irqs: Optional, specify number of interrupt pins.
+> +- apm,irq-start: Optional, specify lowest gpio pin support interrupt.
 
-Most pins on the r8a7795 SoC can be configured in GPIO mode for
-interrupt and GPIO functionality, while a couple of them can also
-be routed to the INTC-EX hardware block (formerly known as IRQC).
+This is quite ambiguous. Is that relative to the GIC? Assuming this is
+the case, you should then document it, specify the type of interrupt
+(SPI?), and whether this is 0- or 32-based (the code seems to indicate
+that is is 0-based).
 
-On r8a7795 the INTC-EX hardware handles pins IRQ0 -> IRQ5 and
-this patch adds support for them to the PFC driver as "intc_ex_irqN".
+>  
+>  Example:
+> -	sbgpio: sbgpio@17001000 {
+> +	sbgpio: gpio@17001000{
+>  		compatible = "apm,xgene-gpio-sb";
+>  		reg = <0x0 0x17001000 0x0 0x400>;
+>  		#gpio-cells = <2>;
+> @@ -29,4 +47,19 @@ Example:
+>  				<0x0 0x2b 0x1>,
+>  				<0x0 0x2c 0x1>,
+>  				<0x0 0x2d 0x1>;
+> +		interrupt-parent = <&gic>;
+> +		#interrupt-cells = <2>;
+> +		interrupt-controller;
+> +		apm,nr-gpios = <22>;
+> +		apm,nr-irqs = <6>;
+> +		apm,irq-start = <8>;
+> +	};
+> +
+> +	testuser {
+> +		compatible = "example,testuser";
+> +		/* Use the GPIO_13/EXT_INT_5 line as an active high triggered
+> +		 * level interrupt
+> +		 */
+> +		interrupts = <5 4>;
+> +		interrupt-parent = <&sbgpio>;
+>  	};
+> 
 
-Tested on r8a7795 Salvator-X with an external loop back adapter on
-EXIO_D that connects pin 9 (IRQ2/GP2_02) and pin 26 (ExA22/GP2_06).
+Thanks,
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Developed on top of renesas-drivers-2016-02-09-v4.5-rc3
-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c |   60 ++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
-
---- 0001/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ work/drivers/pinctrl/sh-pfc/pfc-r8a7795.c	2016-02-15 21:05:24.500513000 +0900
-@@ -1835,6 +1835,50 @@ static const unsigned int i2c6_c_mux[] =
- 	SDA6_C_MARK, SCL6_C_MARK,
- };
- 
-+/* - INTC-EX ---------------------------------------------------------------- */
-+static const unsigned int intc_ex_irq0_pins[] = {
-+	/* IRQ0 */
-+	RCAR_GP_PIN(2, 0),
-+};
-+static const unsigned int intc_ex_irq0_mux[] = {
-+	IRQ0_MARK,
-+};
-+static const unsigned int intc_ex_irq1_pins[] = {
-+	/* IRQ1 */
-+	RCAR_GP_PIN(2, 1),
-+};
-+static const unsigned int intc_ex_irq1_mux[] = {
-+	IRQ1_MARK,
-+};
-+static const unsigned int intc_ex_irq2_pins[] = {
-+	/* IRQ2 */
-+	RCAR_GP_PIN(2, 2),
-+};
-+static const unsigned int intc_ex_irq2_mux[] = {
-+	IRQ2_MARK,
-+};
-+static const unsigned int intc_ex_irq3_pins[] = {
-+	/* IRQ3 */
-+	RCAR_GP_PIN(2, 3),
-+};
-+static const unsigned int intc_ex_irq3_mux[] = {
-+	IRQ3_MARK,
-+};
-+static const unsigned int intc_ex_irq4_pins[] = {
-+	/* IRQ4 */
-+	RCAR_GP_PIN(2, 4),
-+};
-+static const unsigned int intc_ex_irq4_mux[] = {
-+	IRQ4_MARK,
-+};
-+static const unsigned int intc_ex_irq5_pins[] = {
-+	/* IRQ5 */
-+	RCAR_GP_PIN(2, 5),
-+};
-+static const unsigned int intc_ex_irq5_mux[] = {
-+	IRQ5_MARK,
-+};
-+
- /* - MSIOF0 ----------------------------------------------------------------- */
- static const unsigned int msiof0_clk_pins[] = {
- 	/* SCK */
-@@ -3173,6 +3217,12 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(i2c6_a),
- 	SH_PFC_PIN_GROUP(i2c6_b),
- 	SH_PFC_PIN_GROUP(i2c6_c),
-+	SH_PFC_PIN_GROUP(intc_ex_irq0),
-+	SH_PFC_PIN_GROUP(intc_ex_irq1),
-+	SH_PFC_PIN_GROUP(intc_ex_irq2),
-+	SH_PFC_PIN_GROUP(intc_ex_irq3),
-+	SH_PFC_PIN_GROUP(intc_ex_irq4),
-+	SH_PFC_PIN_GROUP(intc_ex_irq5),
- 	SH_PFC_PIN_GROUP(msiof0_clk),
- 	SH_PFC_PIN_GROUP(msiof0_sync),
- 	SH_PFC_PIN_GROUP(msiof0_ss1),
-@@ -3439,6 +3489,15 @@ static const char * const i2c6_groups[]
- 	"i2c6_c",
- };
- 
-+static const char * const intc_ex_groups[] = {
-+	"intc_ex_irq0",
-+	"intc_ex_irq1",
-+	"intc_ex_irq2",
-+	"intc_ex_irq3",
-+	"intc_ex_irq4",
-+	"intc_ex_irq5",
-+};
-+
- static const char * const msiof0_groups[] = {
- 	"msiof0_clk",
- 	"msiof0_sync",
-@@ -3686,6 +3745,7 @@ static const struct sh_pfc_function pinm
- 	SH_PFC_FUNCTION(i2c1),
- 	SH_PFC_FUNCTION(i2c2),
- 	SH_PFC_FUNCTION(i2c6),
-+	SH_PFC_FUNCTION(intc_ex),
- 	SH_PFC_FUNCTION(msiof0),
- 	SH_PFC_FUNCTION(msiof1),
- 	SH_PFC_FUNCTION(msiof2),
+	M.
+-- 
+Jazz is not dead. It just smells funny...
