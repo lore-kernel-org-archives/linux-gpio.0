@@ -1,67 +1,65 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: Add driver for TI TPIC2810
-Date: Sun, 14 Feb 2016 14:18:23 +0100
-Message-ID: <CACRpkdZ18LMdqfuE3Wju5p5BC39qSLUCX9+_kCEB-OR9+mTM7Q@mail.gmail.com>
-References: <1453738452-23633-1-git-send-email-afd@ti.com>
-	<CACRpkdbkwd4K3rav+gfoSO_TqVQqfPXykGF2TWLQ7xWFOOtSaA@mail.gmail.com>
-	<56AA2C30.2040708@ti.com>
-	<CAHp75Vd_CxDmPbFWX7jaNd=ukOdE2hN13RhhMC5D+H_grM_Xiw@mail.gmail.com>
-	<CACRpkdbh3coAedusUHgEZQu=3WkVyS4JW6=jUWAtbSxgUVhNiw@mail.gmail.com>
-	<CAHp75VfTofe13JCcJmFq=yex7zRdmzTSMMSX8Tap5cBZ80rJ2Q@mail.gmail.com>
+From: Bjorn Andersson <bjorn@kryo.se>
+Subject: Re: [PATCH v3 1/6] pinctrl: qcom: ipq4019: Add IPQ4019 pinctrl support
+Date: Sun, 14 Feb 2016 16:41:12 -0800
+Message-ID: <CAJAp7Oib4xJEHoxiwwGhOhcD3WG4AfdCGGVNqmit+Y6LGnkgoA@mail.gmail.com>
+References: <1447975173-29485-1-git-send-email-mmcclint@qca.qualcomm.com>
+	<1447975173-29485-2-git-send-email-mmcclint@qca.qualcomm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VfTofe13JCcJmFq=yex7zRdmzTSMMSX8Tap5cBZ80rJ2Q@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "Andrew F. Davis" <afd@ti.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1447975173-29485-2-git-send-email-mmcclint@qca.qualcomm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matthew McClintock <mmcclint@qca.qualcomm.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Gross <agross@codeaurora.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Varadarajan Narayanan <varada@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, qca-upstream.external@qca.qualcomm.com, Sricharan R <sricharan@codeaurora.org>, Mathieu Olivari <mathieu@codeaurora.org>, Matthew McClintock <mmcclint@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 10, 2016 at 3:29 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Wed, Feb 10, 2016 at 4:21 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Sun, Jan 31, 2016 at 11:52 PM, Andy Shevchenko
->> <andy.shevchenko@gmail.com> wrote:
->>
->>> It reminds me how 12 channel PWM chip is used on Intel Galileo Gen 2.
->>> Half pins are PWM, the other half is GPIO used for discrete based pin
->>> muxing and control. Nevertheless I think it's a userspace issue for
->>> now, otherwise we have to provide some 'semi-virtual' way of
->>> presenting pins as GPIO lines.
->>
->> That sounds like an MFD spawning a GPIO and a PWM cell.
->> That it is called "a PWM chip" is no big deal, it should be
->> modeled according to what it is, not what it claims to be.
+On Thu, Nov 19, 2015 at 3:19 PM, Matthew McClintock
+<mmcclint@qca.qualcomm.com> wrote:
+> From: Varadarajan Narayanan <varada@codeaurora.org>
 >
-> Although I agree with model I barely imagine how in this case drivers
-> should access PWM chip registers in non-race way (take into account
-> that PWM itself is connected to i2c bus).
+> Add pinctrl driver support for IPQ4019 platform
+>
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+> Signed-off-by: Matthew McClintock <mmcclint@codeaurora.org>
+> ---
 
-There is a pattern for that. You add a set of accessor functions that
-performs the I2C traffic in the MFD layer.
+I was asked to review this, to make sure that Linus wasn't waiting for
+my ack or anything. But now I see that you have not added him as a
+recipient. Please make sure to run ./scripts/get_maintainer.pl and
+pick appropriate recipients in the future.
 
-The accessor functions take a mutex. Since this is all slowpath,
-waiting/preempting in a mutex is perfectly fine for all subdrivers.
+>
+> v3
+> - update example with actual values from dts
+> - add missing pins 71-99
+> - drop many functions and stick to basic functionality
+>
 
-Look at this:
+I hope to see a patch later on adding all those functions back, but
+that's fine with me.
 
-/**
- * stmpe_reg_write() - write a single STMPE register
- * @stmpe:      Device to write to
- * @reg:        Register to write
- * @val:        Value to write
- */
-int stmpe_reg_write(struct stmpe *stmpe, u8 reg, u8 val)
-{
-        int ret;
+[..]
 
-        mutex_lock(&stmpe->lock);
-        ret = __stmpe_reg_write(stmpe, reg, val);
-        mutex_unlock(&stmpe->lock);
+> +static struct platform_driver ipq4019_pinctrl_driver = {
+> +       .driver = {
+> +               .name = "ipq4019-pinctrl",
+> +               .owner = THIS_MODULE,
 
-        return ret;
-}
-EXPORT_SYMBOL_GPL(stmpe_reg_write);
+platform_drivers do get their .owner assigned by platform_drive_register().
 
-Yours,
-Linus Walleij
+> +               .of_match_table = ipq4019_pinctrl_of_match,
+> +       },
+> +       .probe = ipq4019_pinctrl_probe,
+> +       .remove = msm_pinctrl_remove,
+> +};
+
+Part of the .owner above you have my
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+@Linus, this still applies and builds cleanly on linux-next.
+Would you be okay dropping the owner assignment while applying this patch?
+
+Regards,
+Bjorn
