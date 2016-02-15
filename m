@@ -1,65 +1,48 @@
-From: Bjorn Andersson <bjorn@kryo.se>
-Subject: Re: [PATCH v3 1/6] pinctrl: qcom: ipq4019: Add IPQ4019 pinctrl support
-Date: Sun, 14 Feb 2016 16:41:12 -0800
-Message-ID: <CAJAp7Oib4xJEHoxiwwGhOhcD3WG4AfdCGGVNqmit+Y6LGnkgoA@mail.gmail.com>
-References: <1447975173-29485-1-git-send-email-mmcclint@qca.qualcomm.com>
-	<1447975173-29485-2-git-send-email-mmcclint@qca.qualcomm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1447975173-29485-2-git-send-email-mmcclint@qca.qualcomm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matthew McClintock <mmcclint@qca.qualcomm.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Gross <agross@codeaurora.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Varadarajan Narayanan <varada@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, qca-upstream.external@qca.qualcomm.com, Sricharan R <sricharan@codeaurora.org>, Mathieu Olivari <mathieu@codeaurora.org>, Matthew McClintock <mmcclint@codeaurora.org>
+From: Quan Nguyen <qnguyen@apm.com>
+Subject: [PATCH v6 0/3] Enable X-Gene standby GPIO as interrupt controller
+Date: Mon, 15 Feb 2016 11:57:40 +0700
+Message-ID: <1455512263-18183-1-git-send-email-qnguyen@apm.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:36392 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751885AbcBOE5y (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Feb 2016 23:57:54 -0500
+Received: by mail-pa0-f46.google.com with SMTP id yy13so79368055pab.3
+        for <linux-gpio@vger.kernel.org>; Sun, 14 Feb 2016 20:57:54 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches@apm.com, Quan Nguyen <qnguyen@apm.com>
 
-On Thu, Nov 19, 2015 at 3:19 PM, Matthew McClintock
-<mmcclint@qca.qualcomm.com> wrote:
-> From: Varadarajan Narayanan <varada@codeaurora.org>
->
-> Add pinctrl driver support for IPQ4019 platform
->
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
-> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
-> Signed-off-by: Matthew McClintock <mmcclint@codeaurora.org>
-> ---
+V6 Changes:
+        - Remove redundant irq_ack and irq_shutdown entries
+V5 Changes:
+        - Add optional properties to describe HW specifics
+        - Use irq_create_fwspec_mapping() instead of low level functions
+        - Move gpiochip_lock_as_irq() to activate method
+        - Remove redundant checks
+        - Add optional HW properties description to DT binding document
+        - Update "interrupts" property description in DT binding document.
+V4 Changes:
+        - Convert to hierarchical irq domain
+V3 Changes:
+        - Picking up from version 2 of "Y Vo <yvo@apm.com>"
+        - Get HW resource information from DT
+        - Avoid keeping parent IRQ controller
+V2 Changes:
+        - Support X-Gene standby GPIO as an interrupt controller.
 
-I was asked to review this, to make sure that Linus wasn't waiting for
-my ack or anything. But now I see that you have not added him as a
-recipient. Please make sure to run ./scripts/get_maintainer.pl and
-pick appropriate recipients in the future.
+Quan Nguyen (3):
+  gpio: xgene: Enable X-Gene standby GPIO as interrupt controller
+  Documentation: gpio: Update description for X-Gene standby GPIO
+    controller DTS binding
+  arm64: dts: Update X-Gene standby GPIO controller DTS entries
 
->
-> v3
-> - update example with actual values from dts
-> - add missing pins 71-99
-> - drop many functions and stick to basic functionality
->
+ .../devicetree/bindings/gpio/gpio-xgene-sb.txt     |  47 +++-
+ arch/arm64/boot/dts/apm/apm-storm.dtsi             |   3 +
+ drivers/gpio/gpio-xgene-sb.c                       | 265 ++++++++++++++++++---
+ 3 files changed, 276 insertions(+), 39 deletions(-)
 
-I hope to see a patch later on adding all those functions back, but
-that's fine with me.
+-- 
+1.7.12.4
 
-[..]
-
-> +static struct platform_driver ipq4019_pinctrl_driver = {
-> +       .driver = {
-> +               .name = "ipq4019-pinctrl",
-> +               .owner = THIS_MODULE,
-
-platform_drivers do get their .owner assigned by platform_drive_register().
-
-> +               .of_match_table = ipq4019_pinctrl_of_match,
-> +       },
-> +       .probe = ipq4019_pinctrl_probe,
-> +       .remove = msm_pinctrl_remove,
-> +};
-
-Part of the .owner above you have my
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-@Linus, this still applies and builds cleanly on linux-next.
-Would you be okay dropping the owner assignment while applying this patch?
-
-Regards,
-Bjorn
