@@ -1,171 +1,93 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 3/4] gpio: ep93xx: remove private irq_to_gpio function
-Date: Mon, 15 Feb 2016 16:46:30 +0100
-Message-ID: <1455551208-2825510-4-git-send-email-arnd@arndb.de>
+Subject: [PATCH 4/4] ARM: remove asm/gpio.h
+Date: Mon, 15 Feb 2016 16:46:31 +0100
+Message-ID: <1455551208-2825510-5-git-send-email-arnd@arndb.de>
 References: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
  <1455551208-2825510-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1455551208-2825510-1-git-send-email-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Russell King <rmk+kernel@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Russell King <rmk+kernel@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The ep93xx goes through its own back-and-forth dance every time
-it wants to know the gpio number for an irq line, when it really
-just hardcodes a fixed offset in ep93xx_gpio_to_irq().
+The ARM version of asm/gpio.h basically just contains the same definitions
+as the gpiolib version, with the exception of ARCH_NR_GPIOS.
 
-This removes the pointless macro and replaces the conversion inside
-of the driver with simple add/subtract operations, using an
-explicit macro.
+This adds the option for overriding the constant through Kconfig to
+the architecture-independent header, and removes the ARM version at
+the same time.
+
+This patch depends on a series done by Bjorn Helgaas, and the patch
+removing irq_to_gpio().
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpio/gpio-ep93xx.c | 37 +++++++++++++++++--------------------
- 1 file changed, 17 insertions(+), 20 deletions(-)
+ arch/arm/Kconfig            |  1 -
+ arch/arm/include/asm/gpio.h | 25 -------------------------
+ include/asm-generic/gpio.h  |  4 ++++
+ 3 files changed, 4 insertions(+), 26 deletions(-)
+ delete mode 100644 arch/arm/include/asm/gpio.h
 
-diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
-index 20e5846bda28..cd83d30e8ff7 100644
---- a/drivers/gpio/gpio-ep93xx.c
-+++ b/drivers/gpio/gpio-ep93xx.c
-@@ -18,12 +18,8 @@
- #include <linux/io.h>
- #include <linux/irq.h>
- #include <linux/slab.h>
--#include <linux/gpio/driver.h>
--/* FIXME: this is here for gpio_to_irq() - get rid of this! */
- #include <linux/gpio.h>
- 
--#define irq_to_gpio(irq)	((irq) - gpio_to_irq(0))
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 0366ad63e2ed..27aefbe43eea 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -5,7 +5,6 @@ config ARM
+ 	select ARCH_HAS_DEVMEM_IS_ALLOWED
+ 	select ARCH_HAS_ELF_RANDOMIZE
+ 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+-	select ARCH_HAVE_CUSTOM_GPIO_H
+ 	select ARCH_HAS_GCOV_PROFILE_ALL
+ 	select ARCH_MIGHT_HAVE_PC_PARPORT
+ 	select ARCH_SUPPORTS_ATOMIC_RMW
+diff --git a/arch/arm/include/asm/gpio.h b/arch/arm/include/asm/gpio.h
+deleted file mode 100644
+index 504dcddebfcc..000000000000
+--- a/arch/arm/include/asm/gpio.h
++++ /dev/null
+@@ -1,25 +0,0 @@
+-#ifndef _ARCH_ARM_GPIO_H
+-#define _ARCH_ARM_GPIO_H
 -
- void __iomem *ep93xx_gpio_base; /* FIXME: put this into irq_data */
- 
- #define EP93XX_GPIO_REG(x)		(ep93xx_gpio_base + (x))
-@@ -35,6 +31,7 @@ void __iomem *ep93xx_gpio_base; /* FIXME: put this into irq_data */
- #define EP93XX_GPIO_LINE_MAX		63
- 
- /* maximum value for irq capable line identifiers */
-+#define EP93XX_GPIO_IRQ_BASE		64
- #define EP93XX_GPIO_LINE_MAX_IRQ	23
- 
- 
-@@ -77,7 +74,7 @@ static void ep93xx_gpio_update_int_params(unsigned port)
- 
- static void ep93xx_gpio_int_debounce(unsigned int irq, bool enable)
- {
--	int line = irq_to_gpio(irq);
-+	int line = irq - EP93XX_GPIO_IRQ_BASE;
- 	int port = line >> 3;
- 	int port_mask = 1 << (line & 7);
- 
-@@ -98,7 +95,7 @@ static void ep93xx_gpio_ab_irq_handler(struct irq_desc *desc)
- 	status = readb(EP93XX_GPIO_A_INT_STATUS);
- 	for (i = 0; i < 8; i++) {
- 		if (status & (1 << i)) {
--			int gpio_irq = gpio_to_irq(0) + i;
-+			int gpio_irq = EP93XX_GPIO_IRQ_BASE + i;
- 			generic_handle_irq(gpio_irq);
- 		}
- 	}
-@@ -106,7 +103,7 @@ static void ep93xx_gpio_ab_irq_handler(struct irq_desc *desc)
- 	status = readb(EP93XX_GPIO_B_INT_STATUS);
- 	for (i = 0; i < 8; i++) {
- 		if (status & (1 << i)) {
--			int gpio_irq = gpio_to_irq(8) + i;
-+			int gpio_irq = EP93XX_GPIO_IRQ_BASE + 8 + i;
- 			generic_handle_irq(gpio_irq);
- 		}
- 	}
-@@ -121,14 +118,14 @@ static void ep93xx_gpio_f_irq_handler(struct irq_desc *desc)
- 	 */
- 	unsigned int irq = irq_desc_get_irq(desc);
- 	int port_f_idx = ((irq + 1) & 7) ^ 4; /* {19..22,47..50} -> {0..7} */
--	int gpio_irq = gpio_to_irq(16) + port_f_idx;
-+	int gpio_irq = EP93XX_GPIO_IRQ_BASE + 16 + port_f_idx;
- 
- 	generic_handle_irq(gpio_irq);
- }
- 
- static void ep93xx_gpio_irq_ack(struct irq_data *d)
- {
--	int line = irq_to_gpio(d->irq);
-+	int line = d->irq - EP93XX_GPIO_IRQ_BASE;
- 	int port = line >> 3;
- 	int port_mask = 1 << (line & 7);
- 
-@@ -142,7 +139,7 @@ static void ep93xx_gpio_irq_ack(struct irq_data *d)
- 
- static void ep93xx_gpio_irq_mask_ack(struct irq_data *d)
- {
--	int line = irq_to_gpio(d->irq);
-+	int line = d->irq - EP93XX_GPIO_IRQ_BASE;
- 	int port = line >> 3;
- 	int port_mask = 1 << (line & 7);
- 
-@@ -157,7 +154,7 @@ static void ep93xx_gpio_irq_mask_ack(struct irq_data *d)
- 
- static void ep93xx_gpio_irq_mask(struct irq_data *d)
- {
--	int line = irq_to_gpio(d->irq);
-+	int line = d->irq - EP93XX_GPIO_IRQ_BASE;
- 	int port = line >> 3;
- 
- 	gpio_int_unmasked[port] &= ~(1 << (line & 7));
-@@ -166,7 +163,7 @@ static void ep93xx_gpio_irq_mask(struct irq_data *d)
- 
- static void ep93xx_gpio_irq_unmask(struct irq_data *d)
- {
--	int line = irq_to_gpio(d->irq);
-+	int line = d->irq - EP93XX_GPIO_IRQ_BASE;
- 	int port = line >> 3;
- 
- 	gpio_int_unmasked[port] |= 1 << (line & 7);
-@@ -180,7 +177,7 @@ static void ep93xx_gpio_irq_unmask(struct irq_data *d)
+-#if CONFIG_ARCH_NR_GPIO > 0
+-#define ARCH_NR_GPIOS CONFIG_ARCH_NR_GPIO
+-#endif
+-
+-/* Note: this may rely upon the value of ARCH_NR_GPIOS set in mach/gpio.h */
+-#include <asm-generic/gpio.h>
+-
+-/* The trivial gpiolib dispatchers */
+-#define gpio_get_value  __gpio_get_value
+-#define gpio_set_value  __gpio_set_value
+-#define gpio_cansleep   __gpio_cansleep
+-
+-/*
+- * Provide a default gpio_to_irq() which should satisfy every case.
+- * However, some platforms want to do this differently, so allow them
+- * to override it.
+- */
+-#ifndef gpio_to_irq
+-#define gpio_to_irq	__gpio_to_irq
+-#endif
+-
+-#endif /* _ARCH_ARM_GPIO_H */
+diff --git a/include/asm-generic/gpio.h b/include/asm-generic/gpio.h
+index 40ec1433f05d..2d04b321db13 100644
+--- a/include/asm-generic/gpio.h
++++ b/include/asm-generic/gpio.h
+@@ -26,8 +26,12 @@
   */
- static int ep93xx_gpio_irq_type(struct irq_data *d, unsigned int type)
- {
--	const int gpio = irq_to_gpio(d->irq);
-+	const int gpio = d->irq - EP93XX_GPIO_IRQ_BASE;
- 	const int port = gpio >> 3;
- 	const int port_mask = 1 << (gpio & 7);
- 	irq_flow_handler_t handler;
-@@ -241,14 +238,14 @@ static struct irq_chip ep93xx_gpio_irq_chip = {
  
- static void ep93xx_gpio_init_irq(struct platform_device *pdev)
- {
--	int gpio_irq;
-+	int gpio;
- 	int i;
+ #ifndef ARCH_NR_GPIOS
++#ifdef CONFIG_ARCH_NR_GPIO
++#define ARCH_NR_GPIOS CONFIG_ARCH_NR_GPIO
++#else
+ #define ARCH_NR_GPIOS		512
+ #endif
++#endif
  
--	for (gpio_irq = gpio_to_irq(0);
--	     gpio_irq <= gpio_to_irq(EP93XX_GPIO_LINE_MAX_IRQ); ++gpio_irq) {
--		irq_set_chip_and_handler(gpio_irq, &ep93xx_gpio_irq_chip,
-+	for (gpio = 0; gpio <= EP93XX_GPIO_LINE_MAX_IRQ; ++gpio) {
-+		irq_set_chip_and_handler(EP93XX_GPIO_IRQ_BASE + gpio,
-+					 &ep93xx_gpio_irq_chip,
- 					 handle_level_irq);
--		irq_clear_status_flags(gpio_irq, IRQ_NOREQUEST);
-+		irq_clear_status_flags(EP93XX_GPIO_IRQ_BASE + gpio, IRQ_NOREQUEST);
- 	}
- 
- 	irq_set_chained_handler(platform_get_irq(pdev, 0),
-@@ -294,7 +291,7 @@ static int ep93xx_gpio_set_debounce(struct gpio_chip *chip,
- 				    unsigned offset, unsigned debounce)
- {
- 	int gpio = chip->base + offset;
--	int irq = gpio_to_irq(gpio);
-+	int irq = EP93XX_GPIO_IRQ_BASE + gpio;
- 
- 	if (irq < 0)
- 		return -EINVAL;
-@@ -316,7 +313,7 @@ static int ep93xx_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
- 	if (gpio > EP93XX_GPIO_LINE_MAX_IRQ)
- 		return -EINVAL;
- 
--	return 64 + gpio;
-+	return EP93XX_GPIO_IRQ_BASE + gpio;
- }
- 
- static int ep93xx_gpio_add_bank(struct gpio_chip *gc, struct device *dev,
+ /*
+  * "valid" GPIO numbers are nonnegative and may be passed to
 -- 
 2.7.0
