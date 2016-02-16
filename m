@@ -1,33 +1,56 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/4] gpio: remove broken irq_to_gpio() interface
-Date: Tue, 16 Feb 2016 16:53:43 +0100
-Message-ID: <CACRpkdYDqU7bbZguifQ2cos0r0ywgofzx4XvsmkQ8d73W9183A@mail.gmail.com>
-References: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-	<1455551208-2825510-2-git-send-email-arnd@arndb.de>
-	<CACRpkdaQN9_qoTn4_riZGvi4BKRLEVkRRL4CWzKj8e_di7Q2Xg@mail.gmail.com>
-	<2646870.5L1En4yxph@wuerfel>
+Subject: Re: [PATCH 1/1] gpio: pisosr: Don't use magic numbers
+Date: Tue, 16 Feb 2016 17:00:06 +0100
+Message-ID: <CACRpkdZtHHUAGFTKErTqVy+R-0TAdY9i9ckUwnPAdQ0rK2D8BQ@mail.gmail.com>
+References: <1455527640-10446-1-git-send-email-alexander.stein@systec-electronic.com>
+	<CACRpkda2LXaPFHdqkonNwnRwv_YhTN3AoOsH-wTRoBZ+-J9shg@mail.gmail.com>
+	<1799444.UXy1g4WTOV@ws-stein>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:33436 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932282AbcBPPxr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 10:53:47 -0500
-Received: by mail-ob0-f182.google.com with SMTP id jq7so80285100obb.0
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Feb 2016 07:53:46 -0800 (PST)
-In-Reply-To: <2646870.5L1En4yxph@wuerfel>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:33032 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753193AbcBPQA2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 11:00:28 -0500
+Received: by mail-ob0-f181.google.com with SMTP id jq7so80626501obb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Feb 2016 08:00:28 -0800 (PST)
+In-Reply-To: <1799444.UXy1g4WTOV@ws-stein>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King <rmk+kernel@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@imgtec.com>, Linux MIPS <linux-mips@linux-mips.org>
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Feb 16, 2016 at 4:45 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Tue, Feb 16, 2016 at 4:35 PM, Alexander Stein
+<alexander.stein@systec-electronic.com> wrote:
 
-> I've just sent v2 of the series, with a separate patch for MIPS
-> that now conflicts with this one. Can you pick up the new patch
-> instead?
+> Well, having a callback get_direction returning a bool would seem really strange.
 
-OK I'll back out and apply the v2 versions.
+Well maybe an enum would be better. Patches accepted.
+
+> Actually the comments on gpiod_get_direction explicitly state GPIOF_DIR_IN and GPIOF_DIR_OUT
+> as return values which aren't used in that function itself, they come from the callback.
+
+Yeah so it is the gpiolib core that need to make sure the right value is
+propagated back to the API, not the driver. It exploits the fact that
+driver return a suiting 0/1 that happen to correspond to that.
+
+> Also other
+> dirvers like e.g. gpio-ich return (in ichx_gpio_get_direction) GPIOF_DIR_IN or GPIOF_DIR_OUT.
+
+Two wrong doesn't make one right. Patch gpio-ich to return 0/1 if
+you like, or even better: add a direction enum to <linux/gpio/driver.h>
+and start patching the callback and drivers to use that.
+
+Overall this is a thing that "just works" mostly, but I have had
+many problems with the driver and consumer API being mixed
+up (mostly by everyone using <linux/gpio.h> and I don't want
+to encourage that mess.
+
+Drivers should use <linux/gpio/driver.h> and nothing else.
+Consumers should use <linus/gpio/consumer.h> and nothing else.
+
+The latter require that they switch to GPIO descriptors though.
+I think.
 
 Yours,
 Linus Walleij
