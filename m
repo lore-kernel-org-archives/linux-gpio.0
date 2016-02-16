@@ -1,39 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/6] pinctrl: qcom: ipq4019: Add IPQ4019 pinctrl support
-Date: Tue, 16 Feb 2016 15:54:12 +0100
-Message-ID: <CACRpkdZQTN+X=kWS7-5tzts=AGem2W+Od_ap1oy04Fm5i0y4fg@mail.gmail.com>
-References: <1447975173-29485-1-git-send-email-mmcclint@qca.qualcomm.com>
-	<1447975173-29485-2-git-send-email-mmcclint@qca.qualcomm.com>
+Subject: Re: [PATCH 1/1] gpio: pisosr: Don't use magic numbers
+Date: Tue, 16 Feb 2016 15:55:47 +0100
+Message-ID: <CACRpkda2LXaPFHdqkonNwnRwv_YhTN3AoOsH-wTRoBZ+-J9shg@mail.gmail.com>
+References: <1455527640-10446-1-git-send-email-alexander.stein@systec-electronic.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1447975173-29485-2-git-send-email-mmcclint@qca.qualcomm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matthew McClintock <mmcclint@qca.qualcomm.com>
-Cc: Andy Gross <agross@codeaurora.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Varadarajan Narayanan <varada@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, qca-upstream.external@qca.qualcomm.com, Sricharan R <sricharan@codeaurora.org>, Mathieu Olivari <mathieu@codeaurora.org>, Matthew McClintock <mmcclint@codeaurora.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:33728 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932204AbcBPO4Q (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 09:56:16 -0500
+Received: by mail-ob0-f178.google.com with SMTP id jq7so77431759obb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Feb 2016 06:56:15 -0800 (PST)
+In-Reply-To: <1455527640-10446-1-git-send-email-alexander.stein@systec-electronic.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Nov 20, 2015 at 12:19 AM, Matthew McClintock
-<mmcclint@qca.qualcomm.com> wrote:
+On Mon, Feb 15, 2016 at 10:14 AM, Alexander Stein
+<alexander.stein@systec-electronic.com> wrote:
 
-> From: Varadarajan Narayanan <varada@codeaurora.org>
+> At first view I thought this function returned an error, but actually
+> it is the input direction. Use the define for input which makes reading
+> the code much easier.
 >
-> Add pinctrl driver support for IPQ4019 platform
->
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
-> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
-> Signed-off-by: Matthew McClintock <mmcclint@codeaurora.org>
-> ---
->
-> v3
-> - update example with actual values from dts
-> - add missing pins 71-99
-> - drop many functions and stick to basic functionality
+> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
 
-Patch applied with all the ACKs and stuff, and dropped the .owner
-assignment as indicated by Bj=C3=B6rn in the process.
+NACK that flag is for consumers, not drivers.
+Drivers have their own API and should ideally
+return a bool true/false, but that would be another major
+refactoring....
 
 Yours,
 Linus Walleij
