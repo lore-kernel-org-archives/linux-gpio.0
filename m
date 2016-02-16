@@ -1,60 +1,65 @@
-From: Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH V8 0/8] Add support for MAXIM MAX77620/MAX20024 PMIC
-Date: Tue, 16 Feb 2016 17:00:30 +0100
-Message-ID: <20160216160029.GC11400@ulmo.nvidia.com>
-References: <1455191794-6065-1-git-send-email-ldewangan@nvidia.com>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH v2 1/5] MIPS: jz4740: remove broken irq_to_gpio() call
+Date: Tue, 16 Feb 2016 17:06:09 +0100
+Message-ID: <20160216160609.GA15268@linux-mips.org>
+References: <455637086-2794174-1-git-send-email-arnd@arndb.de>
+ <1455637261-2920972-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="t0UkRYy7tHLRMCai"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:6546 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751477AbcBPQAn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 11:00:43 -0500
-In-Reply-To: <1455191794-6065-1-git-send-email-ldewangan@nvidia.com>
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, k.kozlowski@samsung.com
-
---t0UkRYy7tHLRMCai
 Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <1455637261-2920972-1-git-send-email-arnd@arndb.de>
+Sender: stable-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, Russell King <rmk+kernel@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, linux-mips@linux-mips.org, "# v4 . 3+" <stable@vger.kernel.org>, Alban Bedel <albeu@free.fr>, Thomas Gleixner <tglx@linutronix.de>, Paul Burton <paul.burton@imgtec.com>
+List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 11, 2016 at 05:26:26PM +0530, Laxman Dewangan wrote:
-> Add SW support for MAXIM Semiconductor's Power Management
-> IC (PMIC) MAX77620/MAX20024. This PMIC supports DC-DC/LDOS, GPIOs,
-> RTC, watchdog, clocks etc.
+On Tue, Feb 16, 2016 at 04:40:34PM +0100, Arnd Bergmann wrote:
+> Date:   Tue, 16 Feb 2016 16:40:34 +0100
+> From: Arnd Bergmann <arnd@arndb.de>
+> To: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+>  Russell King <rmk+kernel@arm.linux.org.uk>, Bjorn Helgaas
+>  <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>,
+>  linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter
+>  Clausen <lars@metafoo.de>, Ralf Baechle <ralf@linux-mips.org>,
+>  linux-mips@linux-mips.org, "# v4 . 3+" <stable@vger.kernel.org>, Alban
+>  Bedel <albeu@free.fr>, Thomas Gleixner <tglx@linutronix.de>, Paul Burton
+>  <paul.burton@imgtec.com>
+> Subject: [PATCH v2 1/5] MIPS: jz4740: remove broken irq_to_gpio() call
+> 
+> gpiolib has removed the irq_to_gpio() API several years ago,
+> but the global header still provided a non-working stub.
+> 
+> With a MIPS-wide change to use the generic header file, the jz4740
+> platform is now using the wrong stub implementation of irq_to_gpio(),
+> which cannot work.
+> 
+> This uses an open-coded implementation in the only line it
+> is used in.
+> 
+> Suggested-by: Lars-Peter Clausen <lars@metafoo.de>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Cc: <stable@vger.kernel.org> # v4.3+
+> Fixes: 832f5dacfa0b ("MIPS: Remove all the uses of custom gpio.h").
+> ---
+>  arch/mips/jz4740/gpio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/mips/jz4740/gpio.c b/arch/mips/jz4740/gpio.c
+> index 8c6d76c9b2d6..d9907e57e9b9 100644
+> --- a/arch/mips/jz4740/gpio.c
+> +++ b/arch/mips/jz4740/gpio.c
+> @@ -270,7 +270,7 @@ uint32_t jz_gpio_port_get_value(int port, uint32_t mask)
+>  }
+>  EXPORT_SYMBOL(jz_gpio_port_get_value);
+>  
+> -#define IRQ_TO_BIT(irq) BIT(irq_to_gpio(irq) & 0x1f)
+> +#define IRQ_TO_BIT(irq) BIT((irq - JZ4740_IRQ_GPIO(0)) & 0x1f)
+>  
+>  static void jz_gpio_check_trigger_both(struct jz_gpio_chip *chip, unsigned int irq)
+>  {
 
-Hi Laxman,
+I've already committed an identical fix locally.
 
-This series is starting to look pretty good. Do you have patches in the
-works to add the corresponding DT content for the various boards that we
-support? I think the Jetson TX1 patch would be most interesting since
-that's what people can get their hands on.
-
-Thierry
-
---t0UkRYy7tHLRMCai
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWw0eZAAoJEN0jrNd/PrOhF3MQALprc3PjZZEoo34c9CwlzmeU
-C6Wu6BahoOfYkxlodpfMQv4CxBj2R8kG+DIta8BWRmyEftz+B/CU9Ogc19R8U6oW
-hrn2d9u0aZF2bK7j8O3F3CLNnC/PQ19V/3aYWviPE+QEZX1u7quW/L1XCeleYLLy
-xcDX4fIjO3PtYziw0j4m7wCnTG+41dQNV4y59D6dJlZBAX6Xg6nATIKlwG/A0lQK
-tecOYFZFVVlTBZ0n9HoXK3ZfhRrjb7xEuMenGXyUkSHCnKh6hF1GXPGSHs/GR8Vw
-pslrkHwg9oeXzXYo591aj1S8tGd8DyMalntG7FkHQFVdEgIsjyQs9JnBqSv1+vWx
-EQ3U090gY3crcW5iXo6HKgS0wNIMb5hxfSHnnGqtpnqQbV1aZz4Kq2Vooj/+35lS
-iiu78M/OFtYR77DI6G5O8XnXVQ+s5YEGabHpTQOkTAP9feilCN1SXxe01b2ZspI+
-4p+PP9wSwpzgCcdmAw4tReFpEpiaMd3Py9sdWiLKYvNpdGBe6NndpmPOmd/LuwUt
-PJdE8nMXAmGHNEN3y1pI8fRG/xUPRUWfomxizMegn9UFeiux5rDnDIxucawtnD37
-8j1y29u14T5EGfHUfeUvrr0lK5qDZx7bf/F7HXf6Jkz/tHkDMzFr7y26G+hZjkRa
-63RXGyQxuIm0RqKWV+Tz
-=7nt0
------END PGP SIGNATURE-----
-
---t0UkRYy7tHLRMCai--
+  Ralf
