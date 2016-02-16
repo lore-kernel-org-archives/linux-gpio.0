@@ -1,45 +1,61 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 0/5] gpio: clean up irq_to_gpio and ARCH_NR_GPIOS
-Date: Tue, 16 Feb 2016 16:37:59 +0100
-Message-ID: <1455637086-2794174-1-git-send-email-arnd@arndb.de>
-References: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:54092 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932371AbcBPPik (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 10:38:40 -0500
-In-Reply-To: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC PATCH] GPIO/ACPI: DesignWare: Add GPIO-signaled ACPI events
+ support for power button
+Date: Tue, 16 Feb 2016 16:38:43 +0100
+Message-ID: <CACRpkdbpysZVN3SGKbX+3rMaua8QBG1Qc0ABa3uVz2Rbfb8v7w@mail.gmail.com>
+References: <1454653542-122055-1-git-send-email-qiujiang@huawei.com>
+	<CACRpkdZNCt_TtA6SR86dVCR7vq5cpVmbzxeTguc7go6vVRkuTg@mail.gmail.com>
+	<56C316E8.4090002@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <56C316E8.4090002@huawei.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: qiujiang <qiujiang@huawei.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Russell King <rmk+kernel@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
 
-I noticed that arch/arm/include/asm/gpio.h can almost be removed,
-after we have already removed the file for most other architectures
-now.
+On Tue, Feb 16, 2016 at 1:32 PM, Jiang Qiu <qiujiang@huawei.com> wrote:
+> =E5=9C=A8 2016/2/16 2:25, Linus Walleij =E5=86=99=E9=81=93:
+>> Mika can you help out looking at this patch. Tell me if you need a c=
+opy
+>> of the whole patch, I'm not smart with ACPI.
+>>
+>> On Fri, Feb 5, 2016 at 7:25 AM, qiujiang <qiujiang@huawei.com> wrote=
+:
+>>
+>>> This patch modifies the DesignWare GPIO controller driver to
+>>> support the GPIO-signaled ACPI Events. This is used for power
+>>> button function on ARM server.
+>>>
+>>> To make it work, the _AEI and _EVT object must be defined in
+>>> the corresponding GPIO driver's dsdt table in UEFI. At the same
+>>> time, ACPI daemon component is also necessary.
+>>>
+>>> Signed-off-by: qiujiang <qiujiang@huawei.com>
+>>
+>> (...)
+>>> --- a/drivers/gpio/gpio-dwapb.c
+>>> +++ b/drivers/gpio/gpio-dwapb.c
+>>> @@ -23,6 +23,11 @@
+>>>  #include <linux/spinlock.h>
+>>>  #include <linux/platform_data/gpio-dwapb.h>
+>>>  #include <linux/slab.h>
+>>> +#include <linux/acpi.h>
+>>> +#include <linux/gpio.h>
+>>
+>> You should only need <linux/driver.h>
+> Here, I don't understand well. I used driver.h instead acpi.h and
+> gpio.h, but it came to compile failed.
 
-When I removed it, I ran into problems with irq_to_gpio(), which
-we had already killed off in ARM, but it survived (barely) in the
-global headers and accidentally gained an invalid user
+Argh sorry.
+<linux/gpio/driver.h>
 
-This kills it off some more.
-
-The first patch should go as a bugfix into the MIPS tree, the
-other ones should only get merged later, but I think that's fine
-if they get submitted for 4.6. I left them as a series of five
-patches to clarify the build-time dependency. Merging patch
-2 before 1 turns the MIPS runtime error into a compiletime
-error.
-
-changes in v2:
-
-* the MIPS change should now correctly fix the bug, thanks
-  to Lars-Peter.
-
-* I left out the ARM specific change for now, and just adapted
-  the generic file so we don't need that any more.
-
-*  Fixed the bug that Russell pointed out
-
-	Arnd
-
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
