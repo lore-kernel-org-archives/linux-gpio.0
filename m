@@ -1,38 +1,48 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add support for INTC-EX IRQ pins
-Date: Tue, 16 Feb 2016 14:16:42 +0100
-Message-ID: <CAMuHMdX01+vqJC78mLVvWDCLXn3B07eLRqKsS07YU8Uecyu6jg@mail.gmail.com>
-References: <20160215121719.27056.43809.sendpatchset@little-apple>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [GIT PULL] Immutable branch between MFD, GPIO and Regulator due
+ for v4.6
+Date: Tue, 16 Feb 2016 15:12:04 +0100
+Message-ID: <CACRpkdaHDUxU-1Mf++C3baJH4FRn_=uW+-BVDUFLA09615tChQ@mail.gmail.com>
+References: <1453736627-2634-1-git-send-email-afd@ti.com>
+	<20160211165451.GC20693@x1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160215121719.27056.43809.sendpatchset@little-apple>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:34919 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932943AbcBPOMG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 09:12:06 -0500
+Received: by mail-ob0-f178.google.com with SMTP id xk3so259056343obc.2
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Feb 2016 06:12:05 -0800 (PST)
+In-Reply-To: <20160211165451.GC20693@x1>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: "Andrew F. Davis" <afd@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Feb 15, 2016 at 1:17 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
+On Thu, Feb 11, 2016 at 5:54 PM, Lee Jones <lee.jones@linaro.org> wrote:
+
+> Enjoy!
 >
-> Most pins on the r8a7795 SoC can be configured in GPIO mode for
-> interrupt and GPIO functionality, while a couple of them can also
-> be routed to the INTC-EX hardware block (formerly known as IRQC).
+> The following changes since commit 36f90b0a2ddd60823fe193a85e60ff1906c2a9b3:
 >
-> On r8a7795 the INTC-EX hardware handles pins IRQ0 -> IRQ5 and
-> this patch adds support for them to the PFC driver as "intc_ex_irqN".
+>   Linux 4.5-rc2 (2016-01-31 18:12:16 -0800)
 >
-> Tested on r8a7795 Salvator-X with an external loop back adapter on
-> EXIO_D that connects pin 9 (IRQ2/GP2_02) and pin 26 (ExA22/GP2_06).
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-regulator-gpio-v4.5
 
-Thanks!
+It's named v4.5...
 
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Immutable branch between MFD, GPIO and Regulator due for v4.6
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+But targeted for v4.6...
 
-Will queue for next renesas-drivers and sh-pfc-for-v4.6.
+But no problem really :)
 
-Gr{oetje,eeting}s,
+I tested to merge it into my devel branch and it was supersmooth, so will
+not merge this unless I run into some problem. Nice for testers though,
+I think it'll fold in just fine in linux-next.
 
-                        Geert
+Yours,
+Linus Walleij
