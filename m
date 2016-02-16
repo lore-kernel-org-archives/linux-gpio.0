@@ -1,107 +1,58 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: sunxi: set pin function as input
- on export
-Date: Tue, 16 Feb 2016 16:35:07 +0100
-Message-ID: <CACRpkdZuNM5GAh5wWpJmAxkX_XVos5j1kd6aZCfgpQJ7zGug7w@mail.gmail.com>
-References: <1454942242-25690-1-git-send-email-krzysztof.adamski@tieto.com>
-	<CACRpkdbd4f3yj2MnR6PU5SuhV5Tj4HzWLc0UX8jQkcJp7MoTig@mail.gmail.com>
-	<20160216080004.GA24625@box2.japko.eu>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: Re: [PATCH 1/1] gpio: pisosr: Don't use magic numbers
+Date: Tue, 16 Feb 2016 16:35:42 +0100
+Message-ID: <1799444.UXy1g4WTOV@ws-stein>
+References: <1455527640-10446-1-git-send-email-alexander.stein@systec-electronic.com> <CACRpkda2LXaPFHdqkonNwnRwv_YhTN3AoOsH-wTRoBZ+-J9shg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBNEDRW3AKGQEN5JXJQY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <20160216080004.GA24625-xLeyfSbClftGit24Ens98Q@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Krzysztof Adamski <krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonas Gorski <jogo-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from webbox1416.server-home.net ([77.236.96.61]:35522 "EHLO
+	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755389AbcBPPft (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 16 Feb 2016 10:35:49 -0500
+In-Reply-To: <CACRpkda2LXaPFHdqkonNwnRwv_YhTN3AoOsH-wTRoBZ+-J9shg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Feb 16, 2016 at 9:00 AM, Krzysztof Adamski
-<krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org> wrote:
+On Tuesday 16 February 2016 15:55:47, Linus Walleij wrote:
+> On Mon, Feb 15, 2016 at 10:14 AM, Alexander Stein
+> <alexander.stein@systec-electronic.com> wrote:
+> 
+> > At first view I thought this function returned an error, but actually
+> > it is the input direction. Use the define for input which makes reading
+> > the code much easier.
+> >
+> > Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> 
+> NACK that flag is for consumers, not drivers.
+> Drivers have their own API and should ideally
+> return a bool true/false, but that would be another major
+> refactoring....
 
-> While sysfs API may be very limited it does have it's strengths too. One of
-> them is that it's trivially scriptable even from bash or other scripting
-> languages
+Well, having a callback get_direction returning a bool would seem really strange. Actually the comments on gpiod_get_direction explicitly state GPIOF_DIR_IN and GPIOF_DIR_OUT as return values which aren't used in that function itself, they come from the callback. Also other dirvers like e.g. gpio-ich return (in ichx_gpio_get_direction) GPIOF_DIR_IN or GPIOF_DIR_OUT.
 
-Feel free to contribute a tool to tools/gpio that perform what you
-need from scripts, using a chardev.
+Best regards,
+Alexander
+-- 
+Dipl.-Inf. Alexander Stein
+SYS TEC electronic GmbH
+alexander.stein@systec-electronic.com
 
-But overall it is subject to the same issue as always: we open
-a chardev and hold it to keep references to it even if the hardware
-goes away. Scripting doesn't seem supergood at opening chardevs
-and holding them and are thus inherently fragile.
+Legal and Commercial Address:
+Am Windrad 2
+08468 Heinsdorfergrund
+Germany
 
-With a chardev we can handle that gracefully.
+Office: +49 (0) 3765 38600-0
+Fax:    +49 (0) 3765 38600-4100
+ 
+Managing Directors:
+	Director Technology/CEO: Dipl.-Phys. Siegmar Schmidt;
+	Director Commercial Affairs/COO: Dipl. Ing. (FH) Armin von Collrepp
+Commercial Registry:
+	Amtsgericht Chemnitz, HRB 28082; USt.-Id Nr. DE150534010
 
-As it is right now, files in sysfs can just disappear while your script
-is running (if e.g. the GPIO is on a USB device or so) and then all
-hell breaks loose I think. So it is very fragile.
-
-> and the other one is that it's there for so long that it's very
-> popular and it will take much time before all the tutorials and existing
-> applications are updated. So, well, I still find it useful to have good
-> support for it.
-
-See commit fe95046e960b4b76e73dc1486955d93f47276134
-it is deprecated but will be around until (at least) 2020.
-
-The chardev will be promoted as it is *always* available, whereas
-the sysfs has a Kconfig option you must switch on.
-
-> I find current behaviour of sysfs interface broken (it says that GPIO is in
-> input mode when in reality it isn't) and still think it's a good idea to fix
-> it. But putting sysfs issue aside, wouldn't it be safer to set some well
-> known state of the pin when requesting it instead of leaving it at whatever
-> was set before?
-
-We have this for in-kernel consumers (<linux/gpio/consumer.h>):
-
-/**
- * Optional flags that can be passed to one of gpiod_* to configure direction
- * and output value. These values cannot be OR'd.
- */
-enum gpiod_flags {
-        GPIOD_ASIS      = 0,
-        GPIOD_IN        = GPIOD_FLAGS_BIT_DIR_SET,
-        GPIOD_OUT_LOW   = GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT,
-        GPIOD_OUT_HIGH  = GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT |
-                          GPIOD_FLAGS_BIT_DIR_VAL,
-};
-
-We have not yet specified a proper ABI for usespace. Are these
-flags the same as you would want for userspace?
-
-My feeling is that unless specified ASIS is what you want.
-
-Especially if there is also an ABI to read the line value.
-
-Let's get the chardev right in this regard and use that.
-
-> The same question goes for freeing, actually, shouldn't the
-> pin be disabled when we call gpio_free instead of leaving it at its last
-> state?
-
-Well maybe we should have an ABI specifying what state we
-want it to be left in, if e.g. the userspace application either quit
-without saying anything, or more importantly, if it crashes.
-
-With the chardev we can do that.
-
-> There are existing drivers that set gpio direction to input when requesting
-> the pin (for example pinctrl-plgpio.c, pinctrl-sirf.c) so sunxi wouldn't be
-> the only driver to do this. This does also show that indeed the problem is
-> not sunxi specific, though.
-
-Drivers can do pretty much what they want, they are supposed
-to handle the hardware as well as they can. They might be doing this
-for a reason or not, better ask the driver writers and/or send them
-patches to augment the behaviour.
-
-Yours,
-Linus Walleij
