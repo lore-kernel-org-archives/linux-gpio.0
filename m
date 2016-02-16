@@ -1,21 +1,31 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: Re: [patch] pinctrl: mediatek: signedness bug in mtk_pmx_gpio_request_enable()
-Date: Wed, 17 Feb 2016 09:44:43 +0800
-Message-ID: <CAFRkauCMTv3DqeKBSx6z4ZJKUVmO38Bm+5bwc0pBbHnr-LQJZg@mail.gmail.com>
-References: <20160216200658.GA9223@mwanda>
+From: Biao Huang <biao.huang@mediatek.com>
+Subject: [PATCH 0/2] pinctrl: mediatek: add setting for gpio and eint
+Date: Wed, 17 Feb 2016 03:16:32 +0800
+Message-ID: <1455650194-9813-1-git-send-email-biao.huang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <20160216200658.GA9223@mwanda>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Biao Huang <biao.huang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Jonas Gorski <jogo@openwrt.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:33914 "EHLO
+	mailgw02.hq.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL)
+	by vger.kernel.org with ESMTP id S933169AbcBQDRM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 16 Feb 2016 22:17:12 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>
 
-2016-02-17 4:06 GMT+08:00 Dan Carpenter <dan.carpenter@oracle.com>:
-> "muxval" stores a value from 0-255 or a negative error code.  It has to
-> be signed for the error handling to work.
->
-> Fixes: 59ee9c96dd5d ('pinctrl: mediatek: Add gpio_request_enable support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Axel Lin <axel.lin@ingics.com>
+1. add input-enable setting in gpio_request_enable.
+2. add input-enable and direction setting for eint resources.
+
+Biao Huang (2):
+  pinctrl: mediatek: add input-enable setting in gpio_request_enable
+  pinctrl: mediatek: add input-enable and direction setting for eint
+    resources
+
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+-- 
+1.7.9.5
+
