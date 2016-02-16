@@ -1,78 +1,122 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [GIT PULL] Immutable branch between MFD, GPIO and Regulator due
- for v4.6
-Date: Tue, 16 Feb 2016 14:41:57 +0000
-Message-ID: <20160216144157.GA4263@x1>
-References: <1453736627-2634-1-git-send-email-afd@ti.com>
- <20160211165451.GC20693@x1>
- <CACRpkdaHDUxU-1Mf++C3baJH4FRn_=uW+-BVDUFLA09615tChQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: create an API to detect open drain/source on lines
+Date: Tue, 16 Feb 2016 15:46:19 +0100
+Message-ID: <1455633979-30970-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:34606 "EHLO
-	mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751221AbcBPOmC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 09:42:02 -0500
-Received: by mail-wm0-f54.google.com with SMTP id b205so113122777wmb.1
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Feb 2016 06:42:01 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaHDUxU-1Mf++C3baJH4FRn_=uW+-BVDUFLA09615tChQ@mail.gmail.com>
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:36416 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754189AbcBPOqY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 09:46:24 -0500
+Received: by mail-lb0-f175.google.com with SMTP id x1so18169656lbj.3
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Feb 2016 06:46:24 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "Andrew F. Davis" <afd@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
 
-On Tue, 16 Feb 2016, Linus Walleij wrote:
+My left hand merges code to privatize the descriptor handling
+while my right hand merges drivers that poke around and
+disrespect with the same gpiolib internals.
 
-> On Thu, Feb 11, 2016 at 5:54 PM, Lee Jones <lee.jones@linaro.org> wro=
-te:
->=20
-> > Enjoy!
-> >
-> > The following changes since commit 36f90b0a2ddd60823fe193a85e60ff19=
-06c2a9b3:
-> >
-> >   Linux 4.5-rc2 (2016-01-31 18:12:16 -0800)
-> >
-> > are available in the git repository at:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib=
--mfd-regulator-gpio-v4.5
->=20
-> It's named v4.5...
->=20
-> > Immutable branch between MFD, GPIO and Regulator due for v4.6
->=20
-> But targeted for v4.6...
->=20
-> But no problem really :)
+So let's expose the proper APIs for drivers to ask the gpiolib
+core if a line is marked as open drain or open source and
+get some order around things so this driver compiles again.
 
-I noticed just after I'd sent this pull-request.
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-tps65218.c |  9 ++++-----
+ drivers/gpio/gpiolib.c       | 18 ++++++++++++++++++
+ include/linux/gpio/driver.h  |  4 ++++
+ 3 files changed, 26 insertions(+), 5 deletions(-)
 
-If it makes you feel any better you can also pull one of:
+diff --git a/drivers/gpio/gpio-tps65218.c b/drivers/gpio/gpio-tps65218.c
+index 7b02f7be9bc9..9eb1a5ab2d95 100644
+--- a/drivers/gpio/gpio-tps65218.c
++++ b/drivers/gpio/gpio-tps65218.c
+@@ -71,17 +71,16 @@ static int tps65218_gpio_request(struct gpio_chip *gc, unsigned offset)
+ {
+ 	struct tps65218_gpio *tps65218_gpio = gpiochip_get_data(gc);
+ 	struct tps65218 *tps65218 = tps65218_gpio->tps65218;
+-	unsigned long flags = gc->desc[offset].flags;
+ 	int ret;
+ 
+-	if (flags & FLAG_OPEN_SOURCE) {
++	if (gpiochip_line_is_open_source(gc, offset)) {
+ 		dev_err(gc->parent, "can't work as open source\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	switch (offset) {
+ 	case 0:
+-		if (!(flags & FLAG_OPEN_DRAIN)) {
++		if (!gpiochip_line_is_open_drain(gc, offset)) {
+ 			dev_err(gc->parent, "GPO1 works only as open drain\n");
+ 			return -EINVAL;
+ 		}
+@@ -103,7 +102,7 @@ static int tps65218_gpio_request(struct gpio_chip *gc, unsigned offset)
+ 		break;
+ 	case 1:
+ 		/* GP02 is push-pull by default, can be set as open drain. */
+-		if (flags & FLAG_OPEN_DRAIN) {
++		if (gpiochip_line_is_open_drain(gc, offset)) {
+ 			ret = tps65218_clear_bits(tps65218,
+ 						  TPS65218_REG_CONFIG1,
+ 						  TPS65218_CONFIG1_GPO2_BUF,
+@@ -122,7 +121,7 @@ static int tps65218_gpio_request(struct gpio_chip *gc, unsigned offset)
+ 		break;
+ 
+ 	case 2:
+-		if (!(flags & FLAG_OPEN_DRAIN)) {
++		if (!gpiochip_line_is_open_drain(gc, offset)) {
+ 			dev_err(gc->parent, "GPO3 works only as open drain\n");
+ 			return -EINVAL;
+ 		}
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index aa4a60e19339..d8511cd68e7b 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1901,6 +1901,24 @@ bool gpiochip_line_is_irq(struct gpio_chip *chip, unsigned int offset)
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_line_is_irq);
+ 
++bool gpiochip_line_is_open_drain(struct gpio_chip *chip, unsigned int offset)
++{
++	if (offset >= chip->ngpio)
++		return false;
++
++	return test_bit(FLAG_OPEN_DRAIN, &chip->gpiodev->descs[offset].flags);
++}
++EXPORT_SYMBOL_GPL(gpiochip_line_is_open_drain);
++
++bool gpiochip_line_is_open_source(struct gpio_chip *chip, unsigned int offset)
++{
++	if (offset >= chip->ngpio)
++		return false;
++
++	return test_bit(FLAG_OPEN_SOURCE, &chip->gpiodev->descs[offset].flags);
++}
++EXPORT_SYMBOL_GPL(gpiochip_line_is_open_source);
++
+ /**
+  * gpiod_get_raw_value_cansleep() - return a gpio's raw value
+  * @desc: gpio whose value will be returned
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index b92ab9efdb69..ff96d0f9fceb 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -199,6 +199,10 @@ int gpiochip_lock_as_irq(struct gpio_chip *chip, unsigned int offset);
+ void gpiochip_unlock_as_irq(struct gpio_chip *chip, unsigned int offset);
+ bool gpiochip_line_is_irq(struct gpio_chip *chip, unsigned int offset);
+ 
++/* Line status inquiry for drivers */
++bool gpiochip_line_is_open_drain(struct gpio_chip *chip, unsigned int offset);
++bool gpiochip_line_is_open_source(struct gpio_chip *chip, unsigned int offset);
++
+ /* get driver data */
+ void *gpiochip_get_data(struct gpio_chip *chip);
+ 
+-- 
+2.4.3
 
-  refs/tags/ib-mfd-regulator-gpio-v4.6
-  refs/heads/ib-mfd-regulator-gpio-4.6
-
-=2E.. which I followed up with.
-
-> I tested to merge it into my devel branch and it was supersmooth, so =
-will
-> not merge this unless I run into some problem. Nice for testers thoug=
-h,
-> I think it'll fold in just fine in linux-next.
->=20
-> Yours,
-> Linus Walleij
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
