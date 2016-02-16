@@ -1,54 +1,54 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v2 1/5] MIPS: jz4740: remove broken irq_to_gpio() call
-Date: Tue, 16 Feb 2016 16:47:37 +0100
-Message-ID: <56C34499.5010704@metafoo.de>
-References: <455637086-2794174-1-git-send-email-arnd@arndb.de>
- <1455637261-2920972-1-git-send-email-arnd@arndb.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/4] gpio: ep93xx: remove private irq_to_gpio function
+Date: Tue, 16 Feb 2016 16:51:57 +0100
+Message-ID: <CACRpkdb3nKTEDCvafURhKRPJipJ=K_y1oyE_kKc=-T8E=Bai0g@mail.gmail.com>
+References: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+	<1455551208-2825510-1-git-send-email-arnd@arndb.de>
+	<1455551208-2825510-4-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1455637261-2920972-1-git-send-email-arnd@arndb.de>
+In-Reply-To: <1455551208-2825510-4-git-send-email-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, Russell King <rmk+kernel@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, "# v4 . 3+" <stable@vger.kernel.org>, Alban Bedel <albeu@free.fr>, Thomas Gleixner <tglx@linutronix.de>, Paul Burton <paul.burton@imgtec.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King <rmk+kernel@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 02/16/2016 04:40 PM, Arnd Bergmann wrote:
-> gpiolib has removed the irq_to_gpio() API several years ago,
-> but the global header still provided a non-working stub.
-> 
-> With a MIPS-wide change to use the generic header file, the jz4740
-> platform is now using the wrong stub implementation of irq_to_gpio(),
-> which cannot work.
-> 
-> This uses an open-coded implementation in the only line it
-> is used in.
-> 
-> Suggested-by: Lars-Peter Clausen <lars@metafoo.de>
+On Mon, Feb 15, 2016 at 4:46 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+
+> The ep93xx goes through its own back-and-forth dance every time
+> it wants to know the gpio number for an irq line, when it really
+> just hardcodes a fixed offset in ep93xx_gpio_to_irq().
+>
+> This removes the pointless macro and replaces the conversion inside
+> of the driver with simple add/subtract operations, using an
+> explicit macro.
+>
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Cc: <stable@vger.kernel.org> # v4.3+
-> Fixes: 832f5dacfa0b ("MIPS: Remove all the uses of custom gpio.h").
+(...)
 
-Acked-by: Lars-Peter Clausen <lars@metafoo.de>
+> -#include <linux/gpio/driver.h>
+> -/* FIXME: this is here for gpio_to_irq() - get rid of this! */
+>  #include <linux/gpio.h>
 
-Thanks.
+No, what you want to get rid of is the #include <linux/gpio.h> not the
+<linux/gpio/driver.h>, we want to be more specific. Sorry for putting the
+comment wrong.
 
-> ---
->  arch/mips/jz4740/gpio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/mips/jz4740/gpio.c b/arch/mips/jz4740/gpio.c
-> index 8c6d76c9b2d6..d9907e57e9b9 100644
-> --- a/arch/mips/jz4740/gpio.c
-> +++ b/arch/mips/jz4740/gpio.c
-> @@ -270,7 +270,7 @@ uint32_t jz_gpio_port_get_value(int port, uint32_t mask)
->  }
->  EXPORT_SYMBOL(jz_gpio_port_get_value);
->  
-> -#define IRQ_TO_BIT(irq) BIT(irq_to_gpio(irq) & 0x1f)
-> +#define IRQ_TO_BIT(irq) BIT((irq - JZ4740_IRQ_GPIO(0)) & 0x1f)
->  
->  static void jz_gpio_check_trigger_both(struct jz_gpio_chip *chip, unsigned int irq)
->  {
-> 
+> @@ -35,6 +31,7 @@ void __iomem *ep93xx_gpio_base; /* FIXME: put this into irq_data */
+>  #define EP93XX_GPIO_LINE_MAX           63
+>
+>  /* maximum value for irq capable line identifiers */
+> +#define EP93XX_GPIO_IRQ_BASE           64
+>  #define EP93XX_GPIO_LINE_MAX_IRQ       23
+
+This doesn't apply to my tree :O
+
+My EP93XX_GPIO_LINE_MAX_IRQ is in
+arch/arm/mach-ep93xx/include/mach/gpio-ep93xx.h
+
+So I think you must be having another patch somewhere in the ARM SoC
+tree. (I can take it, just send it along with an update of this one.)
+
+Yours,
+Linus Walleij
