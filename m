@@ -1,67 +1,107 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V3 2/4] gpio: gpio-f81504: Add Fintek F81504/508/512
- PCIE-to-UART/GPIO GPIOLIB support
-Date: Tue, 16 Feb 2016 16:22:41 +0100
-Message-ID: <CACRpkdYODcp5P7QT1b-9HNjA1j4X_UAVs+AfCgjfgpjAA2PnWQ@mail.gmail.com>
-References: <1455605710-3724-1-git-send-email-hpeter+linux_kernel@gmail.com>
-	<1455605710-3724-3-git-send-email-hpeter+linux_kernel@gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: sunxi: set pin function as input
+ on export
+Date: Tue, 16 Feb 2016 16:35:07 +0100
+Message-ID: <CACRpkdZuNM5GAh5wWpJmAxkX_XVos5j1kd6aZCfgpQJ7zGug7w@mail.gmail.com>
+References: <1454942242-25690-1-git-send-email-krzysztof.adamski@tieto.com>
+	<CACRpkdbd4f3yj2MnR6PU5SuhV5Tj4HzWLc0UX8jQkcJp7MoTig@mail.gmail.com>
+	<20160216080004.GA24625@box2.japko.eu>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1455605710-3724-3-git-send-email-hpeter+linux_kernel@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Hung <hpeter@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Lee Jones <lee.jones@linaro.org>, Jiri Slaby <jslaby@suse.com>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, Peter H <peter_hong@fintek.com.tw>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Peter Hurley <peter@hurleysoftware.com>, Soeren Grunewald <soeren.grunewald@desy.de>, Wang YanQing <udknight@gmail.com>, Adam Lee <adam.lee@canonical.com>, Arnd Bergmann <arnd@arndb.de>, Joachim Eastwood <manabian@gmail.com>, Scott Wood <scottwood@freescale.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Paul Burton <paul.burton@imgtec.com>, =?UTF-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>, Matthias Brugger <matthias.bgg@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, linux-kernel@vger
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBNEDRW3AKGQEN5JXJQY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <20160216080004.GA24625-xLeyfSbClftGit24Ens98Q@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Krzysztof Adamski <krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonas Gorski <jogo-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Feb 16, 2016 at 7:55 AM, Peter Hung <hpeter@gmail.com> wrote:
+On Tue, Feb 16, 2016 at 9:00 AM, Krzysztof Adamski
+<krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org> wrote:
 
-> This driver is GPIOLIB driver for F81504/508/512, it'll handle the
-> GPIOLIB operation of this device. This module will depend on
-> MFD_FINTEK_F81504_CORE.
->
-> IC function list:
->     F81504: Max 2x8 GPIOs and max 4 serial ports
->         port2/3 are multi-function
->     F81508: Max 6x8 GPIOs and max 8 serial ports
->         port2/3 are multi-function, port8/9/10/11 are gpio only
->     F81512: Max 6x8 GPIOs and max 12 serial ports
->         port2/3/8/9/10/11 are multi-function
->
-> GPIO register:
-> PCI Configuration space:
->     F0h: bit0~5: Enable GPIO0~5
->          bit6~7: Reserve
->     F3h: bit0~5: Multi-Functional Flag (0:GPIO/1:UART)
->          bit0: UART2 pin out for UART2 / GPIO0
->          bit1: UART3 pin out for UART3 / GPIO1
->          bit2: UART8 pin out for UART8 / GPIO2
->          bit3: UART9 pin out for UART9 / GPIO3
->          bit4: UART10 pin out for UART10 / GPIO4
->          bit5: UART11 pin out for UART11 / GPIO5
->          bit6~7: Reserve
->     F1h: IO address (LSB)
->     F2h: IO address (MSB)
->     F8h + 8 * set: Direction control (bitwise)
->          bitx: 0 - Input mode
->          bitx: 1 - Output mode
->     F9h + 8 * set: Drive ability control (bitwise)
->          bitx: 0 - Open drain (default)
->          bitx: 1 - Push Pull
->          In this driver, we only implements open drain mode.
->
-> IO space:
->     (IO base + 0~5): GPIO-0x~5x in/out value (bitwise)
->
-> Suggested-by: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Peter Hung <hpeter+linux_kernel@gmail.com>
+> While sysfs API may be very limited it does have it's strengths too. One of
+> them is that it's trivially scriptable even from bash or other scripting
+> languages
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Feel free to contribute a tool to tools/gpio that perform what you
+need from scripts, using a chardev.
 
-It's fine with me if this is queued in MFD, serial or whatever tree, or
-we can wait until the MFD parts are in and take it for the next merge
-window.
+But overall it is subject to the same issue as always: we open
+a chardev and hold it to keep references to it even if the hardware
+goes away. Scripting doesn't seem supergood at opening chardevs
+and holding them and are thus inherently fragile.
+
+With a chardev we can handle that gracefully.
+
+As it is right now, files in sysfs can just disappear while your script
+is running (if e.g. the GPIO is on a USB device or so) and then all
+hell breaks loose I think. So it is very fragile.
+
+> and the other one is that it's there for so long that it's very
+> popular and it will take much time before all the tutorials and existing
+> applications are updated. So, well, I still find it useful to have good
+> support for it.
+
+See commit fe95046e960b4b76e73dc1486955d93f47276134
+it is deprecated but will be around until (at least) 2020.
+
+The chardev will be promoted as it is *always* available, whereas
+the sysfs has a Kconfig option you must switch on.
+
+> I find current behaviour of sysfs interface broken (it says that GPIO is in
+> input mode when in reality it isn't) and still think it's a good idea to fix
+> it. But putting sysfs issue aside, wouldn't it be safer to set some well
+> known state of the pin when requesting it instead of leaving it at whatever
+> was set before?
+
+We have this for in-kernel consumers (<linux/gpio/consumer.h>):
+
+/**
+ * Optional flags that can be passed to one of gpiod_* to configure direction
+ * and output value. These values cannot be OR'd.
+ */
+enum gpiod_flags {
+        GPIOD_ASIS      = 0,
+        GPIOD_IN        = GPIOD_FLAGS_BIT_DIR_SET,
+        GPIOD_OUT_LOW   = GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT,
+        GPIOD_OUT_HIGH  = GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT |
+                          GPIOD_FLAGS_BIT_DIR_VAL,
+};
+
+We have not yet specified a proper ABI for usespace. Are these
+flags the same as you would want for userspace?
+
+My feeling is that unless specified ASIS is what you want.
+
+Especially if there is also an ABI to read the line value.
+
+Let's get the chardev right in this regard and use that.
+
+> The same question goes for freeing, actually, shouldn't the
+> pin be disabled when we call gpio_free instead of leaving it at its last
+> state?
+
+Well maybe we should have an ABI specifying what state we
+want it to be left in, if e.g. the userspace application either quit
+without saying anything, or more importantly, if it crashes.
+
+With the chardev we can do that.
+
+> There are existing drivers that set gpio direction to input when requesting
+> the pin (for example pinctrl-plgpio.c, pinctrl-sirf.c) so sunxi wouldn't be
+> the only driver to do this. This does also show that indeed the problem is
+> not sunxi specific, though.
+
+Drivers can do pretty much what they want, they are supposed
+to handle the hardware as well as they can. They might be doing this
+for a reason or not, better ask the driver writers and/or send them
+patches to augment the behaviour.
 
 Yours,
 Linus Walleij
