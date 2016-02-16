@@ -1,42 +1,54 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/4] gpio: remove broken irq_to_gpio() interface
-Date: Tue, 16 Feb 2016 16:45:28 +0100
-Message-ID: <2646870.5L1En4yxph@wuerfel>
-References: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com> <1455551208-2825510-2-git-send-email-arnd@arndb.de> <CACRpkdaQN9_qoTn4_riZGvi4BKRLEVkRRL4CWzKj8e_di7Q2Xg@mail.gmail.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v2 1/5] MIPS: jz4740: remove broken irq_to_gpio() call
+Date: Tue, 16 Feb 2016 16:47:37 +0100
+Message-ID: <56C34499.5010704@metafoo.de>
+References: <455637086-2794174-1-git-send-email-arnd@arndb.de>
+ <1455637261-2920972-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:50161 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755294AbcBPPqG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 10:46:06 -0500
-In-Reply-To: <CACRpkdaQN9_qoTn4_riZGvi4BKRLEVkRRL4CWzKj8e_di7Q2Xg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1455637261-2920972-1-git-send-email-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Russell King <rmk+kernel@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org, "# v4 . 3+" <stable@vger.kernel.org>, Alban Bedel <albeu@free.fr>, Thomas Gleixner <tglx@linutronix.de>, Paul Burton <paul.burton@imgtec.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King <rmk+kernel@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@imgtec.com>, Linux MIPS <linux-mips@linux-mips.org>
 
-On Tuesday 16 February 2016 16:42:18 Linus Walleij wrote:
-> On Mon, Feb 15, 2016 at 4:46 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+On 02/16/2016 04:40 PM, Arnd Bergmann wrote:
+> gpiolib has removed the irq_to_gpio() API several years ago,
+> but the global header still provided a non-working stub.
 > 
-> > gpiolib has removed the irq_to_gpio() API several years ago,
-> > but the global header still provided a non-working stub.
-> >
-> > Apparently one new user has shown up in arch/mips, so this patch
-> > moves the broken definition to where it is used, ensuring that
-> > we get new users but not changing the current behavior on jz4740.
-> >
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> With a MIPS-wide change to use the generic header file, the jz4740
+> platform is now using the wrong stub implementation of irq_to_gpio(),
+> which cannot work.
 > 
-> Patch applied.
+> This uses an open-coded implementation in the only line it
+> is used in.
 > 
-> I expect the driver maintainer to deal with the resulting
-> deprecation fallout.
-> 
+> Suggested-by: Lars-Peter Clausen <lars@metafoo.de>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Cc: <stable@vger.kernel.org> # v4.3+
+> Fixes: 832f5dacfa0b ("MIPS: Remove all the uses of custom gpio.h").
 
-I've just sent v2 of the series, with a separate patch for MIPS
-that now conflicts with this one. Can you pick up the new patch
-instead?
+Acked-by: Lars-Peter Clausen <lars@metafoo.de>
 
-	Arnd
+Thanks.
+
+> ---
+>  arch/mips/jz4740/gpio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/mips/jz4740/gpio.c b/arch/mips/jz4740/gpio.c
+> index 8c6d76c9b2d6..d9907e57e9b9 100644
+> --- a/arch/mips/jz4740/gpio.c
+> +++ b/arch/mips/jz4740/gpio.c
+> @@ -270,7 +270,7 @@ uint32_t jz_gpio_port_get_value(int port, uint32_t mask)
+>  }
+>  EXPORT_SYMBOL(jz_gpio_port_get_value);
+>  
+> -#define IRQ_TO_BIT(irq) BIT(irq_to_gpio(irq) & 0x1f)
+> +#define IRQ_TO_BIT(irq) BIT((irq - JZ4740_IRQ_GPIO(0)) & 0x1f)
+>  
+>  static void jz_gpio_check_trigger_both(struct jz_gpio_chip *chip, unsigned int irq)
+>  {
+> 
