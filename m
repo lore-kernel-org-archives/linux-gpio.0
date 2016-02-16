@@ -1,32 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: tps65218: Make tps65218_gpio_output set proper
- output level
-Date: Tue, 16 Feb 2016 15:58:56 +0100
-Message-ID: <CACRpkdaExYQXrFD5nJ8fSeDVx8-EULKibqN5w+f1ydLKBB+PKQ@mail.gmail.com>
-References: <1455538154.9793.2.camel@ingics.com>
-	<1455538240.9793.4.camel@ingics.com>
+Subject: Re: [PATCH 1/1] gpio: add devm_ apis for gpio_chip_add and remove
+Date: Tue, 16 Feb 2016 16:03:26 +0100
+Message-ID: <CACRpkdYGS1DogPDnY87HsN2PzDVHw-h6Y15Gv8qhLzgKrkMJtQ@mail.gmail.com>
+References: <1455542246-16761-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:34299 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932142AbcBPO70 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 09:59:26 -0500
-Received: by mail-ob0-f178.google.com with SMTP id wb13so262616781obb.1
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Feb 2016 06:59:26 -0800 (PST)
-In-Reply-To: <1455538240.9793.4.camel@ingics.com>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:34757 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932880AbcBPPDz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 10:03:55 -0500
+Received: by mail-ob0-f174.google.com with SMTP id wb13so262839990obb.1
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Feb 2016 07:03:55 -0800 (PST)
+In-Reply-To: <1455542246-16761-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Feb 15, 2016 at 1:10 PM, Axel Lin <axel.lin@ingics.com> wrote:
+On Mon, Feb 15, 2016 at 2:17 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-> The .direction_output callback should set proper output level.
+> Add device managed APIs devm_gpiochip_add_data() and
+> devm_gpiochip_remove() for the APIs gpiochip_add_data()
+> and gpiochip_remove().
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> This helps in reducing code in error path and sometimes
+> removal of .remove callback for driver unbind.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
-Obviously correct, patch applied.
+I like the looks of this.
+
+One comment: you must also patch
+Documentation/driver-model/devres.txt
+
+Will you also follow up with a massive patch set making use of
+this new API? I feel bad about merging an API if it's not used.
+
+Thanks for only supporting this for the new _data() function.
 
 Yours,
 Linus Walleij
