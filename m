@@ -1,31 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio-mcp23s08: correctly handling failed allocation
-Date: Tue, 16 Feb 2016 16:36:44 +0100
-Message-ID: <CACRpkdaZnU-s8iv6d3X=8sTxUzrj7dN+iq6Hojqguhod1mYQFA@mail.gmail.com>
-References: <1455589197-6576-1-git-send-email-wuninsu@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2 0/5] gpio: clean up irq_to_gpio and ARCH_NR_GPIOS
+Date: Tue, 16 Feb 2016 16:37:59 +0100
+Message-ID: <1455637086-2794174-1-git-send-email-arnd@arndb.de>
+References: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:36046 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932530AbcBPPhD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 10:37:03 -0500
-Received: by mail-ob0-f179.google.com with SMTP id gc3so162408199obb.3
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Feb 2016 07:37:02 -0800 (PST)
-In-Reply-To: <1455589197-6576-1-git-send-email-wuninsu@gmail.com>
+Received: from mout.kundenserver.de ([212.227.17.13]:54092 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932371AbcBPPik (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 10:38:40 -0500
+In-Reply-To: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Insu Yun <wuninsu@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, taesoo@gatech.edu, yeongjin.jang@gatech.edu, insu@gatech.edu, changwoo@gatech.edu
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, Russell King <rmk+kernel@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
 
-On Tue, Feb 16, 2016 at 3:19 AM, Insu Yun <wuninsu@gmail.com> wrote:
+I noticed that arch/arm/include/asm/gpio.h can almost be removed,
+after we have already removed the file for most other architectures
+now.
 
-> Since devm_kzalloc can be failed in memory pressure,
-> it needs to check and return -ENOMEM
->
-> Signed-off-by: Insu Yun <wuninsu@gmail.com>
+When I removed it, I ran into problems with irq_to_gpio(), which
+we had already killed off in ARM, but it survived (barely) in the
+global headers and accidentally gained an invalid user
 
-Patch applied.
+This kills it off some more.
 
-Yours,
-Linus Walleij
+The first patch should go as a bugfix into the MIPS tree, the
+other ones should only get merged later, but I think that's fine
+if they get submitted for 4.6. I left them as a series of five
+patches to clarify the build-time dependency. Merging patch
+2 before 1 turns the MIPS runtime error into a compiletime
+error.
+
+changes in v2:
+
+* the MIPS change should now correctly fix the bug, thanks
+  to Lars-Peter.
+
+* I left out the ARM specific change for now, and just adapted
+  the generic file so we don't need that any more.
+
+*  Fixed the bug that Russell pointed out
+
+	Arnd
+
