@@ -1,66 +1,219 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH -next] gpio: Use kzalloc() to allocate struct gpio_device to fix crash
-Date: Tue, 16 Feb 2016 11:22:51 +0100
-Message-ID: <1455618171-11719-1-git-send-email-geert+renesas@glider.be>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: Re: [PATCH] pinctrl: intel: Turn Baytrail support to tristate
+Date: Tue, 16 Feb 2016 11:25:55 +0100
+Message-ID: <20160216112555.79aa1837@endymion>
+References: <20160211120551.4d8224a4@endymion>
+	<20160211112317.GT16826@lahna.fi.intel.com>
+	<CACRpkdaBBeZbbZGduHOJKuqQmCdyXaMatFt97Bjxsbfdf6V3Rw@mail.gmail.com>
+	<20160216085346.GA1742@lahna.fi.intel.com>
+	<20160216101543.7602d9e8@endymion>
+	<20160216094954.GF1742@lahna.fi.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:42928 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754551AbcBPKW5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 05:22:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57556 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754551AbcBPKZ7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 16 Feb 2016 05:25:59 -0500
+In-Reply-To: <20160216094954.GF1742@lahna.fi.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>
 
-gpiochip_add_data() allocates the struct gpio_device using kmalloc(),
-which doesn't zero the returned memory.
+On Tue, 16 Feb 2016 11:49:54 +0200, Mika Westerberg wrote:
+> On Tue, Feb 16, 2016 at 10:15:43AM +0100, Jean Delvare wrote:
+> > Hi Mika, Linus,
+> > 
+> > On Tue, 16 Feb 2016 10:53:46 +0200, Mika Westerberg wrote:
+> > > On Tue, Feb 16, 2016 at 12:13:36AM +0100, Linus Walleij wrote:
+> > > > On Thu, Feb 11, 2016 at 12:23 PM, Mika Westerberg
+> > > > <mika.westerberg@linux.intel.com> wrote:
+> > > > > On Thu, Feb 11, 2016 at 12:05:51PM +0100, Jean Delvare wrote:
+> > > > >> The pinctrl-baytrail driver builds just fine as a module so give
+> > > > >> users this option.
+> > > > >
+> > > > > IIRC the reason why this is built-in is that there are all kind of ACPI
+> > > > > GPIO magic happening behind the scenes on Baytrail-T based machines
+> > > > > (such as Asus T100) and it does not work without the GPIO driver. Some
+> > > > > of the stuff is done pretty early too.
+> > > > 
+> > > > Hm I wonder if that could be the case for the AMD driver that just
+> > > > got tristated too...
+> > > 
+> > > If they use ACPI GPIO events and operation regions early at boot then it
+> > > can be the case.
+> > 
+> > TBH my patches were more RFCs or even wishful thinking than real
+> > patches. Sorry for not being clearer about this.
+> > 
+> > Hardware-specific code which can only be built-in is a problem, because
+> > it doesn't scale in the long run, so the pinctrl-baytrail and
+> > pinctrl-amd drivers as they exist today do not please me. Same for
+> > acpi_lpss and acpi_apd, btw... Hardware-specific code that is always
+> > built-in. If we keep doing that then distribution kernels will just
+> > grow and grow beyond reason.
+> > 
+> > So if there is any way to let this code be modularized, that would be
+> > great. At this point I still did not see the explanation as to why it
+> > can't be done. "All kind of ACPI GPIO magic happening behind the
+> > scenes" is not an explanation, that's something I would expect from the
+> > marketing department, not engineering ;-) I'd like to know what exactly
+> > is being done, how and why it technically can't be done after loading a
+> > module, it that's actually the case.
+> 
+> Like I said I remember there was some problems if the driver was not
+> loaded early enough. By ACPI GPIO magic I mean that there are things
+> like this for example in Asus T100:
+> 
+>         Device (GPO2)
+>         {
+> 	    ...
+>             Method (_AEI, 0, NotSerialized)  // _AEI: ACPI Event Interrupts
+>             {
+>                 Name (RBUF, ResourceTemplate ()
+>                 {
+>                     GpioInt (Edge, ActiveLow, ExclusiveAndWake, PullUp, 0x0000,
+>                         "\\_SB.GPO2", 0x00, ResourceConsumer, ,
+>                         )
+>                         {   // Pin list
+>                             0x0006
+>                         }
+>                     GpioInt (Edge, ActiveLow, ExclusiveAndWake, PullUp, 0x0000,
+>                         "\\_SB.GPO2", 0x00, ResourceConsumer, ,
+>                         )
+>                         {   // Pin list
+>                             0x0012
+>                         }
+>                 })
+>                 Name (FBUF, ResourceTemplate ()
+>                 {
+>                     GpioInt (Level, ActiveLow, ExclusiveAndWake, PullUp, 0x0000,
+>                         "\\_SB.GPO2", 0x00, ResourceConsumer, ,
+>                         )
+>                         {   // Pin list
+>                             0x0006
+>                         }
+>                     GpioInt (Level, ActiveLow, ExclusiveAndWake, PullUp, 0x0000,
+>                         "\\_SB.GPO2", 0x00, ResourceConsumer, ,
+>                         )
+>                         {   // Pin list
+>                             0x0012
+>                         }
+>                 })
+>                 If ((FSAS == One))
+>                 {
+>                     Return (FBUF) /* \_SB_.GPO2._AEI.FBUF */
+>                 }
+> 
+>                 Return (RBUF) /* \_SB_.GPO2._AEI.RBUF */
+>             }
+> 
+>             Name (BFSA, Buffer (0x03)
+>             {
+>                  0x00, 0x01, 0x00                                 /* ... */
+>             })
+>             CreateByteField (BFSA, Zero, BYYY)
+>             CreateByteField (BFSA, 0x02, DATT)
+>             Name (BFSB, Buffer (0x03)
+>             {
+>                  0x00, 0x01, 0x00                                 /* ... */
+>             })
+>             CreateByteField (BFSB, Zero, YYYY)
+>             CreateByteField (BFSB, 0x02, DTTT)
+>             Method (_L06, 0, NotSerialized)  // _Lxx: Level-Triggered GPE
+>             {
+>             }
+> 
+>             Name (BUFF, Buffer (0x07)
+>             {
+>                  0xFF                                             /* . */
+>             })
+>             CreateByteField (BUFF, Zero, STAT)
+>             CreateByteField (BUFF, One, LEN)
+>             CreateByteField (BUFF, 0x02, TMP0)
+>             CreateByteField (BUFF, 0x03, AX00)
+>             CreateByteField (BUFF, 0x04, AX01)
+>             CreateByteField (BUFF, 0x05, AX10)
+>             CreateByteField (BUFF, 0x06, AX11)
+>             Method (_L12, 0, NotSerialized)  // _Lxx: Level-Triggered GPE
+>             {
+>                 Local0 = Zero
+>                 If (CondRefOf (\_SB.I2C1.BATC, Local1))
+>                 {
+>                     Local0 = ^^I2C1.BATC.INTR ()
+>                     If ((0xFF == Local0))
+>                     {
+>                         ADBG ("INTR RD FAIL")
+>                         Return (Zero)
+>                     }
+> 
+>                     If ((Zero == Local0))
+>                     {
+>                         Return (Zero)
+>                     }
+> 
+>                     ADBG ("ULPMC INTR")
+>                     ADBG (Local0)
+>                     Notify (ADP1, 0x80) // Status Change
+>                     Notify (^^I2C1.BATC, 0x80) // Status Change
+>                     Notify (^^I2C1.BATC, 0x81) // Information Change
+>                 }
+> 
+>                 If ((Local0 == 0x0E))
+>                 {
+>                     Notify (STR3, 0x90) // Device-Specific
+>                     If ((^^I2C1.AVBL == One))
+>                     {
+>                         BUFF = ^^I2C1.THRM /* \_SB_.I2C1.THRM */
+>                         If ((STAT == Zero))
+>                         {
+>                             Local4 = AX01 /* \_SB_.GPO2.AX01 */
+>                             Local4 &= 0xEF
+>                             Local5 = AX11 /* \_SB_.GPO2.AX11 */
+>                             Local5 &= 0xEF
+>                             AX01 = Local4
+>                             AX11 = Local5
+>                             ^^I2C1.THRM = BUFF /* \_SB_.GPO2.BUFF */
+>                         }
+>                     }
+>                 }
+> 
+>                 If (CondRefOf (\_SB.DPTF, Local3))
+>                 {
+>                     If (((Local0 == One) || (Local0 == 0x02)))
+>                     {
+>                         Notify (DPTF, 0x86) // Device-Specific
+>                         Notify (TCHG, 0x80) // Status Change
+>                     }
+> 
+>                     If (((Local0 == 0x07) || (Local0 == 0x08)))
+>                     {
+>                         Notify (DPTF, 0x86) // Device-Specific
+>                         Notify (TCHG, 0x80) // Status Change
+>                     }
+>                 }
+>             }
+> 
+>         }
+> 
+> The method _L12 is executed every time GPIO 12 is pulled low. Now, I'm
+> not exactly sure what this method does but it at least mentions BATC so
+> it might read battery status or something like that. If the GPIO
+> triggers early enough the event is missing. Not sure if this is going to
+> cause problems or not.
 
-Hence when calling dev_set_name(), it may try to free a bogus old name,
-causing a crash:
+Can you describe the respective roles of acpi_lpss and pinctrl-baytrail
+in this process? Both reference ACPI devices "INT33B2" and "INT33FC".
+Who instantiates these devices? Who pulls GPIO 12 low? Who detects when
+this happens? Who triggers the event that leads to _L12 being executed?
 
-    Unable to handle kernel NULL pointer dereference at virtual address 00000000
-    ...
-    Backtrace:
-    [<c01c9258>] (kfree) from [<c01a701c>] (kfree_const+0x28/0x34)
-     r9:eea77210 r8:ffffffff r7:00000001 r6:eea77008 r5:eea77010 r4:ee13afc0
-    [<c01a6ff4>] (kfree_const) from [<c02c47cc>] (kobject_set_name_vargs+0x90/0xa0)
-    [<c02c473c>] (kobject_set_name_vargs) from [<c038b374>] (dev_set_name+0x28/0x30)
-     r6:eea77008 r5:eea7721c r4:eea77000 r3:00001743
-    [<c038b350>] (dev_set_name) from [<c02ed200>] (gpiochip_add_data+0xa8/0x5e4)
-     r3:00001743 r2:00000001 r1:c083b195
-    [<c02ed158>] (gpiochip_add_data) from [<c02f0890>] (gpio_rcar_probe+0x228/0x344)
-     r10:ee922e9c r9:ee922e00 r8:0000001a r7:eea7721c r6:ee90e010 r5:ee922e80
-     r4:eea77210
-    [<c02f0668>] (gpio_rcar_probe) from [<c0390220>] (platform_drv_probe+0x58/0xa8)
+> I'm not opposing turning this driver to a module. If it breaks things we
+> can always revert the patch ;-)
 
-Use kzalloc() instead of kmalloc() to fix this.
+... or try to solve the problem cleanly, if that is possible.
 
-See also the comment for device_initialize():
-
-    All fields in @dev must be initialized by the caller to 0, except
-    for those explicitly set to some other value.  The simplest
-    approach is to use kzalloc() to allocate the structure containing
-    @dev.
-
-Fixes: ff2b135922992756 ("gpio: make the gpiochip a real device")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index aa4a60e19339b8b5..dc49ba3fe5acf089 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -435,7 +435,7 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 	 * First: allocate and populate the internal stat container, and
- 	 * set up the struct device.
- 	 */
--	gdev = kmalloc(sizeof(*gdev), GFP_KERNEL);
-+	gdev = kzalloc(sizeof(*gdev), GFP_KERNEL);
- 	if (!gdev)
- 		return -ENOMEM;
- 	gdev->dev.bus = &gpio_bus_type;
 -- 
-1.9.1
-
+Jean Delvare
+SUSE L3 Support
