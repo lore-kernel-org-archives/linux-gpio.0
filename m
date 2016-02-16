@@ -1,99 +1,76 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] pinctrl: mediatek: fix direction control issue
-Date: Tue, 16 Feb 2016 13:28:52 +0100
-Message-ID: <CACRpkdb1pVQY0UG-_Z5ivyG6rPZq5YibYcRhzdnDMghfH8jMjA@mail.gmail.com>
-References: <1454462686-770-1-git-send-email-biao.huang@mediatek.com>
-	<1454462686-770-2-git-send-email-biao.huang@mediatek.com>
-	<1454555015.4618.10.camel@mussux00>
-	<CACRpkdZb2-TX1eY7eyK5qCqOg66MP1e4+OO287roJdP=RB6-Fg@mail.gmail.com>
-	<1455242831.35628.15.camel@mussux00>
-	<1455612869.11448.22.camel@mtksdaap41>
+From: Jiang Qiu <qiujiang@huawei.com>
+Subject: Re: [RFC PATCH] GPIO/ACPI: DesignWare: Add GPIO-signaled ACPI events
+ support for power button
+Date: Tue, 16 Feb 2016 20:32:40 +0800
+Message-ID: <56C316E8.4090002@huawei.com>
+References: <1454653542-122055-1-git-send-email-qiujiang@huawei.com>
+ <CACRpkdZNCt_TtA6SR86dVCR7vq5cpVmbzxeTguc7go6vVRkuTg@mail.gmail.com>
+Reply-To: <qiujiang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:34970 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755109AbcBPM2x (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 07:28:53 -0500
-Received: by mail-ob0-f177.google.com with SMTP id xk3so254896967obc.2
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Feb 2016 04:28:52 -0800 (PST)
-In-Reply-To: <1455612869.11448.22.camel@mtksdaap41>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZNCt_TtA6SR86dVCR7vq5cpVmbzxeTguc7go6vVRkuTg@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
 List-Id: linux-gpio@vger.kernel.org
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>, Sherman Yin <syin@broadcom.com>, Biao Huang <biao.huang@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, srv_heupstream@mediatek.com, Eddie Huang <eddie.huang@mediatek.com>
 
-On Tue, Feb 16, 2016 at 9:54 AM, Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
+=E5=9C=A8 2016/2/16 2:25, Linus Walleij =E5=86=99=E9=81=93:
+> Mika can you help out looking at this patch. Tell me if you need a co=
+py
+> of the whole patch, I'm not smart with ACPI.
+>=20
+> On Fri, Feb 5, 2016 at 7:25 AM, qiujiang <qiujiang@huawei.com> wrote:
+>=20
+>> This patch modifies the DesignWare GPIO controller driver to
+>> support the GPIO-signaled ACPI Events. This is used for power
+>> button function on ARM server.
+>>
+>> To make it work, the _AEI and _EVT object must be defined in
+>> the corresponding GPIO driver's dsdt table in UEFI. At the same
+>> time, ACPI daemon component is also necessary.
+>>
+>> Signed-off-by: qiujiang <qiujiang@huawei.com>
+>=20
+> (...)
+>> --- a/drivers/gpio/gpio-dwapb.c
+>> +++ b/drivers/gpio/gpio-dwapb.c
+>> @@ -23,6 +23,11 @@
+>>  #include <linux/spinlock.h>
+>>  #include <linux/platform_data/gpio-dwapb.h>
+>>  #include <linux/slab.h>
+>> +#include <linux/acpi.h>
+>> +#include <linux/gpio.h>
+>=20
+> You should only need <linux/driver.h>
+Here, I don't understand well. I used driver.h instead acpi.h and
+gpio.h, but it came to compile failed.
+>=20
+>> +#include "gpiolib.h"
+>=20
+> I guess this is for some acpi_gpiochip* functions that ACPI GPIO
+> drivers need like this:
+>=20
+Yes, this is for function the following acpi_gpiochip* function.
+These functions were declared in the gpiolib.h but gpiolib-acpi.h.
+>> +       /* Add GPIO-signaled ACPI event support */
+>> +       if (pp->irq)
+>> +               acpi_gpiochip_request_interrupts(&(port->bgc.gc));
+>=20
+> Hm, maybe these should be in "gpiolib-acpi.h" or so.
+>=20
+> Overall the patch looks sane to me, but I need some ACPI
+> person to tell.
+>=20
+> Yours,
+> Linus Walleij
+>=20
+> .
+>=20
 
-> To make it more clear, for a GPIO pin to get input on MTK chip, we must:
->
-> - Enable input for the pad (input-enable)
-
-This should be done by the pin control portions of the driver in
-response to the PIN_CONFIG_INPUT_ENABLE generic pin
-config setting.
-
-Possibly *also* by just writing the hardware registers
-from the callbacks right below here:
-
-> - Set mux to GPIO mode
-
-This should be done by just writing the hardware registers
-in these callbacks from struct pinmux_ops:
-
-        int (*gpio_request_enable) (struct pinctrl_dev *pctldev,
-                                    struct pinctrl_gpio_range *range,
-                                    unsigned offset);
-        void (*gpio_disable_free) (struct pinctrl_dev *pctldev,
-                                   struct pinctrl_gpio_range *range,
-                                   unsigned offset);
-        int (*gpio_set_direction) (struct pinctrl_dev *pctldev,
-                                   struct pinctrl_gpio_range *range,
-                                   unsigned offset,
-                                   bool input);
-
-In respons to these functions being called from the corresponding
-GPIO driver:
-
-extern int pinctrl_request_gpio(unsigned gpio);
-extern void pinctrl_free_gpio(unsigned gpio);
-extern int pinctrl_gpio_direction_input(unsigned gpio);
-extern int pinctrl_gpio_direction_output(unsigned gpio);
-
-> - Set GPIO direction to input
-
-This should be done in these callbacks from struct gpio_chip:
-
-        int                     (*direction_input)(struct gpio_chip *chip,
-                                                unsigned offset);
-        int                     (*direction_output)(struct gpio_chip *chip,
-                                                unsigned offset, int value);
-
-By just writing the hardware registers.
-
-> Currently user need to add a dts node to set pinmux to GPIO mode with
-> input-enable property, the driver need to call gpio_direction_input to
-> set direction.
-
-It seems like:
-
-- Your GPIO driver is not calling the pinctrl_request_gpio/
-  pinctrl_gpio_direction_* etc.
-
-- Your pinmux driver is not implementing the GPIO-specifif
-  .gpio_* functions
-
-> Since input-enable and GPIO direction are 2 different things, we now
-> think this patch is inappropriate. Instead, user should not required to
-> add pinmux node in dts if all he want is use it as plain GPIO input.
-
-If you sort out the above callbacks (also read
-Documentation/pinctrl.txt about GPIO) I think it is
-clear what you need to do.
-
-Usually you should only need a special pinmux/pinconf node
-for a GPIO line if you need to specify pull-up or similar electronic
-things for that GPIO.
-
-Yours,
-Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
