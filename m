@@ -1,67 +1,76 @@
-From: Krzysztof Adamski <krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: sunxi: set pin function as input
- on export
-Date: Tue, 16 Feb 2016 09:00:05 +0100
-Message-ID: <20160216080004.GA24625@box2.japko.eu>
-References: <1454942242-25690-1-git-send-email-krzysztof.adamski@tieto.com>
- <CACRpkdbd4f3yj2MnR6PU5SuhV5Tj4HzWLc0UX8jQkcJp7MoTig@mail.gmail.com>
-Reply-To: krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH] gpio/pinctrl: sunxi: stop poking around in private vars
+Date: Tue, 16 Feb 2016 09:08:27 +0100
+Message-ID: <20160216080827.GB4344@lukather>
+References: <1455218943-25917-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Return-path: <linux-sunxi+bncBD7ILP7VSEGBBPNORO3AKGQEDR5WTGQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pvezYHf7grwyp3Bc"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:47591 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754188AbcBPII3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 03:08:29 -0500
 Content-Disposition: inline
-In-Reply-To: <CACRpkdbd4f3yj2MnR6PU5SuhV5Tj4HzWLc0UX8jQkcJp7MoTig-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonas Gorski <jogo-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <1455218943-25917-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Chen-Yu Tsai <wens@csie.org>
 
-On Mon, Feb 15, 2016 at 11:04:26PM +0100, Linus Walleij wrote:
->On Mon, Feb 8, 2016 at 3:37 PM, Krzysztof Adamski
-><krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org> wrote:
->
->> Default function of a pin in sunxi SoCs is "disabled". By default gpios
->> exported by sysfs are set as input and indeed, when reading "direction"
->> file you will get "in". The "value" pin won't return proper value,
->> though, confusing user of this interface.
->>
->> This patch sets direction of a GPIO as input when exporting it.
->>
->> Signed-off-by: Krzysztof Adamski <krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org>
->
->As maxime says it's not a sunxi problem.
->
->So maybe it is wrong to set pins to either input or output when
->exporting them, I suspect they should be exported as is.
->
->Also: the sysfs ABI is deprecated. I suggest you invest your time
->in working on the new chardev ABI.
 
-While sysfs API may be very limited it does have it's strengths too. One 
-of them is that it's trivially scriptable even from bash or other 
-scripting languages and the other one is that it's there for so long 
-that it's very popular and it will take much time before all the 
-tutorials and existing applications are updated. So, well, I still find 
-it useful to have good support for it.
+--pvezYHf7grwyp3Bc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I find current behaviour of sysfs interface broken (it says that GPIO is 
-in input mode when in reality it isn't) and still think it's a good idea 
-to fix it. But putting sysfs issue aside, wouldn't it be safer to set 
-some well known state of the pin when requesting it instead of leaving 
-it at whatever was set before? The same question goes for freeing, 
-actually, shouldn't the pin be disabled when we call gpio_free instead 
-of leaving it at its last state?
+Hi Linus,
 
-There are existing drivers that set gpio direction to input when 
-requesting the pin (for example pinctrl-plgpio.c, pinctrl-sirf.c) so 
-sunxi wouldn't be the only driver to do this. This does also show that 
-indeed the problem is not sunxi specific, though.
+On Thu, Feb 11, 2016 at 08:29:03PM +0100, Linus Walleij wrote:
+> This kind of hacks disturbs the refactoring of the gpiolib.
+>=20
+> The descriptor table belongs to the gpiolib, if we want to know
+> something about something in it, use or define the proper accessor
+> functions. Let's add this gpiochip_lins_is_irq() to do what the
+> sunxi driver is trying at so we can privatize the descriptors
+> properly.
+>=20
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Best regards,
-Krzysztof Adamski
+It looks ok.
+
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--pvezYHf7grwyp3Bc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWwtj7AAoJEBx+YmzsjxAgLs4P/ArPp19M/EA12a/kT4ZWPU0S
+n4d5G6NGjr+c98mxWl7tONDT8IGoL6sZJrAOynKSmbKoTBfLHegNmLm4uhYcxMsO
+61MBfy4Cz3DTudFjXMJ9tWkau/pnAi3MdoI238xnnNlS0frIMKip9on4eL1sTi7k
+//yM2W5p4/GIhJM2C9zRvxpSvsTxa6n1rU1oZ7LFGOhc2zSBhCPMcADzbxYl/cEN
+qeD3s1654u5Dd6GLt80c833lYFV4/aJXHugmUnFCmK2IEtBYzOCJeBIrR8eSuP4C
+981bbZTb4GPeB+Mpo9J/qTtnHeTZo/d0jksE8o9yvR8cGqirrsYwKoDeuaxlwA5z
+1pt6U7d9wf5Qheagr0WwQ0T0fMPrgaHhlVvzqtebjvhNArbVWAwGBm4Q83tK0ETv
+AoDlvU4+PVAGWih7ragfqzQmD1f4g3a1dkhDpwwAzYgk5ISz1xZsc2Q8CnCFtsxF
+Zcibf813TwZbEsJE0Kl/hFGVkTMo/WNDBhABwJIOAMcCjAm0HYbvUqiuaCPXb4hp
+d+tzsXMk6cIhWvolYb132nnUX7fJgC6skzzBhAkoerr8H+sMB+zldUvembV4B6VL
+0MQNrw9Yc64TtRsI1dsSb+EjZCcKCFN0VJNJQ7iIPUOmjEF8Pfmi2mPqLsVa42hy
+ltTq7yrQ5cMobgIEvi3O
+=wOmw
+-----END PGP SIGNATURE-----
+
+--pvezYHf7grwyp3Bc--
