@@ -1,90 +1,67 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH/RFC] gpio: rcar: Add Runtime PM handling for interrupts
-Date: Tue, 16 Feb 2016 08:34:07 +0100
-Message-ID: <CAMuHMdWwzdq4ohfsvScVh4HVRgRjZ8zbDi8ns=xNd+Nk_+-skg@mail.gmail.com>
-References: <1455031183-18294-1-git-send-email-geert+renesas@glider.be>
-	<CACRpkdYPdjFzMW7YfObjmmaLk9=K-DkyJprsz0v0eAg+c-_y=A@mail.gmail.com>
+From: Krzysztof Adamski <krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: sunxi: set pin function as input
+ on export
+Date: Tue, 16 Feb 2016 09:00:05 +0100
+Message-ID: <20160216080004.GA24625@box2.japko.eu>
+References: <1454942242-25690-1-git-send-email-krzysztof.adamski@tieto.com>
+ <CACRpkdbd4f3yj2MnR6PU5SuhV5Tj4HzWLc0UX8jQkcJp7MoTig@mail.gmail.com>
+Reply-To: krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYPdjFzMW7YfObjmmaLk9=K-DkyJprsz0v0eAg+c-_y=A@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Ulf Hansson <ulf.hansson@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Return-path: <linux-sunxi+bncBD7ILP7VSEGBBPNORO3AKGQEDR5WTGQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbd4f3yj2MnR6PU5SuhV5Tj4HzWLc0UX8jQkcJp7MoTig-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonas Gorski <jogo-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
-
-On Mon, Feb 15, 2016 at 11:10 PM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Tue, Feb 9, 2016 at 4:19 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
+On Mon, Feb 15, 2016 at 11:04:26PM +0100, Linus Walleij wrote:
+>On Mon, Feb 8, 2016 at 3:37 PM, Krzysztof Adamski
+><krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org> wrote:
 >
-> Quoting in verbatim as we add new recipients.
->
-> I don't know about any runtime_pm_get():s from the irqchip functions:
-> Ulf and others are discussing with Thomas Gleixner about a more general
-> solution here.
->
-> But since it's a regression I guess we need quick decisions.
->
->> The R-Car GPIO driver handles Runtime PM for requested GPIOs only.
+>> Default function of a pin in sunxi SoCs is "disabled". By default gpios
+>> exported by sysfs are set as input and indeed, when reading "direction"
+>> file you will get "in". The "value" pin won't return proper value,
+>> though, confusing user of this interface.
 >>
->> When using a GPIO purely as an interrupt source, no Runtime PM handling
->> is done, and the GPIO module's clock may not be enabled.
+>> This patch sets direction of a GPIO as input when exporting it.
 >>
->> To fix this:
->>   - Add .irq_request_resources() and .irq_release_resources() callbacks
->>     to handle Runtime PM when an interrupt is requested,
+>> Signed-off-by: Krzysztof Adamski <krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org>
 >
-> This is pretty OK since they are slowpath.
+>As maxime says it's not a sunxi problem.
 >
->>   - Runtime-resume the device before writing to the GPIO module's
->>     registers for disabling/enabling an interrupt, or for configuring
->>     the interrupt type,
+>So maybe it is wrong to set pins to either input or output when
+>exporting them, I suspect they should be exported as is.
 >
-> Will that have *any* effect now that .irq_request_resources has increased
-> usecount to 1?
->
-> Isn't it enough with the patches to .irq_request/release_resources to get
-> this working?
+>Also: the sysfs ABI is deprecated. I suggest you invest your time
+>in working on the new chardev ABI.
 
-The registers are also being written to to:
-  1. Disable the IRQ,
-  2. Set the type.
+While sysfs API may be very limited it does have it's strengths too. One 
+of them is that it's trivially scriptable even from bash or other 
+scripting languages and the other one is that it's there for so long 
+that it's very popular and it will take much time before all the 
+tutorials and existing applications are updated. So, well, I still find 
+it useful to have good support for it.
 
-Unfortunately .irq_request() is the third step, not the first.
+I find current behaviour of sysfs interface broken (it says that GPIO is 
+in input mode when in reality it isn't) and still think it's a good idea 
+to fix it. But putting sysfs issue aside, wouldn't it be safer to set 
+some well known state of the pin when requesting it instead of leaving 
+it at whatever was set before? The same question goes for freeing, 
+actually, shouldn't the pin be disabled when we call gpio_free instead 
+of leaving it at its last state?
 
->>   - Add checks to warn when the GPIO module's registers are accessed
->>     while the device is runtime-suspended.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> This fixes ravb Ethernet on r8a7795/Salvator-X, which was "broken" by
->> commit d5c3d84657db57bd ("net: phy: Avoid polling PHY with
->> PHY_IGNORE_INTERRUPTS").
->>
->> Does it also fix the HDMI interrupt on r8a7791/Koelsch?
->>
->> Notes:
->>   1. I assume gpio_rcar_irq_{dis,en}able() may be called from contexts
->>      where pm_runtime_get_sync() may not be called.
->>      However, so far I didn't see any reports from the might_sleep_if()
->>      check in __pm_runtime_resume(),
->>   2. gpio_rcar_irq_disable() is called from the IRQ core before
->>      gpio_rcar_irq_set_type().
->>      Else an alternative solution could be to just runtime-resume the
->>      device from gpio_rcar_irq_set_type() when an interrupt is setup,
->>      and never call pm_runtime_put() again. That would cause issues when
->>      compiling gpio-rcar as a module, though.
+There are existing drivers that set gpio direction to input when 
+requesting the pin (for example pinctrl-plgpio.c, pinctrl-sirf.c) so 
+sunxi wouldn't be the only driver to do this. This does also show that 
+indeed the problem is not sunxi specific, though.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof Adamski
