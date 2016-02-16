@@ -1,58 +1,31 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: Re: [PATCH 1/1] gpio: pisosr: Don't use magic numbers
-Date: Tue, 16 Feb 2016 16:35:42 +0100
-Message-ID: <1799444.UXy1g4WTOV@ws-stein>
-References: <1455527640-10446-1-git-send-email-alexander.stein@systec-electronic.com> <CACRpkda2LXaPFHdqkonNwnRwv_YhTN3AoOsH-wTRoBZ+-J9shg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio-mcp23s08: correctly handling failed allocation
+Date: Tue, 16 Feb 2016 16:36:44 +0100
+Message-ID: <CACRpkdaZnU-s8iv6d3X=8sTxUzrj7dN+iq6Hojqguhod1mYQFA@mail.gmail.com>
+References: <1455589197-6576-1-git-send-email-wuninsu@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:35522 "EHLO
-	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755389AbcBPPft (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 16 Feb 2016 10:35:49 -0500
-In-Reply-To: <CACRpkda2LXaPFHdqkonNwnRwv_YhTN3AoOsH-wTRoBZ+-J9shg@mail.gmail.com>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:36046 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932530AbcBPPhD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 10:37:03 -0500
+Received: by mail-ob0-f179.google.com with SMTP id gc3so162408199obb.3
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Feb 2016 07:37:02 -0800 (PST)
+In-Reply-To: <1455589197-6576-1-git-send-email-wuninsu@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Insu Yun <wuninsu@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, taesoo@gatech.edu, yeongjin.jang@gatech.edu, insu@gatech.edu, changwoo@gatech.edu
 
-On Tuesday 16 February 2016 15:55:47, Linus Walleij wrote:
-> On Mon, Feb 15, 2016 at 10:14 AM, Alexander Stein
-> <alexander.stein@systec-electronic.com> wrote:
-> 
-> > At first view I thought this function returned an error, but actually
-> > it is the input direction. Use the define for input which makes reading
-> > the code much easier.
-> >
-> > Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
-> 
-> NACK that flag is for consumers, not drivers.
-> Drivers have their own API and should ideally
-> return a bool true/false, but that would be another major
-> refactoring....
+On Tue, Feb 16, 2016 at 3:19 AM, Insu Yun <wuninsu@gmail.com> wrote:
 
-Well, having a callback get_direction returning a bool would seem really strange. Actually the comments on gpiod_get_direction explicitly state GPIOF_DIR_IN and GPIOF_DIR_OUT as return values which aren't used in that function itself, they come from the callback. Also other dirvers like e.g. gpio-ich return (in ichx_gpio_get_direction) GPIOF_DIR_IN or GPIOF_DIR_OUT.
+> Since devm_kzalloc can be failed in memory pressure,
+> it needs to check and return -ENOMEM
+>
+> Signed-off-by: Insu Yun <wuninsu@gmail.com>
 
-Best regards,
-Alexander
--- 
-Dipl.-Inf. Alexander Stein
-SYS TEC electronic GmbH
-alexander.stein@systec-electronic.com
+Patch applied.
 
-Legal and Commercial Address:
-Am Windrad 2
-08468 Heinsdorfergrund
-Germany
-
-Office: +49 (0) 3765 38600-0
-Fax:    +49 (0) 3765 38600-4100
- 
-Managing Directors:
-	Director Technology/CEO: Dipl.-Phys. Siegmar Schmidt;
-	Director Commercial Affairs/COO: Dipl. Ing. (FH) Armin von Collrepp
-Commercial Registry:
-	Amtsgericht Chemnitz, HRB 28082; USt.-Id Nr. DE150534010
-
+Yours,
+Linus Walleij
