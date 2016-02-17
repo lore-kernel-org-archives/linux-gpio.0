@@ -1,189 +1,117 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7794: add EtherAVB pin groups
-Date: Thu, 18 Feb 2016 01:32:05 +0300
-Message-ID: <3010555.FcVIno0yOe@wasted.cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+From: Josh Cartwright <joshc@ni.com>
+Subject: Re: Bunch of machines are not booting in next again, GPIO regression?
+Date: Wed, 17 Feb 2016 16:44:15 -0600
+Message-ID: <20160217224415.GA3866@jcartwri.amer.corp.natinst.com>
+References: <20160217192755.GC21202@atomide.com>
+ <20160217195543.GA871@jcartwri.amer.corp.natinst.com>
+ <20160217201259.GA16028@deathstar>
+ <20160217202224.GD21202@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:34992 "EHLO
-	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030487AbcBQWcK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Feb 2016 17:32:10 -0500
-Received: by mail-lf0-f43.google.com with SMTP id l143so20728383lfe.2
-        for <linux-gpio@vger.kernel.org>; Wed, 17 Feb 2016 14:32:09 -0800 (PST)
-In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+Received: from skprod2.natinst.com ([130.164.80.23]:50861 "EHLO ni.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1424138AbcBQWpD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 17 Feb 2016 17:45:03 -0500
+In-Reply-To: <20160217202224.GD21202@atomide.com>
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org, geert+renesas@glider.be
+To: Tony Lindgren <tony@atomide.com>
+Cc: Michael Welling <mwelling@ieee.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Markus Pargmann <mpa@pengutronix.de>, Mark Brown <broonie@kernel.org>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Add the EtherAVB pin groups to the R8A7794 PFC driver.
+On Wed, Feb 17, 2016 at 12:22:25PM -0800, Tony Lindgren wrote:
+> * Michael Welling <mwelling@ieee.org> [160217 12:13]:
+> > On Wed, Feb 17, 2016 at 01:55:43PM -0600, Josh Cartwright wrote:
+> > > On Wed, Feb 17, 2016 at 11:27:55AM -0800, Tony Lindgren wrote:
+> > > > Hi Linus,
+> > > > 
+> > > > Looks like ff2b13592299 ("gpio: make the gpiochip a real device")
+> > > > broke booting on all omaps, and probably other machines too according
+> > > > to this:
+> > > > 
+> > > > https://kernelci.org/boot/all/job/next/kernel/next-20160217/
+> > > > 
+> > > > So far we've gone from 1 failed machine with next-20160216 to
+> > > > 18 failed machines with next-20160217.
+> > > > 
+> > > > The error I'm getting on omaps is below with debug_ll enable,
+> > > > any ideas?
+> > > 
+> > > Hey Tony-
+> > > 
+> > > Looks like the newly allocated gpio_device object isn't zeroed,
+> > > confusing dev_set_name.  Can you give this a try?
+> > > 
+> > >   Josh
+> > > 
+> > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > > index d8511cd..59f0045 100644
+> > > --- a/drivers/gpio/gpiolib.c
+> > > +++ b/drivers/gpio/gpiolib.c
+> > > @@ -435,7 +435,7 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
+> > >  	 * First: allocate and populate the internal stat container, and
+> > >  	 * set up the struct device.
+> > >  	 */
+> > > -	gdev = kmalloc(sizeof(*gdev), GFP_KERNEL);
+> > > +	gdev = kzalloc(sizeof(*gdev), GFP_KERNEL);
+> > >  	if (!gdev)
+> > >  		return -ENOMEM;
+> > >  	gdev->dev.bus = &gpio_bus_type;
+> > 
+> > As you can see by my post on the GPIO mailing list, a boot failure
+> > was occurring on the Dragonboard 410C:
+> > http://permalink.gmane.org/gmane.linux.kernel.gpio/14360
+> > 
+> > With the above patch the board now boots. Good catch.
+> 
+> Yup fixes the issue for me too.
 
-Based on the patches by Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>.
+Linus-
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Here's a properly cooked patch.  Otherwise, feel free to squash it in if
+it's easier for you.
 
+  Josh
+
+-- 8< --
+Subject: [PATCH] gpio: use kzalloc to allocate gpio_device
+
+The use of kmalloc() to allocate the gpio_device leaves the contained struct
+device object in an unknown state.  Calling dev_set_name() on a struct device
+of unknown state can trigger the free() of an invalid pointer, as seen in the
+following backtrace (collected by Tony Lindgren):
+
+  kfree
+  kobject_set_name_vargs
+  dev_set_name
+  gpiochip_add_data
+  omap_gpio_probe
+  platform_drv_probe
+  ...
+
+Reported-by: Michael Welling <mwelling@ieee.org>
+Reported-by: Tony Lindgren <tony@atomide.com>
+Tested-by: Michael Welling <mwelling@ieee.org>
+Tested-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Josh Cartwright <joshc@ni.com>
 ---
-The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
-repo plus the SSI/audio clock patches posted last week.
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  123 +++++++++++++++++++++++++++++++++++
- 1 file changed, 123 insertions(+)
-
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -1583,6 +1583,105 @@ static const unsigned int audio_clkout_c
- static const unsigned int audio_clkout_c_mux[] = {
- 	AUDIO_CLKOUT_C_MARK,
- };
-+/* - AVB -------------------------------------------------------------------- */
-+static const unsigned int avb_link_pins[] = {
-+	RCAR_GP_PIN(3, 26),
-+};
-+static const unsigned int avb_link_mux[] = {
-+	AVB_LINK_MARK,
-+};
-+static const unsigned int avb_magic_pins[] = {
-+	RCAR_GP_PIN(3, 27),
-+};
-+static const unsigned int avb_magic_mux[] = {
-+	AVB_MAGIC_MARK,
-+};
-+static const unsigned int avb_phy_int_pins[] = {
-+	RCAR_GP_PIN(3, 28),
-+};
-+static const unsigned int avb_phy_int_mux[] = {
-+	AVB_PHY_INT_MARK,
-+};
-+static const unsigned int avb_mdio_pins[] = {
-+	RCAR_GP_PIN(3, 24), RCAR_GP_PIN(3, 25),
-+};
-+static const unsigned int avb_mdio_mux[] = {
-+	AVB_MDC_MARK, AVB_MDIO_MARK,
-+};
-+static const unsigned int avb_mii_pins[] = {
-+	RCAR_GP_PIN(3, 14), RCAR_GP_PIN(3, 15), RCAR_GP_PIN(3, 16),
-+	RCAR_GP_PIN(3, 17),
-+
-+	RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 3), RCAR_GP_PIN(3, 4),
-+	RCAR_GP_PIN(3, 5),
-+
-+	RCAR_GP_PIN(3, 10), RCAR_GP_PIN(3, 0), RCAR_GP_PIN(3, 1),
-+	RCAR_GP_PIN(3, 29), RCAR_GP_PIN(3, 12), RCAR_GP_PIN(3, 22),
-+	RCAR_GP_PIN(3, 13), RCAR_GP_PIN(3, 11),
-+};
-+static const unsigned int avb_mii_mux[] = {
-+	AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
-+	AVB_TXD3_MARK,
-+
-+	AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
-+	AVB_RXD3_MARK,
-+
-+	AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
-+	AVB_CRS_MARK, AVB_TX_EN_MARK, AVB_TX_ER_MARK,
-+	AVB_TX_CLK_MARK, AVB_COL_MARK,
-+};
-+static const unsigned int avb_gmii_pins[] = {
-+	RCAR_GP_PIN(3, 14), RCAR_GP_PIN(3, 15), RCAR_GP_PIN(3, 16),
-+	RCAR_GP_PIN(3, 17), RCAR_GP_PIN(3, 18), RCAR_GP_PIN(3, 19),
-+	RCAR_GP_PIN(3, 20), RCAR_GP_PIN(3, 21),
-+
-+	RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 3), RCAR_GP_PIN(3, 4),
-+	RCAR_GP_PIN(3, 5), RCAR_GP_PIN(3, 6), RCAR_GP_PIN(3, 7),
-+	RCAR_GP_PIN(3, 8), RCAR_GP_PIN(3, 9),
-+
-+	RCAR_GP_PIN(3, 10), RCAR_GP_PIN(3, 0), RCAR_GP_PIN(3, 1),
-+	RCAR_GP_PIN(3, 29), RCAR_GP_PIN(3, 23), RCAR_GP_PIN(3, 30),
-+	RCAR_GP_PIN(3, 12), RCAR_GP_PIN(3, 22), RCAR_GP_PIN(3, 13),
-+	RCAR_GP_PIN(3, 11),
-+};
-+static const unsigned int avb_gmii_mux[] = {
-+	AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
-+	AVB_TXD3_MARK, AVB_TXD4_MARK, AVB_TXD5_MARK,
-+	AVB_TXD6_MARK, AVB_TXD7_MARK,
-+
-+	AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
-+	AVB_RXD3_MARK, AVB_RXD4_MARK, AVB_RXD5_MARK,
-+	AVB_RXD6_MARK, AVB_RXD7_MARK,
-+
-+	AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
-+	AVB_CRS_MARK, AVB_GTX_CLK_MARK, AVB_GTXREFCLK_MARK,
-+	AVB_TX_EN_MARK, AVB_TX_ER_MARK, AVB_TX_CLK_MARK,
-+	AVB_COL_MARK,
-+};
-+static const unsigned int avb_avtp_capture_pins[] = {
-+	RCAR_GP_PIN(5, 11),
-+};
-+static const unsigned int avb_avtp_capture_mux[] = {
-+	AVB_AVTP_CAPTURE_MARK,
-+};
-+static const unsigned int avb_avtp_match_pins[] = {
-+	RCAR_GP_PIN(5, 12),
-+};
-+static const unsigned int avb_avtp_match_mux[] = {
-+	AVB_AVTP_MATCH_MARK,
-+};
-+static const unsigned int avb_avtp_capture_b_pins[] = {
-+	RCAR_GP_PIN(1, 1),
-+};
-+static const unsigned int avb_avtp_capture_b_mux[] = {
-+	AVB_AVTP_CAPTURE_B_MARK,
-+};
-+static const unsigned int avb_avtp_match_b_pins[] = {
-+	RCAR_GP_PIN(1, 2),
-+};
-+static const unsigned int avb_avtp_match_b_mux[] = {
-+	AVB_AVTP_MATCH_B_MARK,
-+};
- /* - ETH -------------------------------------------------------------------- */
- static const unsigned int eth_link_pins[] = {
- 	/* LINK */
-@@ -3255,6 +3354,16 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(audio_clkout),
- 	SH_PFC_PIN_GROUP(audio_clkout_b),
- 	SH_PFC_PIN_GROUP(audio_clkout_c),
-+	SH_PFC_PIN_GROUP(avb_link),
-+	SH_PFC_PIN_GROUP(avb_magic),
-+	SH_PFC_PIN_GROUP(avb_phy_int),
-+	SH_PFC_PIN_GROUP(avb_mdio),
-+	SH_PFC_PIN_GROUP(avb_mii),
-+	SH_PFC_PIN_GROUP(avb_gmii),
-+	SH_PFC_PIN_GROUP(avb_avtp_capture),
-+	SH_PFC_PIN_GROUP(avb_avtp_match),
-+	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
-+	SH_PFC_PIN_GROUP(avb_avtp_match_b),
- 	SH_PFC_PIN_GROUP(eth_link),
- 	SH_PFC_PIN_GROUP(eth_magic),
- 	SH_PFC_PIN_GROUP(eth_mdio),
-@@ -3500,6 +3609,19 @@ static const char * const audio_clk_grou
- 	"audio_clkout_c",
- };
- 
-+static const char * const avb_groups[] = {
-+	"avb_link",
-+	"avb_magic",
-+	"avb_phy_int",
-+	"avb_mdio",
-+	"avb_mii",
-+	"avb_gmii",
-+	"avb_avtp_capture",
-+	"avb_avtp_match",
-+	"avb_avtp_capture_b",
-+	"avb_avtp_match_b",
-+};
-+
- static const char * const eth_groups[] = {
- 	"eth_link",
- 	"eth_magic",
-@@ -3846,6 +3968,7 @@ static const char * const vin1_groups[]
- 
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
-+	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(eth),
- 	SH_PFC_FUNCTION(hscif0),
- 	SH_PFC_FUNCTION(hscif1),
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d8511cd..59f0045 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -435,7 +435,7 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
+ 	 * First: allocate and populate the internal stat container, and
+ 	 * set up the struct device.
+ 	 */
+-	gdev = kmalloc(sizeof(*gdev), GFP_KERNEL);
++	gdev = kzalloc(sizeof(*gdev), GFP_KERNEL);
+ 	if (!gdev)
+ 		return -ENOMEM;
+ 	gdev->dev.bus = &gpio_bus_type;
+-- 
+2.7.0
 
