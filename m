@@ -1,35 +1,21 @@
-From: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
-Subject: Re: [PATCH] gpio: create an API to detect open drain/source on lines
-Date: Wed, 17 Feb 2016 00:21:24 +0000
-Message-ID: <20160217002124.GA31158@vian>
-References: <1455633979-30970-1-git-send-email-linus.walleij@linaro.org>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: Re: [patch] pinctrl: mediatek: signedness bug in mtk_pmx_gpio_request_enable()
+Date: Wed, 17 Feb 2016 09:44:43 +0800
+Message-ID: <CAFRkauCMTv3DqeKBSx6z4ZJKUVmO38Bm+5bwc0pBbHnr-LQJZg@mail.gmail.com>
+References: <20160216200658.GA9223@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:35173 "EHLO
-	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964844AbcBQAV2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Feb 2016 19:21:28 -0500
-Received: by mail-wm0-f52.google.com with SMTP id c200so188108184wme.0
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Feb 2016 16:21:28 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1455633979-30970-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <20160216200658.GA9223@mwanda>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Biao Huang <biao.huang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Jonas Gorski <jogo@openwrt.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Tue, Feb 16, 2016 at 03:46:19PM +0100, Linus Walleij wrote:
-> My left hand merges code to privatize the descriptor handling
-> while my right hand merges drivers that poke around and
-> disrespect with the same gpiolib internals.
+2016-02-17 4:06 GMT+08:00 Dan Carpenter <dan.carpenter@oracle.com>:
+> "muxval" stores a value from 0-255 or a negative error code.  It has to
+> be signed for the error handling to work.
 >
-> So let's expose the proper APIs for drivers to ask the gpiolib
-> core if a line is marked as open drain or open source and
-> get some order around things so this driver compiles again.
-
-Thanks, looks way better now, I'd suggest to remove the "gpiolib.h"
-include since it's not needed anymore. I can do it's on a separate patch
-on top of this one if you prefer :)
-
-Acked-by: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
+> Fixes: 59ee9c96dd5d ('pinctrl: mediatek: Add gpio_request_enable support')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Axel Lin <axel.lin@ingics.com>
