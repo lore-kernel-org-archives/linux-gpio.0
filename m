@@ -1,261 +1,107 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v1] GPIO/ACPI: DesignWare: Add GPIO-signaled ACPI events
- support for power button
-Date: Wed, 17 Feb 2016 16:47:50 +0200
-Message-ID: <CAHp75VefypfqtGY4g747+dCugx2j9ogxC2uDLwJWMZnGyWMgyA@mail.gmail.com>
-References: <1455694090-41713-1-git-send-email-qiujiang@huawei.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Bunch of machines are not booting in next again, GPIO regression?
+Date: Wed, 17 Feb 2016 11:27:55 -0800
+Message-ID: <20160217192755.GC21202@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1455694090-41713-1-git-send-email-qiujiang@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: qiujiang <qiujiang@huawei.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:46607 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1030286AbcBQT16 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 17 Feb 2016 14:27:58 -0500
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org
 
-On Wed, Feb 17, 2016 at 9:28 AM, qiujiang <qiujiang@huawei.com> wrote:
-> This patch modifies the DesignWare GPIO controller driver to
-> support the GPIO-signaled ACPI Events. This is used for power
-> button function on ARM server.
->
-> To make it work, the _AEI and _EVT object must be defined in
-> the corresponding GPIO driver's dsdt table in UEFI as follow:
->
-> Device(GPI0) {
->         Name(_HID, "HISI0181")
->         Name(_ADR, 0) // _ADR: Address
->         Name(_UID, 0)
->
->         Name (_CRS, ResourceTemplate ()  {
->                 Memory32Fixed (ReadWrite, 0x802e0000, 0x10000)
->                 Interrupt (ResourceConsumer, Level, ActiveHigh,
->                 Exclusive,,,) {344}
->         })
->
->         Device(PRTa) {
->                 Name (_DSD, Package () {
->                         Package () {
->                                 Package () {"reg",0},
->                                 Package () {"snps,nr-gpios",32},
->                 }
->                 })
->         }
->
->         Name (_AEI, ResourceTemplate () {
->                 GpioInt(Edge, ActiveLow, ExclusiveAndWake, PullUp, ,
->                 " \\_SB.GPI0") {8}
->         })
->
->         Method (_E08, 0x0, NotSerialized) {
->                 Notify (\_SB.PWRB, 0x80)
->         }
-> }
->
+Hi Linus,
 
-The contents looks fine to me, though I would suggest to split to two
-patches if possible, i.e. preparatory patch which switches to use
-fwnode, and the second one with the extent.
+Looks like ff2b13592299 ("gpio: make the gpiochip a real device")
+broke booting on all omaps, and probably other machines too according
+to this:
 
-> Signed-off-by: qiujiang <qiujiang@huawei.com>
-> ---
->  drivers/gpio/gpio-dwapb.c                | 71 ++++++++++++++++++++------------
->  include/linux/platform_data/gpio-dwapb.h |  2 +-
->  2 files changed, 45 insertions(+), 28 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index fcd5b0a..e482e32 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -7,6 +7,7 @@
->   *
->   * All enquiries to support@picochip.com
->   */
-> +#include <linux/acpi.h>
->  #include <linux/basic_mmio_gpio.h>
->  #include <linux/err.h>
->  #include <linux/init.h>
-> @@ -24,6 +25,8 @@
->  #include <linux/platform_data/gpio-dwapb.h>
->  #include <linux/slab.h>
->
-> +#include "gpiolib.h"
-> +
->  #define GPIO_SWPORTA_DR                0x00
->  #define GPIO_SWPORTA_DDR       0x04
->  #define GPIO_SWPORTB_DR                0x0c
-> @@ -296,14 +299,14 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
->                                  struct dwapb_port_property *pp)
->  {
->         struct gpio_chip *gc = &port->bgc.gc;
-> -       struct device_node *node = pp->node;
-> +       struct fwnode_handle  *fwnode = pp->fwnode;
->         struct irq_chip_generic *irq_gc = NULL;
->         unsigned int hwirq, ngpio = gc->ngpio;
->         struct irq_chip_type *ct;
->         int err, i;
->
-> -       gpio->domain = irq_domain_add_linear(node, ngpio,
-> -                                            &irq_generic_chip_ops, gpio);
-> +       gpio->domain = irq_domain_create_linear(fwnode,
-> +                               ngpio, &irq_generic_chip_ops, gpio);
->         if (!gpio->domain)
->                 return;
->
-> @@ -421,7 +424,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
->         }
->
->  #ifdef CONFIG_OF_GPIO
-> -       port->bgc.gc.of_node = pp->node;
-> +       port->bgc.gc.of_node = to_of_node(pp->fwnode);
->  #endif
->         port->bgc.gc.ngpio = pp->ngpio;
->         port->bgc.gc.base = pp->gpio_base;
-> @@ -440,6 +443,10 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
->         else
->                 port->is_registered = true;
->
-> +       /* Add GPIO-signaled ACPI event support */
-> +       if (pp->irq)
-> +               acpi_gpiochip_request_interrupts(&(port->bgc.gc));
-> +
->         return err;
->  }
->
-> @@ -453,19 +460,15 @@ static void dwapb_gpio_unregister(struct dwapb_gpio *gpio)
->  }
->
->  static struct dwapb_platform_data *
-> -dwapb_gpio_get_pdata_of(struct device *dev)
-> +dwapb_gpio_get_pdata(struct device *dev)
->  {
-> -       struct device_node *node, *port_np;
-> +       struct fwnode_handle *fwnode;
->         struct dwapb_platform_data *pdata;
->         struct dwapb_port_property *pp;
->         int nports;
->         int i;
->
-> -       node = dev->of_node;
-> -       if (!IS_ENABLED(CONFIG_OF_GPIO) || !node)
-> -               return ERR_PTR(-ENODEV);
-> -
-> -       nports = of_get_child_count(node);
-> +       nports = device_get_child_node_count(dev);
->         if (nports == 0)
->                 return ERR_PTR(-ENODEV);
->
-> @@ -480,21 +483,19 @@ dwapb_gpio_get_pdata_of(struct device *dev)
->         pdata->nports = nports;
->
->         i = 0;
-> -       for_each_child_of_node(node, port_np) {
-> -               pp = &pdata->properties[i++];
-> -               pp->node = port_np;
-> +       device_for_each_child_node(dev, fwnode) {
-> +               pp = &pdata->properties[i];
-> +               pp->fwnode = fwnode;
->
-> -               if (of_property_read_u32(port_np, "reg", &pp->idx) ||
-> +               if (fwnode_property_read_u32(fwnode, "reg", &pp->idx) ||
->                     pp->idx >= DWAPB_MAX_PORTS) {
-> -                       dev_err(dev, "missing/invalid port index for %s\n",
-> -                               port_np->full_name);
-> +                       dev_err(dev, "missing/invalid port index\n");
->                         return ERR_PTR(-EINVAL);
->                 }
->
-> -               if (of_property_read_u32(port_np, "snps,nr-gpios",
-> +               if (fwnode_property_read_u32(fwnode, "snps,nr-gpios",
->                                          &pp->ngpio)) {
-> -                       dev_info(dev, "failed to get number of gpios for %s\n",
-> -                                port_np->full_name);
-> +                       dev_info(dev, "failed to get number of gpios\n");
->                         pp->ngpio = 32;
->                 }
->
-> @@ -502,18 +503,27 @@ dwapb_gpio_get_pdata_of(struct device *dev)
->                  * Only port A can provide interrupts in all configurations of
->                  * the IP.
->                  */
-> -               if (pp->idx == 0 &&
-> -                   of_property_read_bool(port_np, "interrupt-controller")) {
-> -                       pp->irq = irq_of_parse_and_map(port_np, 0);
-> +                if (dev->of_node && pp->idx == 0 &&
-> +                        of_property_read_bool(to_of_node(fwnode),
-> +                        "interrupt-controller")) {
-> +                       pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
->                         if (!pp->irq) {
-> -                               dev_warn(dev, "no irq for bank %s\n",
-> -                                        port_np->full_name);
-> +                       dev_warn(dev, "no irq for bank %s\n",
-> +                                 to_of_node(fwnode)->full_name);
->                         }
->                 }
->
-> +               if (has_acpi_companion(dev) && pp->idx == 0)
-> +                       pp->irq = platform_get_irq(to_platform_device(dev), 0);
-> +
->                 pp->irq_shared  = false;
->                 pp->gpio_base   = -1;
-> -               pp->name        = port_np->full_name;
-> +
-> +               if (dev->of_node)
-> +                       pp->name = to_of_node(fwnode)->full_name;
-> +
-> +               if (has_acpi_companion(dev))
-> +                       pp->name = acpi_dev_name(to_acpi_device_node(fwnode));
->         }
->
->         return pdata;
-> @@ -529,7 +539,7 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
->         struct dwapb_platform_data *pdata = dev_get_platdata(dev);
->
->         if (!pdata) {
-> -               pdata = dwapb_gpio_get_pdata_of(dev);
-> +               pdata = dwapb_gpio_get_pdata(dev);
->                 if (IS_ERR(pdata))
->                         return PTR_ERR(pdata);
->         }
-> @@ -586,6 +596,12 @@ static const struct of_device_id dwapb_of_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, dwapb_of_match);
->
-> +static const struct acpi_device_id dwapb_acpi_match[] = {
-> +       {"HISI0181", 0},
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
-> +
->  #ifdef CONFIG_PM_SLEEP
->  static int dwapb_gpio_suspend(struct device *dev)
->  {
-> @@ -680,6 +696,7 @@ static struct platform_driver dwapb_gpio_driver = {
->                 .name   = "gpio-dwapb",
->                 .pm     = &dwapb_gpio_pm_ops,
->                 .of_match_table = of_match_ptr(dwapb_of_match),
-> +               .acpi_match_table = ACPI_PTR(dwapb_acpi_match),
->         },
->         .probe          = dwapb_gpio_probe,
->         .remove         = dwapb_gpio_remove,
-> diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
-> index 28702c8..80954f2 100644
-> --- a/include/linux/platform_data/gpio-dwapb.h
-> +++ b/include/linux/platform_data/gpio-dwapb.h
-> @@ -15,7 +15,7 @@
->  #define GPIO_DW_APB_H
->
->  struct dwapb_port_property {
-> -       struct device_node *node;
-> +       struct fwnode_handle  *fwnode;
->         const char      *name;
->         unsigned int    idx;
->         unsigned int    ngpio;
-> --
-> 1.9.1
->
+https://kernelci.org/boot/all/job/next/kernel/next-20160217/
 
+So far we've gone from 1 failed machine with next-20160216 to
+18 failed machines with next-20160217.
 
+The error I'm getting on omaps is below with debug_ll enable,
+any ideas?
 
--- 
-With Best Regards,
-Andy Shevchenko
+Regards,
+
+Tony
+
+8< -----------------------
+Unable to handle kernel paging request at virtual address d1ba37bc
+pgd = c0004000
+[d1ba37bc] *pgd=00000000
+Internal error: Oops: 5 [#1] SMP ARM
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.5.0-rc4-next-20160217 #1024
+Hardware name: Nokia RX-51 board
+task: ce0a8d40 ti: ce0aa000 task.ti: ce0aa000
+PC is at kfree+0x50/0x144
+LR is at kfree+0x34/0x144
+pc : [<c026d690>]    lr : [<c026d674>]    psr: 20000093
+sp : ce0abc88  ip : ce0abbf7  fp : 00000000
+r10: c0837794  r9 : ce1c0c00  r8 : ce1b30a4
+r7 : c0cbf824  r6 : a0000013  r5 : ab51ab30  r4 : ce1c0c10
+r3 : d1ba37a8  r2 : cfa8c000  r1 : 00000000  r0 : ab51ab30
+Flags: nzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
+Control: 10c5387d  Table: 80004019  DAC: 00000051
+Process swapper/0 (pid: 1, stack limit = 0xce0aa218)
+Stack: (0xce0abc88 to 0xce0ac000)
+bc80:                   ce1c0c10 ce1bfe00 ce1bfe00 ce1b30a4 ce1b30a4 ce1c0c00
+bca0: c0837794 c04632e4 ce1b3010 00000000 ce1c0c08 c04f873c 00000000 ce0abcc8
+bcc0: c0498560 c09c9f94 00000000 ce1c0c08 c0770730 ce0a8d40 00000001 60000013
+bce0: ce1bd010 c018a838 ce1c0c08 ce1bd0a0 00000004 c0770730 00000000 ce1b3010
+bd00: ce1916d0 00000000 ce1b30a4 ce1bd010 cfdb137c c0837794 00000000 c049db40
+bd20: c149646c c14964b8 ce0a8d40 ce1bd010 ce1bd010 ce1bd010 c0c80c9c fffffdfb
+bd40: 00000000 00000000 00000000 c04fe394 ce1bd010 c14964b0 c14964b8 c0c80c9c
+bd60: 00000000 c04fca7c 00000000 ce0abda0 c04fcbcc 00000001 00000000 c149646c
+bd80: 00000000 c04fae50 ce0b38d4 ce19fed4 ce1bd010 ce1bd044 c0c898e0 c04fc790
+bda0: ce1bd010 00000001 c0c8a308 ce1bd018 ce1bd010 c0c898e0 00000000 c04fbc6c
+bdc0: ce1bd018 ce1bd010 ce1b5010 c04f9f78 00000000 00000000 00000000 00000001
+bde0: ce1bd000 ce1bd010 ce1b5010 cfdb13cc 00000000 ce1b5010 00000000 c05f6f28
+be00: 00000000 cfdb137c c0b58048 00000001 c0b61f30 c05f7048 00000000 ce0a92e0
+be20: c05f3ec0 60000013 c0c9ec18 c0b58048 00000001 c0b61f30 60000013 c0c9ec18
+be40: c0b58048 cfdb137c cfd8275c c0b58048 00000001 c0b61f30 ce1b5010 00000000
+be60: 00000000 c05f70a4 00000001 ce0a92e0 c05f3ec0 60000013 c0c9ec18 c0b61f30
+be80: c0b58048 00000000 60000013 c0c9ec18 c0b61f30 cfd8275c cfd8176c c0b61f30
+bea0: c0b58048 00000000 00000001 c0b4f858 c0b00594 c05f7228 00000001 c05f4928
+bec0: c0b581b0 c0b61f30 c0c06950 ce1b13c0 c0b037f8 00000000 00000000 c0b138fc
+bee0: c0c06950 c0b134fc c0c06950 c0b03814 c0c06950 c01018b0 c0c3f04c 60000013
+bf00: ce0a92e8 00000000 00000000 00000006 ce0a8d40 00000000 cfdff1a7 0000009f
+bf20: c082b75c c0155590 ce0a8d40 c0980c40 c0a3d9ac 00000000 00000003 00000003
+bf40: c0b684a0 00000003 00000003 c0b4f844 0000009f c0cc4000 c0cc4000 c0b4f858
+bf60: c0b00594 c0b00ef0 00000003 00000003 00000000 c0b00594 c5804050 c0b685b4
+bf80: c076a14c 00000000 c076a14c 00000000 00000000 00000000 00000000 00000000
+bfa0: 00000000 c076a154 00000000 c0107970 00000000 00000000 00000000 00000000
+bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+bfe0: 00000000 00000000 00000000 00000000 00000013 00000000 1ea05404 55c61c1d
+[<c026d690>] (kfree) from [<c04632e4>] (kobject_set_name_vargs+0x7c/0xa4)
+[<c04632e4>] (kobject_set_name_vargs) from [<c04f873c>] (dev_set_name+0x24/0x34)
+[<c04f873c>] (dev_set_name) from [<c0498560>] (gpiochip_add_data+0x9c/0x76c)
+[<c0498560>] (gpiochip_add_data) from [<c049db40>] (omap_gpio_probe+0x2d4/0x690)
+[<c049db40>] (omap_gpio_probe) from [<c04fe394>] (platform_drv_probe+0x4c/0xb0)
+[<c04fe394>] (platform_drv_probe) from [<c04fca7c>] (driver_probe_device+0x208/0x2c0)
+[<c04fca7c>] (driver_probe_device) from [<c04fae50>] (bus_for_each_drv+0x64/0x98)
+[<c04fae50>] (bus_for_each_drv) from [<c04fc790>] (__device_attach+0xb0/0x118)
+[<c04fc790>] (__device_attach) from [<c04fbc6c>] (bus_probe_device+0x88/0x90)
+[<c04fbc6c>] (bus_probe_device) from [<c04f9f78>] (device_add+0x348/0x568)
+[<c04f9f78>] (device_add) from [<c05f6f28>] (of_platform_device_create_pdata+0x80/0xb8)
+[<c05f6f28>] (of_platform_device_create_pdata) from [<c05f7048>] (of_platform_bus_create+0xdc/0x18c)
+[<c05f7048>] (of_platform_bus_create) from [<c05f70a4>] (of_platform_bus_create+0x138/0x18c)
+[<c05f70a4>] (of_platform_bus_create) from [<c05f7228>] (of_platform_populate+0x5c/0xac)
+[<c05f7228>] (of_platform_populate) from [<c0b138fc>] (pdata_quirks_init+0x54/0x74)
+[<c0b138fc>] (pdata_quirks_init) from [<c0b134fc>] (omap_generic_init+0x10/0x1c)
+[<c0b134fc>] (omap_generic_init) from [<c0b03814>] (customize_machine+0x1c/0x40)
+[<c0b03814>] (customize_machine) from [<c01018b0>] (do_one_initcall+0x80/0x1dc)
+[<c01018b0>] (do_one_initcall) from [<c0b00ef0>] (kernel_init_freeable+0x218/0x2ec)
+[<c0b00ef0>] (kernel_init_freeable) from [<c076a154>] (kernel_init+0x8/0xf4)
+[<c076a154>] (kernel_init) from [<c0107970>] (ret_from_fork+0x14/0x24)
+Code: e1a00005 e5922000 e0833183 e0823103 (e5932014) 
+---[ end trace ebca4d029d5eaa4e ]---
+
