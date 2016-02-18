@@ -1,45 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Bunch of machines are not booting in next again, GPIO regression?
-Date: Thu, 18 Feb 2016 19:55:17 +0100
-Message-ID: <CACRpkdY2=mYVDU2BXzN1rY7=mP_iyG3UEaCNVom4HFJDf61+0Q@mail.gmail.com>
-References: <20160217192755.GC21202@atomide.com>
-	<20160217195543.GA871@jcartwri.amer.corp.natinst.com>
-	<20160217201259.GA16028@deathstar>
-	<20160217202224.GD21202@atomide.com>
-	<20160217224415.GA3866@jcartwri.amer.corp.natinst.com>
+From: Krzysztof Adamski <k@japko.eu>
+Subject: Re: [linux-sunxi] Re: [PATCH] clk: sunxi: Add missing H3 apb0 clock
+ documentation
+Date: Thu, 18 Feb 2016 20:42:56 +0100
+Message-ID: <20160218194255.GD18745@box2.japko.eu>
+References: <CACRpkdbfNeh7_=3ReQtJc7OxkkQEn+BUhZ0O0SKnFsRD=WZiUQ@mail.gmail.com>
+ <1455807809-30827-1-git-send-email-k@japko.eu>
+ <CAGb2v67PiQHVQfhbsk2f3aQFOaDXHy3P+NJDoTw-+GshubWaYQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:36438 "EHLO
-	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1946936AbcBRSzS convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Feb 2016 13:55:18 -0500
-Received: by mail-ob0-f169.google.com with SMTP id gc3so79849240obb.3
-        for <linux-gpio@vger.kernel.org>; Thu, 18 Feb 2016 10:55:17 -0800 (PST)
-In-Reply-To: <20160217224415.GA3866@jcartwri.amer.corp.natinst.com>
+Received: from box2.japko.eu ([91.121.152.53]:35984 "EHLO box2.japko.eu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1946652AbcBRToB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 18 Feb 2016 14:44:01 -0500
+Content-Disposition: inline
+In-Reply-To: <CAGb2v67PiQHVQfhbsk2f3aQFOaDXHy3P+NJDoTw-+GshubWaYQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Josh Cartwright <joshc@ni.com>
-Cc: Tony Lindgren <tony@atomide.com>, Michael Welling <mwelling@ieee.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Markus Pargmann <mpa@pengutronix.de>, Mark Brown <broonie@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Krzysztof Adamski <krzysztof.adamski@tieto.com>, Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Rob Herring <robh@kernel.org>, Hans de Goede <hdegoede@redhat.com>, Vishnu Patekar <vishnupatekar0510@gmail.com>, Jens Kuske <jenskuske@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-sunxi <linux-sunxi@googlegroups.com>
 
-On Wed, Feb 17, 2016 at 11:44 PM, Josh Cartwright <joshc@ni.com> wrote:
-
-> Here's a properly cooked patch.  Otherwise, feel free to squash it in=
- if
-> it's easier for you.
+On Thu, Feb 18, 2016 at 09:07:16AM -0800, Chen-Yu Tsai wrote:
+>On Thu, Feb 18, 2016 at 7:03 AM, Krzysztof Adamski
+><krzysztof.adamski@tieto.com> wrote:
+>> allwinner,sun8i-h3-apb0-gates-clk was added by
+>> commit ba83a11104ae ("pinctrl: sunxi: Add H3 R_PIO controller support")
+>> but the patch was missing proper binding documentation. This patch fixes
+>> this issue.
 >
-> -- 8< --
-> Subject: [PATCH] gpio: use kzalloc to allocate gpio_device
+>What are you talking about? The commit you mentioned only adds the pinctrl
+>driver. Your H3 PRCM related clock and reset patches are still pending.
+>No need for this patch as your earlier patches includes this.
 
-Patch applied, of course.
+Damn, I messed up patches, I must have been tired or something. It was 
+documentation for "allwinner,sun8i-h3-r-pinctrl" that was missing. I'm 
+sending a new patch. Sorry for confusion.
 
-Big hugs and thanks for fixing my stupid mistake!
-
-N=C3=B3ras,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Krzysztof Adamski
