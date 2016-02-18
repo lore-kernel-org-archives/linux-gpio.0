@@ -1,66 +1,46 @@
-From: Romain Izard <romain.izard.pro@gmail.com>
-Subject: Device probing proceeds even when the default pinctrl state is invalid
-Date: Thu, 18 Feb 2016 11:37:08 +0100
-Message-ID: <CAGkQfmOHgOoFrVyKtB+vpmwqs5s2DnLay9zjaksFj5Rbn+4h0g@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7794: add SSI pin groups
+Date: Thu, 18 Feb 2016 14:01:21 +0300
+Message-ID: <56C5A481.6020403@cogentembedded.com>
+References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+ <2575141.vI43ObUTa0@wasted.cogentembedded.com>
+ <56C4EF61.4010505@cogentembedded.com>
+ <CAMuHMdVc+VFxiQAfh0jpiLosT7wXSer4mNxgJyqPPYijYwHi_A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:35885 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1425694AbcBRKh2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Feb 2016 05:37:28 -0500
-Received: by mail-ob0-f177.google.com with SMTP id gc3so59109815obb.3
-        for <linux-gpio@vger.kernel.org>; Thu, 18 Feb 2016 02:37:28 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdVc+VFxiQAfh0jpiLosT7wXSer4mNxgJyqPPYijYwHi_A@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Linux GPIO List <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, devicetree@vger.kernel.org
 
-Hello Linus,
+Hello.
 
-The current code for device probing tries to map the default pinctrl
-state (in pinctrl_bind_pins), but is returning 0 or -EDEFER. If there
-is an other error, it is not reported. This means that devices that do
-not have any specified pinctrl state can be probed, which is a correct
-behaviour that should be conserved, but it can also be an issue, as it
-will fail to report any other issue with the specified pinctrl state.
+On 2/18/2016 10:52 AM, Geert Uytterhoeven wrote:
 
-Did I miss something that would explain why all other errors are ignored ?
+>>> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+>>> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+>>> @@ -1,9 +1,9 @@
+>>>    /*
+>>>     * r8a7794 processor support - PFC hardware block.
+>>>     *
+>>> - * Copyright (C) 2014 Renesas Electronics Corporation
+>>> + * Copyright (C) 2014-2015 Renesas Electronics Corporation
+>>>     * Copyright (C) 2015 Renesas Solutions Corp.
+>>> - * Copyright (C) 2015 Cogent  Embedded, Inc., <source@cogentembedded.com>
+>>> + * Copyright (C) 2015-2016 Cogent  Embedded, Inc.,
+>>> <source@cogentembedded.com>
+>>
+>>     Geert, could you turn the double space into single?
+>
+> Sure, done.
 
-This also leads to a larger problem, as currently the device tree for
-existing boards may specify invalid pinctrl configurations, but the
-boards look like they work correctly, as long as nothing else tries to
-use the same pins. Correcting the issue may require a new
-'strict-mapping' property in the pinctrl node in the device tree,
-otherwise this correction would be an ABI regression.
+    Thank you! Overlooked it. :-/
 
-Is this pattern really a good one ? We're moving away from describing
-hardware in here.
+> Gr{oetje,eeting}s,
+>
+>                          Geert
 
-For an existing example, in the device tree for Atmel's
-SAMA5D2_Xplained board, the mapping for the Ethernet transceiver's IRQ
-line was missing it bias configuration, and thus the pins were not
-reserved for the Ethernet use. I've just send a patch to correct it,
-but breaking Ethernet on kernel upgrade for the boards using the
-previous revisions would be an issue.
-
-I encountered this problem because I wanted to model in device tree a
-system where the main SoC running Linux is connected to a secondary
-chip, using two different protocols on the same pins. Using the
-SAMA5D2's pin muxing, the secondary chip can be accessed either by a
-serial port in normal use, or by bitbanging on the multiplexed GPIOs
-when programming it. I created two devices with conflicting pinctrl
-configurations, expecting only one of them to be successfully probed,
-and to use the "bind" and "unbind" sysfs files to select the correct
-driver. Choosing which device to probe first on startup is an other
-issue in this case, that remains to be addressed.
-
-In the current state of things, both devices are probed successfully
-as conflicting pin sets are not recognized as an issue, which means
-that my use case does not work.
-
-Is the direction I'm taking something correct ?
-
-Best regards,
--- 
-Romain Izard
+MBR, Sergei
