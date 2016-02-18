@@ -1,75 +1,45 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7794: add EtherAVB pin groups
-Date: Thu, 18 Feb 2016 20:40:20 +0300
-Message-ID: <56C60204.9080902@cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
- <3010555.FcVIno0yOe@wasted.cogentembedded.com>
- <CAMuHMdVdqYJ8S0Vps9B8+L_nApaXFrE9M82iDb6_iWjAfXHCVA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Bunch of machines are not booting in next again, GPIO regression?
+Date: Thu, 18 Feb 2016 19:55:17 +0100
+Message-ID: <CACRpkdY2=mYVDU2BXzN1rY7=mP_iyG3UEaCNVom4HFJDf61+0Q@mail.gmail.com>
+References: <20160217192755.GC21202@atomide.com>
+	<20160217195543.GA871@jcartwri.amer.corp.natinst.com>
+	<20160217201259.GA16028@deathstar>
+	<20160217202224.GD21202@atomide.com>
+	<20160217224415.GA3866@jcartwri.amer.corp.natinst.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdVdqYJ8S0Vps9B8+L_nApaXFrE9M82iDb6_iWjAfXHCVA@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:36438 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1946936AbcBRSzS convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Feb 2016 13:55:18 -0500
+Received: by mail-ob0-f169.google.com with SMTP id gc3so79849240obb.3
+        for <linux-gpio@vger.kernel.org>; Thu, 18 Feb 2016 10:55:17 -0800 (PST)
+In-Reply-To: <20160217224415.GA3866@jcartwri.amer.corp.natinst.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Josh Cartwright <joshc@ni.com>
+Cc: Tony Lindgren <tony@atomide.com>, Michael Welling <mwelling@ieee.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Markus Pargmann <mpa@pengutronix.de>, Mark Brown <broonie@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hello.
+On Wed, Feb 17, 2016 at 11:44 PM, Josh Cartwright <joshc@ni.com> wrote:
 
-On 02/18/2016 11:36 AM, Geert Uytterhoeven wrote:
-
->> Add the EtherAVB pin groups to the R8A7794 PFC driver.
->>
->> Based on the patches by Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>.
+> Here's a properly cooked patch.  Otherwise, feel free to squash it in=
+ if
+> it's easier for you.
 >
-> Thank you for your patch!
->
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
->> +static const unsigned int avb_avtp_capture_pins[] = {
->> +       RCAR_GP_PIN(5, 11),
->> +};
->> +static const unsigned int avb_avtp_capture_mux[] = {
->> +       AVB_AVTP_CAPTURE_MARK,
->> +};
->> +static const unsigned int avb_avtp_match_pins[] = {
->> +       RCAR_GP_PIN(5, 12),
->> +};
->> +static const unsigned int avb_avtp_match_mux[] = {
->> +       AVB_AVTP_MATCH_MARK,
->> +};
->> +static const unsigned int avb_avtp_capture_b_pins[] = {
->> +       RCAR_GP_PIN(1, 1),
->> +};
->> +static const unsigned int avb_avtp_capture_b_mux[] = {
->> +       AVB_AVTP_CAPTURE_B_MARK,
->> +};
->> +static const unsigned int avb_avtp_match_b_pins[] = {
->> +       RCAR_GP_PIN(1, 2),
->> +};
->> +static const unsigned int avb_avtp_match_b_mux[] = {
->> +       AVB_AVTP_MATCH_B_MARK,
->> +};
->
-> BTW, the capture pin seems to be available on R-Car E2 only.
+> -- 8< --
+> Subject: [PATCH] gpio: use kzalloc to allocate gpio_device
 
-    Yes, I've noticed.
+Patch applied, of course.
 
-> The match pin seems to be available on R-Car E2 and V2H only.
+Big hugs and thanks for fixing my stupid mistake!
 
-    Don't have V2H manual, have to trust you. :-)
-
-> The EtherAVB section in the datasheet doesn't clarify this.
-> Do you know more?
-
-    Unfortunately, no. I only know what AVTP in the pin name probably stands 
-for: Audio/Video Transport Protocol.
-
-> Gr{oetje,eeting}s,
->
->                          Geert
-
-MBR, Sergei
+N=C3=B3ras,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
