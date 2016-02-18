@@ -1,35 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH -next] gpio: Use kzalloc() to allocate struct gpio_device
- to fix crash
-Date: Thu, 18 Feb 2016 20:47:42 +0100
-Message-ID: <CACRpkdYdzM_Anfa4UBafC5ASAiBc4BPr_PYc+QMV7-cM9L5zLA@mail.gmail.com>
-References: <1455618171-11719-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7794: add EtherAVB pin groups
+Date: Thu, 18 Feb 2016 20:49:01 +0100
+Message-ID: <CACRpkdaK01ezFjwzsvGXJ8TKj9AtWJVJeYTyYgyLVb286kOBDQ@mail.gmail.com>
+References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+	<3010555.FcVIno0yOe@wasted.cogentembedded.com>
+	<CAMuHMdVdqYJ8S0Vps9B8+L_nApaXFrE9M82iDb6_iWjAfXHCVA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:34901 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1946442AbcBRTrm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Feb 2016 14:47:42 -0500
-Received: by mail-ob0-f179.google.com with SMTP id xk3so84982021obc.2
-        for <linux-gpio@vger.kernel.org>; Thu, 18 Feb 2016 11:47:42 -0800 (PST)
-In-Reply-To: <1455618171-11719-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdVdqYJ8S0Vps9B8+L_nApaXFrE9M82iDb6_iWjAfXHCVA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Feb 16, 2016 at 11:22 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Thu, Feb 18, 2016 at 9:36 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-> gpiochip_add_data() allocates the struct gpio_device using kmalloc(),
-> which doesn't zero the returned memory.
+> On Wed, Feb 17, 2016 at 11:32 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+>> Add the EtherAVB pin groups to the R8A7794 PFC driver.
+>>
+>> Based on the patches by Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>.
 >
-> Hence when calling dev_set_name(), it may try to free a bogus old name,
-> causing a crash:
+> Thank you for your patch!
+>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Ooops got two patches to this independently and applied the other one,
-I tagged your name onto the Reported-by now. Thanks!
+I guess this means you're queueing it too?
 
 Yours,
 Linus Walleij
