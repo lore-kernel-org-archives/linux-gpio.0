@@ -1,45 +1,40 @@
-From: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
-Subject: Re: [PATCH] gpio: create an API to detect open drain/source on lines
-Date: Thu, 18 Feb 2016 21:20:40 +0000
-Message-ID: <20160218212032.GA3699@vian>
-References: <1455633979-30970-1-git-send-email-linus.walleij@linaro.org>
- <20160217002124.GA31158@vian>
- <CACRpkdYmhRrfMgdoxh7oV1p4swaRRZ+sGPM_AU6+KD_JL8R6NA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/5] MIPS: jz4740: remove broken irq_to_gpio() call
+Date: Fri, 19 Feb 2016 00:19:18 +0100
+Message-ID: <CACRpkda=TFuUWzV_pLKoVhCZp1zWbEjoGmCey_w87bsuQZZ=jg@mail.gmail.com>
+References: <455637086-2794174-1-git-send-email-arnd@arndb.de>
+	<1455637261-2920972-1-git-send-email-arnd@arndb.de>
+	<20160216160609.GA15268@linux-mips.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:37601 "EHLO
-	mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751534AbcBRVUq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Feb 2016 16:20:46 -0500
-Received: by mail-wm0-f46.google.com with SMTP id g62so44367004wme.0
-        for <linux-gpio@vger.kernel.org>; Thu, 18 Feb 2016 13:20:46 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYmhRrfMgdoxh7oV1p4swaRRZ+sGPM_AU6+KD_JL8R6NA@mail.gmail.com>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:34942 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1947241AbcBRXTT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Feb 2016 18:19:19 -0500
+Received: by mail-oi0-f49.google.com with SMTP id x21so873247oix.2
+        for <linux-gpio@vger.kernel.org>; Thu, 18 Feb 2016 15:19:19 -0800 (PST)
+In-Reply-To: <20160216160609.GA15268@linux-mips.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King <rmk+kernel@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Linux MIPS <linux-mips@linux-mips.org>, "# v4 . 3+" <stable@vger.kernel.org>, Alban Bedel <albeu@free.fr>, Thomas Gleixner <tglx@linutronix.de>, Paul Burton <paul.burton@imgtec.com>
 
-On Thu, Feb 18, 2016 at 09:47:07PM +0100, Linus Walleij wrote:
-> On Wed, Feb 17, 2016 at 1:21 AM, Nicolas Saenz Julienne
-> <nicolassaenzj@gmail.com> wrote:
-> > On Tue, Feb 16, 2016 at 03:46:19PM +0100, Linus Walleij wrote:
-> >> My left hand merges code to privatize the descriptor handling
-> >> while my right hand merges drivers that poke around and
-> >> disrespect with the same gpiolib internals.
-> >>
-> >> So let's expose the proper APIs for drivers to ask the gpiolib
-> >> core if a line is marked as open drain or open source and
-> >> get some order around things so this driver compiles again.
-> >
-> > Thanks, looks way better now, I'd suggest to remove the "gpiolib.h"
-> > include since it's not needed anymore. I can do it's on a separate patch
-> > on top of this one if you prefer :)
+On Tue, Feb 16, 2016 at 5:06 PM, Ralf Baechle <ralf@linux-mips.org> wrote:
 
-Sorry I wasn't more clear. What I meant to say it's that we can now remove the
-#include "gpiolib.h" from gpio-tps65218 driver since the line config query
-functions are included in "gpio/driver.h".
+>> -#define IRQ_TO_BIT(irq) BIT(irq_to_gpio(irq) & 0x1f)
+>> +#define IRQ_TO_BIT(irq) BIT((irq - JZ4740_IRQ_GPIO(0)) & 0x1f)
+>>
+>>  static void jz_gpio_check_trigger_both(struct jz_gpio_chip *chip, unsigned int irq)
+>>  {
+>
+> I've already committed an identical fix locally.
+>
+>   Ralf
 
---
-Nicolas
+I took that fix out of linux-next and applied to the GPIO tree so I can apply
+the rest of the patches without build problems. If you keep it
+around without changing it, git should cope I guess.
+
+Yours,
+Linus Walleij
