@@ -1,78 +1,72 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Device probing proceeds even when the default pinctrl state is invalid
-Date: Thu, 18 Feb 2016 21:07:57 +0100
-Message-ID: <CACRpkdamPh3pLetWs_S6b_BFWKDgZwiyTaOTQCJsm3cC=ZzLAA@mail.gmail.com>
-References: <CAGkQfmOHgOoFrVyKtB+vpmwqs5s2DnLay9zjaksFj5Rbn+4h0g@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sirf/atlas7: stop poking around in GPIO internals
+Date: Thu, 18 Feb 2016 21:42:18 +0100
+Message-ID: <CACRpkdb8SVGdwhY9zsYxZQ5H2R-qd1v7iFek3SwdtAnWr41DaA@mail.gmail.com>
+References: <1455265873-21534-1-git-send-email-linus.walleij@linaro.org>
+	<CAGsJ_4zHEtmHmxbprnc=1qOXgk3G_pqyueHke8PusMKNP_rmmg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGkQfmOHgOoFrVyKtB+vpmwqs5s2DnLay9zjaksFj5Rbn+4h0g@mail.gmail.com>
+In-Reply-To: <CAGsJ_4zHEtmHmxbprnc=1qOXgk3G_pqyueHke8PusMKNP_rmmg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Romain Izard <romain.izard.pro@gmail.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: Linux GPIO List <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Barry Song <baohua@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Barry Song <Baohua.Song@csr.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, Guoying Zhang <Guoying.Zhang@csr.com>, Wei Chen <Wei.Chen@csr.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 18, 2016 at 11:37 AM, Romain Izard
-<romain.izard.pro@gmail.com> wrote:
+On Thu, Feb 18, 2016 at 3:50 AM, Barry Song <baohua@kernel.org> wrote:
 
-> The current code for device probing tries to map the default pinctrl
-> state (in pinctrl_bind_pins), but is returning 0 or -EDEFER. If there
-> is an other error, it is not reported. This means that devices that do
-> not have any specified pinctrl state can be probed, which is a correct
-> behaviour that should be conserved, but it can also be an issue, as it
-> will fail to report any other issue with the specified pinctrl state.
+> gpiochip_add(chip will call this automatically since range is set in dtsi:
+> gpio_0: gpio_mediam@17040000 {
+> #gpio-cells = <2>;
+> #interrupt-cells = <2>;
+> compatible = "sirf,atlas7-gpio";
+> reg = <0x17040000 0x1000>;
+> interrupts = <0 13 0>, <0 14 0>;
+> clocks = <&car 98>;
+> clock-names = "gpio0_io";
+> gpio-controller;
+> interrupt-controller;
 >
-> Did I miss something that would explain why all other errors are ignored ?
+> gpio-banks = <2>;
+> gpio-ranges = <&pinctrl 0 0 0>,
+> <&pinctrl 32 0 0>;
+> gpio-ranges-group-names = "lvds_gpio_grp",
+> "jtag_uart_nand_gpio_grp";
 
-Yeah we should probably respect a few errors and let some
-pass. Please make a patch!
+Aha I see.
 
-> This also leads to a larger problem, as currently the device tree for
-> existing boards may specify invalid pinctrl configurations, but the
-> boards look like they work correctly, as long as nothing else tries to
-> use the same pins.
-
-Well I guess if you look in the debugfs files it looks crazy does
-it not? That is how I verify that the pins get bound right.
-Especially in the file pinmux-pins
-
-> Correcting the issue may require a new
-> 'strict-mapping' property in the pinctrl node in the device tree,
-> otherwise this correction would be an ABI regression.
-
-Bah if the device tree is wrong it is wrong, we certainly do not
-expect erroneous device trees that just "happen to work" to
-keep working.
-
-> Is this pattern really a good one ? We're moving away from describing
-> hardware in here.
-
-I don't understand.
-
-> For an existing example, in the device tree for Atmel's
-> SAMA5D2_Xplained board,
-
-Where is this device tree, so I can look at it?
-
-> the mapping for the Ethernet transceiver's IRQ
-> line was missing it bias configuration, and thus the pins were not
-> reserved for the Ethernet use. I've just send a patch to correct it,
-> but breaking Ethernet on kernel upgrade for the boards using the
-> previous revisions would be an issue.
-
-Hm, ask the Atmel DT maintainers what to do about this...
-Nicolas: how real is this ABI issue?
-
-We have patches bigger issues than this one before though.
-
-> In the current state of things, both devices are probed successfully
-> as conflicting pin sets are not recognized as an issue, which means
-> that my use case does not work.
+>> -
+>> -               /* Records gpio_pin_range to a7gc */
+>> -               list_for_each_entry(pin_range, &chip->pin_ranges, node) {
+>> -                       struct pinctrl_gpio_range *range;
+>> -
+>> -                       range = &pin_range->range;
+>> -                       if (range->id == NGPIO_OF_BANK * idx) {
+>> -                               bank->gpio_offset = range->id;
+>> -                               bank->ngpio = range->npins;
+>> -                               bank->gpio_pins = range->pins;
+>> -                               bank->pctldev = pin_range->pctldev;
+>> -                               break;
+>> -                       }
+>> -               }
+>> -
+>> -               BUG_ON(!bank->pctldev);
 >
-> Is the direction I'm taking something correct ?
+> this doesn't work. my pin range is not continuous and linear, so we
+> need the "if (range->id == NGPIO_OF_BANK * idx)" to calculate the
+> gpio_offset.
+> and gpio_offset is used in many places:
 
-I think so. The device trees should be correct, errors should be
-handled.
+Can't you use:
+
+struct pinctrl_gpio_range *range =
+                pinctrl_find_gpio_range_from_pin(pctldev, pin);
+
+In these places instead?
+
+?
+
+That is what most drivers do.
 
 Yours,
 Linus Walleij
