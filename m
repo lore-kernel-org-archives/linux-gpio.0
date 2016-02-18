@@ -1,45 +1,60 @@
-From: Krzysztof Adamski <krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] clk: sunxi: Add missing H3 apb0 clock documentation
-Date: Thu, 18 Feb 2016 16:03:29 +0100
-Message-ID: <1455807809-30827-1-git-send-email-k@japko.eu>
-References: <CACRpkdbfNeh7_=3ReQtJc7OxkkQEn+BUhZ0O0SKnFsRD=WZiUQ@mail.gmail.com>
-Reply-To: krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH/RFC] gpio: rcar: Add Runtime PM handling for interrupts
+Date: Thu, 18 Feb 2016 16:12:23 +0100
+Message-ID: <CAMuHMdVoUAwWm6GoN6-ufs5j_b79ndFTcpQNu59JCtO1wrQBnQ@mail.gmail.com>
+References: <1455031183-18294-1-git-send-email-geert+renesas@glider.be>
+	<56C2EBA5.4040903@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBD7ILP7VSEGBBF53S63AKGQEZ2TOMKI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <CACRpkdbfNeh7_=3ReQtJc7OxkkQEn+BUhZ0O0SKnFsRD=WZiUQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Cc: Krzysztof Adamski <k@japko.eu>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <56C2EBA5.4040903@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-allwinner,sun8i-h3-apb0-gates-clk was added by
-commit ba83a11104ae ("pinctrl: sunxi: Add H3 R_PIO controller support")
-but the patch was missing proper binding documentation. This patch fixes
-this issue.
+Hi Jon,
 
-Signed-off-by: Krzysztof Adamski <k@japko.eu>
----
- Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, Feb 16, 2016 at 10:28 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
+> On 09/02/16 15:19, Geert Uytterhoeven wrote:
+>> The R-Car GPIO driver handles Runtime PM for requested GPIOs only.
+>>
+>> When using a GPIO purely as an interrupt source, no Runtime PM handling
+>> is done, and the GPIO module's clock may not be enabled.
+>>
+>> To fix this:
+>>   - Add .irq_request_resources() and .irq_release_resources() callbacks
+>>     to handle Runtime PM when an interrupt is requested,
+>
+> I know that when I was looking at runtime-pm support for IRQ chips
+> (which I have been meaning to get back too), the problem with
+> irq_request_resources() is that it is called from the context of a
+> spinlock (in __setup_irq()). You mentioned that you have not seen any
+> reports of might_sleep_if(), but have you ensured that it is actually
+> runtime resuming in your testing and you are not getting lucky?
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index c09f59b..37d0fd6 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -38,6 +38,7 @@ Required properties:
- 	"allwinner,sun4i-a10-apb0-clk" - for the APB0 clock
- 	"allwinner,sun6i-a31-apb0-clk" - for the APB0 clock on A31
- 	"allwinner,sun8i-a23-apb0-clk" - for the APB0 clock on A23
-+	"allwinner,sun8i-h3-apb0-gates-clk" - for the APB0 gates on H3
- 	"allwinner,sun9i-a80-apb0-clk" - for the APB0 bus clock on A80
- 	"allwinner,sun8i-a83t-apb0-gates-clk" - for the APB0 gates on A83T
- 	"allwinner,sun4i-a10-apb0-gates-clk" - for the APB0 gates on A10
--- 
-2.1.4
+It must be runtime-resuming, because without the call to pm_runtime_get_sync()
+interrupts don't work.
+
+> An alternative for you might be to use the
+> irq_bus_lock/irq_bus_sync_unlock callbacks. See what Grygorii
+> implemented for OMAP in commit aca82d1cbb49 ("gpio: omap: move pm
+> runtime in irq_chip.irq_bus_lock/sync_unlock").
+
+Thanks, that indeed looks interesting...
+
+> As I mentioned I do plan to get back to the series for adding runtime-pm
+> support for IRQ chips, in the next week or two.
+
+Looking forward to it!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
