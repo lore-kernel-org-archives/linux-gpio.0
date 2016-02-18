@@ -1,72 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sirf/atlas7: stop poking around in GPIO internals
-Date: Thu, 18 Feb 2016 21:42:18 +0100
-Message-ID: <CACRpkdb8SVGdwhY9zsYxZQ5H2R-qd1v7iFek3SwdtAnWr41DaA@mail.gmail.com>
-References: <1455265873-21534-1-git-send-email-linus.walleij@linaro.org>
-	<CAGsJ_4zHEtmHmxbprnc=1qOXgk3G_pqyueHke8PusMKNP_rmmg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: create an API to detect open drain/source on lines
+Date: Thu, 18 Feb 2016 21:47:07 +0100
+Message-ID: <CACRpkdYmhRrfMgdoxh7oV1p4swaRRZ+sGPM_AU6+KD_JL8R6NA@mail.gmail.com>
+References: <1455633979-30970-1-git-send-email-linus.walleij@linaro.org>
+	<20160217002124.GA31158@vian>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGsJ_4zHEtmHmxbprnc=1qOXgk3G_pqyueHke8PusMKNP_rmmg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Barry Song <baohua@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Barry Song <Baohua.Song@csr.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, Guoying Zhang <Guoying.Zhang@csr.com>, Wei Chen <Wei.Chen@csr.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:36384 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1947555AbcBRUrI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Feb 2016 15:47:08 -0500
+Received: by mail-ob0-f176.google.com with SMTP id gc3so84935091obb.3
+        for <linux-gpio@vger.kernel.org>; Thu, 18 Feb 2016 12:47:08 -0800 (PST)
+In-Reply-To: <20160217002124.GA31158@vian>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Thu, Feb 18, 2016 at 3:50 AM, Barry Song <baohua@kernel.org> wrote:
-
-> gpiochip_add(chip will call this automatically since range is set in dtsi:
-> gpio_0: gpio_mediam@17040000 {
-> #gpio-cells = <2>;
-> #interrupt-cells = <2>;
-> compatible = "sirf,atlas7-gpio";
-> reg = <0x17040000 0x1000>;
-> interrupts = <0 13 0>, <0 14 0>;
-> clocks = <&car 98>;
-> clock-names = "gpio0_io";
-> gpio-controller;
-> interrupt-controller;
+On Wed, Feb 17, 2016 at 1:21 AM, Nicolas Saenz Julienne
+<nicolassaenzj@gmail.com> wrote:
+> On Tue, Feb 16, 2016 at 03:46:19PM +0100, Linus Walleij wrote:
+>> My left hand merges code to privatize the descriptor handling
+>> while my right hand merges drivers that poke around and
+>> disrespect with the same gpiolib internals.
+>>
+>> So let's expose the proper APIs for drivers to ask the gpiolib
+>> core if a line is marked as open drain or open source and
+>> get some order around things so this driver compiles again.
 >
-> gpio-banks = <2>;
-> gpio-ranges = <&pinctrl 0 0 0>,
-> <&pinctrl 32 0 0>;
-> gpio-ranges-group-names = "lvds_gpio_grp",
-> "jtag_uart_nand_gpio_grp";
+> Thanks, looks way better now, I'd suggest to remove the "gpiolib.h"
+> include since it's not needed anymore. I can do it's on a separate patch
+> on top of this one if you prefer :)
 
-Aha I see.
+I don't understand this comment? That is our internal library header
+so that different files in gpiolib can share functions.
 
->> -
->> -               /* Records gpio_pin_range to a7gc */
->> -               list_for_each_entry(pin_range, &chip->pin_ranges, node) {
->> -                       struct pinctrl_gpio_range *range;
->> -
->> -                       range = &pin_range->range;
->> -                       if (range->id == NGPIO_OF_BANK * idx) {
->> -                               bank->gpio_offset = range->id;
->> -                               bank->ngpio = range->npins;
->> -                               bank->gpio_pins = range->pins;
->> -                               bank->pctldev = pin_range->pctldev;
->> -                               break;
->> -                       }
->> -               }
->> -
->> -               BUG_ON(!bank->pctldev);
 >
-> this doesn't work. my pin range is not continuous and linear, so we
-> need the "if (range->id == NGPIO_OF_BANK * idx)" to calculate the
-> gpio_offset.
-> and gpio_offset is used in many places:
+> Acked-by: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
 
-Can't you use:
-
-struct pinctrl_gpio_range *range =
-                pinctrl_find_gpio_range_from_pin(pctldev, pin);
-
-In these places instead?
-
-?
-
-That is what most drivers do.
+Thanks!
 
 Yours,
 Linus Walleij
