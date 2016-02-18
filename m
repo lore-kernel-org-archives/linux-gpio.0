@@ -1,117 +1,167 @@
-From: Josh Cartwright <joshc@ni.com>
-Subject: Re: Bunch of machines are not booting in next again, GPIO regression?
-Date: Wed, 17 Feb 2016 16:44:15 -0600
-Message-ID: <20160217224415.GA3866@jcartwri.amer.corp.natinst.com>
-References: <20160217192755.GC21202@atomide.com>
- <20160217195543.GA871@jcartwri.amer.corp.natinst.com>
- <20160217201259.GA16028@deathstar>
- <20160217202224.GD21202@atomide.com>
+From: Barry Song <baohua@kernel.org>
+Subject: Re: [PATCH] pinctrl: sirf/atlas7: stop poking around in GPIO internals
+Date: Thu, 18 Feb 2016 10:50:23 +0800
+Message-ID: <CAGsJ_4zHEtmHmxbprnc=1qOXgk3G_pqyueHke8PusMKNP_rmmg@mail.gmail.com>
+References: <1455265873-21534-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from skprod2.natinst.com ([130.164.80.23]:50861 "EHLO ni.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1424138AbcBQWpD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 17 Feb 2016 17:45:03 -0500
-In-Reply-To: <20160217202224.GD21202@atomide.com>
-Content-Disposition: inline
+Received: from mail-lb0-f182.google.com ([209.85.217.182]:35491 "EHLO
+	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1424281AbcBRCup (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Feb 2016 21:50:45 -0500
+In-Reply-To: <1455265873-21534-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Michael Welling <mwelling@ieee.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Markus Pargmann <mpa@pengutronix.de>, Mark Brown <broonie@kernel.org>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Barry Song <Baohua.Song@csr.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, Guoying Zhang <Guoying.Zhang@csr.com>, Wei Chen <Wei.Chen@csr.com>
 
-On Wed, Feb 17, 2016 at 12:22:25PM -0800, Tony Lindgren wrote:
-> * Michael Welling <mwelling@ieee.org> [160217 12:13]:
-> > On Wed, Feb 17, 2016 at 01:55:43PM -0600, Josh Cartwright wrote:
-> > > On Wed, Feb 17, 2016 at 11:27:55AM -0800, Tony Lindgren wrote:
-> > > > Hi Linus,
-> > > > 
-> > > > Looks like ff2b13592299 ("gpio: make the gpiochip a real device")
-> > > > broke booting on all omaps, and probably other machines too according
-> > > > to this:
-> > > > 
-> > > > https://kernelci.org/boot/all/job/next/kernel/next-20160217/
-> > > > 
-> > > > So far we've gone from 1 failed machine with next-20160216 to
-> > > > 18 failed machines with next-20160217.
-> > > > 
-> > > > The error I'm getting on omaps is below with debug_ll enable,
-> > > > any ideas?
-> > > 
-> > > Hey Tony-
-> > > 
-> > > Looks like the newly allocated gpio_device object isn't zeroed,
-> > > confusing dev_set_name.  Can you give this a try?
-> > > 
-> > >   Josh
-> > > 
-> > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > > index d8511cd..59f0045 100644
-> > > --- a/drivers/gpio/gpiolib.c
-> > > +++ b/drivers/gpio/gpiolib.c
-> > > @@ -435,7 +435,7 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
-> > >  	 * First: allocate and populate the internal stat container, and
-> > >  	 * set up the struct device.
-> > >  	 */
-> > > -	gdev = kmalloc(sizeof(*gdev), GFP_KERNEL);
-> > > +	gdev = kzalloc(sizeof(*gdev), GFP_KERNEL);
-> > >  	if (!gdev)
-> > >  		return -ENOMEM;
-> > >  	gdev->dev.bus = &gpio_bus_type;
-> > 
-> > As you can see by my post on the GPIO mailing list, a boot failure
-> > was occurring on the Dragonboard 410C:
-> > http://permalink.gmane.org/gmane.linux.kernel.gpio/14360
-> > 
-> > With the above patch the board now boots. Good catch.
-> 
-> Yup fixes the issue for me too.
+Linus,
+thanks!
 
-Linus-
+2016-02-12 16:31 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
+>
+> This code is poking around in the gpio_chip:s internal structures
+> to achieve some kind of pin to GPIO mappings.
+>
+> - It is wrong to poke around in these structs and the pinctrl
+>   maintainer was stupid to let it pass unnoticed, mea culpa.
+>
+> - The right interface to use is gpiochip_add_pin_range()
 
-Here's a properly cooked patch.  Otherwise, feel free to squash it in if
-it's easier for you.
+gpiochip_add(chip will call this automatically since range is set in dtsi:
+gpio_0: gpio_mediam@17040000 {
+#gpio-cells = <2>;
+#interrupt-cells = <2>;
+compatible = "sirf,atlas7-gpio";
+reg = <0x17040000 0x1000>;
+interrupts = <0 13 0>, <0 14 0>;
+clocks = <&car 98>;
+clock-names = "gpio0_io";
+gpio-controller;
+interrupt-controller;
 
-  Josh
+gpio-banks = <2>;
+gpio-ranges = <&pinctrl 0 0 0>,
+<&pinctrl 32 0 0>;
+gpio-ranges-group-names = "lvds_gpio_grp",
+"jtag_uart_nand_gpio_grp";
+};
 
--- 8< --
-Subject: [PATCH] gpio: use kzalloc to allocate gpio_device
+see:
+https://git.kernel.org/cgit/linux/kernel/git/baohua/linux.git/tree/arch/arm/boot/dts/atlas7.dtsi?h=sirf-3.18#n2151
 
-The use of kmalloc() to allocate the gpio_device leaves the contained struct
-device object in an unknown state.  Calling dev_set_name() on a struct device
-of unknown state can trigger the free() of an invalid pointer, as seen in the
-following backtrace (collected by Tony Lindgren):
+>
+> - The code appears unused: the pin control part of the driver
+>   is not adding any ranges, so we're iterating over an empty
+>   list. Maybe it is poking around in some other pin controllers
+>   GPIO ranges, and that's just totally wrong, again use
+>   gpiochip_add_pin_range() and specify the right pin
+>   controller.
+>
+> Cc: Barry Song <baohua@kernel.org>
+> Cc: Guoying Zhang <Guoying.Zhang@csr.com>
+> Cc: Wei Chen <Wei.Chen@csr.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> SiRF maintainers: look at this immediately and explain what is
+> going on.
+> ---
+>  drivers/pinctrl/sirf/pinctrl-atlas7.c | 18 ------------------
+>  1 file changed, 18 deletions(-)
+>
+> diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+> index beb024c31a5d..3d233fc3448a 100644
+> --- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
+> +++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+> @@ -338,7 +338,6 @@ struct atlas7_pinctrl_data {
+>  #define ATLAS7_GPIO_CTL_DATAIN_MASK            BIT(7)
+>
+>  struct atlas7_gpio_bank {
+> -       struct pinctrl_dev *pctldev;
 
-  kfree
-  kobject_set_name_vargs
-  dev_set_name
-  gpiochip_add_data
-  omap_gpio_probe
-  platform_drv_probe
-  ...
+this is ok.
 
-Reported-by: Michael Welling <mwelling@ieee.org>
-Reported-by: Tony Lindgren <tony@atomide.com>
-Tested-by: Michael Welling <mwelling@ieee.org>
-Tested-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Josh Cartwright <joshc@ni.com>
----
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>         int id;
+>         int irq;
+>         void __iomem *base;
+> @@ -6070,7 +6069,6 @@ static int atlas7_gpio_probe(struct platform_device *pdev)
+>         }
+>
+>         for (idx = 0; idx < nbank; idx++) {
+> -               struct gpio_pin_range *pin_range;
+>                 struct atlas7_gpio_bank *bank;
+>
+>                 bank = &a7gc->banks[idx];
+> @@ -6088,22 +6086,6 @@ static int atlas7_gpio_probe(struct platform_device *pdev)
+>
+>                 gpiochip_set_chained_irqchip(chip, &atlas7_gpio_irq_chip,
+>                                         bank->irq, atlas7_gpio_handle_irq);
+> -
+> -               /* Records gpio_pin_range to a7gc */
+> -               list_for_each_entry(pin_range, &chip->pin_ranges, node) {
+> -                       struct pinctrl_gpio_range *range;
+> -
+> -                       range = &pin_range->range;
+> -                       if (range->id == NGPIO_OF_BANK * idx) {
+> -                               bank->gpio_offset = range->id;
+> -                               bank->ngpio = range->npins;
+> -                               bank->gpio_pins = range->pins;
+> -                               bank->pctldev = pin_range->pctldev;
+> -                               break;
+> -                       }
+> -               }
+> -
+> -               BUG_ON(!bank->pctldev);
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d8511cd..59f0045 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -435,7 +435,7 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 	 * First: allocate and populate the internal stat container, and
- 	 * set up the struct device.
- 	 */
--	gdev = kmalloc(sizeof(*gdev), GFP_KERNEL);
-+	gdev = kzalloc(sizeof(*gdev), GFP_KERNEL);
- 	if (!gdev)
- 		return -ENOMEM;
- 	gdev->dev.bus = &gpio_bus_type;
--- 
-2.7.0
+this doesn't work. my pin range is not continuous and linear, so we
+need the "if (range->id == NGPIO_OF_BANK * idx)" to calculate the
+gpio_offset.
+and gpio_offset is used in many places:
+5637
+5638 static int __atlas7_gpio_to_pin(struct atlas7_gpio_chip *a7gc, u32 gpio)
+5639 {
+5640         struct atlas7_gpio_bank *bank;
+5641         u32 ofs;
+5642
+5643         bank = atlas7_gpio_to_bank(a7gc, gpio);
+5644         ofs = gpio - bank->gpio_offset;
+5645         if (ofs >= bank->ngpio)
+5646                 return -ENODEV;
+5647
+5648         return bank->gpio_pins[ofs];
+5649 }
 
+
+5651 static void atlas7_gpio_irq_ack(struct irq_data *d)
+5652 {
+5653         struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+5654         struct atlas7_gpio_chip *a7gc = to_atlas7_gpio(gc);
+5655         struct atlas7_gpio_bank *bank;
+5656         void __iomem *ctrl_reg;
+5657         u32 val, pin_in_bank;
+5658         unsigned long flags;
+5659
+5660         bank = atlas7_gpio_to_bank(a7gc, d->hwirq);
+5661         pin_in_bank = d->hwirq - bank->gpio_offset;
+5662         ctrl_reg = ATLAS7_GPIO_CTRL(bank, pin_in_bank);
+5663
+5664         spin_lock_irqsave(&a7gc->lock, flags);
+5665
+5666         val = readl(ctrl_reg);
+5667         /* clear interrupt status */
+5668         writel(val, ctrl_reg);
+5669
+5670         spin_unlock_irqrestore(&a7gc->lock, flags);
+5671 }
+
+...
+
+
+>         }
+>
+>         platform_set_drvdata(pdev, a7gc);
+> --
+
+
+-barry
