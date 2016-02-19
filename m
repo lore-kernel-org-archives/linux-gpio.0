@@ -1,111 +1,46 @@
-From: jic23@jic23.retrosnub.co.uk
-Subject: Re: [PATCH v2] gpio: add userspace ABI for GPIO line information
-Date: Fri, 19 Feb 2016 11:35:35 +0000
-Message-ID: <8756ef874911997cc5ef45fec30fb75e@jic23.retrosnub.co.uk>
-References: <1455542435-3182-1-git-send-email-linus.walleij@linaro.org>
- <20160217205445.GA2394@deathstar>
- <CACRpkdYgxJme3V1RSkvmsBL=b5zroNKwPJH70mgDbxMD=XQJtw@mail.gmail.com>
- <20160219094620.GA28750@deathstar>
- <CACRpkdairn2nnpWz48gakwdwcbPUiv3mVOzcdhdW9Yy8W=XZog@mail.gmail.com>
- <20160219102614.GA31335@deathstar>
- <CACRpkdYEpzPX+4fCwUixbvGnGgR4Vm2j8DGL7aqNGWKbFD+PWg@mail.gmail.com>
+From: Gang Liu <gang.liu@nxp.com>
+Subject: RE: [PATCH RFT] gpio: mpc8xxx: Fixup setting gpio direction output
+Date: Fri, 19 Feb 2016 11:08:49 +0000
+Message-ID: <DB4PR04MB2661C56B4963D930412280882A00@DB4PR04MB266.eurprd04.prod.outlook.com>
+References: <1455196399.18445.1.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from saturn.retrosnub.co.uk ([178.18.118.26]:45095 "EHLO
-	saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1424436AbcBSLf5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Feb 2016 06:35:57 -0500
-In-Reply-To: <CACRpkdYEpzPX+4fCwUixbvGnGgR4Vm2j8DGL7aqNGWKbFD+PWg@mail.gmail.com>
+Received: from mail-am1on0096.outbound.protection.outlook.com ([157.56.112.96]:6848
+	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1425298AbcBSLkp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 19 Feb 2016 06:40:45 -0500
+In-Reply-To: <1455196399.18445.1.camel@ingics.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Welling <mwelling@ieee.org>, Jonathan Cameron <jic23@kernel.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Markus Pargmann <mpa@pengutronix.de>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>
+To: Axel Lin <axel.lin@ingics.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Alexander Stein <alexander.stein@systec-electronic.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 19.02.2016 11:25, Linus Walleij wrote:
-> On Fri, Feb 19, 2016 at 11:26 AM, Michael Welling <mwelling@ieee.org> 
-> wrote:
->> On Fri, Feb 19, 2016 at 10:47:45AM +0100, Linus Walleij wrote:
->>> On Fri, Feb 19, 2016 at 10:46 AM, Michael Welling <mwelling@ieee.org> 
->>> wrote:
->>> 
->>> > I am looking forward to see how the GPIOs will be modified from userspace.
->>> > The fact that single controllers can host hundreds of GPIOs is going to
->>> > make it an interesting problem.
->>> >
->>> > Do you have a sketch of how the accesses with be performed?
->>> > ioctl, read, write.
->>> 
->>> No. Suggestions welcome. Looking at drivers/iio for inspiration.
->>> 
->> 
->> Well one thing I never liked about the iio userspace is the mixed API.
->> You have to use sysfs to setup buffered reads and character device for
->> the reads.
->> 
->> I suppose individual GPIOs could be configured by simply calling
->> specific ioctls passing the (offset, value) as the argument.
-> 
-> I think so too... I guess we can safely assume that only one
-> userspace process will need to access a GPIO chip at the same
-> time, and in case there'd be several of them, they have to
-> mediate access through a daemon (as is already done with other
-> things).
-> 
->> GPIO_EXPORT_LINE_IOCTL - Allocate the GPIO to userspace.
-> 
-> I suspect this should take an argument with a list of
-> GPIOs from the start, so you can request several GPIO
-> lines, with flags. Requesting several lines makes it
-> possible to use devm_gpiod_get_array() and handle
-> a bunch of GPIOs similtaneously.
-> 
->> GPIO_SET_DIRECTION_IOCTL - Set GPIO direction.
->> GPIO_SET_VALUE_IOCTL - Set GPIO value.
->> GPIO_GET_VALUE_IOCTL - Get GPIO value.
-> 
-> Those we probably need.
-> 
->> GPIO_SET_ACTIVE_IOCTL - Set GPIO active high/low.
->> GPIO_SET_OPEN_DRAIN_IOCTL - Set GPIO open drain.
->> GPIO_SET_OPEN_SOURCE_IOCTL - Set GPIO open source.
-> 
-> Those need to be flags passed when exporting a line due
-> to the nature of the GPIO driver subsystem. Also I don't think
-> it makes sense to change any of these dynamically anyway,
-> you set this up when requesting a line.
-> 
->> Then all exported GPIOs could be accessible using
->> read and write callbacks.
-> 
-> The kernel will just take the gpio descriptors and manage
-> them, it'll "just work" I think.
-> 
->> Handling interrupts may prove a little trickier.
->> The poll could be used on the character device but then there would 
->> have to
->> be a way to resolve which GPIO triggered the interrupt.
-> 
-> Here I lean toward the IIO event interface, that if you want to
-> monitor a GPIO line you should ask for an event file
-> descriptor and select() it waiting for events in userspace,
-> i.e. every such request comes with obtaining a new fd
-> and watching it.
-> 
-On events, it might be worth doing it a bit more input evdev
-like and allowing mor than one consumer.
-
-Do we need to describe to userspace what GPIOs are available?
-Right now I don't have a board to hand to see what info is
-already available on that front.  Strikes me as that side of
-things may be more complex than the interface to actually get hole
-of them.  It's this side of things that makes IOCTLs on highly
-varied devices a pain (any why we ended up with the split interface
-in IIO which is sort of an input / hwmon hybrid).
-
-Jonathan
-
-> Yours,
-> Linus Walleij
+SGksIEF4ZWwsDQoNClllcyB5b3UgYXJlIHJpZ2h0Lg0KDQpNYXliZSB3ZSBjYW4gbWFrZSB0aGUg
+Y2hhbmdlIGp1c3QgbGlrZSB0aGlzOg0KDQorCW1wYzh4eHhfZ2MtPmRpcmVjdGlvbl9vdXRwdXQg
+PSBnYy0+ZGlyZWN0aW9uX291dHB1dDsNCglnYy0+ZGlyZWN0aW9uX291dHB1dCA9IGRldnR5cGUt
+PmdwaW9fZGlyX291dCA/OiBnYy0+ZGlyZWN0aW9uX291dHB1dDsNCglnYy0+Z2V0ID0gZGV2dHlw
+ZS0+Z3Bpb19nZXQgPzogZ2MtPmdldDsNCglnYy0+dG9faXJxID0gbXBjOHh4eF9ncGlvX3RvX2ly
+cTsNCg0KLQltcGM4eHh4X2djLT5kaXJlY3Rpb25fb3V0cHV0ID0gZ2MtPmRpcmVjdGlvbl9vdXRw
+dXQ7DQoNCkJlc3QgUmVnYXJkcywNCkxpdSBHYW5nDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0t
+LQ0KLS0tDQpIaSwNCkkgZG9uJ3QgaGF2ZSB0aGlzIGgvdywgcGxlYXNlIHJldmlldyBhbmQgdGVz
+dCBpZiB0aGlzIHBhdGNoIHdvcmtzLg0KVGhhbmssDQpBeGVsDQogZHJpdmVycy9ncGlvL2dwaW8t
+bXBjOHh4eC5jIHwgMTEgKysrKysrKy0tLS0NCiAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRpb25z
+KCspLCA0IGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncGlvL2dwaW8tbXBj
+OHh4eC5jIGIvZHJpdmVycy9ncGlvL2dwaW8tbXBjOHh4eC5jIGluZGV4IGVjZGIyN2EuLjBlZDI3
+OWEgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1tcGM4eHh4LmMNCisrKyBiL2RyaXZl
+cnMvZ3Bpby9ncGlvLW1wYzh4eHguYw0KQEAgLTM0NCwxMSArMzQ0LDE0IEBAIHN0YXRpYyBpbnQg
+bXBjOHh4eF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KIAkgKi8NCiAJbXBj
+OHh4eF9pcnFfY2hpcC5pcnFfc2V0X3R5cGUgPSBkZXZ0eXBlLT5pcnFfc2V0X3R5cGU7DQogDQot
+CWdjLT5kaXJlY3Rpb25fb3V0cHV0ID0gZGV2dHlwZS0+Z3Bpb19kaXJfb3V0ID86IGdjLT5kaXJl
+Y3Rpb25fb3V0cHV0Ow0KLQlnYy0+Z2V0ID0gZGV2dHlwZS0+Z3Bpb19nZXQgPzogZ2MtPmdldDsN
+Ci0JZ2MtPnRvX2lycSA9IG1wYzh4eHhfZ3Bpb190b19pcnE7DQotDQogCW1wYzh4eHhfZ2MtPmRp
+cmVjdGlvbl9vdXRwdXQgPSBnYy0+ZGlyZWN0aW9uX291dHB1dDsNCisJaWYgKGRldnR5cGUtPmdw
+aW9fZGlyX291dCkNCisJCWdjLT5kaXJlY3Rpb25fb3V0cHV0ID0gZGV2dHlwZS0+Z3Bpb19kaXJf
+b3V0Ow0KKw0KKwlpZiAoZGV2dHlwZS0+Z3Bpb19nZXQpDQorCQlnYy0+Z2V0ID0gZGV2dHlwZS0+
+Z3Bpb19nZXQ7DQorDQorCWdjLT50b19pcnEgPSBtcGM4eHh4X2dwaW9fdG9faXJxOw0KIA0KIAly
+ZXQgPSBncGlvY2hpcF9hZGRfZGF0YShnYywgbXBjOHh4eF9nYyk7DQogCWlmIChyZXQpIHsNCi0t
+DQoyLjEuNA0KDQoNCg0K
