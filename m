@@ -1,34 +1,59 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH/RFC v2] gpio: rcar: Add Runtime PM handling for interrupts
-Date: Fri, 19 Feb 2016 11:59:40 +0000
-Message-ID: <56C703AC.4040803@arm.com>
-References: <1455811590-15836-1-git-send-email-geert+renesas@glider.be>
- <CACRpkdZ2zzP5u4uJDzsnks7ywrp3ddBt+YfxthJ+5mT-ECYLpg@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2 1/2] pinctrl: mediatek: Modify pinctrl bindings for mt7623
+Date: Fri, 19 Feb 2016 13:12:29 +0100
+Message-ID: <CACRpkdbWad9iZV9LYkvEFRZn_BQDtPEAy3JE0uuR569UwMJkHQ@mail.gmail.com>
+References: <1455866238-6102-1-git-send-email-blogic@openwrt.org>
+	<CACRpkdYiQop2qDNuh4N2YZy2DTy9mOEyERro8hT4YogCPc2LGw@mail.gmail.com>
+	<56C6DF23.3060202@openwrt.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZ2zzP5u4uJDzsnks7ywrp3ddBt+YfxthJ+5mT-ECYLpg@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Thomas Gleixner <tglx@linutronix.de>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56C6DF23.3060202-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: John Crispin <blogic-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
+Cc: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Fri, Feb 19, 2016 at 10:23 AM, John Crispin <blogic-p3rKhJxN3npAfugRpC6u6w@public.gmane.org> wrote:
+> On 19/02/2016 10:03, Linus Walleij wrote:
+>> On Fri, Feb 19, 2016 at 8:17 AM, John Crispin <blogic-p3rKhJxN3npAfugRpC6u6w@public.gmane.org> wrote:
+>>
+>>> Signed-off-by: John Crispin <blogic-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
+>>> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>>> ---
+>>> please apply to the devel-mt2701 branch
+>>>
+>>> Changes in V2
+>>> * make mt7623-pinfunc.h part of patch 1/2
+>>> * make sure the list stays sorted
+>>
+>> Patch applied unless the Mediatek maintainers come with serious
+>> remarks (I can always revert).
+>>
+>> Only minor comments from Yingjoe on the previous version so I guess
+>> it is finished.
+>>
+>> MTK guys: do you even have this SoC? It appears MTK is churning out
+>> a plethora of SoCs and then they land in the lap of the OpenWRT
+>> developers before the MTK maintainers even start to look at it...
+>>
+>> Yours,
+>> Linus Walleij
+>>
+>
+> I am doing this work in close collaboration with MTK. It is contractual
+> work. MTK is huge and has many BUs, one of them is WCN, formerly known
+> as Ralink. I have supported their MIPS silicon for many years now so
+> asking me to also take care of the Wireless SoCs based on ARM was the
+> natural next step.
 
-On 19/02/16 09:18, Linus Walleij wrote:
-> Top-quoting so everyone on the new To:-line gets the context.
-> 
-> I definately need an indication from an irqchip maintainer like tglx or Marc Z
-> before I merge this. Also, as in reply to the previous letter, coordinate
-> efforts with Jon Hunters similar problem space.
+Awesome!
 
-Seems pretty straightforward to me.
+Keep doing what you're doing :)
 
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
