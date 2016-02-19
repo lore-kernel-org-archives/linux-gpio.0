@@ -1,20 +1,20 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v7 1/3] gpio: xgene: Enable X-Gene standby GPIO as
- interrupt controller
-Date: Fri, 19 Feb 2016 10:11:29 +0100
-Message-ID: <CACRpkdaH7CLZDK9HP1nCYioPVbypQsZ76ZJcPMPLjVzV-DWqDQ@mail.gmail.com>
+Subject: Re: [PATCH v7 2/3] Documentation: gpio: Update description for X-Gene
+ standby GPIO controller DTS binding
+Date: Fri, 19 Feb 2016 10:13:17 +0100
+Message-ID: <CACRpkdYRTrfjzVG28mJr3uFmaJw_siDjUtcVY-isb3JqJMTJTQ@mail.gmail.com>
 References: <1455714909-3027-1-git-send-email-qnguyen@apm.com>
-	<1455714909-3027-2-git-send-email-qnguyen@apm.com>
+	<1455714909-3027-3-git-send-email-qnguyen@apm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:33293 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1946055AbcBSJL3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Feb 2016 04:11:29 -0500
-Received: by mail-ob0-f180.google.com with SMTP id jq7so101965771obb.0
-        for <linux-gpio@vger.kernel.org>; Fri, 19 Feb 2016 01:11:29 -0800 (PST)
-In-Reply-To: <1455714909-3027-2-git-send-email-qnguyen@apm.com>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:34988 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1948201AbcBSJNS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Feb 2016 04:13:18 -0500
+Received: by mail-oi0-f47.google.com with SMTP id x21so8138786oix.2
+        for <linux-gpio@vger.kernel.org>; Fri, 19 Feb 2016 01:13:17 -0800 (PST)
+In-Reply-To: <1455714909-3027-3-git-send-email-qnguyen@apm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Quan Nguyen <qnguyen@apm.com>
@@ -22,15 +22,13 @@ Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.
 
 On Wed, Feb 17, 2016 at 2:15 PM, Quan Nguyen <qnguyen@apm.com> wrote:
 
-> Enable X-Gene standby GPIO controller as interrupt controller to provide
-> its own resources. This avoids ambiguity where GIC interrupt resource is
-> use as X-Gene standby GPIO interrupt resource in user driver.
+> Update description for X-Gene standby GPIO controller DTS binding to
+> support GPIO line configuration as input, output or external IRQ pin.
 >
 > Signed-off-by: Y Vo <yvo@apm.com>
 > Signed-off-by: Quan Nguyen <qnguyen@apm.com>
-> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
-Sweet! Patch applied.
+Patch applied. But I cut down the subject line a bit.
 
 Yours,
 Linus Walleij
