@@ -1,36 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: add userspace ABI for GPIO line information
-Date: Fri, 19 Feb 2016 10:47:45 +0100
-Message-ID: <CACRpkdairn2nnpWz48gakwdwcbPUiv3mVOzcdhdW9Yy8W=XZog@mail.gmail.com>
-References: <1455542435-3182-1-git-send-email-linus.walleij@linaro.org>
-	<20160217205445.GA2394@deathstar>
-	<CACRpkdYgxJme3V1RSkvmsBL=b5zroNKwPJH70mgDbxMD=XQJtw@mail.gmail.com>
-	<20160219094620.GA28750@deathstar>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] leds: gpio: Use GPIOF_OUT_INIT_LOW instead of hardcoded zero
+Date: Fri, 19 Feb 2016 10:52:34 +0100
+Message-ID: <1455875554-4268-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:33912 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1427368AbcBSJrq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Feb 2016 04:47:46 -0500
-Received: by mail-oi0-f47.google.com with SMTP id m82so8583861oif.1
-        for <linux-gpio@vger.kernel.org>; Fri, 19 Feb 2016 01:47:45 -0800 (PST)
-In-Reply-To: <20160219094620.GA28750@deathstar>
+Received: from michel.telenet-ops.be ([195.130.137.88]:43612 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1427381AbcBSJwm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Feb 2016 04:52:42 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Welling <mwelling@ieee.org>, Jonathan Cameron <jic23@kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Markus Pargmann <mpa@pengutronix.de>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: linux-leds@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Fri, Feb 19, 2016 at 10:46 AM, Michael Welling <mwelling@ieee.org> wrote:
+Use the GPIO flag definition instead of a numeric literal, so the casual
+reader grepping for GPIOF_ will find the GPIO flags used.
 
-> I am looking forward to see how the GPIOs will be modified from userspace.
-> The fact that single controllers can host hundreds of GPIOs is going to
-> make it an interesting problem.
->
-> Do you have a sketch of how the accesses with be performed?
-> ioctl, read, write.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/leds/leds-gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No. Suggestions welcome. Looking at drivers/iio for inspiration.
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 7bc53280dbfdd91d..89955574430cec75 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -86,7 +86,7 @@ static int create_gpio_led(const struct gpio_led *template,
+ 		 * still uses GPIO numbers. Ultimately we would like to get
+ 		 * rid of this block completely.
+ 		 */
+-		unsigned long flags = 0;
++		unsigned long flags = GPIOF_OUT_INIT_LOW;
+ 
+ 		/* skip leds that aren't available */
+ 		if (!gpio_is_valid(template->gpio)) {
+-- 
+1.9.1
 
-Yours,
-Linus Walleij
