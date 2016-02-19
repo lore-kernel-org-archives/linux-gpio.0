@@ -1,20 +1,20 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v7 2/3] Documentation: gpio: Update description for X-Gene
- standby GPIO controller DTS binding
-Date: Fri, 19 Feb 2016 10:13:17 +0100
-Message-ID: <CACRpkdYRTrfjzVG28mJr3uFmaJw_siDjUtcVY-isb3JqJMTJTQ@mail.gmail.com>
+Subject: Re: [PATCH v7 3/3] arm64: dts: Update X-Gene standby GPIO controller
+ DTS entries
+Date: Fri, 19 Feb 2016 10:14:01 +0100
+Message-ID: <CACRpkdav6UXn41UnWvWR4zjYN=QtkNJknihr+YnHu3rXbkPBBw@mail.gmail.com>
 References: <1455714909-3027-1-git-send-email-qnguyen@apm.com>
-	<1455714909-3027-3-git-send-email-qnguyen@apm.com>
+	<1455714909-3027-4-git-send-email-qnguyen@apm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:34988 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1948201AbcBSJNS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Feb 2016 04:13:18 -0500
-Received: by mail-oi0-f47.google.com with SMTP id x21so8138786oix.2
-        for <linux-gpio@vger.kernel.org>; Fri, 19 Feb 2016 01:13:17 -0800 (PST)
-In-Reply-To: <1455714909-3027-3-git-send-email-qnguyen@apm.com>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:33118 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1948248AbcBSJOC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Feb 2016 04:14:02 -0500
+Received: by mail-ob0-f180.google.com with SMTP id jq7so102018005obb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 19 Feb 2016 01:14:02 -0800 (PST)
+In-Reply-To: <1455714909-3027-4-git-send-email-qnguyen@apm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Quan Nguyen <qnguyen@apm.com>
@@ -22,13 +22,16 @@ Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.
 
 On Wed, Feb 17, 2016 at 2:15 PM, Quan Nguyen <qnguyen@apm.com> wrote:
 
-> Update description for X-Gene standby GPIO controller DTS binding to
-> support GPIO line configuration as input, output or external IRQ pin.
+> Update APM X-Gene standby GPIO controller DTS entries to enable it
+> as interrupt controller.
 >
 > Signed-off-by: Y Vo <yvo@apm.com>
 > Signed-off-by: Quan Nguyen <qnguyen@apm.com>
 
-Patch applied. But I cut down the subject line a bit.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Please funnel this patch through the ARM SoC tree with all other
+DTS files.
 
 Yours,
 Linus Walleij
