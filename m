@@ -1,47 +1,67 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7794: add EtherAVB pin groups
-Date: Fri, 19 Feb 2016 09:32:26 +0100
-Message-ID: <CAMuHMdUCkL5LSRO59+3-=U8dSUz=00k+wgai=EFDsEnky0fRqQ@mail.gmail.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
-	<3010555.FcVIno0yOe@wasted.cogentembedded.com>
-	<CAMuHMdVdqYJ8S0Vps9B8+L_nApaXFrE9M82iDb6_iWjAfXHCVA@mail.gmail.com>
-	<CACRpkdaK01ezFjwzsvGXJ8TKj9AtWJVJeYTyYgyLVb286kOBDQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1] GPIO/ACPI: DesignWare: Add GPIO-signaled ACPI events
+ support for power button
+Date: Fri, 19 Feb 2016 09:35:37 +0100
+Message-ID: <CACRpkda1JJOg9ZdSL5ccE9oohekNvaDtxiOOTqvOWGhcxVPGjA@mail.gmail.com>
+References: <1455694090-41713-1-git-send-email-qiujiang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaK01ezFjwzsvGXJ8TKj9AtWJVJeYTyYgyLVb286kOBDQ@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1455694090-41713-1-git-send-email-qiujiang@huawei.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: qiujiang <qiujiang@huawei.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 18, 2016 at 8:49 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Feb 18, 2016 at 9:36 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
+On Wed, Feb 17, 2016 at 8:28 AM, qiujiang <qiujiang@huawei.com> wrote:
+
+> This patch modifies the DesignWare GPIO controller driver to
+> support the GPIO-signaled ACPI Events. This is used for power
+> button function on ARM server.
 >
->> On Wed, Feb 17, 2016 at 11:32 PM, Sergei Shtylyov
->> <sergei.shtylyov@cogentembedded.com> wrote:
->>> Add the EtherAVB pin groups to the R8A7794 PFC driver.
->>>
->>> Based on the patches by Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>.
->>
->> Thank you for your patch!
->>
->>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> To make it work, the _AEI and _EVT object must be defined in
+> the corresponding GPIO driver's dsdt table in UEFI as follow:
 >
-> I guess this means you're queueing it too?
+> Device(GPI0) {
+>         Name(_HID, "HISI0181")
+>         Name(_ADR, 0) // _ADR: Address
+>         Name(_UID, 0)
+>
+>         Name (_CRS, ResourceTemplate ()  {
+>                 Memory32Fixed (ReadWrite, 0x802e0000, 0x10000)
+>                 Interrupt (ResourceConsumer, Level, ActiveHigh,
+>                 Exclusive,,,) {344}
+>         })
+>
+>         Device(PRTa) {
+>                 Name (_DSD, Package () {
+>                         Package () {
+>                                 Package () {"reg",0},
+>                                 Package () {"snps,nr-gpios",32},
+>                 }
+>                 })
+>         }
+>
+>         Name (_AEI, ResourceTemplate () {
+>                 GpioInt(Edge, ActiveLow, ExclusiveAndWake, PullUp, ,
+>                 " \\_SB.GPI0") {8}
+>         })
+>
+>         Method (_E08, 0x0, NotSerialized) {
+>                 Notify (\_SB.PWRB, 0x80)
+>         }
+> }
+>
+> Signed-off-by: qiujiang <qiujiang@huawei.com>
 
-Indeed.
+This patch doesn't apply to my tree. Please do the following:
 
-Gr{oetje,eeting}s,
+- Rebase on the "devel" branch in the linux-gpio tree:
+  https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
 
-                        Geert
+- Split in two parts as suggested by Andy S.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+- Add Mika's ACKs.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
