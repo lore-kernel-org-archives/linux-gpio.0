@@ -1,47 +1,46 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: gpio: Use GPIOF_OUT_INIT_LOW instead of hardcoded
- zero
-Date: Fri, 19 Feb 2016 16:29:01 +0100
-Message-ID: <56C734BD.8040209@samsung.com>
-References: <1455875554-4268-1-git-send-email-geert+renesas@glider.be>
+From: Loc Ho <lho@apm.com>
+Subject: Re: [PATCH v7 3/3] arm64: dts: Update X-Gene standby GPIO controller
+ DTS entries
+Date: Fri, 19 Feb 2016 09:44:32 -0800
+Message-ID: <CAPw-ZTmAe64XbXZ4OWJOec7YMEQcgf7ZrfUsZWG6Yjc1ON0K+w@mail.gmail.com>
+References: <1455714909-3027-1-git-send-email-qnguyen@apm.com>
+	<1455714909-3027-4-git-send-email-qnguyen@apm.com>
+	<CACRpkdav6UXn41UnWvWR4zjYN=QtkNJknihr+YnHu3rXbkPBBw@mail.gmail.com>
+	<CAFopSPR133CT5t2ck2_F3Zzh8gWosLpXFpYi-5VBBhVScOkvjA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-reply-to: <1455875554-4268-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-leds-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:35099 "EHLO
+	mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1947811AbcBSRoe (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Feb 2016 12:44:34 -0500
+Received: by mail-lf0-f41.google.com with SMTP id l143so58755577lfe.2
+        for <linux-gpio@vger.kernel.org>; Fri, 19 Feb 2016 09:44:33 -0800 (PST)
+In-Reply-To: <CAFopSPR133CT5t2ck2_F3Zzh8gWosLpXFpYi-5VBBhVScOkvjA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Quan Nguyen <qnguyen@apm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, Iyappan Subramanian <isubramanian@apm.com>, patches <patches@apm.com>
 
-Hi Geert,
+Hi Quan,
 
-On 02/19/2016 10:52 AM, Geert Uytterhoeven wrote:
-> Use the GPIO flag definition instead of a numeric literal, so the casual
-> reader grepping for GPIOF_ will find the GPIO flags used.
+On Fri, Feb 19, 2016 at 5:47 AM, Quan Nguyen <qnguyen@apm.com> wrote:
+> On Fri, Feb 19, 2016 at 4:14 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Wed, Feb 17, 2016 at 2:15 PM, Quan Nguyen <qnguyen@apm.com> wrote:
+>>
+>>> Update APM X-Gene standby GPIO controller DTS entries to enable it
+>>> as interrupt controller.
+>>>
+>>> Signed-off-by: Y Vo <yvo@apm.com>
+>>> Signed-off-by: Quan Nguyen <qnguyen@apm.com>
+>>
+>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> Please funnel this patch through the ARM SoC tree with all other
+>> DTS files.
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->   drivers/leds/leds-gpio.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> index 7bc53280dbfdd91d..89955574430cec75 100644
-> --- a/drivers/leds/leds-gpio.c
-> +++ b/drivers/leds/leds-gpio.c
-> @@ -86,7 +86,7 @@ static int create_gpio_led(const struct gpio_led *template,
->   		 * still uses GPIO numbers. Ultimately we would like to get
->   		 * rid of this block completely.
->   		 */
-> -		unsigned long flags = 0;
-> +		unsigned long flags = GPIOF_OUT_INIT_LOW;
->
->   		/* skip leds that aren't available */
->   		if (!gpio_is_valid(template->gpio)) {
->
+> Let me do it and resend.
 
-Applied, thanks.
+Duc will pull  this into xgene-next GIT for Olof to pull.
 
--- 
-Best regards,
-Jacek Anaszewski
+-Loc
