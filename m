@@ -1,59 +1,72 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V2 1/2] pinctrl: mediatek: Modify pinctrl bindings for mt7623
-Date: Fri, 19 Feb 2016 13:12:29 +0100
-Message-ID: <CACRpkdbWad9iZV9LYkvEFRZn_BQDtPEAy3JE0uuR569UwMJkHQ@mail.gmail.com>
-References: <1455866238-6102-1-git-send-email-blogic@openwrt.org>
-	<CACRpkdYiQop2qDNuh4N2YZy2DTy9mOEyERro8hT4YogCPc2LGw@mail.gmail.com>
-	<56C6DF23.3060202@openwrt.org>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: Re: [PATCH] ARM: dts: at91: sama5d2 Xplained: Correct the macb irq
+ pinctrl node
+Date: Fri, 19 Feb 2016 14:19:45 +0100
+Message-ID: <20160219131945.GX2607@odux.rfo.atmel.com>
+References: <1455790866-13301-1-git-send-email-romain.izard.pro@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56C6DF23.3060202-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: John Crispin <blogic-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
-Cc: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:47720 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753672AbcBSNTQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Feb 2016 08:19:16 -0500
+Content-Disposition: inline
+In-Reply-To: <1455790866-13301-1-git-send-email-romain.izard.pro@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Romain Izard <romain.izard.pro@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, Linux GPIO List <linux-gpio@vger.kernel.org>
 
-On Fri, Feb 19, 2016 at 10:23 AM, John Crispin <blogic-p3rKhJxN3npAfugRpC6u6w@public.gmane.org> wrote:
-> On 19/02/2016 10:03, Linus Walleij wrote:
->> On Fri, Feb 19, 2016 at 8:17 AM, John Crispin <blogic-p3rKhJxN3npAfugRpC6u6w@public.gmane.org> wrote:
->>
->>> Signed-off-by: John Crispin <blogic-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
->>> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->>> ---
->>> please apply to the devel-mt2701 branch
->>>
->>> Changes in V2
->>> * make mt7623-pinfunc.h part of patch 1/2
->>> * make sure the list stays sorted
->>
->> Patch applied unless the Mediatek maintainers come with serious
->> remarks (I can always revert).
->>
->> Only minor comments from Yingjoe on the previous version so I guess
->> it is finished.
->>
->> MTK guys: do you even have this SoC? It appears MTK is churning out
->> a plethora of SoCs and then they land in the lap of the OpenWRT
->> developers before the MTK maintainers even start to look at it...
->>
->> Yours,
->> Linus Walleij
->>
->
-> I am doing this work in close collaboration with MTK. It is contractual
-> work. MTK is huge and has many BUs, one of them is WCN, formerly known
-> as Ralink. I have supported their MIPS silicon for many years now so
-> asking me to also take care of the Wireless SoCs based on ARM was the
-> natural next step.
+On Thu, Feb 18, 2016 at 11:21:06AM +0100, Romain Izard wrote:
+> All pinctrl nodes for the Atmel pinctrl controller need to have their
+> bias configuration explicitly defined. Otherwise, the pinctrl mapping
+> is not valid.
+>=20
+> It works for now as the pinctrl driver proceeds even with invalid
+> mappings, but this can become an issue, if the pinctrl driver starts
+> to require valid mappings. Additionally, the pin is not protected fro=
+m
+> being remapped later by an other driver.
+>=20
+> There is an external 1k=E2=84=A6 pull-up to 3.3V, so no bias is requi=
+red on
+> the Ethernet PHY's interrupt line.
+>=20
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
 
-Awesome!
+Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
 
-Keep doing what you're doing :)
+Thanks
 
-Yours,
-Linus Walleij
+> ---
+>  arch/arm/boot/dts/at91-sama5d2_xplained.dts | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/b=
+oot/dts/at91-sama5d2_xplained.dts
+> index e683856c507c..75341eec2dfd 100644
+> --- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+> +++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+> @@ -308,6 +308,7 @@
+> =20
+>  				pinctrl_macb0_phy_irq: macb0_phy_irq {
+>  					pinmux =3D <PIN_PC9__GPIO>;
+> +					bias-disable;
+>  				};
+> =20
+>  				pinctrl_pdmic_default: pdmic_default {
+> --=20
+> 2.5.0
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio"=
+ in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
