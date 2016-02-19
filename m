@@ -1,41 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: add userspace ABI for GPIO line information
-Date: Fri, 19 Feb 2016 09:55:41 +0100
-Message-ID: <CACRpkdYgxJme3V1RSkvmsBL=b5zroNKwPJH70mgDbxMD=XQJtw@mail.gmail.com>
-References: <1455542435-3182-1-git-send-email-linus.walleij@linaro.org>
-	<20160217205445.GA2394@deathstar>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.6
+Date: Fri, 19 Feb 2016 09:57:12 +0100
+Message-ID: <CACRpkdYxBQsr+hsPsJ+Hhr05yqxkwaiP1gsW11NiGHs1d=mevg@mail.gmail.com>
+References: <1455872080-7373-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:33671 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1426727AbcBSIzm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Feb 2016 03:55:42 -0500
-Received: by mail-oi0-f46.google.com with SMTP id j125so7979082oih.0
-        for <linux-gpio@vger.kernel.org>; Fri, 19 Feb 2016 00:55:42 -0800 (PST)
-In-Reply-To: <20160217205445.GA2394@deathstar>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:33121 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1427342AbcBSI5N (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Feb 2016 03:57:13 -0500
+Received: by mail-ob0-f176.google.com with SMTP id jq7so101673213obb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 19 Feb 2016 00:57:12 -0800 (PST)
+In-Reply-To: <1455872080-7373-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Welling <mwelling@ieee.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Markus Pargmann <mpa@pengutronix.de>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 
-On Wed, Feb 17, 2016 at 9:54 PM, Michael Welling <mwelling@ieee.org> wrote:
+On Fri, Feb 19, 2016 at 9:54 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> After applying the patch from Josh Cartwright:
-> http://www.spinics.net/lists/arm-kernel/msg484070.html
-
-Sorry for screwing up :(
-
-> root@dragonboard-410c:/sys/class/gpio# ~/lsgpio
-> GPIO chip: gpiochip0, "1000000.pinctrl", 122 GPIO lines
->         line 0: unnamed unlabeled
-> (...)
+>         Hi Linus,
 >
-> Tested-by: Michael Welling <mwelling@ieee.org>
+> The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
+>
+>   Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git sh-pfc-for-v4.6
+>
+> for you to fetch changes up to 4c96cb027be5ceb2c7c0d4dc086d35fd0cfaf14b:
 
-I hope that means you also like where this is going :D
+Pulled to my devel branch.
 
-I merged this to my main branch now.
+Pushing to the build servers soon.
+
+Thanks for your excellent comaintenance efforts!
 
 Yours,
 Linus Walleij
