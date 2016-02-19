@@ -1,56 +1,55 @@
-From: John Crispin <blogic@openwrt.org>
-Subject: Re: [PATCH V2 1/2] pinctrl: mediatek: Modify pinctrl bindings for
- mt7623
-Date: Fri, 19 Feb 2016 10:23:47 +0100
-Message-ID: <56C6DF23.3060202@openwrt.org>
-References: <1455866238-6102-1-git-send-email-blogic@openwrt.org>
- <CACRpkdYiQop2qDNuh4N2YZy2DTy9mOEyERro8hT4YogCPc2LGw@mail.gmail.com>
+From: Michael Welling <mwelling@ieee.org>
+Subject: Re: [PATCH v2] gpio: add userspace ABI for GPIO line information
+Date: Fri, 19 Feb 2016 03:46:20 -0600
+Message-ID: <20160219094620.GA28750@deathstar>
+References: <1455542435-3182-1-git-send-email-linus.walleij@linaro.org>
+ <20160217205445.GA2394@deathstar>
+ <CACRpkdYgxJme3V1RSkvmsBL=b5zroNKwPJH70mgDbxMD=XQJtw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arrakis.dune.hu ([78.24.191.176]:59595 "EHLO arrakis.dune.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1161093AbcBSJXy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 19 Feb 2016 04:23:54 -0500
-In-Reply-To: <CACRpkdYiQop2qDNuh4N2YZy2DTy9mOEyERro8hT4YogCPc2LGw@mail.gmail.com>
+Received: from mail-io0-f179.google.com ([209.85.223.179]:34358 "EHLO
+	mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1423814AbcBSJqg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Feb 2016 04:46:36 -0500
+Received: by mail-io0-f179.google.com with SMTP id 9so103751872iom.1
+        for <linux-gpio@vger.kernel.org>; Fri, 19 Feb 2016 01:46:35 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYgxJme3V1RSkvmsBL=b5zroNKwPJH70mgDbxMD=XQJtw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Biao Huang <biao.huang@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Markus Pargmann <mpa@pengutronix.de>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
+On Fri, Feb 19, 2016 at 09:55:41AM +0100, Linus Walleij wrote:
+> On Wed, Feb 17, 2016 at 9:54 PM, Michael Welling <mwelling@ieee.org> wrote:
+> 
+> > After applying the patch from Josh Cartwright:
+> > http://www.spinics.net/lists/arm-kernel/msg484070.html
+> 
+> Sorry for screwing up :(
+> 
+> > root@dragonboard-410c:/sys/class/gpio# ~/lsgpio
+> > GPIO chip: gpiochip0, "1000000.pinctrl", 122 GPIO lines
+> >         line 0: unnamed unlabeled
+> > (...)
+> >
+> > Tested-by: Michael Welling <mwelling@ieee.org>
+> 
+> I hope that means you also like where this is going :D
+>
 
+I am very happy to see the progress that is being made.
 
-On 19/02/2016 10:03, Linus Walleij wrote:
-> On Fri, Feb 19, 2016 at 8:17 AM, John Crispin <blogic@openwrt.org> wrote:
-> 
->> Signed-off-by: John Crispin <blogic@openwrt.org>
->> Cc: devicetree@vger.kernel.org
->> ---
->> please apply to the devel-mt2701 branch
->>
->> Changes in V2
->> * make mt7623-pinfunc.h part of patch 1/2
->> * make sure the list stays sorted
-> 
-> Patch applied unless the Mediatek maintainers come with serious
-> remarks (I can always revert).
-> 
-> Only minor comments from Yingjoe on the previous version so I guess
-> it is finished.
-> 
-> MTK guys: do you even have this SoC? It appears MTK is churning out
-> a plethora of SoCs and then they land in the lap of the OpenWRT
-> developers before the MTK maintainers even start to look at it...
+I am looking forward to see how the GPIOs will be modified from userspace.
+The fact that single controllers can host hundreds of GPIOs is going to
+make it an interesting problem.
+
+Do you have a sketch of how the accesses with be performed?
+ioctl, read, write.
+
+Thanks for all of the work so far.
+> I merged this to my main branch now.
 > 
 > Yours,
 > Linus Walleij
-> 
-
-I am doing this work in close collaboration with MTK. It is contractual
-work. MTK is huge and has many BUs, one of them is WCN, formerly known
-as Ralink. I have supported their MIPS silicon for many years now so
-asking me to also take care of the Wireless SoCs based on ARM was the
-natural next step.
-
-	John
