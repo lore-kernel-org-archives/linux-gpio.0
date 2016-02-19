@@ -1,38 +1,80 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: mediatek: add input-enable and direction
- setting for eint resources
-Date: Fri, 19 Feb 2016 00:31:03 +0100
-Message-ID: <CACRpkdYeyAejh5Dtw7SKb7o790PcQgnz4tWpT+79hQ2_H6Lj5Q@mail.gmail.com>
-References: <1455650194-9813-1-git-send-email-biao.huang@mediatek.com>
-	<1455650194-9813-3-git-send-email-biao.huang@mediatek.com>
+From: Barry Song <baohua@kernel.org>
+Subject: Re: [PATCH] pinctrl: sirf/atlas7: stop poking around in GPIO internals
+Date: Fri, 19 Feb 2016 11:21:38 +0800
+Message-ID: <CAGsJ_4xf22j-QDxujuRzUY8eG9krR3Uy+_ZsqAoEUCamYV4PWQ@mail.gmail.com>
+References: <1455265873-21534-1-git-send-email-linus.walleij@linaro.org>
+ <CAGsJ_4zHEtmHmxbprnc=1qOXgk3G_pqyueHke8PusMKNP_rmmg@mail.gmail.com> <CACRpkdb8SVGdwhY9zsYxZQ5H2R-qd1v7iFek3SwdtAnWr41DaA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:34546 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1946440AbcBRXbE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Feb 2016 18:31:04 -0500
-Received: by mail-ob0-f177.google.com with SMTP id kf7so8816035obb.1
-        for <linux-gpio@vger.kernel.org>; Thu, 18 Feb 2016 15:31:03 -0800 (PST)
-In-Reply-To: <1455650194-9813-3-git-send-email-biao.huang@mediatek.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdb8SVGdwhY9zsYxZQ5H2R-qd1v7iFek3SwdtAnWr41DaA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Barry Song <Baohua.Song@csr.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, Guoying Zhang <Guoying.Zhang@csr.com>, Wei Chen <Wei.Chen@csr.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Biao Huang <biao.huang@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, srv_heupstream@mediatek.com, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>
 
-On Tue, Feb 16, 2016 at 8:16 PM, Biao Huang <biao.huang@mediatek.com> wrote:
-
-> To use pin as eint, user should make sure that:
-> 1. pin is set to right mode, this is done in .irq_request_resources
-> implementation already.
-> 2. direction of the pin is input, which should call GPIO API to set
-> pin to input gpio.
-> We add what step 2 do to .irq_request_resources so that user doesn't
-> need call GPIO API any more when pin for eint usage.
+2016-02-19 4:42 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Thu, Feb 18, 2016 at 3:50 AM, Barry Song <baohua@kernel.org> wrote:
 >
-> Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+>> gpiochip_add(chip will call this automatically since range is set in dtsi:
+>> gpio_0: gpio_mediam@17040000 {
+>> #gpio-cells = <2>;
+>> #interrupt-cells = <2>;
+>> compatible = "sirf,atlas7-gpio";
+>> reg = <0x17040000 0x1000>;
+>> interrupts = <0 13 0>, <0 14 0>;
+>> clocks = <&car 98>;
+>> clock-names = "gpio0_io";
+>> gpio-controller;
+>> interrupt-controller;
+>>
+>> gpio-banks = <2>;
+>> gpio-ranges = <&pinctrl 0 0 0>,
+>> <&pinctrl 32 0 0>;
+>> gpio-ranges-group-names = "lvds_gpio_grp",
+>> "jtag_uart_nand_gpio_grp";
+>
+> Aha I see.
+>
+>>> -
+>>> -               /* Records gpio_pin_range to a7gc */
+>>> -               list_for_each_entry(pin_range, &chip->pin_ranges, node) {
+>>> -                       struct pinctrl_gpio_range *range;
+>>> -
+>>> -                       range = &pin_range->range;
+>>> -                       if (range->id == NGPIO_OF_BANK * idx) {
+>>> -                               bank->gpio_offset = range->id;
+>>> -                               bank->ngpio = range->npins;
+>>> -                               bank->gpio_pins = range->pins;
+>>> -                               bank->pctldev = pin_range->pctldev;
+>>> -                               break;
+>>> -                       }
+>>> -               }
+>>> -
+>>> -               BUG_ON(!bank->pctldev);
+>>
+>> this doesn't work. my pin range is not continuous and linear, so we
+>> need the "if (range->id == NGPIO_OF_BANK * idx)" to calculate the
+>> gpio_offset.
+>> and gpio_offset is used in many places:
+>
+> Can't you use:
+>
+> struct pinctrl_gpio_range *range =
+>                 pinctrl_find_gpio_range_from_pin(pctldev, pin);
+>
+> In these places instead?
 
-Patch applied.
+this is why gpio_offset was involved to avoid doing complex
+pinctrl_find_gpio_range_from_pin() everytime.
+since the range mapping is not linear, gpio_offset is a cache to do that.
 
-Yours,
-Linus Walleij
+>
+> ?
+>
+> That is what most drivers do.
+>
+> Yours,
+> Linus Walleij
+
+-barry
