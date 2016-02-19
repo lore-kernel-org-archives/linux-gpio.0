@@ -1,67 +1,76 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1] GPIO/ACPI: DesignWare: Add GPIO-signaled ACPI events
- support for power button
-Date: Fri, 19 Feb 2016 09:35:37 +0100
-Message-ID: <CACRpkda1JJOg9ZdSL5ccE9oohekNvaDtxiOOTqvOWGhcxVPGjA@mail.gmail.com>
-References: <1455694090-41713-1-git-send-email-qiujiang@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1455694090-41713-1-git-send-email-qiujiang@huawei.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: qiujiang <qiujiang@huawei.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.6
+Date: Fri, 19 Feb 2016 09:54:40 +0100
+Message-ID: <1455872080-7373-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 17, 2016 at 8:28 AM, qiujiang <qiujiang@huawei.com> wrote:
+	Hi Linus,
 
-> This patch modifies the DesignWare GPIO controller driver to
-> support the GPIO-signaled ACPI Events. This is used for power
-> button function on ARM server.
->
-> To make it work, the _AEI and _EVT object must be defined in
-> the corresponding GPIO driver's dsdt table in UEFI as follow:
->
-> Device(GPI0) {
->         Name(_HID, "HISI0181")
->         Name(_ADR, 0) // _ADR: Address
->         Name(_UID, 0)
->
->         Name (_CRS, ResourceTemplate ()  {
->                 Memory32Fixed (ReadWrite, 0x802e0000, 0x10000)
->                 Interrupt (ResourceConsumer, Level, ActiveHigh,
->                 Exclusive,,,) {344}
->         })
->
->         Device(PRTa) {
->                 Name (_DSD, Package () {
->                         Package () {
->                                 Package () {"reg",0},
->                                 Package () {"snps,nr-gpios",32},
->                 }
->                 })
->         }
->
->         Name (_AEI, ResourceTemplate () {
->                 GpioInt(Edge, ActiveLow, ExclusiveAndWake, PullUp, ,
->                 " \\_SB.GPI0") {8}
->         })
->
->         Method (_E08, 0x0, NotSerialized) {
->                 Notify (\_SB.PWRB, 0x80)
->         }
-> }
->
-> Signed-off-by: qiujiang <qiujiang@huawei.com>
+The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
 
-This patch doesn't apply to my tree. Please do the following:
+  Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
 
-- Rebase on the "devel" branch in the linux-gpio tree:
-  https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
+are available in the git repository at:
 
-- Split in two parts as suggested by Andy S.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git sh-pfc-for-v4.6
 
-- Add Mika's ACKs.
+for you to fetch changes up to 4c96cb027be5ceb2c7c0d4dc086d35fd0cfaf14b:
 
-Yours,
-Linus Walleij
+  pinctrl: sh-pfc: r8a7794: Add EtherAVB pin groups (2016-02-18 09:30:59 +0100)
+
+Summary:
+  - Add more pin group support for R-Car E2 and H3,
+  - Implement Manual Errata for R-Car Gen3,
+  - Improve pinmux macros documentation.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Geert Uytterhoeven (4):
+      pinctrl: sh-pfc: Improve pinmux macros documentation
+      pinctrl: sh-pfc: Rename PINMUX_IPSR_DATA() to PINMUX_IPSR_GPSR()
+      pinctrl: sh-pfc: r8a7795: Rename SSI_{WS,SCK}0129 to SSI_{WS,SCK}01239
+      pinctrl: sh-pfc: r8a7795: Remove bits SEL_VSP_1 and SEL_VSP_0
+
+Magnus Damm (2):
+      pinctrl: sh-pfc: r8a7795: Add support for INTC-EX IRQ pins
+      pinctrl: sh-pfc: Rework PFC GPIO support
+
+Ryo Kataoka (2):
+      pinctrl: sh-pfc: r8a7794: Add SSI pin groups
+      pinctrl: sh-pfc: r8a7794: Add audio clock pin groups
+
+Sergei Shtylyov (1):
+      pinctrl: sh-pfc: r8a7794: Add EtherAVB pin groups
+
+Takeshi Kihara (2):
+      pinctrl: sh-pfc: r8a7795: Add USB2.0 host support
+      pinctrl: sh-pfc: r8a7795: Add PWM support
+
+ drivers/pinctrl/sh-pfc/Kconfig       |   54 +-
+ drivers/pinctrl/sh-pfc/Makefile      |    7 +-
+ drivers/pinctrl/sh-pfc/core.c        |    4 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c |  690 ++++++++---------
+ drivers/pinctrl/sh-pfc/pfc-r8a7779.c | 1136 +++++++++++++--------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c |  774 +++++++++----------
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c |  624 +++++++--------
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 1404 ++++++++++++++++++++++++----------
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c |  826 +++++++++++++-------
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c  |  412 +++++-----
+ drivers/pinctrl/sh-pfc/sh_pfc.h      |   98 ++-
+ 11 files changed, 3452 insertions(+), 2577 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
