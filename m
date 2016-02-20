@@ -1,68 +1,61 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] kernel/resource.c: fix muxed resource handling in __request_region()
-Date: Sat, 20 Feb 2016 09:11:54 -0800
-Message-ID: <CA+55aFx9-itKjqahUnXAoeDNgbi1MeNH5gDQB8Sw9AguPwGefQ@mail.gmail.com>
-References: <20150909220140.GD9892@kw.sim.vm.gnt>
-	<1441836918-24159-1-git-send-email-simon.guinot@sequanux.org>
-	<20160219221056.23487da2@x2>
-	<56C7A459.1090801@virtuousgeek.org>
+From: Alban <albeu@free.fr>
+Subject: Re: [PATCH] gpio: ath79: Check valid gpio count for both DT and
+ non-DT cases
+Date: Sat, 20 Feb 2016 19:11:41 +0100
+Message-ID: <20160220191141.395a64c5@tock>
+References: <1455932887.31674.0.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:36157 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758811AbcBTRLy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 20 Feb 2016 12:11:54 -0500
-In-Reply-To: <56C7A459.1090801@virtuousgeek.org>
+Received: from smtp2-g21.free.fr ([212.27.42.2]:34622 "EHLO smtp2-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759151AbcBTSLw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 20 Feb 2016 13:11:52 -0500
+In-Reply-To: <1455932887.31674.0.camel@ingics.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Vincent Pelletier <plr.vincent@gmail.com>, Simon Guinot <simon.guinot@sequanux.org>, Alan Cox <alan@linux.intel.com>, Giel van Schijndel <me@mortis.eu>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Aban Bedel <albeu@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On Fri, Feb 19, 2016 at 3:25 PM, Jesse Barnes <jbarnes@virtuousgeek.org> wrote:
-> +Linus (the de-facto resource guy).
->
-> On 02/19/2016 01:10 PM, Vincent Pelletier wrote:
->>
->> I finally got around to rebasing some patches, and realised that the
->> patch from Simon Guinot below still gets rebased over torvalds' v4.4 .
->>
->> Any reason it was not applied ?
->> Or was the issue fixed in another, non-git-conflicting way ? (I see
->> nothing recent in git log kernel/resource.c)
->>
->> I do not find a trace of a mail confirming that I tested it and that it
->> fixes the issue. So here goes:
->> Tested-by: Vincent Pelletier <plr.vincent@gmail.com>
+On Sat, 20 Feb 2016 09:48:07 +0800
+Axel Lin <axel.lin@ingics.com> wrote:
 
-Hmm.
+> Move the code checking valid gpio count to cover both DT and non-DT cases.
+> 
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
 
-So I'm not entirely happy with the patch, because I think the problem
-with using a possibly free'd parent resource at restart still exists.
+Acked-by: Aban Bedel <albeu@free.fr>
 
-As far as I can tell, if we hit the IORESOURCE_MUXED case *after* we
-have successfully delved into a resource that wasn't busy, we will
-have updated "parent" in a previous iteration of the loop, and we'll
-not use the original parent when we then re-start after the sleep. So
-quite frankly, I suspect any user of MUXED memory regions is still
-fundamentally buggy, and IORESOURCE_MUXED has always been a hacky and
-broken thing.
+> ---
+>  drivers/gpio/gpio-ath79.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
+> index 018ea9d..c4f4cdd 100644
+> --- a/drivers/gpio/gpio-ath79.c
+> +++ b/drivers/gpio/gpio-ath79.c
+> @@ -240,10 +240,6 @@ static int ath79_gpio_probe(struct platform_device *pdev)
+>  			dev_err(&pdev->dev, "ngpios property is not valid\n");
+>  			return err;
+>  		}
+> -		if (ath79_gpio_count >= 32) {
+> -			dev_err(&pdev->dev, "ngpios must be less than 32\n");
+> -			return -EINVAL;
+> -		}
+>  		oe_inverted = of_device_is_compatible(np, "qca,ar9340-gpio");
+>  	} else if (pdata) {
+>  		ath79_gpio_count = pdata->ngpios;
+> @@ -253,6 +249,11 @@ static int ath79_gpio_probe(struct platform_device *pdev)
+>  		return -EINVAL;
+>  	}
+>  
+> +	if (ath79_gpio_count >= 32) {
+> +		dev_err(&pdev->dev, "ngpios must be less than 32\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	ctrl->base = devm_ioremap_nocache(
+>  		&pdev->dev, res->start, resource_size(res));
 
-That said, I ended up applying the patch anyway, even if I despise it.
-For all I know, muxed users never end up having those non-busy
-sub-resources in practice, and maybe there is some serialization at
-the top level for the drivers that use it. So if testing has shown
-that it helps some actual case, I'll believe the testing. But the code
-still looks rather debatable, and the whole IORESOURCE_MUXED approach
-looks broken.
-
-Jesse, that came in through you and the drm tree, I think. Alan is
-marked as author, and there are other people who actually use and can
-test the code. Can you guys think about the code a bit more.
-
-I'm wondering if the *real* fix ends up being to reset the 'parent'
-pointer to the original top-level parent after the sleep?
-
-To recap: the patch is in my tree, but I'm not all that happy about it.
-
-                    Linus
