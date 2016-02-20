@@ -1,124 +1,78 @@
-From: hp197 <draakje197-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] Fix sun7i pin assignment for IRQ's
-Date: Sat, 20 Feb 2016 22:28:25 +0100
-Message-ID: <1456003710-14807-1-git-send-email-henry@nitronetworks.nl>
-Reply-To: henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: [PATCH] kernel/resource.c: fix muxed resource handling in __request_region()
+Date: Sat, 20 Feb 2016 14:15:49 -0800
+Message-ID: <15300c0ce08.2710.f266623ac48c822f02e65082a71b2734@virtuousgeek.org>
+References: <20150909220140.GD9892@kw.sim.vm.gnt>
+ <1441836918-24159-1-git-send-email-simon.guinot@sequanux.org>
+ <20160219221056.23487da2@x2>
+ <56C7A459.1090801@virtuousgeek.org>
+ <CA+55aFx9-itKjqahUnXAoeDNgbi1MeNH5gDQB8Sw9AguPwGefQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDJ57UPZYEDRBANVUO3AKGQEQJSVRVA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Maxime Coquelin <maxime.coquelin-qxv4g6HH51o@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from gproxy7-pub.mail.unifiedlayer.com ([70.40.196.235]:48352 "HELO
+	gproxy7-pub.mail.unifiedlayer.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1753148AbcBTWWz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 20 Feb 2016 17:22:55 -0500
+In-Reply-To: <CA+55aFx9-itKjqahUnXAoeDNgbi1MeNH5gDQB8Sw9AguPwGefQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Vincent Pelletier <plr.vincent@gmail.com>, Simon Guinot <simon.guinot@sequanux.org>, Alan Cox <alan@linux.intel.com>, Giel van Schijndel <me@mortis.eu>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>
 
-IRQ pins are now according this page: http://linux-sunxi.org/A20/PIO
+On February 20, 2016 9:12:01 AM Linus Torvalds 
+<torvalds@linux-foundation.org> wrote:
 
-Signed-off-by: hp197 <henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org>
----
- drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c | 14 --------------
- 1 file changed, 14 deletions(-)
+> On Fri, Feb 19, 2016 at 3:25 PM, Jesse Barnes <jbarnes@virtuousgeek.org> wrote:
+>> +Linus (the de-facto resource guy).
+>>
+>> On 02/19/2016 01:10 PM, Vincent Pelletier wrote:
+>>> Tested-by: Vincent Pelletier <plr.vincent@gmail.com>
+>
+> Hmm.
+>
+> So I'm not entirely happy with the patch, because I think the problem
+> with using a possibly free'd parent resource at restart still exists.
+>
+> As far as I can tell, if we hit the IORESOURCE_MUXED case *after* we
+> have successfully delved into a resource that wasn't busy, we will
+> have updated "parent" in a previous iteration of the loop, and we'll
+> not use the original parent when we then re-start after the sleep. So
+> quite frankly, I suspect any user of MUXED memory regions is still
+> fundamentally buggy, and IORESOURCE_MUXED has always been a hacky and
+> broken thing.
+>
+> That said, I ended up applying the patch anyway, even if I despise it.
+> For all I know, muxed users never end up having those non-busy
+> sub-resources in practice, and maybe there is some serialization at
+> the top level for the drivers that use it. So if testing has shown
+> that it helps some actual case, I'll believe the testing. But the code
+> still looks rather debatable, and the whole IORESOURCE_MUXED approach
+> looks broken.
+>
+> Jesse, that came in through you and the drm tree, I think. Alan is
+> marked as author, and there are other people who actually use and can
+> test the code. Can you guys think about the code a bit more.
+>
+> I'm wondering if the *real* fix ends up being to reset the 'parent'
+> pointer to the original top-level parent after the sleep?
+>
+> To recap: the patch is in my tree, but I'm not all that happy about it.
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c b/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
-index cf1ce0c..4db5e19 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
-@@ -344,25 +344,21 @@ static const struct sunxi_desc_pin sun7i_a20_pins[] = {
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE4 */
- 		  SUNXI_FUNCTION(0x3, "spi2"),		/* CS0 */
--		  SUNXI_FUNCTION_IRQ(0x6, 12)),		/* EINT12 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 20),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE5 */
- 		  SUNXI_FUNCTION(0x3, "spi2"),		/* CLK */
--		  SUNXI_FUNCTION_IRQ(0x6, 13)),		/* EINT13 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 21),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE6 */
- 		  SUNXI_FUNCTION(0x3, "spi2"),		/* MOSI */
--		  SUNXI_FUNCTION_IRQ(0x6, 14)),		/* EINT14 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 22),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE7 */
- 		  SUNXI_FUNCTION(0x3, "spi2"),		/* MISO */
--		  SUNXI_FUNCTION_IRQ(0x6, 15)),		/* EINT15 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 23),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
-@@ -960,65 +956,55 @@ static const struct sunxi_desc_pin sun7i_a20_pins[] = {
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi0"),		/* CS0 */
- 		  SUNXI_FUNCTION(0x3, "uart5"),		/* TX */
--		  SUNXI_FUNCTION_IRQ(0x5, 22)),		/* EINT22 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 11),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi0"),		/* CLK */
- 		  SUNXI_FUNCTION(0x3, "uart5"),		/* RX */
--		  SUNXI_FUNCTION_IRQ(0x5, 23)),		/* EINT23 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 12),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi0"),		/* MOSI */
- 		  SUNXI_FUNCTION(0x3, "uart6"),		/* TX */
- 		  SUNXI_FUNCTION(0x4, "clk_out_a"),	/* CLK_OUT_A */
--		  SUNXI_FUNCTION_IRQ(0x5, 24)),		/* EINT24 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 13),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi0"),		/* MISO */
- 		  SUNXI_FUNCTION(0x3, "uart6"),		/* RX */
- 		  SUNXI_FUNCTION(0x4, "clk_out_b"),	/* CLK_OUT_B */
--		  SUNXI_FUNCTION_IRQ(0x5, 25)),		/* EINT25 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 14),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi0"),		/* CS1 */
- 		  SUNXI_FUNCTION(0x3, "ps2"),		/* SCK1 */
- 		  SUNXI_FUNCTION(0x4, "timer4"),	/* TCLKIN0 */
--		  SUNXI_FUNCTION_IRQ(0x5, 26)),		/* EINT26 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 15),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi1"),		/* CS1 */
- 		  SUNXI_FUNCTION(0x3, "ps2"),		/* SDA1 */
- 		  SUNXI_FUNCTION(0x4, "timer5"),	/* TCLKIN1 */
--		  SUNXI_FUNCTION_IRQ(0x5, 27)),		/* EINT27 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 16),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi1"),		/* CS0 */
- 		  SUNXI_FUNCTION(0x3, "uart2"),		/* RTS */
--		  SUNXI_FUNCTION_IRQ(0x5, 28)),		/* EINT28 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 17),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi1"),		/* CLK */
- 		  SUNXI_FUNCTION(0x3, "uart2"),		/* CTS */
--		  SUNXI_FUNCTION_IRQ(0x5, 29)),		/* EINT29 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 18),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi1"),		/* MOSI */
- 		  SUNXI_FUNCTION(0x3, "uart2"),		/* TX */
--		  SUNXI_FUNCTION_IRQ(0x5, 30)),		/* EINT30 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 19),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi1"),		/* MISO */
- 		  SUNXI_FUNCTION(0x3, "uart2"),		/* RX */
--		  SUNXI_FUNCTION_IRQ(0x5, 31)),		/* EINT31 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 20),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
--- 
-2.5.0
+Thanks, yeah i think testing wins in this case.  I'll revisit the muxed 
+stuff; I do
+remember being dubious at the time, but iirc Alan needed it for something,
+and others had been pushing for these sorts of usages for awhile even though
+we have some good alternatives in the form of bus and platform drivers that
+can manage the appropriate serialization and keep things from stomping
+on one another.
+
+(And sorry if this message comes across in some bullshit format, I'm trying
+out a new ChromeOS based mail client for fun here.)
+
+Thanks,
+Jesse
+
+
