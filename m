@@ -1,61 +1,124 @@
-From: Alban <albeu@free.fr>
-Subject: Re: [PATCH] gpio: ath79: Check valid gpio count for both DT and
- non-DT cases
-Date: Sat, 20 Feb 2016 19:11:41 +0100
-Message-ID: <20160220191141.395a64c5@tock>
-References: <1455932887.31674.0.camel@ingics.com>
+From: hp197 <draakje197-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] Fix sun7i pin assignment for IRQ's
+Date: Sat, 20 Feb 2016 22:28:25 +0100
+Message-ID: <1456003710-14807-1-git-send-email-henry@nitronetworks.nl>
+Reply-To: henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp2-g21.free.fr ([212.27.42.2]:34622 "EHLO smtp2-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759151AbcBTSLw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 20 Feb 2016 13:11:52 -0500
-In-Reply-To: <1455932887.31674.0.camel@ingics.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBDJ57UPZYEDRBANVUO3AKGQEQJSVRVA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Maxime Coquelin <maxime.coquelin-qxv4g6HH51o@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Aban Bedel <albeu@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On Sat, 20 Feb 2016 09:48:07 +0800
-Axel Lin <axel.lin@ingics.com> wrote:
+IRQ pins are now according this page: http://linux-sunxi.org/A20/PIO
 
-> Move the code checking valid gpio count to cover both DT and non-DT cases.
-> 
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Signed-off-by: hp197 <henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org>
+---
+ drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-Acked-by: Aban Bedel <albeu@free.fr>
-
-> ---
->  drivers/gpio/gpio-ath79.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
-> index 018ea9d..c4f4cdd 100644
-> --- a/drivers/gpio/gpio-ath79.c
-> +++ b/drivers/gpio/gpio-ath79.c
-> @@ -240,10 +240,6 @@ static int ath79_gpio_probe(struct platform_device *pdev)
->  			dev_err(&pdev->dev, "ngpios property is not valid\n");
->  			return err;
->  		}
-> -		if (ath79_gpio_count >= 32) {
-> -			dev_err(&pdev->dev, "ngpios must be less than 32\n");
-> -			return -EINVAL;
-> -		}
->  		oe_inverted = of_device_is_compatible(np, "qca,ar9340-gpio");
->  	} else if (pdata) {
->  		ath79_gpio_count = pdata->ngpios;
-> @@ -253,6 +249,11 @@ static int ath79_gpio_probe(struct platform_device *pdev)
->  		return -EINVAL;
->  	}
->  
-> +	if (ath79_gpio_count >= 32) {
-> +		dev_err(&pdev->dev, "ngpios must be less than 32\n");
-> +		return -EINVAL;
-> +	}
-> +
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	ctrl->base = devm_ioremap_nocache(
->  		&pdev->dev, res->start, resource_size(res));
-
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c b/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
+index cf1ce0c..4db5e19 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
+@@ -344,25 +344,21 @@ static const struct sunxi_desc_pin sun7i_a20_pins[] = {
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE4 */
+ 		  SUNXI_FUNCTION(0x3, "spi2"),		/* CS0 */
+-		  SUNXI_FUNCTION_IRQ(0x6, 12)),		/* EINT12 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 20),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE5 */
+ 		  SUNXI_FUNCTION(0x3, "spi2"),		/* CLK */
+-		  SUNXI_FUNCTION_IRQ(0x6, 13)),		/* EINT13 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 21),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE6 */
+ 		  SUNXI_FUNCTION(0x3, "spi2"),		/* MOSI */
+-		  SUNXI_FUNCTION_IRQ(0x6, 14)),		/* EINT14 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 22),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE7 */
+ 		  SUNXI_FUNCTION(0x3, "spi2"),		/* MISO */
+-		  SUNXI_FUNCTION_IRQ(0x6, 15)),		/* EINT15 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 23),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+@@ -960,65 +956,55 @@ static const struct sunxi_desc_pin sun7i_a20_pins[] = {
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi0"),		/* CS0 */
+ 		  SUNXI_FUNCTION(0x3, "uart5"),		/* TX */
+-		  SUNXI_FUNCTION_IRQ(0x5, 22)),		/* EINT22 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 11),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi0"),		/* CLK */
+ 		  SUNXI_FUNCTION(0x3, "uart5"),		/* RX */
+-		  SUNXI_FUNCTION_IRQ(0x5, 23)),		/* EINT23 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 12),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi0"),		/* MOSI */
+ 		  SUNXI_FUNCTION(0x3, "uart6"),		/* TX */
+ 		  SUNXI_FUNCTION(0x4, "clk_out_a"),	/* CLK_OUT_A */
+-		  SUNXI_FUNCTION_IRQ(0x5, 24)),		/* EINT24 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 13),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi0"),		/* MISO */
+ 		  SUNXI_FUNCTION(0x3, "uart6"),		/* RX */
+ 		  SUNXI_FUNCTION(0x4, "clk_out_b"),	/* CLK_OUT_B */
+-		  SUNXI_FUNCTION_IRQ(0x5, 25)),		/* EINT25 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 14),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi0"),		/* CS1 */
+ 		  SUNXI_FUNCTION(0x3, "ps2"),		/* SCK1 */
+ 		  SUNXI_FUNCTION(0x4, "timer4"),	/* TCLKIN0 */
+-		  SUNXI_FUNCTION_IRQ(0x5, 26)),		/* EINT26 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 15),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi1"),		/* CS1 */
+ 		  SUNXI_FUNCTION(0x3, "ps2"),		/* SDA1 */
+ 		  SUNXI_FUNCTION(0x4, "timer5"),	/* TCLKIN1 */
+-		  SUNXI_FUNCTION_IRQ(0x5, 27)),		/* EINT27 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 16),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi1"),		/* CS0 */
+ 		  SUNXI_FUNCTION(0x3, "uart2"),		/* RTS */
+-		  SUNXI_FUNCTION_IRQ(0x5, 28)),		/* EINT28 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 17),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi1"),		/* CLK */
+ 		  SUNXI_FUNCTION(0x3, "uart2"),		/* CTS */
+-		  SUNXI_FUNCTION_IRQ(0x5, 29)),		/* EINT29 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 18),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi1"),		/* MOSI */
+ 		  SUNXI_FUNCTION(0x3, "uart2"),		/* TX */
+-		  SUNXI_FUNCTION_IRQ(0x5, 30)),		/* EINT30 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 19),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi1"),		/* MISO */
+ 		  SUNXI_FUNCTION(0x3, "uart2"),		/* RX */
+-		  SUNXI_FUNCTION_IRQ(0x5, 31)),		/* EINT31 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 20),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-- 
+2.5.0
