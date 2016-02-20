@@ -1,78 +1,64 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: [PATCH] kernel/resource.c: fix muxed resource handling in __request_region()
-Date: Sat, 20 Feb 2016 14:15:49 -0800
-Message-ID: <15300c0ce08.2710.f266623ac48c822f02e65082a71b2734@virtuousgeek.org>
-References: <20150909220140.GD9892@kw.sim.vm.gnt>
- <1441836918-24159-1-git-send-email-simon.guinot@sequanux.org>
- <20160219221056.23487da2@x2>
- <56C7A459.1090801@virtuousgeek.org>
- <CA+55aFx9-itKjqahUnXAoeDNgbi1MeNH5gDQB8Sw9AguPwGefQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Joachim Eastwood <manabian@gmail.com>
+Subject: [PATCH 0/3] pinctrl: lpc18xx: support pint setup
+Date: Sat, 20 Feb 2016 23:51:53 +0100
+Message-ID: <1456008716-6236-1-git-send-email-manabian@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gproxy7-pub.mail.unifiedlayer.com ([70.40.196.235]:48352 "HELO
-	gproxy7-pub.mail.unifiedlayer.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1753148AbcBTWWz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 20 Feb 2016 17:22:55 -0500
-In-Reply-To: <CA+55aFx9-itKjqahUnXAoeDNgbi1MeNH5gDQB8Sw9AguPwGefQ@mail.gmail.com>
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:33133 "EHLO
+	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753035AbcBTWwR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 20 Feb 2016 17:52:17 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vincent Pelletier <plr.vincent@gmail.com>, Simon Guinot <simon.guinot@sequanux.org>, Alan Cox <alan@linux.intel.com>, Giel van Schijndel <me@mortis.eu>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>
+To: linus.walleij@linaro.org
+Cc: Joachim Eastwood <manabian@gmail.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-On February 20, 2016 9:12:01 AM Linus Torvalds 
-<torvalds@linux-foundation.org> wrote:
+Some background here:
+The LPC1850 has no less than 3 GPIO interrupt blocks. One of these
+blocks is called 'gpio pin interrupt' or just PINT. LPC1850 PINT can
+handle up to 8 interrupts and these have a one-to-one relationship with
+the main interrupt controller (NVIC).
 
-> On Fri, Feb 19, 2016 at 3:25 PM, Jesse Barnes <jbarnes@virtuousgeek.org> wrote:
->> +Linus (the de-facto resource guy).
->>
->> On 02/19/2016 01:10 PM, Vincent Pelletier wrote:
->>> Tested-by: Vincent Pelletier <plr.vincent@gmail.com>
->
-> Hmm.
->
-> So I'm not entirely happy with the patch, because I think the problem
-> with using a possibly free'd parent resource at restart still exists.
->
-> As far as I can tell, if we hit the IORESOURCE_MUXED case *after* we
-> have successfully delved into a resource that wasn't busy, we will
-> have updated "parent" in a previous iteration of the loop, and we'll
-> not use the original parent when we then re-start after the sleep. So
-> quite frankly, I suspect any user of MUXED memory regions is still
-> fundamentally buggy, and IORESOURCE_MUXED has always been a hacky and
-> broken thing.
->
-> That said, I ended up applying the patch anyway, even if I despise it.
-> For all I know, muxed users never end up having those non-busy
-> sub-resources in practice, and maybe there is some serialization at
-> the top level for the drivers that use it. So if testing has shown
-> that it helps some actual case, I'll believe the testing. But the code
-> still looks rather debatable, and the whole IORESOURCE_MUXED approach
-> looks broken.
->
-> Jesse, that came in through you and the drm tree, I think. Alan is
-> marked as author, and there are other people who actually use and can
-> test the code. Can you guys think about the code a bit more.
->
-> I'm wondering if the *real* fix ends up being to reset the 'parent'
-> pointer to the original top-level parent after the sleep?
->
-> To recap: the patch is in my tree, but I'm not all that happy about it.
+Selecting which GPIOs that are associated with PINT irq lines is done in
+pinctrl hw block (SCU). The pinctrl device usually deals with the pin
+namespace but PINT selecction is done in the GPIO namespace. Fortunatly
+there is a function that can translate from the pin namespace to the
+GPIO namespace.
 
-Thanks, yeah i think testing wins in this case.  I'll revisit the muxed 
-stuff; I do
-remember being dubious at the time, but iirc Alan needed it for something,
-and others had been pushing for these sorts of usages for awhile even though
-we have some good alternatives in the form of bus and platform drivers that
-can manage the appropriate serialization and keep things from stomping
-on one another.
+Selection is done in DT with the "nxp,gpio-pin-interrupt" property.
+Example usage;
+&pinctrl {
+	gpio_joystick_1_cfg {
+		pins =  "p9_0";
+		function = "gpio";
+		nxp,gpio-pin-interrupt = <0>;
+		input-enable;
+		bias-disable;
+	};
+};
 
-(And sorry if this message comes across in some bullshit format, I'm trying
-out a new ChromeOS based mail client for fun here.)
+The reason for not doing this irq line selection on the fly in the
+irqchip driver is that the registers lie in the SCU hw block not in the
+PINT block and DT gives you more control since you can select a specific
+irq lines easily.
 
-Thanks,
-Jesse
+The irq chip driver is ready but will posted separetly.
 
+Linus; Take a careful look at patch 1 as this one deals with a pinctrl
+locking issue I encountered when trying to use the pinctrl to gpio
+function. I am not that familiar with pinctrl locking so please advice.
+
+
+Joachim Eastwood (3):
+  pinctrl: core: create unlocked version of pinctrl_find_gpio_range_from_pin
+  pinctrl: lpc18xx: add nxp,gpio-pin-interrupt property
+  pinctrl: lpc1850-scu: document nxp,gpio-pin-interrupt
+
+ .../bindings/pinctrl/nxp,lpc1850-scu.txt           |  14 ++
+ drivers/pinctrl/core.c                             |  25 +++-
+ drivers/pinctrl/core.h                             |   4 +
+ drivers/pinctrl/pinctrl-lpc18xx.c                  | 144 ++++++++++++++++++++-
+ 4 files changed, 174 insertions(+), 13 deletions(-)
+
+-- 
+1.8.0
 
