@@ -1,95 +1,140 @@
-From: hp197 <henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org>
-Subject: Re: [PATCH] Fix sun7i pin assignment for IRQ's
-Date: Sat, 20 Feb 2016 17:15:17 -0800 (PST)
-Message-ID: <ca3f6d77-6d71-4723-8b5b-876d7b68dc84@googlegroups.com>
-References: <1456003710-14807-1-git-send-email-henry@nitronetworks.nl>
-Reply-To: henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org
-Mime-Version: 1.0
-Content-Type: multipart/mixed;
-	boundary="----=_Part_5921_1057355744.1456017318103"
-Return-path: <linux-sunxi+bncBDJ57UPZYEDRBJU7US3AKGQELNKHYQY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1456003710-14807-1-git-send-email-henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, maxime.coquelin-qxv4g6HH51o@public.gmane.org, plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org, fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: hp197 <draakje197@gmail.com>
+Subject: [PATCH v2] Fix sun7i pin assignment for IRQ's
+Date: Sun, 21 Feb 2016 02:54:42 +0100
+Message-ID: <1456019688-19116-1-git-send-email-henry@nitronetworks.nl>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:35429 "EHLO
+	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752002AbcBUByw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 20 Feb 2016 20:54:52 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-sunxi@googlegroups.com
+Cc: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Patrice Chotard <patrice.chotard@st.com>, Maxime Coquelin <maxime.coquelin@st.com>, Fabian Frederick <fabf@skynet.be>, Lee Jones <lee@kernel.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-------=_Part_5921_1057355744.1456017318103
-Content-Type: multipart/alternative;
-	boundary="----=_Part_5922_1898216422.1456017318103"
+After testing IRQ pins we found some bugs in the pinctrl declaration.
 
-------=_Part_5922_1898216422.1456017318103
-Content-Type: text/plain; charset=UTF-8
+Signed-off-by: hp197 <henry@nitronetworks.nl>
+---
 
+Changes in v2:
+    After some more testing we found irq on PI pins.
+    they where on mux6 so this is included in my patch.
 
+    Also included is a warning for PI17, this pin was not working
+    on apritzel his bPI and he thinks it might be correlated to
+    GIC and IRQ 29.
+---
+ drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
-Op zaterdag 20 februari 2016 22:28:35 UTC+1 schreef hp197:
->
-> IRQ pins are now according this page: http://linux-sunxi.org/A20/PIO 
->
-> Signed-off-by: hp197 <henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org> 
-> --- 
->  drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c | 14 -------------- 
->  1 file changed, 14 deletions(-) 
->
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c 
-> b/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c 
-> index cf1ce0c..4db5e19 100644 
->
->
-NAK, v2 incomming 
-
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c b/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
+index cf1ce0c..0fe173e 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
+@@ -344,25 +344,21 @@ static const struct sunxi_desc_pin sun7i_a20_pins[] = {
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE4 */
+ 		  SUNXI_FUNCTION(0x3, "spi2"),		/* CS0 */
+-		  SUNXI_FUNCTION_IRQ(0x6, 12)),		/* EINT12 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 20),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE5 */
+ 		  SUNXI_FUNCTION(0x3, "spi2"),		/* CLK */
+-		  SUNXI_FUNCTION_IRQ(0x6, 13)),		/* EINT13 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 21),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE6 */
+ 		  SUNXI_FUNCTION(0x3, "spi2"),		/* MOSI */
+-		  SUNXI_FUNCTION_IRQ(0x6, 14)),		/* EINT14 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 22),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE7 */
+ 		  SUNXI_FUNCTION(0x3, "spi2"),		/* MISO */
+-		  SUNXI_FUNCTION_IRQ(0x6, 15)),		/* EINT15 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 23),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+@@ -960,65 +956,66 @@ static const struct sunxi_desc_pin sun7i_a20_pins[] = {
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi0"),		/* CS0 */
+ 		  SUNXI_FUNCTION(0x3, "uart5"),		/* TX */
+-		  SUNXI_FUNCTION_IRQ(0x5, 22)),		/* EINT22 */
++		  SUNXI_FUNCTION_IRQ(0x6, 22)),		/* EINT22 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 11),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi0"),		/* CLK */
+ 		  SUNXI_FUNCTION(0x3, "uart5"),		/* RX */
+-		  SUNXI_FUNCTION_IRQ(0x5, 23)),		/* EINT23 */
++		  SUNXI_FUNCTION_IRQ(0x6, 23)),		/* EINT23 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 12),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi0"),		/* MOSI */
+ 		  SUNXI_FUNCTION(0x3, "uart6"),		/* TX */
+ 		  SUNXI_FUNCTION(0x4, "clk_out_a"),	/* CLK_OUT_A */
+-		  SUNXI_FUNCTION_IRQ(0x5, 24)),		/* EINT24 */
++		  SUNXI_FUNCTION_IRQ(0x6, 24)),		/* EINT24 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 13),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi0"),		/* MISO */
+ 		  SUNXI_FUNCTION(0x3, "uart6"),		/* RX */
+ 		  SUNXI_FUNCTION(0x4, "clk_out_b"),	/* CLK_OUT_B */
+-		  SUNXI_FUNCTION_IRQ(0x5, 25)),		/* EINT25 */
++		  SUNXI_FUNCTION_IRQ(0x6, 25)),		/* EINT25 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 14),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi0"),		/* CS1 */
+ 		  SUNXI_FUNCTION(0x3, "ps2"),		/* SCK1 */
+ 		  SUNXI_FUNCTION(0x4, "timer4"),	/* TCLKIN0 */
+-		  SUNXI_FUNCTION_IRQ(0x5, 26)),		/* EINT26 */
++		  SUNXI_FUNCTION_IRQ(0x6, 26)),		/* EINT26 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 15),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi1"),		/* CS1 */
+ 		  SUNXI_FUNCTION(0x3, "ps2"),		/* SDA1 */
+ 		  SUNXI_FUNCTION(0x4, "timer5"),	/* TCLKIN1 */
+-		  SUNXI_FUNCTION_IRQ(0x5, 27)),		/* EINT27 */
++		  SUNXI_FUNCTION_IRQ(0x6, 27)),		/* EINT27 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 16),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi1"),		/* CS0 */
+ 		  SUNXI_FUNCTION(0x3, "uart2"),		/* RTS */
+-		  SUNXI_FUNCTION_IRQ(0x5, 28)),		/* EINT28 */
++		  SUNXI_FUNCTION_IRQ(0x6, 28)),		/* EINT28 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 17),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi1"),		/* CLK */
+ 		  SUNXI_FUNCTION(0x3, "uart2"),		/* CTS */
+-		  SUNXI_FUNCTION_IRQ(0x5, 29)),		/* EINT29 */
++		  SUNXI_FUNCTION_IRQ(0x6, 29)),		/* EINT29 */
++		  /* EINT29 might not work - more testing needed */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 18),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi1"),		/* MOSI */
+ 		  SUNXI_FUNCTION(0x3, "uart2"),		/* TX */
+-		  SUNXI_FUNCTION_IRQ(0x5, 30)),		/* EINT30 */
++		  SUNXI_FUNCTION_IRQ(0x6, 30)),		/* EINT30 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 19),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+ 		  SUNXI_FUNCTION(0x2, "spi1"),		/* MISO */
+ 		  SUNXI_FUNCTION(0x3, "uart2"),		/* RX */
+-		  SUNXI_FUNCTION_IRQ(0x5, 31)),		/* EINT31 */
++		  SUNXI_FUNCTION_IRQ(0x6, 31)),		/* EINT31 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 20),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
 -- 
-You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+2.5.0
 
-------=_Part_5922_1898216422.1456017318103
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><br><br>Op zaterdag 20 februari 2016 22:28:35 UTC+1 schree=
-f hp197:<blockquote class=3D"gmail_quote" style=3D"margin: 0;margin-left: 0=
-.8ex;border-left: 1px #ccc solid;padding-left: 1ex;">IRQ pins are now accor=
-ding this page: <a href=3D"http://linux-sunxi.org/A20/PIO" target=3D"_blank=
-" rel=3D"nofollow" onmousedown=3D"this.href=3D&#39;http://www.google.com/ur=
-l?q\75http%3A%2F%2Flinux-sunxi.org%2FA20%2FPIO\46sa\75D\46sntz\0751\46usg\7=
-5AFQjCNHuBR5Ct_BburfazeHZMvpp2IRppA&#39;;return true;" onclick=3D"this.href=
-=3D&#39;http://www.google.com/url?q\75http%3A%2F%2Flinux-sunxi.org%2FA20%2F=
-PIO\46sa\75D\46sntz\0751\46usg\75AFQjCNHuBR5Ct_BburfazeHZMvpp2IRppA&#39;;re=
-turn true;">http://linux-sunxi.org/A20/PIO</a>
-<br>
-<br>Signed-off-by: hp197 &lt;<a href=3D"mailto:henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org" targ=
-et=3D"_blank" rel=3D"nofollow" onmousedown=3D"this.href=3D&#39;mailto:henry=
-@nitronetworks.nl&#39;;return true;" onclick=3D"this.href=3D&#39;mailto:hen=
-ry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org&#39;;return true;">henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org</a>&gt;
-<br>---
-<br>=C2=A0drivers/pinctrl/sunxi/<wbr>pinctrl-sun7i-a20.c | 14 -------------=
--
-<br>=C2=A01 file changed, 14 deletions(-)
-<br>
-<br>diff --git a/drivers/pinctrl/sunxi/<wbr>pinctrl-sun7i-a20.c b/drivers/p=
-inctrl/sunxi/<wbr>pinctrl-sun7i-a20.c
-<br>index cf1ce0c..4db5e19 100644
-<br><br></blockquote><div><br>NAK, v2 incomming <br></div></div>
-
-<p></p>
-
--- <br />
-You received this message because you are subscribed to the Google Groups &=
-quot;linux-sunxi&quot; group.<br />
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to <a href=3D"mailto:linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org">linux-s=
-unxi+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org</a>.<br />
-For more options, visit <a href=3D"https://groups.google.com/d/optout">http=
-s://groups.google.com/d/optout</a>.<br />
-
-------=_Part_5922_1898216422.1456017318103--
-
-------=_Part_5921_1057355744.1456017318103--
