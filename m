@@ -1,8 +1,7 @@
 From: Krzysztof Adamski <k@japko.eu>
-Subject: [PATCH v5 2/4] dts: sun8i-h3: Add APB0 related clocks
- and resets
-Date: Mon, 22 Feb 2016 14:03:26 +0100
-Message-ID: <1456146208-13890-3-git-send-email-k@japko.eu>
+Subject: [PATCH v5 1/4] clk: sunxi: Add apb0 gates for H3
+Date: Mon, 22 Feb 2016 14:03:25 +0100
+Message-ID: <1456146208-13890-2-git-send-email-k@japko.eu>
 References: <1456146208-13890-1-git-send-email-k@japko.eu>
 Reply-To: k@japko.eu
 Mime-Version: 1.0
@@ -20,63 +19,57 @@ To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxim
 Cc: Krzysztof Adamski <k@japko.eu>
 List-Id: linux-gpio@vger.kernel.org
 
-APB0 is bearly mentioned in H3 User Manual and it is only setup in the
-Allwinners kernel dump for CIR. I have verified experimentally that the
-gate for R_PIO exists and works, though. There are probably other gates
-there but I don't know their order right now and I don't have access to
-their peripherals on my board to test them.
-
-After some experiments and reviewing how this is organized on other
-sunxi SoCs, I couldn't actually find any way to disable clocks for R_PIO
-and they are working properly without doing anything so I assume they
-are connected straight to the 24Mhz oscillator for now.
+This patch adds support for APB0 in H3. It seems to be compatible with
+earlier SOCs. apb0 gates controls R_ block peripherals (R_PIO, R_IR,
+etc).
 
 Signed-off-by: Krzysztof Adamski <k@japko.eu>
 ---
- arch/arm/boot/dts/sun8i-h3.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ Documentation/devicetree/bindings/clock/sunxi.txt | 2 ++
+ drivers/clk/sunxi/clk-simple-gates.c              | 4 ++++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index 3ba65c2..1348b69 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -276,6 +276,25 @@
- 			clocks = <&osc24M>, <&pll6 1>, <&pll5>;
- 			clock-output-names = "mbus";
- 		};
-+
-+		apb0: apb0_clk {
-+			compatible = "fixed-factor-clock";
-+			#clock-cells = <0>;
-+			clock-div = <1>;
-+			clock-mult = <1>;
-+			clocks = <&osc24M>;
-+			clock-output-names = "apb0";
-+		};
-+
-+		apb0_gates: clk@01f01428 {
-+			compatible = "allwinner,sun8i-h3-apb0-gates-clk",
-+				     "allwinner,sun4i-a10-gates-clk";
-+			reg = <0x01f01428 0x4>;
-+			#clock-cells = <1>;
-+			clocks = <&apb0>;
-+			clock-indices = <0>, <1>;
-+			clock-output-names = "apb0_pio", "apb0_ir";
-+		};
- 	};
+diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
+index c09f59b..834436f 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+@@ -18,6 +18,7 @@ Required properties:
+ 	"allwinner,sun4i-a10-cpu-clk" - for the CPU multiplexer clock
+ 	"allwinner,sun4i-a10-axi-clk" - for the AXI clock
+ 	"allwinner,sun8i-a23-axi-clk" - for the AXI clock on A23
++	"allwinner,sun4i-a10-gates-clk" - for generic gates on all compatible SoCs
+ 	"allwinner,sun4i-a10-axi-gates-clk" - for the AXI gates
+ 	"allwinner,sun4i-a10-ahb-clk" - for the AHB clock
+ 	"allwinner,sun5i-a13-ahb-clk" - for the AHB clock on A13
+@@ -46,6 +47,7 @@ Required properties:
+ 	"allwinner,sun6i-a31-apb0-gates-clk" - for the APB0 gates on A31
+ 	"allwinner,sun7i-a20-apb0-gates-clk" - for the APB0 gates on A20
+ 	"allwinner,sun8i-a23-apb0-gates-clk" - for the APB0 gates on A23
++	"allwinner,sun8i-h3-apb0-gates-clk" - for the APB0 gates on H3
+ 	"allwinner,sun9i-a80-apb0-gates-clk" - for the APB0 gates on A80
+ 	"allwinner,sun4i-a10-apb1-clk" - for the APB1 clock
+ 	"allwinner,sun9i-a80-apb1-clk" - for the APB1 bus clock on A80
+diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
+index 2cfc5a8..d7ec2dc 100644
+--- a/drivers/clk/sunxi/clk-simple-gates.c
++++ b/drivers/clk/sunxi/clk-simple-gates.c
+@@ -98,6 +98,8 @@ static void __init sunxi_simple_gates_init(struct device_node *node)
+ 	sunxi_simple_gates_setup(node, NULL, 0);
+ }
  
- 	soc {
-@@ -493,5 +512,11 @@
- 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
- 		};
-+
-+		apb0_reset: reset@01f014b0 {
-+			reg = <0x01f014b0 0x4>;
-+			compatible = "allwinner,sun6i-a31-clock-reset";
-+			#reset-cells = <1>;
-+		};
- 	};
- };
++CLK_OF_DECLARE(sun4i_a10_gates, "allwinner,sun4i-a10-gates-clk",
++	       sunxi_simple_gates_init);
+ CLK_OF_DECLARE(sun4i_a10_apb0, "allwinner,sun4i-a10-apb0-gates-clk",
+ 	       sunxi_simple_gates_init);
+ CLK_OF_DECLARE(sun4i_a10_apb1, "allwinner,sun4i-a10-apb1-gates-clk",
+@@ -132,6 +134,8 @@ CLK_OF_DECLARE(sun8i_a33_ahb1, "allwinner,sun8i-a33-ahb1-gates-clk",
+ 	       sunxi_simple_gates_init);
+ CLK_OF_DECLARE(sun8i_a83t_apb0, "allwinner,sun8i-a83t-apb0-gates-clk",
+ 	       sunxi_simple_gates_init);
++CLK_OF_DECLARE(sun8i_h3_apb0, "allwinner,sun8i-h3-apb0-gates-clk",
++	       sunxi_simple_gates_init);
+ CLK_OF_DECLARE(sun9i_a80_ahb0, "allwinner,sun9i-a80-ahb0-gates-clk",
+ 	       sunxi_simple_gates_init);
+ CLK_OF_DECLARE(sun9i_a80_ahb1, "allwinner,sun9i-a80-ahb1-gates-clk",
 -- 
 2.1.4
