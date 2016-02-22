@@ -1,11 +1,14 @@
 From: Krzysztof Adamski <k@japko.eu>
-Subject: [PATCH v5 0/4] pinctrl: sunxi: Add H3 R_PIO controller support
-Date: Mon, 22 Feb 2016 14:03:24 +0100
-Message-ID: <1456146208-13890-1-git-send-email-k@japko.eu>
+Subject: [PATCH v5 2/4] dts: sun8i-h3: Add APB0 related clocks
+ and resets
+Date: Mon, 22 Feb 2016 14:03:26 +0100
+Message-ID: <1456146208-13890-3-git-send-email-k@japko.eu>
+References: <1456146208-13890-1-git-send-email-k@japko.eu>
 Reply-To: k@japko.eu
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDIL57GUWIARB54OVS3AKGQEADC2VBA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-sunxi+bncBDIL57GUWIARB6EOVS3AKGQE22PORXI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <1456146208-13890-1-git-send-email-k-P4rZei/IPtg@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Archive: <https://groups.google.com/group/linux-sunxi
@@ -17,56 +20,63 @@ To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxim
 Cc: Krzysztof Adamski <k@japko.eu>
 List-Id: linux-gpio@vger.kernel.org
 
-This patch series is extension of my original single patch with the same
-subject. It adds support for R_PIO so that GPIO port L can be used in H3
-based devices. It was tested on OrangePi PC and OrangePi Plus where PL
-is connected amount others to an onboard led, a switch, an IR receiver
-and some VCC controllers.
+APB0 is bearly mentioned in H3 User Manual and it is only setup in the
+Allwinners kernel dump for CIR. I have verified experimentally that the
+gate for R_PIO exists and works, though. There are probably other gates
+there but I don't know their order right now and I don't have access to
+their peripherals on my board to test them.
 
-Patchset is based on next-20160222.
+After some experiments and reviewing how this is organized on other
+sunxi SoCs, I couldn't actually find any way to disable clocks for R_PIO
+and they are working properly without doing anything so I assume they
+are connected straight to the 24Mhz oscillator for now.
 
---- 
+Signed-off-by: Krzysztof Adamski <k@japko.eu>
+---
+ arch/arm/boot/dts/sun8i-h3.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-Changes since v4:
-- remove patches that are alredy merged
-- add patch describing leds and switch in DT
-
-Changes since v3:
-- collect some acked-bys
-- fix r_pios #interrupt-cells
-
-Changes since v2:
-- fixed apb0 parrent clocks list
-- moved binding documentation change to the proper patch
-- simplified sunxi_pinctrl_gpio_get according to ChenYu suggestions
-- fixed ordering in sunxi binding documentation
-
-Changes since v1:
-- splited patch to two separate - dtsi and c files
-- added APB0 clocks a parent for R_PIO
-- added fix in sunxi_pinctrl_gpio_get for getting pin value when in irq
-  mode and on 2nd pinctrl
-- fixed a "pwn" > "pwm" typo
-- fixed order in allwinner,sunxi-pinctrl.txt
-
-
-Krzysztof Adamski (4):
-  clk: sunxi: Add apb0 gates for H3
-  dts: sun8i-h3: Add APB0 related clocks and resets
-  ARM: dts: sun8i-h3: Add R_PIO controller node to the dtsi
-  ARM: dts: sun8i: Add leds and switch on Orangepi Plus boards
-
-Krzysztof Adamski (4):
-  clk: sunxi: Add apb0 gates for H3
-  dts: sun8i-h3: Add APB0 related clocks and resets
-  ARM: dts: sun8i-h3: Add R_PIO controller node to the dtsi
-  ARM: dts: sun8i: Add leds and switch on Orangepi Plus boards
-
- Documentation/devicetree/bindings/clock/sunxi.txt |  2 +
- arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts      | 63 +++++++++++++++++++++++
- arch/arm/boot/dts/sun8i-h3.dtsi                   | 37 +++++++++++++
- drivers/clk/sunxi/clk-simple-gates.c              |  4 ++
- 4 files changed, 106 insertions(+)
-
+diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+index 3ba65c2..1348b69 100644
+--- a/arch/arm/boot/dts/sun8i-h3.dtsi
++++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+@@ -276,6 +276,25 @@
+ 			clocks = <&osc24M>, <&pll6 1>, <&pll5>;
+ 			clock-output-names = "mbus";
+ 		};
++
++		apb0: apb0_clk {
++			compatible = "fixed-factor-clock";
++			#clock-cells = <0>;
++			clock-div = <1>;
++			clock-mult = <1>;
++			clocks = <&osc24M>;
++			clock-output-names = "apb0";
++		};
++
++		apb0_gates: clk@01f01428 {
++			compatible = "allwinner,sun8i-h3-apb0-gates-clk",
++				     "allwinner,sun4i-a10-gates-clk";
++			reg = <0x01f01428 0x4>;
++			#clock-cells = <1>;
++			clocks = <&apb0>;
++			clock-indices = <0>, <1>;
++			clock-output-names = "apb0_pio", "apb0_ir";
++		};
+ 	};
+ 
+ 	soc {
+@@ -493,5 +512,11 @@
+ 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
++
++		apb0_reset: reset@01f014b0 {
++			reg = <0x01f014b0 0x4>;
++			compatible = "allwinner,sun6i-a31-clock-reset";
++			#reset-cells = <1>;
++		};
+ 	};
+ };
 -- 
 2.1.4
