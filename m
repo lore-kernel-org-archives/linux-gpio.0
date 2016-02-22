@@ -1,11 +1,11 @@
 From: Henry Paulissen <draakje197-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: [PATCH v6] Fix sun7i pin assignment for IRQ's
-Date: Mon, 22 Feb 2016 18:07:48 +0100
-Message-ID: <1456160876-1894-1-git-send-email-henry@nitronetworks.nl>
+Date: Mon, 22 Feb 2016 18:14:07 +0100
+Message-ID: <1456161251-2303-1-git-send-email-henry@nitronetworks.nl>
 Reply-To: henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDJ57UPZYEDRB34AVW3AKGQEGSHXJXQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-sunxi+bncBDJ57UPZYEDRBZUDVW3AKGQEUJC6OXA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Archive: <https://groups.google.com/group/linux-sunxi
@@ -14,7 +14,7 @@ List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto
 List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
  <https://groups.google.com/group/linux-sunxi/subscribe>
 To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Maxime Coquelin <maxime.coquelin-qxv4g6HH51o@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
 After testing IRQ pins we found some bugs in the pinctrl declaration.
@@ -54,11 +54,11 @@ Changes in v6:
     Added tested and reviewed by tags.
 
 ---
- drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c | 33 ++++++++++++++-----------------
- 1 file changed, 15 insertions(+), 18 deletions(-)
+ drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c | 32 ++++++++++++++-----------------
+ 1 file changed, 14 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c b/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
-index cf1ce0c..ca7b9a3 100644
+index cf1ce0c..435ad30 100644
 --- a/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
 +++ b/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
 @@ -343,26 +343,22 @@ static const struct sunxi_desc_pin sun7i_a20_pins[] = {
@@ -92,7 +92,7 @@ index cf1ce0c..ca7b9a3 100644
  	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 23),
  		  SUNXI_FUNCTION(0x0, "gpio_in"),
  		  SUNXI_FUNCTION(0x1, "gpio_out"),
-@@ -960,65 +956,66 @@ static const struct sunxi_desc_pin sun7i_a20_pins[] = {
+@@ -960,65 +956,65 @@ static const struct sunxi_desc_pin sun7i_a20_pins[] = {
  		  SUNXI_FUNCTION(0x1, "gpio_out"),
  		  SUNXI_FUNCTION(0x2, "spi0"),		/* CS0 */
  		  SUNXI_FUNCTION(0x3, "uart5"),		/* TX */
@@ -151,7 +151,6 @@ index cf1ce0c..ca7b9a3 100644
  		  SUNXI_FUNCTION(0x3, "uart2"),		/* CTS */
 -		  SUNXI_FUNCTION_IRQ(0x5, 29)),		/* EINT29 */
 +		  SUNXI_FUNCTION_IRQ(0x6, 29)),		/* EINT29 */
-+		  /* EINT29 might not work - more testing needed */
  	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 18),
  		  SUNXI_FUNCTION(0x0, "gpio_in"),
  		  SUNXI_FUNCTION(0x1, "gpio_out"),
