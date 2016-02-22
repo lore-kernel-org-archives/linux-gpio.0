@@ -1,172 +1,51 @@
-From: Henry Paulissen <draakje197-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v6] Fix sun7i pin assignment for IRQ's
-Date: Mon, 22 Feb 2016 18:14:07 +0100
-Message-ID: <1456161251-2303-1-git-send-email-henry@nitronetworks.nl>
-Reply-To: henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org
+From: Ray Jui <ray.jui@broadcom.com>
+Subject: Re: [PATCH 11/61] gpio: bcm-kona: Use devm_gpiochip_add_data() for
+ gpio registration
+Date: Mon, 22 Feb 2016 09:17:13 -0800
+Message-ID: <67faee9e-e234-fc60-5465-3193bed4a7c3@broadcom.com>
+References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
+ <1456150130-2668-12-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDJ57UPZYEDRBZUDVW3AKGQEUJC6OXA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Maxime Coquelin <maxime.coquelin-qxv4g6HH51o@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from 5520-maca-inet1-outside.broadcom.com ([216.31.211.11]:55097
+	"EHLO mail-irv-18.broadcom.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751436AbcBVRRS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 22 Feb 2016 12:17:18 -0500
+In-Reply-To: <1456150130-2668-12-git-send-email-ldewangan@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org, gnurou@gmail.com, michael.hennerich@analog.com, corbet@lwn.net, albeu@free.fr, rjui@broadcom.com, shc_work@mail.ru, support.opensource@diasemi.com, swarren@wwwdotorg.org, thierry.reding@gmail.com
+Cc: bjorn.andersson@sonymobile.com, a.kesavan@samsung.com, gregkh@linuxfoundation.org, catalin.marinas@arm.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 
-After testing IRQ pins we found some bugs in the pinctrl declaration.
-Both PI* and PC* pins didn't work. PI* pins seemed to be connected
-to the wrong mux and PC* pins waren't working at all.
 
-Please note that the A20 soc manual is contradicting between version
-and even within the same document for both the PI and PC pins.
 
-Patch is based on testing with the hardware itself.
+On 2/22/2016 6:08 AM, Laxman Dewangan wrote:
+> Use devm_gpiochip_add_data() for GPIO registration.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: Ray Jui <rjui@broadcom.com>
+> ---
+>  drivers/gpio/gpio-bcm-kona.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+> index b6c5abe..2fd38d5 100644
+> --- a/drivers/gpio/gpio-bcm-kona.c
+> +++ b/drivers/gpio/gpio-bcm-kona.c
+> @@ -630,7 +630,7 @@ static int bcm_kona_gpio_probe(struct platform_device *pdev)
+>
+>  	bcm_kona_gpio_reset(kona_gpio);
+>
+> -	ret = gpiochip_add_data(chip, kona_gpio);
+> +	ret = devm_gpiochip_add_data(dev, chip, kona_gpio);
+>  	if (ret < 0) {
+>  		dev_err(dev, "Couldn't add GPIO chip -- %d\n", ret);
+>  		goto err_irq_domain;
+>
 
-Tested-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Reviewed-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Signed-off-by: Henry Paulissen <henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org>
+Acked-by: Ray Jui <ray.jui@broadcom.com>
 
----
-
-Changes in v2:
-    After some more testing we found irq on PI pins.
-    they where on mux6 so this is included in my patch.
-
-    Also included is a warning for PI17, this pin was not working
-    on apritzel his bPI and he thinks it might be correlated to
-    GIC and IRQ 29.
-
-Changes in v3:
-    Changed name from nickname to realname in email and SoB.
-
-Changes in v4:
-    Added closing parenthesis for the C pins.
-
-Changes in v5:
-    Added a more detailed description.
-
-Changes in v6:
-    Removed extra comment about pin I17 (extra tests needed).
-    Added tested and reviewed by tags.
-
----
- drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c | 32 ++++++++++++++-----------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c b/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
-index cf1ce0c..435ad30 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
-@@ -343,26 +343,22 @@ static const struct sunxi_desc_pin sun7i_a20_pins[] = {
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE4 */
--		  SUNXI_FUNCTION(0x3, "spi2"),		/* CS0 */
--		  SUNXI_FUNCTION_IRQ(0x6, 12)),		/* EINT12 */
-+		  SUNXI_FUNCTION(0x3, "spi2")),		/* CS0 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 20),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE5 */
--		  SUNXI_FUNCTION(0x3, "spi2"),		/* CLK */
--		  SUNXI_FUNCTION_IRQ(0x6, 13)),		/* EINT13 */
-+		  SUNXI_FUNCTION(0x3, "spi2")),		/* CLK */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 21),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE6 */
--		  SUNXI_FUNCTION(0x3, "spi2"),		/* MOSI */
--		  SUNXI_FUNCTION_IRQ(0x6, 14)),		/* EINT14 */
-+		  SUNXI_FUNCTION(0x3, "spi2")),		/* MOSI */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 22),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "nand0"),		/* NCE7 */
--		  SUNXI_FUNCTION(0x3, "spi2"),		/* MISO */
--		  SUNXI_FUNCTION_IRQ(0x6, 15)),		/* EINT15 */
-+		  SUNXI_FUNCTION(0x3, "spi2")),		/* MISO */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 23),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
-@@ -960,65 +956,65 @@ static const struct sunxi_desc_pin sun7i_a20_pins[] = {
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi0"),		/* CS0 */
- 		  SUNXI_FUNCTION(0x3, "uart5"),		/* TX */
--		  SUNXI_FUNCTION_IRQ(0x5, 22)),		/* EINT22 */
-+		  SUNXI_FUNCTION_IRQ(0x6, 22)),		/* EINT22 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 11),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi0"),		/* CLK */
- 		  SUNXI_FUNCTION(0x3, "uart5"),		/* RX */
--		  SUNXI_FUNCTION_IRQ(0x5, 23)),		/* EINT23 */
-+		  SUNXI_FUNCTION_IRQ(0x6, 23)),		/* EINT23 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 12),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi0"),		/* MOSI */
- 		  SUNXI_FUNCTION(0x3, "uart6"),		/* TX */
- 		  SUNXI_FUNCTION(0x4, "clk_out_a"),	/* CLK_OUT_A */
--		  SUNXI_FUNCTION_IRQ(0x5, 24)),		/* EINT24 */
-+		  SUNXI_FUNCTION_IRQ(0x6, 24)),		/* EINT24 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 13),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi0"),		/* MISO */
- 		  SUNXI_FUNCTION(0x3, "uart6"),		/* RX */
- 		  SUNXI_FUNCTION(0x4, "clk_out_b"),	/* CLK_OUT_B */
--		  SUNXI_FUNCTION_IRQ(0x5, 25)),		/* EINT25 */
-+		  SUNXI_FUNCTION_IRQ(0x6, 25)),		/* EINT25 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 14),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi0"),		/* CS1 */
- 		  SUNXI_FUNCTION(0x3, "ps2"),		/* SCK1 */
- 		  SUNXI_FUNCTION(0x4, "timer4"),	/* TCLKIN0 */
--		  SUNXI_FUNCTION_IRQ(0x5, 26)),		/* EINT26 */
-+		  SUNXI_FUNCTION_IRQ(0x6, 26)),		/* EINT26 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 15),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi1"),		/* CS1 */
- 		  SUNXI_FUNCTION(0x3, "ps2"),		/* SDA1 */
- 		  SUNXI_FUNCTION(0x4, "timer5"),	/* TCLKIN1 */
--		  SUNXI_FUNCTION_IRQ(0x5, 27)),		/* EINT27 */
-+		  SUNXI_FUNCTION_IRQ(0x6, 27)),		/* EINT27 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 16),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi1"),		/* CS0 */
- 		  SUNXI_FUNCTION(0x3, "uart2"),		/* RTS */
--		  SUNXI_FUNCTION_IRQ(0x5, 28)),		/* EINT28 */
-+		  SUNXI_FUNCTION_IRQ(0x6, 28)),		/* EINT28 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 17),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi1"),		/* CLK */
- 		  SUNXI_FUNCTION(0x3, "uart2"),		/* CTS */
--		  SUNXI_FUNCTION_IRQ(0x5, 29)),		/* EINT29 */
-+		  SUNXI_FUNCTION_IRQ(0x6, 29)),		/* EINT29 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 18),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi1"),		/* MOSI */
- 		  SUNXI_FUNCTION(0x3, "uart2"),		/* TX */
--		  SUNXI_FUNCTION_IRQ(0x5, 30)),		/* EINT30 */
-+		  SUNXI_FUNCTION_IRQ(0x6, 30)),		/* EINT30 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 19),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "spi1"),		/* MISO */
- 		  SUNXI_FUNCTION(0x3, "uart2"),		/* RX */
--		  SUNXI_FUNCTION_IRQ(0x5, 31)),		/* EINT31 */
-+		  SUNXI_FUNCTION_IRQ(0x6, 31)),		/* EINT31 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 20),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
--- 
-2.5.0
+Thanks!
