@@ -1,55 +1,34 @@
-From: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
-Subject: Re: [PATCH] gpio: ts4800: Drop redundant code to set already
- initialized gpio_chip fields
-Date: Mon, 22 Feb 2016 11:13:47 -0500 (EST)
-Message-ID: <1939670978.164659.1456157627925.JavaMail.zimbra@savoirfairelinux.com>
-References: <1455949366.14139.1.camel@ingics.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 09/61] gpio: arizona: Use devm_gpiochip_add_data() for
+ gpio registration
+Date: Mon, 22 Feb 2016 16:28:43 +0000
+Message-ID: <20160222162843.GA1490@localhost.localdomain>
+References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
+ <1456150130-2668-10-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.savoirfairelinux.com ([208.88.110.44]:58652 "EHLO
-	mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750731AbcBVQNu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Feb 2016 11:13:50 -0500
-In-Reply-To: <1455949366.14139.1.camel@ingics.com>
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:44764 "EHLO
+	mx0a-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750910AbcBVQ3a (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 22 Feb 2016 11:29:30 -0500
+Content-Disposition: inline
+In-Reply-To: <1456150130-2668-10-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, michael.hennerich@analog.com, corbet@lwn.net, albeu@free.fr, rjui@broadcom.com, shc_work@mail.ru, support.opensource@diasemi.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, bjorn.andersson@sonymobile.com, a.kesavan@samsung.com, gregkh@linuxfoundation.org, catalin.marinas@arm.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 
-Hello,
-
-Thank you for this patch. I checked and it still works as expected.
-
------ Original Message -----
-> From: "Axel Lin" <axel.lin@ingics.com>
-> To: "Linus Walleij" <linus.walleij@linaro.org>
-> Cc: "Julien Grossholtz" <julien.grossholtz@savoirfairelinux.com>, "Alexandre Courbot" <gnurou@gmail.com>,
-> linux-gpio@vger.kernel.org
-> Sent: Saturday, February 20, 2016 1:22:46 AM
-> Subject: [PATCH] gpio: ts4800: Drop redundant code to set already initialized gpio_chip fields
-
-> Both chip->base and chip->label are correctly set by bgpio_init().
+On Mon, Feb 22, 2016 at 07:37:58PM +0530, Laxman Dewangan wrote:
+> Use devm_gpiochip_add_data() for GPIO registration and remove the
+> need of driver callback .remove.
 > 
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Tested-by: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: patches@opensource.wolfsonmicro.com
 > ---
-> drivers/gpio/gpio-ts4800.c | 2 --
-> 1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-ts4800.c b/drivers/gpio/gpio-ts4800.c
-> index 9da79e4..1478245 100644
-> --- a/drivers/gpio/gpio-ts4800.c
-> +++ b/drivers/gpio/gpio-ts4800.c
-> @@ -54,8 +54,6 @@ static int ts4800_gpio_probe(struct platform_device *pdev)
-> 		return retval;
-> 	}
-> 
-> -	chip->base = -1;
-> -	chip->label = dev_name(&pdev->dev);
-> 	chip->ngpio = ngpios;
-> 
-> 	platform_set_drvdata(pdev, chip);
-> --
-> 2.1.4
+
+Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+
+Thanks,
+Charles
