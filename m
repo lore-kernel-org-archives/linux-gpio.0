@@ -1,53 +1,75 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [RFT][PATCH v2 3/3] gpio: mpc8xxx: Slightly update the code for
- better readability
-Date: Mon, 22 Feb 2016 15:24:54 +0800
-Message-ID: <1456125894.27297.2.camel@ingics.com>
-References: <1456125772.27297.0.camel@ingics.com>
+From: Krzysztof Adamski <k@japko.eu>
+Subject: Re: Re: [PATCH v3] Fix sun7i pin assignment for IRQ's
+Date: Mon, 22 Feb 2016 09:00:42 +0100
+Message-ID: <20160222080041.GF18745@box2.japko.eu>
+References: <1456060845-20692-1-git-send-email-henry@nitronetworks.nl>
+ <20160221171830.GD19169@lukather>
+ <4cf9dbe3-faa6-4729-87fd-0e7d9ce463b0@googlegroups.com>
+Reply-To: k@japko.eu
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:34209 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753323AbcBVHY6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Feb 2016 02:24:58 -0500
-Received: by mail-pa0-f46.google.com with SMTP id fy10so86541508pac.1
-        for <linux-gpio@vger.kernel.org>; Sun, 21 Feb 2016 23:24:58 -0800 (PST)
-In-Reply-To: <1456125772.27297.0.camel@ingics.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Return-path: <linux-sunxi+bncBDIL57GUWIARB5UAVO3AKGQEXELH4HY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4cf9dbe3-faa6-4729-87fd-0e7d9ce463b0-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Henry Paulissen <henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org>
+Cc: linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, draakje197-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, patrice.chotard-qxv4g6HH51o@public.gmane.org, plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org, maxime.coquelin-qxv4g6HH51o@public.gmane.org, fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Liu Gang <Gang.Liu@nxp.com>, Alexandre Courbot <gnurou@gmail.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org
 
-Setting gc->direction_output to gc->direction_output looks strange.
-I think this change makes the intention more clear.
+On Sun, Feb 21, 2016 at 11:27:46AM -0800, Henry Paulissen wrote:
+>
+>Op zondag 21 februari 2016 18:18:37 UTC+1 schreef Maxime Ripard:
+>
+>>
+>> Your commit log is going to need some work. Which bugs? What tests did
+>> you make? Why are you making these changes while the datasheet says
+>> otherwise?
+>>
+>
+>Its a fix for a not yet existing bug. I was fiddling around with IRQ's and
+>couldn't get them to work.
+>I took a dumpster dive into it and found a shitload of contradicting
+>manuals and datasheets.
+>
+>
+>Take for example the A20 user manual:
+>http://dl.linux-sunxi.org/A20/A20%20user%20manual%20v1.3%2020141010.pdf
+>
+>(pin PI14)
+>Page 237: EINT26 is on mux *5* in the pin overview.
+>Page 288: EINT26 is on mux *6* in the registers.
+>
+>Page 233: EINT12 is on pin PC19 mux6 in the pin overview.
+>Page 236: EINT12 is on pin PH12 mux6 in the pin overview.
+>Page 253: EINT12 is *not* on pin PC19 on the registers.
+>Page 281: EINT12 is on pin PH12 mux6 in the registers.
+>
+>So manual may say otherwise, but I hope I have proven that the manual isn't
+>to be trusted.
+>
+>My patch is based onto testing from both me and Andre (apritzel).
+>He with a Banana PI M1 and me with a Cubietruck (both A20 soc).
+>
+>We did a basic test by connecting a pulsing signal to a port and configure
+>kernel to use irq.
+>
+>e.g.
+>echo pin# > /sys/class/gpio/export
+>echo in > /sys/class/gpio/gpio#/direction
+>echo rising > /sys/class/gpio/gpio#/edge
+>
+>and check on /proc/interrupts to see if a irq was attached and if it was
+>receiving.
+>
+>Im not sure what andre his pulse source was, but mine was a 1pps coming
+>from a gps.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/gpio/gpio-mpc8xxx.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index bc042ad6..425501c 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -339,8 +339,11 @@ static int mpc8xxx_probe(struct platform_device *pdev)
- 	 */
- 	mpc8xxx_irq_chip.irq_set_type = devtype->irq_set_type;
- 
--	gc->direction_output = devtype->gpio_dir_out ?: gc->direction_output;
--	gc->get = devtype->gpio_get ?: gc->get;
-+	if (devtype->gpio_dir_out)
-+		gc->direction_output = devtype->gpio_dir_out;
-+	if (devtype->gpio_get)
-+		gc->get = devtype->gpio_get;
-+
- 	gc->to_irq = mpc8xxx_gpio_to_irq;
- 
- 	ret = gpiochip_add_data(gc, mpc8xxx_gc);
--- 
-2.1.4
-
-
-
+That's quite clear to anybody reading this mailinglist but it won't be 
+to anyone reading just commit message (and there will be many of them).  
+You should try to put some of this into the commit message.
