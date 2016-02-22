@@ -1,14 +1,11 @@
 From: Krzysztof Adamski <k@japko.eu>
-Subject: [PATCH v5 3/4] ARM: dts: sun8i-h3: Add R_PIO controller
- node to the dtsi
-Date: Mon, 22 Feb 2016 14:03:27 +0100
-Message-ID: <1456146208-13890-4-git-send-email-k@japko.eu>
-References: <1456146208-13890-1-git-send-email-k@japko.eu>
+Subject: [PATCH v5 0/4] pinctrl: sunxi: Add H3 R_PIO controller support
+Date: Mon, 22 Feb 2016 14:03:24 +0100
+Message-ID: <1456146208-13890-1-git-send-email-k@japko.eu>
 Reply-To: k@japko.eu
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDIL57GUWIARB6EOVS3AKGQE22PORXI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1456146208-13890-1-git-send-email-k-P4rZei/IPtg@public.gmane.org>
+Return-path: <linux-sunxi+bncBDIL57GUWIARB54OVS3AKGQEADC2VBA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Archive: <https://groups.google.com/group/linux-sunxi
@@ -20,35 +17,56 @@ To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxim
 Cc: Krzysztof Adamski <k@japko.eu>
 List-Id: linux-gpio@vger.kernel.org
 
-Add the corresponding device node for R_PIO on H3 to the dtsi. Support
-for the controller was added in earlier commit.
+This patch series is extension of my original single patch with the same
+subject. It adds support for R_PIO so that GPIO port L can be used in H3
+based devices. It was tested on OrangePi PC and OrangePi Plus where PL
+is connected amount others to an onboard led, a switch, an IR receiver
+and some VCC controllers.
 
-Signed-off-by: Krzysztof Adamski <k@japko.eu>
----
- arch/arm/boot/dts/sun8i-h3.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Patchset is based on next-20160222.
 
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index 1348b69..c3b73d7 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -518,5 +518,17 @@
- 			compatible = "allwinner,sun6i-a31-clock-reset";
- 			#reset-cells = <1>;
- 		};
-+
-+		r_pio: pinctrl@01f02c00 {
-+			compatible = "allwinner,sun8i-h3-r-pinctrl";
-+			reg = <0x01f02c00 0x400>;
-+			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&apb0_gates 0>;
-+			resets = <&apb0_reset 0>;
-+			gpio-controller;
-+			#gpio-cells = <3>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+		};
- 	};
- };
+--- 
+
+Changes since v4:
+- remove patches that are alredy merged
+- add patch describing leds and switch in DT
+
+Changes since v3:
+- collect some acked-bys
+- fix r_pios #interrupt-cells
+
+Changes since v2:
+- fixed apb0 parrent clocks list
+- moved binding documentation change to the proper patch
+- simplified sunxi_pinctrl_gpio_get according to ChenYu suggestions
+- fixed ordering in sunxi binding documentation
+
+Changes since v1:
+- splited patch to two separate - dtsi and c files
+- added APB0 clocks a parent for R_PIO
+- added fix in sunxi_pinctrl_gpio_get for getting pin value when in irq
+  mode and on 2nd pinctrl
+- fixed a "pwn" > "pwm" typo
+- fixed order in allwinner,sunxi-pinctrl.txt
+
+
+Krzysztof Adamski (4):
+  clk: sunxi: Add apb0 gates for H3
+  dts: sun8i-h3: Add APB0 related clocks and resets
+  ARM: dts: sun8i-h3: Add R_PIO controller node to the dtsi
+  ARM: dts: sun8i: Add leds and switch on Orangepi Plus boards
+
+Krzysztof Adamski (4):
+  clk: sunxi: Add apb0 gates for H3
+  dts: sun8i-h3: Add APB0 related clocks and resets
+  ARM: dts: sun8i-h3: Add R_PIO controller node to the dtsi
+  ARM: dts: sun8i: Add leds and switch on Orangepi Plus boards
+
+ Documentation/devicetree/bindings/clock/sunxi.txt |  2 +
+ arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts      | 63 +++++++++++++++++++++++
+ arch/arm/boot/dts/sun8i-h3.dtsi                   | 37 +++++++++++++
+ drivers/clk/sunxi/clk-simple-gates.c              |  4 ++
+ 4 files changed, 106 insertions(+)
+
 -- 
 2.1.4
