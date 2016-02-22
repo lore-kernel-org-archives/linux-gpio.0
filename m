@@ -1,75 +1,108 @@
 From: Krzysztof Adamski <k@japko.eu>
-Subject: [PATCH v5 1/4] clk: sunxi: Add apb0 gates for H3
-Date: Mon, 22 Feb 2016 14:03:25 +0100
-Message-ID: <1456146208-13890-2-git-send-email-k@japko.eu>
+Subject: [PATCH v5 4/4] ARM: dts: sun8i: Add leds and switch on Orangepi Plus boards
+Date: Mon, 22 Feb 2016 14:03:28 +0100
+Message-ID: <1456146208-13890-5-git-send-email-k@japko.eu>
 References: <1456146208-13890-1-git-send-email-k@japko.eu>
-Reply-To: k@japko.eu
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDIL57GUWIARB6EOVS3AKGQE22PORXI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1456146208-13890-1-git-send-email-k-P4rZei/IPtg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Cc: Krzysztof Adamski <k@japko.eu>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from box2.japko.eu ([91.121.152.53]:45364 "EHLO box2.japko.eu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754284AbcBVNE6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 22 Feb 2016 08:04:58 -0500
+In-Reply-To: <1456146208-13890-1-git-send-email-k@japko.eu>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Fabian Frederick <fabf@skynet.be>, Vishnu Patekar <vishnupatekar0510@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc: Krzysztof Adamski <k@japko.eu>
 
-This patch adds support for APB0 in H3. It seems to be compatible with
-earlier SOCs. apb0 gates controls R_ block peripherals (R_PIO, R_IR,
-etc).
+OrangePi Plus board has two leds - green ("pwr") and red ("status")
+and a switch ("sw4"). This patch describes them in a devicetree.
 
 Signed-off-by: Krzysztof Adamski <k@japko.eu>
 ---
- Documentation/devicetree/bindings/clock/sunxi.txt | 2 ++
- drivers/clk/sunxi/clk-simple-gates.c              | 4 ++++
- 2 files changed, 6 insertions(+)
+ arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts | 63 ++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-index c09f59b..834436f 100644
---- a/Documentation/devicetree/bindings/clock/sunxi.txt
-+++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-@@ -18,6 +18,7 @@ Required properties:
- 	"allwinner,sun4i-a10-cpu-clk" - for the CPU multiplexer clock
- 	"allwinner,sun4i-a10-axi-clk" - for the AXI clock
- 	"allwinner,sun8i-a23-axi-clk" - for the AXI clock on A23
-+	"allwinner,sun4i-a10-gates-clk" - for generic gates on all compatible SoCs
- 	"allwinner,sun4i-a10-axi-gates-clk" - for the AXI gates
- 	"allwinner,sun4i-a10-ahb-clk" - for the AHB clock
- 	"allwinner,sun5i-a13-ahb-clk" - for the AHB clock on A13
-@@ -46,6 +47,7 @@ Required properties:
- 	"allwinner,sun6i-a31-apb0-gates-clk" - for the APB0 gates on A31
- 	"allwinner,sun7i-a20-apb0-gates-clk" - for the APB0 gates on A20
- 	"allwinner,sun8i-a23-apb0-gates-clk" - for the APB0 gates on A23
-+	"allwinner,sun8i-h3-apb0-gates-clk" - for the APB0 gates on H3
- 	"allwinner,sun9i-a80-apb0-gates-clk" - for the APB0 gates on A80
- 	"allwinner,sun4i-a10-apb1-clk" - for the APB1 clock
- 	"allwinner,sun9i-a80-apb1-clk" - for the APB1 bus clock on A80
-diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
-index 2cfc5a8..d7ec2dc 100644
---- a/drivers/clk/sunxi/clk-simple-gates.c
-+++ b/drivers/clk/sunxi/clk-simple-gates.c
-@@ -98,6 +98,8 @@ static void __init sunxi_simple_gates_init(struct device_node *node)
- 	sunxi_simple_gates_setup(node, NULL, 0);
- }
+diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts
+index e67df59..5f159d0 100644
+--- a/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts
++++ b/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts
+@@ -45,6 +45,7 @@
+ #include "sunxi-common-regulators.dtsi"
  
-+CLK_OF_DECLARE(sun4i_a10_gates, "allwinner,sun4i-a10-gates-clk",
-+	       sunxi_simple_gates_init);
- CLK_OF_DECLARE(sun4i_a10_apb0, "allwinner,sun4i-a10-apb0-gates-clk",
- 	       sunxi_simple_gates_init);
- CLK_OF_DECLARE(sun4i_a10_apb1, "allwinner,sun4i-a10-apb1-gates-clk",
-@@ -132,6 +134,8 @@ CLK_OF_DECLARE(sun8i_a33_ahb1, "allwinner,sun8i-a33-ahb1-gates-clk",
- 	       sunxi_simple_gates_init);
- CLK_OF_DECLARE(sun8i_a83t_apb0, "allwinner,sun8i-a83t-apb0-gates-clk",
- 	       sunxi_simple_gates_init);
-+CLK_OF_DECLARE(sun8i_h3_apb0, "allwinner,sun8i-h3-apb0-gates-clk",
-+	       sunxi_simple_gates_init);
- CLK_OF_DECLARE(sun9i_a80_ahb0, "allwinner,sun9i-a80-ahb0-gates-clk",
- 	       sunxi_simple_gates_init);
- CLK_OF_DECLARE(sun9i_a80_ahb1, "allwinner,sun9i-a80-ahb1-gates-clk",
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ #include <dt-bindings/pinctrl/sun4i-a10.h>
+ 
+ / {
+@@ -58,6 +59,68 @@
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&leds_opc>;
++
++		status_led {
++			label = "status:red:user";
++			gpios = <&pio 0 15 GPIO_ACTIVE_HIGH>;
++		};
++	};
++
++	r_leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&leds_r_opc>;
++
++		tx {
++			label = "pwr:green:user";
++			gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++		};
++	};
++
++	r_gpio_keys {
++		compatible = "gpio-keys";
++		input-name = "sw4";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&sw_r_opc>;
++
++		sw4@0 {
++			label = "sw4";
++			linux,code = <BTN_0>;
++			gpios = <&r_pio 0 3 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&pio {
++	leds_opc: led_pins@0 {
++		allwinner,pins = "PA15";
++		allwinner,function = "gpio_out";
++		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
++	};
++};
++
++&r_pio {
++	leds_r_opc: led_pins@0 {
++		allwinner,pins = "PL10";
++		allwinner,function = "gpio_out";
++		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
++	};
++
++	sw_r_opc: key_pins@0 {
++		allwinner,pins = "PL03";
++		allwinner,function = "gpio_in";
++		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
++	};
+ };
+ 
+ &mmc0 {
 -- 
 2.1.4
+
