@@ -1,35 +1,47 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 3/3] input: gpio_keys: Make use of the device property API
-Date: Mon, 22 Feb 2016 11:58:15 -0800
-Message-ID: <20160222195815.GB28343@dtor-ws>
-References: <1455876982-6743-1-git-send-email-geert+renesas@glider.be>
- <1455876982-6743-4-git-send-email-geert+renesas@glider.be>
+From: Alban <albeu@free.fr>
+Subject: Re: [PATCH 10/61] gpio: ath79: Use devm_gpiochip_add_data() for
+ gpio registration
+Date: Mon, 22 Feb 2016 21:13:23 +0100
+Message-ID: <20160222211323.5c10533f@tock>
+References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
+	<1456150130-2668-11-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:36805 "EHLO
-	mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752435AbcBVT6T (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Feb 2016 14:58:19 -0500
-Content-Disposition: inline
-In-Reply-To: <1455876982-6743-4-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1456150130-2668-11-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Aban Bedel <albeu@free.fr>, linus.walleij@linaro.org, gnurou@gmail.com, michael.hennerich@analog.com, corbet@lwn.net, rjui@broadcom.com, shc_work@mail.ru, support.opensource@diasemi.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, bjorn.andersson@sonymobile.com, a.kesavan@samsung.com, gregkh@linuxfoundation.org, catalin.marinas@arm.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Vincent Pelletier <plr.vincent@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Fri, Feb 19, 2016 at 11:16:22AM +0100, Geert Uytterhoeven wrote:
-> @@ -887,7 +870,7 @@ static struct platform_driver gpio_keys_device_driver = {
->  	.driver		= {
->  		.name	= "gpio-keys",
->  		.pm	= &gpio_keys_pm_ops,
-> -		.of_match_table = of_match_ptr(gpio_keys_of_match),
-> +		.of_match_table = gpio_keys_of_match,
+On Mon, 22 Feb 2016 19:37:59 +0530
+Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-Why are we changing this? I think match table should still be guarded
-by #ifdef CONFIG_OF.
+> Use devm_gpiochip_add_data() for GPIO registration.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: Alban Bedel <albeu@free.fr>
+> ---
+>  drivers/gpio/gpio-ath79.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
+> index d13dd13..a6aad59 100644
+> --- a/drivers/gpio/gpio-ath79.c
+> +++ b/drivers/gpio/gpio-ath79.c
+> @@ -182,7 +182,7 @@ static int ath79_gpio_probe(struct platform_device *pdev)
+>  		ctrl->chip.direction_output = ar934x_gpio_direction_output;
+>  	}
+>  
+> -	err = gpiochip_add_data(&ctrl->chip, ctrl);
+> +	err = devm_gpiochip_add_data(&pdev->dev, &ctrl->chip, ctrl);
+>  	if (err) {
+>  		dev_err(&pdev->dev,
+>  			"cannot add AR71xx GPIO chip, error=%d", err);
 
-Thanks.
+With the patches already applied to the devel branch a few more changes
+will be needed to remove the calls to gpiochip_remove() in the probe
+error path and the remove callback.
 
--- 
-Dmitry
+Alban
