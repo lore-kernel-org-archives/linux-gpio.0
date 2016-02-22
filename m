@@ -1,27 +1,28 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: [PATCH v4] Fix sun7i pin assignment for IRQ's
-Date: Sun, 21 Feb 2016 15:46:13 -0800
-Message-ID: <CAGb2v64gBVPcZun6snrQccW6MQk3n+bCX_kg7VF_Lrb+ZyT39A@mail.gmail.com>
-References: <1456096638-21961-1-git-send-email-henry@nitronetworks.nl>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+From: Gregory Fong <gregory.0xf0@gmail.com>
+Subject: Re: [PATCH] gpio: brcmstb: Use list_for_each_entry at appropriate places
+Date: Sun, 21 Feb 2016 16:42:59 -0800
+Message-ID: <CADtm3G4aUh2W+enoTydS3=1JWngmsXh2C_=CxNyvfp_QfAnnQg@mail.gmail.com>
+References: <1455933037.31674.2.camel@ingics.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBXEYVG3AKGQEVAOA3KQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1456096638-21961-1-git-send-email-henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Henry Paulissen <draakje197-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f180.google.com ([209.85.223.180]:33976 "EHLO
+	mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751296AbcBVAn3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 21 Feb 2016 19:43:29 -0500
+Received: by mail-io0-f180.google.com with SMTP id 9so162629724iom.1
+        for <linux-gpio@vger.kernel.org>; Sun, 21 Feb 2016 16:43:29 -0800 (PST)
+In-Reply-To: <1455933037.31674.2.camel@ingics.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On Sun, Feb 21, 2016 at 3:17 PM, Henry Paulissen <draakje197-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> After testing IRQ pins we found some bugs in the pinctrl declaration.
+On Fri, Feb 19, 2016 at 5:50 PM, Axel Lin <axel.lin@ingics.com> wrote:
+> Use list_for_each_entry to simplify the code a bit.
 >
-> Signed-off-by: Henry Paulissen <henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org>
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
 
-Acked-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
+
+Thanks for the cleanup.
