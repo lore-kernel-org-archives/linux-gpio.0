@@ -1,30 +1,58 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 3/3] pinctrl: lpc1850-scu: document nxp,gpio-pin-interrupt
-Date: Mon, 22 Feb 2016 13:11:02 -0600
-Message-ID: <20160222191102.GA10728@rob-hp-laptop>
-References: <1456008716-6236-1-git-send-email-manabian@gmail.com>
- <1456008716-6236-4-git-send-email-manabian@gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] input: gpio_keys_polled: Correct check for invalid gpiod
+Date: Mon, 22 Feb 2016 11:54:02 -0800
+Message-ID: <20160222195402.GA28343@dtor-ws>
+References: <1455876273-5913-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:55756 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751907AbcBVTLG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 22 Feb 2016 14:11:06 -0500
+Return-path: <linux-input-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1456008716-6236-4-git-send-email-manabian@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1455876273-5913-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-input-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-On Sat, Feb 20, 2016 at 11:51:56PM +0100, Joachim Eastwood wrote:
-> Update devicetree documention for lpc1850-scu with the new
-> nxp,gpio-pin-interrupt property.
+On Fri, Feb 19, 2016 at 11:04:33AM +0100, Geert Uytterhoeven wrote:
+> At this point in gpio_keys_polled_probe(), button->gpiod contains either
+> a pointer to a GPIO descriptor or NULL, because:
+>   - gpio_keys_polled_get_devtree_pdata() fills in button->gpiod only if
+>     devm_get_gpiod_from_child() succeeded,
+>   - gpio_to_desc() returns NULL on failure, not an ERR_PTR(),
+>   - button->gpiod is untouched if it was NULL, and button->gpio is not
+>     valid.
 > 
-> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+> Hence check for NULL only, and return -EINVAL on failure.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  .../devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt        | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+> Question: Should it return -ENOENT instead?
+> 
+> next-20160219:drivers/leds/leds-gpio.c uses -EINVAL, too.
+> ---
+>  drivers/input/keyboard/gpio_keys_polled.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
+> index 62bdb1d48c49dbd9..1ef3c66099a50d72 100644
+> --- a/drivers/input/keyboard/gpio_keys_polled.c
+> +++ b/drivers/input/keyboard/gpio_keys_polled.c
+> @@ -330,8 +330,8 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
+>  			button->gpiod = gpio_to_desc(button->gpio);
+>  		}
+>  
+> -		if (IS_ERR(button->gpiod))
+> -			return PTR_ERR(button->gpiod);
+> +		if (!button->gpiod)
+> +			return -EINVAL;
 
-Acked-by: Rob Herring <robh@kernel.org>
+I wonder if we should move this check into body of
+
+	if (!button->gpiod && gpio_is_valid(button->gpio)) {
+		...
+	}
+
+Thanks.
+
+-- 
+Dmitry
