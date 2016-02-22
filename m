@@ -1,108 +1,39 @@
-From: Krzysztof Adamski <k@japko.eu>
-Subject: [PATCH v5 4/4] ARM: dts: sun8i: Add leds and switch on Orangepi Plus boards
-Date: Mon, 22 Feb 2016 14:03:28 +0100
-Message-ID: <1456146208-13890-5-git-send-email-k@japko.eu>
-References: <1456146208-13890-1-git-send-email-k@japko.eu>
+From: Alan Cox <alan@linux.intel.com>
+Subject: Re: [PATCH] kernel/resource.c: fix muxed resource handling in
+ __request_region()
+Date: Mon, 22 Feb 2016 13:49:12 +0000
+Message-ID: <1456148952.24303.273.camel@linux.intel.com>
+References: <20150909220140.GD9892@kw.sim.vm.gnt>
+	 <1441836918-24159-1-git-send-email-simon.guinot@sequanux.org>
+	 <20160219221056.23487da2@x2> <56C7A459.1090801@virtuousgeek.org>
+	 <CA+55aFx9-itKjqahUnXAoeDNgbi1MeNH5gDQB8Sw9AguPwGefQ@mail.gmail.com>
+	 <15300c0ce08.2710.f266623ac48c822f02e65082a71b2734@virtuousgeek.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from box2.japko.eu ([91.121.152.53]:45364 "EHLO box2.japko.eu"
+Received: from mga01.intel.com ([192.55.52.88]:9504 "EHLO mga01.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754284AbcBVNE6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 22 Feb 2016 08:04:58 -0500
-In-Reply-To: <1456146208-13890-1-git-send-email-k@japko.eu>
+	id S1755121AbcBVNuO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 22 Feb 2016 08:50:14 -0500
+In-Reply-To: <15300c0ce08.2710.f266623ac48c822f02e65082a71b2734@virtuousgeek.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Fabian Frederick <fabf@skynet.be>, Vishnu Patekar <vishnupatekar0510@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Cc: Krzysztof Adamski <k@japko.eu>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Vincent Pelletier <plr.vincent@gmail.com>, Simon Guinot <simon.guinot@sequanux.org>, Giel van Schijndel <me@mortis.eu>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>
 
-OrangePi Plus board has two leds - green ("pwr") and red ("status")
-and a switch ("sw4"). This patch describes them in a devicetree.
+> we have some good alternatives in the form of bus and platform
+> drivers that
+> can manage the appropriate serialization and keep things from
+> stomping
+> on one another.
 
-Signed-off-by: Krzysztof Adamski <k@japko.eu>
----
- arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts | 63 ++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+It's not used much, especially nowdays. The use case is basically multi
+I/O chips on the ISA/LPC bus with magic shared config register ports.
 
-diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts
-index e67df59..5f159d0 100644
---- a/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts
-@@ -45,6 +45,7 @@
- #include "sunxi-common-regulators.dtsi"
- 
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
- #include <dt-bindings/pinctrl/sun4i-a10.h>
- 
- / {
-@@ -58,6 +59,68 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&leds_opc>;
-+
-+		status_led {
-+			label = "status:red:user";
-+			gpios = <&pio 0 15 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	r_leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&leds_r_opc>;
-+
-+		tx {
-+			label = "pwr:green:user";
-+			gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>;
-+			default-state = "on";
-+		};
-+	};
-+
-+	r_gpio_keys {
-+		compatible = "gpio-keys";
-+		input-name = "sw4";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sw_r_opc>;
-+
-+		sw4@0 {
-+			label = "sw4";
-+			linux,code = <BTN_0>;
-+			gpios = <&r_pio 0 3 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+};
-+
-+&pio {
-+	leds_opc: led_pins@0 {
-+		allwinner,pins = "PA15";
-+		allwinner,function = "gpio_out";
-+		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-+	};
-+};
-+
-+&r_pio {
-+	leds_r_opc: led_pins@0 {
-+		allwinner,pins = "PL10";
-+		allwinner,function = "gpio_out";
-+		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-+	};
-+
-+	sw_r_opc: key_pins@0 {
-+		allwinner,pins = "PL03";
-+		allwinner,function = "gpio_in";
-+		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-+		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-+	};
- };
- 
- &mmc0 {
--- 
-2.1.4
+We have sufficiently few of those we could give muxed the boot and
+special case them if preferred.
+
+Alan
+
 
