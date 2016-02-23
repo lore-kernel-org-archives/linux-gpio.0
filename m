@@ -1,114 +1,47 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 2/3] input: gpio_keys: Switch from irq_of_parse_and_map()
- to platform_get_irq()
-Date: Tue, 23 Feb 2016 11:35:48 -0800
-Message-ID: <20160223193548.GC30638@dtor-ws>
-References: <1455876982-6743-1-git-send-email-geert+renesas@glider.be>
- <1455876982-6743-3-git-send-email-geert+renesas@glider.be>
+From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH] kernel/resource.c: fix muxed resource handling in
+ __request_region()
+Date: Tue, 23 Feb 2016 21:38:35 +0000
+Message-ID: <20160223213835.50e42ca5@lxorguk.ukuu.org.uk>
+References: <20150909220140.GD9892@kw.sim.vm.gnt>
+	<1441836918-24159-1-git-send-email-simon.guinot@sequanux.org>
+	<20160219221056.23487da2@x2>
+	<56C7A459.1090801@virtuousgeek.org>
+	<CA+55aFx9-itKjqahUnXAoeDNgbi1MeNH5gDQB8Sw9AguPwGefQ@mail.gmail.com>
+	<15300c0ce08.2710.f266623ac48c822f02e65082a71b2734@virtuousgeek.org>
+	<1456148952.24303.273.camel@linux.intel.com>
+	<56CB7391.30203@virtuousgeek.org>
+	<20160223161920.GB3840@kw.sim.vm.gnt>
+	<56CC9489.7060706@virtuousgeek.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:36268 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753249AbcBWTfv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Feb 2016 14:35:51 -0500
-Content-Disposition: inline
-In-Reply-To: <1455876982-6743-3-git-send-email-geert+renesas@glider.be>
+Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:54094 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751370AbcBWVjS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Feb 2016 16:39:18 -0500
+In-Reply-To: <56CC9489.7060706@virtuousgeek.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Vincent Pelletier <plr.vincent@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: Simon Guinot <simon.guinot@sequanux.org>, Alan Cox <alan@linux.intel.com>, Linus Torvalds <torvalds@linux-foundation.org>, Vincent Pelletier <plr.vincent@gmail.com>, Giel van Schijndel <me@mortis.eu>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>, Linus Walleij <linus.walleij@linaro.org>
 
-On Fri, Feb 19, 2016 at 11:16:21AM +0100, Geert Uytterhoeven wrote:
-> Note that irq_of_parse_and_map() returns 0 on failure, while
-> platform_get_irq() returns -ENXIO on failure, so we have to make irq
-> signed, and update all error checks.
+> > IORESOURCE_MUXED is a convenient way to deal with that. For some code
+> > examples you can look at the superio_* functions in the IT87 drivers:
+> > gpio/gpio-it87.c, hwmon/it87.c and watchdog/it87_wdt.c.
+> > 
+> > I am not aware of any other users for IORESOURCE_MUXED.
+> > 
+> > Let me know how you want to go and if you need my help.  
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/input/keyboard/gpio_keys.c | 16 ++++++++--------
->  include/linux/gpio_keys.h          |  2 +-
->  2 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
-> index d2b6c3acd9c32f1d..b6262d94aff19f70 100644
-> --- a/drivers/input/keyboard/gpio_keys.c
-> +++ b/drivers/input/keyboard/gpio_keys.c
-> @@ -30,7 +30,6 @@
->  #include <linux/of.h>
->  #include <linux/of_platform.h>
->  #include <linux/of_gpio.h>
-> -#include <linux/of_irq.h>
->  #include <linux/spinlock.h>
->  
->  struct gpio_button_data {
-> @@ -511,7 +510,7 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
->  						button->debounce_interval;
->  		}
->  
-> -		if (button->irq) {
-> +		if (button->irq >= 0) {
->  			bdata->irq = button->irq;
->  		} else {
->  			irq = gpiod_to_irq(button->gpiod);
-> @@ -531,7 +530,7 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
->  		irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING;
->  
->  	} else {
-> -		if (!button->irq) {
-> +		if (button->irq < 0) {
->  			dev_err(dev, "No IRQ specified\n");
->  			return -EINVAL;
->  		}
-> @@ -631,8 +630,9 @@ static void gpio_keys_close(struct input_dev *input)
->   * Translate OpenFirmware node properties into platform_data
->   */
->  static struct gpio_keys_platform_data *
-> -gpio_keys_get_devtree_pdata(struct device *dev)
-> +gpio_keys_get_devtree_pdata(struct platform_device *pdev)
->  {
-> +	struct device *dev = &pdev->dev;
->  	struct device_node *node, *pp;
->  	struct gpio_keys_platform_data *pdata;
->  	struct gpio_keys_button *button;
-> @@ -681,9 +681,9 @@ gpio_keys_get_devtree_pdata(struct device *dev)
->  			button->active_low = flags & OF_GPIO_ACTIVE_LOW;
->  		}
->  
-> -		button->irq = irq_of_parse_and_map(pp, 0);
-> +		button->irq = platform_get_irq(pdev, 0);
+> I'd be happy if you proposed a patch.  It would also be nice if we could
+> somehow more formally limit the MUXED usage to these super I/O devices,
+> just so other users don't get into trouble thinking it's more general
+> than it is.
 
-There are a lot of current users of platform data that do not specify
-button IRQ (and leave it as 0). If we start treating 0 as valid IRQ
-number then we may break them.
+Today I think the problem wouldn't exist. We'd tell the authors of the
+drivers to create an mfd or similar to manage the resources and load the
+appropriate extra goodies.
 
-I do not think that any real setup will actually use IRQ 0 as anything
-but timer, so can we do:
-
-		int irq;
-
-		...
-
-		irq = platform_get_irq(pdev, 0);
-		if (irq < 0) {
-			if (irq == -EPROBE_DEFER)
-				return ERR_PTR(-EPROBE_DEFER);
-
-			/* The driver treats IRQ 0 as invalid */
-			irq = 0;
-		}
-
-		button->irq = irq;
-
-and leave the rest of the code and users as is?
-
-
-Or maybe inner condition should be:
-
-			if (irq != -ENXIO)
-				return ERR_PTR(irq);
-
-Thanks.
-
--- 
-Dmitry
+Alan
