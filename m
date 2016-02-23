@@ -1,48 +1,32 @@
-From: Vincent Pelletier <plr.vincent@gmail.com>
-Subject: Re: [PATCH] kernel/resource.c: fix muxed resource handling in
- __request_region()
-Date: Tue, 23 Feb 2016 09:00:24 +0100
-Message-ID: <20160223090024.2963da69@x2>
-References: <20150909220140.GD9892@kw.sim.vm.gnt>
-	<1441836918-24159-1-git-send-email-simon.guinot@sequanux.org>
-	<20160219221056.23487da2@x2>
-	<56C7A459.1090801@virtuousgeek.org>
-	<CA+55aFx9-itKjqahUnXAoeDNgbi1MeNH5gDQB8Sw9AguPwGefQ@mail.gmail.com>
-	<15300c0ce08.2710.f266623ac48c822f02e65082a71b2734@virtuousgeek.org>
-	<1456148952.24303.273.camel@linux.intel.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 00/61] gpio: Add and use devm_gpiochip_add_data()
+Date: Tue, 23 Feb 2016 14:31:08 +0530
+Message-ID: <56CC1FD4.1080905@nvidia.com>
+References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com> <CACRpkdbt+RiWMA74e40MNZVnDM0t0futtFnbyu9sRhv7p93-Tg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:35559 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932326AbcBWH5z (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Feb 2016 02:57:55 -0500
-In-Reply-To: <1456148952.24303.273.camel@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbt+RiWMA74e40MNZVnDM0t0futtFnbyu9sRhv7p93-Tg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michael Hennerich <michael.hennerich@analog.com>, Jon Corbet <corbet@lwn.net>, Alban Bedel <albeu@free.fr>, Ray Jui <rjui@broadcom.com>, Alexander Shiyan <shc_work@mail.ru>, Support Opensource <support.opensource@diasemi.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?IkFuZGVyc3NvbiwgQmrDtnJuIg==?= <bjorn.andersson@sonymobile.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Greg KH <gregkh@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, WOLFSON MICROELECTRONICS DRIVERS <patches@opensource.wolfsonmicro.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Alan Cox <alan@linux.intel.com>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, Linus Torvalds <torvalds@linux-foundation.org>, Simon Guinot <simon.guinot@sequanux.org>, Giel van Schijndel <me@mortis.eu>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>
 
-On Mon, 22 Feb 2016 13:49:12 +0000, Alan Cox <alan@linux.intel.com>
-wrote:
-> It's not used much, especially nowdays. The use case is basically multi
-> I/O chips on the ISA/LPC bus with magic shared config register ports.
 
-This is precisely a super I/O driver (gpio-f7188x) which, when used
-with concurrent accesses on an SMP machine triggered the issue which
-prompted this patch.
+On Monday 22 February 2016 08:14 PM, Linus Walleij wrote:
+> On Mon, Feb 22, 2016 at 3:07 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+>
+>> Add resource management APIs for gpiochip_add_data() and
+>> gpiochip_remove() and use these APIs from different HW drivers.
+>>
+>> This is based on discussion on patch to use the new APIs.
+>>          gpio: Add devm_ apis for gpio_chip_add and remove
+> Awesome!
+>
+> Do you have a git I can just pull these off so I don't have to apply
+> then all one-by-one?
 
-In case information on the original issue is desired:
-My original report (ignore attached patch, it was rejected as it
-breaks other chips supported by this driver):
-  http://permalink.gmane.org/gmane.linux.kernel.gpio/10204
-My test procedure (second half of the mail), which I used to validate
-the patch against 4.1:
-  http://permalink.gmane.org/gmane.linux.kernel.gpio/10216
-Simon Guinot & Vincent Donnefort debugging results:
-  http://permalink.gmane.org/gmane.linux.kernel.gpio/10521
 
-Regards,
--- 
-Vincent Pelletier
+Nop, I do not have the git repo for sharing as of now at this time.
+Trying to learn to how to create.
