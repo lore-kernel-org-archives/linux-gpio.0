@@ -1,36 +1,90 @@
-From: Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] gpio: rcar: Use ARCH_RENESAS
-Date: Tue, 23 Feb 2016 10:36:51 +0900
-Message-ID: <1456191411-5569-1-git-send-email-horms+renesas@verge.net.au>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>
+From: Peter Hung <hpeter@gmail.com>
+Subject: [PATCH V4 0/4] Transform Fintek PCIE driver from 8250 to MFD
+Date: Tue, 23 Feb 2016 14:29:59 +0800
+Message-ID: <1456209003-22396-1-git-send-email-hpeter+linux_kernel@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, paul.gortmaker@windriver.com, lee.jones@linaro.org, jslaby@suse.com, gnomes@lxorguk.ukuu.org.uk, peter_hong@fintek.com.tw
+Cc: heikki.krogerus@linux.intel.com, peter@hurleysoftware.com, soeren.grunewald@desy.de, udknight@gmail.com, adam.lee@canonical.com, arnd@arndb.de, manabian@gmail.com, scottwood@freescale.com, yamada.masahiro@socionext.com, paul.burton@imgtec.com, mans@mansr.com, matthias.bgg@gmail.com, ralf@linux-mips.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, tom_tsai@fintek.com.tw, Peter Hung <hpeter+linux_kernel@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
+The Fintek F81504/508/512 is a multi-function PCIE devices.
+IC function list:
+    F81504: Max 2x8 GPIOs and max 4 serial ports
+        port2/3 are multi-function
+    F81508: Max 6x8 GPIOs and max 8 serial ports
+        port2/3 are multi-function, port8/9/10/11 are gpio only
+    F81512: Max 6x8 GPIOs and max 12 serial ports
+        port2/3/8/9/10/11 are multi-function
 
-This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+It had implemented in 8250_pci.c with basic serial port function.
+We want to complete it. Alan & Andy recommend us to rewrite and
+spilt our driver with MFD architecture.
+https://lkml.org/lkml/2016/1/19/288
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/gpio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Paul recommed us do less code deletion to avoid confusing problem when
+bisect.
+https://lkml.org/lkml/2016/1/18/646
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index ad226485a8e4..5584ba457161 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -351,7 +351,7 @@ config GPIO_PXA
- 
- config GPIO_RCAR
- 	tristate "Renesas R-Car GPIO"
--	depends on ARCH_SHMOBILE || COMPILE_TEST
-+	depends on ARCH_RENESAS || COMPILE_TEST
- 	select GPIOLIB_IRQCHIP
- 	help
- 	  Say yes here to support GPIO on Renesas R-Car SoCs.
+So we'll do this with following patches.
+    1. Add MFD core driver.
+    2. Add GPIOLIB driver.
+    3. Add serial port driver.
+    4. Remove old driver in 8250_pci.c and add it to blacklist
+
+8250_pci.c will still handle the device when patches 1~3. After apply
+patch 4, the device will control by F81504 MFD core driver.
+
+Changelog:
+V4:
+    1. Fix the comment style
+    2. Fix the warning (.owner = THIS_MODULE) reported by kbuild bot
+       with f81504_core.c & 8250_f81504.c
+    3. Remove unused Kconfig option (RATIONAL) with 8250_f81504.c
+    4. Remove unused variable (quot/rem) with f81504_check_baudrate()
+       in 8250_f81504.c
+V3:
+    1. Refactoring gpio-f81504.c with new API
+       (Suggested by Linus Walleij).
+    2. Fix wrong kfree in gpio-f81504.c (Suggested by Andy Shevchenko).
+    3. Get PCI resource by pci_resource_start() instead of getting PCI
+       resource from BAR of PCI configuration space (Suggested by Alan).
+
+V2:
+    1. Split F81504/508/512 from 8250_pci.c to MFD, It'll add 3 new files
+       1. drivers/mfd/f81504-core.c
+       2. drivers/gpio/gpio-f81504.c
+       3. drivers/tty/serial/8250/8250_f81504.c
+
+V1:
+    1. Split F81504/508/512 from 8250_pci.c to 8250_fintek_pci.c.
+       Alan & Andy recommend me to rewrite as MFD architecture.
+
+Peter Hung (4):
+  mfd: f81504-core: Add Fintek F81504/508/512 PCIE-to-UART/GPIO core
+    support
+  gpio: gpio-f81504: Add Fintek F81504/508/512 PCIE-to-UART/GPIO GPIOLIB
+    support
+  8250: 8250_f81504: Add Fintek F81504/508/512 PCIE-to-UART/GPIO UART
+    support
+  serial: 8250_pci: Remove Fintek F81504/508/512 UART driver
+
+ drivers/gpio/Kconfig                  |  10 +
+ drivers/gpio/Makefile                 |   1 +
+ drivers/gpio/gpio-f81504.c            | 241 ++++++++++++++++++++++++
+ drivers/mfd/Kconfig                   |  12 ++
+ drivers/mfd/Makefile                  |   2 +
+ drivers/mfd/f81504-core.c             | 335 ++++++++++++++++++++++++++++++++++
+ drivers/tty/serial/8250/8250_f81504.c | 250 +++++++++++++++++++++++++
+ drivers/tty/serial/8250/8250_pci.c    | 206 +--------------------
+ drivers/tty/serial/8250/Kconfig       |  10 +
+ drivers/tty/serial/8250/Makefile      |   1 +
+ include/linux/mfd/f81504.h            |  52 ++++++
+ 11 files changed, 919 insertions(+), 201 deletions(-)
+ create mode 100644 drivers/gpio/gpio-f81504.c
+ create mode 100644 drivers/mfd/f81504-core.c
+ create mode 100644 drivers/tty/serial/8250/8250_f81504.c
+ create mode 100644 include/linux/mfd/f81504.h
+
 -- 
-2.1.4
+1.9.1
