@@ -1,47 +1,112 @@
-From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Subject: Re: [PATCH] kernel/resource.c: fix muxed resource handling in
- __request_region()
-Date: Tue, 23 Feb 2016 21:38:35 +0000
-Message-ID: <20160223213835.50e42ca5@lxorguk.ukuu.org.uk>
-References: <20150909220140.GD9892@kw.sim.vm.gnt>
-	<1441836918-24159-1-git-send-email-simon.guinot@sequanux.org>
-	<20160219221056.23487da2@x2>
-	<56C7A459.1090801@virtuousgeek.org>
-	<CA+55aFx9-itKjqahUnXAoeDNgbi1MeNH5gDQB8Sw9AguPwGefQ@mail.gmail.com>
-	<15300c0ce08.2710.f266623ac48c822f02e65082a71b2734@virtuousgeek.org>
-	<1456148952.24303.273.camel@linux.intel.com>
-	<56CB7391.30203@virtuousgeek.org>
-	<20160223161920.GB3840@kw.sim.vm.gnt>
-	<56CC9489.7060706@virtuousgeek.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 3/4] gpio: dt-bindings: Declare gpio-hog optional for
+ GPIO subnodes
+Date: Tue, 23 Feb 2016 17:25:34 -0600
+Message-ID: <20160223232534.GA29637@rob-hp-laptop>
+References: <1456214089-13954-1-git-send-email-mpa@pengutronix.de>
+ <1456214089-13954-3-git-send-email-mpa@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:54094 "EHLO
-	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751370AbcBWVjS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Feb 2016 16:39:18 -0500
-In-Reply-To: <56CC9489.7060706@virtuousgeek.org>
+Received: from mail.kernel.org ([198.145.29.136]:55221 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751711AbcBWXZq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 23 Feb 2016 18:25:46 -0500
+Content-Disposition: inline
+In-Reply-To: <1456214089-13954-3-git-send-email-mpa@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Simon Guinot <simon.guinot@sequanux.org>, Alan Cox <alan@linux.intel.com>, Linus Torvalds <torvalds@linux-foundation.org>, Vincent Pelletier <plr.vincent@gmail.com>, Giel van Schijndel <me@mortis.eu>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>, Linus Walleij <linus.walleij@linaro.org>
+To: Markus Pargmann <mpa@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org
 
-> > IORESOURCE_MUXED is a convenient way to deal with that. For some code
-> > examples you can look at the superio_* functions in the IT87 drivers:
-> > gpio/gpio-it87.c, hwmon/it87.c and watchdog/it87_wdt.c.
-> > 
-> > I am not aware of any other users for IORESOURCE_MUXED.
-> > 
-> > Let me know how you want to go and if you need my help.  
+On Tue, Feb 23, 2016 at 08:54:48AM +0100, Markus Pargmann wrote:
+> Reuse the GPIO hogging DT bindings for more generic specifications of
+> the GPIO. Therefore gpio-hog is declared optional.
+
+Before extending this binding further, we need to consider other cases 
+that have been discussed recently such as gpio switch binding and 
+whether it should fit in with this.
+
+My biggest issue with this binding is whether the DT changes because 
+today we don't have a driver for some GPIO line and tomorrow we do.
+
+That said, some specific comments below:
+
+> Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio.txt | 28 ++++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 7 deletions(-)
 > 
-> I'd be happy if you proposed a patch.  It would also be nice if we could
-> somehow more formally limit the MUXED usage to these super I/O devices,
-> just so other users don't get into trouble thinking it's more general
-> than it is.
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+> index 069cdf6f9dac..820898e0649c 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+> @@ -155,13 +155,25 @@ gpio-controller@00000000 {
+>  	ngpios = <18>;
+>  }
+>  
+> -The GPIO chip may contain GPIO hog definitions. GPIO hogging is a mechanism
+> -providing automatic GPIO request and configuration as part of the
+> -gpio-controller's driver probe function.
+> +The GPIO chip may contain subnodes describing specific GPIOs of this
+> +controller. These GPIO nodes can be used to define GPIO hogging or define GPIO
+> +names.
+> +GPIO hogging is a mechanism providing automatic GPIO request and configuration
+> +as part of the gpio-controller's driver probe function.
 
-Today I think the problem wouldn't exist. We'd tell the authors of the
-drivers to create an mfd or similar to manage the resources and load the
-appropriate extra goodies.
+Linux driver details don't belong in binding descriptions.
 
-Alan
+> -Each GPIO hog definition is represented as a child node of the GPIO controller.
+> +Each GPIO node consists of the following properties:
+>  Required properties:
+> +- gpios:      Store the GPIO information (id, flags, ...). Shall contain the
+> +	      number of cells specified in its parent node (GPIO controller
+> +	      node).
+> +
+> +Optional properties:
+> +- line-name:  The GPIO name. If not present the node name is used.
+
+I'd like to deprecate line-name in favor of the standard property 
+for user visible names "label".
+
+>  - gpio-hog:   A property specifying that this child node represent a GPIO hog.
+> +
+> +For GPIO hogging which is specified by the "gpio-hog" property the following
+> +additional properties are required.
+> +Required properties for GPIO hogging:
+>  - gpios:      Store the GPIO information (id, flags, ...). Shall contain the
+
+This doesn't make sense. gpios is always required and already listed 
+above.
+
+>  	      number of cells specified in its parent node (GPIO controller
+>  	      node).
+> @@ -175,9 +187,6 @@ configuration.
+>  - output-high A property specifying to set the GPIO direction as output with
+>  	      the value high.
+>  
+> -Optional properties:
+> -- line-name:  The GPIO label name. If not present the node name is used.
+> -
+>  Example of two SOC GPIO banks defined as gpio-controller nodes:
+>  
+>  	qe_pio_a: gpio-controller@1400 {
+> @@ -192,6 +201,11 @@ Example of two SOC GPIO banks defined as gpio-controller nodes:
+>  			output-low;
+>  			line-name = "foo-bar-gpio";
+>  		};
+> +
+> +		line_c {
+> +			gpios = <7 0>;
+> +			line-name = "SCHEMATIC_LINE_NAME";
+> +		};
+>  	};
+>  
+>  	qe_pio_e: gpio-controller@1460 {
+> -- 
+> 2.7.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
