@@ -1,55 +1,77 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] gpiolib: shifters used as flags in gpio_ioctl()
-Date: Tue, 23 Feb 2016 12:44:50 +0300
-Message-ID: <20160223094450.GB4030@mwanda>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH V4 1/4] mfd: f81504-core: Add Fintek F81504/508/512
+ PCIE-to-UART/GPIO core support
+Date: Tue, 23 Feb 2016 13:05:17 +0200
+Message-ID: <1456225517.13244.41.camel@linux.intel.com>
+References: <1456209003-22396-1-git-send-email-hpeter+linux_kernel@gmail.com>
+	 <1456209003-22396-2-git-send-email-hpeter+linux_kernel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:44850 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750758AbcBWJpH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Feb 2016 04:45:07 -0500
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1456209003-22396-2-git-send-email-hpeter+linux_kernel@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Hung <hpeter@gmail.com>, linus.walleij@linaro.org, gnurou@gmail.com, gregkh@linuxfoundation.org, paul.gortmaker@windriver.com, lee.jones@linaro.org, jslaby@suse.com, gnomes@lxorguk.ukuu.org.uk, peter_hong@fintek.com.tw
+Cc: heikki.krogerus@linux.intel.com, peter@hurleysoftware.com, soeren.grunewald@desy.de, udknight@gmail.com, adam.lee@canonical.com, arnd@arndb.de, manabian@gmail.com, scottwood@freescale.com, yamada.masahiro@socionext.com, paul.burton@imgtec.com, mans@mansr.com, matthias.bgg@gmail.com, ralf@linux-mips.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, tom_tsai@fintek.com.tw, Peter Hung <hpeter+linux_kernel@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We weren't testing whether the bits were set correctly because we used
-shifters as flags.  It means that we give the user incorrect line
-information in this new ioctl.
+On Tue, 2016-02-23 at 14:30 +0800, Peter Hung wrote:
+> The Fintek F81504/508/512 had implemented the basic serial port
+> function in
+> 8250_pci.c. We try to implement high baudrate & GPIOLIB with a spilt
+> file
+> 8250_f81504.c, but it seems too complex to add GPIOLIB.
 
-Fixes: 521a2ad6f862 ('gpio: add userspace ABI for GPIO line information')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+[...]
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index b816469..d609e03 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -380,17 +380,19 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		 * this GPIO so it can't use it.
- 		 */
- 		lineinfo.flags = 0;
--		if (desc->flags & (FLAG_REQUESTED | FLAG_IS_HOGGED |
--				   FLAG_USED_AS_IRQ | FLAG_EXPORT |
--				   FLAG_SYSFS))
-+		if (desc->flags & ((1 << FLAG_REQUESTED) |
-+				   (1 << FLAG_IS_HOGGED) |
-+				   (1 << FLAG_USED_AS_IRQ) |
-+				   (1 << FLAG_EXPORT) |
-+				   (1 << FLAG_SYSFS)))
- 			lineinfo.flags |= GPIOLINE_FLAG_KERNEL;
--		if (desc->flags & FLAG_IS_OUT)
-+		if (test_bit(FLAG_IS_OUT, &desc->flags))
- 			lineinfo.flags |= GPIOLINE_FLAG_IS_OUT;
--		if (desc->flags & FLAG_ACTIVE_LOW)
-+		if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
- 			lineinfo.flags |= GPIOLINE_FLAG_ACTIVE_LOW;
--		if (desc->flags & FLAG_OPEN_DRAIN)
-+		if (test_bit(FLAG_OPEN_DRAIN, &desc->flags))
- 			lineinfo.flags |= GPIOLINE_FLAG_OPEN_DRAIN;
--		if (desc->flags & FLAG_OPEN_SOURCE)
-+		if (test_bit(FLAG_OPEN_SOURCE, &desc->flags))
- 			lineinfo.flags |= GPIOLINE_FLAG_OPEN_SOURCE;
- 
- 		if (copy_to_user(ip, &lineinfo, sizeof(lineinfo)))
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -345,6 +345,18 @@ config HTC_I2CPLD
+> =C2=A0	=C2=A0=C2=A0This device provides input and output GPIOs throug=
+h an I2C
+> =C2=A0	=C2=A0=C2=A0interface to one or more sub-chips.
+> =C2=A0
+> +config MFD_FINTEK_F81504_CORE
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tristate "Fintek F81=
+504/508/512 PCIE-to-UART/GPIO MFD
+> support"
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0depends on PCI
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select MFD_CORE
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0default SERIAL_8250
+
+SERIAL_8250_PCI ?
+
+> +static bool f81504_is_gpio(unsigned int idx, u8 gpio_en)
+> +{
+> +	unsigned int i;
+> +
+> +	/* Find every port to check is multi-function port */
+> +	for (i =3D 0; i < ARRAY_SIZE(fintek_gpio_mapping); i++) {
+
+
+> +		if (fintek_gpio_mapping[i] !=3D idx || !(gpio_en &
+> BIT(i)))
+> +			continue;
+> +
+> +		/*
+> +		=C2=A0* This port is multi-function and enabled as gpio
+> mode.
+> +		=C2=A0* So we'll not configure it as serial port.
+> +		=C2=A0*/
+> +		return true;
+
+Perhaps
+
+if (fintek_gpio_mapping[i] =3D=3D idx && (gpio_en & BIT(i)))
+=C2=A0return true;
+
+?
+
+> +	}
+> +
+> +	return false;
+> +}
+
+--=20
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
