@@ -1,43 +1,74 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: [PATCH] kernel/resource.c: fix muxed resource handling in
- __request_region()
-Date: Mon, 22 Feb 2016 12:46:09 -0800
-Message-ID: <56CB7391.30203@virtuousgeek.org>
-References: <20150909220140.GD9892@kw.sim.vm.gnt>
- <1441836918-24159-1-git-send-email-simon.guinot@sequanux.org>
- <20160219221056.23487da2@x2> <56C7A459.1090801@virtuousgeek.org>
- <CA+55aFx9-itKjqahUnXAoeDNgbi1MeNH5gDQB8Sw9AguPwGefQ@mail.gmail.com>
- <15300c0ce08.2710.f266623ac48c822f02e65082a71b2734@virtuousgeek.org>
- <1456148952.24303.273.camel@linux.intel.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: Re: [PATCH] gpio: pisosr: Use devm_gpiod_get_optional for gpio->load_gpio
+Date: Tue, 23 Feb 2016 09:09:07 +0800
+Message-ID: <CAFRkauDfK5hmZVoeKC8WRCaSkpbTPXmAszzeVCNdptt+KffE4A@mail.gmail.com>
+References: <1456143411.23008.1.camel@ingics.com>
+	<56CB2CB1.3080201@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gproxy9-pub.mail.unifiedlayer.com ([69.89.20.122]:50363 "HELO
-	gproxy9-pub.mail.unifiedlayer.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1755501AbcBVUxN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 22 Feb 2016 15:53:13 -0500
-In-Reply-To: <1456148952.24303.273.camel@linux.intel.com>
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:33259 "EHLO
+	mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755049AbcBWBJK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Feb 2016 20:09:10 -0500
+Received: by mail-lf0-f41.google.com with SMTP id m1so106475312lfg.0
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Feb 2016 17:09:08 -0800 (PST)
+In-Reply-To: <56CB2CB1.3080201@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alan Cox <alan@linux.intel.com>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vincent Pelletier <plr.vincent@gmail.com>, Simon Guinot <simon.guinot@sequanux.org>, Giel van Schijndel <me@mortis.eu>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 02/22/2016 05:49 AM, Alan Cox wrote:
->> we have some good alternatives in the form of bus and platform
->> drivers that
->> can manage the appropriate serialization and keep things from
->> stomping
->> on one another.
-> 
-> It's not used much, especially nowdays. The use case is basically multi
-> I/O chips on the ISA/LPC bus with magic shared config register ports.
-> 
-> We have sufficiently few of those we could give muxed the boot and
-> special case them if preferred.
+2016-02-22 23:43 GMT+08:00 Andrew F. Davis <afd@ti.com>:
+> On 02/22/2016 06:16 AM, Axel Lin wrote:
+>>
+>> gpio->load_gpio is optional, so use devm_gpiod_get_optional instead.
+>>
+>> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+>> ---
+>>   drivers/gpio/gpio-pisosr.c | 11 ++++-------
+>>   1 file changed, 4 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
+>> index f9f1074..8b8bf8f 100644
+>> --- a/drivers/gpio/gpio-pisosr.c
+>> +++ b/drivers/gpio/gpio-pisosr.c
+>> @@ -125,15 +125,12 @@ static int pisosr_gpio_probe(struct spi_device *spi)
+>>         if (!gpio->buffer)
+>>                 return -ENOMEM;
+>>
+>> -       gpio->load_gpio = devm_gpiod_get(dev, "load", GPIOD_OUT_LOW);
+>> +       gpio->load_gpio = devm_gpiod_get_optional(dev, "load",
+>> GPIOD_OUT_LOW);
+>>         if (IS_ERR(gpio->load_gpio)) {
+>>                 ret = PTR_ERR(gpio->load_gpio);
+>> -               if (ret != -ENOENT && ret != -ENOSYS) {
+>> -                       if (ret != -EPROBE_DEFER)
+>> -                               dev_err(dev, "Unable to allocate load
+>> GPIO\n");
+>> -                       return ret;
+>> -               }
+>> -               gpio->load_gpio = NULL;
+>> +               if (ret != -EPROBE_DEFER)
+>> +                       dev_err(dev, "Unable to allocate load GPIO\n");
+>> +               return ret;
+>>         }
+>>
+>>         mutex_init(&gpio->lock);
+>>
+>
+> How does this work when the GPIO subsystem is disabled? It looks like
+> we get will get -ENOSYS and fail probe. The issue is then that
 
-Ah that's right, now I remember the context.  So where should we go from here then?  Just leave the ugly fix in or hack on old stuff and hope not to break it?
+I think it's no problem for this driver as it is in drivers/gpio/ folder,
+it's always build with GPIOLIB.
 
-Jesse
+> devm_gpiod_get_optional returns an error when it cant get the optional
+> GPIO in that case, when it should probably just return NULL, I would
+> think all the optional functions should.
 
+I had similar question when I mad this change.
+When !GPIOLIB, all the gpio APIs return error.
+But for (devm_)gpiod_get_optional, it seems reasonable to return NULL
+in !GPIOLIB case
+because it's optional anyway.
