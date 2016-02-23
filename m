@@ -1,75 +1,48 @@
-From: Michael Hennerich <michael.hennerich@analog.com>
-Subject: Re: [PATCH 06/61] gpio: adp5520: Use devm_gpiochip_add_data() for
- gpio registration
-Date: Tue, 23 Feb 2016 08:49:47 +0100
-Message-ID: <56CC0F1B.9040003@analog.com>
-References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
- <1456150130-2668-7-git-send-email-ldewangan@nvidia.com>
-Reply-To: <michael.hennerich@analog.com>
+From: Vincent Pelletier <plr.vincent@gmail.com>
+Subject: Re: [PATCH] kernel/resource.c: fix muxed resource handling in
+ __request_region()
+Date: Tue, 23 Feb 2016 09:00:24 +0100
+Message-ID: <20160223090024.2963da69@x2>
+References: <20150909220140.GD9892@kw.sim.vm.gnt>
+	<1441836918-24159-1-git-send-email-simon.guinot@sequanux.org>
+	<20160219221056.23487da2@x2>
+	<56C7A459.1090801@virtuousgeek.org>
+	<CA+55aFx9-itKjqahUnXAoeDNgbi1MeNH5gDQB8Sw9AguPwGefQ@mail.gmail.com>
+	<15300c0ce08.2710.f266623ac48c822f02e65082a71b2734@virtuousgeek.org>
+	<1456148952.24303.273.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1456150130-2668-7-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org, gnurou@gmail.com, corbet@lwn.net, albeu@free.fr, rjui@broadcom.com, shc_work@mail.ru, support.opensource@diasemi.com, swarren@wwwdotorg.org, thierry.reding@gmail.com
-Cc: bjorn.andersson@sonymobile.com, a.kesavan@samsung.com, gregkh@linuxfoundation.org, catalin.marinas@arm.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:35559 "EHLO
+	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932326AbcBWH5z (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Feb 2016 02:57:55 -0500
+In-Reply-To: <1456148952.24303.273.camel@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alan Cox <alan@linux.intel.com>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, Linus Torvalds <torvalds@linux-foundation.org>, Simon Guinot <simon.guinot@sequanux.org>, Giel van Schijndel <me@mortis.eu>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>
 
-On 02/22/2016 03:07 PM, Laxman Dewangan wrote:
-> Use devm_gpiochip_add_data() for GPIO registration and remove the
-> call for gpiochip_remove() from error path.
->
-> Also remove the need of driver callback .remove.
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+On Mon, 22 Feb 2016 13:49:12 +0000, Alan Cox <alan@linux.intel.com>
+wrote:
+> It's not used much, especially nowdays. The use case is basically multi
+> I/O chips on the ISA/LPC bus with magic shared config register ports.
 
-Acked-by: Michael Hennerich <michael.hennerich@analog.com>
+This is precisely a super I/O driver (gpio-f7188x) which, when used
+with concurrent accesses on an SMP machine triggered the issue which
+prompted this patch.
 
-> Cc: Michael Hennerich <michael.hennerich@analog.com>
-> ---
->   drivers/gpio/gpio-adp5520.c | 13 +------------
->   1 file changed, 1 insertion(+), 12 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-adp5520.c b/drivers/gpio/gpio-adp5520.c
-> index 4fa7ff1..abf1996 100644
-> --- a/drivers/gpio/gpio-adp5520.c
-> +++ b/drivers/gpio/gpio-adp5520.c
-> @@ -153,7 +153,7 @@ static int adp5520_gpio_probe(struct platform_device *pdev)
->   		goto err;
->   	}
->
-> -	ret = gpiochip_add_data(&dev->gpio_chip, dev);
-> +	ret = devm_gpiochip_add_data(&pdev->dev, &dev->gpio_chip, dev);
->   	if (ret)
->   		goto err;
->
-> @@ -164,22 +164,11 @@ err:
->   	return ret;
->   }
->
-> -static int adp5520_gpio_remove(struct platform_device *pdev)
-> -{
-> -	struct adp5520_gpio *dev;
-> -
-> -	dev = platform_get_drvdata(pdev);
-> -	gpiochip_remove(&dev->gpio_chip);
-> -
-> -	return 0;
-> -}
-> -
->   static struct platform_driver adp5520_gpio_driver = {
->   	.driver	= {
->   		.name	= "adp5520-gpio",
->   	},
->   	.probe		= adp5520_gpio_probe,
-> -	.remove		= adp5520_gpio_remove,
->   };
->
->   module_platform_driver(adp5520_gpio_driver);
->
+In case information on the original issue is desired:
+My original report (ignore attached patch, it was rejected as it
+breaks other chips supported by this driver):
+  http://permalink.gmane.org/gmane.linux.kernel.gpio/10204
+My test procedure (second half of the mail), which I used to validate
+the patch against 4.1:
+  http://permalink.gmane.org/gmane.linux.kernel.gpio/10216
+Simon Guinot & Vincent Donnefort debugging results:
+  http://permalink.gmane.org/gmane.linux.kernel.gpio/10521
 
-
+Regards,
 -- 
-Greetings,
-Michael
+Vincent Pelletier
