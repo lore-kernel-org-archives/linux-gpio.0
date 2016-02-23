@@ -1,74 +1,36 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: Re: [PATCH] gpio: pisosr: Use devm_gpiod_get_optional for gpio->load_gpio
-Date: Tue, 23 Feb 2016 09:09:07 +0800
-Message-ID: <CAFRkauDfK5hmZVoeKC8WRCaSkpbTPXmAszzeVCNdptt+KffE4A@mail.gmail.com>
-References: <1456143411.23008.1.camel@ingics.com>
-	<56CB2CB1.3080201@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:33259 "EHLO
-	mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755049AbcBWBJK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Feb 2016 20:09:10 -0500
-Received: by mail-lf0-f41.google.com with SMTP id m1so106475312lfg.0
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Feb 2016 17:09:08 -0800 (PST)
-In-Reply-To: <56CB2CB1.3080201@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] gpio: rcar: Use ARCH_RENESAS
+Date: Tue, 23 Feb 2016 10:36:51 +0900
+Message-ID: <1456191411-5569-1-git-send-email-horms+renesas@verge.net.au>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-2016-02-22 23:43 GMT+08:00 Andrew F. Davis <afd@ti.com>:
-> On 02/22/2016 06:16 AM, Axel Lin wrote:
->>
->> gpio->load_gpio is optional, so use devm_gpiod_get_optional instead.
->>
->> Signed-off-by: Axel Lin <axel.lin@ingics.com>
->> ---
->>   drivers/gpio/gpio-pisosr.c | 11 ++++-------
->>   1 file changed, 4 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
->> index f9f1074..8b8bf8f 100644
->> --- a/drivers/gpio/gpio-pisosr.c
->> +++ b/drivers/gpio/gpio-pisosr.c
->> @@ -125,15 +125,12 @@ static int pisosr_gpio_probe(struct spi_device *spi)
->>         if (!gpio->buffer)
->>                 return -ENOMEM;
->>
->> -       gpio->load_gpio = devm_gpiod_get(dev, "load", GPIOD_OUT_LOW);
->> +       gpio->load_gpio = devm_gpiod_get_optional(dev, "load",
->> GPIOD_OUT_LOW);
->>         if (IS_ERR(gpio->load_gpio)) {
->>                 ret = PTR_ERR(gpio->load_gpio);
->> -               if (ret != -ENOENT && ret != -ENOSYS) {
->> -                       if (ret != -EPROBE_DEFER)
->> -                               dev_err(dev, "Unable to allocate load
->> GPIO\n");
->> -                       return ret;
->> -               }
->> -               gpio->load_gpio = NULL;
->> +               if (ret != -EPROBE_DEFER)
->> +                       dev_err(dev, "Unable to allocate load GPIO\n");
->> +               return ret;
->>         }
->>
->>         mutex_init(&gpio->lock);
->>
->
-> How does this work when the GPIO subsystem is disabled? It looks like
-> we get will get -ENOSYS and fail probe. The issue is then that
+Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
 
-I think it's no problem for this driver as it is in drivers/gpio/ folder,
-it's always build with GPIOLIB.
+This is part of an ongoing process to migrate from ARCH_SHMOBILE to
+ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
+appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
 
-> devm_gpiod_get_optional returns an error when it cant get the optional
-> GPIO in that case, when it should probably just return NULL, I would
-> think all the optional functions should.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I had similar question when I mad this change.
-When !GPIOLIB, all the gpio APIs return error.
-But for (devm_)gpiod_get_optional, it seems reasonable to return NULL
-in !GPIOLIB case
-because it's optional anyway.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index ad226485a8e4..5584ba457161 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -351,7 +351,7 @@ config GPIO_PXA
+ 
+ config GPIO_RCAR
+ 	tristate "Renesas R-Car GPIO"
+-	depends on ARCH_SHMOBILE || COMPILE_TEST
++	depends on ARCH_RENESAS || COMPILE_TEST
+ 	select GPIOLIB_IRQCHIP
+ 	help
+ 	  Say yes here to support GPIO on Renesas R-Car SoCs.
+-- 
+2.1.4
