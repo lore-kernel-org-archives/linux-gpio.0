@@ -1,102 +1,81 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: Re: [PATCH] kernel/resource.c: fix muxed resource handling in
- __request_region()
-Date: Tue, 23 Feb 2016 17:19:20 +0100
-Message-ID: <20160223161920.GB3840@kw.sim.vm.gnt>
-References: <20150909220140.GD9892@kw.sim.vm.gnt>
- <1441836918-24159-1-git-send-email-simon.guinot@sequanux.org>
- <20160219221056.23487da2@x2>
- <56C7A459.1090801@virtuousgeek.org>
- <CA+55aFx9-itKjqahUnXAoeDNgbi1MeNH5gDQB8Sw9AguPwGefQ@mail.gmail.com>
- <15300c0ce08.2710.f266623ac48c822f02e65082a71b2734@virtuousgeek.org>
- <1456148952.24303.273.camel@linux.intel.com>
- <56CB7391.30203@virtuousgeek.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 46/61] gpio: tegra: Use devm_gpiochip_add_data() for gpio
+ registration
+Date: Tue, 23 Feb 2016 17:30:47 +0100
+Message-ID: <20160223163047.GB13755@ulmo.nvidia.com>
+References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
+ <1456150130-2668-47-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UHN/qo2QbUvPLonB"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <56CB7391.30203@virtuousgeek.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Alan Cox <alan@linux.intel.com>, Linus Torvalds <torvalds@linux-foundation.org>, Vincent Pelletier <plr.vincent@gmail.com>, Giel van Schijndel <me@mortis.eu>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>, Linus Walleij <linus.walleij@linaro.org>
+In-Reply-To: <1456150130-2668-47-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org, corbet-T1hC0tSOHrs@public.gmane.org, albeu-GANU6spQydw@public.gmane.org, rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, shc_work-JGs/UdohzUI@public.gmane.org, support.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
 
---UHN/qo2QbUvPLonB
+--5/uDoXvLw7AC5HRs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 22, 2016 at 12:46:09PM -0800, Jesse Barnes wrote:
-> On 02/22/2016 05:49 AM, Alan Cox wrote:
-> >> we have some good alternatives in the form of bus and platform
-> >> drivers that
-> >> can manage the appropriate serialization and keep things from
-> >> stomping
-> >> on one another.
-> >=20
-> > It's not used much, especially nowdays. The use case is basically multi
-> > I/O chips on the ISA/LPC bus with magic shared config register ports.
-> >=20
-> > We have sufficiently few of those we could give muxed the boot and
-> > special case them if preferred.
+On Mon, Feb 22, 2016 at 07:38:35PM +0530, Laxman Dewangan wrote:
+> Use devm_gpiochip_add_data() for GPIO registration.
 >=20
-> Ah that's right, now I remember the context.  So where should we go from =
-here then?  Just leave the ugly fix in or hack on old stuff and hope not to=
- break it?
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/gpio/gpio-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+> index 9a1a7e2..790bb11 100644
+> --- a/drivers/gpio/gpio-tegra.c
+> +++ b/drivers/gpio/gpio-tegra.c
+> @@ -545,7 +545,7 @@ static int tegra_gpio_probe(struct platform_device *p=
+dev)
+> =20
+>  	tegra_gpio_chip.of_node =3D pdev->dev.of_node;
+> =20
+> -	ret =3D gpiochip_add_data(&tegra_gpio_chip, NULL);
+> +	ret =3D devm_gpiochip_add_data(&pdev->dev, &tegra_gpio_chip, NULL);
+>  	if (ret < 0) {
+>  		irq_domain_remove(irq_domain);
+>  		return ret;
 
-Hi Jesse,
+It's slightly redundant to do this because the driver probe will never
+fail after this point and the driver can't be unloaded, so there's no
+way that the GPIO chip would ever be removed.
 
-The fix is not ugly but only incomplete. And I have to say that the
-whole IORESOURCE_MUXED thing is not shiny either :)
+But in the interest of consistency I have no objections to doing this.
+It might also happen that, eventually, we might turn this into a proper
+driver, at which point this would come in useful.
 
-The main problem in __request_region() is that we are dropping the
-spinlock of the resource list while holding a reference on a resource,
-waiting for a muxed resource to become available.
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-=46rom here, I can see two bugs:
-
-1 - At wake-up, the next __request_resource() iteration will not detect
-    a remaining conflict. To work properly, __request_resource() needs
-    to be called with a parent of the conflicting resource. Instead we
-    are passing the conflicting resource itself...
-2 - At wake-up the resource pointer we are holding could have been
-    freed. Since we are just about to use this pointer to insert a new
-    resource in the linked list, it is broken...
-
-My patch fixes 1 and makes things better for 2.
-
-But I think Linus is right. If at wake-up we use the original parent
-resource to check again for a conflict, then we are safe.
-
-If you want, I can propose a such patch.
-
-Note that IORESOURCE_MUXED is mostly used by Super-I/Os drivers. A
-Super-I/O is a legacy I/O controller embedded on x86 motherboards. It is
-used to connect the low-bandwidth devices such as parallel ports, serial
-ports, keyboard controllers, hardware monitoring controllers, GPIO
-controllers, etc. While each logical device have its own memory region,
-a shared memory region is used for some configuration purpose.
-IORESOURCE_MUXED is a convenient way to deal with that. For some code
-examples you can look at the superio_* functions in the IT87 drivers:
-gpio/gpio-it87.c, hwmon/it87.c and watchdog/it87_wdt.c.
-
-I am not aware of any other users for IORESOURCE_MUXED.
-
-Let me know how you want to go and if you need my help.
-
-Simon
-
---UHN/qo2QbUvPLonB
+--5/uDoXvLw7AC5HRs
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iEYEARECAAYFAlbMhogACgkQgtp0PDeOcDr8fgCeII4zeM2GKR0OhIR4NWJDRDkA
-FXYAnjH76mjW0PrgcODHMfSbViQ2el5t
-=gy1q
+iQIcBAABCAAGBQJWzIk3AAoJEN0jrNd/PrOhyWUP/iyvoVwhhY14HI7SHPEyCqTd
+9uz0vVjq6omMFwmNEbvvnbXk4SDSd28fZ89kdoXEiT/bO+NrohKf0N6obScvsp5z
+NdGur+LyGERT8UMmvzy042p4pMdqCjJaTU4iI/tUIZuuF0PHcM5/AE+H5z0pnDKh
+W3FAp2Ay4tbUOne7sY732f9G+gvHeHX4D/bd2lmcZKiWzRyJcwurbOJt2oaFGIM7
+ZqDqD7dcqUU6rwgk8tBDWSLiuwjJECrjd0R9Pqms93VxIR1vfcfT0+9ga2LGgcJv
+ajN0NsbAbY3O65BpdYLjvhYROdi8j8udbUQ+RqHDoJjhFiaeoUXz7uPMsxCMlvke
+TPIdJZynGTXh35lN6Gv2uU4rOPJIetAaj5ZPByiS4X5KOgTV8PF3GzFrHPvl8NgQ
+45HCFbudGnyy5z5VVVJq41/LVOnFI405R1cmWszRzyb0wewFCiwNg56kJ7XyiTQZ
+g1403bQgFQY2YW54E/7A0FopLSbNqXa13o2lW3hY9JyhHwgGFDRh6SC3XzyFvAbz
+f72/Z6NMTLcCX1qe/ZXlUoLSMjO3MJj5zkHsUw1vNFVd90+TVXIbCHkEemS3FHA+
+x0MBEa6IS8B5S0OMjAKuLEwjuOtzxlRmGLAjjAAzLWZFtc0dbfAz2WN7y19JXnHm
+niJ0GuzRRTpR34w9+OOH
+=ZxZ+
 -----END PGP SIGNATURE-----
 
---UHN/qo2QbUvPLonB--
+--5/uDoXvLw7AC5HRs--
