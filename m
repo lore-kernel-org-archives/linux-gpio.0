@@ -1,31 +1,39 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 3/3] input: gpio_keys: Make use of the device property API
-Date: Tue, 23 Feb 2016 09:29:50 +0200
-Message-ID: <20160223072950.GJ1770@lahna.fi.intel.com>
-References: <1455876982-6743-1-git-send-email-geert+renesas@glider.be>
- <1455876982-6743-4-git-send-email-geert+renesas@glider.be>
- <20160222195815.GB28343@dtor-ws>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160222195815.GB28343@dtor-ws>
-Sender: linux-input-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Aaron Lu <aaron.lu@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Vincent Pelletier <plr.vincent@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org
+From: Markus Pargmann <mpa@pengutronix.de>
+Subject: [PATCH 2/4] tools: gpio: Add necessary include paths
+Date: Tue, 23 Feb 2016 08:54:47 +0100
+Message-ID: <1456214089-13954-2-git-send-email-mpa@pengutronix.de>
+References: <1456214089-13954-1-git-send-email-mpa@pengutronix.de>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:56128 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751926AbcBWHzI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 23 Feb 2016 02:55:08 -0500
+In-Reply-To: <1456214089-13954-1-git-send-email-mpa@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org, Markus Pargmann <mpa@pengutronix.de>
 
-On Mon, Feb 22, 2016 at 11:58:15AM -0800, Dmitry Torokhov wrote:
-> On Fri, Feb 19, 2016 at 11:16:22AM +0100, Geert Uytterhoeven wrote:
-> > @@ -887,7 +870,7 @@ static struct platform_driver gpio_keys_device_driver = {
-> >  	.driver		= {
-> >  		.name	= "gpio-keys",
-> >  		.pm	= &gpio_keys_pm_ops,
-> > -		.of_match_table = of_match_ptr(gpio_keys_of_match),
-> > +		.of_match_table = gpio_keys_of_match,
-> 
-> Why are we changing this? I think match table should still be guarded
-> by #ifdef CONFIG_OF.
+Add include paths to the Makefile so that linux/gpio.h can be found even
+on systems without this header.
 
-This allows ACPI "PRP0001" ID to match DT .compatible strings in the
-gpio_keys_of_match[] table.
+Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+---
+ tools/gpio/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/gpio/Makefile b/tools/gpio/Makefile
+index 4d198d5c4203..3f5b3f427b9c 100644
+--- a/tools/gpio/Makefile
++++ b/tools/gpio/Makefile
+@@ -1,5 +1,5 @@
+ CC = $(CROSS_COMPILE)gcc
+-CFLAGS += -Wall -g -D_GNU_SOURCE
++CFLAGS += -Wall -g -D_GNU_SOURCE -I ../include -I ../../include/uapi
+ 
+ all: lsgpio
+ 
+-- 
+2.7.0
+
