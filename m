@@ -1,32 +1,55 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 00/61] gpio: Add and use devm_gpiochip_add_data()
-Date: Tue, 23 Feb 2016 14:31:08 +0530
-Message-ID: <56CC1FD4.1080905@nvidia.com>
-References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com> <CACRpkdbt+RiWMA74e40MNZVnDM0t0futtFnbyu9sRhv7p93-Tg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [patch] gpiolib: shifters used as flags in gpio_ioctl()
+Date: Tue, 23 Feb 2016 12:44:50 +0300
+Message-ID: <20160223094450.GB4030@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbt+RiWMA74e40MNZVnDM0t0futtFnbyu9sRhv7p93-Tg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Michael Hennerich <michael.hennerich@analog.com>, Jon Corbet <corbet@lwn.net>, Alban Bedel <albeu@free.fr>, Ray Jui <rjui@broadcom.com>, Alexander Shiyan <shc_work@mail.ru>, Support Opensource <support.opensource@diasemi.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?IkFuZGVyc3NvbiwgQmrDtnJuIg==?= <bjorn.andersson@sonymobile.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Greg KH <gregkh@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, WOLFSON MICROELECTRONICS DRIVERS <patches@opensource.wolfsonmicro.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:44850 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750758AbcBWJpH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Feb 2016 04:45:07 -0500
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We weren't testing whether the bits were set correctly because we used
+shifters as flags.  It means that we give the user incorrect line
+information in this new ioctl.
 
-On Monday 22 February 2016 08:14 PM, Linus Walleij wrote:
-> On Mon, Feb 22, 2016 at 3:07 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
->
->> Add resource management APIs for gpiochip_add_data() and
->> gpiochip_remove() and use these APIs from different HW drivers.
->>
->> This is based on discussion on patch to use the new APIs.
->>          gpio: Add devm_ apis for gpio_chip_add and remove
-> Awesome!
->
-> Do you have a git I can just pull these off so I don't have to apply
-> then all one-by-one?
+Fixes: 521a2ad6f862 ('gpio: add userspace ABI for GPIO line information')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Nop, I do not have the git repo for sharing as of now at this time.
-Trying to learn to how to create.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index b816469..d609e03 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -380,17 +380,19 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		 * this GPIO so it can't use it.
+ 		 */
+ 		lineinfo.flags = 0;
+-		if (desc->flags & (FLAG_REQUESTED | FLAG_IS_HOGGED |
+-				   FLAG_USED_AS_IRQ | FLAG_EXPORT |
+-				   FLAG_SYSFS))
++		if (desc->flags & ((1 << FLAG_REQUESTED) |
++				   (1 << FLAG_IS_HOGGED) |
++				   (1 << FLAG_USED_AS_IRQ) |
++				   (1 << FLAG_EXPORT) |
++				   (1 << FLAG_SYSFS)))
+ 			lineinfo.flags |= GPIOLINE_FLAG_KERNEL;
+-		if (desc->flags & FLAG_IS_OUT)
++		if (test_bit(FLAG_IS_OUT, &desc->flags))
+ 			lineinfo.flags |= GPIOLINE_FLAG_IS_OUT;
+-		if (desc->flags & FLAG_ACTIVE_LOW)
++		if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+ 			lineinfo.flags |= GPIOLINE_FLAG_ACTIVE_LOW;
+-		if (desc->flags & FLAG_OPEN_DRAIN)
++		if (test_bit(FLAG_OPEN_DRAIN, &desc->flags))
+ 			lineinfo.flags |= GPIOLINE_FLAG_OPEN_DRAIN;
+-		if (desc->flags & FLAG_OPEN_SOURCE)
++		if (test_bit(FLAG_OPEN_SOURCE, &desc->flags))
+ 			lineinfo.flags |= GPIOLINE_FLAG_OPEN_SOURCE;
+ 
+ 		if (copy_to_user(ip, &lineinfo, sizeof(lineinfo)))
