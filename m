@@ -1,159 +1,192 @@
-From: qiujiang <qiujiang@huawei.com>
-Subject: [PATCH v3 1/2] gpio: designware: switch device node to fwnode
-Date: Wed, 24 Feb 2016 20:33:29 +0800
-Message-ID: <1456317210-42742-2-git-send-email-qiujiang@huawei.com>
-References: <1456317210-42742-1-git-send-email-qiujiang@huawei.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 00/50] pinctrl: Add and use devm_ apis for pinctrl_{register, unregister}
+Date: Wed, 24 Feb 2016 18:45:25 +0530
+Message-ID: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1456317210-42742-1-git-send-email-qiujiang@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: mika.westerberg@linux.intel.com, andy.shevchenko@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:13503 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752333AbcBXN3v (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Feb 2016 08:29:51 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Laxman Dewangan <ldewangan@nvidia.com>
 
-This patch switch device node to fwnode in dwapb_port_property,
-so as to apply a unified data structure for DT and ACPI.
+Add resource manageemnt APIs fro pinctrl_register() and pinctrl_unregister()
+and use these new APIs on hw driver to reduce the error path code and
+remove callback for driver.
 
-This change also needs to be done in intel_quark_i2c_gpio driver,
-since it depends on gpio-dwapb driver.
+Laxman Dewangan (50):
+  pinctrl: Add devm_ apis for pinctrl_{register, unregister}
+  pinctrl: Add resource management devm_pinctrl_{register, unregister}
+  pinctrl: bcm281xx: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: bcm2835: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: cygnus-mux: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: iproc-gpio: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: nsp-gpio: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: berlin: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: imx: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: imxl: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: cherryview: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: intel: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: mtk-common: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: meson: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: mvebu: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: nomadic: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: spmi-gpio: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: spmi: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: ssbi-gpi: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: ssbi-mpp: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: msm: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: pxa: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: exynos5440: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: samsung: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: ish-pfc: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: spear: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: stm32: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: ssbi-mpp: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: tegra: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: tegra-xusb: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: uniphier: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: vt8500: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: adi2: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: amd: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: as3722: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: at91-pio4: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: at91: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: digicolor: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: lantiq: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: lpc18xx: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: palmas: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: pic32: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: pistachio: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: rockchip: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: st: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: tb10x: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: tz1090-pdc: Use devm_pinctrl_register() for pinctrl
+    registration
+  pinctrl: tz1090 Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: u300: Use devm_pinctrl_register() for pinctrl registration
+  pinctrl: zynq: Use devm_pinctrl_register() for pinctrl registration
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: qiujiang <qiujiang@huawei.com>
----
- drivers/gpio/gpio-dwapb.c                | 36 ++++++++++++++++----------------
- drivers/mfd/intel_quark_i2c_gpio.c       |  2 +-
- include/linux/platform_data/gpio-dwapb.h |  2 +-
- 3 files changed, 20 insertions(+), 20 deletions(-)
+ Documentation/driver-model/devres.txt            |  2 +
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c           |  4 +-
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c            |  3 +-
+ drivers/pinctrl/bcm/pinctrl-cygnus-mux.c         |  2 +-
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c         | 12 +----
+ drivers/pinctrl/bcm/pinctrl-nsp-gpio.c           |  2 +-
+ drivers/pinctrl/berlin/berlin.c                  |  3 +-
+ drivers/pinctrl/core.c                           | 69 ++++++++++++++++++++++++
+ drivers/pinctrl/freescale/pinctrl-imx.c          | 11 +---
+ drivers/pinctrl/freescale/pinctrl-imx.h          |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx1-core.c    | 11 +---
+ drivers/pinctrl/freescale/pinctrl-imx1.c         |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx1.h         |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx21.c        |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx25.c        |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx27.c        |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx35.c        |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx50.c        |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx51.c        |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx53.c        |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx6dl.c       |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx6q.c        |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx6sl.c       |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx6sx.c       |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx6ul.c       |  1 -
+ drivers/pinctrl/freescale/pinctrl-imx7d.c        |  1 -
+ drivers/pinctrl/freescale/pinctrl-vf610.c        |  1 -
+ drivers/pinctrl/intel/pinctrl-cherryview.c       |  4 +-
+ drivers/pinctrl/intel/pinctrl-intel.c            |  4 +-
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c    | 17 +++---
+ drivers/pinctrl/meson/pinctrl-meson.c            |  2 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-370.c       |  6 ---
+ drivers/pinctrl/mvebu/pinctrl-armada-375.c       |  6 ---
+ drivers/pinctrl/mvebu/pinctrl-armada-38x.c       |  6 ---
+ drivers/pinctrl/mvebu/pinctrl-armada-39x.c       |  6 ---
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c        |  6 ---
+ drivers/pinctrl/mvebu/pinctrl-dove.c             |  5 +-
+ drivers/pinctrl/mvebu/pinctrl-kirkwood.c         |  6 ---
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c            |  9 +---
+ drivers/pinctrl/nomadik/pinctrl-abx500.c         |  3 +-
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c        |  2 +-
+ drivers/pinctrl/pinctrl-adi2.c                   | 13 +----
+ drivers/pinctrl/pinctrl-amd.c                    |  9 ++--
+ drivers/pinctrl/pinctrl-as3722.c                 |  9 ++--
+ drivers/pinctrl/pinctrl-at91-pio4.c              | 26 ++++-----
+ drivers/pinctrl/pinctrl-at91.c                   | 13 +----
+ drivers/pinctrl/pinctrl-digicolor.c              |  7 +--
+ drivers/pinctrl/pinctrl-lantiq.c                 |  2 +-
+ drivers/pinctrl/pinctrl-lpc18xx.c                |  3 +-
+ drivers/pinctrl/pinctrl-palmas.c                 | 12 +----
+ drivers/pinctrl/pinctrl-pic32.c                  |  3 +-
+ drivers/pinctrl/pinctrl-pistachio.c              |  4 +-
+ drivers/pinctrl/pinctrl-rockchip.c               |  2 +-
+ drivers/pinctrl/pinctrl-st.c                     |  2 +-
+ drivers/pinctrl/pinctrl-tb10x.c                  |  3 +-
+ drivers/pinctrl/pinctrl-tz1090-pdc.c             | 13 +----
+ drivers/pinctrl/pinctrl-tz1090.c                 | 13 +----
+ drivers/pinctrl/pinctrl-u300.c                   | 12 +----
+ drivers/pinctrl/pinctrl-zynq.c                   | 12 +----
+ drivers/pinctrl/pxa/pinctrl-pxa2xx.c             | 10 +---
+ drivers/pinctrl/qcom/pinctrl-msm.c               |  8 ++-
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c         |  7 +--
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c          |  7 +--
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c         |  9 +---
+ drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c          |  9 +---
+ drivers/pinctrl/samsung/pinctrl-exynos5440.c     |  2 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.c        |  3 +-
+ drivers/pinctrl/sh-pfc/core.c                    |  1 -
+ drivers/pinctrl/sh-pfc/core.h                    |  1 -
+ drivers/pinctrl/sh-pfc/pinctrl.c                 | 12 +----
+ drivers/pinctrl/spear/pinctrl-spear.c            | 11 +---
+ drivers/pinctrl/spear/pinctrl-spear.h            |  1 -
+ drivers/pinctrl/spear/pinctrl-spear1310.c        |  6 ---
+ drivers/pinctrl/spear/pinctrl-spear1340.c        |  6 ---
+ drivers/pinctrl/spear/pinctrl-spear300.c         |  6 ---
+ drivers/pinctrl/spear/pinctrl-spear310.c         |  6 ---
+ drivers/pinctrl/spear/pinctrl-spear320.c         |  6 ---
+ drivers/pinctrl/stm32/pinctrl-stm32.c            |  7 +--
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c            | 13 ++---
+ drivers/pinctrl/tegra/pinctrl-tegra-xusb.c       | 13 ++---
+ drivers/pinctrl/tegra/pinctrl-tegra.c            | 12 +----
+ drivers/pinctrl/tegra/pinctrl-tegra.h            |  2 -
+ drivers/pinctrl/tegra/pinctrl-tegra114.c         |  1 -
+ drivers/pinctrl/tegra/pinctrl-tegra124.c         |  1 -
+ drivers/pinctrl/tegra/pinctrl-tegra20.c          |  1 -
+ drivers/pinctrl/tegra/pinctrl-tegra210.c         |  1 -
+ drivers/pinctrl/tegra/pinctrl-tegra30.c          |  1 -
+ drivers/pinctrl/uniphier/pinctrl-ph1-ld4.c       |  1 -
+ drivers/pinctrl/uniphier/pinctrl-ph1-ld6b.c      |  1 -
+ drivers/pinctrl/uniphier/pinctrl-ph1-pro4.c      |  1 -
+ drivers/pinctrl/uniphier/pinctrl-ph1-pro5.c      |  1 -
+ drivers/pinctrl/uniphier/pinctrl-ph1-sld8.c      |  1 -
+ drivers/pinctrl/uniphier/pinctrl-proxstream2.c   |  1 -
+ drivers/pinctrl/uniphier/pinctrl-uniphier-core.c | 12 +----
+ drivers/pinctrl/uniphier/pinctrl-uniphier.h      |  2 -
+ drivers/pinctrl/vt8500/pinctrl-wmt.c             |  7 +--
+ include/linux/pinctrl/pinctrl.h                  |  6 +++
+ 97 files changed, 179 insertions(+), 393 deletions(-)
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 597de1e..0ebbdf1 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -290,14 +290,14 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 				 struct dwapb_port_property *pp)
- {
- 	struct gpio_chip *gc = &port->gc;
--	struct device_node *node = pp->node;
-+	struct fwnode_handle  *fwnode = pp->fwnode;
- 	struct irq_chip_generic	*irq_gc = NULL;
- 	unsigned int hwirq, ngpio = gc->ngpio;
- 	struct irq_chip_type *ct;
- 	int err, i;
- 
--	gpio->domain = irq_domain_add_linear(node, ngpio,
--					     &irq_generic_chip_ops, gpio);
-+	gpio->domain = irq_domain_create_linear(fwnode, ngpio,
-+						 &irq_generic_chip_ops, gpio);
- 	if (!gpio->domain)
- 		return;
- 
-@@ -415,7 +415,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 	}
- 
- #ifdef CONFIG_OF_GPIO
--	port->gc.of_node = pp->node;
-+	port->gc.of_node = to_of_node(pp->fwnode);
- #endif
- 	port->gc.ngpio = pp->ngpio;
- 	port->gc.base = pp->gpio_base;
-@@ -449,17 +449,16 @@ static void dwapb_gpio_unregister(struct dwapb_gpio *gpio)
- static struct dwapb_platform_data *
- dwapb_gpio_get_pdata_of(struct device *dev)
- {
--	struct device_node *node, *port_np;
-+	struct fwnode_handle *fwnode;
- 	struct dwapb_platform_data *pdata;
- 	struct dwapb_port_property *pp;
- 	int nports;
- 	int i;
- 
--	node = dev->of_node;
--	if (!IS_ENABLED(CONFIG_OF_GPIO) || !node)
-+	if (!IS_ENABLED(CONFIG_OF_GPIO) || !(dev->of_node))
- 		return ERR_PTR(-ENODEV);
- 
--	nports = of_get_child_count(node);
-+	nports = device_get_child_node_count(dev);
- 	if (nports == 0)
- 		return ERR_PTR(-ENODEV);
- 
-@@ -474,21 +473,21 @@ dwapb_gpio_get_pdata_of(struct device *dev)
- 	pdata->nports = nports;
- 
- 	i = 0;
--	for_each_child_of_node(node, port_np) {
-+	device_for_each_child_node(dev, fwnode)  {
- 		pp = &pdata->properties[i++];
--		pp->node = port_np;
-+		pp->fwnode = fwnode;
- 
--		if (of_property_read_u32(port_np, "reg", &pp->idx) ||
-+		if (fwnode_property_read_u32(fwnode, "reg", &pp->idx) ||
- 		    pp->idx >= DWAPB_MAX_PORTS) {
- 			dev_err(dev, "missing/invalid port index for %s\n",
--				port_np->full_name);
-+				to_of_node(fwnode)->full_name);
- 			return ERR_PTR(-EINVAL);
- 		}
- 
--		if (of_property_read_u32(port_np, "snps,nr-gpios",
-+		if (fwnode_property_read_u32(fwnode, "snps,nr-gpios",
- 					 &pp->ngpio)) {
- 			dev_info(dev, "failed to get number of gpios for %s\n",
--				 port_np->full_name);
-+				 to_of_node(fwnode)->full_name);
- 			pp->ngpio = 32;
- 		}
- 
-@@ -497,17 +496,18 @@ dwapb_gpio_get_pdata_of(struct device *dev)
- 		 * the IP.
- 		 */
- 		if (pp->idx == 0 &&
--		    of_property_read_bool(port_np, "interrupt-controller")) {
--			pp->irq = irq_of_parse_and_map(port_np, 0);
-+			of_property_read_bool(to_of_node(fwnode),
-+				"interrupt-controller")) {
-+			pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
- 			if (!pp->irq) {
- 				dev_warn(dev, "no irq for bank %s\n",
--					 port_np->full_name);
-+					 to_of_node(fwnode)->full_name);
- 			}
- 		}
- 
- 		pp->irq_shared	= false;
- 		pp->gpio_base	= -1;
--		pp->name	= port_np->full_name;
-+		pp->name = to_of_node(fwnode)->full_name;
- 	}
- 
- 	return pdata;
-diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_quark_i2c_gpio.c
-index 0421374..265bd3c 100644
---- a/drivers/mfd/intel_quark_i2c_gpio.c
-+++ b/drivers/mfd/intel_quark_i2c_gpio.c
-@@ -227,7 +227,7 @@ static int intel_quark_gpio_setup(struct pci_dev *pdev, struct mfd_cell *cell)
- 		return -ENOMEM;
- 
- 	/* Set the properties for portA */
--	pdata->properties->node		= NULL;
-+	pdata->properties->fwnode	= NULL;
- 	pdata->properties->name		= "intel-quark-x1000-gpio-portA";
- 	pdata->properties->idx		= 0;
- 	pdata->properties->ngpio	= INTEL_QUARK_MFD_NGPIO;
-diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
-index 28702c8..80954f2 100644
---- a/include/linux/platform_data/gpio-dwapb.h
-+++ b/include/linux/platform_data/gpio-dwapb.h
-@@ -15,7 +15,7 @@
- #define GPIO_DW_APB_H
- 
- struct dwapb_port_property {
--	struct device_node *node;
-+	struct fwnode_handle  *fwnode;
- 	const char	*name;
- 	unsigned int	idx;
- 	unsigned int	ngpio;
 -- 
-1.9.1
+2.1.4
+
