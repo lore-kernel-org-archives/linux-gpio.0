@@ -1,85 +1,70 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 36/50] pinctrl: at91-pio4: Use devm_pinctrl_register() for pinctrl registration
-Date: Wed, 24 Feb 2016 18:46:01 +0530
-Message-ID: <1456319775-3216-37-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 35/50] pinctrl: as3722: Use devm_pinctrl_register() for pinctrl registration
+Date: Wed, 24 Feb 2016 18:46:00 +0530
+Message-ID: <1456319775-3216-36-git-send-email-ldewangan@nvidia.com>
 References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:3448 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757836AbcBXNcZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Feb 2016 08:32:25 -0500
 In-Reply-To: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Laxman Dewangan <ldewangan@nvidia.com>
-List-Id: linux-gpio@vger.kernel.org
 
 Use devm_pinctrl_register() for pin control registration and clean
 error path.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org
 ---
- drivers/pinctrl/pinctrl-at91-pio4.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ drivers/pinctrl/pinctrl-as3722.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index ee69db6..9d33ef5 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -1034,18 +1034,19 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
- 		goto clk_prepare_enable_error;
+diff --git a/drivers/pinctrl/pinctrl-as3722.c b/drivers/pinctrl/pinctrl-as3722.c
+index e844fdc..0808569 100644
+--- a/drivers/pinctrl/pinctrl-as3722.c
++++ b/drivers/pinctrl/pinctrl-as3722.c
+@@ -569,8 +569,8 @@ static int as3722_pinctrl_probe(struct platform_device *pdev)
+ 	as3722_pinctrl_desc.name = dev_name(&pdev->dev);
+ 	as3722_pinctrl_desc.pins = as3722_pins_desc;
+ 	as3722_pinctrl_desc.npins = ARRAY_SIZE(as3722_pins_desc);
+-	as_pci->pctl = pinctrl_register(&as3722_pinctrl_desc,
+-					&pdev->dev, as_pci);
++	as_pci->pctl = devm_pinctrl_register(&pdev->dev, &as3722_pinctrl_desc,
++					     as_pci);
+ 	if (IS_ERR(as_pci->pctl)) {
+ 		dev_err(&pdev->dev, "Couldn't register pinctrl driver\n");
+ 		return PTR_ERR(as_pci->pctl);
+@@ -582,7 +582,7 @@ static int as3722_pinctrl_probe(struct platform_device *pdev)
+ 	ret = gpiochip_add_data(&as_pci->gpio_chip, as_pci);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Couldn't register gpiochip, %d\n", ret);
+-		goto fail_chip_add;
++		return ret;
  	}
  
--	atmel_pioctrl->pinctrl_dev = pinctrl_register(&atmel_pinctrl_desc,
--						      &pdev->dev,
--						      atmel_pioctrl);
--	if (!atmel_pioctrl->pinctrl_dev) {
-+	atmel_pioctrl->pinctrl_dev = devm_pinctrl_register(&pdev->dev,
-+							   &atmel_pinctrl_desc,
-+							   atmel_pioctrl);
-+	if (IS_ERR(atmel_pioctrl->pinctrl_dev)) {
-+		ret = PTR_ERR(atmel_pioctrl->pinctrl_dev);
- 		dev_err(dev, "pinctrl registration failed\n");
--		goto pinctrl_register_error;
-+		goto clk_unprep;
- 	}
+ 	ret = gpiochip_add_pin_range(&as_pci->gpio_chip, dev_name(&pdev->dev),
+@@ -596,8 +596,6 @@ static int as3722_pinctrl_probe(struct platform_device *pdev)
  
- 	ret = gpiochip_add_data(atmel_pioctrl->gpio_chip, atmel_pioctrl);
- 	if (ret) {
- 		dev_err(dev, "failed to add gpiochip\n");
--		goto gpiochip_add_error;
-+		goto clk_unprep;
- 	}
- 
- 	ret = gpiochip_add_pin_range(atmel_pioctrl->gpio_chip, dev_name(dev),
-@@ -1059,15 +1060,15 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
--clk_prepare_enable_error:
--	irq_domain_remove(atmel_pioctrl->irq_domain);
--pinctrl_register_error:
--	clk_disable_unprepare(atmel_pioctrl->clk);
--gpiochip_add_error:
--	pinctrl_unregister(atmel_pioctrl->pinctrl_dev);
- gpiochip_add_pin_range_error:
- 	gpiochip_remove(atmel_pioctrl->gpio_chip);
- 
-+clk_unprep:
-+	clk_disable_unprepare(atmel_pioctrl->clk);
-+
-+clk_prepare_enable_error:
-+	irq_domain_remove(atmel_pioctrl->irq_domain);
-+
+ fail_range_add:
+ 	gpiochip_remove(&as_pci->gpio_chip);
+-fail_chip_add:
+-	pinctrl_unregister(as_pci->pctl);
  	return ret;
  }
  
-@@ -1077,7 +1078,6 @@ int atmel_pinctrl_remove(struct platform_device *pdev)
+@@ -606,7 +604,6 @@ static int as3722_pinctrl_remove(struct platform_device *pdev)
+ 	struct as3722_pctrl_info *as_pci = platform_get_drvdata(pdev);
  
- 	irq_domain_remove(atmel_pioctrl->irq_domain);
- 	clk_disable_unprepare(atmel_pioctrl->clk);
--	pinctrl_unregister(atmel_pioctrl->pinctrl_dev);
- 	gpiochip_remove(atmel_pioctrl->gpio_chip);
- 
+ 	gpiochip_remove(&as_pci->gpio_chip);
+-	pinctrl_unregister(as_pci->pctl);
  	return 0;
+ }
+ 
 -- 
 2.1.4
+
