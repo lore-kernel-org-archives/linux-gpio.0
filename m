@@ -1,112 +1,55 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 01/50] pinctrl: Add devm_ apis for pinctrl_{register,
- unregister}
-Date: Wed, 24 Feb 2016 10:21:16 -0800
-Message-ID: <20160224182116.GP21240@tuxbot>
+From: Ray Jui <ray.jui@broadcom.com>
+Subject: Re: [PATCH 03/50] pinctrl: bcm281xx: Use devm_pinctrl_register() for
+ pinctrl registration
+Date: Wed, 24 Feb 2016 10:25:38 -0800
+Message-ID: <d5eeb969-8c51-e716-ff21-084feed01183@broadcom.com>
 References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
- <1456319775-3216-2-git-send-email-ldewangan@nvidia.com>
+ <1456319775-3216-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:34129 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753568AbcBXSVU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Feb 2016 13:21:20 -0500
-Received: by mail-pa0-f41.google.com with SMTP id fy10so16752696pac.1
-        for <linux-gpio@vger.kernel.org>; Wed, 24 Feb 2016 10:21:20 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1456319775-3216-2-git-send-email-ldewangan@nvidia.com>
+Received: from 5520-maca-inet1-outside.broadcom.com ([216.31.211.11]:28631
+	"EHLO mail-irv-18.broadcom.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1758098AbcBXSZj (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 24 Feb 2016 13:25:39 -0500
+In-Reply-To: <1456319775-3216-4-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Ray Jui <rjui@broadcom.com>
 
-On Wed 24 Feb 05:15 PST 2016, Laxman Dewangan wrote:
 
-> Add device managed APIs devm_pinctrl_register() and
-> devm_pinctrl_unregister() for the APIs pinctrl_register()
-> and pinctrl_unregister().
-> 
-> This helps in reducing code in error path and sometimes
-> removal of .remove callback for driver unbind.
-> 
+
+On 2/24/2016 5:15 AM, Laxman Dewangan wrote:
+> Use devm_pinctrl_register() for pin control registration.
+>
 > Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: Ray Jui <rjui@broadcom.com>
 > ---
->  drivers/pinctrl/core.c          | 69 +++++++++++++++++++++++++++++++++++++++++
->  include/linux/pinctrl/pinctrl.h |  6 ++++
->  2 files changed, 75 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-[..]
-> +static int devm_pinctrl_dev_match(struct device *dev, void *res, void *data)
-> +{
-> +	struct pctldev **r = res;
-> +
-> +	if (!r || !*r) {
-> +		WARN_ON(!r || !*r);
-> +		return 0;
-> +	}
+>  drivers/pinctrl/bcm/pinctrl-bcm281xx.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+> index c3c692e..0c0c0f0 100644
+> --- a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+> +++ b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+> @@ -1422,9 +1422,7 @@ static int __init bcm281xx_pinctrl_probe(struct platform_device *pdev)
+>  	bcm281xx_pinctrl_desc.pins = bcm281xx_pinctrl.pins;
+>  	bcm281xx_pinctrl_desc.npins = bcm281xx_pinctrl.npins;
+>
+> -	pctl = pinctrl_register(&bcm281xx_pinctrl_desc,
+> -				&pdev->dev,
+> -				pdata);
+> +	pctl = devm_pinctrl_register(&pdev->dev, &bcm281xx_pinctrl_desc, pdata);
+>  	if (IS_ERR(pctl)) {
+>  		dev_err(&pdev->dev, "Failed to register pinctrl\n");
+>  		return PTR_ERR(pctl);
+>
 
-The idiomatic way is to wrap your condition in the WARN_ON; i.e. 
+Acked-by: Ray Jui <ray.jui@broadcom.com>
 
-if (WARN_ON(!r || !*r))
-	return 0;
+Thanks!
 
-> +
-> +	return *r == data;
-> +}
-> +
-[..]
-> +
-> +/**
-> + * devm_pinctrl_unregister() - Resource manager of pinctrl_unregister()
-> + * @dev: device for which which resource was allocated
-> + * @pctldev: the pinctrl device to unregister.
-> + */
-> +void devm_pinctrl_unregister(struct device *dev, struct pinctrl_dev *pctldev)
-> +{
-> +	int ret;
-> +
-> +	ret = devres_release(dev, devm_pinctrl_dev_release,
-> +			     devm_pinctrl_dev_match, pctldev);
-> +	if (!ret)
-> +		WARN_ON(ret);
-
-ret is unlikely to be non-zero in a code path only taken when ret is
-zero.
-
-Do either:
-
-WARN_ON(devres_release(...));
-
-rc = devres_release(..);
-WARN_ON(rc);
-
-> +}
-> +EXPORT_SYMBOL_GPL(devm_pinctrl_unregister);
-> +
->  static int __init pinctrl_init(void)
->  {
->  	pr_info("initialized pinctrl subsystem\n");
-> diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
-> index 9ba59fc..a42e57d 100644
-> --- a/include/linux/pinctrl/pinctrl.h
-> +++ b/include/linux/pinctrl/pinctrl.h
-> @@ -144,6 +144,12 @@ struct pinctrl_desc {
->  extern struct pinctrl_dev *pinctrl_register(struct pinctrl_desc *pctldesc,
->  				struct device *dev, void *driver_data);
->  extern void pinctrl_unregister(struct pinctrl_dev *pctldev);
-> +extern struct pinctrl_dev *devm_pinctrl_register(struct device *dev,
-> +				struct pinctrl_desc *pctldesc,
-> +				void *driver_data);
-> +extern void devm_pinctrl_unregister(struct device *dev,
-> +				struct pinctrl_dev *pctldev);
-> +
->  extern bool pin_is_valid(struct pinctrl_dev *pctldev, int pin);
->  extern void pinctrl_add_gpio_range(struct pinctrl_dev *pctldev,
->  				struct pinctrl_gpio_range *range);
-
-Apart from these style issues you have my ack.
-
-Regards,
-Bjorn
+Ray
