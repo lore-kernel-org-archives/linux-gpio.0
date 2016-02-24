@@ -1,50 +1,66 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH RFT] gpio: pisosr: Use gpiod_set_value_cansleep in
- pisosr_gpio_refresh()
-Date: Wed, 24 Feb 2016 21:31:14 +0800
-Message-ID: <1456320674.8959.1.camel@ingics.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 19/50] pinctrl: ssbi-gpi: Use devm_pinctrl_register() for pinctrl registration
+Date: Wed, 24 Feb 2016 18:45:44 +0530
+Message-ID: <1456319775-3216-20-git-send-email-ldewangan@nvidia.com>
+References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:34550 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932528AbcBXNbT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Feb 2016 08:31:19 -0500
-Received: by mail-pa0-f41.google.com with SMTP id fy10so12829881pac.1
-        for <linux-gpio@vger.kernel.org>; Wed, 24 Feb 2016 05:31:18 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Laxman Dewangan <ldewangan@nvidia.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "Andrew F. Davis" <afd@ti.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-This driver has .can_sleep flag set.
-So the pisosr_gpio_get() can be called from contexts that can sleep.
-Thus use the cansleep() variant in pisosr_gpio_refresh().
+Use devm_pinctrl_register() for pin control registration and clean
+the error path.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 ---
- drivers/gpio/gpio-pisosr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
-index f9f1074..597cec6 100644
---- a/drivers/gpio/gpio-pisosr.c
-+++ b/drivers/gpio/gpio-pisosr.c
-@@ -46,9 +46,9 @@ static int pisosr_gpio_refresh(struct pisosr_gpio *gpio)
- 	mutex_lock(&gpio->lock);
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+index cd8580d..f71dda6 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+@@ -729,7 +729,7 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
+ 	pctrl->desc.custom_conf_items = pm8xxx_conf_items;
+ #endif
  
- 	if (gpio->load_gpio) {
--		gpiod_set_value(gpio->load_gpio, 1);
-+		gpiod_set_value_cansleep(gpio->load_gpio, 1);
- 		udelay(1); /* registers load time (~10ns) */
--		gpiod_set_value(gpio->load_gpio, 0);
-+		gpiod_set_value_cansleep(gpio->load_gpio, 0);
- 		udelay(1); /* registers recovery time (~5ns) */
+-	pctrl->pctrl = pinctrl_register(&pctrl->desc, &pdev->dev, pctrl);
++	pctrl->pctrl = devm_pinctrl_register(&pdev->dev, &pctrl->desc, pctrl);
+ 	if (IS_ERR(pctrl->pctrl)) {
+ 		dev_err(&pdev->dev, "couldn't register pm8xxx gpio driver\n");
+ 		return PTR_ERR(pctrl->pctrl);
+@@ -745,7 +745,7 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
+ 	ret = gpiochip_add_data(&pctrl->chip, pctrl);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed register gpiochip\n");
+-		goto unregister_pinctrl;
++		return ret;
  	}
+ 
+ 	ret = gpiochip_add_pin_range(&pctrl->chip,
+@@ -765,9 +765,6 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
+ unregister_gpiochip:
+ 	gpiochip_remove(&pctrl->chip);
+ 
+-unregister_pinctrl:
+-	pinctrl_unregister(pctrl->pctrl);
+-
+ 	return ret;
+ }
+ 
+@@ -777,8 +774,6 @@ static int pm8xxx_gpio_remove(struct platform_device *pdev)
+ 
+ 	gpiochip_remove(&pctrl->chip);
+ 
+-	pinctrl_unregister(pctrl->pctrl);
+-
+ 	return 0;
+ }
  
 -- 
 2.1.4
-
-
-
