@@ -1,70 +1,66 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 35/50] pinctrl: as3722: Use devm_pinctrl_register() for pinctrl registration
-Date: Wed, 24 Feb 2016 18:46:00 +0530
-Message-ID: <1456319775-3216-36-git-send-email-ldewangan@nvidia.com>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH 38/50] pinctrl: digicolor: Use devm_pinctrl_register()
+ for pinctrl registration
+Date: Wed, 24 Feb 2016 15:42:19 +0200
+Message-ID: <20160224134219.GI2225@tarshish>
 References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
+ <1456319775-3216-39-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:3448 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757836AbcBXNcZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Feb 2016 08:32:25 -0500
-In-Reply-To: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1456319775-3216-39-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Laxman Dewangan <ldewangan@nvidia.com>
 
-Use devm_pinctrl_register() for pin control registration and clean
-error path.
+Hi Laxman Dewangan,
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
- drivers/pinctrl/pinctrl-as3722.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+On Wed, Feb 24, 2016 at 06:46:03PM +0530, Laxman Dewangan wrote:
+> Use devm_pinctrl_register() for pin control registration and clean
+> error path.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: Baruch Siach <baruch@tkos.co.il>
+> ---
+>  drivers/pinctrl/pinctrl-digicolor.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
+> index f1343d6..c18014d 100644
+> --- a/drivers/pinctrl/pinctrl-digicolor.c
+> +++ b/drivers/pinctrl/pinctrl-digicolor.c
+> @@ -326,17 +326,15 @@ static int dc_pinctrl_probe(struct platform_device *pdev)
+>  
+>  	pmap->dev = &pdev->dev;
+>  
+> -	pmap->pctl = pinctrl_register(pctl_desc, &pdev->dev, pmap);
+> +	pmap->pctl = devm_pinctrl_register(&pdev->dev, pctl_desc, pmap);
+>  	if (IS_ERR(pmap->pctl)) {
+>  		dev_err(&pdev->dev, "pinctrl driver registration failed\n");
+>  		return PTR_ERR(pmap->pctl);
+>  	}
+>  
+>  	ret = dc_gpiochip_add(pmap, pdev->dev.of_node);
+> -	if (ret < 0) {
+> -		pinctrl_unregister(pmap->pctl);
+> +	if (ret < 0)
+>  		return ret;
+> -	}
+>  
+>  	return 0;
 
-diff --git a/drivers/pinctrl/pinctrl-as3722.c b/drivers/pinctrl/pinctrl-as3722.c
-index e844fdc..0808569 100644
---- a/drivers/pinctrl/pinctrl-as3722.c
-+++ b/drivers/pinctrl/pinctrl-as3722.c
-@@ -569,8 +569,8 @@ static int as3722_pinctrl_probe(struct platform_device *pdev)
- 	as3722_pinctrl_desc.name = dev_name(&pdev->dev);
- 	as3722_pinctrl_desc.pins = as3722_pins_desc;
- 	as3722_pinctrl_desc.npins = ARRAY_SIZE(as3722_pins_desc);
--	as_pci->pctl = pinctrl_register(&as3722_pinctrl_desc,
--					&pdev->dev, as_pci);
-+	as_pci->pctl = devm_pinctrl_register(&pdev->dev, &as3722_pinctrl_desc,
-+					     as_pci);
- 	if (IS_ERR(as_pci->pctl)) {
- 		dev_err(&pdev->dev, "Couldn't register pinctrl driver\n");
- 		return PTR_ERR(as_pci->pctl);
-@@ -582,7 +582,7 @@ static int as3722_pinctrl_probe(struct platform_device *pdev)
- 	ret = gpiochip_add_data(&as_pci->gpio_chip, as_pci);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Couldn't register gpiochip, %d\n", ret);
--		goto fail_chip_add;
-+		return ret;
- 	}
- 
- 	ret = gpiochip_add_pin_range(&as_pci->gpio_chip, dev_name(&pdev->dev),
-@@ -596,8 +596,6 @@ static int as3722_pinctrl_probe(struct platform_device *pdev)
- 
- fail_range_add:
- 	gpiochip_remove(&as_pci->gpio_chip);
--fail_chip_add:
--	pinctrl_unregister(as_pci->pctl);
- 	return ret;
- }
- 
-@@ -606,7 +604,6 @@ static int as3722_pinctrl_remove(struct platform_device *pdev)
- 	struct as3722_pctrl_info *as_pci = platform_get_drvdata(pdev);
- 
- 	gpiochip_remove(&as_pci->gpio_chip);
--	pinctrl_unregister(as_pci->pctl);
- 	return 0;
- }
- 
+Please simplify even more to just:
+
+   return dc_gpiochip_add(pmap, pdev->dev.of_node);
+
+and remove the no longer used 'ret' variable.
+
+Thanks,
+baruch
+
 -- 
-2.1.4
-
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
