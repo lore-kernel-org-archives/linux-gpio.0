@@ -1,50 +1,89 @@
-From: Ray Jui <ray.jui@broadcom.com>
-Subject: Re: [PATCH 07/50] pinctrl: nsp-gpio: Use devm_pinctrl_register() for
- pinctrl registration
-Date: Wed, 24 Feb 2016 10:30:34 -0800
-Message-ID: <dbd2ae89-1e62-e7d3-58f0-681d26fee2c9@broadcom.com>
+From: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Subject: Re: [PATCH 13/50] pinctrl: mtk-common: Use devm_pinctrl_register()
+ for pinctrl registration
+Date: Wed, 24 Feb 2016 12:28:25 -0800
+Message-ID: <1456345705.14518.1.camel@mussux00>
 References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
- <1456319775-3216-8-git-send-email-ldewangan@nvidia.com>
+	 <1456319775-3216-14-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1456319775-3216-8-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([66.228.70.111]:54784 "EHLO
+	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753328AbcBXU2d (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Feb 2016 15:28:33 -0500
+In-Reply-To: <1456319775-3216-14-git-send-email-ldewangan@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>
 
-
-
-On 2/24/2016 5:15 AM, Laxman Dewangan wrote:
-> Use devm_pinctrl_register() for pin control registration.
->
+On Wed, 2016-02-24 at 18:45 +0530, Laxman Dewangan wrote:
+> Use devm_pinctrl_register() for pin control registration and clean
+> the error path.
+> 
 > Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Cc: Ray Jui <rjui@broadcom.com>
-> Cc: Scott Branden <sbranden@broadcom.com>
-> Cc: Jon Mason <jonmason@broadcom.com>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
+> Cc: Yingjoe Chen <yingjoe.chen@mediatek.com>
 > ---
->  drivers/pinctrl/bcm/pinctrl-nsp-gpio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
-> index ac90043..2873f73 100644
-> --- a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
-> +++ b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
-> @@ -609,7 +609,7 @@ static int nsp_gpio_register_pinconf(struct nsp_gpio *chip)
->  	pctldesc->npins = gc->ngpio;
->  	pctldesc->confops = &nsp_pconf_ops;
->
-> -	chip->pctl = pinctrl_register(pctldesc, chip->dev, chip);
-> +	chip->pctl = devm_pinctrl_register(chip->dev, pctldesc, chip);
->  	if (IS_ERR(chip->pctl)) {
->  		dev_err(chip->dev, "unable to register pinctrl device\n");
->  		return PTR_ERR(chip->pctl);
->
 
-Acked-by: Ray Jui <ray.jui@broadcom.com>
+Acked-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
 
-Thanks!
+Thanks,
+Hongzhou
 
-Ray
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 17 ++++++-----------
+>  1 file changed, 6 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> index ddc9217..194413d 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> @@ -1390,17 +1390,16 @@ int mtk_pctrl_init(struct platform_device *pdev,
+>  	pctl->pctl_desc.pmxops = &mtk_pmx_ops;
+>  	pctl->dev = &pdev->dev;
+>  
+> -	pctl->pctl_dev = pinctrl_register(&pctl->pctl_desc, &pdev->dev, pctl);
+> +	pctl->pctl_dev = devm_pinctrl_register(&pdev->dev, &pctl->pctl_desc,
+> +					       pctl);
+>  	if (IS_ERR(pctl->pctl_dev)) {
+>  		dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
+>  		return PTR_ERR(pctl->pctl_dev);
+>  	}
+>  
+>  	pctl->chip = devm_kzalloc(&pdev->dev, sizeof(*pctl->chip), GFP_KERNEL);
+> -	if (!pctl->chip) {
+> -		ret = -ENOMEM;
+> -		goto pctrl_error;
+> -	}
+> +	if (!pctl->chip)
+> +		return -ENOMEM;
+>  
+>  	*pctl->chip = mtk_gpio_chip;
+>  	pctl->chip->ngpio = pctl->devdata->npins;
+> @@ -1409,10 +1408,8 @@ int mtk_pctrl_init(struct platform_device *pdev,
+>  	pctl->chip->base = -1;
+>  
+>  	ret = gpiochip_add_data(pctl->chip, pctl);
+> -	if (ret) {
+> -		ret = -EINVAL;
+> -		goto pctrl_error;
+> -	}
+> +	if (ret)
+> +		return -EINVAL;
+>  
+>  	/* Register the GPIO to pin mappings. */
+>  	ret = gpiochip_add_pin_range(pctl->chip, dev_name(&pdev->dev),
+> @@ -1490,8 +1487,6 @@ int mtk_pctrl_init(struct platform_device *pdev,
+>  
+>  chip_error:
+>  	gpiochip_remove(pctl->chip);
+> -pctrl_error:
+> -	pinctrl_unregister(pctl->pctl_dev);
+>  	return ret;
+>  }
+>  
+
+
