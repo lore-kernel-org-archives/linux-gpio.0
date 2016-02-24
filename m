@@ -1,80 +1,68 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v3 2/2] gpio: designware: add gpio-signaled acpi events
- support for power button
-Date: Wed, 24 Feb 2016 15:49:02 +0200
-Message-ID: <CAHp75VeFydKKc6GmWbLJ2uSBmxG2ObGX51i-NrNBAdaR57nXCA@mail.gmail.com>
-References: <1456317210-42742-1-git-send-email-qiujiang@huawei.com>
-	<1456317210-42742-3-git-send-email-qiujiang@huawei.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 25/50] pinctrl: ish-pfc: Use devm_pinctrl_register() for
+ pinctrl registration
+Date: Wed, 24 Feb 2016 14:59:44 +0100
+Message-ID: <CAMuHMdVBjn02J1tAwXb7XQKQa3jk=D4LX-f-1cZ2wsjc3Gfxqw@mail.gmail.com>
+References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
+	<1456319775-3216-26-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1456317210-42742-3-git-send-email-qiujiang@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: qiujiang <qiujiang@huawei.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1456319775-3216-26-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Lee Jones <lee@kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-rpi-kernel@lists.infradead.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 24, 2016 at 2:33 PM, qiujiang <qiujiang@huawei.com> wrote:
-> This patch modifies the designware gpio controller driver to
-> support the gpio-signaled acpi events. This is used for power
-> button on hisilicon D02 board(an arm64 platform).
+Hi Laxman,
 
-> @@ -434,6 +436,10 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
->         else
->                 port->is_registered = true;
+On Wed, Feb 24, 2016 at 2:15 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> Use devm_pinctrl_register() for pin control registration.
 >
-> +       /* Add GPIO-signaled ACPI event support */
-> +       if (pp->irq)
-> +               acpi_gpiochip_request_interrupts(&(port->gc));
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: linux-renesas-soc@vger.kernel.org
 
-Redundant parens.
+Thanks for your patch!
 
-> @@ -447,7 +453,7 @@ static void dwapb_gpio_unregister(struct dwapb_gpio *gpio)
+> index 87b0a59..f17b5fc 100644
+> --- a/drivers/pinctrl/sh-pfc/pinctrl.c
+> +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+> @@ -692,19 +692,9 @@ int sh_pfc_register_pinctrl(struct sh_pfc *pfc)
+>         pmx->pctl_desc.pins = pmx->pins;
+>         pmx->pctl_desc.npins = pfc->info->nr_pins;
+>
+> -       pmx->pctl = pinctrl_register(&pmx->pctl_desc, pfc->dev, pmx);
+> +       pmx->pctl = devm_pinctrl_register(pfc->dev, &pmx->pctl_desc, pmx);
+>         if (IS_ERR(pmx->pctl))
+>                 return PTR_ERR(pmx->pctl);
+>
+>         return 0;
 >  }
->
->  static struct dwapb_platform_data *
-> -dwapb_gpio_get_pdata_of(struct device *dev)
-> +dwapb_gpio_get_pdata(struct device *dev)
->  {
->         struct fwnode_handle *fwnode;
->         struct dwapb_platform_data *pdata;
-> @@ -455,9 +461,6 @@ dwapb_gpio_get_pdata_of(struct device *dev)
->         int nports;
->         int i;
->
-
-> -       if (!IS_ENABLED(CONFIG_OF_GPIO) || !(dev->of_node))
-> -               return ERR_PTR(-ENODEV);
 > -
+> -int sh_pfc_unregister_pinctrl(struct sh_pfc *pfc)
+> -{
+> -       struct sh_pfc_pinctrl *pmx = pfc->pinctrl;
+> -
+> -       pinctrl_unregister(pmx->pctl);
+> -
+> -       pfc->pinctrl = NULL;
+> -       return 0;
+> -}
 
-I think it belongs to patch 1.
+There's no longer a need to have sh_pfc.pinctrl, so please remove that field
+while you're at it.
 
-> @@ -479,15 +482,13 @@ dwapb_gpio_get_pdata_of(struct device *dev)
->
->                 if (fwnode_property_read_u32(fwnode, "reg", &pp->idx) ||
->                     pp->idx >= DWAPB_MAX_PORTS) {
-> -                       dev_err(dev, "missing/invalid port index for %s\n",
-> -                               to_of_node(fwnode)->full_name);
-> +                       dev_err(dev, "missing/invalid port index\n");
+Thanks!
 
-Ditto.
+Gr{oetje,eeting}s,
 
-> -                       dev_info(dev, "failed to get number of gpios for %s\n",
-> -                                to_of_node(fwnode)->full_name);
-> +                       dev_info(dev, "failed to get number of gpios\n");
+                        Geert
 
-Ditto.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> @@ -495,7 +496,7 @@ dwapb_gpio_get_pdata_of(struct device *dev)
->                  * Only port A can provide interrupts in all configurations of
->                  * the IP.
->                  */
-> -               if (pp->idx == 0 &&
-> +               if (dev->of_node && pp->idx == 0 &&
-
-Why is it needed?
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
