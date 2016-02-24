@@ -1,18 +1,18 @@
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 18/50] pinctrl: spmi: Use devm_pinctrl_register() for
+Subject: Re: [PATCH 19/50] pinctrl: ssbi-gpi: Use devm_pinctrl_register() for
  pinctrl registration
-Date: Wed, 24 Feb 2016 10:07:27 -0800
-Message-ID: <20160224180727.GL21240@tuxbot>
+Date: Wed, 24 Feb 2016 10:08:41 -0800
+Message-ID: <20160224180841.GM21240@tuxbot>
 References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
- <1456319775-3216-19-git-send-email-ldewangan@nvidia.com>
+ <1456319775-3216-20-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1456319775-3216-19-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1456319775-3216-20-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
 To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>, Lee Jones <lee.jones@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Jonas Gorski <jogo@openwrt.org>
+Cc: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 List-Id: linux-gpio@vger.kernel.org
 
 On Wed 24 Feb 05:15 PST 2016, Laxman Dewangan wrote:
@@ -21,55 +21,55 @@ On Wed 24 Feb 05:15 PST 2016, Laxman Dewangan wrote:
 > the error path.
 > 
 > Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Cc: Ivan T. Ivanov <ivan.ivanov@linaro.org>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Jonas Gorski <jogo@openwrt.org>
+> Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+> ---
 
-Reviewed-by: Bjorn Andersson <bjorn.anderss@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 Regards,
 Bjorn
 
-> ---
->  drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+>  drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-> index 2a3e549..418367e 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-> @@ -877,14 +877,14 @@ static int pmic_mpp_probe(struct platform_device *pdev)
->  	state->chip.of_gpio_n_cells = 2;
->  	state->chip.can_sleep = false;
+> diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+> index cd8580d..f71dda6 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+> @@ -729,7 +729,7 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
+>  	pctrl->desc.custom_conf_items = pm8xxx_conf_items;
+>  #endif
 >  
-> -	state->ctrl = pinctrl_register(pctrldesc, dev, state);
-> +	state->ctrl = devm_pinctrl_register(dev, pctrldesc, state);
->  	if (IS_ERR(state->ctrl))
->  		return PTR_ERR(state->ctrl);
->  
->  	ret = gpiochip_add_data(&state->chip, state);
+> -	pctrl->pctrl = pinctrl_register(&pctrl->desc, &pdev->dev, pctrl);
+> +	pctrl->pctrl = devm_pinctrl_register(&pdev->dev, &pctrl->desc, pctrl);
+>  	if (IS_ERR(pctrl->pctrl)) {
+>  		dev_err(&pdev->dev, "couldn't register pm8xxx gpio driver\n");
+>  		return PTR_ERR(pctrl->pctrl);
+> @@ -745,7 +745,7 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
+>  	ret = gpiochip_add_data(&pctrl->chip, pctrl);
 >  	if (ret) {
->  		dev_err(state->dev, "can't add gpio chip\n");
-> -		goto err_chip;
+>  		dev_err(&pdev->dev, "failed register gpiochip\n");
+> -		goto unregister_pinctrl;
 > +		return ret;
 >  	}
 >  
->  	ret = gpiochip_add_pin_range(&state->chip, dev_name(dev), 0, 0, npins);
-> @@ -897,8 +897,6 @@ static int pmic_mpp_probe(struct platform_device *pdev)
+>  	ret = gpiochip_add_pin_range(&pctrl->chip,
+> @@ -765,9 +765,6 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
+>  unregister_gpiochip:
+>  	gpiochip_remove(&pctrl->chip);
 >  
->  err_range:
->  	gpiochip_remove(&state->chip);
-> -err_chip:
-> -	pinctrl_unregister(state->ctrl);
+> -unregister_pinctrl:
+> -	pinctrl_unregister(pctrl->pctrl);
+> -
 >  	return ret;
 >  }
 >  
-> @@ -907,7 +905,6 @@ static int pmic_mpp_remove(struct platform_device *pdev)
->  	struct pmic_mpp_state *state = platform_get_drvdata(pdev);
+> @@ -777,8 +774,6 @@ static int pm8xxx_gpio_remove(struct platform_device *pdev)
 >  
->  	gpiochip_remove(&state->chip);
-> -	pinctrl_unregister(state->ctrl);
+>  	gpiochip_remove(&pctrl->chip);
+>  
+> -	pinctrl_unregister(pctrl->pctrl);
+> -
 >  	return 0;
 >  }
 >  
