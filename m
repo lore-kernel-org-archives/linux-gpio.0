@@ -1,61 +1,50 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 21/50] pinctrl: msm: Use devm_pinctrl_register() for pinctrl registration
-Date: Wed, 24 Feb 2016 18:45:46 +0530
-Message-ID: <1456319775-3216-22-git-send-email-ldewangan@nvidia.com>
-References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH RFT] gpio: pisosr: Use gpiod_set_value_cansleep in
+ pisosr_gpio_refresh()
+Date: Wed, 24 Feb 2016 21:31:14 +0800
+Message-ID: <1456320674.8959.1.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Laxman Dewangan <ldewangan@nvidia.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee.jones@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:34550 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932528AbcBXNbT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Feb 2016 08:31:19 -0500
+Received: by mail-pa0-f41.google.com with SMTP id fy10so12829881pac.1
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Feb 2016 05:31:18 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "Andrew F. Davis" <afd@ti.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-Use devm_pinctrl_register() for pin control registration and clean
-the error path.
+This driver has .can_sleep flag set.
+So the pisosr_gpio_get() can be called from contexts that can sleep.
+Thus use the cansleep() variant in pisosr_gpio_refresh().
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- drivers/pinctrl/qcom/pinctrl-msm.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-pisosr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 8777cf0..dc7bf77 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -898,17 +898,16 @@ int msm_pinctrl_probe(struct platform_device *pdev,
- 	msm_pinctrl_desc.name = dev_name(&pdev->dev);
- 	msm_pinctrl_desc.pins = pctrl->soc->pins;
- 	msm_pinctrl_desc.npins = pctrl->soc->npins;
--	pctrl->pctrl = pinctrl_register(&msm_pinctrl_desc, &pdev->dev, pctrl);
-+	pctrl->pctrl = devm_pinctrl_register(&pdev->dev, &msm_pinctrl_desc,
-+					     pctrl);
- 	if (IS_ERR(pctrl->pctrl)) {
- 		dev_err(&pdev->dev, "Couldn't register pinctrl driver\n");
- 		return PTR_ERR(pctrl->pctrl);
+diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
+index f9f1074..597cec6 100644
+--- a/drivers/gpio/gpio-pisosr.c
++++ b/drivers/gpio/gpio-pisosr.c
+@@ -46,9 +46,9 @@ static int pisosr_gpio_refresh(struct pisosr_gpio *gpio)
+ 	mutex_lock(&gpio->lock);
+ 
+ 	if (gpio->load_gpio) {
+-		gpiod_set_value(gpio->load_gpio, 1);
++		gpiod_set_value_cansleep(gpio->load_gpio, 1);
+ 		udelay(1); /* registers load time (~10ns) */
+-		gpiod_set_value(gpio->load_gpio, 0);
++		gpiod_set_value_cansleep(gpio->load_gpio, 0);
+ 		udelay(1); /* registers recovery time (~5ns) */
  	}
- 
- 	ret = msm_gpio_init(pctrl);
--	if (ret) {
--		pinctrl_unregister(pctrl->pctrl);
-+	if (ret)
- 		return ret;
--	}
- 
- 	platform_set_drvdata(pdev, pctrl);
- 
-@@ -923,7 +922,6 @@ int msm_pinctrl_remove(struct platform_device *pdev)
- 	struct msm_pinctrl *pctrl = platform_get_drvdata(pdev);
- 
- 	gpiochip_remove(&pctrl->chip);
--	pinctrl_unregister(pctrl->pctrl);
- 
- 	unregister_restart_handler(&pctrl->restart_nb);
  
 -- 
 2.1.4
+
+
+
