@@ -1,182 +1,183 @@
-From: Markus Pargmann <mpa@pengutronix.de>
-Subject: Re: [PATCH 4/4] gpio: Add parsing of DT GPIO line-names
-Date: Wed, 24 Feb 2016 08:03:09 +0100
-Message-ID: <4005432.tnZmp1QKdV@adelgunde>
-References: <1456214089-13954-1-git-send-email-mpa@pengutronix.de> <1456214089-13954-4-git-send-email-mpa@pengutronix.de> <CACRpkdb3gEZt5-25mi5pPvDePzLzNHfFRpjKMOW_-WfcBBLtUQ@mail.gmail.com>
+From: qiujiang <qiujiang@huawei.com>
+Subject: [PATCH v3 2/2] gpio: designware: add gpio-signaled acpi events support for power button
+Date: Wed, 24 Feb 2016 20:33:30 +0800
+Message-ID: <1456317210-42742-3-git-send-email-qiujiang@huawei.com>
+References: <1456317210-42742-1-git-send-email-qiujiang@huawei.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3344746.XlzoLCETQz"; micalg="pgp-sha256"; protocol="application/pgp-signature"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:47722 "EHLO
-	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755752AbcBXHDK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 24 Feb 2016 02:03:10 -0500
-In-Reply-To: <CACRpkdb3gEZt5-25mi5pPvDePzLzNHfFRpjKMOW_-WfcBBLtUQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1456317210-42742-1-git-send-email-qiujiang@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: mika.westerberg@linux.intel.com, andy.shevchenko@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
+This patch modifies the designware gpio controller driver to
+support the gpio-signaled acpi events. This is used for power
+button on hisilicon D02 board(an arm64 platform).
 
---nextPart3344746.XlzoLCETQz
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="us-ascii"
+The corresponding DSDT table is defined as follows:
+Device(GPI0) {
+        Name(_HID, "HISI0181")
+        Name(_ADR, 0)
+        Name(_UID, 0)
 
-On Tuesday, February 23, 2016 02:36:42 PM Linus Walleij wrote:
-> On Tue, Feb 23, 2016 at 8:54 AM, Markus Pargmann <mpa@pengutronix.de>=
- wrote:
->=20
-> > This patch reuses the DT bindings that are already in place for the=
+        Name (_CRS, ResourceTemplate ()  {
+                Memory32Fixed (ReadWrite, 0x802e0000, 0x10000)
+                Interrupt (ResourceConsumer, Level, ActiveHigh,
+                Exclusive,,,) {344}
+        })
 
-> > gpio-hogging mechanism. These bindings define line-name properties =
-for
-> > GPIOs inside the gpio-chip device node.
-> >
-> > of_parse_own_gpio() now sets the gpio descriptor name using the new=
-ly
-> > introduced gpiod_set_name(). It checks for name collisions within a=
- GPIO
-> > chip to avoid GPIOs with the same name that are exported over the s=
-ame
-> > GPIO character device.
-> >
-> > The GPIO flags that describe the GPIO state are not required anymor=
-e in
-> > general but are checked if the gpio-hog property was found.
-> >
-> > This can be used to use the line names from the schematic. Example =
-of lsgpio on
-> > a modified i.MX6s Riotboard:
-> >
-> >         GPIO chip: gpiochip0, "209c000.gpio", 32 GPIO lines
-> >                 line 0: unnamed unlabeled
-> >                 line 1: unnamed unlabeled
-> >                 line 2: SD2_WP "wp" [kernel output open-drain]
-> >                 line 3: GPIO_3_CLK unlabeled
-> >                 line 4: SD2_CD "cd" [kernel output open-drain]
-> >                 ...
-> >
-> > The modified DT:
-> >          &gpio1 {
-> >                 sd2_wp {
-> >                         gpios =3D <2 0>;
-> >                         line-name =3D "SD2_WP";
-> >                 };
-> >
-> >                 gpio_3_clk {
-> >                         gpios =3D <3 0>;
-> >                         line-name =3D "GPIO_3_CLK";
-> >                 };
-> >
-> >                 sd2_cd {
-> >                         gpios =3D <4 0>;
-> >                         line-name =3D "SD2_CD";
-> >                 };
-> >         };
-> >
-> > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
->=20
-> NICE! And this is what I want too.
->=20
-> We need to remove some rough edges:
->=20
-> > +static struct gpio_desc *gpiodev_find_gpiod_by_name(struct gpio_de=
-vice *gdev,
-> > +                                                   const char *nam=
-e)
-> > +{
-> > +       int i;
-> > +
-> > +       for (i =3D 0; i !=3D gdev->ngpio; ++i) {
-> > +               struct gpio_desc *desc =3D &gdev->descs[i];
-> > +
-> > +               if (desc->name && !strcmp(desc->name, name))
-> > +                       return desc;
-> > +       }
-> > +
-> > +       return NULL;
-> > +}
->=20
-> We already have gpio_name_to_desc() which does something
-> similar but across all chips.
->=20
-> Can we break out one gpiodev_name_to_desc() like
-> yours, and refactor gpio_name_to_desc() to just call
-> that for each chip?
+        Device(PRTa) {
+                Name (_DSD, Package () {
+                        Package () {
+                                Package () {"reg",0},
+                                Package () {"snps,nr-gpios",32},
+                }
+                })
+        }
 
-Yes, that sounds good.
+        Name (_AEI, ResourceTemplate () {
+                GpioInt(Edge, ActiveLow, ExclusiveAndWake, PullUp, ,
+                " \\_SB.GPI0") {8}
+        })
 
-Thanks,
+        Method (_E08, 0x0, NotSerialized) {
+                Notify (\_SB.PWRB, 0x80)
+        }
+}
 
-Markus
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: qiujiang <qiujiang@huawei.com>
+---
+ drivers/gpio/gpio-dwapb.c | 38 +++++++++++++++++++++++++++-----------
+ 1 file changed, 27 insertions(+), 11 deletions(-)
 
->=20
-> > +/**
-> > + * gpid_set_name() - sets the name of a gpio descriptor
->=20
-> Missing "o" in gpid_
->=20
-> > + * @desc: the gpio descriptor
-> > + * @name: the name pointer that is assigned. It is internally not =
-copied.
-> > + *
-> > + * This function sets a new name for the GPIO. It checks for colli=
-sions with
-> > + * other GPIOs with the same name within the gpio chip. It returns=
- 0 on success
-> > + * or -EEXIST if the name is already used within the GPIO chip.
-> > + */
-> > +int gpiod_set_name(struct gpio_desc *desc, const char *name)
-> > +{
-> > +       struct gpio_desc *coll =3D gpiodev_find_gpiod_by_name(desc-=
->gdev, name);
-> > +
-> > +       if (coll)
-> > +               return -EEXIST;
-> > +
-> > +       desc->name =3D name;
-> > +
-> > +       return 0;
-> > +}
->=20
-> Otherwise I'm OK with this.
->=20
-> Yours,
-> Linus Walleij
->=20
-
-=2D-=20
-Pengutronix e.K.                           |                           =
-  |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0  =
-  |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
-5 |
-
---nextPart3344746.XlzoLCETQz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWzVWtAAoJEEpcgKtcEGQQSWYQAJCPpqYvsJJmMuxv9oBqEiAL
-z74Q4e0EzJjmVXZkQ9S+pcypbNOSfftmlKbYwRd2E3GLMzIRdIZ9JulYDLdJOExK
-R5e/iV1/jdRlzsAuafFRPyrJ3f4dVhVXxUvccIUKaILkPP6SQehDEQ1FMJSJFt3Q
-9d3KznxMU1RDt6jpG+JzTr9cLLMz0S5M6eiXGaPZu9AaXyXjVPdPoFglJi3HTFO0
-KHAKduuDTfEmJjlqFwBDMNYKRLpG43WxnFLI5KSNg0ThtaE49bMAqtqpxoavM7zD
-rpVQX8YoDiYk9xDlofuqBrABJdjyq5HiLF04YxcUkl/80RiWKgQrHcbRNbcZ3mAz
-12uns6ASS2+QkLKaOY9qzA6AMsCkPpdthiOL15dlwXcPhIv3Qb8XKSHYweA+7niC
-TJZAYoTxsuvYXqDb+ihrCCzhuVro1wx3g0bg7/JaYN7HEkAaLC/djErrWZ+BsGif
-0EqQc3/vueyIlksZN9jI+eGMks/BW0InAbgccYgtF+5bY54hnSlA6ZMdrzsyH/eU
-BkYiajPl5WaaO6NfUVZLIsBkuQPkjLg8uxT0rtJsCREHxxZZGOcy1N/WEaB8/eLG
-dVaxY9CymcfGpglr9IGYakM0JBgve1yTzulhF5JlBHUwGpFwcmaXq46aNgHKBNiA
-0EXGgOm9gYZoK7Zw6TV7
-=o0pX
------END PGP SIGNATURE-----
-
---nextPart3344746.XlzoLCETQz--
-
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 0ebbdf1..d961d3b 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -7,6 +7,7 @@
+  *
+  * All enquiries to support@picochip.com
+  */
++#include <linux/acpi.h>
+ #include <linux/gpio/driver.h>
+ /* FIXME: for gpio_get_value(), replace this with direct register read */
+ #include <linux/gpio.h>
+@@ -25,6 +26,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/platform_data/gpio-dwapb.h>
+ #include <linux/slab.h>
++#include "gpiolib.h"
+ 
+ #define GPIO_SWPORTA_DR		0x00
+ #define GPIO_SWPORTA_DDR	0x04
+@@ -434,6 +436,10 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+ 	else
+ 		port->is_registered = true;
+ 
++	/* Add GPIO-signaled ACPI event support */
++	if (pp->irq)
++		acpi_gpiochip_request_interrupts(&(port->gc));
++
+ 	return err;
+ }
+ 
+@@ -447,7 +453,7 @@ static void dwapb_gpio_unregister(struct dwapb_gpio *gpio)
+ }
+ 
+ static struct dwapb_platform_data *
+-dwapb_gpio_get_pdata_of(struct device *dev)
++dwapb_gpio_get_pdata(struct device *dev)
+ {
+ 	struct fwnode_handle *fwnode;
+ 	struct dwapb_platform_data *pdata;
+@@ -455,9 +461,6 @@ dwapb_gpio_get_pdata_of(struct device *dev)
+ 	int nports;
+ 	int i;
+ 
+-	if (!IS_ENABLED(CONFIG_OF_GPIO) || !(dev->of_node))
+-		return ERR_PTR(-ENODEV);
+-
+ 	nports = device_get_child_node_count(dev);
+ 	if (nports == 0)
+ 		return ERR_PTR(-ENODEV);
+@@ -479,15 +482,13 @@ dwapb_gpio_get_pdata_of(struct device *dev)
+ 
+ 		if (fwnode_property_read_u32(fwnode, "reg", &pp->idx) ||
+ 		    pp->idx >= DWAPB_MAX_PORTS) {
+-			dev_err(dev, "missing/invalid port index for %s\n",
+-				to_of_node(fwnode)->full_name);
++			dev_err(dev, "missing/invalid port index\n");
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 
+ 		if (fwnode_property_read_u32(fwnode, "snps,nr-gpios",
+ 					 &pp->ngpio)) {
+-			dev_info(dev, "failed to get number of gpios for %s\n",
+-				 to_of_node(fwnode)->full_name);
++			dev_info(dev, "failed to get number of gpios\n");
+ 			pp->ngpio = 32;
+ 		}
+ 
+@@ -495,7 +496,7 @@ dwapb_gpio_get_pdata_of(struct device *dev)
+ 		 * Only port A can provide interrupts in all configurations of
+ 		 * the IP.
+ 		 */
+-		if (pp->idx == 0 &&
++		if (dev->of_node && pp->idx == 0 &&
+ 			of_property_read_bool(to_of_node(fwnode),
+ 				"interrupt-controller")) {
+ 			pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
+@@ -505,9 +506,17 @@ dwapb_gpio_get_pdata_of(struct device *dev)
+ 			}
+ 		}
+ 
++		if (has_acpi_companion(dev) && pp->idx == 0)
++			pp->irq = platform_get_irq(to_platform_device(dev), 0);
++
+ 		pp->irq_shared	= false;
+ 		pp->gpio_base	= -1;
+-		pp->name = to_of_node(fwnode)->full_name;
++
++		if (dev->of_node)
++			pp->name = to_of_node(fwnode)->full_name;
++
++		if (has_acpi_companion(dev))
++			pp->name = acpi_dev_name(to_acpi_device_node(fwnode));
+ 	}
+ 
+ 	return pdata;
+@@ -523,7 +532,7 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+ 	struct dwapb_platform_data *pdata = dev_get_platdata(dev);
+ 
+ 	if (!pdata) {
+-		pdata = dwapb_gpio_get_pdata_of(dev);
++		pdata = dwapb_gpio_get_pdata(dev);
+ 		if (IS_ERR(pdata))
+ 			return PTR_ERR(pdata);
+ 	}
+@@ -580,6 +589,12 @@ static const struct of_device_id dwapb_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, dwapb_of_match);
+ 
++static const struct acpi_device_id dwapb_acpi_match[] = {
++	{"HISI0181", 0},
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
++
+ #ifdef CONFIG_PM_SLEEP
+ static int dwapb_gpio_suspend(struct device *dev)
+ {
+@@ -674,6 +689,7 @@ static struct platform_driver dwapb_gpio_driver = {
+ 		.name	= "gpio-dwapb",
+ 		.pm	= &dwapb_gpio_pm_ops,
+ 		.of_match_table = of_match_ptr(dwapb_of_match),
++		.acpi_match_table = ACPI_PTR(dwapb_acpi_match),
+ 	},
+ 	.probe		= dwapb_gpio_probe,
+ 	.remove		= dwapb_gpio_remove,
+-- 
+1.9.1
