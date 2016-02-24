@@ -1,60 +1,86 @@
 From: Ray Jui <ray.jui@broadcom.com>
-Subject: Re: [PATCH 04/50] pinctrl: bcm2835: Use devm_pinctrl_register() for
- pinctrl registration
-Date: Wed, 24 Feb 2016 10:27:59 -0800
-Message-ID: <d3e4a7ae-6c51-1a2f-8344-8f8b2ff3f5ec@broadcom.com>
+Subject: Re: [PATCH 06/50] pinctrl: iproc-gpio: Use devm_pinctrl_register()
+ for pinctrl registration
+Date: Wed, 24 Feb 2016 10:29:52 -0800
+Message-ID: <fccabf34-d5a7-e176-f8a8-cb9657d36450@broadcom.com>
 References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
- <1456319775-3216-5-git-send-email-ldewangan@nvidia.com>
+ <1456319775-3216-7-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 5520-maca-inet1-outside.broadcom.com ([216.31.211.11]:59120
+Received: from 5520-maca-inet1-outside.broadcom.com ([216.31.211.11]:32514
 	"EHLO mail-irv-18.broadcom.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757300AbcBXS2D (ORCPT
+	by vger.kernel.org with ESMTP id S1755843AbcBXS3z (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 24 Feb 2016 13:28:03 -0500
-In-Reply-To: <1456319775-3216-5-git-send-email-ldewangan@nvidia.com>
+	Wed, 24 Feb 2016 13:29:55 -0500
+In-Reply-To: <1456319775-3216-7-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Ray Jui <rjui@broadcom.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>
 
 
 
 On 2/24/2016 5:15 AM, Laxman Dewangan wrote:
-> Use devm_pinctrl_register() for pin control registration.
+> Use devm_pinctrl_register() for pin control registration and clean
+> the error path.
 >
 > Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 > Cc: Ray Jui <rjui@broadcom.com>
+> Cc: Scott Branden <sbranden@broadcom.com>
+> Cc: Jon Mason <jonmason@broadcom.com>
 > ---
->  drivers/pinctrl/bcm/pinctrl-bcm2835.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  drivers/pinctrl/bcm/pinctrl-iproc-gpio.c | 12 ++----------
+>  1 file changed, 2 insertions(+), 10 deletions(-)
 >
-> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> index 0f5997c..25bc4a2 100644
-> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> @@ -1027,7 +1027,7 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
->  		return err;
->  	}
+> diff --git a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+> index d530ab4..e753af3 100644
+> --- a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+> +++ b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+> @@ -623,7 +623,7 @@ static int iproc_gpio_register_pinconf(struct iproc_gpio *chip)
+>  	pctldesc->npins = gc->ngpio;
+>  	pctldesc->confops = &iproc_pconf_ops;
 >
-> -	pc->pctl_dev = pinctrl_register(&bcm2835_pinctrl_desc, dev, pc);
-> +	pc->pctl_dev = devm_pinctrl_register(dev, &bcm2835_pinctrl_desc, pc);
->  	if (IS_ERR(pc->pctl_dev)) {
->  		gpiochip_remove(&pc->gpio_chip);
->  		return PTR_ERR(pc->pctl_dev);
-> @@ -1045,7 +1045,6 @@ static int bcm2835_pinctrl_remove(struct platform_device *pdev)
->  {
->  	struct bcm2835_pinctrl *pc = platform_get_drvdata(pdev);
+> -	chip->pctl = pinctrl_register(pctldesc, chip->dev, chip);
+> +	chip->pctl = devm_pinctrl_register(chip->dev, pctldesc, chip);
+>  	if (IS_ERR(chip->pctl)) {
+>  		dev_err(chip->dev, "unable to register pinctrl device\n");
+>  		return PTR_ERR(chip->pctl);
+> @@ -632,11 +632,6 @@ static int iproc_gpio_register_pinconf(struct iproc_gpio *chip)
+>  	return 0;
+>  }
 >
-> -	pinctrl_unregister(pc->pctl_dev);
->  	gpiochip_remove(&pc->gpio_chip);
+> -static void iproc_gpio_unregister_pinconf(struct iproc_gpio *chip)
+> -{
+> -	pinctrl_unregister(chip->pctl);
+> -}
+> -
+>  static const struct of_device_id iproc_gpio_of_match[] = {
+>  	{ .compatible = "brcm,cygnus-ccm-gpio" },
+>  	{ .compatible = "brcm,cygnus-asiu-gpio" },
+> @@ -720,7 +715,7 @@ static int iproc_gpio_probe(struct platform_device *pdev)
+>  					   handle_simple_irq, IRQ_TYPE_NONE);
+>  		if (ret) {
+>  			dev_err(dev, "no GPIO irqchip\n");
+> -			goto err_unregister_pinconf;
+> +			goto err_rm_gpiochip;
+>  		}
+>
+>  		gpiochip_set_chained_irqchip(gc, &iproc_gpio_irq_chip, irq,
+> @@ -729,9 +724,6 @@ static int iproc_gpio_probe(struct platform_device *pdev)
 >
 >  	return 0;
 >
+> -err_unregister_pinconf:
+> -	iproc_gpio_unregister_pinconf(chip);
+> -
+>  err_rm_gpiochip:
+>  	gpiochip_remove(gc);
+>
+>
 
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Acked-by: Ray Jui <ray.jui@broadcom.com>
 
 Thanks!
 
