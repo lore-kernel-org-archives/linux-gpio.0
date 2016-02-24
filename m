@@ -1,66 +1,115 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: Re: [PATCH 38/50] pinctrl: digicolor: Use devm_pinctrl_register()
- for pinctrl registration
-Date: Wed, 24 Feb 2016 15:42:19 +0200
-Message-ID: <20160224134219.GI2225@tarshish>
-References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
- <1456319775-3216-39-git-send-email-ldewangan@nvidia.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v3 1/2] gpio: designware: switch device node to fwnode
+Date: Wed, 24 Feb 2016 15:46:21 +0200
+Message-ID: <CAHp75Vd4dNJpuiMMizYbOpv+pZd30RcNA+kPoF6_4Vukk62iFw@mail.gmail.com>
+References: <1456317210-42742-1-git-send-email-qiujiang@huawei.com>
+	<1456317210-42742-2-git-send-email-qiujiang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1456319775-3216-39-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1456317210-42742-2-git-send-email-qiujiang@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org
+To: qiujiang <qiujiang@huawei.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Laxman Dewangan,
+On Wed, Feb 24, 2016 at 2:33 PM, qiujiang <qiujiang@huawei.com> wrote:
+> This patch switch device node to fwnode in dwapb_port_property,
+> so as to apply a unified data structure for DT and ACPI.
+>
+> This change also needs to be done in intel_quark_i2c_gpio driver,
+> since it depends on gpio-dwapb driver.
+>
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: qiujiang <qiujiang@huawei.com>
 
-On Wed, Feb 24, 2016 at 06:46:03PM +0530, Laxman Dewangan wrote:
-> Use devm_pinctrl_register() for pin control registration and clean
-> error path.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Cc: Baruch Siach <baruch@tkos.co.il>
-> ---
->  drivers/pinctrl/pinctrl-digicolor.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
-> index f1343d6..c18014d 100644
-> --- a/drivers/pinctrl/pinctrl-digicolor.c
-> +++ b/drivers/pinctrl/pinctrl-digicolor.c
-> @@ -326,17 +326,15 @@ static int dc_pinctrl_probe(struct platform_device *pdev)
->  
->  	pmap->dev = &pdev->dev;
->  
-> -	pmap->pctl = pinctrl_register(pctl_desc, &pdev->dev, pmap);
-> +	pmap->pctl = devm_pinctrl_register(&pdev->dev, pctl_desc, pmap);
->  	if (IS_ERR(pmap->pctl)) {
->  		dev_err(&pdev->dev, "pinctrl driver registration failed\n");
->  		return PTR_ERR(pmap->pctl);
->  	}
->  
->  	ret = dc_gpiochip_add(pmap, pdev->dev.of_node);
-> -	if (ret < 0) {
-> -		pinctrl_unregister(pmap->pctl);
-> +	if (ret < 0)
->  		return ret;
-> -	}
->  
->  	return 0;
+Yes, something like this.
+Though I have questions:
+ - why do you use fwnode_*() instead of device_property_*() calls?
+What prevents us to move to device property API directly?
 
-Please simplify even more to just:
+> -       gpio->domain = irq_domain_add_linear(node, ngpio,
+> -                                            &irq_generic_chip_ops, gpio);
+> +       gpio->domain = irq_domain_create_linear(fwnode, ngpio,
+> +                                                &irq_generic_chip_ops, gpio);
 
-   return dc_gpiochip_add(pmap, pdev->dev.of_node);
+Are they equivalent?
 
-and remove the no longer used 'ret' variable.
+> @@ -415,7 +415,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+>         }
+>
+>  #ifdef CONFIG_OF_GPIO
+> -       port->gc.of_node = pp->node;
+> +       port->gc.of_node = to_of_node(pp->fwnode);
 
-Thanks,
-baruch
+If fwnode is not OF one?
+Perhaps, something like ... = is_of_node() ? to_of_node() : NULL;
+
+
+> -       node = dev->of_node;
+> -       if (!IS_ENABLED(CONFIG_OF_GPIO) || !node)
+> +       if (!IS_ENABLED(CONFIG_OF_GPIO) || !(dev->of_node))
+>                 return ERR_PTR(-ENODEV);
+
+So, since you converted to fwnode, do you still need this check?
+
+>
+> -       nports = of_get_child_count(node);
+> +       nports = device_get_child_node_count(dev);
+>         if (nports == 0)
+>                 return ERR_PTR(-ENODEV);
+
+...I think this one fail if it will not found any child.
+
+> -               if (of_property_read_u32(port_np, "reg", &pp->idx) ||
+> +               if (fwnode_property_read_u32(fwnode, "reg", &pp->idx) ||
+
+device_property_*() ?
+
+>                     pp->idx >= DWAPB_MAX_PORTS) {
+>                         dev_err(dev, "missing/invalid port index for %s\n",
+> -                               port_np->full_name);
+> +                               to_of_node(fwnode)->full_name);
+
+If it's not OF?
+
+> -               if (of_property_read_u32(port_np, "snps,nr-gpios",
+> +               if (fwnode_property_read_u32(fwnode, "snps,nr-gpios",
+
+Ditto.
+
+>                                          &pp->ngpio)) {
+>                         dev_info(dev, "failed to get number of gpios for %s\n",
+> -                                port_np->full_name);
+> +                                to_of_node(fwnode)->full_name);
+
+Ditto.
+
+>                 if (pp->idx == 0 &&
+> -                   of_property_read_bool(port_np, "interrupt-controller")) {
+> -                       pp->irq = irq_of_parse_and_map(port_np, 0);
+> +                       of_property_read_bool(to_of_node(fwnode),
+> +                               "interrupt-controller")) {
+
+device_property_*() ?
+
+> +                       pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
+>                         if (!pp->irq) {
+>                                 dev_warn(dev, "no irq for bank %s\n",
+> -                                        port_np->full_name);
+> +                                        to_of_node(fwnode)->full_name);
+>                         }
+>                 }
+>
+>                 pp->irq_shared  = false;
+>                 pp->gpio_base   = -1;
+> -               pp->name        = port_np->full_name;
+> +               pp->name = to_of_node(fwnode)->full_name;
+>         }
+>
+>         return pdata;
+
 
 -- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+With Best Regards,
+Andy Shevchenko
