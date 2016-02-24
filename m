@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 29/50] pinctrl: tegra: Use devm_pinctrl_register() for pinctrl registration
-Date: Wed, 24 Feb 2016 18:45:54 +0530
-Message-ID: <1456319775-3216-30-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 22/50] pinctrl: pxa: Use devm_pinctrl_register() for pinctrl registration
+Date: Wed, 24 Feb 2016 18:45:47 +0530
+Message-ID: <1456319775-3216-23-git-send-email-ldewangan@nvidia.com>
 References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,123 +9,45 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Laxman Dewangan <ldewangan@nvidia.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
 List-Id: linux-gpio@vger.kernel.org
 
-Use devm_pinctrl_register() for pin control registration and remove
-need of .remove callback.
+Use devm_pinctrl_register() for pin control registration and clean
+the error path.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: Daniel Mack <daniel@zonque.org>
+Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: linux-arm-kernel@lists.infradead.org
 ---
- drivers/pinctrl/tegra/pinctrl-tegra.c    | 12 +-----------
- drivers/pinctrl/tegra/pinctrl-tegra.h    |  2 --
- drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 -
- drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 -
- drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 -
- drivers/pinctrl/tegra/pinctrl-tegra210.c |  1 -
- drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 -
- 7 files changed, 1 insertion(+), 18 deletions(-)
+ drivers/pinctrl/pxa/pinctrl-pxa2xx.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 4938882..e9e8744 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -719,7 +719,7 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
- 			return PTR_ERR(pmx->regs[i]);
- 	}
+diff --git a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
+index 216f227..deb6aa1 100644
+--- a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
++++ b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
+@@ -416,7 +416,7 @@ int pxa2xx_pinctrl_init(struct platform_device *pdev,
+ 	if (ret)
+ 		return ret;
  
--	pmx->pctl = pinctrl_register(&tegra_pinctrl_desc, &pdev->dev, pmx);
-+	pmx->pctl = devm_pinctrl_register(&pdev->dev, &tegra_pinctrl_desc, pmx);
- 	if (IS_ERR(pmx->pctl)) {
- 		dev_err(&pdev->dev, "Couldn't register pinctrl driver\n");
- 		return PTR_ERR(pmx->pctl);
-@@ -735,13 +735,3 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+-	pctl->pctl_dev = pinctrl_register(&pctl->desc, &pdev->dev, pctl);
++	pctl->pctl_dev = devm_pinctrl_register(&pdev->dev, &pctl->desc, pctl);
+ 	if (IS_ERR(pctl->pctl_dev)) {
+ 		dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
+ 		return PTR_ERR(pctl->pctl_dev);
+@@ -427,11 +427,3 @@ int pxa2xx_pinctrl_init(struct platform_device *pdev,
  	return 0;
  }
- EXPORT_SYMBOL_GPL(tegra_pinctrl_probe);
+ EXPORT_SYMBOL(pxa2xx_pinctrl_init);
 -
--int tegra_pinctrl_remove(struct platform_device *pdev)
+-int pxa2xx_pinctrl_exit(struct platform_device *pdev)
 -{
--	struct tegra_pmx *pmx = platform_get_drvdata(pdev);
+-	struct pxa_pinctrl *pctl = platform_get_drvdata(pdev);
 -
--	pinctrl_unregister(pmx->pctl);
--
+-	pinctrl_unregister(pctl->pctl_dev);
 -	return 0;
 -}
--EXPORT_SYMBOL_GPL(tegra_pinctrl_remove);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
-index 1615db7..05785e5 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-@@ -189,6 +189,4 @@ struct tegra_pinctrl_soc_data {
- 
- int tegra_pinctrl_probe(struct platform_device *pdev,
- 			const struct tegra_pinctrl_soc_data *soc_data);
--int tegra_pinctrl_remove(struct platform_device *pdev);
--
- #endif
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra114.c b/drivers/pinctrl/tegra/pinctrl-tegra114.c
-index 05e49d5..236cc57 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra114.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra114.c
-@@ -1863,7 +1863,6 @@ static struct platform_driver tegra114_pinctrl_driver = {
- 		.of_match_table = tegra114_pinctrl_of_match,
- 	},
- 	.probe = tegra114_pinctrl_probe,
--	.remove = tegra_pinctrl_remove,
- };
- module_platform_driver(tegra114_pinctrl_driver);
- 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra124.c b/drivers/pinctrl/tegra/pinctrl-tegra124.c
-index 7cd44c7..749ea05 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra124.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra124.c
-@@ -2075,7 +2075,6 @@ static struct platform_driver tegra124_pinctrl_driver = {
- 		.of_match_table = tegra124_pinctrl_of_match,
- 	},
- 	.probe = tegra124_pinctrl_probe,
--	.remove = tegra_pinctrl_remove,
- };
- module_platform_driver(tegra124_pinctrl_driver);
- 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-index 4833db4..979e329 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-@@ -2242,7 +2242,6 @@ static struct platform_driver tegra20_pinctrl_driver = {
- 		.of_match_table = tegra20_pinctrl_of_match,
- 	},
- 	.probe = tegra20_pinctrl_probe,
--	.remove = tegra_pinctrl_remove,
- };
- module_platform_driver(tegra20_pinctrl_driver);
- 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-index 252b464..cb2c87d8 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
-@@ -1579,7 +1579,6 @@ static struct platform_driver tegra210_pinctrl_driver = {
- 		.of_match_table = tegra210_pinctrl_of_match,
- 	},
- 	.probe = tegra210_pinctrl_probe,
--	.remove = tegra_pinctrl_remove,
- };
- module_platform_driver(tegra210_pinctrl_driver);
- 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra30.c b/drivers/pinctrl/tegra/pinctrl-tegra30.c
-index 47b2fd8..6b3e96c 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra30.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra30.c
-@@ -2498,7 +2498,6 @@ static struct platform_driver tegra30_pinctrl_driver = {
- 		.of_match_table = tegra30_pinctrl_of_match,
- 	},
- 	.probe = tegra30_pinctrl_probe,
--	.remove = tegra_pinctrl_remove,
- };
- module_platform_driver(tegra30_pinctrl_driver);
- 
 -- 
 2.1.4
