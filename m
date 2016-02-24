@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 32/50] pinctrl: vt8500: Use devm_pinctrl_register() for pinctrl registration
-Date: Wed, 24 Feb 2016 18:45:57 +0530
-Message-ID: <1456319775-3216-33-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 33/50] pinctrl: adi2: Use devm_pinctrl_register() for pinctrl registration
+Date: Wed, 24 Feb 2016 18:45:58 +0530
+Message-ID: <1456319775-3216-34-git-send-email-ldewangan@nvidia.com>
 References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,59 +9,49 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Laxman Dewangan <ldewangan@nvidia.com>, Lee Jones <lee.jones@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Mika Westerberg <mika.westerberg@linux.intel.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Use devm_pinctrl_register() for pin control registration and clean
-the error path.
+Use devm_pinctrl_register() for pin control registration and remove
+the need of .remove callback.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
 ---
- drivers/pinctrl/vt8500/pinctrl-wmt.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/pinctrl/pinctrl-adi2.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/pinctrl/vt8500/pinctrl-wmt.c b/drivers/pinctrl/vt8500/pinctrl-wmt.c
-index 5c261bf..159672b 100644
---- a/drivers/pinctrl/vt8500/pinctrl-wmt.c
-+++ b/drivers/pinctrl/vt8500/pinctrl-wmt.c
-@@ -583,7 +583,7 @@ int wmt_pinctrl_probe(struct platform_device *pdev,
+diff --git a/drivers/pinctrl/pinctrl-adi2.c b/drivers/pinctrl/pinctrl-adi2.c
+index ecb57635..54569a7 100644
+--- a/drivers/pinctrl/pinctrl-adi2.c
++++ b/drivers/pinctrl/pinctrl-adi2.c
+@@ -1058,7 +1058,8 @@ static int adi_pinctrl_probe(struct platform_device *pdev)
+ 	adi_pinmux_desc.npins = pinctrl->soc->npins;
  
- 	data->dev = &pdev->dev;
- 
--	data->pctl_dev = pinctrl_register(&wmt_desc, &pdev->dev, data);
-+	data->pctl_dev = devm_pinctrl_register(&pdev->dev, &wmt_desc, data);
- 	if (IS_ERR(data->pctl_dev)) {
- 		dev_err(&pdev->dev, "Failed to register pinctrl\n");
- 		return PTR_ERR(data->pctl_dev);
-@@ -592,7 +592,7 @@ int wmt_pinctrl_probe(struct platform_device *pdev,
- 	err = gpiochip_add_data(&data->gpio_chip, data);
- 	if (err) {
- 		dev_err(&pdev->dev, "could not add GPIO chip\n");
--		goto fail_gpio;
-+		return ret;
- 	}
- 
- 	err = gpiochip_add_pin_range(&data->gpio_chip, dev_name(data->dev),
-@@ -606,8 +606,6 @@ int wmt_pinctrl_probe(struct platform_device *pdev,
- 
- fail_range:
- 	gpiochip_remove(&data->gpio_chip);
--fail_gpio:
--	pinctrl_unregister(data->pctl_dev);
- 	return err;
- }
- 
-@@ -616,7 +614,6 @@ int wmt_pinctrl_remove(struct platform_device *pdev)
- 	struct wmt_pinctrl_data *data = platform_get_drvdata(pdev);
- 
- 	gpiochip_remove(&data->gpio_chip);
--	pinctrl_unregister(data->pctl_dev);
- 
+ 	/* Now register the pin controller and all pins it handles */
+-	pinctrl->pctl = pinctrl_register(&adi_pinmux_desc, &pdev->dev, pinctrl);
++	pinctrl->pctl = devm_pinctrl_register(&pdev->dev, &adi_pinmux_desc,
++					      pinctrl);
+ 	if (IS_ERR(pinctrl->pctl)) {
+ 		dev_err(&pdev->dev, "could not register pinctrl ADI2 driver\n");
+ 		return PTR_ERR(pinctrl->pctl);
+@@ -1069,18 +1070,8 @@ static int adi_pinctrl_probe(struct platform_device *pdev)
  	return 0;
  }
+ 
+-static int adi_pinctrl_remove(struct platform_device *pdev)
+-{
+-	struct adi_pinctrl *pinctrl = platform_get_drvdata(pdev);
+-
+-	pinctrl_unregister(pinctrl->pctl);
+-
+-	return 0;
+-}
+-
+ static struct platform_driver adi_pinctrl_driver = {
+ 	.probe		= adi_pinctrl_probe,
+-	.remove		= adi_pinctrl_remove,
+ 	.driver		= {
+ 		.name	= DRIVER_NAME,
+ 	},
 -- 
 2.1.4
