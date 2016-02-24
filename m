@@ -1,94 +1,85 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 30/50] pinctrl: tegra-xusb: Use devm_pinctrl_register() for
- pinctrl registration
-Date: Wed, 24 Feb 2016 18:45:55 +0530
-Message-ID: <1456319775-3216-31-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 36/50] pinctrl: at91-pio4: Use devm_pinctrl_register() for pinctrl registration
+Date: Wed, 24 Feb 2016 18:46:01 +0530
+Message-ID: <1456319775-3216-37-git-send-email-ldewangan@nvidia.com>
 References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1456319775-3216-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, corbet-T1hC0tSOHrs@public.gmane.org, lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
 
 Use devm_pinctrl_register() for pin control registration and clean
-the error path.
+error path.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org
 ---
- drivers/pinctrl/tegra/pinctrl-tegra-xusb.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/pinctrl/pinctrl-at91-pio4.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-index 2f06029..19f16f4 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-@@ -914,7 +914,8 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
- 	padctl->desc.confops = &tegra_xusb_padctl_pinconf_ops;
- 	padctl->desc.owner = THIS_MODULE;
- 
--	padctl->pinctrl = pinctrl_register(&padctl->desc, &pdev->dev, padctl);
-+	padctl->pinctrl = devm_pinctrl_register(&pdev->dev, &padctl->desc,
-+						padctl);
- 	if (IS_ERR(padctl->pinctrl)) {
- 		dev_err(&pdev->dev, "failed to register pincontrol\n");
- 		err = PTR_ERR(padctl->pinctrl);
-@@ -924,7 +925,7 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
- 	phy = devm_phy_create(&pdev->dev, NULL, &pcie_phy_ops);
- 	if (IS_ERR(phy)) {
- 		err = PTR_ERR(phy);
--		goto unregister;
-+		goto reset;
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index ee69db6..9d33ef5 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -1034,18 +1034,19 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
+ 		goto clk_prepare_enable_error;
  	}
  
- 	padctl->phys[TEGRA_XUSB_PADCTL_PCIE] = phy;
-@@ -933,7 +934,7 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
- 	phy = devm_phy_create(&pdev->dev, NULL, &sata_phy_ops);
- 	if (IS_ERR(phy)) {
- 		err = PTR_ERR(phy);
--		goto unregister;
-+		goto reset;
+-	atmel_pioctrl->pinctrl_dev = pinctrl_register(&atmel_pinctrl_desc,
+-						      &pdev->dev,
+-						      atmel_pioctrl);
+-	if (!atmel_pioctrl->pinctrl_dev) {
++	atmel_pioctrl->pinctrl_dev = devm_pinctrl_register(&pdev->dev,
++							   &atmel_pinctrl_desc,
++							   atmel_pioctrl);
++	if (IS_ERR(atmel_pioctrl->pinctrl_dev)) {
++		ret = PTR_ERR(atmel_pioctrl->pinctrl_dev);
+ 		dev_err(dev, "pinctrl registration failed\n");
+-		goto pinctrl_register_error;
++		goto clk_unprep;
  	}
  
- 	padctl->phys[TEGRA_XUSB_PADCTL_SATA] = phy;
-@@ -944,13 +945,11 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
- 	if (IS_ERR(padctl->provider)) {
- 		err = PTR_ERR(padctl->provider);
- 		dev_err(&pdev->dev, "failed to register PHYs: %d\n", err);
--		goto unregister;
-+		goto reset;
+ 	ret = gpiochip_add_data(atmel_pioctrl->gpio_chip, atmel_pioctrl);
+ 	if (ret) {
+ 		dev_err(dev, "failed to add gpiochip\n");
+-		goto gpiochip_add_error;
++		goto clk_unprep;
  	}
+ 
+ 	ret = gpiochip_add_pin_range(atmel_pioctrl->gpio_chip, dev_name(dev),
+@@ -1059,15 +1060,15 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
  
  	return 0;
  
--unregister:
--	pinctrl_unregister(padctl->pinctrl);
- reset:
- 	reset_control_assert(padctl->rst);
- 	return err;
-@@ -961,8 +960,6 @@ static int tegra_xusb_padctl_remove(struct platform_device *pdev)
- 	struct tegra_xusb_padctl *padctl = platform_get_drvdata(pdev);
- 	int err;
+-clk_prepare_enable_error:
+-	irq_domain_remove(atmel_pioctrl->irq_domain);
+-pinctrl_register_error:
+-	clk_disable_unprepare(atmel_pioctrl->clk);
+-gpiochip_add_error:
+-	pinctrl_unregister(atmel_pioctrl->pinctrl_dev);
+ gpiochip_add_pin_range_error:
+ 	gpiochip_remove(atmel_pioctrl->gpio_chip);
  
--	pinctrl_unregister(padctl->pinctrl);
--
- 	err = reset_control_assert(padctl->rst);
- 	if (err < 0)
- 		dev_err(&pdev->dev, "failed to assert reset: %d\n", err);
++clk_unprep:
++	clk_disable_unprepare(atmel_pioctrl->clk);
++
++clk_prepare_enable_error:
++	irq_domain_remove(atmel_pioctrl->irq_domain);
++
+ 	return ret;
+ }
+ 
+@@ -1077,7 +1078,6 @@ int atmel_pinctrl_remove(struct platform_device *pdev)
+ 
+ 	irq_domain_remove(atmel_pioctrl->irq_domain);
+ 	clk_disable_unprepare(atmel_pioctrl->clk);
+-	pinctrl_unregister(atmel_pioctrl->pinctrl_dev);
+ 	gpiochip_remove(atmel_pioctrl->gpio_chip);
+ 
+ 	return 0;
 -- 
 2.1.4
