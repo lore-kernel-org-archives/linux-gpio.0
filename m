@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 19/50] pinctrl: ssbi-gpi: Use devm_pinctrl_register() for pinctrl registration
-Date: Wed, 24 Feb 2016 18:45:44 +0530
-Message-ID: <1456319775-3216-20-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 15/50] pinctrl: mvebu: Use devm_pinctrl_register() for pinctrl registration
+Date: Wed, 24 Feb 2016 18:45:40 +0530
+Message-ID: <1456319775-3216-16-git-send-email-ldewangan@nvidia.com>
 References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,58 +9,207 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Laxman Dewangan <ldewangan@nvidia.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Laxman Dewangan <ldewangan@nvidia.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Fabian Frederick <fabf@skynet.be>, Andrew Andrianov <andrew@ncrmnt.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Use devm_pinctrl_register() for pin control registration and clean
-the error path.
+Use devm_pinctrl_register() for pin control registration and remove
+need of .remove callback.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Cc: Fabian Frederick <fabf@skynet.be>
+Cc: Andrew Andrianov <andrew@ncrmnt.org>
 ---
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/pinctrl/mvebu/pinctrl-armada-370.c | 6 ------
+ drivers/pinctrl/mvebu/pinctrl-armada-375.c | 6 ------
+ drivers/pinctrl/mvebu/pinctrl-armada-38x.c | 6 ------
+ drivers/pinctrl/mvebu/pinctrl-armada-39x.c | 6 ------
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c  | 6 ------
+ drivers/pinctrl/mvebu/pinctrl-dove.c       | 5 +----
+ drivers/pinctrl/mvebu/pinctrl-kirkwood.c   | 6 ------
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c      | 9 +--------
+ 8 files changed, 2 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-index cd8580d..f71dda6 100644
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-@@ -729,7 +729,7 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
- 	pctrl->desc.custom_conf_items = pm8xxx_conf_items;
- #endif
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-370.c b/drivers/pinctrl/mvebu/pinctrl-armada-370.c
+index 73dc1bc..9cc1cc3 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-370.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-370.c
+@@ -417,18 +417,12 @@ static int armada_370_pinctrl_probe(struct platform_device *pdev)
+ 	return mvebu_pinctrl_probe(pdev);
+ }
  
--	pctrl->pctrl = pinctrl_register(&pctrl->desc, &pdev->dev, pctrl);
-+	pctrl->pctrl = devm_pinctrl_register(&pdev->dev, &pctrl->desc, pctrl);
- 	if (IS_ERR(pctrl->pctrl)) {
- 		dev_err(&pdev->dev, "couldn't register pm8xxx gpio driver\n");
- 		return PTR_ERR(pctrl->pctrl);
-@@ -745,7 +745,7 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
- 	ret = gpiochip_add_data(&pctrl->chip, pctrl);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed register gpiochip\n");
--		goto unregister_pinctrl;
-+		return ret;
+-static int armada_370_pinctrl_remove(struct platform_device *pdev)
+-{
+-	return mvebu_pinctrl_remove(pdev);
+-}
+-
+ static struct platform_driver armada_370_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "armada-370-pinctrl",
+ 		.of_match_table = armada_370_pinctrl_of_match,
+ 	},
+ 	.probe = armada_370_pinctrl_probe,
+-	.remove = armada_370_pinctrl_remove,
+ };
+ 
+ module_platform_driver(armada_370_pinctrl_driver);
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-375.c b/drivers/pinctrl/mvebu/pinctrl-armada-375.c
+index 54e9fbd..0706514 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-375.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-375.c
+@@ -435,18 +435,12 @@ static int armada_375_pinctrl_probe(struct platform_device *pdev)
+ 	return mvebu_pinctrl_probe(pdev);
+ }
+ 
+-static int armada_375_pinctrl_remove(struct platform_device *pdev)
+-{
+-	return mvebu_pinctrl_remove(pdev);
+-}
+-
+ static struct platform_driver armada_375_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "armada-375-pinctrl",
+ 		.of_match_table = of_match_ptr(armada_375_pinctrl_of_match),
+ 	},
+ 	.probe = armada_375_pinctrl_probe,
+-	.remove = armada_375_pinctrl_remove,
+ };
+ 
+ module_platform_driver(armada_375_pinctrl_driver);
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-38x.c b/drivers/pinctrl/mvebu/pinctrl-armada-38x.c
+index 6ec82c6..4e84c8e 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-38x.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-38x.c
+@@ -446,18 +446,12 @@ static int armada_38x_pinctrl_probe(struct platform_device *pdev)
+ 	return mvebu_pinctrl_probe(pdev);
+ }
+ 
+-static int armada_38x_pinctrl_remove(struct platform_device *pdev)
+-{
+-	return mvebu_pinctrl_remove(pdev);
+-}
+-
+ static struct platform_driver armada_38x_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "armada-38x-pinctrl",
+ 		.of_match_table = of_match_ptr(armada_38x_pinctrl_of_match),
+ 	},
+ 	.probe = armada_38x_pinctrl_probe,
+-	.remove = armada_38x_pinctrl_remove,
+ };
+ 
+ module_platform_driver(armada_38x_pinctrl_driver);
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-39x.c b/drivers/pinctrl/mvebu/pinctrl-armada-39x.c
+index fcfe9b4..e288f8b 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-39x.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-39x.c
+@@ -428,18 +428,12 @@ static int armada_39x_pinctrl_probe(struct platform_device *pdev)
+ 	return mvebu_pinctrl_probe(pdev);
+ }
+ 
+-static int armada_39x_pinctrl_remove(struct platform_device *pdev)
+-{
+-	return mvebu_pinctrl_remove(pdev);
+-}
+-
+ static struct platform_driver armada_39x_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "armada-39x-pinctrl",
+ 		.of_match_table = of_match_ptr(armada_39x_pinctrl_of_match),
+ 	},
+ 	.probe = armada_39x_pinctrl_probe,
+-	.remove = armada_39x_pinctrl_remove,
+ };
+ 
+ module_platform_driver(armada_39x_pinctrl_driver);
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+index bf70e09..e4ea71a 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+@@ -502,18 +502,12 @@ static int armada_xp_pinctrl_probe(struct platform_device *pdev)
+ 	return mvebu_pinctrl_probe(pdev);
+ }
+ 
+-static int armada_xp_pinctrl_remove(struct platform_device *pdev)
+-{
+-	return mvebu_pinctrl_remove(pdev);
+-}
+-
+ static struct platform_driver armada_xp_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "armada-xp-pinctrl",
+ 		.of_match_table = armada_xp_pinctrl_of_match,
+ 	},
+ 	.probe = armada_xp_pinctrl_probe,
+-	.remove = armada_xp_pinctrl_remove,
+ 	.suspend = armada_xp_pinctrl_suspend,
+ 	.resume = armada_xp_pinctrl_resume,
+ };
+diff --git a/drivers/pinctrl/mvebu/pinctrl-dove.c b/drivers/pinctrl/mvebu/pinctrl-dove.c
+index 95bfd06..f93ae0d 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-dove.c
++++ b/drivers/pinctrl/mvebu/pinctrl-dove.c
+@@ -840,12 +840,9 @@ static int dove_pinctrl_probe(struct platform_device *pdev)
+ 
+ static int dove_pinctrl_remove(struct platform_device *pdev)
+ {
+-	int ret;
+-
+-	ret = mvebu_pinctrl_remove(pdev);
+ 	if (!IS_ERR(clk))
+ 		clk_disable_unprepare(clk);
+-	return ret;
++	return 0;
+ }
+ 
+ static struct platform_driver dove_pinctrl_driver = {
+diff --git a/drivers/pinctrl/mvebu/pinctrl-kirkwood.c b/drivers/pinctrl/mvebu/pinctrl-kirkwood.c
+index 0f07dc55..a78e9a4 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-kirkwood.c
++++ b/drivers/pinctrl/mvebu/pinctrl-kirkwood.c
+@@ -481,18 +481,12 @@ static int kirkwood_pinctrl_probe(struct platform_device *pdev)
+ 	return mvebu_pinctrl_probe(pdev);
+ }
+ 
+-static int kirkwood_pinctrl_remove(struct platform_device *pdev)
+-{
+-	return mvebu_pinctrl_remove(pdev);
+-}
+-
+ static struct platform_driver kirkwood_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "kirkwood-pinctrl",
+ 		.of_match_table = kirkwood_pinctrl_of_match,
+ 	},
+ 	.probe = kirkwood_pinctrl_probe,
+-	.remove = kirkwood_pinctrl_remove,
+ };
+ 
+ module_platform_driver(kirkwood_pinctrl_driver);
+diff --git a/drivers/pinctrl/mvebu/pinctrl-mvebu.c b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
+index 3ef798f..b6ec6db 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-mvebu.c
++++ b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
+@@ -711,7 +711,7 @@ int mvebu_pinctrl_probe(struct platform_device *pdev)
+ 		return ret;
  	}
  
- 	ret = gpiochip_add_pin_range(&pctrl->chip,
-@@ -765,9 +765,6 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
- unregister_gpiochip:
- 	gpiochip_remove(&pctrl->chip);
+-	pctl->pctldev = pinctrl_register(&pctl->desc, &pdev->dev, pctl);
++	pctl->pctldev = devm_pinctrl_register(&pdev->dev, &pctl->desc, pctl);
+ 	if (IS_ERR(pctl->pctldev)) {
+ 		dev_err(&pdev->dev, "unable to register pinctrl driver\n");
+ 		return PTR_ERR(pctl->pctldev);
+@@ -725,10 +725,3 @@ int mvebu_pinctrl_probe(struct platform_device *pdev)
  
--unregister_pinctrl:
--	pinctrl_unregister(pctrl->pctrl);
--
- 	return ret;
- }
- 
-@@ -777,8 +774,6 @@ static int pm8xxx_gpio_remove(struct platform_device *pdev)
- 
- 	gpiochip_remove(&pctrl->chip);
- 
--	pinctrl_unregister(pctrl->pctrl);
--
  	return 0;
  }
- 
+-
+-int mvebu_pinctrl_remove(struct platform_device *pdev)
+-{
+-	struct mvebu_pinctrl *pctl = platform_get_drvdata(pdev);
+-	pinctrl_unregister(pctl->pctldev);
+-	return 0;
+-}
 -- 
 2.1.4
