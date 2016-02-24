@@ -1,112 +1,90 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 3/4] gpio: dt-bindings: Declare gpio-hog optional for
- GPIO subnodes
-Date: Tue, 23 Feb 2016 17:25:34 -0600
-Message-ID: <20160223232534.GA29637@rob-hp-laptop>
-References: <1456214089-13954-1-git-send-email-mpa@pengutronix.de>
- <1456214089-13954-3-git-send-email-mpa@pengutronix.de>
+From: Markus Pargmann <mpa@pengutronix.de>
+Subject: Re: [PATCH 2/4] tools: gpio: Add necessary include paths
+Date: Wed, 24 Feb 2016 07:39:33 +0100
+Message-ID: <1663266.QvtJ23oI59@adelgunde>
+References: <1456214089-13954-1-git-send-email-mpa@pengutronix.de> <1456214089-13954-2-git-send-email-mpa@pengutronix.de> <CACRpkdYxDeKDLN8bsA0q3F_q-WiSDd1JTEsw8YYwUXSecMmsoA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; boundary="nextPart2251985.t5KeR8lPiv"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:55221 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751711AbcBWXZq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 23 Feb 2016 18:25:46 -0500
-Content-Disposition: inline
-In-Reply-To: <1456214089-13954-3-git-send-email-mpa@pengutronix.de>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:34192 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756743AbcBXGjm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 24 Feb 2016 01:39:42 -0500
+In-Reply-To: <CACRpkdYxDeKDLN8bsA0q3F_q-WiSDd1JTEsw8YYwUXSecMmsoA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Tue, Feb 23, 2016 at 08:54:48AM +0100, Markus Pargmann wrote:
-> Reuse the GPIO hogging DT bindings for more generic specifications of
-> the GPIO. Therefore gpio-hog is declared optional.
 
-Before extending this binding further, we need to consider other cases 
-that have been discussed recently such as gpio switch binding and 
-whether it should fit in with this.
+--nextPart2251985.t5KeR8lPiv
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 
-My biggest issue with this binding is whether the DT changes because 
-today we don't have a driver for some GPIO line and tomorrow we do.
+On Tuesday, February 23, 2016 02:26:09 PM Linus Walleij wrote:
+> On Tue, Feb 23, 2016 at 8:54 AM, Markus Pargmann <mpa@pengutronix.de>=
+ wrote:
+>=20
+> > Add include paths to the Makefile so that linux/gpio.h can be found=
+ even
+> > on systems without this header.
+> >
+> > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+> (...)
+> > -CFLAGS +=3D -Wall -g -D_GNU_SOURCE
+> > +CFLAGS +=3D -Wall -g -D_GNU_SOURCE -I ../include -I ../../include/=
+uapi
+>=20
+> This is probably not how userspace compilation is supposed
+> to work. The way I understand it, userspace programs from tools/*
+> should be compiled like this:
+>=20
+> make headers_install ARCH=3Dfoo INSTALL_HDR_PATH=3D<bar>
+> cd tools/gpio
+> make CFLAGS=3D"$CFLAGS -I<bar>"
+>=20
+> The reason being that UAPI files can differ after install depending
+> on arch.
 
-That said, some specific comments below:
+I see, thanks for explaining.
 
-> Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
-> ---
->  Documentation/devicetree/bindings/gpio/gpio.txt | 28 ++++++++++++++++++-------
->  1 file changed, 21 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-> index 069cdf6f9dac..820898e0649c 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-> @@ -155,13 +155,25 @@ gpio-controller@00000000 {
->  	ngpios = <18>;
->  }
->  
-> -The GPIO chip may contain GPIO hog definitions. GPIO hogging is a mechanism
-> -providing automatic GPIO request and configuration as part of the
-> -gpio-controller's driver probe function.
-> +The GPIO chip may contain subnodes describing specific GPIOs of this
-> +controller. These GPIO nodes can be used to define GPIO hogging or define GPIO
-> +names.
-> +GPIO hogging is a mechanism providing automatic GPIO request and configuration
-> +as part of the gpio-controller's driver probe function.
+Best Regards,
 
-Linux driver details don't belong in binding descriptions.
+Markus
 
-> -Each GPIO hog definition is represented as a child node of the GPIO controller.
-> +Each GPIO node consists of the following properties:
->  Required properties:
-> +- gpios:      Store the GPIO information (id, flags, ...). Shall contain the
-> +	      number of cells specified in its parent node (GPIO controller
-> +	      node).
-> +
-> +Optional properties:
-> +- line-name:  The GPIO name. If not present the node name is used.
+=2D-=20
+Pengutronix e.K.                           |                           =
+  |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0  =
+  |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
+5 |
 
-I'd like to deprecate line-name in favor of the standard property 
-for user visible names "label".
+--nextPart2251985.t5KeR8lPiv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
->  - gpio-hog:   A property specifying that this child node represent a GPIO hog.
-> +
-> +For GPIO hogging which is specified by the "gpio-hog" property the following
-> +additional properties are required.
-> +Required properties for GPIO hogging:
->  - gpios:      Store the GPIO information (id, flags, ...). Shall contain the
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-This doesn't make sense. gpios is always required and already listed 
-above.
+iQIcBAABCAAGBQJWzVAqAAoJEEpcgKtcEGQQdK4P/RiFS6ojxUHZG6LEQDCWmqNB
+FeNEzKHzfj5Z/qF4hh0CF4d5t68bhyqaStMDdSpFdMJSBdHawjQq0hlXH9R47bgJ
+6mqyUmeCFATYieHCXsxiqZgttRMZu/GfJLyP3N8El/H82HDcbUtSiaDSKNYWEZoU
+PSwWAV/rhojbTaRdXKX28emAYSo3yBUg4VSaOl/mU3YYJHERb9W3zKuv8R51iPhD
+hFsanxXd4cMulz1nlH2z6EhnFzQnV9EJb+DCYkmImFRrPYSL2FJ9mXx+w9BORlzb
+fZSIxHZrfCea5CYIrP0UY61VR9PBn9C3PL1Q2A/cmcWAfv9IdBMJfxbsoB1Wxz0q
+cHVqFNUJBOS3oDNxr3XN5NXxLHRQmB6wNvs0QbKNfMVhX5wcbRiuHl1SgnQCH1bU
+A2lpf7aPFudcXtPj8LZylfcEJ5gMkUW6yOLXEp8Plte+/QnEaYqJQvBEQYU6liwz
+pgb411+/gO7O7wfmu9BnJs9NwVRMaxLXMGLZOd+Bq4UVtEXI/3YLEO5WG6lQSyZh
+c3+5Bj6b4tDmrbKqKEMrA53y2n24LTWW8YgrZxcueqxDOMrgLNQb3SZsYeQqGT5X
+FvsW5+EyIS7/oBzZO9ZMKwe5RoDMWS4uv/amstj5C3/N2JBiqG7DixwkJruO8dzy
+rXTgFC+iUhRmDuyv4Zi6
+=XR+i
+-----END PGP SIGNATURE-----
 
->  	      number of cells specified in its parent node (GPIO controller
->  	      node).
-> @@ -175,9 +187,6 @@ configuration.
->  - output-high A property specifying to set the GPIO direction as output with
->  	      the value high.
->  
-> -Optional properties:
-> -- line-name:  The GPIO label name. If not present the node name is used.
-> -
->  Example of two SOC GPIO banks defined as gpio-controller nodes:
->  
->  	qe_pio_a: gpio-controller@1400 {
-> @@ -192,6 +201,11 @@ Example of two SOC GPIO banks defined as gpio-controller nodes:
->  			output-low;
->  			line-name = "foo-bar-gpio";
->  		};
-> +
-> +		line_c {
-> +			gpios = <7 0>;
-> +			line-name = "SCHEMATIC_LINE_NAME";
-> +		};
->  	};
->  
->  	qe_pio_e: gpio-controller@1460 {
-> -- 
-> 2.7.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--nextPart2251985.t5KeR8lPiv--
+
