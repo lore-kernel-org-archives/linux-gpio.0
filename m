@@ -1,49 +1,83 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 23/50] pinctrl: exynos5440: Use devm_pinctrl_register() for
- pinctrl registration
-Date: Wed, 24 Feb 2016 18:45:48 +0530
-Message-ID: <1456319775-3216-24-git-send-email-ldewangan@nvidia.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH 13/50] pinctrl: mtk-common: Use devm_pinctrl_register()
+ for pinctrl registration
+Date: Wed, 24 Feb 2016 14:36:15 +0100
+Message-ID: <56CDB1CF.6000007@gmail.com>
 References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
+ <1456319775-3216-14-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1456319775-3216-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, corbet-T1hC0tSOHrs@public.gmane.org, lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1456319775-3216-14-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Use devm_pinctrl_register() for pin control registration.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/pinctrl/samsung/pinctrl-exynos5440.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-index 00ab63a..71f9f13 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-@@ -788,7 +788,7 @@ static int exynos5440_pinctrl_register(struct platform_device *pdev,
- 	if (ret)
- 		return ret;
- 
--	pctl_dev = pinctrl_register(ctrldesc, &pdev->dev, priv);
-+	pctl_dev = devm_pinctrl_register(&pdev->dev, ctrldesc, priv);
- 	if (IS_ERR(pctl_dev)) {
- 		dev_err(&pdev->dev, "could not register pinctrl driver\n");
- 		return PTR_ERR(pctl_dev);
--- 
-2.1.4
+On 24/02/16 14:15, Laxman Dewangan wrote:
+> Use devm_pinctrl_register() for pin control registration and clean
+> the error path.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
+> Cc: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> ---
+
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+
+>   drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 17 ++++++-----------
+>   1 file changed, 6 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> index ddc9217..194413d 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> @@ -1390,17 +1390,16 @@ int mtk_pctrl_init(struct platform_device *pdev,
+>   	pctl->pctl_desc.pmxops = &mtk_pmx_ops;
+>   	pctl->dev = &pdev->dev;
+>
+> -	pctl->pctl_dev = pinctrl_register(&pctl->pctl_desc, &pdev->dev, pctl);
+> +	pctl->pctl_dev = devm_pinctrl_register(&pdev->dev, &pctl->pctl_desc,
+> +					       pctl);
+>   	if (IS_ERR(pctl->pctl_dev)) {
+>   		dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
+>   		return PTR_ERR(pctl->pctl_dev);
+>   	}
+>
+>   	pctl->chip = devm_kzalloc(&pdev->dev, sizeof(*pctl->chip), GFP_KERNEL);
+> -	if (!pctl->chip) {
+> -		ret = -ENOMEM;
+> -		goto pctrl_error;
+> -	}
+> +	if (!pctl->chip)
+> +		return -ENOMEM;
+>
+>   	*pctl->chip = mtk_gpio_chip;
+>   	pctl->chip->ngpio = pctl->devdata->npins;
+> @@ -1409,10 +1408,8 @@ int mtk_pctrl_init(struct platform_device *pdev,
+>   	pctl->chip->base = -1;
+>
+>   	ret = gpiochip_add_data(pctl->chip, pctl);
+> -	if (ret) {
+> -		ret = -EINVAL;
+> -		goto pctrl_error;
+> -	}
+> +	if (ret)
+> +		return -EINVAL;
+>
+>   	/* Register the GPIO to pin mappings. */
+>   	ret = gpiochip_add_pin_range(pctl->chip, dev_name(&pdev->dev),
+> @@ -1490,8 +1487,6 @@ int mtk_pctrl_init(struct platform_device *pdev,
+>
+>   chip_error:
+>   	gpiochip_remove(pctl->chip);
+> -pctrl_error:
+> -	pinctrl_unregister(pctl->pctl_dev);
+>   	return ret;
+>   }
+>
+>
