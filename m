@@ -1,68 +1,150 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH/RFC v2] gpio: rcar: Add Runtime PM handling for interrupts
-Date: Thu, 25 Feb 2016 15:26:15 +0100
-Message-ID: <CAMuHMdXSHPbdPXRQFwV=4yHwrd858Sk8HU15px4a9GVSmgPs4w@mail.gmail.com>
-References: <1455811590-15836-1-git-send-email-geert+renesas@glider.be>
-	<CACRpkdZw+2s77+5UO6x91FTuTgA86Y-Brxd=ZziTGE8AuUPgLA@mail.gmail.com>
-	<CAMuHMdV=6G-7Y3kFOaeffCgFzStmFQfDO6othA3up6G7ahqPzQ@mail.gmail.com>
-	<CACRpkdafH1mU7Z3P=w9bJUqijEFQFmkVvR4p-OTy4XiOqL3Rrw@mail.gmail.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH 01/50] pinctrl: Add devm_ apis for pinctrl_{register,
+ unregister}
+Date: Thu, 25 Feb 2016 15:46:50 +0100
+Message-ID: <1456411610.3268.13.camel@pengutronix.de>
+References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
+	 <1456319775-3216-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f180.google.com ([209.85.223.180]:36120 "EHLO
-	mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760837AbcBYO0Q (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 09:26:16 -0500
-In-Reply-To: <CACRpkdafH1mU7Z3P=w9bJUqijEFQFmkVvR4p-OTy4XiOqL3Rrw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1456319775-3216-2-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 
-Hi Linus,
+Hi Laxman,
 
-On Thu, Feb 25, 2016 at 3:19 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Feb 25, 2016 at 10:37 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Thu, Feb 25, 2016 at 10:07 AM, Linus Walleij
->> <linus.walleij@linaro.org> wrote:
->>> On Thu, Feb 18, 2016 at 5:06 PM, Geert Uytterhoeven
->>> <geert+renesas@glider.be> wrote:
->>>
->>>> The R-Car GPIO driver handles Runtime PM for requested GPIOs only.
->>>>
->>>> When using a GPIO purely as an interrupt source, no Runtime PM handling
->>>> is done, and the GPIO module's clock may not be enabled.
->>>>
->>>> To fix this:
->>>>   - Add .irq_request_resources() and .irq_release_resources() callbacks
->>>>     to handle Runtime PM when an interrupt is requested,
->>>>   - Add irq_bus_lock() and sync_unlock() callbacks to handle Runtime PM
->>>>     when e.g. disabling/enabling an interrupt, or configuring the
->>>>     interrupt type.
->>>>
->>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>>
->>> Patch applied with Marc's ACK.
->>
->> Thanks!
->>
->> Can we have it in v4.5? Else Ethernet won't work on r8a7795/salvator-x.
->
-> Argh that is late. But I'll move it over to the fixes branch...
+Am Mittwoch, den 24.02.2016, 18:45 +0530 schrieb Laxman Dewangan:
+> Add device managed APIs devm_pinctrl_register() and
+> devm_pinctrl_unregister() for the APIs pinctrl_register()
+> and pinctrl_unregister().
+> 
+> This helps in reducing code in error path and sometimes
+> removal of .remove callback for driver unbind.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> ---
+>  drivers/pinctrl/core.c          | 69 +++++++++++++++++++++++++++++++++++++++++
+>  include/linux/pinctrl/pinctrl.h |  6 ++++
+>  2 files changed, 75 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+> index 2686a44..ea4a7e6 100644
+> --- a/drivers/pinctrl/core.c
+> +++ b/drivers/pinctrl/core.c
+> @@ -1861,6 +1861,75 @@ void pinctrl_unregister(struct pinctrl_dev *pctldev)
+>  }
+>  EXPORT_SYMBOL_GPL(pinctrl_unregister);
+>  
+> +static void devm_pinctrl_dev_release(struct device *dev, void *res)
+> +{
+> +	struct pinctrl_dev *pctldev = *(struct pinctrl_dev **)res;
+> +
+> +	pinctrl_unregister(pctldev);
+> +}
+> +
+> +static int devm_pinctrl_dev_match(struct device *dev, void *res, void *data)
+> +{
+> +	struct pctldev **r = res;
+> +
+> +	if (!r || !*r) {
+> +		WARN_ON(!r || !*r);
+> +		return 0;
+> +	}
 
-Thanks!
 
-The issue was exposed by commit d5c3d84657db57bd ("net: phy: Avoid polling
-PHY with PHY_IGNORE_INTERRUPTS"), which went upstream only in v4.5-rc3.
+This could be simplified to
 
-Gr{oetje,eeting}s,
+	if (WARN_ON(!r || !*r))
+		return 0;
 
-                        Geert
+> +
+> +	return *r == data;
+> +}
+> +
+> +/**
+> + * devm_pinctrl_register() - Resource manager pinctrl_register()
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Should that be "Resource managed" ?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> + * @dev: parent device for this pin controller
+> + * @pctldesc: descriptor for this pin controller
+> + * @driver_data: private pin controller data for this pin controller
+> + *
+> + * Returns an error pointer if pincontrol register failed. Otherwise
+> + * it returns valid pinctrl handle.
+> + *
+> + * The pinctrl device will be automatically released when the device is unbound.
+> + */
+> +struct pinctrl_dev *devm_pinctrl_register(struct device *dev,
+> +					  struct pinctrl_desc *pctldesc,
+> +					  void *driver_data)
+> +{
+> +	struct pinctrl_dev **ptr, *pctldev;
+> +
+> +	ptr = devres_alloc(devm_pinctrl_dev_release, sizeof(*ptr), GFP_KERNEL);
+> +	if (!ptr)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	pctldev = pinctrl_register(pctldesc, dev, driver_data);
+> +	if (IS_ERR(pctldev)) {
+> +		devres_free(ptr);
+> +		return pctldev;
+> +	}
+> +
+> +	*ptr = pctldev;
+> +	devres_add(dev, ptr);
+> +
+> +	return pctldev;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_pinctrl_register);
+> +
+> +/**
+> + * devm_pinctrl_unregister() - Resource manager of pinctrl_unregister()
+
+Should that be "Resource managed version of" ?
+
+> + * @dev: device for which which resource was allocated
+> + * @pctldev: the pinctrl device to unregister.
+> + */
+> +void devm_pinctrl_unregister(struct device *dev, struct pinctrl_dev *pctldev)
+> +{
+> +	int ret;
+> +
+> +	ret = devres_release(dev, devm_pinctrl_dev_release,
+> +			     devm_pinctrl_dev_match, pctldev);
+> +	if (!ret)
+> +		WARN_ON(ret);
+> +}
+> +EXPORT_SYMBOL_GPL(devm_pinctrl_unregister);
+> +
+>  static int __init pinctrl_init(void)
+>  {
+>  	pr_info("initialized pinctrl subsystem\n");
+> diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
+> index 9ba59fc..a42e57d 100644
+> --- a/include/linux/pinctrl/pinctrl.h
+> +++ b/include/linux/pinctrl/pinctrl.h
+> @@ -144,6 +144,12 @@ struct pinctrl_desc {
+>  extern struct pinctrl_dev *pinctrl_register(struct pinctrl_desc *pctldesc,
+>  				struct device *dev, void *driver_data);
+>  extern void pinctrl_unregister(struct pinctrl_dev *pctldev);
+> +extern struct pinctrl_dev *devm_pinctrl_register(struct device *dev,
+> +				struct pinctrl_desc *pctldesc,
+> +				void *driver_data);
+> +extern void devm_pinctrl_unregister(struct device *dev,
+> +				struct pinctrl_dev *pctldev);
+> +
+>  extern bool pin_is_valid(struct pinctrl_dev *pctldev, int pin);
+>  extern void pinctrl_add_gpio_range(struct pinctrl_dev *pctldev,
+>  				struct pinctrl_gpio_range *range);
+
+With those addressed,
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+regards
+Philipp
+
