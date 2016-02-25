@@ -1,32 +1,26 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RFT] gpio: pisosr: Use gpiod_set_value_cansleep in pisosr_gpio_refresh()
-Date: Thu, 25 Feb 2016 15:10:50 +0100
-Message-ID: <CACRpkdZUp1H8R2KWF_hGMC1NwwsKVjOO+cLD5tvObBMH_p06gQ@mail.gmail.com>
-References: <1456320674.8959.1.camel@ingics.com>
+Subject: Re: [PATCH 00/50] pinctrl: Add and use devm_ apis for
+ pinctrl_{register, unregister}
+Date: Thu, 25 Feb 2016 15:13:26 +0100
+Message-ID: <CACRpkdZjv2KZ0AtC9oBytmSdS+=T+kC8PoJVt-RawE8Np8p40w@mail.gmail.com>
+References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:32862 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760085AbcBYOKv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 09:10:51 -0500
-Received: by mail-ob0-f175.google.com with SMTP id jq7so48728665obb.0
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Feb 2016 06:10:51 -0800 (PST)
-In-Reply-To: <1456320674.8959.1.camel@ingics.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Jon Corbet <corbet@lwn.net>, Lee Jones <lee@kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: "Andrew F. Davis" <afd@ti.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Feb 24, 2016 at 2:31 PM, Axel Lin <axel.lin@ingics.com> wrote:
+On Wed, Feb 24, 2016 at 2:15 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-> This driver has .can_sleep flag set.
-> So the pisosr_gpio_get() can be called from contexts that can sleep.
-> Thus use the cansleep() variant in pisosr_gpio_refresh().
->
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Add resource manageemnt APIs fro pinctrl_register() and pinctrl_unregister()
+> and use these new APIs on hw driver to reduce the error path code and
+> remove callback for driver.
 
-Patch applied.
+As you can probably guess I like this too, so wait a while, collect ACKs
+and send me a branch to pull for this too.
 
 Yours,
 Linus Walleij
