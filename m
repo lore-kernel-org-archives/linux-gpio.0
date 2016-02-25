@@ -1,46 +1,61 @@
-From: Joshua Henderson <joshua.henderson@microchip.com>
-Subject: Re: [PATCH 42/50] pinctrl: pic32: Use devm_pinctrl_register() for
- pinctrl registration
-Date: Thu, 25 Feb 2016 13:30:43 -0700
-Message-ID: <56CF6473.4020804@microchip.com>
-References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
- <1456319775-3216-43-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1456319775-3216-43-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org
+From: Joachim Eastwood <manabian@gmail.com>
+Subject: [PATCH v2 0/3] pinctrl: lpc18xx: support pint setup
+Date: Thu, 25 Feb 2016 22:44:36 +0100
+Message-ID: <1456436679-22077-1-git-send-email-manabian@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:36660 "EHLO
+	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750717AbcBYVot (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 16:44:49 -0500
+Received: by mail-lf0-f43.google.com with SMTP id 78so41841250lfy.3
+        for <linux-gpio@vger.kernel.org>; Thu, 25 Feb 2016 13:44:49 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: Joachim Eastwood <manabian@gmail.com>, linux-gpio@vger.kernel.org
 
-On 02/24/2016 06:16 AM, Laxman Dewangan wrote:
-> Use devm_pinctrl_register() for pin control registration.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Some background here:
+The LPC1850 has no less than 3 GPIO interrupt blocks. One of these
+blocks is called 'gpio pin interrupt' or just PINT. LPC1850 PINT can
+handle up to 8 interrupts and these have a one-to-one relationship with
+the main interrupt controller (NVIC).
 
-Reviewed-by: Joshua Henderson <joshua.henderson@microchip.com>
+Selecting which GPIOs that are associated with PINT irq lines is done in
+pinctrl hw block (SCU). The pinctrl device usually deals with the pin
+namespace but PINT selecction is done in the GPIO namespace. Fortunatly
+there is a function that can translate from the pin namespace to the
+GPIO namespace.
 
-Thanks,
-Josh
+Selection is done in DT with the "nxp,gpio-pin-interrupt" property.
+Example usage;
+&pinctrl {
+	gpio_joystick_1_cfg {
+		pins =  "p9_0";
+		function = "gpio";
+		nxp,gpio-pin-interrupt = <0>;
+		input-enable;
+		bias-disable;
+	};
+};
 
-> ---
->  drivers/pinctrl/pinctrl-pic32.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-pic32.c b/drivers/pinctrl/pinctrl-pic32.c
-> index 0b07d4b..2a3fcd6 100644
-> --- a/drivers/pinctrl/pinctrl-pic32.c
-> +++ b/drivers/pinctrl/pinctrl-pic32.c
-> @@ -2194,7 +2194,8 @@ static int pic32_pinctrl_probe(struct platform_device *pdev)
->  	pic32_pinctrl_desc.custom_params = pic32_mpp_bindings;
->  	pic32_pinctrl_desc.num_custom_params = ARRAY_SIZE(pic32_mpp_bindings);
->  
-> -	pctl->pctldev = pinctrl_register(&pic32_pinctrl_desc, &pdev->dev, pctl);
-> +	pctl->pctldev = devm_pinctrl_register(&pdev->dev, &pic32_pinctrl_desc,
-> +					      pctl);
->  	if (IS_ERR(pctl->pctldev)) {
->  		dev_err(&pdev->dev, "Failed to register pinctrl device\n");
->  		return PTR_ERR(pctl->pctldev);
-> 
+The reason for not doing this irq line selection on the fly in the
+irqchip driver is that the registers lie in the SCU hw block not in the
+PINT block and DT gives you more control since you can select a specific
+irq lines easily.
+
+The irq chip driver is ready but will posted separately.
+
+Joachim Eastwood (3):
+  pinctrl: core: create nolock version of pinctrl_find_gpio_range_from_pin
+  pinctrl: lpc18xx: add nxp,gpio-pin-interrupt property
+  pinctrl: lpc1850-scu: document nxp,gpio-pin-interrupt
+
+ .../bindings/pinctrl/nxp,lpc1850-scu.txt           |  14 ++
+ drivers/pinctrl/core.c                             |  35 +++--
+ drivers/pinctrl/core.h                             |   4 +
+ drivers/pinctrl/pinctrl-lpc18xx.c                  | 143 ++++++++++++++++++++-
+ 4 files changed, 178 insertions(+), 18 deletions(-)
+
+-- 
+1.8.0
+
