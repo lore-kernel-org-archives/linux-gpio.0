@@ -1,57 +1,211 @@
-From: Joachim Eastwood <manabian@gmail.com>
-Subject: Re: [PATCH] pinctrl: lpc18xx: ensure ngroups is initialized at
- correct place
-Date: Thu, 25 Feb 2016 19:32:55 +0100
-Message-ID: <CAGhQ9VykdYLA-ey2pzDVtccLPZvHNYLzmLHKyOnKr2TLLV+2yA@mail.gmail.com>
-References: <1456335170-20718-1-git-send-email-colin.king@canonical.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Eric Anholt <eric@anholt.net>
+Subject: [PATCH 1/5] ARM: bcm2835: Define standard pinctrl groups in the gpio node.
+Date: Thu, 25 Feb 2016 10:40:57 -0800
+Message-ID: <1456425661-26123-2-git-send-email-eric@anholt.net>
+References: <1456425661-26123-1-git-send-email-eric@anholt.net>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f170.google.com ([209.85.213.170]:33306 "EHLO
-	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933348AbcBYSc4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 13:32:56 -0500
-In-Reply-To: <1456335170-20718-1-git-send-email-colin.king@canonical.com>
+Received: from gabe.freedesktop.org ([131.252.210.177]:50681 "EHLO
+	gabe.freedesktop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933297AbcBYSlE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 13:41:04 -0500
+In-Reply-To: <1456425661-26123-1-git-send-email-eric@anholt.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-rpi-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>
 
-Hi Colin,
+The BCM2835-ARM-Peripherals.pdf documentation specifies what the
+function selects do for the pins, and there are a bunch of obvious
+groupings to be made.  With these created, we'll be able to replace
+bcm2835-rpi.dtsi's main "set all of these pins to alt0" with
+references to specific groups we want enabled.
 
-On 24 February 2016 at 18:32, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The initialization of ngroups is occurring at the end of the
-> first iteration of the outer loop, which means that the
-> assignment  pins[ngroups++] = i is potentially indexing into
-> a region outside of array pins because ngroups is not initialized.
-> Instead, initialize ngroups in the inner loop before the first
-> inner loop iteration.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/pinctrl/pinctrl-lpc18xx.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
-> index f0bebbe..ed1cfa7 100644
-> --- a/drivers/pinctrl/pinctrl-lpc18xx.c
-> +++ b/drivers/pinctrl/pinctrl-lpc18xx.c
-> @@ -1170,9 +1170,8 @@ static int lpc18xx_create_group_func_map(struct device *dev,
->         u16 pins[ARRAY_SIZE(lpc18xx_pins)];
->         int func, ngroups, i;
->
-> -       for (func = 0; func < FUNC_MAX; ngroups = 0, func++) {
-> -
-> -               for (i = 0; i < ARRAY_SIZE(lpc18xx_pins); i++) {
-> +       for (func = 0; func < FUNC_MAX; func++) {
-> +               for (ngroups = 0, i = 0; i < ARRAY_SIZE(lpc18xx_pins); i++) {
+Signed-off-by: Eric Anholt <eric@anholt.net>
+---
+ arch/arm/boot/dts/bcm283x.dtsi | 170 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 170 insertions(+)
 
-Good catch!
+diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
+index 8aaf193..e91198e 100644
+--- a/arch/arm/boot/dts/bcm283x.dtsi
++++ b/arch/arm/boot/dts/bcm283x.dtsi
+@@ -110,6 +110,176 @@
+ 
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
++
++			/* Defines pin muxing groups according to
++			 * BCM2835-ARM-Peripherals.pdf page 102.
++			 *
++			 * While each pin can have its mux selected
++			 * for various functions individually, some
++			 * groups only make sense to switch to a
++			 * particular function together.
++			 */
++			i2c0_gpio0: i2c0_gpio0 {
++				brcm,pins = <0 1>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			i2c1_gpio2: i2c1_gpio2 {
++				brcm,pins = <2 3>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			gpclk0_gpio4: gpclk0_gpio4 {
++				brcm,pins = <4>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			gpclk1_gpio5: gpclk1_gpio5 {
++				brcm,pins = <5>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			gpclk2_gpio6: gpclk2_gpio6 {
++				brcm,pins = <6>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			spi0_gpio7: spi0_gpio7 {
++				brcm,pins = <7 8 9 10 11>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			pwm0_gpio12: pwm0_gpio12 {
++				brcm,pins = <12>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			pwm1_gpio13: pwm1_gpio13 {
++				brcm,pins = <13>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			uart0_gpio14: uart0_gpio14 {
++				brcm,pins = <14 15>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			pcm_gpio18: pcm_gpio18 {
++				brcm,pins = <18 19 20 21>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			i2c0_gpio32: i2c0_gpio32 {
++				brcm,pins = <32 34>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			spio0_gpio35: spio0_gpio35 {
++				brcm,pins = <35 36 37 38 39>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			pwm0_gpio40: pwm0_gpio40 {
++				brcm,pins = <40>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			pwm1_gpio41: pwm1_gpio41 {
++				brcm,pins = <41>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			gpclk1_gpio42: gpclk1_gpio42 {
++				brcm,pins = <42>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			gpclk2_gpio43: gpclk2_gpio43 {
++				brcm,pins = <43>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			gpclk1_gpio44: gpclk1_gpio44 {
++				brcm,pins = <44>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			pwm1_gpio45: pwm1_gpio45 {
++				brcm,pins = <45>;
++				brcm,function = <BCM2835_FSEL_ALT0>;
++			};
++			i2c0_gpio44: i2c0_gpio44 {
++				brcm,pins = <44 45>;
++				brcm,function = <BCM2835_FSEL_ALT1>;
++			};
++			pcm_gpio28: pcm_gpio28 {
++				brcm,pins = <28 29 30 31>;
++				brcm,function = <BCM2835_FSEL_ALT2>;
++			};
++			uart1_gpio36: uart1_gpio36 {
++				brcm,pins = <36 37 38 39>;
++				brcm,function = <BCM2835_FSEL_ALT2>;
++			};
++			i2c1_gpio44: i2c1_gpio44 {
++				brcm,pins = <44 45>;
++				brcm,function = <BCM2835_FSEL_ALT2>;
++			};
++			/* Separate from the uart0_gpio14 group
++			 * because it conflicts with spi1_gpio16, and
++			 * people often run uart0 on the two pins
++			 * without flow contrl.
++			 */
++			uart0_ctsrts_gpio16: uart0_ctsrts_gpio16 {
++				brcm,pins = <16 17>;
++				brcm,function = <BCM2835_FSEL_ALT3>;
++			};
++			i2c_slave_gpio18: i2c_slave_gpio18 {
++				brcm,pins = <18 19 20 21>;
++				brcm,function = <BCM2835_FSEL_ALT3>;
++			};
++			emmc_gpio22: emmc_gpio22 {
++				brcm,pins = <22 23 24 25 26 27>;
++				brcm,function = <BCM2835_FSEL_ALT3>;
++			};
++			uart0_gpio30: uart0_gpio30 {
++				brcm,pins = <30 31>;
++				brcm,function = <BCM2835_FSEL_ALT3>;
++			};
++			uart0_ctsrts_gpio32: uart0_ctsrts_gpio32 {
++				brcm,pins = <32 33>;
++				brcm,function = <BCM2835_FSEL_ALT3>;
++			};
++			spi1_gpio16: spi1_gpio16 {
++				brcm,pins = <16 17 18 19 20 21>;
++				brcm,function = <BCM2835_FSEL_ALT4>;
++			};
++			jtag_gpio22: jtag_gpio22 {
++				brcm,pins = <22 23 24 25 26 27>;
++				brcm,function = <BCM2835_FSEL_ALT4>;
++			};
++			spi2_gpio40: spi2_gpio40 {
++				brcm,pins = <40 41 42 43 44 45>;
++				brcm,function = <BCM2835_FSEL_ALT4>;
++			};
++			jtag_gpio4: jtag_gpio4 {
++				brcm,pins = <4 5 6 12 13>;
++				brcm,function = <BCM2835_FSEL_ALT4>;
++			};
++			uart1_gpio14: uart1_gpio14 {
++				brcm,pins = <14 15>;
++				brcm,function = <BCM2835_FSEL_ALT5>;
++			};
++			uart1_ctsrts_gpio16: uart1_ctsrts_gpio16 {
++				brcm,pins = <16 17>;
++				brcm,function = <BCM2835_FSEL_ALT5>;
++			};
++			pwm0_gpio18: pwm0_gpio18 {
++				brcm,pins = <18>;
++				brcm,function = <BCM2835_FSEL_ALT5>;
++			};
++			pwm1_gpio19: pwm1_gpio19 {
++				brcm,pins = <19>;
++				brcm,function = <BCM2835_FSEL_ALT5>;
++			};
++			uart1_gpio32: uart1_gpio32 {
++				brcm,pins = <32 33>;
++				brcm,function = <BCM2835_FSEL_ALT5>;
++			};
++			uart1_ctsrts_gpio30: uart1_ctsrts_gpio30 {
++				brcm,pins = <30 31>;
++				brcm,function = <BCM2835_FSEL_ALT5>;
++			};
++			uart1_gpio40: uart1_gpio40 {
++				brcm,pins = <40 41>;
++				brcm,function = <BCM2835_FSEL_ALT5>;
++			};
++			uart1_ctsrts_gpio42: uart1_ctsrts_gpio42 {
++				brcm,pins = <42 43>;
++				brcm,function = <BCM2835_FSEL_ALT5>;
++			};
+ 		};
+ 
+ 		uart0: serial@7e201000 {
+-- 
+2.7.0
 
-Reviewed-by: Joachim Eastwood <manabian@gmail.com>
-
-
-regards,
-Joachim Eastwood
