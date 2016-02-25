@@ -1,31 +1,47 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: Use ARCH_RENESAS
-Date: Thu, 25 Feb 2016 15:18:06 +0100
-Message-ID: <CACRpkdaLJnPHDXSvpJ6vy29kMDvd-F5VkL8jGHRGKHcZANGBRQ@mail.gmail.com>
-References: <1456361514-18765-1-git-send-email-horms+renesas@verge.net.au>
+Subject: Re: [PATCH/RFC v2] gpio: rcar: Add Runtime PM handling for interrupts
+Date: Thu, 25 Feb 2016 15:19:41 +0100
+Message-ID: <CACRpkdafH1mU7Z3P=w9bJUqijEFQFmkVvR4p-OTy4XiOqL3Rrw@mail.gmail.com>
+References: <1455811590-15836-1-git-send-email-geert+renesas@glider.be>
+	<CACRpkdZw+2s77+5UO6x91FTuTgA86Y-Brxd=ZziTGE8AuUPgLA@mail.gmail.com>
+	<CAMuHMdV=6G-7Y3kFOaeffCgFzStmFQfDO6othA3up6G7ahqPzQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1456361514-18765-1-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <CAMuHMdV=6G-7Y3kFOaeffCgFzStmFQfDO6othA3up6G7ahqPzQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 25, 2016 at 1:51 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-
-> Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
+On Thu, Feb 25, 2016 at 10:37 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Thu, Feb 25, 2016 at 10:07 AM, Linus Walleij
+> <linus.walleij@linaro.org> wrote:
+>> On Thu, Feb 18, 2016 at 5:06 PM, Geert Uytterhoeven
+>> <geert+renesas@glider.be> wrote:
+>>
+>>> The R-Car GPIO driver handles Runtime PM for requested GPIOs only.
+>>>
+>>> When using a GPIO purely as an interrupt source, no Runtime PM handling
+>>> is done, and the GPIO module's clock may not be enabled.
+>>>
+>>> To fix this:
+>>>   - Add .irq_request_resources() and .irq_release_resources() callbacks
+>>>     to handle Runtime PM when an interrupt is requested,
+>>>   - Add irq_bus_lock() and sync_unlock() callbacks to handle Runtime PM
+>>>     when e.g. disabling/enabling an interrupt, or configuring the
+>>>     interrupt type.
+>>>
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>> Patch applied with Marc's ACK.
 >
-> This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-> ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-> appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+> Thanks!
 >
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Can we have it in v4.5? Else Ethernet won't work on r8a7795/salvator-x.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Expecting Geert to queue this for me.
+Argh that is late. But I'll move it over to the fixes branch...
 
 Yours,
 Linus Walleij
