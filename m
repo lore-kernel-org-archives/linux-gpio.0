@@ -1,91 +1,68 @@
-From: Henry Paulissen <henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org>
-Subject: Re: [PATCH v6] Fix sun7i pin assignment for IRQ's
-Date: Thu, 25 Feb 2016 06:26:22 -0800 (PST)
-Message-ID: <280e414e-546e-4a91-91a6-a4fa7157db49@googlegroups.com>
-References: <1456161251-2303-1-git-send-email-henry@nitronetworks.nl>
- <20160225005412.GB4736@lukather>
- <CACRpkdYmf8-ZPV5q9H3cdZtQDUkbx=bcrVg9a8M3zEAifXxF9A@mail.gmail.com>
-Reply-To: henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH/RFC v2] gpio: rcar: Add Runtime PM handling for interrupts
+Date: Thu, 25 Feb 2016 15:26:15 +0100
+Message-ID: <CAMuHMdXSHPbdPXRQFwV=4yHwrd858Sk8HU15px4a9GVSmgPs4w@mail.gmail.com>
+References: <1455811590-15836-1-git-send-email-geert+renesas@glider.be>
+	<CACRpkdZw+2s77+5UO6x91FTuTgA86Y-Brxd=ZziTGE8AuUPgLA@mail.gmail.com>
+	<CAMuHMdV=6G-7Y3kFOaeffCgFzStmFQfDO6othA3up6G7ahqPzQ@mail.gmail.com>
+	<CACRpkdafH1mU7Z3P=w9bJUqijEFQFmkVvR4p-OTy4XiOqL3Rrw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
-	boundary="----=_Part_72_871703851.1456410382138"
-Return-path: <linux-sunxi+bncBDJ57UPZYEDRBDU6XS3AKGQEUGRALFI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <CACRpkdYmf8-ZPV5q9H3cdZtQDUkbx=bcrVg9a8M3zEAifXxF9A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Cc: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, draakje197-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, andre.przywara-5wv7dgnIgG8@public.gmane.org, plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org, maxime.coquelin-qxv4g6HH51o@public.gmane.org, lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-List-Id: linux-gpio@vger.kernel.org
-
-------=_Part_72_871703851.1456410382138
-Content-Type: multipart/alternative;
-	boundary="----=_Part_73_1279141662.1456410382138"
-
-------=_Part_73_1279141662.1456410382138
 Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f180.google.com ([209.85.223.180]:36120 "EHLO
+	mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760837AbcBYO0Q (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 09:26:16 -0500
+In-Reply-To: <CACRpkdafH1mU7Z3P=w9bJUqijEFQFmkVvR4p-OTy4XiOqL3Rrw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 
+Hi Linus,
 
-
-Op donderdag 25 februari 2016 15:16:49 UTC+1 schreef Linus Walleij:
-
+On Thu, Feb 25, 2016 at 3:19 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Feb 25, 2016 at 10:37 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Thu, Feb 25, 2016 at 10:07 AM, Linus Walleij
+>> <linus.walleij@linaro.org> wrote:
+>>> On Thu, Feb 18, 2016 at 5:06 PM, Geert Uytterhoeven
+>>> <geert+renesas@glider.be> wrote:
+>>>
+>>>> The R-Car GPIO driver handles Runtime PM for requested GPIOs only.
+>>>>
+>>>> When using a GPIO purely as an interrupt source, no Runtime PM handling
+>>>> is done, and the GPIO module's clock may not be enabled.
+>>>>
+>>>> To fix this:
+>>>>   - Add .irq_request_resources() and .irq_release_resources() callbacks
+>>>>     to handle Runtime PM when an interrupt is requested,
+>>>>   - Add irq_bus_lock() and sync_unlock() callbacks to handle Runtime PM
+>>>>     when e.g. disabling/enabling an interrupt, or configuring the
+>>>>     interrupt type.
+>>>>
+>>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>
+>>> Patch applied with Marc's ACK.
+>>
+>> Thanks!
+>>
+>> Can we have it in v4.5? Else Ethernet won't work on r8a7795/salvator-x.
 >
-> I'm taking this patch out of my tree now following Maxime's comments. 
->
-> I'm a bit annoyed that it is iterating too quickly as well, I will 
-> wait and see for a while. 
->
->  
-All of Maxime his questions where already answered in a reply to him at:
-Date: Sun, 21 Feb 2016 11:27:46 -0800 (PST)
+> Argh that is late. But I'll move it over to the fixes branch...
 
-Patch V6 is the latest and final.
-Code itself is reviewed and tested and the last few iterations where only 
-cosmetic (changing description, etc).
+Thanks!
 
+The issue was exposed by commit d5c3d84657db57bd ("net: phy: Avoid polling
+PHY with PHY_IGNORE_INTERRUPTS"), which went upstream only in v4.5-rc3.
 
-Regards,
-Henry
+Gr{oetje,eeting}s,
 
--- 
-You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+                        Geert
 
-------=_Part_73_1279141662.1456410382138
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-<div dir=3D"ltr"><br><br>Op donderdag 25 februari 2016 15:16:49 UTC+1 schre=
-ef Linus Walleij:<br><blockquote class=3D"gmail_quote" style=3D"margin: 0;m=
-argin-left: 0.8ex;border-left: 1px #ccc solid;padding-left: 1ex;">
-<br>I&#39;m taking this patch out of my tree now following Maxime&#39;s com=
-ments.
-<br>
-<br>I&#39;m a bit annoyed that it is iterating too quickly as well, I will
-<br>wait and see for a while.
-<br>
-<br></blockquote><div>=C2=A0</div><div>All of Maxime his questions where al=
-ready answered in a reply to him at:<br>Date: Sun, 21 Feb 2016 11:27:46 -08=
-00 (PST)<br><br>Patch V6 is the latest and final.<br>Code itself is reviewe=
-d and tested and the last few iterations where only cosmetic (changing desc=
-ription, etc).<br><pre><br>Regards,<br>Henry<br></pre></div></div>
-
-<p></p>
-
--- <br />
-You received this message because you are subscribed to the Google Groups &=
-quot;linux-sunxi&quot; group.<br />
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to <a href=3D"mailto:linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org">linux-s=
-unxi+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org</a>.<br />
-For more options, visit <a href=3D"https://groups.google.com/d/optout">http=
-s://groups.google.com/d/optout</a>.<br />
-
-------=_Part_73_1279141662.1456410382138--
-
-------=_Part_72_871703851.1456410382138--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
