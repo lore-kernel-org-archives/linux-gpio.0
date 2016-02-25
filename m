@@ -1,42 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: Propagate all errors in devm_get_gpiod_from_child()
-Date: Thu, 25 Feb 2016 10:04:51 +0100
-Message-ID: <CACRpkdaNbCtGGzbwiE9iXOtaMUugyvc_7EunxhnjOdekQVi95g@mail.gmail.com>
-References: <1455876050-5481-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH/RFC v2] gpio: rcar: Add Runtime PM handling for interrupts
+Date: Thu, 25 Feb 2016 10:07:36 +0100
+Message-ID: <CACRpkdZw+2s77+5UO6x91FTuTgA86Y-Brxd=ZziTGE8AuUPgLA@mail.gmail.com>
+References: <1455811590-15836-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:36142 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760199AbcBYJEw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 04:04:52 -0500
-Received: by mail-oi0-f48.google.com with SMTP id w5so35409815oie.3
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Feb 2016 01:04:52 -0800 (PST)
-In-Reply-To: <1455876050-5481-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1455811590-15836-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Olliver Schinagl <oliver@schinagl.nl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Feb 19, 2016 at 11:00 AM, Geert Uytterhoeven
+On Thu, Feb 18, 2016 at 5:06 PM, Geert Uytterhoeven
 <geert+renesas@glider.be> wrote:
 
-> devm_get_gpiod_from_child() tries several property suffixes to find a
-> GPIO descriptor. If all suffixes fail and no probe deferral has been
-> detected, it returns the error of the last try.
+> The R-Car GPIO driver handles Runtime PM for requested GPIOs only.
 >
-> However, if any but the last try fails with a real error (e.g. -EBUSY),
-> this error is not propagated, and -ENOENT will be returned.
-> This confuses drivers that e.g. want to detect if a GPIO is already in
-> use.
+> When using a GPIO purely as an interrupt source, no Runtime PM handling
+> is done, and the GPIO module's clock may not be enabled.
 >
-> To fix this, change the loop logic to continue on -ENOENT, which
-> indicates the property was not found and the next suffix should be
-> tried, and propagate all other detected errors.
+> To fix this:
+>   - Add .irq_request_resources() and .irq_release_resources() callbacks
+>     to handle Runtime PM when an interrupt is requested,
+>   - Add irq_bus_lock() and sync_unlock() callbacks to handle Runtime PM
+>     when e.g. disabling/enabling an interrupt, or configuring the
+>     interrupt type.
 >
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Patch applied.
+Patch applied with Marc's ACK.
 
 Yours,
 Linus Walleij
