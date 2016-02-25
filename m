@@ -1,18 +1,17 @@
 From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v6] Fix sun7i pin assignment for IRQ's
-Date: Thu, 25 Feb 2016 09:42:02 -0800
-Message-ID: <20160225174202.GA31136@lukather>
-References: <1456161251-2303-1-git-send-email-henry@nitronetworks.nl>
- <20160225005412.GB4736@lukather>
- <CACRpkdYmf8-ZPV5q9H3cdZtQDUkbx=bcrVg9a8M3zEAifXxF9A@mail.gmail.com>
- <280e414e-546e-4a91-91a6-a4fa7157db49@googlegroups.com>
+Subject: Re: Re: [PATCH v3] Fix sun7i pin assignment for IRQ's
+Date: Thu, 25 Feb 2016 09:59:43 -0800
+Message-ID: <20160225175943.GD4736@lukather>
+References: <1456060845-20692-1-git-send-email-henry@nitronetworks.nl>
+ <20160221171830.GD19169@lukather>
+ <4cf9dbe3-faa6-4729-87fd-0e7d9ce463b0@googlegroups.com>
 Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
-Return-path: <linux-sunxi+bncBD2ZNBF5VYJRB3PZXS3AKGQEGTJD6AQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="cHMo6Wbp1wrKhbfi"
+Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBEUCXW3AKGQEXPPXFEA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <280e414e-546e-4a91-91a6-a4fa7157db49-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <4cf9dbe3-faa6-4729-87fd-0e7d9ce463b0-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Archive: <https://groups.google.com/group/linux-sunxi
@@ -21,35 +20,77 @@ List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto
 List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
  <https://groups.google.com/group/linux-sunxi/subscribe>
 To: Henry Paulissen <henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org>
-Cc: linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, draakje197-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, andre.przywara-5wv7dgnIgG8@public.gmane.org, plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org, maxime.coquelin-qxv4g6HH51o@public.gmane.org, lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, draakje197-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, patrice.chotard-qxv4g6HH51o@public.gmane.org, plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org, maxime.coquelin-qxv4g6HH51o@public.gmane.org, fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
---HcAYCG3uE/tztfnV
+--cHMo6Wbp1wrKhbfi
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 
 Hi,
 
-On Thu, Feb 25, 2016 at 06:26:22AM -0800, Henry Paulissen wrote:
+On Sun, Feb 21, 2016 at 11:27:46AM -0800, Henry Paulissen wrote:
 > 
-> 
-> Op donderdag 25 februari 2016 15:16:49 UTC+1 schreef Linus Walleij:
+> Op zondag 21 februari 2016 18:18:37 UTC+1 schreef Maxime Ripard:
 > 
 > >
-> > I'm taking this patch out of my tree now following Maxime's comments. 
+> > Your commit log is going to need some work. Which bugs? What tests did 
+> > you make? Why are you making these changes while the datasheet says 
+> > otherwise? 
 > >
-> > I'm a bit annoyed that it is iterating too quickly as well, I will 
-> > wait and see for a while. 
-> >
-> >  
-> All of Maxime his questions where already answered in a reply to him at:
-> Date: Sun, 21 Feb 2016 11:27:46 -0800 (PST)
+> 
+> Its a fix for a not yet existing bug. I was fiddling around with IRQ's and 
+> couldn't get them to work.
+> I took a dumpster dive into it and found a shitload of contradicting 
+> manuals and datasheets.
+> 
+> 
+> Take for example the A20 user manual:
+> http://dl.linux-sunxi.org/A20/A20%20user%20manual%20v1.3%2020141010.pdf
+> 
+> (pin PI14)
+> Page 237: EINT26 is on mux *5* in the pin overview.
+> Page 288: EINT26 is on mux *6* in the registers.
+>  
+> Page 233: EINT12 is on pin PC19 mux6 in the pin overview.
+> Page 236: EINT12 is on pin PH12 mux6 in the pin overview.
+> Page 253: EINT12 is *not* on pin PC19 on the registers.
+> Page 281: EINT12 is on pin PH12 mux6 in the registers.
 
-And I was not among the recipients of that mail, please try to keep
-everyone in Cc.
+Ok, so i guess you're actually fixing two different things: the first
+one is that some interrupts are using the wrong function, while some
+others are just not there at all. It would be great if you could make
+two different patches for these.
 
-Commenting on it right now....
+I guess we could also change SUNXI_FUNCTION_IRQ to enforce the mux
+value 6, since you're removing the last users of a different value,
+but that can be done as a followup
 
+> So manual may say otherwise, but I hope I have proven that the manual isn't 
+> to be trusted.
+> 
+> My patch is based onto testing from both me and Andre (apritzel).
+> He with a Banana PI M1 and me with a Cubietruck (both A20 soc).
+> 
+> We did a basic test by connecting a pulsing signal to a port and configure 
+> kernel to use irq.
+> 
+> e.g.
+> echo pin# > /sys/class/gpio/export
+> echo in > /sys/class/gpio/gpio#/direction
+> echo rising > /sys/class/gpio/gpio#/edge
+> 
+> and check on /proc/interrupts to see if a irq was attached and if it was 
+> receiving.
+> 
+> Im not sure what andre his pulse source was, but mine was a 1pps coming 
+> from a gps.
+
+That's a great explanation overall, it should just be in the commit
+log itself. A git commit is easy to find, the discussion that was
+triggered by it not so much.
+
+Thanks!
 Maxime
 
 
@@ -57,4 +98,4 @@ Maxime
 Maxime Ripard, Free Electrons
 Embedded Linux, Kernel and Android engineering
 http://free-electrons.com
---HcAYCG3uE/tztfnV--
+--cHMo6Wbp1wrKhbfi--
