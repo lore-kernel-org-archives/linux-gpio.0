@@ -1,42 +1,52 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5] Fix sun7i pin assignment for IRQ's
-Date: Thu, 25 Feb 2016 10:36:35 +0100
-Message-ID: <CACRpkdbbOyp-=5n64QBhigtAebKV5BmFcnvFumjXv3f8bj8pbg@mail.gmail.com>
-References: <1456129208-11490-1-git-send-email-henry@nitronetworks.nl>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH/RFC v2] gpio: rcar: Add Runtime PM handling for interrupts
+Date: Thu, 25 Feb 2016 10:37:41 +0100
+Message-ID: <CAMuHMdV=6G-7Y3kFOaeffCgFzStmFQfDO6othA3up6G7ahqPzQ@mail.gmail.com>
+References: <1455811590-15836-1-git-send-email-geert+renesas@glider.be>
+	<CACRpkdZw+2s77+5UO6x91FTuTgA86Y-Brxd=ZziTGE8AuUPgLA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBI4WXO3AKGQEXL3DRJY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1456129208-11490-1-git-send-email-henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Henry Paulissen <draakje197-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Maxime Coquelin <maxime.coquelin-qxv4g6HH51o@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZw+2s77+5UO6x91FTuTgA86Y-Brxd=ZziTGE8AuUPgLA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Feb 22, 2016 at 9:20 AM, Henry Paulissen <draakje197-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+Hi Linus,
 
-> After testing IRQ pins we found some bugs in the pinctrl declaration.
-> Both PI* and PC* pins didn't work. PI* pins seemed to be connected
-> to the wrong mux and PC* pins waren't working at all.
+On Thu, Feb 25, 2016 at 10:07 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Thu, Feb 18, 2016 at 5:06 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
 >
-> Please note that the A20 soc manual is contradicting between version
-> and even within the same document for both the PI and PC pins.
+>> The R-Car GPIO driver handles Runtime PM for requested GPIOs only.
+>>
+>> When using a GPIO purely as an interrupt source, no Runtime PM handling
+>> is done, and the GPIO module's clock may not be enabled.
+>>
+>> To fix this:
+>>   - Add .irq_request_resources() and .irq_release_resources() callbacks
+>>     to handle Runtime PM when an interrupt is requested,
+>>   - Add irq_bus_lock() and sync_unlock() callbacks to handle Runtime PM
+>>     when e.g. disabling/enabling an interrupt, or configuring the
+>>     interrupt type.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 >
-> Patch is based on testing with the hardware itself.
->
-> Signed-off-by: Henry Paulissen <henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org>
-(...)
-> Changes in v5:
->     Added a more detailed description.
+> Patch applied with Marc's ACK.
 
-Aha there is a v5. I took out the v4 and applied this
-instead.
+Thanks!
 
-Yours,
-Linus Walleij
+Can we have it in v4.5? Else Ethernet won't work on r8a7795/salvator-x.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
