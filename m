@@ -1,117 +1,195 @@
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a7795: Add CAN support
-Date: Thu, 25 Feb 2016 16:48:52 +0000
-Message-ID: <1456418933-3948-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456418933-3948-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH] pinctrl: imx: attach iomuxc device to gpr syscon
+Date: Thu, 25 Feb 2016 18:23:07 +0100
+Message-ID: <1456420987-9883-1-git-send-email-p.zabel@pengutronix.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:8762 "EHLO
-	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753461AbcBYQ7g (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 25 Feb 2016 11:59:36 -0500
-In-Reply-To: <1456418933-3948-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:41205 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1760733AbcBYRXW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.Org>);
+	Thu, 25 Feb 2016 12:23:22 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, chris.paterson2@renesas.com, Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Shawn Guo <shawnguo@kernel.org>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Adrian Alonso <aalonso@freescale.com>, Robin Gong <b38343@freescale.com>, Stefan Agner <stefan@agner.ch>, Anson Huang <b20788@freescale.com>, Fabio Estevam <fabio.estevam@freescale.com>, Frank Li <Frank.Li@freescale.com>, linux-gpio@vger.kernel.org, kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>
 
-This patch adds CAN[0-1] pinmux support to r8a7795 SoC.
+Commit bdb0066df96e ("mfd: syscon: Decouple syscon interface from platform
+devices") added the possibility to register syscon devices without
+associated platform device. This also removed regmap debugfs facilities,
+which don't work without a device. This patch associates the syscon regmap
+that handles the IOMUX controller's general purpose registers with the
+pinctrl device so that the GPR registers appear in the regmap debugfs
+directory again. For example, on i.MX6Q the GPR registers now can be
+read from /sys/kernel/debug/regmap/20e0000.iomuxc-gpr/registers.
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 58 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+ drivers/pinctrl/freescale/pinctrl-imx.c    | 10 ++++++++++
+ drivers/pinctrl/freescale/pinctrl-imx.h    |  1 +
+ drivers/pinctrl/freescale/pinctrl-imx50.c  |  1 +
+ drivers/pinctrl/freescale/pinctrl-imx53.c  |  1 +
+ drivers/pinctrl/freescale/pinctrl-imx6dl.c |  1 +
+ drivers/pinctrl/freescale/pinctrl-imx6q.c  |  1 +
+ drivers/pinctrl/freescale/pinctrl-imx6sl.c |  1 +
+ drivers/pinctrl/freescale/pinctrl-imx6sx.c |  1 +
+ drivers/pinctrl/freescale/pinctrl-imx6ul.c |  1 +
+ drivers/pinctrl/freescale/pinctrl-imx7d.c  |  1 +
+ 10 files changed, 19 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index ce4f5cd..fbe8e95 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -2913,6 +2913,43 @@ static const unsigned int scif_clk_b_mux[] = {
- 	SCIF_CLK_B_MARK,
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index a5bb939..0306ac0 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -15,6 +15,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+@@ -24,6 +25,7 @@
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinmux.h>
+ #include <linux/slab.h>
++#include <linux/regmap.h>
+ 
+ #include "../core.h"
+ #include "pinctrl-imx.h"
+@@ -692,10 +694,12 @@ static int imx_pinctrl_probe_dt(struct platform_device *pdev,
+ int imx_pinctrl_probe(struct platform_device *pdev,
+ 		      struct imx_pinctrl_soc_info *info)
+ {
++	struct regmap_config config = { .name = "gpr" };
+ 	struct device_node *dev_np = pdev->dev.of_node;
+ 	struct device_node *np;
+ 	struct imx_pinctrl *ipctl;
+ 	struct resource *res;
++	struct regmap *gpr;
+ 	int ret, i;
+ 
+ 	if (!info || !info->pins || !info->npins) {
+@@ -704,6 +708,12 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+ 	}
+ 	info->dev = &pdev->dev;
+ 
++	if (info->gpr_compatible) {
++		gpr = syscon_regmap_lookup_by_compatible(info->gpr_compatible);
++		if (!IS_ERR(gpr))
++			regmap_attach_dev(&pdev->dev, gpr, &config);
++	}
++
+ 	/* Create state holders etc for this driver */
+ 	ipctl = devm_kzalloc(&pdev->dev, sizeof(*ipctl), GFP_KERNEL);
+ 	if (!ipctl)
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/freescale/pinctrl-imx.h
+index 2a592f6..3b8bd81a 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.h
++++ b/drivers/pinctrl/freescale/pinctrl-imx.h
+@@ -82,6 +82,7 @@ struct imx_pinctrl_soc_info {
+ 	struct imx_pmx_func *functions;
+ 	unsigned int nfunctions;
+ 	unsigned int flags;
++	const char *gpr_compatible;
  };
  
-+/* - RCAN ------------------------------------------------------------------ */
-+static const unsigned int can0_data_a_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 23),	RCAR_GP_PIN(1, 24),
-+};
-+
-+static const unsigned int can0_data_a_mux[] = {
-+	CAN0_TX_A_MARK,		CAN0_RX_A_MARK,
-+};
-+
-+static const unsigned int can0_data_b_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(2, 0),	RCAR_GP_PIN(2, 1),
-+};
-+
-+static const unsigned int can0_data_b_mux[] = {
-+	CAN0_TX_B_MARK,		CAN0_RX_B_MARK,
-+};
-+
-+static const unsigned int can1_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 22),	RCAR_GP_PIN(1, 26),
-+};
-+
-+static const unsigned int can1_data_mux[] = {
-+	CAN1_TX_MARK,		CAN1_RX_MARK,
-+};
-+/* - RCAN-CLK --------------------------------------------------------------- */
-+static const unsigned int can_clk_pins[] = {
-+	/* CLK */
-+	RCAR_GP_PIN(1, 25),
-+};
-+
-+static const unsigned int can_clk_mux[] = {
-+	CAN_CLK_MARK,
-+};
-+
- /* - SSI -------------------------------------------------------------------- */
- static const unsigned int ssi0_data_pins[] = {
- 	/* SDATA */
-@@ -3322,6 +3359,10 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(ssi9_data_b),
- 	SH_PFC_PIN_GROUP(ssi9_ctrl_a),
- 	SH_PFC_PIN_GROUP(ssi9_ctrl_b),
-+	SH_PFC_PIN_GROUP(can0_data_a),
-+	SH_PFC_PIN_GROUP(can0_data_b),
-+	SH_PFC_PIN_GROUP(can1_data),
-+	SH_PFC_PIN_GROUP(can_clk),
+ #define SHARE_MUX_CONF_REG	0x1
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx50.c b/drivers/pinctrl/freescale/pinctrl-imx50.c
+index 51b31df..8acc4d96 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx50.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx50.c
+@@ -389,6 +389,7 @@ static const struct pinctrl_pin_desc imx50_pinctrl_pads[] = {
+ static struct imx_pinctrl_soc_info imx50_pinctrl_info = {
+ 	.pins = imx50_pinctrl_pads,
+ 	.npins = ARRAY_SIZE(imx50_pinctrl_pads),
++	.gpr_compatible = "fsl,imx50-iomuxc-gpr",
  };
  
- static const char * const audio_clk_groups[] = {
-@@ -3636,6 +3677,20 @@ static const char * const ssi_groups[] = {
- 	"ssi9_ctrl_b",
+ static const struct of_device_id imx50_pinctrl_of_match[] = {
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx53.c b/drivers/pinctrl/freescale/pinctrl-imx53.c
+index 7344d34..d39dfd6 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx53.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx53.c
+@@ -452,6 +452,7 @@ static const struct pinctrl_pin_desc imx53_pinctrl_pads[] = {
+ static struct imx_pinctrl_soc_info imx53_pinctrl_info = {
+ 	.pins = imx53_pinctrl_pads,
+ 	.npins = ARRAY_SIZE(imx53_pinctrl_pads),
++	.gpr_compatible = "fsl,imx53-iomuxc-gpr",
  };
  
-+static const char * const can0_groups[] = {
-+	"can0_data_a",
-+	"can0_data_b",
-+};
-+
-+static const char * const can1_groups[] = {
-+	"can1_data",
-+};
-+
-+static const char * const can_clk_groups[] = {
-+	"can_clk",
-+};
-+
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
-@@ -3664,6 +3719,9 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(sdhi2),
- 	SH_PFC_FUNCTION(sdhi3),
- 	SH_PFC_FUNCTION(ssi),
-+	SH_PFC_FUNCTION(can0),
-+	SH_PFC_FUNCTION(can1),
-+	SH_PFC_FUNCTION(can_clk),
+ static const struct of_device_id imx53_pinctrl_of_match[] = {
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx6dl.c b/drivers/pinctrl/freescale/pinctrl-imx6dl.c
+index 6805c67..5a2cdb0 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx6dl.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx6dl.c
+@@ -458,6 +458,7 @@ static const struct pinctrl_pin_desc imx6dl_pinctrl_pads[] = {
+ static struct imx_pinctrl_soc_info imx6dl_pinctrl_info = {
+ 	.pins = imx6dl_pinctrl_pads,
+ 	.npins = ARRAY_SIZE(imx6dl_pinctrl_pads),
++	.gpr_compatible = "fsl,imx6q-iomuxc-gpr",
  };
  
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ static const struct of_device_id imx6dl_pinctrl_of_match[] = {
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx6q.c b/drivers/pinctrl/freescale/pinctrl-imx6q.c
+index 4d1fcb8..7d50a36 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx6q.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx6q.c
+@@ -464,6 +464,7 @@ static const struct pinctrl_pin_desc imx6q_pinctrl_pads[] = {
+ static struct imx_pinctrl_soc_info imx6q_pinctrl_info = {
+ 	.pins = imx6q_pinctrl_pads,
+ 	.npins = ARRAY_SIZE(imx6q_pinctrl_pads),
++	.gpr_compatible = "fsl,imx6q-iomuxc-gpr",
+ };
+ 
+ static const struct of_device_id imx6q_pinctrl_of_match[] = {
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx6sl.c b/drivers/pinctrl/freescale/pinctrl-imx6sl.c
+index 83fa5f1..e27d17f 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx6sl.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx6sl.c
+@@ -364,6 +364,7 @@ static const struct pinctrl_pin_desc imx6sl_pinctrl_pads[] = {
+ static struct imx_pinctrl_soc_info imx6sl_pinctrl_info = {
+ 	.pins = imx6sl_pinctrl_pads,
+ 	.npins = ARRAY_SIZE(imx6sl_pinctrl_pads),
++	.gpr_compatible = "fsl,imx6sl-iomuxc-gpr",
+ };
+ 
+ static const struct of_device_id imx6sl_pinctrl_of_match[] = {
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx6sx.c b/drivers/pinctrl/freescale/pinctrl-imx6sx.c
+index 0d78fe6..117180c 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx6sx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx6sx.c
+@@ -368,6 +368,7 @@ static const struct pinctrl_pin_desc imx6sx_pinctrl_pads[] = {
+ static struct imx_pinctrl_soc_info imx6sx_pinctrl_info = {
+ 	.pins = imx6sx_pinctrl_pads,
+ 	.npins = ARRAY_SIZE(imx6sx_pinctrl_pads),
++	.gpr_compatible = "fsl,imx6sx-iomuxc-gpr",
+ };
+ 
+ static const struct of_device_id imx6sx_pinctrl_of_match[] = {
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx6ul.c b/drivers/pinctrl/freescale/pinctrl-imx6ul.c
+index 08e7576..78627c7 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx6ul.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx6ul.c
+@@ -284,6 +284,7 @@ static const struct pinctrl_pin_desc imx6ul_pinctrl_pads[] = {
+ static struct imx_pinctrl_soc_info imx6ul_pinctrl_info = {
+ 	.pins = imx6ul_pinctrl_pads,
+ 	.npins = ARRAY_SIZE(imx6ul_pinctrl_pads),
++	.gpr_compatible = "fsl,imx6ul-iomuxc-gpr",
+ };
+ 
+ static struct of_device_id imx6ul_pinctrl_of_match[] = {
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx7d.c b/drivers/pinctrl/freescale/pinctrl-imx7d.c
+index 16dc925..1c89613 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx7d.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx7d.c
+@@ -359,6 +359,7 @@ static const struct pinctrl_pin_desc imx7d_lpsr_pinctrl_pads[] = {
+ static struct imx_pinctrl_soc_info imx7d_pinctrl_info = {
+ 	.pins = imx7d_pinctrl_pads,
+ 	.npins = ARRAY_SIZE(imx7d_pinctrl_pads),
++	.gpr_compatible = "fsl,imx7d-iomuxc-gpr",
+ };
+ 
+ static struct imx_pinctrl_soc_info imx7d_lpsr_pinctrl_info = {
 -- 
-1.9.1
+2.7.0
 
