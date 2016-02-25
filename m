@@ -1,18 +1,18 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: [PATCH] gpio: present the consumer of a line to userspace
-Date: Thu, 25 Feb 2016 21:08:10 +0100
-Message-ID: <1456430890-7828-1-git-send-email-linus.walleij@linaro.org>
+Date: Thu, 25 Feb 2016 21:08:23 +0100
+Message-ID: <1456430903-7891-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:36674 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933286AbcBYUIP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 15:08:15 -0500
-Received: by mail-lf0-f49.google.com with SMTP id 78so40402724lfy.3
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Feb 2016 12:08:14 -0800 (PST)
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:34444 "EHLO
+	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933286AbcBYUI3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 15:08:29 -0500
+Received: by mail-lf0-f43.google.com with SMTP id j78so40423176lfb.1
+        for <linux-gpio@vger.kernel.org>; Thu, 25 Feb 2016 12:08:28 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
+Cc: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 
 I named the field representing the current user of GPIO line as
 "label" but this is too vague and ambiguous. Before anyone gets
