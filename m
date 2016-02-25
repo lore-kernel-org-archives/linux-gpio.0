@@ -1,73 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V4 2/4] gpio: gpio-f81504: Add Fintek F81504/508/512
- PCIE-to-UART/GPIO GPIOLIB support
-Date: Thu, 25 Feb 2016 10:59:14 +0100
-Message-ID: <CACRpkdaMqxqpqNUmjc6zyw7MgPr7qhLVXnBiV9bLEsBQBX5Y1w@mail.gmail.com>
-References: <1456209003-22396-1-git-send-email-hpeter+linux_kernel@gmail.com>
-	<1456209003-22396-3-git-send-email-hpeter+linux_kernel@gmail.com>
+Subject: Re: [PATCH 1/2] gpio: xgene: fix type of variable containing error codes
+Date: Thu, 25 Feb 2016 11:00:29 +0100
+Message-ID: <CACRpkdYxnmOkkWksWE+-eGa-J3hNNqU=GHC7xA4mhEyyye4Htg@mail.gmail.com>
+References: <1456209934-13439-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:32985 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758781AbcBYJ7P (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 04:59:15 -0500
-Received: by mail-ob0-f170.google.com with SMTP id jq7so43692215obb.0
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Feb 2016 01:59:15 -0800 (PST)
-In-Reply-To: <1456209003-22396-3-git-send-email-hpeter+linux_kernel@gmail.com>
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:33626 "EHLO
+	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759164AbcBYKA3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 05:00:29 -0500
+Received: by mail-oi0-f50.google.com with SMTP id j125so36868151oih.0
+        for <linux-gpio@vger.kernel.org>; Thu, 25 Feb 2016 02:00:29 -0800 (PST)
+In-Reply-To: <1456209934-13439-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Hung <hpeter@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Lee Jones <lee.jones@linaro.org>, Jiri Slaby <jslaby@suse.com>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, Peter H <peter_hong@fintek.com.tw>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Peter Hurley <peter@hurleysoftware.com>, Soeren Grunewald <soeren.grunewald@desy.de>, Wang YanQing <udknight@gmail.com>, Adam Lee <adam.lee@canonical.com>, Arnd Bergmann <arnd@arndb.de>, Joachim Eastwood <manabian@gmail.com>, Scott Wood <scottwood@freescale.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Paul Burton <paul.burton@imgtec.com>, =?UTF-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>, Matthias Brugger <matthias.bgg@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, linux-kernel@vger
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, open list <linux-kernel@vger.kernel.org>
 
-On Tue, Feb 23, 2016 at 7:30 AM, Peter Hung <hpeter@gmail.com> wrote:
+On Tue, Feb 23, 2016 at 7:45 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
 
-> This driver is GPIOLIB driver for F81504/508/512, it'll handle the
-> GPIOLIB operation of this device. This module will depend on
-> MFD_FINTEK_F81504_CORE.
+> ret variable can contain error values and is compared with zero.
+> Its type must be signed.
 >
-> IC function list:
->     F81504: Max 2x8 GPIOs and max 4 serial ports
->         port2/3 are multi-function
->     F81508: Max 6x8 GPIOs and max 8 serial ports
->         port2/3 are multi-function, port8/9/10/11 are gpio only
->     F81512: Max 6x8 GPIOs and max 12 serial ports
->         port2/3/8/9/10/11 are multi-function
+> The problem has been detected using coccinelle script
+> scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci
 >
-> GPIO register:
-> PCI Configuration space:
->     F0h: bit0~5: Enable GPIO0~5
->          bit6~7: Reserve
->     F3h: bit0~5: Multi-Functional Flag (0:GPIO/1:UART)
->          bit0: UART2 pin out for UART2 / GPIO0
->          bit1: UART3 pin out for UART3 / GPIO1
->          bit2: UART8 pin out for UART8 / GPIO2
->          bit3: UART9 pin out for UART9 / GPIO3
->          bit4: UART10 pin out for UART10 / GPIO4
->          bit5: UART11 pin out for UART11 / GPIO5
->          bit6~7: Reserve
->     F1h: IO address (LSB)
->     F2h: IO address (MSB)
->     F8h + 8 * set: Direction control (bitwise)
->          bitx: 0 - Input mode
->          bitx: 1 - Output mode
->     F9h + 8 * set: Drive ability control (bitwise)
->          bitx: 0 - Open drain (default)
->          bitx: 1 - Push Pull
->          In this driver, we only implements open drain mode.
->
-> IO space:
->     (IO base + 0~5): GPIO-0x~5x in/out value (bitwise)
->
-> Suggested-by: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Peter Hung <hpeter+linux_kernel@gmail.com>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 
-I assume this must do in through the MFD or TTY tree with the rest.
-There is a new devm_gpiochip_add_data() coming into the GPIO tree
-but we can patch it to use that later. (Note to Laxman to revisit...)
-
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Patch applied as obviously correct.
 
 Yours,
 Linus Walleij
