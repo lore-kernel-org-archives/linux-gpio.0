@@ -1,89 +1,43 @@
-From: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Subject: Re: [PATCH 13/50] pinctrl: mtk-common: Use devm_pinctrl_register()
- for pinctrl registration
-Date: Wed, 24 Feb 2016 12:28:25 -0800
-Message-ID: <1456345705.14518.1.camel@mussux00>
-References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
-	 <1456319775-3216-14-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] pinctrl: sh-pfc: Use ARCH_RENESAS
+Date: Thu, 25 Feb 2016 09:51:54 +0900
+Message-ID: <1456361514-18765-1-git-send-email-horms+renesas@verge.net.au>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([66.228.70.111]:54784 "EHLO
-	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753328AbcBXU2d (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Feb 2016 15:28:33 -0500
-In-Reply-To: <1456319775-3216-14-git-send-email-ldewangan@nvidia.com>
+Received: from kirsty.vergenet.net ([202.4.237.240]:40071 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752353AbcBYAwG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Feb 2016 19:52:06 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>
 
-On Wed, 2016-02-24 at 18:45 +0530, Laxman Dewangan wrote:
-> Use devm_pinctrl_register() for pin control registration and clean
-> the error path.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
-> Cc: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> ---
+Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
 
-Acked-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+This is part of an ongoing process to migrate from ARCH_SHMOBILE to
+ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
+appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
 
-Thanks,
-Hongzhou
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/pinctrl/sh-pfc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 17 ++++++-----------
->  1 file changed, 6 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> index ddc9217..194413d 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> @@ -1390,17 +1390,16 @@ int mtk_pctrl_init(struct platform_device *pdev,
->  	pctl->pctl_desc.pmxops = &mtk_pmx_ops;
->  	pctl->dev = &pdev->dev;
->  
-> -	pctl->pctl_dev = pinctrl_register(&pctl->pctl_desc, &pdev->dev, pctl);
-> +	pctl->pctl_dev = devm_pinctrl_register(&pdev->dev, &pctl->pctl_desc,
-> +					       pctl);
->  	if (IS_ERR(pctl->pctl_dev)) {
->  		dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
->  		return PTR_ERR(pctl->pctl_dev);
->  	}
->  
->  	pctl->chip = devm_kzalloc(&pdev->dev, sizeof(*pctl->chip), GFP_KERNEL);
-> -	if (!pctl->chip) {
-> -		ret = -ENOMEM;
-> -		goto pctrl_error;
-> -	}
-> +	if (!pctl->chip)
-> +		return -ENOMEM;
->  
->  	*pctl->chip = mtk_gpio_chip;
->  	pctl->chip->ngpio = pctl->devdata->npins;
-> @@ -1409,10 +1408,8 @@ int mtk_pctrl_init(struct platform_device *pdev,
->  	pctl->chip->base = -1;
->  
->  	ret = gpiochip_add_data(pctl->chip, pctl);
-> -	if (ret) {
-> -		ret = -EINVAL;
-> -		goto pctrl_error;
-> -	}
-> +	if (ret)
-> +		return -EINVAL;
->  
->  	/* Register the GPIO to pin mappings. */
->  	ret = gpiochip_add_pin_range(pctl->chip, dev_name(&pdev->dev),
-> @@ -1490,8 +1487,6 @@ int mtk_pctrl_init(struct platform_device *pdev,
->  
->  chip_error:
->  	gpiochip_remove(pctl->chip);
-> -pctrl_error:
-> -	pinctrl_unregister(pctl->pctl_dev);
->  	return ret;
->  }
->  
+ Based on the for-next branch of the linux-pinctrl tree
 
+diff --git a/drivers/pinctrl/sh-pfc/Kconfig b/drivers/pinctrl/sh-pfc/Kconfig
+index 35d6e95fa21f..9cf9af080bab 100644
+--- a/drivers/pinctrl/sh-pfc/Kconfig
++++ b/drivers/pinctrl/sh-pfc/Kconfig
+@@ -2,7 +2,7 @@
+ # Renesas SH and SH Mobile PINCTRL drivers
+ #
+ 
+-if ARCH_SHMOBILE || SUPERH
++if ARCH_RENESAS || SUPERH
+ 
+ config PINCTRL_SH_PFC
+ 	select GPIO_SH_PFC if ARCH_REQUIRE_GPIOLIB
+-- 
+2.7.0.rc3.207.g0ac5344
 
