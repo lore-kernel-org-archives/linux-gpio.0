@@ -1,33 +1,31 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH] pinctrl: sh-pfc: Use ARCH_RENESAS
-Date: Thu, 25 Feb 2016 18:39:46 +0900
-Message-ID: <20160225093945.GA28141@verge.net.au>
-References: <1456361514-18765-1-git-send-email-horms+renesas@verge.net.au>
- <CAMuHMdX+O2bUscyOz8bt91i3cX+w26WHuC8McBaB+uW-Zptv_w@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: ts4800: Drop redundant code to set already
+ initialized gpio_chip fields
+Date: Thu, 25 Feb 2016 10:52:33 +0100
+Message-ID: <CACRpkdaVOoVLW1192d+9p_Z+S3X9pMcXDevpogx7MvAjwzi+mg@mail.gmail.com>
+References: <1455949366.14139.1.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX+O2bUscyOz8bt91i3cX+w26WHuC8McBaB+uW-Zptv_w@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:32881 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759989AbcBYJwe (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 04:52:34 -0500
+Received: by mail-oi0-f48.google.com with SMTP id j125so36758159oih.0
+        for <linux-gpio@vger.kernel.org>; Thu, 25 Feb 2016 01:52:33 -0800 (PST)
+In-Reply-To: <1455949366.14139.1.camel@ingics.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Feb 25, 2016 at 08:55:33AM +0100, Geert Uytterhoeven wrote:
-> On Thu, Feb 25, 2016 at 1:51 AM, Simon Horman
-> <horms+renesas@verge.net.au> wrote:
-> > Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
-> >
-> > This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-> > ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-> > appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
-> >
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Depending on whether important patches arrive for sh-pfc, I will queue this for
-> v4.6 or v4.7. Is that OK for you?
+On Sat, Feb 20, 2016 at 7:22 AM, Axel Lin <axel.lin@ingics.com> wrote:
 
-Yes, either is fine for me.
+> Both chip->base and chip->label are correctly set by bgpio_init().
+>
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+
+Patch applied with Julien's Test tag.
+
+Yours,
+Linus Walleij
