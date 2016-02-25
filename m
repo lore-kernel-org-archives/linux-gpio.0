@@ -1,91 +1,72 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v5 1/4] clk: sunxi: Add apb0 gates for H3
-Date: Thu, 25 Feb 2016 11:29:38 -0800
-Message-ID: <20160225192938.GL4736@lukather>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v5 2/4] dts: sun8i-h3: Add APB0 related clocks and resets
+Date: Thu, 25 Feb 2016 11:33:17 -0800
+Message-ID: <20160225193317.GM4736@lukather>
 References: <1456146208-13890-1-git-send-email-k@japko.eu>
- <1456146208-13890-2-git-send-email-k@japko.eu>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+ <1456146208-13890-3-git-send-email-k@japko.eu>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="S6vg04ofUPzW4qJg"
-Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBL5MXW3AKGQEE4IRQRY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="BHMq0+oGliEfCAkH"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:54174 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S933377AbcBYTde (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 14:33:34 -0500
 Content-Disposition: inline
-In-Reply-To: <1456146208-13890-2-git-send-email-k-P4rZei/IPtg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Krzysztof Adamski <k@japko.eu>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <1456146208-13890-3-git-send-email-k@japko.eu>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Krzysztof Adamski <k@japko.eu>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Fabian Frederick <fabf@skynet.be>, Vishnu Patekar <vishnupatekar0510@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 
---S6vg04ofUPzW4qJg
-Content-Type: text/plain; charset=UTF-8
+
+--BHMq0+oGliEfCAkH
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Mon, Feb 22, 2016 at 02:03:25PM +0100, Krzysztof Adamski wrote:
-> This patch adds support for APB0 in H3. It seems to be compatible with
-> earlier SOCs. apb0 gates controls R_ block peripherals (R_PIO, R_IR,
-> etc).
-> 
+On Mon, Feb 22, 2016 at 02:03:26PM +0100, Krzysztof Adamski wrote:
+> APB0 is bearly mentioned in H3 User Manual and it is only setup in the
+> Allwinners kernel dump for CIR. I have verified experimentally that the
+> gate for R_PIO exists and works, though. There are probably other gates
+> there but I don't know their order right now and I don't have access to
+> their peripherals on my board to test them.
+>=20
+> After some experiments and reviewing how this is organized on other
+> sunxi SoCs, I couldn't actually find any way to disable clocks for R_PIO
+> and they are working properly without doing anything so I assume they
+> are connected straight to the 24Mhz oscillator for now.
+>=20
 > Signed-off-by: Krzysztof Adamski <k@japko.eu>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt | 2 ++
->  drivers/clk/sunxi/clk-simple-gates.c              | 4 ++++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-> index c09f59b..834436f 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -18,6 +18,7 @@ Required properties:
->  	"allwinner,sun4i-a10-cpu-clk" - for the CPU multiplexer clock
->  	"allwinner,sun4i-a10-axi-clk" - for the AXI clock
->  	"allwinner,sun8i-a23-axi-clk" - for the AXI clock on A23
-> +	"allwinner,sun4i-a10-gates-clk" - for generic gates on all compatible SoCs
->  	"allwinner,sun4i-a10-axi-gates-clk" - for the AXI gates
->  	"allwinner,sun4i-a10-ahb-clk" - for the AHB clock
->  	"allwinner,sun5i-a13-ahb-clk" - for the AHB clock on A13
-> @@ -46,6 +47,7 @@ Required properties:
->  	"allwinner,sun6i-a31-apb0-gates-clk" - for the APB0 gates on A31
->  	"allwinner,sun7i-a20-apb0-gates-clk" - for the APB0 gates on A20
->  	"allwinner,sun8i-a23-apb0-gates-clk" - for the APB0 gates on A23
-> +	"allwinner,sun8i-h3-apb0-gates-clk" - for the APB0 gates on H3
->  	"allwinner,sun9i-a80-apb0-gates-clk" - for the APB0 gates on A80
->  	"allwinner,sun4i-a10-apb1-clk" - for the APB1 clock
->  	"allwinner,sun9i-a80-apb1-clk" - for the APB1 bus clock on A80
-> diff --git a/drivers/clk/sunxi/clk-simple-gates.c b/drivers/clk/sunxi/clk-simple-gates.c
-> index 2cfc5a8..d7ec2dc 100644
-> --- a/drivers/clk/sunxi/clk-simple-gates.c
-> +++ b/drivers/clk/sunxi/clk-simple-gates.c
-> @@ -98,6 +98,8 @@ static void __init sunxi_simple_gates_init(struct device_node *node)
->  	sunxi_simple_gates_setup(node, NULL, 0);
->  }
->  
-> +CLK_OF_DECLARE(sun4i_a10_gates, "allwinner,sun4i-a10-gates-clk",
-> +	       sunxi_simple_gates_init);
->  CLK_OF_DECLARE(sun4i_a10_apb0, "allwinner,sun4i-a10-apb0-gates-clk",
->  	       sunxi_simple_gates_init);
->  CLK_OF_DECLARE(sun4i_a10_apb1, "allwinner,sun4i-a10-apb1-gates-clk",
-> @@ -132,6 +134,8 @@ CLK_OF_DECLARE(sun8i_a33_ahb1, "allwinner,sun8i-a33-ahb1-gates-clk",
->  	       sunxi_simple_gates_init);
->  CLK_OF_DECLARE(sun8i_a83t_apb0, "allwinner,sun8i-a83t-apb0-gates-clk",
->  	       sunxi_simple_gates_init);
-> +CLK_OF_DECLARE(sun8i_h3_apb0, "allwinner,sun8i-h3-apb0-gates-clk",
-> +	       sunxi_simple_gates_init);
 
-You don't need this one anymore. I removed it, and applied the patch.
-
-Thanks!
+Applied, thanks!
 Maxime
 
--- 
+--=20
 Maxime Ripard, Free Electrons
 Embedded Linux, Kernel and Android engineering
 http://free-electrons.com
---S6vg04ofUPzW4qJg--
+
+--BHMq0+oGliEfCAkH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWz1b9AAoJEBx+YmzsjxAg2Z4P/28hfuPDFdRanM2hG5uCQ5HH
+HqdjMi0SFCV05d++Fdc8CeVDZNShJXkFIRNw9kdQ17mrAb7c7UbxeFpYIM00y6yz
+3CTHaHYh+TWTnxkdPcwvRm5so8T4dU8eHnflNc0Z9feMp7UBxTT1zl5nbsgRfpan
+or1WTR2WIC1x8Md3tQK0MA0MHTIp3+ppKGV/DiZt6L5l9EnAeUEXiIt95YLBUTez
+cZuALjw5pi86dWs2YZGYCVFFR2t14P4HG5CtVUgUglEGfRMwyZcuxdT2+n9inSj6
+yu11XFhwX7PrpZX+FUiMuZ1f4fz5Tmbk0ml+eiJyjPuFIadwSWluWpz++DvE/d9/
+4RSi+yMeV6SM+8E6i5PUQ4tHfMNXmGkQHOlvh5f3DHeWaa/EL21b7Ge69tgtgRs6
+gTJfqAInK+Vh+gd6DdNl1ZMS2zwcrpZ+OB4/YN7zheCVEIetfDDUCT+ADjtOJjwI
+LiEJu/9zWaWa/GN94OzV8xebetDSM0/OT8QFnfTo9uufFT5hXk0yFc/cmx3r+3PQ
+C6+CC1Zo0UIk14EiPc88vizMfVKi1akiinGmTw4UkezgODXS9kEPDQpwNa5k8tnR
+C7mWhr60CAjBbuEIFyeFqY36UHu55wLBRGZC+8Hv4zG64egWsk8ZtWgKD3NardnB
+i6JjZjhJYG8JzxGvyiRR
+=+S+9
+-----END PGP SIGNATURE-----
+
+--BHMq0+oGliEfCAkH--
