@@ -1,47 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH/RFC v2] gpio: rcar: Add Runtime PM handling for interrupts
-Date: Thu, 25 Feb 2016 15:19:41 +0100
-Message-ID: <CACRpkdafH1mU7Z3P=w9bJUqijEFQFmkVvR4p-OTy4XiOqL3Rrw@mail.gmail.com>
-References: <1455811590-15836-1-git-send-email-geert+renesas@glider.be>
-	<CACRpkdZw+2s77+5UO6x91FTuTgA86Y-Brxd=ZziTGE8AuUPgLA@mail.gmail.com>
-	<CAMuHMdV=6G-7Y3kFOaeffCgFzStmFQfDO6othA3up6G7ahqPzQ@mail.gmail.com>
+From: John Crispin <blogic@openwrt.org>
+Subject: Re: [PATCH 39/50] pinctrl: lantiq: Use devm_pinctrl_register() for
+ pinctrl registration
+Date: Thu, 25 Feb 2016 15:24:49 +0100
+Message-ID: <56CF0EB1.304@openwrt.org>
+References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
+ <1456319775-3216-40-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdV=6G-7Y3kFOaeffCgFzStmFQfDO6othA3up6G7ahqPzQ@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from arrakis.dune.hu ([78.24.191.176]:52113 "EHLO arrakis.dune.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1760085AbcBYOYz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 25 Feb 2016 09:24:55 -0500
+In-Reply-To: <1456319775-3216-40-git-send-email-ldewangan@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
-On Thu, Feb 25, 2016 at 10:37 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Thu, Feb 25, 2016 at 10:07 AM, Linus Walleij
-> <linus.walleij@linaro.org> wrote:
->> On Thu, Feb 18, 2016 at 5:06 PM, Geert Uytterhoeven
->> <geert+renesas@glider.be> wrote:
->>
->>> The R-Car GPIO driver handles Runtime PM for requested GPIOs only.
->>>
->>> When using a GPIO purely as an interrupt source, no Runtime PM handling
->>> is done, and the GPIO module's clock may not be enabled.
->>>
->>> To fix this:
->>>   - Add .irq_request_resources() and .irq_release_resources() callbacks
->>>     to handle Runtime PM when an interrupt is requested,
->>>   - Add irq_bus_lock() and sync_unlock() callbacks to handle Runtime PM
->>>     when e.g. disabling/enabling an interrupt, or configuring the
->>>     interrupt type.
->>>
->>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>
->> Patch applied with Marc's ACK.
->
-> Thanks!
->
-> Can we have it in v4.5? Else Ethernet won't work on r8a7795/salvator-x.
 
-Argh that is late. But I'll move it over to the fixes branch...
 
-Yours,
-Linus Walleij
+On 24/02/2016 14:16, Laxman Dewangan wrote:
+> Use devm_pinctrl_register() for pin control registration.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+
+Acked-by: John Crispin <blogic@openwrt.org>
+
+
+
+
+> ---
+>  drivers/pinctrl/pinctrl-lantiq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-lantiq.c b/drivers/pinctrl/pinctrl-lantiq.c
+> index fc38a85..a4d6474 100644
+> --- a/drivers/pinctrl/pinctrl-lantiq.c
+> +++ b/drivers/pinctrl/pinctrl-lantiq.c
+> @@ -336,7 +336,7 @@ int ltq_pinctrl_register(struct platform_device *pdev,
+>  	desc->pmxops = &ltq_pmx_ops;
+>  	info->dev = &pdev->dev;
+>  
+> -	info->pctrl = pinctrl_register(desc, &pdev->dev, info);
+> +	info->pctrl = devm_pinctrl_register(&pdev->dev, desc, info);
+>  	if (IS_ERR(info->pctrl)) {
+>  		dev_err(&pdev->dev, "failed to register LTQ pinmux driver\n");
+>  		return PTR_ERR(info->pctrl);
+> 
