@@ -1,30 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: brcmstb: Use list_for_each_entry at appropriate places
-Date: Thu, 25 Feb 2016 10:29:32 +0100
-Message-ID: <CACRpkdZoYbCAGTNTXdhFqA3dD1ivjOdyKTPiM2fvX=w9-EMjYw@mail.gmail.com>
-References: <1455933037.31674.2.camel@ingics.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 3/4] ARM: dts: sun8i-h3: Add R_PIO
+ controller node to the dtsi
+Date: Thu, 25 Feb 2016 10:31:29 +0100
+Message-ID: <CACRpkdaoNwmf93ut1Nk83N5j+rGjmUX5TTrKjWyfhEMUwXyeJQ@mail.gmail.com>
+References: <1456146208-13890-1-git-send-email-k@japko.eu>
+	<1456146208-13890-4-git-send-email-k@japko.eu>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:33867 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760422AbcBYJ3d (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 04:29:33 -0500
-Received: by mail-oi0-f53.google.com with SMTP id m82so35835287oif.1
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Feb 2016 01:29:32 -0800 (PST)
-In-Reply-To: <1455933037.31674.2.camel@ingics.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sunxi+bncBDE6RCFOWIARB4MTXO3AKGQEQD55B6A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <1456146208-13890-4-git-send-email-k-P4rZei/IPtg@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Krzysztof Adamski <k@japko.eu>
+Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Gregory Fong <gregory.0xf0@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Sat, Feb 20, 2016 at 2:50 AM, Axel Lin <axel.lin@ingics.com> wrote:
+On Mon, Feb 22, 2016 at 2:03 PM, Krzysztof Adamski <k@japko.eu> wrote:
 
-> Use list_for_each_entry to simplify the code a bit.
+> Add the corresponding device node for R_PIO on H3 to the dtsi. Support
+> for the controller was added in earlier commit.
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Signed-off-by: Krzysztof Adamski <k@japko.eu>
 
-Patch applied with Gregory's ACK.
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+Please funnel this through the ARM SoC tree.
 
 Yours,
 Linus Walleij
