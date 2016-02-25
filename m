@@ -1,50 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFD] does abi of sysfs of gpio change?
-Date: Thu, 25 Feb 2016 16:12:03 +0100
-Message-ID: <CACRpkdYeDBkpfQrQDiLV_NLGaHYPzfO6DrBJLAp__sQHQGcFBw@mail.gmail.com>
-References: <CAFy1UST8fzsM6tq4_yAZ1XbPyaMg4a0kBm5-_8r0E8NpgwGYag@mail.gmail.com>
+From: Joachim Eastwood <manabian@gmail.com>
+Subject: Re: [PATCH 1/3] pinctrl: core: create unlocked version of pinctrl_find_gpio_range_from_pin
+Date: Thu, 25 Feb 2016 16:15:58 +0100
+Message-ID: <CAGhQ9VzCL=OBf=xmHdU36HXC2NCL-dg9xA=gcQ5YfamWGs4n2g@mail.gmail.com>
+References: <1456008716-6236-1-git-send-email-manabian@gmail.com>
+	<1456008716-6236-2-git-send-email-manabian@gmail.com>
+	<CACRpkdbrS98Bd7Wx8k6GVp27We1nNNtyqEwiR1SxGp1T5myVVw@mail.gmail.com>
+	<CACRpkdZ6EODhqbH9amTdgCMbR1Qq4A867wiK24q6RAg+7Svy+w@mail.gmail.com>
+	<CAGhQ9Vy6wLctan9-O-FOL6E2_HUhFcHcu+qbx_Ye3ai37w0esg@mail.gmail.com>
+	<CACRpkda0Hu+A9C8yNEYx-vxvKvvM+xhpu_N2QWwT7K+WYOhOFQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:32880 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932951AbcBYPMF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 10:12:05 -0500
-Received: by mail-ob0-f171.google.com with SMTP id jq7so50441627obb.0
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Feb 2016 07:12:04 -0800 (PST)
-In-Reply-To: <CAFy1UST8fzsM6tq4_yAZ1XbPyaMg4a0kBm5-_8r0E8NpgwGYag@mail.gmail.com>
+Received: from mail-ig0-f176.google.com ([209.85.213.176]:37184 "EHLO
+	mail-ig0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759993AbcBYPP7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 10:15:59 -0500
+Received: by mail-ig0-f176.google.com with SMTP id z8so15502971ige.0
+        for <linux-gpio@vger.kernel.org>; Thu, 25 Feb 2016 07:15:58 -0800 (PST)
+In-Reply-To: <CACRpkda0Hu+A9C8yNEYx-vxvKvvM+xhpu_N2QWwT7K+WYOhOFQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bamvor Zhang Jian <bamvor.zhangjian@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Markus Pargmann <mpa@pengutronix.de>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Alexandre Courbot <acourbot@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Feb 24, 2016 at 3:35 PM, Bamvor Zhang Jian
-<bamvor.zhangjian@linaro.org> wrote:
+On 25 February 2016 at 15:55, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Feb 25, 2016 at 12:19 PM, Joachim  Eastwood <manabian@gmail.com> wrote:
+>
+>>> Or rather, pinctrl_fund_gpio_range_from_pin_locked(),
+>>> indicating that you're already holding the necessary lock
+>>> when calling the function. Now I'm even confusing myself,
+>>> sorry :(
+>>
+>> Shouldn't the function name indicate what the function does with the lock?
+>>
+>> pinctrl_fund_gpio_range_from_pin_unlocked() would indicate to me that
+>> it does not acquire a lock and it is your responsibility as a caller
+>> to ensure that the correct lock is held before calling.
+>
+> OK hm maybe you're right, grep the kernel for precedents.
 
-> I am working on writing a gpio mockup driver(for test the gpio framework).
-> I found that in the lastest for-next branch of linux-gpio, the path of gpiochip
-> in device directory is changed from
-> `/sys/devices/platform/gpio-mockup/gpio/gpiochip*`
-> to
-> `/sys/devices/platform/gpio-mockup/gpiochip*/gpio`.
-(...)
-> IIUC, this change may break the script which depend on it.
-> Is it intended to do it?
+hmm, I not sure anymore.
 
-No, I screwed up :(
+What do you think about pinctrl_find_gpio_range_from_pin_nolock()?
 
-> From be7699ddea0fd0e2b0712cc8f50318595cad553c Mon Sep 17 00:00:00 2001
-> From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
-> Date: Wed, 24 Feb 2016 22:17:19 +0800
-> Subject: [PATCH] fix abi changes of sysfs
+The _nolock() prefix is also used in the kernel and might convey what
+we want better. Thoughts?
 
-It was impossible to extract this patch because of some
-HTML formatting, but I rewrote the patch, adding some extra
-comments and commit message, and applied. Check the result
-in my devel branch.
 
-I also have a bad conscience for not looking at you patches,
-I've been swamped, sorry :(
-
-Yours,
-Linus Walleij
+regards,
+Joachim Eastwood
