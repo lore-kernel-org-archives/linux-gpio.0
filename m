@@ -1,60 +1,62 @@
 From: Joachim Eastwood <manabian@gmail.com>
-Subject: [PATCH v2 3/3] pinctrl: lpc1850-scu: document nxp,gpio-pin-interrupt
-Date: Thu, 25 Feb 2016 22:44:39 +0100
-Message-ID: <1456436679-22077-4-git-send-email-manabian@gmail.com>
+Subject: Re: [PATCH v2 0/3] pinctrl: lpc18xx: support pint setup
+Date: Thu, 25 Feb 2016 22:47:45 +0100
+Message-ID: <CAGhQ9Vx047NwTaa5s1UX_c-dc4BLmNt6z1q4_rHn+SMr8hZAtQ@mail.gmail.com>
 References: <1456436679-22077-1-git-send-email-manabian@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:36680 "EHLO
-	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750789AbcBYVox (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 16:44:53 -0500
-Received: by mail-lf0-f46.google.com with SMTP id 78so41841954lfy.3
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Feb 2016 13:44:52 -0800 (PST)
+Received: from mail-ig0-f177.google.com ([209.85.213.177]:37129 "EHLO
+	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750780AbcBYVrp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 16:47:45 -0500
+Received: by mail-ig0-f177.google.com with SMTP id z8so23266359ige.0
+        for <linux-gpio@vger.kernel.org>; Thu, 25 Feb 2016 13:47:45 -0800 (PST)
 In-Reply-To: <1456436679-22077-1-git-send-email-manabian@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Joachim Eastwood <manabian@gmail.com>, linux-gpio@vger.kernel.org
 
-Update devicetree documention for lpc1850-scu with the new
-nxp,gpio-pin-interrupt property.
+On 25 February 2016 at 22:44, Joachim Eastwood <manabian@gmail.com> wrote:
+> Some background here:
+> The LPC1850 has no less than 3 GPIO interrupt blocks. One of these
+> blocks is called 'gpio pin interrupt' or just PINT. LPC1850 PINT can
+> handle up to 8 interrupts and these have a one-to-one relationship with
+> the main interrupt controller (NVIC).
+>
+> Selecting which GPIOs that are associated with PINT irq lines is done in
+> pinctrl hw block (SCU). The pinctrl device usually deals with the pin
+> namespace but PINT selecction is done in the GPIO namespace. Fortunatly
+> there is a function that can translate from the pin namespace to the
+> GPIO namespace.
+>
+> Selection is done in DT with the "nxp,gpio-pin-interrupt" property.
+> Example usage;
+> &pinctrl {
+>         gpio_joystick_1_cfg {
+>                 pins =  "p9_0";
+>                 function = "gpio";
+>                 nxp,gpio-pin-interrupt = <0>;
+>                 input-enable;
+>                 bias-disable;
+>         };
+> };
+>
+> The reason for not doing this irq line selection on the fly in the
+> irqchip driver is that the registers lie in the SCU hw block not in the
+> PINT block and DT gives you more control since you can select a specific
+> irq lines easily.
+>
+> The irq chip driver is ready but will posted separately.
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt        | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+oh, I forgot to add the change log. Here it is:
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt b/Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt
-index df0309c57505..bd8b0c69fa44 100644
---- a/Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt
-@@ -22,6 +22,10 @@ The following generic nodes are supported:
-  - input-schmitt-disable
-  - slew-rate
- 
-+NXP specific properties:
-+ - nxp,gpio-pin-interrupt : Assign pin to gpio pin interrupt controller
-+			    irq number 0 to 7. See example below.
-+
- Not all pins support all properties so either refer to the NXP 1850/4350
- user manual or the pin table in the pinctrl-lpc18xx driver for supported
- pin properties.
-@@ -54,4 +58,14 @@ pinctrl: pinctrl@40086000 {
- 			bias-disable;
- 		};
- 	};
-+
-+	gpio_joystick_pins: gpio-joystick-pins {
-+		gpio_joystick_1_cfg {
-+			pins =  "p9_0";
-+			function = "gpio";
-+			nxp,gpio-pin-interrupt = <0>;
-+			input-enable;
-+			bias-disable;
-+		};
-+	};
- };
--- 
-1.8.0
+Changes since v1:
+ - Add ack from Rob on DT doc
+ - rename __pinctrl_find_gpio_range_from_pin to
+pinctrl_find_gpio_range_from_pin_nolock
 
+
+regards,
+Joachim Eastwood
