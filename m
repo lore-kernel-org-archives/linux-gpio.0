@@ -1,33 +1,55 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH 09/50] pinctrl: imx: Use devm_pinctrl_register() for
- pinctrl registration
-Date: Thu, 25 Feb 2016 15:47:18 +0100
-Message-ID: <1456411638.3268.14.camel@pengutronix.de>
-References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
-	 <1456319775-3216-10-git-send-email-ldewangan@nvidia.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 01/14] pinctrl: sunxi: Add A83T R_PIO
+ controller support
+Date: Thu, 25 Feb 2016 15:49:13 +0100
+Message-ID: <CACRpkdYQasUpLhJU16F3_GG7-wKt=wvb1Qqu2cJ62pCHLSii=g@mail.gmail.com>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+	<1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
+	<CACRpkdbCgOBQw28d=qc1fAURY3x8UdoWqiMtXMZ=uWLaQj-nbg@mail.gmail.com>
+	<20160211123648.GN31506@lukather>
+	<CACRpkdaGZ4-S1A9zUUaBXXEazyJf_uZ4ESiBhw-CpozXMxfDHg@mail.gmail.com>
+	<20160211151246.GO31506@lukather>
+	<CACRpkdb7=x2bJP1nXpF2bP3U0t+NUHiuw_aeTAhbR8OXOrHn6A@mail.gmail.com>
+	<20160225005644.GC4736@lukather>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1456319775-3216-10-git-send-email-ldewangan@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linus.walleij@linaro.org, corbet@lwn.net, lee@kernel.org, Adrian Alonso <aalonso@freescale.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, linux-mediatek@lists.infradead.org, Shawn Guo <shawnguo@kernel.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-sunxi+bncBDE6RCFOWIARB2VIXS3AKGQESYD5FHA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <20160225005644.GC4736@lukather>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Emilio Lopez <emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Reind
 List-Id: linux-gpio@vger.kernel.org
 
-Am Mittwoch, den 24.02.2016, 18:45 +0530 schrieb Laxman Dewangan:
-> Use devm_pinctrl_register() for pin control registration and remove
-> need of .remove callback.
->=20
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Adrian Alonso <aalonso@freescale.com>
-> Cc: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-[...]
+On Thu, Feb 25, 2016 at 1:56 AM, Maxime Ripard
+<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> Hi Linus,
+> On Tue, Feb 16, 2016 at 12:23:37AM +0100, Linus Walleij wrote:
+>> On Thu, Feb 11, 2016 at 4:12 PM, Maxime Ripard
+>> <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+>> > On Thu, Feb 11, 2016 at 02:47:57PM +0100, Linus Walleij wrote:
+>>
+>> >> Can you guys supply a MAINTAINERS entry for the sunxi
+>> >> stuff?
+>> >
+>> > We have one, and Chen-Yu is listed as co-maintainer:
+>> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/MAINTAINERS#n911
+>>
+>> Modified request:
+>> can you put in F: wildcards there to match the files pertaining to
+>> the sunxi platform, so that scripts/find-maintainer.pl finds them.
+>
+> I don't really know what you mean, on my laptop, if I run it, I get
+> the following result:
 
-regards
-Philipp
+OK the file is listed under SoC support, that works too.
 
+Yours,
+Linus Walleij
