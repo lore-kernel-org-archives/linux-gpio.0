@@ -1,101 +1,57 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: Re: [PATCH v3] Fix sun7i pin assignment for IRQ's
-Date: Thu, 25 Feb 2016 09:59:43 -0800
-Message-ID: <20160225175943.GD4736@lukather>
-References: <1456060845-20692-1-git-send-email-henry@nitronetworks.nl>
- <20160221171830.GD19169@lukather>
- <4cf9dbe3-faa6-4729-87fd-0e7d9ce463b0@googlegroups.com>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Joachim Eastwood <manabian@gmail.com>
+Subject: Re: [PATCH] pinctrl: lpc18xx: ensure ngroups is initialized at
+ correct place
+Date: Thu, 25 Feb 2016 19:32:55 +0100
+Message-ID: <CAGhQ9VykdYLA-ey2pzDVtccLPZvHNYLzmLHKyOnKr2TLLV+2yA@mail.gmail.com>
+References: <1456335170-20718-1-git-send-email-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cHMo6Wbp1wrKhbfi"
-Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBEUCXW3AKGQEXPPXFEA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4cf9dbe3-faa6-4729-87fd-0e7d9ce463b0-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Henry Paulissen <henry-oxlTVf6CAJF4HdFT58BDcQ@public.gmane.org>
-Cc: linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, draakje197-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, patrice.chotard-qxv4g6HH51o@public.gmane.org, plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org, maxime.coquelin-qxv4g6HH51o@public.gmane.org, fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-gpio@vger.kernel.org
-
---cHMo6Wbp1wrKhbfi
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:33306 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933348AbcBYSc4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 13:32:56 -0500
+In-Reply-To: <1456335170-20718-1-git-send-email-colin.king@canonical.com>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi,
+Hi Colin,
 
-On Sun, Feb 21, 2016 at 11:27:46AM -0800, Henry Paulissen wrote:
-> 
-> Op zondag 21 februari 2016 18:18:37 UTC+1 schreef Maxime Ripard:
-> 
-> >
-> > Your commit log is going to need some work. Which bugs? What tests did 
-> > you make? Why are you making these changes while the datasheet says 
-> > otherwise? 
-> >
-> 
-> Its a fix for a not yet existing bug. I was fiddling around with IRQ's and 
-> couldn't get them to work.
-> I took a dumpster dive into it and found a shitload of contradicting 
-> manuals and datasheets.
-> 
-> 
-> Take for example the A20 user manual:
-> http://dl.linux-sunxi.org/A20/A20%20user%20manual%20v1.3%2020141010.pdf
-> 
-> (pin PI14)
-> Page 237: EINT26 is on mux *5* in the pin overview.
-> Page 288: EINT26 is on mux *6* in the registers.
->  
-> Page 233: EINT12 is on pin PC19 mux6 in the pin overview.
-> Page 236: EINT12 is on pin PH12 mux6 in the pin overview.
-> Page 253: EINT12 is *not* on pin PC19 on the registers.
-> Page 281: EINT12 is on pin PH12 mux6 in the registers.
+On 24 February 2016 at 18:32, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The initialization of ngroups is occurring at the end of the
+> first iteration of the outer loop, which means that the
+> assignment  pins[ngroups++] = i is potentially indexing into
+> a region outside of array pins because ngroups is not initialized.
+> Instead, initialize ngroups in the inner loop before the first
+> inner loop iteration.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/pinctrl/pinctrl-lpc18xx.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
+> index f0bebbe..ed1cfa7 100644
+> --- a/drivers/pinctrl/pinctrl-lpc18xx.c
+> +++ b/drivers/pinctrl/pinctrl-lpc18xx.c
+> @@ -1170,9 +1170,8 @@ static int lpc18xx_create_group_func_map(struct device *dev,
+>         u16 pins[ARRAY_SIZE(lpc18xx_pins)];
+>         int func, ngroups, i;
+>
+> -       for (func = 0; func < FUNC_MAX; ngroups = 0, func++) {
+> -
+> -               for (i = 0; i < ARRAY_SIZE(lpc18xx_pins); i++) {
+> +       for (func = 0; func < FUNC_MAX; func++) {
+> +               for (ngroups = 0, i = 0; i < ARRAY_SIZE(lpc18xx_pins); i++) {
 
-Ok, so i guess you're actually fixing two different things: the first
-one is that some interrupts are using the wrong function, while some
-others are just not there at all. It would be great if you could make
-two different patches for these.
+Good catch!
 
-I guess we could also change SUNXI_FUNCTION_IRQ to enforce the mux
-value 6, since you're removing the last users of a different value,
-but that can be done as a followup
-
-> So manual may say otherwise, but I hope I have proven that the manual isn't 
-> to be trusted.
-> 
-> My patch is based onto testing from both me and Andre (apritzel).
-> He with a Banana PI M1 and me with a Cubietruck (both A20 soc).
-> 
-> We did a basic test by connecting a pulsing signal to a port and configure 
-> kernel to use irq.
-> 
-> e.g.
-> echo pin# > /sys/class/gpio/export
-> echo in > /sys/class/gpio/gpio#/direction
-> echo rising > /sys/class/gpio/gpio#/edge
-> 
-> and check on /proc/interrupts to see if a irq was attached and if it was 
-> receiving.
-> 
-> Im not sure what andre his pulse source was, but mine was a 1pps coming 
-> from a gps.
-
-That's a great explanation overall, it should just be in the commit
-log itself. A git commit is easy to find, the discussion that was
-triggered by it not so much.
-
-Thanks!
-Maxime
+Reviewed-by: Joachim Eastwood <manabian@gmail.com>
 
 
--- 
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
---cHMo6Wbp1wrKhbfi--
+regards,
+Joachim Eastwood
