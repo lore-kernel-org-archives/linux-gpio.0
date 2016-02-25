@@ -1,30 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pisosr: Use devm_gpiod_get_optional for gpio->load_gpio
-Date: Thu, 25 Feb 2016 14:17:34 +0100
-Message-ID: <CACRpkdbW+k=yM0gFQfmvcAstm9mECne+G7=OxbHYngd6P9tN4Q@mail.gmail.com>
-References: <1456143411.23008.1.camel@ingics.com>
+Subject: Re: [PATCH 00/61] gpio: Add and use devm_gpiochip_add_data()
+Date: Thu, 25 Feb 2016 14:24:48 +0100
+Message-ID: <CACRpkdYsG8X5XiV2+Ss2GLJkFnLFzLi0uy0yy8R5sdi0b_Y+qA@mail.gmail.com>
+References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
+	<CACRpkdbt+RiWMA74e40MNZVnDM0t0futtFnbyu9sRhv7p93-Tg@mail.gmail.com>
+	<56CC1FD4.1080905@nvidia.com>
+	<56CC7791.2000607@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:36813 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760651AbcBYNRf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 08:17:35 -0500
-Received: by mail-oi0-f42.google.com with SMTP id w5so39010032oie.3
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Feb 2016 05:17:34 -0800 (PST)
-In-Reply-To: <1456143411.23008.1.camel@ingics.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <56CC7791.2000607@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michael Hennerich <michael.hennerich@analog.com>, Jon Corbet <corbet@lwn.net>, Alban Bedel <albeu@free.fr>, Ray Jui <rjui@broadcom.com>, Alexander Shiyan <shc_work@mail.ru>, Support Opensource <support.opensource@diasemi.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?Q?Andersson=2C_Bj=C3=B6rn?= <bjorn.andersson@sonymobile.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Greg KH <gregkh@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, WOLFSON MICROELECTRONICS DRIVERS <patches@opensource.wolfsonmicro.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-arm-kernel
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: "Andrew F. Davis" <afd@ti.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Feb 22, 2016 at 1:16 PM, Axel Lin <axel.lin@ingics.com> wrote:
+On Tue, Feb 23, 2016 at 4:15 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-> gpio->load_gpio is optional, so use devm_gpiod_get_optional instead.
->
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> I have made the repo in git hub as
+>     https://github.com/ldewangan/linux-upstream.git
 
-Patch applied with Andrew's ACK.
+Awesome.
+
+> branch name is devm_gpiochip.
+>     https://github.com/ldewangan/linux-upstream/tree/devm_gpiochip
+
+I've pulled this branch into my tree on a separate branch for
+testing. I pushed the tree to kernel.org so that the zeroday
+autobuilders can have a go at it.
+
+If everything goes well I plan to merge this for v4.6, then we
+can merge the changes in pin control and other subsystems
+for v4.7.
 
 Yours,
 Linus Walleij
