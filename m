@@ -1,226 +1,54 @@
-From: Eric Anholt <eric@anholt.net>
-Subject: [PATCH 5/5] ARM: bcm2835: Move most RPi default pin groups to their devices.
-Date: Thu, 25 Feb 2016 10:41:01 -0800
-Message-ID: <1456425661-26123-6-git-send-email-eric@anholt.net>
-References: <1456425661-26123-1-git-send-email-eric@anholt.net>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gabe.freedesktop.org ([131.252.210.177]:50702 "EHLO
-	gabe.freedesktop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933406AbcBYSlE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Feb 2016 13:41:04 -0500
-In-Reply-To: <1456425661-26123-1-git-send-email-eric@anholt.net>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v3 04/10] drivers: pinctrl: add driver for
+ Allwinner A64 SoC
+Date: Thu, 25 Feb 2016 10:49:44 -0800
+Message-ID: <20160225184944.GI4736@lukather>
+References: <1456165255-31013-1-git-send-email-andre.przywara@arm.com>
+ <1456165255-31013-5-git-send-email-andre.przywara@arm.com>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="boAH8PqvUi1v1f55"
+Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBS4ZXW3AKGQEIKSLHRY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1456165255-31013-5-git-send-email-andre.przywara-5wv7dgnIgG8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-rpi-kernel@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>
 
-This way we can get the duplicated pin group definitions out of each
-RPi board file, and just leave the i2s variations in them.
+--boAH8PqvUi1v1f55
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- arch/arm/boot/dts/bcm2835-rpi-a-plus.dts | 14 +++-----------
- arch/arm/boot/dts/bcm2835-rpi-a.dts      | 14 +++-----------
- arch/arm/boot/dts/bcm2835-rpi-b-plus.dts | 14 +++-----------
- arch/arm/boot/dts/bcm2835-rpi-b-rev2.dts | 14 +++-----------
- arch/arm/boot/dts/bcm2835-rpi-b.dts      | 12 ------------
- arch/arm/boot/dts/bcm2835-rpi.dtsi       | 20 ++++++++++++++++++++
- arch/arm/boot/dts/bcm2836-rpi-2-b.dts    | 14 +++-----------
- 7 files changed, 35 insertions(+), 67 deletions(-)
+Hi,
 
-diff --git a/arch/arm/boot/dts/bcm2835-rpi-a-plus.dts b/arch/arm/boot/dts/bcm2835-rpi-a-plus.dts
-index 1db6835..a00cbbe 100644
---- a/arch/arm/boot/dts/bcm2835-rpi-a-plus.dts
-+++ b/arch/arm/boot/dts/bcm2835-rpi-a-plus.dts
-@@ -20,15 +20,7 @@
- 	};
- };
- 
--&gpio {
--	pinctrl-0 = <&i2c0_gpio0
--		     &i2c1_gpio2
--		     &gpclk0_gpio4
--		     &gpclk1_gpio5
--		     &spi0_gpio7
--		     &pcm_gpio18
--		     &pwm0_gpio40
--		     &pwm1_gpio45
--		     &emmc_gpio48
--		     &gpioout>;
-+&i2s {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcm_gpio18>;
- };
-diff --git a/arch/arm/boot/dts/bcm2835-rpi-a.dts b/arch/arm/boot/dts/bcm2835-rpi-a.dts
-index 25d2114..23e6b6f 100644
---- a/arch/arm/boot/dts/bcm2835-rpi-a.dts
-+++ b/arch/arm/boot/dts/bcm2835-rpi-a.dts
-@@ -13,15 +13,7 @@
- 	};
- };
- 
--&gpio {
--	pinctrl-0 = <&i2c0_gpio0
--		     &i2c1_gpio2
--		     &gpclk0_gpio4
--		     &gpclk1_gpio5
--		     &spi0_gpio7
--		     &pcm_gpio28
--		     &pwm0_gpio40
--		     &pwm1_gpio45
--		     &emmc_gpio48
--		     &gpioout>;
-+&i2s {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcm_gpio28>;
- };
-diff --git a/arch/arm/boot/dts/bcm2835-rpi-b-plus.dts b/arch/arm/boot/dts/bcm2835-rpi-b-plus.dts
-index d8057b8..029b589 100644
---- a/arch/arm/boot/dts/bcm2835-rpi-b-plus.dts
-+++ b/arch/arm/boot/dts/bcm2835-rpi-b-plus.dts
-@@ -20,15 +20,7 @@
- 	};
- };
- 
--&gpio {
--	pinctrl-0 = <&i2c0_gpio0
--		     &i2c1_gpio2
--		     &gpclk0_gpio4
--		     &gpclk1_gpio5
--		     &spi0_gpio7
--		     &pcm_gpio18
--		     &pwm0_gpio40
--		     &pwm1_gpio45
--		     &emmc_gpio48
--		     &gpioout>;
-+&i2s {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcm_gpio18>;
- };
-diff --git a/arch/arm/boot/dts/bcm2835-rpi-b-rev2.dts b/arch/arm/boot/dts/bcm2835-rpi-b-rev2.dts
-index e7dbff4..da1bc27 100644
---- a/arch/arm/boot/dts/bcm2835-rpi-b-rev2.dts
-+++ b/arch/arm/boot/dts/bcm2835-rpi-b-rev2.dts
-@@ -13,15 +13,7 @@
- 	};
- };
- 
--&gpio {
--	pinctrl-0 = <&i2c0_gpio0
--		     &i2c1_gpio2
--		     &gpclk0_gpio4
--		     &gpclk1_gpio5
--		     &spi0_gpio7
--		     &pcm_gpio28
--		     &pwm0_gpio40
--		     &pwm1_gpio45
--		     &emmc_gpio48
--		     &gpioout>;
-+&i2s {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcm_gpio28>;
- };
-diff --git a/arch/arm/boot/dts/bcm2835-rpi-b.dts b/arch/arm/boot/dts/bcm2835-rpi-b.dts
-index d154049..df275d4 100644
---- a/arch/arm/boot/dts/bcm2835-rpi-b.dts
-+++ b/arch/arm/boot/dts/bcm2835-rpi-b.dts
-@@ -12,15 +12,3 @@
- 		};
- 	};
- };
--
--&gpio {
--	pinctrl-0 = <&i2c0_gpio0
--		     &i2c1_gpio2
--		     &gpclk0_gpio4
--		     &gpclk1_gpio5
--		     &spi0_gpio7
--		     &pwm0_gpio40
--		     &pwm1_gpio45
--		     &emmc_gpio48
--		     &gpioout>;
--};
-diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-index eff27b0..b8efd41 100644
---- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
-+++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-@@ -31,6 +31,9 @@
- 
- &gpio {
- 	pinctrl-names = "default";
-+	pinctrl-0 = <&gpclk0_gpio4
-+		     &gpclk1_gpio5
-+		     &gpioout>;
- 
- 	gpioout: gpioout {
- 		brcm,pins = <6>;
-@@ -39,11 +42,17 @@
- };
- 
- &i2c0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0_gpio0>;
-+
- 	status = "okay";
- 	clock-frequency = <100000>;
- };
- 
- &i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_gpio2>;
-+
- 	status = "okay";
- 	clock-frequency = <100000>;
- };
-@@ -53,14 +62,25 @@
- };
- 
- &sdhci {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&emmc_gpio48>;
-+
- 	status = "okay";
- 	bus-width = <4>;
- };
- 
- &pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm0_gpio40 &pwm1_gpio45>;
-+
- 	status = "okay";
- };
- 
- &usb {
- 	power-domains = <&power RPI_POWER_DOMAIN_USB>;
- };
-+
-+&spi {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi0_gpio7>;
-+};
-diff --git a/arch/arm/boot/dts/bcm2836-rpi-2-b.dts b/arch/arm/boot/dts/bcm2836-rpi-2-b.dts
-index 3e9226f..ae2bc91 100644
---- a/arch/arm/boot/dts/bcm2836-rpi-2-b.dts
-+++ b/arch/arm/boot/dts/bcm2836-rpi-2-b.dts
-@@ -24,15 +24,7 @@
- 	};
- };
- 
--&gpio {
--	pinctrl-0 = <&i2c0_gpio0
--		     &i2c1_gpio2
--		     &gpclk0_gpio4
--		     &gpclk1_gpio5
--		     &spi0_gpio7
--		     &pcm_gpio18
--		     &pwm0_gpio40
--		     &pwm1_gpio45
--		     &emmc_gpio48
--		     &gpioout>;
-+&i2s {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcm_gpio18>;
- };
+On Mon, Feb 22, 2016 at 06:20:49PM +0000, Andre Przywara wrote:
+> Based on the Allwinner A64 user manual and on the previous sunxi
+> pinctrl drivers this introduces the pin multiplex assignments for
+> the ARMv8 Allwinner A64 SoC.
+> Port A is apparently used for the fixed function DRAM controller, so
+> the ports start at B here (the manual mentions "n from 1 to 7", so
+> not starting at 0).
+> 
+> Signed-off-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+
+Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+
+Linus, could you merge this patch for 4.6?
+
+Thanks!
+Maxime
+
 -- 
-2.7.0
-
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+--boAH8PqvUi1v1f55--
