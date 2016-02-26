@@ -1,39 +1,34 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH 31/50] pinctrl: uniphier: Use devm_pinctrl_register() for
- pinctrl registration
-Date: Fri, 26 Feb 2016 19:06:29 +0900
-Message-ID: <CAK7LNATP6vBz3CvD5cJ+DwbL3g8e_UJ40W8zZJwzQrKXnWokkg@mail.gmail.com>
-References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
-	<1456319775-3216-32-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v2 0/2] Add CAN & CAN FD pinctrl support for r8a7795 SoC
+Date: Fri, 26 Feb 2016 11:10:03 +0000
+Message-ID: <1456485005-37035-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg002.nifty.com ([202.248.44.40]:16976 "EHLO
-	conssluserg002-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750883AbcBZKHB (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:35821 "EHLO
+	relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751021AbcBZLOh (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 26 Feb 2016 05:07:01 -0500
-In-Reply-To: <1456319775-3216-32-git-send-email-ldewangan@nvidia.com>
+	Fri, 26 Feb 2016 06:14:37 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, lee@kernel.org, linux-doc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, chris.paterson2@renesas.com, Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-2016-02-24 22:15 GMT+09:00 Laxman Dewangan <ldewangan@nvidia.com>:
-> Use devm_pinctrl_register() for pin control registration and remove
-> need of .remove callback.
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+Hi Geert,
 
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+   Thanks for the comments (https://lkml.org/lkml/2016/2/25/531).
+   I have incorporated those and created this v2 patch set.
 
+   Changes since v1:
+   * Inserted pin block in alphabetical order
+   * Corrected controller name in comment
 
-Thanks!
+Ramesh Shanmugasundaram (2):
+  pinctrl: sh-pfc: r8a7795: Add CAN support
+  pinctrl: sh-pfc: r8a7795: Add CAN FD support
 
-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 89 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
 
 -- 
-Best Regards
-Masahiro Yamada
+1.9.1
+
