@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 40/63] gpio: tps65910: Allow compile testing
-Date: Fri, 26 Feb 2016 14:21:16 +0100
-Message-ID: <1456492895-21835-1-git-send-email-alexanders83@web.de>
+Subject: [PATCH 43/63] gpio: twl6040: Allow compile testing
+Date: Fri, 26 Feb 2016 14:21:19 +0100
+Message-ID: <1456492895-21835-4-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:49798 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.12]:61320 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752049AbcBZNVn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 26 Feb 2016 08:21:43 -0500
+	id S1753793AbcBZNVo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 26 Feb 2016 08:21:44 -0500
 In-Reply-To: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 01497752ae3c..a9f0befdf119 100644
+index ba9e7e3f3a56..54071acb7fa4 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -911,7 +911,7 @@ config GPIO_TPS6586X
+@@ -931,7 +931,7 @@ config GPIO_TWL4030
  
- config GPIO_TPS65910
- 	bool "TPS65910 GPIO"
--	depends on MFD_TPS65910
-+	depends on MFD_TPS65910 || COMPILE_TEST
+ config GPIO_TWL6040
+ 	tristate "TWL6040 GPO"
+-	depends on TWL6040_CORE
++	depends on TWL6040_CORE || COMPILE_TEST
  	help
- 	  Select this option to enable GPIO driver for the TPS65910
- 	  chip family.
+ 	  Say yes here to access the GPO signals of twl6040
+ 	  audio chip from Texas Instruments.
 -- 
 2.7.2
 
