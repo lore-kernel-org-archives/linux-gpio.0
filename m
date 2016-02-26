@@ -1,12 +1,12 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 48/63] gpio: viperboard: Allow compile testing
-Date: Fri, 26 Feb 2016 14:21:24 +0100
-Message-ID: <1456492895-21835-9-git-send-email-alexanders83@web.de>
+Subject: [PATCH 46/63] gpio: wm8350: Allow compile testing
+Date: Fri, 26 Feb 2016 14:21:22 +0100
+Message-ID: <1456492895-21835-7-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:51540 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.12]:59461 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753981AbcBZNVp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	id S1752937AbcBZNVp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
 	Fri, 26 Feb 2016 08:21:45 -0500
 In-Reply-To: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index a051c1ebf11b..fcbc767a685f 100644
+index fdcbe0946ea5..3e78eca42b2b 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -1095,7 +1095,7 @@ menu "USB GPIO expanders"
+@@ -952,7 +952,7 @@ config GPIO_WM831X
  
- config GPIO_VIPERBOARD
- 	tristate "Viperboard GPIO a & b support"
--	depends on MFD_VIPERBOARD
-+	depends on MFD_VIPERBOARD || COMPILE_TEST
+ config GPIO_WM8350
+ 	tristate "WM8350 GPIOs"
+-	depends on MFD_WM8350
++	depends on MFD_WM8350 || COMPILE_TEST
  	help
- 	  Say yes here to access the GPIO signals of Nano River
- 	  Technologies Viperboard. There are two GPIO chips on the
+ 	  Say yes here to access the GPIO signals of WM8350 power management
+ 	  chips from Wolfson Microelectronics.
 -- 
 2.7.2
 
