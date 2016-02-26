@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 21/63] gpio: xgene: Allow compile testing
-Date: Fri, 26 Feb 2016 14:19:20 +0100
-Message-ID: <1456492778-21711-2-git-send-email-alexanders83@web.de>
+Subject: [PATCH 22/63] gpio: xlp: Allow compile testing
+Date: Fri, 26 Feb 2016 14:19:21 +0100
+Message-ID: <1456492778-21711-3-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
  <1456492778-21711-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.3]:54054 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.15.14]:61901 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753978AbcBZNTv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	id S1753986AbcBZNTv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
 	Fri, 26 Feb 2016 08:19:51 -0500
 In-Reply-To: <1456492778-21711-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -23,18 +23,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 275e2ab2af57..5f0591e5ebb6 100644
+index 5f0591e5ebb6..86f6621e3c89 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -447,7 +447,7 @@ config GPIO_VX855
+@@ -470,7 +470,7 @@ config GPIO_XILINX
  
- config GPIO_XGENE
- 	bool "APM X-Gene GPIO controller support"
--	depends on ARM64 && OF_GPIO
-+	depends on ARM64 && OF_GPIO || COMPILE_TEST
+ config GPIO_XLP
+ 	tristate "Netlogic XLP GPIO support"
+-	depends on CPU_XLP && OF_GPIO
++	depends on CPU_XLP && OF_GPIO || COMPILE_TEST
+ 	select GPIOLIB_IRQCHIP
  	help
- 	  This driver is to support the GPIO block within the APM X-Gene SoC
- 	  platform's generic flash controller. The GPIO pins are muxed with
+ 	  This driver provides support for GPIO interface on Netlogic XLP MIPS64
 -- 
 2.7.2
 
