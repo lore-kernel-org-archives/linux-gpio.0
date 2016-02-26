@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 54/63] gpio: lynxpoint: Allow compile testing
-Date: Fri, 26 Feb 2016 14:21:30 +0100
-Message-ID: <1456492895-21835-15-git-send-email-alexanders83@web.de>
+Subject: [PATCH 57/63] gpio: bt8xx: Allow compile testing
+Date: Fri, 26 Feb 2016 14:21:33 +0100
+Message-ID: <1456492895-21835-18-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:63099 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.12]:63823 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753896AbcBZNVr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 26 Feb 2016 08:21:47 -0500
+	id S1754139AbcBZNVs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 26 Feb 2016 08:21:48 -0500
 In-Reply-To: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -18,22 +18,31 @@ Lower dependencies for compile testing.
 
 Signed-off-by: Alexander Stein <alexanders83@web.de>
 ---
- drivers/gpio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index d4e09553f8c2..4bfacf1d4137 100644
+index b83bb56d290d..99c45b846530 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -258,7 +258,7 @@ config GPIO_LPC18XX
+@@ -965,7 +965,7 @@ config GPIO_WM8994
+ endmenu
  
- config GPIO_LYNXPOINT
- 	tristate "Intel Lynxpoint GPIO support"
--	depends on ACPI && X86
-+	depends on ACPI && X86 || COMPILE_TEST
- 	select GPIOLIB_IRQCHIP
+ menu "PCI GPIO expanders"
+-	depends on PCI
++	depends on PCI || COMPILE_TEST
+ 
+ config GPIO_AMD8111
+ 	tristate "AMD 8111 GPIO driver"
+@@ -980,7 +980,7 @@ config GPIO_AMD8111
+ 
+ config GPIO_BT8XX
+ 	tristate "BT8XX GPIO abuser"
+-	depends on VIDEO_BT848=n
++	depends on VIDEO_BT848=n || COMPILE_TEST
  	help
- 	  driver for GPIO functionality on Intel Lynxpoint PCH chipset
+ 	  The BT8xx frame grabber chip has 24 GPIO pins that can be abused
+ 	  as a cheap PCI GPIO card.
 -- 
 2.7.2
 
