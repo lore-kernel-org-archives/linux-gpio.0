@@ -1,14 +1,14 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 38/63] gpio: tps65218: Allow compile testing
-Date: Fri, 26 Feb 2016 14:19:37 +0100
-Message-ID: <1456492778-21711-19-git-send-email-alexanders83@web.de>
+Subject: [PATCH 37/63] gpio: timberdale: Allow compile testing
+Date: Fri, 26 Feb 2016 14:19:36 +0100
+Message-ID: <1456492778-21711-18-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
  <1456492778-21711-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.3]:56519 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.15.3]:51934 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754035AbcBZNTz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 26 Feb 2016 08:19:55 -0500
+	id S1754122AbcBZNTy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 26 Feb 2016 08:19:54 -0500
 In-Reply-To: <1456492778-21711-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -23,18 +23,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index ab17a7bb359b..b2f4237883d3 100644
+index 1a3268490bef..ab17a7bb359b 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -897,7 +897,7 @@ config GPIO_TIMBERDALE
+@@ -891,7 +891,7 @@ config GPIO_TC3589X
  
- config GPIO_TPS65218
- 	tristate "TPS65218 GPIO"
--	depends on MFD_TPS65218
-+	depends on MFD_TPS65218 || COMPILE_TEST
- 	help
- 	  Select this option to enable GPIO driver for the TPS65218
- 	  chip family.
+ config GPIO_TIMBERDALE
+ 	bool "Support for timberdale GPIO IP"
+-	depends on MFD_TIMBERDALE
++	depends on MFD_TIMBERDALE || COMPILE_TEST
+ 	---help---
+ 	Add support for the GPIO IP in the timberdale FPGA.
+ 
 -- 
 2.7.2
 
