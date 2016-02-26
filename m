@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 45/63] gpio: wm831x: Allow compile testing
-Date: Fri, 26 Feb 2016 14:21:21 +0100
-Message-ID: <1456492895-21835-6-git-send-email-alexanders83@web.de>
+Subject: [PATCH 47/63] gpio: wm8994: Allow compile testing
+Date: Fri, 26 Feb 2016 14:21:23 +0100
+Message-ID: <1456492895-21835-8-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:50868 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.12]:53143 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753896AbcBZNVo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 26 Feb 2016 08:21:44 -0500
+	id S1754010AbcBZNVp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 26 Feb 2016 08:21:45 -0500
 In-Reply-To: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index a971731a3735..fdcbe0946ea5 100644
+index 3e78eca42b2b..a051c1ebf11b 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -945,7 +945,7 @@ config GPIO_UCB1400
+@@ -959,7 +959,7 @@ config GPIO_WM8350
  
- config GPIO_WM831X
- 	tristate "WM831x GPIOs"
--	depends on MFD_WM831X
-+	depends on MFD_WM831X || COMPILE_TEST
+ config GPIO_WM8994
+ 	tristate "WM8994 GPIOs"
+-	depends on MFD_WM8994
++	depends on MFD_WM8994 || COMPILE_TEST
  	help
- 	  Say yes here to access the GPIO signals of WM831x power management
- 	  chips from Wolfson Microelectronics.
+ 	  Say yes here to access the GPIO signals of WM8994 audio hub
+ 	  CODECs from Wolfson Microelectronics.
 -- 
 2.7.2
 
