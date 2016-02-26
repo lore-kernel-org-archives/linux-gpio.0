@@ -1,12 +1,12 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 08/63] gpio: moxart: Allow compile testing
-Date: Fri, 26 Feb 2016 14:17:17 +0100
-Message-ID: <1456492692-21592-9-git-send-email-alexanders83@web.de>
+Subject: [PATCH 07/63] gpio: iop: Allow compile testing
+Date: Fri, 26 Feb 2016 14:17:16 +0100
+Message-ID: <1456492692-21592-8-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:51578 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.11]:53004 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752049AbcBZNSU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	id S1753764AbcBZNSU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
 	Fri, 26 Feb 2016 08:18:20 -0500
 In-Reply-To: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index d470f93ef7a7..558c4d2789c6 100644
+index 41cdfead018f..d470f93ef7a7 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -280,7 +280,7 @@ config GPIO_MM_LANTIQ
+@@ -235,7 +235,7 @@ config GPIO_ICH
  
- config GPIO_MOXART
- 	bool "MOXART GPIO support"
--	depends on ARCH_MOXART
-+	depends on ARCH_MOXART || COMPILE_TEST
- 	select GPIO_GENERIC
+ config GPIO_IOP
+ 	tristate "Intel IOP GPIO"
+-	depends on ARM && (ARCH_IOP32X || ARCH_IOP33X)
++	depends on ARM && (ARCH_IOP32X || ARCH_IOP33X) || COMPILE_TEST
  	help
- 	  Select this option to enable GPIO driver for
+ 	  Say yes here to support the GPIO functionality of a number of Intel
+ 	  IOP32X or IOP33X.
 -- 
 2.7.2
 
