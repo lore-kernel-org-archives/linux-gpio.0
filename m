@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 58/63] gpio: intel-mid: Allow compile testing
-Date: Fri, 26 Feb 2016 14:21:34 +0100
-Message-ID: <1456492895-21835-19-git-send-email-alexanders83@web.de>
+Subject: [PATCH 60/63] gpio: 74x164: Allow compile testing
+Date: Fri, 26 Feb 2016 14:21:58 +0100
+Message-ID: <1456492921-21905-1-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:49954 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.15.14]:62340 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752937AbcBZNVs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 26 Feb 2016 08:21:48 -0500
+	id S1752937AbcBZNWI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 26 Feb 2016 08:22:08 -0500
 In-Reply-To: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 99c45b846530..2cde6a101869 100644
+index aa6007b71a16..8cbece5e9955 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -996,7 +996,7 @@ config GPIO_BT8XX
+@@ -1049,7 +1049,7 @@ menu "SPI GPIO expanders"
  
- config GPIO_INTEL_MID
- 	bool "Intel Mid GPIO support"
--	depends on X86
-+	depends on X86 || COMPILE_TEST
- 	select GPIOLIB_IRQCHIP
+ config GPIO_74X164
+ 	tristate "74x164 serial-in/parallel-out 8-bits shift register"
+-	depends on OF
++	depends on OF || COMPILE_TEST
  	help
- 	  Say Y here to support Intel Mid GPIO.
+ 	  Driver for 74x164 compatible serial-in/parallel-out 8-outputs
+ 	  shift registers. This driver can be used to provide access
 -- 
 2.7.2
 
