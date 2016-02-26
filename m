@@ -1,89 +1,39 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Add CAN FD support
-Date: Fri, 26 Feb 2016 10:11:19 +0100
-Message-ID: <CAMuHMdUrxU08T1f_9r0+23FZas3J5b90xHTYdCohNS9qU+iT7w@mail.gmail.com>
-References: <1456418933-3948-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-	<1456418933-3948-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH 31/50] pinctrl: uniphier: Use devm_pinctrl_register() for
+ pinctrl registration
+Date: Fri, 26 Feb 2016 19:06:29 +0900
+Message-ID: <CAK7LNATP6vBz3CvD5cJ+DwbL3g8e_UJ40W8zZJwzQrKXnWokkg@mail.gmail.com>
+References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
+	<1456319775-3216-32-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1456418933-3948-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chris Paterson <chris.paterson2@renesas.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conssluserg002.nifty.com ([202.248.44.40]:16976 "EHLO
+	conssluserg002-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750883AbcBZKHB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 26 Feb 2016 05:07:01 -0500
+In-Reply-To: <1456319775-3216-32-git-send-email-ldewangan@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, lee@kernel.org, linux-doc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Broadcom Kernel Feedback List <bcm-kernel-feedback-list@broadcom.com>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 
-Hi Ramesh,
-
-On Thu, Feb 25, 2016 at 5:48 PM, Ramesh Shanmugasundaram
-<ramesh.shanmugasundaram@bp.renesas.com> wrote:
-> This patch adds CANFD[0-1] pinmux support to r8a7795 SoC.
+2016-02-24 22:15 GMT+09:00 Laxman Dewangan <ldewangan@nvidia.com>:
+> Use devm_pinctrl_register() for pin control registration and remove
+> need of .remove callback.
 >
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-Sorry, I spoke too soon. While the pin data is correct, I noticed the following
-while applying:
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> @@ -2940,6 +2940,36 @@ static const unsigned int can1_data_pins[] = {
->  static const unsigned int can1_data_mux[] = {
->         CAN1_TX_MARK,           CAN1_RX_MARK,
->  };
-> +
-> +/* - RCAN FD --------------------------------------------------------------- */
 
-Please use "CAN" instead of "RCAN", and insert in alphabetical order.
+Thanks!
 
-> +static const unsigned int canfd0_data_a_pins[] = {
 
-> @@ -3362,6 +3392,9 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
->         SH_PFC_PIN_GROUP(can0_data_a),
->         SH_PFC_PIN_GROUP(can0_data_b),
->         SH_PFC_PIN_GROUP(can1_data),
-> +       SH_PFC_PIN_GROUP(canfd0_data_a),
-> +       SH_PFC_PIN_GROUP(canfd0_data_b),
-> +       SH_PFC_PIN_GROUP(canfd1_data),
->         SH_PFC_PIN_GROUP(can_clk),
 
-Please insert in alphabetical order.
-
-> @@ -3686,6 +3719,15 @@ static const char * const can1_groups[] = {
->         "can1_data",
->  };
->
-> +static const char * const canfd0_groups[] = {
-> +       "canfd0_data_a",
-> +       "canfd0_data_b",
-> +};
-> +
-> +static const char * const canfd1_groups[] = {
-> +       "canfd1_data",
-> +};
-
-Please insert in alphabetical order.
-
-> +
->  static const char * const can_clk_groups[] = {
->         "can_clk",
->  };
-> @@ -3721,6 +3763,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
->         SH_PFC_FUNCTION(ssi),
->         SH_PFC_FUNCTION(can0),
->         SH_PFC_FUNCTION(can1),
-> +       SH_PFC_FUNCTION(canfd0),
-> +       SH_PFC_FUNCTION(canfd1),
->         SH_PFC_FUNCTION(can_clk),
-
-Please insert in alphabetical order.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Best Regards
+Masahiro Yamada
