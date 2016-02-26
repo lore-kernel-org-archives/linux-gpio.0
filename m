@@ -1,12 +1,12 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 62/63] gpio: grgpio: Allow compile testing
-Date: Fri, 26 Feb 2016 16:00:54 +0100
-Message-ID: <1456498855-25882-1-git-send-email-alexanders83@web.de>
+Subject: [PATCH 63/63] gpio: mvebu: Allow compile testing
+Date: Fri, 26 Feb 2016 16:00:55 +0100
+Message-ID: <1456498855-25882-2-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.4]:52238 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.15.14]:63406 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753896AbcBZPBI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	id S1754324AbcBZPBI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
 	Fri, 26 Feb 2016 10:01:08 -0500
 In-Reply-To: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b331dc3e050c..121605bd38fa 100644
+index 121605bd38fa..a22c392f1ae2 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -213,7 +213,7 @@ config GPIO_GENERIC_PLATFORM
- 
- config GPIO_GRGPIO
- 	tristate "Aeroflex Gaisler GRGPIO support"
+@@ -303,7 +303,7 @@ config GPIO_MPC8XXX
+ config GPIO_MVEBU
+ 	def_bool y
+ 	depends on PLAT_ORION || COMPILE_TEST
 -	depends on OF
 +	depends on OF || COMPILE_TEST
- 	select GPIO_GENERIC
- 	select IRQ_DOMAIN
- 	help
+ 	select GENERIC_IRQ_CHIP
+ 
+ config GPIO_MXC
 -- 
 2.7.2
 
