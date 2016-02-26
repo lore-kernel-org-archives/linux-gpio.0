@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 56/63] gpio: sch: Allow compile testing
-Date: Fri, 26 Feb 2016 14:21:32 +0100
-Message-ID: <1456492895-21835-17-git-send-email-alexanders83@web.de>
+Subject: [PATCH 54/63] gpio: lynxpoint: Allow compile testing
+Date: Fri, 26 Feb 2016 14:21:30 +0100
+Message-ID: <1456492895-21835-15-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:63692 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.11]:63099 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754010AbcBZNVs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 26 Feb 2016 08:21:48 -0500
+	id S1753896AbcBZNVr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 26 Feb 2016 08:21:47 -0500
 In-Reply-To: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -18,31 +18,22 @@ Lower dependencies for compile testing.
 
 Signed-off-by: Alexander Stein <alexanders83@web.de>
 ---
- drivers/gpio/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index db5e571c7fb9..b83bb56d290d 100644
+index d4e09553f8c2..4bfacf1d4137 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -510,7 +510,7 @@ config GPIO_ZX
- endmenu
+@@ -258,7 +258,7 @@ config GPIO_LPC18XX
  
- menu "Port-mapped I/O GPIO drivers"
--	depends on X86 # Unconditional I/O space access
-+	depends on X86 || COMPILE_TEST # Unconditional I/O space access
- 
- config GPIO_104_DIO_48E
- 	tristate "ACCES 104-DIO-48E GPIO support"
-@@ -561,7 +561,7 @@ config GPIO_IT87
- 
- config GPIO_SCH
- 	tristate "Intel SCH/TunnelCreek/Centerton/Quark X1000 GPIO"
--	depends on PCI
-+	depends on PCI || COMPILE_TEST
- 	select MFD_CORE
- 	select LPC_SCH
+ config GPIO_LYNXPOINT
+ 	tristate "Intel Lynxpoint GPIO support"
+-	depends on ACPI && X86
++	depends on ACPI && X86 || COMPILE_TEST
+ 	select GPIOLIB_IRQCHIP
  	help
+ 	  driver for GPIO functionality on Intel Lynxpoint PCH chipset
 -- 
 2.7.2
 
