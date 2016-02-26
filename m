@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 44/63] gpio: ucb1400: Allow compile testing
-Date: Fri, 26 Feb 2016 14:21:20 +0100
-Message-ID: <1456492895-21835-5-git-send-email-alexanders83@web.de>
+Subject: [PATCH 42/63] gpio: twl4030: Allow compile testing
+Date: Fri, 26 Feb 2016 14:21:18 +0100
+Message-ID: <1456492895-21835-3-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:63287 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.11]:52412 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752049AbcBZNVo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 26 Feb 2016 08:21:44 -0500
+	id S1752937AbcBZNVn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 26 Feb 2016 08:21:43 -0500
 In-Reply-To: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 54071acb7fa4..a971731a3735 100644
+index b9ee764a1d60..ba9e7e3f3a56 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -938,7 +938,7 @@ config GPIO_TWL6040
+@@ -924,7 +924,7 @@ config GPIO_TPS65912
  
- config GPIO_UCB1400
- 	tristate "Philips UCB1400 GPIO"
--	depends on UCB1400_CORE
-+	depends on UCB1400_CORE || COMPILE_TEST
+ config GPIO_TWL4030
+ 	tristate "TWL4030, TWL5030, and TPS659x0 GPIOs"
+-	depends on TWL4030_CORE
++	depends on TWL4030_CORE || COMPILE_TEST
  	help
- 	  This enables support for the Philips UCB1400 GPIO pins.
- 	  The UCB1400 is an AC97 audio codec.
+ 	  Say yes here to access the GPIO signals of various multi-function
+ 	  power management chips from Texas Instruments.
 -- 
 2.7.2
 
