@@ -1,14 +1,14 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 39/63] gpio: tps6586x: Allow compile testing
-Date: Fri, 26 Feb 2016 14:19:38 +0100
-Message-ID: <1456492778-21711-20-git-send-email-alexanders83@web.de>
+Subject: [PATCH 31/63] gpio: jantz-ttl: Allow compile testing
+Date: Fri, 26 Feb 2016 14:19:30 +0100
+Message-ID: <1456492778-21711-12-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
  <1456492778-21711-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.3]:51659 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.15.3]:60973 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754131AbcBZNT4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 26 Feb 2016 08:19:56 -0500
+	id S1753986AbcBZNTy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 26 Feb 2016 08:19:54 -0500
 In-Reply-To: <1456492778-21711-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -23,18 +23,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b2f4237883d3..01497752ae3c 100644
+index ce4dd23fa22f..de47e88ab51b 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -904,7 +904,7 @@ config GPIO_TPS65218
+@@ -824,7 +824,7 @@ config GPIO_DLN2
  
- config GPIO_TPS6586X
- 	bool "TPS6586X GPIO"
--	depends on MFD_TPS6586X
-+	depends on MFD_TPS6586X || COMPILE_TEST
+ config GPIO_JANZ_TTL
+ 	tristate "Janz VMOD-TTL Digital IO Module"
+-	depends on MFD_JANZ_CMODIO
++	depends on MFD_JANZ_CMODIO || COMPILE_TEST
  	help
- 	  Select this option to enable GPIO driver for the TPS6586X
- 	  chip family.
+ 	  This enables support for the Janz VMOD-TTL Digital IO module.
+ 	  This driver provides support for driving the pins in output
 -- 
 2.7.2
 
