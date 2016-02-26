@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 33/63] gpio: lp3943: Allow compile testing
-Date: Fri, 26 Feb 2016 14:19:32 +0100
-Message-ID: <1456492778-21711-14-git-send-email-alexanders83@web.de>
+Subject: [PATCH 34/63] gpio: msic: Allow compile testing
+Date: Fri, 26 Feb 2016 14:19:33 +0100
+Message-ID: <1456492778-21711-15-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
  <1456492778-21711-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.4]:59529 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.15.4]:53834 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754107AbcBZNTx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	id S1753978AbcBZNTx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
 	Fri, 26 Feb 2016 08:19:53 -0500
 In-Reply-To: <1456492778-21711-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -23,18 +23,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 03e87377d3d9..7654258068ea 100644
+index 7654258068ea..1b6d1844a058 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -842,7 +842,7 @@ config GPIO_KEMPLD
+@@ -850,7 +850,7 @@ config GPIO_LP3943
  
- config GPIO_LP3943
- 	tristate "TI/National Semiconductor LP3943 GPIO expander"
--	depends on MFD_LP3943
-+	depends on MFD_LP3943 || COMPILE_TEST
+ config GPIO_MSIC
+ 	bool "Intel MSIC mixed signal gpio support"
+-	depends on MFD_INTEL_MSIC
++	depends on MFD_INTEL_MSIC || COMPILE_TEST
  	help
- 	  GPIO driver for LP3943 MFD.
- 	  LP3943 can be used as a GPIO expander which provides up to 16 GPIOs.
+ 	  Enable support for GPIO on intel MSIC controllers found in
+ 	  intel MID devices
 -- 
 2.7.2
 
