@@ -1,105 +1,70 @@
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v3 1/2] pinctrl: sh-pfc: r8a7795: Add CAN support
-Date: Fri, 26 Feb 2016 12:37:03 +0000
-Message-ID: <1456490224-18124-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456490224-18124-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1456490224-18124-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, chris.paterson2@renesas.com, Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+From: Bamvor Jian Zhang <bamv2005@gmail.com>
+Subject: [RFD] gpiolib: gpiochip is always dangling after remove
+Date: Fri, 26 Feb 2016 21:06:14 +0800
+Message-ID: <1456491974-26997-1-git-send-email-bamv2005@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f171.google.com ([209.85.192.171]:32962 "EHLO
+	mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751488AbcBZNGx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Feb 2016 08:06:53 -0500
+Received: by mail-pf0-f171.google.com with SMTP id q63so51993878pfb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 26 Feb 2016 05:06:53 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, broonie@kernel.org, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 
-This patch adds CAN[0-1] pinmux support to r8a7795 SoC.
+From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+In my gpiochip mockup driver, after call gpiochip_remove, the
+gpipchip is not actually removed even if there is no clients in
+userspace. It could be removed if remove the corresonding reference
+count in this patch.
+
+But such gpiochip will be removed even if user space open the
+corresponding chardev. I am not sure If I do not right thing.
+Please correct me if I am wrong.
+
+Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 52 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+ drivers/gpio/gpiolib.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index ce4f5cd..1aea3af 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1600,6 +1600,38 @@ static const unsigned int avb_avtp_capture_b_mux[] = {
- 	AVB_AVTP_CAPTURE_B_MARK,
- };
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index bc788b9..862b574 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -452,7 +452,6 @@ static void gpiodevice_release(struct device *dev)
+ {
+ 	struct gpio_device *gdev = dev_get_drvdata(dev);
  
-+/* - CAN ------------------------------------------------------------------ */
-+static const unsigned int can0_data_a_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 23),	RCAR_GP_PIN(1, 24),
-+};
-+static const unsigned int can0_data_a_mux[] = {
-+	CAN0_TX_A_MARK,		CAN0_RX_A_MARK,
-+};
-+static const unsigned int can0_data_b_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(2, 0),	RCAR_GP_PIN(2, 1),
-+};
-+static const unsigned int can0_data_b_mux[] = {
-+	CAN0_TX_B_MARK,		CAN0_RX_B_MARK,
-+};
-+static const unsigned int can1_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 22),	RCAR_GP_PIN(1, 26),
-+};
-+static const unsigned int can1_data_mux[] = {
-+	CAN1_TX_MARK,		CAN1_RX_MARK,
-+};
-+
-+/* - CAN Clock -------------------------------------------------------------- */
-+static const unsigned int can_clk_pins[] = {
-+	/* CLK */
-+	RCAR_GP_PIN(1, 25),
-+};
-+static const unsigned int can_clk_mux[] = {
-+	CAN_CLK_MARK,
-+};
-+
- /* - HSCIF0 ----------------------------------------------------------------- */
- static const unsigned int hscif0_data_pins[] = {
- 	/* RX, TX */
-@@ -3117,6 +3149,10 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
- 	SH_PFC_PIN_GROUP(avb_avtp_match_b),
- 	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
-+	SH_PFC_PIN_GROUP(can0_data_a),
-+	SH_PFC_PIN_GROUP(can0_data_b),
-+	SH_PFC_PIN_GROUP(can1_data),
-+	SH_PFC_PIN_GROUP(can_clk),
- 	SH_PFC_PIN_GROUP(hscif0_data),
- 	SH_PFC_PIN_GROUP(hscif0_clk),
- 	SH_PFC_PIN_GROUP(hscif0_ctrl),
-@@ -3356,6 +3392,19 @@ static const char * const avb_groups[] = {
- 	"avb_avtp_capture_b",
- };
+-	cdev_del(&gdev->chrdev);
+ 	list_del(&gdev->list);
+ 	ida_simple_remove(&gpio_ida, gdev->id);
+ 	kfree(gdev);
+@@ -633,7 +632,6 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
  
-+static const char * const can0_groups[] = {
-+	"can0_data_a",
-+	"can0_data_b",
-+};
-+
-+static const char * const can1_groups[] = {
-+	"can1_data",
-+};
-+
-+static const char * const can_clk_groups[] = {
-+	"can_clk",
-+};
-+
- static const char * const hscif0_groups[] = {
- 	"hscif0_data",
- 	"hscif0_clk",
-@@ -3639,6 +3688,9 @@ static const char * const ssi_groups[] = {
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
-+	SH_PFC_FUNCTION(can0),
-+	SH_PFC_FUNCTION(can1),
-+	SH_PFC_FUNCTION(can_clk),
- 	SH_PFC_FUNCTION(hscif0),
- 	SH_PFC_FUNCTION(hscif1),
- 	SH_PFC_FUNCTION(hscif2),
+ 	/* From this point, the .release() function cleans up gpio_device */
+ 	gdev->dev.release = gpiodevice_release;
+-	get_device(&gdev->dev);
+ 	pr_debug("%s: registered GPIOs %d to %d on device: %s (%s)\n",
+ 		 __func__, gdev->base, gdev->base + gdev->ngpio - 1,
+ 		 dev_name(&gdev->dev), chip->label ? : "generic");
+@@ -713,12 +711,8 @@ void gpiochip_remove(struct gpio_chip *chip)
+ 		dev_crit(&gdev->dev,
+ 			 "REMOVING GPIOCHIP WITH GPIOS STILL REQUESTED\n");
+ 
+-	/*
+-	 * The gpiochip side puts its use of the device to rest here:
+-	 * if there are no userspace clients, the chardev and device will
+-	 * be removed, else it will be dangling until the last user is
+-	 * gone.
+-	 */
++	device_del(&gdev->dev);
++	cdev_del(&gdev->chrdev);
+ 	put_device(&gdev->dev);
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_remove);
 -- 
-1.9.1
+2.6.2
+
