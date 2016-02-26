@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 61/63] gpio: etraxfs: Allow compile testing
-Date: Fri, 26 Feb 2016 14:21:59 +0100
-Message-ID: <1456492921-21905-2-git-send-email-alexanders83@web.de>
+Subject: [PATCH 58/63] gpio: intel-mid: Allow compile testing
+Date: Fri, 26 Feb 2016 14:21:34 +0100
+Message-ID: <1456492895-21835-19-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.14]:58770 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.11]:49954 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752947AbcBZNWI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 26 Feb 2016 08:22:08 -0500
+	id S1752937AbcBZNVs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 26 Feb 2016 08:21:48 -0500
 In-Reply-To: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 8cbece5e9955..b331dc3e050c 100644
+index 99c45b846530..2cde6a101869 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -187,7 +187,7 @@ config GPIO_EP93XX
- config GPIO_ETRAXFS
- 	bool "Axis ETRAX FS General I/O"
- 	depends on CRIS || COMPILE_TEST
--	depends on OF
-+	depends on OF || COMPILE_TEST
- 	select GPIO_GENERIC
+@@ -996,7 +996,7 @@ config GPIO_BT8XX
+ 
+ config GPIO_INTEL_MID
+ 	bool "Intel Mid GPIO support"
+-	depends on X86
++	depends on X86 || COMPILE_TEST
  	select GPIOLIB_IRQCHIP
  	help
+ 	  Say Y here to support Intel Mid GPIO.
 -- 
 2.7.2
 
