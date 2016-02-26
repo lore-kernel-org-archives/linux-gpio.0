@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 42/63] gpio: twl4030: Allow compile testing
-Date: Fri, 26 Feb 2016 14:21:18 +0100
-Message-ID: <1456492895-21835-3-git-send-email-alexanders83@web.de>
+Subject: [PATCH 41/63] gpio: tps65912: Allow compile testing
+Date: Fri, 26 Feb 2016 14:21:17 +0100
+Message-ID: <1456492895-21835-2-git-send-email-alexanders83@web.de>
 References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:52412 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.11]:63367 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752937AbcBZNVn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 26 Feb 2016 08:21:43 -0500
+	id S1753125AbcBZNVo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 26 Feb 2016 08:21:44 -0500
 In-Reply-To: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b9ee764a1d60..ba9e7e3f3a56 100644
+index a9f0befdf119..b9ee764a1d60 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -924,7 +924,7 @@ config GPIO_TPS65912
+@@ -918,7 +918,7 @@ config GPIO_TPS65910
  
- config GPIO_TWL4030
- 	tristate "TWL4030, TWL5030, and TPS659x0 GPIOs"
--	depends on TWL4030_CORE
-+	depends on TWL4030_CORE || COMPILE_TEST
+ config GPIO_TPS65912
+ 	tristate "TI TPS65912 GPIO"
+-	depends on (MFD_TPS65912_I2C || MFD_TPS65912_SPI)
++	depends on (MFD_TPS65912_I2C || MFD_TPS65912_SPI) || COMPILE_TEST
  	help
- 	  Say yes here to access the GPIO signals of various multi-function
- 	  power management chips from Texas Instruments.
+ 	  This driver supports TPS65912 gpio chip
+ 
 -- 
 2.7.2
 
