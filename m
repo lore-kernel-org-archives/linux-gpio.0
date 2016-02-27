@@ -1,37 +1,48 @@
-From: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
-Subject: [PATCH] gpio:ts4800: Add IMX51 dependency
-Date: Fri, 26 Feb 2016 18:06:59 -0500
-Message-ID: <1456528019-25872-1-git-send-email-julien.grossholtz@savoirfairelinux.com>
+From: Marek Vasut <marex@denx.de>
+Subject: gpio-altera OF binding discrepancy
+Date: Sat, 27 Feb 2016 03:10:36 +0100
+Message-ID: <56D1059C.6090701@denx.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.savoirfairelinux.com ([208.88.110.44]:60665 "EHLO
-	mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755128AbcBZXHQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Feb 2016 18:07:16 -0500
+Received: from mail-out.m-online.net ([212.18.0.10]:58921 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755218AbcB0CKi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Feb 2016 21:10:38 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
+To: linux-gpio@vger.kernel.org
+Cc: Tien Hock Loh <thloh@altera.com>, Linus Walleij <linus.walleij@linaro.org>
 
-The TS-4800 is an i.MX515 board. Its GPIO driver should only be compiled
-for this CPU or for test builds.
+Hi!
 
-Signed-off-by: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
----
- drivers/gpio/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+I've just checked linux-4.4 and linux-next and discovered the following
+issue.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 619767b..4d292ad 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -395,6 +395,7 @@ config GPIO_TB10X
- config GPIO_TS4800
- 	tristate "TS-4800 DIO blocks and compatibles"
- 	depends on OF_GPIO
-+	depends on SOC_IMX51 || COMPILE_TEST
- 	select GPIO_GENERIC
- 	help
- 	  This driver support TS-4800 FPGA GPIO controllers.
+The Documentation/devicetree/bindings/gpio/gpio-altera.txt lists OF
+property altr,interrupt-trigger , which is not used anywhere in the
+kernel tree.
+
+The drivers/gpio/gpio-altera.c on the other hand checks for a mandatory
+OF property altr,interrupt-type and assigns it into variable
+altera_gc->interrupt_trigger . Note that if this property is not in the
+DT, the driver will fail to probe.
+
+Clearly, there is a typo between altr,interrupt-trigger and
+altr,interrupt-type . Since the driver fails to probe if altr,...-type
+property is not present, there must be users of this variant in the
+wild. I believe the Documentation/devicetree is a part of DT ABI, so the
+bindings there should not be randomly changed.
+
+In this case, I would propose to change the Documentation though, since
+any users who try to use altr,...-trigger will have probe failures and
+fix their DT anyway.
+
+Does this make sense ? If so, I will submit a patch .
+
+Thanks!
+
 -- 
-2.5.0
-
+Best regards,
+Marek Vasut
