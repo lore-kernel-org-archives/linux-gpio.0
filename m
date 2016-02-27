@@ -1,111 +1,78 @@
-From: Bamvor Zhang Jian <bamvor.zhangjian@linaro.org>
-Subject: Re: [RFD] gpiolib: gpiochip is always dangling after remove
-Date: Sat, 27 Feb 2016 11:08:46 +0800
-Message-ID: <CAFy1USSRNw-h9fTfhJUA4P4hRp7fFFgU5qEjhBw9Fv5zfumq2w@mail.gmail.com>
-References: <1456491974-26997-1-git-send-email-bamv2005@gmail.com>
-	<20160226140542.GU18327@sirena.org.uk>
+From: Jiang Qiu <qiujiang@huawei.com>
+Subject: Re: [PATCH v3 1/2] gpio: designware: switch device node to fwnode
+Date: Sat, 27 Feb 2016 15:15:40 +0800
+Message-ID: <56D14D1C.6090706@huawei.com>
+References: <1456317210-42742-1-git-send-email-qiujiang@huawei.com>
+ <1456317210-42742-2-git-send-email-qiujiang@huawei.com>
+ <CAHp75Vd4dNJpuiMMizYbOpv+pZd30RcNA+kPoF6_4Vukk62iFw@mail.gmail.com>
+ <56CEEC58.9050303@huawei.com>
+ <CAHp75Vecxx+YBrZ9d4oZzqS_X3cxUQ4UaSvjqjhuaoJ4O9xauw@mail.gmail.com>
+Reply-To: <qiujiang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f169.google.com ([209.85.223.169]:36187 "EHLO
-	mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755533AbcB0DIr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Feb 2016 22:08:47 -0500
-Received: by mail-io0-f169.google.com with SMTP id l127so140292359iof.3
-        for <linux-gpio@vger.kernel.org>; Fri, 26 Feb 2016 19:08:46 -0800 (PST)
-In-Reply-To: <20160226140542.GU18327@sirena.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CAHp75Vecxx+YBrZ9d4oZzqS_X3cxUQ4UaSvjqjhuaoJ4O9xauw@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Bamvor Jian Zhang <bamv2005@gmail.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bamvor Zhang Jian <bamvor.zhangjian@linaro.org>
 
-Hi, Mark
+=E5=9C=A8 2016/2/25 21:43, Andy Shevchenko =E5=86=99=E9=81=93:
+> On Thu, Feb 25, 2016 at 1:58 PM, Jiang Qiu <qiujiang@huawei.com> wrot=
+e:
+>> =E5=9C=A8 2016/2/24 21:46, Andy Shevchenko =E5=86=99=E9=81=93:
+>>> On Wed, Feb 24, 2016 at 2:33 PM, qiujiang <qiujiang@huawei.com> wro=
+te:
+>=20
+>>>  - why do you use fwnode_*() instead of device_property_*() calls?
+>>> What prevents us to move to device property API directly?
+>> Yes, it looks more reasonable by using devce_property. Howerver,
+>> device_get_child_node_count was used here to find each child node. T=
+his
+>> API output the fwnode_handle for each child node directly, but devic=
+e
+>> property APIs need 'dev' data instead. Actually, the effects of fwno=
+de_*()
+>> and device_*() are the same. So, I used fwnode_*() APIs here.
+>=20
+> Right, looks okay then.
+>=20
+>>>> -       node =3D dev->of_node;
+>>>> -       if (!IS_ENABLED(CONFIG_OF_GPIO) || !node)
+>>>> +       if (!IS_ENABLED(CONFIG_OF_GPIO) || !(dev->of_node))
+>>>>                 return ERR_PTR(-ENODEV);
+>>>
+>>> So, since you converted to fwnode, do you still need this check?
+>>>
+>> Although this patch coverted device node to fwnode, only DTs binding=
+ was
+>> supported here, and patch2 support ACPI will remove this check.
+>=20
+> Yes, but like I said below device_get_child_node_count() will take
+> care of that, will it?
+Right, device_get_child_node_count() will take of it, this should be re=
+moved.
+>=20
+>>>>
+>>>> -       nports =3D of_get_child_count(node);
+>>>> +       nports =3D device_get_child_node_count(dev);
+>>>>         if (nports =3D=3D 0)
+>>>>                 return ERR_PTR(-ENODEV);
+>>>
+>>> ...I think this one fail if it will not found any child.
+>> This one fail? yes, it will return to failure.
+>> I am not very clear here.
+>=20
+> See above.
+Here, device_get_child_node_count will return ZERO if there is not any =
+child.
+So, I think this will work ok, will it?
+>=20
 
-On 26 February 2016 at 22:05, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Feb 26, 2016 at 09:06:14PM +0800, Bamvor Jian Zhang wrote:
->
->> --- a/drivers/gpio/gpiolib.c
->> +++ b/drivers/gpio/gpiolib.c
->> @@ -452,7 +452,6 @@ static void gpiodevice_release(struct device *dev)
->>  {
->>       struct gpio_device *gdev = dev_get_drvdata(dev);
->>
->> -     cdev_del(&gdev->chrdev);
->
-> This seems weird - we're moving the deletion of the chardev (which is
-> the route userspace has to opening the device) later which seems like it
-> isn't relevant to the issue and is likely to create problems since it
-> means userspace can start to try to use the device while we're in the
-> process of trying to tear it down.  If this is needed it should probably
-> be explicitly discussed in the changelog, it may be worth splitting into
-> a separate patch.
->
->> @@ -633,7 +632,6 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
->>
->>       /* From this point, the .release() function cleans up gpio_device */
->>       gdev->dev.release = gpiodevice_release;
->> -     get_device(&gdev->dev);
->>       pr_debug("%s: registered GPIOs %d to %d on device: %s (%s)\n",
->>                __func__, gdev->base, gdev->base + gdev->ngpio - 1,
->>                dev_name(&gdev->dev), chip->label ? : "generic");
->
->> +     device_del(&gdev->dev);
->
-> We're removing a get but adding a delete?  Again this is surprising,
-> explicitly saying what took the reference we're going to delete would
-> probably make this a lot clearer.
->
-> In general I'd say your changelog for a change like this should be in
-> the form of "When $THING happens $PROBLEM occurs because $REASON,
-> instead do $FIX which avoids that because $REASON".
-As you said, the commit message is not clear enough to know what is
-going on here. Try this one:
 
-When gpiochip_remove is called the gpiochips is not removed because
-the refcount is not going down to zero.
-
-The issue I found is that after gpiochip_remove, the gpipchio is not
-remove(in dangling state), the reference count in
-gdev(gdev->dev->kobj->kref->refcount.count) is 4. So, my first thought
-is that where the reference count came from.
-On gpiochip_add_data:
-refcount    after this function
-1           device_initialize(&gdev->dev);
-2           status = cdev_add(&gdev->chrdev, gdev->dev.devt, 1);
-4           status = device_add(&gdev->dev);
-5           get_device(&gdev->dev);
-Notes: "gdev->chrdev.kobj.parent" is "&gdev->dev.kobj;"
-
-On gpiochip_remove:
-refcount    after this function
-4           put_device(&gdev->dev);
-
-And I also check the other code in which chardev is the children of
-the device. I found that the flows of add and remove are(e.g.
-evdev.c):
-Add(e.g. evdev_connect):
-device_initialize();
-cdev_add();
-device_add();
-
-Remove(e.g. evdev_disconnect):
-device_del();
-cdev_del();
-put_device();
-
-If I change the flows in gpiochip_add_data and gpiochip_remove like
-above. The gpiochip could be removed in the put_device. But it seems
-that it conflict with the comment before put_device:
-/*
- * The gpiochip side puts its use of the device to rest here:
- * if there are no userspace clients, the chardev and device will
- * be removed, else it will be dangling until the last user is
- * gone.
- */
-
-So, I feel that maybe I do not fix root issue. Hope I could learn/
-help.
-
-Regards
-
-Bamvor
+--
+To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
