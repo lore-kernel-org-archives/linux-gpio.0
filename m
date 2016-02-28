@@ -1,72 +1,112 @@
-From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4] USB: serial: cp210x: Adding GPIO support for CP2105
-Date: Sun, 28 Feb 2016 13:26:17 +0100
-Message-ID: <20160228122617.GC10265@localhost>
-References: <1453126477-23735-1-git-send-email-martyn.welch@collabora.co.uk>
- <20160131195405.GA2957@localhost>
- <56AF52E0.2080507@collabora.co.uk>
+From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+Subject: [PATCH] gpio: Switch to devm_ioremap_resource()
+Date: Sun, 28 Feb 2016 18:00:56 +0530
+Message-ID: <20160228123056.GA12584@amitoj-Inspiron-3542>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f173.google.com ([209.85.192.173]:35581 "EHLO
+	mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750737AbcB1MbC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 28 Feb 2016 07:31:02 -0500
 Content-Disposition: inline
-In-Reply-To: <56AF52E0.2080507-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Cc: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: julia.lawall@lip6.fr
 
-On Mon, Feb 01, 2016 at 12:43:12PM +0000, Martyn Welch wrote:
-> On 31/01/16 19:54, Johan Hovold wrote:
-> > On Mon, Jan 18, 2016 at 02:14:37PM +0000, Martyn Welch wrote:
-> >> This patch adds support for the GPIO found on the CP2105. Unlike the GPIO
-> >> provided by some of the other devices supported by the cp210x driver, the
-> >> GPIO on the CP2015 is muxed on pins otherwise used for serial control
-> >> lines. The GPIO have been configured in 2 separate banks as the choice to
-> >> configure the pins for GPIO is made separately for pins shared with each
-> >> of the 2 serial ports this device provides, though the choice is made for
-> >> all pins associated with that port in one go. The choice of whether to use
-> >> the pins for GPIO or serial is made by adding configuration to a one-time
-> >> programable PROM in the chip and can not be changed at runtime. The device
-> >> defaults to GPIO.
-> >>
-> >> This device supports either push-pull or open-drain modes, it doesn't
-> >> provide an explicit input mode, though the state of the GPIO can be read
-> >> when used in open-drain mode. Like with pin use, the mode is configured in
-> >> the one-time programable PROM and can't be changed at runtime.
-> >>
-> >> Signed-off-by: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-> >> ---
+Replace calls to devm_request_mem_region and devm_ioremap with a
+direct call to devm_ioremap_resource instead and modify error
+handling.
 
-> >>   static int cp210x_port_probe(struct usb_serial_port *port)
-> >>   {
-> >>   	struct usb_serial *serial = port->serial;
-> >> @@ -1007,12 +1170,21 @@ static int cp210x_port_probe(struct usb_serial_port *port)
-> >>   	usb_set_serial_port_data(port, port_priv);
-> >>
-> >>   	ret = cp210x_detect_swapped_line_ctl(port);
-> >> -	if (ret) {
-> >> -		kfree(port_priv);
-> >> -		return ret;
-> >> -	}
-> >> +	if (ret)
-> >> +		goto err_ctl;
-> >> +
-> >> +#ifdef CONFIG_GPIOLIB
-> >> +	ret = cp210x_shared_gpio_init(port);
-> >> +	if (ret < 0)
-> >> +		goto err_ctl;
-> >
-> > Do you really want to fail probe if the gpios cannot be initialised?
-> > Seems this could risk breaking some currently working systems.
-> >
-> 
-> I can print and error message and continue if you prefer?
+Move the call to platform_get_resource adjacent to the call to
+devm_ioremap_resource to make the connection between them more
+clear.
 
-Yeah, that's probably better.
+A simplified version of the Coccinelle semantic patch that is used to
+make this change is as follows:
+//<smpl>
+@nm@
+expression myname;
+identifier i;
+@@
 
-Thanks,
-Johan
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+struct platform_driver i = { .driver = { .name = myname } };
+
+@@
+expression dev,res,size,e1,e;
+expression nm.myname;
+@@
+
+-if (!devm_request_mem_region(dev, res->start, size,
+-                              \(res->name\|dev_name(dev)\|myname\)))
+                               {
+-   ...
+-   return ...;
+-}
+... when != res->start = e1
+e =
+-devm_ioremap(dev,res->start,size);
++devm_ioremap_resource(dev,res);
+
+if
+-(e == NULL)
++(IS_ERR(e))
+{
+ ...
+-return ...;
++return PTR_ERR(e);
+}
+//</smpl>
+
+Further, updated error handling by hand as devm_ioremap_resource
+gives appropriate error messages, so remove unnecessary error
+messages.
+
+Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+---
+ drivers/gpio/gpio-timberdale.c | 21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
+index a6de10c..bd04328 100644
+--- a/drivers/gpio/gpio-timberdale.c
++++ b/drivers/gpio/gpio-timberdale.c
+@@ -237,12 +237,6 @@ static int timbgpio_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!iomem) {
+-		dev_err(dev, "Unable to get resource\n");
+-		return -EINVAL;
+-	}
+-
+ 	tgpio = devm_kzalloc(dev, sizeof(struct timbgpio), GFP_KERNEL);
+ 	if (!tgpio) {
+ 		dev_err(dev, "Memory alloc failed\n");
+@@ -252,17 +246,10 @@ static int timbgpio_probe(struct platform_device *pdev)
+ 
+ 	spin_lock_init(&tgpio->lock);
+ 
+-	if (!devm_request_mem_region(dev, iomem->start, resource_size(iomem),
+-				     DRIVER_NAME)) {
+-		dev_err(dev, "Region already claimed\n");
+-		return -EBUSY;
+-	}
+-
+-	tgpio->membase = devm_ioremap(dev, iomem->start, resource_size(iomem));
+-	if (!tgpio->membase) {
+-		dev_err(dev, "Cannot ioremap\n");
+-		return -ENOMEM;
+-	}
++	iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	tgpio->membase = devm_ioremap_resource(dev, iomem);
++	if (IS_ERR(tgpio->membase))
++		return PTR_ERR(tgpio->membase);
+ 
+ 	gc = &tgpio->gpio;
+ 
+-- 
+1.9.1
+
