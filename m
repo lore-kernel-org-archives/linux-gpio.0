@@ -1,112 +1,47 @@
-From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Subject: [PATCH] gpio: Switch to devm_ioremap_resource()
-Date: Sun, 28 Feb 2016 18:00:56 +0530
-Message-ID: <20160228123056.GA12584@amitoj-Inspiron-3542>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 00/61] gpio: Add and use devm_gpiochip_add_data()
+Date: Sun, 28 Feb 2016 20:02:02 +0530
+Message-ID: <56D304E2.7000608@nvidia.com>
+References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>	<CACRpkdbt+RiWMA74e40MNZVnDM0t0futtFnbyu9sRhv7p93-Tg@mail.gmail.com>	<56CC1FD4.1080905@nvidia.com>	<56CC7791.2000607@nvidia.com> <CACRpkdYsG8X5XiV2+Ss2GLJkFnLFzLi0uy0yy8R5sdi0b_Y+qA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f173.google.com ([209.85.192.173]:35581 "EHLO
-	mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750737AbcB1MbC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 28 Feb 2016 07:31:02 -0500
-Content-Disposition: inline
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:11091 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757933AbcB1Ooh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 28 Feb 2016 09:44:37 -0500
+In-Reply-To: <CACRpkdYsG8X5XiV2+Ss2GLJkFnLFzLi0uy0yy8R5sdi0b_Y+qA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: julia.lawall@lip6.fr
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michael Hennerich <michael.hennerich@analog.com>, Jon Corbet <corbet@lwn.net>, Alban Bedel <albeu@free.fr>, Ray Jui <rjui@broadcom.com>, Alexander Shiyan <shc_work@mail.ru>, Support Opensource <support.opensource@diasemi.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?IkFuZGVyc3NvbiwgQmrDtnJuIg==?= <bjorn.andersson@sonymobile.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Greg KH <gregkh@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, WOLFSON MICROELECTRONICS DRIVERS <patches@opensource.wolfsonmicro.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-arm-k
 
-Replace calls to devm_request_mem_region and devm_ioremap with a
-direct call to devm_ioremap_resource instead and modify error
-handling.
 
-Move the call to platform_get_resource adjacent to the call to
-devm_ioremap_resource to make the connection between them more
-clear.
+On Thursday 25 February 2016 06:54 PM, Linus Walleij wrote:
+> On Tue, Feb 23, 2016 at 4:15 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+>
+>> I have made the repo in git hub as
+>>      https://github.com/ldewangan/linux-upstream.git
+> Awesome.
+>
+>> branch name is devm_gpiochip.
+>>      https://github.com/ldewangan/linux-upstream/tree/devm_gpiochip
+> I've pulled this branch into my tree on a separate branch for
+> testing. I pushed the tree to kernel.org so that the zeroday
+> autobuilders can have a go at it.
 
-A simplified version of the Coccinelle semantic patch that is used to
-make this change is as follows:
-//<smpl>
-@nm@
-expression myname;
-identifier i;
-@@
+Thanks you very much for taking care.
 
-struct platform_driver i = { .driver = { .name = myname } };
+>
+> If everything goes well I plan to merge this for v4.6, then we
+> can merge the changes in pin control and other subsystems
+> for v4.7.
+Yes, once this is there, we can grep all over subsystem and push the change.
 
-@@
-expression dev,res,size,e1,e;
-expression nm.myname;
-@@
+I am seeing lots of code reduction on pincontrol driver side once we 
+have devm_ for pincontrol register and gpiochip_add_data().
 
--if (!devm_request_mem_region(dev, res->start, size,
--                              \(res->name\|dev_name(dev)\|myname\)))
-                               {
--   ...
--   return ...;
--}
-... when != res->start = e1
-e =
--devm_ioremap(dev,res->start,size);
-+devm_ioremap_resource(dev,res);
-
-if
--(e == NULL)
-+(IS_ERR(e))
-{
- ...
--return ...;
-+return PTR_ERR(e);
-}
-//</smpl>
-
-Further, updated error handling by hand as devm_ioremap_resource
-gives appropriate error messages, so remove unnecessary error
-messages.
-
-Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
----
- drivers/gpio/gpio-timberdale.c | 21 ++++-----------------
- 1 file changed, 4 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
-index a6de10c..bd04328 100644
---- a/drivers/gpio/gpio-timberdale.c
-+++ b/drivers/gpio/gpio-timberdale.c
-@@ -237,12 +237,6 @@ static int timbgpio_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!iomem) {
--		dev_err(dev, "Unable to get resource\n");
--		return -EINVAL;
--	}
--
- 	tgpio = devm_kzalloc(dev, sizeof(struct timbgpio), GFP_KERNEL);
- 	if (!tgpio) {
- 		dev_err(dev, "Memory alloc failed\n");
-@@ -252,17 +246,10 @@ static int timbgpio_probe(struct platform_device *pdev)
- 
- 	spin_lock_init(&tgpio->lock);
- 
--	if (!devm_request_mem_region(dev, iomem->start, resource_size(iomem),
--				     DRIVER_NAME)) {
--		dev_err(dev, "Region already claimed\n");
--		return -EBUSY;
--	}
--
--	tgpio->membase = devm_ioremap(dev, iomem->start, resource_size(iomem));
--	if (!tgpio->membase) {
--		dev_err(dev, "Cannot ioremap\n");
--		return -ENOMEM;
--	}
-+	iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	tgpio->membase = devm_ioremap_resource(dev, iomem);
-+	if (IS_ERR(tgpio->membase))
-+		return PTR_ERR(tgpio->membase);
- 
- 	gc = &tgpio->gpio;
- 
--- 
-1.9.1
+Thanks,
+Laxman
 
