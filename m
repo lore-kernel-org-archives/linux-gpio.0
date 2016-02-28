@@ -1,57 +1,32 @@
-From: sergk sergk2mail <sergk.admin@gmail.com>
-Subject: Re: [PATCH 3/3] input: gpio_keys: Make use of the device property API
-Date: Sun, 28 Feb 2016 02:03:34 +0000
-Message-ID: <CA+V1Lzrag5QPAPjjhqp8R6uUG4NPb9sG7axiJoBGk4q=ozXV0w@mail.gmail.com>
-References: <1455876982-6743-1-git-send-email-geert+renesas@glider.be>
-	<1455876982-6743-4-git-send-email-geert+renesas@glider.be>
-	<20160222195815.GB28343@dtor-ws>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH] pinctrl: imx: attach iomuxc device to gpr syscon
+Date: Sun, 28 Feb 2016 10:25:55 +0800
+Message-ID: <20160228022555.GA22051@tiger>
+References: <1456420987-9883-1-git-send-email-p.zabel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20160222195815.GB28343@dtor-ws>
-Sender: linux-input-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Vincent Pelletier <plr.vincent@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:33545 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S2992732AbcB1C0O (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 27 Feb 2016 21:26:14 -0500
+Content-Disposition: inline
+In-Reply-To: <1456420987-9883-1-git-send-email-p.zabel@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Adrian Alonso <aalonso@freescale.com>, Robin Gong <b38343@freescale.com>, Stefan Agner <stefan@agner.ch>, Anson Huang <b20788@freescale.com>, Fabio Estevam <fabio.estevam@freescale.com>, Frank Li <Frank.Li@freescale.com>, linux-gpio@vger.kernel.org, kernel@pengutronix.de
 
-Sorry to interrupt with question, but I guess this thread has right
-people for related to this topic question.
-The question is reversed to the topic - how to, having working touch
-driver in Android and Windows determine which exactly gpio pin is used
-as INT\WAKE gpio by the driver?
-Or for example even when I have some variant of such gpio pin how to
-ensure that it is exactly this gpio?
-For example practical task: I am trying to determine which exactly
-gpio pin is responsible for INT/WAKE touchscreen on Chuwi Vi10
-(baytrail x86_64 Arch 4.4.2 vanilla kernel with my custom config).
-Exploring /sys/class/gpio/* have guessed that in Android it is
-probably gpio134 but in Linux 4.4.2 probably gpio393. How to compare
-such pins and ensure that in Linux 393 gpio is the same as 134 in
-Android?
-Is this possible to do in any predictable (not guessing or enumerating
-all range) way?
+On Thu, Feb 25, 2016 at 06:23:07PM +0100, Philipp Zabel wrote:
+> Commit bdb0066df96e ("mfd: syscon: Decouple syscon interface from platform
+> devices") added the possibility to register syscon devices without
+> associated platform device. This also removed regmap debugfs facilities,
+> which don't work without a device. This patch associates the syscon regmap
+> that handles the IOMUX controller's general purpose registers with the
+> pinctrl device so that the GPR registers appear in the regmap debugfs
+> directory again. For example, on i.MX6Q the GPR registers now can be
+> read from /sys/kernel/debug/regmap/20e0000.iomuxc-gpr/registers.
+> 
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Regards and thanks for replies,
-                                                 Serge Kolotylo.
-
-On Mon, Feb 22, 2016 at 7:58 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> On Fri, Feb 19, 2016 at 11:16:22AM +0100, Geert Uytterhoeven wrote:
->> @@ -887,7 +870,7 @@ static struct platform_driver gpio_keys_device_driver = {
->>       .driver         = {
->>               .name   = "gpio-keys",
->>               .pm     = &gpio_keys_pm_ops,
->> -             .of_match_table = of_match_ptr(gpio_keys_of_match),
->> +             .of_match_table = gpio_keys_of_match,
->
-> Why are we changing this? I think match table should still be guarded
-> by #ifdef CONFIG_OF.
->
-> Thanks.
->
-> --
-> Dmitry
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-input" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Shawn Guo <shawnguo@kernel.org>
