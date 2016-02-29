@@ -1,55 +1,62 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v3 1/2] gpio: designware: switch device node to fwnode
-Date: Mon, 29 Feb 2016 12:46:26 +0200
-Message-ID: <CAHp75VftQyf6gMvi6mdWkku8+K9GrgtPrZ-819XjBQwF2AY3yw@mail.gmail.com>
-References: <1456317210-42742-1-git-send-email-qiujiang@huawei.com>
-	<1456317210-42742-2-git-send-email-qiujiang@huawei.com>
-	<CAHp75Vd4dNJpuiMMizYbOpv+pZd30RcNA+kPoF6_4Vukk62iFw@mail.gmail.com>
-	<56CEEC58.9050303@huawei.com>
-	<CAHp75Vecxx+YBrZ9d4oZzqS_X3cxUQ4UaSvjqjhuaoJ4O9xauw@mail.gmail.com>
-	<56D14D1C.6090706@huawei.com>
+From: qiujiang <qiujiang@huawei.com>
+Subject: [PATCH v4 2/2] gpio: designware: add gpio-signaled acpi event support
+Date: Mon, 29 Feb 2016 21:13:16 +0800
+Message-ID: <1456751596-98963-3-git-send-email-qiujiang@huawei.com>
+References: <1456751596-98963-1-git-send-email-qiujiang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <56D14D1C.6090706@huawei.com>
+In-Reply-To: <1456751596-98963-1-git-send-email-qiujiang@huawei.com>
 Sender: linux-acpi-owner@vger.kernel.org
-To: qiujiang <qiujiang@huawei.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: mika.westerberg@linux.intel.com, andy.shevchenko@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Feb 27, 2016 at 9:15 AM, Jiang Qiu <qiujiang@huawei.com> wrote:
+This patch adds the support for the gpio-signaled acpi event.
+This is used for power button on hisilicon D02 board, which
+is an arm64 platform.
 
->>>>> -       node = dev->of_node;
->>>>> -       if (!IS_ENABLED(CONFIG_OF_GPIO) || !node)
->>>>> +       if (!IS_ENABLED(CONFIG_OF_GPIO) || !(dev->of_node))
->>>>>                 return ERR_PTR(-ENODEV);
->>>>
->>>> So, since you converted to fwnode, do you still need this check?
->>>>
->>> Although this patch coverted device node to fwnode, only DTs binding was
->>> supported here, and patch2 support ACPI will remove this check.
->>
->> Yes, but like I said below device_get_child_node_count() will take
->> care of that, will it?
-> Right, device_get_child_node_count() will take of it, this should be removed.
->>
->>>>>
->>>>> -       nports = of_get_child_count(node);
->>>>> +       nports = device_get_child_node_count(dev);
->>>>>         if (nports == 0)
->>>>>                 return ERR_PTR(-ENODEV);
->>>>
->>>> ...I think this one fail if it will not found any child.
->>> This one fail? yes, it will return to failure.
->>> I am not very clear here.
->>
->> See above.
-> Here, device_get_child_node_count will return ZERO if there is not any child.
-> So, I think this will work ok, will it?
+To support this function, _AEI and _Exx objects must be
+defined in the corresponding GPIO device as follows:
 
-I didn't check deeply, but I assume so.
+    Name (_AEI, ResourceTemplate () {
+            GpioInt(Edge, ActiveLow, ExclusiveAndWake, PullUp,
+			, " \\_SB.GPI0") {8}
+    })
+    Method (_E08, 0x0, NotSerialized) {
+        Notify (\_SB.PWRB, 0x80)
+    }
 
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: qiujiang <qiujiang@huawei.com>
+---
+ drivers/gpio/gpio-dwapb.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 7a37c65..4955112 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -27,6 +27,8 @@
+ #include <linux/platform_data/gpio-dwapb.h>
+ #include <linux/slab.h>
+ 
++#include "gpiolib.h"
++
+ #define GPIO_SWPORTA_DR		0x00
+ #define GPIO_SWPORTA_DDR	0x04
+ #define GPIO_SWPORTB_DR		0x0c
+@@ -436,6 +438,10 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+ 	else
+ 		port->is_registered = true;
+ 
++	/* Add GPIO-signaled ACPI event support */
++	if (pp->irq)
++		acpi_gpiochip_request_interrupts(&(port->gc));
++
+ 	return err;
+ }
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+1.9.1
+
