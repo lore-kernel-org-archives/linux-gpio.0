@@ -1,213 +1,98 @@
-From: qiujiang <qiujiang@huawei.com>
-Subject: [PATCH v4 1/2] gpio: designware: switch device node to fwnode and add acpi binding
-Date: Mon, 29 Feb 2016 21:13:15 +0800
-Message-ID: <1456751596-98963-2-git-send-email-qiujiang@huawei.com>
-References: <1456751596-98963-1-git-send-email-qiujiang@huawei.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] gpio: lp3943: Drop pin_used and
+ lp3943_gpio_request/lp3943_gpio_free
+Date: Mon, 29 Feb 2016 21:08:19 +0800
+Message-ID: <1456751299.25756.0.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from szxga01-in.huawei.com ([58.251.152.64]:8233 "EHLO
-	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753559AbcB2NDO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Feb 2016 08:03:14 -0500
-In-Reply-To: <1456751596-98963-1-git-send-email-qiujiang@huawei.com>
+Received: from mail-pf0-f177.google.com ([209.85.192.177]:33053 "EHLO
+	mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750723AbcB2NIY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Feb 2016 08:08:24 -0500
+Received: by mail-pf0-f177.google.com with SMTP id 124so30664324pfg.0
+        for <linux-gpio@vger.kernel.org>; Mon, 29 Feb 2016 05:08:24 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: mika.westerberg@linux.intel.com, andy.shevchenko@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Milo Kim <milo.kim@ti.com>, Alexandre Courbot <gnurou@gmail.com>, Lee Jones <lee.jones@linaro.org>, linux-gpio@vger.kernel.org
 
-This patch switches device node to fwnode and adds acpi
-binding. As a result, DT and acpi bingdings are compatible
-for this driver.
+The implementation of lp3943_gpio_request/lp3943_gpio_free test pin_used
+for tracing the pin usage. However, gpiolib already checks FLAG_REQUESTED
+flag for the same purpose. So remove the redundant implementation.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: qiujiang <qiujiang@huawei.com>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- drivers/gpio/gpio-dwapb.c                | 62 +++++++++++++++++++-------------
- drivers/mfd/intel_quark_i2c_gpio.c       |  2 +-
- include/linux/platform_data/gpio-dwapb.h |  2 +-
- 3 files changed, 39 insertions(+), 27 deletions(-)
+ drivers/gpio/gpio-lp3943.c | 22 ----------------------
+ include/linux/mfd/lp3943.h |  6 ------
+ 2 files changed, 28 deletions(-)
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 597de1e..7a37c65 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -7,6 +7,7 @@
-  *
-  * All enquiries to support@picochip.com
-  */
-+#include <linux/acpi.h>
- #include <linux/gpio/driver.h>
- /* FIXME: for gpio_get_value(), replace this with direct register read */
- #include <linux/gpio.h>
-@@ -290,14 +291,14 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 				 struct dwapb_port_property *pp)
- {
- 	struct gpio_chip *gc = &port->gc;
--	struct device_node *node = pp->node;
-+	struct fwnode_handle  *fwnode = pp->fwnode;
- 	struct irq_chip_generic	*irq_gc = NULL;
- 	unsigned int hwirq, ngpio = gc->ngpio;
- 	struct irq_chip_type *ct;
- 	int err, i;
- 
--	gpio->domain = irq_domain_add_linear(node, ngpio,
--					     &irq_generic_chip_ops, gpio);
-+	gpio->domain = irq_domain_create_linear(fwnode, ngpio,
-+						 &irq_generic_chip_ops, gpio);
- 	if (!gpio->domain)
- 		return;
- 
-@@ -415,7 +416,8 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 	}
- 
- #ifdef CONFIG_OF_GPIO
--	port->gc.of_node = pp->node;
-+	port->gc.of_node = is_of_node(pp->fwnode) ?
-+		to_of_node(pp->fwnode) : NULL;
- #endif
- 	port->gc.ngpio = pp->ngpio;
- 	port->gc.base = pp->gpio_base;
-@@ -447,19 +449,15 @@ static void dwapb_gpio_unregister(struct dwapb_gpio *gpio)
- }
- 
- static struct dwapb_platform_data *
--dwapb_gpio_get_pdata_of(struct device *dev)
-+dwapb_gpio_get_pdata(struct device *dev)
- {
--	struct device_node *node, *port_np;
-+	struct fwnode_handle *fwnode;
- 	struct dwapb_platform_data *pdata;
- 	struct dwapb_port_property *pp;
- 	int nports;
- 	int i;
- 
--	node = dev->of_node;
--	if (!IS_ENABLED(CONFIG_OF_GPIO) || !node)
--		return ERR_PTR(-ENODEV);
--
--	nports = of_get_child_count(node);
-+	nports = device_get_child_node_count(dev);
- 	if (nports == 0)
- 		return ERR_PTR(-ENODEV);
- 
-@@ -474,21 +472,19 @@ dwapb_gpio_get_pdata_of(struct device *dev)
- 	pdata->nports = nports;
- 
- 	i = 0;
--	for_each_child_of_node(node, port_np) {
-+	device_for_each_child_node(dev, fwnode)  {
- 		pp = &pdata->properties[i++];
--		pp->node = port_np;
-+		pp->fwnode = fwnode;
- 
--		if (of_property_read_u32(port_np, "reg", &pp->idx) ||
-+		if (fwnode_property_read_u32(fwnode, "reg", &pp->idx) ||
- 		    pp->idx >= DWAPB_MAX_PORTS) {
--			dev_err(dev, "missing/invalid port index for %s\n",
--				port_np->full_name);
-+			dev_err(dev, "missing/invalid port index\n");
- 			return ERR_PTR(-EINVAL);
- 		}
- 
--		if (of_property_read_u32(port_np, "snps,nr-gpios",
-+		if (fwnode_property_read_u32(fwnode, "snps,nr-gpios",
- 					 &pp->ngpio)) {
--			dev_info(dev, "failed to get number of gpios for %s\n",
--				 port_np->full_name);
-+			dev_info(dev, "failed to get number of gpios\n");
- 			pp->ngpio = 32;
- 		}
- 
-@@ -496,18 +492,27 @@ dwapb_gpio_get_pdata_of(struct device *dev)
- 		 * Only port A can provide interrupts in all configurations of
- 		 * the IP.
- 		 */
--		if (pp->idx == 0 &&
--		    of_property_read_bool(port_np, "interrupt-controller")) {
--			pp->irq = irq_of_parse_and_map(port_np, 0);
-+		if (dev->of_node && pp->idx == 0 &&
-+			of_property_read_bool(to_of_node(fwnode),
-+				"interrupt-controller")) {
-+			pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
- 			if (!pp->irq) {
- 				dev_warn(dev, "no irq for bank %s\n",
--					 port_np->full_name);
-+					 to_of_node(fwnode)->full_name);
- 			}
- 		}
- 
-+		if (has_acpi_companion(dev) && pp->idx == 0)
-+			pp->irq = platform_get_irq(to_platform_device(dev), 0);
-+
- 		pp->irq_shared	= false;
- 		pp->gpio_base	= -1;
--		pp->name	= port_np->full_name;
-+
-+		if (dev->of_node)
-+			pp->name = to_of_node(fwnode)->full_name;
-+
-+		if (has_acpi_companion(dev))
-+			pp->name = acpi_dev_name(to_acpi_device_node(fwnode));
- 	}
- 
- 	return pdata;
-@@ -523,7 +528,7 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
- 	struct dwapb_platform_data *pdata = dev_get_platdata(dev);
- 
- 	if (!pdata) {
--		pdata = dwapb_gpio_get_pdata_of(dev);
-+		pdata = dwapb_gpio_get_pdata(dev);
- 		if (IS_ERR(pdata))
- 			return PTR_ERR(pdata);
- 	}
-@@ -580,6 +585,12 @@ static const struct of_device_id dwapb_of_match[] = {
+diff --git a/drivers/gpio/gpio-lp3943.c b/drivers/gpio/gpio-lp3943.c
+index 1c8e2ae..9d26ad4 100644
+--- a/drivers/gpio/gpio-lp3943.c
++++ b/drivers/gpio/gpio-lp3943.c
+@@ -45,26 +45,6 @@ struct lp3943_gpio {
+ 	u16 input_mask;		/* 1 = GPIO is input direction, 0 = output */
  };
- MODULE_DEVICE_TABLE(of, dwapb_of_match);
  
-+static const struct acpi_device_id dwapb_acpi_match[] = {
-+	{"HISI0181", 0},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
-+
- #ifdef CONFIG_PM_SLEEP
- static int dwapb_gpio_suspend(struct device *dev)
+-static int lp3943_gpio_request(struct gpio_chip *chip, unsigned offset)
+-{
+-	struct lp3943_gpio *lp3943_gpio = gpiochip_get_data(chip);
+-	struct lp3943 *lp3943 = lp3943_gpio->lp3943;
+-
+-	/* Return an error if the pin is already assigned */
+-	if (test_and_set_bit(offset, &lp3943->pin_used))
+-		return -EBUSY;
+-
+-	return 0;
+-}
+-
+-static void lp3943_gpio_free(struct gpio_chip *chip, unsigned offset)
+-{
+-	struct lp3943_gpio *lp3943_gpio = gpiochip_get_data(chip);
+-	struct lp3943 *lp3943 = lp3943_gpio->lp3943;
+-
+-	clear_bit(offset, &lp3943->pin_used);
+-}
+-
+ static int lp3943_gpio_set_mode(struct lp3943_gpio *lp3943_gpio, u8 offset,
+ 				u8 val)
  {
-@@ -674,6 +685,7 @@ static struct platform_driver dwapb_gpio_driver = {
- 		.name	= "gpio-dwapb",
- 		.pm	= &dwapb_gpio_pm_ops,
- 		.of_match_table = of_match_ptr(dwapb_of_match),
-+		.acpi_match_table = ACPI_PTR(dwapb_acpi_match),
- 	},
- 	.probe		= dwapb_gpio_probe,
- 	.remove		= dwapb_gpio_remove,
-diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_quark_i2c_gpio.c
-index 0421374..265bd3c 100644
---- a/drivers/mfd/intel_quark_i2c_gpio.c
-+++ b/drivers/mfd/intel_quark_i2c_gpio.c
-@@ -227,7 +227,7 @@ static int intel_quark_gpio_setup(struct pci_dev *pdev, struct mfd_cell *cell)
- 		return -ENOMEM;
+@@ -177,8 +157,6 @@ static int lp3943_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+ static const struct gpio_chip lp3943_gpio_chip = {
+ 	.label			= "lp3943",
+ 	.owner			= THIS_MODULE,
+-	.request		= lp3943_gpio_request,
+-	.free			= lp3943_gpio_free,
+ 	.direction_input	= lp3943_gpio_direction_input,
+ 	.get			= lp3943_gpio_get,
+ 	.direction_output	= lp3943_gpio_direction_output,
+diff --git a/include/linux/mfd/lp3943.h b/include/linux/mfd/lp3943.h
+index 3490db7..d3a73811 100644
+--- a/include/linux/mfd/lp3943.h
++++ b/include/linux/mfd/lp3943.h
+@@ -94,18 +94,12 @@ struct lp3943_reg_cfg {
+  * @regmap: Used for I2C communication on accessing registers
+  * @pdata: LP3943 platform specific data
+  * @mux_cfg: Register configuration for pin MUX
+- * @pin_used: Bit mask for output pin used.
+- *	      This bitmask is used for pin assignment management.
+- *	      1 = pin used, 0 = available.
+- *	      Only LSB 16 bits are used, but it is unsigned long type
+- *	      for atomic bitwise operations.
+  */
+ struct lp3943 {
+ 	struct device *dev;
+ 	struct regmap *regmap;
+ 	struct lp3943_platform_data *pdata;
+ 	const struct lp3943_reg_cfg *mux_cfg;
+-	unsigned long pin_used;
+ };
  
- 	/* Set the properties for portA */
--	pdata->properties->node		= NULL;
-+	pdata->properties->fwnode	= NULL;
- 	pdata->properties->name		= "intel-quark-x1000-gpio-portA";
- 	pdata->properties->idx		= 0;
- 	pdata->properties->ngpio	= INTEL_QUARK_MFD_NGPIO;
-diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
-index 28702c8..80954f2 100644
---- a/include/linux/platform_data/gpio-dwapb.h
-+++ b/include/linux/platform_data/gpio-dwapb.h
-@@ -15,7 +15,7 @@
- #define GPIO_DW_APB_H
- 
- struct dwapb_port_property {
--	struct device_node *node;
-+	struct fwnode_handle  *fwnode;
- 	const char	*name;
- 	unsigned int	idx;
- 	unsigned int	ngpio;
+ int lp3943_read_byte(struct lp3943 *lp3943, u8 reg, u8 *read);
 -- 
-1.9.1
+2.1.4
+
+
 
