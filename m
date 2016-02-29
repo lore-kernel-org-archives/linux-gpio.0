@@ -1,163 +1,51 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: [PATCH v2 02/13] clk: sunxi: add ahb1 clock for A83T
-Date: Sun, 28 Feb 2016 20:09:48 -0800
-Message-ID: <CAGb2v66P5zKkbriUOnvg9ms-HSpmYDQ7RtQ5MG9fLopo3pwPoQ@mail.gmail.com>
-References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com> <1456672738-4993-3-git-send-email-vishnupatekar0510@gmail.com>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 3/3] input: gpio_keys: Make use of the device property API
+Date: Mon, 29 Feb 2016 10:17:23 +0200
+Message-ID: <20160229081723.GB1770@lahna.fi.intel.com>
+References: <1455876982-6743-1-git-send-email-geert+renesas@glider.be>
+ <1455876982-6743-4-git-send-email-geert+renesas@glider.be>
+ <20160222195815.GB28343@dtor-ws>
+ <CA+V1Lzrag5QPAPjjhqp8R6uUG4NPb9sG7axiJoBGk4q=ozXV0w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBI4JZ63AKGQEZVERBXY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1456672738-4993-3-git-send-email-vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Emilio Lopez <emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans De Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Reinder de Haan <patchesrdh-I1/eAgTnXDYAvxtiuMwx3w@public.gmane.org>, linux-cl
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CA+V1Lzrag5QPAPjjhqp8R6uUG4NPb9sG7axiJoBGk4q=ozXV0w@mail.gmail.com>
+Sender: linux-input-owner@vger.kernel.org
+To: sergk sergk2mail <sergk.admin@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Aaron Lu <aaron.lu@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Vincent Pelletier <plr.vincent@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+On Sun, Feb 28, 2016 at 02:03:34AM +0000, sergk sergk2mail wrote:
+> Sorry to interrupt with question, but I guess this thread has right
+> people for related to this topic question.
+> The question is reversed to the topic - how to, having working touch
+> driver in Android and Windows determine which exactly gpio pin is used
+> as INT\WAKE gpio by the driver?
 
-On Sun, Feb 28, 2016 at 7:18 AM, Vishnu Patekar
-<vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
-> clock index 0b1x is PLL6.
->
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Acked-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
->  drivers/clk/sunxi/clk-sunxi.c                     | 76 +++++++++++++++++++++++
->  2 files changed, 77 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Documentation/devicetree/bindings/clock/sunxi.txt
-> index c09f59b..2ee7841 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -29,6 +29,7 @@ Required properties:
->         "allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
->         "allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
->         "allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
-> +       "allwinner,sun8i-a83t-ahb1-clk" - for the AHB1 clock on A83T
->         "allwinner,sun8i-h3-ahb2-clk" - for the AHB2 clock on H3
->         "allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
->         "allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
-> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-> index 99f60ef..0ae1f09 100644
-> --- a/drivers/clk/sunxi/clk-sunxi.c
-> +++ b/drivers/clk/sunxi/clk-sunxi.c
-> @@ -344,6 +344,67 @@ static void sun6i_ahb1_recalc(struct factors_request *req)
->         req->rate >>= req->p;
->  }
->
-> +#define SUN8I_A83T_AHB1_PARENT_PLL6    2
-> +/**
-> + * sun8i_a83t_get_ahb_factors() - calculates m, p factors for AHB
-> + * AHB rate is calculated as follows
-> + * rate = parent_rate >> p
-> + *
-> + * if parent is pll6, then
-> + * parent_rate = pll6 rate / (m + 1)
-> + */
-> +
-> +static void sun8i_a83t_get_ahb1_factors(struct factors_request *req)
-> +{
-> +       u8 div, calcp, calcm = 1;
-> +
-> +       /*
-> +        * clock can only divide, so we will never be able to achieve
-> +        * frequencies higher than the parent frequency
-> +        */
-> +       if (req->parent_rate && req->rate > req->parent_rate)
-> +               req->rate = req->parent_rate;
-> +
-> +       div = DIV_ROUND_UP(req->parent_rate, req->rate);
-> +
-> +       /* calculate pre-divider if parent is pll6 */
-> +       if (req->parent_index >= SUN8I_A83T_AHB1_PARENT_PLL6) {
-> +               if (div < 4)
-> +                       calcp = 0;
-> +               else if (div / 2 < 4)
-> +                       calcp = 1;
-> +               else if (div / 4 < 4)
-> +                       calcp = 2;
-> +               else
-> +                       calcp = 3;
-> +
-> +               calcm = DIV_ROUND_UP(div, 1 << calcp);
-> +       } else {
-> +               calcp = __roundup_pow_of_two(div);
-> +               calcp = calcp > 3 ? 3 : calcp;
-> +}
+On ACPI systems the device description has either Interrupt() or
+GpioInt() resource in its _CRS list (see
+Documentation/acpi/gpio-properties.txt).
 
-Indent here.
+> Or for example even when I have some variant of such gpio pin how to
+> ensure that it is exactly this gpio?
+> For example practical task: I am trying to determine which exactly
+> gpio pin is responsible for INT/WAKE touchscreen on Chuwi Vi10
+> (baytrail x86_64 Arch 4.4.2 vanilla kernel with my custom config).
+> Exploring /sys/class/gpio/* have guessed that in Android it is
+> probably gpio134 but in Linux 4.4.2 probably gpio393. How to compare
+> such pins and ensure that in Linux 393 gpio is the same as 134 in
+> Android?
+> Is this possible to do in any predictable (not guessing or enumerating
+> all range) way?
 
-> +
-> +       req->rate = (req->parent_rate / calcm) >> calcp;
-> +       req->p = calcp;
-> +       req->m = calcm - 1;
-> +}
-> +
-> +/**
-> +* sun8i_a83t_ahb1_recalc() - calculates AHB clock rate from m, p factors and
-> +*                       parent index
+Both DT and ACPI provide means to assign GPIOs to devices. We can then
+use Linux APIs to query those. For example getting GPIO with name
+"reset" is done like:
 
-Whitespace here.
+	struct gpio_desc *reset_desc;
 
-> +*/
-> +static void sun8i_a83t_ahb1_recalc(struct factors_request *req)
-> +{
-> +       req->rate = req->parent_rate;
-> +
-> +/* apply pre-divider first if parent is pll6 */
+	reset_desc = gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
 
-Indent here.
-
-ChenYu
-
-> +       if (req->parent_index >= SUN6I_AHB1_PARENT_PLL6)
-> +               req->rate /= req->m + 1;
-> +
-> +       /* clk divider */
-> +       req->rate >>= req->p;
-> +}
-> +
->  /**
->   * sun4i_get_apb1_factors() - calculates m, p factors for APB1
->   * APB1 rate is calculated as follows
-> @@ -555,6 +616,14 @@ static const struct factors_data sun6i_ahb1_data __initconst = {
->         .recalc = sun6i_ahb1_recalc,
->  };
->
-> +static const struct factors_data sun8i_a83t_ahb1_data __initconst = {
-> +       .mux = 12,
-> +       .muxmask = BIT(1) | BIT(0),
-> +       .table = &sun6i_ahb1_config,
-> +       .getter = sun8i_a83t_get_ahb1_factors,
-> +       .recalc = sun8i_a83t_ahb1_recalc,
-> +};
-> +
->  static const struct factors_data sun4i_apb1_data __initconst = {
->         .mux = 24,
->         .muxmask = BIT(1) | BIT(0),
-> @@ -627,6 +696,13 @@ static void __init sun6i_ahb1_clk_setup(struct device_node *node)
->  CLK_OF_DECLARE(sun6i_a31_ahb1, "allwinner,sun6i-a31-ahb1-clk",
->                sun6i_ahb1_clk_setup);
->
-> +static void __init sun8i_a83t_ahb1_clk_setup(struct device_node *node)
-> +{
-> +       sunxi_factors_clk_setup(node, &sun8i_a83t_ahb1_data);
-> +}
-> +CLK_OF_DECLARE(sun8i_a83t_ahb1, "allwinner,sun8i-a83t-ahb1-clk",
-> +              sun8i_a83t_ahb1_clk_setup);
-> +
->  static void __init sun4i_apb1_clk_setup(struct device_node *node)
->  {
->         sunxi_factors_clk_setup(node, &sun4i_apb1_data);
-> --
-> 1.9.1
->
+This will retrieve the GPIO using firmware description (ACPI, DT) if
+available. No need to deal with the GPIO numbers.
