@@ -1,102 +1,117 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 0/8] drivers/pinctrl: remove truly orphaned module code
-Date: Mon, 29 Feb 2016 15:48:36 -0500
-Message-ID: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 4/8] drivers/pinctrl: make sh-pfc/core.c explicitly non-modular
+Date: Tue, 01 Mar 2016 00:00:36 +0200
+Message-ID: <9340534.3KnKPiL8cc@avalon>
+References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com> <1456778924-20730-5-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, Beniamino Galvani <b.galvani@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Carlo Caione <carlo@endlessm.com>, Chen-Yu Tsai <wens@csie.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Hans de Goede <hdegoede@redhat.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Matthias Brugger <matthias.bgg@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Patrice Chotard <patrice.chotard@st.com>, Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Vishnu Patekar <vishnupatekar0510@gmail.com>, linux-arm-kernel@lists.infradead.orgl
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:44047 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752761AbcB2WAb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Feb 2016 17:00:31 -0500
+In-Reply-To: <1456778924-20730-5-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 
-This series of commits is a part of a larger project to ensure
-people don't reference modular support functions in non-modular
-code.  Overall there was roughly 5k lines of dead code in the
-kernel due to this.  So far we've fixed several areas, like tty,
-x86, net, ... and we continue to work on other areas.
+Hi Paul,
 
-There are several reasons to not use module support for code that
-can never be built as a module, but the big ones are:
+Thank you for the patch.
 
- (1) it is easy to accidentally write unused module_exit and remove code
- (2) it can be misleading when reading the source, thinking it can be
-     modular when the Makefile and/or Kconfig prohibit it
- (3) it requires the include of the module.h header file which in turn
-     includes nearly everything else, thus adding to CPP overhead.
- (4) it gets copied/replicated into other code and spreads like weeds.
+On Monday 29 February 2016 15:48:40 Paul Gortmaker wrote:
+> The Kconfig / Makefile currently controlling compilation of this code is:
+> 
+> drivers/pinctrl/sh-pfc/Makefile:obj-$(CONFIG_PINCTRL_SH_PFC)    += sh-pfc.o
+> drivers/pinctrl/sh-pfc/Makefile:sh-pfc-objs                     = core.o
+> pinctrl.o
+> 
+> drivers/pinctrl/sh-pfc/Kconfig:config PINCTRL_SH_PFC
+> drivers/pinctrl/sh-pfc/Kconfig: def_bool y
+> 
+> ...meaning that it currently is not being built as a module by anyone.
+> 
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> 
+> Since module_init already wasn't being used in this code, the init
+> ordering remains unchanged with this commit.
+> 
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> 
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> was (or is now) contained at the top of the file in the comments.
+> 
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-This group represents roughly 1/2 of the pinctrl commits I've got under
-testing locally.  The commonality within this group is that there should
-be zero runtime changes with this series, because none of the drivers
-here deployed a ".remove" field which in turn would cause me to add the
-".suppress_bind_attrs = true," to the driver struct.  Similarly there is
-no change in the initcall ordering either.
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-So hopefully with that in mind it eases review.
-
-I'm happy to have this go in via the maintainer's tree and reduce the
-(large) number of patches I'm carrying locally.
----
-
-Cc: Antoine Tenart <antoine.tenart@free-electrons.com>
-Cc: Beniamino Galvani <b.galvani@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Carlo Caione <carlo@endlessm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Patrice Chotard <patrice.chotard@st.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org
-
-
-Paul Gortmaker (8):
-  drivers/pinctrl: sunxi/pinctrl-sunxi.c does not need module.h
-  drivers/pinctrl: make mediatek/pinctrl-mt6397 driver explicitly non-modular
-  drivers/pinctrl: make meson/pinctrl-meson.c explicitly non-modular
-  drivers/pinctrl: make sh-pfc/core.c explicitly non-modular
-  drivers/pinctrl: make stm32/pinctrl-stm32f429.c explicitly non-modular
-  drivers/pinctrl: make sunxi/pinctrl-sun[4-9]* explicitly non-modular
-  drivers/pinctrl: make sunxi/pinctrl-sun9i-a80-r.c explicitly non-modular
-  drivers/pinctrl: clean up samsung modular vs. non-modular distinctions
-
- drivers/pinctrl/mediatek/pinctrl-mt6397.c    | 10 ++--------
- drivers/pinctrl/meson/pinctrl-meson.c        |  8 +-------
- drivers/pinctrl/samsung/pinctrl-exynos.c     |  1 -
- drivers/pinctrl/samsung/pinctrl-exynos5440.c | 15 +++------------
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c    |  2 +-
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c    |  2 +-
- drivers/pinctrl/samsung/pinctrl-samsung.c    | 12 +-----------
- drivers/pinctrl/sh-pfc/core.c                | 18 ++++--------------
- drivers/pinctrl/stm32/pinctrl-stm32f429.c    |  9 +--------
- drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun5i-a10s.c   |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun5i-a13.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c  | 10 ++--------
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31s.c   |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c  | 11 ++---------
- drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c    | 10 ++--------
- drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c  |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sunxi.c        |  2 +-
- 22 files changed, 39 insertions(+), 152 deletions(-)
+> ---
+>  drivers/pinctrl/sh-pfc/core.c | 18 ++++--------------
+>  1 file changed, 4 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+> index 181ea98a63b7..3f3f904e458b 100644
+> --- a/drivers/pinctrl/sh-pfc/core.c
+> +++ b/drivers/pinctrl/sh-pfc/core.c
+> @@ -1,5 +1,7 @@
+>  /*
+> - * SuperH Pin Function Controller support.
+> + * Pin Control and GPIO driver for SuperH Pin Function Controller.
+> + *
+> + * Authors: Magnus Damm, Paul Mundt, Laurent Pinchart
+>   *
+>   * Copyright (C) 2008 Magnus Damm
+>   * Copyright (C) 2009 - 2012 Paul Mundt
+> @@ -17,7 +19,7 @@
+>  #include <linux/io.h>
+>  #include <linux/ioport.h>
+>  #include <linux/kernel.h>
+> -#include <linux/module.h>
+> +#include <linux/init.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+>  #include <linux/pinctrl/machine.h>
+> @@ -503,7 +505,6 @@ static const struct of_device_id sh_pfc_of_table[] = {
+>  #endif
+>  	{ },
+>  };
+> -MODULE_DEVICE_TABLE(of, sh_pfc_of_table);
+>  #endif
+> 
+>  static int sh_pfc_probe(struct platform_device *pdev)
+> @@ -632,7 +633,6 @@ static const struct platform_device_id sh_pfc_id_table[]
+> = { { "sh-pfc", 0 },
+>  	{ },
+>  };
+> -MODULE_DEVICE_TABLE(platform, sh_pfc_id_table);
+> 
+>  static struct platform_driver sh_pfc_driver = {
+>  	.probe		= sh_pfc_probe,
+> @@ -649,13 +649,3 @@ static int __init sh_pfc_init(void)
+>  	return platform_driver_register(&sh_pfc_driver);
+>  }
+>  postcore_initcall(sh_pfc_init);
+> -
+> -static void __exit sh_pfc_exit(void)
+> -{
+> -	platform_driver_unregister(&sh_pfc_driver);
+> -}
+> -module_exit(sh_pfc_exit);
+> -
+> -MODULE_AUTHOR("Magnus Damm, Paul Mundt, Laurent Pinchart");
+> -MODULE_DESCRIPTION("Pin Control and GPIO driver for SuperH pin function
+> controller"); -MODULE_LICENSE("GPL v2");
 
 -- 
-2.6.1
+Regards,
+
+Laurent Pinchart
+
