@@ -1,66 +1,83 @@
-From: Marek Vasut <marex@denx.de>
-Subject: Re: gpio-altera OF binding discrepancy
-Date: Mon, 29 Feb 2016 17:22:03 +0100
-Message-ID: <56D4702B.1090205@denx.de>
-References: <56D1059C.6090701@denx.de> <1456758924.1035.4.camel@ubuntu>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 3/8] drivers/pinctrl: make meson/pinctrl-meson.c explicitly non-modular
+Date: Mon, 29 Feb 2016 15:48:39 -0500
+Message-ID: <1456778924-20730-4-git-send-email-paul.gortmaker@windriver.com>
+References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:51378 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752771AbcB2Tna (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Feb 2016 14:43:30 -0500
-In-Reply-To: <1456758924.1035.4.camel@ubuntu>
+Received: from mail1.windriver.com ([147.11.146.13]:64988 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753658AbcB2UtX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Feb 2016 15:49:23 -0500
+In-Reply-To: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tien Hock Loh <thloh@altera.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "thloh85@gmail.com" <thloh85@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Beniamino Galvani <b.galvani@gmail.com>, Carlo Caione <carlo@endlessm.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, linux-gpio@vger.kernel.org
 
-On 02/29/2016 04:15 PM, Tien Hock Loh wrote:
-> Hi Marex
+The Kconfig currently controlling compilation of this code is:
 
-Hi Tien!
+drivers/pinctrl/Kconfig:config PINCTRL_MESON
+drivers/pinctrl/Kconfig:        bool
 
-> Yeah, it must've been a typo when I wrote the document, good catch
-> there. Can you help submit a patch to this?
+...meaning that it currently is not being built as a module by anyone.
 
-Sure, I will do shortly (today or tomorrow).
+Lets remove the couple traces of modularity so that when reading the
+driver there is no doubt it is builtin-only.
 
-> Thanks
-> 
-> On Sat, 2016-02-27 at 03:10 +0100, marex@denx.de wrote:
->> Hi!
->>
->> I've just checked linux-4.4 and linux-next and discovered the following
->> issue.
->>
->> The Documentation/devicetree/bindings/gpio/gpio-altera.txt lists OF
->> property altr,interrupt-trigger , which is not used anywhere in the
->> kernel tree.
->>
->> The drivers/gpio/gpio-altera.c on the other hand checks for a mandatory
->> OF property altr,interrupt-type and assigns it into variable
->> altera_gc->interrupt_trigger . Note that if this property is not in the
->> DT, the driver will fail to probe.
->>
->> Clearly, there is a typo between altr,interrupt-trigger and
->> altr,interrupt-type . Since the driver fails to probe if altr,...-type
->> property is not present, there must be users of this variant in the
->> wild. I believe the Documentation/devicetree is a part of DT ABI, so the
->> bindings there should not be randomly changed.
->>
->> In this case, I would propose to change the Documentation though, since
->> any users who try to use altr,...-trigger will have probe failures and
->> fix their DT anyway.
->>
->> Does this make sense ? If so, I will submit a patch .
->>
->> Thanks!
->>
-> 
+Since module_platform_driver() uses the same init level priority as
+builtin_platform_driver() the init ordering remains unchanged with
+this commit.
 
+We don't replace module.h with init.h since the file already has that.
 
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
+is already contained at the top of the file in the comments.
+
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Beniamino Galvani <b.galvani@gmail.com>
+Cc: Carlo Caione <carlo@endlessm.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Antoine Tenart <antoine.tenart@free-electrons.com>
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ drivers/pinctrl/meson/pinctrl-meson.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+index 50cab27c64d4..3dd1a446f6f4 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.c
++++ b/drivers/pinctrl/meson/pinctrl-meson.c
+@@ -49,7 +49,6 @@
+ #include <linux/gpio.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+-#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/pinctrl/pinconf-generic.h>
+@@ -546,7 +545,6 @@ static const struct of_device_id meson_pinctrl_dt_match[] = {
+ 	},
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(of, meson_pinctrl_dt_match);
+ 
+ static int meson_gpiolib_register(struct meson_pinctrl *pc)
+ {
+@@ -754,8 +752,4 @@ static struct platform_driver meson_pinctrl_driver = {
+ 		.of_match_table = meson_pinctrl_dt_match,
+ 	},
+ };
+-module_platform_driver(meson_pinctrl_driver);
+-
+-MODULE_AUTHOR("Beniamino Galvani <b.galvani@gmail.com>");
+-MODULE_DESCRIPTION("Amlogic Meson pinctrl driver");
+-MODULE_LICENSE("GPL v2");
++builtin_platform_driver(meson_pinctrl_driver);
 -- 
-Best regards,
-Marek Vasut
+2.6.1
+
