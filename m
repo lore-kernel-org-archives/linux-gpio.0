@@ -1,140 +1,57 @@
-From: sergk sergk2mail <sergk.admin@gmail.com>
-Subject: Re: [PATCH 3/3] input: gpio_keys: Make use of the device property API
-Date: Mon, 29 Feb 2016 16:24:16 +0000
-Message-ID: <CA+V1LzqX7_r1YuBCHSVLbjmp=6Ra=fi+mnVjNGzNhdvEDgXh2Q@mail.gmail.com>
-References: <1455876982-6743-1-git-send-email-geert+renesas@glider.be>
-	<1455876982-6743-4-git-send-email-geert+renesas@glider.be>
-	<20160222195815.GB28343@dtor-ws>
-	<CA+V1Lzrag5QPAPjjhqp8R6uUG4NPb9sG7axiJoBGk4q=ozXV0w@mail.gmail.com>
-	<20160229081723.GB1770@lahna.fi.intel.com>
+From: Tien Hock Loh <thloh@altera.com>
+Subject: Re: gpio-altera OF binding discrepancy
+Date: Mon, 29 Feb 2016 07:15:24 -0800
+Message-ID: <1456758924.1035.4.camel@ubuntu>
+References: <56D1059C.6090701@denx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20160229081723.GB1770@lahna.fi.intel.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Aaron Lu <aaron.lu@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Vincent Pelletier <plr.vincent@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bl2on0081.outbound.protection.outlook.com ([65.55.169.81]:40576
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751038AbcB2Qrk convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Feb 2016 11:47:40 -0500
+In-Reply-To: <56D1059C.6090701@denx.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "marex@denx.de" <marex@denx.de>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "thloh85@gmail.com" <thloh85@gmail.com>
 
->
-> Both DT and ACPI provide means to assign GPIOs to devices. We can then
-> use Linux APIs to query those. For example getting GPIO with name
-> "reset" is done like:
->
->         struct gpio_desc *reset_desc;
->
->         reset_desc = gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
->
-> This will retrieve the GPIO using firmware description (ACPI, DT) if
-> available. No need to deal with the GPIO numbers.
+Hi Marex
 
-Hi Mika,
-Thanks for reply,
+Yeah, it must've been a typo when I wrote the document, good catch
+there. Can you help submit a patch to this?
 
-But how then to obtain gpio name or if it is possible the list of all
-available names?
-For example decoded ACPI DSDT shows the following:
-how to get gpio name for mentioned in your reply function?
-Does it according below DSDT should be "GPO1" or "INT33FC" or something other?
-Kind regards,
-                       Serge Kolotylo.
+Thanks
 
- Device (TCS5)
-            {
-                Name (_ADR, Zero)  // _ADR: Address
-                Name (_HID, "CHPN0001")  // _HID: Hardware ID
-                Name (_CID, "PNP0C50" /* HID Protocol Device (I2C bus)
-*/)  // _CID: Compatible ID
-                Name (_S0W, Zero)  // _S0W: S0 Device Wake State
-                Name (_DEP, Package (0x02)  // _DEP: Dependencies
-                {
-                    GPO1,
-                    I2C5
-                })
-                Method (_PS3, 0, Serialized)  // _PS3: Power State 3
-                {
-                }
+On Sat, 2016-02-27 at 03:10 +0100, marex@denx.de wrote:
+> Hi!
+> 
+> I've just checked linux-4.4 and linux-next and discovered the following
+> issue.
+> 
+> The Documentation/devicetree/bindings/gpio/gpio-altera.txt lists OF
+> property altr,interrupt-trigger , which is not used anywhere in the
+> kernel tree.
+> 
+> The drivers/gpio/gpio-altera.c on the other hand checks for a mandatory
+> OF property altr,interrupt-type and assigns it into variable
+> altera_gc->interrupt_trigger . Note that if this property is not in the
+> DT, the driver will fail to probe.
+> 
+> Clearly, there is a typo between altr,interrupt-trigger and
+> altr,interrupt-type . Since the driver fails to probe if altr,...-type
+> property is not present, there must be users of this variant in the
+> wild. I believe the Documentation/devicetree is a part of DT ABI, so the
+> bindings there should not be randomly changed.
+> 
+> In this case, I would propose to change the Documentation though, since
+> any users who try to use altr,...-trigger will have probe failures and
+> fix their DT anyway.
+> 
+> Does this make sense ? If so, I will submit a patch .
+> 
+> Thanks!
+> 
 
-                Method (_PS0, 0, Serialized)  // _PS0: Power State 0
-                {
-                    If ((^^^GPO1.AVBL == One))
-                    {
-                        ^^^GPO1.TCD3 = Zero
-                    }
-
-                    Sleep (0x05)
-                    If ((^^^I2C5.PMI1.AVBG == One))
-                    {
-                        ^^^I2C5.PMI1.TCON = One
-                    }
-
-                    Sleep (0x1E)
-                    If ((^^^GPO1.AVBL == One))
-                    {
-                        ^^^GPO1.TCD3 = One
-                    }
-
-                    Sleep (0x78)
-                }
-
-and GPO1 descr
-
-  Device (GPO1)
-        {
-            Name (_ADR, Zero)  // _ADR: Address
-            Name (_HID, "INT33FC" /* Intel Baytrail GPIO Controller
-*/)  // _HID: Hardware ID
-            Name (_CID, "INT33FC" /* Intel Baytrail GPIO Controller
-*/)  // _CID: Compatible ID
-            Name (_DDN, "ValleyView GPNCORE controller")  // _DDN: DOS
-Device Name
-            Name (_UID, 0x02)  // _UID: Unique ID
-            Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
-            {
-                Name (RBUF, ResourceTemplate ()
-                {
-                    Memory32Fixed (ReadWrite,
-                        0xFED0D000,         // Address Base
-                        0x00001000,         // Address Length
-                        )
-                    Interrupt (ResourceConsumer, Level, ActiveLow, Shared, ,, )
-                    {
-                        0x00000030,
-                    }
-                })
-                Return (RBUF) /* \_SB_.GPO1._CRS.RBUF */
-            }
-
-            Name (AVBL, Zero)
-            Method (_REG, 2, NotSerialized)  // _REG: Region Availability
-            {
-                If ((Arg0 == 0x08))
-                {
-                    AVBL = Arg1
-                }
-            }
-
-            OperationRegion (GPOP, GeneralPurposeIo, Zero, 0x0C)
-            Field (GPOP, ByteAcc, NoLock, Preserve)
-            {
-                Connection (
-                    GpioIo (Exclusive, PullDefault, 0x0000, 0x0000,
-IoRestrictionOutputOnly,
-                        "\\_SB.GPO1", 0x00, ResourceConsumer, ,
-                        )
-                        {   // Pin list
-                            0x000F
-                        }
-                ),
-                BST5,   1,
-                Connection (
-                    GpioIo (Exclusive, PullDefault, 0x0000, 0x0000,
-IoRestrictionOutputOnly,
-                        "\\_SB.GPO1", 0x00, ResourceConsumer, ,
-                        )
-                        {   // Pin list
-                            0x001A
-                        }
-                ),
-                TCD3,   1
-            }
