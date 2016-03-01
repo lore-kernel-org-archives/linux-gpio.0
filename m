@@ -1,156 +1,225 @@
-From: Jiang Qiu <qiujiang@huawei.com>
-Subject: Re: [PATCH v4 1/2] gpio: designware: switch device node to fwnode and
- add acpi binding
-Date: Tue, 1 Mar 2016 14:41:42 +0800
-Message-ID: <56D539A6.1080906@huawei.com>
-References: <1456751596-98963-1-git-send-email-qiujiang@huawei.com>
- <1456751596-98963-2-git-send-email-qiujiang@huawei.com>
- <CAHp75Ves-+6pj_LZccxkKugXxJ9NJUwSotSCRf6=aOveBOx=Jg@mail.gmail.com>
-Reply-To: <qiujiang@huawei.com>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v2 01/13] pinctrl: sunxi: Add A83T R_PIO
+ controller support
+Date: Mon, 29 Feb 2016 23:08:55 -0800
+Message-ID: <20160301070855.GH8418@lukather>
+References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1456672738-4993-2-git-send-email-vishnupatekar0510@gmail.com>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from szxga01-in.huawei.com ([58.251.152.64]:46709 "EHLO
-	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751199AbcCAGpY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Mar 2016 01:45:24 -0500
-In-Reply-To: <CAHp75Ves-+6pj_LZccxkKugXxJ9NJUwSotSCRf6=aOveBOx=Jg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="dMyqICaxQaaUjrCL"
+Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBCUA2W3AKGQEG7ELKCQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1456672738-4993-2-git-send-email-vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, corbet-T1hC0tSOHrs@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org, jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, patchesrdh-I1/eAgTnXDYAvxtiuMwx3w@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
 
-=E5=9C=A8 2016/2/29 21:51, Andy Shevchenko =E5=86=99=E9=81=93:
-> On Mon, Feb 29, 2016 at 3:13 PM, qiujiang <qiujiang@huawei.com> wrote=
-:
->> This patch switches device node to fwnode and adds acpi
->> binding. As a result, DT and acpi bingdings are compatible
->> for this driver.
->=20
-> I'm not sure it makes sense to add ACPI binding here. It more logical
-> to me to add them in patch 2/2.
-> And I see that it touches different subsystems.
->=20
->>
->> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
->=20
-> Due to above and Mika's Ack was only to ACPI parts, I think
-> you may be split this also to two and we will have clearly logical se=
-t:
-> 1. Convert to fwnode
-> 2. Add ACPI bindings
-> 3. ACPI event support.
->=20
-> Does it sound okay to you?
->=20
-> If you do that I give my
-> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> to intel_quark_i2c_gpio.c part and
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> to the rest.
->=20
->> Signed-off-by: qiujiang <qiujiang@huawei.com>
->> ---
->>  drivers/gpio/gpio-dwapb.c                | 62 +++++++++++++++++++--=
------------
->>  drivers/mfd/intel_quark_i2c_gpio.c       |  2 +-
->>  include/linux/platform_data/gpio-dwapb.h |  2 +-
->>  3 files changed, 39 insertions(+), 27 deletions(-)
->>
->> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
->> index 597de1e..7a37c65 100644
->> --- a/drivers/gpio/gpio-dwapb.c
->> +++ b/drivers/gpio/gpio-dwapb.c
->> @@ -7,6 +7,7 @@
->>   *
->>   * All enquiries to support@picochip.com
->>   */
->> +#include <linux/acpi.h>
->=20
-> +#include <linux/property.h> instead (see above).
->=20
->>  #include <linux/gpio/driver.h>
->>  /* FIXME: for gpio_get_value(), replace this with direct register r=
-ead */
->>  #include <linux/gpio.h>
->=20
->> @@ -496,18 +492,27 @@ dwapb_gpio_get_pdata_of(struct device *dev)
->>                  * Only port A can provide interrupts in all configu=
-rations of
->>                  * the IP.
->>                  */
->> -               if (pp->idx =3D=3D 0 &&
->> -                   of_property_read_bool(port_np, "interrupt-contro=
-ller")) {
->> -                       pp->irq =3D irq_of_parse_and_map(port_np, 0)=
-;
->> +               if (dev->of_node && pp->idx =3D=3D 0 &&
->> +                       of_property_read_bool(to_of_node(fwnode),
->> +                               "interrupt-controller")) {
->=20
->> +               if (has_acpi_companion(dev) && pp->idx =3D=3D 0)
->> +                       pp->irq =3D platform_get_irq(to_platform_dev=
-ice(dev), 0);
->> +
->=20
-> To patch 2.
->=20
->>                 pp->irq_shared  =3D false;
->>                 pp->gpio_base   =3D -1;
->=20
->> -               pp->name        =3D port_np->full_name;
->> +
->> +               if (dev->of_node)
->> +                       pp->name =3D to_of_node(fwnode)->full_name;
->> +
->=20
-> And here you have to provide something in case of default / built-in
-> device properties.
-Sorry, I'm not very clear here about the case of default / built-in dev=
-ice
-properties, can you give a example about what will the code look like ?
->=20
->=20
->> +               if (has_acpi_companion(dev))
->> +                       pp->name =3D acpi_dev_name(to_acpi_device_no=
-de(fwnode));
->=20
-> To patch 2.
->=20
->>         }
->>
->>         return pdata;
->=20
->> @@ -580,6 +585,12 @@ static const struct of_device_id dwapb_of_match=
-[] =3D {
->>  };
->>  MODULE_DEVICE_TABLE(of, dwapb_of_match);
->>
->> +static const struct acpi_device_id dwapb_acpi_match[] =3D {
->> +       {"HISI0181", 0},
->> +       { }
->> +};
->> +MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
->> +
->>  #ifdef CONFIG_PM_SLEEP
->>  static int dwapb_gpio_suspend(struct device *dev)
->>  {
->> @@ -674,6 +685,7 @@ static struct platform_driver dwapb_gpio_driver =
-=3D {
->>                 .name   =3D "gpio-dwapb",
->>                 .pm     =3D &dwapb_gpio_pm_ops,
->>                 .of_match_table =3D of_match_ptr(dwapb_of_match),
->> +               .acpi_match_table =3D ACPI_PTR(dwapb_acpi_match),
->>         },
->>         .probe          =3D dwapb_gpio_probe,
->>         .remove         =3D dwapb_gpio_remove,
->=20
-> Ditto to the above hunks.
->=20
+--dMyqICaxQaaUjrCL
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hi,
+
+On Sun, Feb 28, 2016 at 11:18:46PM +0800, Vishnu Patekar wrote:
+> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
+> interrupt bit is 6th and A83T has one extra pin PL12.
+> 
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Acked-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> ---
+>  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+>  drivers/pinctrl/sunxi/Kconfig                      |   5 +
+>  drivers/pinctrl/sunxi/Makefile                     |   1 +
+>  drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c       | 119 +++++++++++++++++++++
+>  4 files changed, 126 insertions(+)
+>  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+> index 9213b27..f9ff10b 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+> @@ -20,6 +20,7 @@ Required properties:
+>    "allwinner,sun9i-a80-pinctrl"
+>    "allwinner,sun9i-a80-r-pinctrl"
+>    "allwinner,sun8i-a83t-pinctrl"
+> +  "allwinner,sun8i-a83t-r-pinctrl"
+>    "allwinner,sun8i-h3-pinctrl"
+>  
+>  - reg: Should contain the register physical address and length for the
+> diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
+> index f8dbc8b..eeab50b 100644
+> --- a/drivers/pinctrl/sunxi/Kconfig
+> +++ b/drivers/pinctrl/sunxi/Kconfig
+> @@ -51,6 +51,11 @@ config PINCTRL_SUN8I_A23_R
+>  	depends on RESET_CONTROLLER
+>  	select PINCTRL_SUNXI_COMMON
+>  
+> +config PINCTRL_SUN8I_A83T_R
+> +	def_bool MACH_SUN8I
+> +	depends on RESET_CONTROLLER
+> +	select PINCTRL_SUNXI_COMMON
+> +
+>  config PINCTRL_SUN8I_H3
+>  	def_bool MACH_SUN8I
+>  	select PINCTRL_SUNXI_COMMON
+> diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
+> index ef82f22..bfd4fa0 100644
+> --- a/drivers/pinctrl/sunxi/Makefile
+> +++ b/drivers/pinctrl/sunxi/Makefile
+> @@ -13,6 +13,7 @@ obj-$(CONFIG_PINCTRL_SUN8I_A23)		+= pinctrl-sun8i-a23.o
+>  obj-$(CONFIG_PINCTRL_SUN8I_A23_R)	+= pinctrl-sun8i-a23-r.o
+>  obj-$(CONFIG_PINCTRL_SUN8I_A33)		+= pinctrl-sun8i-a33.o
+>  obj-$(CONFIG_PINCTRL_SUN8I_A83T)	+= pinctrl-sun8i-a83t.o
+> +obj-$(CONFIG_PINCTRL_SUN8I_A83T_R)	+= pinctrl-sun8i-a83t-r.o
+>  obj-$(CONFIG_PINCTRL_SUN8I_H3)		+= pinctrl-sun8i-h3.o
+>  obj-$(CONFIG_PINCTRL_SUN9I_A80)		+= pinctrl-sun9i-a80.o
+>  obj-$(CONFIG_PINCTRL_SUN9I_A80_R)	+= pinctrl-sun9i-a80-r.o
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
+> new file mode 100644
+> index 0000000..11787894
+> --- /dev/null
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
+> @@ -0,0 +1,119 @@
+> +/*
+> + * Allwinner A83T SoCs special pins pinctrl driver.
+> + *
+> + * Copyright (C) 2016 Vishnu Patekar
+> + * Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> + *
+> + * Based on pinctrl-sun8i-a23.c, which is:
+> + * Copyright (C) 2014 Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+> + * Copyright (C) 2014 Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> + *
+> + * This file is licensed under the terms of the GNU General Public
+> + * License version 2.  This program is licensed "as is" without any
+> + * warranty of any kind, whether express or implied.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <linux/reset.h>
+> +
+> +#include "pinctrl-sunxi.h"
+> +
+> +static const struct sunxi_desc_pin sun8i_a83t_r_pins[] = {
+> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SCK */
+> +		  SUNXI_FUNCTION(0x3, "s_twi"),		/* SCK */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),	/* PL_EINT0 */
+> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SDA */
+> +		  SUNXI_FUNCTION(0x3, "s_twi"),		/* SDA */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),	/* PL_EINT1 */
+> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "s_uart"),	/* TX */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)),	/* PL_EINT2 */
+> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 3),
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "s_uart"),	/* RX */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)),	/* PL_EINT3 */
+> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 4),
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* MS */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)),	/* PL_EINT4 */
+> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 5),
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* CK */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 5)),	/* PL_EINT5 */
+> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 6),
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DO */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 6)),	/* PL_EINT6 */
+> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 7),
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DI */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 7)),	/* PL_EINT7 */
+> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 8),
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "s_twi"),		/* SCK */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 8)),	/* PL_EINT8 */
+> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 9),
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "s_twi"),		/* SDA */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),	/* PL_EINT9 */
+> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 10),
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "s_pwm"),
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 10)),	/* PL_EINT10 */
+> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 11),
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)),	/* PL_EINT11 */
+> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 12),
+> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> +		  SUNXI_FUNCTION(0x2, "s_cir"),		/* RX */
+> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)),	/* PL_EINT12 */
+> +};
+> +
+> +static const struct sunxi_pinctrl_desc sun8i_a83t_r_pinctrl_data = {
+> +	.pins = sun8i_a83t_r_pins,
+> +	.npins = ARRAY_SIZE(sun8i_a83t_r_pins),
+> +	.pin_base = PL_BASE,
+> +	.irq_banks = 1,
+> +};
+> +
+> +static int sun8i_a83t_r_pinctrl_probe(struct platform_device *pdev)
+> +{
+> +	return sunxi_pinctrl_init(pdev, &sun8i_a83t_r_pinctrl_data);
+> +}
+> +
+> +static const struct of_device_id sun8i_a83t_r_pinctrl_match[] = {
+> +	{ .compatible = "allwinner,sun8i-a83t-r-pinctrl", },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, sun8i_a83t_r_pinctrl_match);
+> +
+> +static struct platform_driver sun8i_a83t_r_pinctrl_driver = {
+> +	.probe	= sun8i_a83t_r_pinctrl_probe,
+> +	.driver	= {
+> +		.name		= "sun8i-a83t-r-pinctrl",
+> +		.of_match_table	= sun8i_a83t_r_pinctrl_match,
+> +	},
+> +};
+> +module_platform_driver(sun8i_a83t_r_pinctrl_driver);
+
+This can't be compiled as a module, so please use
+builtin_platform_driver instead, and drop the module specific parts:
+MODULE_DEVICE_TABLE and module.h
+
+Thanks!
+Maxime
+
+
+-- 
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+--dMyqICaxQaaUjrCL--
