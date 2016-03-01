@@ -1,63 +1,54 @@
-From: Tien Hock Loh <thloh@altera.com>
-Subject: Re: [PATCH] dt-bindings: gpio: altera: Fix altr,interrupt-type
- property
-Date: Tue, 1 Mar 2016 00:17:57 -0800
-Message-ID: <1456820277.5100.3.camel@ubuntu>
-References: <1456762997-7607-1-git-send-email-marex@denx.de>
-	 <56D4EEE9.3060308@electromag.com.au> <56D4F097.3000105@denx.de>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH 5/8] drivers/pinctrl: make stm32/pinctrl-stm32f429.c
+ explicitly non-modular
+Date: Tue, 1 Mar 2016 10:01:52 +0100
+Message-ID: <CALszF6A4U6fh5Sbb1=JAotmwXcsO6juftTG4rYZnXjH8dbwNxw@mail.gmail.com>
+References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
+	<1456778924-20730-6-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-by2on0099.outbound.protection.outlook.com ([207.46.100.99]:42144
-	"EHLO na01-by2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751036AbcCAISQ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Mar 2016 03:18:16 -0500
-In-Reply-To: <56D4F097.3000105@denx.de>
+Received: from mail-qg0-f68.google.com ([209.85.192.68]:33350 "EHLO
+	mail-qg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751209AbcCAJBx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Mar 2016 04:01:53 -0500
+In-Reply-To: <1456778924-20730-6-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "marex@denx.de" <marex@denx.de>
-Cc: Phil Reid <preid@electromag.com.au>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Patrice Chotard <patrice.chotard@st.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hey Marex, Phil
+2016-02-29 21:48 GMT+01:00 Paul Gortmaker <paul.gortmaker@windriver.com>:
+> The Kconfig currently controlling compilation of this code is:
+>
+> drivers/pinctrl/stm32/Kconfig:config PINCTRL_STM32F429
+> drivers/pinctrl/stm32/Kconfig:  bool "STMicroelectronics STM32F429 pin control" if COMPILE_TEST && !MACH_STM32F429
+>
+> ...meaning that it currently is not being built as a module by anyone.
+>
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+>
+> Since module_init translates to device_initcall in the non-modular
+> case, the init ordering remains unchanged with this commit.
+>
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+>
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> Cc: Patrice Chotard <patrice.chotard@st.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
+>  drivers/pinctrl/stm32/pinctrl-stm32f429.c | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
 
-Sorry for the late reply, something went wrong with my open source mail
-account. 
+Thanks for the patch:
+Acked-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 
-Yes the tool needs to be fixed, we're expecting to fix it once
-socfpga-4.1 LTSi branch is ready to be released. We don't fix it now to
-keep it compatible with the "old and released" socfpga-3.10-ltsi branch.
-
-Thanks
-
-On Tue, 2016-03-01 at 02:29 +0100, marex@denx.de wrote:
-> On 03/01/2016 02:22 AM, Phil Reid wrote:
-> > On 1/03/2016 12:23 AM, Marek Vasut wrote:
-> >> The altr,interrupt-trigger property is not used by the driver.
-> >> Instead, altr,interrupt-type is used by the driver and the driver
-> >> does not probe if this property is not specified. Therefore, it
-> >> is expected that there are no users of the -trigger property in
-> >> the wild and that this is a typo in the documentation for the
-> >> altera-pio controller. This patch fixes the typo.
-> >>
-> > 
-> > On a related note. The Altera QSYS 15.0 device tree tools generate this
-> > label this as altr,interrupt_type
-> 
-> Aaaaaaargh :-(
-> 
-> > Note: '_' instead of '-'.
-> > I've locally patch the driver to look for both names.
-> > Not sure if this is something that should be fixed in the driver or
-> > require user to to post process the generated dts.
-> > 
-> > I haven't reported the issue to Altera either.
-> 
-> It's the tools which should be fixed in this case.
-> 
-> Since mainline does not mention this binding with '_' anywhere, it's not
-> part of ABI and I would really go for fixing the tools in this case.
-> 
-> Thanks for the report!
-
+Regards,
+Maxime
