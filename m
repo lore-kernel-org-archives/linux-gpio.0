@@ -1,62 +1,72 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V8 0/8] Add support for MAXIM MAX77620/MAX20024 PMIC
-Date: Tue, 1 Mar 2016 17:04:16 +0530
-Message-ID: <56D57E38.2060804@nvidia.com>
-References: <1455191794-6065-1-git-send-email-ldewangan@nvidia.com> <20160216160029.GC11400@ulmo.nvidia.com> <56C7EE58.8000905@nvidia.com> <20160225161510.GB1903@ulmo.nvidia.com>
+From: Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH] dt-bindings: gpio: altera: Fix altr,interrupt-type property
+Date: Tue, 01 Mar 2016 14:49:29 +0100
+Message-ID: <56D59DE9.9090206@denx.de>
+References: <1456762997-7607-1-git-send-email-marex@denx.de>	 <56D4EEE9.3060308@electromag.com.au> <56D4F097.3000105@denx.de> <1456820277.5100.3.camel@ubuntu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:14374 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753337AbcCALqx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Mar 2016 06:46:53 -0500
-In-Reply-To: <20160225161510.GB1903@ulmo.nvidia.com>
+Received: from mail-out.m-online.net ([212.18.0.9]:47005 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753745AbcCAO6e (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Mar 2016 09:58:34 -0500
+In-Reply-To: <1456820277.5100.3.camel@ubuntu>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <treding@nvidia.com>
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, k.kozlowski@samsung.com
+To: Tien Hock Loh <thloh@altera.com>
+Cc: Phil Reid <preid@electromag.com.au>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
+On 03/01/2016 09:17 AM, Tien Hock Loh wrote:
+> Hey Marek, Phil
 
-On Thursday 25 February 2016 09:45 PM, Thierry Reding wrote:
-> On Sat, Feb 20, 2016 at 10:10:56AM +0530, Laxman Dewangan wrote:
->> On Tuesday 16 February 2016 09:30 PM, Thierry Reding wrote:
->>> On Thu, Feb 11, 2016 at 05:26:26PM +0530, Laxman Dewangan wrote:
->>>> Add SW support for MAXIM Semiconductor's Power Management
->>>> IC (PMIC) MAX77620/MAX20024. This PMIC supports DC-DC/LDOS, GPIOs,
->>>> RTC, watchdog, clocks etc.
->>> Hi Laxman,
+Hi Tien,
+
+> Sorry for the late reply, something went wrong with my open source mail
+> account. 
+
+No problem.
+
+> Yes the tool needs to be fixed, we're expecting to fix it once
+> socfpga-4.1 LTSi branch is ready to be released. We don't fix it now to
+> keep it compatible with the "old and released" socfpga-3.10-ltsi branch.
+
+You can patch the old and released branch to support both bindings :)
+
+> Thanks
+> 
+> On Tue, 2016-03-01 at 02:29 +0100, marex@denx.de wrote:
+>> On 03/01/2016 02:22 AM, Phil Reid wrote:
+>>> On 1/03/2016 12:23 AM, Marek Vasut wrote:
+>>>> The altr,interrupt-trigger property is not used by the driver.
+>>>> Instead, altr,interrupt-type is used by the driver and the driver
+>>>> does not probe if this property is not specified. Therefore, it
+>>>> is expected that there are no users of the -trigger property in
+>>>> the wild and that this is a typo in the documentation for the
+>>>> altera-pio controller. This patch fixes the typo.
+>>>>
 >>>
->>> This series is starting to look pretty good. Do you have patches in the
->>> works to add the corresponding DT content for the various boards that we
->>> support? I think the Jetson TX1 patch would be most interesting since
->>> that's what people can get their hands on.
+>>> On a related note. The Altera QSYS 15.0 device tree tools generate this
+>>> label this as altr,interrupt_type
+>>
+>> Aaaaaaargh :-(
+>>
+>>> Note: '_' instead of '-'.
+>>> I've locally patch the driver to look for both names.
+>>> Not sure if this is something that should be fixed in the driver or
+>>> require user to to post process the generated dts.
 >>>
->> Yes, I am just waiting for this series to be concluded and applied. Once it
->> is done, I will immediately post the patches to enable this driver in config
->> and dt entry for the Jetson-TX1.
-> Why hold back on the patches? I'm currently having trouble testing
-> your stash here on Jetson TX1 and I suspect that I'm using the wrong
-> device tree content (it was derived from downstream many moons ago).
-> There's nothing wrong with posting patches that depend on patches on
-> the list. Typically you'd note the dependency in the cover letter to
-> make it easier for people to find what belongs together.
->
-
-OK, posted patches as:
-
-[PATCH 2/2] arm64: tegra: Jetson-TX1: Add DT entry for system PMIC MAX77620
-[PATCH 1/2] arm64: tegra: Add DT entry for keys used in Jetson-TX1
-[PATCH 1/1] arm64: defconfig: Enable Maxim PMIC max77620 config
-
-Currently, the execution is crashing with this series + above patches as 
-MFD_CELLS are not correctly defined.
-Discussion is going on with patch from Rhyland Klein
-[PATCH] mfd: Fix MACRO for commonly declared MFD cell attributes
-
-Once MFD_CELL defines get fixed, either series need to be revisit or 
-automatically fix the issue.
+>>> I haven't reported the issue to Altera either.
+>>
+>> It's the tools which should be fixed in this case.
+>>
+>> Since mainline does not mention this binding with '_' anywhere, it's not
+>> part of ABI and I would really go for fixing the tools in this case.
+>>
+>> Thanks for the report!
+> 
 
 
-
-
+-- 
+Best regards,
+Marek Vasut
