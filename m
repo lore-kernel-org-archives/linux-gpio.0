@@ -1,84 +1,73 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v2 13/13] ARM: sunxi: Introduce
- MACH_SUN8I_A83T option
-Date: Mon, 29 Feb 2016 23:12:53 -0800
-Message-ID: <20160301071253.GI8418@lukather>
-References: <1456672738-4993-1-git-send-email-vishnupatekar0510@gmail.com>
- <1456672738-4993-14-git-send-email-vishnupatekar0510@gmail.com>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH 1/8] drivers/pinctrl: sunxi/pinctrl-sunxi.c does not need
+ module.h
+Date: Mon, 29 Feb 2016 23:13:44 -0800
+Message-ID: <20160301071344.GJ8418@lukather>
+References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
+ <1456778924-20730-2-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nEsDIrWrg+hrB7l1"
-Return-path: <linux-sunxi+bncBD2ZNBF5VYJRB6EB2W3AKGQE34WKULA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="ibvzjYYg+QDzMCy1"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:57299 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750823AbcCAHNs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Mar 2016 02:13:48 -0500
 Content-Disposition: inline
-In-Reply-To: <1456672738-4993-14-git-send-email-vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, corbet-T1hC0tSOHrs@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org, jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, patchesrdh-I1/eAgTnXDYAvxtiuMwx3w@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1456778924-20730-2-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
---nEsDIrWrg+hrB7l1
-Content-Type: text/plain; charset=UTF-8
+
+--ibvzjYYg+QDzMCy1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Feb 29, 2016 at 03:48:37PM -0500, Paul Gortmaker wrote:
+> This file is not modular, nor is it using modular functions. The
+> only thing close is the global THIS_MODULE which comes from export.h
+> so lets replace it appropriately and cut back on the amount of
+> header stuff we draw in by several thousand lines.
+>=20
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-On Sun, Feb 28, 2016 at 11:18:58PM +0800, Vishnu Patekar wrote:
-> A83T has CPUS clock similar to A80's. currently, a80 cpus clock only
-> compiled for A80. So, Introduce MACH_SUN8I_A83T to compile it for
-> A83T as well.
-> 
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  arch/arm/mach-sunxi/Kconfig | 5 +++++
->  drivers/clk/sunxi/Makefile  | 3 +++
->  2 files changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
-> index c124d65..424b76d 100644
-> --- a/arch/arm/mach-sunxi/Kconfig
-> +++ b/arch/arm/mach-sunxi/Kconfig
-> @@ -41,6 +41,11 @@ config MACH_SUN8I
->  	select ARM_GIC
->  	select MFD_SUN6I_PRCM
->  
-> +config MACH_SUN8I_A83T
-> +	bool "Allwinner A83T (sun8i) SoCs support"
-> +	default ARCH_SUNXI
-> +	select ARM_GIC
-> +
->  config MACH_SUN9I
->  	bool "Allwinner (sun9i) SoCs support"
->  	default ARCH_SUNXI
-> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-> index 3fd7901..2aabfc4 100644
-> --- a/drivers/clk/sunxi/Makefile
-> +++ b/drivers/clk/sunxi/Makefile
-> @@ -20,6 +20,9 @@ obj-y += clk-usb.o
->  obj-$(CONFIG_MACH_SUN9I) += clk-sun8i-apb0.o
->  obj-$(CONFIG_MACH_SUN9I) += clk-sun9i-cpus.o
->  
-> +obj-$(CONFIG_MACH_SUN8I_A83T) += clk-sun8i-apb0.o
-> +obj-$(CONFIG_MACH_SUN8I_A83T) += clk-sun9i-cpus.o
-> +
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-This is not how it should be done. You should rather create a Kconfig
-option for these clocks, and use def_bool CONFIG_MACH_SUN8I || CONFIG_MACH_SUN9I
-
-Switching to Kconfig for the clocks has been on my todo-list for quite
-some time, I guess these two clocks would be a good start.
-
-Thanks!
+Thanks,
 Maxime
 
--- 
+--=20
 Maxime Ripard, Free Electrons
 Embedded Linux, Kernel and Android engineering
 http://free-electrons.com
---nEsDIrWrg+hrB7l1--
+
+--ibvzjYYg+QDzMCy1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJW1UEoAAoJEBx+YmzsjxAg2R0P+wZV6J4pekSq/O+Y/Bv84LZf
+dr0s6taTwy0dQjlF6zqTqWuYkLC8dHcm7MUMfky/dhYY38achceSA/9VgZ8uBqk+
+6T2FZyvMOeQAVBZE5NR+bWwl1+evx6Gw5eR7QsmwtTo5/1JODFf88bLqO/79FwXd
+V22hT6A7qhD8J2lKm/dW0lXgGq98Ow4fVU94V1JRC+ZVe5keunfSb1XvF12ahjVQ
+PrVhy2sk/YD8OCtX5pq3nxaaUG7Pg8hbY5ChM0Zu4LmiOv7C9GkDUeCn22MPCLBd
+mRbbFqazQqMT8quP8M0MZUncxGXTNdwOySnyzEkjVVCIoeDfE1Mo0dfFSXpCvVjh
+BL5K3WR83CcRbNa5i30+s3GqlShG/SS9/hAdb3D+vEAD6t+nb9kHFbvTWPGAjEuK
+wW0Ji5fvpEiF4YO43849BLWDk5a8PzxBKOE8rvFjw1cuzfJ0nvNNfNgGYGHf7I4g
+rBSxTwCgAAKrozZ/Zot6V6tCE3qWpdp1Eu+Ix8eClhPliPcbhxk6/CIi7bzjzMvO
+koPbeMcnfH02/Ao7OhER+IV7XRyivlTGlmI8LttjMcBRwWVu2T+B4YAWEkKIsJLX
+X/lMc058g1+tYhtmdibCT336U0eRBkmvkph6tFL+qAIIbeb7fVIIJqIVKu4RnPIh
+LaIPgoE5UJoSsvjX7Mq/
+=iFvr
+-----END PGP SIGNATURE-----
+
+--ibvzjYYg+QDzMCy1--
