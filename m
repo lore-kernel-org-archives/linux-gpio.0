@@ -1,127 +1,156 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: [PATCH 1/1] gpio: mcp23s08: Add support for mcp23s18.
-Date: Tue,  1 Mar 2016 14:25:41 +0800
-Message-ID: <1456813541-74321-2-git-send-email-preid@electromag.com.au>
-References: <1456813541-74321-1-git-send-email-preid@electromag.com.au>
+From: Jiang Qiu <qiujiang@huawei.com>
+Subject: Re: [PATCH v4 1/2] gpio: designware: switch device node to fwnode and
+ add acpi binding
+Date: Tue, 1 Mar 2016 14:41:42 +0800
+Message-ID: <56D539A6.1080906@huawei.com>
+References: <1456751596-98963-1-git-send-email-qiujiang@huawei.com>
+ <1456751596-98963-2-git-send-email-qiujiang@huawei.com>
+ <CAHp75Ves-+6pj_LZccxkKugXxJ9NJUwSotSCRf6=aOveBOx=Jg@mail.gmail.com>
+Reply-To: <qiujiang@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 203-59-230-133.perm.iinet.net.au ([203.59.230.133]:63999 "EHLO
-	preid-centos7.electromag.com.au" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750816AbcCAGf1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Mar 2016 01:35:27 -0500
-In-Reply-To: <1456813541-74321-1-git-send-email-preid@electromag.com.au>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:46709 "EHLO
+	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751199AbcCAGpY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Mar 2016 01:45:24 -0500
+In-Reply-To: <CAHp75Ves-+6pj_LZccxkKugXxJ9NJUwSotSCRf6=aOveBOx=Jg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Phil Reid <preid@electromag.com.au>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
 
-This patch adds support for the mcp23s18 which is very similar to
-the mcp23s17. A couple of control bits are not the same.
-Notable IOCON_HAEN (s17 only) & IOCON_INTCC. Which can be ignored.
+=E5=9C=A8 2016/2/29 21:51, Andy Shevchenko =E5=86=99=E9=81=93:
+> On Mon, Feb 29, 2016 at 3:13 PM, qiujiang <qiujiang@huawei.com> wrote=
+:
+>> This patch switches device node to fwnode and adds acpi
+>> binding. As a result, DT and acpi bingdings are compatible
+>> for this driver.
+>=20
+> I'm not sure it makes sense to add ACPI binding here. It more logical
+> to me to add them in patch 2/2.
+> And I see that it touches different subsystems.
+>=20
+>>
+>> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>=20
+> Due to above and Mika's Ack was only to ACPI parts, I think
+> you may be split this also to two and we will have clearly logical se=
+t:
+> 1. Convert to fwnode
+> 2. Add ACPI bindings
+> 3. ACPI event support.
+>=20
+> Does it sound okay to you?
+>=20
+> If you do that I give my
+> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> to intel_quark_i2c_gpio.c part and
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> to the rest.
+>=20
+>> Signed-off-by: qiujiang <qiujiang@huawei.com>
+>> ---
+>>  drivers/gpio/gpio-dwapb.c                | 62 +++++++++++++++++++--=
+-----------
+>>  drivers/mfd/intel_quark_i2c_gpio.c       |  2 +-
+>>  include/linux/platform_data/gpio-dwapb.h |  2 +-
+>>  3 files changed, 39 insertions(+), 27 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+>> index 597de1e..7a37c65 100644
+>> --- a/drivers/gpio/gpio-dwapb.c
+>> +++ b/drivers/gpio/gpio-dwapb.c
+>> @@ -7,6 +7,7 @@
+>>   *
+>>   * All enquiries to support@picochip.com
+>>   */
+>> +#include <linux/acpi.h>
+>=20
+> +#include <linux/property.h> instead (see above).
+>=20
+>>  #include <linux/gpio/driver.h>
+>>  /* FIXME: for gpio_get_value(), replace this with direct register r=
+ead */
+>>  #include <linux/gpio.h>
+>=20
+>> @@ -496,18 +492,27 @@ dwapb_gpio_get_pdata_of(struct device *dev)
+>>                  * Only port A can provide interrupts in all configu=
+rations of
+>>                  * the IP.
+>>                  */
+>> -               if (pp->idx =3D=3D 0 &&
+>> -                   of_property_read_bool(port_np, "interrupt-contro=
+ller")) {
+>> -                       pp->irq =3D irq_of_parse_and_map(port_np, 0)=
+;
+>> +               if (dev->of_node && pp->idx =3D=3D 0 &&
+>> +                       of_property_read_bool(to_of_node(fwnode),
+>> +                               "interrupt-controller")) {
+>=20
+>> +               if (has_acpi_companion(dev) && pp->idx =3D=3D 0)
+>> +                       pp->irq =3D platform_get_irq(to_platform_dev=
+ice(dev), 0);
+>> +
+>=20
+> To patch 2.
+>=20
+>>                 pp->irq_shared  =3D false;
+>>                 pp->gpio_base   =3D -1;
+>=20
+>> -               pp->name        =3D port_np->full_name;
+>> +
+>> +               if (dev->of_node)
+>> +                       pp->name =3D to_of_node(fwnode)->full_name;
+>> +
+>=20
+> And here you have to provide something in case of default / built-in
+> device properties.
+Sorry, I'm not very clear here about the case of default / built-in dev=
+ice
+properties, can you give a example about what will the code look like ?
+>=20
+>=20
+>> +               if (has_acpi_companion(dev))
+>> +                       pp->name =3D acpi_dev_name(to_acpi_device_no=
+de(fwnode));
+>=20
+> To patch 2.
+>=20
+>>         }
+>>
+>>         return pdata;
+>=20
+>> @@ -580,6 +585,12 @@ static const struct of_device_id dwapb_of_match=
+[] =3D {
+>>  };
+>>  MODULE_DEVICE_TABLE(of, dwapb_of_match);
+>>
+>> +static const struct acpi_device_id dwapb_acpi_match[] =3D {
+>> +       {"HISI0181", 0},
+>> +       { }
+>> +};
+>> +MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
+>> +
+>>  #ifdef CONFIG_PM_SLEEP
+>>  static int dwapb_gpio_suspend(struct device *dev)
+>>  {
+>> @@ -674,6 +685,7 @@ static struct platform_driver dwapb_gpio_driver =
+=3D {
+>>                 .name   =3D "gpio-dwapb",
+>>                 .pm     =3D &dwapb_gpio_pm_ops,
+>>                 .of_match_table =3D of_match_ptr(dwapb_of_match),
+>> +               .acpi_match_table =3D ACPI_PTR(dwapb_acpi_match),
+>>         },
+>>         .probe          =3D dwapb_gpio_probe,
+>>         .remove         =3D dwapb_gpio_remove,
+>=20
+> Ditto to the above hunks.
+>=20
 
-Patch changes the following:
-- Add mcp23s18 types.
-- Always set mirror bit if the dts defines mcp23s18. regardless of type.
-  Mirror bit is ignored on 8 bit devices anyway.
-- In mcp23s08_probe use chip.ngpio instead of logic based on type
-  to determine number of gpio lins to increment by. This is set
-  appropiately by the call to mcp23s08_probe_one.
-- Add mcp23s18 to device tree documentation.
-- Remove statement that irqs don't work for spi. They do.
-  Tested with mcp23s18.
-
-Signed-off-by: Phil Reid <preid@electromag.com.au>
----
- .../devicetree/bindings/gpio/gpio-mcp23s08.txt        |  4 +---
- drivers/gpio/gpio-mcp23s08.c                          | 19 +++++++++++++++----
- 2 files changed, 16 insertions(+), 7 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-index f3332b9..c934106 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-@@ -10,6 +10,7 @@ Required properties:
- 
-     - "microchip,mcp23s08" for  8 GPIO SPI version
-     - "microchip,mcp23s17" for 16 GPIO SPI version
-+    - "microchip,mcp23s18" for 16 GPIO SPI version
-     - "microchip,mcp23008" for  8 GPIO I2C version or
-     - "microchip,mcp23017" for 16 GPIO I2C version of the chip
-     NOTE: Do not use the old mcp prefix any more. It is deprecated and will be
-@@ -43,9 +44,6 @@ Optional properties:
-   - first cell is the pin number
-   - second cell is used to specify flags.
- - interrupt-controller: Marks the device node as a interrupt controller.
--NOTE: The interrupt functionality is only supported for i2c versions of the
--chips. The spi chips can also do the interrupts, but this is not supported by
--the linux driver yet.
- 
- Optional device specific properties:
- - microchip,irq-mirror: Sets the mirror flag in the IOCON register. Devices
-diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-index c767879..72521d9 100644
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@ -31,6 +31,7 @@
- #define MCP_TYPE_S17	1
- #define MCP_TYPE_008	2
- #define MCP_TYPE_017	3
-+#define MCP_TYPE_S18    4
- 
- /* Registers are all 8 bits wide.
-  *
-@@ -617,6 +618,12 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 		mcp->chip.ngpio = 16;
- 		mcp->chip.label = "mcp23s17";
- 		break;
-+
-+	case MCP_TYPE_S18:
-+		mcp->ops = &mcp23s17_ops;
-+		mcp->chip.ngpio = 16;
-+		mcp->chip.label = "mcp23s18";
-+		break;
- #endif /* CONFIG_SPI_MASTER */
- 
- #if IS_ENABLED(CONFIG_I2C)
-@@ -657,8 +664,7 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 			of_property_read_bool(mcp->chip.parent->of_node,
- 					      "microchip,irq-active-high");
- 
--		if (type == MCP_TYPE_017)
--			mirror = pdata->mirror;
-+		mirror = pdata->mirror;
- 	}
- 
- 	if ((status & IOCON_SEQOP) || !(status & IOCON_HAEN) || mirror ||
-@@ -735,6 +741,10 @@ static const struct of_device_id mcp23s08_spi_of_match[] = {
- 		.compatible = "microchip,mcp23s17",
- 		.data = (void *) MCP_TYPE_S17,
- 	},
-+	{
-+		.compatible = "microchip,mcp23s18",
-+		.data = (void *) MCP_TYPE_S18,
-+	},
- /* NOTE: The use of the mcp prefix is deprecated and will be removed. */
- 	{
- 		.compatible = "mcp,mcp23s08",
-@@ -969,8 +979,8 @@ static int mcp23s08_probe(struct spi_device *spi)
- 			goto fail;
- 
- 		if (pdata->base != -1)
--			pdata->base += (type == MCP_TYPE_S17) ? 16 : 8;
--		ngpio += (type == MCP_TYPE_S17) ? 16 : 8;
-+			pdata->base += data->mcp[addr]->chip.ngpio;
-+		ngpio += data->mcp[addr]->chip.ngpio;
- 	}
- 	data->ngpio = ngpio;
- 
-@@ -1012,6 +1022,7 @@ static int mcp23s08_remove(struct spi_device *spi)
- static const struct spi_device_id mcp23s08_ids[] = {
- 	{ "mcp23s08", MCP_TYPE_S08 },
- 	{ "mcp23s17", MCP_TYPE_S17 },
-+	{ "mcp23s18", MCP_TYPE_S18 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(spi, mcp23s08_ids);
--- 
-1.8.3.1
-
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
