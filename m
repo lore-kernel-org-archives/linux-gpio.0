@@ -1,45 +1,62 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V8 3/8] pinctrl: add DT binding doc for pincontrol of
- PMIC max77620/max20024
-Date: Tue, 1 Mar 2016 15:07:31 +0530
-Message-ID: <56D562DB.6020008@nvidia.com>
-References: <1455191794-6065-1-git-send-email-ldewangan@nvidia.com>	<1455191794-6065-4-git-send-email-ldewangan@nvidia.com> <CACRpkdZGNRJK4okMFdVS0JFyWC+Rnwpi8ms06oXrbtAe1MjR=g@mail.gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH V8 0/8] Add support for MAXIM MAX77620/MAX20024 PMIC
+Date: Tue, 1 Mar 2016 17:04:16 +0530
+Message-ID: <56D57E38.2060804@nvidia.com>
+References: <1455191794-6065-1-git-send-email-ldewangan@nvidia.com> <20160216160029.GC11400@ulmo.nvidia.com> <56C7EE58.8000905@nvidia.com> <20160225161510.GB1903@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZGNRJK4okMFdVS0JFyWC+Rnwpi8ms06oXrbtAe1MjR=g@mail.gmail.com>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?B?UGF3ZcWCIE1vbGw=?= <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dzaw==?= =?UTF-8?B?aQ==?= <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14374 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753337AbcCALqx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Mar 2016 06:46:53 -0500
+In-Reply-To: <20160225161510.GB1903@ulmo.nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thierry Reding <treding@nvidia.com>
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, k.kozlowski@samsung.com
 
-Hi Linus,
 
-On Tuesday 16 February 2016 04:46 AM, Linus Walleij wrote:
-> On Thu, Feb 11, 2016 at 12:56 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On Thursday 25 February 2016 09:45 PM, Thierry Reding wrote:
+> On Sat, Feb 20, 2016 at 10:10:56AM +0530, Laxman Dewangan wrote:
+>> On Tuesday 16 February 2016 09:30 PM, Thierry Reding wrote:
+>>> On Thu, Feb 11, 2016 at 05:26:26PM +0530, Laxman Dewangan wrote:
+>>>> Add SW support for MAXIM Semiconductor's Power Management
+>>>> IC (PMIC) MAX77620/MAX20024. This PMIC supports DC-DC/LDOS, GPIOs,
+>>>> RTC, watchdog, clocks etc.
+>>> Hi Laxman,
+>>>
+>>> This series is starting to look pretty good. Do you have patches in the
+>>> works to add the corresponding DT content for the various boards that we
+>>> support? I think the Jetson TX1 patch would be most interesting since
+>>> that's what people can get their hands on.
+>>>
+>> Yes, I am just waiting for this series to be concluded and applied. Once it
+>> is done, I will immediately post the patches to enable this driver in config
+>> and dt entry for the Jetson-TX1.
+> Why hold back on the patches? I'm currently having trouble testing
+> your stash here on Jetson TX1 and I suspect that I'm using the wrong
+> device tree content (it was derived from downstream many moons ago).
+> There's nothing wrong with posting patches that depend on patches on
+> the list. Typically you'd note the dependency in the cover letter to
+> make it easier for people to find what belongs together.
 >
->> Maxim Semiconductor's PMIC MAX77620/MAX20024 has 8 GPIO pins
->> which act as GPIO as well as special function mode.
->>
->> Add DT binding document to configure pins in function mode as
->> well as pin configuration parameters.
->>
->> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->
->
-I saw that regulator driver is merged in regulator subsystem by Mark 
-Brown. So I think  patches can go on their individual subsystem. The 
-config for these driver depends on the MFD and hence it will not build.
 
-Also the common header file is part of mfd subsystem and other patches 
-will not touch this so no conflict on the drivers.
+OK, posted patches as:
 
-Same for max77620 GPIO patch also.
+[PATCH 2/2] arm64: tegra: Jetson-TX1: Add DT entry for system PMIC MAX77620
+[PATCH 1/2] arm64: tegra: Add DT entry for keys used in Jetson-TX1
+[PATCH 1/1] arm64: defconfig: Enable Maxim PMIC max77620 config
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Currently, the execution is crashing with this series + above patches as 
+MFD_CELLS are not correctly defined.
+Discussion is going on with patch from Rhyland Klein
+[PATCH] mfd: Fix MACRO for commonly declared MFD cell attributes
+
+Once MFD_CELL defines get fixed, either series need to be revisit or 
+automatically fix the issue.
+
+
+
+
