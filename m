@@ -1,72 +1,39 @@
-From: Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH] dt-bindings: gpio: altera: Fix altr,interrupt-type property
-Date: Tue, 01 Mar 2016 14:49:29 +0100
-Message-ID: <56D59DE9.9090206@denx.de>
-References: <1456762997-7607-1-git-send-email-marex@denx.de>	 <56D4EEE9.3060308@electromag.com.au> <56D4F097.3000105@denx.de> <1456820277.5100.3.camel@ubuntu>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.9]:47005 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753745AbcCAO6e (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Mar 2016 09:58:34 -0500
-In-Reply-To: <1456820277.5100.3.camel@ubuntu>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH] pinctrl: sh-pfc: core: don't open code of_device_get_match_data()
+Date: Tue,  1 Mar 2016 17:38:46 +0100
+Message-ID: <1456850332-8432-1-git-send-email-wsa@the-dreams.de>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tien Hock Loh <thloh@altera.com>
-Cc: Phil Reid <preid@electromag.com.au>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On 03/01/2016 09:17 AM, Tien Hock Loh wrote:
-> Hey Marek, Phil
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Hi Tien,
+This change will also make Coverity happy by avoiding a theoretical NULL
+pointer dereference; yet another reason is to use the above helper function
+to tighten the code and make it more readable.
 
-> Sorry for the late reply, something went wrong with my open source mail
-> account. 
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-No problem.
+Tested on a Lager board.
 
-> Yes the tool needs to be fixed, we're expecting to fix it once
-> socfpga-4.1 LTSi branch is ready to be released. We don't fix it now to
-> keep it compatible with the "old and released" socfpga-3.10-ltsi branch.
+ drivers/pinctrl/sh-pfc/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You can patch the old and released branch to support both bindings :)
-
-> Thanks
-> 
-> On Tue, 2016-03-01 at 02:29 +0100, marex@denx.de wrote:
->> On 03/01/2016 02:22 AM, Phil Reid wrote:
->>> On 1/03/2016 12:23 AM, Marek Vasut wrote:
->>>> The altr,interrupt-trigger property is not used by the driver.
->>>> Instead, altr,interrupt-type is used by the driver and the driver
->>>> does not probe if this property is not specified. Therefore, it
->>>> is expected that there are no users of the -trigger property in
->>>> the wild and that this is a typo in the documentation for the
->>>> altera-pio controller. This patch fixes the typo.
->>>>
->>>
->>> On a related note. The Altera QSYS 15.0 device tree tools generate this
->>> label this as altr,interrupt_type
->>
->> Aaaaaaargh :-(
->>
->>> Note: '_' instead of '-'.
->>> I've locally patch the driver to look for both names.
->>> Not sure if this is something that should be fixed in the driver or
->>> require user to to post process the generated dts.
->>>
->>> I haven't reported the issue to Altera either.
->>
->> It's the tools which should be fixed in this case.
->>
->> Since mainline does not mention this binding with '_' anywhere, it's not
->> part of ABI and I would really go for fixing the tools in this case.
->>
->> Thanks for the report!
-> 
-
-
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index 181ea98a63b7ab..cd42d32791e3b7 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -518,7 +518,7 @@ static int sh_pfc_probe(struct platform_device *pdev)
+ 
+ #ifdef CONFIG_OF
+ 	if (np)
+-		info = of_match_device(sh_pfc_of_table, &pdev->dev)->data;
++		info = of_device_get_match_data(&pdev->dev);
+ 	else
+ #endif
+ 		info = platid ? (const void *)platid->driver_data : NULL;
 -- 
-Best regards,
-Marek Vasut
+2.7.0
