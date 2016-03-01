@@ -1,54 +1,58 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH 5/8] drivers/pinctrl: make stm32/pinctrl-stm32f429.c
- explicitly non-modular
-Date: Tue, 1 Mar 2016 10:01:52 +0100
-Message-ID: <CALszF6A4U6fh5Sbb1=JAotmwXcsO6juftTG4rYZnXjH8dbwNxw@mail.gmail.com>
-References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
-	<1456778924-20730-6-git-send-email-paul.gortmaker@windriver.com>
+From: Phil Elwell <phil@raspberrypi.org>
+Subject: Re: [PATCH] pinctrl-bcm2835: Fix cut-and-paste error in "pull" parsing
+Date: Tue, 1 Mar 2016 09:13:01 +0000
+Message-ID: <56D55D1D.8090701@raspberrypi.org>
+References: <1456795808-1449-1-git-send-email-eric@anholt.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qg0-f68.google.com ([209.85.192.68]:33350 "EHLO
-	mail-qg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751209AbcCAJBx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Mar 2016 04:01:53 -0500
-In-Reply-To: <1456778924-20730-6-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1456795808-1449-1-git-send-email-eric@anholt.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Eric Anholt <eric@anholt.net>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Patrice Chotard <patrice.chotard@st.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-2016-02-29 21:48 GMT+01:00 Paul Gortmaker <paul.gortmaker@windriver.com>:
-> The Kconfig currently controlling compilation of this code is:
+On 01/03/2016 01:30, Eric Anholt wrote:
+> From: Phil Elwell <phil@raspberrypi.org>
 >
-> drivers/pinctrl/stm32/Kconfig:config PINCTRL_STM32F429
-> drivers/pinctrl/stm32/Kconfig:  bool "STMicroelectronics STM32F429 pin control" if COMPILE_TEST && !MACH_STM32F429
+> The DT bindings for pinctrl-bcm2835 allow both the function and pull
+> to contain either one entry or one per pin. However, an error in the
+> DT parsing can cause failures if the number of pulls differs from the
+> number of functions.
 >
-> ...meaning that it currently is not being built as a module by anyone.
->
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
->
-> Since module_init translates to device_initcall in the non-modular
-> case, the init ordering remains unchanged with this commit.
->
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> is already contained at the top of the file in the comments.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Patrice Chotard <patrice.chotard@st.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Cc: stable@vger.kernel.org
 > ---
->  drivers/pinctrl/stm32/pinctrl-stm32f429.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
-
-Thanks for the patch:
-Acked-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-
-Regards,
-Maxime
+>
+> Yes, the s-o-b differs from the author of the commit, but this falls
+> under part b) of the process.
+>
+> Phil, any chance you could start putting Signed-off-by lines on your
+> kernel commits?
+>
+>  drivers/pinctrl/bcm/pinctrl-bcm2835.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> index 0f5997c..08b1d93 100644
+> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> @@ -779,7 +779,7 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+>  		}
+>  		if (num_pulls) {
+>  			err = of_property_read_u32_index(np, "brcm,pull",
+> -					(num_funcs > 1) ? i : 0, &pull);
+> +					(num_pulls > 1) ? i : 0, &pull);
+>  			if (err)
+>  				goto out;
+>  			err = bcm2835_pctl_dt_node_to_map_pull(pc, np, pin,
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
