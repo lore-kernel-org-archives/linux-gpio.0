@@ -1,39 +1,91 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH] pinctrl: sh-pfc: core: don't open code of_device_get_match_data()
-Date: Tue,  1 Mar 2016 17:38:46 +0100
-Message-ID: <1456850332-8432-1-git-send-email-wsa@the-dreams.de>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+From: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 2/8] drivers/pinctrl: make mediatek/pinctrl-mt6397
+ driver explicitly non-modular
+Date: Tue, 1 Mar 2016 12:02:01 -0800
+Message-ID: <1456862521.13127.1.camel@mussux00>
+References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
+ <1456778924-20730-3-git-send-email-paul.gortmaker@windriver.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1456778924-20730-3-git-send-email-paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Cc: biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, eddie.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Mon, 2016-02-29 at 15:48 -0500, Paul Gortmaker wrote:
+> The Kconfig for this driver is currently:
+> 
+> config PINCTRL_MT6397
+>         bool "Mediatek MT6397 pin control" if COMPILE_TEST && !MFD_MT6397
+> 
+> ...meaning that it is currently not being built as a module by anyone.
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> 
+> Since module_init translates to device_initcall in the non-modular
+> case, the init ordering remains unchanged with this commit.
+> 
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+> 
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> 
+> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+> ---
+>  drivers/pinctrl/mediatek/pinctrl-mt6397.c | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt6397.c b/drivers/pinctrl/mediatek/pinctrl-mt6397.c
+> index f9751ae28e32..6eccb85c02cd 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mt6397.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mt6397.c
+> @@ -12,7 +12,7 @@
+>   * GNU General Public License for more details.
+>   */
+>  
+> -#include <linux/module.h>
+> +#include <linux/init.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> @@ -55,7 +55,6 @@ static const struct of_device_id mt6397_pctrl_match[] = {
+>  	{ .compatible = "mediatek,mt6397-pinctrl", },
+>  	{ }
+>  };
+> -MODULE_DEVICE_TABLE(of, mt6397_pctrl_match);
+>  
+>  static struct platform_driver mtk_pinctrl_driver = {
+>  	.probe = mt6397_pinctrl_probe,
+> @@ -69,9 +68,4 @@ static int __init mtk_pinctrl_init(void)
+>  {
+>  	return platform_driver_register(&mtk_pinctrl_driver);
+>  }
+> -
+> -module_init(mtk_pinctrl_init);
+> -
+> -MODULE_LICENSE("GPL v2");
+> -MODULE_DESCRIPTION("MediaTek MT6397 Pinctrl Driver");
+> -MODULE_AUTHOR("Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>");
+> +device_initcall(mtk_pinctrl_init);
 
-This change will also make Coverity happy by avoiding a theoretical NULL
-pointer dereference; yet another reason is to use the above helper function
-to tighten the code and make it more readable.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Acked-by: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 
-Tested on a Lager board.
-
- drivers/pinctrl/sh-pfc/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 181ea98a63b7ab..cd42d32791e3b7 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -518,7 +518,7 @@ static int sh_pfc_probe(struct platform_device *pdev)
- 
- #ifdef CONFIG_OF
- 	if (np)
--		info = of_match_device(sh_pfc_of_table, &pdev->dev)->data;
-+		info = of_device_get_match_data(&pdev->dev);
- 	else
- #endif
- 		info = platid ? (const void *)platid->driver_data : NULL;
--- 
-2.7.0
+Thanks,
+Hongzhou
