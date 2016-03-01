@@ -1,58 +1,69 @@
-From: Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH] pinctrl-bcm2835: Fix cut-and-paste error in "pull" parsing
-Date: Tue, 1 Mar 2016 09:13:01 +0000
-Message-ID: <56D55D1D.8090701@raspberrypi.org>
-References: <1456795808-1449-1-git-send-email-eric@anholt.net>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: [PATCH] ARM: dts: at91: sama5d2 Xplained: Correct the macb irq
+ pinctrl node
+Date: Tue, 1 Mar 2016 10:48:05 +0100
+Message-ID: <56D56555.1030703@atmel.com>
+References: <1455790866-13301-1-git-send-email-romain.izard.pro@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1456795808-1449-1-git-send-email-eric@anholt.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Eric Anholt <eric@anholt.net>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:14090 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752077AbcCAJr4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Mar 2016 04:47:56 -0500
+In-Reply-To: <1455790866-13301-1-git-send-email-romain.izard.pro@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Romain Izard <romain.izard.pro@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, Linux GPIO List <linux-gpio@vger.kernel.org>
 
-On 01/03/2016 01:30, Eric Anholt wrote:
-> From: Phil Elwell <phil@raspberrypi.org>
->
-> The DT bindings for pinctrl-bcm2835 allow both the function and pull
-> to contain either one entry or one per pin. However, an error in the
-> DT parsing can cause failures if the number of pulls differs from the
-> number of functions.
->
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> Cc: stable@vger.kernel.org
+Le 18/02/2016 11:21, Romain Izard a =C3=A9crit :
+> All pinctrl nodes for the Atmel pinctrl controller need to have their
+> bias configuration explicitly defined. Otherwise, the pinctrl mapping
+> is not valid.
+>=20
+> It works for now as the pinctrl driver proceeds even with invalid
+> mappings, but this can become an issue, if the pinctrl driver starts
+> to require valid mappings. Additionally, the pin is not protected fro=
+m
+> being remapped later by an other driver.
+>=20
+> There is an external 1k=E2=84=A6 pull-up to 3.3V, so no bias is requi=
+red on
+> the Ethernet PHY's interrupt line.
+>=20
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+
+And queued on at91-4.5-dt.
+
+Thanks! Bye,
+
 > ---
->
-> Yes, the s-o-b differs from the author of the commit, but this falls
-> under part b) of the process.
->
-> Phil, any chance you could start putting Signed-off-by lines on your
-> kernel commits?
->
->  drivers/pinctrl/bcm/pinctrl-bcm2835.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> index 0f5997c..08b1d93 100644
-> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> @@ -779,7 +779,7 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
->  		}
->  		if (num_pulls) {
->  			err = of_property_read_u32_index(np, "brcm,pull",
-> -					(num_funcs > 1) ? i : 0, &pull);
-> +					(num_pulls > 1) ? i : 0, &pull);
->  			if (err)
->  				goto out;
->  			err = bcm2835_pctl_dt_node_to_map_pull(pc, np, pin,
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+>  arch/arm/boot/dts/at91-sama5d2_xplained.dts | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/b=
+oot/dts/at91-sama5d2_xplained.dts
+> index e683856c507c..75341eec2dfd 100644
+> --- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+> +++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+> @@ -308,6 +308,7 @@
+> =20
+>  				pinctrl_macb0_phy_irq: macb0_phy_irq {
+>  					pinmux =3D <PIN_PC9__GPIO>;
+> +					bias-disable;
+>  				};
+> =20
+>  				pinctrl_pdmic_default: pdmic_default {
+>=20
+
+
+--=20
+Nicolas Ferre
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
