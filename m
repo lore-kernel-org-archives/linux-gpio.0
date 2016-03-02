@@ -1,56 +1,104 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 01/14] pinctrl: at91: use __maybe_unused to hide pm functions
-Date: Wed,  2 Mar 2016 16:58:53 +0100
-Message-ID: <1456934350-1389172-2-git-send-email-arnd@arndb.de>
-References: <1456934350-1389172-1-git-send-email-arnd@arndb.de>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:64056 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750977AbcCBQAM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Mar 2016 11:00:12 -0500
-In-Reply-To: <1456934350-1389172-1-git-send-email-arnd@arndb.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: [PATCH 00/14] drivers: use __maybe_unused to hide pm functions
+Date: Wed,  2 Mar 2016 16:58:52 +0100
+Message-ID: <1456934350-1389172-1-git-send-email-arnd@arndb.de>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, herbert@gondor.apana.org.au, k.kozlowski@samsung.com, dan.j.williams@intel.com, vinod.koul@intel.com, baohua@kernel.org, dmitry.torokhov@gmail.com, tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com, laurent.pinchart@ideasonboard.com, mchehab@osg.samsung.com, lee.jones@linaro.org, kvalo@codeaurora.org, ludovic.desroches@atmel.com, linus.walleij@linaro.org, sre@kernel.org, dbaryshkov@gmail.com, JBottomley@odin.com, martin.petersen@oracle.com, broonie@kernel.org, linux-crypto@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org, linux-input@vger.kernel.org, linux-media@vger.kernel.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org, alsa-devel@alsa-
 List-Id: linux-gpio@vger.kernel.org
-To: Ludovic Desroches <ludovic.desroches@atmel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The at91-pio4 pinctrl driver uses SET_SYSTEM_SLEEP_PM_OPS() to
-conditionally set the correct suspend/resume options, but they
-become unused when CONFIG_PM is disabled:
+I found many variations of the bug in these device drivers (and some
+USB drivers I already send patches for in a separate series).
 
-drivers/pinctrl/pinctrl-at91-pio4.c:827:12: error: 'atmel_pctrl_suspend' defined but not used [-Werror=unused-function]
-drivers/pinctrl/pinctrl-at91-pio4.c:847:12: error: 'atmel_pctrl_resume' defined but not used [-Werror=unused-function]
+In each case, the power management operations structure conditionally
+references suspend/resume functions, but the functions are hidden
+in an incorrect #ifdef or not hidden at all.
 
-This adds __maybe_unused annotations so the compiler knows
-it can silently drop them instead of warning.
+We could try to correct the #ifdefs, but it seems easier to just
+mark those functions as __maybe_unused, which has the same effect
+but provides better compile-time test coverage and (subjectively)
+looks a bit nicer.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pinctrl/pinctrl-at91-pio4.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I have a patch series that avoids all warnings in ARM randconfig
+builds, and I have verified that all these patches fix a warning that
+is still present in today's linux-next, and that they do not
+introduce new warnings in any configuration I found.
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index ee69db6ae1c7..4429312e848d 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -824,7 +824,7 @@ static struct pinctrl_desc atmel_pinctrl_desc = {
- 	.pmxops		= &atmel_pmxops,
- };
- 
--static int atmel_pctrl_suspend(struct device *dev)
-+static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
-@@ -844,7 +844,7 @@ static int atmel_pctrl_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int atmel_pctrl_resume(struct device *dev)
-+static int __maybe_unused atmel_pctrl_resume(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
+Note that all these drivers are ARM specific, so I assume that
+all portable drivers got fixed already when someone rand into
+the problem on x86.
+
+There are no dependencies between the patches, so I'd appreciate
+subsystem maintainers to put them directly into their git trees.
+
+	Arnd
+
+Arnd Bergmann (14):
+  pinctrl: at91: use __maybe_unused to hide pm functions
+  irqchip: st: use __maybe_unused to hide st_irq_syscfg_resume
+  power: ipaq-micro-battery: use __maybe_unused to hide pm functions
+  power: pm2301-charger: use __maybe_unused to hide pm functions
+  mfd: ipaq-micro: use __maybe_unused to hide pm functions
+  dma: sirf: use __maybe_unused to hide pm functions
+  hw_random: exynos: use __maybe_unused to hide pm functions
+  scsi: mvumi: use __maybe_unused to hide pm functions
+  amd-xgbe: use __maybe_unused to hide pm functions
+  wireless: cw1200: use __maybe_unused to hide pm functions_
+  input: spear-keyboard: use __maybe_unused to hide pm functions
+  keyboard: snvs-pwrkey: use __maybe_unused to hide pm functions
+  [media] omap3isp: use IS_ENABLED() to hide pm functions
+  ASoC: rockchip: use __maybe_unused to hide st_irq_syscfg_resume
+
+ drivers/char/hw_random/exynos-rng.c         | 10 ++++------
+ drivers/dma/sirf-dma.c                      | 10 ++++------
+ drivers/input/keyboard/snvs_pwrkey.c        |  4 ++--
+ drivers/input/keyboard/spear-keyboard.c     |  6 ++----
+ drivers/irqchip/irq-st.c                    |  2 +-
+ drivers/media/platform/omap3isp/isp.c       | 13 +------------
+ drivers/mfd/ipaq-micro.c                    |  2 +-
+ drivers/net/ethernet/amd/xgbe/xgbe-main.c   |  6 ++----
+ drivers/net/wireless/st/cw1200/cw1200_spi.c |  9 ++-------
+ drivers/net/wireless/st/cw1200/pm.h         |  9 +++++++--
+ drivers/pinctrl/pinctrl-at91-pio4.c         |  4 ++--
+ drivers/power/ipaq_micro_battery.c          |  4 ++--
+ drivers/power/pm2301_charger.c              | 22 ++++++----------------
+ drivers/scsi/mvumi.c                        |  4 ++--
+ sound/soc/rockchip/rockchip_spdif.c         |  4 ++--
+ 15 files changed, 40 insertions(+), 69 deletions(-)
+
 -- 
 2.7.0
-
+Cc: herbert@gondor.apana.org.au
+Cc: k.kozlowski@samsung.com
+Cc: dan.j.williams@intel.com
+Cc: vinod.koul@intel.com
+Cc: baohua@kernel.org
+Cc: dmitry.torokhov@gmail.com
+Cc: tglx@linutronix.de
+Cc: jason@lakedaemon.net
+Cc: marc.zyngier@arm.com
+Cc: laurent.pinchart@ideasonboard.com
+Cc: mchehab@osg.samsung.com
+Cc: lee.jones@linaro.org
+Cc: kvalo@codeaurora.org
+Cc: ludovic.desroches@atmel.com
+Cc: linus.walleij@linaro.org
+Cc: sre@kernel.org
+Cc: dbaryshkov@gmail.com
+Cc: JBottomley@odin.com
+Cc: martin.petersen@oracle.com
+Cc: broonie@kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: dmaengine@vger.kernel.org
+Cc: linux-input@vger.kernel.org
+Cc: linux-media@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: linux-wireless@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-scsi@vger.kernel.org
+Cc: alsa-devel@alsa-project.org
+Cc: linux-rockchip@lists.infradead.org
