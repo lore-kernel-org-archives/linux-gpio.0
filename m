@@ -1,52 +1,75 @@
-From: Gang Liu <gang.liu@nxp.com>
-Subject: Re: [RFT][PATCH v2 3/3] gpio: mpc8xxx: Slightly update the code for
- better readability
-Date: Wed, 2 Mar 2016 07:32:03 +0000
-Message-ID: <DB4PR04MB266BAA3729D42152F48F49C82BC0@DB4PR04MB266.eurprd04.prod.outlook.com>
-References: <1456125772.27297.0.camel@ingics.com>
- <1456125894.27297.2.camel@ingics.com>
+From: Peter Hung <hpeter@gmail.com>
+Subject: Re: [PATCH V4 1/4] mfd: f81504-core: Add Fintek F81504/508/512
+ PCIE-to-UART/GPIO core support
+Date: Wed, 2 Mar 2016 15:34:13 +0800
+Message-ID: <56D69775.7080309@gmail.com>
+References: <1456209003-22396-1-git-send-email-hpeter+linux_kernel@gmail.com>
+ <1456209003-22396-2-git-send-email-hpeter+linux_kernel@gmail.com>
+ <1456225517.13244.41.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-am1on0073.outbound.protection.outlook.com ([157.56.112.73]:59456
-	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751240AbcCBHcG convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Mar 2016 02:32:06 -0500
-Content-Language: en-US
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:34097 "EHLO
+	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750797AbcCBHe2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Mar 2016 02:34:28 -0500
+In-Reply-To: <1456225517.13244.41.camel@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Alexander Stein <alexander.stein@systec-electronic.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linus.walleij@linaro.org, gnurou@gmail.com, gregkh@linuxfoundation.org, paul.gortmaker@windriver.com, lee.jones@linaro.org, jslaby@suse.com, gnomes@lxorguk.ukuu.org.uk, peter_hong@fintek.com.tw
+Cc: heikki.krogerus@linux.intel.com, peter@hurleysoftware.com, soeren.grunewald@desy.de, udknight@gmail.com, adam.lee@canonical.com, arnd@arndb.de, manabian@gmail.com, scottwood@freescale.com, yamada.masahiro@socionext.com, paul.burton@imgtec.com, mans@mansr.com, matthias.bgg@gmail.com, ralf@linux-mips.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, tom_tsai@fintek.com.tw, Peter Hung <hpeter+linux_kernel@gmail.com>
 
-On 2/22/2016 3:25 PM, Axel Lin wrote:
-> Setting gc->direction_output to gc->direction_output looks strange.
-> I think this change makes the intention more clear.
->
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> ---
->  drivers/gpio/gpio-mpc8xxx.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-> index bc042ad6..425501c 100644
-> --- a/drivers/gpio/gpio-mpc8xxx.c
-> +++ b/drivers/gpio/gpio-mpc8xxx.c
-> @@ -339,8 +339,11 @@ static int mpc8xxx_probe(struct platform_device *pdev)
->  	 */
->  	mpc8xxx_irq_chip.irq_set_type = devtype->irq_set_type;
->  
-> -	gc->direction_output = devtype->gpio_dir_out ?: gc->direction_output;
-> -	gc->get = devtype->gpio_get ?: gc->get;
-> +	if (devtype->gpio_dir_out)
-> +		gc->direction_output = devtype->gpio_dir_out;
-> +	if (devtype->gpio_get)
-> +		gc->get = devtype->gpio_get;
-> +
->  	gc->to_irq = mpc8xxx_gpio_to_irq;
->  
->  	ret = gpiochip_add_data(gc, mpc8xxx_gc);
-Ok, maybe it's more clear.
+Hi Andy,
 
-Liu Gang
+Andy Shevchenko =E6=96=BC 2016/2/23 =E4=B8=8B=E5=8D=88 07:05 =E5=AF=AB=E9=
+=81=93:
+> On Tue, 2016-02-23 at 14:30 +0800, Peter Hung wrote:
+>> +config MFD_FINTEK_F81504_CORE
+>> +        tristate "Fintek F81504/508/512 PCIE-to-UART/GPIO MFD
+>> support"
+>> +        depends on PCI
+>> +        select MFD_CORE
+>> +        default SERIAL_8250
+>
+> SERIAL_8250_PCI ?
+
+In my opinion, 8250_pci & f81504_core are independently drivers.
+So I'll set the default to SERIAL_8250.
+
+>> +static bool f81504_is_gpio(unsigned int idx, u8 gpio_en)
+>> +{
+>> +	unsigned int i;
+>> +
+>> +	/* Find every port to check is multi-function port */
+>> +	for (i =3D 0; i < ARRAY_SIZE(fintek_gpio_mapping); i++) {
+>
+>
+>> +		if (fintek_gpio_mapping[i] !=3D idx || !(gpio_en &
+>> BIT(i)))
+>> +			continue;
+>> +
+>> +		/*
+>> +		 * This port is multi-function and enabled as gpio
+>> mode.
+>> +		 * So we'll not configure it as serial port.
+>> +		 */
+>> +		return true;
+>
+> Perhaps
+>
+> if (fintek_gpio_mapping[i] =3D=3D idx && (gpio_en & BIT(i)))
+>   return true;
+
+Your code is more simple and readable. I'll change it for V5
+
+Thanks for your advices.
+--=20
+With Best Regards,
+Peter Hung
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
