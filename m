@@ -1,122 +1,64 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: uniphier: rename CONFIG options and file names
-Date: Wed,  2 Mar 2016 15:14:40 +0900
-Message-ID: <1456899280-8641-1-git-send-email-yamada.masahiro@socionext.com>
+From: Gang Liu <gang.liu@nxp.com>
+Subject: Re: [RFT][PATCH v2 1/3] gpio: mpc8xxx: Fixup setting gpio direction
+ output
+Date: Wed, 2 Mar 2016 07:20:11 +0000
+Message-ID: <DB4PR04MB2660D0601E08D7E375F9CC182BC0@DB4PR04MB266.eurprd04.prod.outlook.com>
+References: <1456125772.27297.0.camel@ingics.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conuserg010.nifty.com ([202.248.44.36]:41530 "EHLO
-	conuserg010-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750756AbcCBGOb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Mar 2016 01:14:31 -0500
+Received: from mail-am1on0090.outbound.protection.outlook.com ([157.56.112.90]:34720
+	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750862AbcCBHUO convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Mar 2016 02:20:14 -0500
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Alexander Stein <alexander.stein@systec-electronic.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-The current "CONFIG_PINCTRL_UNIPHIER_PH1_*" is too long.  It would
-not hurt to drop "PH1_" because "UNIPHIER_" already well specifies
-the SoC family.  Also, rename files for consistency.
+On 2/22/2016 3:23 PM, Axel Lin wrote:
+> For devtype with specific gpio_dir_out implementation, current code is
+> wrong because below code sets both gc->direction_output and
+> mpc8xxx_gc->direction_output to the same function.
+>
+> gc->direction_output = devtype->gpio_dir_out ?: gc->direction_output;
+> mpc8xxx_gc->direction_output = gc->direction_output;
+>
+> Set mpc8xxx_gc->direction_output = gc->direction_output first to fix it.
+> This way mpc8xxx_gc->direction_output actually calls the standard
+> bgpio_dir_out() to update register.
+>
+> Fixes: commit 42178e2a1e42 ("drivers/gpio: Switch gpio-mpc8xxx to use gpio-generic")
+>
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
+>  drivers/gpio/gpio-mpc8xxx.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+> index ecdb27a..d2472c5 100644
+> --- a/drivers/gpio/gpio-mpc8xxx.c
+> +++ b/drivers/gpio/gpio-mpc8xxx.c
+> @@ -334,6 +334,7 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+>  
+>  	mpc8xxx_gc->read_reg = gc->read_reg;
+>  	mpc8xxx_gc->write_reg = gc->write_reg;
+> +	mpc8xxx_gc->direction_output = gc->direction_output;
+>  
+>  	if (!devtype)
+>  		devtype = &mpc8xxx_gpio_devtype_default;
+> @@ -348,8 +349,6 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+>  	gc->get = devtype->gpio_get ?: gc->get;
+>  	gc->to_irq = mpc8xxx_gpio_to_irq;
+>  
+> -	mpc8xxx_gc->direction_output = gc->direction_output;
+> -
+>  	ret = gpiochip_add_data(gc, mpc8xxx_gc);
+>  	if (ret) {
+>  		pr_err("%s: GPIO chip registration failed with status %d\n",
+This is OK for me.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- drivers/pinctrl/uniphier/Kconfig                           | 12 ++++++------
- drivers/pinctrl/uniphier/Makefile                          | 14 +++++++-------
- .../uniphier/{pinctrl-ph1-ld4.c => pinctrl-uniphier-ld4.c} |  0
- .../{pinctrl-ph1-ld6b.c => pinctrl-uniphier-ld6b.c}        |  0
- .../{pinctrl-ph1-pro4.c => pinctrl-uniphier-pro4.c}        |  0
- .../{pinctrl-ph1-pro5.c => pinctrl-uniphier-pro5.c}        |  0
- .../{pinctrl-proxstream2.c => pinctrl-uniphier-pxs2.c}     |  0
- .../{pinctrl-ph1-sld8.c => pinctrl-uniphier-sld8.c}        |  0
- 8 files changed, 13 insertions(+), 13 deletions(-)
- rename drivers/pinctrl/uniphier/{pinctrl-ph1-ld4.c => pinctrl-uniphier-ld4.c} (100%)
- rename drivers/pinctrl/uniphier/{pinctrl-ph1-ld6b.c => pinctrl-uniphier-ld6b.c} (100%)
- rename drivers/pinctrl/uniphier/{pinctrl-ph1-pro4.c => pinctrl-uniphier-pro4.c} (100%)
- rename drivers/pinctrl/uniphier/{pinctrl-ph1-pro5.c => pinctrl-uniphier-pro5.c} (100%)
- rename drivers/pinctrl/uniphier/{pinctrl-proxstream2.c => pinctrl-uniphier-pxs2.c} (100%)
- rename drivers/pinctrl/uniphier/{pinctrl-ph1-sld8.c => pinctrl-uniphier-sld8.c} (100%)
-
-diff --git a/drivers/pinctrl/uniphier/Kconfig b/drivers/pinctrl/uniphier/Kconfig
-index 43f689f..0b40ded 100644
---- a/drivers/pinctrl/uniphier/Kconfig
-+++ b/drivers/pinctrl/uniphier/Kconfig
-@@ -8,27 +8,27 @@ menuconfig PINCTRL_UNIPHIER
- 
- if PINCTRL_UNIPHIER
- 
--config PINCTRL_UNIPHIER_PH1_LD4
-+config PINCTRL_UNIPHIER_LD4
- 	tristate "UniPhier PH1-LD4 SoC pinctrl driver"
- 	default y
- 
--config PINCTRL_UNIPHIER_PH1_PRO4
-+config PINCTRL_UNIPHIER_PRO4
- 	tristate "UniPhier PH1-Pro4 SoC pinctrl driver"
- 	default y
- 
--config PINCTRL_UNIPHIER_PH1_SLD8
-+config PINCTRL_UNIPHIER_SLD8
- 	tristate "UniPhier PH1-sLD8 SoC pinctrl driver"
- 	default y
- 
--config PINCTRL_UNIPHIER_PH1_PRO5
-+config PINCTRL_UNIPHIER_PRO5
- 	tristate "UniPhier PH1-Pro5 SoC pinctrl driver"
- 	default y
- 
--config PINCTRL_UNIPHIER_PROXSTREAM2
-+config PINCTRL_UNIPHIER_PXS2
- 	tristate "UniPhier ProXstream2 SoC pinctrl driver"
- 	default y
- 
--config PINCTRL_UNIPHIER_PH1_LD6B
-+config PINCTRL_UNIPHIER_LD6B
- 	tristate "UniPhier PH1-LD6b SoC pinctrl driver"
- 	default y
- 
-diff --git a/drivers/pinctrl/uniphier/Makefile b/drivers/pinctrl/uniphier/Makefile
-index e7ce967..3b8f9ee 100644
---- a/drivers/pinctrl/uniphier/Makefile
-+++ b/drivers/pinctrl/uniphier/Makefile
-@@ -1,8 +1,8 @@
--obj-y						+= pinctrl-uniphier-core.o
-+obj-y					+= pinctrl-uniphier-core.o
- 
--obj-$(CONFIG_PINCTRL_UNIPHIER_PH1_LD4)		+= pinctrl-ph1-ld4.o
--obj-$(CONFIG_PINCTRL_UNIPHIER_PH1_PRO4)		+= pinctrl-ph1-pro4.o
--obj-$(CONFIG_PINCTRL_UNIPHIER_PH1_SLD8)		+= pinctrl-ph1-sld8.o
--obj-$(CONFIG_PINCTRL_UNIPHIER_PH1_PRO5)		+= pinctrl-ph1-pro5.o
--obj-$(CONFIG_PINCTRL_UNIPHIER_PROXSTREAM2)	+= pinctrl-proxstream2.o
--obj-$(CONFIG_PINCTRL_UNIPHIER_PH1_LD6B)		+= pinctrl-ph1-ld6b.o
-+obj-$(CONFIG_PINCTRL_UNIPHIER_LD4)	+= pinctrl-uniphier-ld4.o
-+obj-$(CONFIG_PINCTRL_UNIPHIER_PRO4)	+= pinctrl-uniphier-pro4.o
-+obj-$(CONFIG_PINCTRL_UNIPHIER_SLD8)	+= pinctrl-uniphier-sld8.o
-+obj-$(CONFIG_PINCTRL_UNIPHIER_PRO5)	+= pinctrl-uniphier-pro5.o
-+obj-$(CONFIG_PINCTRL_UNIPHIER_PXS2)	+= pinctrl-uniphier-pxs2.o
-+obj-$(CONFIG_PINCTRL_UNIPHIER_LD6B)	+= pinctrl-uniphier-ld6b.o
-diff --git a/drivers/pinctrl/uniphier/pinctrl-ph1-ld4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
-similarity index 100%
-rename from drivers/pinctrl/uniphier/pinctrl-ph1-ld4.c
-rename to drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
-diff --git a/drivers/pinctrl/uniphier/pinctrl-ph1-ld6b.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
-similarity index 100%
-rename from drivers/pinctrl/uniphier/pinctrl-ph1-ld6b.c
-rename to drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
-diff --git a/drivers/pinctrl/uniphier/pinctrl-ph1-pro4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
-similarity index 100%
-rename from drivers/pinctrl/uniphier/pinctrl-ph1-pro4.c
-rename to drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
-diff --git a/drivers/pinctrl/uniphier/pinctrl-ph1-pro5.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
-similarity index 100%
-rename from drivers/pinctrl/uniphier/pinctrl-ph1-pro5.c
-rename to drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
-diff --git a/drivers/pinctrl/uniphier/pinctrl-proxstream2.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
-similarity index 100%
-rename from drivers/pinctrl/uniphier/pinctrl-proxstream2.c
-rename to drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
-diff --git a/drivers/pinctrl/uniphier/pinctrl-ph1-sld8.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
-similarity index 100%
-rename from drivers/pinctrl/uniphier/pinctrl-ph1-sld8.c
-rename to drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
--- 
-1.9.1
-
+Liu Gang
