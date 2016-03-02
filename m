@@ -1,33 +1,56 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: core: don't open code of_device_get_match_data()
-Date: Wed, 2 Mar 2016 10:15:17 +0100
-Message-ID: <CAMuHMdV8+URdKhpNNdjcG3ZoWyWadueoaOvzQd=xYT1eQDKytg@mail.gmail.com>
-References: <1456850332-8432-1-git-send-email-wsa@the-dreams.de>
+Subject: Re: [PATCH 4/8] drivers/pinctrl: make sh-pfc/core.c explicitly non-modular
+Date: Wed, 2 Mar 2016 12:05:39 +0100
+Message-ID: <CAMuHMdWwiZNJ7UavdNJhfee9EhOHM6CybtNgOKkH9nRdqjiqWg@mail.gmail.com>
+References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
+	<1456778924-20730-5-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:34875 "EHLO
-	mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751240AbcCBJPS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Mar 2016 04:15:18 -0500
-In-Reply-To: <1456850332-8432-1-git-send-email-wsa@the-dreams.de>
+Received: from mail-ig0-f194.google.com ([209.85.213.194]:33578 "EHLO
+	mail-ig0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751025AbcCBLFk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Mar 2016 06:05:40 -0500
+In-Reply-To: <1456778924-20730-5-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Mar 1, 2016 at 5:38 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Mon, Feb 29, 2016 at 9:48 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+> The Kconfig / Makefile currently controlling compilation of this code is:
 >
-> This change will also make Coverity happy by avoiding a theoretical NULL
-> pointer dereference; yet another reason is to use the above helper function
-> to tighten the code and make it more readable.
+> drivers/pinctrl/sh-pfc/Makefile:obj-$(CONFIG_PINCTRL_SH_PFC)    += sh-pfc.o
+> drivers/pinctrl/sh-pfc/Makefile:sh-pfc-objs                     = core.o pinctrl.o
 >
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> drivers/pinctrl/sh-pfc/Kconfig:config PINCTRL_SH_PFC
+> drivers/pinctrl/sh-pfc/Kconfig: def_bool y
+>
+> ...meaning that it currently is not being built as a module by anyone.
+>
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+>
+> Since module_init already wasn't being used in this code, the init
+> ordering remains unchanged with this commit.
+>
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+>
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> was (or is now) contained at the top of the file in the comments.
+>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Will queue in sh-pfc-for-v4.7.
+Linus: Feel free to take this with the other patches from the series.
+Or do you prefer I queue it up in sh-pfc-for-v4.7?
 
 Gr{oetje,eeting}s,
 
