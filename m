@@ -1,67 +1,122 @@
-From: Laison Computech Inc <7sales@laiisoncomputech.com>
-Subject: CISCO AND AVAYA IP Phones
-Date: Wed, 02 Mar 2016 03:10:35 +0700
-Message-ID: <20160301210942.5F83E574BB8__48667.0699473054$1456874280$gmane$org@srv-mta.gcmillenium.com.br>
-Reply-To: sales@laiisoncomputech.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: uniphier: rename CONFIG options and file names
+Date: Wed,  2 Mar 2016 15:14:40 +0900
+Message-ID: <1456899280-8641-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from srv-mta.gcmillenium.com.br ([177.125.218.132]:51815 "EHLO
-	srv-mta.gcmillenium.com.br" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751350AbcCAXRh convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 1 Mar 2016 18:17:37 -0500
-Content-Description: Mail message body
+Received: from conuserg010.nifty.com ([202.248.44.36]:41530 "EHLO
+	conuserg010-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750756AbcCBGOb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Mar 2016 01:14:31 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Recipients <7sales@laiisoncomputech.com>
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi,
+The current "CONFIG_PINCTRL_UNIPHIER_PH1_*" is too long.  It would
+not hurt to drop "PH1_" because "UNIPHIER_" already well specifies
+the SoC family.  Also, rename files for consistency.
 
-Clean tested working pulls CPUs and QTYs in stock.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-115 X X5650
-65 X E5410
-75 X X5660
-145 X E5530
-100 X E5645
-40 X X5680
-75 X X5690
+ drivers/pinctrl/uniphier/Kconfig                           | 12 ++++++------
+ drivers/pinctrl/uniphier/Makefile                          | 14 +++++++-------
+ .../uniphier/{pinctrl-ph1-ld4.c => pinctrl-uniphier-ld4.c} |  0
+ .../{pinctrl-ph1-ld6b.c => pinctrl-uniphier-ld6b.c}        |  0
+ .../{pinctrl-ph1-pro4.c => pinctrl-uniphier-pro4.c}        |  0
+ .../{pinctrl-ph1-pro5.c => pinctrl-uniphier-pro5.c}        |  0
+ .../{pinctrl-proxstream2.c => pinctrl-uniphier-pxs2.c}     |  0
+ .../{pinctrl-ph1-sld8.c => pinctrl-uniphier-sld8.c}        |  0
+ 8 files changed, 13 insertions(+), 13 deletions(-)
+ rename drivers/pinctrl/uniphier/{pinctrl-ph1-ld4.c => pinctrl-uniphier-ld4.c} (100%)
+ rename drivers/pinctrl/uniphier/{pinctrl-ph1-ld6b.c => pinctrl-uniphier-ld6b.c} (100%)
+ rename drivers/pinctrl/uniphier/{pinctrl-ph1-pro4.c => pinctrl-uniphier-pro4.c} (100%)
+ rename drivers/pinctrl/uniphier/{pinctrl-ph1-pro5.c => pinctrl-uniphier-pro5.c} (100%)
+ rename drivers/pinctrl/uniphier/{pinctrl-proxstream2.c => pinctrl-uniphier-pxs2.c} (100%)
+ rename drivers/pinctrl/uniphier/{pinctrl-ph1-sld8.c => pinctrl-uniphier-sld8.c} (100%)
 
-Brand new sealed IP phones and QTYs in stock.
+diff --git a/drivers/pinctrl/uniphier/Kconfig b/drivers/pinctrl/uniphier/Kconfig
+index 43f689f..0b40ded 100644
+--- a/drivers/pinctrl/uniphier/Kconfig
++++ b/drivers/pinctrl/uniphier/Kconfig
+@@ -8,27 +8,27 @@ menuconfig PINCTRL_UNIPHIER
+ 
+ if PINCTRL_UNIPHIER
+ 
+-config PINCTRL_UNIPHIER_PH1_LD4
++config PINCTRL_UNIPHIER_LD4
+ 	tristate "UniPhier PH1-LD4 SoC pinctrl driver"
+ 	default y
+ 
+-config PINCTRL_UNIPHIER_PH1_PRO4
++config PINCTRL_UNIPHIER_PRO4
+ 	tristate "UniPhier PH1-Pro4 SoC pinctrl driver"
+ 	default y
+ 
+-config PINCTRL_UNIPHIER_PH1_SLD8
++config PINCTRL_UNIPHIER_SLD8
+ 	tristate "UniPhier PH1-sLD8 SoC pinctrl driver"
+ 	default y
+ 
+-config PINCTRL_UNIPHIER_PH1_PRO5
++config PINCTRL_UNIPHIER_PRO5
+ 	tristate "UniPhier PH1-Pro5 SoC pinctrl driver"
+ 	default y
+ 
+-config PINCTRL_UNIPHIER_PROXSTREAM2
++config PINCTRL_UNIPHIER_PXS2
+ 	tristate "UniPhier ProXstream2 SoC pinctrl driver"
+ 	default y
+ 
+-config PINCTRL_UNIPHIER_PH1_LD6B
++config PINCTRL_UNIPHIER_LD6B
+ 	tristate "UniPhier PH1-LD6b SoC pinctrl driver"
+ 	default y
+ 
+diff --git a/drivers/pinctrl/uniphier/Makefile b/drivers/pinctrl/uniphier/Makefile
+index e7ce967..3b8f9ee 100644
+--- a/drivers/pinctrl/uniphier/Makefile
++++ b/drivers/pinctrl/uniphier/Makefile
+@@ -1,8 +1,8 @@
+-obj-y						+= pinctrl-uniphier-core.o
++obj-y					+= pinctrl-uniphier-core.o
+ 
+-obj-$(CONFIG_PINCTRL_UNIPHIER_PH1_LD4)		+= pinctrl-ph1-ld4.o
+-obj-$(CONFIG_PINCTRL_UNIPHIER_PH1_PRO4)		+= pinctrl-ph1-pro4.o
+-obj-$(CONFIG_PINCTRL_UNIPHIER_PH1_SLD8)		+= pinctrl-ph1-sld8.o
+-obj-$(CONFIG_PINCTRL_UNIPHIER_PH1_PRO5)		+= pinctrl-ph1-pro5.o
+-obj-$(CONFIG_PINCTRL_UNIPHIER_PROXSTREAM2)	+= pinctrl-proxstream2.o
+-obj-$(CONFIG_PINCTRL_UNIPHIER_PH1_LD6B)		+= pinctrl-ph1-ld6b.o
++obj-$(CONFIG_PINCTRL_UNIPHIER_LD4)	+= pinctrl-uniphier-ld4.o
++obj-$(CONFIG_PINCTRL_UNIPHIER_PRO4)	+= pinctrl-uniphier-pro4.o
++obj-$(CONFIG_PINCTRL_UNIPHIER_SLD8)	+= pinctrl-uniphier-sld8.o
++obj-$(CONFIG_PINCTRL_UNIPHIER_PRO5)	+= pinctrl-uniphier-pro5.o
++obj-$(CONFIG_PINCTRL_UNIPHIER_PXS2)	+= pinctrl-uniphier-pxs2.o
++obj-$(CONFIG_PINCTRL_UNIPHIER_LD6B)	+= pinctrl-uniphier-ld6b.o
+diff --git a/drivers/pinctrl/uniphier/pinctrl-ph1-ld4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
+similarity index 100%
+rename from drivers/pinctrl/uniphier/pinctrl-ph1-ld4.c
+rename to drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
+diff --git a/drivers/pinctrl/uniphier/pinctrl-ph1-ld6b.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
+similarity index 100%
+rename from drivers/pinctrl/uniphier/pinctrl-ph1-ld6b.c
+rename to drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
+diff --git a/drivers/pinctrl/uniphier/pinctrl-ph1-pro4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+similarity index 100%
+rename from drivers/pinctrl/uniphier/pinctrl-ph1-pro4.c
+rename to drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+diff --git a/drivers/pinctrl/uniphier/pinctrl-ph1-pro5.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+similarity index 100%
+rename from drivers/pinctrl/uniphier/pinctrl-ph1-pro5.c
+rename to drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+diff --git a/drivers/pinctrl/uniphier/pinctrl-proxstream2.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+similarity index 100%
+rename from drivers/pinctrl/uniphier/pinctrl-proxstream2.c
+rename to drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+diff --git a/drivers/pinctrl/uniphier/pinctrl-ph1-sld8.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
+similarity index 100%
+rename from drivers/pinctrl/uniphier/pinctrl-ph1-sld8.c
+rename to drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
+-- 
+1.9.1
 
-55 x CP-7937G
-77 x CP-7942G
-54 x CP-7945G
-75 x CP-7962G
-=2E.....
-45 x Avaya 9630
-65 x Avaya 9641
-55 x Avaya 9640=20
-
-USED IT HARDWARE FROM:
-
-=46UJITSU       IBM         SUN        HP
-QUANTUM   DELL       HDS        STK
-NETAPP      SGI         Oracle      EMC=B2
-
-3Com, ADVA, Alcatel, Brocade, Cisco,
-Cabletron, Enterasys, Extreme Networks,
-Huawei, Marconi, Nortel, Qlogic, Avaya
-
-Let me know if you're interested. We are very open to offers and willin=
-g to work with you to make sure that we have a deal.
-
-Sincerely
-Barbara Johnson
-Laison Computech Inc
-Tel: +1-657-205-7860
-=46ax: +1-347-214-0478
-Email: sales@laiisoncomputech.com
-Web: www.laisoncomputech.com
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
