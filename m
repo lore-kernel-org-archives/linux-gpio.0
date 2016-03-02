@@ -1,64 +1,77 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 4/8] drivers/pinctrl: make sh-pfc/core.c explicitly non-modular
-Date: Wed, 2 Mar 2016 12:05:39 +0100
-Message-ID: <CAMuHMdWwiZNJ7UavdNJhfee9EhOHM6CybtNgOKkH9nRdqjiqWg@mail.gmail.com>
-References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
-	<1456778924-20730-5-git-send-email-paul.gortmaker@windriver.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 3/4] gpio: dt-bindings: Declare gpio-hog optional for
+ GPIO subnodes
+Date: Wed, 2 Mar 2016 09:41:20 -0600
+Message-ID: <20160302154120.GA23716@rob-hp-laptop>
+References: <1456214089-13954-1-git-send-email-mpa@pengutronix.de>
+ <1456214089-13954-3-git-send-email-mpa@pengutronix.de>
+ <20160223232534.GA29637@rob-hp-laptop>
+ <1813679.JaFRxta3v8@adelgunde>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f194.google.com ([209.85.213.194]:33578 "EHLO
-	mail-ig0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751025AbcCBLFk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Mar 2016 06:05:40 -0500
-In-Reply-To: <1456778924-20730-5-git-send-email-paul.gortmaker@windriver.com>
+Received: from mail.kernel.org ([198.145.29.136]:59057 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755635AbcCBPlZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 2 Mar 2016 10:41:25 -0500
+Content-Disposition: inline
+In-Reply-To: <1813679.JaFRxta3v8@adelgunde>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Markus Pargmann <mpa@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org
 
-On Mon, Feb 29, 2016 at 9:48 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> The Kconfig / Makefile currently controlling compilation of this code is:
->
-> drivers/pinctrl/sh-pfc/Makefile:obj-$(CONFIG_PINCTRL_SH_PFC)    += sh-pfc.o
-> drivers/pinctrl/sh-pfc/Makefile:sh-pfc-objs                     = core.o pinctrl.o
->
-> drivers/pinctrl/sh-pfc/Kconfig:config PINCTRL_SH_PFC
-> drivers/pinctrl/sh-pfc/Kconfig: def_bool y
->
-> ...meaning that it currently is not being built as a module by anyone.
->
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
->
-> Since module_init already wasn't being used in this code, the init
-> ordering remains unchanged with this commit.
->
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> was (or is now) contained at the top of the file in the comments.
->
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+On Wed, Feb 24, 2016 at 08:01:47AM +0100, Markus Pargmann wrote:
+> Hi,
+> 
+> On Tuesday, February 23, 2016 05:25:34 PM Rob Herring wrote:
+> > On Tue, Feb 23, 2016 at 08:54:48AM +0100, Markus Pargmann wrote:
+> > > Reuse the GPIO hogging DT bindings for more generic specifications of
+> > > the GPIO. Therefore gpio-hog is declared optional.
+> > 
+> > Before extending this binding further, we need to consider other cases 
+> > that have been discussed recently such as gpio switch binding and 
+> > whether it should fit in with this.
+> 
+> I tried to discuss my ideas and issues with the gpio-switch bindings
+> already some time ago, unfortunately the discussion didn't proceed:
+> 	http://thread.gmane.org/gmane.linux.kernel/2100574
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+We need to revive that. I do plan to discuss this with Linus F2F next 
+week.
 
-Linus: Feel free to take this with the other patches from the series.
-Or do you prefer I queue it up in sh-pfc-for-v4.7?
+> > My biggest issue with this binding is whether the DT changes because 
+> > today we don't have a driver for some GPIO line and tomorrow we do.
+> 
+> This patch is just about defining that we can give GPIO lines names. In
+> the best case this name refers to the line name on the schematic. In the
+> worst case it is some arbitrary name. In both cases it should not
+> influence any driver that is trying to use this GPIO.
 
-Gr{oetje,eeting}s,
+No issues with adding this information. The question is just how should 
+all this fit together (line names, simple functions (e.g. switches), and 
+initialization). The overall structure needs to extendable. As Linus 
+said, we need a proposal that addresses all these issues.
 
-                        Geert
+> gpio-hogging indeed could cause problems for future drivers as these
+> GPIOs are not available for any drivers. But gpio-hogging is already
+> defined for quite some time in the DT bindings.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+That doesn't mean we can't decide some bindings were a bad idea and move 
+towards something new.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Also I would assume that for most new drivers new DT bindings are
+> created so that it already requires a DT update together with a kernel
+> update.
+
+Frequently that may be right. However, I think having a temporary 
+binding only encourages to not fully define their h/w. Think of the case 
+where you have a single DTB and support multiple OSs (or different 
+versions). The DTB would have to work with both as one OS may require 
+gpio-hogs and the other may require a specific driver. That should be 
+possible to do. Requiring removing the gpio-hog to add a specific 
+binding is a problem. AIUI, a hog will prevent any other user in the 
+kernel. I think that is backwards in that a hog should only provide some 
+default configuration/use. 
+
+Rob
