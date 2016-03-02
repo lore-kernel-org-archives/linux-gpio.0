@@ -1,64 +1,52 @@
 From: Gang Liu <gang.liu@nxp.com>
-Subject: Re: [RFT][PATCH v2 1/3] gpio: mpc8xxx: Fixup setting gpio direction
- output
-Date: Wed, 2 Mar 2016 07:20:11 +0000
-Message-ID: <DB4PR04MB2660D0601E08D7E375F9CC182BC0@DB4PR04MB266.eurprd04.prod.outlook.com>
+Subject: Re: [RFT][PATCH v2 3/3] gpio: mpc8xxx: Slightly update the code for
+ better readability
+Date: Wed, 2 Mar 2016 07:32:03 +0000
+Message-ID: <DB4PR04MB266BAA3729D42152F48F49C82BC0@DB4PR04MB266.eurprd04.prod.outlook.com>
 References: <1456125772.27297.0.camel@ingics.com>
+ <1456125894.27297.2.camel@ingics.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-am1on0090.outbound.protection.outlook.com ([157.56.112.90]:34720
+Received: from mail-am1on0073.outbound.protection.outlook.com ([157.56.112.73]:59456
 	"EHLO emea01-am1-obe.outbound.protection.outlook.com"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750862AbcCBHUO convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Mar 2016 02:20:14 -0500
+	id S1751240AbcCBHcG convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Mar 2016 02:32:06 -0500
 Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Axel Lin <axel.lin@ingics.com>, Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Alexander Stein <alexander.stein@systec-electronic.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 2/22/2016 3:23 PM, Axel Lin wrote:
-> For devtype with specific gpio_dir_out implementation, current code is
-> wrong because below code sets both gc->direction_output and
-> mpc8xxx_gc->direction_output to the same function.
->
-> gc->direction_output = devtype->gpio_dir_out ?: gc->direction_output;
-> mpc8xxx_gc->direction_output = gc->direction_output;
->
-> Set mpc8xxx_gc->direction_output = gc->direction_output first to fix it.
-> This way mpc8xxx_gc->direction_output actually calls the standard
-> bgpio_dir_out() to update register.
->
-> Fixes: commit 42178e2a1e42 ("drivers/gpio: Switch gpio-mpc8xxx to use gpio-generic")
+On 2/22/2016 3:25 PM, Axel Lin wrote:
+> Setting gc->direction_output to gc->direction_output looks strange.
+> I think this change makes the intention more clear.
 >
 > Signed-off-by: Axel Lin <axel.lin@ingics.com>
 > ---
->  drivers/gpio/gpio-mpc8xxx.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  drivers/gpio/gpio-mpc8xxx.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 >
 > diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-> index ecdb27a..d2472c5 100644
+> index bc042ad6..425501c 100644
 > --- a/drivers/gpio/gpio-mpc8xxx.c
 > +++ b/drivers/gpio/gpio-mpc8xxx.c
-> @@ -334,6 +334,7 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+> @@ -339,8 +339,11 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+>  	 */
+>  	mpc8xxx_irq_chip.irq_set_type = devtype->irq_set_type;
 >  
->  	mpc8xxx_gc->read_reg = gc->read_reg;
->  	mpc8xxx_gc->write_reg = gc->write_reg;
-> +	mpc8xxx_gc->direction_output = gc->direction_output;
->  
->  	if (!devtype)
->  		devtype = &mpc8xxx_gpio_devtype_default;
-> @@ -348,8 +349,6 @@ static int mpc8xxx_probe(struct platform_device *pdev)
->  	gc->get = devtype->gpio_get ?: gc->get;
+> -	gc->direction_output = devtype->gpio_dir_out ?: gc->direction_output;
+> -	gc->get = devtype->gpio_get ?: gc->get;
+> +	if (devtype->gpio_dir_out)
+> +		gc->direction_output = devtype->gpio_dir_out;
+> +	if (devtype->gpio_get)
+> +		gc->get = devtype->gpio_get;
+> +
 >  	gc->to_irq = mpc8xxx_gpio_to_irq;
 >  
-> -	mpc8xxx_gc->direction_output = gc->direction_output;
-> -
 >  	ret = gpiochip_add_data(gc, mpc8xxx_gc);
->  	if (ret) {
->  		pr_err("%s: GPIO chip registration failed with status %d\n",
-This is OK for me.
+Ok, maybe it's more clear.
 
 Liu Gang
