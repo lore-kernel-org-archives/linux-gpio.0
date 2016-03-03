@@ -1,14 +1,13 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC 07/15] pinctrl: mvebu: Add missing MFD_SYSCON dependency on
- HAS_IOMEM
-Date: Thu, 03 Mar 2016 17:03:33 +0900
-Message-ID: <1456992221-26712-8-git-send-email-k.kozlowski__13119.8081457571$1456992751$gmane$org@samsung.com>
+Subject: [RFC 04/15] irqchip: st: Add missing MFD_SYSCON dependency on HAS_IOMEM
+Date: Thu, 03 Mar 2016 17:03:30 +0900
+Message-ID: <1456992221-26712-5-git-send-email-k.kozlowski__18736.0064978295$1456992907$gmane$org@samsung.com>
 References: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:55510 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756957AbcCCIFJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Mar 2016 03:05:09 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58085 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932241AbcCCIEm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Mar 2016 03:04:42 -0500
 In-reply-to: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -20,21 +19,21 @@ direct dependencies.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/pinctrl/mvebu/Kconfig | 1 +
+ drivers/irqchip/Kconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/mvebu/Kconfig b/drivers/pinctrl/mvebu/Kconfig
-index 170602407c0d..13685923729c 100644
---- a/drivers/pinctrl/mvebu/Kconfig
-+++ b/drivers/pinctrl/mvebu/Kconfig
-@@ -7,6 +7,7 @@ config PINCTRL_MVEBU
- 
- config PINCTRL_DOVE
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 00bbec6eca0b..10775b099daa 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -157,6 +157,7 @@ config RENESAS_IRQC
+ config ST_IRQCHIP
  	bool
+ 	select REGMAP
 +	depends on HAS_IOMEM	# For MFD_SYSCON
- 	select PINCTRL_MVEBU
  	select MFD_SYSCON
- 
+ 	help
+ 	  Enables SysCfg Controlled IRQs on STi based platforms.
 -- 
 2.5.0
 
