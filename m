@@ -1,43 +1,57 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC 14/15] usb: xhci: mtk: Add missing MFD_SYSCON dependency on
- HAS_IOMEM
-Date: Thu, 03 Mar 2016 12:01:21 +0100
-Message-ID: <2531852.vizHtxotvy@wuerfel>
-References: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
- <1456992221-26712-15-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1456992221-26712-15-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, David Brown <david.brown@linaro.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Lee Jones <lee.jones@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andy Gross <andy.gross@linaro.org>, linux-media@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, rtc-linux@googlegroups.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Dan Williams <dan.j.williams@intel.com>
+From: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
+Subject: [PATCH 3/3] ARM: dts: enable pinctrl for Broadcom NS2 SoC
+Date: Thu,  3 Mar 2016 06:41:43 -0500
+Message-ID: <1457005303-26829-4-git-send-email-yendapally.reddy@broadcom.com>
+References: <1457005303-26829-1-git-send-email-yendapally.reddy@broadcom.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1457005303-26829-1-git-send-email-yendapally.reddy@broadcom.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Pramod Kumar <pramodku@broadcom.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thursday 03 March 2016 17:03:40 Krzysztof Kozlowski wrote:
-> index 8c20ebbc049c..f759a778d606 100644
-> --- a/drivers/usb/host/Kconfig
-> +++ b/drivers/usb/host/Kconfig
-> @@ -45,6 +45,7 @@ config USB_XHCI_PLATFORM
->  
->  config USB_XHCI_MTK
->         tristate "xHCI support for Mediatek MT65xx"
-> +       depends on HAS_IOMEM    # For MFD_SYSCON
->         select MFD_SYSCON
->         depends on ARCH_MEDIATEK || COMPILE_TEST
->         ---help---
-> 
+This enables the pinctrl support for Broadcom NS2 SoC
 
-This already has the dependency, as it depends on XHCD_PLATFORM
-which depends on HAS_IOMEM.
+Signed-off-by: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
+---
+ arch/arm64/boot/dts/broadcom/ns2-svk.dts | 9 +++++++++
+ arch/arm64/boot/dts/broadcom/ns2.dtsi    | 7 +++++++
+ 2 files changed, 16 insertions(+)
 
-	Arnd
+diff --git a/arch/arm64/boot/dts/broadcom/ns2-svk.dts b/arch/arm64/boot/dts/broadcom/ns2-svk.dts
+index 6bb3d4d..d1c8ccc 100644
+--- a/arch/arm64/boot/dts/broadcom/ns2-svk.dts
++++ b/arch/arm64/boot/dts/broadcom/ns2-svk.dts
+@@ -75,3 +75,12 @@
+ 		#size-cells = <1>;
+ 	};
+ };
++
++&pinctrl {
++	pinctrl-names = "default";
++	pinctrl-0 = <&nand_sel>;
++	nand_sel: nand_sel {
++		function = "nand";
++		groups = "nand_grp";
++	};
++};
+diff --git a/arch/arm64/boot/dts/broadcom/ns2.dtsi b/arch/arm64/boot/dts/broadcom/ns2.dtsi
+index a510d3a..a3b267c 100644
+--- a/arch/arm64/boot/dts/broadcom/ns2.dtsi
++++ b/arch/arm64/boot/dts/broadcom/ns2.dtsi
+@@ -234,6 +234,13 @@
+ 					     "chimp", "port", "sdio";
+ 		};
+ 
++		pinctrl: pinctrl@6501d130 {
++			compatible = "brcm,ns2-pinmux";
++			reg = <0x6501d130 0x08>,
++			      <0x660a0028 0x04>,
++			      <0x660009b0 0x40>;
++		};
++
+ 		crmu: crmu@65024000 {
+ 			compatible = "syscon";
+ 			reg = <0x65024000 0x100>;
+-- 
+2.1.0
