@@ -1,59 +1,44 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH v3 4/6] Add Advantech iManager I2C driver
-Date: Thu, 3 Mar 2016 21:48:29 +0100
-Message-ID: <20160303204829.GD1711@katana>
-References: <1452468675-5827-1-git-send-email-richard.dorsch@gmail.com>
- <1452468675-5827-5-git-send-email-richard.dorsch@gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] pinctrl-bcm2835: Fix cut-and-paste error in "pull"
+ parsing
+Date: Thu, 3 Mar 2016 14:09:22 -0700
+Message-ID: <56D8A802.8040307@wwwdotorg.org>
+References: <1456795808-1449-1-git-send-email-eric@anholt.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eqp4TxRxnD4KrmFZ"
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1452468675-5827-5-git-send-email-richard.dorsch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: richard.dorsch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, jdelvare-IBi9RG/b67k@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org, jo.sunga-ELdSlb/RfAS1Z/+hSey0Gg@public.gmane.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1456795808-1449-1-git-send-email-eric@anholt.net>
+Sender: stable-owner@vger.kernel.org
+To: Eric Anholt <eric@anholt.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+On 02/29/2016 06:30 PM, Eric Anholt wrote:
+> From: Phil Elwell <phil@raspberrypi.org>
+>
+> The DT bindings for pinctrl-bcm2835 allow both the function and pull
+> to contain either one entry or one per pin. However, an error in the
+> DT parsing can cause failures if the number of pulls differs from the
+> number of functions.
+>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Cc: stable@vger.kernel.org
+> ---
+>
+> Yes, the s-o-b differs from the author of the commit, but this falls
+> under part b) of the process.
 
---eqp4TxRxnD4KrmFZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'd argue that part (b) only applies if the s-o-b line is present in the 
+original, otherwise I'm not sure how it's clear the author intended to 
+publish their source under the license in question. That's why I've 
+always beedn careful to go back and ask the original author to give 
+their s-o-b, like you did. Some commits at least in the earlier Pi 
+Foundation kernels also clearly had incorrect git author values, or were 
+squashed together forms of multiple peoples' work:-(
 
-On Sun, Jan 10, 2016 at 03:31:13PM -0800, richard.dorsch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org wrote:
-> From: Richard Vidal-Dorsch <richard.dorsch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->=20
-> Signed-off-by: Richard Vidal-Dorsch <richard.dorsch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Luckily it's a moot point since Phil gave his s-o-b.
 
-Well, most of the comments for the other drivers regarding the style
-apply to this driver as well. I'll wait and see if the MFD core parts
-get improved before throughly reviewing this one.
+Reviewed-by: Stephen Warren <swarren@wwwdotorg.org>
 
-
---eqp4TxRxnD4KrmFZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJW2KMdAAoJEBQN5MwUoCm2xKUP/0uCMriwGwx67kUXIWd5AM7g
-8dMKT5b3zGEe36FyhtXGxmgEPwjDs9x0IDIi0WLInheMejYbQHGYL5bOpny4/LOv
-3H2l/R+M8hFIDkImNc3BHpXcTMFzV61AOkAWQNMzxEDCLXoVpPg9QQqLQKzEFATf
-gqgzS7T/G9LXI62qR3kLDGhkg++p+UUl+eibNAO3HP/bM4MqI3IPM+LqBqYvhuO+
-VES6Rh+I7v6ZLYGrLJH2ackYdjERsk01Jnz+BEkBkUd7pc1sPkxMwlQ6bg+k7dGm
-NgX1PfGDGmSAzjVtX6LRqNGgnf4iyeybkO7tC0NWJe/mLtLnWiQCC6JuSiXIRQzn
-X5Dv3ZXC82R6J8bTK+48cd3L/F8VVBPoe7Loa2wcGUMumGYZD722FlQC7zihXv9O
-VDEvEaH+KZBL9A2IiaZQDyhN2aCvd+OX/bOlMixZBNasPaBt0waz9Ddm9B+vSrt0
-Me1dTKimgV0Cbt6x/JrKqaxYiB7Rlp0KRLnsN+2TTY+FdvnlEy8KxflN1pbBu3+2
-VdvlAPCNQ21H+BjEezogTUd+ohq3aL/Bzdkj3XKyE0OPFhvqmaiqYf00R2E04F1s
-nWOWU/rF4pXLu/a3h+N16LY97pTPcop46O3aLip/fTmw0SiHiPtHJvESAyysvSq0
-KNe50tG8RYRw01hIM9z7
-=8XLJ
------END PGP SIGNATURE-----
-
---eqp4TxRxnD4KrmFZ--
---
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Does a similar bug exist in any other pinctrl drivers?
