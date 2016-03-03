@@ -1,14 +1,13 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC 14/15] usb: xhci: mtk: Add missing MFD_SYSCON dependency on
- HAS_IOMEM
-Date: Thu, 03 Mar 2016 17:03:40 +0900
-Message-ID: <1456992221-26712-15-git-send-email-k.kozlowski__10771.5080994696$1456992450$gmane$org@samsung.com>
+Subject: [RFC 12/15] soc: qcom: Add missing MFD_SYSCON dependency on HAS_IOMEM
+Date: Thu, 03 Mar 2016 17:03:38 +0900
+Message-ID: <1456992221-26712-13-git-send-email-k.kozlowski__11040.1087244556$1456992480$gmane$org@samsung.com>
 References: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58066 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757074AbcCCIGK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Mar 2016 03:06:10 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58200 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932288AbcCCIFw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Mar 2016 03:05:52 -0500
 In-reply-to: <1456992221-26712-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -20,21 +19,21 @@ direct dependencies.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/usb/host/Kconfig | 1 +
+ drivers/soc/qcom/Kconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 8c20ebbc049c..f759a778d606 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -45,6 +45,7 @@ config USB_XHCI_PLATFORM
- 
- config USB_XHCI_MTK
- 	tristate "xHCI support for Mediatek MT65xx"
-+	depends on HAS_IOMEM	# For MFD_SYSCON
- 	select MFD_SYSCON
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
- 	---help---
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 461b387d03cc..24de48134c15 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -4,6 +4,7 @@
+ config QCOM_GSBI
+         tristate "QCOM General Serial Bus Interface"
+         depends on ARCH_QCOM
++        depends on HAS_IOMEM	# For MFD_SYSCON
+         select MFD_SYSCON
+         help
+           Say y here to enable GSBI support.  The GSBI provides control
 -- 
 2.5.0
 
