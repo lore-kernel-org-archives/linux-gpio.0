@@ -1,72 +1,50 @@
-From: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH v3] dt-bindings: GPIO: Add generic serializer binding
-Date: Fri, 4 Mar 2016 12:58:44 -0600
-Message-ID: <1457117924-7014-1-git-send-email-afd@ti.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] pinctrl: sh-pfc: core: only call pinctrl_provide_dummies() on SuperH
+Date: Sat, 05 Mar 2016 01:58:22 +0300
+Message-ID: <14300712.5chtEzsjIN@wasted.cogentembedded.com>
+References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org, geert+renesas@glider.be
 List-Id: linux-gpio@vger.kernel.org
 
-Add binding for generic parallel-in/serial-out shift register devices
-used as GPIO.
+The 'ravb' Ethernet driver couldn't connect to  the PHY as the MDIO bus
+appeared empty on the Renesas R-Car boards. The bug hunt finally pointed
+at  the commit adding the "init" pintcrl state: it tries to switch to non-
+default state before the driver probe which should fail but doesn't as the
+PFC pinctrl driver happens to call pinctrl_provide_dummies()  which makes
+all state lookups succeed, even though the state doesn't really exist.
+That feature is only relevant to non-DT systems and all the ARM boards
+that use the PFC driver  have been converted to the DT boot, so limiting
+it to the SuperH architecture seems The Right Thing...
 
-Signed-off-by: Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org>
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Fixes: ef0eebc05130 ("drivers/pinctrl: Add the concept of an "init" state")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+CC: stable@vger.kernel.org
+
 ---
-The driver was taken but it looks like this might have been lost,
-anyway I've added a dual-string example as requested.
+The patch is against the 'fixes' branch of Linus W.'s 'linux-pinctrl.git' repo.
+As  the bug only seems to happen  to the hardware that's not pre-configured by
+U-Boot, this patch can wait till 4.6 in principle...
 
- .../devicetree/bindings/gpio/gpio-pisosr.txt       | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-pisosr.txt
+ drivers/pinctrl/sh-pfc/core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-pisosr.txt b/Documentation/devicetree/bindings/gpio/gpio-pisosr.txt
-new file mode 100644
-index 0000000..dab8c9f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-pisosr.txt
-@@ -0,0 +1,34 @@
-+Generic Parallel-in/Serial-out Shift Register GPIO Driver
-+
-+This binding describes generic parallel-in/serial-out shift register
-+devices that can be used for GPI (General Purpose Input). This includes
-+SN74165 serial-out shift registers and the SN65HVS88x series of
-+industrial serializers.
-+
-+Required properties:
-+ - compatible		: Should be "pisosr-gpio".
-+ - gpio-controller	: Marks the device node as a GPIO controller.
-+ - #gpio-cells		: Should be two. For consumer use see gpio.txt.
-+
-+Optional properties:
-+ - ngpios		: Number of GPIO lines, default is 8.
-+ - load-gpios		: GPIO pin specifier attached to load enable, this
-+			  pin is pulsed before reading from the device to
-+			  load input pin values into the the device.
-+
-+For other required and optional properties of SPI slave
-+nodes please refer to ../spi/spi-bus.txt.
-+
-+Example:
-+
-+	gpio@0 {
-+		compatible = "ti,sn65hvs882", "pisosr-gpio";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		load-gpios = <&gpio2 23 GPIO_ACTIVE_LOW>;
-+
-+		reg = <0>;
-+		spi-max-frequency = <1000000>;
-+		spi-cpol;
-+	};
--- 
-2.7.2
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/core.c
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/core.c
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/core.c
+@@ -545,7 +545,8 @@ static int sh_pfc_probe(struct platform_
+ 			return ret;
+ 	}
+ 
+-	pinctrl_provide_dummies();
++	if (IS_ENABLED(CONFIG_SUPERH))
++		pinctrl_provide_dummies();
+ 
+ 	ret = sh_pfc_init_ranges(pfc);
+ 	if (ret < 0)
