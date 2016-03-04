@@ -1,69 +1,41 @@
-From: Martin Sperl <martin@sperl.org>
-Subject: Re: [PATCH 1/5] ARM: bcm2835: Define standard pinctrl groups in the
- gpio node.
-Date: Fri, 4 Mar 2016 10:27:49 +0100
-Message-ID: <6D770203-ED53-413D-AC28-B89A5C48DA8C@sperl.org>
-References: <1456510756-15337-1-git-send-email-eric@anholt.net>
- <1456510756-15337-2-git-send-email-eric@anholt.net>
- <56D8AAA2.60907@wwwdotorg.org>
-Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2104\))
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <56D8AAA2.60907@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>, Rob Herring <robh+dt@kernel.org>, linux-rpi-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, linux-arm-kernel@lists.infradead.org
+From: Matthias Brugger <mbrugger@suse.com>
+Subject: [PATCH] gpio: xgene: Fix kconfig for standby GIPO contoller
+Date: Fri,  4 Mar 2016 11:59:58 +0100
+Message-ID: <1457089198-27171-1-git-send-email-mbrugger@suse.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: qnguyen@apm.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Cj4gT24gMDMuMDMuMjAxNiwgYXQgMjI6MjAsIFN0ZXBoZW4gV2FycmVuIDxzd2FycmVuQHd3d2Rv
-dG9yZy5vcmc+IHdyb3RlOgo+IAo+IE9uIDAyLzI2LzIwMTYgMTE6MTkgQU0sIEVyaWMgQW5ob2x0
-IHdyb3RlOgo+PiBUaGUgQkNNMjgzNS1BUk0tUGVyaXBoZXJhbHMucGRmIGRvY3VtZW50YXRpb24g
-c3BlY2lmaWVzIHdoYXQgdGhlCj4+IGZ1bmN0aW9uIHNlbGVjdHMgZG8gZm9yIHRoZSBwaW5zLCBh
-bmQgdGhlcmUgYXJlIGEgYnVuY2ggb2Ygb2J2aW91cwo+PiBncm91cGluZ3MgdG8gYmUgbWFkZS4g
-IFdpdGggdGhlc2UgY3JlYXRlZCwgd2UnbGwgYmUgYWJsZSB0byByZXBsYWNlCj4+IGJjbTI4MzUt
-cnBpLmR0c2kncyBtYWluICJzZXQgYWxsIG9mIHRoZXNlIHBpbnMgdG8gYWx0MCIgd2l0aAo+PiBy
-ZWZlcmVuY2VzIHRvIHNwZWNpZmljIGdyb3VwcyB3ZSB3YW50IGVuYWJsZWQuCj4gCj4+IGRpZmYg
-LS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9iY20yODN4LmR0c2kgYi9hcmNoL2FybS9ib290L2R0
-cy9iY20yODN4LmR0c2kKPiAKPj4gKwkJCXNwaTBfZ3Bpbzc6IHNwaTBfZ3Bpbzcgewo+PiArCQkJ
-CWJyY20scGlucyA9IDw3IDggOSAxMCAxMT47Cj4+ICsJCQkJYnJjbSxmdW5jdGlvbiA9IDxCQ00y
-ODM1X0ZTRUxfQUxUMD47Cj4+ICsJCQl9Owo+IAo+IFRoaXMgaXMgdG9vIG1hbnkgcGlucy4KPiAK
-PiAtIEl0IGluY2x1ZGVzIGJvdGggTU9TSSBhbmQgTUlTTywgYWx0aG91Z2ggYSBwYXJ0aWN1bGFy
-IHVzZS1jYXNlIG1heSBvbmx5IHVzZSAxIG9mIHRob3NlLgo+IAo+IC0gSXQgaW5jbHVkZXMgYm90
-aCBjaGlwLXNlbGVjdCBzaWduYWxzLCB3aGVyZWFzIGEgcGFydGljdWxhciB1c2UtY2FzZSBtYXkg
-dXNlIDAsIDEsIG9yIDIgb2YgdGhvc2UuIFRoaXMgaXMgZXNwZWNpYWxseSB0cnVlIHNpbmNlIElJ
-UkMgdGhlIG1haW5saW5lIGJjbTI4M3ggU1BJIGRyaXZlciB3YW50cyB0byBvbmx5IHVzZSBHUElP
-cyBmb3IgY2hpcC1zZWxlY3RzLCBub3QgU1BJLWNvbnRyb2xsZXItZ2VuZXJhdGVkIGNoaXAtc2Vs
-ZWN0IHNpZ25hbHMsIHRvIGF2b2lkIHNvbWUgaXNzdWVzIHdpdGggdGhlIEhXIGdlbmVyYXRpb24g
-b2YgdGhlc2Ugc2lnbmFscy4KVGhhdCBpcyB0cnVlOiB0aGUgc3BpLWJjbTI4MzUgZHJpdmVyIHJl
-cXVpcmVzIEdQSU8gdXNhZ2UgZm9yIGNoaXAtc2VsZWN0CnRvIG1ha2UgYWxsIHRob3NlIGxhdGVu
-Y3kgb3B0aW1pemF0aW9ucyB3b3JrIChidXQgYWxzbyB0byBhdm9pZCBzb21lCnNwaS1kbWEgaXNz
-dWVzKS4KVGhlIHJlYXNvbiBiZWhpbmQgaXQgaXMgdGhhdCB0aGVyZSBhcmUgb2JzZXJ2ZWQgc2hv
-cnQgdGVybSDigJxnbGl0Y2hlc+KAnQpvbiBuYXRpdmUgQ1Mgd2hlbmV2ZXIgdGhlIFNQSSBjb250
-cm9sIHJlZ2lzdGVyIGlzIHRvdWNoZWQgLSBldmVuIHdpdGggCmlkZW50aWNhbCB2YWx1ZXMuCkFu
-ZCBHUElPIGNvbnRyb2xsZWQgQ1Mgc29sdmVzIHRoaXMgaXNzdWUgKGFuZCBNYXJrIEJyb3duIHNh
-aWQgdGhhdAp0aGUgR1BJTy1jcyBpbnRlcmZhY2UgaXMgbm93IHByZWZlcnJlZCBhbnl3YXkgLSBo
-ZW5jZSB0aGUgYXV4aWxpYXJ5CnNwaSBvbmx5IGltcGxlbWVudCBncGlvLWNzIGFuZCByZXF1aXJl
-cyB0aGUgQ1Mgc2V0IGFzIE9VVFBVVCwgYnV0CnVubGlrZSB0aGUgbWFpbiBzcGkgdGhpcyBkb2Vz
-IG5vdCBoYXZlIOKAnHJlbWFwcGluZ+KAnSBzdXBwb3J0IGZvcgpsZWdhY3kgZGV2aWNlLXRyZWVz
-IChhcyB0aGVyZSBuZXZlciB3YXMgYSBkcml2ZXItdmVyc2lvbiB0aGF0IHN1cHBvcnRlZApuYXRp
-dmUtY3MpLgoKTWF5YmUgc3BsaXQgdGhlIFNQSS1wb3J0aW9uIGludG8gMiBzZWN0aW9uczoKKiB0
-aGUgU0NLLCBNT1NJLCBNSVNPIChwaW4gOSB0byAxMSkgd2l0aCBBTFRfMAoqIHRoZSBDUyBHUElP
-cyAoc3RhbmRhcmQgcGlucyBhcmUgNyBhbmQgOCkgd2l0aCBPVVRQVVQuCgpUaGF0IHdheSBpdCBp
-cyBlYXN5IHRvIG92ZXJyaWRlIG9ubHkgdGhpcyBzZWN0aW9uIChwbHVzIHRoZSBncGlvLWNzIHBy
-b3BlcnR5IGluc2lkZSB0aGUgc3BpIG5vZGUpIHRvIGV4dGVuZCB0aGUgbnVtYmVyIG9mIGNoaXAg
-c2VsZWN0cyBvciB1c2UgZGlmZmVyZW50IG1hcHBpbmdzLgoKPiAKPiBJIGJlbGlldmUgYSBzaW1p
-bGFyIGNvbW1lbnQgYXBwbGllcyB0byBvdGhlciBTUEkgbm9kZXMgdG9vLgpJIGd1ZXNzIHRoZSBz
-YW1lIOKAnHNwbGl0dGluZ+KAnSBhcHByb2FjaCBzaG91bGQgYmUgdGFrZW4gaGVyZSBhcyB3ZWxs
-Li4uCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4
-LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFk
-Lm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFy
-bS1rZXJuZWwK
+The standby GPIO controller can be used as a interrupt controller.
+Select GPIOLIB_IRQCHIP when compiling this driver. Otherwise we get
+a compilation error:
+
+drivers/gpio/gpio-xgene-sb.c: In function 'xgene_gpio_sb_probe':
+drivers/gpio/gpio-xgene-sb.c:312:10: error: 'struct gpio_chip' has no member named 'irqdomain'
+  priv->gc.irqdomain = priv->irq_domain;
+          ^
+scripts/Makefile.build:295: recipe for target 'drivers/gpio/gpio-xgene-sb.o' failed
+make[2]: *** [drivers/gpio/gpio-xgene-sb.o] Error 1
+
+Fixes: 1013fc41 "gpio: xgene: Enable X-Gene standby GPIO as interrupt controller"
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+---
+ drivers/gpio/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 619767b..d9d6cfe 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -452,6 +452,7 @@ config GPIO_XGENE_SB
+ 	tristate "APM X-Gene GPIO standby controller support"
+ 	depends on ARCH_XGENE && OF_GPIO
+ 	select GPIO_GENERIC
++	select GPIOLIB_IRQCHIP
+ 	help
+ 	  This driver supports the GPIO block within the APM X-Gene
+ 	  Standby Domain. Say yes here to enable the GPIO functionality.
+-- 
+2.6.2
