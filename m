@@ -1,151 +1,72 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH] pinctrl: pistachio: fix mfio84-89 function description
- and pinmux.
-Date: Fri, 4 Mar 2016 10:48:33 -0800
-Message-ID: <CAL1qeaHYgqCBSAJBEyrEW3d0ys4BGZ8tzFYbJGONPRSO2fGevA@mail.gmail.com>
-References: <1457105302-15070-1-git-send-email-Govindraj.Raja@imgtec.com>
+From: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH v3] dt-bindings: GPIO: Add generic serializer binding
+Date: Fri, 4 Mar 2016 12:58:44 -0600
+Message-ID: <1457117924-7014-1-git-send-email-afd@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <1457105302-15070-1-git-send-email-Govindraj.Raja@imgtec.com>
-Sender: stable-owner@vger.kernel.org
-To: Govindraj Raja <Govindraj.Raja@imgtec.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Linux-MIPS <linux-mips@linux-mips.org>, James Hartley <James.Hartley@imgtec.com>, "Stable kernel (v4.1)" <stable@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Govindraj,
+Add binding for generic parallel-in/serial-out shift register devices
+used as GPIO.
 
-On Fri, Mar 4, 2016 at 7:28 AM, Govindraj Raja
-<Govindraj.Raja@imgtec.com> wrote:
-> mfio 84 to 89 are described wrongly, fix it to describe
-> the right pin and add them to right pin-mux group.
->
-> The correct order is:
->         pll1_lock => mips_pll   -- MFIO_83
->         pll2_lock => audio_pll  -- MFIO_84
->         pll3_lock => rpu_v_pll  -- MFIO_85
->         pll4_lock => rpu_l_pll  -- MFIO_86
->         pll5_lock => sys_pll    -- MFIO_87
->         pll6_lock => wifi_pll   -- MFIO_88
->         pll7_lock => bt_pll     -- MFIO_89
->
-> Fixes: cefc03e5995e("pinctrl: Add Pistachio SoC pin control driver")
-> Signed-off-by: Govindraj Raja <Govindraj.Raja@imgtec.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Andrew Bresticker <abrestic@chromium.org>
-> Cc: linux-mips@linux-mips.org
-> Cc: James Hartley <James.Hartley@imgtec.com>
-> Cc: <stable@vger.kernel.org> # v4.2+
+Signed-off-by: Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+The driver was taken but it looks like this might have been lost,
+anyway I've added a dual-string example as requested.
 
-Acked-by: Andrew Bresticker <abrestic@chromium.org>
+ .../devicetree/bindings/gpio/gpio-pisosr.txt       | 34 ++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-pisosr.txt
 
-> Do I need to split this patch into dt & pinctrl?
-> Or can it be picked up through pinctrl subsystem with dt maintainers Ack?
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-pisosr.txt b/Documentation/devicetree/bindings/gpio/gpio-pisosr.txt
+new file mode 100644
+index 0000000..dab8c9f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-pisosr.txt
+@@ -0,0 +1,34 @@
++Generic Parallel-in/Serial-out Shift Register GPIO Driver
++
++This binding describes generic parallel-in/serial-out shift register
++devices that can be used for GPI (General Purpose Input). This includes
++SN74165 serial-out shift registers and the SN65HVS88x series of
++industrial serializers.
++
++Required properties:
++ - compatible		: Should be "pisosr-gpio".
++ - gpio-controller	: Marks the device node as a GPIO controller.
++ - #gpio-cells		: Should be two. For consumer use see gpio.txt.
++
++Optional properties:
++ - ngpios		: Number of GPIO lines, default is 8.
++ - load-gpios		: GPIO pin specifier attached to load enable, this
++			  pin is pulsed before reading from the device to
++			  load input pin values into the the device.
++
++For other required and optional properties of SPI slave
++nodes please refer to ../spi/spi-bus.txt.
++
++Example:
++
++	gpio@0 {
++		compatible = "ti,sn65hvs882", "pisosr-gpio";
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		load-gpios = <&gpio2 23 GPIO_ACTIVE_LOW>;
++
++		reg = <0>;
++		spi-max-frequency = <1000000>;
++		spi-cpol;
++	};
+-- 
+2.7.2
 
-I would think that since this is a correction to the existing
-binding/driver that shouldn't be necessary, but that's up to Linus.
-
->
->  .../bindings/pinctrl/img,pistachio-pinctrl.txt     | 12 +++++------
->  drivers/pinctrl/pinctrl-pistachio.c                | 24 +++++++++++-----------
->  2 files changed, 18 insertions(+), 18 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/pinctrl/img,pistachio-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/img,pistachio-pinctrl.txt
-> index 08a4a32..0326154 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/img,pistachio-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/img,pistachio-pinctrl.txt
-> @@ -134,12 +134,12 @@ mfio80            ddr_debug, mips_trace_data, mips_debug
->  mfio81         dreq0, mips_trace_data, eth_debug
->  mfio82         dreq1, mips_trace_data, eth_debug
->  mfio83         mips_pll_lock, mips_trace_data, usb_debug
-> -mfio84         sys_pll_lock, mips_trace_data, usb_debug
-> -mfio85         wifi_pll_lock, mips_trace_data, sdhost_debug
-> -mfio86         bt_pll_lock, mips_trace_data, sdhost_debug
-> -mfio87         rpu_v_pll_lock, dreq2, socif_debug
-> -mfio88         rpu_l_pll_lock, dreq3, socif_debug
-> -mfio89         audio_pll_lock, dreq4, dreq5
-> +mfio84         audio_pll_lock, mips_trace_data, usb_debug
-> +mfio85         rpu_v_pll_lock, mips_trace_data, sdhost_debug
-> +mfio86         rpu_l_pll_lock, mips_trace_data, sdhost_debug
-> +mfio87         sys_pll_lock, dreq2, socif_debug
-> +mfio88         wifi_pll_lock, dreq3, socif_debug
-> +mfio89         bt_pll_lock, dreq4, dreq5
->  tck
->  trstn
->  tdi
-> diff --git a/drivers/pinctrl/pinctrl-pistachio.c b/drivers/pinctrl/pinctrl-pistachio.c
-> index 856f736..2673cd9 100644
-> --- a/drivers/pinctrl/pinctrl-pistachio.c
-> +++ b/drivers/pinctrl/pinctrl-pistachio.c
-> @@ -469,27 +469,27 @@ static const char * const pistachio_mips_pll_lock_groups[] = {
->         "mfio83",
->  };
->
-> -static const char * const pistachio_sys_pll_lock_groups[] = {
-> +static const char * const pistachio_audio_pll_lock_groups[] = {
->         "mfio84",
->  };
->
-> -static const char * const pistachio_wifi_pll_lock_groups[] = {
-> +static const char * const pistachio_rpu_v_pll_lock_groups[] = {
->         "mfio85",
->  };
->
-> -static const char * const pistachio_bt_pll_lock_groups[] = {
-> +static const char * const pistachio_rpu_l_pll_lock_groups[] = {
->         "mfio86",
->  };
->
-> -static const char * const pistachio_rpu_v_pll_lock_groups[] = {
-> +static const char * const pistachio_sys_pll_lock_groups[] = {
->         "mfio87",
->  };
->
-> -static const char * const pistachio_rpu_l_pll_lock_groups[] = {
-> +static const char * const pistachio_wifi_pll_lock_groups[] = {
->         "mfio88",
->  };
->
-> -static const char * const pistachio_audio_pll_lock_groups[] = {
-> +static const char * const pistachio_bt_pll_lock_groups[] = {
->         "mfio89",
->  };
->
-> @@ -559,12 +559,12 @@ enum pistachio_mux_option {
->         PISTACHIO_FUNCTION_DREQ4,
->         PISTACHIO_FUNCTION_DREQ5,
->         PISTACHIO_FUNCTION_MIPS_PLL_LOCK,
-> +       PISTACHIO_FUNCTION_AUDIO_PLL_LOCK,
-> +       PISTACHIO_FUNCTION_RPU_V_PLL_LOCK,
-> +       PISTACHIO_FUNCTION_RPU_L_PLL_LOCK,
->         PISTACHIO_FUNCTION_SYS_PLL_LOCK,
->         PISTACHIO_FUNCTION_WIFI_PLL_LOCK,
->         PISTACHIO_FUNCTION_BT_PLL_LOCK,
-> -       PISTACHIO_FUNCTION_RPU_V_PLL_LOCK,
-> -       PISTACHIO_FUNCTION_RPU_L_PLL_LOCK,
-> -       PISTACHIO_FUNCTION_AUDIO_PLL_LOCK,
->         PISTACHIO_FUNCTION_DEBUG_RAW_CCA_IND,
->         PISTACHIO_FUNCTION_DEBUG_ED_SEC20_CCA_IND,
->         PISTACHIO_FUNCTION_DEBUG_ED_SEC40_CCA_IND,
-> @@ -620,12 +620,12 @@ static const struct pistachio_function pistachio_functions[] = {
->         FUNCTION(dreq4),
->         FUNCTION(dreq5),
->         FUNCTION(mips_pll_lock),
-> +       FUNCTION(audio_pll_lock),
-> +       FUNCTION(rpu_v_pll_lock),
-> +       FUNCTION(rpu_l_pll_lock),
->         FUNCTION(sys_pll_lock),
->         FUNCTION(wifi_pll_lock),
->         FUNCTION(bt_pll_lock),
-> -       FUNCTION(rpu_v_pll_lock),
-> -       FUNCTION(rpu_l_pll_lock),
-> -       FUNCTION(audio_pll_lock),
->         FUNCTION(debug_raw_cca_ind),
->         FUNCTION(debug_ed_sec20_cca_ind),
->         FUNCTION(debug_ed_sec40_cca_ind),
-> --
-> 2.5.0
->
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
