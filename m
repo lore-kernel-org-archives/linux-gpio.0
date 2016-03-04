@@ -1,7 +1,7 @@
 From: Matthias Brugger <mbrugger@suse.com>
 Subject: [PATCH] gpio: xgene: Fix kconfig for standby GIPO contoller
-Date: Fri,  4 Mar 2016 11:59:58 +0100
-Message-ID: <1457089198-27171-1-git-send-email-mbrugger@suse.com>
+Date: Fri,  4 Mar 2016 12:42:12 +0100
+Message-ID: <1457091732-21924-1-git-send-email-mbrugger@suse.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, gnurou@gmail.com
@@ -19,18 +19,42 @@ drivers/gpio/gpio-xgene-sb.c:312:10: error: 'struct gpio_chip' has no member nam
 scripts/Makefile.build:295: recipe for target 'drivers/gpio/gpio-xgene-sb.o' failed
 make[2]: *** [drivers/gpio/gpio-xgene-sb.o] Error 1
 
+Apart if compiled as module, we get the following modpost errors:
+ERROR: "irq_chip_eoi_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+ERROR: "irq_chip_unmask_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+ERROR: "irq_chip_mask_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+ERROR: "irq_domain_create_hierarchy" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+ERROR: "gpiochip_get_data" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+ERROR: "irq_chip_set_type_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+ERROR: "irq_domain_alloc_irqs_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+ERROR: "irq_domain_set_hwirq_and_chip" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+ERROR: "irq_domain_reset_irq_data" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+
+This patch changes the kconfig so that the gpio controller can only be
+build-in and selects GPIOLIB_IRQCHIP.
+
 Fixes: 1013fc41 "gpio: xgene: Enable X-Gene standby GPIO as interrupt controller"
+Cc: Quan Nguyen <qnguyen@apm.com>
 Signed-off-by: Matthias Brugger <mbrugger@suse.com>
 ---
- drivers/gpio/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+
+Changes for v2:
+- Add modprobe fix, changing tristate to bool
+- Add Cc tag
+
+ drivers/gpio/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 619767b..d9d6cfe 100644
+index 619767b..ff67dc3 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -452,6 +452,7 @@ config GPIO_XGENE_SB
- 	tristate "APM X-Gene GPIO standby controller support"
+@@ -449,9 +449,10 @@ config GPIO_XGENE
+ 	  here to enable the GFC GPIO functionality.
+ 
+ config GPIO_XGENE_SB
+-	tristate "APM X-Gene GPIO standby controller support"
++	bool "APM X-Gene GPIO standby controller support"
  	depends on ARCH_XGENE && OF_GPIO
  	select GPIO_GENERIC
 +	select GPIOLIB_IRQCHIP
