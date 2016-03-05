@@ -1,71 +1,75 @@
-From: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 13/13] ARM: sunxi: Add Kconfig for sunxi clocks
-Date: Sat,  5 Mar 2016 23:43:06 +0800
-Message-ID: <1457192586-25596-14-git-send-email-vishnupatekar0510@gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
-Reply-To: vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Subject: Re: [PATCH v3 13/13] ARM: sunxi: Add Kconfig for sunxi clocks
+Date: Sun, 6 Mar 2016 00:22:37 +0800
+Message-ID: <CAEzqOZvULNLoyPb__9Tr8qioNQx73i0tz=cXK8EbJYJatdb3xw@mail.gmail.com>
+References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com> <1457192586-25596-14-git-send-email-vishnupatekar0510@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBD64TFVR3YIBBY755O3AKGQEGOQKTAQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1457192586-25596-1-git-send-email-vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, corbet-T1hC0tSOHrs@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org
-Cc: jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, patchesrdh-I1/eAgTnXDYAvxtiuMwx3w@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1457192586-25596-14-git-send-email-vishnupatekar0510@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: "robh+dt@kernel.org" <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "maxime.ripard@free-electrons.com" <maxime.ripard@free-electrons.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>
+Cc: Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>, linux-clk <linux-clk@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds Kconfig for sunxi clocks.
-Currently, only sun8i-apb0 and sun9i-cpus clocks are added.
-It'll help to use common clocks across different SOCs.
-We can switch to kconfig for other clocks in future.
+Hello,
 
-Signed-off-by: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/clk/Kconfig        | 1 +
- drivers/clk/sunxi/Kconfig  | 5 +++++
- drivers/clk/sunxi/Makefile | 4 ++--
- 3 files changed, 8 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/sunxi/Kconfig
+On Sat, Mar 5, 2016 at 11:43 PM, Vishnu Patekar
+<vishnupatekar0510@gmail.com> wrote:
+> This patch adds Kconfig for sunxi clocks.
+> Currently, only sun8i-apb0 and sun9i-cpus clocks are added.
+> It'll help to use common clocks across different SOCs.
+> We can switch to kconfig for other clocks in future.
+>
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> ---
+>  drivers/clk/Kconfig        | 1 +
+>  drivers/clk/sunxi/Kconfig  | 5 +++++
+>  drivers/clk/sunxi/Makefile | 4 ++--
+>  3 files changed, 8 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/clk/sunxi/Kconfig
+>
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index eca8e01..f9f42e6 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -210,3 +210,4 @@ source "drivers/clk/mvebu/Kconfig"
+>
+>  source "drivers/clk/samsung/Kconfig"
+>  source "drivers/clk/tegra/Kconfig"
+> +source "drivers/clk/sunxi/Kconfig"
+> diff --git a/drivers/clk/sunxi/Kconfig b/drivers/clk/sunxi/Kconfig
+> new file mode 100644
+> index 0000000..afc55c9
+> --- /dev/null
+> +++ b/drivers/clk/sunxi/Kconfig
+> @@ -0,0 +1,5 @@
+> +config CLK_SUN8I_APB0
+> +       def_bool MACH_SUN9I || MACH_SUN8I_A83T
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index eca8e01..f9f42e6 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -210,3 +210,4 @@ source "drivers/clk/mvebu/Kconfig"
- 
- source "drivers/clk/samsung/Kconfig"
- source "drivers/clk/tegra/Kconfig"
-+source "drivers/clk/sunxi/Kconfig"
-diff --git a/drivers/clk/sunxi/Kconfig b/drivers/clk/sunxi/Kconfig
-new file mode 100644
-index 0000000..afc55c9
---- /dev/null
-+++ b/drivers/clk/sunxi/Kconfig
-@@ -0,0 +1,5 @@
-+config CLK_SUN8I_APB0
-+	def_bool MACH_SUN9I || MACH_SUN8I_A83T
-+
-+config CLK_SUN9I_CPUS
-+	def_bool MACH_SUN9I || MACH_SUN8I_A83T
-diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
-index 3fd7901..38dfca8 100644
---- a/drivers/clk/sunxi/Makefile
-+++ b/drivers/clk/sunxi/Makefile
-@@ -17,8 +17,8 @@ obj-y += clk-sun9i-core.o
- obj-y += clk-sun9i-mmc.o
- obj-y += clk-usb.o
- 
--obj-$(CONFIG_MACH_SUN9I) += clk-sun8i-apb0.o
--obj-$(CONFIG_MACH_SUN9I) += clk-sun9i-cpus.o
-+obj-$(CONFIG_CLK_SUN8I_APB0) += clk-sun8i-apb0.o
-+obj-$(CONFIG_CLK_SUN9I_CPUS) += clk-sun9i-cpus.o
- 
- obj-$(CONFIG_MFD_SUN6I_PRCM) += \
- 	clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
--- 
-1.9.1
+This should be MACH_SUN8I and not MACH_SUN8I_A83T.
+
+Self NACK for this patch.
+> +
+> +config CLK_SUN9I_CPUS
+> +       def_bool MACH_SUN9I || MACH_SUN8I_A83T
+same here
+
+> diff --git a/drivers/clk/sunxi/Makefile b/drivers/clk/sunxi/Makefile
+> index 3fd7901..38dfca8 100644
+> --- a/drivers/clk/sunxi/Makefile
+> +++ b/drivers/clk/sunxi/Makefile
+> @@ -17,8 +17,8 @@ obj-y += clk-sun9i-core.o
+>  obj-y += clk-sun9i-mmc.o
+>  obj-y += clk-usb.o
+>
+> -obj-$(CONFIG_MACH_SUN9I) += clk-sun8i-apb0.o
+> -obj-$(CONFIG_MACH_SUN9I) += clk-sun9i-cpus.o
+> +obj-$(CONFIG_CLK_SUN8I_APB0) += clk-sun8i-apb0.o
+> +obj-$(CONFIG_CLK_SUN9I_CPUS) += clk-sun9i-cpus.o
+>
+>  obj-$(CONFIG_MFD_SUN6I_PRCM) += \
+>         clk-sun6i-ar100.o clk-sun6i-apb0.o clk-sun6i-apb0-gates.o \
+> --
+> 1.9.1
+>
