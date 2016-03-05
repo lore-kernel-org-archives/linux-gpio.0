@@ -1,50 +1,26 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] pinctrl: pistachio: fix mfio84-89 function description
- and pinmux.
-Date: Fri, 4 Mar 2016 22:31:37 -0600
-Message-ID: <20160305043137.GJ13525@rob-hp-laptop>
-References: <1457105302-15070-1-git-send-email-Govindraj.Raja@imgtec.com>
+From: ESTHER LABOSO <estherlaboso8@gmail.com>
+Subject: The amount is($9.4 USD nine point four million United State Dollars,
+ I have confirmed from the bank in Burkina Faso, You will also help me to
+ place the money in a more profitable business venture in your Country.
+ However, you will help me by recommending a nice University in your country
+ so that I can complete my studies. It will be my pleasure to compensate you
+ with 30% of the total money for your services. I shall appreciate an urgent
+ message indicating your ability and willingness to handle this transaction
+ trustfully and sincerely.I will also be sending to you my picture's in my
+ next mail, thanks and have a nice day. Sincerely yours, Esther Laboso.
+Date: Sat, 5 Mar 2016 10:05:18 +0100
+Message-ID: <CAOdNpLZbrC_z96bSsk_+DoU2LOCbLse9nD3eNaUrw7Z8_=e6zg@mail.gmail.com>
+Reply-To: estherlaboso8@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:49225 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760588AbcCEEbn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 4 Mar 2016 23:31:43 -0500
-Content-Disposition: inline
-In-Reply-To: <1457105302-15070-1-git-send-email-Govindraj.Raja@imgtec.com>
+Received: from mail-lb0-f194.google.com ([209.85.217.194]:33085 "EHLO
+	mail-lb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754415AbcCEJFV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Mar 2016 04:05:21 -0500
+Received: by mail-lb0-f194.google.com with SMTP id bc4so6880676lbc.0
+        for <linux-gpio@vger.kernel.org>; Sat, 05 Mar 2016 01:05:20 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Govindraj Raja <Govindraj.Raja@imgtec.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, linux-mips@linux-mips.org, James Hartley <James.Hartley@imgtec.com>, stable@vger.kernel.org
 
-On Fri, Mar 04, 2016 at 03:28:22PM +0000, Govindraj Raja wrote:
-> mfio 84 to 89 are described wrongly, fix it to describe
-> the right pin and add them to right pin-mux group.
-> 
-> The correct order is:
-> 	pll1_lock => mips_pll	-- MFIO_83
-> 	pll2_lock => audio_pll	-- MFIO_84
-> 	pll3_lock => rpu_v_pll	-- MFIO_85
-> 	pll4_lock => rpu_l_pll	-- MFIO_86
-> 	pll5_lock => sys_pll	-- MFIO_87
-> 	pll6_lock => wifi_pll	-- MFIO_88
-> 	pll7_lock => bt_pll	-- MFIO_89
-> 
-> Fixes: cefc03e5995e("pinctrl: Add Pistachio SoC pin control driver")
-> Signed-off-by: Govindraj Raja <Govindraj.Raja@imgtec.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Andrew Bresticker <abrestic@chromium.org>
-> Cc: linux-mips@linux-mips.org
-> Cc: James Hartley <James.Hartley@imgtec.com>
-> Cc: <stable@vger.kernel.org> # v4.2+
-> ---
-> Do I need to split this patch into dt & pinctrl?
-> Or can it be picked up through pinctrl subsystem with dt maintainers Ack?
 
-Yes.
-
-Acked-by: Rob Herring <robh@kernel.org>
