@@ -1,50 +1,41 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] pinctrl: sh-pfc: core: only call pinctrl_provide_dummies() on SuperH
-Date: Sat, 05 Mar 2016 01:58:22 +0300
-Message-ID: <14300712.5chtEzsjIN@wasted.cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/1] gpio: mcp23s08: Add support for mcp23s18.
+Date: Fri, 4 Mar 2016 22:24:52 -0600
+Message-ID: <20160305042452.GA13525@rob-hp-laptop>
+References: <1456813541-74321-1-git-send-email-preid@electromag.com.au>
+ <1456813541-74321-2-git-send-email-preid@electromag.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org, geert+renesas@glider.be
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:47561 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759709AbcCEEZJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 4 Mar 2016 23:25:09 -0500
+Content-Disposition: inline
+In-Reply-To: <1456813541-74321-2-git-send-email-preid@electromag.com.au>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Phil Reid <preid@electromag.com.au>
+Cc: pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
 
-The 'ravb' Ethernet driver couldn't connect to  the PHY as the MDIO bus
-appeared empty on the Renesas R-Car boards. The bug hunt finally pointed
-at  the commit adding the "init" pintcrl state: it tries to switch to non-
-default state before the driver probe which should fail but doesn't as the
-PFC pinctrl driver happens to call pinctrl_provide_dummies()  which makes
-all state lookups succeed, even though the state doesn't really exist.
-That feature is only relevant to non-DT systems and all the ARM boards
-that use the PFC driver  have been converted to the DT boot, so limiting
-it to the SuperH architecture seems The Right Thing...
+On Tue, Mar 01, 2016 at 02:25:41PM +0800, Phil Reid wrote:
+> This patch adds support for the mcp23s18 which is very similar to
+> the mcp23s17. A couple of control bits are not the same.
+> Notable IOCON_HAEN (s17 only) & IOCON_INTCC. Which can be ignored.
+> 
+> Patch changes the following:
+> - Add mcp23s18 types.
+> - Always set mirror bit if the dts defines mcp23s18. regardless of type.
+>   Mirror bit is ignored on 8 bit devices anyway.
+> - In mcp23s08_probe use chip.ngpio instead of logic based on type
+>   to determine number of gpio lins to increment by. This is set
+>   appropiately by the call to mcp23s08_probe_one.
+> - Add mcp23s18 to device tree documentation.
+> - Remove statement that irqs don't work for spi. They do.
+>   Tested with mcp23s18.
+> 
+> Signed-off-by: Phil Reid <preid@electromag.com.au>
+> ---
+>  .../devicetree/bindings/gpio/gpio-mcp23s08.txt        |  4 +---
 
-Fixes: ef0eebc05130 ("drivers/pinctrl: Add the concept of an "init" state")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-CC: stable@vger.kernel.org
-
----
-The patch is against the 'fixes' branch of Linus W.'s 'linux-pinctrl.git' repo.
-As  the bug only seems to happen  to the hardware that's not pre-configured by
-U-Boot, this patch can wait till 4.6 in principle...
-
- drivers/pinctrl/sh-pfc/core.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/core.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/core.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/core.c
-@@ -545,7 +545,8 @@ static int sh_pfc_probe(struct platform_
- 			return ret;
- 	}
- 
--	pinctrl_provide_dummies();
-+	if (IS_ENABLED(CONFIG_SUPERH))
-+		pinctrl_provide_dummies();
- 
- 	ret = sh_pfc_init_ranges(pfc);
- 	if (ret < 0)
+Acked-by: Rob Herring <robh@kernel.org>
