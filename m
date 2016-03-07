@@ -1,78 +1,85 @@
-From: Matthias Brugger <mbrugger@suse.com>
-Subject: Re: [PATCH] gpio: xgene: Fix kconfig for standby GIPO contoller
-Date: Mon, 7 Mar 2016 11:47:01 +0100
-Message-ID: <56DD5C25.3070702@suse.com>
-References: <1457091732-21924-1-git-send-email-mbrugger@suse.com>
- <CACRpkda=EnW8h5Ungh8mybes3usCL28RRyMP5etuq_mQUG_3NQ@mail.gmail.com>
+From: Michael Hennerich <michael.hennerich@analog.com>
+Subject: Re: [PATCH v2] iio: dac: Add support for the AD5592R/AD5593R
+ ADCs/DACs
+Date: Mon, 7 Mar 2016 13:25:38 +0100
+Message-ID: <56DD7342.5040101@analog.com>
+References: <1456407412-16218-1-git-send-email-michael.hennerich@analog.com>
+ <56D1E1CB.6070704@kernel.org> <56D71309.30204@analog.com>
+ <56DB1E49.3070908@kernel.org>
+Reply-To: <michael.hennerich@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.nue.novell.com ([195.135.221.5]:45804 "EHLO
-	smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751047AbcCGKrX (ORCPT
-	<rfc822;groupwise-linux-gpio@vger.kernel.org:0:0>);
-	Mon, 7 Mar 2016 05:47:23 -0500
-In-Reply-To: <CACRpkda=EnW8h5Ungh8mybes3usCL28RRyMP5etuq_mQUG_3NQ@mail.gmail.com>
+Received: from mail-by2on0054.outbound.protection.outlook.com ([207.46.100.54]:22976
+	"EHLO na01-by2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752300AbcCGMdV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 7 Mar 2016 07:33:21 -0500
+In-Reply-To: <56DB1E49.3070908@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Quan Nguyen <qnguyen@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>, lars@metafoo.de, knaack.h@gmx.de, paul.cercueil@analog.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-
-
-On 07/03/16 08:41, Linus Walleij wrote:
-> On Fri, Mar 4, 2016 at 6:42 PM, Matthias Brugger <mbrugger@suse.com> wrote:
->
->> The standby GPIO controller can be used as a interrupt controller.
->> Select GPIOLIB_IRQCHIP when compiling this driver. Otherwise we get
->> a compilation error:
+On 03/05/2016 06:58 PM, Jonathan Cameron wrote:
+> On 02/03/16 16:21, Michael Hennerich wrote:
+>> On 02/27/2016 06:50 PM, Jonathan Cameron wrote:
+>>> On 25/02/16 13:36, michael.hennerich@analog.com wrote:
+>>>> From: Paul Cercueil <paul.cercueil@analog.com>
+>>>>
+>>>> This patch adds support for the AD5592R (spi) and AD5593R (i2c)
+>>>> ADC/DAC devices.
+>>>>
+>>>> Signed-off-by: Paul Cercueil <paul.cercueil@analog.com>
+>>>> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+>>>>
+>>> A few bits inline.
+>>>
+>>> I'll need a gpio review on this (looks fine to me but it does contain
+>>> a gpiochip driver.) Not to mention the question of whether they will
+>>> be happy with a gpio chip hiding in iio (rather than via an mfd with a
+>>> separate driver - which feels like overkill here).
+>>>
+>>> The big question to my mind is whether we can take the view this won't
+>>> be the last multipurpose chip we will see so do we need to sort the
+>>> binding out to make it generic?  It'll be a bit of a pain for you
+>>> but I think we can do it fairly easily.
+>>> (either way I'll also need a device tree ack on this one!)
+>>>
+>>> So then we get into the question of the best way of doing the bindings.
+>>> The gpio approach seems a little limiting for things as flexible as
+>>> this but we should certainly be using their macros where relevant.
 >>
->> drivers/gpio/gpio-xgene-sb.c: In function 'xgene_gpio_sb_probe':
->> drivers/gpio/gpio-xgene-sb.c:312:10: error: 'struct gpio_chip' has no member named 'irqdomain'
->>    priv->gc.irqdomain = priv->irq_domain;
->>            ^
->> scripts/Makefile.build:295: recipe for target 'drivers/gpio/gpio-xgene-sb.o' failed
->> make[2]: *** [drivers/gpio/gpio-xgene-sb.o] Error 1
+>> Hi Jonathan,
 >>
->> Apart if compiled as module, we get the following modpost errors:
->> ERROR: "irq_chip_eoi_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
->> ERROR: "irq_chip_unmask_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
->> ERROR: "irq_chip_mask_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
->> ERROR: "irq_domain_create_hierarchy" [drivers/gpio/gpio-xgene-sb.ko] undefined!
->> ERROR: "gpiochip_get_data" [drivers/gpio/gpio-xgene-sb.ko] undefined!
->> ERROR: "irq_chip_set_type_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
->> ERROR: "irq_domain_alloc_irqs_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
->> ERROR: "irq_domain_set_hwirq_and_chip" [drivers/gpio/gpio-xgene-sb.ko] undefined!
->> ERROR: "irq_domain_reset_irq_data" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+>> Thanks for the review.
 >>
->> This patch changes the kconfig so that the gpio controller can only be
->> build-in and selects GPIOLIB_IRQCHIP.
+>> The problem is see is that using GPIOF_OPEN_DRAIN, will simulate OPEN DRAIN behaviour only, by configuring the device for input when outputing logic high.
 >>
->> Fixes: 1013fc41 "gpio: xgene: Enable X-Gene standby GPIO as interrupt controller"
->> Cc: Quan Nguyen <qnguyen@apm.com>
->> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
->> ---
->>
->> Changes for v2:
->> - Add modprobe fix, changing tristate to bool
->> - Add Cc tag
->
-> Quan has sent a patch exporting the offending functions, but no reply from
-> the irqchip maintainers yet.
->
-> If they don't react we'll have to merge this and handle the module loading
-> later.
->
+> Is it actually documented as such anywhere? (that's hideous!)
 
-Thanks for the info.
 
-Just as a heads up, this patch fix two problems. Apart from the missing 
-exports for the irqchip functions, it selects GPIOLIB_IRQCHIP as 
-otherwise the config may be broken.
+In fact it is -
+www.kernel.org/doc/Documentation/gpio/gpio-legacy.txt
 
-Actually v1 of this patch just fixes this:
-https://patchwork.kernel.org/patch/8502401/
+"When setting the flag as GPIOF_OPEN_DRAIN then it will assume that pins is
+open drain type. Such pins will not be driven to 1 in output mode. It is
+require to connect pull-up on such pins. By enabling this flag, gpio lib 
+will
+make the direction to input when it is asked to set value of 1 in output 
+mode
+to make the pin HIGH. The pin is make to LOW by driving value 0 in 
+output mode."
 
-Regards,
-Matthias
+And that's exactly what the gpiolib code does.
+
+-- 
+Greetings,
+Michael
+
+--
+Analog Devices GmbH      Wilhelm-Wagenfeld-Str. 6      80807 Muenchen
+Sitz der Gesellschaft: Muenchen; Registergericht: Muenchen HRB 40368;
+Geschaeftsfuehrer:Dr.Carsten Suckrow, Thomas Wessel, William A. Martin,
+Margaret Seif
