@@ -1,7 +1,7 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Wolfram Sang <wsa@the-dreams.de>
 Subject: Re: [RFC] pinctrl: sh-pfc: only use dummy states for non-DT platforms
-Date: Tue, 8 Mar 2016 00:19:36 +0300
-Message-ID: <56DDF068.6090408@cogentembedded.com>
+Date: Mon, 7 Mar 2016 23:21:31 +0100
+Message-ID: <20160307222131.GA1391@katana>
 References: <1457376072-755-1-git-send-email-wsa@the-dreams.de>
  <CAMuHMdXPH0+YE=cRk7pjvoVEYtEGNcb_83-z5taXSLHRhtgMQA@mail.gmail.com>
  <56DDDE6E.6090908@cogentembedded.com>
@@ -9,57 +9,49 @@ References: <1457376072-755-1-git-send-email-wsa@the-dreams.de>
  <56DDE5CB.60204@cogentembedded.com>
  <CAMuHMdUVFk47u+LPdfh+fq8vvPQAULyM8X_DrizCtrgf-1YwaA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="BOKacYhQ+x31HxR3"
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <CAMuHMdUVFk47u+LPdfh+fq8vvPQAULyM8X_DrizCtrgf-1YwaA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On 03/08/2016 12:00 AM, Geert Uytterhoeven wrote:
 
->>>>>> --- a/drivers/pinctrl/sh-pfc/core.c
->>>>>> +++ b/drivers/pinctrl/sh-pfc/core.c
->>>>>> @@ -545,7 +545,9 @@ static int sh_pfc_probe(struct platform_device
->>>>>> *pdev)
->>>>>>                            return ret;
->>>>>>            }
->>>>>>
->>>>>> -       pinctrl_provide_dummies();
->>>>>> +       /* Enable dummy states for those platforms without pinctrl
->>>>>> support */
->>>>>> +       if (!of_have_populated_dt())
->>>>
->>>>
->>>>      I'd considered this condition -- it won't fly on SH where
->>>> CONFIG_OF=n,
->>>> the kernel just won't build IIUC...
->>>
->>>
->>> I haven't tried to compile it yet, but <linux/of.h> does provide a dummy
->>> that
->>> returns false.
->>
->>
->>     Oops, indeed. I missed it. :-(
->>     This approach is better then, won't have to fix again whenever SH gets DT
->> support.
+--BOKacYhQ+x31HxR3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
 
 > Perhaps the of_have_populated_dt() check should be moved inside
 > pinctrl_provide_dummies()?
 
-    That's probably a good idea...
+Hmm, the kernel-doc for pinctrl_provide_dummies() says "Usually this
+function is called by platforms without pinctrl driver support...".
+Is "without pintctrl" == "no DT"? Linus?
 
-> Besides omap2, which has its own check, the only other user is imx1.
 
-    i.MX2x/3x as well, no?
+--BOKacYhQ+x31HxR3
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[...]
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-> Gr{oetje,eeting}s,
->
->                          Geert
+iQIbBAEBAgAGBQJW3f7rAAoJEBQN5MwUoCm2Uq4P+OhaqRWA8KUvZbYScCV9gfx6
+K9KhpODAEZa0hvqH83z+YQZRYZs2/kSOsLmPv4Q99qtGJZMi5tBiXRq58qIgClZ5
+YCXvUp7BmZAnfEioSWDqojUw1yhLv8HZq5qKbP1MhYsgkSzClB0PSdqbfTUK6vOr
+tSh1ucxedx7H0PwNpn4p4N+UBJ7Ey0DBvtFombvZ/YZSguNyEfqEWPiHaQhnaeT6
+yiSMrQCJts0o+JJtWC712MfFEB9E9iXobu6K5NkFXk6SKNrUDBgr5R/DC06CUg7z
+uFKV7yUZto3sFFtmtICt4n8JctvAWnFegUKZwaBa3SlYPnsu+ybEmL7/n+izcYUb
+X02x/LOorxC+vPJO1W0YVR6Q2OuqC94Zh76bQnrccYfqBK92xYDiqw4tpjY0aw3Y
+llYPRpNiLRc7UF+xCE2bCqrj6im6MRIIqVqu1gxZ9eqik5DPDfE6BZyvAAsJ8Xmv
+wx7ux/KTmIw5sZLCNmop7EFxsWgrwnbPYJaArkd++4I+yNuQ9wEAVToVoFXQ6FmN
+N2MaMKi+pnELmPSuGS5WpyasJw0UAoycn4q87iS1FRWXS0MK9hlqen64fVTEgD6c
+DQiIrKseutnmr2GyyFVvLSjWQgbsockFpCI5G3yH3BWzOuXrzo3A1x9ex/dXw83z
+NCP09XyB0Sr0fXJylnI=
+=sUGV
+-----END PGP SIGNATURE-----
 
-MBR, Sergei
+--BOKacYhQ+x31HxR3--
