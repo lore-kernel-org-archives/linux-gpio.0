@@ -1,34 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 01/63] of: Empty of_read_number when !OF
-Date: Mon, 7 Mar 2016 11:55:22 +0700
-Message-ID: <CACRpkdanZ_FU4RPsmV7VO=0Y-QSZYFWM1fBLj4u+BW3Gg9h87g@mail.gmail.com>
-References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
-	<1456492692-21592-2-git-send-email-alexanders83@web.de>
+Subject: Re: [PATCH] tools: gpio: add kernel headers in CFLAGS
+Date: Mon, 7 Mar 2016 12:01:01 +0700
+Message-ID: <CACRpkdYvGYbzENVSfJO-tW8qGs=RzpFCA9BROtU+_92-jjeeTw@mail.gmail.com>
+References: <1456495590-7610-1-git-send-email-bamv2005@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:34505 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751641AbcCGEzX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 6 Mar 2016 23:55:23 -0500
-Received: by mail-oi0-f41.google.com with SMTP id m82so72476448oif.1
-        for <linux-gpio@vger.kernel.org>; Sun, 06 Mar 2016 20:55:23 -0800 (PST)
-In-Reply-To: <1456492692-21592-2-git-send-email-alexanders83@web.de>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:36778 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751127AbcCGFBD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Mar 2016 00:01:03 -0500
+Received: by mail-ob0-f178.google.com with SMTP id rt7so95775775obb.3
+        for <linux-gpio@vger.kernel.org>; Sun, 06 Mar 2016 21:01:02 -0800 (PST)
+In-Reply-To: <1456495590-7610-1-git-send-email-bamv2005@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexanders83@web.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Bamvor Jian Zhang <bamv2005@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 
-On Fri, Feb 26, 2016 at 8:17 PM, Alexander Stein <alexanders83@web.de> wrote:
+On Fri, Feb 26, 2016 at 9:06 PM, Bamvor Jian Zhang <bamv2005@gmail.com> wrote:
 
-> Introduce empty of_read_number when CONFIG_OF is not defined. This allows
-> us to compile test gpio drivers.
+> From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 >
-> Signed-off-by: Alexander Stein <alexanders83@web.de>
+> Gpio tools require linux/gpio.h which may be only exist in kernel
+> source code in a cross compile environment.
+>
+> Add such header to CFLAGS to avoid compiling failure.
+>
+> Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 
-I need to wait for the OF maintainer to merge this or provide an ACK before
-I proceed with this patch series. It's pretty late so let's consider this v4.7
-material at this point.
+I already got a patch like this and NACKed it: the procedure to compile
+userspace tools is:
+
+make -C ${LINUX_TREE} headers_install ARCH=<arch> INSTALL_HDR_PATH=<bar>
+cd tools/gpio
+make CFLAGS="${CFLAGS} -I<bar>"
+
+So you push the new locations of your fresh kernel headers to the front of the
+include path. But make headers_install is mandatory before trying to compile
+userspace, as uapi may differ between architectures.
 
 Yours,
 Linus Walleij
