@@ -1,49 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpiolib: rewrite gpiodev_add_to_list
-Date: Mon, 7 Mar 2016 12:04:05 +0700
-Message-ID: <CACRpkdYq7Dp7iiJVu2uuL7J8UGuVfVQjkQkXNGo1ynAe1AkiXw@mail.gmail.com>
-References: <1456497434-11656-1-git-send-email-bamv2005@gmail.com>
+Subject: Re: [PATCH 00/63] Allow compile testing of most gpio drivers
+Date: Mon, 7 Mar 2016 12:06:03 +0700
+Message-ID: <CACRpkdYdsX-scQtKTsh_86j7GWPi=BYv2ftY9UKXHFEDATnZvA@mail.gmail.com>
+References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:36590 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750854AbcCGFEG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Mar 2016 00:04:06 -0500
-Received: by mail-oi0-f51.google.com with SMTP id r187so72456507oih.3
-        for <linux-gpio@vger.kernel.org>; Sun, 06 Mar 2016 21:04:05 -0800 (PST)
-In-Reply-To: <1456497434-11656-1-git-send-email-bamv2005@gmail.com>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:35636 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750854AbcCGFGE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Mar 2016 00:06:04 -0500
+Received: by mail-ob0-f179.google.com with SMTP id xx9so95914616obc.2
+        for <linux-gpio@vger.kernel.org>; Sun, 06 Mar 2016 21:06:03 -0800 (PST)
+In-Reply-To: <1456492692-21592-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bamvor Jian Zhang <bamv2005@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>, Arnd Bergmann <arnd@arndb.de>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+To: Alexander Stein <alexanders83@web.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Feb 26, 2016 at 9:37 PM, Bamvor Jian Zhang <bamv2005@gmail.com> wrote:
+On Fri, Feb 26, 2016 at 8:17 PM, Alexander Stein <alexanders83@web.de> wrote:
 
-> From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+> This patch set allows compile testing of most gpio drivers. I compiled all
+> from this list for x86_64 and arm. The drivers missing are using arch specific
+> includes or code only available on that platform, e.g. msr on x86, which is
+> unavailable on others.
 >
-> The original code of gpiodev_add_to_list is not very clear which
-> lead to bugs or compiling warning, reference the following patches:
-> Bugs:
-> 1.  Commit ef7c7553039b ("gpiolib: improve overlap check of range of
->     gpio").
-> 2.  Commit 96098df125c0 ("gpiolib: fix chip order in gpio list")
->
-> Warning:
-> 1.  Commit e28ecca6eac4 ("gpio: fix warning about iterator").
-> of gpio").
->
-> There is a off-list discussion about how to improve it consequently.
-> This commit try to follow this by rewriting the whole functions.
->
-> Tested pass with my gpio mockup driver and test scripts[1].
->
-> [1] http://www.spinics.net/lists/linux-gpio/msg09598.html
->
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+> I didn't include the OF people for the first one in purpose as I want some
+> feedback first.
 
-Patch applied. It surely looks much better like this!
+This is good. Is it possible that we take this for kernel v4.7 if you can
+get some ACK from the OF people for patch 1, and provide me a
+pull request from a git with all patches?
 
 Yours,
 Linus Walleij
