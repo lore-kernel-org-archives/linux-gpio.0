@@ -1,32 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: moxart: Allow compile test build
-Date: Mon, 7 Mar 2016 11:39:05 +0700
-Message-ID: <CACRpkdaYxfJkiUt3sJhOBmEZB5GWWz+kpgvPy3JsGsLDuoFSKQ@mail.gmail.com>
-References: <1456473597.24027.0.camel@ingics.com>
-	<1456473650.24027.1.camel@ingics.com>
+Subject: Re: [PATCH 01/63] of: Empty of_read_number when !OF
+Date: Mon, 7 Mar 2016 11:55:22 +0700
+Message-ID: <CACRpkdanZ_FU4RPsmV7VO=0Y-QSZYFWM1fBLj4u+BW3Gg9h87g@mail.gmail.com>
+References: <1456492692-21592-1-git-send-email-alexanders83@web.de>
+	<1456492692-21592-2-git-send-email-alexanders83@web.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:33916 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751798AbcCGEjG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 6 Mar 2016 23:39:06 -0500
-Received: by mail-ob0-f180.google.com with SMTP id ts10so96007520obc.1
-        for <linux-gpio@vger.kernel.org>; Sun, 06 Mar 2016 20:39:06 -0800 (PST)
-In-Reply-To: <1456473650.24027.1.camel@ingics.com>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:34505 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751641AbcCGEzX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 6 Mar 2016 23:55:23 -0500
+Received: by mail-oi0-f41.google.com with SMTP id m82so72476448oif.1
+        for <linux-gpio@vger.kernel.org>; Sun, 06 Mar 2016 20:55:23 -0800 (PST)
+In-Reply-To: <1456492692-21592-2-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Jonas Jensen <jonas.jensen@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Alexander Stein <alexanders83@web.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Feb 26, 2016 at 3:00 PM, Axel Lin <axel.lin@ingics.com> wrote:
+On Fri, Feb 26, 2016 at 8:17 PM, Alexander Stein <alexanders83@web.de> wrote:
 
-> There is no build dependency for this driver, so enable COMPILE_TEST to get
-> better build coverage.
+> Introduce empty of_read_number when CONFIG_OF is not defined. This allows
+> us to compile test gpio drivers.
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Signed-off-by: Alexander Stein <alexanders83@web.de>
 
-Patch applied.
+I need to wait for the OF maintainer to merge this or provide an ACK before
+I proceed with this patch series. It's pretty late so let's consider this v4.7
+material at this point.
 
 Yours,
 Linus Walleij
