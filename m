@@ -1,47 +1,37 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 04/10] drivers: pinctrl: add driver for
- Allwinner A64 SoC
-Date: Mon, 7 Mar 2016 10:33:35 +0700
-Message-ID: <CACRpkdYo+DhXd+7zQwnkXHPVYieE1r21Taib77SkW_sKd_Rmqw@mail.gmail.com>
-References: <1456165255-31013-1-git-send-email-andre.przywara@arm.com>
-	<1456165255-31013-5-git-send-email-andre.przywara@arm.com>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/3] pinctrl: core: create nolock version of pinctrl_find_gpio_range_from_pin
+Date: Mon, 7 Mar 2016 10:41:54 +0700
+Message-ID: <CACRpkdaOV01tq2AOf=Sdf_4__pjPdya=YQOPcFWNJw8VKXSY9A@mail.gmail.com>
+References: <1456436679-22077-1-git-send-email-manabian@gmail.com>
+	<1456436679-22077-2-git-send-email-manabian@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBD7N6O3AKGQENQUR5LY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1456165255-31013-5-git-send-email-andre.przywara-5wv7dgnIgG8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:33295 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751798AbcCGDly (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 6 Mar 2016 22:41:54 -0500
+Received: by mail-ob0-f179.google.com with SMTP id fz5so95328005obc.0
+        for <linux-gpio@vger.kernel.org>; Sun, 06 Mar 2016 19:41:54 -0800 (PST)
+In-Reply-To: <1456436679-22077-2-git-send-email-manabian@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Joachim Eastwood <manabian@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Feb 23, 2016 at 1:20 AM, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org> wrote:
+On Fri, Feb 26, 2016 at 4:44 AM, Joachim Eastwood <manabian@gmail.com> wrote:
 
-> Based on the Allwinner A64 user manual and on the previous sunxi
-> pinctrl drivers this introduces the pin multiplex assignments for
-> the ARMv8 Allwinner A64 SoC.
-> Port A is apparently used for the fixed function DRAM controller, so
-> the ports start at B here (the manual mentions "n from 1 to 7", so
-> not starting at 0).
+> pinctrl_find_gpio_range_from_pin takes the pctldev->mutex but so
+> does pinconf_pins_show and this will cause a deadlock if
+> pinctrl_find_gpio_range_from_pin is used in .pin_config_get
+> callback.
 >
-> Signed-off-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Create a nolock version of pinctrl_find_gpio_range_from_pin to
+> allow pin to gpio lookup to be used from pinconf_pins_show.
+>
+> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
 
-Add Maxime's ACK.
-
-This does not apply do the pinctrl devel branch, so please rebase it.
-
->  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
->  arch/arm64/Kconfig.platforms                       |   1 +
-
-Remove this from the patch, it can go in through the ASoC or ARM64 tree,
-just a symbol dependence is fine to merge orthogonally.
+Excellent, patch applied.
 
 Yours,
 Linus Walleij
