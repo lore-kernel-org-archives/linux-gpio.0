@@ -1,81 +1,37 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH 0/3] OMAP/pinmux: remove misuse of IRQF_NO_SUSPEND flag
-Date: Tue, 8 Mar 2016 18:31:59 +0700
-Message-ID: <56DEB82F.5050703@ti.com>
-References: <1454351299-27440-1-git-send-email-sudeep.holla@arm.com>
- <CACRpkdYzJ9Hy0sH6gK6RzpLE6juS4WfPjbt7nh43vR9YTuGZWA@mail.gmail.com>
- <56C1A1FE.3080403@arm.com> <20160215152751.GT19432@atomide.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 0/5] gpio: of: Add error handling and support for multiple gpio in gpio-hog
+Date: Tue, 8 Mar 2016 17:32:03 +0530
+Message-ID: <1457438528-29054-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:48707 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933307AbcCHLcm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 06:32:42 -0500
-In-Reply-To: <20160215152751.GT19432@atomide.com>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2837 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932068AbcCHMPH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 07:15:07 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>, Sudeep Holla <sudeep.holla@arm.com>, Tero Kristo <t-kristo@ti.com>, Dave Gerlach <d-gerlach@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linus.walleij@linaro.org, robh+dt@kernel.org
+Cc: pawel.moll@arm.com, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, treding@nvidia.com, swarren@wwwdotorg.org, Laxman Dewangan <ldewangan@nvidia.com>
 
-On 02/15/2016 10:27 PM, Tony Lindgren wrote:
-> * Sudeep Holla <sudeep.holla@arm.com> [160215 02:03]:
->> Hi Linus,
->>
->> On 13/02/16 14:42, Linus Walleij wrote:
->>> On Mon, Feb 1, 2016 at 7:28 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>>
->>>>    pinctrl: single: Use a separate lockdep class
->>>>    pinctrl: single: remove misuse of IRQF_NO_SUSPEND flag
->>>>    ARM: OMAP2+: remove misuse of IRQF_NO_SUSPEND flag
->>>>
->>>>   arch/arm/mach-omap2/mux.c        |  4 ++--
->>>>   arch/arm/mach-omap2/pm34xx.c     |  9 ++++-----
->>>>   arch/arm/mach-omap2/prm_common.c |  1 +
->>>>   drivers/pinctrl/pinctrl-single.c | 15 ++++++++++++---
->>>
->>> Are these patches orthogonal so I can merge the pinctrl patch independently
->>> of the OMAP patches if Tony ACKs this?
->>>
->>
->> Thanks for the follow up.
->> IIUC they are dependent and remember Tony/Grygorii wanted them to be
->> merged together(at-least for bisectibility)
-> 
-> AFAIK this series needs to be kept together to keep things
-> working.
-> 
->>> If not: should it be merged by me or through ARM SoC/Tony?
->>>
->>
->> I think so.
->>
->>> Anyways waiting for maintainer feedback, but the above is good to know.
->>>
->>
->> Grygorii was still not sure if this works and he couldn't give it a
->> test. He was traveling and may need more time to get back on this.
-> 
-> He said it does not work so clearly more work is needed.
-> 
+This series enhance the error print by adding error number in print message,
+handle the error if gpio_hogd() fails and returns error to caller, and
+add the support of multiple GPIOs to be passed from property "gpios" under
+gpio hogd node.
 
-Yeah. As I mentioned before patches 2/3 will not work.
-I've tried to test suspend with diff I posted [1], but I did it only on 
-dra7 and am43 where suspend i more simple than on omap3. Also, I worry
-that with such approach some irq can be missed (especially edge ones), 
-because PRCM irqs will be re-enabled at very late resume stage 
-(right before thaw).
+Laxman Dewangan (5):
+  gpio: of: Scan available child node for gpio-hog
+  gpio: gpiolib: Print error number if gpio hog failed
+  gpio: of: Return error if gpio hog configuration failed
+  gpio: of: Add support to have multiple gpios in gpio-hog
+  gpio: DT: Rephrase property "gpios" of hog node to support multiple
+    gpios
 
-Second option, I see, is to rework PRCM to be threaded IRQ, but in this case
-all children IRQs will need to be threaded/nested threaded
-(including PCS, legacy OMAP mux, OMAP3 _prcm_int_handle_wakeup/_prcm_int_handle_io).
-
-Are there any objection to convert PCS to threaded IRQ, for example? ;)
- 
-
-[1] https://patchwork.ozlabs.org/patch/578915/
+ Documentation/devicetree/bindings/gpio/gpio.txt |  6 +-
+ drivers/gpio/gpiolib-of.c                       | 73 +++++++++++++++++++------
+ drivers/gpio/gpiolib.c                          |  9 +--
+ 3 files changed, 63 insertions(+), 25 deletions(-)
 
 -- 
-regards,
--grygorii
+2.1.4
+
