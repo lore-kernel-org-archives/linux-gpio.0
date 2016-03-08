@@ -1,61 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFD] gpiolib: gpiochip is always dangling after remove
-Date: Tue, 8 Mar 2016 15:53:23 +0700
-Message-ID: <CACRpkdZtVref_ATxY1-ktGmS=ZUAyMxSfrED8sVjRd6KQCRbnQ@mail.gmail.com>
-References: <1456491974-26997-1-git-send-email-bamv2005@gmail.com>
+Subject: Re: [PATCH] pinctrl: imx: attach iomuxc device to gpr syscon
+Date: Tue, 8 Mar 2016 15:54:59 +0700
+Message-ID: <CACRpkdZPLO9FCoCdU6a-a55-HQCopaGu1yhGvrFrkd2hAdvewQ@mail.gmail.com>
+References: <1456420987-9883-1-git-send-email-p.zabel@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:36626 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932256AbcCHIxY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 03:53:24 -0500
-Received: by mail-ob0-f171.google.com with SMTP id m7so7830113obh.3
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 00:53:24 -0800 (PST)
-In-Reply-To: <1456491974-26997-1-git-send-email-bamv2005@gmail.com>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:33632 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753525AbcCHIzB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 03:55:01 -0500
+Received: by mail-oi0-f43.google.com with SMTP id d205so6045103oia.0
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 00:55:00 -0800 (PST)
+In-Reply-To: <1456420987-9883-1-git-send-email-p.zabel@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bamvor Jian Zhang <bamv2005@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Shawn Guo <shawnguo@kernel.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Adrian Alonso <aalonso@freescale.com>, Robin Gong <b38343@freescale.com>, Stefan Agner <stefan@agner.ch>, Anson Huang <b20788@freescale.com>, Fabio Estevam <fabio.estevam@freescale.com>, Frank Li <Frank.Li@freescale.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Fri, Feb 26, 2016 at 8:06 PM, Bamvor Jian Zhang <bamv2005@gmail.com> wrote:
+On Fri, Feb 26, 2016 at 12:23 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
 
-> From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+> Commit bdb0066df96e ("mfd: syscon: Decouple syscon interface from platform
+> devices") added the possibility to register syscon devices without
+> associated platform device. This also removed regmap debugfs facilities,
+> which don't work without a device. This patch associates the syscon regmap
+> that handles the IOMUX controller's general purpose registers with the
+> pinctrl device so that the GPR registers appear in the regmap debugfs
+> directory again. For example, on i.MX6Q the GPR registers now can be
+> read from /sys/kernel/debug/regmap/20e0000.iomuxc-gpr/registers.
 >
-> In my gpiochip mockup driver, after call gpiochip_remove, the
-> gpipchip is not actually removed even if there is no clients in
-> userspace. It could be removed if remove the corresonding reference
-> count in this patch.
->
-> But such gpiochip will be removed even if user space open the
-> corresponding chardev. I am not sure If I do not right thing.
-> Please correct me if I am wrong.
->
-> Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-I think you're onto the right thing, thank you for looking into this.
-
-My idea was that the gdev->dev and gdev->cdev should stay around
-until the last userspace user is gone, even if the gpiochip_remove()
-was called.
-
-Maybe I just got the refcounts wrong :(
-
-It'd be great if you can come up with a patch that has the following
-properties:
-
-gpiochip_add_data(), no userspace users, gpiochip_remove()
--> refcount goes to zero and gpiodevice_release() gets called
-
-gpiochip_add_data(), add some userspace users, gpiochip_remove()
--> refcount does not go to zero and gpiodevice_release() is not called
-Then remove the userspace users:
--> refcount goes to zero and gpiodevice_release() gets called
-
-It might be that using device_add(), device_del() directly like I'm
-doing cannot really solve this :( then we need to rethink the mechanism
-in terms of device_register()/device_unregister(), but I couldn't
-get that to work with the way chardevs are added.
+Patch applied with Shawn's ACK.
 
 Yours,
 Linus Walleij
