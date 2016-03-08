@@ -1,54 +1,68 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 2/5] gpio: gpiolib: Print error number if gpio hog failed
-Date: Tue, 8 Mar 2016 21:02:59 +0530
-Message-ID: <56DEF0AB.7090807@nvidia.com>
-References: <1457438528-29054-1-git-send-email-ldewangan@nvidia.com> <1457438528-29054-3-git-send-email-ldewangan@nvidia.com> <20160308142217.GB9864@ulmo.nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 2/5] ARM: bcm2835: Replace alt0/i2s_alt[02] with standard
+ groups.
+Date: Tue, 8 Mar 2016 09:42:24 -0700
+Message-ID: <56DF00F0.3080801@wwwdotorg.org>
+References: <1456510756-15337-1-git-send-email-eric@anholt.net>
+ <1456510756-15337-3-git-send-email-eric@anholt.net>
+ <CACRpkdYzSt=R7j9GLSY39CsyMKLjqRYnP_31ti5jWiGngJacqA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:9263 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752253AbcCHPpz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 10:45:55 -0500
-In-Reply-To: <20160308142217.GB9864@ulmo.nvidia.com>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:39796 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754255AbcCHQm2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 11:42:28 -0500
+In-Reply-To: <CACRpkdYzSt=R7j9GLSY39CsyMKLjqRYnP_31ti5jWiGngJacqA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <treding@nvidia.com>
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, swarren@wwwdotorg.org
+To: Linus Walleij <linus.walleij@linaro.org>, Eric Anholt <eric@anholt.net>
+Cc: linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stefan Wahren <stefan.wahren@i2se.com>
 
-
-On Tuesday 08 March 2016 07:52 PM, Thierry Reding wrote:
-> On Tue, Mar 08, 2016 at 05:32:05PM +0530, Laxman Dewangan wrote:
+On 03/08/2016 01:24 AM, Linus Walleij wrote:
+> On Sat, Feb 27, 2016 at 1:19 AM, Eric Anholt <eric@anholt.net> wrote:
 >
->> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->> ---
->>   drivers/gpio/gpiolib.c | 9 +++++----
->>   1 file changed, 5 insertions(+), 4 deletions(-)
+>> Since all of these pins were documented, we can use their names to
+>> explain what's going on.
 >>
->> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
->> index bc788b9..7575ebb 100644
->> --- a/drivers/gpio/gpiolib.c
->> +++ b/drivers/gpio/gpiolib.c
->> @@ -2621,15 +2621,16 @@ int gpiod_hog(struct gpio_desc *desc, const char *name,
->>   
->>   	local_desc = gpiochip_request_own_desc(chip, hwnum, name);
->>   	if (IS_ERR(local_desc)) {
->> -		pr_err("requesting hog GPIO %s (chip %s, offset %d) failed\n",
->> -		       name, chip->label, hwnum);
->> +		status = PTR_ERR(local_desc);
->> +		pr_err("requesting hog GPIO %s, chip %s, offset %d failed %d\n",
->> +		       name, chip->label, hwnum, status);
-> I find this type of format hard to read. I prefer a semi-colon to
-> separate the message from the failure reason (i.e. error code).
+>> Signed-off-by: Eric Anholt <eric@anholt.net>
 >
-> Besides that I don't understand why you're dropping the parentheses
-> around the "chip %s, offset %d", I found that easier on the eye.
+>> +       pinctrl-0 = <&i2c0_gpio0
+>> +                    &i2c1_gpio2
+>> +                    &gpclk0_gpio4
+>> +                    &gpclk1_gpio5
+>> +                    &spi0_gpio7
+>> +                    &pcm_gpio18
+>> +                    &pwm0_gpio40
+>> +                    &pwm1_gpio45
+>> +                    &gpioout
+>> +                    &alt3>;
 >
+> Why are all of these done as hogs instead of being in pinctrl-0
+> "default" for the device that is using them? i2c1, gpclk0,
+> etc?
 >
+> The only reason I see would be if they are unused or something.
 
+I think it makes sense to have the pinctrl driver (or even FW before the 
+kernel boots) set up everything at once where possible. That's the 
+easiest way to ensure there are never any conflicts in the pinmux table 
+(i.e. that two different pins don't end up being both muxed to SPI1's 
+MISO signal at the same time for a while before all the drivers probe). 
+Putting pinctrl entries into individual devices only makes sense to me 
+when one of:
 
-I did to accommodate the  3 extra character ( %d) for string format on 
-that line as it was already near to 80 column.
-Just did not want to split in multiple lines.
+a) That device needs to dynamically change the pinmux at run-time, e.g. 
+to switch between different states, so needs definitions of those 
+different states.
 
+or:
+
+b) The initial pinmux is guaranteed set up to a safe non-conflicting 
+state that enables very little, and we need to defer enabling various 
+peripherals until a later time when we know the peripheral is in use, 
+e.g. when loading a DT overlay from user-space.
+
+On the RPi there are certain peripherals that fall into each category, 
+e.g. SD card is always used, I2S only optionally used.
