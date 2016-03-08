@@ -1,68 +1,53 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 2/5] ARM: bcm2835: Replace alt0/i2s_alt[02] with standard
- groups.
-Date: Tue, 8 Mar 2016 09:42:24 -0700
-Message-ID: <56DF00F0.3080801@wwwdotorg.org>
-References: <1456510756-15337-1-git-send-email-eric@anholt.net>
- <1456510756-15337-3-git-send-email-eric@anholt.net>
- <CACRpkdYzSt=R7j9GLSY39CsyMKLjqRYnP_31ti5jWiGngJacqA@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 0/3] OMAP/pinmux: remove misuse of IRQF_NO_SUSPEND flag
+Date: Tue, 8 Mar 2016 09:09:09 -0800
+Message-ID: <20160308170909.GC9329@atomide.com>
+References: <1454351299-27440-1-git-send-email-sudeep.holla@arm.com>
+ <CACRpkdYzJ9Hy0sH6gK6RzpLE6juS4WfPjbt7nh43vR9YTuGZWA@mail.gmail.com>
+ <56C1A1FE.3080403@arm.com>
+ <20160215152751.GT19432@atomide.com>
+ <56DEB82F.5050703@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:39796 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754255AbcCHQm2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 11:42:28 -0500
-In-Reply-To: <CACRpkdYzSt=R7j9GLSY39CsyMKLjqRYnP_31ti5jWiGngJacqA@mail.gmail.com>
+Received: from muru.com ([72.249.23.125]:48180 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752348AbcCHRJN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 8 Mar 2016 12:09:13 -0500
+Content-Disposition: inline
+In-Reply-To: <56DEB82F.5050703@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Eric Anholt <eric@anholt.net>
-Cc: linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stefan Wahren <stefan.wahren@i2se.com>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Tero Kristo <t-kristo@ti.com>, Dave Gerlach <d-gerlach@ti.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 03/08/2016 01:24 AM, Linus Walleij wrote:
-> On Sat, Feb 27, 2016 at 1:19 AM, Eric Anholt <eric@anholt.net> wrote:
->
->> Since all of these pins were documented, we can use their names to
->> explain what's going on.
->>
->> Signed-off-by: Eric Anholt <eric@anholt.net>
->
->> +       pinctrl-0 = <&i2c0_gpio0
->> +                    &i2c1_gpio2
->> +                    &gpclk0_gpio4
->> +                    &gpclk1_gpio5
->> +                    &spi0_gpio7
->> +                    &pcm_gpio18
->> +                    &pwm0_gpio40
->> +                    &pwm1_gpio45
->> +                    &gpioout
->> +                    &alt3>;
->
-> Why are all of these done as hogs instead of being in pinctrl-0
-> "default" for the device that is using them? i2c1, gpclk0,
-> etc?
->
-> The only reason I see would be if they are unused or something.
+* Grygorii Strashko <grygorii.strashko@ti.com> [160308 03:32]:
+> 
+> Yeah. As I mentioned before patches 2/3 will not work.
+> I've tried to test suspend with diff I posted [1], but I did it only on 
+> dra7 and am43 where suspend i more simple than on omap3. Also, I worry
+> that with such approach some irq can be missed (especially edge ones), 
+> because PRCM irqs will be re-enabled at very late resume stage 
+> (right before thaw).
 
-I think it makes sense to have the pinctrl driver (or even FW before the 
-kernel boots) set up everything at once where possible. That's the 
-easiest way to ensure there are never any conflicts in the pinmux table 
-(i.e. that two different pins don't end up being both muxed to SPI1's 
-MISO signal at the same time for a while before all the drivers probe). 
-Putting pinctrl entries into individual devices only makes sense to me 
-when one of:
+Yeah any tests not done with PM on omap3 with the mainline kernel
+are clearly incomplete in this case :)
 
-a) That device needs to dynamically change the pinmux at run-time, e.g. 
-to switch between different states, so needs definitions of those 
-different states.
+> Second option, I see, is to rework PRCM to be threaded IRQ, but in this case
+> all children IRQs will need to be threaded/nested threaded
+> (including PCS, legacy OMAP mux, OMAP3 _prcm_int_handle_wakeup/_prcm_int_handle_io).
+> 
+> Are there any objection to convert PCS to threaded IRQ, for example? ;)
 
-or:
+For PRCM interrupt, I don't think that can be threaded IRQ as
+that thing is firing all the time. The consumers for the chained
+PRCM interrupt consumers like PCS could probably use threaded IRQ.
+When the PCS interrupts fire, we're already in some sleeper
+idle state so the extra latency thre does not matter.
 
-b) The initial pinmux is guaranteed set up to a safe non-conflicting 
-state that enables very little, and we need to defer enabling various 
-peripherals until a later time when we know the peripheral is in use, 
-e.g. when loading a DT overlay from user-space.
+Regards,
 
-On the RPi there are certain peripherals that fall into each category, 
-e.g. SD card is always used, I2S only optionally used.
+Tony
+
+> [1] https://patchwork.ozlabs.org/patch/578915/
+
