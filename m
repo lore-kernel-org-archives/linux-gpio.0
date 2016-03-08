@@ -1,70 +1,54 @@
-From: Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH 3/5] gpio: of: Return error if gpio hog configuration
- failed
-Date: Tue, 8 Mar 2016 15:23:19 +0100
-Message-ID: <20160308142318.GC9864@ulmo.nvidia.com>
-References: <1457438528-29054-1-git-send-email-ldewangan@nvidia.com>
- <1457438528-29054-4-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 2/5] gpio: gpiolib: Print error number if gpio hog failed
+Date: Tue, 8 Mar 2016 21:02:59 +0530
+Message-ID: <56DEF0AB.7090807@nvidia.com>
+References: <1457438528-29054-1-git-send-email-ldewangan@nvidia.com> <1457438528-29054-3-git-send-email-ldewangan@nvidia.com> <20160308142217.GB9864@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hOcCNbCCxyk/YU74"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:2450 "EHLO
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:9263 "EHLO
 	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751959AbcCHOX3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 09:23:29 -0500
-In-Reply-To: <1457438528-29054-4-git-send-email-ldewangan@nvidia.com>
-Content-Disposition: inline
+	with ESMTP id S1752253AbcCHPpz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 10:45:55 -0500
+In-Reply-To: <20160308142217.GB9864@ulmo.nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, swarren@wwwdotorg.org, Benoit Parrot <bparrot@ti.com>, Alexandre Courbot <acourbot@nvidia.com>
+To: Thierry Reding <treding@nvidia.com>
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, swarren@wwwdotorg.org
 
---hOcCNbCCxyk/YU74
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 08, 2016 at 05:32:06PM +0530, Laxman Dewangan wrote:
-> If GPIO hog configuration failed while adding OF based
-> gpiochip() then return the error instead of ignoring it.
->=20
-> This helps of properly handling the gpio driver dependency.
->=20
-> When adding the gpio hog nodes for NVIDIA's Tegra210 platforms,
-> the gpio_hogd() fails with EPROBE_DEFER because pinctrl is not
-> ready at this time and gpio_request() for Tegra GPIO driver
-> returns error. The error was not causing the Tegra GPIO driver
-> to fail as the error was getting ignored.
->=20
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Cc: Benoit Parrot <bparrot@ti.com>
-> Cc: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  drivers/gpio/gpiolib-of.c | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
+On Tuesday 08 March 2016 07:52 PM, Thierry Reding wrote:
+> On Tue, Mar 08, 2016 at 05:32:05PM +0530, Laxman Dewangan wrote:
+>
+>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>> ---
+>>   drivers/gpio/gpiolib.c | 9 +++++----
+>>   1 file changed, 5 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>> index bc788b9..7575ebb 100644
+>> --- a/drivers/gpio/gpiolib.c
+>> +++ b/drivers/gpio/gpiolib.c
+>> @@ -2621,15 +2621,16 @@ int gpiod_hog(struct gpio_desc *desc, const char *name,
+>>   
+>>   	local_desc = gpiochip_request_own_desc(chip, hwnum, name);
+>>   	if (IS_ERR(local_desc)) {
+>> -		pr_err("requesting hog GPIO %s (chip %s, offset %d) failed\n",
+>> -		       name, chip->label, hwnum);
+>> +		status = PTR_ERR(local_desc);
+>> +		pr_err("requesting hog GPIO %s, chip %s, offset %d failed %d\n",
+>> +		       name, chip->label, hwnum, status);
+> I find this type of format hard to read. I prefer a semi-colon to
+> separate the message from the failure reason (i.e. error code).
+>
+> Besides that I don't understand why you're dropping the parentheses
+> around the "chip %s, offset %d", I found that easier on the eye.
+>
+>
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
 
---hOcCNbCCxyk/YU74
-Content-Type: application/pgp-signature; name="signature.asc"
+I did to accommodate the  3 extra character ( %d) for string format on 
+that line as it was already near to 80 column.
+Just did not want to split in multiple lines.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJW3uBWAAoJEN0jrNd/PrOhxsAQAL+vuBhm42YtwPmdRLJA/noW
-DyClSGyLkvmf/CUV1QjM/ccqr6iZ+7PTKssY2eSqmzFeUXBHHqZlxweDMssvvecq
-aeuYd1PdA1GRXlFsN1ksZE4Qhu4eyOEtsOTPjKvO+nXdXbkmKB5eT9ABkKZZdPV4
-uCLAGg7RFaj+M8159Vahv9cbm0y8M4s2OQ6IoUKTPacuxoiHs4aYP5pWY46JFCaF
-ODGvvFLzHPWLRG2rNtGNAed41RmbXlPbP1AJgIN+gwsq0QAvnGgy9wtcHlvc6vv2
-pT5d71Xx5kgQmCNzRxQe+aLfrCgb1NNKIZ2ZjTuFpcXh8AdE5PwImPGvtbyBzOmA
-BP1/VEwsHyEfWlpjMDHvgJQnazebAwl8ZL+6AjW8PON0u79d2LApR/BS6gasSWAd
-eOiGxA0+ym+d9cevDd5W1S6MVoWjEL2syOFN+k9j5qja/j7TlaViX+Pwl+/hBZfo
-Cetedxyr2aS3uhu+ri7nfnH9ZOpWfp1AcQDWp3l3Jz3jknMcH+/XDdScK5JV3DAP
-7ZfV60LUAS1m6+HDgDnMAtJgsRZlyKTS2pRjRcwBqqntPk7ty3SnUYMXUcBjeJKn
-sJV/uvBsaK+dDI4sF/xtNurNYXzI+gmoPSsVkvnufJIXGwI9qtdKUcFohl2pZnZX
-LMq75OOdtvstJnXMtPun
-=ftQb
------END PGP SIGNATURE-----
-
---hOcCNbCCxyk/YU74--
