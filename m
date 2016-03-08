@@ -1,35 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 5/5] ARM: bcm2835: Move most RPi default pin groups to
- their devices.
-Date: Tue, 8 Mar 2016 15:25:55 +0700
-Message-ID: <CACRpkdYCe_iOLEae1NP=xFLRvXXsMEUguLxj9n8Udf=ZuOFmFw@mail.gmail.com>
-References: <1456510756-15337-1-git-send-email-eric@anholt.net>
-	<1456510756-15337-6-git-send-email-eric@anholt.net>
+Subject: Re: [PATCH] gpio:ts4800: Add IMX51 dependency
+Date: Tue, 8 Mar 2016 15:28:35 +0700
+Message-ID: <CACRpkdafH-P=e=LLQ+m5T4V_UH0jfpv63af-c2FfY=aEPiFXOg@mail.gmail.com>
+References: <1456528019-25872-1-git-send-email-julien.grossholtz@savoirfairelinux.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:33079 "EHLO
-	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753495AbcCHIZ4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 03:25:56 -0500
-Received: by mail-oi0-f44.google.com with SMTP id d205so5651960oia.0
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 00:25:56 -0800 (PST)
-In-Reply-To: <1456510756-15337-6-git-send-email-eric@anholt.net>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:33233 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753545AbcCHI2g (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 03:28:36 -0500
+Received: by mail-oi0-f53.google.com with SMTP id d205so5687478oia.0
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 00:28:36 -0800 (PST)
+In-Reply-To: <1456528019-25872-1-git-send-email-julien.grossholtz@savoirfairelinux.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Eric Anholt <eric@anholt.net>
-Cc: linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stefan Wahren <stefan.wahren@i2se.com>
+To: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sat, Feb 27, 2016 at 1:19 AM, Eric Anholt <eric@anholt.net> wrote:
+On Sat, Feb 27, 2016 at 6:06 AM, Julien Grossholtz
+<julien.grossholtz@savoirfairelinux.com> wrote:
 
-> This way we can get the duplicated pin group definitions out of each
-> RPi board file, and just leave the i2s variations in them.
+> The TS-4800 is an i.MX515 board. Its GPIO driver should only be compiled
+> for this CPU or for test builds.
 >
-> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Signed-off-by: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
 
-Aha I speak too soon I see. This set of patches look fine to
-me but you need to address Stephens comments and obtain his
-ACK.
+Patch applied.
 
 Yours,
 Linus Walleij
