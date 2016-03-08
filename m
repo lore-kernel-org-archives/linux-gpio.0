@@ -1,73 +1,43 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [RFC] pinctrl: sh-pfc: only use dummy states for non-DT platforms
-Date: Tue, 8 Mar 2016 09:15:18 +0100
-Message-ID: <CAMuHMdUjJtEJpRxK=bo15BdJQPVK8X-LKjRa-CVj=GM+jti+iA@mail.gmail.com>
-References: <1457376072-755-1-git-send-email-wsa@the-dreams.de>
-	<CAMuHMdXPH0+YE=cRk7pjvoVEYtEGNcb_83-z5taXSLHRhtgMQA@mail.gmail.com>
-	<56DDDE6E.6090908@cogentembedded.com>
-	<CAMuHMdWis_knSv0Lgw+8O3LXp9thEX3SdGX6qo_4UyFrxFVuHA@mail.gmail.com>
-	<56DDE5CB.60204@cogentembedded.com>
-	<CAMuHMdUVFk47u+LPdfh+fq8vvPQAULyM8X_DrizCtrgf-1YwaA@mail.gmail.com>
-	<56DDF068.6090408@cogentembedded.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl-bcm2835: Fix cut-and-paste error in "pull" parsing
+Date: Tue, 8 Mar 2016 15:18:26 +0700
+Message-ID: <CACRpkdZT9BvDc3f4mf22jGb5PQOVVgBU+pSrzhxrqfbczHNG8Q@mail.gmail.com>
+References: <1456795808-1449-1-git-send-email-eric@anholt.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <56DDF068.6090408@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:32881 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753677AbcCHIS1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 03:18:27 -0500
+Received: by mail-ob0-f177.google.com with SMTP id fz5so7374356obc.0
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 00:18:26 -0800 (PST)
+In-Reply-To: <1456795808-1449-1-git-send-email-eric@anholt.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Eric Anholt <eric@anholt.net>
+Cc: linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Phil Elwell <phil@raspberrypi.org>, stable <stable@vger.kernel.org>
 
-Hi Sergei,
+On Tue, Mar 1, 2016 at 8:30 AM, Eric Anholt <eric@anholt.net> wrote:
 
-On Mon, Mar 7, 2016 at 10:19 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 03/08/2016 12:00 AM, Geert Uytterhoeven wrote:
->>>>>>> --- a/drivers/pinctrl/sh-pfc/core.c
->>>>>>> +++ b/drivers/pinctrl/sh-pfc/core.c
->>>>>>> @@ -545,7 +545,9 @@ static int sh_pfc_probe(struct platform_device
->>>>>>> *pdev)
->>>>>>>                            return ret;
->>>>>>>            }
->>>>>>>
->>>>>>> -       pinctrl_provide_dummies();
->>>>>>> +       /* Enable dummy states for those platforms without pinctrl
->>>>>>> support */
->>>>>>> +       if (!of_have_populated_dt())
->>>>>
->>>>>
->>>>>
->>>>>      I'd considered this condition -- it won't fly on SH where
->>>>> CONFIG_OF=n,
->>>>> the kernel just won't build IIUC...
->>>>
->>>> I haven't tried to compile it yet, but <linux/of.h> does provide a dummy
->>>> that
->>>> returns false.
->>>
->>>     Oops, indeed. I missed it. :-(
->>>     This approach is better then, won't have to fix again whenever SH
->>> gets DT
->>> support.
+> From: Phil Elwell <phil@raspberrypi.org>
 >
->> Perhaps the of_have_populated_dt() check should be moved inside
->> pinctrl_provide_dummies()?
+> The DT bindings for pinctrl-bcm2835 allow both the function and pull
+> to contain either one entry or one per pin. However, an error in the
+> DT parsing can cause failures if the number of pulls differs from the
+> number of functions.
 >
->    That's probably a good idea...
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Cc: stable@vger.kernel.org
+> ---
 >
->> Besides omap2, which has its own check, the only other user is imx1.
+> Yes, the s-o-b differs from the author of the commit, but this falls
+> under part b) of the process.
 >
->    i.MX2x/3x as well, no?
+> Phil, any chance you could start putting Signed-off-by lines on your
+> kernel commits?
 
-Yeah sorry, several i.MX. I accidentally typed a trailing "1".
+Patch applied with the extra SoB and Stephen's review tag.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
