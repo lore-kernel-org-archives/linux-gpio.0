@@ -1,32 +1,61 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio:ts4800: Add IMX51 dependency
-Date: Tue, 8 Mar 2016 15:28:35 +0700
-Message-ID: <CACRpkdafH-P=e=LLQ+m5T4V_UH0jfpv63af-c2FfY=aEPiFXOg@mail.gmail.com>
-References: <1456528019-25872-1-git-send-email-julien.grossholtz@savoirfairelinux.com>
+Subject: Re: [RFD] gpiolib: gpiochip is always dangling after remove
+Date: Tue, 8 Mar 2016 15:53:23 +0700
+Message-ID: <CACRpkdZtVref_ATxY1-ktGmS=ZUAyMxSfrED8sVjRd6KQCRbnQ@mail.gmail.com>
+References: <1456491974-26997-1-git-send-email-bamv2005@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:33233 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753545AbcCHI2g (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 03:28:36 -0500
-Received: by mail-oi0-f53.google.com with SMTP id d205so5687478oia.0
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 00:28:36 -0800 (PST)
-In-Reply-To: <1456528019-25872-1-git-send-email-julien.grossholtz@savoirfairelinux.com>
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:36626 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932256AbcCHIxY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 03:53:24 -0500
+Received: by mail-ob0-f171.google.com with SMTP id m7so7830113obh.3
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 00:53:24 -0800 (PST)
+In-Reply-To: <1456491974-26997-1-git-send-email-bamv2005@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Bamvor Jian Zhang <bamv2005@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 
-On Sat, Feb 27, 2016 at 6:06 AM, Julien Grossholtz
-<julien.grossholtz@savoirfairelinux.com> wrote:
+On Fri, Feb 26, 2016 at 8:06 PM, Bamvor Jian Zhang <bamv2005@gmail.com> wrote:
 
-> The TS-4800 is an i.MX515 board. Its GPIO driver should only be compiled
-> for this CPU or for test builds.
+> From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 >
-> Signed-off-by: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
+> In my gpiochip mockup driver, after call gpiochip_remove, the
+> gpipchip is not actually removed even if there is no clients in
+> userspace. It could be removed if remove the corresonding reference
+> count in this patch.
+>
+> But such gpiochip will be removed even if user space open the
+> corresponding chardev. I am not sure If I do not right thing.
+> Please correct me if I am wrong.
+>
+> Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 
-Patch applied.
+I think you're onto the right thing, thank you for looking into this.
+
+My idea was that the gdev->dev and gdev->cdev should stay around
+until the last userspace user is gone, even if the gpiochip_remove()
+was called.
+
+Maybe I just got the refcounts wrong :(
+
+It'd be great if you can come up with a patch that has the following
+properties:
+
+gpiochip_add_data(), no userspace users, gpiochip_remove()
+-> refcount goes to zero and gpiodevice_release() gets called
+
+gpiochip_add_data(), add some userspace users, gpiochip_remove()
+-> refcount does not go to zero and gpiodevice_release() is not called
+Then remove the userspace users:
+-> refcount goes to zero and gpiodevice_release() gets called
+
+It might be that using device_add(), device_del() directly like I'm
+doing cannot really solve this :( then we need to rethink the mechanism
+in terms of device_register()/device_unregister(), but I couldn't
+get that to work with the way chardevs are added.
 
 Yours,
 Linus Walleij
