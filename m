@@ -1,64 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/4] gpio: dt-bindings: Declare gpio-hog optional for GPIO subnodes
-Date: Wed, 9 Mar 2016 11:07:25 +0700
-Message-ID: <CACRpkdaem3OOP_TrZsUajxOB0ftYgLmcSr6LtFJpqN-4ETPe0A@mail.gmail.com>
-References: <1456214089-13954-1-git-send-email-mpa@pengutronix.de>
-	<1456214089-13954-3-git-send-email-mpa@pengutronix.de>
-	<20160223232534.GA29637@rob-hp-laptop>
-	<1813679.JaFRxta3v8@adelgunde>
-	<20160302154120.GA23716@rob-hp-laptop>
+Subject: Re: [PATCH 01/14] pinctrl: at91: use __maybe_unused to hide pm functions
+Date: Wed, 9 Mar 2016 11:09:25 +0700
+Message-ID: <CACRpkdaDy3jmVqm_LfJ3ExaA-RMwfajw-bn+6MStwL0sODTr2A@mail.gmail.com>
+References: <1456934350-1389172-1-git-send-email-arnd@arndb.de>
+	<1456934350-1389172-2-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:35112 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751733AbcCIEH0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 23:07:26 -0500
-Received: by mail-ob0-f170.google.com with SMTP id fp4so35213007obb.2
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 20:07:25 -0800 (PST)
-In-Reply-To: <20160302154120.GA23716@rob-hp-laptop>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1456934350-1389172-2-git-send-email-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Markus Pargmann <mpa@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Wed, Mar 2, 2016 at 10:41 PM, Rob Herring <robh@kernel.org> wrote:
+On Wed, Mar 2, 2016 at 10:58 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-> Requiring removing the gpio-hog to add a specific
-> binding is a problem. AIUI, a hog will prevent any other user in the
-> kernel. I think that is backwards in that a hog should only provide some
-> default configuration/use.
+> The at91-pio4 pinctrl driver uses SET_SYSTEM_SLEEP_PM_OPS() to
+> conditionally set the correct suspend/resume options, but they
+> become unused when CONFIG_PM is disabled:
+>
+> drivers/pinctrl/pinctrl-at91-pio4.c:827:12: error: 'atmel_pctrl_suspend' defined but not used [-Werror=unused-function]
+> drivers/pinctrl/pinctrl-at91-pio4.c:847:12: error: 'atmel_pctrl_resume' defined but not used [-Werror=unused-function]
+>
+> This adds __maybe_unused annotations so the compiler knows
+> it can silently drop them instead of warning.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-I think there is some misunderstanding here.
-
-- HOGS are done to hook a line up in a way so that
-  it is *used* for something, such as biasing a MMC CD line
-  in this example from arch/arm/boot/dts/ste-nomadik-s8815.dts:
-
-        gpio3: gpio@101e7000 {
-                /* This hog will bias the MMC/SD card detect line */
-                mmcsd-gpio {
-                        gpio-hog;
-                        gpios = <16 0x0>;
-                        output-low;
-                        line-name = "card detect bias";
-                };
-        };
-
-   So it's not like this line is "unused" or something.
-
-- For the case when we want to just set up some default values
-  in some registers for a GPIO line and just leave it for whatever
-  consumer may turn up (whether a driver or e.g. userspace), we
-  have had proposals for
-  setting up initial values from the DT, using essentially the hog
-  syntax but with another bool than "gpio-hog" obviously,
-  "gpio-initval" or just leaving it blank was suggested in the former
-  thread. (See switch discussion.)
-
-So my view is if we want just initial configuration of lines, then handle
-that separately, do not try to change the semantic meaning of the
-hogs to be something else, let hogs be hogs.
+Patch applied with the maintainer ACKs.
 
 Yours,
 Linus Walleij
