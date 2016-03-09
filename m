@@ -1,44 +1,52 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] pinctrl: ns2: add pinmux driver support for Broadcom
- NS2 SoC
-Date: Wed, 9 Mar 2016 18:04:26 +0700
-Message-ID: <CACRpkdaKn4puDsZBPSbfkmHW4KHqBW8q1T2vpyNk_0Yb7C0AXQ@mail.gmail.com>
-References: <1457005303-26829-1-git-send-email-yendapally.reddy@broadcom.com>
-	<1457005303-26829-3-git-send-email-yendapally.reddy@broadcom.com>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: [PATCH 0/4] Add AXP209 GPIO driver
+Date: Wed,  9 Mar 2016 11:50:10 +0100
+Message-ID: <1457520614-32239-1-git-send-email-maxime.ripard@free-electrons.com>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:36025 "EHLO
-	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753133AbcCILE1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2016 06:04:27 -0500
-Received: by mail-oi0-f54.google.com with SMTP id r187so32422988oih.3
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Mar 2016 03:04:26 -0800 (PST)
-In-Reply-To: <1457005303-26829-3-git-send-email-yendapally.reddy@broadcom.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBVMGQC3QKGQEMAZFXPY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>, Ray Jui <rjui@broadcom.com>, Stefan Wahren <stefan.wahren@i2se.com>, Stephen Warren <swarren@wwwdotorg.org>, Florian Fainelli <f.fainelli@gmail.com>, Pramod KUMAR <pramodku@broadcom.com>, Jonathan Bell <jonathan@raspberrypi.org>
-Cc: Scott Branden <sbranden@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Mar 3, 2016 at 6:41 PM, Yendapally Reddy Dhananjaya Reddy
-<yendapally.reddy@broadcom.com> wrote:
+Hi,
 
-> This adds the initial support of the Broadcom NS2 pinmux driver
->
-> Signed-off-by: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
+The axp209 PMIC used in combination to some Allwinner SoCs has a bunch
+of GPIOs accessible. Some boards use these to control their backlight
+or a few LEDs.
 
-Now yet another Broadcom driver!
+There's supposed to be 4 of them, but the fourth one has a different
+configuration register scheme, and I couldn't find any board that was
+using this GPIO. It will be probably be supported eventually, but
+until then, we support only the first 3 GPIOs.
 
-Can I get the help of the maintainers of the other
-Broadcom drivers to say:
+Let me know what you think,
+Maxime
 
-- If this looks sane
+Maxime Ripard (4):
+  gpio: Add AXP209 GPIO driver
+  mfd: axp20x: Add AXP209 GPIO driver to the mfd
+  ARM: dt: axp209: Add AXP209 GPIO driver
+  ARM: sun5i: chip: Add status LED
 
-- If this hardware looks suspiciously similar to one of the
-  other drivers and should rather me a subdriver of one of
-  the existing ones
+ .../devicetree/bindings/gpio/gpio-axp209.txt       |  30 ++++
+ arch/arm/boot/dts/axp209.dtsi                      |   6 +
+ arch/arm/boot/dts/sun5i-r8-chip.dts                |  10 ++
+ drivers/gpio/Kconfig                               |   6 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-axp209.c                         | 166 +++++++++++++++++++++
+ drivers/mfd/axp20x.c                               |   3 +
+ 7 files changed, 222 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-axp209.txt
+ create mode 100644 drivers/gpio/gpio-axp209.c
 
-?
-
-Yours,
-Linus Walleij
+-- 
+2.7.2
