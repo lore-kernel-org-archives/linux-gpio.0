@@ -1,56 +1,77 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [RFC] pinctrl: sh-pfc: only use dummy states for non-DT platforms
-Date: Wed, 9 Mar 2016 14:17:57 +0100
-Message-ID: <CAMuHMdVOu-KtWB9mtfftstbNBqyFDtrONYfaetR_NAFKHT-n-A@mail.gmail.com>
-References: <1457376072-755-1-git-send-email-wsa@the-dreams.de>
-	<CAMuHMdXPH0+YE=cRk7pjvoVEYtEGNcb_83-z5taXSLHRhtgMQA@mail.gmail.com>
-	<56DDDE6E.6090908@cogentembedded.com>
-	<CAMuHMdWis_knSv0Lgw+8O3LXp9thEX3SdGX6qo_4UyFrxFVuHA@mail.gmail.com>
-	<56DDE5CB.60204@cogentembedded.com>
-	<CAMuHMdUVFk47u+LPdfh+fq8vvPQAULyM8X_DrizCtrgf-1YwaA@mail.gmail.com>
-	<20160309095805.GA1506@katana>
-	<CACRpkdZzbp5MwD6uH=GbkYbvB=HsGOHYi+HcYpn5gZacmRwHwg@mail.gmail.com>
+From: Peter Korsgaard <peter-+2lRwdCCLRT2eFz/2MeuCQ@public.gmane.org>
+Subject: Re: [PATCH 1/4] gpio: Add AXP209 GPIO driver
+Date: Wed, 09 Mar 2016 14:20:16 +0100
+Message-ID: <87io0v23fz.fsf@dell.be.48ers.dk>
+References: <1457520614-32239-1-git-send-email-maxime.ripard@free-electrons.com>
+	<1457520614-32239-2-git-send-email-maxime.ripard@free-electrons.com>
+Reply-To: jacmet-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZzbp5MwD6uH=GbkYbvB=HsGOHYi+HcYpn5gZacmRwHwg@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>
+Return-path: <linux-sunxi+bncBDKONJFYSUEBBE6GQC3QKGQEOGKCIDA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <1457520614-32239-2-git-send-email-maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+	(Maxime Ripard's message of "Wed, 9 Mar 2016 11:50:11 +0100")
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+>>>>> "Maxime" == Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> writes:
 
-On Wed, Mar 9, 2016 at 11:32 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Mar 9, 2016 at 4:58 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
->> On Mon, Mar 07, 2016 at 10:00:37PM +0100, Geert Uytterhoeven wrote:
->
->>> >    This approach is better then, won't have to fix again whenever SH gets DT
->>> > support.
->>>
->>> Perhaps the of_have_populated_dt() check should be moved inside
->>> pinctrl_provide_dummies()?
->>
->> I suggest we pick up this patch now even with stable tag (the irq storm
->> fixup doesn't work correctly because of this) and consider the
->> refactoring as a second step?
->
-> Sergei, Geert, do you ACK this?
+ > The AXP209 PMIC has a bunch of GPIOs accessible, that are usually used to
+ > control LEDs or backlight.
 
-I gave this a try on all my boards, plus the remote r8a7790/lager that
-exhibited the problem.
+Do you find 3 'a bunch'? ;)
 
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+ > +static int axp20x_gpio_probe(struct platform_device *pdev)
+ > +{
+ > +	struct axp20x_dev *axp20x = dev_get_drvdata(pdev->dev.parent);
+ > +	struct axp20x_gpio *gpio;
+ > +	int ret;
+ > +
+ > +	if (!of_device_is_available(pdev->dev.of_node))
+ > +		return -ENODEV;
+ > +
+ > +	if (!axp20x) {
+ > +		dev_err(&pdev->dev, "Parent drvdata not set\n");
+ > +		return -EINVAL;
+ > +	}
+ > +
+ > +	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
+ > +	if (!gpio)
+ > +		return -ENOMEM;
+ > +
+ > +	gpio->chip.base			= -1;
+ > +	gpio->chip.can_sleep		= true;
+ > +	gpio->chip.dev			= &pdev->dev;
+ > +	gpio->chip.label		= dev_name(&pdev->dev);
+ > +	gpio->chip.owner		= THIS_MODULE;
+ > +	gpio->chip.get			= axp20x_gpio_get;
+ > +	gpio->chip.set			= axp20x_gpio_set;
+ > +	gpio->chip.direction_input	= axp20x_gpio_input;
+ > +	gpio->chip.direction_output	= axp20x_gpio_output;
+ > +	gpio->chip.ngpio		= 3;
+ > +
+ > +	gpio->regmap = axp20x->regmap;
 
-Please pick it up. Thanks!
+This could just use dev_get_regmap(pdev.dev->parent, NULL) instead of
+fiddling in the parent driver data.
 
-Gr{oetje,eeting}s,
+ > +
+ > +	ret = gpiochip_add(&gpio->chip);
+ > +	if (ret) {
+ > +		dev_err(&pdev->dev, "Failed to register GPIO chip\n");
+ > +		return ret;
+ > +	}
+ > +
+ > +	dev_info(&pdev->dev, "AXP209 GPIO driver loaded\n");
 
-                        Geert
+Any reason to be so noisy?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Bye, Peter Korsgaard
