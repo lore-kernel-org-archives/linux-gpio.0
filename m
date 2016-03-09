@@ -1,36 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: add driver for MEN 16Z127 GPIO controller
-Date: Wed, 9 Mar 2016 09:45:42 +0700
-Message-ID: <CACRpkdZrSTiQd2BQS-ErtLtsT5gmyL5gCxo=gcMQ5wy0xaxpiQ@mail.gmail.com>
-References: <cover.1456771093.git.andy@wernerandy.de>
-	<8adb885e10c3b375d451830ba2612bfea09dd011.1456771093.git.andy@wernerandy.de>
+Subject: Re: [PATCH] dt-bindings: gpio: altera: Fix altr,interrupt-type property
+Date: Wed, 9 Mar 2016 09:48:37 +0700
+Message-ID: <CACRpkdZkiF=wU0jm3Btpxp_A_kG55mcdgE1g_o8h9fBV2uEVjQ@mail.gmail.com>
+References: <1456762997-7607-1-git-send-email-marex@denx.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:34424 "EHLO
-	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750863AbcCICpn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 21:45:43 -0500
-Received: by mail-oi0-f50.google.com with SMTP id m82so25714643oif.1
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 18:45:43 -0800 (PST)
-In-Reply-To: <8adb885e10c3b375d451830ba2612bfea09dd011.1456771093.git.andy@wernerandy.de>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:35946 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750765AbcCICsi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 21:48:38 -0500
+Received: by mail-ob0-f176.google.com with SMTP id m7so33760058obh.3
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 18:48:37 -0800 (PST)
+In-Reply-To: <1456762997-7607-1-git-send-email-marex@denx.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andreas Werner <andy@wernerandy.de>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johannes Thumshirn <morbidrsa@gmail.com>, Andreas Werner <andreas.werner@men.de>
+To: Marek Vasut <marex@denx.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Tien Hock Loh <thloh@altera.com>
 
-On Tue, Mar 1, 2016 at 1:44 AM, Andreas Werner <andy@wernerandy.de> wrote:
+On Mon, Feb 29, 2016 at 11:23 PM, Marek Vasut <marex@denx.de> wrote:
 
-> The 16Z127 is a 32bit GPIO controller on a MCB FPGA.
-> Every single line can be configured as input and output.
+> The altr,interrupt-trigger property is not used by the driver.
+> Instead, altr,interrupt-type is used by the driver and the driver
+> does not probe if this property is not specified. Therefore, it
+> is expected that there are no users of the -trigger property in
+> the wild and that this is a typo in the documentation for the
+> altera-pio controller. This patch fixes the typo.
 >
-> Push pull and open drain are supported as well as setting
-> a debounce value for the input lines.
->
-> Signed-off-by: Andreas Werner <andy@wernerandy.de>
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> Cc: Tien Hock Loh <thloh@altera.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
 
-Looks good.
-Patch applied!
+Patch applied.
 
 Yours,
 Linus Walleij
