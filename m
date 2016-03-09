@@ -1,52 +1,45 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH] pinctrl: pxa2xx: export symbols
-Date: Wed, 9 Mar 2016 09:31:21 +0100
-Message-ID: <20160309083121.GS8136@pengutronix.de>
-References: <1457489509-5680-1-git-send-email-linus.walleij@linaro.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 3/3] input: gpio_keys: Make use of the device property API
+Date: Wed, 9 Mar 2016 10:36:54 +0200
+Message-ID: <20160309083654.GC1796@lahna.fi.intel.com>
+References: <1455876982-6743-1-git-send-email-geert+renesas@glider.be>
+ <1455876982-6743-4-git-send-email-geert+renesas@glider.be>
+ <20160222195815.GB28343@dtor-ws>
+ <CA+V1Lzrag5QPAPjjhqp8R6uUG4NPb9sG7axiJoBGk4q=ozXV0w@mail.gmail.com>
+ <20160229081723.GB1770@lahna.fi.intel.com>
+ <CA+V1LzqX7_r1YuBCHSVLbjmp=6Ra=fi+mnVjNGzNhdvEDgXh2Q@mail.gmail.com>
+ <20160301075241.GD1794@lahna.fi.intel.com>
+ <CACRpkdb2vwjcpvOdmn36u_ESpapoc7_BPGOVFGKfsRmW_Q2cQA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:40605 "EHLO
-	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752579AbcCIIb1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2016 03:31:27 -0500
+Received: from mga02.intel.com ([134.134.136.20]:42538 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751300AbcCIIhX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 9 Mar 2016 03:37:23 -0500
 Content-Disposition: inline
-In-Reply-To: <1457489509-5680-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <CACRpkdb2vwjcpvOdmn36u_ESpapoc7_BPGOVFGKfsRmW_Q2cQA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: sergk sergk2mail <sergk.admin@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Aaron Lu <aaron.lu@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Vincent Pelletier <plr.vincent@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Linux Input <linux-input@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Mar 09, 2016 at 09:11:49AM +0700, Linus Walleij wrote:
-> The pxa2xxx fails some automated builds because of unexported
-> symbols.
->=20
-> Reported-by: kbuild test robot <fengguang.wu@intel.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+On Wed, Mar 09, 2016 at 10:36:08AM +0700, Linus Walleij wrote:
+> I just this merge window added an ABI for userspace to read name
+> of the GPIO line and also consumer name ("label") by using the
+> two strings stored in struct gpio_desc.
+> 
+> Currently this will be initialized per-offset from the seldom used
+> char names[] in struct gpio_chip, if not NULL.
+> 
+> We're working on DT bindings to set this per-line from the DT, and
+> if ACPI has a mechanism to name individual lines, please submit
+> patches for assigning this properly! (Hi Mika ;)
 
-There is 3a5242e648a8d009f0e0fd47867592e5265374b6 in linus/master which
-does a part of this patch already.
+Hi :)
 
-Apart from that I don't understand the patch. The only user of
-pxa2xx_pinctrl_init is drivers/pinctrl/pxa/pinctrl-pxa27x.c[1] and this
-is built into the same module as pinctrl-pxa2xx.o. So without testing I
-wonder in which configuration this fails to build.
+Yes, ACPI nowadays has mechanism for assigning names to GPIOs (_DSD). We
+will look into the DT implementation and try to come up with
+corresponding ACPI version.
 
-Best regards
-Uwe
-
-[1] git grep -E pxa2xx_pinctrl_\(in\|ex\)it next/master
-    git grep -E pxa2xx_pinctrl_\(in\|ex\)it linus/master
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks for the heads-up.
