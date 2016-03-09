@@ -1,37 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] dt-bindings: gpio: altera: Fix altr,interrupt-type property
-Date: Wed, 9 Mar 2016 09:48:37 +0700
-Message-ID: <CACRpkdZkiF=wU0jm3Btpxp_A_kG55mcdgE1g_o8h9fBV2uEVjQ@mail.gmail.com>
-References: <1456762997-7607-1-git-send-email-marex@denx.de>
+Subject: Re: [PATCH 1/1] gpio: mcp23s08: Add support for mcp23s18.
+Date: Wed, 9 Mar 2016 09:50:27 +0700
+Message-ID: <CACRpkdbW9quP1_jjcOEubcjdSrt9wmwgDt8p4OJ5ZYH=eUhVAQ@mail.gmail.com>
+References: <1456813541-74321-1-git-send-email-preid@electromag.com.au>
+	<1456813541-74321-2-git-send-email-preid@electromag.com.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:35946 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750765AbcCICsi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 21:48:38 -0500
-Received: by mail-ob0-f176.google.com with SMTP id m7so33760058obh.3
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 18:48:37 -0800 (PST)
-In-Reply-To: <1456762997-7607-1-git-send-email-marex@denx.de>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:35898 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750765AbcCICu2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 21:50:28 -0500
+Received: by mail-ob0-f180.google.com with SMTP id m7so33792900obh.3
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 18:50:28 -0800 (PST)
+In-Reply-To: <1456813541-74321-2-git-send-email-preid@electromag.com.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Marek Vasut <marex@denx.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Tien Hock Loh <thloh@altera.com>
+To: Phil Reid <preid@electromag.com.au>
+Cc: Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Feb 29, 2016 at 11:23 PM, Marek Vasut <marex@denx.de> wrote:
+On Tue, Mar 1, 2016 at 1:25 PM, Phil Reid <preid@electromag.com.au> wrote:
 
-> The altr,interrupt-trigger property is not used by the driver.
-> Instead, altr,interrupt-type is used by the driver and the driver
-> does not probe if this property is not specified. Therefore, it
-> is expected that there are no users of the -trigger property in
-> the wild and that this is a typo in the documentation for the
-> altera-pio controller. This patch fixes the typo.
+> This patch adds support for the mcp23s18 which is very similar to
+> the mcp23s17. A couple of control bits are not the same.
+> Notable IOCON_HAEN (s17 only) & IOCON_INTCC. Which can be ignored.
 >
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> Cc: Tien Hock Loh <thloh@altera.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Patch changes the following:
+> - Add mcp23s18 types.
+> - Always set mirror bit if the dts defines mcp23s18. regardless of type.
+>   Mirror bit is ignored on 8 bit devices anyway.
+> - In mcp23s08_probe use chip.ngpio instead of logic based on type
+>   to determine number of gpio lins to increment by. This is set
+>   appropiately by the call to mcp23s08_probe_one.
+> - Add mcp23s18 to device tree documentation.
+> - Remove statement that irqs don't work for spi. They do.
+>   Tested with mcp23s18.
+>
+> Signed-off-by: Phil Reid <preid@electromag.com.au>
 
-Patch applied.
+Patch applied with Rob's ACK.
 
 Yours,
 Linus Walleij
