@@ -1,53 +1,61 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 0/3] OMAP/pinmux: remove misuse of IRQF_NO_SUSPEND flag
-Date: Tue, 8 Mar 2016 09:09:09 -0800
-Message-ID: <20160308170909.GC9329@atomide.com>
-References: <1454351299-27440-1-git-send-email-sudeep.holla@arm.com>
- <CACRpkdYzJ9Hy0sH6gK6RzpLE6juS4WfPjbt7nh43vR9YTuGZWA@mail.gmail.com>
- <56C1A1FE.3080403@arm.com>
- <20160215152751.GT19432@atomide.com>
- <56DEB82F.5050703@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH] pinctrl: freescale: imx: fix bogus check of of_iomap() return value
+Date: Wed,  9 Mar 2016 02:45:36 +0200
+Message-ID: <1457484336-8928-1-git-send-email-vz@mleia.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:48180 "EHLO muru.com"
+Received: from mleia.com ([178.79.152.223]:48820 "EHLO mail.mleia.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752348AbcCHRJN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 8 Mar 2016 12:09:13 -0500
-Content-Disposition: inline
-In-Reply-To: <56DEB82F.5050703@ti.com>
+	id S1753517AbcCIApn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 8 Mar 2016 19:45:43 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Tero Kristo <t-kristo@ti.com>, Dave Gerlach <d-gerlach@ti.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Shawn Guo <shawnguo@kernel.org>, Adrian Alonso <aalonso@freescale.com>, linux-gpio@vger.kernel.org
 
-* Grygorii Strashko <grygorii.strashko@ti.com> [160308 03:32]:
-> 
-> Yeah. As I mentioned before patches 2/3 will not work.
-> I've tried to test suspend with diff I posted [1], but I did it only on 
-> dra7 and am43 where suspend i more simple than on omap3. Also, I worry
-> that with such approach some irq can be missed (especially edge ones), 
-> because PRCM irqs will be re-enabled at very late resume stage 
-> (right before thaw).
+On error path of_iomap() returns NULL, hence IS_ERR() check is invalid
+and may cause a NULL pointer dereference, the change fixes this
+problem.
 
-Yeah any tests not done with PM on omap3 with the mainline kernel
-are clearly incomplete in this case :)
+While we are here invert a device node check to simplify the code.
 
-> Second option, I see, is to rework PRCM to be threaded IRQ, but in this case
-> all children IRQs will need to be threaded/nested threaded
-> (including PCS, legacy OMAP mux, OMAP3 _prcm_int_handle_wakeup/_prcm_int_handle_io).
-> 
-> Are there any objection to convert PCS to threaded IRQ, for example? ;)
+Fixes: 26d8cde5260b ("pinctrl: freescale: imx: add shared input select reg support")
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-For PRCM interrupt, I don't think that can be threaded IRQ as
-that thing is firing all the time. The consumers for the chained
-PRCM interrupt consumers like PCS could probably use threaded IRQ.
-When the PCS interrupts fire, we're already in some sleeper
-idle state so the extra latency thre does not matter.
-
-Regards,
-
-Tony
-
-> [1] https://patchwork.ozlabs.org/patch/578915/
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 4c435cf..b2d0ac7 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -752,19 +752,18 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	if (of_property_read_bool(dev_np, "fsl,input-sel")) {
+ 		np = of_parse_phandle(dev_np, "fsl,input-sel", 0);
+-		if (np) {
+-			ipctl->input_sel_base = of_iomap(np, 0);
+-			if (IS_ERR(ipctl->input_sel_base)) {
+-				of_node_put(np);
+-				dev_err(&pdev->dev,
+-					"iomuxc input select base address not found\n");
+-				return PTR_ERR(ipctl->input_sel_base);
+-			}
+-		} else {
++		if (!np) {
+ 			dev_err(&pdev->dev, "iomuxc fsl,input-sel property not found\n");
+ 			return -EINVAL;
+ 		}
++
++		ipctl->input_sel_base = of_iomap(np, 0);
+ 		of_node_put(np);
++		if (!ipctl->input_sel_base) {
++			dev_err(&pdev->dev,
++				"iomuxc input select base address not found\n");
++			return -ENOMEM;
++		}
+ 	}
+ 
+ 	imx_pinctrl_desc.name = dev_name(&pdev->dev);
+-- 
+2.1.4
 
