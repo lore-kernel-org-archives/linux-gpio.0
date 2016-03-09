@@ -1,78 +1,58 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [linux-sunxi] Re: [PATCH 0/4] Add AXP209 GPIO driver
-Date: Wed, 9 Mar 2016 16:44:01 +0100
-Message-ID: <56E044C1.7080300@redhat.com>
-References: <1457520614-32239-1-git-send-email-maxime.ripard@free-electrons.com>
- <56E0146E.6050102@redhat.com> <20160309152822.GQ8418@lukather>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 2/5] gpio: gpiolib: Print error number if gpio hog failed
+Date: Wed, 9 Mar 2016 10:07:23 -0700
+Message-ID: <56E0584B.9050607@wwwdotorg.org>
+References: <1457438528-29054-1-git-send-email-ldewangan@nvidia.com>
+ <1457438528-29054-3-git-send-email-ldewangan@nvidia.com>
+ <20160308142217.GB9864@ulmo.nvidia.com> <56DEF0AB.7090807@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160309152822.GQ8418@lukather>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Lee Jones <lee.jones@linaro.org>, Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:43674 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933435AbcCIRH1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2016 12:07:27 -0500
+In-Reply-To: <56DEF0AB.7090807@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <treding@nvidia.com>
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi,
-
-On 09-03-16 16:28, Maxime Ripard wrote:
-> Hi,
+On 03/08/2016 08:32 AM, Laxman Dewangan wrote:
 >
-> On Wed, Mar 09, 2016 at 01:17:50PM +0100, Hans de Goede wrote:
->> Hi,
+> On Tuesday 08 March 2016 07:52 PM, Thierry Reding wrote:
+>> On Tue, Mar 08, 2016 at 05:32:05PM +0530, Laxman Dewangan wrote:
 >>
->> On 09-03-16 11:50, Maxime Ripard wrote:
->>> Hi,
+>>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>>> ---
+>>>   drivers/gpio/gpiolib.c | 9 +++++----
+>>>   1 file changed, 5 insertions(+), 4 deletions(-)
 >>>
->>> The axp209 PMIC used in combination to some Allwinner SoCs has a bunch
->>> of GPIOs accessible. Some boards use these to control their backlight
->>> or a few LEDs.
+>>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>>> index bc788b9..7575ebb 100644
+>>> --- a/drivers/gpio/gpiolib.c
+>>> +++ b/drivers/gpio/gpiolib.c
+>>> @@ -2621,15 +2621,16 @@ int gpiod_hog(struct gpio_desc *desc, const
+>>> char *name,
+>>>       local_desc = gpiochip_request_own_desc(chip, hwnum, name);
+>>>       if (IS_ERR(local_desc)) {
+>>> -        pr_err("requesting hog GPIO %s (chip %s, offset %d) failed\n",
+>>> -               name, chip->label, hwnum);
+>>> +        status = PTR_ERR(local_desc);
+>>> +        pr_err("requesting hog GPIO %s, chip %s, offset %d failed
+>>> %d\n",
+>>> +               name, chip->label, hwnum, status);
+>> I find this type of format hard to read. I prefer a semi-colon to
+>> separate the message from the failure reason (i.e. error code).
 >>
->> Thanks for working on this, but IMHO this cannot go upstream like this,
->> the gpio pins on the axp pmics need a pinctrl driver, not a gpio
->> driver. I.E. on the axp209 gpio0 and gpio1 can also be used to output
->> an additional low-noise ldo (so as a regulator), or as an adc input.
+>> Besides that I don't understand why you're dropping the parentheses
+>> around the "chip %s, offset %d", I found that easier on the eye.
 >
-> Eventually, yes, it needs both. But they don't even have to be the
-> same driver, since they provide two different features. The only
-> reason we have that construct in the pio case is because they share
-> the same address space, but in the AXP case, the regmap and our mfd
-> take care of that already.
+> I did to accommodate the  3 extra character ( %d) for string format on
+> that line as it was already near to 80 column.
+> Just did not want to split in multiple lines.
 
-Hmm, so your suggesting to have mfd instantiate 2 platform devices
-for this, a gpio and a pinctrl device, each with their own
-driver. Yes that would work, but I'm a bit worried about the 2
-racing or some such since they both will end up touching
-bit 0-2 of register 0x90 / 0x92, more-over since they are both
-touching the exact same bits I've the feeling that this really
-should be one driver.
-
-I guess that in a proper written dts we either use pinctrl to enable
-a special function, or gpio, but still.
-
->> I've been working on gsl1680 touchscreen support lately and on at least
->> a few a23 tablets, the low-noise ldo is used as AVCC for the touchscreen
->> controller.
->
-> Yeah, the AXP209 also has an ADC connected to these pins.
->
->> Now these use an axp223 pmic, but nothing is stopping someone from
->> doing something similar with an axp209 and I think it would be best
->> to support this from day one, rather then hope we can retro-fit this
->> later without breaking dts.
->
-> I considered that, but I don't see how it would break the DT later. If
-> someone wants to enable say the ADC, he will of course have to add the
-> pinctrl driver, and the pinctrl handles, but the old DT will only
-> reference the gpio driver directly, which would still be something
-> that would work.
-
-I was assuming we would use one mfd-child(-platform)-device for this,
-not two. I guess that with 2 devices you're right and there should
-not be any problem, still as said it feels wrong-ish to have 2 drivers
-poking bits 0-2 of reg 0x90 / reg 0x92.
-
-Regards,
-
-Hans
+Note that strings shouldn't be split across lines since it makes it 
+harder to grep for them. This is one case where the 80-column limit 
+isn't strict, within reason.
