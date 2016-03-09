@@ -1,77 +1,75 @@
-From: Peter Korsgaard <peter-+2lRwdCCLRT2eFz/2MeuCQ@public.gmane.org>
-Subject: Re: [PATCH 1/4] gpio: Add AXP209 GPIO driver
-Date: Wed, 09 Mar 2016 14:20:16 +0100
-Message-ID: <87io0v23fz.fsf@dell.be.48ers.dk>
-References: <1457520614-32239-1-git-send-email-maxime.ripard@free-electrons.com>
-	<1457520614-32239-2-git-send-email-maxime.ripard@free-electrons.com>
-Reply-To: jacmet-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 4/5] gpio: of: Add support to have multiple gpios in gpio-hog
+Date: Wed, 9 Mar 2016 18:50:53 +0530
+Message-ID: <56E02335.6020901@nvidia.com>
+References: <1457438528-29054-1-git-send-email-ldewangan@nvidia.com> <1457438528-29054-5-git-send-email-ldewangan@nvidia.com> <20160309062849.GB10454@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDKONJFYSUEBBE6GQC3QKGQEOGKCIDA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <1457520614-32239-2-git-send-email-maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-	(Maxime Ripard's message of "Wed, 9 Mar 2016 11:50:11 +0100")
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:12284 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753536AbcCINdw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2016 08:33:52 -0500
+In-Reply-To: <20160309062849.GB10454@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Markus Pargmann <mpa@pengutronix.de>
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, treding@nvidia.com, swarren@wwwdotorg.org, Benoit Parrot <bparrot@ti.com>, Alexandre Courbot <acourbot@nvidia.com>
 
->>>>> "Maxime" == Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> writes:
 
- > The AXP209 PMIC has a bunch of GPIOs accessible, that are usually used to
- > control LEDs or backlight.
+On Wednesday 09 March 2016 11:58 AM, Markus Pargmann wrote:
+> * PGP Signed by an unknown key
+>
+> Hi,
+>
+> On Tue, Mar 08, 2016 at 05:32:07PM +0530, Laxman Dewangan wrote:
+>> The child node for gpio hogs under gpio controller's node
+>> provide the mechanism to automatic GPIO request and
+>> configuration as part of the gpio-controller's driver
+>> probe function.
+>>
+>> Currently, property "gpio" takes one gpios for such
+>> configuration. Add support to have multiple GPIOs in
+>> this property so that multiple GPIOs of gpio-controller
+>> can be configured by this mechanism with one child node.
+> So if I read this correctly you want to have multiple GPIOs with the
+> same line name? Why don't you use multiple child nodes with individual
+> line names?
+>
+There is cases on which particular functional configuration needs sets 
+of GPIO to set. On this case, making sub node for each GPIOs creates 
+lots of sub-nodes and  add complexity on readability, usability and 
+maintainability.
+Example: for my board, I wanted to set GPIO H2 to input and H0 and H1 to 
+be output high.
+Instead of three nodes, I can have two here:
+        gpio@0,6000d000 {
+                wlan_input {
+                        gpio-hog;
+                        gpios = <TEGRA_GPIO(H, 2) 0>;
+                        input;
+                };
 
-Do you find 3 'a bunch'? ;)
+                wlan_output {
+                        gpio-hog;
+                        gpios = <TEGRA_GPIO(H, 0) 0 TEGRA_GPIO(H, 1) 0>;
+                        output-high;
+                };
+        };
 
- > +static int axp20x_gpio_probe(struct platform_device *pdev)
- > +{
- > +	struct axp20x_dev *axp20x = dev_get_drvdata(pdev->dev.parent);
- > +	struct axp20x_gpio *gpio;
- > +	int ret;
- > +
- > +	if (!of_device_is_available(pdev->dev.of_node))
- > +		return -ENODEV;
- > +
- > +	if (!axp20x) {
- > +		dev_err(&pdev->dev, "Parent drvdata not set\n");
- > +		return -EINVAL;
- > +	}
- > +
- > +	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
- > +	if (!gpio)
- > +		return -ENOMEM;
- > +
- > +	gpio->chip.base			= -1;
- > +	gpio->chip.can_sleep		= true;
- > +	gpio->chip.dev			= &pdev->dev;
- > +	gpio->chip.label		= dev_name(&pdev->dev);
- > +	gpio->chip.owner		= THIS_MODULE;
- > +	gpio->chip.get			= axp20x_gpio_get;
- > +	gpio->chip.set			= axp20x_gpio_set;
- > +	gpio->chip.direction_input	= axp20x_gpio_input;
- > +	gpio->chip.direction_output	= axp20x_gpio_output;
- > +	gpio->chip.ngpio		= 3;
- > +
- > +	gpio->regmap = axp20x->regmap;
+So here I am grouping the multiple output GPIO together.
 
-This could just use dev_get_regmap(pdev.dev->parent, NULL) instead of
-fiddling in the parent driver data.
+This looks much similar if we have many GPIOs for one type of 
+configurations.
 
- > +
- > +	ret = gpiochip_add(&gpio->chip);
- > +	if (ret) {
- > +		dev_err(&pdev->dev, "Failed to register GPIO chip\n");
- > +		return ret;
- > +	}
- > +
- > +	dev_info(&pdev->dev, "AXP209 GPIO driver loaded\n");
+Even it looks better if we have something:
+        gpio@0,6000d000 {
+                wlan_control {
+                        gpio-hog;
+                        gpios-input = <TEGRA_GPIO(H, 2) 0>;
+                        gpios-output-high = <TEGRA_GPIO(H, 0) 0 
+TEGRA_GPIO(H, 1) 0>;
+                };
+        };
 
-Any reason to be so noisy?
-
--- 
-Bye, Peter Korsgaard
