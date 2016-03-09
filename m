@@ -1,33 +1,60 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 01/14] pinctrl: at91: use __maybe_unused to hide pm functions
-Date: Wed, 9 Mar 2016 11:09:25 +0700
-Message-ID: <CACRpkdaDy3jmVqm_LfJ3ExaA-RMwfajw-bn+6MStwL0sODTr2A@mail.gmail.com>
-References: <1456934350-1389172-1-git-send-email-arnd@arndb.de>
-	<1456934350-1389172-2-git-send-email-arnd@arndb.de>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 3/4] gpio: dt-bindings: Declare gpio-hog optional for GPIO subnodes
+Date: Tue, 8 Mar 2016 22:27:10 -0600
+Message-ID: <CAL_JsqLxQkyc6BbFLbZgU2OS93B2k74FJhF-YbcZ1UX+KUMvNw@mail.gmail.com>
+References: <1456214089-13954-1-git-send-email-mpa@pengutronix.de>
+ <1456214089-13954-3-git-send-email-mpa@pengutronix.de> <20160223232534.GA29637@rob-hp-laptop>
+ <CACRpkdaE64pjnr=hn0nMJb-KHx5GhvOSrdhNWJucY+UJVcV18w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1456934350-1389172-2-git-send-email-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:58574 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751698AbcCIE1f (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 8 Mar 2016 23:27:35 -0500
+In-Reply-To: <CACRpkdaE64pjnr=hn0nMJb-KHx5GhvOSrdhNWJucY+UJVcV18w@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Markus Pargmann <mpa@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Wed, Mar 2, 2016 at 10:58 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-
-> The at91-pio4 pinctrl driver uses SET_SYSTEM_SLEEP_PM_OPS() to
-> conditionally set the correct suspend/resume options, but they
-> become unused when CONFIG_PM is disabled:
+On Tue, Mar 8, 2016 at 9:53 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Feb 24, 2016 at 6:25 AM, Rob Herring <robh@kernel.org> wrote:
+>> On Tue, Feb 23, 2016 at 08:54:48AM +0100, Markus Pargmann wrote:
 >
-> drivers/pinctrl/pinctrl-at91-pio4.c:827:12: error: 'atmel_pctrl_suspend' defined but not used [-Werror=unused-function]
-> drivers/pinctrl/pinctrl-at91-pio4.c:847:12: error: 'atmel_pctrl_resume' defined but not used [-Werror=unused-function]
+>>> +Optional properties:
+>>> +- line-name:  The GPIO name. If not present the node name is used.
+>>
+>> I'd like to deprecate line-name in favor of the standard property
+>> for user visible names "label".
 >
-> This adds __maybe_unused annotations so the compiler knows
-> it can silently drop them instead of warning.
+> This causes some unfortunate confusion wrt internal linux naming.
+
+Yes.
+
+> GPIO lines have two "names"
 >
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> - The "name" is what the line (pin) is named
+>   on the chip, or the name of the rail going out on the board, from the chip,
+>   so it is a producer name.
 
-Patch applied with the maintainer ACKs.
+Who/what uses this?
 
-Yours,
-Linus Walleij
+> - Then the GPIO consumers set a second name, called "label"
+>   (confusingly) so we can see in e.g. debugfs and now also the userspace
+>   ABI who is using it.
+>
+> I named these "name" and "consumer" in the userspace ABI, I think
+> I should take a round and rename it from "label" to "consumer"
+> also inside the kernel to avoid confusion with this, because "label"
+> in DT is going to be converted to "name" in the GPIOlib and
+> then it also has something named "label" and that is another thing,
+> argh!
+
+There is still confusion because DT label should be the consumer side,
+not the SoC pin name.
+
+Then of course you could have 3 levels of names needed if you have SoC
+pin, board connector pin, and mezzanine consumer.
+
+Rob
