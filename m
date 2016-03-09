@@ -1,57 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 01/13] pinctrl: sunxi: Add A83T R_PIO controller support
-Date: Wed, 9 Mar 2016 09:55:44 +0700
-Message-ID: <CACRpkdZ5o=SKtHxshaedkYNETERt6DfiOPtC5JV2LNWKL_mqDg@mail.gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
-	<1457192586-25596-2-git-send-email-vishnupatekar0510@gmail.com>
+Subject: Re: [PATCH 1/8] drivers/pinctrl: sunxi/pinctrl-sunxi.c does not need module.h
+Date: Wed, 9 Mar 2016 09:59:48 +0700
+Message-ID: <CACRpkdZ0_qmkyfBOBwXFL-HV+PvQxz-Emv0qiMv7EaEJaR1BkQ@mail.gmail.com>
+References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
+	<1456778924-20730-2-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1457192586-25596-2-git-send-email-vishnupatekar0510@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>, Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>R
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:36567 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750766AbcCIC7t (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 21:59:49 -0500
+Received: by mail-oi0-f42.google.com with SMTP id r187so25843013oih.3
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 18:59:49 -0800 (PST)
+In-Reply-To: <1456778924-20730-2-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Sat, Mar 5, 2016 at 10:42 PM, Vishnu Patekar
-<vishnupatekar0510@gmail.com> wrote:
+On Tue, Mar 1, 2016 at 3:48 AM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 
-> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
-> interrupt bit is 6th and A83T has one extra pin PL12.
+> This file is not modular, nor is it using modular functions. The
+> only thing close is the global THIS_MODULE which comes from export.h
+> so lets replace it appropriately and cut back on the amount of
+> header stuff we draw in by several thousand lines.
 >
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
-> Acked-by: Rob Herring <robh@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-As partly noted by others:
-
-> +config PINCTRL_SUN8I_A83T_R
-> +       def_bool MACH_SUN8I
-
-bool
-
-> +       depends on RESET_CONTROLLER
-
-Should it rather select RESET_CONTROLLER?
-
-> +static const struct of_device_id sun8i_a83t_r_pinctrl_match[] = {
-> +       { .compatible = "allwinner,sun8i-a83t-r-pinctrl", },
-> +       {}
-> +};
-> +MODULE_DEVICE_TABLE(of, sun8i_a83t_r_pinctrl_match);
-
-Module talk in bool driver.
-
-> +static struct platform_driver sun8i_a83t_r_pinctrl_driver = {
-> +       .probe  = sun8i_a83t_r_pinctrl_probe,
-> +       .driver = {
-> +               .name           = "sun8i-a83t-r-pinctrl",
-> +               .of_match_table = sun8i_a83t_r_pinctrl_match,
-> +       },
-> +};
-> +module_platform_driver(sun8i_a83t_r_pinctrl_driver);
-
-Should be builtin?
+Patch applied with Maxime's ACK.
 
 Yours,
 Linus Walleij
