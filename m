@@ -1,52 +1,35 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH 4/4] ARM: sun5i: chip: Add status LED
-Date: Wed,  9 Mar 2016 11:50:14 +0100
-Message-ID: <1457520614-32239-5-git-send-email-maxime.ripard@free-electrons.com>
-References: <1457520614-32239-1-git-send-email-maxime.ripard@free-electrons.com>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: omap: drop dev field from gpio_bank structure
+Date: Wed, 9 Mar 2016 18:08:04 +0700
+Message-ID: <CACRpkdYJbGQMUSN7-LjD_BApuMagVZt3W9MzkH3UeAsyBBQ3Bw@mail.gmail.com>
+References: <1457105135-28124-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBYMGQC3QKGQEKYP3PSY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1457520614-32239-1-git-send-email-maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:34793 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932234AbcCILIH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2016 06:08:07 -0500
+Received: by mail-ob0-f182.google.com with SMTP id ts10so43025036obc.1
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Mar 2016 03:08:05 -0800 (PST)
+In-Reply-To: <1457105135-28124-1-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-The CHIP has a status LED connected to one of the AXP GPIOs. Add the
-gpio-leds node to be able to use the proper LED framework to control it.
+On Fri, Mar 4, 2016 at 10:25 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-Signed-off-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
----
- arch/arm/boot/dts/sun5i-r8-chip.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> GPIO chip structure already has "parent" field which is used for the
+> same purpose as "dev" field in gpio_bank structure - store pointer on
+> GPIO device.
+>
+> Hence, drop duplicated "dev" field from gpio_bank structure.
+>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-diff --git a/arch/arm/boot/dts/sun5i-r8-chip.dts b/arch/arm/boot/dts/sun5i-r8-chip.dts
-index f6898c6b84d4..9a54df81ece7 100644
---- a/arch/arm/boot/dts/sun5i-r8-chip.dts
-+++ b/arch/arm/boot/dts/sun5i-r8-chip.dts
-@@ -64,6 +64,16 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		status {
-+			label = "chip:white:status";
-+			gpios = <&axp_gpio 2 GPIO_ACTIVE_HIGH>;
-+			default-state = "on";
-+		};
-+	};
- };
- 
- &codec {
--- 
-2.7.2
+Patch applied with Santosh's ACK.
+
+Yours,
+Linus Walleij
