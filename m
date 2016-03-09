@@ -1,63 +1,48 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH 2/2] gpio: menz127: Drop *mdev field from struct
- men_z127_gpio
-Date: Wed, 09 Mar 2016 20:39:57 +0800
-Message-ID: <1457527197.720.2.camel@ingics.com>
-References: <1457527135.720.1.camel@ingics.com>
+From: mrpace2@gmail.com
+Subject: [PATCH] gpio: gpio-pca953x: no interrupts with 4-bit devices
+Date: Wed, 09 Mar 2016 12:37:09 +0000
+Message-ID: <emac54c752-04e5-4445-a05e-e6d24a098066@t410-5a>
+Reply-To: mrpace2@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; format=flowed; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:33689 "EHLO
-	mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932411AbcCIMkD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2016 07:40:03 -0500
-Received: by mail-pf0-f195.google.com with SMTP id 129so792243pfw.0
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Mar 2016 04:40:01 -0800 (PST)
-In-Reply-To: <1457527135.720.1.camel@ingics.com>
+Received: from mo4-p05-ob.smtp.rzone.de ([81.169.146.183]:11462 "EHLO
+	mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753554AbcCIMnY convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2016 07:43:24 -0500
+Received: from mail.q5net.de (p4FF1C5C9.dip0.t-ipconnect.de [79.241.197.201])
+	by smtp.strato.de (RZmta 37.21 DYNA|AUTH)
+	with ESMTPSA id j04242s29Cb7sBs
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+	(Client did not present a certificate)
+	for <linux-gpio@vger.kernel.org>;
+	Wed, 9 Mar 2016 13:37:07 +0100 (CET)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andreas Werner <andreas.werner@men.de>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
 
-No need to store *medv in struct men_z127_gpio.
+I/O expanders with less than 8 I/O (PCA9536 and PCA9537, currently) fail 
+to invoke interrupt handlers because the NBANK macro
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
+     #define NBANK(chip) (chip->gpio_chip.ngpio / BANK_SZ)
+incorrectly calculates no banks for these devices. As a result, 
+pca953x_irq_pending() never sets the trigger_seen flag.
+
+The patch below fixed the issue by changing the NBANK() macro.
+
+Signed-off-by: Frank Edelhaeuser <mrpace2 <at> gmail.com>
 ---
- drivers/gpio/gpio-menz127.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+diff -Nur a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+--- a/drivers/gpio/gpio-pca953x.c 2016-03-08 00:00:00.000000000 +0000
++++ b/drivers/gpio/gpio-pca953x.c 2016-03-08 00:00:00.000000000 +0000
+@@ -86,7 +86,7 @@
+  #define MAX_BANK 5
+  #define BANK_SZ 8
 
-diff --git a/drivers/gpio/gpio-menz127.c b/drivers/gpio/gpio-menz127.c
-index c5c9599..d979f4b 100644
---- a/drivers/gpio/gpio-menz127.c
-+++ b/drivers/gpio/gpio-menz127.c
-@@ -35,7 +35,6 @@
- struct men_z127_gpio {
- 	struct gpio_chip gc;
- 	void __iomem *reg_base;
--	struct mcb_device *mdev;
- 	struct resource *mem;
- };
- 
-@@ -43,7 +42,7 @@ static int men_z127_debounce(struct gpio_chip *gc, unsigned gpio,
- 			     unsigned debounce)
- {
- 	struct men_z127_gpio *priv = gpiochip_get_data(gc);
--	struct device *dev = &priv->mdev->dev;
-+	struct device *dev = gc->parent;
- 	unsigned int rnd;
- 	u32 db_en, db_cnt;
- 
-@@ -135,7 +134,6 @@ static int men_z127_probe(struct mcb_device *mdev,
- 		goto err_release;
- 	}
- 
--	men_z127_gpio->mdev = mdev;
- 	mcb_set_drvdata(mdev, men_z127_gpio);
- 
- 	ret = bgpio_init(&men_z127_gpio->gc, &mdev->dev, 4,
--- 
-2.1.4
+-#define NBANK(chip) (chip->gpio_chip.ngpio / BANK_SZ)
++#define NBANK(chip) (((chip->gpio_chip.ngpio - 1) / BANK_SZ) + 1)
 
-
+  struct pca953x_chip {
+   unsigned gpio_start;
 
