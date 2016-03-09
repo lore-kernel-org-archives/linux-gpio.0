@@ -1,35 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: omap: drop dev field from gpio_bank structure
-Date: Wed, 9 Mar 2016 18:08:04 +0700
-Message-ID: <CACRpkdYJbGQMUSN7-LjD_BApuMagVZt3W9MzkH3UeAsyBBQ3Bw@mail.gmail.com>
-References: <1457105135-28124-1-git-send-email-grygorii.strashko@ti.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: core: only call pinctrl_provide_dummies()
+ on SuperH
+Date: Wed, 9 Mar 2016 18:09:00 +0700
+Message-ID: <CACRpkdYGaAVz=Njykq9FhEdxLM62bP-G6vxPDH74vX61NEva7A@mail.gmail.com>
+References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+	<14300712.5chtEzsjIN@wasted.cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:34793 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932234AbcCILIH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2016 06:08:07 -0500
-Received: by mail-ob0-f182.google.com with SMTP id ts10so43025036obc.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Mar 2016 03:08:05 -0800 (PST)
-In-Reply-To: <1457105135-28124-1-git-send-email-grygorii.strashko@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <14300712.5chtEzsjIN@wasted.cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Mar 4, 2016 at 10:25 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+On Sat, Mar 5, 2016 at 5:58 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
 
-> GPIO chip structure already has "parent" field which is used for the
-> same purpose as "dev" field in gpio_bank structure - store pointer on
-> GPIO device.
+> The 'ravb' Ethernet driver couldn't connect to  the PHY as the MDIO bus
+> appeared empty on the Renesas R-Car boards. The bug hunt finally pointed
+> at  the commit adding the "init" pintcrl state: it tries to switch to non-
+> default state before the driver probe which should fail but doesn't as the
+> PFC pinctrl driver happens to call pinctrl_provide_dummies()  which makes
+> all state lookups succeed, even though the state doesn't really exist.
+> That feature is only relevant to non-DT systems and all the ARM boards
+> that use the PFC driver  have been converted to the DT boot, so limiting
+> it to the SuperH architecture seems The Right Thing...
 >
-> Hence, drop duplicated "dev" field from gpio_bank structure.
->
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> Fixes: ef0eebc05130 ("drivers/pinctrl: Add the concept of an "init" state")
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> CC: stable@vger.kernel.org
 
-Patch applied with Santosh's ACK.
+Putting this on hold because another patch is being discussed as a
+more proper fix.
 
 Yours,
 Linus Walleij
