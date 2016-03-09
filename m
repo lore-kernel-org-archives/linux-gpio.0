@@ -1,62 +1,44 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 00/50] pinctrl: Add and use devm_ apis for pinctrl_{register,
- unregister}
-Date: Wed, 9 Mar 2016 19:53:06 +0530
-Message-ID: <56E031CA.9010204@nvidia.com>
-References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com> <CACRpkdZjv2KZ0AtC9oBytmSdS+=T+kC8PoJVt-RawE8Np8p40w@mail.gmail.com> <56D307CC.2050202@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: tps65912: fix bad merge
+Date: Wed,  9 Mar 2016 22:04:41 +0700
+Message-ID: <1457535881-17994-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:17232 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750803AbcCIOgE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2016 09:36:04 -0500
-In-Reply-To: <56D307CC.2050202@nvidia.com>
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:33811 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932979AbcCIPFC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2016 10:05:02 -0500
+Received: by mail-pa0-f42.google.com with SMTP id fe3so25761333pab.1
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Mar 2016 07:05:02 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jon Corbet <corbet@lwn.net>, Lee Jones <lee@kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, ARM/Mediatek SoC support <linux-mediatek@lists.infradead.org>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, "Andrew F. Davis" <afd@ti.com>
 
-Hi Linus,
+I screwed up while merging the immutable branch for TPS65912,
+so fixing it unbroken again.
 
-On Sunday 28 February 2016 08:14 PM, Laxman Dewangan wrote:
->
-> On Thursday 25 February 2016 07:43 PM, Linus Walleij wrote:
->> On Wed, Feb 24, 2016 at 2:15 PM, Laxman Dewangan 
->> <ldewangan@nvidia.com> wrote:
->>
->>> Add resource manageemnt APIs fro pinctrl_register() and 
->>> pinctrl_unregister()
->>> and use these new APIs on hw driver to reduce the error path code and
->>> remove callback for driver.
->> As you can probably guess I like this too, so wait a while, collect ACKs
->> and send me a branch to pull for this too.
->>
-> Got lots of ack/reviewed by and captured all. Also did code changes 
-> per review:
-> - Optimizing in devm_ apis.
-> - Correcting the description of devm_ apis.
-> - Simplifying probe in digicolor.
-> - Removing unwanted pfc->pinctrl in ish.
->
-> Pushed the change at:
-> Branch "devm_pinctrl_register" of 
-> https://github.com/ldewangan/linux-upstream.git.
->
-> Base repo is
-> for-next of 
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
->
->
-> If required, I can send the V2 version of list with acks.
->
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Andrew F. Davis <afd@ti.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-tps65912.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Let me know if I need to send full series (V2 with collected ack) again 
-or fine to pull it from above location.
-
-
-Thanks,
-Laxman
-
+diff --git a/drivers/gpio/gpio-tps65912.c b/drivers/gpio/gpio-tps65912.c
+index e7886e712dc7..acfd30a13a56 100644
+--- a/drivers/gpio/gpio-tps65912.c
++++ b/drivers/gpio/gpio-tps65912.c
+@@ -117,8 +117,8 @@ static int tps65912_gpio_probe(struct platform_device *pdev)
+ 	gpio->gpio_chip = template_chip;
+ 	gpio->gpio_chip.parent = tps->dev;
+ 
+-	ret = devm_gpiochip_add_data(&pdev->dev, &tps65912_gpio->gpio_chip,
+-				     tps65912_gpio);
++	ret = devm_gpiochip_add_data(&pdev->dev, &gpio->gpio_chip,
++				     gpio);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
+ 		return ret;
+-- 
+2.4.3
 
