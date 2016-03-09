@@ -1,61 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 0/3] "gpio: designware: add gpio-signaled acpi event
- support for power button"
-Date: Wed, 9 Mar 2016 09:26:10 +0700
-Message-ID: <CACRpkdZ6Uodt-WTrXjCmaGNQLMChRVXOzKLeGf4JoNtuTvNCGw@mail.gmail.com>
-References: <1457077474-124064-1-git-send-email-qiujiang@huawei.com>
+Subject: Re: [PATCH v2] gpio: add driver for MEN 16Z127 GPIO controller
+Date: Wed, 9 Mar 2016 09:45:42 +0700
+Message-ID: <CACRpkdZrSTiQd2BQS-ErtLtsT5gmyL5gCxo=gcMQ5wy0xaxpiQ@mail.gmail.com>
+References: <cover.1456771093.git.andy@wernerandy.de>
+	<8adb885e10c3b375d451830ba2612bfea09dd011.1456771093.git.andy@wernerandy.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:33090 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750863AbcCIC0M (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 21:26:12 -0500
-Received: by mail-ob0-f181.google.com with SMTP id fz5so33646126obc.0
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 18:26:11 -0800 (PST)
-In-Reply-To: <1457077474-124064-1-git-send-email-qiujiang@huawei.com>
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:34424 "EHLO
+	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750863AbcCICpn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 21:45:43 -0500
+Received: by mail-oi0-f50.google.com with SMTP id m82so25714643oif.1
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 18:45:43 -0800 (PST)
+In-Reply-To: <8adb885e10c3b375d451830ba2612bfea09dd011.1456771093.git.andy@wernerandy.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: qiujiang <qiujiang@huawei.com>, Jamie Iles <jamie@jamieiles.com>, Alan Tull <atull@altera.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
+To: Andreas Werner <andy@wernerandy.de>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johannes Thumshirn <morbidrsa@gmail.com>, Andreas Werner <andreas.werner@men.de>
 
-On Fri, Mar 4, 2016 at 2:44 PM, qiujiang <qiujiang@huawei.com> wrote:
+On Tue, Mar 1, 2016 at 1:44 AM, Andreas Werner <andy@wernerandy.de> wrote:
 
-> This patchset adds gpio-signaled acpi events support for power button on hisilicon
-> D02 board.
+> The 16Z127 is a 32bit GPIO controller on a MCB FPGA.
+> Every single line can be configured as input and output.
 >
-> The three patches respectively:
->         - convert device node to fwnode
->                 - add acpi binding
->         - add gpio-signaled acpi event support
+> Push pull and open drain are supported as well as setting
+> a debounce value for the input lines.
 >
->    This patchset is based on
->    https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
->    branch "devel"
->
-> Changes v4 -> v5:
->    - split into three patchs
->    - add Andy's ACKs
->
-> Changes v3 -> v4:
->    - re-organize this two patchs by Andy's suggestion
->
-> Changes v2 -> v3:
->    - fixed the build error reported by Kbuild test robot
->
-> Changes v1 -> v2:
->    - rebase to branch "devel" of Linus Walleij's repository
->    - split in two patch as suggested by Andy S
->    - add Mika's ACKs
->
-> qiujiang (3):
->   gpio: designware: convert device node to fwnode
->   gpio: designware: add acpi binding
->   gpio: designware: add gpio-signaled acpi event support
+> Signed-off-by: Andreas Werner <andy@wernerandy.de>
 
-I noticed that the original driver authors Jamie and Alan have not been
-properly CC:ed on this patch. Jamie, Alan: can you look at this and
-ACK it if you like what you see?
+Looks good.
+Patch applied!
 
 Yours,
 Linus Walleij
