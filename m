@@ -1,61 +1,45 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: [PATCH] pinctrl: freescale: imx: fix bogus check of of_iomap() return value
-Date: Wed,  9 Mar 2016 02:45:36 +0200
-Message-ID: <1457484336-8928-1-git-send-email-vz@mleia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: pxa2xx: export symbols
+Date: Wed,  9 Mar 2016 09:11:49 +0700
+Message-ID: <1457489509-5680-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mleia.com ([178.79.152.223]:48820 "EHLO mail.mleia.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753517AbcCIApn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 8 Mar 2016 19:45:43 -0500
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:33247 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750799AbcCICMK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 21:12:10 -0500
+Received: by mail-pa0-f42.google.com with SMTP id fl4so26281165pad.0
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 18:12:09 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, Adrian Alonso <aalonso@freescale.com>, linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On error path of_iomap() returns NULL, hence IS_ERR() check is invalid
-and may cause a NULL pointer dereference, the change fixes this
-problem.
+The pxa2xxx fails some automated builds because of unexported
+symbols.
 
-While we are here invert a device node check to simplify the code.
-
-Fixes: 26d8cde5260b ("pinctrl: freescale: imx: add shared input select reg support")
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/freescale/pinctrl-imx.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/pinctrl/pxa/pinctrl-pxa2xx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index 4c435cf..b2d0ac7 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -752,19 +752,18 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+diff --git a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
+index d90e205cf809..f553313bc2ef 100644
+--- a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
++++ b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
+@@ -426,6 +426,7 @@ int pxa2xx_pinctrl_init(struct platform_device *pdev,
  
- 	if (of_property_read_bool(dev_np, "fsl,input-sel")) {
- 		np = of_parse_phandle(dev_np, "fsl,input-sel", 0);
--		if (np) {
--			ipctl->input_sel_base = of_iomap(np, 0);
--			if (IS_ERR(ipctl->input_sel_base)) {
--				of_node_put(np);
--				dev_err(&pdev->dev,
--					"iomuxc input select base address not found\n");
--				return PTR_ERR(ipctl->input_sel_base);
--			}
--		} else {
-+		if (!np) {
- 			dev_err(&pdev->dev, "iomuxc fsl,input-sel property not found\n");
- 			return -EINVAL;
- 		}
-+
-+		ipctl->input_sel_base = of_iomap(np, 0);
- 		of_node_put(np);
-+		if (!ipctl->input_sel_base) {
-+			dev_err(&pdev->dev,
-+				"iomuxc input select base address not found\n");
-+			return -ENOMEM;
-+		}
- 	}
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(pxa2xx_pinctrl_init);
  
- 	imx_pinctrl_desc.name = dev_name(&pdev->dev);
+ int pxa2xx_pinctrl_exit(struct platform_device *pdev)
+ {
+@@ -434,3 +435,4 @@ int pxa2xx_pinctrl_exit(struct platform_device *pdev)
+ 	pinctrl_unregister(pctl->pctl_dev);
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(pxa2xx_pinctrl_exit);
 -- 
-2.1.4
+2.4.3
 
