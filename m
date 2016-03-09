@@ -1,75 +1,62 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 4/5] gpio: of: Add support to have multiple gpios in gpio-hog
-Date: Wed, 9 Mar 2016 18:50:53 +0530
-Message-ID: <56E02335.6020901@nvidia.com>
-References: <1457438528-29054-1-git-send-email-ldewangan@nvidia.com> <1457438528-29054-5-git-send-email-ldewangan@nvidia.com> <20160309062849.GB10454@pengutronix.de>
+Subject: Re: [PATCH 00/50] pinctrl: Add and use devm_ apis for pinctrl_{register,
+ unregister}
+Date: Wed, 9 Mar 2016 19:53:06 +0530
+Message-ID: <56E031CA.9010204@nvidia.com>
+References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com> <CACRpkdZjv2KZ0AtC9oBytmSdS+=T+kC8PoJVt-RawE8Np8p40w@mail.gmail.com> <56D307CC.2050202@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:12284 "EHLO
-	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753536AbcCINdw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2016 08:33:52 -0500
-In-Reply-To: <20160309062849.GB10454@pengutronix.de>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:17232 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750803AbcCIOgE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2016 09:36:04 -0500
+In-Reply-To: <56D307CC.2050202@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Pargmann <mpa@pengutronix.de>
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, treding@nvidia.com, swarren@wwwdotorg.org, Benoit Parrot <bparrot@ti.com>, Alexandre Courbot <acourbot@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jon Corbet <corbet@lwn.net>, Lee Jones <lee@kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, ARM/Mediatek SoC support <linux-mediatek@lists.infradead.org>
 
+Hi Linus,
 
-On Wednesday 09 March 2016 11:58 AM, Markus Pargmann wrote:
-> * PGP Signed by an unknown key
+On Sunday 28 February 2016 08:14 PM, Laxman Dewangan wrote:
 >
-> Hi,
->
-> On Tue, Mar 08, 2016 at 05:32:07PM +0530, Laxman Dewangan wrote:
->> The child node for gpio hogs under gpio controller's node
->> provide the mechanism to automatic GPIO request and
->> configuration as part of the gpio-controller's driver
->> probe function.
+> On Thursday 25 February 2016 07:43 PM, Linus Walleij wrote:
+>> On Wed, Feb 24, 2016 at 2:15 PM, Laxman Dewangan 
+>> <ldewangan@nvidia.com> wrote:
 >>
->> Currently, property "gpio" takes one gpios for such
->> configuration. Add support to have multiple GPIOs in
->> this property so that multiple GPIOs of gpio-controller
->> can be configured by this mechanism with one child node.
-> So if I read this correctly you want to have multiple GPIOs with the
-> same line name? Why don't you use multiple child nodes with individual
-> line names?
+>>> Add resource manageemnt APIs fro pinctrl_register() and 
+>>> pinctrl_unregister()
+>>> and use these new APIs on hw driver to reduce the error path code and
+>>> remove callback for driver.
+>> As you can probably guess I like this too, so wait a while, collect ACKs
+>> and send me a branch to pull for this too.
+>>
+> Got lots of ack/reviewed by and captured all. Also did code changes 
+> per review:
+> - Optimizing in devm_ apis.
+> - Correcting the description of devm_ apis.
+> - Simplifying probe in digicolor.
+> - Removing unwanted pfc->pinctrl in ish.
 >
-There is cases on which particular functional configuration needs sets 
-of GPIO to set. On this case, making sub node for each GPIOs creates 
-lots of sub-nodes and  add complexity on readability, usability and 
-maintainability.
-Example: for my board, I wanted to set GPIO H2 to input and H0 and H1 to 
-be output high.
-Instead of three nodes, I can have two here:
-        gpio@0,6000d000 {
-                wlan_input {
-                        gpio-hog;
-                        gpios = <TEGRA_GPIO(H, 2) 0>;
-                        input;
-                };
+> Pushed the change at:
+> Branch "devm_pinctrl_register" of 
+> https://github.com/ldewangan/linux-upstream.git.
+>
+> Base repo is
+> for-next of 
+> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+>
+>
+> If required, I can send the V2 version of list with acks.
+>
 
-                wlan_output {
-                        gpio-hog;
-                        gpios = <TEGRA_GPIO(H, 0) 0 TEGRA_GPIO(H, 1) 0>;
-                        output-high;
-                };
-        };
+Let me know if I need to send full series (V2 with collected ack) again 
+or fine to pull it from above location.
 
-So here I am grouping the multiple output GPIO together.
 
-This looks much similar if we have many GPIOs for one type of 
-configurations.
+Thanks,
+Laxman
 
-Even it looks better if we have something:
-        gpio@0,6000d000 {
-                wlan_control {
-                        gpio-hog;
-                        gpios-input = <TEGRA_GPIO(H, 2) 0>;
-                        gpios-output-high = <TEGRA_GPIO(H, 0) 0 
-TEGRA_GPIO(H, 1) 0>;
-                };
-        };
 
