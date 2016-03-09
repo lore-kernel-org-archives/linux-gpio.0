@@ -1,31 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: uniphier: rename CONFIG options and file names
-Date: Wed, 9 Mar 2016 10:40:11 +0700
-Message-ID: <CACRpkdY8TJztJmENd5PTrQkgzXRRppbmY9HALT=yKf_8Q45C_Q@mail.gmail.com>
-References: <1456899280-8641-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [RFT][PATCH v2 1/3] gpio: mpc8xxx: Fixup setting gpio direction output
+Date: Wed, 9 Mar 2016 10:42:15 +0700
+Message-ID: <CACRpkdZ-5XR23JxA4tfNgwLJ6YZ9cn2wBt=SNiW-kJ6Y=SgHFg@mail.gmail.com>
+References: <1456125772.27297.0.camel@ingics.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:36336 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751425AbcCIDkM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 22:40:12 -0500
-Received: by mail-oi0-f53.google.com with SMTP id r187so26346747oih.3
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 19:40:12 -0800 (PST)
-In-Reply-To: <1456899280-8641-1-git-send-email-yamada.masahiro@socionext.com>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:33758 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750898AbcCIDmQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 22:42:16 -0500
+Received: by mail-ob0-f178.google.com with SMTP id fz5so34951773obc.0
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 19:42:15 -0800 (PST)
+In-Reply-To: <1456125772.27297.0.camel@ingics.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Liu Gang <Gang.Liu@nxp.com>, Alexandre Courbot <gnurou@gmail.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Alexander Stein <alexander.stein@systec-electronic.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Mar 2, 2016 at 1:14 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Mon, Feb 22, 2016 at 2:22 PM, Axel Lin <axel.lin@ingics.com> wrote:
 
-> The current "CONFIG_PINCTRL_UNIPHIER_PH1_*" is too long.  It would
-> not hurt to drop "PH1_" because "UNIPHIER_" already well specifies
-> the SoC family.  Also, rename files for consistency.
+> For devtype with specific gpio_dir_out implementation, current code is
+> wrong because below code sets both gc->direction_output and
+> mpc8xxx_gc->direction_output to the same function.
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> gc->direction_output = devtype->gpio_dir_out ?: gc->direction_output;
+> mpc8xxx_gc->direction_output = gc->direction_output;
+>
+> Set mpc8xxx_gc->direction_output = gc->direction_output first to fix it.
+> This way mpc8xxx_gc->direction_output actually calls the standard
+> bgpio_dir_out() to update register.
+>
+> Fixes: commit 42178e2a1e42 ("drivers/gpio: Switch gpio-mpc8xxx to use gpio-generic")
+>
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
 
 Patch applied.
 
