@@ -1,33 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFT][PATCH v2 3/3] gpio: mpc8xxx: Slightly update the code for
- better readability
-Date: Wed, 9 Mar 2016 10:44:41 +0700
-Message-ID: <CACRpkdbg3aoXFp=dbsf842zBVkUdEJFqD76+hopxwG5D1R8Avw@mail.gmail.com>
-References: <1456125772.27297.0.camel@ingics.com>
-	<1456125894.27297.2.camel@ingics.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: core: don't open code of_device_get_match_data()
+Date: Wed, 9 Mar 2016 10:47:31 +0700
+Message-ID: <CACRpkdY3Tv8ieTJSEesm06B_pvZHTmLvBFNGJFKneO=ZOjUPLw@mail.gmail.com>
+References: <1456850332-8432-1-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:35837 "EHLO
-	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750863AbcCIDom (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 22:44:42 -0500
-Received: by mail-oi0-f44.google.com with SMTP id c203so26431518oia.2
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 19:44:41 -0800 (PST)
-In-Reply-To: <1456125894.27297.2.camel@ingics.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1456850332-8432-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Liu Gang <Gang.Liu@nxp.com>, Alexandre Courbot <gnurou@gmail.com>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Alexander Stein <alexander.stein@systec-electronic.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Feb 22, 2016 at 2:24 PM, Axel Lin <axel.lin@ingics.com> wrote:
+On Tue, Mar 1, 2016 at 11:38 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 
-> Setting gc->direction_output to gc->direction_output looks strange.
-> I think this change makes the intention more clear.
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> This change will also make Coverity happy by avoiding a theoretical NULL
+> pointer dereference; yet another reason is to use the above helper function
+> to tighten the code and make it more readable.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Patch applied.
+Patch applied with Geert's ACK.
 
 Yours,
 Linus Walleij
