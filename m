@@ -1,76 +1,63 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 0/4] Add AXP209 GPIO driver
-Date: Wed, 9 Mar 2016 16:28:22 +0100
-Message-ID: <20160309152822.GQ8418@lukather>
-References: <1457520614-32239-1-git-send-email-maxime.ripard@free-electrons.com>
- <56E0146E.6050102@redhat.com>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [RFC] pinctrl: sh-pfc: only use dummy states for non-DT platforms
+Date: Wed, 9 Mar 2016 16:37:53 +0100
+Message-ID: <20160309153753.GA9443@katana>
+References: <1457376072-755-1-git-send-email-wsa@the-dreams.de>
+ <CAMuHMdXPH0+YE=cRk7pjvoVEYtEGNcb_83-z5taXSLHRhtgMQA@mail.gmail.com>
+ <56DDDE6E.6090908@cogentembedded.com>
+ <CAMuHMdWis_knSv0Lgw+8O3LXp9thEX3SdGX6qo_4UyFrxFVuHA@mail.gmail.com>
+ <56DDE5CB.60204@cogentembedded.com>
+ <CAMuHMdUVFk47u+LPdfh+fq8vvPQAULyM8X_DrizCtrgf-1YwaA@mail.gmail.com>
+ <20160309095805.GA1506@katana>
+ <CACRpkdZzbp5MwD6uH=GbkYbvB=HsGOHYi+HcYpn5gZacmRwHwg@mail.gmail.com>
+ <56E01C3D.1060600@cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0kFaR1LGCHUiJxSD"
-Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBF4CQG3QKGQEAIRQGVY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:51888 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932847AbcCIPiH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 9 Mar 2016 10:38:07 -0500
 Content-Disposition: inline
-In-Reply-To: <56E0146E.6050102-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <56E01C3D.1060600@cogentembedded.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>
 
---0kFaR1LGCHUiJxSD
-Content-Type: text/plain; charset=UTF-8
+
+--qMm9M+Fa2AknHoGS
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+>    I'd only like that the "Fixes:" and "Cc:" tags were added to it.
 
-On Wed, Mar 09, 2016 at 01:17:50PM +0100, Hans de Goede wrote:
-> Hi,
-> 
-> On 09-03-16 11:50, Maxime Ripard wrote:
-> >Hi,
-> >
-> >The axp209 PMIC used in combination to some Allwinner SoCs has a bunch
-> >of GPIOs accessible. Some boards use these to control their backlight
-> >or a few LEDs.
-> 
-> Thanks for working on this, but IMHO this cannot go upstream like this,
-> the gpio pins on the axp pmics need a pinctrl driver, not a gpio
-> driver. I.E. on the axp209 gpio0 and gpio1 can also be used to output
-> an additional low-noise ldo (so as a regulator), or as an adc input.
+To make it easier for you, Linus:
 
-Eventually, yes, it needs both. But they don't even have to be the
-same driver, since they provide two different features. The only
-reason we have that construct in the pio case is because they share
-the same address space, but in the AXP case, the regmap and our mfd
-take care of that already.
+Fixes: ef0eebc05130 ("drivers/pinctrl: Add the concept of an "init" state")
+CC: stable@vger.kernel.org
 
-> I've been working on gsl1680 touchscreen support lately and on at least
-> a few a23 tablets, the low-noise ldo is used as AVCC for the touchscreen
-> controller.
 
-Yeah, the AXP209 also has an ADC connected to these pins.
+--qMm9M+Fa2AknHoGS
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> Now these use an axp223 pmic, but nothing is stopping someone from
-> doing something similar with an axp209 and I think it would be best
-> to support this from day one, rather then hope we can retro-fit this
-> later without breaking dts.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-I considered that, but I don't see how it would break the DT later. If
-someone wants to enable say the ADC, he will of course have to add the
-pinctrl driver, and the pinctrl handles, but the old DT will only
-reference the gpio driver directly, which would still be something
-that would work.
+iQIcBAEBAgAGBQJW4ENRAAoJEBQN5MwUoCm26gYQAK7O/AdUwTAAudv95/m4pGG2
+h74Stn53undaojWN+zp69ydaVUiyQdHQG5YHGvXBhBGetBGutf9ao/uRL+v0UUle
+tDy4dhaCIN+jzLyoX2WOkt9XRUO1h1cIDot5z2oNRptnp82sqe+1GPPJXMzztJD+
+wfL1Zmj/nF9MplsdgFUB07f8tvwCDIsOdNo0v4WjiucMaL6s6wCjkuOJyshon46K
+ylZixF5lmYoXb6PrIFM0B/K1hUoclxrOwb5UxkSuvootIioJH/dtVVj80Hk1FquZ
+9MCIeXq9TIYrIX1GF4E2gH4o/vHWCUPs8tZQDJXdpBoPon8o2b3un74n3Q32ZTH6
++ell0cYPKvgxVulrf0rV4AcbmLXpqsxSG4nTEpHJjGnm/gUlc2JbefXdzmVHVeV3
+WLjQ55IAwN1hX8dvSrHHStOAlRsPig9hWF9ATWIC+UvYDFN/Q7qOmjjxKWOUgahA
+Fg+fVHsIEZk7dYw+jmSL+H6SDcwuoM7z4gpr+5ST3Uam0rlSnkQSqiGsB+kEExYx
+LO4fWydFY8dxwWsHrkp5ctjk6dhSTnydPbfcz+myjIYCIScz4BbZsas5aD5XdMbF
+i972uKTDUvoaqVnMTIbFW7b6urWmgyjGLGPPqYaYxUC2BlFkvbKdbLhqm+gbIMy0
+VWfQ6OxtEuRpcEhrivzE
+=UJS1
+-----END PGP SIGNATURE-----
 
-Thanks!
-Maxime
-
--- 
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
---0kFaR1LGCHUiJxSD--
+--qMm9M+Fa2AknHoGS--
