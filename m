@@ -1,44 +1,57 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] gpio: mcp23s08: Add support for mcp23s18.
-Date: Wed, 9 Mar 2016 09:50:27 +0700
-Message-ID: <CACRpkdbW9quP1_jjcOEubcjdSrt9wmwgDt8p4OJ5ZYH=eUhVAQ@mail.gmail.com>
-References: <1456813541-74321-1-git-send-email-preid@electromag.com.au>
-	<1456813541-74321-2-git-send-email-preid@electromag.com.au>
+Subject: Re: [PATCH v3 01/13] pinctrl: sunxi: Add A83T R_PIO controller support
+Date: Wed, 9 Mar 2016 09:55:44 +0700
+Message-ID: <CACRpkdZ5o=SKtHxshaedkYNETERt6DfiOPtC5JV2LNWKL_mqDg@mail.gmail.com>
+References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
+	<1457192586-25596-2-git-send-email-vishnupatekar0510@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:35898 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750765AbcCICu2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Mar 2016 21:50:28 -0500
-Received: by mail-ob0-f180.google.com with SMTP id m7so33792900obh.3
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Mar 2016 18:50:28 -0800 (PST)
-In-Reply-To: <1456813541-74321-2-git-send-email-preid@electromag.com.au>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1457192586-25596-2-git-send-email-vishnupatekar0510@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>, Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>R
 List-Id: linux-gpio@vger.kernel.org
-To: Phil Reid <preid@electromag.com.au>
-Cc: Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Mar 1, 2016 at 1:25 PM, Phil Reid <preid@electromag.com.au> wrote:
+On Sat, Mar 5, 2016 at 10:42 PM, Vishnu Patekar
+<vishnupatekar0510@gmail.com> wrote:
 
-> This patch adds support for the mcp23s18 which is very similar to
-> the mcp23s17. A couple of control bits are not the same.
-> Notable IOCON_HAEN (s17 only) & IOCON_INTCC. Which can be ignored.
+> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
+> interrupt bit is 6th and A83T has one extra pin PL12.
 >
-> Patch changes the following:
-> - Add mcp23s18 types.
-> - Always set mirror bit if the dts defines mcp23s18. regardless of type.
->   Mirror bit is ignored on 8 bit devices anyway.
-> - In mcp23s08_probe use chip.ngpio instead of logic based on type
->   to determine number of gpio lins to increment by. This is set
->   appropiately by the call to mcp23s08_probe_one.
-> - Add mcp23s18 to device tree documentation.
-> - Remove statement that irqs don't work for spi. They do.
->   Tested with mcp23s18.
->
-> Signed-off-by: Phil Reid <preid@electromag.com.au>
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-Patch applied with Rob's ACK.
+As partly noted by others:
+
+> +config PINCTRL_SUN8I_A83T_R
+> +       def_bool MACH_SUN8I
+
+bool
+
+> +       depends on RESET_CONTROLLER
+
+Should it rather select RESET_CONTROLLER?
+
+> +static const struct of_device_id sun8i_a83t_r_pinctrl_match[] = {
+> +       { .compatible = "allwinner,sun8i-a83t-r-pinctrl", },
+> +       {}
+> +};
+> +MODULE_DEVICE_TABLE(of, sun8i_a83t_r_pinctrl_match);
+
+Module talk in bool driver.
+
+> +static struct platform_driver sun8i_a83t_r_pinctrl_driver = {
+> +       .probe  = sun8i_a83t_r_pinctrl_probe,
+> +       .driver = {
+> +               .name           = "sun8i-a83t-r-pinctrl",
+> +               .of_match_table = sun8i_a83t_r_pinctrl_match,
+> +       },
+> +};
+> +module_platform_driver(sun8i_a83t_r_pinctrl_driver);
+
+Should be builtin?
 
 Yours,
 Linus Walleij
