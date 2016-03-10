@@ -1,105 +1,64 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 4/5] gpio: of: Add support to have multiple gpios in gpio-hog
-Date: Thu, 10 Mar 2016 12:37:32 +0530
-Message-ID: <56E11D34.60401@nvidia.com>
-References: <1457438528-29054-1-git-send-email-ldewangan@nvidia.com> <1457438528-29054-5-git-send-email-ldewangan@nvidia.com> <20160309062849.GB10454@pengutronix.de> <56E02335.6020901@nvidia.com> <56E05AA9.8000503@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56E05AA9.8000503-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: uapi: use 0xB4 as ioctl() major
+Date: Thu, 10 Mar 2016 15:57:58 +0700
+Message-ID: <1457600278-30124-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:35407 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753677AbcCJI6P (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Mar 2016 03:58:15 -0500
+Received: by mail-pa0-f53.google.com with SMTP id td3so35721042pab.2
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Mar 2016 00:58:15 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>
+Cc: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 
+The previous 'o' is in conflict and not very orderly assigned.
+We want to select an ioctl() major that does not conflict with
+the existining ones.
 
-On Wednesday 09 March 2016 10:47 PM, Stephen Warren wrote:
-> On 03/09/2016 06:20 AM, Laxman Dewangan wrote:
->>
->> On Wednesday 09 March 2016 11:58 AM, Markus Pargmann wrote:
->>> * PGP Signed by an unknown key
->>>
->>> Hi,
->>>
->>> On Tue, Mar 08, 2016 at 05:32:07PM +0530, Laxman Dewangan wrote:
->>>> The child node for gpio hogs under gpio controller's node
->>>> provide the mechanism to automatic GPIO request and
->>>> configuration as part of the gpio-controller's driver
->>>> probe function.
->>>>
->>>> Currently, property "gpio" takes one gpios for such
->>>> configuration. Add support to have multiple GPIOs in
->>>> this property so that multiple GPIOs of gpio-controller
->>>> can be configured by this mechanism with one child node.
->>> So if I read this correctly you want to have multiple GPIOs with the
->>> same line name? Why don't you use multiple child nodes with individual
->>> line names?
->>>
->> There is cases on which particular functional configuration needs sets
->> of GPIO to set. On this case, making sub node for each GPIOs creates
->> lots of sub-nodes and  add complexity on readability, usability and
->> maintainability.
->> Example: for my board, I wanted to set GPIO H2 to input and H0 and H1 to
->> be output high.
->> Instead of three nodes, I can have two here:
->>         gpio@0,6000d000 {
->>                 wlan_input {
->>                         gpio-hog;
->>                         gpios = <TEGRA_GPIO(H, 2) 0>;
->>                         input;
->>                 };
->>
->>                 wlan_output {
->>                         gpio-hog;
->>                         gpios = <TEGRA_GPIO(H, 0) 0 TEGRA_GPIO(H, 1) 0>;
->>                         output-high;
->>                 };
->>         };
-> >
->> So here I am grouping the multiple output GPIO together.
->>
->> This looks much similar if we have many GPIOs for one type of
->> configurations.
->>
->> Even it looks better if we have something:
->>         gpio@0,6000d000 {
->>                 wlan_control {
->>                         gpio-hog;
->>                         gpios-input = <TEGRA_GPIO(H, 2) 0>;
->>                         gpios-output-high = <TEGRA_GPIO(H, 0) 0
->> TEGRA_GPIO(H, 1) 0>;
->>                 };
->>         };
->
-> The problem with that is the description used when acquiring the GPIO 
-> is just "wlan_input", "wlan_output", or "wlan_control". There's 
-> nothing to indicate what those individual pins do (perhaps one is a 
-> reset signal, one is a regulator enable, etc.?) By requiring separate 
-> nodes for each GPIO, then the node name can provide a meaningful 
-> semantic name/description for each GPIO, which provides much more 
-> information.
->
+Add the new reserved major (0xB4) to Documentation/ioctl/ioctl-number.txt
 
-On this case, we have already property "line-name" and passed the name 
-of the gpio via this property.
-The property names is "line-name" which is good for one string. We can 
-support other property "line-names" with multiple string per GPIO index.
+Fixes: 3c702e9987e2 ("gpio: add a userspace chardev ABI for GPIOs")
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+This fixes a serious number space collission in the ABI, because
+of my incompetence. Ideally I would augment the original commit,
+but at this point I can not rebase my tree. The merged end result
+will be OK.
+---
+ Documentation/ioctl/ioctl-number.txt | 1 +
+ include/uapi/linux/gpio.h            | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-line-names = "wlan-reset", "wlan-enable";
+diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
+index 91261a32a573..9369d3b0f09a 100644
+--- a/Documentation/ioctl/ioctl-number.txt
++++ b/Documentation/ioctl/ioctl-number.txt
+@@ -319,6 +319,7 @@ Code  Seq#(hex)	Include File		Comments
+ 					<mailto:vgo@ratio.de>
+ 0xB1	00-1F	PPPoX			<mailto:mostrows@styx.uwaterloo.ca>
+ 0xB3	00	linux/mmc/ioctl.h
++0xB4	00-0F	linux/gpio.h		<mailto:linux-gpio@vger.kernel.org>
+ 0xC0	00-0F	linux/usb/iowarrior.h
+ 0xCA	00-0F	uapi/misc/cxl.h
+ 0xCA	80-8F	uapi/scsi/cxlflash_ioctl.h
+diff --git a/include/uapi/linux/gpio.h b/include/uapi/linux/gpio.h
+index dfe8ade2742d..d0a3cac72250 100644
+--- a/include/uapi/linux/gpio.h
++++ b/include/uapi/linux/gpio.h
+@@ -52,7 +52,7 @@ struct gpioline_info {
+ 	char consumer[32];
+ };
+ 
+-#define GPIO_GET_CHIPINFO_IOCTL _IOR('o', 0x01, struct gpiochip_info)
+-#define GPIO_GET_LINEINFO_IOCTL _IOWR('o', 0x02, struct gpioline_info)
++#define GPIO_GET_CHIPINFO_IOCTL _IOR(0xB4, 0x01, struct gpiochip_info)
++#define GPIO_GET_LINEINFO_IOCTL _IOWR(0xB4, 0x02, struct gpioline_info)
+ 
+ #endif /* _UAPI_GPIO_H_ */
+-- 
+2.4.3
 
-
-> If the approach in this patch is acceptable though, I think you want 
-> to update the description of "gpios" (in the GPIO hog definition 
-> section) in Documentation/devicetree/bindings/gpio/gpio.txt to mention 
-> that multiple GPIO entries are legal. Right now it says that property 
-> much contain exactly #gpio-cells, not a multiple of #gpio-cells.
-
-I have 5th patch for this and will rearrange series as you suggested on 
-5th patch.
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
