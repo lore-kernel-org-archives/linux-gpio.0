@@ -1,74 +1,46 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v5 3/3] gpio: designware: add gpio-signaled acpi event support
-Date: Thu, 10 Mar 2016 22:31:43 +0200
-Message-ID: <CAHp75Vcr_uynzQPndYcp5DTVxhD4nMZ_0wz2hxFGqS23=MV6+Q@mail.gmail.com>
-References: <1457077474-124064-1-git-send-email-qiujiang@huawei.com>
-	<1457077474-124064-4-git-send-email-qiujiang@huawei.com>
+From: mrpace2@gmail.com
+Subject: [PATCH v3] gpio: gpio-pca953x: no interrupts with 4-bit devices
+Date: Thu, 10 Mar 2016 21:17:49 +0000
+Message-ID: <em477b04cd-60b3-47e8-ba4c-4e1b20ea3e6a@t410-5a>
+Reply-To: mrpace2@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1457077474-124064-4-git-send-email-qiujiang@huawei.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: qiujiang <qiujiang@huawei.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
+Content-Type: text/plain; format=flowed; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mo4-p05-ob.smtp.rzone.de ([81.169.146.180]:34295 "EHLO
+	mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932288AbcCJVRu convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Mar 2016 16:17:50 -0500
+Received: from mail.q5net.de (p4FF1C47E.dip0.t-ipconnect.de [79.241.196.126])
+	by smtp.strato.de (RZmta 37.21 DYNA|AUTH)
+	with ESMTPSA id C04bc0s2ALHloOu
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+	(Client did not present a certificate)
+	for <linux-gpio@vger.kernel.org>;
+	Thu, 10 Mar 2016 22:17:47 +0100 (CET)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
 
-On Fri, Mar 4, 2016 at 9:44 AM, qiujiang <qiujiang@huawei.com> wrote:
-> This patch adds the support for the gpio-signaled acpi event.
-> This is used for power button on hisilicon D02 board, which
-> is an arm64 platform.
->
-> To support this function, _AEI and _Exx objects must be
-> defined in the corresponding GPIO device as follows:
->
->     Name (_AEI, ResourceTemplate () {
->             GpioInt(Edge, ActiveLow, ExclusiveAndWake, PullUp,
->                         , " \\_SB.GPI0") {8}
->     })
->     Method (_E08, 0x0, NotSerialized) {
->         Notify (\_SB.PWRB, 0x80)
->     }
->
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: qiujiang <qiujiang@huawei.com>
+Ah, I didn't know about DIV_ROUND_UP(). I also didn't read Alexander's 
+response correctly. Sorry about that. DIV_ROUND_UP() is essentially what 
+he proposed, and it's also correct for ngpio==0.
 
-This one fine to me.
+So here's the third version of my trivial patch.
 
-> ---
->  drivers/gpio/gpio-dwapb.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index 2ae506f..043e1c2 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -28,6 +28,8 @@
->  #include <linux/platform_data/gpio-dwapb.h>
->  #include <linux/slab.h>
->
-> +#include "gpiolib.h"
-> +
->  #define GPIO_SWPORTA_DR                0x00
->  #define GPIO_SWPORTA_DDR       0x04
->  #define GPIO_SWPORTB_DR                0x0c
-> @@ -437,6 +439,10 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
->         else
->                 port->is_registered = true;
->
-> +       /* Add GPIO-signaled ACPI event support */
-> +       if (pp->irq)
-> +               acpi_gpiochip_request_interrupts(&port->gc);
-> +
->         return err;
->  }
->
-> --
-> 1.9.1
->
+Signed-off-by: Frank Edelhaeuser <mrpace2 <at> gmail.com>
+---
+diff -Nur a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+--- a/drivers/gpio/gpio-pca953x.c 2016-03-10 19:11:37.799908602 +0000
++++ b/drivers/gpio/gpio-pca953x.c 2016-03-10 19:11:09.635412539 +0000
+@@ -86,7 +86,7 @@
+  #define MAX_BANK 5
+  #define BANK_SZ 8
+
+-#define NBANK(chip) (chip->gpio_chip.ngpio / BANK_SZ)
++#define NBANK(chip) (DIV_ROUND_UP(chip->gpio_chip.ngpio, BANK_SZ))
+
+  struct pca953x_chip {
+   unsigned gpio_start;
 
 
-
--- 
-With Best Regards,
-Andy Shevchenko
