@@ -1,80 +1,70 @@
 From: Liu Gang <Gang.Liu@nxp.com>
-Subject: [PATCH] gpio/ls1021a: Add gpio support for ls1021a platform
-Date: Thu, 10 Mar 2016 16:57:19 +0800
-Message-ID: <1457600240-47141-1-git-send-email-Gang.Liu@nxp.com>
+Subject: [PATCH] gpio/ls1043a: Correct ls1043a gpio nodes compatible in dts file
+Date: Thu, 10 Mar 2016 16:57:20 +0800
+Message-ID: <1457600240-47141-2-git-send-email-Gang.Liu@nxp.com>
+References: <1457600240-47141-1-git-send-email-Gang.Liu@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bl2on0071.outbound.protection.outlook.com ([65.55.169.71]:16656
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+Received: from mail-by2on0099.outbound.protection.outlook.com ([207.46.100.99]:33761
+	"EHLO na01-by2-obe.outbound.protection.outlook.com"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S965429AbcCJJGa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 10 Mar 2016 04:06:30 -0500
+	id S965461AbcCJJGc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 10 Mar 2016 04:06:32 -0500
+In-Reply-To: <1457600240-47141-1-git-send-email-Gang.Liu@nxp.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, khilman@linaro.org
 Cc: robh+dt@kernel.org, scott.wood@nxp.com, Leo.Li@nxp.com, mingkai.hu@nxp.com, Liu Gang <Gang.Liu@nxp.com>
 
-Add gpio nodes for ls1021a platform dts file. The gpio
-IP block of the ls1021a can be supported by the code
-drivers/gpio/gpio-mpc8xxx.c.
+The ls1043a belongs to the Freescale QorIQ platform, and QorIQ
+platform's gpio nodes should use compatible "fsl,qoriq-gpio".
 
 Signed-off-by: Liu Gang <Gang.Liu@nxp.com>
 ---
- arch/arm/boot/dts/ls1021a.dtsi | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
-index 2c84ca2..57915c2 100644
---- a/arch/arm/boot/dts/ls1021a.dtsi
-+++ b/arch/arm/boot/dts/ls1021a.dtsi
-@@ -332,6 +332,46 @@
- 			status = "disabled";
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+index 42a6154..e356362 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+@@ -284,7 +284,7 @@
  		};
  
-+		gpio0: gpio@2300000 {
+ 		gpio1: gpio@2300000 {
+-			compatible = "fsl,ls1043a-gpio";
 +			compatible = "fsl,qoriq-gpio";
-+			reg = <0x0 0x2300000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio1: gpio@2310000 {
+ 			reg = <0x0 0x2300000 0x0 0x10000>;
+ 			interrupts = <0 66 0x4>;
+ 			gpio-controller;
+@@ -294,7 +294,7 @@
+ 		};
+ 
+ 		gpio2: gpio@2310000 {
+-			compatible = "fsl,ls1043a-gpio";
 +			compatible = "fsl,qoriq-gpio";
-+			reg = <0x0 0x2310000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio2: gpio@2320000 {
+ 			reg = <0x0 0x2310000 0x0 0x10000>;
+ 			interrupts = <0 67 0x4>;
+ 			gpio-controller;
+@@ -304,7 +304,7 @@
+ 		};
+ 
+ 		gpio3: gpio@2320000 {
+-			compatible = "fsl,ls1043a-gpio";
 +			compatible = "fsl,qoriq-gpio";
-+			reg = <0x0 0x2320000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio3: gpio@2330000 {
+ 			reg = <0x0 0x2320000 0x0 0x10000>;
+ 			interrupts = <0 68 0x4>;
+ 			gpio-controller;
+@@ -314,7 +314,7 @@
+ 		};
+ 
+ 		gpio4: gpio@2330000 {
+-			compatible = "fsl,ls1043a-gpio";
 +			compatible = "fsl,qoriq-gpio";
-+			reg = <0x0 0x2330000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
- 		lpuart0: serial@2950000 {
- 			compatible = "fsl,ls1021a-lpuart";
- 			reg = <0x0 0x2950000 0x0 0x1000>;
+ 			reg = <0x0 0x2330000 0x0 0x10000>;
+ 			interrupts = <0 134 0x4>;
+ 			gpio-controller;
 -- 
 2.1.0.27.g96db324
 
