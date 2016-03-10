@@ -1,70 +1,63 @@
-From: Ray Jui <ray.jui@broadcom.com>
-Subject: Re: [PATCH 2/3] pinctrl: ns2: add pinmux driver support for Broadcom
- NS2 SoC
-Date: Wed, 9 Mar 2016 13:07:31 -0800
-Message-ID: <b771e51f-e183-052d-eb6f-ff8f3ec76bf3@broadcom.com>
-References: <1457005303-26829-1-git-send-email-yendapally.reddy@broadcom.com>
- <1457005303-26829-3-git-send-email-yendapally.reddy@broadcom.com>
- <CACRpkdaKn4puDsZBPSbfkmHW4KHqBW8q1T2vpyNk_0Yb7C0AXQ@mail.gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/5] gpio: gpiolib: Print error number if gpio hog failed
+Date: Thu, 10 Mar 2016 12:28:10 +0530
+Message-ID: <56E11B02.6080501@nvidia.com>
+References: <1457438528-29054-1-git-send-email-ldewangan@nvidia.com> <1457438528-29054-3-git-send-email-ldewangan@nvidia.com> <20160308142217.GB9864@ulmo.nvidia.com> <56DEF0AB.7090807@nvidia.com> <56E0584B.9050607@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 5520-maca-inet1-outside.broadcom.com ([216.31.211.11]:22361
-	"EHLO mail-irv-18.broadcom.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S933627AbcCIVHf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Mar 2016 16:07:35 -0500
-In-Reply-To: <CACRpkdaKn4puDsZBPSbfkmHW4KHqBW8q1T2vpyNk_0Yb7C0AXQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56E0584B.9050607-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>, Ray Jui <rjui@broadcom.com>, Stefan Wahren <stefan.wahren@i2se.com>, Stephen Warren <swarren@wwwdotorg.org>, Florian Fainelli <f.fainelli@gmail.com>, Pramod KUMAR <pramodku@broadcom.com>, Jonathan Bell <jonathan@raspberrypi.org>
-Cc: Scott Branden <sbranden@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
 
-On 3/9/2016 3:04 AM, Linus Walleij wrote:
-> On Thu, Mar 3, 2016 at 6:41 PM, Yendapally Reddy Dhananjaya Reddy
-> <yendapally.reddy@broadcom.com> wrote:
->
->> This adds the initial support of the Broadcom NS2 pinmux driver
+On Wednesday 09 March 2016 10:37 PM, Stephen Warren wrote:
+> On 03/08/2016 08:32 AM, Laxman Dewangan wrote:
 >>
->> Signed-off-by: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
+>> On Tuesday 08 March 2016 07:52 PM, Thierry Reding wrote:
+>>> On Tue, Mar 08, 2016 at 05:32:05PM +0530, Laxman Dewangan wrote:
+>>>
+>>>> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>> ---
+>>>>   drivers/gpio/gpiolib.c | 9 +++++----
+>>>>   1 file changed, 5 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>>>> index bc788b9..7575ebb 100644
+>>>> --- a/drivers/gpio/gpiolib.c
+>>>> +++ b/drivers/gpio/gpiolib.c
+>>>> @@ -2621,15 +2621,16 @@ int gpiod_hog(struct gpio_desc *desc, const
+>>>> char *name,
+>>>>       local_desc = gpiochip_request_own_desc(chip, hwnum, name);
+>>>>       if (IS_ERR(local_desc)) {
+>>>> -        pr_err("requesting hog GPIO %s (chip %s, offset %d) 
+>>>> failed\n",
+>>>> -               name, chip->label, hwnum);
+>>>> +        status = PTR_ERR(local_desc);
+>>>> +        pr_err("requesting hog GPIO %s, chip %s, offset %d failed
+>>>> %d\n",
+>>>> +               name, chip->label, hwnum, status);
+>>> I find this type of format hard to read. I prefer a semi-colon to
+>>> separate the message from the failure reason (i.e. error code).
+>>>
+>>> Besides that I don't understand why you're dropping the parentheses
+>>> around the "chip %s, offset %d", I found that easier on the eye.
+>>
+>> I did to accommodate the  3 extra character ( %d) for string format on
+>> that line as it was already near to 80 column.
+>> Just did not want to split in multiple lines.
 >
-> Now yet another Broadcom driver!
->
-> Can I get the help of the maintainers of the other
-> Broadcom drivers to say:
->
-> - If this looks sane
->
+> Note that strings shouldn't be split across lines since it makes it 
+> harder to grep for them. This is one case where the 80-column limit 
+> isn't strict, within reason.
 
-I've reviewed this driver internally before it was sent out to public. 
-Here's my reviewed-by:
+OK, so not change the existing string, just add new  format.
 
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
 
-Like I mentioned before, we have been working closely with our ASIC team 
-to have one pad per register based register layout in our next-gen SoC. 
-That way we are able to use the generic pinctrl-single driver. It's 
-definitely our best interest to re-use a generic driver when possible, 
-to minimize the ongoing maintenance cost. Note we only have control on 
-chips that we work on; there are other Broadcom SoCs that we do not have 
-a say, unfortunately.
-
-> - If this hardware looks suspiciously similar to one of the
->   other drivers and should rather me a subdriver of one of
->   the existing ones
-
-The IOMUX block in NS2 seems different from that of Cygnus and NSP. It 
-only supports group based mux configuration and does not have any 
-mechanism to allow GPIO pin function override. It also supports per pad 
-based pinconf functions.
-
->
-> Yours,
-> Linus Walleij
->
-
-Thanks,
-
-Ray
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
