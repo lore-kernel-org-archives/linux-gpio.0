@@ -1,70 +1,48 @@
-From: Liu Gang <Gang.Liu@nxp.com>
-Subject: [PATCH] gpio/ls1043a: Correct ls1043a gpio nodes compatible in dts file
-Date: Thu, 10 Mar 2016 16:57:20 +0800
-Message-ID: <1457600240-47141-2-git-send-email-Gang.Liu@nxp.com>
-References: <1457600240-47141-1-git-send-email-Gang.Liu@nxp.com>
+From: mrpace2@gmail.com
+Subject: [PATCH v2] gpio: gpio-pca953x: no interrupts with 4-bit devices
+Date: Thu, 10 Mar 2016 10:15:05 +0000
+Message-ID: <emabcbfc80-7a10-4494-be09-92de321c5d0e@t410-5a>
+References: <2550700.ucYhgAiWGF@ws-stein>
+Reply-To: mrpace2@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; format=flowed; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-by2on0099.outbound.protection.outlook.com ([207.46.100.99]:33761
-	"EHLO na01-by2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S965461AbcCJJGc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 10 Mar 2016 04:06:32 -0500
-In-Reply-To: <1457600240-47141-1-git-send-email-Gang.Liu@nxp.com>
+Received: from mo4-p05-ob.smtp.rzone.de ([81.169.146.180]:39171 "EHLO
+	mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753612AbcCJKPJ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Mar 2016 05:15:09 -0500
+Received: from mail.q5net.de (p4FF1C47E.dip0.t-ipconnect.de [79.241.196.126])
+	by smtp.strato.de (RZmta 37.21 DYNA|AUTH)
+	with ESMTPSA id k02e5ds2AAF6zPM
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+	(Client did not present a certificate)
+	for <linux-gpio@vger.kernel.org>;
+	Thu, 10 Mar 2016 11:15:06 +0100 (CET)
+In-Reply-To: <2550700.ucYhgAiWGF@ws-stein>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, khilman@linaro.org
-Cc: robh+dt@kernel.org, scott.wood@nxp.com, Leo.Li@nxp.com, mingkai.hu@nxp.com, Liu Gang <Gang.Liu@nxp.com>
+To: linux-gpio@vger.kernel.org
 
-The ls1043a belongs to the Freescale QorIQ platform, and QorIQ
-platform's gpio nodes should use compatible "fsl,qoriq-gpio".
+The NBANK macro can be extended in order to avoid the underflow:
 
-Signed-off-by: Liu Gang <Gang.Liu@nxp.com>
+#define NBANK(chip) (chip->gpio_chip.ngpio == 0 ? 0 : \
+     ((chip->gpio_chip.ngpio + (BANK_SZ - 1)) / BANK_SZ))
+Resending a modified patch.
+
+Signed-off-by: Frank Edelhaeuser <mrpace2 <at> gmail.com>
 ---
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+diff -Nur a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+--- a/drivers/gpio/gpio-pca953x.c 2016-03-10 02:34:56.012345678 +0000
++++ b/drivers/gpio/gpio-pca953x.c 2016-03-10 02:34:56.012345678 +0000
+@@ -86,7 +86,8 @@
+  #define MAX_BANK 5
+  #define BANK_SZ 8
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-index 42a6154..e356362 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-@@ -284,7 +284,7 @@
- 		};
- 
- 		gpio1: gpio@2300000 {
--			compatible = "fsl,ls1043a-gpio";
-+			compatible = "fsl,qoriq-gpio";
- 			reg = <0x0 0x2300000 0x0 0x10000>;
- 			interrupts = <0 66 0x4>;
- 			gpio-controller;
-@@ -294,7 +294,7 @@
- 		};
- 
- 		gpio2: gpio@2310000 {
--			compatible = "fsl,ls1043a-gpio";
-+			compatible = "fsl,qoriq-gpio";
- 			reg = <0x0 0x2310000 0x0 0x10000>;
- 			interrupts = <0 67 0x4>;
- 			gpio-controller;
-@@ -304,7 +304,7 @@
- 		};
- 
- 		gpio3: gpio@2320000 {
--			compatible = "fsl,ls1043a-gpio";
-+			compatible = "fsl,qoriq-gpio";
- 			reg = <0x0 0x2320000 0x0 0x10000>;
- 			interrupts = <0 68 0x4>;
- 			gpio-controller;
-@@ -314,7 +314,7 @@
- 		};
- 
- 		gpio4: gpio@2330000 {
--			compatible = "fsl,ls1043a-gpio";
-+			compatible = "fsl,qoriq-gpio";
- 			reg = <0x0 0x2330000 0x0 0x10000>;
- 			interrupts = <0 134 0x4>;
- 			gpio-controller;
--- 
-2.1.0.27.g96db324
+-#define NBANK(chip) (chip->gpio_chip.ngpio / BANK_SZ)
++#define NBANK(chip) (chip->gpio_chip.ngpio == 0 ? 0 : \
++    ((chip->gpio_chip.ngpio + (BANK_SZ - 1)) / BANK_SZ))
+
+  struct pca953x_chip {
+   unsigned gpio_start;
 
