@@ -1,126 +1,55 @@
-From: Markus Pargmann <mpa@pengutronix.de>
+From: Laxman Dewangan <ldewangan@nvidia.com>
 Subject: Re: [PATCH 4/5] gpio: of: Add support to have multiple gpios in gpio-hog
-Date: Thu, 10 Mar 2016 12:16:58 +0100
-Message-ID: <2337414.ntEtcfKnX0@hermes>
-References: <1457438528-29054-1-git-send-email-ldewangan@nvidia.com> <56E05AA9.8000503@wwwdotorg.org> <56E11D34.60401@nvidia.com>
+Date: Thu, 10 Mar 2016 17:23:55 +0530
+Message-ID: <56E16053.60802@nvidia.com>
+References: <1457438528-29054-1-git-send-email-ldewangan@nvidia.com> <56E05AA9.8000503@wwwdotorg.org> <56E11D34.60401@nvidia.com> <2337414.ntEtcfKnX0@hermes>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:54893 "EHLO
-	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S965696AbcCJLRN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 10 Mar 2016 06:17:13 -0500
-In-Reply-To: <56E11D34.60401@nvidia.com>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:3248 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753708AbcCJMHL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Mar 2016 07:07:11 -0500
+In-Reply-To: <2337414.ntEtcfKnX0@hermes>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
+To: Markus Pargmann <mpa@pengutronix.de>
 Cc: Stephen Warren <swarren@wwwdotorg.org>, linus.walleij@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, treding@nvidia.com, Benoit Parrot <bparrot@ti.com>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Thursday 10 March 2016 12:37:32 Laxman Dewangan wrote:
-> 
-> On Wednesday 09 March 2016 10:47 PM, Stephen Warren wrote:
-> > On 03/09/2016 06:20 AM, Laxman Dewangan wrote:
-> >>
-> >> On Wednesday 09 March 2016 11:58 AM, Markus Pargmann wrote:
-> >>> * PGP Signed by an unknown key
-> >>>
-> >>> Hi,
-> >>>
-> >>> On Tue, Mar 08, 2016 at 05:32:07PM +0530, Laxman Dewangan wrote:
-> >>>> The child node for gpio hogs under gpio controller's node
-> >>>> provide the mechanism to automatic GPIO request and
-> >>>> configuration as part of the gpio-controller's driver
-> >>>> probe function.
-> >>>>
-> >>>> Currently, property "gpio" takes one gpios for such
-> >>>> configuration. Add support to have multiple GPIOs in
-> >>>> this property so that multiple GPIOs of gpio-controller
-> >>>> can be configured by this mechanism with one child node.
-> >>> So if I read this correctly you want to have multiple GPIOs with the
-> >>> same line name? Why don't you use multiple child nodes with individual
-> >>> line names?
-> >>>
-> >> There is cases on which particular functional configuration needs sets
-> >> of GPIO to set. On this case, making sub node for each GPIOs creates
-> >> lots of sub-nodes and  add complexity on readability, usability and
-> >> maintainability.
-> >> Example: for my board, I wanted to set GPIO H2 to input and H0 and H1 to
-> >> be output high.
-> >> Instead of three nodes, I can have two here:
-> >>         gpio@0,6000d000 {
-> >>                 wlan_input {
-> >>                         gpio-hog;
-> >>                         gpios = <TEGRA_GPIO(H, 2) 0>;
-> >>                         input;
-> >>                 };
-> >>
-> >>                 wlan_output {
-> >>                         gpio-hog;
-> >>                         gpios = <TEGRA_GPIO(H, 0) 0 TEGRA_GPIO(H, 1) 0>;
-> >>                         output-high;
-> >>                 };
-> >>         };
-> > >
-> >> So here I am grouping the multiple output GPIO together.
-> >>
-> >> This looks much similar if we have many GPIOs for one type of
-> >> configurations.
-> >>
-> >> Even it looks better if we have something:
-> >>         gpio@0,6000d000 {
-> >>                 wlan_control {
-> >>                         gpio-hog;
-> >>                         gpios-input = <TEGRA_GPIO(H, 2) 0>;
-> >>                         gpios-output-high = <TEGRA_GPIO(H, 0) 0
-> >> TEGRA_GPIO(H, 1) 0>;
-> >>                 };
-> >>         };
-> >
-> > The problem with that is the description used when acquiring the GPIO 
-> > is just "wlan_input", "wlan_output", or "wlan_control". There's 
-> > nothing to indicate what those individual pins do (perhaps one is a 
-> > reset signal, one is a regulator enable, etc.?) By requiring separate 
-> > nodes for each GPIO, then the node name can provide a meaningful 
-> > semantic name/description for each GPIO, which provides much more 
-> > information.
-> >
-> 
-> On this case, we have already property "line-name" and passed the name 
-> of the gpio via this property.
-> The property names is "line-name" which is good for one string. We can 
-> support other property "line-names" with multiple string per GPIO index.
-> 
-> line-names = "wlan-reset", "wlan-enable";
 
-There is currently a discussion about the future bindings for subnodes in GPIO
-controller nodes. Please have a look at these two mail threads:
+On Thursday 10 March 2016 04:46 PM, Markus Pargmann wrote:
+> On Thursday 10 March 2016 12:37:32 Laxman Dewangan wrote:
+>> On Wednesday 09 March 2016 10:47 PM, Stephen Warren wrote:
+>>> On 03/09/2016 06:20 AM, Laxman Dewangan wrote:
+>>> The problem with that is the description used when acquiring the GPIO
+>>> is just "wlan_input", "wlan_output", or "wlan_control". There's
+>>> nothing to indicate what those individual pins do (perhaps one is a
+>>> reset signal, one is a regulator enable, etc.?) By requiring separate
+>>> nodes for each GPIO, then the node name can provide a meaningful
+>>> semantic name/description for each GPIO, which provides much more
+>>> information.
+>>>
+>> On this case, we have already property "line-name" and passed the name
+>> of the gpio via this property.
+>> The property names is "line-name" which is good for one string. We can
+>> support other property "line-names" with multiple string per GPIO index.
+>>
+>> line-names = "wlan-reset", "wlan-enable";
+> There is currently a discussion about the future bindings for subnodes in GPIO
+> controller nodes. Please have a look at these two mail threads:
+>
+> 	"Device tree binding documentation for gpio-switch"
+> 	"gpio: of: Add support to have multiple gpios in gpio-hog"
 
-	"Device tree binding documentation for gpio-switch"
-	"gpio: of: Add support to have multiple gpios in gpio-hog"
+Second one is this patch only. Is it by intention?
 
-Best Regards,
+The binding details about the gpio-switch and names are given by 
+property "lable". I think property "label" is standard way of going 
+forward i.e. I post similar patch for gpio-keys device name from DT 
+after got review comment.
 
-Markus
+So here,  we can have the gpio names  under property "label" or "labels".
 
-> 
-> 
-> > If the approach in this patch is acceptable though, I think you want 
-> > to update the description of "gpios" (in the GPIO hog definition 
-> > section) in Documentation/devicetree/bindings/gpio/gpio.txt to mention 
-> > that multiple GPIO entries are legal. Right now it says that property 
-> > much contain exactly #gpio-cells, not a multiple of #gpio-cells.
-> 
-> I have 5th patch for this and will rearrange series as you suggested on 
-> 5th patch.
-> 
-> 
-> 
 
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
+Or am I missing anything?
