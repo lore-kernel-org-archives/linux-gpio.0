@@ -1,155 +1,50 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] iio: dac: Add support for the AD5592R/AD5593R ADCs/DACs
-Date: Fri, 11 Mar 2016 23:28:32 +0700
-Message-ID: <CACRpkdap_8YGCAvNeK7_0H2MDDnwQ9QDJH4O2SzEkDmczPGtLg@mail.gmail.com>
-References: <1456407412-16218-1-git-send-email-michael.hennerich@analog.com>
-	<56D1E1CB.6070704@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] gpio: pca953x: Fix pca953x_gpio_set_multiple() on 64-bit
+Date: Fri, 11 Mar 2016 17:31:27 +0100
+Message-ID: <1457713887-7748-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:34803 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932775AbcCKQ2d (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Mar 2016 11:28:33 -0500
-Received: by mail-oi0-f43.google.com with SMTP id m82so89522403oif.1
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Mar 2016 08:28:33 -0800 (PST)
-In-Reply-To: <56D1E1CB.6070704@kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:48517 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932264AbcCKQba (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Mar 2016 11:31:30 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Michael Hennerich <michael.hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Hartmut Knaack <knaack.h@gmx.de>, Paul Cercueil <paul.cercueil@analog.com>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Phil Reid <preid@electromag.com.au>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Sun, Feb 28, 2016 at 12:50 AM, Jonathan Cameron <jic23@kernel.org> wrote:
+pca953x_gpio_set_multiple() divides by 4 to convert from longs to bytes,
+which assumes a 32-bit platform, and is not correct on 64-bit platforms.
+Use "sizeof(...)" instead to fix this.
 
->> +Analog Devices AD5592R/AD5593R DAC/ADC device driver
->> +
->> +Required properties for the AD5592R:
->> +     - compatible: Must be "adi,ad5592r"
->> +     - reg: SPI chip select number for the device
->> +     - spi-max-frequency: Max SPI frequency to use (< 30000000)
->> +     - spi-cpol: The AD5592R requires inverse clock polarity (CPOL) mode
+Fixes: b4818afeacbd8182 ("gpio: pca953x: Add set_multiple to allow multiple bits to be set in one write.")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Untested, found by code inspection.
 
-If this should be a gpiochip, this shall also be reflected in the
-device tree bindings and the example in the bindings by
-stating gpio-controller; and #gpio-cells, referring to
-the binding in gpio/gpio.txt so consumers can pick a GPIO
-from this device.
+This bug was introduced in v4.5-rc1, but unless Linus (the other one ;-)
+will make a v4.5-rc8, it's probably too late to get this fixed in v4.5.
+---
+ drivers/gpio/gpio-pca953x.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-I haven't seen the original patch, please mail the next version
-to me so I can take a look.
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 23196c5fc17ceb6b..99b375c959987fe9 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -367,9 +367,11 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+ 	memcpy(reg_val, chip->reg_output, NBANK(chip));
+ 	mutex_lock(&chip->i2c_lock);
+ 	for(bank=0; bank<NBANK(chip); bank++) {
+-		unsigned bankmask = mask[bank/4] >> ((bank % 4) * 8);
++		unsigned bankmask = mask[bank / sizeof(*mask)] >>
++				    ((bank % sizeof(*mask)) * 8);
+ 		if(bankmask) {
+-			unsigned bankval  = bits[bank/4] >> ((bank % 4) * 8);
++			unsigned bankval  = bits[bank / sizeof(*bits)] >>
++					    ((bank % sizeof(*bits)) * 8);
+ 			reg_val[bank] = (reg_val[bank] & ~bankmask) | bankval;
+ 		}
+ 	}
+-- 
+1.9.1
 
->> +config AD5592R_BASE
->> +     tristate
->> +
->> +config AD5592R
->> +     tristate "Analog Devices AD5592R ADC/DAC driver"
->> +     depends on SPI_MASTER
->> +     depends on OF
->> +     select AD5592R_BASE
->> +     help
->> +       Say yes here to build support for Analog Devices AD5592R
->> +       Digital to Analog / Analog to Digital Converter.
->> +
->> +       To compile this driver as a module, choose M here: the
->> +       module will be called ad5592r.
->> +
->> +config AD5593R
->> +     tristate "Analog Devices AD5593R ADC/DAC driver"
->> +     depends on I2C
->> +     depends on OF
->> +     select AD5592R_BASE
->> +     help
->> +       Say yes here to build support for Analog Devices AD5593R
->> +       Digital to Analog / Analog to Digital Converter.
->> +
->> +       To compile this driver as a module, choose M here: the
->> +       module will be called ad5593r.
->> +
-
-I guess something here should select GPIOLIB
-and depend of OF_GPIO
-
->> +#ifdef CONFIG_GPIOLIB
-
-Naaaaah really? Just select GPIOLIB and get rid of ifdeffery.
-It's cool to have gpios available.
-
->> +static int ad5592r_gpio_request(struct gpio_chip *chip, unsigned offset)
->> +{
->> +     struct ad5592r_state *st = gpiochip_get_data(chip);
->> +
->> +     if (!(st->gpio_map & BIT(offset))) {
->> +             dev_err(st->dev, "GPIO %d is reserved by alternate function\n",
->> +                     offset);
-
-This gpio_map looks a bit like pin control.
-
-It might be overkill to use all of the pinctrl subsystem,
-we have circumvented it in other places.
-
->> +             return -ENODEV;
->> +     }
->> +
->> +     if (offset >= chip->ngpio)
->> +             return -EINVAL;
-
-gpiolib already guards against this I think.
-
->> +static int ad5592r_gpio_init(struct ad5592r_state *st)
->> +{
->> +     st->gpiochip.label = dev_name(st->dev);
->> +     st->gpiochip.base = -1;
->> +     st->gpiochip.ngpio = 8;
->> +     st->gpiochip.parent = st->dev;
->> +     st->gpiochip.can_sleep = true;
->> +     st->gpiochip.direction_input = ad5592r_gpio_direction_input;
->> +     st->gpiochip.direction_output = ad5592r_gpio_direction_output;
->> +     st->gpiochip.get = ad5592r_gpio_get;
->> +     st->gpiochip.set = ad5592r_gpio_set;
->> +     st->gpiochip.request = ad5592r_gpio_request;
->> +     st->gpiochip.owner = THIS_MODULE;
->> +
->> +     mutex_init(&st->gpio_lock);
->> +
->> +     return gpiochip_add_data(&st->gpiochip, st);
-
-The gpiolib should be fine with the of_node from the parent so
-looks fine.
-
->> +             mutex_lock(&iio_dev->mlock);
->> +             st->ops->reg_write(st, AD5592R_REG_RESET, 0xdac);
->> +             mutex_unlock(&iio_dev->mlock);
-
-What's that? (0xdac)? Clever magic?
-
->> +             case CH_MODE_DAC_AND_ADC:
->> +                     dac |= BIT(i);
->> +                     adc |= BIT(i);
->> +                     break;
->> +
->> +             case CH_MODE_UNUSED_PULL_DOWN:
->> +                     pulldown |= BIT(i);
->> +                     break;
->> +
->> +             case CH_MODE_UNUSED_OUT_TRISTATE:
->> +                     tristate |= BIT(i);
->> +                     break;
->> +
->> +             case CH_MODE_UNUSED_OUT_LOW:
->> +                     st->gpio_out |= BIT(i);
->> +                     break;
->> +
->> +             case CH_MODE_UNUSED_OUT_HIGH:
->> +                     st->gpio_out |= BIT(i);
->> +                     st->gpio_val |= BIT(i);
->> +                     break;
->> +
->> +             case CH_MODE_GPIO_OPEN_DRAIN:
->> +                     open_drain |= BIT(i);
-
-Deja-vu with include/linux/pinctrl/pinconf-generic.h
-
-We call tristate "bias high impedance".
-
-Yours,
-Linus Walleij
