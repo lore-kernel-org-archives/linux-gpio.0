@@ -1,39 +1,41 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4] drivers: pinctrl: add driver for
- Allwinner A64 SoC
-Date: Fri, 11 Mar 2016 22:47:30 +0700
-Message-ID: <CACRpkdbUr8mk1Wmy66ZmsYAxgo8EVrABQ_KQYi_h-h0Kg2VFiw@mail.gmail.com>
-References: <1457429879-19335-1-git-send-email-andre.przywara@arm.com>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: xgene: Fix kconfig for standby GIPO contoller
+Date: Fri, 11 Mar 2016 23:01:32 +0700
+Message-ID: <CACRpkdbtRAC4pUQP29SAmL-ge6uJefMt5Cda6dYCR2kZ8u18og@mail.gmail.com>
+References: <1457089198-27171-1-git-send-email-mbrugger@suse.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBEWRRO3QKGQE7ZK26SQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <1457429879-19335-1-git-send-email-andre.przywara-5wv7dgnIgG8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:35419 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932534AbcCKQBd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Mar 2016 11:01:33 -0500
+Received: by mail-oi0-f43.google.com with SMTP id c203so88816647oia.2
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Mar 2016 08:01:33 -0800 (PST)
+In-Reply-To: <1457089198-27171-1-git-send-email-mbrugger@suse.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Matthias Brugger <mbrugger@suse.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Quan Nguyen <qnguyen@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Mar 8, 2016 at 4:37 PM, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org> wrote:
+On Fri, Mar 4, 2016 at 5:59 PM, Matthias Brugger <mbrugger@suse.com> wrote:
 
-> Based on the Allwinner A64 user manual and on the previous sunxi
-> pinctrl drivers this introduces the pin multiplex assignments for
-> the ARMv8 Allwinner A64 SoC.
-> Port A is apparently used for the fixed function DRAM controller, so
-> the ports start at B here (the manual mentions "n from 1 to 7", so
-> not starting at 0).
+> The standby GPIO controller can be used as a interrupt controller.
+> Select GPIOLIB_IRQCHIP when compiling this driver. Otherwise we get
+> a compilation error:
 >
-> Signed-off-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> drivers/gpio/gpio-xgene-sb.c: In function 'xgene_gpio_sb_probe':
+> drivers/gpio/gpio-xgene-sb.c:312:10: error: 'struct gpio_chip' has no member named 'irqdomain'
+>   priv->gc.irqdomain = priv->irq_domain;
+>           ^
+> scripts/Makefile.build:295: recipe for target 'drivers/gpio/gpio-xgene-sb.o' failed
+> make[2]: *** [drivers/gpio/gpio-xgene-sb.o] Error 1
+>
+> Fixes: 1013fc41 "gpio: xgene: Enable X-Gene standby GPIO as interrupt controller"
+> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
 
-Patch applied.
+Quan's patch exporting the symbols has been merged by tglx
+so dropping this.
 
 Yours,
 Linus Walleij
