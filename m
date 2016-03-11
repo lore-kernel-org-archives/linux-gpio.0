@@ -1,84 +1,35 @@
-From: Jiang Qiu <qiujiang@huawei.com>
-Subject: Re: [PATCH v5 1/3] gpio: designware: convert device node to fwnode
-Date: Fri, 11 Mar 2016 08:48:09 +0800
-Message-ID: <56E215C9.8030208@huawei.com>
-References: <1457077474-124064-1-git-send-email-qiujiang@huawei.com>
- <1457077474-124064-2-git-send-email-qiujiang@huawei.com>
- <CANk1AXRTvSRZkWMQf03Ty+ouxcJDpD-hJ9tjXSqh5Z0OzOhk+w@mail.gmail.com>
- <CAHp75VfGJZnOWUdZkjCbraupg=KUw2-jhtiRHLxrT2uUwJdvow@mail.gmail.com>
-Reply-To: <qiujiang@huawei.com>
+From: Wang Hongcheng <annie.wang@amd.com>
+Subject: [PATCH] pinctrl: amd:Add device HID for future AMD GPIO controller
+Date: Fri, 11 Mar 2016 10:58:42 +0800
+Message-ID: <1457665122-16365-1-git-send-email-annie.wang@amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VfGJZnOWUdZkjCbraupg=KUw2-jhtiRHLxrT2uUwJdvow@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Alan Tull <delicious.quinoa@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, SPG_Linux_Kernel <SPG_Linux_Kernel@amd.com>
+Cc: Wang Hongcheng <annie.wang@amd.com>
 List-Id: linux-gpio@vger.kernel.org
 
-=E5=9C=A8 2016/3/11 4:27, Andy Shevchenko =E5=86=99=E9=81=93:
-> On Thu, Mar 10, 2016 at 9:09 PM, Alan Tull <delicious.quinoa@gmail.co=
-m> wrote:
->> On Fri, Mar 4, 2016 at 1:44 AM, qiujiang <qiujiang@huawei.com> wrote=
-:
->>> This patch converts device node to fwnode in
->>> dwapb_port_property for designware gpio driver,
->>> so as to provide a unified data structure for DT
->>> and ACPI bindings.
->>>
->>> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->>> Signed-off-by: qiujiang <qiujiang@huawei.com>
->>> @@ -496,18 +492,19 @@ dwapb_gpio_get_pdata_of(struct device *dev)
->>>                  * Only port A can provide interrupts in all config=
-urations of
->>>                  * the IP.
->>>                  */
->>> -               if (pp->idx =3D=3D 0 &&
->>> -                   of_property_read_bool(port_np, "interrupt-contr=
-oller")) {
->>> -                       pp->irq =3D irq_of_parse_and_map(port_np, 0=
-);
->>> +               if (dev->of_node && pp->idx =3D=3D 0 &&
->>> +                       of_property_read_bool(to_of_node(fwnode),
->>> +                               "interrupt-controller")) {
->> Hi Qiujiang,
->>
->> Is there a reason to use "of_property_read_bool" here instead of
->> "device_property_read_bool" or similar?
-> Yeah, this patch looks unfinished.
->
-> This should be
->      if (pp->idx =3D=3D 0 &&  fwnode_property_read_bool(fwnode,
-> "interrupt-controller")) {
-Yes, agreed, "to_of_node" will never appear in this patch : )
->> Alan
->>
->>> +                       pp->irq =3D irq_of_parse_and_map(to_of_node=
-(fwnode), 0);
-> But here should be common method called which takes fwnode on input.
-Agreed.
->
->>>                         if (!pp->irq) {
->>>                                 dev_warn(dev, "no irq for bank %s\n=
-",
->>> -                                        port_np->full_name);
->>> +                                        to_of_node(fwnode)->full_n=
-ame);
->>>                         }
->>>                 }
->>>
->>>                 pp->irq_shared  =3D false;
->>>                 pp->gpio_base   =3D -1;
->>> -               pp->name        =3D port_np->full_name;
->>> +               pp->name        =3D to_of_node(fwnode)->full_name;
-> Also those two should be device property source agnostic. That's what
-> I tried to tell earlier.
-Agreed.
-Thanks, Jiang
+Add device HID AMDI0030 to match the AMD ACPI Vendor ID (AMDI) as
+registered in http://www.uefi.org/acpi_id_list, and the GPIO controller
+on future AMD paltform will use the HID instead of AMD0030.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Wang Hongcheng <annie.wang@amd.com>
+---
+ drivers/pinctrl/pinctrl-amd.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 3318f1d..d7eb9ad 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -849,6 +849,7 @@ static int amd_gpio_remove(struct platform_device *pdev)
+ 
+ static const struct acpi_device_id amd_gpio_acpi_match[] = {
+ 	{ "AMD0030", 0 },
++	{ "AMDI0030", 0},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(acpi, amd_gpio_acpi_match);
+-- 
+1.9.1
