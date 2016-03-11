@@ -1,40 +1,155 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] pinctrl: single: Use a separate lockdep class
-Date: Fri, 11 Mar 2016 23:04:10 +0700
-Message-ID: <CACRpkdbwYx2uA4k1XzW861ig+S0uP0D1K3Mv5G6dcG-rNPn6wQ@mail.gmail.com>
-References: <1454351299-27440-1-git-send-email-sudeep.holla@arm.com>
-	<1454351299-27440-2-git-send-email-sudeep.holla@arm.com>
+Subject: Re: [PATCH v2] iio: dac: Add support for the AD5592R/AD5593R ADCs/DACs
+Date: Fri, 11 Mar 2016 23:28:32 +0700
+Message-ID: <CACRpkdap_8YGCAvNeK7_0H2MDDnwQ9QDJH4O2SzEkDmczPGtLg@mail.gmail.com>
+References: <1456407412-16218-1-git-send-email-michael.hennerich@analog.com>
+	<56D1E1CB.6070704@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:36326 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932371AbcCKQEL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Mar 2016 11:04:11 -0500
-Received: by mail-oi0-f49.google.com with SMTP id r187so88893576oih.3
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Mar 2016 08:04:11 -0800 (PST)
-In-Reply-To: <1454351299-27440-2-git-send-email-sudeep.holla@arm.com>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:34803 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932775AbcCKQ2d (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Mar 2016 11:28:33 -0500
+Received: by mail-oi0-f43.google.com with SMTP id m82so89522403oif.1
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Mar 2016 08:28:33 -0800 (PST)
+In-Reply-To: <56D1E1CB.6070704@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tony Lindgren <tony@atomide.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Michael Hennerich <michael.hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Hartmut Knaack <knaack.h@gmx.de>, Paul Cercueil <paul.cercueil@analog.com>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Feb 2, 2016 at 1:28 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+On Sun, Feb 28, 2016 at 12:50 AM, Jonathan Cameron <jic23@kernel.org> wrote:
 
-> The single pinmux controller can be cascaded to the other interrupt
-> controllers. Hence when propagating wake-up settings to its parent
-> interrupt controller, there's possiblity of detecting possible recursive
-> locking and getting lockdep warning.
->
-> This patch avoids this false positive by using a separate lockdep class
-> for this single pinctrl interrupts.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+>> +Analog Devices AD5592R/AD5593R DAC/ADC device driver
+>> +
+>> +Required properties for the AD5592R:
+>> +     - compatible: Must be "adi,ad5592r"
+>> +     - reg: SPI chip select number for the device
+>> +     - spi-max-frequency: Max SPI frequency to use (< 30000000)
+>> +     - spi-cpol: The AD5592R requires inverse clock polarity (CPOL) mode
 
-Patch applied with Grygorii's review tag.
+If this should be a gpiochip, this shall also be reflected in the
+device tree bindings and the example in the bindings by
+stating gpio-controller; and #gpio-cells, referring to
+the binding in gpio/gpio.txt so consumers can pick a GPIO
+from this device.
+
+I haven't seen the original patch, please mail the next version
+to me so I can take a look.
+
+>> +config AD5592R_BASE
+>> +     tristate
+>> +
+>> +config AD5592R
+>> +     tristate "Analog Devices AD5592R ADC/DAC driver"
+>> +     depends on SPI_MASTER
+>> +     depends on OF
+>> +     select AD5592R_BASE
+>> +     help
+>> +       Say yes here to build support for Analog Devices AD5592R
+>> +       Digital to Analog / Analog to Digital Converter.
+>> +
+>> +       To compile this driver as a module, choose M here: the
+>> +       module will be called ad5592r.
+>> +
+>> +config AD5593R
+>> +     tristate "Analog Devices AD5593R ADC/DAC driver"
+>> +     depends on I2C
+>> +     depends on OF
+>> +     select AD5592R_BASE
+>> +     help
+>> +       Say yes here to build support for Analog Devices AD5593R
+>> +       Digital to Analog / Analog to Digital Converter.
+>> +
+>> +       To compile this driver as a module, choose M here: the
+>> +       module will be called ad5593r.
+>> +
+
+I guess something here should select GPIOLIB
+and depend of OF_GPIO
+
+>> +#ifdef CONFIG_GPIOLIB
+
+Naaaaah really? Just select GPIOLIB and get rid of ifdeffery.
+It's cool to have gpios available.
+
+>> +static int ad5592r_gpio_request(struct gpio_chip *chip, unsigned offset)
+>> +{
+>> +     struct ad5592r_state *st = gpiochip_get_data(chip);
+>> +
+>> +     if (!(st->gpio_map & BIT(offset))) {
+>> +             dev_err(st->dev, "GPIO %d is reserved by alternate function\n",
+>> +                     offset);
+
+This gpio_map looks a bit like pin control.
+
+It might be overkill to use all of the pinctrl subsystem,
+we have circumvented it in other places.
+
+>> +             return -ENODEV;
+>> +     }
+>> +
+>> +     if (offset >= chip->ngpio)
+>> +             return -EINVAL;
+
+gpiolib already guards against this I think.
+
+>> +static int ad5592r_gpio_init(struct ad5592r_state *st)
+>> +{
+>> +     st->gpiochip.label = dev_name(st->dev);
+>> +     st->gpiochip.base = -1;
+>> +     st->gpiochip.ngpio = 8;
+>> +     st->gpiochip.parent = st->dev;
+>> +     st->gpiochip.can_sleep = true;
+>> +     st->gpiochip.direction_input = ad5592r_gpio_direction_input;
+>> +     st->gpiochip.direction_output = ad5592r_gpio_direction_output;
+>> +     st->gpiochip.get = ad5592r_gpio_get;
+>> +     st->gpiochip.set = ad5592r_gpio_set;
+>> +     st->gpiochip.request = ad5592r_gpio_request;
+>> +     st->gpiochip.owner = THIS_MODULE;
+>> +
+>> +     mutex_init(&st->gpio_lock);
+>> +
+>> +     return gpiochip_add_data(&st->gpiochip, st);
+
+The gpiolib should be fine with the of_node from the parent so
+looks fine.
+
+>> +             mutex_lock(&iio_dev->mlock);
+>> +             st->ops->reg_write(st, AD5592R_REG_RESET, 0xdac);
+>> +             mutex_unlock(&iio_dev->mlock);
+
+What's that? (0xdac)? Clever magic?
+
+>> +             case CH_MODE_DAC_AND_ADC:
+>> +                     dac |= BIT(i);
+>> +                     adc |= BIT(i);
+>> +                     break;
+>> +
+>> +             case CH_MODE_UNUSED_PULL_DOWN:
+>> +                     pulldown |= BIT(i);
+>> +                     break;
+>> +
+>> +             case CH_MODE_UNUSED_OUT_TRISTATE:
+>> +                     tristate |= BIT(i);
+>> +                     break;
+>> +
+>> +             case CH_MODE_UNUSED_OUT_LOW:
+>> +                     st->gpio_out |= BIT(i);
+>> +                     break;
+>> +
+>> +             case CH_MODE_UNUSED_OUT_HIGH:
+>> +                     st->gpio_out |= BIT(i);
+>> +                     st->gpio_val |= BIT(i);
+>> +                     break;
+>> +
+>> +             case CH_MODE_GPIO_OPEN_DRAIN:
+>> +                     open_drain |= BIT(i);
+
+Deja-vu with include/linux/pinctrl/pinconf-generic.h
+
+We call tristate "bias high impedance".
 
 Yours,
 Linus Walleij
