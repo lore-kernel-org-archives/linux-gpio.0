@@ -1,41 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: xgene: Fix kconfig for standby GIPO contoller
-Date: Fri, 11 Mar 2016 23:01:32 +0700
-Message-ID: <CACRpkdbtRAC4pUQP29SAmL-ge6uJefMt5Cda6dYCR2kZ8u18og@mail.gmail.com>
-References: <1457089198-27171-1-git-send-email-mbrugger@suse.com>
+Subject: Re: [PATCH 1/3] pinctrl: single: Use a separate lockdep class
+Date: Fri, 11 Mar 2016 23:04:10 +0700
+Message-ID: <CACRpkdbwYx2uA4k1XzW861ig+S0uP0D1K3Mv5G6dcG-rNPn6wQ@mail.gmail.com>
+References: <1454351299-27440-1-git-send-email-sudeep.holla@arm.com>
+	<1454351299-27440-2-git-send-email-sudeep.holla@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:35419 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932534AbcCKQBd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Mar 2016 11:01:33 -0500
-Received: by mail-oi0-f43.google.com with SMTP id c203so88816647oia.2
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Mar 2016 08:01:33 -0800 (PST)
-In-Reply-To: <1457089198-27171-1-git-send-email-mbrugger@suse.com>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:36326 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932371AbcCKQEL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Mar 2016 11:04:11 -0500
+Received: by mail-oi0-f49.google.com with SMTP id r187so88893576oih.3
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Mar 2016 08:04:11 -0800 (PST)
+In-Reply-To: <1454351299-27440-2-git-send-email-sudeep.holla@arm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Matthias Brugger <mbrugger@suse.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Quan Nguyen <qnguyen@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tony Lindgren <tony@atomide.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Mar 4, 2016 at 5:59 PM, Matthias Brugger <mbrugger@suse.com> wrote:
+On Tue, Feb 2, 2016 at 1:28 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
 
-> The standby GPIO controller can be used as a interrupt controller.
-> Select GPIOLIB_IRQCHIP when compiling this driver. Otherwise we get
-> a compilation error:
+> The single pinmux controller can be cascaded to the other interrupt
+> controllers. Hence when propagating wake-up settings to its parent
+> interrupt controller, there's possiblity of detecting possible recursive
+> locking and getting lockdep warning.
 >
-> drivers/gpio/gpio-xgene-sb.c: In function 'xgene_gpio_sb_probe':
-> drivers/gpio/gpio-xgene-sb.c:312:10: error: 'struct gpio_chip' has no member named 'irqdomain'
->   priv->gc.irqdomain = priv->irq_domain;
->           ^
-> scripts/Makefile.build:295: recipe for target 'drivers/gpio/gpio-xgene-sb.o' failed
-> make[2]: *** [drivers/gpio/gpio-xgene-sb.o] Error 1
+> This patch avoids this false positive by using a separate lockdep class
+> for this single pinctrl interrupts.
 >
-> Fixes: 1013fc41 "gpio: xgene: Enable X-Gene standby GPIO as interrupt controller"
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-gpio@vger.kernel.org
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 
-Quan's patch exporting the symbols has been merged by tglx
-so dropping this.
+Patch applied with Grygorii's review tag.
 
 Yours,
 Linus Walleij
