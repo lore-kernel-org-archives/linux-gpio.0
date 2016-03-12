@@ -1,67 +1,129 @@
-From: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Subject: Re: [PATCH v3 01/13] pinctrl: sunxi: Add A83T R_PIO controller support
-Date: Sat, 12 Mar 2016 12:48:02 +0800
-Message-ID: <CAEzqOZta65UBJPBrp_4xr=SzHU98dWDucwzVb80eKE9ChJ8jpQ@mail.gmail.com>
-References: <1457192586-25596-1-git-send-email-vishnupatekar0510@gmail.com>
- <1457192586-25596-2-git-send-email-vishnupatekar0510@gmail.com> <CACRpkdZ5o=SKtHxshaedkYNETERt6DfiOPtC5JV2LNWKL_mqDg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZ5o=SKtHxshaedkYNETERt6DfiOPtC5JV2LNWKL_mqDg@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>, Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>R
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 01/10] pinctrl: sh-pfc: r8a7790: Implement voltage switching for SDHI
+Date: Sat, 12 Mar 2016 10:15:03 +0100
+Message-ID: <1457774112-16958-2-git-send-email-wsa@the-dreams.de>
+References: <1457774112-16958-1-git-send-email-wsa@the-dreams.de>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:48782 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751245AbcCLJPa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 12 Mar 2016 04:15:30 -0500
+In-Reply-To: <1457774112-16958-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-mmc@vger.kernel.org, Dirk Behme <dirk.behme@gmail.com>, Ben Hutchings <ben.hutchings@codethink.co.uk>, linux-gpio@vger.kernel.org
 
-Hello Linus,
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+All the SHDIs can operate with either 3.3V or 1.8V signals, depending
+on negotiation with the card.
 
-On Wed, Mar 9, 2016 at 10:55 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Sat, Mar 5, 2016 at 10:42 PM, Vishnu Patekar
-> <vishnupatekar0510@gmail.com> wrote:
->
->> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
->> interrupt bit is 6th and A83T has one extra pin PL12.
->>
->> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
->> Acked-by: Chen-Yu Tsai <wens@csie.org>
->> Acked-by: Rob Herring <robh@kernel.org>
->
-> As partly noted by others:
->
->> +config PINCTRL_SUN8I_A83T_R
->> +       def_bool MACH_SUN8I
->
-> bool
->
->> +       depends on RESET_CONTROLLER
->
-> Should it rather select RESET_CONTROLLER?
-I used depends on and def_bool as it is used for other sunxi pinctrl drivers.
-Using bool and select will not harm anything.
-Should I change it to bool and select ?  or keep it to be uniform with
-earlier options?
->
->> +static const struct of_device_id sun8i_a83t_r_pinctrl_match[] = {
->> +       { .compatible = "allwinner,sun8i-a83t-r-pinctrl", },
->> +       {}
->> +};
->> +MODULE_DEVICE_TABLE(of, sun8i_a83t_r_pinctrl_match);
->
-> Module talk in bool driver.
-I'll remove it.
->
->> +static struct platform_driver sun8i_a83t_r_pinctrl_driver = {
->> +       .probe  = sun8i_a83t_r_pinctrl_probe,
->> +       .driver = {
->> +               .name           = "sun8i-a83t-r-pinctrl",
->> +               .of_match_table = sun8i_a83t_r_pinctrl_match,
->> +       },
->> +};
->> +module_platform_driver(sun8i_a83t_r_pinctrl_driver);
->
-> Should be builtin?
-Yes, It should be. I missed Maxime's earlier commets.
->
-> Yours,
-> Linus Walleij
+Implement the {get,set}_io_voltage operations and set the related
+capability flag for the associated pins.
+
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-gpio@vger.kernel.org
+---
+
+Changes since RFC:
+
+* Don't export sh_pfc_phys_to_virt but use pfc->windows->virt directly.
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 54 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 53 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+index 0f4d48f9400ba0..eed8daa464cc1e 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+@@ -21,16 +21,21 @@
+  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  */
+ 
++#include <linux/io.h>
+ #include <linux/kernel.h>
+ 
+ #include "core.h"
+ #include "sh_pfc.h"
+ 
++/*
++ * All pins assigned to GPIO bank 3 can be used for SD interfaces in
++ * which case they support both 3.3V and 1.8V signalling.
++ */
+ #define CPU_ALL_PORT(fn, sfx)						\
+ 	PORT_GP_32(0, fn, sfx),						\
+ 	PORT_GP_30(1, fn, sfx),						\
+ 	PORT_GP_30(2, fn, sfx),						\
+-	PORT_GP_32(3, fn, sfx),						\
++	PORT_GP_CFG_32(3, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),		\
+ 	PORT_GP_32(4, fn, sfx),						\
+ 	PORT_GP_32(5, fn, sfx)
+ 
+@@ -4691,6 +4696,47 @@ static const char * const vin3_groups[] = {
+ 	"vin3_clk",
+ };
+ 
++#define IOCTRL6 0x8c
++
++static int r8a7790_get_io_voltage(struct sh_pfc *pfc, unsigned int pin)
++{
++	u32 data, mask;
++
++	if (WARN(pin < RCAR_GP_PIN(3, 0) || pin > RCAR_GP_PIN(3, 31), "invalid pin %#x", pin))
++		return -EINVAL;
++
++	data = ioread32(pfc->windows->virt + IOCTRL6),
++	/* Bits in IOCTRL6 are numbered in opposite order to pins */
++	mask = 0x80000000 >> (pin & 0x1f);
++
++	return (data & mask) ? 3300 : 1800;
++}
++
++static int r8a7790_set_io_voltage(struct sh_pfc *pfc, unsigned int pin, u16 mV)
++{
++	u32 data, mask;
++
++	if (WARN(pin < RCAR_GP_PIN(3, 0) || pin > RCAR_GP_PIN(3, 31), "invalid pin %#x", pin))
++		return -EINVAL;
++
++	if (mV != 1800 && mV != 3300)
++		return -EINVAL;
++
++	data = ioread32(pfc->windows->virt + IOCTRL6);
++	/* Bits in IOCTRL6 are numbered in opposite order to pins */
++	mask = 0x80000000 >> (pin & 0x1f);
++
++	if (mV == 3300)
++		data |= mask;
++	else
++		data &= ~mask;
++
++	iowrite32(~data, pfc->windows->virt); /* unlock reg */
++	iowrite32(data, pfc->windows->virt + IOCTRL6);
++
++	return 0;
++}
++
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(audio_clk),
+ 	SH_PFC_FUNCTION(avb),
+@@ -5690,8 +5736,14 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 	{ },
+ };
+ 
++static const struct sh_pfc_soc_operations pinmux_ops = {
++	.get_io_voltage = r8a7790_get_io_voltage,
++	.set_io_voltage = r8a7790_set_io_voltage,
++};
++
+ const struct sh_pfc_soc_info r8a7790_pinmux_info = {
+ 	.name = "r8a77900_pfc",
++	.ops = &pinmux_ops,
+ 	.unlock_reg = 0xe6060000, /* PMMR */
+ 
+ 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
+-- 
+2.7.0
+
