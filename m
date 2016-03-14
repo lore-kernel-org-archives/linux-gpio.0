@@ -1,71 +1,31 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCH] gpio: pca953x: Fix pca953x_gpio_set_multiple() on 64-bit
-Date: Sat, 12 Mar 2016 23:20:40 +0800
-Message-ID: <56E433C8.10609@electromag.com.au>
-References: <1457713887-7748-1-git-send-email-geert+renesas@glider.be>
+From: "Zheng, Qi" <qi.zheng@intel.com>
+Subject: RE: [PATCH 1/3] pinctrl: Intel: add RX invertion config
+Date: Mon, 14 Mar 2016 01:10:07 +0000
+Message-ID: <0DD381DBF8F68D419C32ACFCEB28EB2521D1032C@SHSMSX101.ccr.corp.intel.com>
+References: <1457715962-108484-1-git-send-email-qipeng.zha@intel.com>
+ <20160311093856.GN1796@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anchovy3.45ru.net.au ([203.30.46.155]:34190 "EHLO
-	anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753399AbcCLPUq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Mar 2016 10:20:46 -0500
-In-Reply-To: <1457713887-7748-1-git-send-email-geert+renesas@glider.be>
+Received: from mga01.intel.com ([192.55.52.88]:42822 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933238AbcCNBKP convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Mar 2016 21:10:15 -0400
+In-Reply-To: <20160311093856.GN1796@lahna.fi.intel.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Westerberg, Mika" <mika.westerberg@intel.com>, "Zha, Qipeng" <qipeng.zha@intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
 
-On 12/03/2016 12:31 AM, Geert Uytterhoeven wrote:
-> pca953x_gpio_set_multiple() divides by 4 to convert from longs to bytes,
-> which assumes a 32-bit platform, and is not correct on 64-bit platforms.
-> Use "sizeof(...)" instead to fix this.
->
-> Fixes: b4818afeacbd8182 ("gpio: pca953x: Add set_multiple to allow multiple bits to be set in one write.")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Sat, Mar 12, 2016 at 01:06:00AM +0800, Qipeng Zha wrote:
+> Some module need to enable RX invertion config on BXT platform.
+> 
+> Signed-off-by: Qi Zheng <qi.zheng@intel.com>
+> Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
 
-Acked-by: Phil Reid <preid@electromag.com.au>
+> Can I ask what module might need this? I'm not so certain we want to add anything like this to the driver to be honest.
 
-> ---
-> Untested, found by code inspection.
->
-> This bug was introduced in v4.5-rc1, but unless Linus (the other one ;-)
-> will make a v4.5-rc8, it's probably too late to get this fixed in v4.5.
-> ---
->   drivers/gpio/gpio-pca953x.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index 23196c5fc17ceb6b..99b375c959987fe9 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -367,9 +367,11 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
->   	memcpy(reg_val, chip->reg_output, NBANK(chip));
->   	mutex_lock(&chip->i2c_lock);
->   	for(bank=0; bank<NBANK(chip); bank++) {
-> -		unsigned bankmask = mask[bank/4] >> ((bank % 4) * 8);
-> +		unsigned bankmask = mask[bank / sizeof(*mask)] >>
-> +				    ((bank % sizeof(*mask)) * 8);
->   		if(bankmask) {
-> -			unsigned bankval  = bits[bank/4] >> ((bank % 4) * 8);
-> +			unsigned bankval  = bits[bank / sizeof(*bits)] >>
-> +					    ((bank % sizeof(*bits)) * 8);
->   			reg_val[bank] = (reg_val[bank] & ~bankmask) | bankval;
->   		}
->   	}
->
-
-
--- 
-Regards
-Phil Reid
-
-ElectroMagnetic Imaging Technology Pty Ltd
-Development of Geophysical Instrumentation & Software
-www.electromag.com.au
-
-3 The Avenue, Midland WA 6056, AUSTRALIA
-Ph: +61 8 9250 8100
-Fax: +61 8 9250 7100
-Email: preid@electromag.com.au
+The "pi330532" device on Broxton requires this function to manually trigger an GPIO input interrupt.
+That is to say, actually no signal change on the pin but toggling this RX inversion bit to make the GPIO controller believes there is voltage change on the pin thus triggering the interrupt.
