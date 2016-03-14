@@ -1,48 +1,67 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] pinctrl: Intel: add RX invertion config
-Date: Mon, 14 Mar 2016 13:26:17 +0100
-Message-ID: <CACRpkdbT9w+XXOUSuzGY+NUkxkKvoUK7KXMRi8R5TJK8Ytk+KQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] pinctrl:Intel: clear interrupt status for every IRQ setup
+Date: Mon, 14 Mar 2016 13:40:39 +0100
+Message-ID: <CACRpkdbqa2zmQ4ajH6LVQLPcWXJ+hWvHNPY5-L3TeLvA=3yg-g@mail.gmail.com>
 References: <1457715962-108484-1-git-send-email-qipeng.zha@intel.com>
-	<20160311093856.GN1796@lahna.fi.intel.com>
-	<0DD381DBF8F68D419C32ACFCEB28EB2521D1032C@SHSMSX101.ccr.corp.intel.com>
-	<20160314085002.GY1796@lahna.fi.intel.com>
-	<0DD381DBF8F68D419C32ACFCEB28EB2521D10643@SHSMSX101.ccr.corp.intel.com>
+	<1457715962-108484-2-git-send-email-qipeng.zha@intel.com>
+	<20160311094517.GO1796@lahna.fi.intel.com>
+	<0DD381DBF8F68D419C32ACFCEB28EB2521D10345@SHSMSX101.ccr.corp.intel.com>
+	<20160314084457.GX1796@lahna.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:35025 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964849AbcCNM0S (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Mar 2016 08:26:18 -0400
-Received: by mail-oi0-f53.google.com with SMTP id c203so131381404oia.2
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Mar 2016 05:26:18 -0700 (PDT)
-In-Reply-To: <0DD381DBF8F68D419C32ACFCEB28EB2521D10643@SHSMSX101.ccr.corp.intel.com>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:35579 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965093AbcCNMkk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Mar 2016 08:40:40 -0400
+Received: by mail-ob0-f170.google.com with SMTP id fp4so174026013obb.2
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Mar 2016 05:40:40 -0700 (PDT)
+In-Reply-To: <20160314084457.GX1796@lahna.fi.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Zheng, Qi" <qi.zheng@intel.com>
-Cc: "Westerberg, Mika" <mika.westerberg@intel.com>, "Zha, Qipeng" <qipeng.zha@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: "Westerberg, Mika" <mika.westerberg@intel.com>
+Cc: "Zheng, Qi" <qi.zheng@intel.com>, "Zha, Qipeng" <qipeng.zha@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Mar 14, 2016 at 9:56 AM, Zheng, Qi <qi.zheng@intel.com> wrote:
+On Mon, Mar 14, 2016 at 9:44 AM, Westerberg, Mika
+<mika.westerberg@intel.com> wrote:
+> On Mon, Mar 14, 2016 at 03:24:06AM +0200, Zheng, Qi wrote:
 
-> The "pi330532" device on Broxton requires this function to manually
-> trigger an GPIO input interrupt.
+>> > +   intel_gpio_irq_ack(d);
+>>
+>> > If the pin toggles right here, we still have the same issue, no?
+>>
+>> Yes. But it is very short time from here to the place IRQ got enabled.
+>
+> That is still a race.
+>
+>> To me, it is the only available platform dependent interface to do
+> the "ACK" in the flow of request_irq. Maybe you have other better
+> option here?
 (...)
-> We have gone through this requirement from CHT to BXT, there was no
-> other better way to simulate the GPIO interrupt for the use of those devices.
+> Drivers need to deal with the fact that they might get spurious
+> interrupts from time to time. You need to check in the interrupt handler
+> if the interrupt was from the device you are driving or not.
+>
+> request_irq() enables the interrupt line and if the pin is already in
+> a state that triggers an interrupt, the driver interrupt handler will
+> be called.
 
-I what you want is to trigger IRQs on GPIO lines using software
-we need to add that to the GPIOlib subsystem, so this register
-gets accessed from the GPIO side of things, not through pin control
-I think?
+This looks like something is wrong in the irqchip.
 
-We have so many diverse function pointers in the gpiochip, so
-ability to trigger/test IRQs from software is certainly not a burden.
+Your set_type() is supporting edges but have all IRQs
+handled by handle_simple_irq() rather than handle_edge_irq()
+for the edges, which gives a more robust control flow
+from IRQ to ACK to calling the handler.
 
-I don't understand the real-world usecase though, please explain
-what kind of problem this is trying to overcome? Why does this
-pi330532 driver need to do that, why can it not just inform the
-driver that needs this interrupt that it should wake up, e.g by
-using a notification or just an open-coded function call or whatever?
+Zheng/Mika: please look at how the level/edge
+IRQs are handled in drivers/gpio/gpio-pl061.c
+where I *tried* to do things right, switching handler
+in .set_type() using irq_set_handler_locked(). I think
+you may need to use handle_edge_irq() for the edge IRQs
+and handle_level_irq() for the level IRQs just like I do
+in the PL061 driver.
+
+(I might be wrong.)
 
 Yours,
 Linus Walleij
