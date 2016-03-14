@@ -1,66 +1,62 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] gpio: 74x164: Implement gpiochip.set_multiple()
-Date: Mon, 14 Mar 2016 16:19:18 +0100
-Message-ID: <1457968758-22670-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH] gpio: rcar: Implement gpiochip.set_multiple()
+Date: Mon, 14 Mar 2016 16:21:44 +0100
+Message-ID: <1457968904-22899-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:46924 "EHLO
-	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934381AbcCNPTW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Mar 2016 11:19:22 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:52846 "EHLO
+	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932431AbcCNPVr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Mar 2016 11:21:47 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Gabor Juhos <juhosg@openwrt.org>, Miguel Gaio <miguel.gaio@efixo.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-This allows to set multiple outputs using a single SPI transfer.
+This allows to set multiple outputs using a single register write.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpio/gpio-74x164.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/gpio/gpio-rcar.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
-index c81224ff2dca988b..62291a81c97f7140 100644
---- a/drivers/gpio/gpio-74x164.c
-+++ b/drivers/gpio/gpio-74x164.c
-@@ -75,6 +75,29 @@ static void gen_74x164_set_value(struct gpio_chip *gc,
- 	mutex_unlock(&chip->lock);
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index d9ab0cd1d2059635..3fe8e773d95c3b62 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -336,6 +336,25 @@ static void gpio_rcar_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	spin_unlock_irqrestore(&p->lock, flags);
  }
  
-+static void gen_74x164_set_multiple(struct gpio_chip *gc, unsigned long *mask,
-+				    unsigned long *bits)
++static void gpio_rcar_set_multiple(struct gpio_chip *chip, unsigned long *mask,
++				   unsigned long *bits)
 +{
-+	struct gen_74x164_chip *chip = gpiochip_get_data(gc);
-+	unsigned int i, idx, shift;
-+	u8 bank, bankmask;
++	struct gpio_rcar_priv *p = gpiochip_get_data(chip);
++	unsigned long flags;
++	u32 val, bankmask;
 +
-+	mutex_lock(&chip->lock);
-+	for (i = 0, bank = chip->registers - 1; i < chip->registers;
-+	     i++, bank--) {
-+		idx = i / sizeof(*mask);
-+		shift = i % sizeof(*mask) * BITS_PER_BYTE;
-+		bankmask = mask[idx] >> shift;
-+		if (!bankmask)
-+			continue;
++	bankmask = mask[0] & GENMASK(chip->ngpio - 1, 0);
++	if (!bankmask)
++		return;
 +
-+		chip->buffer[bank] &= ~bankmask;
-+		chip->buffer[bank] |= bankmask & (bits[idx] >> shift);
-+	}
-+	__gen_74x164_write_config(chip);
-+	mutex_unlock(&chip->lock);
++	spin_lock_irqsave(&p->lock, flags);
++	val = gpio_rcar_read(p, OUTDT);
++	val &= ~bankmask;
++	val |= (bankmask & bits[0]);
++	gpio_rcar_write(p, OUTDT, val);
++	spin_unlock_irqrestore(&p->lock, flags);
 +}
 +
- static int gen_74x164_direction_output(struct gpio_chip *gc,
- 		unsigned offset, int val)
+ static int gpio_rcar_direction_output(struct gpio_chip *chip, unsigned offset,
+ 				      int value)
  {
-@@ -114,6 +137,7 @@ static int gen_74x164_probe(struct spi_device *spi)
- 	chip->gpio_chip.direction_output = gen_74x164_direction_output;
- 	chip->gpio_chip.get = gen_74x164_get_value;
- 	chip->gpio_chip.set = gen_74x164_set_value;
-+	chip->gpio_chip.set_multiple = gen_74x164_set_multiple;
- 	chip->gpio_chip.base = -1;
- 
- 	chip->registers = nregs;
+@@ -476,6 +495,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	gpio_chip->get = gpio_rcar_get;
+ 	gpio_chip->direction_output = gpio_rcar_direction_output;
+ 	gpio_chip->set = gpio_rcar_set;
++	gpio_chip->set_multiple = gpio_rcar_set_multiple;
+ 	gpio_chip->label = name;
+ 	gpio_chip->parent = dev;
+ 	gpio_chip->owner = THIS_MODULE;
 -- 
 1.9.1
 
