@@ -1,96 +1,66 @@
-From: "Westerberg, Mika" <mika.westerberg@intel.com>
-Subject: Re: [PATCH 2/3] pinctrl:Intel: clear interrupt status for every IRQ
- setup
-Date: Mon, 14 Mar 2016 16:26:07 +0200
-Message-ID: <20160314142607.GI1793@lahna.fi.intel.com>
-References: <1457715962-108484-1-git-send-email-qipeng.zha@intel.com>
- <1457715962-108484-2-git-send-email-qipeng.zha@intel.com>
- <20160311094517.GO1796@lahna.fi.intel.com>
- <0DD381DBF8F68D419C32ACFCEB28EB2521D10345@SHSMSX101.ccr.corp.intel.com>
- <20160314084457.GX1796@lahna.fi.intel.com>
- <CACRpkdbqa2zmQ4ajH6LVQLPcWXJ+hWvHNPY5-L3TeLvA=3yg-g@mail.gmail.com>
- <20160314125436.GG1793@lahna.fi.intel.com>
- <20160314130041.GH1793@lahna.fi.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] gpio: 74x164: Implement gpiochip.set_multiple()
+Date: Mon, 14 Mar 2016 16:19:18 +0100
+Message-ID: <1457968758-22670-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:6790 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932864AbcCNO0M (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 14 Mar 2016 10:26:12 -0400
-Content-Disposition: inline
-In-Reply-To: <20160314130041.GH1793@lahna.fi.intel.com>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:46924 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934381AbcCNPTW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Mar 2016 11:19:22 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "Zheng, Qi" <qi.zheng@intel.com>, "Zha, Qipeng" <qipeng.zha@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Gabor Juhos <juhosg@openwrt.org>, Miguel Gaio <miguel.gaio@efixo.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Mon, Mar 14, 2016 at 03:00:41PM +0200, Westerberg, Mika wrote:
-> 
-> > > Your set_type() is supporting edges but have all IRQs
-> > > handled by handle_simple_irq() rather than handle_edge_irq()
-> > > for the edges, which gives a more robust control flow
-> > > from IRQ to ACK to calling the handler.
-> > > 
-> > > Zheng/Mika: please look at how the level/edge
-> > > IRQs are handled in drivers/gpio/gpio-pl061.c
-> > > where I *tried* to do things right, switching handler
-> > > in .set_type() using irq_set_handler_locked(). I think
-> > > you may need to use handle_edge_irq() for the edge IRQs
-> > > and handle_level_irq() for the level IRQs just like I do
-> > > in the PL061 driver.
-> > 
-> > The driver is already doing that as far as I can tell (see
-> > intel_gpio_irq_type()).
-> 
-> I will check again if we are still missing something there.
+This allows to set multiple outputs using a single SPI transfer.
 
-Maybe we can implement ->enable() that clears the status right before
-interrupt is unmasked? Something like below.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gpio/gpio-74x164.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index c0f5586218c4..b4873a4e25d5 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -648,6 +648,33 @@ static const struct gpio_chip intel_gpio_chip = {
- 	.set = intel_gpio_set,
- };
+diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
+index c81224ff2dca988b..62291a81c97f7140 100644
+--- a/drivers/gpio/gpio-74x164.c
++++ b/drivers/gpio/gpio-74x164.c
+@@ -75,6 +75,29 @@ static void gen_74x164_set_value(struct gpio_chip *gc,
+ 	mutex_unlock(&chip->lock);
+ }
  
-+static void intel_gpio_irq_enable(struct irq_data *d)
++static void gen_74x164_set_multiple(struct gpio_chip *gc, unsigned long *mask,
++				    unsigned long *bits)
 +{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
-+	const struct intel_community *community;
-+	unsigned pin = irqd_to_hwirq(d);
-+	unsigned long flags;
++	struct gen_74x164_chip *chip = gpiochip_get_data(gc);
++	unsigned int i, idx, shift;
++	u8 bank, bankmask;
 +
-+	spin_lock_irqsave(&pctrl->lock, flags);
++	mutex_lock(&chip->lock);
++	for (i = 0, bank = chip->registers - 1; i < chip->registers;
++	     i++, bank--) {
++		idx = i / sizeof(*mask);
++		shift = i % sizeof(*mask) * BITS_PER_BYTE;
++		bankmask = mask[idx] >> shift;
++		if (!bankmask)
++			continue;
 +
-+	community = intel_get_community(pctrl, pin);
-+	if (community) {
-+		unsigned padno = pin_to_padno(community, pin);
-+		unsigned gpp_offset = padno % community->gpp_size;
-+		unsigned gpp = padno / community->gpp_size;
-+		unsigned value;
-+
-+		writel(BIT(gpp_offset), community->regs + GPI_IS + gpp * 4);
-+
-+		value = readl(community->regs + community->ie_offset + gpp * 4);
-+		value |= BIT(gpp_offset);
-+		writel(value, community->regs + community->ie_offset + gpp * 4);
++		chip->buffer[bank] &= ~bankmask;
++		chip->buffer[bank] |= bankmask & (bits[idx] >> shift);
 +	}
-+
-+	spin_unlock_irqrestore(&pctrl->lock, flags);
++	__gen_74x164_write_config(chip);
++	mutex_unlock(&chip->lock);
 +}
 +
- static void intel_gpio_irq_ack(struct irq_data *d)
+ static int gen_74x164_direction_output(struct gpio_chip *gc,
+ 		unsigned offset, int val)
  {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-@@ -856,6 +883,7 @@ static irqreturn_t intel_gpio_irq(int irq, void *data)
+@@ -114,6 +137,7 @@ static int gen_74x164_probe(struct spi_device *spi)
+ 	chip->gpio_chip.direction_output = gen_74x164_direction_output;
+ 	chip->gpio_chip.get = gen_74x164_get_value;
+ 	chip->gpio_chip.set = gen_74x164_set_value;
++	chip->gpio_chip.set_multiple = gen_74x164_set_multiple;
+ 	chip->gpio_chip.base = -1;
  
- static struct irq_chip intel_gpio_irqchip = {
- 	.name = "intel-gpio",
-+	.irq_enable = intel_gpio_irq_enable,
- 	.irq_ack = intel_gpio_irq_ack,
- 	.irq_mask = intel_gpio_irq_mask,
- 	.irq_unmask = intel_gpio_irq_unmask,
+ 	chip->registers = nregs;
+-- 
+1.9.1
+
