@@ -1,52 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC] pinctrl: sh-pfc: only use dummy states for non-DT platforms
-Date: Tue, 15 Mar 2016 09:29:21 +0100
-Message-ID: <CACRpkdZko+MAKn-JGCNPhnSVJOHJQ1GG_0HNN33Z6zpbu9ZddQ@mail.gmail.com>
-References: <1457376072-755-1-git-send-email-wsa@the-dreams.de>
+Subject: Re: [PATCH 00/50] pinctrl: Add and use devm_ apis for
+ pinctrl_{register, unregister}
+Date: Tue, 15 Mar 2016 09:31:15 +0100
+Message-ID: <CACRpkdYQL0HUWuz882RRsSu5hLoS5VcVvpm1LeL1aeJkE_Y0tA@mail.gmail.com>
+References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
+	<CACRpkdZjv2KZ0AtC9oBytmSdS+=T+kC8PoJVt-RawE8Np8p40w@mail.gmail.com>
+	<56D307CC.2050202@nvidia.com>
+	<56E031CA.9010204@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:33453 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934112AbcCOI3W (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Mar 2016 04:29:22 -0400
-Received: by mail-ob0-f171.google.com with SMTP id fz5so9909785obc.0
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Mar 2016 01:29:22 -0700 (PDT)
-In-Reply-To: <1457376072-755-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <56E031CA.9010204@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Jon Corbet <corbet@lwn.net>, Lee Jones <lee@kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, ARM/Mediatek SoC support <linux-mediatek@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Mar 7, 2016 at 7:40 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+On Wed, Mar 9, 2016 at 3:23 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> Pushed the change at:
+>> Branch "devm_pinctrl_register" of
+>> https://github.com/ldewangan/linux-upstream.git.
+>>
+>> Base repo is
+>> for-next of
+>> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+>>
+>>
+>> If required, I can send the V2 version of list with acks.
 >
-> If pinctrl_provide_dummies() is used unconditionally, then the dummy
-> state will be used even on DT platforms when the "init" state was
-> intentionally left out. Instead of "default", the dummy "init" state
-> will then be used during probe. Thus, when probing an I2C controller on
-> cold boot, communication triggered by bus notifiers broke because the
-> pins were not initialized.
->
-> Do it like OMAP2: use the dummy state only for non-DT platforms.
->
-> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Let me know if I need to send full series (V2 with collected ack) again or
+> fine to pull it from above location.
 
-Patch applied for fixes with all the ACKs etc.
+Please collect the ACKs on your branch and ask me to pull it after v4.6-rc1.
+No need to resend the patches.
 
-This unfortiunately coincide with the merge window so was slow
-to pick it up, but it will be in the first round of fixes to Torvalds,
-possibly at -rc1 possibly earlier.
-
-> -       pinctrl_provide_dummies();
-> +       /* Enable dummy states for those platforms without pinctrl support */
-> +       if (!of_have_populated_dt())
-> +               pinctrl_provide_dummies();
-
-So remind we: what Renesas platforms are still not using DT?
-arch/sh?
+Unfortunately it arrived too late for the merge window, but hey: we got the
+devm gpiochip in for v4.6.
 
 Yours,
 Linus Walleij
