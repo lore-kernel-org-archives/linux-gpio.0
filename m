@@ -1,51 +1,80 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: [PATCH 1/1] gpio: mcp23s08: Fix clearing of interrupt.
-Date: Tue, 15 Mar 2016 15:46:30 +0800
-Message-ID: <1458027990-128142-2-git-send-email-preid@electromag.com.au>
-References: <1458027990-128142-1-git-send-email-preid@electromag.com.au>
+From: Caesar Wang <wxt@rock-chips.com>
+Subject: [PATCH v2] pinctrl: rockchip: add support the get_direction
+Date: Tue, 15 Mar 2016 15:55:45 +0800
+Message-ID: <1458028545-1202-1-git-send-email-wxt@rock-chips.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from [203.59.230.133] ([203.59.230.133]:40292 "EHLO
-	preid-centos7.electromag.com.au" rhost-flags-FAIL-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751548AbcCOHyb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 15 Mar 2016 03:54:31 -0400
-In-Reply-To: <1458027990-128142-1-git-send-email-preid@electromag.com.au>
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33673 "EHLO
+	mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751155AbcCOH4u (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Mar 2016 03:56:50 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org
-Cc: Phil Reid <preid@electromag.com.au>
+To: linus.walleij@linaro.org, heiko@sntech.de
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Caesar Wang <wxt@rock-chips.com>, linux-rockchip@lists.infradead.org
 
-The mcp23s18 is configurable on clearing the interrupt on either reading
-INTCAP or GPIO. Since driver reads INTCAP in IRQ and not the GPIO reg need
-to set control byte for this mode.
+This patch adds the get_direction to support the gpio
+interface.
 
-Signed-off-by: Phil Reid <preid@electromag.com.au>
+The gpio direction is not used on rockchip platform when use the gpio
+debugfs.
+
+Tested on kylin board. (RK3036 SoCs)
+The repro steps:
+$/sys/class/gpio/
+echo 53 > export
+$/sys/class/gpio/gpio53# cat direction
+in
+In general, the gpio53 should be out value, but the direction is the
+default value 'in',  since the get_direction didn't supported in rockchip
+pinctrl.
+
+So, we should add this patch to support it.
+
+Reported-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-rockchip@lists.infradead.org
+
 ---
- drivers/gpio/gpio-mcp23s08.c | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-index 72521d9..b42524f 100644
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@ -49,6 +49,7 @@
- #	define IOCON_HAEN	(1 << 3)
- #	define IOCON_ODR	(1 << 2)
- #	define IOCON_INTPOL	(1 << 1)
-+#	define IOCON_INTCC	(1)
- #define MCP_GPPU	0x06
- #define MCP_INTF	0x07
- #define MCP_INTCAP	0x08
-@@ -680,6 +681,9 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 		if (mirror)
- 			status |= IOCON_MIRROR | (IOCON_MIRROR << 8);
+Changes in v2:
+- As Heiko comments on (https://patchwork.kernel.org/patch/8576661/),
+  fixes the wrong offset from original patch.
+
+ drivers/pinctrl/pinctrl-rockchip.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index bf032b9..0b3fd02 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -1208,6 +1208,16 @@ static int rockchip_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
+ 	return 0;
+ }
  
-+		if (type == MCP_TYPE_S18)
-+			status |= IOCON_INTCC | (IOCON_INTCC << 8);
++static int rockchip_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
++{
++	struct rockchip_pin_bank *bank = gpiochip_get_data(chip);
++	u32 data;
 +
- 		status = mcp->ops->write(mcp, MCP_IOCON, status);
- 		if (status < 0)
- 			goto fail;
++	data = readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
++
++	return !(data & BIT(offset));
++}
++
+ /*
+  * The calls to gpio_direction_output() and gpio_direction_input()
+  * leads to this function call (via the pinctrl_gpio_direction_{input|output}()
+@@ -1741,6 +1751,7 @@ static const struct gpio_chip rockchip_gpiolib_chip = {
+ 	.free = gpiochip_generic_free,
+ 	.set = rockchip_gpio_set,
+ 	.get = rockchip_gpio_get,
++	.get_direction	= rockchip_gpio_get_direction,
+ 	.direction_input = rockchip_gpio_direction_input,
+ 	.direction_output = rockchip_gpio_direction_output,
+ 	.to_irq = rockchip_gpio_to_irq,
 -- 
-1.8.3.1
+1.9.1
 
