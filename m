@@ -1,45 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: pistachio: fix mfio84-89 function description
- and pinmux.
-Date: Tue, 15 Mar 2016 09:58:38 +0100
-Message-ID: <CACRpkdaGy-X8qatpMkaDz-7sGrL9vmmrJeZCWy3UYPePrO2+gQ@mail.gmail.com>
-References: <1457105302-15070-1-git-send-email-Govindraj.Raja@imgtec.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH] pinctrl: freescale: imx: fix bogus check of of_iomap()
+ return value
+Date: Tue, 15 Mar 2016 17:00:04 +0800
+Message-ID: <20160315090000.GA28207@tiger>
+References: <1457484336-8928-1-git-send-email-vz@mleia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <1457105302-15070-1-git-send-email-Govindraj.Raja@imgtec.com>
-Sender: stable-owner@vger.kernel.org
-To: Govindraj Raja <Govindraj.Raja@imgtec.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Andrew Bresticker <abrestic@chromium.org>, Linux MIPS <linux-mips@linux-mips.org>, James Hartley <James.Hartley@imgtec.com>, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:38492 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932386AbcCOJAe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 15 Mar 2016 05:00:34 -0400
+Content-Disposition: inline
+In-Reply-To: <1457484336-8928-1-git-send-email-vz@mleia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Adrian Alonso <aalonso@freescale.com>, linux-gpio@vger.kernel.org
 
-On Fri, Mar 4, 2016 at 4:28 PM, Govindraj Raja
-<Govindraj.Raja@imgtec.com> wrote:
+On Wed, Mar 09, 2016 at 02:45:36AM +0200, Vladimir Zapolskiy wrote:
+> On error path of_iomap() returns NULL, hence IS_ERR() check is invalid
+> and may cause a NULL pointer dereference, the change fixes this
+> problem.
+> 
+> While we are here invert a device node check to simplify the code.
+> 
+> Fixes: 26d8cde5260b ("pinctrl: freescale: imx: add shared input select reg support")
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
 
-> mfio 84 to 89 are described wrongly, fix it to describe
-> the right pin and add them to right pin-mux group.
->
-> The correct order is:
->         pll1_lock => mips_pll   -- MFIO_83
->         pll2_lock => audio_pll  -- MFIO_84
->         pll3_lock => rpu_v_pll  -- MFIO_85
->         pll4_lock => rpu_l_pll  -- MFIO_86
->         pll5_lock => sys_pll    -- MFIO_87
->         pll6_lock => wifi_pll   -- MFIO_88
->         pll7_lock => bt_pll     -- MFIO_89
->
-> Fixes: cefc03e5995e("pinctrl: Add Pistachio SoC pin control driver")
-> Signed-off-by: Govindraj Raja <Govindraj.Raja@imgtec.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Andrew Bresticker <abrestic@chromium.org>
-> Cc: linux-mips@linux-mips.org
-> Cc: James Hartley <James.Hartley@imgtec.com>
-> Cc: <stable@vger.kernel.org> # v4.2+
-
-Patch applied for fixes with the ACKs and all.
-
-Yours,
-Linus Walleij
+Acked-by: Shawn Guo <shawnguo@kernel.org>
