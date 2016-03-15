@@ -1,55 +1,54 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 8/8] drivers/pinctrl: clean up samsung modular vs.
- non-modular distinctions
-Date: Tue, 15 Mar 2016 11:10:20 +0100
-Message-ID: <56E7DF8C.4030005@samsung.com>
-References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
- <1456778924-20730-9-git-send-email-paul.gortmaker@windriver.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [RFC] pinctrl: sh-pfc: only use dummy states for non-DT platforms
+Date: Tue, 15 Mar 2016 15:31:16 +0300
+Message-ID: <56E80094.9070206@cogentembedded.com>
+References: <1457376072-755-1-git-send-email-wsa@the-dreams.de>
+ <CACRpkdZko+MAKn-JGCNPhnSVJOHJQ1GG_0HNN33Z6zpbu9ZddQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-reply-to: <1456778924-20730-9-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZko+MAKn-JGCNPhnSVJOHJQ1GG_0HNN33Z6zpbu9ZddQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 02/29/2016 09:48 PM, Paul Gortmaker wrote:
-> Fixups here tend to be more all over the map vs. some of the other
-> repeated/systematic ones we've seen elsewhere.
-> 
-> We remove module.h from code that isn't doing anything modular at
-> all;  if they have __init sections, then replace it with init.h
-> 
-> A couple drivers have module_exit() code that is essentially orphaned,
-> and so we remove that.
-> 
-> There are no module_init replacements, so we have no concerns wrt.
-> initcall ordering changes as per some of the other cleanups.
-> 
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-> 
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> was (or is now) contained at the top of the file in the comments.
-> 
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-exynos.c     |  1 -
->  drivers/pinctrl/samsung/pinctrl-exynos5440.c | 15 +++------------
->  drivers/pinctrl/samsung/pinctrl-s3c24xx.c    |  2 +-
->  drivers/pinctrl/samsung/pinctrl-s3c64xx.c    |  2 +-
->  drivers/pinctrl/samsung/pinctrl-samsung.c    | 12 +-----------
->  5 files changed, 6 insertions(+), 26 deletions(-)
+On 3/15/2016 11:29 AM, Linus Walleij wrote:
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>
+>> If pinctrl_provide_dummies() is used unconditionally, then the dummy
+>> state will be used even on DT platforms when the "init" state was
+>> intentionally left out. Instead of "default", the dummy "init" state
+>> will then be used during probe. Thus, when probing an I2C controller on
+>> cold boot, communication triggered by bus notifiers broke because the
+>> pins were not initialized.
+>>
+>> Do it like OMAP2: use the dummy state only for non-DT platforms.
+>>
+>> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Patch applied for fixes with all the ACKs etc.
+>
+> This unfortiunately coincide with the merge window so was slow
+> to pick it up, but it will be in the first round of fixes to Torvalds,
+> possibly at -rc1 possibly earlier.
 
---
-Thanks,
-Sylwester
+    TIA!
+
+>> -       pinctrl_provide_dummies();
+>> +       /* Enable dummy states for those platforms without pinctrl support */
+>> +       if (!of_have_populated_dt())
+>> +               pinctrl_provide_dummies();
+>
+> So remind we: what Renesas platforms are still not using DT?
+> arch/sh?
+
+    Yes, only those are left.
+
+> Yours,
+> Linus Walleij
+
+MBR, Sergei
