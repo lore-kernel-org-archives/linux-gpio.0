@@ -1,80 +1,52 @@
-From: Caesar Wang <wxt@rock-chips.com>
-Subject: [PATCH v2] pinctrl: rockchip: add support the get_direction
-Date: Tue, 15 Mar 2016 15:55:45 +0800
-Message-ID: <1458028545-1202-1-git-send-email-wxt@rock-chips.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC] pinctrl: sh-pfc: only use dummy states for non-DT platforms
+Date: Tue, 15 Mar 2016 09:29:21 +0100
+Message-ID: <CACRpkdZko+MAKn-JGCNPhnSVJOHJQ1GG_0HNN33Z6zpbu9ZddQ@mail.gmail.com>
+References: <1457376072-755-1-git-send-email-wsa@the-dreams.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:33673 "EHLO
-	mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751155AbcCOH4u (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Mar 2016 03:56:50 -0400
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:33453 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934112AbcCOI3W (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Mar 2016 04:29:22 -0400
+Received: by mail-ob0-f171.google.com with SMTP id fz5so9909785obc.0
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Mar 2016 01:29:22 -0700 (PDT)
+In-Reply-To: <1457376072-755-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, heiko@sntech.de
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Caesar Wang <wxt@rock-chips.com>, linux-rockchip@lists.infradead.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-This patch adds the get_direction to support the gpio
-interface.
+On Mon, Mar 7, 2016 at 7:40 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 
-The gpio direction is not used on rockchip platform when use the gpio
-debugfs.
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> If pinctrl_provide_dummies() is used unconditionally, then the dummy
+> state will be used even on DT platforms when the "init" state was
+> intentionally left out. Instead of "default", the dummy "init" state
+> will then be used during probe. Thus, when probing an I2C controller on
+> cold boot, communication triggered by bus notifiers broke because the
+> pins were not initialized.
+>
+> Do it like OMAP2: use the dummy state only for non-DT platforms.
+>
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Tested on kylin board. (RK3036 SoCs)
-The repro steps:
-$/sys/class/gpio/
-echo 53 > export
-$/sys/class/gpio/gpio53# cat direction
-in
-In general, the gpio53 should be out value, but the direction is the
-default value 'in',  since the get_direction didn't supported in rockchip
-pinctrl.
+Patch applied for fixes with all the ACKs etc.
 
-So, we should add this patch to support it.
+This unfortiunately coincide with the merge window so was slow
+to pick it up, but it will be in the first round of fixes to Torvalds,
+possibly at -rc1 possibly earlier.
 
-Reported-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-rockchip@lists.infradead.org
+> -       pinctrl_provide_dummies();
+> +       /* Enable dummy states for those platforms without pinctrl support */
+> +       if (!of_have_populated_dt())
+> +               pinctrl_provide_dummies();
 
----
+So remind we: what Renesas platforms are still not using DT?
+arch/sh?
 
-Changes in v2:
-- As Heiko comments on (https://patchwork.kernel.org/patch/8576661/),
-  fixes the wrong offset from original patch.
-
- drivers/pinctrl/pinctrl-rockchip.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index bf032b9..0b3fd02 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -1208,6 +1208,16 @@ static int rockchip_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
- 	return 0;
- }
- 
-+static int rockchip_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct rockchip_pin_bank *bank = gpiochip_get_data(chip);
-+	u32 data;
-+
-+	data = readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
-+
-+	return !(data & BIT(offset));
-+}
-+
- /*
-  * The calls to gpio_direction_output() and gpio_direction_input()
-  * leads to this function call (via the pinctrl_gpio_direction_{input|output}()
-@@ -1741,6 +1751,7 @@ static const struct gpio_chip rockchip_gpiolib_chip = {
- 	.free = gpiochip_generic_free,
- 	.set = rockchip_gpio_set,
- 	.get = rockchip_gpio_get,
-+	.get_direction	= rockchip_gpio_get_direction,
- 	.direction_input = rockchip_gpio_direction_input,
- 	.direction_output = rockchip_gpio_direction_output,
- 	.to_irq = rockchip_gpio_to_irq,
--- 
-1.9.1
-
+Yours,
+Linus Walleij
