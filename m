@@ -1,53 +1,63 @@
-From: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
-Subject: [PATCH] gpio: 74x164: add dt support for nxp's 74x594
-Date: Mon, 14 Mar 2016 23:32:10 +0000
-Message-ID: <1457998330-8070-1-git-send-email-nicolassaenzj@gmail.com>
+From: "Zheng, Qi" <qi.zheng@intel.com>
+Subject: RE: [PATCH 1/3] pinctrl: Intel: add RX invertion config
+Date: Tue, 15 Mar 2016 02:17:53 +0000
+Message-ID: <0DD381DBF8F68D419C32ACFCEB28EB2521D10AC2@SHSMSX101.ccr.corp.intel.com>
+References: <1457715962-108484-1-git-send-email-qipeng.zha@intel.com>
+	<20160311093856.GN1796@lahna.fi.intel.com>
+	<0DD381DBF8F68D419C32ACFCEB28EB2521D1032C@SHSMSX101.ccr.corp.intel.com>
+	<20160314085002.GY1796@lahna.fi.intel.com>
+	<0DD381DBF8F68D419C32ACFCEB28EB2521D10643@SHSMSX101.ccr.corp.intel.com>
+ <CACRpkdbT9w+XXOUSuzGY+NUkxkKvoUK7KXMRi8R5TJK8Ytk+KQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33325 "EHLO
-	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750774AbcCNXcR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Mar 2016 19:32:17 -0400
+Received: from mga01.intel.com ([192.55.52.88]:51771 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932809AbcCOCR5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 14 Mar 2016 22:17:57 -0400
+In-Reply-To: <CACRpkdbT9w+XXOUSuzGY+NUkxkKvoUK7KXMRi8R5TJK8Ytk+KQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: gnurou@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "Westerberg, Mika" <mika.westerberg@intel.com>, "Zha, Qipeng" <qipeng.zha@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-The chip is also an 8 bit shift register which works out of the box as a GPO
-expander with this patch
-
-Signed-off-by: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
----
- Documentation/devicetree/bindings/gpio/gpio-74x164.txt | 4 +++-
- drivers/gpio/gpio-74x164.c                             | 1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-74x164.txt b/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
-index cc26080..ce1b223 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
-@@ -1,7 +1,9 @@
- * Generic 8-bits shift register GPIO driver
- 
- Required properties:
--- compatible : Should be "fairchild,74hc595"
-+- compatible: Should contain one of the following:
-+    "fairchild,74hc595"
-+    "nxp,74lvc594"
- - reg : chip select number
- - gpio-controller : Marks the device node as a gpio controller.
- - #gpio-cells : Should be two.  The first cell is the pin number and
-diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
-index c81224f..ebd0d1a 100644
---- a/drivers/gpio/gpio-74x164.c
-+++ b/drivers/gpio/gpio-74x164.c
-@@ -153,6 +153,7 @@ static int gen_74x164_remove(struct spi_device *spi)
- 
- static const struct of_device_id gen_74x164_dt_ids[] = {
- 	{ .compatible = "fairchild,74hc595" },
-+	{ .compatible = "nxp,74lvc594" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, gen_74x164_dt_ids);
--- 
-2.5.0
-
+DQo+IE9uIE1vbiwgTWFyIDE0LCAyMDE2IGF0IDk6NTYgQU0sIFpoZW5nLCBRaSA8cWkuemhlbmdA
+aW50ZWwuY29tPiB3cm90ZToNCg0KPiBUaGUgInBpMzMwNTMyIiBkZXZpY2Ugb24gQnJveHRvbiBy
+ZXF1aXJlcyB0aGlzIGZ1bmN0aW9uIHRvIG1hbnVhbGx5IA0KPiB0cmlnZ2VyIGFuIEdQSU8gaW5w
+dXQgaW50ZXJydXB0Lg0KKC4uLikNCj4gV2UgaGF2ZSBnb25lIHRocm91Z2ggdGhpcyByZXF1aXJl
+bWVudCBmcm9tIENIVCB0byBCWFQsIHRoZXJlIHdhcyBubyANCj4gb3RoZXIgYmV0dGVyIHdheSB0
+byBzaW11bGF0ZSB0aGUgR1BJTyBpbnRlcnJ1cHQgZm9yIHRoZSB1c2Ugb2YgdGhvc2UgZGV2aWNl
+cy4NCg0KPiBJIHdoYXQgeW91IHdhbnQgaXMgdG8gdHJpZ2dlciBJUlFzIG9uIEdQSU8gbGluZXMg
+dXNpbmcgc29mdHdhcmUgd2UgbmVlZCB0byBhZGQgdGhhdCB0byB0aGUgR1BJT2xpYiBzdWJzeXN0
+ZW0sIHNvIHRoaXMgcmVnaXN0ZXIgZ2V0cyBhY2Nlc3NlZCBmcm9tIHRoZSBHUElPIHNpZGUgb2Yg
+dGhpbmdzLCBub3QgdGhyb3VnaCBwaW4gY29udHJvbCBJIHRoaW5rPw0KDQpXZSBoYXZlIHBpbmN0
+cmwgY29udHJvbCBtYXAgbG9jYWxseS4NClRoZSBSWCBpbnZlcnNpb24gaXMgaW1wbGVtZW50ZWQg
+YnkgcGluY3RybCBjb250cm9sIGNhbGxzLCBwaW5jdHJsX3BtX3NlbGVjdF9kZWZhdWx0X3N0YXRl
+IGFuZCBwaW5jdHJsX3BtX3NlbGVjdF9zbGVlcF9zdGF0ZS4gDQoNCj4gV2UgaGF2ZSBzbyBtYW55
+IGRpdmVyc2UgZnVuY3Rpb24gcG9pbnRlcnMgaW4gdGhlIGdwaW9jaGlwLCBzbyBhYmlsaXR5IHRv
+IHRyaWdnZXIvdGVzdCBJUlFzIGZyb20gc29mdHdhcmUgaXMgY2VydGFpbmx5IG5vdCBhIGJ1cmRl
+bi4NCg0KPiBJIGRvbid0IHVuZGVyc3RhbmQgdGhlIHJlYWwtd29ybGQgdXNlY2FzZSB0aG91Z2gs
+IHBsZWFzZSBleHBsYWluIHdoYXQga2luZCBvZiBwcm9ibGVtIHRoaXMgaXMgdHJ5aW5nIHRvIG92
+ZXJjb21lPyBXaHkgZG9lcyB0aGlzDQo+IHBpMzMwNTMyIGRyaXZlciBuZWVkIHRvIGRvIHRoYXQs
+IHdoeSBjYW4gaXQgbm90IGp1c3QgaW5mb3JtIHRoZSBkcml2ZXIgdGhhdCBuZWVkcyB0aGlzIGlu
+dGVycnVwdCB0aGF0IGl0IHNob3VsZCB3YWtlIHVwLCBlLmcgYnkgdXNpbmcgYSBub3RpZmljYXRp
+b24gb3IganVzdCBhbiBvcGVuLWNvZGVkIGZ1bmN0aW9uIGNhbGwgb3Igd2hhdGV2ZXI/DQoNCkFj
+Y29yZGluZyB0byB0aGUgcGkzMzA1MzIgZHJpdmVyIG93bmVyLCANCiINCndlIG5lZWRlZCB0aGlz
+IHN1cHBvcnQgdG8gc2ltdWxhdGUgdGhlIEhQRCBpbnRlcnJ1cHQgYmVoYXZpb3IgYXMgd2UgZG9u
+4oCZdCBoYXZlIGRlZGljYXRlZCBpbnRlcnJ1cHQgbGluZSBmb3IgVHlwZS1DIERQIEhQRC4NCg0K
+V2UgZG9u4oCZdCBoYXZlIGFueSBub3RpZmljYXRpb25zIG1lY2hhc2lzbSBiL3cgVVNCIGFuZCBk
+aXNwbGF5L0dmeCBzdGFjayBhbmQgYWxzbyBub3QgdGhlIGlkZWFsIHdheSB0byBoYW5kbGUuICBI
+UEQgdG9nZ2xpbmcgaXMgdGhlIHByZWZlcnJlZCBhcHByb2FjaCBzdWdnZXN0ZWQgYnkgVlBHIGFu
+ZCBIVyB0ZWFtcyB0byBtZWV0IHRpbWluZyByZXF1aXJlbWVudHMgYWxzby4NCg0Kc3RhdGljIHZv
+aWQgaHBkX3RyaWdnZXIoc3RydWN0IHBpM3VzYjMwNTMyX211eCAqY2hpcCwgaW50IHN0YXRlKQ0K
+ew0KICAgICAgICBkZXZfaW5mbygmY2hpcC0+Y2xpZW50LT5kZXYsICJbSFBEIHRyaWdnZXJdIHN0
+YXRlIDogJWRcbiIsIHN0YXRlKTsNCg0KICAgICAgICBpZiAoc3RhdGUpDQogICAgICAgICAgICAg
+ICAgcGluY3RybF9wbV9zZWxlY3RfZGVmYXVsdF9zdGF0ZShjaGlwLT5kZXYpOw0KICAgICAgICBl
+bHNlDQogICAgICAgICAgICAgICAgcGluY3RybF9wbV9zZWxlY3Rfc2xlZXBfc3RhdGUoY2hpcC0+
+ZGV2KTsNCn0NCg0KIg0KDQpZb3VycywNCkxpbnVzIFdhbGxlaWoNCi0tDQpUbyB1bnN1YnNjcmli
+ZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtZ3BpbyIg
+aW4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcgTW9y
+ZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5m
+by5odG1sDQo=
