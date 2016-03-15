@@ -1,52 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 8/8] drivers/pinctrl: clean up samsung modular vs.
- non-modular distinctions
-Date: Tue, 15 Mar 2016 09:50:43 +0100
-Message-ID: <CACRpkdYN_qRUa_hscDma_jRAF=2K7_qaGM+f5DNr-NyA3g_NHg@mail.gmail.com>
-References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
-	<1456778924-20730-9-git-send-email-paul.gortmaker@windriver.com>
+Subject: Re: [PATCH v3] dt-bindings: GPIO: Add generic serializer binding
+Date: Tue, 15 Mar 2016 09:55:54 +0100
+Message-ID: <CACRpkdZ8RyMMsTJvUDFk3KPFE_=4pnXWs1O_XjQE+dR+ibWMuQ@mail.gmail.com>
+References: <1457117924-7014-1-git-send-email-afd@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1456778924-20730-9-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:35693 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964989AbcCOIzz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Mar 2016 04:55:55 -0400
+Received: by mail-ob0-f172.google.com with SMTP id fp4so10377919obb.2
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Mar 2016 01:55:54 -0700 (PDT)
+In-Reply-To: <1457117924-7014-1-git-send-email-afd@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Feb 29, 2016 at 9:48 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
+On Fri, Mar 4, 2016 at 7:58 PM, Andrew F. Davis <afd@ti.com> wrote:
 
-> Fixups here tend to be more all over the map vs. some of the other
-> repeated/systematic ones we've seen elsewhere.
+> Add binding for generic parallel-in/serial-out shift register devices
+> used as GPIO.
 >
-> We remove module.h from code that isn't doing anything modular at
-> all;  if they have __init sections, then replace it with init.h
->
-> A couple drivers have module_exit() code that is essentially orphaned,
-> and so we remove that.
->
-> There are no module_init replacements, so we have no concerns wrt.
-> initcall ordering changes as per some of the other cleanups.
->
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> was (or is now) contained at the top of the file in the comments.
->
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+> The driver was taken but it looks like this might have been lost,
+> anyway I've added a dual-string example as requested.
 
-This didn't make it in for v4.6 because noone provided ACKs.
+Ah I missed it, mea culpa.
 
-Please resend the outstanding (rebased) demodularization patches
-after v4.6-rc1 and I will merge them no matter if I get ACKs or not,
-I will not wait for ACKs any longer than that.
+Patch applied, I edited the ngpios text a bit to reflect that this
+signifies that you use 0..n-1 offsets.
 
 Yours,
 Linus Walleij
