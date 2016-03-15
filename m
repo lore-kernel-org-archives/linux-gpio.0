@@ -1,42 +1,98 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 00/50] pinctrl: Add and use devm_ apis for
- pinctrl_{register, unregister}
-Date: Tue, 15 Mar 2016 09:31:15 +0100
-Message-ID: <CACRpkdYQL0HUWuz882RRsSu5hLoS5VcVvpm1LeL1aeJkE_Y0tA@mail.gmail.com>
-References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
-	<CACRpkdZjv2KZ0AtC9oBytmSdS+=T+kC8PoJVt-RawE8Np8p40w@mail.gmail.com>
-	<56D307CC.2050202@nvidia.com>
-	<56E031CA.9010204@nvidia.com>
+Subject: Re: [PATCH 4/4] gpio: Add parsing of DT GPIO line-names
+Date: Tue, 15 Mar 2016 09:41:26 +0100
+Message-ID: <CACRpkdby+VUhZTwD9c3Q0t2BGqQYTbaypaM-L1WzXXrshNLbYw@mail.gmail.com>
+References: <1456214089-13954-1-git-send-email-mpa@pengutronix.de>
+	<1456214089-13954-4-git-send-email-mpa@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <56E031CA.9010204@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Jon Corbet <corbet@lwn.net>, Lee Jones <lee@kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, ARM/Mediatek SoC support <linux-mediatek@lists.infradead.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:36673 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964802AbcCOIl1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Mar 2016 04:41:27 -0400
+Received: by mail-ob0-f170.google.com with SMTP id m7so9947656obh.3
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Mar 2016 01:41:27 -0700 (PDT)
+In-Reply-To: <1456214089-13954-4-git-send-email-mpa@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Markus Pargmann <mpa@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Wed, Mar 9, 2016 at 3:23 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+On Tue, Feb 23, 2016 at 8:54 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
 
->> Pushed the change at:
->> Branch "devm_pinctrl_register" of
->> https://github.com/ldewangan/linux-upstream.git.
->>
->> Base repo is
->> for-next of
->> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
->>
->>
->> If required, I can send the V2 version of list with acks.
+> This patch reuses the DT bindings that are already in place for the
+> gpio-hogging mechanism. These bindings define line-name properties for
+> GPIOs inside the gpio-chip device node.
 >
-> Let me know if I need to send full series (V2 with collected ack) again or
-> fine to pull it from above location.
+> of_parse_own_gpio() now sets the gpio descriptor name using the newly
+> introduced gpiod_set_name(). It checks for name collisions within a GPIO
+> chip to avoid GPIOs with the same name that are exported over the same
+> GPIO character device.
+>
+> The GPIO flags that describe the GPIO state are not required anymore in
+> general but are checked if the gpio-hog property was found.
+>
+> This can be used to use the line names from the schematic. Example of lsgpio on
+> a modified i.MX6s Riotboard:
+>
+>         GPIO chip: gpiochip0, "209c000.gpio", 32 GPIO lines
+>                 line 0: unnamed unlabeled
+>                 line 1: unnamed unlabeled
+>                 line 2: SD2_WP "wp" [kernel output open-drain]
+>                 line 3: GPIO_3_CLK unlabeled
+>                 line 4: SD2_CD "cd" [kernel output open-drain]
+>                 ...
+>
+> The modified DT:
+>          &gpio1 {
+>                 sd2_wp {
+>                         gpios = <2 0>;
+>                         line-name = "SD2_WP";
+>                 };
+>
+>                 gpio_3_clk {
+>                         gpios = <3 0>;
+>                         line-name = "GPIO_3_CLK";
+>                 };
+>
+>                 sd2_cd {
+>                         gpios = <4 0>;
+>                         line-name = "SD2_CD";
+>                 };
+>         };
+>
+> Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
 
-Please collect the ACKs on your branch and ask me to pull it after v4.6-rc1.
-No need to resend the patches.
+I discussed the method for naming the GPIO lines with Rob Herring, Grant
+Likely and Arnd Bergmann in person last week.
 
-Unfortunately it arrived too late for the merge window, but hey: we got the
-devm gpiochip in for v4.6.
+Rob strongly prefers that we just assign the names to the indices using an
+array, like is done in the clock framework so we don't deviate from their
+pattern for clock-output-names:
+Documentation/devicetree/bindings/clock/clock-bindings.txt
+
+In our case I proposed that it be named gpio-line-names, so:
+
+gpio-line-names = "foo", "bar", "baz" ... ;
+
+It needs to be named gpio-line-names, since they are
+bidirectional so gpio-output-names would not work, also
+gpio-names = ... would be ambigous. So I suggest gpio-line-names.
+
+Further, there is a problem that I did not realize with reusing the
+hog names: the name specified in there is for the consumer side:
+so it will result in gpiod_get("name") and name the consumer
+side (label) of the GPIO. It is confusing if the same scheme is
+used to name the producer side: so let's leave hogs to be hogs:
+they are a kind of consumer nothing else.
+
+We also discussed initial values/set up. This is another issue
+and we didn't reach a conclusion on that.
+
+Anyways: we need a line naming patch, are you interested
+in hacking it up (keep DT bindings and code changed in the
+same file) or should I do it?
 
 Yours,
 Linus Walleij
