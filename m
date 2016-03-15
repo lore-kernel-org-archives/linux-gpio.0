@@ -1,63 +1,43 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 8/8] drivers/pinctrl: clean up samsung modular vs.
- non-modular distinctions
-Date: Tue, 15 Mar 2016 09:20:40 -0400
-Message-ID: <20160315132039.GE23251@windriver.com>
-References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
- <1456778924-20730-9-git-send-email-paul.gortmaker@windriver.com>
- <CACRpkdYN_qRUa_hscDma_jRAF=2K7_qaGM+f5DNr-NyA3g_NHg@mail.gmail.com>
+From: YesGrowth =?utf-8?Q?Loans=C2=AE?= <jog@kalstaronline.com>
+Subject: =?utf-8?Q?Hyv=C3=A4=C3=A4_p=C3=A4iv=C3=A4=C3=A4,?=
+Date: Tue, 15 Mar 2016 20:24:41 +0700 (WIT)
+Message-ID: <1383416352.196847.1458048281948.JavaMail.zimbra__14062.8573521555$1458048934$gmane$org@kalstaronline.com>
+Reply-To: YesGrowth =?utf-8?Q?Loans=C2=AE?= <yesgrowth1986@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYN_qRUa_hscDma_jRAF=2K7_qaGM+f5DNr-NyA3g_NHg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from [202.43.163.170] ([202.43.163.170]:35891 "EHLO
+	mail2.kalstaronline.com" rhost-flags-FAIL-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1750817AbcCONfV convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 15 Mar 2016 09:35:21 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-[Re: [PATCH 8/8] drivers/pinctrl: clean up samsung modular vs. non-modular distinctions] On 15/03/2016 (Tue 09:50) Linus Walleij wrote:
+Hyv=C3=A4=C3=A4 p=C3=A4iv=C3=A4=C3=A4,
 
-> On Mon, Feb 29, 2016 at 9:48 PM, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
-> 
-> > Fixups here tend to be more all over the map vs. some of the other
-> > repeated/systematic ones we've seen elsewhere.
-> >
-> > We remove module.h from code that isn't doing anything modular at
-> > all;  if they have __init sections, then replace it with init.h
-> >
-> > A couple drivers have module_exit() code that is essentially orphaned,
-> > and so we remove that.
-> >
-> > There are no module_init replacements, so we have no concerns wrt.
-> > initcall ordering changes as per some of the other cleanups.
-> >
-> > Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-> >
-> > We also delete the MODULE_LICENSE tag etc. since all that information
-> > was (or is now) contained at the top of the file in the comments.
-> >
-> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> > Cc: Thomas Abraham <thomas.ab@samsung.com>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Cc: linux-gpio@vger.kernel.org
-> > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> 
-> This didn't make it in for v4.6 because noone provided ACKs.
-> 
-> Please resend the outstanding (rebased) demodularization patches
-> after v4.6-rc1 and I will merge them no matter if I get ACKs or not,
-> I will not wait for ACKs any longer than that.
+ Olen rouva Rose Butler yksityinen luotonanto yritys tunnetaan YesGrowt=
+h
+ Loans=C2=AE. Tarjoamme kaikenlaisia lainan 3% korolla. Jos olet tarvit=
+sevat
+ lainaa yst=C3=A4v=C3=A4llisesti yhteytt=C3=A4 meihin alla tiedot.
 
-Sounds good, will do that in ~2 wks.
+ Koko nimi:
+ Sukupuoli:
+ Maa:
+ osoite:
+ Lainan m=C3=A4=C3=A4r=C3=A4:
+ Kesto:
+ Puh:
 
-Thanks,
-Paul.
+ Odotamme vastaustasi, jos olet kiinnostunut.
+
+ Kiitos,
+ Rouva Rose Butler
+yesgrowth1986@gmail.com
 --
-
-> 
-> Yours,
-> Linus Walleij
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
