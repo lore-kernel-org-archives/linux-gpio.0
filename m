@@ -1,49 +1,110 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: pinctrl: samsung: Add two new maintainers
-Date: Wed, 16 Mar 2016 22:17:14 +0900
-Message-ID: <CA+Ln22EaU+GB8f_Ab9P6Atehm4X7tzFy+dLd5FjSyF4Ck7NRUw@mail.gmail.com>
-References: <1458086521-11220-1-git-send-email-k.kozlowski@samsung.com>
-	<CACRpkdYckkZ1q_rfMDp8TOoEm5AnAmccpa+gm9d28wJbCLBkaQ@mail.gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 1/3] pinctrl: Intel: add RX invertion config
+Date: Wed, 16 Mar 2016 14:34:12 +0100
+Message-ID: <20160316133412.GN14170@phenom.ffwll.local>
+References: <1457715962-108484-1-git-send-email-qipeng.zha@intel.com>
+ <20160311093856.GN1796@lahna.fi.intel.com>
+ <0DD381DBF8F68D419C32ACFCEB28EB2521D1032C@SHSMSX101.ccr.corp.intel.com>
+ <20160314085002.GY1796@lahna.fi.intel.com>
+ <0DD381DBF8F68D419C32ACFCEB28EB2521D10643@SHSMSX101.ccr.corp.intel.com>
+ <CACRpkdbT9w+XXOUSuzGY+NUkxkKvoUK7KXMRi8R5TJK8Ytk+KQ@mail.gmail.com>
+ <0DD381DBF8F68D419C32ACFCEB28EB2521D10AC2@SHSMSX101.ccr.corp.intel.com>
+ <CACRpkdZ25kGPZ7SfeactfqY9PNrH4++v0V727Rbmh-NQCLuE4w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qg0-f52.google.com ([209.85.192.52]:36609 "EHLO
-	mail-qg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965820AbcCPNRQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Mar 2016 09:17:16 -0400
-In-Reply-To: <CACRpkdYckkZ1q_rfMDp8TOoEm5AnAmccpa+gm9d28wJbCLBkaQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZ25kGPZ7SfeactfqY9PNrH4++v0V727Rbmh-NQCLuE4w@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "Westerberg, Mika" <mika.westerberg@intel.com>, Hans Holmberg <hans.holmberg@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, DRI Development <dri-devel@lists.freedesktop.org>, "Zha,
+ Qipeng" <qipeng.zha@intel.com>, Daniel Vetter <daniel.vetter@intel.com>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, "Zheng,
+ Qi" <qi.zheng@intel.com>
+List-Id: linux-gpio@vger.kernel.org
 
-2016-03-16 22:09 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Wed, Mar 16, 2016 at 1:02 AM, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
->
->> Extend the list of maintainers for Samsung pinctrl driver with Sylwester
->> and Krzysztof.
->>
->> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Cc: Kukjin Kim <kgene@kernel.org>
->> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> ---
->> Tomasz Figa still has the time for this driver (and, as the most recent
->> author, he really knows what is inside!) but sometimes a faster
->> response could be reached from Samsung folks.
->
-> More maintainers are always good.
-> I just want an ACK of trust from Tomasz.
-
-Sorry for slacking off, I've been a bit desynchronized lately. :(
-
-Sure, let's do it. Actually I was convinced that we already added
-Sylwester to the list at the time I was leaving Samsung.
-
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Best regards,
-Tomasz
+T24gV2VkLCBNYXIgMTYsIDIwMTYgYXQgMDE6Mjc6NDlQTSArMDEwMCwgTGludXMgV2FsbGVpaiB3
+cm90ZToKPiAKPiBPbiBUdWUsIE1hciAxNSwgMjAxNiBhdCAzOjE3IEFNLCBaaGVuZywgUWkgPHFp
+LnpoZW5nQGludGVsLmNvbT4gd3JvdGU6Cj4gPj4gT24gTW9uLCBNYXIgMTQsIDIwMTYgYXQgOTo1
+NiBBTSwgWmhlbmcsIFFpIDxxaS56aGVuZ0BpbnRlbC5jb20+IHdyb3RlOgo+ID4KPiA+PiBUaGUg
+InBpMzMwNTMyIiBkZXZpY2Ugb24gQnJveHRvbiByZXF1aXJlcyB0aGlzIGZ1bmN0aW9uIHRvIG1h
+bnVhbGx5Cj4gPj4gdHJpZ2dlciBhbiBHUElPIGlucHV0IGludGVycnVwdC4KPiA+ICguLi4pCj4g
+Pj4gV2UgaGF2ZSBnb25lIHRocm91Z2ggdGhpcyByZXF1aXJlbWVudCBmcm9tIENIVCB0byBCWFQs
+IHRoZXJlIHdhcyBubwo+ID4+IG90aGVyIGJldHRlciB3YXkgdG8gc2ltdWxhdGUgdGhlIEdQSU8g
+aW50ZXJydXB0IGZvciB0aGUgdXNlIG9mIHRob3NlIGRldmljZXMuCj4gPgo+ID4+IEkgd2hhdCB5
+b3Ugd2FudCBpcyB0byB0cmlnZ2VyIElSUXMgb24gR1BJTyBsaW5lcyB1c2luZyBzb2Z0d2FyZSB3
+ZQo+ID4+IG5lZWQgdG8gYWRkIHRoYXQgdG8gdGhlIEdQSU9saWIgc3Vic3lzdGVtLCBzbyB0aGlz
+IHJlZ2lzdGVyIGdldHMgYWNjZXNzZWQKPiA+PiBmcm9tIHRoZSBHUElPIHNpZGUgb2YgdGhpbmdz
+LCBub3QgdGhyb3VnaCBwaW4gY29udHJvbCBJIHRoaW5rPwo+ID4KPiA+IFdlIGhhdmUgcGluY3Ry
+bCBjb250cm9sIG1hcCBsb2NhbGx5Lgo+ID4gVGhlIFJYIGludmVyc2lvbiBpcyBpbXBsZW1lbnRl
+ZCBieSBwaW5jdHJsIGNvbnRyb2wgY2FsbHMsIHBpbmN0cmxfcG1fc2VsZWN0X2RlZmF1bHRfc3Rh
+dGUKPiA+IGFuZCBwaW5jdHJsX3BtX3NlbGVjdF9zbGVlcF9zdGF0ZS4KPiA+Cj4gPj4gV2UgaGF2
+ZSBzbyBtYW55IGRpdmVyc2UgZnVuY3Rpb24gcG9pbnRlcnMgaW4gdGhlIGdwaW9jaGlwLCBzbyBh
+YmlsaXR5IHRvCj4gPj4gdHJpZ2dlci90ZXN0IElSUXMgZnJvbSBzb2Z0d2FyZSBpcyBjZXJ0YWlu
+bHkgbm90IGEgYnVyZGVuLgo+ID4KPiA+PiBJIGRvbid0IHVuZGVyc3RhbmQgdGhlIHJlYWwtd29y
+bGQgdXNlY2FzZSB0aG91Z2gsIHBsZWFzZSBleHBsYWluIHdoYXQga2luZCBvZiBwcm9ibGVtCj4g
+Pj4gdGhpcyBpcyB0cnlpbmcgdG8gb3ZlcmNvbWU/IFdoeSBkb2VzIHRoaXMgcGkzMzA1MzIgZHJp
+dmVyIG5lZWQgdG8gZG8gdGhhdCwgd2h5IGNhbgo+ID4+IGl0IG5vdCBqdXN0IGluZm9ybSB0aGUg
+ZHJpdmVyIHRoYXQgbmVlZHMgdGhpcyBpbnRlcnJ1cHQgdGhhdCBpdCBzaG91bGQgd2FrZSB1cCwg
+ZS5nIGJ5Cj4gPj4gdXNpbmcgYSBub3RpZmljYXRpb24gb3IganVzdCBhbiBvcGVuLWNvZGVkIGZ1
+bmN0aW9uIGNhbGwgb3Igd2hhdGV2ZXI/Cj4gPgo+ID4gQWNjb3JkaW5nIHRvIHRoZSBwaTMzMDUz
+MiBkcml2ZXIgb3duZXIsCj4gPiAiCj4gPiB3ZSBuZWVkZWQgdGhpcyBzdXBwb3J0IHRvIHNpbXVs
+YXRlIHRoZSBIUEQgaW50ZXJydXB0IGJlaGF2aW9yIGFzIHdlIGRvbuKAmXQgaGF2ZQo+ID4gZGVk
+aWNhdGVkIGludGVycnVwdCBsaW5lIGZvciBUeXBlLUMgRFAgSFBELgo+IAo+IC0gV2hhdCBpcyBh
+IEhQRCBpbnRlcnJ1cHQ/Cgpob3RwbHVnIGludGVycnVwdCwgZmlyZXMgd2hlbiB5b3UgcGx1ZyBp
+biBhIGNhYmxlLgoKPiAtIFdoYXQgaXMgYSBUeXBlLUMgRFAgSFBEPwoKdXNiIHR5cGUgQyBjb25u
+ZWN0b3IgY2FuIG11bHRpcGxleCBib3RoIERpc3BsYXlQb3J0IGFuZCBVU0IsIHlvdSBuZWVkIHRv
+CnJlbmVnb3RpYXRlIHRoZSBsYW5lIHNwbGl0dGluZyBldmVyeSB0aW1lIHRoZSBzaW5rIGNoYW5n
+ZXMsIGkuZS4gb24gZWFjaApob3RwbHVnLgoKPiAtIEFnYWluIHdoeSBjYW4ndCB5b3UganVzdCB1
+c2UgYSBub3RpZmllciBvciBmdW5jdGlvbiBjYWxsPwoKQmVjYXVzZSB3aW5kb3dzIHN1Y2tzLCBo
+ZW5jZSBhbGwgdGhhdCBjb29yZGluYXRpb24gaGFwcGVucyB0aHJvdWdoIGh3CmZvcndhcmRlZCBp
+bnRlcnJ1cHRzIGFuZCBtYWdpYyByZWdpc3RlcnMuIFNhbWUgaG9ycm9yIHN0b3J5IG9uIHRoZSBz
+b3VuZApzaWRlLCB3aGVyZSB0aGUgc291bmQgZHJpdmVyIG5lZWRzIHRvIGtub3cgd2hhdCBraW5k
+IG9mIFBDTSBzdHJlYW0gdGhlCm1vbml0b3IgY2FuIHRha2UuIEl0J3MgaGlsYXJpb3VzLiBFeGNl
+cHQgd2hlbiB0aGV5IHNjcmV3IHVwIHRoZSBkZXNpZ24gYW5kCnRoZW4gbmVlZCB0byBmYWtlIHBh
+cnRzIG9mIGl0IGluIHNvZnR3YXJlLgoKSW4gc291bmQgd2UndmUgc3dpdGNoZWQgb3ZlciB0byBh
+IHByb3BlciBzdyBpbnRlcmZhY2UsIGFuZCB3ZSB0aWUgdGhlCmRpZmZlcmVudCBwYXJ0cyAoZHJt
+IGdyYXBoaWNzIGRyaXZlciBhbmQgYWxzYSBzbmQgZHJpdmVyKSB1c2luZyB0aGUKY29tcG9uZW50
+LmMgZnJhbWV3b3JrLgoKPiA+IFdlIGRvbuKAmXQgaGF2ZSBhbnkgbm90aWZpY2F0aW9ucyBtZWNo
+YXNpc20gYi93IFVTQiBhbmQgZGlzcGxheS9HZnggc3RhY2sgYW5kCj4gPiBhbHNvIG5vdCB0aGUg
+aWRlYWwgd2F5IHRvIGhhbmRsZS4gIEhQRCB0b2dnbGluZyBpcyB0aGUgcHJlZmVycmVkIGFwcHJv
+YWNoIHN1Z2dlc3RlZAo+ID4gYnkgVlBHIGFuZCBIVyB0ZWFtcyB0byBtZWV0IHRpbWluZyByZXF1
+aXJlbWVudHMgYWxzby4KPiAKPiBXaGF0IGlzIFZQRz8gTm93IGl0IHNlZW1zIEludGVsJ3MgaW50
+ZXJuYWwgb3JnYW5pemF0aW9uIGlzIGJlaW5nIHVzZWQgYXMKPiBwYXJ0IG9mIHRoZSBhcmd1bWVu
+dCB0byBnZXQgdGhpcyBjaGFuZ2UgaW4gYW5kIHRoYXQgbWFrZXMgbWUgYSBiaXQKPiBhbm5veWVk
+Lgo+IAo+IElmIHRoZXJlIGlzIG5vIGdvb2Qgbm90aWZpY2F0aW9uIG1lY2hhbmlzbSB0aGVuIGlt
+cGxlbWVudCBvbmUgaW5zdGVhZAo+IG9mIHN0YXJ0aW5nIHRvIHNvZnR3YXJlLWdlbmVyYXRlIGhh
+cmR3YXJlIGludGVycnVwdHMuCj4gCj4gSSBhbHNvIHN0YXJ0IHRvIGdldCB0aGUgZmVlbGluZyB0
+aGF0IHRoZXNlIFVTQiBhbmQgZGlzcGxheSBzdGFja3MKPiB5b3UgYXJlIHJlZmVycmluZyB0byBh
+cmUgbm90IHRoZSB1cHN0cmVhbSB2ZXJzaW9ucy4KClRoZXJlIHdhcyBjaGF0IG9mIHVzYiB0eXBl
+IEMgc3VwcG9ydCBmb3IgZm9yZXZlciwgYnV0IEkgd2FzIGFsd2F5cwpwcm9taXNlZCB0aGF0IHdl
+IGRvbid0IG5lZWQgYW55IGludGVyYWN0aW9ucyBvbiB0aGUgc3cgc2lkZSBhbmQgaXQncyBhbGwK
+bWFnaWMgaW4gaHcuIFRoZXJlIGhhc24ndCBiZWVuIGFueSByZWFsIGRlc2lnbiBkaXNjdXNzaW9u
+cyBpbiB0aGUgb3Blbgpzb3VyY2UgZ3JvdXAuIFZQRyBpcyB0aGUgaHcvd2luZG93cyBncm91cCBh
+bmQgZ2VuZXJhbGx5IGNvbWVzIHVwIHdpdGgKImludGVyZXN0aW5nIiBkZXNpZ25zIG5vdCBzdWl0
+YWJsZSBmb3IgdXBzdHJlYW0uCgpGZWVsIGZyZWUgdG8ganVzdCBuYWNrIHRoaXMgc3R1ZmYsIGFu
+ZCBwbGVhc2UgY2MgaW50ZWwtZ2Z4L2RyaS1kZXZlbCBpbgp0aGUgZnV0dXJlIChzaW5jZSBJIHRl
+bmQgdG8gaWdub3JlIGV2ZXJ5dGhpbmcgdGhhdCdzIG5vdCBjYydlZCB0byBtYWlsaW5nCmxpc3Rz
+IEkgZG9uJ3QgY2FyZSBhYm91dCwgZXZlbiB3aGVuIEknbSBvbiBjYyBwZXJzb25hbGx5KS4gSSd2
+ZSBhZGRlZCB0aGVtCmFsbCB0byBjYy4KCkNoZWVycywgRGFuaWVsCgoKPiA+IHN0YXRpYyB2b2lk
+IGhwZF90cmlnZ2VyKHN0cnVjdCBwaTN1c2IzMDUzMl9tdXggKmNoaXAsIGludCBzdGF0ZSkKPiA+
+IHsKPiA+ICAgICAgICAgZGV2X2luZm8oJmNoaXAtPmNsaWVudC0+ZGV2LCAiW0hQRCB0cmlnZ2Vy
+XSBzdGF0ZSA6ICVkXG4iLCBzdGF0ZSk7Cj4gPgo+ID4gICAgICAgICBpZiAoc3RhdGUpCj4gPiAg
+ICAgICAgICAgICAgICAgcGluY3RybF9wbV9zZWxlY3RfZGVmYXVsdF9zdGF0ZShjaGlwLT5kZXYp
+Owo+ID4gICAgICAgICBlbHNlCj4gPiAgICAgICAgICAgICAgICAgcGluY3RybF9wbV9zZWxlY3Rf
+c2xlZXBfc3RhdGUoY2hpcC0+ZGV2KTsKPiA+IH0KPiAKPiBDYW4gd2UgZ2V0IHRoZSAqVEVDSE5J
+Q0FMKiBleHBsYW5hdGlvbiBvZiB3aHkgdGhpcyB0aGluZyBuZWVkcwo+IHRvIGJlIGRvbmUgaW5z
+dGVhZCBvZiB1c2luZyBhIG5vdGlmaWVyIG9yIGZ1bmN0aW9uIGNhbGw/Cj4gCj4gWW91cnMsCj4g
+TGludXMgV2FsbGVpagoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVs
+IENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
