@@ -1,14 +1,14 @@
 From: YD Tseng <ltyu101@gmail.com>
 Subject: Re: [PATCH RFT] gpio: amdpt: Convert to use gpio-generic
-Date: Wed, 16 Mar 2016 15:34:16 +0800
-Message-ID: <1458113656-4459-1-git-send-email-Yd_Tseng@asmedia.com.tw>
+Date: Wed, 16 Mar 2016 16:12:55 +0800
+Message-ID: <1458115975-5485-1-git-send-email-yd_tseng@asmedia.com.tw>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:36844 "EHLO
-	mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932370AbcCPHgK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Mar 2016 03:36:10 -0400
-Received: by mail-pf0-f195.google.com with SMTP id q129so5787360pfb.3
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Mar 2016 00:36:10 -0700 (PDT)
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:33579 "EHLO
+	mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966366AbcCPIO6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Mar 2016 04:14:58 -0400
+Received: by mail-pf0-f196.google.com with SMTP id x3so5880710pfb.0
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Mar 2016 01:14:57 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linus.walleij@linaro.org, axel.lin@ingics.com, varkab@cdac.in, pramod.gurav@smartplayin.com, dbaryshkov@gmail.com, Ken.Xue@amd.com
