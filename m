@@ -1,87 +1,56 @@
-From: Qipeng Zha <qipeng.zha@intel.com>
-Subject: [PATCH v2 2/2] pinctrl:Intel: implement gpio_irq_enable
-Date: Thu, 17 Mar 2016 02:15:26 +0800
-Message-ID: <1458152126-2333-2-git-send-email-qipeng.zha@intel.com>
-References: <1458152126-2333-1-git-send-email-qipeng.zha@intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:19657 "EHLO mga04.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S966035AbcCPKKN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 16 Mar 2016 06:10:13 -0400
-In-Reply-To: <1458152126-2333-1-git-send-email-qipeng.zha@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [linux-sunxi] Re: [PATCH 0/4] Add AXP209 GPIO driver
+Date: Wed, 16 Mar 2016 11:10:21 +0100
+Message-ID: <CACRpkdZUJsqCG=dd9XdwxaAHxEHXgrZncH+DqtPYta4a30v87w@mail.gmail.com>
+References: <1457520614-32239-1-git-send-email-maxime.ripard@free-electrons.com>
+	<56E0146E.6050102@redhat.com>
+	<20160309152822.GQ8418@lukather>
+	<56E044C1.7080300@redhat.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56E044C1.7080300-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, mika.westerberg@intel.com, Qi Zheng <qi.zheng@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-From: Qi Zheng <qi.zheng@intel.com>
+On Wed, Mar 9, 2016 at 4:44 PM, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org> wrote:
+>> On Wed, Mar 09, 2016 at 01:17:50PM +0100, Hans de Goede wrote:
 
-There is unexpected gpio interrupt after irq_enable. If not
-implemeted gpio_irq_enable callback, irq_enable calls irq_unmask
-instead. But if there was interrupt set before the irq_enable,
-unmask it may trigger the unexpected interrupt. By implementing
-the gpio_irq_enable callback, do interrupt status ack, the issue
-has gone.
+>> Eventually, yes, it needs both. But they don't even have to be the
+>> same driver, since they provide two different features. The only
+>> reason we have that construct in the pio case is because they share
+>> the same address space, but in the AXP case, the regmap and our mfd
+>> take care of that already.
+>
+> Hmm, so your suggesting to have mfd instantiate 2 platform devices
+> for this, a gpio and a pinctrl device, each with their own
+> driver. Yes that would work, but I'm a bit worried about the 2
+> racing or some such since they both will end up touching
+> bit 0-2 of register 0x90 / 0x92, more-over since they are both
+> touching the exact same bits I've the feeling that this really
+> should be one driver.
 
-Signed-off-by: Qi Zheng <qi.zheng@intel.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
+We can put the driver in drivers/pinctrl/pinctrl-axp209.c from day
+one, add in comments stating that it only implements GPIO
+for now and that the GPIO portion must call
+pinctrl_request_gpio() and the pin controller must implement
+.gpio_request_enable() the day it is added so the GPIOs do
+not conflict with other use of the pins.
 
----
-change in v2:
- remove one blank line.
----
- drivers/pinctrl/intel/pinctrl-intel.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Requireing a huge slew of upfront code is a bit hard on simple
+drivers I think.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index c216cb3..6c2c816f 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -665,6 +665,35 @@ static void intel_gpio_irq_ack(struct irq_data *d)
- 	spin_unlock(&pctrl->lock);
- }
- 
-+static void intel_gpio_irq_enable(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
-+	const struct intel_community *community;
-+	unsigned pin = irqd_to_hwirq(d);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&pctrl->lock, flags);
-+
-+	community = intel_get_community(pctrl, pin);
-+	if (community) {
-+		unsigned padno = pin_to_padno(community, pin);
-+		unsigned gpp_size = community->gpp_size;
-+		unsigned gpp_offset = padno % gpp_size;
-+		unsigned gpp = padno / gpp_size;
-+		u32 value;
-+
-+		/* Clear interrupt status first to avoid unexpected interrupt */
-+		writel(BIT(gpp_offset), community->regs + GPI_IS + gpp * 4);
-+
-+		value = readl(community->regs + community->ie_offset + gpp * 4);
-+		value |= BIT(gpp_offset);
-+		writel(value, community->regs + community->ie_offset + gpp * 4);
-+	}
-+
-+	spin_unlock_irqrestore(&pctrl->lock, flags);
-+}
-+
- static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-@@ -853,6 +882,7 @@ static irqreturn_t intel_gpio_irq(int irq, void *data)
- 
- static struct irq_chip intel_gpio_irqchip = {
- 	.name = "intel-gpio",
-+	.irq_enable = intel_gpio_irq_enable,
- 	.irq_ack = intel_gpio_irq_ack,
- 	.irq_mask = intel_gpio_irq_mask,
- 	.irq_unmask = intel_gpio_irq_unmask,
--- 
-1.8.3.2
+Also we have the solution in drivers/mfd/stmpe.c that just add
+a simple mux code when pins on mixsigs or simple expanders
+can just mux some two-three different functions, then I think
+pin control may be a bit too thick overhead. (Not sure where
+the limit is though.)
 
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
