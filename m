@@ -1,96 +1,39 @@
-From: Mika Westerberg <mika.westerberg@intel.com>
-Subject: Re: [PATCH 2/2] pinctrl:Intel: implement gpio_irq_enable
-Date: Wed, 16 Mar 2016 12:03:12 +0200
-Message-ID: <20160316100312.GD1793@lahna.fi.intel.com>
-References: <1458120064-74635-1-git-send-email-qipeng.zha@intel.com>
- <1458120064-74635-2-git-send-email-qipeng.zha@intel.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/4] mfd: axp20x: Add AXP209 GPIO driver to
+ the mfd
+Date: Wed, 16 Mar 2016 11:03:55 +0100
+Message-ID: <CACRpkdY4p6n-B58TUdaqkcDP0s0aAf8OCR08F3prA00C5M3Nyw@mail.gmail.com>
+References: <1457520614-32239-1-git-send-email-maxime.ripard@free-electrons.com>
+	<1457520614-32239-3-git-send-email-maxime.ripard@free-electrons.com>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:26453 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934448AbcCPKDS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 16 Mar 2016 06:03:18 -0400
-Content-Disposition: inline
-In-Reply-To: <1458120064-74635-2-git-send-email-qipeng.zha@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBC67US3QKGQET7RVTWQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <1457520614-32239-3-git-send-email-maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Qipeng Zha <qipeng.zha@intel.com>
-Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, Qi Zheng <qi.zheng@intel.com>
 
-On Wed, Mar 16, 2016 at 05:21:04PM +0800, Qipeng Zha wrote:
-> From: Qi Zheng <qi.zheng@intel.com>
-> 
-> There is unexpected gpio interrupt after irq_enable. If not
-> implemeted gpio_irq_enable callback, irq_enable calls irq_unmask
-> instead. But if there was interrupt set before the irq_enable,
-> unmask it may trigger the unexpected interrupt. By implementing
-> the gpio_irq_enable callback, do interrupt status ack, the issue
-> has gone.
-> 
-> Signed-off-by: Qi Zheng <qi.zheng@intel.com>
-> Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-intel.c | 31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-> index c216cb3..768118d 100644
-> --- a/drivers/pinctrl/intel/pinctrl-intel.c
-> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-> @@ -665,6 +665,36 @@ static void intel_gpio_irq_ack(struct irq_data *d)
->  	spin_unlock(&pctrl->lock);
->  }
->  
-> +static void intel_gpio_irq_enable(struct irq_data *d)
-> +{
-> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> +	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
-> +	const struct intel_community *community;
-> +	unsigned pin = irqd_to_hwirq(d);
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&pctrl->lock, flags);
-> +
-> +	community = intel_get_community(pctrl, pin);
-> +	if (community) {
-> +		unsigned padno = pin_to_padno(community, pin);
-> +		unsigned gpp_size = community->gpp_size;
-> +		unsigned gpp_offset = padno % gpp_size;
-> +		unsigned gpp = padno / gpp_size;
-> +		u32 value;
-> +
-> +		/* Clear interrupt status first to avoid unexpected interrupt */
-> +		writel(BIT(gpp_offset), community->regs + GPI_IS + gpp * 4);
-> +
-> +		value = readl(community->regs + community->ie_offset + gpp * 4);
-> +		value |= BIT(gpp_offset);
-> +		writel(value, community->regs + community->ie_offset + gpp * 4);
-> +	}
-> +
-> +	spin_unlock_irqrestore(&pctrl->lock, flags);
-> +}
-> +
-> +
+On Wed, Mar 9, 2016 at 11:50 AM, Maxime Ripard
+<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
 
-Please remove the second blank line here.
+> Now that we have a GPIO driver for the AXP209, we can add it to our MFD.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+(...)
+> +               .name           = "axp20x-gpio",
+> +               .of_compatible  = "x-powers,axp209-gpio",
 
-Then you can add my
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Professor X must be behind this X-powers X men.
 
-(as I think this code was based on my original code).
-
->  static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
->  {
->  	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> @@ -853,6 +883,7 @@ static irqreturn_t intel_gpio_irq(int irq, void *data)
->  
->  static struct irq_chip intel_gpio_irqchip = {
->  	.name = "intel-gpio",
-> +	.irq_enable = intel_gpio_irq_enable,
->  	.irq_ack = intel_gpio_irq_ack,
->  	.irq_mask = intel_gpio_irq_mask,
->  	.irq_unmask = intel_gpio_irq_unmask,
-> -- 
-> 1.8.3.2
+Yours,
+Linus Walleij
