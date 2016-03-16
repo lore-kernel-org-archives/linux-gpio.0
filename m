@@ -1,33 +1,43 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 3/4] ARM: dt: axp209: Add AXP209 GPIO driver
-Date: Wed, 16 Mar 2016 11:04:35 +0100
-Message-ID: <CACRpkdbyJ=82TxF=vzOCMHe1Xvvv1AkH_V49jB45ju=irgkDog@mail.gmail.com>
-References: <1457520614-32239-1-git-send-email-maxime.ripard@free-electrons.com>
-	<1457520614-32239-4-git-send-email-maxime.ripard@free-electrons.com>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBNG7US3QKGQETJBRQHI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <1457520614-32239-4-git-send-email-maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+From: Qipeng Zha <qipeng.zha@intel.com>
+Subject: [PATCH v2 1/2] pinctrl:Intel: make the high level interrupt working
+Date: Thu, 17 Mar 2016 02:15:25 +0800
+Message-ID: <1458152126-2333-1-git-send-email-qipeng.zha@intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga04.intel.com ([192.55.52.120]:19657 "EHLO mga04.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S964778AbcCPKKM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 16 Mar 2016 06:10:12 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, mika.westerberg@intel.com, Qi Zheng <qi.zheng@intel.com>
 
-On Wed, Mar 9, 2016 at 11:50 AM, Maxime Ripard
-<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+High level trigger mode of GPIO interrupt is not set correctly
+in intel_gpio_irq_type(), and will make this kind of interrupt
+not respond.
 
-> Add the AXP209 GPIO node to our AXP209 DTSI so that boards can use it.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Signed-off-by: Qi Zheng <qi.zheng@intel.com>
+Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-intel.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 85536b4..c216cb3 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -741,8 +741,9 @@ static int intel_gpio_irq_type(struct irq_data *d, unsigned type)
+ 		value |= PADCFG0_RXINV;
+ 	} else if (type & IRQ_TYPE_EDGE_RISING) {
+ 		value |= PADCFG0_RXEVCFG_EDGE << PADCFG0_RXEVCFG_SHIFT;
+-	} else if (type & IRQ_TYPE_LEVEL_LOW) {
+-		value |= PADCFG0_RXINV;
++	} else if (type & IRQ_TYPE_LEVEL_MASK) {
++		if (type & IRQ_TYPE_LEVEL_LOW)
++			value |= PADCFG0_RXINV;
+ 	} else {
+ 		value |= PADCFG0_RXEVCFG_DISABLED << PADCFG0_RXEVCFG_SHIFT;
+ 	}
+-- 
+1.8.3.2
 
-Yours,
-Linus Walleij
