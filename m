@@ -1,83 +1,55 @@
-From: Qipeng Zha <qipeng.zha@intel.com>
-Subject: [PATCH 2/2] pinctrl:Intel: implement gpio_irq_enable
-Date: Wed, 16 Mar 2016 17:21:04 +0800
-Message-ID: <1458120064-74635-2-git-send-email-qipeng.zha@intel.com>
-References: <1458120064-74635-1-git-send-email-qipeng.zha@intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:11576 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754869AbcCPBPw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 15 Mar 2016 21:15:52 -0400
-In-Reply-To: <1458120064-74635-1-git-send-email-qipeng.zha@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: "Xue, Ken" <Ken.Xue@amd.com>
+Subject: RE: [PATCH] pinctrl: amd:Add device HID for future AMD GPIO
+ controller
+Date: Wed, 16 Mar 2016 05:10:55 +0000
+Message-ID: <DM2PR12MB0201D5583811701257DF34DBFB8A0@DM2PR12MB0201.namprd12.prod.outlook.com>
+References: <1457665122-16365-1-git-send-email-annie.wang@amd.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1457665122-16365-1-git-send-email-annie.wang@amd.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "Wang, Annie" <Annie.Wang@amd.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, SPG_Linux_Kernel <SPG_Linux_Kernel@amd.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, mika.westerberg@intel.com, Qi Zheng <qi.zheng@intel.com>
 
-From: Qi Zheng <qi.zheng@intel.com>
+> From: Wang Hongcheng [mailto:annie.wang@amd.com]
+> Sent: Friday, March 11, 2016 10:59 AM
+> To: Linus Walleij; linux-gpio@vger.kernel.org; linux-kernel@vger.kernel.org;
+> SPG_Linux_Kernel
+> Cc: Wang, Annie
+> Subject: [PATCH] pinctrl: amd:Add device HID for future AMD GPIO controller
+> 
+> Add device HID AMDI0030 to match the AMD ACPI Vendor ID (AMDI) as
+> registered in http://www.uefi.org/acpi_id_list, and the GPIO controller on
+> future AMD paltform will use the HID instead of AMD0030.
+> 
+> Signed-off-by: Wang Hongcheng <annie.wang@amd.com>
+> ---
 
-There is unexpected gpio interrupt after irq_enable. If not
-implemeted gpio_irq_enable callback, irq_enable calls irq_unmask
-instead. But if there was interrupt set before the irq_enable,
-unmask it may trigger the unexpected interrupt. By implementing
-the gpio_irq_enable callback, do interrupt status ack, the issue
-has gone.
+Acked-by: Ken Xue <ken.Xue@amd.com>
 
-Signed-off-by: Qi Zheng <qi.zheng@intel.com>
-Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
----
- drivers/pinctrl/intel/pinctrl-intel.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Hi Linus,
+Can you please help apply and queue this patch into V4.6?
+Thanks.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index c216cb3..768118d 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -665,6 +665,36 @@ static void intel_gpio_irq_ack(struct irq_data *d)
- 	spin_unlock(&pctrl->lock);
- }
- 
-+static void intel_gpio_irq_enable(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
-+	const struct intel_community *community;
-+	unsigned pin = irqd_to_hwirq(d);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&pctrl->lock, flags);
-+
-+	community = intel_get_community(pctrl, pin);
-+	if (community) {
-+		unsigned padno = pin_to_padno(community, pin);
-+		unsigned gpp_size = community->gpp_size;
-+		unsigned gpp_offset = padno % gpp_size;
-+		unsigned gpp = padno / gpp_size;
-+		u32 value;
-+
-+		/* Clear interrupt status first to avoid unexpected interrupt */
-+		writel(BIT(gpp_offset), community->regs + GPI_IS + gpp * 4);
-+
-+		value = readl(community->regs + community->ie_offset + gpp * 4);
-+		value |= BIT(gpp_offset);
-+		writel(value, community->regs + community->ie_offset + gpp * 4);
-+	}
-+
-+	spin_unlock_irqrestore(&pctrl->lock, flags);
-+}
-+
-+
- static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-@@ -853,6 +883,7 @@ static irqreturn_t intel_gpio_irq(int irq, void *data)
- 
- static struct irq_chip intel_gpio_irqchip = {
- 	.name = "intel-gpio",
-+	.irq_enable = intel_gpio_irq_enable,
- 	.irq_ack = intel_gpio_irq_ack,
- 	.irq_mask = intel_gpio_irq_mask,
- 	.irq_unmask = intel_gpio_irq_unmask,
--- 
-1.8.3.2
-
+>  drivers/pinctrl/pinctrl-amd.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c index
+> 3318f1d..d7eb9ad 100644
+> --- a/drivers/pinctrl/pinctrl-amd.c
+> +++ b/drivers/pinctrl/pinctrl-amd.c
+> @@ -849,6 +849,7 @@ static int amd_gpio_remove(struct platform_device
+> *pdev)
+> 
+>  static const struct acpi_device_id amd_gpio_acpi_match[] = {
+>  	{ "AMD0030", 0 },
+> +	{ "AMDI0030", 0},
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(acpi, amd_gpio_acpi_match);
+> --
+> 1.9.1
