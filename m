@@ -1,32 +1,112 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio/ls1021a: Add gpio support for ls1021a platform
-Date: Wed, 16 Mar 2016 11:20:15 +0100
-Message-ID: <CACRpkdYxTeM=W8pWQC8iW+ovezpfxvTgLm=JSn5bGqp7AJZipg@mail.gmail.com>
-References: <1457600240-47141-1-git-send-email-Gang.Liu@nxp.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 0/4] Add AXP209 GPIO driver
+Date: Wed, 16 Mar 2016 11:38:51 +0100
+Message-ID: <56E937BB.5020706@redhat.com>
+References: <1457520614-32239-1-git-send-email-maxime.ripard@free-electrons.com>
+ <56E0146E.6050102@redhat.com> <20160309152822.GQ8418@lukather>
+ <56E044C1.7080300@redhat.com>
+ <CACRpkdZUJsqCG=dd9XdwxaAHxEHXgrZncH+DqtPYta4a30v87w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:35253 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966040AbcCPKUP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Mar 2016 06:20:15 -0400
-Received: by mail-oi0-f46.google.com with SMTP id c203so34760484oia.2
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Mar 2016 03:20:15 -0700 (PDT)
-In-Reply-To: <1457600240-47141-1-git-send-email-Gang.Liu@nxp.com>
+Received: from mx1.redhat.com ([209.132.183.28]:43815 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752537AbcCPKi7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 16 Mar 2016 06:38:59 -0400
+In-Reply-To: <CACRpkdZUJsqCG=dd9XdwxaAHxEHXgrZncH+DqtPYta4a30v87w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Liu Gang <Gang.Liu@nxp.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@linaro.org>, Rob Herring <robh+dt@kernel.org>, scott.wood@nxp.com, Leo.Li@nxp.com, mingkai.hu@nxp.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Alexandre Courbot <gnurou@gmail.com>, Lee Jones <lee.jones@linaro.org>, Chen-Yu Tsai <wens@csie.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
 
-On Thu, Mar 10, 2016 at 9:57 AM, Liu Gang <Gang.Liu@nxp.com> wrote:
+Hi,
 
-> Add gpio nodes for ls1021a platform dts file. The gpio
-> IP block of the ls1021a can be supported by the code
-> drivers/gpio/gpio-mpc8xxx.c.
+On 16-03-16 11:10, Linus Walleij wrote:
+> On Wed, Mar 9, 2016 at 4:44 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+>>> On Wed, Mar 09, 2016 at 01:17:50PM +0100, Hans de Goede wrote:
 >
-> Signed-off-by: Liu Gang <Gang.Liu@nxp.com>
+>>> Eventually, yes, it needs both. But they don't even have to be the
+>>> same driver, since they provide two different features. The only
+>>> reason we have that construct in the pio case is because they share
+>>> the same address space, but in the AXP case, the regmap and our mfd
+>>> take care of that already.
+>>
+>> Hmm, so your suggesting to have mfd instantiate 2 platform devices
+>> for this, a gpio and a pinctrl device, each with their own
+>> driver. Yes that would work, but I'm a bit worried about the 2
+>> racing or some such since they both will end up touching
+>> bit 0-2 of register 0x90 / 0x92, more-over since they are both
+>> touching the exact same bits I've the feeling that this really
+>> should be one driver.
+>
+> We can put the driver in drivers/pinctrl/pinctrl-axp209.c from day
+> one, add in comments stating that it only implements GPIO
+> for now and that the GPIO portion must call
+> pinctrl_request_gpio() and the pin controller must implement
+> .gpio_request_enable() the day it is added so the GPIOs do
+> not conflict with other use of the pins.
+>
+> Requireing a huge slew of upfront code is a bit hard on simple
+> drivers I think.
+>
+> Also we have the solution in drivers/mfd/stmpe.c that just add
+> a simple mux code when pins on mixsigs or simple expanders
+> can just mux some two-three different functions, then I think
+> pin control may be a bit too thick overhead. (Not sure where
+> the limit is though.)
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+I actually found out this weekend, that we already have
+a problem here. Regulator on/off is implemented as
+2 mux settings, just like gpio high/low/input are mux settings:
 
-Yours,
-Linus Walleij
+On the axp209 the gpio pin mux bit table looks like this:
+
+000: low output
+001: output (3.3V)
+010: universal input function
+011: low noise LDO5
+100: ADC input
+1XX: floating
+
+And on the axp221 / axp223:
+
+000: output low
+001: output high (3.3V)
+010: input
+011: LDOIO0 off
+100: LDOIO0 on
+1XX: floating
+
+Note the LDOIO0 off / LDOIO0 on being 2 different mux
+settings, and then existing axp20x regulator driver for
+LD05 / LDOIO0 actually already implements regulator on / off
+by changing the mux for both axp209 and axp22x.
+
+This results in the following potentially happening.
+
+0) kernel boots
+
+1) The gpio driver is in use for these pins, sets the pin
+to say output low
+
+2) kernel is ready to start init, calls the regulators
+subsys late_init call, which disables any unused regulators,
+this results in the mux getting set to 7 (axp209) resp
+4 (axp22x), and the gpio is no longer driven low as
+the intend of the driver using the pin was.
+
+So we really need either some coordination here, or a way
+to tell the regulator-driver to not register ldo5 / ldoio#
+at all, so that the regulator-core won't try to turn them
+off changing the mux.
+
+I've submitted a patch series this weekend which allows
+putting "status = disabled" in regulator child-dts-nodes, which
+will then result in not registering a regulator at all,
+which would fix that. But that series has not received any
+feedback yet...
+
+Regards,
+
+Hans
