@@ -1,36 +1,60 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: freescale: imx: fix bogus check of of_iomap()
- return value
-Date: Wed, 16 Mar 2016 13:57:09 +0100
-Message-ID: <CACRpkdbUgk1syexK1Z+XPUHW+Xfz8zviwiryzZj-ysRR=eRTdg@mail.gmail.com>
-References: <1457484336-8928-1-git-send-email-vz@mleia.com>
+Subject: Re: [PATCH 00/50] pinctrl: Add and use devm_ apis for
+ pinctrl_{register, unregister}
+Date: Wed, 16 Mar 2016 14:03:47 +0100
+Message-ID: <CACRpkdYr8BiVMEU8uvnrXzTLDEcAjrujgJPJVKXAq5E5P=HzFQ@mail.gmail.com>
+References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
+	<CACRpkdZjv2KZ0AtC9oBytmSdS+=T+kC8PoJVt-RawE8Np8p40w@mail.gmail.com>
+	<56D307CC.2050202@nvidia.com>
+	<56E031CA.9010204@nvidia.com>
+	<CACRpkdYQL0HUWuz882RRsSu5hLoS5VcVvpm1LeL1aeJkE_Y0tA@mail.gmail.com>
+	<56E80D3F.3090300@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:33135 "EHLO
-	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751099AbcCPM5K (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Mar 2016 08:57:10 -0400
-Received: by mail-ob0-f169.google.com with SMTP id fz5so49920102obc.0
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Mar 2016 05:57:09 -0700 (PDT)
-In-Reply-To: <1457484336-8928-1-git-send-email-vz@mleia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <56E80D3F.3090300@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Jon Corbet <corbet@lwn.net>, Lee Jones <lee@kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, ARM/Mediatek SoC support <linux-mediatek@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Adrian Alonso <aalonso@freescale.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Mar 9, 2016 at 1:45 AM, Vladimir Zapolskiy <vz@mleia.com> wrote:
-
-> On error path of_iomap() returns NULL, hence IS_ERR() check is invalid
-> and may cause a NULL pointer dereference, the change fixes this
-> problem.
+On Tue, Mar 15, 2016 at 2:25 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> On Tuesday 15 March 2016 02:01 PM, Linus Walleij wrote:
+>> On Wed, Mar 9, 2016 at 3:23 PM, Laxman Dewangan <ldewangan@nvidia.com>
+>> wrote:
+>>
+>>>> Pushed the change at:
+>>>> Branch "devm_pinctrl_register" of
+>>>> https://github.com/ldewangan/linux-upstream.git.
+>>>>
+>>>> Base repo is
+>>>> for-next of
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+>>>>
+>>>>
+>>>> If required, I can send the V2 version of list with acks.
+>>>
+>>> Let me know if I need to send full series (V2 with collected ack) again
+>>> or
+>>> fine to pull it from above location.
+>>
+>> Please collect the ACKs on your branch and ask me to pull it after
+>> v4.6-rc1.
+>> No need to resend the patches.
+>>
+>> Unfortunately it arrived too late for the merge window, but hey: we got
+>> the
+>> devm gpiochip in for v4.6.
 >
-> While we are here invert a device node check to simplify the code.
 >
-> Fixes: 26d8cde5260b ("pinctrl: freescale: imx: add shared input select reg support")
-> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+> Thanks for taking the GPIO patches.
+>
+> Ok, We will do pincontrol post v4.6 and probably, we will have some more
+> chnages for using devm_gpio in pincontrol subsystem  as these APIs will be
+> available  publicly.
 
-Patch applied with Shawn's ACK.
+Awesome, then we get double the reduction in most cases, this
+will look nice. Let's proceed like this.
 
 Yours,
 Linus Walleij
