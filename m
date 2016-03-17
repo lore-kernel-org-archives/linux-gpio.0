@@ -1,165 +1,65 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 12/18] dt-bindings: Add PLX Technology OXNAS pinctrl
- and gpio bindings
-Date: Thu, 17 Mar 2016 12:25:51 -0500
-Message-ID: <20160317172551.GA3922@rob-hp-laptop>
-References: <1457005210-18485-1-git-send-email-narmstrong@baylibre.com>
- <1457519060-6038-1-git-send-email-narmstrong@baylibre.com>
- <1457519060-6038-13-git-send-email-narmstrong@baylibre.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 4/5] gpio: of: Add support to have multiple gpios in gpio-hog
+Date: Thu, 17 Mar 2016 23:14:33 +0530
+Message-ID: <56EAED01.4070107@nvidia.com>
+References: <1457438528-29054-1-git-send-email-ldewangan@nvidia.com> <56E05AA9.8000503@wwwdotorg.org> <56E11D34.60401@nvidia.com> <2337414.ntEtcfKnX0@hermes> <56E16053.60802@nvidia.com> <20160317154656.GA9444@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:41212 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932675AbcCQRZ4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 17 Mar 2016 13:25:56 -0400
-Content-Disposition: inline
-In-Reply-To: <1457519060-6038-13-git-send-email-narmstrong@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160317154656.GA9444@rob-hp-laptop>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Markus Pargmann <mpa@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, linus.walleij@linaro.org, pawel.moll@arm.com, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, treding@nvidia.com, Benoit Parrot <bparrot@ti.com>, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-On Wed, Mar 09, 2016 at 11:24:14AM +0100, Neil Armstrong wrote:
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  .../devicetree/bindings/gpio/gpio_oxnas.txt        |  27 ++++++
->  .../bindings/pinctrl/plxtech,pinctrl.txt           | 100 +++++++++++++++++++++
->  2 files changed, 127 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/plxtech,pinctrl.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt b/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
-> new file mode 100644
-> index 0000000..cbb03c4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
-> @@ -0,0 +1,27 @@
-> +PLX Technology OXNAS SoC GPIO Controller
-> +==========================================
-> +
-> +Required properties:
-> +- compatible: "oxsemi,ox810se-gpio".
-> +- reg: Should contain GPIO controller registers location and length
-> +- interrupts: Should be the port interrupt shared by all the pins.
-> +- #gpio-cells: Should be two.  The first cell is the pin number and
-> +  the second cell is used to specify optional parameters (currently
-> +  unused).
-> +- gpio-controller: Marks the device node as a GPIO controller.
-> +
-> +optional properties:
-> +- #gpio-lines: Number of gpio if absent 32.
-> +
-> +
-> +Example:
-> +	gpio0: gpio@000000 {
 
-Drop the leading 0s.
+On Thursday 17 March 2016 09:16 PM, Rob Herring wrote:
+> On Thu, Mar 10, 2016 at 05:23:55PM +0530, Laxman Dewangan wrote:
+>>>> On this case, we have already property "line-name" and passed the name
+>>>> of the gpio via this property.
+>>>> The property names is "line-name" which is good for one string. We can
+>>>> support other property "line-names" with multiple string per GPIO index.
+>>>>
+>>>> line-names = "wlan-reset", "wlan-enable";
+> Then what happens when someone wants to selectively disable gpio hogs?
+>
+> status = "okay", "disabled", "okay";
+>
+> While I often push things to fewer nodes and more compact descriptions,
+> I don't think that is the right direction in this case.
 
-> +		compatible = "oxsemi,ox810se-gpio";
-> +		reg = <0x000000 0x100000>;
-> +		interrupts = <21>;
-> +		#gpio-cells = <2>;
-> +		gpio-controller;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +		#gpio-lines = <32>;
-> +	};
-> diff --git a/Documentation/devicetree/bindings/pinctrl/plxtech,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/plxtech,pinctrl.txt
-> new file mode 100644
-> index 0000000..0c5051a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/plxtech,pinctrl.txt
-> @@ -0,0 +1,100 @@
-> +PLX Technology OXNAS SoC Pinmux Controller
-> +==========================================
-> +
-> +The OXNAS Pinmux Controller, enables the IC to share one PAD to several
-> +functional blocks. The sharing is done by multiplexing the PAD input/output
-> +signals. For each PAD there are up to 8 muxing options (called periph modes).
-> +Since different modules require different PAD settings
-> +(like pull up, keeper, etc) the contoller controls also the PAD settings
-> +parameters.
-> +
-> +Please refer to pinctrl-bindings.txt in this directory for details of the
-> +common pinctrl bindings used by client devices, including the meaning of the
-> +phrase "pin configuration node".
-> +
-> +OXNAS pin configuration node is a node of a group of pins which can be
-> +used for a specific device or function. This node represents both mux and config
-> +of the pins in that group. The 'pins' selects the function mode(also named pin
-> +mode) this pin can work on and the 'config' configures various pad settings
-> +such as pull-up, multi drive, etc.
-> +
-> +Required properties for iomux controller:
-> +- compatible: "oxsemi,ox810se-pinctrl"
-> +- plxtech,mux-mask: array of mask (periph per bank) to describe if a pin can be
-> +  configured in this periph mode. All the periph and bank need to be describe.
-> +- plxtech,sys-ctrl: a phandle to the system controller syscon node
-> +
-> +How to create such array:
-> +
-> +Each column will represent the possible peripheral of the pinctrl
-> +Each line will represent a pio bank
-> +
-> +For example :
-> +Peripheral: 2 ( A and B)
-> +Bank: 2 (A, B and C)
-> +=>
-> +
-> +  /*    A         B     */
-> +  0xffffffff 0xffc00c3b  /* pioA */
-> +  0xffffffff 0x7fff3ccf  /* pioB */
-> +
-> +For each peripheral/bank we will descibe in a u32 if a pin can be
-> +configured in it by putting 1 to the pin bit (1 << pin)
-> +
-> +Required properties for pin configuration node:
-> +- plxtech,pins: 4 integers array, represents a group of pins mux and config
-> +  setting. The format is plxtech,pins = <PIN_BANK PIN_BANK_NUM PERIPH CONFIG>.
-> +  The PERIPH 0 means gpio, PERIPH 1 is periph A, PERIPH 2 is periph B...
-> +  PIN_BANK 0 is pioA, PIN_BANK 1 is pioB...
-> +
-> +Bits used for CONFIG:
-> + - None Yet
-> +
-> +Examples:
-> +
-> +pinctrl: pinctrl {
-> +	compatible = "oxsemi,ox810se-pinctrl", "simple-bus";
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +	ranges;
-> +
-> +	/* Regmap for sys registers */
-> +	plxtech,sys-ctrl = <&sys>;
-> +
-> +	/* Default, all-open mux-map */
-> +	plxtech,mux-mask = <
-> +		 0xFFFFFFFF 0xFFFFFFFF 0xFFFFFFFF 0xFFFFFFFF 0xFFFFFFFF
-> +		 0xFFFFFFFF 0xFFFFFFFF 0xFFFFFFFF 0xFFFFFFFF 0xFFFFFFFF
-> +		 >;
-> +
-> +	uart0 {
-> +		pinctrl_uart0: uart0 {
-> +			plxtech,pins = <0 31 3 0
-> +					0 32 3 0>;
-> +		};
-> +		pinctrl_uart0_modem: uart0_modem {
-> +			plxtech,pins = <0 27 3 0
-> +					0 28 3 0
-> +					0 29 3 0
-> +					0 30 3 0
-> +					0 33 3 0
-> +					0 34 3 0>;
-> +		};
-> +	};
-> +};
-> +
-> +uart0: uart@200000 {
+I dont think we need to support the individual gpio to be enable/disable 
+by status.
+We need to support the status property at node level only. if individual 
+gpio need to be enabled/disabled by status then it need to break in 
+different hog nodes.
 
-serial@200000
+This is same as like we have in pincontrol where we can provide the list 
+of pin names for some configuration under same node.
 
-With those changes:
 
-Acked-by: Rob Herring <robh@kernel.org>
+>>> There is currently a discussion about the future bindings for subnodes in GPIO
+>>> controller nodes. Please have a look at these two mail threads:
+>>>
+>>> 	"Device tree binding documentation for gpio-switch"
+>>> 	"gpio: of: Add support to have multiple gpios in gpio-hog"
+>> Second one is this patch only. Is it by intention?
+>>
+>> The binding details about the gpio-switch and names are given by property
+>> "lable". I think property "label" is standard way of going forward i.e. I
+>> post similar patch for gpio-keys device name from DT after got review
+>> comment.
+>>
+>> So here,  we can have the gpio names  under property "label" or "labels".
+> label is standard. labels you just made up.
+
+Yaah, lables for plural only. Otherwise no issue with "label".
+
+>
+>> Or am I missing anything?
+> The point is the more one off changes I see that are all inter-related,
+> the less willing I am to accept any that don't consider all the cases.
+> The inter-relationship here is how do we describe gpio lines that don't
+> otherwise have a connection to another node and how to deal with them if
+> that changes.
