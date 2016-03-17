@@ -1,37 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 10/17] pinctrl: Add PLX Technology OXNAS pinctrl and gpio driver
-Date: Thu, 17 Mar 2016 15:49:58 +0100
-Message-ID: <CACRpkdbWZDpM5ctNkU5cRasaATjkoa_zrg_-xgnTpbYRZK2pXw@mail.gmail.com>
-References: <1457005210-18485-1-git-send-email-narmstrong@baylibre.com>
-	<1457005210-18485-11-git-send-email-narmstrong@baylibre.com>
-	<CACRpkdby7XmbK2ZpwX3zy5J=yr1HRbmfWVab3K0ArcL6wd=oyA@mail.gmail.com>
-	<56E9750B.2000800@baylibre.com>
+Subject: Re: [PATCH v4 01/13] pinctrl: sunxi: Add A83T R_PIO controller
+Date: Thu, 17 Mar 2016 15:51:15 +0100
+Message-ID: <CACRpkdaFekCnRKoYQ=Fq1LT0FcH7RobwkLi_G1YfXJAb=4RTHQ@mail.gmail.com>
+References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+	<1458144276-31108-2-git-send-email-vishnupatekar0510@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:36705 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753304AbcCQOt7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Mar 2016 10:49:59 -0400
-Received: by mail-ob0-f180.google.com with SMTP id m7so85782201obh.3
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Mar 2016 07:49:58 -0700 (PDT)
-In-Reply-To: <56E9750B.2000800@baylibre.com>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:34304 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030294AbcCQOvQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Mar 2016 10:51:16 -0400
+Received: by mail-oi0-f49.google.com with SMTP id m82so65373862oif.1
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Mar 2016 07:51:16 -0700 (PDT)
+In-Reply-To: <1458144276-31108-2-git-send-email-vishnupatekar0510@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ma Haijun <mahaijuns@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>, Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>R
 
-On Wed, Mar 16, 2016 at 4:00 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Wed, Mar 16, 2016 at 5:04 PM, Vishnu Patekar
+<vishnupatekar0510@gmail.com> wrote:
 
-> I think I'll reboot over a clean base, could you give a reference driver I should follow ?
-> It's a very simple HW, it should be easy.
+> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
+> interrupt bit is 6th and A83T has one extra pin PL12.
+>
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-I would look at those merged lately, which has pin control
-combined with GPIO and interrupts.
-
-drivers/pinctrl/qcom is good but supports quite a lot of
-subvariants so it may be hard to see what parts you really
-need. But I think of those as a very nice drivers.
+I think I already merged this?
 
 Yours,
 Linus Walleij
