@@ -1,129 +1,161 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFD] Sharing GPIOs for input (buttons) and output (LEDs)
-Date: Thu, 17 Mar 2016 11:18:28 +0100
-Message-ID: <CACRpkdb1J+-_9szuv6xWhrD7+NFeCjug+cqaYsHDYyLUYbLw1w@mail.gmail.com>
-References: <CAMuHMdWbpj=ZnFqh1uWZSCojvrM+NB=Bbzw=UebodTr+vAKy7g@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v4 02/13] clk: sunxi: add ahb1 clock for A83T
+Date: Thu, 17 Mar 2016 11:40:42 +0100
+Message-ID: <20160317104042.GK30977@lukather>
+References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1458144276-31108-3-git-send-email-vishnupatekar0510@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nWEzmRaGLXxZdI3i"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:33720 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935533AbcCQKS3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Mar 2016 06:18:29 -0400
-Received: by mail-ob0-f179.google.com with SMTP id fz5so79108224obc.0
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Mar 2016 03:18:29 -0700 (PDT)
-In-Reply-To: <CAMuHMdWbpj=ZnFqh1uWZSCojvrM+NB=Bbzw=UebodTr+vAKy7g@mail.gmail.com>
+Received: from down.free-electrons.com ([37.187.137.238]:43830 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754807AbcCQKkp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Mar 2016 06:40:45 -0400
+Content-Disposition: inline
+In-Reply-To: <1458144276-31108-3-git-send-email-vishnupatekar0510@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-renesas-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: robh+dt@kernel.org, corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, emilio@elopez.com.ar, jenskuske@gmail.com, hdegoede@redhat.com, wens@csie.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, mturquette@baylibre.com, sboyd@codeaurora.org, patchesrdh@mveas.com, linux-clk@vger.kernel.org
 
-On Mon, Feb 22, 2016 at 1:14 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
 
-> On the Renesas Salvator-X development board, 3 GPIO pins are connected to both
-> push buttons and LEDs.
->   - If the GPIO is configured for output, it can control the LED,
->   - If the GPIO is configured for input, the push button status can be
->     read. Note that the LED is on if the push button is not pressed; it is
->     turned off while holding the button.
+--nWEzmRaGLXxZdI3i
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Have you asked the hardware engineer who did this construction
-what s/he was thinking? And I mean seriously: what was the
-usecase? Did they really design the LEDs to be used to flicker
-with or just as an indication as to whether the button was being
-pushed or not?
+On Thu, Mar 17, 2016 at 12:04:25AM +0800, Vishnu Patekar wrote:
+> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
+> clock index 0b1x is PLL6.
+>=20
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
+>  drivers/clk/sunxi/clk-sunxi.c                     | 76 +++++++++++++++++=
+++++++
+>  2 files changed, 77 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Document=
+ation/devicetree/bindings/clock/sunxi.txt
+> index 834436f..cba9fe55 100644
+> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
+> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
+> @@ -30,6 +30,7 @@ Required properties:
+>  	"allwinner,sun6i-a31-ar100-clk" - for the AR100 on A31
+>  	"allwinner,sun9i-a80-cpus-clk" - for the CPUS on A80
+>  	"allwinner,sun6i-a31-ahb1-clk" - for the AHB1 clock on A31
+> +	"allwinner,sun8i-a83t-ahb1-clk" - for the AHB1 clock on A83T
+>  	"allwinner,sun8i-h3-ahb2-clk" - for the AHB2 clock on H3
+>  	"allwinner,sun6i-a31-ahb1-gates-clk" - for the AHB1 gates on A31
+>  	"allwinner,sun8i-a23-ahb1-gates-clk" - for the AHB1 gates on A23
+> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+> index 91de0a0..a7aab65 100644
+> --- a/drivers/clk/sunxi/clk-sunxi.c
+> +++ b/drivers/clk/sunxi/clk-sunxi.c
+> @@ -344,6 +344,67 @@ static void sun6i_ahb1_recalc(struct factors_request=
+ *req)
+>  	req->rate >>=3D req->p;
+>  }
+> =20
+> +#define SUN8I_A83T_AHB1_PARENT_PLL6	2
+> +/**
+> + * sun8i_a83t_get_ahb_factors() - calculates m, p factors for AHB
+> + * AHB rate is calculated as follows
+> + * rate =3D parent_rate >> p
+> + *
+> + * if parent is pll6, then
+> + * parent_rate =3D pll6 rate / (m + 1)
+> + */
+> +
+> +static void sun8i_a83t_get_ahb1_factors(struct factors_request *req)
+> +{
+> +	u8 div, calcp, calcm =3D 1;
+> +
+> +	/*
+> +	 * clock can only divide, so we will never be able to achieve
+> +	 * frequencies higher than the parent frequency
+> +	 */
+> +	if (req->parent_rate && req->rate > req->parent_rate)
+> +		req->rate =3D req->parent_rate;
+> +
+> +	div =3D DIV_ROUND_UP(req->parent_rate, req->rate);
+> +
+> +	/* calculate pre-divider if parent is pll6 */
+> +	if (req->parent_index >=3D SUN8I_A83T_AHB1_PARENT_PLL6) {
+> +		if (div < 4)
+> +			calcp =3D 0;
+> +		else if (div / 2 < 4)
+> +			calcp =3D 1;
+> +		else if (div / 4 < 4)
+> +			calcp =3D 2;
+> +		else
+> +			calcp =3D 3;
+> +
+> +		calcm =3D DIV_ROUND_UP(div, 1 << calcp);
+> +	} else {
+> +		calcp =3D __roundup_pow_of_two(div);
+> +		calcp =3D calcp > 3 ? 3 : calcp;
+> +	}
+> +
+> +	req->rate =3D (req->parent_rate / calcm) >> calcp;
+> +	req->p =3D calcp;
+> +	req->m =3D calcm - 1;
+> +}
+> +
+> +/**
+> +* sun8i_a83t_ahb1_recalc() - calculates AHB clock rate from m, p factors=
+ and
+> +*			 parent index
+> +*/
+> +static void sun8i_a83t_ahb1_recalc(struct factors_request *req)
+> +{
+> +	req->rate =3D req->parent_rate;
+> +
+> +/* apply pre-divider first if parent is pll6 */
 
-Your approach seems dedicated to use it for both usecases (also
-as a stand-alone heartbeat or whatever) but was that really
-intended?
+The comment indentation is wrong
 
->         keyboard {
->                 compatible = "gpio-keys";
->
->                 key-a {
->                         gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
->                         label = "SW20";
->                         wakeup-source;
->                         linux,code = <KEY_A>;
->                 };
->                 key-b {
->                         gpios = <&gpio6 12 GPIO_ACTIVE_LOW>;
->                         label = "SW21";
->                         wakeup-source;
->                         linux,code = <KEY_B>;
->                 };
->                 key-c {
->                         gpios = <&gpio6 13 GPIO_ACTIVE_LOW>;
->                         label = "SW22";
->                         wakeup-source;
->                         linux,code = <KEY_C>;
->                 };
->         };
+> +	if (req->parent_index >=3D SUN6I_AHB1_PARENT_PLL6)
 
-I suspect that in this usecase, the GPIO should be flagged
-GPIO_OPEN_DRAIN rather than GPIO_ACTIVE_LOW,
-as the construction with the LED draws current fron the line.
+And this is not the right define you're using.
 
-> There exist device tree bindings for LEDs connected to GPIOs, and the
-> following also works:
->
->         leds {
->                 compatible = "gpio-leds";
->
->                 led4 {
->                         gpios = <&gpio6 11 GPIO_ACTIVE_HIGH>;
->                         label = "LED4";
->                 };
->                 led5 {
->                         gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
->                         label = "LED5";
->                 };
->                 led6 {
->                         gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
->                         label = "LED6";
->                 };
->         };
+I still believe that duplicating the same logic just because of
+different dividers is not the way to go.
 
-OK
+You could solve that easily by adding a table for the muxes, and
+associate it with parents and dividers, that you could store in
+clk_factors.
 
-> If a GPIO is found busy during initialization, and if it's already in
-> use by the other half of the driver, the driver switches to a special
-> "polled-key-and-LED" mode. I.e. during polling, it does:
->   - Save the GPIO output state,
->   - Switch the GPIO to input mode,
->   - Wait 5 ms (else it will read the old output state, depending on
->     e.g. hardware capacitance),
->   - Read the GPIO input state,
->   - Switch the GPIO to output mode,
->   - Restore the GPIO output state.
->
-> And it works, the LEDs can be controlled, and the push button states can
-> be read!
+Maxime
 
-Why go to such troubles of switching the line from output to
-input to read it?
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-Especially when a line is OPEN_DRAIN it should be perfectly legal
-to read it's value even if it is set as output, but AFAICT that is
-always working no matter whether the line is set as output.
+--nWEzmRaGLXxZdI3i
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> However, due to the 5 ms delay, there's a visible flickering of LEDs
-> that are supposed to be turned off (remember, when the GPIO is
-> configured for input and the button is not pressed, the LED is lit).
->
-> If we go this route, adding support for non-polled GPIOs (if the GPIO is
-> not shared with an LED) and wake-up should be doable.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-I think this actually implies OPEN_DRAIN and if you flag it as such
-the core should be happy using it as input and output at the same
-time.
+iQIcBAEBAgAGBQJW6omqAAoJEBx+YmzsjxAg+IkP/2n5+5I/Z4nyp7elRujuyzaE
+2f3QCOY+7UOtYv0/LfUIjKujFD5ygm7RlpeIRjXVGBBErWrkvB5Nx1xe6X1IooGb
+X+10yJZe4ryQgn923+FasXa2BQxgHw38M5tfub8FBmxxru74lxrpkhDax7fI402l
+Blm9oucHEtK71F8E53x8+UUg35i0Zxf7c1iFIndDeBd4KQL5zgVd2lmjNFU4oKn1
+Y+ZQd8bDfuaioWmVFXEiN1HHtzE2s5qjbyZtt2pvX0bv5a0U470O7v+o9/jCvfs2
+PzRpy0vLbnUxwDXT/vyrL/Ntk8/ZK5HpVlJukSITNGWr7IbqSPefY+OdCgyjjymZ
+h7LLCmDUjV7bCKIHUFivE9ahFqTC6xIVw8MQEkJkymsfCvK9zKBH9bezTjAwucCK
+EWWnJwxNVTs9lI9vjSJhXtNuxSUToVyS3vO4KEPAY4BXoDh+iF58g5voQ8Vx2kCs
+cmeMaeB08SdFJpxNgdvh12IwMiggow6r9aunpKN2eZuxvIaAwsfGnxJMs+yJKeC3
+Gh/amdLJ4fQ7qfdHNCxStiAehkJKwgA5jxfjKK8x9Rvw2gwSG2I7/qGv2GUbWMFF
+VqxN2SEpc5fbfnfl/A7sTeAnx2vLGIiBA21qe0Jq5JtcId80bXlx/h2u/fY4YTnS
+083HDY2FJEsMZurPv22F
+=dNXR
+-----END PGP SIGNATURE-----
 
-If the hardware has a problem with reading the value from a line
-that is set to output, it needs a workaround hack in the driver to
-support reading and output line, *NOT* changes to gpiolib,
-because the lib assumes this is always possible, i.e. it will
-call the driver .get() callback no matter what.
-
-Yours,
-Linus Walleij
+--nWEzmRaGLXxZdI3i--
