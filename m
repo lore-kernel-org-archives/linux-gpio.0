@@ -1,65 +1,41 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 4/5] gpio: of: Add support to have multiple gpios in gpio-hog
-Date: Thu, 17 Mar 2016 23:14:33 +0530
-Message-ID: <56EAED01.4070107@nvidia.com>
-References: <1457438528-29054-1-git-send-email-ldewangan@nvidia.com> <56E05AA9.8000503@wwwdotorg.org> <56E11D34.60401@nvidia.com> <2337414.ntEtcfKnX0@hermes> <56E16053.60802@nvidia.com> <20160317154656.GA9444@rob-hp-laptop>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/4] gpio: Add AXP209 GPIO driver
+Date: Thu, 17 Mar 2016 14:10:58 -0500
+Message-ID: <20160317191058.GA31052@rob-hp-laptop>
+References: <1457520614-32239-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1457520614-32239-2-git-send-email-maxime.ripard@free-electrons.com>
+Reply-To: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160317154656.GA9444@rob-hp-laptop>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Markus Pargmann <mpa@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, linus.walleij@linaro.org, pawel.moll@arm.com, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, treding@nvidia.com, Benoit Parrot <bparrot@ti.com>, Alexandre Courbot <acourbot@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBDJIP47K7MERBR4CVS3QKGQEYIHQ3LA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <1457520614-32239-2-git-send-email-maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Wed, Mar 09, 2016 at 11:50:11AM +0100, Maxime Ripard wrote:
+> The AXP209 PMIC has a bunch of GPIOs accessible, that are usually used to
+> control LEDs or backlight.
+> 
+> Add a driver for them
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> ---
+>  .../devicetree/bindings/gpio/gpio-axp209.txt       |  30 ++++
 
-On Thursday 17 March 2016 09:16 PM, Rob Herring wrote:
-> On Thu, Mar 10, 2016 at 05:23:55PM +0530, Laxman Dewangan wrote:
->>>> On this case, we have already property "line-name" and passed the name
->>>> of the gpio via this property.
->>>> The property names is "line-name" which is good for one string. We can
->>>> support other property "line-names" with multiple string per GPIO index.
->>>>
->>>> line-names = "wlan-reset", "wlan-enable";
-> Then what happens when someone wants to selectively disable gpio hogs?
->
-> status = "okay", "disabled", "okay";
->
-> While I often push things to fewer nodes and more compact descriptions,
-> I don't think that is the right direction in this case.
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-I dont think we need to support the individual gpio to be enable/disable 
-by status.
-We need to support the status property at node level only. if individual 
-gpio need to be enabled/disabled by status then it need to break in 
-different hog nodes.
-
-This is same as like we have in pincontrol where we can provide the list 
-of pin names for some configuration under same node.
-
-
->>> There is currently a discussion about the future bindings for subnodes in GPIO
->>> controller nodes. Please have a look at these two mail threads:
->>>
->>> 	"Device tree binding documentation for gpio-switch"
->>> 	"gpio: of: Add support to have multiple gpios in gpio-hog"
->> Second one is this patch only. Is it by intention?
->>
->> The binding details about the gpio-switch and names are given by property
->> "lable". I think property "label" is standard way of going forward i.e. I
->> post similar patch for gpio-keys device name from DT after got review
->> comment.
->>
->> So here,  we can have the gpio names  under property "label" or "labels".
-> label is standard. labels you just made up.
-
-Yaah, lables for plural only. Otherwise no issue with "label".
-
->
->> Or am I missing anything?
-> The point is the more one off changes I see that are all inter-related,
-> the less willing I am to accept any that don't consider all the cases.
-> The inter-relationship here is how do we describe gpio lines that don't
-> otherwise have a connection to another node and how to deal with them if
-> that changes.
+>  drivers/gpio/Kconfig                               |   6 +
+>  drivers/gpio/Makefile                              |   1 +
+>  drivers/gpio/gpio-axp209.c                         | 166 +++++++++++++++++++++
+>  4 files changed, 203 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-axp209.txt
+>  create mode 100644 drivers/gpio/gpio-axp209.c
