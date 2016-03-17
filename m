@@ -1,35 +1,60 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 01/13] pinctrl: sunxi: Add A83T R_PIO controller
-Date: Thu, 17 Mar 2016 15:51:15 +0100
-Message-ID: <CACRpkdaFekCnRKoYQ=Fq1LT0FcH7RobwkLi_G1YfXJAb=4RTHQ@mail.gmail.com>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
-	<1458144276-31108-2-git-send-email-vishnupatekar0510@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4] iio: dac: Add support for the AD5592R/AD5593R
+ ADCs/DACs
+Date: Thu, 17 Mar 2016 09:58:37 -0500
+Message-ID: <20160317145837.GA24226@rob-hp-laptop>
+References: <1457354915-30831-1-git-send-email-michael.hennerich@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:34304 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030294AbcCQOvQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Mar 2016 10:51:16 -0400
-Received: by mail-oi0-f49.google.com with SMTP id m82so65373862oif.1
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Mar 2016 07:51:16 -0700 (PDT)
-In-Reply-To: <1458144276-31108-2-git-send-email-vishnupatekar0510@gmail.com>
+Received: from mail.kernel.org ([198.145.29.136]:55814 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932879AbcCQO6m (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 17 Mar 2016 10:58:42 -0400
+Content-Disposition: inline
+In-Reply-To: <1457354915-30831-1-git-send-email-michael.hennerich@analog.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Jon Corbet <corbet@lwn.net>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>, Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>R
+To: michael.hennerich@analog.com
+Cc: jic23@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, lars@metafoo.de, knaack.h@gmx.de, paul.cercueil@analog.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Wed, Mar 16, 2016 at 5:04 PM, Vishnu Patekar
-<vishnupatekar0510@gmail.com> wrote:
+On Mon, Mar 07, 2016 at 01:48:35PM +0100, michael.hennerich@analog.com wrote:
+> From: Paul Cercueil <paul.cercueil@analog.com>
+> 
+> This patch adds support for the AD5592R (spi) and AD5593R (i2c)
+> ADC/DAC devices.
+> 
+> Signed-off-by: Paul Cercueil <paul.cercueil@analog.com>
+> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> 
+> Changes since v1:
+> 	* Fix mutex usage
+> 	* Remove unnecessary NULL pointer guards
+> 	* Add comment explaining the invalid data read
+> 	* AD5593R Remove surplus adc readback
+> 
+> Changes since v2:
+> 	* Use child nodes to describe channels
+> 	* Fix probe return and driver remove path
+> 	* Move locking closer to where its used
+> 	* Remove WARN_ON but return error
+> 	* Remove OPEN DRAIN configuration option
+> 
+> Changes since v3:
+> 	* Documentation: Add missing vendor prefixes in the examples
+> 	* Minor function reordering in remove() to match the reverse of probe()
+> 
+> ---
+>  .../devicetree/bindings/iio/dac/ad5592r.txt        | 143 +++++
 
-> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
-> interrupt bit is 6th and A83T has one extra pin PL12.
->
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
-> Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
 
-I think I already merged this?
+>  drivers/iio/dac/Kconfig                            |  27 +
+>  drivers/iio/dac/Makefile                           |   3 +
+>  drivers/iio/dac/ad5592r-base.c                     | 702 +++++++++++++++++++++
+>  drivers/iio/dac/ad5592r-base.h                     |  78 +++
+>  drivers/iio/dac/ad5592r.c                          | 164 +++++
+>  drivers/iio/dac/ad5593r.c                          | 131 ++++
+>  include/dt-bindings/iio/adi,ad5592r.h              |  16 +
+>  8 files changed, 1264 insertions(+)
 
-Yours,
-Linus Walleij
