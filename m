@@ -1,65 +1,72 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH 2/2] gpio: xgene-sb: Use irq_domain_free_irqs_common instead
- of open coded
-Date: Thu, 17 Mar 2016 12:01:43 +0800
-Message-ID: <1458187303.27037.3.camel@ingics.com>
-References: <1458187231.27037.1.camel@ingics.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: enable to indicate GPSR/IPSR/MOD_SEL
+ for debug
+Date: Thu, 17 Mar 2016 08:34:05 +0100
+Message-ID: <CAMuHMdWkeV34DpJO3Q_kviO9u0cBdYvSQ_34=UAkOmHLsisYjw@mail.gmail.com>
+References: <8760wnfe3r.wl%kuninori.morimoto.gx@renesas.com>
+	<874mc7fe29.wl%kuninori.morimoto.gx@renesas.com>
+	<CAMuHMdVhLSXLVT5HYW=TfxZgM7TdtcJdsbqcVz-56U_AYczhng@mail.gmail.com>
+	<871t7a54sd.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36062 "EHLO
-	mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751851AbcCQEBs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Mar 2016 00:01:48 -0400
-Received: by mail-pf0-f196.google.com with SMTP id q129so9400777pfb.3
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Mar 2016 21:01:47 -0700 (PDT)
-In-Reply-To: <1458187231.27037.1.camel@ingics.com>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36198 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932217AbcCQHeG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Mar 2016 03:34:06 -0400
+In-Reply-To: <871t7a54sd.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Y Vo <yvo@apm.com>, Alexandre Courbot <gnurou@gmail.com>, Jiang Liu <jiang.liu@linux.intel.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus <magnus.damm@gmail.com>, Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Current code calls irq_domain_alloc_irqs_parent() in .alloc,
-so it should call irq_domain_free_irqs_parent() accordingly in .free.
-Fix it by switching to use irq_domain_free_irqs_common() instead.
+Hi Morimoto-san,
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/gpio/gpio-xgene-sb.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+On Thu, Mar 17, 2016 at 1:30 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+>> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>> >
+>> > Current sh_pfc can't indicate GPSR/IPSR/MOD_SEL name for debug.
+>> > Of course we can get it from indicated register address, but it
+>> > is not convenient. This patch enables to indicate these.
+>> >
+>> > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>>
+>> > --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+>> > +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+>> > @@ -94,6 +94,7 @@ struct pinmux_func {
+>> >  };
+>> >
+>> >  struct pinmux_cfg_reg {
+>> > +       const char *name;
+>>
+>> Have you looked at the size increase, esp. for multi-platform kernels?
+>
+> Indeed.
+> I checked its size by "ls -l", and the result is below.
+> zImage size was... reduced ??
+>
+> without this patch
+>
+>         10661888  Image
+>          3544032  zImage
+>
+> with this patch
+>
+>         10661888  Image
+>          3543432  zImage
 
-diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
-index 31cbcb8..0332586 100644
---- a/drivers/gpio/gpio-xgene-sb.c
-+++ b/drivers/gpio/gpio-xgene-sb.c
-@@ -216,23 +216,10 @@ static int xgene_gpio_sb_domain_alloc(struct irq_domain *domain,
- 			&parent_fwspec);
- }
- 
--static void xgene_gpio_sb_domain_free(struct irq_domain *domain,
--		unsigned int virq,
--		unsigned int nr_irqs)
--{
--	struct irq_data *d;
--	unsigned int i;
--
--	for (i = 0; i < nr_irqs; i++) {
--		d = irq_domain_get_irq_data(domain, virq + i);
--		irq_domain_reset_irq_data(d);
--	}
--}
--
- static const struct irq_domain_ops xgene_gpio_sb_domain_ops = {
- 	.translate      = xgene_gpio_sb_domain_translate,
- 	.alloc          = xgene_gpio_sb_domain_alloc,
--	.free           = xgene_gpio_sb_domain_free,
-+	.free           = irq_domain_free_irqs_common,
- 	.activate	= xgene_gpio_sb_domain_activate,
- 	.deactivate	= xgene_gpio_sb_domain_deactivate,
- };
--- 
-2.1.4
+Please use "size drivers/pinctrl/sh-pfc/built-in.o".
 
+zImage size is affected by section alignment and crompression.
 
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
