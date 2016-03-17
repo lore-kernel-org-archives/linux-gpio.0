@@ -1,56 +1,165 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: IPSRx and MOD_SELx should be set before GPSRx
-Date: Thu, 17 Mar 2016 08:58:45 +0200
-Message-ID: <1532372.pY3qGGVVN1@avalon>
-References: <8760wnfe3r.wl%kuninori.morimoto.gx@renesas.com> <8737rrfe1f.wl%kuninori.morimoto.gx@renesas.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 12/18] dt-bindings: Add PLX Technology OXNAS pinctrl
+ and gpio bindings
+Date: Thu, 17 Mar 2016 12:25:51 -0500
+Message-ID: <20160317172551.GA3922@rob-hp-laptop>
+References: <1457005210-18485-1-git-send-email-narmstrong@baylibre.com>
+ <1457519060-6038-1-git-send-email-narmstrong@baylibre.com>
+ <1457519060-6038-13-git-send-email-narmstrong@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <8737rrfe1f.wl%kuninori.morimoto.gx@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus <magnus.damm@gmail.com>, Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:41212 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932675AbcCQRZ4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 17 Mar 2016 13:25:56 -0400
+Content-Disposition: inline
+In-Reply-To: <1457519060-6038-13-git-send-email-narmstrong@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-Hi Morimoto-san,
-
-Thank you for the patch.
-
-On Wednesday 16 March 2016 00:48:11 Kuninori Morimoto wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> 
-> Gen2 / Gen3 datasheet will have below note in next version.
-> This patch follows this note.
-> 
-> IPSRx and MOD_SELx registers shall be set before setting GPSRx
-> registers in case that they need to be configured.
-> MOD_SELx registers can be set either earlier or later than setting
-> IPSRx registers.
-> 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
+On Wed, Mar 09, 2016 at 11:24:14AM +0100, Neil Armstrong wrote:
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 > ---
->  drivers/pinctrl/sh-pfc/sh_pfc.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../devicetree/bindings/gpio/gpio_oxnas.txt        |  27 ++++++
+>  .../bindings/pinctrl/plxtech,pinctrl.txt           | 100 +++++++++++++++++++++
+>  2 files changed, 127 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/plxtech,pinctrl.txt
 > 
-> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> b/drivers/pinctrl/sh-pfc/sh_pfc.h index 2b593fc..f174d61 100644
-> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> @@ -279,7 +279,7 @@ struct sh_pfc_soc_info {
->   *   - msel: Module selector
->   */
->  #define PINMUX_IPSR_MSEL(ipsr, fn, msel)				\
-> -	PINMUX_DATA(fn##_MARK, FN_##msel, FN_##ipsr, FN_##fn)
-> +	PINMUX_DATA(fn##_MARK, FN_##msel, FN_##fn, FN_##ipsr)
-> 
->  /*
->   * Describe a pinmux configuration for a single-function pin with GPIO
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt b/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
+> new file mode 100644
+> index 0000000..cbb03c4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
+> @@ -0,0 +1,27 @@
+> +PLX Technology OXNAS SoC GPIO Controller
+> +==========================================
+> +
+> +Required properties:
+> +- compatible: "oxsemi,ox810se-gpio".
+> +- reg: Should contain GPIO controller registers location and length
+> +- interrupts: Should be the port interrupt shared by all the pins.
+> +- #gpio-cells: Should be two.  The first cell is the pin number and
+> +  the second cell is used to specify optional parameters (currently
+> +  unused).
+> +- gpio-controller: Marks the device node as a GPIO controller.
+> +
+> +optional properties:
+> +- #gpio-lines: Number of gpio if absent 32.
+> +
+> +
+> +Example:
+> +	gpio0: gpio@000000 {
 
--- 
-Regards,
+Drop the leading 0s.
 
-Laurent Pinchart
+> +		compatible = "oxsemi,ox810se-gpio";
+> +		reg = <0x000000 0x100000>;
+> +		interrupts = <21>;
+> +		#gpio-cells = <2>;
+> +		gpio-controller;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		#gpio-lines = <32>;
+> +	};
+> diff --git a/Documentation/devicetree/bindings/pinctrl/plxtech,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/plxtech,pinctrl.txt
+> new file mode 100644
+> index 0000000..0c5051a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/plxtech,pinctrl.txt
+> @@ -0,0 +1,100 @@
+> +PLX Technology OXNAS SoC Pinmux Controller
+> +==========================================
+> +
+> +The OXNAS Pinmux Controller, enables the IC to share one PAD to several
+> +functional blocks. The sharing is done by multiplexing the PAD input/output
+> +signals. For each PAD there are up to 8 muxing options (called periph modes).
+> +Since different modules require different PAD settings
+> +(like pull up, keeper, etc) the contoller controls also the PAD settings
+> +parameters.
+> +
+> +Please refer to pinctrl-bindings.txt in this directory for details of the
+> +common pinctrl bindings used by client devices, including the meaning of the
+> +phrase "pin configuration node".
+> +
+> +OXNAS pin configuration node is a node of a group of pins which can be
+> +used for a specific device or function. This node represents both mux and config
+> +of the pins in that group. The 'pins' selects the function mode(also named pin
+> +mode) this pin can work on and the 'config' configures various pad settings
+> +such as pull-up, multi drive, etc.
+> +
+> +Required properties for iomux controller:
+> +- compatible: "oxsemi,ox810se-pinctrl"
+> +- plxtech,mux-mask: array of mask (periph per bank) to describe if a pin can be
+> +  configured in this periph mode. All the periph and bank need to be describe.
+> +- plxtech,sys-ctrl: a phandle to the system controller syscon node
+> +
+> +How to create such array:
+> +
+> +Each column will represent the possible peripheral of the pinctrl
+> +Each line will represent a pio bank
+> +
+> +For example :
+> +Peripheral: 2 ( A and B)
+> +Bank: 2 (A, B and C)
+> +=>
+> +
+> +  /*    A         B     */
+> +  0xffffffff 0xffc00c3b  /* pioA */
+> +  0xffffffff 0x7fff3ccf  /* pioB */
+> +
+> +For each peripheral/bank we will descibe in a u32 if a pin can be
+> +configured in it by putting 1 to the pin bit (1 << pin)
+> +
+> +Required properties for pin configuration node:
+> +- plxtech,pins: 4 integers array, represents a group of pins mux and config
+> +  setting. The format is plxtech,pins = <PIN_BANK PIN_BANK_NUM PERIPH CONFIG>.
+> +  The PERIPH 0 means gpio, PERIPH 1 is periph A, PERIPH 2 is periph B...
+> +  PIN_BANK 0 is pioA, PIN_BANK 1 is pioB...
+> +
+> +Bits used for CONFIG:
+> + - None Yet
+> +
+> +Examples:
+> +
+> +pinctrl: pinctrl {
+> +	compatible = "oxsemi,ox810se-pinctrl", "simple-bus";
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +	ranges;
+> +
+> +	/* Regmap for sys registers */
+> +	plxtech,sys-ctrl = <&sys>;
+> +
+> +	/* Default, all-open mux-map */
+> +	plxtech,mux-mask = <
+> +		 0xFFFFFFFF 0xFFFFFFFF 0xFFFFFFFF 0xFFFFFFFF 0xFFFFFFFF
+> +		 0xFFFFFFFF 0xFFFFFFFF 0xFFFFFFFF 0xFFFFFFFF 0xFFFFFFFF
+> +		 >;
+> +
+> +	uart0 {
+> +		pinctrl_uart0: uart0 {
+> +			plxtech,pins = <0 31 3 0
+> +					0 32 3 0>;
+> +		};
+> +		pinctrl_uart0_modem: uart0_modem {
+> +			plxtech,pins = <0 27 3 0
+> +					0 28 3 0
+> +					0 29 3 0
+> +					0 30 3 0
+> +					0 33 3 0
+> +					0 34 3 0>;
+> +		};
+> +	};
+> +};
+> +
+> +uart0: uart@200000 {
+
+serial@200000
+
+With those changes:
+
+Acked-by: Rob Herring <robh@kernel.org>
