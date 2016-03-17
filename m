@@ -1,78 +1,46 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v4 03/13] clk: sunxi: Add APB1 clock for A83T
-Date: Thu, 17 Mar 2016 11:41:24 +0100
-Message-ID: <20160317104124.GL30977@lukather>
-References: <1458144276-31108-1-git-send-email-vishnupatekar0510@gmail.com>
- <1458144276-31108-4-git-send-email-vishnupatekar0510@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: amd:Add device HID for future AMD GPIO controller
+Date: Thu, 17 Mar 2016 14:31:45 +0100
+Message-ID: <CACRpkdZ-QKzH7igmMfwcb2-unykKVKwW5gf+cHySavvyDPKuzA@mail.gmail.com>
+References: <1457665122-16365-1-git-send-email-annie.wang@amd.com>
+	<DM2PR12MB0201D5583811701257DF34DBFB8A0@DM2PR12MB0201.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GDLQamdgIxhPcIwq"
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1458144276-31108-4-git-send-email-vishnupatekar0510@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: robh+dt@kernel.org, corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, emilio@elopez.com.ar, jenskuske@gmail.com, hdegoede@redhat.com, wens@csie.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, mturquette@baylibre.com, sboyd@codeaurora.org, patchesrdh@mveas.com, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:36512 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S936047AbcCQNbr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Mar 2016 09:31:47 -0400
+Received: by mail-oi0-f41.google.com with SMTP id r187so63374231oih.3
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Mar 2016 06:31:46 -0700 (PDT)
+In-Reply-To: <DM2PR12MB0201D5583811701257DF34DBFB8A0@DM2PR12MB0201.namprd12.prod.outlook.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Xue, Ken" <Ken.Xue@amd.com>
+Cc: "Wang, Annie" <Annie.Wang@amd.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, SPG_Linux_Kernel <SPG_Linux_Kernel@amd.com>
 
+On Wed, Mar 16, 2016 at 6:10 AM, Xue, Ken <Ken.Xue@amd.com> wrote:
+>> From: Wang Hongcheng [mailto:annie.wang@amd.com]
+>> Sent: Friday, March 11, 2016 10:59 AM
+>> To: Linus Walleij; linux-gpio@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> SPG_Linux_Kernel
+>> Cc: Wang, Annie
+>> Subject: [PATCH] pinctrl: amd:Add device HID for future AMD GPIO controller
+>>
+>> Add device HID AMDI0030 to match the AMD ACPI Vendor ID (AMDI) as
+>> registered in http://www.uefi.org/acpi_id_list, and the GPIO controller on
+>> future AMD paltform will use the HID instead of AMD0030.
+>>
+>> Signed-off-by: Wang Hongcheng <annie.wang@amd.com>
+>> ---
+>
+> Acked-by: Ken Xue <ken.Xue@amd.com>
+>
+> Hi Linus,
+> Can you please help apply and queue this patch into V4.6?
 
---GDLQamdgIxhPcIwq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No way, we are in the middle of the merge window.
+This will be queued for v4.7 once -rc1 is released.
 
-On Thu, Mar 17, 2016 at 12:04:26AM +0800, Vishnu Patekar wrote:
-> APB1 is similar to sun4i-a10-apb0-clk, except different dividers.
->=20
-> This adds support for apb1 on A83T.
->=20
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
->  drivers/clk/sunxi/clk-sunxi.c                     | 13 +++++++++++++
->  2 files changed, 14 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi.txt b/Document=
-ation/devicetree/bindings/clock/sunxi.txt
-> index cba9fe55..291d366 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi.txt
-> @@ -51,6 +51,7 @@ Required properties:
->  	"allwinner,sun8i-h3-apb0-gates-clk" - for the APB0 gates on H3
->  	"allwinner,sun9i-a80-apb0-gates-clk" - for the APB0 gates on A80
->  	"allwinner,sun4i-a10-apb1-clk" - for the APB1 clock
-> ++	"allwinner,sun8i-a83t-apb1-clk" - for the APB1 clock on A83T
-
-There's one '+' too many
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---GDLQamdgIxhPcIwq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJW6onUAAoJEBx+YmzsjxAg2EwP/0xt7aSDsenIcLIibB9u5qn6
-f1UG1xsLX9v4HQxUu7B8x1NmdgoM0htl6cLgntX0d3nV4jjadjRf/K0eUw/1V2XT
-WpWRD+WbTmrPaSzuibSzAenuIOQSOYMj9IJqbZpswjH3oBhyi9/hGwga6FDPXeAK
-duF5bo3Z10WfWi7P6/1/mnJ1aMRwwUskfg1ryZihH8AL91B+nLMGRvK7nR+aBZwv
-7wMuTeQmER1ymWaf3iVt4hPAHHPoohOhAvHDFz4hy8XsOZuC4ti2sMuvQcV90IS/
-fWWeEYTmMJYBF37l/2Z1Y//6Q1NhGIVRUNUmat01F3uYKRpMCSGM+JwVejLoyuZQ
-oFtp/RHuQpP6AGwzlJY/2YYeuJJPeXoEST+k6wgH4snDRiTIVYi4JCKnX3RtRgtk
-5DM5UoBJ5cyIIKQmas76HXVIdhuRjxNqPfKAKSTBDQ5FeT7tpBOhAF5mCJHzoGqn
-WkkVeGIaPZAQcXV80GRi2cczpSjnR1v+5CKlmJafWaBdBWZ/KTa8tx7P1Ow0iYxP
-8xCePI2G6HM4S7Z+Ns3YxFnxjg5D1KH5MvN4ZIVypbADL2p+Gtm+3pafexlI2iZW
-fvtOEc1k6/g+CYNE+HLq+DOy9A2xtaXn3VJSUnL7CpgTIjIhkRDrCjdzPpP8DfGy
-Bbj0oSU9tyHG6u8XWfWZ
-=nXWR
------END PGP SIGNATURE-----
-
---GDLQamdgIxhPcIwq--
+Yours,
+Linus Walleij
