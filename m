@@ -1,66 +1,41 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] gpio: 74x164: add dt support for nxp's 74x594
-Date: Fri, 18 Mar 2016 15:26:36 -0500
-Message-ID: <20160318202636.GA8849@rob-hp-laptop>
-References: <1457998330-8070-1-git-send-email-nicolassaenzj@gmail.com>
+From: zen@zenhancer.net
+Subject: SEC Filing
+Date: Fri, 18 Mar 2016 20:50:16 +0530
+Message-ID: <56ec1cb0.BX40JB08Inef3lJL%zen@zenhancer.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:55190 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755543AbcCRU0l (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 18 Mar 2016 16:26:41 -0400
-Content-Disposition: inline
-In-Reply-To: <1457998330-8070-1-git-send-email-nicolassaenzj@gmail.com>
+Received: from server.zenhancer.net ([103.248.117.244]:60597 "EHLO
+	server.zenhancer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751220AbcCSHFw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 19 Mar 2016 03:05:52 -0400
+Received: from server.zenhancer.net (localhost [127.0.0.1])
+	by server.zenhancer.net (Postfix) with ESMTP id DF83610482C45
+	for <linux-gpio@vger.kernel.org>; Sat, 19 Mar 2016 12:29:20 +0530 (IST)
+Received: from server.zenhancer.net ([127.0.0.1])
+	by server.zenhancer.net (server.zenhancer.net [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id zlyr5lYWwgLD for <linux-gpio@vger.kernel.org>;
+	Sat, 19 Mar 2016 12:29:17 +0530 (IST)
+Received: from server.zenhancer.net (localhost [127.0.0.1])
+	by server.zenhancer.net (Postfix) with ESMTPSA id 9E95A104B0454
+	for <linux-gpio@vger.kernel.org>; Fri, 18 Mar 2016 20:50:16 +0530 (IST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+To: linux-gpio@vger.kernel.org
 
-On Mon, Mar 14, 2016 at 11:32:10PM +0000, Nicolas Saenz Julienne wrote:
-> The chip is also an 8 bit shift register which works out of the box as a GPO
-> expander with this patch
-> 
-> Signed-off-by: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
-> ---
->  Documentation/devicetree/bindings/gpio/gpio-74x164.txt | 4 +++-
->  drivers/gpio/gpio-74x164.c                             | 1 +
->  2 files changed, 4 insertions(+), 1 deletion(-)
+SEC XBRL Filings (www.secxbrlfilings.com) is offering new clients FIRST FILING FREE for a limited period of time and for a limited number of companies.
 
-Acked-by: Rob Herring <robh@kernel.org>
+In addition, will guarantee that we save you at least 20% ongoing versus any competitor in the industry. We have dedicated 24/7 Project management and round the clock production for all our services.
 
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-74x164.txt b/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
-> index cc26080..ce1b223 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
-> @@ -1,7 +1,9 @@
->  * Generic 8-bits shift register GPIO driver
->  
->  Required properties:
-> -- compatible : Should be "fairchild,74hc595"
-> +- compatible: Should contain one of the following:
-> +    "fairchild,74hc595"
-> +    "nxp,74lvc594"
->  - reg : chip select number
->  - gpio-controller : Marks the device node as a gpio controller.
->  - #gpio-cells : Should be two.  The first cell is the pin number and
-> diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
-> index c81224f..ebd0d1a 100644
-> --- a/drivers/gpio/gpio-74x164.c
-> +++ b/drivers/gpio/gpio-74x164.c
-> @@ -153,6 +153,7 @@ static int gen_74x164_remove(struct spi_device *spi)
->  
->  static const struct of_device_id gen_74x164_dt_ids[] = {
->  	{ .compatible = "fairchild,74hc595" },
-> +	{ .compatible = "nxp,74lvc594" },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, gen_74x164_dt_ids);
-> -- 
-> 2.5.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+If you are looking to improve the process, get supreme quality EDGAR and XBRL, save time and money then consider SEC XBRL Filings as a solution. It is worth calling to find out more (347) 480-4275.
+
+What's more, we will also update or create your INVESTOR RELATIONS(XBRL Web posting) page for FREE!!!
+
+Regards,
+
+Paul Smith
+SEC XBRL Filings
+E: info@secxbrlfilings.com
+T: (347) 480-4275
+www.secxbrlfilings.com
