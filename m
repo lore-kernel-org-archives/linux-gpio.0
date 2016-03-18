@@ -1,38 +1,72 @@
-From: Junio C Hamano <gitster@pobox.com>
-Subject: Re: [GIT PULL] GPIO bulk changes for kernel v4.6
-Date: Fri, 18 Mar 2016 10:16:55 -0700
-Message-ID: <xmqqk2kzr9iw.fsf@gitster.mtv.corp.google.com>
-References: <CACRpkdbGkfJ9bW1db64msMeQjue+=y+op5EmSx62FWOWDOJwWg@mail.gmail.com>
-	<CA+55aFwV4Cq=4zJc6Fw0yAGrTmci_DFAjJKxkk05pjJJf3iYbA@mail.gmail.com>
-	<56EB9B0C.4050507@nvidia.com>
-	<CA+55aFy=-UAbVo+Xx08tBA7eTPk2B+G3=SbarVxThS57LdakPA@mail.gmail.com>
-	<alpine.DEB.2.20.1603181532040.4690@virtualbox>
-	<CA+55aFwbRVG-5AW+NnMOFZ_hU5i+i7f3FxgEt9Qm7B6pEd7x0g@mail.gmail.com>
-	<xmqqr3f7rbck.fsf@gitster.mtv.corp.google.com>
-	<CA+55aFzVqPzEg6zq7sRweE7OCVKMJzM1eZRHXddMG+BabEDeCA@mail.gmail.com>
+From: Scott Wood <scott.wood@nxp.com>
+Subject: Re: [PATCH] gpio/ls1043a: Correct ls1043a gpio nodes compatible in
+ dts file
+Date: Fri, 18 Mar 2016 18:49:00 +0000
+Message-ID: <DB5PR0401MB19283736845DCFD5F4186729918C0@DB5PR0401MB1928.eurprd04.prod.outlook.com>
+References: <1457600240-47141-1-git-send-email-Gang.Liu@nxp.com>
+ <1457600240-47141-2-git-send-email-Gang.Liu@nxp.com>
+ <DB5PR0401MB192833673541757889C889C1918A0@DB5PR0401MB1928.eurprd04.prod.outlook.com>
+ <DB4PR04MB26636780AB3453AE0D3E218828B0@DB4PR04MB266.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pb-smtp0.pobox.com ([208.72.237.35]:60990 "EHLO
-	sasl.smtp.pobox.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1755089AbcCRRQ6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Mar 2016 13:16:58 -0400
-In-Reply-To: <CA+55aFzVqPzEg6zq7sRweE7OCVKMJzM1eZRHXddMG+BabEDeCA@mail.gmail.com>
-	(Linus Torvalds's message of "Fri, 18 Mar 2016 10:01:25 -0700")
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Gang Liu <gang.liu@nxp.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "khilman@linaro.org" <khilman@linaro.org>
+Cc: Leo Li <leo.li@nxp.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Mingkai Hu <mingkai.hu@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Johannes Schindelin <Johannes.Schindelin@gmx.de>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+On 03/17/2016 01:57 AM, Gang Liu wrote:
+> On 3/17/2016 2:47 AM, Scott Wood wrote:
+>> On 03/10/2016 03:06 AM, Liu Gang wrote:
+>>> The ls1043a belongs to the Freescale QorIQ platform, and QorIQ
+>>> platform's gpio nodes should use compatible "fsl,qoriq-gpio".
+>> Why?  I don't see any version register anything else in this block that
+>> could be used to identify potential differences from chip to chip.  At
+>> the least, both compatibles should be present.
+>>
+>> Where is the binding for this?
+>>
+>> -Scott
+>>
+>>
+> Hi, Scott,
+> Currently all QorIQ platform's GPIO IP blocks are same, they are all no
+> version register,
+> and have same registers, offset address and other features, so the code
+> can cover all of
+> them.
 
-> The code in the recursive merge that allows this to happen is this:
-> ...
-> And I do think that's right, and I think it's clever, and it goes back to 2006:
->
->   934d9a24078e merge-recur: if there is no common ancestor, fake empty one
->
-> but I think there should be an option there.
+So?  We have no idea what the hardware people will do in the future.
 
-Oh, I think everybody understands that and agrees by now.
+> There is just one exceptional ls2080, it has the little-endian GPIO
+> registers, and we added
+> a "little-endian" property in the GPIO nodes.
+> 
+> Add in addition, we have deeply discussed about the GPIO compatible name
+> before, you
+> suggested using "fsl,qoriq-gpio" for all the QorIQ platforms. Please
+> find some excerpt
+> from former mail context.
 
+It's in established use so I won't suggest that we get rid of it.  But
+ideally the chip-specific compatible should be in the device tree (not
+the driver until/unless necessary) as well, so it seemed odd to get rid
+of it.
+
+If we were starting from scratch, then instead of "fsl,qoriq-gpio" it
+should have been a chip-based compatible for some arbitrary chip that
+contains this exact logic (in addition to the chip-specific compatible
+for the actual chip).  Neither case requires adding every chip name to
+the driver.
+
+-Scott
