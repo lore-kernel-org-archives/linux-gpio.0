@@ -1,29 +1,27 @@
-From: Junio C Hamano <gitster@pobox.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: [GIT PULL] GPIO bulk changes for kernel v4.6
-Date: Fri, 18 Mar 2016 08:43:30 -0700
-Message-ID: <xmqqzitvrdul.fsf@gitster.mtv.corp.google.com>
+Date: Fri, 18 Mar 2016 08:47:02 -0700
+Message-ID: <CA+55aFwbRVG-5AW+NnMOFZ_hU5i+i7f3FxgEt9Qm7B6pEd7x0g@mail.gmail.com>
 References: <CACRpkdbGkfJ9bW1db64msMeQjue+=y+op5EmSx62FWOWDOJwWg@mail.gmail.com>
 	<CA+55aFwV4Cq=4zJc6Fw0yAGrTmci_DFAjJKxkk05pjJJf3iYbA@mail.gmail.com>
 	<56EB9B0C.4050507@nvidia.com>
 	<CA+55aFy=-UAbVo+Xx08tBA7eTPk2B+G3=SbarVxThS57LdakPA@mail.gmail.com>
 	<alpine.DEB.2.20.1603181532040.4690@virtualbox>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pb-smtp0.pobox.com ([208.72.237.35]:54221 "EHLO
-	sasl.smtp.pobox.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752558AbcCRPne (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Mar 2016 11:43:34 -0400
-In-Reply-To: <alpine.DEB.2.20.1603181532040.4690@virtualbox> (Johannes
-	Schindelin's message of "Fri, 18 Mar 2016 15:32:54 +0100 (CET)")
+Received: from mail-io0-f177.google.com ([209.85.223.177]:36470 "EHLO
+	mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751410AbcCRPrE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Mar 2016 11:47:04 -0400
+In-Reply-To: <alpine.DEB.2.20.1603181532040.4690@virtualbox>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Johannes Schindelin <Johannes.Schindelin@gmx.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Junio C Hamano <gitster@pobox.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>
 
-Johannes Schindelin <Johannes.Schindelin@gmx.de> writes:
-
-> Hi Linus,
+On Fri, Mar 18, 2016 at 7:32 AM, Johannes Schindelin
+<Johannes.Schindelin@gmx.de> wrote:
 >
 > On Fri, 18 Mar 2016, Linus Torvalds wrote:
 >
@@ -32,35 +30,28 @@ Johannes Schindelin <Johannes.Schindelin@gmx.de> writes:
 >
 > What happened to "The coolest merge EVER!"?
 >
-> 	http://thread.gmane.org/gmane.comp.version-control.git/5126/
->
-> Ciao,
-> Dscho
+>         http://thread.gmane.org/gmane.comp.version-control.git/5126/
 
-An obvious response to the above, "What about it?", is something you
-would have already anticipated when you wrote the above, and I wish
-I saw that in the message I am responding to, but I didn't, so here
-is my attempt ;-)
+I'm not complaining about multi-root capability in general - it's
+still cool. In the kernel, we have aef8755711a2 ("Merge Btrfs into
+fs/btrfs") that does something slightly similar.
 
-The old article shows two interesting things.  One is that there are
-cases where it makes perfect sense to bind two unrelated histories
-when the two roots are totally unrelated.
+It's literally just the fact that "git merge" does it with no extra
+flags or checks. I'd like people to have to be aware of what they are
+doing when they merge two different projects, not do it by mistake.
 
-I am not Linus, but I think the proposal is to make it harder to do
-this unusual merge by mistake, while keeping it possible to do so
-when the user really wants to.  And the "deliberately whitespace
-damaged patch" in the message you are responding to was primarily to
-point out where the "making it harder" logic should go by showing
-how to make it impossible, leaving it to readers to adjust it to
-"harder but still possible".
+So making it conditional on a flag like "--no-common-root" is what I'd look for.
 
-Now, the second thing that the old article you pointed shows is that
-it is possible to create such a merge without using "git merge" even
-though it is more involved and takes conscious effort by the user.
-In that sense, you could argue that, with the "make it impossible"
-change in Linus's message to "git merge", there is no more change
-needed (I do not know if that is what you meant to imply, though).
+Or just make it about the merge stategy. For example, "subtree" makes
+sense exactly for merging one project into a subdirectory of another.
+But the default merge shouldn't do it.
 
-I think it makes sense to teach "git merge" to error out like Linus
-did unless the user explicitly says "I know what I am doing" with an
-explicit option (e.g. --force or --merge-unrelated-histories).
+I don't think the original "resolve" did it, for example. You can't do
+a three-way merge without a base.
+
+Note how that above "coolest merge" definitely wasn't done by just
+"git merge gitk". I had to play around with the git internals. Now, it
+shouldn't be _that_ hard, but at the same time it really shouldn't be
+as easy as "I didn't know, so I merged two independent projects".
+
+                       Linus
