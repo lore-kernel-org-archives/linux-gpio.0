@@ -1,38 +1,81 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [GIT PULL] GPIO bulk changes for kernel v4.6
-Date: Fri, 18 Mar 2016 15:09:40 +0530
-Message-ID: <56EBCCDC.8070405@nvidia.com>
-References: <CACRpkdbGkfJ9bW1db64msMeQjue+=y+op5EmSx62FWOWDOJwWg@mail.gmail.com>	<CA+55aFwV4Cq=4zJc6Fw0yAGrTmci_DFAjJKxkk05pjJJf3iYbA@mail.gmail.com> <CACRpkdawWP42O+dy2eJOQXr+aJqpQyRVWLFN5s66EA3wsTEz8A@mail.gmail.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH 1/2] gpio: octeon: Convert to use devm_ioremap_resource
+Date: Fri, 18 Mar 2016 21:05:16 +0800
+Message-ID: <1458306316.17098.0.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13438 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932396AbcCRJxF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Mar 2016 05:53:05 -0400
-In-Reply-To: <CACRpkdawWP42O+dy2eJOQXr+aJqpQyRVWLFN5s66EA3wsTEz8A@mail.gmail.com>
+Received: from mail-pf0-f172.google.com ([209.85.192.172]:36259 "EHLO
+	mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754577AbcCRNFW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Mar 2016 09:05:22 -0400
+Received: by mail-pf0-f172.google.com with SMTP id u190so167904618pfb.3
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Mar 2016 06:05:21 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: David Daney <david.daney@cavium.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-mips@linux-mips.org
 
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/gpio/gpio-octeon.c | 24 +++++++-----------------
+ 1 file changed, 7 insertions(+), 17 deletions(-)
 
-On Friday 18 March 2016 02:31 PM, Linus Walleij wrote:
-> On Fri, Mar 18, 2016 at 7:07 AM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->> On Thu, Mar 17, 2016 at 1:59 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>> The end result should be clean but the history is a bit messy.
->> Gaah. I took the tree, but I didn't realize just *how* messy it was. I
->> doubt you did either.
-> Certainly not. I wasn't even aware that things could be screwed up so
-> much and still look OK on the surface. I'll certainly be more cautious
-> about pulling branches in the future.
->
-
-Apologizing for the trouble created by me. I understand from other mail 
-that It seems I have misguided by the step mentioned in github document 
-and so created the issue. I will not use github as mentioned by Linus T.
+diff --git a/drivers/gpio/gpio-octeon.c b/drivers/gpio/gpio-octeon.c
+index 47aead1..9373d4e 100644
+--- a/drivers/gpio/gpio-octeon.c
++++ b/drivers/gpio/gpio-octeon.c
+@@ -83,6 +83,7 @@ static int octeon_gpio_probe(struct platform_device *pdev)
+ 	struct octeon_gpio *gpio;
+ 	struct gpio_chip *chip;
+ 	struct resource *res_mem;
++	void __iomem *reg_base;
+ 	int err = 0;
+ 
+ 	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
+@@ -91,21 +92,11 @@ static int octeon_gpio_probe(struct platform_device *pdev)
+ 	chip = &gpio->chip;
+ 
+ 	res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res_mem == NULL) {
+-		dev_err(&pdev->dev, "found no memory resource\n");
+-		err = -ENXIO;
+-		goto out;
+-	}
+-	if (!devm_request_mem_region(&pdev->dev, res_mem->start,
+-					resource_size(res_mem),
+-				     res_mem->name)) {
+-		dev_err(&pdev->dev, "request_mem_region failed\n");
+-		err = -ENXIO;
+-		goto out;
+-	}
+-	gpio->register_base = (u64)devm_ioremap(&pdev->dev, res_mem->start,
+-						resource_size(res_mem));
++	reg_base = devm_ioremap_resource(&pdev->dev, res_mem);
++	if (IS_ERR(reg_base))
++		return PTR_ERR(reg_base);
+ 
++	gpio->register_base = (u64)reg_base;
+ 	pdev->dev.platform_data = chip;
+ 	chip->label = "octeon-gpio";
+ 	chip->parent = &pdev->dev;
+@@ -119,11 +110,10 @@ static int octeon_gpio_probe(struct platform_device *pdev)
+ 	chip->set = octeon_gpio_set;
+ 	err = devm_gpiochip_add_data(&pdev->dev, chip, gpio);
+ 	if (err)
+-		goto out;
++		return err;
+ 
+ 	dev_info(&pdev->dev, "OCTEON GPIO driver probed.\n");
+-out:
+-	return err;
++	return 0;
+ }
+ 
+ static struct of_device_id octeon_gpio_match[] = {
+-- 
+2.1.4
 
 
 
