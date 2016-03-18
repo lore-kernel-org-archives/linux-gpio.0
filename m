@@ -1,30 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [GIT PULL] GPIO bulk changes for kernel v4.6
-Date: Fri, 18 Mar 2016 10:01:49 +0100
-Message-ID: <CACRpkdawWP42O+dy2eJOQXr+aJqpQyRVWLFN5s66EA3wsTEz8A@mail.gmail.com>
-References: <CACRpkdbGkfJ9bW1db64msMeQjue+=y+op5EmSx62FWOWDOJwWg@mail.gmail.com>
-	<CA+55aFwV4Cq=4zJc6Fw0yAGrTmci_DFAjJKxkk05pjJJf3iYbA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+55aFwV4Cq=4zJc6Fw0yAGrTmci_DFAjJKxkk05pjJJf3iYbA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
+From: YD Tseng <ltyu101@gmail.com>
+Subject: Re: [PATCH RFT] gpio: amdpt: Convert to use gpio-generic
+Date: Fri, 18 Mar 2016 17:49:34 +0800
+Message-ID: <1458294574-3959-1-git-send-email-yd_tseng@asmedia.com.tw>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:35425 "EHLO
+	mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757086AbcCRJuP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Mar 2016 05:50:15 -0400
+Received: by mail-pf0-f194.google.com with SMTP id u190so15583254pfb.2
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Mar 2016 02:50:15 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, axel.lin@ingics.com, varkab@cdac.in, pramod.gurav@smartplayin.com, dbaryshkov@gmail.com, Ken.Xue@amd.com
+Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, Yd_Tseng@asmedia.com.tw, TungYu_Lu@asmedia.com.tw
 
-On Fri, Mar 18, 2016 at 7:07 AM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Thu, Mar 17, 2016 at 1:59 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>
->> The end result should be clean but the history is a bit messy.
+From: YD Tseng <Yd_Tseng@asmedia.com.tw>
+
+>Use gpio-generic to simplify this driver.
 >
-> Gaah. I took the tree, but I didn't realize just *how* messy it was. I
-> doubt you did either.
+>Signed-off-by: Axel Lin <axel.lin@ingics.com>
+>---
+>Hi YD,
+>I don't have this h/w for test.
+>I'd appreciate if you can help to review and test this patch.
+>
+>Thanks.
 
-Certainly not. I wasn't even aware that things could be screwed up so
-much and still look OK on the surface. I'll certainly be more cautious
-about pulling branches in the future.
+We confirm the new patch, it runs well with the AMD Promontory chip.
 
-Yours,
-Linus Walleij
+Regards,
+YD Tseng
+
