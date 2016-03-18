@@ -1,44 +1,27 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH 2/2] gpio: octeon: Constify octeon_gpio_match table
-Date: Fri, 18 Mar 2016 21:06:06 +0800
-Message-ID: <1458306366.17098.1.camel@ingics.com>
-References: <1458306316.17098.0.camel@ingics.com>
+From: Johannes Schindelin <Johannes.Schindelin@gmx.de>
+Subject: Re: [GIT PULL] GPIO bulk changes for kernel v4.6
+Date: Fri, 18 Mar 2016 15:32:54 +0100 (CET)
+Message-ID: <alpine.DEB.2.20.1603181532040.4690@virtualbox>
+References: <CACRpkdbGkfJ9bW1db64msMeQjue+=y+op5EmSx62FWOWDOJwWg@mail.gmail.com> <CA+55aFwV4Cq=4zJc6Fw0yAGrTmci_DFAjJKxkk05pjJJf3iYbA@mail.gmail.com> <56EB9B0C.4050507@nvidia.com> <CA+55aFy=-UAbVo+Xx08tBA7eTPk2B+G3=SbarVxThS57LdakPA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f180.google.com ([209.85.192.180]:34989 "EHLO
-	mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750770AbcCRNGL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Mar 2016 09:06:11 -0400
-Received: by mail-pf0-f180.google.com with SMTP id n5so167595573pfn.2
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Mar 2016 06:06:11 -0700 (PDT)
-In-Reply-To: <1458306316.17098.0.camel@ingics.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Return-path: <git-owner@vger.kernel.org>
+In-Reply-To: <CA+55aFy=-UAbVo+Xx08tBA7eTPk2B+G3=SbarVxThS57LdakPA@mail.gmail.com>
+Sender: git-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Junio C Hamano <gitster@pobox.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: David Daney <david.daney@cavium.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-mips@linux-mips.org
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/gpio/gpio-octeon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Linus,
 
-diff --git a/drivers/gpio/gpio-octeon.c b/drivers/gpio/gpio-octeon.c
-index 9373d4e..96a8a8c 100644
---- a/drivers/gpio/gpio-octeon.c
-+++ b/drivers/gpio/gpio-octeon.c
-@@ -116,7 +116,7 @@ static int octeon_gpio_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static struct of_device_id octeon_gpio_match[] = {
-+static const struct of_device_id octeon_gpio_match[] = {
- 	{
- 		.compatible = "cavium,octeon-3860-gpio",
- 	},
--- 
-2.1.4
+On Fri, 18 Mar 2016, Linus Torvalds wrote:
 
+> I thought git didn't merge two branches that have no common base by
+> default, but it seems it will happily do so.
 
+What happened to "The coolest merge EVER!"?
 
+	http://thread.gmane.org/gmane.comp.version-control.git/5126/
+
+Ciao,
+Dscho
