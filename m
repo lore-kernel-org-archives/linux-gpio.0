@@ -1,267 +1,272 @@
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Add drive strength support
-Date: Mon, 21 Mar 2016 01:33:39 +0200
-Message-ID: <1458516819-3928-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH 1/2] pinctrl: sh-pfc: Add drive strength support
+Date: Mon, 21 Mar 2016 01:33:38 +0200
+Message-ID: <1458516819-3928-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 References: <1458516819-3928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36579 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751118AbcCTXdo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Mar 2016 19:33:44 -0400
 In-Reply-To: <1458516819-3928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-List-Id: linux-gpio@vger.kernel.org
 
-Define the drive strength registers for the R8A7795. As the PFC driver
-for the SoC only defines GPIO pins at the moment, limit drive strength
-support to those pins. Pins without GPIO capabilities will be supported
-later.
+Add support for the drive-strengh pin configuration using the generic
+pinconf DT bindings.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 218 +++++++++++++++++++++++++++++++++--
- 1 file changed, 210 insertions(+), 8 deletions(-)
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   4 +-
+ drivers/pinctrl/sh-pfc/core.c                      |  15 +++
+ drivers/pinctrl/sh-pfc/core.h                      |   3 +
+ drivers/pinctrl/sh-pfc/pinctrl.c                   | 112 +++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |  17 ++++
+ 5 files changed, 149 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index ce4f5cdb0579..1cc0c1bea692 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -14,14 +14,14 @@
- #include "sh_pfc.h"
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+index ffadb7a371f6..74e6ec0339d6 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+@@ -72,8 +72,8 @@ Pin Configuration Node Properties:
  
- #define CPU_ALL_PORT(fn, sfx)						\
--	PORT_GP_16(0, fn, sfx),						\
--	PORT_GP_28(1, fn, sfx),						\
--	PORT_GP_15(2, fn, sfx),						\
--	PORT_GP_16(3, fn, sfx),						\
--	PORT_GP_18(4, fn, sfx),						\
--	PORT_GP_26(5, fn, sfx),						\
--	PORT_GP_32(6, fn, sfx),						\
--	PORT_GP_4(7, fn, sfx)
-+	PORT_GP_CFG_16(0, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_28(1, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_15(2, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_16(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_26(5, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_32(6, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_4(7, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH)
- /*
-  * F_() : just information
-  * FM() : macro for FN_xxx / xxx_MARK
-@@ -4219,6 +4219,207 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 	{ },
+ The pin configuration parameters use the generic pinconf bindings defined in
+ pinctrl-bindings.txt in this directory. The supported parameters are
+-bias-disable, bias-pull-up, bias-pull-down and power-source. For pins that
+-have a configurable I/O voltage, the power-source value should be the
++bias-disable, bias-pull-up, bias-pull-down, drive strength and power-source. For
++pins that have a configurable I/O voltage, the power-source value should be the
+ nominal I/O voltage in millivolts.
+ 
+ 
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index 181ea98a63b7..73f0b33ee0a1 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -173,6 +173,21 @@ void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned int reg_width,
+ 	BUG();
+ }
+ 
++u32 sh_pfc_read_reg(struct sh_pfc *pfc, u32 reg, unsigned int width)
++{
++	return sh_pfc_read_raw_reg(sh_pfc_phys_to_virt(pfc, reg), width);
++}
++
++void sh_pfc_write_reg(struct sh_pfc *pfc, u32 reg, unsigned int width, u32 data)
++{
++	if (pfc->info->unlock_reg)
++		sh_pfc_write_raw_reg(
++			sh_pfc_phys_to_virt(pfc, pfc->info->unlock_reg), 32,
++			~data);
++
++	sh_pfc_write_raw_reg(sh_pfc_phys_to_virt(pfc, reg), width, data);
++}
++
+ static void sh_pfc_config_reg_helper(struct sh_pfc *pfc,
+ 				     const struct pinmux_cfg_reg *crp,
+ 				     unsigned int in_pos,
+diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
+index 62f53b22ae85..fc05d0c516f3 100644
+--- a/drivers/pinctrl/sh-pfc/core.h
++++ b/drivers/pinctrl/sh-pfc/core.h
+@@ -62,6 +62,9 @@ int sh_pfc_unregister_pinctrl(struct sh_pfc *pfc);
+ u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned int reg_width);
+ void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned int reg_width,
+ 			  u32 data);
++u32 sh_pfc_read_reg(struct sh_pfc *pfc, u32 reg, unsigned int width);
++void sh_pfc_write_reg(struct sh_pfc *pfc, u32 reg, unsigned int width,
++		      u32 data);
+ 
+ int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin);
+ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type);
+diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+index 87b0a599afaf..7aeb816ad946 100644
+--- a/drivers/pinctrl/sh-pfc/pinctrl.c
++++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+@@ -476,6 +476,92 @@ static const struct pinmux_ops sh_pfc_pinmux_ops = {
+ 	.gpio_set_direction	= sh_pfc_gpio_set_direction,
  };
  
-+static const struct pinmux_drive_reg pinmux_drive_regs[] = {
-+	{ PINMUX_DRIVE_REG("DRVCTRL3", 0xe606030c) {
-+		{ RCAR_GP_PIN(2,  9),  8, 3 },	/* AVB_MDC */
-+		{ RCAR_GP_PIN(2, 10),  4, 3 },	/* AVB_MAGIC */
-+		{ RCAR_GP_PIN(2, 11),  0, 3 },	/* AVB_PHY_INT */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL4", 0xe6060310) {
-+		{ RCAR_GP_PIN(2, 12), 28, 3 },	/* AVB_LINK */
-+		{ RCAR_GP_PIN(2, 13), 24, 3 },	/* AVB_AVTP_MATCH */
-+		{ RCAR_GP_PIN(2, 14), 20, 3 },	/* AVB_AVTP_CAPTURE */
-+		{ RCAR_GP_PIN(2,  0), 16, 3 },	/* IRQ0 */
-+		{ RCAR_GP_PIN(2,  1), 12, 3 },	/* IRQ1 */
-+		{ RCAR_GP_PIN(2,  2),  8, 3 },	/* IRQ2 */
-+		{ RCAR_GP_PIN(2,  3),  4, 3 },	/* IRQ3 */
-+		{ RCAR_GP_PIN(2,  4),  0, 3 },	/* IRQ4 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL5", 0xe6060314) {
-+		{ RCAR_GP_PIN(2,  5), 28, 3 },	/* IRQ5 */
-+		{ RCAR_GP_PIN(2,  6), 24, 3 },	/* PWM0 */
-+		{ RCAR_GP_PIN(2,  7), 20, 3 },	/* PWM1 */
-+		{ RCAR_GP_PIN(2,  8), 16, 3 },	/* PWM2 */
-+		{ RCAR_GP_PIN(1,  0), 12, 3 },	/* A0 */
-+		{ RCAR_GP_PIN(1,  1),  8, 3 },	/* A1 */
-+		{ RCAR_GP_PIN(1,  2),  4, 3 },	/* A2 */
-+		{ RCAR_GP_PIN(1,  3),  0, 3 },	/* A3 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL6", 0xe6060318) {
-+		{ RCAR_GP_PIN(1,  4), 28, 3 },	/* A4 */
-+		{ RCAR_GP_PIN(1,  5), 24, 3 },	/* A5 */
-+		{ RCAR_GP_PIN(1,  6), 20, 3 },	/* A6 */
-+		{ RCAR_GP_PIN(1,  7), 16, 3 },	/* A7 */
-+		{ RCAR_GP_PIN(1,  8), 12, 3 },	/* A8 */
-+		{ RCAR_GP_PIN(1,  9),  8, 3 },	/* A9 */
-+		{ RCAR_GP_PIN(1, 10),  4, 3 },	/* A10 */
-+		{ RCAR_GP_PIN(1, 11),  0, 3 },	/* A11 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL7", 0xe606031c) {
-+		{ RCAR_GP_PIN(1, 12), 28, 3 },	/* A12 */
-+		{ RCAR_GP_PIN(1, 13), 24, 3 },	/* A13 */
-+		{ RCAR_GP_PIN(1, 14), 20, 3 },	/* A14 */
-+		{ RCAR_GP_PIN(1, 15), 16, 3 },	/* A15 */
-+		{ RCAR_GP_PIN(1, 16), 12, 3 },	/* A16 */
-+		{ RCAR_GP_PIN(1, 17),  8, 3 },	/* A17 */
-+		{ RCAR_GP_PIN(1, 18),  4, 3 },	/* A18 */
-+		{ RCAR_GP_PIN(1, 19),  0, 3 },	/* A19 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL8", 0xe6060320) {
-+		{ RCAR_GP_PIN(1, 20), 24, 3 },	/* CS0 */
-+		{ RCAR_GP_PIN(1, 21), 20, 3 },	/* CS1_A26 */
-+		{ RCAR_GP_PIN(1, 22), 16, 3 },	/* BS */
-+		{ RCAR_GP_PIN(1, 23), 12, 3 },	/* RD */
-+		{ RCAR_GP_PIN(1, 24),  8, 3 },	/* RD_WR */
-+		{ RCAR_GP_PIN(1, 25),  4, 3 },	/* WE0 */
-+		{ RCAR_GP_PIN(1, 26),  0, 3 },	/* WE1 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL9", 0xe6060324) {
-+		{ RCAR_GP_PIN(1, 27), 28, 3 },	/* EX_WAIT0 */
-+		{ RCAR_GP_PIN(0,  0), 20, 3 },	/* D0 */
-+		{ RCAR_GP_PIN(0,  1), 16, 3 },	/* D1 */
-+		{ RCAR_GP_PIN(0,  2), 12, 3 },	/* D2 */
-+		{ RCAR_GP_PIN(0,  3),  8, 3 },	/* D3 */
-+		{ RCAR_GP_PIN(0,  4),  4, 3 },	/* D4 */
-+		{ RCAR_GP_PIN(0,  5),  0, 3 },	/* D5 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL10", 0xe6060328) {
-+		{ RCAR_GP_PIN(0,  6), 28, 3 },	/* D6 */
-+		{ RCAR_GP_PIN(0,  7), 24, 3 },	/* D7 */
-+		{ RCAR_GP_PIN(0,  8), 20, 3 },	/* D8 */
-+		{ RCAR_GP_PIN(0,  9), 16, 3 },	/* D9 */
-+		{ RCAR_GP_PIN(0, 10), 12, 3 },	/* D10 */
-+		{ RCAR_GP_PIN(0, 11),  8, 3 },	/* D11 */
-+		{ RCAR_GP_PIN(0, 12),  4, 3 },	/* D12 */
-+		{ RCAR_GP_PIN(0, 13),  0, 3 },	/* D13 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL11", 0xe606032c) {
-+		{ RCAR_GP_PIN(0, 14), 28, 3 },	/* D14 */
-+		{ RCAR_GP_PIN(0, 15), 24, 3 },	/* D15 */
-+		{ RCAR_GP_PIN(7,  0), 20, 3 },	/* AVS1 */
-+		{ RCAR_GP_PIN(7,  1), 16, 3 },	/* AVS2 */
-+		{ RCAR_GP_PIN(7,  2), 12, 3 },	/* HDMI0_CEC */
-+		{ RCAR_GP_PIN(7,  3),  8, 3 },	/* HDMI1_CEC */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL13", 0xe6060334) {
-+		{ RCAR_GP_PIN(3,  0), 20, 3 },	/* SD0_CLK */
-+		{ RCAR_GP_PIN(3,  1), 16, 3 },	/* SD0_CMD */
-+		{ RCAR_GP_PIN(3,  2), 12, 3 },	/* SD0_DAT0 */
-+		{ RCAR_GP_PIN(3,  3),  8, 3 },	/* SD0_DAT1 */
-+		{ RCAR_GP_PIN(3,  4),  4, 3 },	/* SD0_DAT2 */
-+		{ RCAR_GP_PIN(3,  5),  0, 3 },	/* SD0_DAT3 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL14", 0xe6060338) {
-+		{ RCAR_GP_PIN(3,  6), 28, 3 },	/* SD1_CLK */
-+		{ RCAR_GP_PIN(3,  7), 24, 3 },	/* SD1_CMD */
-+		{ RCAR_GP_PIN(3,  8), 20, 3 },	/* SD1_DAT0 */
-+		{ RCAR_GP_PIN(3,  9), 16, 3 },	/* SD1_DAT1 */
-+		{ RCAR_GP_PIN(3, 10), 12, 3 },	/* SD1_DAT2 */
-+		{ RCAR_GP_PIN(3, 11),  8, 3 },	/* SD1_DAT3 */
-+		{ RCAR_GP_PIN(4,  0),  4, 3 },	/* SD2_CLK */
-+		{ RCAR_GP_PIN(4,  1),  0, 3 },	/* SD2_CMD */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL15", 0xe606033c) {
-+		{ RCAR_GP_PIN(4,  2), 28, 3 },	/* SD2_DAT0 */
-+		{ RCAR_GP_PIN(4,  3), 24, 3 },	/* SD2_DAT1 */
-+		{ RCAR_GP_PIN(4,  4), 20, 3 },	/* SD2_DAT2 */
-+		{ RCAR_GP_PIN(4,  5), 16, 3 },	/* SD2_DAT3 */
-+		{ RCAR_GP_PIN(4,  6), 12, 3 },	/* SD2_DS */
-+		{ RCAR_GP_PIN(4,  7),  8, 3 },	/* SD3_CLK */
-+		{ RCAR_GP_PIN(4,  8),  4, 3 },	/* SD3_CMD */
-+		{ RCAR_GP_PIN(4,  9),  0, 3 },	/* SD3_DAT0 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL16", 0xe6060340) {
-+		{ RCAR_GP_PIN(4, 10), 28, 3 },	/* SD3_DAT1 */
-+		{ RCAR_GP_PIN(4, 11), 24, 3 },	/* SD3_DAT2 */
-+		{ RCAR_GP_PIN(4, 12), 20, 3 },	/* SD3_DAT3 */
-+		{ RCAR_GP_PIN(4, 13), 16, 3 },	/* SD3_DAT4 */
-+		{ RCAR_GP_PIN(4, 14), 12, 3 },	/* SD3_DAT5 */
-+		{ RCAR_GP_PIN(4, 15),  8, 3 },	/* SD3_DAT6 */
-+		{ RCAR_GP_PIN(4, 16),  4, 3 },	/* SD3_DAT7 */
-+		{ RCAR_GP_PIN(4, 17),  0, 3 },	/* SD3_DS */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL17", 0xe6060344) {
-+		{ RCAR_GP_PIN(3, 12), 28, 3 },	/* SD0_CD */
-+		{ RCAR_GP_PIN(3, 13), 24, 3 },	/* SD0_WP */
-+		{ RCAR_GP_PIN(3, 14), 20, 3 },	/* SD1_CD */
-+		{ RCAR_GP_PIN(3, 15), 16, 3 },	/* SD1_WP */
-+		{ RCAR_GP_PIN(5,  0), 12, 3 },	/* SCK0 */
-+		{ RCAR_GP_PIN(5,  1),  8, 3 },	/* RX0 */
-+		{ RCAR_GP_PIN(5,  2),  4, 3 },	/* TX0 */
-+		{ RCAR_GP_PIN(5,  3),  0, 3 },	/* CTS0 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL18", 0xe6060348) {
-+		{ RCAR_GP_PIN(5,  4), 28, 3 },	/* RTS0_TANS */
-+		{ RCAR_GP_PIN(5,  5), 24, 3 },	/* RX1 */
-+		{ RCAR_GP_PIN(5,  6), 20, 3 },	/* TX1 */
-+		{ RCAR_GP_PIN(5,  7), 16, 3 },	/* CTS1 */
-+		{ RCAR_GP_PIN(5,  8), 12, 3 },	/* RTS1_TANS */
-+		{ RCAR_GP_PIN(5,  9),  8, 3 },	/* SCK2 */
-+		{ RCAR_GP_PIN(5, 10),  4, 3 },	/* TX2 */
-+		{ RCAR_GP_PIN(5, 11),  0, 3 },	/* RX2 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL19", 0xe606034c) {
-+		{ RCAR_GP_PIN(5, 12), 28, 3 },	/* HSCK0 */
-+		{ RCAR_GP_PIN(5, 13), 24, 3 },	/* HRX0 */
-+		{ RCAR_GP_PIN(5, 14), 20, 3 },	/* HTX0 */
-+		{ RCAR_GP_PIN(5, 15), 16, 3 },	/* HCTS0 */
-+		{ RCAR_GP_PIN(5, 16), 12, 3 },	/* HRTS0 */
-+		{ RCAR_GP_PIN(5, 17),  8, 3 },	/* MSIOF0_SCK */
-+		{ RCAR_GP_PIN(5, 18),  4, 3 },	/* MSIOF0_SYNC */
-+		{ RCAR_GP_PIN(5, 19),  0, 3 },	/* MSIOF0_SS1 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL20", 0xe6060350) {
-+		{ RCAR_GP_PIN(5, 20), 28, 3 },	/* MSIOF0_TXD */
-+		{ RCAR_GP_PIN(5, 21), 24, 3 },	/* MSIOF0_SS2 */
-+		{ RCAR_GP_PIN(5, 22), 20, 3 },	/* MSIOF0_RXD */
-+		{ RCAR_GP_PIN(5, 23), 16, 3 },	/* MLB_CLK */
-+		{ RCAR_GP_PIN(5, 24), 12, 3 },	/* MLB_SIG */
-+		{ RCAR_GP_PIN(5, 25),  8, 3 },	/* MLB_DAT */
-+		{ RCAR_GP_PIN(6,  0),  0, 3 },	/* SSI_SCK01239 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL21", 0xe6060354) {
-+		{ RCAR_GP_PIN(6,  1), 28, 3 },	/* SSI_WS01239 */
-+		{ RCAR_GP_PIN(6,  2), 24, 3 },	/* SSI_SDATA0 */
-+		{ RCAR_GP_PIN(6,  3), 20, 3 },	/* SSI_SDATA1 */
-+		{ RCAR_GP_PIN(6,  4), 16, 3 },	/* SSI_SDATA2 */
-+		{ RCAR_GP_PIN(6,  5), 12, 3 },	/* SSI_SCK34 */
-+		{ RCAR_GP_PIN(6,  6),  8, 3 },	/* SSI_WS34 */
-+		{ RCAR_GP_PIN(6,  7),  4, 3 },	/* SSI_SDATA3 */
-+		{ RCAR_GP_PIN(6,  8),  0, 3 },	/* SSI_SCK4 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL22", 0xe6060358) {
-+		{ RCAR_GP_PIN(6,  9), 28, 3 },	/* SSI_WS4 */
-+		{ RCAR_GP_PIN(6, 10), 24, 3 },	/* SSI_SDATA4 */
-+		{ RCAR_GP_PIN(6, 11), 20, 3 },	/* SSI_SCK5 */
-+		{ RCAR_GP_PIN(6, 12), 16, 3 },	/* SSI_WS5 */
-+		{ RCAR_GP_PIN(6, 13), 12, 3 },	/* SSI_SDATA5 */
-+		{ RCAR_GP_PIN(6, 14),  8, 3 },	/* SSI_SCK6 */
-+		{ RCAR_GP_PIN(6, 15),  4, 3 },	/* SSI_WS6 */
-+		{ RCAR_GP_PIN(6, 16),  0, 3 },	/* SSI_SDATA6 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL23", 0xe606035c) {
-+		{ RCAR_GP_PIN(6, 17), 28, 3 },	/* SSI_SCK78 */
-+		{ RCAR_GP_PIN(6, 18), 24, 3 },	/* SSI_WS78 */
-+		{ RCAR_GP_PIN(6, 19), 20, 3 },	/* SSI_SDATA7 */
-+		{ RCAR_GP_PIN(6, 20), 16, 3 },	/* SSI_SDATA8 */
-+		{ RCAR_GP_PIN(6, 21), 12, 3 },	/* SSI_SDATA9 */
-+		{ RCAR_GP_PIN(6, 22),  8, 3 },	/* AUDIO_CLKA */
-+		{ RCAR_GP_PIN(6, 23),  4, 3 },	/* AUDIO_CLKB */
-+		{ RCAR_GP_PIN(6, 24),  0, 3 },	/* USB0_PWEN */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL24", 0xe6060360) {
-+		{ RCAR_GP_PIN(6, 25), 28, 3 },	/* USB0_OVC */
-+		{ RCAR_GP_PIN(6, 26), 24, 3 },	/* USB1_PWEN */
-+		{ RCAR_GP_PIN(6, 27), 20, 3 },	/* USB1_OVC */
-+		{ RCAR_GP_PIN(6, 28), 16, 3 },	/* USB30_PWEN */
-+		{ RCAR_GP_PIN(6, 29), 12, 3 },	/* USB30_OVC */
-+		{ RCAR_GP_PIN(6, 30),  8, 3 },	/* USB31_PWEN */
-+		{ RCAR_GP_PIN(6, 31),  4, 3 },	/* USB31_OVC */
-+	} },
-+	{ },
++static u32 sh_pfc_pinconf_find_drive_strength_reg(struct sh_pfc *pfc,
++		unsigned int pin, unsigned int *offset, unsigned int *size)
++{
++	const struct pinmux_drive_reg_field *field;
++	const struct pinmux_drive_reg *reg;
++	unsigned int i;
++
++	for (reg = pfc->info->drive_regs; reg->reg; ++reg) {
++		for (i = 0; i < ARRAY_SIZE(reg->fields); ++i) {
++			field = &reg->fields[i];
++
++			if (field->size && field->pin == pin) {
++				*offset = field->offset;
++				*size = field->size;
++
++				return reg->reg;
++			}
++		}
++	}
++
++	return 0;
++}
++
++static int sh_pfc_pinconf_get_drive_strength(struct sh_pfc *pfc,
++					     unsigned int pin)
++{
++	unsigned long flags;
++	unsigned int offset;
++	unsigned int size;
++	u32 reg;
++	u32 val;
++
++	reg = sh_pfc_pinconf_find_drive_strength_reg(pfc, pin, &offset, &size);
++	if (!reg)
++		return -EINVAL;
++
++	spin_lock_irqsave(&pfc->lock, flags);
++	val = sh_pfc_read_reg(pfc, reg, 32);
++	spin_unlock_irqrestore(&pfc->lock, flags);
++
++	val = (val >> offset) & GENMASK(size - 1, 0);
++
++	/* Convert the value to mA based on a full drive strength value of 24mA.
++	 * We can make the full value configurable later if needed.
++	 */
++	if (size == 2)
++		val <<= 1;
++	return (val + 1) * 3;
++}
++
++static int sh_pfc_pinconf_set_drive_strength(struct sh_pfc *pfc,
++					     unsigned int pin, u16 strength)
++{
++	unsigned long flags;
++	unsigned int offset;
++	unsigned int size;
++	u32 reg;
++	u32 val;
++
++	if (strength < 3 || strength > 24)
++		return -EINVAL;
++
++	reg = sh_pfc_pinconf_find_drive_strength_reg(pfc, pin, &offset, &size);
++	if (!reg)
++		return -EINVAL;
++
++	/* Convert the value from mA based on a full drive strength value of
++	 * 24mA. We can make the full value configurable later if needed.
++	 */
++	strength = strength / 3 - 1;
++	if (size == 2)
++		strength >>= 1;
++
++	spin_lock_irqsave(&pfc->lock, flags);
++
++	val = sh_pfc_read_reg(pfc, reg, 32);
++	val &= ~GENMASK(offset + size - 1, offset);
++	val |= strength << offset;
++
++	sh_pfc_write_reg(pfc, reg, 32, val);
++
++	spin_unlock_irqrestore(&pfc->lock, flags);
++
++	return 0;
++}
++
+ /* Check whether the requested parameter is supported for a pin. */
+ static bool sh_pfc_pinconf_validate(struct sh_pfc *pfc, unsigned int _pin,
+ 				    enum pin_config_param param)
+@@ -493,6 +579,9 @@ static bool sh_pfc_pinconf_validate(struct sh_pfc *pfc, unsigned int _pin,
+ 	case PIN_CONFIG_BIAS_PULL_DOWN:
+ 		return pin->configs & SH_PFC_PIN_CFG_PULL_DOWN;
+ 
++	case PIN_CONFIG_DRIVE_STRENGTH:
++		return pin->configs & SH_PFC_PIN_CFG_DRIVE_STRENGTH;
++
+ 	case PIN_CONFIG_POWER_SOURCE:
+ 		return pin->configs & SH_PFC_PIN_CFG_IO_VOLTAGE;
+ 
+@@ -532,6 +621,17 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		break;
+ 	}
+ 
++	case PIN_CONFIG_DRIVE_STRENGTH: {
++		int ret;
++
++		ret = sh_pfc_pinconf_get_drive_strength(pfc, _pin);
++		if (ret < 0)
++			return ret;
++
++		*config = ret;
++		break;
++	}
++
+ 	case PIN_CONFIG_POWER_SOURCE: {
+ 		int ret;
+ 
+@@ -584,6 +684,18 @@ static int sh_pfc_pinconf_set(struct pinctrl_dev *pctldev, unsigned _pin,
+ 
+ 			break;
+ 
++		case PIN_CONFIG_DRIVE_STRENGTH: {
++			unsigned int arg =
++				pinconf_to_config_argument(configs[i]);
++			int ret;
++
++			ret = sh_pfc_pinconf_set_drive_strength(pfc, _pin, arg);
++			if (ret < 0)
++				return ret;
++
++			break;
++		}
++
+ 		case PIN_CONFIG_POWER_SOURCE: {
+ 			unsigned int arg =
+ 				pinconf_to_config_argument(configs[i]);
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index 2123ab49d6a5..8d548fb39229 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -28,6 +28,7 @@ enum {
+ #define SH_PFC_PIN_CFG_PULL_UP		(1 << 2)
+ #define SH_PFC_PIN_CFG_PULL_DOWN	(1 << 3)
+ #define SH_PFC_PIN_CFG_IO_VOLTAGE	(1 << 4)
++#define SH_PFC_PIN_CFG_DRIVE_STRENGTH	(1 << 5)
+ #define SH_PFC_PIN_CFG_NO_GPIO		(1 << 31)
+ 
+ struct sh_pfc_pin {
+@@ -110,6 +111,21 @@ struct pinmux_cfg_reg {
+ 		{ var_fw0, var_fwn, 0 }, \
+ 	.enum_ids = (const u16 [])
+ 
++struct pinmux_drive_reg_field {
++	u16 pin;
++	u8 offset;
++	u8 size;
 +};
 +
- const struct sh_pfc_soc_info r8a7795_pinmux_info = {
- 	.name = "r8a77950_pfc",
- 	.unlock_reg = 0xe6060000, /* PMMR */
-@@ -4233,6 +4434,7 @@ const struct sh_pfc_soc_info r8a7795_pinmux_info = {
- 	.nr_functions = ARRAY_SIZE(pinmux_functions),
++struct pinmux_drive_reg {
++	u32 reg;
++	const struct pinmux_drive_reg_field fields[8];
++};
++
++#define PINMUX_DRIVE_REG(name, r) \
++	.reg = r, \
++	.fields =
++
+ struct pinmux_data_reg {
+ 	u32 reg;
+ 	u8 reg_width;
+@@ -166,6 +182,7 @@ struct sh_pfc_soc_info {
+ #endif
  
- 	.cfg_regs = pinmux_config_regs,
-+	.drive_regs = pinmux_drive_regs,
+ 	const struct pinmux_cfg_reg *cfg_regs;
++	const struct pinmux_drive_reg *drive_regs;
+ 	const struct pinmux_data_reg *data_regs;
  
- 	.pinmux_data = pinmux_data,
- 	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
+ 	const u16 *pinmux_data;
 -- 
 2.7.3
+
