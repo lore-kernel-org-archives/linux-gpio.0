@@ -1,71 +1,64 @@
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: [PATCH 0/2] r8a7795 pinctrl: Add drive strength support
-Date: Mon, 21 Mar 2016 01:33:37 +0200
-Message-ID: <1458516819-3928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/4] mfd: axp20x: Add AXP209 GPIO driver to
+ the mfd
+Date: Mon, 21 Mar 2016 11:54:10 +0000
+Message-ID: <20160321115410.GC4140@x1>
+References: <1457520614-32239-1-git-send-email-maxime.ripard@free-electrons.com>
+ <1457520614-32239-3-git-send-email-maxime.ripard@free-electrons.com>
+Reply-To: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36577 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751118AbcCTXdn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Mar 2016 19:33:43 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-sunxi+bncBDA7X7F2WUEBBZWBX63QKGQE2RHYYIY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <1457520614-32239-3-git-send-email-maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-Hello,
+On Wed, 09 Mar 2016, Maxime Ripard wrote:
 
-This patch series adds drive strength control support to the sh-pfc dri=
-ver for
-the R8A7795 (R-Car H3) SoC.
+> Now that we have a GPIO driver for the AXP209, we can add it to our MFD.
+>=20
+> Signed-off-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> ---
+>  drivers/mfd/axp20x.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
-The SoC can control the drive strength of all GPIO pins, as well as of =
-some
-dedicated-purpose pins. As the R8A7795 pinctrl driver doesn't support n=
-on-GPIO
-pins yet, this series is limited to controlling the drive strength on t=
-he GPIO
-pins.
+Applied, thanks.
 
-Patch 1/2 adds drive strength support to the sh-pfc driver. It hardcode=
-s a few
-assumptions that might be specific to the R8A7795, I'll revisit them if=
- future
-SoCs break them.
-
-Patch 2/2 adds R8A7795-specific support by setting the drive strength
-configuration flag for all GPIO pins, and defining the drive strength
-registers layout.
-
-The series has been tested on the Salvator-X board with the GPIO pins
-connected to the on-board LEDs. The 4.7=C2=B5F capacitor to ground prov=
-ides a large
-enough load on the lines to make the effect of the drive strength easil=
-y
-measurable with an oscilloscope.
-
-Laurent Pinchart (2):
-  pinctrl: sh-pfc: Add drive strength support
-  pinctrl: sh-pfc: r8a7795: Add drive strength support
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   4 +-
- drivers/pinctrl/sh-pfc/core.c                      |  15 ++
- drivers/pinctrl/sh-pfc/core.h                      |   3 +
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 218 +++++++++++++=
-+++++++-
- drivers/pinctrl/sh-pfc/pinctrl.c                   | 112 +++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |  17 ++
- 6 files changed, 359 insertions(+), 10 deletions(-)
+> diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
+> index a57d6e940610..89518ee3be33 100644
+> --- a/drivers/mfd/axp20x.c
+> +++ b/drivers/mfd/axp20x.c
+> @@ -430,6 +430,9 @@ static const struct regmap_irq_chip axp288_regmap_irq=
+_chip =3D {
+> =20
+>  static struct mfd_cell axp20x_cells[] =3D {
+>  	{
+> +		.name		=3D "axp20x-gpio",
+> +		.of_compatible	=3D "x-powers,axp209-gpio",
+> +	}, {
+>  		.name		=3D "axp20x-pek",
+>  		.num_resources	=3D ARRAY_SIZE(axp20x_pek_resources),
+>  		.resources	=3D axp20x_pek_resources,
 
 --=20
-Regards,
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
 
-Laurent Pinchart
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
