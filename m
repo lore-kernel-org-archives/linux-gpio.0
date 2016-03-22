@@ -1,197 +1,134 @@
-From: Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2] iio: dac: Add support for the AD5592R/AD5593R
- ADCs/DACs
-Date: Mon, 21 Mar 2016 15:07:23 +0100
-Message-ID: <56F0001B.9010608@analog.com>
-References: <1456407412-16218-1-git-send-email-michael.hennerich@analog.com>
- <56D1E1CB.6070704@kernel.org>
- <CACRpkdap_8YGCAvNeK7_0H2MDDnwQ9QDJH4O2SzEkDmczPGtLg@mail.gmail.com>
-Reply-To: <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 0/4] Add AXP209 GPIO driver
+Date: Tue, 22 Mar 2016 08:22:14 +0100
+Message-ID: <20160322072214.GJ30977@lukather>
+References: <1457520614-32239-1-git-send-email-maxime.ripard@free-electrons.com>
+ <56E0146E.6050102@redhat.com>
+ <20160309152822.GQ8418@lukather>
+ <56E044C1.7080300@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdap_8YGCAvNeK7_0H2MDDnwQ9QDJH4O2SzEkDmczPGtLg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Paul Cercueil <paul.cercueil-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?Q?Pawe=c5=82_Moll?= <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="vaHlF1o0eSLrKmNa"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:51370 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752667AbcCVHW1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Mar 2016 03:22:27 -0400
+Content-Disposition: inline
+In-Reply-To: <56E044C1.7080300@redhat.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-
-On 03/11/2016 05:28 PM, Linus Walleij wrote:
-> On Sun, Feb 28, 2016 at 12:50 AM, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
->
->>> +Analog Devices AD5592R/AD5593R DAC/ADC device driver
->>> +
->>> +Required properties for the AD5592R:
->>> +     - compatible: Must be "adi,ad5592r"
->>> +     - reg: SPI chip select number for the device
->>> +     - spi-max-frequency: Max SPI frequency to use (< 30000000)
->>> +     - spi-cpol: The AD5592R requires inverse clock polarity (CPOL) mode
->
-> If this should be a gpiochip, this shall also be reflected in the
-> device tree bindings and the example in the bindings by
-> stating gpio-controller; and #gpio-cells, referring to
-> the binding in gpio/gpio.txt so consumers can pick a GPIO
-> from this device.
-
-Hi Linus,
-
-Thanks for the feedback.
-
-- Will add this to the documentation.
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Lee Jones <lee.jones@linaro.org>, Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 
 
->
-> I haven't seen the original patch, please mail the next version
-> to me so I can take a look.
->
->>> +config AD5592R_BASE
->>> +     tristate
->>> +
->>> +config AD5592R
->>> +     tristate "Analog Devices AD5592R ADC/DAC driver"
->>> +     depends on SPI_MASTER
->>> +     depends on OF
->>> +     select AD5592R_BASE
->>> +     help
->>> +       Say yes here to build support for Analog Devices AD5592R
->>> +       Digital to Analog / Analog to Digital Converter.
->>> +
->>> +       To compile this driver as a module, choose M here: the
->>> +       module will be called ad5592r.
->>> +
->>> +config AD5593R
->>> +     tristate "Analog Devices AD5593R ADC/DAC driver"
->>> +     depends on I2C
->>> +     depends on OF
->>> +     select AD5592R_BASE
->>> +     help
->>> +       Say yes here to build support for Analog Devices AD5593R
->>> +       Digital to Analog / Analog to Digital Converter.
->>> +
->>> +       To compile this driver as a module, choose M here: the
->>> +       module will be called ad5593r.
->>> +
->
-> I guess something here should select GPIOLIB
-> and depend of OF_GPIO
+--vaHlF1o0eSLrKmNa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
-That reminds me - On my dev tree I removed to the depends on OF from 
-kconfig. But I haven't rebased this commit into my for_upstream branch.
+On Wed, Mar 09, 2016 at 04:44:01PM +0100, Hans de Goede wrote:
+> Hi,
+>=20
+> On 09-03-16 16:28, Maxime Ripard wrote:
+> >Hi,
+> >
+> >On Wed, Mar 09, 2016 at 01:17:50PM +0100, Hans de Goede wrote:
+> >>Hi,
+> >>
+> >>On 09-03-16 11:50, Maxime Ripard wrote:
+> >>>Hi,
+> >>>
+> >>>The axp209 PMIC used in combination to some Allwinner SoCs has a bunch
+> >>>of GPIOs accessible. Some boards use these to control their backlight
+> >>>or a few LEDs.
+> >>
+> >>Thanks for working on this, but IMHO this cannot go upstream like this,
+> >>the gpio pins on the axp pmics need a pinctrl driver, not a gpio
+> >>driver. I.E. on the axp209 gpio0 and gpio1 can also be used to output
+> >>an additional low-noise ldo (so as a regulator), or as an adc input.
+> >
+> >Eventually, yes, it needs both. But they don't even have to be the
+> >same driver, since they provide two different features. The only
+> >reason we have that construct in the pio case is because they share
+> >the same address space, but in the AXP case, the regmap and our mfd
+> >take care of that already.
+>=20
+> Hmm, so your suggesting to have mfd instantiate 2 platform devices
+> for this, a gpio and a pinctrl device, each with their own
+> driver. Yes that would work, but I'm a bit worried about the 2
+> racing or some such since they both will end up touching
+> bit 0-2 of register 0x90 / 0x92, more-over since they are both
+> touching the exact same bits I've the feeling that this really
+> should be one driver.
 
-I tried to avoid any OF dependency in the driver by using the 
-linux/property API.
+I don't think that's an issue. We basically have two cases here:
+either we have a driver using the pin or not.
 
-I'll add select GPIOLIB - and gpio/Kconfig will select OF_GPIO if OF.
+If we have a driver using it, then pinctrl will make sure we have an
+exclusive use of the pin, before the gpio is requested and we start
+changing that value. If not, then no one cares anyway.
 
+>=20
+> I guess that in a proper written dts we either use pinctrl to enable
+> a special function, or gpio, but still.
+>=20
+> >>I've been working on gsl1680 touchscreen support lately and on at least
+> >>a few a23 tablets, the low-noise ldo is used as AVCC for the touchscreen
+> >>controller.
+> >
+> >Yeah, the AXP209 also has an ADC connected to these pins.
+> >
+> >>Now these use an axp223 pmic, but nothing is stopping someone from
+> >>doing something similar with an axp209 and I think it would be best
+> >>to support this from day one, rather then hope we can retro-fit this
+> >>later without breaking dts.
+> >
+> >I considered that, but I don't see how it would break the DT later. If
+> >someone wants to enable say the ADC, he will of course have to add the
+> >pinctrl driver, and the pinctrl handles, but the old DT will only
+> >reference the gpio driver directly, which would still be something
+> >that would work.
+>=20
+> I was assuming we would use one mfd-child(-platform)-device for this,
+> not two. I guess that with 2 devices you're right and there should
+> not be any problem, still as said it feels wrong-ish to have 2 drivers
+> poking bits 0-2 of reg 0x90 / reg 0x92.
 
->
->>> +#ifdef CONFIG_GPIOLIB
->
-> Naaaaah really? Just select GPIOLIB and get rid of ifdeffery.
-> It's cool to have gpios available.
+Note that the PIO is built on the same model and it works, while we
+have 3 drivers in one. The only reason why we have everything linked
+to the same device is because we have to share the address space, but
+regmap takes care of that here.
 
-Convinced me.
+Maxime
 
->
->>> +static int ad5592r_gpio_request(struct gpio_chip *chip, unsigned offset)
->>> +{
->>> +     struct ad5592r_state *st = gpiochip_get_data(chip);
->>> +
->>> +     if (!(st->gpio_map & BIT(offset))) {
->>> +             dev_err(st->dev, "GPIO %d is reserved by alternate function\n",
->>> +                     offset);
->
-> This gpio_map looks a bit like pin control.
->
-> It might be overkill to use all of the pinctrl subsystem,
-> we have circumvented it in other places.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
-I think it's overkill too.
+--vaHlF1o0eSLrKmNa
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
->
->>> +             return -ENODEV;
->>> +     }
->>> +
->>> +     if (offset >= chip->ngpio)
->>> +             return -EINVAL;
->
-> gpiolib already guards against this I think.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Then I drop it
+iQIcBAEBAgAGBQJW8PKmAAoJEBx+YmzsjxAgeHwQAMF7o+uxgHTyxffdrDBKKvIJ
+4LRsSU7rV5GUnx6V6ZA8X1iZKz0LVoxkUrwdcANPSMoi9IDipgGzdJTsbUm2nGha
+K8XBKLbQotPfKkQxB6XjoywjypqVOhYDE9Vt2TcFkiV6bttLl9Cs+dUOZFgxmz7A
+sp1p51HhLLo3WMqejV4Lmvnn8Byv6lICOBF5ePZ1B/yQ2VlukbPuvE+cMHlrFe3r
+HYid+esyyJQBoyQZtKFEJExzIdmALmsCbPooxK7KioZM4f/vJNV2J8VSOnpgukzz
+vl+kT7fWp3vC+2HSQziqezO+BijXbLSsFaf8tERgCqGIuNVhNakwVAzHMrq9+lSj
+KhTBcM2d1FpEnpAbsE9jt3oSGp3WNQehmyZfqMYOSBT3IFS8yKU8+81zLmALukFQ
+GR3hOpepnee1KnrRrUNt+PC+So3N5foplFkDnLSIc1bSxvHOgSxnzlBHIKpP3di2
+hpy9/j0lRMhYwQcUYrNQOZPcHXgIDWGLFzHonVrXEWv5RaX3OuXAdcumZEg/PxzX
+yVvGmEyCLIGivN0oahREbO7nzN0pHP48Nx3h0SzTiABk409q9LTiAfOM+ISNnQ63
+s8DBzCUvUfG1pyKflAL/QnL/1Coh+L+W5y9eoJ8WwyMHH49F5SmNNDrshOFYuGAx
+vEsChHm0yA58ZeMoaCIH
+=cp4Q
+-----END PGP SIGNATURE-----
 
->
->>> +static int ad5592r_gpio_init(struct ad5592r_state *st)
->>> +{
->>> +     st->gpiochip.label = dev_name(st->dev);
->>> +     st->gpiochip.base = -1;
->>> +     st->gpiochip.ngpio = 8;
->>> +     st->gpiochip.parent = st->dev;
->>> +     st->gpiochip.can_sleep = true;
->>> +     st->gpiochip.direction_input = ad5592r_gpio_direction_input;
->>> +     st->gpiochip.direction_output = ad5592r_gpio_direction_output;
->>> +     st->gpiochip.get = ad5592r_gpio_get;
->>> +     st->gpiochip.set = ad5592r_gpio_set;
->>> +     st->gpiochip.request = ad5592r_gpio_request;
->>> +     st->gpiochip.owner = THIS_MODULE;
->>> +
->>> +     mutex_init(&st->gpio_lock);
->>> +
->>> +     return gpiochip_add_data(&st->gpiochip, st);
->
-> The gpiolib should be fine with the of_node from the parent so
-> looks fine.
->
->>> +             mutex_lock(&iio_dev->mlock);
->>> +             st->ops->reg_write(st, AD5592R_REG_RESET, 0xdac);
->>> +             mutex_unlock(&iio_dev->mlock);
->
-> What's that? (0xdac)? Clever magic?
-
-Clever magic - to avoid accidental resets.
-
->
->>> +             case CH_MODE_DAC_AND_ADC:
->>> +                     dac |= BIT(i);
->>> +                     adc |= BIT(i);
->>> +                     break;
->>> +
->>> +             case CH_MODE_UNUSED_PULL_DOWN:
->>> +                     pulldown |= BIT(i);
->>> +                     break;
->>> +
->>> +             case CH_MODE_UNUSED_OUT_TRISTATE:
->>> +                     tristate |= BIT(i);
->>> +                     break;
->>> +
->>> +             case CH_MODE_UNUSED_OUT_LOW:
->>> +                     st->gpio_out |= BIT(i);
->>> +                     break;
->>> +
->>> +             case CH_MODE_UNUSED_OUT_HIGH:
->>> +                     st->gpio_out |= BIT(i);
->>> +                     st->gpio_val |= BIT(i);
->>> +                     break;
->>> +
->>> +             case CH_MODE_GPIO_OPEN_DRAIN:
->>> +                     open_drain |= BIT(i);
->
-> Deja-vu with include/linux/pinctrl/pinconf-generic.h
->
-> We call tristate "bias high impedance".
->
-> Yours,
-> Linus Walleij
->
-
-
--- 
-Greetings,
-Michael
-
---
-Analog Devices GmbH      Wilhelm-Wagenfeld-Str. 6      80807 Muenchen
-Sitz der Gesellschaft: Muenchen; Registergericht: Muenchen HRB 40368;
-Geschaeftsfuehrer:Dr.Carsten Suckrow, Thomas Wessel, William A. Martin,
-Margaret Seif
+--vaHlF1o0eSLrKmNa--
