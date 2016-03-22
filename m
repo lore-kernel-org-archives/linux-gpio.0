@@ -1,71 +1,64 @@
-From: Martin Langhoff <martin.langhoff@gmail.com>
-Subject: Re: Diagnosing ACPI trouble related to pinctr_cherryview on 4.4.x
-Date: Tue, 22 Mar 2016 16:32:30 -0400
-Message-ID: <CACPiFCL2rc-yMht2_CyPgLg35xamDobhzQVJjDed4FgpbX9gTA@mail.gmail.com>
-References: <CACPiFCKv=QJ0t5e=9Wm4cC4Spynx-tVCiabL7AcbcOkp_w47fQ@mail.gmail.com>
- <20160322152218.GA2099@lahna.fi.intel.com> <CACPiFC+hDF0+9vPCrhvo079E6RCVVmZXTS1ziS-jHAAZJQ+wNg@mail.gmail.com>
- <20160322154950.GB2099@lahna.fi.intel.com> <CACPiFCKS-8re6g1Zbhs8N9D_tDMENqXPeNGRS_0dU6tzz50T8A@mail.gmail.com>
- <20160322162222.GF2099@lahna.fi.intel.com> <CACPiFCKD_Nwut=GL-xOU5gN2k8Na7pFWdhsms85QsDTvvREJLw@mail.gmail.com>
- <1458668165.5907.28.camel@linux.intel.com> <CACPiFC+_TpiFFm+hYJd1tX4AnadxSj_KKOtDALjSj0_c8Qa2pA@mail.gmail.com>
+From: Nicolas Saenz Julienne <nicolassaenzj-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] gpio: 74x164: add dt support for nxp's 74x594
+Date: Tue, 22 Mar 2016 23:16:02 +0000
+Message-ID: <20160322231558.GA2611@vian>
+References: <1457998330-8070-1-git-send-email-nicolassaenzj@gmail.com>
+ <CAMuHMdW5Owzv06wnV34W3cYp=ibrONcfBVV6WST5VyvQ1ENjsA@mail.gmail.com>
+ <20160322104207.GA2842@marie-Aspire-5600>
+ <CAMuHMdWTteucxUgBU=d6=bckaZrn0vmr8LYW08UdULEtQYFzpg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:33946 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751359AbcCVUcv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Mar 2016 16:32:51 -0400
-Received: by mail-oi0-f42.google.com with SMTP id i17so23415696oib.1
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Mar 2016 13:32:50 -0700 (PDT)
-In-Reply-To: <CACPiFC+_TpiFFm+hYJd1tX4AnadxSj_KKOtDALjSj0_c8Qa2pA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWTteucxUgBU=d6=bckaZrn0vmr8LYW08UdULEtQYFzpg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-ok so I've tried blacklisting all the modules suggested here, but they
-do not make a difference. What does make a difference is to have
-pinctrl_cherryview (as a module and ) blacklisted, _and_ noapic.
+Hi Geert, thanks for your reply.
 
-dmesg
-http://fpaste.org/343894/78237145/
+On Tue, Mar 22, 2016 at 11:56:51AM +0100, Geert Uytterhoeven wrote:
+[..]
+> For DT bindings, it doesn't matter who manufactured the part, or which
+> technology was used (TTL, HC, LVC, ...).
+> 
+> Logically, the shiny new parts are compatible with the old ones, from as early
+> as the 1960s.
+> 
+> Especially for standard logic glue, where you can source parts from several
+> manufacturers, and which are available in many different technologies, it
+> doesn't make much sense to have all combinations in the DT bindings.
+> 
+> https://en.wikipedia.org/wiki/7400_series
+That did the trick.
 
-acpidump
-http://fpaste.org/343898/14586785/
+> 
+> Now, which one to pick?
+> Given the precedence set by the existing compatible value "fairchild,74hc595",
+> perhaps the most logical one to add is "fairchild,74hc594"?
+> 
+> Or can we just drop the manufacturer?
+Well as you say DT doesn't care for technology nor manufacturer. I'd go for
+dropping the manufacturer and adding an "x" for the technology (i.e. 74x595).
+I saw that the binding is being used on some boards is there any rule against
+changing bindings that are already being used?
 
-
-big thanks for all the help so far,
-
-
-
-martin
-
-On Tue, Mar 22, 2016 at 1:53 PM, Martin Langhoff
-<martin.langhoff@gmail.com> wrote:
-> On Tue, Mar 22, 2016 at 1:36 PM, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
->> # CONFIG_X86_INTEL_LPSS is not set
->
-> adding intel_lpss,intel_lpss_acpi,intel_lpss_pci to blacklisted
-> modules in kernel command line did not change things for the better.
->
-> Compiles are slow and awkward on the limited setup I have (visiting
-> relatives, etc)... I'm trying to get a 4.6.6 kernel built with
-> pinctrl_cherryview as module so I can test that case...
->
-> All tests so far on Fedora's kernel-4.6.6-300-fc23 rpm, frobbing kernel params.
->
->
-> m
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 > --
->  martin.langhoff@gmail.com
->  -  ask interesting questions
->  - don't get distracted with shiny stuff  - working code first
->  ~ http://docs.moodle.org/en/User:Martin_Langhoff
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+I'll happily do a new version of the patch if the idea is worth it.
 
-
-
--- 
- martin.langhoff@gmail.com
- -  ask interesting questions
- - don't get distracted with shiny stuff  - working code first
- ~ http://docs.moodle.org/en/User:Martin_Langhoff
+	Nicolas
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
