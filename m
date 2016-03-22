@@ -1,65 +1,50 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFD] Sharing GPIOs for input (buttons) and output (LEDs)
-Date: Tue, 22 Mar 2016 15:18:17 +0100
-Message-ID: <CACRpkdZ=Xd3_T7paMif10P1zwOT5+p-qn_i1pYoUfvX1wi=EVQ@mail.gmail.com>
-References: <CAMuHMdWbpj=ZnFqh1uWZSCojvrM+NB=Bbzw=UebodTr+vAKy7g@mail.gmail.com>
-	<CACRpkdb1J+-_9szuv6xWhrD7+NFeCjug+cqaYsHDYyLUYbLw1w@mail.gmail.com>
-	<56F14FC2.8060804@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: IPSRx and MOD_SELx should be set
+ before GPSRx
+Date: Tue, 22 Mar 2016 15:30:24 +0100
+Message-ID: <CAMuHMdUbcJZmyXgRd3EyNi55b-Gwc-dN84TQNdFf3F5JxvOR5Q@mail.gmail.com>
+References: <8760wnfe3r.wl%kuninori.morimoto.gx@renesas.com>
+	<8737rrfe1f.wl%kuninori.morimoto.gx@renesas.com>
+	<CACRpkdYFzKkDEr-PE1euG7ZOGe5MQJfm-rdW-7YN1yQ_y4W9Zg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <56F14FC2.8060804@linaro.org>
+In-Reply-To: <CACRpkdYFzKkDEr-PE1euG7ZOGe5MQJfm-rdW-7YN1yQ_y4W9Zg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-renesas-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus <magnus.damm@gmail.com>, Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 22, 2016 at 2:59 PM, Vaibhav Hiremath
-<vaibhav.hiremath@linaro.org> wrote:
-> On Thursday 17 March 2016 03:48 PM, Linus Walleij wrote:
+Hi Linus,
 
-> but recently I came across another usecase of shared gpio,
+On Tue, Mar 22, 2016 at 2:18 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Mar 16, 2016 at 1:48 AM, Kuninori Morimoto
+> <kuninori.morimoto.gx@renesas.com> wrote:
 >
-> Say, for example, we have multiple external I2C peripheral which share
-> interrupt line over gpio (ofcourse irq line is muxed onto single gpio).
+>> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>>
+>> Gen2 / Gen3 datasheet will have below note in next version.
+>> This patch follows this note.
+>>
+>> IPSRx and MOD_SELx registers shall be set before setting GPSRx
+>> registers in case that they need to be configured.
+>> MOD_SELx registers can be set either earlier or later than setting
+>> IPSRx registers.
+>>
+>> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 >
-> Now in kernel I would have multiple instances of driver supporting each
-> peripheral but gpio can not be shared for registering irq.
->
-> Do you suggest MFD driver for such simple usecases ? Should gpiolib
-> support SHARED gpios, and gpiolib can define all the policies over
-> configuration
+> I wait for Geert to either queue this for his first v4.7 pull request
+> or tell me to apply it for fixes. Is it a regression?
 
-I don't see why you would want to use MFD at all.
+I'm not aware of any issues due to this.
 
-Not shared GPIOs but shared interrupt lines.
+Gr{oetje,eeting}s,
 
-If you're using device tree is is pretty straight forward:
+                        Geert
 
-- Make sure the GPIOlib and irqchip portions of the driver
-  are totally orthogonal. (See Documentation/gpio/driver.txt
-  section "GPIO drivers providing IRQs")
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-- Just use the irqchip side of the GPIO
-
-- Make sure your consumers check if the IRQ is theirs
-  and return IRQ_HANDLED vs NO_IRQ depending on
-  whether it's theirs or not.
-
-It is quite obvious from context that in this case all consumers
-are using an open drain (if active low) scheme. However
-since the GPIO is then used as input it has no effect, it is
-more a question for the consumers to assure their IRQ
-logic is not using push-pull but rather open drain or you will
-get a disaster in the totempole...
-
-> (input only, what about conflicts, bidirectional mode?)
-
-We thought about this, see Documentation/gpio/driver.txt section
-Locking IRQ usage".
-
-When the line is locked for IRQ usage, it cannot be switched to
-output.
-
-Yours,
-Linus Walleij
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
