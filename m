@@ -1,46 +1,65 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: xlp: Add GPIO driver support for Broadcom Vulcan ARM64
-Date: Tue, 22 Mar 2016 15:06:50 +0100
-Message-ID: <CACRpkdbXrUD0BfyYMceCS=EqoHztjPMChrwHTXWMySo_kD=qdw@mail.gmail.com>
-References: <1458652125-4527-1-git-send-email-kamlakant.patel@broadcom.com>
+Subject: Re: [RFD] Sharing GPIOs for input (buttons) and output (LEDs)
+Date: Tue, 22 Mar 2016 15:18:17 +0100
+Message-ID: <CACRpkdZ=Xd3_T7paMif10P1zwOT5+p-qn_i1pYoUfvX1wi=EVQ@mail.gmail.com>
+References: <CAMuHMdWbpj=ZnFqh1uWZSCojvrM+NB=Bbzw=UebodTr+vAKy7g@mail.gmail.com>
+	<CACRpkdb1J+-_9szuv6xWhrD7+NFeCjug+cqaYsHDYyLUYbLw1w@mail.gmail.com>
+	<56F14FC2.8060804@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:35242 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751991AbcCVOGx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Mar 2016 10:06:53 -0400
-Received: by mail-oi0-f49.google.com with SMTP id w20so120631485oia.2
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Mar 2016 07:06:53 -0700 (PDT)
-In-Reply-To: <1458652125-4527-1-git-send-email-kamlakant.patel@broadcom.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <56F14FC2.8060804@linaro.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-renesas-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Kamlakant Patel <kamlakant.patel@broadcom.com>
-Cc: Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Mar 22, 2016 at 2:08 PM,  <kamlakant.patel@broadcom.com> wrote:
+On Tue, Mar 22, 2016 at 2:59 PM, Vaibhav Hiremath
+<vaibhav.hiremath@linaro.org> wrote:
+> On Thursday 17 March 2016 03:48 PM, Linus Walleij wrote:
 
-> From: Kamlakant Patel <kamlakant.patel@broadcom.com>
+> but recently I came across another usecase of shared gpio,
 >
-> - Add GPIO support for Broadcom Vulcan ARM64.
-> - Add depends on ARCH_VULCAN to Kconfig to enable gpio controller
->   driver for Broadcom Vulcan ARM64 SoCs.
+> Say, for example, we have multiple external I2C peripheral which share
+> interrupt line over gpio (ofcourse irq line is muxed onto single gpio).
 >
-> Signed-off-by: Kamlakant Patel <kamlakant.patel@broadcom.com>
-(...)
-> +       {
-> +               .compatible = "brcm,vulcan-gpio",
-> +               .data       = (void *)GPIO_VARIANT_VULCAN,
-> +       },
+> Now in kernel I would have multiple instances of driver supporting each
+> peripheral but gpio can not be shared for registering irq.
+>
+> Do you suggest MFD driver for such simple usecases ? Should gpiolib
+> support SHARED gpios, and gpiolib can define all the policies over
+> configuration
 
-Please patch:
-Documentation/devicetree/bindings/gpio/gpio-xlp.txt
+I don't see why you would want to use MFD at all.
 
-TO contain the new compatible.
+Not shared GPIOs but shared interrupt lines.
 
-It's fine with me to do in the same patch.
+If you're using device tree is is pretty straight forward:
 
-No other problems with this, just fix that and I will apply it.
+- Make sure the GPIOlib and irqchip portions of the driver
+  are totally orthogonal. (See Documentation/gpio/driver.txt
+  section "GPIO drivers providing IRQs")
+
+- Just use the irqchip side of the GPIO
+
+- Make sure your consumers check if the IRQ is theirs
+  and return IRQ_HANDLED vs NO_IRQ depending on
+  whether it's theirs or not.
+
+It is quite obvious from context that in this case all consumers
+are using an open drain (if active low) scheme. However
+since the GPIO is then used as input it has no effect, it is
+more a question for the consumers to assure their IRQ
+logic is not using push-pull but rather open drain or you will
+get a disaster in the totempole...
+
+> (input only, what about conflicts, bidirectional mode?)
+
+We thought about this, see Documentation/gpio/driver.txt section
+Locking IRQ usage".
+
+When the line is locked for IRQ usage, it cannot be switched to
+output.
 
 Yours,
 Linus Walleij
