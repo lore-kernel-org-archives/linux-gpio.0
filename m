@@ -1,55 +1,49 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 01/10] pinctrl: sh-pfc: r8a7790: Implement voltage
- switching for SDHI
-Date: Tue, 22 Mar 2016 09:44:31 +0100
-Message-ID: <CAMuHMdUidqgeNjjbzXn4SSgmjQxfZkc4wNNTWjEBcEG0dsbi-A@mail.gmail.com>
-References: <1457774112-16958-1-git-send-email-wsa@the-dreams.de>
-	<1457774112-16958-2-git-send-email-wsa@the-dreams.de>
-	<CAMuHMdXhw6bPBruU8CLXm72mq6_c6a_8ZPGukdyuMi=HQ4eACA@mail.gmail.com>
-	<20160322083520.GB1475@katana>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] iio: dac: Add support for the AD5592R/AD5593R ADCs/DACs
+Date: Tue, 22 Mar 2016 09:49:55 +0100
+Message-ID: <CACRpkdYFUUoG--47qFA_za9X07qukST1vMBEoVC6J4z2LHcs3w@mail.gmail.com>
+References: <1457009883-4017-1-git-send-email-michael.hennerich@analog.com>
+	<56DAEDF4.6040008@kernel.org>
+	<56DD7548.8050306@analog.com>
+	<CACRpkdY=n30A5UkRX7avP7eWrPffh3faF8K_Ey2f2cs1GRZP7g@mail.gmail.com>
+	<56EFFBB6.40806@analog.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34352 "EHLO
-	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753149AbcCVIod (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Mar 2016 04:44:33 -0400
-In-Reply-To: <20160322083520.GB1475@katana>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:34742 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756388AbcCVItz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Mar 2016 04:49:55 -0400
+Received: by mail-oi0-f42.google.com with SMTP id l76so76093607oig.1
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Mar 2016 01:49:55 -0700 (PDT)
+In-Reply-To: <56EFFBB6.40806@analog.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org, Linux MMC List <linux-mmc@vger.kernel.org>, Dirk Behme <dirk.behme@gmail.com>, Ben Hutchings <ben.hutchings@codethink.co.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Michael Hennerich <michael.hennerich@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Hartmut Knaack <knaack.h@gmx.de>, Paul Cercueil <paul.cercueil@analog.com>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Wolfram,
+On Mon, Mar 21, 2016 at 2:48 PM, Michael Hennerich
+<michael.hennerich@analog.com> wrote:
 
-On Tue, Mar 22, 2016 at 9:35 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> On Mon, Mar 14, 2016 at 10:47:23AM +0100, Geert Uytterhoeven wrote:
->> On Sat, Mar 12, 2016 at 10:15 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
->> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> >
->> > All the SHDIs can operate with either 3.3V or 1.8V signals, depending
->> > on negotiation with the card.
->> >
->> > Implement the {get,set}_io_voltage operations and set the related
->> > capability flag for the associated pins.
->> >
->> > Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
->> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> > Cc: linux-gpio@vger.kernel.org
->>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> The thing is that the device directly supports an OPEN DRAIN mode.
 >
-> So, can this be picked up already?
+> If the consumer asks for open drain mode - everything works as expected.
+> However instead of utilizing the on-chip feature, GPIOLIB will emulate open
+> drain behaviour by configuring the chip for input when someone writes logic
+> high.
+>
+> So the comment above was really meant to say -
+> remove on-chip OPEN DRAIN mode, consumers should use the GPIOLIB
+> implementation if required.
 
-I'll add it to sh-pfc-for-v4.7, and to next renesas-drivers.
+This is very interesting.
 
-Gr{oetje,eeting}s,
+So if a hardware has *real* open drain, i.e. a bit in hardware that says
+"set me in open drain mode" we should manage this in gpiolib
+and provide a special callback in the vtable for it, right? Because it
+is certainly better to do this with hardware, if we can.
 
-                        Geert
+I'll send a draft patch and we can see if this is what you want.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
