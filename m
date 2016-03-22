@@ -1,38 +1,61 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: Re: [PATCH 1/2] gpio: menz127: Drop lock field from struct men_z127_gpio
-Date: Tue, 22 Mar 2016 18:53:55 +0800
-Message-ID: <CAFRkauD6pMt-paEHwt653C+iDv78Py52pRjHRAxyVp4XyWoBbA@mail.gmail.com>
-References: <1457527135.720.1.camel@ingics.com>
-	<CACRpkdZNrdn0p-usbpFP4OZXCfLRiPdiMR55uqcBnHJcrO429g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] gpio: 74x164: add dt support for nxp's 74x594
+Date: Tue, 22 Mar 2016 11:56:51 +0100
+Message-ID: <CAMuHMdWTteucxUgBU=d6=bckaZrn0vmr8LYW08UdULEtQYFzpg@mail.gmail.com>
+References: <1457998330-8070-1-git-send-email-nicolassaenzj@gmail.com>
+	<CAMuHMdW5Owzv06wnV34W3cYp=ibrONcfBVV6WST5VyvQ1ENjsA@mail.gmail.com>
+	<20160322104207.GA2842@marie-Aspire-5600>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f194.google.com ([209.85.217.194]:35785 "EHLO
-	mail-lb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758905AbcCVKx5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Mar 2016 06:53:57 -0400
-Received: by mail-lb0-f194.google.com with SMTP id wn5so14018091lbb.2
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Mar 2016 03:53:56 -0700 (PDT)
-In-Reply-To: <CACRpkdZNrdn0p-usbpFP4OZXCfLRiPdiMR55uqcBnHJcrO429g@mail.gmail.com>
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:33743 "EHLO
+	mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759261AbcCVK4x (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Mar 2016 06:56:53 -0400
+In-Reply-To: <20160322104207.GA2842@marie-Aspire-5600>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andreas Werner <andreas.werner@men.de>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: nicolas saenz julienne <nicolassaenzj@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-2016-03-22 18:31 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Wed, Mar 9, 2016 at 1:38 PM, Axel Lin <axel.lin@ingics.com> wrote:
+Hi Nicolas,
+
+On Tue, Mar 22, 2016 at 11:42 AM, nicolas saenz julienne
+<nicolassaenzj@gmail.com> wrote:
+>> Why did you choose the "lvc" variant?
+> Well to be honest the HW people did and it's all I could test with.  I don't
+> know much about these naming schemes, apart from the intuition it has to do
+> with frequency and line levels.
 >
->> Current code uses a uninitialized spin lock.
->> bgpio_init() already initialized a spin lock, so let's switch to use
->> &gc->bgpio_lock instead and remove the lock from struct men_z127_gpio.
->>
->> Signed-off-by: Axel Lin <axel.lin@ingics.com>
->
-> Patch applied for the v4.7 cycle. Will not appear in -next until
-> after -rc1.
+>> Ideally, you want to put the oldest "manuf,74x594" variant here.
+> What do you mean by oldest? What would you suggest? it's funny because the chip
+> is going to be used on a new product that is meant to be produced for years.
 
-Is it fine to use uninitialized spinlock?
-If not, this one should be for 4.6.
+For DT bindings, it doesn't matter who manufactured the part, or which
+technology was used (TTL, HC, LVC, ...).
 
-Regards,
-Axel
+Logically, the shiny new parts are compatible with the old ones, from as early
+as the 1960s.
+
+Especially for standard logic glue, where you can source parts from several
+manufacturers, and which are available in many different technologies, it
+doesn't make much sense to have all combinations in the DT bindings.
+
+https://en.wikipedia.org/wiki/7400_series
+
+Now, which one to pick?
+Given the precedence set by the existing compatible value "fairchild,74hc595",
+perhaps the most logical one to add is "fairchild,74hc594"?
+
+Or can we just drop the manufacturer?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
