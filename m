@@ -1,48 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 1/3] gpio: designware: convert device node to fwnode
-Date: Tue, 22 Mar 2016 11:38:26 +0100
-Message-ID: <CACRpkdYb8HYXta3yHB4-n-KtSAhyrREUGJJMOUbt3ZXvSUbn6Q@mail.gmail.com>
-References: <1457077474-124064-1-git-send-email-qiujiang@huawei.com>
-	<1457077474-124064-2-git-send-email-qiujiang@huawei.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2] iio: dac: Add support for the AD5592R/AD5593R ADCs/DACs
+Date: Tue, 22 Mar 2016 11:50:42 +0100
+Message-ID: <CACRpkdZk=wMEDCw4dm7VNhxtGeSKFb1ELV4Tosi00+jjcWFmFg@mail.gmail.com>
+References: <1456407412-16218-1-git-send-email-michael.hennerich@analog.com>
+	<56D1E1CB.6070704@kernel.org>
+	<CACRpkdap_8YGCAvNeK7_0H2MDDnwQ9QDJH4O2SzEkDmczPGtLg@mail.gmail.com>
+	<56F0001B.9010608@analog.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:33887 "EHLO
-	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756703AbcCVKi1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Mar 2016 06:38:27 -0400
-Received: by mail-oi0-f50.google.com with SMTP id i17so766156oib.1
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Mar 2016 03:38:27 -0700 (PDT)
-In-Reply-To: <1457077474-124064-2-git-send-email-qiujiang@huawei.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56F0001B.9010608-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
+Cc: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Paul Cercueil <paul.cercueil-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: qiujiang <qiujiang@huawei.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Lee Jones <lee.jones@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>, haifeng.wei@huawei.com, charles.chenxin@huawei.com
 
-On Fri, Mar 4, 2016 at 8:44 AM, qiujiang <qiujiang@huawei.com> wrote:
+On Mon, Mar 21, 2016 at 3:07 PM, Michael Hennerich
+<michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org> wrote:
+> On 03/11/2016 05:28 PM, Linus Walleij wrote:
 
-> This patch converts device node to fwnode in
-> dwapb_port_property for designware gpio driver,
-> so as to provide a unified data structure for DT
-> and ACPI bindings.
+>>>> +             mutex_lock(&iio_dev->mlock);
+>>>> +             st->ops->reg_write(st, AD5592R_REG_RESET, 0xdac);
+>>>> +             mutex_unlock(&iio_dev->mlock);
+>>
+>> What's that? (0xdac)? Clever magic?
 >
-> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: qiujiang <qiujiang@huawei.com>
+> Clever magic - to avoid accidental resets.
 
-I need Mika's and maybe also Rafael's ACKs on this before
-I merge any of the series.
+I see. Put in a small comment like:
 
-> --- a/drivers/mfd/intel_quark_i2c_gpio.c
-> +++ b/drivers/mfd/intel_quark_i2c_gpio.c
-> @@ -227,7 +227,7 @@ static int intel_quark_gpio_setup(struct pci_dev *pdev, struct mfd_cell *cell)
->                 return -ENOMEM;
->
->         /* Set the properties for portA */
-> -       pdata->properties->node         = NULL;
-> +       pdata->properties->fwnode       = NULL;
-
-And apparently also the MFD maintainer needs to be involved to ACK this,
-so add Lee Jones on subsequent postings.
+/* Writing this magic value resets the device */
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
