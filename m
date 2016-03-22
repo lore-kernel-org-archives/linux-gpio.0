@@ -1,36 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: 74x164: Implement gpiochip.set_multiple()
-Date: Tue, 22 Mar 2016 11:56:50 +0100
-Message-ID: <CACRpkda38uz2dDwyCPA4YucfMS3Jjjkz00oPOmmkK7rXZatRNg@mail.gmail.com>
-References: <1457968758-22670-1-git-send-email-geert+renesas@glider.be>
-	<56E789C1.2070907@electromag.com.au>
+From: nicolas saenz julienne <nicolassaenzj@gmail.com>
+Subject: Re: [PATCH] gpio: 74x164: add dt support for nxp's 74x594
+Date: Tue, 22 Mar 2016 11:42:08 +0100
+Message-ID: <20160322104207.GA2842@marie-Aspire-5600>
+References: <1457998330-8070-1-git-send-email-nicolassaenzj@gmail.com>
+ <CAMuHMdW5Owzv06wnV34W3cYp=ibrONcfBVV6WST5VyvQ1ENjsA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56E789C1.2070907@electromag.com.au>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW5Owzv06wnV34W3cYp=ibrONcfBVV6WST5VyvQ1ENjsA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Phil Reid <preid@electromag.com.au>, Axel Lin <axel.lin@ingics.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Alexandre Courbot <gnurou@gmail.com>, Gabor Juhos <juhosg@openwrt.org>, Miguel Gaio <miguel.gaio@efixo.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 15, 2016 at 5:04 AM, Phil Reid <preid@electromag.com.au> wrote:
+Hi sorry for the late response but I was on vacation.
+> 
+> Why did you choose the "lvc" variant?
+Well to be honest the HW people did and it's all I could test with.  I don't
+know much about these naming schemes, apart from the intuition it has to do
+with frequency and line levels.
 
-> pca953x does not update the cached data unless the write operation
-> was successful. Which I folowed with the implement of set_multiple.
-> However a number of other drivers update regardless.
-> eg chip->buffer is updated even if the write_config fails.
->
-> What is the preferred approach?
+> Ideally, you want to put the oldest "manuf,74x594" variant here.
+What do you mean by oldest? What would you suggest? it's funny because the chip
+is going to be used on a new product that is meant to be produced for years.
 
-Obviously the other drivers are buggy and need to be fixed.
-It can't be too many since the number of drivers with failable
-write operations aren's so many. (And I guess they seldom fail
-so it's not a big real world problem.) But it should be fixed.
-
-Add Axel Lin to the thread, he's awesome at finding semantic
-bugs.
-
-Patches accepted :)
-
-Yours,
-Linus Walleij
+> I once read it was Motorola who invented the 7459x parts, to interface with
+> SPI.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+Thanks for your comments!
+	Nicolas
