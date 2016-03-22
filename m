@@ -1,42 +1,45 @@
-From: Scott Wood <scott.wood@nxp.com>
-Subject: Re: [PATCH] gpio/ls1043a: Correct ls1043a gpio nodes compatible in
- dts file
-Date: Tue, 22 Mar 2016 16:00:19 +0000
-Message-ID: <DB5PR0401MB19284B4AAA63BD31A605AC7691800@DB5PR0401MB1928.eurprd04.prod.outlook.com>
-References: <1457600240-47141-1-git-send-email-Gang.Liu@nxp.com>
- <1457600240-47141-2-git-send-email-Gang.Liu@nxp.com>
- <DB5PR0401MB192833673541757889C889C1918A0@DB5PR0401MB1928.eurprd04.prod.outlook.com>
- <DB4PR04MB26636780AB3453AE0D3E218828B0@DB4PR04MB266.eurprd04.prod.outlook.com>
- <DB5PR0401MB19283736845DCFD5F4186729918C0@DB5PR0401MB1928.eurprd04.prod.outlook.com>
- <DB4PR04MB2660ED371AE3599B6EC8F8E82800@DB4PR04MB266.eurprd04.prod.outlook.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: Diagnosing ACPI trouble related to pinctr_cherryview on 4.4.x
+Date: Tue, 22 Mar 2016 18:22:22 +0200
+Message-ID: <20160322162222.GF2099@lahna.fi.intel.com>
+References: <CACPiFCKv=QJ0t5e=9Wm4cC4Spynx-tVCiabL7AcbcOkp_w47fQ@mail.gmail.com>
+ <20160322152218.GA2099@lahna.fi.intel.com>
+ <CACPiFC+hDF0+9vPCrhvo079E6RCVVmZXTS1ziS-jHAAZJQ+wNg@mail.gmail.com>
+ <20160322154950.GB2099@lahna.fi.intel.com>
+ <CACPiFCKS-8re6g1Zbhs8N9D_tDMENqXPeNGRS_0dU6tzz50T8A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-db3on0074.outbound.protection.outlook.com ([157.55.234.74]:13640
-	"EHLO emea01-db3-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751245AbcCVQAX convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Mar 2016 12:00:23 -0400
-Content-Language: en-US
+Received: from mga03.intel.com ([134.134.136.65]:41895 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751142AbcCVQ2R (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 22 Mar 2016 12:28:17 -0400
+Content-Disposition: inline
+In-Reply-To: <CACPiFCKS-8re6g1Zbhs8N9D_tDMENqXPeNGRS_0dU6tzz50T8A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gang Liu <gang.liu@nxp.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "khilman@linaro.org" <khilman@linaro.org>
-Cc: "robh+dt@kernel.org" <robh+dt@kernel.org>, Yang-Leo Li <leoyang.li@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>
+To: Martin Langhoff <martin.langhoff@gmail.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On 03/22/2016 09:03 AM, Gang Liu wrote:
-> Hi, Scott,
+On Tue, Mar 22, 2016 at 11:59:46AM -0400, Martin Langhoff wrote:
+> This is a cheap consumer laptop I thought I'd get Fedora on in half an
+> hour -- grand plans ;-) -- I don't have it rigged to capture dmsg of
+> the crash, no serial adapter with me.
 > 
-> I think you mean that GPIO node needs two compatibles, one for general GPIO IP block ("fsl,qoriq-gpio")
-> and another for chip-specific ("fsl,ls1043a-gpio").
-> The driver can just include general GPIO IP block compatible, and if there is a errata for ls1043 GPIO, the
-> chip-specific compatible can be used to fix the errata, right?
+> On the kernel command line... lvm, root settings 'single`.
 
-Yes.
+Can you also disable sdhci:
 
-> If it's right, do you think the "fsl,ls1043a-gpio" and "fsl,qoriq-gpio" are ok for our Layerscape platforms?
+CONFIG_MMC_SDHCI=n
+CONFIG_MMC_SDHCI_PCI=n
+CONFIG_MMC_SDHCI_ACPI=n
 
-Yes.
+and see if that changes anything.
 
--Scott
+If not, please blacklist pinctrl-cherryview.c and send me full dmesg of
+the boot and acpidump if possible.
 
+> This is an Acer Aspire One 11 Cloudbook Series AO1-131-C1G9 Model N15V1 .
+
+Thanks, I'll try if I can purchase similar machine here and debug it
+further.
