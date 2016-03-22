@@ -1,120 +1,66 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: Re: [PATCH 0/4] Add AXP209 GPIO driver
-Date: Tue, 22 Mar 2016 15:33:53 +0800
-Message-ID: <CAGb2v67iotNrrSNZ6n1SeHYAn-FoAp5vB+HYp2K580wZ3V9cNQ@mail.gmail.com>
-References: <1457520614-32239-1-git-send-email-maxime.ripard@free-electrons.com>
- <56E0146E.6050102@redhat.com> <20160309152822.GQ8418@lukather>
- <56E044C1.7080300@redhat.com> <20160322072214.GJ30977@lukather>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 01/10] pinctrl: sh-pfc: r8a7790: Implement voltage
+ switching for SDHI
+Date: Tue, 22 Mar 2016 09:35:20 +0100
+Message-ID: <20160322083520.GB1475@katana>
+References: <1457774112-16958-1-git-send-email-wsa@the-dreams.de>
+ <1457774112-16958-2-git-send-email-wsa@the-dreams.de>
+ <CAMuHMdXhw6bPBruU8CLXm72mq6_c6a_8ZPGukdyuMi=HQ4eACA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCMILY6JWQBBB6PKYO3QKGQE7NFNEUI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20160322072214.GJ30977@lukather>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="jy6Sn24JjFx/iggw"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXhw6bPBruU8CLXm72mq6_c6a_8ZPGukdyuMi=HQ4eACA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org, Linux MMC List <linux-mmc@vger.kernel.org>, Dirk Behme <dirk.behme@gmail.com>, Ben Hutchings <ben.hutchings@codethink.co.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
 
-On Tue, Mar 22, 2016 at 3:22 PM, Maxime Ripard
-<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> Hi,
->
-> On Wed, Mar 09, 2016 at 04:44:01PM +0100, Hans de Goede wrote:
->> Hi,
->>
->> On 09-03-16 16:28, Maxime Ripard wrote:
->> >Hi,
->> >
->> >On Wed, Mar 09, 2016 at 01:17:50PM +0100, Hans de Goede wrote:
->> >>Hi,
->> >>
->> >>On 09-03-16 11:50, Maxime Ripard wrote:
->> >>>Hi,
->> >>>
->> >>>The axp209 PMIC used in combination to some Allwinner SoCs has a bunch
->> >>>of GPIOs accessible. Some boards use these to control their backlight
->> >>>or a few LEDs.
->> >>
->> >>Thanks for working on this, but IMHO this cannot go upstream like this,
->> >>the gpio pins on the axp pmics need a pinctrl driver, not a gpio
->> >>driver. I.E. on the axp209 gpio0 and gpio1 can also be used to output
->> >>an additional low-noise ldo (so as a regulator), or as an adc input.
->> >
->> >Eventually, yes, it needs both. But they don't even have to be the
->> >same driver, since they provide two different features. The only
->> >reason we have that construct in the pio case is because they share
->> >the same address space, but in the AXP case, the regmap and our mfd
->> >take care of that already.
->>
->> Hmm, so your suggesting to have mfd instantiate 2 platform devices
->> for this, a gpio and a pinctrl device, each with their own
->> driver. Yes that would work, but I'm a bit worried about the 2
->> racing or some such since they both will end up touching
->> bit 0-2 of register 0x90 / 0x92, more-over since they are both
->> touching the exact same bits I've the feeling that this really
->> should be one driver.
->
-> I don't think that's an issue. We basically have two cases here:
-> either we have a driver using the pin or not.
->
-> If we have a driver using it, then pinctrl will make sure we have an
-> exclusive use of the pin, before the gpio is requested and we start
-> changing that value. If not, then no one cares anyway.
+--jy6Sn24JjFx/iggw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-AFAIK pinctrl binding happens before probe time, and is tied to the
-DT. Each driver requesting pins would have to have a separate node.
-Seems like there isn't one for the regulators.
+On Mon, Mar 14, 2016 at 10:47:23AM +0100, Geert Uytterhoeven wrote:
+> On Sat, Mar 12, 2016 at 10:15 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >
+> > All the SHDIs can operate with either 3.3V or 1.8V signals, depending
+> > on negotiation with the card.
+> >
+> > Implement the {get,set}_io_voltage operations and set the related
+> > capability flag for the associated pins.
+> >
+> > Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > Cc: linux-gpio@vger.kernel.org
+>=20
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Or we'd have to manually configure them for each regulator that needs
-them, and list the relevant pinctrl properties under its own node.
-One "on" and "off" setting pair for each LDO_IO regulator. We could
-then tie the settings to the regulator device, not the underlying
-mfd sub-device.
+So, can this be picked up already?
 
-ChenYu
 
->>
->> I guess that in a proper written dts we either use pinctrl to enable
->> a special function, or gpio, but still.
->>
->> >>I've been working on gsl1680 touchscreen support lately and on at least
->> >>a few a23 tablets, the low-noise ldo is used as AVCC for the touchscreen
->> >>controller.
->> >
->> >Yeah, the AXP209 also has an ADC connected to these pins.
->> >
->> >>Now these use an axp223 pmic, but nothing is stopping someone from
->> >>doing something similar with an axp209 and I think it would be best
->> >>to support this from day one, rather then hope we can retro-fit this
->> >>later without breaking dts.
->> >
->> >I considered that, but I don't see how it would break the DT later. If
->> >someone wants to enable say the ADC, he will of course have to add the
->> >pinctrl driver, and the pinctrl handles, but the old DT will only
->> >reference the gpio driver directly, which would still be something
->> >that would work.
->>
->> I was assuming we would use one mfd-child(-platform)-device for this,
->> not two. I guess that with 2 devices you're right and there should
->> not be any problem, still as said it feels wrong-ish to have 2 drivers
->> poking bits 0-2 of reg 0x90 / reg 0x92.
->
-> Note that the PIO is built on the same model and it works, while we
-> have 3 drivers in one. The only reason why we have everything linked
-> to the same device is because we have to share the address space, but
-> regmap takes care of that here.
->
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
+--jy6Sn24JjFx/iggw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJW8QPIAAoJEBQN5MwUoCm25OEP/isZug+FhRoUnFMosk2DFHDX
+nu3OhlK5Alam5kb6Oij2E+onS6CmeKyNoZJSooEeKwS9MUBm9UW1njLZE/bVfYcX
+TExIyZGjv1FekmA/Yp/z2L/3Gg33iQ1zXMmlooG8MU5C/2HGhF/ZkECYiLIiiaG2
+88zZyzhaCWi3B0in086Bkckr4nmIvFOpwTln7i4vIl/2/OXqLWm2U4sGPXm3QM2g
+6cO90JClw7L/41Nc8gtohcKr+i9dOHAseSv7HvPFa7CAXBL+ftR0EkJf+c68xXjD
+/GqSfwlbKuGs0M58FWG7r0+SbBh9T3q08PBoAGgEVp+AhHqM99tF2L4MkJHXQYw2
+yW0CnJyowjtNEau/CkwdL/Ps5tNBR6Ei9iUigvZfWhsikjAKERiaw6aEDhZ9/XHR
+h+ENBuU9DERxroe3dNS+AifwIGOFhhrmqNiFFRsSRj+JI/+JbZbFFu8Qtvbrh8AT
+Wo5WyKKU7MTpZ312VNlXCS6TFChXezw2ZI1jjnMHh5FWNIMkjDA3WO5ll3yXL12O
+yilWVp14HGE4qToq0D18+FLgz1hw+rXwegNV2ya5VuEn5C7YoPZAJGB6J40gxMNZ
+VbmQuGKGocpMoGjNvoWLEvn4x+Sp1tpqi/QE4+Nbh26GqtBSLZXUdniuLvChBE9z
+XsTwz+AJ0YiB66WQGKbc
+=YW19
+-----END PGP SIGNATURE-----
+
+--jy6Sn24JjFx/iggw--
