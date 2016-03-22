@@ -1,30 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: mb86s7x: Remove redundant platform_set_drvdata() call
-Date: Tue, 22 Mar 2016 11:33:38 +0100
-Message-ID: <CACRpkdY+jW8S5qKoEhj38ni=gQoehnRKpM4wT6Ft3-k-DBc+yw@mail.gmail.com>
-References: <1457527695.720.4.camel@ingics.com>
+Subject: Re: [PATCH v5 1/3] gpio: designware: convert device node to fwnode
+Date: Tue, 22 Mar 2016 11:38:26 +0100
+Message-ID: <CACRpkdYb8HYXta3yHB4-n-KtSAhyrREUGJJMOUbt3ZXvSUbn6Q@mail.gmail.com>
+References: <1457077474-124064-1-git-send-email-qiujiang@huawei.com>
+	<1457077474-124064-2-git-send-email-qiujiang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:35685 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758498AbcCVKdj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Mar 2016 06:33:39 -0400
-Received: by mail-oi0-f46.google.com with SMTP id w20so112702651oia.2
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Mar 2016 03:33:39 -0700 (PDT)
-In-Reply-To: <1457527695.720.4.camel@ingics.com>
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:33887 "EHLO
+	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756703AbcCVKi1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Mar 2016 06:38:27 -0400
+Received: by mail-oi0-f50.google.com with SMTP id i17so766156oib.1
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Mar 2016 03:38:27 -0700 (PDT)
+In-Reply-To: <1457077474-124064-2-git-send-email-qiujiang@huawei.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Jassi Brar <jaswinder.singh@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: qiujiang <qiujiang@huawei.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Lee Jones <lee.jones@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>, haifeng.wei@huawei.com, charles.chenxin@huawei.com
 
-On Wed, Mar 9, 2016 at 1:48 PM, Axel Lin <axel.lin@ingics.com> wrote:
+On Fri, Mar 4, 2016 at 8:44 AM, qiujiang <qiujiang@huawei.com> wrote:
 
-> Set it once is enough, so remove the second platform_set_drvdata() call.
+> This patch converts device node to fwnode in
+> dwapb_port_property for designware gpio driver,
+> so as to provide a unified data structure for DT
+> and ACPI bindings.
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: qiujiang <qiujiang@huawei.com>
 
-Patch applied for v4.7.
+I need Mika's and maybe also Rafael's ACKs on this before
+I merge any of the series.
+
+> --- a/drivers/mfd/intel_quark_i2c_gpio.c
+> +++ b/drivers/mfd/intel_quark_i2c_gpio.c
+> @@ -227,7 +227,7 @@ static int intel_quark_gpio_setup(struct pci_dev *pdev, struct mfd_cell *cell)
+>                 return -ENOMEM;
+>
+>         /* Set the properties for portA */
+> -       pdata->properties->node         = NULL;
+> +       pdata->properties->fwnode       = NULL;
+
+And apparently also the MFD maintainer needs to be involved to ACK this,
+so add Lee Jones on subsequent postings.
 
 Yours,
 Linus Walleij
