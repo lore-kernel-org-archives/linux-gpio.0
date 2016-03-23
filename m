@@ -1,72 +1,163 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5] iio: dac: Add support for the AD5592R/AD5593R
- ADCs/DACs
-Date: Wed, 23 Mar 2016 10:15:20 -0500
-Message-ID: <20160323151520.GA19229@rob-hp-laptop>
-References: <1458721195-28915-1-git-send-email-michael.hennerich@analog.com>
+From: Alan Tull <delicious.quinoa@gmail.com>
+Subject: Re: [PATCH v5 1/3] gpio: designware: convert device node to fwnode
+Date: Wed, 23 Mar 2016 11:20:08 -0500
+Message-ID: <CANk1AXSJQh4VovcBVqvt=s4f7yBVLLyhG3js4o1HDNW80u-=JQ@mail.gmail.com>
+References: <1457077474-124064-1-git-send-email-qiujiang@huawei.com>
+	<1457077474-124064-2-git-send-email-qiujiang@huawei.com>
+	<CANk1AXRTvSRZkWMQf03Ty+ouxcJDpD-hJ9tjXSqh5Z0OzOhk+w@mail.gmail.com>
+	<CAHp75VfGJZnOWUdZkjCbraupg=KUw2-jhtiRHLxrT2uUwJdvow@mail.gmail.com>
+	<56F28107.6090305@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:54388 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753030AbcCWPP0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 23 Mar 2016 11:15:26 -0400
-Content-Disposition: inline
-In-Reply-To: <1458721195-28915-1-git-send-email-michael.hennerich@analog.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <56F28107.6090305@huawei.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: qiujiang <qiujiang@huawei.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com, atull <atull@opensource.altera.com>
 List-Id: linux-gpio@vger.kernel.org
-To: michael.hennerich@analog.com
-Cc: jic23@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, lars@metafoo.de, knaack.h@gmx.de, paul.cercueil@analog.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Wed, Mar 23, 2016 at 09:19:55AM +0100, michael.hennerich@analog.com wrote:
-> From: Paul Cercueil <paul.cercueil@analog.com>
-> 
-> This patch adds support for the AD5592R (spi) and AD5593R (i2c)
-> ADC/DAC/GPIO devices.
-> 
-> Signed-off-by: Paul Cercueil <paul.cercueil@analog.com>
-> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-> 
-> ---
-> 
-> Changes since v1:
-> 	* Fix mutex usage
-> 	* Remove unnecessary NULL pointer guards
-> 	* Add comment explaining the invalid data read
-> 	* AD5593R Remove surplus adc readback
-> 
-> Changes since v2:
-> 	* Use child nodes to describe channels
-> 	* Fix probe return and driver remove path
-> 	* Move locking closer to where its used
-> 	* Remove WARN_ON but return error
-> 	* Remove OPEN DRAIN configuration option
-> 
-> Changes since v3:
-> 	* Documentation: Add missing vendor prefixes in the examples
-> 	* Minor function reordering in remove() to match the reverse of probe()
-> 
-> Changes since v4:
-> 	* Documentation: Add missing gpio bindings
-> 	* Kconfig: Select GPIOLIB and remove ifdefs in code
-> 	* Remove surplus error check in ad5592r_gpio_request()
-> 	* Add comment about reset magic
-> ---
->  .../devicetree/bindings/iio/dac/ad5592r.txt        | 152 +++++
+On Wed, Mar 23, 2016 at 6:41 AM, Jiang Qiu <qiujiang@huawei.com> wrote:
+> =E5=9C=A8 2016/3/11 4:27, Andy Shevchenko =E5=86=99=E9=81=93:
+>> On Thu, Mar 10, 2016 at 9:09 PM, Alan Tull <delicious.quinoa@gmail.c=
+om> wrote:
+>>> On Fri, Mar 4, 2016 at 1:44 AM, qiujiang <qiujiang@huawei.com> wrot=
+e:
+>>>> This patch converts device node to fwnode in
+>>>> dwapb_port_property for designware gpio driver,
+>>>> so as to provide a unified data structure for DT
+>>>> and ACPI bindings.
+>>>>
+>>>> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>>>> Signed-off-by: qiujiang <qiujiang@huawei.com>
+>>>> @@ -496,18 +492,19 @@ dwapb_gpio_get_pdata_of(struct device *dev)
+>>>>                  * Only port A can provide interrupts in all confi=
+gurations of
+>>>>                  * the IP.
+>>>>                  */
+>>>> -               if (pp->idx =3D=3D 0 &&
+>>>> -                   of_property_read_bool(port_np, "interrupt-cont=
+roller")) {
+>>>> -                       pp->irq =3D irq_of_parse_and_map(port_np, =
+0);
+>>>> +               if (dev->of_node && pp->idx =3D=3D 0 &&
+>>>> +                       of_property_read_bool(to_of_node(fwnode),
+>>>> +                               "interrupt-controller")) {
+>>> Hi Qiujiang,
+>>>
+>>> Is there a reason to use "of_property_read_bool" here instead of
+>>> "device_property_read_bool" or similar?
+>> Yeah, this patch looks unfinished.
+>>
+>> This should be
+>>      if (pp->idx =3D=3D 0 &&  fwnode_property_read_bool(fwnode,
+>> "interrupt-controller")) {
+> Hi, Alan, Andy, Mika,
+>
+> Many thanks for help me review this patchset.
+>
+> I tried to use a unified interface to parse the interrupts resource i=
+n DT and ACPI,
+> but it looks difficult because of the hierarchy device node structure=
+ as follow:
+>
+> pc_gpio1: gpio@802f0000 {
+>             #address-cells =3D <1>;
+>             #size-cells =3D <0>;
+>             compatible =3D "snps,dw-apb-gpio";
+>             reg =3D <0x0 0x802f0000 0x0 0x10000>;
+>
+>             porta: gpio-controller@0 {
+>                 compatible =3D "snps,dw-apb-gpio-port";
+>                 gpio-controller;
+>                 #gpio-cells =3D <2>;
+>                 snps,nr-gpios =3D <32>;
+>                 reg =3D <0>;
+>                 interrupt-controller;
+>                 #interrupt-cells =3D <2>;
+>                 interrupts =3D <0 313 4>;
+>             };
+> };
+>
+> According to the designware gpio databook, each GPIO controller inclu=
+des 4 ports
+> (porta,b,c,d), only porta can be a interrupt controller. So, I moved =
+the interrupts
+> resource to the parent node from porta in ACPI.
+>
+> Device(GPI0) {
+>         Name(_HID, "HISI0181")
+>         Name(_ADR, 0) // _ADR: Address
+>         Name(_UID, 0)
+>
+>         Name (_CRS, ResourceTemplate ()  {
+>             Memory32Fixed (ReadWrite, 0x802e0000, 0x10000)
+>             Interrupt (ResourceConsumer, Level, ActiveHigh, Exclusive=
+,,,)  {344} //moved here
+>         })
+>
+>         Device(PRTa) {
+>             Name (_DSD, Package () {
+>                 ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+>                 Package () {
+>                     Package () {"reg",0},
+>                     Package () {"snps,nr-gpios",32},
+>                 }
+>             })
+>         }
+> }
+>
+> That is to say, if GPI0 should be a interrupt controller, the child n=
+ode PRTa must be
+> present first, then add the interrupt resource to the parent node GPI=
+0 scope.
+>
+> Dose this proposal sounds ok? if yes, we can do that for DT. If not, =
+there can only
+> keep two branches to parse the IRQ resource, and the code looks stran=
+ge.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Hi Jiang,
 
->  drivers/iio/dac/Kconfig                            |  27 +
->  drivers/iio/dac/Makefile                           |   3 +
->  drivers/iio/dac/ad5592r-base.c                     | 694 +++++++++++++++++++++
->  drivers/iio/dac/ad5592r-base.h                     |  78 +++
->  drivers/iio/dac/ad5592r.c                          | 164 +++++
->  drivers/iio/dac/ad5593r.c                          | 131 ++++
->  include/dt-bindings/iio/adi,ad5592r.h              |  16 +
->  8 files changed, 1265 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/dac/ad5592r.txt
->  create mode 100644 drivers/iio/dac/ad5592r-base.c
->  create mode 100644 drivers/iio/dac/ad5592r-base.h
->  create mode 100644 drivers/iio/dac/ad5592r.c
->  create mode 100644 drivers/iio/dac/ad5593r.c
->  create mode 100644 include/dt-bindings/iio/adi,ad5592r.h
+Are you suggesting a change for the DT to make it similar to the ACPI
+case?  DT changes create unexpected breakages when people upgrade
+their kernel even if the change is minor.  How bad will the code look
+if you implement it as the two separate code paths as you suggest?
+
+Alan
+
+>
+> That would be great if I can get some help from you.
+>
+> Best Regards
+> Jiang
+>>> Alan
+>>>
+>>>> +                       pp->irq =3D irq_of_parse_and_map(to_of_nod=
+e(fwnode), 0);
+>> But here should be common method called which takes fwnode on input.
+>>
+>>>>                         if (!pp->irq) {
+>>>>                                 dev_warn(dev, "no irq for bank %s\=
+n",
+>>>> -                                        port_np->full_name);
+>>>> +                                        to_of_node(fwnode)->full_=
+name);
+>>>>                         }
+>>>>                 }
+>>>>
+>>>>                 pp->irq_shared  =3D false;
+>>>>                 pp->gpio_base   =3D -1;
+>>>> -               pp->name        =3D port_np->full_name;
+>>>> +               pp->name        =3D to_of_node(fwnode)->full_name;
+>> Also those two should be device property source agnostic. That's wha=
+t
+>> I tried to tell earlier.
+>>
+>
+>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
