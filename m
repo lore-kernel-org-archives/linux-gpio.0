@@ -1,130 +1,75 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: Add drive strength support
-Date: Wed, 23 Mar 2016 10:54:02 +0100
-Message-ID: <CAMuHMdXZ6Eec37e7s3CO0Y782_Yy5hv--jX7gSGFTc5SCokZVA@mail.gmail.com>
-References: <1458516819-3928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-	<1458516819-3928-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+From: Liu Gang <Gang.Liu@nxp.com>
+Subject: [PATCH] dt-bindings: Add new platforms GPIO node description
+Date: Wed, 23 Mar 2016 17:47:19 +0800
+Message-ID: <1458726442-1851-1-git-send-email-Gang.Liu@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1458516819-3928-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, khilman@linaro.org
+Cc: Liu Gang <Gang.Liu@nxp.com>, robh+dt@kernel.org, leoyang.li@nxp.com, mingkai.hu@nxp.com, scott.wood@nxp.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Laurent,
+Update the NXP GPIO node dt-binding file for QorIQ and
+Layerscape platforms, and add one more example with
+ls2080a GPIO node.
 
-On Mon, Mar 21, 2016 at 12:33 AM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> Add support for the drive-strengh pin configuration using the generic
-> pinconf DT bindings.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Liu Gang <Gang.Liu@nxp.com>
+---
+ .../devicetree/bindings/gpio/gpio-mpc8xxx.txt        | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-Thanks for your patch!
-
-> diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-> index 181ea98a63b7..73f0b33ee0a1 100644
-> --- a/drivers/pinctrl/sh-pfc/core.c
-> +++ b/drivers/pinctrl/sh-pfc/core.c
-> @@ -173,6 +173,21 @@ void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned int reg_width,
->         BUG();
->  }
->
-> +u32 sh_pfc_read_reg(struct sh_pfc *pfc, u32 reg, unsigned int width)
-> +{
-> +       return sh_pfc_read_raw_reg(sh_pfc_phys_to_virt(pfc, reg), width);
-> +}
-> +
-> +void sh_pfc_write_reg(struct sh_pfc *pfc, u32 reg, unsigned int width, u32 data)
-> +{
-> +       if (pfc->info->unlock_reg)
-> +               sh_pfc_write_raw_reg(
-> +                       sh_pfc_phys_to_virt(pfc, pfc->info->unlock_reg), 32,
-> +                       ~data);
-> +
-> +       sh_pfc_write_raw_reg(sh_pfc_phys_to_virt(pfc, reg), width, data);
-> +}
-
-I like these helpers. They may also be used by r8a7778_pinmux_[gs]et_bias()
-and r8a7790_[gs]et_io_voltage().
-
-However, writing to the pull-up registers on r8a7778 doesn't seem to require
-writing to the unlock register first.
-
-Should we prepare for that and add a bool parameter to sh_pfc_write_reg()?
-
-> --- a/drivers/pinctrl/sh-pfc/pinctrl.c
-> +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-
-> +static int sh_pfc_pinconf_get_drive_strength(struct sh_pfc *pfc,
-> +                                            unsigned int pin)
-> +{
-> +       unsigned long flags;
-> +       unsigned int offset;
-> +       unsigned int size;
-> +       u32 reg;
-> +       u32 val;
-> +
-> +       reg = sh_pfc_pinconf_find_drive_strength_reg(pfc, pin, &offset, &size);
-> +       if (!reg)
-> +               return -EINVAL;
-> +
-> +       spin_lock_irqsave(&pfc->lock, flags);
-> +       val = sh_pfc_read_reg(pfc, reg, 32);
-> +       spin_unlock_irqrestore(&pfc->lock, flags);
-> +
-> +       val = (val >> offset) & GENMASK(size - 1, 0);
-> +
-> +       /* Convert the value to mA based on a full drive strength value of 24mA.
-> +        * We can make the full value configurable later if needed.
-> +        */
-> +       if (size == 2)
-> +               val <<= 1;
-
-I would write "val *= 2" here, as you're doing arithmetic, and have a "* 3"
-below anyway.
-
-> +       return (val + 1) * 3;
-> +}
-> +
-> +static int sh_pfc_pinconf_set_drive_strength(struct sh_pfc *pfc,
-> +                                            unsigned int pin, u16 strength)
-> +{
-> +       unsigned long flags;
-> +       unsigned int offset;
-> +       unsigned int size;
-> +       u32 reg;
-> +       u32 val;
-> +
-> +       if (strength < 3 || strength > 24)
-> +               return -EINVAL;
-> +
-> +       reg = sh_pfc_pinconf_find_drive_strength_reg(pfc, pin, &offset, &size);
-> +       if (!reg)
-> +               return -EINVAL;
-> +
-> +       /* Convert the value from mA based on a full drive strength value of
-> +        * 24mA. We can make the full value configurable later if needed.
-> +        */
-> +       strength = strength / 3 - 1;
-> +       if (size == 2)
-> +               strength >>= 1;
-
-Same here: "strength / = 2".
-
-Apart from the above, everything else looks fine to me, thx!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+index 120bc49..4b6cc63 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+@@ -1,9 +1,10 @@
+-* Freescale MPC512x/MPC8xxx/Layerscape GPIO controller
++* Freescale MPC512x/MPC8xxx/QorIQ/Layerscape GPIO controller
+ 
+ Required properties:
+ - compatible : Should be "fsl,<soc>-gpio"
+   The following <soc>s are known to be supported:
+-    mpc5121, mpc5125, mpc8349, mpc8572, mpc8610, pq3, qoriq.
++	mpc5121, mpc5125, mpc8349, mpc8572, mpc8610, pq3, qoriq,
++	ls1021a, ls1043a, ls2080a.
+ - reg : Address and length of the register set for the device
+ - interrupts : Should be the port interrupt shared by all 32 pins.
+ - #gpio-cells : Should be two.  The first cell is the pin number and
+@@ -15,7 +16,7 @@ Optional properties:
+ - little-endian : GPIO registers are used as little endian. If not
+                   present registers are used as big endian by default.
+ 
+-Example:
++Example of gpio-controller node for a mpc5125 SoC:
+ 
+ gpio0: gpio@1100 {
+ 	compatible = "fsl,mpc5125-gpio";
+@@ -24,3 +25,16 @@ gpio0: gpio@1100 {
+ 	interrupts = <78 0x8>;
+ 	status = "okay";
+ };
++
++Example of gpio-controller node for a ls2080a SoC:
++
++gpio0: gpio@2300000 {
++	compatible = "fsl,ls2080a-gpio", "fsl,qoriq-gpio";
++	reg = <0x0 0x2300000 0x0 0x10000>;
++	interrupts = <0 36 0x4>; /* Level high type */
++	gpio-controller;
++	little-endian;
++	#gpio-cells = <2>;
++	interrupt-controller;
++	#interrupt-cells = <2>;
++};
+-- 
+2.1.0.27.g96db324
