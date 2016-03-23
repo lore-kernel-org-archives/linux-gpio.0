@@ -1,97 +1,42 @@
-From: Liu Gang <Gang.Liu@nxp.com>
-Subject: [PATCH v2] gpio/ls1021a: Add gpio support for ls1021a platform
-Date: Wed, 23 Mar 2016 17:47:20 +0800
-Message-ID: <1458726442-1851-2-git-send-email-Gang.Liu@nxp.com>
-References: <1458726442-1851-1-git-send-email-Gang.Liu@nxp.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Add drive strength support
+Date: Wed, 23 Mar 2016 11:14:04 +0100
+Message-ID: <CAMuHMdUbUCe-HWEVQmV+uBonL_w8bW65Wh9ofpTXKxSnbPEB1A@mail.gmail.com>
+References: <1458516819-3928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	<1458516819-3928-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1458726442-1851-1-git-send-email-Gang.Liu@nxp.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, khilman@linaro.org
-Cc: Liu Gang <Gang.Liu@nxp.com>, robh+dt@kernel.org, leoyang.li@nxp.com, mingkai.hu@nxp.com, scott.wood@nxp.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36139 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754463AbcCWKOF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Mar 2016 06:14:05 -0400
+In-Reply-To: <1458516819-3928-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-Add gpio nodes for ls1021a platform dts file. The gpio
-IP block of the ls1021a can be supported by the code
-drivers/gpio/gpio-mpc8xxx.c.
+Hi Laurent,
 
-The compatible "fsl,qoriq-gpio" is used by gpio driver:
-drivers/gpio/gpio-mpc8xxx.c to implement general gpio
-functionalities.
+On Mon, Mar 21, 2016 at 12:33 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> Define the drive strength registers for the R8A7795. As the PFC driver
+> for the SoC only defines GPIO pins at the moment, limit drive strength
+> support to those pins. Pins without GPIO capabilities will be supported
+> later.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-The chip-specific compatible "fsl,ls1021a-gpio" may be
-used to fix potential gpio IP block errata or other
-chip-specific gpio issues.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Liu Gang <Gang.Liu@nxp.com>
----
-v2 changes:
-	Add chip-specific compatible based on Scott's
-	comment.
+Gr{oetje,eeting}s,
 
- arch/arm/boot/dts/ls1021a.dtsi | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+                        Geert
 
-diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
-index ecf12dc..662b336 100644
---- a/arch/arm/boot/dts/ls1021a.dtsi
-+++ b/arch/arm/boot/dts/ls1021a.dtsi
-@@ -332,6 +332,46 @@
- 			status = "disabled";
- 		};
- 
-+		gpio0: gpio@2300000 {
-+			compatible = "fsl,ls1021a-gpio", "fsl,qoriq-gpio";
-+			reg = <0x0 0x2300000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio1: gpio@2310000 {
-+			compatible = "fsl,ls1021a-gpio", "fsl,qoriq-gpio";
-+			reg = <0x0 0x2310000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio2: gpio@2320000 {
-+			compatible = "fsl,ls1021a-gpio", "fsl,qoriq-gpio";
-+			reg = <0x0 0x2320000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio3: gpio@2330000 {
-+			compatible = "fsl,ls1021a-gpio", "fsl,qoriq-gpio";
-+			reg = <0x0 0x2330000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
- 		lpuart0: serial@2950000 {
- 			compatible = "fsl,ls1021a-lpuart";
- 			reg = <0x0 0x2950000 0x0 0x1000>;
--- 
-2.1.0.27.g96db324
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
