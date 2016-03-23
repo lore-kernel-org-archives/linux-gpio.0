@@ -1,151 +1,95 @@
-From: Jiang Qiu <qiujiang@huawei.com>
-Subject: Re: [PATCH v5 1/3] gpio: designware: convert device node to fwnode
-Date: Wed, 23 Mar 2016 19:41:59 +0800
-Message-ID: <56F28107.6090305@huawei.com>
-References: <1457077474-124064-1-git-send-email-qiujiang@huawei.com>
- <1457077474-124064-2-git-send-email-qiujiang@huawei.com>
- <CANk1AXRTvSRZkWMQf03Ty+ouxcJDpD-hJ9tjXSqh5Z0OzOhk+w@mail.gmail.com>
- <CAHp75VfGJZnOWUdZkjCbraupg=KUw2-jhtiRHLxrT2uUwJdvow@mail.gmail.com>
-Reply-To: <qiujiang@huawei.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH RFT] gpio: tpic2810: Make sure cached buffer has consistent
+ status with h/w status
+Date: Wed, 23 Mar 2016 19:49:41 +0800
+Message-ID: <1458733781.22226.3.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VfGJZnOWUdZkjCbraupg=KUw2-jhtiRHLxrT2uUwJdvow@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Alan Tull <delicious.quinoa@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:35749 "EHLO
+	mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751990AbcCWLtr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Mar 2016 07:49:47 -0400
+Received: by mail-pf0-f194.google.com with SMTP id u190so2952070pfb.2
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Mar 2016 04:49:46 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "Andrew F. Davis" <afd@ti.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-=E5=9C=A8 2016/3/11 4:27, Andy Shevchenko =E5=86=99=E9=81=93:
-> On Thu, Mar 10, 2016 at 9:09 PM, Alan Tull <delicious.quinoa@gmail.co=
-m> wrote:
->> On Fri, Mar 4, 2016 at 1:44 AM, qiujiang <qiujiang@huawei.com> wrote=
-:
->>> This patch converts device node to fwnode in
->>> dwapb_port_property for designware gpio driver,
->>> so as to provide a unified data structure for DT
->>> and ACPI bindings.
->>>
->>> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->>> Signed-off-by: qiujiang <qiujiang@huawei.com>
->>> @@ -496,18 +492,19 @@ dwapb_gpio_get_pdata_of(struct device *dev)
->>>                  * Only port A can provide interrupts in all config=
-urations of
->>>                  * the IP.
->>>                  */
->>> -               if (pp->idx =3D=3D 0 &&
->>> -                   of_property_read_bool(port_np, "interrupt-contr=
-oller")) {
->>> -                       pp->irq =3D irq_of_parse_and_map(port_np, 0=
-);
->>> +               if (dev->of_node && pp->idx =3D=3D 0 &&
->>> +                       of_property_read_bool(to_of_node(fwnode),
->>> +                               "interrupt-controller")) {
->> Hi Qiujiang,
->>
->> Is there a reason to use "of_property_read_bool" here instead of
->> "device_property_read_bool" or similar?
-> Yeah, this patch looks unfinished.
->
-> This should be
->      if (pp->idx =3D=3D 0 &&  fwnode_property_read_bool(fwnode,
-> "interrupt-controller")) {
-Hi, Alan, Andy, Mika,
+i2c_smbus_write_byte_data() can fail. To ensure the cached buffer has
+consistent status with h/w status, don't update the cached gpio->buffer
+if write fails.
+Also refactor the code a bit by adding a tpic2810_set_mask_bits() helper
+and use it to simplify the code.
 
-Many thanks for help me review this patchset.
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/gpio/gpio-tpic2810.c | 35 +++++++++++++++--------------------
+ 1 file changed, 15 insertions(+), 20 deletions(-)
 
-I tried to use a unified interface to parse the interrupts resource in =
-DT and ACPI,
-but it looks difficult because of the hierarchy device node structure a=
-s follow:
-
-pc_gpio1: gpio@802f0000 {
-            #address-cells =3D <1>;
-            #size-cells =3D <0>;
-            compatible =3D "snps,dw-apb-gpio";
-            reg =3D <0x0 0x802f0000 0x0 0x10000>;
-
-            porta: gpio-controller@0 {
-                compatible =3D "snps,dw-apb-gpio-port";
-                gpio-controller;
-                #gpio-cells =3D <2>;
-                snps,nr-gpios =3D <32>;
-                reg =3D <0>;
-                interrupt-controller;
-                #interrupt-cells =3D <2>;
-                interrupts =3D <0 313 4>;
-            };
-};
-
-According to the designware gpio databook, each GPIO controller include=
-s 4 ports
-(porta,b,c,d), only porta can be a interrupt controller. So, I moved th=
-e interrupts
-resource to the parent node from porta in ACPI.
-
-Device(GPI0) {
-        Name(_HID, "HISI0181")
-        Name(_ADR, 0) // _ADR: Address
-        Name(_UID, 0)
-      =20
-        Name (_CRS, ResourceTemplate ()  {
-            Memory32Fixed (ReadWrite, 0x802e0000, 0x10000)
-            Interrupt (ResourceConsumer, Level, ActiveHigh, Exclusive,,=
-,)  {344} //moved here
-        })
-      =20
-        Device(PRTa) {
-            Name (_DSD, Package () {
-                ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-                Package () {
-                    Package () {"reg",0},
-                    Package () {"snps,nr-gpios",32},
-                }
-            })
-        }
-}
-
-That is to say, if GPI0 should be a interrupt controller, the child nod=
-e PRTa must be
-present first, then add the interrupt resource to the parent node GPI0 =
-scope.
-
-Dose this proposal sounds ok? if yes, we can do that for DT. If not, th=
-ere can only
-keep two branches to parse the IRQ resource, and the code looks strange=
-=2E
-
-That would be great if I can get some help from you.
-
-Best Regards
-Jiang
->> Alan
->>
->>> +                       pp->irq =3D irq_of_parse_and_map(to_of_node=
-(fwnode), 0);
-> But here should be common method called which takes fwnode on input.
->
->>>                         if (!pp->irq) {
->>>                                 dev_warn(dev, "no irq for bank %s\n=
-",
->>> -                                        port_np->full_name);
->>> +                                        to_of_node(fwnode)->full_n=
-ame);
->>>                         }
->>>                 }
->>>
->>>                 pp->irq_shared  =3D false;
->>>                 pp->gpio_base   =3D -1;
->>> -               pp->name        =3D port_np->full_name;
->>> +               pp->name        =3D to_of_node(fwnode)->full_name;
-> Also those two should be device property source agnostic. That's what
-> I tried to tell earlier.
->
+diff --git a/drivers/gpio/gpio-tpic2810.c b/drivers/gpio/gpio-tpic2810.c
+index 9f020aa..cace79c 100644
+--- a/drivers/gpio/gpio-tpic2810.c
++++ b/drivers/gpio/gpio-tpic2810.c
+@@ -57,39 +57,34 @@ static int tpic2810_direction_output(struct gpio_chip *chip,
+ 	return 0;
+ }
+ 
+-static void tpic2810_set(struct gpio_chip *chip, unsigned offset, int value)
++static void tpic2810_set_mask_bits(struct gpio_chip *chip, u8 mask, u8 bits)
+ {
+ 	struct tpic2810 *gpio = gpiochip_get_data(chip);
++	u8 buffer;
++	int err;
+ 
+ 	mutex_lock(&gpio->lock);
+ 
+-	if (value)
+-		gpio->buffer |= BIT(offset);
+-	else
+-		gpio->buffer &= ~BIT(offset);
++	buffer = gpio->buffer & ~mask;
++	buffer |= (mask & bits);
+ 
+-	i2c_smbus_write_byte_data(gpio->client, TPIC2810_WS_COMMAND,
+-				  gpio->buffer);
++	err = i2c_smbus_write_byte_data(gpio->client, TPIC2810_WS_COMMAND,
++					buffer);
++	if (!err)
++		gpio->buffer = buffer;
+ 
+ 	mutex_unlock(&gpio->lock);
+ }
+ 
++static void tpic2810_set(struct gpio_chip *chip, unsigned offset, int value)
++{
++	tpic2810_set_mask_bits(chip, BIT(offset), value ? BIT(offset) : 0);
++}
++
+ static void tpic2810_set_multiple(struct gpio_chip *chip, unsigned long *mask,
+ 				  unsigned long *bits)
+ {
+-	struct tpic2810 *gpio = gpiochip_get_data(chip);
+-
+-	mutex_lock(&gpio->lock);
+-
+-	/* clear bits under mask */
+-	gpio->buffer &= ~(*mask);
+-	/* set bits under mask */
+-	gpio->buffer |= ((*mask) & (*bits));
+-
+-	i2c_smbus_write_byte_data(gpio->client, TPIC2810_WS_COMMAND,
+-				  gpio->buffer);
+-
+-	mutex_unlock(&gpio->lock);
++	tpic2810_set_mask_bits(chip, *mask, *bits);
+ }
+ 
+ static struct gpio_chip template_chip = {
+-- 
+2.1.4
 
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
