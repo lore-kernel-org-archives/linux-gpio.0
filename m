@@ -1,44 +1,138 @@
-From: Martin Langhoff <martin.langhoff@gmail.com>
-Subject: Re: Diagnosing ACPI trouble related to pinctr_cherryview on 4.4.x
-Date: Wed, 23 Mar 2016 09:26:11 -0400
-Message-ID: <CACPiFCJg0dx+zFnybtMBKH3jKrMQgwpfiD9Q8YhvpvC6YW68Yg@mail.gmail.com>
-References: <CACPiFCKv=QJ0t5e=9Wm4cC4Spynx-tVCiabL7AcbcOkp_w47fQ@mail.gmail.com>
- <20160322152218.GA2099@lahna.fi.intel.com> <CACPiFC+hDF0+9vPCrhvo079E6RCVVmZXTS1ziS-jHAAZJQ+wNg@mail.gmail.com>
- <20160322154950.GB2099@lahna.fi.intel.com> <CACPiFCKS-8re6g1Zbhs8N9D_tDMENqXPeNGRS_0dU6tzz50T8A@mail.gmail.com>
- <20160322162222.GF2099@lahna.fi.intel.com> <CACPiFCKD_Nwut=GL-xOU5gN2k8Na7pFWdhsms85QsDTvvREJLw@mail.gmail.com>
- <1458668165.5907.28.camel@linux.intel.com> <CACPiFC+_TpiFFm+hYJd1tX4AnadxSj_KKOtDALjSj0_c8Qa2pA@mail.gmail.com>
- <20160323112532.GK2099@lahna.fi.intel.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: Add drive strength support
+Date: Wed, 23 Mar 2016 16:03:54 +0200
+Message-ID: <1677428.6HZQq3BeTR@avalon>
+References: <1458516819-3928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1458516819-3928-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdXZ6Eec37e7s3CO0Y782_Yy5hv--jX7gSGFTc5SCokZVA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:36988 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755139AbcCWN0t (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Mar 2016 09:26:49 -0400
-Received: by mail-wm0-f51.google.com with SMTP id p65so24204622wmp.0
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Mar 2016 06:26:48 -0700 (PDT)
-In-Reply-To: <20160323112532.GK2099@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdXZ6Eec37e7s3CO0Y782_Yy5hv--jX7gSGFTc5SCokZVA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Wed, Mar 23, 2016 at 7:25 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> intel_lpss_* is actually different thing than setting
->
-> CONFIG_X86_INTEL_LPSS=n
->
-> which I suggest you try as well (you can't blacklist that).
+Hi Geert,
 
-Good catch, ok will give it a shot. Will be tomorrow.
+On Wednesday 23 Mar 2016 10:54:02 Geert Uytterhoeven wrote:
+> On Mon, Mar 21, 2016 at 12:33 AM, Laurent Pinchart wrote:
+> > Add support for the drive-strengh pin configuration using the generic
+> > pinconf DT bindings.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Thanks for your patch!
+> 
+> > diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+> > index 181ea98a63b7..73f0b33ee0a1 100644
+> > --- a/drivers/pinctrl/sh-pfc/core.c
+> > +++ b/drivers/pinctrl/sh-pfc/core.c
+> > @@ -173,6 +173,21 @@ void sh_pfc_write_raw_reg(void __iomem *mapped_reg,
+> > unsigned int reg_width,
+> >         BUG();
+> >  }
+> > 
+> > +u32 sh_pfc_read_reg(struct sh_pfc *pfc, u32 reg, unsigned int width)
+> > +{
+> > +       return sh_pfc_read_raw_reg(sh_pfc_phys_to_virt(pfc, reg), width);
+> > +}
+> > +
+> > +void sh_pfc_write_reg(struct sh_pfc *pfc, u32 reg, unsigned int width,
+> > u32 data)
+> > +{
+> > +       if (pfc->info->unlock_reg)
+> > +               sh_pfc_write_raw_reg(
+> > +                       sh_pfc_phys_to_virt(pfc, pfc->info->unlock_reg),
+> > 32,
+> > +                       ~data);
+> > +
+> > +       sh_pfc_write_raw_reg(sh_pfc_phys_to_virt(pfc, reg), width, data);
+> > +}
+> 
+> I like these helpers. They may also be used by r8a7778_pinmux_[gs]et_bias()
+> and r8a7790_[gs]et_io_voltage().
+> 
+> However, writing to the pull-up registers on r8a7778 doesn't seem to require
+> writing to the unlock register first.
+> 
+> Should we prepare for that and add a bool parameter to sh_pfc_write_reg()?
 
-cheers,
+I've thought about it, but given that we don't have an immediate issue with 
+the r8a7778 implementation, I decided it would be better to wait until we have 
+a couple more users for that API to decide how to implement it best.
 
+> > --- a/drivers/pinctrl/sh-pfc/pinctrl.c
+> > +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+> > 
+> > +static int sh_pfc_pinconf_get_drive_strength(struct sh_pfc *pfc,
+> > +                                            unsigned int pin)
+> > +{
+> > +       unsigned long flags;
+> > +       unsigned int offset;
+> > +       unsigned int size;
+> > +       u32 reg;
+> > +       u32 val;
+> > +
+> > +       reg = sh_pfc_pinconf_find_drive_strength_reg(pfc, pin, &offset,
+> > &size); +       if (!reg)
+> > +               return -EINVAL;
+> > +
+> > +       spin_lock_irqsave(&pfc->lock, flags);
+> > +       val = sh_pfc_read_reg(pfc, reg, 32);
+> > +       spin_unlock_irqrestore(&pfc->lock, flags);
+> > +
+> > +       val = (val >> offset) & GENMASK(size - 1, 0);
+> > +
+> > +       /* Convert the value to mA based on a full drive strength value of
+> > 24mA. +        * We can make the full value configurable later if needed.
+> > +        */
+> > +       if (size == 2)
+> > +               val <<= 1;
+> 
+> I would write "val *= 2" here, as you're doing arithmetic, and have a "* 3"
+> below anyway.
 
-m
+It's actually not really arithmetics, but I realize the code doesn't work 
+correctly as a 2-bits drive strength set to 3 will be converted to 21 instead 
+of 34. I'll fix it and resubmit.
+
+> > +       return (val + 1) * 3;
+> > +}
+> > +
+> > +static int sh_pfc_pinconf_set_drive_strength(struct sh_pfc *pfc,
+> > +                                            unsigned int pin, u16
+> > strength)
+> > +{
+> > +       unsigned long flags;
+> > +       unsigned int offset;
+> > +       unsigned int size;
+> > +       u32 reg;
+> > +       u32 val;
+> > +
+> > +       if (strength < 3 || strength > 24)
+> > +               return -EINVAL;
+> > +
+> > +       reg = sh_pfc_pinconf_find_drive_strength_reg(pfc, pin, &offset,
+> > &size); +       if (!reg)
+> > +               return -EINVAL;
+> > +
+> > +       /* Convert the value from mA based on a full drive strength value
+> > of
+> > +        * 24mA. We can make the full value configurable later if needed.
+> > +        */
+> > +       strength = strength / 3 - 1;
+> > +       if (size == 2)
+> > +               strength >>= 1;
+> 
+> Same here: "strength / = 2".
+> 
+> Apart from the above, everything else looks fine to me, thx!
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 -- 
- martin.langhoff@gmail.com
- -  ask interesting questions
- - don't get distracted with shiny stuff  - working code first
- ~ http://docs.moodle.org/en/User:Martin_Langhoff
+Regards,
+
+Laurent Pinchart
