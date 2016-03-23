@@ -1,163 +1,56 @@
-From: Alan Tull <delicious.quinoa@gmail.com>
-Subject: Re: [PATCH v5 1/3] gpio: designware: convert device node to fwnode
-Date: Wed, 23 Mar 2016 11:20:08 -0500
-Message-ID: <CANk1AXSJQh4VovcBVqvt=s4f7yBVLLyhG3js4o1HDNW80u-=JQ@mail.gmail.com>
-References: <1457077474-124064-1-git-send-email-qiujiang@huawei.com>
-	<1457077474-124064-2-git-send-email-qiujiang@huawei.com>
-	<CANk1AXRTvSRZkWMQf03Ty+ouxcJDpD-hJ9tjXSqh5Z0OzOhk+w@mail.gmail.com>
-	<CAHp75VfGJZnOWUdZkjCbraupg=KUw2-jhtiRHLxrT2uUwJdvow@mail.gmail.com>
-	<56F28107.6090305@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <56F28107.6090305@huawei.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: qiujiang <qiujiang@huawei.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com, atull <atull@opensource.altera.com>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: [PATCH 1/1] gpio: mcp23s08: Add support for level triggered interrupts
+Date: Wed, 23 Mar 2016 18:01:27 +0100
+Message-ID: <1458752487-32767-1-git-send-email-alexander.stein@systec-electronic.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from webbox1416.server-home.net ([77.236.96.61]:56233 "EHLO
+	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753038AbcCWRBi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 23 Mar 2016 13:01:38 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Mar 23, 2016 at 6:41 AM, Jiang Qiu <qiujiang@huawei.com> wrote:
-> =E5=9C=A8 2016/3/11 4:27, Andy Shevchenko =E5=86=99=E9=81=93:
->> On Thu, Mar 10, 2016 at 9:09 PM, Alan Tull <delicious.quinoa@gmail.c=
-om> wrote:
->>> On Fri, Mar 4, 2016 at 1:44 AM, qiujiang <qiujiang@huawei.com> wrot=
-e:
->>>> This patch converts device node to fwnode in
->>>> dwapb_port_property for designware gpio driver,
->>>> so as to provide a unified data structure for DT
->>>> and ACPI bindings.
->>>>
->>>> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->>>> Signed-off-by: qiujiang <qiujiang@huawei.com>
->>>> @@ -496,18 +492,19 @@ dwapb_gpio_get_pdata_of(struct device *dev)
->>>>                  * Only port A can provide interrupts in all confi=
-gurations of
->>>>                  * the IP.
->>>>                  */
->>>> -               if (pp->idx =3D=3D 0 &&
->>>> -                   of_property_read_bool(port_np, "interrupt-cont=
-roller")) {
->>>> -                       pp->irq =3D irq_of_parse_and_map(port_np, =
-0);
->>>> +               if (dev->of_node && pp->idx =3D=3D 0 &&
->>>> +                       of_property_read_bool(to_of_node(fwnode),
->>>> +                               "interrupt-controller")) {
->>> Hi Qiujiang,
->>>
->>> Is there a reason to use "of_property_read_bool" here instead of
->>> "device_property_read_bool" or similar?
->> Yeah, this patch looks unfinished.
->>
->> This should be
->>      if (pp->idx =3D=3D 0 &&  fwnode_property_read_bool(fwnode,
->> "interrupt-controller")) {
-> Hi, Alan, Andy, Mika,
->
-> Many thanks for help me review this patchset.
->
-> I tried to use a unified interface to parse the interrupts resource i=
-n DT and ACPI,
-> but it looks difficult because of the hierarchy device node structure=
- as follow:
->
-> pc_gpio1: gpio@802f0000 {
->             #address-cells =3D <1>;
->             #size-cells =3D <0>;
->             compatible =3D "snps,dw-apb-gpio";
->             reg =3D <0x0 0x802f0000 0x0 0x10000>;
->
->             porta: gpio-controller@0 {
->                 compatible =3D "snps,dw-apb-gpio-port";
->                 gpio-controller;
->                 #gpio-cells =3D <2>;
->                 snps,nr-gpios =3D <32>;
->                 reg =3D <0>;
->                 interrupt-controller;
->                 #interrupt-cells =3D <2>;
->                 interrupts =3D <0 313 4>;
->             };
-> };
->
-> According to the designware gpio databook, each GPIO controller inclu=
-des 4 ports
-> (porta,b,c,d), only porta can be a interrupt controller. So, I moved =
-the interrupts
-> resource to the parent node from porta in ACPI.
->
-> Device(GPI0) {
->         Name(_HID, "HISI0181")
->         Name(_ADR, 0) // _ADR: Address
->         Name(_UID, 0)
->
->         Name (_CRS, ResourceTemplate ()  {
->             Memory32Fixed (ReadWrite, 0x802e0000, 0x10000)
->             Interrupt (ResourceConsumer, Level, ActiveHigh, Exclusive=
-,,,)  {344} //moved here
->         })
->
->         Device(PRTa) {
->             Name (_DSD, Package () {
->                 ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
->                 Package () {
->                     Package () {"reg",0},
->                     Package () {"snps,nr-gpios",32},
->                 }
->             })
->         }
-> }
->
-> That is to say, if GPI0 should be a interrupt controller, the child n=
-ode PRTa must be
-> present first, then add the interrupt resource to the parent node GPI=
-0 scope.
->
-> Dose this proposal sounds ok? if yes, we can do that for DT. If not, =
-there can only
-> keep two branches to parse the IRQ resource, and the code looks stran=
-ge.
+The interrupt for the corresponding pin is configured to trigger when the
+pin state changes compared to a preconfigured state (Bit set in INTCON).
+This state is set by setting/clearing the bit in DEFVAL.
+In the interrupt handler we need also to check if the bit in INTCON is set
+for level triggered interrupts.
 
-Hi Jiang,
+Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+---
+ drivers/gpio/gpio-mcp23s08.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Are you suggesting a change for the DT to make it similar to the ACPI
-case?  DT changes create unexpected breakages when people upgrade
-their kernel even if the change is minor.  How bad will the code look
-if you implement it as the two separate code paths as you suggest?
+diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
+index c882c2b..ac22efc 100644
+--- a/drivers/gpio/gpio-mcp23s08.c
++++ b/drivers/gpio/gpio-mcp23s08.c
+@@ -362,7 +362,8 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+ 	for (i = 0; i < mcp->chip.ngpio; i++) {
+ 		if ((BIT(i) & mcp->cache[MCP_INTF]) &&
+ 		    ((BIT(i) & intcap & mcp->irq_rise) ||
+-		     (mcp->irq_fall & ~intcap & BIT(i)))) {
++		     (mcp->irq_fall & ~intcap & BIT(i)) ||
++		     (BIT(i) & mcp->cache[MCP_INTCON]))) {
+ 			child_irq = irq_find_mapping(mcp->chip.irqdomain, i);
+ 			handle_nested_irq(child_irq);
+ 		}
+@@ -408,6 +409,12 @@ static int mcp23s08_irq_set_type(struct irq_data *data, unsigned int type)
+ 		mcp->cache[MCP_INTCON] &= ~BIT(pos);
+ 		mcp->irq_rise &= ~BIT(pos);
+ 		mcp->irq_fall |= BIT(pos);
++	} else if (type & IRQ_TYPE_LEVEL_HIGH) {
++		mcp->cache[MCP_INTCON] |= BIT(pos);
++		mcp->cache[MCP_DEFVAL] &= ~BIT(pos);
++	} else if (type & IRQ_TYPE_LEVEL_LOW) {
++		mcp->cache[MCP_INTCON] |= BIT(pos);
++		mcp->cache[MCP_DEFVAL] |= BIT(pos);
+ 	} else
+ 		return -EINVAL;
+ 
+-- 
+2.7.3
 
-Alan
-
->
-> That would be great if I can get some help from you.
->
-> Best Regards
-> Jiang
->>> Alan
->>>
->>>> +                       pp->irq =3D irq_of_parse_and_map(to_of_nod=
-e(fwnode), 0);
->> But here should be common method called which takes fwnode on input.
->>
->>>>                         if (!pp->irq) {
->>>>                                 dev_warn(dev, "no irq for bank %s\=
-n",
->>>> -                                        port_np->full_name);
->>>> +                                        to_of_node(fwnode)->full_=
-name);
->>>>                         }
->>>>                 }
->>>>
->>>>                 pp->irq_shared  =3D false;
->>>>                 pp->gpio_base   =3D -1;
->>>> -               pp->name        =3D port_np->full_name;
->>>> +               pp->name        =3D to_of_node(fwnode)->full_name;
->> Also those two should be device property source agnostic. That's wha=
-t
->> I tried to tell earlier.
->>
->
->
---
-To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
