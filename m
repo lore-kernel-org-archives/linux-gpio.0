@@ -1,138 +1,66 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: Add drive strength support
-Date: Wed, 23 Mar 2016 16:03:54 +0200
-Message-ID: <1677428.6HZQq3BeTR@avalon>
-References: <1458516819-3928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1458516819-3928-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdXZ6Eec37e7s3CO0Y782_Yy5hv--jX7gSGFTc5SCokZVA@mail.gmail.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v2 0/2] r8a7795 pinctrl: Add drive strength support
+Date: Wed, 23 Mar 2016 16:05:59 +0200
+Message-ID: <1458741961-4039-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdXZ6Eec37e7s3CO0Y782_Yy5hv--jX7gSGFTc5SCokZVA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Geert,
+Hello,
 
-On Wednesday 23 Mar 2016 10:54:02 Geert Uytterhoeven wrote:
-> On Mon, Mar 21, 2016 at 12:33 AM, Laurent Pinchart wrote:
-> > Add support for the drive-strengh pin configuration using the generic
-> > pinconf DT bindings.
-> > 
-> > Signed-off-by: Laurent Pinchart
-> > <laurent.pinchart+renesas@ideasonboard.com>
-> 
-> Thanks for your patch!
-> 
-> > diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-> > index 181ea98a63b7..73f0b33ee0a1 100644
-> > --- a/drivers/pinctrl/sh-pfc/core.c
-> > +++ b/drivers/pinctrl/sh-pfc/core.c
-> > @@ -173,6 +173,21 @@ void sh_pfc_write_raw_reg(void __iomem *mapped_reg,
-> > unsigned int reg_width,
-> >         BUG();
-> >  }
-> > 
-> > +u32 sh_pfc_read_reg(struct sh_pfc *pfc, u32 reg, unsigned int width)
-> > +{
-> > +       return sh_pfc_read_raw_reg(sh_pfc_phys_to_virt(pfc, reg), width);
-> > +}
-> > +
-> > +void sh_pfc_write_reg(struct sh_pfc *pfc, u32 reg, unsigned int width,
-> > u32 data)
-> > +{
-> > +       if (pfc->info->unlock_reg)
-> > +               sh_pfc_write_raw_reg(
-> > +                       sh_pfc_phys_to_virt(pfc, pfc->info->unlock_reg),
-> > 32,
-> > +                       ~data);
-> > +
-> > +       sh_pfc_write_raw_reg(sh_pfc_phys_to_virt(pfc, reg), width, data);
-> > +}
-> 
-> I like these helpers. They may also be used by r8a7778_pinmux_[gs]et_bias()
-> and r8a7790_[gs]et_io_voltage().
-> 
-> However, writing to the pull-up registers on r8a7778 doesn't seem to require
-> writing to the unlock register first.
-> 
-> Should we prepare for that and add a bool parameter to sh_pfc_write_reg()?
+This patch series adds drive strength control support to the sh-pfc dri=
+ver for
+the R8A7795 (R-Car H3) SoC.
 
-I've thought about it, but given that we don't have an immediate issue with 
-the r8a7778 implementation, I decided it would be better to wait until we have 
-a couple more users for that API to decide how to implement it best.
+The SoC can control the drive strength of all GPIO pins, as well as of =
+some
+dedicated-purpose pins. As the R8A7795 pinctrl driver doesn't support n=
+on-GPIO
+pins yet, this series is limited to controlling the drive strength on t=
+he GPIO
+pins.
 
-> > --- a/drivers/pinctrl/sh-pfc/pinctrl.c
-> > +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-> > 
-> > +static int sh_pfc_pinconf_get_drive_strength(struct sh_pfc *pfc,
-> > +                                            unsigned int pin)
-> > +{
-> > +       unsigned long flags;
-> > +       unsigned int offset;
-> > +       unsigned int size;
-> > +       u32 reg;
-> > +       u32 val;
-> > +
-> > +       reg = sh_pfc_pinconf_find_drive_strength_reg(pfc, pin, &offset,
-> > &size); +       if (!reg)
-> > +               return -EINVAL;
-> > +
-> > +       spin_lock_irqsave(&pfc->lock, flags);
-> > +       val = sh_pfc_read_reg(pfc, reg, 32);
-> > +       spin_unlock_irqrestore(&pfc->lock, flags);
-> > +
-> > +       val = (val >> offset) & GENMASK(size - 1, 0);
-> > +
-> > +       /* Convert the value to mA based on a full drive strength value of
-> > 24mA. +        * We can make the full value configurable later if needed.
-> > +        */
-> > +       if (size == 2)
-> > +               val <<= 1;
-> 
-> I would write "val *= 2" here, as you're doing arithmetic, and have a "* 3"
-> below anyway.
+Patch 1/2 adds drive strength support to the sh-pfc driver. It hardcode=
+s a few
+assumptions that might be specific to the R8A7795, I'll revisit them if=
+ future
+SoCs break them.
 
-It's actually not really arithmetics, but I realize the code doesn't work 
-correctly as a 2-bits drive strength set to 3 will be converted to 21 instead 
-of 34. I'll fix it and resubmit.
+Patch 2/2 adds R8A7795-specific support by setting the drive strength
+configuration flag for all GPIO pins, and defining the drive strength
+registers layout.
 
-> > +       return (val + 1) * 3;
-> > +}
-> > +
-> > +static int sh_pfc_pinconf_set_drive_strength(struct sh_pfc *pfc,
-> > +                                            unsigned int pin, u16
-> > strength)
-> > +{
-> > +       unsigned long flags;
-> > +       unsigned int offset;
-> > +       unsigned int size;
-> > +       u32 reg;
-> > +       u32 val;
-> > +
-> > +       if (strength < 3 || strength > 24)
-> > +               return -EINVAL;
-> > +
-> > +       reg = sh_pfc_pinconf_find_drive_strength_reg(pfc, pin, &offset,
-> > &size); +       if (!reg)
-> > +               return -EINVAL;
-> > +
-> > +       /* Convert the value from mA based on a full drive strength value
-> > of
-> > +        * 24mA. We can make the full value configurable later if needed.
-> > +        */
-> > +       strength = strength / 3 - 1;
-> > +       if (size == 2)
-> > +               strength >>= 1;
-> 
-> Same here: "strength / = 2".
-> 
-> Apart from the above, everything else looks fine to me, thx!
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The series has been tested on the Salvator-X board with the GPIO pins
+connected to the on-board LEDs. The 4.7=C2=B5F capacitor to ground prov=
+ides a large
+enough load on the lines to make the effect of the drive strength easil=
+y
+measurable with an oscilloscope.
 
--- 
+Changes compared to v1:
+
+- Fix conversion from register value to mA
+- Fix boundary checking when setting drive strength
+
+Laurent Pinchart (2):
+  pinctrl: sh-pfc: Add drive strength support
+  pinctrl: sh-pfc: r8a7795: Add drive strength support
+
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   4 +-
+ drivers/pinctrl/sh-pfc/core.c                      |  15 ++
+ drivers/pinctrl/sh-pfc/core.h                      |   3 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 218 +++++++++++++=
++++++++-
+ drivers/pinctrl/sh-pfc/pinctrl.c                   | 111 +++++++++++
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |  17 ++
+ 6 files changed, 358 insertions(+), 10 deletions(-)
+
+--=20
 Regards,
 
 Laurent Pinchart
