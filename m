@@ -1,78 +1,146 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] gpio / ACPI: ignore GpioInt() GPIOs when requesting
- GPIO_OUT_*
-Date: Thu, 24 Mar 2016 16:01:33 +0200
-Message-ID: <20160324140133.GT2099@lahna.fi.intel.com>
-References: <20160323225831.GA28309@dtor-ws>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:41720 "EHLO mga04.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752871AbcCXOBi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 24 Mar 2016 10:01:38 -0400
-Content-Disposition: inline
-In-Reply-To: <20160323225831.GA28309@dtor-ws>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH v3 12/18] dt-bindings: Add PLX Technology OXNAS pinctrl and gpio bindings
+Date: Thu, 24 Mar 2016 17:50:09 +0100
+Message-ID: <1458838215-23314-13-git-send-email-narmstrong@baylibre.com>
+References: <1458838215-23314-1-git-send-email-narmstrong@baylibre.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1458838215-23314-1-git-send-email-narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Mar 23, 2016 at 03:58:31PM -0700, Dmitry Torokhov wrote:
-> From: Dmitry Torokhov <dtor@chromium.org>
-> 
-> When firmware does not use _DSD properties that allow properly name GPIO
-> resources, the kernel falls back on parsing _CRS resources, and will
-> return entries described as GpioInt() as general purpose GPIOs even
-> though they are meant to be used simply as interrupt sources for the
-> device:
-> 
-> Device (ETSA)
-> {
-> 	Name (_HID, "ELAN0001")
-> 	...
-> 
-> 	Method(_CRS, 0x0, NotSerialized)
-> 	{
-> 		Name(BUF0,ResourceTemplate ()
-> 		{
-> 			I2CSerialBus(
-> 				0x10,                     /* SlaveAddress */
-> 				ControllerInitiated,      /* SlaveMode */
-> 				400000,                   /* ConnectionSpeed */
-> 				AddressingMode7Bit,       /* AddressingMode */
-> 				"\\_SB.I2C1",             /* ResourceSource */
-> 			)
-> 			GpioInt (Edge, ActiveLow, ExclusiveAndWake, PullNone,,
-> 				 "\\_SB.GPSW") { BOARD_TOUCH_GPIO_INDEX }
-> 		} )
-> 		Return (BUF0)
-> 	}
-> ...
-> }
-> 
-> This gives troubles with drivers such as Elan Touchscreen driver
-> (elants_i2c) that uses devm_gpio_get to look up "reset" GPIO line and
-> decide whether the driver is responsible for powering up and resetting
-> the device or firmware is. In the above case the lookup succeeds, we map
-> GPIO as output and later fail to request client->irq interrupt that is
-> mapped to the same GPIO.
-> 
-> Let's ignore resources described as GpioInt() when requesting output
-> GPIO (but allow them when requesting GPIOD_ASIS or GPIOD_IN as some
-> drivers - i2c-hid - do request GPIO as input and then map it to
-> interrupt with gpiod_to_irq).
+Add pinctrl and gpio DT bindings for PLX Technology OXNAS SoC Family.
+This version supports the ARM926EJ-S based OX810SE SoC with 34 IO pins.
 
-You could mention here that we only ignore GpioInt() resources in
-fallback case.
+Signed-off-by: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+---
+ .../devicetree/bindings/gpio/gpio_oxnas.txt        | 47 ++++++++++++++++++
+ .../bindings/pinctrl/plxtech,pinctrl.txt           | 57 ++++++++++++++++++++++
+ 2 files changed, 104 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/plxtech,pinctrl.txt
 
-> BUG=chrome-os-partner:51154
-> TEST=Boot Cyan, verify touchscreen work
-> 
-> Change-Id: Id20c730b937dce8a4135d2b64c8d798372d20e82
+diff --git a/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt b/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
+new file mode 100644
+index 0000000..4530fa9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
+@@ -0,0 +1,47 @@
++* PLX Technology OXNAS SoC GPIO Controller
++
++Required properties:
++ - compatible: "oxsemi,ox810se-gpio"
++ - reg: Base address and length for the device.
++ - interrupts: The port interrupt shared by all pins.
++ - gpio-controller: Marks the port as GPIO controller.
++ - #gpio-cells: Two. The first cell is the pin number and
++   the second cell is used to specify the gpio polarity as defined in
++   defined in <dt-bindings/gpio/gpio.h>:
++      0 = GPIO_ACTIVE_HIGH
++      1 = GPIO_ACTIVE_LOW
++ - interrupt-controller: Marks the device node as an interrupt controller.
++ - #interrupt-cells: Two. The first cell is the GPIO number and second cell
++   is used to specify the trigger type as defined in
++   <dt-bindings/interrupt-controller/irq.h>:
++      IRQ_TYPE_EDGE_RISING
++      IRQ_TYPE_EDGE_FALLING
++      IRQ_TYPE_EDGE_BOTH
++ - plxtech,gpio-bank: Specifies which bank a controller owns.
++ - gpio-ranges: Interaction with the PINCTRL subsystem.
++ - ngpios: Specifies the gpio lines count in this specific bank.
++
++Example:
++
++gpio0: gpio@0 {
++	compatible = "oxsemi,ox810se-gpio";
++	reg = <0x000000 0x100000>;
++	interrupts = <21>;
++	#gpio-cells = <2>;
++	gpio-controller;
++	interrupt-controller;
++	#interrupt-cells = <2>;
++	plxtech,gpio-bank = <0>;
++	gpio-ranges = <&pinctrl 0 0 32>;
++	ngpios = <32>;
++};
++
++keys {
++	...
++
++	button@sw1 {
++		label = "ESC";
++		linux,code = <1>;
++		gpios = <&gpio0 12 0>;
++	};
++};
+diff --git a/Documentation/devicetree/bindings/pinctrl/plxtech,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/plxtech,pinctrl.txt
+new file mode 100644
+index 0000000..dc4907b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/plxtech,pinctrl.txt
+@@ -0,0 +1,57 @@
++* PLX Technology OXNAS SoC Family Pin Controller
++
++Please refer to pinctrl-bindings.txt, ../gpio/gpio.txt, and
++../interrupt-controller/interrupts.txt for generic information regarding
++pin controller, GPIO, and interrupt bindings.
++
++OXNAS 'pin configuration node' is a node of a group of pins which can be
++used for a specific device or function. This node represents configurations of
++pins, optional function, and optional mux related configuration.
++
++Required properties for pin controller node:
++ - compatible: "oxsemi,ox810se-pinctrl"
++ - plxtech,sys-ctrl: a phandle to the system controller syscon node
++
++Required properties for pin configuration sub-nodes:
++ - pins: List of pins to which the configuration applies.
++
++Optional properties for pin configuration sub-nodes:
++----------------------------------------------------
++ - function: Mux function for the specified pins.
++ - bias-pull-up: Enable weak pull-up.
++
++Example:
++
++pinctrl: pinctrl {
++	compatible = "oxsemi,ox810se-pinctrl";
++
++	/* Regmap for sys registers */
++	plxtech,sys-ctrl = <&sys>;
++
++	pinctrl_uart2: pinctrl_uart2 {
++		uart2a {
++			pins = "gpio31";
++			function = "fct3";
++		};
++		uart2b {
++			pins = "gpio32";
++			function = "fct3";
++		};
++	};
++};
++
++uart2: serial@900000 {
++	compatible = "ns16550a";
++	reg = <0x900000 0x100000>;
++	clocks = <&sysclk>;
++	interrupts = <29>;
++	reg-shift = <0>;
++	fifo-size = <16>;
++	reg-io-width = <1>;
++	current-speed = <115200>;
++	no-loopback-test;
++	status = "disabled";
++	resets = <&reset 22>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart2>;
++};
+-- 
+1.9.1
 
-This is not needed for mainline patches :)
-
-> Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
-
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
