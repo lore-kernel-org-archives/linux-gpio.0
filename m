@@ -1,780 +1,577 @@
-From: Cristina Ciocan <cristina.ciocan@intel.com>
-Subject: [PATCH 2/6] pinctrl: baytrail: Add pin control operations
-Date: Fri, 25 Mar 2016 16:51:32 +0200
-Message-ID: <1458917496-22794-3-git-send-email-cristina.ciocan@intel.com>
-References: <1458917496-22794-1-git-send-email-cristina.ciocan@intel.com>
+From: kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH 3/6] pinctrl: baytrail: Update gpio chip operations
+Date: Fri, 25 Mar 2016 23:28:22 +0800
+Message-ID: <201603252321.gSFnBVFq%fengguang.wu@intel.com>
+References: <1458917496-22794-4-git-send-email-cristina.ciocan@intel.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="dDRMvlgZJXvWKvBx"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:26743 "EHLO mga02.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:21171 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752627AbcCYOsl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 25 Mar 2016 10:48:41 -0400
-In-Reply-To: <1458917496-22794-1-git-send-email-cristina.ciocan@intel.com>
+	id S1752855AbcCYPey (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 25 Mar 2016 11:34:54 -0400
+Content-Disposition: inline
+In-Reply-To: <1458917496-22794-4-git-send-email-cristina.ciocan@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: mathias.nyman@linux.intel.com, mika.westerberg@linux.intel.com, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com, Cristina Ciocan <cristina.ciocan@intel.com>
+Cc: kbuild-all@01.org, mathias.nyman@linux.intel.com, mika.westerberg@linux.intel.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com, Cristina Ciocan <cristina.ciocan@intel.com>
 
-Add implementation for:
-	- pin control, group information retrieval: count, name and pins
-	- pin muxing:
-		- function information (count, name and groups)
-		- mux setting
-		- gpio control (enable, disable, set direction)
-	- pin configuration:
-		- pull disable
-		- pull up/down and pull strength
-		- debounce
-		- any other option is treated as not supported.
 
-Signed-off-by: Cristina Ciocan <cristina.ciocan@intel.com>
+--dDRMvlgZJXvWKvBx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Cristina,
+
+[auto build test WARNING on pinctrl/for-next]
+[also build test WARNING on v4.5 next-20160324]
+[if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
+
+url:    https://github.com/0day-ci/linux/commits/Cristina-Ciocan/Add-pinctrl-support-for-Baytrail/20160325-225229
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
+config: x86_64-randconfig-x004-201612 (attached as .config)
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=x86_64 
+
+All warnings (new ones prefixed by >>):
+
+   drivers/pinctrl/intel/pinctrl-baytrail.c: In function 'byt_gpio_direction_input':
+>> drivers/pinctrl/intel/pinctrl-baytrail.c:1407:6: warning: unused variable 'reg_val' [-Wunused-variable]
+     u32 reg_val;
+         ^
+>> drivers/pinctrl/intel/pinctrl-baytrail.c:1405:16: warning: unused variable 'reg' [-Wunused-variable]
+     void __iomem *reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
+                   ^
+   drivers/pinctrl/intel/pinctrl-baytrail.c: At top level:
+   drivers/pinctrl/intel/pinctrl-baytrail.c:741:43: warning: 'byt_soc_data' defined but not used [-Wunused-variable]
+    static const struct byt_pinctrl_soc_data *byt_soc_data[] = {
+                                              ^
+
+vim +/reg_val +1407 drivers/pinctrl/intel/pinctrl-baytrail.c
+
+a5d811bb drivers/pinctrl/pinctrl-baytrail.c       Mathias Nyman   2013-06-18  1399  }
+a5d811bb drivers/pinctrl/pinctrl-baytrail.c       Mathias Nyman   2013-06-18  1400  
+c1df0d70 drivers/pinctrl/intel/pinctrl-baytrail.c Cristina Ciocan 2016-03-25  1401  static int byt_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
+a5d811bb drivers/pinctrl/pinctrl-baytrail.c       Mathias Nyman   2013-06-18  1402  {
+bf9a5c96 drivers/pinctrl/intel/pinctrl-baytrail.c Linus Walleij   2015-12-08  1403  	struct byt_gpio *vg = gpiochip_get_data(chip);
+c1df0d70 drivers/pinctrl/intel/pinctrl-baytrail.c Cristina Ciocan 2016-03-25  1404  	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
+c1df0d70 drivers/pinctrl/intel/pinctrl-baytrail.c Cristina Ciocan 2016-03-25 @1405  	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
+a5d811bb drivers/pinctrl/pinctrl-baytrail.c       Mathias Nyman   2013-06-18  1406  	unsigned long flags;
+a5d811bb drivers/pinctrl/pinctrl-baytrail.c       Mathias Nyman   2013-06-18 @1407  	u32 reg_val;
+a5d811bb drivers/pinctrl/pinctrl-baytrail.c       Mathias Nyman   2013-06-18  1408  
+78e1c896 drivers/pinctrl/intel/pinctrl-baytrail.c Mika Westerberg 2015-08-17  1409  	raw_spin_lock_irqsave(&vg->lock, flags);
+a5d811bb drivers/pinctrl/pinctrl-baytrail.c       Mathias Nyman   2013-06-18  1410  
+
+:::::: The code at line 1407 was first introduced by commit
+:::::: a5d811bbf1c6df86cfe23948059ea614554b9f19 pinctrl: add Intel BayTrail GPIO/pinctrl support
+
+:::::: TO: Mathias Nyman <mathias.nyman@linux.intel.com>
+:::::: CC: Linus Walleij <linus.walleij@linaro.org>
+
 ---
- drivers/pinctrl/intel/Kconfig            |   3 +
- drivers/pinctrl/intel/pinctrl-baytrail.c | 560 +++++++++++++++++++++++++++++--
- 2 files changed, 528 insertions(+), 35 deletions(-)
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-diff --git a/drivers/pinctrl/intel/Kconfig b/drivers/pinctrl/intel/Kconfig
-index 4d2efad..1c74e03 100644
---- a/drivers/pinctrl/intel/Kconfig
-+++ b/drivers/pinctrl/intel/Kconfig
-@@ -6,6 +6,9 @@ config PINCTRL_BAYTRAIL
- 	bool "Intel Baytrail GPIO pin control"
- 	depends on GPIOLIB && ACPI
- 	select GPIOLIB_IRQCHIP
-+	select PINMUX
-+	select PINCONF
-+	select GENERIC_PINCONF
- 	help
- 	  driver for memory mapped GPIO functionality on Intel Baytrail
- 	  platforms. Supports 3 banks with 102, 28 and 44 gpios.
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 80898c9..061c9cc 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -27,6 +27,9 @@
- #include <linux/io.h>
- #include <linux/pm_runtime.h>
- #include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/pinctrl/pinconf.h>
-+#include <linux/pinctrl/pinconf-generic.h>
- 
- /* memory mapped register offsets */
- #define BYT_CONF0_REG		0x000
-@@ -73,6 +76,14 @@
- #define BYT_NCORE_ACPI_UID	"2"
- #define BYT_SUS_ACPI_UID	"3"
- 
-+/*
-+ * This is the function value most pins have for GPIO muxing. If the value
-+ * differs from the default one, it must be explicitly mentioned. Otherwise, the
-+ * pin control implementation will set the muxing value to default GPIO if it
-+ * does not find a match for the requested function.
-+ */
-+#define BYT_DEFAULT_GPIO_MUX	0
-+
- struct byt_gpio_pin_context {
- 	u32 conf0;
- 	u32 val;
-@@ -722,6 +733,8 @@ struct byt_gpio {
- 	void __iomem			*reg_base;
- 	struct pinctrl_gpio_range	*range;
- 	struct byt_gpio_pin_context	*saved_context;
-+	const struct byt_pinctrl_soc_data *soc_data;
-+	struct byt_community		*communities_copy;
- };
- 
- static const struct byt_pinctrl_soc_data *byt_soc_data[] = {
-@@ -731,52 +744,252 @@ static const struct byt_pinctrl_soc_data *byt_soc_data[] = {
- 	NULL,
- };
- 
--static void __iomem *byt_gpio_reg(struct gpio_chip *chip, unsigned offset,
--				 int reg)
-+static struct byt_community *byt_get_community(struct byt_gpio *vg,
-+					       unsigned int pin)
- {
--	struct byt_gpio *vg = gpiochip_get_data(chip);
--	u32 reg_offset;
-+	struct byt_community *comm;
-+	int i;
-+
-+	for (i = 0; i < vg->soc_data->ncommunities; i++) {
-+		comm = vg->communities_copy + i;
-+		if (pin < comm->pin_base + comm->npins && pin >= comm->pin_base)
-+			return comm;
-+	}
- 
-+	return NULL;
-+}
-+
-+static void __iomem *byt_gpio_reg(struct byt_gpio *vg, unsigned int offset,
-+				  int reg)
-+{
-+	struct byt_community *comm = byt_get_community(vg, offset);
-+	u32 reg_offset = 0;
-+
-+	if (!comm)
-+		return NULL;
-+
-+	offset -= comm->pin_base;
- 	if (reg == BYT_INT_STAT_REG)
- 		reg_offset = (offset / 32) * 4;
- 	else
--		reg_offset = vg->range->pins[offset] * 16;
-+		reg_offset = comm->pad_map[offset] * 16;
-+
-+	return comm->reg_base + reg_offset + reg;
-+}
-+
-+static int byt_get_groups_count(struct pinctrl_dev *pctldev)
-+{
-+	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return vg->soc_data->ngroups;
-+}
-+
-+static const char *byt_get_group_name(struct pinctrl_dev *pctldev,
-+				      unsigned int selector)
-+{
-+	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return vg->soc_data->groups[selector].name;
-+}
-+
-+static int byt_get_group_pins(struct pinctrl_dev *pctldev,
-+			      unsigned int selector,
-+			      const unsigned int **pins,
-+			      unsigned int *num_pins)
-+{
-+	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctldev);
-+
-+	*pins		= vg->soc_data->groups[selector].pins;
-+	*num_pins	= vg->soc_data->groups[selector].npins;
-+
-+	return 0;
-+}
-+
-+static const struct pinctrl_ops byt_pinctrl_ops = {
-+	.get_groups_count	= byt_get_groups_count,
-+	.get_group_name		= byt_get_group_name,
-+	.get_group_pins		= byt_get_group_pins,
-+};
-+
-+static int byt_get_functions_count(struct pinctrl_dev *pctldev)
-+{
-+	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return vg->soc_data->nfunctions;
-+}
-+
-+static const char *byt_get_function_name(struct pinctrl_dev *pctldev,
-+					 unsigned int selector)
-+{
-+	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return vg->soc_data->functions[selector].name;
-+}
-+
-+static int byt_get_function_groups(struct pinctrl_dev *pctldev,
-+				   unsigned int selector,
-+				   const char * const **groups,
-+				   unsigned int *num_groups)
-+{
-+	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctldev);
-+
-+	*groups		= vg->soc_data->functions[selector].groups;
-+	*num_groups	= vg->soc_data->functions[selector].ngroups;
-+
-+	return 0;
-+}
-+
-+static int byt_get_group_simple_mux(const struct byt_pingroup group,
-+				    const char *func_name,
-+				    unsigned short *func)
-+{
-+	int i;
-+
-+	for (i = 0; i < group.nfuncs; i++) {
-+		if (!strcmp(group.simple_funcs[i].name, func_name)) {
-+			*func = group.simple_funcs[i].func;
-+			return 0;
-+		}
-+	}
-+
-+	return 1;
-+}
-+
-+static int byt_get_group_mixed_mux(const struct byt_pingroup group,
-+				   const char *func_name,
-+				   const unsigned short **func)
-+{
-+	int i;
-+
-+	for (i = 0; i < group.nfuncs; i++) {
-+		if (!strcmp(group.mixed_funcs[i].name, func_name)) {
-+			*func = group.mixed_funcs[i].func_values;
-+			return 0;
-+		}
-+	}
- 
--	return vg->reg_base + reg_offset + reg;
-+	return 1;
- }
- 
--static void byt_gpio_clear_triggering(struct byt_gpio *vg, unsigned offset)
-+static void byt_set_group_simple_mux(struct byt_gpio *vg,
-+				     const struct byt_pingroup group,
-+				     unsigned short func)
- {
--	void __iomem *reg = byt_gpio_reg(&vg->chip, offset, BYT_CONF0_REG);
- 	unsigned long flags;
--	u32 value;
-+	int i;
- 
- 	raw_spin_lock_irqsave(&vg->lock, flags);
--	value = readl(reg);
--	value &= ~(BYT_TRIG_POS | BYT_TRIG_NEG | BYT_TRIG_LVL);
--	writel(value, reg);
-+
-+	for (i = 0; i < group.npins; i++) {
-+		void __iomem *padcfg0;
-+		u32 value;
-+
-+		padcfg0 = byt_gpio_reg(vg, group.pins[i], BYT_CONF0_REG);
-+		if (!padcfg0) {
-+			dev_warn(&vg->pdev->dev,
-+				 "Group %s, pin %i not muxed (no padcfg0)\n",
-+				 group.name, i);
-+			continue;
-+		}
-+
-+		value = readl(padcfg0);
-+		value &= ~BYT_PIN_MUX;
-+		value |= func;
-+		writel(value, padcfg0);
-+	}
-+
- 	raw_spin_unlock_irqrestore(&vg->lock, flags);
- }
- 
-+static void byt_set_group_mixed_mux(struct byt_gpio *vg,
-+				    const struct byt_pingroup group,
-+				    const unsigned short *func)
-+{
-+	unsigned long flags;
-+	int i;
-+
-+	raw_spin_lock_irqsave(&vg->lock, flags);
-+
-+	for (i = 0; i < group.npins; i++) {
-+		void __iomem *padcfg0;
-+		u32 value;
-+
-+		padcfg0 = byt_gpio_reg(vg, group.pins[i], BYT_CONF0_REG);
-+		if (!padcfg0) {
-+			dev_warn(&vg->pdev->dev,
-+				 "Group %s, pin %i not muxed (no padcfg0)\n",
-+				 group.name, i);
-+			continue;
-+		}
-+
-+		value = readl(padcfg0);
-+		value &= ~BYT_PIN_MUX;
-+		value |= func[i];
-+		writel(value, padcfg0);
-+	}
-+
-+	raw_spin_unlock_irqrestore(&vg->lock, flags);
-+}
-+
-+static int byt_set_mux(struct pinctrl_dev *pctldev, unsigned int func_selector,
-+		       unsigned int group_selector)
-+{
-+	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctldev);
-+	const struct byt_function func = vg->soc_data->functions[func_selector];
-+	const struct byt_pingroup group = vg->soc_data->groups[group_selector];
-+	const unsigned short *mixed_func;
-+	unsigned short simple_func;
-+	int ret = 1;
-+
-+	if (group.has_simple_funcs)
-+		ret = byt_get_group_simple_mux(group, func.name, &simple_func);
-+	else
-+		ret = byt_get_group_mixed_mux(group, func.name, &mixed_func);
-+
-+	if (ret)
-+		byt_set_group_simple_mux(vg, group, BYT_DEFAULT_GPIO_MUX);
-+	else if (group.has_simple_funcs)
-+		byt_set_group_simple_mux(vg, group, simple_func);
-+	else
-+		byt_set_group_mixed_mux(vg, group, mixed_func);
-+
-+	return 0;
-+}
-+
- static u32 byt_get_gpio_mux(struct byt_gpio *vg, unsigned offset)
- {
- 	/* SCORE pin 92-93 */
--	if (!strcmp(vg->range->name, BYT_SCORE_ACPI_UID) &&
--		offset >= 92 && offset <= 93)
-+	if (!strcmp(vg->soc_data->uid, BYT_SCORE_ACPI_UID) &&
-+	    offset >= 92 && offset <= 93)
- 		return 1;
- 
- 	/* SUS pin 11-21 */
--	if (!strcmp(vg->range->name, BYT_SUS_ACPI_UID) &&
--		offset >= 11 && offset <= 21)
-+	if (!strcmp(vg->soc_data->uid, BYT_SUS_ACPI_UID) &&
-+	    offset >= 11 && offset <= 21)
- 		return 1;
- 
- 	return 0;
- }
- 
--static int byt_gpio_request(struct gpio_chip *chip, unsigned offset)
-+static void byt_gpio_clear_triggering(struct byt_gpio *vg, unsigned int offset)
- {
--	struct byt_gpio *vg = gpiochip_get_data(chip);
--	void __iomem *reg = byt_gpio_reg(chip, offset, BYT_CONF0_REG);
-+	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
-+	unsigned long flags;
-+	u32 value;
-+
-+	raw_spin_lock_irqsave(&vg->lock, flags);
-+	value = readl(reg);
-+	value &= ~(BYT_TRIG_POS | BYT_TRIG_NEG | BYT_TRIG_LVL);
-+	writel(value, reg);
-+	raw_spin_unlock_irqrestore(&vg->lock, flags);
-+}
-+
-+static int byt_gpio_request_enable(struct pinctrl_dev *pctl_dev,
-+				   struct pinctrl_gpio_range *range,
-+				   unsigned int offset)
-+{
-+	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctl_dev);
-+	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
- 	u32 value, gpio_mux;
- 	unsigned long flags;
- 
-@@ -817,13 +1030,102 @@ static void byt_gpio_free(struct gpio_chip *chip, unsigned offset)
- 	pm_runtime_put(&vg->pdev->dev);
- }
- 
-+static void byt_gpio_disable_free(struct pinctrl_dev *pctl_dev,
-+				  struct pinctrl_gpio_range *range,
-+				  unsigned int offset)
-+{
-+	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctl_dev);
-+
-+	byt_gpio_clear_triggering(vg, offset);
-+	pm_runtime_put(&vg->pdev->dev);
-+}
-+
-+static int byt_gpio_set_direction(struct pinctrl_dev *pctl_dev,
-+				  struct pinctrl_gpio_range *range,
-+				  unsigned int offset,
-+				  bool input)
-+{
-+	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctl_dev);
-+	void __iomem *val_reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
-+	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
-+	unsigned long flags;
-+	u32 value;
-+
-+	raw_spin_lock_irqsave(&vg->lock, flags);
-+
-+	value = readl(val_reg);
-+	value &= ~BYT_DIR_MASK;
-+	if (input)
-+		value |= BYT_OUTPUT_EN;
-+	else
-+		/*
-+		 * Before making any direction modifications, do a check if gpio
-+		 * is set for direct IRQ.  On baytrail, setting GPIO to output
-+		 * does not make sense, so let's at least warn the caller before
-+		 * they shoot themselves in the foot.
-+		 */
-+		WARN(readl(conf_reg) & BYT_DIRECT_IRQ_EN,
-+		     "Potential Error: Setting GPIO with direct_irq_en to output");
-+	writel(value, val_reg);
-+
-+	raw_spin_unlock_irqrestore(&vg->lock, flags);
-+
-+	return 0;
-+}
-+
-+static const struct pinmux_ops byt_pinmux_ops = {
-+	.get_functions_count	= byt_get_functions_count,
-+	.get_function_name	= byt_get_function_name,
-+	.get_function_groups	= byt_get_function_groups,
-+	.set_mux		= byt_set_mux,
-+	.gpio_request_enable	= byt_gpio_request_enable,
-+	.gpio_disable_free	= byt_gpio_disable_free,
-+	.gpio_set_direction	= byt_gpio_set_direction,
-+};
-+
-+static int byt_gpio_request(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct byt_gpio *vg = gpiochip_get_data(chip);
-+	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
-+	u32 value, gpio_mux;
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&vg->lock, flags);
-+
-+	/*
-+	 * In most cases, func pin mux 000 means GPIO function.
-+	 * But, some pins may have func pin mux 001 represents
-+	 * GPIO function.
-+	 *
-+	 * Because there are devices out there where some pins were not
-+	 * configured correctly we allow changing the mux value from
-+	 * request (but print out warning about that).
-+	 */
-+	value = readl(reg) & BYT_PIN_MUX;
-+	gpio_mux = byt_get_gpio_mux(vg, offset);
-+	if (WARN_ON(gpio_mux != value)) {
-+		value = readl(reg) & ~BYT_PIN_MUX;
-+		value |= gpio_mux;
-+		writel(value, reg);
-+
-+		dev_warn(&vg->pdev->dev,
-+			 "pin %u forcibly re-configured as GPIO\n", offset);
-+	}
-+
-+	raw_spin_unlock_irqrestore(&vg->lock, flags);
-+
-+	pm_runtime_get(&vg->pdev->dev);
-+
-+	return 0;
-+}
-+
- static int byt_irq_type(struct irq_data *d, unsigned type)
- {
- 	struct byt_gpio *vg = gpiochip_get_data(irq_data_get_irq_chip_data(d));
- 	u32 offset = irqd_to_hwirq(d);
- 	u32 value;
- 	unsigned long flags;
--	void __iomem *reg = byt_gpio_reg(&vg->chip, offset, BYT_CONF0_REG);
-+	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
- 
- 	if (offset >= vg->chip.ngpio)
- 		return -EINVAL;
-@@ -832,7 +1134,7 @@ static int byt_irq_type(struct irq_data *d, unsigned type)
- 	value = readl(reg);
- 
- 	WARN(value & BYT_DIRECT_IRQ_EN,
--		"Bad pad config for io mode, force direct_irq_en bit clearing");
-+	     "Bad pad config for io mode, force direct_irq_en bit clearing");
- 
- 	/* For level trigges the BYT_TRIG_POS and BYT_TRIG_NEG bits
- 	 * are used to indicate high and low level triggering
-@@ -852,10 +1154,198 @@ static int byt_irq_type(struct irq_data *d, unsigned type)
- 	return 0;
- }
- 
-+static void byt_get_pull_strength(u32 reg, u16 *strength)
-+{
-+	switch (reg & BYT_PULL_STR_MASK) {
-+	case BYT_PULL_STR_2K:
-+		*strength = 2000;
-+		break;
-+	case BYT_PULL_STR_10K:
-+		*strength = 10000;
-+		break;
-+	case BYT_PULL_STR_20K:
-+		*strength = 20000;
-+		break;
-+	case BYT_PULL_STR_40K:
-+		*strength = 40000;
-+		break;
-+	}
-+}
-+
-+static int byt_set_pull_strength(u32 *reg, u16 strength)
-+{
-+	*reg &= ~BYT_PULL_STR_MASK;
-+
-+	switch (strength) {
-+	case 2000:
-+		*reg |= BYT_PULL_STR_2K;
-+		break;
-+	case 10000:
-+		*reg |= BYT_PULL_STR_10K;
-+		break;
-+	case 20000:
-+		*reg |= BYT_PULL_STR_20K;
-+		break;
-+	case 40000:
-+		*reg |= BYT_PULL_STR_40K;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int byt_pin_config_get(struct pinctrl_dev *pctl_dev, unsigned int offset,
-+			      unsigned long *config)
-+{
-+	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctl_dev);
-+	enum pin_config_param param = pinconf_to_config_param(*config);
-+	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
-+	void __iomem *val_reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
-+	unsigned long flags;
-+	u32 conf, pull, val;
-+	u16 arg = 0;
-+
-+	raw_spin_lock_irqsave(&vg->lock, flags);
-+	conf = readl(conf_reg);
-+	pull = conf & BYT_PULL_ASSIGN_MASK;
-+	val = readl(val_reg);
-+	raw_spin_unlock_irqrestore(&vg->lock, flags);
-+
-+	switch (param) {
-+	case PIN_CONFIG_BIAS_DISABLE:
-+		if (pull)
-+			return -EINVAL;
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+		/* Pull assignment is only applicable in input mode */
-+		if ((val & BYT_INPUT_EN) || pull != BYT_PULL_ASSIGN_DOWN)
-+			return -EINVAL;
-+
-+		byt_get_pull_strength(conf, &arg);
-+
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_UP:
-+		/* Pull assignment is only applicable in input mode */
-+		if ((val & BYT_INPUT_EN) || pull != BYT_PULL_ASSIGN_UP)
-+			return -EINVAL;
-+
-+		byt_get_pull_strength(conf, &arg);
-+
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+
-+	*config = pinconf_to_config_packed(param, arg);
-+
-+	return 0;
-+}
-+
-+static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
-+			      unsigned int offset,
-+			      unsigned long *configs,
-+			      unsigned int num_configs)
-+{
-+	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctl_dev);
-+	unsigned int param, arg;
-+	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
-+	void __iomem *val_reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
-+	unsigned long flags;
-+	u32 conf, val;
-+	int i, ret = 0;
-+
-+	raw_spin_lock_irqsave(&vg->lock, flags);
-+
-+	conf = readl(conf_reg);
-+	val = readl(val_reg);
-+
-+	for (i = 0; i < num_configs; i++) {
-+		param = pinconf_to_config_param(configs[i]);
-+		arg = pinconf_to_config_argument(configs[i]);
-+
-+		switch (param) {
-+		case PIN_CONFIG_BIAS_DISABLE:
-+			conf &= ~BYT_PULL_ASSIGN_MASK;
-+			break;
-+		case PIN_CONFIG_BIAS_PULL_DOWN:
-+			/* Set default strength value in case none is given */
-+			if (arg == 1)
-+				arg = 2000;
-+
-+			/*
-+			 * Pull assignment is only applicable in input mode. If
-+			 * chip is not in input mode, set it and warn about it.
-+			 */
-+			if (val & BYT_INPUT_EN) {
-+				val &= ~BYT_INPUT_EN;
-+				writel(val, val_reg);
-+				dev_warn(&vg->pdev->dev,
-+					 "pin %u forcibly set to input mode\n",
-+					 offset);
-+			}
-+
-+			conf &= ~BYT_PULL_ASSIGN_MASK;
-+			conf |= BYT_PULL_ASSIGN_DOWN;
-+			ret = byt_set_pull_strength(&conf, arg);
-+
-+			break;
-+		case PIN_CONFIG_BIAS_PULL_UP:
-+			/* Set default strength value in case none is given */
-+			if (arg == 1)
-+				arg = 2000;
-+
-+			/*
-+			 * Pull assignment is only applicable in input mode. If
-+			 * chip is not in input mode, set it and warn about it.
-+			 */
-+			if (val & BYT_INPUT_EN) {
-+				val &= ~BYT_INPUT_EN;
-+				writel(val, val_reg);
-+				dev_warn(&vg->pdev->dev,
-+					 "pin %u forcibly set to input mode\n",
-+					 offset);
-+			}
-+
-+			conf &= ~BYT_PULL_ASSIGN_MASK;
-+			conf |= BYT_PULL_ASSIGN_UP;
-+			ret = byt_set_pull_strength(&conf, arg);
-+
-+			break;
-+		default:
-+			ret = -ENOTSUPP;
-+		}
-+
-+		if (ret)
-+			break;
-+	}
-+
-+	if (!ret)
-+		writel(conf, conf_reg);
-+
-+	raw_spin_unlock_irqrestore(&vg->lock, flags);
-+
-+	return ret;
-+}
-+
-+static const struct pinconf_ops byt_pinconf_ops = {
-+	.is_generic	= true,
-+	.pin_config_get	= byt_pin_config_get,
-+	.pin_config_set	= byt_pin_config_set,
-+};
-+
-+static const struct pinctrl_desc byt_pinctrl_desc = {
-+	.pctlops	= &byt_pinctrl_ops,
-+	.pmxops		= &byt_pinmux_ops,
-+	.confops	= &byt_pinconf_ops,
-+	.owner		= THIS_MODULE,
-+};
-+
- static int byt_gpio_get(struct gpio_chip *chip, unsigned offset)
- {
--	void __iomem *reg = byt_gpio_reg(chip, offset, BYT_VAL_REG);
- 	struct byt_gpio *vg = gpiochip_get_data(chip);
-+	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
- 	unsigned long flags;
- 	u32 val;
- 
-@@ -869,7 +1359,7 @@ static int byt_gpio_get(struct gpio_chip *chip, unsigned offset)
- static void byt_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct byt_gpio *vg = gpiochip_get_data(chip);
--	void __iomem *reg = byt_gpio_reg(chip, offset, BYT_VAL_REG);
-+	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
- 	unsigned long flags;
- 	u32 old_val;
- 
-@@ -888,7 +1378,7 @@ static void byt_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- static int byt_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- {
- 	struct byt_gpio *vg = gpiochip_get_data(chip);
--	void __iomem *reg = byt_gpio_reg(chip, offset, BYT_VAL_REG);
-+	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
- 	unsigned long flags;
- 	u32 value;
- 
-@@ -907,8 +1397,8 @@ static int byt_gpio_direction_output(struct gpio_chip *chip,
- 				     unsigned gpio, int value)
- {
- 	struct byt_gpio *vg = gpiochip_get_data(chip);
--	void __iomem *conf_reg = byt_gpio_reg(chip, gpio, BYT_CONF0_REG);
--	void __iomem *reg = byt_gpio_reg(chip, gpio, BYT_VAL_REG);
-+	void __iomem *conf_reg = byt_gpio_reg(vg, gpio, BYT_CONF0_REG);
-+	void __iomem *reg = byt_gpio_reg(vg, gpio, BYT_VAL_REG);
- 	unsigned long flags;
- 	u32 reg_val;
- 
-@@ -1019,7 +1509,7 @@ static void byt_gpio_irq_handler(struct irq_desc *desc)
- 
- 	/* check from GPIO controller which pin triggered the interrupt */
- 	for (base = 0; base < vg->chip.ngpio; base += 32) {
--		reg = byt_gpio_reg(&vg->chip, base, BYT_INT_STAT_REG);
-+		reg = byt_gpio_reg(vg, base, BYT_INT_STAT_REG);
- 		pending = readl(reg);
- 		for_each_set_bit(pin, &pending, 32) {
- 			virq = irq_find_mapping(vg->chip.irqdomain, base + pin);
-@@ -1037,7 +1527,7 @@ static void byt_irq_ack(struct irq_data *d)
- 	void __iomem *reg;
- 
- 	raw_spin_lock(&vg->lock);
--	reg = byt_gpio_reg(&vg->chip, offset, BYT_INT_STAT_REG);
-+	reg = byt_gpio_reg(vg, offset, BYT_INT_STAT_REG);
- 	writel(BIT(offset % 32), reg);
- 	raw_spin_unlock(&vg->lock);
- }
-@@ -1051,7 +1541,7 @@ static void byt_irq_unmask(struct irq_data *d)
- 	void __iomem *reg;
- 	u32 value;
- 
--	reg = byt_gpio_reg(&vg->chip, offset, BYT_CONF0_REG);
-+	reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
- 
- 	raw_spin_lock_irqsave(&vg->lock, flags);
- 	value = readl(reg);
-@@ -1106,7 +1596,7 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
- 	 * interrupts from misconfigured pins.
- 	 */
- 	for (i = 0; i < vg->chip.ngpio; i++) {
--		value = readl(byt_gpio_reg(&vg->chip, i, BYT_CONF0_REG));
-+		value = readl(byt_gpio_reg(vg, i, BYT_CONF0_REG));
- 		if ((value & BYT_PIN_MUX) == byt_get_gpio_mux(vg, i) &&
- 		    !(value & BYT_DIRECT_IRQ_EN)) {
- 			byt_gpio_clear_triggering(vg, i);
-@@ -1116,7 +1606,7 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
- 
- 	/* clear interrupt status trigger registers */
- 	for (base = 0; base < vg->chip.ngpio; base += 32) {
--		reg = byt_gpio_reg(&vg->chip, base, BYT_INT_STAT_REG);
-+		reg = byt_gpio_reg(vg, base, BYT_INT_STAT_REG);
- 		writel(0xffffffff, reg);
- 		/* make sure trigger bits are cleared, if not then a pin
- 		   might be misconfigured in bios */
-@@ -1226,11 +1716,11 @@ static int byt_gpio_suspend(struct device *dev)
- 		void __iomem *reg;
- 		u32 value;
- 
--		reg = byt_gpio_reg(&vg->chip, i, BYT_CONF0_REG);
-+		reg = byt_gpio_reg(vg, i, BYT_CONF0_REG);
- 		value = readl(reg) & BYT_CONF0_RESTORE_MASK;
- 		vg->saved_context[i].conf0 = value;
- 
--		reg = byt_gpio_reg(&vg->chip, i, BYT_VAL_REG);
-+		reg = byt_gpio_reg(vg, i, BYT_VAL_REG);
- 		value = readl(reg) & BYT_VAL_RESTORE_MASK;
- 		vg->saved_context[i].val = value;
- 	}
-@@ -1248,7 +1738,7 @@ static int byt_gpio_resume(struct device *dev)
- 		void __iomem *reg;
- 		u32 value;
- 
--		reg = byt_gpio_reg(&vg->chip, i, BYT_CONF0_REG);
-+		reg = byt_gpio_reg(vg, i, BYT_CONF0_REG);
- 		value = readl(reg);
- 		if ((value & BYT_CONF0_RESTORE_MASK) !=
- 		     vg->saved_context[i].conf0) {
-@@ -1258,7 +1748,7 @@ static int byt_gpio_resume(struct device *dev)
- 			dev_info(dev, "restored pin %d conf0 %#08x", i, value);
- 		}
- 
--		reg = byt_gpio_reg(&vg->chip, i, BYT_VAL_REG);
-+		reg = byt_gpio_reg(vg, i, BYT_VAL_REG);
- 		value = readl(reg);
- 		if ((value & BYT_VAL_RESTORE_MASK) !=
- 		     vg->saved_context[i].val) {
--- 
-1.9.1
+--dDRMvlgZJXvWKvBx
+Content-Type: application/octet-stream
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
 
+H4sICJFU9VYAAy5jb25maWcAlFxfd9s4rn+fT+HTuQ+7D50macfbvffkgZYom2P9YUXKifOi
+4yZuJ2fTuGs7s+23vwApWSQFut15mEYASJEgCPwAUv71l18n7OW4+7I5Pt5vnp6+Tz5vn7f7
+zXH7MPn0+LT9v0laTcpKT3gq9G8gnD8+v3x78+39tJ2+m7z77fffLl7v73+fLLf75+3TJNk9
+f3r8/ALtH3fPv/z6S1KVmZiD6Ezo6+/9461p7T0PD6JUum4SLaqyTXlSpbwemJLXWctXvNQK
+BDXP26ZMqpoPElWjZaPbrKoLpq9fbZ8+Td+9huG+nr571cuwOllA35l9vH612d//iVN6c2+G
+f+im1z5sP1nKqWVeJcuUy1Y1Ula1MyWlWbLUNUv4mFcUzfBg3l0UTLZ1mbagFtUWory+en9O
+gN1ev72iBZKqkEwPHUX68cSgu8tpL1dynrZpwVoUhWloR5mGp+aGnfNyrhcDb85LXouknTVz
+ktjWPGdarHgrK1yqWo3FFjdczBeOquobxYv2NlnMWZq2LJ9XtdCLYtwyYbmY1TBYWMecrQP9
+LphqE9mYIdxSPJYseJuLElZL3DkTXjAYr+K6kWhqpg9WcxZopGfxYgZPmaiVbpNFUy4jcpLN
+OS1mRyRmvC6ZsXhZKSVmOQ9EVKMkh2WMsG9YqdtFA2+RBSzYgtWkhFEey42kzmeDyF0FmoBF
+fnvlNGtgx5vGo7EY+1ZtJbUoQH0pbEXQpSjnMcmUo0GgGlgOWyicv7WCNslyNlfXr15/Qk/0
++rD5a/vwev/wOPEJh5Dw8C0g3IeE98HzP4Pny4uQcPmKnkkj62rGHVPOxG3LWZ2v4bktuGOq
+cq4ZLBVsnBXP1fW7nn5yPGCAClzUm6fHj2++7B5enraHN//TlKzgaLicKf7mt8D/iPpDe1PV
+jgXNGpGnsA685bf2fco6H/C+v07mxpk/TQ7b48vXwR/P6mrJyxZGrArpul5YcV6uYM44uAJ8
+9uB2khpsz/gRAfb36hX03nMsrdVc6cnjYfK8O+ILHZ/J8hXsf7BvbEeQwdh0FezCJewJ8O/z
+OyFpzgw4VzQrvysYzbm9i7WIvD+/cwKVP6aTAtwBuQoIBXBY5/i3d+dbV+fZ7wjlg7GxJgfn
+UCmNlnX96m/Pu+ft30/LoNZqJaSzJTsC/pvo3J0mOB8w9uJDwxtOvMoaCGyBql63TENAdDxH
+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
+GXpQHvmaAQA=
+
+--dDRMvlgZJXvWKvBx--
