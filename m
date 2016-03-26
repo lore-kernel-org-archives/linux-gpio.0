@@ -1,133 +1,39 @@
-From: qiujiang <qiujiang@huawei.com>
-Subject: [PATCH v6 2/2] gpio: dwapb: add gpio-signaled acpi event support
-Date: Sat, 26 Mar 2016 10:31:36 +0800
-Message-ID: <1458959496-57455-3-git-send-email-qiujiang@huawei.com>
-References: <1458959496-57455-1-git-send-email-qiujiang@huawei.com>
+From: rogerkaase@arcor.de
+Subject: winning Alert !!contact davidcarolm@yahoo.com.hk
+Date: Sun, 27 Mar 2016 00:30:10 +0100 (CET)
+Message-ID: <134339893.620871.1459035010021.JavaMail.ngmail__35321.5914489285$1459035039$gmane$org@webmail08.arcor-online.net>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from szxga01-in.huawei.com ([58.251.152.64]:17485 "EHLO
-	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752649AbcCZCWM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Mar 2016 22:22:12 -0400
-In-Reply-To: <1458959496-57455-1-git-send-email-qiujiang@huawei.com>
+Received: from mail-in-16.arcor-online.net ([151.189.21.56]:52133 "EHLO
+	mail-in-16.arcor-online.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754322AbcCZXaM convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 26 Mar 2016 19:30:12 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: mika.westerberg@linux.intel.com, andy.shevchenko@gmail.com, delicious.quinoa@gmail.com, jamie@jamieiles.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com, qiujiang <qiujiang@huawei.com>
+To: info@web.net
 
-This patch adds gpio-signaled acpi event support. It is used for
-power button on hisilicon D02 board, an arm64 platform.
+Attention:
+We are donating to you 1,500,000 GBP, from David and Carol Martin =A333=
+million lottery, won January 2016
+To confirm this kindly click on
+http://www.ibtimes.co.uk/lotto-winners-david-carol-martin-want-blast-in=
+to-space-after-buying-new-shoes-1537851
 
-Corresponding DSDT file is defined as follows:
- Device(GPI0) {
-        Name(_HID, "HISI0181")
-	Name(_ADR, 0)
-        Name(_UID, 0)
-
-	Name (_CRS, ResourceTemplate ()  {
-		Memory32Fixed (ReadWrite, 0x802e0000, 0x10000)
-		Interrupt (ResourceConsumer, Level, ActiveHigh,
-		Exclusive,,,)  {344}
-	})
-
-	Device(PRTa) {
-		Name (_DSD, Package () {
-		Package () {
-			Package () {"reg",0},
-			Package () {"snps,nr-gpios",32},
-			}
-		})
-	}
-
-	Name (_AEI, ResourceTemplate () {
-		GpioInt(Edge, ActiveLow, ExclusiveAndWake,
-		PullUp, , " \\_SB.GPI0") {8}
-	})
-
-	Method (_E08, 0x0, NotSerialized) {
-		Notify (\_SB.PWRB, 0x80)
-	}
-}
-
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: qiujiang <qiujiang@huawei.com>
----
- drivers/gpio/gpio-dwapb.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 3498393..f52adc9 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -7,6 +7,7 @@
-  *
-  * All enquiries to support@picochip.com
-  */
-+#include <linux/acpi.h>
- #include <linux/gpio/driver.h>
- /* FIXME: for gpio_get_value(), replace this with direct register read */
- #include <linux/gpio.h>
-@@ -27,6 +28,8 @@
- #include <linux/platform_data/gpio-dwapb.h>
- #include <linux/slab.h>
- 
-+#include "gpiolib.h"
-+
- #define GPIO_SWPORTA_DR		0x00
- #define GPIO_SWPORTA_DDR	0x04
- #define GPIO_SWPORTB_DR		0x0c
-@@ -436,6 +439,10 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 	else
- 		port->is_registered = true;
- 
-+	/* Add GPIO-signaled ACPI event support */
-+	if (pp->irq)
-+		acpi_gpiochip_request_interrupts(&port->gc);
-+
- 	return err;
- }
- 
-@@ -502,10 +509,17 @@ dwapb_gpio_get_pdata(struct device *dev)
- 			}
- 		}
- 
-+		if (has_acpi_companion(dev) && pp->idx == 0)
-+			pp->irq = platform_get_irq(to_platform_device(dev), 0);
-+
- 		pp->irq_shared	= false;
- 		pp->gpio_base	= -1;
-+
- 		if (dev->of_node)
- 			pp->name = to_of_node(fwnode)->full_name;
-+
-+		if (has_acpi_companion(dev))
-+			pp->name = acpi_dev_name(to_acpi_device_node(fwnode));
- 	}
- 
- 	return pdata;
-@@ -578,6 +592,12 @@ static const struct of_device_id dwapb_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, dwapb_of_match);
- 
-+static const struct acpi_device_id dwapb_acpi_match[] = {
-+	{"HISI0181", 0},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
-+
- #ifdef CONFIG_PM_SLEEP
- static int dwapb_gpio_suspend(struct device *dev)
- {
-@@ -672,6 +692,7 @@ static struct platform_driver dwapb_gpio_driver = {
- 		.name	= "gpio-dwapb",
- 		.pm	= &dwapb_gpio_pm_ops,
- 		.of_match_table = of_match_ptr(dwapb_of_match),
-+		.acpi_match_table = ACPI_PTR(dwapb_acpi_match),
- 	},
- 	.probe		= dwapb_gpio_probe,
- 	.remove		= dwapb_gpio_remove,
--- 
-1.9.1
-
+Please provide the following information
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+*Full Name:
+*Telephone Number:
+*Age:
+*Country:
+reply to us on
+davidcarolm@yahoo.com.hk
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
