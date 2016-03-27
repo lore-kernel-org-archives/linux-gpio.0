@@ -1,39 +1,38 @@
-From: rogerkaase@arcor.de
-Subject: winning Alert !!contact davidcarolm@yahoo.com.hk
-Date: Sun, 27 Mar 2016 00:30:10 +0100 (CET)
-Message-ID: <134339893.620871.1459035010021.JavaMail.ngmail__35321.5914489285$1459035039$gmane$org@webmail08.arcor-online.net>
+From: Guenter Roeck <guenter@roeck-us.net>
+Subject: Problems with commit a770d946371e ("gpio: pxa: add pin control gpio
+ direction and request")
+Date: Sat, 26 Mar 2016 18:01:19 -0700
+Message-ID: <56F730DF.9080307@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-in-16.arcor-online.net ([151.189.21.56]:52133 "EHLO
-	mail-in-16.arcor-online.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754322AbcCZXaM convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 26 Mar 2016 19:30:12 -0400
+Received: from mail-pf0-f175.google.com ([209.85.192.175]:34373 "EHLO
+	mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754430AbcC0BBV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Mar 2016 21:01:21 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: info@web.net
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Attention:
-We are donating to you 1,500,000 GBP, from David and Carol Martin =A333=
-million lottery, won January 2016
-To confirm this kindly click on
-http://www.ibtimes.co.uk/lotto-winners-david-carol-martin-want-blast-in=
-to-space-after-buying-new-shoes-1537851
+Hi,
 
-Please provide the following information
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-*Full Name:
-*Telephone Number:
-*Age:
-*Country:
-reply to us on
-davidcarolm@yahoo.com.hk
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+when trying pxa_defconfig with various pxa270 and pxa255 qemu targets, I noticed that the gpio
+pin direction is no longer set. Bisect points to commit a770d946371e ("gpio: pxa: add pin control
+gpio direction and request"). As it turns out, pxa_defconfig does not configure PINCTRL. As a result,
+pinctrl stub functions are used. Those all return 0 if PINCTRL is not configured. This causes the
+pxa gpio driver to wrongly assume that pinctrl configured the gpio pin direction, and does nothing.
+
+Looking into gpio-mvebu.c, its use of the pinctrl functions is completely different. It aborts
+on error, not on success, from the pinctrl functions. Given that, I have no idea how to resolve
+the problem. Having the stub functions return an error might cause the mvebu driver (and maybe
+others) to fail if there is no pinctrl driver, so that does not seem to be an option.
+
+If the idea is to mandate pinctrl for PXA architectures, it should probably be enabled for those
+architectures. Unless I am missing something, PXA architectures to not select PINCTRL, which
+suggests that the problem may affect a wide range of systems. Please have a look.
+
+Thanks,
+Guenter
+
