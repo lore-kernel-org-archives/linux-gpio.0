@@ -1,79 +1,91 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH] [RFC] gpio: gpio-it87: Add support for IT8620 and IT8628
-Date: Sun, 27 Mar 2016 17:43:02 +0200
-Message-ID: <1459093382-23119-2-git-send-email-martin.blumenstingl@googlemail.com>
-References: <1459076863-26014-1-git-send-email-martin.blumenstingl@googlemail.com>
- <1459093382-23119-1-git-send-email-martin.blumenstingl@googlemail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 1/9] drivers/gpio: make gpio-bcm-kona.c explicitly non-modular
+Date: Sun, 27 Mar 2016 11:44:41 -0400
+Message-ID: <1459093489-18314-2-git-send-email-paul.gortmaker@windriver.com>
+References: <1459093489-18314-1-git-send-email-paul.gortmaker@windriver.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33308 "EHLO
-	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752338AbcC0Pn2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Mar 2016 11:43:28 -0400
-Received: by mail-wm0-f66.google.com with SMTP id 77so4175545wmi.0
-        for <linux-gpio@vger.kernel.org>; Sun, 27 Mar 2016 08:43:27 -0700 (PDT)
-In-Reply-To: <1459093382-23119-1-git-send-email-martin.blumenstingl@googlemail.com>
+Received: from mail.windriver.com ([147.11.1.11]:56722 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752154AbcC0PpL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Mar 2016 11:45:11 -0400
+In-Reply-To: <1459093489-18314-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: jdelvare@suse.com, linus.walleij@linaro.org, gnurou@gmail.com, denis@compulab.co.il, flameeyes@flameeyes.eu, cvubrugier@fastmail.fm, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Ray Jui <rjui@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org
 
-These chips seem to have a 9th GPIO block (thus supporting 72 GPIOs)
-which is configured through SuperIO register 0xd2 (output enable) and
-0xd3 (simple I/O). This is also the reason why io_size is larger than
-on IT8728 / IT8732. Unfortunately I don't have hardware to test this 9th
-GPIO block.
-I am also not sure about not configuring the Simple I/O registers as the
-hardware I have only uses GPIO block 8. Reading back the values of
-0xc0-0xc7 (as configured by the BIOS/EFI on my board) shows that all
-have 0xff set.
+The Kconfig currently controlling compilation of this code is:
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+config GPIO_BCM_KONA
+        bool "Broadcom Kona GPIO"
+
+...meaning that it currently is not being built as a module by anyone.
+
+Lets remove the couple traces of modularity so that when reading the
+driver there is no doubt it is builtin-only.
+
+Since module_platform_driver() uses the same init level priority as
+builtin_platform_driver() the init ordering remains unchanged with
+this commit.
+
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
+was (or is now) contained at the top of the file in the comments.
+
+Cc: Ray Jui <rjui@broadcom.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: bcm-kernel-feedback-list@broadcom.com
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/gpio/Kconfig     |  2 +-
- drivers/gpio/gpio-it87.c | 10 ++++++++++
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-bcm-kona.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 5f3429f..729e650 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -557,7 +557,7 @@ config GPIO_IT87
- 	  Say yes here to support GPIO functionality of IT87xx Super I/O chips.
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index 2fd38d598f3d..9aabc48ff5de 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -1,4 +1,7 @@
+ /*
++ * Broadcom Kona GPIO Driver
++ *
++ * Author: Broadcom Corporation <bcm-kernel-feedback-list@broadcom.com>
+  * Copyright (C) 2012-2014 Broadcom Corporation
+  *
+  * This program is free software; you can redistribute it and/or
+@@ -17,7 +20,7 @@
+ #include <linux/gpio.h>
+ #include <linux/of_device.h>
+ #include <linux/of_irq.h>
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/irqdomain.h>
+ #include <linux/irqchip/chained_irq.h>
  
- 	  This driver is tested with ITE IT8728 and IT8732 Super I/O chips, and
--	  supports the IT8761E Super I/O chip as well.
-+	  supports the IT8761E, IT8620E and IT8628E Super I/O chip as well.
+@@ -502,8 +505,6 @@ static struct of_device_id const bcm_kona_gpio_of_match[] = {
+ 	{}
+ };
  
- 	  To compile this driver as a module, choose M here: the module will
- 	  be called gpio_it87
-diff --git a/drivers/gpio/gpio-it87.c b/drivers/gpio/gpio-it87.c
-index b219c82..63a962d 100644
---- a/drivers/gpio/gpio-it87.c
-+++ b/drivers/gpio/gpio-it87.c
-@@ -34,6 +34,8 @@
- 
- /* Chip Id numbers */
- #define NO_DEV_ID	0xffff
-+#define IT8620_ID	0x8620
-+#define IT8628_ID	0x8628
- #define IT8728_ID	0x8728
- #define IT8732_ID	0x8732
- #define IT8761_ID	0x8761
-@@ -302,6 +304,14 @@ static int __init it87_gpio_init(void)
- 	it87_gpio->chip = it87_template_chip;
- 
- 	switch (chip_type) {
-+	case IT8620_ID:
-+	case IT8628_ID:
-+		gpio_ba_reg = 0x62;
-+		it87_gpio->io_size = 11;
-+		it87_gpio->output_base = 0xc8;
-+		it87_gpio->simple_size = 0;
-+		it87_gpio->chip.ngpio = 64;
-+		break;
- 	case IT8728_ID:
- 	case IT8732_ID:
- 		gpio_ba_reg = 0x62;
+-MODULE_DEVICE_TABLE(of, bcm_kona_gpio_of_match);
+-
+ /*
+  * This lock class tells lockdep that GPIO irqs are in a different
+  * category than their parents, so it won't report false recursion.
+@@ -659,9 +660,4 @@ static struct platform_driver bcm_kona_gpio_driver = {
+ 	},
+ 	.probe = bcm_kona_gpio_probe,
+ };
+-
+-module_platform_driver(bcm_kona_gpio_driver);
+-
+-MODULE_AUTHOR("Broadcom Corporation <bcm-kernel-feedback-list@broadcom.com>");
+-MODULE_DESCRIPTION("Broadcom Kona GPIO Driver");
+-MODULE_LICENSE("GPL v2");
++builtin_platform_driver(bcm_kona_gpio_driver);
 -- 
-2.7.4
+2.6.1
 
