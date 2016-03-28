@@ -1,29 +1,50 @@
-From: Amit Tomer <amittomer25-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH] drivers: pinctrl: add driver for
- Allwinner A64 SoC
-Date: Mon, 28 Mar 2016 22:22:41 +0530
-Message-ID: <CABHD4K-O1yqyScAyS5_BfWeG=cG-YG=CeZdt33GozdO85mx-dA@mail.gmail.com>
-References: <1451582246-32373-1-git-send-email-andre.przywara@arm.com>
-	<CABHD4K-nD9EvbgOPA2WH0q66csqVv18tmeTOBe87ACr4nuQM0A@mail.gmail.com>
-	<CAGb2v64sv7CuuTC8fZV0spmiC=MYM3iqABr-EOC9oheXQ10C3Q@mail.gmail.com>
-Reply-To: amittomer25-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Eric Anholt <eric@anholt.net>
+Subject: Re: [PATCH] pinctrl: bcm2835: Implement get_direction callback
+Date: Mon, 28 Mar 2016 11:42:28 -0700
+Message-ID: <87y492jvfv.fsf@eliezer.anholt.net>
+References: <1459177104-24353-1-git-send-email-stefan.wahren@i2se.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCDMHZG2WYPRBWWC4W3QKGQEXDFM6QY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <CAGb2v64sv7CuuTC8fZV0spmiC=MYM3iqABr-EOC9oheXQ10C3Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Cc: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, linux-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from anholt.net ([50.246.234.109]:58370 "EHLO anholt.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754705AbcC1Smd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 28 Mar 2016 14:42:33 -0400
+In-Reply-To: <1459177104-24353-1-git-send-email-stefan.wahren@i2se.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Stefan Wahren <stefan.wahren@i2se.com>
 
-> The PL bank is a separate controller (R_PIO), and would be covered by
-> a separate driver.
-> See the other sunxi drivers.
+--=-=-=
+Content-Type: text/plain
 
-Ok, Thanks for the clarification.
+Stefan Wahren <stefan.wahren@i2se.com> writes:
+
+> Implement gpio_chip's get_direction() callback, that lets other
+> drivers get particular GPIOs direction using gpiod_get_direction().
+
+Reviewed-by: Eric Anholt <eric@anholt.net>
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJW+XsVAAoJELXWKTbR/J7o/g8P/3RtscmYXHWyYMSQOL81e4vQ
+zMWTf+dk+zr1Aqg6nYvzWIHdriyx6EG6k4LBHsUFbDKNV3xEZV/yYlgzkuumt/RP
+Mqyzk0kV71IkvlhYUJM5uIQzs/WzBnx1PEQ+hgD1v5CCiGzlRftLFJ2GBrKm0pND
+R0meHgwKjoKJwKEM3M2wr9agy1+oP/mnLEZNXOVCPV4DB+33qQukbhrNmMZhm7HE
+s4fM01WmyjvfDYtUrqmgRb4vODMBWtFk4eNEJPuyHLW/yiGJXMUvpEVNrDNeba7a
+Bp6Q0xyr3zV1OFsxbqxVG8Q4u2sR/yymUumZkBZJDbZ5FxsyuIKNkv9Y33QkEErb
+ijuBXCHdy+yt25lHSEHNNJZ28//2ZcZcb+bYZtQDkkZijGIiepfJ3lYDEmWTzx2b
+ozaaPnVaKTuw223Q3ZJgjNAeDIZKG1nGt6bwTnVDN8w50pvfH/0EMY7WfzucwQpg
+oM2iCCOavWOjJvgt0J6HTgFLEZknNQl80z6JkYbgohkYjUbs3mNXoPfu7lsUCWDw
+JDntM4SPQVVNijp6qEZwD9Dw4PGCfaM5KdN4mWJO3wObqenP3rRr2cIPxO3+Wd2i
+RshyvuvYhO85x0QA6bkGlrfH/4P/57qtGRpdCUW+iktg7hEwpi/rqNsjTkym6EpY
+9p+LU9h4PICAdeBw0uYo
+=mexz
+-----END PGP SIGNATURE-----
+--=-=-=--
