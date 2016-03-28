@@ -1,73 +1,31 @@
-From: Guenter Roeck <guenter@roeck-us.net>
-Subject: Re: Problems with commit a770d946371e ("gpio: pxa: add pin control
- gpio direction and request")
-Date: Sun, 27 Mar 2016 16:02:18 -0700
-Message-ID: <56F8667A.1090304@roeck-us.net>
-References: <56F730DF.9080307@roeck-us.net> <87oa9zr7g3.fsf@belgarion.home>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH RFT] gpio: tpic2810: Make sure cached buffer has
+ consistent status with h/w status
+Date: Mon, 28 Mar 2016 12:30:40 +0900
+Message-ID: <CAAVeFuJwbdZyO50yx4pV331=fa7iYV0PFXWHz9yxoxPJzXyH+w@mail.gmail.com>
+References: <1458733781.22226.3.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:36296 "EHLO
-	mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751517AbcC0XCV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Mar 2016 19:02:21 -0400
-In-Reply-To: <87oa9zr7g3.fsf@belgarion.home>
+Received: from mail-io0-f177.google.com ([209.85.223.177]:34458 "EHLO
+	mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753508AbcC1DbA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Mar 2016 23:31:00 -0400
+Received: by mail-io0-f177.google.com with SMTP id e3so51028324ioa.1
+        for <linux-gpio@vger.kernel.org>; Sun, 27 Mar 2016 20:31:00 -0700 (PDT)
+In-Reply-To: <1458733781.22226.3.camel@ingics.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "Andrew F. Davis" <afd@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 03/27/2016 01:29 PM, Robert Jarzmik wrote:
-> Guenter Roeck <guenter@roeck-us.net> writes:
->
->> Hi,
-> Hi Guenter,
->
->> when trying pxa_defconfig with various pxa270 and pxa255 qemu targets, I
->> noticed that the gpio pin direction is no longer set. Bisect points to commit
->> a770d946371e ("gpio: pxa: add pin control gpio direction and request").
-> This is a bug, you're perfectly right.
->
->> As it turns out, pxa_defconfig does not configure PINCTRL. As a result,
->> pinctrl stub functions are used.
-> Not having PINCTRL for pxa platforms is also right : only pxa device-tree
-> platforms will have pinctrl in a first stage, the legacy ones will lives for
-> several cycles without pinctrl.
->
->> Those all return 0 if PINCTRL is not configured. This causes the pxa gpio
->> driver to wrongly assume that pinctrl configured the gpio pin direction, and
->> does nothing.
-> And as you explain, this is the root case.
->
->> Looking into gpio-mvebu.c, its use of the pinctrl functions is completely
->> different. It aborts on error, not on success, from the pinctrl
->> functions.
->> Given that, I have no idea how to resolve the problem. Having the stub
->> functions return an error might cause the mvebu driver (and maybe others) to
->> fail if there is no pinctrl driver, so that does not seem to be an option.
-> You're right, it's the inverted logic in pxa_gpio_direction_output() which is at
-> fault, ie. the commit you pointed out.
->
->> If the idea is to mandate pinctrl for PXA architectures, it should probably be
->> enabled for those architectures. Unless I am missing something, PXA
->> architectures to not select PINCTRL, which suggests that the problem may
->> affect a wide range of systems. Please have a look.
-> As I said above, selecting PINCTRL is not yet an option. But fixing gpio-pxa is
-> a necessity for sure. It is beyond me how this can pass through my
-> non-regression Jenkins ... oh wait, I found :
->   - pxa machine files still use the old "mfp" stuff
->   - in this mfp (arch/arm/mach-pxa/mfp-pxa[23]xxx.c", GPDR is directly accessed
->
-> But no more poor excuses, would you try the patch at the end of this mail, while
-> I'm doing the same on my Jenkins, on both device-tree and legacy platform-data
-> builds, to see if we can fix this ?
-Your patch fixes the problem. Feel free to add
+On Wed, Mar 23, 2016 at 8:49 PM, Axel Lin <axel.lin@ingics.com> wrote:
+> i2c_smbus_write_byte_data() can fail. To ensure the cached buffer has
+> consistent status with h/w status, don't update the cached gpio->buffer
+> if write fails.
+> Also refactor the code a bit by adding a tpic2810_set_mask_bits() helper
+> and use it to simplify the code.
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+Looks pretty good!
 
-when you submit it for real.
-
-Thanks,
-Guenter
-
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
