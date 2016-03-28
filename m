@@ -1,721 +1,1419 @@
-From: Cristina Ciocan <cristina.ciocan@intel.com>
-Subject: [PATCH v2 1/6] pinctrl: baytrail: Add pin control data structures
-Date: Mon, 28 Mar 2016 16:29:35 +0300
-Message-ID: <1459171780-24856-2-git-send-email-cristina.ciocan@intel.com>
-References: <1459171780-24856-1-git-send-email-cristina.ciocan@intel.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH v5] iio: dac: Add support for the AD5592R/AD5593R
+ ADCs/DACs
+Date: Mon, 28 Mar 2016 15:30:49 +0100
+Message-ID: <56F94019.4040103@kernel.org>
+References: <1458721195-28915-1-git-send-email-michael.hennerich@analog.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:55439 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752673AbcC1N06 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 28 Mar 2016 09:26:58 -0400
-In-Reply-To: <1459171780-24856-1-git-send-email-cristina.ciocan@intel.com>
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:45659 "EHLO
+	saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752413AbcC1Oaz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Mar 2016 10:30:55 -0400
+In-Reply-To: <1458721195-28915-1-git-send-email-michael.hennerich@analog.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: mathias.nyman@linux.intel.com, mika.westerberg@linux.intel.com, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com, Cristina Ciocan <cristina.ciocan@intel.com>
+To: michael.hennerich@analog.com, linus.walleij@linaro.org, gnurou@gmail.com, lars@metafoo.de, knaack.h@gmx.de, paul.cercueil@analog.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
 
-In order to implement pin control for Baytrail, we need data structures
-in which to store and pass along pin, group, function, community and SOC
-data information.
+On 23/03/16 08:19, michael.hennerich@analog.com wrote:
+> From: Paul Cercueil <paul.cercueil@analog.com>
+> 
+> This patch adds support for the AD5592R (spi) and AD5593R (i2c)
+> ADC/DAC/GPIO devices.
+> 
+> Signed-off-by: Paul Cercueil <paul.cercueil@analog.com>
+> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+>
+A few little bits and pieces in line.  Biggest one to me is whether Linus
+Walleij is happy with the gpio chip related parts.  I'm unconvinced you
+have completely addressed his points in the earlier review - but then I wasn't
+closely following the thread so perhaps I missed a consensus being reached.
 
-Baytrail has 3 GPIO controllers. Add SCORE, NCORE and SUS controller data:
-	- pins (for all controllers),
-	- pad map for pins (for all controllers; we need this since pads
-	are not ordered),
-	- groups (for SCORE and SUS controllers),
-	- functions (for SCORE and SUS controllers),
-	- communities (for all controllers),
-	- soc specific data gathering all of the above and the ACPI UID
-	(for all controllers)
-This information is useful for pin control functionality. NCORE data is
-lighter than the other two controllers' due to lack of pin documentation in
-the public datasheet.
+Anyhow, as it contains a gpiochip it needs an Ack from Linus or Alexandre
+before I take it.
 
-Datasheet:
-http://www.intel.com/content/www/us/en/embedded/products/bay-trail/atom-e3800-family-datasheet.html
+IIO parts look pretty good to me.
 
-Signed-off-by: Cristina Ciocan <cristina.ciocan@intel.com>
----
- drivers/pinctrl/intel/pinctrl-baytrail.c | 628 +++++++++++++++++++++++++++++--
- 1 file changed, 606 insertions(+), 22 deletions(-)
+Thanks,
+ 
+Jonathan
+> ---
+> 
+> Changes since v1:
+> 	* Fix mutex usage
+> 	* Remove unnecessary NULL pointer guards
+> 	* Add comment explaining the invalid data read
+> 	* AD5593R Remove surplus adc readback
+> 
+> Changes since v2:
+> 	* Use child nodes to describe channels
+> 	* Fix probe return and driver remove path
+> 	* Move locking closer to where its used
+> 	* Remove WARN_ON but return error
+> 	* Remove OPEN DRAIN configuration option
+> 
+> Changes since v3:
+> 	* Documentation: Add missing vendor prefixes in the examples
+> 	* Minor function reordering in remove() to match the reverse of probe()
+> 
+> Changes since v4:
+> 	* Documentation: Add missing gpio bindings
+> 	* Kconfig: Select GPIOLIB and remove ifdefs in code
+Looks like one of these snuck through...
 
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 21b79a4..cd83de3 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -73,17 +73,207 @@
- #define BYT_NCORE_ACPI_UID	"2"
- #define BYT_SUS_ACPI_UID	"3"
- 
--/*
-- * Baytrail gpio controller consist of three separate sub-controllers called
-- * SCORE, NCORE and SUS. The sub-controllers are identified by their acpi UID.
-- *
-- * GPIO numbering is _not_ ordered meaning that gpio # 0 in ACPI namespace does
-- * _not_ correspond to the first gpio register at controller's gpio base.
-- * There is no logic or pattern in mapping gpio numbers to registers (pads) so
-- * each sub-controller needs to have its own mapping table
-- */
-+struct byt_gpio_pin_context {
-+	u32 conf0;
-+	u32 val;
-+};
-+
-+struct byt_simple_func_mux {
-+	const char *name;
-+	unsigned short func;
-+};
-+
-+struct byt_mixed_func_mux {
-+	const char *name;
-+	const unsigned short *func_values;
-+};
-+
-+struct byt_pingroup {
-+	const char *name;
-+	const unsigned int *pins;
-+	size_t npins;
-+	unsigned short has_simple_funcs;
-+	union {
-+		const struct byt_simple_func_mux *simple_funcs;
-+		const struct byt_mixed_func_mux *mixed_funcs;
-+	};
-+	size_t nfuncs;
-+};
-+
-+struct byt_function {
-+	const char *name;
-+	const char * const *groups;
-+	size_t ngroups;
-+};
-+
-+struct byt_community {
-+	unsigned int pin_base;
-+	size_t npins;
-+	const unsigned int *pad_map;
-+	void __iomem *reg_base;
-+};
-+
-+#define SIMPLE_FUNC(n, f)	\
-+	{			\
-+		.name	= (n),	\
-+		.func	= (f),	\
-+	}
-+#define MIXED_FUNC(n, f)		\
-+	{				\
-+		.name		= (n),	\
-+		.func_values	= (f),	\
-+	}
-+
-+#define PIN_GROUP_SIMPLE(n, p, f)				\
-+	{							\
-+		.name			= (n),			\
-+		.pins			= (p),			\
-+		.npins			= ARRAY_SIZE((p)),	\
-+		.has_simple_funcs	= 1,		\
-+		.simple_funcs		= (f),			\
-+		.nfuncs			= ARRAY_SIZE((f)),	\
-+	}
-+#define PIN_GROUP_MIXED(n, p, f)				\
-+	{							\
-+		.name			= (n),			\
-+		.pins			= (p),			\
-+		.npins			= ARRAY_SIZE((p)),	\
-+		.has_simple_funcs	= 0,			\
-+		.mixed_funcs		= (f),			\
-+		.nfuncs			= ARRAY_SIZE((f)),	\
-+	}
-+
-+#define FUNCTION(n, g)					\
-+	{						\
-+		.name		= (n),			\
-+		.groups		= (g),			\
-+		.ngroups	= ARRAY_SIZE((g)),	\
-+	}
-+
-+#define COMMUNITY(p, n, map)		\
-+	{				\
-+		.pin_base	= (p),	\
-+		.npins		= (n),	\
-+		.pad_map	= (map),\
-+	}
- 
--/* score_pins[gpio_nr] = pad_nr */
-+struct byt_pinctrl_soc_data {
-+	const char *uid;
-+	const struct pinctrl_pin_desc *pins;
-+	size_t npins;
-+	const struct byt_pingroup *groups;
-+	size_t ngroups;
-+	const struct byt_function *functions;
-+	size_t nfunctions;
-+	const struct byt_community *communities;
-+	size_t ncommunities;
-+};
-+
-+/* SCORE pins */
-+static const struct pinctrl_pin_desc byt_score_pins[] = {
-+	PINCTRL_PIN(0, "SATA_GP[0]"),		/* GPIOC_0 */
-+	PINCTRL_PIN(1, "SATA_GP[1]"),		/* GPIOC_1 */
-+	PINCTRL_PIN(2, "SATA_LED#"),		/* GPIOC_2 */
-+	PINCTRL_PIN(3, "PCIE_CLKREQ[0]#"),	/* GPIOC_3 */
-+	PINCTRL_PIN(4, "PCIE_CLKREQ[1]#"),	/* GPIOC_4 */
-+	PINCTRL_PIN(5, "PCIE_CLKREQ[2]#"),	/* GPIOC_5 */
-+	PINCTRL_PIN(6, "PCIE_CLKREQ[3]#"),	/* GPIOC_6 */
-+	PINCTRL_PIN(7, "SD3_WP"),		/* GPIOC_7 */
-+	PINCTRL_PIN(8, "HDA_RST#"),		/* GPIOC_8 */
-+	PINCTRL_PIN(9, "HDA_SYNC"),		/* GPIOC_9 */
-+	PINCTRL_PIN(10, "HDA_CLK"),		/* GPIOC_10 */
-+	PINCTRL_PIN(11, "HDA_SDO"),		/* GPIOC_11 */
-+	PINCTRL_PIN(12, "HDA_SDI[0]"),		/* GPIOC_12 */
-+	PINCTRL_PIN(13, "HDA_SDI[1]"),		/* GPIOC_13 */
-+	PINCTRL_PIN(14, "GPIO_S0_SC[014]"),	/* GPIOC_14 */
-+	PINCTRL_PIN(15, "GPIO_S0_SC[015]"),	/* GPIOC_15 */
-+	PINCTRL_PIN(16, "MMC1_CLK"),		/* GPIOC_16 */
-+	PINCTRL_PIN(17, "MMC1_D[0]"),		/* GPIOC_17 */
-+	PINCTRL_PIN(18, "MMC1_D[1]"),		/* GPIOC_18 */
-+	PINCTRL_PIN(19, "MMC1_D[2]"),		/* GPIOC_19 */
-+	PINCTRL_PIN(20, "MMC1_D[3]"),		/* GPIOC_20 */
-+	PINCTRL_PIN(21, "MMC1_D[4]"),		/* GPIOC_21 */
-+	PINCTRL_PIN(22, "MMC1_D[5]"),		/* GPIOC_22 */
-+	PINCTRL_PIN(23, "MMC1_D[6]"),		/* GPIOC_23 */
-+	PINCTRL_PIN(24, "MMC1_D[7]"),		/* GPIOC_24 */
-+	PINCTRL_PIN(25, "MMC1_CMD"),		/* GPIOC_25 */
-+	PINCTRL_PIN(26, "MMC1_RST#"),		/* GPIOC_26 */
-+	PINCTRL_PIN(27, "SD2_CLK"),		/* GPIOC_27 */
-+	PINCTRL_PIN(28, "SD2_D[0]"),		/* GPIOC_28 */
-+	PINCTRL_PIN(29, "SD2_D[1]"),		/* GPIOC_29 */
-+	PINCTRL_PIN(30, "SD2_D[2]"),		/* GPIOC_30 */
-+	PINCTRL_PIN(31, "SD2_D[3]_CD#"),	/* GPIOC_31 */
-+	PINCTRL_PIN(32, "SD2_CMD"),		/* GPIOC_32 */
-+	PINCTRL_PIN(33, "SD3_CLK"),		/* GPIOC_33 */
-+	PINCTRL_PIN(34, "SD3_D[0]"),		/* GPIOC_34 */
-+	PINCTRL_PIN(35, "SD3_D[1]"),		/* GPIOC_35 */
-+	PINCTRL_PIN(36, "SD3_D[2]"),		/* GPIOC_36 */
-+	PINCTRL_PIN(37, "SD3_D[3]"),		/* GPIOC_37 */
-+	PINCTRL_PIN(38, "SD3_CD#"),		/* GPIOC_38 */
-+	PINCTRL_PIN(39, "SD3_CMD"),		/* GPIOC_39 */
-+	PINCTRL_PIN(40, "SD3_1P8EN"),		/* GPIOC_40 */
-+	PINCTRL_PIN(41, "SD3_PWREN#"),		/* GPIOC_41 */
-+	PINCTRL_PIN(42, "ILB_LPC_AD[0]"),	/* GPIOC_42 */
-+	PINCTRL_PIN(43, "ILB_LPC_AD[1]"),	/* GPIOC_43 */
-+	PINCTRL_PIN(44, "ILB_LPC_AD[2]"),	/* GPIOC_44 */
-+	PINCTRL_PIN(45, "ILB_LPC_AD[3]"),	/* GPIOC_45 */
-+	PINCTRL_PIN(46, "ILB_LPC_FRAME#"),	/* GPIOC_46 */
-+	PINCTRL_PIN(47, "ILB_LPC_CLK[0]"),	/* GPIOC_47 */
-+	PINCTRL_PIN(48, "ILB_LPC_CLK[1]"),	/* GPIOC_48 */
-+	PINCTRL_PIN(49, "ILB_LPC_CLKRUN#"),	/* GPIOC_49 */
-+	PINCTRL_PIN(50, "ILB_LPC_SERIRQ"),	/* GPIOC_50 */
-+	PINCTRL_PIN(51, "PCU_SMB_DATA"),	/* GPIOC_51 */
-+	PINCTRL_PIN(52, "PCU_SMB_CLK"),		/* GPIOC_52 */
-+	PINCTRL_PIN(53, "PCU_SMB_ALERT#"),	/* GPIOC_53 */
-+	PINCTRL_PIN(54, "ILB_8254_SPKR"),	/* GPIOC_54 */
-+	PINCTRL_PIN(55, "GPIO_S0_SC[055]"),	/* GPIOC_55 */
-+	PINCTRL_PIN(56, "GPIO_S0_SC[056]"),	/* GPIOC_56 */
-+	PINCTRL_PIN(57, "GPIO_S0_SC[057]"),	/* GPIOC_57 */
-+	PINCTRL_PIN(58, "GPIO_S0_SC[058]"),	/* GPIOC_58 */
-+	PINCTRL_PIN(59, "GPIO_S0_SC[059]"),	/* GPIOC_59 */
-+	PINCTRL_PIN(60, "GPIO_S0_SC[060]"),	/* GPIOC_60 */
-+	PINCTRL_PIN(61, "GPIO_S0_SC[061]"),	/* GPIOC_61 */
-+	PINCTRL_PIN(62, "LPE_I2S2_CLK"),	/* GPIOC_62 */
-+	PINCTRL_PIN(63, "LPE_I2S2_FRM"),	/* GPIOC_63 */
-+	PINCTRL_PIN(64, "LPE_I2S2_DATAIN"),	/* GPIOC_64 */
-+	PINCTRL_PIN(65, "LPE_I2S2_DATAOUT"),	/* GPIOC_65 */
-+	PINCTRL_PIN(66, "SIO_SPI_CS#"),		/* GPIOC_66 */
-+	PINCTRL_PIN(67, "SIO_SPI_MISO"),	/* GPIOC_67 */
-+	PINCTRL_PIN(68, "SIO_SPI_MOSI"),	/* GPIOC_68 */
-+	PINCTRL_PIN(69, "SIO_SPI_CLK"),		/* GPIOC_69 */
-+	PINCTRL_PIN(70, "SIO_UART1_RXD"),	/* GPIOC_70 */
-+	PINCTRL_PIN(71, "SIO_UART1_TXD"),	/* GPIOC_71 */
-+	PINCTRL_PIN(72, "SIO_UART1_RTS#"),	/* GPIOC_72 */
-+	PINCTRL_PIN(73, "SIO_UART1_CTS#"),	/* GPIOC_73 */
-+	PINCTRL_PIN(74, "SIO_UART2_RXD"),	/* GPIOC_74 */
-+	PINCTRL_PIN(75, "SIO_UART2_TXD"),	/* GPIOC_75 */
-+	PINCTRL_PIN(76, "SIO_UART2_RTS#"),	/* GPIOC_76 */
-+	PINCTRL_PIN(77, "SIO_UART2_CTS#"),	/* GPIOC_77 */
-+	PINCTRL_PIN(78, "SIO_I2C0_DATA"),	/* GPIOC_78 */
-+	PINCTRL_PIN(79, "SIO_I2C0_CLK"),	/* GPIOC_79 */
-+	PINCTRL_PIN(80, "SIO_I2C1_DATA"),	/* GPIOC_80 */
-+	PINCTRL_PIN(81, "SIO_I2C1_CLK"),	/* GPIOC_81 */
-+	PINCTRL_PIN(82, "SIO_I2C2_DATA"),	/* GPIOC_82 */
-+	PINCTRL_PIN(83, "SIO_I2C2_CLK"),	/* GPIOC_83 */
-+	PINCTRL_PIN(84, "SIO_I2C3_DATA"),	/* GPIOC_84 */
-+	PINCTRL_PIN(85, "SIO_I2C3_CLK"),	/* GPIOC_85 */
-+	PINCTRL_PIN(86, "SIO_I2C4_DATA"),	/* GPIOC_86 */
-+	PINCTRL_PIN(87, "SIO_I2C4_CLK"),	/* GPIOC_87 */
-+	PINCTRL_PIN(88, "SIO_I2C5_DATA"),	/* GPIOC_88 */
-+	PINCTRL_PIN(89, "SIO_I2C5_CLK"),	/* GPIOC_89 */
-+	PINCTRL_PIN(90, "SIO_I2C6_DATA"),	/* GPIOC_90 */
-+	PINCTRL_PIN(91, "SIO_I2C6_CLK"),	/* GPIOC_91 */
-+	PINCTRL_PIN(92, "GPIO_S0_SC[092]"),	/* GPIOC_92 */
-+	PINCTRL_PIN(93, "GPIO_S0_SC[093]"),	/* GPIOC_93 */
-+	PINCTRL_PIN(94, "SIO_PWM[0]"),		/* GPIOC_94 */
-+	PINCTRL_PIN(95, "SIO_PWM[1]"),		/* GPIOC_95 */
-+	PINCTRL_PIN(96, "PMC_PLT_CLK[0]"),	/* GPIOC_96 */
-+	PINCTRL_PIN(97, "PMC_PLT_CLK[1]"),	/* GPIOC_97 */
-+	PINCTRL_PIN(98, "PMC_PLT_CLK[2]"),	/* GPIOC_98 */
-+	PINCTRL_PIN(99, "PMC_PLT_CLK[3]"),	/* GPIOC_99 */
-+	PINCTRL_PIN(100, "PMC_PLT_CLK[4]"),	/* GPIOC_100 */
-+	PINCTRL_PIN(101, "PMC_PLT_CLK[5]"),	/* GPIOC_101 */
-+};
- 
- static unsigned const score_pins[BYT_NGPIO_SCORE] = {
- 	85, 89, 93, 96, 99, 102, 98, 101, 34, 37,
-@@ -99,13 +289,285 @@ static unsigned const score_pins[BYT_NGPIO_SCORE] = {
- 	97, 100,
- };
- 
--static unsigned const ncore_pins[BYT_NGPIO_NCORE] = {
--	19, 18, 17, 20, 21, 22, 24, 25, 23, 16,
--	14, 15, 12, 26, 27, 1, 4, 8, 11, 0,
--	3, 6, 10, 13, 2, 5, 9, 7,
-+static const unsigned int byt_score_pins_map[BYT_NGPIO_SCORE] = {
-+	85, 89, 93, 96, 99, 102, 98, 101, 34, 37,
-+	36, 38, 39, 35, 40, 84, 62, 61, 64, 59,
-+	54, 56, 60, 55, 63, 57, 51, 50, 53, 47,
-+	52, 49, 48, 43, 46, 41, 45, 42, 58, 44,
-+	95, 105, 70, 68, 67, 66, 69, 71, 65, 72,
-+	86, 90, 88, 92, 103, 77, 79, 83, 78, 81,
-+	80, 82, 13, 12, 15, 14, 17, 18, 19, 16,
-+	2, 1, 0, 4, 6, 7, 9, 8, 33, 32,
-+	31, 30, 29, 27, 25, 28, 26, 23, 21, 20,
-+	24, 22, 5, 3, 10, 11, 106, 87, 91, 104,
-+	97, 100,
-+};
-+
-+/* SCORE groups */
-+static const unsigned int byt_score_uart1_pins[] = { 70, 71, 72, 73 };
-+static const unsigned int byt_score_uart2_pins[] = { 74, 75, 76, 77 };
-+static const struct byt_simple_func_mux byt_score_uart_mux[] = {
-+	SIMPLE_FUNC("uart", 1),
-+};
-+
-+static const unsigned int byt_score_pwm0_pins[] = { 94 };
-+static const unsigned int byt_score_pwm1_pins[] = { 95 };
-+static const struct byt_simple_func_mux byt_score_pwm_mux[] = {
-+	SIMPLE_FUNC("pwm", 1),
-+};
-+
-+static const unsigned int byt_score_sio_spi_pins[] = { 66, 67, 68, 69 };
-+static const struct byt_simple_func_mux byt_score_spi_mux[] = {
-+	SIMPLE_FUNC("spi", 1),
-+};
-+
-+static const unsigned int byt_score_i2c5_pins[] = { 88, 89 };
-+static const unsigned int byt_score_i2c6_pins[] = { 90, 91 };
-+static const unsigned int byt_score_i2c4_pins[] = { 86, 87 };
-+static const unsigned int byt_score_i2c3_pins[] = { 84, 85 };
-+static const unsigned int byt_score_i2c2_pins[] = { 82, 83 };
-+static const unsigned int byt_score_i2c1_pins[] = { 80, 81 };
-+static const unsigned int byt_score_i2c0_pins[] = { 78, 79 };
-+static const struct byt_simple_func_mux byt_score_i2c_mux[] = {
-+	SIMPLE_FUNC("i2c", 1),
-+};
-+
-+static const unsigned int byt_score_ssp0_pins[] = { 8, 9, 10, 11 };
-+static const unsigned int byt_score_ssp1_pins[] = { 12, 13, 14, 15 };
-+static const unsigned int byt_score_ssp2_pins[] = { 62, 63, 64, 65 };
-+static const struct byt_simple_func_mux byt_score_ssp_mux[] = {
-+	SIMPLE_FUNC("ssp", 1),
-+};
-+
-+static const unsigned int byt_score_sdcard_pins[] = {
-+	7, 33, 34, 35, 36, 37, 38, 39, 40, 41,
-+};
-+static const unsigned short byt_score_sdcard_mux_values[] = {
-+	2, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-+};
-+static const struct byt_mixed_func_mux byt_score_sdcard_mux[] = {
-+	MIXED_FUNC("sdcard", byt_score_sdcard_mux_values),
-+};
-+
-+static const unsigned int byt_score_sdio_pins[] = { 27, 28, 29, 30, 31, 32 };
-+static const struct byt_simple_func_mux byt_score_sdio_mux[] = {
-+	SIMPLE_FUNC("sdio", 1),
-+};
-+
-+static const unsigned int byt_score_emmc_pins[] = {
-+	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
-+};
-+static const struct byt_simple_func_mux byt_score_emmc_mux[] = {
-+	SIMPLE_FUNC("emmc", 1),
-+};
-+
-+static const unsigned int byt_score_ilb_lpc_pins[] = {
-+	42, 43, 44, 45, 46, 47, 48, 49, 50,
-+};
-+static const struct byt_simple_func_mux byt_score_lpc_mux[] = {
-+	SIMPLE_FUNC("lpc", 1),
-+};
-+
-+static const unsigned int byt_score_sata_pins[] = { 0, 1, 2 };
-+static const struct byt_simple_func_mux byt_score_sata_mux[] = {
-+	SIMPLE_FUNC("sata", 1),
-+};
-+
-+static const unsigned int byt_score_plt_clk0_pins[] = { 96 };
-+static const unsigned int byt_score_plt_clk1_pins[] = { 97 };
-+static const unsigned int byt_score_plt_clk2_pins[] = { 98 };
-+static const unsigned int byt_score_plt_clk4_pins[] = { 99 };
-+static const unsigned int byt_score_plt_clk5_pins[] = { 100 };
-+static const unsigned int byt_score_plt_clk3_pins[] = { 101 };
-+static const struct byt_simple_func_mux byt_score_plt_clk_mux[] = {
-+	SIMPLE_FUNC("plt_clk", 1),
- };
- 
--static unsigned const sus_pins[BYT_NGPIO_SUS] = {
-+static const unsigned int byt_score_smbus_pins[] = { 51, 52, 53 };
-+static const struct byt_simple_func_mux byt_score_smbus_mux[] = {
-+	SIMPLE_FUNC("smbus", 1),
-+};
-+
-+static const struct byt_pingroup byt_score_groups[] = {
-+	PIN_GROUP_SIMPLE("uart1_grp",
-+			 byt_score_uart1_pins, byt_score_uart_mux),
-+	PIN_GROUP_SIMPLE("uart2_grp",
-+			 byt_score_uart2_pins, byt_score_uart_mux),
-+	PIN_GROUP_SIMPLE("pwm0_grp",
-+			 byt_score_pwm0_pins, byt_score_pwm_mux),
-+	PIN_GROUP_SIMPLE("pwm1_grp",
-+			 byt_score_pwm1_pins, byt_score_pwm_mux),
-+	PIN_GROUP_SIMPLE("ssp2_grp",
-+			 byt_score_ssp2_pins, byt_score_pwm_mux),
-+	PIN_GROUP_SIMPLE("sio_spi_grp",
-+			 byt_score_sio_spi_pins, byt_score_spi_mux),
-+	PIN_GROUP_SIMPLE("i2c5_grp",
-+			 byt_score_i2c5_pins, byt_score_i2c_mux),
-+	PIN_GROUP_SIMPLE("i2c6_grp",
-+			 byt_score_i2c6_pins, byt_score_i2c_mux),
-+	PIN_GROUP_SIMPLE("i2c4_grp",
-+			 byt_score_i2c4_pins, byt_score_i2c_mux),
-+	PIN_GROUP_SIMPLE("i2c3_grp",
-+			 byt_score_i2c3_pins, byt_score_i2c_mux),
-+	PIN_GROUP_SIMPLE("i2c2_grp",
-+			 byt_score_i2c2_pins, byt_score_i2c_mux),
-+	PIN_GROUP_SIMPLE("i2c1_grp",
-+			 byt_score_i2c1_pins, byt_score_i2c_mux),
-+	PIN_GROUP_SIMPLE("i2c0_grp",
-+			 byt_score_i2c0_pins, byt_score_i2c_mux),
-+	PIN_GROUP_SIMPLE("ssp0_grp",
-+			 byt_score_ssp0_pins, byt_score_ssp_mux),
-+	PIN_GROUP_SIMPLE("ssp1_grp",
-+			 byt_score_ssp1_pins, byt_score_ssp_mux),
-+	PIN_GROUP_MIXED("sdcard_grp",
-+			byt_score_sdcard_pins, byt_score_sdcard_mux),
-+	PIN_GROUP_SIMPLE("sdio_grp",
-+			 byt_score_sdio_pins, byt_score_sdio_mux),
-+	PIN_GROUP_SIMPLE("emmc_grp",
-+			 byt_score_emmc_pins, byt_score_emmc_mux),
-+	PIN_GROUP_SIMPLE("lpc_grp",
-+			 byt_score_ilb_lpc_pins, byt_score_lpc_mux),
-+	PIN_GROUP_SIMPLE("sata_grp",
-+			 byt_score_sata_pins, byt_score_sata_mux),
-+	PIN_GROUP_SIMPLE("plt_clk0_grp",
-+			 byt_score_plt_clk0_pins, byt_score_plt_clk_mux),
-+	PIN_GROUP_SIMPLE("plt_clk1_grp",
-+			 byt_score_plt_clk1_pins, byt_score_plt_clk_mux),
-+	PIN_GROUP_SIMPLE("plt_clk2_grp",
-+			 byt_score_plt_clk2_pins, byt_score_plt_clk_mux),
-+	PIN_GROUP_SIMPLE("plt_clk3_grp",
-+			 byt_score_plt_clk3_pins, byt_score_plt_clk_mux),
-+	PIN_GROUP_SIMPLE("plt_clk4_grp",
-+			 byt_score_plt_clk4_pins, byt_score_plt_clk_mux),
-+	PIN_GROUP_SIMPLE("plt_clk5_grp",
-+			 byt_score_plt_clk5_pins, byt_score_plt_clk_mux),
-+	PIN_GROUP_SIMPLE("smbus_grp",
-+			 byt_score_smbus_pins, byt_score_smbus_mux),
-+};
-+
-+static const char * const byt_score_uart_groups[] = {
-+	"uart1_grp", "uart2_grp",
-+};
-+static const char * const byt_score_pwm_groups[] = {
-+	"pwm0_grp", "pwm1_grp",
-+};
-+static const char * const byt_score_ssp_groups[] = {
-+	"ssp0_grp", "ssp1_grp", "ssp2_grp",
-+};
-+static const char * const byt_score_spi_groups[] = { "sio_spi_grp" };
-+static const char * const byt_score_i2c_groups[] = {
-+	"i2c0_grp", "i2c1_grp", "i2c2_grp", "i2c3_grp", "i2c4_grp", "i2c5_grp",
-+	"i2c6_grp",
-+};
-+static const char * const byt_score_sdcard_groups[] = { "sdcard_grp" };
-+static const char * const byt_score_sdio_groups[] = { "sdio_grp" };
-+static const char * const byt_score_emmc_groups[] = { "emmc_grp" };
-+static const char * const byt_score_lpc_groups[] = { "lpc_grp" };
-+static const char * const byt_score_sata_groups[] = { "sata_grp" };
-+static const char * const byt_score_plt_clk_groups[] = {
-+	"plt_clk0_grp", "plt_clk1_grp", "plt_clk2_grp", "plt_clk3_grp",
-+	"plt_clk4_grp", "plt_clk5_grp",
-+};
-+static const char * const byt_score_smbus_groups[] = { "smbus_grp" };
-+static const char * const byt_score_gpio_groups[] = {
-+	"uart1_grp", "uart2_grp", "pwm0_grp", "pwm1_grp", "ssp0_grp",
-+	"ssp1_grp", "ssp2_grp", "sio_spi_grp", "i2c0_grp", "i2c1_grp",
-+	"i2c2_grp", "i2c3_grp", "i2c4_grp", "i2c5_grp", "i2c6_grp",
-+	"sdcard_grp", "sdio_grp", "emmc_grp", "lpc_grp", "sata_grp",
-+	"plt_clk0_grp", "plt_clk1_grp", "plt_clk2_grp", "plt_clk3_grp",
-+	"plt_clk4_grp", "plt_clk5_grp", "smbus_grp",
-+
-+};
-+
-+static const struct byt_function byt_score_functions[] = {
-+	FUNCTION("uart", byt_score_uart_groups),
-+	FUNCTION("pwm", byt_score_pwm_groups),
-+	FUNCTION("ssp", byt_score_ssp_groups),
-+	FUNCTION("spi", byt_score_spi_groups),
-+	FUNCTION("i2c", byt_score_i2c_groups),
-+	FUNCTION("sdcard", byt_score_sdcard_groups),
-+	FUNCTION("sdio", byt_score_sdio_groups),
-+	FUNCTION("emmc", byt_score_emmc_groups),
-+	FUNCTION("lpc", byt_score_lpc_groups),
-+	FUNCTION("sata", byt_score_sata_groups),
-+	FUNCTION("plt_clk", byt_score_plt_clk_groups),
-+	FUNCTION("smbus", byt_score_smbus_groups),
-+	FUNCTION("gpio", byt_score_gpio_groups),
-+};
-+
-+static const struct byt_community byt_score_communities[] = {
-+	COMMUNITY(0, BYT_NGPIO_SCORE, byt_score_pins_map),
-+};
-+
-+static const struct byt_pinctrl_soc_data byt_score_soc_data = {
-+	.uid		= BYT_SCORE_ACPI_UID,
-+	.pins		= byt_score_pins,
-+	.npins		= ARRAY_SIZE(byt_score_pins),
-+	.groups		= byt_score_groups,
-+	.ngroups	= ARRAY_SIZE(byt_score_groups),
-+	.functions	= byt_score_functions,
-+	.nfunctions	= ARRAY_SIZE(byt_score_functions),
-+	.communities	= byt_score_communities,
-+	.ncommunities	= ARRAY_SIZE(byt_score_communities),
-+};
-+
-+/* SUS pins */
-+static const struct pinctrl_pin_desc byt_sus_pins[] = {
-+	PINCTRL_PIN(0, "GPIO_S5[00]"),		/* GPIO_SUS0 */
-+	PINCTRL_PIN(1, "GPIO_S5[01]"),		/* GPIO_SUS1 */
-+	PINCTRL_PIN(2, "GPIO_S5[02]"),		/* GPIO_SUS2 */
-+	PINCTRL_PIN(3, "GPIO_S5[03]"),		/* GPIO_SUS3 */
-+	PINCTRL_PIN(4, "GPIO_S5[04]"),		/* GPIO_SUS4 */
-+	PINCTRL_PIN(5, "GPIO_S5[05]"),		/* GPIO_SUS5 */
-+	PINCTRL_PIN(6, "GPIO_S5[06]"),		/* GPIO_SUS6 */
-+	PINCTRL_PIN(7, "GPIO_S5[07]"),		/* GPIO_SUS7 */
-+	PINCTRL_PIN(8, "GPIO_S5[08]"),		/* SEC_GPIO_SUS8 */
-+	PINCTRL_PIN(9, "GPIO_S5[09]"),		/* SEC_GPIO_SUS9 */
-+	PINCTRL_PIN(10, "GPIO_S5[10]"),		/* SEC_GPIO_SUS10 */
-+	PINCTRL_PIN(11, "PMC_SUSPWRDNACK"),	/* GPIOS_11 */
-+	PINCTRL_PIN(12, "PMC_SUSCLK[0]"),	/* GPIOS_12 */
-+	PINCTRL_PIN(13, "GPIO_S5[13]"),		/* GPIOS_13 */
-+	PINCTRL_PIN(14, "USB_ULPI_RST#"),	/* GPIOS_14 */
-+	PINCTRL_PIN(15, "PMC_WAKE_PCIE[0]#"),	/* GPIOS_15 */
-+	PINCTRL_PIN(16, "PMC_PWRBTN#"),		/* GPIOS_16 */
-+	PINCTRL_PIN(17, "GPIO_S5[17]"),		/* GPIOS_17 */
-+	PINCTRL_PIN(18, "PMC_SUS_STAT#"),	/* GPIOS_18 */
-+	PINCTRL_PIN(19, "USB_OC[0]#"),		/* GPIOS_19 */
-+	PINCTRL_PIN(20, "USB_OC[1]#"),		/* GPIOS_20 */
-+	PINCTRL_PIN(21, "PCU_SPI_CS[1]#"),	/* GPIOS_21 */
-+	PINCTRL_PIN(22, "GPIO_S5[22]"),		/* GPIOS_22 */
-+	PINCTRL_PIN(23, "GPIO_S5[23]"),		/* GPIOS_23 */
-+	PINCTRL_PIN(24, "GPIO_S5[24]"),		/* GPIOS_24 */
-+	PINCTRL_PIN(25, "GPIO_S5[25]"),		/* GPIOS_25 */
-+	PINCTRL_PIN(26, "GPIO_S5[26]"),		/* GPIOS_26 */
-+	PINCTRL_PIN(27, "GPIO_S5[27]"),		/* GPIOS_27 */
-+	PINCTRL_PIN(28, "GPIO_S5[28]"),		/* GPIOS_28 */
-+	PINCTRL_PIN(29, "GPIO_S5[29]"),		/* GPIOS_29 */
-+	PINCTRL_PIN(30, "GPIO_S5[30]"),		/* GPIOS_30 */
-+	PINCTRL_PIN(31, "USB_ULPI_CLK"),	/* GPIOS_31 */
-+	PINCTRL_PIN(32, "USB_ULPI_DATA[0]"),	/* GPIOS_32 */
-+	PINCTRL_PIN(33, "USB_ULPI_DATA[1]"),	/* GPIOS_33 */
-+	PINCTRL_PIN(34, "USB_ULPI_DATA[2]"),	/* GPIOS_34 */
-+	PINCTRL_PIN(35, "USB_ULPI_DATA[3]"),	/* GPIOS_35 */
-+	PINCTRL_PIN(36, "USB_ULPI_DATA[4]"),	/* GPIOS_36 */
-+	PINCTRL_PIN(37, "USB_ULPI_DATA[5]"),	/* GPIOS_37 */
-+	PINCTRL_PIN(38, "USB_ULPI_DATA[6]"),	/* GPIOS_38 */
-+	PINCTRL_PIN(39, "USB_ULPI_DATA[7]"),	/* GPIOS_39 */
-+	PINCTRL_PIN(40, "USB_ULPI_DIR"),	/* GPIOS_40 */
-+	PINCTRL_PIN(41, "USB_ULPI_NXT"),	/* GPIOS_41 */
-+	PINCTRL_PIN(42, "USB_ULPI_STP"),	/* GPIOS_42 */
-+	PINCTRL_PIN(43, "USB_ULPI_REFCLK"),	/* GPIOS_43 */
-+};
-+
-+static const unsigned int sus_pins[BYT_NGPIO_SUS] = {
-+	29, 33, 30, 31, 32, 34, 36, 35, 38, 37,
-+	18, 7, 11, 20, 17, 1, 8, 10, 19, 12,
-+	0, 2, 23, 39, 28, 27, 22, 21, 24, 25,
-+	26, 51, 56, 54, 49, 55, 48, 57, 50, 58,
-+	52, 53, 59, 40,
-+};
-+
-+static const unsigned int byt_sus_pins_map[BYT_NGPIO_SUS] = {
- 	29, 33, 30, 31, 32, 34, 36, 35, 38, 37,
- 	18, 7, 11, 20, 17, 1, 8, 10, 19, 12,
- 	0, 2, 23, 39, 28, 27, 22, 21, 24, 25,
-@@ -113,6 +575,126 @@ static unsigned const sus_pins[BYT_NGPIO_SUS] = {
- 	52, 53, 59, 40,
- };
- 
-+static const unsigned int byt_sus_usb_over_current_pins[] = { 19, 20 };
-+static const struct byt_simple_func_mux byt_sus_usb_oc_mux[] = {
-+	SIMPLE_FUNC("usb", 0),
-+	SIMPLE_FUNC("gpio", 1),
-+};
-+
-+static const unsigned int byt_sus_usb_ulpi_pins[] = {
-+	14, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43,
-+};
-+static const unsigned short byt_sus_usb_ulpi_mode_values[] = {
-+	2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-+};
-+static const unsigned short byt_sus_usb_ulpi_gpio_mode_values[] = {
-+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-+};
-+static const struct byt_mixed_func_mux byt_sus_usb_ulpi_mux[] = {
-+	MIXED_FUNC("usb", byt_sus_usb_ulpi_mode_values),
-+	MIXED_FUNC("gpio", byt_sus_usb_ulpi_gpio_mode_values),
-+};
-+
-+static const unsigned int byt_sus_pcu_spi_pins[] = { 21 };
-+static const struct byt_simple_func_mux byt_sus_pcu_spi_mux[] = {
-+	SIMPLE_FUNC("spi", 0),
-+	SIMPLE_FUNC("gpio", 1),
-+};
-+
-+static const struct byt_pingroup byt_sus_groups[] = {
-+	PIN_GROUP_SIMPLE("usb_oc_grp",
-+			byt_sus_usb_over_current_pins, byt_sus_usb_oc_mux),
-+	PIN_GROUP_MIXED("usb_ulpi_grp",
-+			byt_sus_usb_ulpi_pins, byt_sus_usb_ulpi_mux),
-+	PIN_GROUP_SIMPLE("pcu_spi_grp",
-+			byt_sus_pcu_spi_pins, byt_sus_pcu_spi_mux),
-+};
-+
-+static const char * const byt_sus_usb_groups[] = {
-+	"usb_oc_grp", "usb_ulpi_grp",
-+};
-+static const char * const byt_sus_spi_groups[] = { "pcu_spi_grp" };
-+static const char * const byt_sus_gpio_groups[] = {
-+	"usb_oc_grp", "usb_ulpi_grp", "pcu_spi_grp",
-+};
-+
-+static const struct byt_function byt_sus_functions[] = {
-+	FUNCTION("usb", byt_sus_usb_groups),
-+	FUNCTION("spi", byt_sus_spi_groups),
-+	FUNCTION("gpio", byt_sus_gpio_groups),
-+};
-+
-+static const struct byt_community byt_sus_communities[] = {
-+	COMMUNITY(0, BYT_NGPIO_SUS, byt_sus_pins_map),
-+};
-+
-+static const struct byt_pinctrl_soc_data byt_sus_soc_data = {
-+	.uid		= BYT_SUS_ACPI_UID,
-+	.pins		= byt_sus_pins,
-+	.npins		= ARRAY_SIZE(byt_sus_pins),
-+	.groups		= byt_sus_groups,
-+	.ngroups	= ARRAY_SIZE(byt_sus_groups),
-+	.functions	= byt_sus_functions,
-+	.nfunctions	= ARRAY_SIZE(byt_sus_functions),
-+	.communities	= byt_sus_communities,
-+	.ncommunities	= ARRAY_SIZE(byt_sus_communities),
-+};
-+
-+static const struct pinctrl_pin_desc byt_ncore_pins[] = {
-+	PINCTRL_PIN(0, "GPIO_NCORE[0]"),
-+	PINCTRL_PIN(1, "GPIO_NCORE[1]"),
-+	PINCTRL_PIN(2, "GPIO_NCORE[2]"),
-+	PINCTRL_PIN(3, "GPIO_NCORE[3]"),
-+	PINCTRL_PIN(4, "GPIO_NCORE[4]"),
-+	PINCTRL_PIN(5, "GPIO_NCORE[5]"),
-+	PINCTRL_PIN(6, "GPIO_NCORE[6]"),
-+	PINCTRL_PIN(7, "GPIO_NCORE[7]"),
-+	PINCTRL_PIN(8, "GPIO_NCORE[8]"),
-+	PINCTRL_PIN(9, "GPIO_NCORE[9]"),
-+	PINCTRL_PIN(10, "GPIO_NCORE[10]"),
-+	PINCTRL_PIN(11, "GPIO_NCORE[11]"),
-+	PINCTRL_PIN(12, "GPIO_NCORE[12]"),
-+	PINCTRL_PIN(13, "GPIO_NCORE[13]"),
-+	PINCTRL_PIN(14, "GPIO_NCORE[14]"),
-+	PINCTRL_PIN(15, "GPIO_NCORE[15]"),
-+	PINCTRL_PIN(16, "GPIO_NCORE[16]"),
-+	PINCTRL_PIN(17, "GPIO_NCORE[17]"),
-+	PINCTRL_PIN(18, "GPIO_NCORE[18]"),
-+	PINCTRL_PIN(19, "GPIO_NCORE[19]"),
-+	PINCTRL_PIN(20, "GPIO_NCORE[20]"),
-+	PINCTRL_PIN(21, "GPIO_NCORE[21]"),
-+	PINCTRL_PIN(22, "GPIO_NCORE[22]"),
-+	PINCTRL_PIN(23, "GPIO_NCORE[23]"),
-+	PINCTRL_PIN(24, "GPIO_NCORE[24]"),
-+	PINCTRL_PIN(25, "GPIO_NCORE[25]"),
-+	PINCTRL_PIN(26, "GPIO_NCORE[26]"),
-+	PINCTRL_PIN(27, "GPIO_NCORE[27]"),
-+};
-+
-+static unsigned const byt_ncore_pins_map[BYT_NGPIO_NCORE] = {
-+	19, 18, 17, 20, 21, 22, 24, 25, 23, 16,
-+	14, 15, 12, 26, 27, 1, 4, 8, 11, 0,
-+	3, 6, 10, 13, 2, 5, 9, 7,
-+};
-+
-+static const struct byt_community byt_ncore_communities[] = {
-+	COMMUNITY(0, BYT_NGPIO_NCORE, byt_ncore_pins_map),
-+};
-+
-+static const struct byt_pinctrl_soc_data byt_ncore_soc_data = {
-+	.uid		= BYT_NCORE_ACPI_UID,
-+	.pins		= byt_ncore_pins,
-+	.npins		= ARRAY_SIZE(byt_ncore_pins),
-+	.communities	= byt_ncore_communities,
-+	.ncommunities	= ARRAY_SIZE(byt_ncore_communities),
-+};
-+
-+static unsigned const ncore_pins[BYT_NGPIO_NCORE] = {
-+	19, 18, 17, 20, 21, 22, 24, 25, 23, 16,
-+	14, 15, 12, 26, 27, 1, 4, 8, 11, 0,
-+	3, 6, 10, 13, 2, 5, 9, 7,
-+};
-+
- static struct pinctrl_gpio_range byt_ranges[] = {
- 	{
- 		.name = BYT_SCORE_ACPI_UID, /* match with acpi _UID in probe */
-@@ -133,11 +715,6 @@ static struct pinctrl_gpio_range byt_ranges[] = {
- 	},
- };
- 
--struct byt_gpio_pin_context {
--	u32 conf0;
--	u32 val;
--};
--
- struct byt_gpio {
- 	struct gpio_chip		chip;
- 	struct platform_device		*pdev;
-@@ -147,6 +724,13 @@ struct byt_gpio {
- 	struct byt_gpio_pin_context	*saved_context;
- };
- 
-+static const struct byt_pinctrl_soc_data *byt_soc_data[] = {
-+	&byt_score_soc_data,
-+	&byt_sus_soc_data,
-+	&byt_ncore_soc_data,
-+	NULL,
-+};
-+
- static void __iomem *byt_gpio_reg(struct gpio_chip *chip, unsigned offset,
- 				 int reg)
- {
-@@ -713,8 +1297,8 @@ static const struct dev_pm_ops byt_gpio_pm_ops = {
- };
- 
- static const struct acpi_device_id byt_gpio_acpi_match[] = {
--	{ "INT33B2", 0 },
--	{ "INT33FC", 0 },
-+	{ "INT33B2", (kernel_ulong_t)byt_soc_data },
-+	{ "INT33FC", (kernel_ulong_t)byt_soc_data },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, byt_gpio_acpi_match);
--- 
-1.9.1
+> 	* Remove surplus error check in ad5592r_gpio_request()
+> 	* Add comment about reset magic
+> ---
+>  .../devicetree/bindings/iio/dac/ad5592r.txt        | 152 +++++
+>  drivers/iio/dac/Kconfig                            |  27 +
+>  drivers/iio/dac/Makefile                           |   3 +
+>  drivers/iio/dac/ad5592r-base.c                     | 694 +++++++++++++++++++++
+>  drivers/iio/dac/ad5592r-base.h                     |  78 +++
+>  drivers/iio/dac/ad5592r.c                          | 164 +++++
+>  drivers/iio/dac/ad5593r.c                          | 131 ++++
+>  include/dt-bindings/iio/adi,ad5592r.h              |  16 +
+>  8 files changed, 1265 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/dac/ad5592r.txt
+>  create mode 100644 drivers/iio/dac/ad5592r-base.c
+>  create mode 100644 drivers/iio/dac/ad5592r-base.h
+>  create mode 100644 drivers/iio/dac/ad5592r.c
+>  create mode 100644 drivers/iio/dac/ad5593r.c
+>  create mode 100644 include/dt-bindings/iio/adi,ad5592r.h
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/dac/ad5592r.txt b/Documentation/devicetree/bindings/iio/dac/ad5592r.txt
+> new file mode 100644
+> index 0000000..35f76d7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/dac/ad5592r.txt
+> @@ -0,0 +1,152 @@
+> +Analog Devices AD5592R/AD5593R DAC/ADC device driver
+> +
+> +Required properties for the AD5592R:
+> +	- compatible: Must be "adi,ad5592r"
+> +	- reg: SPI chip select number for the device
+> +	- spi-max-frequency: Max SPI frequency to use (< 30000000)
+> +	- spi-cpol: The AD5592R requires inverse clock polarity (CPOL) mode
+> +
+> +Required properties for the AD5593R:
+> +	- compatible: Must be "adi,ad5593r"
+> +	- reg: I2C address of the device
+> +
+> +Required properties for all supported chips:
+> +	- #address-cells: Should be 1.
+> +	- #size-cells: Should be 0.
+> +	- channel nodes:
+> +	  Each child node represents one channel and has the following
+> +	  Required properties:
+> +		* reg: Pin on which this channel is connected to.
+> +		* adi,mode: Mode or function of this channel.
+> +			    Macros specifying the valid values
+> +			    can be found in <dt-bindings/iio/adi,ad5592r.h>.
+> +
+> +			    The following values are currently supported:
+> +				* CH_MODE_UNUSED (the pin is unused)
+> +				* CH_MODE_ADC (the pin is ADC input)
+> +				* CH_MODE_DAC (the pin is DAC output)
+> +				* CH_MODE_DAC_AND_ADC (the pin is DAC output
+> +					but can be monitored by an ADC)
+Really silly question.  What is the disadvantage of configuring all dac
+channels in this mode?
+Might make sense to document this here to give people writing the dt
+files a hint.
+
+> +				* CH_MODE_GPIO (the pin is registered
+> +					with GPIOLIB)
+> +	 Optional properties:
+> +		* adi,off-state: State of this channel when unused or the
+> +				 device gets removed. Macros specifying the
+> +				 valid values can be found in
+> +				 <dt-bindings/iio/adi,ad5592r.h>.
+> +
+> +				* CH_OFFSTATE_PULLDOWN (the pin is pulled down)
+> +				* CH_OFFSTATE_OUT_LOW  (the pin is output low)
+> +				* CH_OFFSTATE_OUT_HIGH (the pin is output high)
+> +				* CH_OFFSTATE_OUT_TRISTATE (the pin is
+> +					tristated output)
+> +
+> +
+> +Optional properties:
+> +	- vref-supply: Phandle to the external reference voltage supply. This should
+> +	  only be set if there is an external reference voltage connected to the VREF
+> +	  pin. If the property is not set the internal 2.5V reference is used.
+> +	- reset-gpios : GPIO spec for the RESET pin. If specified, it will be
+> +	  asserted during driver probe.
+> +	- gpio-controller: Marks the device node as a GPIO controller.
+> +	- #gpio-cells: Should be 2. The first cell is the GPIO number and the second
+> +	  cell specifies GPIO flags, as defined in <dt-bindings/gpio/gpio.h>.
+> +
+> +AD5592R Example:
+> +
+> +	#include <dt-bindings/iio/adi,ad5592r.h>
+> +
+> +	vref: regulator-vref {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vref-ad559x";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-always-on;
+> +	};
+> +
+> +	ad5592r@0 {
+> +		#size-cells = <0>;
+> +		#address-cells = <1>;
+> +		#gpio-cells = <2>;
+> +		compatible = "adi,ad5592r";
+> +		reg = <0>;
+> +
+> +		spi-max-frequency = <1000000>;
+> +		spi-cpol;
+> +
+> +		vref-supply = <&vref>; /* optional */
+> +		reset-gpios = <&gpio0 86 0>;  /* optional */
+> +		gpio-controller;
+> +
+> +		channel@0 {
+> +			reg = <0>;
+> +			adi,mode = <CH_MODE_DAC>;
+> +		};
+> +		channel@1 {
+> +			reg = <1>;
+> +			adi,mode = <CH_MODE_ADC>;
+> +		};
+> +		channel@2 {
+> +			reg = <2>;
+> +			adi,mode = <CH_MODE_DAC_AND_ADC>;
+> +		};
+> +		channel@3 {
+> +			reg = <3>;
+> +			adi,mode = <CH_MODE_DAC_AND_ADC>;
+> +			adi,off-state = <CH_OFFSTATE_PULLDOWN>;
+> +		};
+> +		channel@4 {
+> +			reg = <4>;
+> +			adi,mode = <CH_MODE_UNUSED>;
+> +			adi,off-state = <CH_OFFSTATE_PULLDOWN>;
+> +		};
+> +		channel@5 {
+> +			reg = <5>;
+> +			adi,mode = <CH_MODE_GPIO>;
+> +			adi,off-state = <CH_OFFSTATE_PULLDOWN>;
+> +		};
+> +		channel@6 {
+> +			reg = <6>;
+> +			adi,mode = <CH_MODE_GPIO>;
+> +			adi,off-state = <CH_OFFSTATE_PULLDOWN>;
+> +		};
+> +		channel@7 {
+> +			reg = <7>;
+> +			adi,mode = <CH_MODE_GPIO>;
+> +			adi,off-state = <CH_OFFSTATE_PULLDOWN>;
+> +		};
+> +	};
+> +
+> +AD5593R Example:
+> +
+> +	#include <dt-bindings/iio/adi,ad5592r.h>
+> +
+> +	ad5593r@10 {
+> +		#size-cells = <0>;
+> +		#address-cells = <1>;
+> +		#gpio-cells = <2>;
+> +		compatible = "adi,ad5593r";
+> +		reg = <0x10>;
+> +		gpio-controller;
+> +
+> +		channel@0 {
+> +			reg = <0>;
+> +			adi,mode = <CH_MODE_DAC>;
+> +			adi,off-state = <CH_OFFSTATE_PULLDOWN>;
+> +		};
+> +		channel@1 {
+> +			reg = <1>;
+> +			adi,mode = <CH_MODE_ADC>;
+> +			adi,off-state = <CH_OFFSTATE_PULLDOWN>;
+> +		};
+> +		channel@2 {
+> +			reg = <2>;
+> +			adi,mode = <CH_MODE_DAC_AND_ADC>;
+> +			adi,off-state = <CH_OFFSTATE_PULLDOWN>;
+> +		};
+> +		channel@6 {
+> +			reg = <6>;
+> +			adi,mode = <CH_MODE_GPIO>;
+> +			adi,off-state = <CH_OFFSTATE_PULLDOWN>;
+> +		};
+> +	};
+> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
+> index a995139..233dfb7 100644
+> --- a/drivers/iio/dac/Kconfig
+> +++ b/drivers/iio/dac/Kconfig
+> @@ -74,6 +74,33 @@ config AD5449
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called ad5449.
+>  
+> +config AD5592R_BASE
+> +	tristate
+> +
+> +config AD5592R
+> +	tristate "Analog Devices AD5592R ADC/DAC driver"
+> +	depends on SPI_MASTER
+> +	select GPIOLIB
+> +	select AD5592R_BASE
+> +	help
+> +	  Say yes here to build support for Analog Devices AD5592R
+> +	  Digital to Analog / Analog to Digital Converter.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called ad5592r.
+> +
+> +config AD5593R
+> +	tristate "Analog Devices AD5593R ADC/DAC driver"
+> +	depends on I2C
+> +	select GPIOLIB
+> +	select AD5592R_BASE
+> +	help
+> +	  Say yes here to build support for Analog Devices AD5593R
+> +	  Digital to Analog / Analog to Digital Converter.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called ad5593r.
+> +
+>  config AD5504
+>  	tristate "Analog Devices AD5504/AD5501 DAC SPI driver"
+>  	depends on SPI
+> diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
+> index 67b4842..de28cd2 100644
+> --- a/drivers/iio/dac/Makefile
+> +++ b/drivers/iio/dac/Makefile
+> @@ -11,6 +11,9 @@ obj-$(CONFIG_AD5064) += ad5064.o
+>  obj-$(CONFIG_AD5504) += ad5504.o
+>  obj-$(CONFIG_AD5446) += ad5446.o
+>  obj-$(CONFIG_AD5449) += ad5449.o
+> +obj-$(CONFIG_AD5592R_BASE) += ad5592r-base.o
+> +obj-$(CONFIG_AD5592R) += ad5592r.o
+> +obj-$(CONFIG_AD5593R) += ad5593r.o
+>  obj-$(CONFIG_AD5755) += ad5755.o
+>  obj-$(CONFIG_AD5761) += ad5761.o
+>  obj-$(CONFIG_AD5764) += ad5764.o
+> diff --git a/drivers/iio/dac/ad5592r-base.c b/drivers/iio/dac/ad5592r-base.c
+> new file mode 100644
+> index 0000000..4019e44
+> --- /dev/null
+> +++ b/drivers/iio/dac/ad5592r-base.c
+> @@ -0,0 +1,694 @@
+> +/*
+> + * AD5592R Digital <-> Analog converters driver
+> + *
+> + * Copyright 2014-2016 Analog Devices Inc.
+> + * Author: Paul Cercueil <paul.cercueil@analog.com>
+> + *
+> + * Licensed under the GPL-2.
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/delay.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/gpio.h>
+> +#include <linux/property.h>
+> +
+> +#include <dt-bindings/iio/adi,ad5592r.h>
+> +
+> +#include "ad5592r-base.h"
+> +
+> +static int ad5592r_gpio_get(struct gpio_chip *chip, unsigned offset)
+> +{
+> +	struct ad5592r_state *st = gpiochip_get_data(chip);
+> +	int ret = 0;
+> +	u8 val;
+> +
+> +	mutex_lock(&st->gpio_lock);
+> +
+> +	if (st->gpio_out & BIT(offset))
+> +		val = st->gpio_val;
+> +	else
+> +		ret = st->ops->gpio_read(st, &val);
+> +
+> +	mutex_unlock(&st->gpio_lock);
+> +
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return !!(val & BIT(offset));
+> +}
+> +
+> +static void ad5592r_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+> +{
+> +	struct ad5592r_state *st = gpiochip_get_data(chip);
+> +
+> +	mutex_lock(&st->gpio_lock);
+> +
+> +	if (value)
+> +		st->gpio_val |= BIT(offset);
+> +	else
+> +		st->gpio_val &= ~BIT(offset);
+> +
+> +	st->ops->reg_write(st, AD5592R_REG_GPIO_SET, st->gpio_val);
+> +
+> +	mutex_unlock(&st->gpio_lock);
+> +}
+> +
+> +static int ad5592r_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+> +{
+> +	struct ad5592r_state *st = gpiochip_get_data(chip);
+> +	int ret;
+> +
+> +	mutex_lock(&st->gpio_lock);
+> +
+> +	st->gpio_out &= ~BIT(offset);
+> +	st->gpio_in |= BIT(offset);
+> +
+> +	ret = st->ops->reg_write(st, AD5592R_REG_GPIO_OUT_EN, st->gpio_out);
+> +	if (ret < 0)
+> +		goto err_unlock;
+> +
+> +	ret = st->ops->reg_write(st, AD5592R_REG_GPIO_IN_EN, st->gpio_in);
+> +
+> +err_unlock:
+> +	mutex_unlock(&st->gpio_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ad5592r_gpio_direction_output(struct gpio_chip *chip,
+> +					 unsigned offset, int value)
+> +{
+> +	struct ad5592r_state *st = gpiochip_get_data(chip);
+> +	int ret;
+> +
+> +	mutex_lock(&st->gpio_lock);
+> +
+> +	if (value)
+> +		st->gpio_val |= BIT(offset);
+> +	else
+> +		st->gpio_val &= ~BIT(offset);
+> +
+> +	st->gpio_in &= ~BIT(offset);
+> +	st->gpio_out |= BIT(offset);
+> +
+> +	ret = st->ops->reg_write(st, AD5592R_REG_GPIO_SET, st->gpio_val);
+> +	if (ret < 0)
+> +		goto err_unlock;
+> +
+> +	ret = st->ops->reg_write(st, AD5592R_REG_GPIO_OUT_EN, st->gpio_out);
+> +	if (ret < 0)
+> +		goto err_unlock;
+> +
+> +	ret = st->ops->reg_write(st, AD5592R_REG_GPIO_IN_EN, st->gpio_in);
+> +
+> +err_unlock:
+> +	mutex_unlock(&st->gpio_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ad5592r_gpio_request(struct gpio_chip *chip, unsigned offset)
+> +{
+> +	struct ad5592r_state *st = gpiochip_get_data(chip);
+> +
+> +	if (!(st->gpio_map & BIT(offset))) {
+> +		dev_err(st->dev, "GPIO %d is reserved by alternate function\n",
+> +			offset);
+> +		return -ENODEV;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int ad5592r_gpio_init(struct ad5592r_state *st)
+> +{
+> +	if (!st->gpio_map)
+> +		return 0;
+> +
+> +	st->gpiochip.label = dev_name(st->dev);
+> +	st->gpiochip.base = -1;
+> +	st->gpiochip.ngpio = 8;
+> +	st->gpiochip.parent = st->dev;
+> +	st->gpiochip.can_sleep = true;
+> +	st->gpiochip.direction_input = ad5592r_gpio_direction_input;
+> +	st->gpiochip.direction_output = ad5592r_gpio_direction_output;
+> +	st->gpiochip.get = ad5592r_gpio_get;
+> +	st->gpiochip.set = ad5592r_gpio_set;
+> +	st->gpiochip.request = ad5592r_gpio_request;
+> +	st->gpiochip.owner = THIS_MODULE;
+> +
+> +	mutex_init(&st->gpio_lock);
+> +
+> +	return gpiochip_add_data(&st->gpiochip, st);
+> +}
+> +
+> +static void ad5592r_gpio_cleanup(struct ad5592r_state *st)
+> +{
+> +	if (st->gpio_map)
+> +		gpiochip_remove(&st->gpiochip);
+> +}
+> +
+> +static int ad5592r_reset(struct ad5592r_state *st)
+> +{
+> +	struct gpio_desc *gpio;
+> +	struct iio_dev *iio_dev = iio_priv_to_dev(st);
+> +
+> +	gpio = devm_gpiod_get_optional(st->dev, "reset", GPIOD_OUT_LOW);
+> +	if (IS_ERR(gpio))
+> +		return PTR_ERR(gpio);
+> +
+> +	if (gpio) {
+> +		udelay(1);
+> +		gpiod_set_value(gpio, 1);
+> +	} else {
+> +		mutex_lock(&iio_dev->mlock);
+> +		/* Writing this magic value resets the device */
+> +		st->ops->reg_write(st, AD5592R_REG_RESET, 0xdac);
+> +		mutex_unlock(&iio_dev->mlock);
+> +	}
+> +
+> +	udelay(250);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ad5592r_get_vref(struct ad5592r_state *st)
+> +{
+> +	int ret;
+> +
+> +	if (st->reg) {
+> +		ret = regulator_get_voltage(st->reg);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		return ret / 1000;
+> +	} else {
+> +		return 2500;
+> +	}
+> +}
+> +
+> +static int ad5592r_set_channel_modes(struct ad5592r_state *st)
+> +{
+> +	const struct ad5592r_rw_ops *ops = st->ops;
+> +	int ret;
+> +	unsigned i;
+> +	struct iio_dev *iio_dev = iio_priv_to_dev(st);
+> +	u8 pulldown = 0, tristate = 0, dac = 0, adc = 0;
+> +	u16 read_back;
+> +
+> +	for (i = 0; i < st->num_channels; i++) {
+> +		switch (st->channel_modes[i]) {
+> +		case CH_MODE_DAC:
+> +			dac |= BIT(i);
+> +			break;
+> +
+> +		case CH_MODE_ADC:
+> +			adc |= BIT(i);
+> +			break;
+> +
+> +		case CH_MODE_DAC_AND_ADC:
+> +			dac |= BIT(i);
+> +			adc |= BIT(i);
+> +			break;
+> +
+> +		case CH_MODE_GPIO:
+> +			st->gpio_map |= BIT(i);
+> +			st->gpio_in |= BIT(i); /* Default to input */
+> +			break;
+> +
+> +		case CH_MODE_UNUSED:
+> +			/* fall-through */
+> +		default:
+> +			switch (st->channel_offstate[i]) {
+> +			case CH_OFFSTATE_OUT_TRISTATE:
+> +				tristate |= BIT(i);
+> +				break;
+> +
+> +			case CH_OFFSTATE_OUT_LOW:
+> +				st->gpio_out |= BIT(i);
+> +				break;
+> +
+> +			case CH_OFFSTATE_OUT_HIGH:
+> +				st->gpio_out |= BIT(i);
+> +				st->gpio_val |= BIT(i);
+> +				break;
+> +
+> +			case CH_OFFSTATE_PULLDOWN:
+> +				/* fall-through */
+> +			default:
+> +				pulldown |= BIT(i);
+> +				break;
+> +			}
+> +		}
+> +	}
+> +
+> +	mutex_lock(&iio_dev->mlock);
+> +
+> +	/* Pull down unused pins to GND */
+> +	ret = ops->reg_write(st, AD5592R_REG_PULLDOWN, pulldown);
+> +	if (ret)
+> +		goto err_unlock;
+> +
+> +	ret = ops->reg_write(st, AD5592R_REG_TRISTATE, tristate);
+> +	if (ret)
+> +		goto err_unlock;
+> +
+> +	/* Configure pins that we use */
+> +	ret = ops->reg_write(st, AD5592R_REG_DAC_EN, dac);
+> +	if (ret)
+> +		goto err_unlock;
+> +
+> +	ret = ops->reg_write(st, AD5592R_REG_ADC_EN, adc);
+> +	if (ret)
+> +		goto err_unlock;
+> +
+> +	ret = ops->reg_write(st, AD5592R_REG_GPIO_SET, st->gpio_val);
+> +	if (ret)
+> +		goto err_unlock;
+> +
+> +	ret = ops->reg_write(st, AD5592R_REG_GPIO_OUT_EN, st->gpio_out);
+> +	if (ret)
+> +		goto err_unlock;
+> +
+> +	ret = ops->reg_write(st, AD5592R_REG_GPIO_IN_EN, st->gpio_in);
+> +	if (ret)
+> +		goto err_unlock;
+> +
+> +	/* Verify that we can read back at least one register */
+> +	ret = ops->reg_read(st, AD5592R_REG_ADC_EN, &read_back);
+> +	if (!ret && (read_back & 0xff) != adc)
+> +		ret = -EIO;
+> +
+> +err_unlock:
+> +	mutex_unlock(&iio_dev->mlock);
+> +	return ret;
+> +}
+> +
+> +static int ad5592r_reset_channel_modes(struct ad5592r_state *st)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(st->channel_modes); i++)
+> +		st->channel_modes[i] = CH_MODE_UNUSED;
+> +
+> +	return ad5592r_set_channel_modes(st);
+> +}
+> +
+> +static int ad5592r_write_raw(struct iio_dev *iio_dev,
+> +	struct iio_chan_spec const *chan, int val, int val2, long mask)
+> +{
+> +	struct ad5592r_state *st = iio_priv(iio_dev);
+> +	int ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +
+> +		if (val >= (1 << chan->scan_type.realbits) || val < 0)
+> +			return -EINVAL;
+> +
+> +		if (!chan->output)
+> +			return -EINVAL;
+> +
+> +		mutex_lock(&iio_dev->mlock);
+> +		ret = st->ops->write_dac(st, chan->channel, val);
+> +		if (!ret)
+> +			st->cached_dac[chan->channel] = val;
+> +		mutex_unlock(&iio_dev->mlock);
+> +		return ret;
+> +	case IIO_CHAN_INFO_SCALE:
+> +		if (chan->type == IIO_VOLTAGE) {
+> +			bool gain;
+> +
+> +			if (val == st->scale_avail[0][0] &&
+> +				val2 == st->scale_avail[0][1])
+> +				gain = false;
+> +			else if (val == st->scale_avail[1][0] &&
+> +				 val2 == st->scale_avail[1][1])
+> +				gain = true;
+> +			else
+> +				return -EINVAL;
+> +
+> +			mutex_lock(&iio_dev->mlock);
+> +
+> +			ret = st->ops->reg_read(st, AD5592R_REG_CTRL,
+> +						&st->cached_gp_ctrl);
+> +			if (ret < 0) {
+> +				mutex_unlock(&iio_dev->mlock);
+> +				return ret;
+> +			}
+> +
+> +			if (chan->output) {
+> +				if (gain)
+> +					st->cached_gp_ctrl |=
+> +						AD5592R_REG_CTRL_DAC_RANGE;
+> +				else
+> +					st->cached_gp_ctrl &=
+> +						~AD5592R_REG_CTRL_DAC_RANGE;
+> +			} else {
+> +				if (gain)
+> +					st->cached_gp_ctrl |=
+> +						AD5592R_REG_CTRL_ADC_RANGE;
+> +				else
+> +					st->cached_gp_ctrl &=
+> +						~AD5592R_REG_CTRL_ADC_RANGE;
+> +			}
+> +
+> +			ret = st->ops->reg_write(st, AD5592R_REG_CTRL,
+> +						 st->cached_gp_ctrl);
+> +			mutex_unlock(&iio_dev->mlock);
+> +			if (ret < 0)
+> +				return ret;
+> +
+Spot the obvious simplication between these few lines ;) It returns ret whatever
+the value of ret, so don't check it.
+> +			return ret;
+> +
+> +		}
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int ad5592r_read_raw(struct iio_dev *iio_dev,
+> +			   struct iio_chan_spec const *chan,
+> +			   int *val, int *val2, long m)
+> +{
+> +	struct ad5592r_state *st = iio_priv(iio_dev);
+> +	u16 read_val;
+> +	int ret;
+> +
+> +	switch (m) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		mutex_lock(&iio_dev->mlock);
+> +
+> +		if (!chan->output) {
+> +			ret = st->ops->read_adc(st, chan->channel, &read_val);
+> +			if (ret)
+> +				goto unlock;
+> +
+> +			if ((read_val >> 12 & 0x7) != (chan->channel & 0x7)) {
+> +				dev_err(st->dev, "Error while reading channel %u\n",
+> +						chan->channel);
+> +				ret = -EIO;
+> +				goto unlock;
+> +			}
+> +
+> +			read_val &= GENMASK(11, 0);
+> +
+> +		} else {
+> +			read_val = st->cached_dac[chan->channel];
+> +		}
+> +
+> +		dev_dbg(st->dev, "Channel %u read: 0x%04hX\n",
+> +				chan->channel, read_val);
+> +
+> +		*val = (int) read_val;
+> +		ret = IIO_VAL_INT;
+> +		break;
+> +	case IIO_CHAN_INFO_SCALE:
+> +		*val = ad5592r_get_vref(st);
+> +
+> +		if (chan->type == IIO_TEMP) {
+> +			s64 tmp = *val * (3767897513LL / 25LL);
+> +			*val = div_s64_rem(tmp, 1000000000LL, val2);
+> +
+> +			ret = IIO_VAL_INT_PLUS_MICRO;
+> +		} else {
+> +			int mult;
+> +
+> +			mutex_lock(&iio_dev->mlock);
+> +
+> +			if (chan->output)
+> +				mult = !!(st->cached_gp_ctrl &
+> +					AD5592R_REG_CTRL_DAC_RANGE);
+> +			else
+> +				mult = !!(st->cached_gp_ctrl &
+> +					AD5592R_REG_CTRL_ADC_RANGE);
+> +
+> +			*val *= ++mult;
+> +
+> +			*val2 = chan->scan_type.realbits;
+> +			ret = IIO_VAL_FRACTIONAL_LOG2;
+> +		}
+> +		break;
+> +	case IIO_CHAN_INFO_OFFSET:
+> +		ret = ad5592r_get_vref(st);
+> +
+> +		mutex_lock(&iio_dev->mlock);
+> +
+> +		if (st->cached_gp_ctrl & AD5592R_REG_CTRL_ADC_RANGE)
+> +			*val = (-34365 * 25) / ret;
+> +		else
+> +			*val = (-75365 * 25) / ret;
+> +		ret =  IIO_VAL_INT;
+> +		break;
+> +	default:
+> +		ret = -EINVAL;
+> +	}
+> +
+> +unlock:
+> +	mutex_unlock(&iio_dev->mlock);
+> +	return ret;
+> +}
+> +
+> +static int ad5592r_write_raw_get_fmt(struct iio_dev *indio_dev,
+> +				 struct iio_chan_spec const *chan, long mask)
+> +{
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_SCALE:
+> +		return IIO_VAL_INT_PLUS_NANO;
+> +
+> +	default:
+> +		return IIO_VAL_INT_PLUS_MICRO;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static const struct iio_info ad5592r_info = {
+> +	.read_raw = ad5592r_read_raw,
+> +	.write_raw = ad5592r_write_raw,
+> +	.write_raw_get_fmt = ad5592r_write_raw_get_fmt,
+> +	.driver_module = THIS_MODULE,
+> +};
+> +
+> +static ssize_t ad5592r_show_scale_available(struct iio_dev *iio_dev,
+> +					   uintptr_t private,
+> +					   const struct iio_chan_spec *chan,
+> +					   char *buf)
+> +{
+> +	struct ad5592r_state *st = iio_priv(iio_dev);
+> +
+> +	return sprintf(buf, "%d.%09u %d.%09u\n",
+> +		st->scale_avail[0][0], st->scale_avail[0][1],
+> +		st->scale_avail[1][0], st->scale_avail[1][1]);
+> +}
+> +
+> +static struct iio_chan_spec_ext_info ad5592r_ext_info[] = {
+> +	{
+> +	 .name = "scale_available",
+> +	 .read = ad5592r_show_scale_available,
+> +	 .shared = true,
+> +	 },
+> +	{},
+> +};
+> +
+> +static void ad5592r_setup_channel(struct iio_dev *iio_dev,
+> +		struct iio_chan_spec *chan, bool output, unsigned id)
+> +{
+> +	chan->type = IIO_VOLTAGE;
+> +	chan->indexed = 1;
+> +	chan->output = output;
+> +	chan->channel = id;
+> +	chan->info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
+> +	chan->info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE);
+> +	chan->scan_type.sign = 'u';
+> +	chan->scan_type.realbits = 12;
+> +	chan->scan_type.storagebits = 16;
+> +	chan->ext_info = ad5592r_ext_info;
+> +}
+> +
+> +static int ad5592r_alloc_channels(struct ad5592r_state *st)
+> +{
+> +	unsigned i, curr_channel = 0,
+> +		 num_channels = st->num_channels;
+> +	struct iio_dev *iio_dev = iio_priv_to_dev(st);
+> +	struct iio_chan_spec *channels;
+> +	struct fwnode_handle *child;
+> +	u32 reg, tmp;
+> +	int ret;
+> +
+> +	device_for_each_child_node(st->dev, child) {
+> +		ret = fwnode_property_read_u32(child, "reg", &reg);
+> +		if (ret || reg > ARRAY_SIZE(st->channel_modes))
+> +			continue;
+> +
+> +		ret = fwnode_property_read_u32(child, "adi,mode", &tmp);
+> +		if (!ret)
+> +			st->channel_modes[reg] = tmp;
+> +
+> +		fwnode_property_read_u32(child, "adi,off-state", &tmp);
+> +		if (!ret)
+> +			st->channel_offstate[reg] = tmp;
+> +	}
+> +
+> +	channels = devm_kzalloc(st->dev,
+> +			(1 + 2 * num_channels) * sizeof(*channels), GFP_KERNEL);
+> +	if (!channels)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < num_channels; i++) {
+> +		switch (st->channel_modes[i]) {
+> +		case CH_MODE_DAC:
+> +			ad5592r_setup_channel(iio_dev, &channels[curr_channel],
+> +					true, i);
+> +			curr_channel++;
+> +			break;
+> +
+> +		case CH_MODE_ADC:
+> +			ad5592r_setup_channel(iio_dev, &channels[curr_channel],
+> +					false, i);
+> +			curr_channel++;
+> +			break;
+> +
+> +		case CH_MODE_DAC_AND_ADC:
+> +			ad5592r_setup_channel(iio_dev, &channels[curr_channel],
+> +					true, i);
+> +			curr_channel++;
+> +			ad5592r_setup_channel(iio_dev, &channels[curr_channel],
+> +					false, i);
+> +			curr_channel++;
+> +			break;
+> +
+> +		default:
+> +			continue;
+> +		}
+> +	}
+> +
+> +	channels[curr_channel].type = IIO_TEMP;
+> +	channels[curr_channel].channel = 8;
+> +	channels[curr_channel].info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> +				   BIT(IIO_CHAN_INFO_SCALE) |
+> +				   BIT(IIO_CHAN_INFO_OFFSET);
+> +	curr_channel++;
+> +
+> +	iio_dev->num_channels = curr_channel;
+> +	iio_dev->channels = channels;
+> +
+> +	return 0;
+> +}
+> +
+> +static void ad5592r_init_scales(struct ad5592r_state *st, int vref_mV)
+> +{
+> +	s64 tmp = (s64)vref_mV * 1000000000LL >> 12;
+> +
+> +	st->scale_avail[0][0] =
+> +		div_s64_rem(tmp, 1000000000LL, &st->scale_avail[0][1]);
+> +	st->scale_avail[1][0] =
+> +		div_s64_rem(tmp * 2, 1000000000LL, &st->scale_avail[1][1]);
+> +}
+> +
+> +int ad5592r_probe(struct device *dev, const char *name,
+> +		const struct ad5592r_rw_ops *ops)
+> +{
+> +	struct iio_dev *iio_dev;
+> +	struct ad5592r_state *st;
+> +	int ret;
+> +
+> +	iio_dev = devm_iio_device_alloc(dev, sizeof(*st));
+> +	if (!iio_dev)
+> +		return -ENOMEM;
+> +
+> +	st = iio_priv(iio_dev);
+> +	st->dev = dev;
+> +	st->ops = ops;
+> +	st->num_channels = 8;
+> +	dev_set_drvdata(dev, iio_dev);
+> +
+> +	st->reg = devm_regulator_get_optional(dev, "vref");
+> +	if (IS_ERR(st->reg)) {
+> +		if ((PTR_ERR(st->reg) != -ENODEV) && dev->of_node)
+> +			return PTR_ERR(st->reg);
+> +
+> +		st->reg = NULL;
+> +	} else {
+> +		ret = regulator_enable(st->reg);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	iio_dev->dev.parent = dev;
+> +	iio_dev->name = name;
+> +	iio_dev->info = &ad5592r_info;
+> +	iio_dev->modes = INDIO_DIRECT_MODE;
+> +
+> +	ad5592r_init_scales(st, ad5592r_get_vref(st));
+> +
+> +	ret = ad5592r_reset(st);
+> +	if (ret)
+> +		goto error_disable_reg;
+> +
+> +	ret = ops->reg_write(st, AD5592R_REG_PD,
+> +		     (st->reg == NULL) ? AD5592R_REG_PD_EN_REF : 0);
+> +	if (ret)
+> +		goto error_disable_reg;
+> +
+> +	ret = ad5592r_alloc_channels(st);
+> +	if (ret)
+> +		goto error_disable_reg;
+> +
+> +	ret = ad5592r_set_channel_modes(st);
+> +	if (ret)
+> +		goto error_reset_ch_modes;
+> +
+> +	ret = iio_device_register(iio_dev);
+> +	if (ret)
+> +		goto error_reset_ch_modes;
+> +
+> +	ret = ad5592r_gpio_init(st);
+> +	if (ret)
+> +		goto error_dev_unregister;
+> +
+> +	return 0;
+> +
+> +error_dev_unregister:
+> +	iio_device_unregister(iio_dev);
+> +
+> +error_reset_ch_modes:
+> +	ad5592r_reset_channel_modes(st);
+> +
+> +error_disable_reg:
+> +	if (st->reg)
+> +		regulator_disable(st->reg);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(ad5592r_probe);
+> +
+> +int ad5592r_remove(struct device *dev)
+> +{
+> +	struct iio_dev *iio_dev = dev_get_drvdata(dev);
+> +	struct ad5592r_state *st = iio_priv(iio_dev);
+> +
+> +	iio_device_unregister(iio_dev);
+> +	ad5592r_reset_channel_modes(st);
+> +	ad5592r_gpio_cleanup(st);
+> +
+> +	if (st->reg)
+> +		regulator_disable(st->reg);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(ad5592r_remove);
+> +
+> +MODULE_AUTHOR("Paul Cercueil <paul.cercueil@analog.com>");
+> +MODULE_DESCRIPTION("Analog Devices AD5592R multi-channel converters");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/iio/dac/ad5592r-base.h b/drivers/iio/dac/ad5592r-base.h
+> new file mode 100644
+> index 0000000..2753385
+> --- /dev/null
+> +++ b/drivers/iio/dac/ad5592r-base.h
+> @@ -0,0 +1,78 @@
+> +/*
+> + * AD5592R / AD5593R Digital <-> Analog converters driver
+> + *
+> + * Copyright 2015-2016 Analog Devices Inc.
+> + * Author: Paul Cercueil <paul.cercueil@analog.com>
+> + *
+> + * Licensed under the GPL-2.
+> + */
+> +
+> +#ifndef __DRIVERS_IIO_DAC_AD5592R_BASE_H__
+> +#define __DRIVERS_IIO_DAC_AD5592R_BASE_H__
+> +
+> +#include <linux/types.h>
+> +#include <linux/cache.h>
+> +#include <linux/mutex.h>
+> +#include <linux/gpio/driver.h>
+> +
+> +struct device;
+> +struct ad5592r_state;
+> +
+> +enum ad5592r_registers {
+> +	AD5592R_REG_NOOP		= 0x0,
+> +	AD5592R_REG_DAC_READBACK	= 0x1,
+> +	AD5592R_REG_ADC_SEQ		= 0x2,
+> +	AD5592R_REG_CTRL		= 0x3,
+> +	AD5592R_REG_ADC_EN		= 0x4,
+> +	AD5592R_REG_DAC_EN		= 0x5,
+> +	AD5592R_REG_PULLDOWN		= 0x6,
+> +	AD5592R_REG_LDAC		= 0x7,
+> +	AD5592R_REG_GPIO_OUT_EN		= 0x8,
+> +	AD5592R_REG_GPIO_SET		= 0x9,
+> +	AD5592R_REG_GPIO_IN_EN		= 0xA,
+> +	AD5592R_REG_PD			= 0xB,
+> +	AD5592R_REG_OPEN_DRAIN		= 0xC,
+> +	AD5592R_REG_TRISTATE		= 0xD,
+> +	AD5592R_REG_RESET		= 0xF,
+> +};
+> +
+> +#define AD5592R_REG_PD_EN_REF		BIT(9)
+> +#define AD5592R_REG_CTRL_ADC_RANGE	BIT(5)
+> +#define AD5592R_REG_CTRL_DAC_RANGE	BIT(4)
+> +
+> +struct ad5592r_rw_ops {
+> +	int (*write_dac)(struct ad5592r_state *st, unsigned chan, u16 value);
+> +	int (*read_adc)(struct ad5592r_state *st, unsigned chan, u16 *value);
+> +	int (*reg_write)(struct ad5592r_state *st, u8 reg, u16 value);
+> +	int (*reg_read)(struct ad5592r_state *st, u8 reg, u16 *value);
+> +	int (*gpio_read)(struct ad5592r_state *st, u8 *value);
+> +};
+> +
+> +struct ad5592r_state {
+> +	struct device *dev;
+> +	struct regulator *reg;
+
+Guessing this ifdef was meant to go.
+> +#ifdef CONFIG_GPIOLIB
+> +	struct gpio_chip gpiochip;
+> +	struct mutex gpio_lock;	/* Protect cached gpio_out, gpio_val, etc. */
+> +#endif
+> +	unsigned int num_channels;
+> +	const struct ad5592r_rw_ops *ops;
+> +	int scale_avail[2][2];
+> +	u16 cached_dac[8];
+> +	u16 cached_gp_ctrl;
+> +	u8 channel_modes[8];
+> +	u8 channel_offstate[8];
+> +	u8 gpio_map;
+> +	u8 gpio_out;
+> +	u8 gpio_in;
+> +	u8 gpio_val;
+> +
+> +	__be16 spi_msg ____cacheline_aligned;
+> +	__be16 spi_msg_nop;
+> +};
+> +
+> +int ad5592r_probe(struct device *dev, const char *name,
+> +		const struct ad5592r_rw_ops *ops);
+> +int ad5592r_remove(struct device *dev);
+> +
+> +#endif /* __DRIVERS_IIO_DAC_AD5592R_BASE_H__ */
+> diff --git a/drivers/iio/dac/ad5592r.c b/drivers/iio/dac/ad5592r.c
+> new file mode 100644
+> index 0000000..0b235a2
+> --- /dev/null
+> +++ b/drivers/iio/dac/ad5592r.c
+> @@ -0,0 +1,164 @@
+> +/*
+> + * AD5592R Digital <-> Analog converters driver
+> + *
+> + * Copyright 2015-2016 Analog Devices Inc.
+> + * Author: Paul Cercueil <paul.cercueil@analog.com>
+> + *
+> + * Licensed under the GPL-2.
+> + */
+> +
+> +#include "ad5592r-base.h"
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/spi/spi.h>
+> +
+> +#define AD5592R_GPIO_READBACK_EN	BIT(10)
+> +#define AD5592R_LDAC_READBACK_EN	BIT(6)
+> +
+> +static int ad5592r_spi_wnop_r16(struct ad5592r_state *st, u16 *buf)
+> +{
+> +	struct spi_device *spi = container_of(st->dev, struct spi_device, dev);
+> +	struct spi_transfer t = {
+> +			.tx_buf	= &st->spi_msg_nop,
+> +			.rx_buf	= buf,
+> +			.len = 2
+> +		};
+> +
+> +	st->spi_msg_nop = 0; /* NOP */
+> +
+> +	return spi_sync_transfer(spi, &t, 1);
+> +}
+> +
+> +static int ad5592r_write_dac(struct ad5592r_state *st, unsigned chan, u16 value)
+> +{
+> +	struct spi_device *spi = container_of(st->dev, struct spi_device, dev);
+> +
+> +	st->spi_msg = cpu_to_be16(BIT(15) | (chan << 12) | value);
+> +
+> +	return spi_write(spi, &st->spi_msg, sizeof(st->spi_msg));
+> +}
+> +
+> +static int ad5592r_read_adc(struct ad5592r_state *st, unsigned chan, u16 *value)
+> +{
+> +	struct spi_device *spi = container_of(st->dev, struct spi_device, dev);
+> +	int ret;
+> +
+> +	st->spi_msg = cpu_to_be16((AD5592R_REG_ADC_SEQ << 11) | BIT(chan));
+> +
+> +	ret = spi_write(spi, &st->spi_msg, sizeof(st->spi_msg));
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Invalid data:
+> +	 * See Figure 40. Single-Channel ADC Conversion Sequence
+> +	 */
+> +	ret = ad5592r_spi_wnop_r16(st, &st->spi_msg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ad5592r_spi_wnop_r16(st, &st->spi_msg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	*value = be16_to_cpu(st->spi_msg);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ad5592r_reg_write(struct ad5592r_state *st, u8 reg, u16 value)
+> +{
+> +	struct spi_device *spi = container_of(st->dev, struct spi_device, dev);
+> +
+> +	st->spi_msg = cpu_to_be16((reg << 11) | value);
+> +
+> +	return spi_write(spi, &st->spi_msg, sizeof(st->spi_msg));
+> +}
+> +
+> +static int ad5592r_reg_read(struct ad5592r_state *st, u8 reg, u16 *value)
+> +{
+> +	struct spi_device *spi = container_of(st->dev, struct spi_device, dev);
+> +	int ret;
+> +
+> +	st->spi_msg = cpu_to_be16((AD5592R_REG_LDAC << 11) |
+> +				   AD5592R_LDAC_READBACK_EN | (reg << 2));
+> +
+> +	ret = spi_write(spi, &st->spi_msg, sizeof(st->spi_msg));
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ad5592r_spi_wnop_r16(st, &st->spi_msg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	*value = be16_to_cpu(st->spi_msg);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ad5593r_gpio_read(struct ad5592r_state *st, u8 *value)
+> +{
+> +	int ret;
+> +
+> +	ret = ad5592r_reg_write(st, AD5592R_REG_GPIO_IN_EN,
+> +				AD5592R_GPIO_READBACK_EN | st->gpio_in);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ad5592r_spi_wnop_r16(st, &st->spi_msg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	*value = (u8) be16_to_cpu(st->spi_msg);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct ad5592r_rw_ops ad5592r_rw_ops = {
+> +	.write_dac = ad5592r_write_dac,
+> +	.read_adc = ad5592r_read_adc,
+> +	.reg_write = ad5592r_reg_write,
+> +	.reg_read = ad5592r_reg_read,
+> +	.gpio_read = ad5593r_gpio_read,
+> +};
+> +
+> +static int ad5592r_spi_probe(struct spi_device *spi)
+> +{
+> +	const struct spi_device_id *id = spi_get_device_id(spi);
+> +
+> +	return ad5592r_probe(&spi->dev, id->name, &ad5592r_rw_ops);
+> +}
+> +
+> +static int ad5592r_spi_remove(struct spi_device *spi)
+> +{
+> +	return ad5592r_remove(&spi->dev);
+> +}
+> +
+> +static const struct spi_device_id ad5592r_spi_ids[] = {
+> +	{ .name = "ad5592r", },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(spi, ad5592r_spi_ids);
+> +
+> +static const struct of_device_id ad5592r_of_match[] = {
+> +	{ .compatible = "adi,ad5592r", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, ad5592r_of_match);
+> +
+> +static struct spi_driver ad5592r_spi_driver = {
+> +	.driver = {
+> +		.name = "ad5592r",
+> +		.of_match_table = of_match_ptr(ad5592r_of_match),
+> +	},
+> +	.probe = ad5592r_spi_probe,
+> +	.remove = ad5592r_spi_remove,
+> +	.id_table = ad5592r_spi_ids,
+> +};
+> +module_spi_driver(ad5592r_spi_driver);
+> +
+> +MODULE_AUTHOR("Paul Cercueil <paul.cercueil@analog.com>");
+> +MODULE_DESCRIPTION("Analog Devices AD5592R multi-channel converters");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/iio/dac/ad5593r.c b/drivers/iio/dac/ad5593r.c
+> new file mode 100644
+> index 0000000..dca158a
+> --- /dev/null
+> +++ b/drivers/iio/dac/ad5593r.c
+> @@ -0,0 +1,131 @@
+> +/*
+> + * AD5593R Digital <-> Analog converters driver
+> + *
+> + * Copyright 2015-2016 Analog Devices Inc.
+> + * Author: Paul Cercueil <paul.cercueil@analog.com>
+> + *
+> + * Licensed under the GPL-2.
+> + */
+> +
+> +#include "ad5592r-base.h"
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +
+> +#define AD5593R_MODE_CONF		(0 << 4)
+> +#define AD5593R_MODE_DAC_WRITE		(1 << 4)
+> +#define AD5593R_MODE_ADC_READBACK	(4 << 4)
+> +#define AD5593R_MODE_DAC_READBACK	(5 << 4)
+> +#define AD5593R_MODE_GPIO_READBACK	(6 << 4)
+> +#define AD5593R_MODE_REG_READBACK	(7 << 4)
+> +
+> +static int ad5593r_write_dac(struct ad5592r_state *st, unsigned chan, u16 value)
+> +{
+> +	struct i2c_client *i2c = to_i2c_client(st->dev);
+> +
+> +	return i2c_smbus_write_word_swapped(i2c,
+> +			AD5593R_MODE_DAC_WRITE | chan, value);
+> +}
+> +
+> +static int ad5593r_read_adc(struct ad5592r_state *st, unsigned chan, u16 *value)
+> +{
+> +	struct i2c_client *i2c = to_i2c_client(st->dev);
+> +	s32 val;
+> +
+> +	val = i2c_smbus_write_word_swapped(i2c,
+> +			AD5593R_MODE_CONF | AD5592R_REG_ADC_SEQ, BIT(chan));
+> +	if (val < 0)
+> +		return (int) val;
+> +
+> +	val = i2c_smbus_read_word_swapped(i2c, AD5593R_MODE_ADC_READBACK);
+> +	if (val < 0)
+> +		return (int) val;
+> +
+> +	*value = (u16) val;
+> +
+> +	return 0;
+> +}
+> +
+> +static int ad5593r_reg_write(struct ad5592r_state *st, u8 reg, u16 value)
+> +{
+> +	struct i2c_client *i2c = to_i2c_client(st->dev);
+> +
+> +	return i2c_smbus_write_word_swapped(i2c,
+> +			AD5593R_MODE_CONF | reg, value);
+> +}
+> +
+> +static int ad5593r_reg_read(struct ad5592r_state *st, u8 reg, u16 *value)
+> +{
+> +	struct i2c_client *i2c = to_i2c_client(st->dev);
+> +	s32 val;
+> +
+> +	val = i2c_smbus_read_word_swapped(i2c, AD5593R_MODE_REG_READBACK | reg);
+> +	if (val < 0)
+> +		return (int) val;
+> +
+> +	*value = (u16) val;
+> +
+> +	return 0;
+> +}
+> +
+> +static int ad5593r_gpio_read(struct ad5592r_state *st, u8 *value)
+> +{
+> +	struct i2c_client *i2c = to_i2c_client(st->dev);
+> +	s32 val;
+> +
+> +	val = i2c_smbus_read_word_swapped(i2c, AD5593R_MODE_GPIO_READBACK);
+> +	if (val < 0)
+> +		return (int) val;
+> +
+> +	*value = (u8) val;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct ad5592r_rw_ops ad5593r_rw_ops = {
+> +	.write_dac = ad5593r_write_dac,
+> +	.read_adc = ad5593r_read_adc,
+> +	.reg_write = ad5593r_reg_write,
+> +	.reg_read = ad5593r_reg_read,
+> +	.gpio_read = ad5593r_gpio_read,
+> +};
+> +
+> +static int ad5593r_i2c_probe(struct i2c_client *i2c,
+> +		const struct i2c_device_id *id)
+> +{
+> +	return ad5592r_probe(&i2c->dev, id->name, &ad5593r_rw_ops);
+> +}
+> +
+> +static int ad5593r_i2c_remove(struct i2c_client *i2c)
+> +{
+> +	return ad5592r_remove(&i2c->dev);
+> +}
+> +
+> +static const struct i2c_device_id ad5593r_i2c_ids[] = {
+> +	{ .name = "ad5593r", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(i2c, ad5593r_i2c_ids);
+> +
+> +static const struct of_device_id ad5593r_of_match[] = {
+> +	{ .compatible = "adi,ad5593r", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, ad5593r_of_match);
+> +
+> +static struct i2c_driver ad5593r_driver = {
+> +	.driver = {
+> +		.name = "ad5593r",
+> +		.of_match_table = of_match_ptr(ad5593r_of_match),
+> +	},
+> +	.probe = ad5593r_i2c_probe,
+> +	.remove = ad5593r_i2c_remove,
+> +	.id_table = ad5593r_i2c_ids,
+> +};
+> +module_i2c_driver(ad5593r_driver);
+> +
+> +MODULE_AUTHOR("Paul Cercueil <paul.cercueil@analog.com>");
+> +MODULE_DESCRIPTION("Analog Devices AD5592R multi-channel converters");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/include/dt-bindings/iio/adi,ad5592r.h b/include/dt-bindings/iio/adi,ad5592r.h
+> new file mode 100644
+> index 0000000..c48aca1
+> --- /dev/null
+> +++ b/include/dt-bindings/iio/adi,ad5592r.h
+> @@ -0,0 +1,16 @@
+> +
+> +#ifndef _DT_BINDINGS_ADI_AD5592R_H
+> +#define _DT_BINDINGS_ADI_AD5592R_H
+> +
+> +#define CH_MODE_UNUSED			0
+> +#define CH_MODE_ADC			1
+> +#define CH_MODE_DAC			2
+> +#define CH_MODE_DAC_AND_ADC		3
+> +#define CH_MODE_GPIO			8
+> +
+> +#define CH_OFFSTATE_PULLDOWN		0
+> +#define CH_OFFSTATE_OUT_LOW		1
+> +#define CH_OFFSTATE_OUT_HIGH		2
+> +#define CH_OFFSTATE_OUT_TRISTATE	3
+> +
+> +#endif /* _DT_BINDINGS_ADI_AD5592R_H */
+> 
 
