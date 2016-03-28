@@ -1,209 +1,162 @@
 From: Cristina Ciocan <cristina.ciocan@intel.com>
-Subject: [PATCH v2 3/6] pinctrl: baytrail: Update gpio chip operations
-Date: Mon, 28 Mar 2016 16:29:37 +0300
-Message-ID: <1459171780-24856-4-git-send-email-cristina.ciocan@intel.com>
+Subject: [PATCH v2 4/6] pinctrl: baytrail: Update irq chip operations
+Date: Mon, 28 Mar 2016 16:29:38 +0300
+Message-ID: <1459171780-24856-5-git-send-email-cristina.ciocan@intel.com>
 References: <1459171780-24856-1-git-send-email-cristina.ciocan@intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:27570 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752983AbcC1N1A (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 28 Mar 2016 09:27:00 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1459171780-24856-1-git-send-email-cristina.ciocan@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: mathias.nyman@linux.intel.com, mika.westerberg@linux.intel.com, linux-gpio@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com, Cristina Ciocan <cristina.ciocan@intel.com>
+List-Id: linux-gpio@vger.kernel.org
 
-This patch updates the gpio chip implementation in order to interact with
-the pin control model: the chip contains reference to SOC data and
+This patch updates the irq chip implementation in order to interact with
+the pin control chip model: the chip contains reference to SOC data and
 pin/group/community information is retrieved through the SOC reference.
 
 Signed-off-by: Cristina Ciocan <cristina.ciocan@intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-baytrail.c | 97 ++++++++++++++++++++++----------
- 1 file changed, 68 insertions(+), 29 deletions(-)
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 97 +++++++++++++++++---------------
+ 1 file changed, 51 insertions(+), 46 deletions(-)
 
 diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 6901964..eb06bf7 100644
+index eb06bf7..d8a6809 100644
 --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
 +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -20,6 +20,7 @@
- #include <linux/types.h>
- #include <linux/bitops.h>
- #include <linux/interrupt.h>
-+#include <linux/gpio.h>
- #include <linux/gpio/driver.h>
- #include <linux/acpi.h>
- #include <linux/platform_device.h>
-@@ -1363,44 +1364,45 @@ static void byt_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	unsigned long flags;
- 	u32 old_val;
+@@ -1120,41 +1120,6 @@ static int byt_gpio_request(struct gpio_chip *chip, unsigned int offset)
+ 	return 0;
+ }
  
+-static int byt_irq_type(struct irq_data *d, unsigned type)
+-{
+-	struct byt_gpio *vg = gpiochip_get_data(irq_data_get_irq_chip_data(d));
+-	u32 offset = irqd_to_hwirq(d);
+-	u32 value;
+-	unsigned long flags;
+-	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
+-
+-	if (offset >= vg->chip.ngpio)
+-		return -EINVAL;
+-
 -	raw_spin_lock_irqsave(&vg->lock, flags);
+-	value = readl(reg);
+-
+-	WARN(value & BYT_DIRECT_IRQ_EN,
+-	     "Bad pad config for io mode, force direct_irq_en bit clearing");
+-
+-	/* For level trigges the BYT_TRIG_POS and BYT_TRIG_NEG bits
+-	 * are used to indicate high and low level triggering
+-	 */
+-	value &= ~(BYT_DIRECT_IRQ_EN | BYT_TRIG_POS | BYT_TRIG_NEG |
+-		   BYT_TRIG_LVL);
+-
+-	writel(value, reg);
+-
+-	if (type & IRQ_TYPE_EDGE_BOTH)
+-		irq_set_handler_locked(d, handle_edge_irq);
+-	else if (type & IRQ_TYPE_LEVEL_MASK)
+-		irq_set_handler_locked(d, handle_level_irq);
+-
+-	raw_spin_unlock_irqrestore(&vg->lock, flags);
+-
+-	return 0;
+-}
+-
+ static void byt_get_pull_strength(u32 reg, u16 *strength)
+ {
+ 	switch (reg & BYT_PULL_STR_MASK) {
+@@ -1565,12 +1530,23 @@ static void byt_irq_ack(struct irq_data *d)
+ 	unsigned offset = irqd_to_hwirq(d);
+ 	void __iomem *reg;
+ 
+-	raw_spin_lock(&vg->lock);
+ 	reg = byt_gpio_reg(vg, offset, BYT_INT_STAT_REG);
++	if (!reg)
++		return;
++
++	raw_spin_lock(&vg->lock);
+ 	writel(BIT(offset % 32), reg);
+ 	raw_spin_unlock(&vg->lock);
+ }
+ 
++static void byt_irq_mask(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct byt_gpio *vg = gpiochip_get_data(gc);
++
++	byt_gpio_clear_triggering(vg, irqd_to_hwirq(d));
++}
++
+ static void byt_irq_unmask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+@@ -1581,6 +1557,8 @@ static void byt_irq_unmask(struct irq_data *d)
+ 	u32 value;
+ 
+ 	reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
 +	if (!reg)
 +		return;
  
-+	raw_spin_lock_irqsave(&vg->lock, flags);
- 	old_val = readl(reg);
--
- 	if (value)
- 		writel(old_val | BYT_LEVEL, reg);
- 	else
- 		writel(old_val & ~BYT_LEVEL, reg);
--
+ 	raw_spin_lock_irqsave(&vg->lock, flags);
+ 	value = readl(reg);
+@@ -1606,21 +1584,48 @@ static void byt_irq_unmask(struct irq_data *d)
  	raw_spin_unlock_irqrestore(&vg->lock, flags);
  }
  
--static int byt_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
-+static int byt_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+-static void byt_irq_mask(struct irq_data *d)
++static int byt_irq_type(struct irq_data *d, unsigned int type)
  {
- 	struct byt_gpio *vg = gpiochip_get_data(chip);
- 	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
- 	unsigned long flags;
- 	u32 value;
+-	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct byt_gpio *vg = gpiochip_get_data(gc);
++	struct byt_gpio *vg = gpiochip_get_data(irq_data_get_irq_chip_data(d));
++	u32 offset = irqd_to_hwirq(d);
++	u32 value;
++	unsigned long flags;
++	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
  
--	raw_spin_lock_irqsave(&vg->lock, flags);
--
--	value = readl(reg) | BYT_DIR_MASK;
--	value &= ~BYT_INPUT_EN;		/* active low */
--	writel(value, reg);
-+	if (!reg)
+-	byt_gpio_clear_triggering(vg, irqd_to_hwirq(d));
++	if (!reg || offset >= vg->chip.ngpio)
 +		return -EINVAL;
- 
++
 +	raw_spin_lock_irqsave(&vg->lock, flags);
 +	value = readl(reg);
- 	raw_spin_unlock_irqrestore(&vg->lock, flags);
- 
--	return 0;
-+	if (!(value & BYT_OUTPUT_EN))
-+		return GPIOF_DIR_OUT;
-+	if (!(value & BYT_INPUT_EN))
-+		return GPIOF_DIR_IN;
 +
-+	return -EINVAL;
++	WARN(value & BYT_DIRECT_IRQ_EN,
++	     "Bad pad config for io mode, force direct_irq_en bit clearing");
++
++	/* For level trigges the BYT_TRIG_POS and BYT_TRIG_NEG bits
++	 * are used to indicate high and low level triggering
++	 */
++	value &= ~(BYT_DIRECT_IRQ_EN | BYT_TRIG_POS | BYT_TRIG_NEG |
++		   BYT_TRIG_LVL);
++
++	writel(value, reg);
++
++	if (type & IRQ_TYPE_EDGE_BOTH)
++		irq_set_handler_locked(d, handle_edge_irq);
++	else if (type & IRQ_TYPE_LEVEL_MASK)
++		irq_set_handler_locked(d, handle_level_irq);
++
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
++
++	return 0;
  }
  
--static int byt_gpio_direction_output(struct gpio_chip *chip,
--				     unsigned gpio, int value)
-+static int byt_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct byt_gpio *vg = gpiochip_get_data(chip);
--	void __iomem *conf_reg = byt_gpio_reg(vg, gpio, BYT_CONF0_REG);
--	void __iomem *reg = byt_gpio_reg(vg, gpio, BYT_VAL_REG);
-+	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
- 	unsigned long flags;
--	u32 reg_val;
+ static struct irq_chip byt_irqchip = {
+-	.name = "BYT-GPIO",
+-	.irq_ack = byt_irq_ack,
+-	.irq_mask = byt_irq_mask,
+-	.irq_unmask = byt_irq_unmask,
+-	.irq_set_type = byt_irq_type,
+-	.flags = IRQCHIP_SKIP_SET_WAKE,
++	.name		= "BYT-GPIO",
++	.irq_ack	= byt_irq_ack,
++	.irq_mask	= byt_irq_mask,
++	.irq_unmask	= byt_irq_unmask,
++	.irq_set_type	= byt_irq_type,
++	.flags		= IRQCHIP_SKIP_SET_WAKE,
+ };
  
- 	raw_spin_lock_irqsave(&vg->lock, flags);
- 
-@@ -1413,15 +1415,18 @@ static int byt_gpio_direction_output(struct gpio_chip *chip,
- 	WARN(readl(conf_reg) & BYT_DIRECT_IRQ_EN,
- 		"Potential Error: Setting GPIO with direct_irq_en to output");
- 
--	reg_val = readl(reg) | BYT_DIR_MASK;
--	reg_val &= ~(BYT_OUTPUT_EN | BYT_INPUT_EN);
-+	return pinctrl_gpio_direction_input(chip->base + offset);
-+}
- 
--	if (value)
--		writel(reg_val | BYT_LEVEL, reg);
--	else
--		writel(reg_val & ~BYT_LEVEL, reg);
-+static int byt_gpio_direction_output(struct gpio_chip *chip,
-+				     unsigned int offset, int value)
-+{
-+	int ret = pinctrl_gpio_direction_output(chip->base + offset);
- 
--	raw_spin_unlock_irqrestore(&vg->lock, flags);
-+	if (ret)
-+		return ret;
-+
-+	byt_gpio_set(chip, offset, value);
- 
- 	return 0;
- }
-@@ -1430,20 +1435,42 @@ static void byt_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- {
- 	struct byt_gpio *vg = gpiochip_get_data(chip);
- 	int i;
--	u32 conf0, val, offs;
-+	u32 conf0, val;
- 
--	for (i = 0; i < vg->chip.ngpio; i++) {
-+	for (i = 0; i < vg->soc_data->npins; i++) {
-+		const struct byt_community *comm;
- 		const char *pull_str = NULL;
- 		const char *pull = NULL;
-+		void __iomem *reg;
- 		unsigned long flags;
- 		const char *label;
--		offs = vg->range->pins[i] * 16;
-+		unsigned int pin;
- 
- 		raw_spin_lock_irqsave(&vg->lock, flags);
--		conf0 = readl(vg->reg_base + offs + BYT_CONF0_REG);
--		val = readl(vg->reg_base + offs + BYT_VAL_REG);
-+		pin = vg->soc_data->pins[i].number;
-+		reg = byt_gpio_reg(vg, pin, BYT_CONF0_REG);
-+		if (!reg) {
-+			seq_printf(s,
-+				   "Could not retrieve pin %i conf0 reg\n",
-+				   pin);
-+			continue;
-+		}
-+		conf0 = readl(reg);
-+
-+		reg = byt_gpio_reg(vg, pin, BYT_VAL_REG);
-+		if (!reg) {
-+			seq_printf(s,
-+				   "Could not retrieve pin %i val reg\n", pin);
-+		}
-+		val = readl(reg);
- 		raw_spin_unlock_irqrestore(&vg->lock, flags);
- 
-+		comm = byt_get_community(vg, pin);
-+		if (!comm) {
-+			seq_printf(s,
-+				   "Could not get community for pin %i\n", pin);
-+			continue;
-+		}
- 		label = gpiochip_is_requested(chip, i);
- 		if (!label)
- 			label = "Unrequested";
-@@ -1474,12 +1501,12 @@ static void byt_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 
- 		seq_printf(s,
- 			   " gpio-%-3d (%-20.20s) %s %s %s pad-%-3d offset:0x%03x mux:%d %s%s%s",
--			   i,
-+			   pin,
- 			   label,
- 			   val & BYT_INPUT_EN ? "  " : "in",
- 			   val & BYT_OUTPUT_EN ? "   " : "out",
- 			   val & BYT_LEVEL ? "hi" : "lo",
--			   vg->range->pins[i], offs,
-+			   comm->pad_map[i], comm->pad_map[i] * 32,
- 			   conf0 & 0x7,
- 			   conf0 & BYT_TRIG_NEG ? " fall" : "     ",
- 			   conf0 & BYT_TRIG_POS ? " rise" : "     ",
-@@ -1519,6 +1546,18 @@ static void byt_gpio_irq_handler(struct irq_desc *desc)
- 	chip->irq_eoi(data);
- }
- 
-+static const struct gpio_chip byt_gpio_chip = {
-+	.owner			= THIS_MODULE,
-+	.request		= gpiochip_generic_request,
-+	.free			= gpiochip_generic_free,
-+	.get_direction		= byt_gpio_get_direction,
-+	.direction_input	= byt_gpio_direction_input,
-+	.direction_output	= byt_gpio_direction_output,
-+	.get			= byt_gpio_get,
-+	.set			= byt_gpio_set,
-+	.dbg_show		= byt_gpio_dbg_show,
-+};
-+
- static void byt_irq_ack(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
 -- 
 1.9.1
-
