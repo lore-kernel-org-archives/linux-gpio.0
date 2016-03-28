@@ -1,31 +1,69 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH RFT] gpio: tpic2810: Make sure cached buffer has
- consistent status with h/w status
-Date: Mon, 28 Mar 2016 12:30:40 +0900
-Message-ID: <CAAVeFuJwbdZyO50yx4pV331=fa7iYV0PFXWHz9yxoxPJzXyH+w@mail.gmail.com>
-References: <1458733781.22226.3.camel@ingics.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: arm:collie_defconfig broken since commit ff2b135922 ("gpio: make the
+ gpiochip a real device")
+Date: Sun, 27 Mar 2016 22:03:53 -0700
+Message-ID: <56F8BB39.5010708@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f177.google.com ([209.85.223.177]:34458 "EHLO
-	mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753508AbcC1DbA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Mar 2016 23:31:00 -0400
-Received: by mail-io0-f177.google.com with SMTP id e3so51028324ioa.1
-        for <linux-gpio@vger.kernel.org>; Sun, 27 Mar 2016 20:31:00 -0700 (PDT)
-In-Reply-To: <1458733781.22226.3.camel@ingics.com>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:59293 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751724AbcC1FDx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Mar 2016 01:03:53 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "Andrew F. Davis" <afd@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-On Wed, Mar 23, 2016 at 8:49 PM, Axel Lin <axel.lin@ingics.com> wrote:
-> i2c_smbus_write_byte_data() can fail. To ensure the cached buffer has
-> consistent status with h/w status, don't update the cached gpio->buffer
-> if write fails.
-> Also refactor the code a bit by adding a tpic2810_set_mask_bits() helper
-> and use it to simplify the code.
+Hi,
 
-Looks pretty good!
+arm:collie_defconfig is broken since commit ff2b135922 ("gpio: make the gpiochip a real device").
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Test is quite simple:
+
+Build arm:collie_defconfig, run with
+	qemu-system-arm -M collie -kernel arch/arm/boot/zImage --append "console=ttySA1" -monitor null -nographic
+
+Prior to the above commit, there is console output (the image crashes because it
+doesn't have a root file system, but that is irrelevant). After the commit, the
+console is silent.
+
+Let me know if I can do anything to help tracking down the problem.
+
+Thanks,
+Guenter
+
+---
+Bisect log:
+
+# bad: [f55532a0c0b8bb6148f4e07853b876ef73bc69ca] Linux 4.6-rc1
+# good: [b562e44f507e863c6792946e4e1b1449fbbac85d] Linux 4.5
+git bisect start 'HEAD' 'v4.5'
+# bad: [6b5f04b6cf8ebab9a65d9c0026c650bb2538fd0f] Merge branch 'for-4.6' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup
+git bisect bad 6b5f04b6cf8ebab9a65d9c0026c650bb2538fd0f
+# good: [96b9b1c95660d4bc5510c5d798d3817ae9f0b391] Merge tag 'tty-4.6-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty
+git bisect good 96b9b1c95660d4bc5510c5d798d3817ae9f0b391
+# good: [18f038e6bfb715310526ac05e4f20e55683471de] staging: dgnc: cleanup properly
+git bisect good 18f038e6bfb715310526ac05e4f20e55683471de
+# bad: [10fdfee7f7fd8d4a6a8455ac4c9fbbc51d79b9f7] Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input
+git bisect bad 10fdfee7f7fd8d4a6a8455ac4c9fbbc51d79b9f7
+# good: [3d15cfdb1b77536c205d8e49c0312219ddf162ec] Merge tag 'linux-kselftest-4.6-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest
+git bisect good 3d15cfdb1b77536c205d8e49c0312219ddf162ec
+# bad: [ccbd805aa934dd1b863ef115a9c55f119b2388cf] Revert "Share upstreaming patches"
+git bisect bad ccbd805aa934dd1b863ef115a9c55f119b2388cf
+# bad: [db303a9053c8a81717cb6497f4cf63b773b21ca8] gpio: arizona: Use devm_gpiochip_add_data() for gpio registration
+git bisect bad db303a9053c8a81717cb6497f4cf63b773b21ca8
+# bad: [ed07247dbf5b0a23b0289c9e8e4a2ceb9b8f2e9d] gpio: Remove unused asm/gpio.h files
+git bisect bad ed07247dbf5b0a23b0289c9e8e4a2ceb9b8f2e9d
+# bad: [2f890cf0dfe421ecd2095d8cabb89e7207b499ee] gpio: ath79: Make the driver removable
+git bisect bad 2f890cf0dfe421ecd2095d8cabb89e7207b499ee
+# good: [daec0beda6fd7a741e4381741b3f7ff15970fdf6] Merge branch 'error-return-from-get' into devel
+git bisect good daec0beda6fd7a741e4381741b3f7ff15970fdf6
+# bad: [40c159b776f882f2e2cbe20c9e29832841e5c0f9] gpio: add a userspace character device ABI
+git bisect bad 40c159b776f882f2e2cbe20c9e29832841e5c0f9
+# bad: [34ffd85d9c46cde3dc987cac82bff370a937ac4b] gpio: refer to gpio device in prints and debugfs
+git bisect bad 34ffd85d9c46cde3dc987cac82bff370a937ac4b
+# bad: [ff2b1359229927563addbf2f5ad480660c350903] gpio: make the gpiochip a real device
+git bisect bad ff2b1359229927563addbf2f5ad480660c350903
+# first bad commit: [ff2b1359229927563addbf2f5ad480660c350903] gpio: make the gpiochip a real device
