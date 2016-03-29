@@ -1,71 +1,38 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [RFC] pinctrl: sh-pfc: only use dummy states for non-DT platforms
-Date: Tue, 29 Mar 2016 13:48:01 +0800
-Message-ID: <20160329054801.GB28207@tiger>
-References: <1457376072-755-1-git-send-email-wsa@the-dreams.de>
- <CAMuHMdXPH0+YE=cRk7pjvoVEYtEGNcb_83-z5taXSLHRhtgMQA@mail.gmail.com>
- <56DDDE6E.6090908@cogentembedded.com>
- <CAMuHMdWis_knSv0Lgw+8O3LXp9thEX3SdGX6qo_4UyFrxFVuHA@mail.gmail.com>
- <56DDE5CB.60204@cogentembedded.com>
- <CAMuHMdUVFk47u+LPdfh+fq8vvPQAULyM8X_DrizCtrgf-1YwaA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUVFk47u+LPdfh+fq8vvPQAULyM8X_DrizCtrgf-1YwaA@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Sascha Hauer <kernel@pengutronix.de>
+From: Yong Li <sdliyong@gmail.com>
+Subject: [PATCH] gpio: pca953x: Use correct u16 value for register word write
+Date: Tue, 29 Mar 2016 14:27:32 +0800
+Message-ID: <1459232852-15697-1-git-send-email-sdliyong@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga14.intel.com ([192.55.52.115]:56943 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751041AbcC2Gbk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 29 Mar 2016 02:31:40 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: sdliyong@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Mar 07, 2016 at 10:00:37PM +0100, Geert Uytterhoeven wrote:
-> CC Shawn, Sascha for imx1
+The current implementation only uses the first byte in *val,
+the second data is always 0. Change it to *(u16 *)val
+to write the two bytes into the register
 
-Sorry for the late response.
+Signed-off-by: Yong Li <sdliyong@gmail.com>
+---
+ drivers/gpio/gpio-pca953x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> On Mon, Mar 7, 2016 at 9:34 PM, Sergei Shtylyov
-> <sergei.shtylyov@cogentembedded.com> wrote:
-> > On 03/07/2016 11:29 PM, Geert Uytterhoeven wrote:
-> >
-> >>>>> --- a/drivers/pinctrl/sh-pfc/core.c
-> >>>>> +++ b/drivers/pinctrl/sh-pfc/core.c
-> >>>>> @@ -545,7 +545,9 @@ static int sh_pfc_probe(struct platform_device
-> >>>>> *pdev)
-> >>>>>                           return ret;
-> >>>>>           }
-> >>>>>
-> >>>>> -       pinctrl_provide_dummies();
-> >>>>> +       /* Enable dummy states for those platforms without pinctrl
-> >>>>> support */
-> >>>>> +       if (!of_have_populated_dt())
-> >>>
-> >>>
-> >>>     I'd considered this condition -- it won't fly on SH where
-> >>> CONFIG_OF=n,
-> >>> the kernel just won't build IIUC...
-> >>
-> >>
-> >> I haven't tried to compile it yet, but <linux/of.h> does provide a dummy
-> >> that
-> >> returns false.
-> >
-> >
-> >    Oops, indeed. I missed it. :-(
-> >    This approach is better then, won't have to fix again whenever SH gets DT
-> > support.
-> 
-> Perhaps the of_have_populated_dt() check should be moved inside
-> pinctrl_provide_dummies()?
-> 
-> Besides omap2, which has its own check, the only other user is imx1.
-> Does imx1 (still) needs this on DT-based platforms?
-> 
-> (Context for Shawn and Sascha:
->  http://article.gmane.org/gmane.linux.kernel.renesas-soc/1639)
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index d0d3065..cf3d410 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -159,7 +159,7 @@ static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
+ 		switch (chip->chip_type) {
+ 		case PCA953X_TYPE:
+ 			ret = i2c_smbus_write_word_data(chip->client,
+-							reg << 1, (u16) *val);
++							reg << 1, *(u16 *)val);
+ 			break;
+ 		case PCA957X_TYPE:
+ 			ret = i2c_smbus_write_byte_data(chip->client, reg << 1,
+-- 
+2.1.4
 
-pinctrl_provide_dummies() is only used on a few legacy i.MX platforms
-for non-DT boot, so it should be safe to move the check inside the
-function from i.MX view.
-
-Shawn
