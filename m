@@ -1,71 +1,28 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH] gpio: Do not accept gpio chip additions before gpiolib initialization
-Date: Tue, 29 Mar 2016 11:20:38 -0700
-Message-ID: <1459275638-11717-1-git-send-email-linux@roeck-us.net>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:43173 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751595AbcC2SUk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Mar 2016 14:20:40 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
+Subject: [RFC] Addition of Altera Arria10 System Resource Chip
+Date: Tue, 29 Mar 2016 14:13:03 -0500
+Message-ID: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jdelvare-IBi9RG/b67k@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawell.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, dinguyen-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-hwmon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
 
-Since commit ff2b13592299 ("gpio: make the gpiochip a real device"),
-attempts to add a gpio chip prior to gpiolib initialization cause the
-system to crash. Dump a warning to the console and return an error
-if the situation is encountered.
+The Altera Arria10 Development Kit includes a system resource chip
+that fits under the Multi-Function Device framework. The chip has
+hardware monitoring functions and a GPIO expander over the SPI bus.
 
-Fixes: ff2b13592299 ("gpio: make the gpiochip a real device")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- drivers/gpio/gpiolib.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 72065532c1c7..ac66219f0611 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -68,6 +68,7 @@ LIST_HEAD(gpio_devices);
- static void gpiochip_free_hogs(struct gpio_chip *chip);
- static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
- 
-+static bool gpiolib_initialized;
- 
- static inline void desc_set_label(struct gpio_desc *d, const char *label)
- {
-@@ -457,6 +458,9 @@ static void gpiodevice_release(struct device *dev)
-  * the gpio framework's arch_initcall().  Otherwise sysfs initialization
-  * for GPIOs will fail rudely.
-  *
-+ * gpiochip_add_data() must only be called after gpiolib initialization,
-+ * ie after core_initcall().
-+ *
-  * If chip->base is negative, this requests dynamic assignment of
-  * a range of valid GPIOs.
-  */
-@@ -468,6 +472,11 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 	int		base = chip->base;
- 	struct gpio_device *gdev;
- 
-+	if (!gpiolib_initialized) {
-+		WARN(1, "gpiolib not initialized\n");
-+		return -EPROBE_DEFER;
-+	}
-+
- 	/*
- 	 * First: allocate and populate the internal stat container, and
- 	 * set up the struct device.
-@@ -2829,6 +2838,8 @@ static int __init gpiolib_dev_init(void)
- 	if (ret < 0) {
- 		pr_err("gpiolib: failed to allocate char dev region\n");
- 		bus_unregister(&gpio_bus_type);
-+	} else {
-+		gpiolib_initialized = true;
- 	}
- 	return ret;
- }
--- 
-2.5.0
-
+[RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource Chip
+[RFC 2/8] MAINTAINERS: Addition of Altera Arria10 System Resource
+[RFC 3/8] mfd: altr_a10sr: Add Altera Arria10 DevKit System Resource
+[RFC 4/8] gpio: altera-a10sr: Add A10 System Resource Chip GPIO
+[RFC 5/8] ARM: socfpga: dts: Add Devkit A10-SR fields for Arria10
+[RFC 6/8] ARM: socfpga: dts: Add LED framework to A10-SR GPIO
+[RFC 7/8] hwmon: Altera Arria10 System Resource Chip - HW Monitor
+[RFC 8/8] ARM: socfpga: dts: Add Devkit Arria10-SR HWMON
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
