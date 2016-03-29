@@ -1,63 +1,53 @@
-From: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Subject: [PATCH RESEND 2/2] ARM: dts: enable pinctrl for Broadcom NS2 SoC
-Date: Tue, 29 Mar 2016 11:22:12 -0400
-Message-ID: <1459264932-27884-3-git-send-email-yendapally.reddy@broadcom.com>
-References: <1459264932-27884-1-git-send-email-yendapally.reddy@broadcom.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1459264932-27884-1-git-send-email-yendapally.reddy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Pramod Kumar <pramodku-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+From: Alan Tull <delicious.quinoa@gmail.com>
+Subject: Re: [PATCH v6 1/2] gpio: dwapb: convert device node to fwnode
+Date: Tue, 29 Mar 2016 11:30:50 -0500
+Message-ID: <CANk1AXT5yHMwPJ7=0kSZKr+eHHdC1QXQVgstQ6QhFbUPSKuD+A@mail.gmail.com>
+References: <1458959496-57455-1-git-send-email-qiujiang@huawei.com>
+	<1458959496-57455-2-git-send-email-qiujiang@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1458959496-57455-2-git-send-email-qiujiang@huawei.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: qiujiang <qiujiang@huawei.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Jamie Iles <jamie@jamieiles.com>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com, atull <atull@opensource.altera.com>
 List-Id: linux-gpio@vger.kernel.org
 
-This enables the pinctrl support for Broadcom NS2 SoC
+On Fri, Mar 25, 2016 at 9:31 PM, qiujiang <qiujiang@huawei.com> wrote:
 
-Signed-off-by: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Reviewed-by: Ray Jui <ray.jui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
----
- arch/arm64/boot/dts/broadcom/ns2-svk.dts | 9 +++++++++
- arch/arm64/boot/dts/broadcom/ns2.dtsi    | 7 +++++++
- 2 files changed, 16 insertions(+)
+> -               if (pp->idx == 0 &&
+> -                   of_property_read_bool(port_np, "interrupt-controller")) {
+> -                       pp->irq = irq_of_parse_and_map(port_np, 0);
+> +               if (dev->of_node && pp->idx == 0 &&
+> +                       fwnode_property_read_bool(fwnode,
+> +                                                 "interrupt-controller")) {
+> +                       pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
+>                         if (!pp->irq) {
+>                                 dev_warn(dev, "no irq for bank %s\n",
+> -                                        port_np->full_name);
+> +                                        to_of_node(fwnode)->full_name);
+>                         }
+>                 }
+>
+>                 pp->irq_shared  = false;
+>                 pp->gpio_base   = -1;
+> -               pp->name        = port_np->full_name;
+> +               if (dev->of_node)
+> +                       pp->name = to_of_node(fwnode)->full_name;
 
-diff --git a/arch/arm64/boot/dts/broadcom/ns2-svk.dts b/arch/arm64/boot/dts/broadcom/ns2-svk.dts
-index ce0ab84..2c98d76 100644
---- a/arch/arm64/boot/dts/broadcom/ns2-svk.dts
-+++ b/arch/arm64/boot/dts/broadcom/ns2-svk.dts
-@@ -87,3 +87,12 @@
- 		#size-cells = <1>;
- 	};
- };
-+
-+&pinctrl {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&nand_sel>;
-+	nand_sel: nand_sel {
-+		function = "nand";
-+		groups = "nand_grp";
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/broadcom/ns2.dtsi b/arch/arm64/boot/dts/broadcom/ns2.dtsi
-index 6f81c9d..e263ade3 100644
---- a/arch/arm64/boot/dts/broadcom/ns2.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/ns2.dtsi
-@@ -308,6 +308,13 @@
- 					     "chimp", "port", "sdio";
- 		};
- 
-+		pinctrl: pinctrl@6501d130 {
-+			compatible = "brcm,ns2-pinmux";
-+			reg = <0x6501d130 0x08>,
-+			      <0x660a0028 0x04>,
-+			      <0x660009b0 0x40>;
-+		};
-+
- 		crmu: crmu@65024000 {
- 			compatible = "syscon";
- 			reg = <0x65024000 0x100>;
--- 
-2.1.0
+Hi Jiang,
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I tested lightly on a CycloneV and it worked fine (with device tree).
+
+One suggestion for both patches: you could remove name from struct
+dwapb_port_property and get rid of pp->name and nobody would miss it.
+All it is used for is some dev_err's so the device info gets printed
+anyway.  For example (if I leave the irq out of the DT)
+
+gpio-dwapb ff708000.gpio: no irq for bank /soc/gpio@ff708000/gpio-controller@0
+
+is redundant.  The only additional info here from the name is the port
+index.  That could be added to the messages without having to get the
+name through the two property/of methods.
+
+Alan
