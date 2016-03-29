@@ -1,70 +1,71 @@
-From: Martin Langhoff <martin.langhoff@gmail.com>
-Subject: Re: Diagnosing ACPI trouble related to pinctr_cherryview on 4.4.x
-Date: Mon, 28 Mar 2016 16:57:04 -0400
-Message-ID: <CACPiFC+7m_ePr59M=upxsjXF1f0Z8uLcOiy58DDCcOpOA-rhyA@mail.gmail.com>
-References: <CACPiFCKv=QJ0t5e=9Wm4cC4Spynx-tVCiabL7AcbcOkp_w47fQ@mail.gmail.com>
- <20160322152218.GA2099@lahna.fi.intel.com> <CACPiFC+hDF0+9vPCrhvo079E6RCVVmZXTS1ziS-jHAAZJQ+wNg@mail.gmail.com>
- <20160322154950.GB2099@lahna.fi.intel.com> <CACPiFCKS-8re6g1Zbhs8N9D_tDMENqXPeNGRS_0dU6tzz50T8A@mail.gmail.com>
- <20160322162222.GF2099@lahna.fi.intel.com> <CACPiFCKD_Nwut=GL-xOU5gN2k8Na7pFWdhsms85QsDTvvREJLw@mail.gmail.com>
- <1458668165.5907.28.camel@linux.intel.com> <CACPiFC+_TpiFFm+hYJd1tX4AnadxSj_KKOtDALjSj0_c8Qa2pA@mail.gmail.com>
- <20160323112532.GK2099@lahna.fi.intel.com> <CACPiFCJg0dx+zFnybtMBKH3jKrMQgwpfiD9Q8YhvpvC6YW68Yg@mail.gmail.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [RFC] pinctrl: sh-pfc: only use dummy states for non-DT platforms
+Date: Tue, 29 Mar 2016 13:48:01 +0800
+Message-ID: <20160329054801.GB28207@tiger>
+References: <1457376072-755-1-git-send-email-wsa@the-dreams.de>
+ <CAMuHMdXPH0+YE=cRk7pjvoVEYtEGNcb_83-z5taXSLHRhtgMQA@mail.gmail.com>
+ <56DDDE6E.6090908@cogentembedded.com>
+ <CAMuHMdWis_knSv0Lgw+8O3LXp9thEX3SdGX6qo_4UyFrxFVuHA@mail.gmail.com>
+ <56DDE5CB.60204@cogentembedded.com>
+ <CAMuHMdUVFk47u+LPdfh+fq8vvPQAULyM8X_DrizCtrgf-1YwaA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:33358 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752562AbcC1U5Y (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Mar 2016 16:57:24 -0400
-Received: by mail-oi0-f46.google.com with SMTP id d205so186951262oia.0
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Mar 2016 13:57:24 -0700 (PDT)
-In-Reply-To: <CACPiFCJg0dx+zFnybtMBKH3jKrMQgwpfiD9Q8YhvpvC6YW68Yg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUVFk47u+LPdfh+fq8vvPQAULyM8X_DrizCtrgf-1YwaA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Sascha Hauer <kernel@pengutronix.de>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-Took a few days but managed to get my hands on the laptop again.
+On Mon, Mar 07, 2016 at 10:00:37PM +0100, Geert Uytterhoeven wrote:
+> CC Shawn, Sascha for imx1
 
-A kernel built with CONFIG_X86_INTEL_LPSS=n boots with noapic in the
-cmdline. Somehow during the build all the PINCTRL options in the
-kernel got switched off, perhaps they depend on X86_INTEL_LPSS?
+Sorry for the late response.
 
-If I don't add noapic, we crash during boot.
+> 
+> On Mon, Mar 7, 2016 at 9:34 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > On 03/07/2016 11:29 PM, Geert Uytterhoeven wrote:
+> >
+> >>>>> --- a/drivers/pinctrl/sh-pfc/core.c
+> >>>>> +++ b/drivers/pinctrl/sh-pfc/core.c
+> >>>>> @@ -545,7 +545,9 @@ static int sh_pfc_probe(struct platform_device
+> >>>>> *pdev)
+> >>>>>                           return ret;
+> >>>>>           }
+> >>>>>
+> >>>>> -       pinctrl_provide_dummies();
+> >>>>> +       /* Enable dummy states for those platforms without pinctrl
+> >>>>> support */
+> >>>>> +       if (!of_have_populated_dt())
+> >>>
+> >>>
+> >>>     I'd considered this condition -- it won't fly on SH where
+> >>> CONFIG_OF=n,
+> >>> the kernel just won't build IIUC...
+> >>
+> >>
+> >> I haven't tried to compile it yet, but <linux/of.h> does provide a dummy
+> >> that
+> >> returns false.
+> >
+> >
+> >    Oops, indeed. I missed it. :-(
+> >    This approach is better then, won't have to fix again whenever SH gets DT
+> > support.
+> 
+> Perhaps the of_have_populated_dt() check should be moved inside
+> pinctrl_provide_dummies()?
+> 
+> Besides omap2, which has its own check, the only other user is imx1.
+> Does imx1 (still) needs this on DT-based platforms?
+> 
+> (Context for Shawn and Sascha:
+>  http://article.gmane.org/gmane.linux.kernel.renesas-soc/1639)
 
-I'm about to lose access to this laptop as I am traveling back home,
-leaving it with its new owner...
+pinctrl_provide_dummies() is only used on a few legacy i.MX platforms
+for non-DT boot, so it should be safe to move the check inside the
+function from i.MX view.
 
-cheers,
-
-
-martin
-
-On Wed, Mar 23, 2016 at 9:26 AM, Martin Langhoff
-<martin.langhoff@gmail.com> wrote:
-> On Wed, Mar 23, 2016 at 7:25 AM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
->> intel_lpss_* is actually different thing than setting
->>
->> CONFIG_X86_INTEL_LPSS=n
->>
->> which I suggest you try as well (you can't blacklist that).
->
-> Good catch, ok will give it a shot. Will be tomorrow.
->
-> cheers,
->
->
-> m
-> --
->  martin.langhoff@gmail.com
->  -  ask interesting questions
->  - don't get distracted with shiny stuff  - working code first
->  ~ http://docs.moodle.org/en/User:Martin_Langhoff
-
-
-
--- 
- martin.langhoff@gmail.com
- -  ask interesting questions
- - don't get distracted with shiny stuff  - working code first
- ~ http://docs.moodle.org/en/User:Martin_Langhoff
+Shawn
