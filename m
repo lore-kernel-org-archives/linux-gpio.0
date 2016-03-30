@@ -1,52 +1,92 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v2 0/6] Add pinctrl support for Baytrail
-Date: Wed, 30 Mar 2016 17:45:03 +0300
-Message-ID: <20160330144503.GY2099@lahna.fi.intel.com>
-References: <1459171780-24856-1-git-send-email-cristina.ciocan@intel.com>
+From: Thor Thayer <tthayer@opensource.altera.com>
+Subject: Re: [RFC 3/8] mfd: altr_a10sr: Add Altera Arria10 DevKit System
+ Resource Chip
+Date: Wed, 30 Mar 2016 09:52:25 -0500
+Message-ID: <56FBE829.2000607@opensource.altera.com>
+References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
+ <1459278791-3646-4-git-send-email-tthayer@opensource.altera.com>
+ <20160330115106.GJ3323@x1>
+Reply-To: <tthayer@opensource.altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:29615 "EHLO mga04.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751631AbcC3OpK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 30 Mar 2016 10:45:10 -0400
-Content-Disposition: inline
-In-Reply-To: <1459171780-24856-1-git-send-email-cristina.ciocan@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-hwmon-owner@vger.kernel.org>
+In-Reply-To: <20160330115106.GJ3323@x1>
+Sender: linux-hwmon-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org, pawell.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Cristina Ciocan <cristina.ciocan@intel.com>
-Cc: mathias.nyman@linux.intel.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com
 
-On Mon, Mar 28, 2016 at 04:29:34PM +0300, Cristina Ciocan wrote:
-> Add support for pin control (pin muxing and pin configuration) for Baytrail
-> platform.
-> 
-> It follows the design in pinctrl-intel.c, but could not use the
-> implementation in pinctrl-intel since there were significant differences:
-> 	- gpio pin pads are not ordered
-> 	- per group functions: for setting a certain mode, there are groups
-> 	that need setting pins with different values; for instance, for
-> 	setting USB ULPI pins to GPIO function, pin 2 (GPIO_SUS1) needs
-> 	to be set to function 1, wihle all other from the group need to be
-> 	set to 0
-> 	- communities only need pin base and count as specific data
-> 	- irq set type only clears all flags, while the actual type setting
-> 	is made in the byt_irq_unmask function, which does not comply with
-> 	the intel pinctrl implementation
-> 
-> Changes from v1:
-> 	- fix reg, reg_val and byt_soc_data not used variables warnings
-> 
-> Cristina Ciocan (6):
->   pinctrl: baytrail: Add pin control data structures
->   pinctrl: baytrail: Add pin control operations
->   pinctrl: baytrail: Update gpio chip operations
->   pinctrl: baytrail: Update irq chip operations
->   pinctrl: baytrail: Register pin control handling
->   pinctrl: baytrail: Add debounce configuration
+Hi Lee,
 
-Apart of the pin naming I commented, this patch series finally
-brings real pinctrl support to the misnamed baytrail GPIO driver which
-is definitely the right thing to do :)
+On 03/30/2016 06:51 AM, Lee Jones wrote:
+> On Tue, 29 Mar 2016, tthayer@opensource.altera.com wrote:
+>
+>> From: Thor Thayer <tthayer@opensource.altera.com>
+>>
+>> Add support for the Altera Arria10 Development Kit System Resource
+>> chip which is implemented using a MAX5 as a external gpio extender,
+>> and hardware monitor with the regmap framework over a SPI bus.
+>>
+>> Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
+>> ---
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+[...]
+
+>> index 0000000..13665d4
+>> --- /dev/null
+>> +++ b/drivers/mfd/altera-a10sr.c
+>> @@ -0,0 +1,177 @@
+>> +/*
+>> + * Copyright Altera Corporation (C) 2014-2016. All Rights Reserved
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify it
+>> + * under the terms and conditions of the GNU General Public License,
+>> + * version 2, as published by the Free Software Foundation.
+>> + *
+>> + * This program is distributed in the hope it will be useful, but WITHOUT
+>> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+>> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+>> + * more details.
+>> + *
+>> + * You should have received a copy of the GNU General Public License along with
+>> + * this program.  If not, see <http://www.gnu.org/licenses/>.
+>
+> Any chance you can use the shorter copyright header?
+>
+
+This is the header that Altera has specified and that we're operating 
+under. We haven't received guidance on Intel's header yet but it may 
+change as a result of our acquisition by Intel.
+
+[...]
+
+>> +
+>> +	/*
+>> +	 * We can't use the standard regmap_update_bits function because
+>> +	 * the read register has a different address than the write register.
+>> +	 * Therefore, just do a read, modify, write operation here.
+>> +	 */
+>> +	ret = regmap_read(a10sr->regmap, (reg | READ_REG_MASK), &rval);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	rval = ((rval & ~bit_mask) | (reg_val & bit_mask));
+>> +
+>> +	ret = regmap_write(a10sr->regmap, (reg & WRITE_REG_MASK), rval);
+>> +
+>> +	return ret;
+>> +}
+>
+> Why can't you use the Regmap update function(s)?
+
+The read register has a different address than the write register which 
+is handled in this function with the masks (read address is odd, write 
+address is even).
+
+Thank you for the review of my patch set. I will implement the changes 
+that you pointed out. Thank you for reviewing!
+
+>
+>> +#endif /* __MFD_ALTERA_A10SR_H */
+>
