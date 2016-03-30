@@ -1,52 +1,59 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v6 2/2] gpio: dwapb: add gpio-signaled acpi event support
-Date: Wed, 30 Mar 2016 14:41:29 +0300
-Message-ID: <CAHp75VcRkwDm60b7PTJmYmPVX7iNoLFL_pcx5qUK8=E7zMyKtw@mail.gmail.com>
-References: <1458959496-57455-1-git-send-email-qiujiang@huawei.com>
-	<1458959496-57455-3-git-send-email-qiujiang@huawei.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2 1/6] pinctrl: baytrail: Add pin control data structures
+Date: Wed, 30 Mar 2016 14:42:43 +0300
+Message-ID: <20160330114243.GT2099@lahna.fi.intel.com>
+References: <1459171780-24856-1-git-send-email-cristina.ciocan@intel.com>
+ <1459171780-24856-2-git-send-email-cristina.ciocan@intel.com>
+ <20160330111501.GS2099@lahna.fi.intel.com>
+ <56FBB993.9030905@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:32985 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751404AbcC3Lla (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Mar 2016 07:41:30 -0400
-In-Reply-To: <1458959496-57455-3-git-send-email-qiujiang@huawei.com>
+Received: from mga02.intel.com ([134.134.136.20]:4763 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751404AbcC3Lms (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 30 Mar 2016 07:42:48 -0400
+Content-Disposition: inline
+In-Reply-To: <56FBB993.9030905@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: qiujiang <qiujiang@huawei.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Alan Tull <delicious.quinoa@gmail.com>, Jamie Iles <jamie@jamieiles.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
+To: Cristina Ciocan <cristina.ciocan@intel.com>
+Cc: mathias.nyman@linux.intel.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com
 
-On Sat, Mar 26, 2016 at 4:31 AM, qiujiang <qiujiang@huawei.com> wrote:
-> This patch adds gpio-signaled acpi event support. It is used for
-> power button on hisilicon D02 board, an arm64 platform.
+On Wed, Mar 30, 2016 at 02:33:39PM +0300, Cristina Ciocan wrote:
+> On 30.03.2016 14:15, Mika Westerberg wrote:
+> > On Mon, Mar 28, 2016 at 04:29:35PM +0300, Cristina Ciocan wrote:
+> >> +/* SCORE pins */
+> >> +static const struct pinctrl_pin_desc byt_score_pins[] = {
+> >> +	PINCTRL_PIN(0, "SATA_GP[0]"),		/* GPIOC_0 */
+> >> +	PINCTRL_PIN(1, "SATA_GP[1]"),		/* GPIOC_1 */
+> > 
+> > Maybe we should call these "SATA_GP0" and "SATA_GP1" like we do in other
+> > Intel pinctrl drivers?
+> 
+> The names are directly taken form the public datasheet found at:
+> http://www.intel.com/content/www/us/en/embedded/products/bay-trail/atom-e3800-family-datasheet.html,
+> section 10.3, Ball Name and Function by Location.
+> 
+> I kept those names, even though they are not always pretty, so that teh
+> pins can be easily identified if someone searches them in the datasheet
+> for extra information.
 
-Yes, looks good, my tag stays.
+Well, I think it is not too hard to find out that SATA_GP0 matches
+SATA_GP[0] in the datasheet ;-)
 
-> @@ -502,10 +509,17 @@ dwapb_gpio_get_pdata(struct device *dev)
->                         }
->                 }
->
-> +               if (has_acpi_companion(dev) && pp->idx == 0)
-> +                       pp->irq = platform_get_irq(to_platform_device(dev), 0);
-> +
+> > Also I don't think /* GPIOC_1 */ is really useful comment as that can be
+> > derived already from the pin number.
+> 
+> The issue here is that pins are not referenced by the same name in the
+> datasheet. In the above mentioned section (10.3), south core pins are
+> GPIO_S0_SC[<pin_number>], whereas in the GPIO section (39) they are
+> referenced as GPIOC_<pin_number>. I added the comments for the same
+> reasoning as above, easy search for datasheet-driver pin matching.
 
->                 pp->irq_shared  = false;
->                 pp->gpio_base   = -1;
+And the <pin_number> in both cases is the same.
 
+> If this is not an issue, I can change both names and comments.
 
-> +
->                 if (dev->of_node)
->                         pp->name = to_of_node(fwnode)->full_name;
-
-This change doesn't belong the patch, though it should gone with the
-two lines of pp->name assignment as per Alan's suggestion to get rid
-of pp->name completely.
-
-> +
-> +               if (has_acpi_companion(dev))
-> +                       pp->name = acpi_dev_name(to_acpi_device_node(fwnode));
-
--- 
-With Best Regards,
-Andy Shevchenko
+I'm fine either way. Just wanted to mention because other Intel pinctrl
+drivers use slightly different naming.
