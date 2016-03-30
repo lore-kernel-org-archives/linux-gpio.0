@@ -1,117 +1,52 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RFC 3/8] mfd: altr_a10sr: Add Altera Arria10 DevKit System
- Resource Chip
-Date: Wed, 30 Mar 2016 15:52:39 +0100
-Message-ID: <20160330145239.GM3323@x1>
-References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
- <1459278791-3646-4-git-send-email-tthayer@opensource.altera.com>
- <20160330115106.GJ3323@x1>
- <56FBE829.2000607@opensource.altera.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Cristina Ciocan <cristina.ciocan@intel.com>
+Subject: [PATCH v3 0/6] Add pinctrl support for Baytrail
+Date: Wed, 30 Mar 2016 18:05:29 +0300
+Message-ID: <1459350335-15192-1-git-send-email-cristina.ciocan@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:36878 "EHLO
-	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753939AbcC3Own (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Mar 2016 10:52:43 -0400
-Received: by mail-wm0-f50.google.com with SMTP id p65so75650078wmp.0
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Mar 2016 07:52:42 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <56FBE829.2000607@opensource.altera.com>
+Received: from mga14.intel.com ([192.55.52.115]:1148 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751337AbcC3PDY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 30 Mar 2016 11:03:24 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thor Thayer <tthayer@opensource.altera.com>, broonie@kernel.org
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org, pawell.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
+To: mathias.nyman@linux.intel.com, mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com, Cristina Ciocan <cristina.ciocan@intel.com>
 
-Mr Brown,
+Add support for pin control (pin muxing and pin configuration) for Baytrail
+platform.
 
-On Wed, 30 Mar 2016, Thor Thayer wrote:
-> On 03/30/2016 06:51 AM, Lee Jones wrote:
-> >On Tue, 29 Mar 2016, tthayer@opensource.altera.com wrote:
-> >
-> >>From: Thor Thayer <tthayer@opensource.altera.com>
-> >>
-> >>Add support for the Altera Arria10 Development Kit System Resource
-> >>chip which is implemented using a MAX5 as a external gpio extender,
-> >>and hardware monitor with the regmap framework over a SPI bus.
-> >>
-> >>Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
-> >>---
->=20
-> [...]
->=20
-> >>index 0000000..13665d4
-> >>--- /dev/null
-> >>+++ b/drivers/mfd/altera-a10sr.c
-> >>@@ -0,0 +1,177 @@
-> >>+/*
-> >>+ * Copyright Altera Corporation (C) 2014-2016. All Rights Reserved
-> >>+ *
-> >>+ * This program is free software; you can redistribute it and/or m=
-odify it
-> >>+ * under the terms and conditions of the GNU General Public Licens=
-e,
-> >>+ * version 2, as published by the Free Software Foundation.
-> >>+ *
-> >>+ * This program is distributed in the hope it will be useful, but =
-WITHOUT
-> >>+ * ANY WARRANTY; without even the implied warranty of MERCHANTABIL=
-ITY or
-> >>+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public L=
-icense for
-> >>+ * more details.
-> >>+ *
-> >>+ * You should have received a copy of the GNU General Public Licen=
-se along with
-> >>+ * this program.  If not, see <http://www.gnu.org/licenses/>.
-> >
-> >Any chance you can use the shorter copyright header?
-> >
->=20
-> This is the header that Altera has specified and that we're
-> operating under. We haven't received guidance on Intel's header yet
-> but it may change as a result of our acquisition by Intel.
+It follows the design in pinctrl-intel.c, but could not use the
+implementation in pinctrl-intel since there were significant differences:
+	- gpio pin pads are not ordered
+	- per group functions: for setting a certain mode, there are groups
+	that need setting pins with different values; for instance, for
+	setting USB ULPI pins to GPIO function, pin 2 (GPIO_SUS1) needs
+	to be set to function 1, wihle all other from the group need to be
+	set to 0
+	- communities only need pin base and count as specific data
+	- irq set type only clears all flags, while the actual type setting
+	is made in the byt_irq_unmask function, which does not comply with
+	the intel pinctrl implementation
 
-=46air enough.
+Changes from v2:
+	- remove comment for each enumerated pin
+	- apply pin naming conventions used in other Intel drivers
 
-> >>+
-> >>+	/*
-> >>+	 * We can't use the standard regmap_update_bits function because
-> >>+	 * the read register has a different address than the write regis=
-ter.
-> >>+	 * Therefore, just do a read, modify, write operation here.
-> >>+	 */
-> >>+	ret =3D regmap_read(a10sr->regmap, (reg | READ_REG_MASK), &rval);
-> >>+	if (ret < 0)
-> >>+		return ret;
-> >>+
-> >>+	rval =3D ((rval & ~bit_mask) | (reg_val & bit_mask));
-> >>+
-> >>+	ret =3D regmap_write(a10sr->regmap, (reg & WRITE_REG_MASK), rval)=
-;
-> >>+
-> >>+	return ret;
-> >>+}
-> >
-> >Why can't you use the Regmap update function(s)?
->=20
-> The read register has a different address than the write register
-> which is handled in this function with the masks (read address is
-> odd, write address is even).
+Changes from v1:
+	- fix reg, reg_val and byt_soc_data not used variables warnings
 
-Mark, do we have an API which handled such a configuration?
+Cristina Ciocan (6):
+  pinctrl: baytrail: Add pin control data structures
+  pinctrl: baytrail: Add pin control operations
+  pinctrl: baytrail: Update gpio chip operations
+  pinctrl: baytrail: Update irq chip operations
+  pinctrl: baytrail: Register pin control handling
+  pinctrl: baytrail: Add debounce configuration
 
-> Thank you for the review of my patch set. I will implement the
-> changes that you pointed out. Thank you for reviewing!
+ drivers/pinctrl/intel/Kconfig            |    3 +
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 1690 +++++++++++++++++++++++++-----
+ 2 files changed, 1444 insertions(+), 249 deletions(-)
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.9.1
+
