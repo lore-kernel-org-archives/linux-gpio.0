@@ -1,47 +1,45 @@
-From: Yong Li <sdliyong@gmail.com>
-Subject: [PATCH v2] gpio: pca953x: Use correct u16 value for register word write
-Date: Wed, 30 Mar 2016 14:49:14 +0800
-Message-ID: <1459320554-2455-1-git-send-email-sdliyong@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:23812 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753004AbcC3GxO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 30 Mar 2016 02:53:14 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC] Addition of Altera Arria10 System Resource Chip
+Date: Wed, 30 Mar 2016 09:14:14 +0100
+Message-ID: <20160330081414.GE3323@x1>
+References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1459278791-3646-1-git-send-email-tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jdelvare-IBi9RG/b67k@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawell.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, dinguyen-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-hwmon-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, alexander.stein@systec-electronic.com, preid@electromag.com.au
-Cc: sdliyong@gmail.com
 
-The current implementation only uses the first byte in val,
-the second byte is always 0. Change it to use cpu_to_le16
-to write the two bytes into the register
+On Tue, 29 Mar 2016, tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org wrote:
 
-Signed-off-by: Yong Li <sdliyong@gmail.com>
----
- drivers/gpio/gpio-pca953x.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+You need to submit this properly, using `git send-email`, since it
+will look after you by listing each patch, together with their author,
+and provide a nice diff-stat, which is very helpful to reviewers.
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index d0d3065..e66084c 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -18,6 +18,7 @@
- #include <linux/i2c.h>
- #include <linux/platform_data/pca953x.h>
- #include <linux/slab.h>
-+#include <asm/unaligned.h>
- #include <linux/of_platform.h>
- #include <linux/acpi.h>
- 
-@@ -159,7 +160,7 @@ static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
- 		switch (chip->chip_type) {
- 		case PCA953X_TYPE:
- 			ret = i2c_smbus_write_word_data(chip->client,
--							reg << 1, (u16) *val);
-+			    reg << 1, cpu_to_le16(get_unaligned((u16 *)val)));
- 			break;
- 		case PCA957X_TYPE:
- 			ret = i2c_smbus_write_byte_data(chip->client, reg << 1,
--- 
-2.1.4
+> The Altera Arria10 Development Kit includes a system resource chip
+> that fits under the Multi-Function Device framework. The chip has
+> hardware monitoring functions and a GPIO expander over the SPI bus.
+>=20
+> [RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource Chip
+> [RFC 2/8] MAINTAINERS: Addition of Altera Arria10 System Resource
+> [RFC 3/8] mfd: altr_a10sr: Add Altera Arria10 DevKit System Resource
+> [RFC 4/8] gpio: altera-a10sr: Add A10 System Resource Chip GPIO
+> [RFC 5/8] ARM: socfpga: dts: Add Devkit A10-SR fields for Arria10
+> [RFC 6/8] ARM: socfpga: dts: Add LED framework to A10-SR GPIO
+> [RFC 7/8] hwmon: Altera Arria10 System Resource Chip - HW Monitor
+> [RFC 8/8] ARM: socfpga: dts: Add Devkit Arria10-SR HWMON
 
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
