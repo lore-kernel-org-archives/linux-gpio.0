@@ -1,42 +1,47 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCH] gpio: pca953x: Use correct u16 value for register word
- write
-Date: Wed, 30 Mar 2016 13:14:52 +0800
-Message-ID: <56FB60CC.9000605@electromag.com.au>
-References: <1459232852-15697-1-git-send-email-sdliyong@gmail.com>
- <56FA6FB6.4040003@electromag.com.au>
- <CADO9-pdhTOmg9OMgz+K++Gc3mCxbi7KF23kA8zsftVeDTR3SSw@mail.gmail.com>
- <1680089.6CCf2RWg8O@ws-stein> <56FAAE58.20004@electromag.com.au>
- <CADO9-pdxpQRQQ8RFtjT6rz28GteL3u+at0EGVdNwG8VV48SGEw@mail.gmail.com>
- <CADO9-pfuBVA1HW+XrV5oN_6jF2mebi3QeTiro1B8DCk+Em2Yug@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Yong Li <sdliyong@gmail.com>
+Subject: [PATCH v2] gpio: pca953x: Use correct u16 value for register word write
+Date: Wed, 30 Mar 2016 14:49:14 +0800
+Message-ID: <1459320554-2455-1-git-send-email-sdliyong@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anchovy3.45ru.net.au ([203.30.46.155]:60943 "EHLO
-	anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751227AbcC3FO7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Mar 2016 01:14:59 -0400
-In-Reply-To: <CADO9-pfuBVA1HW+XrV5oN_6jF2mebi3QeTiro1B8DCk+Em2Yug@mail.gmail.com>
+Received: from mga02.intel.com ([134.134.136.20]:23812 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753004AbcC3GxO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 30 Mar 2016 02:53:14 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Yong Li <sdliyong@gmail.com>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, alexander.stein@systec-electronic.com, preid@electromag.com.au
+Cc: sdliyong@gmail.com
 
-On 30/03/2016 1:01 PM, Yong Li wrote:
-> Or another method is using the below to convert the u8 to u16:
-> cpu_to_le16(get_unaligned((u16 *) val)), compared with the
-> i2c_smbus_write_byte_data method, which one is better?
->
->
+The current implementation only uses the first byte in val,
+the second byte is always 0. Change it to use cpu_to_le16
+to write the two bytes into the register
 
-G'day Yong,
+Signed-off-by: Yong Li <sdliyong@gmail.com>
+---
+ drivers/gpio/gpio-pca953x.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I'd go with the cpu_to_le16(get_unaligned((u16 *) val))
-
-
-
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index d0d3065..e66084c 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -18,6 +18,7 @@
+ #include <linux/i2c.h>
+ #include <linux/platform_data/pca953x.h>
+ #include <linux/slab.h>
++#include <asm/unaligned.h>
+ #include <linux/of_platform.h>
+ #include <linux/acpi.h>
+ 
+@@ -159,7 +160,7 @@ static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
+ 		switch (chip->chip_type) {
+ 		case PCA953X_TYPE:
+ 			ret = i2c_smbus_write_word_data(chip->client,
+-							reg << 1, (u16) *val);
++			    reg << 1, cpu_to_le16(get_unaligned((u16 *)val)));
+ 			break;
+ 		case PCA957X_TYPE:
+ 			ret = i2c_smbus_write_byte_data(chip->client, reg << 1,
 -- 
-Regards
-Phil Reid
+2.1.4
 
