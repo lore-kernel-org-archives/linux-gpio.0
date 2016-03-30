@@ -1,46 +1,43 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH] gpio: Do not accept gpio chip additions before gpiolib
- initialization
-Date: Wed, 30 Mar 2016 02:16:02 -0700
-Message-ID: <56FB9952.1030503@roeck-us.net>
-References: <1459275638-11717-1-git-send-email-linux@roeck-us.net>
- <CAAVeFuJZuOWAeG7q=WaZj0f6ch9zmOHvBZReYDnqbFQLsP7G5Q@mail.gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: Diagnosing ACPI trouble related to pinctr_cherryview on 4.4.x
+Date: Wed, 30 Mar 2016 13:33:13 +0300
+Message-ID: <1459333993.5907.30.camel@linux.intel.com>
+References: <CACPiFCKv=QJ0t5e=9Wm4cC4Spynx-tVCiabL7AcbcOkp_w47fQ@mail.gmail.com>
+	 <20160322152218.GA2099@lahna.fi.intel.com>
+	 <CACPiFC+hDF0+9vPCrhvo079E6RCVVmZXTS1ziS-jHAAZJQ+wNg@mail.gmail.com>
+	 <20160322154950.GB2099@lahna.fi.intel.com>
+	 <CACPiFCKS-8re6g1Zbhs8N9D_tDMENqXPeNGRS_0dU6tzz50T8A@mail.gmail.com>
+	 <20160322162222.GF2099@lahna.fi.intel.com>
+	 <CACPiFCKD_Nwut=GL-xOU5gN2k8Na7pFWdhsms85QsDTvvREJLw@mail.gmail.com>
+	 <1458668165.5907.28.camel@linux.intel.com>
+	 <CACPiFC+_TpiFFm+hYJd1tX4AnadxSj_KKOtDALjSj0_c8Qa2pA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:42723 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932510AbcC3JQH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Mar 2016 05:16:07 -0400
-In-Reply-To: <CAAVeFuJZuOWAeG7q=WaZj0f6ch9zmOHvBZReYDnqbFQLsP7G5Q@mail.gmail.com>
+Received: from mga02.intel.com ([134.134.136.20]:38760 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750794AbcC3KcT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 30 Mar 2016 06:32:19 -0400
+In-Reply-To: <CACPiFC+_TpiFFm+hYJd1tX4AnadxSj_KKOtDALjSj0_c8Qa2pA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Martin Langhoff <martin.langhoff@gmail.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On 03/30/2016 01:37 AM, Alexandre Courbot wrote:
-> On Wed, Mar 30, 2016 at 3:20 AM, Guenter Roeck <linux@roeck-us.net> wrote:
->> Since commit ff2b13592299 ("gpio: make the gpiochip a real device"),
->> attempts to add a gpio chip prior to gpiolib initialization cause the
->> system to crash. Dump a warning to the console and return an error
->> if the situation is encountered.
->
-> Mmm I see the problem but this could seriously delay the availability
-> of some GPIOs that are useful for early system boot.
->
-> I have not followed the GPIO device patches as closely as I should
-> have, but shouldn't you be able to register a GPIO chip without
-> immediately presenting it to user-space, for internal kernel needs? If
-> gpiolib is not initialized, then device-related operations would be
-> skipped, and gpiolib_dev_init() could then parse the list of
-> registered chips and fix them up when it gets called.
->
-> Again, I'm speaking without real knowledge here, but that pattern
-> seems more resilent to me.
->
-You are absolutely right, but my knowledge of gpiolib is not good enough
-to make that change. See this as a band-gap; it is better than just crashing.
+On Tue, 2016-03-22 at 13:53 -0400, Martin Langhoff wrote:
+> On Tue, Mar 22, 2016 at 1:36 PM, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > 
+> > # CONFIG_X86_INTEL_LPSS is not set
 
-Guenter
+> adding intel_lpss,intel_lpss_acpi,intel_lpss_pci to blacklisted
+> modules in kernel command line did not change things for the better.
+
+It's unrelated.
+
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
 
