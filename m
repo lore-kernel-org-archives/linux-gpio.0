@@ -1,113 +1,66 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource
- Chip bindings
-Date: Wed, 30 Mar 2016 12:35:32 +0100
-Message-ID: <20160330113532.GI3323@x1>
-References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
- <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v6 1/2] gpio: dwapb: convert device node to fwnode
+Date: Wed, 30 Mar 2016 14:38:02 +0300
+Message-ID: <CAHp75VcDAg_aXt7ej-_zXxHMXJohRM9ErQkJQS_ryekD-7V=zw@mail.gmail.com>
+References: <1458959496-57455-1-git-send-email-qiujiang@huawei.com>
+	<1458959496-57455-2-git-send-email-qiujiang@huawei.com>
+	<CANk1AXT5yHMwPJ7=0kSZKr+eHHdC1QXQVgstQ6QhFbUPSKuD+A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-hwmon-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
-Sender: linux-hwmon-owner@vger.kernel.org
-To: tthayer@opensource.altera.com
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org, pawell.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qg0-f43.google.com ([209.85.192.43]:36699 "EHLO
+	mail-qg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751425AbcC3LiE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Mar 2016 07:38:04 -0400
+In-Reply-To: <CANk1AXT5yHMwPJ7=0kSZKr+eHHdC1QXQVgstQ6QhFbUPSKuD+A@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alan Tull <delicious.quinoa@gmail.com>
+Cc: qiujiang <qiujiang@huawei.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Jamie Iles <jamie@jamieiles.com>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com, atull <atull@opensource.altera.com>
 
-On Tue, 29 Mar 2016, tthayer@opensource.altera.com wrote:
+On Tue, Mar 29, 2016 at 7:30 PM, Alan Tull <delicious.quinoa@gmail.com> wrote:
+> On Fri, Mar 25, 2016 at 9:31 PM, qiujiang <qiujiang@huawei.com> wrote:
+>
+>> -               if (pp->idx == 0 &&
+>> -                   of_property_read_bool(port_np, "interrupt-controller")) {
+>> -                       pp->irq = irq_of_parse_and_map(port_np, 0);
+>> +               if (dev->of_node && pp->idx == 0 &&
+>> +                       fwnode_property_read_bool(fwnode,
+>> +                                                 "interrupt-controller")) {
+>> +                       pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
+>>                         if (!pp->irq) {
+>>                                 dev_warn(dev, "no irq for bank %s\n",
+>> -                                        port_np->full_name);
+>> +                                        to_of_node(fwnode)->full_name);
+>>                         }
+>>                 }
+>>
+>>                 pp->irq_shared  = false;
+>>                 pp->gpio_base   = -1;
+>> -               pp->name        = port_np->full_name;
+>> +               if (dev->of_node)
+>> +                       pp->name = to_of_node(fwnode)->full_name;
+>
+> Hi Jiang,
+>
+> I tested lightly on a CycloneV and it worked fine (with device tree).
+>
+> One suggestion for both patches: you could remove name from struct
+> dwapb_port_property and get rid of pp->name and nobody would miss it.
+> All it is used for is some dev_err's so the device info gets printed
+> anyway.  For example (if I leave the irq out of the DT)
+>
+> gpio-dwapb ff708000.gpio: no irq for bank /soc/gpio@ff708000/gpio-controller@0
+>
+> is redundant.  The only additional info here from the name is the port
+> index.  That could be added to the messages without having to get the
+> name through the two property/of methods.
+>
 
-> From: Thor Thayer <tthayer@opensource.altera.com>
->=20
-> The Altera Arria10 Devkit System Resource chip is a Multi-Function
-> Device, it has two subdevices:
->      - GPIO
->      - HWMON
->=20
-> This patch adds documentation for the Altera A10-SR DT bindings.
->=20
-> Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
-> ---
->  .../devicetree/bindings/mfd/altera-a10sr.txt       |   35 ++++++++++=
-++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/altera-a10s=
-r.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/mfd/altera-a10sr.txt b=
-/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-> new file mode 100644
-> index 0000000..564c761
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-> @@ -0,0 +1,35 @@
-> +* Altera Arria10 Development Kit System Resource Chip
-> +
-> +Required parent device properties:
-> +- compatible : "altr,altr_a10sr"
-> +- spi-max-frequency : Maximum SPI frequency.
-> +- reg : the SPI Chip Select address for the Arria10 System Resource =
-chip
+Good suggestion! That'll make patches and code cleaner.
 
-DT bindings are much easier to read in the following format:
+Perhaps separate prepended  patch?
 
-- compatible		: "altr,altr_a10sr"
-- spi-max-frequency	: Maximum SPI frequency.
-- reg			: the SPI Chip Select address for the Arria10 System Resource c=
-hip
-
-=2E.. also, sentences start with an uppercase char.
-
-> +The A10SR consists of this varied group of sub-devices:
-> +
-> +Device                   Description
-> +------                   ----------
-> +altr_a10sr_gpio          GPIO Controller
-> +altr_a10sr_hwmon         Hardware Monitor
-> +
-> +The LEDs are implemented entirely in the device tree using
-> +the gpio-led framework.
-
-This is a Linuxisum and should not live in DT bindings.
-
-> +Example:
-> +
-> +        a10-sr: a10-sr@0 {
-
-Nodes should be named after their device 'type'.
-
-Does this device really start a address 0?
-
-> +		compatible =3D "altr,altr-a10sr";
-> +		reg =3D <0>;
-> +		spi-max-frequency =3D <100000>;
-> +
-> +		a10sr_gpio: a10sr_gpio {
-
-Device type only please.
-
-> +			compatible =3D "altr,a10sr-gpio";
-> +			gpio-controller;
-> +			#gpio-cells =3D <2>;
-> +			ngpios =3D <16>;
-> +		};
-> +
-> +		a10sr_hwmon: a10sr_hwmon {
-
-Device type only please.
-
-> +			compatible =3D "altr,a10sr-hwmon";
-> +		};
-> +	};
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-hwmon" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+With Best Regards,
+Andy Shevchenko
