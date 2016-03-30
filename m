@@ -1,57 +1,113 @@
-From: Cristina Ciocan <cristina.ciocan@intel.com>
-Subject: Re: [PATCH v2 1/6] pinctrl: baytrail: Add pin control data structures
-Date: Wed, 30 Mar 2016 14:33:39 +0300
-Message-ID: <56FBB993.9030905@intel.com>
-References: <1459171780-24856-1-git-send-email-cristina.ciocan@intel.com>
- <1459171780-24856-2-git-send-email-cristina.ciocan@intel.com>
- <20160330111501.GS2099@lahna.fi.intel.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource
+ Chip bindings
+Date: Wed, 30 Mar 2016 12:35:32 +0100
+Message-ID: <20160330113532.GI3323@x1>
+References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
+ <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:11674 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751425AbcC3LaZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 30 Mar 2016 07:30:25 -0400
-In-Reply-To: <20160330111501.GS2099@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-hwmon-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
+Sender: linux-hwmon-owner@vger.kernel.org
+To: tthayer@opensource.altera.com
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org, pawell.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: mathias.nyman@linux.intel.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com
 
-On 30.03.2016 14:15, Mika Westerberg wrote:
-> On Mon, Mar 28, 2016 at 04:29:35PM +0300, Cristina Ciocan wrote:
->> +/* SCORE pins */
->> +static const struct pinctrl_pin_desc byt_score_pins[] = {
->> +	PINCTRL_PIN(0, "SATA_GP[0]"),		/* GPIOC_0 */
->> +	PINCTRL_PIN(1, "SATA_GP[1]"),		/* GPIOC_1 */
-> 
-> Maybe we should call these "SATA_GP0" and "SATA_GP1" like we do in other
-> Intel pinctrl drivers?
+On Tue, 29 Mar 2016, tthayer@opensource.altera.com wrote:
 
-The names are directly taken form the public datasheet found at:
-http://www.intel.com/content/www/us/en/embedded/products/bay-trail/atom-e3800-family-datasheet.html,
-section 10.3, Ball Name and Function by Location.
+> From: Thor Thayer <tthayer@opensource.altera.com>
+>=20
+> The Altera Arria10 Devkit System Resource chip is a Multi-Function
+> Device, it has two subdevices:
+>      - GPIO
+>      - HWMON
+>=20
+> This patch adds documentation for the Altera A10-SR DT bindings.
+>=20
+> Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
+> ---
+>  .../devicetree/bindings/mfd/altera-a10sr.txt       |   35 ++++++++++=
+++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/altera-a10s=
+r.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/mfd/altera-a10sr.txt b=
+/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
+> new file mode 100644
+> index 0000000..564c761
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
+> @@ -0,0 +1,35 @@
+> +* Altera Arria10 Development Kit System Resource Chip
+> +
+> +Required parent device properties:
+> +- compatible : "altr,altr_a10sr"
+> +- spi-max-frequency : Maximum SPI frequency.
+> +- reg : the SPI Chip Select address for the Arria10 System Resource =
+chip
 
-I kept those names, even though they are not always pretty, so that teh
-pins can be easily identified if someone searches them in the datasheet
-for extra information.
+DT bindings are much easier to read in the following format:
 
-> 
-> Also I don't think /* GPIOC_1 */ is really useful comment as that can be
-> derived already from the pin number.
+- compatible		: "altr,altr_a10sr"
+- spi-max-frequency	: Maximum SPI frequency.
+- reg			: the SPI Chip Select address for the Arria10 System Resource c=
+hip
 
-The issue here is that pins are not referenced by the same name in the
-datasheet. In the above mentioned section (10.3), south core pins are
-GPIO_S0_SC[<pin_number>], whereas in the GPIO section (39) they are
-referenced as GPIOC_<pin_number>. I added the comments for the same
-reasoning as above, easy search for datasheet-driver pin matching.
+=2E.. also, sentences start with an uppercase char.
 
-If this is not an issue, I can change both names and comments.
+> +The A10SR consists of this varied group of sub-devices:
+> +
+> +Device                   Description
+> +------                   ----------
+> +altr_a10sr_gpio          GPIO Controller
+> +altr_a10sr_hwmon         Hardware Monitor
+> +
+> +The LEDs are implemented entirely in the device tree using
+> +the gpio-led framework.
 
-Thank you for the review.
+This is a Linuxisum and should not live in DT bindings.
 
-> 
-> Otherwise this looks good.
->
+> +Example:
+> +
+> +        a10-sr: a10-sr@0 {
 
+Nodes should be named after their device 'type'.
+
+Does this device really start a address 0?
+
+> +		compatible =3D "altr,altr-a10sr";
+> +		reg =3D <0>;
+> +		spi-max-frequency =3D <100000>;
+> +
+> +		a10sr_gpio: a10sr_gpio {
+
+Device type only please.
+
+> +			compatible =3D "altr,a10sr-gpio";
+> +			gpio-controller;
+> +			#gpio-cells =3D <2>;
+> +			ngpios =3D <16>;
+> +		};
+> +
+> +		a10sr_hwmon: a10sr_hwmon {
+
+Device type only please.
+
+> +			compatible =3D "altr,a10sr-hwmon";
+> +		};
+> +	};
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-hwmon" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
