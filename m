@@ -1,48 +1,63 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 1/2] USB: serial: cp210x: Adding GPIO support for CP2105
-Date: Thu, 31 Mar 2016 15:24:53 +0200
-Message-ID: <CACRpkdZGzgwo7q5DCKYC9x_aHJ5VQ2rcBkppJjPXiGgW0zwsKw@mail.gmail.com>
-References: <cover.1459269397.git.martyn.welch@collabora.co.uk>
-	<79ce9ed7dd2124eb5a608b156318237867fe9987.1459269397.git.martyn.welch@collabora.co.uk>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v6 1/2] gpio: dwapb: convert device node to fwnode
+Date: Thu, 31 Mar 2016 16:25:22 +0300
+Message-ID: <CAHp75VcJ92vB-b7daMpd2i9hP4MPU2CAQf7JoiBx5rKFvB1RVw@mail.gmail.com>
+References: <1458959496-57455-1-git-send-email-qiujiang@huawei.com>
+	<1458959496-57455-2-git-send-email-qiujiang@huawei.com>
+	<CANk1AXT5yHMwPJ7=0kSZKr+eHHdC1QXQVgstQ6QhFbUPSKuD+A@mail.gmail.com>
+	<CAHp75VcDAg_aXt7ej-_zXxHMXJohRM9ErQkJQS_ryekD-7V=zw@mail.gmail.com>
+	<56FC7491.5050000@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:36586 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756304AbcCaNYy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Mar 2016 09:24:54 -0400
-Received: by mail-oi0-f42.google.com with SMTP id r187so59921355oih.3
-        for <linux-gpio@vger.kernel.org>; Thu, 31 Mar 2016 06:24:54 -0700 (PDT)
-In-Reply-To: <79ce9ed7dd2124eb5a608b156318237867fe9987.1459269397.git.martyn.welch@collabora.co.uk>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:34306 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753223AbcCaNZX convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Mar 2016 09:25:23 -0400
+In-Reply-To: <56FC7491.5050000@huawei.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Martyn Welch <martyn.welch@collabora.co.uk>
-Cc: Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: qiujiang <qiujiang@huawei.com>
+Cc: Alan Tull <delicious.quinoa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Jamie Iles <jamie@jamieiles.com>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com, atull <atull@opensource.altera.com>
 
-On Tue, Mar 29, 2016 at 6:47 PM, Martyn Welch
-<martyn.welch@collabora.co.uk> wrote:
+On Thu, Mar 31, 2016 at 3:51 AM, Jiang Qiu <qiujiang@huawei.com> wrote:
+> =E5=9C=A8 2016/3/30 19:38, Andy Shevchenko =E5=86=99=E9=81=93:
 
-> This patch adds support for the GPIO found on the CP2105. Unlike the GPIO
-> provided by some of the other devices supported by the cp210x driver, the
-> GPIO on the CP2015 is muxed on pins otherwise used for serial control
-> lines. The GPIO have been configured in 2 separate banks as the choice to
-> configure the pins for GPIO is made separately for pins shared with each
-> of the 2 serial ports this device provides, though the choice is made for
-> all pins associated with that port in one go. The choice of whether to use
-> the pins for GPIO or serial is made by adding configuration to a one-time
-> programable PROM in the chip and can not be changed at runtime. The device
-> defaults to GPIO.
+>>> One suggestion for both patches: you could remove name from struct
+>>> dwapb_port_property and get rid of pp->name and nobody would miss i=
+t.
+>>> All it is used for is some dev_err's so the device info gets printe=
+d
+>>> anyway.  For example (if I leave the irq out of the DT)
+>>>
+>>> gpio-dwapb ff708000.gpio: no irq for bank /soc/gpio@ff708000/gpio-c=
+ontroller@0
+>>>
+>>> is redundant.  The only additional info here from the name is the p=
+ort
+>>> index.  That could be added to the messages without having to get t=
+he
+>>> name through the two property/of methods.
+>>>
+>>
+>> Good suggestion! That'll make patches and code cleaner.
+>>
+>> Perhaps separate prepended  patch?
+>>
+> Hi Alan/Andy,
 >
-> This device supports either push-pull or open-drain modes, it doesn't
-> provide an explicit input mode, though the state of the GPIO can be read
-> when used in open-drain mode. Like with pin use, the mode is configured in
-> the one-time programable PROM and can't be changed at runtime.
->
-> Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
+> It sounds good, I will follow this suggestion and do a test. But, wha=
+t's the
+> "separate prepended patch" mean?
 
-Looking good from a GPIO point of view.
+Preparatory patch which goes first in the series.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+--=20
+With Best Regards,
+Andy Shevchenko
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
