@@ -1,49 +1,59 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RFC 3/8] mfd: altr_a10sr: Add Altera Arria10 DevKit System
- Resource Chip
-Date: Thu, 31 Mar 2016 10:10:01 +0100
-Message-ID: <20160331091001.GN3323@x1>
-References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
- <1459278791-3646-4-git-send-email-tthayer@opensource.altera.com>
- <20160330115106.GJ3323@x1>
- <56FBE829.2000607@opensource.altera.com>
- <20160330145239.GM3323@x1>
- <20160330161048.GB2350@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-hwmon-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160330161048.GB2350@sirena.org.uk>
-Sender: linux-hwmon-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Thor Thayer <tthayer@opensource.altera.com>, linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org, pawell.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: dt-bindings: document the concept of GPIO banks
+Date: Thu, 31 Mar 2016 11:10:59 +0200
+Message-ID: <1459415459-8107-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:35713 "EHLO
+	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755771AbcCaJLH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Mar 2016 05:11:07 -0400
+Received: by mail-lf0-f49.google.com with SMTP id k79so54878144lfb.2
+        for <linux-gpio@vger.kernel.org>; Thu, 31 Mar 2016 02:11:06 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>, Rob Herring <robh@kernel.org>
 
-On Wed, 30 Mar 2016, Mark Brown wrote:
-> On Wed, Mar 30, 2016 at 03:52:39PM +0100, Lee Jones wrote:
-> > On Wed, 30 Mar 2016, Thor Thayer wrote:
->=20
-> > > The read register has a different address than the write register
-> > > which is handled in this function with the masks (read address is
-> > > odd, write address is even).
->=20
-> > Mark, do we have an API which handled such a configuration?
->=20
-> No, but it sounds like this is a regmap with seven bit register value=
-s
-> and a read/write bit which should be using read_flag_mask rather than
-> trying to treat these as separate registers.
+Cc: devicetree@vger.kernel.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Rob Herring <robh@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ Documentation/devicetree/bindings/gpio/gpio.txt | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Nice one.  Thanks Mark.
+diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+index 069cdf6f9dac..f509ecf03ece 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -131,6 +131,19 @@ Every GPIO controller node must contain both an empty "gpio-controller"
+ property, and a #gpio-cells integer property, which indicates the number of
+ cells in a gpio-specifier.
+ 
++Some system-on-chips (SoCs) use the concept of GPIO banks. A GPIO bank is an
++instance of a hardware IP core on a silicon die, usually exposed to the
++programmer as a coherent range of I/O addresses. Usually each such bank is
++exposed in the device tree as an individual gpio-controller node, reflecting
++the fact that the hardware was synthesized by reusing the same IP block a
++few times over.
++
++A GPIO controller may specify a bank ID. This is a hardware index that
++indicate the logical order of the GPIO controller in the hardware architecture,
++usually in the sequence 0, 1, 2 .. n. The hardware index may be different
++from the order of register ranges and related to the backplane of how this
++one bank is connected to the outside through a pin controller for example.
++
+ Optionally, a GPIO controller may have a "ngpios" property. This property
+ indicates the number of in-use slots of available slots for GPIOs. The
+ typical example is something like this: the hardware register is 32 bits
+@@ -152,6 +165,7 @@ gpio-controller@00000000 {
+ 	reg = <0x00000000 0x1000>;
+ 	gpio-controller;
+ 	#gpio-cells = <2>;
++	gpio-bank = <0>;
+ 	ngpios = <18>;
+ }
+ 
+-- 
+2.4.3
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-hwmon" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
