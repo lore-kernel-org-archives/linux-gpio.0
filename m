@@ -1,88 +1,37 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource
- Chip bindings
-Date: Thu, 31 Mar 2016 09:06:51 -0500
-Message-ID: <20160331140651.GA2193@rob-hp-laptop>
-References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
- <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
- <20160330113532.GI3323@x1>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: arm:collie_defconfig broken since commit ff2b135922 ("gpio: make
+ the gpiochip a real device")
+Date: Thu, 31 Mar 2016 07:18:49 -0700
+Message-ID: <20160331141849.GA28107@roeck-us.net>
+References: <56F8BB39.5010708@roeck-us.net>
+ <CACRpkdZ4P6Sk3__pJtHep91f8Bw4xQWLZ85V_=TEa3OMUze1aw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:56527 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750751AbcCaOG5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 31 Mar 2016 10:06:57 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20160330113532.GI3323@x1>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <CACRpkdZ4P6Sk3__pJtHep91f8Bw4xQWLZ85V_=TEa3OMUze1aw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, tthayer@opensource.altera.com
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, pawell.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
 
-On Wed, Mar 30, 2016 at 12:35:32PM +0100, Lee Jones wrote:
-> On Tue, 29 Mar 2016, tthayer@opensource.altera.com wrote:
+On Thu, Mar 31, 2016 at 03:26:49PM +0200, Linus Walleij wrote:
+> On Mon, Mar 28, 2016 at 7:03 AM, Guenter Roeck <linux@roeck-us.net> wrote:
 > 
-> > From: Thor Thayer <tthayer@opensource.altera.com>
-> > 
-> > The Altera Arria10 Devkit System Resource chip is a Multi-Function
-> > Device, it has two subdevices:
-> >      - GPIO
-> >      - HWMON
-> > 
-> > This patch adds documentation for the Altera A10-SR DT bindings.
-> > 
-> > Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
-> > ---
-> >  .../devicetree/bindings/mfd/altera-a10sr.txt       |   35 ++++++++++++++++++++
-> >  1 file changed, 35 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/altera-a10sr.txt b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-> > new file mode 100644
-> > index 0000000..564c761
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-> > @@ -0,0 +1,35 @@
-> > +* Altera Arria10 Development Kit System Resource Chip
-> > +
-> > +Required parent device properties:
-> > +- compatible : "altr,altr_a10sr"
+> > arm:collie_defconfig is broken since commit ff2b135922 ("gpio: make the
+> > gpiochip a real device").
+> 
+> Oh I was worried that something like this would happen, but
+> hoped we could find it in linux-next, oh well.
+> 
+I didn't have collie_defconfig in my list of qemu tests since last weekend.
+Shows that qemu boot tests _are_ valuable ;-).
 
-Why "altr" twice?
+Question is how to get to a real solution. I tried calling gpiolib_dev_init()
+from gpiochip_add_data() if gpiolib was not initialized yet, but at least for
+collie this doesn't work, presumably since gpiochip_add_data() is called too
+early. I am currently looking into deferring device initialization from
+gpiochip_add_data() until gpiolib_dev_init() was called, as suggested by
+Alexandre.
 
-Don't use underscores.
-
-> > +- spi-max-frequency : Maximum SPI frequency.
-> > +- reg : the SPI Chip Select address for the Arria10 System Resource chip
-> 
-> DT bindings are much easier to read in the following format:
-> 
-> - compatible		: "altr,altr_a10sr"
-> - spi-max-frequency	: Maximum SPI frequency.
-> - reg			: the SPI Chip Select address for the Arria10 System Resource chip
-> 
-> ... also, sentences start with an uppercase char.
-> 
-> > +The A10SR consists of this varied group of sub-devices:
-> > +
-> > +Device                   Description
-> > +------                   ----------
-> > +altr_a10sr_gpio          GPIO Controller
-> > +altr_a10sr_hwmon         Hardware Monitor
-> > +
-> > +The LEDs are implemented entirely in the device tree using
-> > +the gpio-led framework.
-> 
-> This is a Linuxisum and should not live in DT bindings.
-> 
-> > +Example:
-> > +
-> > +        a10-sr: a10-sr@0 {
-> 
-> Nodes should be named after their device 'type'.
-> 
-> Does this device really start a address 0?
-
-Being a SPI device, I imagine so.
-
+Guenter
