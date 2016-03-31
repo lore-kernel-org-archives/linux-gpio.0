@@ -1,37 +1,93 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: arm:collie_defconfig broken since commit ff2b135922 ("gpio: make
- the gpiochip a real device")
-Date: Thu, 31 Mar 2016 07:18:49 -0700
-Message-ID: <20160331141849.GA28107@roeck-us.net>
-References: <56F8BB39.5010708@roeck-us.net>
- <CACRpkdZ4P6Sk3__pJtHep91f8Bw4xQWLZ85V_=TEa3OMUze1aw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] gpio: dt-bindings: document the concept of GPIO banks
+Date: Thu, 31 Mar 2016 09:48:48 -0500
+Message-ID: <CAL_JsqKzzoSOFY9b9jwOVa4EZdzzRDusOEtDuOwnB7Q3x6W=eQ@mail.gmail.com>
+References: <1459415459-8107-1-git-send-email-linus.walleij@linaro.org>
+ <CAL_JsqK+n-EwHx52=d9-dTJaVsSOzRS+PAmyCYwe6HK=kDoyGQ@mail.gmail.com> <56FD2689.1080707@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZ4P6Sk3__pJtHep91f8Bw4xQWLZ85V_=TEa3OMUze1aw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:59884 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755652AbcCaOtL convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Mar 2016 10:49:11 -0400
+In-Reply-To: <56FD2689.1080707@atmel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Neil Armstrong <narmstrong@baylibre.com>
 
-On Thu, Mar 31, 2016 at 03:26:49PM +0200, Linus Walleij wrote:
-> On Mon, Mar 28, 2016 at 7:03 AM, Guenter Roeck <linux@roeck-us.net> wrote:
-> 
-> > arm:collie_defconfig is broken since commit ff2b135922 ("gpio: make the
-> > gpiochip a real device").
-> 
-> Oh I was worried that something like this would happen, but
-> hoped we could find it in linux-next, oh well.
-> 
-I didn't have collie_defconfig in my list of qemu tests since last weekend.
-Shows that qemu boot tests _are_ valuable ;-).
+On Thu, Mar 31, 2016 at 8:30 AM, Nicolas Ferre <nicolas.ferre@atmel.com=
+> wrote:
+> Le 31/03/2016 15:22, Rob Herring a =C3=A9crit :
+>> On Thu, Mar 31, 2016 at 4:10 AM, Linus Walleij <linus.walleij@linaro=
+=2Eorg> wrote:
+>>> Cc: devicetree@vger.kernel.org
+>>> Cc: Neil Armstrong <narmstrong@baylibre.com>
+>>> Cc: Rob Herring <robh@kernel.org>
+>>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> We generally avoid indexing blocks in DT.
+>>
+>>> ---
+>>>  Documentation/devicetree/bindings/gpio/gpio.txt | 14 +++++++++++++=
++
+>>>  1 file changed, 14 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Docu=
+mentation/devicetree/bindings/gpio/gpio.txt
+>>> index 069cdf6f9dac..f509ecf03ece 100644
+>>> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
+>>> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+>>> @@ -131,6 +131,19 @@ Every GPIO controller node must contain both a=
+n empty "gpio-controller"
+>>>  property, and a #gpio-cells integer property, which indicates the =
+number of
+>>>  cells in a gpio-specifier.
+>>>
+>>> +Some system-on-chips (SoCs) use the concept of GPIO banks. A GPIO =
+bank is an
+>>> +instance of a hardware IP core on a silicon die, usually exposed t=
+o the
+>>> +programmer as a coherent range of I/O addresses. Usually each such=
+ bank is
+>>> +exposed in the device tree as an individual gpio-controller node, =
+reflecting
+>>> +the fact that the hardware was synthesized by reusing the same IP =
+block a
+>>> +few times over.
+>>> +
+>>> +A GPIO controller may specify a bank ID. This is a hardware index =
+that
+>>> +indicate the logical order of the GPIO controller in the hardware =
+architecture,
+>>> +usually in the sequence 0, 1, 2 .. n. The hardware index may be di=
+fferent
+>>> +from the order of register ranges and related to the backplane of =
+how this
+>>> +one bank is connected to the outside through a pin controller for =
+example.
+>>
+>> I still don't understand why do you need to know this? If you need
+>> some mapping of gpio nodes into pin controller, the pin controller
+>> should have a mapping using phandles.
+>
+> We use aliases for this:
+>
+> aliases {
+>     gpio0 =3D &pioA;
+>     gpio1 =3D &pioB;
+>     [..]
+> };
 
-Question is how to get to a real solution. I tried calling gpiolib_dev_init()
-from gpiochip_add_data() if gpiolib was not initialized yet, but at least for
-collie this doesn't work, presumably since gpiochip_add_data() is called too
-early. I am currently looking into deferring device initialization from
-gpiochip_add_data() until gpiolib_dev_init() was called, as suggested by
-Alexandre.
+Which is a global number space that might not work in all cases. I
+don't think gpio should be using aliases either. If you need to
+describe the connections between nodes, then keep that between nodes.
 
-Guenter
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
