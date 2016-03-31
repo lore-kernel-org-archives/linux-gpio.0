@@ -1,56 +1,81 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH] powerpc: ppc4xx: drop unused variable
-Date: Thu, 31 Mar 2016 21:09:40 +1100
-Message-ID: <1459418980.24848.1.camel@ellerman.id.au>
-References: <1459408452-3483-1-git-send-email-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42394 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751243AbcCaKJu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 31 Mar 2016 06:09:50 -0400
-In-Reply-To: <1459408452-3483-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Irina Tirdea <irina.tirdea@intel.com>
+Subject: [RFC PATCH 0/4] Add ACPI support for pinctrl configuration
+Date: Thu, 31 Mar 2016 14:44:41 +0300
+Message-ID: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Octavian Purdila <octavian.purdila@intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Irina Tirdea <irina.tirdea@intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Anatolij Gustschin <agust@denx.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-On Thu, 2016-03-31 at 09:14 +0200, Linus Walleij wrote:
+This is a proposal for adding ACPI support for pin controller
+configuration.
 
-> commit 0d36fe65f58391712e11a6621075f373216e5f00
-> "powerpc: ppc4xx: use gpiochip data pointer"
-> made the mm_gc local variable in ppc4xx_gpio_set()
-> redundant, and when GCC treats warnings as errors this
-> happens:
-> 
-> arch/powerpc/sysdev/ppc4xx_gpio.c: In function 'ppc4xx_gpio_set':
-> arch/powerpc/sysdev/ppc4xx_gpio.c:93:26: error:
->   unused variable 'mm_gc' [-Werror=unused-variable]
->      struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
->                              ^
->    cc1: all warnings being treated as errors
-> 
-> Reported-by: kbuild test robot <fengguang.wu@intel.com>
-> Cc: Anatolij Gustschin <agust@denx.de>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> I've applied this to the GPIO tree where the offending
-> commit is now merged.
+It has been developed to enable the MinnowBoard and IoT community
+by providing an easy way to specify pin multiplexing and
+pin configuration.
 
-Thanks.
+This proposal is based on using _DSD properties to specify device
+states and configuration nodes and it follows closely the device
+tree model. Device states are defined using the Device Properties
+format and the configuration nodes are defined using the
+Hierarchical Properties Extension format. The generic properties
+for the configuration nodes are the same as the ones for device
+tree, while pincontroller drivers can also define custom ones.
 
-If you feel like cross building powerpc in future it should be as simple as:
+Irina Tirdea (4):
+  pinctrl: Rename pinctrl_utils_dt_free_map to pinctrl_utils_free_map
+  pinctrl: pinconf-generic: Add ACPI support
+  pinctrl: Add ACPI support
+  pinctrl: Parse GpioInt/GpioIo resources
 
- $ dnf install gcc-powerpc64-linux-gnu || apt-get install gcc-powerpc-linux-gnu
- $ make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- ...
+ Documentation/acpi/pinctrl-properties.txt        | 282 ++++++++++++
+ drivers/acpi/property.c                          |   8 +-
+ drivers/base/property.c                          |  36 +-
+ drivers/pinctrl/Makefile                         |   1 +
+ drivers/pinctrl/acpi.c                           | 551 +++++++++++++++++++++++
+ drivers/pinctrl/acpi.h                           |  32 ++
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c           |   2 +-
+ drivers/pinctrl/bcm/pinctrl-cygnus-mux.c         |   2 +-
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c         |   2 +-
+ drivers/pinctrl/bcm/pinctrl-nsp-gpio.c           |   2 +-
+ drivers/pinctrl/berlin/berlin.c                  |   2 +-
+ drivers/pinctrl/core.c                           |  26 ++
+ drivers/pinctrl/core.h                           |   2 +
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c    |   4 +-
+ drivers/pinctrl/meson/pinctrl-meson.c            |   2 +-
+ drivers/pinctrl/nomadik/pinctrl-abx500.c         |   4 +-
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c        |   4 +-
+ drivers/pinctrl/pinconf-generic.c                | 123 +++--
+ drivers/pinctrl/pinctrl-amd.c                    |   2 +-
+ drivers/pinctrl/pinctrl-as3722.c                 |   2 +-
+ drivers/pinctrl/pinctrl-at91-pio4.c              |   4 +-
+ drivers/pinctrl/pinctrl-digicolor.c              |   2 +-
+ drivers/pinctrl/pinctrl-lpc18xx.c                |   2 +-
+ drivers/pinctrl/pinctrl-palmas.c                 |   2 +-
+ drivers/pinctrl/pinctrl-pic32.c                  |   2 +-
+ drivers/pinctrl/pinctrl-pistachio.c              |   2 +-
+ drivers/pinctrl/pinctrl-tb10x.c                  |   2 +-
+ drivers/pinctrl/pinctrl-utils.c                  |   4 +-
+ drivers/pinctrl/pinctrl-utils.h                  |   2 +-
+ drivers/pinctrl/pinctrl-zynq.c                   |   2 +-
+ drivers/pinctrl/pxa/pinctrl-pxa2xx.c             |   2 +-
+ drivers/pinctrl/qcom/pinctrl-msm.c               |   2 +-
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c         |   2 +-
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c          |   2 +-
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c         |   2 +-
+ drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c          |   2 +-
+ drivers/pinctrl/stm32/pinctrl-stm32.c            |   4 +-
+ drivers/pinctrl/tegra/pinctrl-tegra-xusb.c       |   2 +-
+ drivers/pinctrl/tegra/pinctrl-tegra.c            |   4 +-
+ drivers/pinctrl/uniphier/pinctrl-uniphier-core.c |   2 +-
+ include/linux/acpi.h                             |   4 +-
+ include/linux/pinctrl/pinconf-generic.h          |  27 +-
+ include/linux/property.h                         |   9 +
+ 43 files changed, 1063 insertions(+), 114 deletions(-)
+ create mode 100644 Documentation/acpi/pinctrl-properties.txt
+ create mode 100644 drivers/pinctrl/acpi.c
+ create mode 100644 drivers/pinctrl/acpi.h
 
-:)
-
-cheers
-
+-- 
+1.9.1
