@@ -1,28 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: xgene-sb: Use irq_domain_free_irqs_common
- instead of open coded
-Date: Thu, 31 Mar 2016 10:22:23 +0200
-Message-ID: <CACRpkdb0XErdgaAVg5z+x4EThHWoPcW4Z3jagp=Atjnhue0mpA@mail.gmail.com>
-References: <1458187231.27037.1.camel@ingics.com>
-	<1458187303.27037.3.camel@ingics.com>
+Subject: Re: [PATCH] gpio: 74x164: add dt support for nxp's 74x594
+Date: Thu, 31 Mar 2016 10:26:53 +0200
+Message-ID: <CACRpkdb5Yqw4dMqV1wBh2hL701XgxEWGDguVvuK2gvsmakj4eg@mail.gmail.com>
+References: <1457998330-8070-1-git-send-email-nicolassaenzj@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1458187303.27037.3.camel@ingics.com>
+In-Reply-To: <1457998330-8070-1-git-send-email-nicolassaenzj@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Y Vo <yvo@apm.com>, Alexandre Courbot <gnurou@gmail.com>, Jiang Liu <jiang.liu@linux.intel.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Mar 17, 2016 at 5:01 AM, Axel Lin <axel.lin@ingics.com> wrote:
+On Tue, Mar 15, 2016 at 12:32 AM, Nicolas Saenz Julienne
+<nicolassaenzj@gmail.com> wrote:
 
-> Current code calls irq_domain_alloc_irqs_parent() in .alloc,
-> so it should call irq_domain_free_irqs_parent() accordingly in .free.
-> Fix it by switching to use irq_domain_free_irqs_common() instead.
+> The chip is also an 8 bit shift register which works out of the box as a GPO
+> expander with this patch
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Signed-off-by: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
 
-Patch applied with Marc's ACK.
+Patch applied.
+
+I'm not a compatible-string minimalist. Add as many as you
+like.
 
 Yours,
 Linus Walleij
