@@ -1,63 +1,34 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v6 1/2] gpio: dwapb: convert device node to fwnode
-Date: Thu, 31 Mar 2016 16:25:22 +0300
-Message-ID: <CAHp75VcJ92vB-b7daMpd2i9hP4MPU2CAQf7JoiBx5rKFvB1RVw@mail.gmail.com>
-References: <1458959496-57455-1-git-send-email-qiujiang@huawei.com>
-	<1458959496-57455-2-git-send-email-qiujiang@huawei.com>
-	<CANk1AXT5yHMwPJ7=0kSZKr+eHHdC1QXQVgstQ6QhFbUPSKuD+A@mail.gmail.com>
-	<CAHp75VcDAg_aXt7ej-_zXxHMXJohRM9ErQkJQS_ryekD-7V=zw@mail.gmail.com>
-	<56FC7491.5050000@huawei.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: arm:collie_defconfig broken since commit ff2b135922 ("gpio: make
+ the gpiochip a real device")
+Date: Thu, 31 Mar 2016 15:26:49 +0200
+Message-ID: <CACRpkdZ4P6Sk3__pJtHep91f8Bw4xQWLZ85V_=TEa3OMUze1aw@mail.gmail.com>
+References: <56F8BB39.5010708@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:34306 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753223AbcCaNZX convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Mar 2016 09:25:23 -0400
-In-Reply-To: <56FC7491.5050000@huawei.com>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:36175 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752473AbcCaN0u (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Mar 2016 09:26:50 -0400
+Received: by mail-oi0-f53.google.com with SMTP id r187so59995974oih.3
+        for <linux-gpio@vger.kernel.org>; Thu, 31 Mar 2016 06:26:49 -0700 (PDT)
+In-Reply-To: <56F8BB39.5010708@roeck-us.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: qiujiang <qiujiang@huawei.com>
-Cc: Alan Tull <delicious.quinoa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Jamie Iles <jamie@jamieiles.com>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com, atull <atull@opensource.altera.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Mar 31, 2016 at 3:51 AM, Jiang Qiu <qiujiang@huawei.com> wrote:
-> =E5=9C=A8 2016/3/30 19:38, Andy Shevchenko =E5=86=99=E9=81=93:
+On Mon, Mar 28, 2016 at 7:03 AM, Guenter Roeck <linux@roeck-us.net> wrote:
 
->>> One suggestion for both patches: you could remove name from struct
->>> dwapb_port_property and get rid of pp->name and nobody would miss i=
-t.
->>> All it is used for is some dev_err's so the device info gets printe=
-d
->>> anyway.  For example (if I leave the irq out of the DT)
->>>
->>> gpio-dwapb ff708000.gpio: no irq for bank /soc/gpio@ff708000/gpio-c=
-ontroller@0
->>>
->>> is redundant.  The only additional info here from the name is the p=
-ort
->>> index.  That could be added to the messages without having to get t=
-he
->>> name through the two property/of methods.
->>>
->>
->> Good suggestion! That'll make patches and code cleaner.
->>
->> Perhaps separate prepended  patch?
->>
-> Hi Alan/Andy,
->
-> It sounds good, I will follow this suggestion and do a test. But, wha=
-t's the
-> "separate prepended patch" mean?
+> arm:collie_defconfig is broken since commit ff2b135922 ("gpio: make the
+> gpiochip a real device").
 
-Preparatory patch which goes first in the series.
+Oh I was worried that something like this would happen, but
+hoped we could find it in linux-next, oh well.
 
---=20
-With Best Regards,
-Andy Shevchenko
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I saw you sent a patch too, I will look at it & also try to
+reproduce on my iPAQ.
+
+Yours,
+Linus Walleij
