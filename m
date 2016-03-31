@@ -1,36 +1,39 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5] iio: dac: Add support for the AD5592R/AD5593R ADCs/DACs
-Date: Thu, 31 Mar 2016 10:01:06 +0200
-Message-ID: <CACRpkdYAqPn9o-wMbb-iZn7bjad8u9JmdwRqwrjFMArPrOXEOQ@mail.gmail.com>
-References: <1458721195-28915-1-git-send-email-michael.hennerich@analog.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v3 1/6] pinctrl: baytrail: Add pin control data structures
+Date: Thu, 31 Mar 2016 11:04:34 +0300
+Message-ID: <20160331080434.GE2099@lahna.fi.intel.com>
+References: <1459350335-15192-1-git-send-email-cristina.ciocan@intel.com>
+ <1459350335-15192-2-git-send-email-cristina.ciocan@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1458721195-28915-1-git-send-email-michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
-Cc: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Paul Cercueil <paul.cercueil-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1459350335-15192-2-git-send-email-cristina.ciocan@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Cristina Ciocan <cristina.ciocan@intel.com>
+Cc: mathias.nyman@linux.intel.com, heikki.krogerus@linux.intel.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Mar 23, 2016 at 9:19 AM,  <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org> wrote:
+On Wed, Mar 30, 2016 at 06:05:30PM +0300, Cristina Ciocan wrote:
+> +	PINCTRL_PIN(55, "GPIO_S0_SC[055]"),
+> +	PINCTRL_PIN(56, "GPIO_S0_SC[056]"),
+> +	PINCTRL_PIN(57, "GPIO_S0_SC[057]"),
+> +	PINCTRL_PIN(58, "GPIO_S0_SC[058]"),
+> +	PINCTRL_PIN(59, "GPIO_S0_SC[059]"),
+> +	PINCTRL_PIN(60, "GPIO_S0_SC[060]"),
+> +	PINCTRL_PIN(61, "GPIO_S0_SC[061]"),
 
-> From: Paul Cercueil <paul.cercueil-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
->
-> This patch adds support for the AD5592R (spi) and AD5593R (i2c)
-> ADC/DAC/GPIO devices.
->
-> Signed-off-by: Paul Cercueil <paul.cercueil-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
+You still have these (and all similar [number]) things. IMO this looks
+better:
 
-For this v5 version:
-Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+	PINCTRL_PIN(55, "GPIO_S0_SC55"),
+	PINCTRL_PIN(56, "GPIO_S0_SC56"),
+	PINCTRL_PIN(57, "GPIO_S0_SC57"),
+	PINCTRL_PIN(58, "GPIO_S0_SC58"),
+	PINCTRL_PIN(59, "GPIO_S0_SC59"),
+	PINCTRL_PIN(60, "GPIO_S0_SC60"),
+	PINCTRL_PIN(61, "GPIO_S0_SC61"),
 
-I'm fine with this new gpiochip driver being merged into the
-IIO tree.
+but I don't really care that much ;-)
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+My ack still applies to the whole series.
