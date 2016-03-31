@@ -1,54 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/9] drivers/gpio: make gpio-bcm-kona.c explicitly non-modular
-Date: Thu, 31 Mar 2016 12:01:46 +0200
-Message-ID: <CACRpkdaanGJTrAASM37wc9_LtJCG07Bnhm+LcCPxpGJW9vDAiA@mail.gmail.com>
-References: <1459093489-18314-1-git-send-email-paul.gortmaker@windriver.com>
-	<1459093489-18314-2-git-send-email-paul.gortmaker@windriver.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH] powerpc: ppc4xx: drop unused variable
+Date: Thu, 31 Mar 2016 21:09:40 +1100
+Message-ID: <1459418980.24848.1.camel@ellerman.id.au>
+References: <1459408452-3483-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:33089 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751607AbcCaKBr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Mar 2016 06:01:47 -0400
-Received: by mail-oi0-f41.google.com with SMTP id d205so53533242oia.0
-        for <linux-gpio@vger.kernel.org>; Thu, 31 Mar 2016 03:01:46 -0700 (PDT)
-In-Reply-To: <1459093489-18314-2-git-send-email-paul.gortmaker@windriver.com>
+Received: from ozlabs.org ([103.22.144.67]:42394 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751243AbcCaKJu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 31 Mar 2016 06:09:50 -0400
+In-Reply-To: <1459408452-3483-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ray Jui <rjui@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Anatolij Gustschin <agust@denx.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-On Sun, Mar 27, 2016 at 5:44 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
+On Thu, 2016-03-31 at 09:14 +0200, Linus Walleij wrote:
 
-> The Kconfig currently controlling compilation of this code is:
->
-> config GPIO_BCM_KONA
->         bool "Broadcom Kona GPIO"
->
-> ...meaning that it currently is not being built as a module by anyone.
->
-> Lets remove the couple traces of modularity so that when reading the
-> driver there is no doubt it is builtin-only.
->
-> Since module_platform_driver() uses the same init level priority as
-> builtin_platform_driver() the init ordering remains unchanged with
-> this commit.
->
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> was (or is now) contained at the top of the file in the comments.
->
-> Cc: Ray Jui <rjui@broadcom.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: bcm-kernel-feedback-list@broadcom.com
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> commit 0d36fe65f58391712e11a6621075f373216e5f00
+> "powerpc: ppc4xx: use gpiochip data pointer"
+> made the mm_gc local variable in ppc4xx_gpio_set()
+> redundant, and when GCC treats warnings as errors this
+> happens:
+> 
+> arch/powerpc/sysdev/ppc4xx_gpio.c: In function 'ppc4xx_gpio_set':
+> arch/powerpc/sysdev/ppc4xx_gpio.c:93:26: error:
+>   unused variable 'mm_gc' [-Werror=unused-variable]
+>      struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+>                              ^
+>    cc1: all warnings being treated as errors
+> 
+> Reported-by: kbuild test robot <fengguang.wu@intel.com>
+> Cc: Anatolij Gustschin <agust@denx.de>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> I've applied this to the GPIO tree where the offending
+> commit is now merged.
 
-Patch applied.
+Thanks.
 
-Yours,
-Linus Walleij
+If you feel like cross building powerpc in future it should be as simple as:
+
+ $ dnf install gcc-powerpc64-linux-gnu || apt-get install gcc-powerpc-linux-gnu
+ $ make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- ...
+
+:)
+
+cheers
+
