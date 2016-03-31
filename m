@@ -1,29 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: 74x164: add dt support for nxp's 74x594
-Date: Thu, 31 Mar 2016 10:26:53 +0200
-Message-ID: <CACRpkdb5Yqw4dMqV1wBh2hL701XgxEWGDguVvuK2gvsmakj4eg@mail.gmail.com>
-References: <1457998330-8070-1-git-send-email-nicolassaenzj@gmail.com>
+Subject: Re: [PATCH] gpio/ls2080a: Add compatible "fsl,ls2080a-gpio" for
+ ls2080a gpio nodes
+Date: Thu, 31 Mar 2016 10:29:02 +0200
+Message-ID: <CACRpkdbRwTdGNsoCgqZbgf7DVYbPJdSDey7ju6ogVtVJ+tDGoA@mail.gmail.com>
+References: <1458726442-1851-1-git-send-email-Gang.Liu@nxp.com>
+	<1458726442-1851-4-git-send-email-Gang.Liu@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1457998330-8070-1-git-send-email-nicolassaenzj@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:33646 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752942AbcCaI3C (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Mar 2016 04:29:02 -0400
+Received: by mail-oi0-f52.google.com with SMTP id d205so50951144oia.0
+        for <linux-gpio@vger.kernel.org>; Thu, 31 Mar 2016 01:29:02 -0700 (PDT)
+In-Reply-To: <1458726442-1851-4-git-send-email-Gang.Liu@nxp.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Liu Gang <Gang.Liu@nxp.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@linaro.org>, Rob Herring <robh+dt@kernel.org>, scott.wood@nxp.com, leoyang.li@nxp.com, mingkai.hu@nxp.com
 
-On Tue, Mar 15, 2016 at 12:32 AM, Nicolas Saenz Julienne
-<nicolassaenzj@gmail.com> wrote:
+The subject of this patch should be:
 
-> The chip is also an 8 bit shift register which works out of the box as a GPO
-> expander with this patch
+ARM64: dts: ...
+
+And it should be merged into the ARM SoC tree, not the GPIO tree.
+
+On Wed, Mar 23, 2016 at 10:47 AM, Liu Gang <Gang.Liu@nxp.com> wrote:
+
+> The compatible "fsl,qoriq-gpio" is used by gpio driver:
+> drivers/gpio/gpio-mpc8xxx.c to implement general gpio
+> functionalities.
 >
-> Signed-off-by: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
+> The chip-specific compatible "fsl,ls2080a-gpio" may be
+> used to fix potential gpio IP block errata or other
+> chip-specific gpio issues.
+>
+> Signed-off-by: Liu Gang <Gang.Liu@nxp.com>
 
-Patch applied.
-
-I'm not a compatible-string minimalist. Add as many as you
-like.
+Apart from that it looks good.
 
 Yours,
 Linus Walleij
