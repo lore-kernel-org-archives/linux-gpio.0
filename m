@@ -1,65 +1,59 @@
-From: Jiang Qiu <qiujiang@huawei.com>
-Subject: Re: [PATCH v6 2/2] gpio: dwapb: add gpio-signaled acpi event support
-Date: Thu, 31 Mar 2016 08:59:02 +0800
-Message-ID: <56FC7656.1020900@huawei.com>
-References: <1458959496-57455-1-git-send-email-qiujiang@huawei.com>
- <1458959496-57455-3-git-send-email-qiujiang@huawei.com>
- <CAHp75VcRkwDm60b7PTJmYmPVX7iNoLFL_pcx5qUK8=E7zMyKtw@mail.gmail.com>
-Reply-To: <qiujiang@huawei.com>
+From: Phil Reid <preid@electromag.com.au>
+Subject: Re: [PATCH v2] gpio: pca953x: Use correct u16 value for register word
+ write
+Date: Thu, 31 Mar 2016 11:28:57 +0800
+Message-ID: <56FC9979.1070905@electromag.com.au>
+References: <1459320554-2455-1-git-send-email-sdliyong@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from szxga03-in.huawei.com ([119.145.14.66]:2734 "EHLO
-	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750803AbcCaA71 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Mar 2016 20:59:27 -0400
-In-Reply-To: <CAHp75VcRkwDm60b7PTJmYmPVX7iNoLFL_pcx5qUK8=E7zMyKtw@mail.gmail.com>
+Received: from anchovy1.45ru.net.au ([203.30.46.145]:36531 "EHLO
+	anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755313AbcCaD3G (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Mar 2016 23:29:06 -0400
+In-Reply-To: <1459320554-2455-1-git-send-email-sdliyong@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Alan Tull <delicious.quinoa@gmail.com>, Jamie Iles <jamie@jamieiles.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com, haifeng.wei@huawei.com, charles.chenxin@huawei.com
+To: Yong Li <sdliyong@gmail.com>, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, alexander.stein@systec-electronic.com
 
-=E5=9C=A8 2016/3/30 19:41, Andy Shevchenko =E5=86=99=E9=81=93:
-> On Sat, Mar 26, 2016 at 4:31 AM, qiujiang <qiujiang@huawei.com> wrote=
-:
->> This patch adds gpio-signaled acpi event support. It is used for
->> power button on hisilicon D02 board, an arm64 platform.
->=20
-> Yes, looks good, my tag stays.
->=20
->> @@ -502,10 +509,17 @@ dwapb_gpio_get_pdata(struct device *dev)
->>                         }
->>                 }
->>
->> +               if (has_acpi_companion(dev) && pp->idx =3D=3D 0)
->> +                       pp->irq =3D platform_get_irq(to_platform_dev=
-ice(dev), 0);
->> +
->=20
->>                 pp->irq_shared  =3D false;
->>                 pp->gpio_base   =3D -1;
->=20
->=20
->> +
->>                 if (dev->of_node)
->>                         pp->name =3D to_of_node(fwnode)->full_name;
->=20
-> This change doesn't belong the patch, though it should gone with the
-> two lines of pp->name assignment as per Alan's suggestion to get rid
-> of pp->name completely.
+On 30/03/2016 2:49 PM, Yong Li wrote:
+> The current implementation only uses the first byte in val,
+> the second byte is always 0. Change it to use cpu_to_le16
+> to write the two bytes into the register
+>
+> Signed-off-by: Yong Li <sdliyong@gmail.com>
 
-Agree, I plan to take Alan's suggestion, thank you.
+Reviewed-by: Phil Reid <preid@electromag.com.au>
+> ---
+>   drivers/gpio/gpio-pca953x.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index d0d3065..e66084c 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -18,6 +18,7 @@
+>   #include <linux/i2c.h>
+>   #include <linux/platform_data/pca953x.h>
+>   #include <linux/slab.h>
+> +#include <asm/unaligned.h>
+>   #include <linux/of_platform.h>
+>   #include <linux/acpi.h>
+>
+> @@ -159,7 +160,7 @@ static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
+>   		switch (chip->chip_type) {
+>   		case PCA953X_TYPE:
+>   			ret = i2c_smbus_write_word_data(chip->client,
+> -							reg << 1, (u16) *val);
+> +			    reg << 1, cpu_to_le16(get_unaligned((u16 *)val)));
+>   			break;
+>   		case PCA957X_TYPE:
+>   			ret = i2c_smbus_write_byte_data(chip->client, reg << 1,
+>
 
->=20
->> +
->> +               if (has_acpi_companion(dev))
->> +                       pp->name =3D acpi_dev_name(to_acpi_device_no=
-de(fwnode));
->=20
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Regards
+Phil Reid
+
