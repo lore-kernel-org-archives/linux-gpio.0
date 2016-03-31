@@ -1,66 +1,58 @@
-From: Greg Ungerer <gerg@uclinux.org>
-Subject: Re: [PATCH] gpio: add a userspace chardev ABI for GPIOs
-Date: Thu, 31 Mar 2016 16:43:25 +1000
-Message-ID: <56FCC70D.30306@uclinux.org>
-References: <56FB30A3.40405@uclinux.org>
- <CAAVeFu+o9izwAyjORBisLg+G=PChzFvzF4SjmB1G=S+Tt--Qag@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-m68k-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFu+o9izwAyjORBisLg+G=PChzFvzF4SjmB1G=S+Tt--Qag@mail.gmail.com>
-Sender: linux-m68k-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-m68k <linux-m68k@lists.linux-m68k.org>, Guenter Roeck <linux@roeck-us.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] powerpc: ppc4xx: drop unused variable
+Date: Thu, 31 Mar 2016 09:14:12 +0200
+Message-ID: <1459408452-3483-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f169.google.com ([209.85.217.169]:35127 "EHLO
+	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751459AbcCaHOT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Mar 2016 03:14:19 -0400
+Received: by mail-lb0-f169.google.com with SMTP id bc4so46602710lbc.2
+        for <linux-gpio@vger.kernel.org>; Thu, 31 Mar 2016 00:14:18 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Anatolij Gustschin <agust@denx.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
 
-Hi Alexandre,
+commit 0d36fe65f58391712e11a6621075f373216e5f00
+"powerpc: ppc4xx: use gpiochip data pointer"
+made the mm_gc local variable in ppc4xx_gpio_set()
+redundant, and when GCC treats warnings as errors this
+happens:
 
-On 31/03/16 15:59, Alexandre Courbot wrote:
-> On Wed, Mar 30, 2016 at 10:49 AM, Greg Ungerer <gerg@uclinux.org> wrote:
->> Hi Linus,
->>
->> Commit 3c702e99 ("gpio: add a userspace chardev ABI for GPIOs")
->> breaks booting on all my m68k/ColdFire platforms (with MMU and
->> without). They all hang during the boot up, the last console
->> trace is:
->>
->>   ...
->>   NR_IRQS:256
->>    clocksource: pit: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1467848399018 ns
->>    Calibrating delay loop... 1042.02 BogoMIPS (lpj=5210112)
->>    pid_max: default: 32768 minimum: 301
->>    Mount-cache hash table entries: 2048 (order: 0, 8192 bytes)
->>    Mountpoint-cache hash table entries: 2048 (order: 0, 8192 bytes)
->>
->> I traced this back to gpiochip_add_data() when it does the
->> device_add() call. On my platforms this is being called
->> before gpiolib_dev_init(), and this seems to be the issue.
->> So gpio_bus_type has not been registered as a bus yet.
->>
->> The lowest level ColdFire gpio code (arch/m68k/coldfire/gpio.c)
->> calls its setup from core_initcall() - and this will call
->> gpiochip_add_data(). This is being called first, before
->> the core_initcall() for gpiolib_dev_init().
-> 
-> We got a similar report with an alternative workaround:
-> 
-> https://lkml.org/lkml/2016/3/29/714
-> 
->> I can fix by changing the core_initcall() in coldfire/gpio.c
->> to something like postcore_initcall() and that fixes the boot
->> problem.
->>
->> What do you think?
->> Would you expect that all callers of gpiochip_add_data()
->> should be after core_initcall()?
-> 
-> As you can see on the discussion thread above, there are several
-> candidate fixes - I have been away from GPIO for too long to make a
-> good decision, but I'm sure Linus can make the call.
+arch/powerpc/sysdev/ppc4xx_gpio.c: In function 'ppc4xx_gpio_set':
+arch/powerpc/sysdev/ppc4xx_gpio.c:93:26: error:
+  unused variable 'mm_gc' [-Werror=unused-variable]
+     struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+                             ^
+   cc1: all warnings being treated as errors
 
-Thanks for letting me know. I wasn't going to rush any fixes,
-happy to let Linus decide how to handle it.
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Cc: Anatolij Gustschin <agust@denx.de>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+I've applied this to the GPIO tree where the offending
+commit is now merged.
+---
+ arch/powerpc/sysdev/ppc4xx_gpio.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Regards
-Greg
+diff --git a/arch/powerpc/sysdev/ppc4xx_gpio.c b/arch/powerpc/sysdev/ppc4xx_gpio.c
+index 4ab83cd04785..5382d04dd872 100644
+--- a/arch/powerpc/sysdev/ppc4xx_gpio.c
++++ b/arch/powerpc/sysdev/ppc4xx_gpio.c
+@@ -90,7 +90,6 @@ __ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ static void
+ ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+ 	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
+ 	unsigned long flags;
+ 
+-- 
+2.4.3
+
