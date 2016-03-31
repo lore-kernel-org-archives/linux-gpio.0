@@ -1,96 +1,92 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 1/2] gpiolib: Do not use devm functions when registering gpio chip
-Date: Thu, 31 Mar 2016 08:11:29 -0700
-Message-ID: <1459437090-10029-1-git-send-email-linux@roeck-us.net>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: [PATCH v2 8/9] ARM: dts: Declare push button as GPIO key on stm32f429 Disco board
+Date: Thu, 31 Mar 2016 17:09:38 +0200
+Message-ID: <1459436979-17275-9-git-send-email-mcoquelin.stm32@gmail.com>
+References: <1459436979-17275-1-git-send-email-mcoquelin.stm32@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:58220 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757144AbcCaPLc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Mar 2016 11:11:32 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36302 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757418AbcCaPJ5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Mar 2016 11:09:57 -0400
+In-Reply-To: <1459436979-17275-1-git-send-email-mcoquelin.stm32@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Alexandre Courbot <gnurou@gmail.com>, Greg Ungerer <gerg@uclinux.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com, lee.jones@linaro.org
 
-It is possible that a gpio chip is registered before the gpiolib
-initialization code has run. This means we can not use devm_ functions
-to allocate memory at that time. Do it the old fashioned way.
-
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Greg Ungerer <gerg@uclinux.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 ---
- drivers/gpio/gpiolib.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/stm32429i-eval.dts  | 18 ++++++++++++++++++
+ arch/arm/boot/dts/stm32f429-disco.dts | 13 +++++++++++++
+ 2 files changed, 31 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 72065532c1c7..f1531070814d 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -440,6 +440,8 @@ static void gpiodevice_release(struct device *dev)
- 	cdev_del(&gdev->chrdev);
- 	list_del(&gdev->list);
- 	ida_simple_remove(&gpio_ida, gdev->id);
-+	kfree(gdev->label);
-+	kfree(gdev->descs);
- 	kfree(gdev);
- }
+diff --git a/arch/arm/boot/dts/stm32429i-eval.dts b/arch/arm/boot/dts/stm32429i-eval.dts
+index 6bfc5959dac3..0fd78e4e8a45 100644
+--- a/arch/arm/boot/dts/stm32429i-eval.dts
++++ b/arch/arm/boot/dts/stm32429i-eval.dts
+@@ -47,6 +47,7 @@
  
-@@ -504,8 +506,7 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 	else
- 		gdev->owner = THIS_MODULE;
+ /dts-v1/;
+ #include "stm32f429.dtsi"
++#include <dt-bindings/input/input.h>
  
--	gdev->descs = devm_kcalloc(&gdev->dev, chip->ngpio,
--				   sizeof(gdev->descs[0]), GFP_KERNEL);
-+	gdev->descs = kcalloc(chip->ngpio, sizeof(gdev->descs[0]), GFP_KERNEL);
- 	if (!gdev->descs) {
- 		status = -ENOMEM;
- 		goto err_free_gdev;
-@@ -518,12 +519,12 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 	}
+ / {
+ 	model = "STMicroelectronics STM32429i-EVAL board";
+@@ -82,6 +83,23 @@
+ 		};
+ 	};
  
- 	if (chip->label)
--		gdev->label = devm_kstrdup(&gdev->dev, chip->label, GFP_KERNEL);
-+		gdev->label = kstrdup(chip->label, GFP_KERNEL);
- 	else
--		gdev->label = devm_kstrdup(&gdev->dev, "unknown", GFP_KERNEL);
-+		gdev->label = kstrdup("unknown", GFP_KERNEL);
- 	if (!gdev->label) {
- 		status = -ENOMEM;
--		goto err_free_gdev;
-+		goto err_free_descs;
- 	}
++	gpio_keys {
++		compatible = "gpio-keys";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		autorepeat;
++		button@0 {
++			label = "Wake up";
++			linux,code = <KEY_WAKEUP>;
++			gpios = <&gpioa 0 0>;
++		};
++		button@1 {
++			label = "Tamper";
++			linux,code = <KEY_RESTART>;
++			gpios = <&gpioc 13 0>;
++		};
++	};
++
+ 	usbotg_hs_phy: usbphy {
+ 		#phy-cells = <0>;
+ 		compatible = "usb-nop-xceiv";
+diff --git a/arch/arm/boot/dts/stm32f429-disco.dts b/arch/arm/boot/dts/stm32f429-disco.dts
+index 01408073dd53..7d0415e80668 100644
+--- a/arch/arm/boot/dts/stm32f429-disco.dts
++++ b/arch/arm/boot/dts/stm32f429-disco.dts
+@@ -47,6 +47,7 @@
  
- 	gdev->ngpio = chip->ngpio;
-@@ -543,7 +544,7 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 		if (base < 0) {
- 			status = base;
- 			spin_unlock_irqrestore(&gpio_lock, flags);
--			goto err_free_gdev;
-+			goto err_free_label;
- 		}
- 		/*
- 		 * TODO: it should not be necessary to reflect the assigned
-@@ -558,7 +559,7 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 	status = gpiodev_add_to_list(gdev);
- 	if (status) {
- 		spin_unlock_irqrestore(&gpio_lock, flags);
--		goto err_free_gdev;
-+		goto err_free_label;
- 	}
+ /dts-v1/;
+ #include "stm32f429.dtsi"
++#include <dt-bindings/input/input.h>
  
- 	for (i = 0; i < chip->ngpio; i++) {
-@@ -637,6 +638,10 @@ err_remove_from_list:
- 	spin_lock_irqsave(&gpio_lock, flags);
- 	list_del(&gdev->list);
- 	spin_unlock_irqrestore(&gpio_lock, flags);
-+err_free_label:
-+	kfree(gdev->label);
-+err_free_descs:
-+	kfree(gdev->descs);
- err_free_gdev:
- 	ida_simple_remove(&gpio_ida, gdev->id);
- 	/* failures here can mean systems won't boot... */
+ / {
+ 	model = "STMicroelectronics STM32F429i-DISCO board";
+@@ -75,6 +76,18 @@
+ 			linux,default-trigger = "heartbeat";
+ 		};
+ 	};
++
++	gpio_keys {
++		compatible = "gpio-keys";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		autorepeat;
++		button@0 {
++			label = "User";
++			linux,code = <KEY_HOME>;
++			gpios = <&gpioa 0 0>;
++		};
++	};
+ };
+ 
+ &clk_hse {
 -- 
-2.5.0
+1.9.1
 
