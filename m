@@ -1,42 +1,115 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2] gpio / ACPI: ignore GpioInt() GPIOs when requesting
- GPIO_OUT_*
-Date: Thu, 31 Mar 2016 10:33:34 -0700
-Message-ID: <20160331173334.GA39098@dtor-ws>
-References: <20160324175025.GA4149@dtor-ws>
- <CACRpkdYxpP=tKhuWyCQT4FdkEeruPS-0DWbJmXmPMFkVye=9tA@mail.gmail.com>
+From: Thor Thayer <tthayer@opensource.altera.com>
+Subject: Re: [RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource
+ Chip bindings
+Date: Thu, 31 Mar 2016 13:21:02 -0500
+Message-ID: <56FD6A8E.7030208@opensource.altera.com>
+References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
+ <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
+ <20160330113532.GI3323@x1>
+Reply-To: <tthayer@opensource.altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:35625 "EHLO
-	mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757383AbcCaRdh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Mar 2016 13:33:37 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYxpP=tKhuWyCQT4FdkEeruPS-0DWbJmXmPMFkVye=9tA@mail.gmail.com>
+Received: from mail-by2on0067.outbound.protection.outlook.com ([207.46.100.67]:25808
+	"EHLO na01-by2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751703AbcCaSQY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 31 Mar 2016 14:16:24 -0400
+In-Reply-To: <20160330113532.GI3323@x1>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org, pawell.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
 
-On Thu, Mar 31, 2016 at 11:49:13AM +0200, Linus Walleij wrote:
-> On Thu, Mar 24, 2016 at 6:50 PM, Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> 
-> > From: Dmitry Torokhov <dtor@chromium.org>
-> >
-> > When firmware does not use _DSD properties that allow properly name GPIO
-> > resources, the kernel falls back on parsing _CRS resources, and will
-> > return entries described as GpioInt() as general purpose GPIOs even
-> > though they are meant to be used simply as interrupt sources for the
-> > device:
-> 
-> Patch applied for fixes. Is this a regression so that I should
-> also tag it for stable?
+Hi Lee,
 
-No, I think it is OK to keep it in 4.6+.
+On 03/30/2016 06:35 AM, Lee Jones wrote:
+> On Tue, 29 Mar 2016, tthayer@opensource.altera.com wrote:
+>
+>> From: Thor Thayer <tthayer@opensource.altera.com>
+>>
 
-Thanks.
+[..snip..]
 
--- 
-Dmitry
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
+>> @@ -0,0 +1,35 @@
+>> +* Altera Arria10 Development Kit System Resource Chip
+>> +
+>> +Required parent device properties:
+>> +- compatible : "altr,altr_a10sr"
+>> +- spi-max-frequency : Maximum SPI frequency.
+>> +- reg : the SPI Chip Select address for the Arria10 System Resource chip
+>
+> DT bindings are much easier to read in the following format:
+>
+> - compatible		: "altr,altr_a10sr"
+> - spi-max-frequency	: Maximum SPI frequency.
+> - reg			: the SPI Chip Select address for the Arria10 System Resource chip
+>
+> ... also, sentences start with an uppercase char.
+>
+
+OK.
+
+>> +The A10SR consists of this varied group of sub-devices:
+>> +
+>> +Device                   Description
+>> +------                   ----------
+>> +altr_a10sr_gpio          GPIO Controller
+>> +altr_a10sr_hwmon         Hardware Monitor
+>> +
+>> +The LEDs are implemented entirely in the device tree using
+>> +the gpio-led framework.
+>
+> This is a Linuxisum and should not live in DT bindings.
+>
+
+I was following the format of other mfd binding documents such as 
+Documentation/devicetree/bindings/mfd/da9055.txt so I'll need your help 
+understanding this.
+
+I'm not familiar with the phrase Linuxisum. A Google search turns up 
+several threads referencing Linuxisum but I can't seem to find the 
+definition. One thread seems to imply that an existing driver such as 
+GPIO is a Linuxisum and should not be re-defined. Am I understanding 
+correctly?
+
+>> +Example:
+>> +
+>> +        a10-sr: a10-sr@0 {
+>
+> Nodes should be named after their device 'type'.
+>
+> Does this device really start a address 0?
+
+OK. If I understand, this should be named after mfd then?
+>
+>> +		compatible = "altr,altr-a10sr";
+>> +		reg = <0>;
+>> +		spi-max-frequency = <100000>;
+>> +
+>> +		a10sr_gpio: a10sr_gpio {
+>
+> Device type only please.
+
+And this would be a gpio?
+
+Thanks for your comments and for reviewing!
+
+>
+>> +			compatible = "altr,a10sr-gpio";
+>> +			gpio-controller;
+>> +			#gpio-cells = <2>;
+>> +			ngpios = <16>;
+>> +		};
+>> +
+>> +		a10sr_hwmon: a10sr_hwmon {
+>
+> Device type only please.
+>
+>> +			compatible = "altr,a10sr-hwmon";
+>> +		};
+>> +	};
+>
