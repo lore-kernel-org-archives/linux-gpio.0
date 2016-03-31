@@ -1,35 +1,67 @@
-From: Li Yang <leoli@freescale.com>
-Subject: Re: [PATCH] gpio/ls2080a: Add compatible "fsl,ls2080a-gpio" for
- ls2080a gpio nodes
-Date: Thu, 31 Mar 2016 14:40:31 -0500
-Message-ID: <CADRPPNTSA888Vc6E3Sg__6b7dG3Eq26=4vf0OojpjdzfrSWA2w@mail.gmail.com>
-References: <1458726442-1851-1-git-send-email-Gang.Liu@nxp.com>
-	<1458726442-1851-4-git-send-email-Gang.Liu@nxp.com>
-	<CACRpkdbRwTdGNsoCgqZbgf7DVYbPJdSDey7ju6ogVtVJ+tDGoA@mail.gmail.com>
+From: "DR.ANTHONY EMMANUEL" <taminbin@micso.fr>
+Subject: CAN I TRUST YOU ON THIS DEAL!!!
+Date: Fri, 1 Apr 2016 00:22:06 +0200
+Message-ID: <eb16e561fea1127ce011bc9f7b6546a3@195.32.69.13>
+Reply-To: "DR.ANTHONY EMMANUEL" <dr.anthony_emmanuel@yahoo.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33150 "EHLO
-	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756334AbcCaTkd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Mar 2016 15:40:33 -0400
-Received: by mail-wm0-f68.google.com with SMTP id i204so24738952wmd.0
-        for <linux-gpio@vger.kernel.org>; Thu, 31 Mar 2016 12:40:32 -0700 (PDT)
-In-Reply-To: <CACRpkdbRwTdGNsoCgqZbgf7DVYbPJdSDey7ju6ogVtVJ+tDGoA@mail.gmail.com>
+Received: from france.micso.it ([195.32.69.13]:48483 "HELO micso.fr"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+	id S1757251AbcCaWWJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 31 Mar 2016 18:22:09 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Liu Gang <Gang.Liu@nxp.com>, Kevin Hilman <khilman@linaro.org>, Li Yang <leoyang.li@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, mingkai.hu@nxp.com, scott.wood@nxp.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Mar 31, 2016 at 3:29 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> The subject of this patch should be:
->
-> ARM64: dts: ...
->
-> And it should be merged into the ARM SoC tree, not the GPIO tree.
+FROM DR.ANTHONY EMMANUEL.
+AUDITING AND ACCOUNTING UNIT.
+BANK OF AFRICA. BURKINA FASO.
 
-Thanks for the comment.  I will help to fix the title issues for the
-dts patches and push for acceptance in arm-soc tree.
+CONTACT ME HERE;( dr.anthony_emmanuel@yahoo.fr )
+ 
+Attn: Sir/ Madam,
 
-Regards,
-Leo
+FROM ( DR.ANTHONY EMMANUEL.) Staff of Bank Of Africa in Burkina Faso. I
+would like you to indicate your  interest to  receive the transfer of
+(15.5 Million Dollars) which I will like you to stand as the next of kin to
+my late client whose account is presently dormant for claims.
+if you are interested,indicate and i will intimate you with the method of
+application and how you can apply to the bank.
+But before i send to you the text of application form,I will like you to
+send me the following informations
+
+1.NAME IN FULL:..............................
+2.ADDRESS:.......................................
+3.NATIONALITY:.................................. .
+4.AGE:.............................................
+5.SEX..............................................
+6.OCCUPATION:......................................
+7.MARITAL STATUS:..................................
+8.PRIAVTE PHONE NO.................................
+9.PRIVATE FAX NO:..........................
+10.ATTACH COPY OF YOUR IDENTIFICATION......
+
+Now my questions are:
+1) Can you handle this project?
+2) Can I give you this trust?
+
+so i will like you to send to me those informations for easy and effective
+communication.Upon receipt of your reply, I will send to you by fax or email
+the text of the application form.I will not fail to bring to your notice
+that this transaction is hitch-free and that you should not entertain any
+atom of fear as all required arrangements have been made for the transfer.
+You should contact me immediately as soon as you receive this letter,if only
+you are interested and ready to help On this Contact me. through my private
+email address (dr.anthony_emmanuel@yahoo.fr )
+Trusting to hear from you immediately. Do keep this a top secret for
+security reasons.
+
+Yours faithfully,
+
+DR.ANTHONY EMMANUEL.
+
+________________________________________________
+Message sent using Micso France Webmail
+
+
