@@ -1,129 +1,175 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC 4/8] gpio: altera-a10sr: Add A10 System Resource Chip GPIO support.
-Date: Fri, 1 Apr 2016 14:17:42 +0200
-Message-ID: <CACRpkda8VTDGVsRqbCs6ESeokA3t_p2X91FUNiqA7YM=F-JXBQ@mail.gmail.com>
-References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
-	<1459278791-3646-5-git-send-email-tthayer@opensource.altera.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH] gpiolib: handle probe deferrals better
+Date: Fri, 1 Apr 2016 05:42:01 -0700
+Message-ID: <56FE6C99.8090900@roeck-us.net>
+References: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-hwmon-owner@vger.kernel.org>
-In-Reply-To: <1459278791-3646-5-git-send-email-tthayer@opensource.altera.com>
-Sender: linux-hwmon-owner@vger.kernel.org
-To: tthayer@opensource.altera.com
-Cc: Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, jdelvare@suse.com, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>, pawell.moll@arm.com, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Dinh Nguyen <dinguyen@opensource.altera.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-hwmon@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: linux-input@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 29, 2016 at 9:13 PM,  <tthayer@opensource.altera.com> wrote:
-
-> From: Thor Thayer <tthayer@opensource.altera.com>
+On 04/01/2016 04:44 AM, Linus Walleij wrote:
+> The gpiolib does not currently return probe deferrals from the
+> .to_irq() hook while the GPIO drivers are being initialized.
+> Further: it keeps returning -EPROBE_DEFER for gpio[d]_get()
+> even after all builtin drivers have initialized.
 >
-> Add the GPIO functionality for the Altera Arria10 MAX5 System Resource
-> Chip. The A10 MAX5 has 12 bits of GPIO assigned to switches, buttons,
-> and LEDs as a GPIO extender on the SPI bus.
+> Fix this thusly:
 >
-> Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
+> - Move the assignment of .to_irq() to the last step when
+>    using gpiolib_irqchip_add() so we can't get spurious calls
+>    into the .to_irq() function until all set-up is finished.
+>
+> - Put in a late_initcall_sync() to set a boolean state variable to
+>    indicate that we're not gonna defer any longer. Since deferred
+>    probe happens at late_initcall() time, using late_initcall_sync()
+>    should be fine.
+>
+> - After this point, return hard errors (-ENXIO) from both
+>    gpio[d]_get() and .to_irq().
+>
+> This way we should (at least for all drivers using GPIOLIB_IRQCHIP)
+> be getting proper deferrals from both gpio[d]_get() and .to_irq()
+> until the irqchip side is properly set up, and then proper
+> errors after all drivers should have been probed.
+>
+> This problem was first seen with gpio-keys.
+>
+> Cc: linux-input@vger.kernel.org
+> Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Reported-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Alexander: please test this, you need Guether's patches too,
+> I have it all on my "fixes" branch in the GPIO git:
+> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=fixes
+>
+> Tomeu: I think you're the authority on deferred probe these days.
+> Is this the right way for a subsystem to switch from returning
+> -EPROBE_DEFER to instead returning an unrecoverable error?
+>
+> Guenther: I applied this on top of your patches, please check it
+> if you can, you're smarter than me with this stuff.
 
-OK...
+Not sure about that ;-). I'll run it through my test suite.
 
-As Lee says: split off the MFD patch so it is a pure GPIO driver
-patch.
+Guenter
 
-> +#include <linux/gpio.h>
-
-You should instead #include <linux/gpio/driver.h>
-
-> +#include <linux/mfd/altera-a10sr.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/seq_file.h>
-> +#include <linux/syscalls.h>
-> +#include <linux/uaccess.h>
-
-Syscalls and uaccess??? I don't think so.
-
-> +struct altr_a10sr_gpio {
-> +       struct altr_a10sr *a10sc;
-> +       struct gpio_chip gp;
-> +};
-
-Add some kerneldoc.
-
-> +static inline struct altr_a10sr_gpio *to_altr_a10sr_gpio(struct gpio_chip *chip)
+> ---
+>   drivers/gpio/gpiolib.c | 47 ++++++++++++++++++++++++++++++++++++++++-------
+>   1 file changed, 40 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index b747c76fd2b1..426a93f9d79e 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -68,7 +68,9 @@ LIST_HEAD(gpio_devices);
+>   static void gpiochip_free_hogs(struct gpio_chip *chip);
+>   static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
+>
+> +/* These keep the state of the library */
+>   static bool gpiolib_initialized;
+> +static bool gpiolib_builtin_ready;
+>
+>   static inline void desc_set_label(struct gpio_desc *d, const char *label)
+>   {
+> @@ -1093,7 +1095,6 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+>   	gpiochip->irqchip = irqchip;
+>   	gpiochip->irq_handler = handler;
+>   	gpiochip->irq_default_type = type;
+> -	gpiochip->to_irq = gpiochip_to_irq;
+>   	gpiochip->lock_key = lock_key;
+>   	gpiochip->irqdomain = irq_domain_add_simple(of_node,
+>   					gpiochip->ngpio, first_irq,
+> @@ -1129,6 +1130,12 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+>   	}
+>
+>   	acpi_gpiochip_request_interrupts(gpiochip);
+> +	/*
+> +	 * Wait with this until last, as someone may be asynchronously
+> +	 * calling .to_irq() and needs to be getting probe deferrals until
+> +	 * this point.
+> +	 */
+> +	gpiochip->to_irq = gpiochip_to_irq;
+>
+>   	return 0;
+>   }
+> @@ -1366,12 +1373,21 @@ done:
+>
+>   int gpiod_request(struct gpio_desc *desc, const char *label)
+>   {
+> -	int status = -EPROBE_DEFER;
+> +	int status;
+>   	struct gpio_device *gdev;
+>
+>   	VALIDATE_DESC(desc);
+>   	gdev = desc->gdev;
+>
+> +	/*
+> +	 * Defer requests until all built-in drivers have had a chance
+> +	 * to probe, then give up and return a hard error.
+> +	 */
+> +	if (!gpiolib_builtin_ready)
+> +		status = -EPROBE_DEFER;
+> +	else
+> +		status = -ENXIO;
+> +
+>   	if (try_module_get(gdev->owner)) {
+>   		status = __gpiod_request(desc, label);
+>   		if (status < 0)
+> @@ -1993,18 +2009,27 @@ EXPORT_SYMBOL_GPL(gpiod_cansleep);
+>    * gpiod_to_irq() - return the IRQ corresponding to a GPIO
+>    * @desc: gpio whose IRQ will be returned (already requested)
+>    *
+> - * Return the IRQ corresponding to the passed GPIO, or an error code in case of
+> - * error.
+> + * Return the IRQ corresponding to the passed GPIO, or an error code.
+>    */
+>   int gpiod_to_irq(const struct gpio_desc *desc)
+>   {
+> -	struct gpio_chip	*chip;
+> -	int			offset;
+> +	struct gpio_chip *chip;
+> +	int offset;
+>
+>   	VALIDATE_DESC(desc);
+>   	chip = desc->gdev->chip;
+>   	offset = gpio_chip_hwgpio(desc);
+> -	return chip->to_irq ? chip->to_irq(chip, offset) : -ENXIO;
+> +
+> +	if (chip->to_irq)
+> +		return chip->to_irq(chip, offset);
+> +	/*
+> +	 * We will wait for new GPIO drivers to arrive until the
+> +	 * late initcalls. After that we stop deferring and return
+> +	 * a hard error.
+> +	 */
+> +	if (!gpiolib_builtin_ready)
+> +		return -EPROBE_DEFER;
+> +	return -ENXIO;
+>   }
+>   EXPORT_SYMBOL_GPL(gpiod_to_irq);
+>
+> @@ -2883,6 +2908,14 @@ static int __init gpiolib_dev_init(void)
+>   }
+>   core_initcall(gpiolib_dev_init);
+>
+> +static int __init gpiolib_late_done(void)
 > +{
-> +       return container_of(chip, struct altr_a10sr_gpio, gp);
+> +	/* Flag that we're not deferring probes anymore */
+> +	gpiolib_builtin_ready = true;
+> +	return 0;
 > +}
-
-Don't use this old design pattern.
-
-Use [devm_]gpiochip_add_data() and use gpiochip_get_data(gc) to get
-a data pointer from the gpiochip.
-
-> +static int altr_a10sr_gpio_get(struct gpio_chip *gc, unsigned int nr)
-> +{
-> +       struct altr_a10sr_gpio *gpio = to_altr_a10sr_gpio(gc);
-
-So this becomes
-struct altr_a10sr_gpio *gpio = gpiochip_get_data(gc);
-
-> +       int ret;
-> +       unsigned char reg = ALTR_A10SR_LED_RD_REG + ALTR_A10SR_REG_OFFSET(nr);
+> +late_initcall_sync(gpiolib_late_done);
 > +
-> +       ret = altr_a10sr_reg_read(gpio->a10sc, reg);
-> +
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       if (ret & (1 << ALTR_A10SR_REG_BIT(nr)))
-> +               return 1;
+>   #ifdef CONFIG_DEBUG_FS
+>
+>   static void gpiolib_dbg_show(struct seq_file *s, struct gpio_device *gdev)
+>
 
-Do this instead:
-
-return !!(ret & (1 << ALTR_A10SR_REG_BIT(nr)))
-
-It raises the question whether ALTR_A10SR_REG_BIT
-is just a reimplementation of the BIT() macro from
-<linux/bitops.h>, please check this.
-
-> +static int altr_a10sr_gpio_direction_input(struct gpio_chip *gc,
-> +                                          unsigned int nr)
-> +{
-> +       if ((nr >= ALTR_A10SR_IN_VALID_RANGE_LO) &&
-> +           (nr <= ALTR_A10SR_IN_VALID_RANGE_HI))
-> +               return 0;
-> +       return -EINVAL;
-> +}
-> +
-> +static int altr_a10sr_gpio_direction_output(struct gpio_chip *gc,
-> +                                           unsigned int nr, int value)
-> +{
-> +       if ((nr >= ALTR_A10SR_OUT_VALID_RANGE_LO) &&
-> +           (nr <= ALTR_A10SR_OUT_VALID_RANGE_HI))
-> +               return 0;
-> +       return -EINVAL;
-> +}
-
-Does this mean that all lines are *always* input and output
-at the same time?
-
-If there is no .set_direction() callback and all lines are both
-input and output it kind of implies that all lines are also
-implicitly open drain do you agree?
-
-Please check:
-- If there is really no direction setting anywhere
-- For example if some lines are hardwired as input and
-  some lines are hardwired as output
-- If that is not the case, verify that all lines are really
-  open drain, they should be if all are both input and
-  output at the same time.
-
-> +       ret = gpiochip_add(&gpio->gp);
-> +       if (ret < 0) {
-> +               dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
-> +               return ret;
-> +       }
-
-Use devm_gpiochip_add_data() instead.
-
-Yours,
-Linus Walleij
