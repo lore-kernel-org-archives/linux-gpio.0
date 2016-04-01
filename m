@@ -1,43 +1,51 @@
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Subject: [PATCH] pinctrl: mediatek: correct debounce time unit in mtk_gpio_set_debounce
-Date: Fri, 1 Apr 2016 21:51:51 +0800
-Message-ID: <1459518711-61619-1-git-send-email-yingjoe.chen@mediatek.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH] gpiolib: handle probe deferrals better
+Date: Fri, 1 Apr 2016 07:04:49 -0700
+Message-ID: <20160401140449.GA16014@roeck-us.net>
+References: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org>
+ <1766024.riJEdmHPZI@ws-stein>
+ <CACRpkdaynNEFGhCSkd7qAgxtNoRT=pRWbB0dJmjM89UM4NG_xQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:40365 "EHLO
-	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752362AbcDANwN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 09:52:13 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaynNEFGhCSkd7qAgxtNoRT=pRWbB0dJmjM89UM4NG_xQ@mail.gmail.com>
+Sender: linux-input-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, srv_heupstream@mediatek.com, Yingjoe Chen <yingjoe.chen@mediatek.com>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux Input <linux-input@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+List-Id: linux-gpio@vger.kernel.org
 
-The debounce time unit for gpio_chip.set_debounce is us but
-mtk_gpio_set_debounce regard it as ms.
-Fix this by correct debounce time array dbnc_arr so it can find correct
-debounce setting.
+On Fri, Apr 01, 2016 at 03:03:40PM +0200, Linus Walleij wrote:
+> On Fri, Apr 1, 2016 at 2:16 PM, Alexander Stein
+> <alexander.stein@systec-electronic.com> wrote:
+> 
+> > I noticed you fiddle with late_initcall_sync. Sorry, I did not mention it:
+> > gpio_mcp23s08 as well as gpio_keys are loaded as modules, so late_initcall_*
+> > should not affect it.
+> 
+> I don't get this. I think probe deferral is only used to defer
+> initcalls used for built-in drivers.
+> 
 
-Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
----
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Maybe late_initcall() and driver_probe_done() are not synchronous ?
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index 2bbe6f7..be72325 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -1004,7 +1004,8 @@ static int mtk_gpio_set_debounce(struct gpio_chip *chip, unsigned offset,
- 	struct mtk_pinctrl *pctl = dev_get_drvdata(chip->parent);
- 	int eint_num, virq, eint_offset;
- 	unsigned int set_offset, bit, clr_bit, clr_offset, rst, i, unmask, dbnc;
--	static const unsigned int dbnc_arr[] = {0 , 1, 16, 32, 64, 128, 256};
-+	static const unsigned int dbnc_arr[] = {500, 1000, 16000, 32000, 64000,
-+						128000, 256000};
- 	const struct mtk_desc_pin *pin;
- 	struct irq_data *d;
- 
--- 
-1.9.1
+In other words, is it guaranteed that driver_probe_done() returns
+true when late_initcall() is executed ?
 
+Thanks,
+Guenter
+
+> If there are dependencies among things compiled as modules,
+> doesn't depmod/modprobe make sure that they are probed in
+> the right order? Could it be that some module alias thingofabob
+> is missing?
+> 
+> Or is modprobe failing because it (correctly) see that there is
+> no symbol dependencies between the gpio_mcp23s08 and
+> gpio-keys modules? (Not that I know how depmod works...)
+> 
+> If nothing else works, I guess marking mcp23s08 as bool
+> and building it into the kernel will work, right?
+> 
+> Yours,
+> Linus Walleij
