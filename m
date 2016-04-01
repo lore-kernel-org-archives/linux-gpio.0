@@ -1,85 +1,85 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 0/6] gpio: batch #2: remove modular code from non-modular drivers
-Date: Fri, 1 Apr 2016 14:49:32 -0400
-Message-ID: <1459536578-3017-1-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 5/6] drivers/gpio: make gpio-tps65910.c explicitly non-modular
+Date: Fri, 1 Apr 2016 14:49:37 -0400
+Message-ID: <1459536578-3017-6-git-send-email-paul.gortmaker@windriver.com>
+References: <1459536578-3017-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Alexandre Courbot <gnurou@gmail.com>, Graeme Gregory <gg@slimlogic.co.uk>, Gregory Bean <gbean@codeaurora.org>, Hanumath Prasad <hanumath.prasad@stericsson.com>, Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Rabin Vincent <rabin.vincent@stericsson.com>, linux-gpio@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail5.windriver.com ([192.103.53.11]:44482 "EHLO mail5.wrs.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753177AbcDASuD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 1 Apr 2016 14:50:03 -0400
+In-Reply-To: <1459536578-3017-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Graeme Gregory <gg@slimlogic.co.uk>, Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>, linux-gpio@vger.kernel.org
 
-For GPIO, I've divided up the the audit of modular usage in non-modular
-drivers into three categories to ease review and limit the batch size.
-Group #1 has been submitted and merged ; this group here is group #2.
+The Kconfig currently controlling compilation of this code is:
 
-The breakdown of the three groups is as follows:
+drivers/gpio/Kconfig:config GPIO_TPS65910
+drivers/gpio/Kconfig:   bool "TPS65910 GPIO"
 
-1) just replacement of modular macros with their non-modular equivalents
-   that CPP would have inserted anyway ; this means runtime equivalence
-   and actually also binary equivalence.
+...meaning that it currently is not being built as a module by anyone.
 
-2) as per #1 but also with the removal of unused/orphaned __exit functions
-   that could never be called/exercised.  This also maintains runtime
-   equivalence, but since the unused __exit function is gone, there is a
-   reduction in the object file size and hence not binary equivalence, eg:
-       before: -rw-rw-r-- 1 8828 drivers/gpio/gpio-rc5t583.o
-       after:  -rw-rw-r-- 1 7396 drivers/gpio/gpio-rc5t583.o
+Lets remove the modular code that is essentially orphaned, so that
+when reading the driver there is no doubt it is builtin-only.
 
-3) as per #2 but also with the removal of a ".remove" function that is
-   hooked into the driver struct.   This ".remove" function would of
-   course not be called from the __exit function since that is never run.
-   However in theory, someone could have triggered it via sysfs unbind,
-   even though there isn't a sensible use case for doing so.  So to cover
-   that possibility, we've also disabled sysfs unbind in these drivers.
+Since module_init was not in use by this code, the init ordering
+remains unchanged with this commit.
 
-For anyone new to the underlying goal of this cleanup, we are trying to
-not use module support for code that can never be built as a module since:
+We also delete the MODULE_LICENSE tag etc. since all that information
+is already contained at the top of the file in the comments.
 
- (1) it is easy to accidentally write unused module_exit and remove code
- (2) it can be misleading when reading the source, thinking it can be
-     modular when the Makefile and/or Kconfig prohibit it
- (3) it requires the include of the module.h header file which in turn
-     includes nearly everything else, thus adding to CPP overhead.
- (4) it gets copied/replicated into other code and spreads like weeds.
-
-Interestingly enough, none of the drivers patched here were using the
-module_init() binding ; they all used subsys_initcall() instead, which
-I think reinforces point #4 above - i.e. nobody writes a new driver
-from scratch.
-
-Build tested for x86-64, arm and arm64 on today's linux-next to ensure
-no silly typos crept in.
-
-Paul.
----
-
+Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>
 Cc: Graeme Gregory <gg@slimlogic.co.uk>
-Cc: Gregory Bean <gbean@codeaurora.org>
-Cc: Hanumath Prasad <hanumath.prasad@stericsson.com>
 Cc: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rabin Vincent <rabin.vincent@stericsson.com>
 Cc: linux-gpio@vger.kernel.org
-
-Paul Gortmaker (6):
-  drivers/gpio: make gpio-rc5t583.c explicitly non-modular
-  drivers/gpio: make gpio-tc3589x.c explicitly non-modular
-  drivers/gpio: make gpio-sx150x.c explicitly non-modular
-  drivers/gpio: make gpio-palmas.c explicitly non-modular
-  drivers/gpio: make gpio-tps65910.c explicitly non-modular
-  drivers/gpio: make gpio-tps6586x.c explicitly non-modular
-
- drivers/gpio/gpio-palmas.c   | 13 +------------
- drivers/gpio/gpio-rc5t583.c  | 12 ------------
- drivers/gpio/gpio-sx150x.c   | 15 ++++-----------
- drivers/gpio/gpio-tc3589x.c  | 11 -----------
- drivers/gpio/gpio-tps6586x.c | 13 +------------
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
  drivers/gpio/gpio-tps65910.c | 16 ++--------------
- 6 files changed, 8 insertions(+), 72 deletions(-)
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
+diff --git a/drivers/gpio/gpio-tps65910.c b/drivers/gpio/gpio-tps65910.c
+index cdbd7c740043..0ae6a5a54ea8 100644
+--- a/drivers/gpio/gpio-tps65910.c
++++ b/drivers/gpio/gpio-tps65910.c
+@@ -4,7 +4,7 @@
+  * Copyright 2010 Texas Instruments Inc.
+  *
+  * Author: Graeme Gregory <gg@slimlogic.co.uk>
+- * Author: Jorge Eduardo Candelaria jedu@slimlogic.co.uk>
++ * Author: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
+  *
+  *  This program is free software; you can redistribute it and/or modify it
+  *  under  the terms of the GNU General  Public License as published by the
+@@ -14,7 +14,7 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/errno.h>
+ #include <linux/gpio.h>
+ #include <linux/i2c.h>
+@@ -193,15 +193,3 @@ static int __init tps65910_gpio_init(void)
+ 	return platform_driver_register(&tps65910_gpio_driver);
+ }
+ subsys_initcall(tps65910_gpio_init);
+-
+-static void __exit tps65910_gpio_exit(void)
+-{
+-	platform_driver_unregister(&tps65910_gpio_driver);
+-}
+-module_exit(tps65910_gpio_exit);
+-
+-MODULE_AUTHOR("Graeme Gregory <gg@slimlogic.co.uk>");
+-MODULE_AUTHOR("Jorge Eduardo Candelaria jedu@slimlogic.co.uk>");
+-MODULE_DESCRIPTION("GPIO interface for TPS65910/TPS6511 PMICs");
+-MODULE_LICENSE("GPL v2");
+-MODULE_ALIAS("platform:tps65910-gpio");
 -- 
 2.6.1
+
