@@ -1,623 +1,780 @@
 From: Cristina Ciocan <cristina.ciocan@intel.com>
-Subject: [PATCH v4 5/6] pinctrl: baytrail: Register pin control handling
-Date: Fri,  1 Apr 2016 14:00:06 +0300
-Message-ID: <1459508407-22011-6-git-send-email-cristina.ciocan@intel.com>
+Subject: [PATCH v4 2/6] pinctrl: baytrail: Add pin control operations
+Date: Fri,  1 Apr 2016 14:00:03 +0300
+Message-ID: <1459508407-22011-3-git-send-email-cristina.ciocan@intel.com>
 References: <1459508407-22011-1-git-send-email-cristina.ciocan@intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:12256 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758991AbcDAK4z (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 1 Apr 2016 06:56:55 -0400
 In-Reply-To: <1459508407-22011-1-git-send-email-cristina.ciocan@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: mathias.nyman@linux.intel.com, mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com, Cristina Ciocan <cristina.ciocan@intel.com>
-List-Id: linux-gpio@vger.kernel.org
 
-This patch updates device's probing, removal and irq handling in order to
-register it as pinctrl device. Pin control data is matched by ACPI UID,
-since it is passed along as driver data in acpi_device_id structure.
+Add implementation for:
+	- pin control, group information retrieval: count, name and pins
+	- pin muxing:
+		- function information (count, name and groups)
+		- mux setting
+		- gpio control (enable, disable, set direction)
+	- pin configuration:
+		- pull disable
+		- pull up/down and pull strength
+		- debounce
+		- any other option is treated as not supported.
 
 Signed-off-by: Cristina Ciocan <cristina.ciocan@intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-baytrail.c | 447 +++++++++++++++----------------
- 1 file changed, 221 insertions(+), 226 deletions(-)
+ drivers/pinctrl/intel/Kconfig            |   3 +
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 560 +++++++++++++++++++++++++++++--
+ 2 files changed, 528 insertions(+), 35 deletions(-)
 
+diff --git a/drivers/pinctrl/intel/Kconfig b/drivers/pinctrl/intel/Kconfig
+index 4d2efad..1c74e03 100644
+--- a/drivers/pinctrl/intel/Kconfig
++++ b/drivers/pinctrl/intel/Kconfig
+@@ -6,6 +6,9 @@ config PINCTRL_BAYTRAIL
+ 	bool "Intel Baytrail GPIO pin control"
+ 	depends on GPIOLIB && ACPI
+ 	select GPIOLIB_IRQCHIP
++	select PINMUX
++	select PINCONF
++	select GENERIC_PINCONF
+ 	help
+ 	  driver for memory mapped GPIO functionality on Intel Baytrail
+ 	  platforms. Supports 3 banks with 102, 28 and 44 gpios.
 diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index f7c752b..b087b00 100644
+index 364f56c..415d2d5 100644
 --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
 +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -181,6 +181,17 @@ struct byt_pinctrl_soc_data {
- 	size_t ncommunities;
+@@ -27,6 +27,9 @@
+ #include <linux/io.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinmux.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinconf-generic.h>
+ 
+ /* memory mapped register offsets */
+ #define BYT_CONF0_REG		0x000
+@@ -73,6 +76,14 @@
+ #define BYT_NCORE_ACPI_UID	"2"
+ #define BYT_SUS_ACPI_UID	"3"
+ 
++/*
++ * This is the function value most pins have for GPIO muxing. If the value
++ * differs from the default one, it must be explicitly mentioned. Otherwise, the
++ * pin control implementation will set the muxing value to default GPIO if it
++ * does not find a match for the requested function.
++ */
++#define BYT_DEFAULT_GPIO_MUX	0
++
+ struct byt_gpio_pin_context {
+ 	u32 conf0;
+ 	u32 val;
+@@ -722,6 +733,8 @@ struct byt_gpio {
+ 	void __iomem			*reg_base;
+ 	struct pinctrl_gpio_range	*range;
+ 	struct byt_gpio_pin_context	*saved_context;
++	const struct byt_pinctrl_soc_data *soc_data;
++	struct byt_community		*communities_copy;
  };
  
-+struct byt_gpio {
-+	struct gpio_chip chip;
-+	struct platform_device *pdev;
-+	struct pinctrl_dev *pctl_dev;
-+	struct pinctrl_desc pctl_desc;
-+	raw_spinlock_t lock;
-+	const struct byt_pinctrl_soc_data *soc_data;
-+	struct byt_community *communities_copy;
-+	struct byt_gpio_pin_context *saved_context;
+ static const struct byt_pinctrl_soc_data *byt_soc_data[] = {
+@@ -731,52 +744,252 @@ static const struct byt_pinctrl_soc_data *byt_soc_data[] = {
+ 	NULL,
+ };
+ 
+-static void __iomem *byt_gpio_reg(struct gpio_chip *chip, unsigned offset,
+-				 int reg)
++static struct byt_community *byt_get_community(struct byt_gpio *vg,
++					       unsigned int pin)
+ {
+-	struct byt_gpio *vg = gpiochip_get_data(chip);
+-	u32 reg_offset;
++	struct byt_community *comm;
++	int i;
++
++	for (i = 0; i < vg->soc_data->ncommunities; i++) {
++		comm = vg->communities_copy + i;
++		if (pin < comm->pin_base + comm->npins && pin >= comm->pin_base)
++			return comm;
++	}
+ 
++	return NULL;
++}
++
++static void __iomem *byt_gpio_reg(struct byt_gpio *vg, unsigned int offset,
++				  int reg)
++{
++	struct byt_community *comm = byt_get_community(vg, offset);
++	u32 reg_offset = 0;
++
++	if (!comm)
++		return NULL;
++
++	offset -= comm->pin_base;
+ 	if (reg == BYT_INT_STAT_REG)
+ 		reg_offset = (offset / 32) * 4;
+ 	else
+-		reg_offset = vg->range->pins[offset] * 16;
++		reg_offset = comm->pad_map[offset] * 16;
++
++	return comm->reg_base + reg_offset + reg;
++}
++
++static int byt_get_groups_count(struct pinctrl_dev *pctldev)
++{
++	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctldev);
++
++	return vg->soc_data->ngroups;
++}
++
++static const char *byt_get_group_name(struct pinctrl_dev *pctldev,
++				      unsigned int selector)
++{
++	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctldev);
++
++	return vg->soc_data->groups[selector].name;
++}
++
++static int byt_get_group_pins(struct pinctrl_dev *pctldev,
++			      unsigned int selector,
++			      const unsigned int **pins,
++			      unsigned int *num_pins)
++{
++	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctldev);
++
++	*pins		= vg->soc_data->groups[selector].pins;
++	*num_pins	= vg->soc_data->groups[selector].npins;
++
++	return 0;
++}
++
++static const struct pinctrl_ops byt_pinctrl_ops = {
++	.get_groups_count	= byt_get_groups_count,
++	.get_group_name		= byt_get_group_name,
++	.get_group_pins		= byt_get_group_pins,
 +};
 +
- /* SCORE pins, aka GPIOC_<pin_no> or GPIO_S0_SC[<pin_no>] */
- static const struct pinctrl_pin_desc byt_score_pins[] = {
- 	PINCTRL_PIN(0, "SATA_GP0"),
-@@ -287,20 +298,6 @@ static const struct pinctrl_pin_desc byt_score_pins[] = {
- 	PINCTRL_PIN(101, "PMC_PLT_CLK5"),
- };
- 
--static unsigned const score_pins[BYT_NGPIO_SCORE] = {
--	85, 89, 93, 96, 99, 102, 98, 101, 34, 37,
--	36, 38, 39, 35, 40, 84, 62, 61, 64, 59,
--	54, 56, 60, 55, 63, 57, 51, 50, 53, 47,
--	52, 49, 48, 43, 46, 41, 45, 42, 58, 44,
--	95, 105, 70, 68, 67, 66, 69, 71, 65, 72,
--	86, 90, 88, 92, 103, 77, 79, 83, 78, 81,
--	80, 82, 13, 12, 15, 14, 17, 18, 19, 16,
--	2, 1, 0, 4, 6, 7, 9, 8, 33, 32,
--	31, 30, 29, 27, 25, 28, 26, 23, 21, 20,
--	24, 22, 5, 3, 10, 11, 106, 87, 91, 104,
--	97, 100,
--};
--
- static const unsigned int byt_score_pins_map[BYT_NGPIO_SCORE] = {
- 	85, 89, 93, 96, 99, 102, 98, 101, 34, 37,
- 	36, 38, 39, 35, 40, 84, 62, 61, 64, 59,
-@@ -571,14 +568,6 @@ static const struct pinctrl_pin_desc byt_sus_pins[] = {
- 	PINCTRL_PIN(43, "USB_ULPI_REFCLK"),
- };
- 
--static const unsigned int sus_pins[BYT_NGPIO_SUS] = {
--	29, 33, 30, 31, 32, 34, 36, 35, 38, 37,
--	18, 7, 11, 20, 17, 1, 8, 10, 19, 12,
--	0, 2, 23, 39, 28, 27, 22, 21, 24, 25,
--	26, 51, 56, 54, 49, 55, 48, 57, 50, 58,
--	52, 53, 59, 40,
--};
--
- static const unsigned int byt_sus_pins_map[BYT_NGPIO_SUS] = {
- 	29, 33, 30, 31, 32, 34, 36, 35, 38, 37,
- 	18, 7, 11, 20, 17, 1, 8, 10, 19, 12,
-@@ -701,43 +690,6 @@ static const struct byt_pinctrl_soc_data byt_ncore_soc_data = {
- 	.ncommunities	= ARRAY_SIZE(byt_ncore_communities),
- };
- 
--static unsigned const ncore_pins[BYT_NGPIO_NCORE] = {
--	19, 18, 17, 20, 21, 22, 24, 25, 23, 16,
--	14, 15, 12, 26, 27, 1, 4, 8, 11, 0,
--	3, 6, 10, 13, 2, 5, 9, 7,
--};
--
--static struct pinctrl_gpio_range byt_ranges[] = {
--	{
--		.name = BYT_SCORE_ACPI_UID, /* match with acpi _UID in probe */
--		.npins = BYT_NGPIO_SCORE,
--		.pins = score_pins,
--	},
--	{
--		.name = BYT_NCORE_ACPI_UID,
--		.npins = BYT_NGPIO_NCORE,
--		.pins = ncore_pins,
--	},
--	{
--		.name = BYT_SUS_ACPI_UID,
--		.npins = BYT_NGPIO_SUS,
--		.pins = sus_pins,
--	},
--	{
--	},
--};
--
--struct byt_gpio {
--	struct gpio_chip		chip;
--	struct platform_device		*pdev;
--	raw_spinlock_t			lock;
--	void __iomem			*reg_base;
--	struct pinctrl_gpio_range	*range;
--	struct byt_gpio_pin_context	*saved_context;
--	const struct byt_pinctrl_soc_data *soc_data;
--	struct byt_community		*communities_copy;
--};
--
- static const struct byt_pinctrl_soc_data *byt_soc_data[] = {
- 	&byt_score_soc_data,
- 	&byt_sus_soc_data,
-@@ -1023,14 +975,6 @@ static int byt_gpio_request_enable(struct pinctrl_dev *pctl_dev,
- 	return 0;
- }
- 
--static void byt_gpio_free(struct gpio_chip *chip, unsigned offset)
--{
--	struct byt_gpio *vg = gpiochip_get_data(chip);
--
--	byt_gpio_clear_triggering(vg, offset);
--	pm_runtime_put(&vg->pdev->dev);
--}
--
- static void byt_gpio_disable_free(struct pinctrl_dev *pctl_dev,
- 				  struct pinctrl_gpio_range *range,
- 				  unsigned int offset)
-@@ -1084,42 +1028,6 @@ static const struct pinmux_ops byt_pinmux_ops = {
- 	.gpio_set_direction	= byt_gpio_set_direction,
- };
- 
--static int byt_gpio_request(struct gpio_chip *chip, unsigned int offset)
--{
--	struct byt_gpio *vg = gpiochip_get_data(chip);
--	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
--	u32 value, gpio_mux;
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&vg->lock, flags);
--
--	/*
--	 * In most cases, func pin mux 000 means GPIO function.
--	 * But, some pins may have func pin mux 001 represents
--	 * GPIO function.
--	 *
--	 * Because there are devices out there where some pins were not
--	 * configured correctly we allow changing the mux value from
--	 * request (but print out warning about that).
--	 */
--	value = readl(reg) & BYT_PIN_MUX;
--	gpio_mux = byt_get_gpio_mux(vg, offset);
--	if (WARN_ON(gpio_mux != value)) {
--		value = readl(reg) & ~BYT_PIN_MUX;
--		value |= gpio_mux;
--		writel(value, reg);
--
--		dev_warn(&vg->pdev->dev,
--			 "pin %u forcibly re-configured as GPIO\n", offset);
--	}
--
--	raw_spin_unlock_irqrestore(&vg->lock, flags);
--
--	pm_runtime_get(&vg->pdev->dev);
--
--	return 0;
--}
--
- static void byt_get_pull_strength(u32 reg, u16 *strength)
- {
- 	switch (reg & BYT_PULL_STR_MASK) {
-@@ -1365,21 +1273,6 @@ static int byt_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- 
- static int byt_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
- {
--	struct byt_gpio *vg = gpiochip_get_data(chip);
--	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&vg->lock, flags);
--
--	/*
--	 * Before making any direction modifications, do a check if gpio
--	 * is set for direct IRQ.  On baytrail, setting GPIO to output does
--	 * not make sense, so let's at least warn the caller before they shoot
--	 * themselves in the foot.
--	 */
--	WARN(readl(conf_reg) & BYT_DIRECT_IRQ_EN,
--		"Potential Error: Setting GPIO with direct_irq_en to output");
--
- 	return pinctrl_gpio_direction_input(chip->base + offset);
- }
- 
-@@ -1489,28 +1382,6 @@ static void byt_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 	}
- }
- 
--static void byt_gpio_irq_handler(struct irq_desc *desc)
--{
--	struct irq_data *data = irq_desc_get_irq_data(desc);
--	struct byt_gpio *vg = gpiochip_get_data(irq_desc_get_handler_data(desc));
--	struct irq_chip *chip = irq_data_get_irq_chip(data);
--	u32 base, pin;
--	void __iomem *reg;
--	unsigned long pending;
--	unsigned virq;
--
--	/* check from GPIO controller which pin triggered the interrupt */
--	for (base = 0; base < vg->chip.ngpio; base += 32) {
--		reg = byt_gpio_reg(vg, base, BYT_INT_STAT_REG);
--		pending = readl(reg);
--		for_each_set_bit(pin, &pending, 32) {
--			virq = irq_find_mapping(vg->chip.irqdomain, base + pin);
--			generic_handle_irq(virq);
--		}
--	}
--	chip->irq_eoi(data);
--}
--
- static const struct gpio_chip byt_gpio_chip = {
- 	.owner			= THIS_MODULE,
- 	.request		= gpiochip_generic_request,
-@@ -1628,6 +1499,37 @@ static struct irq_chip byt_irqchip = {
- 	.flags		= IRQCHIP_SKIP_SET_WAKE,
- };
- 
-+static void byt_gpio_irq_handler(struct irq_desc *desc)
++static int byt_get_functions_count(struct pinctrl_dev *pctldev)
 +{
-+	struct irq_data *data = irq_desc_get_irq_data(desc);
-+	struct byt_gpio *vg = gpiochip_get_data(
-+				irq_desc_get_handler_data(desc));
-+	struct irq_chip *chip = irq_data_get_irq_chip(data);
-+	u32 base, pin;
-+	void __iomem *reg;
-+	unsigned long pending;
-+	unsigned int virq;
++	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctldev);
 +
-+	/* check from GPIO controller which pin triggered the interrupt */
-+	for (base = 0; base < vg->chip.ngpio; base += 32) {
-+		reg = byt_gpio_reg(vg, base, BYT_INT_STAT_REG);
-+
-+		if (!reg) {
-+			dev_warn(&vg->pdev->dev,
-+				 "Pin %i: could not retrieve interrupt status register\n",
-+				 base);
-+			continue;
-+		}
-+
-+		pending = readl(reg);
-+		for_each_set_bit(pin, &pending, 32) {
-+			virq = irq_find_mapping(vg->chip.irqdomain, base + pin);
-+			generic_handle_irq(virq);
-+		}
-+	}
-+	chip->irq_eoi(data);
++	return vg->soc_data->nfunctions;
 +}
 +
- static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
- {
- 	void __iomem *reg;
-@@ -1639,8 +1541,18 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
- 	 * do not use direct IRQ mode. This will prevent spurious
- 	 * interrupts from misconfigured pins.
- 	 */
--	for (i = 0; i < vg->chip.ngpio; i++) {
--		value = readl(byt_gpio_reg(vg, i, BYT_CONF0_REG));
-+	for (i = 0; i < vg->soc_data->npins; i++) {
-+		unsigned int pin = vg->soc_data->pins[i].number;
++static const char *byt_get_function_name(struct pinctrl_dev *pctldev,
++					 unsigned int selector)
++{
++	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctldev);
 +
-+		reg = byt_gpio_reg(vg, pin, BYT_CONF0_REG);
-+		if (!reg) {
-+			dev_warn(&vg->pdev->dev,
-+				 "Pin %i: could not retrieve conf0 register\n",
-+				 i);
-+			continue;
-+		}
-+
-+		value = readl(reg);
- 		if ((value & BYT_PIN_MUX) == byt_get_gpio_mux(vg, i) &&
- 		    !(value & BYT_DIRECT_IRQ_EN)) {
- 			byt_gpio_clear_triggering(vg, i);
-@@ -1649,8 +1561,16 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
- 	}
- 
- 	/* clear interrupt status trigger registers */
--	for (base = 0; base < vg->chip.ngpio; base += 32) {
-+	for (base = 0; base < vg->soc_data->npins; base += 32) {
- 		reg = byt_gpio_reg(vg, base, BYT_INT_STAT_REG);
-+
-+		if (!reg) {
-+			dev_warn(&vg->pdev->dev,
-+				 "Pin %i: could not retrieve irq status reg\n",
-+				 base);
-+			continue;
-+		}
-+
- 		writel(0xffffffff, reg);
- 		/* make sure trigger bits are cleared, if not then a pin
- 		   might be misconfigured in bios */
-@@ -1661,82 +1581,47 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
- 	}
- }
- 
--static int byt_gpio_probe(struct platform_device *pdev)
-+static int byt_gpio_probe(struct byt_gpio *vg)
- {
--	struct byt_gpio *vg;
- 	struct gpio_chip *gc;
--	struct resource *mem_rc, *irq_rc;
--	struct device *dev = &pdev->dev;
--	struct acpi_device *acpi_dev;
--	struct pinctrl_gpio_range *range;
--	acpi_handle handle = ACPI_HANDLE(dev);
-+	struct resource *irq_rc;
- 	int ret;
- 
--	if (acpi_bus_get_device(handle, &acpi_dev))
--		return -ENODEV;
--
--	vg = devm_kzalloc(dev, sizeof(struct byt_gpio), GFP_KERNEL);
--	if (!vg) {
--		dev_err(&pdev->dev, "can't allocate byt_gpio chip data\n");
--		return -ENOMEM;
--	}
--
--	for (range = byt_ranges; range->name; range++) {
--		if (!strcmp(acpi_dev->pnp.unique_id, range->name)) {
--			vg->chip.ngpio = range->npins;
--			vg->range = range;
--			break;
--		}
--	}
--
--	if (!vg->chip.ngpio || !vg->range)
--		return -ENODEV;
--
--	vg->pdev = pdev;
--	platform_set_drvdata(pdev, vg);
--
--	mem_rc = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	vg->reg_base = devm_ioremap_resource(dev, mem_rc);
--	if (IS_ERR(vg->reg_base))
--		return PTR_ERR(vg->reg_base);
--
--	raw_spin_lock_init(&vg->lock);
--
--	gc = &vg->chip;
--	gc->label = dev_name(&pdev->dev);
--	gc->owner = THIS_MODULE;
--	gc->request = byt_gpio_request;
--	gc->free = byt_gpio_free;
--	gc->direction_input = byt_gpio_direction_input;
--	gc->direction_output = byt_gpio_direction_output;
--	gc->get = byt_gpio_get;
--	gc->set = byt_gpio_set;
--	gc->dbg_show = byt_gpio_dbg_show;
--	gc->base = -1;
--	gc->can_sleep = false;
--	gc->parent = dev;
-+	/* Set up gpio chip */
-+	vg->chip	= byt_gpio_chip;
-+	gc		= &vg->chip;
-+	gc->label	= dev_name(&vg->pdev->dev);
-+	gc->base	= -1;
-+	gc->can_sleep	= false;
-+	gc->parent	= &vg->pdev->dev;
-+	gc->ngpio	= vg->soc_data->npins;
- 
- #ifdef CONFIG_PM_SLEEP
--	vg->saved_context = devm_kcalloc(&pdev->dev, gc->ngpio,
-+	vg->saved_context = devm_kcalloc(&vg->pdev->dev, gc->ngpio,
- 				       sizeof(*vg->saved_context), GFP_KERNEL);
- #endif
--
- 	ret = gpiochip_add_data(gc, vg);
- 	if (ret) {
--		dev_err(&pdev->dev, "failed adding byt-gpio chip\n");
-+		dev_err(&vg->pdev->dev, "failed adding byt-gpio chip\n");
- 		return ret;
- 	}
- 
-+	ret = gpiochip_add_pin_range(&vg->chip, dev_name(&vg->pdev->dev),
-+				     0, 0, vg->soc_data->npins);
-+	if (ret) {
-+		dev_err(&vg->pdev->dev, "failed to add GPIO pin range\n");
-+		goto fail;
-+	}
-+
- 	/* set up interrupts  */
--	irq_rc = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-+	irq_rc = platform_get_resource(vg->pdev, IORESOURCE_IRQ, 0);
- 	if (irq_rc && irq_rc->start) {
- 		byt_gpio_irq_init_hw(vg);
- 		ret = gpiochip_irqchip_add(gc, &byt_irqchip, 0,
- 					   handle_simple_irq, IRQ_TYPE_NONE);
- 		if (ret) {
--			dev_err(dev, "failed to add irqchip\n");
--			gpiochip_remove(gc);
--			return ret;
-+			dev_err(&vg->pdev->dev, "failed to add irqchip\n");
-+			goto fail;
- 		}
- 
- 		gpiochip_set_chained_irqchip(gc, &byt_irqchip,
-@@ -1744,7 +1629,120 @@ static int byt_gpio_probe(struct platform_device *pdev)
- 					     byt_gpio_irq_handler);
- 	}
- 
--	pm_runtime_enable(dev);
-+	return ret;
-+
-+fail:
-+	gpiochip_remove(&vg->chip);
-+
-+	return ret;
++	return vg->soc_data->functions[selector].name;
 +}
 +
-+static int byt_set_soc_data(struct byt_gpio *vg,
-+			    const struct byt_pinctrl_soc_data *soc_data)
++static int byt_get_function_groups(struct pinctrl_dev *pctldev,
++				   unsigned int selector,
++				   const char * const **groups,
++				   unsigned int *num_groups)
++{
++	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctldev);
++
++	*groups		= vg->soc_data->functions[selector].groups;
++	*num_groups	= vg->soc_data->functions[selector].ngroups;
++
++	return 0;
++}
++
++static int byt_get_group_simple_mux(const struct byt_pingroup group,
++				    const char *func_name,
++				    unsigned short *func)
 +{
 +	int i;
 +
-+	vg->soc_data = soc_data;
-+	vg->communities_copy = devm_kcalloc(&vg->pdev->dev,
-+					    soc_data->ncommunities,
-+					    sizeof(*vg->communities_copy),
-+					    GFP_KERNEL);
-+	if (!vg->communities_copy)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < soc_data->ncommunities; i++) {
-+		struct byt_community *comm = vg->communities_copy + i;
-+		struct resource *mem_rc;
-+
-+		*comm = vg->soc_data->communities[i];
-+
-+		mem_rc = platform_get_resource(vg->pdev, IORESOURCE_MEM, 0);
-+		comm->reg_base = devm_ioremap_resource(&vg->pdev->dev, mem_rc);
-+		if (IS_ERR(comm->reg_base))
-+			return PTR_ERR(comm->reg_base);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct acpi_device_id byt_gpio_acpi_match[] = {
-+	{ "INT33B2", (kernel_ulong_t)byt_soc_data },
-+	{ "INT33FC", (kernel_ulong_t)byt_soc_data },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, byt_gpio_acpi_match);
-+
-+static int byt_pinctrl_probe(struct platform_device *pdev)
-+{
-+	const struct byt_pinctrl_soc_data *soc_data = NULL;
-+	const struct byt_pinctrl_soc_data **soc_table;
-+	const struct acpi_device_id *acpi_id;
-+	struct acpi_device *acpi_dev;
-+	struct byt_gpio *vg;
-+	int i, ret;
-+
-+	acpi_dev = ACPI_COMPANION(&pdev->dev);
-+	if (!acpi_dev)
-+		return -ENODEV;
-+
-+	acpi_id = acpi_match_device(byt_gpio_acpi_match, &pdev->dev);
-+	if (!acpi_id)
-+		return -ENODEV;
-+
-+	soc_table = (const struct byt_pinctrl_soc_data **)acpi_id->driver_data;
-+
-+	for (i = 0; soc_table[i]; i++) {
-+		if (!strcmp(acpi_dev->pnp.unique_id, soc_table[i]->uid)) {
-+			soc_data = soc_table[i];
-+			break;
++	for (i = 0; i < group.nfuncs; i++) {
++		if (!strcmp(group.simple_funcs[i].name, func_name)) {
++			*func = group.simple_funcs[i].func;
++			return 0;
 +		}
 +	}
 +
-+	if (!soc_data)
-+		return -ENODEV;
++	return 1;
++}
 +
-+	vg = devm_kzalloc(&pdev->dev, sizeof(*vg), GFP_KERNEL);
-+	if (!vg)
-+		return -ENOMEM;
++static int byt_get_group_mixed_mux(const struct byt_pingroup group,
++				   const char *func_name,
++				   const unsigned short **func)
++{
++	int i;
 +
-+	vg->pdev = pdev;
-+	ret = byt_set_soc_data(vg, soc_data);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to set soc data\n");
-+		return ret;
++	for (i = 0; i < group.nfuncs; i++) {
++		if (!strcmp(group.mixed_funcs[i].name, func_name)) {
++			*func = group.mixed_funcs[i].func_values;
++			return 0;
++		}
++	}
+ 
+-	return vg->reg_base + reg_offset + reg;
++	return 1;
+ }
+ 
+-static void byt_gpio_clear_triggering(struct byt_gpio *vg, unsigned offset)
++static void byt_set_group_simple_mux(struct byt_gpio *vg,
++				     const struct byt_pingroup group,
++				     unsigned short func)
+ {
+-	void __iomem *reg = byt_gpio_reg(&vg->chip, offset, BYT_CONF0_REG);
+ 	unsigned long flags;
+-	u32 value;
++	int i;
+ 
+ 	raw_spin_lock_irqsave(&vg->lock, flags);
+-	value = readl(reg);
+-	value &= ~(BYT_TRIG_POS | BYT_TRIG_NEG | BYT_TRIG_LVL);
+-	writel(value, reg);
++
++	for (i = 0; i < group.npins; i++) {
++		void __iomem *padcfg0;
++		u32 value;
++
++		padcfg0 = byt_gpio_reg(vg, group.pins[i], BYT_CONF0_REG);
++		if (!padcfg0) {
++			dev_warn(&vg->pdev->dev,
++				 "Group %s, pin %i not muxed (no padcfg0)\n",
++				 group.name, i);
++			continue;
++		}
++
++		value = readl(padcfg0);
++		value &= ~BYT_PIN_MUX;
++		value |= func;
++		writel(value, padcfg0);
 +	}
 +
-+	vg->pctl_desc		= byt_pinctrl_desc;
-+	vg->pctl_desc.name	= dev_name(&pdev->dev);
-+	vg->pctl_desc.pins	= vg->soc_data->pins;
-+	vg->pctl_desc.npins	= vg->soc_data->npins;
+ 	raw_spin_unlock_irqrestore(&vg->lock, flags);
+ }
+ 
++static void byt_set_group_mixed_mux(struct byt_gpio *vg,
++				    const struct byt_pingroup group,
++				    const unsigned short *func)
++{
++	unsigned long flags;
++	int i;
 +
-+	vg->pctl_dev = pinctrl_register(&vg->pctl_desc, &pdev->dev, vg);
-+	if (IS_ERR(vg->pctl_dev)) {
-+		dev_err(&pdev->dev, "failed to register pinctrl driver\n");
-+		return PTR_ERR(vg->pctl_dev);
++	raw_spin_lock_irqsave(&vg->lock, flags);
++
++	for (i = 0; i < group.npins; i++) {
++		void __iomem *padcfg0;
++		u32 value;
++
++		padcfg0 = byt_gpio_reg(vg, group.pins[i], BYT_CONF0_REG);
++		if (!padcfg0) {
++			dev_warn(&vg->pdev->dev,
++				 "Group %s, pin %i not muxed (no padcfg0)\n",
++				 group.name, i);
++			continue;
++		}
++
++		value = readl(padcfg0);
++		value &= ~BYT_PIN_MUX;
++		value |= func[i];
++		writel(value, padcfg0);
 +	}
 +
-+	ret = byt_gpio_probe(vg);
-+	if (ret) {
-+		pinctrl_unregister(vg->pctl_dev);
-+		return ret;
-+	}
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
++}
 +
-+	platform_set_drvdata(pdev, vg);
-+	raw_spin_lock_init(&vg->lock);
-+	pm_runtime_enable(&pdev->dev);
++static int byt_set_mux(struct pinctrl_dev *pctldev, unsigned int func_selector,
++		       unsigned int group_selector)
++{
++	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctldev);
++	const struct byt_function func = vg->soc_data->functions[func_selector];
++	const struct byt_pingroup group = vg->soc_data->groups[group_selector];
++	const unsigned short *mixed_func;
++	unsigned short simple_func;
++	int ret = 1;
++
++	if (group.has_simple_funcs)
++		ret = byt_get_group_simple_mux(group, func.name, &simple_func);
++	else
++		ret = byt_get_group_mixed_mux(group, func.name, &mixed_func);
++
++	if (ret)
++		byt_set_group_simple_mux(vg, group, BYT_DEFAULT_GPIO_MUX);
++	else if (group.has_simple_funcs)
++		byt_set_group_simple_mux(vg, group, simple_func);
++	else
++		byt_set_group_mixed_mux(vg, group, mixed_func);
 +
 +	return 0;
 +}
 +
-+static int byt_pinctrl_remove(struct platform_device *pdev)
-+{
-+	struct byt_gpio *vg = platform_get_drvdata(pdev);
-+
-+	pm_runtime_disable(&pdev->dev);
-+	gpiochip_remove(&vg->chip);
-+	pinctrl_unregister(vg->pctl_dev);
+ static u32 byt_get_gpio_mux(struct byt_gpio *vg, unsigned offset)
+ {
+ 	/* SCORE pin 92-93 */
+-	if (!strcmp(vg->range->name, BYT_SCORE_ACPI_UID) &&
+-		offset >= 92 && offset <= 93)
++	if (!strcmp(vg->soc_data->uid, BYT_SCORE_ACPI_UID) &&
++	    offset >= 92 && offset <= 93)
+ 		return 1;
+ 
+ 	/* SUS pin 11-21 */
+-	if (!strcmp(vg->range->name, BYT_SUS_ACPI_UID) &&
+-		offset >= 11 && offset <= 21)
++	if (!strcmp(vg->soc_data->uid, BYT_SUS_ACPI_UID) &&
++	    offset >= 11 && offset <= 21)
+ 		return 1;
  
  	return 0;
  }
-@@ -1756,15 +1754,22 @@ static int byt_gpio_suspend(struct device *dev)
- 	struct byt_gpio *vg = platform_get_drvdata(pdev);
- 	int i;
  
--	for (i = 0; i < vg->chip.ngpio; i++) {
-+	for (i = 0; i < vg->soc_data->npins; i++) {
+-static int byt_gpio_request(struct gpio_chip *chip, unsigned offset)
++static void byt_gpio_clear_triggering(struct byt_gpio *vg, unsigned int offset)
+ {
+-	struct byt_gpio *vg = gpiochip_get_data(chip);
+-	void __iomem *reg = byt_gpio_reg(chip, offset, BYT_CONF0_REG);
++	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
++	unsigned long flags;
++	u32 value;
++
++	raw_spin_lock_irqsave(&vg->lock, flags);
++	value = readl(reg);
++	value &= ~(BYT_TRIG_POS | BYT_TRIG_NEG | BYT_TRIG_LVL);
++	writel(value, reg);
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
++}
++
++static int byt_gpio_request_enable(struct pinctrl_dev *pctl_dev,
++				   struct pinctrl_gpio_range *range,
++				   unsigned int offset)
++{
++	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctl_dev);
++	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
+ 	u32 value, gpio_mux;
+ 	unsigned long flags;
+ 
+@@ -817,13 +1030,102 @@ static void byt_gpio_free(struct gpio_chip *chip, unsigned offset)
+ 	pm_runtime_put(&vg->pdev->dev);
+ }
+ 
++static void byt_gpio_disable_free(struct pinctrl_dev *pctl_dev,
++				  struct pinctrl_gpio_range *range,
++				  unsigned int offset)
++{
++	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctl_dev);
++
++	byt_gpio_clear_triggering(vg, offset);
++	pm_runtime_put(&vg->pdev->dev);
++}
++
++static int byt_gpio_set_direction(struct pinctrl_dev *pctl_dev,
++				  struct pinctrl_gpio_range *range,
++				  unsigned int offset,
++				  bool input)
++{
++	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctl_dev);
++	void __iomem *val_reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
++	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
++	unsigned long flags;
++	u32 value;
++
++	raw_spin_lock_irqsave(&vg->lock, flags);
++
++	value = readl(val_reg);
++	value &= ~BYT_DIR_MASK;
++	if (input)
++		value |= BYT_OUTPUT_EN;
++	else
++		/*
++		 * Before making any direction modifications, do a check if gpio
++		 * is set for direct IRQ.  On baytrail, setting GPIO to output
++		 * does not make sense, so let's at least warn the caller before
++		 * they shoot themselves in the foot.
++		 */
++		WARN(readl(conf_reg) & BYT_DIRECT_IRQ_EN,
++		     "Potential Error: Setting GPIO with direct_irq_en to output");
++	writel(value, val_reg);
++
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
++
++	return 0;
++}
++
++static const struct pinmux_ops byt_pinmux_ops = {
++	.get_functions_count	= byt_get_functions_count,
++	.get_function_name	= byt_get_function_name,
++	.get_function_groups	= byt_get_function_groups,
++	.set_mux		= byt_set_mux,
++	.gpio_request_enable	= byt_gpio_request_enable,
++	.gpio_disable_free	= byt_gpio_disable_free,
++	.gpio_set_direction	= byt_gpio_set_direction,
++};
++
++static int byt_gpio_request(struct gpio_chip *chip, unsigned int offset)
++{
++	struct byt_gpio *vg = gpiochip_get_data(chip);
++	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
++	u32 value, gpio_mux;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&vg->lock, flags);
++
++	/*
++	 * In most cases, func pin mux 000 means GPIO function.
++	 * But, some pins may have func pin mux 001 represents
++	 * GPIO function.
++	 *
++	 * Because there are devices out there where some pins were not
++	 * configured correctly we allow changing the mux value from
++	 * request (but print out warning about that).
++	 */
++	value = readl(reg) & BYT_PIN_MUX;
++	gpio_mux = byt_get_gpio_mux(vg, offset);
++	if (WARN_ON(gpio_mux != value)) {
++		value = readl(reg) & ~BYT_PIN_MUX;
++		value |= gpio_mux;
++		writel(value, reg);
++
++		dev_warn(&vg->pdev->dev,
++			 "pin %u forcibly re-configured as GPIO\n", offset);
++	}
++
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
++
++	pm_runtime_get(&vg->pdev->dev);
++
++	return 0;
++}
++
+ static int byt_irq_type(struct irq_data *d, unsigned type)
+ {
+ 	struct byt_gpio *vg = gpiochip_get_data(irq_data_get_irq_chip_data(d));
+ 	u32 offset = irqd_to_hwirq(d);
+ 	u32 value;
+ 	unsigned long flags;
+-	void __iomem *reg = byt_gpio_reg(&vg->chip, offset, BYT_CONF0_REG);
++	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
+ 
+ 	if (offset >= vg->chip.ngpio)
+ 		return -EINVAL;
+@@ -832,7 +1134,7 @@ static int byt_irq_type(struct irq_data *d, unsigned type)
+ 	value = readl(reg);
+ 
+ 	WARN(value & BYT_DIRECT_IRQ_EN,
+-		"Bad pad config for io mode, force direct_irq_en bit clearing");
++	     "Bad pad config for io mode, force direct_irq_en bit clearing");
+ 
+ 	/* For level trigges the BYT_TRIG_POS and BYT_TRIG_NEG bits
+ 	 * are used to indicate high and low level triggering
+@@ -852,10 +1154,198 @@ static int byt_irq_type(struct irq_data *d, unsigned type)
+ 	return 0;
+ }
+ 
++static void byt_get_pull_strength(u32 reg, u16 *strength)
++{
++	switch (reg & BYT_PULL_STR_MASK) {
++	case BYT_PULL_STR_2K:
++		*strength = 2000;
++		break;
++	case BYT_PULL_STR_10K:
++		*strength = 10000;
++		break;
++	case BYT_PULL_STR_20K:
++		*strength = 20000;
++		break;
++	case BYT_PULL_STR_40K:
++		*strength = 40000;
++		break;
++	}
++}
++
++static int byt_set_pull_strength(u32 *reg, u16 strength)
++{
++	*reg &= ~BYT_PULL_STR_MASK;
++
++	switch (strength) {
++	case 2000:
++		*reg |= BYT_PULL_STR_2K;
++		break;
++	case 10000:
++		*reg |= BYT_PULL_STR_10K;
++		break;
++	case 20000:
++		*reg |= BYT_PULL_STR_20K;
++		break;
++	case 40000:
++		*reg |= BYT_PULL_STR_40K;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int byt_pin_config_get(struct pinctrl_dev *pctl_dev, unsigned int offset,
++			      unsigned long *config)
++{
++	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctl_dev);
++	enum pin_config_param param = pinconf_to_config_param(*config);
++	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
++	void __iomem *val_reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
++	unsigned long flags;
++	u32 conf, pull, val;
++	u16 arg = 0;
++
++	raw_spin_lock_irqsave(&vg->lock, flags);
++	conf = readl(conf_reg);
++	pull = conf & BYT_PULL_ASSIGN_MASK;
++	val = readl(val_reg);
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
++
++	switch (param) {
++	case PIN_CONFIG_BIAS_DISABLE:
++		if (pull)
++			return -EINVAL;
++		break;
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++		/* Pull assignment is only applicable in input mode */
++		if ((val & BYT_INPUT_EN) || pull != BYT_PULL_ASSIGN_DOWN)
++			return -EINVAL;
++
++		byt_get_pull_strength(conf, &arg);
++
++		break;
++	case PIN_CONFIG_BIAS_PULL_UP:
++		/* Pull assignment is only applicable in input mode */
++		if ((val & BYT_INPUT_EN) || pull != BYT_PULL_ASSIGN_UP)
++			return -EINVAL;
++
++		byt_get_pull_strength(conf, &arg);
++
++		break;
++	default:
++		return -ENOTSUPP;
++	}
++
++	*config = pinconf_to_config_packed(param, arg);
++
++	return 0;
++}
++
++static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
++			      unsigned int offset,
++			      unsigned long *configs,
++			      unsigned int num_configs)
++{
++	struct byt_gpio *vg = pinctrl_dev_get_drvdata(pctl_dev);
++	unsigned int param, arg;
++	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
++	void __iomem *val_reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
++	unsigned long flags;
++	u32 conf, val;
++	int i, ret = 0;
++
++	raw_spin_lock_irqsave(&vg->lock, flags);
++
++	conf = readl(conf_reg);
++	val = readl(val_reg);
++
++	for (i = 0; i < num_configs; i++) {
++		param = pinconf_to_config_param(configs[i]);
++		arg = pinconf_to_config_argument(configs[i]);
++
++		switch (param) {
++		case PIN_CONFIG_BIAS_DISABLE:
++			conf &= ~BYT_PULL_ASSIGN_MASK;
++			break;
++		case PIN_CONFIG_BIAS_PULL_DOWN:
++			/* Set default strength value in case none is given */
++			if (arg == 1)
++				arg = 2000;
++
++			/*
++			 * Pull assignment is only applicable in input mode. If
++			 * chip is not in input mode, set it and warn about it.
++			 */
++			if (val & BYT_INPUT_EN) {
++				val &= ~BYT_INPUT_EN;
++				writel(val, val_reg);
++				dev_warn(&vg->pdev->dev,
++					 "pin %u forcibly set to input mode\n",
++					 offset);
++			}
++
++			conf &= ~BYT_PULL_ASSIGN_MASK;
++			conf |= BYT_PULL_ASSIGN_DOWN;
++			ret = byt_set_pull_strength(&conf, arg);
++
++			break;
++		case PIN_CONFIG_BIAS_PULL_UP:
++			/* Set default strength value in case none is given */
++			if (arg == 1)
++				arg = 2000;
++
++			/*
++			 * Pull assignment is only applicable in input mode. If
++			 * chip is not in input mode, set it and warn about it.
++			 */
++			if (val & BYT_INPUT_EN) {
++				val &= ~BYT_INPUT_EN;
++				writel(val, val_reg);
++				dev_warn(&vg->pdev->dev,
++					 "pin %u forcibly set to input mode\n",
++					 offset);
++			}
++
++			conf &= ~BYT_PULL_ASSIGN_MASK;
++			conf |= BYT_PULL_ASSIGN_UP;
++			ret = byt_set_pull_strength(&conf, arg);
++
++			break;
++		default:
++			ret = -ENOTSUPP;
++		}
++
++		if (ret)
++			break;
++	}
++
++	if (!ret)
++		writel(conf, conf_reg);
++
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
++
++	return ret;
++}
++
++static const struct pinconf_ops byt_pinconf_ops = {
++	.is_generic	= true,
++	.pin_config_get	= byt_pin_config_get,
++	.pin_config_set	= byt_pin_config_set,
++};
++
++static const struct pinctrl_desc byt_pinctrl_desc = {
++	.pctlops	= &byt_pinctrl_ops,
++	.pmxops		= &byt_pinmux_ops,
++	.confops	= &byt_pinconf_ops,
++	.owner		= THIS_MODULE,
++};
++
+ static int byt_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+-	void __iomem *reg = byt_gpio_reg(chip, offset, BYT_VAL_REG);
+ 	struct byt_gpio *vg = gpiochip_get_data(chip);
++	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
+ 	unsigned long flags;
+ 	u32 val;
+ 
+@@ -869,7 +1359,7 @@ static int byt_gpio_get(struct gpio_chip *chip, unsigned offset)
+ static void byt_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ {
+ 	struct byt_gpio *vg = gpiochip_get_data(chip);
+-	void __iomem *reg = byt_gpio_reg(chip, offset, BYT_VAL_REG);
++	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
+ 	unsigned long flags;
+ 	u32 old_val;
+ 
+@@ -888,7 +1378,7 @@ static void byt_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ static int byt_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct byt_gpio *vg = gpiochip_get_data(chip);
+-	void __iomem *reg = byt_gpio_reg(chip, offset, BYT_VAL_REG);
++	void __iomem *reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
+ 	unsigned long flags;
+ 	u32 value;
+ 
+@@ -907,8 +1397,8 @@ static int byt_gpio_direction_output(struct gpio_chip *chip,
+ 				     unsigned gpio, int value)
+ {
+ 	struct byt_gpio *vg = gpiochip_get_data(chip);
+-	void __iomem *conf_reg = byt_gpio_reg(chip, gpio, BYT_CONF0_REG);
+-	void __iomem *reg = byt_gpio_reg(chip, gpio, BYT_VAL_REG);
++	void __iomem *conf_reg = byt_gpio_reg(vg, gpio, BYT_CONF0_REG);
++	void __iomem *reg = byt_gpio_reg(vg, gpio, BYT_VAL_REG);
+ 	unsigned long flags;
+ 	u32 reg_val;
+ 
+@@ -1019,7 +1509,7 @@ static void byt_gpio_irq_handler(struct irq_desc *desc)
+ 
+ 	/* check from GPIO controller which pin triggered the interrupt */
+ 	for (base = 0; base < vg->chip.ngpio; base += 32) {
+-		reg = byt_gpio_reg(&vg->chip, base, BYT_INT_STAT_REG);
++		reg = byt_gpio_reg(vg, base, BYT_INT_STAT_REG);
+ 		pending = readl(reg);
+ 		for_each_set_bit(pin, &pending, 32) {
+ 			virq = irq_find_mapping(vg->chip.irqdomain, base + pin);
+@@ -1037,7 +1527,7 @@ static void byt_irq_ack(struct irq_data *d)
+ 	void __iomem *reg;
+ 
+ 	raw_spin_lock(&vg->lock);
+-	reg = byt_gpio_reg(&vg->chip, offset, BYT_INT_STAT_REG);
++	reg = byt_gpio_reg(vg, offset, BYT_INT_STAT_REG);
+ 	writel(BIT(offset % 32), reg);
+ 	raw_spin_unlock(&vg->lock);
+ }
+@@ -1051,7 +1541,7 @@ static void byt_irq_unmask(struct irq_data *d)
+ 	void __iomem *reg;
+ 	u32 value;
+ 
+-	reg = byt_gpio_reg(&vg->chip, offset, BYT_CONF0_REG);
++	reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
+ 
+ 	raw_spin_lock_irqsave(&vg->lock, flags);
+ 	value = readl(reg);
+@@ -1106,7 +1596,7 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
+ 	 * interrupts from misconfigured pins.
+ 	 */
+ 	for (i = 0; i < vg->chip.ngpio; i++) {
+-		value = readl(byt_gpio_reg(&vg->chip, i, BYT_CONF0_REG));
++		value = readl(byt_gpio_reg(vg, i, BYT_CONF0_REG));
+ 		if ((value & BYT_PIN_MUX) == byt_get_gpio_mux(vg, i) &&
+ 		    !(value & BYT_DIRECT_IRQ_EN)) {
+ 			byt_gpio_clear_triggering(vg, i);
+@@ -1116,7 +1606,7 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
+ 
+ 	/* clear interrupt status trigger registers */
+ 	for (base = 0; base < vg->chip.ngpio; base += 32) {
+-		reg = byt_gpio_reg(&vg->chip, base, BYT_INT_STAT_REG);
++		reg = byt_gpio_reg(vg, base, BYT_INT_STAT_REG);
+ 		writel(0xffffffff, reg);
+ 		/* make sure trigger bits are cleared, if not then a pin
+ 		   might be misconfigured in bios */
+@@ -1226,11 +1716,11 @@ static int byt_gpio_suspend(struct device *dev)
  		void __iomem *reg;
  		u32 value;
-+		unsigned int pin = vg->soc_data->pins[i].number;
  
--		reg = byt_gpio_reg(vg, i, BYT_CONF0_REG);
-+		reg = byt_gpio_reg(vg, pin, BYT_CONF0_REG);
-+		if (!reg) {
-+			dev_warn(&vg->pdev->dev,
-+				 "Pin %i: could not retrieve conf0 register\n",
-+				 i);
-+			continue;
-+		}
+-		reg = byt_gpio_reg(&vg->chip, i, BYT_CONF0_REG);
++		reg = byt_gpio_reg(vg, i, BYT_CONF0_REG);
  		value = readl(reg) & BYT_CONF0_RESTORE_MASK;
  		vg->saved_context[i].conf0 = value;
  
--		reg = byt_gpio_reg(vg, i, BYT_VAL_REG);
-+		reg = byt_gpio_reg(vg, pin, BYT_VAL_REG);
+-		reg = byt_gpio_reg(&vg->chip, i, BYT_VAL_REG);
++		reg = byt_gpio_reg(vg, i, BYT_VAL_REG);
  		value = readl(reg) & BYT_VAL_RESTORE_MASK;
  		vg->saved_context[i].val = value;
  	}
-@@ -1778,11 +1783,18 @@ static int byt_gpio_resume(struct device *dev)
- 	struct byt_gpio *vg = platform_get_drvdata(pdev);
- 	int i;
- 
--	for (i = 0; i < vg->chip.ngpio; i++) {
-+	for (i = 0; i < vg->soc_data->npins; i++) {
+@@ -1248,7 +1738,7 @@ static int byt_gpio_resume(struct device *dev)
  		void __iomem *reg;
  		u32 value;
-+		unsigned int pin = vg->soc_data->pins[i].number;
  
--		reg = byt_gpio_reg(vg, i, BYT_CONF0_REG);
-+		reg = byt_gpio_reg(vg, pin, BYT_CONF0_REG);
-+		if (!reg) {
-+			dev_warn(&vg->pdev->dev,
-+				 "Pin %i: could not retrieve conf0 register\n",
-+				 i);
-+			continue;
-+		}
+-		reg = byt_gpio_reg(&vg->chip, i, BYT_CONF0_REG);
++		reg = byt_gpio_reg(vg, i, BYT_CONF0_REG);
  		value = readl(reg);
  		if ((value & BYT_CONF0_RESTORE_MASK) !=
  		     vg->saved_context[i].conf0) {
-@@ -1792,7 +1804,7 @@ static int byt_gpio_resume(struct device *dev)
+@@ -1258,7 +1748,7 @@ static int byt_gpio_resume(struct device *dev)
  			dev_info(dev, "restored pin %d conf0 %#08x", i, value);
  		}
  
--		reg = byt_gpio_reg(vg, i, BYT_VAL_REG);
-+		reg = byt_gpio_reg(vg, pin, BYT_VAL_REG);
+-		reg = byt_gpio_reg(&vg->chip, i, BYT_VAL_REG);
++		reg = byt_gpio_reg(vg, i, BYT_VAL_REG);
  		value = readl(reg);
  		if ((value & BYT_VAL_RESTORE_MASK) !=
  		     vg->saved_context[i].val) {
-@@ -1830,26 +1842,9 @@ static const struct dev_pm_ops byt_gpio_pm_ops = {
- 			   NULL)
- };
- 
--static const struct acpi_device_id byt_gpio_acpi_match[] = {
--	{ "INT33B2", (kernel_ulong_t)byt_soc_data },
--	{ "INT33FC", (kernel_ulong_t)byt_soc_data },
--	{ }
--};
--MODULE_DEVICE_TABLE(acpi, byt_gpio_acpi_match);
--
--static int byt_gpio_remove(struct platform_device *pdev)
--{
--	struct byt_gpio *vg = platform_get_drvdata(pdev);
--
--	pm_runtime_disable(&pdev->dev);
--	gpiochip_remove(&vg->chip);
--
--	return 0;
--}
--
- static struct platform_driver byt_gpio_driver = {
--	.probe          = byt_gpio_probe,
--	.remove         = byt_gpio_remove,
-+	.probe          = byt_pinctrl_probe,
-+	.remove         = byt_pinctrl_remove,
- 	.driver         = {
- 		.name   = "byt_gpio",
- 		.pm	= &byt_gpio_pm_ops,
 -- 
 1.9.1
+
