@@ -1,86 +1,89 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [RFC PATCH 2/4] pinctrl: pinconf-generic: Add ACPI support
-Date: Fri, 01 Apr 2016 17:05:29 +0300
-Message-ID: <1459519529.5907.198.camel@linux.intel.com>
-References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
-	 <1459424685-26965-3-git-send-email-irina.tirdea@intel.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpiolib: handle probe deferrals better
+Date: Fri, 1 Apr 2016 17:03:08 +0300
+Message-ID: <56FE7F9C.9050902@ti.com>
+References: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org>
+ <1766024.riJEdmHPZI@ws-stein>
+ <CACRpkdaynNEFGhCSkd7qAgxtNoRT=pRWbB0dJmjM89UM4NG_xQ@mail.gmail.com>
+ <3233696.TZ7kbb7G3F@ws-stein>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1459424685-26965-3-git-send-email-irina.tirdea@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Irina Tirdea <irina.tirdea@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Octavian Purdila <octavian.purdila@intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:60031 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759097AbcDAOEG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 1 Apr 2016 10:04:06 -0400
+In-Reply-To: <3233696.TZ7kbb7G3F@ws-stein>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexander Stein <alexander.stein@systec-electronic.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux Input <linux-input@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Guenter Roeck <linux@roeck-us.net>
 
-On Thu, 2016-03-31 at 14:44 +0300, Irina Tirdea wrote:
-> Add ACPI support for the generic device tree properties.
-> Convert the pinconf generic code to handle both ACPI and
-> device tree by using the fwnode_property API. Also include
-> renaming device tree references in names of functions and
-> structures from 'dt' to 'fwnode'.
+On 04/01/2016 04:42 PM, Alexander Stein wrote:
+> On Friday 01 April 2016 15:03:40, Linus Walleij wrote:
+>> On Fri, Apr 1, 2016 at 2:16 PM, Alexander Stein
+>>
+>> <alexander.stein@systec-electronic.com> wrote:
+>>> I noticed you fiddle with late_initcall_sync. Sorry, I did not mention it:
+>>> gpio_mcp23s08 as well as gpio_keys are loaded as modules, so
+>>> late_initcall_* should not affect it.
+>>
+>> I don't get this. I think probe deferral is only used to defer
+>> initcalls used for built-in drivers.
 
-This is looks good to me, though few style / minor comments below.
+It doesn't. Deferred probing expected to work for modules also.
 
-> --- a/drivers/pinctrl/pinconf-generic.c
-> +++ b/drivers/pinctrl/pinconf-generic.c
->=20
+> 
+> To my understanding probe deferral is for the case when the parent or some
+> other required resource like DT nodes (e.g. panel node for graphics driver) is
+> not available yet. IIRC all deffered device are probed once a device was
+> probed sucessfully, no?
 
-> @@ -175,22 +176,22 @@ static const struct pinconf_generic_params
-> dt_params[] =3D {
-> =C2=A0};
-> =C2=A0
-> =C2=A0/**
-> - * parse_dt_cfg() - Parse DT pinconf parameters
-> - * @np:	DT node
-> + * parse_fwnode_cfg() - Parse FW pinconf parameters
-> + * @fw:	FW node
+true.
 
-Here and below it should be @fwnode.
+> So in my case, I would expect that gpio-keys probe fails due to missing IRQ
+> parent and gets deferred. Once the IRQ parent happen to be probed successfully
+> at some point gpio-keys is probed again and succeeds.
 
-> -int pinconf_generic_dt_subnode_to_map(struct pinctrl_dev *pctldev,
-> -		struct device_node *np, struct pinctrl_map **map,
-> +static int pinconf_generic_fwnode_subnode_to_map(struct pinctrl_dev
-> *pctldev,
-> +		struct fwnode_handle *fwnode, struct pinctrl_map
-> **map,
-> =C2=A0		unsigned *reserved_maps, unsigned *num_maps,
-> =C2=A0		enum pinctrl_map_type type)
-> =C2=A0{
-> -	int ret;
-> +	int ret, i;
+I assume in your case It's devm_gpio_request_one() first of all, which
+follows by gpio_to_irq.
 
-Since you change this line anyway, perhaps move it to be last in the
-definition block?
+> 
+>> If there are dependencies among things compiled as modules,
+>> doesn't depmod/modprobe make sure that they are probed in
+>> the right order? Could it be that some module alias thingofabob
+>> is missing?
+>>
+>> Or is modprobe failing because it (correctly) see that there is
+>> no symbol dependencies between the gpio_mcp23s08 and
+>> gpio-keys modules? (Not that I know how depmod works...)
+> 
+> I don't think modprobe can or even should do any dependencies here.
+> Consider the following cascading GPIO chips:
+> 
+>   /-------\                /---------\                 /--------\
+> |         |               |         |                |          |
+> |MCP23S17 + Pin1 <--> IRQ-+ PCA9555 + Pin 1 <--> IRQ + MCP23S17 +
+> |         |               |         |                |          |
+>   \-------/                 \-------/                  \--------/
+> 
+> Probing should still work for this scenario. This is something modprobe cannot
+> fix.
 
-> =C2=A0	const char *function;
-> =C2=A0	struct device *dev =3D pctldev->dev;
-> =C2=A0	unsigned long *configs =3D NULL;
-> =C2=A0	unsigned num_configs =3D 0;
-> =C2=A0	unsigned reserve, strings_count;
-> -	struct property *prop;
-> -	const char *group;
-> +	const char **groups;
-> =C2=A0	const char *subnode_target_type =3D "pins";
+What I can see from my boot log is that at module loading time log output 
+from many drivers is mixed which makes me think that this parallel process
+(udev) - and no I've not hit this issue..yet.
 
-=2E..to here.
+> 
+>> If nothing else works, I guess marking mcp23s08 as bool
+>> and building it into the kernel will work, right?
+> 
+> This would merely be a workaround and I guess there might be scenarios and/or
+> random device probing where even this fails.
+> 
 
-> +#ifdef CONFIG_OF
-> +inline int pinconf_generic_parse_dt_config(struct device_node *np,
-> +					=C2=A0=C2=A0=C2=A0struct pinctrl_dev
-> *pctldev,
-> +					=C2=A0=C2=A0=C2=A0unsigned long **configs,
-> +					=C2=A0=C2=A0=C2=A0unsigned int *nconfigs)
-> +{
-> +	return pinconf_generic_parse_fwnode_config(&np->fwnode,
-> pctldev,
-> +						=C2=A0=C2=A0=C2=A0configs,
-> nconfigs);
-> +}
 
-I didn't see any user of this.
-
---=20
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+-- 
+regards,
+-grygorii
