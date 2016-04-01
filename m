@@ -1,41 +1,103 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpiolib: Defer gpio device setup until after gpiolib initialization
-Date: Fri, 1 Apr 2016 10:14:03 +0200
-Message-ID: <CACRpkdY8UQFfy26UJ-amEoC7D8=mdd5XDwuCpGzdVMcZvRyang@mail.gmail.com>
-References: <1459437090-10029-1-git-send-email-linux@roeck-us.net>
-	<1459437090-10029-2-git-send-email-linux@roeck-us.net>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource
+ Chip bindings
+Date: Fri, 1 Apr 2016 09:14:26 +0100
+Message-ID: <20160401081426.GS3323@x1>
+References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
+ <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
+ <20160330113532.GI3323@x1>
+ <56FD6A8E.7030208@opensource.altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:35509 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752830AbcDAIOF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 04:14:05 -0400
-Received: by mail-oi0-f43.google.com with SMTP id p188so62871956oih.2
-        for <linux-gpio@vger.kernel.org>; Fri, 01 Apr 2016 01:14:04 -0700 (PDT)
-In-Reply-To: <1459437090-10029-2-git-send-email-linux@roeck-us.net>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:33343 "EHLO
+	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758483AbcDAIOb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 04:14:31 -0400
+Received: by mail-wm0-f42.google.com with SMTP id f198so15293990wme.0
+        for <linux-gpio@vger.kernel.org>; Fri, 01 Apr 2016 01:14:30 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <56FD6A8E.7030208@opensource.altera.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg Ungerer <gerg@uclinux.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Thor Thayer <tthayer@opensource.altera.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org, pawell.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
 
-On Thu, Mar 31, 2016 at 5:11 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+On Thu, 31 Mar 2016, Thor Thayer wrote:
+> On 03/30/2016 06:35 AM, Lee Jones wrote:
+> >On Tue, 29 Mar 2016, tthayer@opensource.altera.com wrote:
+> >
+> >>From: Thor Thayer <tthayer@opensource.altera.com>
 
-> Since commit ff2b13592299 ("gpio: make the gpiochip a real device"),
-> attempts to add a gpio chip prior to gpiolib initialization cause
-> the system to crash. This happens because gpio_bus_type has not been
-> registered yet. Defer creating gpio devices until after gpiolib has
-> been initialized to fix the problem.
->
-> Cc: Greg Ungerer <gerg@uclinux.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Fixes: ff2b13592299 ("gpio: make the gpiochip a real device")
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+[...]
 
-Very elegant solution and also a nice refactoring.
+> >>+The A10SR consists of this varied group of sub-devices:
+> >>+
+> >>+Device                   Description
+> >>+------                   ----------
+> >>+altr_a10sr_gpio          GPIO Controller
+> >>+altr_a10sr_hwmon         Hardware Monitor
+> >>+
+> >>+The LEDs are implemented entirely in the device tree using
+> >>+the gpio-led framework.
+> >
+> >This is a Linuxisum and should not live in DT bindings.
+>=20
+> I was following the format of other mfd binding documents such as
+> Documentation/devicetree/bindings/mfd/da9055.txt so I'll need your
+> help understanding this.
+>=20
+> I'm not familiar with the phrase Linuxisum. A Google search turns up
+> several threads referencing Linuxisum but I can't seem to find the
+> definition. One thread seems to imply that an existing driver such
+> as GPIO is a Linuxisum and should not be re-defined. Am I
+> understanding correctly?
 
-Patches applied for fixes and I'm pushing it for test so we get
-some rotation in linux-next.
+Linuxisum is a made up word.  Actually, it looks like I placed a
+superfluous 'u' in there, but I assume most people would get the gist.
+Some examples ending in "ism" which might push the point across are
+"colloquialism" and "feminism", where the "ism" can probably be taken
+to mean "pertaining to".  So in the example above, we might reasonably
+conclude that I meant "pertaining to Linux", which I did.
 
-Yours,
-Linus Walleij
+In other words "the gpio-led framework" is something we have in Linux,
+but might not exist in other OSes.  And considering DT is supposed to
+be OS agnostic and the documentation relevant to all OSes, you can not
+and should not document Linuxisms.
+
+> >>+Example:
+> >>+
+> >>+        a10-sr: a10-sr@0 {
+> >
+> >Nodes should be named after their device 'type'.
+> >
+> >Does this device really start a address 0?
+>=20
+> OK. If I understand, this should be named after mfd then?
+
+MFDs are usually a little tougher, but in your case I think it should
+be "resource-manager" or similar.
+
+> >>+		compatible =3D "altr,altr-a10sr";
+> >>+		reg =3D <0>;
+> >>+		spi-max-frequency =3D <100000>;
+> >>+
+> >>+		a10sr_gpio: a10sr_gpio {
+> >
+> >Device type only please.
+>=20
+> And this would be a gpio?
+
+Exactly.
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
