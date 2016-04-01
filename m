@@ -1,39 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: handle probe deferrals better
-Date: Fri, 1 Apr 2016 15:03:40 +0200
-Message-ID: <CACRpkdaynNEFGhCSkd7qAgxtNoRT=pRWbB0dJmjM89UM4NG_xQ@mail.gmail.com>
-References: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org>
-	<1766024.riJEdmHPZI@ws-stein>
+Subject: Re: [RFC PATCH 1/4] pinctrl: Rename pinctrl_utils_dt_free_map to pinctrl_utils_free_map
+Date: Fri, 1 Apr 2016 15:08:32 +0200
+Message-ID: <CACRpkdb4bKoWMxAo4H1ycy5gk1Rh9jC=TPXJ4ycnfPh6LWEOyQ@mail.gmail.com>
+References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
+	<1459424685-26965-2-git-send-email-irina.tirdea@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <1766024.riJEdmHPZI@ws-stein>
-Sender: linux-input-owner@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux Input <linux-input@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Guenter Roeck <linux@roeck-us.net>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1459424685-26965-2-git-send-email-irina.tirdea@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Irina Tirdea <irina.tirdea@intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Octavian Purdila <octavian.purdila@intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 1, 2016 at 2:16 PM, Alexander Stein
-<alexander.stein@systec-electronic.com> wrote:
+On Thu, Mar 31, 2016 at 1:44 PM, Irina Tirdea <irina.tirdea@intel.com> wrote:
 
-> I noticed you fiddle with late_initcall_sync. Sorry, I did not mention it:
-> gpio_mcp23s08 as well as gpio_keys are loaded as modules, so late_initcall_*
-> should not affect it.
+> Rename pinctrl_utils_dt_free_map to pinctrl_utils_free_map, since
+> it does not depend on device tree despite the current name. This
+> will enforce a consistent naming in pinctr-utils.c and will make
+> it clear it can be called from outside device tree (e.g. from
+> ACPI handling code).
+>
+> Signed-off-by: Irina Tirdea <irina.tirdea@intel.com>
 
-I don't get this. I think probe deferral is only used to defer
-initcalls used for built-in drivers.
+OK that's a good change making nice ground work for the rest.
+Patch applied.
 
-If there are dependencies among things compiled as modules,
-doesn't depmod/modprobe make sure that they are probed in
-the right order? Could it be that some module alias thingofabob
-is missing?
-
-Or is modprobe failing because it (correctly) see that there is
-no symbol dependencies between the gpio_mcp23s08 and
-gpio-keys modules? (Not that I know how depmod works...)
-
-If nothing else works, I guess marking mcp23s08 as bool
-and building it into the kernel will work, right?
+For the rest I want to hear from Rafael and/or Mika first.
 
 Yours,
 Linus Walleij
