@@ -1,68 +1,57 @@
-From: Rob Herring <robh@kernel.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
 Subject: Re: [PATCH v3 12/18] dt-bindings: Add PLX Technology OXNAS pinctrl
  and gpio bindings
-Date: Fri, 1 Apr 2016 10:19:14 -0500
-Message-ID: <CAL_JsqJS31gNS-dYXQvkLHb=qsVz4Vccztufnd08yfD+p52v_w@mail.gmail.com>
+Date: Fri, 1 Apr 2016 17:48:28 +0200
+Message-ID: <56FE984C.10807@baylibre.com>
 References: <1458838215-23314-1-git-send-email-narmstrong@baylibre.com>
  <1458838215-23314-13-git-send-email-narmstrong@baylibre.com>
- <20160325144834.GA27177@rob-hp-laptop> <CACRpkdbem5a_aLTHErp0ZvanwvVPbGnDiWxM5e7iX_FdHtXprQ@mail.gmail.com>
- <CAL_JsqLsKEb+dWLg9VD3p=kjgEV84_r8z89p0QgMJWKqjrGNpw@mail.gmail.com> <56FE8602.8020405@baylibre.com>
+ <20160325144834.GA27177@rob-hp-laptop>
+ <CACRpkdbem5a_aLTHErp0ZvanwvVPbGnDiWxM5e7iX_FdHtXprQ@mail.gmail.com>
+ <CAL_JsqLsKEb+dWLg9VD3p=kjgEV84_r8z89p0QgMJWKqjrGNpw@mail.gmail.com>
+ <56FE8602.8020405@baylibre.com>
+ <CAL_JsqJS31gNS-dYXQvkLHb=qsVz4Vccztufnd08yfD+p52v_w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:38870 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751820AbcDAPTi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 1 Apr 2016 11:19:38 -0400
-In-Reply-To: <56FE8602.8020405@baylibre.com>
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:33010 "EHLO
+	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751774AbcDAPsm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 11:48:42 -0400
+Received: by mail-wm0-f45.google.com with SMTP id f198so31390044wme.0
+        for <linux-gpio@vger.kernel.org>; Fri, 01 Apr 2016 08:48:41 -0700 (PDT)
+In-Reply-To: <CAL_JsqJS31gNS-dYXQvkLHb=qsVz4Vccztufnd08yfD+p52v_w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
+To: Rob Herring <robh@kernel.org>
 Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Fri, Apr 1, 2016 at 9:30 AM, Neil Armstrong <narmstrong@baylibre.com> wrote:
-> On 03/31/2016 03:36 PM, Rob Herring wrote:
->> On Thu, Mar 31, 2016 at 3:58 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>> On Fri, Mar 25, 2016 at 3:48 PM, Rob Herring <robh@kernel.org> wrote:
->>>> On Thu, Mar 24, 2016 at 05:50:09PM +0100, Neil Armstrong wrote:
->>>>> Add pinctrl and gpio DT bindings for PLX Technology OXNAS SoC Family.
->>>>> This version supports the ARM926EJ-S based OX810SE SoC with 34 IO pins.
->>>>>
->>>>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+On 04/01/2016 05:19 PM, Rob Herring wrote:
+> On Fri, Apr 1, 2016 at 9:30 AM, Neil Armstrong <narmstrong@baylibre.com> wrote:
 >>>
->>>>> + - plxtech,gpio-bank: Specifies which bank a controller owns.
->>>>
->>>> How is this used?
+>>> Rob
 >>>
->>> That is used to give a unique ID number to the bank.
->>>
->>> Hardware often need this to cross-reference pin controllers
->>> to GPIO banks.
->>>
->>> I should add it as "gpio-bank" to the generic bindings
->>> instead, several platforms already use this and there is
->>> no point in having a vendor prefix in front of it.
 >>
->> Okay, now it is clearer. I don't want this documented as a common
->> property because I don't want to encourage it's use. I only see 2
->> users currently: ST and PIC32.
+>> Hi,
 >>
->> Looking at one example, it appears to be redundant already.
->> nomadik-gpio-chips property already gives you the index. The index of
->> the phandles is the bank numbering. PIC32 could do the same.
->>
->> Rob
->>
->
-> Hi,
->
-> What should I use ?
+>> What should I use ?
+> 
+> Maybe gpio-ranges as you asked. Not really sure as I haven't used it.
 
-Maybe gpio-ranges as you asked. Not really sure as I haven't used it.
+If I use gpio-ranges I can get rid of gpio-bank and ngpios properties.
 
-> I need to repost in a separate patchset with vendor replaced by Oxford Semiconductor.
-> Should I get rid of the vendor prefix of gpio-bank ?
+> 
+>> I need to repost in a separate patchset with vendor replaced by Oxford Semiconductor.
+>> Should I get rid of the vendor prefix of gpio-bank ?
+> 
+> No, because I think you should get rid of the property.
+> 
+> Rob
+> 
 
-No, because I think you should get rid of the property.
+If gpio-ranges is OK, I can post it ASAP.
 
-Rob
+Thanks,
+
+Neil
+
