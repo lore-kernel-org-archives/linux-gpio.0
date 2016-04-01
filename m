@@ -1,69 +1,98 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 4/6] drivers/gpio: make gpio-palmas.c explicitly non-modular
-Date: Fri, 1 Apr 2016 14:49:36 -0400
-Message-ID: <1459536578-3017-5-git-send-email-paul.gortmaker@windriver.com>
-References: <1459536578-3017-1-git-send-email-paul.gortmaker@windriver.com>
+From: Thor Thayer <tthayer@opensource.altera.com>
+Subject: Re: [RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource
+ Chip bindings
+Date: Fri, 1 Apr 2016 15:21:04 -0500
+Message-ID: <56FED830.6060902@opensource.altera.com>
+References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
+ <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
+ <20160330113532.GI3323@x1> <56FD6A8E.7030208@opensource.altera.com>
+ <20160401081426.GS3323@x1>
+Reply-To: <tthayer@opensource.altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1459536578-3017-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-by2on0077.outbound.protection.outlook.com ([207.46.100.77]:46160
+	"EHLO na01-by2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751484AbcDAUQ0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 1 Apr 2016 16:16:26 -0400
+In-Reply-To: <20160401081426.GS3323@x1>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org, pawell.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
 
-drivers/gpio/Kconfig:config GPIO_PALMAS
-drivers/gpio/Kconfig:   bool "TI PALMAS series PMICs GPIO"
 
-...meaning that it currently is not being built as a module by anyone.
+On 04/01/2016 03:14 AM, Lee Jones wrote:
+> On Thu, 31 Mar 2016, Thor Thayer wrote:
+>> On 03/30/2016 06:35 AM, Lee Jones wrote:
+>>> On Tue, 29 Mar 2016, tthayer@opensource.altera.com wrote:
+>>>
+>>>> From: Thor Thayer <tthayer@opensource.altera.com>
+>
+> [...]
+>
+>>>> +The A10SR consists of this varied group of sub-devices:
+>>>> +
+>>>> +Device                   Description
+>>>> +------                   ----------
+>>>> +altr_a10sr_gpio          GPIO Controller
+>>>> +altr_a10sr_hwmon         Hardware Monitor
+>>>> +
+>>>> +The LEDs are implemented entirely in the device tree using
+>>>> +the gpio-led framework.
+>>>
+>>> This is a Linuxisum and should not live in DT bindings.
+>>
+>> I was following the format of other mfd binding documents such as
+>> Documentation/devicetree/bindings/mfd/da9055.txt so I'll need your
+>> help understanding this.
+>>
+>> I'm not familiar with the phrase Linuxisum. A Google search turns up
+>> several threads referencing Linuxisum but I can't seem to find the
+>> definition. One thread seems to imply that an existing driver such
+>> as GPIO is a Linuxisum and should not be re-defined. Am I
+>> understanding correctly?
+>
+> Linuxisum is a made up word.  Actually, it looks like I placed a
+> superfluous 'u' in there, but I assume most people would get the gist.
+> Some examples ending in "ism" which might push the point across are
+> "colloquialism" and "feminism", where the "ism" can probably be taken
+> to mean "pertaining to".  So in the example above, we might reasonably
+> conclude that I meant "pertaining to Linux", which I did.
+>
+> In other words "the gpio-led framework" is something we have in Linux,
+> but might not exist in other OSes.  And considering DT is supposed to
+> be OS agnostic and the documentation relevant to all OSes, you can not
+> and should not document Linuxisms.
+>
 
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
+Got it. Thanks for the explanation! I'll make the changes.
 
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
-
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/gpio/gpio-palmas.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
-
-diff --git a/drivers/gpio/gpio-palmas.c b/drivers/gpio/gpio-palmas.c
-index 6f27b3d94d53..e248707ca39e 100644
---- a/drivers/gpio/gpio-palmas.c
-+++ b/drivers/gpio/gpio-palmas.c
-@@ -20,7 +20,7 @@
- 
- #include <linux/gpio.h>
- #include <linux/kernel.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/mfd/palmas.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -218,14 +218,3 @@ static int __init palmas_gpio_init(void)
- 	return platform_driver_register(&palmas_gpio_driver);
- }
- subsys_initcall(palmas_gpio_init);
--
--static void __exit palmas_gpio_exit(void)
--{
--	platform_driver_unregister(&palmas_gpio_driver);
--}
--module_exit(palmas_gpio_exit);
--
--MODULE_ALIAS("platform:palmas-gpio");
--MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
--MODULE_DESCRIPTION("GPIO driver for TI Palmas series PMICs");
--MODULE_LICENSE("GPL v2");
--- 
-2.6.1
+>>>> +Example:
+>>>> +
+>>>> +        a10-sr: a10-sr@0 {
+>>>
+>>> Nodes should be named after their device 'type'.
+>>>
+>>> Does this device really start a address 0?
+>>
+>> OK. If I understand, this should be named after mfd then?
+>
+> MFDs are usually a little tougher, but in your case I think it should
+> be "resource-manager" or similar.
+>
+>>>> +		compatible = "altr,altr-a10sr";
+>>>> +		reg = <0>;
+>>>> +		spi-max-frequency = <100000>;
+>>>> +
+>>>> +		a10sr_gpio: a10sr_gpio {
+>>>
+>>> Device type only please.
+>>
+>> And this would be a gpio?
+>
+> Exactly.
+>
