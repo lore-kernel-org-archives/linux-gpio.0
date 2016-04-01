@@ -1,188 +1,58 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH] gpiolib: handle probe deferrals better
-Date: Fri, 1 Apr 2016 16:28:37 +0300
-Message-ID: <56FE7785.1010507@ti.com>
-References: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/1] gpio: mcp23s08: Add support for level triggered interrupts
+Date: Fri, 1 Apr 2016 15:29:21 +0200
+Message-ID: <CACRpkdYJD+U9LSSZKdUR0Ax+cZZN_kbdhaOUsKp=wgcfzPXZgA@mail.gmail.com>
+References: <1458752487-32767-1-git-send-email-alexander.stein@systec-electronic.com>
+	<CACRpkdZKX28G_MvvNhGB7v0Mwsfhbq3gnkmNiCM9UzRsmdJCxw@mail.gmail.com>
+	<5801670.ZsrEAbzXnC@ws-stein>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-input-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: linux-input@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:36338 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753506AbcDAN3W convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 09:29:22 -0400
+Received: by mail-oi0-f45.google.com with SMTP id r187so105007504oih.3
+        for <linux-gpio@vger.kernel.org>; Fri, 01 Apr 2016 06:29:22 -0700 (PDT)
+In-Reply-To: <5801670.ZsrEAbzXnC@ws-stein>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 04/01/2016 02:44 PM, Linus Walleij wrote:
-> The gpiolib does not currently return probe deferrals from the
-> .to_irq() hook while the GPIO drivers are being initialized.
-> Further: it keeps returning -EPROBE_DEFER for gpio[d]_get()
-> even after all builtin drivers have initialized.
-> 
-> Fix this thusly:
-> 
-> - Move the assignment of .to_irq() to the last step when
->    using gpiolib_irqchip_add() so we can't get spurious calls
->    into the .to_irq() function until all set-up is finished.
-> 
-> - Put in a late_initcall_sync() to set a boolean state variable to
->    indicate that we're not gonna defer any longer. Since deferred
->    probe happens at late_initcall() time, using late_initcall_sync()
->    should be fine.
-> 
-> - After this point, return hard errors (-ENXIO) from both
->    gpio[d]_get() and .to_irq().
-> 
-> This way we should (at least for all drivers using GPIOLIB_IRQCHIP)
-> be getting proper deferrals from both gpio[d]_get() and .to_irq()
-> until the irqchip side is properly set up, and then proper
-> errors after all drivers should have been probed.
-> 
-> This problem was first seen with gpio-keys.
-> 
-> Cc: linux-input@vger.kernel.org
-> Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Reported-by: Alexander Stein <alexander.stein@systec-electronic.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Alexander: please test this, you need Guether's patches too,
-> I have it all on my "fixes" branch in the GPIO git:
-> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=fixes
-> 
-> Tomeu: I think you're the authority on deferred probe these days.
-> Is this the right way for a subsystem to switch from returning
-> -EPROBE_DEFER to instead returning an unrecoverable error?
-> 
-> Guenther: I applied this on top of your patches, please check it
-> if you can, you're smarter than me with this stuff.
-> ---
->   drivers/gpio/gpiolib.c | 47 ++++++++++++++++++++++++++++++++++++++++-------
->   1 file changed, 40 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index b747c76fd2b1..426a93f9d79e 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -68,7 +68,9 @@ LIST_HEAD(gpio_devices);
->   static void gpiochip_free_hogs(struct gpio_chip *chip);
->   static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
->   
-> +/* These keep the state of the library */
->   static bool gpiolib_initialized;
-> +static bool gpiolib_builtin_ready;
->   
->   static inline void desc_set_label(struct gpio_desc *d, const char *label)
->   {
-> @@ -1093,7 +1095,6 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
->   	gpiochip->irqchip = irqchip;
->   	gpiochip->irq_handler = handler;
->   	gpiochip->irq_default_type = type;
-> -	gpiochip->to_irq = gpiochip_to_irq;
->   	gpiochip->lock_key = lock_key;
->   	gpiochip->irqdomain = irq_domain_add_simple(of_node,
->   					gpiochip->ngpio, first_irq,
-> @@ -1129,6 +1130,12 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
->   	}
->   
->   	acpi_gpiochip_request_interrupts(gpiochip);
-> +	/*
-> +	 * Wait with this until last, as someone may be asynchronously
-> +	 * calling .to_irq() and needs to be getting probe deferrals until
-> +	 * this point.
-> +	 */
-> +	gpiochip->to_irq = gpiochip_to_irq;
->   
->   	return 0;
->   }
-> @@ -1366,12 +1373,21 @@ done:
->   
->   int gpiod_request(struct gpio_desc *desc, const char *label)
->   {
-> -	int status = -EPROBE_DEFER;
-> +	int status;
->   	struct gpio_device *gdev;
->   
->   	VALIDATE_DESC(desc);
->   	gdev = desc->gdev;
->   
-> +	/*
-> +	 * Defer requests until all built-in drivers have had a chance
-> +	 * to probe, then give up and return a hard error.
-> +	 */
-> +	if (!gpiolib_builtin_ready)
-> +		status = -EPROBE_DEFER;
-> +	else
-> +		status = -ENXIO;
+On Thu, Mar 31, 2016 at 10:58 AM, Alexander Stein
+<alexander.stein@systec-electronic.com> wrote:
+> On Thursday 31 March 2016 10:41:24, Linus Walleij wrote:
 
-Probably It will work right if we will let gpiochip know that
-it has irqchip companion.
-With above knowledge the gpiod_request() can return -EPROBE_DEFER while 
-irqchip is not initialized. In other words:
-- driver will set HAS_IRQ flag
-- gpiolib will set gpio_chip->irqs_ready = 0 in gpiochip_add_data()
-- gpiolib will set gpio_chip->irqs_ready = 1 in gpiochip_irqchip_add()
-- gpiod_request() will do at the beginning:
-  if (HAS_IRQ && !gpio_chip->irqs_ready)
-   return  -EPROBE_DEFER
+> From the reference manual:
+>> The INTCAP register captures the GPIO port value at
+>> the time the interrupt occurred. The register is =E2=80=98read
+>> only=E2=80=99 and is updated only when an interrupt occurs. The
+>> register will remain unchanged until the interrupt is
+>> cleared via a read of INTCAP or GPIO.
+>
+> So, i guess you're right. Although currently I don't know why
+> handle_simple_irq would not work if this would not be the case.
 
-it might also required to combine 
-gpiochip_irqchip_add and gpiochip_set_chained_irqchip.
+The usual construction is that for edge triggered interrupts
+there is an ACK register where a bit goes to "1" whenever it
+triggers on an edge, and this must be taken down by an explicit
+read or even write of the ACK registers.
 
-> +
->   	if (try_module_get(gdev->owner)) {
->   		status = __gpiod_request(desc, label);
->   		if (status < 0)
-> @@ -1993,18 +2009,27 @@ EXPORT_SYMBOL_GPL(gpiod_cansleep);
->    * gpiod_to_irq() - return the IRQ corresponding to a GPIO
->    * @desc: gpio whose IRQ will be returned (already requested)
->    *
-> - * Return the IRQ corresponding to the passed GPIO, or an error code in case of
-> - * error.
-> + * Return the IRQ corresponding to the passed GPIO, or an error code.
->    */
->   int gpiod_to_irq(const struct gpio_desc *desc)
->   {
-> -	struct gpio_chip	*chip;
-> -	int			offset;
-> +	struct gpio_chip *chip;
-> +	int offset;
->   
->   	VALIDATE_DESC(desc);
->   	chip = desc->gdev->chip;
->   	offset = gpio_chip_hwgpio(desc);
-> -	return chip->to_irq ? chip->to_irq(chip, offset) : -ENXIO;
-> +
-> +	if (chip->to_irq)
-> +		return chip->to_irq(chip, offset);
-> +	/*
-> +	 * We will wait for new GPIO drivers to arrive until the
-> +	 * late initcalls. After that we stop deferring and return
-> +	 * a hard error.
-> +	 */
-> +	if (!gpiolib_builtin_ready)
-> +		return -EPROBE_DEFER;
+Level triggered interrupts by contrast, are just a register
+reflecting the value of the interrupt line: it only remains set
+to "1" as long as the external source holds it high, and will
+go low as soon as the device causing he interrupt releases
+it.
 
-yah. This might not help with modules :(
+Therefor level triggered interrupts often do not need any
+explicit ACK at all.
 
-
-> +	return -ENXIO;
->   }
->   EXPORT_SYMBOL_GPL(gpiod_to_irq);
->   
-> @@ -2883,6 +2908,14 @@ static int __init gpiolib_dev_init(void)
->   }
->   core_initcall(gpiolib_dev_init);
->   
-> +static int __init gpiolib_late_done(void)
-> +{
-> +	/* Flag that we're not deferring probes anymore */
-> +	gpiolib_builtin_ready = true;
-> +	return 0;
-> +}
-> +late_initcall_sync(gpiolib_late_done);
-
-
--- 
-regards,
--grygorii
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
