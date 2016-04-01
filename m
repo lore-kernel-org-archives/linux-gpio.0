@@ -1,25 +1,21 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 1/6] drivers/gpio: make gpio-rc5t583.c explicitly non-modular
-Date: Fri, 1 Apr 2016 14:49:33 -0400
-Message-ID: <1459536578-3017-2-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 2/6] drivers/gpio: make gpio-tc3589x.c explicitly non-modular
+Date: Fri, 1 Apr 2016 14:49:34 -0400
+Message-ID: <1459536578-3017-3-git-send-email-paul.gortmaker@windriver.com>
 References: <1459536578-3017-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:63013 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751184AbcDASty (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 14:49:54 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1459536578-3017-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-gpio@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rabin Vincent <rabin.vincent@stericsson.com>, Hanumath Prasad <hanumath.prasad@stericsson.com>, linux-gpio@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/gpio/Kconfig:config GPIO_RC5T583
-drivers/gpio/Kconfig:   bool "RICOH RC5T583 GPIO"
+drivers/gpio/Kconfig:config GPIO_TC3589X
+drivers/gpio/Kconfig:   bool "TC3589X GPIOs"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -34,40 +30,39 @@ is already contained at the top of the file in the comments.
 
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Rabin Vincent <rabin.vincent@stericsson.com>
+Cc: Hanumath Prasad <hanumath.prasad@stericsson.com>
 Cc: linux-gpio@vger.kernel.org
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/gpio/gpio-rc5t583.c | 12 ------------
- 1 file changed, 12 deletions(-)
+ drivers/gpio/gpio-tc3589x.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-diff --git a/drivers/gpio/gpio-rc5t583.c b/drivers/gpio/gpio-rc5t583.c
-index 1d6100fa312a..3b4dc1a9a68d 100644
---- a/drivers/gpio/gpio-rc5t583.c
-+++ b/drivers/gpio/gpio-rc5t583.c
-@@ -23,7 +23,6 @@
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/slab.h>
+diff --git a/drivers/gpio/gpio-tc3589x.c b/drivers/gpio/gpio-tc3589x.c
+index 4f566e6b81f1..a29dec137373 100644
+--- a/drivers/gpio/gpio-tc3589x.c
++++ b/drivers/gpio/gpio-tc3589x.c
+@@ -6,7 +6,6 @@
+  * Author: Rabin Vincent <rabin.vincent@stericsson.com> for ST-Ericsson
+  */
+ 
 -#include <linux/module.h>
+ #include <linux/init.h>
  #include <linux/platform_device.h>
- #include <linux/device.h>
- #include <linux/gpio.h>
-@@ -152,14 +151,3 @@ static int __init rc5t583_gpio_init(void)
- 	return platform_driver_register(&rc5t583_gpio_driver);
+ #include <linux/slab.h>
+@@ -311,13 +310,3 @@ static int __init tc3589x_gpio_init(void)
+ 	return platform_driver_register(&tc3589x_gpio_driver);
  }
- subsys_initcall(rc5t583_gpio_init);
+ subsys_initcall(tc3589x_gpio_init);
 -
--static void __exit rc5t583_gpio_exit(void)
+-static void __exit tc3589x_gpio_exit(void)
 -{
--	platform_driver_unregister(&rc5t583_gpio_driver);
+-	platform_driver_unregister(&tc3589x_gpio_driver);
 -}
--module_exit(rc5t583_gpio_exit);
+-module_exit(tc3589x_gpio_exit);
 -
--MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
--MODULE_DESCRIPTION("GPIO interface for RC5T583");
 -MODULE_LICENSE("GPL v2");
--MODULE_ALIAS("platform:rc5t583-gpio");
+-MODULE_DESCRIPTION("TC3589x GPIO driver");
+-MODULE_AUTHOR("Hanumath Prasad, Rabin Vincent");
 -- 
 2.6.1
-
