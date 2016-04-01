@@ -1,66 +1,67 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH v3 12/18] dt-bindings: Add PLX Technology OXNAS pinctrl
- and gpio bindings
-Date: Fri, 1 Apr 2016 16:30:26 +0200
-Message-ID: <56FE8602.8020405@baylibre.com>
-References: <1458838215-23314-1-git-send-email-narmstrong@baylibre.com>
- <1458838215-23314-13-git-send-email-narmstrong@baylibre.com>
- <20160325144834.GA27177@rob-hp-laptop>
- <CACRpkdbem5a_aLTHErp0ZvanwvVPbGnDiWxM5e7iX_FdHtXprQ@mail.gmail.com>
- <CAL_JsqLsKEb+dWLg9VD3p=kjgEV84_r8z89p0QgMJWKqjrGNpw@mail.gmail.com>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Subject: Re: [PATCH] pinctrl: mediatek: correct debounce time unit in
+ mtk_gpio_set_debounce
+Date: Fri, 1 Apr 2016 22:34:42 +0800
+Message-ID: <1459521282.27150.3.camel@mtksdaap41>
+References: <1459518711-61619-1-git-send-email-yingjoe.chen@mediatek.com>
+	 <CAGS+omA=xbZH04nkVddVi77xvNznjx36_rHJHhAHBLejuxZqgA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:34690 "EHLO
-	mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755367AbcDAOak (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 10:30:40 -0400
-Received: by mail-wm0-f44.google.com with SMTP id p65so28476955wmp.1
-        for <linux-gpio@vger.kernel.org>; Fri, 01 Apr 2016 07:30:39 -0700 (PDT)
-In-Reply-To: <CAL_JsqLsKEb+dWLg9VD3p=kjgEV84_r8z89p0QgMJWKqjrGNpw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGS+omA=xbZH04nkVddVi77xvNznjx36_rHJHhAHBLejuxZqgA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, srv_heupstream <srv_heupstream@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 03/31/2016 03:36 PM, Rob Herring wrote:
-> On Thu, Mar 31, 2016 at 3:58 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Fri, Mar 25, 2016 at 3:48 PM, Rob Herring <robh@kernel.org> wrote:
->>> On Thu, Mar 24, 2016 at 05:50:09PM +0100, Neil Armstrong wrote:
->>>> Add pinctrl and gpio DT bindings for PLX Technology OXNAS SoC Family.
->>>> This version supports the ARM926EJ-S based OX810SE SoC with 34 IO pins.
->>>>
->>>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->>
->>>> + - plxtech,gpio-bank: Specifies which bank a controller owns.
->>>
->>> How is this used?
->>
->> That is used to give a unique ID number to the bank.
->>
->> Hardware often need this to cross-reference pin controllers
->> to GPIO banks.
->>
->> I should add it as "gpio-bank" to the generic bindings
->> instead, several platforms already use this and there is
->> no point in having a vendor prefix in front of it.
+
+Daniel,
+
+Thanks for your review.
+
+On Fri, 2016-04-01 at 22:28 +0800, Daniel Kurtz wrote:
+> Hi Yingjoe,
 > 
-> Okay, now it is clearer. I don't want this documented as a common
-> property because I don't want to encourage it's use. I only see 2
-> users currently: ST and PIC32.
+> On Fri, Apr 1, 2016 at 9:51 PM, Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
+> > The debounce time unit for gpio_chip.set_debounce is us but
+> > mtk_gpio_set_debounce regard it as ms.
+> > Fix this by correct debounce time array dbnc_arr so it can find correct
+> > debounce setting.
 > 
-> Looking at one example, it appears to be redundant already.
-> nomadik-gpio-chips property already gives you the index. The index of
-> the phandles is the bank numbering. PIC32 could do the same.
-> 
-> Rob
+> This patch also changes the first entry to 500 usec.  At least mention why.
 > 
 
-Hi,
+OK. Will add this:
 
-What should I use ?
-I need to repost in a separate patchset with vendor replaced by Oxford Semiconductor.
-Should I get rid of the vendor prefix of gpio-bank ?
+Debounce time for first debounce setting is 500us, correct this as well.
 
-Neil
+While I'm at it, also change the debounce time array name to
+"debounce_time" for readability.
+
+
+> >
+> > Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> > ---
+> >  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> > index 2bbe6f7..be72325 100644
+> > --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> > +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> > @@ -1004,7 +1004,8 @@ static int mtk_gpio_set_debounce(struct gpio_chip *chip, unsigned offset,
+> >         struct mtk_pinctrl *pctl = dev_get_drvdata(chip->parent);
+> >         int eint_num, virq, eint_offset;
+> >         unsigned int set_offset, bit, clr_bit, clr_offset, rst, i, unmask, dbnc;
+> > -       static const unsigned int dbnc_arr[] = {0 , 1, 16, 32, 64, 128, 256};
+> > +       static const unsigned int dbnc_arr[] = {500, 1000, 16000, 32000, 64000,
+> > +                                               128000, 256000};
+> 
+> While you are at it, can you please rename this to something more
+> readable than "dbnc"?
+
+
+Will change to debounce_time.
+
+Joe.C
