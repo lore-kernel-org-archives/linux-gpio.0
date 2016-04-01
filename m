@@ -1,67 +1,48 @@
-From: "DR.ANTHONY EMMANUEL" <taminbin@micso.fr>
-Subject: CAN I TRUST YOU ON THIS DEAL!!!
-Date: Fri, 1 Apr 2016 00:22:06 +0200
-Message-ID: <eb16e561fea1127ce011bc9f7b6546a3@195.32.69.13>
-Reply-To: "DR.ANTHONY EMMANUEL" <dr.anthony_emmanuel@yahoo.fr>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v2] pinctrl: rockchip: add support the get_direction
+Date: Fri, 01 Apr 2016 02:21:07 +0200
+Message-ID: <4521590.yHkfr458Oq@phil>
+References: <1458028545-1202-1-git-send-email-wxt@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from france.micso.it ([195.32.69.13]:48483 "HELO micso.fr"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-	id S1757251AbcCaWWJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 31 Mar 2016 18:22:09 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:54056 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757614AbcDAAVZ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Mar 2016 20:21:25 -0400
+In-Reply-To: <1458028545-1202-1-git-send-email-wxt@rock-chips.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Caesar Wang <wxt@rock-chips.com>
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
 
-FROM DR.ANTHONY EMMANUEL.
-AUDITING AND ACCOUNTING UNIT.
-BANK OF AFRICA. BURKINA FASO.
+Am Dienstag, 15. M=E4rz 2016, 15:55:45 schrieb Caesar Wang:
+> This patch adds the get_direction to support the gpio
+> interface.
+>=20
+> The gpio direction is not used on rockchip platform when use the gpio
+> debugfs.
+>=20
+> Tested on kylin board. (RK3036 SoCs)
+> The repro steps:
+> $/sys/class/gpio/
+> echo 53 > export
+> $/sys/class/gpio/gpio53# cat direction
+> in
+> In general, the gpio53 should be out value, but the direction is the
+> default value 'in',  since the get_direction didn't supported in rock=
+chip
+> pinctrl.
+>=20
+> So, we should add this patch to support it.
+>=20
+> Reported-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
 
-CONTACT ME HERE;( dr.anthony_emmanuel@yahoo.fr )
- 
-Attn: Sir/ Madam,
-
-FROM ( DR.ANTHONY EMMANUEL.) Staff of Bank Of Africa in Burkina Faso. I
-would like you to indicate your  interest to  receive the transfer of
-(15.5 Million Dollars) which I will like you to stand as the next of kin to
-my late client whose account is presently dormant for claims.
-if you are interested,indicate and i will intimate you with the method of
-application and how you can apply to the bank.
-But before i send to you the text of application form,I will like you to
-send me the following informations
-
-1.NAME IN FULL:..............................
-2.ADDRESS:.......................................
-3.NATIONALITY:.................................. .
-4.AGE:.............................................
-5.SEX..............................................
-6.OCCUPATION:......................................
-7.MARITAL STATUS:..................................
-8.PRIAVTE PHONE NO.................................
-9.PRIVATE FAX NO:..........................
-10.ATTACH COPY OF YOUR IDENTIFICATION......
-
-Now my questions are:
-1) Can you handle this project?
-2) Can I give you this trust?
-
-so i will like you to send to me those informations for easy and effective
-communication.Upon receipt of your reply, I will send to you by fax or email
-the text of the application form.I will not fail to bring to your notice
-that this transaction is hitch-free and that you should not entertain any
-atom of fear as all required arrangements have been made for the transfer.
-You should contact me immediately as soon as you receive this letter,if only
-you are interested and ready to help On this Contact me. through my private
-email address (dr.anthony_emmanuel@yahoo.fr )
-Trusting to hear from you immediately. Do keep this a top secret for
-security reasons.
-
-Yours faithfully,
-
-DR.ANTHONY EMMANUEL.
-
-________________________________________________
-Message sent using Micso France Webmail
-
-
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
