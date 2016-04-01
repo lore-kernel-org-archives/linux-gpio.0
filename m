@@ -1,57 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpiolib: Defer gpio device setup until after gpiolib initialization
-Date: Fri, 1 Apr 2016 10:16:29 +0200
-Message-ID: <CACRpkdacra5WnWtH7qyuxix3fGBoa+6WZJCU5vusQoAaJGZrfw@mail.gmail.com>
-References: <1459437090-10029-1-git-send-email-linux@roeck-us.net>
-	<1459437090-10029-2-git-send-email-linux@roeck-us.net>
-	<56FDC0D7.5040101@westnet.com.au>
-	<20160401005301.GA17066@roeck-us.net>
-	<56FDCFDF.2090107@westnet.com.au>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: gpio irqchip initialization race
+Date: Fri, 01 Apr 2016 10:28:54 +0200
+Message-ID: <44236018.b6N0xPzKYW@ws-stein>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:34127 "EHLO
-	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753197AbcDAIQa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 04:16:30 -0400
-Received: by mail-oi0-f54.google.com with SMTP id o62so95578553oig.1
-        for <linux-gpio@vger.kernel.org>; Fri, 01 Apr 2016 01:16:30 -0700 (PDT)
-In-Reply-To: <56FDCFDF.2090107@westnet.com.au>
+Received: from webbox1416.server-home.net ([77.236.96.61]:39561 "EHLO
+	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753064AbcDAI3D (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 04:29:03 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Greg Ungerer <gregungerer@westnet.com.au>
-Cc: Guenter Roeck <linux@roeck-us.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Ungerer <gerg@uclinux.org>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Fri, Apr 1, 2016 at 3:33 AM, Greg Ungerer <gregungerer@westnet.com.au> wrote:
-> On 01/04/16 10:53, Guenter Roeck wrote:
+Hi,
 
->> Probably coldfire ?
->>
->> arch/m68k/coldfire/gpio.c:
->
-> Yes, that is the one.
->
->> static struct bus_type mcfgpio_subsys = {
->>         .name           = "gpio",
->>       .dev_name       = "gpio",
->> };
->>
->> No idea what to do about that. Can that bus be renamed ?
->
-> Yeah, it could. But is it even necessary at all now?
->
-> I am thinking I could remove the subsys_system_register(&mcfgpio_subsys, NULL)
-> call from that coldfire/gpio.c. Doing that certainly cleans up the
-> boot. There was nothing much under the old coldfire /sys/gpio other than
-> the standard devices/drivers/etc. And the new gpio api ofcourse has all
-> that as well.
+I'm currently observing a (supposedly) race condition during system start.
+My board is running an SMP kernel on 2 cores and uses a MCP23S17 where some 
+buttons are attached to. In the device tree the buttons are configured to used 
+by gpio-keys, thus some GPIOs on MCP23S17 will be used as interrupts.
+In probably most cases init is fine and buttons can be used by evtest. But on 
+some boots I get 2 different error messages:
+> gpio-keys user_sw: Unable to claim irq 0; error -22
+and
+> gpio-keys user_sw: Unable to get irq number for GPIO 376, error -6
+GPIO 376 is Pin 8 on MCP23S17.
+I suspect this depends on the time when gpio-keys is being probed. It will not 
+be probed (or actually deferred) before mcp23s08_probe_one calls 
+gpiochip_add_data as the parent GPIo controller to buttons is not present yet.
+I guess those error messages raise when gpio-keys is probed after 
+gpiochip_add_data but before gpiochip_irqchip_add or 
+gpiochip_set_chained_irqchip (in mcp23s08_irq_setup).
 
-Please kill it if you can. Or are there userspaces for
-coldfire that use this? In that case we need some compatibility
-shim for them.
+The comment to _gpiochip_irqchip_add states the gpiochip has to be registered 
+when calling. So to me this opens a rather small window where childs to 
+gpiochip can be probed (parent is registered) but registering an interrupt 
+will fail as the parent IRQ setup has not finished yet.
+Any suggestions how to fix that?
 
-I'm trying to pull all needed functionality into the proper gpiolib
-so we can get some order around the place...
+Best regards,
+Alexander
 
-Yours,
-Linus Walleij
