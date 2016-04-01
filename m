@@ -1,67 +1,54 @@
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Subject: Re: [PATCH] pinctrl: mediatek: correct debounce time unit in
- mtk_gpio_set_debounce
-Date: Fri, 1 Apr 2016 22:34:42 +0800
-Message-ID: <1459521282.27150.3.camel@mtksdaap41>
-References: <1459518711-61619-1-git-send-email-yingjoe.chen@mediatek.com>
-	 <CAGS+omA=xbZH04nkVddVi77xvNznjx36_rHJHhAHBLejuxZqgA@mail.gmail.com>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: Re: [PATCH] gpiolib: handle probe deferrals better
+Date: Fri, 01 Apr 2016 16:35:22 +0200
+Message-ID: <3328895.pnRVlrd6Vm@ws-stein>
+References: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org> <3233696.TZ7kbb7G3F@ws-stein> <56FE7F9C.9050902@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGS+omA=xbZH04nkVddVi77xvNznjx36_rHJHhAHBLejuxZqgA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Kurtz <djkurtz@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, srv_heupstream <srv_heupstream@mediatek.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from webbox1416.server-home.net ([77.236.96.61]:35892 "EHLO
+	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1758241AbcDAOfa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 10:35:30 -0400
+In-Reply-To: <56FE7F9C.9050902@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux Input <linux-input@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Guenter Roeck <linux@roeck-us.net>
 
-
-Daniel,
-
-Thanks for your review.
-
-On Fri, 2016-04-01 at 22:28 +0800, Daniel Kurtz wrote:
-> Hi Yingjoe,
+On Friday 01 April 2016 17:03:08, Grygorii Strashko wrote:
+> > So in my case, I would expect that gpio-keys probe fails due to missing
+> > IRQ
+> > parent and gets deferred. Once the IRQ parent happen to be probed
+> > successfully at some point gpio-keys is probed again and succeeds.
 > 
-> On Fri, Apr 1, 2016 at 9:51 PM, Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
-> > The debounce time unit for gpio_chip.set_debounce is us but
-> > mtk_gpio_set_debounce regard it as ms.
-> > Fix this by correct debounce time array dbnc_arr so it can find correct
-> > debounce setting.
+> I assume in your case It's devm_gpio_request_one() first of all, which
+> follows by gpio_to_irq.
+
+I think nothing is wrong with that. The problem is that the former succeeds 
+while the latter doesn't although from a device view point the GPIO chip is 
+already there.
+
+> > Consider the following cascading GPIO chips:
+> >   /-------\                /---------\                 /--------\
+> > |
+> > |MCP23S17 + Pin1 <--> IRQ-+ PCA9555 + Pin 1 <--> IRQ + MCP23S17 +
+> > |
+> >   \-------/                 \-------/                  \--------/
+> > 
+> > Probing should still work for this scenario. This is something modprobe
+> > cannot fix.
 > 
-> This patch also changes the first entry to 500 usec.  At least mention why.
-> 
+> What I can see from my boot log is that at module loading time log output
+> from many drivers is mixed which makes me think that this parallel process
+> (udev) - and no I've not hit this issue..yet.
 
-OK. Will add this:
+I think parallel device probing is expectable and reasonable. I guess to hit 
+this issue you need a device which requires GPIOs and their corresponding IRQ 
+and probing of that must be done while GPIO chip is attached but not it's IRQ 
+chip.
 
-Debounce time for first debounce setting is 500us, correct this as well.
+Best regards,
+Alexander
 
-While I'm at it, also change the debounce time array name to
-"debounce_time" for readability.
-
-
-> >
-> > Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> > ---
-> >  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> > index 2bbe6f7..be72325 100644
-> > --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> > +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> > @@ -1004,7 +1004,8 @@ static int mtk_gpio_set_debounce(struct gpio_chip *chip, unsigned offset,
-> >         struct mtk_pinctrl *pctl = dev_get_drvdata(chip->parent);
-> >         int eint_num, virq, eint_offset;
-> >         unsigned int set_offset, bit, clr_bit, clr_offset, rst, i, unmask, dbnc;
-> > -       static const unsigned int dbnc_arr[] = {0 , 1, 16, 32, 64, 128, 256};
-> > +       static const unsigned int dbnc_arr[] = {500, 1000, 16000, 32000, 64000,
-> > +                                               128000, 256000};
-> 
-> While you are at it, can you please rename this to something more
-> readable than "dbnc"?
-
-
-Will change to debounce_time.
-
-Joe.C
