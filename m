@@ -1,49 +1,50 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: Re: gpio irqchip initialization race
-Date: Fri, 01 Apr 2016 10:56:12 +0200
-Message-ID: <1587936.Xd43Z6OAxQ@ws-stein>
-References: <44236018.b6N0xPzKYW@ws-stein> <CACRpkdbfidnokJ2WyagdcEycDu3dXKVon2z4TKM7KhNg_Hyf9w@mail.gmail.com> <CACRpkdZ32AAq2BfoEeyiBm1RiXQVkTO6gxsEuuMGhm7wuUXxgQ@mail.gmail.com>
+From: Cristina Ciocan <cristina.ciocan@intel.com>
+Subject: Re: [PATCH v3 1/6] pinctrl: baytrail: Add pin control data structures
+Date: Fri, 1 Apr 2016 13:44:22 +0300
+Message-ID: <56FE5106.6010607@intel.com>
+References: <1459350335-15192-1-git-send-email-cristina.ciocan@intel.com>
+ <1459350335-15192-2-git-send-email-cristina.ciocan@intel.com>
+ <20160331080434.GE2099@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:39943 "EHLO
-	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750701AbcDAI4T (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 04:56:19 -0400
-In-Reply-To: <CACRpkdZ32AAq2BfoEeyiBm1RiXQVkTO6gxsEuuMGhm7wuUXxgQ@mail.gmail.com>
+Received: from mga11.intel.com ([192.55.52.93]:53554 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751902AbcDAKlE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 1 Apr 2016 06:41:04 -0400
+In-Reply-To: <20160331080434.GE2099@lahna.fi.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Input <linux-input@vger.kernel.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: mathias.nyman@linux.intel.com, heikki.krogerus@linux.intel.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com
 
-On Friday 01 April 2016 10:47:42, Linus Walleij wrote:
-> On Fri, Apr 1, 2016 at 10:43 AM, Linus Walleij <linus.walleij@linaro.org> 
-wrote:
-> > I think the problem is that gpio-keys is calling gpio_to_irq(), and at
-> > that
-> > point between gpiochip_add_data() but before gpiochip_irqchip_add()
-> > it gets a bogus IRQ when it should be getting -EPROBE_DEFER.
+On 31.03.2016 11:04, Mika Westerberg wrote:
+> On Wed, Mar 30, 2016 at 06:05:30PM +0300, Cristina Ciocan wrote:
+>> +	PINCTRL_PIN(55, "GPIO_S0_SC[055]"),
+>> +	PINCTRL_PIN(56, "GPIO_S0_SC[056]"),
+>> +	PINCTRL_PIN(57, "GPIO_S0_SC[057]"),
+>> +	PINCTRL_PIN(58, "GPIO_S0_SC[058]"),
+>> +	PINCTRL_PIN(59, "GPIO_S0_SC[059]"),
+>> +	PINCTRL_PIN(60, "GPIO_S0_SC[060]"),
+>> +	PINCTRL_PIN(61, "GPIO_S0_SC[061]"),
 > 
-> Or not a bogus irqnumber really, it get -ENXIO (-6)
+> You still have these (and all similar [number]) things. IMO this looks
+> better:
 > 
-> as in your example:
-> > gpio-keys user_sw: Unable to get irq number for GPIO 376, error -6
-> 
-> And in this case (if gpio_keys handle -EPROBE_DEFER gracefully)
-> all should be fine with my oneliner patch.
-> 
-> I am more uncertain about the -EINVAL (-22) we might need some
-> more analysis there.
+> 	PINCTRL_PIN(55, "GPIO_S0_SC55"),
+> 	PINCTRL_PIN(56, "GPIO_S0_SC56"),
+> 	PINCTRL_PIN(57, "GPIO_S0_SC57"),
+> 	PINCTRL_PIN(58, "GPIO_S0_SC58"),
+> 	PINCTRL_PIN(59, "GPIO_S0_SC59"),
+> 	PINCTRL_PIN(60, "GPIO_S0_SC60"),
+> 	PINCTRL_PIN(61, "GPIO_S0_SC61"),
 
-I did 10 runs and got the following results:
-> 3x  gpio-keys user_sw: Unable to claim irq 0; error -22
-> 2x  gpio-keys user_sw: Unable to get irq number for GPIO 376, error -517
-> 5x  ok
+Will fix in a new patch set, for consistency. Thank you.
 
-So, for one gpio-keys seems not to handle -EPROBE_DEFER gracefully and it seem 
-still possible to get an invalid irq number.
-
-Best regards,
-Alexander
+> 
+> but I don't really care that much ;-)
+> 
+> My ack still applies to the whole series.
+> 
 
