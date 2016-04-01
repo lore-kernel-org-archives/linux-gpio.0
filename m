@@ -1,40 +1,68 @@
-From: Yong Li <sdliyong@gmail.com>
-Subject: Re: [PATCH v2] gpio: pca953x: Use correct u16 value for register word write
-Date: Fri, 1 Apr 2016 22:38:55 +0800
-Message-ID: <CADO9-pfvRUnKM104YbM2PEewWSh3K0qqS-LJoUqXbN-UEdbdNg@mail.gmail.com>
-References: <1459320554-2455-1-git-send-email-sdliyong@gmail.com> <CACRpkdZ9ojn1rhbX8v9zJ8srkQWrQzSZZ6BLYiyyQwU3oz5BTQ@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 12/18] dt-bindings: Add PLX Technology OXNAS pinctrl
+ and gpio bindings
+Date: Fri, 1 Apr 2016 10:19:14 -0500
+Message-ID: <CAL_JsqJS31gNS-dYXQvkLHb=qsVz4Vccztufnd08yfD+p52v_w@mail.gmail.com>
+References: <1458838215-23314-1-git-send-email-narmstrong@baylibre.com>
+ <1458838215-23314-13-git-send-email-narmstrong@baylibre.com>
+ <20160325144834.GA27177@rob-hp-laptop> <CACRpkdbem5a_aLTHErp0ZvanwvVPbGnDiWxM5e7iX_FdHtXprQ@mail.gmail.com>
+ <CAL_JsqLsKEb+dWLg9VD3p=kjgEV84_r8z89p0QgMJWKqjrGNpw@mail.gmail.com> <56FE8602.8020405@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f174.google.com ([209.85.213.174]:35168 "EHLO
-	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758384AbcDAOjP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 10:39:15 -0400
-In-Reply-To: <CACRpkdZ9ojn1rhbX8v9zJ8srkQWrQzSZZ6BLYiyyQwU3oz5BTQ@mail.gmail.com>
+Received: from mail.kernel.org ([198.145.29.136]:38870 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751820AbcDAPTi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 1 Apr 2016 11:19:38 -0400
+In-Reply-To: <56FE8602.8020405@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexander Stein <alexander.stein@systec-electronic.com>, Phil Reid <preid@electromag.com.au>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Yes it is a regression. I think it should be tagged for stable too
-
-Thanks,
-Yong
-
-2016-04-01 20:51 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Wed, Mar 30, 2016 at 8:49 AM, Yong Li <sdliyong@gmail.com> wrote:
->
->> The current implementation only uses the first byte in val,
->> the second byte is always 0. Change it to use cpu_to_le16
->> to write the two bytes into the register
+On Fri, Apr 1, 2016 at 9:30 AM, Neil Armstrong <narmstrong@baylibre.com> wrote:
+> On 03/31/2016 03:36 PM, Rob Herring wrote:
+>> On Thu, Mar 31, 2016 at 3:58 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>> On Fri, Mar 25, 2016 at 3:48 PM, Rob Herring <robh@kernel.org> wrote:
+>>>> On Thu, Mar 24, 2016 at 05:50:09PM +0100, Neil Armstrong wrote:
+>>>>> Add pinctrl and gpio DT bindings for PLX Technology OXNAS SoC Family.
+>>>>> This version supports the ARM926EJ-S based OX810SE SoC with 34 IO pins.
+>>>>>
+>>>>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>>>
+>>>>> + - plxtech,gpio-bank: Specifies which bank a controller owns.
+>>>>
+>>>> How is this used?
+>>>
+>>> That is used to give a unique ID number to the bank.
+>>>
+>>> Hardware often need this to cross-reference pin controllers
+>>> to GPIO banks.
+>>>
+>>> I should add it as "gpio-bank" to the generic bindings
+>>> instead, several platforms already use this and there is
+>>> no point in having a vendor prefix in front of it.
 >>
->> Signed-off-by: Yong Li <sdliyong@gmail.com>
+>> Okay, now it is clearer. I don't want this documented as a common
+>> property because I don't want to encourage it's use. I only see 2
+>> users currently: ST and PIC32.
+>>
+>> Looking at one example, it appears to be redundant already.
+>> nomadik-gpio-chips property already gives you the index. The index of
+>> the phandles is the bank numbering. PIC32 could do the same.
+>>
+>> Rob
+>>
 >
-> Patch applied to fixes with Phil's review tag.
+> Hi,
 >
-> It is a regression, right?
->
-> Should it be tagged for stable?
->
-> Yours,
-> Linus Walleij
+> What should I use ?
+
+Maybe gpio-ranges as you asked. Not really sure as I haven't used it.
+
+> I need to repost in a separate patchset with vendor replaced by Oxford Semiconductor.
+> Should I get rid of the vendor prefix of gpio-bank ?
+
+No, because I think you should get rid of the property.
+
+Rob
