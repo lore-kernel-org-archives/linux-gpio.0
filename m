@@ -1,51 +1,86 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH] gpiolib: handle probe deferrals better
-Date: Fri, 1 Apr 2016 07:04:49 -0700
-Message-ID: <20160401140449.GA16014@roeck-us.net>
-References: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org>
- <1766024.riJEdmHPZI@ws-stein>
- <CACRpkdaynNEFGhCSkd7qAgxtNoRT=pRWbB0dJmjM89UM4NG_xQ@mail.gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [RFC PATCH 2/4] pinctrl: pinconf-generic: Add ACPI support
+Date: Fri, 01 Apr 2016 17:05:29 +0300
+Message-ID: <1459519529.5907.198.camel@linux.intel.com>
+References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
+	 <1459424685-26965-3-git-send-email-irina.tirdea@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaynNEFGhCSkd7qAgxtNoRT=pRWbB0dJmjM89UM4NG_xQ@mail.gmail.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux Input <linux-input@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1459424685-26965-3-git-send-email-irina.tirdea@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Irina Tirdea <irina.tirdea@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Octavian Purdila <octavian.purdila@intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 01, 2016 at 03:03:40PM +0200, Linus Walleij wrote:
-> On Fri, Apr 1, 2016 at 2:16 PM, Alexander Stein
-> <alexander.stein@systec-electronic.com> wrote:
-> 
-> > I noticed you fiddle with late_initcall_sync. Sorry, I did not mention it:
-> > gpio_mcp23s08 as well as gpio_keys are loaded as modules, so late_initcall_*
-> > should not affect it.
-> 
-> I don't get this. I think probe deferral is only used to defer
-> initcalls used for built-in drivers.
-> 
+On Thu, 2016-03-31 at 14:44 +0300, Irina Tirdea wrote:
+> Add ACPI support for the generic device tree properties.
+> Convert the pinconf generic code to handle both ACPI and
+> device tree by using the fwnode_property API. Also include
+> renaming device tree references in names of functions and
+> structures from 'dt' to 'fwnode'.
 
-Maybe late_initcall() and driver_probe_done() are not synchronous ?
+This is looks good to me, though few style / minor comments below.
 
-In other words, is it guaranteed that driver_probe_done() returns
-true when late_initcall() is executed ?
+> --- a/drivers/pinctrl/pinconf-generic.c
+> +++ b/drivers/pinctrl/pinconf-generic.c
+>=20
 
-Thanks,
-Guenter
+> @@ -175,22 +176,22 @@ static const struct pinconf_generic_params
+> dt_params[] =3D {
+> =C2=A0};
+> =C2=A0
+> =C2=A0/**
+> - * parse_dt_cfg() - Parse DT pinconf parameters
+> - * @np:	DT node
+> + * parse_fwnode_cfg() - Parse FW pinconf parameters
+> + * @fw:	FW node
 
-> If there are dependencies among things compiled as modules,
-> doesn't depmod/modprobe make sure that they are probed in
-> the right order? Could it be that some module alias thingofabob
-> is missing?
-> 
-> Or is modprobe failing because it (correctly) see that there is
-> no symbol dependencies between the gpio_mcp23s08 and
-> gpio-keys modules? (Not that I know how depmod works...)
-> 
-> If nothing else works, I guess marking mcp23s08 as bool
-> and building it into the kernel will work, right?
-> 
-> Yours,
-> Linus Walleij
+Here and below it should be @fwnode.
+
+> -int pinconf_generic_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+> -		struct device_node *np, struct pinctrl_map **map,
+> +static int pinconf_generic_fwnode_subnode_to_map(struct pinctrl_dev
+> *pctldev,
+> +		struct fwnode_handle *fwnode, struct pinctrl_map
+> **map,
+> =C2=A0		unsigned *reserved_maps, unsigned *num_maps,
+> =C2=A0		enum pinctrl_map_type type)
+> =C2=A0{
+> -	int ret;
+> +	int ret, i;
+
+Since you change this line anyway, perhaps move it to be last in the
+definition block?
+
+> =C2=A0	const char *function;
+> =C2=A0	struct device *dev =3D pctldev->dev;
+> =C2=A0	unsigned long *configs =3D NULL;
+> =C2=A0	unsigned num_configs =3D 0;
+> =C2=A0	unsigned reserve, strings_count;
+> -	struct property *prop;
+> -	const char *group;
+> +	const char **groups;
+> =C2=A0	const char *subnode_target_type =3D "pins";
+
+=2E..to here.
+
+> +#ifdef CONFIG_OF
+> +inline int pinconf_generic_parse_dt_config(struct device_node *np,
+> +					=C2=A0=C2=A0=C2=A0struct pinctrl_dev
+> *pctldev,
+> +					=C2=A0=C2=A0=C2=A0unsigned long **configs,
+> +					=C2=A0=C2=A0=C2=A0unsigned int *nconfigs)
+> +{
+> +	return pinconf_generic_parse_fwnode_config(&np->fwnode,
+> pctldev,
+> +						=C2=A0=C2=A0=C2=A0configs,
+> nconfigs);
+> +}
+
+I didn't see any user of this.
+
+--=20
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
