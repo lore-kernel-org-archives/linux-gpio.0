@@ -1,50 +1,48 @@
 From: Cristina Ciocan <cristina.ciocan@intel.com>
-Subject: Re: [PATCH v3 1/6] pinctrl: baytrail: Add pin control data structures
-Date: Fri, 1 Apr 2016 13:44:22 +0300
-Message-ID: <56FE5106.6010607@intel.com>
-References: <1459350335-15192-1-git-send-email-cristina.ciocan@intel.com>
- <1459350335-15192-2-git-send-email-cristina.ciocan@intel.com>
- <20160331080434.GE2099@lahna.fi.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:53554 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751902AbcDAKlE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 1 Apr 2016 06:41:04 -0400
-In-Reply-To: <20160331080434.GE2099@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: [PATCH v4 0/6] Add pinctrl support for Baytrail
+Date: Fri,  1 Apr 2016 13:56:11 +0300
+Message-ID: <1459508183-21843-1-git-send-email-cristina.ciocan@intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: mathias.nyman@linux.intel.com, mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com, Cristina Ciocan <cristina.ciocan@intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: mathias.nyman@linux.intel.com, heikki.krogerus@linux.intel.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com
 
-On 31.03.2016 11:04, Mika Westerberg wrote:
-> On Wed, Mar 30, 2016 at 06:05:30PM +0300, Cristina Ciocan wrote:
->> +	PINCTRL_PIN(55, "GPIO_S0_SC[055]"),
->> +	PINCTRL_PIN(56, "GPIO_S0_SC[056]"),
->> +	PINCTRL_PIN(57, "GPIO_S0_SC[057]"),
->> +	PINCTRL_PIN(58, "GPIO_S0_SC[058]"),
->> +	PINCTRL_PIN(59, "GPIO_S0_SC[059]"),
->> +	PINCTRL_PIN(60, "GPIO_S0_SC[060]"),
->> +	PINCTRL_PIN(61, "GPIO_S0_SC[061]"),
-> 
-> You still have these (and all similar [number]) things. IMO this looks
-> better:
-> 
-> 	PINCTRL_PIN(55, "GPIO_S0_SC55"),
-> 	PINCTRL_PIN(56, "GPIO_S0_SC56"),
-> 	PINCTRL_PIN(57, "GPIO_S0_SC57"),
-> 	PINCTRL_PIN(58, "GPIO_S0_SC58"),
-> 	PINCTRL_PIN(59, "GPIO_S0_SC59"),
-> 	PINCTRL_PIN(60, "GPIO_S0_SC60"),
-> 	PINCTRL_PIN(61, "GPIO_S0_SC61"),
+Add support for pin control (pin muxing and pin configuration) for Baytrail
+platform.
 
-Will fix in a new patch set, for consistency. Thank you.
+It follows the design in pinctrl-intel.c, but could not use the
+implementation in pinctrl-intel since there were significant differences:
+	- gpio pin pads are not ordered
+	- per group functions: for setting a certain mode, there are groups
+	that need setting pins with different values; for instance, for
+	setting USB ULPI pins to GPIO function, pin 2 (GPIO_SUS1) needs
+	to be set to function 1, wihle all other from the group need to be
+	set to 0
+	- communities only need pin base and count as specific data
+	- irq set type only clears all flags, while the actual type setting
+	is made in the byt_irq_unmask function, which does not comply with
+	the intel pinctrl implementation
 
-> 
-> but I don't really care that much ;-)
-> 
-> My ack still applies to the whole series.
-> 
+Changes from v3:
+	- fix GPIO_* pin names to match naming conventions used in other
+	Intel pinctrl drivers
 
+Changes from v2:
+	- remove comment for each enumerated pin
+	- apply pin naming conventions used in other Intel drivers
+
+Changes from v1:
+	- fix reg, reg_val and byt_soc_data not used variables warnings
+
+Cristina Ciocan (6):
+  pinctrl: baytrail: Add pin control data structures
+  pinctrl: baytrail: Add pin control operations
+  pinctrl: baytrail: Update gpio chip operations
+  pinctrl: baytrail: Update irq chip operations
+  pinctrl: baytrail: Register pin control handling
+  pinctrl: baytrail: Add debounce configuration
+
+ drivers/pinctrl/intel/Kconfig            |    3 +
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 1690 +++++++++++++++++++++++++-----
+ 2 files changed, 1444 insertions(+), 249 deletions(-)
