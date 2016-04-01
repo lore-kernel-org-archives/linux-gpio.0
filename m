@@ -1,14 +1,18 @@
 From: Cristina Ciocan <cristina.ciocan@intel.com>
-Subject: [PATCH v4 2/6] pinctrl: baytrail: Add pin control operations
-Date: Fri,  1 Apr 2016 13:56:14 +0300
-Message-ID: <1459508183-21843-4-git-send-email-cristina.ciocan@intel.com>
+Subject: [PATCH 3/7] pinctrl: baytrail: Add pin control operations
+Date: Fri,  1 Apr 2016 13:56:15 +0300
+Message-ID: <1459508183-21843-5-git-send-email-cristina.ciocan@intel.com>
 References: <1459508183-21843-1-git-send-email-cristina.ciocan@intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:21420 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752885AbcDAKxZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 1 Apr 2016 06:53:25 -0400
 In-Reply-To: <1459508183-21843-1-git-send-email-cristina.ciocan@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: mathias.nyman@linux.intel.com, mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com, Cristina Ciocan <cristina.ciocan@intel.com>
-List-Id: linux-gpio@vger.kernel.org
 
 Add implementation for:
 	- pin control, group information retrieval: count, name and pins
@@ -43,7 +47,7 @@ index 4d2efad..1c74e03 100644
  	  driver for memory mapped GPIO functionality on Intel Baytrail
  	  platforms. Supports 3 banks with 102, 28 and 44 gpios.
 diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 364f56c..415d2d5 100644
+index 8dcf1b6..c1a753a 100644
 --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
 +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
 @@ -27,6 +27,9 @@
@@ -773,3 +777,4 @@ index 364f56c..415d2d5 100644
  		     vg->saved_context[i].val) {
 -- 
 1.9.1
+
