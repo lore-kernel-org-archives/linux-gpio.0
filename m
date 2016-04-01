@@ -1,7 +1,7 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 2/6] drivers/gpio: make gpio-tc3589x.c explicitly non-modular
-Date: Fri, 1 Apr 2016 14:49:34 -0400
-Message-ID: <1459536578-3017-3-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 6/6] drivers/gpio: make gpio-tps6586x.c explicitly non-modular
+Date: Fri, 1 Apr 2016 14:49:38 -0400
+Message-ID: <1459536578-3017-7-git-send-email-paul.gortmaker@windriver.com>
 References: <1459536578-3017-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,13 +9,13 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1459536578-3017-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rabin Vincent <rabin.vincent@stericsson.com>, Hanumath Prasad <hanumath.prasad@stericsson.com>, linux-gpio@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/gpio/Kconfig:config GPIO_TC3589X
-drivers/gpio/Kconfig:   bool "TC3589X GPIOs"
+drivers/gpio/Kconfig:config GPIO_TPS6586X
+drivers/gpio/Kconfig:   bool "TPS6586X GPIO"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -30,39 +30,40 @@ is already contained at the top of the file in the comments.
 
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Rabin Vincent <rabin.vincent@stericsson.com>
-Cc: Hanumath Prasad <hanumath.prasad@stericsson.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>
 Cc: linux-gpio@vger.kernel.org
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/gpio/gpio-tc3589x.c | 11 -----------
- 1 file changed, 11 deletions(-)
+ drivers/gpio/gpio-tps6586x.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/gpio/gpio-tc3589x.c b/drivers/gpio/gpio-tc3589x.c
-index 4f566e6b81f1..a29dec137373 100644
---- a/drivers/gpio/gpio-tc3589x.c
-+++ b/drivers/gpio/gpio-tc3589x.c
-@@ -6,7 +6,6 @@
-  * Author: Rabin Vincent <rabin.vincent@stericsson.com> for ST-Ericsson
-  */
- 
+diff --git a/drivers/gpio/gpio-tps6586x.c b/drivers/gpio/gpio-tps6586x.c
+index c88bdc8ee2c9..6b15e68a314f 100644
+--- a/drivers/gpio/gpio-tps6586x.c
++++ b/drivers/gpio/gpio-tps6586x.c
+@@ -24,7 +24,7 @@
+ #include <linux/errno.h>
+ #include <linux/gpio.h>
+ #include <linux/kernel.h>
 -#include <linux/module.h>
- #include <linux/init.h>
++#include <linux/init.h>
+ #include <linux/mfd/tps6586x.h>
+ #include <linux/of_device.h>
  #include <linux/platform_device.h>
- #include <linux/slab.h>
-@@ -311,13 +310,3 @@ static int __init tc3589x_gpio_init(void)
- 	return platform_driver_register(&tc3589x_gpio_driver);
+@@ -140,14 +140,3 @@ static int __init tps6586x_gpio_init(void)
+ 	return platform_driver_register(&tps6586x_gpio_driver);
  }
- subsys_initcall(tc3589x_gpio_init);
+ subsys_initcall(tps6586x_gpio_init);
 -
--static void __exit tc3589x_gpio_exit(void)
+-static void __exit tps6586x_gpio_exit(void)
 -{
--	platform_driver_unregister(&tc3589x_gpio_driver);
+-	platform_driver_unregister(&tps6586x_gpio_driver);
 -}
--module_exit(tc3589x_gpio_exit);
+-module_exit(tps6586x_gpio_exit);
 -
--MODULE_LICENSE("GPL v2");
--MODULE_DESCRIPTION("TC3589x GPIO driver");
--MODULE_AUTHOR("Hanumath Prasad, Rabin Vincent");
+-MODULE_ALIAS("platform:tps6586x-gpio");
+-MODULE_DESCRIPTION("GPIO interface for TPS6586X PMIC");
+-MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
+-MODULE_LICENSE("GPL");
 -- 
 2.6.1
