@@ -1,171 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpiolib: handle probe deferrals better
-Date: Fri,  1 Apr 2016 13:44:08 +0200
-Message-ID: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org>
+From: "Westerberg, Mika" <mika.westerberg@intel.com>
+Subject: Re: [PATCH v2 2/2] pinctrl:Intel: implement gpio_irq_enable
+Date: Fri, 1 Apr 2016 14:54:09 +0300
+Message-ID: <20160401115409.GQ1719@lahna.fi.intel.com>
+References: <1458152126-2333-1-git-send-email-qipeng.zha@intel.com>
+ <1458152126-2333-2-git-send-email-qipeng.zha@intel.com>
+ <CACRpkdZjCBNdbXyxv-dGkWah+4zqmFD0X4AeV9GyQK0o-Gv_ew@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:35607 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752565AbcDALoP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 07:44:15 -0400
-Received: by mail-lf0-f48.google.com with SMTP id k79so79870619lfb.2
-        for <linux-gpio@vger.kernel.org>; Fri, 01 Apr 2016 04:44:14 -0700 (PDT)
+Received: from mga11.intel.com ([192.55.52.93]:45188 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752492AbcDALyN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 1 Apr 2016 07:54:13 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZjCBNdbXyxv-dGkWah+4zqmFD0X4AeV9GyQK0o-Gv_ew@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-input@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Guenter Roeck <linux@roeck-us.net>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Qipeng Zha <qipeng.zha@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Qi Zheng <qi.zheng@intel.com>
 
-The gpiolib does not currently return probe deferrals from the
-.to_irq() hook while the GPIO drivers are being initialized.
-Further: it keeps returning -EPROBE_DEFER for gpio[d]_get()
-even after all builtin drivers have initialized.
+On Thu, Mar 17, 2016 at 03:07:33PM +0100, Linus Walleij wrote:
+> On Wed, Mar 16, 2016 at 7:15 PM, Qipeng Zha <qipeng.zha@intel.com> wrote:
+> 
+> > From: Qi Zheng <qi.zheng@intel.com>
+> >
+> > There is unexpected gpio interrupt after irq_enable. If not
+> > implemeted gpio_irq_enable callback, irq_enable calls irq_unmask
+> > instead. But if there was interrupt set before the irq_enable,
+> > unmask it may trigger the unexpected interrupt. By implementing
+> > the gpio_irq_enable callback, do interrupt status ack, the issue
+> > has gone.
+> >
+> > Signed-off-by: Qi Zheng <qi.zheng@intel.com>
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
+> 
+> Patch applied for fixes.
 
-Fix this thusly:
-
-- Move the assignment of .to_irq() to the last step when
-  using gpiolib_irqchip_add() so we can't get spurious calls
-  into the .to_irq() function until all set-up is finished.
-
-- Put in a late_initcall_sync() to set a boolean state variable to
-  indicate that we're not gonna defer any longer. Since deferred
-  probe happens at late_initcall() time, using late_initcall_sync()
-  should be fine.
-
-- After this point, return hard errors (-ENXIO) from both
-  gpio[d]_get() and .to_irq().
-
-This way we should (at least for all drivers using GPIOLIB_IRQCHIP)
-be getting proper deferrals from both gpio[d]_get() and .to_irq()
-until the irqchip side is properly set up, and then proper
-errors after all drivers should have been probed.
-
-This problem was first seen with gpio-keys.
-
-Cc: linux-input@vger.kernel.org
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Reported-by: Alexander Stein <alexander.stein@systec-electronic.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-Alexander: please test this, you need Guether's patches too,
-I have it all on my "fixes" branch in the GPIO git:
-https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=fixes
-
-Tomeu: I think you're the authority on deferred probe these days.
-Is this the right way for a subsystem to switch from returning
--EPROBE_DEFER to instead returning an unrecoverable error?
-
-Guenther: I applied this on top of your patches, please check it
-if you can, you're smarter than me with this stuff.
----
- drivers/gpio/gpiolib.c | 47 ++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 40 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index b747c76fd2b1..426a93f9d79e 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -68,7 +68,9 @@ LIST_HEAD(gpio_devices);
- static void gpiochip_free_hogs(struct gpio_chip *chip);
- static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
- 
-+/* These keep the state of the library */
- static bool gpiolib_initialized;
-+static bool gpiolib_builtin_ready;
- 
- static inline void desc_set_label(struct gpio_desc *d, const char *label)
- {
-@@ -1093,7 +1095,6 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
- 	gpiochip->irqchip = irqchip;
- 	gpiochip->irq_handler = handler;
- 	gpiochip->irq_default_type = type;
--	gpiochip->to_irq = gpiochip_to_irq;
- 	gpiochip->lock_key = lock_key;
- 	gpiochip->irqdomain = irq_domain_add_simple(of_node,
- 					gpiochip->ngpio, first_irq,
-@@ -1129,6 +1130,12 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
- 	}
- 
- 	acpi_gpiochip_request_interrupts(gpiochip);
-+	/*
-+	 * Wait with this until last, as someone may be asynchronously
-+	 * calling .to_irq() and needs to be getting probe deferrals until
-+	 * this point.
-+	 */
-+	gpiochip->to_irq = gpiochip_to_irq;
- 
- 	return 0;
- }
-@@ -1366,12 +1373,21 @@ done:
- 
- int gpiod_request(struct gpio_desc *desc, const char *label)
- {
--	int status = -EPROBE_DEFER;
-+	int status;
- 	struct gpio_device *gdev;
- 
- 	VALIDATE_DESC(desc);
- 	gdev = desc->gdev;
- 
-+	/*
-+	 * Defer requests until all built-in drivers have had a chance
-+	 * to probe, then give up and return a hard error.
-+	 */
-+	if (!gpiolib_builtin_ready)
-+		status = -EPROBE_DEFER;
-+	else
-+		status = -ENXIO;
-+
- 	if (try_module_get(gdev->owner)) {
- 		status = __gpiod_request(desc, label);
- 		if (status < 0)
-@@ -1993,18 +2009,27 @@ EXPORT_SYMBOL_GPL(gpiod_cansleep);
-  * gpiod_to_irq() - return the IRQ corresponding to a GPIO
-  * @desc: gpio whose IRQ will be returned (already requested)
-  *
-- * Return the IRQ corresponding to the passed GPIO, or an error code in case of
-- * error.
-+ * Return the IRQ corresponding to the passed GPIO, or an error code.
-  */
- int gpiod_to_irq(const struct gpio_desc *desc)
- {
--	struct gpio_chip	*chip;
--	int			offset;
-+	struct gpio_chip *chip;
-+	int offset;
- 
- 	VALIDATE_DESC(desc);
- 	chip = desc->gdev->chip;
- 	offset = gpio_chip_hwgpio(desc);
--	return chip->to_irq ? chip->to_irq(chip, offset) : -ENXIO;
-+
-+	if (chip->to_irq)
-+		return chip->to_irq(chip, offset);
-+	/*
-+	 * We will wait for new GPIO drivers to arrive until the
-+	 * late initcalls. After that we stop deferring and return
-+	 * a hard error.
-+	 */
-+	if (!gpiolib_builtin_ready)
-+		return -EPROBE_DEFER;
-+	return -ENXIO;
- }
- EXPORT_SYMBOL_GPL(gpiod_to_irq);
- 
-@@ -2883,6 +2908,14 @@ static int __init gpiolib_dev_init(void)
- }
- core_initcall(gpiolib_dev_init);
- 
-+static int __init gpiolib_late_done(void)
-+{
-+	/* Flag that we're not deferring probes anymore */
-+	gpiolib_builtin_ready = true;
-+	return 0;
-+}
-+late_initcall_sync(gpiolib_late_done);
-+
- #ifdef CONFIG_DEBUG_FS
- 
- static void gpiolib_dbg_show(struct seq_file *s, struct gpio_device *gdev)
--- 
-2.4.3
-
+Linus, what happend to these two patches? I do not find them in the
+mainline for some reason.
