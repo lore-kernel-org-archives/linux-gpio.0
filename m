@@ -1,89 +1,112 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH] gpiolib: handle probe deferrals better
-Date: Fri, 1 Apr 2016 17:03:08 +0300
-Message-ID: <56FE7F9C.9050902@ti.com>
-References: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org>
- <1766024.riJEdmHPZI@ws-stein>
- <CACRpkdaynNEFGhCSkd7qAgxtNoRT=pRWbB0dJmjM89UM4NG_xQ@mail.gmail.com>
- <3233696.TZ7kbb7G3F@ws-stein>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [RFC PATCH 3/4] pinctrl: Add ACPI support
+Date: Fri, 01 Apr 2016 17:14:34 +0300
+Message-ID: <1459520074.5907.205.camel@linux.intel.com>
+References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
+	 <1459424685-26965-4-git-send-email-irina.tirdea@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:60031 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759097AbcDAOEG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 1 Apr 2016 10:04:06 -0400
-In-Reply-To: <3233696.TZ7kbb7G3F@ws-stein>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1459424685-26965-4-git-send-email-irina.tirdea@intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Irina Tirdea <irina.tirdea@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Octavian Purdila <octavian.purdila@intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux Input <linux-input@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Guenter Roeck <linux@roeck-us.net>
 
-On 04/01/2016 04:42 PM, Alexander Stein wrote:
-> On Friday 01 April 2016 15:03:40, Linus Walleij wrote:
->> On Fri, Apr 1, 2016 at 2:16 PM, Alexander Stein
->>
->> <alexander.stein@systec-electronic.com> wrote:
->>> I noticed you fiddle with late_initcall_sync. Sorry, I did not mention it:
->>> gpio_mcp23s08 as well as gpio_keys are loaded as modules, so
->>> late_initcall_* should not affect it.
->>
->> I don't get this. I think probe deferral is only used to defer
->> initcalls used for built-in drivers.
+On Thu, 2016-03-31 at 14:44 +0300, Irina Tirdea wrote:
+> Add ACPI support for pin controller properties. These are
+> based on ACPI _DSD properties and follow the device tree
+> model based on states and node configurations. The states
+> are defined as _DSD properties and configuration nodes
+> are defined using the _DSD Hierarchical Properties Extension.
+>=20
+> A configuration node supports the generic device tree properties.
+>=20
+> The implementation is based on device tree code from devicetree.c.
+>=20
 
-It doesn't. Deferred probing expected to work for modules also.
+Patch is good to me, though few minor comments below.
 
-> 
-> To my understanding probe deferral is for the case when the parent or some
-> other required resource like DT nodes (e.g. panel node for graphics driver) is
-> not available yet. IIRC all deffered device are probed once a device was
-> probed sucessfully, no?
+> +/**
+> + * struct pinctrl_acpi_map - mapping table chunk parsed from ACPI
+> + * @node: list node for struct pinctrl's @fw_maps field
+> + * @pctldev: the pin controller that allocated this struct, and will
+> free it
 
-true.
+> + * @maps: the mapping table entries
 
-> So in my case, I would expect that gpio-keys probe fails due to missing IRQ
-> parent and gets deferred. Once the IRQ parent happen to be probed successfully
-> at some point gpio-keys is probed again and succeeds.
+We have @map and @num_maps.
 
-I assume in your case It's devm_gpio_request_one() first of all, which
-follows by gpio_to_irq.
+> + */
+> +struct pinctrl_acpi_map {
+> +	struct list_head node;
+> +	struct pinctrl_dev *pctldev;
+> +	struct pinctrl_map *map;
+> +	unsigned num_maps;
+> +};
+> +
+>=20
 
-> 
->> If there are dependencies among things compiled as modules,
->> doesn't depmod/modprobe make sure that they are probed in
->> the right order? Could it be that some module alias thingofabob
->> is missing?
->>
->> Or is modprobe failing because it (correctly) see that there is
->> no symbol dependencies between the gpio_mcp23s08 and
->> gpio-keys modules? (Not that I know how depmod works...)
-> 
-> I don't think modprobe can or even should do any dependencies here.
-> Consider the following cascading GPIO chips:
-> 
->   /-------\                /---------\                 /--------\
-> |         |               |         |                |          |
-> |MCP23S17 + Pin1 <--> IRQ-+ PCA9555 + Pin 1 <--> IRQ + MCP23S17 +
-> |         |               |         |                |          |
->   \-------/                 \-------/                  \--------/
-> 
-> Probing should still work for this scenario. This is something modprobe cannot
-> fix.
-
-What I can see from my boot log is that at module loading time log output 
-from many drivers is mixed which makes me think that this parallel process
-(udev) - and no I've not hit this issue..yet.
-
-> 
->> If nothing else works, I guess marking mcp23s08 as bool
->> and building it into the kernel will work, right?
-> 
-> This would merely be a workaround and I guess there might be scenarios and/or
-> random device probing where even this fails.
-> 
+> +static int acpi_remember_or_free_map(struct pinctrl *p, const char
+> *statename,
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct pinctrl_dev *pctldev,
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct pinctrl_map *map,
+> unsigned num_maps)
+> +{
+> +	struct pinctrl_acpi_map *acpi_map;
+> +	struct list_head *acpi_maps;
 
 
--- 
-regards,
--grygorii
+> +	unsigned int i;
+
+Just unsigned i to be in align with unsigned num_maps.
+
+> +
+> +	/* Initialize common mapping table entry fields */
+> +	for (i =3D 0; i < num_maps; i++) {
+> +		map[i].dev_name =3D dev_name(p->dev);
+> +		map[i].name =3D statename;
+> +		if (pctldev)
+> +			map[i].ctrl_dev_name =3D dev_name(pctldev-
+> >dev);
+> +	}
+
+
+> +int pinctrl_acpi_to_map(struct pinctrl *p)
+> +{
+> +	const union acpi_object *prop, *statenames, *configs;
+> +	unsigned int state, nstates, nconfigs, config;
+> +	char *statename, *propname, *configname;
+> +	struct fwnode_handle *fw_prop;
+> +	struct acpi_device *adev;
+> +	int ret;
+> +
+> +	/* We may store pointers to property names within the node
+> */
+> +	adev =3D acpi_bus_get_acpi_device(ACPI_HANDLE(p->dev));
+> +	if (!adev)
+> +		return -ENODEV;
+> +
+
+> +	/* Only allow named states (device must have prop 'pinctrl-
+> names') */
+
+Does it fit one line?
+
+> +err_free_map:
+
+Perhaps err_free_maps?
+
+> +	pinctrl_acpi_free_maps(p);
+> +	return ret;
+
+--=C2=A0
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
