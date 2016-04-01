@@ -1,18 +1,14 @@
 From: Cristina Ciocan <cristina.ciocan@intel.com>
-Subject: [PATCH 6/7] pinctrl: baytrail: Register pin control handling
-Date: Fri,  1 Apr 2016 13:56:22 +0300
-Message-ID: <1459508183-21843-12-git-send-email-cristina.ciocan@intel.com>
+Subject: [PATCH v4 5/6] pinctrl: baytrail: Register pin control handling
+Date: Fri,  1 Apr 2016 13:56:19 +0300
+Message-ID: <1459508183-21843-9-git-send-email-cristina.ciocan@intel.com>
 References: <1459508183-21843-1-git-send-email-cristina.ciocan@intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:3963 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932274AbcDAKxj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 1 Apr 2016 06:53:39 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1459508183-21843-1-git-send-email-cristina.ciocan@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: mathias.nyman@linux.intel.com, mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, irina.tirdea@intel.com, octavian.purdila@intel.com, Cristina Ciocan <cristina.ciocan@intel.com>
+List-Id: linux-gpio@vger.kernel.org
 
 This patch updates device's probing, removal and irq handling in order to
 register it as pinctrl device. Pin control data is matched by ACPI UID,
@@ -24,7 +20,7 @@ Signed-off-by: Cristina Ciocan <cristina.ciocan@intel.com>
  1 file changed, 221 insertions(+), 226 deletions(-)
 
 diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index f37986e..960db0e 100644
+index f7c752b..b087b00 100644
 --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
 +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
 @@ -181,6 +181,17 @@ struct byt_pinctrl_soc_data {
@@ -625,4 +621,3 @@ index f37986e..960db0e 100644
  		.pm	= &byt_gpio_pm_ops,
 -- 
 1.9.1
-
