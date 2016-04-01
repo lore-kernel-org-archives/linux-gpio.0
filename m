@@ -1,54 +1,40 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: Re: [PATCH] gpiolib: handle probe deferrals better
-Date: Fri, 01 Apr 2016 16:35:22 +0200
-Message-ID: <3328895.pnRVlrd6Vm@ws-stein>
-References: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org> <3233696.TZ7kbb7G3F@ws-stein> <56FE7F9C.9050902@ti.com>
+From: Yong Li <sdliyong@gmail.com>
+Subject: Re: [PATCH v2] gpio: pca953x: Use correct u16 value for register word write
+Date: Fri, 1 Apr 2016 22:38:55 +0800
+Message-ID: <CADO9-pfvRUnKM104YbM2PEewWSh3K0qqS-LJoUqXbN-UEdbdNg@mail.gmail.com>
+References: <1459320554-2455-1-git-send-email-sdliyong@gmail.com> <CACRpkdZ9ojn1rhbX8v9zJ8srkQWrQzSZZ6BLYiyyQwU3oz5BTQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:35892 "EHLO
-	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1758241AbcDAOfa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 10:35:30 -0400
-In-Reply-To: <56FE7F9C.9050902@ti.com>
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:35168 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758384AbcDAOjP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Apr 2016 10:39:15 -0400
+In-Reply-To: <CACRpkdZ9ojn1rhbX8v9zJ8srkQWrQzSZZ6BLYiyyQwU3oz5BTQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux Input <linux-input@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Guenter Roeck <linux@roeck-us.net>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexander Stein <alexander.stein@systec-electronic.com>, Phil Reid <preid@electromag.com.au>
 
-On Friday 01 April 2016 17:03:08, Grygorii Strashko wrote:
-> > So in my case, I would expect that gpio-keys probe fails due to missing
-> > IRQ
-> > parent and gets deferred. Once the IRQ parent happen to be probed
-> > successfully at some point gpio-keys is probed again and succeeds.
-> 
-> I assume in your case It's devm_gpio_request_one() first of all, which
-> follows by gpio_to_irq.
+Yes it is a regression. I think it should be tagged for stable too
 
-I think nothing is wrong with that. The problem is that the former succeeds 
-while the latter doesn't although from a device view point the GPIO chip is 
-already there.
+Thanks,
+Yong
 
-> > Consider the following cascading GPIO chips:
-> >   /-------\                /---------\                 /--------\
-> > |
-> > |MCP23S17 + Pin1 <--> IRQ-+ PCA9555 + Pin 1 <--> IRQ + MCP23S17 +
-> > |
-> >   \-------/                 \-------/                  \--------/
-> > 
-> > Probing should still work for this scenario. This is something modprobe
-> > cannot fix.
-> 
-> What I can see from my boot log is that at module loading time log output
-> from many drivers is mixed which makes me think that this parallel process
-> (udev) - and no I've not hit this issue..yet.
-
-I think parallel device probing is expectable and reasonable. I guess to hit 
-this issue you need a device which requires GPIOs and their corresponding IRQ 
-and probing of that must be done while GPIO chip is attached but not it's IRQ 
-chip.
-
-Best regards,
-Alexander
-
+2016-04-01 20:51 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Wed, Mar 30, 2016 at 8:49 AM, Yong Li <sdliyong@gmail.com> wrote:
+>
+>> The current implementation only uses the first byte in val,
+>> the second byte is always 0. Change it to use cpu_to_le16
+>> to write the two bytes into the register
+>>
+>> Signed-off-by: Yong Li <sdliyong@gmail.com>
+>
+> Patch applied to fixes with Phil's review tag.
+>
+> It is a regression, right?
+>
+> Should it be tagged for stable?
+>
+> Yours,
+> Linus Walleij
