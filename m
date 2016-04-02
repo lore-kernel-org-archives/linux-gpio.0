@@ -1,166 +1,60 @@
-From: Thor Thayer <tthayer@opensource.altera.com>
-Subject: Re: [RFC 4/8] gpio: altera-a10sr: Add A10 System Resource Chip GPIO
- support.
-Date: Fri, 1 Apr 2016 15:34:42 -0500
-Message-ID: <56FEDB62.1010308@opensource.altera.com>
-References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
- <1459278791-3646-5-git-send-email-tthayer@opensource.altera.com>
- <CACRpkda8VTDGVsRqbCs6ESeokA3t_p2X91FUNiqA7YM=F-JXBQ@mail.gmail.com>
-Reply-To: <tthayer@opensource.altera.com>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Subject: [PATCH v2] pinctrl: mediatek: correct debounce time unit in mtk_gpio_set_debounce
+Date: Sat, 2 Apr 2016 14:57:49 +0800
+Message-ID: <1459580269-64531-1-git-send-email-yingjoe.chen@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-hwmon-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda8VTDGVsRqbCs6ESeokA3t_p2X91FUNiqA7YM=F-JXBQ@mail.gmail.com>
-Sender: linux-hwmon-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, jdelvare@suse.com, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>, pawell.moll@arm.com, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Dinh Nguyen <dinguyen@opensource.altera.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-hwmon@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, srv_heupstream@mediatek.com, djkurtz@chromium.org, Yingjoe Chen <yingjoe.chen@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+The debounce time unit for gpio_chip.set_debounce is us but
+mtk_gpio_set_debounce regard it as ms.
+Fix this by correct debounce time array dbnc_arr so it can find correct
+debounce setting. Debounce time for first debounce setting is 500us,
+correct this as well.
 
-On 04/01/2016 07:17 AM, Linus Walleij wrote:
-> On Tue, Mar 29, 2016 at 9:13 PM,  <tthayer@opensource.altera.com> wrote:
->
->> From: Thor Thayer <tthayer@opensource.altera.com>
->>
->> Add the GPIO functionality for the Altera Arria10 MAX5 System Resource
->> Chip. The A10 MAX5 has 12 bits of GPIO assigned to switches, buttons,
->> and LEDs as a GPIO extender on the SPI bus.
->>
->> Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
->
-> OK...
->
-> As Lee says: split off the MFD patch so it is a pure GPIO driver
-> patch.
->
+While I'm at it, also change the debounce time array name to
+"debounce_time" for readability.
 
-ACK
+Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+---
+This was based on v4.6-rc1
+Change since v1:
+- Improve commit message.
+- Change dbnc_arr name to debounce_time
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
->> +#include <linux/gpio.h>
->
-> You should instead #include <linux/gpio/driver.h>
->
->> +#include <linux/mfd/altera-a10sr.h>
->> +#include <linux/module.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/seq_file.h>
->> +#include <linux/syscalls.h>
->> +#include <linux/uaccess.h>
->
-> Syscalls and uaccess??? I don't think so.
->
-OK.
-
->> +struct altr_a10sr_gpio {
->> +       struct altr_a10sr *a10sc;
->> +       struct gpio_chip gp;
->> +};
->
-> Add some kerneldoc.
-
-OK. To clarify, is this comment referring to the bindings document or 
-something different?
-
->
->> +static inline struct altr_a10sr_gpio *to_altr_a10sr_gpio(struct gpio_chip *chip)
->> +{
->> +       return container_of(chip, struct altr_a10sr_gpio, gp);
->> +}
->
-> Don't use this old design pattern.
->
-> Use [devm_]gpiochip_add_data() and use gpiochip_get_data(gc) to get
-> a data pointer from the gpiochip.
->
->> +static int altr_a10sr_gpio_get(struct gpio_chip *gc, unsigned int nr)
->> +{
->> +       struct altr_a10sr_gpio *gpio = to_altr_a10sr_gpio(gc);
->
-> So this becomes
-> struct altr_a10sr_gpio *gpio = gpiochip_get_data(gc);
->
-
-Got it. Thanks!
-
->> +       int ret;
->> +       unsigned char reg = ALTR_A10SR_LED_RD_REG + ALTR_A10SR_REG_OFFSET(nr);
->> +
->> +       ret = altr_a10sr_reg_read(gpio->a10sc, reg);
->> +
->> +       if (ret < 0)
->> +               return ret;
->> +
->> +       if (ret & (1 << ALTR_A10SR_REG_BIT(nr)))
->> +               return 1;
->
-> Do this instead:
->
-> return !!(ret & (1 << ALTR_A10SR_REG_BIT(nr)))
->
-> It raises the question whether ALTR_A10SR_REG_BIT
-> is just a reimplementation of the BIT() macro from
-> <linux/bitops.h>, please check this.
->
-
-Got it. Yes, I will check that. Thanks.
-
->> +static int altr_a10sr_gpio_direction_input(struct gpio_chip *gc,
->> +                                          unsigned int nr)
->> +{
->> +       if ((nr >= ALTR_A10SR_IN_VALID_RANGE_LO) &&
->> +           (nr <= ALTR_A10SR_IN_VALID_RANGE_HI))
->> +               return 0;
->> +       return -EINVAL;
->> +}
->> +
->> +static int altr_a10sr_gpio_direction_output(struct gpio_chip *gc,
->> +                                           unsigned int nr, int value)
->> +{
->> +       if ((nr >= ALTR_A10SR_OUT_VALID_RANGE_LO) &&
->> +           (nr <= ALTR_A10SR_OUT_VALID_RANGE_HI))
->> +               return 0;
->> +       return -EINVAL;
->> +}
->
-> Does this mean that all lines are *always* input and output
-> at the same time?
->
-> If there is no .set_direction() callback and all lines are both
-> input and output it kind of implies that all lines are also
-> implicitly open drain do you agree?
->
-> Please check:
-> - If there is really no direction setting anywhere
-> - For example if some lines are hardwired as input and
->    some lines are hardwired as output
-> - If that is not the case, verify that all lines are really
->    open drain, they should be if all are both input and
->    output at the same time.
->
-
-I see your point. I'll investigate how to do this properly for your 2nd 
-check above. Registers are hard-wired as input or output so I'll need to 
-handle this properly and is why I didn't implement the .set_direction 
-callback. Thanks for the explanation.
-
-In my case, there are 12 valid GPIOs out of the 16 bits (the first 4 
-bits are unused). Bits 4-7 are output and bits 8-15 are inputs. I was 
-using the IN_VALID range for the inputs and the OUT_VALID range for the 
-outputs.
-
->> +       ret = gpiochip_add(&gpio->gp);
->> +       if (ret < 0) {
->> +               dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
->> +               return ret;
->> +       }
->
-> Use devm_gpiochip_add_data() instead.
->
-
-OK. Thanks for reviewing!
-
-> Yours,
-> Linus Walleij
->
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index 2bbe6f7..6ab8c3c 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1004,7 +1004,8 @@ static int mtk_gpio_set_debounce(struct gpio_chip *chip, unsigned offset,
+ 	struct mtk_pinctrl *pctl = dev_get_drvdata(chip->parent);
+ 	int eint_num, virq, eint_offset;
+ 	unsigned int set_offset, bit, clr_bit, clr_offset, rst, i, unmask, dbnc;
+-	static const unsigned int dbnc_arr[] = {0 , 1, 16, 32, 64, 128, 256};
++	static const unsigned int debounce_time[] = {500, 1000, 16000, 32000, 64000,
++						128000, 256000};
+ 	const struct mtk_desc_pin *pin;
+ 	struct irq_data *d;
+ 
+@@ -1022,9 +1023,9 @@ static int mtk_gpio_set_debounce(struct gpio_chip *chip, unsigned offset,
+ 	if (!mtk_eint_can_en_debounce(pctl, eint_num))
+ 		return -ENOSYS;
+ 
+-	dbnc = ARRAY_SIZE(dbnc_arr);
+-	for (i = 0; i < ARRAY_SIZE(dbnc_arr); i++) {
+-		if (debounce <= dbnc_arr[i]) {
++	dbnc = ARRAY_SIZE(debounce_time);
++	for (i = 0; i < ARRAY_SIZE(debounce_time); i++) {
++		if (debounce <= debounce_time[i]) {
+ 			dbnc = i;
+ 			break;
+ 		}
+-- 
+1.9.1
