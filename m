@@ -1,54 +1,43 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH v5] iio: dac: Add support for the AD5592R/AD5593R
- ADCs/DACs
-Date: Sun, 3 Apr 2016 10:39:52 +0100
-Message-ID: <5700E4E8.40304@kernel.org>
-References: <1458721195-28915-1-git-send-email-michael.hennerich@analog.com>
- <CACRpkdYAqPn9o-wMbb-iZn7bjad8u9JmdwRqwrjFMArPrOXEOQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 0/2] pinctrl: Oxford Semiconductor OXNAS pinctrl and gpio support
+Date: Sun,  3 Apr 2016 15:26:07 +0200
+Message-ID: <1459689969-5326-1-git-send-email-narmstrong@baylibre.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from saturn.retrosnub.co.uk ([178.18.118.26]:48835 "EHLO
-	saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751865AbcDCJj4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 3 Apr 2016 05:39:56 -0400
-In-Reply-To: <CACRpkdYAqPn9o-wMbb-iZn7bjad8u9JmdwRqwrjFMArPrOXEOQ@mail.gmail.com>
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:34367 "EHLO
+	mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751566AbcDCN0e (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 3 Apr 2016 09:26:34 -0400
+Received: by mail-qk0-f181.google.com with SMTP id r184so19272027qkc.1
+        for <linux-gpio@vger.kernel.org>; Sun, 03 Apr 2016 06:26:34 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Michael Hennerich <michael.hennerich@analog.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Hartmut Knaack <knaack.h@gmx.de>, Paul Cercueil <paul.cercueil@analog.com>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=c5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>
 
-On 31/03/16 09:01, Linus Walleij wrote:
-> On Wed, Mar 23, 2016 at 9:19 AM,  <michael.hennerich@analog.com> wrote:
-> 
->> From: Paul Cercueil <paul.cercueil@analog.com>
->>
->> This patch adds support for the AD5592R (spi) and AD5593R (i2c)
->> ADC/DAC/GPIO devices.
->>
->> Signed-off-by: Paul Cercueil <paul.cercueil@analog.com>
->> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-> 
-> For this v5 version:
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> I'm fine with this new gpiochip driver being merged into the
-> IIO tree.
-> 
-Cool,  Paul / Michael,
+This patchset includes support for the pinctrl and gpio controller of the
+Oxford Semiconductor OXNAS SoC Family.
 
-I still had a few trivial outstanding comments. Please remember to add
-this reviewed-by to V6.
+It was originally posted part of a platform patchset available here :
+http://lkml.kernel.org/r/1458838215-23314-1-git-send-email-narmstrong@baylibre.com
 
-thanks,
+Changes this v3 patchset :
+- Get rid of PLX Technology, replace by Oxford Semiconductor
+- Get rid of gpio-bank and ngpios properties, now using gpio-ranges
 
-Jonathan
-> Yours,
-> Linus Walleij
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Neil Armstrong (2):
+  pinctrl: Add Oxford Semiconductor OXNAS pinctrl and gpio driver
+  dt-bindings: Add Oxford Semiconductor OXNAS pinctrl and gpio bindings
+
+ .../devicetree/bindings/gpio/gpio_oxnas.txt        |  43 ++
+ .../devicetree/bindings/pinctrl/oxnas,pinctrl.txt  |  57 ++
+ drivers/pinctrl/Kconfig                            |  11 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-oxnas.c                    | 837 +++++++++++++++++++++
+ 5 files changed, 949 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/oxnas,pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-oxnas.c
+
+-- 
+1.9.1
 
