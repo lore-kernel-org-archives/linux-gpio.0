@@ -1,60 +1,54 @@
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Subject: [PATCH v2] pinctrl: mediatek: correct debounce time unit in mtk_gpio_set_debounce
-Date: Sat, 2 Apr 2016 14:57:49 +0800
-Message-ID: <1459580269-64531-1-git-send-email-yingjoe.chen@mediatek.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH v5] iio: dac: Add support for the AD5592R/AD5593R
+ ADCs/DACs
+Date: Sun, 3 Apr 2016 10:39:52 +0100
+Message-ID: <5700E4E8.40304@kernel.org>
+References: <1458721195-28915-1-git-send-email-michael.hennerich@analog.com>
+ <CACRpkdYAqPn9o-wMbb-iZn7bjad8u9JmdwRqwrjFMArPrOXEOQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, srv_heupstream@mediatek.com, djkurtz@chromium.org, Yingjoe Chen <yingjoe.chen@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:48835 "EHLO
+	saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751865AbcDCJj4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 3 Apr 2016 05:39:56 -0400
+In-Reply-To: <CACRpkdYAqPn9o-wMbb-iZn7bjad8u9JmdwRqwrjFMArPrOXEOQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Michael Hennerich <michael.hennerich@analog.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Hartmut Knaack <knaack.h@gmx.de>, Paul Cercueil <paul.cercueil@analog.com>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=c5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-The debounce time unit for gpio_chip.set_debounce is us but
-mtk_gpio_set_debounce regard it as ms.
-Fix this by correct debounce time array dbnc_arr so it can find correct
-debounce setting. Debounce time for first debounce setting is 500us,
-correct this as well.
+On 31/03/16 09:01, Linus Walleij wrote:
+> On Wed, Mar 23, 2016 at 9:19 AM,  <michael.hennerich@analog.com> wrote:
+> 
+>> From: Paul Cercueil <paul.cercueil@analog.com>
+>>
+>> This patch adds support for the AD5592R (spi) and AD5593R (i2c)
+>> ADC/DAC/GPIO devices.
+>>
+>> Signed-off-by: Paul Cercueil <paul.cercueil@analog.com>
+>> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> 
+> For this v5 version:
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> I'm fine with this new gpiochip driver being merged into the
+> IIO tree.
+> 
+Cool,  Paul / Michael,
 
-While I'm at it, also change the debounce time array name to
-"debounce_time" for readability.
+I still had a few trivial outstanding comments. Please remember to add
+this reviewed-by to V6.
 
-Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
----
-This was based on v4.6-rc1
-Change since v1:
-- Improve commit message.
-- Change dbnc_arr name to debounce_time
----
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+thanks,
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index 2bbe6f7..6ab8c3c 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -1004,7 +1004,8 @@ static int mtk_gpio_set_debounce(struct gpio_chip *chip, unsigned offset,
- 	struct mtk_pinctrl *pctl = dev_get_drvdata(chip->parent);
- 	int eint_num, virq, eint_offset;
- 	unsigned int set_offset, bit, clr_bit, clr_offset, rst, i, unmask, dbnc;
--	static const unsigned int dbnc_arr[] = {0 , 1, 16, 32, 64, 128, 256};
-+	static const unsigned int debounce_time[] = {500, 1000, 16000, 32000, 64000,
-+						128000, 256000};
- 	const struct mtk_desc_pin *pin;
- 	struct irq_data *d;
- 
-@@ -1022,9 +1023,9 @@ static int mtk_gpio_set_debounce(struct gpio_chip *chip, unsigned offset,
- 	if (!mtk_eint_can_en_debounce(pctl, eint_num))
- 		return -ENOSYS;
- 
--	dbnc = ARRAY_SIZE(dbnc_arr);
--	for (i = 0; i < ARRAY_SIZE(dbnc_arr); i++) {
--		if (debounce <= dbnc_arr[i]) {
-+	dbnc = ARRAY_SIZE(debounce_time);
-+	for (i = 0; i < ARRAY_SIZE(debounce_time); i++) {
-+		if (debounce <= debounce_time[i]) {
- 			dbnc = i;
- 			break;
- 		}
--- 
-1.9.1
+Jonathan
+> Yours,
+> Linus Walleij
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
