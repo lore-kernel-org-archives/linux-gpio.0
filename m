@@ -1,34 +1,92 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 6/6] pinctrl: baytrail: Add debounce configuration
-Date: Mon, 4 Apr 2016 16:17:33 +0200
-Message-ID: <CACRpkdZUbO6yTkh67fZwhjd9DmMU7ZuF9xOM8bgu-O9jVaYcmA@mail.gmail.com>
-References: <1459508407-22011-1-git-send-email-cristina.ciocan@intel.com>
-	<1459508407-22011-7-git-send-email-cristina.ciocan@intel.com>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v2 1/9] Documentation: dt-bindings: Document STM32 EXTI
+ controller bindings
+Date: Mon, 4 Apr 2016 16:32:33 +0200
+Message-ID: <CALszF6CEs_5BATN5Vz-=z=ukL5cSKnCLVz+3mU0G9ohfq1RwpQ@mail.gmail.com>
+References: <1459436979-17275-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1459436979-17275-2-git-send-email-mcoquelin.stm32@gmail.com>
+	<20160404051529.GA17806@rob-hp-laptop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1459508407-22011-7-git-send-email-cristina.ciocan@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Cristina Ciocan <cristina.ciocan@intel.com>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Irina Tirdea <irina.tirdea@intel.com>, Octavian Purdila <octavian.purdila@intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qg0-f65.google.com ([209.85.192.65]:35684 "EHLO
+	mail-qg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755652AbcDDOce (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Apr 2016 10:32:34 -0400
+In-Reply-To: <20160404051529.GA17806@rob-hp-laptop>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>, Lee Jones <lee.jones@linaro.org>
 
-On Fri, Apr 1, 2016 at 1:00 PM, Cristina Ciocan
-<cristina.ciocan@intel.com> wrote:
+Hi Rob,
 
-> Make debounce setting and getting functionality available when
-> configurating a certain pin.
+2016-04-04 7:15 GMT+02:00 Rob Herring <robh@kernel.org>:
+> On Thu, Mar 31, 2016 at 05:09:31PM +0200, Maxime Coquelin wrote:
+>> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>> ---
+>>  .../bindings/interrupt-controller/st,stm32-exti.txt  | 20 ++++++++++++++++++++
+>>  1 file changed, 20 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+>> new file mode 100644
+>> index 000000000000..6e7703d4ff5b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+>> @@ -0,0 +1,20 @@
+>> +STM32 External Interrupt Controller
+>> +
+>> +Required properties:
+>> +
+>> +- compatible: Should be "st,stm32-exti"
+>> +- reg: Specifies base physical address and size of the registers
+>> +- interrupt-controller: Indentifies the node as an interrupt controller
+>> +- #interrupt-cells: Specifies the number of cells to encode an interrupt
+>> +  specifier, shall be 2
+>> +- interrupts: interrupts references to primary interrupt controller
 >
-> Signed-off-by: Cristina Ciocan <cristina.ciocan@intel.com>
+> Need to define how many and what is the order?
+The exti driver uses of_irq_count() to count the number of interrupts.
+The order doesn't matter in my implementation, I will come back on
+this point below.
 
-Patch applied.
+>
+> Are these 1:1 mapping? You could use interrupt-map here to define the
+> mapping.
 
-And as this is another case where GPIO has a debounce
-setting call: gpiod_set_debounce() this is another case for
-my suggested pinctrl_gpio_set_config() as that call is
-currently not implemented in your corresponding .set_debounce()
-callback for the GPIO chip, but could easily be handled
-by calling back into the pinctrl back-end, right?
+No, this is not 1:1 mapping.
+This is the mapping for STM32F429 (With 'n' managed by a mux in Syscfg
+(from GPIOA to GPIOI)):
+EXTI0 (GPIOn0) : NVIC 6
+EXTI1 (GPIOn1) : NVIC 7
+EXTI2 (GPIOn2) : NVIC 8
+EXTI3 (GPIOn3) : NVIC 9
+EXTI4 (GPIOn4) : NVIC 10
+EXTI5 (GPIOn5) : NVIC 23
+EXTI6 (GPIOn6) : NVIC 23
+EXTI7 (GPIOn7) : NVIC 23
+EXTI8 (GPIOn8) : NVIC 23
+EXTI9 (GPIOn9) : NVIC 23
+EXTI10 (GPIOn10) : NVIC 40
+EXTI11 (GPIOn11) : NVIC 40
+EXTI12 (GPIOn12) : NVIC 40
+EXTI13 (GPIOn13) : NVIC 40
+EXTI14 (GPIOn14) : NVIC 40
+EXTI15 (GPIOn15) : NVIC 40
+EXTI16 (PVD) : NVIC 1
+EXTI17 (RTC Alarm) : NVIC 41
+EXTI18 (USB OTG FS Wakeup) : NVIC 42
+EXTI19 (Ethernet Wakeup) : NVIC 62
+EXTI20 (USB OTG HS Wakeup) : NVIC 76
+EXTI21 (RTC Tamper) : NVIC 2
+EXTI22 (RTC Wakeup) : NVIC 3
 
-Yours,
-Linus Walleij
+Ideally, we should define a kind of mapping in the DT node.
+However, from what I understand 'interrupt-map' is not intended to be used
+in an interrupt controller (it would not even be parsed in of_irq_parse_raw()).
+
+Any ideas?
+
+Thanks for the review,
+Maxime
