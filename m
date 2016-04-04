@@ -1,61 +1,66 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC PATCH 0/4] Add ACPI support for pinctrl configuration
-Date: Mon, 4 Apr 2016 23:52:01 +0100
-Message-ID: <20160404225200.GA1615@svinekod>
-References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
+From: Greg Ungerer <gregungerer@westnet.com.au>
+Subject: Re: [PATCH 2/2] gpiolib: Defer gpio device setup until after gpiolib
+ initialization
+Date: Tue, 5 Apr 2016 09:50:17 +1000
+Message-ID: <5702FDB9.9010806@westnet.com.au>
+References: <1459437090-10029-1-git-send-email-linux@roeck-us.net>
+ <1459437090-10029-2-git-send-email-linux@roeck-us.net>
+ <56FDC0D7.5040101@westnet.com.au> <20160401005301.GA17066@roeck-us.net>
+ <56FDCFDF.2090107@westnet.com.au>
+ <CACRpkdacra5WnWtH7qyuxix3fGBoa+6WZJCU5vusQoAaJGZrfw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:47967 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752190AbcDDWwN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 4 Apr 2016 18:52:13 -0400
-Content-Disposition: inline
-In-Reply-To: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdacra5WnWtH7qyuxix3fGBoa+6WZJCU5vusQoAaJGZrfw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Ungerer <gerg@uclinux.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Irina Tirdea <irina.tirdea@intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Octavian Purdila <octavian.purdila@intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, charles.garcia-tobin@arm.com
 
-Hi,
+Hi Linus,
 
-On Thu, Mar 31, 2016 at 02:44:41PM +0300, Irina Tirdea wrote:
-> This is a proposal for adding ACPI support for pin controller
-> configuration.
-> 
-> It has been developed to enable the MinnowBoard and IoT community
-> by providing an easy way to specify pin multiplexing and
-> pin configuration.
-> 
-> This proposal is based on using _DSD properties to specify device
-> states and configuration nodes and it follows closely the device
-> tree model. Device states are defined using the Device Properties
-> format and the configuration nodes are defined using the
-> Hierarchical Properties Extension format. The generic properties
-> for the configuration nodes are the same as the ones for device
-> tree, while pincontroller drivers can also define custom ones.
+On 01/04/16 18:16, Linus Walleij wrote:
+> On Fri, Apr 1, 2016 at 3:33 AM, Greg Ungerer <gregungerer@westnet.com.au> wrote:
+>> On 01/04/16 10:53, Guenter Roeck wrote:
+>
+>>> Probably coldfire ?
+>>>
+>>> arch/m68k/coldfire/gpio.c:
+>>
+>> Yes, that is the one.
+>>
+>>> static struct bus_type mcfgpio_subsys = {
+>>>          .name           = "gpio",
+>>>        .dev_name       = "gpio",
+>>> };
+>>>
+>>> No idea what to do about that. Can that bus be renamed ?
+>>
+>> Yeah, it could. But is it even necessary at all now?
+>>
+>> I am thinking I could remove the subsys_system_register(&mcfgpio_subsys, NULL)
+>> call from that coldfire/gpio.c. Doing that certainly cleans up the
+>> boot. There was nothing much under the old coldfire /sys/gpio other than
+>> the standard devices/drivers/etc. And the new gpio api ofcourse has all
+>> that as well.
+>
+> Please kill it if you can. Or are there userspaces for
+> coldfire that use this? In that case we need some compatibility
+> shim for them.
 
->From a look of the Documentation addition, and of the current uses of
-pinctrl-names in device tree bindings, one reason for requiring multiple
-pinctrl states is power management. Given that, I'm somewhat concerned by this,
-as it goes against the usual ACPI model of abstracting this sort of thing
-behind power control methods.
+I don't see any reason we can't just kill it.
+It never had any real links to anything under it, only
+the usual set of bus sysfs nodes. So the new "/sys/bus/gpio"
+has all that and more. So no need for a shim.
 
-To the best of my knowledge, that goes against the ASWG's expectations on how
-_DSD will be used (per [1]). Charles, please correct me if that document is no
-longer representative.
 
-Additionally, pinctrl has some cross-cutting concerns (e.g. mutually exclusive
-device usage due to a shared pin), and I can imagine that may interact poorly
-with any AML or firmware assumptions about the state of the world, as there's
-no mechanism present to notify those of changes to pins.
+> I'm trying to pull all needed functionality into the proper gpiolib
+> so we can get some order around the place...
 
-I think that this is a class of problem which needs to be raised with the ASWG,
-and solved in an ACPI-native fashion, rather than simply copying properties
-from DT using _DSD. If nothing else, the restrictions on FW and AML would need
-to be specified.
+Yep :-)
+I'll prepare a patch to remove the coldfire gpio sys bus device.
+It is pretty simple in this case.
 
-Thanks,
-Mark.
-
-[1] https://lists.acpica.org/pipermail/dsd/2015-September/000019.html
+Regards
+Greg
