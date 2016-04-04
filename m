@@ -1,92 +1,223 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v2 1/9] Documentation: dt-bindings: Document STM32 EXTI
- controller bindings
-Date: Mon, 4 Apr 2016 16:32:33 +0200
-Message-ID: <CALszF6CEs_5BATN5Vz-=z=ukL5cSKnCLVz+3mU0G9ohfq1RwpQ@mail.gmail.com>
-References: <1459436979-17275-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1459436979-17275-2-git-send-email-mcoquelin.stm32@gmail.com>
-	<20160404051529.GA17806@rob-hp-laptop>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpiolib: handle probe deferrals better
+Date: Mon, 4 Apr 2016 19:21:56 +0300
+Message-ID: <570294A4.2070801@ti.com>
+References: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org>
+ <56FE7785.1010507@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qg0-f65.google.com ([209.85.192.65]:35684 "EHLO
-	mail-qg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755652AbcDDOce (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Apr 2016 10:32:34 -0400
-In-Reply-To: <20160404051529.GA17806@rob-hp-laptop>
+Received: from bear.ext.ti.com ([192.94.94.41]:53165 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751902AbcDDQWs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 4 Apr 2016 12:22:48 -0400
+In-Reply-To: <56FE7785.1010507@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>, Lee Jones <lee.jones@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Alexander Stein <alexander.stein@systec-electronic.com>Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: linux-input@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Guenter Roeck <linux@roeck-us.net>, bjorn.andersson@linaro.org
 
-Hi Rob,
+Hi Linus,
 
-2016-04-04 7:15 GMT+02:00 Rob Herring <robh@kernel.org>:
-> On Thu, Mar 31, 2016 at 05:09:31PM +0200, Maxime Coquelin wrote:
->> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
->> ---
->>  .../bindings/interrupt-controller/st,stm32-exti.txt  | 20 ++++++++++++++++++++
->>  1 file changed, 20 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+On 04/01/2016 04:28 PM, Grygorii Strashko wrote:
+> On 04/01/2016 02:44 PM, Linus Walleij wrote:
+>> The gpiolib does not currently return probe deferrals from the
+>> .to_irq() hook while the GPIO drivers are being initialized.
+>> Further: it keeps returning -EPROBE_DEFER for gpio[d]_get()
+>> even after all builtin drivers have initialized.
 >>
->> diff --git a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
->> new file mode 100644
->> index 000000000000..6e7703d4ff5b
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
->> @@ -0,0 +1,20 @@
->> +STM32 External Interrupt Controller
->> +
->> +Required properties:
->> +
->> +- compatible: Should be "st,stm32-exti"
->> +- reg: Specifies base physical address and size of the registers
->> +- interrupt-controller: Indentifies the node as an interrupt controller
->> +- #interrupt-cells: Specifies the number of cells to encode an interrupt
->> +  specifier, shall be 2
->> +- interrupts: interrupts references to primary interrupt controller
->
-> Need to define how many and what is the order?
-The exti driver uses of_irq_count() to count the number of interrupts.
-The order doesn't matter in my implementation, I will come back on
-this point below.
+>> Fix this thusly:
+>>
+>> - Move the assignment of .to_irq() to the last step when
+>>     using gpiolib_irqchip_add() so we can't get spurious calls
+>>     into the .to_irq() function until all set-up is finished.
+>>
+>> - Put in a late_initcall_sync() to set a boolean state variable to
+>>     indicate that we're not gonna defer any longer. Since deferred
+>>     probe happens at late_initcall() time, using late_initcall_sync()
+>>     should be fine.
+>>
+>> - After this point, return hard errors (-ENXIO) from both
+>>     gpio[d]_get() and .to_irq().
+>>
+>> This way we should (at least for all drivers using GPIOLIB_IRQCHIP)
+>> be getting proper deferrals from both gpio[d]_get() and .to_irq()
+>> until the irqchip side is properly set up, and then proper
+>> errors after all drivers should have been probed.
+>>
+>> This problem was first seen with gpio-keys.
+>>
+>> Cc: linux-input@vger.kernel.org
+>> Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>> Cc: Guenter Roeck <linux@roeck-us.net>
+>> Reported-by: Alexander Stein <alexander.stein@systec-electronic.com>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> ---
+>> Alexander: please test this, you need Guether's patches too,
+>> I have it all on my "fixes" branch in the GPIO git:
+>> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=fixes
+>>
+>> Tomeu: I think you're the authority on deferred probe these days.
+>> Is this the right way for a subsystem to switch from returning
+>> -EPROBE_DEFER to instead returning an unrecoverable error?
+>>
+>> Guenther: I applied this on top of your patches, please check it
+>> if you can, you're smarter than me with this stuff.
+>> ---
+>>    drivers/gpio/gpiolib.c | 47 ++++++++++++++++++++++++++++++++++++++++-------
+>>    1 file changed, 40 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>> index b747c76fd2b1..426a93f9d79e 100644
+>> --- a/drivers/gpio/gpiolib.c
+>> +++ b/drivers/gpio/gpiolib.c
+>> @@ -68,7 +68,9 @@ LIST_HEAD(gpio_devices);
+>>    static void gpiochip_free_hogs(struct gpio_chip *chip);
+>>    static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
+>>    
+>> +/* These keep the state of the library */
+>>    static bool gpiolib_initialized;
+>> +static bool gpiolib_builtin_ready;
+>>    
 
->
-> Are these 1:1 mapping? You could use interrupt-map here to define the
-> mapping.
+[..]
 
-No, this is not 1:1 mapping.
-This is the mapping for STM32F429 (With 'n' managed by a mux in Syscfg
-(from GPIOA to GPIOI)):
-EXTI0 (GPIOn0) : NVIC 6
-EXTI1 (GPIOn1) : NVIC 7
-EXTI2 (GPIOn2) : NVIC 8
-EXTI3 (GPIOn3) : NVIC 9
-EXTI4 (GPIOn4) : NVIC 10
-EXTI5 (GPIOn5) : NVIC 23
-EXTI6 (GPIOn6) : NVIC 23
-EXTI7 (GPIOn7) : NVIC 23
-EXTI8 (GPIOn8) : NVIC 23
-EXTI9 (GPIOn9) : NVIC 23
-EXTI10 (GPIOn10) : NVIC 40
-EXTI11 (GPIOn11) : NVIC 40
-EXTI12 (GPIOn12) : NVIC 40
-EXTI13 (GPIOn13) : NVIC 40
-EXTI14 (GPIOn14) : NVIC 40
-EXTI15 (GPIOn15) : NVIC 40
-EXTI16 (PVD) : NVIC 1
-EXTI17 (RTC Alarm) : NVIC 41
-EXTI18 (USB OTG FS Wakeup) : NVIC 42
-EXTI19 (Ethernet Wakeup) : NVIC 62
-EXTI20 (USB OTG HS Wakeup) : NVIC 76
-EXTI21 (RTC Tamper) : NVIC 2
-EXTI22 (RTC Wakeup) : NVIC 3
+>>    
+>>    int gpiod_request(struct gpio_desc *desc, const char *label)
+>>    {
+>> -	int status = -EPROBE_DEFER;
+>> +	int status;
+>>    	struct gpio_device *gdev;
+>>    
+>>    	VALIDATE_DESC(desc);
+>>    	gdev = desc->gdev;
+>>    
+>> +	/*
+>> +	 * Defer requests until all built-in drivers have had a chance
+>> +	 * to probe, then give up and return a hard error.
+>> +	 */
+>> +	if (!gpiolib_builtin_ready)
+>> +		status = -EPROBE_DEFER;
+>> +	else
+>> +		status = -ENXIO;
+> 
+> Probably It will work right if we will let gpiochip know that
+> it has irqchip companion.
+> With above knowledge the gpiod_request() can return -EPROBE_DEFER while
+> irqchip is not initialized. In other words:
+> - driver will set HAS_IRQ flag
+> - gpiolib will set gpio_chip->irqs_ready = 0 in gpiochip_add_data()
+> - gpiolib will set gpio_chip->irqs_ready = 1 in gpiochip_irqchip_add()
+> - gpiod_request() will do at the beginning:
+>    if (HAS_IRQ && !gpio_chip->irqs_ready)
+>     return  -EPROBE_DEFER
+> 
+> it might also required to combine
+> gpiochip_irqchip_add and gpiochip_set_chained_irqchip.
+> 
 
-Ideally, we should define a kind of mapping in the DT node.
-However, from what I understand 'interrupt-map' is not intended to be used
-in an interrupt controller (it would not even be parsed in of_irq_parse_raw()).
+Below is RFC patch to prove above consent. I've had offlist 
+debugging session with Alexander and He mentioned that this change
+fixes boot issue for him.
 
-Any ideas?
+Of course, there are some question to discuss:
+1) [+] It should sync initialization of GPIOchip and GPIOirqchip 
+2) [+] This approach requires changes in gpiolib/gpio drivers only, from other side
+It will require to add fixes all over the Kernel if gpiod_to_irq() will 
+start returning -EPROBE_DEFER.
+3) [-] has_irq might need to be initialized by non-DT drivers
+4) [-] irq_ready might need to be set manually by drivers which do not use GPIO irq
+   helpers (see change in gpio-mpc8xxx.c)
+4) irq_ready access synchronization on SMP? atomic?
 
-Thanks for the review,
-Maxime
+job done with commit e6918cd 'gpiolib: handle probe deferrals better'
+reverted. 
+
+-----
+>From d3d486700351d55fd242c7d9494740b0534a2081 Mon Sep 17 00:00:00 2001
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Date: Sat, 2 Apr 2016 14:55:31 +0300
+Subject: [RFC PATCH] gpiolib: sync gpiochip and irqchip initializtion
+
+TBD.
+
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+ drivers/gpio/gpio-mpc8xxx.c |  2 ++
+ drivers/gpio/gpiolib.c      | 13 ++++++++++++-
+ include/linux/gpio/driver.h |  2 ++
+ 3 files changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+index 425501c..3652b44 100644
+--- a/drivers/gpio/gpio-mpc8xxx.c
++++ b/drivers/gpio/gpio-mpc8xxx.c
+@@ -368,6 +368,8 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 
+ 	irq_set_chained_handler_and_data(mpc8xxx_gc->irqn,
+ 					 mpc8xxx_gpio_irq_cascade, mpc8xxx_gc);
++
++	gc->irq_ready = true;
+ 	return 0;
+ err:
+ 	iounmap(mpc8xxx_gc->regs);
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 7206553..9d24196 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -488,6 +488,11 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
+ 			gdev->dev.of_node = chip->of_node;
+ #endif
+ 	}
++
++	chip->has_irq = of_get_property(gdev->dev.of_node,
++					"interrupt-controller", NULL) ?
++					true : false;
++
+ 	gdev->id = ida_simple_get(&gpio_ida, 0, 0, GFP_KERNEL);
+ 	if (gdev->id < 0) {
+ 		status = gdev->id;
+@@ -1092,6 +1097,9 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+ 
+ 	acpi_gpiochip_request_interrupts(gpiochip);
+ 
++	if (gpiochip->has_irq)
++		gpiochip->irq_ready = true;
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(_gpiochip_irqchip_add);
+@@ -1335,7 +1343,10 @@ int gpiod_request(struct gpio_desc *desc, const char *label)
+ 	gdev = desc->gdev;
+ 
+ 	if (try_module_get(gdev->owner)) {
+-		status = __gpiod_request(desc, label);
++		if (!gdev->chip->has_irq)
++			status = __gpiod_request(desc, label);
++		else if (gdev->chip->has_irq && gdev->chip->irq_ready)
++			status = __gpiod_request(desc, label);
+ 		if (status < 0)
+ 			module_put(gdev->owner);
+ 		else
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index bee976f..134be32 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -141,6 +141,8 @@ struct gpio_chip {
+ 	const char		*const *names;
+ 	bool			can_sleep;
+ 	bool			irq_not_threaded;
++	bool			has_irq;
++	bool			irq_ready;
+ 
+ #if IS_ENABLED(CONFIG_GPIO_GENERIC)
+ 	unsigned long (*read_reg)(void __iomem *reg);
+-- 
+2.8.0
+
+
+
+-- 
+regards,
+-grygorii
