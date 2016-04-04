@@ -1,66 +1,44 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [RFC PATCH 4/4] pinctrl: Parse GpioInt/GpioIo resources
-Date: Mon, 4 Apr 2016 16:47:40 +0300
-Message-ID: <20160404134740.GB1727@lahna.fi.intel.com>
-References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
- <1459424685-26965-5-git-send-email-irina.tirdea@intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 1/6] pinctrl: baytrail: Add pin control data structures
+Date: Mon, 4 Apr 2016 15:57:50 +0200
+Message-ID: <CACRpkdYDPyQiEpxLcZSK35zdDe3MwyxBADwMBcoRnZoz3jbstQ@mail.gmail.com>
+References: <1459508407-22011-1-git-send-email-cristina.ciocan@intel.com>
+	<1459508407-22011-2-git-send-email-cristina.ciocan@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:9024 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755522AbcDDNrs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 4 Apr 2016 09:47:48 -0400
-Content-Disposition: inline
-In-Reply-To: <1459424685-26965-5-git-send-email-irina.tirdea@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1459508407-22011-2-git-send-email-cristina.ciocan@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Cristina Ciocan <cristina.ciocan@intel.com>
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Irina Tirdea <irina.tirdea@intel.com>, Octavian Purdila <octavian.purdila@intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Irina Tirdea <irina.tirdea@intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Octavian Purdila <octavian.purdila@intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Mar 31, 2016 at 02:44:45PM +0300, Irina Tirdea wrote:
-> +static int acpi_parse_gpio_res(struct pinctrl *p,
-> +			       struct pinctrl_map **map,
-> +			       unsigned *num_maps,
-> +			       struct pinctrl_dev ***pctldevs)
-> +{
-> +	struct acpi_gpio_lookup lookup;
-> +	struct list_head res_list;
-> +	struct acpi_device *adev;
-> +	unsigned int index;
-> +	int ret;
-> +
-> +	adev = ACPI_COMPANION(p->dev);
-> +
-> +	*map = NULL;
-> +	*num_maps = 0;
-> +	memset(&lookup, 0, sizeof(lookup));
-> +
-> +	/* Parse all GpioInt/GpioIo resources in _CRS and extract pin conf */
-> +	for (index = 0; ; index++) {
-> +		lookup.index = index;
-> +		lookup.n = 0;
-> +		lookup.found = false;
-> +
-> +		INIT_LIST_HEAD(&res_list);
-> +		ret = acpi_dev_get_resources(adev, &res_list, acpi_gpio_to_map,
-> +					     &lookup);
-> +		if (ret < 0)
-> +			goto exit_free;
-> +		acpi_dev_free_resource_list(&res_list);
-> +		if (!lookup.found)
-> +			break;
-> +	}
-> +
-> +	*map = lookup.map;
-> +	*num_maps = lookup.num_maps;
-> +	*pctldevs = lookup.pctldevs;
+On Fri, Apr 1, 2016 at 1:00 PM, Cristina Ciocan
+<cristina.ciocan@intel.com> wrote:
 
-This function has quite many stars in arguments and in the function
-body. In particular pctldevs has three stars!
+> In order to implement pin control for Baytrail, we need data structures
+> in which to store and pass along pin, group, function, community and SOC
+> data information.
+>
+> Baytrail has 3 GPIO controllers. Add SCORE, NCORE and SUS controller data:
+>         - pins (for all controllers),
+>         - pad map for pins (for all controllers; we need this since pads
+>         are not ordered),
+>         - groups (for SCORE and SUS controllers),
+>         - functions (for SCORE and SUS controllers),
+>         - communities (for all controllers),
+>         - soc specific data gathering all of the above and the ACPI UID
+>         (for all controllers)
+> This information is useful for pin control functionality. NCORE data is
+> lighter than the other two controllers' due to lack of pin documentation in
+> the public datasheet.
+>
+> Datasheet:
+> http://www.intel.com/content/www/us/en/embedded/products/bay-trail/atom-e3800-family-datasheet.html
+>
+> Signed-off-by: Cristina Ciocan <cristina.ciocan@intel.com>
 
-I wonder if this could be written in such way that avoids that. Like
-create a structure holding the map information and pass that to the
-function instead.
+Patch applied with Mika's ACK.
 
-Other parts of the patch look good to me.
+Yours,
+Linus Walleij
