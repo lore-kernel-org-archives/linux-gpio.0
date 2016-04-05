@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH v2 32/63] gpio: palmas: Allow compile testing
-Date: Tue,  5 Apr 2016 19:39:02 +0200
-Message-ID: <1459877949-29889-13-git-send-email-alexanders83@web.de>
+Subject: [PATCH v2 27/63] gpio: dln2: Allow compile testing
+Date: Tue,  5 Apr 2016 19:38:57 +0200
+Message-ID: <1459877949-29889-8-git-send-email-alexanders83@web.de>
 References: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:64982 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.12]:58877 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758774AbcDERjY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 5 Apr 2016 13:39:24 -0400
+	id S1758906AbcDERjV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 5 Apr 2016 13:39:21 -0400
 In-Reply-To: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 4b27bd4ae41c..6c37864ded40 100644
+index 4f582231d0e0..36d64f87b3b1 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -867,7 +867,7 @@ config GPIO_MSIC
+@@ -822,7 +822,7 @@ config GPIO_DA9055
  
- config GPIO_PALMAS
- 	bool "TI PALMAS series PMICs GPIO"
--	depends on MFD_PALMAS
-+	depends on MFD_PALMAS || COMPILE_TEST
+ config GPIO_DLN2
+ 	tristate "Diolan DLN2 GPIO support"
+-	depends on MFD_DLN2
++	depends on MFD_DLN2 || COMPILE_TEST
+ 	select GPIOLIB_IRQCHIP
+ 
  	help
- 	  Select this option to enable GPIO driver for the TI PALMAS
- 	  series chip family.
 -- 
 2.8.0
 
