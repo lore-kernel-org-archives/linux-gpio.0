@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH v2 51/63] gpio: lynxpoint: Allow compile testing
-Date: Tue,  5 Apr 2016 19:39:32 +0200
-Message-ID: <1459877980-31872-12-git-send-email-alexanders83@web.de>
+Subject: [PATCH v2 58/63] gpio: 74x164: Allow compile testing
+Date: Tue,  5 Apr 2016 19:39:39 +0200
+Message-ID: <1459877980-31872-19-git-send-email-alexanders83@web.de>
 References: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.3]:58489 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.15.4]:63337 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759594AbcDERjv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 5 Apr 2016 13:39:51 -0400
+	id S1759595AbcDERkF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 5 Apr 2016 13:40:05 -0400
 In-Reply-To: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 6768cb95a5a1..28fb53c544d3 100644
+index d77281285d24..03ff9e8a8759 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -259,7 +259,7 @@ config GPIO_LPC18XX
+@@ -1065,7 +1065,7 @@ menu "SPI GPIO expanders"
  
- config GPIO_LYNXPOINT
- 	tristate "Intel Lynxpoint GPIO support"
--	depends on ACPI && X86
-+	depends on ACPI && X86 || COMPILE_TEST
- 	select GPIOLIB_IRQCHIP
+ config GPIO_74X164
+ 	tristate "74x164 serial-in/parallel-out 8-bits shift register"
+-	depends on OF
++	depends on OF || COMPILE_TEST
  	help
- 	  driver for GPIO functionality on Intel Lynxpoint PCH chipset
+ 	  Driver for 74x164 compatible serial-in/parallel-out 8-outputs
+ 	  shift registers. This driver can be used to provide access
 -- 
 2.8.0
 
