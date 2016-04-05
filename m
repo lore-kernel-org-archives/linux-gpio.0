@@ -1,91 +1,104 @@
-From: Charles Garcia-Tobin <charles.garcia-tobin@arm.com>
-Subject: Re: [RFC PATCH 0/4] Add ACPI support for pinctrl configuration
-Date: Tue, 5 Apr 2016 08:56:12 +0000
-Message-ID: <D3292CBB.662A8%charles.garcia-tobin@arm.com>
-References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
- <20160404225200.GA1615@svinekod>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v4.6
+Date: Tue, 5 Apr 2016 13:52:40 +0200
+Message-ID: <CACRpkdahdQ7O8t+gtWo5AV6sg4VKZ_=-aTozxyucK9_SfNBwvw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20160404225200.GA1615@svinekod>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>, Irina Tirdea <irina.tirdea@intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Octavian Purdila <octavian.purdila@intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:33776 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752539AbcDELwl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Apr 2016 07:52:41 -0400
+Received: by mail-oi0-f49.google.com with SMTP id w85so13984447oiw.0
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Apr 2016 04:52:41 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
+Hi Linus,
 
+here is a set of pin control fixes for the v4.6 series. A bit bigger than
+what I hoped for, but all fixes are confined to drivers, a few of them also
+targeted to stable.
 
-On 04/04/2016 23:52, "Mark Rutland" <mark.rutland@arm.com> wrote:
+Please pull it in, details in the signed tag!
 
->Hi,
->
->On Thu, Mar 31, 2016 at 02:44:41PM +0300, Irina Tirdea wrote:
->> This is a proposal for adding ACPI support for pin controller
->> configuration.
->> 
->> It has been developed to enable the MinnowBoard and IoT community
->> by providing an easy way to specify pin multiplexing and
->> pin configuration.
->> 
->> This proposal is based on using _DSD properties to specify device
->> states and configuration nodes and it follows closely the device
->> tree model. Device states are defined using the Device Properties
->> format and the configuration nodes are defined using the
->> Hierarchical Properties Extension format. The generic properties
->> for the configuration nodes are the same as the ones for device
->> tree, while pincontroller drivers can also define custom ones.
->
->From a look of the Documentation addition, and of the current uses of
->pinctrl-names in device tree bindings, one reason for requiring multiple
->pinctrl states is power management. Given that, I'm somewhat concerned by
->this,
->as it goes against the usual ACPI model of abstracting this sort of thing
->behind power control methods.
->
->To the best of my knowledge, that goes against the ASWG's expectations on
->how
->_DSD will be used (per [1]). Charles, please correct me if that document
->is no
->longer representative.
+Yours,
+Linus Walleij
 
-It is though latest version was posted by Rafael a bit later:
-https://lists.acpica.org/pipermail/dsd/2015-December/000027.html
+The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
 
+  Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
 
-In addition the core rules requiring that existing ACPI paradigms are not
-subverted through DSD (basically the concern you express) are also
-documented in the main DSD documentation itself:
-http://www.uefi.org/sites/default/files/resources/_DSD-device-properties-UU
-ID.pdf (section 2.3)
+are available in the git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.6-2
 
-Cheers
+for you to fetch changes up to e1641c9d174ee21b4a75a64ab6df9063cf60ac4a:
 
-Charles
+  Revert "Revert "pinctrl: lantiq: Implement gpio_chip.to_irq""
+(2016-04-01 15:21:27 +0200)
 
+----------------------------------------------------------------
+Pin control fixes for the v4.6 series:
+- On Super-H PFC (Renesas) controllers: only use dummies on
+  legacy systems. This fixes a serious ethernet regression on
+  a Renesas board.
+- Pistachio: Fix errors in the pin table.
+- Allwinner SunXi: fix the external interrupts to work.
+- Intel: fix so the high level interrupts start working, and
+  fix a spurious interrupt issue.
+- Qualcomm ipq4019: fix the number of GPIOs provided (bump
+  to 100), correct register offsets and handle GPIO mode
+  properly.
+- Revert the revert on the revert so that Xway has a .to_irq()
+  callback again.
+- Minor fixes to errorpaths and debug info.
+- A MAINTAINERS update.
 
->
->Additionally, pinctrl has some cross-cutting concerns (e.g. mutually
->exclusive
->device usage due to a shared pin), and I can imagine that may interact
->poorly
->with any AML or firmware assumptions about the state of the world, as
->there's
->no mechanism present to notify those of changes to pins.
->
->I think that this is a class of problem which needs to be raised with the
->ASWG,
->and solved in an ACPI-native fashion, rather than simply copying
->properties
->from DT using _DSD. If nothing else, the restrictions on FW and AML would
->need
->to be specified.
->
->Thanks,
->Mark.
->
->[1] https://lists.acpica.org/pipermail/dsd/2015-September/000019.html
->
+----------------------------------------------------------------
+Govindraj Raja (1):
+      pinctrl: pistachio: fix mfio84-89 function description and pinmux.
 
+Hans de Goede (1):
+      pinctrl: sunxi: Fix A33 external interrupts not working
 
+Krzysztof Kozlowski (1):
+      MAINTAINERS: pinctrl: samsung: Add two new maintainers
+
+Linus Walleij (2):
+      pinctrl: nomadik: fix pull debug print inversion
+      Revert "Revert "pinctrl: lantiq: Implement gpio_chip.to_irq""
+
+Matthew McClintock (3):
+      pinctrl: qcom: ipq4019: set ngpios to correct value
+      pinctrl: qcom: ipq4019: fix the function enum for gpio mode
+      pinctrl: qcom: ipq4019: fix register offsets
+
+Qi Zheng (1):
+      pinctrl: intel: implement gpio_irq_enable
+
+Qipeng Zha (1):
+      pinctrl: intel: make the high level interrupt working
+
+Vladimir Zapolskiy (1):
+      pinctrl: freescale: imx: fix bogus check of of_iomap() return value
+
+Wolfram Sang (1):
+      pinctrl: sh-pfc: only use dummy states for non-DT platforms
+
+ .../bindings/pinctrl/img,pistachio-pinctrl.txt     | 12 ++++----
+ MAINTAINERS                                        |  2 ++
+ drivers/pinctrl/freescale/pinctrl-imx.c            | 17 +++++------
+ drivers/pinctrl/intel/pinctrl-intel.c              | 35 ++++++++++++++++++++--
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c          |  2 +-
+ drivers/pinctrl/pinctrl-pistachio.c                | 24 +++++++--------
+ drivers/pinctrl/pinctrl-xway.c                     | 17 +++++++++++
+ drivers/pinctrl/qcom/pinctrl-ipq4019.c             | 14 ++++-----
+ drivers/pinctrl/sh-pfc/core.c                      |  4 ++-
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c          |  1 +
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c              | 17 ++++++-----
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h              | 21 ++++++-------
+ 12 files changed, 111 insertions(+), 55 deletions(-)
