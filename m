@@ -1,12 +1,12 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH v2 18/63] gpio: vf610: Allow compile testing
-Date: Tue,  5 Apr 2016 19:35:27 +0200
-Message-ID: <1459877772-11289-19-git-send-email-alexanders83@web.de>
+Subject: [PATCH v2 15/63] gpio: syscon: Allow compile testing
+Date: Tue,  5 Apr 2016 19:35:24 +0200
+Message-ID: <1459877772-11289-16-git-send-email-alexanders83@web.de>
 References: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:50545 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.11]:63014 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752060AbcDERgw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	id S1751668AbcDERgw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
 	Tue, 5 Apr 2016 13:36:52 -0400
 In-Reply-To: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index c86b4381c3fb..ec14f1153908 100644
+index 3eb6d6f3f39c..bf6fd10d8d64 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -431,7 +431,7 @@ config GPIO_TZ1090_PDC
+@@ -391,7 +391,7 @@ config GPIO_STP_XWAY
  
- config GPIO_VF610
- 	def_bool y
--	depends on ARCH_MXC && SOC_VF610
-+	depends on ARCH_MXC && SOC_VF610 || COMPILE_TEST
- 	select GPIOLIB_IRQCHIP
+ config GPIO_SYSCON
+ 	tristate "GPIO based on SYSCON"
+-	depends on MFD_SYSCON && OF
++	depends on MFD_SYSCON && OF || COMPILE_TEST
  	help
- 	  Say yes here to support Vybrid vf610 GPIOs.
+ 	  Say yes here to support GPIO functionality though SYSCON driver.
+ 
 -- 
 2.8.0
 
