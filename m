@@ -1,75 +1,100 @@
-From: Octavian Purdila <octavian.purdila@intel.com>
-Subject: Re: [RFC PATCH 0/4] Add ACPI support for pinctrl configuration
-Date: Tue, 5 Apr 2016 15:51:18 +0300
-Message-ID: <CAE1zotLcLFACKFaPgp2QUK=6qhWvUGu7hmbK+-XuL7+5arBXVg@mail.gmail.com>
-References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
-	<20160404214034.GL2350@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160404214034.GL2350@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Irina Tirdea <irina.tirdea@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>, devicetree@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: tc3589x: use BIT() macro
+Date: Tue,  5 Apr 2016 15:10:55 +0200
+Message-ID: <1459861855-1975-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:33618 "EHLO
+	mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752023AbcDENLB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Apr 2016 09:11:01 -0400
+Received: by mail-lf0-f50.google.com with SMTP id e190so8262396lfe.0
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Apr 2016 06:11:01 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-On Tue, Apr 5, 2016 at 12:40 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Thu, Mar 31, 2016 at 02:44:41PM +0300, Irina Tirdea wrote:
->
->> This is a proposal for adding ACPI support for pin controller
->> configuration.
->
->> It has been developed to enable the MinnowBoard and IoT community
->> by providing an easy way to specify pin multiplexing and
->> pin configuration.
->
-> So this is mainly targeted at modules being added to base boards?
+This switch to use BIT(n) instead of (1 << n) which is less
+to the point. Most GPIO drivers do this to avoid mistakes.
+Also switch from using <linux/gpio.h> to the apropriate
+<linux/gpio/driver.h> include.
 
-That is the main use case, yes. Velocity of platform
-debugging/enabling is another one.
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-tc3589x.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-> Without getting into the binding at all here it seems like this is not
-> solving the problem at the right abstraction level.  It's exposing the
-> pins on the SoC directly without any tie in with the functionality that
-> goes over those pins.
+diff --git a/drivers/gpio/gpio-tc3589x.c b/drivers/gpio/gpio-tc3589x.c
+index 4f566e6b81f1..3d84bae89067 100644
+--- a/drivers/gpio/gpio-tc3589x.c
++++ b/drivers/gpio/gpio-tc3589x.c
+@@ -10,10 +10,11 @@
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/driver.h>
+ #include <linux/of.h>
+ #include <linux/interrupt.h>
+ #include <linux/mfd/tc3589x.h>
++#include <linux/bitops.h>
+ 
+ /*
+  * These registers are modified under the irq bus lock and cached to avoid
+@@ -39,7 +40,7 @@ static int tc3589x_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	struct tc3589x_gpio *tc3589x_gpio = gpiochip_get_data(chip);
+ 	struct tc3589x *tc3589x = tc3589x_gpio->tc3589x;
+ 	u8 reg = TC3589x_GPIODATA0 + (offset / 8) * 2;
+-	u8 mask = 1 << (offset % 8);
++	u8 mask = BIT(offset % 8);
+ 	int ret;
+ 
+ 	ret = tc3589x_reg_read(tc3589x, reg);
+@@ -55,7 +56,7 @@ static void tc3589x_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
+ 	struct tc3589x *tc3589x = tc3589x_gpio->tc3589x;
+ 	u8 reg = TC3589x_GPIODATA0 + (offset / 8) * 2;
+ 	unsigned pos = offset % 8;
+-	u8 data[] = {!!val << pos, 1 << pos};
++	u8 data[] = {!!val << pos, BIT(pos)};
+ 
+ 	tc3589x_block_write(tc3589x, reg, ARRAY_SIZE(data), data);
+ }
+@@ -70,7 +71,7 @@ static int tc3589x_gpio_direction_output(struct gpio_chip *chip,
+ 
+ 	tc3589x_gpio_set(chip, offset, val);
+ 
+-	return tc3589x_set_bits(tc3589x, reg, 1 << pos, 1 << pos);
++	return tc3589x_set_bits(tc3589x, reg, BIT(pos), BIT(pos));
+ }
+ 
+ static int tc3589x_gpio_direction_input(struct gpio_chip *chip,
+@@ -100,7 +101,7 @@ static int tc3589x_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 	struct tc3589x_gpio *tc3589x_gpio = gpiochip_get_data(gc);
+ 	int offset = d->hwirq;
+ 	int regoffset = offset / 8;
+-	int mask = 1 << (offset % 8);
++	int mask = BIT(offset % 8);
+ 
+ 	if (type == IRQ_TYPE_EDGE_BOTH) {
+ 		tc3589x_gpio->regs[REG_IBE][regoffset] |= mask;
+@@ -165,7 +166,7 @@ static void tc3589x_gpio_irq_mask(struct irq_data *d)
+ 	struct tc3589x_gpio *tc3589x_gpio = gpiochip_get_data(gc);
+ 	int offset = d->hwirq;
+ 	int regoffset = offset / 8;
+-	int mask = 1 << (offset % 8);
++	int mask = BIT(offset % 8);
+ 
+ 	tc3589x_gpio->regs[REG_IE][regoffset] &= ~mask;
+ }
+@@ -176,7 +177,7 @@ static void tc3589x_gpio_irq_unmask(struct irq_data *d)
+ 	struct tc3589x_gpio *tc3589x_gpio = gpiochip_get_data(gc);
+ 	int offset = d->hwirq;
+ 	int regoffset = offset / 8;
+-	int mask = 1 << (offset % 8);
++	int mask = BIT(offset % 8);
+ 
+ 	tc3589x_gpio->regs[REG_IE][regoffset] |= mask;
+ }
+-- 
+2.4.3
 
-This is not completely true. The pinctrl drivers are exposing
-functionality in terms of function groups (e.g., i2c1_grp, spi1_grp,
-pwm1_grp, etc.) It is not enough, but it is a step in the right
-direction for standard bindings and for tools that can build on top of
-this.
-
->  This means that any binding of a board to an ACPI
-> using system that just uses this is going to be entirely specific to the
-> particular combination of base and expansion board even if the
-> electrical connections are standard.
->
-
-This can be solved by tools that work with high level abstractions and
-generate this specific information.
-
-> This is something that people are currently looking at for DT, there the
-> discussion has been about defining the connectors as entities and hiding
-> the details of the muxing on the SoC behind that along with higher level
-> concepts like instantiation of buses like I2C and SPI.  It seems like if
-> we do want to try to share between DT and ACPI we should be doing it at
-> that level rather than dealing with pinmuxing at the extremely low level
-> that pinctrl does.
->
-
-At some point we still need to poke registers. We already have a
-drivers that do this (pinctrl) and a standard configuration interface
-(the pinctrl device tree bindings). It seems natural to build on top
-of this for those higher level concepts / tools.
-
-> Obviously for the more general ACPI use case the idiomatic way of
-> handling this is that the OS should never see anything about the
-> pin muxing. With DT we need to really know what's going on with the
-> pinbox because the model is that even for things built into a single
-> board the OS is responsible for managing the pins but that's really not
-> how ACPI is expected to work.
-
-Maybe. But we already expose pin control / muxing in
-drivers/pinctrl/intel, yes, read-only at this point. Very useful for
-debugging. Having write access would make debugging even more useful,
-not to mention fast prototyping.
