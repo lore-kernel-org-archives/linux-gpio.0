@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH v2 06/63] gpio: iop: Allow compile testing
-Date: Tue,  5 Apr 2016 19:35:15 +0200
-Message-ID: <1459877772-11289-7-git-send-email-alexanders83@web.de>
+Subject: [PATCH v2 12/63] gpio: pxa: Allow compile testing
+Date: Tue,  5 Apr 2016 19:35:21 +0200
+Message-ID: <1459877772-11289-13-git-send-email-alexanders83@web.de>
 References: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:62777 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.11]:54866 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750946AbcDERgt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 5 Apr 2016 13:36:49 -0400
+	id S1751729AbcDERgu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 5 Apr 2016 13:36:50 -0400
 In-Reply-To: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 91dcb232fae6..b7cb5a5d7153 100644
+index c6c8420dfa0f..448e8b43bf76 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -236,7 +236,7 @@ config GPIO_ICH
+@@ -353,7 +353,7 @@ config GPIO_PL061
  
- config GPIO_IOP
- 	tristate "Intel IOP GPIO"
--	depends on ARM && (ARCH_IOP32X || ARCH_IOP33X)
-+	depends on ARM && (ARCH_IOP32X || ARCH_IOP33X) || COMPILE_TEST
+ config GPIO_PXA
+ 	bool "PXA GPIO support"
+-	depends on ARCH_PXA || ARCH_MMP
++	depends on ARCH_PXA || ARCH_MMP || COMPILE_TEST
  	help
- 	  Say yes here to support the GPIO functionality of a number of Intel
- 	  IOP32X or IOP33X.
+ 	  Say yes here to support the PXA GPIO device
+ 
 -- 
 2.8.0
 
