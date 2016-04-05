@@ -1,61 +1,79 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v4 3/6] pinctrl: baytrail: Update gpio chip operations
-Date: Tue, 5 Apr 2016 11:48:23 +0300
-Message-ID: <20160405084823.GG1727@lahna.fi.intel.com>
-References: <1459508407-22011-1-git-send-email-cristina.ciocan@intel.com>
- <1459508407-22011-4-git-send-email-cristina.ciocan@intel.com>
- <CACRpkdbyGZbzX6k2b6CSKFZmxShXQ0i1=efgX6EKAnCG1EibOg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC PATCH 0/4] Add ACPI support for pinctrl configuration
+Date: Tue, 5 Apr 2016 11:00:50 +0200
+Message-ID: <CACRpkdZW83kOADo1WcYT=mc++ro3Xb7PS15zh+RkLnSxmbTZAQ@mail.gmail.com>
+References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
+	<20160404214034.GL2350@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:59147 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756749AbcDEIs2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 5 Apr 2016 04:48:28 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbyGZbzX6k2b6CSKFZmxShXQ0i1=efgX6EKAnCG1EibOg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20160404214034.GL2350@sirena.org.uk>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Irina Tirdea <irina.tirdea@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Octavian Purdila <octavian.purdila@intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Cristina Ciocan <cristina.ciocan@intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Irina Tirdea <irina.tirdea@intel.com>, Octavian Purdila <octavian.purdila@intel.com>
 
-On Mon, Apr 04, 2016 at 04:08:47PM +0200, Linus Walleij wrote:
-> On Fri, Apr 1, 2016 at 1:00 PM, Cristina Ciocan
-> <cristina.ciocan@intel.com> wrote:
-> 
-> > This patch updates the gpio chip implementation in order to interact with
-> > the pin control model: the chip contains reference to SOC data and
-> > pin/group/community information is retrieved through the SOC reference.
-> >
-> > Signed-off-by: Cristina Ciocan <cristina.ciocan@intel.com>
-> 
-> Patch applied with Mika's ACK.
+On Mon, Apr 4, 2016 at 11:40 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Thu, Mar 31, 2016 at 02:44:41PM +0300, Irina Tirdea wrote:
+>
+>> This is a proposal for adding ACPI support for pin controller
+>> configuration.
+>
+>> It has been developed to enable the MinnowBoard and IoT community
+>> by providing an easy way to specify pin multiplexing and
+>> pin configuration.
+>
+> So this is mainly targeted at modules being added to base boards?
+> Without getting into the binding at all here it seems like this is not
+> solving the problem at the right abstraction level.  It's exposing the
+> pins on the SoC directly without any tie in with the functionality that
+> goes over those pins.  This means that any binding of a board to an ACPI
+> using system that just uses this is going to be entirely specific to the
+> particular combination of base and expansion board even if the
+> electrical connections are standard.
 
-Thanks!
+I have seen the same need beyond strictly embedded (MinnowBoard)
+from the Intel camp.
 
-> Cristina & Mika, can you provide feedback on a patch I sent last week:
-> http://marc.info/?l=linux-gpio&m=145864063724362&w=2
-> 
-> This makes it possible for a GPIO driver to use native
-> open drain if the hardware supports this instead of relying
-> on switching the pin to input and thus expecting high impedance.
+These chips with funny Atom-specific codenames (baytrail, cherryview,
+broxton, sunrisepoint etc) are not just used for these IoT use cases
+but also for e.g. laptops of the ChromeBook form factor, and the same
+pin control needs arise there, just at a different cadence related to
+product cycle.
 
-Looks like a good idea to me. Recent Intel hardware (Skylake, Broxton)
-is capable of taking advantage of this. Not sure if Baytrail supports
-this at hardware level, though.
+I bet they also have funny product-specific kernel trees :(
 
-> With a backing pin control driver I think that maybe we need
-> a pin control back-end performing things like this on behalf
-> of the GPIO driver, something like
-> pinctrl_gpio_set_config(unsigned gpio, enum pin_config_param param,
-> u16 argument);
-> 
-> So the pin controller can perform config on behalf of the
-> GPIO driver (e.g. setting a backing pin to open drain).
-> 
-> Do you think we will need this?
+> This is something that people are currently looking at for DT, there the
+> discussion has been about defining the connectors as entities and hiding
+> the details of the muxing on the SoC behind that along with higher level
+> concepts like instantiation of buses like I2C and SPI.  It seems like if
+> we do want to try to share between DT and ACPI we should be doing it at
+> that level rather than dealing with pinmuxing at the extremely low level
+> that pinctrl does.
 
-If I understand this right, GPIO part of the pinctrl driver just calls
-pinctrl_gpio_set_config() with correct parameters in its
-->set_single_ended() to get the pin to the right mode. So yes, I think
-we could use it, at least from Intel pinctrl/GPIO drivers perspective :)
+Agree: work is needed here. It is a big confusion, the whole model is
+based around the configuration being pretty static as I recently
+realized when just wanting to add a runtime-detected LCD panel
+to a certain driver. No runtime patching of the DT or overlays or any
+of the sort deliver what is really needed.
+
+The only thing I heard which was actually doing something sensible
+was when Matthew Garret once told that apple mice provide a
+device tree fragment to the OS on how to handle it during bus
+discovery.
+
+I think that for random complex hotpluggable devices like what
+greybus is trying to achieve this is needed too, despite the standard
+USB-like device classes in all their glory.
+
+> Obviously for the more general ACPI use case the idiomatic way of
+> handling this is that the OS should never see anything about the
+> pin muxing.  With DT we need to really know what's going on with the
+> pinbox because the model is that even for things built into a single
+> board the OS is responsible for managing the pins but that's really not
+> how ACPI is expected to work.
+
+See my previous mail for some kind of answer to this.
+
+Yours,
+Linus Walleij
