@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH v2 09/63] gpio: mxs: Allow compile testing
-Date: Tue,  5 Apr 2016 19:35:18 +0200
-Message-ID: <1459877772-11289-10-git-send-email-alexanders83@web.de>
+Subject: [PATCH v2 13/63] gpio: spear-spics: Allow compile testing
+Date: Tue,  5 Apr 2016 19:35:22 +0200
+Message-ID: <1459877772-11289-14-git-send-email-alexanders83@web.de>
 References: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:51906 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.12]:62224 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751070AbcDERgt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 5 Apr 2016 13:36:49 -0400
+	id S1751398AbcDERgv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 5 Apr 2016 13:36:51 -0400
 In-Reply-To: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 44ae3e5c0776..8748a94c2d45 100644
+index 448e8b43bf76..db84932018d6 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -322,7 +322,7 @@ config GPIO_MXC
+@@ -366,7 +366,7 @@ config GPIO_RCAR
  
- config GPIO_MXS
- 	def_bool y
--	depends on ARCH_MXS
-+	depends on ARCH_MXS || COMPILE_TEST
- 	select GPIO_GENERIC
+ config GPIO_SPEAR_SPICS
+ 	bool "ST SPEAr13xx SPI Chip Select as GPIO support"
+-	depends on PLAT_SPEAR
++	depends on PLAT_SPEAR || COMPILE_TEST
  	select GENERIC_IRQ_CHIP
- 
+ 	help
+ 	  Say yes here to support ST SPEAr SPI Chip Select as GPIO device
 -- 
 2.8.0
 
