@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH v2 11/63] gpio: pl061: Allow compile testing
-Date: Tue,  5 Apr 2016 19:35:20 +0200
-Message-ID: <1459877772-11289-12-git-send-email-alexanders83@web.de>
+Subject: [PATCH v2 19/63] gpio: xgene: Allow compile testing
+Date: Tue,  5 Apr 2016 19:35:28 +0200
+Message-ID: <1459877772-11289-20-git-send-email-alexanders83@web.de>
 References: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:64818 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.11]:55921 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751589AbcDERgu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 5 Apr 2016 13:36:50 -0400
+	id S1750946AbcDERgx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 5 Apr 2016 13:36:53 -0400
 In-Reply-To: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index ac8b89d5db0a..c6c8420dfa0f 100644
+index ec14f1153908..91a9c4c8af29 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -345,7 +345,7 @@ config GPIO_OMAP
+@@ -456,7 +456,7 @@ config GPIO_VX855
  
- config GPIO_PL061
- 	bool "PrimeCell PL061 GPIO support"
--	depends on ARM_AMBA
-+	depends on ARM_AMBA || COMPILE_TEST
- 	select IRQ_DOMAIN
- 	select GPIOLIB_IRQCHIP
+ config GPIO_XGENE
+ 	bool "APM X-Gene GPIO controller support"
+-	depends on ARM64 && OF_GPIO
++	depends on ARM64 && OF_GPIO || COMPILE_TEST
  	help
+ 	  This driver is to support the GPIO block within the APM X-Gene SoC
+ 	  platform's generic flash controller. The GPIO pins are muxed with
 -- 
 2.8.0
 
