@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH v2 40/63] gpio: twl6040: Allow compile testing
-Date: Tue,  5 Apr 2016 19:39:21 +0200
-Message-ID: <1459877980-31872-1-git-send-email-alexanders83@web.de>
+Subject: [PATCH v2 47/63] gpio: stmpe: Allow compile testing
+Date: Tue,  5 Apr 2016 19:39:28 +0200
+Message-ID: <1459877980-31872-8-git-send-email-alexanders83@web.de>
 References: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.4]:58851 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.15.4]:56723 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759581AbcDERjr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 5 Apr 2016 13:39:47 -0400
+	id S1759577AbcDERjs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 5 Apr 2016 13:39:48 -0400
 In-Reply-To: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 0d3fad059ac5..77bf0131d9b0 100644
+index 5bd23e7124ef..3a4d192646e6 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -947,7 +947,7 @@ config GPIO_TWL4030
+@@ -883,7 +883,7 @@ config GPIO_RC5T583
  
- config GPIO_TWL6040
- 	tristate "TWL6040 GPO"
--	depends on TWL6040_CORE
-+	depends on TWL6040_CORE || COMPILE_TEST
+ config GPIO_STMPE
+ 	bool "STMPE GPIOs"
+-	depends on MFD_STMPE && OF_GPIO
++	depends on MFD_STMPE && OF_GPIO || COMPILE_TEST
+ 	select GPIOLIB_IRQCHIP
  	help
- 	  Say yes here to access the GPO signals of twl6040
- 	  audio chip from Texas Instruments.
+ 	  This enables support for the GPIOs found on the STMPE I/O
 -- 
 2.8.0
 
