@@ -1,12 +1,12 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH v2 34/63] gpio: timberdale: Allow compile testing
-Date: Tue,  5 Apr 2016 19:39:04 +0200
-Message-ID: <1459877949-29889-15-git-send-email-alexanders83@web.de>
+Subject: [PATCH v2 21/63] gpio: mc9s08dz60: Allow compile testing
+Date: Tue,  5 Apr 2016 19:38:51 +0200
+Message-ID: <1459877949-29889-2-git-send-email-alexanders83@web.de>
 References: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:57345 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.11]:64092 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759475AbcDERj3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	id S1759382AbcDERj3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
 	Tue, 5 Apr 2016 13:39:29 -0400
 In-Reply-To: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -22,17 +22,17 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index c5e8016cd25e..327cc857f3ad 100644
+index 34e1547277e3..6b890958fe1b 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -901,7 +901,7 @@ config GPIO_TC3589X
+@@ -687,7 +687,7 @@ config GPIO_MAX732X_IRQ
  
- config GPIO_TIMBERDALE
- 	bool "Support for timberdale GPIO IP"
--	depends on MFD_TIMBERDALE
-+	depends on MFD_TIMBERDALE || COMPILE_TEST
- 	---help---
- 	Add support for the GPIO IP in the timberdale FPGA.
+ config GPIO_MC9S08DZ60
+ 	bool "MX35 3DS BOARD MC9S08DZ60 GPIO functions"
+-	depends on I2C=y && MACH_MX35_3DS
++	depends on I2C=y && MACH_MX35_3DS || COMPILE_TEST
+ 	help
+ 	  Select this to enable the MC9S08DZ60 GPIO driver
  
 -- 
 2.8.0
