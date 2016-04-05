@@ -1,13 +1,13 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH v2 33/63] gpio: rc5t583: Allow compile testing
-Date: Tue,  5 Apr 2016 19:39:03 +0200
-Message-ID: <1459877949-29889-14-git-send-email-alexanders83@web.de>
+Subject: [PATCH v2 34/63] gpio: timberdale: Allow compile testing
+Date: Tue,  5 Apr 2016 19:39:04 +0200
+Message-ID: <1459877949-29889-15-git-send-email-alexanders83@web.de>
 References: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:58917 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.17.12]:57345 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758933AbcDERjY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 5 Apr 2016 13:39:24 -0400
+	id S1759475AbcDERj3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 5 Apr 2016 13:39:29 -0400
 In-Reply-To: <1459877772-11289-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -22,18 +22,18 @@ Signed-off-by: Alexander Stein <alexanders83@web.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 6c37864ded40..c5e8016cd25e 100644
+index c5e8016cd25e..327cc857f3ad 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
-@@ -874,7 +874,7 @@ config GPIO_PALMAS
+@@ -901,7 +901,7 @@ config GPIO_TC3589X
  
- config GPIO_RC5T583
- 	bool "RICOH RC5T583 GPIO"
--	depends on MFD_RC5T583
-+	depends on MFD_RC5T583 || COMPILE_TEST
- 	help
- 	  Select this option to enable GPIO driver for the Ricoh RC5T583
- 	  chip family.
+ config GPIO_TIMBERDALE
+ 	bool "Support for timberdale GPIO IP"
+-	depends on MFD_TIMBERDALE
++	depends on MFD_TIMBERDALE || COMPILE_TEST
+ 	---help---
+ 	Add support for the GPIO IP in the timberdale FPGA.
+ 
 -- 
 2.8.0
 
