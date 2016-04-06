@@ -1,28 +1,61 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V1 5/7] gpio: Loongson1: add Loongson1 GPIO driver
-Date: Wed, 6 Apr 2016 15:31:53 +0200
-Message-ID: <CACRpkdYGjz5n4Cw=cE45-KeWLZ1ZK82MMVEe5sYxkoCbNfZ-Yw@mail.gmail.com>
-References: <1459946095-7637-1-git-send-email-keguang.zhang@gmail.com>
-	<1459946095-7637-6-git-send-email-keguang.zhang@gmail.com>
+Subject: Re: [PATCH] gpiolib: handle probe deferrals better
+Date: Wed, 6 Apr 2016 15:39:13 +0200
+Message-ID: <CACRpkdbzRPfEgdcPrQzDBQxVUnpdJFoGSFqeQ82tohfCAE11_g@mail.gmail.com>
+References: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org>
+	<56FE7785.1010507@ti.com>
+	<570294A4.2070801@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1459946095-7637-6-git-send-email-keguang.zhang@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Keguang Zhang <keguang.zhang@gmail.com>
-Cc: Linux MIPS <linux-mips@linux-mips.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Alexandre Courbot <gnurou@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:34210 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750726AbcDFNjO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Apr 2016 09:39:14 -0400
+Received: by mail-oi0-f51.google.com with SMTP id s79so58212569oie.1
+        for <linux-gpio@vger.kernel.org>; Wed, 06 Apr 2016 06:39:14 -0700 (PDT)
+In-Reply-To: <570294A4.2070801@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Alexander Stein <alexander.stein@systec-electronic.com>, Linux Input <linux-input@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Guenter Roeck <linux@roeck-us.net>, Bjorn Andersson <bjorn.andersson@linaro.org>
 
-On Wed, Apr 6, 2016 at 2:34 PM, Keguang Zhang <keguang.zhang@gmail.com> wrote:
+On Mon, Apr 4, 2016 at 6:21 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-> From: Kelvin Cheung <keguang.zhang@gmail.com>
->
-> This patch adds GPIO driver for Loongson1B.
->
-> Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
+> Below is RFC patch to prove above consent. I've had offlist
+> debugging session with Alexander and He mentioned that this change
+> fixes boot issue for him.
 
-Nice and pretty driver.
-Patch applied for v4.7.
+Thanks for looking into this.
+
+> Of course, there are some question to discuss:
+> 1) [+] It should sync initialization of GPIOchip and GPIOirqchip
+> 2) [+] This approach requires changes in gpiolib/gpio drivers only, from other side
+> It will require to add fixes all over the Kernel if gpiod_to_irq() will
+> start returning -EPROBE_DEFER.
+
+Yes, so it will need to be cross-coordinated with IRQ maintainers
+Marc and TGLX.
+
+> 3) [-] has_irq might need to be initialized by non-DT drivers
+
+Yes. Every driver in the kernel need to be audited.
+
+> 4) [-] irq_ready might need to be set manually by drivers which do not use GPIO irq
+>    helpers (see change in gpio-mpc8xxx.c)
+
+Yes. That too. Every driver in the kernel need to be audited.
+
+> 4) irq_ready access synchronization on SMP? atomic?
+
+Uhhh.... I don't even understand the question.
+
+> job done with commit e6918cd 'gpiolib: handle probe deferrals better'
+> reverted.
+
+I have taken that out of my tree as well. My naive approach
+doesn't work.
 
 Yours,
 Linus Walleij
