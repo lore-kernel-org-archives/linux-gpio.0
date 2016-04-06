@@ -1,73 +1,28 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v7 0/3] gpio: dwapb: add gpio-signaled acpi event support
- for power button
-Date: Wed, 6 Apr 2016 16:03:10 +0300
-Message-ID: <CAHp75Vdw_xj6Cc+zsM_ba0BPkeV+18dZzGoyyVGOgTKbxZwzdA@mail.gmail.com>
-References: <1459926480-32966-1-git-send-email-qiujiang@huawei.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V1 5/7] gpio: Loongson1: add Loongson1 GPIO driver
+Date: Wed, 6 Apr 2016 15:31:53 +0200
+Message-ID: <CACRpkdYGjz5n4Cw=cE45-KeWLZ1ZK82MMVEe5sYxkoCbNfZ-Yw@mail.gmail.com>
+References: <1459946095-7637-1-git-send-email-keguang.zhang@gmail.com>
+	<1459946095-7637-6-git-send-email-keguang.zhang@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1459926480-32966-1-git-send-email-qiujiang@huawei.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: qiujiang <qiujiang@huawei.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Alan Tull <delicious.quinoa@gmail.com>, Jamie Iles <jamie@jamieiles.com>, charles.chenxin@huawei.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1459946095-7637-6-git-send-email-keguang.zhang@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Keguang Zhang <keguang.zhang@gmail.com>
+Cc: Linux MIPS <linux-mips@linux-mips.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Alexandre Courbot <gnurou@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 6, 2016 at 10:07 AM, qiujiang <qiujiang@huawei.com> wrote:
-> This patchset adds gpio-signaled acpi events support for power button on hisilicon
-> D02 board.
->
-> The three patches respectively:
->         - remove name from dwapb_port_property
->         - convert device node to fwnode
->         - add gpio-signaled acpi event support
->
->    This patchset is based on
->    https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
->    branch "devel"
+On Wed, Apr 6, 2016 at 2:34 PM, Keguang Zhang <keguang.zhang@gmail.com> wrote:
 
-Thanks for new version. Still few minors, but looks pretty match good!
+> From: Kelvin Cheung <keguang.zhang@gmail.com>
+>
+> This patch adds GPIO driver for Loongson1B.
+>
+> Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
 
->
-> Changes v6 -> v7:
->    - add patch1 by Alan's suggestion
->
-> Changes v5 -> v6:
->    - merge patch 2~3 to one patch
->    - small fixed from Alan's suggestion
->    - fixed subject title reference commit history
->
-> Changes v4 -> v5:
->    - split into three patchs
->    - add Andy's ACKs
->
-> Changes v3 -> v4:
->    - re-organize this two patchs by Andy's suggestion
->
-> Changes v2 -> v3:
->    - fixed the build error reported by Kbuild test robot
->
-> Changes v1 -> v2:
->    - rebase to branch "devel" of Linus Walleij's repository
->    - split in two patch as suggested by Andy S
->    - add Mika's ACKs
->
-> qiujiang (3):
->   gpio: dwapb: remove name from dwapb_port_property
->   gpio: dwapb: convert device node to fwnode
->   gpio: dwapb: add gpio-signaled acpi event support
->
->  drivers/gpio/gpio-dwapb.c                | 76 ++++++++++++++++++--------------
->  drivers/mfd/intel_quark_i2c_gpio.c       |  3 +-
->  include/linux/platform_data/gpio-dwapb.h |  3 +-
->  3 files changed, 46 insertions(+), 36 deletions(-)
->
-> --
-> 1.9.1
->
+Nice and pretty driver.
+Patch applied for v4.7.
 
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Yours,
+Linus Walleij
