@@ -1,58 +1,56 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC PATCH 0/4] Add ACPI support for pinctrl configuration
-Date: Wed, 6 Apr 2016 01:01:33 +0100
-Message-ID: <20160406000130.GB8903@svinekod>
-References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
- <20160404225200.GA1615@svinekod>
- <1F3AC3675D538145B1661F571FE1805F2F2342A6@irsmsx105.ger.corp.intel.com>
- <20160405181625.GA3064@svinekod>
- <CAE1zot+kyANCTPHGmj2W26f4LbS9Nkgt_9DNon-=0nsqRpT3Rw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAE1zot+kyANCTPHGmj2W26f4LbS9Nkgt_9DNon-=0nsqRpT3Rw@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: "Tirdea, Irina" <irina.tirdea@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Ciocan, Cristina" <cristina.ciocan@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "charles.garcia-tobin@arm.com" <charles.garcia-tobin@arm.com>
+From: Greg Ungerer <gerg@uclinux.org>
+Subject: [PATCH] m68k/gpio: remove arch specific sysfs bus device
+Date: Wed,  6 Apr 2016 12:32:10 +1000
+Message-ID: <1459909950-26077-1-git-send-email-gerg@uclinux.org>
+Return-path: <linux-m68k-owner@vger.kernel.org>
+Sender: linux-m68k-owner@vger.kernel.org
+To: linux-m68k@vger.kernel.org, linux@roeck-us.net, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, linus.walleij@linaro.org
+Cc: Greg Ungerer <gerg@uclinux.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 05, 2016 at 11:09:34PM +0300, Octavian Purdila wrote:
-> On Tue, Apr 5, 2016 at 9:16 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> > * The firmware is to some extent expected to manage pinctrl today (for power
-> >   management of devices it does know about), and hence a pinctrl device is
-> >   potentially under shared management of ACPI and the OS.
-> >
-> > * The ACPI specification says nothing about this style of pinctrl management,
-> >   so it is unclear what the expectations are:
-> 
-> Does it say anything at all about pinctrl management?
+From: Greg Ungerer <gerg@gumby.(none)>
 
-To the best of my knowledge the ACPI spec does not explicitly mention pinctrl.
-In another reply it was mentioned that there is work in progress for pinmuxing,
-so evidently it is on the ASWG radar and within the scope of ACPI.
+The ColdFire architecture specific gpio support code registers a sysfs
+bus device named "gpio". This clashes with the new generic API device
+added in commit 3c702e99 ("gpio: add a userspace chardev ABI for GPIOs").
 
-I was trying to point out that it is _implicitly_ firmware's responsibility to
-do any pinctrl today, due to the ACPI model for power management, and the lack
-of an existing ACPI mechanisms to provide pinctrl data.
+The old ColdFire sysfs gpio device was never used for anything specific,
+and no links or other nodes were created under it. The new API sysfs gpio
+device has all the same default sysfs links (device, drivers, etc) and
+they are properly populated.
 
-In practice, firmware configures pinctrl at boot, and may modify pinctrl as
-part of the runtime power management firmware is put in charge of.
+Remove the old ColdFire sysfs gpio registration.
 
-The lack of any statement about pinctrl would mean that there is effectively no
-reasonable limitation on what firmware might do with pinctrl, and we cannot
-assume specific behaviour from the firmware.
+Signed-off-by: Greg Ungerer <gerg@uclinux.org>
+---
+ arch/m68k/coldfire/gpio.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-[...]
-
-> Since our focus is for open-ended configurations and for hardware that
-> it is not know to firmware we only considered the case where the pins
-> are not touched after the system boots.
-> 
-> Now I wonder what are the cases were the firmware changes the pin
-> configuration after boot.
-
-Device power management and suspend/resume seem like the obvious cases.
-
-Thanks,
-Mark
+diff --git a/arch/m68k/coldfire/gpio.c b/arch/m68k/coldfire/gpio.c
+index 8832083..b515809 100644
+--- a/arch/m68k/coldfire/gpio.c
++++ b/arch/m68k/coldfire/gpio.c
+@@ -158,11 +158,6 @@ static int mcfgpio_to_irq(struct gpio_chip *chip, unsigned offset)
+ 		return -EINVAL;
+ }
+ 
+-static struct bus_type mcfgpio_subsys = {
+-	.name		= "gpio",
+-	.dev_name	= "gpio",
+-};
+-
+ static struct gpio_chip mcfgpio_chip = {
+ 	.label			= "mcfgpio",
+ 	.request		= mcfgpio_request,
+@@ -178,8 +173,7 @@ static struct gpio_chip mcfgpio_chip = {
+ 
+ static int __init mcfgpio_sysinit(void)
+ {
+-	gpiochip_add_data(&mcfgpio_chip, NULL);
+-	return subsys_system_register(&mcfgpio_subsys, NULL);
++	return gpiochip_add_data(&mcfgpio_chip, NULL);
+ }
+ 
+ core_initcall(mcfgpio_sysinit);
+-- 
+1.9.1
