@@ -1,33 +1,68 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: zynq: Fix the error path
-Date: Wed, 6 Apr 2016 15:40:36 +0200
-Message-ID: <CACRpkdZna_Bznio84enjjsegZVt+SAOGc-mSc9H7Dqq8PCotfg@mail.gmail.com>
-References: <1459793646-16000-1-git-send-email-shubhraj@xilinx.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH V1 3/7] dmaengine: Loongson1: add Loongson1 dmaengine
+ driver
+Date: Wed, 6 Apr 2016 07:26:53 -0700
+Message-ID: <20160406142652.GC27292@vkoul-mobl.iind.intel.com>
+References: <1459946095-7637-1-git-send-email-keguang.zhang@gmail.com>
+ <1459946095-7637-4-git-send-email-keguang.zhang@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:36233 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750771AbcDFNkh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Apr 2016 09:40:37 -0400
-Received: by mail-oi0-f48.google.com with SMTP id y204so58119212oie.3
-        for <linux-gpio@vger.kernel.org>; Wed, 06 Apr 2016 06:40:37 -0700 (PDT)
-In-Reply-To: <1459793646-16000-1-git-send-email-shubhraj@xilinx.com>
+Received: from mga03.intel.com ([134.134.136.65]:26630 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753370AbcDFO1K (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 6 Apr 2016 10:27:10 -0400
+Content-Disposition: inline
+In-Reply-To: <1459946095-7637-4-git-send-email-keguang.zhang@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Shubhrajyoti Datta <shubhraj@xilinx.com>
+To: Keguang Zhang <keguang.zhang@gmail.com>
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org, Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>
 
-On Mon, Apr 4, 2016 at 8:14 PM, Shubhrajyoti Datta
-<shubhrajyoti.datta@xilinx.com> wrote:
+On Wed, Apr 06, 2016 at 08:34:51PM +0800, Keguang Zhang wrote:
+> @@ -527,6 +527,15 @@ config ZX_DMA
+>  	help
+>  	  Support the DMA engine for ZTE ZX296702 platform devices.
+>  
+> +config DMA_LOONGSON1
 
-> pm_runtime_disable is called only in remove it is missed
-> out in the error path.
-> Fix the same.
->
-> Signed-off-by: Shubhrajyoti Datta <shubhraj@xilinx.com>
+The kconfig and makefile is sorted alphabetically, pls arrage these entries
+accordingly
 
-Patch applied.
+> +
+> +		/*memorize the physical address of descriptor */
 
-Yours,
-Linus Walleij
+bad comment style
+
+
+> +	/*allocate DMA descriptors */
+
+here and other places too :(
+
+> +static enum dma_status ls1x_dma_tx_status(struct dma_chan *chan,
+> +					  dma_cookie_t cookie,
+> +					  struct dma_tx_state *txstate)
+> +{
+> +	struct ls1x_dma_chan *dma_chan = to_ls1x_dma_chan(chan);
+> +	struct ls1x_dma_desc *dma_desc = dma_chan->dma_desc;
+> +	struct virt_dma_desc *vdesc;
+> +	enum dma_status status;
+> +	unsigned int residue = 0;
+> +	unsigned long flags;
+> +
+> +	status = dma_cookie_status(chan, cookie, txstate);
+> +	if ((status == DMA_COMPLETE) || !txstate)
+> +		return status;
+> +
+> +	spin_lock_irqsave(&dma_chan->vchan.lock, flags);
+> +
+> +	vdesc = vchan_find_desc(&dma_chan->vchan, cookie);
+> +	if (vdesc)
+> +		/* not yet processed */
+> +		residue = ls1x_dma_desc_residue(to_ls1x_dma_desc(vdesc), 0);
+
+If your usage queries reside repeatedly, then it might make sense to store
+the size which is residue here
+
+-- 
+~Vinod
