@@ -1,83 +1,40 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH] gpiolib: handle probe deferrals better
-Date: Wed, 6 Apr 2016 18:42:31 +0300
-Message-ID: <57052E67.4050206@ti.com>
-References: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org>
- <56FE7785.1010507@ti.com> <570294A4.2070801@ti.com>
- <CACRpkdbzRPfEgdcPrQzDBQxVUnpdJFoGSFqeQ82tohfCAE11_g@mail.gmail.com>
+From: Greg Ungerer <gerg@uclinux.org>
+Subject: Re: [PATCH] m68k/gpio: remove arch specific sysfs bus device
+Date: Thu, 7 Apr 2016 05:31:14 +1000
+Message-ID: <57056402.8020308@uclinux.org>
+References: <1459909950-26077-1-git-send-email-gerg@uclinux.org>
+ <CACRpkda6SHJC-TfeakPa=ZcYtTyhNijN3H6y8FUDyziVNXCEEw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:33709 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753252AbcDFPnX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 6 Apr 2016 11:43:23 -0400
-In-Reply-To: <CACRpkdbzRPfEgdcPrQzDBQxVUnpdJFoGSFqeQ82tohfCAE11_g@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkda6SHJC-TfeakPa=ZcYtTyhNijN3H6y8FUDyziVNXCEEw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Alexander Stein <alexander.stein@systec-electronic.com>, Linux Input <linux-input@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Guenter Roeck <linux@roeck-us.net>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-m68k@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
-On 04/06/2016 04:39 PM, Linus Walleij wrote:
-> On Mon, Apr 4, 2016 at 6:21 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
-> 
->> Below is RFC patch to prove above consent. I've had offlist
->> debugging session with Alexander and He mentioned that this change
->> fixes boot issue for him.
-> 
-> Thanks for looking into this.
-> 
->> Of course, there are some question to discuss:
->> 1) [+] It should sync initialization of GPIOchip and GPIOirqchip
->> 2) [+] This approach requires changes in gpiolib/gpio drivers only, from other side
->> It will require to add fixes all over the Kernel if gpiod_to_irq() will
->> start returning -EPROBE_DEFER.
-> 
-> Yes, so it will need to be cross-coordinated with IRQ maintainers
-> Marc and TGLX.
+On 06/04/16 16:57, Linus Walleij wrote:
+> On Wed, Apr 6, 2016 at 4:32 AM, Greg Ungerer <gerg@uclinux.org> wrote:
+>
+>> From: Greg Ungerer <gerg@gumby.(none)>
+>>
+>> The ColdFire architecture specific gpio support code registers a sysfs
+>> bus device named "gpio". This clashes with the new generic API device
+>> added in commit 3c702e99 ("gpio: add a userspace chardev ABI for GPIOs").
+>>
+>> The old ColdFire sysfs gpio device was never used for anything specific,
+>> and no links or other nodes were created under it. The new API sysfs gpio
+>> device has all the same default sysfs links (device, drivers, etc) and
+>> they are properly populated.
+>>
+>> Remove the old ColdFire sysfs gpio registration.
+>>
+>> Signed-off-by: Greg Ungerer <gerg@uclinux.org>
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Seems, I have to study how to be more clear :(
-This +/- are all about my RFC patch.
-My patch limits the scope of problem to GPIO subsystem/drivers only.
-As opposite, if we will touch gpiod_to_irq() - it will affect on whole
-kernel.
+Thanks Linus. I will push via the m68knommu git tree.
 
-> 
->> 3) [-] has_irq might need to be initialized by non-DT drivers
-> 
-> Yes. Every driver in the kernel need to be audited.
-
-With my patch only GPIO drivers need to be checked, especially GPIO
-drivers which:
- - are non-DT based;
- - do not use GPIO irq helpers
- - can make IRQ functionality optional using Kconfig/sysfs/module parameters
-
-> 
->> 4) [-] irq_ready might need to be set manually by drivers which do not use GPIO irq
->>     helpers (see change in gpio-mpc8xxx.c)
-> 
-> Yes. That too. Every driver in the kernel need to be audited.
-> 
->> 4) irq_ready access synchronization on SMP? atomic?
-> 
-> Uhhh.... I don't even understand the question.
-
-in my patch the irq_ready is set from _gpiochip_irqchip_add() and
-read from gpiod_request() without any kind of protection and those
-two functions can be executed in parallel.
-
-> 
->> job done with commit e6918cd 'gpiolib: handle probe deferrals better'
->> reverted.
-> 
-> I have taken that out of my tree as well. My naive approach
-> doesn't work.
-> 
-
-
--- 
-regards,
--grygorii
+Regards
+Greg
