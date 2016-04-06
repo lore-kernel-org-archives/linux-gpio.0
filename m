@@ -1,41 +1,163 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] m68k/gpio: remove arch specific sysfs bus device
-Date: Wed, 6 Apr 2016 08:57:58 +0200
-Message-ID: <CACRpkda6SHJC-TfeakPa=ZcYtTyhNijN3H6y8FUDyziVNXCEEw@mail.gmail.com>
-References: <1459909950-26077-1-git-send-email-gerg@uclinux.org>
+From: qiujiang <qiujiang@huawei.com>
+Subject: [PATCH v7 2/3] gpio: dwapb: convert device node to fwnode
+Date: Wed, 6 Apr 2016 15:07:59 +0800
+Message-ID: <1459926480-32966-3-git-send-email-qiujiang@huawei.com>
+References: <1459926480-32966-1-git-send-email-qiujiang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:35182 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751934AbcDFG57 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Apr 2016 02:57:59 -0400
-Received: by mail-ob0-f178.google.com with SMTP id fp4so25238302obb.2
-        for <linux-gpio@vger.kernel.org>; Tue, 05 Apr 2016 23:57:59 -0700 (PDT)
-In-Reply-To: <1459909950-26077-1-git-send-email-gerg@uclinux.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1459926480-32966-1-git-send-email-qiujiang@huawei.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: mika.westerberg@linux.intel.com, andy.shevchenko@gmail.com, delicious.quinoa@gmail.com, jamie@jamieiles.com, charles.chenxin@huawei.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linuxarm@huawei.com, qiujiang <qiujiang@huawei.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Greg Ungerer <gerg@uclinux.org>
-Cc: linux-m68k@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Wed, Apr 6, 2016 at 4:32 AM, Greg Ungerer <gerg@uclinux.org> wrote:
+This patch converts device node to fwnode for dwapb driver, so
+as to provide a unified fwnode for DT and ACPI bindings.
 
-> From: Greg Ungerer <gerg@gumby.(none)>
->
-> The ColdFire architecture specific gpio support code registers a sysfs
-> bus device named "gpio". This clashes with the new generic API device
-> added in commit 3c702e99 ("gpio: add a userspace chardev ABI for GPIOs").
->
-> The old ColdFire sysfs gpio device was never used for anything specific,
-> and no links or other nodes were created under it. The new API sysfs gpio
-> device has all the same default sysfs links (device, drivers, etc) and
-> they are properly populated.
->
-> Remove the old ColdFire sysfs gpio registration.
->
-> Signed-off-by: Greg Ungerer <gerg@uclinux.org>
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: qiujiang <qiujiang@huawei.com>
+---
+ drivers/gpio/gpio-dwapb.c                | 37 ++++++++++++++++----------------
+ drivers/mfd/intel_quark_i2c_gpio.c       |  2 +-
+ include/linux/platform_data/gpio-dwapb.h |  2 +-
+ 3 files changed, 20 insertions(+), 21 deletions(-)
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 91afec8..3c4d8e6 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -22,6 +22,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+ #include <linux/platform_device.h>
++#include <linux/property.h>
+ #include <linux/spinlock.h>
+ #include <linux/platform_data/gpio-dwapb.h>
+ #include <linux/slab.h>
+@@ -290,14 +291,14 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 				 struct dwapb_port_property *pp)
+ {
+ 	struct gpio_chip *gc = &port->gc;
+-	struct device_node *node = pp->node;
++	struct fwnode_handle  *fwnode = pp->fwnode;
+ 	struct irq_chip_generic	*irq_gc = NULL;
+ 	unsigned int hwirq, ngpio = gc->ngpio;
+ 	struct irq_chip_type *ct;
+ 	int err, i;
+ 
+-	gpio->domain = irq_domain_add_linear(node, ngpio,
+-					     &irq_generic_chip_ops, gpio);
++	gpio->domain = irq_domain_create_linear(fwnode, ngpio,
++						 &irq_generic_chip_ops, gpio);
+ 	if (!gpio->domain)
+ 		return;
+ 
+@@ -414,7 +415,8 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+ 	}
+ 
+ #ifdef CONFIG_OF_GPIO
+-	port->gc.of_node = pp->node;
++	port->gc.of_node = is_of_node(pp->fwnode) ?
++		to_of_node(pp->fwnode) : NULL;
+ #endif
+ 	port->gc.ngpio = pp->ngpio;
+ 	port->gc.base = pp->gpio_base;
+@@ -445,19 +447,15 @@ static void dwapb_gpio_unregister(struct dwapb_gpio *gpio)
+ }
+ 
+ static struct dwapb_platform_data *
+-dwapb_gpio_get_pdata_of(struct device *dev)
++dwapb_gpio_get_pdata(struct device *dev)
+ {
+-	struct device_node *node, *port_np;
++	struct fwnode_handle *fwnode;
+ 	struct dwapb_platform_data *pdata;
+ 	struct dwapb_port_property *pp;
+ 	int nports;
+ 	int i;
+ 
+-	node = dev->of_node;
+-	if (!IS_ENABLED(CONFIG_OF_GPIO) || !node)
+-		return ERR_PTR(-ENODEV);
+-
+-	nports = of_get_child_count(node);
++	nports = device_get_child_node_count(dev);
+ 	if (nports == 0)
+ 		return ERR_PTR(-ENODEV);
+ 
+@@ -472,18 +470,18 @@ dwapb_gpio_get_pdata_of(struct device *dev)
+ 	pdata->nports = nports;
+ 
+ 	i = 0;
+-	for_each_child_of_node(node, port_np) {
++	device_for_each_child_node(dev, fwnode)  {
+ 		pp = &pdata->properties[i++];
+-		pp->node = port_np;
++		pp->fwnode = fwnode;
+ 
+-		if (of_property_read_u32(port_np, "reg", &pp->idx) ||
++		if (fwnode_property_read_u32(fwnode, "reg", &pp->idx) ||
+ 		    pp->idx >= DWAPB_MAX_PORTS) {
+ 			dev_err(dev,
+ 				"missing/invalid port index for port%d\n", i);
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 
+-		if (of_property_read_u32(port_np, "snps,nr-gpios",
++		if (fwnode_property_read_u32(fwnode, "snps,nr-gpios",
+ 					 &pp->ngpio)) {
+ 			dev_info(dev,
+ 				 "failed to get number of gpios for port%d\n",
+@@ -495,9 +493,10 @@ dwapb_gpio_get_pdata_of(struct device *dev)
+ 		 * Only port A can provide interrupts in all configurations of
+ 		 * the IP.
+ 		 */
+-		if (pp->idx == 0 &&
+-		    of_property_read_bool(port_np, "interrupt-controller")) {
+-			pp->irq = irq_of_parse_and_map(port_np, 0);
++		if (dev->of_node && pp->idx == 0 &&
++			fwnode_property_read_bool(fwnode,
++						  "interrupt-controller")) {
++			pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
+ 			if (!pp->irq)
+ 				dev_warn(dev, "no irq for this bank\n");
+ 		}
+@@ -519,7 +518,7 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+ 	struct dwapb_platform_data *pdata = dev_get_platdata(dev);
+ 
+ 	if (!pdata) {
+-		pdata = dwapb_gpio_get_pdata_of(dev);
++		pdata = dwapb_gpio_get_pdata(dev);
+ 		if (IS_ERR(pdata))
+ 			return PTR_ERR(pdata);
+ 	}
+diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_quark_i2c_gpio.c
+index a4ef99b..a24b35f 100644
+--- a/drivers/mfd/intel_quark_i2c_gpio.c
++++ b/drivers/mfd/intel_quark_i2c_gpio.c
+@@ -219,7 +219,7 @@ static int intel_quark_gpio_setup(struct pci_dev *pdev, struct mfd_cell *cell)
+ 		return -ENOMEM;
+ 
+ 	/* Set the properties for portA */
+-	pdata->properties->node		= NULL;
++	pdata->properties->fwnode	= NULL;
+ 	pdata->properties->idx		= 0;
+ 	pdata->properties->ngpio	= INTEL_QUARK_MFD_NGPIO;
+ 	pdata->properties->gpio_base	= INTEL_QUARK_MFD_GPIO_BASE;
+diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
+index 955b579..2dc7f4a 100644
+--- a/include/linux/platform_data/gpio-dwapb.h
++++ b/include/linux/platform_data/gpio-dwapb.h
+@@ -15,7 +15,7 @@
+ #define GPIO_DW_APB_H
+ 
+ struct dwapb_port_property {
+-	struct device_node *node;
++	struct fwnode_handle *fwnode;
+ 	unsigned int	idx;
+ 	unsigned int	ngpio;
+ 	unsigned int	gpio_base;
+-- 
+1.9.1
 
-Yours,
-Linus Walleij
