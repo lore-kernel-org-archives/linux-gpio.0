@@ -1,7 +1,7 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 03/10] Documentation: Add ISA bus driver documentation
-Date: Thu,  7 Apr 2016 10:47:24 -0400
-Message-ID: <e43db27011750537e86e8176bf532e20757133fd.1460040201.git.vilhelm.gray@gmail.com>
+Subject: [PATCH 06/10] watchdog: ebc-c384_wdt: Utilize the ISA bus driver
+Date: Thu,  7 Apr 2016 10:47:27 -0400
+Message-ID: <1f5bf2e21006f0fd4f10ab3948cf69a737c0b039.1460040201.git.vilhelm.gray@gmail.com>
 References: <cover.1460040201.git.vilhelm.gray@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1460040201.git.vilhelm.gray@gmail.com>
@@ -12,160 +12,130 @@ To: gregkh@linuxfoundation.org, tglx@linutronix.de, jic23@kernel.org, knaack.h@g
 Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-This is a verbatim copy of the original commit message of the initial
-commit of the ISA bus driver authored by Rene Herman. Descriptions of
-the module_isa_driver macro and max_num_isa_dev macro are provided at
-the end.
+The WinSystems EBC-C384 watchdog timer is controlled via ISA bus
+communication. As such, the ISA bus driver is more appropriate than the
+platform driver for the WinSystems EBC-C384 watchdog timer driver.
 
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- Documentation/isa.txt | 121 ++++++++++++++++++++++++++++++++++++++++++++++++++
- MAINTAINERS           |   5 +++
- 2 files changed, 126 insertions(+)
- create mode 100644 Documentation/isa.txt
+ drivers/watchdog/Kconfig        |  2 +-
+ drivers/watchdog/ebc-c384_wdt.c | 43 ++++++++++-------------------------------
+ 2 files changed, 11 insertions(+), 34 deletions(-)
 
-diff --git a/Documentation/isa.txt b/Documentation/isa.txt
-new file mode 100644
-index 0000000..f232c26
---- /dev/null
-+++ b/Documentation/isa.txt
-@@ -0,0 +1,121 @@
-+ISA Drivers
-+-----------
-+
-+The following text is adapted from the commit message of the initial
-+commit of the ISA bus driver authored by Rene Herman.
-+
-+During the recent "isa drivers using platform devices" discussion it was
-+pointed out that (ALSA) ISA drivers ran into the problem of not having
-+the option to fail driver load (device registration rather) upon not
-+finding their hardware due to a probe() error not being passed up
-+through the driver model. In the course of that, I suggested a separate
-+ISA bus might be best; Russell King agreed and suggested this bus could
-+use the .match() method for the actual device discovery.
-+
-+The attached does this. For this old non (generically) discoverable ISA
-+hardware only the driver itself can do discovery so as a difference with
-+the platform_bus, this isa_bus also distributes match() up to the
-+driver.
-+
-+As another difference: these devices only exist in the driver model due
-+to the driver creating them because it might want to drive them, meaning
-+that all device creation has been made internal as well.
-+
-+The usage model this provides is nice, and has been acked from the ALSA
-+side by Takashi Iwai and Jaroslav Kysela. The ALSA driver module_init's
-+now (for oldisa-only drivers) become:
-+
-+static int __init alsa_card_foo_init(void)
-+{
-+	return isa_register_driver(&snd_foo_isa_driver, SNDRV_CARDS);
-+}
-+
-+static void __exit alsa_card_foo_exit(void)
-+{
-+	isa_unregister_driver(&snd_foo_isa_driver);
-+}
-+
-+Quite like the other bus models therefore. This removes a lot of
-+duplicated init code from the ALSA ISA drivers.
-+
-+The passed in isa_driver struct is the regular driver struct embedding a
-+struct device_driver, the normal probe/remove/shutdown/suspend/resume
-+callbacks, and as indicated that .match callback.
-+
-+The "SNDRV_CARDS" you see being passed in is a "unsigned int ndev"
-+parameter, indicating how many devices to create and call our methods
-+with.
-+
-+The platform_driver callbacks are called with a platform_device param;
-+the isa_driver callbacks are being called with a "struct device *dev,
-+unsigned int id" pair directly -- with the device creation completely
-+internal to the bus it's much cleaner to not leak isa_dev's by passing
-+them in at all. The id is the only thing we ever want other then the
-+struct device * anyways, and it makes for nicer code in the callbacks as
-+well.
-+
-+With this additional .match() callback ISA drivers have all options. If
-+ALSA would want to keep the old non-load behaviour, it could stick all
-+of the old .probe in .match, which would only keep them registered after
-+everything was found to be present and accounted for. If it wanted the
-+behaviour of always loading as it inadvertently did for a bit after the
-+changeover to platform devices, it could just not provide a .match() and
-+do everything in .probe() as before.
-+
-+If it, as Takashi Iwai already suggested earlier as a way of following
-+the model from saner buses more closely, wants to load when a later bind
-+could conceivably succeed, it could use .match() for the prerequisites
-+(such as checking the user wants the card enabled and that port/irq/dma
-+values have been passed in) and .probe() for everything else. This is
-+the nicest model.
-+
-+To the code...
-+
-+This exports only two functions; isa_{,un}register_driver().
-+
-+isa_register_driver() register's the struct device_driver, and then
-+loops over the passed in ndev creating devices and registering them.
-+This causes the bus match method to be called for them, which is:
-+
-+int isa_bus_match(struct device *dev, struct device_driver *driver)
-+{
-+          struct isa_driver *isa_driver = to_isa_driver(driver);
-+
-+          if (dev->platform_data == isa_driver) {
-+                  if (!isa_driver->match ||
-+                          isa_driver->match(dev, to_isa_dev(dev)->id))
-+                          return 1;
-+                  dev->platform_data = NULL;
-+          }
-+          return 0;
-+}
-+
-+The first thing this does is check if this device is in fact one of this
-+driver's devices by seeing if the device's platform_data pointer is set
-+to this driver. Platform devices compare strings, but we don't need to
-+do that with everything being internal, so isa_register_driver() abuses
-+dev->platform_data as a isa_driver pointer which we can then check here.
-+I believe platform_data is available for this, but if rather not, moving
-+the isa_driver pointer to the private struct isa_dev is ofcourse fine as
-+well.
-+
-+Then, if the the driver did not provide a .match, it matches. If it did,
-+the driver match() method is called to determine a match.
-+
-+If it did _not_ match, dev->platform_data is reset to indicate this to
-+isa_register_driver which can then unregister the device again.
-+
-+If during all this, there's any error, or no devices matched at all
-+everything is backed out again and the error, or -ENODEV, is returned.
-+
-+isa_unregister_driver() just unregisters the matched devices and the
-+driver itself.
-+
-+module_isa_driver is a helper macro for ISA drivers which do not do
-+anything special in module init/exit. This eliminates a lot of
-+boilerplate code. Each module may only use this macro once, and calling
-+it replaces module_init and module_exit.
-+
-+max_num_isa_dev is a macro to determine the maximum possible number of
-+ISA devices which may be registered in the I/O port address space given
-+the address extent of the ISA devices.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 03e00c7..3713010 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5994,6 +5994,11 @@ F:	include/linux/irqdomain.h
- F:	kernel/irq/irqdomain.c
- F:	kernel/irq/msi.c
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index fb94765..b10761d 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -738,7 +738,7 @@ config ALIM7101_WDT
  
-+ISA
-+M:	William Breathitt Gray <vilhelm.gray@gmail.com>
-+S:	Maintained
-+F:	Documentation/isa.txt
-+
- ISAPNP
- M:	Jaroslav Kysela <perex@perex.cz>
- S:	Maintained
+ config EBC_C384_WDT
+ 	tristate "WinSystems EBC-C384 Watchdog Timer"
+-	depends on X86
++	depends on X86 && ISA_BUS
+ 	select WATCHDOG_CORE
+ 	help
+ 	  Enables watchdog timer support for the watchdog timer on the
+diff --git a/drivers/watchdog/ebc-c384_wdt.c b/drivers/watchdog/ebc-c384_wdt.c
+index 77fda0b..4b849b8 100644
+--- a/drivers/watchdog/ebc-c384_wdt.c
++++ b/drivers/watchdog/ebc-c384_wdt.c
+@@ -16,10 +16,10 @@
+ #include <linux/errno.h>
+ #include <linux/io.h>
+ #include <linux/ioport.h>
++#include <linux/isa.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+-#include <linux/platform_device.h>
+ #include <linux/types.h>
+ #include <linux/watchdog.h>
+ 
+@@ -95,9 +95,8 @@ static const struct watchdog_info ebc_c384_wdt_info = {
+ 	.identity = MODULE_NAME
+ };
+ 
+-static int __init ebc_c384_wdt_probe(struct platform_device *pdev)
++static int ebc_c384_wdt_probe(struct device *dev, unsigned int id)
+ {
+-	struct device *dev = &pdev->dev;
+ 	struct watchdog_device *wdd;
+ 
+ 	if (!devm_request_region(dev, BASE_ADDR, ADDR_EXTENT, dev_name(dev))) {
+@@ -122,61 +121,39 @@ static int __init ebc_c384_wdt_probe(struct platform_device *pdev)
+ 		dev_warn(dev, "Invalid timeout (%u seconds), using default (%u seconds)\n",
+ 			timeout, WATCHDOG_TIMEOUT);
+ 
+-	platform_set_drvdata(pdev, wdd);
++	dev_set_drvdata(dev, wdd);
+ 
+ 	return watchdog_register_device(wdd);
+ }
+ 
+-static int ebc_c384_wdt_remove(struct platform_device *pdev)
++static int ebc_c384_wdt_remove(struct device *dev, unsigned int id)
+ {
+-	struct watchdog_device *wdd = platform_get_drvdata(pdev);
++	struct watchdog_device *wdd = dev_get_drvdata(dev);
+ 
+ 	watchdog_unregister_device(wdd);
+ 
+ 	return 0;
+ }
+ 
+-static struct platform_driver ebc_c384_wdt_driver = {
++static struct isa_driver ebc_c384_wdt_driver = {
++	.probe = ebc_c384_wdt_probe,
+ 	.driver = {
+ 		.name = MODULE_NAME
+ 	},
+ 	.remove = ebc_c384_wdt_remove
+ };
+ 
+-static struct platform_device *ebc_c384_wdt_device;
+-
+ static int __init ebc_c384_wdt_init(void)
+ {
+-	int err;
+-
+ 	if (!dmi_match(DMI_BOARD_NAME, "EBC-C384 SBC"))
+ 		return -ENODEV;
+ 
+-	ebc_c384_wdt_device = platform_device_alloc(MODULE_NAME, -1);
+-	if (!ebc_c384_wdt_device)
+-		return -ENOMEM;
+-
+-	err = platform_device_add(ebc_c384_wdt_device);
+-	if (err)
+-		goto err_platform_device;
+-
+-	err = platform_driver_probe(&ebc_c384_wdt_driver, ebc_c384_wdt_probe);
+-	if (err)
+-		goto err_platform_driver;
+-
+-	return 0;
+-
+-err_platform_driver:
+-	platform_device_del(ebc_c384_wdt_device);
+-err_platform_device:
+-	platform_device_put(ebc_c384_wdt_device);
+-	return err;
++	return isa_register_driver(&ebc_c384_wdt_driver, 1);
+ }
+ 
+ static void __exit ebc_c384_wdt_exit(void)
+ {
+-	platform_device_unregister(ebc_c384_wdt_device);
+-	platform_driver_unregister(&ebc_c384_wdt_driver);
++	isa_unregister_driver(&ebc_c384_wdt_driver);
+ }
+ 
+ module_init(ebc_c384_wdt_init);
+@@ -185,4 +162,4 @@ module_exit(ebc_c384_wdt_exit);
+ MODULE_AUTHOR("William Breathitt Gray <vilhelm.gray@gmail.com>");
+ MODULE_DESCRIPTION("WinSystems EBC-C384 watchdog timer driver");
+ MODULE_LICENSE("GPL v2");
+-MODULE_ALIAS("platform:" MODULE_NAME);
++MODULE_ALIAS("isa:" MODULE_NAME);
 -- 
 2.7.3
