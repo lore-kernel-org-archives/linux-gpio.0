@@ -1,53 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH 0/4] Add ACPI support for pinctrl configuration
-Date: Thu, 7 Apr 2016 20:01:45 +0200
-Message-ID: <CACRpkdYbap1AM6pnQnqjfvsGbuU35ZcnMf_XEq81HQYwKcRS8Q@mail.gmail.com>
-References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
-	<20160404225200.GA1615@svinekod>
-	<D3292CBB.662A8%charles.garcia-tobin@arm.com>
-	<5704519F.5030906@redhat.com>
-	<20160406104900.GA2820@xora-haswell.xora.org.uk>
-	<CAE1zot+C7asvCfs2m=wNCBAKTHLpjYsPnmxQx_+inh9o0sPLwg@mail.gmail.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: Problems with commit a770d946371e ("gpio: pxa: add pin control gpio direction and request")
+Date: Thu, 07 Apr 2016 20:20:21 +0200
+Message-ID: <871t6huvq2.fsf@belgarion.home>
+References: <56F730DF.9080307@roeck-us.net> <87oa9zr7g3.fsf@belgarion.home>
+	<570673FA.4020200@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CAE1zot+C7asvCfs2m=wNCBAKTHLpjYsPnmxQx_+inh9o0sPLwg@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: Graeme Gregory <gg@slimlogic.co.uk>, ahs3@redhat.com, Charles Garcia-Tobin <charles.garcia-tobin@arm.com>, Mark Rutland <mark.rutland@arm.com>, Irina Tirdea <irina.tirdea@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:19296 "EHLO
+	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932233AbcDGSU0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Apr 2016 14:20:26 -0400
+In-Reply-To: <570673FA.4020200@roeck-us.net> (Guenter Roeck's message of "Thu,
+	7 Apr 2016 07:51:38 -0700")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Guenter Roeck <guenter@roeck-us.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Apr 7, 2016 at 4:17 PM, Octavian Purdila
-<octavian.purdila@intel.com> wrote:
-> On Wed, Apr 6, 2016 at 1:49 PM, Graeme Gregory <gg@slimlogic.co.uk> wrote:
+Guenter Roeck <guenter@roeck-us.net> writes:
 
->> Why has there been no attempt in ASWG to make these sort of features a
->> 1st class citizen of ACPI so they can interact correctly with the other
->> features?
->
-> IMO having an ASWG pinctrl specification and using _DSD for Linux are
-> orthogonal approaches. The latter is very specific to Linux and we
-> want it so that we can support the Linux pinctrl model as best as
-> possible and I doubt it is a common denominator for all OSes that ACPI
-> supports.
+>> But no more poor excuses, would you try the patch at the end of this mail, while
+>> I'm doing the same on my Jenkins, on both device-tree and legacy platform-data
+>> builds, to see if we can fix this ?
+>>
+>> Cheers.
+> Any updates ? I still see the problem in mainline.
 
-Sob, I tried so hard to implement pin control referring to generic
-concepts that everyone should be able to reuse. E.g. stressing SI
-units to be used all over the place, neutral scientific terms for all
-config options and what not.
+Please be patient, it's scheduled for this kernel version, see here :
+ - Linus fixes tree
+ - and more specifically here :
+https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/commit/?h=fixes&id=c32f4fd558e1b278addc9514578dd98e20218e00
 
-The multiplexing with groups and functions is a simple (aehm,
-OK, super-complicated) matter of mapping disjunct sets onto each
-other, so that comes from logic.
+Cheers.
 
-Not even the GPIO ranges that map GPIOs to pin ranges are very
-Linux-specific: it is a property of the hardware that sometimes
-GPIO is "behind" the pin, in a distinct hardware unit. (See pinctrl.txt
-for the GPIO pitfalls.)
-
-If I was to rewrite pin control and GPIO from scratch I would make it
-one subsystem instead of two. This is more of an architectural
-choice. GPIO would still be a stand-alone part of it.
-
-Yours,
-Linus Walleij
+-- 
+Robert
