@@ -1,79 +1,53 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6] iio: dac: Add support for the AD5592R/AD5593R
- ADCs/DACs
-Date: Thu, 7 Apr 2016 12:57:48 -0500
-Message-ID: <20160407175748.GL32257@rob-hp-laptop>
-References: <1459842379-26275-1-git-send-email-michael.hennerich@analog.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC PATCH 0/4] Add ACPI support for pinctrl configuration
+Date: Thu, 7 Apr 2016 20:01:45 +0200
+Message-ID: <CACRpkdYbap1AM6pnQnqjfvsGbuU35ZcnMf_XEq81HQYwKcRS8Q@mail.gmail.com>
+References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
+	<20160404225200.GA1615@svinekod>
+	<D3292CBB.662A8%charles.garcia-tobin@arm.com>
+	<5704519F.5030906@redhat.com>
+	<20160406104900.GA2820@xora-haswell.xora.org.uk>
+	<CAE1zot+C7asvCfs2m=wNCBAKTHLpjYsPnmxQx_+inh9o0sPLwg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1459842379-26275-1-git-send-email-michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org
-Cc: jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, paul.cercueil-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CAE1zot+C7asvCfs2m=wNCBAKTHLpjYsPnmxQx_+inh9o0sPLwg@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Octavian Purdila <octavian.purdila@intel.com>
+Cc: Graeme Gregory <gg@slimlogic.co.uk>, ahs3@redhat.com, Charles Garcia-Tobin <charles.garcia-tobin@arm.com>, Mark Rutland <mark.rutland@arm.com>, Irina Tirdea <irina.tirdea@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 05, 2016 at 09:46:19AM +0200, michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org wrote:
-> From: Paul Cercueil <paul.cercueil-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
-> 
-> This patch adds support for the AD5592R (spi) and AD5593R (i2c)
-> ADC/DAC/GPIO devices.
-> 
-> Signed-off-by: Paul Cercueil <paul.cercueil-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
-> Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> 
-> ---
-> 
-> Changes since v1:
-> 	* Fix mutex usage
-> 	* Remove unnecessary NULL pointer guards
-> 	* Add comment explaining the invalid data read
-> 	* AD5593R Remove surplus adc readback
-> 
-> Changes since v2:
-> 	* Use child nodes to describe channels
-> 	* Fix probe return and driver remove path
-> 	* Move locking closer to where its used
-> 	* Remove WARN_ON but return error
-> 	* Remove OPEN DRAIN configuration option
-> 
-> Changes since v3:
-> 	* Documentation: Add missing vendor prefixes in the examples
-> 	* Minor function reordering in remove() to match the reverse of probe()
-> 
-> Changes since v4:
-> 	* Documentation: Add missing gpio bindings
-> 	* Kconfig: Select GPIOLIB and remove ifdefs in code
-> 	* Remove surplus error check in ad5592r_gpio_request()
-> 	* Add comment about reset magic
-> 
-> Changes since v5:
-> 	* Remove surplus error check
-> 	* Remove additional ifdef CONFIG_GPIOLIB guards in the header
-> 	* Bindings: Add additional comments about CH_MODE_DAC_AND_ADC mode
-> ---
->  .../devicetree/bindings/iio/dac/ad5592r.txt        | 155 +++++
+On Thu, Apr 7, 2016 at 4:17 PM, Octavian Purdila
+<octavian.purdila@intel.com> wrote:
+> On Wed, Apr 6, 2016 at 1:49 PM, Graeme Gregory <gg@slimlogic.co.uk> wrote:
 
-I've acked this twice before, and the last change seems minor. 
-Please add acks unless it is more than minor changes and you need it 
-reviewed again.
+>> Why has there been no attempt in ASWG to make these sort of features a
+>> 1st class citizen of ACPI so they can interact correctly with the other
+>> features?
+>
+> IMO having an ASWG pinctrl specification and using _DSD for Linux are
+> orthogonal approaches. The latter is very specific to Linux and we
+> want it so that we can support the Linux pinctrl model as best as
+> possible and I doubt it is a common denominator for all OSes that ACPI
+> supports.
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sob, I tried so hard to implement pin control referring to generic
+concepts that everyone should be able to reuse. E.g. stressing SI
+units to be used all over the place, neutral scientific terms for all
+config options and what not.
 
->  drivers/iio/dac/Kconfig                            |  27 +
->  drivers/iio/dac/Makefile                           |   3 +
->  drivers/iio/dac/ad5592r-base.c                     | 691 +++++++++++++++++++++
->  drivers/iio/dac/ad5592r-base.h                     |  76 +++
->  drivers/iio/dac/ad5592r.c                          | 164 +++++
->  drivers/iio/dac/ad5593r.c                          | 131 ++++
->  include/dt-bindings/iio/adi,ad5592r.h              |  16 +
->  8 files changed, 1263 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/dac/ad5592r.txt
->  create mode 100644 drivers/iio/dac/ad5592r-base.c
->  create mode 100644 drivers/iio/dac/ad5592r-base.h
->  create mode 100644 drivers/iio/dac/ad5592r.c
->  create mode 100644 drivers/iio/dac/ad5593r.c
->  create mode 100644 include/dt-bindings/iio/adi,ad5592r.h
-> 
+The multiplexing with groups and functions is a simple (aehm,
+OK, super-complicated) matter of mapping disjunct sets onto each
+other, so that comes from logic.
+
+Not even the GPIO ranges that map GPIOs to pin ranges are very
+Linux-specific: it is a property of the hardware that sometimes
+GPIO is "behind" the pin, in a distinct hardware unit. (See pinctrl.txt
+for the GPIO pitfalls.)
+
+If I was to rewrite pin control and GPIO from scratch I would make it
+one subsystem instead of two. This is more of an architectural
+choice. GPIO would still be a stand-alone part of it.
+
+Yours,
+Linus Walleij
