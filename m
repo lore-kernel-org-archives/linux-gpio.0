@@ -1,131 +1,50 @@
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: Re: [PATCH] gpio: document open drain/source behaviour
-Date: Thu, 7 Apr 2016 09:52:49 +0200
-Message-ID: <DCEF7592-98F7-4F55-AB91-74B514444E85@goldelico.com>
-References: <1459868162-9736-1-git-send-email-linus.walleij@linaro.org> <CAMuHMdUvtd+EdwJjW3wLYeMxLDZWRfvUSustxEAUjP-Rvjf3JQ@mail.gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 2/2] USB: serial: cp210x: Adding GE Healthcare Device
+ ID
+Date: Thu, 7 Apr 2016 11:39:52 +0200
+Message-ID: <20160407093952.GF25008@localhost>
+References: <cover.1459269397.git.martyn.welch@collabora.co.uk>
+ <ddee21e702ef47d8c97d6fa3b37acbb8be28634e.1459269397.git.martyn.welch@collabora.co.uk>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.217]:20743 "EHLO
-	mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751964AbcDGHxC convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Apr 2016 03:53:02 -0400
-In-Reply-To: <CAMuHMdUvtd+EdwJjW3wLYeMxLDZWRfvUSustxEAUjP-Rvjf3JQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <ddee21e702ef47d8c97d6fa3b37acbb8be28634e.1459269397.git.martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Hennerich <michael.hennerich@analog.com>, Nicolas Saenz Julienne <nicolassaenzj@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>
 
-Hi,
+On Tue, Mar 29, 2016 at 05:47:29PM +0100, Martyn Welch wrote:
+> The CP2105 is used in the GE Healthcare Remote Alarm Box, with the
+> Manufacturer ID of 0x1901 and Product ID of 0x0194.
+> 
+> Signed-off-by: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+> ---
+>  drivers/usb/serial/cp210x.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
+> index b1eb8da..5b5c4ec 100644
+> --- a/drivers/usb/serial/cp210x.c
+> +++ b/drivers/usb/serial/cp210x.c
+> @@ -170,6 +170,7 @@ static const struct usb_device_id id_table[] = {
+>  	{ USB_DEVICE(0x1843, 0x0200) }, /* Vaisala USB Instrument Cable */
+>  	{ USB_DEVICE(0x18EF, 0xE00F) }, /* ELV USB-I2C-Interface */
+>  	{ USB_DEVICE(0x18EF, 0xE025) }, /* ELV Marble Sound Board 1 */
+> +	{ USB_DEVICE(0x1901, 0x0194) },	/* GE Healthcare Remote Alarm Box */
+>  	{ USB_DEVICE(0x1ADB, 0x0001) }, /* Schweitzer Engineering C662 Cable */
+>  	{ USB_DEVICE(0x1B1C, 0x1C00) }, /* Corsair USB Dongle */
+>  	{ USB_DEVICE(0x1BA4, 0x0002) },	/* Silicon Labs 358x factory default */
 
-> Am 07.04.2016 um 09:34 schrieb Geert Uytterhoeven <geert@linux-m68k.org>:
-> 
-> Hi Linus,
-> 
-> On Tue, Apr 5, 2016 at 4:56 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> This has been a totally undocumented feature for years so add some
->> generic concepts and documentation about open drain/source, include
->> some facts on how we now support for hardware.
->> 
->> Cc: Michael Hennerich <michael.hennerich@analog.com>
->> Cc: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
->> Cc: H. Nikolaus Schaller <hns@goldelico.com>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> I saw this appear in gpio/for-next, so let's review it ;-)
-> 
->> --- a/Documentation/gpio/driver.txt
->> +++ b/Documentation/gpio/driver.txt
->> @@ -68,6 +68,74 @@ control callbacks) if it is expected to call GPIO APIs from atomic context
->> on -RT (inside hard IRQ handlers and similar contexts). Normally this should
->> not be required.
->> 
->> +
->> +GPIOs with open drain/source support
->> +------------------------------------
->> +
->> +Open drain (CMOS) or open collector (TTL) is traditionally a way to achieve
->> +wire-OR on an I/O line, for example a GPIO line, using a single transistor.
+This one does not apply, what tree did you generate it against against?
 
-IMHO wired-or is not the standard use case of open-drain GPIOs (under control of a CPU inside a SoC).
+I can fix it up here, but it makes me worried about the (unrelated)
+first gpio patch as well.
 
-They are more used for level shifting. A push-pull driver has a definitive "high level" voltage
-while open drains can drive different voltages, e.g. for controlling LEDs or pulling down inputs of
-chips with different I/O voltage (as long as they don't burn the SoC).
-
->> +This means the line is not actively driven high, instead you provide the
->> +drain/collector as output, so when the transistor is not open, it will present
->> +a high-impedance (tristate) to the external rail. This means it will not
->> +conflict with other similarly wired I/O lines on the rail, and when accompanied
->> +with a pull-up resistor, this will tend to high level unless one of the
->> +transistors on the rail actively pull it down.
-> 
-> pulls
-
-Sometimes they are used for gpio bitbang i2c (which is of course a wired-or connection/bus).
-
-> 
-> 
->> +Modern electronics very seldom has this kind of single-transistor output
-
-Modern? Very seldom?
-
-It is still common for peripheral chips and I don't see any trend which justifies "modern" (implying vs. "ancient").
-
-Here, we mainly have a special case that gpios come with an additional transistor and
-we want to turn it off because the hardware doesn't want to see it.
-
-If a chip or pin would not be programmable and "general purpose" and needs to be single-ended
-that additional transistor would simply not be included in the silicon chip.
-
->> +stage. Instead they usually have a CMOS "totempole" with one N-MOS and one
-
-same for "usually" which implies a rationale that does not exist. I.e. chip design decisions
-are not based on some "common use" but on "need for this specific case".
-
-> 
-> totem-pole
-> 
->> +P-MOS transistor where one of them drive the line high and one of them drive
-> 
-> drives ... drives
-> 
->> +the line low. This is called a push-pull-output. The "totempole" looks like so,
-> 
-> push-pull output (consistency with below) ... totem pole
-> 
->> +and shold be familiar to anyone working with electronics:
-> 
-> should
-> 
->> +Hardware that supports open drain or open source or both, can implement a
->> +special callback in the gpio_chip: .set_single_ended() that takes an enum flag
->> +telling whether to configure the line as open drain, open source or push-pull.
->> +This will happen i response to the GPIO_OPEN_DRAIN or GPIO_OPEN_SOURCE flag
-> 
-> in
-> 
->> +set in the machine file, or coming from other hardware descriptions.
->> +
->> +If this state can not be configured in hardware, i.e. if the GPIO hardware does
->> +not support open drain/open source in hardware, the GPIO library will instead
->> +use a trick: when a line is set as output, if the line is flagged as open
->> +drain, and the output value is negative, it will be driven low as usual. But
->> +if the output value is set to positive, it will instead *NOT* be driven high,
->> +instead it will be switched to input, as input mode is high impedance, thus
->> +achieveing a "open drain emulation" of sorts: electrically the behaviour will
-> 
-> achieving an
-> 
->> +be identical, with the exception of possible hardware glitches when switching
->> +the mode of the line.
-> 
-> Gr{oetje,eeting}s,
-> 
->                        Geert
-
-Hope this helps.
-
-BR,
-NIkolaus
+Thanks,
+Johan
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
