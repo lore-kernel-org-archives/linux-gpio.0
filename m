@@ -1,7 +1,7 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 04/10] iio: stx104: Change STX104 dependency to ISA_BUS
-Date: Thu,  7 Apr 2016 10:47:25 -0400
-Message-ID: <783be62acf68b35f3fe4785a2cedfe017624688b.1460040201.git.vilhelm.gray@gmail.com>
+Subject: [PATCH 02/10] isa: Implement the max_num_isa_dev macro
+Date: Thu,  7 Apr 2016 10:47:23 -0400
+Message-ID: <34d77952d94c05b187e83e2de78b4de4533c5650.1460040201.git.vilhelm.gray@gmail.com>
 References: <cover.1460040201.git.vilhelm.gray@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1460040201.git.vilhelm.gray@gmail.com>
@@ -12,27 +12,39 @@ To: gregkh@linuxfoundation.org, tglx@linutronix.de, jic23@kernel.org, knaack.h@g
 Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The Apex Embedded Systems STX104 may be used on 64-bit X86 systems. This
-patch allows the Apex Embedded Systems STX104 DAC driver to be compiled
-for both 32-bit and 64-bit X86 systems.
+max_num_isa_dev is a macro to determine the maximum possible number of
+ISA devices which may be registered in the I/O port address space given
+the address extent of the ISA devices.
+
+The highest base address possible for an ISA device is 0x3FF; this
+results in 1024 possible base addresses. Dividing the number of possible
+base addresses by the address extent taken by each device results in the
+maximum number of devices on a system.
 
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/iio/dac/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/isa.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-index a995139..df4b55d 100644
---- a/drivers/iio/dac/Kconfig
-+++ b/drivers/iio/dac/Kconfig
-@@ -210,7 +210,7 @@ config MCP4922
+diff --git a/include/linux/isa.h b/include/linux/isa.h
+index d410259..bc0a7c0 100644
+--- a/include/linux/isa.h
++++ b/include/linux/isa.h
+@@ -57,4 +57,15 @@ static void __exit __isa_driver##_exit(void) \
+ } \
+ module_exit(__isa_driver##_exit);
  
- config STX104
- 	tristate "Apex Embedded Systems STX104 DAC driver"
--	depends on ISA
-+	depends on X86 && ISA_BUS
- 	help
- 	  Say yes here to build support for the 2-channel DAC on the Apex
- 	  Embedded Systems STX104 integrated analog PC/104 card. The base port
++/**
++ * max_num_isa_dev() - Maximum possible number registered of an ISA device
++ * @__ida_dev_ext: ISA device address extent
++ *
++ * The highest base address possible for an ISA device is 0x3FF; this results in
++ * 1024 possible base addresses. Dividing the number of possible base addresses
++ * by the address extent taken by each device results in the maximum number of
++ * devices on a system.
++ */
++#define max_num_isa_dev(__isa_dev_ext) (1024 / __isa_dev_ext)
++
+ #endif /* __LINUX_ISA_H */
 -- 
 2.7.3
