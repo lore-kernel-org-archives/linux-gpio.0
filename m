@@ -1,113 +1,69 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC PATCH 0/4] Add ACPI support for pinctrl configuration
-Date: Wed, 6 Apr 2016 11:39:27 +0100
-Message-ID: <20160406103925.GA31110@svinekod>
-References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
- <20160404225200.GA1615@svinekod>
- <1F3AC3675D538145B1661F571FE1805F2F2342A6@irsmsx105.ger.corp.intel.com>
- <20160405181625.GA3064@svinekod>
- <CAE1zot+kyANCTPHGmj2W26f4LbS9Nkgt_9DNon-=0nsqRpT3Rw@mail.gmail.com>
- <20160406000130.GB8903@svinekod>
- <CAE1zotJ4OiQ_tMvCDm-KoF8cTJ9Z-n09FX7KR75j0DyAcsznLA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpiolib: handle probe deferrals better
+Date: Thu, 7 Apr 2016 19:09:06 +0200
+Message-ID: <CACRpkdZYyZG9=mXdWi3bnfvOqc6LFE1FykTU-QirQOJLv=Z2=A@mail.gmail.com>
+References: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org>
+	<56FE7785.1010507@ti.com>
+	<570294A4.2070801@ti.com>
+	<CACRpkdbzRPfEgdcPrQzDBQxVUnpdJFoGSFqeQ82tohfCAE11_g@mail.gmail.com>
+	<57052E67.4050206@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAE1zotJ4OiQ_tMvCDm-KoF8cTJ9Z-n09FX7KR75j0DyAcsznLA@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Octavian Purdila <octavian.purdila@intel.com>
-Cc: "Tirdea, Irina" <irina.tirdea@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Ciocan, Cristina" <cristina.ciocan@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "charles.garcia-tobin@arm.com" <charles.garcia-tobin@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:34705 "EHLO
+	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756553AbcDGRJI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Apr 2016 13:09:08 -0400
+Received: by mail-oi0-f54.google.com with SMTP id s79so106979216oie.1
+        for <linux-gpio@vger.kernel.org>; Thu, 07 Apr 2016 10:09:07 -0700 (PDT)
+In-Reply-To: <57052E67.4050206@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Alexander Stein <alexander.stein@systec-electronic.com>, Linux Input <linux-input@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Guenter Roeck <linux@roeck-us.net>, Bjorn Andersson <bjorn.andersson@linaro.org>
 
-On Thu, Apr 07, 2016 at 03:11:53PM +0300, Octavian Purdila wrote:
-> On Wed, Apr 6, 2016 at 3:01 AM, Mark Rutland <mark.rutland@arm.com> wrote:
-> > On Tue, Apr 05, 2016 at 11:09:34PM +0300, Octavian Purdila wrote:
-> >> On Tue, Apr 5, 2016 at 9:16 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> >> > * The firmware is to some extent expected to manage pinctrl today (for power
-> >> >   management of devices it does know about), and hence a pinctrl device is
-> >> >   potentially under shared management of ACPI and the OS.
-> >> >
-> >> > * The ACPI specification says nothing about this style of pinctrl management,
-> >> >   so it is unclear what the expectations are:
-> >>
-> >> Does it say anything at all about pinctrl management?
-> >
-> > To the best of my knowledge the ACPI spec does not explicitly mention pinctrl.
-> > In another reply it was mentioned that there is work in progress for pinmuxing,
-> > so evidently it is on the ASWG radar and within the scope of ACPI.
-> >
-> > I was trying to point out that it is _implicitly_ firmware's responsibility to
-> > do any pinctrl today, due to the ACPI model for power management, and the lack
-> > of an existing ACPI mechanisms to provide pinctrl data.
-> >
-> > In practice, firmware configures pinctrl at boot, and may modify pinctrl as
-> > part of the runtime power management firmware is put in charge of.
-> >
-> 
-> AFAIK the firmware only uses the pinctrl at boot to set the initial
-> values and the OS owns it after boot. The only interaction I know of
-> after boot are GPIO signaled events, but those are executed under the
-> control of the OS.
-> 
-> I don't understand the part about firmware being put in charge of
-> runtime power management. Do you mean that the firmware directly
-> accesses the pinctrl registers? Doesn't this contradict the ACPI goal
-> of having the OS control power management? Or do you mean accessing
-> pinctrl registers via _PSx and PowerResource._On/_Off?
+On Wed, Apr 6, 2016 at 5:42 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+> On 04/06/2016 04:39 PM, Linus Walleij wrote:
 
-I mostly mean the latter. Even if the OS is in charge of _when_ those happen,
-that only solves mutual exclusion over the pinctrl registers. That does not
-handle expectations regarding the current _state_ of the pinctrl configuation,
-or the configurations the OS/FW can permit and/or require (e.g. there's no
-refcounting between OS and FW for the state of shared pins).
+>>> Of course, there are some question to discuss:
+>>> 1) [+] It should sync initialization of GPIOchip and GPIOirqchip
+>>> 2) [+] This approach requires changes in gpiolib/gpio drivers only, from other side
+>>> It will require to add fixes all over the Kernel if gpiod_to_irq() will
+>>> start returning -EPROBE_DEFER.
+>>
+>> Yes, so it will need to be cross-coordinated with IRQ maintainers
+>> Marc and TGLX.
+>
+> Seems, I have to study how to be more clear :(
+> This +/- are all about my RFC patch.
+> My patch limits the scope of problem to GPIO subsystem/drivers only.
+> As opposite, if we will touch gpiod_to_irq() - it will affect on whole
+> kernel.
 
-It may also be that pinctrl gets altered in the background (e.g. in SMM),
-outside of the OS's control also, but that's probably a rare/extreme case.
+OK I get it now, good.
 
-> > The lack of any statement about pinctrl would mean that there is effectively no
-> > reasonable limitation on what firmware might do with pinctrl, and we cannot
-> > assume specific behaviour from the firmware.
-> 
-> There is noting specified in the spec about other controllers, why is
-> pinctrl special in this regard?
+>> Yes. Every driver in the kernel need to be audited.
+>
+> With my patch only GPIO drivers need to be checked, especially GPIO
+> drivers which:
+>  - are non-DT based;
+>  - do not use GPIO irq helpers
+>  - can make IRQ functionality optional using Kconfig/sysfs/module parameters
 
-Because there are clear demonstrable cases why FW would want to touch pinctrl
-today, that may clash with the pinctrl model you are importing from DT (where
-the OS is assumed to have complete ownership and control over pinctrl).
+Yeah. I mean you have to look at all of them, not patch all of
+them. It's a lot but not unberably much. < 300 files.
 
-The ACPI model implies FW-driven pinctrl management, so if we're going to put
-the OS in direct control of pinctrl, we have to make clear what expectation FW
-and OS can have.
+>>> 4) irq_ready access synchronization on SMP? atomic?
+>>
+>> Uhhh.... I don't even understand the question.
+>
+> in my patch the irq_ready is set from _gpiochip_irqchip_add() and
+> read from gpiod_request() without any kind of protection and those
+> two functions can be executed in parallel.
 
-> > [...]
-> >
-> >> Since our focus is for open-ended configurations and for hardware that
-> >> it is not know to firmware we only considered the case where the pins
-> >> are not touched after the system boots.
-> >>
-> >> Now I wonder what are the cases were the firmware changes the pin
-> >> configuration after boot.
-> >
-> > Device power management and suspend/resume seem like the obvious cases.
-> 
-> I assume you are suggesting something like the following: we have a
-> device that is powered via a GPIO and associated ACPI _PS3/_PS0
-> methods are poking the pinctrl register to drive 0 or 1 to power on or
-> off the device.
+Aha. Well I don't know if that is really a big problem?
+Does that really happen in practice?
 
-Potentially. In that case it's not clear what the FW is expected to do, and
-what the OS is expected to do.
-
-For things like system suspend/resume or hibernate, it's not clear what state
-the FW is expected to save/restore, and what state might arbitrarily change.
-
-> If that is the case, we can easily break that today, by changing that
-> particular GPIO value via, e.g., sysfs.
-
-Sure, but that is not part of the usual, automatic management of the system.
-
-There are plenty of ways a user with sufficient privilege can bring easily down
-a system. They are irrelevant.
-
-Thanks,
-Mark.
+Yours,
+Linus Walleij
