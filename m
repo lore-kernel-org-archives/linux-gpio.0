@@ -1,121 +1,80 @@
-From: Jiang Qiu <qiujiang@huawei.com>
-Subject: Re: [PATCH v7 1/3] gpio: dwapb: remove name from dwapb_port_property
-Date: Thu, 7 Apr 2016 19:45:30 +0800
-Message-ID: <5706485A.1000802@huawei.com>
-References: <1459926480-32966-1-git-send-email-qiujiang@huawei.com>
- <1459926480-32966-2-git-send-email-qiujiang@huawei.com>
- <CAHp75Vc4OxOtA1jseX+BOP9zRzsV98z4VKiY=rdpLdi7K2umNg@mail.gmail.com>
-Reply-To: <qiujiang@huawei.com>
+From: Octavian Purdila <octavian.purdila@intel.com>
+Subject: Re: [RFC PATCH 0/4] Add ACPI support for pinctrl configuration
+Date: Thu, 7 Apr 2016 15:11:53 +0300
+Message-ID: <CAE1zotJ4OiQ_tMvCDm-KoF8cTJ9Z-n09FX7KR75j0DyAcsznLA@mail.gmail.com>
+References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
+	<20160404225200.GA1615@svinekod>
+	<1F3AC3675D538145B1661F571FE1805F2F2342A6@irsmsx105.ger.corp.intel.com>
+	<20160405181625.GA3064@svinekod>
+	<CAE1zot+kyANCTPHGmj2W26f4LbS9Nkgt_9DNon-=0nsqRpT3Rw@mail.gmail.com>
+	<20160406000130.GB8903@svinekod>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:17866 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755550AbcDGLqN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Apr 2016 07:46:13 -0400
-In-Reply-To: <CAHp75Vc4OxOtA1jseX+BOP9zRzsV98z4VKiY=rdpLdi7K2umNg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160406000130.GB8903@svinekod>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: "Tirdea, Irina" <irina.tirdea@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Ciocan, Cristina" <cristina.ciocan@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "charles.garcia-tobin@arm.com" <charles.garcia-tobin@arm.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Alan Tull <delicious.quinoa@gmail.com>, Jamie Iles <jamie@jamieiles.com>, charles.chenxin@huawei.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com
 
-Hi Andy,
-
-Thanks for your reply. See my comments inline.
-
-Thanks
-Jiang
-
-=E5=9C=A8 2016/4/6 20:57, Andy Shevchenko =E5=86=99=E9=81=93:
-> On Wed, Apr 6, 2016 at 10:07 AM, qiujiang <qiujiang@huawei.com> wrote=
-:
->> This patch removed the name property from dwapb_port_property.
->> The name property is redundant because we can get those info
->> from dwapb_gpio dev and pp->idx property.
->=20
-> Where idx is used in such replacements?
-Actually, it is not used so far. As Alan mentioned, the only additional
-info from the pp->name against dev is the port index. I present here to
-prevent anyone from missing it.
-
-If it is inappropriate, I will remove it.
-
->=20
->> --- a/drivers/gpio/gpio-dwapb.c
->> +++ b/drivers/gpio/gpio-dwapb.c
->> @@ -409,8 +409,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio=
- *gpio,
->>         err =3D bgpio_init(&port->gc, gpio->dev, 4, dat, set, NULL, =
-dirout,
->>                          NULL, false);
->>         if (err) {
->> -               dev_err(gpio->dev, "failed to init gpio chip for %s\=
-n",
->> -                       pp->name);
->> +               dev_err(gpio->dev, "failed to init gpio chip\n");
->=20
-> Do we have any port index here available (expected value I suppose)?
-
-The 3rd parameter 'offs' can be used, I will add it.
->=20
->> @@ -429,8 +428,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio=
- *gpio,
+On Wed, Apr 6, 2016 at 3:01 AM, Mark Rutland <mark.rutland@arm.com> wrote:
+> On Tue, Apr 05, 2016 at 11:09:34PM +0300, Octavian Purdila wrote:
+>> On Tue, Apr 5, 2016 at 9:16 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+>> > * The firmware is to some extent expected to manage pinctrl today (for power
+>> >   management of devices it does know about), and hence a pinctrl device is
+>> >   potentially under shared management of ACPI and the OS.
+>> >
+>> > * The ACPI specification says nothing about this style of pinctrl management,
+>> >   so it is unclear what the expectations are:
 >>
->>         err =3D gpiochip_add_data(&port->gc, port);
->>         if (err)
->> -               dev_err(gpio->dev, "failed to register gpiochip for =
-%s\n",
->> -                       pp->name);
->> +               dev_err(gpio->dev, "failed to register gpiochip\n");
->=20
-> Ditto.
->=20
->=20
->> @@ -499,15 +498,12 @@ dwapb_gpio_get_pdata_of(struct device *dev)
->>                 if (pp->idx =3D=3D 0 &&
->>                     of_property_read_bool(port_np, "interrupt-contro=
-ller")) {
->>                         pp->irq =3D irq_of_parse_and_map(port_np, 0)=
-;
->> -                       if (!pp->irq) {
->> -                               dev_warn(dev, "no irq for bank %s\n"=
-,
->> -                                        port_np->full_name);
->> -                       }
->> +                       if (!pp->irq)
->> +                               dev_warn(dev, "no irq for this bank\=
-n");
->=20
-> pp->idx here?
->=20
-> dev_warn(dev, "no irq for port%d\n", pp->idx);
+>> Does it say anything at all about pinctrl management?
+>
+> To the best of my knowledge the ACPI spec does not explicitly mention pinctrl.
+> In another reply it was mentioned that there is work in progress for pinmuxing,
+> so evidently it is on the ASWG radar and within the scope of ACPI.
+>
+> I was trying to point out that it is _implicitly_ firmware's responsibility to
+> do any pinctrl today, due to the ACPI model for power management, and the lack
+> of an existing ACPI mechanisms to provide pinctrl data.
+>
+> In practice, firmware configures pinctrl at boot, and may modify pinctrl as
+> part of the runtime power management firmware is put in charge of.
+>
 
-Here, pp->idx should always be zero, means portA, because only portA ca=
-n be a
-interrupt controller as dwapb gpio IP defined. So, I omited it.
+AFAIK the firmware only uses the pinctrl at boot to set the initial
+values and the OS owns it after boot. The only interaction I know of
+after boot are GPIO signaled events, but those are executed under the
+control of the OS.
 
->=20
->> --- a/drivers/mfd/intel_quark_i2c_gpio.c
->> +++ b/drivers/mfd/intel_quark_i2c_gpio.c
->> @@ -220,7 +220,6 @@ static int intel_quark_gpio_setup(struct pci_dev=
- *pdev, struct mfd_cell *cell)
+I don't understand the part about firmware being put in charge of
+runtime power management. Do you mean that the firmware directly
+accesses the pinctrl registers? Doesn't this contradict the ACPI goal
+of having the OS control power management? Or do you mean accessing
+pinctrl registers via _PSx and PowerResource._On/_Off?
+
+> The lack of any statement about pinctrl would mean that there is effectively no
+> reasonable limitation on what firmware might do with pinctrl, and we cannot
+> assume specific behaviour from the firmware.
+>
+
+There is noting specified in the spec about other controllers, why is
+pinctrl special in this regard?
+
+> [...]
+>
+>> Since our focus is for open-ended configurations and for hardware that
+>> it is not know to firmware we only considered the case where the pins
+>> are not touched after the system boots.
 >>
->>         /* Set the properties for portA */
->>         pdata->properties->node         =3D NULL;
->> -       pdata->properties->name         =3D "intel-quark-x1000-gpio-=
-portA";
->>         pdata->properties->idx          =3D 0;
->>         pdata->properties->ngpio        =3D INTEL_QUARK_MFD_NGPIO;
->>         pdata->properties->gpio_base    =3D INTEL_QUARK_MFD_GPIO_BAS=
-E;
->=20
-> For Quark part:
-> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->=20
+>> Now I wonder what are the cases were the firmware changes the pin
+>> configuration after boot.
+>
+> Device power management and suspend/resume seem like the obvious cases.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I assume you are suggesting something like the following: we have a
+device that is powered via a GPIO and associated ACPI _PS3/_PS0
+methods are poking the pinctrl register to drive 0 or 1 to power on or
+off the device.
+
+If that is the case, we can easily break that today, by changing that
+particular GPIO value via, e.g., sysfs.
