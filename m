@@ -1,54 +1,79 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH v2 0/3] Add ACPI support for pinctrl configuration
-Date: Thu, 7 Apr 2016 19:48:57 +0200
-Message-ID: <CACRpkdZu1MFZ+0m7VUq8hArpjiESzjqaLvFDZHOK-JUidFtwvg@mail.gmail.com>
-References: <1459870406-15219-1-git-send-email-irina.tirdea@intel.com>
-	<20160407125634.GO1727@lahna.fi.intel.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6] iio: dac: Add support for the AD5592R/AD5593R
+ ADCs/DACs
+Date: Thu, 7 Apr 2016 12:57:48 -0500
+Message-ID: <20160407175748.GL32257@rob-hp-laptop>
+References: <1459842379-26275-1-git-send-email-michael.hennerich@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:35618 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756645AbcDGRs6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Apr 2016 13:48:58 -0400
-Received: by mail-oi0-f42.google.com with SMTP id p188so107946682oih.2
-        for <linux-gpio@vger.kernel.org>; Thu, 07 Apr 2016 10:48:58 -0700 (PDT)
-In-Reply-To: <20160407125634.GO1727@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1459842379-26275-1-git-send-email-michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org
+Cc: jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, paul.cercueil-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Irina Tirdea <irina.tirdea@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Octavian Purdila <octavian.purdila@intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Apr 7, 2016 at 2:56 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Tue, Apr 05, 2016 at 06:33:23PM +0300, Irina Tirdea wrote:
+On Tue, Apr 05, 2016 at 09:46:19AM +0200, michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org wrote:
+> From: Paul Cercueil <paul.cercueil-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
+> 
+> This patch adds support for the AD5592R (spi) and AD5593R (i2c)
+> ADC/DAC/GPIO devices.
+> 
+> Signed-off-by: Paul Cercueil <paul.cercueil-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
+> Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> 
+> ---
+> 
+> Changes since v1:
+> 	* Fix mutex usage
+> 	* Remove unnecessary NULL pointer guards
+> 	* Add comment explaining the invalid data read
+> 	* AD5593R Remove surplus adc readback
+> 
+> Changes since v2:
+> 	* Use child nodes to describe channels
+> 	* Fix probe return and driver remove path
+> 	* Move locking closer to where its used
+> 	* Remove WARN_ON but return error
+> 	* Remove OPEN DRAIN configuration option
+> 
+> Changes since v3:
+> 	* Documentation: Add missing vendor prefixes in the examples
+> 	* Minor function reordering in remove() to match the reverse of probe()
+> 
+> Changes since v4:
+> 	* Documentation: Add missing gpio bindings
+> 	* Kconfig: Select GPIOLIB and remove ifdefs in code
+> 	* Remove surplus error check in ad5592r_gpio_request()
+> 	* Add comment about reset magic
+> 
+> Changes since v5:
+> 	* Remove surplus error check
+> 	* Remove additional ifdef CONFIG_GPIOLIB guards in the header
+> 	* Bindings: Add additional comments about CH_MODE_DAC_AND_ADC mode
+> ---
+>  .../devicetree/bindings/iio/dac/ad5592r.txt        | 155 +++++
 
->> Changes from v1:
->>  - address code review comments regarding coding style, documentation
->> and fixes
->>  - rewrote patch 3 ("pinctrl: Parse GpioInt/GpioIo resources") to
->> avoid using triple pointers
->>  - define pinconf_generic_dt_node_to_map since it is used by pinctrl
->> sirf driver
->>  - add dependency on PINCONF_GENERIC to the entire ACPI parsing code
->>  - dropped first patch from the series since it got merged
->> ("pinctrl: Rename pinctrl_utils_dt_free_map to pinctrl_utils_free_map")
->>
->> Irina Tirdea (3):
->>   pinctrl: pinconf-generic: Add ACPI support
->>   pinctrl: Add ACPI support
->>   pinctrl: Parse GpioInt/GpioIo resources
->
-> The series looks good to me now,
->
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
->
-> Of course this all depends on the decision whether this is the preferred
-> way of controlling and muxing pins in ACPI.
+I've acked this twice before, and the last change seems minor. 
+Please add acks unless it is more than minor changes and you need it 
+reviewed again.
 
-I think the discussion is very interesting and intense right now so
-let us see. We need to form some rough consensus before we
-know how to proceed.
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-Yours,
-Linus Walleij
+>  drivers/iio/dac/Kconfig                            |  27 +
+>  drivers/iio/dac/Makefile                           |   3 +
+>  drivers/iio/dac/ad5592r-base.c                     | 691 +++++++++++++++++++++
+>  drivers/iio/dac/ad5592r-base.h                     |  76 +++
+>  drivers/iio/dac/ad5592r.c                          | 164 +++++
+>  drivers/iio/dac/ad5593r.c                          | 131 ++++
+>  include/dt-bindings/iio/adi,ad5592r.h              |  16 +
+>  8 files changed, 1263 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/dac/ad5592r.txt
+>  create mode 100644 drivers/iio/dac/ad5592r-base.c
+>  create mode 100644 drivers/iio/dac/ad5592r-base.h
+>  create mode 100644 drivers/iio/dac/ad5592r.c
+>  create mode 100644 drivers/iio/dac/ad5593r.c
+>  create mode 100644 include/dt-bindings/iio/adi,ad5592r.h
+> 
