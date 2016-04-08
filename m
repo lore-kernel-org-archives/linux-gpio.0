@@ -1,31 +1,29 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: pca953x: add PCAL9535 interrupt support for
- Galileo Gen2
-Date: Fri, 8 Apr 2016 15:20:52 +0200
-Message-ID: <CACRpkdavpaV1K7hfWgyRTtnxmFqkrD33--Ji9jcy_JFwqYYX7Q@mail.gmail.com>
-References: <1460004992-16210-1-git-send-email-yong.b.li@intel.com>
+From: Kelvin Cheung <keguang.zhang@gmail.com>
+Subject: Re: [PATCH V2 4/7] mtd: nand: add Loongson1 NAND driver
+Date: Fri, 8 Apr 2016 22:30:21 +0800
+Message-ID: <CAJhJPsXaidmMUX7CcTHshaYGZ-iqbaAExMh6eoOFDEAuzp4t7A@mail.gmail.com>
+References: <1460115779-13141-1-git-send-email-keguang.zhang@gmail.com>
+ <1460115779-13141-4-git-send-email-keguang.zhang@gmail.com> <57079B87.9030209@nod.at>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1460004992-16210-1-git-send-email-yong.b.li@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yong Li <yong.b.li@intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, Phil Reid <preid@electromag.com.au>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <57079B87.9030209@nod.at>
+Sender: linux-pm-owner@vger.kernel.org
+To: Richard Weinberger <richard@nod.at>, linux-mips@linux-mips.org, linux-clk@vger.kernel.org, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org
+Cc: Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-n Thu, Apr 7, 2016 at 6:56 AM, Yong Li <yong.b.li@intel.com> wrote:
+On 04/08/2016 07:52 PM, Richard Weinberger wrote:
+> Am 08.04.2016 um 13:42 schrieb Keguang Zhang:
+>> + chip->options = NAND_NO_SUBPAGE_WRITE;
+>> + chip->ecc.mode = NAND_ECC_SOFT;
+> Is the lack of HW ECC and subpage write a hardware limitation?
 
-> Galileo Gen2 board uses the PCAL9535 as the GPIO expansion,
-> it is different from PCA9535 and includes interrupt mask/status registers,
-> The current driver does not support the interrupt registers configuration,
-> it causes some gpio pins cannot trigger interrupt events,
-> this patch fix this issue. The original patch was submitted by
-> Josef Ahmad <josef.ahmad@linux.intel.com>
-> http://git.yoctoproject.org/cgit/cgit.cgi/meta-intel-quark/tree/recipes-kernel/linux/files/0015-Quark-GPIO-1-2-quark.patch
->
-> Signed-off-by: Yong Li <yong.b.li@intel.com>
+Yes, that's the hardware limitation of Loongson1B NAND controller.
 
-Patch applied with Andy's review tag.
+> Thanks,
+> //richard
 
-Yours,
-Linus Walleij
+Best regards,
+
+Keguang Zhang
