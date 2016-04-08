@@ -1,43 +1,58 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 12/18] dt-bindings: Add PLX Technology OXNAS pinctrl
- and gpio bindings
-Date: Fri, 8 Apr 2016 13:16:01 +0200
-Message-ID: <CACRpkda75E+B=vsgouks4ei=jc=Q-Uj1fzQnhGR4sVJBOkMBnQ@mail.gmail.com>
-References: <1458838215-23314-1-git-send-email-narmstrong@baylibre.com>
-	<1458838215-23314-13-git-send-email-narmstrong@baylibre.com>
-	<20160325144834.GA27177@rob-hp-laptop>
-	<CACRpkdbem5a_aLTHErp0ZvanwvVPbGnDiWxM5e7iX_FdHtXprQ@mail.gmail.com>
-	<CAL_JsqLsKEb+dWLg9VD3p=kjgEV84_r8z89p0QgMJWKqjrGNpw@mail.gmail.com>
-	<56FE8602.8020405@baylibre.com>
-	<CAL_JsqJS31gNS-dYXQvkLHb=qsVz4Vccztufnd08yfD+p52v_w@mail.gmail.com>
-	<56FE984C.10807@baylibre.com>
+Subject: Re: [RFC 4/8] gpio: altera-a10sr: Add A10 System Resource Chip GPIO support.
+Date: Fri, 8 Apr 2016 13:39:06 +0200
+Message-ID: <CACRpkdZu6ODbDaf1QCn8URSoJp=h3qDt2tzxxhpQ2oVO8Mb=QQ@mail.gmail.com>
+References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
+	<1459278791-3646-5-git-send-email-tthayer@opensource.altera.com>
+	<CACRpkda8VTDGVsRqbCs6ESeokA3t_p2X91FUNiqA7YM=F-JXBQ@mail.gmail.com>
+	<56FEDB62.1010308@opensource.altera.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:36380 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758043AbcDHLQD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Apr 2016 07:16:03 -0400
-Received: by mail-ob0-f174.google.com with SMTP id j9so70586534obd.3
-        for <linux-gpio@vger.kernel.org>; Fri, 08 Apr 2016 04:16:02 -0700 (PDT)
-In-Reply-To: <56FE984C.10807@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-hwmon-owner@vger.kernel.org>
+In-Reply-To: <56FEDB62.1010308@opensource.altera.com>
+Sender: linux-hwmon-owner@vger.kernel.org
+To: tthayer@opensource.altera.com
+Cc: Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, jdelvare@suse.com, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>, pawell.moll@arm.com, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Dinh Nguyen <dinguyen@opensource.altera.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-hwmon@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Rob Herring <robh@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Fri, Apr 1, 2016 at 5:48 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
-> On 04/01/2016 05:19 PM, Rob Herring wrote:
->> On Fri, Apr 1, 2016 at 9:30 AM, Neil Armstrong <narmstrong@baylibre.com> wrote:
->>>>
->>> What should I use ?
+On Fri, Apr 1, 2016 at 10:34 PM, Thor Thayer
+<tthayer@opensource.altera.com> wrote:
+> On 04/01/2016 07:17 AM, Linus Walleij wrote:
+
+>>> +struct altr_a10sr_gpio {
+>>> +       struct altr_a10sr *a10sc;
+>>> +       struct gpio_chip gp;
+>>> +};
 >>
->> Maybe gpio-ranges as you asked. Not really sure as I haven't used it.
+>> Add some kerneldoc.
 >
-> If I use gpio-ranges I can get rid of gpio-bank and ngpios properties.
+> OK. To clarify, is this comment referring to the bindings document or
+> something different?
 
-I'm not super-happy about that but I see that it can be used
-this way... hm.
+Document the data structure.
+Documentation/kernel-doc-nano-HOWTO.txt
+
+>> Please check:
+>> - If there is really no direction setting anywhere
+>> - For example if some lines are hardwired as input and
+>>    some lines are hardwired as output
+>> - If that is not the case, verify that all lines are really
+>>    open drain, they should be if all are both input and
+>>    output at the same time.
+>>
+>
+> I see your point. I'll investigate how to do this properly for your 2nd
+> check above. Registers are hard-wired as input or output so I'll need to
+> handle this properly and is why I didn't implement the .set_direction
+> callback. Thanks for the explanation.
+>
+> In my case, there are 12 valid GPIOs out of the 16 bits (the first 4 bits
+> are unused). Bits 4-7 are output and bits 8-15 are inputs. I was using the
+> IN_VALID range for the inputs and the OUT_VALID range for the outputs.
+
+It sounds like should implement direction_[input|output]() callbacks
+and just return 0 if the user is asking for the hardwired direction and return
+error if it tries to set an input-only to output and vice versa.
 
 Yours,
 Linus Walleij
