@@ -1,99 +1,156 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v7 3/3] gpio: dwapb: add gpio-signaled acpi event support
-Date: Fri, 8 Apr 2016 11:38:30 +0300
-Message-ID: <20160408083830.GT1727@lahna.fi.intel.com>
-References: <1459926480-32966-1-git-send-email-qiujiang@huawei.com>
- <1459926480-32966-4-git-send-email-qiujiang@huawei.com>
- <CACRpkdb63AZtEOSJ0R+EqdHfKXcUr7Hs8fh9N5XHNcWjQ1Ba8A@mail.gmail.com>
+From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v2] rtc: omap: Support ext_wakeup configuration
+Date: Fri, 8 Apr 2016 12:18:33 +0300
+Message-ID: <57077769.1050101@ti.com>
+References: <1459960367-29399-1-git-send-email-m.niestroj@grinn-global.com>
+ <1459960367-29399-2-git-send-email-m.niestroj@grinn-global.com>
+ <20160406191103.GE27411@atomide.com> <57056352.1060801@grinn-global.com>
+ <57063B1A.7080700@ti.com> <570694B0.4040500@grinn-global.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:28549 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753110AbcDHIih (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 8 Apr 2016 04:38:37 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb63AZtEOSJ0R+EqdHfKXcUr7Hs8fh9N5XHNcWjQ1Ba8A@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <570694B0.4040500-z3quKL4iOrmQ6ZAhV5LmOA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marcin Niestroj <m.niestroj-z3quKL4iOrmQ6ZAhV5LmOA@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Cc: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: qiujiang <qiujiang@huawei.com>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Alan Tull <delicious.quinoa@gmail.com>, Jamie Iles <jamie@jamieiles.com>, charles.chenxin@huawei.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>
 
-On Fri, Apr 08, 2016 at 10:26:28AM +0200, Linus Walleij wrote:
-> On Wed, Apr 6, 2016 at 9:08 AM, qiujiang <qiujiang@huawei.com> wrote:
+On 04/07/2016 08:11 PM, Marcin Niestroj wrote:
 > 
-> > This patch adds gpio-signaled acpi event support. It is used for
-> > power button on hisilicon D02 board, an arm64 platform.
-> >
-> > The corresponding DSDT file is defined as follows:
-> >  Device(GPI0) {
-> >         Name(_HID, "HISI0181")
-> >         Name(_ADR, 0)
-> >         Name(_UID, 0)
-> >
-> >         Name (_CRS, ResourceTemplate ()  {
-> >                 Memory32Fixed (ReadWrite, 0x802e0000, 0x10000)
-> >                 Interrupt (ResourceConsumer, Level, ActiveHigh,
-> >                 Exclusive,,,)  {344}
-> >         })
-> >
-> >         Device(PRTa) {
-> >                 Name (_DSD, Package () {
-> >                 Package () {
-> >                         Package () {"reg",0},
-> >                         Package () {"snps,nr-gpios",32},
-> >                         }
-> >                 })
-> >         }
-> >
-> >         Name (_AEI, ResourceTemplate () {
-> >                 GpioInt(Edge, ActiveLow, ExclusiveAndWake,
-> >                 PullUp, , " \\_SB.GPI0") {8}
-> >         })
-> >
-> >         Method (_E08, 0x0, NotSerialized) {
-> >                 Notify (\_SB.PWRB, 0x80)
-> >         }
-> > }
-> >
-> > Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > Signed-off-by: qiujiang <qiujiang@huawei.com>
+> On 07.04.2016 12:48, Grygorii Strashko wrote:
+>> On 04/06/2016 10:28 PM, Marcin Niestroj wrote:
+>>> Hi,
+>>>
+>>> On 06.04.2016 21:11, Tony Lindgren wrote:
+>>>> * Marcin Niestroj <m.niestroj-z3quKL4iOrmQ6ZAhV5LmOA@public.gmane.org> [160406 09:34]:
+>>>>> Support configuration of ext_wakeup sources. This patch makes it
+>>>>> possible to enable ext_wakeup (and set it's polarity), depending on
+>>>>> board configuration. AM335x's dedicated PMIC (tps65217) uses 
+>>>>> ext_wakeup
+>>>>> in SLEEP mode (RTC-only) to notify about power-button presses. 
+>>>>> Handling
+>>>>> power-button presses enables to recover from RTC-only power states
+>>>>> correctly.
+>>>>>
+>>>>> Implementation uses gpiochip to utilize standard bindings. However,
+>>>>> configuration is possible only using device-tree (no runtime changes).
+>>>>
+>>>> Hey looks good to me, adding linux-omap list to Cc.
+>>>>
+>>>> Can you please check that the "depends on GPIOLIB" does not disable
+>>>> the RTC driver for omap1?
+>>>
+>>> Looks ok for omap1. ARCH_OMAP1 selects ARCH_REQUIRE_GPIOLIB, which
+>>> selects GPIOLIB.
+>>>
+>>> Best regards,
+>>> Marcin
+>>>
+>>>>
+>>>> Regards,
+>>>>
+>>>> Tony
+>>>>
+>>>>> Signed-off-by: Marcin Niestroj <m.niestroj-z3quKL4iOrmQ6ZAhV5LmOA@public.gmane.org>
+>>>>> ---
+>>>>>   Documentation/devicetree/bindings/rtc/rtc-omap.txt |  18 ++-
+>>>>>   drivers/rtc/Kconfig                                |   2 +-
+>>>>>   drivers/rtc/rtc-omap.c                             | 137
+>>>>> ++++++++++++++++++++-
+>>>>>   3 files changed, 154 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/rtc/rtc-omap.txt
+>>>>> b/Documentation/devicetree/bindings/rtc/rtc-omap.txt
+>>>>> index bf7d11a..4a7738e 100644
+>>>>> --- a/Documentation/devicetree/bindings/rtc/rtc-omap.txt
+>>>>> +++ b/Documentation/devicetree/bindings/rtc/rtc-omap.txt
+>>>>> @@ -18,8 +18,12 @@ Optional properties:
+>>>>>     through pmic_power_en
+>>>>>   - clocks: Any internal or external clocks feeding in to rtc
+>>>>>   - clock-names: Corresponding names of the clocks
+>>>>> +- gpio-controller: Mark as gpio controller when using ext_wakeup
+>>>>> +- #gpio-cells: Should be set to 2
+>>>>> +- ngpios: Number of ext_wakeup sources supported by processor (board)
+>>>>> +- ext-wakeup-gpios: List of ext_wakeup sources to configure
+>>>>>
+>>>>> -Example:
+>>>>> +Examples:
+>>>>>
+>>>>>   rtc@1c23000 {
+>>>>>       compatible = "ti,da830-rtc";
+>>>>> @@ -31,3 +35,15 @@ rtc@1c23000 {
+>>>>>       clocks = <&clk_32k_rtc>, <&clk_32768_ck>;
+>>>>>       clock-names = "ext-clk", "int-clk";
+>>>>>   };
+>>>>> +
+>>>>> +rtc: rtc@44e3e000 {
+>>>>> +    compatible = "ti,am3352-rtc", "ti,da830-rtc";
+>>>>> +    reg = <0x44e3e000 0x1000>;
+>>>>> +    interrupts = <75
+>>>>> +              76>;
+>>>>> +    system-power-controller;
+>>>>> +    gpio-controller;
+>>>>> +    #gpio-cells = <2>;
+>>>>> +    ngpios = <1>;
+>>>>> +    ext-wakeup-gpios = <&rtc 0 GPIO_ACTIVE_LOW>;
+>>>>> +};
+>>
+>> I'm not sure that rtc can request gpios by itself in this
+>> way (if i rememberer this can break modules isnmod/rmmod).
+>>
+>> cc: linux-gpio
+>>
+>> The gpio-hog is more correct way follow if I'm not mistaken)
+>> - see gpiochip_request_own_desc().
 > 
-> Admittedly I'm an ACPI novice and need help with deciding
-> about ACPI, but I mostly trust Mika to know these things right.
+> You are right. It is not possible to rmmod module, as it is "in use"
+> all the time. I'll try with gpio_requst_own_desc().
 > 
-> About this:
+>>
+>> Another question, in commit message you refer to  power-button,
+>> but i do not see anything related in binding description.
 > 
-> > +       /* Add GPIO-signaled ACPI event support */
-> > +       if (pp->irq)
-> > +               acpi_gpiochip_request_interrupts(&port->gc);
+> We don't have power-button connected right to the processor. It is
+> connected to PMIC. During runtime we receive IRQs about power-button
+> from PMIC using i2c bus. The only purpose of this patch is to
+> configure processor's ext_wakeup line, which is triggered during
+> RTC-only mode (for example when power-button is pressed), causing
+> device wakeup. On the other hand, it is not possible to use ext_wakeup
+> during runtime, as we are only able to read it's status, but it
+> cannot trigger any interrupts.
+
+Sry, but I don't like this approach - it could make sense if RTC
+EXT_WAKEUP will be at least partially mapped on gpiolib interface.
+But your gpiochip is fake, you do not/can't use GPIO hogging mechanism
+and you're even parsing DT on your own (in V3).
+
+In general it's more like irqchip than gpiochip, but RTC can
+trigger IRQ on ext_wakeup :(
+
+As per above, your first version of the patch looks more sensible to me.
+
+Additional note. Shouldn't EXT_WAKEUP_STATUS be cleared after wake up?
+This is requested by am57x trm at least: "SW must clear the events before
+PMIC_PWR_ENABLE can go from 1 - 0. "
+
 > 
-> It's weird to me that the driver already has a requested IRQ and
-> everything, now it has to request it again from ACPI.
+>>
+>> Shouldn't some gpio-key node be here, which will consume rtc-gpio?
+>>
+>>
+>>>>> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+>>>>> index 3e84315..f013346 100644
+>>>>> --- a/drivers/rtc/Kconfig
+>>>>> +++ b/drivers/rtc/Kconfig
 
-This is different thing, though.
+[...]
 
-Calling acpi_gpiochip_request_interrupts() results _AEI ACPI method
-being evaluated that returns a list of GPIOs which are used as event
-sources. acpi_gpiochip_request_interrupts() then goes and installs
-interrupt handler per each GPIO in that list.
 
-> When I look into the acpi_gpiochip_request_interrupts()
-> I find it weird that it is void given how much can go wrong
-> inside it. Should it not return an errorcode?
-
-Currently it just complains if something goes wrong. The GPIO driver
-itself can still work just fine (including interrupts).
-
-I'm fine to change it to return an error code.
-
-> > +               if (has_acpi_companion(dev) && pp->idx == 0)
-> > +                       pp->irq = platform_get_irq(to_platform_device(dev), 0);
-> 
-> As it was already fetched here and then later requested,
-> we still have to call acpi_gpiochip_request_interrupts()
-> further down the road? That is confusing to me, can you
-> explain what is going on?
-
-See above.
+-- 
+regards,
+-grygorii
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
