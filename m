@@ -1,37 +1,166 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] pinctrl: tegra: clear park bit for all pins
-Date: Thu, 7 Apr 2016 16:10:29 -0600
-Message-ID: <5706DAD5.9020805@wwwdotorg.org>
-References: <1460065028-26169-1-git-send-email-rklein@nvidia.com>
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: [PATCH 06/10] watchdog: ebc-c384_wdt: Utilize the ISA bus driver
+Date: Thu, 7 Apr 2016 17:35:35 -0700
+Message-ID: <20160408003535.GA10211@roeck-us.net>
+References: <cover.1460040201.git.vilhelm.gray@gmail.com>
+ <1f5bf2e21006f0fd4f10ab3948cf69a737c0b039.1460040201.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:56686 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751760AbcDGWKe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Apr 2016 18:10:34 -0400
-In-Reply-To: <1460065028-26169-1-git-send-email-rklein@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1f5bf2e21006f0fd4f10ab3948cf69a737c0b039.1460040201.git.vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/07/2016 03:37 PM, Rhyland Klein wrote:
-> Parking bits might not be cleared by the bootloader properly (if for
-> instance it doesn't use the device configured by that pin). Clear
-> the park bits for all the pins during pinctrl probe.
->
-> This is present on T210 platforms but not earlier ones, so for earlier
-> generations, set parked_reg = -1 to disable.
->
-> The park bit is used to prevent glitching when reprogramming pinctrl
-> registers.
->
-> Based on work by:
-> Shravani Dingari <shravanid@nvidia.com>
->
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+On Thu, Apr 07, 2016 at 10:47:27AM -0400, William Breathitt Gray wrote:
+> The WinSystems EBC-C384 watchdog timer is controlled via ISA bus
+> communication. As such, the ISA bus driver is more appropriate than the
+> platform driver for the WinSystems EBC-C384 watchdog timer driver.
+> 
+> Signed-off-by: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/watchdog/Kconfig        |  2 +-
+>  drivers/watchdog/ebc-c384_wdt.c | 43 ++++++++++-------------------------------
+>  2 files changed, 11 insertions(+), 34 deletions(-)
+> 
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index fb94765..b10761d 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -738,7 +738,7 @@ config ALIM7101_WDT
+>  
+>  config EBC_C384_WDT
+>  	tristate "WinSystems EBC-C384 Watchdog Timer"
+> -	depends on X86
+> +	depends on X86 && ISA_BUS
 
-Acked-by: Stephen Warren <swarren@nvidia.com>
+I am a bit concerend that the newly introduced ISA_BUS is not automatically
+enabled. Effectively this means that all drivers depending on it will
+be disabled until someone enables ISA_BUS in the distribution.
 
+Is this a concern for anyone but me ?
+
+Anyway, since you are the driver maintainer, I assume that you are ok
+with it, so
+
+Acked-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+
+Side note for Wim: ISA_BUS was introduced with commit b3c1be1b789c
+("base: isa: Remove X86_32 dependency") in -next.
+
+Guenter
+
+>  	select WATCHDOG_CORE
+>  	help
+>  	  Enables watchdog timer support for the watchdog timer on the
+> diff --git a/drivers/watchdog/ebc-c384_wdt.c b/drivers/watchdog/ebc-c384_wdt.c
+> index 77fda0b..4b849b8 100644
+> --- a/drivers/watchdog/ebc-c384_wdt.c
+> +++ b/drivers/watchdog/ebc-c384_wdt.c
+> @@ -16,10 +16,10 @@
+>  #include <linux/errno.h>
+>  #include <linux/io.h>
+>  #include <linux/ioport.h>
+> +#include <linux/isa.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/moduleparam.h>
+> -#include <linux/platform_device.h>
+>  #include <linux/types.h>
+>  #include <linux/watchdog.h>
+>  
+> @@ -95,9 +95,8 @@ static const struct watchdog_info ebc_c384_wdt_info = {
+>  	.identity = MODULE_NAME
+>  };
+>  
+> -static int __init ebc_c384_wdt_probe(struct platform_device *pdev)
+> +static int ebc_c384_wdt_probe(struct device *dev, unsigned int id)
+>  {
+> -	struct device *dev = &pdev->dev;
+>  	struct watchdog_device *wdd;
+>  
+>  	if (!devm_request_region(dev, BASE_ADDR, ADDR_EXTENT, dev_name(dev))) {
+> @@ -122,61 +121,39 @@ static int __init ebc_c384_wdt_probe(struct platform_device *pdev)
+>  		dev_warn(dev, "Invalid timeout (%u seconds), using default (%u seconds)\n",
+>  			timeout, WATCHDOG_TIMEOUT);
+>  
+> -	platform_set_drvdata(pdev, wdd);
+> +	dev_set_drvdata(dev, wdd);
+>  
+>  	return watchdog_register_device(wdd);
+>  }
+>  
+> -static int ebc_c384_wdt_remove(struct platform_device *pdev)
+> +static int ebc_c384_wdt_remove(struct device *dev, unsigned int id)
+>  {
+> -	struct watchdog_device *wdd = platform_get_drvdata(pdev);
+> +	struct watchdog_device *wdd = dev_get_drvdata(dev);
+>  
+>  	watchdog_unregister_device(wdd);
+>  
+>  	return 0;
+>  }
+>  
+> -static struct platform_driver ebc_c384_wdt_driver = {
+> +static struct isa_driver ebc_c384_wdt_driver = {
+> +	.probe = ebc_c384_wdt_probe,
+>  	.driver = {
+>  		.name = MODULE_NAME
+>  	},
+>  	.remove = ebc_c384_wdt_remove
+>  };
+>  
+> -static struct platform_device *ebc_c384_wdt_device;
+> -
+>  static int __init ebc_c384_wdt_init(void)
+>  {
+> -	int err;
+> -
+>  	if (!dmi_match(DMI_BOARD_NAME, "EBC-C384 SBC"))
+>  		return -ENODEV;
+>  
+> -	ebc_c384_wdt_device = platform_device_alloc(MODULE_NAME, -1);
+> -	if (!ebc_c384_wdt_device)
+> -		return -ENOMEM;
+> -
+> -	err = platform_device_add(ebc_c384_wdt_device);
+> -	if (err)
+> -		goto err_platform_device;
+> -
+> -	err = platform_driver_probe(&ebc_c384_wdt_driver, ebc_c384_wdt_probe);
+> -	if (err)
+> -		goto err_platform_driver;
+> -
+> -	return 0;
+> -
+> -err_platform_driver:
+> -	platform_device_del(ebc_c384_wdt_device);
+> -err_platform_device:
+> -	platform_device_put(ebc_c384_wdt_device);
+> -	return err;
+> +	return isa_register_driver(&ebc_c384_wdt_driver, 1);
+>  }
+>  
+>  static void __exit ebc_c384_wdt_exit(void)
+>  {
+> -	platform_device_unregister(ebc_c384_wdt_device);
+> -	platform_driver_unregister(&ebc_c384_wdt_driver);
+> +	isa_unregister_driver(&ebc_c384_wdt_driver);
+>  }
+>  
+>  module_init(ebc_c384_wdt_init);
+> @@ -185,4 +162,4 @@ module_exit(ebc_c384_wdt_exit);
+>  MODULE_AUTHOR("William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>");
+>  MODULE_DESCRIPTION("WinSystems EBC-C384 watchdog timer driver");
+>  MODULE_LICENSE("GPL v2");
+> -MODULE_ALIAS("platform:" MODULE_NAME);
+> +MODULE_ALIAS("isa:" MODULE_NAME);
+> -- 
+> 2.7.3
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
