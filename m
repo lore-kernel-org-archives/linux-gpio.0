@@ -1,28 +1,49 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: Re: [PATCH V2 4/7] mtd: nand: add Loongson1 NAND driver
-Date: Fri, 8 Apr 2016 13:52:39 +0200
-Message-ID: <57079B87.9030209@nod.at>
-References: <1460115779-13141-1-git-send-email-keguang.zhang@gmail.com>
- <1460115779-13141-4-git-send-email-keguang.zhang@gmail.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH 06/10] watchdog: ebc-c384_wdt: Utilize the ISA bus driver
+Date: Fri, 8 Apr 2016 08:03:38 -0400
+Message-ID: <20160408120338.GA18202@sophia>
+References: <cover.1460040201.git.vilhelm.gray@gmail.com>
+ <1f5bf2e21006f0fd4f10ab3948cf69a737c0b039.1460040201.git.vilhelm.gray@gmail.com>
+ <20160408003535.GA10211@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from a.ns.miles-group.at ([95.130.255.143]:11952 "EHLO radon.swed.at"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754251AbcDHLwr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 8 Apr 2016 07:52:47 -0400
-In-Reply-To: <1460115779-13141-4-git-send-email-keguang.zhang@gmail.com>
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:34601 "EHLO
+	mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752633AbcDHMDx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Apr 2016 08:03:53 -0400
+Content-Disposition: inline
+In-Reply-To: <20160408003535.GA10211@roeck-us.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Keguang Zhang <keguang.zhang@gmail.com>, linux-mips@linux-mips.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org
-Cc: Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: gregkh@linuxfoundation.org, tglx@linutronix.de, jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, wim@iguana.be, linus.walleij@linaro.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Am 08.04.2016 um 13:42 schrieb Keguang Zhang:
-> +	chip->options		= NAND_NO_SUBPAGE_WRITE;
-> +	chip->ecc.mode		= NAND_ECC_SOFT;
+On Thu, Apr 07, 2016 at 05:35:35PM -0700, Guenter Roeck wrote:
+>I am a bit concerend that the newly introduced ISA_BUS is not automatically
+>enabled. Effectively this means that all drivers depending on it will
+>be disabled until someone enables ISA_BUS in the distribution.
+>
+>Is this a concern for anyone but me ?
+>
+>Anyway, since you are the driver maintainer, I assume that you are ok
+>with it, so
+>
+>Acked-by: Guenter Roeck <linux@roeck-us.net>
+>
+>Side note for Wim: ISA_BUS was introduced with commit b3c1be1b789c
+>("base: isa: Remove X86_32 dependency") in -next.
+>
+>Guenter
 
-Is the lack of HW ECC and subpage write a hardware limitation?
+Since the ISA bus lacks standardized probing functionality, and the
+majority of ISA devices I've encountered expect the user to start
+writing to the device's I/O port addresses from the get-go, I think
+ISA_BUS should remain an explicit dependency rather than become selected
+when a user chooses a driver. That is to say, it is more appropriate for
+a user to explicitly enable ISA_BUS if their system has an ISA bus;
+otherwise a user may enable a driver with the expectation of a device
+probe, whereas the driver will simply start writing to I/O port
+addresses unexpectedly.
 
-Thanks,
-//richard
+William Breathitt Gray
