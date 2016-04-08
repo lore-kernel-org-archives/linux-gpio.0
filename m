@@ -1,29 +1,71 @@
-From: Kelvin Cheung <keguang.zhang@gmail.com>
-Subject: Re: [PATCH V2 4/7] mtd: nand: add Loongson1 NAND driver
-Date: Fri, 8 Apr 2016 22:30:21 +0800
-Message-ID: <CAJhJPsXaidmMUX7CcTHshaYGZ-iqbaAExMh6eoOFDEAuzp4t7A@mail.gmail.com>
-References: <1460115779-13141-1-git-send-email-keguang.zhang@gmail.com>
- <1460115779-13141-4-git-send-email-keguang.zhang@gmail.com> <57079B87.9030209@nod.at>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v2] rtc: omap: Support ext_wakeup configuration
+Date: Fri, 8 Apr 2016 07:57:03 -0700
+Message-ID: <20160408145703.GR16484@atomide.com>
+References: <1459960367-29399-1-git-send-email-m.niestroj@grinn-global.com>
+ <1459960367-29399-2-git-send-email-m.niestroj@grinn-global.com>
+ <20160406191103.GE27411@atomide.com>
+ <57056352.1060801@grinn-global.com>
+ <57063B1A.7080700@ti.com>
+ <570694B0.4040500@grinn-global.com>
+ <57077769.1050101@ti.com>
+ <57078313.70803@grinn-global.com>
+ <57078B16.2020402@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <57079B87.9030209@nod.at>
-Sender: linux-pm-owner@vger.kernel.org
-To: Richard Weinberger <richard@nod.at>, linux-mips@linux-mips.org, linux-clk@vger.kernel.org, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org
-Cc: Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:50099 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758508AbcDHO5V (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 8 Apr 2016 10:57:21 -0400
+Content-Disposition: inline
+In-Reply-To: <57078B16.2020402@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Marcin Niestroj <m.niestroj@grinn-global.com>, rtc-linux@googlegroups.com, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Keerthy <j-keerthy@ti.com>, linux-omap@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 04/08/2016 07:52 PM, Richard Weinberger wrote:
-> Am 08.04.2016 um 13:42 schrieb Keguang Zhang:
->> + chip->options = NAND_NO_SUBPAGE_WRITE;
->> + chip->ecc.mode = NAND_ECC_SOFT;
-> Is the lack of HW ECC and subpage write a hardware limitation?
+* Grygorii Strashko <grygorii.strashko@ti.com> [160408 03:43]:
+> On 04/08/2016 01:08 PM, Marcin Niestroj wrote:
+> >>>>>>> @@ -18,8 +18,12 @@ Optional properties:
+> >>>>>>>      through pmic_power_en
+> >>>>>>>    - clocks: Any internal or external clocks feeding in to rtc
+> >>>>>>>    - clock-names: Corresponding names of the clocks
+> >>>>>>> +- gpio-controller: Mark as gpio controller when using ext_wakeup
+> >>>>>>> +- #gpio-cells: Should be set to 2
+> >>>>>>> +- ngpios: Number of ext_wakeup sources supported by processor 
+> >>>>>>> (board)
+> >>>>>>> +- ext-wakeup-gpios: List of ext_wakeup sources to configure
 
-Yes, that's the hardware limitation of Loongson1B NAND controller.
+I think the naming standard here should be gpio-*, so in this
+case gpio-wakeup.
 
-> Thanks,
-> //richard
+> >>> We don't have power-button connected right to the processor. It is
+> >>> connected to PMIC. During runtime we receive IRQs about power-button
+> >>> from PMIC using i2c bus. The only purpose of this patch is to
+> >>> configure processor's ext_wakeup line, which is triggered during
+> >>> RTC-only mode (for example when power-button is pressed), causing
+> >>> device wakeup. On the other hand, it is not possible to use ext_wakeup
+> >>> during runtime, as we are only able to read it's status, but it
+> >>> cannot trigger any interrupts.
+> >>
+> >> Sry, but I don't like this approach - it could make sense if RTC
+> >> EXT_WAKEUP will be at least partially mapped on gpiolib interface.
+> >> But your gpiochip is fake, you do not/can't use GPIO hogging mechanism
+> >> and you're even parsing DT on your own (in V3).
+> > 
+> > With gpio hogging we can't pass polarity to the driver. It is hidden
+> > in gpiolib.
+> 
+> kirkwood-openrd.dtsi-			p2 {
+> kirkwood-openrd.dtsi:				gpio-hog;
+> kirkwood-openrd.dtsi-				gpios = <2 GPIO_ACTIVE_HIGH>;
+> 						[input;]
+> 
+> Sry, if you can't do smth like above - it's just prove that this approach is not right.
 
-Best regards,
+Yes let's stick to the standards. It should be using gpiolib interface.
 
-Keguang Zhang
+Regards,
+
+Tony
