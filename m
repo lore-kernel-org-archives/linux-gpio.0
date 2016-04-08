@@ -1,89 +1,89 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 04/10] iio: stx104: Change STX104 dependency to ISA_BUS
-Date: Fri, 8 Apr 2016 11:28:01 -0700
-Message-ID: <20160408182801.GB7083@roeck-us.net>
-References: <cover.1460040201.git.vilhelm.gray@gmail.com>
- <783be62acf68b35f3fe4785a2cedfe017624688b.1460040201.git.vilhelm.gray@gmail.com>
- <20160408004503.GB10211@roeck-us.net>
- <20160408123158.GB18202@sophia>
- <5707AF91.5010704@roeck-us.net>
- <20160408150922.GA28058@sophia>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: GPIO character device next steps
+Date: Fri, 8 Apr 2016 20:32:31 +0200
+Message-ID: <CACRpkdYDjN8R60hhhu4RK9LF2cChOkA98pgvy2TzG9MAT1qGRw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:37055 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751186AbcDHS2A (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Apr 2016 14:28:00 -0400
-Content-Disposition: inline
-In-Reply-To: <20160408150922.GA28058@sophia>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:35460 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753723AbcDHScc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Apr 2016 14:32:32 -0400
+Received: by mail-oi0-f41.google.com with SMTP id p188so145580830oih.2
+        for <linux-gpio@vger.kernel.org>; Fri, 08 Apr 2016 11:32:32 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: gregkh@linuxfoundation.org, tglx@linutronix.de, jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, wim@iguana.be, linus.walleij@linaro.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Johan Hovold <johan@kernel.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Lee Campbell <leecam@google.com>, Amit Kucheria <amit.kucheria@linaro.org>, Markus Pargmann <mpa@pengutronix.de>, Michael Welling <mwelling@ieee.org>
 
-On Fri, Apr 08, 2016 at 11:09:22AM -0400, William Breathitt Gray wrote:
-> On Fri, Apr 08, 2016 at 06:18:09AM -0700, Guenter Roeck wrote:
-> > From the context, arm and mips use "select ISA". For those, adding and
-> >auto-selecting ISA_BUS would make sense. For the remaining architectures
-> >you could simply add "config ISA_BUS". I would suggest to update default
-> >configurations, though.
-> >
-> >There is also "um", for which you effectively disabled ISA support
-> >as far as I can see. You might want to look into that as well.
-> >
-> >> My avoidance of making ISA a selection of ISA_BUS is the possibility of
-> >> an invalid configuration: a user may initially enable ISA_BUS, then
-> >> later disable ISA, resulting in ISA_BUS remaining enabled without ISA
-> >> selected.
-> >>
-> >Does that even make sense ? Not sure I understand why you don't just
-> >select ISA_BUS if ISA is selected. That would also be backward compatible
-> >and avoid the problem I was concerned about.
-> 
-> I feel now that the introduction of the ISA_BUS option may the wrong
-> approach to resolve lack of ISA support for the X86_64 architecture;
-> adding ISA_BUS depends or selects through various Kconfigs would simply
-> obfuscate the ISA option. The true issue is that various driver
-> configs are assuming X86_32 architecture when they depend on the ISA
-> option, but the ISA bus does not require an X86_32 architecture.
-> 
-> The proper resolution then is to remove the misguided ISA_BUS option and
-> move the X86_32 dependency to the relevant drivers configs explicitly.
-> A grep for isa_register_driver calls within the kernel reveals that only
-> a few drivers explicitly use it. It should be trivial to create a patch
-> to add the explicit X86_32 dependency to the relevant drivers, so I will
-> submit one soon when I get the time to decouple X86_32 from the ISA
-> config option.
-> 
+As you know we froze the GPIO sysfs ABI in kernel v4.6 and
+now we need to complete its replacement with a new mechanism
+using the character device.
 
-That might be tricky: At least some if not many of those drivers are expected
-to run on non-X86 architectures, and thus don't really depend on X86_32
-(possibly some depend on 32 bit - I didn't check).
+We can currently:
 
-I count 44 calls to isa_register_driver() in the current mainline.
-Not sure if this counts as "only a few drivers".
+- Enumerate gpiochips - udev/systemd and its siblings
+  will do this automatically from the character devices
+  (a patch for mdev will be needed for BusyBox to enumerate
+  the chips).
 
-Thanks,
-Guenter
+- List its lines with name and consumer strings, that is what
+  "lsgpio" from tools/gpio/lsgpio.c does.
 
-> Once ISA is freed from the X86_32 dependency, I will simply use it
-> instead of ISA_BUS, and rebase this patchset for version 2.
-> 
-> >> As a side note, should the dummy isa_register_driver return 0? Would it
-> >> be more appropriate for it to return an error code to indicate lack of
-> >> support for ISA, rather than silently fail?
-> >>
-> >One should think so.
-> >
-> >Thanks,
-> >Guenter
-> >
-> 
-> I'll submit a separate patch for this as well then.
-> 
-> William Breathitt Gray
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+- Locate the offset of any desired GPIO line from this string
+
+- Locate the gpiochip in the bus topology using sysfs
+  (as with any device)
+
+So I need some help, rants, ACKs etc on whatever I come up
+with next, and the next steps are (from the top of my head):
+
+- Naming GPIO lines from DT files
+  (So you have something reasonable to look for from userspace)
+  What do people think about just using
+  gpio-names = "foo", "bar", "baz"; as suggested by Rob Herring?
+
+- Getting a filehandle for one or several GPIOs
+  I would prefer to support getting multiple GPIOs from day one
+  as we know this is going to be a usecase sooner or later.
+  For example it is not uncommon to bitbang a bus from userspace
+  and then clock and data lines should
+
+- Give them consumer names from userspace (label who's
+  using this GPIO)
+
+- Setting flags on a line from userspace (such as ACTIVE_LOW
+  or OPEN_DRAIN) so the hardware can act accordingly.
+
+- Using this filehandle, shake the lines from low to high and vice
+  versa from userspace.
+
+- Getting a filehandle to listen to input events (interrupts) from a
+  certain GPIO line. Here I am primarily thinking about something
+  akin to IIO's event mechanism using poll() which I like a lot.
+
+- Getting the filehandle for events involves selecting trigger type
+  for rising/falling edge events. (I don't see how userspace could
+  possibly support or want to support level IRQs.)
+
+I am thinking about using filehandles to get a grip on (multiple)
+GPIOs and for events because it has the nice property that we
+know very well when userspace is using the resource, and we can
+free it when the file is closed (which also happens if the application
+crashes or get killed, or at shutdown etc).
+
+I'm thinking about staying with a single open() on the chardev
+from userspace, but several processes can open handles, then
+we need to use an ioctl() to say what we want from this
+filehandle: whether a handle on a few GPIO lines or a polled
+event.
+
+We want to be mutually exclusive to processes when getting
+pins for output, while making it possible for several clients
+to read the same line or subscribe to events from the same
+line.
+
+Your thoughts?
+
+Yours,
+Linus Walleij
