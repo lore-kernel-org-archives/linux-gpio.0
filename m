@@ -1,87 +1,257 @@
-From: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 04/10] iio: stx104: Change STX104 dependency to ISA_BUS
-Date: Fri, 8 Apr 2016 15:27:23 -0400
-Message-ID: <20160408192723.GA31687@sophia>
-References: <cover.1460040201.git.vilhelm.gray@gmail.com>
- <783be62acf68b35f3fe4785a2cedfe017624688b.1460040201.git.vilhelm.gray@gmail.com>
- <20160408004503.GB10211@roeck-us.net>
- <20160408123158.GB18202@sophia>
- <5707AF91.5010704@roeck-us.net>
- <20160408150922.GA28058@sophia>
- <20160408182801.GB7083@roeck-us.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160408182801.GB7083-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH] ARM: tegra: add DT binding for Tegra186 GPIO controllers
+Date: Fri,  8 Apr 2016 17:04:28 -0600
+Message-ID: <1460156668-27339-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:59632 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753300AbcDHXEf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Apr 2016 19:04:35 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 
-On Fri, Apr 08, 2016 at 11:28:01AM -0700, Guenter Roeck wrote:
->On Fri, Apr 08, 2016 at 11:09:22AM -0400, William Breathitt Gray wrote:
->> I feel now that the introduction of the ISA_BUS option may the wrong
->> approach to resolve lack of ISA support for the X86_64 architecture;
->> adding ISA_BUS depends or selects through various Kconfigs would simply
->> obfuscate the ISA option. The true issue is that various driver
->> configs are assuming X86_32 architecture when they depend on the ISA
->> option, but the ISA bus does not require an X86_32 architecture.
->> 
->> The proper resolution then is to remove the misguided ISA_BUS option and
->> move the X86_32 dependency to the relevant drivers configs explicitly.
->> A grep for isa_register_driver calls within the kernel reveals that only
->> a few drivers explicitly use it. It should be trivial to create a patch
->> to add the explicit X86_32 dependency to the relevant drivers, so I will
->> submit one soon when I get the time to decouple X86_32 from the ISA
->> config option.
->> 
->
->That might be tricky: At least some if not many of those drivers are expected
->to run on non-X86 architectures, and thus don't really depend on X86_32
->(possibly some depend on 32 bit - I didn't check).
->
->I count 44 calls to isa_register_driver() in the current mainline.
->Not sure if this counts as "only a few drivers".
->
->Thanks,
->Guenter
+From: Stephen Warren <swarren@nvidia.com>
 
-You're right, I there are more drivers that call isa_register_driver
-than I had estimated. I think a different approach may work however.
+Tegra186 contains two separate but mostly similar GPIO controllers.
+Register layout differs significantly from previous Tegra generations, and
+so a new binding is required to describe them in device tree. This patch
+adds that binding.
 
-When I initially proposed a patch to decouple the X86_32 dependency from
-the ISA config option, I received a reply from the 0-DAY kernel test
-auto-build indicating the errors from the drivers assuming a X86_32
-architecture
-(http://www.gossamer-threads.com/lists/linux/kernel/2350122#2350122).
-After reviewing the debug messages, I realized there are only four main
-issues:
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+---
+ .../bindings/gpio/nvidia,tegra186-gpio.txt         | 157 +++++++++++++++++++++
+ include/dt-bindings/gpio/tegra186-gpio.h           |  56 ++++++++
+ 2 files changed, 213 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+ create mode 100644 include/dt-bindings/gpio/tegra186-gpio.h
 
- 1. sound/isa/sscape.c:594:14:
-     snd_printk format uses '%d' but a size_t is passed in
- 2. arch/x86/mm/extable.c:23:15:
-     'SEGMENT_IS_PNP_CODE' is undeclared
- 3. drivers/pnp/pnpbios/bioscall.c:
-     a slew of undeclared symbols and casting type mismatches
- 4. drivers/scsi/ultrastor.c:674:29:
-     sprintf format uses '%05X' but a kernel pointer is passed in
+diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+new file mode 100644
+index 000000000000..41d12cb79f8e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+@@ -0,0 +1,157 @@
++NVIDIA Tegra186 GPIO controllers
++
++Tegra186 contains two GPIO controllers; a main controller and an "AON"
++controller. This binding document applies to both controllers. The register
++layouts for the controllers share many similarities, but also some significant
++differences. Hence, this document describes closely related but different
++bindings and compatible values.
++
++The Tegra186 GPIO controller allows software to set the IO direction of, and
++read/write the value of, numerous GPIO signals. Routing of GPIO signals to
++package balls is under the control of a separate pin controller HW block. Two
++major sets of registers exist:
++
++a) Security registers, which allow configuration of allowed access to the GPIO
++register set. These registers exist in a single contguous block of physical
++address space. The size of this block, and the security features available,
++varies between the different GPIO controllers.
++
++Access to this set of registers is not necessary in all circumstances. Code
++that wishes to configure access to the GPIO registers needs access to these
++registers to do so. Code which simply wishes to read or write GPIO data does not
++need access to these registers.
++
++b) GPIO registers, which allow manipulation of the GPIO signals. In some GPIO
++controllers, these registers are exposed via multiple "physical aliases" in
++address space, each of which access the same underlying state. See the hardware
++documentation for rationale. Any particular GPIO client is expected to access
++just one of these physical aliases.
++
++Tegra HW documentation describes a unified naming convention for all GPIOs
++implemented by the SoC. Each GPIO is assigned to a port, and a port may control
++a number of GPIOs. Thus, each GPIO is named according to an alphabetical port
++name and an integer GPIO name within the port. For example, GPIO_PA0, GPIO_PN6,
++or GPIO_PCC3.
++
++The number of ports implemented by each GPIO controller varies. The number of
++implemented GPIOs within each port varies. GPIO registers within a controller
++are grouped and laid out according to the port they affect.
++
++The mapping from port name to the GPIO controller that implements that port, and
++the mapping from port name to register offset within a controller, are both
++extremely non-linear. The header file <dt-bindings/gpio/tegra186-gpio.h>
++describes the port-level mapping. In that file, the naming convention for ports
++matches the HW documentation. The values chosen for the names are alphabetically
++sorted within a particular controller. Drivers need to map between the DT GPIO
++IDs and HW register offsets using a lookup table.
++
++Each GPIO controller can generate a number of interrupt signals. Each signal
++represents the aggregate status for all GPIOs within a set of ports. Thus, the
++number of interrupt signals generated by a controller varies as a rough function
++of the number of ports it implements. Note that the HW documentation refers to
++both the overall controller HW module and the sets-of-ports as "controllers".
++
++Each GPIO controller in fact generates multiple interrupts signals for each set
++of ports. Each GPIO may be configured to feed into a specific one of the
++interrupt signals generated by a set-of-ports. The intent is for each generated
++signal to be routed to a different CPU, thus allowing different CPUs to each
++handle subsets of the interrupts within a port. The status of each of these
++per-port-set signals is reported via a separate register. Thus, a driver needs
++to know which status register to observe. This binding currently defines no
++configuration mechanism for this. By default, drivers should use register
++GPIO_${port}_INTERRUPT_STATUS_G1_0. Future revisions to the binding could
++define a property to configure this.
++
++Required properties:
++- compatible
++  Array of strings.
++  One of:
++  - "nvidia,tegra186-gpio".
++  - "nvidia,tegra186-gpio-aon".
++- reg-names
++  Array of strings.
++  Contains a list of names for the register spaces described by the reg
++  property. May contain the following entries, in any order:
++  - "gpio": Mandatory. GPIO control registers. This may cover either:
++    a) The single physical alias that this OS should use.
++    b) All physical aliases that exist in the controller. This is appropriate
++       when the OS is responsible for managing assignment of the physical
++       aliass.
++  - "security": Optional. Security configuration registers.
++  Users of this binding MUST look up entries in the reg property by name, using
++  this reg-names property to do so.
++- reg
++  Array of (physical base address, length) tuples.
++  Must contain one entry per entry in the reg-names property, in a matching
++  order.
++- interrupts
++  Array of interrupt specifiers.
++  The interrupt outputs from the HW block, one per set of ports, in the order
++  the HW manual describes them. The number of entries required varies depending
++  on compatible value:
++  - "nvidia,tegra186-gpio": 6 entries.
++  - "nvidia,tegra186-gpio-aon": 1 entry.
++- gpio-controller
++  Boolean.
++  Marks the device node as a GPIO controller/provider.
++- #gpio-cells
++  Single-cell integer.
++  Must be <2>.
++  Indicates how many cells are used in a consumer's GPIO specifier.
++  The first cell is the pin number. See <dt-bindings/gpio/tegra186-gpio.h>.
++  The second cell contains flags:
++  - Bit 0 specifies polarity
++    - 0: Active-high (normal).
++    - 1: Active-low (inverted).
++- interrupt-controller
++  Boolean.
++  Marks the device node as an interrupt controller/provider.
++- #interrupt-cells
++  Single-cell integer.
++  Must be <2>.
++  Indicates how many cells are used in a consumer's interrupt specifier.
++  The first cell is the GPIO number. See <dt-bindings/gpio/tegra186-gpio.h>.
++  The second cell is contains flags:
++  - Bits [3:0] indicate trigger type and level:
++    - 1: Low-to-high edge triggered.
++    - 2: High-to-low edge triggered.
++    - 4: Active high level-sensitive.
++    - 8: Active low level-sensitive.
++    Valid combinations are 1, 2, 3, 4, 8.
++
++Example:
++
++#include <dt-bindings/interrupt-controller/irq.h>
++
++gpio@2200000 {
++	compatible = "nvidia,tegra186-gpio";
++	reg-names = "security", "gpio";
++	reg =
++		<0x0 0x2200000 0x0 0x10000>,
++		<0x0 0x2210000 0x0 0x10000>;
++	interrupts =
++		<0 47 IRQ_TYPE_LEVEL_HIGH>,
++		<0 50 IRQ_TYPE_LEVEL_HIGH>,
++		<0 53 IRQ_TYPE_LEVEL_HIGH>,
++		<0 56 IRQ_TYPE_LEVEL_HIGH>,
++		<0 59 IRQ_TYPE_LEVEL_HIGH>,
++		<0 180 IRQ_TYPE_LEVEL_HIGH>;
++	gpio-controller;
++	#gpio-cells = <2>;
++	interrupt-controller;
++	#interrupt-cells = <2>;
++};
++
++gpio@c2f0000 {
++	compatible = "nvidia,tegra186-gpio-aon";
++	reg-names = "security", "gpio";
++	reg =
++		<0x0 0xc2f0000 0x0 0x1000>,
++		<0x0 0xc2f1000 0x0 0x1000>;
++	interrupts =
++		<0 60 IRQ_TYPE_LEVEL_HIGH>;
++	gpio-controller;
++	#gpio-cells = <2>;
++	interrupt-controller;
++	#interrupt-cells = <2>;
++};
+diff --git a/include/dt-bindings/gpio/tegra186-gpio.h b/include/dt-bindings/gpio/tegra186-gpio.h
+new file mode 100644
+index 000000000000..38001c7023f1
+--- /dev/null
++++ b/include/dt-bindings/gpio/tegra186-gpio.h
+@@ -0,0 +1,56 @@
++/*
++ * This header provides constants for binding nvidia,tegra186-gpio*.
++ *
++ * The first cell in Tegra's GPIO specifier is the GPIO ID. The macros below
++ * provide names for this.
++ *
++ * The second cell contains standard flag values specified in gpio.h.
++ */
++
++#ifndef _DT_BINDINGS_GPIO_TEGRA_GPIO_H
++#define _DT_BINDINGS_GPIO_TEGRA_GPIO_H
++
++#include <dt-bindings/gpio/gpio.h>
++
++/* GPIOs implemented by main GPIO controller */
++#define TEGRA_MAIN_GPIO_PORT_A 0
++#define TEGRA_MAIN_GPIO_PORT_B 1
++#define TEGRA_MAIN_GPIO_PORT_C 2
++#define TEGRA_MAIN_GPIO_PORT_D 3
++#define TEGRA_MAIN_GPIO_PORT_E 4
++#define TEGRA_MAIN_GPIO_PORT_F 5
++#define TEGRA_MAIN_GPIO_PORT_G 6
++#define TEGRA_MAIN_GPIO_PORT_H 7
++#define TEGRA_MAIN_GPIO_PORT_I 8
++#define TEGRA_MAIN_GPIO_PORT_J 9
++#define TEGRA_MAIN_GPIO_PORT_K 10
++#define TEGRA_MAIN_GPIO_PORT_L 11
++#define TEGRA_MAIN_GPIO_PORT_M 12
++#define TEGRA_MAIN_GPIO_PORT_N 13
++#define TEGRA_MAIN_GPIO_PORT_O 14
++#define TEGRA_MAIN_GPIO_PORT_P 15
++#define TEGRA_MAIN_GPIO_PORT_Q 16
++#define TEGRA_MAIN_GPIO_PORT_R 17
++#define TEGRA_MAIN_GPIO_PORT_T 18
++#define TEGRA_MAIN_GPIO_PORT_X 19
++#define TEGRA_MAIN_GPIO_PORT_Y 20
++#define TEGRA_MAIN_GPIO_PORT_BB 21
++#define TEGRA_MAIN_GPIO_PORT_CC 22
++
++#define TEGRA_MAIN_GPIO(port, offset) \
++	((TEGRA_MAIN_GPIO_PORT_##port * 8) + offset)
++
++/* GPIOs implemented by AON GPIO controller */
++#define TEGRA_AON_GPIO_PORT_S 0
++#define TEGRA_AON_GPIO_PORT_U 1
++#define TEGRA_AON_GPIO_PORT_V 2
++#define TEGRA_AON_GPIO_PORT_W 3
++#define TEGRA_AON_GPIO_PORT_Z 4
++#define TEGRA_AON_GPIO_PORT_AA 5
++#define TEGRA_AON_GPIO_PORT_EE 6
++#define TEGRA_AON_GPIO_PORT_FF 7
++
++#define TEGRA_AON_GPIO(port, offset) \
++	((TEGRA_AON_GPIO_PORT_##port * 8) + offset)
++
++#endif
+-- 
+2.8.1
 
-Both issue 1 and issue 4 are easily fixed by patching the respective
-lines to match the format string with the variable type and vice-versa.
-
-Issue 2 and 3 are the actual X86_32 assumption I had suspected: these
-files depend on symbols declared in the include/asm/segment.h file; the
-declaration of these symbols is conditional: #ifdef CONFIG_X86_32.
-
-I believe this is the source of the issues I encountered on my initial
-attempt to decouple the X86_32 dependency from the ISA option. I suspect
-if I add an explicit X86_32 dependency to the PNPBIOS driver, I will be
-able to remove the X86_32 dependency from the ISA option without
-incident from the other drivers.
-
-William Breathitt Gray
---
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
