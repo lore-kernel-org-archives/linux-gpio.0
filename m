@@ -1,68 +1,31 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH 04/10] iio: stx104: Change STX104 dependency to ISA_BUS
-Date: Fri, 8 Apr 2016 06:18:09 -0700
-Message-ID: <5707AF91.5010704@roeck-us.net>
-References: <cover.1460040201.git.vilhelm.gray@gmail.com>
- <783be62acf68b35f3fe4785a2cedfe017624688b.1460040201.git.vilhelm.gray@gmail.com>
- <20160408004503.GB10211@roeck-us.net> <20160408123158.GB18202@sophia>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] gpio: pca953x: add PCAL9535 interrupt support for
+ Galileo Gen2
+Date: Fri, 8 Apr 2016 15:20:52 +0200
+Message-ID: <CACRpkdavpaV1K7hfWgyRTtnxmFqkrD33--Ji9jcy_JFwqYYX7Q@mail.gmail.com>
+References: <1460004992-16210-1-git-send-email-yong.b.li@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160408123158.GB18202@sophia>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1460004992-16210-1-git-send-email-yong.b.li@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yong Li <yong.b.li@intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, Phil Reid <preid@electromag.com.au>
 List-Id: linux-gpio@vger.kernel.org
 
-On 04/08/2016 05:31 AM, William Breathitt Gray wrote:
-> On Thu, Apr 07, 2016 at 05:45:03PM -0700, Guenter Roeck wrote:
->> This means for this and other similar drivers that the driver is no longer
->> supported on architectures which support ISA but not the newly introduced
->> ISA_BUS. Affected architectures are alpha, arm, m32r, m68k, mips, powerpc,
->> and parisc.
->>
->> A typical example is SCSI_AHA1542, which is no longer supported on those
->> architectures. It builds, but isa_register_driver() will be a dummy and fail.
->> Actually, this is true for _all_ drivers calling isa_register_driver().
->>
->> I hope this is understood and doesn't cause any problems.
->>
->> Thanks,
->> Guenter
->
-> That's a good catch. I overlooked this when I submitted the ISA_BUS
-> patch; I had improperly assumed the ISA option to have a dependency on
-> X86_32 based on arch/x86/Kconfig. The intention of the ISA_BUS is to
-> allow the proper definition of the isa_register_driver and
-> isa_unregister_driver functions without the dependency on X86_32 (e.g.
-> on X86_64 systems). How can this be resolved without ending support for
-> ISA on these other architectures? Would it be appropriate to add the
-> ISA_BUS dependency to every "config ISA" block for the other
-> architectures?
->
- From the context, arm and mips use "select ISA". For those, adding and
-auto-selecting ISA_BUS would make sense. For the remaining architectures
-you could simply add "config ISA_BUS". I would suggest to update default
-configurations, though.
+n Thu, Apr 7, 2016 at 6:56 AM, Yong Li <yong.b.li@intel.com> wrote:
 
-There is also "um", for which you effectively disabled ISA support
-as far as I can see. You might want to look into that as well.
-
-> My avoidance of making ISA a selection of ISA_BUS is the possibility of
-> an invalid configuration: a user may initially enable ISA_BUS, then
-> later disable ISA, resulting in ISA_BUS remaining enabled without ISA
-> selected.
+> Galileo Gen2 board uses the PCAL9535 as the GPIO expansion,
+> it is different from PCA9535 and includes interrupt mask/status registers,
+> The current driver does not support the interrupt registers configuration,
+> it causes some gpio pins cannot trigger interrupt events,
+> this patch fix this issue. The original patch was submitted by
+> Josef Ahmad <josef.ahmad@linux.intel.com>
+> http://git.yoctoproject.org/cgit/cgit.cgi/meta-intel-quark/tree/recipes-kernel/linux/files/0015-Quark-GPIO-1-2-quark.patch
 >
-Does that even make sense ? Not sure I understand why you don't just
-select ISA_BUS if ISA is selected. That would also be backward compatible
-and avoid the problem I was concerned about.
+> Signed-off-by: Yong Li <yong.b.li@intel.com>
 
-> As a side note, should the dummy isa_register_driver return 0? Would it
-> be more appropriate for it to return an error code to indicate lack of
-> support for ISA, rather than silently fail?
->
-One should think so.
+Patch applied with Andy's review tag.
 
-Thanks,
-Guenter
+Yours,
+Linus Walleij
