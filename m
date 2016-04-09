@@ -1,82 +1,79 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for the v4.6 series, take two
-Date: Sat, 9 Apr 2016 21:25:38 +0200
-Message-ID: <CACRpkdaUwt932jq6X9g2J_F=EJip2oV-zd2wTtYSCSE_WLDd=A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] gpio: menz127: use the new open drain callback
+Date: Sat,  9 Apr 2016 21:56:55 +0200
+Message-ID: <1460231815-8635-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:34736 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754814AbcDITZj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Apr 2016 15:25:39 -0400
-Received: by mail-ob0-f180.google.com with SMTP id bg3so90102632obb.1
-        for <linux-gpio@vger.kernel.org>; Sat, 09 Apr 2016 12:25:39 -0700 (PDT)
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:33248 "EHLO
+	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753097AbcDIT5H (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Apr 2016 15:57:07 -0400
+Received: by mail-lf0-f49.google.com with SMTP id e190so111492622lfe.0
+        for <linux-gpio@vger.kernel.org>; Sat, 09 Apr 2016 12:57:05 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Guenter Roeck <linux@roeck-us.net>, Robert Jarzmik <robert.jarzmik@free.fr>, Yong Li <sdliyong@gmail.com>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andreas Werner <andy@wernerandy.de>
 
-Hi Linus,
+The menz127 driver tries to support open drain by detecting it
+at request time. However: without the new callbacks from the
+gpiolib it is not really working: the core will still just emulate
+the open drain mode by switching the line to an input.
 
-here is a set of four GPIO fixes, the two fixes to the core are
-serious as they are regressing minor architectures.
+By adding a hook into the new .set_single_ended() call rather than
+trying to autodetect at request() time, proper open drain can be
+supported.
 
-Detailed information in the signed tag as usual.
+Cc: Andreas Werner <andy@wernerandy.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-menz127.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-Please pull them in!
+diff --git a/drivers/gpio/gpio-menz127.c b/drivers/gpio/gpio-menz127.c
+index 8c1ab8e1974f..334fe270dcf1 100644
+--- a/drivers/gpio/gpio-menz127.c
++++ b/drivers/gpio/gpio-menz127.c
+@@ -88,21 +88,25 @@ static int men_z127_debounce(struct gpio_chip *gc, unsigned gpio,
+ 	return 0;
+ }
+ 
+-static int men_z127_request(struct gpio_chip *gc, unsigned gpio_pin)
++static int men_z127_set_single_ended(struct gpio_chip *gc,
++				     unsigned offset,
++				     enum single_ended_mode mode)
+ {
+ 	struct men_z127_gpio *priv = gpiochip_get_data(gc);
+ 	u32 od_en;
+ 
+-	if (gpio_pin >= gc->ngpio)
+-		return -EINVAL;
++	if (mode != LINE_MODE_OPEN_DRAIN &&
++	    mode != LINE_MODE_PUSH_PULL)
++		return -ENOTSUPP;
+ 
+ 	spin_lock(&priv->lock);
+ 	od_en = readl(priv->reg_base + MEN_Z127_ODER);
+ 
+-	if (gpiochip_line_is_open_drain(gc, gpio_pin))
+-		od_en |= BIT(gpio_pin);
++	if (mode == LINE_MODE_OPEN_DRAIN)
++		od_en |= BIT(offset);
+ 	else
+-		od_en &= ~BIT(gpio_pin);
++		/* Implicitly LINE_MODE_PUSH_PULL */
++		od_en &= ~BIT(offset);
+ 
+ 	writel(od_en, priv->reg_base + MEN_Z127_ODER);
+ 	spin_unlock(&priv->lock);
+@@ -147,7 +151,7 @@ static int men_z127_probe(struct mcb_device *mdev,
+ 		goto err_unmap;
+ 
+ 	men_z127_gpio->gc.set_debounce = men_z127_debounce;
+-	men_z127_gpio->gc.request = men_z127_request;
++	men_z127_gpio->gc.set_single_ended = men_z127_set_single_ended;
+ 
+ 	ret = gpiochip_add_data(&men_z127_gpio->gc, men_z127_gpio);
+ 	if (ret) {
+-- 
+2.4.3
 
-Yours,
-Linus Walleij
-
-The following changes since commit 9735a22799b9214d17d3c231fe377fc852f042e9:
-
-  Linux 4.6-rc2 (2016-04-03 09:09:40 -0500)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.6-3
-
-for you to fetch changes up to 9b8e3ec34318663affced3c14d960e78d760dd9a:
-
-  gpio: pca953x: Use correct u16 value for register word write
-(2016-04-08 11:49:47 +0200)
-
-----------------------------------------------------------------
-GPIO fixes for the V4.6 series:
-
-Core fixes:
-- Defer GPIO device setup until after gpiolib is initialized.
-  It turns out that a few very tightly integrated GPIO platform
-  drivers initialize so early (befor core_initcall()) so that
-  the gpiolib isn't even initialized itself. That limits what
-  the library can do, and we cannot reference uninitialized
-  fields until later. Defer some of the initialization until
-  right after the gpiolib is initialized in these (rare) cases.
-- As a consequence: do not use devm_* resources when allocating
-  the states in the initial set-up of the gpiochip.
-
-Driver fixes:
-- In ACPI retrieveal: ignore GpioInt when looking for output
-  GPIOs.
-- Fix legacy builds on the PXA without a backing pin controller.
-- Use correct datatype on pca953x register writes.
-
-----------------------------------------------------------------
-Dmitry Torokhov (1):
-      gpio / ACPI: ignore GpioInt() GPIOs when requesting GPIO_OUT_*
-
-Guenter Roeck (2):
-      gpiolib: Do not use devm functions when registering gpio chip
-      gpiolib: Defer gpio device setup until after gpiolib initialization
-
-Robert Jarzmik (1):
-      gpio: pxa: fix legacy non pinctrl aware builds
-
-Yong Li (1):
-      gpio: pca953x: Use correct u16 value for register word write
-
- drivers/gpio/gpio-pca953x.c |   3 +-
- drivers/gpio/gpio-pxa.c     |   4 +-
- drivers/gpio/gpiolib.c      | 133 ++++++++++++++++++++++++++++++--------------
- 3 files changed, 95 insertions(+), 45 deletions(-)
