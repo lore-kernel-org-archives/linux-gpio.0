@@ -1,88 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/2] gpio: f7188x: use the new open drain callback
-Date: Sat,  9 Apr 2016 16:13:32 +0200
-Message-ID: <1460211212-2808-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:35739 "EHLO
-	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751797AbcDIONi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Apr 2016 10:13:38 -0400
-Received: by mail-lf0-f44.google.com with SMTP id c126so108008225lfb.2
-        for <linux-gpio@vger.kernel.org>; Sat, 09 Apr 2016 07:13:37 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: One Thousand Gnomes <gnomes-qBU/x9rampVanCEyBjwyrvXRex20P6io@public.gmane.org>
+Subject: Re: [PATCH 04/10] iio: stx104: Change STX104 dependency to ISA_BUS
+Date: Sat, 9 Apr 2016 16:51:31 +0100
+Message-ID: <20160409165131.4d4a109b@lxorguk.ukuu.org.uk>
+References: <cover.1460040201.git.vilhelm.gray@gmail.com>
+	<783be62acf68b35f3fe4785a2cedfe017624688b.1460040201.git.vilhelm.gray@gmail.com>
+	<20160408004503.GB10211@roeck-us.net>
+	<20160408123158.GB18202@sophia>
+	<5707AF91.5010704@roeck-us.net>
+	<20160408150922.GA28058@sophia>
+	<20160408182801.GB7083@roeck-us.net>
+	<20160408192723.GA31687@sophia>
+	<20160409135814.359e24d6@lxorguk.ukuu.org.uk>
+	<20160409135050.GA10418@sophia>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160409135050.GA10418@sophia>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Peter Hung <hpeter@gmail.com>, Andreas Bofjall <andreas@gazonk.org>, Simon Guinot <simon.guinot@sequanux.org>
 
-The F7188x chips supports setting the pins in open drain mode.
-Activate the new .set_single_ended() callback.
+> It looks like I'm in quite a pickle. Even if the patch for the PnPBIOS
+> driver removes the errors and warnings, there may be runtime bugs in
+> other drivers expecting X86_32. The only way I can see to prevent that
+> is to audit all the drivers which depend on the ISA option -- a behemoth
+> undertaking which would be far too impractical and error-prone for me to
+> do.
 
-Cc: Peter Hung <hpeter@gmail.com>
-Cc: Andreas Bofjall <andreas@gazonk.org>
-Cc: Simon Guinot <simon.guinot@sequanux.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-f7188x.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+I actually wouldn't worry. We've got lots of other drivers that don't
+work on all the platforms they should because nobody has ever tried them
+out.
 
-diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
-index 8b10fbf787f8..75667afce387 100644
---- a/drivers/gpio/gpio-f7188x.c
-+++ b/drivers/gpio/gpio-f7188x.c
-@@ -130,6 +130,9 @@ static int f7188x_gpio_get(struct gpio_chip *chip, unsigned offset);
- static int f7188x_gpio_direction_out(struct gpio_chip *chip,
- 				     unsigned offset, int value);
- static void f7188x_gpio_set(struct gpio_chip *chip, unsigned offset, int value);
-+static int f7188x_gpio_set_single_ended(struct gpio_chip *gc,
-+					unsigned offset,
-+					enum single_ended_mode mode);
- 
- #define F7188X_GPIO_BANK(_base, _ngpio, _regbase)			\
- 	{								\
-@@ -140,6 +143,7 @@ static void f7188x_gpio_set(struct gpio_chip *chip, unsigned offset, int value);
- 			.get              = f7188x_gpio_get,		\
- 			.direction_output = f7188x_gpio_direction_out,	\
- 			.set              = f7188x_gpio_set,		\
-+			.set_single_ended = f7188x_gpio_set_single_ended, \
- 			.base             = _base,			\
- 			.ngpio            = _ngpio,			\
- 			.can_sleep        = true,			\
-@@ -301,6 +305,35 @@ static void f7188x_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	superio_exit(sio->addr);
- }
- 
-+static int f7188x_gpio_set_single_ended(struct gpio_chip *gc,
-+					unsigned offset,
-+					enum single_ended_mode mode)
-+{
-+	int err;
-+	struct f7188x_gpio_bank *bank = gpiochip_get_data(chip);
-+	struct f7188x_sio *sio = bank->data->sio;
-+	u8 data;
-+
-+	if (mode != LINE_MODE_OPEN_DRAIN &&
-+	    mode != LINE_MODE_PUSH_PULL)
-+		return -ENOTSUPP;
-+
-+	err = superio_enter(sio->addr);
-+	if (err)
-+		return err;
-+	superio_select(sio->addr, SIO_LD_GPIO);
-+
-+	data = superio_inb(sio->addr, gpio_out_mode(bank->regbase));
-+	if (mode == LINE_MODE_OPEN_DRAIN)
-+		data &= ~BIT(offset);
-+	else
-+		data |= BIT(offset);
-+	superio_outb(sio->addr, gpio_data_mode(bank->regbase), data);
-+
-+	superio_exit(sio->addr);
-+	return 0;
-+}
-+
- /*
-  * Platform device and driver.
-  */
--- 
-2.4.3
+At least if they compile on the different platforms people will be able
+to try them. It's not making anything any worse - it used to not work and
+it still doesn't work is the failure case 8)
 
+Alan
