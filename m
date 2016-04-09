@@ -1,63 +1,100 @@
-From: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 04/10] iio: stx104: Change STX104 dependency to ISA_BUS
-Date: Sat, 9 Apr 2016 09:50:50 -0400
-Message-ID: <20160409135050.GA10418@sophia>
-References: <cover.1460040201.git.vilhelm.gray@gmail.com>
- <783be62acf68b35f3fe4785a2cedfe017624688b.1460040201.git.vilhelm.gray@gmail.com>
- <20160408004503.GB10211@roeck-us.net>
- <20160408123158.GB18202@sophia>
- <5707AF91.5010704@roeck-us.net>
- <20160408150922.GA28058@sophia>
- <20160408182801.GB7083@roeck-us.net>
- <20160408192723.GA31687@sophia>
- <20160409135814.359e24d6@lxorguk.ukuu.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160409135814.359e24d6-qBU/x9rampVanCEyBjwyrvXRex20P6io@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: One Thousand Gnomes <gnomes-qBU/x9rampVanCEyBjwyrvXRex20P6io@public.gmane.org>
-Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/2] gpio: f7188x: use BIT() macro
+Date: Sat,  9 Apr 2016 16:13:24 +0200
+Message-ID: <1460211204-2761-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:33832 "EHLO
+	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751244AbcDIONb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Apr 2016 10:13:31 -0400
+Received: by mail-lf0-f43.google.com with SMTP id j11so107761212lfb.1
+        for <linux-gpio@vger.kernel.org>; Sat, 09 Apr 2016 07:13:30 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Peter Hung <hpeter@gmail.com>, Andreas Bofjall <andreas@gazonk.org>, Simon Guinot <simon.guinot@sequanux.org>
 
-On Sat, Apr 09, 2016 at 01:58:14PM +0100, One Thousand Gnomes wrote:
->> I believe this is the source of the issues I encountered on my initial
->> attempt to decouple the X86_32 dependency from the ISA option. I suspect
->> if I add an explicit X86_32 dependency to the PNPBIOS driver, I will be
->> able to remove the X86_32 dependency from the ISA option without
->> incident from the other drivers.
->
->That would be correct. PnPBIOS is obsoleted by ACPI so a 64bit x86
->platform shouldn't be using PnPBIOS nor anything non x86. Strictly
->speaking PnpBIOS is not ISA, it's onboard devices.
->
->ISA devices that can be enumerated are usually enumerated via ISAPnP
->which is platform independent.
->
->Quite a few of the ISA drivers if you review them more carefully have
->other endian and size assumptions, IRQ assumptions and probably fun bugs
->because they've simply never been run on anything else even when it is
->possible.
->
->Alan
+Align to how we handle bitmasks in most drivers in the
+subsystem: using the BIT(n) macro over (1 << n).
 
-It looks like I'm in quite a pickle. Even if the patch for the PnPBIOS
-driver removes the errors and warnings, there may be runtime bugs in
-other drivers expecting X86_32. The only way I can see to prevent that
-is to audit all the drivers which depend on the ISA option -- a behemoth
-undertaking which would be far too impractical and error-prone for me to
-do.
+Cc: Peter Hung <hpeter@gmail.com>
+Cc: Andreas Bofjall <andreas@gazonk.org>
+Cc: Simon Guinot <simon.guinot@sequanux.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-f7188x.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-The alternative then is to do as Guenter Roeck suggests and
-introduce/select ISA_BUS in the various other architectures which lack
-it. In this scenario, I would expect the ISA option to be avoided for
-new drivers, wherefore the ISA_BUS option can be used regardless of
-architecture configuration.
+diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
+index daac2d480db1..8b10fbf787f8 100644
+--- a/drivers/gpio/gpio-f7188x.c
++++ b/drivers/gpio/gpio-f7188x.c
+@@ -15,7 +15,8 @@
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/driver.h>
++#include <linux/bitops.h>
+ 
+ #define DRVNAME "gpio-f7188x"
+ 
+@@ -217,7 +218,7 @@ static int f7188x_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
+ 	superio_select(sio->addr, SIO_LD_GPIO);
+ 
+ 	dir = superio_inb(sio->addr, gpio_dir(bank->regbase));
+-	dir &= ~(1 << offset);
++	dir &= ~BIT(offset);
+ 	superio_outb(sio->addr, gpio_dir(bank->regbase), dir);
+ 
+ 	superio_exit(sio->addr);
+@@ -238,7 +239,7 @@ static int f7188x_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	superio_select(sio->addr, SIO_LD_GPIO);
+ 
+ 	dir = superio_inb(sio->addr, gpio_dir(bank->regbase));
+-	dir = !!(dir & (1 << offset));
++	dir = !!(dir & BIT(offset));
+ 	if (dir)
+ 		data = superio_inb(sio->addr, gpio_data_out(bank->regbase));
+ 	else
+@@ -246,7 +247,7 @@ static int f7188x_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 
+ 	superio_exit(sio->addr);
+ 
+-	return !!(data & 1 << offset);
++	return !!(data & BIT(offset));
+ }
+ 
+ static int f7188x_gpio_direction_out(struct gpio_chip *chip,
+@@ -264,13 +265,13 @@ static int f7188x_gpio_direction_out(struct gpio_chip *chip,
+ 
+ 	data_out = superio_inb(sio->addr, gpio_data_out(bank->regbase));
+ 	if (value)
+-		data_out |= (1 << offset);
++		data_out |= BIT(offset);
+ 	else
+-		data_out &= ~(1 << offset);
++		data_out &= ~BIT(offset);
+ 	superio_outb(sio->addr, gpio_data_out(bank->regbase), data_out);
+ 
+ 	dir = superio_inb(sio->addr, gpio_dir(bank->regbase));
+-	dir |= (1 << offset);
++	dir |= BIT(offset);
+ 	superio_outb(sio->addr, gpio_dir(bank->regbase), dir);
+ 
+ 	superio_exit(sio->addr);
+@@ -292,9 +293,9 @@ static void f7188x_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 
+ 	data_out = superio_inb(sio->addr, gpio_data_out(bank->regbase));
+ 	if (value)
+-		data_out |= (1 << offset);
++		data_out |= BIT(offset);
+ 	else
+-		data_out &= ~(1 << offset);
++		data_out &= ~BIT(offset);
+ 	superio_outb(sio->addr, gpio_data_out(bank->regbase), data_out);
+ 
+ 	superio_exit(sio->addr);
+-- 
+2.4.3
 
-I would prefer for a single ISA configuration option, but not at the
-expense on breaking existing drivers; therefore, I will work instead on
-adding the necessary ISA_BUS code to the various areas which require
-them. If there are problems with this plan too, let me know.
-
-William Breathitt Gray
