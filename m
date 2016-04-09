@@ -1,257 +1,201 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH] ARM: tegra: add DT binding for Tegra186 GPIO controllers
-Date: Fri,  8 Apr 2016 17:04:28 -0600
-Message-ID: <1460156668-27339-1-git-send-email-swarren@wwwdotorg.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: sx150x: move platform data into driver
+Date: Sat,  9 Apr 2016 10:56:13 +0200
+Message-ID: <1460192173-8995-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:59632 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753300AbcDHXEf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Apr 2016 19:04:35 -0400
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:35764 "EHLO
+	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751266AbcDII4V (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Apr 2016 04:56:21 -0400
+Received: by mail-lf0-f47.google.com with SMTP id c126so102883168lfb.2
+        for <linux-gpio@vger.kernel.org>; Sat, 09 Apr 2016 01:56:20 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Wei Chen <Wei.Chen@csr.com>, Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
 
-From: Stephen Warren <swarren@nvidia.com>
+The sx150x has some platform data definition in <linux/i2c/sx150x.h>
+but this file is only included from the driver in the whole kernel
+so move its contents into the driver.
 
-Tegra186 contains two separate but mostly similar GPIO controllers.
-Register layout differs significantly from previous Tegra generations, and
-so a new binding is required to describe them in device tree. This patch
-adds that binding.
-
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Cc: Wei Chen <Wei.Chen@csr.com>
+Cc: Peter Rosin <peda@axentia.se>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- .../bindings/gpio/nvidia,tegra186-gpio.txt         | 157 +++++++++++++++++++++
- include/dt-bindings/gpio/tegra186-gpio.h           |  56 ++++++++
- 2 files changed, 213 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
- create mode 100644 include/dt-bindings/gpio/tegra186-gpio.h
+Wolfram: I assume you're OK with me stealing this file.
+---
+ drivers/gpio/gpio-sx150x.c | 60 ++++++++++++++++++++++++++++++++-
+ include/linux/i2c/sx150x.h | 82 ----------------------------------------------
+ 2 files changed, 59 insertions(+), 83 deletions(-)
+ delete mode 100644 include/linux/i2c/sx150x.h
 
-diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
-new file mode 100644
-index 000000000000..41d12cb79f8e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
-@@ -0,0 +1,157 @@
-+NVIDIA Tegra186 GPIO controllers
-+
-+Tegra186 contains two GPIO controllers; a main controller and an "AON"
-+controller. This binding document applies to both controllers. The register
-+layouts for the controllers share many similarities, but also some significant
-+differences. Hence, this document describes closely related but different
-+bindings and compatible values.
-+
-+The Tegra186 GPIO controller allows software to set the IO direction of, and
-+read/write the value of, numerous GPIO signals. Routing of GPIO signals to
-+package balls is under the control of a separate pin controller HW block. Two
-+major sets of registers exist:
-+
-+a) Security registers, which allow configuration of allowed access to the GPIO
-+register set. These registers exist in a single contguous block of physical
-+address space. The size of this block, and the security features available,
-+varies between the different GPIO controllers.
-+
-+Access to this set of registers is not necessary in all circumstances. Code
-+that wishes to configure access to the GPIO registers needs access to these
-+registers to do so. Code which simply wishes to read or write GPIO data does not
-+need access to these registers.
-+
-+b) GPIO registers, which allow manipulation of the GPIO signals. In some GPIO
-+controllers, these registers are exposed via multiple "physical aliases" in
-+address space, each of which access the same underlying state. See the hardware
-+documentation for rationale. Any particular GPIO client is expected to access
-+just one of these physical aliases.
-+
-+Tegra HW documentation describes a unified naming convention for all GPIOs
-+implemented by the SoC. Each GPIO is assigned to a port, and a port may control
-+a number of GPIOs. Thus, each GPIO is named according to an alphabetical port
-+name and an integer GPIO name within the port. For example, GPIO_PA0, GPIO_PN6,
-+or GPIO_PCC3.
-+
-+The number of ports implemented by each GPIO controller varies. The number of
-+implemented GPIOs within each port varies. GPIO registers within a controller
-+are grouped and laid out according to the port they affect.
-+
-+The mapping from port name to the GPIO controller that implements that port, and
-+the mapping from port name to register offset within a controller, are both
-+extremely non-linear. The header file <dt-bindings/gpio/tegra186-gpio.h>
-+describes the port-level mapping. In that file, the naming convention for ports
-+matches the HW documentation. The values chosen for the names are alphabetically
-+sorted within a particular controller. Drivers need to map between the DT GPIO
-+IDs and HW register offsets using a lookup table.
-+
-+Each GPIO controller can generate a number of interrupt signals. Each signal
-+represents the aggregate status for all GPIOs within a set of ports. Thus, the
-+number of interrupt signals generated by a controller varies as a rough function
-+of the number of ports it implements. Note that the HW documentation refers to
-+both the overall controller HW module and the sets-of-ports as "controllers".
-+
-+Each GPIO controller in fact generates multiple interrupts signals for each set
-+of ports. Each GPIO may be configured to feed into a specific one of the
-+interrupt signals generated by a set-of-ports. The intent is for each generated
-+signal to be routed to a different CPU, thus allowing different CPUs to each
-+handle subsets of the interrupts within a port. The status of each of these
-+per-port-set signals is reported via a separate register. Thus, a driver needs
-+to know which status register to observe. This binding currently defines no
-+configuration mechanism for this. By default, drivers should use register
-+GPIO_${port}_INTERRUPT_STATUS_G1_0. Future revisions to the binding could
-+define a property to configure this.
-+
-+Required properties:
-+- compatible
-+  Array of strings.
-+  One of:
-+  - "nvidia,tegra186-gpio".
-+  - "nvidia,tegra186-gpio-aon".
-+- reg-names
-+  Array of strings.
-+  Contains a list of names for the register spaces described by the reg
-+  property. May contain the following entries, in any order:
-+  - "gpio": Mandatory. GPIO control registers. This may cover either:
-+    a) The single physical alias that this OS should use.
-+    b) All physical aliases that exist in the controller. This is appropriate
-+       when the OS is responsible for managing assignment of the physical
-+       aliass.
-+  - "security": Optional. Security configuration registers.
-+  Users of this binding MUST look up entries in the reg property by name, using
-+  this reg-names property to do so.
-+- reg
-+  Array of (physical base address, length) tuples.
-+  Must contain one entry per entry in the reg-names property, in a matching
-+  order.
-+- interrupts
-+  Array of interrupt specifiers.
-+  The interrupt outputs from the HW block, one per set of ports, in the order
-+  the HW manual describes them. The number of entries required varies depending
-+  on compatible value:
-+  - "nvidia,tegra186-gpio": 6 entries.
-+  - "nvidia,tegra186-gpio-aon": 1 entry.
-+- gpio-controller
-+  Boolean.
-+  Marks the device node as a GPIO controller/provider.
-+- #gpio-cells
-+  Single-cell integer.
-+  Must be <2>.
-+  Indicates how many cells are used in a consumer's GPIO specifier.
-+  The first cell is the pin number. See <dt-bindings/gpio/tegra186-gpio.h>.
-+  The second cell contains flags:
-+  - Bit 0 specifies polarity
-+    - 0: Active-high (normal).
-+    - 1: Active-low (inverted).
-+- interrupt-controller
-+  Boolean.
-+  Marks the device node as an interrupt controller/provider.
-+- #interrupt-cells
-+  Single-cell integer.
-+  Must be <2>.
-+  Indicates how many cells are used in a consumer's interrupt specifier.
-+  The first cell is the GPIO number. See <dt-bindings/gpio/tegra186-gpio.h>.
-+  The second cell is contains flags:
-+  - Bits [3:0] indicate trigger type and level:
-+    - 1: Low-to-high edge triggered.
-+    - 2: High-to-low edge triggered.
-+    - 4: Active high level-sensitive.
-+    - 8: Active low level-sensitive.
-+    Valid combinations are 1, 2, 3, 4, 8.
-+
-+Example:
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+gpio@2200000 {
-+	compatible = "nvidia,tegra186-gpio";
-+	reg-names = "security", "gpio";
-+	reg =
-+		<0x0 0x2200000 0x0 0x10000>,
-+		<0x0 0x2210000 0x0 0x10000>;
-+	interrupts =
-+		<0 47 IRQ_TYPE_LEVEL_HIGH>,
-+		<0 50 IRQ_TYPE_LEVEL_HIGH>,
-+		<0 53 IRQ_TYPE_LEVEL_HIGH>,
-+		<0 56 IRQ_TYPE_LEVEL_HIGH>,
-+		<0 59 IRQ_TYPE_LEVEL_HIGH>,
-+		<0 180 IRQ_TYPE_LEVEL_HIGH>;
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
-+};
-+
-+gpio@c2f0000 {
-+	compatible = "nvidia,tegra186-gpio-aon";
-+	reg-names = "security", "gpio";
-+	reg =
-+		<0x0 0xc2f0000 0x0 0x1000>,
-+		<0x0 0xc2f1000 0x0 0x1000>;
-+	interrupts =
-+		<0 60 IRQ_TYPE_LEVEL_HIGH>;
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
-+};
-diff --git a/include/dt-bindings/gpio/tegra186-gpio.h b/include/dt-bindings/gpio/tegra186-gpio.h
-new file mode 100644
-index 000000000000..38001c7023f1
---- /dev/null
-+++ b/include/dt-bindings/gpio/tegra186-gpio.h
-@@ -0,0 +1,56 @@
-+/*
-+ * This header provides constants for binding nvidia,tegra186-gpio*.
-+ *
-+ * The first cell in Tegra's GPIO specifier is the GPIO ID. The macros below
-+ * provide names for this.
-+ *
-+ * The second cell contains standard flag values specified in gpio.h.
+diff --git a/drivers/gpio/gpio-sx150x.c b/drivers/gpio/gpio-sx150x.c
+index d57e8ad0bfd2..d4501d5f8b8e 100644
+--- a/drivers/gpio/gpio-sx150x.c
++++ b/drivers/gpio/gpio-sx150x.c
+@@ -25,7 +25,6 @@
+ #include <linux/irq.h>
+ #include <linux/mutex.h>
+ #include <linux/slab.h>
+-#include <linux/i2c/sx150x.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+@@ -85,6 +84,65 @@ struct sx150x_device_data {
+ 	} pri;
+ };
+ 
++/**
++ * struct sx150x_platform_data - config data for SX150x driver
++ * @gpio_base: The index number of the first GPIO assigned to this
++ *             GPIO expander.  The expander will create a block of
++ *             consecutively numbered gpios beginning at the given base,
++ *             with the size of the block depending on the model of the
++ *             expander chip.
++ * @oscio_is_gpo: If set to true, the driver will configure OSCIO as a GPO
++ *                instead of as an oscillator, increasing the size of the
++ *                GP(I)O pool created by this expander by one.  The
++ *                output-only GPO pin will be added at the end of the block.
++ * @io_pullup_ena: A bit-mask which enables or disables the pull-up resistor
++ *                 for each IO line in the expander.  Setting the bit at
++ *                 position n will enable the pull-up for the IO at
++ *                 the corresponding offset.  For chips with fewer than
++ *                 16 IO pins, high-end bits are ignored.
++ * @io_pulldn_ena: A bit-mask which enables-or disables the pull-down
++ *                 resistor for each IO line in the expander. Setting the
++ *                 bit at position n will enable the pull-down for the IO at
++ *                 the corresponding offset.  For chips with fewer than
++ *                 16 IO pins, high-end bits are ignored.
++ * @io_open_drain_ena: A bit-mask which enables-or disables open-drain
++ *                     operation for each IO line in the expander. Setting the
++ *                     bit at position n enables open-drain operation for
++ *                     the IO at the corresponding offset.  Clearing the bit
++ *                     enables regular push-pull operation for that IO.
++ *                     For chips with fewer than 16 IO pins, high-end bits
++ *                     are ignored.
++ * @io_polarity: A bit-mask which enables polarity inversion for each IO line
++ *               in the expander.  Setting the bit at position n inverts
++ *               the polarity of that IO line, while clearing it results
++ *               in normal polarity. For chips with fewer than 16 IO pins,
++ *               high-end bits are ignored.
++ * @irq_summary: The 'summary IRQ' line to which the GPIO expander's INT line
++ *               is connected, via which it reports interrupt events
++ *               across all GPIO lines.  This must be a real,
++ *               pre-existing IRQ line.
++ *               Setting this value < 0 disables the irq_chip functionality
++ *               of the driver.
++ * @irq_base: The first 'virtual IRQ' line at which our block of GPIO-based
++ *            IRQ lines will appear.  Similarly to gpio_base, the expander
++ *            will create a block of irqs beginning at this number.
++ *            This value is ignored if irq_summary is < 0.
++ * @reset_during_probe: If set to true, the driver will trigger a full
++ *                      reset of the chip at the beginning of the probe
++ *                      in order to place it in a known state.
 + */
++struct sx150x_platform_data {
++	unsigned gpio_base;
++	bool     oscio_is_gpo;
++	u16      io_pullup_ena;
++	u16      io_pulldn_ena;
++	u16      io_open_drain_ena;
++	u16      io_polarity;
++	int      irq_summary;
++	unsigned irq_base;
++	bool     reset_during_probe;
++};
 +
-+#ifndef _DT_BINDINGS_GPIO_TEGRA_GPIO_H
-+#define _DT_BINDINGS_GPIO_TEGRA_GPIO_H
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/* GPIOs implemented by main GPIO controller */
-+#define TEGRA_MAIN_GPIO_PORT_A 0
-+#define TEGRA_MAIN_GPIO_PORT_B 1
-+#define TEGRA_MAIN_GPIO_PORT_C 2
-+#define TEGRA_MAIN_GPIO_PORT_D 3
-+#define TEGRA_MAIN_GPIO_PORT_E 4
-+#define TEGRA_MAIN_GPIO_PORT_F 5
-+#define TEGRA_MAIN_GPIO_PORT_G 6
-+#define TEGRA_MAIN_GPIO_PORT_H 7
-+#define TEGRA_MAIN_GPIO_PORT_I 8
-+#define TEGRA_MAIN_GPIO_PORT_J 9
-+#define TEGRA_MAIN_GPIO_PORT_K 10
-+#define TEGRA_MAIN_GPIO_PORT_L 11
-+#define TEGRA_MAIN_GPIO_PORT_M 12
-+#define TEGRA_MAIN_GPIO_PORT_N 13
-+#define TEGRA_MAIN_GPIO_PORT_O 14
-+#define TEGRA_MAIN_GPIO_PORT_P 15
-+#define TEGRA_MAIN_GPIO_PORT_Q 16
-+#define TEGRA_MAIN_GPIO_PORT_R 17
-+#define TEGRA_MAIN_GPIO_PORT_T 18
-+#define TEGRA_MAIN_GPIO_PORT_X 19
-+#define TEGRA_MAIN_GPIO_PORT_Y 20
-+#define TEGRA_MAIN_GPIO_PORT_BB 21
-+#define TEGRA_MAIN_GPIO_PORT_CC 22
-+
-+#define TEGRA_MAIN_GPIO(port, offset) \
-+	((TEGRA_MAIN_GPIO_PORT_##port * 8) + offset)
-+
-+/* GPIOs implemented by AON GPIO controller */
-+#define TEGRA_AON_GPIO_PORT_S 0
-+#define TEGRA_AON_GPIO_PORT_U 1
-+#define TEGRA_AON_GPIO_PORT_V 2
-+#define TEGRA_AON_GPIO_PORT_W 3
-+#define TEGRA_AON_GPIO_PORT_Z 4
-+#define TEGRA_AON_GPIO_PORT_AA 5
-+#define TEGRA_AON_GPIO_PORT_EE 6
-+#define TEGRA_AON_GPIO_PORT_FF 7
-+
-+#define TEGRA_AON_GPIO(port, offset) \
-+	((TEGRA_AON_GPIO_PORT_##port * 8) + offset)
-+
-+#endif
+ struct sx150x_chip {
+ 	struct gpio_chip                 gpio_chip;
+ 	struct i2c_client               *client;
+diff --git a/include/linux/i2c/sx150x.h b/include/linux/i2c/sx150x.h
+deleted file mode 100644
+index 52baa79d69a7..000000000000
+--- a/include/linux/i2c/sx150x.h
++++ /dev/null
+@@ -1,82 +0,0 @@
+-/*
+- * Driver for the Semtech SX150x I2C GPIO Expanders
+- *
+- * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+- * 02110-1301, USA.
+- */
+-#ifndef __LINUX_I2C_SX150X_H
+-#define __LINUX_I2C_SX150X_H
+-
+-/**
+- * struct sx150x_platform_data - config data for SX150x driver
+- * @gpio_base: The index number of the first GPIO assigned to this
+- *             GPIO expander.  The expander will create a block of
+- *             consecutively numbered gpios beginning at the given base,
+- *             with the size of the block depending on the model of the
+- *             expander chip.
+- * @oscio_is_gpo: If set to true, the driver will configure OSCIO as a GPO
+- *                instead of as an oscillator, increasing the size of the
+- *                GP(I)O pool created by this expander by one.  The
+- *                output-only GPO pin will be added at the end of the block.
+- * @io_pullup_ena: A bit-mask which enables or disables the pull-up resistor
+- *                 for each IO line in the expander.  Setting the bit at
+- *                 position n will enable the pull-up for the IO at
+- *                 the corresponding offset.  For chips with fewer than
+- *                 16 IO pins, high-end bits are ignored.
+- * @io_pulldn_ena: A bit-mask which enables-or disables the pull-down
+- *                 resistor for each IO line in the expander. Setting the
+- *                 bit at position n will enable the pull-down for the IO at
+- *                 the corresponding offset.  For chips with fewer than
+- *                 16 IO pins, high-end bits are ignored.
+- * @io_open_drain_ena: A bit-mask which enables-or disables open-drain
+- *                     operation for each IO line in the expander. Setting the
+- *                     bit at position n enables open-drain operation for
+- *                     the IO at the corresponding offset.  Clearing the bit
+- *                     enables regular push-pull operation for that IO.
+- *                     For chips with fewer than 16 IO pins, high-end bits
+- *                     are ignored.
+- * @io_polarity: A bit-mask which enables polarity inversion for each IO line
+- *               in the expander.  Setting the bit at position n inverts
+- *               the polarity of that IO line, while clearing it results
+- *               in normal polarity. For chips with fewer than 16 IO pins,
+- *               high-end bits are ignored.
+- * @irq_summary: The 'summary IRQ' line to which the GPIO expander's INT line
+- *               is connected, via which it reports interrupt events
+- *               across all GPIO lines.  This must be a real,
+- *               pre-existing IRQ line.
+- *               Setting this value < 0 disables the irq_chip functionality
+- *               of the driver.
+- * @irq_base: The first 'virtual IRQ' line at which our block of GPIO-based
+- *            IRQ lines will appear.  Similarly to gpio_base, the expander
+- *            will create a block of irqs beginning at this number.
+- *            This value is ignored if irq_summary is < 0.
+- * @reset_during_probe: If set to true, the driver will trigger a full
+- *                      reset of the chip at the beginning of the probe
+- *                      in order to place it in a known state.
+- */
+-struct sx150x_platform_data {
+-	unsigned gpio_base;
+-	bool     oscio_is_gpo;
+-	u16      io_pullup_ena;
+-	u16      io_pulldn_ena;
+-	u16      io_open_drain_ena;
+-	u16      io_polarity;
+-	int      irq_summary;
+-	unsigned irq_base;
+-	bool     reset_during_probe;
+-};
+-
+-#endif /* __LINUX_I2C_SX150X_H */
 -- 
-2.8.1
+2.4.3
 
