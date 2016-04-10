@@ -1,57 +1,65 @@
-From: "Li, Yong B" <yong.b.li@intel.com>
-Subject: RE: [PATCH v2] gpio: pca953x: add PCAL9535 interrupt support for
- Galileo Gen2
-Date: Sun, 10 Apr 2016 03:02:29 +0000
-Message-ID: <BCE6BEBCDDF4B84E891D2320CBF96F1D3F9C77F1@SHSMSX101.ccr.corp.intel.com>
-References: <1460004992-16210-1-git-send-email-yong.b.li@intel.com>
- <CACRpkdavpaV1K7hfWgyRTtnxmFqkrD33--Ji9jcy_JFwqYYX7Q@mail.gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] gpio: sx150x: move platform data into driver
+Date: Sun, 10 Apr 2016 07:27:12 +0200
+Message-ID: <20160410052711.GA1388@katana>
+References: <1460192173-8995-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:39741 "EHLO mga09.intel.com"
+Received: from sauhun.de ([89.238.76.85]:42642 "EHLO pokefinder.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750973AbcDJDCe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 9 Apr 2016 23:02:34 -0400
-In-Reply-To: <CACRpkdavpaV1K7hfWgyRTtnxmFqkrD33--Ji9jcy_JFwqYYX7Q@mail.gmail.com>
-Content-Language: en-US
+	id S1750851AbcDJF1Z (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 10 Apr 2016 01:27:25 -0400
+Content-Disposition: inline
+In-Reply-To: <1460192173-8995-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, Phil Reid <preid@electromag.com.au>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Wei Chen <Wei.Chen@csr.com>, Peter Rosin <peda@axentia.se>
 
-VGhhbmtzIExpbnVzLiBJIHRoaW5rIHRoZSBiZWxvdyBwYXRjaChpbiBmaXhlcyBicmFuY2gpIHNo
-b3VsZCBiZSBtZXJnZWQgaW50byBkZXZlbCBicmFuY2ggdG9vLCBzaW5jZSB0aGUgYmVsb3cgcGF0
-Y2ggaXMgZGVwZW5kZWQgYnkgdGhpcyBvbmUgaW4gZGV2ZWwgYnJhbmNoLg0KDQpjb21taXQgOWI4
-ZTNlYzM0MzE4NjYzYWZmY2VkM2MxNGQ5NjBlNzhkNzYwZGQ5YQ0KQXV0aG9yOiBZb25nIExpIDxz
-ZGxpeW9uZ0BnbWFpbC5jb20+DQpEYXRlOiAgIFdlZCBNYXIgMzAgMTQ6NDk6MTQgMjAxNiArMDgw
-MA0KDQogICAgZ3BpbzogcGNhOTUzeDogVXNlIGNvcnJlY3QgdTE2IHZhbHVlIGZvciByZWdpc3Rl
-ciB3b3JkIHdyaXRlDQoNCiAgICBUaGUgY3VycmVudCBpbXBsZW1lbnRhdGlvbiBvbmx5IHVzZXMg
-dGhlIGZpcnN0IGJ5dGUgaW4gdmFsLA0KICAgIHRoZSBzZWNvbmQgYnl0ZSBpcyBhbHdheXMgMC4g
-Q2hhbmdlIGl0IHRvIHVzZSBjcHVfdG9fbGUxNg0KICAgIHRvIHdyaXRlIHRoZSB0d28gYnl0ZXMg
-aW50byB0aGUgcmVnaXN0ZXINCg0KICAgIENjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnDQogICAg
-U2lnbmVkLW9mZi1ieTogWW9uZyBMaSA8c2RsaXlvbmdAZ21haWwuY29tPg0KICAgIFJldmlld2Vk
-LWJ5OiBQaGlsIFJlaWQgPHByZWlkQGVsZWN0cm9tYWcuY29tLmF1Pg0KICAgIFNpZ25lZC1vZmYt
-Ynk6IExpbnVzIFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz4NCg0KWW9uZw0KPiAt
-LS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMaW51cyBXYWxsZWlqIFttYWlsdG86
-bGludXMud2FsbGVpakBsaW5hcm8ub3JnXQ0KPiBTZW50OiBGcmlkYXksIEFwcmlsIDA4LCAyMDE2
-IDIxOjIxDQo+IFRvOiBMaSwgWW9uZyBCIDx5b25nLmIubGlAaW50ZWwuY29tPg0KPiBDYzogbGlu
-dXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEFs
-ZXhhbmRyZQ0KPiBDb3VyYm90IDxnbnVyb3VAZ21haWwuY29tPjsgQW5keSBTaGV2Y2hlbmtvDQo+
-IDxhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb20+OyBQdXVzdGluZW4sIElzbW8NCj4g
-PGlzbW8ucHV1c3RpbmVuQGludGVsLmNvbT47IFBoaWwgUmVpZCA8cHJlaWRAZWxlY3Ryb21hZy5j
-b20uYXU+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjJdIGdwaW86IHBjYTk1M3g6IGFkZCBQQ0FM
-OTUzNSBpbnRlcnJ1cHQgc3VwcG9ydCBmb3INCj4gR2FsaWxlbyBHZW4yDQo+IA0KPiBuIFRodSwg
-QXByIDcsIDIwMTYgYXQgNjo1NiBBTSwgWW9uZyBMaSA8eW9uZy5iLmxpQGludGVsLmNvbT4gd3Jv
-dGU6DQo+IA0KPiA+IEdhbGlsZW8gR2VuMiBib2FyZCB1c2VzIHRoZSBQQ0FMOTUzNSBhcyB0aGUg
-R1BJTyBleHBhbnNpb24sIGl0IGlzDQo+ID4gZGlmZmVyZW50IGZyb20gUENBOTUzNSBhbmQgaW5j
-bHVkZXMgaW50ZXJydXB0IG1hc2svc3RhdHVzIHJlZ2lzdGVycywNCj4gPiBUaGUgY3VycmVudCBk
-cml2ZXIgZG9lcyBub3Qgc3VwcG9ydCB0aGUgaW50ZXJydXB0IHJlZ2lzdGVycw0KPiA+IGNvbmZp
-Z3VyYXRpb24sIGl0IGNhdXNlcyBzb21lIGdwaW8gcGlucyBjYW5ub3QgdHJpZ2dlciBpbnRlcnJ1
-cHQNCj4gPiBldmVudHMsIHRoaXMgcGF0Y2ggZml4IHRoaXMgaXNzdWUuIFRoZSBvcmlnaW5hbCBw
-YXRjaCB3YXMgc3VibWl0dGVkIGJ5DQo+ID4gSm9zZWYgQWhtYWQgPGpvc2VmLmFobWFkQGxpbnV4
-LmludGVsLmNvbT4NCj4gPiBodHRwOi8vZ2l0LnlvY3RvcHJvamVjdC5vcmcvY2dpdC9jZ2l0LmNn
-aS9tZXRhLWludGVsLXF1YXJrL3RyZWUvcmVjaXBlDQo+ID4gcy1rZXJuZWwvbGludXgvZmlsZXMv
-MDAxNS1RdWFyay1HUElPLTEtMi1xdWFyay5wYXRjaA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTog
-WW9uZyBMaSA8eW9uZy5iLmxpQGludGVsLmNvbT4NCj4gDQo+IFBhdGNoIGFwcGxpZWQgd2l0aCBB
-bmR5J3MgcmV2aWV3IHRhZy4NCj4gDQo+IFlvdXJzLA0KPiBMaW51cyBXYWxsZWlqDQo=
+
+--envbJBWh7q8WU6mo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Apr 09, 2016 at 10:56:13AM +0200, Linus Walleij wrote:
+> The sx150x has some platform data definition in <linux/i2c/sx150x.h>
+> but this file is only included from the driver in the whole kernel
+> so move its contents into the driver.
+>=20
+> Cc: Wei Chen <Wei.Chen@csr.com>
+> Cc: Peter Rosin <peda@axentia.se>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Wolfram: I assume you're OK with me stealing this file.
+
+Actually happy that you are doing that :)
+
+Acked-by: Wolfram Sang <wsa@the-dreams.de>
+
+
+--envbJBWh7q8WU6mo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXCeQvAAoJEBQN5MwUoCm2ox4P/RgsnCi23WdLspkgBEyv1ueT
+ek4P0pBqprYSWGO05Uf4XOwdT1TDa/tOAH4Hz5OQ0ZrvUBRSpxZoFVhNX26HMQA+
+YKKxifQTXc+aZcG4tOXpOTsSoItwyD7wbgI2r7jm1q3GiATewuSzwKpcX4ifkXhQ
+i4e7VR0kPTkwaGZjE/ktPJKoYBWLUhUELJsf4kuPf+YSqCjOBkSauZF7a9qCS72d
+I+DXSRD3pNyqQbFsha5FVKHcZxlta2iHSp1A8Wnb6eG702GkPfeVcGrsozuT+3DS
+3o+ZJBLMheG8s0p9l6oRr6pgnxa9RGYUrYtSW/UjCzUj9y+Ttpwj8Y+xRzrvqI5I
+G501gwV8isI/rk0ORoJJvctDihw82zJfoTGzAIAl07unYg/JVsMVBt2f+8vVp4uw
+uywwHC+VHRkIne8RreuVpMd62d4Umr8clbnQCRxwUiJNvj+sm1B+cI592BLnexTE
+3t6OYo+B+9Ia6s83QvkyDwSGG6wvbIEe6d2+dLwgDbRThYKYYoNu5Z6/sq3wrnTF
+aGzFHdGT7rrSiwUmzgIGZfXx2zBk8Ui9FlEp7C8f+V9mGHAO7rX5LICiR1nnkltI
+bH7Ei2qPLLkzQK2k9ZQPyRIjuwp/fcsx1w0LhwuxICVBBRtoktIBTKcFq0Wze2sA
+9xC+mEN83s/RHXw5dehi
+=NfAA
+-----END PGP SIGNATURE-----
+
+--envbJBWh7q8WU6mo--
