@@ -1,92 +1,147 @@
-From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6] iio: dac: Add support for the AD5592R/AD5593R
- ADCs/DACs
-Date: Sun, 10 Apr 2016 14:29:52 +0100
-Message-ID: <570A5550.20107@kernel.org>
-References: <1459842379-26275-1-git-send-email-michael.hennerich@analog.com>
- <20160407175748.GL32257@rob-hp-laptop>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: GPIO character device next steps
+Date: Sun, 10 Apr 2016 16:16:55 +0100
+Message-ID: <570A6E67.8000802@kernel.org>
+References: <CACRpkdYDjN8R60hhhu4RK9LF2cChOkA98pgvy2TzG9MAT1qGRw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160407175748.GL32257@rob-hp-laptop>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, paul.cercueil-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:44425 "EHLO
+	saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753496AbcDJPQ6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 10 Apr 2016 11:16:58 -0400
+In-Reply-To: <CACRpkdYDjN8R60hhhu4RK9LF2cChOkA98pgvy2TzG9MAT1qGRw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Johan Hovold <johan@kernel.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Lee Campbell <leecam@google.com>, Amit Kucheria <amit.kucheria@linaro.org>, Markus Pargmann <mpa@pengutronix.de>, Michael Welling <mwelling@ieee.org>
 
-On 07/04/16 18:57, Rob Herring wrote:
-> On Tue, Apr 05, 2016 at 09:46:19AM +0200, michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org wrote:
->> From: Paul Cercueil <paul.cercueil-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
->>
->> This patch adds support for the AD5592R (spi) and AD5593R (i2c)
->> ADC/DAC/GPIO devices.
->>
->> Signed-off-by: Paul Cercueil <paul.cercueil-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
->> Signed-off-by: Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
->> Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->>
->> ---
->>
->> Changes since v1:
->> 	* Fix mutex usage
->> 	* Remove unnecessary NULL pointer guards
->> 	* Add comment explaining the invalid data read
->> 	* AD5593R Remove surplus adc readback
->>
->> Changes since v2:
->> 	* Use child nodes to describe channels
->> 	* Fix probe return and driver remove path
->> 	* Move locking closer to where its used
->> 	* Remove WARN_ON but return error
->> 	* Remove OPEN DRAIN configuration option
->>
->> Changes since v3:
->> 	* Documentation: Add missing vendor prefixes in the examples
->> 	* Minor function reordering in remove() to match the reverse of probe()
->>
->> Changes since v4:
->> 	* Documentation: Add missing gpio bindings
->> 	* Kconfig: Select GPIOLIB and remove ifdefs in code
->> 	* Remove surplus error check in ad5592r_gpio_request()
->> 	* Add comment about reset magic
->>
->> Changes since v5:
->> 	* Remove surplus error check
->> 	* Remove additional ifdef CONFIG_GPIOLIB guards in the header
->> 	* Bindings: Add additional comments about CH_MODE_DAC_AND_ADC mode
->> ---
->>  .../devicetree/bindings/iio/dac/ad5592r.txt        | 155 +++++
+On 08/04/16 19:32, Linus Walleij wrote:
+> As you know we froze the GPIO sysfs ABI in kernel v4.6 and
+> now we need to complete its replacement with a new mechanism
+> using the character device.
+Does it actually make sense to replace it?  Or rather extend
+it via the chardev. I've not really been following the discussion
+though if you've already addressed this.
 > 
-> I've acked this twice before, and the last change seems minor. 
-> Please add acks unless it is more than minor changes and you need it 
-> reviewed again.
+> We can currently:
 > 
-> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Applied to the togreg branch of iio.git - initially pushed out as testing for
-the autobuilders to play with it.
+> - Enumerate gpiochips - udev/systemd and its siblings
+>   will do this automatically from the character devices
+>   (a patch for mdev will be needed for BusyBox to enumerate
+>   the chips).
+> 
+> - List its lines with name and consumer strings, that is what
+>   "lsgpio" from tools/gpio/lsgpio.c does.
+> 
+> - Locate the offset of any desired GPIO line from this string
+> 
+> - Locate the gpiochip in the bus topology using sysfs
+>   (as with any device)
+> 
+> So I need some help, rants, ACKs etc on whatever I come up
+> with next, and the next steps are (from the top of my head):
+> 
+> - Naming GPIO lines from DT files
+>   (So you have something reasonable to look for from userspace)
+>   What do people think about just using
+>   gpio-names = "foo", "bar", "baz"; as suggested by Rob Herring?
+Seems sensible to me.
+> 
+> - Getting a filehandle for one or several GPIOs
+>   I would prefer to support getting multiple GPIOs from day one
+>   as we know this is going to be a usecase sooner or later.
+Absolutely.
+>   For example it is not uncommon to bitbang a bus from userspace
+>   and then clock and data lines should
+> 
+> - Give them consumer names from userspace (label who's
+>   using this GPIO)
+Useful to what?  What is going to read this info? (debugfs?)
+> 
+> - Setting flags on a line from userspace (such as ACTIVE_LOW
+>   or OPEN_DRAIN) so the hardware can act accordingly.
+> 
+> - Using this filehandle, shake the lines from low to high and vice
+>   versa from userspace.
+> 
+> - Getting a filehandle to listen to input events (interrupts) from a
+>   certain GPIO line. Here I am primarily thinking about something
+>   akin to IIO's event mechanism using poll() which I like a lot.
+We don't support multiple listeners in IIO.  Maybe some combination
+of that and evdev which spins off a separate fifo for each listener.
+> 
+> - Getting the filehandle for events involves selecting trigger type
+>   for rising/falling edge events. (I don't see how userspace could
+>   possibly support or want to support level IRQs.)
+> 
+> I am thinking about using filehandles to get a grip on (multiple)
+> GPIOs and for events because it has the nice property that we
+> know very well when userspace is using the resource, and we can
+> free it when the file is closed (which also happens if the application
+> crashes or get killed, or at shutdown etc).
+> 
+> I'm thinking about staying with a single open() on the chardev
+> from userspace, but several processes can open handles, then
+> we need to use an ioctl() to say what we want from this
+> filehandle: whether a handle on a few GPIO lines or a polled
+> event.
+Perhaps use anonymous file handles for each case.  So the exposed
+chardev is simply there for configuration of what others will do.
+Then you can have an ioctl to get an anonymous file handle for each of
+(with the appropriate description of what it is handling).
 
-Thanks,
+* Read multiple inputs
+* Write multiple outputs
+(for both of these are you distinguishing between cases where you an guarantee
+they happen simultaneously and others where they are just close in time? 
+Makes a huge difference in some cases obviously - such as reading from a parallel
+ADC - or writing to a DAC).
+
+* Events - though that could probably be shared with a read multiple inputs
+chardev - or maybe not if it's about different pins...
+
+Re reading above I guess you may already mean this by one file for multiple
+things?  
+> 
+> We want to be mutually exclusive to processes when getting
+> pins for output, while making it possible for several clients
+> to read the same line or subscribe to events from the same
+> line.
+Are you thinking one file descriptor for one pin (for events) or
+handling more complex registrations?  I can see the infrastructure
+for this getting rapidly complex.
+
+Could do it with irq_chips like we do in IIO triggers - so you can
+have one irq fire multiple listening devices...
+
+> 
+> Your thoughts?
+Good luck ;)
+
+I've been thinking about how to handle logic analyzer type
+inputs in IIO for a while.  One example is beaglelogic with it's around
+100MHz sampling of 8 channels, It might be interesting to use some of
+this same gpio infrastructure to play around with the ideas (though probably
+not the actual beaglelogic data flows - that will need some large block transfer
+tricks) - particularly once you have nice functions to feed sets of gpios
+from arbitrary locations out on a read.
+
+Clearly there would be some overlap, but I doubt you'll get into the
+complexity of triggered captures etc here or at least not without jumping
+to userspace and back again.  Some gpio chips do support this sort of 
+sampling, but I suspect they aren't going to be found in many 'normal'
+systems. (e.g. an input bank latch on event).
+
+Anyhow, this was really just a request to keep any data handling/merging
+infrastructure nicely separated from the front end bit spitting it out of
+a chardev as there are/may be other usecases.
 
 Jonathan
+
 > 
->>  drivers/iio/dac/Kconfig                            |  27 +
->>  drivers/iio/dac/Makefile                           |   3 +
->>  drivers/iio/dac/ad5592r-base.c                     | 691 +++++++++++++++++++++
->>  drivers/iio/dac/ad5592r-base.h                     |  76 +++
->>  drivers/iio/dac/ad5592r.c                          | 164 +++++
->>  drivers/iio/dac/ad5593r.c                          | 131 ++++
->>  include/dt-bindings/iio/adi,ad5592r.h              |  16 +
->>  8 files changed, 1263 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/iio/dac/ad5592r.txt
->>  create mode 100644 drivers/iio/dac/ad5592r-base.c
->>  create mode 100644 drivers/iio/dac/ad5592r-base.h
->>  create mode 100644 drivers/iio/dac/ad5592r.c
->>  create mode 100644 drivers/iio/dac/ad5593r.c
->>  create mode 100644 include/dt-bindings/iio/adi,ad5592r.h
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Yours,
+> Linus Walleij
 > 
+
