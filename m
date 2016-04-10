@@ -1,79 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: menz127: use the new open drain callback
-Date: Sat,  9 Apr 2016 21:56:55 +0200
-Message-ID: <1460231815-8635-1-git-send-email-linus.walleij@linaro.org>
+From: "Li, Yong B" <yong.b.li@intel.com>
+Subject: RE: [PATCH v2] gpio: pca953x: add PCAL9535 interrupt support for
+ Galileo Gen2
+Date: Sun, 10 Apr 2016 03:02:29 +0000
+Message-ID: <BCE6BEBCDDF4B84E891D2320CBF96F1D3F9C77F1@SHSMSX101.ccr.corp.intel.com>
+References: <1460004992-16210-1-git-send-email-yong.b.li@intel.com>
+ <CACRpkdavpaV1K7hfWgyRTtnxmFqkrD33--Ji9jcy_JFwqYYX7Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:33248 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753097AbcDIT5H (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Apr 2016 15:57:07 -0400
-Received: by mail-lf0-f49.google.com with SMTP id e190so111492622lfe.0
-        for <linux-gpio@vger.kernel.org>; Sat, 09 Apr 2016 12:57:05 -0700 (PDT)
+Received: from mga09.intel.com ([134.134.136.24]:39741 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750973AbcDJDCe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 9 Apr 2016 23:02:34 -0400
+In-Reply-To: <CACRpkdavpaV1K7hfWgyRTtnxmFqkrD33--Ji9jcy_JFwqYYX7Q@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andreas Werner <andy@wernerandy.de>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, Phil Reid <preid@electromag.com.au>
 
-The menz127 driver tries to support open drain by detecting it
-at request time. However: without the new callbacks from the
-gpiolib it is not really working: the core will still just emulate
-the open drain mode by switching the line to an input.
-
-By adding a hook into the new .set_single_ended() call rather than
-trying to autodetect at request() time, proper open drain can be
-supported.
-
-Cc: Andreas Werner <andy@wernerandy.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-menz127.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpio/gpio-menz127.c b/drivers/gpio/gpio-menz127.c
-index 8c1ab8e1974f..334fe270dcf1 100644
---- a/drivers/gpio/gpio-menz127.c
-+++ b/drivers/gpio/gpio-menz127.c
-@@ -88,21 +88,25 @@ static int men_z127_debounce(struct gpio_chip *gc, unsigned gpio,
- 	return 0;
- }
- 
--static int men_z127_request(struct gpio_chip *gc, unsigned gpio_pin)
-+static int men_z127_set_single_ended(struct gpio_chip *gc,
-+				     unsigned offset,
-+				     enum single_ended_mode mode)
- {
- 	struct men_z127_gpio *priv = gpiochip_get_data(gc);
- 	u32 od_en;
- 
--	if (gpio_pin >= gc->ngpio)
--		return -EINVAL;
-+	if (mode != LINE_MODE_OPEN_DRAIN &&
-+	    mode != LINE_MODE_PUSH_PULL)
-+		return -ENOTSUPP;
- 
- 	spin_lock(&priv->lock);
- 	od_en = readl(priv->reg_base + MEN_Z127_ODER);
- 
--	if (gpiochip_line_is_open_drain(gc, gpio_pin))
--		od_en |= BIT(gpio_pin);
-+	if (mode == LINE_MODE_OPEN_DRAIN)
-+		od_en |= BIT(offset);
- 	else
--		od_en &= ~BIT(gpio_pin);
-+		/* Implicitly LINE_MODE_PUSH_PULL */
-+		od_en &= ~BIT(offset);
- 
- 	writel(od_en, priv->reg_base + MEN_Z127_ODER);
- 	spin_unlock(&priv->lock);
-@@ -147,7 +151,7 @@ static int men_z127_probe(struct mcb_device *mdev,
- 		goto err_unmap;
- 
- 	men_z127_gpio->gc.set_debounce = men_z127_debounce;
--	men_z127_gpio->gc.request = men_z127_request;
-+	men_z127_gpio->gc.set_single_ended = men_z127_set_single_ended;
- 
- 	ret = gpiochip_add_data(&men_z127_gpio->gc, men_z127_gpio);
- 	if (ret) {
--- 
-2.4.3
-
+VGhhbmtzIExpbnVzLiBJIHRoaW5rIHRoZSBiZWxvdyBwYXRjaChpbiBmaXhlcyBicmFuY2gpIHNo
+b3VsZCBiZSBtZXJnZWQgaW50byBkZXZlbCBicmFuY2ggdG9vLCBzaW5jZSB0aGUgYmVsb3cgcGF0
+Y2ggaXMgZGVwZW5kZWQgYnkgdGhpcyBvbmUgaW4gZGV2ZWwgYnJhbmNoLg0KDQpjb21taXQgOWI4
+ZTNlYzM0MzE4NjYzYWZmY2VkM2MxNGQ5NjBlNzhkNzYwZGQ5YQ0KQXV0aG9yOiBZb25nIExpIDxz
+ZGxpeW9uZ0BnbWFpbC5jb20+DQpEYXRlOiAgIFdlZCBNYXIgMzAgMTQ6NDk6MTQgMjAxNiArMDgw
+MA0KDQogICAgZ3BpbzogcGNhOTUzeDogVXNlIGNvcnJlY3QgdTE2IHZhbHVlIGZvciByZWdpc3Rl
+ciB3b3JkIHdyaXRlDQoNCiAgICBUaGUgY3VycmVudCBpbXBsZW1lbnRhdGlvbiBvbmx5IHVzZXMg
+dGhlIGZpcnN0IGJ5dGUgaW4gdmFsLA0KICAgIHRoZSBzZWNvbmQgYnl0ZSBpcyBhbHdheXMgMC4g
+Q2hhbmdlIGl0IHRvIHVzZSBjcHVfdG9fbGUxNg0KICAgIHRvIHdyaXRlIHRoZSB0d28gYnl0ZXMg
+aW50byB0aGUgcmVnaXN0ZXINCg0KICAgIENjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnDQogICAg
+U2lnbmVkLW9mZi1ieTogWW9uZyBMaSA8c2RsaXlvbmdAZ21haWwuY29tPg0KICAgIFJldmlld2Vk
+LWJ5OiBQaGlsIFJlaWQgPHByZWlkQGVsZWN0cm9tYWcuY29tLmF1Pg0KICAgIFNpZ25lZC1vZmYt
+Ynk6IExpbnVzIFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz4NCg0KWW9uZw0KPiAt
+LS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMaW51cyBXYWxsZWlqIFttYWlsdG86
+bGludXMud2FsbGVpakBsaW5hcm8ub3JnXQ0KPiBTZW50OiBGcmlkYXksIEFwcmlsIDA4LCAyMDE2
+IDIxOjIxDQo+IFRvOiBMaSwgWW9uZyBCIDx5b25nLmIubGlAaW50ZWwuY29tPg0KPiBDYzogbGlu
+dXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEFs
+ZXhhbmRyZQ0KPiBDb3VyYm90IDxnbnVyb3VAZ21haWwuY29tPjsgQW5keSBTaGV2Y2hlbmtvDQo+
+IDxhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb20+OyBQdXVzdGluZW4sIElzbW8NCj4g
+PGlzbW8ucHV1c3RpbmVuQGludGVsLmNvbT47IFBoaWwgUmVpZCA8cHJlaWRAZWxlY3Ryb21hZy5j
+b20uYXU+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjJdIGdwaW86IHBjYTk1M3g6IGFkZCBQQ0FM
+OTUzNSBpbnRlcnJ1cHQgc3VwcG9ydCBmb3INCj4gR2FsaWxlbyBHZW4yDQo+IA0KPiBuIFRodSwg
+QXByIDcsIDIwMTYgYXQgNjo1NiBBTSwgWW9uZyBMaSA8eW9uZy5iLmxpQGludGVsLmNvbT4gd3Jv
+dGU6DQo+IA0KPiA+IEdhbGlsZW8gR2VuMiBib2FyZCB1c2VzIHRoZSBQQ0FMOTUzNSBhcyB0aGUg
+R1BJTyBleHBhbnNpb24sIGl0IGlzDQo+ID4gZGlmZmVyZW50IGZyb20gUENBOTUzNSBhbmQgaW5j
+bHVkZXMgaW50ZXJydXB0IG1hc2svc3RhdHVzIHJlZ2lzdGVycywNCj4gPiBUaGUgY3VycmVudCBk
+cml2ZXIgZG9lcyBub3Qgc3VwcG9ydCB0aGUgaW50ZXJydXB0IHJlZ2lzdGVycw0KPiA+IGNvbmZp
+Z3VyYXRpb24sIGl0IGNhdXNlcyBzb21lIGdwaW8gcGlucyBjYW5ub3QgdHJpZ2dlciBpbnRlcnJ1
+cHQNCj4gPiBldmVudHMsIHRoaXMgcGF0Y2ggZml4IHRoaXMgaXNzdWUuIFRoZSBvcmlnaW5hbCBw
+YXRjaCB3YXMgc3VibWl0dGVkIGJ5DQo+ID4gSm9zZWYgQWhtYWQgPGpvc2VmLmFobWFkQGxpbnV4
+LmludGVsLmNvbT4NCj4gPiBodHRwOi8vZ2l0LnlvY3RvcHJvamVjdC5vcmcvY2dpdC9jZ2l0LmNn
+aS9tZXRhLWludGVsLXF1YXJrL3RyZWUvcmVjaXBlDQo+ID4gcy1rZXJuZWwvbGludXgvZmlsZXMv
+MDAxNS1RdWFyay1HUElPLTEtMi1xdWFyay5wYXRjaA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTog
+WW9uZyBMaSA8eW9uZy5iLmxpQGludGVsLmNvbT4NCj4gDQo+IFBhdGNoIGFwcGxpZWQgd2l0aCBB
+bmR5J3MgcmV2aWV3IHRhZy4NCj4gDQo+IFlvdXJzLA0KPiBMaW51cyBXYWxsZWlqDQo=
