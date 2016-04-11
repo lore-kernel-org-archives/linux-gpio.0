@@ -1,107 +1,197 @@
 From: Tan Jui Nee <jui.nee.tan@intel.com>
-Subject: [PATCH 1/3] pinctrl/broxton: enable platform device in the absent of ACPI enumeration
-Date: Mon, 11 Apr 2016 10:50:42 +0800
-Message-ID: <1460343044-1474-2-git-send-email-jui.nee.tan@intel.com>
+Subject: [PATCH 2/3] x86/platform/p2sb: New Primary to Sideband bridge support driver for Intel SOC's
+Date: Mon, 11 Apr 2016 10:50:43 +0800
+Message-ID: <1460343044-1474-3-git-send-email-jui.nee.tan@intel.com>
 References: <1460343044-1474-1-git-send-email-jui.nee.tan@intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga14.intel.com ([192.55.52.115]:53952 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751713AbcDKCv2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 10 Apr 2016 22:51:28 -0400
 In-Reply-To: <1460343044-1474-1-git-send-email-jui.nee.tan@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jui.nee.tan@intel.com, jonathan.yong@intel.com, ong.hock.yu@intel.com, weifeng.voon@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
-List-Id: linux-gpio@vger.kernel.org
 
-This is to cater the need for non-ACPI system whereby
-a platform device has to be created in order to bind
-with the Apollo Lake Pinctrl GPIO platform driver.
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
+There is already one and at least one more user coming which
+require an access to Primary to Sideband bridge (P2SB) in order
+to get IO or MMIO bar hidden by BIOS.
+Create a driver to access P2SB for x86 devices.
+
+Signed-off-by: Yong, Jonathan <jonathan.yong@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-broxton.c | 43 ++++++++++++++++++++++++---------
- 1 file changed, 31 insertions(+), 12 deletions(-)
+ arch/x86/Kconfig                 |  4 ++
+ arch/x86/include/asm/p2sb.h      | 27 +++++++++++
+ arch/x86/platform/intel/Makefile |  1 +
+ arch/x86/platform/intel/p2sb.c   | 99 ++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 131 insertions(+)
+ create mode 100644 arch/x86/include/asm/p2sb.h
+ create mode 100644 arch/x86/platform/intel/p2sb.c
 
-diff --git a/drivers/pinctrl/intel/pinctrl-broxton.c b/drivers/pinctrl/intel/pinctrl-broxton.c
-index 5979d38..59cb7a6 100644
---- a/drivers/pinctrl/intel/pinctrl-broxton.c
-+++ b/drivers/pinctrl/intel/pinctrl-broxton.c
-@@ -1,7 +1,7 @@
- /*
-  * Intel Broxton SoC pinctrl/GPIO driver
-  *
-- * Copyright (C) 2015, Intel Corporation
-+ * Copyright (C) 2015, 2016 Intel Corporation
-  * Author: Mika Westerberg <mika.westerberg@linux.intel.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-@@ -1003,29 +1003,46 @@ static const struct acpi_device_id bxt_pinctrl_acpi_match[] = {
- };
- MODULE_DEVICE_TABLE(acpi, bxt_pinctrl_acpi_match);
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 2dc18605..b678380 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -606,6 +606,10 @@ config IOSF_MBI_DEBUG
  
-+static const struct platform_device_id bxt_pinctrl_platform_ids[] = {
-+	{ "apl-pinctrl", (kernel_ulong_t)&apl_pinctrl_soc_data },
-+	{ "broxton-pinctrl", (kernel_ulong_t)&bxt_pinctrl_soc_data },
-+	{ },
-+};
+ 	  If you don't require the option or are in doubt, say N.
+ 
++config P2SB
++	tristate
++	depends on PCI
 +
- static int bxt_pinctrl_probe(struct platform_device *pdev)
- {
- 	const struct intel_pinctrl_soc_data *soc_data = NULL;
- 	const struct intel_pinctrl_soc_data **soc_table;
--	const struct acpi_device_id *id;
- 	struct acpi_device *adev;
- 	int i;
- 
- 	adev = ACPI_COMPANION(&pdev->dev);
--	if (!adev)
--		return -ENODEV;
-+	if (adev) {
-+		const struct acpi_device_id *id;
- 
--	id = acpi_match_device(bxt_pinctrl_acpi_match, &pdev->dev);
--	if (!id)
--		return -ENODEV;
-+		id = acpi_match_device(bxt_pinctrl_acpi_match, &pdev->dev);
-+		if (!id)
-+			return -ENODEV;
- 
--	soc_table = (const struct intel_pinctrl_soc_data **)id->driver_data;
-+		soc_table = (const struct intel_pinctrl_soc_data **)
-+			id->driver_data;
- 
--	for (i = 0; soc_table[i]; i++) {
--		if (!strcmp(adev->pnp.unique_id, soc_table[i]->uid)) {
--			soc_data = soc_table[i];
--			break;
-+		for (i = 0; soc_table[i]; i++) {
-+			if (!strcmp(adev->pnp.unique_id, soc_table[i]->uid)) {
-+				soc_data = soc_table[i];
-+				break;
-+			}
- 		}
+ config X86_RDC321X
+ 	bool "RDC R-321x SoC"
+ 	depends on X86_32
+diff --git a/arch/x86/include/asm/p2sb.h b/arch/x86/include/asm/p2sb.h
+new file mode 100644
+index 0000000..686e07b
+--- /dev/null
++++ b/arch/x86/include/asm/p2sb.h
+@@ -0,0 +1,27 @@
++/*
++ * Primary to Sideband bridge (P2SB) access support
++ */
++
++#ifndef P2SB_SYMS_H
++#define P2SB_SYMS_H
++
++#include <linux/ioport.h>
++#include <linux/pci.h>
++
++#if IS_ENABLED(CONFIG_P2SB)
++
++int p2sb_bar(struct pci_dev *pdev, unsigned int devfn,
++	struct resource *res);
++
++#else /* CONFIG_P2SB is not set */
++
++static inline
++int p2sb_bar(struct pci_dev *pdev, unsigned int devfn,
++	struct resource *res)
++{
++	return -ENODEV;
++}
++
++#endif /* CONFIG_P2SB */
++
++#endif /* P2SB_SYMS_H */
+diff --git a/arch/x86/platform/intel/Makefile b/arch/x86/platform/intel/Makefile
+index b878032..dbf9f10 100644
+--- a/arch/x86/platform/intel/Makefile
++++ b/arch/x86/platform/intel/Makefile
+@@ -1 +1,2 @@
+ obj-$(CONFIG_IOSF_MBI)			+= iosf_mbi.o
++obj-$(CONFIG_P2SB)			+= p2sb.o
+diff --git a/arch/x86/platform/intel/p2sb.c b/arch/x86/platform/intel/p2sb.c
+new file mode 100644
+index 0000000..8be47a4
+--- /dev/null
++++ b/arch/x86/platform/intel/p2sb.c
+@@ -0,0 +1,99 @@
++/*
++ * Primary to Sideband bridge (P2SB) driver
++ *
++ * Copyright (c) 2016, Intel Corporation.
++ *
++ * Authors: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
++ *			Jonathan Yong <jonathan.yong@intel.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ */
++
++#include <linux/ioport.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++#include <linux/spinlock.h>
++
++#include <asm/p2sb.h>
++
++#define SBREG_BAR	0x10
++#define SBREG_HIDE	0xe1
++
++static DEFINE_SPINLOCK(p2sb_spinlock);
++
++/*
++ * p2sb_bar - Get Primary to Sideband bridge (P2SB) BAR
++ * @pdev:	PCI device to get PCI bus to communicate with
++ * @devfn:	PCI device and function to communicate with
++ * @res:	resources to be filled in
++ *
++ * The BIOS prevents the P2SB device from being enumerated by the PCI
++ * subsystem, so we need to unhide and hide it back to lookup the P2SB BAR.
++ *
++ * Locking is handled by spinlock - cannot sleep.
++ *
++ * Return:
++ * 0 on success or appropriate errno value on error.
++ */
++int p2sb_bar(struct pci_dev *pdev, unsigned int devfn,
++	struct resource *res)
++{
++	u32 base_addr;
++	u64 base64_addr;
++	unsigned long flags;
++
++	if (!res)
++		return -EINVAL;
++
++	spin_lock(&p2sb_spinlock);
++
++	/* Unhide the P2SB device */
++	pci_bus_write_config_byte(pdev->bus, devfn, SBREG_HIDE, 0x00);
++
++	/* Check if device present */
++	pci_bus_read_config_dword(pdev->bus, devfn, 0, &base_addr);
++	if (base_addr == 0xffffffff || base_addr == 0x00000000) {
++		spin_unlock(&p2sb_spinlock);
++		dev_warn(&pdev->dev, "P2SB device access disabled by BIOS?\n");
++		return -ENODEV;
++	}
++
++	/* Get IO or MMIO BAR */
++	pci_bus_read_config_dword(pdev->bus, devfn, SBREG_BAR, &base_addr);
++	if ((base_addr & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO) {
++		flags = IORESOURCE_IO;
++		base64_addr = base_addr & PCI_BASE_ADDRESS_IO_MASK;
 +	} else {
-+		const struct platform_device_id *pid;
++		flags = IORESOURCE_MEM;
++		base64_addr = base_addr & PCI_BASE_ADDRESS_MEM_MASK;
++		if (base_addr & PCI_BASE_ADDRESS_MEM_TYPE_64) {
++			flags |= IORESOURCE_MEM_64;
++			pci_bus_read_config_dword(pdev->bus, devfn,
++				SBREG_BAR + 4, &base_addr);
++			base64_addr |= (u64)base_addr << 32;
++		}
++	}
 +
-+		pid = platform_get_device_id(pdev);
-+		if (!pid)
-+			return -ENODEV;
++	/* Hide the P2SB device */
++	pci_bus_write_config_byte(pdev->bus, devfn, SBREG_HIDE, 0x01);
 +
-+		soc_table = (const struct intel_pinctrl_soc_data **)
-+			pid->driver_data;
-+		soc_data = soc_table[pdev->id];
- 	}
- 
- 	if (!soc_data)
-@@ -1047,6 +1064,7 @@ static struct platform_driver bxt_pinctrl_driver = {
- 		.acpi_match_table = bxt_pinctrl_acpi_match,
- 		.pm = &bxt_pinctrl_pm_ops,
- 	},
-+	.id_table = bxt_pinctrl_platform_ids,
- };
- 
- static int __init bxt_pinctrl_init(void)
-@@ -1064,3 +1082,4 @@ module_exit(bxt_pinctrl_exit);
- MODULE_AUTHOR("Mika Westerberg <mika.westerberg@linux.intel.com>");
- MODULE_DESCRIPTION("Intel Broxton SoC pinctrl/GPIO driver");
- MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:broxton-pinctrl");
++	spin_unlock(&p2sb_spinlock);
++
++	/* User provides prefilled resources */
++	res->start += (resource_size_t)base64_addr;
++	res->end += (resource_size_t)base64_addr;
++	res->flags = flags;
++
++	return 0;
++}
++EXPORT_SYMBOL(p2sb_bar);
++
++MODULE_LICENSE("GPL");
 -- 
 1.9.1
+
