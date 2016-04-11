@@ -1,124 +1,166 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: add DT binding for Tegra186 GPIO controllers
-Date: Mon, 11 Apr 2016 14:31:56 -0500
-Message-ID: <20160411193156.GA10323@rob-hp-laptop>
-References: <1460156668-27339-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1460156668-27339-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Kamal Mostafa <kamal-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+Subject: [4.2.y-ckt stable] Patch "pinctrl: pistachio: fix mfio84-89 function description and pinmux." has been added to the 4.2.y-ckt tree
+Date: Mon, 11 Apr 2016 15:33:56 -0700
+Message-ID: <1460414036-24106-1-git-send-email-kamal@canonical.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Govindraj Raja <Govindraj.Raja-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, James Hartley <James.Hartley-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kamal Mostafa <kamal-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, kernel-team-nLRlyDuq1AZFpShjVBNYrg@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 08, 2016 at 05:04:28PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Tegra186 contains two separate but mostly similar GPIO controllers.
-> Register layout differs significantly from previous Tegra generations, and
-> so a new binding is required to describe them in device tree. This patch
-> adds that binding.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  .../bindings/gpio/nvidia,tegra186-gpio.txt         | 157 +++++++++++++++++++++
->  include/dt-bindings/gpio/tegra186-gpio.h           |  56 ++++++++
->  2 files changed, 213 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
->  create mode 100644 include/dt-bindings/gpio/tegra186-gpio.h
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
-> new file mode 100644
-> index 000000000000..41d12cb79f8e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
-> @@ -0,0 +1,157 @@
-> +NVIDIA Tegra186 GPIO controllers
-> +
-> +Tegra186 contains two GPIO controllers; a main controller and an "AON"
-> +controller. This binding document applies to both controllers. The register
-> +layouts for the controllers share many similarities, but also some significant
-> +differences. Hence, this document describes closely related but different
-> +bindings and compatible values.
-> +
-> +The Tegra186 GPIO controller allows software to set the IO direction of, and
-> +read/write the value of, numerous GPIO signals. Routing of GPIO signals to
-> +package balls is under the control of a separate pin controller HW block. Two
-> +major sets of registers exist:
-> +
-> +a) Security registers, which allow configuration of allowed access to the GPIO
-> +register set. These registers exist in a single contguous block of physical
-> +address space. The size of this block, and the security features available,
-> +varies between the different GPIO controllers.
-> +
-> +Access to this set of registers is not necessary in all circumstances. Code
-> +that wishes to configure access to the GPIO registers needs access to these
-> +registers to do so. Code which simply wishes to read or write GPIO data does not
-> +need access to these registers.
-> +
-> +b) GPIO registers, which allow manipulation of the GPIO signals. In some GPIO
-> +controllers, these registers are exposed via multiple "physical aliases" in
-> +address space, each of which access the same underlying state. See the hardware
-> +documentation for rationale. Any particular GPIO client is expected to access
-> +just one of these physical aliases.
-> +
-> +Tegra HW documentation describes a unified naming convention for all GPIOs
-> +implemented by the SoC. Each GPIO is assigned to a port, and a port may control
-> +a number of GPIOs. Thus, each GPIO is named according to an alphabetical port
-> +name and an integer GPIO name within the port. For example, GPIO_PA0, GPIO_PN6,
-> +or GPIO_PCC3.
-> +
-> +The number of ports implemented by each GPIO controller varies. The number of
-> +implemented GPIOs within each port varies. GPIO registers within a controller
-> +are grouped and laid out according to the port they affect.
-> +
-> +The mapping from port name to the GPIO controller that implements that port, and
-> +the mapping from port name to register offset within a controller, are both
-> +extremely non-linear. The header file <dt-bindings/gpio/tegra186-gpio.h>
-> +describes the port-level mapping. In that file, the naming convention for ports
-> +matches the HW documentation. The values chosen for the names are alphabetically
-> +sorted within a particular controller. Drivers need to map between the DT GPIO
-> +IDs and HW register offsets using a lookup table.
-> +
-> +Each GPIO controller can generate a number of interrupt signals. Each signal
-> +represents the aggregate status for all GPIOs within a set of ports. Thus, the
-> +number of interrupt signals generated by a controller varies as a rough function
-> +of the number of ports it implements. Note that the HW documentation refers to
-> +both the overall controller HW module and the sets-of-ports as "controllers".
-> +
-> +Each GPIO controller in fact generates multiple interrupts signals for each set
-> +of ports. Each GPIO may be configured to feed into a specific one of the
-> +interrupt signals generated by a set-of-ports. The intent is for each generated
-> +signal to be routed to a different CPU, thus allowing different CPUs to each
-> +handle subsets of the interrupts within a port. The status of each of these
-> +per-port-set signals is reported via a separate register. Thus, a driver needs
-> +to know which status register to observe. This binding currently defines no
-> +configuration mechanism for this. By default, drivers should use register
-> +GPIO_${port}_INTERRUPT_STATUS_G1_0. Future revisions to the binding could
-> +define a property to configure this.
-> +
-> +Required properties:
-> +- compatible
-> +  Array of strings.
-> +  One of:
-> +  - "nvidia,tegra186-gpio".
-> +  - "nvidia,tegra186-gpio-aon".
+This is a note to let you know that I have just added a patch titled
 
-Perhaps another level of indentation so the properties stick out.
+    pinctrl: pistachio: fix mfio84-89 function description and pinmux.
 
-Otherwise,
+to the linux-4.2.y-queue branch of the 4.2.y-ckt extended stable tree 
+which can be found at:
 
+    http://kernel.ubuntu.com/git/ubuntu/linux.git/log/?h=linux-4.2.y-queue
+
+This patch is scheduled to be released in version 4.2.8-ckt8.
+
+If you, or anyone else, feels it should not be added to this tree, please 
+reply to this email.
+
+For more information about the 4.2.y-ckt tree, see
+https://wiki.ubuntu.com/Kernel/Dev/ExtendedStable
+
+Thanks.
+-Kamal
+
+---8<------------------------------------------------------------
+
+>From 74a0ced3654a9c534af6bfd425576990962e6431 Mon Sep 17 00:00:00 2001
+From: Govindraj Raja <Govindraj.Raja-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+Date: Fri, 4 Mar 2016 15:28:22 +0000
+Subject: pinctrl: pistachio: fix mfio84-89 function description and pinmux.
+
+commit e9adb336d0bf391be23e820975ca5cd12c31d781 upstream.
+
+mfio 84 to 89 are described wrongly, fix it to describe
+the right pin and add them to right pin-mux group.
+
+The correct order is:
+	pll1_lock => mips_pll	-- MFIO_83
+	pll2_lock => audio_pll	-- MFIO_84
+	pll3_lock => rpu_v_pll	-- MFIO_85
+	pll4_lock => rpu_l_pll	-- MFIO_86
+	pll5_lock => sys_pll	-- MFIO_87
+	pll6_lock => wifi_pll	-- MFIO_88
+	pll7_lock => bt_pll	-- MFIO_89
+
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org
+Cc: James Hartley <James.Hartley-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+Fixes: cefc03e5995e("pinctrl: Add Pistachio SoC pin control driver")
+Signed-off-by: Govindraj Raja <Govindraj.Raja-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+Acked-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Signed-off-by: Kamal Mostafa <kamal-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+---
+ .../bindings/pinctrl/img,pistachio-pinctrl.txt     | 12 +++++------
+ drivers/pinctrl/pinctrl-pistachio.c                | 24 +++++++++++-----------
+ 2 files changed, 18 insertions(+), 18 deletions(-)
 
-> +- reg-names
-> +  Array of strings.
-> +  Contains a list of names for the register spaces described by the reg
-> +  property. May contain the following entries, in any order:
-> +  - "gpio": Mandatory. GPIO control registers. This may cover either:
-> +    a) The single physical alias that this OS should use.
-> +    b) All physical aliases that exist in the controller. This is appropriate
-> +       when the OS is responsible for managing assignment of the physical
-> +       aliass.
-> +  - "security": Optional. Security configuration registers.
+diff --git a/Documentation/devicetree/bindings/pinctrl/img,pistachio-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/img,pistachio-pinctrl.txt
+index 08a4a32..0326154 100644
+--- a/Documentation/devicetree/bindings/pinctrl/img,pistachio-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/img,pistachio-pinctrl.txt
+@@ -134,12 +134,12 @@ mfio80		ddr_debug, mips_trace_data, mips_debug
+ mfio81		dreq0, mips_trace_data, eth_debug
+ mfio82		dreq1, mips_trace_data, eth_debug
+ mfio83		mips_pll_lock, mips_trace_data, usb_debug
+-mfio84		sys_pll_lock, mips_trace_data, usb_debug
+-mfio85		wifi_pll_lock, mips_trace_data, sdhost_debug
+-mfio86		bt_pll_lock, mips_trace_data, sdhost_debug
+-mfio87		rpu_v_pll_lock, dreq2, socif_debug
+-mfio88		rpu_l_pll_lock, dreq3, socif_debug
+-mfio89		audio_pll_lock, dreq4, dreq5
++mfio84		audio_pll_lock, mips_trace_data, usb_debug
++mfio85		rpu_v_pll_lock, mips_trace_data, sdhost_debug
++mfio86		rpu_l_pll_lock, mips_trace_data, sdhost_debug
++mfio87		sys_pll_lock, dreq2, socif_debug
++mfio88		wifi_pll_lock, dreq3, socif_debug
++mfio89		bt_pll_lock, dreq4, dreq5
+ tck
+ trstn
+ tdi
+diff --git a/drivers/pinctrl/pinctrl-pistachio.c b/drivers/pinctrl/pinctrl-pistachio.c
+index 63100be..8a5bc77 100644
+--- a/drivers/pinctrl/pinctrl-pistachio.c
++++ b/drivers/pinctrl/pinctrl-pistachio.c
+@@ -469,27 +469,27 @@ static const char * const pistachio_mips_pll_lock_groups[] = {
+ 	"mfio83",
+ };
+
+-static const char * const pistachio_sys_pll_lock_groups[] = {
++static const char * const pistachio_audio_pll_lock_groups[] = {
+ 	"mfio84",
+ };
+
+-static const char * const pistachio_wifi_pll_lock_groups[] = {
++static const char * const pistachio_rpu_v_pll_lock_groups[] = {
+ 	"mfio85",
+ };
+
+-static const char * const pistachio_bt_pll_lock_groups[] = {
++static const char * const pistachio_rpu_l_pll_lock_groups[] = {
+ 	"mfio86",
+ };
+
+-static const char * const pistachio_rpu_v_pll_lock_groups[] = {
++static const char * const pistachio_sys_pll_lock_groups[] = {
+ 	"mfio87",
+ };
+
+-static const char * const pistachio_rpu_l_pll_lock_groups[] = {
++static const char * const pistachio_wifi_pll_lock_groups[] = {
+ 	"mfio88",
+ };
+
+-static const char * const pistachio_audio_pll_lock_groups[] = {
++static const char * const pistachio_bt_pll_lock_groups[] = {
+ 	"mfio89",
+ };
+
+@@ -559,12 +559,12 @@ enum pistachio_mux_option {
+ 	PISTACHIO_FUNCTION_DREQ4,
+ 	PISTACHIO_FUNCTION_DREQ5,
+ 	PISTACHIO_FUNCTION_MIPS_PLL_LOCK,
++	PISTACHIO_FUNCTION_AUDIO_PLL_LOCK,
++	PISTACHIO_FUNCTION_RPU_V_PLL_LOCK,
++	PISTACHIO_FUNCTION_RPU_L_PLL_LOCK,
+ 	PISTACHIO_FUNCTION_SYS_PLL_LOCK,
+ 	PISTACHIO_FUNCTION_WIFI_PLL_LOCK,
+ 	PISTACHIO_FUNCTION_BT_PLL_LOCK,
+-	PISTACHIO_FUNCTION_RPU_V_PLL_LOCK,
+-	PISTACHIO_FUNCTION_RPU_L_PLL_LOCK,
+-	PISTACHIO_FUNCTION_AUDIO_PLL_LOCK,
+ 	PISTACHIO_FUNCTION_DEBUG_RAW_CCA_IND,
+ 	PISTACHIO_FUNCTION_DEBUG_ED_SEC20_CCA_IND,
+ 	PISTACHIO_FUNCTION_DEBUG_ED_SEC40_CCA_IND,
+@@ -620,12 +620,12 @@ static const struct pistachio_function pistachio_functions[] = {
+ 	FUNCTION(dreq4),
+ 	FUNCTION(dreq5),
+ 	FUNCTION(mips_pll_lock),
++	FUNCTION(audio_pll_lock),
++	FUNCTION(rpu_v_pll_lock),
++	FUNCTION(rpu_l_pll_lock),
+ 	FUNCTION(sys_pll_lock),
+ 	FUNCTION(wifi_pll_lock),
+ 	FUNCTION(bt_pll_lock),
+-	FUNCTION(rpu_v_pll_lock),
+-	FUNCTION(rpu_l_pll_lock),
+-	FUNCTION(audio_pll_lock),
+ 	FUNCTION(debug_raw_cca_ind),
+ 	FUNCTION(debug_ed_sec20_cca_ind),
+ 	FUNCTION(debug_ed_sec40_cca_ind),
+--
+2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
