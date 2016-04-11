@@ -1,37 +1,39 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: Re: [PATCH] gpiolib: handle probe deferrals better
-Date: Mon, 11 Apr 2016 08:10:14 +0200
-Message-ID: <2011375.YUICgDcM4E@ws-stein>
-References: <1459511048-24084-1-git-send-email-linus.walleij@linaro.org> <57052E67.4050206@ti.com> <CACRpkdZYyZG9=mXdWi3bnfvOqc6LFE1FykTU-QirQOJLv=Z2=A@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 00/10] Use the ISA bus driver for PC/104 and ISA devices
+Date: Mon, 11 Apr 2016 08:59:13 +0200
+Message-ID: <CACRpkdY5j8Qq83pQVYGBJvgfN0MC51aq3UM-7T1Z7+R_dzJjXw@mail.gmail.com>
+References: <cover.1460040201.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZYyZG9=mXdWi3bnfvOqc6LFE1FykTU-QirQOJLv=Z2=A@mail.gmail.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linux Input <linux-input@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Guenter Roeck <linux@roeck-us.net>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:36684 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752060AbcDKG7P (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Apr 2016 02:59:15 -0400
+Received: by mail-oi0-f43.google.com with SMTP id y204so196820506oie.3
+        for <linux-gpio@vger.kernel.org>; Sun, 10 Apr 2016 23:59:14 -0700 (PDT)
+In-Reply-To: <cover.1460040201.git.vilhelm.gray@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, linux-watchdog@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thursday 07 April 2016 19:09:06, Linus Walleij wrote:
-> >>> 4) irq_ready access synchronization on SMP? atomic?
-> >> 
-> >> Uhhh.... I don't even understand the question.
-> > 
-> > in my patch the irq_ready is set from _gpiochip_irqchip_add() and
-> > read from gpiod_request() without any kind of protection and those
-> > two functions can be executed in parallel.
-> 
-> Aha. Well I don't know if that is really a big problem?
-> Does that really happen in practice?
+On Thu, Apr 7, 2016 at 4:47 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-I guess this is what actually happens in my case. The gpio controller has 
-already been registred and the companion irq chip is about to be registered.
-Meanwhile gpio-keys requests a GPIO from that recently registred gpio 
-controller and the following gpio_to_irq or irq_request returns 0 or fails as 
-the irq chip has not been registred yet (without Grygorii's patch). So this 
-calling situation might actually happen.
+> Two new ISA bus driver macros are introduced in this patchset:
+> module_isa_driver and max_num_isa_dev.
+(...)
+>   gpio: 104-dio-48e: Utilize the ISA bus driver
+>   gpio: 104-idi-48: Utilize the ISA bus driver
+>   gpio: 104-idio-16: Utilize the ISA bus driver
+>   gpio: ws16c48: Utilize the ISA bus driver
 
-Best regards,
-Alexander
+For these:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
+So if the driver core maintainers want to merge this as part
+of the series, go ahead.
+
+Yours,
+Linus Walleij
