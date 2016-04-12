@@ -1,152 +1,144 @@
-From: "Tan, Jui Nee" <jui.nee.tan@intel.com>
-Subject: RE: [PATCH 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake
- GPIO pinctrl in non-ACPI system
-Date: Tue, 12 Apr 2016 08:34:15 +0000
-Message-ID: <0158A29DB680F54A88142ED28D55B1D008209DC3@PGSMSX107.gar.corp.intel.com>
-References: <1460343044-1474-4-git-send-email-jui.nee.tan@intel.com>
- <201604111231.JOsx2OGx%fengguang.wu@intel.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH] gpio: omap: fix irq triggering in smart-idle wakeup mode
+Date: Tue, 12 Apr 2016 13:52:31 +0300
+Message-ID: <1460458351-24187-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:13488 "EHLO mga01.intel.com"
+Received: from arroyo.ext.ti.com ([192.94.94.40]:35339 "EHLO arroyo.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755615AbcDLIeV convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Apr 2016 04:34:21 -0400
-In-Reply-To: <201604111231.JOsx2OGx%fengguang.wu@intel.com>
-Content-Language: en-US
+	id S1756317AbcDLKwk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 12 Apr 2016 06:52:40 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: lkp <lkp@intel.com>, "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
-Cc: "kbuild-all@01.org" <kbuild-all@01.org>, "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>, "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, "ptyser@xes-inc.com" <ptyser@xes-inc.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Yong, Jonathan" <jonathan.yong@intel.com>, "Yu, Ong Hock" <ong.hock.yu@intel.com>, "Voon, Weifeng" <weifeng.voon@intel.com>, "Wan Mohamad, Wan Ahmad Zainie" <wan.ahmad.zainie.wan.mohamad@intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Santosh Shilimkar <ssantosh@kernel.org>, tony@atomide.com
+Cc: nsekhar@ti.com, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Roger Quadros <rogerq@ti.com>
 
+Now GPIO IRQ loss is observed on dra7-evm after suspend/resume cycle
+in the following case:
+  extcon_usb1(id_irq) ->  pcf8575.gpio1 -> omapgpio6.gpio11 -> gic
 
+the extcon_usb1 is wake up source and it enables IRQ wake up for
+id_irq by calling enable/disable_irq_wake() during suspend/resume
+which, in turn, causes execution of omap_gpio_wake_enable(). And
+omap_gpio_wake_enable() will set/clear corresponding bit in
+GPIO_IRQWAKEN_x register.
 
-> -----Original Message-----
-> From: lkp
-> Sent: Monday, April 11, 2016 12:35 PM
-> To: Tan, Jui Nee <jui.nee.tan@intel.com>
-> Cc: kbuild-all@01.org; mika.westerberg@linux.intel.com;
-> heikki.krogerus@linux.intel.com; andriy.shevchenko@linux.intel.com;
-> tglx@linutronix.de; mingo@redhat.com; hpa@zytor.com; x86@kernel.org;
-> ptyser@xes-inc.com; lee.jones@linaro.org; linux-gpio@vger.kernel.org;
-> linux-kernel@vger.kernel.org; Tan, Jui Nee <jui.nee.tan@intel.com>; Yong,
-> Jonathan <jonathan.yong@intel.com>; Yu, Ong Hock
-> <ong.hock.yu@intel.com>; Voon, Weifeng <weifeng.voon@intel.com>; Wan
-> Mohamad, Wan Ahmad Zainie
-> <wan.ahmad.zainie.wan.mohamad@intel.com>
-> Subject: Re: [PATCH 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake GPIO
-> pinctrl in non-ACPI system
-> 
-> Hi Tan,
-> 
-> [auto build test ERROR on tip/x86/core]
-> [also build test ERROR on v4.6-rc3 next-20160408] [if your patch is applied to
-> the wrong git tree, please drop us a note to help improving the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Tan-Jui-Nee/pinctrl-
-> broxton-enable-platform-device-in-the-absent-of-ACPI-
-> enumeration/20160411-105542
-> config: x86_64-randconfig-n0-04111131 (attached as .config)
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
->    drivers/mfd/lpc_ich.c:204:22: error: invalid application of 'sizeof' to
-> incomplete type 'struct pinctrl_pin_desc'
->      .pdata_size = sizeof(apl_pinctrl_pdata),
->                          ^
->    drivers/mfd/lpc_ich.c: In function 'lpc_ich_misc':
->    drivers/mfd/lpc_ich.c:1146:4: error: invalid use of undefined type 'struct
-> pinctrl_pin_desc'
->        apl_pinctrl_pdata.name = kasprintf(GFP_KERNEL, "%u",
->        ^
->    drivers/mfd/lpc_ich.c:1148:4: error: invalid use of undefined type 'struct
-> pinctrl_pin_desc'
->        if (apl_pinctrl_pdata.name)
->        ^
->    drivers/mfd/lpc_ich.c:1148:4: error: invalid use of undefined type 'struct
-> pinctrl_pin_desc'
->    In file included from include/linux/linkage.h:4:0,
->                     from include/linux/kernel.h:6,
->                     from drivers/mfd/lpc_ich.c:63:
-> >> include/linux/compiler.h:150:17: error: invalid use of undefined type
-> 'struct pinctrl_pin_desc'
->       static struct ftrace_branch_data   \
->                     ^
->    include/linux/compiler.h:145:23: note: in expansion of macro '__trace_if'
->     #define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
->                           ^
-> >> drivers/mfd/lpc_ich.c:1148:4: note: in expansion of macro 'if'
->        if (apl_pinctrl_pdata.name)
->        ^
->    drivers/mfd/lpc_ich.c:1158:7: error: invalid use of undefined type 'struct
-> pinctrl_pin_desc'
->           apl_pinctrl_pdata.name, ret);
->           ^
->    drivers/mfd/lpc_ich.c:1160:4: error: invalid use of undefined type 'struct
-> pinctrl_pin_desc'
->        kfree(apl_pinctrl_pdata.name);
->        ^
-> 
-> vim +150 include/linux/compiler.h
-> 
-> 2bcd521a Steven Rostedt 2008-11-21  144   */
-> ab3c9c68 Linus Torvalds 2009-04-07  145  #define if(cond, ...) __trace_if(
-> (cond , ## __VA_ARGS__) )
-> ab3c9c68 Linus Torvalds 2009-04-07  146  #define __trace_if(cond) \
-> ab3c9c68 Linus Torvalds 2009-04-07  147  	if
-> (__builtin_constant_p((cond)) ? !!(cond) :			\
-> 2bcd521a Steven Rostedt 2008-11-21  148  	({
-> 					\
-> 2bcd521a Steven Rostedt 2008-11-21  149  		int ______r;
-> 					\
-> 2bcd521a Steven Rostedt 2008-11-21 @150  		static struct
-> ftrace_branch_data			\
-> 2bcd521a Steven Rostedt 2008-11-21  151
-> 	__attribute__((__aligned__(4)))			\
-> 2bcd521a Steven Rostedt 2008-11-21  152
-> 	__attribute__((section("_ftrace_branch")))	\
-> 2bcd521a Steven Rostedt 2008-11-21  153  			______f = {
-> 					\
-> 
-> :::::: The code at line 150 was first introduced by commit
-> :::::: 2bcd521a684cc94befbe2ce7d5b613c841b0d304 trace: profile all if
-> conditionals
-> 
-> :::::: TO: Steven Rostedt <srostedt@redhat.com>
-> :::::: CC: Ingo Molnar <mingo@elte.hu>
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-Hi Andy, I will send patch v2 that looks like:
+omapgpio6 configuration after boot - wakeup is enabled for GPIO IRQs
+by default from  omap_gpio_irq_type:
+GPIO_IRQSTATUS_SET_0    | 0x00000400
+GPIO_IRQSTATUS_CLR_0    | 0x00000400
+GPIO_IRQWAKEN_0         | 0x00000400
+GPIO_RISINGDETECT       | 0x00000000
+GPIO_FALLINGDETECT      | 0x00000400
 
-+static int lpc_ich_misc(struct pci_dev *dev, enum lpc_chipsets chipset)
-+{
-...
-+	const char *name;
-...
-+			/* Fill IRQ resource */
-+			res->start = APL_GPIO_IRQ;
-+			res->end = res->start;
-+			res->flags = IORESOURCE_IRQ;
-+
-+			name = kasprintf(GFP_KERNEL, "%u", i + 1);
-+			if (name)
-+				ret = mfd_add_devices(&dev->dev, i,
-+					&apl_gpio_devices, 1, NULL, 0, NULL);
-+			else
-+				ret = -ENOMEM;
-+
-+warn_continue:
-+			if (ret)
-+				dev_warn(&dev->dev,
-+					"Failed to add Apollo Lake GPIO %s: %d\n",
-+						name, ret);
-+
-+			kfree(name);
-...
-Please let me know if that isn't the right thing. Thanks.
+omapgpio6 configuration after after suspend/resume cycle:
+GPIO_IRQSTATUS_SET_0    | 0x00000400
+GPIO_IRQSTATUS_CLR_0    | 0x00000400
+GPIO_IRQWAKEN_0         | 0x00000000 <---
+GPIO_RISINGDETECT       | 0x00000000
+GPIO_FALLINGDETECT      | 0x00000400
+
+As result, system will start to lose interrupts from pcf8575 GPIO
+expander, because when OMAP GPIO IP is in smart-idle wakeup mode, there
+is no guarantee that transition(s) on input non wake up GPIO pin will
+trigger asynchronous wake-up request to PRCM and then IRQ generation.
+IRQ will be generated when GPIO is in active mode - for example, some
+time after accessing GPIO bank registers IRQs will be generated
+normally, but issue will happen again once PRCM will put GPIO in low
+power smart-idle wakeup mode.
+
+Note 1. Issue is not reproduced if debounce clk is enabled for GPIO
+bank.
+
+Note 2. Issue hardly reproducible if GPIO pins group contains both
+wakeup/non-wakeup gpios - for example, it will be hard to reproduce
+issue with pin2 if GPIO_IRQWAKEN_0=0x1 GPIO_IRQSTATUS_SET_0=0x3
+GPIO_FALLINGDETECT = 0x3 (TRM "Power Saving by Grouping the Edge/Level
+Detection").
+
+Note 3. There nothing common bitween System wake up and OMAP GPIO bank
+IP wake up logic - the last one defines how the GPIO bank ON-IDLE-ON
+transition will happen inside SoC under control of PRCM.
+
+Hence, fix the problem by removing omap_set_gpio_wakeup() function
+completely and so keeping always in sync GPIO IRQ mask/unmask
+(IRQSTATUS_SET) and wake up enable (GPIO_IRQWAKEN) bits; and adding
+IRQCHIP_MASK_ON_SUSPEND flag in OMAP GPIO irqchip. That way non wakeup
+GPIO IRQs will be properly masked/unmask by IRQ PM core during
+suspend/resume cycle.
+
+Cc: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+ drivers/gpio/gpio-omap.c | 42 ++----------------------------------------
+ 1 file changed, 2 insertions(+), 40 deletions(-)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 551dfa9..b98ede7 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -611,51 +611,12 @@ static inline void omap_set_gpio_irqenable(struct gpio_bank *bank,
+ 		omap_disable_gpio_irqbank(bank, BIT(offset));
+ }
+ 
+-/*
+- * Note that ENAWAKEUP needs to be enabled in GPIO_SYSCONFIG register.
+- * 1510 does not seem to have a wake-up register. If JTAG is connected
+- * to the target, system will wake up always on GPIO events. While
+- * system is running all registered GPIO interrupts need to have wake-up
+- * enabled. When system is suspended, only selected GPIO interrupts need
+- * to have wake-up enabled.
+- */
+-static int omap_set_gpio_wakeup(struct gpio_bank *bank, unsigned offset,
+-				int enable)
+-{
+-	u32 gpio_bit = BIT(offset);
+-	unsigned long flags;
+-
+-	if (bank->non_wakeup_gpios & gpio_bit) {
+-		dev_err(bank->chip.parent,
+-			"Unable to modify wakeup on non-wakeup GPIO%d\n",
+-			offset);
+-		return -EINVAL;
+-	}
+-
+-	raw_spin_lock_irqsave(&bank->lock, flags);
+-	if (enable)
+-		bank->context.wake_en |= gpio_bit;
+-	else
+-		bank->context.wake_en &= ~gpio_bit;
+-
+-	writel_relaxed(bank->context.wake_en, bank->base + bank->regs->wkup_en);
+-	raw_spin_unlock_irqrestore(&bank->lock, flags);
+-
+-	return 0;
+-}
+-
+ /* Use disable_irq_wake() and enable_irq_wake() functions from drivers */
+ static int omap_gpio_wake_enable(struct irq_data *d, unsigned int enable)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+-	unsigned offset = d->hwirq;
+-	int ret;
+ 
+-	ret = omap_set_gpio_wakeup(bank, offset, enable);
+-	if (!ret)
+-		ret = irq_set_irq_wake(bank->irq, enable);
+-
+-	return ret;
++	return irq_set_irq_wake(bank->irq, enable);
+ }
+ 
+ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
+@@ -1187,6 +1148,7 @@ static int omap_gpio_probe(struct platform_device *pdev)
+ 	irqc->irq_bus_lock = omap_gpio_irq_bus_lock,
+ 	irqc->irq_bus_sync_unlock = gpio_irq_bus_sync_unlock,
+ 	irqc->name = dev_name(&pdev->dev);
++	irqc->flags = IRQCHIP_MASK_ON_SUSPEND;
+ 
+ 	bank->irq = platform_get_irq(pdev, 0);
+ 	if (bank->irq <= 0) {
+-- 
+2.8.1
+
