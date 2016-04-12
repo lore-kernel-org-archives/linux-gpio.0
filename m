@@ -1,33 +1,38 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH] MAINTAINERS: gpio: add DT bindings directory
-Date: Tue, 12 Apr 2016 17:57:53 +0200
-Message-ID: <1460476673-3133-1-git-send-email-wsa@the-dreams.de>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] Documentation: power: reset: move gpio-{poweroff|restart} to proper place
+Date: Tue, 12 Apr 2016 18:00:53 +0200
+Message-ID: <1460476853-3306-1-git-send-email-wsa@the-dreams.de>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:41671 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S965342AbcDLQBF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 12 Apr 2016 12:01:05 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-pm@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, Sebastian Reichel <sre@kernel.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Helps get_maintainer.pl to find the right people.
+I did only find them after a fuzzy search, so let them be where one
+would expect them.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/{gpio => power/reset}/gpio-poweroff.txt | 0
+ Documentation/devicetree/bindings/{gpio => power/reset}/gpio-restart.txt  | 0
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+ rename Documentation/devicetree/bindings/{gpio => power/reset}/gpio-poweroff.txt (100%)
+ rename Documentation/devicetree/bindings/{gpio => power/reset}/gpio-restart.txt (100%)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1b0b5bb8d5c09b..4e0d6e5809dd85 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4884,6 +4884,7 @@ M:	Alexandre Courbot <gnurou@gmail.com>
- L:	linux-gpio@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
- S:	Maintained
-+F:	Documentation/devicetree/bindings/gpio/
- F:	Documentation/gpio/
- F:	Documentation/ABI/testing/gpio-cdev
- F:	Documentation/ABI/obsolete/sysfs-gpio
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-poweroff.txt b/Documentation/devicetree/bindings/power/reset/gpio-poweroff.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/gpio/gpio-poweroff.txt
+rename to Documentation/devicetree/bindings/power/reset/gpio-poweroff.txt
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-restart.txt b/Documentation/devicetree/bindings/power/reset/gpio-restart.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/gpio/gpio-restart.txt
+rename to Documentation/devicetree/bindings/power/reset/gpio-restart.txt
 -- 
 2.7.0
+
