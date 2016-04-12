@@ -1,138 +1,80 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake
- GPIO pinctrl in non-ACPI system
-Date: Tue, 12 Apr 2016 14:11:28 +0300
-Message-ID: <1460459488.6620.92.camel@linux.intel.com>
-References: <1460343044-1474-4-git-send-email-jui.nee.tan@intel.com>
-	 <201604111231.JOsx2OGx%fengguang.wu@intel.com>
-	 <0158A29DB680F54A88142ED28D55B1D008209DC3@PGSMSX107.gar.corp.intel.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC PATCH 0/4] Add ACPI support for pinctrl configuration
+Date: Tue, 12 Apr 2016 13:15:33 +0100
+Message-ID: <20160412121533.GB14664@sirena.org.uk>
+References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
+ <CAE1zotJ4OiQ_tMvCDm-KoF8cTJ9Z-n09FX7KR75j0DyAcsznLA@mail.gmail.com>
+ <20160406103925.GA31110@svinekod>
+ <2161127.3msi2j0Rxi@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:38790 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932287AbcDLLKc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 12 Apr 2016 07:10:32 -0400
-In-Reply-To: <0158A29DB680F54A88142ED28D55B1D008209DC3@PGSMSX107.gar.corp.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/NkBOFFp2J2Af1nK"
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <2161127.3msi2j0Rxi@vostro.rjw.lan>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Mark Rutland <mark.rutland@arm.com>, Octavian Purdila <octavian.purdila@intel.com>, "Tirdea, Irina" <irina.tirdea@intel.com>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Ciocan, Cristina" <cristina.ciocan@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "charles.garcia-tobin@arm.com" <charles.garcia-tobin@arm.com>
 List-Id: linux-gpio@vger.kernel.org
-To: "Tan, Jui Nee" <jui.nee.tan@intel.com>, lkp <lkp@intel.com>
-Cc: "kbuild-all@01.org" <kbuild-all@01.org>, "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>, "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, "ptyser@xes-inc.com" <ptyser@xes-inc.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Yong, Jonathan" <jonathan.yong@intel.com>, "Yu, Ong Hock" <ong.hock.yu@intel.com>, "Voon, Weifeng" <weifeng.voon@intel.com>, "Wan Mohamad, Wan Ahmad Zainie" <wan.ahmad.zainie.wan.mohamad@intel.com>
 
-On Tue, 2016-04-12 at 08:34 +0000, Tan, Jui Nee wrote:
 
-> -----Original Message-----
-> > From: lkp
-> > Sent: Monday, April 11, 2016 12:35 PM
-> > To: Tan, Jui Nee <jui.nee.tan@intel.com>
-> > Cc: kbuild-all@01.org; mika.westerberg@linux.intel.com;
-> > heikki.krogerus@linux.intel.com; andriy.shevchenko@linux.intel.com;
-> > tglx@linutronix.de; mingo@redhat.com; hpa@zytor.com; x86@kernel.org=
-;
-> > ptyser@xes-inc.com; lee.jones@linaro.org; linux-gpio@vger.kernel.or=
-g
-> > ;
-> > linux-kernel@vger.kernel.org; Tan, Jui Nee <jui.nee.tan@intel.com>;
-> > Yong,
-> > Jonathan <jonathan.yong@intel.com>; Yu, Ong Hock
-> > <ong.hock.yu@intel.com>; Voon, Weifeng <weifeng.voon@intel.com>; Wa=
-n
-> > Mohamad, Wan Ahmad Zainie
-> > <wan.ahmad.zainie.wan.mohamad@intel.com>
-> > Subject: Re: [PATCH 3/3] mfd: lpc_ich: Add support for Intel Apollo
-> > Lake GPIO
-> > pinctrl in non-ACPI system
-> >=20
-> > Hi Tan,
-> >=20
-> > [auto build test ERROR on tip/x86/core]
-> > [also build test ERROR on v4.6-rc3 next-20160408] [if your patch is
-> > applied to
-> > the wrong git tree, please drop us a note to help improving the
-> > system]
-> >=20
-> > url:=C2=A0=C2=A0=C2=A0=C2=A0https://github.com/0day-ci/linux/commit=
-s/Tan-Jui-Nee/pinctrl
-> > -
-> > broxton-enable-platform-device-in-the-absent-of-ACPI-
-> > enumeration/20160411-105542
-> > config: x86_64-randconfig-n0-04111131 (attached as .config)
-> > reproduce:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0# save the attached=
- .config to linux build tree
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0make ARCH=3Dx86_64
-> >=20
-> > All error/warnings (new ones prefixed by >>):
-> >=20
-> > =C2=A0=C2=A0=C2=A0drivers/mfd/lpc_ich.c:204:22: error: invalid appl=
-ication of
-> > 'sizeof' to
-> > incomplete type 'struct pinctrl_pin_desc'
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.pdata_size =3D sizeof(apl_pinctrl_pd=
-ata),
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0^
-> > =C2=A0=C2=A0=C2=A0drivers/mfd/lpc_ich.c: In function 'lpc_ich_misc'=
-:
-> > =C2=A0=C2=A0=C2=A0drivers/mfd/lpc_ich.c:1146:4: error: invalid use =
-of undefined
-> > type 'struct
-> > pinctrl_pin_desc'
+--/NkBOFFp2J2Af1nK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> >=C2=A0
-> Hi Andy, I will send patch v2 that looks like:
->=20
-> +static int lpc_ich_misc(struct pci_dev *dev, enum lpc_chipsets
-> chipset)
-> +{
-> ...
-> +	const char *name;
+On Thu, Apr 07, 2016 at 11:24:00PM +0200, Rafael J. Wysocki wrote:
+> On Wednesday, April 06, 2016 11:39:27 AM Mark Rutland wrote:
 
-This will make things worse.
+> > The ACPI model implies FW-driven pinctrl management, so if we're going to put
+> > the OS in direct control of pinctrl, we have to make clear what expectation FW
+> > and OS can have.
 
-> Please let me know if that isn't the right thing. Thanks.
+> Well, orthodox ACPI people from the Windows camp would definitely agree with you,
+> but I'm not one of them, so let me play a devil's advocate for a while. :-)
 
-Nope. The complain by kbuidbot apparently about specific kernel
-configuration. I'm pretty sure it's about CONFIG_PINCTRL=3Dn.
+> IMO, exposing anything in the ACPI tables without explicitly saying "but you
+> should not touch that", eg by defining an operation region covering it or similar,
+> is equivalent to giving the OS a license to play with that thing as it wishes.
 
-I don't know the best solution here (only add select PINCTRL that sound=
-s
-a bit overhead to me), perhaps Lee can advise something.
+> Therefore I would regard exposing pin control information in cases when the
+> OS is not allowed to use it to its fit as a firmware bug.
 
-Perhaps new config option is required for APL like you have
+This is something where it seems like it would be very easy for people
+to end up relying on current OS behaviour even if that only happened
+through accident rather than design.  You might assume that such
+behaviour is a bug but that may not be obvious to the firmware author if
+the OS behaviour makes sense to them.
 
-arch/x86:
+There may also be some expectation on the part of firmware that the OS
+will do some management of the pins even for devices that it's not
+actively working with (put them in an idle mode for example).
 
-config X86_INTEL_NON_ACPI
-=C2=A0bool "enable support non-ACPI Intel platforms"
-=C2=A0help
-=C2=A0 =E2=80=A6
+> Now, the question in this patch series is how to expose things and not when to
+> do that.  It adds support for a specific method of exposing information to the
+> OS, but should it be concerned about the possible consequences of inappropriate
+> use of that method by firmware?
 
-mfd:
-config LPC_ICH
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tristate "Intel ICH LPC=
-"
--=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0depends on PCI
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0depends on X86 && PCI
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select MFD_CORE
-+ =C2=A0 =C2=A0select P2SB if X86_INTEL_NON_ACPI
-+ =C2=A0 =C2=A0select PINCTRL if X86_INTEL_NON_ACPI
+The other issue here is that if (as Octavian mentioned) there are
+ongoing discussions within ASWG on producing an actual spec for this it
+doesn't seem great that we'd just go and do something completely
+different rather than trying to make sure that the spec works well.  Or
+if there isn't any spec work then writing one there for other OSs to
+pick up if they like.  This seems like it'd make us much better
+community players.
 
-In the code
-#ifdef X86_INTEL_NON_ACPI
-#else
-#endif
+--/NkBOFFp2J2Af1nK
+Content-Type: application/pgp-signature; name="signature.asc"
 
-P.S. I don't like this either.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
---=C2=A0
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+iQEcBAEBCAAGBQJXDObkAAoJECTWi3JdVIfQdqwH/32gASzKWbp4mfuKkbeT1UY0
+4fYAHF5sMamIjPt7SXumZKyHULkwNfLgai2C3rNvgbg0pyD4QyEhNih8nviWbXki
++iuQQKu7ARBgG7P4YwbqTdoij1ClwdEytjRvpEpY+q47oE6BZ5B74YqOK5dO1umI
+J8MeYv9ZqOakHXwaKx67gp6Ua+lwRmqKL9pHTweNvxJJc7iNiHSzcfrwV7wK8+jr
+ENNMTFu9a+5bkc2DeLAcbMW6ESQ2dkcqHjlGDtS3q6CnRq5B1MBUnu0+7Iri7iOu
+0XUsZIkz95SNG8SEgqyMLxD1MKEHT0iAeojHRGycOR9lTyOPd2FU8Sv35KoSy48=
+=/hjS
+-----END PGP SIGNATURE-----
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--/NkBOFFp2J2Af1nK--
