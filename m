@@ -1,57 +1,94 @@
-From: Jiang Qiu <qiujiang@huawei.com>
-Subject: Re: [PATCH v7 3/3] gpio: dwapb: add gpio-signaled acpi event support
-Date: Tue, 12 Apr 2016 14:55:52 +0800
-Message-ID: <570C9BF8.7070400@huawei.com>
-References: <1459926480-32966-1-git-send-email-qiujiang@huawei.com>
- <1459926480-32966-4-git-send-email-qiujiang@huawei.com>
- <CACRpkdb63AZtEOSJ0R+EqdHfKXcUr7Hs8fh9N5XHNcWjQ1Ba8A@mail.gmail.com>
- <20160408083830.GT1727@lahna.fi.intel.com> <570B9BEA.8060608@huawei.com>
- <20160412064657.GF1714@lahna.fi.intel.com>
-Reply-To: <qiujiang@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/2] gpio: wm831x: use the new open drain callback
+Date: Tue, 12 Apr 2016 09:29:40 +0200
+Message-ID: <1460446180-16397-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from szxga03-in.huawei.com ([119.145.14.66]:48202 "EHLO
-	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755914AbcDLG4i (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Apr 2016 02:56:38 -0400
-In-Reply-To: <20160412064657.GF1714@lahna.fi.intel.com>
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:33642 "EHLO
+	mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756017AbcDLH3r (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Apr 2016 03:29:47 -0400
+Received: by mail-lf0-f54.google.com with SMTP id e190so12924083lfe.0
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Apr 2016 00:29:47 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Alan Tull <delicious.quinoa@gmail.com>, Jamie Iles <jamie@jamieiles.com>, charles.chenxin@huawei.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, patches@opensource.wolfsonmicro.com, Mark Brown <broonie@kernel.org>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-=E5=9C=A8 2016/4/12 14:46, Mika Westerberg =E5=86=99=E9=81=93:
-> On Mon, Apr 11, 2016 at 08:43:22PM +0800, Jiang Qiu wrote:
->>> Currently it just complains if something goes wrong. The GPIO drive=
-r
->>> itself can still work just fine (including interrupts).
->>>
->>> I'm fine to change it to return an error code.
->> Agree, if add a error code for acpi_gpiochip_request_interrupts(), i=
-t looks more pretty.
->>
->> However, this function is common for other part, maybe cause any oth=
-er effects if I
->> do this change, did you think so?
-> I'm thinking what the callers are going to do with the error code.
-> Basically it means that we were not able to attach and configure ACPI
-> event GPIOs. It does not prevent GPIO drivers from functioning so the=
-y
-> probably just print out some warning message and continue probing, an=
-d
-> we already warn in acpi_gpiochip_request_interrupts() if something fa=
-ils.
->
-> Unless Linus W insists, let's just keep it as is for now :)
-=46ine to me, thanks:).
-> .
->
+The WM831x GPIOs clearly have a dedicated open drain control
+register. Implement support for controlling this from GPIO
+descriptor tables or other hardware descriptions such as
+device tree by implementing the .set_single_ended() callback.
 
+Before this patch, lines requesting open drain will just be
+switched to input mode by the framework, thus emulating open
+drain. But the hardware can do the real thing, so let's
+support that.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+As part of this, rename the debugfs string for output mode
+from "CMOS" to "push-pull" because it is the term used in
+the framework to signify a tomem-pole CMOS output.
+
+Cc: patches@opensource.wolfsonmicro.com
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- Use a switch() statement rather than if-constructions
+---
+ drivers/gpio/gpio-wm831x.c | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-wm831x.c b/drivers/gpio/gpio-wm831x.c
+index 18cb0f534b91..41ec7834059a 100644
+--- a/drivers/gpio/gpio-wm831x.c
++++ b/drivers/gpio/gpio-wm831x.c
+@@ -132,6 +132,28 @@ static int wm831x_gpio_set_debounce(struct gpio_chip *chip, unsigned offset,
+ 	return wm831x_set_bits(wm831x, reg, WM831X_GPN_FN_MASK, fn);
+ }
+ 
++static int wm831x_set_single_ended(struct gpio_chip *chip,
++				   unsigned int offset,
++				   enum single_ended_mode mode)
++{
++	struct wm831x_gpio *wm831x_gpio = gpiochip_get_data(chip);
++	struct wm831x *wm831x = wm831x_gpio->wm831x;
++	int reg = WM831X_GPIO1_CONTROL + offset;
++
++	switch (mode) {
++	case LINE_MODE_OPEN_DRAIN:
++		return wm831x_set_bits(wm831x, reg,
++				       WM831X_GPN_OD_MASK, WM831X_GPN_OD);
++	case LINE_MODE_PUSH_PULL:
++		return wm831x_set_bits(wm831x, reg,
++				       WM831X_GPN_OD_MASK, 0);
++	default:
++		break;
++	}
++
++	return -ENOTSUPP;
++}
++
+ #ifdef CONFIG_DEBUG_FS
+ static void wm831x_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ {
+@@ -216,7 +238,7 @@ static void wm831x_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 			   pull,
+ 			   powerdomain,
+ 			   reg & WM831X_GPN_POL ? "" : " inverted",
+-			   reg & WM831X_GPN_OD ? "open-drain" : "CMOS",
++			   reg & WM831X_GPN_OD ? "open-drain" : "push-pull",
+ 			   tristated ? " tristated" : "",
+ 			   reg);
+ 	}
+@@ -234,6 +256,7 @@ static struct gpio_chip template_chip = {
+ 	.set			= wm831x_gpio_set,
+ 	.to_irq			= wm831x_gpio_to_irq,
+ 	.set_debounce		= wm831x_gpio_set_debounce,
++	.set_single_ended	= wm831x_set_single_ended,
+ 	.dbg_show		= wm831x_gpio_dbg_show,
+ 	.can_sleep		= true,
+ };
+-- 
+2.4.3
+
