@@ -1,39 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH/RFC v2] gpio: rcar: Add Runtime PM handling for interrupts
-Date: Tue, 12 Apr 2016 10:06:25 +0200
-Message-ID: <CACRpkdaSrWnX4Ze-xgY+s1vNx9gD9DPPOz+Dnb_1RfrHFrJPEQ@mail.gmail.com>
-References: <1455811590-15836-1-git-send-email-geert+renesas@glider.be>
-	<CACRpkdZ2zzP5u4uJDzsnks7ywrp3ddBt+YfxthJ+5mT-ECYLpg@mail.gmail.com>
-	<56C703AC.4040803@arm.com>
-	<8178382.Z7YODHSRMC@avalon>
-	<570BD6F1.90709@arm.com>
-	<CAMuHMdXym9YXaDP+-xEU7o+NcKPUz5mgXnVkpk_QnQQppuab-A@mail.gmail.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v5 1/2] USB: serial: cp210x: Adding GPIO support for
+ CP2105
+Date: Tue, 12 Apr 2016 10:08:54 +0200
+Message-ID: <20160412080854.GA14046@localhost>
+References: <cover.1459269397.git.martyn.welch@collabora.co.uk>
+ <79ce9ed7dd2124eb5a608b156318237867fe9987.1459269397.git.martyn.welch@collabora.co.uk>
+ <570CAB70.5080609@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdXym9YXaDP+-xEU7o+NcKPUz5mgXnVkpk_QnQQppuab-A@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Thomas Gleixner <tglx@linutronix.de>, Ulf Hansson <ulf.hansson@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:33298 "EHLO
+	mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932391AbcDLIIx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Apr 2016 04:08:53 -0400
+Content-Disposition: inline
+In-Reply-To: <570CAB70.5080609@collabora.co.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Martyn Welch <martyn.welch@collabora.co.uk>
+Cc: Johan Hovold <johan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Mon, Apr 11, 2016 at 7:18 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
+On Tue, Apr 12, 2016 at 09:01:52AM +0100, Martyn Welch wrote:
+> Johan,
+> 
+> Thanks for reviewing the other patch in this series. I haven't seen any 
+> feedback regarding this patch, is it still in your queue?
 
-> I'm afraid we'll have to keep gpio-rcar runtime-resumed all the time,
-> i.e. revert both of
-> b26a719bdb ("gpio: rcar: Add Runtime PM handling for interrupts")
+It is, and I will get to it. I've managed to gather some review backlog
+this past month that I need to get through first.
 
-I have reverted this for fixes.
-
-> 65194cb174 ("gpio: rcar: Fine-grained Runtime PM support")
-
-I reverted this too, with some manual intervention.
-
-> until Jon Hunter's "genirq: Add runtime power management support for IRQ chips"
-> (and perhaps a few more patches from his series) is applied.
-
-Yup let's try to solve the big picture problem with Jon.
-
-Yours,
-Linus Walleij
+Thanks,
+Johan
