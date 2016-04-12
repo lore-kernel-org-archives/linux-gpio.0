@@ -1,80 +1,111 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC PATCH 0/4] Add ACPI support for pinctrl configuration
-Date: Tue, 12 Apr 2016 13:15:33 +0100
-Message-ID: <20160412121533.GB14664@sirena.org.uk>
-References: <1459424685-26965-1-git-send-email-irina.tirdea@intel.com>
- <CAE1zotJ4OiQ_tMvCDm-KoF8cTJ9Z-n09FX7KR75j0DyAcsznLA@mail.gmail.com>
- <20160406103925.GA31110@svinekod>
- <2161127.3msi2j0Rxi@vostro.rjw.lan>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/7] soc/tegra: pmc: Use BIT macro for register field definition
+Date: Tue, 12 Apr 2016 20:26:41 +0530
+Message-ID: <1460473007-11535-2-git-send-email-ldewangan@nvidia.com>
+References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="/NkBOFFp2J2Af1nK"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2161127.3msi2j0Rxi@vostro.rjw.lan>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Mark Rutland <mark.rutland@arm.com>, Octavian Purdila <octavian.purdila@intel.com>, "Tirdea, Irina" <irina.tirdea@intel.com>, Len Brown <lenb@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Ciocan, Cristina" <cristina.ciocan@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "charles.garcia-tobin@arm.com" <charles.garcia-tobin@arm.com>
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1460473007-11535-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
+Use BIT macro for register field definition and make constant as
+unsigned when using in shift operator like instead of (3 << 30),
+make it to (3U << 30).
 
---/NkBOFFp2J2Af1nK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/soc/tegra/pmc.c | 42 +++++++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
-On Thu, Apr 07, 2016 at 11:24:00PM +0200, Rafael J. Wysocki wrote:
-> On Wednesday, April 06, 2016 11:39:27 AM Mark Rutland wrote:
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 08966c2..762f4fa 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -42,29 +42,29 @@
+ #include <soc/tegra/pmc.h>
+ 
+ #define PMC_CNTRL			0x0
+-#define  PMC_CNTRL_SYSCLK_POLARITY	(1 << 10)  /* sys clk polarity */
+-#define  PMC_CNTRL_SYSCLK_OE		(1 << 11)  /* system clock enable */
+-#define  PMC_CNTRL_SIDE_EFFECT_LP0	(1 << 14)  /* LP0 when CPU pwr gated */
+-#define  PMC_CNTRL_CPU_PWRREQ_POLARITY	(1 << 15)  /* CPU pwr req polarity */
+-#define  PMC_CNTRL_CPU_PWRREQ_OE	(1 << 16)  /* CPU pwr req enable */
+-#define  PMC_CNTRL_INTR_POLARITY	(1 << 17)  /* inverts INTR polarity */
++#define PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
++#define PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
++#define PMC_CNTRL_SIDE_EFFECT_LP0	BIT(14) /* LP0 when CPU pwr gated */
++#define PMC_CNTRL_CPU_PWRREQ_POLARITY	BIT(15) /* CPU pwr req polarity */
++#define PMC_CNTRL_CPU_PWRREQ_OE		BIT(16) /* CPU pwr req enable */
++#define PMC_CNTRL_INTR_POLARITY		BIT(17)/* inverts INTR polarity */
+ 
+ #define DPD_SAMPLE			0x020
+-#define  DPD_SAMPLE_ENABLE		(1 << 0)
+-#define  DPD_SAMPLE_DISABLE		(0 << 0)
++#define DPD_SAMPLE_ENABLE		BIT(0)
++#define DPD_SAMPLE_DISABLE		(0 << 0)
+ 
+ #define PWRGATE_TOGGLE			0x30
+-#define  PWRGATE_TOGGLE_START		(1 << 8)
++#define PWRGATE_TOGGLE_START		BIT(8)
+ 
+ #define REMOVE_CLAMPING			0x34
+ 
+ #define PWRGATE_STATUS			0x38
+ 
+ #define PMC_SCRATCH0			0x50
+-#define  PMC_SCRATCH0_MODE_RECOVERY	(1 << 31)
+-#define  PMC_SCRATCH0_MODE_BOOTLOADER	(1 << 30)
+-#define  PMC_SCRATCH0_MODE_RCM		(1 << 1)
+-#define  PMC_SCRATCH0_MODE_MASK		(PMC_SCRATCH0_MODE_RECOVERY | \
++#define PMC_SCRATCH0_MODE_RECOVERY	BIT(31)
++#define PMC_SCRATCH0_MODE_BOOTLOADER	BIT(30)
++#define PMC_SCRATCH0_MODE_RCM		BIT(1)
++#define PMC_SCRATCH0_MODE_MASK		(PMC_SCRATCH0_MODE_RECOVERY | \
+ 					 PMC_SCRATCH0_MODE_BOOTLOADER | \
+ 					 PMC_SCRATCH0_MODE_RCM)
+ 
+@@ -74,14 +74,14 @@
+ #define PMC_SCRATCH41			0x140
+ 
+ #define PMC_SENSOR_CTRL			0x1b0
+-#define PMC_SENSOR_CTRL_SCRATCH_WRITE	(1 << 2)
+-#define PMC_SENSOR_CTRL_ENABLE_RST	(1 << 1)
++#define PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
++#define PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
+ 
+ #define IO_DPD_REQ			0x1b8
+-#define  IO_DPD_REQ_CODE_IDLE		(0 << 30)
+-#define  IO_DPD_REQ_CODE_OFF		(1 << 30)
+-#define  IO_DPD_REQ_CODE_ON		(2 << 30)
+-#define  IO_DPD_REQ_CODE_MASK		(3 << 30)
++#define IO_DPD_REQ_CODE_IDLE		(0 << 30)
++#define IO_DPD_REQ_CODE_OFF		(1U << 30)
++#define IO_DPD_REQ_CODE_ON		(2U << 30)
++#define IO_DPD_REQ_CODE_MASK		(3U << 30)
+ 
+ #define IO_DPD_STATUS			0x1bc
+ #define IO_DPD2_REQ			0x1c0
+@@ -93,10 +93,10 @@
+ #define PMC_SCRATCH54_ADDR_SHIFT	0
+ 
+ #define PMC_SCRATCH55			0x25c
+-#define PMC_SCRATCH55_RESET_TEGRA	(1 << 31)
++#define PMC_SCRATCH55_RESET_TEGRA	BIT(31)
+ #define PMC_SCRATCH55_CNTRL_ID_SHIFT	27
+ #define PMC_SCRATCH55_PINMUX_SHIFT	24
+-#define PMC_SCRATCH55_16BITOP		(1 << 15)
++#define PMC_SCRATCH55_16BITOP		BIT(15)
+ #define PMC_SCRATCH55_CHECKSUM_SHIFT	16
+ #define PMC_SCRATCH55_I2CSLV1_SHIFT	0
+ 
+-- 
+2.1.4
 
-> > The ACPI model implies FW-driven pinctrl management, so if we're going to put
-> > the OS in direct control of pinctrl, we have to make clear what expectation FW
-> > and OS can have.
-
-> Well, orthodox ACPI people from the Windows camp would definitely agree with you,
-> but I'm not one of them, so let me play a devil's advocate for a while. :-)
-
-> IMO, exposing anything in the ACPI tables without explicitly saying "but you
-> should not touch that", eg by defining an operation region covering it or similar,
-> is equivalent to giving the OS a license to play with that thing as it wishes.
-
-> Therefore I would regard exposing pin control information in cases when the
-> OS is not allowed to use it to its fit as a firmware bug.
-
-This is something where it seems like it would be very easy for people
-to end up relying on current OS behaviour even if that only happened
-through accident rather than design.  You might assume that such
-behaviour is a bug but that may not be obvious to the firmware author if
-the OS behaviour makes sense to them.
-
-There may also be some expectation on the part of firmware that the OS
-will do some management of the pins even for devices that it's not
-actively working with (put them in an idle mode for example).
-
-> Now, the question in this patch series is how to expose things and not when to
-> do that.  It adds support for a specific method of exposing information to the
-> OS, but should it be concerned about the possible consequences of inappropriate
-> use of that method by firmware?
-
-The other issue here is that if (as Octavian mentioned) there are
-ongoing discussions within ASWG on producing an actual spec for this it
-doesn't seem great that we'd just go and do something completely
-different rather than trying to make sure that the spec works well.  Or
-if there isn't any spec work then writing one there for other OSs to
-pick up if they like.  This seems like it'd make us much better
-community players.
-
---/NkBOFFp2J2Af1nK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXDObkAAoJECTWi3JdVIfQdqwH/32gASzKWbp4mfuKkbeT1UY0
-4fYAHF5sMamIjPt7SXumZKyHULkwNfLgai2C3rNvgbg0pyD4QyEhNih8nviWbXki
-+iuQQKu7ARBgG7P4YwbqTdoij1ClwdEytjRvpEpY+q47oE6BZ5B74YqOK5dO1umI
-J8MeYv9ZqOakHXwaKx67gp6Ua+lwRmqKL9pHTweNvxJJc7iNiHSzcfrwV7wK8+jr
-ENNMTFu9a+5bkc2DeLAcbMW6ESQ2dkcqHjlGDtS3q6CnRq5B1MBUnu0+7Iri7iOu
-0XUsZIkz95SNG8SEgqyMLxD1MKEHT0iAeojHRGycOR9lTyOPd2FU8Sv35KoSy48=
-=/hjS
------END PGP SIGNATURE-----
-
---/NkBOFFp2J2Af1nK--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
