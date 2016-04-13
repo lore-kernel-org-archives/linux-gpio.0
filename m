@@ -1,29 +1,47 @@
-From: Gregory Fong <gregory.0xf0@gmail.com>
-Subject: Re: [PATCH] gpio: brcmstb: Return proper error if bank width is invalid
-Date: Tue, 12 Apr 2016 15:59:42 -0700
-Message-ID: <CADtm3G4=2Yokqfjcgti_tN10U6g8e6LmCgMGmH-Q=_hmv7wzxA@mail.gmail.com>
-References: <1460283315.10702.5.camel@ingics.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH 1/4] dt-bindings: Update iProc GPIO bindings
+Date: Tue, 12 Apr 2016 17:15:20 -0700
+Message-ID: <1460506523-6249-2-git-send-email-ray.jui@broadcom.com>
+References: <1460506523-6249-1-git-send-email-ray.jui@broadcom.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f179.google.com ([209.85.223.179]:34318 "EHLO
-	mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758906AbcDLXAN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Apr 2016 19:00:13 -0400
-Received: by mail-io0-f179.google.com with SMTP id 2so48421046ioy.1
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Apr 2016 16:00:12 -0700 (PDT)
-In-Reply-To: <1460283315.10702.5.camel@ingics.com>
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:12123 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757490AbcDMAPb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Apr 2016 20:15:31 -0400
+In-Reply-To: <1460506523-6249-1-git-send-email-ray.jui@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org, Ray Jui <ray.jui@broadcom.com>
 
-On Sun, Apr 10, 2016 at 3:15 AM, Axel Lin <axel.lin@ingics.com> wrote:
-> Return proper error in brcmstb_gpio_probe if bank width is invalid.
+Update the iProc GPIO binding document to add a new optional property
+'brcm,pinconf-func-off' that allows certain PINCONF parameters to be
+disabled in certain iProc SoCs where these PINCONF functions are not
+supported
 
-Thanks for catching that.
+Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Jon Mason <jon.mason@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+---
+ Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
->
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
+index e427792..ddaa1b0 100644
+--- a/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
++++ b/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
+@@ -37,6 +37,11 @@ Optional properties:
+     3  Pin-control base pin offset.
+     4. number of gpio pins which are linearly mapped from pin base.
+ 
++- brcm,pinconf-func-off:
++    Certain iProc SoCs might have some of the PINCONF functions disabled in
++the chip when the iProc GPIO controller is integrated. This optional property
++allows unsupported PINCONF functions to be disabled
++
+ Supported generic PINCONF properties in child nodes:
+ 
+ - pins:
+-- 
+2.1.4
 
-Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
