@@ -1,62 +1,29 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH] pinctrl: pinctrl-single: Fix pcs_parse_bits_in_pinctrl_entry to use __ffs than ffs
-Date: Wed, 13 Apr 2016 12:31:05 +0530
-Message-ID: <1460530865-29085-1-git-send-email-j-keerthy@ti.com>
+From: Biao Huang <biao.huang@mediatek.com>
+Subject: [RESEND PATCH 0/2] pinctrl: mediatek: add pinctrl/GPIO/EINT driver for mt2701
+Date: Wed, 13 Apr 2016 15:07:42 +0800
+Message-ID: <1460531264-4405-1-git-send-email-biao.huang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:57255 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933090AbcDMHCX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 13 Apr 2016 03:02:23 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:55423 "EHLO
+	mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932760AbcDMHH7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2016 03:07:59 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: tony@atomide.com
-Cc: linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, j-keerthy@ti.com, t-kristo@ti.com, nsekhar@ti.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>
 
-pcs_parse_bits_in_pinctrl_entry uses ffs which gives bit indices
-ranging from 1 to MAX. This leads to a corner case where we try to request
-the pin number = MAX and fails.
+Biao Huang (1):
+  arm: dts: Add pinctrl/GPIO/EINT node for mt2701
 
-bit_pos value is being calculted using ffs. pin_num_from_lsb uses
-bit_pos value. pins array is populated with:
+Erin Lo (1):
+  ARM: mediatek: Add MT2701 config options for mediatek SoCs.
 
-pin + pin_num_from_lsb.
+ arch/arm/boot/dts/mt2701.dtsi  |   19 +++++++++++++++++++
+ arch/arm/mach-mediatek/Kconfig |    4 ++++
+ 2 files changed, 23 insertions(+)
 
-The above is 1 more than usual bit indices as bit_pos uses ffs to compute
-first set bit. Hence the last of the pins array is populated with the MAX
-value and not MAX - 1 which causes error when we call pin_request.
-
-mask_pos is rightly calculated as ((pcs->fmask) << (bit_pos - 1))
-Consequently val_pos and submask are correct.
-
-Hence use __ffs which gives (ffs(x) - 1) as the first bit set.
-
-fixes: 4e7e8017a8 ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
-
-Boot tested on da850-evm
-
- drivers/pinctrl/pinctrl-single.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 748c047..897b89b 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -1323,9 +1323,9 @@ static int pcs_parse_bits_in_pinctrl_entry(struct pcs_device *pcs,
- 
- 		/* Parse pins in each row from LSB */
- 		while (mask) {
--			bit_pos = ffs(mask);
-+			bit_pos = __ffs(mask);
- 			pin_num_from_lsb = bit_pos / pcs->bits_per_pin;
--			mask_pos = ((pcs->fmask) << (bit_pos - 1));
-+			mask_pos = ((pcs->fmask) << bit_pos);
- 			val_pos = val & mask_pos;
- 			submask = mask & mask_pos;
- 
 -- 
-1.9.1
+1.7.9.5
 
