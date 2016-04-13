@@ -1,52 +1,78 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/2] pinctrl:Intel: implement gpio_irq_enable
-Date: Wed, 13 Apr 2016 15:29:00 +0200
-Message-ID: <CACRpkdYQDSMUdRMbCYQ9PzR8mqpSE_DrOtc==NQ=30+sF_hYWQ@mail.gmail.com>
-References: <1458152126-2333-1-git-send-email-qipeng.zha@intel.com>
-	<1458152126-2333-2-git-send-email-qipeng.zha@intel.com>
-	<CACRpkdZjCBNdbXyxv-dGkWah+4zqmFD0X4AeV9GyQK0o-Gv_ew@mail.gmail.com>
-	<20160401115409.GQ1719@lahna.fi.intel.com>
+Subject: Re: [PATCH 1/2] pinctrl: Add Oxford Semiconductor OXNAS pinctrl and
+ gpio driver
+Date: Wed, 13 Apr 2016 15:42:07 +0200
+Message-ID: <CACRpkdbTSdPG3-5HmmFbtZkZLG0S3cg54gPMKCF8isegmc3tow@mail.gmail.com>
+References: <1459689969-5326-1-git-send-email-narmstrong@baylibre.com>
+	<1459689969-5326-2-git-send-email-narmstrong@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:36848 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758203AbcDMN3C (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2016 09:29:02 -0400
-Received: by mail-ob0-f182.google.com with SMTP id j9so32933612obd.3
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2016 06:29:01 -0700 (PDT)
-In-Reply-To: <20160401115409.GQ1719@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1459689969-5326-2-git-send-email-narmstrong@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: "Westerberg, Mika" <mika.westerberg@intel.com>
-Cc: Qipeng Zha <qipeng.zha@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Qi Zheng <qi.zheng@intel.com>
 
-On Fri, Apr 1, 2016 at 1:54 PM, Westerberg, Mika
-<mika.westerberg@intel.com> wrote:
-> On Thu, Mar 17, 2016 at 03:07:33PM +0100, Linus Walleij wrote:
->> On Wed, Mar 16, 2016 at 7:15 PM, Qipeng Zha <qipeng.zha@intel.com> wrote:
->>
->> > From: Qi Zheng <qi.zheng@intel.com>
->> >
->> > There is unexpected gpio interrupt after irq_enable. If not
->> > implemeted gpio_irq_enable callback, irq_enable calls irq_unmask
->> > instead. But if there was interrupt set before the irq_enable,
->> > unmask it may trigger the unexpected interrupt. By implementing
->> > the gpio_irq_enable callback, do interrupt status ack, the issue
->> > has gone.
->> >
->> > Signed-off-by: Qi Zheng <qi.zheng@intel.com>
->> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
->> > Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
->>
->> Patch applied for fixes.
+On Sun, Apr 3, 2016 at 3:26 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
+
+> Add pinctrl and gpio control support to Oxford Semiconductor OXNAS SoC Family.
+> This version supports the ARM926EJ-S based OX810SE SoC with 34 IO pins.
 >
-> Linus, what happend to these two patches? I do not find them in the
-> mainline for some reason.
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-I guess lack of patience or me being slow :)
+Starting to look very nice :)
 
-It's there now AFAICT.
+> +static inline struct oxnas_gpio_bank *irqd_to_bank(struct irq_data *d)
+> +{
+> +       return gpiochip_get_data(irq_data_get_irq_chip_data(d));
+> +}
+
+Do you really need to wrap this call? Seems like pointless layer of
+abstraction to me.
+
+> +       if (of_parse_phandle_with_fixed_args(np, "gpio-ranges",
+> +                                            3, 0, &pinspec)) {
+> +               dev_err(&pdev->dev, "gpio-ranges property not found\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       id = pinspec.args[1] / PINS_PER_BANK;
+> +       ngpios = pinspec.args[2];
+> +
+> +       if (id >= ARRAY_SIZE(oxnas_gpio_banks)) {
+> +               dev_err(&pdev->dev, "invalid gpio-ranges base arg\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (ngpios > PINS_PER_BANK) {
+> +               dev_err(&pdev->dev, "invalid gpio-ranges count arg\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       bank = &oxnas_gpio_banks[id];
+
+This feels a bit hackish but I guess that is how we have to do things
+then :/
+
+> +static int __init oxnas_gpio_register(void)
+> +{
+> +       return platform_driver_register(&oxnas_gpio_driver);
+> +}
+> +arch_initcall(oxnas_gpio_register);
+> +
+> +static int __init oxnas_pinctrl_register(void)
+> +{
+> +       return platform_driver_register(&oxnas_pinctrl_driver);
+> +}
+> +arch_initcall(oxnas_pinctrl_register);
+
+Why do these have to be arch_initcall()?
+
+I'm not very happy with anything below subsys_initcall()
+and others prefer that you have only device_initcall().
+
+I need some rationale. Sorry if I already asked...
 
 Yours,
 Linus Walleij
