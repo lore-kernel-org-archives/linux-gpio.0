@@ -1,176 +1,61 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 6/7] pinctrl: tegra: Add DT binding for io pads control
-Date: Wed, 13 Apr 2016 10:04:46 +0100
-Message-ID: <570E0BAE.8090404@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
- <1460473007-11535-7-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:13298 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759581AbcDMJEy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2016 05:04:54 -0400
-In-Reply-To: <1460473007-11535-7-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.7
+Date: Wed, 13 Apr 2016 10:45:30 +0200
+Message-ID: <1460537130-28658-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, swarren@wwwdotorg.org, thierry.reding@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
+	Hi Linus,
 
-On 12/04/16 15:56, Laxman Dewangan wrote:
-> NVIDIA Tegra210 supports the IO pads which can operate at 1.8V
-> or 3.3V I/O voltage levels. Also IO pads can be configured for
-> power down state if it is not in used. SW needs to configure the
-> voltage level of IO pads based on IO rail voltage and its power
-> state based on platform usage.
-> 
-> Add DT binding document for detailing the DT properties for
-> configuring IO pads voltage levels and its power state.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> ---
->  .../bindings/pinctrl/nvidia,tegra210-io-pad.txt    | 102 +++++++++++++++++++++
->  .../dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h  |  24 +++++
->  2 files changed, 126 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt
->  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt
-> new file mode 100644
-> index 0000000..97cdd4f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt
-> @@ -0,0 +1,102 @@
-> +NVIDIA Tegra210 PMC IO pad controller
-> +
-> +NVIDIA Tegra210 supports IO pads which can operate at 1.8V or 3.3V I/O
-> +power rail voltages. SW needs to configure the voltage level of IO pads
-> +based on platform specific power tree.
-> +
-> +The voltage configurations of IO pads should be done in boot if it is not
-> +going to change other wise dynamically based on IO rail voltage on that
-> +IO pads.
-> +
-> +The node for the Tegra210 io-pad driver must be sub node of pmc@0,7000e400.
+The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
 
-This should be 'pmc@7000e400'. We were incorrectly adding the '0,'
-previously.
+  Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
 
-> +
-> +Required properties:
-> +- compatible: "nvidia,tegra210-io-pad"
+are available in the git repository at:
 
-I think you have have "Must be ..." here. I am also wondering if the
-pinctrl device should be registered by the pmc driver and so not a
-separate driver to the PMC driver. In other words, the PMC driver calls
-pinctrl_register() directly.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git sh-pfc-for-v4.7
 
-> +Please refer to <pinctrl-bindings.txt> in this directory for details of the
-> +common pinctrl bindings used by client devices, including the meaning of the
-> +phrase "pin configuration node".
-> +
-> +Tegra's pin configuration nodes act as a container for an arbitrary number of
-> +subnodes. Each of these subnodes represents some desired configuration for an
-> +IO pads, or a list of IO pads. This configuration can include the voltage and
-> +power enable/disable control
-> +
-> +The name of each subnode is not important; all subnodes should be enumerated
-> +and processed purely based on their content. Each subnode only affects those
-> +parameters that are explicitly listed. Unspecified is represented as an absent
-> +property,
-> +
-> +See the TRM to determine which properties and values apply to each IO pads.
-> +Macro values for property values are defined in
-> +<dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h>
-> +
-> +The voltage supported on the pads are 1.8V and 3.3V. The enums are defined as:
-> +	For 1.8V, use TEGRA210_IO_RAIL_1800000UV
-> +	For 3.3V, use TEGRA210_IO_RAIL_3300000UV
+for you to fetch changes up to 92e6d9a2cc827018a18885e0f3050ab9ff8c3206:
 
-You may consider just using integer values here like we do for regulators.
+  pinctrl: sh-pfc: r8a7795: Add drive strength support (2016-03-29 09:23:01 +0200)
 
-> +
-> +Required subnode-properties:
-> +==========================
-> +- pins : An array of strings. Each string contains the name of an IO pads. Valid
-> +	 values for these names are listed below.
+Summary:
+  - Voltage switching support for SDHI on R-Car H2,
+  - Drive strength support on R-Car H3,
+  - Correct register write ordering.
 
-Why are they not listed here? Array of strings sounds odd. Array/list of
-pin names seems more appropriate.
+Thanks for pulling!
 
-> +Optional subnode-properties:
-> +==========================
-> +-nvidia,io-rail-voltage:	Integer. The voltage level of IO pads. The
-> +				valid values are 1.8V and 3.3V. Macros are
-> +				defined for these voltage levels in
-> +				<dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h>
-> +					Use TEGRA210_IO_RAIL_1800000UV for 1.8V
-> +					Use TEGRA210_IO_RAIL_3300000UV for 3.3V
-> +
-> +-nvidia,io-pad-deep-power-down: Integer, representing the deep power down state
-> +				of the IO pads. If this is enable then IO pads
-> +				will be in power down state and interface is not
-> +				enabled for any transaction. This is power
-> +				saving mode of the IO pads. The macros are
-> +				defined for enable/disable in
-> +				<dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h>
-> +				  TEGRA210_IO_PAD_DEEP_POWER_DOWN_DISABLE for
-> +					disable.
-> +				  TEGRA210_IO_PAD_DEEP_POWER_DOWN_ENABLE for
-> +					enable.
+----------------------------------------------------------------
+Kuninori Morimoto (1):
+      pinctrl: sh-pfc: IPSRx and MOD_SELx should be set before GPSRx
 
-Sounds like a boolean parameter. So may consider that if the property
-'nvidia,io-pad-deep-power-down' is present then it means enable
-deep-power-down and if not present then don't. Then you do not need to
-assign a value to it.
+Laurent Pinchart (2):
+      pinctrl: sh-pfc: Add drive strength support
+      pinctrl: sh-pfc: r8a7795: Add drive strength support
 
-> +Valid values for pin are:
-> +	audio, audio-hv, cam, csia, csib, csic, csid, csie, csif,
-> +	dbg, debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2,
-> +	gpio, hdmi, hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2,
-> +	pex-ctrl, sdmmc1, sdmmc3, spi, spi-hv, uart, usb-bias, usb0,
-> +	usb1, usb2, usb3.
-> +
-> +All IO pads do not support the 1.8V/3.3V configurations. Valid values for
-> +nvidia,io-rail-voltage are:
-> +	audio-hv, dmic, gpio, sdmmc1, sdmmc3, spi-hv.
+Wolfram Sang (1):
+      pinctrl: sh-pfc: r8a7790: Implement voltage switching for SDHI
 
-May be this should be moved under the nvidia,io-rail-voltage description?
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   4 +-
+ drivers/pinctrl/sh-pfc/core.c                      |  15 ++
+ drivers/pinctrl/sh-pfc/core.h                      |   3 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c               |  54 ++++-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 218 ++++++++++++++++++++-
+ drivers/pinctrl/sh-pfc/pinctrl.c                   | 111 +++++++++++
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |  19 +-
+ 7 files changed, 412 insertions(+), 12 deletions(-)
 
-> +All above IO pads supports the deep power down state.
+Gr{oetje,eeting}s,
 
-May be this should be moved under the nvidia,io-pad-deep-power-down
-description?
+						Geert
 
-> +Example:
-> +	#include <dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h>
-> +	pmc@0,7000e400 {
-> +		pmc-pad-control {
-> +			compatible = "nvidia,tegra210-io-pad";
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&tegra_io_pad_volt_default>;
-> +			tegra_io_pad_volt_default: common {
-> +				audio {
-> +					pins = "audio";
-> +					nvidia,io-pad-deep-power-down = <TEGRA210_IO_PAD_DEEP_POWER_DOWN_DISABLE>;
-> +				};
-> +				audio-hv {
-> +					pins = "audio-hv";
-> +					nvidia,io-rail-voltage = <TEGRA210_IO_RAIL_1800000UV>;
-> +				};
-> +				gpio {
-> +					pins = "gpio";
-> +					nvidia,io-rail-voltage = <TEGRA210_IO_RAIL_1800000UV>;
-> +				};
-> +				rest {
-> +					pins = "dmic", "sdmmc1", "sdmmc3";
-> +					nvidia,io-rail-voltage = <TEGRA210_IO_RAIL_1800000UV>;
-> +				};
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I know this is an example, but it does not make sense to me why audio-hv
-and gpio and separated from 'rest' when they have the same configuration.
-
-Cheers
-Jon
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
