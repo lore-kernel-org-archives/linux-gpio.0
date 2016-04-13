@@ -1,36 +1,51 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RESEND 2/2] ARM: dts: enable pinctrl for Broadcom NS2 SoC
-Date: Wed, 13 Apr 2016 15:24:16 +0200
-Message-ID: <CACRpkdZWeXFENOK-ufrBZxp91Hj0-rfm+rtG0f8_Mb5CnmZG1A@mail.gmail.com>
-References: <1459264932-27884-1-git-send-email-yendapally.reddy@broadcom.com>
-	<1459264932-27884-3-git-send-email-yendapally.reddy@broadcom.com>
+Subject: Re: [PATCH v2] pinctrl: rockchip: add support the get_direction
+Date: Wed, 13 Apr 2016 15:26:50 +0200
+Message-ID: <CACRpkdbKG5bvv=rXd+osJorvP2gUmhMWMKGfwz56r+HTYiBmOA@mail.gmail.com>
+References: <1458028545-1202-1-git-send-email-wxt@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:36174 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756987AbcDMNYR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2016 09:24:17 -0400
-Received: by mail-ob0-f181.google.com with SMTP id j9so32841813obd.3
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2016 06:24:16 -0700 (PDT)
-In-Reply-To: <1459264932-27884-3-git-send-email-yendapally.reddy@broadcom.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1458028545-1202-1-git-send-email-wxt@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Caesar Wang <wxt@rock-chips.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Pramod Kumar <pramodku@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Mar 29, 2016 at 5:22 PM, Yendapally Reddy Dhananjaya Reddy
-<yendapally.reddy@broadcom.com> wrote:
+On Tue, Mar 15, 2016 at 8:55 AM, Caesar Wang <wxt@rock-chips.com> wrote:
 
-> This enables the pinctrl support for Broadcom NS2 SoC
+> This patch adds the get_direction to support the gpio
+> interface.
 >
-> Signed-off-by: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
-> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+> The gpio direction is not used on rockchip platform when use the gpio
+> debugfs.
+>
+> Tested on kylin board. (RK3036 SoCs)
+> The repro steps:
+> $/sys/class/gpio/
+> echo 53 > export
+> $/sys/class/gpio/gpio53# cat direction
+> in
+> In general, the gpio53 should be out value, but the direction is the
+> default value 'in',  since the get_direction didn't supported in rockchip
+> pinctrl.
+>
+> So, we should add this patch to support it.
+>
+> Reported-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-rockchip@lists.infradead.org
+>
+> ---
+>
+> Changes in v2:
+> - As Heiko comments on (https://patchwork.kernel.org/patch/8576661/),
+>   fixes the wrong offset from original patch.
 
-This looks good.
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Please merge it separately through the ARM SoC tree.
+Patch applied.
 
 Yours,
 Linus Walleij
