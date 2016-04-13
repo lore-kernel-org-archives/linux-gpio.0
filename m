@@ -1,69 +1,52 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/2] dt-bindings: Add Oxford Semiconductor OXNAS pinctrl
- and gpio bindings
-Date: Wed, 13 Apr 2016 15:44:40 +0200
-Message-ID: <CACRpkdYYy2qObQDOP-FTPtwOgEqg6zgJOAwkSsYJaam6jqjSaQ@mail.gmail.com>
-References: <1459689969-5326-1-git-send-email-narmstrong@baylibre.com>
-	<1459689969-5326-3-git-send-email-narmstrong@baylibre.com>
-	<20160404051621.GM17806@rob-hp-laptop>
+From: "Westerberg, Mika" <mika.westerberg@intel.com>
+Subject: Re: [PATCH v2 2/2] pinctrl:Intel: implement gpio_irq_enable
+Date: Wed, 13 Apr 2016 16:54:03 +0300
+Message-ID: <20160413135403.GN1714@lahna.fi.intel.com>
+References: <1458152126-2333-1-git-send-email-qipeng.zha@intel.com>
+ <1458152126-2333-2-git-send-email-qipeng.zha@intel.com>
+ <CACRpkdZjCBNdbXyxv-dGkWah+4zqmFD0X4AeV9GyQK0o-Gv_ew@mail.gmail.com>
+ <20160401115409.GQ1719@lahna.fi.intel.com>
+ <CACRpkdYQDSMUdRMbCYQ9PzR8mqpSE_DrOtc==NQ=30+sF_hYWQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160404051621.GM17806@rob-hp-laptop>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga03.intel.com ([134.134.136.65]:54445 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757460AbcDMNyI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 13 Apr 2016 09:54:08 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYQDSMUdRMbCYQ9PzR8mqpSE_DrOtc==NQ=30+sF_hYWQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Qipeng Zha <qipeng.zha@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Qi Zheng <qi.zheng@intel.com>
 
-On Mon, Apr 4, 2016 at 7:16 AM, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Sun, Apr 03, 2016 at 03:26:09PM +0200, Neil Armstrong wrote:
->> Add pinctrl and gpio DT bindings for Oxford Semiconductor OXNAS SoC Family.
->> This version supports the ARM926EJ-S based OX810SE SoC with 34 IO pins.
->>
->> Signed-off-by: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
->> ---
->>  .../devicetree/bindings/gpio/gpio_oxnas.txt        | 43 ++++++++++++++++
->>  .../devicetree/bindings/pinctrl/oxnas,pinctrl.txt  | 57 ++++++++++++++++++++++
->>  2 files changed, 100 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
->>  create mode 100644 Documentation/devicetree/bindings/pinctrl/oxnas,pinctrl.txt
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt b/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
->> new file mode 100644
->> index 0000000..ddd3de9
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
->> @@ -0,0 +1,43 @@
->> +* Oxford Semiconductor OXNAS SoC GPIO Controller
->> +
->> +Required properties:
->> + - compatible: "oxsemi,ox810se-gpio"
->> + - reg: Base address and length for the device.
->> + - interrupts: The port interrupt shared by all pins.
->> + - gpio-controller: Marks the port as GPIO controller.
->> + - #gpio-cells: Two. The first cell is the pin number and
->> +   the second cell is used to specify the gpio polarity as defined in
->> +   defined in <dt-bindings/gpio/gpio.h>:
->> +      0 = GPIO_ACTIVE_HIGH
->> +      1 = GPIO_ACTIVE_LOW
->> + - interrupt-controller: Marks the device node as an interrupt controller.
->> + - #interrupt-cells: Two. The first cell is the GPIO number and second cell
->> +   is used to specify the trigger type as defined in
->> +   <dt-bindings/interrupt-controller/irq.h>:
->> +      IRQ_TYPE_EDGE_RISING
->> +      IRQ_TYPE_EDGE_FALLING
->> +      IRQ_TYPE_EDGE_BOTH
->> + - gpio-ranges: Interaction with the PINCTRL subsystem.
->
-> This should say something about what is a valid value. Think how do you
-> validate the example?
+On Wed, Apr 13, 2016 at 03:29:00PM +0200, Linus Walleij wrote:
+> On Fri, Apr 1, 2016 at 1:54 PM, Westerberg, Mika
+> <mika.westerberg@intel.com> wrote:
+> > On Thu, Mar 17, 2016 at 03:07:33PM +0100, Linus Walleij wrote:
+> >> On Wed, Mar 16, 2016 at 7:15 PM, Qipeng Zha <qipeng.zha@intel.com> wrote:
+> >>
+> >> > From: Qi Zheng <qi.zheng@intel.com>
+> >> >
+> >> > There is unexpected gpio interrupt after irq_enable. If not
+> >> > implemeted gpio_irq_enable callback, irq_enable calls irq_unmask
+> >> > instead. But if there was interrupt set before the irq_enable,
+> >> > unmask it may trigger the unexpected interrupt. By implementing
+> >> > the gpio_irq_enable callback, do interrupt status ack, the issue
+> >> > has gone.
+> >> >
+> >> > Signed-off-by: Qi Zheng <qi.zheng@intel.com>
+> >> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> >> > Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
+> >>
+> >> Patch applied for fixes.
+> >
+> > Linus, what happend to these two patches? I do not find them in the
+> > mainline for some reason.
+> 
+> I guess lack of patience or me being slow :)
+> 
+> It's there now AFAICT.
 
-It should just reference gpio/gpio.txt I think. The binding
-is described there. (Partly in BNF, which noone understands.)
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thank you :)
