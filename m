@@ -1,52 +1,145 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] pinctrl: pinctrl-single: Fix
- pcs_parse_bits_in_pinctrl_entry to use __ffs than ffs
-Date: Wed, 13 Apr 2016 08:43:29 -0700
-Message-ID: <20160413154328.GR5995@atomide.com>
-References: <1460530865-29085-1-git-send-email-j-keerthy@ti.com>
+From: ville.syrjala@linux.intel.com
+Subject: [PATCH] gpiolib-acpi: Duplicate con_id string when adding it to the crs lookup list
+Date: Wed, 13 Apr 2016 19:10:36 +0300
+Message-ID: <1460563836-1899-1-git-send-email-ville.syrjala@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1460530865-29085-1-git-send-email-j-keerthy@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, t-kristo@ti.com, nsekhar@ti.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, stable@vger.kernel.org, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-* Keerthy <j-keerthy@ti.com> [160413 00:03]:
-> pcs_parse_bits_in_pinctrl_entry uses ffs which gives bit indices
-> ranging from 1 to MAX. This leads to a corner case where we try to request
-> the pin number = MAX and fails.
-> 
-> bit_pos value is being calculted using ffs. pin_num_from_lsb uses
-> bit_pos value. pins array is populated with:
-> 
-> pin + pin_num_from_lsb.
-> 
-> The above is 1 more than usual bit indices as bit_pos uses ffs to compute
-> first set bit. Hence the last of the pins array is populated with the MAX
-> value and not MAX - 1 which causes error when we call pin_request.
+=46rom: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
 
-Hmm that sounds like a bug to me, just one comment below.
+Calling gpiod_get() from a module and then unloading the module leads t=
+o an
+oops due to acpi_can_fallback_to_crs() storing the pointer to the passe=
+d
+'con_id' string onto acpi_crs_lookup_list. The next guy to come along w=
+ill then
+try to access the string but the memory may now be gone with the module=
+=2E
+Make a copy of the passed string instead, and store the copy on the lis=
+t.
 
-> --- a/drivers/pinctrl/pinctrl-single.c
-> +++ b/drivers/pinctrl/pinctrl-single.c
-> @@ -1323,9 +1323,9 @@ static int pcs_parse_bits_in_pinctrl_entry(struct pcs_device *pcs,
->  
->  		/* Parse pins in each row from LSB */
->  		while (mask) {
-> -			bit_pos = ffs(mask);
-> +			bit_pos = __ffs(mask);
->  			pin_num_from_lsb = bit_pos / pcs->bits_per_pin;
-> -			mask_pos = ((pcs->fmask) << (bit_pos - 1));
-> +			mask_pos = ((pcs->fmask) << bit_pos);
->  			val_pos = val & mask_pos;
->  			submask = mask & mask_pos;
+BUG: unable to handle kernel paging request at ffffffffa03e7855
+IP: [<ffffffff81338322>] strcmp+0x12/0x30
+PGD 2a07067 PUD 2a08063 PMD 74720067 PTE 0
+Oops: 0000 [#1] PREEMPT SMP
+Modules linked in: i915(+) drm_kms_helper drm intel_gtt snd_hda_codec s=
+nd_hda_core i2c_algo_bit syscopya
+rea sysfillrect sysimgblt fb_sys_fops agpgart snd_soc_sst_bytcr_rt5640 =
+coretemp hwmon intel_rapl intel_soc_dts_thermal
+punit_atom_debug snd_soc_rt5640 snd_soc_rl6231 serio snd_intel_sst_acpi=
+ snd_intel_sst_core video snd_soc_sst_mfld_platf
+orm snd_soc_sst_match backlight int3402_thermal processor_thermal_devic=
+e int3403_thermal int3400_thermal acpi_thermal_r
+el snd_soc_core intel_soc_dts_iosf int340x_thermal_zone snd_compress i2=
+c_hid hid snd_pcm snd_timer snd soundcore evdev
+sch_fq_codel efivarfs ipv6 autofs4 [last unloaded: drm]
+CPU: 2 PID: 3064 Comm: modprobe Tainted: G     U  W       4.6.0-rc3-ffr=
+d-ipvr+ #302
+Hardware name: Intel Corp. VALLEYVIEW C0 PLATFORM/BYT-T FFD8, BIOS BLAK=
+=46F81.X64.0088.R10.1403240443 FFD8
+_X64_R_2014_13_1_00 03/24/2014
+task: ffff8800701cd200 ti: ffff880070034000 task.ti: ffff880070034000
+RIP: 0010:[<ffffffff81338322>]  [<ffffffff81338322>] strcmp+0x12/0x30
+RSP: 0000:ffff880070037748  EFLAGS: 00010286
+RAX: 0000000080000000 RBX: ffff88007a342800 RCX: 0000000000000006
+RDX: 0000000000000006 RSI: ffffffffa054f856 RDI: ffffffffa03e7856
+RBP: ffff880070037748 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa054f855
+R13: ffff88007281cae0 R14: 0000000000000010 R15: ffffffffffffffea
+=46S:  00007faa51447700(0000) GS:ffff880079300000(0000) knlGS:000000000=
+0000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffa03e7855 CR3: 0000000041eba000 CR4: 00000000001006e0
+Stack:
+ ffff880070037770 ffffffff8136ad28 ffffffffa054f855 0000000000000000
+ ffff88007a0a2098 ffff8800700377e8 ffffffff8136852e ffff88007a342800
+ 00000007700377a0 ffff8800700377a0 ffffffff81412442 70672d6c656e6170
+Call Trace:
+ [<ffffffff8136ad28>] acpi_can_fallback_to_crs+0x88/0x100
+ [<ffffffff8136852e>] gpiod_get_index+0x25e/0x310
+ [<ffffffff81412442>] ? mipi_dsi_attach+0x22/0x30
+ [<ffffffff813685f2>] gpiod_get+0x12/0x20
+ [<ffffffffa04fcf41>] intel_dsi_init+0x421/0x480 [i915]
+ [<ffffffffa04d3783>] intel_modeset_init+0x853/0x16b0 [i915]
+ [<ffffffffa0504864>] ? intel_setup_gmbus+0x214/0x260 [i915]
+ [<ffffffffa0510158>] i915_driver_load+0xdc8/0x19b0 [i915]
+ [<ffffffff8160fb53>] ? _raw_spin_unlock_irqrestore+0x43/0x70
+ [<ffffffffa026b13b>] drm_dev_register+0xab/0xc0 [drm]
+ [<ffffffffa026d7b3>] drm_get_pci_dev+0x93/0x1f0 [drm]
+ [<ffffffff8160fb53>] ? _raw_spin_unlock_irqrestore+0x43/0x70
+ [<ffffffffa043f1f4>] i915_pci_probe+0x34/0x50 [i915]
+ [<ffffffff81379751>] pci_device_probe+0x91/0x100
+ [<ffffffff8141a75a>] driver_probe_device+0x20a/0x2d0
+ [<ffffffff8141a8be>] __driver_attach+0x9e/0xb0
+ [<ffffffff8141a820>] ? driver_probe_device+0x2d0/0x2d0
+ [<ffffffff81418439>] bus_for_each_dev+0x69/0xa0
+ [<ffffffff8141a04e>] driver_attach+0x1e/0x20
+ [<ffffffff81419c20>] bus_add_driver+0x1c0/0x240
+ [<ffffffff8141b6d0>] driver_register+0x60/0xe0
+ [<ffffffff81377d20>] __pci_register_driver+0x60/0x70
+ [<ffffffffa026d9f4>] drm_pci_init+0xe4/0x110 [drm]
+ [<ffffffff810ce04e>] ? trace_hardirqs_on+0xe/0x10
+ [<ffffffffa02f1000>] ? 0xffffffffa02f1000
+ [<ffffffffa02f1094>] i915_init+0x94/0x9b [i915]
+ [<ffffffff810003bb>] do_one_initcall+0x8b/0x1c0
+ [<ffffffff810eb616>] ? rcu_read_lock_sched_held+0x86/0x90
+ [<ffffffff811de6d6>] ? kmem_cache_alloc_trace+0x1f6/0x270
+ [<ffffffff81183826>] do_init_module+0x60/0x1dc
+ [<ffffffff81115a8d>] load_module+0x1d0d/0x2390
+ [<ffffffff811120b0>] ? __symbol_put+0x70/0x70
+ [<ffffffff811f41b2>] ? kernel_read_file+0x92/0x120
+ [<ffffffff811162f4>] SYSC_finit_module+0xa4/0xb0
+ [<ffffffff8111631e>] SyS_finit_module+0xe/0x10
+ [<ffffffff81001ff3>] do_syscall_64+0x63/0x350
+ [<ffffffff816103da>] entry_SYSCALL64_slow_path+0x25/0x25
+Code: f7 48 8d 76 01 48 8d 52 01 0f b6 4e ff 84 c9 88 4a ff 75 ed 5d c3=
+ 0f 1f 00 55 48 89 e5 eb 04 84 c0
+ 74 18 48 8d 7f 01 48 8d 76 01 <0f> b6 47 ff 3a 46 ff 74 eb 19 c0 83 c8=
+ 01 5d c3 31 c0 5d c3 66
+RIP  [<ffffffff81338322>] strcmp+0x12/0x30
+ RSP <ffff880070037748>
+CR2: ffffffffa03e7855
 
-Can you please also change the pcs->fshift = ffs(pcs->fmask) - 1 to
-use __ffs to avoid confusion?
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: stable@vger.kernel.org
+=46ixes: 10cf4899f8af ("gpiolib: tighten up ACPI legacy gpio lookups")
+Signed-off-by: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
-
-Tony
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 682070d20f00..6238ddb81709 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -950,7 +950,7 @@ int acpi_gpio_count(struct device *dev, const char =
+*con_id)
+ struct acpi_crs_lookup {
+ 	struct list_head node;
+ 	struct acpi_device *adev;
+-	const char *con_id;
++	char *con_id;
+ };
+=20
+ static DEFINE_MUTEX(acpi_crs_lookup_lock);
+@@ -977,7 +977,7 @@ bool acpi_can_fallback_to_crs(struct acpi_device *a=
+dev, const char *con_id)
+ 		lookup =3D kmalloc(sizeof(*lookup), GFP_KERNEL);
+ 		if (lookup) {
+ 			lookup->adev =3D adev;
+-			lookup->con_id =3D con_id;
++			lookup->con_id =3D kstrdup(con_id, GFP_KERNEL);
+ 			list_add_tail(&lookup->node, &acpi_crs_lookup_list);
+ 		}
+ 	}
+--=20
+2.7.4
