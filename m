@@ -1,51 +1,52 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: rockchip: add support the get_direction
-Date: Wed, 13 Apr 2016 15:26:50 +0200
-Message-ID: <CACRpkdbKG5bvv=rXd+osJorvP2gUmhMWMKGfwz56r+HTYiBmOA@mail.gmail.com>
-References: <1458028545-1202-1-git-send-email-wxt@rock-chips.com>
+Subject: Re: [PATCH v2 2/2] pinctrl:Intel: implement gpio_irq_enable
+Date: Wed, 13 Apr 2016 15:29:00 +0200
+Message-ID: <CACRpkdYQDSMUdRMbCYQ9PzR8mqpSE_DrOtc==NQ=30+sF_hYWQ@mail.gmail.com>
+References: <1458152126-2333-1-git-send-email-qipeng.zha@intel.com>
+	<1458152126-2333-2-git-send-email-qipeng.zha@intel.com>
+	<CACRpkdZjCBNdbXyxv-dGkWah+4zqmFD0X4AeV9GyQK0o-Gv_ew@mail.gmail.com>
+	<20160401115409.GQ1719@lahna.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1458028545-1202-1-git-send-email-wxt@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Caesar Wang <wxt@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:36848 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758203AbcDMN3C (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2016 09:29:02 -0400
+Received: by mail-ob0-f182.google.com with SMTP id j9so32933612obd.3
+        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2016 06:29:01 -0700 (PDT)
+In-Reply-To: <20160401115409.GQ1719@lahna.fi.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Westerberg, Mika" <mika.westerberg@intel.com>
+Cc: Qipeng Zha <qipeng.zha@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Qi Zheng <qi.zheng@intel.com>
 
-On Tue, Mar 15, 2016 at 8:55 AM, Caesar Wang <wxt@rock-chips.com> wrote:
+On Fri, Apr 1, 2016 at 1:54 PM, Westerberg, Mika
+<mika.westerberg@intel.com> wrote:
+> On Thu, Mar 17, 2016 at 03:07:33PM +0100, Linus Walleij wrote:
+>> On Wed, Mar 16, 2016 at 7:15 PM, Qipeng Zha <qipeng.zha@intel.com> wrote:
+>>
+>> > From: Qi Zheng <qi.zheng@intel.com>
+>> >
+>> > There is unexpected gpio interrupt after irq_enable. If not
+>> > implemeted gpio_irq_enable callback, irq_enable calls irq_unmask
+>> > instead. But if there was interrupt set before the irq_enable,
+>> > unmask it may trigger the unexpected interrupt. By implementing
+>> > the gpio_irq_enable callback, do interrupt status ack, the issue
+>> > has gone.
+>> >
+>> > Signed-off-by: Qi Zheng <qi.zheng@intel.com>
+>> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>> > Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
+>>
+>> Patch applied for fixes.
+>
+> Linus, what happend to these two patches? I do not find them in the
+> mainline for some reason.
 
-> This patch adds the get_direction to support the gpio
-> interface.
->
-> The gpio direction is not used on rockchip platform when use the gpio
-> debugfs.
->
-> Tested on kylin board. (RK3036 SoCs)
-> The repro steps:
-> $/sys/class/gpio/
-> echo 53 > export
-> $/sys/class/gpio/gpio53# cat direction
-> in
-> In general, the gpio53 should be out value, but the direction is the
-> default value 'in',  since the get_direction didn't supported in rockchip
-> pinctrl.
->
-> So, we should add this patch to support it.
->
-> Reported-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-rockchip@lists.infradead.org
->
-> ---
->
-> Changes in v2:
-> - As Heiko comments on (https://patchwork.kernel.org/patch/8576661/),
->   fixes the wrong offset from original patch.
+I guess lack of patience or me being slow :)
 
-Patch applied.
+It's there now AFAICT.
 
 Yours,
 Linus Walleij
