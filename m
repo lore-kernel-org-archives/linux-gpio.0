@@ -1,29 +1,43 @@
 From: Biao Huang <biao.huang@mediatek.com>
-Subject: [RESEND PATCH 0/2] pinctrl: mediatek: add pinctrl/GPIO/EINT driver for mt2701
-Date: Wed, 13 Apr 2016 15:07:42 +0800
-Message-ID: <1460531264-4405-1-git-send-email-biao.huang@mediatek.com>
+Subject: [RESEND PATCH 1/2] ARM: mediatek: Add MT2701 config options for mediatek SoCs.
+Date: Wed, 13 Apr 2016 15:07:43 +0800
+Message-ID: <1460531264-4405-2-git-send-email-biao.huang@mediatek.com>
+References: <1460531264-4405-1-git-send-email-biao.huang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:55423 "EHLO
-	mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932760AbcDMHH7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2016 03:07:59 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1460531264-4405-1-git-send-email-biao.huang@mediatek.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, Erin Lo <erin.lo@mediatek.com>
+List-Id: linux-gpio@vger.kernel.org
 
-Biao Huang (1):
-  arm: dts: Add pinctrl/GPIO/EINT node for mt2701
+From: Erin Lo <erin.lo@mediatek.com>
 
-Erin Lo (1):
-  ARM: mediatek: Add MT2701 config options for mediatek SoCs.
+The upcoming MTK pinctrl driver have a big pin table for each SoC
+and we don't want to bloat the kernel binary if we don't need it.
+Add config options so we can build for one SoC only. Add MT2701.
 
- arch/arm/boot/dts/mt2701.dtsi  |   19 +++++++++++++++++++
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
  arch/arm/mach-mediatek/Kconfig |    4 ++++
- 2 files changed, 23 insertions(+)
+ 1 file changed, 4 insertions(+)
 
+diff --git a/arch/arm/mach-mediatek/Kconfig b/arch/arm/mach-mediatek/Kconfig
+index 8ced4ad..70e49d5 100644
+--- a/arch/arm/mach-mediatek/Kconfig
++++ b/arch/arm/mach-mediatek/Kconfig
+@@ -10,6 +10,10 @@ menuconfig ARCH_MEDIATEK
+ 
+ if ARCH_MEDIATEK
+ 
++config MACH_MT2701
++	bool "MediaTek MT2701 SoCs support"
++	default ARCH_MEDIATEK
++
+ config MACH_MT6589
+ 	bool "MediaTek MT6589 SoCs support"
+ 	default ARCH_MEDIATEK
 -- 
 1.7.9.5
-
