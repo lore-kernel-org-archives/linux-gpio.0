@@ -1,52 +1,52 @@
-From: "Westerberg, Mika" <mika.westerberg@intel.com>
-Subject: Re: [PATCH v2 2/2] pinctrl:Intel: implement gpio_irq_enable
-Date: Wed, 13 Apr 2016 16:54:03 +0300
-Message-ID: <20160413135403.GN1714@lahna.fi.intel.com>
-References: <1458152126-2333-1-git-send-email-qipeng.zha@intel.com>
- <1458152126-2333-2-git-send-email-qipeng.zha@intel.com>
- <CACRpkdZjCBNdbXyxv-dGkWah+4zqmFD0X4AeV9GyQK0o-Gv_ew@mail.gmail.com>
- <20160401115409.GQ1719@lahna.fi.intel.com>
- <CACRpkdYQDSMUdRMbCYQ9PzR8mqpSE_DrOtc==NQ=30+sF_hYWQ@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] pinctrl: pinctrl-single: Fix
+ pcs_parse_bits_in_pinctrl_entry to use __ffs than ffs
+Date: Wed, 13 Apr 2016 08:43:29 -0700
+Message-ID: <20160413154328.GR5995@atomide.com>
+References: <1460530865-29085-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:54445 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757460AbcDMNyI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 13 Apr 2016 09:54:08 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYQDSMUdRMbCYQ9PzR8mqpSE_DrOtc==NQ=30+sF_hYWQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1460530865-29085-1-git-send-email-j-keerthy@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>
+Cc: linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, t-kristo@ti.com, nsekhar@ti.com
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Qipeng Zha <qipeng.zha@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Qi Zheng <qi.zheng@intel.com>
 
-On Wed, Apr 13, 2016 at 03:29:00PM +0200, Linus Walleij wrote:
-> On Fri, Apr 1, 2016 at 1:54 PM, Westerberg, Mika
-> <mika.westerberg@intel.com> wrote:
-> > On Thu, Mar 17, 2016 at 03:07:33PM +0100, Linus Walleij wrote:
-> >> On Wed, Mar 16, 2016 at 7:15 PM, Qipeng Zha <qipeng.zha@intel.com> wrote:
-> >>
-> >> > From: Qi Zheng <qi.zheng@intel.com>
-> >> >
-> >> > There is unexpected gpio interrupt after irq_enable. If not
-> >> > implemeted gpio_irq_enable callback, irq_enable calls irq_unmask
-> >> > instead. But if there was interrupt set before the irq_enable,
-> >> > unmask it may trigger the unexpected interrupt. By implementing
-> >> > the gpio_irq_enable callback, do interrupt status ack, the issue
-> >> > has gone.
-> >> >
-> >> > Signed-off-by: Qi Zheng <qi.zheng@intel.com>
-> >> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> >> > Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
-> >>
-> >> Patch applied for fixes.
-> >
-> > Linus, what happend to these two patches? I do not find them in the
-> > mainline for some reason.
+* Keerthy <j-keerthy@ti.com> [160413 00:03]:
+> pcs_parse_bits_in_pinctrl_entry uses ffs which gives bit indices
+> ranging from 1 to MAX. This leads to a corner case where we try to request
+> the pin number = MAX and fails.
 > 
-> I guess lack of patience or me being slow :)
+> bit_pos value is being calculted using ffs. pin_num_from_lsb uses
+> bit_pos value. pins array is populated with:
 > 
-> It's there now AFAICT.
+> pin + pin_num_from_lsb.
+> 
+> The above is 1 more than usual bit indices as bit_pos uses ffs to compute
+> first set bit. Hence the last of the pins array is populated with the MAX
+> value and not MAX - 1 which causes error when we call pin_request.
 
-Thank you :)
+Hmm that sounds like a bug to me, just one comment below.
+
+> --- a/drivers/pinctrl/pinctrl-single.c
+> +++ b/drivers/pinctrl/pinctrl-single.c
+> @@ -1323,9 +1323,9 @@ static int pcs_parse_bits_in_pinctrl_entry(struct pcs_device *pcs,
+>  
+>  		/* Parse pins in each row from LSB */
+>  		while (mask) {
+> -			bit_pos = ffs(mask);
+> +			bit_pos = __ffs(mask);
+>  			pin_num_from_lsb = bit_pos / pcs->bits_per_pin;
+> -			mask_pos = ((pcs->fmask) << (bit_pos - 1));
+> +			mask_pos = ((pcs->fmask) << bit_pos);
+>  			val_pos = val & mask_pos;
+>  			submask = mask & mask_pos;
+
+Can you please also change the pcs->fshift = ffs(pcs->fmask) - 1 to
+use __ffs to avoid confusion?
+
+Regards,
+
+Tony
