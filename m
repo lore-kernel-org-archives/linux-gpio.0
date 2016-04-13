@@ -1,110 +1,61 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4/7] soc/tegra: pmc: Add interface to set voltage of IO
- rails
-Date: Wed, 13 Apr 2016 10:56:12 +0100
-Message-ID: <570E17BC.7010304@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
- <1460473007-11535-5-git-send-email-ldewangan@nvidia.com>
- <570E07B7.1070209@nvidia.com> <570E0AC9.9050701@nvidia.com>
- <570E109D.6070805@nvidia.com> <570E0F7B.6060006@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH RESEND 1/2] pinctrl: ns2: add pinmux driver support for
+ Broadcom NS2 SoC
+Date: Wed, 13 Apr 2016 15:19:01 +0200
+Message-ID: <CACRpkdY8R91_j4+A_CFzrZdp1zj10SBthL2yyoSxUDJnVBs8NA@mail.gmail.com>
+References: <1459264932-27884-1-git-send-email-yendapally.reddy@broadcom.com>
+	<1459264932-27884-2-git-send-email-yendapally.reddy@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:13153 "EHLO
-	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965799AbcDMJ4S (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2016 05:56:18 -0400
-In-Reply-To: <570E0F7B.6060006@nvidia.com>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:36255 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759324AbcDMNTD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2016 09:19:03 -0400
+Received: by mail-ob0-f172.google.com with SMTP id j9so32739892obd.3
+        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2016 06:19:01 -0700 (PDT)
+In-Reply-To: <1459264932-27884-2-git-send-email-yendapally.reddy@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, swarren@wwwdotorg.org, thierry.reding@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Pramod Kumar <pramodku@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
+
+On Tue, Mar 29, 2016 at 5:22 PM, Yendapally Reddy Dhananjaya Reddy
+<yendapally.reddy@broadcom.com> wrote:
+
+> This adds the initial support of the Broadcom NS2 pinmux driver
+>
+> Signed-off-by: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
+> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+
+Sorry for slow replies. :(
+
+This mostly looks good. Some small things needs fixing:
+
+> +config PINCTRL_NS2_MUX
+> +       bool "Broadcom Northstar2 pinmux driver"
+
+This is a bool driver, yet it uses MODULE* macros at the end of the file.
+Check the recent commits from Paul Gortmaker cleaning this up.
+Just a git log -p --author=Gortmaker in the main kernel tree will quickly
+give you an idea of what you have to do.
 
 
-On 13/04/16 10:20, Laxman Dewangan wrote:
-> 
-> On Wednesday 13 April 2016 02:55 PM, Jon Hunter wrote:
->> On 13/04/16 10:00, Laxman Dewangan wrote:
->>> On Wednesday 13 April 2016 02:17 PM, Jon Hunter wrote:
->>>> On 12/04/16 15:56, Laxman Dewangan wrote:
->>>>> NVIDIA Tegra210 supports some of the IO interface which can operate
->>>>> at 1.8V or 3.3V I/O rail voltage levels. SW needs to configure
->>>>> Tegra PMC register to set different voltage level of IO interface
->>>>> based
->>>>> on IO rail voltage from power supply i.e. power regulators.
->>>>>
->>>>> Add APIs to set and get IO rail voltage from the client driver.
->>>> I think that we need some further explanation about the scenario when
->>>> this is used. In other words, why this configuration needs to be
->>>> done in
->>>> the kernel versus the bootloader. Is this something that can change at
->>>> runtime? I could see that for SD cards it may.
->>> Yes, SDIO3.0 support needs dynamic IO rail voltage change and so pad
->>> voltage change.
->>>
->>>>>      #define GPU_RG_CNTRL            0x2d4
->>>>>    +static DEFINE_SPINLOCK(tegra_pmc_access_lock);
->>>>> +
->>>> We already have a mutex for managing concurrent accesses, do we need
->>>> this?
->>> Mutex is sleeping calls and we really dont need this. This is sleep for
->>> small duration and we should do this in spinlock.
->> Yes but do you need to call it from a interrupt context? It seems that
->> these are not called very often, may be on boot, or when swapping an SD
->> card, and so although a spinlock would be faster, the overhead of the
->> mutex would be negligible in this case. I think that you need to justify
->> why this needs to be a spinlock with a use-case that requires it.
->>
-> 
-> This is just based on my OS theory that if critical region is taking
-> less time, in order of us instead of ms then better to use spin lock
-> instead of mutex lock.
+> +static const unsigned int gpio_0_1_pins[] = {24, 25};
+> +static const unsigned int pwm_0_pins[] = {24};
+> +static const unsigned int pwm_1_pins[] = {25};
 
-Yes, but you also need to be practical. Furthermore, someone could be
-powering up/down a rail at the same time someone is setting the voltage.
-May be this is not a big deal ...
+So either the same pins are used for GPIO or PWM.
+And this pattern persists.
 
->>>>>    +
->>>>> +static struct tegra_io_rail_voltage_bit_info
->>>>> tegra210_io_rail_voltage_info[] = {
->>>>> +    TEGRA_IO_RAIL_VOLTAGE(SDMMC1, 12),
->>>>> +    TEGRA_IO_RAIL_VOLTAGE(SDMMC3, 13),
->>>>> +    TEGRA_IO_RAIL_VOLTAGE(AUDIO_HV, 18),
->>>>> +    TEGRA_IO_RAIL_VOLTAGE(DMIC, 20),
->>>>> +    TEGRA_IO_RAIL_VOLTAGE(GPIO, 21),
->>>>> +    TEGRA_IO_RAIL_VOLTAGE(SPI_HV, 23),
->>>>> +};
->>>>> +
->>>> You could simply this by having a look-up table similar to what we do
->>>> for the powergates.
->>> Revising the power gate code, it needs ID matches with bit location but
->>> it is not the case here. We need to have lookup from ID to  bit
->>> position.
->> I still don't see why you could not have ...
->>
->> static unsigned int tegra210_io_rail_voltage_bit[] = {
->>     [TEGRA_IO_RAIL_SDMMC1] = 12,
->>     ...
->> }
->>
->> You could avoid the for-loop in the lookup as well as all the extra
->> definitions. Seems a lot simpler.
-> 
-> This makes the table in larger size, max index is maximum of all the 
-> macros used in LHS.
+Do you have a brewing GPIO driver for this block as well?
+Is it a separate front-end calling to pinctrl using the
+pinctrl_gpio_* calls or do you plan to patch it into this
+driver?
 
-True. May be there is not a better way to do this ...
+This is more of a question.
 
-> Also if we have 0 as valid (which is not there now) then it can be trouble.
->>> The TRM needs to be update. There is no LATCH register in the T210.
->>> PMC_PWR_DET and PMC_PWR_DET_VAL are registers for this. I have internal
->>> tracking bug for correcting this.
->> Why do you need to program both? I think that we should be clear here
->> about the procedure. If the TRM is wrong, then there should be at least
->> a comment here describing the correct sequence.
-> OK, will mention the details.
+Apart from this it looks good.
 
-Thanks
-Jon
-
+Yours,
+Linus Walleij
