@@ -1,69 +1,36 @@
-From: Biao Huang <biao.huang@mediatek.com>
-Subject: [RESEND PATCH 2/2] arm: dts: Add pinctrl/GPIO/EINT node for mt2701
-Date: Wed, 13 Apr 2016 15:07:44 +0800
-Message-ID: <1460531264-4405-3-git-send-email-biao.huang@mediatek.com>
-References: <1460531264-4405-1-git-send-email-biao.huang@mediatek.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] MAINTAINERS: gpio: add DT bindings directory
+Date: Wed, 13 Apr 2016 09:23:04 +0200
+Message-ID: <CACRpkdad2Ps6bqgPJRv7-8jx848UPiAEQh9FWyUEx9uuAgzc0g@mail.gmail.com>
+References: <1460476673-3133-1-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:36859 "EHLO
-	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S934016AbcDMHIB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2016 03:08:01 -0400
-In-Reply-To: <1460531264-4405-1-git-send-email-biao.huang@mediatek.com>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:35112 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759594AbcDMHXF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Apr 2016 03:23:05 -0400
+Received: by mail-ob0-f170.google.com with SMTP id k9so27683975obk.2
+        for <linux-gpio@vger.kernel.org>; Wed, 13 Apr 2016 00:23:05 -0700 (PDT)
+In-Reply-To: <1460476673-3133-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, Biao Huang <biao.huang@mediatek.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 
-Add pinctrl and GPIO node to mt2701.dtsi
+On Tue, Apr 12, 2016 at 5:57 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 
-Signed-off-by: Biao Huang <biao.huang@mediatek.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
-This patch has been reverted in 7aec2fd74add9c4a61d77f51c805b4f7592956da
-We have checked it can build pass in kernel-4.6 rc1
----
- arch/arm/boot/dts/mt2701.dtsi |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Helps get_maintainer.pl to find the right people.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-index 88364f0..da5fef8 100644
---- a/arch/arm/boot/dts/mt2701.dtsi
-+++ b/arch/arm/boot/dts/mt2701.dtsi
-@@ -17,6 +17,7 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include "skeleton64.dtsi"
-+#include "mt2701-pinfunc.h"
- 
- / {
- 	compatible = "mediatek,mt2701";
-@@ -115,6 +116,24 @@
- 		#reset-cells = <1>;
- 	};
- 
-+	pio: pinctrl@10005000 {
-+		compatible = "mediatek,mt2701-pinctrl";
-+		reg = <0 0x1000b000 0 0x1000>;
-+		mediatek,pctl-regmap = <&syscfg_pctl_a>;
-+		pins-are-numbered;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	syscfg_pctl_a: syscfg@10005000 {
-+		compatible = "mediatek,mt2701-pctl-a-syscfg", "syscon";
-+		reg = <0 0x10005000 0 0x1000>;
-+	};
-+
- 	scpsys: scpsys@10006000 {
- 		compatible = "mediatek,mt2701-scpsys", "syscon";
- 		#power-domain-cells = <1>;
--- 
-1.7.9.5
+OK patch applied.
 
+Maybe we should move the ACPI specs into the kernel
+as well as that stuff is taking my time as well now, apart
+from DT :/
+
+Yours,
+Linus Walleij
