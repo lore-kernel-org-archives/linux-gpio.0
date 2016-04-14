@@ -1,127 +1,58 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RESEND 1/2] pinctrl: ns2: add pinmux driver support for
- Broadcom NS2 SoC
-Date: Thu, 14 Apr 2016 11:42:13 +0200
-Message-ID: <CACRpkdYxE4UMB+AwHhUJ4cYAOget94zos_u4Z-j9obemPGewWQ@mail.gmail.com>
-References: <CAL2FKYmAoaK=E8wrKc+sHPfM3cZ5O8GnZB2yfMx-GvUH3g1pKQ@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: gpio: add DT bindings directory
+Date: Thu, 14 Apr 2016 13:29:27 +0200
+Message-ID: <CACRpkdYRA55-YPedSzf49fwVg6GG9r6vdjB7Cvzs7jdcituq0w@mail.gmail.com>
+References: <1460476673-3133-1-git-send-email-wsa@the-dreams.de>
+	<CACRpkdad2Ps6bqgPJRv7-8jx848UPiAEQh9FWyUEx9uuAgzc0g@mail.gmail.com>
+	<CAMuHMdV79ZSUkTCO0Cde6VGE9R-8AdqDod1nmRV8L89K3NCRJQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL2FKYmAoaK=E8wrKc+sHPfM3cZ5O8GnZB2yfMx-GvUH3g1pKQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Pramod Kumar <pramodku@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:35423 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752595AbcDNL32 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Apr 2016 07:29:28 -0400
+Received: by mail-oi0-f41.google.com with SMTP id p188so90191339oih.2
+        for <linux-gpio@vger.kernel.org>; Thu, 14 Apr 2016 04:29:27 -0700 (PDT)
+In-Reply-To: <CAMuHMdV79ZSUkTCO0Cde6VGE9R-8AdqDod1nmRV8L89K3NCRJQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 
-On Thu, Apr 14, 2016 at 9:53 AM, Yendapally Reddy Dhananjaya Reddy
-<yendapally.reddy@broadcom.com> wrote:
-> On Wed, Apr 13, 2016 at 6:49 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Tue, Mar 29, 2016 at 5:22 PM, Yendapally Reddy Dhananjaya Reddy
->> <yendapally.reddy@broadcom.com> wrote:
-
->>> +static const unsigned int gpio_0_1_pins[] = {24, 25};
->>> +static const unsigned int pwm_0_pins[] = {24};
->>> +static const unsigned int pwm_1_pins[] = {25};
+On Wed, Apr 13, 2016 at 10:11 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Wed, Apr 13, 2016 at 9:23 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Tue, Apr 12, 2016 at 5:57 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 >>
->> So either the same pins are used for GPIO or PWM.
->> And this pattern persists.
+>>> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>>
+>>> Helps get_maintainer.pl to find the right people.
+>>>
+>>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 >>
->> Do you have a brewing GPIO driver for this block as well?
->> Is it a separate front-end calling to pinctrl using the
->> pinctrl_gpio_* calls or do you plan to patch it into this
->> driver?
+>> OK patch applied.
 >>
->> This is more of a question.
->>
+>> Maybe we should move the ACPI specs into the kernel
+>> as well as that stuff is taking my time as well now, apart
+>> from DT :/
 >
-> This SoC supports group based configuration and there is a top level register
-> to select groups. Once the gpio_0_1_pins group is selected, there is one more
-> register to select between gpio_0_1 and pwm (only four pins). The pins
-> 24 and 25 are shared between nor pins and gpio at the top group level. Once
-> gpio group is selected, then we can select to be either gpio or pwm. I missed
-> these two pins to be added to nor_data_pins and will add in the next version.
->
-> static const unsigned nor_data_pins[] =  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
->         10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25};
->
-> NS2_PIN_GROUP(nand, 0, 0, 31, 1, 0),
-> NS2_PIN_GROUP(nor_data, 0, 0, 31, 1, 1),
-> NS2_PIN_GROUP(gpio_0_1, 0, 0, 31, 1, 0),
->
-> To select PWM, we need to select gpio and pwm as well.
->
-> gpio: gpio {
-> function = "gpio";
-> groups = "gpio_0_1_grp";
->
-> pwm: pwm {
-> function = "pwm";
-> groups = "pwm0_grp", "pwm1_grp";
-> };
->
-> Already available gpio driver "pinctrl-iproc-gpio.c" will be the gpio driver
-> for this soc as well without pin request.
+> Wasn't the plan to move the DT bindings out of the kernel tree instead?
 
-Then you are doing something wrong. Look in pinctrl-iproc-gpio.c:
+That never seems to happen. Who would dare to try even.
 
-/*
- * Request the Iproc IOMUX pinmux controller to mux individual pins to GPIO
- */
-static int iproc_gpio_request(struct gpio_chip *gc, unsigned offset)
-{
-        struct iproc_gpio *chip = gpiochip_get_data(gc);
-        unsigned gpio = gc->base + offset;
+The effect of doing that would probably not be desireable: the
+kernel maintainers would maybe stop caring about DT bindings
+and not providing any help at all, and noone would be able to
+sensibly enforce that drivers and bindings go hand-in-hand.
 
-        /* not all Iproc GPIO pins can be muxed individually */
-        if (!chip->pinmux_is_supported)
-                return 0;
-
-        return pinctrl_request_gpio(gpio);
-}
-
-static void iproc_gpio_free(struct gpio_chip *gc, unsigned offset)
-{
-        struct iproc_gpio *chip = gpiochip_get_data(gc);
-        unsigned gpio = gc->base + offset;
-
-        if (!chip->pinmux_is_supported)
-                return;
-
-        pinctrl_free_gpio(gpio);
-}
-
-So as you see pinctrl_request_gpio() and pinctrl_free_gpio()
-are being called.
-
-These will in turn call pinmux_request_gpio() and
-pinmux_free_gpio() to make the backing pin controller
-mux in the pin as GPIO.
-
-pinmux_request_gpio() will end up in pin_request()
-and at this point:
-
-if (gpio_range && ops->gpio_request_enable)
-                /* This requests and enables a single GPIO pin */
-                status = ops->gpio_request_enable(pctldev, gpio_range, pin);
-
-As you can see: it will attempt to call the .gpio_request_enable()
-method of your struct pinmux_ops.
-
-But your pinmux ops look like this:
-
-+static struct pinmux_ops ns2_pinmux_ops = {
-+       .get_functions_count = ns2_get_functions_count,
-+       .get_function_name = ns2_get_function_name,
-+       .get_function_groups = ns2_get_function_groups,
-+       .set_mux = ns2_pinmux_enable,
-+};
-
-I.e. there is no way that GPIO can be set up as a GPIO line,
-and you're relying on some other pin control entries in the
-device tree to do that, which is unnecessarily complicated.
-
-Please consider implementing the .gpio_request_enable callback
-for this pin multiplexer.
+I would think it was a good idea if there was an entity
+outside the kernel community with the right manpower and
+time budget to actually just do DT reviews, participating on
+bindings and kernel driver reviews alike. But that needs to
+come first, then *maybe* this entity can maintain their
+own tree, with a copy in the kernel for a trial period and
+then move it out.
 
 Yours,
 Linus Walleij
