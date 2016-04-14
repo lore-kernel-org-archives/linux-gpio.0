@@ -1,75 +1,90 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH v2]  pinctrl: pinctrl-single: Fix pcs_parse_bits_in_pinctrl_entry to use __ffs than ffs
-Date: Thu, 14 Apr 2016 10:29:16 +0530
-Message-ID: <1460609956-26539-1-git-send-email-j-keerthy@ti.com>
+From: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
+Subject: Re: [PATCH RESEND 1/2] pinctrl: ns2: add pinmux driver support for
+ Broadcom NS2 SoC
+Date: Thu, 14 Apr 2016 13:23:33 +0530
+Message-ID: <CAL2FKYmAoaK=E8wrKc+sHPfM3cZ5O8GnZB2yfMx-GvUH3g1pKQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:51953 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751023AbcDNE75 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 14 Apr 2016 00:59:57 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Pramod Kumar <pramodku@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
 List-Id: linux-gpio@vger.kernel.org
-To: tony@atomide.com
-Cc: linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, j-keerthy@ti.com, t-kristo@ti.com, nsekhar@ti.com
 
-pcs_parse_bits_in_pinctrl_entry uses ffs which gives bit indices
-ranging from 1 to MAX. This leads to a corner case where we try to request
-the pin number = MAX and fails.
+Hi Linus,
 
-bit_pos value is being calculted using ffs. pin_num_from_lsb uses
-bit_pos value. pins array is populated with:
+On Wed, Apr 13, 2016 at 6:49 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Mar 29, 2016 at 5:22 PM, Yendapally Reddy Dhananjaya Reddy
+> <yendapally.reddy@broadcom.com> wrote:
+>
+>> This adds the initial support of the Broadcom NS2 pinmux driver
+>>
+>> Signed-off-by: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
+>> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+>
+> Sorry for slow replies. :(
+>
+> This mostly looks good. Some small things needs fixing:
+>
+>> +config PINCTRL_NS2_MUX
+>> +       bool "Broadcom Northstar2 pinmux driver"
+>
+> This is a bool driver, yet it uses MODULE* macros at the end of the file.
+> Check the recent commits from Paul Gortmaker cleaning this up.
+> Just a git log -p --author=Gortmaker in the main kernel tree will quickly
+> give you an idea of what you have to do.
+>
 
-pin + pin_num_from_lsb.
+Sure. I will address this in the v2 patch set.
 
-The above is 1 more than usual bit indices as bit_pos uses ffs to compute
-first set bit. Hence the last of the pins array is populated with the MAX
-value and not MAX - 1 which causes error when we call pin_request.
+>
+>> +static const unsigned int gpio_0_1_pins[] = {24, 25};
+>> +static const unsigned int pwm_0_pins[] = {24};
+>> +static const unsigned int pwm_1_pins[] = {25};
+>
+> So either the same pins are used for GPIO or PWM.
+> And this pattern persists.
+>
+> Do you have a brewing GPIO driver for this block as well?
+> Is it a separate front-end calling to pinctrl using the
+> pinctrl_gpio_* calls or do you plan to patch it into this
+> driver?
+>
+> This is more of a question.
+>
 
-mask_pos is rightly calculated as ((pcs->fmask) << (bit_pos - 1))
-Consequently val_pos and submask are correct.
+This SoC supports group based configuration and there is a top level register
+to select groups. Once the gpio_0_1_pins group is selected, there is one more
+register to select between gpio_0_1 and pwm (only four pins). The pins
+24 and 25 are shared between nor pins and gpio at the top group level. Once
+gpio group is selected, then we can select to be either gpio or pwm. I missed
+these two pins to be added to nor_data_pins and will add in the next version.
 
-Hence use __ffs which gives (ffs(x) - 1) as the first bit set.
+static const unsigned nor_data_pins[] =  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25};
 
-fixes: 4e7e8017a8 ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
+NS2_PIN_GROUP(nand, 0, 0, 31, 1, 0),
+NS2_PIN_GROUP(nor_data, 0, 0, 31, 1, 1),
+NS2_PIN_GROUP(gpio_0_1, 0, 0, 31, 1, 0),
 
-Changes in v2:
+To select PWM, we need to select gpio and pwm as well.
 
-  * Changed pcs->fshift to use __ffs instead of ffs to be consistent.
+gpio: gpio {
+function = "gpio";
+groups = "gpio_0_1_grp";
 
-Boot tesed on da850-evm and checked the pinctrl sysfs nodes.
+pwm: pwm {
+function = "pwm";
+groups = "pwm0_grp", "pwm1_grp";
+};
 
- drivers/pinctrl/pinctrl-single.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Already available gpio driver "pinctrl-iproc-gpio.c" will be the gpio driver
+for this soc as well without pin request.
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index fb126d5..cf9bafa 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -1280,9 +1280,9 @@ static int pcs_parse_bits_in_pinctrl_entry(struct pcs_device *pcs,
- 
- 		/* Parse pins in each row from LSB */
- 		while (mask) {
--			bit_pos = ffs(mask);
-+			bit_pos = __ffs(mask);
- 			pin_num_from_lsb = bit_pos / pcs->bits_per_pin;
--			mask_pos = ((pcs->fmask) << (bit_pos - 1));
-+			mask_pos = ((pcs->fmask) << bit_pos);
- 			val_pos = val & mask_pos;
- 			submask = mask & mask_pos;
- 
-@@ -1852,7 +1852,7 @@ static int pcs_probe(struct platform_device *pdev)
- 	ret = of_property_read_u32(np, "pinctrl-single,function-mask",
- 				   &pcs->fmask);
- 	if (!ret) {
--		pcs->fshift = ffs(pcs->fmask) - 1;
-+		pcs->fshift = __ffs(pcs->fmask);
- 		pcs->fmax = pcs->fmask >> pcs->fshift;
- 	} else {
- 		/* If mask property doesn't exist, function mux is invalid. */
--- 
-1.9.1
+> Apart from this it looks good.
+>
+> Yours,
+> Linus Walleij
 
+Thanks & Regards
+Dhananjay
