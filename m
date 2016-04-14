@@ -1,58 +1,130 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Subject: Re: [PATCH] gpiolib-acpi: Duplicate con_id string when adding it to
- the crs lookup list
-Date: Thu, 14 Apr 2016 15:41:11 +0300
-Message-ID: <20160414124111.GO4329@intel.com>
-References: <1460563836-1899-1-git-send-email-ville.syrjala@linux.intel.com>
- <20160414122749.GV1714@lahna.fi.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V2] ARM: tegra: add DT binding for Tegra186 GPIO controllers
+Date: Thu, 14 Apr 2016 14:42:28 +0200
+Message-ID: <CACRpkdYmcEQBN5QwjLa-Wyorv-otPdJh5C1KgKwUjUBWXvnb_w@mail.gmail.com>
+References: <1460483197-5130-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160414122749.GV1714@lahna.fi.intel.com>
-Sender: stable-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:33467 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755255AbcDNMm3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Apr 2016 08:42:29 -0400
+Received: by mail-oi0-f49.google.com with SMTP id w85so91962527oiw.0
+        for <linux-gpio@vger.kernel.org>; Thu, 14 Apr 2016 05:42:29 -0700 (PDT)
+In-Reply-To: <1460483197-5130-1-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>
 
-On Thu, Apr 14, 2016 at 03:27:49PM +0300, Mika Westerberg wrote:
-> On Wed, Apr 13, 2016 at 07:10:36PM +0300, ville.syrjala@linux.intel.c=
-om wrote:
-> > diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acp=
-i.c
-> > index 682070d20f00..6238ddb81709 100644
-> > --- a/drivers/gpio/gpiolib-acpi.c
-> > +++ b/drivers/gpio/gpiolib-acpi.c
-> > @@ -950,7 +950,7 @@ int acpi_gpio_count(struct device *dev, const c=
-har *con_id)
-> >  struct acpi_crs_lookup {
-> >  	struct list_head node;
-> >  	struct acpi_device *adev;
-> > -	const char *con_id;
-> > +	char *con_id;
->=20
-> Why it cannot be left as const?
+On Tue, Apr 12, 2016 at 7:46 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
 
-I suppose it could.
+> From: Stephen Warren <swarren@nvidia.com>
+>
+> Tegra186 contains two separate but mostly similar GPIO controllers.
+> Register layout differs significantly from previous Tegra generations, and
+> so a new binding is required to describe them in device tree. This patch
+> adds that binding.
+>
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+> v2: Increase indentation to make lists more readable.
 
->=20
-> >  };
-> > =20
-> >  static DEFINE_MUTEX(acpi_crs_lookup_lock);
-> > @@ -977,7 +977,7 @@ bool acpi_can_fallback_to_crs(struct acpi_devic=
-e *adev, const char *con_id)
-> >  		lookup =3D kmalloc(sizeof(*lookup), GFP_KERNEL);
-> >  		if (lookup) {
-> >  			lookup->adev =3D adev;
-> > -			lookup->con_id =3D con_id;
-> > +			lookup->con_id =3D kstrdup(con_id, GFP_KERNEL);
-> >  			list_add_tail(&lookup->node, &acpi_crs_lookup_list);
-> >  		}
-> >  	}
-> > --=20
-> > 2.7.4
+Very interesting patch!
 
---=20
-Ville Syrj=E4l=E4
-Intel OTC
+> +a) Security registers, which allow configuration of allowed access to the GPIO
+> +register set. These registers exist in a single contguous block of physical
+
+^ speling: contiguous?
+
+> +Tegra HW documentation describes a unified naming convention for all GPIOs
+> +implemented by the SoC. Each GPIO is assigned to a port, and a port may control
+> +a number of GPIOs. Thus, each GPIO is named according to an alphabetical port
+> +name and an integer GPIO name within the port. For example, GPIO_PA0, GPIO_PN6,
+> +or GPIO_PCC3.
+
+I suspect that the Tegra definition of a "port" is close to what other people
+call a "bank" like I try to define in this patch?
+http://marc.info/?l=linux-gpio&m=145941547420164&w=2
+
+> +The mapping from port name to the GPIO controller that implements that port, and
+> +the mapping from port name to register offset within a controller, are both
+> +extremely non-linear.
+
+That actually warrants the concept of gpio-bank = <n>;
+
+> + The header file <dt-bindings/gpio/tegra186-gpio.h>
+> +describes the port-level mapping. In that file, the naming convention for ports
+> +matches the HW documentation. The values chosen for the names are alphabetically
+> +sorted within a particular controller. Drivers need to map between the DT GPIO
+> +IDs and HW register offsets using a lookup table.
+
+Again that use case. Can you please enter the mentioned thread
+and provide some input on how you see this working?
+
+Neil Armstrong provided a driver using the GPIO ranges for
+cross-reference to the pin controller as the basis for finding
+what is here the port ID. I don't know if that is such a great
+idea.
+
+I noticed that the #defines in that tegra186-gpio.h file are not used
+in the example below. Something seems wrong: this mapping must
+be important. I don't see which of the required properties it should go
+into either.
+
+> +Each GPIO controller in fact generates multiple interrupts signals for each set
+> +of ports. Each GPIO may be configured to feed into a specific one of the
+> +interrupt signals generated by a set-of-ports. The intent is for each generated
+> +signal to be routed to a different CPU, thus allowing different CPUs to each
+> +handle subsets of the interrupts within a port.
+
+Clever. Seems like something other hardware engineers should pick
+up on.
+
+> +/* GPIOs implemented by main GPIO controller */
+> +#define TEGRA_MAIN_GPIO_PORT_A 0
+> +#define TEGRA_MAIN_GPIO_PORT_B 1
+> +#define TEGRA_MAIN_GPIO_PORT_C 2
+> +#define TEGRA_MAIN_GPIO_PORT_D 3
+> +#define TEGRA_MAIN_GPIO_PORT_E 4
+> +#define TEGRA_MAIN_GPIO_PORT_F 5
+> +#define TEGRA_MAIN_GPIO_PORT_G 6
+> +#define TEGRA_MAIN_GPIO_PORT_H 7
+> +#define TEGRA_MAIN_GPIO_PORT_I 8
+> +#define TEGRA_MAIN_GPIO_PORT_J 9
+> +#define TEGRA_MAIN_GPIO_PORT_K 10
+> +#define TEGRA_MAIN_GPIO_PORT_L 11
+> +#define TEGRA_MAIN_GPIO_PORT_M 12
+> +#define TEGRA_MAIN_GPIO_PORT_N 13
+> +#define TEGRA_MAIN_GPIO_PORT_O 14
+> +#define TEGRA_MAIN_GPIO_PORT_P 15
+> +#define TEGRA_MAIN_GPIO_PORT_Q 16
+> +#define TEGRA_MAIN_GPIO_PORT_R 17
+> +#define TEGRA_MAIN_GPIO_PORT_T 18
+> +#define TEGRA_MAIN_GPIO_PORT_X 19
+> +#define TEGRA_MAIN_GPIO_PORT_Y 20
+> +#define TEGRA_MAIN_GPIO_PORT_BB 21
+> +#define TEGRA_MAIN_GPIO_PORT_CC 22
+> +
+> +#define TEGRA_MAIN_GPIO(port, offset) \
+> +       ((TEGRA_MAIN_GPIO_PORT_##port * 8) + offset)
+> +
+> +/* GPIOs implemented by AON GPIO controller */
+> +#define TEGRA_AON_GPIO_PORT_S 0
+> +#define TEGRA_AON_GPIO_PORT_U 1
+> +#define TEGRA_AON_GPIO_PORT_V 2
+> +#define TEGRA_AON_GPIO_PORT_W 3
+> +#define TEGRA_AON_GPIO_PORT_Z 4
+> +#define TEGRA_AON_GPIO_PORT_AA 5
+> +#define TEGRA_AON_GPIO_PORT_EE 6
+> +#define TEGRA_AON_GPIO_PORT_FF 7
+> +
+> +#define TEGRA_AON_GPIO(port, offset) \
+> +       ((TEGRA_AON_GPIO_PORT_##port * 8) + offset)
+
+So we definately need this stuff used in the example.
+
+Yours,
+Linus Walleij
