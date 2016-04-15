@@ -1,45 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/4] pinctrl: iproc: Allow PINCONF to be disabled completely
-Date: Fri, 15 Apr 2016 10:24:06 +0200
-Message-ID: <CACRpkdYmGUxQu5Sagw+J70wpFc+3Smg3V8mKxF2OFOhbMATYDw@mail.gmail.com>
-References: <1460506523-6249-1-git-send-email-ray.jui@broadcom.com>
-	<1460506523-6249-5-git-send-email-ray.jui@broadcom.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.7
+Date: Fri, 15 Apr 2016 10:25:56 +0200
+Message-ID: <CACRpkdb1yQHXcCZwH++p+J7z9-8zkNved=P4icBhwsUXTivs+Q@mail.gmail.com>
+References: <1460537130-28658-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:34943 "EHLO
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:35611 "EHLO
 	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752880AbcDOIYI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Apr 2016 04:24:08 -0400
-Received: by mail-oi0-f53.google.com with SMTP id p188so117510563oih.2
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Apr 2016 01:24:07 -0700 (PDT)
-In-Reply-To: <1460506523-6249-5-git-send-email-ray.jui@broadcom.com>
+	with ESMTP id S1751668AbcDOI0C (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Apr 2016 04:26:02 -0400
+Received: by mail-oi0-f53.google.com with SMTP id p188so117541977oih.2
+        for <linux-gpio@vger.kernel.org>; Fri, 15 Apr 2016 01:26:01 -0700 (PDT)
+In-Reply-To: <1460537130-28658-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ray Jui <ray.jui@broadcom.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 
-On Wed, Apr 13, 2016 at 2:15 AM, Ray Jui <ray.jui@broadcom.com> wrote:
+On Wed, Apr 13, 2016 at 10:45 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> In some of the future iProc based SoCs, pinconf is handled by another
-> block and the iProc GPIO controller is solely used as a GPIO controller.
-> This patch adds support of a new compatible string "brcm,iproc-gpio-only",
-> that is introduced to handle this case, where pinconf functions in this
-> driver are completely disabled
+>         Hi Linus,
 >
-> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-> Reviewed-by: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
-> Reviewed-by: Jon Mason <jon.mason@broadcom.com>
-> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+> The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
+>
+>   Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git sh-pfc-for-v4.7
 
-If this was entirely true, then the driver should end up only executing
-[devm_]gpiochip_add_data() but that does not seem to be the case.
+Pulled into the devel branch for v4.7.
 
-You are still registering a pin controller, right? Just disabling some of
-the pin config options. The pin multiplexing is still there, right?
-Then it is not "solely a GPIO controller". Not at all.
-
-This patch set needs some elaboration I think.
+Thanks Geert!
 
 Yours,
 Linus Walleij
