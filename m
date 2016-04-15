@@ -1,92 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 7/7] pinctrl: tegra: Add driver to configure voltage and
- power state of io pads
-Date: Fri, 15 Apr 2016 11:25:06 +0200
-Message-ID: <CACRpkdZLEozAmv6REcb7ubCNSLxGsYj1whZEKUkdiodZoS=vzg@mail.gmail.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
-	<1460473007-11535-8-git-send-email-ldewangan@nvidia.com>
-	<CACRpkdZyYiNJfuiTPeivvgVTZwdwh64nkf=f8JczSAVvnT7QeA@mail.gmail.com>
-	<5710A8A4.90309@nvidia.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpio: omap: fix irq triggering in smart-idle wakeup mode
+Date: Fri, 15 Apr 2016 12:26:17 +0300
+Message-ID: <5710B3B9.4090807@ti.com>
+References: <1460458351-24187-1-git-send-email-grygorii.strashko@ti.com>
+ <CACRpkdbGcO7i5B9e3dicAEaTTfG7u_owe3hS2u6Sd6tCNXNzBg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5710A8A4.90309@nvidia.com>
+In-Reply-To: <CACRpkdbGcO7i5B9e3dicAEaTTfG7u_owe3hS2u6Sd6tCNXNzBg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 15, 2016 at 10:39 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
-> On Friday 15 April 2016 01:38 PM, Linus Walleij wrote:
->> On Tue, Apr 12, 2016 at 4:56 PM, Laxman Dewangan <ldewangan@nvidia.com>
->> wrote:
+On 04/15/2016 11:32 AM, Linus Walleij wrote:
+> On Tue, Apr 12, 2016 at 12:52 PM, Grygorii Strashko
+> <grygorii.strashko@ti.com> wrote:
+> 
+>> Now GPIO IRQ loss is observed on dra7-evm after suspend/resume cycle
+> (...)
+>> Cc: Roger Quadros <rogerq@ti.com>
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> 
+> Can I get some explicit ACK / Tested-by tags for this patch?
 
->>> +static const struct pinconf_generic_params tegra_io_pads_cfg_params[] =
->>> {
->>> +       {
->>> +               .property = "nvidia,io-rail-voltage",
->>> +               .param = TEGRA_IO_RAIL_VOLTAGE,
->>> +       }, {
->>
->> What's so nvidia-specific about this?
->> We have power-source in
->> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
->> which takes a custom argument. This is obviously what you
->> are doing (selecting one of two rails), so use that binding.
->
-> Yes, I looked for the common property but did not found anything near to
-> this.
-> My understating for power-source is that selecting the source of supply, not
-> the voltages.
+Roger's promised to test it once suspend regression will be fixed
+for dra7-evm, probably next rc.
 
-Well in a comment to the previous patch you just said that the
-hardware actually does not regulate voltages. Isn't the actual case
-that there are two rails with two different voltages, and you select one
-of the rails for the pin?
+> 
+> Is it a serious regression that will need to go in as a fix and
+> tagged for stable?
+> 
 
-That is not really selecting a voltage, that is selecting a power
-rail.
+This issue is here since 2012, so I think it's not very critical -
+It seems bits combination which causing the issue is rare.
 
-> I am looking something  power-source-voltage-level.
-> Should we add this?
+Regarding stable:
+4.4 - good to have, simple merge conflict
+4.1 - some merge resolution is required
+older kernel - it will be hard to backport it due to significant
+changes in omap gpio driver
 
-If the pin could actually set a voltage level it would have a regulator.
-I don't believe that. I think it is selecting one of two rails which
-could theoretically hold two totally different voltages.
-
-And that is what power-source is about.
-
->>> +               .property = "nvidia,io-pad-deep-power-down",
->>> +               .param = TEGRA_IO_PAD_DEEP_POWER_DOWN,
->>> +       },
->>
->> Likewise the generic bindings have low-power-enable and
->> low-power-disable, this seems like a copy of low-power-enable;
->
-> When writing, I considered this property but was not able to fully convinced
-> myself to use this but I think now I am fine to use this as you suggested.
-
-Thanks.
-
->> Even if Tegra is not using the generic code for handling the
->> standard bindings (GENERIC_PINCONF) it doesn't stop
->> you from using the generic bindings and contributing to them.
->>
->> Historically you have a few custom bindings like these:
->>
->> nvidia,pins
->> nvidia,function
->> nvidia,pull
->> nvidia,tristate
->>
->> etc etc, but that is just unfortunate and due to preceding the
->> generic bindings. I would appreciate if you started to support
->> the generic bindings in parallel, but I'm not gonna push that issue.
->
-> Yaah, these are in my plate to cleanup. Let me work with Stephen, what he
-> think here.
-
-Much appreciated, thanks!
-
-Yours,
-Linus Walleij
+Santosh, Tony, do you want me to perform any additional actions regarding this patch?
+-- 
+regards,
+-grygorii
