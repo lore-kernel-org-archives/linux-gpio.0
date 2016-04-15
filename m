@@ -1,68 +1,52 @@
-From: Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH] Documentation: power: reset: move
- gpio-{poweroff|restart} to proper place
-Date: Fri, 15 Apr 2016 15:27:12 +0200
-Message-ID: <20160415132712.GA15986@earth>
-References: <1460476853-3306-1-git-send-email-wsa@the-dreams.de>
- <CACRpkdaUj5w3zkjWVf1GML3reeDnRpT8avOPkRB6_qFXB6EGjw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 7/7] pinctrl: tegra: Add driver to configure voltage and
+ power state of io pads
+Date: Fri, 15 Apr 2016 16:03:32 +0200
+Message-ID: <CACRpkdbqjjha6GJnQBzvKjGTswx5Kp_y5nWoj8+AS6H+ds5agQ@mail.gmail.com>
+References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
+	<1460473007-11535-8-git-send-email-ldewangan@nvidia.com>
+	<CACRpkdZyYiNJfuiTPeivvgVTZwdwh64nkf=f8JczSAVvnT7QeA@mail.gmail.com>
+	<5710A8A4.90309@nvidia.com>
+	<CACRpkdZLEozAmv6REcb7ubCNSLxGsYj1whZEKUkdiodZoS=vzg@mail.gmail.com>
+	<5710BA75.2010503@nvidia.com>
+	<CACRpkdbr-9Z1JKMVmwNFyMq+Pg+3hT5c9rKZ1y4wZecnidW9Cg@mail.gmail.com>
+	<5710D4E2.2030801@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaUj5w3zkjWVf1GML3reeDnRpT8avOPkRB6_qFXB6EGjw@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5710D4E2.2030801@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Fri, Apr 15, 2016 at 1:47 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> On Friday 15 April 2016 04:45 PM, Linus Walleij wrote:
+>> On Fri, Apr 15, 2016 at 11:55 AM, Laxman Dewangan <ldewangan@nvidia.com>
+>> wrote:
 
---r5Pyd7+fXNt84Ff3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> But to be sure we would like to know what is actually happening,
+>> electronically speaking, when you set this up. Do you have any
+>> idea?
+>
+> From electronic point of view, the value of VIL, VIH, VOL, VOH (Input/output
+> voltage level for low and high state) are different when talking for 0 t
+> 1.8V and 0 to 3.3V.
 
-Hi,
+Yeah that I get. But since it is switched on a per-pin basis, and
+this is not about what voltage is actually supplied to the I/O cell,
+because that comes from the outside, it is a mystery why it is
+even needed.
 
-On Fri, Apr 15, 2016 at 09:48:17AM +0200, Linus Walleij wrote:
-> On Tue, Apr 12, 2016 at 6:00 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >
-> > I did only find them after a fuzzy search, so let them be where one
-> > would expect them.
-> >
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->=20
-> I saw this the other day too I agree.
+I understand that there is a bit selecting driving voltage level in
+the register range, what I don't understand is what that is
+doing in the I/O cell.
 
-> Sebastian: are you OK that I move this by committing the patch to
-> the GPIO tree?
+The bit in the register must be routed to somehing in the I/O cell
+and I would like to know what. I take it that an ordinary CMOS
+totem-pole push-pull output is going to work the same with 1.8
+and 3.3V alike so it's obviously not enabling any extra transistors
+or anything.
 
-Yes.
-
-Acked-By: Sebastian Reichel <sre@kernel.org>
-
--- Sebastian
-
---r5Pyd7+fXNt84Ff3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJXEOwtAAoJENju1/PIO/qaQ7kP/3wMKdLY+J2WaUftByGm5+Jm
-i8OXjtfLP6vCbcmq5NNINkOgqmvvlkR0WZg9+DG2b0+KiSYTXmhtPdDmBq5WpAec
-Z/z4gtv0P/rsFzWc/eCoyauVsRyfgs3akexIAxluvWnmtpY9Ed5a+JP6JAkoX3z4
-6xVTnJ0nvSKBk2/bcx5lH8frqkDt+jjY/MpV4wIX7oKKG06Ayg00/jx7iIjL6N6z
-iIuWgSmo6a0Qj6otl9e+64Y54MRdsCxFVWSb5TrwSQr8YWXE26uHBqeoVrY3bNxH
-MNLjH5qdGCOT0ncR+MGR8+5ruxZSVswue6uV3QeAXRsLgELv7K//nGJmJahZzFdB
-GBzCG2NnFHzS5AYDquNStMh3Xh5OhOh87vQesZ7tq4Weg3vFIzvtKKBUkzyGN/UT
-9tqV2Sy93/pZL0kG6iJmuN7k5oRvhZXSKmppznsacdRYyiVfwkeZ2MUhqzutGVxa
-8l0MJAkO3OU/bYoVlYKdwB4ccPkL0WVe3TzX2GvxO7EPGSp0AL3atjAWIg05cNuS
-G4DmaVlFhDQwXYCYHEGSPEfx6ZkNaI34fCL/vMDFcsjG/XXWNWz+1Gj2l9W5cJyA
-lrPpX1c0BWpsp46DXjgNooDfbPjPnY/K4KXAXXWwTCs/1BLNmbT+WuEpavYcbLY0
-+AQn7HZ4HkzFJYskFAVb
-=q+cu
------END PGP SIGNATURE-----
-
---r5Pyd7+fXNt84Ff3--
+Yours,
+Linus Walleij
