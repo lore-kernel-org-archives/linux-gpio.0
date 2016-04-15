@@ -1,62 +1,48 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v2] pinctrl: pinctrl-single: Fix
- pcs_parse_bits_in_pinctrl_entry to use __ffs than ffs
-Date: Fri, 15 Apr 2016 08:22:16 -0700
-Message-ID: <20160415152215.GR5995@atomide.com>
-References: <1460609956-26539-1-git-send-email-j-keerthy@ti.com>
- <CACRpkdZxY3FNti37HfuwS7KT9K+pA=REr_G=hEQRi-D3=CHUpQ@mail.gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 6/7] pinctrl: tegra: Add DT binding for io pads control
+Date: Fri, 15 Apr 2016 20:44:32 +0530
+Message-ID: <57110558.8010209@nvidia.com>
+References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com> <1460473007-11535-7-git-send-email-ldewangan@nvidia.com> <5710F7A4.5070902@nvidia.com> <5710F6CA.6060700@nvidia.com> <57110560.80004@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:51044 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751325AbcDOPWW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 15 Apr 2016 11:22:22 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZxY3FNti37HfuwS7KT9K+pA=REr_G=hEQRi-D3=CHUpQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <57110560.80004-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Keerthy <j-keerthy@ti.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>, Sekhar Nori <nsekhar@ti.com>
 
-* Linus Walleij <linus.walleij@linaro.org> [160415 02:29]:
-> On Thu, Apr 14, 2016 at 6:59 AM, Keerthy <j-keerthy@ti.com> wrote:
-> 
-> > pcs_parse_bits_in_pinctrl_entry uses ffs which gives bit indices
-> > ranging from 1 to MAX. This leads to a corner case where we try to request
-> > the pin number = MAX and fails.
-> >
-> > bit_pos value is being calculted using ffs. pin_num_from_lsb uses
-> > bit_pos value. pins array is populated with:
-> >
-> > pin + pin_num_from_lsb.
-> >
-> > The above is 1 more than usual bit indices as bit_pos uses ffs to compute
-> > first set bit. Hence the last of the pins array is populated with the MAX
-> > value and not MAX - 1 which causes error when we call pin_request.
-> >
-> > mask_pos is rightly calculated as ((pcs->fmask) << (bit_pos - 1))
-> > Consequently val_pos and submask are correct.
-> >
-> > Hence use __ffs which gives (ffs(x) - 1) as the first bit set.
-> >
-> > fixes: 4e7e8017a8 ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
-> > Signed-off-by: Keerthy <j-keerthy@ti.com>
-> > ---
-> >
-> > Changes in v2:
-> >
-> >   * Changed pcs->fshift to use __ffs instead of ffs to be consistent.
-> >
-> > Boot tesed on da850-evm and checked the pinctrl sysfs nodes.
-> 
-> Patch applied for fixes with Tony's ACK.
-> 
-> Should it also be tagged for stable?
 
-Probably a good idea, I can see somebody pulling hair out because
-of this in various product trees.
+On Friday 15 April 2016 08:44 PM, Jon Hunter wrote:
+> On 15/04/16 15:12, Laxman Dewangan wrote:
+>>
+>>
+>> All CSI pads are lined to single IO rail.
+> I agree with this and from the data-sheet I see the rail that powers the
+> CSI (and DSI) interfaces is called AVDD_DSI_CSI. But again, in the DT
+> document you are referring to csia, csib, csic, csid, csie, csif as
+> pins, but these don't appear to be physical pins, and this appears to be
+> more of a software means to control power to the various csi_x pins.
+>
+> It seems to me that each of the existing CSI_A_xxx pins/pads should be
+> mapped to or register with the appropriate power-down control and when
+> all pads are set to inactive this then triggers the power-down of all
+> the CSI_A_xxx pads.
 
-Regards,
+I used pins as this is the property from pincon generic so that I can 
+use the generic implementation.
 
-Tony
+Here, I will not go to the pin level control as HW does not support pin 
+level control.
+
+I will say the unit should be interface level. Should we say 
+IO_GROUP_CSIA, IO_GROUP_CSIB etc?
+
+
+>
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
