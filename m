@@ -1,58 +1,75 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Revisiting rbtx4927: gpiod_direction_output_raw: invalid GPIO
-Date: Thu, 14 Apr 2016 21:06:05 +0200
-Message-ID: <CAMuHMdUARn_SxhkWiTsGdSixFv9a=VjKLLgQMfPTtxufrjepCg@mail.gmail.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+Subject: Re: [PATCH v7 2/3] gpio: dwapb: convert device node to fwnode
+Date: Fri, 15 Apr 2016 10:29:53 +0800
+Message-ID: <57105221.2030202@huawei.com>
+References: <1459926480-32966-1-git-send-email-qiujiang@huawei.com>
+ <1459926480-32966-3-git-send-email-qiujiang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34258 "EHLO
-	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750705AbcDNTGH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Apr 2016 15:06:07 -0400
-Received: by mail-io0-f194.google.com with SMTP id z133so12241482iod.1
-        for <linux-gpio@vger.kernel.org>; Thu, 14 Apr 2016 12:06:05 -0700 (PDT)
+Received: from szxga01-in.huawei.com ([58.251.152.64]:56368 "EHLO
+	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751808AbcDOCaP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Apr 2016 22:30:15 -0400
+In-Reply-To: <1459926480-32966-3-git-send-email-qiujiang@huawei.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Atsushi Nemoto <anemo@mba.ocn.ne.jp>
-Cc: Linux MIPS Mailing List <linux-mips@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: qiujiang <qiujiang@huawei.com>, linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-acpi@vger.kernel.org, charles.chenxin@huawei.com, linux-kernel@vger.kernel.org, linuxarm@huawei.com, linux-gpio@vger.kernel.org, andy.shevchenko@gmail.com, jamie@jamieiles.com, mika.westerberg@linux.intel.com, delicious.quinoa@gmail.com
 
-Hi Nemoto-san,
 
-I've just updated my old rbtx4927 from v3.13-rc3 to v4.6-rc3.
-Surprisingly, it boots to nfsroot without any kernel changes.
 
-However, there's an annoying warning in the boot log:
+On 2016/4/6 15:07, qiujiang wrote:
+> This patch converts device node to fwnode for dwapb driver, so
+> as to provide a unified fwnode for DT and ACPI bindings.
+> 
+> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: qiujiang <qiujiang@huawei.com>
+> ---
+>  drivers/gpio/gpio-dwapb.c                | 37 ++++++++++++++++----------------
+>  drivers/mfd/intel_quark_i2c_gpio.c       |  2 +-
+>  include/linux/platform_data/gpio-dwapb.h |  2 +-
+>  3 files changed, 20 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> index 91afec8..3c4d8e6 100644
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/of_address.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/property.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/platform_data/gpio-dwapb.h>
+>  #include <linux/slab.h>
+> @@ -290,14 +291,14 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>  				 struct dwapb_port_property *pp)
+>  {
+>  	struct gpio_chip *gc = &port->gc;
+> -	struct device_node *node = pp->node;
+> +	struct fwnode_handle  *fwnode = pp->fwnode;
+>  	struct irq_chip_generic	*irq_gc = NULL;
+>  	unsigned int hwirq, ngpio = gc->ngpio;
+>  	struct irq_chip_type *ct;
+>  	int err, i;
+>  
+> -	gpio->domain = irq_domain_add_linear(node, ngpio,
+> -					     &irq_generic_chip_ops, gpio);
+> +	gpio->domain = irq_domain_create_linear(fwnode, ngpio,
+> +						 &irq_generic_chip_ops, gpio);
+>  	if (!gpio->domain)
+>  		return;
+>  
+> @@ -414,7 +415,8 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+>  	}
+>  
+>  #ifdef CONFIG_OF_GPIO
+> -	port->gc.of_node = pp->node;
+> +	port->gc.of_node = is_of_node(pp->fwnode) ?
+> +		to_of_node(pp->fwnode) : NULL;
 
-        gpiod_direction_output_raw: invalid GPIO
+It is enough to use port->gc.of_node = to_of_node(pp->fwnode);
 
-This is caused by the following code in arch/mips/txx9/rbtx4927/setup.c:
 
-        static void __init rbtx4927_mem_setup(void)
-        {
-
-                /* TX4927-SIO DTR on (PIO[15]) */
-                gpio_request(15, "sio-dtr");
-
-returns -EPROBE_DEFER
-
-                gpio_direction_output(15, 1);
-
-VALIDATE_DESC triggers the warning.
-
-Probably a silly GPIO conversion was missed during the last 2+ years?
-
-I can bisect (which may take a while), but perhaps this immediately rings a bell
-with someone?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
