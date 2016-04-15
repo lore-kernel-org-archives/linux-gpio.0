@@ -1,51 +1,79 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: pinctrl-single: Fix pcs_parse_bits_in_pinctrl_entry
- to use __ffs than ffs
-Date: Fri, 15 Apr 2016 11:27:51 +0200
-Message-ID: <CACRpkdZxY3FNti37HfuwS7KT9K+pA=REr_G=hEQRi-D3=CHUpQ@mail.gmail.com>
-References: <1460609956-26539-1-git-send-email-j-keerthy@ti.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 7/7] pinctrl: tegra: Add driver to configure voltage and
+ power state of io pads
+Date: Fri, 15 Apr 2016 15:25:01 +0530
+Message-ID: <5710BA75.2010503@nvidia.com>
+References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>	<1460473007-11535-8-git-send-email-ldewangan@nvidia.com>	<CACRpkdZyYiNJfuiTPeivvgVTZwdwh64nkf=f8JczSAVvnT7QeA@mail.gmail.com>	<5710A8A4.90309@nvidia.com> <CACRpkdZLEozAmv6REcb7ubCNSLxGsYj1whZEKUkdiodZoS=vzg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1460609956-26539-1-git-send-email-j-keerthy@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>, Sekhar Nori <nsekhar@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:18051 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751283AbcDOKGi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Apr 2016 06:06:38 -0400
+In-Reply-To: <CACRpkdZLEozAmv6REcb7ubCNSLxGsYj1whZEKUkdiodZoS=vzg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Apr 14, 2016 at 6:59 AM, Keerthy <j-keerthy@ti.com> wrote:
 
-> pcs_parse_bits_in_pinctrl_entry uses ffs which gives bit indices
-> ranging from 1 to MAX. This leads to a corner case where we try to request
-> the pin number = MAX and fails.
+On Friday 15 April 2016 02:55 PM, Linus Walleij wrote:
+> On Fri, Apr 15, 2016 at 10:39 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+>> On Friday 15 April 2016 01:38 PM, Linus Walleij wrote:
+>>> On Tue, Apr 12, 2016 at 4:56 PM, Laxman Dewangan <ldewangan@nvidia.com>
+>>> wrote:
+>>>> +static const struct pinconf_generic_params tegra_io_pads_cfg_params[] =
+>>>> {
+>>>> +       {
+>>>> +               .property = "nvidia,io-rail-voltage",
+>>>> +               .param = TEGRA_IO_RAIL_VOLTAGE,
+>>>> +       }, {
+>>> What's so nvidia-specific about this?
+>>> We have power-source in
+>>> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+>>> which takes a custom argument. This is obviously what you
+>>> are doing (selecting one of two rails), so use that binding.
+>> Yes, I looked for the common property but did not found anything near to
+>> this.
+>> My understating for power-source is that selecting the source of supply, not
+>> the voltages.
+> Well in a comment to the previous patch you just said that the
+> hardware actually does not regulate voltages. Isn't the actual case
+> that there are two rails with two different voltages, and you select one
+> of the rails for the pin?
 >
-> bit_pos value is being calculted using ffs. pin_num_from_lsb uses
-> bit_pos value. pins array is populated with:
+> That is not really selecting a voltage, that is selecting a power
+> rail.
 >
-> pin + pin_num_from_lsb.
+>> I am looking something  power-source-voltage-level.
+>> Should we add this?
+> If the pin could actually set a voltage level it would have a regulator.
+> I don't believe that. I think it is selecting one of two rails which
+> could theoretically hold two totally different voltages.
 >
-> The above is 1 more than usual bit indices as bit_pos uses ffs to compute
-> first set bit. Hence the last of the pins array is populated with the MAX
-> value and not MAX - 1 which causes error when we call pin_request.
+> And that is what power-source is about.
 >
-> mask_pos is rightly calculated as ((pcs->fmask) << (bit_pos - 1))
-> Consequently val_pos and submask are correct.
 >
-> Hence use __ffs which gives (ffs(x) - 1) as the first bit set.
->
-> fixes: 4e7e8017a8 ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> ---
->
-> Changes in v2:
->
->   * Changed pcs->fshift to use __ffs instead of ffs to be consistent.
->
-> Boot tesed on da850-evm and checked the pinctrl sysfs nodes.
 
-Patch applied for fixes with Tony's ACK.
 
-Should it also be tagged for stable?
+The IO rails connected to PMIC rail and connection does not get change.
+We change the voltage of PMIC rails via regulator calls. And then 
+configure pads for the new voltage.
+We really do not witch the supply connection here. power-source is about 
+the power supply connection, not about the voltage change on same supply.
 
-Yours,
-Linus Walleij
+Like in MMC driver for SDIO3.0:
+
+regulator_set_voltage(sdmmc_rail, 3300000, 3300000);
+tegra_io_pad_voltage_configure(SDMMC, 3300000)
+
+
+For 1.8V
+
+regulator_set_voltage(sdmmc_rail, 1800000, 1800000);
+tegra_io_pad_voltage_configure(SDMMC, 1800000)
+
+
+
