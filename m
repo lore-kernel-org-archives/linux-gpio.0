@@ -1,46 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v7 3/3] gpio: dwapb: add gpio-signaled acpi event support
-Date: Fri, 15 Apr 2016 09:40:05 +0200
-Message-ID: <CACRpkdY=i9BVYEpu0svmKOQJURH2nQ5iwCM0895fODmkVuPBew@mail.gmail.com>
-References: <1459926480-32966-1-git-send-email-qiujiang@huawei.com>
-	<1459926480-32966-4-git-send-email-qiujiang@huawei.com>
-	<CACRpkdb63AZtEOSJ0R+EqdHfKXcUr7Hs8fh9N5XHNcWjQ1Ba8A@mail.gmail.com>
-	<20160408083830.GT1727@lahna.fi.intel.com>
-	<570B9BEA.8060608@huawei.com>
-	<20160412064657.GF1714@lahna.fi.intel.com>
+Subject: Re: [PATCH 1/7] soc/tegra: pmc: Use BIT macro for register field definition
+Date: Fri, 15 Apr 2016 09:44:23 +0200
+Message-ID: <CACRpkdb0xKdwHqC-dof2sjvCftLs6-Vy14_x4joY12vLE=c13w@mail.gmail.com>
+References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
+	<1460473007-11535-2-git-send-email-ldewangan@nvidia.com>
+	<20160412152642.GA30211@ulmo.ba.sec>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160412064657.GF1714@lahna.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Jiang Qiu <qiujiang@huawei.com>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Alan Tull <delicious.quinoa@gmail.com>, Jamie Iles <jamie@jamieiles.com>, charles.chenxin@huawei.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:34319 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751127AbcDOHoY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Apr 2016 03:44:24 -0400
+Received: by mail-oi0-f53.google.com with SMTP id s79so116916986oie.1
+        for <linux-gpio@vger.kernel.org>; Fri, 15 Apr 2016 00:44:24 -0700 (PDT)
+In-Reply-To: <20160412152642.GA30211@ulmo.ba.sec>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Apr 12, 2016 at 8:46 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Mon, Apr 11, 2016 at 08:43:22PM +0800, Jiang Qiu wrote:
->> > Currently it just complains if something goes wrong. The GPIO driver
->> > itself can still work just fine (including interrupts).
->> >
->> > I'm fine to change it to return an error code.
->> Agree, if add a error code for acpi_gpiochip_request_interrupts(), it looks more pretty.
->>
->> However, this function is common for other part, maybe cause any other effects if I
->> do this change, did you think so?
->
-> I'm thinking what the callers are going to do with the error code.
-> Basically it means that we were not able to attach and configure ACPI
-> event GPIOs. It does not prevent GPIO drivers from functioning so they
-> probably just print out some warning message and continue probing, and
-> we already warn in acpi_gpiochip_request_interrupts() if something fails.
->
-> Unless Linus W insists, let's just keep it as is for now :)
+On Tue, Apr 12, 2016 at 5:26 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
 
-I'm fine with it, don' worry.
+> Does this matter at all? We use the explicit notation in quite a number
+> of places and it works great. I'd like to avoid needless churn unless
+> there is a very good reason to switch.
 
-I'm just waiting for this patch set to mature so I can apply
-it.
+I am softly enforcing <linux/bitops.h> in the GPIO subsystem
+because I think it's a great perceptual aid, I can skim code
+faster if this is used, easier for the brain to handle and thus
+simplifies maintenance.
+
+Others may disagree on its virtues.
+
+It is not a subjective opinion, but proving the point needs
+perceptual psychology research.
 
 Yours,
 Linus Walleij
