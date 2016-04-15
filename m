@@ -1,42 +1,51 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: mediatek: correct debounce time unit in mtk_gpio_set_debounce
-Date: Fri, 15 Apr 2016 10:29:04 +0200
-Message-ID: <CACRpkdZT0xMDwwnQRvC1Q76yvBGoJnU1w_rSP8XcmKRnCQpnKg@mail.gmail.com>
-References: <1459580269-64531-1-git-send-email-yingjoe.chen@mediatek.com>
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a7794: Add DU pin groups
+Date: Fri, 15 Apr 2016 10:30:26 +0200
+Message-ID: <CACRpkdbJtBVCbvYxC5bty7oLxC=20H2Y9F0L-hsqh8H7bp=gwQ@mail.gmail.com>
+References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+	<3647462.hH7yCUNCYQ@wasted.cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:36822 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753000AbcDOI3F (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Apr 2016 04:29:05 -0400
-Received: by mail-oi0-f46.google.com with SMTP id y204so117682909oie.3
-        for <linux-gpio@vger.kernel.org>; Fri, 15 Apr 2016 01:29:05 -0700 (PDT)
-In-Reply-To: <1459580269-64531-1-git-send-email-yingjoe.chen@mediatek.com>
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:35232 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753085AbcDOIa1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Apr 2016 04:30:27 -0400
+Received: by mail-oi0-f45.google.com with SMTP id p188so117620418oih.2
+        for <linux-gpio@vger.kernel.org>; Fri, 15 Apr 2016 01:30:27 -0700 (PDT)
+In-Reply-To: <3647462.hH7yCUNCYQ@wasted.cogentembedded.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, srv_heupstream@mediatek.com, Daniel Kurtz <djkurtz@chromium.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>
 
-On Sat, Apr 2, 2016 at 8:57 AM, Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
+On Wed, Apr 13, 2016 at 8:01 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
 
-> The debounce time unit for gpio_chip.set_debounce is us but
-> mtk_gpio_set_debounce regard it as ms.
-> Fix this by correct debounce time array dbnc_arr so it can find correct
-> debounce setting. Debounce time for first debounce setting is 500us,
-> correct this as well.
+> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 >
-> While I'm at it, also change the debounce time array name to
-> "debounce_time" for readability.
+> r8a7794 PFC DU support from the R-Car Gen2 v1.9.4 BSP
 >
-> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> [Magnus: added the description, added missing dot clock output signals,
+> separated CDE and DISP signals, broke out the ODDF signal from the sync
+> group.]
+>
+> [Sergei: resolved rejects, folded in Magnus' patches, killed empty lines,
+> reordered pin/mux arrays and pin groups, fixed up some comments to the pin
+> arrays, removed the "du" function splitting its groups between the "du0"
+> and "du1" functions.]
+>
+> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+Looks fine to me, Geert do you want to stack more stuff or should
+I apply it directly?
+
 > ---
-> This was based on v4.6-rc1
-> Change since v1:
-> - Improve commit message.
-> - Change dbnc_arr name to debounce_time
+> The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'.
 
-Patch applied to fixes and tagged for stable.
+I just pulled a first set of new stuff from Geert. Will it apply on top?
 
 Yours,
 Linus Walleij
