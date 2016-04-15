@@ -1,70 +1,64 @@
-From: Jiang Qiu <qiujiang@huawei.com>
-Subject: Re: [PATCH v7 3/3] gpio: dwapb: add gpio-signaled acpi event support
-Date: Fri, 15 Apr 2016 15:58:37 +0800
-Message-ID: <57109F2D.6020807@huawei.com>
-References: <1459926480-32966-1-git-send-email-qiujiang@huawei.com>
- <1459926480-32966-4-git-send-email-qiujiang@huawei.com>
- <CACRpkdb63AZtEOSJ0R+EqdHfKXcUr7Hs8fh9N5XHNcWjQ1Ba8A@mail.gmail.com>
- <20160408083830.GT1727@lahna.fi.intel.com> <570B9BEA.8060608@huawei.com>
- <20160412064657.GF1714@lahna.fi.intel.com>
- <CACRpkdY=i9BVYEpu0svmKOQJURH2nQ5iwCM0895fODmkVuPBew@mail.gmail.com>
-Reply-To: <qiujiang@huawei.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 4/7] soc/tegra: pmc: Add interface to set voltage of IO
+ rails
+Date: Fri, 15 Apr 2016 09:00:27 +0100
+Message-ID: <20160415080027.GB3217@sirena.org.uk>
+References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
+ <1460473007-11535-5-git-send-email-ldewangan@nvidia.com>
+ <CACRpkdbueJ=0+WtNefQ7GHoqU5HY7WFYjL2geFq4vkpTbZesZA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdY=i9BVYEpu0svmKOQJURH2nQ5iwCM0895fODmkVuPBew@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Alan Tull <delicious.quinoa@gmail.com>, Jamie Iles <jamie@jamieiles.com>, charles.chenxin@huawei.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rJwd6BRFiFCcLxzm"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbueJ=0+WtNefQ7GHoqU5HY7WFYjL2geFq4vkpTbZesZA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-=E5=9C=A8 2016/4/15 15:40, Linus Walleij =E5=86=99=E9=81=93:
-> On Tue, Apr 12, 2016 at 8:46 AM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
->> On Mon, Apr 11, 2016 at 08:43:22PM +0800, Jiang Qiu wrote:
->>>> Currently it just complains if something goes wrong. The GPIO driv=
-er
->>>> itself can still work just fine (including interrupts).
->>>>
->>>> I'm fine to change it to return an error code.
->>> Agree, if add a error code for acpi_gpiochip_request_interrupts(), =
-it looks more pretty.
->>>
->>> However, this function is common for other part, maybe cause any ot=
-her effects if I
->>> do this change, did you think so?
->> I'm thinking what the callers are going to do with the error code.
->> Basically it means that we were not able to attach and configure ACP=
-I
->> event GPIOs. It does not prevent GPIO drivers from functioning so th=
-ey
->> probably just print out some warning message and continue probing, a=
-nd
->> we already warn in acpi_gpiochip_request_interrupts() if something f=
-ails.
->>
->> Unless Linus W insists, let's just keep it as is for now :)
-> I'm fine with it, don' worry.
->
-> I'm just waiting for this patch set to mature so I can apply
-> it.
-Many thanks, I will fix these minor mentioned by Andy and get ready for=
- the new version
-ASAP.
 
-Regards,
-Jiang
->
-> Yours,
-> Linus Walleij
->
-> .
->
+--rJwd6BRFiFCcLxzm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Fri, Apr 15, 2016 at 09:54:34AM +0200, Linus Walleij wrote:
+> On Tue, Apr 12, 2016 at 4:56 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
+> > NVIDIA Tegra210 supports some of the IO interface which can operate
+> > at 1.8V or 3.3V I/O rail voltage levels. SW needs to configure
+> > Tegra PMC register to set different voltage level of IO interface based
+> > on IO rail voltage from power supply i.e. power regulators.
+
+> Nobody seems to mention the elephant in the room: why is this
+> not using the regulator subsystem and instead using custom
+> code under drivers/soc? We have worried before about drivers/soc
+> becoming a dumping ground akin to drivers/misc
+
+The above changelog sounds like a regulator consumer not a regulator -
+based on what I'm reading there it's a driver that looks at the voltage
+being supplied to the device and sets some configuration in the device
+based on that voltage.  This isn't that unusual for analogue circuits
+but it's definitely not something that's actually doing voltage
+regulation.
+
+--rJwd6BRFiFCcLxzm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXEJ+WAAoJECTWi3JdVIfQtwkIAIFCkWijD3mQ5M6Oyoz6iGX3
+DMNt+ifpeQQ1ksBwfgmzvZuisUys21A4cdN1ROSvsJYu52TIYYPVjX+QydKeX5Ys
+Go0AmrvYwdV3SC+trfYVg1Kf+VSPwnTKSit5QrvFTZZ/dJUM0Eu6HYouLFq5gjpE
+6NG5RHiTd34n5uWcGKEjEm1MZmHEdauegoZD6W6EWKQ0ycx3NampDMOr0UW4IFyL
+hTKjoVIns6uZhPTDdB875Wr0FwIyoB3xEtWUR8KxyC98SmhyeookPDV+kQuyl84n
+bzsMxiXC0Zu45rPwgj/+TiiyaPUWCxX7p4aiIZ/aEItAp1hFVXZuIpZGQGcafc8=
+=3lKE
+-----END PGP SIGNATURE-----
+
+--rJwd6BRFiFCcLxzm--
 --
-To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
-n
-the body of a message to majordomo@vger.kernel.org
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
