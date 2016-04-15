@@ -1,85 +1,38 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 6/7] pinctrl: tegra: Add DT binding for io pads control
-Date: Fri, 15 Apr 2016 19:30:24 +0100
-Message-ID: <57113340.6090701@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
- <1460473007-11535-7-git-send-email-ldewangan@nvidia.com>
- <5710F7A4.5070902@nvidia.com> <5710F6CA.6060700@nvidia.com>
- <57110560.80004@nvidia.com> <57110558.8010209@nvidia.com>
- <57110CA4.6050903@nvidia.com> <571119C6.6000107@nvidia.com>
- <5711288D.7060701@nvidia.com> <571129B9.7050602@nvidia.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] gpio: omap: fix irq triggering in smart-idle wakeup mode
+Date: Fri, 15 Apr 2016 11:54:30 -0700
+Message-ID: <20160415185429.GU5995@atomide.com>
+References: <1460458351-24187-1-git-send-email-grygorii.strashko@ti.com>
+ <CACRpkdbGcO7i5B9e3dicAEaTTfG7u_owe3hS2u6Sd6tCNXNzBg@mail.gmail.com>
+ <5710B3B9.4090807@ti.com>
+ <571106F3.9070805@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:7797 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750996AbcDOSab (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 Apr 2016 14:30:31 -0400
-In-Reply-To: <571129B9.7050602@nvidia.com>
+Received: from muru.com ([72.249.23.125]:51094 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750716AbcDOSyf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 15 Apr 2016 14:54:35 -0400
+Content-Disposition: inline
+In-Reply-To: <571106F3.9070805@oracle.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, swarren@wwwdotorg.org, thierry.reding@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: santosh shilimkar <santosh.shilimkar@oracle.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Santosh Shilimkar <ssantosh@kernel.org>, Sekhar Nori <nsekhar@ti.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
 
+* santosh shilimkar <santosh.shilimkar@oracle.com> [160415 08:22]:
+> On 4/15/2016 2:26 AM, Grygorii Strashko wrote:
+> >
+> >Santosh, Tony, do you want me to perform any additional actions regarding this patch?
+> >
+> This patch should be run across family of SOCs to make
+> sure wakeup works on all of those if not done already
 
-On 15/04/16 18:49, Laxman Dewangan wrote:
-> 
-> On Friday 15 April 2016 11:14 PM, Jon Hunter wrote:
->> On 15/04/16 17:41, Laxman Dewangan wrote:
->>> On Friday 15 April 2016 09:15 PM, Jon Hunter wrote:
->>>> On 15/04/16 16:14, Laxman Dewangan wrote:
->>>>> I used pins as this is the property from pincon generic so that I can
->>>>> use the generic implementation.
->>>>>
->>>>> Here, I will not go to the pin level control as HW does not support
->>>>> pin
->>>>> level control.
->>>>>
->>>>> I will say the unit should be interface level. Should we say
->>>>> IO_GROUP_CSIA, IO_GROUP_CSIB etc?
->>>> So we need to reflect the hardware in device-tree and although yes the
->>>> power-down for the CSI_x_xxx pads are all controlled together as a
->>>> single group, it does not feel right that we add a pseudo pin called
->>>> csix to represent these.
->>>>
->>>> The CSI_x_xxx pads are already in device-tree and so why not add a
->>>> property to each of these pads which has the IO rail information for
->>>> power-down and voltage-select?
->>> Which dt binding docs have these?
->>> I looked for nvidia,tegra210-pinmux.txt and not able to find csi_xxx.
->> For CSI you are right they are not included by the current DT binding
->> docs, however, the sdmmc1/3 pads are. So that makes things a bit more
->> messy as some are and some are not.
-> 
-> Yaah and so lets have the names in new dt files. Names may be same but
-> define all possible names f groups in dt binding and need not to refer
-> from other file which does not have all.
+Also, I'm not sure if we can just drop this code in question.
 
-I still do not like that. In the case of sdmmc we now have two pinctrl
-drivers to deal with for a single set of pins. That does not seem
-correct IMO.
+After this patch, what function updates the GPIO wkup_en registers
+depending on enable_irq_wake()/disable_irq_wake()?
 
->>> Here I dont want to refer the individual pins as control should be as
->>> group.
->> I understand, however, at least for power-down control I don't see why
->> we cannot refer to the individual pins and once all are inactive then
->> the rail can be powered down.
->>
->> For switching the voltage it is a bit more complex, but may be we could
->> still look-up the IO rail based upon the pads the device uses.
->>
-> 
-> Yes, it can be done with ref count also for power down.
+Regards,
 
-Exactly.
-
-> But interfaces are complex. As a client, it is easy to say power down
-> SDMMC1 IO interface rather than saying power down 10 pins (names) of
-> that group.
-
-Right and like I said, we could always look up the IO rail from the pins
-associated once at probe time and then control it from there.
-
-Cheers
-Jon
+Tony
