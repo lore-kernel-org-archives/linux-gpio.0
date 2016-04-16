@@ -1,32 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [patch] gpio: brcmstb: missing error code
-Date: Sat, 16 Apr 2016 01:25:51 +0300
-Message-ID: <20160415222551.GL4247@mwanda>
-References: <20160415144528.GC8953@mwanda>
- <57116564.4000002@gmail.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH V1 1/7] clk: Loongson1: Update clocks of Loongson1B
+Date: Fri, 15 Apr 2016 17:33:22 -0700
+Message-ID: <20160416003322.GK26353@codeaurora.org>
+References: <1459946095-7637-1-git-send-email-keguang.zhang@gmail.com>
+ <1459946095-7637-2-git-send-email-keguang.zhang@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-janitors-owner@vger.kernel.org>
+Return-path: <linux-mips-bounce@linux-mips.org>
 Content-Disposition: inline
-In-Reply-To: <57116564.4000002@gmail.com>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Gregory Fong <gregory.0xf0@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Brian Norris <computersforpeace@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <1459946095-7637-2-git-send-email-keguang.zhang@gmail.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Keguang Zhang <keguang.zhang@gmail.com>
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org, Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 15, 2016 at 03:04:20PM -0700, Florian Fainelli wrote:
-> On 15/04/16 07:45, Dan Carpenter wrote:
-> > We should set the error code before returning here.  Otherwise "err"
-> > could be uninitialized or zero.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 04/06, Keguang Zhang wrote:
+> From: Kelvin Cheung <keguang.zhang@gmail.com>
 > 
-> Axel just sent an identical patch which Linus picked already:
+> - Rename the file to clk-loongson1.c
+> - Add AC97, DMA and NAND clock
+> - Update clock names
+> - Remove superfluous error messages
 > 
-> http://www.spinics.net/lists/linux-gpio/msg13728.html
+> Signed-off-by: Kelvin Cheung <keguang.zhang@gmail.com>
+> ---
 
-Heh.  Weird timing.  That bug has been there for 11 months...
+Can you please send this with git format-patch -M? I can't easily
+tell what has changed.
 
-regards,
-dan carpenter
-
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
