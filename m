@@ -1,52 +1,41 @@
-From: <TungYu_Lu@asmedia.com.tw>
-Subject: RE: [PATCH] gpio: amdpt: Add a new ACPI HID
-Date: Mon, 18 Apr 2016 08:49:00 +0000
-Message-ID: <F35F71BF8A165F48925028F09F3CDC2501365782@ASMT-EXMB-V01.corpnet.asus>
-References: <1458185757-10537-1-git-send-email-yd_tseng@asmedia.com.tw>
- <CACRpkdaFZS8s8NTtY7iY4hA17GSLZYxNaYz1QLURwPa1ZvMqzQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: f7188x: fix edit mistake
+Date: Mon, 18 Apr 2016 13:32:49 +0200
+Message-ID: <1460979169-14368-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ms.asus.com ([103.10.4.13]:22472 "EHLO ms.asus.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751382AbcDRJDD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 18 Apr 2016 05:03:03 -0400
-In-Reply-To: <CACRpkdaFZS8s8NTtY7iY4hA17GSLZYxNaYz1QLURwPa1ZvMqzQ@mail.gmail.com>
-Content-Language: zh-TW
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:34487 "EHLO
+	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752158AbcDRLc4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Apr 2016 07:32:56 -0400
+Received: by mail-lf0-f49.google.com with SMTP id j11so212671083lfb.1
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Apr 2016 04:32:55 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, dbaryshkov@gmail.com, Yd_Tseng@asmedia.com.tw
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-RGVhciBMaW51cywNCg0KUmVhbGx5IGFwcHJlY2lhdGUgZm9yIHlvdXIgYXNzaXN0YW5jZS4gV2hp
-Y2ggdmVyc2lvbiB3aWxsIGFwcGx5IHRoaXMgcGF0Y2g/DQoNClRoYW5rcywNClR1bmdZdQ0KDQot
-LS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogTGludXMgV2FsbGVpaiBbbWFpbHRvOmxp
-bnVzLndhbGxlaWpAbGluYXJvLm9yZ10gDQpTZW50OiBUdWVzZGF5LCBNYXJjaCAyMiwgMjAxNiAx
-MDozMSBQTQ0KVG86IFlEIFRzZW5nDQpDYzogQWxleGFuZHJlIENvdXJib3Q7IGxpbnV4LWdwaW9A
-dmdlci5rZXJuZWwub3JnOyBEbWl0cnkgRXJlbWluLVNvbGVuaWtvdjsgWWQgVHNlbmco5pu+6KOV
-6YGUKTsgVHVuZ1l1IEx1KOWRguadseaYsSkNClN1YmplY3Q6IFJlOiBbUEFUQ0hdIGdwaW86IGFt
-ZHB0OiBBZGQgYSBuZXcgQUNQSSBISUQNCg0KT24gVGh1LCBNYXIgMTcsIDIwMTYgYXQgNDozNSBB
-TSwgWUQgVHNlbmcgPGx0eXUxMDFAZ21haWwuY29tPiB3cm90ZToNCg0KPiBGcm9tOiBZRCBUc2Vu
-ZyA8WWRfVHNlbmdAYXNtZWRpYS5jb20udHc+DQo+DQo+IERlYXIgYWxsOg0KPg0KPiBUaGlzIHBh
-dGNoIGFkZHMgYSBuZXcgQUNQSSBISUQsIEFNRElGMDMwLCBpbiB0aGUgcHRfZ3Bpb19hY3BpX21h
-dGNoLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBZRCBUc2VuZzxZZF9Uc2VuZ0Bhc21lZGlhLmNvbS50
-dz4NCg0KUGF0Y2ggYXBwbGllZC4NCg0KWW91cnMsDQpMaW51cyBXYWxsZWlqDQo9PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NClRoaXMgZW1h
-aWwgYW5kIGFueSBhdHRhY2htZW50cyB0byBpdCBjb250YWluIGNvbmZpZGVudGlhbCBpbmZvcm1h
-dGlvbiBhbmQgYXJlIGludGVuZGVkIHNvbGVseSBmb3IgdGhlIHVzZSBvZiB0aGUgaW5kaXZpZHVh
-bCB0byB3aG9tIGl0IA0KaXMgYWRkcmVzc2VkLklmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCBy
-ZWNpcGllbnQgb3IgcmVjZWl2ZSBpdCBhY2NpZGVudGFsbHksIHBsZWFzZSBpbW1lZGlhdGVseSBu
-b3RpZnkgdGhlIHNlbmRlciBieSBlLW1haWwgYW5kIGRlbGV0ZSANCnRoZSBtZXNzYWdlIGFuZCBh
-bnkgYXR0YWNobWVudHMgZnJvbSB5b3VyIGNvbXB1dGVyIHN5c3RlbSwgYW5kIGRlc3Ryb3kgYWxs
-IGhhcmQgY29waWVzLiBJZiBhbnksIHBsZWFzZSBiZSBhZHZpc2VkIHRoYXQgYW55IHVuYXV0aG9y
-aXplZCANCmRpc2Nsb3N1cmUsIGNvcHlpbmcsIGRpc3RyaWJ1dGlvbiBvciBhbnkgYWN0aW9uIHRh
-a2VuIG9yIG9taXR0ZWQgaW4gcmVsaWFuY2Ugb24gdGhpcywgaXMgaWxsZWdhbCBhbmQgcHJvaGli
-aXRlZC4gRnVydGhlcm1vcmUsIGFueSB2aWV3cyANCm9yIG9waW5pb25zIGV4cHJlc3NlZCBhcmUg
-c29sZWx5IHRob3NlIG9mIHRoZSBhdXRob3IgYW5kIGRvIG5vdCByZXByZXNlbnQgdGhvc2Ugb2Yg
-QVNNZWRpYSBUZWNobm9sb2d5IEluYy4gVGhhbmsgeW91IGZvciB5b3VyIGNvb3BlcmF0aW9uLg0K
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-Cg==
+Fix a typo causing a build regression.
+
+Fixes: f90c6bdb690b ("gpio: f7188x: use the new open drain callback")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-f7188x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
+index 58674ff75097..05aa538c3767 100644
+--- a/drivers/gpio/gpio-f7188x.c
++++ b/drivers/gpio/gpio-f7188x.c
+@@ -328,7 +328,7 @@ static int f7188x_gpio_set_single_ended(struct gpio_chip *chip,
+ 		data &= ~BIT(offset);
+ 	else
+ 		data |= BIT(offset);
+-	superio_outb(sio->addr, gpio_data_mode(bank->regbase), data);
++	superio_outb(sio->addr, gpio_out_mode(bank->regbase), data);
+ 
+ 	superio_exit(sio->addr);
+ 	return 0;
+-- 
+2.4.3
 
