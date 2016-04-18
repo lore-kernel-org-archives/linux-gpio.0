@@ -1,97 +1,114 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 1/2] pinctrl: Add Oxford Semiconductor OXNAS pinctrl and
- gpio driver
-Date: Mon, 18 Apr 2016 10:26:06 +0200
-Message-ID: <57149A1E.5040902@baylibre.com>
-References: <1459689969-5326-1-git-send-email-narmstrong@baylibre.com>
- <1459689969-5326-2-git-send-email-narmstrong@baylibre.com>
- <CACRpkdbTSdPG3-5HmmFbtZkZLG0S3cg54gPMKCF8isegmc3tow@mail.gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/3] gpio: tegra: Don't open code of_device_get_match_data()
+Date: Mon, 18 Apr 2016 14:16:16 +0530
+Message-ID: <1460969178-20914-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:38823 "EHLO
-	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751149AbcDRI0J (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Apr 2016 04:26:09 -0400
-Received: by mail-wm0-f42.google.com with SMTP id u206so111995898wme.1
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Apr 2016 01:26:08 -0700 (PDT)
-In-Reply-To: <CACRpkdbTSdPG3-5HmmFbtZkZLG0S3cg54gPMKCF8isegmc3tow@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 04/13/2016 03:42 PM, Linus Walleij wrote:
-> On Sun, Apr 3, 2016 at 3:26 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
-> 
->> Add pinctrl and gpio control support to Oxford Semiconductor OXNAS SoC Family.
->> This version supports the ARM926EJ-S based OX810SE SoC with 34 IO pins.
->>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> 
-> Starting to look very nice :)
-> 
->> +static inline struct oxnas_gpio_bank *irqd_to_bank(struct irq_data *d)
->> +{
->> +       return gpiochip_get_data(irq_data_get_irq_chip_data(d));
->> +}
-> 
-> Do you really need to wrap this call? Seems like pointless layer of
-> abstraction to me.
+Use of_device_get_match_data() for getting matched data
+instead of implementing this locally.
 
-Sure, I'll remove it.
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpio/gpio-tegra.c | 50 +++++++++++++++++++++++------------------------
+ 1 file changed, 24 insertions(+), 26 deletions(-)
 
->> +       if (of_parse_phandle_with_fixed_args(np, "gpio-ranges",
->> +                                            3, 0, &pinspec)) {
->> +               dev_err(&pdev->dev, "gpio-ranges property not found\n");
->> +               return -EINVAL;
->> +       }
->> +
->> +       id = pinspec.args[1] / PINS_PER_BANK;
->> +       ngpios = pinspec.args[2];
->> +
->> +       if (id >= ARRAY_SIZE(oxnas_gpio_banks)) {
->> +               dev_err(&pdev->dev, "invalid gpio-ranges base arg\n");
->> +               return -EINVAL;
->> +       }
->> +
->> +       if (ngpios > PINS_PER_BANK) {
->> +               dev_err(&pdev->dev, "invalid gpio-ranges count arg\n");
->> +               return -EINVAL;
->> +       }
->> +
->> +       bank = &oxnas_gpio_banks[id];
-> 
-> This feels a bit hackish but I guess that is how we have to do things
-> then :/
-
-It seems I'll need to stick with this for the moment :/
-
->> +static int __init oxnas_gpio_register(void)
->> +{
->> +       return platform_driver_register(&oxnas_gpio_driver);
->> +}
->> +arch_initcall(oxnas_gpio_register);
->> +
->> +static int __init oxnas_pinctrl_register(void)
->> +{
->> +       return platform_driver_register(&oxnas_pinctrl_driver);
->> +}
->> +arch_initcall(oxnas_pinctrl_register);
-> 
-> Why do these have to be arch_initcall()?
-> 
-> I'm not very happy with anything below subsys_initcall()
-> and others prefer that you have only device_initcall().
-> 
-> I need some rationale. Sorry if I already asked...
-
-Actually, arch_initcall seems the best level to permit further device to get interrupts from these gpio controllers, AFAIK quite all the upstream pinctrl driver uses arch_ or subsys_.
-
-> Yours,
-> Linus Walleij
-> 
-
-Thanks,
-Neil
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 790bb11..1b0c497 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -75,6 +75,11 @@ struct tegra_gpio_bank {
+ #endif
+ };
+ 
++struct tegra_gpio_soc_config {
++	u32 bank_stride;
++	u32 upper_offset;
++};
++
+ static struct device *dev;
+ static struct irq_domain *irq_domain;
+ static void __iomem *regs;
+@@ -445,27 +450,6 @@ static const struct dev_pm_ops tegra_gpio_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
+ };
+ 
+-struct tegra_gpio_soc_config {
+-	u32 bank_stride;
+-	u32 upper_offset;
+-};
+-
+-static struct tegra_gpio_soc_config tegra20_gpio_config = {
+-	.bank_stride = 0x80,
+-	.upper_offset = 0x800,
+-};
+-
+-static struct tegra_gpio_soc_config tegra30_gpio_config = {
+-	.bank_stride = 0x100,
+-	.upper_offset = 0x80,
+-};
+-
+-static const struct of_device_id tegra_gpio_of_match[] = {
+-	{ .compatible = "nvidia,tegra30-gpio", .data = &tegra30_gpio_config },
+-	{ .compatible = "nvidia,tegra20-gpio", .data = &tegra20_gpio_config },
+-	{ },
+-};
+-
+ /* This lock class tells lockdep that GPIO irqs are in a different
+  * category than their parents, so it won't report false recursion.
+  */
+@@ -473,8 +457,7 @@ static struct lock_class_key gpio_lock_class;
+ 
+ static int tegra_gpio_probe(struct platform_device *pdev)
+ {
+-	const struct of_device_id *match;
+-	struct tegra_gpio_soc_config *config;
++	const struct tegra_gpio_soc_config *config;
+ 	struct resource *res;
+ 	struct tegra_gpio_bank *bank;
+ 	int ret;
+@@ -484,12 +467,11 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 
+ 	dev = &pdev->dev;
+ 
+-	match = of_match_device(tegra_gpio_of_match, &pdev->dev);
+-	if (!match) {
++	config = of_device_get_match_data(&pdev->dev);
++	if (!config) {
+ 		dev_err(&pdev->dev, "Error: No device match found\n");
+ 		return -ENODEV;
+ 	}
+-	config = (struct tegra_gpio_soc_config *)match->data;
+ 
+ 	tegra_gpio_bank_stride = config->bank_stride;
+ 	tegra_gpio_upper_offset = config->upper_offset;
+@@ -578,6 +560,22 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static struct tegra_gpio_soc_config tegra20_gpio_config = {
++	.bank_stride = 0x80,
++	.upper_offset = 0x800,
++};
++
++static struct tegra_gpio_soc_config tegra30_gpio_config = {
++	.bank_stride = 0x100,
++	.upper_offset = 0x80,
++};
++
++static const struct of_device_id tegra_gpio_of_match[] = {
++	{ .compatible = "nvidia,tegra30-gpio", .data = &tegra30_gpio_config },
++	{ .compatible = "nvidia,tegra20-gpio", .data = &tegra20_gpio_config },
++	{ },
++};
++
+ static struct platform_driver tegra_gpio_driver = {
+ 	.driver		= {
+ 		.name	= "tegra-gpio",
+-- 
+2.1.4
