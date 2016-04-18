@@ -1,155 +1,153 @@
-From: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
-Subject: Re: [PATCH RESEND 1/2] pinctrl: ns2: add pinmux driver support for
- Broadcom NS2 SoC
-Date: Mon, 18 Apr 2016 09:04:38 +0530
-Message-ID: <CAL2FKYnJNVOcB7aYwkwRAGSq5ufg+CJowJCnzpBEYiTMev0B9A@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource
+ Chip bindings
+Date: Mon, 18 Apr 2016 08:43:35 +0100
+Message-ID: <20160418074335.GA3346@x1>
+References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
+ <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
+ <20160330113532.GI3323@x1>
+ <57111E8B.1040503@opensource.altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Pramod Kumar <pramodku@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:36241 "EHLO
+	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751773AbcDRHnl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Apr 2016 03:43:41 -0400
+Received: by mail-wm0-f42.google.com with SMTP id v188so106248622wme.1
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Apr 2016 00:43:40 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <57111E8B.1040503@opensource.altera.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thor Thayer <tthayer@opensource.altera.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org, pawell.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
 
-Hi Linus,
+On Fri, 15 Apr 2016, Thor Thayer wrote:
+> On 03/30/2016 06:35 AM, Lee Jones wrote:
+> >On Tue, 29 Mar 2016, tthayer@opensource.altera.com wrote:
+> >
+> >>From: Thor Thayer <tthayer@opensource.altera.com>
+> >>
+> >>The Altera Arria10 Devkit System Resource chip is a Multi-Function
+> >>Device, it has two subdevices:
+> >>      - GPIO
+> >>      - HWMON
+> >>
+> >>This patch adds documentation for the Altera A10-SR DT bindings.
+> >>
+> >>Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
+> >>---
+> >>  .../devicetree/bindings/mfd/altera-a10sr.txt       |   35 +++++++=
++++++++++++++
+> >>  1 file changed, 35 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/mfd/altera-a=
+10sr.txt
+> >>
+> >>diff --git a/Documentation/devicetree/bindings/mfd/altera-a10sr.txt=
+ b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
+> >>new file mode 100644
+> >>index 0000000..564c761
+> >>--- /dev/null
+> >>+++ b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
+> >>@@ -0,0 +1,35 @@
+> >>+* Altera Arria10 Development Kit System Resource Chip
+> >>+
+> >>+Required parent device properties:
+> >>+- compatible : "altr,altr_a10sr"
+> >>+- spi-max-frequency : Maximum SPI frequency.
+> >>+- reg : the SPI Chip Select address for the Arria10 System Resourc=
+e chip
+> >
+> >DT bindings are much easier to read in the following format:
+> >
+> >- compatible		: "altr,altr_a10sr"
+> >- spi-max-frequency	: Maximum SPI frequency.
+> >- reg			: the SPI Chip Select address for the Arria10 System Resourc=
+e chip
+> >
+> >... also, sentences start with an uppercase char.
+> >
+> >>+The A10SR consists of this varied group of sub-devices:
+> >>+
+> >>+Device                   Description
+> >>+------                   ----------
+> >>+altr_a10sr_gpio          GPIO Controller
+> >>+altr_a10sr_hwmon         Hardware Monitor
+> >>+
+> >>+The LEDs are implemented entirely in the device tree using
+> >>+the gpio-led framework.
+> >
+> >This is a Linuxisum and should not live in DT bindings.
+> >
+> >>+Example:
+> >>+
+> >>+        a10-sr: a10-sr@0 {
+> >
+> >Nodes should be named after their device 'type'.
+> >
+> >Does this device really start a address 0?
+> >
+>=20
+> I see in the documentation on device trees there are a number of
+> categories I can use. GPIO is easy because it is one of the
+> categories but I'm not sure about the new device I'm adding since
+> the a10sr is a new device.
 
-On Thu, Apr 14, 2016 at 3:12 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Apr 14, 2016 at 9:53 AM, Yendapally Reddy Dhananjaya Reddy
-> <yendapally.reddy@broadcom.com> wrote:
->> On Wed, Apr 13, 2016 at 6:49 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>> On Tue, Mar 29, 2016 at 5:22 PM, Yendapally Reddy Dhananjaya Reddy
->>> <yendapally.reddy@broadcom.com> wrote:
->
->>>> +static const unsigned int gpio_0_1_pins[] = {24, 25};
->>>> +static const unsigned int pwm_0_pins[] = {24};
->>>> +static const unsigned int pwm_1_pins[] = {25};
->>>
->>> So either the same pins are used for GPIO or PWM.
->>> And this pattern persists.
->>>
->>> Do you have a brewing GPIO driver for this block as well?
->>> Is it a separate front-end calling to pinctrl using the
->>> pinctrl_gpio_* calls or do you plan to patch it into this
->>> driver?
->>>
->>> This is more of a question.
->>>
->>
->> This SoC supports group based configuration and there is a top level register
->> to select groups. Once the gpio_0_1_pins group is selected, there is one more
->> register to select between gpio_0_1 and pwm (only four pins). The pins
->> 24 and 25 are shared between nor pins and gpio at the top group level. Once
->> gpio group is selected, then we can select to be either gpio or pwm. I missed
->> these two pins to be added to nor_data_pins and will add in the next version.
->>
->> static const unsigned nor_data_pins[] =  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
->>         10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25};
->>
->> NS2_PIN_GROUP(nand, 0, 0, 31, 1, 0),
->> NS2_PIN_GROUP(nor_data, 0, 0, 31, 1, 1),
->> NS2_PIN_GROUP(gpio_0_1, 0, 0, 31, 1, 0),
->>
->> To select PWM, we need to select gpio and pwm as well.
->>
->> gpio: gpio {
->> function = "gpio";
->> groups = "gpio_0_1_grp";
->>
->> pwm: pwm {
->> function = "pwm";
->> groups = "pwm0_grp", "pwm1_grp";
->> };
->>
->> Already available gpio driver "pinctrl-iproc-gpio.c" will be the gpio driver
->> for this soc as well without pin request.
->
-> Then you are doing something wrong. Look in pinctrl-iproc-gpio.c:
->
-> /*
->  * Request the Iproc IOMUX pinmux controller to mux individual pins to GPIO
->  */
-> static int iproc_gpio_request(struct gpio_chip *gc, unsigned offset)
-> {
->         struct iproc_gpio *chip = gpiochip_get_data(gc);
->         unsigned gpio = gc->base + offset;
->
->         /* not all Iproc GPIO pins can be muxed individually */
->         if (!chip->pinmux_is_supported)
->                 return 0;
->
->         return pinctrl_request_gpio(gpio);
-> }
->
-> static void iproc_gpio_free(struct gpio_chip *gc, unsigned offset)
-> {
->         struct iproc_gpio *chip = gpiochip_get_data(gc);
->         unsigned gpio = gc->base + offset;
->
->         if (!chip->pinmux_is_supported)
->                 return;
->
->         pinctrl_free_gpio(gpio);
-> }
->
-> So as you see pinctrl_request_gpio() and pinctrl_free_gpio()
-> are being called.
->
-> These will in turn call pinmux_request_gpio() and
-> pinmux_free_gpio() to make the backing pin controller
-> mux in the pin as GPIO.
->
-> pinmux_request_gpio() will end up in pin_request()
-> and at this point:
->
-> if (gpio_range && ops->gpio_request_enable)
->                 /* This requests and enables a single GPIO pin */
->                 status = ops->gpio_request_enable(pctldev, gpio_range, pin);
->
-> As you can see: it will attempt to call the .gpio_request_enable()
-> method of your struct pinmux_ops.
->
-> But your pinmux ops look like this:
->
-> +static struct pinmux_ops ns2_pinmux_ops = {
-> +       .get_functions_count = ns2_get_functions_count,
-> +       .get_function_name = ns2_get_function_name,
-> +       .get_function_groups = ns2_get_function_groups,
-> +       .set_mux = ns2_pinmux_enable,
-> +};
->
-> I.e. there is no way that GPIO can be set up as a GPIO line,
-> and you're relying on some other pin control entries in the
-> device tree to do that, which is unnecessarily complicated.
->
-> Please consider implementing the .gpio_request_enable callback
-> for this pin multiplexer.
+It's always difficult with MFDs as they are by their very nature, more
+than one device.  But how about 'resource-manager'?
 
-Only 4 GPIO pins are pin configurable. The other GPIO pins are group
-controlled as mentioned in the NS2_PIN_GROUP. A single gpio request will affect
-the other pins in that particular group as the control is available
-to select either "gpio group" or the other. As shown below
+> I believe I should only call out the name and address on the SPI bus =
+like:
+>=20
+> a10sr@0 {
 
-0x00 selects "gpio_6_7_pins" together
-0x01 selects "pcie_a3_clk_wak_pins"
-0x02 selects "nor_addr_4_5_pins"
+Correct.
 
-static const unsigned gpio_6_7_pins[] = {31, 32};
-static const unsigned pcie_a3_clk_wak_pins[] = {31, 32};
-static const unsigned nor_addr_4_5_pins[] = {31, 32};
+> >>+		compatible =3D "altr,altr-a10sr";
+> >>+		reg =3D <0>;
+> >>+		spi-max-frequency =3D <100000>;
+> >>+
+> >>+		a10sr_gpio: a10sr_gpio {
+> >
+> >Device type only please.
+> >
+>=20
+> and this would be a10sr_gpio: gpio-controller {
+>=20
+> Does that seem correct?
 
-I tested with not providing the "ranges" property in the gpio node. The
-"iproc_gpio_request" and "iproc_gpio_free" functions returned back as
-"rages" property is not defined.
+Also correct.  No address though?
 
-        if (!chip->pinmux_is_supported)
-                return 0;
+> >>+			compatible =3D "altr,a10sr-gpio";
+> >>+			gpio-controller;
+> >>+			#gpio-cells =3D <2>;
+> >>+			ngpios =3D <16>;
+> >>+		};
+> >>+
+> >>+		a10sr_hwmon: a10sr_hwmon {
+> >
+> >Device type only please.
+> >
+> I need to revisit where this will live (hwmon does not seem to be
+> the correct place) so it will change but I can follow the format
+> above if it is correct.
+>=20
+> Thanks for reviewing.
+>=20
+> >>+			compatible =3D "altr,a10sr-hwmon";
+> >>+		};
+> >>+	};
+> >
 
-We can support the "iproc_gpio_request" and "iproc_gpio_free" functions for the
-4 gpios that share the pwm pins only. Please suggest me here.
-
-Thanks,
-Dhananjay
-
->
-> Yours,
-> Linus Walleij
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
