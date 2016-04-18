@@ -1,69 +1,27 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH] gpio: omap: fix irq triggering in smart-idle wakeup mode
-Date: Mon, 18 Apr 2016 18:57:43 +0300
-Message-ID: <571503F7.4040304@ti.com>
-References: <1460458351-24187-1-git-send-email-grygorii.strashko@ti.com>
- <CACRpkdbGcO7i5B9e3dicAEaTTfG7u_owe3hS2u6Sd6tCNXNzBg@mail.gmail.com>
- <5710B3B9.4090807@ti.com> <571106F3.9070805@oracle.com>
- <20160415185429.GU5995@atomide.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/3] gpio: tegra: Don't open code
+ of_device_get_match_data()
+Date: Mon, 18 Apr 2016 10:29:07 -0600
+Message-ID: <57150B53.2010209@wwwdotorg.org>
+References: <1460969178-20914-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:41970 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751519AbcDRP5y (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 18 Apr 2016 11:57:54 -0400
-In-Reply-To: <20160415185429.GU5995@atomide.com>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:54248 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751797AbcDRQ3L (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Apr 2016 12:29:11 -0400
+In-Reply-To: <1460969178-20914-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>, santosh shilimkar <santosh.shilimkar@oracle.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Santosh Shilimkar <ssantosh@kernel.org>, Sekhar Nori <nsekhar@ti.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
+To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org
+Cc: gnurou@gmail.com, thierry.reding@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/15/2016 09:54 PM, Tony Lindgren wrote:
-> * santosh shilimkar <santosh.shilimkar@oracle.com> [160415 08:22]:
->> On 4/15/2016 2:26 AM, Grygorii Strashko wrote:
->>>
->>> Santosh, Tony, do you want me to perform any additional actions regarding this patch?
->>>
->> This patch should be run across family of SOCs to make
->> sure wakeup works on all of those if not done already
-> 
-> Also, I'm not sure if we can just drop this code in question.
-> 
-> After this patch, what function updates the GPIO wkup_en registers
-> depending on enable_irq_wake()/disable_irq_wake()?
-> 
+On 04/18/2016 02:46 AM, Laxman Dewangan wrote:
+> Use of_device_get_match_data() for getting matched data
+> instead of implementing this locally.
 
-The main purpose of this patch is to *not* modify GPIO wkup_en registers
-depending of enable_irq_wake()/disable_irq_wake() :), instead all
-non wake up IRQs should be masked during suspend.
+This patch,
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
 
-The GPIO wkup_en registers should be always in sync with GPIO irq_en when
-GPIO IP is in smart-idle wakeup mode. And this is done now from 
-omap_gpio_unmask_irq/omap_gpio_mask_irq(). See also [1].
-
-In general, it is more or less similar to GIC + wakeupgen:
-- during normal work (including cpuidle) GIC irq_en and Wakeupgen wkup_en
-should be in sync always
-- during suspend - only IRQs, marked as wake up sources, should be left
-unmasked.
-
-Also, I've found old thread [2] where Santosh proposed to use IRQCHIP_MASK_ON_SUSPEND.
-And it was not possible, at that time, but now IRQCHIP_MASK_ON_SUSPEND can be used :),
-because OMAP GPIO driver was switched to use generic irq handler instead of chained, so
-now OMAP GPIO irqs are properly handled by IRQ PM core.  
-[chained irqs (and chained irq handles) are not disabled during suspend/resume and they are
- not maintained by IRQ PM core as result they can trigger way too early on resume when
- OMAP GPIO is not ready/powered.]
-
-
-I've tested it on: am57x-evm, am437x-idk-evm, omap4-panda
-
-[1] https://lkml.org/lkml/2016/4/12/676
-[2] https://lkml.org/lkml/2012/8/26/1
-    https://groups.google.com/forum/#!msg/linux.kernel/iXJ5Y568B3Q/hZ39bSlcs0kJ
-
--- 
-regards,
--grygorii
