@@ -1,73 +1,32 @@
-From: Ray Jui <ray.jui@broadcom.com>
-Subject: Re: [PATCH 4/4] pinctrl: iproc: Allow PINCONF to be disabled
- completely
-Date: Mon, 18 Apr 2016 12:30:26 -0700
-Message-ID: <3a66ff72-dac1-eaa9-2567-a20f24bba1cf@broadcom.com>
-References: <1460506523-6249-1-git-send-email-ray.jui@broadcom.com>
- <1460506523-6249-5-git-send-email-ray.jui@broadcom.com>
- <CACRpkdYmGUxQu5Sagw+J70wpFc+3Smg3V8mKxF2OFOhbMATYDw@mail.gmail.com>
+From: andreas122@elisaandreas.biz
+Subject: Greetings!!!
+Date: Mon, 18 Apr 2016 21:12:04 +0100
+Message-ID: <777136.35773.qm__25413.2511829541$1461010787$gmane$org@smtp105.biz.mail.ne1.yahoo.com>
+Reply-To: J_ericdaniels111@outlook.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:26792 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751551AbcDRTas (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Apr 2016 15:30:48 -0400
-In-Reply-To: <CACRpkdYmGUxQu5Sagw+J70wpFc+3Smg3V8mKxF2OFOhbMATYDw@mail.gmail.com>
+Received: from smtp105.biz.mail.ne1.yahoo.com ([98.138.207.12]:27580 "EHLO
+	smtp105.biz.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752536AbcDRUTK convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 18 Apr 2016 16:19:10 -0400
+Content-Description: Mail message body
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: "Mr. Eric" <andreas122@elisaandreas.biz>
 
-Hi Linus,
-
-On 4/15/2016 1:24 AM, Linus Walleij wrote:
-> On Wed, Apr 13, 2016 at 2:15 AM, Ray Jui <ray.jui@broadcom.com> wrote:
->
->> In some of the future iProc based SoCs, pinconf is handled by another
->> block and the iProc GPIO controller is solely used as a GPIO controller.
->> This patch adds support of a new compatible string "brcm,iproc-gpio-only",
->> that is introduced to handle this case, where pinconf functions in this
->> driver are completely disabled
->>
->> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
->> Reviewed-by: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
->> Reviewed-by: Jon Mason <jon.mason@broadcom.com>
->> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->
-> If this was entirely true, then the driver should end up only executing
-> [devm_]gpiochip_add_data() but that does not seem to be the case.
-
-Yes, in the case of compatible string "brcm,iproc-gpio-only" is 
-detected, the driver only registers 'gpiochip_add_data'. Please check 
-patch 2/4 of this series, which takes care of it.
-
->
-> You are still registering a pin controller, right? Just disabling some of
-> the pin config options. The pin multiplexing is still there, right?
-> Then it is not "solely a GPIO controller". Not at all.
-
-This driver does not register itself as a PINCONF driver if 
-"brcm,iproc-gpio-only" compatible string is detected. This is addressed 
-in patch 2/4 of this series.
-
-Pin based IOMUX GPIO override is only activated when 
-'chip->pinmux_is_supported' is true, and it is only true if the optional 
-DT property "gpio-ranges" is defined.
-
->
-> This patch set needs some elaboration I think.
->
-> Yours,
-> Linus Walleij
->
-
-I believe the current issue with this patch series is now only on the 
-naming of the new compatible string "brcm,iproc-gpio-only". Please 
-correct me if I'm wrong.
-
-Thanks,
-
-Ray
-
+Hi, how are you? My name is J Eric Denials, External Financial Auditor =
+at Lloyds Banking Group plc., London. It is a pleasure to contact you a=
+t this time through this medium. I have a cool and legitimate deal to d=
+o with you as you're a foreigner, it will be mutually beneficial to bot=
+h. If you=E2=80=99re interested, urgently, get back to me for more expl=
+anation about the deal.
+Regards
+Eric
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
