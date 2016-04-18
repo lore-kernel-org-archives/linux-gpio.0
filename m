@@ -1,8 +1,8 @@
 From: Lee Jones <lee.jones@linaro.org>
 Subject: Re: [RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource
  Chip bindings
-Date: Mon, 18 Apr 2016 08:43:35 +0100
-Message-ID: <20160418074335.GA3346@x1>
+Date: Mon, 18 Apr 2016 08:45:40 +0100
+Message-ID: <20160418074540.GB3346@x1>
 References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
  <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
  <20160330113532.GI3323@x1>
@@ -11,12 +11,12 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:36241 "EHLO
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:35858 "EHLO
 	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751773AbcDRHnl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Apr 2016 03:43:41 -0400
-Received: by mail-wm0-f42.google.com with SMTP id v188so106248622wme.1
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Apr 2016 00:43:40 -0700 (PDT)
+	with ESMTP id S1751232AbcDRHpq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Apr 2016 03:45:46 -0400
+Received: by mail-wm0-f42.google.com with SMTP id v188so106322511wme.1
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Apr 2016 00:45:45 -0700 (PDT)
 Content-Disposition: inline
 In-Reply-To: <57111E8B.1040503@opensource.altera.com>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -59,73 +59,9 @@ On Fri, 15 Apr 2016, Thor Thayer wrote:
 > >>+- spi-max-frequency : Maximum SPI frequency.
 > >>+- reg : the SPI Chip Select address for the Arria10 System Resourc=
 e chip
-> >
-> >DT bindings are much easier to read in the following format:
-> >
-> >- compatible		: "altr,altr_a10sr"
-> >- spi-max-frequency	: Maximum SPI frequency.
-> >- reg			: the SPI Chip Select address for the Arria10 System Resourc=
-e chip
-> >
-> >... also, sentences start with an uppercase char.
-> >
-> >>+The A10SR consists of this varied group of sub-devices:
-> >>+
-> >>+Device                   Description
-> >>+------                   ----------
-> >>+altr_a10sr_gpio          GPIO Controller
-> >>+altr_a10sr_hwmon         Hardware Monitor
-> >>+
-> >>+The LEDs are implemented entirely in the device tree using
-> >>+the gpio-led framework.
-> >
-> >This is a Linuxisum and should not live in DT bindings.
-> >
-> >>+Example:
-> >>+
-> >>+        a10-sr: a10-sr@0 {
-> >
-> >Nodes should be named after their device 'type'.
-> >
-> >Does this device really start a address 0?
-> >
->=20
-> I see in the documentation on device trees there are a number of
-> categories I can use. GPIO is easy because it is one of the
-> categories but I'm not sure about the new device I'm adding since
-> the a10sr is a new device.
 
-It's always difficult with MFDs as they are by their very nature, more
-than one device.  But how about 'resource-manager'?
+[...]
 
-> I believe I should only call out the name and address on the SPI bus =
-like:
->=20
-> a10sr@0 {
-
-Correct.
-
-> >>+		compatible =3D "altr,altr-a10sr";
-> >>+		reg =3D <0>;
-> >>+		spi-max-frequency =3D <100000>;
-> >>+
-> >>+		a10sr_gpio: a10sr_gpio {
-> >
-> >Device type only please.
-> >
->=20
-> and this would be a10sr_gpio: gpio-controller {
->=20
-> Does that seem correct?
-
-Also correct.  No address though?
-
-> >>+			compatible =3D "altr,a10sr-gpio";
-> >>+			gpio-controller;
-> >>+			#gpio-cells =3D <2>;
-> >>+			ngpios =3D <16>;
-> >>+		};
-> >>+
 > >>+		a10sr_hwmon: a10sr_hwmon {
 > >
 > >Device type only please.
@@ -133,13 +69,9 @@ Also correct.  No address though?
 > I need to revisit where this will live (hwmon does not seem to be
 > the correct place) so it will change but I can follow the format
 > above if it is correct.
->=20
-> Thanks for reviewing.
->=20
-> >>+			compatible =3D "altr,a10sr-hwmon";
-> >>+		};
-> >>+	};
-> >
+
+BTW, "hwmon" is a subsystem in Linux, therefore is a Linuxism and is
+not allowed in DT.  What does the device *actually* do?
 
 --=20
 Lee Jones
