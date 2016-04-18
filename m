@@ -1,87 +1,69 @@
-From: Thor Thayer <tthayer@opensource.altera.com>
-Subject: Re: [RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource
- Chip bindings
-Date: Mon, 18 Apr 2016 10:12:02 -0500
-Message-ID: <5714F942.5040309@opensource.altera.com>
-References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
- <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
- <20160330113532.GI3323@x1> <57111E8B.1040503@opensource.altera.com>
- <20160418074540.GB3346@x1>
-Reply-To: <tthayer@opensource.altera.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpio: omap: fix irq triggering in smart-idle wakeup mode
+Date: Mon, 18 Apr 2016 18:57:43 +0300
+Message-ID: <571503F7.4040304@ti.com>
+References: <1460458351-24187-1-git-send-email-grygorii.strashko@ti.com>
+ <CACRpkdbGcO7i5B9e3dicAEaTTfG7u_owe3hS2u6Sd6tCNXNzBg@mail.gmail.com>
+ <5710B3B9.4090807@ti.com> <571106F3.9070805@oracle.com>
+ <20160415185429.GU5995@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-hwmon-owner@vger.kernel.org>
-In-Reply-To: <20160418074540.GB3346@x1>
-Sender: linux-hwmon-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:41970 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751519AbcDRP5y (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 18 Apr 2016 11:57:54 -0400
+In-Reply-To: <20160415185429.GU5995@atomide.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>, santosh shilimkar <santosh.shilimkar@oracle.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Santosh Shilimkar <ssantosh@kernel.org>, Sekhar Nori <nsekhar@ti.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
 
-Hi Lee,
-
-On 04/18/2016 02:45 AM, Lee Jones wrote:
-> On Fri, 15 Apr 2016, Thor Thayer wrote:
->> On 03/30/2016 06:35 AM, Lee Jones wrote:
->>> On Tue, 29 Mar 2016, tthayer@opensource.altera.com wrote:
+On 04/15/2016 09:54 PM, Tony Lindgren wrote:
+> * santosh shilimkar <santosh.shilimkar@oracle.com> [160415 08:22]:
+>> On 4/15/2016 2:26 AM, Grygorii Strashko wrote:
 >>>
->>>> From: Thor Thayer <tthayer@opensource.altera.com>
->>>>
->>>> The Altera Arria10 Devkit System Resource chip is a Multi-Function
->>>> Device, it has two subdevices:
->>>>       - GPIO
->>>>       - HWMON
->>>>
->>>> This patch adds documentation for the Altera A10-SR DT bindings.
->>>>
->>>> Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
->>>> ---
->>>>   .../devicetree/bindings/mfd/altera-a10sr.txt       |   35 ++++++++++++++++++++
->>>>   1 file changed, 35 insertions(+)
->>>>   create mode 100644 Documentation/devicetree/bindings/mfd/altera-a10sr.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/mfd/altera-a10sr.txt b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
->>>> new file mode 100644
->>>> index 0000000..564c761
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
->>>> @@ -0,0 +1,35 @@
->>>> +* Altera Arria10 Development Kit System Resource Chip
->>>> +
->>>> +Required parent device properties:
->>>> +- compatible : "altr,altr_a10sr"
->>>> +- spi-max-frequency : Maximum SPI frequency.
->>>> +- reg : the SPI Chip Select address for the Arria10 System Resource chip
->
-> [...]
->
->>>> +		a10sr_hwmon: a10sr_hwmon {
+>>> Santosh, Tony, do you want me to perform any additional actions regarding this patch?
 >>>
->>> Device type only please.
->>>
->> I need to revisit where this will live (hwmon does not seem to be
->> the correct place) so it will change but I can follow the format
->> above if it is correct.
->
-> BTW, "hwmon" is a subsystem in Linux, therefore is a Linuxism and is
-> not allowed in DT.  What does the device *actually* do?
->
+>> This patch should be run across family of SOCs to make
+>> sure wakeup works on all of those if not done already
+> 
+> Also, I'm not sure if we can just drop this code in question.
+> 
+> After this patch, what function updates the GPIO wkup_en registers
+> depending on enable_irq_wake()/disable_irq_wake()?
+> 
 
-OK. I'll be careful not to introduce the Linux subsystem name.
+The main purpose of this patch is to *not* modify GPIO wkup_en registers
+depending of enable_irq_wake()/disable_irq_wake() :), instead all
+non wake up IRQs should be masked during suspend.
 
-This module indicates whether the power supplies are at the correct 
-voltage. It uses a boolean instead of giving an actual voltage value as 
-required by HWMON. In other words it is a comparator instead of an 
-Analog-to-Digital Converter.
+The GPIO wkup_en registers should be always in sync with GPIO irq_en when
+GPIO IP is in smart-idle wakeup mode. And this is done now from 
+omap_gpio_unmask_irq/omap_gpio_mask_irq(). See also [1].
 
-I could call it a power supply supervisor or voltage status monitor but 
-it only acts in a passive role. There is no output to trigger an error - 
-only polling, so supervisor doesn't seem like a good name.
+In general, it is more or less similar to GIC + wakeupgen:
+- during normal work (including cpuidle) GIC irq_en and Wakeupgen wkup_en
+should be in sync always
+- during suspend - only IRQs, marked as wake up sources, should be left
+unmasked.
 
-Maybe something like this?
+Also, I've found old thread [2] where Santosh proposed to use IRQCHIP_MASK_ON_SUSPEND.
+And it was not possible, at that time, but now IRQCHIP_MASK_ON_SUSPEND can be used :),
+because OMAP GPIO driver was switched to use generic irq handler instead of chained, so
+now OMAP GPIO irqs are properly handled by IRQ PM core.  
+[chained irqs (and chained irq handles) are not disabled during suspend/resume and they are
+ not maintained by IRQ PM core as result they can trigger way too early on resume when
+ OMAP GPIO is not ready/powered.]
 
-	power_supply_status {
-		compatible = "altr,a10sr-hwmon";
-	}
 
-Thanks for reviewing and helping me figure out the device tree naming.
+I've tested it on: am57x-evm, am437x-idk-evm, omap4-panda
+
+[1] https://lkml.org/lkml/2016/4/12/676
+[2] https://lkml.org/lkml/2012/8/26/1
+    https://groups.google.com/forum/#!msg/linux.kernel/iXJ5Y568B3Q/hZ39bSlcs0kJ
+
+-- 
+regards,
+-grygorii
