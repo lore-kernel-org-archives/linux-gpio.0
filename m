@@ -1,147 +1,155 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.4 086/137] pinctrl: pistachio: fix mfio84-89 function description and pinmux.
-Date: Mon, 18 Apr 2016 11:29:08 +0900
-Message-ID: <20160418022512.897788997@linuxfoundation.org>
-References: <20160418022507.236379264@linuxfoundation.org>
+From: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
+Subject: Re: [PATCH RESEND 1/2] pinctrl: ns2: add pinmux driver support for
+ Broadcom NS2 SoC
+Date: Mon, 18 Apr 2016 09:04:38 +0530
+Message-ID: <CAL2FKYnJNVOcB7aYwkwRAGSq5ufg+CJowJCnzpBEYiTMev0B9A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <20160418022507.236379264@linuxfoundation.org>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-mips@linux-mips.org, James Hartley <James.Hartley@imgtec.com>, Govindraj Raja <Govindraj.Raja@imgtec.com>, Andrew Bresticker <abrestic@chromium.org>, Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Pramod Kumar <pramodku@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
 List-Id: linux-gpio@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Hi Linus,
 
-------------------
+On Thu, Apr 14, 2016 at 3:12 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Apr 14, 2016 at 9:53 AM, Yendapally Reddy Dhananjaya Reddy
+> <yendapally.reddy@broadcom.com> wrote:
+>> On Wed, Apr 13, 2016 at 6:49 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>> On Tue, Mar 29, 2016 at 5:22 PM, Yendapally Reddy Dhananjaya Reddy
+>>> <yendapally.reddy@broadcom.com> wrote:
+>
+>>>> +static const unsigned int gpio_0_1_pins[] = {24, 25};
+>>>> +static const unsigned int pwm_0_pins[] = {24};
+>>>> +static const unsigned int pwm_1_pins[] = {25};
+>>>
+>>> So either the same pins are used for GPIO or PWM.
+>>> And this pattern persists.
+>>>
+>>> Do you have a brewing GPIO driver for this block as well?
+>>> Is it a separate front-end calling to pinctrl using the
+>>> pinctrl_gpio_* calls or do you plan to patch it into this
+>>> driver?
+>>>
+>>> This is more of a question.
+>>>
+>>
+>> This SoC supports group based configuration and there is a top level register
+>> to select groups. Once the gpio_0_1_pins group is selected, there is one more
+>> register to select between gpio_0_1 and pwm (only four pins). The pins
+>> 24 and 25 are shared between nor pins and gpio at the top group level. Once
+>> gpio group is selected, then we can select to be either gpio or pwm. I missed
+>> these two pins to be added to nor_data_pins and will add in the next version.
+>>
+>> static const unsigned nor_data_pins[] =  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+>>         10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25};
+>>
+>> NS2_PIN_GROUP(nand, 0, 0, 31, 1, 0),
+>> NS2_PIN_GROUP(nor_data, 0, 0, 31, 1, 1),
+>> NS2_PIN_GROUP(gpio_0_1, 0, 0, 31, 1, 0),
+>>
+>> To select PWM, we need to select gpio and pwm as well.
+>>
+>> gpio: gpio {
+>> function = "gpio";
+>> groups = "gpio_0_1_grp";
+>>
+>> pwm: pwm {
+>> function = "pwm";
+>> groups = "pwm0_grp", "pwm1_grp";
+>> };
+>>
+>> Already available gpio driver "pinctrl-iproc-gpio.c" will be the gpio driver
+>> for this soc as well without pin request.
+>
+> Then you are doing something wrong. Look in pinctrl-iproc-gpio.c:
+>
+> /*
+>  * Request the Iproc IOMUX pinmux controller to mux individual pins to GPIO
+>  */
+> static int iproc_gpio_request(struct gpio_chip *gc, unsigned offset)
+> {
+>         struct iproc_gpio *chip = gpiochip_get_data(gc);
+>         unsigned gpio = gc->base + offset;
+>
+>         /* not all Iproc GPIO pins can be muxed individually */
+>         if (!chip->pinmux_is_supported)
+>                 return 0;
+>
+>         return pinctrl_request_gpio(gpio);
+> }
+>
+> static void iproc_gpio_free(struct gpio_chip *gc, unsigned offset)
+> {
+>         struct iproc_gpio *chip = gpiochip_get_data(gc);
+>         unsigned gpio = gc->base + offset;
+>
+>         if (!chip->pinmux_is_supported)
+>                 return;
+>
+>         pinctrl_free_gpio(gpio);
+> }
+>
+> So as you see pinctrl_request_gpio() and pinctrl_free_gpio()
+> are being called.
+>
+> These will in turn call pinmux_request_gpio() and
+> pinmux_free_gpio() to make the backing pin controller
+> mux in the pin as GPIO.
+>
+> pinmux_request_gpio() will end up in pin_request()
+> and at this point:
+>
+> if (gpio_range && ops->gpio_request_enable)
+>                 /* This requests and enables a single GPIO pin */
+>                 status = ops->gpio_request_enable(pctldev, gpio_range, pin);
+>
+> As you can see: it will attempt to call the .gpio_request_enable()
+> method of your struct pinmux_ops.
+>
+> But your pinmux ops look like this:
+>
+> +static struct pinmux_ops ns2_pinmux_ops = {
+> +       .get_functions_count = ns2_get_functions_count,
+> +       .get_function_name = ns2_get_function_name,
+> +       .get_function_groups = ns2_get_function_groups,
+> +       .set_mux = ns2_pinmux_enable,
+> +};
+>
+> I.e. there is no way that GPIO can be set up as a GPIO line,
+> and you're relying on some other pin control entries in the
+> device tree to do that, which is unnecessarily complicated.
+>
+> Please consider implementing the .gpio_request_enable callback
+> for this pin multiplexer.
 
-From: Govindraj Raja <Govindraj.Raja@imgtec.com>
+Only 4 GPIO pins are pin configurable. The other GPIO pins are group
+controlled as mentioned in the NS2_PIN_GROUP. A single gpio request will affect
+the other pins in that particular group as the control is available
+to select either "gpio group" or the other. As shown below
 
-commit e9adb336d0bf391be23e820975ca5cd12c31d781 upstream.
+0x00 selects "gpio_6_7_pins" together
+0x01 selects "pcie_a3_clk_wak_pins"
+0x02 selects "nor_addr_4_5_pins"
 
-mfio 84 to 89 are described wrongly, fix it to describe
-the right pin and add them to right pin-mux group.
+static const unsigned gpio_6_7_pins[] = {31, 32};
+static const unsigned pcie_a3_clk_wak_pins[] = {31, 32};
+static const unsigned nor_addr_4_5_pins[] = {31, 32};
 
-The correct order is:
-	pll1_lock => mips_pll	-- MFIO_83
-	pll2_lock => audio_pll	-- MFIO_84
-	pll3_lock => rpu_v_pll	-- MFIO_85
-	pll4_lock => rpu_l_pll	-- MFIO_86
-	pll5_lock => sys_pll	-- MFIO_87
-	pll6_lock => wifi_pll	-- MFIO_88
-	pll7_lock => bt_pll	-- MFIO_89
+I tested with not providing the "ranges" property in the gpio node. The
+"iproc_gpio_request" and "iproc_gpio_free" functions returned back as
+"rages" property is not defined.
 
-Cc: linux-gpio@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-mips@linux-mips.org
-Cc: James Hartley <James.Hartley@imgtec.com>
-Fixes: cefc03e5995e("pinctrl: Add Pistachio SoC pin control driver")
-Signed-off-by: Govindraj Raja <Govindraj.Raja@imgtec.com>
-Acked-by: Andrew Bresticker <abrestic@chromium.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        if (!chip->pinmux_is_supported)
+                return 0;
 
----
- Documentation/devicetree/bindings/pinctrl/img,pistachio-pinctrl.txt |   12 ++---
- drivers/pinctrl/pinctrl-pistachio.c                                 |   24 +++++-----
- 2 files changed, 18 insertions(+), 18 deletions(-)
+We can support the "iproc_gpio_request" and "iproc_gpio_free" functions for the
+4 gpios that share the pwm pins only. Please suggest me here.
 
---- a/Documentation/devicetree/bindings/pinctrl/img,pistachio-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/img,pistachio-pinctrl.txt
-@@ -134,12 +134,12 @@ mfio80		ddr_debug, mips_trace_data, mips
- mfio81		dreq0, mips_trace_data, eth_debug
- mfio82		dreq1, mips_trace_data, eth_debug
- mfio83		mips_pll_lock, mips_trace_data, usb_debug
--mfio84		sys_pll_lock, mips_trace_data, usb_debug
--mfio85		wifi_pll_lock, mips_trace_data, sdhost_debug
--mfio86		bt_pll_lock, mips_trace_data, sdhost_debug
--mfio87		rpu_v_pll_lock, dreq2, socif_debug
--mfio88		rpu_l_pll_lock, dreq3, socif_debug
--mfio89		audio_pll_lock, dreq4, dreq5
-+mfio84		audio_pll_lock, mips_trace_data, usb_debug
-+mfio85		rpu_v_pll_lock, mips_trace_data, sdhost_debug
-+mfio86		rpu_l_pll_lock, mips_trace_data, sdhost_debug
-+mfio87		sys_pll_lock, dreq2, socif_debug
-+mfio88		wifi_pll_lock, dreq3, socif_debug
-+mfio89		bt_pll_lock, dreq4, dreq5
- tck
- trstn
- tdi
---- a/drivers/pinctrl/pinctrl-pistachio.c
-+++ b/drivers/pinctrl/pinctrl-pistachio.c
-@@ -469,27 +469,27 @@ static const char * const pistachio_mips
- 	"mfio83",
- };
- 
--static const char * const pistachio_sys_pll_lock_groups[] = {
-+static const char * const pistachio_audio_pll_lock_groups[] = {
- 	"mfio84",
- };
- 
--static const char * const pistachio_wifi_pll_lock_groups[] = {
-+static const char * const pistachio_rpu_v_pll_lock_groups[] = {
- 	"mfio85",
- };
- 
--static const char * const pistachio_bt_pll_lock_groups[] = {
-+static const char * const pistachio_rpu_l_pll_lock_groups[] = {
- 	"mfio86",
- };
- 
--static const char * const pistachio_rpu_v_pll_lock_groups[] = {
-+static const char * const pistachio_sys_pll_lock_groups[] = {
- 	"mfio87",
- };
- 
--static const char * const pistachio_rpu_l_pll_lock_groups[] = {
-+static const char * const pistachio_wifi_pll_lock_groups[] = {
- 	"mfio88",
- };
- 
--static const char * const pistachio_audio_pll_lock_groups[] = {
-+static const char * const pistachio_bt_pll_lock_groups[] = {
- 	"mfio89",
- };
- 
-@@ -559,12 +559,12 @@ enum pistachio_mux_option {
- 	PISTACHIO_FUNCTION_DREQ4,
- 	PISTACHIO_FUNCTION_DREQ5,
- 	PISTACHIO_FUNCTION_MIPS_PLL_LOCK,
-+	PISTACHIO_FUNCTION_AUDIO_PLL_LOCK,
-+	PISTACHIO_FUNCTION_RPU_V_PLL_LOCK,
-+	PISTACHIO_FUNCTION_RPU_L_PLL_LOCK,
- 	PISTACHIO_FUNCTION_SYS_PLL_LOCK,
- 	PISTACHIO_FUNCTION_WIFI_PLL_LOCK,
- 	PISTACHIO_FUNCTION_BT_PLL_LOCK,
--	PISTACHIO_FUNCTION_RPU_V_PLL_LOCK,
--	PISTACHIO_FUNCTION_RPU_L_PLL_LOCK,
--	PISTACHIO_FUNCTION_AUDIO_PLL_LOCK,
- 	PISTACHIO_FUNCTION_DEBUG_RAW_CCA_IND,
- 	PISTACHIO_FUNCTION_DEBUG_ED_SEC20_CCA_IND,
- 	PISTACHIO_FUNCTION_DEBUG_ED_SEC40_CCA_IND,
-@@ -620,12 +620,12 @@ static const struct pistachio_function p
- 	FUNCTION(dreq4),
- 	FUNCTION(dreq5),
- 	FUNCTION(mips_pll_lock),
-+	FUNCTION(audio_pll_lock),
-+	FUNCTION(rpu_v_pll_lock),
-+	FUNCTION(rpu_l_pll_lock),
- 	FUNCTION(sys_pll_lock),
- 	FUNCTION(wifi_pll_lock),
- 	FUNCTION(bt_pll_lock),
--	FUNCTION(rpu_v_pll_lock),
--	FUNCTION(rpu_l_pll_lock),
--	FUNCTION(audio_pll_lock),
- 	FUNCTION(debug_raw_cca_ind),
- 	FUNCTION(debug_ed_sec20_cca_ind),
- 	FUNCTION(debug_ed_sec40_cca_ind),
+Thanks,
+Dhananjay
+
+>
+> Yours,
+> Linus Walleij
