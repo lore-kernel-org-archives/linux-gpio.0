@@ -1,65 +1,52 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 2/3] gpio: tegra: Remove the need of keeping device handle for gpio driver
-Date: Mon, 18 Apr 2016 14:16:17 +0530
-Message-ID: <1460969178-20914-2-git-send-email-ldewangan@nvidia.com>
-References: <1460969178-20914-1-git-send-email-ldewangan@nvidia.com>
+From: <TungYu_Lu@asmedia.com.tw>
+Subject: RE: [PATCH] gpio: amdpt: Add a new ACPI HID
+Date: Mon, 18 Apr 2016 08:49:00 +0000
+Message-ID: <F35F71BF8A165F48925028F09F3CDC2501365782@ASMT-EXMB-V01.corpnet.asus>
+References: <1458185757-10537-1-git-send-email-yd_tseng@asmedia.com.tw>
+ <CACRpkdaFZS8s8NTtY7iY4hA17GSLZYxNaYz1QLURwPa1ZvMqzQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1460969178-20914-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, swarren@wwwdotorg.org, thierry.reding@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from ms.asus.com ([103.10.4.13]:22472 "EHLO ms.asus.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751382AbcDRJDD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 18 Apr 2016 05:03:03 -0400
+In-Reply-To: <CACRpkdaFZS8s8NTtY7iY4hA17GSLZYxNaYz1QLURwPa1ZvMqzQ@mail.gmail.com>
+Content-Language: zh-TW
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, dbaryshkov@gmail.com, Yd_Tseng@asmedia.com.tw
 
-Remove the file static device handle variable as this is just
-required for prints. The required handle can be stored in
-tegra_gpio_chip and hence it become redundancy.
+RGVhciBMaW51cywNCg0KUmVhbGx5IGFwcHJlY2lhdGUgZm9yIHlvdXIgYXNzaXN0YW5jZS4gV2hp
+Y2ggdmVyc2lvbiB3aWxsIGFwcGx5IHRoaXMgcGF0Y2g/DQoNClRoYW5rcywNClR1bmdZdQ0KDQot
+LS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogTGludXMgV2FsbGVpaiBbbWFpbHRvOmxp
+bnVzLndhbGxlaWpAbGluYXJvLm9yZ10gDQpTZW50OiBUdWVzZGF5LCBNYXJjaCAyMiwgMjAxNiAx
+MDozMSBQTQ0KVG86IFlEIFRzZW5nDQpDYzogQWxleGFuZHJlIENvdXJib3Q7IGxpbnV4LWdwaW9A
+dmdlci5rZXJuZWwub3JnOyBEbWl0cnkgRXJlbWluLVNvbGVuaWtvdjsgWWQgVHNlbmco5pu+6KOV
+6YGUKTsgVHVuZ1l1IEx1KOWRguadseaYsSkNClN1YmplY3Q6IFJlOiBbUEFUQ0hdIGdwaW86IGFt
+ZHB0OiBBZGQgYSBuZXcgQUNQSSBISUQNCg0KT24gVGh1LCBNYXIgMTcsIDIwMTYgYXQgNDozNSBB
+TSwgWUQgVHNlbmcgPGx0eXUxMDFAZ21haWwuY29tPiB3cm90ZToNCg0KPiBGcm9tOiBZRCBUc2Vu
+ZyA8WWRfVHNlbmdAYXNtZWRpYS5jb20udHc+DQo+DQo+IERlYXIgYWxsOg0KPg0KPiBUaGlzIHBh
+dGNoIGFkZHMgYSBuZXcgQUNQSSBISUQsIEFNRElGMDMwLCBpbiB0aGUgcHRfZ3Bpb19hY3BpX21h
+dGNoLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBZRCBUc2VuZzxZZF9Uc2VuZ0Bhc21lZGlhLmNvbS50
+dz4NCg0KUGF0Y2ggYXBwbGllZC4NCg0KWW91cnMsDQpMaW51cyBXYWxsZWlqDQo9PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NClRoaXMgZW1h
+aWwgYW5kIGFueSBhdHRhY2htZW50cyB0byBpdCBjb250YWluIGNvbmZpZGVudGlhbCBpbmZvcm1h
+dGlvbiBhbmQgYXJlIGludGVuZGVkIHNvbGVseSBmb3IgdGhlIHVzZSBvZiB0aGUgaW5kaXZpZHVh
+bCB0byB3aG9tIGl0IA0KaXMgYWRkcmVzc2VkLklmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCBy
+ZWNpcGllbnQgb3IgcmVjZWl2ZSBpdCBhY2NpZGVudGFsbHksIHBsZWFzZSBpbW1lZGlhdGVseSBu
+b3RpZnkgdGhlIHNlbmRlciBieSBlLW1haWwgYW5kIGRlbGV0ZSANCnRoZSBtZXNzYWdlIGFuZCBh
+bnkgYXR0YWNobWVudHMgZnJvbSB5b3VyIGNvbXB1dGVyIHN5c3RlbSwgYW5kIGRlc3Ryb3kgYWxs
+IGhhcmQgY29waWVzLiBJZiBhbnksIHBsZWFzZSBiZSBhZHZpc2VkIHRoYXQgYW55IHVuYXV0aG9y
+aXplZCANCmRpc2Nsb3N1cmUsIGNvcHlpbmcsIGRpc3RyaWJ1dGlvbiBvciBhbnkgYWN0aW9uIHRh
+a2VuIG9yIG9taXR0ZWQgaW4gcmVsaWFuY2Ugb24gdGhpcywgaXMgaWxsZWdhbCBhbmQgcHJvaGli
+aXRlZC4gRnVydGhlcm1vcmUsIGFueSB2aWV3cyANCm9yIG9waW5pb25zIGV4cHJlc3NlZCBhcmUg
+c29sZWx5IHRob3NlIG9mIHRoZSBhdXRob3IgYW5kIGRvIG5vdCByZXByZXNlbnQgdGhvc2Ugb2Yg
+QVNNZWRpYSBUZWNobm9sb2d5IEluYy4gVGhhbmsgeW91IGZvciB5b3VyIGNvb3BlcmF0aW9uLg0K
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+Cg==
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
- drivers/gpio/gpio-tegra.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 1b0c497..de022a9 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -80,7 +80,6 @@ struct tegra_gpio_soc_config {
- 	u32 upper_offset;
- };
- 
--static struct device *dev;
- static struct irq_domain *irq_domain;
- static void __iomem *regs;
- static u32 tegra_gpio_bank_count;
-@@ -240,7 +239,8 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 
- 	ret = gpiochip_lock_as_irq(&tegra_gpio_chip, gpio);
- 	if (ret) {
--		dev_err(dev, "unable to lock Tegra GPIO %d as IRQ\n", gpio);
-+		dev_err(tegra_gpio_chip.parent,
-+			"unable to lock Tegra GPIO %d as IRQ\n", gpio);
- 		return ret;
- 	}
- 
-@@ -465,8 +465,6 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 	int i;
- 	int j;
- 
--	dev = &pdev->dev;
--
- 	config = of_device_get_match_data(&pdev->dev);
- 	if (!config) {
- 		dev_err(&pdev->dev, "Error: No device match found\n");
-@@ -488,6 +486,8 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 	}
- 
- 	tegra_gpio_chip.ngpio = tegra_gpio_bank_count * 32;
-+	tegra_gpio_chip.parent = &pdev->dev;
-+
- 
- 	tegra_gpio_banks = devm_kzalloc(&pdev->dev,
- 			tegra_gpio_bank_count * sizeof(*tegra_gpio_banks),
--- 
-2.1.4
