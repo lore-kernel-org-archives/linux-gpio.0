@@ -1,85 +1,97 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource
- Chip bindings
-Date: Mon, 18 Apr 2016 08:45:40 +0100
-Message-ID: <20160418074540.GB3346@x1>
-References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
- <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
- <20160330113532.GI3323@x1>
- <57111E8B.1040503@opensource.altera.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 1/2] pinctrl: Add Oxford Semiconductor OXNAS pinctrl and
+ gpio driver
+Date: Mon, 18 Apr 2016 10:26:06 +0200
+Message-ID: <57149A1E.5040902@baylibre.com>
+References: <1459689969-5326-1-git-send-email-narmstrong@baylibre.com>
+ <1459689969-5326-2-git-send-email-narmstrong@baylibre.com>
+ <CACRpkdbTSdPG3-5HmmFbtZkZLG0S3cg54gPMKCF8isegmc3tow@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:35858 "EHLO
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:38823 "EHLO
 	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751232AbcDRHpq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Apr 2016 03:45:46 -0400
-Received: by mail-wm0-f42.google.com with SMTP id v188so106322511wme.1
-        for <linux-gpio@vger.kernel.org>; Mon, 18 Apr 2016 00:45:45 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <57111E8B.1040503@opensource.altera.com>
+	with ESMTP id S1751149AbcDRI0J (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Apr 2016 04:26:09 -0400
+Received: by mail-wm0-f42.google.com with SMTP id u206so111995898wme.1
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Apr 2016 01:26:08 -0700 (PDT)
+In-Reply-To: <CACRpkdbTSdPG3-5HmmFbtZkZLG0S3cg54gPMKCF8isegmc3tow@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thor Thayer <tthayer@opensource.altera.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org, pawell.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, 15 Apr 2016, Thor Thayer wrote:
-> On 03/30/2016 06:35 AM, Lee Jones wrote:
-> >On Tue, 29 Mar 2016, tthayer@opensource.altera.com wrote:
-> >
-> >>From: Thor Thayer <tthayer@opensource.altera.com>
-> >>
-> >>The Altera Arria10 Devkit System Resource chip is a Multi-Function
-> >>Device, it has two subdevices:
-> >>      - GPIO
-> >>      - HWMON
-> >>
-> >>This patch adds documentation for the Altera A10-SR DT bindings.
-> >>
-> >>Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
-> >>---
-> >>  .../devicetree/bindings/mfd/altera-a10sr.txt       |   35 +++++++=
-+++++++++++++
-> >>  1 file changed, 35 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/mfd/altera-a=
-10sr.txt
-> >>
-> >>diff --git a/Documentation/devicetree/bindings/mfd/altera-a10sr.txt=
- b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-> >>new file mode 100644
-> >>index 0000000..564c761
-> >>--- /dev/null
-> >>+++ b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-> >>@@ -0,0 +1,35 @@
-> >>+* Altera Arria10 Development Kit System Resource Chip
-> >>+
-> >>+Required parent device properties:
-> >>+- compatible : "altr,altr_a10sr"
-> >>+- spi-max-frequency : Maximum SPI frequency.
-> >>+- reg : the SPI Chip Select address for the Arria10 System Resourc=
-e chip
+On 04/13/2016 03:42 PM, Linus Walleij wrote:
+> On Sun, Apr 3, 2016 at 3:26 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
+> 
+>> Add pinctrl and gpio control support to Oxford Semiconductor OXNAS SoC Family.
+>> This version supports the ARM926EJ-S based OX810SE SoC with 34 IO pins.
+>>
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> 
+> Starting to look very nice :)
+> 
+>> +static inline struct oxnas_gpio_bank *irqd_to_bank(struct irq_data *d)
+>> +{
+>> +       return gpiochip_get_data(irq_data_get_irq_chip_data(d));
+>> +}
+> 
+> Do you really need to wrap this call? Seems like pointless layer of
+> abstraction to me.
 
-[...]
+Sure, I'll remove it.
 
-> >>+		a10sr_hwmon: a10sr_hwmon {
-> >
-> >Device type only please.
-> >
-> I need to revisit where this will live (hwmon does not seem to be
-> the correct place) so it will change but I can follow the format
-> above if it is correct.
+>> +       if (of_parse_phandle_with_fixed_args(np, "gpio-ranges",
+>> +                                            3, 0, &pinspec)) {
+>> +               dev_err(&pdev->dev, "gpio-ranges property not found\n");
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       id = pinspec.args[1] / PINS_PER_BANK;
+>> +       ngpios = pinspec.args[2];
+>> +
+>> +       if (id >= ARRAY_SIZE(oxnas_gpio_banks)) {
+>> +               dev_err(&pdev->dev, "invalid gpio-ranges base arg\n");
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       if (ngpios > PINS_PER_BANK) {
+>> +               dev_err(&pdev->dev, "invalid gpio-ranges count arg\n");
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       bank = &oxnas_gpio_banks[id];
+> 
+> This feels a bit hackish but I guess that is how we have to do things
+> then :/
 
-BTW, "hwmon" is a subsystem in Linux, therefore is a Linuxism and is
-not allowed in DT.  What does the device *actually* do?
+It seems I'll need to stick with this for the moment :/
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> +static int __init oxnas_gpio_register(void)
+>> +{
+>> +       return platform_driver_register(&oxnas_gpio_driver);
+>> +}
+>> +arch_initcall(oxnas_gpio_register);
+>> +
+>> +static int __init oxnas_pinctrl_register(void)
+>> +{
+>> +       return platform_driver_register(&oxnas_pinctrl_driver);
+>> +}
+>> +arch_initcall(oxnas_pinctrl_register);
+> 
+> Why do these have to be arch_initcall()?
+> 
+> I'm not very happy with anything below subsys_initcall()
+> and others prefer that you have only device_initcall().
+> 
+> I need some rationale. Sorry if I already asked...
+
+Actually, arch_initcall seems the best level to permit further device to get interrupts from these gpio controllers, AFAIK quite all the upstream pinctrl driver uses arch_ or subsys_.
+
+> Yours,
+> Linus Walleij
+> 
+
+Thanks,
+Neil
