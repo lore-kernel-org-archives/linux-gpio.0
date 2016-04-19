@@ -1,61 +1,118 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v2 6/9] pinctrl: Add IRQ support to STM32 gpios
-Date: Tue, 19 Apr 2016 11:04:46 +0200
-Message-ID: <CALszF6CUFKAjzUpEh3pDtSDdJuFan1ON0Kcu_uKD_OX36kXOHQ@mail.gmail.com>
-References: <1459436979-17275-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1459436979-17275-7-git-send-email-mcoquelin.stm32@gmail.com>
-	<CACRpkdYLPWNQZgdFHVwLOZv+rS=bdERM9St5b0hVHTd_+ZJMKg@mail.gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 1/3] gpio: tegra: Don't open code of_device_get_match_data()
+Date: Tue, 19 Apr 2016 15:13:38 +0530
+Message-ID: <1461059020-25373-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:34961 "EHLO
-	mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752856AbcDSJEr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Apr 2016 05:04:47 -0400
-In-Reply-To: <CACRpkdYLPWNQZgdFHVwLOZv+rS=bdERM9St5b0hVHTd_+ZJMKg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>, Lee Jones <lee.jones@linaro.org>
 
-Hi Linus
+Use of_device_get_match_data() for getting matched data
+instead of implementing this locally.
 
-2016-04-08 11:43 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Thu, Mar 31, 2016 at 5:09 PM, Maxime Coquelin
-> <mcoquelin.stm32@gmail.com> wrote:
->
->> +static int stm32_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
->> +{
->> +       struct stm32_pinctrl *pctl = dev_get_drvdata(chip->parent);
->> +       struct stm32_gpio_bank *bank = gpiochip_get_data(chip);
->> +       unsigned int irq;
->> +
->> +       regmap_field_write(pctl->irqmux[offset], bank->range.id);
->
-> No. You must implement the irqchip and GPIO controllers to
-> be orthogonal, doing things like this creates a semantic that
-> assumes .to_irq() is always called before using the IRQ and
-> that is not guaranteed at all. A consumer may very well
-> use an interrupt right off the irqchip without this being called
-> first. All this function should do is translate a number. No
-> other semantics.
->
-> This needs to be done from the irqchip (sorry).
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Actually, the register written here is not part of the irqchip.
-It is a system config register that is only used when using a GPIO as
-external interrupt.
-Its aim is to mux the GPIO bank on a line.
-For example on line 1, it can be muxed to select either gpioa1,
-gpiob1, gpioc1, ...
-How could I do it in the irqchip that has no gpio knowledge?
+---
+Collected reviewed by from Stephen.
+---
+ drivers/gpio/gpio-tegra.c | 50 +++++++++++++++++++++++------------------------
+ 1 file changed, 24 insertions(+), 26 deletions(-)
 
-In case the consumer uses an interrupt right off the irqchip, it
-should not access this register.
-For example the RTC wakeup lines, where we will reference directly the irqchip.
-
-That said, do you still believe the implementation is wrong? Do I miss
-something?
-
-Best regards,
-Maxime
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 790bb11..1b0c497 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -75,6 +75,11 @@ struct tegra_gpio_bank {
+ #endif
+ };
+ 
++struct tegra_gpio_soc_config {
++	u32 bank_stride;
++	u32 upper_offset;
++};
++
+ static struct device *dev;
+ static struct irq_domain *irq_domain;
+ static void __iomem *regs;
+@@ -445,27 +450,6 @@ static const struct dev_pm_ops tegra_gpio_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
+ };
+ 
+-struct tegra_gpio_soc_config {
+-	u32 bank_stride;
+-	u32 upper_offset;
+-};
+-
+-static struct tegra_gpio_soc_config tegra20_gpio_config = {
+-	.bank_stride = 0x80,
+-	.upper_offset = 0x800,
+-};
+-
+-static struct tegra_gpio_soc_config tegra30_gpio_config = {
+-	.bank_stride = 0x100,
+-	.upper_offset = 0x80,
+-};
+-
+-static const struct of_device_id tegra_gpio_of_match[] = {
+-	{ .compatible = "nvidia,tegra30-gpio", .data = &tegra30_gpio_config },
+-	{ .compatible = "nvidia,tegra20-gpio", .data = &tegra20_gpio_config },
+-	{ },
+-};
+-
+ /* This lock class tells lockdep that GPIO irqs are in a different
+  * category than their parents, so it won't report false recursion.
+  */
+@@ -473,8 +457,7 @@ static struct lock_class_key gpio_lock_class;
+ 
+ static int tegra_gpio_probe(struct platform_device *pdev)
+ {
+-	const struct of_device_id *match;
+-	struct tegra_gpio_soc_config *config;
++	const struct tegra_gpio_soc_config *config;
+ 	struct resource *res;
+ 	struct tegra_gpio_bank *bank;
+ 	int ret;
+@@ -484,12 +467,11 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 
+ 	dev = &pdev->dev;
+ 
+-	match = of_match_device(tegra_gpio_of_match, &pdev->dev);
+-	if (!match) {
++	config = of_device_get_match_data(&pdev->dev);
++	if (!config) {
+ 		dev_err(&pdev->dev, "Error: No device match found\n");
+ 		return -ENODEV;
+ 	}
+-	config = (struct tegra_gpio_soc_config *)match->data;
+ 
+ 	tegra_gpio_bank_stride = config->bank_stride;
+ 	tegra_gpio_upper_offset = config->upper_offset;
+@@ -578,6 +560,22 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static struct tegra_gpio_soc_config tegra20_gpio_config = {
++	.bank_stride = 0x80,
++	.upper_offset = 0x800,
++};
++
++static struct tegra_gpio_soc_config tegra30_gpio_config = {
++	.bank_stride = 0x100,
++	.upper_offset = 0x80,
++};
++
++static const struct of_device_id tegra_gpio_of_match[] = {
++	{ .compatible = "nvidia,tegra30-gpio", .data = &tegra30_gpio_config },
++	{ .compatible = "nvidia,tegra20-gpio", .data = &tegra20_gpio_config },
++	{ },
++};
++
+ static struct platform_driver tegra_gpio_driver = {
+ 	.driver		= {
+ 		.name	= "tegra-gpio",
+-- 
+2.1.4
