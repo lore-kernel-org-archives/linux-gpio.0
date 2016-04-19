@@ -1,51 +1,61 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: [PATCH] pinctrl: at91-pio4: fix pull-up/down logic
-Date: Tue, 19 Apr 2016 16:03:45 +0200
-Message-ID: <1461074628-20224-1-git-send-email-ludovic.desroches@atmel.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH] gpio: revert bank bindings
+Date: Tue, 19 Apr 2016 09:06:47 -0500
+Message-ID: <CAL_JsqKY=koMGXp0XUd-C6BqXZAs9JnV-G088H7KY0NxbHX8Ow@mail.gmail.com>
+References: <1461070196-15382-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:40866 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754040AbcDSODU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Apr 2016 10:03:20 -0400
+Received: from mail.kernel.org ([198.145.29.136]:34466 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753054AbcDSOHP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 19 Apr 2016 10:07:15 -0400
+In-Reply-To: <1461070196-15382-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: nicolas.ferre@atmel.com, alexandre.belloni@free-electrons.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Ludovic Desroches <ludovic.desroches@atmel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-The default configuration of a pin is often with a value in the
-pull-up/down field at chip reset. So, even if the internal logic of the
-controller prevents writing a configuration with pull-up and pull-down at
-the same time, we must ensure explicitly this condition before writing the
-register.
++DT list
 
-This was leading to a pull-down condition not taken into account for
-instance.
+On Tue, Apr 19, 2016 at 7:49 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> Keep the words talking about what a GPIO bank is, but remove the
+> binding. We have not agreed that this is something we want to have.
+>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio.txt | 7 -------
+>  1 file changed, 7 deletions(-)
 
-Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
-Fixes: 776180848b57 ("pinctrl: introduce driver for Atmel PIO4 controller")
-Cc: stable@vger.kernel.org #v4.4 and later
----
- drivers/pinctrl/pinctrl-at91-pio4.c | 2 ++
- 1 file changed, 2 insertions(+)
+Acked-by: Rob Herring <robh@kernel.org>
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index 629b6fe..75093d7 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -722,9 +722,11 @@ static int atmel_conf_pin_config_group_set(struct pinctrl_dev *pctldev,
- 			break;
- 		case PIN_CONFIG_BIAS_PULL_UP:
- 			conf |= ATMEL_PIO_PUEN_MASK;
-+			conf &= (~ATMEL_PIO_PDEN_MASK);
- 			break;
- 		case PIN_CONFIG_BIAS_PULL_DOWN:
- 			conf |= ATMEL_PIO_PDEN_MASK;
-+			conf &= (~ATMEL_PIO_PUEN_MASK);
- 			break;
- 		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
- 			if (arg == 0)
--- 
-2.5.0
-
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+> index f509ecf03ece..c88d2ccb05ca 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+> @@ -138,12 +138,6 @@ exposed in the device tree as an individual gpio-controller node, reflecting
+>  the fact that the hardware was synthesized by reusing the same IP block a
+>  few times over.
+>
+> -A GPIO controller may specify a bank ID. This is a hardware index that
+> -indicate the logical order of the GPIO controller in the hardware architecture,
+> -usually in the sequence 0, 1, 2 .. n. The hardware index may be different
+> -from the order of register ranges and related to the backplane of how this
+> -one bank is connected to the outside through a pin controller for example.
+> -
+>  Optionally, a GPIO controller may have a "ngpios" property. This property
+>  indicates the number of in-use slots of available slots for GPIOs. The
+>  typical example is something like this: the hardware register is 32 bits
+> @@ -165,7 +159,6 @@ gpio-controller@00000000 {
+>         reg = <0x00000000 0x1000>;
+>         gpio-controller;
+>         #gpio-cells = <2>;
+> -       gpio-bank = <0>;
+>         ngpios = <18>;
+>  }
+>
+> --
+> 2.4.11
+>
