@@ -1,151 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: of: make it possible to name GPIO lines
-Date: Tue, 19 Apr 2016 15:39:17 +0200
-Message-ID: <1461073157-26574-1-git-send-email-linus.walleij@linaro.org>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: [PATCH] pinctrl: at91-pio4: fix pull-up/down logic
+Date: Tue, 19 Apr 2016 16:03:45 +0200
+Message-ID: <1461074628-20224-1-git-send-email-ludovic.desroches@atmel.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:36320 "EHLO
-	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754472AbcDSNjf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Apr 2016 09:39:35 -0400
-Received: by mail-lf0-f43.google.com with SMTP id g184so19178549lfb.3
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Apr 2016 06:39:34 -0700 (PDT)
+Received: from eusmtp01.atmel.com ([212.144.249.242]:40866 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754040AbcDSODU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Apr 2016 10:03:20 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>
-Cc: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: nicolas.ferre@atmel.com, alexandre.belloni@free-electrons.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Ludovic Desroches <ludovic.desroches@atmel.com>
 
-Make it possible to name the producer side of a GPIO line using
-a "gpio-names" property array, modeled on the "clock-names"
-property from the clock bindings.
+The default configuration of a pin is often with a value in the
+pull-up/down field at chip reset. So, even if the internal logic of the
+controller prevents writing a configuration with pull-up and pull-down at
+the same time, we must ensure explicitly this condition before writing the
+register.
 
-This naming is especially useful for:
+This was leading to a pull-down condition not taken into account for
+instance.
 
-- Debugging: lines are named after function, not just opaque
-  offset numbers.
-
-- Exploration: systems where some or all GPIO lines are available
-  to end users, such as prototyping, one-off's "makerspace usecases"
-  users are helped by the names of the GPIO lines when tinkering.
-  This usecase has been surfacing recently.
-
-The gpio-names attribute is completely optional.
-
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Grant Likely <grant.likely@linaro.org>
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+Fixes: 776180848b57 ("pinctrl: introduce driver for Atmel PIO4 controller")
+Cc: stable@vger.kernel.org #v4.4 and later
 ---
-This has been discussed at some length now.
+ drivers/pinctrl/pinctrl-at91-pio4.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Why we are not using hogs: these are consumer side, not producer
-side. The gpio-controller in DT (gpio_chip in Linux) is a
-producer, not a consumer.
-
-This patch is not about assigning initial values to GPIO lines.
-That is an orthogonal usecase. This is just about naming lines.
----
- Documentation/devicetree/bindings/gpio/gpio.txt | 19 +++++++++++
- drivers/gpio/gpiolib-of.c                       | 43 +++++++++++++++++++++++++
- 2 files changed, 62 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-index c88d2ccb05ca..6b371ab6098e 100644
---- a/Documentation/devicetree/bindings/gpio/gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -152,6 +152,21 @@ additional bitmask is needed to specify which GPIOs are actually in use,
- and which are dummies. The bindings for this case has not yet been
- specified, but should be specified if/when such hardware appears.
- 
-+Optionally, a GPIO controller may have a "gpio-names" property. This is
-+an array of strings defining the names of the GPIO lines going out of the
-+GPIO controller. This name should be the most meaningful producer name
-+for the system, such as a rail name indicating the usage. Package names
-+such as pin name are discouraged: such lines have opaque names (since they
-+are by definition generic purpose) and such names are usually not very
-+helpful. For example "MMC-CD", "Red LED Vdd" and "ethernet reset" are
-+reasonable line names as they describe what the line is used for. "GPIO0"
-+is not a good name to give to a GPIO line. Placeholders are discouraged:
-+rather use the "" (blank string) if the use of the GPIO line is undefined
-+in your design. The names are assigned starting from line offset 0 from
-+left to right from the passed array. An incomplete array (where the number
-+of passed named are less than ngpios) will still be used up until the last
-+provided valid line index.
-+
- Example:
- 
- gpio-controller@00000000 {
-@@ -160,6 +175,10 @@ gpio-controller@00000000 {
- 	gpio-controller;
- 	#gpio-cells = <2>;
- 	ngpios = <18>;
-+	gpio-names = "MMC-CD", "MMC-WP", "VDD eth", "RST eth", "LED R",
-+		"LED G", "LED B", "Col A", "Col B", "Col C", "Col D",
-+		"Row A", "Row B", "Row C", "Row D", "NMI button",
-+		"poweroff", "reset";
- }
- 
- The GPIO chip may contain GPIO hog definitions. GPIO hogging is a mechanism
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index d81dbd8e90d9..b4e3a42e7aae 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -196,6 +196,42 @@ static struct gpio_desc *of_parse_own_gpio(struct device_node *np,
- }
- 
- /**
-+ * of_gpiochip_set_names() - set up the names of the lines
-+ * @chip: GPIO chip whose lines should be named, if possible
-+ */
-+static int of_gpiochip_set_names(struct gpio_chip *gc)
-+{
-+	struct gpio_device *gdev = gc->gpiodev;
-+	struct device_node *np = gc->of_node;
-+	int i;
-+	int nstrings;
-+
-+	/* Do we even have the "gpio-names" property */
-+	if (!of_property_read_bool(np, "gpio-names"))
-+		return 0;
-+
-+	nstrings = of_property_count_strings(np, "gpio-names");
-+	for (i = 0; i < nstrings; i++) {
-+		const char *name;
-+		int ret;
-+
-+		ret = of_property_read_string_index(np,
-+						    "gpio-names",
-+						    i,
-+						    &name);
-+		if (!ret)
-+			gdev->descs[i].name = name;
-+
-+		/* Empty strings are OK */
-+		if (ret != -ENODATA)
-+			dev_err(&gdev->dev, "unable to name line %d\n",
-+				i);
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-  * of_gpiochip_scan_gpios - Scan gpio-controller for gpio definitions
-  * @chip:	gpio chip to act on
-  *
-@@ -445,6 +481,13 @@ int of_gpiochip_add(struct gpio_chip *chip)
- 	if (status)
- 		return status;
- 
-+	/* If the chip defines names itself, these take precedence */
-+	if (!chip->names) {
-+		status = of_gpiochip_set_names(chip);
-+		if (status)
-+			return status;
-+	}
-+
- 	of_node_get(chip->of_node);
- 
- 	return of_gpiochip_scan_gpios(chip);
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index 629b6fe..75093d7 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -722,9 +722,11 @@ static int atmel_conf_pin_config_group_set(struct pinctrl_dev *pctldev,
+ 			break;
+ 		case PIN_CONFIG_BIAS_PULL_UP:
+ 			conf |= ATMEL_PIO_PUEN_MASK;
++			conf &= (~ATMEL_PIO_PDEN_MASK);
+ 			break;
+ 		case PIN_CONFIG_BIAS_PULL_DOWN:
+ 			conf |= ATMEL_PIO_PDEN_MASK;
++			conf &= (~ATMEL_PIO_PUEN_MASK);
+ 			break;
+ 		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+ 			if (arg == 0)
 -- 
-2.4.11
+2.5.0
 
