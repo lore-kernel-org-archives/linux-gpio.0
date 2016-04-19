@@ -1,53 +1,170 @@
 From: <patrice.chotard@st.com>
-Subject: [PATCH 4/8] gpio: stmpe: write int status register only when needed
-Date: Tue, 19 Apr 2016 14:18:33 +0200
-Message-ID: <1461068317-28016-5-git-send-email-patrice.chotard@st.com>
+Subject: [PATCH 1/8] mfd: stmpe: Add STMPE_IDX_SYS_CTRL/2 enum
+Date: Tue, 19 Apr 2016 14:18:30 +0200
+Message-ID: <1461068317-28016-2-git-send-email-patrice.chotard@st.com>
 References: <1461068317-28016-1-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:41699 "EHLO
+	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1753497AbcDSMT1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 19 Apr 2016 08:19:27 -0400
 In-Reply-To: <1461068317-28016-1-git-send-email-patrice.chotard@st.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: lee.jones@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, maxime.coquelin@st.com, amelie.delaunay@st.com, shawnguo@kernel.org, kernel@pengutronix.de, dinguyen@opensource.altera.com, vireshk@kernel.org, shiraz.linux.kernel@gmail.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, Patrice Chotard <patrice.chotard@st.com>
-List-Id: linux-gpio@vger.kernel.org
 
 From: Patrice Chotard <patrice.chotard@st.com>
 
-On STMPE801/1801 datasheets, it's mentionned writing
-in interrupt status register has no effect, bits are
-cleared when reading.
+As STMPE1801/1601/24xx has a SYS_CTRL register and
+STMPE1601/2403 has even a SYS_CTRL2 register, add
+STMPE_IDX_SYS_CTRL/2 and update driver code accordingly
 
-Signed-off-by: Amelie DELAUNAY <amelie.delaunay@st.com>
+This update prepares the ground for not yet supported STMPE1600
+which share similar REG_SYS_CTRL register.
+
 Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 ---
- drivers/gpio/gpio-stmpe.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/mfd/stmpe.c       | 21 ++++++++++++++-------
+ drivers/mfd/stmpe.h       |  2 ++
+ include/linux/mfd/stmpe.h |  2 ++
+ 3 files changed, 18 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index 225e075..f8c9d22 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -344,12 +344,16 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
- 			stat &= ~(1 << bit);
- 		}
+diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
+index fb8f9e8..c553b73 100644
+--- a/drivers/mfd/stmpe.c
++++ b/drivers/mfd/stmpe.c
+@@ -448,6 +448,8 @@ static const struct mfd_cell stmpe_ts_cell = {
  
--		stmpe_reg_write(stmpe, statmsbreg + i, status[i]);
--
--		/* Edge detect register is not present on 801 and 1801 */
--		if (stmpe->partnum != STMPE801 || stmpe->partnum != STMPE1801)
-+		/*
-+		 * interrupt status register write has no effect on
-+		 * 801 and 1801, bits are cleared when read.
-+		 * Edge detect register is not present on 801 and 1801
-+		 */
-+		if (stmpe->partnum != STMPE801 || stmpe->partnum != STMPE1801) {
-+			stmpe_reg_write(stmpe, statmsbreg + i, status[i]);
- 			stmpe_reg_write(stmpe, stmpe->regs[STMPE_IDX_GPEDR_MSB]
- 					+ i, status[i]);
-+		}
+ static const u8 stmpe811_regs[] = {
+ 	[STMPE_IDX_CHIP_ID]	= STMPE811_REG_CHIP_ID,
++	[STMPE_IDX_SYS_CTRL]	= STMPE811_REG_SYS_CTRL,
++	[STMPE_IDX_SYS_CTRL2]	= STMPE811_REG_SYS_CTRL2,
+ 	[STMPE_IDX_ICR_LSB]	= STMPE811_REG_INT_CTRL,
+ 	[STMPE_IDX_IER_LSB]	= STMPE811_REG_INT_EN,
+ 	[STMPE_IDX_ISR_MSB]	= STMPE811_REG_INT_STA,
+@@ -490,7 +492,7 @@ static int stmpe811_enable(struct stmpe *stmpe, unsigned int blocks,
+ 	if (blocks & STMPE_BLOCK_TOUCHSCREEN)
+ 		mask |= STMPE811_SYS_CTRL2_TSC_OFF;
+ 
+-	return __stmpe_set_bits(stmpe, STMPE811_REG_SYS_CTRL2, mask,
++	return __stmpe_set_bits(stmpe, stmpe->regs[STMPE_IDX_SYS_CTRL2], mask,
+ 				enable ? 0 : mask);
+ }
+ 
+@@ -535,6 +537,8 @@ static struct stmpe_variant_info stmpe610 = {
+ 
+ static const u8 stmpe1601_regs[] = {
+ 	[STMPE_IDX_CHIP_ID]	= STMPE1601_REG_CHIP_ID,
++	[STMPE_IDX_SYS_CTRL]	= STMPE1601_REG_SYS_CTRL,
++	[STMPE_IDX_SYS_CTRL2]	= STMPE1601_REG_SYS_CTRL2,
+ 	[STMPE_IDX_ICR_LSB]	= STMPE1601_REG_ICR_LSB,
+ 	[STMPE_IDX_IER_LSB]	= STMPE1601_REG_IER_LSB,
+ 	[STMPE_IDX_ISR_MSB]	= STMPE1601_REG_ISR_MSB,
+@@ -619,13 +623,13 @@ static int stmpe1601_autosleep(struct stmpe *stmpe,
+ 		return timeout;
  	}
  
- 	return IRQ_HANDLED;
+-	ret = __stmpe_set_bits(stmpe, STMPE1601_REG_SYS_CTRL2,
++	ret = __stmpe_set_bits(stmpe, stmpe->regs[STMPE_IDX_SYS_CTRL2],
+ 			STMPE1601_AUTOSLEEP_TIMEOUT_MASK,
+ 			timeout);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	return __stmpe_set_bits(stmpe, STMPE1601_REG_SYS_CTRL2,
++	return __stmpe_set_bits(stmpe, stmpe->regs[STMPE_IDX_SYS_CTRL2],
+ 			STPME1601_AUTOSLEEP_ENABLE,
+ 			STPME1601_AUTOSLEEP_ENABLE);
+ }
+@@ -650,7 +654,7 @@ static int stmpe1601_enable(struct stmpe *stmpe, unsigned int blocks,
+ 	else
+ 		mask &= ~STMPE1601_SYS_CTRL_ENABLE_SPWM;
+ 
+-	return __stmpe_set_bits(stmpe, STMPE1601_REG_SYS_CTRL, mask,
++	return __stmpe_set_bits(stmpe, stmpe->regs[STMPE_IDX_SYS_CTRL], mask,
+ 				enable ? mask : 0);
+ }
+ 
+@@ -689,6 +693,7 @@ static struct stmpe_variant_info stmpe1601 = {
+  */
+ static const u8 stmpe1801_regs[] = {
+ 	[STMPE_IDX_CHIP_ID]	= STMPE1801_REG_CHIP_ID,
++	[STMPE_IDX_SYS_CTRL]	= STMPE1801_REG_SYS_CTRL,
+ 	[STMPE_IDX_ICR_LSB]	= STMPE1801_REG_INT_CTRL_LOW,
+ 	[STMPE_IDX_IER_LSB]	= STMPE1801_REG_INT_EN_MASK_LOW,
+ 	[STMPE_IDX_ISR_LSB]	= STMPE1801_REG_INT_STA_LOW,
+@@ -735,14 +740,14 @@ static int stmpe1801_reset(struct stmpe *stmpe)
+ 	unsigned long timeout;
+ 	int ret = 0;
+ 
+-	ret = __stmpe_set_bits(stmpe, STMPE1801_REG_SYS_CTRL,
++	ret = __stmpe_set_bits(stmpe, stmpe->regs[STMPE_IDX_SYS_CTRL],
+ 		STMPE1801_MSK_SYS_CTRL_RESET, STMPE1801_MSK_SYS_CTRL_RESET);
+ 	if (ret < 0)
+ 		return ret;
+ 
+ 	timeout = jiffies + msecs_to_jiffies(100);
+ 	while (time_before(jiffies, timeout)) {
+-		ret = __stmpe_reg_read(stmpe, STMPE1801_REG_SYS_CTRL);
++		ret = __stmpe_reg_read(stmpe, stmpe->regs[STMPE_IDX_SYS_CTRL]);
+ 		if (ret < 0)
+ 			return ret;
+ 		if (!(ret & STMPE1801_MSK_SYS_CTRL_RESET))
+@@ -773,6 +778,8 @@ static struct stmpe_variant_info stmpe1801 = {
+ 
+ static const u8 stmpe24xx_regs[] = {
+ 	[STMPE_IDX_CHIP_ID]	= STMPE24XX_REG_CHIP_ID,
++	[STMPE_IDX_SYS_CTRL]	= STMPE24XX_REG_SYS_CTRL,
++	[STMPE_IDX_SYS_CTRL2]	= STMPE24XX_REG_SYS_CTRL2,
+ 	[STMPE_IDX_ICR_LSB]	= STMPE24XX_REG_ICR_LSB,
+ 	[STMPE_IDX_IER_LSB]	= STMPE24XX_REG_IER_LSB,
+ 	[STMPE_IDX_ISR_MSB]	= STMPE24XX_REG_ISR_MSB,
+@@ -819,7 +826,7 @@ static int stmpe24xx_enable(struct stmpe *stmpe, unsigned int blocks,
+ 	if (blocks & STMPE_BLOCK_KEYPAD)
+ 		mask |= STMPE24XX_SYS_CTRL_ENABLE_KPC;
+ 
+-	return __stmpe_set_bits(stmpe, STMPE24XX_REG_SYS_CTRL, mask,
++	return __stmpe_set_bits(stmpe, stmpe->regs[STMPE_IDX_SYS_CTRL], mask,
+ 				enable ? mask : 0);
+ }
+ 
+diff --git a/drivers/mfd/stmpe.h b/drivers/mfd/stmpe.h
+index 84adb46..406f9f2 100644
+--- a/drivers/mfd/stmpe.h
++++ b/drivers/mfd/stmpe.h
+@@ -138,6 +138,7 @@ int stmpe_remove(struct stmpe *stmpe);
+ #define STMPE811_NR_INTERNAL_IRQS	8
+ 
+ #define STMPE811_REG_CHIP_ID		0x00
++#define STMPE811_REG_SYS_CTRL		0x03
+ #define STMPE811_REG_SYS_CTRL2		0x04
+ #define STMPE811_REG_SPI_CFG		0x08
+ #define STMPE811_REG_INT_CTRL		0x09
+@@ -264,6 +265,7 @@ int stmpe_remove(struct stmpe *stmpe);
+ #define STMPE24XX_NR_INTERNAL_IRQS	9
+ 
+ #define STMPE24XX_REG_SYS_CTRL		0x02
++#define STMPE24XX_REG_SYS_CTRL2		0x03
+ #define STMPE24XX_REG_ICR_LSB		0x11
+ #define STMPE24XX_REG_IER_LSB		0x13
+ #define STMPE24XX_REG_ISR_MSB		0x14
+diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
+index cb83883..6c6690f 100644
+--- a/include/linux/mfd/stmpe.h
++++ b/include/linux/mfd/stmpe.h
+@@ -39,6 +39,8 @@ enum stmpe_partnum {
+  */
+ enum {
+ 	STMPE_IDX_CHIP_ID,
++	STMPE_IDX_SYS_CTRL,
++	STMPE_IDX_SYS_CTRL2,
+ 	STMPE_IDX_ICR_LSB,
+ 	STMPE_IDX_IER_LSB,
+ 	STMPE_IDX_ISR_LSB,
 -- 
 1.9.1
+
