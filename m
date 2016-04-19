@@ -1,76 +1,112 @@
-From: <patrice.chotard@st.com>
-Subject: [PATCH 0/8] STMPE fixes/rework and add STMPE1600 support
-Date: Tue, 19 Apr 2016 14:18:29 +0200
-Message-ID: <1461068317-28016-1-git-send-email-patrice.chotard@st.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2 2/3] gpio: tegra: Remove the need of keeping device
+ handle for gpio driver
+Date: Tue, 19 Apr 2016 14:33:23 +0200
+Message-ID: <20160419123323.GC8284@ulmo.ba.sec>
+References: <1461059020-25373-1-git-send-email-ldewangan@nvidia.com>
+ <1461059020-25373-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: lee.jones@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: gnurou@gmail.com, amelie.delaunay@st.com, swarren@wwwdotorg.org, vireshk@kernel.org, Patrice Chotard <patrice.chotard@st.com>, thierry.reding@gmail.com, kernel@pengutronix.de, dinguyen@opensource.altera.com, shawnguo@kernel.org, shiraz.linux.kernel@gmail.com, linux-arm-kernel@lists.infradead.org, maxime.coquelin@st.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="gr/z0/N6AeWAPJVB"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f171.google.com ([209.85.192.171]:35530 "EHLO
+	mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752702AbcDSMd2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Apr 2016 08:33:28 -0400
+Content-Disposition: inline
+In-Reply-To: <1461059020-25373-2-git-send-email-ldewangan@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, swarren@wwwdotorg.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Patrice Chotard <patrice.chotard@st.com>
 
-This series cleans and fixes some bugs in MFD/GPIO STMPE drivers and prepare
- the ground to add new STMPE1600 support.
+--gr/z0/N6AeWAPJVB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-STMPE1600 datasheet is available here : 
-http://www2.st.com/content/st_com/en/products/interfaces-and-transceivers/
-i-o-expanders-and-level-translators/i-o-expanders/stmpe1600.html
+On Tue, Apr 19, 2016 at 03:13:39PM +0530, Laxman Dewangan wrote:
+> Remove the file static device handle variable for keeping device handle
+> of driver as this is just required for error prints. The required device
+> handle are available from gpiochip structure.
+>=20
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> ---
+>  drivers/gpio/gpio-tegra.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+> index 1b0c497..de022a9 100644
+> --- a/drivers/gpio/gpio-tegra.c
+> +++ b/drivers/gpio/gpio-tegra.c
+> @@ -80,7 +80,6 @@ struct tegra_gpio_soc_config {
+>  	u32 upper_offset;
+>  };
+> =20
+> -static struct device *dev;
+>  static struct irq_domain *irq_domain;
+>  static void __iomem *regs;
+>  static u32 tegra_gpio_bank_count;
+> @@ -240,7 +239,8 @@ static int tegra_gpio_irq_set_type(struct irq_data *d=
+, unsigned int type)
+> =20
+>  	ret =3D gpiochip_lock_as_irq(&tegra_gpio_chip, gpio);
+>  	if (ret) {
+> -		dev_err(dev, "unable to lock Tegra GPIO %d as IRQ\n", gpio);
+> +		dev_err(tegra_gpio_chip.parent,
+> +			"unable to lock Tegra GPIO %d as IRQ\n", gpio);
 
-Only STMPE1600 has been tested on STM32 platform. As i have no board with
-others STMPE variant(STMPE610/STMPE801/STMPE811/STMPE1601/STMPE1801/STMPE2401
-and STMPE2403), i put in CC boards's maintainers which are using others STMPE variant.
+Can't we get rid of the tegra_gpio_chip global variable altogether? We
+set a struct tegra_gpio_bank * as the chip data for each of the
+interrupts, so if we added a back link to the GPIO chip to each bank
+we could easily get at the GPIO chip (and its parent device) from the
+IRQ chip implementation.
 
-If they can kindly check that no regression has been introduce by this series
-:
+>  		return ret;
+>  	}
+> =20
+> @@ -465,8 +465,6 @@ static int tegra_gpio_probe(struct platform_device *p=
+dev)
+>  	int i;
+>  	int j;
+> =20
+> -	dev =3D &pdev->dev;
+> -
+>  	config =3D of_device_get_match_data(&pdev->dev);
+>  	if (!config) {
+>  		dev_err(&pdev->dev, "Error: No device match found\n");
+> @@ -488,6 +486,8 @@ static int tegra_gpio_probe(struct platform_device *p=
+dev)
+>  	}
+> =20
+>  	tegra_gpio_chip.ngpio =3D tegra_gpio_bank_count * 32;
+> +	tegra_gpio_chip.parent =3D &pdev->dev;
+> +
 
-For ARM/FREESCALE IMX / MXC ARM ARCHITECTURE:
-	_ Shawn Guo <shawnguo@kernel.org>
-	_ Sascha Hauer <kernel@pengutronix.de>
+This adds a gratuitous blank line.
 
-For ARM/SOCFPGA ARCHITECTURE
-	_ Dinh Nguyen <dinguyen@opensource.altera.com>
+Thierry
 
-For SPEAR PLATFORM SUPPORT
-	_ Viresh Kumar <vireshk@kernel.org>
-	_ Shiraz Hashim <shiraz.linux.kernel@gmail.com>
+--gr/z0/N6AeWAPJVB
+Content-Type: application/pgp-signature; name="signature.asc"
 
-For TEGRA ARCHITECTURE SUPPORT
-	_ Stephen Warren <swarren@wwwdotorg.org>
-	_ Thierry Reding <thierry.reding@gmail.com>
-	_ Alexandre Courbot <gnurou@gmail.com> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-For ARM/Ux500 ARM ARCHITECTURE
-	_ Linus Walleij <linus.walleij@linaro.org>
+iQIcBAABCAAGBQJXFiWQAAoJEN0jrNd/PrOhAXMQAJbleBYZZ6Cqez5u/aZE9uCy
+Pgbhc5+rScbXPN4m/8Li55CrKvEflJb4GPyi8SYbh2lix2eUmomUFVyZ1q6+1zhe
+T0mElS+CHYvSduW7u/0nkevvBT477e07VdWrpa16kO122AnxgyeSMeljXZEqB9yj
+AKj+MnCh4U2vF08QqT3qJptxjoCiYqY0ClmgW81O9YS101aQG0R4ZGujhMA9fKm/
+EGbWqDd/5riTty2oo79P0pvXDVbQc0DDWAcIjtXNePZONnhGmb1DuURqbq5TqF/5
+1bzmq+Ra9rsNowh+xNvnlvoctA0blA5q9M2dugC2qbeFpPafbNrpJuxxTMZcabVD
+QGJy1AWWxhPPGGjMGHJI8rOxHGXglaFpKWP97ZataCBQ4jyftNT42omQ60KRXAHy
+NDCfoi618qD63jVPSqCOh0eg5/+mXH6EwbRgTHcp6rkRq5jA4tFGvT5fDyRWUiAV
+IWDqTzvi6rjXQM+iixDDPAHeyc5OgwIqUc4hQ5JU6UVwP5vBcqQoARPjSWU/Tow+
+My1x453FeDnAI3ynCe/z4/kT/N1u8ZjOrlZbVTMSrxBVw7oXGE+ZTOyRcr1ocgPz
+Y0711YEtH1bgBxAYtgU4qa9ahuL0T9eqCOahV2KULocQMP4+HlmBexgOGf29ddGO
+FyViGEKfVHE+sWys+FVT
+=HZoa
+-----END PGP SIGNATURE-----
 
-Patrice Chotard (8):
-  mfd: stmpe: Add STMPE_IDX_SYS_CTRL/2 enum
-  mfd: stmpe: Add reset support for all STMPE variant
-  gpio: stmpe: fix edge and rising/falling edge detection
-  gpio: stmpe: write int status register only when needed
-  Documentation: dt: add stmpe1600 compatible string to stmpe mfd
-  mfd: Add STMPE1600 support
-  gpio: stmpe: Add STMPE1600 support
-  gpio: stmpe: configure GPIO as output by default
-
- Documentation/devicetree/bindings/mfd/stmpe.txt |   2 +-
- drivers/gpio/gpio-stmpe.c                       | 142 ++++++++++++++++++------
- drivers/mfd/stmpe-i2c.c                         |   2 +
- drivers/mfd/stmpe.c                             | 105 ++++++++++++++----
- drivers/mfd/stmpe.h                             |  30 ++++-
- include/linux/mfd/stmpe.h                       |   3 +
- 6 files changed, 223 insertions(+), 61 deletions(-)
-
--- 
-1.9.1
+--gr/z0/N6AeWAPJVB--
