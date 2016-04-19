@@ -1,92 +1,58 @@
-From: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/9] drivers: irqchip: Add STM32 external interrupts support
-Date: Tue, 19 Apr 2016 10:00:29 +0200
-Message-ID: <CALszF6AKS2-SxQKTM-hrVfB2tMZS_21jRx9HtnHVACO1o=1Fgw@mail.gmail.com>
-References: <1459436979-17275-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1459436979-17275-3-git-send-email-mcoquelin.stm32@gmail.com>
-	<CACRpkdaiE1cJM6uq_bQuRS2NJTwniPREBsgwuxEjRjB5yTfc9Q@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] pinctrl-exynos5440: Use off-stack memory for
+ pinctrl_gpio_range
+Date: Tue, 19 Apr 2016 10:19:11 +0200
+Message-ID: <5715E9FF.6080000@samsung.com>
+References: <1461039222-26592-1-git-send-email-andrew@aj.id.au>
+ <CA+Ln22Fcdp=W1A7ZY5nNNkUqHWfTTepVBS+SzjdoeO2HDJGpuQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdaiE1cJM6uq_bQuRS2NJTwniPREBsgwuxEjRjB5yTfc9Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bruno Herrera <bruherrera-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:56963 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752113AbcDSITR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Apr 2016 04:19:17 -0400
+In-reply-to: <CA+Ln22Fcdp=W1A7ZY5nNNkUqHWfTTepVBS+SzjdoeO2HDJGpuQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Andrew Jeffery <andrew@aj.id.au>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
 
-Hi Linus,
+On 04/19/2016 09:24 AM, Tomasz Figa wrote:
+> Hi Andrew,
+> 
+> 2016-04-19 13:13 GMT+09:00 Andrew Jeffery <andrew@aj.id.au>:
+>> The range is registered into a linked list which can be referenced
+>> throughout the lifetime of the driver. Ensure the range's memory is useful
+>> for the same lifetime by adding it to the driver's private data structure.
+>>
+>> The bug was introduced in the driver's initial commit, which was present in
+>> v3.10.
+>>
+>> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+>> Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC")
+>> Cc: stable@vger.kernel.org
+>> ---
+>> This is my first contribution to the kernel, so hopefully I've followed all the
+>> relevant documentation. If not, please let me know and point me in the right
+>> direction!
+>>
+>> I don't have the means to test the patch, but it compiles. Someone with
+>> appropriate hardware should probably give it a spin.
+>>
+> 
+> Thanks for the patch. Good catch, I wonder how this even worked. Just
+> one minor nitpick below.
+> 
+> Unfortunately I don't have any platform based on this SoC to test, so
+> I'll defer to Krzysztof or Sylwester to handle this.
 
-Sorry for the late reply, I was off last week.
+We don't have this board neither, it is not so popular and apparently
+not many people are using it because such bug remained unnoticed.
 
-2016-04-08 11:38 GMT+02:00 Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>:
-> On Thu, Mar 31, 2016 at 5:09 PM, Maxime Coquelin
-> <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
->> +static void stm32_irq_handler(struct irq_desc *desc)
->> +{
->> +       struct irq_domain *domain = irq_desc_get_handler_data(desc);
->> +       struct irq_chip_generic *gc = domain->gc->gc[0];
->> +       struct irq_chip *chip = irq_desc_get_chip(desc);
->> +       unsigned long pending;
->> +       int n;
->> +
->> +       chained_irq_enter(chip, desc);
->> +
->> +       pending = irq_reg_readl(gc, EXTI_PR);
->> +       for_each_set_bit(n, &pending, BITS_PER_LONG) {
->> +               generic_handle_irq(irq_find_mapping(domain, n));
->> +       }
->> +
->> +       chained_irq_exit(chip, desc);
->> +}
->
-> Is this one of those cases where you should re-read the status register
-> on every iteration, so as to avoid exiting and immediately re-entering
-> the irq handler?
->
-> C.g irq-vic.c:
->
-> static int handle_one_vic(struct vic_device *vic, struct pt_regs *regs)
-> {
->         u32 stat, irq;
->         int handled = 0;
->
->         while ((stat = readl_relaxed(vic->base + VIC_IRQ_STATUS))) {
->                 irq = ffs(stat) - 1;
->                 handle_domain_irq(vic->domain, irq, regs);
->                 handled = 1;
->         }
->
->         return handled;
-> }
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Indeed, it would be better doing it like this.
-Do you think I could even do this with two nested loops to reduce the
-number of reg accesses?
-It would look like this (just compiled, not tested):
+Best regards,
+Krzysztof
 
-static void stm32_irq_handler(struct irq_desc *desc)
-{
-    struct irq_domain *domain = irq_desc_get_handler_data(desc);
-    struct irq_chip_generic *gc = domain->gc->gc[0];
-    struct irq_chip *chip = irq_desc_get_chip(desc);
-    unsigned long pending;
-    int n;
-
-    chained_irq_enter(chip, desc);
-
-    while ((pending = irq_reg_readl(gc, EXTI_PR))) {
-        for_each_set_bit(n, &pending, BITS_PER_LONG) {
-            generic_handle_irq(irq_find_mapping(domain, n));
-        }
-    }
-
-    chained_irq_exit(chip, desc);
-}
-
-Thanks,
-Maxime
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
