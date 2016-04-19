@@ -1,47 +1,61 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] Documentation: power: reset: move gpio-{poweroff|restart}
- to proper place
-Date: Tue, 19 Apr 2016 10:19:38 +0200
-Message-ID: <CACRpkdZKS77CQpf5xQ4aA++jg6SH32BptoSbDCg0yugF4O0Jtw@mail.gmail.com>
-References: <1460476853-3306-1-git-send-email-wsa@the-dreams.de>
-	<CACRpkdaUj5w3zkjWVf1GML3reeDnRpT8avOPkRB6_qFXB6EGjw@mail.gmail.com>
-	<CAL_JsqKK1QmGdyae-P9SoP2-7JiLK1XCyskxbd-wrn+7CidMJw@mail.gmail.com>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v2 6/9] pinctrl: Add IRQ support to STM32 gpios
+Date: Tue, 19 Apr 2016 11:04:46 +0200
+Message-ID: <CALszF6CUFKAjzUpEh3pDtSDdJuFan1ON0Kcu_uKD_OX36kXOHQ@mail.gmail.com>
+References: <1459436979-17275-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1459436979-17275-7-git-send-email-mcoquelin.stm32@gmail.com>
+	<CACRpkdYLPWNQZgdFHVwLOZv+rS=bdERM9St5b0hVHTd_+ZJMKg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:36551 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752625AbcDSITj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Apr 2016 04:19:39 -0400
-Received: by mail-ob0-f173.google.com with SMTP id j9so6441034obd.3
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Apr 2016 01:19:39 -0700 (PDT)
-In-Reply-To: <CAL_JsqKK1QmGdyae-P9SoP2-7JiLK1XCyskxbd-wrn+7CidMJw@mail.gmail.com>
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:34961 "EHLO
+	mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752856AbcDSJEr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Apr 2016 05:04:47 -0400
+In-Reply-To: <CACRpkdYLPWNQZgdFHVwLOZv+rS=bdERM9St5b0hVHTd_+ZJMKg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Sebastian Reichel <sre@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>, Lee Jones <lee.jones@linaro.org>
 
-On Fri, Apr 15, 2016 at 6:53 PM, Rob Herring <robh@kernel.org> wrote:
-> On Fri, Apr 15, 2016 at 2:48 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Tue, Apr 12, 2016 at 6:00 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
->>
->>> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>>
->>> I did only find them after a fuzzy search, so let them be where one
->>> would expect them.
->>>
->>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>
->> I saw this the other day too I agree.
->> Sebastian: are you OK that I move this by committing the patch to the GPIO tree?
->> DT maintainers: OK?
+Hi Linus
+
+2016-04-08 11:43 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Thu, Mar 31, 2016 at 5:09 PM, Maxime Coquelin
+> <mcoquelin.stm32@gmail.com> wrote:
 >
-> Acked-by: Rob Herring <robh@kernel.org>
+>> +static int stm32_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+>> +{
+>> +       struct stm32_pinctrl *pctl = dev_get_drvdata(chip->parent);
+>> +       struct stm32_gpio_bank *bank = gpiochip_get_data(chip);
+>> +       unsigned int irq;
+>> +
+>> +       regmap_field_write(pctl->irqmux[offset], bank->range.id);
 >
-> Seems like this should go thru my tree though, but I don't have the patch.
+> No. You must implement the irqchip and GPIO controllers to
+> be orthogonal, doing things like this creates a semantic that
+> assumes .to_irq() is always called before using the IRQ and
+> that is not guaranteed at all. A consumer may very well
+> use an interrupt right off the irqchip without this being called
+> first. All this function should do is translate a number. No
+> other semantics.
+>
+> This needs to be done from the irqchip (sorry).
 
-I have it merged in my tree, is is OK or shall I extract it and send
-it to you?
+Actually, the register written here is not part of the irqchip.
+It is a system config register that is only used when using a GPIO as
+external interrupt.
+Its aim is to mux the GPIO bank on a line.
+For example on line 1, it can be muxed to select either gpioa1,
+gpiob1, gpioc1, ...
+How could I do it in the irqchip that has no gpio knowledge?
 
-Yours,
-Linus Walleij
+In case the consumer uses an interrupt right off the irqchip, it
+should not access this register.
+For example the RTC wakeup lines, where we will reference directly the irqchip.
+
+That said, do you still believe the implementation is wrong? Do I miss
+something?
+
+Best regards,
+Maxime
