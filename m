@@ -1,58 +1,47 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] pinctrl-exynos5440: Use off-stack memory for
- pinctrl_gpio_range
-Date: Tue, 19 Apr 2016 10:19:11 +0200
-Message-ID: <5715E9FF.6080000@samsung.com>
-References: <1461039222-26592-1-git-send-email-andrew@aj.id.au>
- <CA+Ln22Fcdp=W1A7ZY5nNNkUqHWfTTepVBS+SzjdoeO2HDJGpuQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] Documentation: power: reset: move gpio-{poweroff|restart}
+ to proper place
+Date: Tue, 19 Apr 2016 10:19:38 +0200
+Message-ID: <CACRpkdZKS77CQpf5xQ4aA++jg6SH32BptoSbDCg0yugF4O0Jtw@mail.gmail.com>
+References: <1460476853-3306-1-git-send-email-wsa@the-dreams.de>
+	<CACRpkdaUj5w3zkjWVf1GML3reeDnRpT8avOPkRB6_qFXB6EGjw@mail.gmail.com>
+	<CAL_JsqKK1QmGdyae-P9SoP2-7JiLK1XCyskxbd-wrn+7CidMJw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:56963 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752113AbcDSITR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Apr 2016 04:19:17 -0400
-In-reply-to: <CA+Ln22Fcdp=W1A7ZY5nNNkUqHWfTTepVBS+SzjdoeO2HDJGpuQ@mail.gmail.com>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:36551 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752625AbcDSITj (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Apr 2016 04:19:39 -0400
+Received: by mail-ob0-f173.google.com with SMTP id j9so6441034obd.3
+        for <linux-gpio@vger.kernel.org>; Tue, 19 Apr 2016 01:19:39 -0700 (PDT)
+In-Reply-To: <CAL_JsqKK1QmGdyae-P9SoP2-7JiLK1XCyskxbd-wrn+7CidMJw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Andrew Jeffery <andrew@aj.id.au>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Sebastian Reichel <sre@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 
-On 04/19/2016 09:24 AM, Tomasz Figa wrote:
-> Hi Andrew,
-> 
-> 2016-04-19 13:13 GMT+09:00 Andrew Jeffery <andrew@aj.id.au>:
->> The range is registered into a linked list which can be referenced
->> throughout the lifetime of the driver. Ensure the range's memory is useful
->> for the same lifetime by adding it to the driver's private data structure.
+On Fri, Apr 15, 2016 at 6:53 PM, Rob Herring <robh@kernel.org> wrote:
+> On Fri, Apr 15, 2016 at 2:48 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Tue, Apr 12, 2016 at 6:00 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 >>
->> The bug was introduced in the driver's initial commit, which was present in
->> v3.10.
+>>> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>>
+>>> I did only find them after a fuzzy search, so let them be where one
+>>> would expect them.
+>>>
+>>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 >>
->> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
->> Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC")
->> Cc: stable@vger.kernel.org
->> ---
->> This is my first contribution to the kernel, so hopefully I've followed all the
->> relevant documentation. If not, please let me know and point me in the right
->> direction!
->>
->> I don't have the means to test the patch, but it compiles. Someone with
->> appropriate hardware should probably give it a spin.
->>
-> 
-> Thanks for the patch. Good catch, I wonder how this even worked. Just
-> one minor nitpick below.
-> 
-> Unfortunately I don't have any platform based on this SoC to test, so
-> I'll defer to Krzysztof or Sylwester to handle this.
+>> I saw this the other day too I agree.
+>> Sebastian: are you OK that I move this by committing the patch to the GPIO tree?
+>> DT maintainers: OK?
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+>
+> Seems like this should go thru my tree though, but I don't have the patch.
 
-We don't have this board neither, it is not so popular and apparently
-not many people are using it because such bug remained unnoticed.
+I have it merged in my tree, is is OK or shall I extract it and send
+it to you?
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
-
+Yours,
+Linus Walleij
