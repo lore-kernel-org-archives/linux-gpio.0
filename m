@@ -1,118 +1,92 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource
- Chip bindings
-Date: Tue, 19 Apr 2016 08:23:58 +0100
-Message-ID: <20160419072358.GB3222@x1>
-References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
- <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
- <20160330113532.GI3323@x1>
- <57111E8B.1040503@opensource.altera.com>
- <20160418074540.GB3346@x1>
- <5714F942.5040309@opensource.altera.com>
+From: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/9] drivers: irqchip: Add STM32 external interrupts support
+Date: Tue, 19 Apr 2016 10:00:29 +0200
+Message-ID: <CALszF6AKS2-SxQKTM-hrVfB2tMZS_21jRx9HtnHVACO1o=1Fgw@mail.gmail.com>
+References: <1459436979-17275-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1459436979-17275-3-git-send-email-mcoquelin.stm32@gmail.com>
+	<CACRpkdaiE1cJM6uq_bQuRS2NJTwniPREBsgwuxEjRjB5yTfc9Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:38293 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751938AbcDSHYD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Apr 2016 03:24:03 -0400
-Received: by mail-wm0-f51.google.com with SMTP id u206so13542285wme.1
-        for <linux-gpio@vger.kernel.org>; Tue, 19 Apr 2016 00:24:02 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <5714F942.5040309@opensource.altera.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdaiE1cJM6uq_bQuRS2NJTwniPREBsgwuxEjRjB5yTfc9Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bruno Herrera <bruherrera-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Thor Thayer <tthayer@opensource.altera.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
 
-On Mon, 18 Apr 2016, Thor Thayer wrote:
+Hi Linus,
 
-> Hi Lee,
->=20
-> On 04/18/2016 02:45 AM, Lee Jones wrote:
-> >On Fri, 15 Apr 2016, Thor Thayer wrote:
-> >>On 03/30/2016 06:35 AM, Lee Jones wrote:
-> >>>On Tue, 29 Mar 2016, tthayer@opensource.altera.com wrote:
-> >>>
-> >>>>From: Thor Thayer <tthayer@opensource.altera.com>
-> >>>>
-> >>>>The Altera Arria10 Devkit System Resource chip is a Multi-Functio=
-n
-> >>>>Device, it has two subdevices:
-> >>>>      - GPIO
-> >>>>      - HWMON
-> >>>>
-> >>>>This patch adds documentation for the Altera A10-SR DT bindings.
-> >>>>
-> >>>>Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
-> >>>>---
-> >>>>  .../devicetree/bindings/mfd/altera-a10sr.txt       |   35 +++++=
-+++++++++++++++
-> >>>>  1 file changed, 35 insertions(+)
-> >>>>  create mode 100644 Documentation/devicetree/bindings/mfd/altera=
--a10sr.txt
-> >>>>
-> >>>>diff --git a/Documentation/devicetree/bindings/mfd/altera-a10sr.t=
-xt b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-> >>>>new file mode 100644
-> >>>>index 0000000..564c761
-> >>>>--- /dev/null
-> >>>>+++ b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-> >>>>@@ -0,0 +1,35 @@
-> >>>>+* Altera Arria10 Development Kit System Resource Chip
-> >>>>+
-> >>>>+Required parent device properties:
-> >>>>+- compatible : "altr,altr_a10sr"
-> >>>>+- spi-max-frequency : Maximum SPI frequency.
-> >>>>+- reg : the SPI Chip Select address for the Arria10 System Resou=
-rce chip
-> >
-> >[...]
-> >
-> >>>>+		a10sr_hwmon: a10sr_hwmon {
-> >>>
-> >>>Device type only please.
-> >>>
-> >>I need to revisit where this will live (hwmon does not seem to be
-> >>the correct place) so it will change but I can follow the format
-> >>above if it is correct.
-> >
-> >BTW, "hwmon" is a subsystem in Linux, therefore is a Linuxism and is
-> >not allowed in DT.  What does the device *actually* do?
-> >
->=20
-> OK. I'll be careful not to introduce the Linux subsystem name.
->=20
-> This module indicates whether the power supplies are at the correct
-> voltage. It uses a boolean instead of giving an actual voltage value
-> as required by HWMON. In other words it is a comparator instead of
-> an Analog-to-Digital Converter.
->=20
-> I could call it a power supply supervisor or voltage status monitor
-> but it only acts in a passive role. There is no output to trigger an
-> error - only polling, so supervisor doesn't seem like a good name.
->=20
-> Maybe something like this?
->=20
-> 	power_supply_status {
-> 		compatible =3D "altr,a10sr-hwmon";
-> 	}
->=20
-> Thanks for reviewing and helping me figure out the device tree naming=
-=2E
+Sorry for the late reply, I was off last week.
 
-Does it have its own address space?  How complex is the device?  Not
-very, by the sounds of it.  In which case, does it really need its own
-driver?
+2016-04-08 11:38 GMT+02:00 Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>:
+> On Thu, Mar 31, 2016 at 5:09 PM, Maxime Coquelin
+> <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>
+>> +static void stm32_irq_handler(struct irq_desc *desc)
+>> +{
+>> +       struct irq_domain *domain = irq_desc_get_handler_data(desc);
+>> +       struct irq_chip_generic *gc = domain->gc->gc[0];
+>> +       struct irq_chip *chip = irq_desc_get_chip(desc);
+>> +       unsigned long pending;
+>> +       int n;
+>> +
+>> +       chained_irq_enter(chip, desc);
+>> +
+>> +       pending = irq_reg_readl(gc, EXTI_PR);
+>> +       for_each_set_bit(n, &pending, BITS_PER_LONG) {
+>> +               generic_handle_irq(irq_find_mapping(domain, n));
+>> +       }
+>> +
+>> +       chained_irq_exit(chip, desc);
+>> +}
+>
+> Is this one of those cases where you should re-read the status register
+> on every iteration, so as to avoid exiting and immediately re-entering
+> the irq handler?
+>
+> C.g irq-vic.c:
+>
+> static int handle_one_vic(struct vic_device *vic, struct pt_regs *regs)
+> {
+>         u32 stat, irq;
+>         int handled = 0;
+>
+>         while ((stat = readl_relaxed(vic->base + VIC_IRQ_STATUS))) {
+>                 irq = ffs(stat) - 1;
+>                 handle_domain_irq(vic->domain, irq, regs);
+>                 handled = 1;
+>         }
+>
+>         return handled;
+> }
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Indeed, it would be better doing it like this.
+Do you think I could even do this with two nested loops to reduce the
+number of reg accesses?
+It would look like this (just compiled, not tested):
+
+static void stm32_irq_handler(struct irq_desc *desc)
+{
+    struct irq_domain *domain = irq_desc_get_handler_data(desc);
+    struct irq_chip_generic *gc = domain->gc->gc[0];
+    struct irq_chip *chip = irq_desc_get_chip(desc);
+    unsigned long pending;
+    int n;
+
+    chained_irq_enter(chip, desc);
+
+    while ((pending = irq_reg_readl(gc, EXTI_PR))) {
+        for_each_set_bit(n, &pending, BITS_PER_LONG) {
+            generic_handle_irq(irq_find_mapping(domain, n));
+        }
+    }
+
+    chained_irq_exit(chip, desc);
+}
+
+Thanks,
+Maxime
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
