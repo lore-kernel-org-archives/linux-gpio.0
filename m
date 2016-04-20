@@ -1,45 +1,31 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 1/1] pinctrl: core: Fix build error due to devm_pinctrl_dev_match()
-Date: Wed, 20 Apr 2016 22:47:53 +0530
-Message-ID: <1461172673-29500-1-git-send-email-ldewangan@nvidia.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
+Subject: Re: [PATCH 22/23] xtensa: remove ARCH_WANT_OPTIONAL_GPIOLIB
+Date: Wed, 20 Apr 2016 22:00:32 +0300
+Message-ID: <CAMo8BfLq8iCDYh_ecwuKyEsNZZdg1NqWZMSn7oLHhSAv=X6maw@mail.gmail.com>
+References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
+	<1461142701-21096-23-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:13874 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751515AbcDTR3e (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Apr 2016 13:29:34 -0400
+Received: from mail-io0-f173.google.com ([209.85.223.173]:36808 "EHLO
+	mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751747AbcDTTAd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Apr 2016 15:00:33 -0400
+Received: by mail-io0-f173.google.com with SMTP id u185so62396964iod.3
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Apr 2016 12:00:33 -0700 (PDT)
+In-Reply-To: <1461142701-21096-23-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>, Chris Zankel <chris@zankel.net>, "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>
 
-The closing bracket missing from final patch which causes the
-build break. Correcting the function.
+On Wed, Apr 20, 2016 at 11:58 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> This symbols is not needed to get access to selecting the
+> GPIOLIB anymore: any arch can select GPIOLIB.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Acked-by: Max Filippov <jcmvbkbc@gmail.com>
 
----
-This may be happend by mistake when applyign the pathces for git hub from
-test branch to devm_pinctrl branch.
-This is happening on devel branch of pinctrl subsystem.
----
- drivers/pinctrl/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 21df52e..98d2a1b 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1883,7 +1883,7 @@ static int devm_pinctrl_dev_match(struct device *dev, void *res, void *data)
- {
- 	struct pctldev **r = res;
- 
--	if (WARN_ON(!r || !*r)
-+	if (WARN_ON(!r || !*r))
- 		return 0;
- 
- 	return *r == data;
 -- 
-2.1.4
-
+Thanks.
+-- Max
