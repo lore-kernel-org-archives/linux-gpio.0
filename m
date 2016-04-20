@@ -1,55 +1,94 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 0/8] STMPE fixes/rework and add STMPE1600 support
-Date: Wed, 20 Apr 2016 10:02:59 -0600
-Message-ID: <5717A833.3020304@wwwdotorg.org>
-References: <1461068317-28016-1-git-send-email-patrice.chotard@st.com>
- <5716545D.9080006@wwwdotorg.org> <5717325F.6080808@st.com>
+From: Alan Tull <delicious.quinoa@gmail.com>
+Subject: Re: [PATCH v9 0/3] gpio: dwapb: add gpio-signaled acpi event support
+ for power button
+Date: Wed, 20 Apr 2016 11:10:09 -0500
+Message-ID: <CANk1AXQNe160XkSH4zLWKRN4d92=25=-Hn1jkwVzsQXiUvSnCA@mail.gmail.com>
+References: <1461136429-85114-1-git-send-email-qiujiang@huawei.com>
+	<CAHp75VfW=07SQdR3rH1gh0Q-CEBkBDrdNgoeYKc7QGbVB6THfw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5717325F.6080808@st.com>
+In-Reply-To: <CAHp75VfW=07SQdR3rH1gh0Q-CEBkBDrdNgoeYKc7QGbVB6THfw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Patrice Chotard <patrice.chotard@st.com>
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, thierry.reding@gmail.com
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jiang Qiu <qiujiang@huawei.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Jamie Iles <jamie@jamieiles.com>, charles.chenxin@huawei.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com
 List-Id: linux-gpio@vger.kernel.org
 
-On 04/20/2016 01:40 AM, Patrice Chotard wrote:
-> On 04/19/2016 05:53 PM, Stephen Warren wrote:
->> On 04/19/2016 06:18 AM, patrice.chotard@st.com wrote:
->>> From: Patrice Chotard <patrice.chotard@st.com>
->>>
->>> This series cleans and fixes some bugs in MFD/GPIO STMPE drivers and
->>> prepare
->>>   the ground to add new STMPE1600 support.
->>>
->>> STMPE1600 datasheet is available here :
->>> http://www2.st.com/content/st_com/en/products/interfaces-and-transceivers/
->>>
->>> i-o-expanders-and-level-translators/i-o-expanders/stmpe1600.html
->>>
->>> Only STMPE1600 has been tested on STM32 platform. As i have no board
->>> with
->>> others STMPE
->>> variant(STMPE610/STMPE801/STMPE811/STMPE1601/STMPE1801/STMPE2401
->>> and STMPE2403), i put in CC boards's maintainers which are using
->>> others STMPE variant.
->>>
->>> If they can kindly check that no regression has been introduce by
->>> this series
+On Wed, Apr 20, 2016 at 8:06 AM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Wed, Apr 20, 2016 at 10:13 AM, Jiang Qiu <qiujiang@huawei.com> wrote:
+>> This patchset adds gpio-signaled acpi events support for power button on hisilicon
+>> D02 board.
 >>
->>> For TEGRA ARCHITECTURE SUPPORT
->>>     _ Stephen Warren <swarren@wwwdotorg.org>
->>>     _ Thierry Reding <thierry.reding@gmail.com>
->>>     _ Alexandre Courbot <gnurou@gmail.com>
+>> The three patches respectively:
+>>         - remove name from dwapb_port_property
+>>         - convert device node to fwnode
+>>         - add gpio-signaled acpi event support
 >>
->> I don't know what STMPE is, and I don't believe it is used on Tegra;
->> what makes you think it is?
-...
-> I put you in copy as STMPE811 is used on tegra30-apalis and
-> tegra30-colibri platforms.
+>>    This patchset is based on
+>>    https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+>>    branch "devel"
+>>
+>> Changes v8 -> v9:
+>>    - fixed a low-level compile warning
+>
+> Please, don't send updates to often. You see, now I noticed one more
+> thing you have to address.
+> Usually the time between fixup series is something like 24h. Thus,
+> waiting for v10 at least tomorrow or even next week.
+>
+> Linus, for my point of view next version should be fine and final. The
+> current code is in a good shape already.
 
-Ah. You'd best contact the individual board owners, since those are 
-3rd-party Tegra boards and I don't believe anyone at NVIDIA has them to 
-test with etc. I added likely candidates to Cc and dropped all the 
-individuals unrelated to Tegra to keep the CC list low.
+Reviewed, tested v9, looks good.
+
+Alan Tull
+
+
+>
+>>
+>> Changes v7 -> v8:
+>>    - fixed few minors
+>>
+>> Changes v6 -> v7:
+>>    - add patch1 by Alan's suggestion
+>>
+>> Changes v5 -> v6:
+>>    - merge patch 2~3 to one patch
+>>    - small fixed from Alan's suggestion
+>>    - fixed subject title reference commit history
+>>
+>> Changes v4 -> v5:
+>>    - split into three patchs
+>>    - add Andy's ACKs
+>>
+>> Changes v3 -> v4:
+>>    - re-organize this two patchs by Andy's suggestion
+>>
+>> Changes v2 -> v3:
+>>    - fixed the build error reported by Kbuild test robot
+>>
+>> Changes v1 -> v2:
+>>    - rebase to branch "devel" of Linus Walleij's repository
+>>    - split in two patch as suggested by Andy S
+>>    - add Mika's ACKs
+>>
+>> Jiang Qiu (3):
+>>   gpio: dwapb: remove name from dwapb_port_property
+>>   gpio: dwapb: convert device node to fwnode
+>>   gpio: dwapb: add gpio-signaled acpi event support
+>>
+>>  drivers/gpio/gpio-dwapb.c                | 78 +++++++++++++++++++-------------
+>>  drivers/mfd/intel_quark_i2c_gpio.c       |  3 +-
+>>  include/linux/platform_data/gpio-dwapb.h |  3 +-
+>>  3 files changed, 48 insertions(+), 36 deletions(-)
+>>
+>> --
+>> 1.9.1
+>>
+>
+>
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
