@@ -1,31 +1,116 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 2/3] gpio: tegra: Remove the need of keeping device handle
- for gpio driver
-Date: Wed, 20 Apr 2016 10:16:15 +0900
-Message-ID: <CAAVeFuLdaHhfYxDgPCE3joLRXkZMfDGOzEoDwGNy1bfcQTpw3Q@mail.gmail.com>
-References: <1460969178-20914-1-git-send-email-ldewangan@nvidia.com> <1460969178-20914-2-git-send-email-ldewangan@nvidia.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource
+ Chip bindings
+Date: Tue, 19 Apr 2016 18:48:35 -0700
+Message-ID: <5716DFF3.6080905@roeck-us.net>
+References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
+ <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
+ <20160330113532.GI3323@x1> <57111E8B.1040503@opensource.altera.com>
+ <20160418074540.GB3346@x1> <5714F942.5040309@opensource.altera.com>
+ <20160419072358.GB3222@x1> <571642DA.2060903@opensource.altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:36759 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752096AbcDTBQg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Apr 2016 21:16:36 -0400
-In-Reply-To: <1460969178-20914-2-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-hwmon-owner@vger.kernel.org>
+In-Reply-To: <571642DA.2060903@opensource.altera.com>
+Sender: linux-hwmon-owner@vger.kernel.org
+To: tthayer@opensource.altera.com, Lee Jones <lee.jones@linaro.org>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Mon, Apr 18, 2016 at 5:46 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
-> Remove the file static device handle variable as this is just
-> required for prints. The required handle can be stored in
-> tegra_gpio_chip and hence it become redundancy.
+On 04/19/2016 07:38 AM, Thor Thayer wrote:
+>
+>
+> On 04/19/2016 02:23 AM, Lee Jones wrote:
+>> On Mon, 18 Apr 2016, Thor Thayer wrote:
+>>
+>>> Hi Lee,
+>>>
+>>> On 04/18/2016 02:45 AM, Lee Jones wrote:
+>>>> On Fri, 15 Apr 2016, Thor Thayer wrote:
+>>>>> On 03/30/2016 06:35 AM, Lee Jones wrote:
+>>>>>> On Tue, 29 Mar 2016, tthayer@opensource.altera.com wrote:
+>>>>>>
+>>>>>>> From: Thor Thayer <tthayer@opensource.altera.com>
+>>>>>>>
+>>>>>>> The Altera Arria10 Devkit System Resource chip is a Multi-Function
+>>>>>>> Device, it has two subdevices:
+>>>>>>>       - GPIO
+>>>>>>>       - HWMON
+>>>>>>>
+>>>>>>> This patch adds documentation for the Altera A10-SR DT bindings.
+>>>>>>>
+>>>>>>> Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
+>>>>>>> ---
+>>>>>>>   .../devicetree/bindings/mfd/altera-a10sr.txt       |   35 ++++++++++++++++++++
+>>>>>>>   1 file changed, 35 insertions(+)
+>>>>>>>   create mode 100644 Documentation/devicetree/bindings/mfd/altera-a10sr.txt
+>>>>>>>
+>>>>>>> diff --git a/Documentation/devicetree/bindings/mfd/altera-a10sr.txt b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
+>>>>>>> new file mode 100644
+>>>>>>> index 0000000..564c761
+>>>>>>> --- /dev/null
+>>>>>>> +++ b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
+>>>>>>> @@ -0,0 +1,35 @@
+>>>>>>> +* Altera Arria10 Development Kit System Resource Chip
+>>>>>>> +
+>>>>>>> +Required parent device properties:
+>>>>>>> +- compatible : "altr,altr_a10sr"
+>>>>>>> +- spi-max-frequency : Maximum SPI frequency.
+>>>>>>> +- reg : the SPI Chip Select address for the Arria10 System Resource chip
+>>>>
+>>>> [...]
+>>>>
+>>>>>>> +        a10sr_hwmon: a10sr_hwmon {
+>>>>>>
+>>>>>> Device type only please.
+>>>>>>
+>>>>> I need to revisit where this will live (hwmon does not seem to be
+>>>>> the correct place) so it will change but I can follow the format
+>>>>> above if it is correct.
+>>>>
+>>>> BTW, "hwmon" is a subsystem in Linux, therefore is a Linuxism and is
+>>>> not allowed in DT.  What does the device *actually* do?
+>>>>
+>>>
+>>> OK. I'll be careful not to introduce the Linux subsystem name.
+>>>
+>>> This module indicates whether the power supplies are at the correct
+>>> voltage. It uses a boolean instead of giving an actual voltage value
+>>> as required by HWMON. In other words it is a comparator instead of
+>>> an Analog-to-Digital Converter.
+>>>
+>>> I could call it a power supply supervisor or voltage status monitor
+>>> but it only acts in a passive role. There is no output to trigger an
+>>> error - only polling, so supervisor doesn't seem like a good name.
+>>>
+>>> Maybe something like this?
+>>>
+>>>     power_supply_status {
+>>>         compatible = "altr,a10sr-hwmon";
+>>>     }
+>>>
+>>> Thanks for reviewing and helping me figure out the device tree naming.
+>>
+>> Does it have its own address space?  How complex is the device?  Not
+>> very, by the sounds of it.  In which case, does it really need its own
+>> driver?
+>>
+> Yes, you are correct that the voltage status is not very complex but I'd need a driver to expose these signals.
+>
 
-Small but still worthy change. "dev" in the file's global namespace is
-scary and prone to conflict with local variables declarations.
+A completely different option might be to expose the signals as gpio pins.
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+Guenter
 
-Now I hope you will take care of "regs" and the other static variables
-as Stephen rightfully suggested. :)
+> I initially started with an MFD because it was similar to the other MFD drivers. The device has GPI, GPO, voltage status, device enables, device present indications, and device resets.
+>
+> There is a discussion now on where the voltage status driver should live (iio/ , hwmon/, misc/). It isn't clear to me where the device enables, device present indications and voltage status would go. I'm leaning toward a driver in the misc/ directory that would cover all of these. In that case, this wouldn't be a MFD driver.
+>
+> Any thoughts or suggestions?
+>
+> Thanks,
+>
+> Thor
+>
+
