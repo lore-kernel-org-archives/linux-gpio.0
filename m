@@ -1,116 +1,87 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [RFC 1/8] dt-bindings: mfd: Add Altera Arria10 System Resource
- Chip bindings
-Date: Tue, 19 Apr 2016 18:48:35 -0700
-Message-ID: <5716DFF3.6080905@roeck-us.net>
-References: <1459278791-3646-1-git-send-email-tthayer@opensource.altera.com>
- <1459278791-3646-2-git-send-email-tthayer@opensource.altera.com>
- <20160330113532.GI3323@x1> <57111E8B.1040503@opensource.altera.com>
- <20160418074540.GB3346@x1> <5714F942.5040309@opensource.altera.com>
- <20160419072358.GB3222@x1> <571642DA.2060903@opensource.altera.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-hwmon-owner@vger.kernel.org>
-In-Reply-To: <571642DA.2060903@opensource.altera.com>
-Sender: linux-hwmon-owner@vger.kernel.org
-To: tthayer@opensource.altera.com, Lee Jones <lee.jones@linaro.org>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: [PATCH v2] pinctrl-exynos5440: Use off-stack memory for pinctrl_gpio_range
+Date: Wed, 20 Apr 2016 11:24:17 +0930
+Message-ID: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 04/19/2016 07:38 AM, Thor Thayer wrote:
->
->
-> On 04/19/2016 02:23 AM, Lee Jones wrote:
->> On Mon, 18 Apr 2016, Thor Thayer wrote:
->>
->>> Hi Lee,
->>>
->>> On 04/18/2016 02:45 AM, Lee Jones wrote:
->>>> On Fri, 15 Apr 2016, Thor Thayer wrote:
->>>>> On 03/30/2016 06:35 AM, Lee Jones wrote:
->>>>>> On Tue, 29 Mar 2016, tthayer@opensource.altera.com wrote:
->>>>>>
->>>>>>> From: Thor Thayer <tthayer@opensource.altera.com>
->>>>>>>
->>>>>>> The Altera Arria10 Devkit System Resource chip is a Multi-Function
->>>>>>> Device, it has two subdevices:
->>>>>>>       - GPIO
->>>>>>>       - HWMON
->>>>>>>
->>>>>>> This patch adds documentation for the Altera A10-SR DT bindings.
->>>>>>>
->>>>>>> Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
->>>>>>> ---
->>>>>>>   .../devicetree/bindings/mfd/altera-a10sr.txt       |   35 ++++++++++++++++++++
->>>>>>>   1 file changed, 35 insertions(+)
->>>>>>>   create mode 100644 Documentation/devicetree/bindings/mfd/altera-a10sr.txt
->>>>>>>
->>>>>>> diff --git a/Documentation/devicetree/bindings/mfd/altera-a10sr.txt b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
->>>>>>> new file mode 100644
->>>>>>> index 0000000..564c761
->>>>>>> --- /dev/null
->>>>>>> +++ b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
->>>>>>> @@ -0,0 +1,35 @@
->>>>>>> +* Altera Arria10 Development Kit System Resource Chip
->>>>>>> +
->>>>>>> +Required parent device properties:
->>>>>>> +- compatible : "altr,altr_a10sr"
->>>>>>> +- spi-max-frequency : Maximum SPI frequency.
->>>>>>> +- reg : the SPI Chip Select address for the Arria10 System Resource chip
->>>>
->>>> [...]
->>>>
->>>>>>> +        a10sr_hwmon: a10sr_hwmon {
->>>>>>
->>>>>> Device type only please.
->>>>>>
->>>>> I need to revisit where this will live (hwmon does not seem to be
->>>>> the correct place) so it will change but I can follow the format
->>>>> above if it is correct.
->>>>
->>>> BTW, "hwmon" is a subsystem in Linux, therefore is a Linuxism and is
->>>> not allowed in DT.  What does the device *actually* do?
->>>>
->>>
->>> OK. I'll be careful not to introduce the Linux subsystem name.
->>>
->>> This module indicates whether the power supplies are at the correct
->>> voltage. It uses a boolean instead of giving an actual voltage value
->>> as required by HWMON. In other words it is a comparator instead of
->>> an Analog-to-Digital Converter.
->>>
->>> I could call it a power supply supervisor or voltage status monitor
->>> but it only acts in a passive role. There is no output to trigger an
->>> error - only polling, so supervisor doesn't seem like a good name.
->>>
->>> Maybe something like this?
->>>
->>>     power_supply_status {
->>>         compatible = "altr,a10sr-hwmon";
->>>     }
->>>
->>> Thanks for reviewing and helping me figure out the device tree naming.
->>
->> Does it have its own address space?  How complex is the device?  Not
->> very, by the sounds of it.  In which case, does it really need its own
->> driver?
->>
-> Yes, you are correct that the voltage status is not very complex but I'd need a driver to expose these signals.
->
+The range is registered into a linked list which can be referenced
+throughout the lifetime of the driver. Ensure the range's memory is useful
+for the same lifetime by adding it to the driver's private data structure.
 
-A completely different option might be to expose the signals as gpio pins.
+The bug was introduced in the driver's initial commit, which was present in
+v3.10.
 
-Guenter
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC")
+Cc: stable@vger.kernel.org
+---
+Since v1:
 
-> I initially started with an MFD because it was similar to the other MFD drivers. The device has GPI, GPO, voltage status, device enables, device present indications, and device resets.
->
-> There is a discussion now on where the voltage status driver should live (iio/ , hwmon/, misc/). It isn't clear to me where the device enables, device present indications and voltage status would go. I'm leaning toward a driver in the misc/ directory that would cover all of these. In that case, this wouldn't be a MFD driver.
->
-> Any thoughts or suggestions?
->
-> Thanks,
->
-> Thor
->
+* Add range member kerneldoc addressing Tomasz Figa's comment
 
+This is my first contribution to the kernel, so hopefully I've followed all the
+relevant documentation. If not, please let me know and point me in the right
+direction!
+
+I don't have the means to test the patch, but it compiles. Someone with
+appropriate hardware should probably give it a spin. From the responses it
+seems that few might have access, and given the nature of the bug it might be
+the case that no-one has complained because no-one is affected - is it worth
+maintaining going forward?
+
+ drivers/pinctrl/samsung/pinctrl-exynos5440.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+index 00ab63abf1d9..dbbdf652c34a 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+@@ -107,6 +107,7 @@ struct exynos5440_pmx_func {
+  * @nr_groups: number of pin groups available.
+  * @pmx_functions: list of pin functions parsed from device tree.
+  * @nr_functions: number of pin functions available.
++ * @range: gpio range to register with pinctrl
+  */
+ struct exynos5440_pinctrl_priv_data {
+ 	void __iomem			*reg_base;
+@@ -117,6 +118,7 @@ struct exynos5440_pinctrl_priv_data {
+ 	unsigned int			nr_groups;
+ 	const struct exynos5440_pmx_func	*pmx_functions;
+ 	unsigned int			nr_functions;
++	struct pinctrl_gpio_range	range;
+ };
+ 
+ /**
+@@ -742,7 +744,6 @@ static int exynos5440_pinctrl_register(struct platform_device *pdev,
+ 	struct pinctrl_desc *ctrldesc;
+ 	struct pinctrl_dev *pctl_dev;
+ 	struct pinctrl_pin_desc *pindesc, *pdesc;
+-	struct pinctrl_gpio_range grange;
+ 	char *pin_names;
+ 	int pin, ret;
+ 
+@@ -794,12 +795,12 @@ static int exynos5440_pinctrl_register(struct platform_device *pdev,
+ 		return PTR_ERR(pctl_dev);
+ 	}
+ 
+-	grange.name = "exynos5440-pctrl-gpio-range";
+-	grange.id = 0;
+-	grange.base = 0;
+-	grange.npins = EXYNOS5440_MAX_PINS;
+-	grange.gc = priv->gc;
+-	pinctrl_add_gpio_range(pctl_dev, &grange);
++	priv->range.name = "exynos5440-pctrl-gpio-range";
++	priv->range.id = 0;
++	priv->range.base = 0;
++	priv->range.npins = EXYNOS5440_MAX_PINS;
++	priv->range.gc = priv->gc;
++	pinctrl_add_gpio_range(pctl_dev, &priv->range);
+ 	return 0;
+ }
+ 
+-- 
+2.5.0
