@@ -1,30 +1,25 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 20/23] nios2: remove ARCH_WANT_OPTIONAL_GPIOLIB
-Date: Wed, 20 Apr 2016 10:58:18 +0200
-Message-ID: <1461142701-21096-21-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 17/23] ia64: remove ARCH_WANT_OPTIONAL_GPIOLIB
+Date: Wed, 20 Apr 2016 10:58:15 +0200
+Message-ID: <1461142701-21096-18-git-send-email-linus.walleij@linaro.org>
 References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:36716 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932850AbcDTI7O (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Apr 2016 04:59:14 -0400
-Received: by mail-lf0-f48.google.com with SMTP id g184so36664990lfb.3
-        for <linux-gpio@vger.kernel.org>; Wed, 20 Apr 2016 01:59:13 -0700 (PDT)
+Return-path: <linux-ia64-owner@vger.kernel.org>
 In-Reply-To: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-ia64-owner@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?Michael=20B=C3=BCsch?= <m@bues.ch>, Ley Foon Tan <lftan@altera.com>, nios2-dev@lists.rocketboards.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?Michael=20B=C3=BCsch?= <m@bues.ch>, Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
 This symbols is not needed to get access to selecting the
 GPIOLIB anymore: any arch can select GPIOLIB.
 
 Cc: Michael B=C3=BCsch <m@bues.ch>
-Cc: Ley Foon Tan <lftan@altera.com>
-Cc: nios2-dev@lists.rocketboards.org
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: linux-ia64@vger.kernel.org
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
 Various arch maintainers:
@@ -44,25 +39,26 @@ Select your option from the menu, silence probably means I will
 merge it to the GPIO tree. Unless you are X86 or ARM in which case
 I will be cautious.
 ---
- arch/nios2/Kconfig | 1 -
+ arch/ia64/Kconfig | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/arch/nios2/Kconfig b/arch/nios2/Kconfig
-index 437555424bda..87ca653eb5f3 100644
---- a/arch/nios2/Kconfig
-+++ b/arch/nios2/Kconfig
-@@ -1,6 +1,5 @@
- config NIOS2
- 	def_bool y
+diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
+index b534ebab36ea..b97a4e08fae4 100644
+--- a/arch/ia64/Kconfig
++++ b/arch/ia64/Kconfig
+@@ -38,7 +38,6 @@ config IA64
+ 	select GENERIC_PENDING_IRQ if SMP
+ 	select GENERIC_IRQ_SHOW
+ 	select GENERIC_IRQ_LEGACY
 -	select ARCH_WANT_OPTIONAL_GPIOLIB
- 	select CLKSRC_OF
- 	select GENERIC_ATOMIC64
- 	select GENERIC_CLOCKEVENTS
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+ 	select GENERIC_IOMAP
+ 	select GENERIC_SMP_IDLE_THREAD
 --=20
 2.4.11
 
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+To unsubscribe from this list: send the line "unsubscribe linux-ia64" i=
 n
 the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
