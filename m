@@ -1,26 +1,68 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH v2] pinctrl-exynos5440: Use off-stack memory for
- pinctrl_gpio_range
-Date: Wed, 20 Apr 2016 17:04:21 +0930
-Message-ID: <1461137661.27001.22.camel@aj.id.au>
-References: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
-	 <5717281A.70906@samsung.com>
-Reply-To: andrew@aj.id.au
+From: Patrice Chotard <patrice.chotard@st.com>
+Subject: Re: [PATCH 0/8] STMPE fixes/rework and add STMPE1600 support
+Date: Wed, 20 Apr 2016 09:40:15 +0200
+Message-ID: <5717325F.6080808@st.com>
+References: <1461068317-28016-1-git-send-email-patrice.chotard@st.com>
+ <5716545D.9080006@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <5717281A.70906@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5716545D.9080006@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, maxime.coquelin@st.com, amelie.delaunay@st.com, shawnguo@kernel.org, kernel@pengutronix.de, dinguyen@opensource.altera.com, vireshk@kernel.org, shiraz.linux.kernel@gmail.com, thierry.reding@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 2016-04-20 at 08:56 +0200, Krzysztof Kozlowski wrote:
-> When you resubmit patches (unless there is a significant change in the
-> patch) please always put accumulated tags after existing tags.
 
-Okay, I wasn't sure about that. Thanks for the clarification and I'll
-do so in the future.
 
-Andrew
+On 04/19/2016 05:53 PM, Stephen Warren wrote:
+> On 04/19/2016 06:18 AM, patrice.chotard@st.com wrote:
+>> From: Patrice Chotard <patrice.chotard@st.com>
+>>
+>> This series cleans and fixes some bugs in MFD/GPIO STMPE drivers and 
+>> prepare
+>>   the ground to add new STMPE1600 support.
+>>
+>> STMPE1600 datasheet is available here :
+>> http://www2.st.com/content/st_com/en/products/interfaces-and-transceivers/ 
+>>
+>> i-o-expanders-and-level-translators/i-o-expanders/stmpe1600.html
+>>
+>> Only STMPE1600 has been tested on STM32 platform. As i have no board 
+>> with
+>> others STMPE 
+>> variant(STMPE610/STMPE801/STMPE811/STMPE1601/STMPE1801/STMPE2401
+>> and STMPE2403), i put in CC boards's maintainers which are using 
+>> others STMPE variant.
+>>
+>> If they can kindly check that no regression has been introduce by 
+>> this series
+>
+>> For TEGRA ARCHITECTURE SUPPORT
+>>     _ Stephen Warren <swarren@wwwdotorg.org>
+>>     _ Thierry Reding <thierry.reding@gmail.com>
+>>     _ Alexandre Courbot <gnurou@gmail.com>
+>
+> I don't know what STMPE is, and I don't believe it is used on Tegra; 
+> what makes you think it is?
+
+Hi Stephen
+
+STMPE family is GPIO expander, and for some of them, it includes others 
+fonctionnality:
+     _STMPE811 and STMPE610: touchscreen controller
+     _ STMPE1601, STMPE2401 and STMPE2403: keypad and PWM controller
+     _ STMPE1801: keypad controller
+
+For more informations, some datasheets are available here: 
+http://www2.st.com/content/st_com/en/products/interfaces-and-transceivers/i-o-expanders-and-level-translators/i-o-expanders.html?querycriteria=productId=SC1027
+
+drivers/mfd/stmpe.c and drivers/gpio/gpio-stmpe.c are drivers which 
+support all STMPE variant.
+I put you in copy as STMPE811 is used on tegra30-apalis and 
+tegra30-colibri platforms.
+
+Thanks
+
+Patrice
