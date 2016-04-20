@@ -1,62 +1,70 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2] pinctrl-exynos5440: Use off-stack memory for
- pinctrl_gpio_range
-Date: Wed, 20 Apr 2016 08:56:26 +0200
-Message-ID: <5717281A.70906@samsung.com>
-References: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
+From: Jiang Qiu <qiujiang@huawei.com>
+Subject: [PATCH v9 0/3] gpio: dwapb: add gpio-signaled acpi event support for power button
+Date: Wed, 20 Apr 2016 15:13:46 +0800
+Message-ID: <1461136429-85114-1-git-send-email-qiujiang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-reply-to: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
-Sender: stable-owner@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:45157 "EHLO
+	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753356AbcDTHFI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Apr 2016 03:05:08 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: mika.westerberg@linux.intel.com, andy.shevchenko@gmail.com, delicious.quinoa@gmail.com, jamie@jamieiles.com, charles.chenxin@huawei.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linuxarm@huawei.com, Jiang Qiu <qiujiang@huawei.com>
 
-On 04/20/2016 03:54 AM, Andrew Jeffery wrote:
-> The range is registered into a linked list which can be referenced
-> throughout the lifetime of the driver. Ensure the range's memory is useful
-> for the same lifetime by adding it to the driver's private data structure.
-> 
-> The bug was introduced in the driver's initial commit, which was present in
-> v3.10.
-> 
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC")
-> Cc: stable@vger.kernel.org
-> ---
-> Since v1:
-> 
-> * Add range member kerneldoc addressing Tomasz Figa's comment
-> 
-> This is my first contribution to the kernel, so hopefully I've followed all the
-> relevant documentation. If not, please let me know and point me in the right
-> direction!
-> 
-> I don't have the means to test the patch, but it compiles. Someone with
-> appropriate hardware should probably give it a spin. From the responses it
-> seems that few might have access, and given the nature of the bug it might be
-> the case that no-one has complained because no-one is affected - is it worth
-> maintaining going forward?
-> 
->  drivers/pinctrl/samsung/pinctrl-exynos5440.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
+This patchset adds gpio-signaled acpi events support for power button on hisilicon
+D02 board.
 
-Thank you for your contribution. You already received positive feedback
-on v1 of this patch: Tomasz acked it ("acked-by") and I reviewed it
-("reviewed-by"). These are called "tags".
+The three patches respectively:
+        - remove name from dwapb_port_property
+	- convert device node to fwnode
+        - add gpio-signaled acpi event support
 
-When you resubmit patches (unless there is a significant change in the
-patch) please always put accumulated tags after existing tags. Usually
-after signed-off-by, in this case after Cc-stable, so this would look like:
+   This patchset is based on
+   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+   branch "devel"
 
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for
-Samsung EXYNOS5440 SoC")
-Cc: stable@vger.kernel.org
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Changes v8 -> v9:
+   - fixed a low-level compile warning
 
-Best regards,
-Krzysztof
+Changes v7 -> v8:
+   - fixed few minors
+
+Changes v6 -> v7:
+   - add patch1 by Alan's suggestion
+
+Changes v5 -> v6:
+   - merge patch 2~3 to one patch
+   - small fixed from Alan's suggestion
+   - fixed subject title reference commit history
+
+Changes v4 -> v5:
+   - split into three patchs
+   - add Andy's ACKs
+   
+Changes v3 -> v4:
+   - re-organize this two patchs by Andy's suggestion
+
+Changes v2 -> v3:
+   - fixed the build error reported by Kbuild test robot
+
+Changes v1 -> v2: 
+   - rebase to branch "devel" of Linus Walleij's repository
+   - split in two patch as suggested by Andy S
+   - add Mika's ACKs
+
+Jiang Qiu (3):
+  gpio: dwapb: remove name from dwapb_port_property
+  gpio: dwapb: convert device node to fwnode
+  gpio: dwapb: add gpio-signaled acpi event support
+
+ drivers/gpio/gpio-dwapb.c                | 78 +++++++++++++++++++-------------
+ drivers/mfd/intel_quark_i2c_gpio.c       |  3 +-
+ include/linux/platform_data/gpio-dwapb.h |  3 +-
+ 3 files changed, 48 insertions(+), 36 deletions(-)
+
+-- 
+1.9.1
+
