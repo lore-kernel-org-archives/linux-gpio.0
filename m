@@ -1,68 +1,68 @@
-From: Patrice Chotard <patrice.chotard@st.com>
-Subject: Re: [PATCH 0/8] STMPE fixes/rework and add STMPE1600 support
-Date: Wed, 20 Apr 2016 09:40:15 +0200
-Message-ID: <5717325F.6080808@st.com>
-References: <1461068317-28016-1-git-send-email-patrice.chotard@st.com>
- <5716545D.9080006@wwwdotorg.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2] pinctrl-exynos5440: Use off-stack memory for pinctrl_gpio_range
+Date: Wed, 20 Apr 2016 17:33:45 +0900
+Message-ID: <CA+Ln22GOBfOfZNJH_3eyPLmmkt3hWGcUG=w27YUb4H2CbFzgcg@mail.gmail.com>
+References: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
+	<5717281A.70906@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5716545D.9080006@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, maxime.coquelin@st.com, amelie.delaunay@st.com, shawnguo@kernel.org, kernel@pengutronix.de, dinguyen@opensource.altera.com, vireshk@kernel.org, shiraz.linux.kernel@gmail.com, thierry.reding@gmail.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f174.google.com ([209.85.220.174]:33195 "EHLO
+	mail-qk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752775AbcDTIdr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Apr 2016 04:33:47 -0400
+In-Reply-To: <5717281A.70906@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Andrew Jeffery <andrew@aj.id.au>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
 
-
-
-On 04/19/2016 05:53 PM, Stephen Warren wrote:
-> On 04/19/2016 06:18 AM, patrice.chotard@st.com wrote:
->> From: Patrice Chotard <patrice.chotard@st.com>
+2016-04-20 15:56 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
+> On 04/20/2016 03:54 AM, Andrew Jeffery wrote:
+>> The range is registered into a linked list which can be referenced
+>> throughout the lifetime of the driver. Ensure the range's memory is useful
+>> for the same lifetime by adding it to the driver's private data structure.
 >>
->> This series cleans and fixes some bugs in MFD/GPIO STMPE drivers and 
->> prepare
->>   the ground to add new STMPE1600 support.
+>> The bug was introduced in the driver's initial commit, which was present in
+>> v3.10.
 >>
->> STMPE1600 datasheet is available here :
->> http://www2.st.com/content/st_com/en/products/interfaces-and-transceivers/ 
+>> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+>> Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC")
+>> Cc: stable@vger.kernel.org
+>> ---
+>> Since v1:
 >>
->> i-o-expanders-and-level-translators/i-o-expanders/stmpe1600.html
+>> * Add range member kerneldoc addressing Tomasz Figa's comment
 >>
->> Only STMPE1600 has been tested on STM32 platform. As i have no board 
->> with
->> others STMPE 
->> variant(STMPE610/STMPE801/STMPE811/STMPE1601/STMPE1801/STMPE2401
->> and STMPE2403), i put in CC boards's maintainers which are using 
->> others STMPE variant.
+>> This is my first contribution to the kernel, so hopefully I've followed all the
+>> relevant documentation. If not, please let me know and point me in the right
+>> direction!
 >>
->> If they can kindly check that no regression has been introduce by 
->> this series
+>> I don't have the means to test the patch, but it compiles. Someone with
+>> appropriate hardware should probably give it a spin. From the responses it
+>> seems that few might have access, and given the nature of the bug it might be
+>> the case that no-one has complained because no-one is affected - is it worth
+>> maintaining going forward?
+>>
+>>  drivers/pinctrl/samsung/pinctrl-exynos5440.c | 15 ++++++++-------
+>>  1 file changed, 8 insertions(+), 7 deletions(-)
 >
->> For TEGRA ARCHITECTURE SUPPORT
->>     _ Stephen Warren <swarren@wwwdotorg.org>
->>     _ Thierry Reding <thierry.reding@gmail.com>
->>     _ Alexandre Courbot <gnurou@gmail.com>
+> Thank you for your contribution. You already received positive feedback
+> on v1 of this patch: Tomasz acked it ("acked-by") and I reviewed it
+> ("reviewed-by"). These are called "tags".
 >
-> I don't know what STMPE is, and I don't believe it is used on Tegra; 
-> what makes you think it is?
+> When you resubmit patches (unless there is a significant change in the
+> patch) please always put accumulated tags after existing tags. Usually
+> after signed-off-by, in this case after Cc-stable, so this would look like:
+>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for
+> Samsung EXYNOS5440 SoC")
+> Cc: stable@vger.kernel.org
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hi Stephen
+In any case, I think this is ready for applying with the tags above. Thanks.
 
-STMPE family is GPIO expander, and for some of them, it includes others 
-fonctionnality:
-     _STMPE811 and STMPE610: touchscreen controller
-     _ STMPE1601, STMPE2401 and STMPE2403: keypad and PWM controller
-     _ STMPE1801: keypad controller
-
-For more informations, some datasheets are available here: 
-http://www2.st.com/content/st_com/en/products/interfaces-and-transceivers/i-o-expanders-and-level-translators/i-o-expanders.html?querycriteria=productId=SC1027
-
-drivers/mfd/stmpe.c and drivers/gpio/gpio-stmpe.c are drivers which 
-support all STMPE variant.
-I put you in copy as STMPE811 is used on tegra30-apalis and 
-tegra30-colibri platforms.
-
-Thanks
-
-Patrice
+Best regards,
+Tomasz
