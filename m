@@ -1,35 +1,38 @@
-From: Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>
-Subject: Re: [PATCH 05/23] avr32: do away with ARCH_REQUIRE_GPIOLIB
-Date: Wed, 20 Apr 2016 11:09:31 +0200
-Message-ID: <20160420090931.GA21027@samfundet.no>
+From: James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 18/23] metag: remove ARCH_WANT_OPTIONAL_GPIOLIB
+Date: Wed, 20 Apr 2016 10:26:02 +0100
+Message-ID: <20160420092602.GX7859@jhogan-linux.le.imgtec.org>
 References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
- <1461142701-21096-6-git-send-email-linus.walleij@linaro.org>
+ <1461142701-21096-19-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cassarossa.samfundet.no ([193.35.52.29]:48606 "EHLO
-	cassarossa.samfundet.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751676AbcDTJJi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Apr 2016 05:09:38 -0400
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="4PR/+zdSfVlxyWed"
+Return-path: <linux-metag-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1461142701-21096-6-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1461142701-21096-19-git-send-email-linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-metag-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael =?utf-8?B?QsO8c2No?= <m@bues.ch>, linux-metag-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Michael =?iso-8859-1?Q?B=FCsch?= <m@bues.ch>, Haavard Skinnemoen <hskinnemoen@gmail.com>
 
-Around Wed 20 Apr 2016 10:58:03 +0200 or thereabout, Linus Walleij wrot=
-e:
-> Replace "select ARCH_REQUIRE_GPIOLIB" with "select GPIOLIB"
-> as this can now be selected directly.
+--4PR/+zdSfVlxyWed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Apr 20, 2016 at 10:58:16AM +0200, Linus Walleij wrote:
+> This symbols is not needed to get access to selecting the
+> GPIOLIB anymore: any arch can select GPIOLIB.
 >=20
-> Cc: Michael B=FCsch <m@bues.ch>
-> Cc: Haavard Skinnemoen <hskinnemoen@gmail.com>
-> Cc: Hans-Christian Egtvedt <egtvedt@samfundet.no>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Michael B=C3=BCsch <m@bues.ch>
+> Cc: James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+> Cc: linux-metag-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-Acked-by: Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>
+Acked-by: James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+
+Thanks
+James
 
 > ---
 > Various arch maintainers:
@@ -40,9 +43,7 @@ Acked-by: Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>
 > ARCH_[WANTS_OPTIONAL|REQUIRES]_GPIOLIB), and you will be able to
 > merge it to your arch trees yourselves for late v4.7
 > (post GPIO tree merge) or for v4.8.
-
-I'll go for this option, thank you (-:
-
+>=20
 > You can also ask me for an immutable branch if you prefer that, I
 > will put the enabling patch on a branch and the patch for your arch
 > on top and ask you to pull it.
@@ -51,26 +52,45 @@ I'll go for this option, thank you (-:
 > merge it to the GPIO tree. Unless you are X86 or ARM in which case
 > I will be cautious.
 > ---
->  arch/avr32/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/metag/Kconfig.soc | 1 -
+>  1 file changed, 1 deletion(-)
 >=20
-> diff --git a/arch/avr32/Kconfig b/arch/avr32/Kconfig
-> index b6878eb64884..18b88779e701 100644
-> --- a/arch/avr32/Kconfig
-> +++ b/arch/avr32/Kconfig
-> @@ -74,7 +74,7 @@ config PLATFORM_AT32AP
->  	select SUBARCH_AVR32B
->  	select MMU
->  	select PERFORMANCE_COUNTERS
-> -	select ARCH_REQUIRE_GPIOLIB
-> +	select GPIOLIB
->  	select GENERIC_ALLOCATOR
->  	select HAVE_FB_ATMEL
---=20
-mvh
-Hans-Christian Noren Egtvedt
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> diff --git a/arch/metag/Kconfig.soc b/arch/metag/Kconfig.soc
+> index 973640f46752..50f979c2b02d 100644
+> --- a/arch/metag/Kconfig.soc
+> +++ b/arch/metag/Kconfig.soc
+> @@ -16,7 +16,6 @@ config META21_FPGA
+> =20
+>  config SOC_TZ1090
+>  	bool "Toumaz Xenif TZ1090 SoC (Comet)"
+> -	select ARCH_WANT_OPTIONAL_GPIOLIB
+>  	select IMGPDC_IRQ
+>  	select METAG_LNKGET_AROUND_CACHE
+>  	select METAG_META21
+> --=20
+> 2.4.11
+>=20
+
+--4PR/+zdSfVlxyWed
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJXF0sqAAoJEGwLaZPeOHZ6SwsP/11CI4SRTCWvZa8jEXdoCUoO
+jeV6CPqzNK6/eoRPW8ct3ir3O5QpoELbHguBCGMHtFkJIc3qDP7AeUCm6xEa+5mn
+v5FNX2AtsyB80iyVlk20P8ePoxOnRvw7pG/58h0m9Ifey8/EkvW0UEIk+DJTfKpd
+en21o1bxIL6N6syLGHHLKEgONWXMuvb+gterK60akE6IgmcQU3p7h15c89ZA5gdJ
++j7FbDqpJm8yrmAfWSlK4Z3+VfaYYP39IpLQQ6XTIf1H9enjnHmNF+SV1OAewSMF
+SJMiT4YUVqdk4u7JpFGkPEtNGA8xhlIO4ZuXe+g4zhsIj8Zw14Vh5tg6Zv3fVmtH
+ESHjx3etmm3eSpISHltUw0O+p/R1fGqUhTRG5E+VHy4aAhSxMBRKiVpx+hMHPuMe
+qSLh1G+b34dfDsD9DpZZZjRs9orS/mIpTfSs+srl0SFw2nyjrXiUyp/ohRXcXnvS
+i094RzFQyjeUbjOeAwkvsXP6Vi4QG4UKHpHrXMFz1MaE1tlRmWI7Na8U65TSqYGx
+4jF9XtcdHVuBNSjSYMLviDaeKSqVP2xE6T2XuO5bU+tTTZcbPieatKWX+8il9w1P
+/s3O/OcobyDKMAYj458VzTq544t79Pn7BTiYWA68fHNIAOrjw9Wtp6E1SpIuWgIU
+Jq7yllbIm6Ehd3e9DI/S
+=i6sG
+-----END PGP SIGNATURE-----
+
+--4PR/+zdSfVlxyWed--
