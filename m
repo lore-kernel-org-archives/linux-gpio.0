@@ -1,54 +1,62 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH 00/50] pinctrl: Add and use devm_ apis for
- pinctrl_{register, unregister}
-Date: Wed, 20 Apr 2016 13:12:05 +0900
-Message-ID: <CAK7LNARUxy_ACa77t7ZZy4NqK6WOoKBqghy8YgyHg2Q0vLiymA@mail.gmail.com>
-References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
-	<CACRpkdZjv2KZ0AtC9oBytmSdS+=T+kC8PoJVt-RawE8Np8p40w@mail.gmail.com>
-	<56D307CC.2050202@nvidia.com>
-	<56E031CA.9010204@nvidia.com>
-	<CACRpkdYQL0HUWuz882RRsSu5hLoS5VcVvpm1LeL1aeJkE_Y0tA@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] pinctrl-exynos5440: Use off-stack memory for
+ pinctrl_gpio_range
+Date: Wed, 20 Apr 2016 08:56:26 +0200
+Message-ID: <5717281A.70906@samsung.com>
+References: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYQL0HUWuz882RRsSu5hLoS5VcVvpm1LeL1aeJkE_Y0tA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Jon Corbet <corbet@lwn.net>, Lee Jones <lee@kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, ARM/Mediatek SoC support <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-reply-to: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
+Sender: stable-owner@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi.
+On 04/20/2016 03:54 AM, Andrew Jeffery wrote:
+> The range is registered into a linked list which can be referenced
+> throughout the lifetime of the driver. Ensure the range's memory is useful
+> for the same lifetime by adding it to the driver's private data structure.
+> 
+> The bug was introduced in the driver's initial commit, which was present in
+> v3.10.
+> 
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC")
+> Cc: stable@vger.kernel.org
+> ---
+> Since v1:
+> 
+> * Add range member kerneldoc addressing Tomasz Figa's comment
+> 
+> This is my first contribution to the kernel, so hopefully I've followed all the
+> relevant documentation. If not, please let me know and point me in the right
+> direction!
+> 
+> I don't have the means to test the patch, but it compiles. Someone with
+> appropriate hardware should probably give it a spin. From the responses it
+> seems that few might have access, and given the nature of the bug it might be
+> the case that no-one has complained because no-one is affected - is it worth
+> maintaining going forward?
+> 
+>  drivers/pinctrl/samsung/pinctrl-exynos5440.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
 
-2016-03-15 17:31 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Wed, Mar 9, 2016 at 3:23 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
->
->>> Pushed the change at:
->>> Branch "devm_pinctrl_register" of
->>> https://github.com/ldewangan/linux-upstream.git.
->>>
->>> Base repo is
->>> for-next of
->>> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
->>>
->>>
->>> If required, I can send the V2 version of list with acks.
->>
->> Let me know if I need to send full series (V2 with collected ack) again or
->> fine to pull it from above location.
->
-> Please collect the ACKs on your branch and ask me to pull it after v4.6-rc1.
-> No need to resend the patches.
->
-> Unfortunately it arrived too late for the merge window, but hey: we got the
-> devm gpiochip in for v4.6.
+Thank you for your contribution. You already received positive feedback
+on v1 of this patch: Tomasz acked it ("acked-by") and I reviewed it
+("reviewed-by"). These are called "tags".
 
+When you resubmit patches (unless there is a significant change in the
+patch) please always put accumulated tags after existing tags. Usually
+after signed-off-by, in this case after Cc-stable, so this would look like:
 
-Not pulled yet?
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for
+Samsung EXYNOS5440 SoC")
+Cc: stable@vger.kernel.org
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-I want to do my development on top of the devm_pinctrl_register series.
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Best regards,
+Krzysztof
