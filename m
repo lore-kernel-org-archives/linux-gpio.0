@@ -1,87 +1,67 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH v2] pinctrl-exynos5440: Use off-stack memory for pinctrl_gpio_range
-Date: Wed, 20 Apr 2016 11:24:17 +0930
-Message-ID: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+From: Jiang Qiu <qiujiang@huawei.com>
+Subject: [PATCH v8 0/3] gpio: dwapb: add gpio-signaled acpi event support for power button
+Date: Wed, 20 Apr 2016 11:31:11 +0800
+Message-ID: <1461123074-64205-1-git-send-email-qiujiang@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from szxga01-in.huawei.com ([58.251.152.64]:26391 "EHLO
+	szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752665AbcDTDXb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Apr 2016 23:23:31 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: mika.westerberg@linux.intel.com, andy.shevchenko@gmail.com, delicious.quinoa@gmail.com, jamie@jamieiles.com, charles.chenxin@huawei.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linuxarm@huawei.com, Jiang Qiu <qiujiang@huawei.com>
 
-The range is registered into a linked list which can be referenced
-throughout the lifetime of the driver. Ensure the range's memory is useful
-for the same lifetime by adding it to the driver's private data structure.
+This patchset adds gpio-signaled acpi events support for power button on hisilicon
+D02 board.
 
-The bug was introduced in the driver's initial commit, which was present in
-v3.10.
+The three patches respectively:
+        - remove name from dwapb_port_property
+	- convert device node to fwnode
+        - add gpio-signaled acpi event support
 
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC")
-Cc: stable@vger.kernel.org
----
-Since v1:
+   This patchset is based on
+   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+   branch "devel"
 
-* Add range member kerneldoc addressing Tomasz Figa's comment
+Changes v7 -> v8:
+   - fixed few minors
 
-This is my first contribution to the kernel, so hopefully I've followed all the
-relevant documentation. If not, please let me know and point me in the right
-direction!
+Changes v6 -> v7:
+   - add patch1 by Alan's suggestion
 
-I don't have the means to test the patch, but it compiles. Someone with
-appropriate hardware should probably give it a spin. From the responses it
-seems that few might have access, and given the nature of the bug it might be
-the case that no-one has complained because no-one is affected - is it worth
-maintaining going forward?
+Changes v5 -> v6:
+   - merge patch 2~3 to one patch
+   - small fixed from Alan's suggestion
+   - fixed subject title reference commit history
 
- drivers/pinctrl/samsung/pinctrl-exynos5440.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+Changes v4 -> v5:
+   - split into three patchs
+   - add Andy's ACKs
+   
+Changes v3 -> v4:
+   - re-organize this two patchs by Andy's suggestion
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-index 00ab63abf1d9..dbbdf652c34a 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-@@ -107,6 +107,7 @@ struct exynos5440_pmx_func {
-  * @nr_groups: number of pin groups available.
-  * @pmx_functions: list of pin functions parsed from device tree.
-  * @nr_functions: number of pin functions available.
-+ * @range: gpio range to register with pinctrl
-  */
- struct exynos5440_pinctrl_priv_data {
- 	void __iomem			*reg_base;
-@@ -117,6 +118,7 @@ struct exynos5440_pinctrl_priv_data {
- 	unsigned int			nr_groups;
- 	const struct exynos5440_pmx_func	*pmx_functions;
- 	unsigned int			nr_functions;
-+	struct pinctrl_gpio_range	range;
- };
- 
- /**
-@@ -742,7 +744,6 @@ static int exynos5440_pinctrl_register(struct platform_device *pdev,
- 	struct pinctrl_desc *ctrldesc;
- 	struct pinctrl_dev *pctl_dev;
- 	struct pinctrl_pin_desc *pindesc, *pdesc;
--	struct pinctrl_gpio_range grange;
- 	char *pin_names;
- 	int pin, ret;
- 
-@@ -794,12 +795,12 @@ static int exynos5440_pinctrl_register(struct platform_device *pdev,
- 		return PTR_ERR(pctl_dev);
- 	}
- 
--	grange.name = "exynos5440-pctrl-gpio-range";
--	grange.id = 0;
--	grange.base = 0;
--	grange.npins = EXYNOS5440_MAX_PINS;
--	grange.gc = priv->gc;
--	pinctrl_add_gpio_range(pctl_dev, &grange);
-+	priv->range.name = "exynos5440-pctrl-gpio-range";
-+	priv->range.id = 0;
-+	priv->range.base = 0;
-+	priv->range.npins = EXYNOS5440_MAX_PINS;
-+	priv->range.gc = priv->gc;
-+	pinctrl_add_gpio_range(pctl_dev, &priv->range);
- 	return 0;
- }
- 
+Changes v2 -> v3:
+   - fixed the build error reported by Kbuild test robot
+
+Changes v1 -> v2: 
+   - rebase to branch "devel" of Linus Walleij's repository
+   - split in two patch as suggested by Andy S
+   - add Mika's ACKs
+
+Jiang Qiu (3):
+  gpio: dwapb: remove name from dwapb_port_property
+  gpio: dwapb: convert device node to fwnode
+  gpio: dwapb: add gpio-signaled acpi event support
+
+ drivers/gpio/gpio-dwapb.c                | 78 +++++++++++++++++++-------------
+ drivers/mfd/intel_quark_i2c_gpio.c       |  3 +-
+ include/linux/platform_data/gpio-dwapb.h |  3 +-
+ 3 files changed, 48 insertions(+), 36 deletions(-)
+
 -- 
-2.5.0
+1.9.1
+
