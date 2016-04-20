@@ -1,96 +1,202 @@
-From: James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 18/23] metag: remove ARCH_WANT_OPTIONAL_GPIOLIB
-Date: Wed, 20 Apr 2016 10:26:02 +0100
-Message-ID: <20160420092602.GX7859@jhogan-linux.le.imgtec.org>
-References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
- <1461142701-21096-19-git-send-email-linus.walleij@linaro.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v9 2/3] gpio: dwapb: convert device node to fwnode
+Date: Wed, 20 Apr 2016 16:04:00 +0300
+Message-ID: <CAHp75Vd7eNH546ZUhzkt30Xi_jFpHMn+seLQXLhuvbwC+g7bsA@mail.gmail.com>
+References: <1461136429-85114-1-git-send-email-qiujiang@huawei.com>
+	<1461136429-85114-3-git-send-email-qiujiang@huawei.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4PR/+zdSfVlxyWed"
-Return-path: <linux-metag-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1461142701-21096-19-git-send-email-linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-metag-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael =?utf-8?B?QsO8c2No?= <m@bues.ch>, linux-metag-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1461136429-85114-3-git-send-email-qiujiang@huawei.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Jiang Qiu <qiujiang@huawei.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Alan Tull <delicious.quinoa@gmail.com>, Jamie Iles <jamie@jamieiles.com>, charles.chenxin@huawei.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com
 List-Id: linux-gpio@vger.kernel.org
 
---4PR/+zdSfVlxyWed
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Apr 20, 2016 at 10:58:16AM +0200, Linus Walleij wrote:
-> This symbols is not needed to get access to selecting the
-> GPIOLIB anymore: any arch can select GPIOLIB.
->=20
-> Cc: Michael B=C3=BCsch <m@bues.ch>
-> Cc: James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
-> Cc: linux-metag-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-
-Acked-by: James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
-
-Thanks
-James
-
+On Wed, Apr 20, 2016 at 10:13 AM, Jiang Qiu <qiujiang@huawei.com> wrote=
+:
+> This patch converts device node to fwnode for dwapb driver, so
+> as to provide a unified fwnode for DT and ACPI bindings.
+>
+> Tested-by: Alan Tull <delicious.quinoa@gmail.com>
+> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Jiang Qiu <qiujiang@huawei.com>
 > ---
-> Various arch maintainers:
->=20
-> either ACK this and I will merge it into the GPIO tree for v4.7
-> anticipating no clashes, or you wait until I have the enabling patch
-> upstream (patch 1 in this series, removing deps on
-> ARCH_[WANTS_OPTIONAL|REQUIRES]_GPIOLIB), and you will be able to
-> merge it to your arch trees yourselves for late v4.7
-> (post GPIO tree merge) or for v4.8.
->=20
-> You can also ask me for an immutable branch if you prefer that, I
-> will put the enabling patch on a branch and the patch for your arch
-> on top and ask you to pull it.
->=20
-> Select your option from the menu, silence probably means I will
-> merge it to the GPIO tree. Unless you are X86 or ARM in which case
-> I will be cautious.
-> ---
->  arch/metag/Kconfig.soc | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/arch/metag/Kconfig.soc b/arch/metag/Kconfig.soc
-> index 973640f46752..50f979c2b02d 100644
-> --- a/arch/metag/Kconfig.soc
-> +++ b/arch/metag/Kconfig.soc
-> @@ -16,7 +16,6 @@ config META21_FPGA
-> =20
->  config SOC_TZ1090
->  	bool "Toumaz Xenif TZ1090 SoC (Comet)"
-> -	select ARCH_WANT_OPTIONAL_GPIOLIB
->  	select IMGPDC_IRQ
->  	select METAG_LNKGET_AROUND_CACHE
->  	select METAG_META21
-> --=20
-> 2.4.11
->=20
+>  drivers/gpio/gpio-dwapb.c                | 37 ++++++++++++++++------=
+----------
+>  drivers/mfd/intel_quark_i2c_gpio.c       |  2 +-
+>  include/linux/platform_data/gpio-dwapb.h |  2 +-
+>  3 files changed, 20 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> index 772d743..92bc204 100644
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/of_address.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/property.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/platform_data/gpio-dwapb.h>
+>  #include <linux/slab.h>
+> @@ -290,14 +291,14 @@ static void dwapb_configure_irqs(struct dwapb_g=
+pio *gpio,
+>                                  struct dwapb_port_property *pp)
+>  {
+>         struct gpio_chip *gc =3D &port->gc;
+> -       struct device_node *node =3D pp->node;
+> +       struct fwnode_handle  *fwnode =3D pp->fwnode;
+>         struct irq_chip_generic *irq_gc =3D NULL;
+>         unsigned int hwirq, ngpio =3D gc->ngpio;
+>         struct irq_chip_type *ct;
+>         int err, i;
+>
+> -       gpio->domain =3D irq_domain_add_linear(node, ngpio,
+> -                                            &irq_generic_chip_ops, g=
+pio);
+> +       gpio->domain =3D irq_domain_create_linear(fwnode, ngpio,
+> +                                                &irq_generic_chip_op=
+s, gpio);
+>         if (!gpio->domain)
+>                 return;
+>
+> @@ -415,7 +416,8 @@ static int dwapb_gpio_add_port(struct dwapb_gpio =
+*gpio,
+>         }
+>
+>  #ifdef CONFIG_OF_GPIO
+> -       port->gc.of_node =3D pp->node;
+> +       port->gc.of_node =3D is_of_node(pp->fwnode) ?
+> +               to_of_node(pp->fwnode) : NULL;
 
---4PR/+zdSfVlxyWed
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Someone commented on this that it's simple
+=E2=80=A6of_node =3D to_of_node(=E2=80=A6);
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+>  #endif
+>         port->gc.ngpio =3D pp->ngpio;
+>         port->gc.base =3D pp->gpio_base;
+> @@ -447,19 +449,15 @@ static void dwapb_gpio_unregister(struct dwapb_=
+gpio *gpio)
+>  }
+>
+>  static struct dwapb_platform_data *
+> -dwapb_gpio_get_pdata_of(struct device *dev)
+> +dwapb_gpio_get_pdata(struct device *dev)
+>  {
+> -       struct device_node *node, *port_np;
+> +       struct fwnode_handle *fwnode;
+>         struct dwapb_platform_data *pdata;
+>         struct dwapb_port_property *pp;
+>         int nports;
+>         int i;
+>
+> -       node =3D dev->of_node;
+> -       if (!IS_ENABLED(CONFIG_OF_GPIO) || !node)
+> -               return ERR_PTR(-ENODEV);
+> -
+> -       nports =3D of_get_child_count(node);
+> +       nports =3D device_get_child_node_count(dev);
+>         if (nports =3D=3D 0)
+>                 return ERR_PTR(-ENODEV);
+>
+> @@ -474,18 +472,18 @@ dwapb_gpio_get_pdata_of(struct device *dev)
+>         pdata->nports =3D nports;
+>
+>         i =3D 0;
+> -       for_each_child_of_node(node, port_np) {
+> +       device_for_each_child_node(dev, fwnode)  {
+>                 pp =3D &pdata->properties[i++];
+> -               pp->node =3D port_np;
+> +               pp->fwnode =3D fwnode;
+>
+> -               if (of_property_read_u32(port_np, "reg", &pp->idx) ||
+> +               if (fwnode_property_read_u32(fwnode, "reg", &pp->idx)=
+ ||
+>                     pp->idx >=3D DWAPB_MAX_PORTS) {
+>                         dev_err(dev,
+>                                 "missing/invalid port index for port%=
+d\n", i);
+>                         return ERR_PTR(-EINVAL);
+>                 }
+>
+> -               if (of_property_read_u32(port_np, "snps,nr-gpios",
+> +               if (fwnode_property_read_u32(fwnode, "snps,nr-gpios",
+>                                          &pp->ngpio)) {
+>                         dev_info(dev,
+>                                  "failed to get number of gpios for p=
+ort%d\n",
+> @@ -497,9 +495,10 @@ dwapb_gpio_get_pdata_of(struct device *dev)
+>                  * Only port A can provide interrupts in all configur=
+ations of
+>                  * the IP.
+>                  */
+> -               if (pp->idx =3D=3D 0 &&
+> -                   of_property_read_bool(port_np, "interrupt-control=
+ler")) {
+> -                       pp->irq =3D irq_of_parse_and_map(port_np, 0);
+> +               if (dev->of_node && pp->idx =3D=3D 0 &&
+> +                       fwnode_property_read_bool(fwnode,
+> +                                                 "interrupt-controll=
+er")) {
+> +                       pp->irq =3D irq_of_parse_and_map(to_of_node(f=
+wnode), 0);
+>                         if (!pp->irq)
+>                                 dev_warn(dev, "no irq for port%d\n", =
+pp->idx);
+>                 }
+> @@ -521,7 +520,7 @@ static int dwapb_gpio_probe(struct platform_devic=
+e *pdev)
+>         struct dwapb_platform_data *pdata =3D dev_get_platdata(dev);
+>
+>         if (!pdata) {
+> -               pdata =3D dwapb_gpio_get_pdata_of(dev);
+> +               pdata =3D dwapb_gpio_get_pdata(dev);
+>                 if (IS_ERR(pdata))
+>                         return PTR_ERR(pdata);
+>         }
+> diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_q=
+uark_i2c_gpio.c
+> index a4ef99b..a24b35f 100644
+> --- a/drivers/mfd/intel_quark_i2c_gpio.c
+> +++ b/drivers/mfd/intel_quark_i2c_gpio.c
+> @@ -219,7 +219,7 @@ static int intel_quark_gpio_setup(struct pci_dev =
+*pdev, struct mfd_cell *cell)
+>                 return -ENOMEM;
+>
+>         /* Set the properties for portA */
+> -       pdata->properties->node         =3D NULL;
+> +       pdata->properties->fwnode       =3D NULL;
+>         pdata->properties->idx          =3D 0;
+>         pdata->properties->ngpio        =3D INTEL_QUARK_MFD_NGPIO;
+>         pdata->properties->gpio_base    =3D INTEL_QUARK_MFD_GPIO_BASE=
+;
+> diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux=
+/platform_data/gpio-dwapb.h
+> index 955b579..2dc7f4a 100644
+> --- a/include/linux/platform_data/gpio-dwapb.h
+> +++ b/include/linux/platform_data/gpio-dwapb.h
+> @@ -15,7 +15,7 @@
+>  #define GPIO_DW_APB_H
+>
+>  struct dwapb_port_property {
+> -       struct device_node *node;
+> +       struct fwnode_handle *fwnode;
+>         unsigned int    idx;
+>         unsigned int    ngpio;
+>         unsigned int    gpio_base;
+> --
+> 1.9.1
+>
 
-iQIcBAEBCAAGBQJXF0sqAAoJEGwLaZPeOHZ6SwsP/11CI4SRTCWvZa8jEXdoCUoO
-jeV6CPqzNK6/eoRPW8ct3ir3O5QpoELbHguBCGMHtFkJIc3qDP7AeUCm6xEa+5mn
-v5FNX2AtsyB80iyVlk20P8ePoxOnRvw7pG/58h0m9Ifey8/EkvW0UEIk+DJTfKpd
-en21o1bxIL6N6syLGHHLKEgONWXMuvb+gterK60akE6IgmcQU3p7h15c89ZA5gdJ
-+j7FbDqpJm8yrmAfWSlK4Z3+VfaYYP39IpLQQ6XTIf1H9enjnHmNF+SV1OAewSMF
-SJMiT4YUVqdk4u7JpFGkPEtNGA8xhlIO4ZuXe+g4zhsIj8Zw14Vh5tg6Zv3fVmtH
-ESHjx3etmm3eSpISHltUw0O+p/R1fGqUhTRG5E+VHy4aAhSxMBRKiVpx+hMHPuMe
-qSLh1G+b34dfDsD9DpZZZjRs9orS/mIpTfSs+srl0SFw2nyjrXiUyp/ohRXcXnvS
-i094RzFQyjeUbjOeAwkvsXP6Vi4QG4UKHpHrXMFz1MaE1tlRmWI7Na8U65TSqYGx
-4jF9XtcdHVuBNSjSYMLviDaeKSqVP2xE6T2XuO5bU+tTTZcbPieatKWX+8il9w1P
-/s3O/OcobyDKMAYj458VzTq544t79Pn7BTiYWA68fHNIAOrjw9Wtp6E1SpIuWgIU
-Jq7yllbIm6Ehd3e9DI/S
-=i6sG
------END PGP SIGNATURE-----
 
---4PR/+zdSfVlxyWed--
+
+--=20
+With Best Regards,
+Andy Shevchenko
+--
+To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
