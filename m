@@ -1,63 +1,152 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 19/23] microblaze: remove ARCH_WANT_OPTIONAL_GPIOLIB
-Date: Wed, 20 Apr 2016 10:58:17 +0200
-Message-ID: <1461142701-21096-20-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 23/23] gpio: delete ARCH_[WANTS_OPTIONAL|REQUIRE]_GPIOLIB
+Date: Wed, 20 Apr 2016 10:58:21 +0200
+Message-ID: <1461142701-21096-24-git-send-email-linus.walleij@linaro.org>
 References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:34481 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932761AbcDTI7M (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Apr 2016 04:59:12 -0400
-Received: by mail-lf0-f49.google.com with SMTP id j11so36744973lfb.1
-        for <linux-gpio@vger.kernel.org>; Wed, 20 Apr 2016 01:59:11 -0700 (PDT)
+Received: from mail-lb0-f180.google.com ([209.85.217.180]:36226 "EHLO
+	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932976AbcDTI7V (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Apr 2016 04:59:21 -0400
+Received: by mail-lb0-f180.google.com with SMTP id ys16so5552472lbb.3
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Apr 2016 01:59:20 -0700 (PDT)
 In-Reply-To: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?Michael=20B=C3=BCsch?= <m@bues.ch>, Michal Simek <monstr@monstr.eu>
+Cc: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?Michael=20B=C3=BCsch?= <m@bues.ch>
 
-This symbols is not needed to get access to selecting the
-GPIOLIB anymore: any arch can select GPIOLIB.
+The GPIOLIB is now selectable explicitly, and always available
+for all archs. All archs that require GPIOLIB are switched to
+select GPIOLIB directly. Delete the hairy ARCH_REQUIRE_GPIOLIB
+and ARCH_WANTS_OPTIONAL_GPIOLIB Kconfig symbols.
 
 Cc: Michael B=C3=BCsch <m@bues.ch>
-Cc: Michal Simek <monstr@monstr.eu>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Various arch maintainers:
+ Documentation/gpio/board.txt       |  6 +++---
+ Documentation/gpio/gpio-legacy.txt | 16 ++++------------
+ drivers/gpio/Kconfig               | 21 ---------------------
+ 3 files changed, 7 insertions(+), 36 deletions(-)
 
-either ACK this and I will merge it into the GPIO tree for v4.7
-anticipating no clashes, or you wait until I have the enabling patch
-upstream (patch 1 in this series, removing deps on
-ARCH_[WANTS_OPTIONAL|REQUIRES]_GPIOLIB), and you will be able to
-merge it to your arch trees yourselves for late v4.7
-(post GPIO tree merge) or for v4.8.
-
-You can also ask me for an immutable branch if you prefer that, I
-will put the enabling patch on a branch and the patch for your arch
-on top and ask you to pull it.
-
-Select your option from the menu, silence probably means I will
-merge it to the GPIO tree. Unless you are X86 or ARM in which case
-I will be cautious.
----
- arch/microblaze/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
-index 3d793b55f60c..91a2ade46ff2 100644
---- a/arch/microblaze/Kconfig
-+++ b/arch/microblaze/Kconfig
-@@ -3,7 +3,6 @@ config MICROBLAZE
- 	select ARCH_HAS_GCOV_PROFILE_ALL
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
- 	select ARCH_WANT_IPC_PARSE_VERSION
--	select ARCH_WANT_OPTIONAL_GPIOLIB
- 	select BUILDTIME_EXTABLE_SORT
- 	select CLKSRC_OF
- 	select CLONE_BACKWARDS3
+diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.tx=
+t
+index 86d3fa95fd12..40884c4fe40c 100644
+--- a/Documentation/gpio/board.txt
++++ b/Documentation/gpio/board.txt
+@@ -8,9 +8,9 @@ gpio-legacy.txt (actually, there is no real mapping pos=
+sible with the old
+ interface; you just fetch an integer from somewhere and request the
+ corresponding GPIO.
+=20
+-Platforms that make use of GPIOs must select ARCH_REQUIRE_GPIOLIB (if =
+GPIO usage
+-is mandatory) or ARCH_WANT_OPTIONAL_GPIOLIB (if GPIO support can be om=
+itted) in
+-their Kconfig. Then, how GPIOs are mapped depends on what the platform=
+ uses to
++All platforms can enable the GPIO library, but if the platform strictl=
+y
++requires GPIO functionality to be present, it needs to select GPIOLIB =
+from its
++Kconfig. Then, how GPIOs are mapped depends on what the platform uses =
+to
+ describe its hardware layout. Currently, mappings can be defined throu=
+gh device
+ tree, ACPI, and platform data.
+=20
+diff --git a/Documentation/gpio/gpio-legacy.txt b/Documentation/gpio/gp=
+io-legacy.txt
+index 79ab5648d69b..b34fd94f7089 100644
+--- a/Documentation/gpio/gpio-legacy.txt
++++ b/Documentation/gpio/gpio-legacy.txt
+@@ -72,8 +72,8 @@ in this document, but drivers acting as clients to th=
+e GPIO interface must
+ not care how it's implemented.)
+=20
+ That said, if the convention is supported on their platform, drivers s=
+hould
+-use it when possible.  Platforms must select ARCH_REQUIRE_GPIOLIB or
+-ARCH_WANT_OPTIONAL_GPIOLIB in their Kconfig.  Drivers that can't work =
+without
++use it when possible.  Platforms must select GPIOLIB if GPIO functiona=
+lity
++is strictly required.  Drivers that can't work without
+ standard GPIO calls should have Kconfig entries which depend on GPIOLI=
+B.  The
+ GPIO calls are available, either as "real code" or as optimized-away s=
+tubs,
+ when drivers use the include file:
+@@ -553,22 +553,14 @@ either NULL or the label associated with that GPI=
+O when it was requested.
+=20
+ Platform Support
+ ----------------
+-To support this framework, a platform's Kconfig will "select" either
+-ARCH_REQUIRE_GPIOLIB or ARCH_WANT_OPTIONAL_GPIOLIB
+-and arrange that its <asm/gpio.h> includes <asm-generic/gpio.h> and de=
+fines
+-three functions: gpio_get_value(), gpio_set_value(), and gpio_cansleep=
+().
++To force-enable this framework, a platform's Kconfig will "select" GPI=
+OLIB,
++else it is up to the user to configure support for GPIO.
+=20
+ It may also provide a custom value for ARCH_NR_GPIOS, so that it bette=
+r
+ reflects the number of GPIOs in actual use on that platform, without
+ wasting static table space.  (It should count both built-in/SoC GPIOs =
+and
+ also ones on GPIO expanders.
+=20
+-ARCH_REQUIRE_GPIOLIB means that the gpiolib code will always get compi=
+led
+-into the kernel on that architecture.
+-
+-ARCH_WANT_OPTIONAL_GPIOLIB means the gpiolib code defaults to off and =
+the user
+-can enable it and build it into the kernel optionally.
+-
+ If neither of these options are selected, the platform does not suppor=
+t
+ GPIOs through GPIO-lib and the code cannot be enabled by the user.
+=20
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index a68d83808f37..711995e39cf9 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -10,27 +10,6 @@ config ARCH_HAVE_CUSTOM_GPIO_H
+ 	  overriding the default implementations.  New uses of this are
+ 	  strongly discouraged.
+=20
+-config ARCH_WANT_OPTIONAL_GPIOLIB
+-	bool
+-	help
+-	  Select this config option from the architecture Kconfig, if
+-	  it is possible to use gpiolib on the architecture, but let the
+-	  user decide whether to actually build it or not.
+-	  Select this instead of ARCH_REQUIRE_GPIOLIB, if your architecture d=
+oes
+-	  not depend on GPIOs being available, but rather let the user
+-	  decide whether he needs it or not.
+-
+-config ARCH_REQUIRE_GPIOLIB
+-	bool
+-	select GPIOLIB
+-	help
+-	  Platforms select gpiolib if they use this infrastructure
+-	  for all their GPIOs, usually starting with ones integrated
+-	  into SOC processors.
+-	  Selecting this from the architecture code will cause the gpiolib
+-	  code to always get built in.
+-
+-
+ menuconfig GPIOLIB
+ 	bool "GPIO Support"
+ 	help
 --=20
 2.4.11
 
