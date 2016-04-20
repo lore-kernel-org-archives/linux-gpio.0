@@ -1,31 +1,31 @@
-From: Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH 22/23] xtensa: remove ARCH_WANT_OPTIONAL_GPIOLIB
-Date: Wed, 20 Apr 2016 22:00:32 +0300
-Message-ID: <CAMo8BfLq8iCDYh_ecwuKyEsNZZdg1NqWZMSn7oLHhSAv=X6maw@mail.gmail.com>
-References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
-	<1461142701-21096-23-git-send-email-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/1] pinctrl: core: Fix build error due to devm_pinctrl_dev_match()
+Date: Thu, 21 Apr 2016 00:00:52 +0200
+Message-ID: <CACRpkdZ6=DDy4NeVPJy52S_YaMmqb2abiG6O1Yc66_dfkyJytw@mail.gmail.com>
+References: <1461172673-29500-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:36808 "EHLO
-	mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751747AbcDTTAd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Apr 2016 15:00:33 -0400
-Received: by mail-io0-f173.google.com with SMTP id u185so62396964iod.3
-        for <linux-gpio@vger.kernel.org>; Wed, 20 Apr 2016 12:00:33 -0700 (PDT)
-In-Reply-To: <1461142701-21096-23-git-send-email-linus.walleij@linaro.org>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:34334 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751237AbcDTWAy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Apr 2016 18:00:54 -0400
+Received: by mail-oi0-f53.google.com with SMTP id k142so57328370oib.1
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Apr 2016 15:00:53 -0700 (PDT)
+In-Reply-To: <1461172673-29500-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>, Chris Zankel <chris@zankel.net>, "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Apr 20, 2016 at 11:58 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> This symbols is not needed to get access to selecting the
-> GPIOLIB anymore: any arch can select GPIOLIB.
+On Wed, Apr 20, 2016 at 7:17 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-Acked-by: Max Filippov <jcmvbkbc@gmail.com>
+> The closing bracket missing from final patch which causes the
+> build break. Correcting the function.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
--- 
-Thanks.
--- Max
+Squashed this into the patch and pushed to build again.
+
+Yours,
+Linus Walleij
