@@ -1,89 +1,31 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v9 0/3] gpio: dwapb: add gpio-signaled acpi event support
- for power button
-Date: Wed, 20 Apr 2016 16:06:44 +0300
-Message-ID: <CAHp75VfW=07SQdR3rH1gh0Q-CEBkBDrdNgoeYKc7QGbVB6THfw@mail.gmail.com>
-References: <1461136429-85114-1-git-send-email-qiujiang@huawei.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V3 0/4] gpio: tegra: Cleanups and support fro debounce
+Date: Wed, 20 Apr 2016 19:00:54 +0530
+Message-ID: <1461159058-1439-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:36316 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753362AbcDTNGp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Apr 2016 09:06:45 -0400
-In-Reply-To: <1461136429-85114-1-git-send-email-qiujiang@huawei.com>
+Received: from nat-hk.nvidia.com ([203.18.50.4]:59132 "EHLO
+	hkmmgate101.nvidia.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932369AbcDTNmk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Apr 2016 09:42:40 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jiang Qiu <qiujiang@huawei.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Alan Tull <delicious.quinoa@gmail.com>, Jamie Iles <jamie@jamieiles.com>, charles.chenxin@huawei.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com
+To: linus.walleij@linaro.org, swarren@wwwdotorg.org, gnurou@gmail.com, thierry.reding@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 
-On Wed, Apr 20, 2016 at 10:13 AM, Jiang Qiu <qiujiang@huawei.com> wrote:
-> This patchset adds gpio-signaled acpi events support for power button on hisilicon
-> D02 board.
->
-> The three patches respectively:
->         - remove name from dwapb_port_property
->         - convert device node to fwnode
->         - add gpio-signaled acpi event support
->
->    This patchset is based on
->    https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
->    branch "devel"
->
-> Changes v8 -> v9:
->    - fixed a low-level compile warning
+Add support for the debounce as Tegra210 support debounce in HW.
+Also do the clenaups to remove all global variables.
 
-Please, don't send updates to often. You see, now I noticed one more
-thing you have to address.
-Usually the time between fixup series is something like 24h. Thus,
-waiting for v10 at least tomorrow or even next week.
+Laxman Dewangan (4):
+  gpio: tegra: Don't open code of_device_get_match_data()
+  gpio: tegra: Make of_device_id compatible data to constant
+  gpio: tegra: Get rid of all file scoped global variables
+  gpio: tegra: Add support for gpio debounce
 
-Linus, for my point of view next version should be fine and final. The
-current code is in a good shape already.
-
->
-> Changes v7 -> v8:
->    - fixed few minors
->
-> Changes v6 -> v7:
->    - add patch1 by Alan's suggestion
->
-> Changes v5 -> v6:
->    - merge patch 2~3 to one patch
->    - small fixed from Alan's suggestion
->    - fixed subject title reference commit history
->
-> Changes v4 -> v5:
->    - split into three patchs
->    - add Andy's ACKs
->
-> Changes v3 -> v4:
->    - re-organize this two patchs by Andy's suggestion
->
-> Changes v2 -> v3:
->    - fixed the build error reported by Kbuild test robot
->
-> Changes v1 -> v2:
->    - rebase to branch "devel" of Linus Walleij's repository
->    - split in two patch as suggested by Andy S
->    - add Mika's ACKs
->
-> Jiang Qiu (3):
->   gpio: dwapb: remove name from dwapb_port_property
->   gpio: dwapb: convert device node to fwnode
->   gpio: dwapb: add gpio-signaled acpi event support
->
->  drivers/gpio/gpio-dwapb.c                | 78 +++++++++++++++++++-------------
->  drivers/mfd/intel_quark_i2c_gpio.c       |  3 +-
->  include/linux/platform_data/gpio-dwapb.h |  3 +-
->  3 files changed, 48 insertions(+), 36 deletions(-)
->
-> --
-> 1.9.1
->
-
-
+ drivers/gpio/gpio-tegra.c | 407 +++++++++++++++++++++++++++++-----------------
+ 1 file changed, 261 insertions(+), 146 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.1.4
+
