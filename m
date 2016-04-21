@@ -1,117 +1,67 @@
-From: Jiang Qiu <qiujiang@huawei.com>
-Subject: Re: [PATCH v9 0/3] gpio: dwapb: add gpio-signaled acpi event support
- for power button
-Date: Thu, 21 Apr 2016 19:43:25 +0800
-Message-ID: <5718BCDD.5020205@huawei.com>
-References: <1461136429-85114-1-git-send-email-qiujiang@huawei.com>
- <CAHp75VfW=07SQdR3rH1gh0Q-CEBkBDrdNgoeYKc7QGbVB6THfw@mail.gmail.com>
- <CANk1AXQNe160XkSH4zLWKRN4d92=25=-Hn1jkwVzsQXiUvSnCA@mail.gmail.com>
-Reply-To: <qiujiang@huawei.com>
+From: Patrice Chotard <patrice.chotard@st.com>
+Subject: Re: [PATCH 3/8] gpio: stmpe: fix edge and rising/falling edge
+ detection
+Date: Thu, 21 Apr 2016 15:48:44 +0200
+Message-ID: <5718DA3C.6060304@st.com>
+References: <1461068317-28016-1-git-send-email-patrice.chotard@st.com>
+ <1461068317-28016-4-git-send-email-patrice.chotard@st.com>
+ <CACRpkdZWmYo-QgVgYaoHwUV7t=e5MGi-Ge5oWjKAi46+h1JMWg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:63924 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752046AbcDUL4o (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Apr 2016 07:56:44 -0400
-In-Reply-To: <CANk1AXQNe160XkSH4zLWKRN4d92=25=-Hn1jkwVzsQXiUvSnCA@mail.gmail.com>
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:12201 "EHLO
+	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752121AbcDUNtf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 21 Apr 2016 09:49:35 -0400
+In-Reply-To: <CACRpkdZWmYo-QgVgYaoHwUV7t=e5MGi-Ge5oWjKAi46+h1JMWg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alan Tull <delicious.quinoa@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Jamie Iles <jamie@jamieiles.com>, charles.chenxin@huawei.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, linuxarm@huawei.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Maxime Coquelin <maxime.coquelin@st.com>, amelie.delaunay@st.com, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Dinh Nguyen <dinguyen@opensource.altera.com>, Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
 
-=E5=9C=A8 2016/4/21 0:10, Alan Tull =E5=86=99=E9=81=93:
-> On Wed, Apr 20, 2016 at 8:06 AM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->> On Wed, Apr 20, 2016 at 10:13 AM, Jiang Qiu <qiujiang@huawei.com> wr=
-ote:
->>> This patchset adds gpio-signaled acpi events support for power butt=
-on on hisilicon
->>> D02 board.
->>>
->>> The three patches respectively:
->>>         - remove name from dwapb_port_property
->>>         - convert device node to fwnode
->>>         - add gpio-signaled acpi event support
->>>
->>>    This patchset is based on
->>>    https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpi=
-o.git
->>>    branch "devel"
->>>
->>> Changes v8 -> v9:
->>>    - fixed a low-level compile warning
->>
->> Please, don't send updates to often. You see, now I noticed one more
->> thing you have to address.
->> Usually the time between fixup series is something like 24h. Thus,
->> waiting for v10 at least tomorrow or even next week.
->>
->> Linus, for my point of view next version should be fine and final. T=
-he
->> current code is in a good shape already.
->=20
-> Reviewed, tested v9, looks good.
->=20
-> Alan Tull
->=20
-Alan, Thanks a lot. :)
->=20
->>
->>>
->>> Changes v7 -> v8:
->>>    - fixed few minors
->>>
->>> Changes v6 -> v7:
->>>    - add patch1 by Alan's suggestion
->>>
->>> Changes v5 -> v6:
->>>    - merge patch 2~3 to one patch
->>>    - small fixed from Alan's suggestion
->>>    - fixed subject title reference commit history
->>>
->>> Changes v4 -> v5:
->>>    - split into three patchs
->>>    - add Andy's ACKs
->>>
->>> Changes v3 -> v4:
->>>    - re-organize this two patchs by Andy's suggestion
->>>
->>> Changes v2 -> v3:
->>>    - fixed the build error reported by Kbuild test robot
->>>
->>> Changes v1 -> v2:
->>>    - rebase to branch "devel" of Linus Walleij's repository
->>>    - split in two patch as suggested by Andy S
->>>    - add Mika's ACKs
->>>
->>> Jiang Qiu (3):
->>>   gpio: dwapb: remove name from dwapb_port_property
->>>   gpio: dwapb: convert device node to fwnode
->>>   gpio: dwapb: add gpio-signaled acpi event support
->>>
->>>  drivers/gpio/gpio-dwapb.c                | 78 +++++++++++++++++++-=
-------------
->>>  drivers/mfd/intel_quark_i2c_gpio.c       |  3 +-
->>>  include/linux/platform_data/gpio-dwapb.h |  3 +-
->>>  3 files changed, 48 insertions(+), 36 deletions(-)
->>>
->>> --
->>> 1.9.1
->>>
->>
->>
->>
->> --
->> With Best Regards,
->> Andy Shevchenko
->=20
-> .
->=20
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+On 04/20/2016 04:37 PM, Linus Walleij wrote:
+> On Tue, Apr 19, 2016 at 2:18 PM,  <patrice.chotard@st.com> wrote:
+>
+>> From: Patrice Chotard <patrice.chotard@st.com>
+>>
+>> By cross-checking STMPE 610/801/811/1601/2401/2403 datasheets,
+>> it appears that edge detection and rising/falling edge detection
+>> is not supported by all STMPE variant:
+>>
+>>             GPIO              GPIO
+>>        Edge detection     rising/falling
+>>                           edge detection
+>>   610 |      X        |         X       |
+>>   801 |               |                 |
+>>   811 |      X        |         X       |
+>> 1600 |               |                 |
+>> 1601 |      X        |         X       |
+>> 1801 |               |         X       |
+>> 2401 |      X        |         X       |
+>> 2403 |      X        |         X       |
+>>
+>> Rework stmpe_dbg_show_one() and stmpe_gpio_irq to correctly
+>> take these cases into account.
+>>
+>> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+> Very nice.
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> I expect this to go into the MFD tree with the rest, I guess
+> Lee will cook me an immutable branch for the whole thing
+> once he's happy with it.
+>
+> Yours,
+> Linus Walleij
+
+Hi Linus
+
+I will send a v2 as warnings as been detected by kbuild test robot
+
+Thanks
+
+Patrice
