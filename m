@@ -1,82 +1,71 @@
-From: Greg Ungerer <gregungerer@westnet.com.au>
-Subject: Re: [PATCH 09/23] m68k: do away with ARCH_REQUIRE_GPIOLIB
-Date: Thu, 21 Apr 2016 11:12:45 +1000
-Message-ID: <5718290D.7030705@westnet.com.au>
-References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
- <1461142701-21096-10-git-send-email-linus.walleij@linaro.org>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH 0/8] STMPE fixes/rework and add STMPE1600 support
+Date: Thu, 21 Apr 2016 02:39:37 +0000
+Message-ID: <1461206376.4279.38.camel@toradex.com>
+References: <1461068317-28016-1-git-send-email-patrice.chotard@st.com>
+ <5716545D.9080006@wwwdotorg.org> <5717325F.6080808@st.com>
+ <5717A833.3020304@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from icp-osb-irony-out8.external.iinet.net.au ([203.59.1.225]:4586
-	"EHLO icp-osb-irony-out8.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751532AbcDUBMN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 20 Apr 2016 21:12:13 -0400
-In-Reply-To: <1461142701-21096-10-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <5717A833.3020304@wwwdotorg.org>
+Content-Language: en-US
+Content-ID: <EA49396A2BB8A346A1D2DECCF7ED8765@eurprd05.prod.outlook.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "patrice.chotard@st.com" <patrice.chotard@st.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>
+Cc: "gnurou@gmail.com" <gnurou@gmail.com>, "dev@lynxeye.de" <dev@lynxeye.de>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stefan@agner.ch" <stefan@agner.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@lists.linux-m68k.org
 
-On 20/04/16 18:58, Linus Walleij wrote:
-> Replace "select ARCH_REQUIRE_GPIOLIB" with "select GPIOLIB"
-> as this can now be selected directly.
->=20
-> Cc: Michael B=C3=BCsch <m@bues.ch>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: linux-m68k@lists.linux-m68k.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-
-Since this affects ColdFire I am happy to give an ack:
-
-Acked-by: Greg Ungerer <gerg@linux-m68k.org>
-
-Regards
-Greg
-
-
-> Various arch maintainers:
->=20
-> either ACK this and I will merge it into the GPIO tree for v4.7
-> anticipating no clashes, or you wait until I have the enabling patch
-> upstream (patch 1 in this series, removing deps on
-> ARCH_[WANTS_OPTIONAL|REQUIRES]_GPIOLIB), and you will be able to
-> merge it to your arch trees yourselves for late v4.7
-> (post GPIO tree merge) or for v4.8.
->=20
-> You can also ask me for an immutable branch if you prefer that, I
-> will put the enabling patch on a branch and the patch for your arch
-> on top and ask you to pull it.
->=20
-> Select your option from the menu, silence probably means I will
-> merge it to the GPIO tree. Unless you are X86 or ARM in which case
-> I will be cautious.
-> ---
->  arch/m68k/Kconfig.cpu | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/m68k/Kconfig.cpu b/arch/m68k/Kconfig.cpu
-> index 0dfcf1281e9c..c1beb5ae181f 100644
-> --- a/arch/m68k/Kconfig.cpu
-> +++ b/arch/m68k/Kconfig.cpu
-> @@ -22,11 +22,11 @@ config M68KCLASSIC
-> =20
->  config COLDFIRE
->  	bool "Coldfire CPU family support"
-> -	select ARCH_REQUIRE_GPIOLIB
->  	select ARCH_HAVE_CUSTOM_GPIO_H
->  	select CPU_HAS_NO_BITFIELDS
->  	select CPU_HAS_NO_MULDIV64
->  	select GENERIC_CSUM
-> +	select GPIOLIB
->  	select HAVE_CLK
-> =20
->  endchoice
->=20
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gV2VkLCAyMDE2LTA0LTIwIGF0IDEwOjAyIC0wNjAwLCBTdGVwaGVuIFdhcnJlbiB3cm90ZToN
+Cj4gT24gMDQvMjAvMjAxNiAwMTo0MCBBTSwgUGF0cmljZSBDaG90YXJkIHdyb3RlOg0KPiA+IA0K
+PiA+IE9uIDA0LzE5LzIwMTYgMDU6NTMgUE0sIFN0ZXBoZW4gV2FycmVuIHdyb3RlOg0KPiA+ID4g
+DQo+ID4gPiBPbiAwNC8xOS8yMDE2IDA2OjE4IEFNLCBwYXRyaWNlLmNob3RhcmRAc3QuY29tIHdy
+b3RlOg0KPiA+ID4gPiANCj4gPiA+ID4gRnJvbTogUGF0cmljZSBDaG90YXJkIDxwYXRyaWNlLmNo
+b3RhcmRAc3QuY29tPg0KPiA+ID4gPiANCj4gPiA+ID4gVGhpcyBzZXJpZXMgY2xlYW5zIGFuZCBm
+aXhlcyBzb21lIGJ1Z3MgaW4gTUZEL0dQSU8gU1RNUEUNCj4gPiA+ID4gZHJpdmVycyBhbmQNCj4g
+PiA+ID4gcHJlcGFyZQ0KPiA+ID4gPiDCoCB0aGUgZ3JvdW5kIHRvIGFkZCBuZXcgU1RNUEUxNjAw
+IHN1cHBvcnQuDQo+ID4gPiA+IA0KPiA+ID4gPiBTVE1QRTE2MDAgZGF0YXNoZWV0IGlzIGF2YWls
+YWJsZSBoZXJlIDoNCj4gPiA+ID4gaHR0cDovL3d3dzIuc3QuY29tL2NvbnRlbnQvc3RfY29tL2Vu
+L3Byb2R1Y3RzL2ludGVyZmFjZXMtYW5kLXRyDQo+ID4gPiA+IGFuc2NlaXZlcnMvDQo+ID4gPiA+
+IA0KPiA+ID4gPiBpLW8tZXhwYW5kZXJzLWFuZC1sZXZlbC10cmFuc2xhdG9ycy9pLW8tDQo+ID4g
+PiA+IGV4cGFuZGVycy9zdG1wZTE2MDAuaHRtbA0KPiA+ID4gPiANCj4gPiA+ID4gT25seSBTVE1Q
+RTE2MDAgaGFzIGJlZW4gdGVzdGVkIG9uIFNUTTMyIHBsYXRmb3JtLiBBcyBpIGhhdmUgbm8NCj4g
+PiA+ID4gYm9hcmQNCj4gPiA+ID4gd2l0aA0KPiA+ID4gPiBvdGhlcnMgU1RNUEUNCj4gPiA+ID4g
+dmFyaWFudChTVE1QRTYxMC9TVE1QRTgwMS9TVE1QRTgxMS9TVE1QRTE2MDEvU1RNUEUxODAxL1NU
+TVBFMjQwDQo+ID4gPiA+IDENCj4gPiA+ID4gYW5kIFNUTVBFMjQwMyksIGkgcHV0IGluIENDIGJv
+YXJkcydzIG1haW50YWluZXJzIHdoaWNoIGFyZQ0KPiA+ID4gPiB1c2luZw0KPiA+ID4gPiBvdGhl
+cnMgU1RNUEUgdmFyaWFudC4NCj4gPiA+ID4gDQo+ID4gPiA+IElmIHRoZXkgY2FuIGtpbmRseSBj
+aGVjayB0aGF0IG5vIHJlZ3Jlc3Npb24gaGFzIGJlZW4gaW50cm9kdWNlDQo+ID4gPiA+IGJ5DQo+
+ID4gPiA+IHRoaXMgc2VyaWVzDQo+ID4gPiA+IA0KPiA+ID4gPiBGb3IgVEVHUkEgQVJDSElURUNU
+VVJFIFNVUFBPUlQNCj4gPiA+ID4gwqDCoMKgwqBfIFN0ZXBoZW4gV2FycmVuIDxzd2FycmVuQHd3
+d2RvdG9yZy5vcmc+DQo+ID4gPiA+IMKgwqDCoMKgXyBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5y
+ZWRpbmdAZ21haWwuY29tPg0KPiA+ID4gPiDCoMKgwqDCoF8gQWxleGFuZHJlIENvdXJib3QgPGdu
+dXJvdUBnbWFpbC5jb20+DQo+ID4gPiBJIGRvbid0IGtub3cgd2hhdCBTVE1QRSBpcywgYW5kIEkg
+ZG9uJ3QgYmVsaWV2ZSBpdCBpcyB1c2VkIG9uDQo+ID4gPiBUZWdyYTsNCj4gPiA+IHdoYXQgbWFr
+ZXMgeW91IHRoaW5rIGl0IGlzPw0KPiAuLi4NCj4gPiANCj4gPiBJIHB1dCB5b3UgaW4gY29weSBh
+cyBTVE1QRTgxMSBpcyB1c2VkIG9uIHRlZ3JhMzAtYXBhbGlzIGFuZA0KPiA+IHRlZ3JhMzAtY29s
+aWJyaSBwbGF0Zm9ybXMuDQo+IEFoLiBZb3UnZCBiZXN0IGNvbnRhY3QgdGhlIGluZGl2aWR1YWwg
+Ym9hcmQgb3duZXJzLCBzaW5jZSB0aG9zZSBhcmXCoA0KPiAzcmQtcGFydHkgVGVncmEgYm9hcmRz
+IGFuZCBJIGRvbid0IGJlbGlldmUgYW55b25lIGF0IE5WSURJQSBoYXMgdGhlbQ0KPiB0b8KgDQo+
+IHRlc3Qgd2l0aCBldGMuIEkgYWRkZWQgbGlrZWx5IGNhbmRpZGF0ZXMgdG8gQ2MgYW5kIGRyb3Bw
+ZWQgYWxsIHRoZcKgDQo+IGluZGl2aWR1YWxzIHVucmVsYXRlZCB0byBUZWdyYSB0byBrZWVwIHRo
+ZSBDQyBsaXN0IGxvdy4NCg0KSSBnYXZlIHRoZSB3aG9sZSBzZXJpZXMgYSBzcGluIG9uIEFwYWxp
+cyBUMzAgMkdCIFYxLjFBIGZlYXR1cmluZyBhDQpTVE1QRTgxMSBhbmQgdGhlIEVEVCBWR0EgdG91
+Y2ggcGFuZWwgY29ubmVjdGVkIHRvIGl0IHN0aWxsIHdvcmtzDQpwZXJmZWN0bHkgcnVubmluZyBM
+WERFIG9uIHRvcCBvZiB0aGUgbW9kZXNldHRpbmcgWCBkcml2ZXIuDQpVbmZvcnR1bmF0ZWx5IHRo
+ZSA0LjYuMC1yYzQtbmV4dC0yMDE2MDQyMCBJIHVzZWQgZm9yIHRlc3RpbmcgaXMgYnJva2VuDQpi
+ZXlvbmQgZWFzeSBxdWljayByZXBhaXIgb24gaS5NWCA2IHNvIEkgd2FzIHVuYWJsZSB0byB2YWxp
+ZGF0ZSBpdCBvbg0KdGhlcmUsIHNvcnJ5Lg0KDQoNClRlc3RlZC1ieTogTWFyY2VsIFppc3dpbGVy
+IDxtYXJjZWwuemlzd2lsZXJAdG9yYWRleC5jb20+DQpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51
+eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
