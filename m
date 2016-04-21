@@ -1,68 +1,41 @@
-From: Patrice Chotard <patrice.chotard@st.com>
-Subject: Re: [PATCH 6/8] mfd: Add STMPE1600 support
-Date: Thu, 21 Apr 2016 15:51:40 +0200
-Message-ID: <5718DAEC.6030207@st.com>
-References: <1461068317-28016-1-git-send-email-patrice.chotard@st.com>
- <1461068317-28016-7-git-send-email-patrice.chotard@st.com>
- <CACRpkdb73QAs5jZpTq1Qz_RX=fSj3ymQ54S-6RwNDTZ9x8ASkg@mail.gmail.com>
+From: Jesper Nilsson <jesper.nilsson@axis.com>
+Subject: Re: [PATCH 07/23] cris: do away with ARCH_REQUIRE_GPIOLIB
+Date: Thu, 21 Apr 2016 16:05:41 +0200
+Message-ID: <20160421140541.GQ2555@axis.com>
+References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
+ <1461142701-21096-8-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdb73QAs5jZpTq1Qz_RX=fSj3ymQ54S-6RwNDTZ9x8ASkg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Maxime Coquelin <maxime.coquelin@st.com>, amelie.delaunay@st.com, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Dinh Nguyen <dinguyen@opensource.altera.com>, Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bastet.se.axis.com ([195.60.68.11]:46224 "EHLO
+	bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751647AbcDUOFx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Apr 2016 10:05:53 -0400
+Content-Disposition: inline
+In-Reply-To: <1461142701-21096-8-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Michael =?iso-8859-1?Q?B=FCsch?= <m@bues.ch>, Mikael Starvik <starvik@axis.com>, Jesper Nilsson <jespern@axis.com>, linux-cris-kernel@axis.com
 
+On Wed, Apr 20, 2016 at 10:58:05AM +0200, Linus Walleij wrote:
+> Replace "select ARCH_REQUIRE_GPIOLIB" with "select GPIOLIB"
+> as this can now be selected directly.
+>=20
+> Cc: Michael B=FCsch <m@bues.ch>
+> Cc: Mikael Starvik <starvik@axis.com>
 
+Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
 
-On 04/20/2016 04:43 PM, Linus Walleij wrote:
-> On Tue, Apr 19, 2016 at 2:18 PM,  <patrice.chotard@st.com> wrote:
->
->> From: Patrice Chotard <patrice.chotard@st.com>
->>
->> STMPE1600 is a 16-bit port expander.
->> Datasheet is available here :
->> http://www2.st.com/content/st_com/en/products/interfaces-and-transceivers/
->> i-o-expanders-and-level-translators/i-o-expanders/stmpe1600.html
->>
->> As STMPE1600's SYS_CTRL register has the same layout as
->> STMPE801 variant, unify STMPExxx_REG_SYS_CTRL_RESET/INT_EN/INT_HI
->> bit masks to more generic STMPE_SYS_CTRL_RESET/INT_EN/INT_HI
->>
->> Signed-off-by: Amelie DELAUNAY <amelie.delaunay@st.com>
->> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-> (...)
->>   #define STMPE_SYS_CTRL_RESET   (1 << 7)
->> +#define STMPE_SYS_CTRL_INT_EN  (1 << 2)
->> +#define STMPE_SYS_CTRL_INT_HI  (1 << 0)
->>
->>   /*
->>    * STMPE801
->> @@ -121,10 +123,6 @@ int stmpe_remove(struct stmpe *stmpe);
->>   #define STMPE801_REG_GPIO_SET_PIN      0x11
->>   #define STMPE801_REG_GPIO_DIR          0x12
->>
->> -#define STMPE801_REG_SYS_CTRL_RESET    (1 << 7)
->> -#define STMPE801_REG_SYS_CTRL_INT_EN   (1 << 2)
->> -#define STMPE801_REG_SYS_CTRL_INT_HI   (1 << 0)
-> This looks like unrelated cleanups?
-> Should this be in the reset enablement patch?
-> (It's OK with me though.)
+> Cc: linux-cris-kernel@axis.com
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Not completely unrelated as STMPE801 and STMPE1600 use the same SYS_CTRL 
-register layout.
-But nevertheless i will put this fix in a separate patch.
-
-Thanks
-
-Patrice
-
->
-> With that fixed:
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->
-> Yours,
-> Linus Walleij
-Hi
+/^JN - Jesper Nilsson
+--=20
+               Jesper Nilsson -- jesper.nilsson@axis.com
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
