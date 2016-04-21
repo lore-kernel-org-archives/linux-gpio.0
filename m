@@ -1,67 +1,68 @@
 From: Patrice Chotard <patrice.chotard@st.com>
-Subject: Re: [PATCH 3/8] gpio: stmpe: fix edge and rising/falling edge
- detection
-Date: Thu, 21 Apr 2016 15:48:44 +0200
-Message-ID: <5718DA3C.6060304@st.com>
+Subject: Re: [PATCH 6/8] mfd: Add STMPE1600 support
+Date: Thu, 21 Apr 2016 15:51:40 +0200
+Message-ID: <5718DAEC.6030207@st.com>
 References: <1461068317-28016-1-git-send-email-patrice.chotard@st.com>
- <1461068317-28016-4-git-send-email-patrice.chotard@st.com>
- <CACRpkdZWmYo-QgVgYaoHwUV7t=e5MGi-Ge5oWjKAi46+h1JMWg@mail.gmail.com>
+ <1461068317-28016-7-git-send-email-patrice.chotard@st.com>
+ <CACRpkdb73QAs5jZpTq1Qz_RX=fSj3ymQ54S-6RwNDTZ9x8ASkg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:12201 "EHLO
-	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752121AbcDUNtf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 21 Apr 2016 09:49:35 -0400
-In-Reply-To: <CACRpkdZWmYo-QgVgYaoHwUV7t=e5MGi-Ge5oWjKAi46+h1JMWg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdb73QAs5jZpTq1Qz_RX=fSj3ymQ54S-6RwNDTZ9x8ASkg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Maxime Coquelin <maxime.coquelin@st.com>, amelie.delaunay@st.com, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Dinh Nguyen <dinguyen@opensource.altera.com>, Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
 
 
-On 04/20/2016 04:37 PM, Linus Walleij wrote:
+On 04/20/2016 04:43 PM, Linus Walleij wrote:
 > On Tue, Apr 19, 2016 at 2:18 PM,  <patrice.chotard@st.com> wrote:
 >
 >> From: Patrice Chotard <patrice.chotard@st.com>
 >>
->> By cross-checking STMPE 610/801/811/1601/2401/2403 datasheets,
->> it appears that edge detection and rising/falling edge detection
->> is not supported by all STMPE variant:
+>> STMPE1600 is a 16-bit port expander.
+>> Datasheet is available here :
+>> http://www2.st.com/content/st_com/en/products/interfaces-and-transceivers/
+>> i-o-expanders-and-level-translators/i-o-expanders/stmpe1600.html
 >>
->>             GPIO              GPIO
->>        Edge detection     rising/falling
->>                           edge detection
->>   610 |      X        |         X       |
->>   801 |               |                 |
->>   811 |      X        |         X       |
->> 1600 |               |                 |
->> 1601 |      X        |         X       |
->> 1801 |               |         X       |
->> 2401 |      X        |         X       |
->> 2403 |      X        |         X       |
+>> As STMPE1600's SYS_CTRL register has the same layout as
+>> STMPE801 variant, unify STMPExxx_REG_SYS_CTRL_RESET/INT_EN/INT_HI
+>> bit masks to more generic STMPE_SYS_CTRL_RESET/INT_EN/INT_HI
 >>
->> Rework stmpe_dbg_show_one() and stmpe_gpio_irq to correctly
->> take these cases into account.
->>
+>> Signed-off-by: Amelie DELAUNAY <amelie.delaunay@st.com>
 >> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-> Very nice.
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->
-> I expect this to go into the MFD tree with the rest, I guess
-> Lee will cook me an immutable branch for the whole thing
-> once he's happy with it.
->
-> Yours,
-> Linus Walleij
+> (...)
+>>   #define STMPE_SYS_CTRL_RESET   (1 << 7)
+>> +#define STMPE_SYS_CTRL_INT_EN  (1 << 2)
+>> +#define STMPE_SYS_CTRL_INT_HI  (1 << 0)
+>>
+>>   /*
+>>    * STMPE801
+>> @@ -121,10 +123,6 @@ int stmpe_remove(struct stmpe *stmpe);
+>>   #define STMPE801_REG_GPIO_SET_PIN      0x11
+>>   #define STMPE801_REG_GPIO_DIR          0x12
+>>
+>> -#define STMPE801_REG_SYS_CTRL_RESET    (1 << 7)
+>> -#define STMPE801_REG_SYS_CTRL_INT_EN   (1 << 2)
+>> -#define STMPE801_REG_SYS_CTRL_INT_HI   (1 << 0)
+> This looks like unrelated cleanups?
+> Should this be in the reset enablement patch?
+> (It's OK with me though.)
 
-Hi Linus
-
-I will send a v2 as warnings as been detected by kbuild test robot
+Not completely unrelated as STMPE801 and STMPE1600 use the same SYS_CTRL 
+register layout.
+But nevertheless i will put this fix in a separate patch.
 
 Thanks
 
 Patrice
+
+>
+> With that fixed:
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Yours,
+> Linus Walleij
+Hi
