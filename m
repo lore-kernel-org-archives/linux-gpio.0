@@ -1,78 +1,60 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v3] gpio: of: make it possible to name GPIO lines
-Date: Thu, 21 Apr 2016 10:06:15 -0700
-Message-ID: <20160421170615.GA25466@dtor-ws>
-References: <1461236901-28626-1-git-send-email-linus.walleij@linaro.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V3 3/4] gpio: tegra: Get rid of all file scoped global
+ variables
+Date: Thu, 21 Apr 2016 12:33:46 -0600
+Message-ID: <57191D0A.8010005@wwwdotorg.org>
+References: <1461159058-1439-1-git-send-email-ldewangan@nvidia.com>
+ <1461159058-1439-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:35412 "EHLO
-	mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751611AbcDURGU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Apr 2016 13:06:20 -0400
-Content-Disposition: inline
-In-Reply-To: <1461236901-28626-1-git-send-email-linus.walleij@linaro.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:37668 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753179AbcDUSdt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Apr 2016 14:33:49 -0400
+In-Reply-To: <1461159058-1439-4-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Lee Campbell <leecam@google.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, David Mandala <david.mandala@linaro.org>, devicetree@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, thierry.reding@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 04/20/2016 07:30 AM, Laxman Dewangan wrote:
+> Move the file scoped multiple global variable from Tegra GPIO
+> driver to the structure and make this as gpiochip data which
+> can be referred from GPIO chip callbacks.
 
-On Thu, Apr 21, 2016 at 01:08:21PM +0200, Linus Walleij wrote:
->  /**
-> + * of_gpiochip_set_names() - set up the names of the lines
-> + * @chip: GPIO chip whose lines should be named, if possible
-> + */
-> +static void of_gpiochip_set_names(struct gpio_chip *gc)
-> +{
-> +	struct gpio_device *gdev = gc->gpiodev;
-> +	struct device_node *np = gc->of_node;
-> +	int i;
-> +	int nstrings;
+> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+
+> +#define GPIO_MSK_CNF(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x00)
+> +#define GPIO_MSK_OE(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x10)
+> +#define GPIO_MSK_OUT(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0X20)
+> +#define GPIO_MSK_INT_STA(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x40)
+> +#define GPIO_MSK_INT_ENB(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x50)
+> +#define GPIO_MSK_INT_LVL(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x60)
+> +#define GPIO_MSK_DBC_EN(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x30)
+
+DBC_EN/0x30 should be sorted correctly with the rest, and likely added 
+in patch 4 instead.
+
+> @@ -276,19 +307,25 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
+
+> +	struct tegra_gpio_info *tgi = bank->tgi;
 > +
-> +	/* Do we even have the "gpio-line-names" property */
-> +	if (!of_property_read_bool(np, "gpio-line-names"))
-> +		return;
-> +
-> +	nstrings = of_property_count_strings(np, "gpio-line-names");
-> +	/*
-> +	 * Make sure to not index beyond either the end of the
-> +	 * "gpio-names" array nor the number of descriptors of
-> +	 * the GPIO device.
-> +	 */
+>
+>   	chained_irq_enter(chip, desc);
 
-I know you mentioned that it already been discussed much, but I am not
-sure why we need to count the string (and validate that strings are
-present by treating the property as boolean?), when we could do
-something like this (relying on the fact that
-of_property_read_string_index() returns 0 or negative error, no positive
-return codes):
+No need for 2 blank lines there.
 
-	for (i = 0; i < gdev->ngpio; i++) {
-		const char *name;
-		int error;
+> @@ -410,7 +462,7 @@ static int dbg_gpio_show(struct seq_file *s, void *unused)
+>
+>   static int dbg_gpio_open(struct inode *inode, struct file *file)
+>   {
+> -	return single_open(file, dbg_gpio_show, &inode->i_private);
+> +	return single_open(file, dbg_gpio_show, inode->i_private);
 
-		error = of_property_read_string_index(np,
-						      "gpio-line-names",
-						      i,
-						      &name);
-		if (error) {
-			if (error != -ENODATA)
-				dev_err(&gdev->dev,
-					"unable to name line %d: %d\n",
-					i, error);
-			/*
-			 * Either no more strings (-ENODATA), or
-			 * other error, in any case we are done naming.
-			 */
-			break;
-		}
+Can you explain that change? I'm not sure it's correct, but don't know 
+why it was made.
 
-		gdev->descs[i].name = name;
-	}
-
-Thanks.
-
--- 
-Dmitry
+Once those are fixed,
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
