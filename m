@@ -1,87 +1,184 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: of: make it possible to name GPIO lines
-Date: Thu, 21 Apr 2016 11:17:44 +0200
-Message-ID: <CACRpkdZrFye5k8yRevofmbRBk=1pKtv8M1Ls5h5hqY_fMTnz_g@mail.gmail.com>
-References: <1461190600-20955-1-git-send-email-linus.walleij@linaro.org>
-	<CAL_JsqJb+T+r=jOpF+nNkMD_gzB6B7=08_+mNRc-ZRA2TZNpiA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH v3] gpio: of: make it possible to name GPIO lines
+Date: Thu, 21 Apr 2016 13:08:21 +0200
+Message-ID: <1461236901-28626-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:34678 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750919AbcDUJRq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Apr 2016 05:17:46 -0400
-Received: by mail-oi0-f41.google.com with SMTP id k142so74990757oib.1
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Apr 2016 02:17:45 -0700 (PDT)
-In-Reply-To: <CAL_JsqJb+T+r=jOpF+nNkMD_gzB6B7=08_+mNRc-ZRA2TZNpiA@mail.gmail.com>
+Received: from mail-lb0-f178.google.com ([209.85.217.178]:33309 "EHLO
+	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752400AbcDULI2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Apr 2016 07:08:28 -0400
+Received: by mail-lb0-f178.google.com with SMTP id u8so24997780lbk.0
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Apr 2016 04:08:27 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, David Mandala <david.mandala@linaro.org>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Lee Campbell <leecam@google.com>
+Cc: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, David Mandala <david.mandala@linaro.org>, devicetree@vger.kernel.org
 
-On Thu, Apr 21, 2016 at 1:41 AM, Rob Herring <robh+dt@kernel.org> wrote:
-> On Wed, Apr 20, 2016 at 5:16 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> Make it possible to name the producer side of a GPIO line using
->> a "gpio-names" property array, modeled on the "clock-names"
->> property from the clock bindings.
->
-> Except clock-names is the consumer side. There is clock-output-names
-> for the clock controller side though.
+Make it possible to name the producer side of a GPIO line using
+a "gpio-line-names" property array, modeled on the
+"clock-output-names" property from the clock bindings.
 
-Ah yes you're 100% right.
+This naming is especially useful for:
 
-However I cannot name it "gpio-output-names" since that becomes
-ever confusing: GPIO is both input and output (I remember we
-discussed this at some point).
+- Debugging: lines are named after function, not just opaque
+  offset numbers.
 
-"gpio-line-names" was my best suggestion at the time,
-I will respin the patch with that convention (how could I forget
-this!).
+- Exploration: systems where some or all GPIO lines are available
+  to end users, such as prototyping, one-off's "makerspace usecases"
+  users are helped by the names of the GPIO lines when tinkering.
+  This usecase has been surfacing recently.
 
->> Why we are not using hogs: these are consumer side, not producer
->> side. The gpio-controller in DT (gpio_chip in Linux) is a
->> producer, not a consumer.
->
-> Arguably, the names you have are the consumer side. The consumer side
-> is what defines the function. The consumer name is typically local
-> like vddio being the input supply pin, but the producer names are more
-> global like ldo3.
+The gpio-line-names attribute is completely optional.
 
-Depends on what you mean with "producer" and "consumer".
+Example output from lsgpio on a patched Snowball tree:
 
-To the GPIO subsystem atleast a "consumer" is a device
-grabbing a GPIO, like SMSC911x WLAN chip or something.
+GPIO chip: gpiochip6, "8000e180.gpio", 32 GPIO lines
+        line  0: unnamed unused
+        line  1: "AP_GPIO161" "extkb3" [kernel]
+        line  2: "AP_GPIO162" "extkb4" [kernel]
+        line  3: "ACCELEROMETER_INT1_RDY" unused [kernel]
+        line  4: "ACCELEROMETER_INT2" unused
+        line  5: "MAG_DRDY" unused [kernel]
+        line  6: "GYRO_DRDY" unused [kernel]
+        line  7: "RSTn_MLC" unused
+        line  8: "RSTn_SLC" unused
+        line  9: "GYRO_INT" unused
+        line 10: "UART_WAKE" unused
+        line 11: "GBF_RESET" unused
+        line 12: unnamed unused
 
-The producer name here is something like the name of the
-rail. (I would even consider using "gpio-rail-names" for this
-property...)
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Grant Likely <grant.likely@linaro.org>
+Cc: Amit Kucheria <amit.kucheria@linaro.org>
+Cc: David Mandala <david.mandala@linaro.org>
+Cc: Lee Campbell <leecam@google.com>
+Cc: devicetree@vger.kernel.org
+Reviewed-by: Michael Welling <mwelling@ieee.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v2->v3:
+- Swap "gpio-names" for "gpio-line-names" as "gpio-names" indicate
+  a consumer endpoint in DT terminology.
+- Index to either:
+  (A) The end of the gpio-names array or
+  (B) ngpios
+  So we don't risk going out of bounds on either
+ChangeLog v1->v2:
+- Make the naming function return void: we continue at all times
+  and always return 0 anyway.
+- Fix a return value check.
 
-If the GPIO controls an LDO regulator, then the rail will be
-named something like "ldo3" indeed.
+This has been discussed at some length now.
 
-We need to distinguish the producer name from e.g. the
-name of the pin on the package, as that is by nature
-ambigous and likely to have a name such as "gpio3".
+Why we are not using hogs: these are consumer side, not producer
+side. The gpio-controller in DT (gpio_chip in Linux) is a
+producer, not a consumer.
 
->> This patch is not about assigning initial values to GPIO lines.
->> That is an orthogonal usecase. This is just about naming lines.
->
-> It is unless we decide that both should use the same structure.
+This patch is not about assigning initial values to GPIO lines.
+That is an orthogonal usecase. This is just about naming lines.
+---
+ Documentation/devicetree/bindings/gpio/gpio.txt | 19 +++++++++++
+ drivers/gpio/gpiolib-of.c                       | 43 +++++++++++++++++++++++++
+ 2 files changed, 62 insertions(+)
 
-It would still be a different property?
+diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+index c88d2ccb05ca..68d28f62a6f4 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -152,6 +152,21 @@ additional bitmask is needed to specify which GPIOs are actually in use,
+ and which are dummies. The bindings for this case has not yet been
+ specified, but should be specified if/when such hardware appears.
+ 
++Optionally, a GPIO controller may have a "gpio-line-names" property. This is
++an array of strings defining the names of the GPIO lines going out of the
++GPIO controller. This name should be the most meaningful producer name
++for the system, such as a rail name indicating the usage. Package names
++such as pin name are discouraged: such lines have opaque names (since they
++are by definition generic purpose) and such names are usually not very
++helpful. For example "MMC-CD", "Red LED Vdd" and "ethernet reset" are
++reasonable line names as they describe what the line is used for. "GPIO0"
++is not a good name to give to a GPIO line. Placeholders are discouraged:
++rather use the "" (blank string) if the use of the GPIO line is undefined
++in your design. The names are assigned starting from line offset 0 from
++left to right from the passed array. An incomplete array (where the number
++of passed named are less than ngpios) will still be used up until the last
++provided valid line index.
++
+ Example:
+ 
+ gpio-controller@00000000 {
+@@ -160,6 +175,10 @@ gpio-controller@00000000 {
+ 	gpio-controller;
+ 	#gpio-cells = <2>;
+ 	ngpios = <18>;
++	gpio-line-names = "MMC-CD", "MMC-WP", "VDD eth", "RST eth", "LED R",
++		"LED G", "LED B", "Col A", "Col B", "Col C", "Col D",
++		"Row A", "Row B", "Row C", "Row D", "NMI button",
++		"poweroff", "reset";
+ }
+ 
+ The GPIO chip may contain GPIO hog definitions. GPIO hogging is a mechanism
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index d81dbd8e90d9..d43eaca803e3 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -196,6 +196,45 @@ static struct gpio_desc *of_parse_own_gpio(struct device_node *np,
+ }
+ 
+ /**
++ * of_gpiochip_set_names() - set up the names of the lines
++ * @chip: GPIO chip whose lines should be named, if possible
++ */
++static void of_gpiochip_set_names(struct gpio_chip *gc)
++{
++	struct gpio_device *gdev = gc->gpiodev;
++	struct device_node *np = gc->of_node;
++	int i;
++	int nstrings;
++
++	/* Do we even have the "gpio-line-names" property */
++	if (!of_property_read_bool(np, "gpio-line-names"))
++		return;
++
++	nstrings = of_property_count_strings(np, "gpio-line-names");
++	/*
++	 * Make sure to not index beyond either the end of the
++	 * "gpio-names" array nor the number of descriptors of
++	 * the GPIO device.
++	 */
++	for (i = 0; i < nstrings && i < gdev->ngpio; i++) {
++		const char *name;
++		int ret;
++
++		ret = of_property_read_string_index(np,
++						    "gpio-line-names",
++						    i,
++						    &name);
++		if (!ret)
++			gdev->descs[i].name = name;
++
++		/* Empty strings are OK */
++		if (ret < 0 && ret != -ENODATA)
++			dev_err(&gdev->dev, "unable to name line %d\n",
++				i);
++	}
++}
++
++/**
+  * of_gpiochip_scan_gpios - Scan gpio-controller for gpio definitions
+  * @chip:	gpio chip to act on
+  *
+@@ -445,6 +484,10 @@ int of_gpiochip_add(struct gpio_chip *chip)
+ 	if (status)
+ 		return status;
+ 
++	/* If the chip defines names itself, these take precedence */
++	if (!chip->names)
++		of_gpiochip_set_names(chip);
++
+ 	of_node_get(chip->of_node);
+ 
+ 	return of_gpiochip_scan_gpios(chip);
+-- 
+2.4.11
 
-> I'm also worried that just putting in somewhat random names doesn't
-> buy much. If you have to figure out what the name is for the GPIO line
-> you want from userspace, then you might as well know the chip and
-> offset. I'm doubtful we could standardize naming across platforms.
-
-Having a symbolic GPIO line/rail name across several board
-with different chipsets is the explicit goal for people like
-96boards and IoT libraries they use. (Put them on CC).
-
-> I'm not saying yes or no yet, just raising some of the concerns I have.
-
-Let me respin the patch and we keep talking.
-
-Yours,
-Linus Walleij
