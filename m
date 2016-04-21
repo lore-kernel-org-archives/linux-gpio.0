@@ -1,73 +1,82 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v2] gpio: of: make it possible to name GPIO lines
-Date: Wed, 20 Apr 2016 18:41:34 -0500
-Message-ID: <CAL_JsqJb+T+r=jOpF+nNkMD_gzB6B7=08_+mNRc-ZRA2TZNpiA@mail.gmail.com>
-References: <1461190600-20955-1-git-send-email-linus.walleij@linaro.org>
+From: Greg Ungerer <gregungerer@westnet.com.au>
+Subject: Re: [PATCH 09/23] m68k: do away with ARCH_REQUIRE_GPIOLIB
+Date: Thu, 21 Apr 2016 11:12:45 +1000
+Message-ID: <5718290D.7030705@westnet.com.au>
+References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
+ <1461142701-21096-10-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:43870 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751029AbcDTXmB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 20 Apr 2016 19:42:01 -0400
-In-Reply-To: <1461190600-20955-1-git-send-email-linus.walleij@linaro.org>
+Received: from icp-osb-irony-out8.external.iinet.net.au ([203.59.1.225]:4586
+	"EHLO icp-osb-irony-out8.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751532AbcDUBMN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 20 Apr 2016 21:12:13 -0400
+In-Reply-To: <1461142701-21096-10-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@lists.linux-m68k.org
 
-On Wed, Apr 20, 2016 at 5:16 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> Make it possible to name the producer side of a GPIO line using
-> a "gpio-names" property array, modeled on the "clock-names"
-> property from the clock bindings.
-
-Except clock-names is the consumer side. There is clock-output-names
-for the clock controller side though.
-
->
-> This naming is especially useful for:
->
-> - Debugging: lines are named after function, not just opaque
->   offset numbers.
->
-> - Exploration: systems where some or all GPIO lines are available
->   to end users, such as prototyping, one-off's "makerspace usecases"
->   users are helped by the names of the GPIO lines when tinkering.
->   This usecase has been surfacing recently.
->
-> The gpio-names attribute is completely optional.
->
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Grant Likely <grant.likely@linaro.org>
-> Cc: devicetree@vger.kernel.org
+On 20/04/16 18:58, Linus Walleij wrote:
+> Replace "select ARCH_REQUIRE_GPIOLIB" with "select GPIOLIB"
+> as this can now be selected directly.
+>=20
+> Cc: Michael B=C3=BCsch <m@bues.ch>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: linux-m68k@lists.linux-m68k.org
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+
+Since this affects ColdFire I am happy to give an ack:
+
+Acked-by: Greg Ungerer <gerg@linux-m68k.org>
+
+Regards
+Greg
+
+
+> Various arch maintainers:
+>=20
+> either ACK this and I will merge it into the GPIO tree for v4.7
+> anticipating no clashes, or you wait until I have the enabling patch
+> upstream (patch 1 in this series, removing deps on
+> ARCH_[WANTS_OPTIONAL|REQUIRES]_GPIOLIB), and you will be able to
+> merge it to your arch trees yourselves for late v4.7
+> (post GPIO tree merge) or for v4.8.
+>=20
+> You can also ask me for an immutable branch if you prefer that, I
+> will put the enabling patch on a branch and the patch for your arch
+> on top and ask you to pull it.
+>=20
+> Select your option from the menu, silence probably means I will
+> merge it to the GPIO tree. Unless you are X86 or ARM in which case
+> I will be cautious.
 > ---
-> ChangeLog v1->v2:
-> - Make the naming function return void: we continue at all times
->   and always return 0 anyway.
-> - Fix a return value check.
->
-> This has been discussed at some length now.
->
-> Why we are not using hogs: these are consumer side, not producer
-> side. The gpio-controller in DT (gpio_chip in Linux) is a
-> producer, not a consumer.
+>  arch/m68k/Kconfig.cpu | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/m68k/Kconfig.cpu b/arch/m68k/Kconfig.cpu
+> index 0dfcf1281e9c..c1beb5ae181f 100644
+> --- a/arch/m68k/Kconfig.cpu
+> +++ b/arch/m68k/Kconfig.cpu
+> @@ -22,11 +22,11 @@ config M68KCLASSIC
+> =20
+>  config COLDFIRE
+>  	bool "Coldfire CPU family support"
+> -	select ARCH_REQUIRE_GPIOLIB
+>  	select ARCH_HAVE_CUSTOM_GPIO_H
+>  	select CPU_HAS_NO_BITFIELDS
+>  	select CPU_HAS_NO_MULDIV64
+>  	select GENERIC_CSUM
+> +	select GPIOLIB
+>  	select HAVE_CLK
+> =20
+>  endchoice
+>=20
 
-Arguably, the names you have are the consumer side. The consumer side
-is what defines the function. The consumer name is typically local
-like vddio being the input supply pin, but the producer names are more
-global like ldo3.
-
-> This patch is not about assigning initial values to GPIO lines.
-> That is an orthogonal usecase. This is just about naming lines.
-
-It is unless we decide that both should use the same structure.
-
-I'm also worried that just putting in somewhat random names doesn't
-buy much. If you have to figure out what the name is for the GPIO line
-you want from userspace, then you might as well know the chip and
-offset. I'm doubtful we could standardize naming across platforms.
-
-I'm not saying yes or no yet, just raising some of the concerns I have.
-
-Rob
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
