@@ -1,87 +1,99 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V3 3/4] gpio: tegra: Get rid of all file scoped global
- variables
-Date: Thu, 21 Apr 2016 13:34:46 -0600
-Message-ID: <57192B56.5070607@wwwdotorg.org>
-References: <1461159058-1439-1-git-send-email-ldewangan@nvidia.com>
- <1461159058-1439-4-git-send-email-ldewangan@nvidia.com>
- <57191D0A.8010005@wwwdotorg.org> <57191D5C.1020401@nvidia.com>
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: Re: [PATCH 02/23] arc: select GPIOLIB directly
+Date: Fri, 22 Apr 2016 10:46:16 +0530
+Message-ID: <5719B3A0.4060001@synopsys.com>
+References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
+ <1461142701-21096-3-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:37786 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753083AbcDUTet (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Apr 2016 15:34:49 -0400
-In-Reply-To: <57191D5C.1020401@nvidia.com>
+Received: from smtprelay.synopsys.com ([198.182.60.111]:34893 "EHLO
+	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752841AbcDVFSI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2016 01:18:08 -0400
+In-Reply-To: <1461142701-21096-3-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, thierry.reding@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>, linux-snps-arc@lists.infradead.org
 
-On 04/21/2016 12:35 PM, Laxman Dewangan wrote:
->
-> On Friday 22 April 2016 12:03 AM, Stephen Warren wrote:
->> On 04/20/2016 07:30 AM, Laxman Dewangan wrote:
->>> Move the file scoped multiple global variable from Tegra GPIO
->>> driver to the structure and make this as gpiochip data which
->>> can be referred from GPIO chip callbacks.
->>
->>> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
->>
->>> +#define GPIO_MSK_CNF(t, x) (GPIO_REG(t, x) + t->soc->upper_offset +
->>> 0x00)
->>> +#define GPIO_MSK_OE(t, x)    (GPIO_REG(t, x) + t->soc->upper_offset
->>> + 0x10)
->>> +#define GPIO_MSK_OUT(t, x)    (GPIO_REG(t, x) + t->soc->upper_offset
->>> + 0X20)
->>> +#define GPIO_MSK_INT_STA(t, x)    (GPIO_REG(t, x) +
->>> t->soc->upper_offset + 0x40)
->>> +#define GPIO_MSK_INT_ENB(t, x)    (GPIO_REG(t, x) +
->>> t->soc->upper_offset + 0x50)
->>> +#define GPIO_MSK_INT_LVL(t, x)    (GPIO_REG(t, x) +
->>> t->soc->upper_offset + 0x60)
->>> +#define GPIO_MSK_DBC_EN(t, x)    (GPIO_REG(t, x) +
->>> t->soc->upper_offset + 0x30)
->>
->> DBC_EN/0x30 should be sorted correctly with the rest, and likely added
->> in patch 4 instead.
->>
->>> @@ -276,19 +307,25 @@ static void tegra_gpio_irq_handler(struct
->>> irq_desc *desc)
->>
->>> +    struct tegra_gpio_info *tgi = bank->tgi;
->>> +
->>>
->>>       chained_irq_enter(chip, desc);
->>
->> No need for 2 blank lines there.
->>
->>> @@ -410,7 +462,7 @@ static int dbg_gpio_show(struct seq_file *s, void
->>> *unused)
->>>
->>>   static int dbg_gpio_open(struct inode *inode, struct file *file)
->>>   {
->>> -    return single_open(file, dbg_gpio_show, &inode->i_private);
->>> +    return single_open(file, dbg_gpio_show, inode->i_private);
->>
->> Can you explain that change? I'm not sure it's correct, but don't know
->> why it was made.
->
-> we have sysfs interface to dump register as /sys/kernel/debug/tega_gpio
-> On this patch, I moved the tegra_gpio_info pointer as data for
-> s->private so that we will not need the global variable.
-> inode->i_private contains the pointer of the passed data. Hence we do
-> not need to pass the pointe ro pointer of data. If we dont do then we
-> will get wrong data pointer for tegra_gpio_info.
+On Wednesday 20 April 2016 02:28 PM, Linus Walleij wrote:
+> Instead of indirectly selecting GPIOLIB via the
+> ARCH_REQUIRE_GPIOLIB symbol, just select GPIOLIB.
+>=20
+> Cc: Michael B=C3=BCsch <m@bues.ch>
+> Cc: Vineet Gupta <vgupta@synopsys.com>
+> Cc: linux-snps-arc@lists.infradead.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Various arch maintainers:
 
-Oh I see. The old value wasn't ever used at all, so it wasn't set to 
-anything in particular. This isn't so much a change as just using the 
-data for the first time, and hence setting it correctly.
+It would be nice to get the cover latter as well to get more context. T=
+he whole
+series didn't seem to be CCed to lkml either. Anyhow I found some refer=
+ence on
+linux-gpio patchworks and seems like a nice cleanup.
 
->> Once those are fixed,
->> Reviewed-by: Stephen Warren <swarren@nvidia.com>
->
-> Thanks for RB.
+So for arch/arc/*
 
+Acked-by: Vineet Gupta <vgupt@synopsys.com>
+
+Thx,
+-Vineet
+
+>=20
+> either ACK this and I will merge it into the GPIO tree for v4.7
+> anticipating no clashes, or you wait until I have the enabling patch
+> upstream (patch 1 in this series, removing deps on
+> ARCH_[WANTS_OPTIONAL|REQUIRES]_GPIOLIB), and you will be able to
+> merge it to your arch trees yourselves for late v4.7
+> (post GPIO tree merge) or for v4.8.
+>=20
+> You can also ask me for an immutable branch if you prefer that, I
+> will put the enabling patch on a branch and the patch for your arch
+> on top and ask you to pull it.
+>=20
+> Select your option from the menu, silence probably means I will
+> merge it to the GPIO tree. Unless you are X86 or ARM in which case
+> I will be cautious.
+> ---
+>  arch/arc/plat-axs10x/Kconfig | 2 +-
+>  arch/arc/plat-tb10x/Kconfig  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/arch/arc/plat-axs10x/Kconfig b/arch/arc/plat-axs10x/Kcon=
+fig
+> index 426ac4b8bb39..c54d1ae57fe0 100644
+> --- a/arch/arc/plat-axs10x/Kconfig
+> +++ b/arch/arc/plat-axs10x/Kconfig
+> @@ -13,7 +13,7 @@ menuconfig ARC_PLAT_AXS10X
+>  	select OF_GPIO
+>  	select MIGHT_HAVE_PCI
+>  	select GENERIC_IRQ_CHIP
+> -	select ARCH_REQUIRE_GPIOLIB
+> +	select GPIOLIB
+>  	help
+>  	  Support for the ARC AXS10x Software Development Platforms.
+> =20
+> diff --git a/arch/arc/plat-tb10x/Kconfig b/arch/arc/plat-tb10x/Kconfi=
+g
+> index d14b3d3c5dfd..149e0917645d 100644
+> --- a/arch/arc/plat-tb10x/Kconfig
+> +++ b/arch/arc/plat-tb10x/Kconfig
+> @@ -21,7 +21,7 @@ menuconfig ARC_PLAT_TB10X
+>  	select PINCTRL
+>  	select PINCTRL_TB10X
+>  	select PINMUX
+> -	select ARCH_REQUIRE_GPIOLIB
+> +	select GPIOLIB
+>  	select GPIO_TB10X
+>  	select TB10X_IRQC
+>  	help
+>=20
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
