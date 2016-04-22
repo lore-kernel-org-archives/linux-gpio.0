@@ -1,99 +1,110 @@
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: Re: [PATCH 02/23] arc: select GPIOLIB directly
-Date: Fri, 22 Apr 2016 10:46:16 +0530
-Message-ID: <5719B3A0.4060001@synopsys.com>
-References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
- <1461142701-21096-3-git-send-email-linus.walleij@linaro.org>
+From: Patrice Chotard <patrice.chotard@st.com>
+Subject: Re: [PATCH 7/8] gpio: stmpe: Add STMPE1600 support
+Date: Fri, 22 Apr 2016 09:17:35 +0200
+Message-ID: <5719D00F.3020202@st.com>
+References: <1461068317-28016-1-git-send-email-patrice.chotard@st.com>
+ <1461068317-28016-8-git-send-email-patrice.chotard@st.com>
+ <CACRpkdaLhgR8PcKuR1svU=iAEUq=-USN1zktvdor128kEO=G9A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtprelay.synopsys.com ([198.182.60.111]:34893 "EHLO
-	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752841AbcDVFSI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2016 01:18:08 -0400
-In-Reply-To: <1461142701-21096-3-git-send-email-linus.walleij@linaro.org>
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:47543 "EHLO
+	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751707AbcDVHSR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 22 Apr 2016 03:18:17 -0400
+In-Reply-To: <CACRpkdaLhgR8PcKuR1svU=iAEUq=-USN1zktvdor128kEO=G9A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>, linux-snps-arc@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Maxime Coquelin <maxime.coquelin@st.com>, amelie.delaunay@st.com, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Dinh Nguyen <dinguyen@opensource.altera.com>, Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
 
-On Wednesday 20 April 2016 02:28 PM, Linus Walleij wrote:
-> Instead of indirectly selecting GPIOLIB via the
-> ARCH_REQUIRE_GPIOLIB symbol, just select GPIOLIB.
->=20
-> Cc: Michael B=C3=BCsch <m@bues.ch>
-> Cc: Vineet Gupta <vgupta@synopsys.com>
-> Cc: linux-snps-arc@lists.infradead.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Various arch maintainers:
 
-It would be nice to get the cover latter as well to get more context. T=
-he whole
-series didn't seem to be CCed to lkml either. Anyhow I found some refer=
-ence on
-linux-gpio patchworks and seems like a nice cleanup.
 
-So for arch/arc/*
+On 04/20/2016 04:53 PM, Linus Walleij wrote:
+> On Tue, Apr 19, 2016 at 2:18 PM,  <patrice.chotard@st.com> wrote:
+>
+>> From: Patrice Chotard <patrice.chotard@st.com>
+>>
+>> The particularities of this variant are:
+>> - GPIO_XXX_LSB and GPIO_XXX_MSB memory locations are inverted compared
+>>    to other variants.
+>> - There is no Edge detection, Rising Edge and Falling Edge registers.
+>> - IRQ flags are cleared when read, no need to write in Status register.
+>>
+>> Signed-off-by: Amelie DELAUNAY <amelie.delaunay@st.com>
+>> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+>> -       u8 reg = stmpe->regs[STMPE_IDX_GPMR_LSB] - (offset / 8);
+>> +       u8 reg;
+>>          u8 mask = 1 << (offset % 8);
+>>          int ret;
+>>
+>> +       if (stmpe->partnum == STMPE1600)
+>> +               reg = stmpe->regs[STMPE_IDX_GPMR_LSB] + (offset / 8);
+>> +       else
+>> +               reg = stmpe->regs[STMPE_IDX_GPMR_LSB] - (offset / 8);
+> This construct is a bit hard to grasp.
+>
+> Can we think of something more intuitive? Maybe using more
+> code lines but easier to understand.
+>
+> Subtracting the offset is just totally unintuitive in the first place,
+> the STMPE1600 arrangement is much more intuitive.
+>
+> I would prefer if we address the LSB+MSB register explicitly
+> instead of adding or subtracting 1 to the LSB register to get
+> to the MSB register.
+>
+>> +       if (stmpe->partnum == STMPE1600)
+>> +               reg = stmpe->regs[which] + (offset / 8);
+>> +       else
+>> +               reg = stmpe->regs[which] - (offset / 8);
+> Same.
+>
+>> +       if (stmpe->partnum == STMPE1600)
+>> +               reg = stmpe->regs[STMPE_IDX_GPDR_LSB] + (offset / 8);
+>> +       else
+>> +               reg = stmpe->regs[STMPE_IDX_GPDR_LSB] - (offset / 8);
+> Same.
+>
+>> +       if (stmpe->partnum == STMPE1600)
+>> +               reg = stmpe->regs[STMPE_IDX_GPDR_LSB] + (offset / 8);
+>> +       else
+>> +               reg = stmpe->regs[STMPE_IDX_GPDR_LSB] - (offset / 8);
+> Same.
+>
+>> +                               stmpe_reg_write(stmpe,
+>> +                                               stmpe->regs[regmap[i]] + j,
+>> +                                               new);
+>> +                       else
+>> +                               stmpe_reg_write(stmpe,
+>> +                                               stmpe->regs[regmap[i]] - j,
+>> +                                               new);
+> This is also unintuitively backwards.
+>
+>> +       if (stmpe->partnum == STMPE1600)
+>> +               dir_reg = stmpe->regs[STMPE_IDX_GPDR_LSB] + (offset / 8);
+>> +       else
+>> +               dir_reg = stmpe->regs[STMPE_IDX_GPDR_LSB] - (offset / 8);
+> Same.
+>
+>> +       if (stmpe->partnum == STMPE1600)
+>> +               statmsbreg = stmpe->regs[STMPE_IDX_ISGPIOR_LSB];
+>> +       else
+>> +               statmsbreg = stmpe->regs[STMPE_IDX_ISGPIOR_MSB];
+> And this kind of points at the problem.
+>
+> Can we write this in some way that make it super-clear which register
+> we're using and why?
 
-Acked-by: Vineet Gupta <vgupt@synopsys.com>
+Ok i will rework all these points
 
-Thx,
--Vineet
+Thanks
 
->=20
-> either ACK this and I will merge it into the GPIO tree for v4.7
-> anticipating no clashes, or you wait until I have the enabling patch
-> upstream (patch 1 in this series, removing deps on
-> ARCH_[WANTS_OPTIONAL|REQUIRES]_GPIOLIB), and you will be able to
-> merge it to your arch trees yourselves for late v4.7
-> (post GPIO tree merge) or for v4.8.
->=20
-> You can also ask me for an immutable branch if you prefer that, I
-> will put the enabling patch on a branch and the patch for your arch
-> on top and ask you to pull it.
->=20
-> Select your option from the menu, silence probably means I will
-> merge it to the GPIO tree. Unless you are X86 or ARM in which case
-> I will be cautious.
-> ---
->  arch/arc/plat-axs10x/Kconfig | 2 +-
->  arch/arc/plat-tb10x/Kconfig  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/arch/arc/plat-axs10x/Kconfig b/arch/arc/plat-axs10x/Kcon=
-fig
-> index 426ac4b8bb39..c54d1ae57fe0 100644
-> --- a/arch/arc/plat-axs10x/Kconfig
-> +++ b/arch/arc/plat-axs10x/Kconfig
-> @@ -13,7 +13,7 @@ menuconfig ARC_PLAT_AXS10X
->  	select OF_GPIO
->  	select MIGHT_HAVE_PCI
->  	select GENERIC_IRQ_CHIP
-> -	select ARCH_REQUIRE_GPIOLIB
-> +	select GPIOLIB
->  	help
->  	  Support for the ARC AXS10x Software Development Platforms.
-> =20
-> diff --git a/arch/arc/plat-tb10x/Kconfig b/arch/arc/plat-tb10x/Kconfi=
-g
-> index d14b3d3c5dfd..149e0917645d 100644
-> --- a/arch/arc/plat-tb10x/Kconfig
-> +++ b/arch/arc/plat-tb10x/Kconfig
-> @@ -21,7 +21,7 @@ menuconfig ARC_PLAT_TB10X
->  	select PINCTRL
->  	select PINCTRL_TB10X
->  	select PINMUX
-> -	select ARCH_REQUIRE_GPIOLIB
-> +	select GPIOLIB
->  	select GPIO_TB10X
->  	select TB10X_IRQC
->  	help
->=20
+Patrice
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> Yours,
+> Linus Walleij
+
