@@ -1,57 +1,64 @@
-From: <tthayer@opensource.altera.com>
-Subject: [PATCH 08/11] dt-bindings: mfd: Add Altera A10-SR power supply alarm
-Date: Fri, 22 Apr 2016 10:33:36 -0500
-Message-ID: <1461339219-15255-9-git-send-email-tthayer@opensource.altera.com>
-References: <1461339219-15255-1-git-send-email-tthayer@opensource.altera.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v4.6 take three
+Date: Fri, 22 Apr 2016 20:18:00 +0200
+Message-ID: <CACRpkdb2MYFP=U3PdOrcbLnERXpeyY1SwpoyfsDx1820mRi1vw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-hwmon-owner@vger.kernel.org>
-In-Reply-To: <1461339219-15255-1-git-send-email-tthayer@opensource.altera.com>
-Sender: linux-hwmon-owner@vger.kernel.org
-To: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com
-Cc: linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, Thor Thayer <tthayer@opensource.altera.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:33150 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754552AbcDVSSC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2016 14:18:02 -0400
+Received: by mail-oi0-f49.google.com with SMTP id r78so124877052oie.0
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Apr 2016 11:18:01 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-From: Thor Thayer <tthayer@opensource.altera.com>
+Hi Linus,
 
-Add power supply alarm from the hwmon framework.
+some pin control driver fixes came in. One headed for stable
+and the other two are just ordinary merge window fixes.
 
-Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
----
- .../devicetree/bindings/mfd/altera-a10sr.txt       |    8 ++++++++
- 1 file changed, 8 insertions(+)
+Details in the tag and commits.
 
-diff --git a/Documentation/devicetree/bindings/mfd/altera-a10sr.txt b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-index 8e17d05..75c51ab 100644
---- a/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-+++ b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-@@ -11,6 +11,7 @@ The A10SR consists of this varied group of sub-devices:
- Device                   Description
- ------                   ----------
- a10sr_gpio               GPIO Controller
-+ps_alarm                 Power Supply Alarms
- 
- Arria10 GPIO
- Required Properties:
-@@ -20,6 +21,9 @@ Required Properties:
-                       the second cell is used to specify flags.
-                       See ../gpio/gpio.txt for more information.
- 
-+Arria10 Power Supply Alarms
-+- compatible        : Should be "altr,a10sr-hwmon"
-+
- Example:
- 
-         resource-manager@0 {
-@@ -32,4 +36,8 @@ Example:
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 		};
-+
-+		ps_alarm {
-+			compatible = "altr,a10sr-hwmon";
-+		};
- 	};
--- 
-1.7.9.5
+Please pull it in.
 
+Yours,
+Linus Walleij
+
+The following changes since commit bf16200689118d19de1b8d2a3c314fc21f5dc7bb:
+
+  Linux 4.6-rc3 (2016-04-10 17:58:30 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.6-3
+
+for you to fetch changes up to 56b367c0cd67d4c3006738e7dc9dda9273fd2bfe:
+
+  pinctrl: single: Fix pcs_parse_bits_in_pinctrl_entry to use __ffs
+than ffs (2016-04-15 11:26:55 +0200)
+
+----------------------------------------------------------------
+Pin control fixes for the v4.6 series:
+- Make the i.MX driver select REGMAP as a dependency
+- Fix up the Mediatek debounce time unit
+- Fix a real hairy ffs vs __ffs issue in the Single pinctrl driver
+
+----------------------------------------------------------------
+Alexander Kurz (1):
+      pinctrl: imx: Kconfig: PINCTRL_IMX select REGMAP
+
+Keerthy (1):
+      pinctrl: single: Fix pcs_parse_bits_in_pinctrl_entry to use __ffs than ffs
+
+Yingjoe Chen (1):
+      pinctrl: mediatek: correct debounce time unit in mtk_gpio_set_debounce
+
+ drivers/pinctrl/freescale/Kconfig             | 1 +
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 9 +++++----
+ drivers/pinctrl/pinctrl-single.c              | 6 +++---
+ 3 files changed, 9 insertions(+), 7 deletions(-)
