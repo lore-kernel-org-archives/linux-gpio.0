@@ -1,58 +1,28 @@
-From: ville.syrjala@linux.intel.com
-Subject: [PATCH] mfd: intel_soc_pmic_core: Terminate panel control GPIO lookup table correctly
-Date: Fri, 22 Apr 2016 22:38:55 +0300
-Message-ID: <1461353935-8078-1-git-send-email-ville.syrjala@linux.intel.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V4 4/4] gpio: tegra: Add support for gpio debounce
+Date: Fri, 22 Apr 2016 13:53:03 -0600
+Message-ID: <571A811F.6030102@wwwdotorg.org>
+References: <1461319754-12040-1-git-send-email-ldewangan@nvidia.com>
+ <1461319754-12040-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:5452 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752499AbcDVTjB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 22 Apr 2016 15:39:01 -0400
+Received: from avon.wwwdotorg.org ([70.85.31.133]:41582 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751084AbcDVTxG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Apr 2016 15:53:06 -0400
+In-Reply-To: <1461319754-12040-4-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: intel-gfx@lists.freedesktop.org, Shobhit Kumar <shobhit.kumar@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Lee Jones <lee.jones@linaro.org>, stable@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org
+Cc: gnurou@gmail.com, thierry.reding@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-=46rom: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
+On 04/22/2016 04:09 AM, Laxman Dewangan wrote:
+> NVIDIA's Tegra210 support the HW debounce in the GPIO controller
+> for all its GPIO pins.
+>
+> Add support for setting debounce timing by implementing the
+> set_debounce callback of gpiochip.
 
-GPIO lookup tables are supposed to be zero terminated. Let's do that
-and avoid accidentally walking off the end.
-
-Cc: Shobhit Kumar <shobhit.kumar@intel.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: stable@vger.kernel.org
-=46ixes: 61dd2ca2d44e ("mfd: intel_soc_pmic_core: Add lookup table for =
-Panel Control as GPIO signal")
-Signed-off-by: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
----
- drivers/mfd/intel_soc_pmic_core.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mfd/intel_soc_pmic_core.c b/drivers/mfd/intel_soc_=
-pmic_core.c
-index d9e15cf7c6c8..12d6ebb4ae5d 100644
---- a/drivers/mfd/intel_soc_pmic_core.c
-+++ b/drivers/mfd/intel_soc_pmic_core.c
-@@ -35,6 +35,7 @@ static struct gpiod_lookup_table panel_gpio_table =3D=
- {
- 	.table =3D {
- 		/* Panel EN/DISABLE */
- 		GPIO_LOOKUP("gpio_crystalcove", 94, "panel", GPIO_ACTIVE_HIGH),
-+		{ },
- 	},
- };
-=20
---=20
-2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
