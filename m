@@ -1,68 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: pinctrl-single: Fix pcs_parse_bits_in_pinctrl_entry
- to use __ffs than ffs
-Date: Sat, 23 Apr 2016 11:45:34 +0200
-Message-ID: <CACRpkdZa=v1iKZ=eiY11V3qZV9pPqtoi6vHm2Pu4ctWTFiy0TA@mail.gmail.com>
-References: <1460609956-26539-1-git-send-email-j-keerthy@ti.com>
-	<CACRpkdZxY3FNti37HfuwS7KT9K+pA=REr_G=hEQRi-D3=CHUpQ@mail.gmail.com>
-	<20160415152215.GR5995@atomide.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] pinctrl: sirf/atlas7: trivial fix of spelling mistake on flagged
+Date: Sun, 24 Apr 2016 23:02:09 +0100
+Message-ID: <1461535329-19935-1-git-send-email-colin.king@canonical.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:35383 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751681AbcDWJpf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Apr 2016 05:45:35 -0400
-Received: by mail-oi0-f43.google.com with SMTP id x19so3707034oix.2
-        for <linux-gpio@vger.kernel.org>; Sat, 23 Apr 2016 02:45:34 -0700 (PDT)
-In-Reply-To: <20160415152215.GR5995@atomide.com>
+Received: from youngberry.canonical.com ([91.189.89.112]:60470 "EHLO
+	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753124AbcDXWCT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 24 Apr 2016 18:02:19 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Keerthy <j-keerthy@ti.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>, Sekhar Nori <nsekhar@ti.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Barry Song <baohua@kernel.org>, Jiri Kosina <trivial@kernel.org>, Wei Chen <Wei.Chen@csr.com>, Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
 
-On Fri, Apr 15, 2016 at 5:22 PM, Tony Lindgren <tony@atomide.com> wrote:
-> * Linus Walleij <linus.walleij@linaro.org> [160415 02:29]:
->> On Thu, Apr 14, 2016 at 6:59 AM, Keerthy <j-keerthy@ti.com> wrote:
->>
->> > pcs_parse_bits_in_pinctrl_entry uses ffs which gives bit indices
->> > ranging from 1 to MAX. This leads to a corner case where we try to request
->> > the pin number = MAX and fails.
->> >
->> > bit_pos value is being calculted using ffs. pin_num_from_lsb uses
->> > bit_pos value. pins array is populated with:
->> >
->> > pin + pin_num_from_lsb.
->> >
->> > The above is 1 more than usual bit indices as bit_pos uses ffs to compute
->> > first set bit. Hence the last of the pins array is populated with the MAX
->> > value and not MAX - 1 which causes error when we call pin_request.
->> >
->> > mask_pos is rightly calculated as ((pcs->fmask) << (bit_pos - 1))
->> > Consequently val_pos and submask are correct.
->> >
->> > Hence use __ffs which gives (ffs(x) - 1) as the first bit set.
->> >
->> > fixes: 4e7e8017a8 ("pinctrl: pinctrl-single: enhance to configure multiple pins of different modules")
->> > Signed-off-by: Keerthy <j-keerthy@ti.com>
->> > ---
->> >
->> > Changes in v2:
->> >
->> >   * Changed pcs->fshift to use __ffs instead of ffs to be consistent.
->> >
->> > Boot tesed on da850-evm and checked the pinctrl sysfs nodes.
->>
->> Patch applied for fixes with Tony's ACK.
->>
->> Should it also be tagged for stable?
->
-> Probably a good idea, I can see somebody pulling hair out because
-> of this in various product trees.
+From: Colin Ian King <colin.king@canonical.com>
 
-Ooops sorry I totally missed to add that :(
+fix spelling mistake, flaged -> flagged
 
-Please ask Greg to take it as a selected stable patch.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/sirf/pinctrl-atlas7.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+index 3d233fc..168c0f5 100644
+--- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
++++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+@@ -5798,7 +5798,7 @@ static void atlas7_gpio_handle_irq(struct irq_desc *desc)
+ 
+ 	status = readl(ATLAS7_GPIO_INT_STATUS(bank));
+ 	if (!status) {
+-		pr_warn("%s: gpio [%s] status %#x no interrupt is flaged\n",
++		pr_warn("%s: gpio [%s] status %#x no interrupt is flagged\n",
+ 			__func__, gc->label, status);
+ 		handle_bad_irq(desc);
+ 		return;
+-- 
+2.7.4
+
