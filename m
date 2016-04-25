@@ -1,199 +1,50 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH V4 4/4] gpio: tegra: Add support for gpio debounce
-Date: Mon, 25 Apr 2016 14:36:45 +0900
-Message-ID: <CAAVeFuJykGNGj95r4P8vatxOA_yjsP1eQkDf9zS-dYV1piHTJA@mail.gmail.com>
-References: <1461319754-12040-1-git-send-email-ldewangan@nvidia.com> <1461319754-12040-4-git-send-email-ldewangan@nvidia.com>
+From: Jani Nikula <jani.nikula@linux.intel.com>
+Subject: Re: [PATCH] mfd: intel_soc_pmic_core: Terminate
+	panel	control GPIO lookup table correctly
+Date: Mon, 25 Apr 2016 10:40:57 +0300
+Message-ID: <8737qam8za.fsf@intel.com>
+References: <1461353935-8078-1-git-send-email-ville.syrjala@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f179.google.com ([209.85.223.179]:36322 "EHLO
-	mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752099AbcDYFhF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Apr 2016 01:37:05 -0400
-In-Reply-To: <1461319754-12040-4-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <1461353935-8078-1-git-send-email-ville.syrjala@linux.intel.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: ville.syrjala@linux.intel.com, linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Shobhit Kumar <shobhit.kumar@intel.com>, intel-gfx@lists.freedesktop.org, stable@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Sorry, just realized I commented on v3...
-
-On Fri, Apr 22, 2016 at 7:09 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
-> NVIDIA's Tegra210 support the HW debounce in the GPIO controller
-> for all its GPIO pins.
->
-> Add support for setting debounce timing by implementing the
-> set_debounce callback of gpiochip.
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->
-> ---
-> Changes from V1:
-> - Write debounce count before enable.
-> - Make sure the debounce count do not have any boot residuals.
->
-> Changes from V2:
-> - Only access register for debounce when SoC support debounce.
->
-> Changes from V3:
-> - Add locking mechanism in debounce count register update.
-> - Move DBC register from prev patch to here.
->
->  drivers/gpio/gpio-tegra.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 68 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-> index 6af5eb2..45d80ec 100644
-> --- a/drivers/gpio/gpio-tegra.c
-> +++ b/drivers/gpio/gpio-tegra.c
-> @@ -46,10 +46,13 @@
->  #define GPIO_INT_ENB(t, x)     (GPIO_REG(t, x) + 0x50)
->  #define GPIO_INT_LVL(t, x)     (GPIO_REG(t, x) + 0x60)
->  #define GPIO_INT_CLR(t, x)     (GPIO_REG(t, x) + 0x70)
-> +#define GPIO_DBC_CNT(t, x)     (GPIO_REG(t, x) + 0xF0)
-> +
->
->  #define GPIO_MSK_CNF(t, x)     (GPIO_REG(t, x) + t->soc->upper_offset + 0x00)
->  #define GPIO_MSK_OE(t, x)      (GPIO_REG(t, x) + t->soc->upper_offset + 0x10)
->  #define GPIO_MSK_OUT(t, x)     (GPIO_REG(t, x) + t->soc->upper_offset + 0X20)
-> +#define GPIO_MSK_DBC_EN(t, x)  (GPIO_REG(t, x) + t->soc->upper_offset + 0x30)
->  #define GPIO_MSK_INT_STA(t, x) (GPIO_REG(t, x) + t->soc->upper_offset + 0x40)
->  #define GPIO_MSK_INT_ENB(t, x) (GPIO_REG(t, x) + t->soc->upper_offset + 0x50)
->  #define GPIO_MSK_INT_LVL(t, x) (GPIO_REG(t, x) + t->soc->upper_offset + 0x60)
-> @@ -67,6 +70,7 @@ struct tegra_gpio_bank {
->         int bank;
->         int irq;
->         spinlock_t lvl_lock[4];
-> +       spinlock_t dbc_lock[4]; /* Lock for updating debounce count register */
-
-I'm nit'ing here, but maybe one spinlock shared by all ports would be
-enough? (the same would apply to lvl_lock, so feel free to do this as
-a separate patch) I don't think we expect *that* many concurrent
-accesses, do we?
-
->  #ifdef CONFIG_PM_SLEEP
->         u32 cnf[4];
->         u32 out[4];
-> @@ -74,11 +78,14 @@ struct tegra_gpio_bank {
->         u32 int_enb[4];
->         u32 int_lvl[4];
->         u32 wake_enb[4];
-> +       u32 dbc_enb[4];
->  #endif
-> +       u32 dbc_cnt[4];
->         struct tegra_gpio_info *tgi;
->  };
->
->  struct tegra_gpio_soc_config {
-> +       bool debounce_supported;
->         u32 bank_stride;
->         u32 upper_offset;
->  };
-> @@ -182,6 +189,38 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
->         return 0;
->  }
->
-> +static int tegra_gpio_set_debounce(struct gpio_chip *chip, unsigned int offset,
-> +                                  unsigned int debounce)
-> +{
-> +       struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
-> +       unsigned int debounce_ms = DIV_ROUND_UP(debounce, 1000);
-> +       unsigned long flags;
-> +       int port = GPIO_PORT(offset);
-> +       int bank = GPIO_BANK(offset);
-
-Maybe declare "bank" as follows:
-
-    struct tegra_gpio_bank *bank = &tgi->bank_info[GPIO_BANK(offset)];
-
-This will allow you to simplify the code that follows:
-
-> +
-> +       if (!debounce_ms) {
-> +               tegra_gpio_mask_write(tgi, GPIO_MSK_DBC_EN(tgi, offset),
-> +                                     offset, 0);
-> +               return 0;
-> +       }
-> +
-> +       debounce_ms = min(debounce_ms, 255U);
-> +
-> +       /* There is only one debounce count register per port and hence
-> +        * set the maximum of current and requested debounce time.
-> +        */
-> +       spin_lock_irqsave(&tgi->bank_info[bank].dbc_lock[port], flags);
-> +       if (tgi->bank_info[bank].dbc_cnt[port] < debounce_ms) {
-> +               tegra_gpio_writel(tgi, debounce_ms, GPIO_DBC_CNT(tgi, offset));
-> +               tgi->bank_info[bank].dbc_cnt[port] = debounce_ms;
-> +       }
-> +       spin_unlock_irqrestore(&tgi->bank_info[bank].dbc_lock[port], flags);
-
-Becomes:
-
-       spin_lock_irqsave(bank->dbc_lock[port], flags);
-       if (bank->dbc_cnt[port] < debounce_ms) {
-               tegra_gpio_writel(tgi, debounce_ms, GPIO_DBC_CNT(tgi, offset));
-               bank->dbc_cnt[port] = debounce_ms;
-       }
-       spin_unlock_irqrestore(&bank->dbc_lock[port], flags);
-
-Which is nicer to the eyes.
-
-Extra points if you initialize port and bank after we ensure that
-debounce_ms is not zero and that their value will actually be used.
-
-> +
-> +       tegra_gpio_mask_write(tgi, GPIO_MSK_DBC_EN(tgi, offset), offset, 1);
-> +
-> +       return 0;
-> +}
-> +
->  static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
->  {
->         struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
-> @@ -197,6 +236,7 @@ static struct gpio_chip tegra_gpio_chip = {
->         .get                    = tegra_gpio_get,
->         .direction_output       = tegra_gpio_direction_output,
->         .set                    = tegra_gpio_set,
-> +       .set_debounce           = tegra_gpio_set_debounce,
->         .to_irq                 = tegra_gpio_to_irq,
->         .base                   = 0,
->  };
-> @@ -360,6 +400,14 @@ static int tegra_gpio_resume(struct device *dev)
->                         unsigned int gpio = (b<<5) | (p<<3);
->                         tegra_gpio_writel(tgi, bank->cnf[p],
->                                           GPIO_CNF(tgi, gpio));
-> +
-> +                       if (tgi->soc->debounce_supported) {
-> +                               tegra_gpio_writel(tgi, bank->dbc_cnt[p],
-> +                                                 GPIO_DBC_CNT(tgi, gpio));
-> +                               tegra_gpio_writel(tgi, bank->dbc_enb[p],
-> +                                                 GPIO_MSK_DBC_EN(tgi, gpio));
-> +                       }
-> +
->                         tegra_gpio_writel(tgi, bank->out[p],
->                                           GPIO_OUT(tgi, gpio));
->                         tegra_gpio_writel(tgi, bank->oe[p],
-> @@ -395,6 +443,13 @@ static int tegra_gpio_suspend(struct device *dev)
->                                                         GPIO_OUT(tgi, gpio));
->                         bank->oe[p] = tegra_gpio_readl(tgi,
->                                                        GPIO_OE(tgi, gpio));
-> +                       if (tgi->soc->debounce_supported) {
-> +                               bank->dbc_enb[p] = tegra_gpio_readl(tgi,
-> +                                               GPIO_MSK_DBC_EN(tgi, gpio));
-> +                               bank->dbc_enb[p] = (bank->dbc_enb[p] << 8) |
-> +                                                       bank->dbc_enb[p];
-> +                       }
-> +
->                         bank->int_enb[p] = tegra_gpio_readl(tgi,
->                                                 GPIO_INT_ENB(tgi, gpio));
->                         bank->int_lvl[p] = tegra_gpio_readl(tgi,
-> @@ -547,6 +602,9 @@ static int tegra_gpio_probe(struct platform_device *pdev)
->
->         platform_set_drvdata(pdev, tgi);
->
-> +       if (!config->debounce_supported)
-> +               tgi->gc->set_debounce = NULL;
-
-Yep, we really want one gpio_chip instance in the tegra_gpio_info
-struct, otherwise this kind of limits the purpose of getting rid of
-these global variables...
+T24gRnJpLCAyMiBBcHIgMjAxNiwgdmlsbGUuc3lyamFsYUBsaW51eC5pbnRlbC5jb20gd3JvdGU6
+Cj4gRnJvbTogVmlsbGUgU3lyasOkbMOkIDx2aWxsZS5zeXJqYWxhQGxpbnV4LmludGVsLmNvbT4K
+Pgo+IEdQSU8gbG9va3VwIHRhYmxlcyBhcmUgc3VwcG9zZWQgdG8gYmUgemVybyB0ZXJtaW5hdGVk
+LiBMZXQncyBkbyB0aGF0Cj4gYW5kIGF2b2lkIGFjY2lkZW50YWxseSB3YWxraW5nIG9mZiB0aGUg
+ZW5kLgo+Cj4gQ2M6IFNob2JoaXQgS3VtYXIgPHNob2JoaXQua3VtYXJAaW50ZWwuY29tPgo+IENj
+OiBTYW11ZWwgT3J0aXogPHNhbWVvQGxpbnV4LmludGVsLmNvbT4KPiBDYzogTGludXMgV2FsbGVp
+aiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPgo+IENjOiBBbGV4YW5kcmUgQ291cmJvdCA8Z251
+cm91QGdtYWlsLmNvbT4KPiBDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWls
+LmNvbT4KPiBDYzogTGVlIEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4KPiBDYzogc3RhYmxl
+QHZnZXIua2VybmVsLm9yZwo+IEZpeGVzOiA2MWRkMmNhMmQ0NGUgKCJtZmQ6IGludGVsX3NvY19w
+bWljX2NvcmU6IEFkZCBsb29rdXAgdGFibGUgZm9yIFBhbmVsIENvbnRyb2wgYXMgR1BJTyBzaWdu
+YWwiKQo+IFNpZ25lZC1vZmYtYnk6IFZpbGxlIFN5cmrDpGzDpCA8dmlsbGUuc3lyamFsYUBsaW51
+eC5pbnRlbC5jb20+CgpSZXZpZXdlZC1ieTogSmFuaSBOaWt1bGEgPGphbmkubmlrdWxhQGludGVs
+LmNvbT4KCj4gLS0tCj4gIGRyaXZlcnMvbWZkL2ludGVsX3NvY19wbWljX2NvcmUuYyB8IDEgKwo+
+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L21mZC9pbnRlbF9zb2NfcG1pY19jb3JlLmMgYi9kcml2ZXJzL21mZC9pbnRlbF9zb2NfcG1pY19j
+b3JlLmMKPiBpbmRleCBkOWUxNWNmN2M2YzguLjEyZDZlYmI0YWU1ZCAxMDA2NDQKPiAtLS0gYS9k
+cml2ZXJzL21mZC9pbnRlbF9zb2NfcG1pY19jb3JlLmMKPiArKysgYi9kcml2ZXJzL21mZC9pbnRl
+bF9zb2NfcG1pY19jb3JlLmMKPiBAQCAtMzUsNiArMzUsNyBAQCBzdGF0aWMgc3RydWN0IGdwaW9k
+X2xvb2t1cF90YWJsZSBwYW5lbF9ncGlvX3RhYmxlID0gewo+ICAJLnRhYmxlID0gewo+ICAJCS8q
+IFBhbmVsIEVOL0RJU0FCTEUgKi8KPiAgCQlHUElPX0xPT0tVUCgiZ3Bpb19jcnlzdGFsY292ZSIs
+IDk0LCAicGFuZWwiLCBHUElPX0FDVElWRV9ISUdIKSwKPiArCQl7IH0sCj4gIAl9LAo+ICB9OwoK
+LS0gCkphbmkgTmlrdWxhLCBJbnRlbCBPcGVuIFNvdXJjZSBUZWNobm9sb2d5IENlbnRlcgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFp
+bGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
