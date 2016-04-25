@@ -1,17 +1,17 @@
 From: Thor Thayer <tthayer@opensource.altera.com>
-Subject: Re: [PATCH 08/11] dt-bindings: mfd: Add Altera A10-SR power supply
- alarm
-Date: Mon, 25 Apr 2016 10:04:09 -0500
-Message-ID: <571E31E9.1000309@opensource.altera.com>
+Subject: Re: [PATCH 01/11] dt-bindings: mfd: Add Altera Arria10 System
+ Resource Chip bindings
+Date: Mon, 25 Apr 2016 10:01:52 -0500
+Message-ID: <571E3160.60702@opensource.altera.com>
 References: <1461339219-15255-1-git-send-email-tthayer@opensource.altera.com>
- <1461339219-15255-9-git-send-email-tthayer@opensource.altera.com>
- <20160425125713.GA6578@rob-hp-laptop>
+ <1461339219-15255-2-git-send-email-tthayer@opensource.altera.com>
+ <20160425125514.GA5100@rob-hp-laptop>
 Reply-To: <tthayer@opensource.altera.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-hwmon-owner@vger.kernel.org>
-In-Reply-To: <20160425125713.GA6578@rob-hp-laptop>
+In-Reply-To: <20160425125514.GA5100@rob-hp-laptop>
 Sender: linux-hwmon-owner@vger.kernel.org
 To: Rob Herring <robh@kernel.org>
 Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
@@ -19,25 +19,24 @@ List-Id: linux-gpio@vger.kernel.org
 
 
 
-On 04/25/2016 07:57 AM, Rob Herring wrote:
-> On Fri, Apr 22, 2016 at 10:33:36AM -0500, tthayer@opensource.altera.com wrote:
+On 04/25/2016 07:55 AM, Rob Herring wrote:
+> On Fri, Apr 22, 2016 at 10:33:29AM -0500, tthayer@opensource.altera.com wrote:
 >> From: Thor Thayer <tthayer@opensource.altera.com>
 >>
->> Add power supply alarm from the hwmon framework.
+>> The Altera Arria10 Devkit System Resource chip is a Multi-Function
+>> Device with a GPIO expander and power supply alarm.
 >
-> hwmon framework is a Linuxism that has nothing to do with the h/w
-> description.
->
-OK. I was careful to remove it in the binding and will remove it from 
-the description as well.
+> An alarm with no interrupt? Are the GPIOs interrupt capable?
 
+The alarms have no interrupt but the GPIOs are interrupt capable (not 
+implemented with interrupt capability in this patch series).
+
+>
+>> This patch adds documentation for the Altera A10-SR DT bindings.
+>>
 >> Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
 >> ---
->>   .../devicetree/bindings/mfd/altera-a10sr.txt       |    8 ++++++++
->>   1 file changed, 8 insertions(+)
->
-> Just squash this into the 1st patch.
->
-> Rob
->
-OK. Thank you for reviewing.
+>>   .../devicetree/bindings/mfd/altera-a10sr.txt       |   35 ++++++++++++++++++++
+>>   1 file changed, 35 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/mfd/altera-a10sr.txt
+>>
