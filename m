@@ -1,39 +1,146 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH] pinctrl: sirf/atlas7: trivial fix of spelling mistake on flagged
-Date: Sun, 24 Apr 2016 23:02:09 +0100
-Message-ID: <1461535329-19935-1-git-send-email-colin.king@canonical.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:60470 "EHLO
-	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753124AbcDXWCT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 24 Apr 2016 18:02:19 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V3 4/4] gpio: tegra: Add support for gpio debounce
+Date: Mon, 25 Apr 2016 13:55:49 +0900
+Message-ID: <CAAVeFuK2pQpy9Srg7PJNCMTKkXeLoqGjzVDmuWHox71tHV3-jQ@mail.gmail.com>
+References: <1461159058-1439-1-git-send-email-ldewangan@nvidia.com> <1461159058-1439-5-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1461159058-1439-5-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Barry Song <baohua@kernel.org>, Jiri Kosina <trivial@kernel.org>, Wei Chen <Wei.Chen@csr.com>, Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee.jones@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Apr 20, 2016 at 10:30 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> NVIDIA's Tegra210 support the HW debounce in the GPIO
+> controller for all its GPIO pins.
+>
+> Add support for setting debounce timing by implementing the
+> set_debounce callback of gpiochip.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> ---
+> Changes from V1:
+> - Write debounce count before enable.
+> - Make sure the debounce count do not have any boot residuals.
+>
+> Changes from V2:
+> - Only access register fo debounce when SoC support debounce.
+> ---
+>  drivers/gpio/gpio-tegra.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+>
+> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+> index 36e865f..1f8ec24 100644
+> --- a/drivers/gpio/gpio-tegra.c
+> +++ b/drivers/gpio/gpio-tegra.c
+> @@ -76,11 +76,14 @@ struct tegra_gpio_bank {
+>         u32 int_enb[4];
+>         u32 int_lvl[4];
+>         u32 wake_enb[4];
+> +       u32 dbc_enb[4];
+>  #endif
+> +       u32 dbc_cnt[4];
+>         struct tegra_gpio_info *tgi;
+>  };
+>
+>  struct tegra_gpio_soc_config {
+> +       bool debounce_supported;
+>         u32 bank_stride;
+>         u32 upper_offset;
+>  };
+> @@ -184,6 +187,35 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+>         return 0;
+>  }
+>
+> +static int tegra_gpio_set_debounce(struct gpio_chip *chip, unsigned int offset,
+> +                                  unsigned int debounce)
+> +{
+> +       struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+> +       unsigned int debounce_ms = DIV_ROUND_UP(debounce, 1000);
+> +       int port = GPIO_PORT(offset);
+> +       int bank = GPIO_BANK(offset);
+> +
+> +       if (!debounce_ms) {
+> +               tegra_gpio_mask_write(tgi, GPIO_MSK_DBC_EN(tgi, offset),
+> +                                     offset, 0);
+> +               return 0;
+> +       }
+> +
+> +       debounce_ms = min(debounce_ms, 255U);
+> +
+> +       /* There is only one debounce count register per port and hence
+> +        * set the maximum of current and requested debounce time.
+> +        */
+> +       if (tgi->bank_info[bank].dbc_cnt[port] < debounce_ms) {
+> +               tegra_gpio_writel(tgi, debounce_ms, GPIO_DBC_CNT(tgi, offset));
+> +               tgi->bank_info[bank].dbc_cnt[port] = debounce_ms;
+> +       }
+> +
+> +       tegra_gpio_mask_write(tgi, GPIO_MSK_DBC_EN(tgi, offset), offset, 1);
+> +
+> +       return 0;
+> +}
+> +
+>  static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+>  {
+>         struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+> @@ -199,6 +231,7 @@ static struct gpio_chip tegra_gpio_chip = {
+>         .get                    = tegra_gpio_get,
+>         .direction_output       = tegra_gpio_direction_output,
+>         .set                    = tegra_gpio_set,
+> +       .set_debounce           = tegra_gpio_set_debounce,
+>         .to_irq                 = tegra_gpio_to_irq,
+>         .base                   = 0,
+>  };
+> @@ -363,6 +396,14 @@ static int tegra_gpio_resume(struct device *dev)
+>                         unsigned int gpio = (b<<5) | (p<<3);
+>                         tegra_gpio_writel(tgi, bank->cnf[p],
+>                                           GPIO_CNF(tgi, gpio));
+> +
+> +                       if (tgi->soc->debounce_supported) {
+> +                               tegra_gpio_writel(tgi, bank->dbc_cnt[p],
+> +                                                 GPIO_DBC_CNT(tgi, gpio));
+> +                               tegra_gpio_writel(tgi, bank->dbc_enb[p],
+> +                                                 GPIO_MSK_DBC_EN(tgi, gpio));
+> +                       }
+> +
+>                         tegra_gpio_writel(tgi, bank->out[p],
+>                                           GPIO_OUT(tgi, gpio));
+>                         tegra_gpio_writel(tgi, bank->oe[p],
+> @@ -398,6 +439,13 @@ static int tegra_gpio_suspend(struct device *dev)
+>                                                         GPIO_OUT(tgi, gpio));
+>                         bank->oe[p] = tegra_gpio_readl(tgi,
+>                                                        GPIO_OE(tgi, gpio));
+> +                       if (tgi->soc->debounce_supported) {
+> +                               bank->dbc_enb[p] = tegra_gpio_readl(tgi,
+> +                                               GPIO_MSK_DBC_EN(tgi, gpio));
+> +                               bank->dbc_enb[p] = (bank->dbc_enb[p] << 8) |
+> +                                                       bank->dbc_enb[p];
+> +                       }
+> +
+>                         bank->int_enb[p] = tegra_gpio_readl(tgi,
+>                                                 GPIO_INT_ENB(tgi, gpio));
+>                         bank->int_lvl[p] = tegra_gpio_readl(tgi,
+> @@ -550,6 +598,9 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+>
+>         platform_set_drvdata(pdev, tgi);
+>
+> +       if (!config->debounce_supported)
+> +               tgi->gc->set_debounce = NULL;
 
-fix spelling mistake, flaged -> flagged
+This last line is equivalent to doing
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pinctrl/sirf/pinctrl-atlas7.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+     tegra_gpio_chip.set_debounce = NULL
 
-diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
-index 3d233fc..168c0f5 100644
---- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
-+++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
-@@ -5798,7 +5798,7 @@ static void atlas7_gpio_handle_irq(struct irq_desc *desc)
- 
- 	status = readl(ATLAS7_GPIO_INT_STATUS(bank));
- 	if (!status) {
--		pr_warn("%s: gpio [%s] status %#x no interrupt is flaged\n",
-+		pr_warn("%s: gpio [%s] status %#x no interrupt is flagged\n",
- 			__func__, gc->label, status);
- 		handle_bad_irq(desc);
- 		return;
--- 
-2.7.4
+Which means that after that no one can reinstanciate this driver and
+use debounce. Granted, this does not happen in real life, but the
+purpose of the previous patch that removes all static variables is
+supposedly to make this scenario possible. I think you can easily fix
+this though: make tgi->gc a non-pointer member, do tgi->gc =
+tegra_gpio_chip to copy the initial data, and then set
+tgi->gc.set_debounce to NULL if needed.
 
+tegra_gpio_chip can then be made constant, and maybe even __initdata?
