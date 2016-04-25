@@ -1,50 +1,54 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: [PATCH] mfd: intel_soc_pmic_core: Terminate
-	panel	control GPIO lookup table correctly
-Date: Mon, 25 Apr 2016 10:40:57 +0300
-Message-ID: <8737qam8za.fsf@intel.com>
-References: <1461353935-8078-1-git-send-email-ville.syrjala@linux.intel.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH V3 4/4] gpio: tegra: Add support for gpio debounce
+Date: Mon, 25 Apr 2016 13:59:31 +0530
+Message-ID: <571DD56B.9030506@nvidia.com>
+References: <1461159058-1439-1-git-send-email-ldewangan@nvidia.com> <1461159058-1439-5-git-send-email-ldewangan@nvidia.com> <CAAVeFuK2pQpy9Srg7PJNCMTKkXeLoqGjzVDmuWHox71tHV3-jQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <1461353935-8078-1-git-send-email-ville.syrjala@linux.intel.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: ville.syrjala@linux.intel.com, linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Shobhit Kumar <shobhit.kumar@intel.com>, intel-gfx@lists.freedesktop.org, stable@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16016 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753894AbcDYIlT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Apr 2016 04:41:19 -0400
+In-Reply-To: <CAAVeFuK2pQpy9Srg7PJNCMTKkXeLoqGjzVDmuWHox71tHV3-jQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-T24gRnJpLCAyMiBBcHIgMjAxNiwgdmlsbGUuc3lyamFsYUBsaW51eC5pbnRlbC5jb20gd3JvdGU6
-Cj4gRnJvbTogVmlsbGUgU3lyasOkbMOkIDx2aWxsZS5zeXJqYWxhQGxpbnV4LmludGVsLmNvbT4K
-Pgo+IEdQSU8gbG9va3VwIHRhYmxlcyBhcmUgc3VwcG9zZWQgdG8gYmUgemVybyB0ZXJtaW5hdGVk
-LiBMZXQncyBkbyB0aGF0Cj4gYW5kIGF2b2lkIGFjY2lkZW50YWxseSB3YWxraW5nIG9mZiB0aGUg
-ZW5kLgo+Cj4gQ2M6IFNob2JoaXQgS3VtYXIgPHNob2JoaXQua3VtYXJAaW50ZWwuY29tPgo+IENj
-OiBTYW11ZWwgT3J0aXogPHNhbWVvQGxpbnV4LmludGVsLmNvbT4KPiBDYzogTGludXMgV2FsbGVp
-aiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPgo+IENjOiBBbGV4YW5kcmUgQ291cmJvdCA8Z251
-cm91QGdtYWlsLmNvbT4KPiBDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWls
-LmNvbT4KPiBDYzogTGVlIEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4KPiBDYzogc3RhYmxl
-QHZnZXIua2VybmVsLm9yZwo+IEZpeGVzOiA2MWRkMmNhMmQ0NGUgKCJtZmQ6IGludGVsX3NvY19w
-bWljX2NvcmU6IEFkZCBsb29rdXAgdGFibGUgZm9yIFBhbmVsIENvbnRyb2wgYXMgR1BJTyBzaWdu
-YWwiKQo+IFNpZ25lZC1vZmYtYnk6IFZpbGxlIFN5cmrDpGzDpCA8dmlsbGUuc3lyamFsYUBsaW51
-eC5pbnRlbC5jb20+CgpSZXZpZXdlZC1ieTogSmFuaSBOaWt1bGEgPGphbmkubmlrdWxhQGludGVs
-LmNvbT4KCj4gLS0tCj4gIGRyaXZlcnMvbWZkL2ludGVsX3NvY19wbWljX2NvcmUuYyB8IDEgKwo+
-ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L21mZC9pbnRlbF9zb2NfcG1pY19jb3JlLmMgYi9kcml2ZXJzL21mZC9pbnRlbF9zb2NfcG1pY19j
-b3JlLmMKPiBpbmRleCBkOWUxNWNmN2M2YzguLjEyZDZlYmI0YWU1ZCAxMDA2NDQKPiAtLS0gYS9k
-cml2ZXJzL21mZC9pbnRlbF9zb2NfcG1pY19jb3JlLmMKPiArKysgYi9kcml2ZXJzL21mZC9pbnRl
-bF9zb2NfcG1pY19jb3JlLmMKPiBAQCAtMzUsNiArMzUsNyBAQCBzdGF0aWMgc3RydWN0IGdwaW9k
-X2xvb2t1cF90YWJsZSBwYW5lbF9ncGlvX3RhYmxlID0gewo+ICAJLnRhYmxlID0gewo+ICAJCS8q
-IFBhbmVsIEVOL0RJU0FCTEUgKi8KPiAgCQlHUElPX0xPT0tVUCgiZ3Bpb19jcnlzdGFsY292ZSIs
-IDk0LCAicGFuZWwiLCBHUElPX0FDVElWRV9ISUdIKSwKPiArCQl7IH0sCj4gIAl9LAo+ICB9OwoK
-LS0gCkphbmkgTmlrdWxhLCBJbnRlbCBPcGVuIFNvdXJjZSBUZWNobm9sb2d5IENlbnRlcgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFp
-bGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
+
+On Monday 25 April 2016 10:25 AM, Alexandre Courbot wrote:
+> On Wed, Apr 20, 2016 at 10:30 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+>>                       bank->int_lvl[p] = tegra_gpio_readl(tgi,
+>> @@ -550,6 +598,9 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+>>
+>>          platform_set_drvdata(pdev, tgi);
+>>
+>> +       if (!config->debounce_supported)
+>> +               tgi->gc->set_debounce = NULL;
+> This last line is equivalent to doing
+>
+>       tegra_gpio_chip.set_debounce = NULL
+>
+> Which means that after that no one can reinstanciate this driver and
+> use debounce. Granted, this does not happen in real life, but the
+> purpose of the previous patch that removes all static variables is
+> supposedly to make this scenario possible. I think you can easily fix
+> this though: make tgi->gc a non-pointer member, do tgi->gc =
+> tegra_gpio_chip to copy the initial data, and then set
+> tgi->gc.set_debounce to NULL if needed.
+
+As there is only single instance of the tegra gpio driver, I avoided the 
+copy of the tegra_gpio_chip.
+I am not expecting multiple instance of this driver and hence should be 
+fine. When multiple instances are needed, it can be just use as:
+
+But let me make this as you suggested.
+
+
+> tegra_gpio_chip can then be made constant, and maybe even __initdata?
+I have not seen the usage of __initdata now a days. I think it is 
+removed from most of places.
+Will use the const.
+
