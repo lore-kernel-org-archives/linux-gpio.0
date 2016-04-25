@@ -1,31 +1,37 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
-Date: Mon, 25 Apr 2016 16:08:30 +0530
-Message-ID: <1461580714-22479-1-git-send-email-ldewangan@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 01/11] dt-bindings: mfd: Add Altera Arria10 System
+ Resource Chip bindings
+Date: Mon, 25 Apr 2016 07:55:14 -0500
+Message-ID: <20160425125514.GA5100@rob-hp-laptop>
+References: <1461339219-15255-1-git-send-email-tthayer@opensource.altera.com>
+ <1461339219-15255-2-git-send-email-tthayer@opensource.altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@wwwdotorg.org, linus.walleij@linaro.org, gnurou@gmail.com, thierry.reding@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:50954 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932283AbcDYMzU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 25 Apr 2016 08:55:20 -0400
+Content-Disposition: inline
+In-Reply-To: <1461339219-15255-2-git-send-email-tthayer@opensource.altera.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: tthayer@opensource.altera.com
+Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
 
-Add support for the debounce as Tegra210 support debounce in HW.
-Also do the clenaups to remove all global variables.
+On Fri, Apr 22, 2016 at 10:33:29AM -0500, tthayer@opensource.altera.com wrote:
+> From: Thor Thayer <tthayer@opensource.altera.com>
+> 
+> The Altera Arria10 Devkit System Resource chip is a Multi-Function
+> Device with a GPIO expander and power supply alarm.
 
-Changes from V3:
-- Rearranging debounce registers and lock the DB CNT registers.
-Changes from V4:
-- Get rid of tegra_gpio_chip and tegra_irq_chip as global.
-
-Laxman Dewangan (4):
-  gpio: tegra: Don't open code of_device_get_match_data()
-  gpio: tegra: Make of_device_id compatible data to constant
-  gpio: tegra: Get rid of all file scoped global variables
-  gpio: tegra: Add support for gpio debounce
-
- drivers/gpio/gpio-tegra.c | 407 +++++++++++++++++++++++++++++-----------------
- 1 file changed, 261 insertions(+), 146 deletions(-)
-
--- 
-2.1.4
+An alarm with no interrupt? Are the GPIOs interrupt capable?
+ 
+> This patch adds documentation for the Altera A10-SR DT bindings.
+> 
+> Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
+> ---
+>  .../devicetree/bindings/mfd/altera-a10sr.txt       |   35 ++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/altera-a10sr.txt
+> 
