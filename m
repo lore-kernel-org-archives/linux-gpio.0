@@ -1,45 +1,35 @@
-From: Thor Thayer <tthayer@opensource.altera.com>
-Subject: Re: [PATCH 01/11] dt-bindings: mfd: Add Altera Arria10 System
- Resource Chip bindings
-Date: Tue, 26 Apr 2016 08:54:54 -0500
-Message-ID: <571F732E.6090301@opensource.altera.com>
-References: <1461339219-15255-1-git-send-email-tthayer@opensource.altera.com>
- <1461339219-15255-2-git-send-email-tthayer@opensource.altera.com>
- <20160425125514.GA5100@rob-hp-laptop> <571E3160.60702@opensource.altera.com>
- <20160426123332.GA25487@rob-hp-laptop>
-Reply-To: <tthayer@opensource.altera.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] pinctrl-exynos5440: Use off-stack memory for pinctrl_gpio_range
+Date: Tue, 26 Apr 2016 15:52:38 +0200
+Message-ID: <CACRpkdYczBP58uS4nVpUGUevb7E+OCXmXA60SydigQo=AzX8Aw@mail.gmail.com>
+References: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-hwmon-owner@vger.kernel.org>
-In-Reply-To: <20160426123332.GA25487@rob-hp-laptop>
-Sender: linux-hwmon-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Wed, Apr 20, 2016 at 3:54 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
 
+> The range is registered into a linked list which can be referenced
+> throughout the lifetime of the driver. Ensure the range's memory is useful
+> for the same lifetime by adding it to the driver's private data structure.
+>
+> The bug was introduced in the driver's initial commit, which was present in
+> v3.10.
+>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC")
+> Cc: stable@vger.kernel.org
+> ---
+> Since v1:
+>
+> * Add range member kerneldoc addressing Tomasz Figa's comment
 
-On 04/26/2016 07:33 AM, Rob Herring wrote:
-> On Mon, Apr 25, 2016 at 10:01:52AM -0500, Thor Thayer wrote:
->>
->>
->> On 04/25/2016 07:55 AM, Rob Herring wrote:
->>> On Fri, Apr 22, 2016 at 10:33:29AM -0500, tthayer@opensource.altera.com wrote:
->>>> From: Thor Thayer <tthayer@opensource.altera.com>
->>>>
->>>> The Altera Arria10 Devkit System Resource chip is a Multi-Function
->>>> Device with a GPIO expander and power supply alarm.
->>>
->>> An alarm with no interrupt? Are the GPIOs interrupt capable?
->>
->> The alarms have no interrupt but the GPIOs are interrupt capable (not
->> implemented with interrupt capability in this patch series).
->
-> Please make the binding as complete as possible even if you don't
-> support features in the driver yet. Driver features may evolve, but a
-> specific h/w doesn't.
->
-> Rob
->
-Understood. Thanks for the explanation.
+Patch applied with the ACKs.
+
+Yours,
+Linus Walleij
