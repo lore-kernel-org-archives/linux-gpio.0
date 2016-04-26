@@ -1,93 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpio: of: make it possible to name GPIO lines
-Date: Tue, 26 Apr 2016 13:03:45 +0200
-Message-ID: <CACRpkdYZuRGvFf1kjy3E4=1hSfVaqFTk6qENyaJjEdTgZ8uVGQ@mail.gmail.com>
-References: <1461236901-28626-1-git-send-email-linus.walleij@linaro.org>
-	<20160421170615.GA25466@dtor-ws>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: Kill unused variable in sh_pfc_remove()
+Date: Tue, 26 Apr 2016 16:30:44 +0530
+Message-ID: <571F4A5C.7090608@nvidia.com>
+References: <1461666626-24805-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:33372 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752120AbcDZLDq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Apr 2016 07:03:46 -0400
-Received: by mail-oi0-f52.google.com with SMTP id r78so10871193oie.0
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Apr 2016 04:03:46 -0700 (PDT)
-In-Reply-To: <20160421170615.GA25466@dtor-ws>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1461666626-24805-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Lee Campbell <leecam@google.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, David Mandala <david.mandala@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Thu, Apr 21, 2016 at 7:06 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> On Thu, Apr 21, 2016 at 01:08:21PM +0200, Linus Walleij wrote:
->>  /**
->> + * of_gpiochip_set_names() - set up the names of the lines
->> + * @chip: GPIO chip whose lines should be named, if possible
->> + */
->> +static void of_gpiochip_set_names(struct gpio_chip *gc)
->> +{
->> +     struct gpio_device *gdev = gc->gpiodev;
->> +     struct device_node *np = gc->of_node;
->> +     int i;
->> +     int nstrings;
->> +
->> +     /* Do we even have the "gpio-line-names" property */
->> +     if (!of_property_read_bool(np, "gpio-line-names"))
->> +             return;
->> +
->> +     nstrings = of_property_count_strings(np, "gpio-line-names");
->> +     /*
->> +      * Make sure to not index beyond either the end of the
->> +      * "gpio-names" array nor the number of descriptors of
->> +      * the GPIO device.
->> +      */
+
+On Tuesday 26 April 2016 04:00 PM, Geert Uytterhoeven wrote:
+> If CONFIG_PINCTRL_SH_PFC_GPIO=n:
 >
-> I know you mentioned that it already been discussed much, but I am not
-> sure why we need to count the string (and validate that strings are
-> present by treating the property as boolean?),
-
-I validate the property to be present to bail out quickly on controllers
-that have no names set (i.e. all currently deployed device trees).
-I can skip that part if you think it's too much optimization.
-
-However:
-
-> I am not
-> sure why we need to count the string
-> when we could do
-> something like this (relying on the fact that
-> of_property_read_string_index() returns 0 or negative error, no positive
-> return codes):
+>      drivers/pinctrl/sh-pfc/core.c: In function 'sh_pfc_remove':
+>      drivers/pinctrl/sh-pfc/core.c:649:17: warning: unused variable 'pfc' [-Wunused-variable]
 >
->         for (i = 0; i < gdev->ngpio; i++) {
->                 const char *name;
->                 int error;
+> Fixes: 67ec8d7b48463904 ("pinctrl: ish-pfc: Use devm_pinctrl_register() for pinctrl registration")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> I won't queue this up in sh-pfc-for-v4.7, as the offending commit is not in
+> that branch.
 >
->                 error = of_property_read_string_index(np,
->                                                       "gpio-line-names",
->                                                       i,
->                                                       &name);
->                 if (error) {
->                         if (error != -ENODATA)
->                                 dev_err(&gdev->dev,
->                                         "unable to name line %d: %d\n",
->                                         i, error);
->                         /*
->                          * Either no more strings (-ENODATA), or
->                          * other error, in any case we are done naming.
->                          */
->                         break;
->                 }
->
->                 gdev->descs[i].name = name;
->         }
 
-Yeah I can do that, thanks I didn't look close enough at the semantics.
+Ideally, you dont need the call of sh_pfc_unregister_gpiochip() if you 
+use the devm_gpiochip_add_data() which is already available on all 
+subsystem.
 
-The big question whether the DT people are OK with naming producer
-names like this remains however.
+int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc)
+{
+         gpiochip_remove(&pfc->gpio->gpio_chip);
+#ifdef CONFIG_SUPERH
+         gpiochip_remove(&pfc->func->gpio_chip);
+#endif
+         return 0;
+}
 
-Yours,
-Linus Walleij
+So you can get rid of this calls and lines.
+
+
+-----------------------------------------------------------------------------------
+This email message is for the sole use of the intended recipient(s) and may contain
+confidential information.  Any unauthorized review, use, disclosure or distribution
+is prohibited.  If you are not the intended recipient, please contact the sender by
+reply email and destroy all copies of the original message.
+-----------------------------------------------------------------------------------
