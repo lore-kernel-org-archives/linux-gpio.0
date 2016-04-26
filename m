@@ -1,45 +1,34 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 05/23] avr32: do away with ARCH_REQUIRE_GPIOLIB
-Date: Tue, 26 Apr 2016 13:38:03 +0200
-Message-ID: <CACRpkdYv+nt_-onhFqFPxgX1MYkGNO0ZUp1PEUN4hdfYJF=hiA@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 18/23] metag: remove ARCH_WANT_OPTIONAL_GPIOLIB
+Date: Tue, 26 Apr 2016 13:40:16 +0200
+Message-ID: <CACRpkdZf9xMpPVg-yUysuhjQgm005e_4MPje8qngLiszPZiz3Q@mail.gmail.com>
 References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
-	<1461142701-21096-6-git-send-email-linus.walleij@linaro.org>
-	<20160420090931.GA21027@samfundet.no>
+	<1461142701-21096-19-git-send-email-linus.walleij@linaro.org>
+	<20160420092602.GX7859@jhogan-linux.le.imgtec.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:35856 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752553AbcDZLiF convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Apr 2016 07:38:05 -0400
-Received: by mail-ob0-f177.google.com with SMTP id j9so5323602obd.3
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Apr 2016 04:38:04 -0700 (PDT)
-In-Reply-To: <20160420090931.GA21027@samfundet.no>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-metag-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160420092602.GX7859-4bYivNCBEGTR3KXKvIWQxtm+Uo4AYnCiHZ5vskTnxNA@public.gmane.org>
+Sender: linux-metag-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>, linux-metag-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>, Haavard Skinnemoen <hskinnemoen@gmail.com>
 
-On Wed, Apr 20, 2016 at 11:09 AM, Hans-Christian Noren Egtvedt
-<egtvedt@samfundet.no> wrote:
-> Around Wed 20 Apr 2016 10:58:03 +0200 or thereabout, Linus Walleij wr=
-ote:
->> Replace "select ARCH_REQUIRE_GPIOLIB" with "select GPIOLIB"
->> as this can now be selected directly.
+On Wed, Apr 20, 2016 at 11:26 AM, James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org> =
+wrote:
+> On Wed, Apr 20, 2016 at 10:58:16AM +0200, Linus Walleij wrote:
+>> This symbols is not needed to get access to selecting the
+>> GPIOLIB anymore: any arch can select GPIOLIB.
 >>
 >> Cc: Michael B=C3=BCsch <m@bues.ch>
->> Cc: Haavard Skinnemoen <hskinnemoen@gmail.com>
->> Cc: Hans-Christian Egtvedt <egtvedt@samfundet.no>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+>> Cc: linux-metag-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 >
-> Acked-by: Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>
+> Acked-by: James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
 
 Applied to the GPIO tree for v4.7 with your ACK, thanks!
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
