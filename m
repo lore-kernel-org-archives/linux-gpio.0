@@ -1,78 +1,38 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 7/7] pinctrl: tegra: Add driver to configure voltage and
- power state of io pads
-Date: Tue, 26 Apr 2016 09:31:47 -0600
-Message-ID: <571F89E3.1040907@wwwdotorg.org>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
- <1460473007-11535-8-git-send-email-ldewangan@nvidia.com>
- <CACRpkdZyYiNJfuiTPeivvgVTZwdwh64nkf=f8JczSAVvnT7QeA@mail.gmail.com>
- <5710A8A4.90309@nvidia.com>
- <CACRpkdZLEozAmv6REcb7ubCNSLxGsYj1whZEKUkdiodZoS=vzg@mail.gmail.com>
- <5710BA75.2010503@nvidia.com>
- <CACRpkdbr-9Z1JKMVmwNFyMq+Pg+3hT5c9rKZ1y4wZecnidW9Cg@mail.gmail.com>
- <5710D4E2.2030801@nvidia.com> <571F6DE5.5020605@nvidia.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v2] pinctrl: pinctrl-single: Fix
+ pcs_parse_bits_in_pinctrl_entry to use __ffs than ffs
+Date: Tue, 26 Apr 2016 09:17:04 -0700
+Message-ID: <20160426161704.GU5995@atomide.com>
+References: <1460609956-26539-1-git-send-email-j-keerthy@ti.com>
+ <CACRpkdZxY3FNti37HfuwS7KT9K+pA=REr_G=hEQRi-D3=CHUpQ@mail.gmail.com>
+ <20160415152215.GR5995@atomide.com>
+ <CACRpkdZa=v1iKZ=eiY11V3qZV9pPqtoi6vHm2Pu4ctWTFiy0TA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:53170 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752246AbcDZPbw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Apr 2016 11:31:52 -0400
-In-Reply-To: <571F6DE5.5020605@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZa=v1iKZ=eiY11V3qZV9pPqtoi6vHm2Pu4ctWTFiy0TA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Keerthy <j-keerthy@ti.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>, Sekhar Nori <nsekhar@ti.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 04/26/2016 07:32 AM, Laxman Dewangan wrote:
->
-> On Friday 15 April 2016 05:17 PM, Laxman Dewangan wrote:
->>
->> On Friday 15 April 2016 04:45 PM, Linus Walleij wrote:
->>> On Fri, Apr 15, 2016 at 11:55 AM, Laxman Dewangan
->>> <ldewangan@nvidia.com> wrote:
->>>> On Friday 15 April 2016 02:55 PM, Linus Walleij wrote:
->>>>> If the pin could actually set a voltage level it would have a
->>>>> regulator.
->>>>> I don't believe that. I think it is selecting one of two rails which
->>>>> could theoretically hold two totally different voltages.
->>>>>
->>>>> And that is what power-source is about.
->>>> The IO rails connected to PMIC rail and connection does not get change.
->>>> We change the voltage of PMIC rails via regulator calls. And then
->>>> configure
->>>> pads for the new voltage.
->>> Aha I get it! So you adjust something in the I/O-cell so that it is
->>> adapted
->>> for the new voltage.
->>>
->>> OK that seems to be something new. I suspect
->>> power-voltage-select = <n>; where N i in uV would solve this?
->>> (We should use uV since regulators use this.)
->>
->> Thanks for new property. I will make the unit and type same as the
->> regulator framework.
->
-> We have the ops for configuring the pin config as
->
->          int (*pin_config_group_set) (struct pinctrl_dev *pctldev,
->                                       unsigned selector,
->                                       unsigned long *configs,
->                                       unsigned num_configs);
->
->
-> The config is 32 bit, upper 16 for config argument and  and lower 16 for
-> the config param.
->
-> So we can not accommodate 3300000uV until we change it to mV i.e. 3300mV.
->
-> So on interface, we can read uV from DT but when making config, we can
-> translate it to mV before passing to pin_config_group_set.
+* Linus Walleij <linus.walleij@linaro.org> [160423 02:46]:
+> On Fri, Apr 15, 2016 at 5:22 PM, Tony Lindgren <tony@atomide.com> wrote:
+> > * Linus Walleij <linus.walleij@linaro.org> [160415 02:29]:
+> >> Patch applied for fixes with Tony's ACK.
+> >>
+> >> Should it also be tagged for stable?
+> >
+> > Probably a good idea, I can see somebody pulling hair out because
+> > of this in various product trees.
+> 
+> Ooops sorry I totally missed to add that :(
+> 
+> Please ask Greg to take it as a selected stable patch.
 
-A SoC-specific enum would make more sense. It would avoid any 
-translation. There's no need for a generic value since the available set 
-of options is SoC-specific, the data source is SoC-specific, and there's 
-no need for any code besides the SoC-specific driver to interpret the 
-value in any way at all.
+Well it has the fixes tag, let's see if the stable people will
+find it automatically now :) If not, Keerthy can send email
+requesting adding it manually to stable trees.
 
+Tony
