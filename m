@@ -1,59 +1,55 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2] gpiolib-acpi: Duplicate con_id string when adding it
- to the crs lookup list
-Date: Mon, 25 Apr 2016 14:18:18 -0700
-Message-ID: <20160425211818.GH26059@dtor-ws>
-References: <1460563836-1899-1-git-send-email-ville.syrjala@linux.intel.com>
- <1461589279-8911-1-git-send-email-ville.syrjala@linux.intel.com>
- <20160425132139.GA1721@lahna.fi.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Tan Jui Nee <jui.nee.tan@intel.com>
+Subject: [PATCH v2 0/3] pinctrl/broxton: enable platform device in the absent of ACPI enumeration
+Date: Tue, 26 Apr 2016 14:09:48 +0800
+Message-ID: <1461650991-15185-1-git-send-email-jui.nee.tan@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f172.google.com ([209.85.192.172]:33370 "EHLO
-	mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933361AbcDYVSV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Apr 2016 17:18:21 -0400
-Content-Disposition: inline
-In-Reply-To: <20160425132139.GA1721@lahna.fi.intel.com>
+Received: from mga09.intel.com ([134.134.136.24]:42992 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751027AbcDZGKO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 26 Apr 2016 02:10:14 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: ville.syrjala@linux.intel.com, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, stable@vger.kernel.org
+To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jui.nee.tan@intel.com, jonathan.yong@intel.com, ong.hock.yu@intel.com, weifeng.voon@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
 
-On Mon, Apr 25, 2016 at 04:21:39PM +0300, Mika Westerberg wrote:
-> On Mon, Apr 25, 2016 at 04:01:19PM +0300, ville.syrjala@linux.intel.c=
-om wrote:
-> > From: Ville Syrj=E4l=E4 <ville.syrjala@linux.intel.com>
-> >=20
-> > Calling gpiod_get() from a module and then unloading the module lea=
-ds to an
-> > oops due to acpi_can_fallback_to_crs() storing the pointer to the p=
-assed
-> > 'con_id' string onto acpi_crs_lookup_list. The next guy to come alo=
-ng will then
-> > try to access the string but the memory may now be gone with the mo=
-dule.
-> > Make a copy of the passed string instead, and store the copy on the=
- list.
-> >
->=20
-> [...]
->=20
-> >=20
-> > v2: Make the copied con_id const
-> >=20
-> > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
->=20
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Hi,
+The patches are to cater the need for non-ACPI system whereby
+a platform device has to be created in order to bind with
+Apollo Lake Pinctrl GPIO platform driver.
 
-Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+The MMIO BAR is accessed over the Primary to Sideband bridge
+(P2SB). Since the BIOS prevents the P2SB device from being
+enumerated by the PCI subsystem, so we need to hide/unhide P2SB
+to lookup the P2SB BAR and pass the PCI BAR address to the gpio
+platform driver.
 
---=20
-Dmitry
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+All these three patches have dependencies on each other.
+
+Changes from V1:
+	- Add new config option CONFIG_X86_INTEL_NON_ACPI and "select PINCTRL"
+	  to fix kbuildbot error
+
+Andy Shevchenko (1):
+  x86/platform/p2sb: New Primary to Sideband bridge support driver for
+    Intel SOC's
+
+Tan Jui Nee (2):
+  pinctrl/broxton: enable platform device in the absent of ACPI
+    enumeration
+  mfd: lpc_ich: Add support for Intel Apollo Lake GPIO pinctrl in
+    non-ACPI system
+
+ arch/x86/Kconfig                        |  14 ++++
+ arch/x86/include/asm/p2sb.h             |  27 +++++++
+ arch/x86/platform/intel/Makefile        |   1 +
+ arch/x86/platform/intel/p2sb.c          |  99 ++++++++++++++++++++++++
+ drivers/mfd/Kconfig                     |   3 +-
+ drivers/mfd/lpc_ich.c                   | 128 ++++++++++++++++++++++++++++++++
+ drivers/pinctrl/intel/pinctrl-broxton.c |  43 ++++++++---
+ 7 files changed, 302 insertions(+), 13 deletions(-)
+ create mode 100644 arch/x86/include/asm/p2sb.h
+ create mode 100644 arch/x86/platform/intel/p2sb.c
+
+-- 
+1.9.1
+
