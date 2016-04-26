@@ -1,31 +1,68 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: amdpt: Add a new ACPI HID
-Date: Tue, 26 Apr 2016 15:42:49 +0200
-Message-ID: <CACRpkdamq23y3kdyV8zYqMeVqC4T87eAzyHXPS6tEMurFRRjSQ@mail.gmail.com>
-References: <1458185757-10537-1-git-send-email-yd_tseng@asmedia.com.tw>
-	<CACRpkdaFZS8s8NTtY7iY4hA17GSLZYxNaYz1QLURwPa1ZvMqzQ@mail.gmail.com>
-	<F35F71BF8A165F48925028F09F3CDC2501365782@ASMT-EXMB-V01.corpnet.asus>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 7/7] pinctrl: tegra: Add driver to configure voltage and
+ power state of io pads
+Date: Tue, 26 Apr 2016 19:02:21 +0530
+Message-ID: <571F6DE5.5020605@nvidia.com>
+References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>	<1460473007-11535-8-git-send-email-ldewangan@nvidia.com>	<CACRpkdZyYiNJfuiTPeivvgVTZwdwh64nkf=f8JczSAVvnT7QeA@mail.gmail.com>	<5710A8A4.90309@nvidia.com>	<CACRpkdZLEozAmv6REcb7ubCNSLxGsYj1whZEKUkdiodZoS=vzg@mail.gmail.com>	<5710BA75.2010503@nvidia.com> <CACRpkdbr-9Z1JKMVmwNFyMq+Pg+3hT5c9rKZ1y4wZecnidW9Cg@mail.gmail.com> <5710D4E2.2030801@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:33537 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751858AbcDZNmt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Apr 2016 09:42:49 -0400
-Received: by mail-ob0-f173.google.com with SMTP id tz8so6951188obc.0
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Apr 2016 06:42:49 -0700 (PDT)
-In-Reply-To: <F35F71BF8A165F48925028F09F3CDC2501365782@ASMT-EXMB-V01.corpnet.asus>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15340 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751858AbcDZNoO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Apr 2016 09:44:14 -0400
+In-Reply-To: <5710D4E2.2030801@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?VHVuZ1l1IEx1KOWRguadseaYsSk=?= <TungYu_Lu@asmedia.com.tw>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Yd_Tseng@asmedia.com.tw
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Apr 18, 2016 at 10:49 AM,  <TungYu_Lu@asmedia.com.tw> wrote:
-> Dear Linus,
+
+On Friday 15 April 2016 05:17 PM, Laxman Dewangan wrote:
 >
-> Really appreciate for your assistance. Which version will apply this patch?
+> On Friday 15 April 2016 04:45 PM, Linus Walleij wrote:
+>> On Fri, Apr 15, 2016 at 11:55 AM, Laxman Dewangan 
+>> <ldewangan@nvidia.com> wrote:
+>>> On Friday 15 April 2016 02:55 PM, Linus Walleij wrote:
+>>>> If the pin could actually set a voltage level it would have a 
+>>>> regulator.
+>>>> I don't believe that. I think it is selecting one of two rails which
+>>>> could theoretically hold two totally different voltages.
+>>>>
+>>>> And that is what power-source is about.
+>>> The IO rails connected to PMIC rail and connection does not get change.
+>>> We change the voltage of PMIC rails via regulator calls. And then 
+>>> configure
+>>> pads for the new voltage.
+>> Aha I get it! So you adjust something in the I/O-cell so that it is 
+>> adapted
+>> for the new voltage.
+>>
+>> OK that seems to be something new. I suspect
+>> power-voltage-select = <n>; where N i in uV would solve this?
+>> (We should use uV since regulators use this.)
+>
+> Thanks for new property. I will make the unit and type same as the 
+> regulator framework.
 
-Kernel v4.7.
+We have the ops for configuring the pin config as
 
-Yours,
-Linus Walleij
+         int (*pin_config_group_set) (struct pinctrl_dev *pctldev,
+                                      unsigned selector,
+                                      unsigned long *configs,
+                                      unsigned num_configs);
+
+
+The config is 32 bit, upper 16 for config argument and  and lower 16 for 
+the config param.
+
+So we can not accommodate 3300000uV until we change it to mV i.e. 3300mV.
+
+So on interface, we can read uV from DT but when making config, we can 
+translate it to mV before passing to pin_config_group_set.
+
+
+
+
+
