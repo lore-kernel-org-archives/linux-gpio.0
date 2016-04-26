@@ -1,51 +1,45 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: Kill unused variable in sh_pfc_remove()
-Date: Tue, 26 Apr 2016 16:30:44 +0530
-Message-ID: <571F4A5C.7090608@nvidia.com>
-References: <1461666626-24805-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 05/23] avr32: do away with ARCH_REQUIRE_GPIOLIB
+Date: Tue, 26 Apr 2016 13:38:03 +0200
+Message-ID: <CACRpkdYv+nt_-onhFqFPxgX1MYkGNO0ZUp1PEUN4hdfYJF=hiA@mail.gmail.com>
+References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
+	<1461142701-21096-6-git-send-email-linus.walleij@linaro.org>
+	<20160420090931.GA21027@samfundet.no>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1461666626-24805-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:35856 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752553AbcDZLiF convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Apr 2016 07:38:05 -0400
+Received: by mail-ob0-f177.google.com with SMTP id j9so5323602obd.3
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Apr 2016 04:38:04 -0700 (PDT)
+In-Reply-To: <20160420090931.GA21027@samfundet.no>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>, Haavard Skinnemoen <hskinnemoen@gmail.com>
 
-
-On Tuesday 26 April 2016 04:00 PM, Geert Uytterhoeven wrote:
-> If CONFIG_PINCTRL_SH_PFC_GPIO=n:
+On Wed, Apr 20, 2016 at 11:09 AM, Hans-Christian Noren Egtvedt
+<egtvedt@samfundet.no> wrote:
+> Around Wed 20 Apr 2016 10:58:03 +0200 or thereabout, Linus Walleij wr=
+ote:
+>> Replace "select ARCH_REQUIRE_GPIOLIB" with "select GPIOLIB"
+>> as this can now be selected directly.
+>>
+>> Cc: Michael B=C3=BCsch <m@bues.ch>
+>> Cc: Haavard Skinnemoen <hskinnemoen@gmail.com>
+>> Cc: Hans-Christian Egtvedt <egtvedt@samfundet.no>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 >
->      drivers/pinctrl/sh-pfc/core.c: In function 'sh_pfc_remove':
->      drivers/pinctrl/sh-pfc/core.c:649:17: warning: unused variable 'pfc' [-Wunused-variable]
->
-> Fixes: 67ec8d7b48463904 ("pinctrl: ish-pfc: Use devm_pinctrl_register() for pinctrl registration")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> I won't queue this up in sh-pfc-for-v4.7, as the offending commit is not in
-> that branch.
->
+> Acked-by: Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>
 
-Ideally, you dont need the call of sh_pfc_unregister_gpiochip() if you 
-use the devm_gpiochip_add_data() which is already available on all 
-subsystem.
+Applied to the GPIO tree for v4.7 with your ACK, thanks!
 
-int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc)
-{
-         gpiochip_remove(&pfc->gpio->gpio_chip);
-#ifdef CONFIG_SUPERH
-         gpiochip_remove(&pfc->func->gpio_chip);
-#endif
-         return 0;
-}
-
-So you can get rid of this calls and lines.
-
-
------------------------------------------------------------------------------------
-This email message is for the sole use of the intended recipient(s) and may contain
-confidential information.  Any unauthorized review, use, disclosure or distribution
-is prohibited.  If you are not the intended recipient, please contact the sender by
-reply email and destroy all copies of the original message.
------------------------------------------------------------------------------------
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
