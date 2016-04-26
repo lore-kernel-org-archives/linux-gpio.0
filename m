@@ -1,58 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 02/23] arc: select GPIOLIB directly
-Date: Tue, 26 Apr 2016 14:09:14 +0200
-Message-ID: <CACRpkdYABvUtAjjzokNStDEaN=vViF5X7b_bhGsmgNFb9K62gQ@mail.gmail.com>
-References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
-	<1461142701-21096-3-git-send-email-linus.walleij@linaro.org>
-	<5719B3A0.4060001@synopsys.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 01/11] dt-bindings: mfd: Add Altera Arria10 System
+ Resource Chip bindings
+Date: Tue, 26 Apr 2016 07:33:32 -0500
+Message-ID: <20160426123332.GA25487@rob-hp-laptop>
+References: <1461339219-15255-1-git-send-email-tthayer@opensource.altera.com>
+ <1461339219-15255-2-git-send-email-tthayer@opensource.altera.com>
+ <20160425125514.GA5100@rob-hp-laptop>
+ <571E3160.60702@opensource.altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:35193 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751750AbcDZMJP convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Apr 2016 08:09:15 -0400
-Received: by mail-ob0-f175.google.com with SMTP id n10so5022604obb.2
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Apr 2016 05:09:15 -0700 (PDT)
-In-Reply-To: <5719B3A0.4060001@synopsys.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-hwmon-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <571E3160.60702@opensource.altera.com>
+Sender: linux-hwmon-owner@vger.kernel.org
+To: Thor Thayer <tthayer@opensource.altera.com>
+Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>, linux-snps-arc@lists.infradead.org
 
-On Fri, Apr 22, 2016 at 7:16 AM, Vineet Gupta
-<Vineet.Gupta1@synopsys.com> wrote:
-> On Wednesday 20 April 2016 02:28 PM, Linus Walleij wrote:
->> Instead of indirectly selecting GPIOLIB via the
->> ARCH_REQUIRE_GPIOLIB symbol, just select GPIOLIB.
->>
->> Cc: Michael B=C3=BCsch <m@bues.ch>
->> Cc: Vineet Gupta <vgupta@synopsys.com>
->> Cc: linux-snps-arc@lists.infradead.org
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->> Various arch maintainers:
->
-> It would be nice to get the cover latter as well to get more context.=
- The whole
-> series didn't seem to be CCed to lkml either.
+On Mon, Apr 25, 2016 at 10:01:52AM -0500, Thor Thayer wrote:
+> 
+> 
+> On 04/25/2016 07:55 AM, Rob Herring wrote:
+> >On Fri, Apr 22, 2016 at 10:33:29AM -0500, tthayer@opensource.altera.com wrote:
+> >>From: Thor Thayer <tthayer@opensource.altera.com>
+> >>
+> >>The Altera Arria10 Devkit System Resource chip is a Multi-Function
+> >>Device with a GPIO expander and power supply alarm.
+> >
+> >An alarm with no interrupt? Are the GPIOs interrupt capable?
+> 
+> The alarms have no interrupt but the GPIOs are interrupt capable (not
+> implemented with interrupt capability in this patch series).
 
-Sorry for that.
+Please make the binding as complete as possible even if you don't 
+support features in the driver yet. Driver features may evolve, but a 
+specific h/w doesn't.
 
-> Anyhow I found some reference on
-> linux-gpio patchworks and seems like a nice cleanup.
->
-> So for arch/arc/*
->
-> Acked-by: Vineet Gupta <vgupt@synopsys.com>
-
-Thanks, patch applied to the GPIO tree with your ACK.
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Rob
