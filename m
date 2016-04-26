@@ -1,39 +1,31 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 01/11] dt-bindings: mfd: Add Altera Arria10 System
- Resource Chip bindings
-Date: Tue, 26 Apr 2016 07:33:32 -0500
-Message-ID: <20160426123332.GA25487@rob-hp-laptop>
-References: <1461339219-15255-1-git-send-email-tthayer@opensource.altera.com>
- <1461339219-15255-2-git-send-email-tthayer@opensource.altera.com>
- <20160425125514.GA5100@rob-hp-laptop>
- <571E3160.60702@opensource.altera.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: amdpt: Add a new ACPI HID
+Date: Tue, 26 Apr 2016 15:42:49 +0200
+Message-ID: <CACRpkdamq23y3kdyV8zYqMeVqC4T87eAzyHXPS6tEMurFRRjSQ@mail.gmail.com>
+References: <1458185757-10537-1-git-send-email-yd_tseng@asmedia.com.tw>
+	<CACRpkdaFZS8s8NTtY7iY4hA17GSLZYxNaYz1QLURwPa1ZvMqzQ@mail.gmail.com>
+	<F35F71BF8A165F48925028F09F3CDC2501365782@ASMT-EXMB-V01.corpnet.asus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-hwmon-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <571E3160.60702@opensource.altera.com>
-Sender: linux-hwmon-owner@vger.kernel.org
-To: Thor Thayer <tthayer@opensource.altera.com>
-Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:33537 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751858AbcDZNmt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Apr 2016 09:42:49 -0400
+Received: by mail-ob0-f173.google.com with SMTP id tz8so6951188obc.0
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Apr 2016 06:42:49 -0700 (PDT)
+In-Reply-To: <F35F71BF8A165F48925028F09F3CDC2501365782@ASMT-EXMB-V01.corpnet.asus>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?B?VHVuZ1l1IEx1KOWRguadseaYsSk=?= <TungYu_Lu@asmedia.com.tw>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Yd_Tseng@asmedia.com.tw
 
-On Mon, Apr 25, 2016 at 10:01:52AM -0500, Thor Thayer wrote:
-> 
-> 
-> On 04/25/2016 07:55 AM, Rob Herring wrote:
-> >On Fri, Apr 22, 2016 at 10:33:29AM -0500, tthayer@opensource.altera.com wrote:
-> >>From: Thor Thayer <tthayer@opensource.altera.com>
-> >>
-> >>The Altera Arria10 Devkit System Resource chip is a Multi-Function
-> >>Device with a GPIO expander and power supply alarm.
-> >
-> >An alarm with no interrupt? Are the GPIOs interrupt capable?
-> 
-> The alarms have no interrupt but the GPIOs are interrupt capable (not
-> implemented with interrupt capability in this patch series).
+On Mon, Apr 18, 2016 at 10:49 AM,  <TungYu_Lu@asmedia.com.tw> wrote:
+> Dear Linus,
+>
+> Really appreciate for your assistance. Which version will apply this patch?
 
-Please make the binding as complete as possible even if you don't 
-support features in the driver yet. Driver features may evolve, but a 
-specific h/w doesn't.
+Kernel v4.7.
 
-Rob
+Yours,
+Linus Walleij
