@@ -1,104 +1,43 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v3] gpio: of: make it possible to name GPIO lines
-Date: Tue, 26 Apr 2016 09:53:40 -0700
-Message-ID: <20160426165340.GD30010@dtor-ws>
-References: <1461236901-28626-1-git-send-email-linus.walleij@linaro.org>
- <20160421170615.GA25466@dtor-ws>
- <CACRpkdYZuRGvFf1kjy3E4=1hSfVaqFTk6qENyaJjEdTgZ8uVGQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Christian Lamparter <chunkeey@googlemail.com>
+Subject: [RFC v3 3/3] gpio: generic: fix GPIO_GENERIC_PLATFORM is set to module case
+Date: Wed, 27 Apr 2016 00:51:54 +0200
+Message-ID: <dead7dfa3d5f9f298a7506391f167c81fc067291.1461710784.git.chunkeey@googlemail.com>
+References: <cover.1461710784.git.chunkeey@googlemail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:35014 "EHLO
-	mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751583AbcDZQxo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Apr 2016 12:53:44 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYZuRGvFf1kjy3E4=1hSfVaqFTk6qENyaJjEdTgZ8uVGQ@mail.gmail.com>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34227 "EHLO
+	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752464AbcDZWwQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Apr 2016 18:52:16 -0400
+In-Reply-To: <cover.1461710784.git.chunkeey@googlemail.com>
+In-Reply-To: <cover.1461710784.git.chunkeey@googlemail.com>
+References: <cover.1461710784.git.chunkeey@googlemail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Lee Campbell <leecam@google.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, David Mandala <david.mandala@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Christian Lamparter <chunkeey@googlemail.com>, =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Tue, Apr 26, 2016 at 01:03:45PM +0200, Linus Walleij wrote:
-> On Thu, Apr 21, 2016 at 7:06 PM, Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> > On Thu, Apr 21, 2016 at 01:08:21PM +0200, Linus Walleij wrote:
-> >>  /**
-> >> + * of_gpiochip_set_names() - set up the names of the lines
-> >> + * @chip: GPIO chip whose lines should be named, if possible
-> >> + */
-> >> +static void of_gpiochip_set_names(struct gpio_chip *gc)
-> >> +{
-> >> +     struct gpio_device *gdev = gc->gpiodev;
-> >> +     struct device_node *np = gc->of_node;
-> >> +     int i;
-> >> +     int nstrings;
-> >> +
-> >> +     /* Do we even have the "gpio-line-names" property */
-> >> +     if (!of_property_read_bool(np, "gpio-line-names"))
-> >> +             return;
-> >> +
-> >> +     nstrings = of_property_count_strings(np, "gpio-line-names");
-> >> +     /*
-> >> +      * Make sure to not index beyond either the end of the
-> >> +      * "gpio-names" array nor the number of descriptors of
-> >> +      * the GPIO device.
-> >> +      */
-> >
-> > I know you mentioned that it already been discussed much, but I am not
-> > sure why we need to count the string (and validate that strings are
-> > present by treating the property as boolean?),
-> 
-> I validate the property to be present to bail out quickly on controllers
-> that have no names set (i.e. all currently deployed device trees).
-> I can skip that part if you think it's too much optimization.
+GPIO_GENERIC_PLATFORM is a tristate. If the module option is
+selected the resulting gpio-generic.ko will lack most of the
+module initialzation and probe code.
 
-My main objection is use of of_property_read_bool() call to validate
-presence of a property that is not really a boolean property.
+Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
+---
+ drivers/gpio/gpio-generic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But you are the maintainer so it is your decision.
-
-> 
-> However:
-> 
-> > I am not
-> > sure why we need to count the string
-> > when we could do
-> > something like this (relying on the fact that
-> > of_property_read_string_index() returns 0 or negative error, no positive
-> > return codes):
-> >
-> >         for (i = 0; i < gdev->ngpio; i++) {
-> >                 const char *name;
-> >                 int error;
-> >
-> >                 error = of_property_read_string_index(np,
-> >                                                       "gpio-line-names",
-> >                                                       i,
-> >                                                       &name);
-> >                 if (error) {
-> >                         if (error != -ENODATA)
-> >                                 dev_err(&gdev->dev,
-> >                                         "unable to name line %d: %d\n",
-> >                                         i, error);
-> >                         /*
-> >                          * Either no more strings (-ENODATA), or
-> >                          * other error, in any case we are done naming.
-> >                          */
-> >                         break;
-> >                 }
-> >
-> >                 gdev->descs[i].name = name;
-> >         }
-> 
-> Yeah I can do that, thanks I didn't look close enough at the semantics.
-> 
-> The big question whether the DT people are OK with naming producer
-> names like this remains however.
-
-Right, I was just commenting on the implementation.
-
-Thanks.
-
+diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
+index f535299..b2170d0 100644
+--- a/drivers/gpio/gpio-generic.c
++++ b/drivers/gpio/gpio-generic.c
+@@ -551,7 +551,7 @@ int bgpio_init(struct gpio_chip *gc, struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(bgpio_init);
+ 
+-#ifdef CONFIG_GPIO_GENERIC_PLATFORM
++#if IS_ENABLED(CONFIG_GPIO_GENERIC_PLATFORM)
+ 
+ static void __iomem *bgpio_map(struct platform_device *pdev,
+ 			       const char *name,
 -- 
-Dmitry
+2.8.1
+
