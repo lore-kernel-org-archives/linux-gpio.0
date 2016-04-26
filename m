@@ -1,68 +1,45 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 7/7] pinctrl: tegra: Add driver to configure voltage and
- power state of io pads
-Date: Tue, 26 Apr 2016 19:02:21 +0530
-Message-ID: <571F6DE5.5020605@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>	<1460473007-11535-8-git-send-email-ldewangan@nvidia.com>	<CACRpkdZyYiNJfuiTPeivvgVTZwdwh64nkf=f8JczSAVvnT7QeA@mail.gmail.com>	<5710A8A4.90309@nvidia.com>	<CACRpkdZLEozAmv6REcb7ubCNSLxGsYj1whZEKUkdiodZoS=vzg@mail.gmail.com>	<5710BA75.2010503@nvidia.com> <CACRpkdbr-9Z1JKMVmwNFyMq+Pg+3hT5c9rKZ1y4wZecnidW9Cg@mail.gmail.com> <5710D4E2.2030801@nvidia.com>
+From: Thor Thayer <tthayer@opensource.altera.com>
+Subject: Re: [PATCH 01/11] dt-bindings: mfd: Add Altera Arria10 System
+ Resource Chip bindings
+Date: Tue, 26 Apr 2016 08:54:54 -0500
+Message-ID: <571F732E.6090301@opensource.altera.com>
+References: <1461339219-15255-1-git-send-email-tthayer@opensource.altera.com>
+ <1461339219-15255-2-git-send-email-tthayer@opensource.altera.com>
+ <20160425125514.GA5100@rob-hp-laptop> <571E3160.60702@opensource.altera.com>
+ <20160426123332.GA25487@rob-hp-laptop>
+Reply-To: <tthayer@opensource.altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:15340 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751858AbcDZNoO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Apr 2016 09:44:14 -0400
-In-Reply-To: <5710D4E2.2030801@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-hwmon-owner@vger.kernel.org>
+In-Reply-To: <20160426123332.GA25487@rob-hp-laptop>
+Sender: linux-hwmon-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
 
-On Friday 15 April 2016 05:17 PM, Laxman Dewangan wrote:
->
-> On Friday 15 April 2016 04:45 PM, Linus Walleij wrote:
->> On Fri, Apr 15, 2016 at 11:55 AM, Laxman Dewangan 
->> <ldewangan@nvidia.com> wrote:
->>> On Friday 15 April 2016 02:55 PM, Linus Walleij wrote:
->>>> If the pin could actually set a voltage level it would have a 
->>>> regulator.
->>>> I don't believe that. I think it is selecting one of two rails which
->>>> could theoretically hold two totally different voltages.
->>>>
->>>> And that is what power-source is about.
->>> The IO rails connected to PMIC rail and connection does not get change.
->>> We change the voltage of PMIC rails via regulator calls. And then 
->>> configure
->>> pads for the new voltage.
->> Aha I get it! So you adjust something in the I/O-cell so that it is 
->> adapted
->> for the new voltage.
+
+On 04/26/2016 07:33 AM, Rob Herring wrote:
+> On Mon, Apr 25, 2016 at 10:01:52AM -0500, Thor Thayer wrote:
 >>
->> OK that seems to be something new. I suspect
->> power-voltage-select = <n>; where N i in uV would solve this?
->> (We should use uV since regulators use this.)
+>>
+>> On 04/25/2016 07:55 AM, Rob Herring wrote:
+>>> On Fri, Apr 22, 2016 at 10:33:29AM -0500, tthayer@opensource.altera.com wrote:
+>>>> From: Thor Thayer <tthayer@opensource.altera.com>
+>>>>
+>>>> The Altera Arria10 Devkit System Resource chip is a Multi-Function
+>>>> Device with a GPIO expander and power supply alarm.
+>>>
+>>> An alarm with no interrupt? Are the GPIOs interrupt capable?
+>>
+>> The alarms have no interrupt but the GPIOs are interrupt capable (not
+>> implemented with interrupt capability in this patch series).
 >
-> Thanks for new property. I will make the unit and type same as the 
-> regulator framework.
-
-We have the ops for configuring the pin config as
-
-         int (*pin_config_group_set) (struct pinctrl_dev *pctldev,
-                                      unsigned selector,
-                                      unsigned long *configs,
-                                      unsigned num_configs);
-
-
-The config is 32 bit, upper 16 for config argument and  and lower 16 for 
-the config param.
-
-So we can not accommodate 3300000uV until we change it to mV i.e. 3300mV.
-
-So on interface, we can read uV from DT but when making config, we can 
-translate it to mV before passing to pin_config_group_set.
-
-
-
-
-
+> Please make the binding as complete as possible even if you don't
+> support features in the driver yet. Driver features may evolve, but a
+> specific h/w doesn't.
+>
+> Rob
+>
+Understood. Thanks for the explanation.
