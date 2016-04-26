@@ -1,35 +1,84 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl-exynos5440: Use off-stack memory for pinctrl_gpio_range
-Date: Tue, 26 Apr 2016 15:52:38 +0200
-Message-ID: <CACRpkdYczBP58uS4nVpUGUevb7E+OCXmXA60SydigQo=AzX8Aw@mail.gmail.com>
-References: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
+Subject: Re: [PATCH] gpio: omap: fix irq triggering in smart-idle wakeup mode
+Date: Tue, 26 Apr 2016 15:58:18 +0200
+Message-ID: <CACRpkdavUOR-CQVOgxLBRXhkDozpuuQQm3pj0xNUP5ZSti9M-Q@mail.gmail.com>
+References: <1460458351-24187-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1461117257-27048-1-git-send-email-andrew@aj.id.au>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:33114 "EHLO
+	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751735AbcDZN6T (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Apr 2016 09:58:19 -0400
+Received: by mail-oi0-f46.google.com with SMTP id r78so15597936oie.0
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Apr 2016 06:58:18 -0700 (PDT)
+In-Reply-To: <1460458351-24187-1-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
 
-On Wed, Apr 20, 2016 at 3:54 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+On Tue, Apr 12, 2016 at 12:52 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-> The range is registered into a linked list which can be referenced
-> throughout the lifetime of the driver. Ensure the range's memory is useful
-> for the same lifetime by adding it to the driver's private data structure.
+> Now GPIO IRQ loss is observed on dra7-evm after suspend/resume cycle
+> in the following case:
+>   extcon_usb1(id_irq) ->  pcf8575.gpio1 -> omapgpio6.gpio11 -> gic
 >
-> The bug was introduced in the driver's initial commit, which was present in
-> v3.10.
+> the extcon_usb1 is wake up source and it enables IRQ wake up for
+> id_irq by calling enable/disable_irq_wake() during suspend/resume
+> which, in turn, causes execution of omap_gpio_wake_enable(). And
+> omap_gpio_wake_enable() will set/clear corresponding bit in
+> GPIO_IRQWAKEN_x register.
 >
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> Fixes: f0b9a7e521fa ("pinctrl: exynos5440: add pinctrl driver for Samsung EXYNOS5440 SoC")
-> Cc: stable@vger.kernel.org
-> ---
-> Since v1:
+> omapgpio6 configuration after boot - wakeup is enabled for GPIO IRQs
+> by default from  omap_gpio_irq_type:
+> GPIO_IRQSTATUS_SET_0    | 0x00000400
+> GPIO_IRQSTATUS_CLR_0    | 0x00000400
+> GPIO_IRQWAKEN_0         | 0x00000400
+> GPIO_RISINGDETECT       | 0x00000000
+> GPIO_FALLINGDETECT      | 0x00000400
 >
-> * Add range member kerneldoc addressing Tomasz Figa's comment
+> omapgpio6 configuration after after suspend/resume cycle:
+> GPIO_IRQSTATUS_SET_0    | 0x00000400
+> GPIO_IRQSTATUS_CLR_0    | 0x00000400
+> GPIO_IRQWAKEN_0         | 0x00000000 <---
+> GPIO_RISINGDETECT       | 0x00000000
+> GPIO_FALLINGDETECT      | 0x00000400
+>
+> As result, system will start to lose interrupts from pcf8575 GPIO
+> expander, because when OMAP GPIO IP is in smart-idle wakeup mode, there
+> is no guarantee that transition(s) on input non wake up GPIO pin will
+> trigger asynchronous wake-up request to PRCM and then IRQ generation.
+> IRQ will be generated when GPIO is in active mode - for example, some
+> time after accessing GPIO bank registers IRQs will be generated
+> normally, but issue will happen again once PRCM will put GPIO in low
+> power smart-idle wakeup mode.
+>
+> Note 1. Issue is not reproduced if debounce clk is enabled for GPIO
+> bank.
+>
+> Note 2. Issue hardly reproducible if GPIO pins group contains both
+> wakeup/non-wakeup gpios - for example, it will be hard to reproduce
+> issue with pin2 if GPIO_IRQWAKEN_0=0x1 GPIO_IRQSTATUS_SET_0=0x3
+> GPIO_FALLINGDETECT = 0x3 (TRM "Power Saving by Grouping the Edge/Level
+> Detection").
+>
+> Note 3. There nothing common bitween System wake up and OMAP GPIO bank
+> IP wake up logic - the last one defines how the GPIO bank ON-IDLE-ON
+> transition will happen inside SoC under control of PRCM.
+>
+> Hence, fix the problem by removing omap_set_gpio_wakeup() function
+> completely and so keeping always in sync GPIO IRQ mask/unmask
+> (IRQSTATUS_SET) and wake up enable (GPIO_IRQWAKEN) bits; and adding
+> IRQCHIP_MASK_ON_SUSPEND flag in OMAP GPIO irqchip. That way non wakeup
+> GPIO IRQs will be properly masked/unmask by IRQ PM core during
+> suspend/resume cycle.
+>
+> Cc: Roger Quadros <rogerq@ti.com>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Patch applied with the ACKs.
+Patch applied with the arrived ACKs
 
 Yours,
 Linus Walleij
