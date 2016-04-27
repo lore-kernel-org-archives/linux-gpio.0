@@ -1,82 +1,37 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH V10 1/6] mfd: add device-tree binding doc for PMIC
- max77620/max20024
-Date: Wed, 27 Apr 2016 13:49:59 +0100
-Message-ID: <20160427124959.GC4892@dell>
-References: <1459348188-11726-1-git-send-email-ldewangan@nvidia.com>
- <1459348188-11726-2-git-send-email-ldewangan@nvidia.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH] pinctrl: ish-pfc: avoid unused variable warning
+Date: Wed, 27 Apr 2016 17:13:25 +0300
+Message-ID: <c7844423-7adf-95bd-1174-9c4bddaef69b@cogentembedded.com>
+References: <1461751049-2751427-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1459348188-11726-2-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, ijc+devicetree@hellion.org.uk, swarren@nvidia.com, treding@nvidia.com
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1461751049-2751427-1-git-send-email-arnd@arndb.de>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Simon Horman <horms+renesas@verge.net.au>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>, Takeshi Kihara <takeshi.kihara.df@renesas.com>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 30 Mar 2016, Laxman Dewangan wrote:
+Hello.
 
-> The MAXIM PMIC MAX77620 and MAX20024 are power management IC
-> which supports RTC, GPIO, DCDC/LDO regulators, interrupt,
-> watchdog etc.
->=20
-> Add DT binding document for the different functionality of
-> this device.
->=20
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Acked-by: Rob Herring <robh@kernel.org>
->=20
-> ---
-> Changes from V1:
-> - Added units in some of properties.
-> - Change the boolean property to tristate type and detail some of
->   properties.
->=20
-> Change from V2:
-> - added unit in period related dt property.
->=20
-> Change from V3: None
-> - Added Rob's ack.
->=20
-> Changes from V4:
-> - A- Provide more details in the dt binding doc.
-> - Take care of fps nodes.
-> - Split the submodule's DT binding doc on respective folder.
-> - Drop the battery charger and low battery binding and related code a=
-s
->   it need to go on power driver.
->=20
-> Change from V5:
-> - None
->=20
-> Change from V6:
-> -start the patch title with mfd instead of DT: mfd:
->=20
-> Change from V7:
-> - Better describe the FPS to make more clear.
->=20
-> Changes from V8:
-> None
->=20
-> Changes from V9:
-> None
->=20
->  Documentation/devicetree/bindings/mfd/max77620.txt | 143 +++++++++++=
-++++++++++
->  include/dt-bindings/mfd/max77620.h                 |  39 ++++++
->  2 files changed, 182 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/max77620.tx=
-t
->  create mode 100644 include/dt-bindings/mfd/max77620.h
+    s/ish-/sh-/ in the subject.
 
-=46or my own reference:
+On 4/27/2016 12:56 PM, Arnd Bergmann wrote:
 
-  Acked-by: Lee Jones <lee.jones@linaro.org>
+> After the conversion to devm_pinctrl_register, we get a warning in
+> sh_pfc_remove when CONFIG_PINCTRL_SH_PFC_GPIO is disabled:
+>
+> drivers/pinctrl/sh-pfc/core.c: In function 'sh_pfc_remove':
+> drivers/pinctrl/sh-pfc/core.c:603:17: unused variable 'pfc' [-Werror=unused-variable]
+>   struct sh_pfc *pfc = platform_get_drvdata(pdev);
+>
+> This moves the variable definition inside of the same ifdef
+> that has the only user, to get a clean build again.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 67ec8d7b4846 ("pinctrl: ish-pfc: Use devm_pinctrl_register() for pinctrl registration")
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+    Ah, the broken patch also has this typo. :-)
+
+WBR, Sergei
