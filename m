@@ -1,122 +1,102 @@
-From: Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH V10 2/6] mfd: max77620: add core driver for
- MAX77620/MAX20024
-Date: Wed, 27 Apr 2016 17:06:00 +0200
-Message-ID: <20160427150559.GD4176@ulmo.ba.sec>
-References: <1459348188-11726-1-git-send-email-ldewangan@nvidia.com>
- <1459348188-11726-3-git-send-email-ldewangan@nvidia.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [RFC v3 1/3] gpio: dt-bindings: add basic-mmio-gpio bindings
+Date: Wed, 27 Apr 2016 10:08:49 -0500
+Message-ID: <CAL_JsqKYU=W8DhVjgihgPiu2B_QgLnFqDqX-soghHDFVUGtAOQ@mail.gmail.com>
+References: <cover.1461710784.git.chunkeey@googlemail.com> <7e8845e6b6384c6b5673532ebef79c8730ed7748.1461710784.git.chunkeey@googlemail.com>
+ <CAL_Jsq+OrkudQwxqfSvuqW=HWm6B74pE9bec0QBh5xNbF+s2Hw@mail.gmail.com> <1838530.usypLq5u4X@debian64>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="d01dLTUuW90fS44H"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:10349 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752225AbcD0PGQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Apr 2016 11:06:16 -0400
-In-Reply-To: <1459348188-11726-3-git-send-email-ldewangan@nvidia.com>
-Content-Disposition: inline
+Received: from mail.kernel.org ([198.145.29.136]:51120 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751267AbcD0PJO convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Apr 2016 11:09:14 -0400
+In-Reply-To: <1838530.usypLq5u4X@debian64>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: lee.jones@linaro.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, ijc+devicetree@hellion.org.uk, swarren@nvidia.com, Mallikarjun Kasoju <mkasoju@nvidia.com>
+To: Christian Lamparter <chunkeey@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6?= <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Alexandre Courbot <gnurou@gmail.com>
 
---d01dLTUuW90fS44H
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Apr 27, 2016 at 5:15 AM, Christian Lamparter
+<chunkeey@googlemail.com> wrote:
+> On Tuesday, April 26, 2016 09:06:14 PM Rob Herring wrote:
+>> On Tue, Apr 26, 2016 at 5:51 PM, Christian Lamparter
+>> <chunkeey@googlemail.com> wrote:
+>> > From: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+>> >
+>> > This patch adds the device tree bindings for the basic-mmio-gpio.
+>> > The basic-mmio-gpio is already part of a the GPIO generic library
+>> > and shares its compatible with the platform device.
+>>
+>> These things always start out "simple", "basic" or "generic". Then
+>> people extend them a property or 2 at a time until they are no longe=
+r
+>> basic. Make a bunch of GPIO drivers use a generic driver then maybe
+>> I'll be convinced this is a good idea.
+> Well, I mentioned brcm63xx (MIPS) and MyBook Live (PPC). But OK, if y=
+ou
+> want me to look at the existing code in the kernel. I found the follo=
+wing
+> candidates.
 
-On Wed, Mar 30, 2016 at 07:59:44PM +0530, Laxman Dewangan wrote:
-> MAX77620/MAX20024 are Power Management IC from the MAXIM.
-> It supports RTC, multiple GPIOs, multiple DCDC and LDOs,
-> watchdog, clock etc.
->=20
-> Add MFD drier to provides common support for accessing the
-> device; additional drivers is developed on respected subsystem
-> in order to use the functionality of the device.
->=20
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Signed-off-by: Mallikarjun Kasoju <mkasoju@nvidia.com>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->=20
+What I meant was convert the drivers, not the dts files to a generic
+driver. There is no benefit here from a dts perspective. It is driver
+consolidation that would make all this worthwhile.
+
+> 1. MOXA ART: "moxa,moxart-gpio"
+> http://lxr.free-electrons.com/source/drivers/gpio/gpio-moxart.c
+> This driver is used by the:
+> arch/arm/boot/dts/moxart.dtsi
+>
 > ---
-> Changes from V1:
-> - Code cleanups per review from V1.
-> - Move register acccess APIs from header to c file.
-> - Remove some of non required variable, remove duplication in error messa=
-ge
->  and simplify some of function implementation.
-> - Register RTC driver such that it can get the regmap handle form parent =
-device
->=20
-> Changes from V2:
-> - Run coccicheck and checkpatch in strict mode for the alignment.
-> - Drop RTC driver and its i2c client registration.
->=20
-> Changes from V3:
-> - Change all sys initcall to module driver.
-> - change the max77620_read argument to unisgned int from u8.
->=20
-> Changes from V4:
-> - Take care of fps nodes.
-> - Drop the battery charger and low battery binding and related code as
->   it need to go on power driver.
->=20
-> Changes from V5:
-> -None
->=20
-> Changes from V6:
-> - Taken care of Lee's comment like used defines for irqs, remove max77620
->   register accesss abstractions, remove DTof module and use ID table only,
->   reduce the copyright lines.
-> - Drop configuration for hard power off time chnage as it will be in
->   power driver.
-> - Use direct regmap from all drivers instead of using abstractions.
-> - This depends on patch
->=20
-> Change from V7:
-> - Use MFD defines for making mfd cells.
-> - Use new property name.
->=20
-> Changes from V8:
-> - Remove the usage of MFD defines. Remove mutex_config as not needed.
->=20
-> Changes from V9:
-> - Use the devm_regmap_add_irq_chip() for irq registration.
->=20
->  drivers/mfd/Kconfig          |  15 ++
->  drivers/mfd/Makefile         |   1 +
->  drivers/mfd/max77620.c       | 544 +++++++++++++++++++++++++++++++++++++=
-++++++
->  include/linux/mfd/max77620.h | 337 +++++++++++++++++++++++++++
->  4 files changed, 897 insertions(+)
->  create mode 100644 drivers/mfd/max77620.c
->  create mode 100644 include/linux/mfd/max77620.h
+> diff --git a/arch/arm/boot/dts/moxart.dtsi b/arch/arm/boot/dts/moxart=
+=2Edtsi
+> index 1fd27ed..26707d0 100644
+> --- a/arch/arm/boot/dts/moxart.dtsi
+> +++ b/arch/arm/boot/dts/moxart.dtsi
+> @@ -66,8 +66,11 @@
+>                 gpio: gpio@98700000 {
+>                         gpio-controller;
+>                         #gpio-cells =3D <2>;
+> -                       compatible =3D "moxa,moxart-gpio";
+> -                       reg =3D <0x98700000 0xC>;
+> +                       compatible =3D "basic-mmio-gpio";
+> +                       reg =3D <0x98700000 0x4
+> +                              0x98700004 0x4
+> +                              0x98700008 0x4>;
+> +                       reg-names =3D "set dat dirout";
 
-Lee,
+This is not a compatible change. You can't remove the old drivers as
+they are needed to work with old dtbs, so there is no gain.
 
-Were you going to pick this up along with the corresponding DT bindings?
+You would need to match on existing compatibles such as
+moxa,moxart-gpio and provide a match data struct that has all the info
+you are adding here (e.g. data register offset). Then additionally you
+could add "basic-mmio-gpio" (I would drop "basic" part) and the
+additional data associated with it. But it has to be new properties,
+not changing properties. Changing the reg values doesn't work.
 
-Thierry
 
---d01dLTUuW90fS44H
-Content-Type: application/pgp-signature; name="signature.asc"
+> 2. GE FPGA based GPIO: "ge,imp3a-gpio", "gef,sbc310-gpio", "gef,sbc61=
+0-gpio"
+> 3. CLPS711X GPIO driver: "cirrus,clps711x-gpio"
+> 4. GPIO driver for the TS-4800 board: "technologic,ts4800-gpio"
+>
+> What do you think. There's a total of six devices that can make use
+> of the "basic-mmio-gpio". If this gives me your go-ahead, I'll includ=
+e
+> them in the series as proper patches.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Those are a good start. My other worry about this is next someone will
+want to add interrupt registers which is probably a majority of GPIO
+controllers.
 
-iQIcBAABCAAGBQJXINVWAAoJEN0jrNd/PrOh/KEP/3T1hiCyDqoVrePoWZPQ7d60
-DBzNxEaeJxNW88Jp1B+NTuOZOpL0czMzFHNMPVKhi2jZFBw3V+QGG/HtlO0eiIKu
-KBd9lydC3Uo5sMeN1On4Q5cjWMkraNxGCy5R0wEhiqjLTqOTFcrvpn1TcQdHhAnF
-hoOB0fVFn73Z5PjF4KigFPr9eqmZAkRPLju8XQlXrsv8WHRiTp7XEQxYrzeqUNC+
-rYPWPV3Ug/TDJyz0jVZnePqKtqaZmnYIlG6B5DOSFl/MSxXy3Q7kZqIO51U0d0Tw
-klzXHH4Tz8uN2JQbKapRfqD/DoiaNUFvOCw3Qs1d2ROZePaWhPsGeWiflnBiqZfq
-EUXMykWo/1pjA/azT+73ZEo52PYWz0D7V0oDuSU3ftpkcpV61j9Sd5g9YwktF8aK
-6B5umbvztTYRzf1jSYtOLRCKKA2ahEejmERgRnzo50B6xzG/FdYMNK2JC3gHdYHZ
-oa9HePq34pfeUtbcbXfvgVOGhHBPzdQ+SXyNX9vHugKxOCHsfgoC1Mj9/xbwH0ct
-m/l5FisP9770u9838cqcD+JW7MAwrXt55J+YVY8mmTjjceDn7/m4jmG/E9WkGHZX
-dt0JzpKOFhqVrEa+OlJ/VKXrIlx9HJyL7q56hYr5693DD9JQMhpkec/kGapxxGJY
-yltr7xOIU/AfOmqGfVfG
-=/cZR
------END PGP SIGNATURE-----
+Of course, I'm sure Linus has an opinion on all of this.
 
---d01dLTUuW90fS44H--
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
