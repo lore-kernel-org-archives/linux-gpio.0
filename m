@@ -1,115 +1,122 @@
 From: Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH V10 1/6] mfd: add device-tree binding doc for PMIC
- max77620/max20024
-Date: Wed, 27 Apr 2016 17:04:44 +0200
-Message-ID: <20160427150443.GC4176@ulmo.ba.sec>
+Subject: Re: [PATCH V10 2/6] mfd: max77620: add core driver for
+ MAX77620/MAX20024
+Date: Wed, 27 Apr 2016 17:06:00 +0200
+Message-ID: <20160427150559.GD4176@ulmo.ba.sec>
 References: <1459348188-11726-1-git-send-email-ldewangan@nvidia.com>
- <1459348188-11726-2-git-send-email-ldewangan@nvidia.com>
- <20160427124959.GC4892@dell>
+ <1459348188-11726-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="eRtJSFbw+EEWtPj3"
+	protocol="application/pgp-signature"; boundary="d01dLTUuW90fS44H"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:4792 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752696AbcD0PEz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Apr 2016 11:04:55 -0400
-In-Reply-To: <20160427124959.GC4892@dell>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:10349 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752225AbcD0PGQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Apr 2016 11:06:16 -0400
+In-Reply-To: <1459348188-11726-3-git-send-email-ldewangan@nvidia.com>
 Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, ijc+devicetree@hellion.org.uk, swarren@nvidia.com
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: lee.jones@linaro.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, ijc+devicetree@hellion.org.uk, swarren@nvidia.com, Mallikarjun Kasoju <mkasoju@nvidia.com>
 
---eRtJSFbw+EEWtPj3
+--d01dLTUuW90fS44H
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 27, 2016 at 01:49:59PM +0100, Lee Jones wrote:
-> On Wed, 30 Mar 2016, Laxman Dewangan wrote:
+On Wed, Mar 30, 2016 at 07:59:44PM +0530, Laxman Dewangan wrote:
+> MAX77620/MAX20024 are Power Management IC from the MAXIM.
+> It supports RTC, multiple GPIOs, multiple DCDC and LDOs,
+> watchdog, clock etc.
 >=20
-> > The MAXIM PMIC MAX77620 and MAX20024 are power management IC
-> > which supports RTC, GPIO, DCDC/LDO regulators, interrupt,
-> > watchdog etc.
-> >=20
-> > Add DT binding document for the different functionality of
-> > this device.
-> >=20
-> > Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> > Acked-by: Rob Herring <robh@kernel.org>
-> >=20
-> > ---
-> > Changes from V1:
-> > - Added units in some of properties.
-> > - Change the boolean property to tristate type and detail some of
-> >   properties.
-> >=20
-> > Change from V2:
-> > - added unit in period related dt property.
-> >=20
-> > Change from V3: None
-> > - Added Rob's ack.
-> >=20
-> > Changes from V4:
-> > - A- Provide more details in the dt binding doc.
-> > - Take care of fps nodes.
-> > - Split the submodule's DT binding doc on respective folder.
-> > - Drop the battery charger and low battery binding and related code as
-> >   it need to go on power driver.
-> >=20
-> > Change from V5:
-> > - None
-> >=20
-> > Change from V6:
-> > -start the patch title with mfd instead of DT: mfd:
-> >=20
-> > Change from V7:
-> > - Better describe the FPS to make more clear.
-> >=20
-> > Changes from V8:
-> > None
-> >=20
-> > Changes from V9:
-> > None
-> >=20
-> >  Documentation/devicetree/bindings/mfd/max77620.txt | 143 +++++++++++++=
-++++++++
-> >  include/dt-bindings/mfd/max77620.h                 |  39 ++++++
-> >  2 files changed, 182 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/mfd/max77620.txt
-> >  create mode 100644 include/dt-bindings/mfd/max77620.h
+> Add MFD drier to provides common support for accessing the
+> device; additional drivers is developed on respected subsystem
+> in order to use the functionality of the device.
 >=20
-> For my own reference:
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Signed-off-by: Mallikarjun Kasoju <mkasoju@nvidia.com>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 >=20
->   Acked-by: Lee Jones <lee.jones@linaro.org>
+> ---
+> Changes from V1:
+> - Code cleanups per review from V1.
+> - Move register acccess APIs from header to c file.
+> - Remove some of non required variable, remove duplication in error messa=
+ge
+>  and simplify some of function implementation.
+> - Register RTC driver such that it can get the regmap handle form parent =
+device
+>=20
+> Changes from V2:
+> - Run coccicheck and checkpatch in strict mode for the alignment.
+> - Drop RTC driver and its i2c client registration.
+>=20
+> Changes from V3:
+> - Change all sys initcall to module driver.
+> - change the max77620_read argument to unisgned int from u8.
+>=20
+> Changes from V4:
+> - Take care of fps nodes.
+> - Drop the battery charger and low battery binding and related code as
+>   it need to go on power driver.
+>=20
+> Changes from V5:
+> -None
+>=20
+> Changes from V6:
+> - Taken care of Lee's comment like used defines for irqs, remove max77620
+>   register accesss abstractions, remove DTof module and use ID table only,
+>   reduce the copyright lines.
+> - Drop configuration for hard power off time chnage as it will be in
+>   power driver.
+> - Use direct regmap from all drivers instead of using abstractions.
+> - This depends on patch
+>=20
+> Change from V7:
+> - Use MFD defines for making mfd cells.
+> - Use new property name.
+>=20
+> Changes from V8:
+> - Remove the usage of MFD defines. Remove mutex_config as not needed.
+>=20
+> Changes from V9:
+> - Use the devm_regmap_add_irq_chip() for irq registration.
+>=20
+>  drivers/mfd/Kconfig          |  15 ++
+>  drivers/mfd/Makefile         |   1 +
+>  drivers/mfd/max77620.c       | 544 +++++++++++++++++++++++++++++++++++++=
+++++++
+>  include/linux/mfd/max77620.h | 337 +++++++++++++++++++++++++++
+>  4 files changed, 897 insertions(+)
+>  create mode 100644 drivers/mfd/max77620.c
+>  create mode 100644 include/linux/mfd/max77620.h
 
-Hi Lee,
+Lee,
 
-I'm confused now. Were you going to pick this up, or are you waiting for
-someone else to do it?
+Were you going to pick this up along with the corresponding DT bindings?
 
 Thierry
 
---eRtJSFbw+EEWtPj3
+--d01dLTUuW90fS44H
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXINULAAoJEN0jrNd/PrOh1WsP/3vEotfvBXQtacOPhsy0qrlM
-+/zYqDQfzwFx0Sy3ZlAh+BNuG0zc76ljwxB8rXfQXVsGLZWmIibuGksXeBAuGuaq
-MQay94ksBHe/NmccWMXVA2DqUXgE1nv3A37suqSP/4YEX2pzf5PzYtwT5zX/zWeB
-lHL9h+AOyL798ifY3GjeldyJfjcFlB05c5pfoFpswEdfas8I9bW7ZS86vzgyO414
-JUpgLLazT84yD6f6mN0MvsCWfpdpOMgM2raA1W0TkEKqm10PG/SAuvl+mLER4KPW
-0wdRPr1bMZlbu+S3tI03FgpkTicy4n8JLokpnkDC0ks8qKKht06+iNsRphSoPXI/
-jrFuWCT/449vpSkv/25orQfzOubLcZJteTZnSxxXq/O/KI5+NbmF55DFILQbzBL2
-NEJg+rppr/td1ACDayHMvQY1SOdY3pRO4Po+sohc4WEuA4RQv9tbeitMWh5PQhNg
-1PfJIKb2tm0TNUOX5T6/myKMV4CKvHvgwUlvZQIT2Oh1pZv2/XTnQ7DnfrUAzwER
-Ri2v1IzU+WD29TvRncAp+0I8z72bAEu20sMVpkjl9Ab0YE1/zrRxrvBdlYqL3bo/
-SH44fKYXk/bt1lN4oRixq1M2+jAGdAqrqMxIkbQ33/z4pxxWObHiBcWu0uqnf2gx
-MJnWf0rmuJf6JkNTWJrB
-=Lk/M
+iQIcBAABCAAGBQJXINVWAAoJEN0jrNd/PrOh/KEP/3T1hiCyDqoVrePoWZPQ7d60
+DBzNxEaeJxNW88Jp1B+NTuOZOpL0czMzFHNMPVKhi2jZFBw3V+QGG/HtlO0eiIKu
+KBd9lydC3Uo5sMeN1On4Q5cjWMkraNxGCy5R0wEhiqjLTqOTFcrvpn1TcQdHhAnF
+hoOB0fVFn73Z5PjF4KigFPr9eqmZAkRPLju8XQlXrsv8WHRiTp7XEQxYrzeqUNC+
+rYPWPV3Ug/TDJyz0jVZnePqKtqaZmnYIlG6B5DOSFl/MSxXy3Q7kZqIO51U0d0Tw
+klzXHH4Tz8uN2JQbKapRfqD/DoiaNUFvOCw3Qs1d2ROZePaWhPsGeWiflnBiqZfq
+EUXMykWo/1pjA/azT+73ZEo52PYWz0D7V0oDuSU3ftpkcpV61j9Sd5g9YwktF8aK
+6B5umbvztTYRzf1jSYtOLRCKKA2ahEejmERgRnzo50B6xzG/FdYMNK2JC3gHdYHZ
+oa9HePq34pfeUtbcbXfvgVOGhHBPzdQ+SXyNX9vHugKxOCHsfgoC1Mj9/xbwH0ct
+m/l5FisP9770u9838cqcD+JW7MAwrXt55J+YVY8mmTjjceDn7/m4jmG/E9WkGHZX
+dt0JzpKOFhqVrEa+OlJ/VKXrIlx9HJyL7q56hYr5693DD9JQMhpkec/kGapxxGJY
+yltr7xOIU/AfOmqGfVfG
+=/cZR
 -----END PGP SIGNATURE-----
 
---eRtJSFbw+EEWtPj3--
+--d01dLTUuW90fS44H--
