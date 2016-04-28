@@ -1,77 +1,256 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: Re: [PATCH 2/2] tools/gpio: add the gpio-hammer tool
-Date: Thu, 28 Apr 2016 09:47:53 +0200
-Message-ID: <5064400.LUANRz9U0Y@ws-stein>
-References: <1461660866-18683-1-git-send-email-linus.walleij@linaro.org> <1461660866-18683-2-git-send-email-linus.walleij@linaro.org>
+From: Markus Pargmann <mpa@pengutronix.de>
+Subject: Re: [PATCH v3] gpio: of: make it possible to name GPIO lines
+Date: Thu, 28 Apr 2016 10:12:26 +0200
+Message-ID: <1595634.pn7WvaDMTh@adelgunde>
+References: <1461236901-28626-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; boundary="nextPart9200594.5CvlCET1oc"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:56562 "EHLO
-	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751038AbcD1HsA convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 28 Apr 2016 03:48:00 -0400
-In-Reply-To: <1461660866-18683-2-git-send-email-linus.walleij@linaro.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:51744 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750847AbcD1IMg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 Apr 2016 04:12:36 -0400
+In-Reply-To: <1461236901-28626-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Lee Campbell <leecam@google.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Johan Hovold <johan@kernel.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Michael Welling <mwelling@ieee.org>, Lee Campbell <leecam@google.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, David Mandala <david.mandala@linaro.org>, devicetree@vger.kernel.org
 
-On Tuesday 26 April 2016 10:54:26, Linus Walleij wrote:
-> The gpio-hammer is used from userspace as an example of how
-> to retrieve a GPIO handle for one or several GPIO lines and
-> hammer the outputs from low to high and back again. It will
-> pulse the selected lines once per second for a specified
-> number of times or indefinitely if no loop count is
-> supplied.
+
+--nextPart9200594.5CvlCET1oc
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+
+Hi Linus,
+
+Thanks for creating this. Some minor comments inline.
+
+On Thursday 21 April 2016 13:08:21 Linus Walleij wrote:
+> Make it possible to name the producer side of a GPIO line using
+> a "gpio-line-names" property array, modeled on the
+> "clock-output-names" property from the clock bindings.
 >=20
-> Example output:
-> $ gpio-hammer -n gpiochip0 -o5 -o6 -o7
-> Hammer lines [5, 6, 7] on gpiochip0, initial states: [1, 1, 1]
-> [-] [5: 0, 6: 0, 7: 0]
+> This naming is especially useful for:
 >=20
+> - Debugging: lines are named after function, not just opaque
+>   offset numbers.
+>=20
+> - Exploration: systems where some or all GPIO lines are available
+>   to end users, such as prototyping, one-off's "makerspace usecases"
+>   users are helped by the names of the GPIO lines when tinkering.
+>   This usecase has been surfacing recently.
+>=20
+> The gpio-line-names attribute is completely optional.
+>=20
+> Example output from lsgpio on a patched Snowball tree:
+>=20
+> GPIO chip: gpiochip6, "8000e180.gpio", 32 GPIO lines
+>         line  0: unnamed unused
+>         line  1: "AP_GPIO161" "extkb3" [kernel]
+>         line  2: "AP_GPIO162" "extkb4" [kernel]
+>         line  3: "ACCELEROMETER_INT1_RDY" unused [kernel]
+>         line  4: "ACCELEROMETER_INT2" unused
+>         line  5: "MAG_DRDY" unused [kernel]
+>         line  6: "GYRO_DRDY" unused [kernel]
+>         line  7: "RSTn_MLC" unused
+>         line  8: "RSTn_SLC" unused
+>         line  9: "GYRO_INT" unused
+>         line 10: "UART_WAKE" unused
+>         line 11: "GBF_RESET" unused
+>         line 12: unnamed unused
+>=20
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Grant Likely <grant.likely@linaro.org>
+> Cc: Amit Kucheria <amit.kucheria@linaro.org>
+> Cc: David Mandala <david.mandala@linaro.org>
+> Cc: Lee Campbell <leecam@google.com>
+> Cc: devicetree@vger.kernel.org
+> Reviewed-by: Michael Welling <mwelling@ieee.org>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v2->v3:
+> - Swap "gpio-names" for "gpio-line-names" as "gpio-names" indicate
+>   a consumer endpoint in DT terminology.
+> - Index to either:
+>   (A) The end of the gpio-names array or
+>   (B) ngpios
+>   So we don't risk going out of bounds on either
+> ChangeLog v1->v2:
+> - Make the naming function return void: we continue at all times
+>   and always return 0 anyway.
+> - Fix a return value check.
+>=20
+> This has been discussed at some length now.
+>=20
+> Why we are not using hogs: these are consumer side, not producer
+> side. The gpio-controller in DT (gpio_chip in Linux) is a
+> producer, not a consumer.
+>=20
+> This patch is not about assigning initial values to GPIO lines.
+> That is an orthogonal usecase. This is just about naming lines.
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio.txt | 19 +++++++++++
+>  drivers/gpio/gpiolib-of.c                       | 43 +++++++++++++++=
+++++++++++
+>  2 files changed, 62 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Docume=
+ntation/devicetree/bindings/gpio/gpio.txt
+> index c88d2ccb05ca..68d28f62a6f4 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+> @@ -152,6 +152,21 @@ additional bitmask is needed to specify which GP=
+IOs are actually in use,
+>  and which are dummies. The bindings for this case has not yet been
+>  specified, but should be specified if/when such hardware appears.
+> =20
+> +Optionally, a GPIO controller may have a "gpio-line-names" property.=
+ This is
+> +an array of strings defining the names of the GPIO lines going out o=
+f the
+> +GPIO controller. This name should be the most meaningful producer na=
+me
+> +for the system, such as a rail name indicating the usage. Package na=
+mes
+> +such as pin name are discouraged: such lines have opaque names (sinc=
+e they
+> +are by definition generic purpose) and such names are usually not ve=
+ry
+> +helpful. For example "MMC-CD", "Red LED Vdd" and "ethernet reset" ar=
+e
+> +reasonable line names as they describe what the line is used for. "G=
+PIO0"
+> +is not a good name to give to a GPIO line. Placeholders are discoura=
+ged:
 
-This might be a stupid question, but how do I build those tools? I've n=
-ever=20
-done this before and failed with the following command:
-> ARCH=3Darm CROSS_COMPILE=3D/opt/OSELAS.Toolchain-2013.12.2/arm-cortex=
-a8-linux-
-gnueabi/gcc-4.8.3-glibc-2.18-binutils-2.24-kernel-3.12-sanitized/bin/ar=
-m-
-cortexa8-linux-gnueabi- make O=3Dbuild_arm V=3D1 tools/gpio
+"GPIO0" may not be a good name, but there are plenty of boards out ther=
+e
+that use just this line name in their schematic for GPIOs that are not
+used otherwise. For example the riotboard has line-names "GPIO_1",
+"GPIO4_31", "GPIO5_05", ...
 
-results:
+> +rather use the "" (blank string) if the use of the GPIO line is unde=
+fined
+> +in your design. The names are assigned starting from line offset 0 f=
+rom
+> +left to right from the passed array. An incomplete array (where the =
+number
+> +of passed named are less than ngpios) will still be used up until th=
+e last
+> +provided valid line index.
+> +
+>  Example:
+> =20
+>  gpio-controller@00000000 {
+> @@ -160,6 +175,10 @@ gpio-controller@00000000 {
+>  =09gpio-controller;
+>  =09#gpio-cells =3D <2>;
+>  =09ngpios =3D <18>;
+> +=09gpio-line-names =3D "MMC-CD", "MMC-WP", "VDD eth", "RST eth", "LE=
+D R",
+> +=09=09"LED G", "LED B", "Col A", "Col B", "Col C", "Col D",
+> +=09=09"Row A", "Row B", "Row C", "Row D", "NMI button",
+> +=09=09"poweroff", "reset";
 
-make -C /home/alex/repo/linux/build_arm KBUILD_SRC=3D/home/alex/repo/li=
-nux \
--f /home/alex/repo/linux/Makefile tools/gpio
-make[1]: Verzeichnis =E2=80=9E/home/alex/repo/linux/build_arm=E2=80=9C =
-wird betreten
-mkdir -p ./tools
-make LDFLAGS=3D MAKEFLAGS=3D"" O=3D/home/alex/repo/linux/build_arm subd=
-ir=3Dtools -C=20
-=2E./tools/ gpio
-mkdir -p /home/alex/repo/linux/build_arm/tools/gpio && make=20
-O=3D/home/alex/repo/linux/build_arm subdir=3Dtools/gpio --no-print-dire=
-ctory -C=20
-gpio=20
-/opt/OSELAS.Toolchain-2013.12.2/arm-cortexa8-linux-gnueabi/gcc-4.8.3-
-glibc-2.18-binutils-2.24-kernel-3.12-sanitized/bin/arm-cortexa8-linux-g=
-nueabi-
-gcc -O2 -Wall -g -D_GNU_SOURCE   -c -o lsgpio.o lsgpio.c
-lsgpio.c:25:24: fatal error: linux/gpio.h: No such file or directory
- #include <linux/gpio.h>
+As many GPIO controllers have something like 32 GPIO lines, it can be
+difficult to read which GPIO number the line "reset" is on.
+But I think you can get around that by writing one name per file-line o=
+r
+something similar. Also it should be immediately visible by listing all=
 
-Apparently the includes to $(srcdir)/include and=20
-$(srcdir)/arch/${ARCH}/include are missing.
+gpio names in the userspace.
 
-Best regards,
-Alexander
+>  }
+> =20
+>  The GPIO chip may contain GPIO hog definitions. GPIO hogging is a me=
+chanism
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index d81dbd8e90d9..d43eaca803e3 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -196,6 +196,45 @@ static struct gpio_desc *of_parse_own_gpio(struc=
+t device_node *np,
+>  }
+> =20
+>  /**
+> + * of_gpiochip_set_names() - set up the names of the lines
+> + * @chip: GPIO chip whose lines should be named, if possible
+> + */
+> +static void of_gpiochip_set_names(struct gpio_chip *gc)
+> +{
+> +=09struct gpio_device *gdev =3D gc->gpiodev;
+> +=09struct device_node *np =3D gc->of_node;
+> +=09int i;
+> +=09int nstrings;
+> +
+> +=09/* Do we even have the "gpio-line-names" property */
+> +=09if (!of_property_read_bool(np, "gpio-line-names"))
+> +=09=09return;
+> +
+> +=09nstrings =3D of_property_count_strings(np, "gpio-line-names");
+> +=09/*
+> +=09 * Make sure to not index beyond either the end of the
+> +=09 * "gpio-names" array nor the number of descriptors of
+> +=09 * the GPIO device.
+> +=09 */
+> +=09for (i =3D 0; i < nstrings && i < gdev->ngpio; i++) {
+> +=09=09const char *name;
+> +=09=09int ret;
+> +
+> +=09=09ret =3D of_property_read_string_index(np,
+> +=09=09=09=09=09=09    "gpio-line-names",
+> +=09=09=09=09=09=09    i,
+> +=09=09=09=09=09=09    &name);
+> +=09=09if (!ret)
+> +=09=09=09gdev->descs[i].name =3D name;
+> +
+> +=09=09/* Empty strings are OK */
+> +=09=09if (ret < 0 && ret !=3D -ENODATA)
+> +=09=09=09dev_err(&gdev->dev, "unable to name line %d\n",
+> +=09=09=09=09i);
+> +=09}
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Maybe a warning for nstrings > ngpio here?
+
+Otherwise this looks good.
+
+Best Regards,
+
+Markus
+
+=2D-=20
+Pengutronix e.K.                           |                           =
+  |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0  =
+  |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
+5 |
+
+--nextPart9200594.5CvlCET1oc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXIcXvAAoJEEpcgKtcEGQQUXMQALyPFHJ5WNUXETGkcV3BsnSw
+hxPn3fkM1aE7fJJfa/1npymuzif+VHNxzFeWxo+Jrpcgn5dgTa1ZN9JA6eI9n+bn
+xp3RG5jdG7XlRgtj9zajiRg8+HiTtp588tD3EZTo2Jvz471LgSMNgjDU9wXCi/Az
+TRi08feOcHJce5YrVC8j0fPuKNiL5xWGi1qjNZxeSDRmDy01Tftw5K9dY1kHwRsR
+NjJcnRjI2vHisfhFWlNto+G8NKxQWo2jTq2QiqmyZDdo3DhGo5kZsStkunu6x9Qy
+h4VnT+zsnWUcxxZfDnEbQkBaVPN4thXPvE3ry9gGNgLHdWlh83TfqXhyB+V1E13A
+FIGuTzU3sEwvo1U7fDeqgKhCraWK4hmUM0B51VUkUSEKl9I/UpI/qfaGXnDX7el/
+zOC/JHUfwodyI3hoHt5ZU7t252F22Frxr6M+midImOhdmCSMLm37wQczxUNSJ1zO
+RmYuSdLdxkNXLKxGeqy2V0vNQFx7QpsQUZ2c9/PJrEUksa+sRA3h21MlQgDqtKbK
+Jf4ec+1uGywV2jJH9i6SgH6ICtShr8qwYJGlAmXZcCDi31rD83de2EyIMQhRISZm
+iWRARTCVUna6KoturVjXfSu8aePe31ZxR6TN+kOAQoG4abxXi5ZeI6+mApvklDPe
+trPWbls+k2eFzhvIVCDe
+=QRS7
+-----END PGP SIGNATURE-----
+
+--nextPart9200594.5CvlCET1oc--
+
