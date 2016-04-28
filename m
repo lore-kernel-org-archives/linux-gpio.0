@@ -1,10 +1,12 @@
 From: <patrice.chotard@st.com>
-Subject: [PATCH v2 00/10] STMPE fixes/rework and add STMPE1600 support
-Date: Thu, 28 Apr 2016 14:12:59 +0200
-Message-ID: <1461845589-4826-1-git-send-email-patrice.chotard@st.com>
+Subject: [PATCH v2 09/10] mfd: Add STMPE1600 support
+Date: Thu, 28 Apr 2016 14:13:08 +0200
+Message-ID: <1461845589-4826-10-git-send-email-patrice.chotard@st.com>
+References: <1461845589-4826-1-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1461845589-4826-1-git-send-email-patrice.chotard@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: lee.jones@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, maxime.coquelin@st.com, amelie.delaunay@st.com, shawnguo@kernel.org, kernel@pengutronix.de, dinguyen@opensource.altera.com, vireshk@kernel.org, shiraz.linux.kernel@gmail.com, thierry.reding@gmail.com, gnurou@gmail.com, Patrice Chotard <patrice.chotard@st.com>, marcel.ziswiler@toradex.com, stefan@agner.ch, dev@lynxeye.de
@@ -12,70 +14,192 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Patrice Chotard <patrice.chotard@st.com>
 
-
-This series cleans and fixes some bugs in MFD/GPIO STMPE drivers and prepare
- the ground to add new STMPE1600 support.
-
-STMPE1600 datasheet is available here : 
+STMPE1600 is a 16-bit port expander.
+Datasheet is available here :
 http://www2.st.com/content/st_com/en/products/interfaces-and-transceivers/
 i-o-expanders-and-level-translators/i-o-expanders/stmpe1600.html
 
-Only STMPE1600 has been tested on STM32 platform. As i have no board with
-others STMPE variant(STMPE610/STMPE801/STMPE811/STMPE1601/STMPE1801/STMPE2401
-and STMPE2403), i put in CC boards's maintainers which are using others STMPE variant.
+Signed-off-by: Amelie DELAUNAY <amelie.delaunay@st.com>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/mfd/stmpe-i2c.c   |  2 ++
+ drivers/mfd/stmpe.c       | 65 +++++++++++++++++++++++++++++++++++++++++++----
+ drivers/mfd/stmpe.h       | 21 +++++++++++++++
+ include/linux/mfd/stmpe.h |  1 +
+ 4 files changed, 84 insertions(+), 5 deletions(-)
 
-If they can kindly check that no regression has been introduce by this series
-:
-
-For ARM/FREESCALE IMX / MXC ARM ARCHITECTURE:
-	_ Shawn Guo <shawnguo@kernel.org>
-	_ Sascha Hauer <kernel@pengutronix.de>
-
-For ARM/SOCFPGA ARCHITECTURE
-	_ Dinh Nguyen <dinguyen@opensource.altera.com>
-
-For SPEAR PLATFORM SUPPORT
-	_ Viresh Kumar <vireshk@kernel.org>
-	_ Shiraz Hashim <shiraz.linux.kernel@gmail.com>
-
-For Apalis/Colibri board SUPPORT
-	_ marcel.ziswiler@toradex.com
-	_ stefan@agner.ch
-	_ dev@lynxeye.de
-	_ Thierry Reding <thierry.reding@gmail.com>
-	_ Alexandre Courbot <gnurou@gmail.com>
-
-For ARM/Ux500 ARM ARCHITECTURE
-	_ Linus Walleij <linus.walleij@linaro.org>
-
-
-v1 => v2:
-	_ update Cc list
-	_ fix kbuild test robot warnings on original patch 3
-	_ split patch 6 to extract usage of generic bitmask name
-	_ split patch 6 and 7 and introduce a new way to access registers
-	  for both mfd/stmpe and gpio/gpio-stmpe drivers.
-	_ remove patch 8
-
-Patrice Chotard (10):
-  mfd: stmpe: Add STMPE_IDX_SYS_CTRL/2 enum
-  mfd: stmpe: Add reset support for all STMPE variant
-  gpio: stmpe: fix edge and rising/falling edge detection
-  gpio: stmpe: write int status register only when needed
-  mfd: stmpe: use generic bit mask name
-  mfd: stmpe: rework registers access
-  gpio: stmpe: rework registers access
-  Documentation: dt: add stmpe1600 compatible string to stmpe mfd
-  mfd: Add STMPE1600 support
-  gpio: stmpe: Add STMPE1600 support
-
- Documentation/devicetree/bindings/mfd/stmpe.txt |   2 +-
- drivers/gpio/gpio-stmpe.c                       | 167 +++++++++++++++++-------
- drivers/mfd/stmpe-i2c.c                         |   2 +
- drivers/mfd/stmpe.c                             | 161 +++++++++++++++++++----
- drivers/mfd/stmpe.h                             |  85 ++++++++++--
- include/linux/mfd/stmpe.h                       |  21 +++
- 6 files changed, 352 insertions(+), 86 deletions(-)
-
+diff --git a/drivers/mfd/stmpe-i2c.c b/drivers/mfd/stmpe-i2c.c
+index c3f4aab..863c39a 100644
+--- a/drivers/mfd/stmpe-i2c.c
++++ b/drivers/mfd/stmpe-i2c.c
+@@ -57,6 +57,7 @@ static const struct of_device_id stmpe_of_match[] = {
+ 	{ .compatible = "st,stmpe610", .data = (void *)STMPE610, },
+ 	{ .compatible = "st,stmpe801", .data = (void *)STMPE801, },
+ 	{ .compatible = "st,stmpe811", .data = (void *)STMPE811, },
++	{ .compatible = "st,stmpe1600", .data = (void *)STMPE1600, },
+ 	{ .compatible = "st,stmpe1601", .data = (void *)STMPE1601, },
+ 	{ .compatible = "st,stmpe1801", .data = (void *)STMPE1801, },
+ 	{ .compatible = "st,stmpe2401", .data = (void *)STMPE2401, },
+@@ -101,6 +102,7 @@ static const struct i2c_device_id stmpe_i2c_id[] = {
+ 	{ "stmpe610", STMPE610 },
+ 	{ "stmpe801", STMPE801 },
+ 	{ "stmpe811", STMPE811 },
++	{ "stmpe1600", STMPE1600 },
+ 	{ "stmpe1601", STMPE1601 },
+ 	{ "stmpe1801", STMPE1801 },
+ 	{ "stmpe2401", STMPE2401 },
+diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
+index a060809..3a65331 100644
+--- a/drivers/mfd/stmpe.c
++++ b/drivers/mfd/stmpe.c
+@@ -532,6 +532,59 @@ static struct stmpe_variant_info stmpe610 = {
+ };
+ 
+ /*
++ * STMPE1600
++ * Compared to all others STMPE variant, LSB and MSB regs are located in this
++ * order :	LSB   addr
++ *		MSB   addr + 1
++ * As there is only 2 * 8bits registers for GPMR/GPSR/IEGPIOPR, CSB index is MSB registers
++ */
++
++static const u8 stmpe1600_regs[] = {
++	[STMPE_IDX_CHIP_ID]	= STMPE1600_REG_CHIP_ID,
++	[STMPE_IDX_SYS_CTRL]	= STMPE1600_REG_SYS_CTRL,
++	[STMPE_IDX_ICR_LSB]	= STMPE1600_REG_SYS_CTRL,
++	[STMPE_IDX_GPMR_LSB]	= STMPE1600_REG_GPMR_LSB,
++	[STMPE_IDX_GPMR_CSB]	= STMPE1600_REG_GPMR_MSB,
++	[STMPE_IDX_GPSR_LSB]	= STMPE1600_REG_GPSR_LSB,
++	[STMPE_IDX_GPSR_CSB]	= STMPE1600_REG_GPSR_MSB,
++	[STMPE_IDX_GPDR_LSB]	= STMPE1600_REG_GPDR_LSB,
++	[STMPE_IDX_GPDR_CSB]	= STMPE1600_REG_GPDR_MSB,
++	[STMPE_IDX_IEGPIOR_LSB]	= STMPE1600_REG_IEGPIOR_LSB,
++	[STMPE_IDX_IEGPIOR_CSB]	= STMPE1600_REG_IEGPIOR_MSB,
++	[STMPE_IDX_ISGPIOR_LSB]	= STMPE1600_REG_ISGPIOR_LSB,
++};
++
++static struct stmpe_variant_block stmpe1600_blocks[] = {
++	{
++		.cell	= &stmpe_gpio_cell,
++		.irq	= 0,
++		.block	= STMPE_BLOCK_GPIO,
++	},
++};
++
++static int stmpe1600_enable(struct stmpe *stmpe, unsigned int blocks,
++			   bool enable)
++{
++	if (blocks & STMPE_BLOCK_GPIO)
++		return 0;
++	else
++		return -EINVAL;
++}
++
++static struct stmpe_variant_info stmpe1600 = {
++	.name		= "stmpe1600",
++	.id_val		= STMPE1600_ID,
++	.id_mask	= 0xffff,
++	.num_gpios	= 16,
++	.af_bits	= 0,
++	.regs		= stmpe1600_regs,
++	.blocks		= stmpe1600_blocks,
++	.num_blocks	= ARRAY_SIZE(stmpe1600_blocks),
++	.num_irqs	= STMPE1600_NR_INTERNAL_IRQS,
++	.enable		= stmpe1600_enable,
++};
++
++/*
+  * STMPE1601
+  */
+ 
+@@ -928,6 +981,7 @@ static struct stmpe_variant_info *stmpe_variant_info[STMPE_NBR_PARTS] = {
+ 	[STMPE610]	= &stmpe610,
+ 	[STMPE801]	= &stmpe801,
+ 	[STMPE811]	= &stmpe811,
++	[STMPE1600]	= &stmpe1600,
+ 	[STMPE1601]	= &stmpe1601,
+ 	[STMPE1801]	= &stmpe1801,
+ 	[STMPE2401]	= &stmpe2401,
+@@ -954,7 +1008,8 @@ static irqreturn_t stmpe_irq(int irq, void *data)
+ 	int ret;
+ 	int i;
+ 
+-	if (variant->id_val == STMPE801_ID) {
++	if (variant->id_val == STMPE801_ID ||
++	    variant->id_val == STMPE1600_ID) {
+ 		int base = irq_create_mapping(stmpe->domain, 0);
+ 
+ 		handle_nested_irq(base);
+@@ -1128,13 +1183,13 @@ static int stmpe_chip_init(struct stmpe *stmpe)
+ 		return ret;
+ 
+ 	if (stmpe->irq >= 0) {
+-		if (id == STMPE801_ID)
++		if (id == STMPE801_ID || id == STMPE1600_ID)
+ 			icr = STMPE_SYS_CTRL_INT_EN;
+ 		else
+ 			icr = STMPE_ICR_LSB_GIM;
+ 
+-		/* STMPE801 doesn't support Edge interrupts */
+-		if (id != STMPE801_ID) {
++		/* STMPE801 and STMPE1600 don't support Edge interrupts */
++		if (id != STMPE801_ID && id != STMPE1600_ID) {
+ 			if (irq_trigger == IRQF_TRIGGER_FALLING ||
+ 					irq_trigger == IRQF_TRIGGER_RISING)
+ 				icr |= STMPE_ICR_LSB_EDGE;
+@@ -1142,7 +1197,7 @@ static int stmpe_chip_init(struct stmpe *stmpe)
+ 
+ 		if (irq_trigger == IRQF_TRIGGER_RISING ||
+ 				irq_trigger == IRQF_TRIGGER_HIGH) {
+-			if (id == STMPE801_ID)
++			if (id == STMPE801_ID || id == STMPE1600_ID)
+ 				icr |= STMPE_SYS_CTRL_INT_HI;
+ 			else
+ 				icr |= STMPE_ICR_LSB_HIGH;
+diff --git a/drivers/mfd/stmpe.h b/drivers/mfd/stmpe.h
+index f127342..f7efdd8 100644
+--- a/drivers/mfd/stmpe.h
++++ b/drivers/mfd/stmpe.h
+@@ -164,6 +164,27 @@ int stmpe_remove(struct stmpe *stmpe);
+ #define STMPE811_SYS_CTRL2_TS_OFF	(1 << 3)
+ 
+ /*
++ * STMPE1600
++ */
++#define STMPE1600_ID			0x0016
++#define STMPE1600_NR_INTERNAL_IRQS	16
++
++#define STMPE1600_REG_CHIP_ID		0x00
++#define STMPE1600_REG_SYS_CTRL		0x03
++#define STMPE1600_REG_IEGPIOR_LSB	0x08
++#define STMPE1600_REG_IEGPIOR_MSB	0x09
++#define STMPE1600_REG_ISGPIOR_LSB	0x0A
++#define STMPE1600_REG_ISGPIOR_MSB	0x0B
++#define STMPE1600_REG_GPMR_LSB		0x10
++#define STMPE1600_REG_GPMR_MSB		0x11
++#define STMPE1600_REG_GPSR_LSB		0x12
++#define STMPE1600_REG_GPSR_MSB		0x13
++#define STMPE1600_REG_GPDR_LSB		0x14
++#define STMPE1600_REG_GPDR_MSB		0x15
++#define STMPE1600_REG_GPPIR_LSB		0x16
++#define STMPE1600_REG_GPPIR_MSB		0x17
++
++/*
+  * STMPE1601
+  */
+ 
+diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
+index 3dced4a..0170bd6 100644
+--- a/include/linux/mfd/stmpe.h
++++ b/include/linux/mfd/stmpe.h
+@@ -26,6 +26,7 @@ enum stmpe_partnum {
+ 	STMPE610,
+ 	STMPE801,
+ 	STMPE811,
++	STMPE1600,
+ 	STMPE1601,
+ 	STMPE1801,
+ 	STMPE2401,
 -- 
 1.9.1
