@@ -1,120 +1,108 @@
-From: Jiang Qiu <qiujiang@huawei.com>
-Subject: [PATCH v10 3/3] gpio: dwapb: add gpio-signaled acpi event support
-Date: Thu, 28 Apr 2016 17:32:03 +0800
-Message-ID: <1461835923-68492-4-git-send-email-qiujiang@huawei.com>
-References: <1461835923-68492-1-git-send-email-qiujiang@huawei.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [RFC v4 3/8] gpio: generic: add DT support for generic
+ memory-mapped GPIOs
+Date: Thu, 28 Apr 2016 12:58:03 +0300
+Message-ID: <CAHp75VeSf_=rQBRQ+1ox=fn7aJ53mGg_huH7HRbZck0HEhxBAQ@mail.gmail.com>
+References: <cover.1461806071.git.chunkeey@googlemail.com>
+	<a5d6bb7bb73ff9396c9e8053a8e8e0975b857934.1461806071.git.chunkeey@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1461835923-68492-1-git-send-email-qiujiang@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: mika.westerberg@linux.intel.com, andy.shevchenko@gmail.com, delicious.quinoa@gmail.com, jamie@jamieiles.com, charles.chenxin@huawei.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linuxarm@huawei.com, Jiang Qiu <qiujiang@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:34813 "EHLO
+	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753416AbcD1J6F convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Apr 2016 05:58:05 -0400
+In-Reply-To: <a5d6bb7bb73ff9396c9e8053a8e8e0975b857934.1461806071.git.chunkeey@googlemail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Christian Lamparter <chunkeey@googlemail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexander Shiyan <shc_work@mail.ru>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
-This patch adds gpio-signaled acpi event support. It is used for
-power button on hisilicon D02 board, an arm64 platform.
+On Thu, Apr 28, 2016 at 12:05 PM, Christian Lamparter
+<chunkeey@googlemail.com> wrote:
+> From: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+>
+> This patch adds support for defining memory-mapped GPIOs
+> which provide a compatible interface for the existing
+> generic-gpio driver.
 
-The corresponding DSDT file is defined as follows:
-Device(GPI0) {
-	Name(_HID, "HISI0181")
-	Name(_ADR, 0)
-	Name(_UID, 0)
+> +static inline void set_resource_address(struct resource *res,
+> +                                       resource_size_t start,
+> +                                       resource_size_t len)
+> +{
+> +       res->start =3D start;
+> +       res->end =3D start + len - 1;
+> +}
 
-	Name (_CRS, ResourceTemplate ()  {
-		Memory32Fixed (ReadWrite, 0x802e0000, 0x10000)
-		Interrupt (ResourceConsumer, Level, ActiveHigh,
-		Exclusive,,,)  {344}
-	})
+It might make sense to put this in the generic (resource related, e.g.
+ioport.h) header. There are plenty users of such already and who knows
+how many will come.
 
-	Device(PRTa) {
-		Name (_DSD, Package () {
-		Package () {
-			Package () {"reg",0},
-			Package () {"snps,nr-gpios",32},
-		}
-		})
-	}
+>  #include <linux/bitops.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/mod_devicetable.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
 
-	Name (_AEI, ResourceTemplate () {
-		GpioInt(Edge, ActiveLow, ExclusiveAndWake,
-		PullUp, , " \\_SB.GPI0") {8}
-	})
+Perhaps + empty line?
 
-	Method (_E08, 0x0, NotSerialized) {
-		Notify (\_SB.PWRB, 0x80)
-	}
-}
+> +#include "gpio-mmio-compat.h"
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Jiang Qiu <qiujiang@huawei.com>
----
- drivers/gpio/gpio-dwapb.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+[]
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 7517c2f..b235d70 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -7,6 +7,7 @@
-  *
-  * All enquiries to support@picochip.com
-  */
-+#include <linux/acpi.h>
- #include <linux/gpio/driver.h>
- /* FIXME: for gpio_get_value(), replace this with direct register read */
- #include <linux/gpio.h>
-@@ -27,6 +28,8 @@
- #include <linux/platform_data/gpio-dwapb.h>
- #include <linux/slab.h>
- 
-+#include "gpiolib.h"
-+
- #define GPIO_SWPORTA_DR		0x00
- #define GPIO_SWPORTA_DDR	0x04
- #define GPIO_SWPORTB_DR		0x0c
-@@ -435,6 +438,10 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 	else
- 		port->is_registered = true;
- 
-+	/* Add GPIO-signaled ACPI event support */
-+	if (pp->irq)
-+		acpi_gpiochip_request_interrupts(&port->gc);
-+
- 	return err;
- }
- 
-@@ -502,6 +509,9 @@ dwapb_gpio_get_pdata(struct device *dev)
- 				dev_warn(dev, "no irq for port%d\n", pp->idx);
- 		}
- 
-+		if (has_acpi_companion(dev) && pp->idx == 0)
-+			pp->irq = platform_get_irq(to_platform_device(dev), 0);
-+
- 		pp->irq_shared	= false;
- 		pp->gpio_base	= -1;
- 	}
-@@ -576,6 +586,12 @@ static const struct of_device_id dwapb_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, dwapb_of_match);
- 
-+static const struct acpi_device_id dwapb_acpi_match[] = {
-+	{"HISI0181", 0},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
-+
- #ifdef CONFIG_PM_SLEEP
- static int dwapb_gpio_suspend(struct device *dev)
- {
-@@ -670,6 +686,7 @@ static struct platform_driver dwapb_gpio_driver = {
- 		.name	= "gpio-dwapb",
- 		.pm	= &dwapb_gpio_pm_ops,
- 		.of_match_table = of_match_ptr(dwapb_of_match),
-+		.acpi_match_table = ACPI_PTR(dwapb_acpi_match),
- 	},
- 	.probe		= dwapb_gpio_probe,
- 	.remove		= dwapb_gpio_remove,
--- 
-1.9.1
+> +#ifdef CONFIG_OF
+> +static int bgpio_basic_mmio_parse_dt(struct platform_device *pdev,
+> +                                    struct bgpio_pdata *pdata,
+> +                                    unsigned long *flags)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       int err;
+> +
+> +       err =3D of_property_read_u32(dev->of_node, "ngpio", &pdata->n=
+gpio);
+> +       if (err && err !=3D -EINVAL)
+> +               return err;
+
+I think check for -EINVAL needs explanation.
+
+> +}
+
+[]
+
+> +       pdata =3D bgpio_parse_dt(pdev, &flags);
+> +       if (IS_ERR(pdata)) {
+> +               return PTR_ERR(pdata);
+
+> +       } else if (!pdata) {
+
+Redundant else
+
+> +               pdata =3D dev_get_platdata(dev);
+> +               flags =3D pdev->id_entry->driver_data;
+> +       }
+>
+>         r =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "dat=
+");
+>         if (!r)
+> @@ -646,6 +734,9 @@ MODULE_DEVICE_TABLE(platform, bgpio_id_table);
+>  static struct platform_driver bgpio_driver =3D {
+>         .driver =3D {
+>                 .name =3D "basic-mmio-gpio",
+
+> +#ifdef CONFIG_OF
+
+Doesn't of_match_ptr do this for you?
+
+
+> +               .of_match_table =3D of_match_ptr(bgpio_of_match),
+> +#endif
+
+--=20
+With Best Regards,
+Andy Shevchenko
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
