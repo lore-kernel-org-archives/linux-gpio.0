@@ -1,166 +1,299 @@
 From: <patrice.chotard@st.com>
-Subject: [PATCH v2 03/10] gpio: stmpe: fix edge and rising/falling edge
- detection
-Date: Thu, 28 Apr 2016 14:13:02 +0200
-Message-ID: <1461845589-4826-4-git-send-email-patrice.chotard@st.com>
+Subject: [PATCH v2 06/10] mfd: stmpe: rework registers access
+Date: Thu, 28 Apr 2016 14:13:05 +0200
+Message-ID: <1461845589-4826-7-git-send-email-patrice.chotard@st.com>
 References: <1461845589-4826-1-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:18728 "EHLO
+	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1753282AbcD1MOM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 Apr 2016 08:14:12 -0400
 In-Reply-To: <1461845589-4826-1-git-send-email-patrice.chotard@st.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: lee.jones@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: gnurou@gmail.com, amelie.delaunay@st.com, dev@lynxeye.de, marcel.ziswiler@toradex.com, vireshk@kernel.org, Patrice Chotard <patrice.chotard@st.com>, stefan@agner.ch, thierry.reding@gmail.com, kernel@pengutronix.de, dinguyen@opensource.altera.com, shawnguo@kernel.org, shiraz.linux.kernel@gmail.com, linux-arm-kernel@lists.infradead.org, maxime.coquelin@st.com
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: lee.jones@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, maxime.coquelin@st.com, amelie.delaunay@st.com, shawnguo@kernel.org, kernel@pengutronix.de, dinguyen@opensource.altera.com, vireshk@kernel.org, shiraz.linux.kernel@gmail.com, thierry.reding@gmail.com, gnurou@gmail.com, Patrice Chotard <patrice.chotard@st.com>, marcel.ziswiler@toradex.com, stefan@agner.ch, dev@lynxeye.de
 
 From: Patrice Chotard <patrice.chotard@st.com>
 
-By cross-checking STMPE 610/801/811/1601/2401/2403 datasheets,
-it appears that edge detection and rising/falling edge detection
-is not supported by all STMPE variant:
+this update allows to use registers map as following :
+regs[reg_index + offset] instead of
+regs[reg_index] + offset
 
-           GPIO              GPIO
-      Edge detection     rising/falling
-                         edge detection
- 610 |      X        |         X       |
- 801 |               |                 |
- 811 |      X        |         X       |
-1600 |               |                 |
-1601 |      X        |         X       |
-1801 |               |         X       |
-2401 |      X        |         X       |
-2403 |      X        |         X       |
+This makes code clearer and will facilitate the addition of STMPE1600
+on which LSB and MSB registers are respectively located at addr and addr + 1.
+Despite for all others STMPE variant, LSB and MSB registers are respectively
+located in reverse order at addr + 1 and addr.
 
-Rework stmpe_dbg_show_one() and stmpe_gpio_irq to correctly
-take these cases into account.
+For variant which have 3 registers's bank, we use LSB,CSB and MSB indexes
+which contains respectively LSB (or LOW), CSB (or MID) and MSB (or HIGH)
+register addresses (STMPE1801/STMPE24xx).
+For variant which have 2 registers's bank, we use LSB and CSB indexes only.
+In this case the CSB index contains the MSB regs address (STMPE 1601).
 
 Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-stmpe.c | 85 +++++++++++++++++++++++++++++++++--------------
- 1 file changed, 60 insertions(+), 25 deletions(-)
+ drivers/mfd/stmpe.c       | 48 ++++++++++++++++++++++++++++++++++++++++++----
+ drivers/mfd/stmpe.h       | 49 +++++++++++++++++++++++++++++++++++++++++------
+ include/linux/mfd/stmpe.h | 18 +++++++++++++++++
+ 3 files changed, 105 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index 5197edf..bfc918c 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -231,39 +231,74 @@ static void stmpe_dbg_show_one(struct seq_file *s,
- 			   gpio, label ?: "(none)",
- 			   val ? "hi" : "lo");
- 	} else {
--		u8 edge_det_reg = stmpe->regs[STMPE_IDX_GPEDR_MSB] + num_banks - 1 - (offset / 8);
--		u8 rise_reg = stmpe->regs[STMPE_IDX_GPRER_LSB] - (offset / 8);
--		u8 fall_reg = stmpe->regs[STMPE_IDX_GPFER_LSB] - (offset / 8);
--		u8 irqen_reg = stmpe->regs[STMPE_IDX_IEGPIOR_LSB] - (offset / 8);
--		bool edge_det;
--		bool rise;
--		bool fall;
-+		u8 edge_det_reg;
-+		u8 rise_reg;
-+		u8 fall_reg;
-+		u8 irqen_reg;
-+
-+		char *edge_det_values[] = {"edge-inactive",
-+					   "edge-asserted",
-+					   "not-supported"};
-+		char *rise_values[] = {"no-rising-edge-detection",
-+				       "rising-edge-detection",
-+				       "not-supported"};
-+		char *fall_values[] = {"no-falling-edge-detection",
-+				       "falling-edge-detection",
-+				       "not-supported"};
-+		#define NOT_SUPPORTED_IDX 2
-+		u8 edge_det = NOT_SUPPORTED_IDX;
-+		u8 rise = NOT_SUPPORTED_IDX;
-+		u8 fall = NOT_SUPPORTED_IDX;
- 		bool irqen;
+diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
+index 2556463..a060809 100644
+--- a/drivers/mfd/stmpe.c
++++ b/drivers/mfd/stmpe.c
+@@ -462,7 +462,7 @@ static const u8 stmpe811_regs[] = {
+ 	[STMPE_IDX_GPAFR_U_MSB]	= STMPE811_REG_GPIO_AF,
+ 	[STMPE_IDX_IEGPIOR_LSB]	= STMPE811_REG_GPIO_INT_EN,
+ 	[STMPE_IDX_ISGPIOR_MSB]	= STMPE811_REG_GPIO_INT_STA,
+-	[STMPE_IDX_GPEDR_MSB]	= STMPE811_REG_GPIO_ED,
++	[STMPE_IDX_GPEDR_LSB]	= STMPE811_REG_GPIO_ED,
+ };
  
--		ret = stmpe_reg_read(stmpe, edge_det_reg);
--		if (ret < 0)
--			return;
--		edge_det = !!(ret & mask);
--		ret = stmpe_reg_read(stmpe, rise_reg);
--		if (ret < 0)
-+		switch (stmpe->partnum) {
-+		case STMPE610:
-+		case STMPE811:
-+		case STMPE1601:
-+		case STMPE2401:
-+		case STMPE2403:
-+			edge_det_reg = stmpe->regs[STMPE_IDX_GPEDR_MSB] +
-+				       num_banks - 1 - (offset / 8);
-+			ret = stmpe_reg_read(stmpe, edge_det_reg);
-+			if (ret < 0)
-+				return;
-+			edge_det = !!(ret & mask);
-+
-+		case STMPE1801:
-+			rise_reg = stmpe->regs[STMPE_IDX_GPRER_LSB] -
-+				   (offset / 8);
-+			fall_reg = stmpe->regs[STMPE_IDX_GPFER_LSB] -
-+				   (offset / 8);
-+			ret = stmpe_reg_read(stmpe, rise_reg);
-+			if (ret < 0)
-+				return;
-+			rise = !!(ret & mask);
-+			ret = stmpe_reg_read(stmpe, fall_reg);
-+			if (ret < 0)
-+				return;
-+			fall = !!(ret & mask);
-+
-+		case STMPE801:
-+			irqen_reg = stmpe->regs[STMPE_IDX_IEGPIOR_LSB] -
-+				    (offset / 8);
-+			break;
-+
-+		default:
- 			return;
--		rise = !!(ret & mask);
--		ret = stmpe_reg_read(stmpe, fall_reg);
--		if (ret < 0)
--			return;
--		fall = !!(ret & mask);
-+		}
-+
- 		ret = stmpe_reg_read(stmpe, irqen_reg);
- 		if (ret < 0)
- 			return;
- 		irqen = !!(ret & mask);
+ static struct stmpe_variant_block stmpe811_blocks[] = {
+@@ -540,19 +540,28 @@ static const u8 stmpe1601_regs[] = {
+ 	[STMPE_IDX_SYS_CTRL]	= STMPE1601_REG_SYS_CTRL,
+ 	[STMPE_IDX_SYS_CTRL2]	= STMPE1601_REG_SYS_CTRL2,
+ 	[STMPE_IDX_ICR_LSB]	= STMPE1601_REG_ICR_LSB,
++	[STMPE_IDX_IER_MSB]	= STMPE1601_REG_IER_MSB,
+ 	[STMPE_IDX_IER_LSB]	= STMPE1601_REG_IER_LSB,
+ 	[STMPE_IDX_ISR_MSB]	= STMPE1601_REG_ISR_MSB,
+ 	[STMPE_IDX_GPMR_LSB]	= STMPE1601_REG_GPIO_MP_LSB,
++	[STMPE_IDX_GPMR_CSB]	= STMPE1601_REG_GPIO_MP_MSB,
+ 	[STMPE_IDX_GPSR_LSB]	= STMPE1601_REG_GPIO_SET_LSB,
++	[STMPE_IDX_GPSR_CSB]	= STMPE1601_REG_GPIO_SET_MSB,
+ 	[STMPE_IDX_GPCR_LSB]	= STMPE1601_REG_GPIO_CLR_LSB,
++	[STMPE_IDX_GPCR_CSB]	= STMPE1601_REG_GPIO_CLR_MSB,
+ 	[STMPE_IDX_GPDR_LSB]	= STMPE1601_REG_GPIO_SET_DIR_LSB,
++	[STMPE_IDX_GPDR_CSB]	= STMPE1601_REG_GPIO_SET_DIR_MSB,
++	[STMPE_IDX_GPEDR_LSB]	= STMPE1601_REG_GPIO_ED_LSB,
++	[STMPE_IDX_GPEDR_CSB]	= STMPE1601_REG_GPIO_ED_MSB,
+ 	[STMPE_IDX_GPRER_LSB]	= STMPE1601_REG_GPIO_RE_LSB,
++	[STMPE_IDX_GPRER_CSB]	= STMPE1601_REG_GPIO_RE_MSB,
+ 	[STMPE_IDX_GPFER_LSB]	= STMPE1601_REG_GPIO_FE_LSB,
++	[STMPE_IDX_GPFER_CSB]	= STMPE1601_REG_GPIO_FE_MSB,
+ 	[STMPE_IDX_GPPUR_LSB]	= STMPE1601_REG_GPIO_PU_LSB,
+ 	[STMPE_IDX_GPAFR_U_MSB]	= STMPE1601_REG_GPIO_AF_U_MSB,
+ 	[STMPE_IDX_IEGPIOR_LSB]	= STMPE1601_REG_INT_EN_GPIO_MASK_LSB,
++	[STMPE_IDX_IEGPIOR_CSB]	= STMPE1601_REG_INT_EN_GPIO_MASK_MSB,
+ 	[STMPE_IDX_ISGPIOR_MSB]	= STMPE1601_REG_INT_STA_GPIO_MSB,
+-	[STMPE_IDX_GPEDR_MSB]	= STMPE1601_REG_GPIO_ED_MSB,
+ };
  
--		seq_printf(s, " gpio-%-3d (%-20.20s) in  %s %s %s%s%s",
-+		seq_printf(s, " gpio-%-3d (%-20.20s) in  %s %13s %13s %25s %25s",
- 			   gpio, label ?: "(none)",
- 			   val ? "hi" : "lo",
--			   edge_det ? "edge-asserted" : "edge-inactive",
--			   irqen ? "IRQ-enabled" : "",
--			   rise ? " rising-edge-detection" : "",
--			   fall ? " falling-edge-detection" : "");
-+			   edge_det_values[edge_det],
-+			   irqen ? "IRQ-enabled" : "IRQ-disabled",
-+			   rise_values[rise],
-+			   fall_values[fall]);
+ static struct stmpe_variant_block stmpe1601_blocks[] = {
+@@ -698,14 +707,28 @@ static const u8 stmpe1801_regs[] = {
+ 	[STMPE_IDX_IER_LSB]	= STMPE1801_REG_INT_EN_MASK_LOW,
+ 	[STMPE_IDX_ISR_LSB]	= STMPE1801_REG_INT_STA_LOW,
+ 	[STMPE_IDX_GPMR_LSB]	= STMPE1801_REG_GPIO_MP_LOW,
++	[STMPE_IDX_GPMR_CSB]	= STMPE1801_REG_GPIO_MP_MID,
++	[STMPE_IDX_GPMR_MSB]	= STMPE1801_REG_GPIO_MP_HIGH,
+ 	[STMPE_IDX_GPSR_LSB]	= STMPE1801_REG_GPIO_SET_LOW,
++	[STMPE_IDX_GPSR_CSB]	= STMPE1801_REG_GPIO_SET_MID,
++	[STMPE_IDX_GPSR_MSB]	= STMPE1801_REG_GPIO_SET_HIGH,
+ 	[STMPE_IDX_GPCR_LSB]	= STMPE1801_REG_GPIO_CLR_LOW,
++	[STMPE_IDX_GPCR_CSB]	= STMPE1801_REG_GPIO_CLR_MID,
++	[STMPE_IDX_GPCR_MSB]	= STMPE1801_REG_GPIO_CLR_HIGH,
+ 	[STMPE_IDX_GPDR_LSB]	= STMPE1801_REG_GPIO_SET_DIR_LOW,
++	[STMPE_IDX_GPDR_CSB]	= STMPE1801_REG_GPIO_SET_DIR_MID,
++	[STMPE_IDX_GPDR_MSB]	= STMPE1801_REG_GPIO_SET_DIR_HIGH,
+ 	[STMPE_IDX_GPRER_LSB]	= STMPE1801_REG_GPIO_RE_LOW,
++	[STMPE_IDX_GPRER_CSB]	= STMPE1801_REG_GPIO_RE_MID,
++	[STMPE_IDX_GPRER_MSB]	= STMPE1801_REG_GPIO_RE_HIGH,
+ 	[STMPE_IDX_GPFER_LSB]	= STMPE1801_REG_GPIO_FE_LOW,
++	[STMPE_IDX_GPFER_CSB]	= STMPE1801_REG_GPIO_FE_MID,
++	[STMPE_IDX_GPFER_MSB]	= STMPE1801_REG_GPIO_FE_HIGH,
+ 	[STMPE_IDX_GPPUR_LSB]	= STMPE1801_REG_GPIO_PULL_UP_LOW,
+ 	[STMPE_IDX_IEGPIOR_LSB]	= STMPE1801_REG_INT_EN_GPIO_MASK_LOW,
+-	[STMPE_IDX_ISGPIOR_LSB]	= STMPE1801_REG_INT_STA_GPIO_LOW,
++	[STMPE_IDX_IEGPIOR_CSB]	= STMPE1801_REG_INT_EN_GPIO_MASK_MID,
++	[STMPE_IDX_IEGPIOR_MSB]	= STMPE1801_REG_INT_EN_GPIO_MASK_HIGH,
++	[STMPE_IDX_ISGPIOR_MSB]	= STMPE1801_REG_INT_STA_GPIO_HIGH,
+ };
+ 
+ static struct stmpe_variant_block stmpe1801_blocks[] = {
+@@ -790,19 +813,36 @@ static const u8 stmpe24xx_regs[] = {
+ 	[STMPE_IDX_SYS_CTRL]	= STMPE24XX_REG_SYS_CTRL,
+ 	[STMPE_IDX_SYS_CTRL2]	= STMPE24XX_REG_SYS_CTRL2,
+ 	[STMPE_IDX_ICR_LSB]	= STMPE24XX_REG_ICR_LSB,
++	[STMPE_IDX_IER_MSB]	= STMPE24XX_REG_IER_MSB,
+ 	[STMPE_IDX_IER_LSB]	= STMPE24XX_REG_IER_LSB,
+ 	[STMPE_IDX_ISR_MSB]	= STMPE24XX_REG_ISR_MSB,
+ 	[STMPE_IDX_GPMR_LSB]	= STMPE24XX_REG_GPMR_LSB,
++	[STMPE_IDX_GPMR_CSB]	= STMPE24XX_REG_GPMR_CSB,
++	[STMPE_IDX_GPMR_MSB]	= STMPE24XX_REG_GPMR_MSB,
+ 	[STMPE_IDX_GPSR_LSB]	= STMPE24XX_REG_GPSR_LSB,
++	[STMPE_IDX_GPSR_CSB]	= STMPE24XX_REG_GPSR_CSB,
++	[STMPE_IDX_GPSR_MSB]	= STMPE24XX_REG_GPSR_MSB,
+ 	[STMPE_IDX_GPCR_LSB]	= STMPE24XX_REG_GPCR_LSB,
++	[STMPE_IDX_GPCR_CSB]	= STMPE24XX_REG_GPCR_CSB,
++	[STMPE_IDX_GPCR_MSB]	= STMPE24XX_REG_GPCR_MSB,
+ 	[STMPE_IDX_GPDR_LSB]	= STMPE24XX_REG_GPDR_LSB,
++	[STMPE_IDX_GPDR_CSB]	= STMPE24XX_REG_GPDR_CSB,
++	[STMPE_IDX_GPDR_MSB]	= STMPE24XX_REG_GPDR_MSB,
+ 	[STMPE_IDX_GPRER_LSB]	= STMPE24XX_REG_GPRER_LSB,
++	[STMPE_IDX_GPRER_CSB]	= STMPE24XX_REG_GPRER_CSB,
++	[STMPE_IDX_GPRER_MSB]	= STMPE24XX_REG_GPRER_MSB,
+ 	[STMPE_IDX_GPFER_LSB]	= STMPE24XX_REG_GPFER_LSB,
++	[STMPE_IDX_GPFER_CSB]	= STMPE24XX_REG_GPFER_CSB,
++	[STMPE_IDX_GPFER_MSB]	= STMPE24XX_REG_GPFER_MSB,
+ 	[STMPE_IDX_GPPUR_LSB]	= STMPE24XX_REG_GPPUR_LSB,
+ 	[STMPE_IDX_GPPDR_LSB]	= STMPE24XX_REG_GPPDR_LSB,
+ 	[STMPE_IDX_GPAFR_U_MSB]	= STMPE24XX_REG_GPAFR_U_MSB,
+ 	[STMPE_IDX_IEGPIOR_LSB]	= STMPE24XX_REG_IEGPIOR_LSB,
++	[STMPE_IDX_IEGPIOR_CSB]	= STMPE24XX_REG_IEGPIOR_CSB,
++	[STMPE_IDX_IEGPIOR_MSB]	= STMPE24XX_REG_IEGPIOR_MSB,
+ 	[STMPE_IDX_ISGPIOR_MSB]	= STMPE24XX_REG_ISGPIOR_MSB,
++	[STMPE_IDX_GPEDR_LSB]	= STMPE24XX_REG_GPEDR_LSB,
++	[STMPE_IDX_GPEDR_CSB]	= STMPE24XX_REG_GPEDR_CSB,
+ 	[STMPE_IDX_GPEDR_MSB]	= STMPE24XX_REG_GPEDR_MSB,
+ };
+ 
+@@ -977,7 +1017,7 @@ static void stmpe_irq_sync_unlock(struct irq_data *data)
+ 			continue;
+ 
+ 		stmpe->oldier[i] = new;
+-		stmpe_reg_write(stmpe, stmpe->regs[STMPE_IDX_IER_LSB] - i, new);
++		stmpe_reg_write(stmpe, stmpe->regs[STMPE_IDX_IER_LSB + i], new);
  	}
- }
  
-@@ -322,8 +357,8 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
+ 	mutex_unlock(&stmpe->irq_lock);
+diff --git a/drivers/mfd/stmpe.h b/drivers/mfd/stmpe.h
+index 4ba1123..f127342 100644
+--- a/drivers/mfd/stmpe.h
++++ b/drivers/mfd/stmpe.h
+@@ -179,19 +179,32 @@ int stmpe_remove(struct stmpe *stmpe);
  
- 		stmpe_reg_write(stmpe, statmsbreg + i, status[i]);
+ #define STMPE1601_REG_SYS_CTRL			0x02
+ #define STMPE1601_REG_SYS_CTRL2			0x03
++#define STMPE1601_REG_ICR_MSB			0x10
+ #define STMPE1601_REG_ICR_LSB			0x11
++#define STMPE1601_REG_IER_MSB			0x12
+ #define STMPE1601_REG_IER_LSB			0x13
+ #define STMPE1601_REG_ISR_MSB			0x14
+-#define STMPE1601_REG_CHIP_ID			0x80
++#define STMPE1601_REG_ISR_LSB			0x15
++#define STMPE1601_REG_INT_EN_GPIO_MASK_MSB	0x16
+ #define STMPE1601_REG_INT_EN_GPIO_MASK_LSB	0x17
+ #define STMPE1601_REG_INT_STA_GPIO_MSB		0x18
+-#define STMPE1601_REG_GPIO_MP_LSB		0x87
++#define STMPE1601_REG_INT_STA_GPIO_LSB		0x19
++#define STMPE1601_REG_CHIP_ID			0x80
++#define STMPE1601_REG_GPIO_SET_MSB		0x82
+ #define STMPE1601_REG_GPIO_SET_LSB		0x83
++#define STMPE1601_REG_GPIO_CLR_MSB		0x84
+ #define STMPE1601_REG_GPIO_CLR_LSB		0x85
++#define STMPE1601_REG_GPIO_MP_MSB		0x86
++#define STMPE1601_REG_GPIO_MP_LSB		0x87
++#define STMPE1601_REG_GPIO_SET_DIR_MSB		0x88
+ #define STMPE1601_REG_GPIO_SET_DIR_LSB		0x89
+ #define STMPE1601_REG_GPIO_ED_MSB		0x8A
++#define STMPE1601_REG_GPIO_ED_LSB		0x8B
++#define STMPE1601_REG_GPIO_RE_MSB		0x8C
+ #define STMPE1601_REG_GPIO_RE_LSB		0x8D
++#define STMPE1601_REG_GPIO_FE_MSB		0x8E
+ #define STMPE1601_REG_GPIO_FE_LSB		0x8F
++#define STMPE1601_REG_GPIO_PU_MSB		0x90
+ #define STMPE1601_REG_GPIO_PU_LSB		0x91
+ #define STMPE1601_REG_GPIO_AF_U_MSB		0x92
  
--		/* Edge detect register is not present on 801 */
--		if (stmpe->partnum != STMPE801)
-+		/* Edge detect register is not present on 801 and 1801 */
-+		if (stmpe->partnum != STMPE801 || stmpe->partnum != STMPE1801)
- 			stmpe_reg_write(stmpe, stmpe->regs[STMPE_IDX_GPEDR_MSB]
- 					+ i, status[i]);
- 	}
+@@ -267,23 +280,47 @@ int stmpe_remove(struct stmpe *stmpe);
+ 
+ #define STMPE24XX_REG_SYS_CTRL		0x02
+ #define STMPE24XX_REG_SYS_CTRL2		0x03
++#define STMPE24XX_REG_ICR_MSB		0x10
+ #define STMPE24XX_REG_ICR_LSB		0x11
++#define STMPE24XX_REG_IER_MSB		0x12
+ #define STMPE24XX_REG_IER_LSB		0x13
+ #define STMPE24XX_REG_ISR_MSB		0x14
+-#define STMPE24XX_REG_CHIP_ID		0x80
++#define STMPE24XX_REG_ISR_LSB		0x15
++#define STMPE24XX_REG_IEGPIOR_MSB	0x16
++#define STMPE24XX_REG_IEGPIOR_CSB	0x17
+ #define STMPE24XX_REG_IEGPIOR_LSB	0x18
+ #define STMPE24XX_REG_ISGPIOR_MSB	0x19
+-#define STMPE24XX_REG_GPMR_LSB		0xA4
++#define STMPE24XX_REG_ISGPIOR_CSB	0x1A
++#define STMPE24XX_REG_ISGPIOR_LSB	0x1B
++#define STMPE24XX_REG_CHIP_ID		0x80
++#define STMPE24XX_REG_GPSR_MSB		0x83
++#define STMPE24XX_REG_GPSR_CSB		0x84
+ #define STMPE24XX_REG_GPSR_LSB		0x85
++#define STMPE24XX_REG_GPCR_MSB		0x86
++#define STMPE24XX_REG_GPCR_CSB		0x87
+ #define STMPE24XX_REG_GPCR_LSB		0x88
++#define STMPE24XX_REG_GPDR_MSB		0x89
++#define STMPE24XX_REG_GPDR_CSB		0x8A
+ #define STMPE24XX_REG_GPDR_LSB		0x8B
+ #define STMPE24XX_REG_GPEDR_MSB		0x8C
++#define STMPE24XX_REG_GPEDR_CSB		0x8D
++#define STMPE24XX_REG_GPEDR_LSB		0x8E
++#define STMPE24XX_REG_GPRER_MSB		0x8F
++#define STMPE24XX_REG_GPRER_CSB		0x90
+ #define STMPE24XX_REG_GPRER_LSB		0x91
++#define STMPE24XX_REG_GPFER_MSB		0x92
++#define STMPE24XX_REG_GPFER_CSB		0x93
+ #define STMPE24XX_REG_GPFER_LSB		0x94
++#define STMPE24XX_REG_GPPUR_MSB		0x95
++#define STMPE24XX_REG_GPPUR_CSB		0x96
+ #define STMPE24XX_REG_GPPUR_LSB		0x97
+-#define STMPE24XX_REG_GPPDR_LSB		0x9a
++#define STMPE24XX_REG_GPPDR_MSB		0x98
++#define STMPE24XX_REG_GPPDR_CSB		0x99
++#define STMPE24XX_REG_GPPDR_LSB		0x9A
+ #define STMPE24XX_REG_GPAFR_U_MSB	0x9B
+-
++#define STMPE24XX_REG_GPMR_MSB		0xA2
++#define STMPE24XX_REG_GPMR_CSB		0xA3
++#define STMPE24XX_REG_GPMR_LSB		0xA4
+ #define STMPE24XX_SYS_CTRL_ENABLE_GPIO		(1 << 3)
+ #define STMPE24XX_SYSCON_ENABLE_PWM		(1 << 2)
+ #define STMPE24XX_SYS_CTRL_ENABLE_KPC		(1 << 1)
+diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
+index 6c6690f..3dced4a 100644
+--- a/include/linux/mfd/stmpe.h
++++ b/include/linux/mfd/stmpe.h
+@@ -43,20 +43,38 @@ enum {
+ 	STMPE_IDX_SYS_CTRL2,
+ 	STMPE_IDX_ICR_LSB,
+ 	STMPE_IDX_IER_LSB,
++	STMPE_IDX_IER_MSB,
+ 	STMPE_IDX_ISR_LSB,
+ 	STMPE_IDX_ISR_MSB,
+ 	STMPE_IDX_GPMR_LSB,
++	STMPE_IDX_GPMR_CSB,
++	STMPE_IDX_GPMR_MSB,
+ 	STMPE_IDX_GPSR_LSB,
++	STMPE_IDX_GPSR_CSB,
++	STMPE_IDX_GPSR_MSB,
+ 	STMPE_IDX_GPCR_LSB,
++	STMPE_IDX_GPCR_CSB,
++	STMPE_IDX_GPCR_MSB,
+ 	STMPE_IDX_GPDR_LSB,
++	STMPE_IDX_GPDR_CSB,
++	STMPE_IDX_GPDR_MSB,
++	STMPE_IDX_GPEDR_LSB,
++	STMPE_IDX_GPEDR_CSB,
+ 	STMPE_IDX_GPEDR_MSB,
+ 	STMPE_IDX_GPRER_LSB,
++	STMPE_IDX_GPRER_CSB,
++	STMPE_IDX_GPRER_MSB,
+ 	STMPE_IDX_GPFER_LSB,
++	STMPE_IDX_GPFER_CSB,
++	STMPE_IDX_GPFER_MSB,
+ 	STMPE_IDX_GPPUR_LSB,
+ 	STMPE_IDX_GPPDR_LSB,
+ 	STMPE_IDX_GPAFR_U_MSB,
+ 	STMPE_IDX_IEGPIOR_LSB,
++	STMPE_IDX_IEGPIOR_CSB,
++	STMPE_IDX_IEGPIOR_MSB,
+ 	STMPE_IDX_ISGPIOR_LSB,
++	STMPE_IDX_ISGPIOR_CSB,
+ 	STMPE_IDX_ISGPIOR_MSB,
+ 	STMPE_IDX_MAX,
+ };
 -- 
 1.9.1
+
