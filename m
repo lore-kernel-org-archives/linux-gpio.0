@@ -1,797 +1,166 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V11 4/6] pinctrl: max77620: add pincontrol driver for MAX77620/MAX20024
-Date: Thu, 28 Apr 2016 15:28:58 +0530
-Message-ID: <1461837540-17071-5-git-send-email-ldewangan@nvidia.com>
-References: <1461837540-17071-1-git-send-email-ldewangan@nvidia.com>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Subject: Re: [PATCH v2] gpiolib-acpi: Duplicate con_id string when adding it
+ to the crs lookup list
+Date: Thu, 28 Apr 2016 13:33:33 +0300
+Message-ID: <20160428103333.GY4329@intel.com>
+References: <1460563836-1899-1-git-send-email-ville.syrjala@linux.intel.com>
+ <1461589279-8911-1-git-send-email-ville.syrjala@linux.intel.com>
+ <CAAVeFuJKj_Z-s=K+Ag4XmzoL37vdz0MnBJiCoDYFk1NnZchrDw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1461837540-17071-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: lee.jones@linaro.org, linus.walleij@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com
-Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, swarren@nvidia.com, treding@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:57651 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750923AbcD1Kdj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 Apr 2016 06:33:39 -0400
+Content-Disposition: inline
+In-Reply-To: <CAAVeFuJKj_Z-s=K+Ag4XmzoL37vdz0MnBJiCoDYFk1NnZchrDw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Stable <stable@vger.kernel.org>
 
-MAXIM Semiconductor's PMIC, MAX77620/MAX20024 has 8 GPIO pins
-which also act as the special function in alternate mode. Also
-there is configuration like push-pull, open drain, FPS timing
-etc for these pins.
+On Thu, Apr 28, 2016 at 02:04:10PM +0900, Alexandre Courbot wrote:
+> On Mon, Apr 25, 2016 at 10:01 PM,  <ville.syrjala@linux.intel.com> wr=
+ote:
+> > From: Ville Syrj=E4l=E4 <ville.syrjala@linux.intel.com>
+> >
+> > Calling gpiod_get() from a module and then unloading the module lea=
+ds to an
+> > oops due to acpi_can_fallback_to_crs() storing the pointer to the p=
+assed
+> > 'con_id' string onto acpi_crs_lookup_list. The next guy to come alo=
+ng will then
+> > try to access the string but the memory may now be gone with the mo=
+dule.
+> > Make a copy of the passed string instead, and store the copy on the=
+ list.
+> >
+> > BUG: unable to handle kernel paging request at ffffffffa03e7855
+> > IP: [<ffffffff81338322>] strcmp+0x12/0x30
+> > PGD 2a07067 PUD 2a08063 PMD 74720067 PTE 0
+> > Oops: 0000 [#1] PREEMPT SMP
+> > Modules linked in: i915(+) drm_kms_helper drm intel_gtt snd_hda_cod=
+ec snd_hda_core i2c_algo_bit syscopya
+> > rea sysfillrect sysimgblt fb_sys_fops agpgart snd_soc_sst_bytcr_rt5=
+640 coretemp hwmon intel_rapl intel_soc_dts_thermal
+> > punit_atom_debug snd_soc_rt5640 snd_soc_rl6231 serio snd_intel_sst_=
+acpi snd_intel_sst_core video snd_soc_sst_mfld_platf
+> > orm snd_soc_sst_match backlight int3402_thermal processor_thermal_d=
+evice int3403_thermal int3400_thermal acpi_thermal_r
+> > el snd_soc_core intel_soc_dts_iosf int340x_thermal_zone snd_compres=
+s i2c_hid hid snd_pcm snd_timer snd soundcore evdev
+> > sch_fq_codel efivarfs ipv6 autofs4 [last unloaded: drm]
+> > CPU: 2 PID: 3064 Comm: modprobe Tainted: G     U  W       4.6.0-rc3=
+-ffrd-ipvr+ #302
+> > Hardware name: Intel Corp. VALLEYVIEW C0 PLATFORM/BYT-T FFD8, BIOS =
+BLAKFF81.X64.0088.R10.1403240443 FFD8
+> > _X64_R_2014_13_1_00 03/24/2014
+> > task: ffff8800701cd200 ti: ffff880070034000 task.ti: ffff8800700340=
+00
+> > RIP: 0010:[<ffffffff81338322>]  [<ffffffff81338322>] strcmp+0x12/0x=
+30
+> > RSP: 0000:ffff880070037748  EFLAGS: 00010286
+> > RAX: 0000000080000000 RBX: ffff88007a342800 RCX: 0000000000000006
+> > RDX: 0000000000000006 RSI: ffffffffa054f856 RDI: ffffffffa03e7856
+> > RBP: ffff880070037748 R08: 0000000000000000 R09: 0000000000000001
+> > R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa054f855
+> > R13: ffff88007281cae0 R14: 0000000000000010 R15: ffffffffffffffea
+> > FS:  00007faa51447700(0000) GS:ffff880079300000(0000) knlGS:0000000=
+000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: ffffffffa03e7855 CR3: 0000000041eba000 CR4: 00000000001006e0
+> > Stack:
+> >  ffff880070037770 ffffffff8136ad28 ffffffffa054f855 000000000000000=
+0
+> >  ffff88007a0a2098 ffff8800700377e8 ffffffff8136852e ffff88007a34280=
+0
+> >  00000007700377a0 ffff8800700377a0 ffffffff81412442 70672d6c656e617=
+0
+> > Call Trace:
+> >  [<ffffffff8136ad28>] acpi_can_fallback_to_crs+0x88/0x100
+> >  [<ffffffff8136852e>] gpiod_get_index+0x25e/0x310
+> >  [<ffffffff81412442>] ? mipi_dsi_attach+0x22/0x30
+> >  [<ffffffff813685f2>] gpiod_get+0x12/0x20
+> >  [<ffffffffa04fcf41>] intel_dsi_init+0x421/0x480 [i915]
+> >  [<ffffffffa04d3783>] intel_modeset_init+0x853/0x16b0 [i915]
+> >  [<ffffffffa0504864>] ? intel_setup_gmbus+0x214/0x260 [i915]
+> >  [<ffffffffa0510158>] i915_driver_load+0xdc8/0x19b0 [i915]
+> >  [<ffffffff8160fb53>] ? _raw_spin_unlock_irqrestore+0x43/0x70
+> >  [<ffffffffa026b13b>] drm_dev_register+0xab/0xc0 [drm]
+> >  [<ffffffffa026d7b3>] drm_get_pci_dev+0x93/0x1f0 [drm]
+> >  [<ffffffff8160fb53>] ? _raw_spin_unlock_irqrestore+0x43/0x70
+> >  [<ffffffffa043f1f4>] i915_pci_probe+0x34/0x50 [i915]
+> >  [<ffffffff81379751>] pci_device_probe+0x91/0x100
+> >  [<ffffffff8141a75a>] driver_probe_device+0x20a/0x2d0
+> >  [<ffffffff8141a8be>] __driver_attach+0x9e/0xb0
+> >  [<ffffffff8141a820>] ? driver_probe_device+0x2d0/0x2d0
+> >  [<ffffffff81418439>] bus_for_each_dev+0x69/0xa0
+> >  [<ffffffff8141a04e>] driver_attach+0x1e/0x20
+> >  [<ffffffff81419c20>] bus_add_driver+0x1c0/0x240
+> >  [<ffffffff8141b6d0>] driver_register+0x60/0xe0
+> >  [<ffffffff81377d20>] __pci_register_driver+0x60/0x70
+> >  [<ffffffffa026d9f4>] drm_pci_init+0xe4/0x110 [drm]
+> >  [<ffffffff810ce04e>] ? trace_hardirqs_on+0xe/0x10
+> >  [<ffffffffa02f1000>] ? 0xffffffffa02f1000
+> >  [<ffffffffa02f1094>] i915_init+0x94/0x9b [i915]
+> >  [<ffffffff810003bb>] do_one_initcall+0x8b/0x1c0
+> >  [<ffffffff810eb616>] ? rcu_read_lock_sched_held+0x86/0x90
+> >  [<ffffffff811de6d6>] ? kmem_cache_alloc_trace+0x1f6/0x270
+> >  [<ffffffff81183826>] do_init_module+0x60/0x1dc
+> >  [<ffffffff81115a8d>] load_module+0x1d0d/0x2390
+> >  [<ffffffff811120b0>] ? __symbol_put+0x70/0x70
+> >  [<ffffffff811f41b2>] ? kernel_read_file+0x92/0x120
+> >  [<ffffffff811162f4>] SYSC_finit_module+0xa4/0xb0
+> >  [<ffffffff8111631e>] SyS_finit_module+0xe/0x10
+> >  [<ffffffff81001ff3>] do_syscall_64+0x63/0x350
+> >  [<ffffffff816103da>] entry_SYSCALL64_slow_path+0x25/0x25
+> > Code: f7 48 8d 76 01 48 8d 52 01 0f b6 4e ff 84 c9 88 4a ff 75 ed 5=
+d c3 0f 1f 00 55 48 89 e5 eb 04 84 c0
+> >  74 18 48 8d 7f 01 48 8d 76 01 <0f> b6 47 ff 3a 46 ff 74 eb 19 c0 8=
+3 c8 01 5d c3 31 c0 5d c3 66
+> > RIP  [<ffffffff81338322>] strcmp+0x12/0x30
+> >  RSP <ffff880070037748>
+> > CR2: ffffffffa03e7855
+> >
+> > v2: Make the copied con_id const
+> >
+> > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Alexandre Courbot <gnurou@gmail.com>
+> > Cc: stable@vger.kernel.org
+> > Fixes: 10cf4899f8af ("gpiolib: tighten up ACPI legacy gpio lookups"=
+)
+> > Signed-off-by: Ville Syrj=E4l=E4 <ville.syrjala@linux.intel.com>
+> > ---
+> >  drivers/gpio/gpiolib-acpi.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acp=
+i.c
+> > index 682070d20f00..2dc52585e3f2 100644
+> > --- a/drivers/gpio/gpiolib-acpi.c
+> > +++ b/drivers/gpio/gpiolib-acpi.c
+> > @@ -977,7 +977,7 @@ bool acpi_can_fallback_to_crs(struct acpi_devic=
+e *adev, const char *con_id)
+> >                 lookup =3D kmalloc(sizeof(*lookup), GFP_KERNEL);
+> >                 if (lookup) {
+> >                         lookup->adev =3D adev;
+> > -                       lookup->con_id =3D con_id;
+> > +                       lookup->con_id =3D kstrdup(con_id, GFP_KERN=
+EL);
+>=20
+> Agree with the idea, but where is this newly-allocated memory freed?
 
-Add pin control driver to configure these parameters through
-pin control APIs.
+It isn't. Neither is the 'lookup' thing itself.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
----
-Changes from V1:
-- Cleanup code based on comment received on mfd/rtc.
-- Avoid duplication on error message.
-
-Changes form V2:
-- Run coccicheck and checkpatch in strict mode for the alignment.
-- update based on api changes from core.
-
-Changes from V3:
-- Change all sys initcall to module driver.
-- change the max77620_read argument to unisgned int from u8.
-
-Changes from V4:
-- Added DT binding document as devicetree/bindings/pinctrl/pinctrl-max77620.txt
-- Detail out properties as per review comment.
-
-Changes from V5:
-- Separate out DT binding doc for pincontrol.
-- Added reviewed by for Linus W
-
-Changes from V6:
-- Use regmap APIs direct instead of max77620 abstraction APIs.
-
-Changes from V7:
-- None
-
-Changes from V8:
-- Run checkpatch --strict on final patch and fixes issue and changed
-  unsigned to unsigned int.
-
-Changes from V9:
-None
-
-Changes from V10:
-Use new APIs for the dt_free_map.
-
- drivers/pinctrl/Kconfig            |  10 +
- drivers/pinctrl/Makefile           |   1 +
- drivers/pinctrl/pinctrl-max77620.c | 688 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 699 insertions(+)
- create mode 100644 drivers/pinctrl/pinctrl-max77620.c
-
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index fb8200b..15214e6 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -196,6 +196,16 @@ config PINCTRL_COH901
- 	  COH 901 335 and COH 901 571/3. They contain 3, 5 or 7
- 	  ports of 8 GPIO pins each.
- 
-+config PINCTRL_MAX77620
-+	bool "MAX77620/MAX20024 Pincontrol support"
-+	depends on MFD_MAX77620
-+	select GENERIC_PINCONF
-+	help
-+	  Say Yes here to enable Pin control support for Maxim PMIC MAX77620.
-+	  This PMIC has 8 GPIO pins that work as GPIO as well as special
-+	  function in alternate mode. This driver also configure push-pull,
-+	  open drain, FPS slots etc.
-+
- config PINCTRL_PALMAS
- 	bool "Pinctrl driver for the PALMAS Series MFD devices"
- 	depends on OF && MFD_PALMAS
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index e4bc115..d6f349c 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -17,6 +17,7 @@ obj-$(CONFIG_PINCTRL_AMD)	+= pinctrl-amd.o
- obj-$(CONFIG_PINCTRL_DIGICOLOR)	+= pinctrl-digicolor.o
- obj-$(CONFIG_PINCTRL_FALCON)	+= pinctrl-falcon.o
- obj-$(CONFIG_PINCTRL_MESON)	+= meson/
-+obj-$(CONFIG_PINCTRL_MAX77620)	+= pinctrl-max77620.o
- obj-$(CONFIG_PINCTRL_PALMAS)	+= pinctrl-palmas.o
- obj-$(CONFIG_PINCTRL_PIC32)	+= pinctrl-pic32.o
- obj-$(CONFIG_PINCTRL_PISTACHIO)	+= pinctrl-pistachio.o
-diff --git a/drivers/pinctrl/pinctrl-max77620.c b/drivers/pinctrl/pinctrl-max77620.c
-new file mode 100644
-index 0000000..3aaef59
---- /dev/null
-+++ b/drivers/pinctrl/pinctrl-max77620.c
-@@ -0,0 +1,688 @@
-+/*
-+ * MAX77620 pin control driver.
-+ *
-+ * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * Author:
-+ *	Chaitanya Bandi <bandik@nvidia.com>
-+ *	Laxman Dewangan <ldewangan@nvidia.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ */
-+
-+#include <linux/mfd/max77620.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/pinctrl/pinconf.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "core.h"
-+#include "pinconf.h"
-+#include "pinctrl-utils.h"
-+
-+#define MAX77620_PIN_NUM 8
-+
-+enum max77620_pin_ppdrv {
-+	MAX77620_PIN_UNCONFIG_DRV,
-+	MAX77620_PIN_OD_DRV,
-+	MAX77620_PIN_PP_DRV,
-+};
-+
-+enum max77620_pinconf_param {
-+	MAX77620_ACTIVE_FPS_SOURCE = PIN_CONFIG_END + 1,
-+	MAX77620_ACTIVE_FPS_POWER_ON_SLOTS,
-+	MAX77620_ACTIVE_FPS_POWER_DOWN_SLOTS,
-+	MAX77620_SUSPEND_FPS_SOURCE,
-+	MAX77620_SUSPEND_FPS_POWER_ON_SLOTS,
-+	MAX77620_SUSPEND_FPS_POWER_DOWN_SLOTS,
-+};
-+
-+struct max77620_pin_function {
-+	const char *name;
-+	const char * const *groups;
-+	unsigned int ngroups;
-+	int mux_option;
-+};
-+
-+struct max77620_cfg_param {
-+	const char *property;
-+	enum max77620_pinconf_param param;
-+};
-+
-+static const struct pinconf_generic_params max77620_cfg_params[] = {
-+	{
-+		.property = "maxim,active-fps-source",
-+		.param = MAX77620_ACTIVE_FPS_SOURCE,
-+	}, {
-+		.property = "maxim,active-fps-power-up-slot",
-+		.param = MAX77620_ACTIVE_FPS_POWER_ON_SLOTS,
-+	}, {
-+		.property = "maxim,active-fps-power-down-slot",
-+		.param = MAX77620_ACTIVE_FPS_POWER_DOWN_SLOTS,
-+	}, {
-+		.property = "maxim,suspend-fps-source",
-+		.param = MAX77620_SUSPEND_FPS_SOURCE,
-+	}, {
-+		.property = "maxim,suspend-fps-power-up-slot",
-+		.param = MAX77620_SUSPEND_FPS_POWER_ON_SLOTS,
-+	}, {
-+		.property = "maxim,suspend-fps-power-down-slot",
-+		.param = MAX77620_SUSPEND_FPS_POWER_DOWN_SLOTS,
-+	},
-+};
-+
-+enum max77620_alternate_pinmux_option {
-+	MAX77620_PINMUX_GPIO				= 0,
-+	MAX77620_PINMUX_LOW_POWER_MODE_CONTROL_IN	= 1,
-+	MAX77620_PINMUX_FLEXIBLE_POWER_SEQUENCER_OUT	= 2,
-+	MAX77620_PINMUX_32K_OUT1			= 3,
-+	MAX77620_PINMUX_SD0_DYNAMIC_VOLTAGE_SCALING_IN	= 4,
-+	MAX77620_PINMUX_SD1_DYNAMIC_VOLTAGE_SCALING_IN	= 5,
-+	MAX77620_PINMUX_REFERENCE_OUT			= 6,
-+};
-+
-+struct max77620_pingroup {
-+	const char *name;
-+	const unsigned int pins[1];
-+	unsigned int npins;
-+	enum max77620_alternate_pinmux_option alt_option;
-+};
-+
-+struct max77620_pin_info {
-+	enum max77620_pin_ppdrv drv_type;
-+	int pull_config;
-+};
-+
-+struct max77620_fps_config {
-+	int active_fps_src;
-+	int active_power_up_slots;
-+	int active_power_down_slots;
-+	int suspend_fps_src;
-+	int suspend_power_up_slots;
-+	int suspend_power_down_slots;
-+};
-+
-+struct max77620_pctrl_info {
-+	struct device *dev;
-+	struct pinctrl_dev *pctl;
-+	struct regmap *rmap;
-+	int pins_current_opt[MAX77620_GPIO_NR];
-+	const struct max77620_pin_function *functions;
-+	unsigned int num_functions;
-+	const struct max77620_pingroup *pin_groups;
-+	int num_pin_groups;
-+	const struct pinctrl_pin_desc *pins;
-+	unsigned int num_pins;
-+	struct max77620_pin_info pin_info[MAX77620_PIN_NUM];
-+	struct max77620_fps_config fps_config[MAX77620_PIN_NUM];
-+};
-+
-+static const struct pinctrl_pin_desc max77620_pins_desc[] = {
-+	PINCTRL_PIN(MAX77620_GPIO0, "gpio0"),
-+	PINCTRL_PIN(MAX77620_GPIO1, "gpio1"),
-+	PINCTRL_PIN(MAX77620_GPIO2, "gpio2"),
-+	PINCTRL_PIN(MAX77620_GPIO3, "gpio3"),
-+	PINCTRL_PIN(MAX77620_GPIO4, "gpio4"),
-+	PINCTRL_PIN(MAX77620_GPIO5, "gpio5"),
-+	PINCTRL_PIN(MAX77620_GPIO6, "gpio6"),
-+	PINCTRL_PIN(MAX77620_GPIO7, "gpio7"),
-+};
-+
-+static const char * const gpio_groups[] = {
-+	"gpio0",
-+	"gpio1",
-+	"gpio2",
-+	"gpio3",
-+	"gpio4",
-+	"gpio5",
-+	"gpio6",
-+	"gpio7",
-+};
-+
-+#define FUNCTION_GROUP(fname, mux)			\
-+	{						\
-+		.name = fname,				\
-+		.groups = gpio_groups,			\
-+		.ngroups = ARRAY_SIZE(gpio_groups),	\
-+		.mux_option = MAX77620_PINMUX_##mux,	\
-+	}
-+
-+static const struct max77620_pin_function max77620_pin_function[] = {
-+	FUNCTION_GROUP("gpio", GPIO),
-+	FUNCTION_GROUP("lpm-control-in", LOW_POWER_MODE_CONTROL_IN),
-+	FUNCTION_GROUP("fps-out", FLEXIBLE_POWER_SEQUENCER_OUT),
-+	FUNCTION_GROUP("32k-out1", 32K_OUT1),
-+	FUNCTION_GROUP("sd0-dvs-in", SD0_DYNAMIC_VOLTAGE_SCALING_IN),
-+	FUNCTION_GROUP("sd1-dvs-in", SD1_DYNAMIC_VOLTAGE_SCALING_IN),
-+	FUNCTION_GROUP("reference-out", REFERENCE_OUT),
-+};
-+
-+#define MAX77620_PINGROUP(pg_name, pin_id, option) \
-+	{								\
-+		.name = #pg_name,					\
-+		.pins = {MAX77620_##pin_id},				\
-+		.npins = 1,						\
-+		.alt_option = MAX77620_PINMUX_##option,			\
-+	}
-+
-+static const struct max77620_pingroup max77620_pingroups[] = {
-+	MAX77620_PINGROUP(gpio0, GPIO0, LOW_POWER_MODE_CONTROL_IN),
-+	MAX77620_PINGROUP(gpio1, GPIO1, FLEXIBLE_POWER_SEQUENCER_OUT),
-+	MAX77620_PINGROUP(gpio2, GPIO2, FLEXIBLE_POWER_SEQUENCER_OUT),
-+	MAX77620_PINGROUP(gpio3, GPIO3, FLEXIBLE_POWER_SEQUENCER_OUT),
-+	MAX77620_PINGROUP(gpio4, GPIO4, 32K_OUT1),
-+	MAX77620_PINGROUP(gpio5, GPIO5, SD0_DYNAMIC_VOLTAGE_SCALING_IN),
-+	MAX77620_PINGROUP(gpio6, GPIO6, SD1_DYNAMIC_VOLTAGE_SCALING_IN),
-+	MAX77620_PINGROUP(gpio7, GPIO7, REFERENCE_OUT),
-+};
-+
-+static int max77620_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
-+{
-+	struct max77620_pctrl_info *mpci = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return mpci->num_pin_groups;
-+}
-+
-+static const char *max77620_pinctrl_get_group_name(
-+		struct pinctrl_dev *pctldev, unsigned int group)
-+{
-+	struct max77620_pctrl_info *mpci = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return mpci->pin_groups[group].name;
-+}
-+
-+static int max77620_pinctrl_get_group_pins(
-+		struct pinctrl_dev *pctldev, unsigned int group,
-+		const unsigned int **pins, unsigned int *num_pins)
-+{
-+	struct max77620_pctrl_info *mpci = pinctrl_dev_get_drvdata(pctldev);
-+
-+	*pins = mpci->pin_groups[group].pins;
-+	*num_pins = mpci->pin_groups[group].npins;
-+
-+	return 0;
-+}
-+
-+static const struct pinctrl_ops max77620_pinctrl_ops = {
-+	.get_groups_count = max77620_pinctrl_get_groups_count,
-+	.get_group_name = max77620_pinctrl_get_group_name,
-+	.get_group_pins = max77620_pinctrl_get_group_pins,
-+	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
-+	.dt_free_map = pinctrl_utils_free_map,
-+};
-+
-+static int max77620_pinctrl_get_funcs_count(struct pinctrl_dev *pctldev)
-+{
-+	struct max77620_pctrl_info *mpci = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return mpci->num_functions;
-+}
-+
-+static const char *max77620_pinctrl_get_func_name(struct pinctrl_dev *pctldev,
-+						  unsigned int function)
-+{
-+	struct max77620_pctrl_info *mpci = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return mpci->functions[function].name;
-+}
-+
-+static int max77620_pinctrl_get_func_groups(struct pinctrl_dev *pctldev,
-+					    unsigned int function,
-+					    const char * const **groups,
-+					    unsigned int * const num_groups)
-+{
-+	struct max77620_pctrl_info *mpci = pinctrl_dev_get_drvdata(pctldev);
-+
-+	*groups = mpci->functions[function].groups;
-+	*num_groups = mpci->functions[function].ngroups;
-+
-+	return 0;
-+}
-+
-+static int max77620_pinctrl_enable(struct pinctrl_dev *pctldev,
-+				   unsigned int function, unsigned int group)
-+{
-+	struct max77620_pctrl_info *mpci = pinctrl_dev_get_drvdata(pctldev);
-+	u8 val;
-+	int ret;
-+
-+	if (function == MAX77620_PINMUX_GPIO) {
-+		val = 0;
-+	} else if (function == mpci->pin_groups[group].alt_option) {
-+		val = 1 << group;
-+	} else {
-+		dev_err(mpci->dev, "GPIO %u doesn't have function %u\n",
-+			group, function);
-+		return -EINVAL;
-+	}
-+	ret = regmap_update_bits(mpci->rmap, MAX77620_REG_AME_GPIO,
-+				 BIT(group), val);
-+	if (ret < 0)
-+		dev_err(mpci->dev, "REG AME GPIO update failed: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static const struct pinmux_ops max77620_pinmux_ops = {
-+	.get_functions_count	= max77620_pinctrl_get_funcs_count,
-+	.get_function_name	= max77620_pinctrl_get_func_name,
-+	.get_function_groups	= max77620_pinctrl_get_func_groups,
-+	.set_mux		= max77620_pinctrl_enable,
-+};
-+
-+static int max77620_pinconf_get(struct pinctrl_dev *pctldev,
-+				unsigned int pin, unsigned long *config)
-+{
-+	struct max77620_pctrl_info *mpci = pinctrl_dev_get_drvdata(pctldev);
-+	struct device *dev = mpci->dev;
-+	enum pin_config_param param = pinconf_to_config_param(*config);
-+	unsigned int val;
-+	int arg = 0;
-+	int ret;
-+
-+	switch (param) {
-+	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+		if (mpci->pin_info[pin].drv_type == MAX77620_PIN_OD_DRV)
-+			arg = 1;
-+		break;
-+
-+	case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		if (mpci->pin_info[pin].drv_type == MAX77620_PIN_PP_DRV)
-+			arg = 1;
-+		break;
-+
-+	case PIN_CONFIG_BIAS_PULL_UP:
-+		ret = regmap_read(mpci->rmap, MAX77620_REG_PUE_GPIO, &val);
-+		if (ret < 0) {
-+			dev_err(dev, "Reg PUE_GPIO read failed: %d\n", ret);
-+			return ret;
-+		}
-+		if (val & BIT(pin))
-+			arg = 1;
-+		break;
-+
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+		ret = regmap_read(mpci->rmap, MAX77620_REG_PDE_GPIO, &val);
-+		if (ret < 0) {
-+			dev_err(dev, "Reg PDE_GPIO read failed: %d\n", ret);
-+			return ret;
-+		}
-+		if (val & BIT(pin))
-+			arg = 1;
-+		break;
-+
-+	default:
-+		dev_err(dev, "Properties not supported\n");
-+		return -ENOTSUPP;
-+	}
-+
-+	*config = pinconf_to_config_packed(param, (u16)arg);
-+
-+	return 0;
-+}
-+
-+static int max77620_get_default_fps(struct max77620_pctrl_info *mpci,
-+				    int addr, int *fps)
-+{
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(mpci->rmap, addr, &val);
-+	if (ret < 0) {
-+		dev_err(mpci->dev, "Reg PUE_GPIO read failed: %d\n", ret);
-+		return ret;
-+	}
-+	*fps = (val & MAX77620_FPS_SRC_MASK) >> MAX77620_FPS_SRC_SHIFT;
-+
-+	return 0;
-+}
-+
-+static int max77620_set_fps_param(struct max77620_pctrl_info *mpci,
-+				  int pin, int param)
-+{
-+	struct max77620_fps_config *fps_config = &mpci->fps_config[pin];
-+	int addr, ret;
-+	int param_val;
-+	int mask, shift;
-+
-+	if ((pin < MAX77620_GPIO1) || (pin > MAX77620_GPIO3))
-+		return 0;
-+
-+	addr = MAX77620_REG_FPS_GPIO1 + pin - 1;
-+	switch (param) {
-+	case MAX77620_ACTIVE_FPS_SOURCE:
-+	case MAX77620_SUSPEND_FPS_SOURCE:
-+		mask = MAX77620_FPS_SRC_MASK;
-+		shift = MAX77620_FPS_SRC_SHIFT;
-+		param_val = fps_config->active_fps_src;
-+		if (param == MAX77620_SUSPEND_FPS_SOURCE)
-+			param_val = fps_config->suspend_fps_src;
-+		break;
-+
-+	case MAX77620_ACTIVE_FPS_POWER_ON_SLOTS:
-+	case MAX77620_SUSPEND_FPS_POWER_ON_SLOTS:
-+		mask = MAX77620_FPS_PU_PERIOD_MASK;
-+		shift = MAX77620_FPS_PU_PERIOD_SHIFT;
-+		param_val = fps_config->active_power_up_slots;
-+		if (param == MAX77620_SUSPEND_FPS_POWER_ON_SLOTS)
-+			param_val = fps_config->suspend_power_up_slots;
-+		break;
-+
-+	case MAX77620_ACTIVE_FPS_POWER_DOWN_SLOTS:
-+	case MAX77620_SUSPEND_FPS_POWER_DOWN_SLOTS:
-+		mask = MAX77620_FPS_PD_PERIOD_MASK;
-+		shift = MAX77620_FPS_PD_PERIOD_SHIFT;
-+		param_val = fps_config->active_power_down_slots;
-+		if (param == MAX77620_SUSPEND_FPS_POWER_DOWN_SLOTS)
-+			param_val = fps_config->suspend_power_down_slots;
-+		break;
-+
-+	default:
-+		dev_err(mpci->dev, "Invalid parameter %d for pin %d\n",
-+			param, pin);
-+		return -EINVAL;
-+	}
-+
-+	if (param_val < 0)
-+		return 0;
-+
-+	ret = regmap_update_bits(mpci->rmap, addr, mask, param_val << shift);
-+	if (ret < 0)
-+		dev_err(mpci->dev, "Reg 0x%02x update failed %d\n", addr, ret);
-+
-+	return ret;
-+}
-+
-+static int max77620_pinconf_set(struct pinctrl_dev *pctldev,
-+				unsigned int pin, unsigned long *configs,
-+				unsigned int num_configs)
-+{
-+	struct max77620_pctrl_info *mpci = pinctrl_dev_get_drvdata(pctldev);
-+	struct device *dev = mpci->dev;
-+	struct max77620_fps_config *fps_config;
-+	int param;
-+	u16 param_val;
-+	unsigned int val;
-+	unsigned int pu_val;
-+	unsigned int pd_val;
-+	int addr, ret;
-+	int i;
-+
-+	for (i = 0; i < num_configs; i++) {
-+		param = pinconf_to_config_param(configs[i]);
-+		param_val = pinconf_to_config_argument(configs[i]);
-+
-+		switch (param) {
-+		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+			val = param_val ? 0 : 1;
-+			ret = regmap_update_bits(mpci->rmap,
-+						 MAX77620_REG_GPIO0 + pin,
-+						 MAX77620_CNFG_GPIO_DRV_MASK,
-+						 val);
-+			if (ret < 0) {
-+				dev_err(dev, "Reg 0x%02x update failed %d\n",
-+					MAX77620_REG_GPIO0 + pin, ret);
-+				return ret;
-+			}
-+			mpci->pin_info[pin].drv_type = val ?
-+				MAX77620_PIN_PP_DRV : MAX77620_PIN_OD_DRV;
-+			break;
-+
-+		case PIN_CONFIG_DRIVE_PUSH_PULL:
-+			val = param_val ? 1 : 0;
-+			ret = regmap_update_bits(mpci->rmap,
-+						 MAX77620_REG_GPIO0 + pin,
-+						 MAX77620_CNFG_GPIO_DRV_MASK,
-+						 val);
-+			if (ret < 0) {
-+				dev_err(dev, "Reg 0x%02x update failed %d\n",
-+					MAX77620_REG_GPIO0 + pin, ret);
-+				return ret;
-+			}
-+			mpci->pin_info[pin].drv_type = val ?
-+				MAX77620_PIN_PP_DRV : MAX77620_PIN_OD_DRV;
-+			break;
-+
-+		case MAX77620_ACTIVE_FPS_SOURCE:
-+		case MAX77620_ACTIVE_FPS_POWER_ON_SLOTS:
-+		case MAX77620_ACTIVE_FPS_POWER_DOWN_SLOTS:
-+			if ((pin < MAX77620_GPIO1) || (pin > MAX77620_GPIO3))
-+				return -EINVAL;
-+
-+			fps_config = &mpci->fps_config[pin];
-+
-+			if ((param == MAX77620_ACTIVE_FPS_SOURCE) &&
-+			    (param_val == MAX77620_FPS_SRC_DEF)) {
-+				addr = MAX77620_REG_FPS_GPIO1 + pin - 1;
-+				ret = max77620_get_default_fps(
-+						mpci, addr,
-+						&fps_config->active_fps_src);
-+				if (ret < 0)
-+					return ret;
-+				break;
-+			}
-+
-+			if (param == MAX77620_ACTIVE_FPS_SOURCE)
-+				fps_config->active_fps_src = param_val;
-+			else if (param == MAX77620_ACTIVE_FPS_POWER_ON_SLOTS)
-+				fps_config->active_power_up_slots = param_val;
-+			else
-+				fps_config->active_power_down_slots = param_val;
-+
-+			ret = max77620_set_fps_param(mpci, pin, param);
-+			if (ret < 0)
-+				return ret;
-+			break;
-+
-+		case MAX77620_SUSPEND_FPS_SOURCE:
-+		case MAX77620_SUSPEND_FPS_POWER_ON_SLOTS:
-+		case MAX77620_SUSPEND_FPS_POWER_DOWN_SLOTS:
-+			if ((pin < MAX77620_GPIO1) || (pin > MAX77620_GPIO3))
-+				return -EINVAL;
-+
-+			fps_config = &mpci->fps_config[pin];
-+
-+			if ((param == MAX77620_SUSPEND_FPS_SOURCE) &&
-+			    (param_val == MAX77620_FPS_SRC_DEF)) {
-+				addr = MAX77620_REG_FPS_GPIO1 + pin - 1;
-+				ret = max77620_get_default_fps(
-+						mpci, addr,
-+						&fps_config->suspend_fps_src);
-+				if (ret < 0)
-+					return ret;
-+				break;
-+			}
-+
-+			if (param == MAX77620_SUSPEND_FPS_SOURCE)
-+				fps_config->suspend_fps_src = param_val;
-+			else if (param == MAX77620_SUSPEND_FPS_POWER_ON_SLOTS)
-+				fps_config->suspend_power_up_slots = param_val;
-+			else
-+				fps_config->suspend_power_down_slots =
-+								param_val;
-+			break;
-+
-+		case PIN_CONFIG_BIAS_PULL_UP:
-+		case PIN_CONFIG_BIAS_PULL_DOWN:
-+			pu_val = (param == PIN_CONFIG_BIAS_PULL_UP) ?
-+							BIT(pin) : 0;
-+			pd_val = (param == PIN_CONFIG_BIAS_PULL_DOWN) ?
-+							BIT(pin) : 0;
-+
-+			ret = regmap_update_bits(mpci->rmap,
-+						 MAX77620_REG_PUE_GPIO,
-+						 BIT(pin), pu_val);
-+			if (ret < 0) {
-+				dev_err(dev, "PUE_GPIO update failed: %d\n",
-+					ret);
-+				return ret;
-+			}
-+
-+			ret = regmap_update_bits(mpci->rmap,
-+						 MAX77620_REG_PDE_GPIO,
-+						 BIT(pin), pd_val);
-+			if (ret < 0) {
-+				dev_err(dev, "PDE_GPIO update failed: %d\n",
-+					ret);
-+				return ret;
-+			}
-+			break;
-+
-+		default:
-+			dev_err(dev, "Properties not supported\n");
-+			return -ENOTSUPP;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct pinconf_ops max77620_pinconf_ops = {
-+	.pin_config_get = max77620_pinconf_get,
-+	.pin_config_set = max77620_pinconf_set,
-+};
-+
-+static struct pinctrl_desc max77620_pinctrl_desc = {
-+	.pctlops = &max77620_pinctrl_ops,
-+	.pmxops = &max77620_pinmux_ops,
-+	.confops = &max77620_pinconf_ops,
-+};
-+
-+static int max77620_pinctrl_probe(struct platform_device *pdev)
-+{
-+	struct max77620_chip *max77620 = dev_get_drvdata(pdev->dev.parent);
-+	struct max77620_pctrl_info *mpci;
-+	int i;
-+
-+	mpci = devm_kzalloc(&pdev->dev, sizeof(*mpci), GFP_KERNEL);
-+	if (!mpci)
-+		return -ENOMEM;
-+
-+	mpci->dev = &pdev->dev;
-+	mpci->dev->of_node = pdev->dev.parent->of_node;
-+	mpci->rmap = max77620->rmap;
-+
-+	mpci->pins = max77620_pins_desc;
-+	mpci->num_pins = ARRAY_SIZE(max77620_pins_desc);
-+	mpci->functions = max77620_pin_function;
-+	mpci->num_functions = ARRAY_SIZE(max77620_pin_function);
-+	mpci->pin_groups = max77620_pingroups;
-+	mpci->num_pin_groups = ARRAY_SIZE(max77620_pingroups);
-+	platform_set_drvdata(pdev, mpci);
-+
-+	max77620_pinctrl_desc.name = dev_name(&pdev->dev);
-+	max77620_pinctrl_desc.pins = max77620_pins_desc;
-+	max77620_pinctrl_desc.npins = ARRAY_SIZE(max77620_pins_desc);
-+	max77620_pinctrl_desc.num_custom_params =
-+				ARRAY_SIZE(max77620_cfg_params);
-+	max77620_pinctrl_desc.custom_params = max77620_cfg_params;
-+
-+	for (i = 0; i < MAX77620_PIN_NUM; ++i) {
-+		mpci->fps_config[i].active_fps_src = -1;
-+		mpci->fps_config[i].active_power_up_slots = -1;
-+		mpci->fps_config[i].active_power_down_slots = -1;
-+		mpci->fps_config[i].suspend_fps_src = -1;
-+		mpci->fps_config[i].suspend_power_up_slots = -1;
-+		mpci->fps_config[i].suspend_power_down_slots = -1;
-+	}
-+
-+	mpci->pctl = pinctrl_register(&max77620_pinctrl_desc,
-+					&pdev->dev, mpci);
-+	if (IS_ERR(mpci->pctl)) {
-+		dev_err(&pdev->dev, "Couldn't register pinctrl driver\n");
-+		return PTR_ERR(mpci->pctl);
-+	}
-+
-+	return 0;
-+}
-+
-+static int max77620_pinctrl_remove(struct platform_device *pdev)
-+{
-+	struct max77620_pctrl_info *mpci = platform_get_drvdata(pdev);
-+
-+	pinctrl_unregister(mpci->pctl);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int max77620_suspend_fps_param[] = {
-+	MAX77620_SUSPEND_FPS_SOURCE,
-+	MAX77620_SUSPEND_FPS_POWER_ON_SLOTS,
-+	MAX77620_SUSPEND_FPS_POWER_DOWN_SLOTS,
-+};
-+
-+static int max77620_active_fps_param[] = {
-+	MAX77620_ACTIVE_FPS_SOURCE,
-+	MAX77620_ACTIVE_FPS_POWER_ON_SLOTS,
-+	MAX77620_ACTIVE_FPS_POWER_DOWN_SLOTS,
-+};
-+
-+static int max77620_pinctrl_suspend(struct device *dev)
-+{
-+	struct max77620_pctrl_info *mpci = dev_get_drvdata(dev);
-+	int pin, p;
-+
-+	for (pin = 0; pin < MAX77620_PIN_NUM; ++pin) {
-+		if ((pin < MAX77620_GPIO1) || (pin > MAX77620_GPIO3))
-+			continue;
-+		for (p = 0; p < 3; ++p)
-+			max77620_set_fps_param(
-+				mpci, pin, max77620_suspend_fps_param[p]);
-+	}
-+
-+	return 0;
-+};
-+
-+static int max77620_pinctrl_resume(struct device *dev)
-+{
-+	struct max77620_pctrl_info *mpci = dev_get_drvdata(dev);
-+	int pin, p;
-+
-+	for (pin = 0; pin < MAX77620_PIN_NUM; ++pin) {
-+		if ((pin < MAX77620_GPIO1) || (pin > MAX77620_GPIO3))
-+			continue;
-+		for (p = 0; p < 3; ++p)
-+			max77620_set_fps_param(
-+				mpci, pin, max77620_active_fps_param[p]);
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct dev_pm_ops max77620_pinctrl_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(
-+		max77620_pinctrl_suspend, max77620_pinctrl_resume)
-+};
-+
-+static const struct platform_device_id max77620_pinctrl_devtype[] = {
-+	{ .name = "max77620-pinctrl", },
-+	{ .name = "max20024-pinctrl", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(platform, max77620_pinctrl_devtype);
-+
-+static struct platform_driver max77620_pinctrl_driver = {
-+	.driver = {
-+		.name = "max77620-pinctrl",
-+		.pm = &max77620_pinctrl_pm_ops,
-+	},
-+	.probe = max77620_pinctrl_probe,
-+	.remove = max77620_pinctrl_remove,
-+	.id_table = max77620_pinctrl_devtype,
-+};
-+
-+module_platform_driver(max77620_pinctrl_driver);
-+
-+MODULE_DESCRIPTION("MAX77620/MAX20024 pin control driver");
-+MODULE_AUTHOR("Chaitanya Bandi<bandik@nvidia.com>");
-+MODULE_AUTHOR("Laxman Dewangan<ldewangan@nvidia.com>");
-+MODULE_ALIAS("platform:max77620-pinctrl");
-+MODULE_LICENSE("GPL v2");
--- 
-2.1.4
+--=20
+Ville Syrj=E4l=E4
+Intel OTC
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
