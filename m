@@ -1,8 +1,7 @@
 From: <patrice.chotard@st.com>
-Subject: [PATCH v2 08/10] Documentation: dt: add stmpe1600 compatible string
- to stmpe mfd
-Date: Thu, 28 Apr 2016 14:13:07 +0200
-Message-ID: <1461845589-4826-9-git-send-email-patrice.chotard@st.com>
+Subject: [PATCH v2 05/10] mfd: stmpe: use generic bit mask name
+Date: Thu, 28 Apr 2016 14:13:04 +0200
+Message-ID: <1461845589-4826-6-git-send-email-patrice.chotard@st.com>
 References: <1461845589-4826-1-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -24,27 +23,62 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Patrice Chotard <patrice.chotard@st.com>
 
-This patch adds a new compatible string for stmpe mfd to support
-stmpe1600 variant.
+In order to prepare the ground to STMPE1600,
+as STMPE1600's SYS_CTRL register has the same layout as
+STMPE801 variant, unify STMPExxx_REG_SYS_CTRL_RESET/INT_EN/INT_HI
+bit masks to more generic STMPE_SYS_CTRL_RESET/INT_EN/INT_HI
 
-Signed-off-by: Amelie DELAUNAY <amelie.delaunay@st.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 ---
- Documentation/devicetree/bindings/mfd/stmpe.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/stmpe.c | 4 ++--
+ drivers/mfd/stmpe.h | 6 ++----
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/stmpe.txt b/Documentation/devicetree/bindings/mfd/stmpe.txt
-index 3fb68bf..f9065a5 100644
---- a/Documentation/devicetree/bindings/mfd/stmpe.txt
-+++ b/Documentation/devicetree/bindings/mfd/stmpe.txt
-@@ -4,7 +4,7 @@ STMPE is an MFD device which may expose the following inbuilt devices: gpio,
- keypad, touchscreen, adc, pwm, rotator.
+diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
+index af682d0..2556463 100644
+--- a/drivers/mfd/stmpe.c
++++ b/drivers/mfd/stmpe.c
+@@ -1089,7 +1089,7 @@ static int stmpe_chip_init(struct stmpe *stmpe)
  
- Required properties:
-- - compatible                   : "st,stmpe[610|801|811|1601|2401|2403]"
-+ - compatible                   : "st,stmpe[610|801|811|1600|1601|2401|2403]"
-  - reg                          : I2C/SPI address of the device
+ 	if (stmpe->irq >= 0) {
+ 		if (id == STMPE801_ID)
+-			icr = STMPE801_REG_SYS_CTRL_INT_EN;
++			icr = STMPE_SYS_CTRL_INT_EN;
+ 		else
+ 			icr = STMPE_ICR_LSB_GIM;
  
- Optional properties:
+@@ -1103,7 +1103,7 @@ static int stmpe_chip_init(struct stmpe *stmpe)
+ 		if (irq_trigger == IRQF_TRIGGER_RISING ||
+ 				irq_trigger == IRQF_TRIGGER_HIGH) {
+ 			if (id == STMPE801_ID)
+-				icr |= STMPE801_REG_SYS_CTRL_INT_HI;
++				icr |= STMPE_SYS_CTRL_INT_HI;
+ 			else
+ 				icr |= STMPE_ICR_LSB_HIGH;
+ 		}
+diff --git a/drivers/mfd/stmpe.h b/drivers/mfd/stmpe.h
+index 4ae343d..4ba1123 100644
+--- a/drivers/mfd/stmpe.h
++++ b/drivers/mfd/stmpe.h
+@@ -105,6 +105,8 @@ int stmpe_remove(struct stmpe *stmpe);
+ #define STMPE_ICR_LSB_GIM	(1 << 0)
+ 
+ #define STMPE_SYS_CTRL_RESET	(1 << 7)
++#define STMPE_SYS_CTRL_INT_EN	(1 << 2)
++#define STMPE_SYS_CTRL_INT_HI	(1 << 0)
+ 
+ /*
+  * STMPE801
+@@ -121,10 +123,6 @@ int stmpe_remove(struct stmpe *stmpe);
+ #define STMPE801_REG_GPIO_SET_PIN	0x11
+ #define STMPE801_REG_GPIO_DIR		0x12
+ 
+-#define STMPE801_REG_SYS_CTRL_RESET	(1 << 7)
+-#define STMPE801_REG_SYS_CTRL_INT_EN	(1 << 2)
+-#define STMPE801_REG_SYS_CTRL_INT_HI	(1 << 0)
+-
+ /*
+  * STMPE811
+  */
 -- 
 1.9.1
