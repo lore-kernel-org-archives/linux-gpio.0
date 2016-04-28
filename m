@@ -1,53 +1,63 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/2] gpio: pl061: implement .get_direction()
-Date: Thu, 28 Apr 2016 14:36:04 +0200
-Message-ID: <1461846964-30854-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH] gpio: stmpe: implement .get_direction()
+Date: Thu, 28 Apr 2016 15:04:15 +0200
+Message-ID: <1461848655-12230-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:34334 "EHLO
-	mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752316AbcD1MgJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Apr 2016 08:36:09 -0400
-Received: by mail-lf0-f41.google.com with SMTP id j11so93332643lfb.1
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Apr 2016 05:36:08 -0700 (PDT)
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:35818 "EHLO
+	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750845AbcD1NEW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Apr 2016 09:04:22 -0400
+Received: by mail-lf0-f45.google.com with SMTP id c126so94438132lfb.2
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Apr 2016 06:04:21 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Patrice Chotard <patrice.chotard@st.com>
 
-Implement this callback so that the driver reports correctly
-the direction setting of each line.
+This implements the .get_direction() callback for the STMPE
+expander GPIO.
 
+Cc: Patrice Chotard <patrice.chotard@st.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-pl061.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/gpio/gpio-stmpe.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 70eb9ada002e..6e3c1430616f 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -61,6 +61,13 @@ struct pl061_gpio {
- #endif
- };
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index 5197edf1acfd..5f77ea6b294d 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -69,6 +69,22 @@ static void stmpe_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
+ 		stmpe_reg_write(stmpe, reg, mask);
+ }
  
-+static int pl061_get_direction(struct gpio_chip *gc, unsigned offset)
++static int stmpe_gpio_get_direction(struct gpio_chip *chip,
++				    unsigned offset)
 +{
-+	struct pl061_gpio *chip = gpiochip_get_data(gc);
++	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(chip);
++	struct stmpe *stmpe = stmpe_gpio->stmpe;
++	u8 reg = stmpe->regs[STMPE_IDX_GPDR_LSB] - (offset / 8);
++	u8 mask = 1 << (offset % 8);
++	int ret;
 +
-+	return !(readb(chip->base + GPIODIR) & BIT(offset));
++	ret = stmpe_reg_read(stmpe, reg);
++	if (ret < 0)
++		return ret;
++
++	return !(ret & mask);
 +}
 +
- static int pl061_direction_input(struct gpio_chip *gc, unsigned offset)
+ static int stmpe_gpio_direction_output(struct gpio_chip *chip,
+ 					 unsigned offset, int val)
  {
- 	struct pl061_gpio *chip = gpiochip_get_data(gc);
-@@ -315,6 +322,7 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- 		chip->gc.free = gpiochip_generic_free;
- 	}
- 
-+	chip->gc.get_direction = pl061_get_direction;
- 	chip->gc.direction_input = pl061_direction_input;
- 	chip->gc.direction_output = pl061_direction_output;
- 	chip->gc.get = pl061_get_value;
+@@ -107,6 +123,7 @@ static int stmpe_gpio_request(struct gpio_chip *chip, unsigned offset)
+ static struct gpio_chip template_chip = {
+ 	.label			= "stmpe",
+ 	.owner			= THIS_MODULE,
++	.get_direction		= stmpe_gpio_get_direction,
+ 	.direction_input	= stmpe_gpio_direction_input,
+ 	.get			= stmpe_gpio_get,
+ 	.direction_output	= stmpe_gpio_direction_output,
 -- 
 2.4.11
 
