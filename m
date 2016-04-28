@@ -1,63 +1,69 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: stmpe: implement .get_direction()
-Date: Thu, 28 Apr 2016 15:04:15 +0200
-Message-ID: <1461848655-12230-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:35818 "EHLO
-	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750845AbcD1NEW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Apr 2016 09:04:22 -0400
-Received: by mail-lf0-f45.google.com with SMTP id c126so94438132lfb.2
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Apr 2016 06:04:21 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH V11 4/6] pinctrl: max77620: add pincontrol driver for
+ MAX77620/MAX20024
+Date: Thu, 28 Apr 2016 18:52:26 +0530
+Message-ID: <57220E92.90105@nvidia.com>
+References: <1461837540-17071-1-git-send-email-ldewangan@nvidia.com> <1461837540-17071-5-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1461837540-17071-5-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: lee.jones@linaro.org, linus.walleij@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com
+Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, swarren@nvidia.com, treding@nvidia.com, irina.tirdea@intel.com
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Patrice Chotard <patrice.chotard@st.com>
 
-This implements the .get_direction() callback for the STMPE
-expander GPIO.
+Hi Lee,
 
-Cc: Patrice Chotard <patrice.chotard@st.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-stmpe.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+On Thursday 28 April 2016 03:28 PM, Laxman Dewangan wrote:
+> MAXIM Semiconductor's PMIC, MAX77620/MAX20024 has 8 GPIO pins
+> which also act as the special function in alternate mode. Also
+> there is configuration like push-pull, open drain, FPS timing
+> etc for these pins.
+>
+> Add pin control driver to configure these parameters through
+> pin control APIs.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index 5197edf1acfd..5f77ea6b294d 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -69,6 +69,22 @@ static void stmpe_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
- 		stmpe_reg_write(stmpe, reg, mask);
- }
- 
-+static int stmpe_gpio_get_direction(struct gpio_chip *chip,
-+				    unsigned offset)
-+{
-+	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(chip);
-+	struct stmpe *stmpe = stmpe_gpio->stmpe;
-+	u8 reg = stmpe->regs[STMPE_IDX_GPDR_LSB] - (offset / 8);
-+	u8 mask = 1 << (offset % 8);
-+	int ret;
-+
-+	ret = stmpe_reg_read(stmpe, reg);
-+	if (ret < 0)
-+		return ret;
-+
-+	return !(ret & mask);
-+}
-+
- static int stmpe_gpio_direction_output(struct gpio_chip *chip,
- 					 unsigned offset, int val)
- {
-@@ -107,6 +123,7 @@ static int stmpe_gpio_request(struct gpio_chip *chip, unsigned offset)
- static struct gpio_chip template_chip = {
- 	.label			= "stmpe",
- 	.owner			= THIS_MODULE,
-+	.get_direction		= stmpe_gpio_get_direction,
- 	.direction_input	= stmpe_gpio_direction_input,
- 	.get			= stmpe_gpio_get,
- 	.direction_output	= stmpe_gpio_direction_output,
--- 
-2.4.11
+It seems there is some mismatches on kernel-next and the mfd/for-next 
+for one of patch for generic function name.
 
+/**
+2016-04-01    pinctrl: Rename pinctrl_utils_dt_free_map to 
+pinctrl_utils_free_map    Irina Tirdea    1    -1/+1
+
+d32f7fd3bbc32732b094d938b95169521503a9fb (patch)
+
+pinctrl: Rename pinctrl_utils_dt_free_map to pinctrl_utils_free_map
+
+Rename pinctrl_utils_dt_free_map to pinctrl_utils_free_map, since
+it does not depend on device tree despite the current name. This
+will enforce a consistent naming in pinctr-utils.c and will make
+it clear it can be called from outside device tree (e.g. from
+ACPI handling code).
+**/
+
+But this is not there in MFD sub system.
+
+In mfd tree
+.dt_free_map = pinctrl_utils_dt_free_map,
+
+In kernel next
+.dt_free_map = pinctrl_utils_free_map,
+
+
+  I used APIs from the kernel-next.
+> +static const struct pinctrl_ops max77620_pinctrl_ops = {
+> +	.get_groups_count = max77620_pinctrl_get_groups_count,
+> +	.get_group_name = max77620_pinctrl_get_group_name,
+> +	.get_group_pins = max77620_pinctrl_get_group_pins,
+> +	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
+> +	.dt_free_map = pinctrl_utils_free_map,
+> +};
+
+
+If you see any issue on this patch, please drop this patch and we will 
+fix this later once the renamed change available all the places.
