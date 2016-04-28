@@ -1,193 +1,78 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2] gpiolib-acpi: Duplicate con_id string when adding it
- to the crs lookup list
-Date: Thu, 28 Apr 2016 09:56:47 -0700
-Message-ID: <CAKdAkRRouTa+C3+k_9YSOPs9K0R4u5ENpzuE41uOoW7zq0A6gA@mail.gmail.com>
-References: <1460563836-1899-1-git-send-email-ville.syrjala@linux.intel.com>
-	<1461589279-8911-1-git-send-email-ville.syrjala@linux.intel.com>
-	<CAAVeFuJKj_Z-s=K+Ag4XmzoL37vdz0MnBJiCoDYFk1NnZchrDw@mail.gmail.com>
-	<20160428103333.GY4329@intel.com>
-	<CAAVeFuLR0V2Vum0wTuHd+UZDwNaaF_V7H81xeX3TuzE-Obj=Wg@mail.gmail.com>
-	<20160428123056.GC4329@intel.com>
+From: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+Subject: Re: [RFC v4 3/8] gpio: generic: add DT support for generic memory-mapped GPIOs
+Date: Fri, 29 Apr 2016 01:39:55 +0200
+Message-ID: <3841493.Kd66QyCgCc@debian64>
+References: <cover.1461806071.git.chunkeey@googlemail.com> <a5d6bb7bb73ff9396c9e8053a8e8e0975b857934.1461806071.git.chunkeey@googlemail.com> <CAHp75VeSf_=rQBRQ+1ox=fn7aJ53mGg_huH7HRbZck0HEhxBAQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f170.google.com ([209.85.161.170]:32800 "EHLO
-	mail-yw0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753235AbcD1Q4s convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Apr 2016 12:56:48 -0400
-In-Reply-To: <20160428123056.GC4329@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAHp75VeSf_=rQBRQ+1ox=fn7aJ53mGg_huH7HRbZck0HEhxBAQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm Mailing List <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, =?ISO-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Stable <stable@vger.kernel.org>
 
-On Thu, Apr 28, 2016 at 5:30 AM, Ville Syrj=C3=A4l=C3=A4
-<ville.syrjala@linux.intel.com> wrote:
-> On Thu, Apr 28, 2016 at 08:55:36PM +0900, Alexandre Courbot wrote:
->> On Thu, Apr 28, 2016 at 7:33 PM, Ville Syrj=C3=A4l=C3=A4
->> <ville.syrjala@linux.intel.com> wrote:
->> > On Thu, Apr 28, 2016 at 02:04:10PM +0900, Alexandre Courbot wrote:
->> >> On Mon, Apr 25, 2016 at 10:01 PM,  <ville.syrjala@linux.intel.com=
-> wrote:
->> >> > From: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
->> >> >
->> >> > Calling gpiod_get() from a module and then unloading the module=
- leads to an
->> >> > oops due to acpi_can_fallback_to_crs() storing the pointer to t=
-he passed
->> >> > 'con_id' string onto acpi_crs_lookup_list. The next guy to come=
- along will then
->> >> > try to access the string but the memory may now be gone with th=
-e module.
->> >> > Make a copy of the passed string instead, and store the copy on=
- the list.
->> >> >
->> >> > BUG: unable to handle kernel paging request at ffffffffa03e7855
->> >> > IP: [<ffffffff81338322>] strcmp+0x12/0x30
->> >> > PGD 2a07067 PUD 2a08063 PMD 74720067 PTE 0
->> >> > Oops: 0000 [#1] PREEMPT SMP
->> >> > Modules linked in: i915(+) drm_kms_helper drm intel_gtt snd_hda=
-_codec snd_hda_core i2c_algo_bit syscopya
->> >> > rea sysfillrect sysimgblt fb_sys_fops agpgart snd_soc_sst_bytcr=
-_rt5640 coretemp hwmon intel_rapl intel_soc_dts_thermal
->> >> > punit_atom_debug snd_soc_rt5640 snd_soc_rl6231 serio snd_intel_=
-sst_acpi snd_intel_sst_core video snd_soc_sst_mfld_platf
->> >> > orm snd_soc_sst_match backlight int3402_thermal processor_therm=
-al_device int3403_thermal int3400_thermal acpi_thermal_r
->> >> > el snd_soc_core intel_soc_dts_iosf int340x_thermal_zone snd_com=
-press i2c_hid hid snd_pcm snd_timer snd soundcore evdev
->> >> > sch_fq_codel efivarfs ipv6 autofs4 [last unloaded: drm]
->> >> > CPU: 2 PID: 3064 Comm: modprobe Tainted: G     U  W       4.6.0=
--rc3-ffrd-ipvr+ #302
->> >> > Hardware name: Intel Corp. VALLEYVIEW C0 PLATFORM/BYT-T FFD8, B=
-IOS BLAKFF81.X64.0088.R10.1403240443 FFD8
->> >> > _X64_R_2014_13_1_00 03/24/2014
->> >> > task: ffff8800701cd200 ti: ffff880070034000 task.ti: ffff880070=
-034000
->> >> > RIP: 0010:[<ffffffff81338322>]  [<ffffffff81338322>] strcmp+0x1=
-2/0x30
->> >> > RSP: 0000:ffff880070037748  EFLAGS: 00010286
->> >> > RAX: 0000000080000000 RBX: ffff88007a342800 RCX: 00000000000000=
-06
->> >> > RDX: 0000000000000006 RSI: ffffffffa054f856 RDI: ffffffffa03e78=
-56
->> >> > RBP: ffff880070037748 R08: 0000000000000000 R09: 00000000000000=
-01
->> >> > R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa054f8=
-55
->> >> > R13: ffff88007281cae0 R14: 0000000000000010 R15: ffffffffffffff=
-ea
->> >> > FS:  00007faa51447700(0000) GS:ffff880079300000(0000) knlGS:000=
-0000000000000
->> >> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> >> > CR2: ffffffffa03e7855 CR3: 0000000041eba000 CR4: 00000000001006=
-e0
->> >> > Stack:
->> >> >  ffff880070037770 ffffffff8136ad28 ffffffffa054f855 00000000000=
-00000
->> >> >  ffff88007a0a2098 ffff8800700377e8 ffffffff8136852e ffff88007a3=
-42800
->> >> >  00000007700377a0 ffff8800700377a0 ffffffff81412442 70672d6c656=
-e6170
->> >> > Call Trace:
->> >> >  [<ffffffff8136ad28>] acpi_can_fallback_to_crs+0x88/0x100
->> >> >  [<ffffffff8136852e>] gpiod_get_index+0x25e/0x310
->> >> >  [<ffffffff81412442>] ? mipi_dsi_attach+0x22/0x30
->> >> >  [<ffffffff813685f2>] gpiod_get+0x12/0x20
->> >> >  [<ffffffffa04fcf41>] intel_dsi_init+0x421/0x480 [i915]
->> >> >  [<ffffffffa04d3783>] intel_modeset_init+0x853/0x16b0 [i915]
->> >> >  [<ffffffffa0504864>] ? intel_setup_gmbus+0x214/0x260 [i915]
->> >> >  [<ffffffffa0510158>] i915_driver_load+0xdc8/0x19b0 [i915]
->> >> >  [<ffffffff8160fb53>] ? _raw_spin_unlock_irqrestore+0x43/0x70
->> >> >  [<ffffffffa026b13b>] drm_dev_register+0xab/0xc0 [drm]
->> >> >  [<ffffffffa026d7b3>] drm_get_pci_dev+0x93/0x1f0 [drm]
->> >> >  [<ffffffff8160fb53>] ? _raw_spin_unlock_irqrestore+0x43/0x70
->> >> >  [<ffffffffa043f1f4>] i915_pci_probe+0x34/0x50 [i915]
->> >> >  [<ffffffff81379751>] pci_device_probe+0x91/0x100
->> >> >  [<ffffffff8141a75a>] driver_probe_device+0x20a/0x2d0
->> >> >  [<ffffffff8141a8be>] __driver_attach+0x9e/0xb0
->> >> >  [<ffffffff8141a820>] ? driver_probe_device+0x2d0/0x2d0
->> >> >  [<ffffffff81418439>] bus_for_each_dev+0x69/0xa0
->> >> >  [<ffffffff8141a04e>] driver_attach+0x1e/0x20
->> >> >  [<ffffffff81419c20>] bus_add_driver+0x1c0/0x240
->> >> >  [<ffffffff8141b6d0>] driver_register+0x60/0xe0
->> >> >  [<ffffffff81377d20>] __pci_register_driver+0x60/0x70
->> >> >  [<ffffffffa026d9f4>] drm_pci_init+0xe4/0x110 [drm]
->> >> >  [<ffffffff810ce04e>] ? trace_hardirqs_on+0xe/0x10
->> >> >  [<ffffffffa02f1000>] ? 0xffffffffa02f1000
->> >> >  [<ffffffffa02f1094>] i915_init+0x94/0x9b [i915]
->> >> >  [<ffffffff810003bb>] do_one_initcall+0x8b/0x1c0
->> >> >  [<ffffffff810eb616>] ? rcu_read_lock_sched_held+0x86/0x90
->> >> >  [<ffffffff811de6d6>] ? kmem_cache_alloc_trace+0x1f6/0x270
->> >> >  [<ffffffff81183826>] do_init_module+0x60/0x1dc
->> >> >  [<ffffffff81115a8d>] load_module+0x1d0d/0x2390
->> >> >  [<ffffffff811120b0>] ? __symbol_put+0x70/0x70
->> >> >  [<ffffffff811f41b2>] ? kernel_read_file+0x92/0x120
->> >> >  [<ffffffff811162f4>] SYSC_finit_module+0xa4/0xb0
->> >> >  [<ffffffff8111631e>] SyS_finit_module+0xe/0x10
->> >> >  [<ffffffff81001ff3>] do_syscall_64+0x63/0x350
->> >> >  [<ffffffff816103da>] entry_SYSCALL64_slow_path+0x25/0x25
->> >> > Code: f7 48 8d 76 01 48 8d 52 01 0f b6 4e ff 84 c9 88 4a ff 75 =
-ed 5d c3 0f 1f 00 55 48 89 e5 eb 04 84 c0
->> >> >  74 18 48 8d 7f 01 48 8d 76 01 <0f> b6 47 ff 3a 46 ff 74 eb 19 =
-c0 83 c8 01 5d c3 31 c0 5d c3 66
->> >> > RIP  [<ffffffff81338322>] strcmp+0x12/0x30
->> >> >  RSP <ffff880070037748>
->> >> > CR2: ffffffffa03e7855
->> >> >
->> >> > v2: Make the copied con_id const
->> >> >
->> >> > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->> >> > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
->> >> > Cc: Linus Walleij <linus.walleij@linaro.org>
->> >> > Cc: Alexandre Courbot <gnurou@gmail.com>
->> >> > Cc: stable@vger.kernel.org
->> >> > Fixes: 10cf4899f8af ("gpiolib: tighten up ACPI legacy gpio look=
-ups")
->> >> > Signed-off-by: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.int=
-el.com>
->> >> > ---
->> >> >  drivers/gpio/gpiolib-acpi.c | 2 +-
->> >> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >> >
->> >> > diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib=
--acpi.c
->> >> > index 682070d20f00..2dc52585e3f2 100644
->> >> > --- a/drivers/gpio/gpiolib-acpi.c
->> >> > +++ b/drivers/gpio/gpiolib-acpi.c
->> >> > @@ -977,7 +977,7 @@ bool acpi_can_fallback_to_crs(struct acpi_d=
-evice *adev, const char *con_id)
->> >> >                 lookup =3D kmalloc(sizeof(*lookup), GFP_KERNEL)=
-;
->> >> >                 if (lookup) {
->> >> >                         lookup->adev =3D adev;
->> >> > -                       lookup->con_id =3D con_id;
->> >> > +                       lookup->con_id =3D kstrdup(con_id, GFP_=
-KERNEL);
->> >>
->> >> Agree with the idea, but where is this newly-allocated memory fre=
-ed?
->> >
->> > It isn't. Neither is the 'lookup' thing itself.
->>
->> Are we ok with that? Leaking memory is slightly better than crashing=
- a
->> driver, but that is still not something to be fond of...
->
-> When would you free it?
+On Thursday, April 28, 2016 12:58:03 PM Andy Shevchenko wrote:
+> On Thu, Apr 28, 2016 at 12:05 PM, Christian Lamparter
+> <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> wrote:
+> > From: =C1lvaro Fern=E1ndez Rojas <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> >
+> > This patch adds support for defining memory-mapped GPIOs
+> > which provide a compatible interface for the existing
+> > generic-gpio driver.
 
-It is not supposed to be freed. We need to note that someone at some
-point requested gpio with given name, so if someone else ever requests
-gpio with different name we shoudl not be falling back to _CRS.
+Thanks for your comments! I've prepared a new series which
+I'm going to post tomorrow. I've incorporated most of the
+remarks, but there's something I have to say about:=20
 
-Thanks.
+> > +static inline void set_resource_address(struct resource *res,
+> > +                                       resource_size_t start,
+> > +                                       resource_size_t len)
+> > +{
+> > +       res->start =3D start;
+> > +       res->end =3D start + len - 1;
+> > +}
+>=20
+> It might make sense to put this in the generic (resource related, e.g=
+=2E
+> ioport.h) header. There are plenty users of such already and who know=
+s
+> how many will come.
 
---=20
-Dmitry
+I looked around and found plenty of code in drivers/
+alone doing the same song and dance around it:
+
+acpi/pci_root.c acpi/resource.c
+bus/mvebu-mbus.c
+i2c/busses/i2c-i801.c
+irqchip/irq-mips-gic.c
+memory/omap-gpmc.c
+mfd/janz-cmodio.c mfd/lpc_ich.c mfd/sm501.c mtd/devices/ms02-nv.c
+nvdimm/namespace_devs.c
+of/address.c
+parisc/ccio-dma.c parisc/dino.c parisc/lba_pci.c
+pci/hotplug/ibmphp_res.c pci/bus.c pci/iov.c pci/setup-res.c
+pci/setup-bus.c pci/hotplug/ibmphp_res.c
+pcmcia/rsrc_mgr.c pcmcia/pcmcia_resource.c
+pnp/manager.c
+platform/x86/intel_pmc_ipc.c
+pinctrl/sh-pfc/core.c
+etc...
+
+I think arch/ will have a few more. If anything this will require
+help from coccinelle and more stuff. For now I'll convert the code
+to do the same thing as everybody else. And after the "linux,gpio-mmio"
+has been successfully mainlined I can worry about how to write the
+perfect set_resource_address or set_resource_range (needs to handle
+over- and underflows, etc...) and setup the automatic tools to convert
+the whole tree. So, unless someone else beats me to this, this would
+be my plan.
+
+Regards,
+Christian
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
 n
-the body of a message to majordomo@vger.kernel.org
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
