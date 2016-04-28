@@ -1,8 +1,8 @@
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Subject: Re: [PATCH v2] gpiolib-acpi: Duplicate con_id string when adding it
  to the crs lookup list
-Date: Thu, 28 Apr 2016 09:54:36 -0700
-Message-ID: <CAKdAkRTKYNJuTTkxP1U_6saso5QUa5ZveDhsnU_K7TDt=eutyQ@mail.gmail.com>
+Date: Thu, 28 Apr 2016 09:56:47 -0700
+Message-ID: <CAKdAkRRouTa+C3+k_9YSOPs9K0R4u5ENpzuE41uOoW7zq0A6gA@mail.gmail.com>
 References: <1460563836-1899-1-git-send-email-ville.syrjala@linux.intel.com>
 	<1461589279-8911-1-git-send-email-ville.syrjala@linux.intel.com>
 	<CAAVeFuJKj_Z-s=K+Ag4XmzoL37vdz0MnBJiCoDYFk1NnZchrDw@mail.gmail.com>
@@ -13,10 +13,10 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f171.google.com ([209.85.161.171]:33888 "EHLO
-	mail-yw0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753161AbcD1Qyh convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Apr 2016 12:54:37 -0400
+Received: from mail-yw0-f170.google.com ([209.85.161.170]:32800 "EHLO
+	mail-yw0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753235AbcD1Q4s convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Apr 2016 12:56:48 -0400
 In-Reply-To: <20160428123056.GC4329@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -177,12 +177,12 @@ ed?
 >> driver, but that is still not something to be fond of...
 >
 > When would you free it?
->
-> --
-> Ville Syrj=C3=A4l=C3=A4
-> Intel OTC
 
+It is not supposed to be freed. We need to note that someone at some
+point requested gpio with given name, so if someone else ever requests
+gpio with different name we shoudl not be falling back to _CRS.
 
+Thanks.
 
 --=20
 Dmitry
