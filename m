@@ -1,25 +1,31 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V5 4/4] gpio: tegra: Add support for gpio debounce
-Date: Thu, 28 Apr 2016 14:58:36 +0900
-Message-ID: <CAAVeFuLesCbWCecMLZNRENuA_CHgwTd6ZZE4Gh2JQ2vg5rAoEQ@mail.gmail.com>
-References: <1461580714-22479-1-git-send-email-ldewangan@nvidia.com> <1461580714-22479-5-git-send-email-ldewangan@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpio: move gpiod_set_array_value_priv()
+Date: Thu, 28 Apr 2016 14:59:57 +0900
+Message-ID: <CAAVeFuJHBb6qSVeckJdJQtJ93b-xvHo8CQoATsiE-TMGQxHVYA@mail.gmail.com>
+References: <1461660663-17207-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1461580714-22479-5-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f178.google.com ([209.85.223.178]:33269 "EHLO
+	mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750748AbcD1GAR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Apr 2016 02:00:17 -0400
+Received: by mail-io0-f178.google.com with SMTP id f89so67725863ioi.0
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Apr 2016 23:00:17 -0700 (PDT)
+In-Reply-To: <1461660663-17207-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Mon, Apr 25, 2016 at 7:38 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> NVIDIA's Tegra210 support the HW debounce in the GPIO controller
-> for all its GPIO pins.
->
-> Add support for setting debounce timing by implementing the
-> set_debounce callback of gpiochip.
->
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, Apr 26, 2016 at 5:51 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> This renames gpiod_set_array_value_priv() to
+> gpiod_set_array_value_complex() and moves it to the gpiolib.h
+> private header file so we can reuse it in the subsystem.
 
-Reviewed-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Why "complex"?
+
+>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
