@@ -1,127 +1,95 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [RFC v3 1/3] gpio: dt-bindings: add basic-mmio-gpio bindings
-Date: Thu, 28 Apr 2016 15:20:39 +0900
-Message-ID: <CAAVeFuLeQRLReHQbwM5mBtoUG7zKcuw8ScNaV_0-MLw48QZsOw@mail.gmail.com>
-References: <cover.1461710784.git.chunkeey@googlemail.com> <7e8845e6b6384c6b5673532ebef79c8730ed7748.1461710784.git.chunkeey@googlemail.com>
- <CAL_Jsq+OrkudQwxqfSvuqW=HWm6B74pE9bec0QBh5xNbF+s2Hw@mail.gmail.com>
- <1838530.usypLq5u4X@debian64> <CAL_JsqKYU=W8DhVjgihgPiu2B_QgLnFqDqX-soghHDFVUGtAOQ@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH V10 2/6] mfd: max77620: add core driver for
+ MAX77620/MAX20024
+Date: Thu, 28 Apr 2016 08:23:26 +0100
+Message-ID: <20160428072326.GJ4892@dell>
+References: <1459348188-11726-1-git-send-email-ldewangan@nvidia.com>
+ <1459348188-11726-3-git-send-email-ldewangan@nvidia.com>
+ <20160427151947.GD4892@dell>
+ <5721083E.8080805@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f181.google.com ([209.85.223.181]:35219 "EHLO
-	mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752280AbcD1GVF convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Apr 2016 02:21:05 -0400
-In-Reply-To: <CAL_JsqKYU=W8DhVjgihgPiu2B_QgLnFqDqX-soghHDFVUGtAOQ@mail.gmail.com>
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:37387 "EHLO
+	mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750932AbcD1HXZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Apr 2016 03:23:25 -0400
+Received: by mail-wm0-f53.google.com with SMTP id a17so49476364wme.0
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Apr 2016 00:23:25 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <5721083E.8080805@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Christian Lamparter <chunkeey@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6?= <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, ijc+devicetree@hellion.org.uk, swarren@nvidia.com, treding@nvidia.com, Mallikarjun Kasoju <mkasoju@nvidia.com>
 
-On Thu, Apr 28, 2016 at 12:08 AM, Rob Herring <robh+dt@kernel.org> wrot=
-e:
-> On Wed, Apr 27, 2016 at 5:15 AM, Christian Lamparter
-> <chunkeey@googlemail.com> wrote:
->> On Tuesday, April 26, 2016 09:06:14 PM Rob Herring wrote:
->>> On Tue, Apr 26, 2016 at 5:51 PM, Christian Lamparter
->>> <chunkeey@googlemail.com> wrote:
->>> > From: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
->>> >
->>> > This patch adds the device tree bindings for the basic-mmio-gpio.
->>> > The basic-mmio-gpio is already part of a the GPIO generic library
->>> > and shares its compatible with the platform device.
->>>
->>> These things always start out "simple", "basic" or "generic". Then
->>> people extend them a property or 2 at a time until they are no long=
-er
->>> basic. Make a bunch of GPIO drivers use a generic driver then maybe
->>> I'll be convinced this is a good idea.
->> Well, I mentioned brcm63xx (MIPS) and MyBook Live (PPC). But OK, if =
-you
->> want me to look at the existing code in the kernel. I found the foll=
-owing
->> candidates.
->
-> What I meant was convert the drivers, not the dts files to a generic
-> driver. There is no benefit here from a dts perspective. It is driver
-> consolidation that would make all this worthwhile.
->
->> 1. MOXA ART: "moxa,moxart-gpio"
->> http://lxr.free-electrons.com/source/drivers/gpio/gpio-moxart.c
->> This driver is used by the:
->> arch/arm/boot/dts/moxart.dtsi
->>
->> ---
->> diff --git a/arch/arm/boot/dts/moxart.dtsi b/arch/arm/boot/dts/moxar=
-t.dtsi
->> index 1fd27ed..26707d0 100644
->> --- a/arch/arm/boot/dts/moxart.dtsi
->> +++ b/arch/arm/boot/dts/moxart.dtsi
->> @@ -66,8 +66,11 @@
->>                 gpio: gpio@98700000 {
->>                         gpio-controller;
->>                         #gpio-cells =3D <2>;
->> -                       compatible =3D "moxa,moxart-gpio";
->> -                       reg =3D <0x98700000 0xC>;
->> +                       compatible =3D "basic-mmio-gpio";
->> +                       reg =3D <0x98700000 0x4
->> +                              0x98700004 0x4
->> +                              0x98700008 0x4>;
->> +                       reg-names =3D "set dat dirout";
->
-> This is not a compatible change. You can't remove the old drivers as
-> they are needed to work with old dtbs, so there is no gain.
->
-> You would need to match on existing compatibles such as
-> moxa,moxart-gpio and provide a match data struct that has all the inf=
-o
-> you are adding here (e.g. data register offset). Then additionally yo=
-u
-> could add "basic-mmio-gpio" (I would drop "basic" part) and the
-> additional data associated with it. But it has to be new properties,
-> not changing properties. Changing the reg values doesn't work.
->
->
->> 2. GE FPGA based GPIO: "ge,imp3a-gpio", "gef,sbc310-gpio", "gef,sbc6=
-10-gpio"
->> 3. CLPS711X GPIO driver: "cirrus,clps711x-gpio"
->> 4. GPIO driver for the TS-4800 board: "technologic,ts4800-gpio"
->>
->> What do you think. There's a total of six devices that can make use
->> of the "basic-mmio-gpio". If this gives me your go-ahead, I'll inclu=
-de
->> them in the series as proper patches.
->
-> Those are a good start. My other worry about this is next someone wil=
-l
-> want to add interrupt registers which is probably a majority of GPIO
-> controllers.
->
-> Of course, I'm sure Linus has an opinion on all of this.
+On Thu, 28 Apr 2016, Laxman Dewangan wrote:
 
-I'm not Linus, but after a quick look at the drivers mentioned by
-Christian I see little room for improvement (but still some - see
-below). Like Rob mentioned we want the DT's compatible property to
-describe the hardware as precisely as possible. "basic-mmio-gpio" is
-not precise and not backward-compatible. The examples listed by
-Christian are already all using the generic MMIO driver and are thus
-already quite short.
+>=20
+> On Wednesday 27 April 2016 08:49 PM, Lee Jones wrote:
+> >On Wed, 30 Mar 2016, Laxman Dewangan wrote:
+> >
+> >
+> >What are 20 and 40?  I think you're going to need a comment to
+> >describe what's going on in this function.
+> >
+> >>+	int x, i;
+> >>+
+> >>+	for (i =3D 0; i < 0x7; i++) {
+> >It's unsual to use hex values like this.
+> >
+> >I think it should be defined.
+> >
+> >>+		x =3D base_fps_time * BIT(i);
+> >20 * (1 << {0..7})
+> >
+> >So ...
+> >
+> >20 * (1, 2, 4, 8, etc)
+> >
+> >What does that does that doe exactly?
+> >
+> >>+		if (x >=3D tperiod)
+> >>+			return i;
+> >>+	}
+> >>+
+> >>+	return i;
+> >>+}
+> >>+
+> >>+static int max77620_config_fps(struct max77620_chip *chip,
+> >>+			       struct device_node *fps_np)
+> >Lots of mention of 'FPS' here, but noting to so what that is?
+> >
+> >What does FPS stand for and what does the FPS do?
+> >
+>=20
+> The chip support here the Flexible Power Sequence period (FPS period)=
+ as
+> 40, 80, 160, 320, 640, 1280, 2560 and 5120 microseconds (for max77620=
+)
+> 20, 40, 80, 160, 320, 640, 1280, 2560  microseconds (for max77620)
+>=20
+> There is 3 bits in registers which defined as
+> 000: 40us for max77620, 20us for max20024
+> 001: 80us for max77620, 40us for max20024
+> 010: 160us for max77620, 80us for max20024.
+> ::
+>=20
+> From DT, I am getting the FPS period time as above and this loop is f=
+inding
+> equivalent bit value (0 to 7) from period.
+>=20
+> The min fps time is 40us for MAX77620 and 20us for MAX20024.
 
-However, they all repeat the same basic sequence to initialize the
-generic IOMMU driver, and maybe this could be consolidated in a single
-file, with each matching chip having the arguments passed to
-bgpio_init() encoded as data (a bit like the simple-panel driver does
-- see the platform_of_match member of
-drivers/gpu/drm/panel/panel-simple.c)
+Great info.  So if you can add this into the section where you handle
+the FPS, that'd be grand.
 
-This would reduce the amount of code that basically does the same
-thing, and remove a few files from drivers/gpio. Even there I see that
-gpio-clps711x.c has some specifics compared to the other drivers, but
-maybe Christian can iron them out.
-
-So without touching the DT I think consolidating the bgpio users in a
-fashion similar to what simple-panel does would be worthwhile.
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
 n
