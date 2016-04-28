@@ -1,184 +1,396 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Subject: Re: [PATCH v2] gpiolib-acpi: Duplicate con_id string when adding it
- to the crs lookup list
-Date: Thu, 28 Apr 2016 15:30:56 +0300
-Message-ID: <20160428123056.GC4329@intel.com>
-References: <1460563836-1899-1-git-send-email-ville.syrjala@linux.intel.com>
- <1461589279-8911-1-git-send-email-ville.syrjala@linux.intel.com>
- <CAAVeFuJKj_Z-s=K+Ag4XmzoL37vdz0MnBJiCoDYFk1NnZchrDw@mail.gmail.com>
- <20160428103333.GY4329@intel.com>
- <CAAVeFuLR0V2Vum0wTuHd+UZDwNaaF_V7H81xeX3TuzE-Obj=Wg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/2] pinctrl: nomadik: use BIT() with offsets consequently
+Date: Thu, 28 Apr 2016 14:34:00 +0200
+Message-ID: <1461846840-30265-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:27422 "EHLO mga04.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751411AbcD1MbH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 28 Apr 2016 08:31:07 -0400
-Content-Disposition: inline
-In-Reply-To: <CAAVeFuLR0V2Vum0wTuHd+UZDwNaaF_V7H81xeX3TuzE-Obj=Wg@mail.gmail.com>
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:33922 "EHLO
+	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751411AbcD1MeH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Apr 2016 08:34:07 -0400
+Received: by mail-lf0-f44.google.com with SMTP id j11so93264885lfb.1
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Apr 2016 05:34:05 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Stable <stable@vger.kernel.org>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On Thu, Apr 28, 2016 at 08:55:36PM +0900, Alexandre Courbot wrote:
-> On Thu, Apr 28, 2016 at 7:33 PM, Ville Syrj=E4l=E4
-> <ville.syrjala@linux.intel.com> wrote:
-> > On Thu, Apr 28, 2016 at 02:04:10PM +0900, Alexandre Courbot wrote:
-> >> On Mon, Apr 25, 2016 at 10:01 PM,  <ville.syrjala@linux.intel.com>=
- wrote:
-> >> > From: Ville Syrj=E4l=E4 <ville.syrjala@linux.intel.com>
-> >> >
-> >> > Calling gpiod_get() from a module and then unloading the module =
-leads to an
-> >> > oops due to acpi_can_fallback_to_crs() storing the pointer to th=
-e passed
-> >> > 'con_id' string onto acpi_crs_lookup_list. The next guy to come =
-along will then
-> >> > try to access the string but the memory may now be gone with the=
- module.
-> >> > Make a copy of the passed string instead, and store the copy on =
-the list.
-> >> >
-> >> > BUG: unable to handle kernel paging request at ffffffffa03e7855
-> >> > IP: [<ffffffff81338322>] strcmp+0x12/0x30
-> >> > PGD 2a07067 PUD 2a08063 PMD 74720067 PTE 0
-> >> > Oops: 0000 [#1] PREEMPT SMP
-> >> > Modules linked in: i915(+) drm_kms_helper drm intel_gtt snd_hda_=
-codec snd_hda_core i2c_algo_bit syscopya
-> >> > rea sysfillrect sysimgblt fb_sys_fops agpgart snd_soc_sst_bytcr_=
-rt5640 coretemp hwmon intel_rapl intel_soc_dts_thermal
-> >> > punit_atom_debug snd_soc_rt5640 snd_soc_rl6231 serio snd_intel_s=
-st_acpi snd_intel_sst_core video snd_soc_sst_mfld_platf
-> >> > orm snd_soc_sst_match backlight int3402_thermal processor_therma=
-l_device int3403_thermal int3400_thermal acpi_thermal_r
-> >> > el snd_soc_core intel_soc_dts_iosf int340x_thermal_zone snd_comp=
-ress i2c_hid hid snd_pcm snd_timer snd soundcore evdev
-> >> > sch_fq_codel efivarfs ipv6 autofs4 [last unloaded: drm]
-> >> > CPU: 2 PID: 3064 Comm: modprobe Tainted: G     U  W       4.6.0-=
-rc3-ffrd-ipvr+ #302
-> >> > Hardware name: Intel Corp. VALLEYVIEW C0 PLATFORM/BYT-T FFD8, BI=
-OS BLAKFF81.X64.0088.R10.1403240443 FFD8
-> >> > _X64_R_2014_13_1_00 03/24/2014
-> >> > task: ffff8800701cd200 ti: ffff880070034000 task.ti: ffff8800700=
-34000
-> >> > RIP: 0010:[<ffffffff81338322>]  [<ffffffff81338322>] strcmp+0x12=
-/0x30
-> >> > RSP: 0000:ffff880070037748  EFLAGS: 00010286
-> >> > RAX: 0000000080000000 RBX: ffff88007a342800 RCX: 000000000000000=
-6
-> >> > RDX: 0000000000000006 RSI: ffffffffa054f856 RDI: ffffffffa03e785=
-6
-> >> > RBP: ffff880070037748 R08: 0000000000000000 R09: 000000000000000=
-1
-> >> > R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa054f85=
-5
-> >> > R13: ffff88007281cae0 R14: 0000000000000010 R15: ffffffffffffffe=
-a
-> >> > FS:  00007faa51447700(0000) GS:ffff880079300000(0000) knlGS:0000=
-000000000000
-> >> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >> > CR2: ffffffffa03e7855 CR3: 0000000041eba000 CR4: 00000000001006e=
-0
-> >> > Stack:
-> >> >  ffff880070037770 ffffffff8136ad28 ffffffffa054f855 000000000000=
-0000
-> >> >  ffff88007a0a2098 ffff8800700377e8 ffffffff8136852e ffff88007a34=
-2800
-> >> >  00000007700377a0 ffff8800700377a0 ffffffff81412442 70672d6c656e=
-6170
-> >> > Call Trace:
-> >> >  [<ffffffff8136ad28>] acpi_can_fallback_to_crs+0x88/0x100
-> >> >  [<ffffffff8136852e>] gpiod_get_index+0x25e/0x310
-> >> >  [<ffffffff81412442>] ? mipi_dsi_attach+0x22/0x30
-> >> >  [<ffffffff813685f2>] gpiod_get+0x12/0x20
-> >> >  [<ffffffffa04fcf41>] intel_dsi_init+0x421/0x480 [i915]
-> >> >  [<ffffffffa04d3783>] intel_modeset_init+0x853/0x16b0 [i915]
-> >> >  [<ffffffffa0504864>] ? intel_setup_gmbus+0x214/0x260 [i915]
-> >> >  [<ffffffffa0510158>] i915_driver_load+0xdc8/0x19b0 [i915]
-> >> >  [<ffffffff8160fb53>] ? _raw_spin_unlock_irqrestore+0x43/0x70
-> >> >  [<ffffffffa026b13b>] drm_dev_register+0xab/0xc0 [drm]
-> >> >  [<ffffffffa026d7b3>] drm_get_pci_dev+0x93/0x1f0 [drm]
-> >> >  [<ffffffff8160fb53>] ? _raw_spin_unlock_irqrestore+0x43/0x70
-> >> >  [<ffffffffa043f1f4>] i915_pci_probe+0x34/0x50 [i915]
-> >> >  [<ffffffff81379751>] pci_device_probe+0x91/0x100
-> >> >  [<ffffffff8141a75a>] driver_probe_device+0x20a/0x2d0
-> >> >  [<ffffffff8141a8be>] __driver_attach+0x9e/0xb0
-> >> >  [<ffffffff8141a820>] ? driver_probe_device+0x2d0/0x2d0
-> >> >  [<ffffffff81418439>] bus_for_each_dev+0x69/0xa0
-> >> >  [<ffffffff8141a04e>] driver_attach+0x1e/0x20
-> >> >  [<ffffffff81419c20>] bus_add_driver+0x1c0/0x240
-> >> >  [<ffffffff8141b6d0>] driver_register+0x60/0xe0
-> >> >  [<ffffffff81377d20>] __pci_register_driver+0x60/0x70
-> >> >  [<ffffffffa026d9f4>] drm_pci_init+0xe4/0x110 [drm]
-> >> >  [<ffffffff810ce04e>] ? trace_hardirqs_on+0xe/0x10
-> >> >  [<ffffffffa02f1000>] ? 0xffffffffa02f1000
-> >> >  [<ffffffffa02f1094>] i915_init+0x94/0x9b [i915]
-> >> >  [<ffffffff810003bb>] do_one_initcall+0x8b/0x1c0
-> >> >  [<ffffffff810eb616>] ? rcu_read_lock_sched_held+0x86/0x90
-> >> >  [<ffffffff811de6d6>] ? kmem_cache_alloc_trace+0x1f6/0x270
-> >> >  [<ffffffff81183826>] do_init_module+0x60/0x1dc
-> >> >  [<ffffffff81115a8d>] load_module+0x1d0d/0x2390
-> >> >  [<ffffffff811120b0>] ? __symbol_put+0x70/0x70
-> >> >  [<ffffffff811f41b2>] ? kernel_read_file+0x92/0x120
-> >> >  [<ffffffff811162f4>] SYSC_finit_module+0xa4/0xb0
-> >> >  [<ffffffff8111631e>] SyS_finit_module+0xe/0x10
-> >> >  [<ffffffff81001ff3>] do_syscall_64+0x63/0x350
-> >> >  [<ffffffff816103da>] entry_SYSCALL64_slow_path+0x25/0x25
-> >> > Code: f7 48 8d 76 01 48 8d 52 01 0f b6 4e ff 84 c9 88 4a ff 75 e=
-d 5d c3 0f 1f 00 55 48 89 e5 eb 04 84 c0
-> >> >  74 18 48 8d 7f 01 48 8d 76 01 <0f> b6 47 ff 3a 46 ff 74 eb 19 c=
-0 83 c8 01 5d c3 31 c0 5d c3 66
-> >> > RIP  [<ffffffff81338322>] strcmp+0x12/0x30
-> >> >  RSP <ffff880070037748>
-> >> > CR2: ffffffffa03e7855
-> >> >
-> >> > v2: Make the copied con_id const
-> >> >
-> >> > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> >> > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> >> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> >> > Cc: Alexandre Courbot <gnurou@gmail.com>
-> >> > Cc: stable@vger.kernel.org
-> >> > Fixes: 10cf4899f8af ("gpiolib: tighten up ACPI legacy gpio looku=
-ps")
-> >> > Signed-off-by: Ville Syrj=E4l=E4 <ville.syrjala@linux.intel.com>
-> >> > ---
-> >> >  drivers/gpio/gpiolib-acpi.c | 2 +-
-> >> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >> >
-> >> > diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-=
-acpi.c
-> >> > index 682070d20f00..2dc52585e3f2 100644
-> >> > --- a/drivers/gpio/gpiolib-acpi.c
-> >> > +++ b/drivers/gpio/gpiolib-acpi.c
-> >> > @@ -977,7 +977,7 @@ bool acpi_can_fallback_to_crs(struct acpi_de=
-vice *adev, const char *con_id)
-> >> >                 lookup =3D kmalloc(sizeof(*lookup), GFP_KERNEL);
-> >> >                 if (lookup) {
-> >> >                         lookup->adev =3D adev;
-> >> > -                       lookup->con_id =3D con_id;
-> >> > +                       lookup->con_id =3D kstrdup(con_id, GFP_K=
-ERNEL);
-> >>
-> >> Agree with the idea, but where is this newly-allocated memory free=
-d?
-> >
-> > It isn't. Neither is the 'lookup' thing itself.
->=20
-> Are we ok with that? Leaking memory is slightly better than crashing =
-a
-> driver, but that is still not something to be fond of...
+This driver is confusing in referencing/dereferencing the global
+GPIO number scope in some places and using local offsets in other
+places. Remove some of the confusion by removing local "bit" and
+"bitmask" definitions and just use BIT(offset) directly. Also
+unexport a function only used in this file.
 
-When would you free it?
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c | 128 ++++++++++++------------------
+ 1 file changed, 51 insertions(+), 77 deletions(-)
 
---=20
-Ville Syrj=E4l=E4
-Intel OTC
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index 352406108fa0..a121c0c06234 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -24,6 +24,7 @@
+ #include <linux/slab.h>
+ #include <linux/of_device.h>
+ #include <linux/of_address.h>
++#include <linux/bitops.h>
+ #include <linux/pinctrl/machine.h>
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinmux.h>
+@@ -292,15 +293,14 @@ static DEFINE_SPINLOCK(nmk_gpio_slpm_lock);
+ static void __nmk_gpio_set_mode(struct nmk_gpio_chip *nmk_chip,
+ 				unsigned offset, int gpio_mode)
+ {
+-	u32 bit = 1 << offset;
+ 	u32 afunc, bfunc;
+ 
+-	afunc = readl(nmk_chip->addr + NMK_GPIO_AFSLA) & ~bit;
+-	bfunc = readl(nmk_chip->addr + NMK_GPIO_AFSLB) & ~bit;
++	afunc = readl(nmk_chip->addr + NMK_GPIO_AFSLA) & ~BIT(offset);
++	bfunc = readl(nmk_chip->addr + NMK_GPIO_AFSLB) & ~BIT(offset);
+ 	if (gpio_mode & NMK_GPIO_ALT_A)
+-		afunc |= bit;
++		afunc |= BIT(offset);
+ 	if (gpio_mode & NMK_GPIO_ALT_B)
+-		bfunc |= bit;
++		bfunc |= BIT(offset);
+ 	writel(afunc, nmk_chip->addr + NMK_GPIO_AFSLA);
+ 	writel(bfunc, nmk_chip->addr + NMK_GPIO_AFSLB);
+ }
+@@ -308,55 +308,52 @@ static void __nmk_gpio_set_mode(struct nmk_gpio_chip *nmk_chip,
+ static void __nmk_gpio_set_slpm(struct nmk_gpio_chip *nmk_chip,
+ 				unsigned offset, enum nmk_gpio_slpm mode)
+ {
+-	u32 bit = 1 << offset;
+ 	u32 slpm;
+ 
+ 	slpm = readl(nmk_chip->addr + NMK_GPIO_SLPC);
+ 	if (mode == NMK_GPIO_SLPM_NOCHANGE)
+-		slpm |= bit;
++		slpm |= BIT(offset);
+ 	else
+-		slpm &= ~bit;
++		slpm &= ~BIT(offset);
+ 	writel(slpm, nmk_chip->addr + NMK_GPIO_SLPC);
+ }
+ 
+ static void __nmk_gpio_set_pull(struct nmk_gpio_chip *nmk_chip,
+ 				unsigned offset, enum nmk_gpio_pull pull)
+ {
+-	u32 bit = 1 << offset;
+ 	u32 pdis;
+ 
+ 	pdis = readl(nmk_chip->addr + NMK_GPIO_PDIS);
+ 	if (pull == NMK_GPIO_PULL_NONE) {
+-		pdis |= bit;
+-		nmk_chip->pull_up &= ~bit;
++		pdis |= BIT(offset);
++		nmk_chip->pull_up &= ~BIT(offset);
+ 	} else {
+-		pdis &= ~bit;
++		pdis &= ~BIT(offset);
+ 	}
+ 
+ 	writel(pdis, nmk_chip->addr + NMK_GPIO_PDIS);
+ 
+ 	if (pull == NMK_GPIO_PULL_UP) {
+-		nmk_chip->pull_up |= bit;
+-		writel(bit, nmk_chip->addr + NMK_GPIO_DATS);
++		nmk_chip->pull_up |= BIT(offset);
++		writel(BIT(offset), nmk_chip->addr + NMK_GPIO_DATS);
+ 	} else if (pull == NMK_GPIO_PULL_DOWN) {
+-		nmk_chip->pull_up &= ~bit;
+-		writel(bit, nmk_chip->addr + NMK_GPIO_DATC);
++		nmk_chip->pull_up &= ~BIT(offset);
++		writel(BIT(offset), nmk_chip->addr + NMK_GPIO_DATC);
+ 	}
+ }
+ 
+ static void __nmk_gpio_set_lowemi(struct nmk_gpio_chip *nmk_chip,
+ 				  unsigned offset, bool lowemi)
+ {
+-	u32 bit = BIT(offset);
+-	bool enabled = nmk_chip->lowemi & bit;
++	bool enabled = nmk_chip->lowemi & BIT(offset);
+ 
+ 	if (lowemi == enabled)
+ 		return;
+ 
+ 	if (lowemi)
+-		nmk_chip->lowemi |= bit;
++		nmk_chip->lowemi |= BIT(offset);
+ 	else
+-		nmk_chip->lowemi &= ~bit;
++		nmk_chip->lowemi &= ~BIT(offset);
+ 
+ 	writel_relaxed(nmk_chip->lowemi,
+ 		       nmk_chip->addr + NMK_GPIO_LOWEMI);
+@@ -365,22 +362,22 @@ static void __nmk_gpio_set_lowemi(struct nmk_gpio_chip *nmk_chip,
+ static void __nmk_gpio_make_input(struct nmk_gpio_chip *nmk_chip,
+ 				  unsigned offset)
+ {
+-	writel(1 << offset, nmk_chip->addr + NMK_GPIO_DIRC);
++	writel(BIT(offset), nmk_chip->addr + NMK_GPIO_DIRC);
+ }
+ 
+ static void __nmk_gpio_set_output(struct nmk_gpio_chip *nmk_chip,
+ 				  unsigned offset, int val)
+ {
+ 	if (val)
+-		writel(1 << offset, nmk_chip->addr + NMK_GPIO_DATS);
++		writel(BIT(offset), nmk_chip->addr + NMK_GPIO_DATS);
+ 	else
+-		writel(1 << offset, nmk_chip->addr + NMK_GPIO_DATC);
++		writel(BIT(offset), nmk_chip->addr + NMK_GPIO_DATC);
+ }
+ 
+ static void __nmk_gpio_make_output(struct nmk_gpio_chip *nmk_chip,
+ 				  unsigned offset, int val)
+ {
+-	writel(1 << offset, nmk_chip->addr + NMK_GPIO_DIRS);
++	writel(BIT(offset), nmk_chip->addr + NMK_GPIO_DIRS);
+ 	__nmk_gpio_set_output(nmk_chip, offset, val);
+ }
+ 
+@@ -614,34 +611,21 @@ static int __maybe_unused nmk_prcm_gpiocr_get_mode(struct pinctrl_dev *pctldev,
+ 	return NMK_GPIO_ALT_C;
+ }
+ 
+-int nmk_gpio_get_mode(int gpio)
++static int nmk_gpio_get_mode(struct nmk_gpio_chip *nmk_chip, int offset)
+ {
+-	struct nmk_gpio_chip *nmk_chip;
+-	u32 afunc, bfunc, bit;
+-
+-	nmk_chip = nmk_gpio_chips[gpio / NMK_GPIO_PER_CHIP];
+-	if (!nmk_chip)
+-		return -EINVAL;
+-
+-	bit = 1 << (gpio % NMK_GPIO_PER_CHIP);
++	u32 afunc, bfunc;
+ 
+ 	clk_enable(nmk_chip->clk);
+ 
+-	afunc = readl(nmk_chip->addr + NMK_GPIO_AFSLA) & bit;
+-	bfunc = readl(nmk_chip->addr + NMK_GPIO_AFSLB) & bit;
++	afunc = readl(nmk_chip->addr + NMK_GPIO_AFSLA) & BIT(offset);
++	bfunc = readl(nmk_chip->addr + NMK_GPIO_AFSLB) & BIT(offset);
+ 
+ 	clk_disable(nmk_chip->clk);
+ 
+ 	return (afunc ? NMK_GPIO_ALT_A : 0) | (bfunc ? NMK_GPIO_ALT_B : 0);
+ }
+-EXPORT_SYMBOL(nmk_gpio_get_mode);
+-
+ 
+ /* IRQ functions */
+-static inline int nmk_gpio_get_bitmask(int gpio)
+-{
+-	return 1 << (gpio % NMK_GPIO_PER_CHIP);
+-}
+ 
+ static void nmk_gpio_irq_ack(struct irq_data *d)
+ {
+@@ -649,7 +633,7 @@ static void nmk_gpio_irq_ack(struct irq_data *d)
+ 	struct nmk_gpio_chip *nmk_chip = gpiochip_get_data(chip);
+ 
+ 	clk_enable(nmk_chip->clk);
+-	writel(nmk_gpio_get_bitmask(d->hwirq), nmk_chip->addr + NMK_GPIO_IC);
++	writel(BIT(d->hwirq), nmk_chip->addr + NMK_GPIO_IC);
+ 	clk_disable(nmk_chip->clk);
+ }
+ 
+@@ -659,10 +643,9 @@ enum nmk_gpio_irq_type {
+ };
+ 
+ static void __nmk_gpio_irq_modify(struct nmk_gpio_chip *nmk_chip,
+-				  int gpio, enum nmk_gpio_irq_type which,
++				  int offset, enum nmk_gpio_irq_type which,
+ 				  bool enable)
+ {
+-	u32 bitmask = nmk_gpio_get_bitmask(gpio);
+ 	u32 *rimscval;
+ 	u32 *fimscval;
+ 	u32 rimscreg;
+@@ -681,24 +664,24 @@ static void __nmk_gpio_irq_modify(struct nmk_gpio_chip *nmk_chip,
+ 	}
+ 
+ 	/* we must individually set/clear the two edges */
+-	if (nmk_chip->edge_rising & bitmask) {
++	if (nmk_chip->edge_rising & BIT(offset)) {
+ 		if (enable)
+-			*rimscval |= bitmask;
++			*rimscval |= BIT(offset);
+ 		else
+-			*rimscval &= ~bitmask;
++			*rimscval &= ~BIT(offset);
+ 		writel(*rimscval, nmk_chip->addr + rimscreg);
+ 	}
+-	if (nmk_chip->edge_falling & bitmask) {
++	if (nmk_chip->edge_falling & BIT(offset)) {
+ 		if (enable)
+-			*fimscval |= bitmask;
++			*fimscval |= BIT(offset);
+ 		else
+-			*fimscval &= ~bitmask;
++			*fimscval &= ~BIT(offset);
+ 		writel(*fimscval, nmk_chip->addr + fimscreg);
+ 	}
+ }
+ 
+ static void __nmk_gpio_set_wake(struct nmk_gpio_chip *nmk_chip,
+-				int gpio, bool on)
++				int offset, bool on)
+ {
+ 	/*
+ 	 * Ensure WAKEUP_ENABLE is on.  No need to disable it if wakeup is
+@@ -706,21 +689,19 @@ static void __nmk_gpio_set_wake(struct nmk_gpio_chip *nmk_chip,
+ 	 * wakeup is anyhow controlled by the RIMSC and FIMSC registers.
+ 	 */
+ 	if (nmk_chip->sleepmode && on) {
+-		__nmk_gpio_set_slpm(nmk_chip, gpio % NMK_GPIO_PER_CHIP,
++		__nmk_gpio_set_slpm(nmk_chip, offset,
+ 				    NMK_GPIO_SLPM_WAKEUP_ENABLE);
+ 	}
+ 
+-	__nmk_gpio_irq_modify(nmk_chip, gpio, WAKE, on);
++	__nmk_gpio_irq_modify(nmk_chip, offset, WAKE, on);
+ }
+ 
+ static int nmk_gpio_irq_maskunmask(struct irq_data *d, bool enable)
+ {
+ 	struct nmk_gpio_chip *nmk_chip;
+ 	unsigned long flags;
+-	u32 bitmask;
+ 
+ 	nmk_chip = irq_data_get_irq_chip_data(d);
+-	bitmask = nmk_gpio_get_bitmask(d->hwirq);
+ 	if (!nmk_chip)
+ 		return -EINVAL;
+ 
+@@ -730,7 +711,7 @@ static int nmk_gpio_irq_maskunmask(struct irq_data *d, bool enable)
+ 
+ 	__nmk_gpio_irq_modify(nmk_chip, d->hwirq, NORMAL, enable);
+ 
+-	if (!(nmk_chip->real_wake & bitmask))
++	if (!(nmk_chip->real_wake & BIT(d->hwirq)))
+ 		__nmk_gpio_set_wake(nmk_chip, d->hwirq, enable);
+ 
+ 	spin_unlock(&nmk_chip->lock);
+@@ -754,12 +735,10 @@ static int nmk_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
+ {
+ 	struct nmk_gpio_chip *nmk_chip;
+ 	unsigned long flags;
+-	u32 bitmask;
+ 
+ 	nmk_chip = irq_data_get_irq_chip_data(d);
+ 	if (!nmk_chip)
+ 		return -EINVAL;
+-	bitmask = nmk_gpio_get_bitmask(d->hwirq);
+ 
+ 	clk_enable(nmk_chip->clk);
+ 	spin_lock_irqsave(&nmk_gpio_slpm_lock, flags);
+@@ -769,9 +748,9 @@ static int nmk_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
+ 		__nmk_gpio_set_wake(nmk_chip, d->hwirq, on);
+ 
+ 	if (on)
+-		nmk_chip->real_wake |= bitmask;
++		nmk_chip->real_wake |= BIT(d->hwirq);
+ 	else
+-		nmk_chip->real_wake &= ~bitmask;
++		nmk_chip->real_wake &= ~BIT(d->hwirq);
+ 
+ 	spin_unlock(&nmk_chip->lock);
+ 	spin_unlock_irqrestore(&nmk_gpio_slpm_lock, flags);
+@@ -786,10 +765,8 @@ static int nmk_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 	bool wake = irqd_is_wakeup_set(d);
+ 	struct nmk_gpio_chip *nmk_chip;
+ 	unsigned long flags;
+-	u32 bitmask;
+ 
+ 	nmk_chip = irq_data_get_irq_chip_data(d);
+-	bitmask = nmk_gpio_get_bitmask(d->hwirq);
+ 	if (!nmk_chip)
+ 		return -EINVAL;
+ 	if (type & IRQ_TYPE_LEVEL_HIGH)
+@@ -806,13 +783,13 @@ static int nmk_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 	if (enabled || wake)
+ 		__nmk_gpio_irq_modify(nmk_chip, d->hwirq, WAKE, false);
+ 
+-	nmk_chip->edge_rising &= ~bitmask;
++	nmk_chip->edge_rising &= ~BIT(d->hwirq);
+ 	if (type & IRQ_TYPE_EDGE_RISING)
+-		nmk_chip->edge_rising |= bitmask;
++		nmk_chip->edge_rising |= BIT(d->hwirq);
+ 
+-	nmk_chip->edge_falling &= ~bitmask;
++	nmk_chip->edge_falling &= ~BIT(d->hwirq);
+ 	if (type & IRQ_TYPE_EDGE_FALLING)
+-		nmk_chip->edge_falling |= bitmask;
++		nmk_chip->edge_falling |= BIT(d->hwirq);
+ 
+ 	if (enabled)
+ 		__nmk_gpio_irq_modify(nmk_chip, d->hwirq, NORMAL, true);
+@@ -890,7 +867,7 @@ static int nmk_gpio_make_input(struct gpio_chip *chip, unsigned offset)
+ 
+ 	clk_enable(nmk_chip->clk);
+ 
+-	writel(1 << offset, nmk_chip->addr + NMK_GPIO_DIRC);
++	writel(BIT(offset), nmk_chip->addr + NMK_GPIO_DIRC);
+ 
+ 	clk_disable(nmk_chip->clk);
+ 
+@@ -900,12 +877,11 @@ static int nmk_gpio_make_input(struct gpio_chip *chip, unsigned offset)
+ static int nmk_gpio_get_input(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct nmk_gpio_chip *nmk_chip = gpiochip_get_data(chip);
+-	u32 bit = 1 << offset;
+ 	int value;
+ 
+ 	clk_enable(nmk_chip->clk);
+ 
+-	value = (readl(nmk_chip->addr + NMK_GPIO_DAT) & bit) != 0;
++	value = !!(readl(nmk_chip->addr + NMK_GPIO_DAT) & BIT(offset));
+ 
+ 	clk_disable(nmk_chip->clk);
+ 
+@@ -952,7 +928,6 @@ static void nmk_gpio_dbg_show_one(struct seq_file *s,
+ 	bool is_out;
+ 	bool data_out;
+ 	bool pull;
+-	u32 bit = 1 << offset;
+ 	const char *modes[] = {
+ 		[NMK_GPIO_ALT_GPIO]	= "gpio",
+ 		[NMK_GPIO_ALT_A]	= "altA",
+@@ -970,10 +945,10 @@ static void nmk_gpio_dbg_show_one(struct seq_file *s,
+ 	};
+ 
+ 	clk_enable(nmk_chip->clk);
+-	is_out = !!(readl(nmk_chip->addr + NMK_GPIO_DIR) & bit);
+-	pull = !(readl(nmk_chip->addr + NMK_GPIO_PDIS) & bit);
+-	data_out = !!(readl(nmk_chip->addr + NMK_GPIO_DAT) & bit);
+-	mode = nmk_gpio_get_mode(gpio);
++	is_out = !!(readl(nmk_chip->addr + NMK_GPIO_DIR) & BIT(offset));
++	pull = !(readl(nmk_chip->addr + NMK_GPIO_PDIS) & BIT(offset));
++	data_out = !!(readl(nmk_chip->addr + NMK_GPIO_DAT) & BIT(offset));
++	mode = nmk_gpio_get_mode(nmk_chip, offset);
+ 	if ((mode == NMK_GPIO_ALT_C) && pctldev)
+ 		mode = nmk_prcm_gpiocr_get_mode(pctldev, gpio);
+ 
+@@ -1007,11 +982,10 @@ static void nmk_gpio_dbg_show_one(struct seq_file *s,
+ 		 */
+ 		if (irq > 0 && desc && desc->action) {
+ 			char *trigger;
+-			u32 bitmask = nmk_gpio_get_bitmask(gpio);
+ 
+-			if (nmk_chip->edge_rising & bitmask)
++			if (nmk_chip->edge_rising & BIT(offset))
+ 				trigger = "edge-rising";
+-			else if (nmk_chip->edge_falling & bitmask)
++			else if (nmk_chip->edge_falling & BIT(offset))
+ 				trigger = "edge-falling";
+ 			else
+ 				trigger = "edge-undefined";
+-- 
+2.4.11
+
