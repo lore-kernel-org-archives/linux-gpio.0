@@ -1,53 +1,72 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/2] pinctrl: nomadik: implement .get_direction()
-Date: Thu, 28 Apr 2016 14:34:09 +0200
-Message-ID: <1461846849-30311-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: set up initial state from .get_direction()
+Date: Thu, 28 Apr 2016 14:35:27 +0200
+Message-ID: <1461846927-30734-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:36705 "EHLO
+	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751571AbcD1Mfc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Apr 2016 08:35:32 -0400
+Received: by mail-lf0-f43.google.com with SMTP id u64so82338285lff.3
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Apr 2016 05:35:32 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-This makes the Nomadik gpiochip support the .get_direction()
-callback.
+If the gpiochip supports the .get_direction() callback, then
+the initial state of the descriptor flags should be set up
+as output accordingly. Also put in comments explaining what is
+going on.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/nomadik/pinctrl-nomadik.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/gpio/gpiolib.c | 31 ++++++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-index a121c0c06234..76a08b96cc67 100644
---- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-@@ -861,6 +861,20 @@ static void nmk_gpio_latent_irq_handler(struct irq_desc *desc)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index f72dfb6094a7..d2246f58abbc 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -755,14 +755,31 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
+ 		struct gpio_desc *desc = &gdev->descs[i];
  
- /* I/O Functions */
+ 		desc->gdev = gdev;
+-
+-		/* REVISIT: most hardware initializes GPIOs as inputs (often
+-		 * with pullups enabled) so power usage is minimized. Linux
+-		 * code should set the gpio direction first thing; but until
+-		 * it does, and in case chip->get_direction is not set, we may
+-		 * expose the wrong direction in sysfs.
++		/*
++		 * REVISIT: most hardware initializes GPIOs as inputs
++		 * (often with pullups enabled) so power usage is
++		 * minimized. Linux code should set the gpio direction
++		 * first thing; but until it does, and in case
++		 * chip->get_direction is not set, we may expose the
++		 * wrong direction in sysfs.
+ 		 */
+-		desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
++
++		if (chip->get_direction) {
++			/*
++			 * If we have .get_direction, set up the initial
++			 * direction flag from the hardware.
++			 */
++			int dir = chip->get_direction(chip, i);
++
++			if (!dir)
++				set_bit(FLAG_IS_OUT, &desc->flags);
++		} else if (!chip->direction_input) {
++			/*
++			 * If the chip lacks the .direction_input callback
++			 * we logically assume all lines are outputs.
++			 */
++			set_bit(FLAG_IS_OUT, &desc->flags);
++		}
+ 	}
  
-+static int nmk_gpio_get_dir(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct nmk_gpio_chip *nmk_chip = gpiochip_get_data(chip);
-+	int dir;
-+
-+	clk_enable(nmk_chip->clk);
-+
-+	dir = !!(readl(nmk_chip->addr + NMK_GPIO_DIR) & BIT(offset));
-+
-+	clk_disable(nmk_chip->clk);
-+
-+	return dir;
-+}
-+
- static int nmk_gpio_make_input(struct gpio_chip *chip, unsigned offset)
- {
- 	struct nmk_gpio_chip *nmk_chip = gpiochip_get_data(chip);
-@@ -1220,6 +1234,7 @@ static int nmk_gpio_probe(struct platform_device *dev)
- 	chip = &nmk_chip->chip;
- 	chip->request = gpiochip_generic_request;
- 	chip->free = gpiochip_generic_free;
-+	chip->get_direction = nmk_gpio_get_dir;
- 	chip->direction_input = nmk_gpio_make_input;
- 	chip->get = nmk_gpio_get_input;
- 	chip->direction_output = nmk_gpio_make_output;
+ 	spin_unlock_irqrestore(&gpio_lock, flags);
 -- 
 2.4.11
+
