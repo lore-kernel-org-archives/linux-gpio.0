@@ -1,51 +1,54 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] mfd: intel_soc_pmic_core: Terminate panel control GPIO
- lookup table correctly
-Date: Fri, 29 Apr 2016 11:31:44 +0200
-Message-ID: <CACRpkdasFcEAzDtHGU+unrsstyX+o1Ft=HAh22Esm5Z3KZ=2ug@mail.gmail.com>
-References: <1461353935-8078-1-git-send-email-ville.syrjala@linux.intel.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
+Date: Fri, 29 Apr 2016 14:50:11 +0530
+Message-ID: <5723274B.3050209@nvidia.com>
+References: <1461580714-22479-1-git-send-email-ldewangan@nvidia.com> <CACRpkda7HqPLSRLzaSdO-7chjUBL9C2VAMB0nyVZUw=PSGL3VQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:33839 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752352AbcD2Jbp convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Apr 2016 05:31:45 -0400
-Received: by mail-oi0-f46.google.com with SMTP id k142so112506796oib.1
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Apr 2016 02:31:45 -0700 (PDT)
-In-Reply-To: <1461353935-8078-1-git-send-email-ville.syrjala@linux.intel.com>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:1511 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751043AbcD2JcM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Apr 2016 05:32:12 -0400
+In-Reply-To: <CACRpkda7HqPLSRLzaSdO-7chjUBL9C2VAMB0nyVZUw=PSGL3VQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, Shobhit Kumar <shobhit.kumar@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Lee Jones <lee.jones@linaro.org>, stable <stable@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Apr 22, 2016 at 9:38 PM,  <ville.syrjala@linux.intel.com> wrote=
-:
 
-> From: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
+On Friday 29 April 2016 02:37 PM, Linus Walleij wrote:
+> On Mon, Apr 25, 2016 at 12:38 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 >
-> GPIO lookup tables are supposed to be zero terminated. Let's do that
-> and avoid accidentally walking off the end.
+>> Add support for the debounce as Tegra210 support debounce in HW.
+>> Also do the clenaups to remove all global variables.
+> OK this v5 is applied.
 >
-> Cc: Shobhit Kumar <shobhit.kumar@intel.com>
-> Cc: Samuel Ortiz <sameo@linux.intel.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: stable@vger.kernel.org
-> Fixes: 61dd2ca2d44e ("mfd: intel_soc_pmic_core: Add lookup table for =
-Panel Control as GPIO signal")
-> Signed-off-by: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com=
+> Laxman does this GPIO also have open drain and/or open source
+> handling?
+
+Some of the pins support the open drain and these are part of pinmux 
+register set.
+For that we have property for setting open drain.
+
+Is it possible to link the gpio APIs to pincontrol for setting that pin?
+
+
+> Then you might want to look into supporting that too as I just added
+> support for native single-endedness to gpiolib, c.f.:
+> http://marc.info/?l=linux-gpio&m=146011780301280&w=2
+
+Yaah, Some of PMIC's (which I am handling) gpios support open drain and 
+I think I can have changes for the PMIC gpio driver.
+
 >
+> It would be nice if you also implement .get_direction() which
+> makes debugfs and initial reading of the state of the lines
+> more accurate.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Sure, this can be implemented.
+Will post the patch on top of the series soon.
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
