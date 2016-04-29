@@ -1,123 +1,75 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v2 6/9] pinctrl: Add IRQ support to STM32 gpios
-Date: Fri, 29 Apr 2016 13:19:15 +0200
-Message-ID: <CALszF6D1nPJ8NVghWo27y1KABwN7-QQfjPTmgY2pgdY_8jjkTQ@mail.gmail.com>
-References: <1459436979-17275-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1459436979-17275-7-git-send-email-mcoquelin.stm32@gmail.com>
-	<CACRpkdYLPWNQZgdFHVwLOZv+rS=bdERM9St5b0hVHTd_+ZJMKg@mail.gmail.com>
-	<CALszF6CUFKAjzUpEh3pDtSDdJuFan1ON0Kcu_uKD_OX36kXOHQ@mail.gmail.com>
-	<CACRpkdZXz8-UnOd6ee48AWqDX2X9Hvux=+ZQ7qdg6a4KVoArww@mail.gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH] gpio: tegra: Implement gpio_get_direction callback
+Date: Fri, 29 Apr 2016 18:01:18 +0530
+Message-ID: <1461933078-20366-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qg0-f66.google.com ([209.85.192.66]:34355 "EHLO
-	mail-qg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752563AbcD2LTQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Apr 2016 07:19:16 -0400
-In-Reply-To: <CACRpkdZXz8-UnOd6ee48AWqDX2X9Hvux=+ZQ7qdg6a4KVoArww@mail.gmail.com>
+Received: from nat-hk.nvidia.com ([203.18.50.4]:27427 "EHLO
+	hkmmgate102.nvidia.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752625AbcD2Mnm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Apr 2016 08:43:42 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>, Lee Jones <lee.jones@linaro.org>
+To: linus.walleij@linaro.org, swarren@wwwdotorg.org, thierry.reding@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 
-2016-04-29 10:53 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Tue, Apr 19, 2016 at 11:04 AM, Maxime Coquelin
-> <mcoquelin.stm32@gmail.com> wrote:
->> 2016-04-08 11:43 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
->>> On Thu, Mar 31, 2016 at 5:09 PM, Maxime Coquelin
->>> <mcoquelin.stm32@gmail.com> wrote:
->>>
->>>> +static int stm32_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
->>>> +{
->>>> +       struct stm32_pinctrl *pctl = dev_get_drvdata(chip->parent);
->>>> +       struct stm32_gpio_bank *bank = gpiochip_get_data(chip);
->>>> +       unsigned int irq;
->>>> +
->>>> +       regmap_field_write(pctl->irqmux[offset], bank->range.id);
->>>
->>> No. You must implement the irqchip and GPIO controllers to
->>> be orthogonal, doing things like this creates a semantic that
->>> assumes .to_irq() is always called before using the IRQ and
->>> that is not guaranteed at all. A consumer may very well
->>> use an interrupt right off the irqchip without this being called
->>> first. All this function should do is translate a number. No
->>> other semantics.
->>>
->>> This needs to be done from the irqchip (sorry).
->>
->> Actually, the register written here is not part of the irqchip.
->> It is a system config register that is only used when using a GPIO as
->> external interrupt.
->> Its aim is to mux the GPIO bank on a line.
->
-> Then it should be done in .request() for the GPIO, not in
-> .to_irq().
-Problem is that at request time, we don't know whether the GPIO is to
-be used as an interrupt or not.
+Implement gpio_get_direction() callback for Tegra GPIO.
+The direction is only valid if the pin is configured as
+GPIO. If pin is not configured in GPIO mode then this
+function return error.
 
-I think I may have not been clear enough in the HW architecture description.
-Indeed, I used the term "mux", but should instead use the term "selector".
+This makes debugfs and initial reading of the state of
+the lines more accurate.
 
-The idea is that between the GPIO controllers and the EXTI controller,
-there is one selector for each line number, to select the controller used as
-interrupt source.
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+This patch is based on discussion on series 
+Re: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
+>From Linus W:
+It would be nice if you also implement .get_direction() which makes
+debugfs and initial reading of the state of the lines more accurate.
 
-For example, there is a selector on line 0 to select between gpioa0, gpiob0,
-gpioc0,.., gpiok0, which one is connected to exti0.
+ drivers/gpio/gpio-tegra.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-It means there is a HW restriction that makes impossible to use both GPIOA0
-or GPIOB0 as interrupts at the same time.
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index b3ddd92..6f2292b 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -191,6 +191,24 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+ 	return 0;
+ }
+ 
++static int tegra_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
++{
++	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
++	u32 pin_mask = BIT(GPIO_BIT(offset));
++	u32 cnf, oe;
++
++	cnf = tegra_gpio_readl(tgi, GPIO_CNF(tgi, offset));
++	oe = tegra_gpio_readl(tgi, GPIO_OE(tgi, offset));
++	if (cnf & pin_mask) {
++		if (oe & pin_mask)
++			return GPIOF_DIR_OUT;
++
++		return GPIOF_DIR_IN;
++	}
++
++	return -EINVAL;
++}
++
+ static int tegra_gpio_set_debounce(struct gpio_chip *chip, unsigned int offset,
+ 				   unsigned int debounce)
+ {
+@@ -575,6 +593,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	tgi->gc.get			= tegra_gpio_get;
+ 	tgi->gc.direction_output	= tegra_gpio_direction_output;
+ 	tgi->gc.set			= tegra_gpio_set;
++	tgi->gc.get_direction		= tegra_gpio_get_direction;
+ 	tgi->gc.to_irq			= tegra_gpio_to_irq;
+ 	tgi->gc.base			= 0;
+ 	tgi->gc.ngpio			= tgi->bank_count * 32;
+-- 
+2.1.4
 
-It looks like this: http://pastebin.com/raw/cs2WiNKZ
-You can directly check section 12.2.5 of the stm32f429 reference manual:
-http://www2.st.com/resource/en/reference_manual/dm00031020.pdf
-
-For example, we can imagine a board where gpioa0 is used SD's card detect,
-and gpiob0 used to control a led.
-
-If we set the mux at request time, gpiob0 request may overwrite the mux
-configuration set by gpioa0, whereas it is not used as interrupt.
-
-That is the reason why I did it in .to_irq().
-
->
-> It should *also* be done in the set-up path for the irqchip
-> side, if that line is used without any interaction with the
-> gpio side of things.
-Actually, a line is either used by a GPIO, (exclusive) or another purpose.
-In the case of a GPIO line, I think we should always go through the gpio.
-
->
->> For example on line 1, it can be muxed to select either gpioa1,
->> gpiob1, gpioc1, ...
->> How could I do it in the irqchip that has no gpio knowledge?
->
-> I don't understand this.
->
-> We are discussing an irqchip that is tightly coupled with
-> a gpiochip. Usually d->hwirq is the same as the GPIO offset
-> but that varies.
->
-> The point is that each IRQ that ever get used
-> has a 1-to-1 relationship to a certain GPIO line, and if that
-> relationship cannot be resolved from the irqchip side,
-> something is wrong. The irqchip needs to enable the
-> GPIO line it is backing to recieve interrupts without any
-> requirements that .to_irq() have been called first.
-
-Actually, this is not a 1:1 relationship, as for example, exti0 can be connected
-to either gpioa0, or gpiob0,..., or gpiok0.
-
-So for the exti entries that are connected to gpios, I don't see how
-we can reference it
-from the exti controller,
->
-> If to_irq() does something else than translate to an IRQ
-> something is wrong.
-
-Ok, so maybe we need an intermediate layer between gpio and exti to manage the
-selectors sysconf?
-I wiil have a look in that direction, but I think it could be over-engineered.
-
-Thanks!
-Maxime
