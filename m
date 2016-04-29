@@ -1,48 +1,74 @@
-From: Christian Lamparter <chunkeey@googlemail.com>
-Subject: Re: [RFC v5 3/4] gpio: move clps711x, moxart, ts4800 and gpio-ge into gpio-generic
-Date: Fri, 29 Apr 2016 21:06:11 +0200
-Message-ID: <1518049.pLhlI1cuZi@debian64>
-References: <cover.1461888822.git.chunkeey@googlemail.com> <9e5cc9e957144bd5d4081573ef959f931281eaaa.1461888822.git.chunkeey@googlemail.com> <CACRpkdaX1xeGJxV9K-GkTAh87SctqyhkJ+VN6mwUdtD19tz99g@mail.gmail.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH v2 00/10] STMPE fixes/rework and add STMPE1600 support
+Date: Fri, 29 Apr 2016 19:23:06 +0000
+Message-ID: <1461957784.3869.50.camel@toradex.com>
+References: <1461845589-4826-1-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:32948 "EHLO
-	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750875AbcD2TGT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Apr 2016 15:06:19 -0400
-In-Reply-To: <CACRpkdaX1xeGJxV9K-GkTAh87SctqyhkJ+VN6mwUdtD19tz99g@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1461845589-4826-1-git-send-email-patrice.chotard@st.com>
+Content-Language: en-US
+Content-ID: <52D1F8FFBCDC6D4997D2B3E2ECBF273B@eurprd05.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "patrice.chotard@st.com" <patrice.chotard@st.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Cc: "dinguyen@opensource.altera.com" <dinguyen@opensource.altera.com>, "stefan@agner.ch" <stefan@agner.ch>, "shiraz.linux.kernel@gmail.com" <shiraz.linux.kernel@gmail.com>, "vireshk@kernel.org" <vireshk@kernel.org>, "dev@lynxeye.de" <dev@lynxeye.de>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "maxime.coquelin@st.com" <maxime.coquelin@st.com>, "amelie.delaunay@st.com" <amelie.delaunay@st.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?ISO-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexander Shiyan <shc_work@mail.ru>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Friday, April 29, 2016 04:18:20 PM Linus Walleij wrote:
-> On Fri, Apr 29, 2016 at 2:53 AM, Christian Lamparter
-> <chunkeey@googlemail.com> wrote:
-> 
-> > This patch integrates these GPIO drivers into gpio-generic.
-> >
-> > Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
-> 
-> Very elegant. Let's wait for some feedback/ACKs from
-> the driver maintainers, but this looks very nice.
-Oh by the way: who's maintaining them? get_maintainer.pl just
-lists the usual gpio people. I can try to add the module authors.
-However, I don't know if these are working or dead. I ran into an
-issue once (for something else) that I got the dreaded "delivery
-notification failed" messages, but I can't rebroadcast them on the
-ML (because that would be very silly).
-
-Anyway, I'll rebase my patch series (without the two patches you
-had already merged)
-
-> Do you want to address Andy's optimization suggestion directly
-> or as a follow-on patch?
-Oh, this is a RFC. I didn't expect anything to be merged just yet.
-Of course, I'll try to integrate his suggestion. I'll do that once
-I reply to Rob/Mark/You about the "linux,gpio-mmio",
-"memory-mapped-gpio" situation etc.
-
-Regards,
-Christian Lamparter
+T24gVGh1LCAyMDE2LTA0LTI4IGF0IDE0OjEyICswMjAwLCBwYXRyaWNlLmNob3RhcmRAc3QuY29t
+IHdyb3RlOg0KPiBGcm9tOiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+
+DQo+IA0KPiANCj4gVGhpcyBzZXJpZXMgY2xlYW5zIGFuZCBmaXhlcyBzb21lIGJ1Z3MgaW4gTUZE
+L0dQSU8gU1RNUEUgZHJpdmVycyBhbmQNCj4gcHJlcGFyZQ0KPiDCoHRoZSBncm91bmQgdG8gYWRk
+IG5ldyBTVE1QRTE2MDAgc3VwcG9ydC4NCj4gDQo+IFNUTVBFMTYwMCBkYXRhc2hlZXQgaXMgYXZh
+aWxhYmxlIGhlcmUgOsKgDQo+IGh0dHA6Ly93d3cyLnN0LmNvbS9jb250ZW50L3N0X2NvbS9lbi9w
+cm9kdWN0cy9pbnRlcmZhY2VzLWFuZC10cmFuc2NlaQ0KPiB2ZXJzLw0KPiBpLW8tZXhwYW5kZXJz
+LWFuZC1sZXZlbC10cmFuc2xhdG9ycy9pLW8tZXhwYW5kZXJzL3N0bXBlMTYwMC5odG1sDQo+IA0K
+PiBPbmx5IFNUTVBFMTYwMCBoYXMgYmVlbiB0ZXN0ZWQgb24gU1RNMzIgcGxhdGZvcm0uIEFzIGkg
+aGF2ZSBubyBib2FyZA0KPiB3aXRoDQo+IG90aGVycyBTVE1QRQ0KPiB2YXJpYW50KFNUTVBFNjEw
+L1NUTVBFODAxL1NUTVBFODExL1NUTVBFMTYwMS9TVE1QRTE4MDEvU1RNUEUyNDAxDQo+IGFuZCBT
+VE1QRTI0MDMpLCBpIHB1dCBpbiBDQyBib2FyZHMncyBtYWludGFpbmVycyB3aGljaCBhcmUgdXNp
+bmcNCj4gb3RoZXJzIFNUTVBFIHZhcmlhbnQuDQo+IA0KPiBJZiB0aGV5IGNhbiBraW5kbHkgY2hl
+Y2sgdGhhdCBubyByZWdyZXNzaW9uIGhhcyBiZWVuIGludHJvZHVjZSBieQ0KPiB0aGlzIHNlcmll
+cw0KPiA6DQo+IA0KPiBGb3IgQVJNL0ZSRUVTQ0FMRSBJTVggLyBNWEMgQVJNIEFSQ0hJVEVDVFVS
+RToNCj4gCV8gU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPg0KPiAJXyBTYXNjaGEgSGF1
+ZXIgPGtlcm5lbEBwZW5ndXRyb25peC5kZT4NCj4gDQo+IEZvciBBUk0vU09DRlBHQSBBUkNISVRF
+Q1RVUkUNCj4gCV8gRGluaCBOZ3V5ZW4gPGRpbmd1eWVuQG9wZW5zb3VyY2UuYWx0ZXJhLmNvbT4N
+Cj4gDQo+IEZvciBTUEVBUiBQTEFURk9STSBTVVBQT1JUDQo+IAlfIFZpcmVzaCBLdW1hciA8dmly
+ZXNoa0BrZXJuZWwub3JnPg0KPiAJXyBTaGlyYXogSGFzaGltIDxzaGlyYXoubGludXgua2VybmVs
+QGdtYWlsLmNvbT4NCj4gDQo+IEZvciBBcGFsaXMvQ29saWJyaSBib2FyZCBTVVBQT1JUDQo+IAlf
+IG1hcmNlbC56aXN3aWxlckB0b3JhZGV4LmNvbQ0KPiAJXyBzdGVmYW5AYWduZXIuY2gNCj4gCV8g
+ZGV2QGx5bnhleWUuZGUNCj4gCV8gVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWls
+LmNvbT4NCj4gCV8gQWxleGFuZHJlIENvdXJib3QgPGdudXJvdUBnbWFpbC5jb20+DQo+IA0KPiBG
+b3IgQVJNL1V4NTAwIEFSTSBBUkNISVRFQ1RVUkUNCj4gCV8gTGludXMgV2FsbGVpaiA8bGludXMu
+d2FsbGVpakBsaW5hcm8ub3JnPg0KPiANCj4gDQo+IHYxID0+IHYyOg0KPiAJXyB1cGRhdGUgQ2Mg
+bGlzdA0KPiAJXyBmaXgga2J1aWxkIHRlc3Qgcm9ib3Qgd2FybmluZ3Mgb24gb3JpZ2luYWwgcGF0
+Y2ggMw0KPiAJXyBzcGxpdCBwYXRjaCA2IHRvIGV4dHJhY3QgdXNhZ2Ugb2YgZ2VuZXJpYyBiaXRt
+YXNrIG5hbWUNCj4gCV8gc3BsaXQgcGF0Y2ggNiBhbmQgNyBhbmQgaW50cm9kdWNlIGEgbmV3IHdh
+eSB0byBhY2Nlc3MNCj4gcmVnaXN0ZXJzDQo+IAnCoMKgZm9yIGJvdGggbWZkL3N0bXBlIGFuZCBn
+cGlvL2dwaW8tc3RtcGUgZHJpdmVycy4NCj4gCV8gcmVtb3ZlIHBhdGNoIDgNCj4gDQo+IFBhdHJp
+Y2UgQ2hvdGFyZCAoMTApOg0KPiDCoCBtZmQ6IHN0bXBlOiBBZGQgU1RNUEVfSURYX1NZU19DVFJM
+LzIgZW51bQ0KPiDCoCBtZmQ6IHN0bXBlOiBBZGQgcmVzZXQgc3VwcG9ydCBmb3IgYWxsIFNUTVBF
+IHZhcmlhbnQNCj4gwqAgZ3Bpbzogc3RtcGU6IGZpeCBlZGdlIGFuZCByaXNpbmcvZmFsbGluZyBl
+ZGdlIGRldGVjdGlvbg0KPiDCoCBncGlvOiBzdG1wZTogd3JpdGUgaW50IHN0YXR1cyByZWdpc3Rl
+ciBvbmx5IHdoZW4gbmVlZGVkDQo+IMKgIG1mZDogc3RtcGU6IHVzZSBnZW5lcmljIGJpdCBtYXNr
+IG5hbWUNCj4gwqAgbWZkOiBzdG1wZTogcmV3b3JrIHJlZ2lzdGVycyBhY2Nlc3MNCj4gwqAgZ3Bp
+bzogc3RtcGU6IHJld29yayByZWdpc3RlcnMgYWNjZXNzDQo+IMKgIERvY3VtZW50YXRpb246IGR0
+OiBhZGQgc3RtcGUxNjAwIGNvbXBhdGlibGUgc3RyaW5nIHRvIHN0bXBlIG1mZA0KPiDCoCBtZmQ6
+IEFkZCBTVE1QRTE2MDAgc3VwcG9ydA0KPiDCoCBncGlvOiBzdG1wZTogQWRkIFNUTVBFMTYwMCBz
+dXBwb3J0DQo+IA0KPiDCoERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQvc3Rt
+cGUudHh0IHzCoMKgwqAyICstDQo+IMKgZHJpdmVycy9ncGlvL2dwaW8tc3RtcGUuY8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB8IDE2Nw0KPiArKysrKysrKysr
+KysrKysrKy0tLS0tLS0NCj4gwqBkcml2ZXJzL21mZC9zdG1wZS1pMmMuY8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfMKgwqDCoDIgKw0KPiDCoGRyaXZl
+cnMvbWZkL3N0bXBlLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgfCAxNjENCj4gKysrKysrKysrKysrKysrKysrKy0tLS0NCj4gwqBkcml2
+ZXJzL21mZC9zdG1wZS5owqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoHzCoMKgODUgKysrKysrKysrKy0tDQo+IMKgaW5jbHVkZS9saW51eC9t
+ZmQvc3RtcGUuaMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB8
+wqDCoDIxICsrKw0KPiDCoDYgZmlsZXMgY2hhbmdlZCwgMzUyIGluc2VydGlvbnMoKyksIDg2IGRl
+bGV0aW9ucygtKQ0KDQpJIGdhdmUgdGhlIHdob2xlIHNlcmllcyBhIHNwaW4gYm90aCBvbiBBcGFs
+aXMgaU1YNlEgMkdCIElUIFYxLjFCIGFzDQp3ZWxsIGFzIEFwYWxpcyBUMzAgMkdCIFYxLjFBIGJv
+dGggZmVhdHVyaW5nIGEgU1RNUEU4MTEgYW5kIGFuIEVEVCBWR0ENCnRvdWNoIHBhbmVsIGNvbm5l
+Y3RlZCB0byBpdCBzdGlsbCB3b3JrcyBwZXJmZWN0bHkgcnVubmluZyBMWERFIG9uIHRvcA0Kb2Yg
+dGhlIG1vZGVzZXR0aW5nIFggZHJpdmVyLg0KDQpUZXN0ZWQtYnk6IE1hcmNlbCBaaXN3aWxlciA8
+bWFyY2VsLnppc3dpbGVyQHRvcmFkZXguY29tPg==
