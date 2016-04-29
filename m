@@ -1,78 +1,103 @@
-From: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Subject: Re: [RFC v4 3/8] gpio: generic: add DT support for generic memory-mapped GPIOs
-Date: Fri, 29 Apr 2016 01:39:55 +0200
-Message-ID: <3841493.Kd66QyCgCc@debian64>
-References: <cover.1461806071.git.chunkeey@googlemail.com> <a5d6bb7bb73ff9396c9e8053a8e8e0975b857934.1461806071.git.chunkeey@googlemail.com> <CAHp75VeSf_=rQBRQ+1ox=fn7aJ53mGg_huH7HRbZck0HEhxBAQ@mail.gmail.com>
+From: Christian Lamparter <chunkeey@googlemail.com>
+Subject: [RFC v5 0/4] gpio: add DT support for generic memory-mapped GPIOs
+Date: Fri, 29 Apr 2016 02:53:13 +0200
+Message-ID: <cover.1461888822.git.chunkeey@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAHp75VeSf_=rQBRQ+1ox=fn7aJ53mGg_huH7HRbZck0HEhxBAQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm Mailing List <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, =?ISO-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:36861 "EHLO
+	mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752625AbcD2Axh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Apr 2016 20:53:37 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Christian Lamparter <chunkeey@googlemail.com>, =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexander Shiyan <shc_work@mail.ru>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Thursday, April 28, 2016 12:58:03 PM Andy Shevchenko wrote:
-> On Thu, Apr 28, 2016 at 12:05 PM, Christian Lamparter
-> <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> wrote:
-> > From: =C1lvaro Fern=E1ndez Rojas <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >
-> > This patch adds support for defining memory-mapped GPIOs
-> > which provide a compatible interface for the existing
-> > generic-gpio driver.
+This patch series adds device tree support for generic memory-mapped GP=
+IOs.
+The GPIO library already allows drivers and architecture support code t=
+o
+reuse generic code for managing a GPIO chip. Currently, a developer has
+to create a platform device "basic-mmio-gpio" and attach a bgpio_pdata
+platform data structure to make use of it. However, for architectures
+which rely on the device tree to enumerate devices, creating custom
+platform devices is another extra step that can be avoided by having
+direct support via a device tree binding.
 
-Thanks for your comments! I've prepared a new series which
-I'm going to post tomorrow. I've incorporated most of the
-remarks, but there's something I have to say about:=20
+I initially came across this patch [0] from =C3=81lvaro Fern=C3=A1ndez =
+Rojas,
+while looking for an easy way to add support for the GPIO of my
+WD MyBook Live [1] (APM82181 - ppc464). This generic approach patch
+allowed me to easily get the GPIO (and the connected LEDs,
+buttons, gpiohogs, etc.) up and running. Even tought, Mr. Fernandez
+initially developed it for his work on the brcm63xx [2].
 
-> > +static inline void set_resource_address(struct resource *res,
-> > +                                       resource_size_t start,
-> > +                                       resource_size_t len)
-> > +{
-> > +       res->start =3D start;
-> > +       res->end =3D start + len - 1;
-> > +}
->=20
-> It might make sense to put this in the generic (resource related, e.g=
-=2E
-> ioport.h) header. There are plenty users of such already and who know=
-s
-> how many will come.
+The device tree parses for the integrated drivers:
+gpio-clps711x, gpio-ge, gpio-moxart and gpio-ts4800 are now part
+of the gpio-generic.c driver file. The old driver files have been
+removed and the Kconfig, Makefile entries have been updated
+accordingly. If no complaints are filed (MODULE_ALIASES?), I'll
+go ahead and post the PATCH series beginning of next week.
 
-I looked around and found plenty of code in drivers/
-alone doing the same song and dance around it:
+And finally, the most important stat about the series:
+	>>> 312 insertions(+), 412 deletions(-) <<<
+	It removes more lines than it adds!
 
-acpi/pci_root.c acpi/resource.c
-bus/mvebu-mbus.c
-i2c/busses/i2c-i801.c
-irqchip/irq-mips-gic.c
-memory/omap-gpmc.c
-mfd/janz-cmodio.c mfd/lpc_ich.c mfd/sm501.c mtd/devices/ms02-nv.c
-nvdimm/namespace_devs.c
-of/address.c
-parisc/ccio-dma.c parisc/dino.c parisc/lba_pci.c
-pci/hotplug/ibmphp_res.c pci/bus.c pci/iov.c pci/setup-res.c
-pci/setup-bus.c pci/hotplug/ibmphp_res.c
-pcmcia/rsrc_mgr.c pcmcia/pcmcia_resource.c
-pnp/manager.c
-platform/x86/intel_pmc_ipc.c
-pinctrl/sh-pfc/core.c
-etc...
+Thanks! (Please keep me in the CC)
 
-I think arch/ will have a few more. If anything this will require
-help from coccinelle and more stuff. For now I'll convert the code
-to do the same thing as everybody else. And after the "linux,gpio-mmio"
-has been successfully mainlined I can worry about how to write the
-perfect set_resource_address or set_resource_range (needs to handle
-over- and underflows, etc...) and setup the automatic tools to convert
-the whole tree. So, unless someone else beats me to this, this would
-be my plan.
+[0] <https://patchwork.ozlabs.org/patch/422121/>
+[1] <https://github.com/chunkeey/MBL-openwrt>
+[2] <https://wiki.openwrt.org/doc/hardware/soc/soc.broadcom.bcm63xx>
 
-Regards,
-Christian
+changelog:
+
+v4 -> v5:
+	- reverted rename of gpio-mmio.c back to gpio-generic.c
+	- fixed Andy Shevchenko's comments
+	- consolidated changes from clps711x, gpio-ge, gpio-moxart and
+	  gpio-ts4800 into one patch.
+
+v3 -> v4:
+	- renamed gpio-generic.c to gpio-mmio.c
+	- changed compat. string to "linux,gpio-mmio"
+	- integrated Cirrus clps711x driver
+	- integrated GE FGPA gpio-ge driver
+	- integrated MOXA ART GPIO driver
+	- integrated TS4800 gpio driver
+	- reshuffled patches, reworded commits, fixed spelling errors, etc.
+
+Christian Lamparter (2):
+  gpio: generic: fix GPIO_GENERIC_PLATFORM is set to module case
+  gpio: move clps711x, moxart, ts4800 and gpio-ge into gpio-generic
+
+=C3=81lvaro Fern=C3=A1ndez Rojas (2):
+  gpio: generic: add DT support for generic memory-mapped GPIOs
+  gpio: dt-bindings: add gpio-mmio bindings
+
+ .../devicetree/bindings/gpio/gpio-mmio.txt         |  73 +++++++
+ drivers/gpio/Kconfig                               |  43 +---
+ drivers/gpio/Makefile                              |   4 -
+ drivers/gpio/gpio-clps711x.c                       |  91 --------
+ drivers/gpio/gpio-ge.c                             | 114 ----------
+ drivers/gpio/gpio-generic.c                        | 234 +++++++++++++=
++++++++-
+ drivers/gpio/gpio-moxart.c                         |  84 --------
+ drivers/gpio/gpio-ts4800.c                         |  81 -------
+ 8 files changed, 312 insertions(+), 412 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-mmio.tx=
+t
+ delete mode 100644 drivers/gpio/gpio-clps711x.c
+ delete mode 100644 drivers/gpio/gpio-ge.c
+ delete mode 100644 drivers/gpio/gpio-moxart.c
+ delete mode 100644 drivers/gpio/gpio-ts4800.c
+
+--=20
+2.8.1
+
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
 n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
