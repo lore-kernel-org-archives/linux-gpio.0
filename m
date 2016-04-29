@@ -1,34 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
-Date: Fri, 29 Apr 2016 11:07:42 +0200
-Message-ID: <CACRpkda7HqPLSRLzaSdO-7chjUBL9C2VAMB0nyVZUw=PSGL3VQ@mail.gmail.com>
-References: <1461580714-22479-1-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: Kill unused variable in sh_pfc_remove()
+Date: Fri, 29 Apr 2016 11:09:41 +0200
+Message-ID: <CACRpkdYvK85EMaZLURrt6MqkV2kv7DTqsq6AdktOsp8dcUmJeQ@mail.gmail.com>
+References: <1461666626-24805-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1461580714-22479-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1461666626-24805-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 25, 2016 at 12:38 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+On Tue, Apr 26, 2016 at 12:30 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> Add support for the debounce as Tegra210 support debounce in HW.
-> Also do the clenaups to remove all global variables.
+> If CONFIG_PINCTRL_SH_PFC_GPIO=n:
+>
+>     drivers/pinctrl/sh-pfc/core.c: In function 'sh_pfc_remove':
+>     drivers/pinctrl/sh-pfc/core.c:649:17: warning: unused variable 'pfc' [-Wunused-variable]
+>
+> Fixes: 67ec8d7b48463904 ("pinctrl: ish-pfc: Use devm_pinctrl_register() for pinctrl registration")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> I won't queue this up in sh-pfc-for-v4.7, as the offending commit is not in
+> that branch.
 
-OK this v5 is applied.
-
-Laxman does this GPIO also have open drain and/or open source
-handling?
-
-Then you might want to look into supporting that too as I just added
-support for native single-endedness to gpiolib, c.f.:
-http://marc.info/?l=linux-gpio&m=146011780301280&w=2
-
-It would be nice if you also implement .get_direction() which
-makes debugfs and initial reading of the state of the lines
-more accurate.
+OK patch applied.
 
 Yours,
 Linus Walleij
