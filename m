@@ -1,59 +1,43 @@
-From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 2/2] pinctrl: at91: Merge clk_prepare and clk_enable into clk_prepare_enable
-Date: Fri, 29 Apr 2016 14:50:03 +0200
-Message-ID: <1461934203-3206-2-git-send-email-alexanders83@web.de>
-References: <1461934203-3206-1-git-send-email-alexanders83@web.de>
+From: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
+Subject: [PATCH v2 0/2] pinmux support for Broadcom NS2 SoC
+Date: Fri, 29 Apr 2016 08:51:37 -0400
+Message-ID: <1461934299-14774-1-git-send-email-yendapally.reddy@broadcom.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.3]:63381 "EHLO mout.web.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752892AbcD2Muj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 29 Apr 2016 08:50:39 -0400
-In-Reply-To: <1461934203-3206-1-git-send-email-alexanders83@web.de>
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:51690 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753081AbcD2Mvp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Apr 2016 08:51:45 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexander Stein <alexanders83@web.de>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Pramod Kumar <pramodku@broadcom.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
 
-This simplifies the normal as well as the error path.
+This patchset contains the pinmux support for the Broadcom's
+Northstar 2 (NS2) SoC.
 
-Signed-off-by: Alexander Stein <alexanders83@web.de>
----
- drivers/pinctrl/pinctrl-at91.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+The first patch provides the driver details and the second patch contains
+the enable method. The documentation details patch is already merged.
 
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index 29d57118e35c..e380333dad46 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -1730,14 +1730,9 @@ static int at91_gpio_probe(struct platform_device *pdev)
- 		goto err;
- 	}
- 
--	ret = clk_prepare(at91_chip->clock);
--	if (ret)
--		goto clk_prepare_err;
--
--	/* enable PIO controller's clock */
--	ret = clk_enable(at91_chip->clock);
-+	ret = clk_prepare_enable(at91_chip->clock);
- 	if (ret) {
--		dev_err(&pdev->dev, "failed to enable clock, ignoring.\n");
-+		dev_err(&pdev->dev, "failed to prepare and enable clock, ignoring.\n");
- 		goto clk_enable_err;
- 	}
- 
-@@ -1797,10 +1792,8 @@ static int at91_gpio_probe(struct platform_device *pdev)
- irq_setup_err:
- 	gpiochip_remove(chip);
- gpiochip_add_err:
--	clk_disable(at91_chip->clock);
- clk_enable_err:
--	clk_unprepare(at91_chip->clock);
--clk_prepare_err:
-+	clk_disable_unprepare(at91_chip->clock);
- err:
- 	dev_err(&pdev->dev, "Failure %i for GPIO %i\n", ret, alias_idx);
- 
+This patch set has been tested on NS2 bcm958712K board.
+This patch set is based on v4.6.0-rc1 and is available from github
+repo: https://github.com/Broadcom/arm64-linux.git
+branch: ns2-pinmux-v2
+
+Changes since v1:
+ removed module macros in the file as suggested by Linus
+
+Yendapally Reddy Dhananjaya Reddy (2):
+  pinctrl: ns2: add pinmux driver support for Broadcom NS2 SoC
+  ARM: dts: enable pinctrl for Broadcom NS2 SoC
+
+ arch/arm64/boot/dts/broadcom/ns2-svk.dts |    9 +
+ arch/arm64/boot/dts/broadcom/ns2.dtsi    |    7 +
+ drivers/pinctrl/bcm/Kconfig              |   13 +
+ drivers/pinctrl/bcm/Makefile             |    1 +
+ drivers/pinctrl/bcm/pinctrl-ns2-mux.c    | 1117 ++++++++++++++++++++++++++++++
+ 5 files changed, 1147 insertions(+)
+ create mode 100644 drivers/pinctrl/bcm/pinctrl-ns2-mux.c
+
 -- 
-2.8.1
+2.1.0
 
