@@ -1,32 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: Kill unused variable in sh_pfc_remove()
-Date: Fri, 29 Apr 2016 11:09:41 +0200
-Message-ID: <CACRpkdYvK85EMaZLURrt6MqkV2kv7DTqsq6AdktOsp8dcUmJeQ@mail.gmail.com>
-References: <1461666626-24805-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH] gpio/qoriq: select IRQ_DOMAIN
+Date: Fri, 29 Apr 2016 11:13:29 +0200
+Message-ID: <CACRpkdbBeVShF-E0MySsmcgkBVQb1upL=5uFDtYbtz3aYNz+iQ@mail.gmail.com>
+References: <1461067821-2031706-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1461666626-24805-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1461067821-2031706-1-git-send-email-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Liu Gang <Gang.Liu@nxp.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 26, 2016 at 12:30 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Tue, Apr 19, 2016 at 2:10 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-> If CONFIG_PINCTRL_SH_PFC_GPIO=n:
+> The gpio-mpc8xxx driver requires IRQ domains but can be built
+> without them, resulting on a failure to build certain randconfigs
+> on ARM:
 >
->     drivers/pinctrl/sh-pfc/core.c: In function 'sh_pfc_remove':
->     drivers/pinctrl/sh-pfc/core.c:649:17: warning: unused variable 'pfc' [-Wunused-variable]
+> drivers/gpio/gpio-mpc8xxx.c: In function 'mpc8xxx_gpio_to_irq':
+> drivers/gpio/gpio-mpc8xxx.c:92:10: error: implicit declaration of function 'irq_create_mapping' [-Werror=implicit-function-declaration]
+>    return irq_create_mapping(mpc8xxx_gc->irq, offset);
 >
-> Fixes: 67ec8d7b48463904 ("pinctrl: ish-pfc: Use devm_pinctrl_register() for pinctrl registration")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> I won't queue this up in sh-pfc-for-v4.7, as the offending commit is not in
-> that branch.
+> This selects IRQ_DOMAIN from the driver to ensure we can build it.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 5df7fd46b70b ("gpio/qoriq: Add qoriq platforms support")
 
-OK patch applied.
+Patch applied.
 
 Yours,
 Linus Walleij
