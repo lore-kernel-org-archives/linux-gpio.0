@@ -1,54 +1,197 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
-Date: Fri, 29 Apr 2016 14:50:11 +0530
-Message-ID: <5723274B.3050209@nvidia.com>
-References: <1461580714-22479-1-git-send-email-ldewangan@nvidia.com> <CACRpkda7HqPLSRLzaSdO-7chjUBL9C2VAMB0nyVZUw=PSGL3VQ@mail.gmail.com>
+From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [RFC v5 4/4] gpio: dt-bindings: add gpio-mmio bindings
+Date: Fri, 29 Apr 2016 12:15:01 +0100
+Message-ID: <20160429111500.GA23726@leverpostej>
+References: <cover.1461888822.git.chunkeey@googlemail.com>
+ <a0ded4d0161f7ab3cd1945741d95d2718dbe4f44.1461888822.git.chunkeey@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:1511 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751043AbcD2JcM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Apr 2016 05:32:12 -0400
-In-Reply-To: <CACRpkda7HqPLSRLzaSdO-7chjUBL9C2VAMB0nyVZUw=PSGL3VQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <a0ded4d0161f7ab3cd1945741d95d2718dbe4f44.1461888822.git.chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, =?utf-8?B?w4FsdmFybyBGZXJuw6FuZGV6?= Rojas <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
+Hi,
 
-On Friday 29 April 2016 02:37 PM, Linus Walleij wrote:
-> On Mon, Apr 25, 2016 at 12:38 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
->
->> Add support for the debounce as Tegra210 support debounce in HW.
->> Also do the clenaups to remove all global variables.
-> OK this v5 is applied.
->
-> Laxman does this GPIO also have open drain and/or open source
-> handling?
+As a general thing, please put the binding earlier in a series than cod=
+e
+implemeting it, as that that makes it easier to review the series
+in-order (with context from the binding making code review easier). See
+Documentation/devicetree/bindings/submitting-patches.txt
 
-Some of the pins support the open drain and these are part of pinmux 
-register set.
-For that we have property for setting open drain.
+On Fri, Apr 29, 2016 at 02:53:17AM +0200, Christian Lamparter wrote:
+> From: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>=20
+> This patch adds the device tree bindings for the gpio-mmio.
+> The gpio-mmio is already part of a the GPIO generic library.
+>=20
+> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+> ---
+>  .../devicetree/bindings/gpio/gpio-mmio.txt         | 73 ++++++++++++=
+++++++++++
+>  1 file changed, 73 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-mmio.=
+txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mmio.txt b/D=
+ocumentation/devicetree/bindings/gpio/gpio-mmio.txt
+> new file mode 100644
+> index 0000000..cc7f0b1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-mmio.txt
+> @@ -0,0 +1,73 @@
+> +Bindings for the generic driver for memory-mapped GPIO controllers.
+> +
 
-Is it possible to link the gpio APIs to pincontrol for setting that pin?
+Bindings should be for hardware (either specific device models, or for
+classes), and not for Linux drivers. The latter is subject to arbitrary
+changes while the former is not, as old hardware continues to exist and
+does not change while drivers get completely reworked.
 
+So please frame this binding document in terms of the class of hardware
+you are trying to address. Please provide some introduction to the
+assumptions that you are making about said hardware, such that it's
+obvious when one needs a more specific binding.
 
-> Then you might want to look into supporting that too as I just added
-> support for native single-endedness to gpiolib, c.f.:
-> http://marc.info/?l=linux-gpio&m=146011780301280&w=2
+I share the same fears that Rob mentioned in that while this may appear
+simple now, the limitations are unclear, and this effectively prevents
+us from accurately/specifically describing some hardware.
 
-Yaah, Some of PMIC's (which I am handling) gpios support open drain and 
-I think I can have changes for the PMIC gpio driver.
+Regardless, I've taken the time to review the below, and I have a numbe=
+r
+of comments.
 
->
-> It would be nice if you also implement .get_direction() which
-> makes debugfs and initial reading of the state of the lines
-> more accurate.
+> +Required properties:
+> +	- compatible: should be "linux,gpio-mmio"
 
-Sure, this can be implemented.
-Will post the patch on top of the series soon.
+Even with the above comments, this binding name would be valid.
 
+> +	- reg-names: must contain
+> +		"dat" - data register
+> +		may contain
+> +		"set" - data set register
+> +		"clr" - data clear register
+> +		"dirout" - direction output register
+> +		"dirin" - direction input register
 
+Below, we mention endianness. Are registers an arbitrary number of byte=
+s
+long? In what unit size are they grouped (e.g. {8,16,32,64}-bit)?
 
+What are the expectations for the set/clear/dirin/dirout registers? Are
+they write-one to modify, or write-zero to modify?
+
+=46or the names, don't bother abbreviating (i.e. use "data", "set",
+"clear").
+
+These names might clash with the real names a specific HW model applies
+to its register sets, which means that this binding is exclusive w.r.t.
+a specific binding for a device (i.e. it cannot be extended with
+device-specific information).
+
+If we're happy with that, then we must call out the expected limitation=
+s
+on the use of this binding, or we end up with the not-so-simple-any-mor=
+e
+issues Rob mentioned previously.=20
+
+> +	- reg: address + size pairs describing the GPIO register sets;
+> +		order must correspond with the order of entries in reg-names
+> +	- #gpio-cells =3D must be set to 2
+
+Where the cells encode what? I'm guessing this is <$idx $flags>, but yo=
+u
+should spell that out explicitly.
+
+> +	- gpio-controller: Marks the device node as a gpio controller.
+> +
+> +Optional properties:
+> +	- ngpio: specifies the number of gpio mapped in the register.
+> +	- big-endian: force big endian register accesses.
+> +	- big-endian-byte-order: assign GPIOs in reverse order.
+
+I cannot parse this last description. It needs a better wording.
+
+I guess this means that the indices (in the first GPIO cell) are applie=
+d
+in descending order for ascending chunks of the registers (and that is =
+a
+poor description, too).
+
+> +	- unreadable-reg-set: data set register is not readable.
+> +	- read-output-reg-set: cache value set for reads.
+> +	- unreadable-reg-dir: dirout/dirin register is not readable.
+> +	- no-output: GPIOs are read-only.
+> +
+> +The GPIO generic library provides support for memory-mapped GPIO
+> +controllers. The configuration is detected by which resources are pr=
+esent.
+> +The simplest form of a GPIO controller that the driver support is ju=
+st a
+> +single "dat" register, where GPIO state can be read and/or written.
+> +However, the driver supports far more:
+> +	- 8/16/32/64 bits registers. The number of GPIOs is automatically
+> +	  determined by the width of the registers.
+> +	- GPIO controllers with clear/set registers.
+> +	- GPIO controllers with a single "dat" register.
+> +	- Big endian bits/GPIOs ordering.
+
+Reword this in terms of the class of hardware you are trying to support=
+,
+(rather than the specific library code you are using), and move it to
+the introduction at the top of the binding.
+
+Thanks,
+Mark.
+
+> +
+> +For setting GPIO's there are three configurations:
+> +	1. single input/output register resource (named "dat"),
+> +	2. set/clear pair (named "set" and "clr"),
+> +	3. single output register resource and single input resource
+> +	   ("set" and dat").
+> +
+> +For setting the GPIO direction, there are three configurations:
+> +	a. simple bidirectional GPIOs that requires no configuration.
+> +	b. an output direction register (named "dirout")
+> +	   where a 1 bit indicates the GPIO is an output.
+> +	c. an input direction register (named "dirin")
+> +	   where a 1 bit indicates the GPIO is an input.
+> +
+> +Examples:
+> +
+> +	/* Configuration for single input/output register
+> +	 * for eight simple bidirectional GPIOs.
+> +	 */
+> +	gpio_a_1 {
+> +		compatible =3D "linux,gpio-mmio";
+> +		reg =3D <0x18000000 0x1>;
+> +		reg-names =3D "dat";
+> +		#gpio-cells =3D <2>;
+> +		gpio-controller;
+> +	};
+> +
+> +	/* Configuration for set/clear pair registers with
+> +	 * 32 output direction register GPIOs.
+> +	 */
+> +	gpio_b_2 {
+> +		compatible =3D "linux,gpio-mmio";
+> +		reg =3D <0x18000000 0x4>, <0x18000010 0x4>,
+> +		      <0x18000004 0x4>, <0x18000008 0x4>;
+> +		reg-names =3D "dat", "set", "clr", "dirout";
+> +		#gpio-cells =3D <2>;
+> +		gpio-controller;
+> +	};
+> --=20
+> 2.8.1
+>=20
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
