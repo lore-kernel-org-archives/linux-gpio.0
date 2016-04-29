@@ -1,82 +1,48 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V2] gpio: tegra: Implement gpio_get_direction callback
-Date: Fri, 29 Apr 2016 18:15:04 +0100
-Message-ID: <57239698.80901@nvidia.com>
-References: <1461947123-18170-1-git-send-email-ldewangan@nvidia.com>
+From: Christian Lamparter <chunkeey@googlemail.com>
+Subject: Re: [RFC v5 3/4] gpio: move clps711x, moxart, ts4800 and gpio-ge into gpio-generic
+Date: Fri, 29 Apr 2016 21:06:11 +0200
+Message-ID: <1518049.pLhlI1cuZi@debian64>
+References: <cover.1461888822.git.chunkeey@googlemail.com> <9e5cc9e957144bd5d4081573ef959f931281eaaa.1461888822.git.chunkeey@googlemail.com> <CACRpkdaX1xeGJxV9K-GkTAh87SctqyhkJ+VN6mwUdtD19tz99g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:5703 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751980AbcD2RPO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Apr 2016 13:15:14 -0400
-In-Reply-To: <1461947123-18170-1-git-send-email-ldewangan@nvidia.com>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:32948 "EHLO
+	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750875AbcD2TGT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Apr 2016 15:06:19 -0400
+In-Reply-To: <CACRpkdaX1xeGJxV9K-GkTAh87SctqyhkJ+VN6mwUdtD19tz99g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org, swarren@wwwdotorg.org, thierry.reding@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?ISO-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexander Shiyan <shc_work@mail.ru>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
+On Friday, April 29, 2016 04:18:20 PM Linus Walleij wrote:
+> On Fri, Apr 29, 2016 at 2:53 AM, Christian Lamparter
+> <chunkeey@googlemail.com> wrote:
+> 
+> > This patch integrates these GPIO drivers into gpio-generic.
+> >
+> > Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
+> 
+> Very elegant. Let's wait for some feedback/ACKs from
+> the driver maintainers, but this looks very nice.
+Oh by the way: who's maintaining them? get_maintainer.pl just
+lists the usual gpio people. I can try to add the module authors.
+However, I don't know if these are working or dead. I ran into an
+issue once (for something else) that I got the dreaded "delivery
+notification failed" messages, but I can't rebroadcast them on the
+ML (because that would be very silly).
 
-On 29/04/16 17:25, Laxman Dewangan wrote:
-> Implement gpio_get_direction() callback for Tegra GPIO.
-> The direction is only valid if the pin is configured as
-> GPIO. If pin is not configured in GPIO mode then this
-> function return error.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> 
-> ---
-> This patch is based on discussion on series
-> Re: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
-> From Linus W:
-> It would be nice if you also implement .get_direction() which makes
-> debugfs and initial reading of the state of the lines more accurate.
-> 
-> V1->V2:
-> - Rearrange the calls to optimise the register access and avoid
->  much indenting based on Stephen's and Jon review.
-> 
->  drivers/gpio/gpio-tegra.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-> index b3ddd92..ec891a27 100644
-> --- a/drivers/gpio/gpio-tegra.c
-> +++ b/drivers/gpio/gpio-tegra.c
-> @@ -191,6 +191,21 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
->  	return 0;
->  }
->  
-> +static int tegra_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
-> +{
-> +	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
-> +	u32 pin_mask = BIT(GPIO_BIT(offset));
-> +	u32 cnf, oe;
-> +
-> +	cnf = tegra_gpio_readl(tgi, GPIO_CNF(tgi, offset));
-> +	if (!(cnf & pin_mask))
-> +		return -EINVAL;
-> +
-> +	oe = tegra_gpio_readl(tgi, GPIO_OE(tgi, offset));
-> +
-> +	return (oe & pin_mask) ? GPIOF_DIR_OUT : GPIOF_DIR_IN;
-> +}
-> +
->  static int tegra_gpio_set_debounce(struct gpio_chip *chip, unsigned int offset,
->  				   unsigned int debounce)
->  {
-> @@ -575,6 +590,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
->  	tgi->gc.get			= tegra_gpio_get;
->  	tgi->gc.direction_output	= tegra_gpio_direction_output;
->  	tgi->gc.set			= tegra_gpio_set;
-> +	tgi->gc.get_direction		= tegra_gpio_get_direction;
->  	tgi->gc.to_irq			= tegra_gpio_to_irq;
->  	tgi->gc.base			= 0;
->  	tgi->gc.ngpio			= tgi->bank_count * 32;
+Anyway, I'll rebase my patch series (without the two patches you
+had already merged)
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> Do you want to address Andy's optimization suggestion directly
+> or as a follow-on patch?
+Oh, this is a RFC. I didn't expect anything to be merged just yet.
+Of course, I'll try to integrate his suggestion. I'll do that once
+I reply to Rob/Mark/You about the "linux,gpio-mmio",
+"memory-mapped-gpio" situation etc.
 
-Cheers
-Jon
-
+Regards,
+Christian Lamparter
