@@ -1,59 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v10 3/3] gpio: dwapb: add gpio-signaled acpi event support
-Date: Fri, 29 Apr 2016 11:25:17 +0200
-Message-ID: <CACRpkdYHxy7BY8=aZu19RCeyyPvSsivNJjby2wp=x3t0Ape=Qg@mail.gmail.com>
-References: <1461835923-68492-1-git-send-email-qiujiang@huawei.com>
-	<1461835923-68492-4-git-send-email-qiujiang@huawei.com>
+Subject: Re: [PATCH 04/11] gpio: altera-a10sr: Add A10 System Resource Chip
+ GPIO support.
+Date: Fri, 29 Apr 2016 11:29:28 +0200
+Message-ID: <CACRpkdbQSCqC-wYsigVKsm3=o2Uq8iOLXOnCMYgAkSddvUEODw@mail.gmail.com>
+References: <1461339219-15255-1-git-send-email-tthayer@opensource.altera.com>
+	<1461339219-15255-5-git-send-email-tthayer@opensource.altera.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1461835923-68492-4-git-send-email-qiujiang@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jiang Qiu <qiujiang@huawei.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Alan Tull <delicious.quinoa@gmail.com>, Jamie Iles <jamie@jamieiles.com>, charles.chenxin@huawei.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>
+Return-path: <linux-hwmon-owner@vger.kernel.org>
+In-Reply-To: <1461339219-15255-5-git-send-email-tthayer@opensource.altera.com>
+Sender: linux-hwmon-owner@vger.kernel.org
+To: tthayer@opensource.altera.com
+Cc: Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, jdelvare@suse.com, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Dinh Nguyen <dinguyen@opensource.altera.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-hwmon@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Apr 28, 2016 at 11:32 AM, Jiang Qiu <qiujiang@huawei.com> wrote:
+On Fri, Apr 22, 2016 at 5:33 PM,  <tthayer@opensource.altera.com> wrote:
 
-> This patch adds gpio-signaled acpi event support. It is used for
-> power button on hisilicon D02 board, an arm64 platform.
+> From: Thor Thayer <tthayer@opensource.altera.com>
 >
-> The corresponding DSDT file is defined as follows:
-> Device(GPI0) {
->         Name(_HID, "HISI0181")
->         Name(_ADR, 0)
->         Name(_UID, 0)
+> Add the GPIO functionality for the Altera Arria10 MAX5 System Resource
+> Chip. The A10 MAX5 has 12 bits of GPIO assigned to switches, buttons,
+> and LEDs as a GPIO extender on the SPI bus.
 >
->         Name (_CRS, ResourceTemplate ()  {
->                 Memory32Fixed (ReadWrite, 0x802e0000, 0x10000)
->                 Interrupt (ResourceConsumer, Level, ActiveHigh,
->                 Exclusive,,,)  {344}
->         })
->
->         Device(PRTa) {
->                 Name (_DSD, Package () {
->                 Package () {
->                         Package () {"reg",0},
->                         Package () {"snps,nr-gpios",32},
->                 }
->                 })
->         }
->
->         Name (_AEI, ResourceTemplate () {
->                 GpioInt(Edge, ActiveLow, ExclusiveAndWake,
->                 PullUp, , " \\_SB.GPI0") {8}
->         })
->
->         Method (_E08, 0x0, NotSerialized) {
->                 Notify (\_SB.PWRB, 0x80)
->         }
-> }
->
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: Jiang Qiu <qiujiang@huawei.com>
+> Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
 
-Patch applied.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Lee feel free to queue this.
 
 Yours,
 Linus Walleij
