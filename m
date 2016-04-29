@@ -1,53 +1,42 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: Let gpio_chip.to_irq() return -ENXIO on error
-Date: Fri, 29 Apr 2016 09:24:37 +0200
-Message-ID: <1461914677-24899-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 06/10] mfd: stmpe: rework registers access
+Date: Fri, 29 Apr 2016 09:42:06 +0200
+Message-ID: <CACRpkdbPGjmKb6V+QhxnjV+FxcTDhFDmMdjfHhS4fUEHVXEs6A@mail.gmail.com>
+References: <1461845589-4826-1-git-send-email-patrice.chotard@st.com>
+	<1461845589-4826-7-git-send-email-patrice.chotard@st.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1461845589-4826-7-git-send-email-patrice.chotard@st.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Patrice CHOTARD <patrice.chotard@st.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Maxime Coquelin <maxime.coquelin@st.com>, amelie.delaunay@st.com, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Dinh Nguyen <dinguyen@opensource.altera.com>, Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Stefan Agner <stefan@agner.ch>, dev@lynxeye.de
 List-Id: linux-gpio@vger.kernel.org
 
-Currrently the gpio_chip.to_irq() callback returns -ENOSYS on error,
-which causes bad interactions with the serial_mctrl_gpio helpers.
+On Thu, Apr 28, 2016 at 2:13 PM,  <patrice.chotard@st.com> wrote:
 
-mctrl_gpio_init() returns -ENOSYS if GPIOLIB is not enabled, which is
-intended to be ignored by its callers. However, ignoring -ENOSYS when it
-was caused by a gpiod_to_irq() failure will lead to a crash later:
+> From: Patrice Chotard <patrice.chotard@st.com>
+>
+> this update allows to use registers map as following :
+> regs[reg_index + offset] instead of
+> regs[reg_index] + offset
+>
+> This makes code clearer and will facilitate the addition of STMPE1600
+> on which LSB and MSB registers are respectively located at addr and addr + 1.
+> Despite for all others STMPE variant, LSB and MSB registers are respectively
+> located in reverse order at addr + 1 and addr.
+>
+> For variant which have 3 registers's bank, we use LSB,CSB and MSB indexes
+> which contains respectively LSB (or LOW), CSB (or MID) and MSB (or HIGH)
+> register addresses (STMPE1801/STMPE24xx).
+> For variant which have 2 registers's bank, we use LSB and CSB indexes only.
+> In this case the CSB index contains the MSB regs address (STMPE 1601).
+>
+> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 
-    Unable to handle kernel paging request at virtual address ffffffde
-    ...
-    PC is at mctrl_gpio_set+0x14/0x78
+Yep this is so much clearer!
 
-Fix this by returning -ENXIO instead.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Is -ENXIO the right error code?
-
-  - Most drivers seem to return -ENXIO on failure, just like
-    gpiod_to_irq() does when no .to_irq() callback is provided by the
-    driver,
-  - Some drivers use -EINVAL,
-  - Drivers that call irq_find_mapping(), irq_create_mapping(), or
-    irq_create_fwspec_mapping() return zero!  This also applies to the
-    core helper gpiochip_to_irq().
----
- drivers/pinctrl/sh-pfc/gpio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-index a6681b8b17c3b30c..2fffb9c32231adb3 100644
---- a/drivers/pinctrl/sh-pfc/gpio.c
-+++ b/drivers/pinctrl/sh-pfc/gpio.c
-@@ -212,7 +212,7 @@ static int gpio_pin_to_irq(struct gpio_chip *gc, unsigned offset)
- 		}
- 	}
- 
--	return -ENOSYS;
-+	return -ENXIO;
- 
- found:
- 	return pfc->irqs[i];
--- 
-1.9.1
+Yours,
+Linus Walleij
