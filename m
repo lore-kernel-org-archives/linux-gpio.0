@@ -1,115 +1,73 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC v5 4/4] gpio: dt-bindings: add gpio-mmio bindings
-Date: Fri, 29 Apr 2016 16:29:13 +0200
-Message-ID: <CACRpkdYXqcQ1a=S5c6Cev__nqfquo7tFA=3uJSu9wf96txfBwQ@mail.gmail.com>
-References: <cover.1461888822.git.chunkeey@googlemail.com>
-	<a0ded4d0161f7ab3cd1945741d95d2718dbe4f44.1461888822.git.chunkeey@googlemail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] gpio: tegra: Implement gpio_get_direction callback
+Date: Fri, 29 Apr 2016 16:30:41 +0100
+Message-ID: <57237E21.4090906@nvidia.com>
+References: <1461933078-20366-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:35166 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753190AbcD2O3O convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Apr 2016 10:29:14 -0400
-Received: by mail-ob0-f182.google.com with SMTP id n10so49116109obb.2
-        for <linux-gpio@vger.kernel.org>; Fri, 29 Apr 2016 07:29:14 -0700 (PDT)
-In-Reply-To: <a0ded4d0161f7ab3cd1945741d95d2718dbe4f44.1461888822.git.chunkeey@googlemail.com>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15670 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753038AbcD2Pat (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 Apr 2016 11:30:49 -0400
+In-Reply-To: <1461933078-20366-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Christian Lamparter <chunkeey@googlemail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexander Shiyan <shc_work@mail.ru>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org, swarren@wwwdotorg.org, thierry.reding@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Apr 29, 2016 at 2:53 AM, Christian Lamparter
-<chunkeey@googlemail.com> wrote:
 
-> From: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
->
-> This patch adds the device tree bindings for the gpio-mmio.
-> The gpio-mmio is already part of a the GPIO generic library.
->
-> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
-> Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
-
-I share your ambition to create something generic for this class
-of hardware(s).
-
-> +Bindings for the generic driver for memory-mapped GPIO controllers.
+On 29/04/16 13:31, Laxman Dewangan wrote:
+> Implement gpio_get_direction() callback for Tegra GPIO.
+> The direction is only valid if the pin is configured as
+> GPIO. If pin is not configured in GPIO mode then this
+> function return error.
+> 
+> This makes debugfs and initial reading of the state of
+> the lines more accurate.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> ---
+> This patch is based on discussion on series 
+> Re: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
+> From Linus W:
+> It would be nice if you also implement .get_direction() which makes
+> debugfs and initial reading of the state of the lines more accurate.
+> 
+>  drivers/gpio/gpio-tegra.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+> index b3ddd92..6f2292b 100644
+> --- a/drivers/gpio/gpio-tegra.c
+> +++ b/drivers/gpio/gpio-tegra.c
+> @@ -191,6 +191,24 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+>  	return 0;
+>  }
+>  
+> +static int tegra_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+> +{
+> +	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+> +	u32 pin_mask = BIT(GPIO_BIT(offset));
+> +	u32 cnf, oe;
 > +
-> +Required properties:
-> +       - compatible: should be "linux,gpio-mmio"
+> +	cnf = tegra_gpio_readl(tgi, GPIO_CNF(tgi, offset));
+> +	oe = tegra_gpio_readl(tgi, GPIO_OE(tgi, offset));
+> +	if (cnf & pin_mask) {
 
-Why?
-"memory-mapped-gpio" sits nicely with me.
+Nit ... does not look like there is any point in reading GPIO_OE if cnf
+& pin_mask == 0, so you could move the test before reading GPIO_OE and
+then ...
 
-Read another very generic binding for inspiration:
-Documentation/devicetree/bindings/leds/register-bit-led.txt
+> +		if (oe & pin_mask)
+> +			return GPIOF_DIR_OUT;
+> +
+> +		return GPIOF_DIR_IN;
 
-> +       - reg-names: must contain
-> +               "dat" - data register
-> +               may contain
-> +               "set" - data set register
-> +               "clr" - data clear register
-> +               "dirout" - direction output register
-> +               "dirin" - direction input register
+You could ...
 
-I would just be more verbose:
+	return (oe & mask) ? GPIOF_DIR_OUT : GPIOF_DIR_IN;
 
-data-in-register
-data-out-set-register
-data-out-clear-register
-direction-output-register
-direction-input-register
-
-Some should be optional so we can support input-only
-and output-only GPIO controllers too.
-
-I would take this opportunity to add bindings also for stuff that
-the generic MMIO driver does not support today but
-could be made to support:
-
-open-drain-register
-open-source-register
-debounce-register
-
-etc
-
-> +Optional properties:
-> +       - ngpio: specifies the number of gpio mapped in the register.
-
-Just reference the generic docs.
-
-> +       - big-endian: force big endian register accesses.
-> +       - big-endian-byte-order: assign GPIOs in reverse order.
-> +       - unreadable-reg-set: data set register is not readable.
-> +       - read-output-reg-set: cache value set for reads.
-> +       - unreadable-reg-dir: dirout/dirin register is not readable.
-> +       - no-output: GPIOs are read-only.
-
-I think it's better to imply that if there is no data-in-register
-specified, then it is output-only etc.
-
-> +The GPIO generic library provides support for memory-mapped GPIO
-> +controllers. The configuration is detected by which resources are pr=
-esent.
-> +The simplest form of a GPIO controller that the driver support is ju=
-st a
-> +single "dat" register, where GPIO state can be read and/or written.
-> +However, the driver supports far more:
-> +       - 8/16/32/64 bits registers. The number of GPIOs is automatic=
-ally
-> +         determined by the width of the registers.
-> +       - GPIO controllers with clear/set registers.
-> +       - GPIO controllers with a single "dat" register.
-> +       - Big endian bits/GPIOs ordering.
-
-
-Skip this. It is Linux-specific.
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Cheers
+Jon
