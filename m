@@ -1,106 +1,53 @@
-From: Christian Lamparter <chunkeey@googlemail.com>
-Subject: [RFC v5 2/4] gpio: generic: add DT support for generic memory-mapped
- GPIOs
-Date: Fri, 29 Apr 2016 02:53:15 +0200
-Message-ID: <240c85fbbedbe3fa3c4b23da9a804e4ece98786d.1461888822.git.chunkeey@googlemail.com>
-References: <cover.1461888822.git.chunkeey@googlemail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <cover.1461888822.git.chunkeey@googlemail.com>
-In-Reply-To: <cover.1461888822.git.chunkeey@googlemail.com>
-References: <cover.1461888822.git.chunkeey@googlemail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>, Alexander Shiyan <shc_work@mail.ru>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Christian Lamparter <chunkeey@googlemail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: Let gpio_chip.to_irq() return -ENXIO on error
+Date: Fri, 29 Apr 2016 09:24:37 +0200
+Message-ID: <1461914677-24899-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-RnJvbTogw4FsdmFybyBGZXJuw6FuZGV6IFJvamFzIDxub2x0YXJpQGdtYWlsLmNvbT4KClRoaXMg
-cGF0Y2ggYWRkcyBzdXBwb3J0IGZvciBkZWZpbmluZyBtZW1vcnktbWFwcGVkIEdQSU9zCndoaWNo
-IHByb3ZpZGUgYSBjb21wYXRpYmxlIGludGVyZmFjZSBmb3IgdGhlIGV4aXN0aW5nCmdlbmVyaWMt
-Z3BpbyBkcml2ZXIuCgpTaWduZWQtb2ZmLWJ5OiDDgWx2YXJvIEZlcm7DoW5kZXogUm9qYXMgPG5v
-bHRhcmlAZ21haWwuY29tPgpTaWduZWQtb2ZmLWJ5OiBDaHJpc3RpYW4gTGFtcGFydGVyIDxjaHVu
-a2VleUBnb29nbGVtYWlsLmNvbT4KLS0tCiBkcml2ZXJzL2dwaW8vZ3Bpby1nZW5lcmljLmMgfCA5
-OCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0KIDEgZmlsZSBj
-aGFuZ2VkLCA5NiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3Bpby9ncGlvLWdlbmVyaWMuYyBiL2RyaXZlcnMvZ3Bpby9ncGlvLWdlbmVyaWMuYwpp
-bmRleCA2YzFjYjNiLi4xMjljM2JhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1nZW5l
-cmljLmMKKysrIGIvZHJpdmVycy9ncGlvL2dwaW8tZ2VuZXJpYy5jCkBAIC02MSw2ICs2MSw4IEBA
-IG8gICAgICAgIGAgICAgICAgICAgICAgICAgICAgICB+fn5+XF9fXy9+fn5+ICAgIGAgY29udHJv
-bGxlciBpbiBGUEdBIGlzICwuYAogI2luY2x1ZGUgPGxpbnV4L2JpdG9wcy5oPgogI2luY2x1ZGUg
-PGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgogI2luY2x1ZGUgPGxpbnV4L21vZF9kZXZpY2V0YWJs
-ZS5oPgorI2luY2x1ZGUgPGxpbnV4L29mLmg+CisjaW5jbHVkZSA8bGludXgvb2ZfZGV2aWNlLmg+
-CiAKIHN0YXRpYyB2b2lkIGJncGlvX3dyaXRlOCh2b2lkIF9faW9tZW0gKnJlZywgdW5zaWduZWQg
-bG9uZyBkYXRhKQogewpAQCAtNTY5LDYgKzU3MSw4OCBAQCBzdGF0aWMgdm9pZCBfX2lvbWVtICpi
-Z3Bpb19tYXAoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiwKIAlyZXR1cm4gZGV2bV9pb3Jl
-bWFwX3Jlc291cmNlKCZwZGV2LT5kZXYsIHIpOwogfQogCisjaWZkZWYgQ09ORklHX09GCitzdGF0
-aWMgaW50IGJncGlvX2Jhc2ljX21taW9fcGFyc2VfZHQoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
-cGRldiwKKwkJCQkgICAgIHN0cnVjdCBiZ3Bpb19wZGF0YSAqcGRhdGEsCisJCQkJICAgICB1bnNp
-Z25lZCBsb25nICpmbGFncykKK3sKKwlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+ZGV2Owor
-CWludCBlcnI7CisKKwkvKiBJZiBuZ3BpbyBwcm9wZXJ0eSBpcyBub3Qgc3BlY2lmaWVkLCBvZl9w
-cm9wZXJ0eV9yZWFkX3UzMgorCSAqIHdpbGwgcmV0dXJuIC1FSU5WQUwuIEluIHRoaXMgY2FzZSB0
-aGUgbnVtYmVyIG9mIEdQSU9zIGlzCisJICogYXV0b21hdGljYWxseSBkZXRlcm1pbmVkIGJ5IHRo
-ZSByZWdpc3RlciB3aWR0aC4gQW55CisJICogb3RoZXIgZXJyb3Igb2Ygb2ZfcHJvcGVydHlfcmVh
-ZF91MzIgaXMgZHVlIGJhZCBkYXRhIGFuZAorCSAqIG5lZWRzIHRvIGJlIGRlYWx0IHdpdGguCisJ
-ICovCisJZXJyID0gb2ZfcHJvcGVydHlfcmVhZF91MzIoZGV2LT5vZl9ub2RlLCAibmdwaW8iLCAm
-cGRhdGEtPm5ncGlvKTsKKwlpZiAoZXJyICYmIGVyciAhPSAtRUlOVkFMKQorCQlyZXR1cm4gZXJy
-OworCisJaWYgKG9mX2RldmljZV9pc19iaWdfZW5kaWFuKGRldi0+b2Zfbm9kZSkpCisJCSpmbGFn
-cyB8PSBCR1BJT0ZfQklHX0VORElBTl9CWVRFX09SREVSOworCisJaWYgKG9mX3Byb3BlcnR5X3Jl
-YWRfYm9vbChkZXYtPm9mX25vZGUsICJ1bnJlYWRhYmxlLXJlZy1zZXQiKSkKKwkJKmZsYWdzIHw9
-IEJHUElPRl9VTlJFQURBQkxFX1JFR19TRVQ7CisKKwlpZiAob2ZfcHJvcGVydHlfcmVhZF9ib29s
-KGRldi0+b2Zfbm9kZSwgInVucmVhZGFibGUtcmVnLWRpciIpKQorCQkqZmxhZ3MgfD0gQkdQSU9G
-X1VOUkVBREFCTEVfUkVHX0RJUjsKKworCWlmIChvZl9wcm9wZXJ0eV9yZWFkX2Jvb2woZGV2LT5v
-Zl9ub2RlLCAiYmlnLWVuZGlhbi1ieXRlLW9yZGVyIikpCisJCSpmbGFncyB8PSBCR1BJT0ZfQklH
-X0VORElBTjsKKworCWlmIChvZl9wcm9wZXJ0eV9yZWFkX2Jvb2woZGV2LT5vZl9ub2RlLCAicmVh
-ZC1vdXRwdXQtcmVnLXNldCIpKQorCQkqZmxhZ3MgfD0gQkdQSU9GX1JFQURfT1VUUFVUX1JFR19T
-RVQ7CisKKwlpZiAob2ZfcHJvcGVydHlfcmVhZF9ib29sKGRldi0+b2Zfbm9kZSwgIm5vLW91dHB1
-dCIpKQorCQkqZmxhZ3MgfD0gQkdQSU9GX05PX09VVFBVVDsKKwlyZXR1cm4gMDsKK30KKworI2Rl
-ZmluZSBBREQoX25hbWUsIF9mdW5jKSB7IC5jb21wYXRpYmxlID0gX25hbWUsIC5kYXRhID0gX2Z1
-bmMgfQorCitzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBiZ3Bpb19vZl9tYXRjaFtd
-ID0geworCUFERCgibGludXgsZ3Bpby1tbWlvIiwgYmdwaW9fYmFzaWNfbW1pb19wYXJzZV9kdCks
-CisJeyB9Cit9OworI3VuZGVmIEFERAorTU9EVUxFX0RFVklDRV9UQUJMRShvZiwgYmdwaW9fb2Zf
-bWF0Y2gpOworCitzdGF0aWMgc3RydWN0IGJncGlvX3BkYXRhICpiZ3Bpb19wYXJzZV9kdChzdHJ1
-Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2LAorCQkJCQkgIHVuc2lnbmVkIGxvbmcgKmZsYWdzKQor
-eworCWludCAoKnBhcnNlX2R0KShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICosCisJCQlzdHJ1Y3Qg
-YmdwaW9fcGRhdGEgKiwgdW5zaWduZWQgbG9uZyAqKTsKKwljb25zdCBzdHJ1Y3QgZGV2aWNlX25v
-ZGUgKm5vZGUgPSBwZGV2LT5kZXYub2Zfbm9kZTsKKwljb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lk
-ICpvZl9pZDsKKwlzdHJ1Y3QgYmdwaW9fcGRhdGEgKnBkYXRhOworCWludCBlcnIgPSAtRU5PREVW
-OworCisJb2ZfaWQgPSBvZl9tYXRjaF9ub2RlKGJncGlvX29mX21hdGNoLCBub2RlKTsKKwlpZiAo
-IW9mX2lkKQorCQlyZXR1cm4gTlVMTDsKKworCXBkYXRhID0gZGV2bV9remFsbG9jKCZwZGV2LT5k
-ZXYsIHNpemVvZihzdHJ1Y3QgYmdwaW9fcGRhdGEpLAorCQkJICAgICBHRlBfS0VSTkVMKTsKKwlp
-ZiAoIXBkYXRhKQorCQlyZXR1cm4gRVJSX1BUUigtRU5PTUVNKTsKKworCXBhcnNlX2R0ID0gb2Zf
-aWQtPmRhdGE7CisJaWYgKHBhcnNlX2R0KQorCQllcnIgPSBwYXJzZV9kdChwZGV2LCBwZGF0YSwg
-ZmxhZ3MpOworCWlmIChlcnIpCisJCXJldHVybiBFUlJfUFRSKGVycik7CisKKwlyZXR1cm4gcGRh
-dGE7Cit9CisjZWxzZQorc3RhdGljIHN0cnVjdCBiZ3Bpb19wZGF0YSAqYmdwaW9fcGFyc2VfZHQo
-c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiwKKwkJCQkJICB1bnNpZ25lZCBsb25nICpmbGFn
-cykKK3sKKwlyZXR1cm4gTlVMTDsKK30KKyNlbmRpZiAvKiBDT05GSUdfT0YgKi8KKwogc3RhdGlj
-IGludCBiZ3Bpb19wZGV2X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiB7CiAJ
-c3RydWN0IGRldmljZSAqZGV2ID0gJnBkZXYtPmRldjsKQEAgLTU3OSwxMCArNjYzLDE5IEBAIHN0
-YXRpYyBpbnQgYmdwaW9fcGRldl9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQog
-CXZvaWQgX19pb21lbSAqZGlyb3V0OwogCXZvaWQgX19pb21lbSAqZGlyaW47CiAJdW5zaWduZWQg
-bG9uZyBzejsKLQl1bnNpZ25lZCBsb25nIGZsYWdzID0gcGRldi0+aWRfZW50cnktPmRyaXZlcl9k
-YXRhOworCXVuc2lnbmVkIGxvbmcgZmxhZ3MgPSAwOwogCWludCBlcnI7CiAJc3RydWN0IGdwaW9f
-Y2hpcCAqZ2M7Ci0Jc3RydWN0IGJncGlvX3BkYXRhICpwZGF0YSA9IGRldl9nZXRfcGxhdGRhdGEo
-ZGV2KTsKKwlzdHJ1Y3QgYmdwaW9fcGRhdGEgKnBkYXRhOworCisJcGRhdGEgPSBiZ3Bpb19wYXJz
-ZV9kdChwZGV2LCAmZmxhZ3MpOworCWlmIChJU19FUlIocGRhdGEpKQorCQlyZXR1cm4gUFRSX0VS
-UihwZGF0YSk7CisKKwlpZiAoIXBkYXRhKSB7CisJCXBkYXRhID0gZGV2X2dldF9wbGF0ZGF0YShk
-ZXYpOworCQlmbGFncyA9IHBkZXYtPmlkX2VudHJ5LT5kcml2ZXJfZGF0YTsKKwl9CiAKIAlyID0g
-cGxhdGZvcm1fZ2V0X3Jlc291cmNlX2J5bmFtZShwZGV2LCBJT1JFU09VUkNFX01FTSwgImRhdCIp
-OwogCWlmICghcikKQEAgLTY0Niw2ICs3MzksNyBAQCBNT0RVTEVfREVWSUNFX1RBQkxFKHBsYXRm
-b3JtLCBiZ3Bpb19pZF90YWJsZSk7CiBzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBiZ3Bp
-b19kcml2ZXIgPSB7CiAJLmRyaXZlciA9IHsKIAkJLm5hbWUgPSAiYmFzaWMtbW1pby1ncGlvIiwK
-KwkJLm9mX21hdGNoX3RhYmxlID0gb2ZfbWF0Y2hfcHRyKGJncGlvX29mX21hdGNoKSwKIAl9LAog
-CS5pZF90YWJsZSA9IGJncGlvX2lkX3RhYmxlLAogCS5wcm9iZSA9IGJncGlvX3BkZXZfcHJvYmUs
-Ci0tIAoyLjguMQoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
-aW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2xpbnV4LWFybS1rZXJuZWwK
+Currrently the gpio_chip.to_irq() callback returns -ENOSYS on error,
+which causes bad interactions with the serial_mctrl_gpio helpers.
+
+mctrl_gpio_init() returns -ENOSYS if GPIOLIB is not enabled, which is
+intended to be ignored by its callers. However, ignoring -ENOSYS when it
+was caused by a gpiod_to_irq() failure will lead to a crash later:
+
+    Unable to handle kernel paging request at virtual address ffffffde
+    ...
+    PC is at mctrl_gpio_set+0x14/0x78
+
+Fix this by returning -ENXIO instead.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Is -ENXIO the right error code?
+
+  - Most drivers seem to return -ENXIO on failure, just like
+    gpiod_to_irq() does when no .to_irq() callback is provided by the
+    driver,
+  - Some drivers use -EINVAL,
+  - Drivers that call irq_find_mapping(), irq_create_mapping(), or
+    irq_create_fwspec_mapping() return zero!  This also applies to the
+    core helper gpiochip_to_irq().
+---
+ drivers/pinctrl/sh-pfc/gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
+index a6681b8b17c3b30c..2fffb9c32231adb3 100644
+--- a/drivers/pinctrl/sh-pfc/gpio.c
++++ b/drivers/pinctrl/sh-pfc/gpio.c
+@@ -212,7 +212,7 @@ static int gpio_pin_to_irq(struct gpio_chip *gc, unsigned offset)
+ 		}
+ 	}
+ 
+-	return -ENOSYS;
++	return -ENXIO;
+ 
+ found:
+ 	return pfc->irqs[i];
+-- 
+1.9.1
