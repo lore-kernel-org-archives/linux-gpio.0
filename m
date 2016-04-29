@@ -1,371 +1,53 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [RFC v5 3/4] gpio: move clps711x, moxart, ts4800 and gpio-ge into gpio-generic
-Date: Fri, 29 Apr 2016 11:05:34 +0300
-Message-ID: <CAHp75Vf_+3ja07Z99k1Grvvg-w3mj0inPdiE69zTs=fa_nn5=g@mail.gmail.com>
-References: <cover.1461888822.git.chunkeey@googlemail.com>
-	<9e5cc9e957144bd5d4081573ef959f931281eaaa.1461888822.git.chunkeey@googlemail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH RESEND 1/2] pinctrl: ns2: add pinmux driver support for
+ Broadcom NS2 SoC
+Date: Fri, 29 Apr 2016 10:40:59 +0200
+Message-ID: <CACRpkdZb=jc8pAhxPWSF2nJnEeAU3JenTfNyZwZDrtgq4QoGsw@mail.gmail.com>
+References: <CAL2FKYnJNVOcB7aYwkwRAGSq5ufg+CJowJCnzpBEYiTMev0B9A@mail.gmail.com>
+	<dc5a5c07-7acd-ae28-cf5c-187d58de64c9@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9e5cc9e957144bd5d4081573ef959f931281eaaa.1461888822.git.chunkeey@googlemail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christian Lamparter <chunkeey@googlemail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexander Shiyan <shc_work@mail.ru>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <dc5a5c07-7acd-ae28-cf5c-187d58de64c9-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ray Jui <ray.jui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Cc: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Pramod Kumar <pramodku-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 29, 2016 at 3:53 AM, Christian Lamparter
-<chunkeey@googlemail.com> wrote:
-> This patch integrates these GPIO drivers into gpio-generic.
+On Mon, Apr 18, 2016 at 8:24 PM, Ray Jui <ray.jui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org> wrote:
+> On 4/17/2016 8:34 PM, Yendapally Reddy Dhananjaya Reddy wrote:
+
+>>>
+>>>         /* not all Iproc GPIO pins can be muxed individually */
+>>>         if (!chip->pinmux_is_supported)
+>>>                 return 0;
 >
-
 >
-> +static int clps711x_parse_dt(struct platform_device *pdev,
-> +                            struct bgpio_pdata *pdata,
-> +                            unsigned long *flags)
-> +{
-> +       struct device_node *np =3D pdev->dev.of_node;
-> +       int id =3D np ? of_alias_get_id(np, "gpio") : pdev->id;
-> +       struct resource *res;
-> +
-> +       if ((id < 0) || (id > 4))
-> +               return -ENODEV;
-> +
-> +       /* PORTE is 3 lines only */
-> +       if (id =3D=3D 4)
-> +               pdata->ngpio =3D 3;
-> +
-> +       pdata->base =3D id * 8;
-> +
-> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       if (!res)
-> +               return -EINVAL;
-> +
-> +       res->name =3D "dat";
-> +
-> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> +       if (!res)
-> +               return -EINVAL;
-> +
-> +       /* PORTD is inverted logic for direction register */
-> +       res->name =3D (id =3D=3D 3) ? "dirin" : "dirout";
-> +       return 0;
-> +}
-> +
+> NS2 does not support GPIO pins to be muxed individually. The call to
+> iproc_gpio_request should be rejected for NS2 since
+> 'chip->pinmux_is_supported' is false.
 
-I think the three below have enough in common to reorganize data
-structure and use one parse function.
+Aha, I see.
 
-So, instead of providing just parsing function, something like
-
-ngpios (0 =E2=80=94 read from property)
-resource size
-start, end pairs for dat/set/dirin.
-flags
-
-Have no idea if it's possible to re-use this approach for case above.
-
-> +static int ge_parse_dt(struct platform_device *pdev,
-> +                      struct bgpio_pdata *pdata,
-> +                      unsigned long *flags)
-> +{
-> +       struct device_node *np =3D pdev->dev.of_node;
-> +
-> +       struct resource *res;
-> +       struct resource nres[] =3D {
-> +               DEFINE_RES_MEM_NAMED(0, 1, "dat"),
-> +               DEFINE_RES_MEM_NAMED(0, 1, "set"),
-> +               DEFINE_RES_MEM_NAMED(0, 1, "dirin"),
-> +       };
-> +
-> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       if (!res || resource_size(res) !=3D 0x24)
-> +               return -EINVAL;
-> +
-> +       nres[0].start =3D res->start + 0x04;
-> +       nres[0].end =3D nres[0].start + 3;
-> +       nres[1].start =3D res->start + 0x08;
-> +       nres[1].end =3D nres[1].start + 3;
-> +       nres[2].start =3D res->start + 0x00;
-> +       nres[2].end =3D nres[2].start + 3;
-> +       *flags |=3D BGPIOF_BIG_ENDIAN_BYTE_ORDER;
-> +       pdata->label =3D devm_kstrdup(&pdev->dev, np->full_name, GFP_=
-KERNEL);
-> +       if (!pdata->label)
-> +               return -ENOMEM;
-> +
-> +       if (of_device_is_compatible(np, "ge,imp3a-gpio"))
-> +               pdata->ngpio =3D 16;
-> +       else if (of_device_is_compatible(np, "gef,sbc310-gpio"))
-> +               pdata->ngpio =3D 6;
-> +       else if (of_device_is_compatible(np, "gef,sbc610-gpio"))
-> +               pdata->ngpio =3D 19;
-> +
-> +       return platform_device_add_resources(pdev, nres, ARRAY_SIZE(n=
-res));
-> +}
-> +
-> +static int moxart_parse_dt(struct platform_device *pdev,
-> +                          struct bgpio_pdata *pdata,
-> +                          unsigned long *flags)
-> +{
-> +       struct resource *res;
-> +       struct resource nres[] =3D {
-> +               DEFINE_RES_MEM_NAMED(0, 1, "dat"),
-> +               DEFINE_RES_MEM_NAMED(0, 1, "set"),
-> +               DEFINE_RES_MEM_NAMED(0, 1, "dirout"),
-> +       };
-> +
-> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       if (!res || resource_size(res) !=3D 0xc)
-> +               return -EINVAL;
-> +
-> +       pdata->label =3D "moxart-gpio";
-> +       *flags |=3D BGPIOF_READ_OUTPUT_REG_SET;
-> +       nres[0].start =3D res->start + 0x04;
-> +       nres[0].end =3D nres[0].start + 3;
-> +       nres[1].start =3D res->start + 0x00;
-> +       nres[1].end =3D nres[1].start + 3;
-> +       nres[2].start =3D res->start + 0x08;
-> +       nres[2].end =3D nres[2].start + 3;
-> +       return platform_device_add_resources(pdev, nres, ARRAY_SIZE(n=
-res));
-> +}
-> +
-> +static int ts4800_parse_dt(struct platform_device *pdev,
-> +                          struct bgpio_pdata *pdata,
-> +                          unsigned long *flags)
-> +{
-> +       int err;
-> +       struct resource *res;
-> +       struct resource nres[] =3D {
-> +               DEFINE_RES_MEM_NAMED(0, 1, "dat"),
-> +               DEFINE_RES_MEM_NAMED(0, 1, "set"),
-> +               DEFINE_RES_MEM_NAMED(0, 1, "dirout"),
-> +       };
-> +
-> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       if (!res || resource_size(res) !=3D 0x6)
-> +               return -EINVAL;
-> +
-> +       nres[0].start =3D res->start;
-> +       nres[0].end =3D nres[0].start + 1;
-> +       nres[1].start =3D res->start + 0x02;
-> +       nres[1].end =3D nres[1].start + 1;
-> +       nres[2].start =3D res->start + 0x04;
-> +       nres[2].end =3D nres[2].start + 1;
-> +
-> +       err =3D of_property_read_u32(pdev->dev.of_node, "ngpios", &pd=
-ata->ngpio);
-> +       if (err =3D=3D -EINVAL)
-> +               pdata->ngpio =3D 16;
-> +       else if (err)
-> +               return err;
-> +
-> +       return platform_device_add_resources(pdev, nres, ARRAY_SIZE(n=
-res));
-> +}
-> +
->  #define ADD(_name, _func) { .compatible =3D _name, .data =3D _func }
+> since NS2 can only support group based GPIO configuration, the
+> above functions will be rejected because "pinmux_is_supported" is false:
 >
->  static const struct of_device_id bgpio_of_match[] =3D {
->         ADD("linux,gpio-mmio", bgpio_basic_mmio_parse_dt),
-> +       ADD("cirrus,clps711x-gpio", clps711x_parse_dt),
-> +       ADD("ge,imp3a-gpio", ge_parse_dt),
-> +       ADD("gef,sbc310-gpio", ge_parse_dt),
-> +       ADD("gef,sbc610-gpio", ge_parse_dt),
-> +       ADD("moxa,moxart-gpio", moxart_parse_dt),
-> +       ADD("technologic,ts4800-gpio", ts4800_parse_dt),
->         { }
->  };
->  #undef ADD
-> diff --git a/drivers/gpio/gpio-moxart.c b/drivers/gpio/gpio-moxart.c
-> deleted file mode 100644
-> index d58d389..0000000
-> --- a/drivers/gpio/gpio-moxart.c
-> +++ /dev/null
-> @@ -1,84 +0,0 @@
-> -/*
-> - * MOXA ART SoCs GPIO driver.
-> - *
-> - * Copyright (C) 2013 Jonas Jensen
-> - *
-> - * Jonas Jensen <jonas.jensen@gmail.com>
-> - *
-> - * This file is licensed under the terms of the GNU General Public
-> - * License version 2.  This program is licensed "as is" without any
-> - * warranty of any kind, whether express or implied.
-> - */
-> -
-> -#include <linux/err.h>
-> -#include <linux/init.h>
-> -#include <linux/irq.h>
-> -#include <linux/io.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/of_address.h>
-> -#include <linux/of_gpio.h>
-> -#include <linux/pinctrl/consumer.h>
-> -#include <linux/delay.h>
-> -#include <linux/timer.h>
-> -#include <linux/bitops.h>
-> -#include <linux/gpio/driver.h>
-> -
-> -#define GPIO_DATA_OUT          0x00
-> -#define GPIO_DATA_IN           0x04
-> -#define GPIO_PIN_DIRECTION     0x08
-> -
-> -static int moxart_gpio_probe(struct platform_device *pdev)
-> -{
-> -       struct device *dev =3D &pdev->dev;
-> -       struct resource *res;
-> -       struct gpio_chip *gc;
-> -       void __iomem *base;
-> -       int ret;
-> -
-> -       gc =3D devm_kzalloc(dev, sizeof(*gc), GFP_KERNEL);
-> -       if (!gc)
-> -               return -ENOMEM;
-> -
-> -       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       base =3D devm_ioremap_resource(dev, res);
-> -       if (IS_ERR(base))
-> -               return PTR_ERR(base);
-> -
-> -       ret =3D bgpio_init(gc, dev, 4, base + GPIO_DATA_IN,
-> -                        base + GPIO_DATA_OUT, NULL,
-> -                        base + GPIO_PIN_DIRECTION, NULL,
-> -                        BGPIOF_READ_OUTPUT_REG_SET);
-> -       if (ret) {
-> -               dev_err(&pdev->dev, "bgpio_init failed\n");
-> -               return ret;
-> -       }
-> -
-> -       gc->label =3D "moxart-gpio";
-> -       gc->request =3D gpiochip_generic_request;
-> -       gc->free =3D gpiochip_generic_free;
-> -       gc->base =3D 0;
-> -       gc->owner =3D THIS_MODULE;
-> -
-> -       ret =3D devm_gpiochip_add_data(dev, gc, NULL);
-> -       if (ret) {
-> -               dev_err(dev, "%s: gpiochip_add failed\n",
-> -                       dev->of_node->full_name);
-> -               return ret;
-> -       }
-> -
-> -       return ret;
-> -}
-> -
-> -static const struct of_device_id moxart_gpio_match[] =3D {
-> -       { .compatible =3D "moxa,moxart-gpio" },
-> -       { }
-> -};
-> -
-> -static struct platform_driver moxart_gpio_driver =3D {
-> -       .driver =3D {
-> -               .name           =3D "moxart-gpio",
-> -               .of_match_table =3D moxart_gpio_match,
-> -       },
-> -       .probe  =3D moxart_gpio_probe,
-> -};
-> -builtin_platform_driver(moxart_gpio_driver);
-> diff --git a/drivers/gpio/gpio-ts4800.c b/drivers/gpio/gpio-ts4800.c
-> deleted file mode 100644
-> index 0c144a7..0000000
-> --- a/drivers/gpio/gpio-ts4800.c
-> +++ /dev/null
-> @@ -1,81 +0,0 @@
-> -/*
-> - * GPIO driver for the TS-4800 board
-> - *
-> - * Copyright (c) 2016 - Savoir-faire Linux
-> - *
-> - * This file is licensed under the terms of the GNU General Public
-> - * License version 2. This program is licensed "as is" without any
-> - * warranty of any kind, whether express or implied.
-> - */
-> -
-> -#include <linux/gpio/driver.h>
-> -#include <linux/of_address.h>
-> -#include <linux/of_device.h>
-> -#include <linux/platform_device.h>
-> -
-> -#define DEFAULT_PIN_NUMBER      16
-> -#define INPUT_REG_OFFSET        0x00
-> -#define OUTPUT_REG_OFFSET       0x02
-> -#define DIRECTION_REG_OFFSET    0x04
-> -
-> -static int ts4800_gpio_probe(struct platform_device *pdev)
-> -{
-> -       struct device_node *node;
-> -       struct gpio_chip *chip;
-> -       struct resource *res;
-> -       void __iomem *base_addr;
-> -       int retval;
-> -       u32 ngpios;
-> -
-> -       chip =3D devm_kzalloc(&pdev->dev, sizeof(struct gpio_chip), G=
-=46P_KERNEL);
-> -       if (!chip)
-> -               return -ENOMEM;
-> -
-> -       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       base_addr =3D devm_ioremap_resource(&pdev->dev, res);
-> -       if (IS_ERR(base_addr))
-> -               return PTR_ERR(base_addr);
-> -
-> -       node =3D pdev->dev.of_node;
-> -       if (!node)
-> -               return -EINVAL;
-> -
-> -       retval =3D of_property_read_u32(node, "ngpios", &ngpios);
-> -       if (retval =3D=3D -EINVAL)
-> -               ngpios =3D DEFAULT_PIN_NUMBER;
-> -       else if (retval)
-> -               return retval;
-> -
-> -       retval =3D bgpio_init(chip, &pdev->dev, 2, base_addr + INPUT_=
-REG_OFFSET,
-> -                           base_addr + OUTPUT_REG_OFFSET, NULL,
-> -                           base_addr + DIRECTION_REG_OFFSET, NULL, 0=
-);
-> -       if (retval) {
-> -               dev_err(&pdev->dev, "bgpio_init failed\n");
-> -               return retval;
-> -       }
-> -
-> -       chip->ngpio =3D ngpios;
-> -
-> -       platform_set_drvdata(pdev, chip);
-> -
-> -       return devm_gpiochip_add_data(&pdev->dev, chip, NULL);
-> -}
-> -
-> -static const struct of_device_id ts4800_gpio_of_match[] =3D {
-> -       { .compatible =3D "technologic,ts4800-gpio", },
-> -       {},
-> -};
-> -
-> -static struct platform_driver ts4800_gpio_driver =3D {
-> -       .driver =3D {
-> -                  .name =3D "ts4800-gpio",
-> -                  .of_match_table =3D ts4800_gpio_of_match,
-> -                  },
-> -       .probe =3D ts4800_gpio_probe,
-> -};
-> -
-> -module_platform_driver_probe(ts4800_gpio_driver, ts4800_gpio_probe);
-> -
-> -MODULE_AUTHOR("Julien Grossholtz <julien.grossholtz@savoirfairelinux=
-=2Ecom>");
-> -MODULE_DESCRIPTION("TS4800 FPGA GPIO driver");
-> -MODULE_LICENSE("GPL v2");
-> --
-> 2.8.1
+> chip->pinmux_is_supported = of_property_read_bool(dev->of_node,
+> "gpio-ranges");
 >
+> Here, "gpio-ranges" should never be defined on NS2 DT files.
 
+Makes perfect sense.
 
+So for this hardware, muxing will always be done orthogonally
+(using some pinctrl hogs or similar for GPIO).
 
---=20
-With Best Regards,
-Andy Shevchenko
+I'm waiting for a version fixing the bool Kconfig issue, then I guess
+the driver is ready for inclusion.
+
+Yours,
+Linus Waleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
