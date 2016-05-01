@@ -1,61 +1,67 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: Let gpio_chip.to_irq() return -ENXIO on error
-Date: Sun, 1 May 2016 10:48:43 +0200
-Message-ID: <CACRpkdayGoAsU2+dOg4Y9BcyOORVp4OmUUCbE_cW5gPzR=D7nw@mail.gmail.com>
-References: <1461914677-24899-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3] gpio: of: make it possible to name GPIO lines
+Date: Sun, 1 May 2016 10:56:57 +0200
+Message-ID: <CACRpkdbBah92TcAEquSL1HR4CdHx94MwdhBCcgu=p3-EUoHoTg@mail.gmail.com>
+References: <1461236901-28626-1-git-send-email-linus.walleij@linaro.org>
+	<1595634.pn7WvaDMTh@adelgunde>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1461914677-24899-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1595634.pn7WvaDMTh@adelgunde>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Welling <mwelling-EkmVulN54Sk@public.gmane.org>, Lee Campbell <leecam-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Bamvor Jian Zhang <bamvor.zhangjian-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Amit Kucheria <amit.kucheria-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, David Mandala <david.mandala-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 29, 2016 at 9:24 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Thu, Apr 28, 2016 at 10:12 AM, Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+> On Thursday 21 April 2016 13:08:21 Linus Walleij wrote:
 
-> Currrently the gpio_chip.to_irq() callback returns -ENOSYS on error,
-> which causes bad interactions with the serial_mctrl_gpio helpers.
+>> +Optionally, a GPIO controller may have a "gpio-line-names" property. This is
+>> +an array of strings defining the names of the GPIO lines going out of the
+>> +GPIO controller. This name should be the most meaningful producer name
+>> +for the system, such as a rail name indicating the usage. Package names
+>> +such as pin name are discouraged: such lines have opaque names (since they
+>> +are by definition generic purpose) and such names are usually not very
+>> +helpful. For example "MMC-CD", "Red LED Vdd" and "ethernet reset" are
+>> +reasonable line names as they describe what the line is used for. "GPIO0"
+>> +is not a good name to give to a GPIO line. Placeholders are discouraged:
 >
-> mctrl_gpio_init() returns -ENOSYS if GPIOLIB is not enabled, which is
-> intended to be ignored by its callers. However, ignoring -ENOSYS when it
-> was caused by a gpiod_to_irq() failure will lead to a crash later:
+> "GPIO0" may not be a good name, but there are plenty of boards out there
+> that use just this line name in their schematic for GPIOs that are not
+> used otherwise. For example the riotboard has line-names "GPIO_1",
+> "GPIO4_31", "GPIO5_05", ...
+
+That is what is referred to as "rail name" above. If they really choose
+that name on a schematic, then it is the right name for it.
+
+>> +     gpio-line-names = "MMC-CD", "MMC-WP", "VDD eth", "RST eth", "LED R",
+>> +             "LED G", "LED B", "Col A", "Col B", "Col C", "Col D",
+>> +             "Row A", "Row B", "Row C", "Row D", "NMI button",
+>> +             "poweroff", "reset";
 >
->     Unable to handle kernel paging request at virtual address ffffffde
->     ...
->     PC is at mctrl_gpio_set+0x14/0x78
+> As many GPIO controllers have something like 32 GPIO lines, it can be
+> difficult to read which GPIO number the line "reset" is on.
+> But I think you can get around that by writing one name per file-line or
+> something similar. Also it should be immediately visible by listing all
+> gpio names in the userspace.
+
+Yeah well, the problem goes for clk-output-names that it's derived
+from as well, it comes from the DT syntactic limitations.
+
+>> +             /* Empty strings are OK */
+>> +             if (ret < 0 && ret != -ENODATA)
+>> +                     dev_err(&gdev->dev, "unable to name line %d\n",
+>> +                             i);
+>> +     }
 >
-> Fix this by returning -ENXIO instead.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Is -ENXIO the right error code?
+> Maybe a warning for nstrings > ngpio here?
 
-I would say that whatever the generic helpers in drivers/gpio/gpiolib.c
-returns should be the norm. However the guy who wrote them (me)
-isn't very smart either. It looks like so:
-
-static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
-{
-        return irq_find_mapping(chip->irqdomain, offset);
-}
-
-That returns 0 (NO_IRQ) on failure.
-
-And as you say:
-
->   - Drivers that call irq_find_mapping(), irq_create_mapping(), or
->     irq_create_fwspec_mapping() return zero!  This also applies to the
->     core helper gpiochip_to_irq().
-
-Zero means NO_IRQ.
-
-Reminder:
-http://lwn.net/Articles/470820/
-
-What we should do is patch all drivers to return 0 on failure, and
-patch any consumers like mctrl_gpio_init() to handle that correctly.
+Sure. Just waiting for DT maintainers and other stakeholders' input at
+this point.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
