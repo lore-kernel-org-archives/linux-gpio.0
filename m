@@ -1,126 +1,56 @@
-From: Christian Lamparter <chunkeey@googlemail.com>
-Subject: [RFC v6 2/3] gpio: mmio: add DT support for memory-mapped GPIOs
-Date: Sun,  1 May 2016 14:18:38 +0200
-Message-ID: <891081fc8cc10771d235f5ba04e13e08144293c9.1462104492.git.chunkeey@googlemail.com>
-References: <cover.1462104492.git.chunkeey@googlemail.com>
+From: Anatol Pomozov <anatol.pomozov@gmail.com>
+Subject: Re: NULL pointer dereference when 'rmmod gpio_lynxpoint'
+Date: Sun, 1 May 2016 07:36:57 -0700
+Message-ID: <CAOMFOmWTc11KrzGhWzowM7LW0F6S5qRshNG1KWm_NZZ7R3MJ_g@mail.gmail.com>
+References: <CAOMFOmXMJ47HQrc4vVXF1+JbxHmH78HTncnnUHfzseCs47EQ6w@mail.gmail.com>
+	<CACRpkdbDww+JdAD6BXKc_PnXFRD5o=0OTqOfTjTYNdTMsqtH2g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <cover.1462104492.git.chunkeey@googlemail.com>
-In-Reply-To: <cover.1462104492.git.chunkeey@googlemail.com>
-References: <cover.1462104492.git.chunkeey@googlemail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>, Alexander Shiyan <shc_work@mail.ru>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Christian Lamparter <chunkeey@googlemail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:35315 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751111AbcEAOg6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 1 May 2016 10:36:58 -0400
+Received: by mail-ig0-f170.google.com with SMTP id bi2so64359968igb.0
+        for <linux-gpio@vger.kernel.org>; Sun, 01 May 2016 07:36:58 -0700 (PDT)
+In-Reply-To: <CACRpkdbDww+JdAD6BXKc_PnXFRD5o=0OTqOfTjTYNdTMsqtH2g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Matt DeVillier <matt.devillier@gmail.com>
 
-RnJvbTogw4FsdmFybyBGZXJuw6FuZGV6IFJvamFzIDxub2x0YXJpQGdtYWlsLmNvbT4KClRoaXMg
-cGF0Y2ggYWRkcyBzdXBwb3J0IGZvciBkZWZpbmluZyBtZW1vcnktbWFwcGVkIEdQSU9zIHdoaWNo
-CmFyZSBjb21wYXRpYmxlIHdpdGggdGhlIGV4aXN0aW5nIGdwaW8tbW1pbyBpbnRlcmZhY2UuIFRo
-ZSBnZW5lcmljCmxpYnJhcnkgcHJvdmlkZXMgc3VwcG9ydCBmb3IgbWFueSBtZW1vcnktbWFwcGVk
-IEdQSU8gY29udHJvbGxlcnMKdGhhdCBhcmUgZm91bmQgaW4gdmFyaW91cyBvbi1ib2FyZCBGUEdB
-IGFuZCBBU0lDIHNvbHV0aW9ucyB0aGF0CmFyZSB1c2VkIHRvIGNvbnRyb2wgYm9hcmQncyBzd2l0
-Y2hlcywgTEVEcywgY2hpcC1zZWxlY3RzLApFdGhlcm5ldC9VU0IgUEhZIHBvd2VyLCBldGMuCgpG
-b3Igc2V0dGluZyBHUElPJ3MgdGhlcmUgYXJlIHRocmVlIGNvbmZpZ3VyYXRpb25zOgoJMS4gc2lu
-Z2xlIGlucHV0L291dHB1dCByZWdpc3RlciByZXNvdXJjZSAobmFtZWQgImRhdCIpLAoJMi4gc2V0
-L2NsZWFyIHBhaXIgKG5hbWVkICJzZXQiIGFuZCAiY2xyIiksCgkzLiBzaW5nbGUgb3V0cHV0IHJl
-Z2lzdGVyIHJlc291cmNlIGFuZCBzaW5nbGUgaW5wdXQgcmVzb3VyY2UKCSAgICgic2V0IiBhbmQg
-ZGF0IikuCgpUaGUgY29uZmlndXJhdGlvbiBpcyBkZXRlY3RlZCBieSB3aGljaCByZXNvdXJjZXMg
-YXJlIHByZXNlbnQuCkZvciB0aGUgc2luZ2xlIG91dHB1dCByZWdpc3RlciwgdGhpcyBkcml2ZXMg
-YSAxIGJ5IHNldHRpbmcgYSBiaXQKYW5kIGEgemVybyBieSBjbGVhcmluZyBhIGJpdC4gIEZvciB0
-aGUgc2V0IGNsciBwYWlyLCB0aGlzIGRyaXZlcwphIDEgYnkgc2V0dGluZyBhIGJpdCBpbiB0aGUg
-c2V0IHJlZ2lzdGVyIGFuZCBjbGVhcnMgaXQgYnkgc2V0dGluZwphIGJpdCBpbiB0aGUgY2xlYXIg
-cmVnaXN0ZXIuIFRoZSBjb25maWd1cmF0aW9uIGlzIGRldGVjdGVkIGJ5CndoaWNoIHJlc291cmNl
-cyBhcmUgcHJlc2VudC4KCkZvciBzZXR0aW5nIHRoZSBHUElPIGRpcmVjdGlvbiwgdGhlcmUgYXJl
-IHRocmVlIGNvbmZpZ3VyYXRpb25zOgoJYS4gc2ltcGxlIGJpZGlyZWN0aW9uYWwgR1BJT3MgdGhh
-dCByZXF1aXJlcyBubyBjb25maWd1cmF0aW9uLgoJYi4gYW4gb3V0cHV0IGRpcmVjdGlvbiByZWdp
-c3RlciAobmFtZWQgImRpcm91dCIpCgkgICB3aGVyZSBhIDEgYml0IGluZGljYXRlcyB0aGUgR1BJ
-TyBpcyBhbiBvdXRwdXQuCgljLiBhbiBpbnB1dCBkaXJlY3Rpb24gcmVnaXN0ZXIgKG5hbWVkICJk
-aXJpbiIpCgkgICB3aGVyZSBhIDEgYml0IGluZGljYXRlcyB0aGUgR1BJTyBpcyBhbiBpbnB1dC4K
-ClRoZSBmaXJzdCB1c2VyIGZvciB0aGlzIGJpbmRpbmcgaXMgIndkLG1ibC1ncGlvIi4KClNpZ25l
-ZC1vZmYtYnk6IMOBbHZhcm8gRmVybsOhbmRleiBSb2phcyA8bm9sdGFyaUBnbWFpbC5jb20+ClNp
-Z25lZC1vZmYtYnk6IENocmlzdGlhbiBMYW1wYXJ0ZXIgPGNodW5rZWV5QGdvb2dsZW1haWwuY29t
-PgotLS0KIGRyaXZlcnMvZ3Bpby9ncGlvLW1taW8uYyB8IDk5ICsrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrLQogMSBmaWxlIGNoYW5nZWQsIDk3IGluc2VydGlv
-bnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncGlvL2dwaW8tbW1p
-by5jIGIvZHJpdmVycy9ncGlvL2dwaW8tbW1pby5jCmluZGV4IDZjMWNiM2IuLjFjZmI3MGEgMTAw
-NjQ0Ci0tLSBhL2RyaXZlcnMvZ3Bpby9ncGlvLW1taW8uYworKysgYi9kcml2ZXJzL2dwaW8vZ3Bp
-by1tbWlvLmMKQEAgLTYxLDYgKzYxLDggQEAgbyAgICAgICAgYCAgICAgICAgICAgICAgICAgICAg
-IH5+fn5cX19fL35+fn4gICAgYCBjb250cm9sbGVyIGluIEZQR0EgaXMgLC5gCiAjaW5jbHVkZSA8
-bGludXgvYml0b3BzLmg+CiAjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+CiAjaW5j
-bHVkZSA8bGludXgvbW9kX2RldmljZXRhYmxlLmg+CisjaW5jbHVkZSA8bGludXgvb2YuaD4KKyNp
-bmNsdWRlIDxsaW51eC9vZl9kZXZpY2UuaD4KIAogc3RhdGljIHZvaWQgYmdwaW9fd3JpdGU4KHZv
-aWQgX19pb21lbSAqcmVnLCB1bnNpZ25lZCBsb25nIGRhdGEpCiB7CkBAIC01NjksNiArNTcxLDg5
-IEBAIHN0YXRpYyB2b2lkIF9faW9tZW0gKmJncGlvX21hcChzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
-ICpwZGV2LAogCXJldHVybiBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoJnBkZXYtPmRldiwgcik7CiB9
-CiAKKyNpZmRlZiBDT05GSUdfT0YKK3N0YXRpYyBpbnQgYmdwaW9fYmFzaWNfbW1pb19wYXJzZV9k
-dChzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2LAorCQkJCSAgICAgc3RydWN0IGJncGlvX3Bk
-YXRhICpwZGF0YSwKKwkJCQkgICAgIHVuc2lnbmVkIGxvbmcgKmZsYWdzKQoreworCXN0cnVjdCBk
-ZXZpY2UgKmRldiA9ICZwZGV2LT5kZXY7CisJaW50IGVycjsKKworCXBkYXRhLT5iYXNlID0gLTE7
-CisJLyogSWYgbmdwaW8gcHJvcGVydHkgaXMgbm90IHNwZWNpZmllZCwgb2ZfcHJvcGVydHlfcmVh
-ZF91MzIKKwkgKiB3aWxsIHJldHVybiAtRUlOVkFMLiBJbiB0aGlzIGNhc2UgdGhlIG51bWJlciBv
-ZiBHUElPcyBpcworCSAqIGF1dG9tYXRpY2FsbHkgZGV0ZXJtaW5lZCBieSB0aGUgcmVnaXN0ZXIg
-d2lkdGguIEFueQorCSAqIG90aGVyIGVycm9yIG9mIG9mX3Byb3BlcnR5X3JlYWRfdTMyIGlzIGR1
-ZSBiYWQgZGF0YSBhbmQKKwkgKiBuZWVkcyB0byBiZSBkZWFsdCB3aXRoLgorCSAqLworCWVyciA9
-IG9mX3Byb3BlcnR5X3JlYWRfdTMyKGRldi0+b2Zfbm9kZSwgIm5ncGlvIiwgJnBkYXRhLT5uZ3Bp
-byk7CisJaWYgKGVyciAmJiBlcnIgIT0gLUVJTlZBTCkKKwkJcmV0dXJuIGVycjsKKworCWlmIChv
-Zl9kZXZpY2VfaXNfYmlnX2VuZGlhbihkZXYtPm9mX25vZGUpKQorCQkqZmxhZ3MgfD0gQkdQSU9G
-X0JJR19FTkRJQU5fQllURV9PUkRFUjsKKworCWlmIChvZl9wcm9wZXJ0eV9yZWFkX2Jvb2woZGV2
-LT5vZl9ub2RlLCAidW5yZWFkYWJsZS1yZWctc2V0IikpCisJCSpmbGFncyB8PSBCR1BJT0ZfVU5S
-RUFEQUJMRV9SRUdfU0VUOworCisJaWYgKG9mX3Byb3BlcnR5X3JlYWRfYm9vbChkZXYtPm9mX25v
-ZGUsICJ1bnJlYWRhYmxlLXJlZy1kaXIiKSkKKwkJKmZsYWdzIHw9IEJHUElPRl9VTlJFQURBQkxF
-X1JFR19ESVI7CisKKwlpZiAob2ZfcHJvcGVydHlfcmVhZF9ib29sKGRldi0+b2Zfbm9kZSwgImJp
-Zy1lbmRpYW4tYnl0ZS1vcmRlciIpKQorCQkqZmxhZ3MgfD0gQkdQSU9GX0JJR19FTkRJQU47CisK
-KwlpZiAob2ZfcHJvcGVydHlfcmVhZF9ib29sKGRldi0+b2Zfbm9kZSwgInJlYWQtb3V0cHV0LXJl
-Zy1zZXQiKSkKKwkJKmZsYWdzIHw9IEJHUElPRl9SRUFEX09VVFBVVF9SRUdfU0VUOworCisJaWYg
-KG9mX3Byb3BlcnR5X3JlYWRfYm9vbChkZXYtPm9mX25vZGUsICJuby1vdXRwdXQiKSkKKwkJKmZs
-YWdzIHw9IEJHUElPRl9OT19PVVRQVVQ7CisJcmV0dXJuIDA7Cit9CisKKyNkZWZpbmUgQUREKF9u
-YW1lLCBfZnVuYykgeyAuY29tcGF0aWJsZSA9IF9uYW1lLCAuZGF0YSA9IF9mdW5jIH0KKworc3Rh
-dGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgYmdwaW9fb2ZfbWF0Y2hbXSA9IHsKKwlBREQo
-IndkLG1ibC1ncGlvIiwgYmdwaW9fYmFzaWNfbW1pb19wYXJzZV9kdCksCisJeyB9Cit9OworI3Vu
-ZGVmIEFERAorTU9EVUxFX0RFVklDRV9UQUJMRShvZiwgYmdwaW9fb2ZfbWF0Y2gpOworCitzdGF0
-aWMgc3RydWN0IGJncGlvX3BkYXRhICpiZ3Bpb19wYXJzZV9kdChzdHJ1Y3QgcGxhdGZvcm1fZGV2
-aWNlICpwZGV2LAorCQkJCQkgIHVuc2lnbmVkIGxvbmcgKmZsYWdzKQoreworCWNvbnN0IGludCAo
-KnBhcnNlX2R0KShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICosCisJCQkgICAgICBzdHJ1Y3QgYmdw
-aW9fcGRhdGEgKiwgdW5zaWduZWQgbG9uZyAqKTsKKwljb25zdCBzdHJ1Y3QgZGV2aWNlX25vZGUg
-Km5vZGUgPSBwZGV2LT5kZXYub2Zfbm9kZTsKKwljb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkICpv
-Zl9pZDsKKwlzdHJ1Y3QgYmdwaW9fcGRhdGEgKnBkYXRhOworCWludCBlcnIgPSAtRU5PREVWOwor
-CisJb2ZfaWQgPSBvZl9tYXRjaF9ub2RlKGJncGlvX29mX21hdGNoLCBub2RlKTsKKwlpZiAoIW9m
-X2lkKQorCQlyZXR1cm4gTlVMTDsKKworCXBkYXRhID0gZGV2bV9remFsbG9jKCZwZGV2LT5kZXYs
-IHNpemVvZihzdHJ1Y3QgYmdwaW9fcGRhdGEpLAorCQkJICAgICBHRlBfS0VSTkVMKTsKKwlpZiAo
-IXBkYXRhKQorCQlyZXR1cm4gRVJSX1BUUigtRU5PTUVNKTsKKworCXBhcnNlX2R0ID0gKGNvbnN0
-IHZvaWQgKilvZl9pZC0+ZGF0YTsKKwlpZiAocGFyc2VfZHQpCisJCWVyciA9IHBhcnNlX2R0KHBk
-ZXYsIHBkYXRhLCBmbGFncyk7CisJaWYgKGVycikKKwkJcmV0dXJuIEVSUl9QVFIoZXJyKTsKKwor
-CXJldHVybiBwZGF0YTsKK30KKyNlbHNlCitzdGF0aWMgc3RydWN0IGJncGlvX3BkYXRhICpiZ3Bp
-b19wYXJzZV9kdChzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2LAorCQkJCQkgIHVuc2lnbmVk
-IGxvbmcgKmZsYWdzKQoreworCXJldHVybiBOVUxMOworfQorI2VuZGlmIC8qIENPTkZJR19PRiAq
-LworCiBzdGF0aWMgaW50IGJncGlvX3BkZXZfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
-cGRldikKIHsKIAlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+ZGV2OwpAQCAtNTc5LDEwICs2
-NjQsMTkgQEAgc3RhdGljIGludCBiZ3Bpb19wZGV2X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZp
-Y2UgKnBkZXYpCiAJdm9pZCBfX2lvbWVtICpkaXJvdXQ7CiAJdm9pZCBfX2lvbWVtICpkaXJpbjsK
-IAl1bnNpZ25lZCBsb25nIHN6OwotCXVuc2lnbmVkIGxvbmcgZmxhZ3MgPSBwZGV2LT5pZF9lbnRy
-eS0+ZHJpdmVyX2RhdGE7CisJdW5zaWduZWQgbG9uZyBmbGFncyA9IDA7CiAJaW50IGVycjsKIAlz
-dHJ1Y3QgZ3Bpb19jaGlwICpnYzsKLQlzdHJ1Y3QgYmdwaW9fcGRhdGEgKnBkYXRhID0gZGV2X2dl
-dF9wbGF0ZGF0YShkZXYpOworCXN0cnVjdCBiZ3Bpb19wZGF0YSAqcGRhdGE7CisKKwlwZGF0YSA9
-IGJncGlvX3BhcnNlX2R0KHBkZXYsICZmbGFncyk7CisJaWYgKElTX0VSUihwZGF0YSkpCisJCXJl
-dHVybiBQVFJfRVJSKHBkYXRhKTsKKworCWlmICghcGRhdGEpIHsKKwkJcGRhdGEgPSBkZXZfZ2V0
-X3BsYXRkYXRhKGRldik7CisJCWZsYWdzID0gcGRldi0+aWRfZW50cnktPmRyaXZlcl9kYXRhOwor
-CX0KIAogCXIgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2VfYnluYW1lKHBkZXYsIElPUkVTT1VSQ0Vf
-TUVNLCAiZGF0Iik7CiAJaWYgKCFyKQpAQCAtNjQ2LDYgKzc0MCw3IEBAIE1PRFVMRV9ERVZJQ0Vf
-VEFCTEUocGxhdGZvcm0sIGJncGlvX2lkX3RhYmxlKTsKIHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1f
-ZHJpdmVyIGJncGlvX2RyaXZlciA9IHsKIAkuZHJpdmVyID0gewogCQkubmFtZSA9ICJiYXNpYy1t
-bWlvLWdwaW8iLAorCQkub2ZfbWF0Y2hfdGFibGUgPSBvZl9tYXRjaF9wdHIoYmdwaW9fb2ZfbWF0
-Y2gpLAogCX0sCiAJLmlkX3RhYmxlID0gYmdwaW9faWRfdGFibGUsCiAJLnByb2JlID0gYmdwaW9f
-cGRldl9wcm9iZSwKLS0gCjIuOC4xCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtl
-cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxt
-YW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+Hi
+
++Matt, the maintainer of Coreboot firmware that I use at this device.
+
+On Sun, May 1, 2016 at 1:38 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Sun, May 1, 2016 at 2:33 AM, Anatol Pomozov <anatol.pomozov@gmail.com> wrote:
+>
+>> I am trying to 'rmmod gpio_lynxpoint' module at my Chromebox with Arch
+>> 4.5.1 kernel and get this oops:
+>>
+>> [  118.801173] BUG: unable to handle kernel NULL pointer dereference
+>> at 0000000000000078
+>> [  118.801228] IP: [<ffffffff8105401f>] apic_ack_edge+0x2f/0x60
+>
+> Mathias Nyman is the maintainer of this driver. Interesting that
+> a recent Chromebox is using Lynxpoint!
+>
+> Are you Cc:ing Laxman because you think the addition of
+> devm_gpiochip_add_data() handling is causing it?
+
+Yeah. I was looking at the history of recent changes in that file and
+just CC a few people.
+
+Starting from 4.2/4.3 kernel release I see numerous problems with this
+driver. For example there are regular crashes at the boot time when
+tries to load this driver https://goo.gl/photos/fGk2U6PgUFtxUk9w5    I
+have to stick with Arch 4.1 kernel that does not have this problem.
+
+> I think this looks much more related to the fact that we're removing
+> an irqchip and it's not really working.
+>
+> GPIO drivers with backing irqchips are providing resources to other
+> drivers, they are seldom really removeable.
+>
+> Maybe this driver should be made a bool?
