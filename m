@@ -1,37 +1,76 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: NULL pointer dereference when 'rmmod gpio_lynxpoint'
-Date: Sun, 1 May 2016 20:30:50 +0200
-Message-ID: <CACRpkdbwb9v=7qOdqNuvJhstfzv3M7OxCRM=ipOLiEp7=C5z3w@mail.gmail.com>
-References: <CAOMFOmXMJ47HQrc4vVXF1+JbxHmH78HTncnnUHfzseCs47EQ6w@mail.gmail.com>
-	<CACRpkdbDww+JdAD6BXKc_PnXFRD5o=0OTqOfTjTYNdTMsqtH2g@mail.gmail.com>
-	<CAOMFOmWTc11KrzGhWzowM7LW0F6S5qRshNG1KWm_NZZ7R3MJ_g@mail.gmail.com>
+From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH 00/10] Use the ISA bus driver for PC/104 and ISA devices
+Date: Sun, 1 May 2016 14:26:57 -0700
+Message-ID: <20160501212657.GC8337@kroah.com>
+References: <cover.1460040201.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:33982 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751976AbcEASav (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 1 May 2016 14:30:51 -0400
-Received: by mail-ob0-f173.google.com with SMTP id dm5so12757178obc.1
-        for <linux-gpio@vger.kernel.org>; Sun, 01 May 2016 11:30:51 -0700 (PDT)
-In-Reply-To: <CAOMFOmWTc11KrzGhWzowM7LW0F6S5qRshNG1KWm_NZZ7R3MJ_g@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <cover.1460040201.git.vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Anatol Pomozov <anatol.pomozov@gmail.com>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Matt DeVillier <matt.devillier@gmail.com>
 
-On Sun, May 1, 2016 at 4:36 PM, Anatol Pomozov <anatol.pomozov@gmail.com> wrote:
-> On Sun, May 1, 2016 at 1:38 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Sun, May 1, 2016 at 2:33 AM, Anatol Pomozov <anatol.pomozov@gmail.com> wrote:
+On Thu, Apr 07, 2016 at 10:47:21AM -0400, William Breathitt Gray wrote:
+> This patchset is based on top of commit 3a3a5fece6f2 ("fs: kernfs: Replace
+> CURRENT_TIME by current_fs_time()") of the driver-core-next branch of the
+> driver-core repository.
+> 
+> Two new ISA bus driver macros are introduced in this patchset:
+> module_isa_driver and max_num_isa_dev.
+> 
+> The module_isa_driver macro is a helper macro for ISA drivers which do not
+> do anything special in module init/exit. This macro is modelled after the
+> module_pci_driver macro and eliminates a lot of module init/exit
+> boilerplate code.
+> 
+> The max_num_isa_dev macro is used to determine the maximum possible number
+> of ISA devices which may be registered in the I/O port address space given
+> the address extent of the ISA devices. This macro is useful for computing
+> the maximum number of elements necessary to hold the base addresses and
+> interrupt line numbers of ISA devices for the respective ISA driver.
+> 
+> Lacking other documentation, I often found myself repeatedly returning to
+> the commit message of the initial commit for drivers/base/isa.c authored by
+> Rene Herman. A verbatim copy of this commit message has been added to
+> Documentation/isa.txt, along with descriptions for the module_isa driver
+> and max_num_isa_dev macros, for posterity.
+> 
+> The Apex Embedded Systems STX104 may be used on 64-bit X86 systems. This
+> patchset allows the Apex Embedded Systems STX104 DAC driver to be compiled
+> for both 32-bit and 64-bit X86 systems by depending on the ISA_BUS
+> configuration option rather than the ISA configuration option.
+> 
+> Similarly, many PC/104 and ISA devices may also be used on 64-bit X86
+> systems. The platform driver had been used to enable support for these
+> devices on 64-bit X86 systems. With the introduction of the ISA_BUS
+> configuration option, the respective drivers for these devices may now
+> utilize the ISA bus driver without restricting support to only 32-bit X86
+> systems; the following drivers now utilize the ISA bus driver over the
+> platform driver:
+> 
+>  * WinSystems EBC-C384 watchdog timer
+>  * ACCES 104-DIO-48E GPIO driver
+>  * ACCES 104-IDI-48 GPIO driver
+>  * ACCES 104-IDIO-16 GPIO driver
+>  * WinSystems WS16C48 GPIO driver
+> 
+> With the utilization of the ISA bus driver, the GPIO drivers in this
+> patchset may now support multiple devices for each of their respective ISA
+> drivers. A naming convention for module array parameters has been set based
+> on the Apex Embedded Systems STX104 DAC driver.
+> 
+> The "base" array module parameter sets the I/O port base address of each
+> device. The "irq" array module parameter sets the interrupt line number of
+> each device. Each element of the "base" array corresponds to a discrete
+> device; each element of the "irq" array corresponds to the respective
+> device addressed in the respective "base" array element.
 
-> Starting from 4.2/4.3 kernel release I see numerous problems with this
-> driver. For example there are regular crashes at the boot time when
-> tries to load this driver https://goo.gl/photos/fGk2U6PgUFtxUk9w5    I
-> have to stick with Arch 4.1 kernel that does not have this problem.
+Can you fix up the MAINTAINERS patch, add the ACKs you received, and
+resend this series so that I can apply it?
 
-Hm atleast it is not due to my recent refactorings of GPIO then.
+thanks,
 
-Any chance you can run a bisect and nail the commit?
-
-Yours,
-Linus Walleij
+greg k-h
