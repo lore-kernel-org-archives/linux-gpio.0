@@ -1,67 +1,109 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3] gpio: of: make it possible to name GPIO lines
-Date: Sun, 1 May 2016 10:56:57 +0200
-Message-ID: <CACRpkdbBah92TcAEquSL1HR4CdHx94MwdhBCcgu=p3-EUoHoTg@mail.gmail.com>
-References: <1461236901-28626-1-git-send-email-linus.walleij@linaro.org>
-	<1595634.pn7WvaDMTh@adelgunde>
+From: Christian Lamparter <chunkeey@googlemail.com>
+Subject: [RFC v6 0/3] gpio: add DT support for memory-mapped GPIOs
+Date: Sun,  1 May 2016 14:18:36 +0200
+Message-ID: <cover.1462104492.git.chunkeey@googlemail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1595634.pn7WvaDMTh@adelgunde>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Welling <mwelling-EkmVulN54Sk@public.gmane.org>, Lee Campbell <leecam-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Bamvor Jian Zhang <bamvor.zhangjian-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Amit Kucheria <amit.kucheria-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, David Mandala <david.mandala-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33384 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752261AbcEAMSt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 1 May 2016 08:18:49 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Christian Lamparter <chunkeey@googlemail.com>, =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexander Shiyan <shc_work@mail.ru>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
 
-On Thu, Apr 28, 2016 at 10:12 AM, Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
-> On Thursday 21 April 2016 13:08:21 Linus Walleij wrote:
+This patch series adds device tree support for generic memory-mapped GP=
+IOs.
+The GPIO library already allows drivers and architecture support code t=
+o
+reuse generic code for managing a GPIO chip. Currently, a developer has
+to create a platform device "basic-mmio-gpio" and attach a bgpio_pdata
+platform data structure to make use of it. However, for architectures
+which rely on the device tree to enumerate devices, creating custom
+platform devices is another extra step that can be avoided by having
+direct support via a device tree binding.
 
->> +Optionally, a GPIO controller may have a "gpio-line-names" property. This is
->> +an array of strings defining the names of the GPIO lines going out of the
->> +GPIO controller. This name should be the most meaningful producer name
->> +for the system, such as a rail name indicating the usage. Package names
->> +such as pin name are discouraged: such lines have opaque names (since they
->> +are by definition generic purpose) and such names are usually not very
->> +helpful. For example "MMC-CD", "Red LED Vdd" and "ethernet reset" are
->> +reasonable line names as they describe what the line is used for. "GPIO0"
->> +is not a good name to give to a GPIO line. Placeholders are discouraged:
->
-> "GPIO0" may not be a good name, but there are plenty of boards out there
-> that use just this line name in their schematic for GPIOs that are not
-> used otherwise. For example the riotboard has line-names "GPIO_1",
-> "GPIO4_31", "GPIO5_05", ...
+I initially came across this patch [0] from =C3=81lvaro Fern=C3=A1ndez =
+Rojas,
+while looking for an easy way to add support for the GPIO of my
+WD MyBook Live [1] (APM82181 - ppc464). His generic approach patch
+allowed me to easily get the GPIO (and the connected LEDs,
+buttons, gpiohogs, etc.) up and running. Even thought, Mr. Fernandez
+initially developed it for his work on the brcm63xx [2].
 
-That is what is referred to as "rail name" above. If they really choose
-that name on a schematic, then it is the right name for it.
+The drivers for gpio-clps711x, gpio-ge, gpio-moxart and gpio-ts4800
+are now part of the gpio-mmio.c driver. The old driver files have
+been removed and the Kconfig, Makefile entries have been updated
+accordingly.
 
->> +     gpio-line-names = "MMC-CD", "MMC-WP", "VDD eth", "RST eth", "LED R",
->> +             "LED G", "LED B", "Col A", "Col B", "Col C", "Col D",
->> +             "Row A", "Row B", "Row C", "Row D", "NMI button",
->> +             "poweroff", "reset";
->
-> As many GPIO controllers have something like 32 GPIO lines, it can be
-> difficult to read which GPIO number the line "reset" is on.
-> But I think you can get around that by writing one name per file-line or
-> something similar. Also it should be immediately visible by listing all
-> gpio names in the userspace.
+And finally, the most important stat about the series:
+	>>> 333 insertions(+), 411 deletions(-) <<<
+	It still removes more lines than it adds!
 
-Yeah well, the problem goes for clk-output-names that it's derived
-from as well, it comes from the DT syntactic limitations.
+Thanks! (Please keep me in the CC)
 
->> +             /* Empty strings are OK */
->> +             if (ret < 0 && ret != -ENODATA)
->> +                     dev_err(&gdev->dev, "unable to name line %d\n",
->> +                             i);
->> +     }
->
-> Maybe a warning for nstrings > ngpio here?
+[0] <https://patchwork.ozlabs.org/patch/422121/>
+[1] <https://github.com/chunkeey/MBL-openwrt>
+[2] <https://wiki.openwrt.org/doc/hardware/soc/soc.broadcom.bcm63xx>
 
-Sure. Just waiting for DT maintainers and other stakeholders' input at
-this point.
+changelog:
 
-Yours,
-Linus Walleij
+v5 -> v6:
+	- rewrote bindings and driver patch to fit the wd,mbl-gpio
+	- unified parser code for gpio-ge, gpio-moxart and gpio-ts4800
+	- fixed gpio chip's base being overwritten with bogus "0"
+	- fixed compat driver crash when reload gpio-generic.ko module
+	- dropped already applied patches from the series
+	- rebased code on linus' devel tree
+	- moved dt bindings patch to the top of the series
+
+v4 -> v5:
+	- reverted rename of gpio-mmio.c back to gpio-generic.c
+	- fixed Andy Shevchenko's comments
+	- consolidated changes from clps711x, gpio-ge, gpio-moxart and
+	  gpio-ts4800 into one patch.
+
+v3 -> v4:
+	- renamed gpio-generic.c to gpio-mmio.c
+	- changed compat. string to "linux,gpio-mmio"
+	- integrated Cirrus clps711x driver
+	- integrated GE FGPA gpio-ge driver
+	- integrated MOXA ART GPIO driver
+	- integrated TS4800 gpio driver
+	- reshuffled patches, reworded commits, fixed spelling errors, etc.
+
+Christian Lamparter (2):
+  gpio: dt-bindings: add wd,mbl-gpio bindings
+  gpio: move clps711x, moxart, ts4800 and gpio-ge into gpio-mmio
+
+=C3=81lvaro Fern=C3=A1ndez Rojas (1):
+  gpio: mmio: add DT support for memory-mapped GPIOs
+
+ .../devicetree/bindings/gpio/wd,mbl-gpio.txt       |  38 +++
+ drivers/gpio/Kconfig                               |  43 +--
+ drivers/gpio/Makefile                              |   4 -
+ drivers/gpio/gpio-clps711x.c                       |  91 -------
+ drivers/gpio/gpio-ge.c                             | 114 --------
+ drivers/gpio/gpio-mmio.c                           | 289 +++++++++++++=
++++++++-
+ drivers/gpio/gpio-moxart.c                         |  84 ------
+ drivers/gpio/gpio-ts4800.c                         |  81 ------
+ 8 files changed, 333 insertions(+), 411 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/wd,mbl-gpio.=
+txt
+ delete mode 100644 drivers/gpio/gpio-clps711x.c
+ delete mode 100644 drivers/gpio/gpio-ge.c
+ delete mode 100644 drivers/gpio/gpio-moxart.c
+ delete mode 100644 drivers/gpio/gpio-ts4800.c
+
+--=20
+2.8.1
+
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
