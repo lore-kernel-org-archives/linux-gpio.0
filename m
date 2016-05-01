@@ -1,45 +1,61 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: NULL pointer dereference when 'rmmod gpio_lynxpoint'
-Date: Sun, 1 May 2016 10:38:52 +0200
-Message-ID: <CACRpkdbDww+JdAD6BXKc_PnXFRD5o=0OTqOfTjTYNdTMsqtH2g@mail.gmail.com>
-References: <CAOMFOmXMJ47HQrc4vVXF1+JbxHmH78HTncnnUHfzseCs47EQ6w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: Let gpio_chip.to_irq() return -ENXIO on error
+Date: Sun, 1 May 2016 10:48:43 +0200
+Message-ID: <CACRpkdayGoAsU2+dOg4Y9BcyOORVp4OmUUCbE_cW5gPzR=D7nw@mail.gmail.com>
+References: <1461914677-24899-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:33748 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751784AbcEAIix (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 1 May 2016 04:38:53 -0400
-Received: by mail-oi0-f46.google.com with SMTP id v145so128288167oie.0
-        for <linux-gpio@vger.kernel.org>; Sun, 01 May 2016 01:38:53 -0700 (PDT)
-In-Reply-To: <CAOMFOmXMJ47HQrc4vVXF1+JbxHmH78HTncnnUHfzseCs47EQ6w@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1461914677-24899-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Anatol Pomozov <anatol.pomozov@gmail.com>, Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dewangan@nvidia.com, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Sun, May 1, 2016 at 2:33 AM, Anatol Pomozov <anatol.pomozov@gmail.com> wrote:
+On Fri, Apr 29, 2016 at 9:24 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> I am trying to 'rmmod gpio_lynxpoint' module at my Chromebox with Arch
-> 4.5.1 kernel and get this oops:
+> Currrently the gpio_chip.to_irq() callback returns -ENOSYS on error,
+> which causes bad interactions with the serial_mctrl_gpio helpers.
 >
-> [  118.801173] BUG: unable to handle kernel NULL pointer dereference
-> at 0000000000000078
-> [  118.801228] IP: [<ffffffff8105401f>] apic_ack_edge+0x2f/0x60
+> mctrl_gpio_init() returns -ENOSYS if GPIOLIB is not enabled, which is
+> intended to be ignored by its callers. However, ignoring -ENOSYS when it
+> was caused by a gpiod_to_irq() failure will lead to a crash later:
+>
+>     Unable to handle kernel paging request at virtual address ffffffde
+>     ...
+>     PC is at mctrl_gpio_set+0x14/0x78
+>
+> Fix this by returning -ENXIO instead.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Is -ENXIO the right error code?
 
-Mathias Nyman is the maintainer of this driver. Interesting that
-a recent Chromebox is using Lynxpoint!
+I would say that whatever the generic helpers in drivers/gpio/gpiolib.c
+returns should be the norm. However the guy who wrote them (me)
+isn't very smart either. It looks like so:
 
-Are you Cc:ing Laxman because you think the addition of
-devm_gpiochip_add_data() handling is causing it?
+static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
+{
+        return irq_find_mapping(chip->irqdomain, offset);
+}
 
-I think this looks much more related to the fact that we're removing
-an irqchip and it's not really working.
+That returns 0 (NO_IRQ) on failure.
 
-GPIO drivers with backing irqchips are providing resources to other
-drivers, they are seldom really removeable.
+And as you say:
 
-Maybe this driver should be made a bool?
+>   - Drivers that call irq_find_mapping(), irq_create_mapping(), or
+>     irq_create_fwspec_mapping() return zero!  This also applies to the
+>     core helper gpiochip_to_irq().
+
+Zero means NO_IRQ.
+
+Reminder:
+http://lwn.net/Articles/470820/
+
+What we should do is patch all drivers to return 0 on failure, and
+patch any consumers like mctrl_gpio_init() to handle that correctly.
 
 Yours,
 Linus Walleij
