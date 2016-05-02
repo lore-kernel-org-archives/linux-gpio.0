@@ -1,62 +1,70 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
-Date: Mon, 2 May 2016 12:14:00 +0530
-Message-ID: <5726F730.6010802@nvidia.com>
-References: <1461580714-22479-1-git-send-email-ldewangan@nvidia.com>	<CACRpkda7HqPLSRLzaSdO-7chjUBL9C2VAMB0nyVZUw=PSGL3VQ@mail.gmail.com>	<5723274B.3050209@nvidia.com> <CACRpkdZ-muOGvtKbKNP66Bv5FSPeMeYvmArC5GAM92EcKp+kgQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] Late GPIO fixes for the v4.6 cycle
+Date: Mon, 2 May 2016 10:02:08 +0200
+Message-ID: <CACRpkdas77BJq9mthoBnWhqzjMgzW-3Gv-VOJNuxMDO4Ah2uuA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZ-muOGvtKbKNP66Bv5FSPeMeYvmArC5GAM92EcKp+kgQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:36103 "EHLO
+	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752317AbcEBICJ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 May 2016 04:02:09 -0400
+Received: by mail-oi0-f54.google.com with SMTP id x201so181198952oif.3
+        for <linux-gpio@vger.kernel.org>; Mon, 02 May 2016 01:02:09 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
+Hi Linus,
 
-On Saturday 30 April 2016 04:37 PM, Linus Walleij wrote:
-> On Fri, Apr 29, 2016 at 11:20 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> On Friday 29 April 2016 02:37 PM, Linus Walleij wrote:
->>> On Mon, Apr 25, 2016 at 12:38 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> wrote:
->>>
->>>> Add support for the debounce as Tegra210 support debounce in HW.
->>>> Also do the clenaups to remove all global variables.
->>> OK this v5 is applied.
->>>
->>> Laxman does this GPIO also have open drain and/or open source
->>> handling?
->>
->> Some of the pins support the open drain and these are part of pinmux
->> register set.
->> For that we have property for setting open drain.
->>
->> Is it possible to link the gpio APIs to pincontrol for setting that pin?
-> I have the same issue with Nomadik pin control that I use as a
-> testbed: there is a backend in pin control to the GPIO side.
->
-> I was thinking about adding a new cross call. We now have this:
->
-> /* External interface to pin control */
-> extern int pinctrl_request_gpio(unsigned gpio);
-> extern void pinctrl_free_gpio(unsigned gpio);
-> extern int pinctrl_gpio_direction_input(unsigned gpio);
-> extern int pinctrl_gpio_direction_output(unsigned gpio);
->
-> I was going to add:
->
-> extern int pinctrl_gpio_set_config(unsigned gpio, unsigned long config);
->
-> That can be used by GPIO drivers to call back into pincontrol
-> and set up any config flags using the conventions of the
-> corresponding pin control back-end.
->
-> This could be used for as well open drain as other things (like
-> pull-up) as the userspace ABI matures (it currently only has
-> in/out and open drain/source).
->
-> What do you think about this idea?
->
+here are some late but important fixes for the v4.6 kernel
+series. ACPI and RCAR, so two driver fixes (PM related)
+and a self-evident string lookup fix for ACPI GPIOs.
 
-Yes, this will be great.
-We will have generic interface which help in extending it in option.
+Please pull them in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit bf16200689118d19de1b8d2a3c314fc21f5d=
+c7bb:
+
+  Linux 4.6-rc3 (2016-04-10 17:58:30 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.6-4
+
+for you to fetch changes up to 7df89e92a56a3d2c8f84aa76c61471e4a7bc24f9=
+:
+
+  gpiolib-acpi: Duplicate con_id string when adding it to the crs
+lookup list (2016-04-30 13:51:59 +0200)
+
+----------------------------------------------------------------
+Late GPIO fixes for the v4.6 series:
+- A serious ACPI fix targeted for stable: lookup strings
+  were being free:ed.
+- Revert two patches from the RCAR driver.
+
+----------------------------------------------------------------
+Linus Walleij (2):
+      Revert "gpio: rcar: Add Runtime PM handling for interrupts"
+      Revert "gpio: rcar: Fine-grained Runtime PM support"
+
+Ville Syrj=C3=A4l=C3=A4 (1):
+      gpiolib-acpi: Duplicate con_id string when adding it to the crs
+lookup list
+
+ drivers/gpio/gpio-rcar.c    | 65 +++++--------------------------------=
+--------
+ drivers/gpio/gpiolib-acpi.c |  2 +-
+ 2 files changed, 7 insertions(+), 60 deletions(-)
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
