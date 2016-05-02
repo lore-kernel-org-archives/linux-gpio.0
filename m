@@ -1,47 +1,52 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] mfd: intel_soc_pmic_core: Terminate panel
- control GPIO lookup table correctly
-Date: Mon, 2 May 2016 10:19:38 +0200
-Message-ID: <20160502081938.GG14148@phenom.ffwll.local>
-References: <1461353935-8078-1-git-send-email-ville.syrjala@linux.intel.com>
- <CACRpkdasFcEAzDtHGU+unrsstyX+o1Ft=HAh22Esm5Z3KZ=2ug@mail.gmail.com>
+From: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v2 2/2] ARM: dts: enable pinctrl for Broadcom NS2 SoC
+Date: Mon, 2 May 2016 13:55:59 +0530
+Message-ID: <CAL2FKYn6FnGRyu=QKDmhqbYx5K3_orROnFww7dekcG4XGo_Y=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdasFcEAzDtHGU+unrsstyX+o1Ft=HAh22Esm5Z3KZ=2ug@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Shobhit Kumar <shobhit.kumar@intel.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, stable <stable@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Pramod Kumar <pramodku-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-T24gRnJpLCBBcHIgMjksIDIwMTYgYXQgMTE6MzE6NDRBTSArMDIwMCwgTGludXMgV2FsbGVpaiB3
-cm90ZToKPiBPbiBGcmksIEFwciAyMiwgMjAxNiBhdCA5OjM4IFBNLCAgPHZpbGxlLnN5cmphbGFA
-bGludXguaW50ZWwuY29tPiB3cm90ZToKPiAKPiA+IEZyb206IFZpbGxlIFN5cmrDpGzDpCA8dmls
-bGUuc3lyamFsYUBsaW51eC5pbnRlbC5jb20+Cj4gPgo+ID4gR1BJTyBsb29rdXAgdGFibGVzIGFy
-ZSBzdXBwb3NlZCB0byBiZSB6ZXJvIHRlcm1pbmF0ZWQuIExldCdzIGRvIHRoYXQKPiA+IGFuZCBh
-dm9pZCBhY2NpZGVudGFsbHkgd2Fsa2luZyBvZmYgdGhlIGVuZC4KPiA+Cj4gPiBDYzogU2hvYmhp
-dCBLdW1hciA8c2hvYmhpdC5rdW1hckBpbnRlbC5jb20+Cj4gPiBDYzogU2FtdWVsIE9ydGl6IDxz
-YW1lb0BsaW51eC5pbnRlbC5jb20+Cj4gPiBDYzogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVp
-akBsaW5hcm8ub3JnPgo+ID4gQ2M6IEFsZXhhbmRyZSBDb3VyYm90IDxnbnVyb3VAZ21haWwuY29t
-Pgo+ID4gQ2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+Cj4gPiBD
-YzogTGVlIEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4KPiA+IENjOiBzdGFibGVAdmdlci5r
-ZXJuZWwub3JnCj4gPiBGaXhlczogNjFkZDJjYTJkNDRlICgibWZkOiBpbnRlbF9zb2NfcG1pY19j
-b3JlOiBBZGQgbG9va3VwIHRhYmxlIGZvciBQYW5lbCBDb250cm9sIGFzIEdQSU8gc2lnbmFsIikK
-PiA+IFNpZ25lZC1vZmYtYnk6IFZpbGxlIFN5cmrDpGzDpCA8dmlsbGUuc3lyamFsYUBsaW51eC5p
-bnRlbC5jb20+Cj4gCj4gQWNrZWQtYnk6IExpbnVzIFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGlu
-YXJvLm9yZz4KCkFwcGxpZWQgdG8gZHJtLWludGVsIHRyZWVzLCB0aGFua3MgZm9yIHBhdGNoLCBy
-ZXZpZXdzJmFja3MuCi1EYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIs
-IEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50
-ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
+Hi Florian,
+
+On Sat, Apr 30, 2016 at 11:25 PM, Florian Fainelli <f.fainelli-Re5JQEeQqe8@public.gmane.org=
+m> wrote:
+> Le 30/04/2016 04:13, Linus Walleij a =C3=A9crit :
+>> On Fri, Apr 29, 2016 at 2:51 PM, Yendapally Reddy Dhananjaya Reddy
+>> <yendapally.reddy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org> wrote:
+>>
+>>> This enables the pinctrl support for Broadcom NS2 SoC
+>>>
+>>> Signed-off-by: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@=
+broadcom.com>
+>>> Reviewed-by: Ray Jui <ray.jui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+>>
+>> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>>
+>> Please take this in through the apropriate BCM tree to ARM SoC.
+>
+> Applied to devicetree-arm64/next, there was a small conflict due to t=
+he
+> crmu node removal while switching to PSCI, Dhanajay, please double ch=
+eck
+> the result here:
+>
+> https://github.com/Broadcom/stblinux/commit/8eab685dda30fb15e74d6be07=
+baa9d430a75b8ca
+> --
+
+I verified it on the provided path. Its working fine.
+
+> Florian
+
+Thanks
+Dhananjay
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
