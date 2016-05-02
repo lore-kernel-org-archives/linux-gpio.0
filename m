@@ -1,47 +1,62 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V11 6/6] gpio: max77620: add gpio driver for MAX77620/MAX20024
-Date: Mon, 2 May 2016 11:47:44 +0530
-Message-ID: <5726F108.2050805@nvidia.com>
-References: <1461837540-17071-1-git-send-email-ldewangan@nvidia.com>	<1461837540-17071-7-git-send-email-ldewangan@nvidia.com> <CACRpkdZxVsGkC1U5Y9+M1fh6Z1T_ZBZC4eyH4ryzBijUq2hvCg@mail.gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
+Date: Mon, 2 May 2016 12:14:00 +0530
+Message-ID: <5726F730.6010802@nvidia.com>
+References: <1461580714-22479-1-git-send-email-ldewangan@nvidia.com>	<CACRpkda7HqPLSRLzaSdO-7chjUBL9C2VAMB0nyVZUw=PSGL3VQ@mail.gmail.com>	<5723274B.3050209@nvidia.com> <CACRpkdZ-muOGvtKbKNP66Bv5FSPeMeYvmArC5GAM92EcKp+kgQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:10428 "EHLO
-	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750948AbcEBGaA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 May 2016 02:30:00 -0400
-In-Reply-To: <CACRpkdZxVsGkC1U5Y9+M1fh6Z1T_ZBZC4eyH4ryzBijUq2hvCg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdZ-muOGvtKbKNP66Bv5FSPeMeYvmArC5GAM92EcKp+kgQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?B?UGF3ZcWCIE1vbGw=?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>
 
 
-On Saturday 30 April 2016 05:08 PM, Linus Walleij wrote:
-> On Thu, Apr 28, 2016 at 11:59 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
->
->> MAXIM Semiconductor's PMIC, MAX77620/MAX20024 has 8 GPIO
->> pins. It also supports interrupts from these pins.
+On Saturday 30 April 2016 04:37 PM, Linus Walleij wrote:
+> On Fri, Apr 29, 2016 at 11:20 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> On Friday 29 April 2016 02:37 PM, Linus Walleij wrote:
+>>> On Mon, Apr 25, 2016 at 12:38 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> wrote:
+>>>
+>>>> Add support for the debounce as Tegra210 support debounce in HW.
+>>>> Also do the clenaups to remove all global variables.
+>>> OK this v5 is applied.
+>>>
+>>> Laxman does this GPIO also have open drain and/or open source
+>>> handling?
 >>
->> Add GPIO driver for these pins to control via GPIO APIs.
+>> Some of the pins support the open drain and these are part of pinmux
+>> register set.
+>> For that we have property for setting open drain.
 >>
->> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Gnah there is still a problem with this, I just saw it:
+>> Is it possible to link the gpio APIs to pincontrol for setting that pin?
+> I have the same issue with Nomadik pin control that I use as a
+> testbed: there is a backend in pin control to the GPIO side.
 >
->> +config GPIO_MAX77620
->> +       bool "GPIO support for PMIC MAX77620 and MAX20024"
-> bool == not a module
+> I was thinking about adding a new cross call. We now have this:
+>
+> /* External interface to pin control */
+> extern int pinctrl_request_gpio(unsigned gpio);
+> extern void pinctrl_free_gpio(unsigned gpio);
+> extern int pinctrl_gpio_direction_input(unsigned gpio);
+> extern int pinctrl_gpio_direction_output(unsigned gpio);
+>
+> I was going to add:
+>
+> extern int pinctrl_gpio_set_config(unsigned gpio, unsigned long config);
+>
+> That can be used by GPIO drivers to call back into pincontrol
+> and set up any config flags using the conventions of the
+> corresponding pin control back-end.
+>
+> This could be used for as well open drain as other things (like
+> pull-up) as the userspace ABI matures (it currently only has
+> in/out and open drain/source).
+>
+> What do you think about this idea?
+>
 
-Yaah, looked the changes from Gortmaker.
-The things are evolving faster.
-
-I think we can change "bool" to "tristate" here.
-Then there is no need to have code change. MFD driver is already said as 
-tristate.
-
-
-I will wait for Lee's comment on this series patch before recycling the 
-patch. (Already on V11 :-(  ).
-
+Yes, this will be great.
+We will have generic interface which help in extending it in option.
