@@ -1,41 +1,49 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] gpio: make gpiod_to_irq() return negative for NO_IRQ
-Date: Mon, 2 May 2016 13:25:00 +0200
-Message-ID: <CAMuHMdXawvn8DaMsgb74QqMGeAnw0ZH51MK+ng5Bm9AWe2X40A@mail.gmail.com>
-References: <1462187702-7450-1-git-send-email-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35686 "EHLO
-	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753569AbcEBLZB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 May 2016 07:25:01 -0400
-Received: by mail-io0-f194.google.com with SMTP id u185so25109876iod.2
-        for <linux-gpio@vger.kernel.org>; Mon, 02 May 2016 04:25:01 -0700 (PDT)
-In-Reply-To: <1462187702-7450-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.7 (take two)
+Date: Mon,  2 May 2016 13:48:46 +0200
+Message-ID: <1462189726-31833-1-git-send-email-geert@linux-m68k.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 2, 2016 at 1:15 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> If a translation returns zero, that means NO_IRQ, so we
-> should return an error since the function is documented to
-> return a negative code on error.
->
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+	Hi Linus,
+
+The following changes since commit 92e6d9a2cc827018a18885e0f3050ab9ff8c3206:
+
+  pinctrl: sh-pfc: r8a7795: Add drive strength support (2016-03-29 09:23:01 +0200)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.7-tag2
+
+for you to fetch changes up to 56ed4bb984acbba9cfe080e45ac4b50ca63dd188:
+
+  pinctrl: sh-pfc: r8a7794: Add DU pin groups (2016-04-15 12:31:37 +0200)
+
+----------------------------------------------------------------
+pinctrl: sh-pfc: Updates for v4.7 (take two)
+
+  - Support for the Display Unit on R-Car E2.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Koji Matsuoka (1):
+      pinctrl: sh-pfc: r8a7794: Add DU pin groups
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 217 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 217 insertions(+)
 
 Gr{oetje,eeting}s,
 
-                        Geert
+						Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+							    -- Linus Torvalds
