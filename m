@@ -1,52 +1,53 @@
-From: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] ARM: dts: enable pinctrl for Broadcom NS2 SoC
-Date: Mon, 2 May 2016 13:55:59 +0530
-Message-ID: <CAL2FKYn6FnGRyu=QKDmhqbYx5K3_orROnFww7dekcG4XGo_Y=A@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: Let gpio_chip.to_irq() return -ENXIO on error
+Date: Mon, 2 May 2016 10:30:13 +0200
+Message-ID: <CACRpkdbtwSmGmCfBLBUi2w9NHkVTLhwg8Q5srMCxNLNjze6msg@mail.gmail.com>
+References: <1461914677-24899-1-git-send-email-geert+renesas@glider.be>
+	<CACRpkdayGoAsU2+dOg4Y9BcyOORVp4OmUUCbE_cW5gPzR=D7nw@mail.gmail.com>
+	<CAMuHMdW+O-qtrfbfpORX_dWCATZ9goTqQQa_sD9h1Jq=7H9DMA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Pramod Kumar <pramodku-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdW+O-qtrfbfpORX_dWCATZ9goTqQQa_sD9h1Jq=7H9DMA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Florian,
+On Mon, May 2, 2016 at 10:03 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Sun, May 1, 2016 at 10:48 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-On Sat, Apr 30, 2016 at 11:25 PM, Florian Fainelli <f.fainelli-Re5JQEeQqe8@public.gmane.org=
-m> wrote:
-> Le 30/04/2016 04:13, Linus Walleij a =C3=A9crit :
->> On Fri, Apr 29, 2016 at 2:51 PM, Yendapally Reddy Dhananjaya Reddy
->> <yendapally.reddy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org> wrote:
+>>>   - Drivers that call irq_find_mapping(), irq_create_mapping(), or
+>>>     irq_create_fwspec_mapping() return zero!  This also applies to the
+>>>     core helper gpiochip_to_irq().
 >>
->>> This enables the pinctrl support for Broadcom NS2 SoC
->>>
->>> Signed-off-by: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@=
-broadcom.com>
->>> Reviewed-by: Ray Jui <ray.jui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+>> Zero means NO_IRQ.
 >>
->> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>> Reminder:
+>> http://lwn.net/Articles/470820/
 >>
->> Please take this in through the apropriate BCM tree to ARM SoC.
+>> What we should do is patch all drivers to return 0 on failure, and
+>> patch any consumers like mctrl_gpio_init() to handle that correctly.
 >
-> Applied to devicetree-arm64/next, there was a small conflict due to t=
-he
-> crmu node removal while switching to PSCI, Dhanajay, please double ch=
-eck
-> the result here:
+> That's the Long Term Plan. There are still too many non-zero NO_IRQ
+> definitions in use...
 >
-> https://github.com/Broadcom/stblinux/commit/8eab685dda30fb15e74d6be07=
-baa9d430a75b8ca
-> --
+> Is -ENXIO acceptable for the short term?
 
-I verified it on the provided path. Its working fine.
+I don't understand. You say you have a problem  with
+mctrl_gpio_init() which looks like this:
 
-> Florian
+        ret = gpiod_to_irq(gpios->gpio[i]);
+        if (ret <= 0) {
+            dev_err(port->dev, (...)
 
-Thanks
-Dhananjay
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This function is already *correctly* handling zero as NO_IRQ
+i.e. an error.
+
+Just make your driver return 0/NO_IRQ and it is fixed.
+
+Or are there other problems that you're not telling about?
+
+Yours,
+Linus Walleij
