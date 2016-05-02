@@ -1,70 +1,38 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
-Date: Tue, 3 May 2016 00:36:29 +0530
-Message-ID: <5727A535.2060808@nvidia.com>
-References: <1461580714-22479-1-git-send-email-ldewangan@nvidia.com> <CACRpkda7HqPLSRLzaSdO-7chjUBL9C2VAMB0nyVZUw=PSGL3VQ@mail.gmail.com> <5723274B.3050209@nvidia.com> <CACRpkdZ-muOGvtKbKNP66Bv5FSPeMeYvmArC5GAM92EcKp+kgQ@mail.gmail.com> <57277C70.5080204@wwwdotorg.org> <57279534.5010409@nvidia.com> <5727A001.5030609@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH v2 0/2] Additional iProc GPIO support
+Date: Mon,  2 May 2016 13:51:46 -0700
+Message-ID: <1462222308-4869-1-git-send-email-ray.jui@broadcom.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:9104 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754672AbcEBTSj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 May 2016 15:18:39 -0400
-In-Reply-To: <5727A001.5030609@wwwdotorg.org>
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:49213 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753488AbcEBUvx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 May 2016 16:51:53 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org, Ray Jui <ray.jui@broadcom.com>
 
+Add support to the iProc GPIO driver for v2 and v3 revisions of the iProc GPIO
+controllers. The v2 revision is used on NSP with drive strength pinconf
+feature disabled and the v3 revision is used on Stingray with all pinconf
+features disabled
 
-On Tuesday 03 May 2016 12:14 AM, Stephen Warren wrote:
-> On 05/02/2016 11:58 AM, Laxman Dewangan wrote:
->>
->>
->> Toggling OE bit is something emulating the open drain here.
->
-> From the perspective of the external HW that's attached to the GPIO, I 
-> believe there's no difference.
->
->> I think idea is that when we configure the pin in open drain then it
->> should be automatically handled by HW  when we want to set pin state
->> high or low. When we set low, the pin should be driven and when high
->> then it should be tristated input. We should not need any direction bit
->> setting.
->
-> I don't imagine anything in the kernel cares, so long as the correct 
-> logic level is present on the pin based on whatever GPIO API was last 
-> called.
->
-> I'd be very surprised if there wasn't hardware that could only 
-> implement open-drain by this "emulation" method, so I'd be very 
-> surprised if something prohibited that implementation style.
->
+Changes from v1:
+ - Changed to use compatible strings "brcm,iproc-gpio-v2" and
+"brcm,iproc-gpio-v3" to deal with differences among various iProc based SoCs
+ - Removed DT header "include/dt-bindings/pinctrl/brcm,iproc-gpio.h"
 
-The emulation method implemented just to not drive high for open drain.
-Recently, proper callback added for hw control for open drain and hence 
-emulation method is not needed for such HW.
+Patch series is developed based on Linux v4.6-rc1 and available at:
+https://github.com/Broadcom/cygnus-linux/tree/iproc-gpio-v2
 
-I think if HW support the callback to implement the open drain then use 
-the HW method otherwise fallback to emulation method.
+Ray Jui (2):
+  dt-bindings: Update iProc GPIO bindings
+  pinctrl: iproc: Add v2/v3 GPIO support
 
+ .../bindings/pinctrl/brcm,iproc-gpio.txt           |  11 +-
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c           | 115 +++++++++++++++++++--
+ 2 files changed, 119 insertions(+), 7 deletions(-)
 
->> Otherwise, if pin is configured as open drain then:
->>
->> Set out = 0
->>
->> and when it need to set pin to high then oe = 0 else oe =1. Do not
->> toggle any other bits.
->>
->> On this case, we need to store that pin is configured as open drain so
->> that set_value should toggle OE instead of OUT.
->
-> That sounds like a reasonable implementation.
->
-
-Let me create the patch for review and further discussion.
-
->> Or do you want to have different implementation?
->
+-- 
+2.1.4
 
