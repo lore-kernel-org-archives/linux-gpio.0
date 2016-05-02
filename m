@@ -1,39 +1,203 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 1/2] pinctrl: ns2: add pinmux driver support for Broadcom NS2 SoC
-Date: Mon, 02 May 2016 15:36:08 +0200
-Message-ID: <7673779.BeEs3iufq4@wuerfel>
-References: <1461934299-14774-1-git-send-email-yendapally.reddy@broadcom.com> <1461934299-14774-2-git-send-email-yendapally.reddy@broadcom.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 1/1] pinctrl: tegra: avoid parked_reg and parked_bank
+Date: Mon, 2 May 2016 19:58:49 +0530
+Message-ID: <1462199330-1536-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.133]:57463 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753341AbcEBNg6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 May 2016 09:36:58 -0400
-In-Reply-To: <1461934299-14774-2-git-send-email-yendapally.reddy@broadcom.com>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:1318 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753292AbcEBOlH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 May 2016 10:41:07 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Pramod Kumar <pramodku@broadcom.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, swarren@wwwdotorg.org, thierry.reding@gmail.com
+Cc: gnurou@gmail.com, rklein@nvidia.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 
-On Friday 29 April 2016 08:51:38 Yendapally Reddy Dhananjaya Reddy wrote:
-> +static struct pinctrl_ops ns2_pinctrl_ops = {
-> +       .get_groups_count = ns2_get_groups_count,
-> +       .get_group_name = ns2_get_group_name,
-> +       .get_group_pins = ns2_get_group_pins,
-> +       .pin_dbg_show = ns2_pin_dbg_show,
-> +       .dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
-> +       .dt_free_map = pinctrl_utils_dt_free_map,
-> +};
-> +
+NVIDIA's Tegra210 support the park bit to make pinmux configuration
+enable/disable. If parked bit is 1 then configuration does not apply
+and if it is 0 then pinmux configuration applies. This is to support
+to avoid any glitch in pinmux configurations.
 
-This does not build:
+The parked bit is part of mux register and mux bank and hence it is
+not required to have member for the parked_reg and parked bank very
+similar to other bit field of the same register.
 
-drivers/pinctrl/bcm/pinctrl-ns2-mux.c:540:17: error: 'pinctrl_utils_dt_free_map' undeclared here (not in a function)
-  .dt_free_map = pinctrl_utils_dt_free_map,
-                 ^~~~~~~~~~~~~~~~~~~~~~~~~
+Remove the need of the parked register and parked bank and get whether
+parked function supported or not by parked_bit.
 
-Apparently this function got renamed to pinctrl_utils_free_map
+This is to make the parked bit handling same as other fields of mux
+registers.
 
-	Arnd
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+ drivers/pinctrl/tegra/pinctrl-tegra.c    | 8 ++++----
+ drivers/pinctrl/tegra/pinctrl-tegra.h    | 6 +-----
+ drivers/pinctrl/tegra/pinctrl-tegra114.c | 4 ++--
+ drivers/pinctrl/tegra/pinctrl-tegra124.c | 4 ++--
+ drivers/pinctrl/tegra/pinctrl-tegra20.c  | 4 ++--
+ drivers/pinctrl/tegra/pinctrl-tegra210.c | 4 +---
+ drivers/pinctrl/tegra/pinctrl-tegra30.c  | 4 ++--
+ 7 files changed, 14 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 861baf2..fb00129 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -632,11 +632,11 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+ 	u32 val;
+ 
+ 	for (i = 0; i < pmx->soc->ngroups; ++i) {
+-		if (pmx->soc->groups[i].parked_reg >= 0) {
+-			g = &pmx->soc->groups[i];
+-			val = pmx_readl(pmx, g->parked_bank, g->parked_reg);
++		g = &pmx->soc->groups[i];
++		if ((g->parked_bit >= 0) && (g->parked_bit <= 31)) {
++			val = pmx_readl(pmx, g->mux_bank, g->mux_reg);
+ 			val &= ~(1 << g->parked_bit);
+-			pmx_writel(pmx, val, g->parked_bank, g->parked_reg);
++			pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
+ 		}
+ 	}
+ }
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
+index d2ced17..33b17cb 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.h
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+@@ -93,9 +93,7 @@ struct tegra_function {
+  * @tri_reg:		Tri-state register offset.
+  * @tri_bank:		Tri-state register bank.
+  * @tri_bit:		Tri-state register bit.
+- * @parked_reg:		Parked register offset. -1 if unsupported.
+- * @parked_bank:	Parked register bank. 0 if unsupported.
+- * @parked_bit:		Parked register bit. 0 if unsupported.
++ * @parked_bit:		Parked register bit. -1 if unsupported.
+  * @einput_bit:		Enable-input register bit.
+  * @odrain_bit:		Open-drain register bit.
+  * @lock_bit:		Lock register bit.
+@@ -138,12 +136,10 @@ struct tegra_pingroup {
+ 	s16 pupd_reg;
+ 	s16 tri_reg;
+ 	s16 drv_reg;
+-	s16 parked_reg;
+ 	u32 mux_bank:2;
+ 	u32 pupd_bank:2;
+ 	u32 tri_bank:2;
+ 	u32 drv_bank:2;
+-	u32 parked_bank:2;
+ 	s32 mux_bit:6;
+ 	s32 pupd_bit:6;
+ 	s32 tri_bit:6;
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra114.c b/drivers/pinctrl/tegra/pinctrl-tegra114.c
+index 4851d16..952132c 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra114.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra114.c
+@@ -1578,7 +1578,7 @@ static struct tegra_function tegra114_functions[] = {
+ 		.lock_bit = 7,						\
+ 		.ioreset_bit = PINGROUP_BIT_##ior(8),			\
+ 		.rcv_sel_bit = PINGROUP_BIT_##rcv_sel(9),		\
+-		.parked_reg = -1,					\
++		.parked_bit = -1,					\
+ 		.drv_reg = -1,						\
+ 	}
+ 
+@@ -1599,7 +1599,7 @@ static struct tegra_function tegra114_functions[] = {
+ 		.rcv_sel_bit = -1,					\
+ 		.drv_reg = DRV_PINGROUP_REG(r),				\
+ 		.drv_bank = 0,						\
+-		.parked_reg = -1,					\
++		.parked_bit = -1,					\
+ 		.hsm_bit = hsm_b,					\
+ 		.schmitt_bit = schmitt_b,				\
+ 		.lpmd_bit = lpmd_b,					\
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra124.c b/drivers/pinctrl/tegra/pinctrl-tegra124.c
+index a0ce723..bca239e 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra124.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra124.c
+@@ -1747,7 +1747,7 @@ static struct tegra_function tegra124_functions[] = {
+ 		.lock_bit = 7,						\
+ 		.ioreset_bit = PINGROUP_BIT_##ior(8),			\
+ 		.rcv_sel_bit = PINGROUP_BIT_##rcv_sel(9),		\
+-		.parked_reg = -1,					\
++		.parked_bit = -1,					\
+ 		.drv_reg = -1,						\
+ 	}
+ 
+@@ -1768,7 +1768,7 @@ static struct tegra_function tegra124_functions[] = {
+ 		.rcv_sel_bit = -1,					\
+ 		.drv_reg = DRV_PINGROUP_REG(r),				\
+ 		.drv_bank = 0,						\
+-		.parked_reg = -1,					\
++		.parked_bit = -1,					\
+ 		.hsm_bit = hsm_b,					\
+ 		.schmitt_bit = schmitt_b,				\
+ 		.lpmd_bit = lpmd_b,					\
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+index 09bad69..91254d0 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+@@ -1994,7 +1994,7 @@ static struct tegra_function tegra20_functions[] = {
+ 		.tri_reg = ((tri_r) - TRISTATE_REG_A),		\
+ 		.tri_bank = 0,					\
+ 		.tri_bit = tri_b,				\
+-		.parked_reg = -1,				\
++		.parked_bit = -1,				\
+ 		.einput_bit = -1,				\
+ 		.odrain_bit = -1,				\
+ 		.lock_bit = -1,					\
+@@ -2014,7 +2014,7 @@ static struct tegra_function tegra20_functions[] = {
+ 		.pupd_bank = 2,					\
+ 		.pupd_bit = pupd_b,				\
+ 		.drv_reg = -1,					\
+-		.parked_reg = -1,				\
++		.parked_bit = -1,				\
+ 	}
+ 
+ /* Pin groups for drive strength registers (configurable version) */
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+index 2d856af..2b70e93 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+@@ -1310,8 +1310,6 @@ static struct tegra_function tegra210_functions[] = {
+ 		.lock_bit = 7,						\
+ 		.ioreset_bit = -1,					\
+ 		.rcv_sel_bit = PINGROUP_BIT_##e_io_hv(10),		\
+-		.parked_reg = PINGROUP_REG(r),				\
+-		.parked_bank = 1,					\
+ 		.parked_bit = 5,					\
+ 		.hsm_bit = PINGROUP_BIT_##hsm(9),			\
+ 		.schmitt_bit = 12,					\
+@@ -1345,7 +1343,7 @@ static struct tegra_function tegra210_functions[] = {
+ 		.rcv_sel_bit = -1,					\
+ 		.drv_reg = DRV_PINGROUP_REG(r),				\
+ 		.drv_bank = 0,						\
+-		.parked_reg = -1,					\
++		.parked_bit = -1,					\
+ 		.hsm_bit = -1,						\
+ 		.schmitt_bit = -1,					\
+ 		.lpmd_bit = -1,						\
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra30.c b/drivers/pinctrl/tegra/pinctrl-tegra30.c
+index fb7817f..474ac6d 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra30.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra30.c
+@@ -2139,7 +2139,7 @@ static struct tegra_function tegra30_functions[] = {
+ 		.lock_bit = 7,						\
+ 		.ioreset_bit = PINGROUP_BIT_##ior(8),			\
+ 		.rcv_sel_bit = -1,					\
+-		.parked_reg = -1,					\
++		.parked_bit = -1,					\
+ 		.drv_reg = -1,						\
+ 	}
+ 
+@@ -2160,7 +2160,7 @@ static struct tegra_function tegra30_functions[] = {
+ 		.rcv_sel_bit = -1,					\
+ 		.drv_reg = DRV_PINGROUP_REG(r),				\
+ 		.drv_bank = 0,						\
+-		.parked_reg = -1,					\
++		.parked_bit = -1,					\
+ 		.hsm_bit = hsm_b,					\
+ 		.schmitt_bit = schmitt_b,				\
+ 		.lpmd_bit = lpmd_b,					\
+-- 
+2.1.4
+
