@@ -1,46 +1,45 @@
-From: Anatol Pomozov <anatol.pomozov@gmail.com>
-Subject: Re: NULL pointer dereference when 'rmmod gpio_lynxpoint'
-Date: Mon, 2 May 2016 20:23:22 -0700
-Message-ID: <CAOMFOmVUj_KRU20bpkqTUaCWNTVCoALz-vskgPKaW1TTR2gRPQ@mail.gmail.com>
-References: <CAOMFOmXMJ47HQrc4vVXF1+JbxHmH78HTncnnUHfzseCs47EQ6w@mail.gmail.com>
-	<CACRpkdbDww+JdAD6BXKc_PnXFRD5o=0OTqOfTjTYNdTMsqtH2g@mail.gmail.com>
-	<CAOMFOmWTc11KrzGhWzowM7LW0F6S5qRshNG1KWm_NZZ7R3MJ_g@mail.gmail.com>
-	<CACRpkdbwb9v=7qOdqNuvJhstfzv3M7OxCRM=ipOLiEp7=C5z3w@mail.gmail.com>
+From: Jiang Qiu <qiujiang@huawei.com>
+Subject: Re: [PATCH v10 1/3] gpio: dwapb: remove name from dwapb_port_property
+Date: Tue, 3 May 2016 11:38:36 +0800
+Message-ID: <57281D3C.5020503@huawei.com>
+References: <1461835923-68492-1-git-send-email-qiujiang@huawei.com>
+ <1461835923-68492-2-git-send-email-qiujiang@huawei.com>
+ <CACRpkdaS3+6ZJS0MJk-j4J3j2mKC-MULgCbS8Dqy=4_toy-x9Q@mail.gmail.com>
+Reply-To: <qiujiang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f172.google.com ([209.85.213.172]:38902 "EHLO
-	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755238AbcECDXX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 May 2016 23:23:23 -0400
-Received: by mail-ig0-f172.google.com with SMTP id m9so9610539ige.1
-        for <linux-gpio@vger.kernel.org>; Mon, 02 May 2016 20:23:23 -0700 (PDT)
-In-Reply-To: <CACRpkdbwb9v=7qOdqNuvJhstfzv3M7OxCRM=ipOLiEp7=C5z3w@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaS3+6ZJS0MJk-j4J3j2mKC-MULgCbS8Dqy=4_toy-x9Q@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Matt DeVillier <matt.devillier@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Alan Tull <delicious.quinoa@gmail.com>, Jamie Iles <jamie@jamieiles.com>, charles.chenxin@huawei.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>
+List-Id: linux-gpio@vger.kernel.org
 
-Hi
+=E5=9C=A8 4/29/2016 5:22 PM, Linus Walleij =E5=86=99=E9=81=93:
+> On Thu, Apr 28, 2016 at 11:32 AM, Jiang Qiu <qiujiang@huawei.com> wro=
+te:
+>=20
+>> This patch removed the name property from dwapb_port_property.
+>> The name property is redundant, since we can get this info
+>> from dwapb_gpio dev node.
+>>
+>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>> Signed-off-by: Jiang Qiu <qiujiang@huawei.com>
+>=20
+> Hmmm just applied another version. Oh well, applying this
+> instead.
 
-On Sun, May 1, 2016 at 11:30 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Sun, May 1, 2016 at 4:36 PM, Anatol Pomozov <anatol.pomozov@gmail.com> wrote:
->> On Sun, May 1, 2016 at 1:38 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>> On Sun, May 1, 2016 at 2:33 AM, Anatol Pomozov <anatol.pomozov@gmail.com> wrote:
->
->> Starting from 4.2/4.3 kernel release I see numerous problems with this
->> driver. For example there are regular crashes at the boot time when
->> tries to load this driver https://goo.gl/photos/fGk2U6PgUFtxUk9w5    I
->> have to stick with Arch 4.1 kernel that does not have this problem.
->
-> Hm atleast it is not due to my recent refactorings of GPIO then.
->
-> Any chance you can run a bisect and nail the commit?
+Hi, Linux, many thanks for applying.
+>=20
+> Yours,
+> Linus Walleij
+>=20
+> .
+>=20
 
-I compiled lynx gpio into kernel instead of compiling it as a module.
-And the system got more stable - I rebooted my devices ~50 times
-already and I do not see the boot problem I had before. 'CONFIG_..=y'
-definitely makes the situation better.
-
-As of bisecting - it will require time do find the commit. I might do
-it if I find some spare time.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
