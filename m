@@ -1,73 +1,84 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5/6] pinctrl: tegra: Add DT binding for io pads control
-Date: Tue, 3 May 2016 14:33:25 +0100
-Message-ID: <5728A8A5.4080603@nvidia.com>
-References: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com>
- <1462191434-28933-6-git-send-email-ldewangan@nvidia.com>
- <57289D3D.40301@nvidia.com> <57289F88.6040203@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 1/2] pinctrl: nomadik: hide nmk_gpio_get_mode when unused
+Date: Tue,  3 May 2016 17:26:53 +0200
+Message-ID: <1462289221-861102-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <57289F88.6040203@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, swarren@wwwdotorg.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@unipv.it>
+Cc: Heiko Stuebner <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, Irina Tirdea <irina.tirdea@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Jonas Gorski <jogo@openwrt.org>, Laxman Dewangan <ldewangan@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
+nmk_gpio_get_mode is only used in one place, and that is conditionally
+compiled if DEBUG_FS is enabled. A recent cleanup has marked the
+definition 'static', which now leads to a warning:
 
-On 03/05/16 13:54, Laxman Dewangan wrote:
-> 
-> On Tuesday 03 May 2016 06:14 PM, Jon Hunter wrote:
->> On 02/05/16 13:17, Laxman Dewangan wrote:
->>> +
->>> +The voltage supported on the pads are 1.8V and 3.3V. The enums are
->>> defined as:
->>> +    For 1.8V, use TEGRA_IO_PAD_POWER_SOURCE_1800000UV
->>> +    For 3.3V, use TEGRA_IO_PAD_POWER_SOURCE_3300000UV
->> Are these still necessary now that the driver is using uV? Can't we just
->> use integer values for 1800000 and 3300000 in the DTS directly?
->>
-> The config param and value are packed in u32 with 16bit each So we can
-> not make uV in 16bit until we do conversion of uV->mV.
-> Hence suggestion came from Stephen that we can have enum for Nvidia
-> specific and what actually it supports by HW. HW does not support any
-> other voltage.
+drivers/pinctrl/nomadik/pinctrl-nomadik.c:614:12: error: 'nmk_gpio_get_mode' defined but not used [-Werror=unused-function]
+ static int nmk_gpio_get_mode(struct nmk_gpio_chip *nmk_chip, int offset)
+            ^~~~~~~~~~~~~~~~~
 
-Ah yes I see.
+Moving the function itself inside the #ifdef shuts it up again.
 
-> 
->>> +Required subnode-properties:
->>> +==========================
->>> +- pins : An array of strings. Each string contains the name of an IO
->>> pads. Valid
->>> +     values for these names are listed below.
->> Please see my previous comments.
-> 
-> This is taken from other dt binding docs for description. We can have
-> array of string.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 5e81e0a0913c ("pinctrl: nomadik: use BIT() with offsets consequently")
+---
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
-OK.
-
-> As all value of pins are not supporting all property and hence I
-> explicitly wrote under properties.
-
-I don't find it very clear. I thought all pins support the low power
-modes so I think it is clearer to list all the pin names under the pins
-description.
-
->>> +Optional subnode-properties:
->>> +==========================
->>> +-nvidia,power-source-voltage:    Integer. The voltage level of IO
->>> pads. The
->> I think I prefer nvidia,io-voltage or something. You can describe what
->> this means in this doc. In fact, the current description here does not
->> explicitly state that this voltage, is the voltage the pad is configured
->> to operate at versus the voltage of the IO rail.
-> 
-> Linus suggested this dt property name to make more readable and generic
-> and meaningful with other property :power-source.
-
-OK.
-
-Jon
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index e5c71acd9506..ccbfc325c778 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -611,20 +611,6 @@ static int __maybe_unused nmk_prcm_gpiocr_get_mode(struct pinctrl_dev *pctldev,
+ 	return NMK_GPIO_ALT_C;
+ }
+ 
+-static int nmk_gpio_get_mode(struct nmk_gpio_chip *nmk_chip, int offset)
+-{
+-	u32 afunc, bfunc;
+-
+-	clk_enable(nmk_chip->clk);
+-
+-	afunc = readl(nmk_chip->addr + NMK_GPIO_AFSLA) & BIT(offset);
+-	bfunc = readl(nmk_chip->addr + NMK_GPIO_AFSLB) & BIT(offset);
+-
+-	clk_disable(nmk_chip->clk);
+-
+-	return (afunc ? NMK_GPIO_ALT_A : 0) | (bfunc ? NMK_GPIO_ALT_B : 0);
+-}
+-
+ /* IRQ functions */
+ 
+ static void nmk_gpio_irq_ack(struct irq_data *d)
+@@ -929,6 +915,19 @@ static int nmk_gpio_make_output(struct gpio_chip *chip, unsigned offset,
+ }
+ 
+ #ifdef CONFIG_DEBUG_FS
++static int nmk_gpio_get_mode(struct nmk_gpio_chip *nmk_chip, int offset)
++{
++	u32 afunc, bfunc;
++
++	clk_enable(nmk_chip->clk);
++
++	afunc = readl(nmk_chip->addr + NMK_GPIO_AFSLA) & BIT(offset);
++	bfunc = readl(nmk_chip->addr + NMK_GPIO_AFSLB) & BIT(offset);
++
++	clk_disable(nmk_chip->clk);
++
++	return (afunc ? NMK_GPIO_ALT_A : 0) | (bfunc ? NMK_GPIO_ALT_B : 0);
++}
+ 
+ #include <linux/seq_file.h>
+ 
+-- 
+2.7.0
