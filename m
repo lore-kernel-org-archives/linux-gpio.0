@@ -1,53 +1,51 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] mfd: intel_soc_pmic_core: Terminate panel
- control GPIO lookup table correctly
-Date: Wed, 4 May 2016 08:32:17 +0100
-Message-ID: <20160504073217.GB1503@dell.home>
-References: <1461353935-8078-1-git-send-email-ville.syrjala@linux.intel.com>
- <CACRpkdasFcEAzDtHGU+unrsstyX+o1Ft=HAh22Esm5Z3KZ=2ug@mail.gmail.com>
- <20160502081938.GG14148@phenom.ffwll.local>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20160502081938.GG14148@phenom.ffwll.local>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Shobhit Kumar <shobhit.kumar@intel.com>, Linus Walleij <linus.walleij@linaro.org>, stable <stable@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, intel-gfx <intel-gfx@lists.freedesktop.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] pinctrl: sh-pfc: Let gpio_chip.to_irq() return zero on error
+Date: Wed,  4 May 2016 10:21:53 +0200
+Message-ID: <1462350113-20216-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-T24gTW9uLCAwMiBNYXkgMjAxNiwgRGFuaWVsIFZldHRlciB3cm90ZToKCj4gT24gRnJpLCBBcHIg
-MjksIDIwMTYgYXQgMTE6MzE6NDRBTSArMDIwMCwgTGludXMgV2FsbGVpaiB3cm90ZToKPiA+IE9u
-IEZyaSwgQXByIDIyLCAyMDE2IGF0IDk6MzggUE0sICA8dmlsbGUuc3lyamFsYUBsaW51eC5pbnRl
-bC5jb20+IHdyb3RlOgo+ID4gCj4gPiA+IEZyb206IFZpbGxlIFN5cmrDpGzDpCA8dmlsbGUuc3ly
-amFsYUBsaW51eC5pbnRlbC5jb20+Cj4gPiA+Cj4gPiA+IEdQSU8gbG9va3VwIHRhYmxlcyBhcmUg
-c3VwcG9zZWQgdG8gYmUgemVybyB0ZXJtaW5hdGVkLiBMZXQncyBkbyB0aGF0Cj4gPiA+IGFuZCBh
-dm9pZCBhY2NpZGVudGFsbHkgd2Fsa2luZyBvZmYgdGhlIGVuZC4KPiA+ID4KPiA+ID4gQ2M6IFNo
-b2JoaXQgS3VtYXIgPHNob2JoaXQua3VtYXJAaW50ZWwuY29tPgo+ID4gPiBDYzogU2FtdWVsIE9y
-dGl6IDxzYW1lb0BsaW51eC5pbnRlbC5jb20+Cj4gPiA+IENjOiBMaW51cyBXYWxsZWlqIDxsaW51
-cy53YWxsZWlqQGxpbmFyby5vcmc+Cj4gPiA+IENjOiBBbGV4YW5kcmUgQ291cmJvdCA8Z251cm91
-QGdtYWlsLmNvbT4KPiA+ID4gQ2M6IFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGluZ0BnbWFp
-bC5jb20+Cj4gPiA+IENjOiBMZWUgSm9uZXMgPGxlZS5qb25lc0BsaW5hcm8ub3JnPgo+ID4gPiBD
-Yzogc3RhYmxlQHZnZXIua2VybmVsLm9yZwo+ID4gPiBGaXhlczogNjFkZDJjYTJkNDRlICgibWZk
-OiBpbnRlbF9zb2NfcG1pY19jb3JlOiBBZGQgbG9va3VwIHRhYmxlIGZvciBQYW5lbCBDb250cm9s
-IGFzIEdQSU8gc2lnbmFsIikKPiA+ID4gU2lnbmVkLW9mZi1ieTogVmlsbGUgU3lyasOkbMOkIDx2
-aWxsZS5zeXJqYWxhQGxpbnV4LmludGVsLmNvbT4KPiA+IAo+ID4gQWNrZWQtYnk6IExpbnVzIFdh
-bGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz4KPiAKPiBBcHBsaWVkIHRvIGRybS1pbnRl
-bCB0cmVlcywgdGhhbmtzIGZvciBwYXRjaCwgcmV2aWV3cyZhY2tzLgoKRG8gd2hhdCBub3c/ICBI
-b3cgY2FuIHlvdSBhcHBseSBhIHBhdGNoIGZvciBhIHN1YnN5c3RlbSB5b3UgZG9uJ3QgaGF2ZQpy
-ZXNwb25zaWJpbGl0eSBmb3I/ICBUaGlzIGlzIGJvdW5kIHRvIGNhdXNlIG1lcmdlIGNvbmZsaWN0
-cy4KCi0tIApMZWUgSm9uZXMKTGluYXJvIFNUTWljcm9lbGVjdHJvbmljcyBMYW5kaW5nIFRlYW0g
-TGVhZApMaW5hcm8ub3JnIOKUgiBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MKRm9s
-bG93IExpbmFybzogRmFjZWJvb2sgfCBUd2l0dGVyIHwgQmxvZwpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVs
-LWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
+Currrently the gpio_chip.to_irq() callback returns -ENOSYS on error,
+which causes bad interactions with the serial_mctrl_gpio helpers.
+
+mctrl_gpio_init() returns -ENOSYS if GPIOLIB is not enabled, which is
+intended to be ignored by its callers. However, ignoring -ENOSYS when it
+was caused by a gpiod_to_irq() failure will lead to a crash later:
+
+    Unable to handle kernel paging request at virtual address ffffffde
+    ...
+    PC is at mctrl_gpio_set+0x14/0x78
+
+Fix this by returning zero instead, like gpiochip_to_irq() does.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This depends on "gpio: make gpiod_to_irq() return negative for NO_IRQ"
+for proper handling by callers of mctrl_gpio_init().
+Hence I think it's best to take this through the GPIO tree, after the
+above has been applied.
+
+v2:
+  - Return zero instead of -ENXIO.
+---
+ drivers/pinctrl/sh-pfc/gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
+index a6681b8b17c3b30c..97dff6a09ff08115 100644
+--- a/drivers/pinctrl/sh-pfc/gpio.c
++++ b/drivers/pinctrl/sh-pfc/gpio.c
+@@ -212,7 +212,7 @@ static int gpio_pin_to_irq(struct gpio_chip *gc, unsigned offset)
+ 		}
+ 	}
+ 
+-	return -ENOSYS;
++	return 0;
+ 
+ found:
+ 	return pfc->irqs[i];
+-- 
+1.9.1
