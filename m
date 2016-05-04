@@ -1,51 +1,54 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [RFC v6 1/3] gpio: dt-bindings: add wd,mbl-gpio bindings
-Date: Wed, 4 May 2016 07:32:02 -0500
-Message-ID: <CAL_JsqLQV-k9O9SjaTnHG5G_JhYqn69xHzLWrqXJAJvGAc=2Og@mail.gmail.com>
-References: <cover.1462104492.git.chunkeey@googlemail.com> <103bf8fceb426a9c3b09641ea989955e3ec1c7d4.1462104492.git.chunkeey@googlemail.com>
- <20160504022210.GA9913@rob-hp-laptop> <4330813.s9mxBLCsXA@debian64>
+Subject: Re: [PATCH v2 1/2] dt-bindings: Update iProc GPIO bindings
+Date: Wed, 4 May 2016 08:20:20 -0500
+Message-ID: <20160504132020.GA21065@rob-hp-laptop>
+References: <1462222308-4869-1-git-send-email-ray.jui@broadcom.com>
+ <1462222308-4869-2-git-send-email-ray.jui@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:42666 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:46547 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750732AbcEDMcf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 4 May 2016 08:32:35 -0400
-In-Reply-To: <4330813.s9mxBLCsXA@debian64>
+	id S1751136AbcEDNUZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 4 May 2016 09:20:25 -0400
+Content-Disposition: inline
+In-Reply-To: <1462222308-4869-2-git-send-email-ray.jui@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Christian Lamparter <chunkeey@googlemail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6?= <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexander Shiyan <shc_work@mail.ru>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Ray Jui <ray.jui@broadcom.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
 
-On Tue, May 3, 2016 at 11:53 PM, Christian Lamparter
-<chunkeey@googlemail.com> wrote:
-> On Tuesday, May 03, 2016 09:22:10 PM Rob Herring wrote:
->> On Sun, May 01, 2016 at 02:18:37PM +0200, Christian Lamparter wrote:
->> > This patch adds the device tree bindings for the Western Digital's
->> > MyBook Live memory-mapped GPIO controllers.
->> >
->> > The gpios will be supported by gpio-mmio code of the
->> > GPIO generic library.
->> >
->> > +++ b/Documentation/devicetree/bindings/gpio/wd,mbl-gpio.txt
->> > @@ -0,0 +1,38 @@
->> > +Bindings for the Western Digital's MyBook Live memory-mapped GPIO controllers.
->>
->> Are these really product level GPIOs rather than some SOC's GPIOs
->> (APM?)?
->>
-> Ah, that's a good point.
->
-> In a nutshell: The APM82181 SoC has two proper/normal GPIO controllers
-> which have a dt-binding and a kernel driver ready to go.
-> However Western Digital went with their own GPIO controller for
-> the MyBook Live [7].
+On Mon, May 02, 2016 at 01:51:47PM -0700, Ray Jui wrote:
+> Update the iProc GPIO binding document to add new compatible strings
+> "brcm,iproc-gpio-v2" and "brcm,iproc-gpio-v3" for the 2nd and 3rd
+> generation of the iProc GPIO controllers
+> 
+> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
+> index e427792..3a56649 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
+> @@ -4,7 +4,16 @@ Required properties:
+>  
+>  - compatible:
+>      Must be "brcm,cygnus-ccm-gpio", "brcm,cygnus-asiu-gpio",
+> -    "brcm,cygnus-crmu-gpio" or "brcm,iproc-gpio"
+> +    or "brcm,cygnus-crmu-gpio" for Cygnus SoCs
+> +
+> +    "brcm,iproc-gpio" for the first generation of the GPIO controller that
+> +    supports full-featured pinctrl and GPIO functions used in iProc based SoCs
+> +
+> +    "brcm,iproc-gpio-v2" for the second generation of the GPIO controller that
+> +    has the drive strength pinctrl support disabled, e.g., in the iProc NSP SoC
+> +
+> +    "brcm,iproc-gpio-v3" for the third generation of the GPIO controller that
+> +    has the general pinctrl support completely disabled
 
-Okay, just making sure. It's a little strange to have external (to an
-SOC) memory mapped GPIOs is why I asked.
-
-Acked-by: Rob Herring <robh@kernel.org>
+You can have these for driver matching, but you still need SoC specific 
+compatible strings.
 
 Rob
-
-P.S. By v6, you should drop RFC.
