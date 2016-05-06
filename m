@@ -1,61 +1,105 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: [RFC PATCH] drivers/pinctrl: Add pinctrl-ast2400
-Date: Fri,  6 May 2016 15:50:07 +0930
-Message-ID: <1462515608-20566-1-git-send-email-andrew@aj.id.au>
+From: Christian Lamparter <chunkeey@googlemail.com>
+Subject: [PATCH v7 0/3] gpio: add DT support for memory-mapped GPIOs
+Date: Fri,  6 May 2016 13:10:18 +0200
+Message-ID: <cover.1462372360.git.chunkeey@googlemail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Milton Miller II <miltonm@us.ibm.com>, Joel Stanley <joel@jms.id.au>, Jeremy Kerr <jk@ozlabs.org>
+To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Christian Lamparter <chunkeey@googlemail.com>, =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexander Shiyan <shc_work@mail.ru>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi all,
+This patch series adds device tree support for generic memory-mapped GP=
+IOs.
+The GPIO library already allows drivers and architecture support code t=
+o
+reuse generic code for managing a GPIO chip. Currently, a developer has
+to create a platform device "basic-mmio-gpio" and attach a bgpio_pdata
+platform data structure to make use of it. However, for architectures
+which rely on the device tree to enumerate devices, creating custom
+platform devices is another extra step that can be avoided by having
+direct support via a device tree binding.
 
-This is a patch partially implementing a pinctrl/pinmux driver for the Aspeed
-AST2400 ARM SoC, complementing Joel Stanley's recent series[1] adding the core
-support for the chip. With additional integration patches there's enough pinmux
-to boot the SoC and configure a number of i2c busses, but not much more.
+I initially came across this patch [0] from =C3=81lvaro Fern=C3=A1ndez =
+Rojas,
+while looking for an easy way to add support for the GPIO of my
+WD MyBook Live [1] (APM82181). His generic approach patch allowed
+me to easily get the GPIO (and the connected LEDs, buttons, gpiohogs)
+up and running. Even thought, Mr. Fernandez initially developed it
+for his work on the brcm63xx [2].
 
-I'm posting it as an RFC for several reasons:
+The drivers for gpio-clps711x, gpio-ge, gpio-moxart and gpio-ts4800
+are now part of the gpio-mmio.c driver. The old driver files have
+been removed and the Kconfig, Makefile entries have been updated
+accordingly.
 
-* This is my first attempt at a pinmux driver (and first significant kernel
-  patch) and so I've probably made mistakes and overlooked useful interfaces or
-  patterns
+And finally, the most important stat about the series:
+	>>> 333 insertions(+), 411 deletions(-) <<<
+	It still removes more lines than it adds!
 
-* The hardware seems funky and makes things tedious. Configuring a
-  mux function often requires writing multiple bits to multiple registers,
-  sometimes for each pin in a bus
+Thanks!
 
-* I've added a fair bit of commentary to the implementation to explain the
-  approach. Likely some of it is considered common knowledge and can be
-  stripped out, so thoughts there would be appreciated. Maybe it's too verbose
-  and is more confusing than helpful. The datasheet isn't publicly available so
-  I went with more-is-better.
+[0] <https://patchwork.ozlabs.org/patch/422121/>
+[1] <https://github.com/chunkeey/MBL-openwrt>
+[2] <https://wiki.openwrt.org/doc/hardware/soc/soc.broadcom.bcm63xx>
 
-* It makes heavy use of macros to "simplify" the pin/function declarations.
-  Maybe it's too much of a macro hell. Maybe there's an alternative
-  representation that's less dependent on interlinked structures. Maybe more
-  should be pushed into devicetree? In any case, I've kernel-doc'ed the
-  high-level macros to describe their use.
+changelog:
 
-As mentioned the driver not complete and the patch doesn't integrate it in any
-way, the implementation only describes a subset of the functions and pins
-available and pinconf isn't yet handled. To be useful in the system I'm testing
-against (an OpenPOWER Palmetto BMC) we need more pins configured as GPIO, but I
-held off on implementing functionality for all required pins in order to first
-get some feedback on the approach.
+v6 -> v7:
+	- finally made a PATCH series (based on linux-gpio devel branch)
+	- added Rob Herring's ACK to the dt bindings
+	- cc'd clps711x, gpio-ge, moxart and ts4800 authors for driver
+	  changes.
 
-Cheers,
+v5 -> v6:
+	- rewrote bindings and driver patch to fit the wd,mbl-gpio
+	- unified parser code for gpio-ge, gpio-moxart and gpio-ts4800
+	- fixed gpio chip's base being overwritten with bogus "0"
+	- fixed compat driver crash when reload gpio-generic.ko module
+	- dropped already applied patches from the series
+	- rebased code on linus' devel tree
+	- moved dt bindings patch to the top of the series
 
-Andrew
+v4 -> v5:
+	- reverted rename of gpio-mmio.c back to gpio-generic.c
+	- fixed Andy Shevchenko's comments
+	- consolidated changes from clps711x, gpio-ge, gpio-moxart and
+	  gpio-ts4800 into one patch.
 
-[1] http://www.spinics.net/lists/arm-kernel/msg498895.html
+v3 -> v4:
+	- renamed gpio-generic.c to gpio-mmio.c
+	- changed compat. string to "linux,gpio-mmio"
+	- integrated Cirrus clps711x driver
+	- integrated GE FGPA gpio-ge driver
+	- integrated MOXA ART GPIO driver
+	- integrated TS4800 gpio driver
+	- reshuffled patches, reworded commits, fixed spelling errors, etc.
 
-Andrew Jeffery (1):
-  drivers/pinctrl: Add pinctrl-ast2400
+Christian Lamparter (2):
+  gpio: dt-bindings: add wd,mbl-gpio bindings
+  gpio: move clps711x, moxart, ts4800 and gpio-ge into gpio-mmio
 
- drivers/pinctrl/pinctrl-ast2400.c | 1488 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 1488 insertions(+)
- create mode 100644 drivers/pinctrl/pinctrl-ast2400.c
+=C3=81lvaro Fern=C3=A1ndez Rojas (1):
+  gpio: mmio: add DT support for memory-mapped GPIOs
 
--- 
-2.7.4
+ .../devicetree/bindings/gpio/wd,mbl-gpio.txt       |  38 +++
+ drivers/gpio/Kconfig                               |  43 +--
+ drivers/gpio/Makefile                              |   4 -
+ drivers/gpio/gpio-clps711x.c                       |  91 -------
+ drivers/gpio/gpio-ge.c                             | 114 --------
+ drivers/gpio/gpio-mmio.c                           | 289 +++++++++++++=
++++++++-
+ drivers/gpio/gpio-moxart.c                         |  84 ------
+ drivers/gpio/gpio-ts4800.c                         |  81 ------
+ 8 files changed, 333 insertions(+), 411 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/wd,mbl-gpio.=
+txt
+ delete mode 100644 drivers/gpio/gpio-clps711x.c
+ delete mode 100644 drivers/gpio/gpio-ge.c
+ delete mode 100644 drivers/gpio/gpio-moxart.c
+ delete mode 100644 drivers/gpio/gpio-ts4800.c
+
+--=20
+2.8.1
