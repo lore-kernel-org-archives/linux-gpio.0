@@ -1,101 +1,98 @@
 From: Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 2/7] pinctrl: amlogic: gxbb: add EMMC and SD pins
-Date: Fri,  6 May 2016 07:21:21 -0700
-Message-ID: <1462544486-9516-3-git-send-email-khilman@baylibre.com>
+Subject: [PATCH 4/7] pinctrl amlogic: gxbb: add ethernet pins
+Date: Fri,  6 May 2016 07:21:23 -0700
+Message-ID: <1462544486-9516-5-git-send-email-khilman@baylibre.com>
 References: <1462544486-9516-1-git-send-email-khilman@baylibre.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:35747 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757430AbcEFOVa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 May 2016 10:21:30 -0400
-Received: by mail-pa0-f48.google.com with SMTP id iv1so48010726pac.2
-        for <linux-gpio@vger.kernel.org>; Fri, 06 May 2016 07:21:30 -0700 (PDT)
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:35752 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757924AbcEFOVc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 May 2016 10:21:32 -0400
+Received: by mail-pa0-f46.google.com with SMTP id iv1so48010993pac.2
+        for <linux-gpio@vger.kernel.org>; Fri, 06 May 2016 07:21:31 -0700 (PDT)
 In-Reply-To: <1462544486-9516-1-git-send-email-khilman@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-amlogic@lists.infradead.org, Carlo Caione <carlo@caione.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-meson@googlegroups.com, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Victor Wan <victor.wan@amlogic.com>, Jerry Cao <jerry.cao@amlogic.com>, Xing Wu <xing.xu@amlogic.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Carlo Caione <carlo@endlessm.com>
+Cc: linux-meson@googlegroups.com, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Victor Wan <victor.wan@amlogic.com>, Jerry Cao <jerry.cao@amlogic.com>, Xing Wu <xing.xu@amlogic.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-Add EE domain pins for eMMC and SD card.
+Add EE domain pins for ethernet interface.
 
-Cc: Carlo Caione <carlo@endlessm.com>
 Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 ---
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 41 ++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 39 ++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
 diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 50551677b0ee..5dc98ee35265 100644
+index 67b5af70e9e9..360535a30625 100644
 --- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
 +++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -147,6 +147,22 @@ static const struct pinctrl_pin_desc meson_gxbb_periphs_pins[] = {
- 	MESON_PIN(GPIO_TEST_N, EE_OFF),
- };
+@@ -178,6 +178,21 @@ static const unsigned int uart_rx_c_pins[]	= { PIN(GPIOY_14, EE_OFF) };
+ static const unsigned int uart_cts_c_pins[]	= { PIN(GPIOX_11, EE_OFF) };
+ static const unsigned int uart_rts_c_pins[]	= { PIN(GPIOX_12, EE_OFF) };
  
-+static const unsigned int emmc_nand_d07_pins[] = {
-+	PIN(BOOT_0, EE_OFF), PIN(BOOT_1, EE_OFF), PIN(BOOT_2, EE_OFF),
-+	PIN(BOOT_3, EE_OFF), PIN(BOOT_4, EE_OFF), PIN(BOOT_5, EE_OFF),
-+	PIN(BOOT_6, EE_OFF), PIN(BOOT_7, EE_OFF),
-+};
-+static const unsigned int emmc_clk_pins[] = { PIN(BOOT_8, EE_OFF) };
-+static const unsigned int emmc_cmd_pins[] = { PIN(BOOT_10, EE_OFF) };
-+static const unsigned int emmc_ds_pins[] = { PIN(BOOT_15, EE_OFF) };
-+
-+static const unsigned int sdcard_d0_pins[] = { PIN(CARD_1, EE_OFF) };
-+static const unsigned int sdcard_d1_pins[] = { PIN(CARD_0, EE_OFF) };
-+static const unsigned int sdcard_d2_pins[] = { PIN(CARD_5, EE_OFF) };
-+static const unsigned int sdcard_d3_pins[] = { PIN(CARD_4, EE_OFF) };
-+static const unsigned int sdcard_cmd_pins[] = { PIN(CARD_3, EE_OFF) };
-+static const unsigned int sdcard_clk_pins[] = { PIN(CARD_2, EE_OFF) };
++static const unsigned int eth_mdio_pins[]	= { PIN(GPIOZ_0, EE_OFF) };
++static const unsigned int eth_mdc_pins[]	= { PIN(GPIOZ_1, EE_OFF) };
++static const unsigned int eth_clk_rx_clk_pins[]	= { PIN(GPIOZ_2, EE_OFF) };
++static const unsigned int eth_rx_dv_pins[]	= { PIN(GPIOZ_3, EE_OFF) };
++static const unsigned int eth_rxd0_pins[]	= { PIN(GPIOZ_4, EE_OFF) };
++static const unsigned int eth_rxd1_pins[]	= { PIN(GPIOZ_5, EE_OFF) };
++static const unsigned int eth_rxd2_pins[]	= { PIN(GPIOZ_6, EE_OFF) };
++static const unsigned int eth_rxd3_pins[]	= { PIN(GPIOZ_7, EE_OFF) };
++static const unsigned int eth_rgmii_tx_clk_pins[] = { PIN(GPIOZ_8, EE_OFF) };
++static const unsigned int eth_tx_en_pins[]	= { PIN(GPIOZ_9, EE_OFF) };
++static const unsigned int eth_txd0_pins[]	= { PIN(GPIOZ_10, EE_OFF) };
++static const unsigned int eth_txd1_pins[]	= { PIN(GPIOZ_11, EE_OFF) };
++static const unsigned int eth_txd2_pins[]	= { PIN(GPIOZ_12, EE_OFF) };
++static const unsigned int eth_txd3_pins[]	= { PIN(GPIOZ_13, EE_OFF) };
 +
  static const struct pinctrl_pin_desc meson_gxbb_aobus_pins[] = {
  	MESON_PIN(GPIOAO_0, 0),
  	MESON_PIN(GPIOAO_1, 0),
-@@ -307,6 +323,20 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GPIO_GROUP(GPIOCLK_3, EE_OFF),
+@@ -351,6 +366,22 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
+ 	GROUP(uart_tx_c,	1,	17),
+ 	GROUP(uart_rx_c,	1,	16),
  
- 	GPIO_GROUP(GPIO_TEST_N, EE_OFF),
++	/* Bank Z */
++	GROUP(eth_mdio,		6,	1),
++	GROUP(eth_mdc,		6,	0),
++	GROUP(eth_clk_rx_clk,	6,	13),
++	GROUP(eth_rx_dv,	6,	12),
++	GROUP(eth_rxd0,		6,	11),
++	GROUP(eth_rxd1,		6,	10),
++	GROUP(eth_rxd2,		6,	9),
++	GROUP(eth_rxd3,		6,	8),
++	GROUP(eth_rgmii_tx_clk,	6,	7),
++	GROUP(eth_tx_en,	6,	6),
++	GROUP(eth_txd0,		6,	5),
++	GROUP(eth_txd1,		6,	4),
++	GROUP(eth_txd2,		6,	3),
++	GROUP(eth_txd3,		6,	2),
 +
-+	/* Bank BOOT */
-+	GROUP(emmc_nand_d07,	4,	30),
-+	GROUP(emmc_clk,		4,	18),
-+	GROUP(emmc_cmd,		4,	19),
-+	GROUP(emmc_ds,		4,	31),
-+
-+	/* Bank CARD */
-+	GROUP(sdcard_d1,	2,	14),
-+	GROUP(sdcard_d0,	2,	15),
-+	GROUP(sdcard_d3,	2,	12),
-+	GROUP(sdcard_d2,	2,	13),
-+	GROUP(sdcard_cmd,	2,	10),
-+	GROUP(sdcard_clk,	2,	11),
+ 	/* Bank DV */
+ 	GROUP(uart_tx_b,	2,	29),
+ 	GROUP(uart_rx_b,	2,	28),
+@@ -461,6 +492,13 @@ static const char * const uart_c_groups[] = {
+ 	"uart_tx_c", "uart_rx_c", "uart_cts_c", "uart_rts_c",
  };
  
- static struct meson_pmx_group meson_gxbb_aobus_groups[] = {
-@@ -377,6 +407,15 @@ static const char * const gpio_periphs_groups[] = {
- 	"GPIO_TEST_N",
- };
- 
-+static const char * const emmc_groups[] = {
-+	"emmc_nand_d07", "emmc_clk", "emmc_cmd", "emmc_ds",
-+};
-+
-+static const char * const sdcard_groups[] = {
-+	"sdcard_d0", "sdcard_d1", "sdcard_d2", "sdcard_d3",
-+	"sdcard_cmd", "sdcard_clk",
++static const char * const eth_groups[] = {
++	"eth_mdio", "eth_mdc", "eth_clk_rx_clk", "eth_rx_dv",
++	"eth_rxd0", "eth_rxd1", "eth_rxd2", "eth_rxd3",
++	"eth_rgmii_tx_clk", "eth_tx_en",
++	"eth_txd0", "eth_txd1", "eth_txd2", "eth_txd3",
 +};
 +
  static const char * const gpio_aobus_groups[] = {
  	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
  	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
-@@ -401,6 +440,8 @@ static const char * const i2c_slave_ao_groups[] = {
- 
- static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
-+	FUNCTION(emmc),
-+	FUNCTION(sdcard),
+@@ -490,6 +528,7 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
+ 	FUNCTION(uart_a),
+ 	FUNCTION(uart_b),
+ 	FUNCTION(uart_c),
++	FUNCTION(eth),
  };
  
  static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
