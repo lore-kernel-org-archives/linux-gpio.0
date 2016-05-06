@@ -1,119 +1,51 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v7 3/3] gpio: move clps711x, moxart, ts4800 and gpio-ge
- into gpio-mmio
-Date: Fri, 6 May 2016 16:25:49 +0300
-Message-ID: <CAHp75Vf5AP88TMFqVHOD5197vj40QpKRaW0jkOQ9kwz2rzYdWw@mail.gmail.com>
-References: <cover.1462372360.git.chunkeey@googlemail.com>
-	<e936c3c38deee5cd954862c5ed11f9cffa2ba6a9.1462372360.git.chunkeey@googlemail.com>
-	<CAHp75VeFjcPX+f3j+h+OL2jEpfGP+aqL78ymcsj4JwUfO0RvtA@mail.gmail.com>
-	<4995974.1A7SuhXPf2@debian64>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH 0/7] pinctrl: meson: Add a bunch more pins
+Date: Fri,  6 May 2016 07:21:19 -0700
+Message-ID: <1462544486-9516-1-git-send-email-khilman@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:33867 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757915AbcEFNZv convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 May 2016 09:25:51 -0400
-In-Reply-To: <4995974.1A7SuhXPf2@debian64>
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:33546 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757430AbcEFOV2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 May 2016 10:21:28 -0400
+Received: by mail-pa0-f48.google.com with SMTP id xk12so48437067pac.0
+        for <linux-gpio@vger.kernel.org>; Fri, 06 May 2016 07:21:27 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Christian Lamparter <chunkeey@googlemail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6?= <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexander Shiyan <shc_work@mail.ru>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>, Martyn Welch <martyn.welch@ge.com>, Jonas Jensen <jonas.jensen@gmail.com>
+To: linux-amlogic@lists.infradead.org, Carlo Caione <carlo@caione.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-meson@googlegroups.com, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Victor Wan <victor.wan@amlogic.com>, Jerry Cao <jerry.cao@amlogic.com>, Xing Wu <xing.xu@amlogic.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-On Fri, May 6, 2016 at 4:06 PM, Christian Lamparter
-<chunkeey@googlemail.com> wrote:
-> On Friday, May 06, 2016 02:53:24 PM Andy Shevchenko wrote:
->> On Fri, May 6, 2016 at 2:10 PM, Christian Lamparter
->> <chunkeey@googlemail.com> wrote:
+Add support for several more devices, both in the EE domain and in the
+AO domain.  Also, add the pins to the corresponding DTS files.
 
->> Just a nit: possible to use switch case?
-> I think so. I've integrated the id < 0 || id > 4 check as well.
-> I don't know, I liked the old version more, it was shorter
->
-> diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
-> index f116786..f71021c 100644
-> --- a/drivers/gpio/gpio-mmio.c
-> +++ b/drivers/gpio/gpio-mmio.c
-> @@ -619,14 +619,25 @@ static int clps711x_parse_dt(struct platform_de=
-vice *pdev,
->         const char *dir_reg_name;
->         int id =3D np ? of_alias_get_id(np, "gpio") : pdev->id;
->
-> -       if ((id < 0) || (id > 4))
-> +       switch (id) {
-> +       case 0:
-> +       case 1:
-> +       case 2:
-> +               pdata->ngpio =3D 0; /* determined by register width *=
-/
-> +               dir_reg_name =3D "dirout";
-> +               break;
-> +       case 3:
-> +               pdata->ngpio =3D 0; /* determined by register width *=
-/
-> +               /* PORTD is inverted logic for direction register */
-> +               dir_reg_name =3D "dirin";
-> +               break;
-> +       case 4:
-> +               pdata->ngpio =3D 3; /* PORTE is 3 lines only */
-> +               dir_reg_name =3D "dirout";
-> +               break;
-> +       default:
->                 return -ENODEV;
-> -
-> -       /* PORTE is 3 lines only */
-> -       pdata->ngpio =3D (id =3D=3D 4) ? 3 : /* determined by registe=
-r width */ 0;
-> -
-> -       /* PORTD is inverted logic for direction register */
-> -       dir_reg_name =3D (id =3D=3D 3) ? "dirin" : "dirout",
-> +       }
+Tested on odroid-c2 and Amlogic P200 boards, and verified with working
+ethernet.
 
-=46or my personal taste the switch case more understandable / readable.
-But i'm not totally objecting the old model, just a subject to discuss.
+Depends on the initial GXBB pinctrl support from Carlo[1].  Also
+available in my git tree[2] with all the dependencies included.
 
->> > +struct compat_gpio_device_data {
->> > +       unsigned int expected_resource_size;
->> > +       unsigned int ngpio;
->> > +       resource_size_t register_width;
->> > +       unsigned long flags;
->> > +       int (*call_back)(struct platform_device *pdev,
->> > +                        struct bgpio_pdata *pdata,
->> > +                        unsigned long *flags);
->> > +       struct resource_replacement {
->> > +               resource_size_t start_offset;
->> > +               const char *name;
->> > +       } resources[5];
->>
->> I would define magic number with a description what are those 5.
->
-> Difficult, these are 5 placeholders for the named resources.
-> There's particular order so a enum like
-> {
->         DAT,
->         SET,
->         CLR,
->         DIRIN,
->         DIROUT,
->         __NUM_RES
-> }
->
-> might look nice but it has no purpose other than maybe confusing peop=
-le
-> why the entries aren't used.
+Kevin
 
-OK, might be just
+[1] [PATCH v2 0/4] Amlogic: GXBB: Add pin controller
+    http://lists.infradead.org/pipermail/linux-arm-kernel/2016-May/426718.html
+[2] https://git.kernel.org/cgit/linux/kernel/git/khilman/linux.git/log/?h=amlogic/wip/pinctrl
 
-#define =E2=80=A6_SUPPORTED_RES_MAX 5
-=E2=80=A6
-} resources[_SUPPORTED_RES_MAX];
+Kevin Hilman (7):
+  pinctrl: amlogic: gxbb: add UART_AO_B, I2C
+  pinctrl: amlogic: gxbb: add EMMC and SD pins
+  pinctrl: amlogic: gxbb: add more UART pins
+  pinctrl amlogic: gxbb: add ethernet pins
+  ARM64: dts: amlogic: add pins for EMMC, SD
+  ARM64: dts: amlogic: gxbb: pinctrl: add/update UART
+  ARM64: dts: amlogic: gxbb: add ethernet
 
---=20
-With Best Regards,
-Andy Shevchenko
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ .../arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts |   7 +
+ arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi   |   7 +
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        |  97 +++++++++++-
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c         | 167 ++++++++++++++++++++-
+ 4 files changed, 273 insertions(+), 5 deletions(-)
+
+-- 
+2.7.4
+
