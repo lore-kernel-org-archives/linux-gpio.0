@@ -1,197 +1,119 @@
-From: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Subject: Re: [PATCH v7 3/3] gpio: move clps711x, moxart, ts4800 and gpio-ge into gpio-mmio
-Date: Fri, 06 May 2016 15:06:11 +0200
-Message-ID: <4995974.1A7SuhXPf2@debian64>
-References: <cover.1462372360.git.chunkeey@googlemail.com> <e936c3c38deee5cd954862c5ed11f9cffa2ba6a9.1462372360.git.chunkeey@googlemail.com> <CAHp75VeFjcPX+f3j+h+OL2jEpfGP+aqL78ymcsj4JwUfO0RvtA@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v7 3/3] gpio: move clps711x, moxart, ts4800 and gpio-ge
+ into gpio-mmio
+Date: Fri, 6 May 2016 16:25:49 +0300
+Message-ID: <CAHp75Vf5AP88TMFqVHOD5197vj40QpKRaW0jkOQ9kwz2rzYdWw@mail.gmail.com>
+References: <cover.1462372360.git.chunkeey@googlemail.com>
+	<e936c3c38deee5cd954862c5ed11f9cffa2ba6a9.1462372360.git.chunkeey@googlemail.com>
+	<CAHp75VeFjcPX+f3j+h+OL2jEpfGP+aqL78ymcsj4JwUfO0RvtA@mail.gmail.com>
+	<4995974.1A7SuhXPf2@debian64>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAHp75VeFjcPX+f3j+h+OL2jEpfGP+aqL78ymcsj4JwUfO0RvtA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm Mailing List <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, =?ISO-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Julien Grossholtz <julien.grossholtz-4ysUXcep3aM1wj+D4I0NRVaTQe2KTcn/@public.gmane.org>, Martyn Welch <martyn.welch-JJi787mZWgc@public.gmane.org>, Jonas Jensen <jonas.jensen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:33867 "EHLO
+	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757915AbcEFNZv convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 May 2016 09:25:51 -0400
+In-Reply-To: <4995974.1A7SuhXPf2@debian64>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Christian Lamparter <chunkeey@googlemail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6?= <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexander Shiyan <shc_work@mail.ru>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>, Martyn Welch <martyn.welch@ge.com>, Jonas Jensen <jonas.jensen@gmail.com>
 
-On Friday, May 06, 2016 02:53:24 PM Andy Shevchenko wrote:
-> On Fri, May 6, 2016 at 2:10 PM, Christian Lamparter
-> <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> wrote:
-> > This patch integrates these GPIO drivers into gpio-mmio.
-> 
-> Would be nice to repeat a list here.
-Ok.
- 
-> > @@ -285,14 +274,6 @@ config GPIO_MM_LANTIQ
-> >           (EBU) found on Lantiq SoCs. The gpios are output only as they are
-> >           created by attaching a 16bit latch to the bus.
-> >
-> > -config GPIO_MOXART
-> > -       bool "MOXART GPIO support"
-> > -       depends on ARCH_MOXART || COMPILE_TEST
-> > -       select GPIO_GENERIC
-> > -       help
-> > -         Select this option to enable GPIO driver for
-> > -         MOXA ART SoC devices.
-> > -
-> 
-> Doesn't it change behaviour? So, as a user of old .config I expect to
-> have driver enabled. How is it achieved now?
-Ok, I'll restore the configs and let them select GPIO_GENERIC_PLATFORM.
+On Fri, May 6, 2016 at 4:06 PM, Christian Lamparter
+<chunkeey@googlemail.com> wrote:
+> On Friday, May 06, 2016 02:53:24 PM Andy Shevchenko wrote:
+>> On Fri, May 6, 2016 at 2:10 PM, Christian Lamparter
+>> <chunkeey@googlemail.com> wrote:
 
-> > --- a/drivers/gpio/gpio-mmio.c
-> > +++ b/drivers/gpio/gpio-mmio.c
-> > @@ -610,10 +610,200 @@ static int bgpio_basic_mmio_parse_dt(struct platform_device *pdev,
-> >         return 0;
-> >  }
-> >
-> > +static int clps711x_parse_dt(struct platform_device *pdev,
-> > +                            struct bgpio_pdata *pdata,
-> > +                            unsigned long *flags)
-> > +{
-> > +       struct device_node *np = pdev->dev.of_node;
-> > +       struct resource *res;
-> > +       const char *dir_reg_name;
-> > +       int id = np ? of_alias_get_id(np, "gpio") : pdev->id;
-> > +
-> > +       if ((id < 0) || (id > 4))
-> > +               return -ENODEV;
-> > +
-> 
-> > +       /* PORTE is 3 lines only */
-> > +       pdata->ngpio = (id == 4) ? 3 : /* determined by register width */ 0;
-> > +
-> > +       /* PORTD is inverted logic for direction register */
-> > +       dir_reg_name = (id == 3) ? "dirin" : "dirout",
-Actually, the , should be a ; it compiled because , is an operator.
-But yes, fixed.
+>> Just a nit: possible to use switch case?
+> I think so. I've integrated the id < 0 || id > 4 check as well.
+> I don't know, I liked the old version more, it was shorter
+>
+> diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+> index f116786..f71021c 100644
+> --- a/drivers/gpio/gpio-mmio.c
+> +++ b/drivers/gpio/gpio-mmio.c
+> @@ -619,14 +619,25 @@ static int clps711x_parse_dt(struct platform_de=
+vice *pdev,
+>         const char *dir_reg_name;
+>         int id =3D np ? of_alias_get_id(np, "gpio") : pdev->id;
+>
+> -       if ((id < 0) || (id > 4))
+> +       switch (id) {
+> +       case 0:
+> +       case 1:
+> +       case 2:
+> +               pdata->ngpio =3D 0; /* determined by register width *=
+/
+> +               dir_reg_name =3D "dirout";
+> +               break;
+> +       case 3:
+> +               pdata->ngpio =3D 0; /* determined by register width *=
+/
+> +               /* PORTD is inverted logic for direction register */
+> +               dir_reg_name =3D "dirin";
+> +               break;
+> +       case 4:
+> +               pdata->ngpio =3D 3; /* PORTE is 3 lines only */
+> +               dir_reg_name =3D "dirout";
+> +               break;
+> +       default:
+>                 return -ENODEV;
+> -
+> -       /* PORTE is 3 lines only */
+> -       pdata->ngpio =3D (id =3D=3D 4) ? 3 : /* determined by registe=
+r width */ 0;
+> -
+> -       /* PORTD is inverted logic for direction register */
+> -       dir_reg_name =3D (id =3D=3D 3) ? "dirin" : "dirout",
+> +       }
 
-> Just a nit: possible to use switch case?
-I think so. I've integrated the id < 0 || id > 4 check as well.
-I don't know, I liked the old version more, it was shorter
+=46or my personal taste the switch case more understandable / readable.
+But i'm not totally objecting the old model, just a subject to discuss.
 
-diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
-index f116786..f71021c 100644
---- a/drivers/gpio/gpio-mmio.c
-+++ b/drivers/gpio/gpio-mmio.c
-@@ -619,14 +619,25 @@ static int clps711x_parse_dt(struct platform_device *pdev,
- 	const char *dir_reg_name;
- 	int id = np ? of_alias_get_id(np, "gpio") : pdev->id;
- 
--	if ((id < 0) || (id > 4))
-+	switch (id) {
-+	case 0:
-+	case 1:
-+	case 2:
-+		pdata->ngpio = 0; /* determined by register width */
-+		dir_reg_name = "dirout";
-+		break;
-+	case 3:
-+		pdata->ngpio = 0; /* determined by register width */
-+		/* PORTD is inverted logic for direction register */
-+		dir_reg_name = "dirin";
-+		break;
-+	case 4:
-+		pdata->ngpio = 3; /* PORTE is 3 lines only */
-+		dir_reg_name = "dirout";
-+		break;
-+	default:
- 		return -ENODEV;
--
--	/* PORTE is 3 lines only */
--	pdata->ngpio = (id == 4) ? 3 : /* determined by register width */ 0;
--
--	/* PORTD is inverted logic for direction register */
--	dir_reg_name = (id == 3) ? "dirin" : "dirout",
-+	}
- 
- 	pdata->base = id * 8;
----
-  
-> > +
-> > +       pdata->base = id * 8;
-> > +
-> > +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +       if (!res)
-> > +               return -EINVAL;
-> > +       if (!res->name || strcmp("dat", res->name))
-> > +               res->name = devm_kstrdup(&pdev->dev, "dat", GFP_KERNEL);
-> > +
-> > +       res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> > +       if (!res)
-> > +               return -EINVAL;
-> > +       if (!res->name || strcmp(dir_reg_name, res->name))
-> > +               res->name = devm_kstrdup(&pdev->dev, dir_reg_name, GFP_KERNEL);
-> > +
-> > +       return 0;
-> > +}
+>> > +struct compat_gpio_device_data {
+>> > +       unsigned int expected_resource_size;
+>> > +       unsigned int ngpio;
+>> > +       resource_size_t register_width;
+>> > +       unsigned long flags;
+>> > +       int (*call_back)(struct platform_device *pdev,
+>> > +                        struct bgpio_pdata *pdata,
+>> > +                        unsigned long *flags);
+>> > +       struct resource_replacement {
+>> > +               resource_size_t start_offset;
+>> > +               const char *name;
+>> > +       } resources[5];
+>>
+>> I would define magic number with a description what are those 5.
+>
+> Difficult, these are 5 placeholders for the named resources.
+> There's particular order so a enum like
+> {
+>         DAT,
+>         SET,
+>         CLR,
+>         DIRIN,
+>         DIROUT,
+>         __NUM_RES
+> }
+>
+> might look nice but it has no purpose other than maybe confusing peop=
+le
+> why the entries aren't used.
 
-[...]
+OK, might be just
 
-> > +struct compat_gpio_device_data {
-> > +       unsigned int expected_resource_size;
-> > +       unsigned int ngpio;
-> > +       resource_size_t register_width;
-> > +       unsigned long flags;
-> > +       int (*call_back)(struct platform_device *pdev,
-> > +                        struct bgpio_pdata *pdata,
-> > +                        unsigned long *flags);
-> > +       struct resource_replacement {
-> > +               resource_size_t start_offset;
-> > +               const char *name;
-> > +       } resources[5];
-> 
-> I would define magic number with a description what are those 5.
+#define =E2=80=A6_SUPPORTED_RES_MAX 5
+=E2=80=A6
+} resources[_SUPPORTED_RES_MAX];
 
-Difficult, these are 5 placeholders for the named resources.
-There's particular order so a enum like
-{
-	DAT,
-	SET,
-	CLR,
-	DIRIN,
-	DIROUT,
-	__NUM_RES 
-}
-
-might look nice but it has no purpose other than maybe confusing people
-why the entries aren't used.
-
-> > +};
-> 
-> [...]
-> 
-> > +static int compat_parse_dt(struct platform_device *pdev,
-> > +                          struct bgpio_pdata *pdata,
-> > +                          unsigned long *flags)
-> > +{
-> > +       const struct device_node *node = pdev->dev.of_node;
-> > +       const struct compat_gpio_device_data *entry;
-> > +       const struct of_device_id *of_id;
-> > +       struct resource *res;
-> > +       int err;
-> > +
-> > +       of_id = of_match_node(compat_gpio_devices, node);
-> > +       if (!of_id)
-> > +               return -ENODEV;
-> > +
-> > +       entry = of_id->data;
-> > +       if (!entry || !entry->resources[0].name)
-> > +               return -EINVAL;
-> > +
-> > +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +       if (!res)
-> > +               return -EINVAL;
-> > +
-> > +       if (!res->name || strcmp(entry->resources[0].name, res->name)) {
-> > +               struct resource nres[ARRAY_SIZE(entry->resources)];
-> > +               int i;
-> 
-> unsigned int i; ?
-yes. I think I change it to size_t. ARRAY_SIZE uses sizeof internally.
- 
-Regards,
-Christian
+--=20
+With Best Regards,
+Andy Shevchenko
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
