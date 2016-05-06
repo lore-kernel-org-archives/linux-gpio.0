@@ -1,105 +1,118 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 6/7] ARM64: dts: amlogic: gxbb: pinctrl: add/update UART
-Date: Fri,  6 May 2016 07:21:25 -0700
-Message-ID: <1462544486-9516-7-git-send-email-khilman@baylibre.com>
-References: <1462544486-9516-1-git-send-email-khilman@baylibre.com>
+From: Colin Pitrat <colin.pitrat@gmail.com>
+Subject: [PATCH] gpio: sch: Fix Oops on module load on Asus Eee PC 1201
+Date: Fri, 6 May 2016 22:49:25 +0100
+Message-ID: <20160506214917.GA1691@pitrat4.localdomain>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:33384 "EHLO
-	mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757924AbcEFOVe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 May 2016 10:21:34 -0400
-Received: by mail-pf0-f179.google.com with SMTP id 206so50666876pfu.0
-        for <linux-gpio@vger.kernel.org>; Fri, 06 May 2016 07:21:33 -0700 (PDT)
-In-Reply-To: <1462544486-9516-1-git-send-email-khilman@baylibre.com>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36521 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758557AbcEFVtf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 May 2016 17:49:35 -0400
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-amlogic@lists.infradead.org, Carlo Caione <carlo@caione.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-meson@googlegroups.com, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Victor Wan <victor.wan@amlogic.com>, Jerry Cao <jerry.cao@amlogic.com>, Xing Wu <xing.xu@amlogic.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: rebecca.swee.fun.chang@intel.com, mika.westerberg@linux.intel.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Add DT nodes for additional UARTs (UART B & C in EE domain) and add pins
-for all EE domain UARTs.
+This fixes the issue descirbe in bug 117531. 
+It's a regression introduced in linux 4.5 that causes a Oops at load of
+gpio_sch and prevents powering off the computer.
 
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+The patch consist in reverting commit 737c8fccf1c5b2aae3c6d9a66dce17e35fc39b71 
+(a.k.a 'gpio: sch: use gpiochip data pointer') that causes this regression.
+However, although it does work for me, I'm not sure of the impact of reverting
+only this part of the patch.
+
+Signed-off-by: Colin Pitrat <colin.pitrat@gmail.com>
+
 ---
- .../arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts |  1 +
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        | 42 +++++++++++++++++++++-
- 2 files changed, 42 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-sch.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-index 41e1e669bc70..45778896bd3d 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-@@ -80,3 +80,4 @@
- 	pinctrl-0 = <&uart_ao_a_pins>;
- 	pinctrl-names = "default";
+diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
+index e85e753..a8a333ad 100644
+--- a/drivers/gpio/gpio-sch.c
++++ b/drivers/gpio/gpio-sch.c
+@@ -41,6 +41,8 @@ struct sch_gpio {
+ 	unsigned short resume_base;
  };
-+
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index 7b22b9d3b9d9..86c41b3798db 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -132,11 +132,27 @@
  
- 			uart_A: serial@84c0 {
- 				compatible = "amlogic,meson-uart";
--				reg = <0x0 0x084c0 0x0 0x14>;
-+				reg = <0x0 0x84c0 0x0 0x14>;
- 				interrupts = <GIC_SPI 26 IRQ_TYPE_EDGE_RISING>;
- 				clocks = <&xtal>;
- 				status = "disabled";
- 			};
++#define to_sch_gpio(gc)	container_of(gc, struct sch_gpio, chip)
 +
-+			uart_B: serial@84dc {
-+				compatible = "amlogic,meson-uart";
-+				reg = <0x0 0x84dc 0x0 0x14>;
-+				interrupts = <GIC_SPI 75 IRQ_TYPE_EDGE_RISING>;
-+				clocks = <&xtal>;
-+				status = "disabled";
-+			};
-+
-+			uart_C: serial@8700 {
-+				compatible = "amlogic,meson-uart";
-+				reg = <0x0 0x8700 0x0 0x14>;
-+				interrupts = <GIC_SPI 93 IRQ_TYPE_EDGE_RISING>;
-+				clocks = <&xtal>;
-+				status = "disabled";
-+			};
- 		};
+ static unsigned sch_gpio_offset(struct sch_gpio *sch, unsigned gpio,
+ 				unsigned reg)
+ {
+@@ -63,7 +65,7 @@ static unsigned sch_gpio_bit(struct sch_gpio *sch, unsigned gpio)
  
- 		gic: interrupt-controller@c4301000 {
-@@ -234,6 +250,30 @@
- 						function = "sdcard";
- 					};
- 				};
-+
-+				uart_a_pins: uart_a {
-+					mux {
-+						groups = "uart_tx_a",
-+						       "uart_rx_a";
-+						function = "uart_a";
-+					};
-+				};
-+
-+				uart_b_pins: uart_b {
-+					mux {
-+						groups = "uart_tx_b",
-+						       "uart_rx_b";
-+						function = "uart_b";
-+					};
-+				};
-+
-+				uart_c_pins: uart_c {
-+					mux {
-+						groups = "uart_tx_c",
-+						       "uart_rx_c";
-+						function = "uart_c";
-+					};
-+				};
- 			};
- 		};
+ static int sch_gpio_reg_get(struct gpio_chip *gc, unsigned gpio, unsigned reg)
+ {
+-	struct sch_gpio *sch = gpiochip_get_data(gc);
++	struct sch_gpio *sch = to_sch_gpio(gc);
+ 	unsigned short offset, bit;
+ 	u8 reg_val;
  
+@@ -78,7 +80,7 @@ static int sch_gpio_reg_get(struct gpio_chip *gc, unsigned gpio, unsigned reg)
+ static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned reg,
+ 			     int val)
+ {
+-	struct sch_gpio *sch = gpiochip_get_data(gc);
++	struct sch_gpio *sch = to_sch_gpio(gc);
+ 	unsigned short offset, bit;
+ 	u8 reg_val;
+ 
+@@ -95,7 +97,7 @@ static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned reg,
+ 
+ static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
+ {
+-	struct sch_gpio *sch = gpiochip_get_data(gc);
++	struct sch_gpio *sch = to_sch_gpio(gc);
+ 
+ 	spin_lock(&sch->lock);
+ 	sch_gpio_reg_set(gc, gpio_num, GIO, 1);
+@@ -110,7 +112,7 @@ static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num)
+ 
+ static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
+ {
+-	struct sch_gpio *sch = gpiochip_get_data(gc);
++	struct sch_gpio *sch = to_sch_gpio(gc);
+ 
+ 	spin_lock(&sch->lock);
+ 	sch_gpio_reg_set(gc, gpio_num, GLV, val);
+@@ -120,7 +122,7 @@ static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
+ static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
+ 				  int val)
+ {
+-	struct sch_gpio *sch = gpiochip_get_data(gc);
++	struct sch_gpio *sch = to_sch_gpio(gc);
+ 
+ 	spin_lock(&sch->lock);
+ 	sch_gpio_reg_set(gc, gpio_num, GIO, 0);
+@@ -215,7 +217,15 @@ static int sch_gpio_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, sch);
+ 
+-	return devm_gpiochip_add_data(&pdev->dev, &sch->chip, sch);
++	return gpiochip_add(&sch->chip);
++}
++
++static int sch_gpio_remove(struct platform_device *pdev)
++{
++	struct sch_gpio *sch = platform_get_drvdata(pdev);
++
++	gpiochip_remove(&sch->chip);
++	return 0;
+ }
+ 
+ static struct platform_driver sch_gpio_driver = {
+@@ -223,6 +233,7 @@ static struct platform_driver sch_gpio_driver = {
+ 		.name = "sch_gpio",
+ 	},
+ 	.probe		= sch_gpio_probe,
++	.remove		= sch_gpio_remove,
+ };
+ 
+ module_platform_driver(sch_gpio_driver);
 -- 
-2.7.4
+2.8.2
 
