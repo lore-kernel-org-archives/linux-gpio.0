@@ -1,123 +1,111 @@
 From: Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 1/7] pinctrl: amlogic: gxbb: add UART_AO_B, I2C
-Date: Fri,  6 May 2016 07:21:20 -0700
-Message-ID: <1462544486-9516-2-git-send-email-khilman@baylibre.com>
+Subject: [PATCH 3/7] pinctrl: amlogic: gxbb: add more UART pins
+Date: Fri,  6 May 2016 07:21:22 -0700
+Message-ID: <1462544486-9516-4-git-send-email-khilman@baylibre.com>
 References: <1462544486-9516-1-git-send-email-khilman@baylibre.com>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f181.google.com ([209.85.192.181]:33369 "EHLO
-	mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757430AbcEFOV3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 May 2016 10:21:29 -0400
-Received: by mail-pf0-f181.google.com with SMTP id 206so50666085pfu.0
-        for <linux-gpio@vger.kernel.org>; Fri, 06 May 2016 07:21:28 -0700 (PDT)
+Received: from mail-pf0-f177.google.com ([209.85.192.177]:35166 "EHLO
+	mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757924AbcEFOVb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 May 2016 10:21:31 -0400
+Received: by mail-pf0-f177.google.com with SMTP id 77so50231079pfv.2
+        for <linux-gpio@vger.kernel.org>; Fri, 06 May 2016 07:21:30 -0700 (PDT)
 In-Reply-To: <1462544486-9516-1-git-send-email-khilman@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-amlogic@lists.infradead.org, Carlo Caione <carlo@caione.org>, Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-meson@googlegroups.com, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Victor Wan <victor.wan@amlogic.com>, Jerry Cao <jerry.cao@amlogic.com>, Xing Wu <xing.xu@amlogic.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Carlo Caione <carlo@endlessm.com>
 
-Add pins for some more AO domain devices: UART_AO_B and I2C master &
-slave.
-
-Also, rename UART_AO to UART_AO_A since UART_AO_B has also been added.
+Add EE domain pins for UART A, B & C.
 
 Cc: Carlo Caione <carlo@endlessm.com>
 Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi |  2 +-
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c  | 39 ++++++++++++++++++++++++++---
- 2 files changed, 37 insertions(+), 4 deletions(-)
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 48 ++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index 6dd27685e31e..35397fcc5380 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -177,7 +177,7 @@
- 				uart_ao_a_pins: uart_ao_a {
- 					mux {
- 						groups = "uart_tx_ao_a", "uart_rx_ao_a";
--						function = "uart_ao";
-+						function = "uart_ao_a";
- 					};
- 				};
- 			};
 diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index eeabafbbf598..50551677b0ee 100644
+index 5dc98ee35265..67b5af70e9e9 100644
 --- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
 +++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -168,6 +168,16 @@ static const unsigned int uart_tx_ao_a_pins[]	= { PIN(GPIOAO_0, 0) };
- static const unsigned int uart_rx_ao_a_pins[]	= { PIN(GPIOAO_1, 0) };
- static const unsigned int uart_cts_ao_a_pins[]	= { PIN(GPIOAO_2, 0) };
- static const unsigned int uart_rts_ao_a_pins[]	= { PIN(GPIOAO_3, 0) };
-+static const unsigned int uart_tx_ao_b_pins[]	= { PIN(GPIOAO_0, 0) };
-+static const unsigned int uart_rx_ao_b_pins[]	= { PIN(GPIOAO_1, 0),
-+						    PIN(GPIOAO_5, 0) };
-+static const unsigned int uart_cts_ao_b_pins[]	= { PIN(GPIOAO_2, 0) };
-+static const unsigned int uart_rts_ao_b_pins[]	= { PIN(GPIOAO_3, 0) };
+@@ -163,6 +163,21 @@ static const unsigned int sdcard_d3_pins[] = { PIN(CARD_4, EE_OFF) };
+ static const unsigned int sdcard_cmd_pins[] = { PIN(CARD_3, EE_OFF) };
+ static const unsigned int sdcard_clk_pins[] = { PIN(CARD_2, EE_OFF) };
+ 
++static const unsigned int uart_tx_a_pins[]	= { PIN(GPIOX_12, EE_OFF) };
++static const unsigned int uart_rx_a_pins[]	= { PIN(GPIOX_13, EE_OFF) };
++static const unsigned int uart_cts_a_pins[]	= { PIN(GPIOX_14, EE_OFF) };
++static const unsigned int uart_rts_a_pins[]	= { PIN(GPIOX_15, EE_OFF) };
 +
-+static const unsigned int i2c_sck_ao_pins[] = {PIN(GPIOAO_4, 0) };
-+static const unsigned int i2c_sda_ao_pins[] = {PIN(GPIOAO_5, 0) };
-+static const unsigned int i2c_slave_sck_ao_pins[] = {PIN(GPIOAO_4, 0) };
-+static const unsigned int i2c_slave_sda_ao_pins[] = {PIN(GPIOAO_5, 0) };
++static const unsigned int uart_tx_b_pins[]	= { PIN(GPIODV_24, EE_OFF) };
++static const unsigned int uart_rx_b_pins[]	= { PIN(GPIODV_25, EE_OFF) };
++static const unsigned int uart_cts_b_pins[]	= { PIN(GPIODV_26, EE_OFF) };
++static const unsigned int uart_rts_b_pins[]	= { PIN(GPIODV_27, EE_OFF) };
++
++static const unsigned int uart_tx_c_pins[]	= { PIN(GPIOY_13, EE_OFF) };
++static const unsigned int uart_rx_c_pins[]	= { PIN(GPIOY_14, EE_OFF) };
++static const unsigned int uart_cts_c_pins[]	= { PIN(GPIOX_11, EE_OFF) };
++static const unsigned int uart_rts_c_pins[]	= { PIN(GPIOX_12, EE_OFF) };
++
+ static const struct pinctrl_pin_desc meson_gxbb_aobus_pins[] = {
+ 	MESON_PIN(GPIOAO_0, 0),
+ 	MESON_PIN(GPIOAO_1, 0),
+@@ -324,6 +339,24 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
  
- static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GPIO_GROUP(GPIOZ_0, EE_OFF),
-@@ -316,10 +326,18 @@ static struct meson_pmx_group meson_gxbb_aobus_groups[] = {
- 	GPIO_GROUP(GPIOAO_13, 0),
+ 	GPIO_GROUP(GPIO_TEST_N, EE_OFF),
  
- 	/* bank AO */
-+	GROUP(uart_tx_ao_b,	0,	26),
-+	GROUP(uart_rx_ao_b,	0,	25),
- 	GROUP(uart_tx_ao_a,	0,	12),
- 	GROUP(uart_rx_ao_a,	0,	11),
- 	GROUP(uart_cts_ao_a,	0,	10),
- 	GROUP(uart_rts_ao_a,	0,	9),
-+	GROUP(uart_cts_ao_b,	0,	8),
-+	GROUP(uart_rts_ao_b,	0,	7),
-+	GROUP(i2c_sck_ao,	0,	6),
-+	GROUP(i2c_sda_ao,	0,	5),
-+	GROUP(i2c_slave_sck_ao, 0,	2),
-+	GROUP(i2c_slave_sda_ao, 0,	1),
++	/* Bank X */
++	GROUP(uart_tx_a,	4,	13),
++	GROUP(uart_rx_a,	4,	12),
++	GROUP(uart_cts_a,	4,	11),
++	GROUP(uart_rts_a,	4,	10),
++
++	/* Bank Y */
++	GROUP(uart_cts_c,	1,	19),
++	GROUP(uart_rts_c,	1,	18),
++	GROUP(uart_tx_c,	1,	17),
++	GROUP(uart_rx_c,	1,	16),
++
++	/* Bank DV */
++	GROUP(uart_tx_b,	2,	29),
++	GROUP(uart_rx_b,	2,	28),
++	GROUP(uart_cts_b,	2,	27),
++	GROUP(uart_rts_b,	2,	26),
++
+ 	/* Bank BOOT */
+ 	GROUP(emmc_nand_d07,	4,	30),
+ 	GROUP(emmc_clk,		4,	18),
+@@ -416,6 +449,18 @@ static const char * const sdcard_groups[] = {
+ 	"sdcard_cmd", "sdcard_clk",
  };
  
- static const char * const gpio_periphs_groups[] = {
-@@ -365,8 +383,20 @@ static const char * const gpio_aobus_groups[] = {
- 	"GPIOAO_10", "GPIOAO_11", "GPIOAO_12", "GPIOAO_13",
++static const char * const uart_a_groups[] = {
++	"uart_tx_a", "uart_rx_a", "uart_cts_a", "uart_rts_a",
++};
++
++static const char * const uart_b_groups[] = {
++	"uart_tx_b", "uart_rx_b", "uart_cts_b", "uart_rts_b",
++};
++
++static const char * const uart_c_groups[] = {
++	"uart_tx_c", "uart_rx_c", "uart_cts_c", "uart_rts_c",
++};
++
+ static const char * const gpio_aobus_groups[] = {
+ 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
+ 	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
+@@ -442,6 +487,9 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(emmc),
+ 	FUNCTION(sdcard),
++	FUNCTION(uart_a),
++	FUNCTION(uart_b),
++	FUNCTION(uart_c),
  };
- 
--static const char * const uart_ao_groups[] = {
--	"uart_tx_ao_a", "uart_rx_ao_a", "uart_cts_ao_a", "uart_rts_ao_a"
-+static const char * const uart_ao_a_groups[] = {
-+	"uart_tx_ao_a", "uart_rx_ao_a", "uart_cts_ao_a", "uart_rts_ao_a",
-+};
-+
-+static const char * const uart_ao_b_groups[] = {
-+	"uart_tx_ao_b", "uart_rx_ao_b", "uart_cts_ao_b", "uart_rts_ao_b",
-+};
-+
-+static const char * const i2c_ao_groups[] = {
-+	"i2c_sdk_ao", "i2c_sda_ao",
-+};
-+
-+static const char * const i2c_slave_ao_groups[] = {
-+	"i2c_slave_sdk_ao", "i2c_slave_sda_ao",
- };
- 
- static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
-@@ -375,7 +405,10 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
  
  static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
- 	FUNCTION(gpio_aobus),
--	FUNCTION(uart_ao),
-+	FUNCTION(uart_ao_a),
-+	FUNCTION(uart_ao_b),
-+	FUNCTION(i2c_ao),
-+	FUNCTION(i2c_slave_ao),
- };
- 
- static struct meson_bank meson_gxbb_periphs_banks[] = {
 -- 
 2.7.4
 
