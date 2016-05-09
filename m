@@ -1,42 +1,63 @@
-From: YesGrowth Loans <helpdesk.lpse@tangerangkota.go.id>
-Subject: =?utf-8?Q?Hyv=C3=A4=C3=A4_p=C3=A4iv=C3=A4=C3=A4,?=
-Date: Mon, 9 May 2016 20:43:56 +0700 (WIB)
-Message-ID: <828850678.233494.1462801436139.JavaMail.zimbra__5113.71783582053$1462805480$gmane$org@tangerangkota.go.id>
-Reply-To: YesGrowth Loans <yesgrowth1986@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 02/11] MAINTAINERS: Add Altera Arria10 System Resource
+ Chip
+Date: Mon, 9 May 2016 16:36:52 +0100
+Message-ID: <20160509153652.GC19473@dell>
+References: <1461339219-15255-1-git-send-email-tthayer@opensource.altera.com>
+ <1461339219-15255-3-git-send-email-tthayer@opensource.altera.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from [103.50.218.124] ([103.50.218.124]:58901 "EHLO
-	mail.tangerangkota.go.id" rhost-flags-FAIL-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1750916AbcEIOk1 convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 9 May 2016 10:40:27 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-hwmon-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1461339219-15255-3-git-send-email-tthayer@opensource.altera.com>
+Sender: linux-hwmon-owner@vger.kernel.org
+To: tthayer@opensource.altera.com
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+On Fri, 22 Apr 2016, tthayer@opensource.altera.com wrote:
 
+> From: Thor Thayer <tthayer@opensource.altera.com>
+>=20
+> Add maintainer for the Altera Arria10 Max5 System Resource chip files=
+=2E
+>=20
+> Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
+> ---
+>  MAINTAINERS |    8 ++++++++
+>  1 file changed, 8 insertions(+)
 
-Hyv=C3=A4=C3=A4 p=C3=A4iv=C3=A4=C3=A4,
+=46or my own reference:
+  Acked-by: Lee Jones <lee.jones@linaro.org>
 
-   Olen rouva Rose Butler, Executive asiamiehen hyvin tunnustettu laill=
-inen lainanantajayhti=C3=B6ll=C3=A4 tunnetaan YesGrowth lainat. Onko si=
-nulla huono luotto tai olet tarvitsevat rahaa maksaa laskuja? Meid=C3=A4=
-n korko on 3%.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 724bb86..e5f2621 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -608,6 +608,14 @@ L:	linux-gpio@vger.kernel.org
+>  S:	Maintained
+>  F:	drivers/gpio/gpio-altera.c
+> =20
+> +ALTERA SYSTEM RESOURCE DRIVER FOR ARRIA10 DEVKIT
+> +M:	Thor Thayer <tthayer@opensource.altera.com>
+> +S:	Maintained
+> +F:	drivers/gpio/gpio-altera-a10sr.c
+> +F:	drivers/hwmon/altera-a10sr-hwmon.c
+> +F:	drivers/mfd/altera-a10sr.c
+> +F:	include/linux/mfd/altera-a10sr.h
+> +
+>  ALTERA TRIPLE SPEED ETHERNET DRIVER
+>  M:	Vince Bridgers <vbridger@opensource.altera.com>
+>  L:	netdev@vger.kernel.org
 
-  T=C3=A4yt=C3=A4 alla oleva lomake jos kiinnostaa.
-
-Koko nimi:
-sukupuoli:
-M=C3=A4=C3=A4r=C3=A4 tarvitaan:
-Kesto:
-
-Voit ottaa meihin yhteytt=C3=A4 Puh: +447045734550
-
-  Vilpitt=C3=B6m=C3=A4sti,
-Mrs Rose Butler
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
+To unsubscribe from this list: send the line "unsubscribe linux-hwmon" =
+in
 the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
