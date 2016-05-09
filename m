@@ -1,53 +1,42 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] mfd: intel_soc_pmic_core: Terminate panel
- control GPIO lookup table correctly
-Date: Mon, 9 May 2016 08:18:32 +0100
-Message-ID: <20160509071832.GA8324@dell>
-References: <1461353935-8078-1-git-send-email-ville.syrjala@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] pinctrl: ns2: rename pinctrl_utils_dt_free_map
+Date: Mon, 9 May 2016 11:57:42 +0200
+Message-ID: <CACRpkdaY2Xig17ZfRwMZa1Fz-Kj1KE3qz5aMQHLxNBrXZ1v-fg@mail.gmail.com>
+References: <1462289221-861102-1-git-send-email-arnd@arndb.de>
+	<1462289221-861102-2-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1461353935-8078-1-git-send-email-ville.syrjala@linux.intel.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: ville.syrjala@linux.intel.com
-Cc: Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Shobhit Kumar <shobhit.kumar@intel.com>, intel-gfx@lists.freedesktop.org, stable@vger.kernel.org, linux-gpio@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:35566 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751377AbcEIJ5n (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2016 05:57:43 -0400
+Received: by mail-ob0-f175.google.com with SMTP id n10so80620635obb.2
+        for <linux-gpio@vger.kernel.org>; Mon, 09 May 2016 02:57:42 -0700 (PDT)
+In-Reply-To: <1462289221-861102-2-git-send-email-arnd@arndb.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>, Ray Jui <ray.jui@broadcom.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-T24gRnJpLCAyMiBBcHIgMjAxNiwgdmlsbGUuc3lyamFsYUBsaW51eC5pbnRlbC5jb20gd3JvdGU6
-Cgo+IEZyb206IFZpbGxlIFN5cmrDpGzDpCA8dmlsbGUuc3lyamFsYUBsaW51eC5pbnRlbC5jb20+
-Cj4gCj4gR1BJTyBsb29rdXAgdGFibGVzIGFyZSBzdXBwb3NlZCB0byBiZSB6ZXJvIHRlcm1pbmF0
-ZWQuIExldCdzIGRvIHRoYXQKPiBhbmQgYXZvaWQgYWNjaWRlbnRhbGx5IHdhbGtpbmcgb2ZmIHRo
-ZSBlbmQuCj4gCj4gQ2M6IFNob2JoaXQgS3VtYXIgPHNob2JoaXQua3VtYXJAaW50ZWwuY29tPgo+
-IENjOiBTYW11ZWwgT3J0aXogPHNhbWVvQGxpbnV4LmludGVsLmNvbT4KPiBDYzogTGludXMgV2Fs
-bGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPgo+IENjOiBBbGV4YW5kcmUgQ291cmJvdCA8
-Z251cm91QGdtYWlsLmNvbT4KPiBDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdt
-YWlsLmNvbT4KPiBDYzogTGVlIEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4KPiBDYzogc3Rh
-YmxlQHZnZXIua2VybmVsLm9yZwo+IEZpeGVzOiA2MWRkMmNhMmQ0NGUgKCJtZmQ6IGludGVsX3Nv
-Y19wbWljX2NvcmU6IEFkZCBsb29rdXAgdGFibGUgZm9yIFBhbmVsIENvbnRyb2wgYXMgR1BJTyBz
-aWduYWwiKQo+IFNpZ25lZC1vZmYtYnk6IFZpbGxlIFN5cmrDpGzDpCA8dmlsbGUuc3lyamFsYUBs
-aW51eC5pbnRlbC5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvbWZkL2ludGVsX3NvY19wbWljX2NvcmUu
-YyB8IDEgKwo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKCkFwcGxpZWQgd2l0aCBM
-aW51cycgYW5kIERhbmllbCdzIEFjay4KCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWZkL2ludGVs
-X3NvY19wbWljX2NvcmUuYyBiL2RyaXZlcnMvbWZkL2ludGVsX3NvY19wbWljX2NvcmUuYwo+IGlu
-ZGV4IGQ5ZTE1Y2Y3YzZjOC4uMTJkNmViYjRhZTVkIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvbWZk
-L2ludGVsX3NvY19wbWljX2NvcmUuYwo+ICsrKyBiL2RyaXZlcnMvbWZkL2ludGVsX3NvY19wbWlj
-X2NvcmUuYwo+IEBAIC0zNSw2ICszNSw3IEBAIHN0YXRpYyBzdHJ1Y3QgZ3Bpb2RfbG9va3VwX3Rh
-YmxlIHBhbmVsX2dwaW9fdGFibGUgPSB7Cj4gIAkudGFibGUgPSB7Cj4gIAkJLyogUGFuZWwgRU4v
-RElTQUJMRSAqLwo+ICAJCUdQSU9fTE9PS1VQKCJncGlvX2NyeXN0YWxjb3ZlIiwgOTQsICJwYW5l
-bCIsIEdQSU9fQUNUSVZFX0hJR0gpLAo+ICsJCXsgfSwKPiAgCX0sCj4gIH07Cj4gIAoKLS0gCkxl
-ZSBKb25lcwpMaW5hcm8gU1RNaWNyb2VsZWN0cm9uaWNzIExhbmRpbmcgVGVhbSBMZWFkCkxpbmFy
-by5vcmcg4pSCIE9wZW4gc291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwpGb2xsb3cgTGluYXJv
-OiBGYWNlYm9vayB8IFR3aXR0ZXIgfCBCbG9nCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2ludGVsLWdmeAo=
+On Tue, May 3, 2016 at 5:26 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+
+> A conflict of two patches caused a build error when a function got renamed
+> but a new user appeared in the other patch:
+>
+> drivers/pinctrl/bcm/pinctrl-ns2-mux.c:540:17: error: 'pinctrl_utils_dt_free_map' undeclared here (not in a function)
+>   .dt_free_map = pinctrl_utils_dt_free_map,
+>                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> This renames the new user of pinctrl_utils_dt_free_map accordingly.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: d32f7fd3bbc3 ("pinctrl: Rename pinctrl_utils_dt_free_map to pinctrl_utils_free_map")
+> Fixes: b5aa1006e4a9 ("pinctrl: ns2: add pinmux driver support for Broadcom NS2 SoC")
+
+Patch applied.
+
+Sorry for taking so long. Mail Swamp.
+
+Yours,
+Linus Walleij
