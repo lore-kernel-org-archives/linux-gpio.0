@@ -1,7 +1,7 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 1/4] gpio: sodaville: make it explicitly non-modular
-Date: Mon, 9 May 2016 19:59:55 -0400
-Message-ID: <1462838398-10725-2-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 4/4] gpio: zevio: make it explicitly non-modular
+Date: Mon, 9 May 2016 19:59:58 -0400
+Message-ID: <1462838398-10725-5-git-send-email-paul.gortmaker@windriver.com>
 References: <1462838398-10725-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,13 +9,13 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1462838398-10725-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, "Hans J . Koch" <hjk@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Fabian Vogt <fabian@ritter-vogt.de>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/gpio/Kconfig:config GPIO_SODAVILLE
-drivers/gpio/Kconfig:   bool "Intel Sodaville GPIO support"
+drivers/gpio/Kconfig:config GPIO_ZEVIO
+drivers/gpio/Kconfig:   bool "LSI ZEVIO SoC memory mapped GPIOs"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -26,83 +26,71 @@ We explicitly disallow a driver unbind, since that doesn't have a
 sensible use case anyway, and it allows us to drop the ".remove"
 code for non-modular drivers.
 
-Since module_pci_driver() uses the same init level as the
-builtin_pci_driver() does, there is no init ordering change
-caused by this commit.
+Since module_platform_driver() uses the same init level priority as
+builtin_platform_driver() the init ordering remains unchanged with
+this commit.
 
-We don't replace module.h with init.h since the file already has that.
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
 We also delete the MODULE_LICENSE tag etc. since all that information
-was (or is now) contained at the top of the file in the comments.
+is already contained at the top of the file in the comments.
 
-Cc: Hans J. Koch <hjk@linutronix.de>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: Fabian Vogt <fabian@ritter-vogt.de>
 Cc: linux-gpio@vger.kernel.org
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/gpio/gpio-sodaville.c | 28 ++++++----------------------
- 1 file changed, 6 insertions(+), 22 deletions(-)
+ drivers/gpio/gpio-zevio.c | 21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/gpio/gpio-sodaville.c b/drivers/gpio/gpio-sodaville.c
-index e3cb6772f6ec..7da9e6c4546a 100644
---- a/drivers/gpio/gpio-sodaville.c
-+++ b/drivers/gpio/gpio-sodaville.c
-@@ -3,6 +3,8 @@
-  *
-  *  Copyright (c) 2010, 2011 Intel Corporation
-  *
-+ *  Author: Hans J. Koch <hjk@linutronix.de>
-+ *
-  *  This program is free software; you can redistribute it and/or modify
-  *  it under the terms of the GNU General Public License 2 as published
-  *  by the Free Software Foundation.
-@@ -15,7 +17,6 @@
- #include <linux/irq.h>
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
+diff --git a/drivers/gpio/gpio-zevio.c b/drivers/gpio/gpio-zevio.c
+index cda6d922be98..e23ef7b9451d 100644
+--- a/drivers/gpio/gpio-zevio.c
++++ b/drivers/gpio/gpio-zevio.c
+@@ -10,7 +10,7 @@
+ 
+ #include <linux/spinlock.h>
+ #include <linux/errno.h>
 -#include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
- #include <linux/of_irq.h>
-@@ -257,34 +258,17 @@ done:
- 	return ret;
++#include <linux/init.h>
+ #include <linux/bitops.h>
+ #include <linux/io.h>
+ #include <linux/of_device.h>
+@@ -203,32 +203,17 @@ static int zevio_gpio_probe(struct platform_device *pdev)
+ 	return 0;
  }
  
--static void sdv_gpio_remove(struct pci_dev *pdev)
+-static int zevio_gpio_remove(struct platform_device *pdev)
 -{
--	struct sdv_gpio_chip_data *sd = pci_get_drvdata(pdev);
+-	struct zevio_gpio *controller = platform_get_drvdata(pdev);
 -
--	free_irq(pdev->irq, sd);
--	irq_free_descs(sd->irq_base, SDV_NUM_PUB_GPIOS);
+-	of_mm_gpiochip_remove(&controller->chip);
 -
--	gpiochip_remove(&sd->chip);
--	pci_release_region(pdev, GPIO_BAR);
--	iounmap(sd->gpio_pub_base);
--	pci_disable_device(pdev);
--	kfree(sd);
+-	return 0;
 -}
 -
- static const struct pci_device_id sdv_gpio_pci_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_SDV_GPIO) },
- 	{ 0, },
+ static const struct of_device_id zevio_gpio_of_match[] = {
+ 	{ .compatible = "lsi,zevio-gpio", },
+ 	{ },
  };
  
- static struct pci_driver sdv_gpio_driver = {
-+	.driver = {
+-MODULE_DEVICE_TABLE(of, zevio_gpio_of_match);
+-
+ static struct platform_driver zevio_gpio_driver = {
+ 	.driver		= {
+ 		.name	= "gpio-zevio",
+ 		.of_match_table = zevio_gpio_of_match,
 +		.suppress_bind_attrs = true,
-+	},
- 	.name = DRV_NAME,
- 	.id_table = sdv_gpio_pci_ids,
- 	.probe = sdv_gpio_probe,
--	.remove = sdv_gpio_remove,
+ 	},
+ 	.probe		= zevio_gpio_probe,
+-	.remove		= zevio_gpio_remove,
  };
+-module_platform_driver(zevio_gpio_driver);
 -
--module_pci_driver(sdv_gpio_driver);
--
--MODULE_AUTHOR("Hans J. Koch <hjk@linutronix.de>");
--MODULE_DESCRIPTION("GPIO interface for Intel Sodaville SoCs");
--MODULE_LICENSE("GPL v2");
-+builtin_pci_driver(sdv_gpio_driver);
+-MODULE_LICENSE("GPL");
+-MODULE_AUTHOR("Fabian Vogt <fabian@ritter-vogt.de>");
+-MODULE_DESCRIPTION("LSI ZEVIO SoC GPIO driver");
++builtin_platform_driver(zevio_gpio_driver);
 -- 
 2.8.0
