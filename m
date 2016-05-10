@@ -1,95 +1,77 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 0/4] gpio: batch #3: remove modular code from non-modular drivers
-Date: Mon, 9 May 2016 19:59:54 -0400
-Message-ID: <1462838398-10725-1-git-send-email-paul.gortmaker@windriver.com>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH 10/23] MIPS: do away with
+ ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB
+Date: Tue, 10 May 2016 10:05:24 +0200
+Message-ID: <20160510080524.GC16402@linux-mips.org>
+References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
+ <1461142701-21096-11-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:60431 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753914AbcEJAAn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 May 2016 20:00:43 -0400
+Received: from eddie.linux-mips.org ([148.251.95.138]:35028 "EHLO
+	cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751006AbcEJIFa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2016 04:05:30 -0400
+Received: from localhost.localdomain ([127.0.0.1]:58788 "EHLO linux-mips.org"
+        rhost-flags-OK-OK-OK-FAIL) by eddie.linux-mips.org with ESMTP
+        id S27028568AbcEJIF1WqCkv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2016 10:05:27 +0200
+Content-Disposition: inline
+In-Reply-To: <1461142701-21096-11-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Alexandre Courbot <gnurou@gmail.com>, Fabian Vogt <fabian@ritter-vogt.de>, "Hans J . Koch" <hjk@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rabin Vincent <rabin.vincent@stericsson.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Michael =?iso-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-mips@linux-mips.org
 
-For GPIO, I'd divided up the the audit of modular usage in non-modular
-drivers into three categories to ease review and limit the batch size.
-Group #1 & #2 have been submitted and merged ; this here is group #3.
+On Wed, Apr 20, 2016 at 10:58:08AM +0200, Linus Walleij wrote:
 
-The breakdown of the three groups was as follows:
+> This replaces:
+>=20
+> - "select ARCH_REQUIRE_GPIOLIB" with "select GPIOLIB" as this can
+>   now be selected directly.
+>=20
+> - "select ARCH_WANT_OPTIONAL_GPIOLIB" with no dependency: GPIOLIB
+>   is now selectable by everyone, so we need not declare our
+>   intent to select it.
+>=20
+> When ordering the symbols the following rationale was used:
+> if the selects were in alphabetical order, I moved select GPIOLIB
+> to be in alphabetical order, but if the selects were not
+> maintained in alphabetical order, I just replaced
+> "select ARCH_REQUIRE_GPIOLIB" with "select GPIOLIB".
+>=20
+> Cc: Michael B=FCsch <m@bues.ch>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: linux-mips@linux-mips.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Various arch maintainers:
+>=20
+> either ACK this and I will merge it into the GPIO tree for v4.7
+> anticipating no clashes, or you wait until I have the enabling patch
+> upstream (patch 1 in this series, removing deps on
+> ARCH_[WANTS_OPTIONAL|REQUIRES]_GPIOLIB), and you will be able to
+> merge it to your arch trees yourselves for late v4.7
+> (post GPIO tree merge) or for v4.8.
+>=20
+> You can also ask me for an immutable branch if you prefer that, I
+> will put the enabling patch on a branch and the patch for your arch
+> on top and ask you to pull it.
+>=20
+> Select your option from the menu, silence probably means I will
+> merge it to the GPIO tree. Unless you are X86 or ARM in which case
+> I will be cautious.
 
-1) just replacement of modular macros with their non-modular equivalents
-   that CPP would have inserted anyway ; this means runtime equivalence
-   and actually also binary equivalence.
+Warning of the snappish maintainer ;-)
 
-2) as per #1 but also with the removal of unused/orphaned __exit functions
-   that could never be called/exercised.  This also maintains runtime
-   equivalence, but since the unused __exit function is gone, there is a
-   reduction in the object file size and hence not binary equivalence, eg:
-       before: -rw-rw-r-- 1 8828 drivers/gpio/gpio-rc5t583.o
-       after:  -rw-rw-r-- 1 7396 drivers/gpio/gpio-rc5t583.o
+=46or this one:
 
-3) as per #2 but also with the removal of a ".remove" function that is
-   hooked into the driver struct.   This ".remove" function would of
-   course not be called from the __exit function since that is never run.
-   However in theory, someone could have triggered it via sysfs unbind,
-   even though there isn't a sensible use case for doing so.  So to cover
-   that possibility, we've also disabled sysfs unbind in these drivers.
+Acked-by: Ralf Baechle <ralf@linux-mips.org>
 
-Since this is the #3 of 3, an additional bind comment is warranted.
-One could argue that the suppress bind is overkill, since it isn't used
-by all non-modular drivers everywhere, but it does ensure that anyone
-who was manually trying to (ab)use it with _these_ drivers gets a clear
-signal that it was never meant to be used like that.
-
-For anyone new to the underlying goal of this cleanup, we are trying to
-not use module support for code that can never be built as a module since:
-
- (1) it is easy to accidentally write unused module_exit and remove code
- (2) it can be misleading when reading the source, thinking it can be
-     modular when the Makefile and/or Kconfig prohibit it
- (3) it requires the include of the module.h header file which in turn
-     includes nearly everything else, thus adding to CPP overhead.
- (4) it gets copied/replicated into other code and spreads like weeds.
-
-There are no initcall level changes here; everything was at the level
-of device_initcall and remains so, by using the builtin equivalents.
-
-I fixed up the shortlogs in this lot to match the existing gpio shortlog
-format (no "device/" in the prefix, etc.) -- apologies for not catching
-that for the earlier lot of commits in #1 and #2.
-
-Build tested for 5-6 different key arch on today's linux-next to ensure
-no silly typos crept in.
-
-There is one remaining trivial bool ---> tristate gpio conversion I have to
-send that didn't fit #1/#2/#3, but getting these groups done is 99% of it,
-so thanks in advance for handling these and getting them off of my queue.
-
-Paul.
----
-
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Fabian Vogt <fabian@ritter-vogt.de>
-Cc: Hans J. Koch <hjk@linutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
-Cc: Rabin Vincent <rabin.vincent@stericsson.com>
-
-Paul Gortmaker (4):
-  gpio: sodaville: make it explicitly non-modular
-  gpio: stmpe: make it explicitly non-modular
-  gpio: timberdale: make it explicitly non-modular
-  gpio: zevio: make it explicitly non-modular
-
- drivers/gpio/gpio-sodaville.c  | 28 ++++++----------------------
- drivers/gpio/gpio-stmpe.c      | 31 +++++--------------------------
- drivers/gpio/gpio-timberdale.c | 35 +++++------------------------------
- drivers/gpio/gpio-zevio.c      | 21 +++------------------
- 4 files changed, 19 insertions(+), 96 deletions(-)
-
--- 
-2.8.0
-
+  Ralf
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
