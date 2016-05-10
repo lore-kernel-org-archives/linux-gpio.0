@@ -1,56 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC v5 3/4] gpio: move clps711x, moxart, ts4800 and gpio-ge into gpio-generic
-Date: Tue, 10 May 2016 13:52:54 +0200
-Message-ID: <CACRpkdbXM2Bnzv_qTwz6sWkpCgx3q2ihiEMbeb+5DJj+DT+GAw@mail.gmail.com>
-References: <cover.1461888822.git.chunkeey@googlemail.com>
-	<9e5cc9e957144bd5d4081573ef959f931281eaaa.1461888822.git.chunkeey@googlemail.com>
-	<CACRpkdaX1xeGJxV9K-GkTAh87SctqyhkJ+VN6mwUdtD19tz99g@mail.gmail.com>
-	<1518049.pLhlI1cuZi@debian64>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v8 1/3] gpio: dt-bindings: add wd,mbl-gpio bindings
+Date: Tue, 10 May 2016 13:58:26 +0200
+Message-ID: <CACRpkdbqifjgD0hV+mV5bwu-LKmX8huMQhpJQ4wUCXmXZeSfyQ@mail.gmail.com>
+References: <cover.1462543457.git.chunkeey@googlemail.com>
+	<9bc9349d6e13d81c6200b0cd8fa20c76263043f6.1462543458.git.chunkeey@googlemail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:35128 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751391AbcEJLwz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2016 07:52:55 -0400
-Received: by mail-oi0-f49.google.com with SMTP id x19so11338296oix.2
-        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2016 04:52:54 -0700 (PDT)
-In-Reply-To: <1518049.pLhlI1cuZi@debian64>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <9bc9349d6e13d81c6200b0cd8fa20c76263043f6.1462543458.git.chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Christian Lamparter <chunkeey@googlemail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6?= <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexander Shiyan <shc_work@mail.ru>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Fri, Apr 29, 2016 at 9:06 PM, Christian Lamparter
-<chunkeey@googlemail.com> wrote:
-> On Friday, April 29, 2016 04:18:20 PM Linus Walleij wrote:
+On Sun, May 8, 2016 at 3:08 PM, Christian Lamparter
+<chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> wrote:
 
->> Very elegant. Let's wait for some feedback/ACKs from
->> the driver maintainers, but this looks very nice.
-
-> Oh by the way: who's maintaining them? get_maintainer.pl just
-> lists the usual gpio people.
-
-I usually just git log drivers/gpio/gpio-foo.c
-and see what turns up, then sift out to avoid any generic
-maintenance patches and mail the remaining people who
-made real functional changes and seem  to be using the
-real hardware.
-
-> Anyway, I'll rebase my patch series (without the two patches you
-> had already merged)
-
-Awesome.
-
->> Do you want to address Andy's optimization suggestion directly
->> or as a follow-on patch?
+> This patch adds the device tree bindings for the Western Digital's
+> MyBook Live memory-mapped GPIO controllers.
 >
-> Oh, this is a RFC. I didn't expect anything to be merged just yet.
-> Of course, I'll try to integrate his suggestion. I'll do that once
-> I reply to Rob/Mark/You about the "linux,gpio-mmio",
-> "memory-mapped-gpio" situation etc.
+> The gpios will be supported by gpio-mmio code of the
+> GPIO generic library.
+>
+> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
 
-True, OK no hurries, I just liked the patches a lot.
+Looks OK to me and Rob has ACKed so patch applied.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
