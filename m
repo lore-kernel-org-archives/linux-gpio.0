@@ -1,77 +1,79 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH 10/23] MIPS: do away with
- ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB
-Date: Tue, 10 May 2016 10:05:24 +0200
-Message-ID: <20160510080524.GC16402@linux-mips.org>
-References: <1461142701-21096-1-git-send-email-linus.walleij@linaro.org>
- <1461142701-21096-11-git-send-email-linus.walleij@linaro.org>
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Subject: Add MediaTek USB3 DRD Driver
+Date: Tue, 10 May 2016 16:23:28 +0800
+Message-ID: <1462868614-20602-1-git-send-email-chunfeng.yun@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eddie.linux-mips.org ([148.251.95.138]:35028 "EHLO
-	cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751006AbcEJIFa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2016 04:05:30 -0400
-Received: from localhost.localdomain ([127.0.0.1]:58788 "EHLO linux-mips.org"
-        rhost-flags-OK-OK-OK-FAIL) by eddie.linux-mips.org with ESMTP
-        id S27028568AbcEJIF1WqCkv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2016 10:05:27 +0200
-Content-Disposition: inline
-In-Reply-To: <1461142701-21096-11-git-send-email-linus.walleij@linaro.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:33178 "EHLO
+	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751092AbcEJIYA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2016 04:24:00 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Michael =?iso-8859-1?Q?B=FCsch?= <m@bues.ch>, linux-mips@linux-mips.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Matthias Brugger <matthias.bgg@gmail.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Pawel Moll <pawel.moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Sascha Hauer <s.hauer@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>, Biao Huang <biao.huang@mediatek.com>, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
 
-On Wed, Apr 20, 2016 at 10:58:08AM +0200, Linus Walleij wrote:
+>From 5e3e992dc3c02eda12f5cf984a18a57f0207333d Mon Sep 17 00:00:00 2001
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Date: Tue, 10 May 2016 16:04:25 +0800
+Subject: [PATCH 0/6] Add MediaTek USB3 DRD Driver
 
-> This replaces:
->=20
-> - "select ARCH_REQUIRE_GPIOLIB" with "select GPIOLIB" as this can
->   now be selected directly.
->=20
-> - "select ARCH_WANT_OPTIONAL_GPIOLIB" with no dependency: GPIOLIB
->   is now selectable by everyone, so we need not declare our
->   intent to select it.
->=20
-> When ordering the symbols the following rationale was used:
-> if the selects were in alphabetical order, I moved select GPIOLIB
-> to be in alphabetical order, but if the selects were not
-> maintained in alphabetical order, I just replaced
-> "select ARCH_REQUIRE_GPIOLIB" with "select GPIOLIB".
->=20
-> Cc: Michael B=FCsch <m@bues.ch>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: linux-mips@linux-mips.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Various arch maintainers:
->=20
-> either ACK this and I will merge it into the GPIO tree for v4.7
-> anticipating no clashes, or you wait until I have the enabling patch
-> upstream (patch 1 in this series, removing deps on
-> ARCH_[WANTS_OPTIONAL|REQUIRES]_GPIOLIB), and you will be able to
-> merge it to your arch trees yourselves for late v4.7
-> (post GPIO tree merge) or for v4.8.
->=20
-> You can also ask me for an immutable branch if you prefer that, I
-> will put the enabling patch on a branch and the patch for your arch
-> on top and ask you to pull it.
->=20
-> Select your option from the menu, silence probably means I will
-> merge it to the GPIO tree. Unless you are X86 or ARM in which case
-> I will be cautious.
+These patches introduce the MediaTek USB3 dual-role controller
+driver.
 
-Warning of the snappish maintainer ;-)
+The driver can be configured as Dual-Role Device (DRD),
+Peripheral Only and Host Only (xHCI) modes. It works well
+with Mass Storage, RNDIS and g_zero on FS/HS and SS. And it is
+tested on MT8173 platform which only contains USB2.0 device IP,
+and on MT6290 platform which contains USB3.0 device IP.
 
-=46or this one:
 
-Acked-by: Ralf Baechle <ralf@linux-mips.org>
+Chunfeng Yun (6):
+  dt-bindings: mt8173-xhci: support host side of dual-role mode
+  usb: xhci-mtk: make IPPC register optional
+  dt-bindings: mtu3: add devicetree bindings
+  usb: Add MediaTek USB3 DRD Driver
+  arm64: dts: mediatek: add USB3 DRD driver
+  pinctrl: mt8173: set GPIO16 to usb iddig mode
 
-  Ralf
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ .../devicetree/bindings/usb/mt8173-xhci.txt        |   48 ++
+ Documentation/devicetree/bindings/usb/mtu3.txt     |   86 ++
+ arch/arm64/boot/dts/mediatek/mt8173-evb.dts        |   46 +-
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi           |   28 +-
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt8173.h      |    2 +-
+ drivers/usb/Kconfig                                |    2 +
+ drivers/usb/Makefile                               |    1 +
+ drivers/usb/host/xhci-mtk.c                        |   32 +-
+ drivers/usb/mtu3/Kconfig                           |   47 ++
+ drivers/usb/mtu3/Makefile                          |   20 +
+ drivers/usb/mtu3/mtu3.h                            |  422 ++++++++++
+ drivers/usb/mtu3/mtu3_core.c                       |  877 +++++++++++++++++++
+ drivers/usb/mtu3/mtu3_dr.c                         |  353 ++++++++
+ drivers/usb/mtu3/mtu3_dr.h                         |  108 +++
+ drivers/usb/mtu3/mtu3_gadget.c                     |  735 ++++++++++++++++
+ drivers/usb/mtu3/mtu3_gadget_ep0.c                 |  889 ++++++++++++++++++++
+ drivers/usb/mtu3/mtu3_host.c                       |  294 +++++++
+ drivers/usb/mtu3/mtu3_hw_regs.h                    |  474 +++++++++++
+ drivers/usb/mtu3/mtu3_plat.c                       |  496 +++++++++++
+ drivers/usb/mtu3/mtu3_qmu.c                        |  599 +++++++++++++
+ drivers/usb/mtu3/mtu3_qmu.h                        |   43 +
+ 21 files changed, 5587 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/mtu3.txt
+ create mode 100644 drivers/usb/mtu3/Kconfig
+ create mode 100644 drivers/usb/mtu3/Makefile
+ create mode 100644 drivers/usb/mtu3/mtu3.h
+ create mode 100644 drivers/usb/mtu3/mtu3_core.c
+ create mode 100644 drivers/usb/mtu3/mtu3_dr.c
+ create mode 100644 drivers/usb/mtu3/mtu3_dr.h
+ create mode 100644 drivers/usb/mtu3/mtu3_gadget.c
+ create mode 100644 drivers/usb/mtu3/mtu3_gadget_ep0.c
+ create mode 100644 drivers/usb/mtu3/mtu3_host.c
+ create mode 100644 drivers/usb/mtu3/mtu3_hw_regs.h
+ create mode 100644 drivers/usb/mtu3/mtu3_plat.c
+ create mode 100644 drivers/usb/mtu3/mtu3_qmu.c
+ create mode 100644 drivers/usb/mtu3/mtu3_qmu.h
+
+-- 
+1.7.9.5
+
