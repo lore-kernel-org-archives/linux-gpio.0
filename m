@@ -1,328 +1,56 @@
-From: Caesar Wang <wxt@rock-chips.com>
-Subject: [PATCH] pinctrl: rockchip: fix pull setting error for rk3399
-Date: Tue, 10 May 2016 19:14:56 +0800
-Message-ID: <1462878896-28956-1-git-send-email-wxt@rock-chips.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC v5 3/4] gpio: move clps711x, moxart, ts4800 and gpio-ge into gpio-generic
+Date: Tue, 10 May 2016 13:52:54 +0200
+Message-ID: <CACRpkdbXM2Bnzv_qTwz6sWkpCgx3q2ihiEMbeb+5DJj+DT+GAw@mail.gmail.com>
+References: <cover.1461888822.git.chunkeey@googlemail.com>
+	<9e5cc9e957144bd5d4081573ef959f931281eaaa.1461888822.git.chunkeey@googlemail.com>
+	<CACRpkdaX1xeGJxV9K-GkTAh87SctqyhkJ+VN6mwUdtD19tz99g@mail.gmail.com>
+	<1518049.pLhlI1cuZi@debian64>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f173.google.com ([209.85.192.173]:34045 "EHLO
-	mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751079AbcEJLPH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2016 07:15:07 -0400
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:35128 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751391AbcEJLwz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2016 07:52:55 -0400
+Received: by mail-oi0-f49.google.com with SMTP id x19so11338296oix.2
+        for <linux-gpio@vger.kernel.org>; Tue, 10 May 2016 04:52:54 -0700 (PDT)
+In-Reply-To: <1518049.pLhlI1cuZi@debian64>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: dianders@chromium.org, briannorris@google.com, smbarber@google.com, linux-rockchip@lists.infradead.org, David Wu <david.wu@rock-chips.com>, Caesar Wang <wxt@rock-chips.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Christian Lamparter <chunkeey@googlemail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6?= <noltari@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexander Shiyan <shc_work@mail.ru>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-From: David Wu <david.wu@rock-chips.com>
+On Fri, Apr 29, 2016 at 9:06 PM, Christian Lamparter
+<chunkeey@googlemail.com> wrote:
+> On Friday, April 29, 2016 04:18:20 PM Linus Walleij wrote:
 
-This patch fixes the pinctrl pull bias setting, since the pull up/down
-setting is the contrary for gpio0.
+>> Very elegant. Let's wait for some feedback/ACKs from
+>> the driver maintainers, but this looks very nice.
 
->From the TRM said, the gpio0 pull polarity setting:
-gpio0a_p (gpio0 )
-GPIO0A PE/PS programmation section, every
-GPIO bit corresponding to 2bits[PS:PE]
-2'b00: Z(Noraml operaton);
-2'b11: weak 1(pull-up);
-2'b01: weak 0(pull-down);
-2'b10: Z(Noraml operaton);
+> Oh by the way: who's maintaining them? get_maintainer.pl just
+> lists the usual gpio people.
 
-Then, the other gpios setting as the following:
-gpio1a_p (gpio1, gpio2, gpio3...)
-GPIO1A PU/PD programmation section, every
-GPIO bit corresponding to 2bits
-2'b00: Z(Noraml operaton);
-2'b01: weak 1(pull-up);
-2'b10: weak 0(pull-down);
-2'b11: Repeater(Bus keeper)
+I usually just git log drivers/gpio/gpio-foo.c
+and see what turns up, then sift out to avoid any generic
+maintenance patches and mail the remaining people who
+made real functional changes and seem  to be using the
+real hardware.
 
-For example,(rk3399evb board)
-sdmmc_cd --->gpio0_a7
-localhost / # io -r -4 0xff320040
-ff320040: 00004d5f
-In general,the value should be 0x0000cd5f since the pin set in the dts.
+> Anyway, I'll rebase my patch series (without the two patches you
+> had already merged)
 
-Signed-off-by: David Wu <david.wu@rock-chips.com>
-Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-gpio@vger.kernel.org
----
+Awesome.
 
- drivers/pinctrl/pinctrl-rockchip.c | 178 ++++++++++++++++++++++++++-----------
- 1 file changed, 126 insertions(+), 52 deletions(-)
+>> Do you want to address Andy's optimization suggestion directly
+>> or as a follow-on patch?
+>
+> Oh, this is a RFC. I didn't expect anything to be merged just yet.
+> Of course, I'll try to integrate his suggestion. I'll do that once
+> I reply to Rob/Mark/You about the "linux,gpio-mmio",
+> "memory-mapped-gpio" situation etc.
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 596b869..38be9c7 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -99,6 +99,15 @@ enum rockchip_pin_drv_type {
- };
- 
- /**
-+ * enum type index corresponding to rockchip_pull_list arrays index.
-+ */
-+enum rockchip_pin_pull_type {
-+	PULL_TYPE_IO_DEFAULT = 0,
-+	PULL_TYPE_IO_1V8_ONLY,
-+	PULL_TYPE_MAX
-+};
-+
-+/**
-  * @drv_type: drive strength variant using rockchip_perpin_drv_type
-  * @offset: if initialized to -1 it will be autocalculated, by specifying
-  *	    an initial offset value the relevant source offset can be reset
-@@ -123,6 +132,7 @@ struct rockchip_drv {
-  * @bank_num: number of the bank, to account for holes
-  * @iomux: array describing the 4 iomux sources of the bank
-  * @drv: array describing the 4 drive strength sources of the bank
-+ * @pull_type: array describing the 4 pull type sources of the bank
-  * @valid: are all necessary informations present
-  * @of_node: dt node of this bank
-  * @drvdata: common pinctrl basedata
-@@ -143,6 +153,7 @@ struct rockchip_pin_bank {
- 	u8				bank_num;
- 	struct rockchip_iomux		iomux[4];
- 	struct rockchip_drv		drv[4];
-+	enum rockchip_pin_pull_type	pull_type[4];
- 	bool				valid;
- 	struct device_node		*of_node;
- 	struct rockchip_pinctrl		*drvdata;
-@@ -198,6 +209,31 @@ struct rockchip_pin_bank {
- 		},							\
- 	}
- 
-+#define PIN_BANK_DRV_FLAGS_PULL_FLAGS(id, pins, label, drv0, drv1,	\
-+				      drv2, drv3, pull0, pull1,		\
-+				      pull2, pull3)			\
-+	{								\
-+		.bank_num	= id,					\
-+		.nr_pins	= pins,					\
-+		.name		= label,				\
-+		.iomux		= {					\
-+			{ .offset = -1 },				\
-+			{ .offset = -1 },				\
-+			{ .offset = -1 },				\
-+			{ .offset = -1 },				\
-+		},							\
-+		.drv		= {					\
-+			{ .drv_type = drv0, .offset = -1 },		\
-+			{ .drv_type = drv1, .offset = -1 },		\
-+			{ .drv_type = drv2, .offset = -1 },		\
-+			{ .drv_type = drv3, .offset = -1 },		\
-+		},							\
-+		.pull_type[0] = pull0,					\
-+		.pull_type[1] = pull1,					\
-+		.pull_type[2] = pull2,					\
-+		.pull_type[3] = pull3,					\
-+	}
-+
- #define PIN_BANK_IOMUX_DRV_FLAGS_OFFSET(id, pins, label, iom0, iom1,	\
- 					iom2, iom3, drv0, drv1, drv2,	\
- 					drv3, offset0, offset1,		\
-@@ -220,6 +256,34 @@ struct rockchip_pin_bank {
- 		},							\
- 	}
- 
-+#define PIN_BANK_IOMUX_FLAGS_DRV_FLAGS_OFFSET_PULL_FLAGS(id, pins,	\
-+					      label, iom0, iom1, iom2,  \
-+					      iom3, drv0, drv1, drv2,   \
-+					      drv3, offset0, offset1,   \
-+					      offset2, offset3, pull0,  \
-+					      pull1, pull2, pull3)	\
-+	{								\
-+		.bank_num	= id,					\
-+		.nr_pins	= pins,					\
-+		.name		= label,				\
-+		.iomux		= {					\
-+			{ .type = iom0, .offset = -1 },			\
-+			{ .type = iom1, .offset = -1 },			\
-+			{ .type = iom2, .offset = -1 },			\
-+			{ .type = iom3, .offset = -1 },			\
-+		},							\
-+		.drv		= {					\
-+			{ .drv_type = drv0, .offset = offset0 },	\
-+			{ .drv_type = drv1, .offset = offset1 },	\
-+			{ .drv_type = drv2, .offset = offset2 },	\
-+			{ .drv_type = drv3, .offset = offset3 },	\
-+		},							\
-+		.pull_type[0] = pull0,					\
-+		.pull_type[1] = pull1,					\
-+		.pull_type[2] = pull2,					\
-+		.pull_type[3] = pull3,					\
-+	}
-+
- /**
-  */
- struct rockchip_pin_ctrl {
-@@ -1020,12 +1084,27 @@ static int rockchip_set_drive_perpin(struct rockchip_pin_bank *bank,
- 	return ret;
- }
- 
-+static int rockchip_pull_list[PULL_TYPE_MAX][4] = {
-+	{
-+		PIN_CONFIG_BIAS_DISABLE,
-+		PIN_CONFIG_BIAS_PULL_UP,
-+		PIN_CONFIG_BIAS_PULL_DOWN,
-+		PIN_CONFIG_BIAS_BUS_HOLD
-+	},
-+	{
-+		PIN_CONFIG_BIAS_DISABLE,
-+		PIN_CONFIG_BIAS_PULL_DOWN,
-+		PIN_CONFIG_BIAS_DISABLE,
-+		PIN_CONFIG_BIAS_PULL_UP
-+	},
-+};
-+
- static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
- {
- 	struct rockchip_pinctrl *info = bank->drvdata;
- 	struct rockchip_pin_ctrl *ctrl = info->ctrl;
- 	struct regmap *regmap;
--	int reg, ret;
-+	int reg, ret, pull_type;
- 	u8 bit;
- 	u32 data;
- 
-@@ -1048,22 +1127,11 @@ static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
- 	case RK3288:
- 	case RK3368:
- 	case RK3399:
-+		pull_type = bank->pull_type[pin_num / 8];
- 		data >>= bit;
- 		data &= (1 << RK3188_PULL_BITS_PER_PIN) - 1;
- 
--		switch (data) {
--		case 0:
--			return PIN_CONFIG_BIAS_DISABLE;
--		case 1:
--			return PIN_CONFIG_BIAS_PULL_UP;
--		case 2:
--			return PIN_CONFIG_BIAS_PULL_DOWN;
--		case 3:
--			return PIN_CONFIG_BIAS_BUS_HOLD;
--		}
--
--		dev_err(info->dev, "unknown pull setting\n");
--		return -EIO;
-+		return rockchip_pull_list[pull_type][data];
- 	default:
- 		dev_err(info->dev, "unsupported pinctrl type\n");
- 		return -EINVAL;
-@@ -1076,7 +1144,7 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
- 	struct rockchip_pinctrl *info = bank->drvdata;
- 	struct rockchip_pin_ctrl *ctrl = info->ctrl;
- 	struct regmap *regmap;
--	int reg, ret;
-+	int reg, ret, i, pull_type;
- 	unsigned long flags;
- 	u8 bit;
- 	u32 data, rmask;
-@@ -1105,30 +1173,27 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
- 	case RK3288:
- 	case RK3368:
- 	case RK3399:
-+		pull_type = bank->pull_type[pin_num / 8];
-+		ret = -EINVAL;
-+		for (i = 0; i < ARRAY_SIZE(rockchip_pull_list[pull_type]);
-+			i++) {
-+			if (rockchip_pull_list[pull_type][i] == pull) {
-+				ret = i;
-+				break;
-+			}
-+		}
-+
-+		if (ret < 0) {
-+			dev_err(info->dev, "unknown pull setting %d\n", pull);
-+			return ret;
-+		}
-+
- 		spin_lock_irqsave(&bank->slock, flags);
- 
- 		/* enable the write to the equivalent lower bits */
- 		data = ((1 << RK3188_PULL_BITS_PER_PIN) - 1) << (bit + 16);
- 		rmask = data | (data >> 16);
--
--		switch (pull) {
--		case PIN_CONFIG_BIAS_DISABLE:
--			break;
--		case PIN_CONFIG_BIAS_PULL_UP:
--			data |= (1 << bit);
--			break;
--		case PIN_CONFIG_BIAS_PULL_DOWN:
--			data |= (2 << bit);
--			break;
--		case PIN_CONFIG_BIAS_BUS_HOLD:
--			data |= (3 << bit);
--			break;
--		default:
--			spin_unlock_irqrestore(&bank->slock, flags);
--			dev_err(info->dev, "unsupported pull setting %d\n",
--				pull);
--			return -EINVAL;
--		}
-+		data |= (ret << bit);
- 
- 		ret = regmap_update_bits(regmap, reg, rmask, data);
- 
-@@ -2552,19 +2617,24 @@ static struct rockchip_pin_ctrl rk3368_pin_ctrl = {
- };
- 
- static struct rockchip_pin_bank rk3399_pin_banks[] = {
--	PIN_BANK_IOMUX_DRV_FLAGS_OFFSET(0, 32, "gpio0", IOMUX_SOURCE_PMU,
--					IOMUX_SOURCE_PMU,
--					IOMUX_SOURCE_PMU,
--					IOMUX_SOURCE_PMU,
--					DRV_TYPE_IO_1V8_ONLY,
--					DRV_TYPE_IO_1V8_ONLY,
--					DRV_TYPE_IO_DEFAULT,
--					DRV_TYPE_IO_DEFAULT,
--					0x0,
--					0x8,
--					-1,
--					-1
--					),
-+	PIN_BANK_IOMUX_FLAGS_DRV_FLAGS_OFFSET_PULL_FLAGS(0, 32, "gpio0",
-+							 IOMUX_SOURCE_PMU,
-+							 IOMUX_SOURCE_PMU,
-+							 IOMUX_SOURCE_PMU,
-+							 IOMUX_SOURCE_PMU,
-+							 DRV_TYPE_IO_1V8_ONLY,
-+							 DRV_TYPE_IO_1V8_ONLY,
-+							 DRV_TYPE_IO_DEFAULT,
-+							 DRV_TYPE_IO_DEFAULT,
-+							 0x0,
-+							 0x8,
-+							 -1,
-+							 -1,
-+							 PULL_TYPE_IO_1V8_ONLY,
-+							 PULL_TYPE_IO_1V8_ONLY,
-+							 PULL_TYPE_IO_DEFAULT,
-+							 PULL_TYPE_IO_DEFAULT
-+							),
- 	PIN_BANK_IOMUX_DRV_FLAGS_OFFSET(1, 32, "gpio1", IOMUX_SOURCE_PMU,
- 					IOMUX_SOURCE_PMU,
- 					IOMUX_SOURCE_PMU,
-@@ -2578,11 +2648,15 @@ static struct rockchip_pin_bank rk3399_pin_banks[] = {
- 					0x30,
- 					0x38
- 					),
--	PIN_BANK_DRV_FLAGS(2, 32, "gpio2", DRV_TYPE_IO_1V8_OR_3V0,
--			   DRV_TYPE_IO_1V8_OR_3V0,
--			   DRV_TYPE_IO_1V8_ONLY,
--			   DRV_TYPE_IO_1V8_ONLY
--			   ),
-+	PIN_BANK_DRV_FLAGS_PULL_FLAGS(2, 32, "gpio2", DRV_TYPE_IO_1V8_OR_3V0,
-+				      DRV_TYPE_IO_1V8_OR_3V0,
-+				      DRV_TYPE_IO_1V8_ONLY,
-+				      DRV_TYPE_IO_1V8_ONLY,
-+				      PULL_TYPE_IO_DEFAULT,
-+				      PULL_TYPE_IO_DEFAULT,
-+				      PULL_TYPE_IO_1V8_ONLY,
-+				      PULL_TYPE_IO_1V8_ONLY
-+				      ),
- 	PIN_BANK_DRV_FLAGS(3, 32, "gpio3", DRV_TYPE_IO_3V3_ONLY,
- 			   DRV_TYPE_IO_3V3_ONLY,
- 			   DRV_TYPE_IO_3V3_ONLY,
--- 
-1.9.1
+True, OK no hurries, I just liked the patches a lot.
 
+Yours,
+Linus Walleij
