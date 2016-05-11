@@ -1,37 +1,50 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/1] pinctrl: tegra: avoid parked_reg and parked_bank
-Date: Wed, 11 May 2016 13:25:21 +0200
-Message-ID: <CACRpkdau6Ey5Zot5OPF_NdPFL4h7M27KPpehQX57A45hwpgCDg@mail.gmail.com>
-References: <1462199330-1536-1-git-send-email-ldewangan@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: Let gpio_chip.to_irq() return zero on error
+Date: Wed, 11 May 2016 13:29:14 +0200
+Message-ID: <CACRpkdaWMQYi81SALcN4n3W8_=Bm5-e+-BGpFv2jF-9c6JAOrg@mail.gmail.com>
+References: <1462350113-20216-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1462199330-1536-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:33847 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751386AbcEKL3P (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 May 2016 07:29:15 -0400
+Received: by mail-oi0-f45.google.com with SMTP id k142so62130651oib.1
+        for <linux-gpio@vger.kernel.org>; Wed, 11 May 2016 04:29:15 -0700 (PDT)
+In-Reply-To: <1462350113-20216-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 
-On Mon, May 2, 2016 at 4:28 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On Wed, May 4, 2016 at 10:21 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> NVIDIA's Tegra210 support the park bit to make pinmux configuration
-> enable/disable. If parked bit is 1 then configuration does not apply
-> and if it is 0 then pinmux configuration applies. This is to support
-> to avoid any glitch in pinmux configurations.
+> Currrently the gpio_chip.to_irq() callback returns -ENOSYS on error,
+> which causes bad interactions with the serial_mctrl_gpio helpers.
 >
-> The parked bit is part of mux register and mux bank and hence it is
-> not required to have member for the parked_reg and parked bank very
-> similar to other bit field of the same register.
+> mctrl_gpio_init() returns -ENOSYS if GPIOLIB is not enabled, which is
+> intended to be ignored by its callers. However, ignoring -ENOSYS when it
+> was caused by a gpiod_to_irq() failure will lead to a crash later:
 >
-> Remove the need of the parked register and parked bank and get whether
-> parked function supported or not by parked_bit.
+>     Unable to handle kernel paging request at virtual address ffffffde
+>     ...
+>     PC is at mctrl_gpio_set+0x14/0x78
 >
-> This is to make the parked bit handling same as other fields of mux
-> registers.
+> Fix this by returning zero instead, like gpiochip_to_irq() does.
 >
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This depends on "gpio: make gpiod_to_irq() return negative for NO_IRQ"
+> for proper handling by callers of mctrl_gpio_init().
+> Hence I think it's best to take this through the GPIO tree, after the
+> above has been applied.
+>
+> v2:
+>   - Return zero instead of -ENXIO.
 
-Patch applied with Stephen's ACK.
+Patch applied.
 
 Yours,
 Linus Walleij
