@@ -1,95 +1,121 @@
-From: Andreas Werner <andy@wernerandy.de>
-Subject: Re: [PATCH] gpio: menz127: use the new open drain callback
-Date: Wed, 11 May 2016 19:39:55 +0200
-Message-ID: <20160511173955.GA3574@linux-ah44>
-References: <1460231815-8635-1-git-send-email-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Sylvain Lemieux <slemieux.tyco@gmail.com>
+Subject: [PATCH] gpio: lpc32xx: disable broken to_irq support
+Date: Wed, 11 May 2016 13:40:00 -0400
+Message-ID: <1462988400-21738-1-git-send-email-slemieux.tyco@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:42437 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752008AbcEKRkK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 May 2016 13:40:10 -0400
-Content-Disposition: inline
-In-Reply-To: <1460231815-8635-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33432 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752008AbcEKRkT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 May 2016 13:40:19 -0400
+Received: by mail-io0-f196.google.com with SMTP id x35so7051316ioi.0
+        for <linux-gpio@vger.kernel.org>; Wed, 11 May 2016 10:40:19 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+To: vz@mleia.com, linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-On Sat, Apr 09, 2016 at 09:56:55PM +0200, Linus Walleij wrote:
-> The menz127 driver tries to support open drain by detecting it
-> at request time. However: without the new callbacks from the
-> gpiolib it is not really working: the core will still just emulate
-> the open drain mode by switching the line to an input.
-> 
-> By adding a hook into the new .set_single_ended() call rather than
-> trying to autodetect at request() time, proper open drain can be
-> supported.
-> 
-> Cc: Andreas Werner <andy@wernerandy.de>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/gpio/gpio-menz127.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-menz127.c b/drivers/gpio/gpio-menz127.c
-> index 8c1ab8e1974f..334fe270dcf1 100644
-> --- a/drivers/gpio/gpio-menz127.c
-> +++ b/drivers/gpio/gpio-menz127.c
-> @@ -88,21 +88,25 @@ static int men_z127_debounce(struct gpio_chip *gc, unsigned gpio,
->  	return 0;
->  }
->  
-> -static int men_z127_request(struct gpio_chip *gc, unsigned gpio_pin)
-> +static int men_z127_set_single_ended(struct gpio_chip *gc,
-> +				     unsigned offset,
-> +				     enum single_ended_mode mode)
->  {
->  	struct men_z127_gpio *priv = gpiochip_get_data(gc);
->  	u32 od_en;
->  
-> -	if (gpio_pin >= gc->ngpio)
-> -		return -EINVAL;
-> +	if (mode != LINE_MODE_OPEN_DRAIN &&
-> +	    mode != LINE_MODE_PUSH_PULL)
-> +		return -ENOTSUPP;
->  
->  	spin_lock(&priv->lock);
->  	od_en = readl(priv->reg_base + MEN_Z127_ODER);
->  
-> -	if (gpiochip_line_is_open_drain(gc, gpio_pin))
-> -		od_en |= BIT(gpio_pin);
-> +	if (mode == LINE_MODE_OPEN_DRAIN)
-> +		od_en |= BIT(offset);
->  	else
-> -		od_en &= ~BIT(gpio_pin);
-> +		/* Implicitly LINE_MODE_PUSH_PULL */
-> +		od_en &= ~BIT(offset);
->  
->  	writel(od_en, priv->reg_base + MEN_Z127_ODER);
->  	spin_unlock(&priv->lock);
-> @@ -147,7 +151,7 @@ static int men_z127_probe(struct mcb_device *mdev,
->  		goto err_unmap;
->  
->  	men_z127_gpio->gc.set_debounce = men_z127_debounce;
-> -	men_z127_gpio->gc.request = men_z127_request;
-> +	men_z127_gpio->gc.set_single_ended = men_z127_set_single_ended;
->  
->  	ret = gpiochip_add_data(&men_z127_gpio->gc, men_z127_gpio);
->  	if (ret) {
-> -- 
-> 2.4.3
-> 
+From: Sylvain Lemieux <slemieux@tycoint.com>
 
-Hi Linus,
-sorry for the late answer.
+The "to_irq" functionality is broken inside this driver since commit
+76ba59f8366f ("genirq: Add irq_domain-aware core IRQ handler").
 
-I will try to get the hardware and will test the patch.
+The addition of the new lpc32xx irqchip driver in 4.7, fixed the
+lpc32xx platform interrupt issue.
 
-I think this is exactly what I need to support the "real" open drain
-mode.
+When switching to the new lpc32xx irqchip driver, a warning appear
+in the lpc32xx gpio driver: warning: "NR_IRQS" redefined.
 
-Regards
-Andy
+To remove this warning (temporary solution), this patch
+disables the broken "to_irq" mapping functionality support.
+
+Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
+---
+Note:
+* For details on the lpc32xx irqchip patch, refer to:
+  http://thread.gmane.org/gmane.linux.drivers.devicetree/165620
+
+* The final solution is to replace the existing lpc32xx gpio driver.
+  This work is currently in progress; refer to the following URL:
+  http://thread.gmane.org/gmane.linux.drivers.devicetree/144696
+
+ drivers/gpio/gpio-lpc32xx.c | 48 +--------------------------------------------
+ 1 file changed, 1 insertion(+), 47 deletions(-)
+
+diff --git a/drivers/gpio/gpio-lpc32xx.c b/drivers/gpio/gpio-lpc32xx.c
+index d39014d..fc5f197 100644
+--- a/drivers/gpio/gpio-lpc32xx.c
++++ b/drivers/gpio/gpio-lpc32xx.c
+@@ -29,7 +29,6 @@
+ 
+ #include <mach/hardware.h>
+ #include <mach/platform.h>
+-#include <mach/irqs.h>
+ 
+ #define LPC32XX_GPIO_P3_INP_STATE		_GPREG(0x000)
+ #define LPC32XX_GPIO_P3_OUTP_SET		_GPREG(0x004)
+@@ -371,61 +370,16 @@ static int lpc32xx_gpio_request(struct gpio_chip *chip, unsigned pin)
+ 
+ static int lpc32xx_gpio_to_irq_p01(struct gpio_chip *chip, unsigned offset)
+ {
+-	return IRQ_LPC32XX_P0_P1_IRQ;
++	return -ENXIO;
+ }
+ 
+-static const char lpc32xx_gpio_to_irq_gpio_p3_table[] = {
+-	IRQ_LPC32XX_GPIO_00,
+-	IRQ_LPC32XX_GPIO_01,
+-	IRQ_LPC32XX_GPIO_02,
+-	IRQ_LPC32XX_GPIO_03,
+-	IRQ_LPC32XX_GPIO_04,
+-	IRQ_LPC32XX_GPIO_05,
+-};
+-
+ static int lpc32xx_gpio_to_irq_gpio_p3(struct gpio_chip *chip, unsigned offset)
+ {
+-	if (offset < ARRAY_SIZE(lpc32xx_gpio_to_irq_gpio_p3_table))
+-		return lpc32xx_gpio_to_irq_gpio_p3_table[offset];
+ 	return -ENXIO;
+ }
+ 
+-static const char lpc32xx_gpio_to_irq_gpi_p3_table[] = {
+-	IRQ_LPC32XX_GPI_00,
+-	IRQ_LPC32XX_GPI_01,
+-	IRQ_LPC32XX_GPI_02,
+-	IRQ_LPC32XX_GPI_03,
+-	IRQ_LPC32XX_GPI_04,
+-	IRQ_LPC32XX_GPI_05,
+-	IRQ_LPC32XX_GPI_06,
+-	IRQ_LPC32XX_GPI_07,
+-	IRQ_LPC32XX_GPI_08,
+-	IRQ_LPC32XX_GPI_09,
+-	-ENXIO, /* 10 */
+-	-ENXIO, /* 11 */
+-	-ENXIO, /* 12 */
+-	-ENXIO, /* 13 */
+-	-ENXIO, /* 14 */
+-	-ENXIO, /* 15 */
+-	-ENXIO, /* 16 */
+-	-ENXIO, /* 17 */
+-	-ENXIO, /* 18 */
+-	IRQ_LPC32XX_GPI_19,
+-	-ENXIO, /* 20 */
+-	-ENXIO, /* 21 */
+-	-ENXIO, /* 22 */
+-	-ENXIO, /* 23 */
+-	-ENXIO, /* 24 */
+-	-ENXIO, /* 25 */
+-	-ENXIO, /* 26 */
+-	-ENXIO, /* 27 */
+-	IRQ_LPC32XX_GPI_28,
+-};
+-
+ static int lpc32xx_gpio_to_irq_gpi_p3(struct gpio_chip *chip, unsigned offset)
+ {
+-	if (offset < ARRAY_SIZE(lpc32xx_gpio_to_irq_gpi_p3_table))
+-		return lpc32xx_gpio_to_irq_gpi_p3_table[offset];
+ 	return -ENXIO;
+ }
+ 
+-- 
+1.8.3.1
 
