@@ -1,78 +1,336 @@
-From: Caesar Wang <wxt-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: rockchip: fix pull setting error for rk3399
-Date: Wed, 11 May 2016 11:31:25 +0800
-Message-ID: <5732A78D.7040308@rock-chips.com>
-References: <1462878896-28956-1-git-send-email-wxt@rock-chips.com>
- <CAD=FV=VrE=9=sgqUXBMwmoQin8S+yPbAgnrO1VUgx5QafYWXhA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <CAD=FV=VrE=9=sgqUXBMwmoQin8S+yPbAgnrO1VUgx5QafYWXhA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Barber <smbarber-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, David Wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Brian Norris <briannorris-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Caesar Wang <wxt-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+From: Caesar Wang <wxt@rock-chips.com>
+Subject: [PATCH v2] pinctrl: rockchip: fix pull setting error for rk3399
+Date: Wed, 11 May 2016 11:39:28 +0800
+Message-ID: <1462937968-4952-1-git-send-email-wxt@rock-chips.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:33499 "EHLO
+	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751922AbcEKDjn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 May 2016 23:39:43 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: dianders@chromium.org, briannorris@google.com, smbarber@google.com, linux-rockchip@lists.infradead.org, huangtao@rock-chips.com, eddie.cai@rock-chips.com, David Wu <david.wu@rock-chips.com>, Caesar Wang <wxt@rock-chips.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-RG91ZywKCuS6jiAyMDE25bm0MDXmnIgxMeaXpSAwNTowNywgRG91ZyBBbmRlcnNvbiDlhpnpgZM6
-Cj4gQ2Flc2FyIC8gRGF2aWQsCj4KPiBPbiBUdWUsIE1heSAxMCwgMjAxNiBhdCA0OjE0IEFNLCBD
-YWVzYXIgV2FuZyA8d3h0QHJvY2stY2hpcHMuY29tPiB3cm90ZToKPj4gRnJvbTogRGF2aWQgV3Ug
-PGRhdmlkLnd1QHJvY2stY2hpcHMuY29tPgo+Pgo+PiBUaGlzIHBhdGNoIGZpeGVzIHRoZSBwaW5j
-dHJsIHB1bGwgYmlhcyBzZXR0aW5nLCBzaW5jZSB0aGUgcHVsbCB1cC9kb3duCj4+IHNldHRpbmcg
-aXMgdGhlIGNvbnRyYXJ5IGZvciBncGlvMC4KPiBDb21taXQgbWVzc2FnZSBvbmx5IG1lbnRpb25z
-IGdwaW8wLCBidXQgZ3BpbzIgaXMgYWxzbyBmaXhlZCBpbiB0aGUKPiBjb21taXQuICBQbGVhc2Ug
-bWVudGlvbiBncGlvMiBpbiB0aGUgY29tbWl0IG1lc3NhZ2UuCgpGaXggaXQgaW4gbmV4dCB2ZXJz
-aW9uLgoKPgo+PiAgRnJvbSB0aGUgVFJNIHNhaWQsIHRoZSBncGlvMCBwdWxsIHBvbGFyaXR5IHNl
-dHRpbmc6Cj4+IGdwaW8wYV9wIChncGlvMCApCj4+IEdQSU8wQSBQRS9QUyBwcm9ncmFtbWF0aW9u
-IHNlY3Rpb24sIGV2ZXJ5Cj4+IEdQSU8gYml0IGNvcnJlc3BvbmRpbmcgdG8gMmJpdHNbUFM6UEVd
-Cj4+IDInYjAwOiBaKE5vcmFtbCBvcGVyYXRvbik7Cj4+IDInYjExOiB3ZWFrIDEocHVsbC11cCk7
-Cj4+IDInYjAxOiB3ZWFrIDAocHVsbC1kb3duKTsKPj4gMidiMTA6IFooTm9yYW1sIG9wZXJhdG9u
-KTsKPiBEZXNwaXRlIHRoZSBmYWN0IHRoYXQgdGhlIHR5cG8gKE5vcmFsbSB2cy4gTm9ybWFsKSBp
-cyBwcmVzZW50IGluIHRoZQo+IFRSTSwgbWF5YmUgd2Ugc2hvdWxkIGZpeCBpdCBoZXJlPwoKWWVw
-LCBkaXR0by4KCj4gPGN1dD4KPgo+ICsKPiArICAgICAgICAgICAgICAgaWYgKHJldCA8IDApIHsK
-PiArICAgICAgICAgICAgICAgICAgICAgICBkZXZfZXJyKGluZm8tPmRldiwgInVua25vd24gcHVs
-bCBzZXR0aW5nICVkXG4iLCBwdWxsKTsKPiBuaXQ6IHdoeSBjaGFuZ2UgdGhlIGVycm9yIG1lc3Nh
-Z2U/ICBPbGQgbWVzc2FnZSB3YXMgInVuc3VwcG9ydGVkIgo+IGluc3RlYWQgb2YgeW91ciBuZXcg
-InVua25vd24iLiAgInVuc3VwcG9ydGVkIiB3YXMgYmV0dGVyIElNSE8uCgpPa2F5LCBzb3VuZCBy
-ZXNvbmFibGUuCgo+Cj4KPj4gLSAgICAgICBQSU5fQkFOS19EUlZfRkxBR1MoMiwgMzIsICJncGlv
-MiIsIERSVl9UWVBFX0lPXzFWOF9PUl8zVjAsCj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAg
-IERSVl9UWVBFX0lPXzFWOF9PUl8zVjAsCj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgIERS
-Vl9UWVBFX0lPXzFWOF9PTkxZLAo+PiAtICAgICAgICAgICAgICAgICAgICAgICAgICBEUlZfVFlQ
-RV9JT18xVjhfT05MWQo+PiAtICAgICAgICAgICAgICAgICAgICAgICAgICApLAo+PiArICAgICAg
-IFBJTl9CQU5LX0RSVl9GTEFHU19QVUxMX0ZMQUdTKDIsIDMyLCAiZ3BpbzIiLCBEUlZfVFlQRV9J
-T18xVjhfT1JfM1YwLAo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIERS
-Vl9UWVBFX0lPXzFWOF9PUl8zVjAsCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgRFJWX1RZUEVfSU9fMVY4X09OTFksCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgRFJWX1RZUEVfSU9fMVY4X09OTFksCj4+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgUFVMTF9UWVBFX0lPX0RFRkFVTFQsCj4+ICsgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgUFVMTF9UWVBFX0lPX0RFRkFVTFQsCj4+Cj4gQXJlIHlv
-dSBjZXJ0YWluIHRoYXQgZ3BpbzIgYmVoYXZlcyB0aGUgc2FtZSB3YXk/ICBUaGUgVFJNIEkgaGF2
-ZSBzYXlzCj4gdGhpcyBmb3IgR1BJTzJDIGFuZCBHUElPMkQ6CgorICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIFBVTExfVFlQRV9JT18xVjhfT05MWSwKKyAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBQVUxMX1RZUEVfSU9fMVY4X09OTFkKClllcCwgc28gdGhp
-cyBqdXN0IHNldCB0aGUgZ3BpbzJjJmdwaW8yZCBpbiB0aGlzIGZ1bmN0aW9uLgoKPgo+IDInYjAw
-OiBwZXJ2aW91cy1zdGF0ZQo+IDInYjAxOiB3ZWFrIDAocHVsbC1kb3duKTsKPiAyJ2IxMDogcGVy
-dmlvdXMtc3RhdGUKPiAyJ2IxMTogd2VhayAxKHB1bGwtdXApOwo+Cj4gQXNzdW1pbmcgdGhhdCAi
-cGVydmlvdXMtc3RhdGUiIGlzIGEgc2ltcGxlIHR5cG8gZm9yICJwcmV2aW91cyBzdGF0ZSIKPiB0
-aGF0IHdvdWxkIGltcGx5IHRoYXQgaXQgd2FzIGJlaGF2aW5nIGFzICJidXMgaG9sZCIgYW5kIF9u
-b3RfICJiaWFzCj4gZGlzYWJsZSIuCgpJIHdpbGwgc2F5IHRoYXQgVFJNIG1hZGUgdGhlIG1pc3Rh
-a2Ugc2luY2UgdGhpcyBpcyAqbm90KiBleGlzdC4KT2theSwgZml4ZXMgYnkgdGhlIG5ld2VyIFRS
-TS4KCj4KPiBOb3RlOiBpZiBpdCBhY3R1YWxseSBpcyBhICJidXMgaG9sZCIgc3RhdGUgdGhlbiB3
-ZSdsbCBoYXZlIHRvIGZpZ3VyZQo+IG91dCBob3cgdGhpcyB3b3VsZCB3b3JrIHdpdGggZXhpc3Rp
-bmcgZGV2aWNlIHRyZWVzLiAgSSdkIGltYWdpbmUgdGhhdAo+IHRoZXkgYXJlIGN1cnJlbnRseSBz
-cGVjaWZ5aW5nICJiaWFzIGRpc2FibGUiIGFuZCB0ZWNobmljYWxseSB0aGF0Cj4gbWlnaHQgbm90
-IGJlIHBvc3NpYmxlPwo+Cj4KPgo+IC1Eb3VnCj4KPiBfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwo+IExpbnV4LXJvY2tjaGlwIG1haWxpbmcgbGlzdAo+IExp
-bnV4LXJvY2tjaGlwQGxpc3RzLmluZnJhZGVhZC5vcmcKPiBodHRwOi8vbGlzdHMuaW5mcmFkZWFk
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LXJvY2tjaGlwCj4KCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LXJvY2tjaGlwIG1haWxpbmcgbGlz
-dApMaW51eC1yb2NrY2hpcEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRl
-YWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtcm9ja2NoaXAK
+From: David Wu <david.wu@rock-chips.com>
+
+This patch fixes the pinctrl pull bias setting, since the pull up/down
+setting is the contrary for gpio0(just the gpio0a and gpio0b) and
+gpio2(just the gpio2c and gpio2d).
+
+>From the TRM said, the gpio0a pull polarity setting:
+gpio0a_p
+GPIO0A PE/PS programmation section, every
+GPIO bit corresponding to 2bits[PS:PE]
+2'b00: Z(Normal operation);
+2'b11: weak 1(pull-up);
+2'b01: weak 0(pull-down);
+2'b10: Z(Normal operation);
+
+Then, the other gpios setting as the following:
+gpio1a_p (e.g.: gpio1, gpio2a, gpio2b, gpio3...)
+GPIO1A PU/PD programmation section, every
+GPIO bit corresponding to 2bits
+2'b00: Z(Normal operation);
+2'b01: weak 1(pull-up);
+2'b10: weak 0(pull-down);
+2'b11: Z(Normal operation);
+
+For example,(rk3399evb board)
+sdmmc_cd --->gpio0_a7
+localhost / # io -r -4 0xff320040
+ff320040: 00004d5f
+In general,the value should be 0x0000cd5f since the pin has been set
+in the dts.
+
+Signed-off-by: David Wu <david.wu@rock-chips.com>
+Signed-off-by: Caesar Wang <wxt@rock-chips.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-gpio@vger.kernel.org
+---
+
+Changes in v2:
+- As Doug commnets on https://patchwork.kernel.org/patch/9056961/
+- update the commit for gpio2.
+- change the print error messgae.
+
+ drivers/pinctrl/pinctrl-rockchip.c | 179 ++++++++++++++++++++++++++-----------
+ 1 file changed, 127 insertions(+), 52 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 596b869..a91026e 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -99,6 +99,15 @@ enum rockchip_pin_drv_type {
+ };
+ 
+ /**
++ * enum type index corresponding to rockchip_pull_list arrays index.
++ */
++enum rockchip_pin_pull_type {
++	PULL_TYPE_IO_DEFAULT = 0,
++	PULL_TYPE_IO_1V8_ONLY,
++	PULL_TYPE_MAX
++};
++
++/**
+  * @drv_type: drive strength variant using rockchip_perpin_drv_type
+  * @offset: if initialized to -1 it will be autocalculated, by specifying
+  *	    an initial offset value the relevant source offset can be reset
+@@ -123,6 +132,7 @@ struct rockchip_drv {
+  * @bank_num: number of the bank, to account for holes
+  * @iomux: array describing the 4 iomux sources of the bank
+  * @drv: array describing the 4 drive strength sources of the bank
++ * @pull_type: array describing the 4 pull type sources of the bank
+  * @valid: are all necessary informations present
+  * @of_node: dt node of this bank
+  * @drvdata: common pinctrl basedata
+@@ -143,6 +153,7 @@ struct rockchip_pin_bank {
+ 	u8				bank_num;
+ 	struct rockchip_iomux		iomux[4];
+ 	struct rockchip_drv		drv[4];
++	enum rockchip_pin_pull_type	pull_type[4];
+ 	bool				valid;
+ 	struct device_node		*of_node;
+ 	struct rockchip_pinctrl		*drvdata;
+@@ -198,6 +209,31 @@ struct rockchip_pin_bank {
+ 		},							\
+ 	}
+ 
++#define PIN_BANK_DRV_FLAGS_PULL_FLAGS(id, pins, label, drv0, drv1,	\
++				      drv2, drv3, pull0, pull1,		\
++				      pull2, pull3)			\
++	{								\
++		.bank_num	= id,					\
++		.nr_pins	= pins,					\
++		.name		= label,				\
++		.iomux		= {					\
++			{ .offset = -1 },				\
++			{ .offset = -1 },				\
++			{ .offset = -1 },				\
++			{ .offset = -1 },				\
++		},							\
++		.drv		= {					\
++			{ .drv_type = drv0, .offset = -1 },		\
++			{ .drv_type = drv1, .offset = -1 },		\
++			{ .drv_type = drv2, .offset = -1 },		\
++			{ .drv_type = drv3, .offset = -1 },		\
++		},							\
++		.pull_type[0] = pull0,					\
++		.pull_type[1] = pull1,					\
++		.pull_type[2] = pull2,					\
++		.pull_type[3] = pull3,					\
++	}
++
+ #define PIN_BANK_IOMUX_DRV_FLAGS_OFFSET(id, pins, label, iom0, iom1,	\
+ 					iom2, iom3, drv0, drv1, drv2,	\
+ 					drv3, offset0, offset1,		\
+@@ -220,6 +256,34 @@ struct rockchip_pin_bank {
+ 		},							\
+ 	}
+ 
++#define PIN_BANK_IOMUX_FLAGS_DRV_FLAGS_OFFSET_PULL_FLAGS(id, pins,	\
++					      label, iom0, iom1, iom2,  \
++					      iom3, drv0, drv1, drv2,   \
++					      drv3, offset0, offset1,   \
++					      offset2, offset3, pull0,  \
++					      pull1, pull2, pull3)	\
++	{								\
++		.bank_num	= id,					\
++		.nr_pins	= pins,					\
++		.name		= label,				\
++		.iomux		= {					\
++			{ .type = iom0, .offset = -1 },			\
++			{ .type = iom1, .offset = -1 },			\
++			{ .type = iom2, .offset = -1 },			\
++			{ .type = iom3, .offset = -1 },			\
++		},							\
++		.drv		= {					\
++			{ .drv_type = drv0, .offset = offset0 },	\
++			{ .drv_type = drv1, .offset = offset1 },	\
++			{ .drv_type = drv2, .offset = offset2 },	\
++			{ .drv_type = drv3, .offset = offset3 },	\
++		},							\
++		.pull_type[0] = pull0,					\
++		.pull_type[1] = pull1,					\
++		.pull_type[2] = pull2,					\
++		.pull_type[3] = pull3,					\
++	}
++
+ /**
+  */
+ struct rockchip_pin_ctrl {
+@@ -1020,12 +1084,27 @@ static int rockchip_set_drive_perpin(struct rockchip_pin_bank *bank,
+ 	return ret;
+ }
+ 
++static int rockchip_pull_list[PULL_TYPE_MAX][4] = {
++	{
++		PIN_CONFIG_BIAS_DISABLE,
++		PIN_CONFIG_BIAS_PULL_UP,
++		PIN_CONFIG_BIAS_PULL_DOWN,
++		PIN_CONFIG_BIAS_BUS_HOLD
++	},
++	{
++		PIN_CONFIG_BIAS_DISABLE,
++		PIN_CONFIG_BIAS_PULL_DOWN,
++		PIN_CONFIG_BIAS_DISABLE,
++		PIN_CONFIG_BIAS_PULL_UP
++	},
++};
++
+ static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
+ {
+ 	struct rockchip_pinctrl *info = bank->drvdata;
+ 	struct rockchip_pin_ctrl *ctrl = info->ctrl;
+ 	struct regmap *regmap;
+-	int reg, ret;
++	int reg, ret, pull_type;
+ 	u8 bit;
+ 	u32 data;
+ 
+@@ -1048,22 +1127,11 @@ static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
+ 	case RK3288:
+ 	case RK3368:
+ 	case RK3399:
++		pull_type = bank->pull_type[pin_num / 8];
+ 		data >>= bit;
+ 		data &= (1 << RK3188_PULL_BITS_PER_PIN) - 1;
+ 
+-		switch (data) {
+-		case 0:
+-			return PIN_CONFIG_BIAS_DISABLE;
+-		case 1:
+-			return PIN_CONFIG_BIAS_PULL_UP;
+-		case 2:
+-			return PIN_CONFIG_BIAS_PULL_DOWN;
+-		case 3:
+-			return PIN_CONFIG_BIAS_BUS_HOLD;
+-		}
+-
+-		dev_err(info->dev, "unknown pull setting\n");
+-		return -EIO;
++		return rockchip_pull_list[pull_type][data];
+ 	default:
+ 		dev_err(info->dev, "unsupported pinctrl type\n");
+ 		return -EINVAL;
+@@ -1076,7 +1144,7 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
+ 	struct rockchip_pinctrl *info = bank->drvdata;
+ 	struct rockchip_pin_ctrl *ctrl = info->ctrl;
+ 	struct regmap *regmap;
+-	int reg, ret;
++	int reg, ret, i, pull_type;
+ 	unsigned long flags;
+ 	u8 bit;
+ 	u32 data, rmask;
+@@ -1105,30 +1173,28 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
+ 	case RK3288:
+ 	case RK3368:
+ 	case RK3399:
++		pull_type = bank->pull_type[pin_num / 8];
++		ret = -EINVAL;
++		for (i = 0; i < ARRAY_SIZE(rockchip_pull_list[pull_type]);
++			i++) {
++			if (rockchip_pull_list[pull_type][i] == pull) {
++				ret = i;
++				break;
++			}
++		}
++
++		if (ret < 0) {
++			dev_err(info->dev, "unsupported pull setting %d\n",
++				pull);
++			return ret;
++		}
++
+ 		spin_lock_irqsave(&bank->slock, flags);
+ 
+ 		/* enable the write to the equivalent lower bits */
+ 		data = ((1 << RK3188_PULL_BITS_PER_PIN) - 1) << (bit + 16);
+ 		rmask = data | (data >> 16);
+-
+-		switch (pull) {
+-		case PIN_CONFIG_BIAS_DISABLE:
+-			break;
+-		case PIN_CONFIG_BIAS_PULL_UP:
+-			data |= (1 << bit);
+-			break;
+-		case PIN_CONFIG_BIAS_PULL_DOWN:
+-			data |= (2 << bit);
+-			break;
+-		case PIN_CONFIG_BIAS_BUS_HOLD:
+-			data |= (3 << bit);
+-			break;
+-		default:
+-			spin_unlock_irqrestore(&bank->slock, flags);
+-			dev_err(info->dev, "unsupported pull setting %d\n",
+-				pull);
+-			return -EINVAL;
+-		}
++		data |= (ret << bit);
+ 
+ 		ret = regmap_update_bits(regmap, reg, rmask, data);
+ 
+@@ -2552,19 +2618,24 @@ static struct rockchip_pin_ctrl rk3368_pin_ctrl = {
+ };
+ 
+ static struct rockchip_pin_bank rk3399_pin_banks[] = {
+-	PIN_BANK_IOMUX_DRV_FLAGS_OFFSET(0, 32, "gpio0", IOMUX_SOURCE_PMU,
+-					IOMUX_SOURCE_PMU,
+-					IOMUX_SOURCE_PMU,
+-					IOMUX_SOURCE_PMU,
+-					DRV_TYPE_IO_1V8_ONLY,
+-					DRV_TYPE_IO_1V8_ONLY,
+-					DRV_TYPE_IO_DEFAULT,
+-					DRV_TYPE_IO_DEFAULT,
+-					0x0,
+-					0x8,
+-					-1,
+-					-1
+-					),
++	PIN_BANK_IOMUX_FLAGS_DRV_FLAGS_OFFSET_PULL_FLAGS(0, 32, "gpio0",
++							 IOMUX_SOURCE_PMU,
++							 IOMUX_SOURCE_PMU,
++							 IOMUX_SOURCE_PMU,
++							 IOMUX_SOURCE_PMU,
++							 DRV_TYPE_IO_1V8_ONLY,
++							 DRV_TYPE_IO_1V8_ONLY,
++							 DRV_TYPE_IO_DEFAULT,
++							 DRV_TYPE_IO_DEFAULT,
++							 0x0,
++							 0x8,
++							 -1,
++							 -1,
++							 PULL_TYPE_IO_1V8_ONLY,
++							 PULL_TYPE_IO_1V8_ONLY,
++							 PULL_TYPE_IO_DEFAULT,
++							 PULL_TYPE_IO_DEFAULT
++							),
+ 	PIN_BANK_IOMUX_DRV_FLAGS_OFFSET(1, 32, "gpio1", IOMUX_SOURCE_PMU,
+ 					IOMUX_SOURCE_PMU,
+ 					IOMUX_SOURCE_PMU,
+@@ -2578,11 +2649,15 @@ static struct rockchip_pin_bank rk3399_pin_banks[] = {
+ 					0x30,
+ 					0x38
+ 					),
+-	PIN_BANK_DRV_FLAGS(2, 32, "gpio2", DRV_TYPE_IO_1V8_OR_3V0,
+-			   DRV_TYPE_IO_1V8_OR_3V0,
+-			   DRV_TYPE_IO_1V8_ONLY,
+-			   DRV_TYPE_IO_1V8_ONLY
+-			   ),
++	PIN_BANK_DRV_FLAGS_PULL_FLAGS(2, 32, "gpio2", DRV_TYPE_IO_1V8_OR_3V0,
++				      DRV_TYPE_IO_1V8_OR_3V0,
++				      DRV_TYPE_IO_1V8_ONLY,
++				      DRV_TYPE_IO_1V8_ONLY,
++				      PULL_TYPE_IO_DEFAULT,
++				      PULL_TYPE_IO_DEFAULT,
++				      PULL_TYPE_IO_1V8_ONLY,
++				      PULL_TYPE_IO_1V8_ONLY
++				      ),
+ 	PIN_BANK_DRV_FLAGS(3, 32, "gpio3", DRV_TYPE_IO_3V3_ONLY,
+ 			   DRV_TYPE_IO_3V3_ONLY,
+ 			   DRV_TYPE_IO_3V3_ONLY,
+-- 
+1.9.1
+
