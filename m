@@ -1,48 +1,55 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: sh-pfc: Let gpio_chip.to_irq() return zero on error
-Date: Wed, 11 May 2016 13:29:14 +0200
-Message-ID: <CACRpkdaWMQYi81SALcN4n3W8_=Bm5-e+-BGpFv2jF-9c6JAOrg@mail.gmail.com>
-References: <1462350113-20216-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH 1/4] gpio: sodaville: make it explicitly non-modular
+Date: Wed, 11 May 2016 13:47:34 +0200
+Message-ID: <CACRpkdaSdqs+uZOSSGA45NTB3YYk7HneVCWBb-WG30Bp-KwLdA@mail.gmail.com>
+References: <1462838398-10725-1-git-send-email-paul.gortmaker@windriver.com>
+	<1462838398-10725-2-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:33847 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751386AbcEKL3P (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 May 2016 07:29:15 -0400
-Received: by mail-oi0-f45.google.com with SMTP id k142so62130651oib.1
-        for <linux-gpio@vger.kernel.org>; Wed, 11 May 2016 04:29:15 -0700 (PDT)
-In-Reply-To: <1462350113-20216-1-git-send-email-geert+renesas@glider.be>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:34570 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751670AbcEKLrf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 May 2016 07:47:35 -0400
+Received: by mail-oi0-f49.google.com with SMTP id k142so62783902oib.1
+        for <linux-gpio@vger.kernel.org>; Wed, 11 May 2016 04:47:34 -0700 (PDT)
+In-Reply-To: <1462838398-10725-2-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Hans J . Koch" <hjk@linutronix.de>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, May 4, 2016 at 10:21 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Tue, May 10, 2016 at 1:59 AM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 
-> Currrently the gpio_chip.to_irq() callback returns -ENOSYS on error,
-> which causes bad interactions with the serial_mctrl_gpio helpers.
+> The Kconfig currently controlling compilation of this code is:
 >
-> mctrl_gpio_init() returns -ENOSYS if GPIOLIB is not enabled, which is
-> intended to be ignored by its callers. However, ignoring -ENOSYS when it
-> was caused by a gpiod_to_irq() failure will lead to a crash later:
+> drivers/gpio/Kconfig:config GPIO_SODAVILLE
+> drivers/gpio/Kconfig:   bool "Intel Sodaville GPIO support"
 >
->     Unable to handle kernel paging request at virtual address ffffffde
->     ...
->     PC is at mctrl_gpio_set+0x14/0x78
+> ...meaning that it currently is not being built as a module by anyone.
 >
-> Fix this by returning zero instead, like gpiochip_to_irq() does.
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This depends on "gpio: make gpiod_to_irq() return negative for NO_IRQ"
-> for proper handling by callers of mctrl_gpio_init().
-> Hence I think it's best to take this through the GPIO tree, after the
-> above has been applied.
+> We explicitly disallow a driver unbind, since that doesn't have a
+> sensible use case anyway, and it allows us to drop the ".remove"
+> code for non-modular drivers.
 >
-> v2:
->   - Return zero instead of -ENXIO.
+> Since module_pci_driver() uses the same init level as the
+> builtin_pci_driver() does, there is no init ordering change
+> caused by this commit.
+>
+> We don't replace module.h with init.h since the file already has that.
+>
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> was (or is now) contained at the top of the file in the comments.
+>
+> Cc: Hans J. Koch <hjk@linutronix.de>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
 Patch applied.
 
