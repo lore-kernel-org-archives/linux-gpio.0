@@ -1,98 +1,49 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: Update iProc GPIO bindings
-Date: Wed, 11 May 2016 09:06:18 -0500
-Message-ID: <20160511140618.GA29113@rob-hp-laptop>
-References: <1462222308-4869-1-git-send-email-ray.jui@broadcom.com>
- <1462222308-4869-2-git-send-email-ray.jui@broadcom.com>
- <20160504132020.GA21065@rob-hp-laptop>
- <6fe293c1-505d-2af9-711a-09e5b5a83e58@broadcom.com>
+From: Anatol Pomozov <anatol.pomozov@gmail.com>
+Subject: Re: NULL pointer dereference when 'rmmod gpio_lynxpoint'
+Date: Wed, 11 May 2016 07:26:52 -0700
+Message-ID: <CAOMFOmXbFOCnNd3P5pcLNJ5DvPmZ=0fLCV1xZsrTEF0e8xYdJQ@mail.gmail.com>
+References: <CAOMFOmXMJ47HQrc4vVXF1+JbxHmH78HTncnnUHfzseCs47EQ6w@mail.gmail.com>
+	<CACRpkdbDww+JdAD6BXKc_PnXFRD5o=0OTqOfTjTYNdTMsqtH2g@mail.gmail.com>
+	<CAOMFOmWTc11KrzGhWzowM7LW0F6S5qRshNG1KWm_NZZ7R3MJ_g@mail.gmail.com>
+	<CACRpkdbwb9v=7qOdqNuvJhstfzv3M7OxCRM=ipOLiEp7=C5z3w@mail.gmail.com>
+	<CAOMFOmVUj_KRU20bpkqTUaCWNTVCoALz-vskgPKaW1TTR2gRPQ@mail.gmail.com>
+	<CACRpkdZjc6YQmnNg81HVybeDXTer6t-F=qXrGV+D7gtD+8MKqw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:47946 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932162AbcEKOGY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 11 May 2016 10:06:24 -0400
-Content-Disposition: inline
-In-Reply-To: <6fe293c1-505d-2af9-711a-09e5b5a83e58@broadcom.com>
+Received: from mail-ig0-f195.google.com ([209.85.213.195]:34435 "EHLO
+	mail-ig0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751372AbcEKO0x (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 May 2016 10:26:53 -0400
+Received: by mail-ig0-f195.google.com with SMTP id kj7so4254365igb.1
+        for <linux-gpio@vger.kernel.org>; Wed, 11 May 2016 07:26:52 -0700 (PDT)
+In-Reply-To: <CACRpkdZjc6YQmnNg81HVybeDXTer6t-F=qXrGV+D7gtD+8MKqw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ray Jui <ray.jui@broadcom.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Matt DeVillier <matt.devillier@gmail.com>
 
-On Wed, May 04, 2016 at 09:29:04AM -0700, Ray Jui wrote:
-> Hi Rob,
-> 
-> On 5/4/2016 6:20 AM, Rob Herring wrote:
-> >On Mon, May 02, 2016 at 01:51:47PM -0700, Ray Jui wrote:
-> >>Update the iProc GPIO binding document to add new compatible strings
-> >>"brcm,iproc-gpio-v2" and "brcm,iproc-gpio-v3" for the 2nd and 3rd
-> >>generation of the iProc GPIO controllers
-> >>
-> >>Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-> >>---
-> >> Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt | 11 ++++++++++-
-> >> 1 file changed, 10 insertions(+), 1 deletion(-)
-> >>
-> >>diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
-> >>index e427792..3a56649 100644
-> >>--- a/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
-> >>+++ b/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
-> >>@@ -4,7 +4,16 @@ Required properties:
-> >>
-> >> - compatible:
-> >>     Must be "brcm,cygnus-ccm-gpio", "brcm,cygnus-asiu-gpio",
-> >>-    "brcm,cygnus-crmu-gpio" or "brcm,iproc-gpio"
-> >>+    or "brcm,cygnus-crmu-gpio" for Cygnus SoCs
-> >>+
-> >>+    "brcm,iproc-gpio" for the first generation of the GPIO controller that
-> >>+    supports full-featured pinctrl and GPIO functions used in iProc based SoCs
-> >>+
-> >>+    "brcm,iproc-gpio-v2" for the second generation of the GPIO controller that
-> >>+    has the drive strength pinctrl support disabled, e.g., in the iProc NSP SoC
-> >>+
-> >>+    "brcm,iproc-gpio-v3" for the third generation of the GPIO controller that
-> >>+    has the general pinctrl support completely disabled
-> >
-> >You can have these for driver matching, but you still need SoC specific
-> >compatible strings.
-> >
-> >Rob
-> >
-> 
-> I think I'm missing something and hope you can help to clarify here. It
-> looks like the notion of v2, v3 should only be used if there's an indeed an
-> revision update on the controller IP itself, correct?
+...resending it as a plain text
 
-Yes, but only if v2, v3 is actually a meaningful number rather than 
-something made up. You have to have a well defined process of IP 
-revisions which I have not seen during my time in chip companies, so I'm 
-generally suspicious of version numbers. The exception is FPGA IP 
-blocks.
 
-> In our case, if the same revision of GPIO controller is used but instead
-> synthesized differently with different SoCs, then you are suggesting here
-> that it should be dealt with SoC specific compatible string, correct?
+I tried to read the gpio handling code, but I do not see any obvious
+reason for this "insert module" crash. And I had no time to do the
+history bisect.
 
-Yes, that and/or integration differences is why you need SoC specific 
-compatible strings. A block could be "identical" but have different max 
-frequency for example.
- 
-> For example, for the GPIO controller on NSP where drive strength is
-> disabled, the compatible string in DT should look like this?
-> 
-> compatible = "brcm,iproc-gpio", "brcm,iproc-gpio-nsp";
+On Wed, May 11, 2016 at 2:22 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> I compiled lynx gpio into kernel instead of compiling it as a module.
+>> And the system got more stable - I rebooted my devices ~50 times
+>> already and I do not see the boot problem I had before. 'CONFIG_..=y'
+>> definitely makes the situation better.
+>>
+>> As of bisecting - it will require time do find the commit. I might do
+>> it if I find some spare time.
+>
+> If nothing else works I'm happy to accept a patch turning the
+> driver into a bool and removing all module handling code.
 
-Yes, but reverse the order. Most specific to least specific.
+Before doing this I would love to get some feedback from the driver
+maintainer. Mathias, do you see this issue with the module?
 
-> 
-> For the GPIO controller on Stingray where pinconf is completely disabled,
-> the compatible string in DT should look like:
-> 
-> compatible = "brcm,iproc-gpio", "brcm,iproc-gpio-stingray";
-> 
-> Is that correct?
-> 
-> Thanks,
-> 
-> Ray
+Also I am going to change Arch Linux kernel config to compile this
+driver as 'y'.
