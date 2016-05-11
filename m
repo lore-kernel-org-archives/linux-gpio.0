@@ -1,84 +1,95 @@
-From: Sasha Levin <sasha.levin-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 06/10] watchdog: ebc-c384_wdt: Utilize the ISA bus driver
-Date: Wed, 11 May 2016 13:04:34 -0400
-Message-ID: <57336622.9070508@oracle.com>
-References: <cover.1460040201.git.vilhelm.gray@gmail.com>
- <1f5bf2e21006f0fd4f10ab3948cf69a737c0b039.1460040201.git.vilhelm.gray@gmail.com>
+From: Andreas Werner <andy@wernerandy.de>
+Subject: Re: [PATCH] gpio: menz127: use the new open drain callback
+Date: Wed, 11 May 2016 19:39:55 +0200
+Message-ID: <20160511173955.GA3574@linux-ah44>
+References: <1460231815-8635-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1f5bf2e21006f0fd4f10ab3948cf69a737c0b039.1460040201.git.vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-out.m-online.net ([212.18.0.10]:42437 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752008AbcEKRkK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 May 2016 13:40:10 -0400
+Content-Disposition: inline
+In-Reply-To: <1460231815-8635-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
-On 04/07/2016 10:47 AM, William Breathitt Gray wrote:
-> The WinSystems EBC-C384 watchdog timer is controlled via ISA bus
-> communication. As such, the ISA bus driver is more appropriate than the
-> platform driver for the WinSystems EBC-C384 watchdog timer driver.
+On Sat, Apr 09, 2016 at 09:56:55PM +0200, Linus Walleij wrote:
+> The menz127 driver tries to support open drain by detecting it
+> at request time. However: without the new callbacks from the
+> gpiolib it is not really working: the core will still just emulate
+> the open drain mode by switching the line to an input.
 > 
-> Signed-off-by: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> By adding a hook into the new .set_single_ended() call rather than
+> trying to autodetect at request() time, proper open drain can be
+> supported.
+> 
+> Cc: Andreas Werner <andy@wernerandy.de>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/gpio/gpio-menz127.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-menz127.c b/drivers/gpio/gpio-menz127.c
+> index 8c1ab8e1974f..334fe270dcf1 100644
+> --- a/drivers/gpio/gpio-menz127.c
+> +++ b/drivers/gpio/gpio-menz127.c
+> @@ -88,21 +88,25 @@ static int men_z127_debounce(struct gpio_chip *gc, unsigned gpio,
+>  	return 0;
+>  }
+>  
+> -static int men_z127_request(struct gpio_chip *gc, unsigned gpio_pin)
+> +static int men_z127_set_single_ended(struct gpio_chip *gc,
+> +				     unsigned offset,
+> +				     enum single_ended_mode mode)
+>  {
+>  	struct men_z127_gpio *priv = gpiochip_get_data(gc);
+>  	u32 od_en;
+>  
+> -	if (gpio_pin >= gc->ngpio)
+> -		return -EINVAL;
+> +	if (mode != LINE_MODE_OPEN_DRAIN &&
+> +	    mode != LINE_MODE_PUSH_PULL)
+> +		return -ENOTSUPP;
+>  
+>  	spin_lock(&priv->lock);
+>  	od_en = readl(priv->reg_base + MEN_Z127_ODER);
+>  
+> -	if (gpiochip_line_is_open_drain(gc, gpio_pin))
+> -		od_en |= BIT(gpio_pin);
+> +	if (mode == LINE_MODE_OPEN_DRAIN)
+> +		od_en |= BIT(offset);
+>  	else
+> -		od_en &= ~BIT(gpio_pin);
+> +		/* Implicitly LINE_MODE_PUSH_PULL */
+> +		od_en &= ~BIT(offset);
+>  
+>  	writel(od_en, priv->reg_base + MEN_Z127_ODER);
+>  	spin_unlock(&priv->lock);
+> @@ -147,7 +151,7 @@ static int men_z127_probe(struct mcb_device *mdev,
+>  		goto err_unmap;
+>  
+>  	men_z127_gpio->gc.set_debounce = men_z127_debounce;
+> -	men_z127_gpio->gc.request = men_z127_request;
+> +	men_z127_gpio->gc.set_single_ended = men_z127_set_single_ended;
+>  
+>  	ret = gpiochip_add_data(&men_z127_gpio->gc, men_z127_gpio);
+>  	if (ret) {
+> -- 
+> 2.4.3
+> 
 
-Hey William,
+Hi Linus,
+sorry for the late answer.
 
-I'm seeing this on boot:
+I will try to get the hardware and will test the patch.
 
-kernel BUG at drivers/base/driver.c:153!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-Modules linked in:
-CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.6.0-rc7-next-20160511-sasha-00024-g13dfe33 #3081
-task: ffff88005b2f8000 ti: ffff88005b300000 task.ti: ffff88005b300000
-RIP: driver_register (drivers/base/driver.c:153 (discriminator 1))
-RSP: 0000:ffff88005b307c68  EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffffffffb3987c30 RCX: 1ffffffff68acf26
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: ffffffffb4567930
-RBP: ffff88005b307c88 R08: 1ffffffff606e3dc R09: dffffc0000000000
-R10: 0000000080000000 R11: 1ffffffff79c42e2 R12: ffffffffb45678a0
-R13: ffffffffb3987c38 R14: ffffffffb3987c30 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff880063e40000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000030023000 CR4: 00000000000406a0
-Stack:
-1ffff1000b660fa4 dffffc0000000000 0000000000000000 ffffffffb3987c00
-ffff88005b307cf0 ffffffffa5bf826d ffff88005b307dc0 ffffffffb3987c30
-ffffffffb3987ca8 ffffffffb39847e0 ffffffffb39847e0 00000000f673090a
-Call Trace:
-isa_register_driver (drivers/base/isa.c:123)
-dio48e_driver_init (drivers/gpio/gpio-104-dio-48e.c:396)
-do_one_initcall (init/main.c:770)
-kernel_init_freeable (init/main.c:834 init/main.c:843 init/main.c:861 init/main.c:1008)
-kernel_init (init/main.c:936)
-ret_from_fork (arch/x86/entry/entry_64.S:390)
-Code: be 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 80 3c 31 00 74 05 e8 4a 18 be fd 49 83 bc 24 90 00 00 00 00 75 13 e8 2a 89 a0 fd <0f> 0b 48 c7 c7 40 21 51 b4 e8 6f 78 58 ff e8 17 89 a0 fd 49 8d
-All code
-========
-   0:   be 00 00 00 00          mov    $0x0,%esi
-   5:   00 fc                   add    %bh,%ah
-   7:   ff df                   lcallq *<internal disassembler error>
-   9:   48 89 f9                mov    %rdi,%rcx
-   c:   48 c1 e9 03             shr    $0x3,%rcx
-  10:   80 3c 31 00             cmpb   $0x0,(%rcx,%rsi,1)
-  14:   74 05                   je     0x1b
-  16:   e8 4a 18 be fd          callq  0xfffffffffdbe1865
-  1b:   49 83 bc 24 90 00 00    cmpq   $0x0,0x90(%r12)
-  22:   00 00
-  24:   75 13                   jne    0x39
-  26:   e8 2a 89 a0 fd          callq  0xfffffffffda08955
-  2b:*  0f 0b                   ud2             <-- trapping instruction
-  2d:   48 c7 c7 40 21 51 b4    mov    $0xffffffffb4512140,%rdi
-  34:   e8 6f 78 58 ff          callq  0xffffffffff5878a8
-  39:   e8 17 89 a0 fd          callq  0xfffffffffda08955
-  3e:   49 8d 00                lea    (%r8),%rax
+I think this is exactly what I need to support the "real" open drain
+mode.
 
-Code starting with the faulting instruction
-===========================================
-   0:   0f 0b                   ud2
-   2:   48 c7 c7 40 21 51 b4    mov    $0xffffffffb4512140,%rdi
-   9:   e8 6f 78 58 ff          callq  0xffffffffff58787d
-   e:   e8 17 89 a0 fd          callq  0xfffffffffda0892a
-  13:   49 8d 00                lea    (%r8),%rax
-RIP driver_register (drivers/base/driver.c:153 (discriminator 1))
-RSP <ffff88005b307c68>
----[ end trace 96103422392be10c ]---
+Regards
+Andy
+
