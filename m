@@ -1,62 +1,90 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [PATCH] gpio: lpc32xx: disable broken to_irq support
-Date: Wed, 11 May 2016 22:58:14 +0300
-Message-ID: <57338ED6.3090001@mleia.com>
-References: <1462988400-21738-1-git-send-email-slemieux.tyco@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Christian Lamparter <chunkeey@googlemail.com>
+Subject: [PATCH] gpio: dt-bindings: add ibm,ppc4xx-gpio binding
+Date: Thu, 12 May 2016 00:07:48 +0200
+Message-ID: <c7b118c342c161954126e2e82cf1a0a6a127b4c2.1463002267.git.chunkeey@googlemail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mleia.com ([178.79.152.223]:37714 "EHLO mail.mleia.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932103AbcEKT6Y (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 11 May 2016 15:58:24 -0400
-In-Reply-To: <1462988400-21738-1-git-send-email-slemieux.tyco@gmail.com>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34890 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752000AbcEKWH7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 May 2016 18:07:59 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sylvain Lemieux <slemieux.tyco@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org
+Cc: Christian Lamparter <chunkeey@googlemail.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Alistair Popple <alistair@popple.id.au>, Matt Porter <mporter@kernel.crashing.org>, Linus Walleij <linus.walleij@linaro.org>
 
-Hi Sylvain,
+This patch adds binding information for IBM/AMCC/APM GPIO
+Controllers of the PowerPC 4XX series and compatible SoCs.
 
-On 11.05.2016 20:40, Sylvain Lemieux wrote:
-> From: Sylvain Lemieux <slemieux@tycoint.com>
-> 
-> The "to_irq" functionality is broken inside this driver since commit
-> 76ba59f8366f ("genirq: Add irq_domain-aware core IRQ handler").
-> 
-> The addition of the new lpc32xx irqchip driver in 4.7, fixed the
-> lpc32xx platform interrupt issue.
-> 
-> When switching to the new lpc32xx irqchip driver, a warning appear
-> in the lpc32xx gpio driver: warning: "NR_IRQS" redefined.
-> 
-> To remove this warning (temporary solution), this patch
-> disables the broken "to_irq" mapping functionality support.
-> 
-> Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
-> ---
-> Note:
-> * For details on the lpc32xx irqchip patch, refer to:
->   http://thread.gmane.org/gmane.linux.drivers.devicetree/165620
-> 
-> * The final solution is to replace the existing lpc32xx gpio driver.
->   This work is currently in progress; refer to the following URL:
->   http://thread.gmane.org/gmane.linux.drivers.devicetree/144696
-> 
->  drivers/gpio/gpio-lpc32xx.c | 48 +--------------------------------------------
->  1 file changed, 1 insertion(+), 47 deletions(-)
-> 
+The "PowerPC 405EP Embedded Processor Data Sheet" has the
+following to say about the GPIO controllers: "
 
-the change looks good to me.
+ - Controller functions and GPIO registers are programmed
+   and accessed via memory-mapped OPB bus master accesses
 
-Probably all lpc32xx_gpio_to_irq* functions can be removed along with .to_irq
-callback assignments, but it is up to you.
+ - All GPIOs are pin-shared with other functions. DCRs control
+   whether a particular pin that has GPIO capabilities acts
+   as a GPIO or is used for another purpose.
 
+ - Each GPIO outputs is separately programmable to emulate
+   an open-drain driver (i.e. drives to zero, threestated if
+   output bit is 1)
 
-Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+"
+The ppc4xx_gpio.c driver is part of the platform/sysdev drivers
+in arch/powerpc/sysdev.
 
+Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
+---
+I looked into arch/powerpc/sysdev/ppc4xx_gpio.c driver and
+it doesn't have support for the tri-state logic (open drain
+is disabled), but the hardware would support it.
+(the #gpio-cells description suffers because of this, since
+the high-z option isn't there).
 
---
-With best wishes,
-Vladimir
+Also there's another problem: There's no DCR pinmux driver?!
+So sadly, there's not much information on how to use the DCRs
+to control the which pin is muxed to the GPIO or to a SoC
+function like the i2c.
+
+This was all the valuable information I could find about the
+hardware, so it is included it in the binding text, even
+though there's no support for it... Is there anything else
+to add?
+---
+ .../devicetree/bindings/gpio/ibm,ppc4xx-gpio.txt   | 24 ++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/ibm,ppc4xx-gpio.txt
+
+diff --git a/Documentation/devicetree/bindings/gpio/ibm,ppc4xx-gpio.txt b/Documentation/devicetree/bindings/gpio/ibm,ppc4xx-gpio.txt
+new file mode 100644
+index 0000000..22aabb7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/ibm,ppc4xx-gpio.txt
+@@ -0,0 +1,24 @@
++* IBM/AMCC/APM GPIO Controller for PowerPC 4XX series and compatible SoCs
++
++All GPIOs are pin-shared with other functions. DCRs control whether a
++particular pin that has GPIO capabilities acts as a GPIO or is used for
++another purpose. GPIO outputs are separately programmable to emulate
++an open-drain driver.
++
++Required properties:
++	- compatible: must be "ibm,ppc4xx-gpio"
++	- reg: address and length of the register set for the device
++	- #gpio-cells: must be set to 2. The first cell is the pin number
++		and the second cell is used to specify the gpio polarity:
++		0 = active high
++		1 = active low
++	- gpio-controller: marks the device node as a gpio controller.
++
++Example:
++
++GPIO0: gpio@ef600b00 {
++	compatible = "ibm,ppc4xx-gpio";
++	reg = <0xef600b00 0x00000048>;
++	#gpio-cells = <2>;
++	gpio-controller;
++};
+-- 
+2.8.1
+
