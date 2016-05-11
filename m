@@ -1,69 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: rockchip: fix pull setting error for rk3399
-Date: Wed, 11 May 2016 10:44:36 +0200
-Message-ID: <CACRpkdasLu0ZtOBuyfE=BG6TwY=-NY7Xksywv3jimNGXyx08AQ@mail.gmail.com>
-References: <1462937968-4952-1-git-send-email-wxt@rock-chips.com>
+Subject: Re: [PATCH 0/7] pinctrl: meson: Add a bunch more pins
+Date: Wed, 11 May 2016 10:57:21 +0200
+Message-ID: <CACRpkdY99HWOQ4fhuYuPZ4JpwK6s75TXYpaBaBxhLLJFRLCd6w@mail.gmail.com>
+References: <1462544486-9516-1-git-send-email-khilman@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:36306 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751759AbcEKIoh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 May 2016 04:44:37 -0400
-Received: by mail-oi0-f49.google.com with SMTP id x201so56674968oif.3
-        for <linux-gpio@vger.kernel.org>; Wed, 11 May 2016 01:44:37 -0700 (PDT)
-In-Reply-To: <1462937968-4952-1-git-send-email-wxt@rock-chips.com>
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:34891 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751400AbcEKI5W (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 May 2016 04:57:22 -0400
+Received: by mail-oi0-f45.google.com with SMTP id x19so57042999oix.2
+        for <linux-gpio@vger.kernel.org>; Wed, 11 May 2016 01:57:22 -0700 (PDT)
+In-Reply-To: <1462544486-9516-1-git-send-email-khilman@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Caesar Wang <wxt@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Doug Anderson <dianders@chromium.org>, briannorris@google.com, smbarber@google.com, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Tao Huang <huangtao@rock-chips.com>, Eddie Cai <eddie.cai@rock-chips.com>, David Wu <david.wu@rock-chips.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: linux-amlogic@lists.infradead.org, linux-meson <linux-meson@googlegroups.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Victor Wan <victor.wan@amlogic.com>, Jerry Cao <jerry.cao@amlogic.com>, Xing Wu <xing.xu@amlogic.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, May 11, 2016 at 5:39 AM, Caesar Wang <wxt@rock-chips.com> wrote:
+On Fri, May 6, 2016 at 4:21 PM, Kevin Hilman <khilman@baylibre.com> wrote:
 
-> From: David Wu <david.wu@rock-chips.com>
+> Add support for several more devices, both in the EE domain and in the
+> AO domain.  Also, add the pins to the corresponding DTS files.
 >
-> This patch fixes the pinctrl pull bias setting, since the pull up/down
-> setting is the contrary for gpio0(just the gpio0a and gpio0b) and
-> gpio2(just the gpio2c and gpio2d).
+> Tested on odroid-c2 and Amlogic P200 boards, and verified with working
+> ethernet.
 >
-> From the TRM said, the gpio0a pull polarity setting:
-> gpio0a_p
-> GPIO0A PE/PS programmation section, every
-> GPIO bit corresponding to 2bits[PS:PE]
-> 2'b00: Z(Normal operation);
-> 2'b11: weak 1(pull-up);
-> 2'b01: weak 0(pull-down);
-> 2'b10: Z(Normal operation);
->
-> Then, the other gpios setting as the following:
-> gpio1a_p (e.g.: gpio1, gpio2a, gpio2b, gpio3...)
-> GPIO1A PU/PD programmation section, every
-> GPIO bit corresponding to 2bits
-> 2'b00: Z(Normal operation);
-> 2'b01: weak 1(pull-up);
-> 2'b10: weak 0(pull-down);
-> 2'b11: Z(Normal operation);
->
-> For example,(rk3399evb board)
-> sdmmc_cd --->gpio0_a7
-> localhost / # io -r -4 0xff320040
-> ff320040: 00004d5f
-> In general,the value should be 0x0000cd5f since the pin has been set
-> in the dts.
->
-> Signed-off-by: David Wu <david.wu@rock-chips.com>
-> Signed-off-by: Caesar Wang <wxt@rock-chips.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: linux-gpio@vger.kernel.org
-> ---
->
-> Changes in v2:
-> - As Doug commnets on https://patchwork.kernel.org/patch/9056961/
-> - update the commit for gpio2.
-> - change the print error messgae.
+> Depends on the initial GXBB pinctrl support from Carlo[1].  Also
+> available in my git tree[2] with all the dependencies included.
 
-Patch applied with the Review tags.
+Carlo can you review Kevin's patches? I'd like to apply them if
+nothing's controversial about them.
 
 Yours,
 Linus Walleij
