@@ -1,48 +1,44 @@
-From: Carlo Caione <carlo@caione.org>
-Subject: Re: [PATCH 0/7] pinctrl: meson: Add a bunch more pins
-Date: Wed, 11 May 2016 11:18:11 +0200
-Message-ID: <CAOQ7t2Ys-zow-wn4p5chYxrYrjun-9_5p4_Xij6bXLApyt5itw@mail.gmail.com>
-References: <1462544486-9516-1-git-send-email-khilman@baylibre.com>
-	<CACRpkdY99HWOQ4fhuYuPZ4JpwK6s75TXYpaBaBxhLLJFRLCd6w@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 6/6] pinctrl: tegra: Add driver to configure voltage and
+ power state of io pads
+Date: Wed, 11 May 2016 11:19:15 +0200
+Message-ID: <CACRpkdbvCQr11hjCBoeOO+8-MLUbwXAjv9xW=jKR=Y9hZO5sjA@mail.gmail.com>
+References: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com>
+	<1462191434-28933-7-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34533 "EHLO
-	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932095AbcEKJSN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 May 2016 05:18:13 -0400
-Received: by mail-wm0-f68.google.com with SMTP id n129so8177712wmn.1
-        for <linux-gpio@vger.kernel.org>; Wed, 11 May 2016 02:18:12 -0700 (PDT)
-In-Reply-To: <CACRpkdY99HWOQ4fhuYuPZ4JpwK6s75TXYpaBaBxhLLJFRLCd6w@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1462191434-28933-7-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org, linux-meson <linux-meson@googlegroups.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Victor Wan <victor.wan@amlogic.com>, Jerry Cao <jerry.cao@amlogic.com>, Xing Wu <xing.xu@amlogic.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, May 11, 2016 at 10:57 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Fri, May 6, 2016 at 4:21 PM, Kevin Hilman <khilman@baylibre.com> wrote:
+On Mon, May 2, 2016 at 2:17 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+
+> NVIDIA Tegra210 supports the IO pads which can operate at 1.8V
+> or 3.3V I/O voltage levels. Also the IO pads can be configured
+> for power down state if it is not used. SW needs to configure the
+> voltage level of IO pads based on IO rail voltage and its power
+> state based on platform usage.
 >
->> Add support for several more devices, both in the EE domain and in the
->> AO domain.  Also, add the pins to the corresponding DTS files.
->>
->> Tested on odroid-c2 and Amlogic P200 boards, and verified with working
->> ethernet.
->>
->> Depends on the initial GXBB pinctrl support from Carlo[1].  Also
->> available in my git tree[2] with all the dependencies included.
+> The voltage and power state configurations of pads are provided
+> through pin control frameworks. Add pin control driver for Tegra's
+> IO pads' voltage and power state configurations.
 >
-> Carlo can you review Kevin's patches? I'd like to apply them if
-> nothing's controversial about them.
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> ---
+> Changes from V1:
+> - Use the generic pincontrol property for low power enable/disable.
+> - sync with latest and remove all MODULE* macros
+> - Use renamed APIs form PMC
 
-Go ahead and apply them:
+Looks OK to me, need Stephen's ACK though!
 
-Acked-by: Carlo Caione <carlo@endlessm.com>
-
-The ack is on the formal correctness since I still do not have access
-to the datasheet.
-
-Thanks,
-
--- 
-Carlo Caione
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
