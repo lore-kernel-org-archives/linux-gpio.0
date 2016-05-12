@@ -1,90 +1,43 @@
-From: Christian Lamparter <chunkeey@googlemail.com>
-Subject: [PATCH] gpio: dt-bindings: add ibm,ppc4xx-gpio binding
-Date: Thu, 12 May 2016 00:07:48 +0200
-Message-ID: <c7b118c342c161954126e2e82cf1a0a6a127b4c2.1463002267.git.chunkeey@googlemail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34890 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752000AbcEKWH7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 May 2016 18:07:59 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: chunfeng yun <chunfeng.yun@mediatek.com>
+Subject: Re: [PATCH 6/6] pinctrl: mt8173: set GPIO16 to usb iddig mode
+Date: Thu, 12 May 2016 09:41:22 +0800
+Message-ID: <1463017282.11651.82.camel@mhfsdcap03>
+References: <1462868614-20602-1-git-send-email-chunfeng.yun@mediatek.com>
+	 <1462868614-20602-7-git-send-email-chunfeng.yun@mediatek.com>
+	 <CACRpkdaeD5mk7LXEWnE0=Xute8-JA-fa4tVt4fYhujEXeq2+9w@mail.gmail.com>
+	 <1462991546.11623.3.camel@mussux00>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1462991546.11623.3.camel@mussux00>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Maoguang Meng <maoguang.meng@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Matthias Brugger <matthias.bgg@gmail.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Pawel Moll <pawel.moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Sascha Hauer <s.hauer@pengutronix.de>, Biao Huang <biao.huang@mediatek.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.or
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org
-Cc: Christian Lamparter <chunkeey@googlemail.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Alistair Popple <alistair@popple.id.au>, Matt Porter <mporter@kernel.crashing.org>, Linus Walleij <linus.walleij@linaro.org>
 
-This patch adds binding information for IBM/AMCC/APM GPIO
-Controllers of the PowerPC 4XX series and compatible SoCs.
+Hi,
 
-The "PowerPC 405EP Embedded Processor Data Sheet" has the
-following to say about the GPIO controllers: "
+On Wed, 2016-05-11 at 11:32 -0700, Hongzhou Yang wrote:
+> On Wed, 2016-05-11 at 13:56 +0200, Linus Walleij wrote:
+> > On Tue, May 10, 2016 at 10:23 AM, Chunfeng Yun
+> > <chunfeng.yun@mediatek.com> wrote:
+> > 
+> > > the default mode of GPIO16 pin is gpio, when set EINT16 to
+> > > IRQ_TYPE_LEVEL_HIGH, no interrupt is triggered, it can be
+> > > fixed when set its default mode as usb iddig.
+> > >
+> > > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> > 
+> 
+> Chunfeng, GPIO16 can be used as EINT16 mode, but the pinmux should be 0.
+> If you want to set its default mode to iddig, you should set it in dts.
+> 
+I set it in DTS, but it didn't work, because when usb driver requested
+IRQ, pinmux was switched back to default mode set by
+MTK_EINT_FUNCTION().
 
- - Controller functions and GPIO registers are programmed
-   and accessed via memory-mapped OPB bus master accesses
 
- - All GPIOs are pin-shared with other functions. DCRs control
-   whether a particular pin that has GPIO capabilities acts
-   as a GPIO or is used for another purpose.
-
- - Each GPIO outputs is separately programmable to emulate
-   an open-drain driver (i.e. drives to zero, threestated if
-   output bit is 1)
-
-"
-The ppc4xx_gpio.c driver is part of the platform/sysdev drivers
-in arch/powerpc/sysdev.
-
-Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
----
-I looked into arch/powerpc/sysdev/ppc4xx_gpio.c driver and
-it doesn't have support for the tri-state logic (open drain
-is disabled), but the hardware would support it.
-(the #gpio-cells description suffers because of this, since
-the high-z option isn't there).
-
-Also there's another problem: There's no DCR pinmux driver?!
-So sadly, there's not much information on how to use the DCRs
-to control the which pin is muxed to the GPIO or to a SoC
-function like the i2c.
-
-This was all the valuable information I could find about the
-hardware, so it is included it in the binding text, even
-though there's no support for it... Is there anything else
-to add?
----
- .../devicetree/bindings/gpio/ibm,ppc4xx-gpio.txt   | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/ibm,ppc4xx-gpio.txt
-
-diff --git a/Documentation/devicetree/bindings/gpio/ibm,ppc4xx-gpio.txt b/Documentation/devicetree/bindings/gpio/ibm,ppc4xx-gpio.txt
-new file mode 100644
-index 0000000..22aabb7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/ibm,ppc4xx-gpio.txt
-@@ -0,0 +1,24 @@
-+* IBM/AMCC/APM GPIO Controller for PowerPC 4XX series and compatible SoCs
-+
-+All GPIOs are pin-shared with other functions. DCRs control whether a
-+particular pin that has GPIO capabilities acts as a GPIO or is used for
-+another purpose. GPIO outputs are separately programmable to emulate
-+an open-drain driver.
-+
-+Required properties:
-+	- compatible: must be "ibm,ppc4xx-gpio"
-+	- reg: address and length of the register set for the device
-+	- #gpio-cells: must be set to 2. The first cell is the pin number
-+		and the second cell is used to specify the gpio polarity:
-+		0 = active high
-+		1 = active low
-+	- gpio-controller: marks the device node as a gpio controller.
-+
-+Example:
-+
-+GPIO0: gpio@ef600b00 {
-+	compatible = "ibm,ppc4xx-gpio";
-+	reg = <0xef600b00 0x00000048>;
-+	#gpio-cells = <2>;
-+	gpio-controller;
-+};
--- 
-2.8.1
-
+> Yours,
+> Hongzhou
+> 
