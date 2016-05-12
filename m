@@ -1,173 +1,65 @@
-From: Christian Lamparter <chunkeey@googlemail.com>
-Subject: [PATCH v9.1] gpio: mmio: add DT support for memory-mapped GPIOs
-Date: Thu, 12 May 2016 21:28:09 +0200
-Message-ID: <3e75e8316ceac62f61f3ffc839faaac8789ca936.1463078228.git.chunkeey@googlemail.com>
-References: <0a1ab2b6-b4c5-44d7-abb4-ce1e9da7e477@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 6/6] pinctrl: tegra: Add driver to configure voltage and
+ power state of io pads
+Date: Thu, 12 May 2016 20:48:26 +0100
+Message-ID: <5734DE0A.5090600@nvidia.com>
+References: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com>
+ <1462191434-28933-7-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36040 "EHLO
-	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752686AbcELT2c (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 May 2016 15:28:32 -0400
-In-Reply-To: <0a1ab2b6-b4c5-44d7-abb4-ce1e9da7e477@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1462191434-28933-7-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, swarren@wwwdotorg.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>, Alexander Shiyan <shc_work@mail.ru>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Christian Lamparter <chunkeey@googlemail.com>
 
-=46rom: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
 
-This patch adds support for defining memory-mapped GPIOs which
-are compatible with the existing gpio-mmio interface. The generic
-library provides support for many memory-mapped GPIO controllers
-that are found in various on-board FPGA and ASIC solutions that
-are used to control board's switches, LEDs, chip-selects,
-Ethernet/USB PHY power, etc.
+On 02/05/16 13:17, Laxman Dewangan wrote:
+> NVIDIA Tegra210 supports the IO pads which can operate at 1.8V
+> or 3.3V I/O voltage levels. Also the IO pads can be configured
+> for power down state if it is not used. SW needs to configure the
+> voltage level of IO pads based on IO rail voltage and its power
+> state based on platform usage.
+> 
+> The voltage and power state configurations of pads are provided
+> through pin control frameworks. Add pin control driver for Tegra's
+> IO pads' voltage and power state configurations.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> 
+> ---
+> Changes from V1:
+> - Use the generic pincontrol property for low power enable/disable.
+> - sync with latest and remove all MODULE* macros
+> - Use renamed APIs form PMC
+> ---
+>  drivers/pinctrl/tegra/Makefile                  |   1 +
+>  drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c | 301 ++++++++++++++++++++++++
+>  2 files changed, 302 insertions(+)
+>  create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c
 
-=46or setting GPIOs there are three configurations:
-	1. single input/output register resource (named "dat"),
-	2. set/clear pair (named "set" and "clr"),
-	3. single output register resource and single input resource
-	   ("set" and dat").
+[snip]
 
-The configuration is detected by which resources are present.
-=46or the single output register, this drives a 1 by setting a bit
-and a zero by clearing a bit.  For the set clr pair, this drives
-a 1 by setting a bit in the set register and clears it by setting
-a bit in the clear register.
+> +static int tegra_io_pad_pinconf_get(struct pinctrl_dev *pctldev,
+> +				    unsigned int pin, unsigned long *config)
+> +{
+> +	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
+> +	int param = pinconf_to_config_param(*config);
+> +	struct tegra_io_pads_cfg_info *pad_cfg = &tiopi->pads_cfg[pin];
+> +	int pad_id = pad_cfg->pad_id;
+> +	int arg = 0;
+> +	int ret;
+> +
+> +	switch (param) {
+> +	case TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE:
+> +		ret = tegra_io_pads_get_configured_voltage(pad_id);
+> +		if (ret < 0)
+> +			return ret;
+> +		arg = (ret =  3300000) ? 1 : 0;
 
-=46or setting the GPIO direction, there are three configurations:
-	a. simple bidirectional GPIOs that requires no configuration.
-	b. an output direction register (named "dirout")
-	   where a 1 bit indicates the GPIO is an output.
-	c. an input direction register (named "dirin")
-	   where a 1 bit indicates the GPIO is an input.
+This should be (ret == 3300000).
 
-The first user for this binding is "wd,mbl-gpio".
-
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
-Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
----
- drivers/gpio/gpio-mmio.c | 68 ++++++++++++++++++++++++++++++++++++++++=
-++++++--
- 1 file changed, 66 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
-index 6c1cb3b..f72e40e 100644
---- a/drivers/gpio/gpio-mmio.c
-+++ b/drivers/gpio/gpio-mmio.c
-@@ -61,6 +61,8 @@ o        `                     ~~~~\___/~~~~    ` con=
-troller in FPGA is ,.`
- #include <linux/bitops.h>
- #include <linux/platform_device.h>
- #include <linux/mod_devicetable.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-=20
- static void bgpio_write8(void __iomem *reg, unsigned long data)
- {
-@@ -569,6 +571,58 @@ static void __iomem *bgpio_map(struct platform_dev=
-ice *pdev,
- 	return devm_ioremap_resource(&pdev->dev, r);
- }
-=20
-+#ifdef CONFIG_OF
-+static int bgpio_basic_mmio_parse_dt(struct platform_device *pdev,
-+				     struct bgpio_pdata *pdata,
-+				     unsigned long *flags)
-+{
-+	struct device *dev =3D &pdev->dev;
-+
-+	pdata->base =3D -1;
-+
-+	if (of_property_read_bool(dev->of_node, "no-output"))
-+		*flags |=3D BGPIOF_NO_OUTPUT;
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id bgpio_of_match[] =3D {
-+	{ .compatible =3D "wd,mbl-gpio", .data =3D bgpio_basic_mmio_parse_dt =
-},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, bgpio_of_match);
-+
-+static struct bgpio_pdata *bgpio_parse_dt(struct platform_device *pdev=
-,
-+					  unsigned long *flags)
-+{
-+	const int (*parse_dt)(struct platform_device *,
-+			      struct bgpio_pdata *, unsigned long *);
-+	struct bgpio_pdata *pdata;
-+	int err;
-+
-+	parse_dt =3D of_device_get_match_data(&pdev->dev);
-+	if (!parse_dt)
-+		return NULL;
-+
-+	pdata =3D devm_kzalloc(&pdev->dev, sizeof(struct bgpio_pdata),
-+			     GFP_KERNEL);
-+	if (!pdata)
-+		return ERR_PTR(-ENOMEM);
-+
-+	err =3D parse_dt(pdev, pdata, flags);
-+	if (err)
-+		return ERR_PTR(err);
-+
-+	return pdata;
-+}
-+#else
-+static struct bgpio_pdata *bgpio_parse_dt(struct platform_device *pdev=
-,
-+					  unsigned long *flags)
-+{
-+	return NULL;
-+}
-+#endif /* CONFIG_OF */
-+
- static int bgpio_pdev_probe(struct platform_device *pdev)
- {
- 	struct device *dev =3D &pdev->dev;
-@@ -579,10 +633,19 @@ static int bgpio_pdev_probe(struct platform_devic=
-e *pdev)
- 	void __iomem *dirout;
- 	void __iomem *dirin;
- 	unsigned long sz;
--	unsigned long flags =3D pdev->id_entry->driver_data;
-+	unsigned long flags =3D 0;
- 	int err;
- 	struct gpio_chip *gc;
--	struct bgpio_pdata *pdata =3D dev_get_platdata(dev);
-+	struct bgpio_pdata *pdata;
-+
-+	pdata =3D bgpio_parse_dt(pdev, &flags);
-+	if (IS_ERR(pdata))
-+		return PTR_ERR(pdata);
-+
-+	if (!pdata) {
-+		pdata =3D dev_get_platdata(dev);
-+		flags =3D pdev->id_entry->driver_data;
-+	}
-=20
- 	r =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "dat");
- 	if (!r)
-@@ -646,6 +709,7 @@ MODULE_DEVICE_TABLE(platform, bgpio_id_table);
- static struct platform_driver bgpio_driver =3D {
- 	.driver =3D {
- 		.name =3D "basic-mmio-gpio",
-+		.of_match_table =3D of_match_ptr(bgpio_of_match),
- 	},
- 	.id_table =3D bgpio_id_table,
- 	.probe =3D bgpio_pdev_probe,
---=20
-2.8.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Cheers
+Jon
