@@ -1,65 +1,36 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 6/6] pinctrl: tegra: Add driver to configure voltage and
- power state of io pads
-Date: Thu, 12 May 2016 20:48:26 +0100
-Message-ID: <5734DE0A.5090600@nvidia.com>
-References: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com>
- <1462191434-28933-7-git-send-email-ldewangan@nvidia.com>
+From: Alan Cooper <alcooperx@gmail.com>
+Subject: Re: [PATCH 3/6] dt-bindings: mtu3: add devicetree bindings
+Date: Thu, 12 May 2016 19:02:36 -0400
+Message-ID: <CAOGqxeUYEGKq5yhHbgcjPZtY06ZfDp2iCLZDqS3uyfCW523B4w@mail.gmail.com>
+References: <1462868614-20602-1-git-send-email-chunfeng.yun@mediatek.com>
+	<1462868614-20602-4-git-send-email-chunfeng.yun@mediatek.com>
+	<20160511145409.GA23042@rob-hp-laptop>
+	<1463037844.11651.118.camel@mhfsdcap03>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1462191434-28933-7-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, swarren@wwwdotorg.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qg0-f66.google.com ([209.85.192.66]:34061 "EHLO
+	mail-qg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751111AbcELXCh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 May 2016 19:02:37 -0400
+In-Reply-To: <1463037844.11651.118.camel@mhfsdcap03>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: chunfeng yun <chunfeng.yun@mediatek.com>
+Cc: Rob Herring <robh@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Matthias Brugger <matthias.bgg@gmail.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Pawel Moll <pawel.moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Sascha Hauer <s.hauer@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Biao Huang <biao.huang@mediatek.com>, USB list <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
 
+On Thu, May 12, 2016 at 3:24 AM, chunfeng yun <chunfeng.yun@mediatek.com> wrote:
+>> > + - mediatek,enable-manual-drd : supports manual dual-role switch by sysfs
+>> > +   interface; only used when receptacle is TYPE-A and also wants to support
+>> > +   dual-role mode.
+>>
+>> sysfs is a Linux detail that doesn't apply to the binding. Does the
+>> property mean "the IP block supports or doesn't support switching"  or
+>> "I want to enable switching feature". Only the former belongs in DT.
+>>
+> It is the former case, and has little relation with sysfs interface.
+> I will modify it later, sorry for my unclear description.
 
-On 02/05/16 13:17, Laxman Dewangan wrote:
-> NVIDIA Tegra210 supports the IO pads which can operate at 1.8V
-> or 3.3V I/O voltage levels. Also the IO pads can be configured
-> for power down state if it is not used. SW needs to configure the
-> voltage level of IO pads based on IO rail voltage and its power
-> state based on platform usage.
-> 
-> The voltage and power state configurations of pads are provided
-> through pin control frameworks. Add pin control driver for Tegra's
-> IO pads' voltage and power state configurations.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> 
-> ---
-> Changes from V1:
-> - Use the generic pincontrol property for low power enable/disable.
-> - sync with latest and remove all MODULE* macros
-> - Use renamed APIs form PMC
-> ---
->  drivers/pinctrl/tegra/Makefile                  |   1 +
->  drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c | 301 ++++++++++++++++++++++++
->  2 files changed, 302 insertions(+)
->  create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c
-
-[snip]
-
-> +static int tegra_io_pad_pinconf_get(struct pinctrl_dev *pctldev,
-> +				    unsigned int pin, unsigned long *config)
-> +{
-> +	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
-> +	int param = pinconf_to_config_param(*config);
-> +	struct tegra_io_pads_cfg_info *pad_cfg = &tiopi->pads_cfg[pin];
-> +	int pad_id = pad_cfg->pad_id;
-> +	int arg = 0;
-> +	int ret;
-> +
-> +	switch (param) {
-> +	case TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE:
-> +		ret = tegra_io_pads_get_configured_voltage(pad_id);
-> +		if (ret < 0)
-> +			return ret;
-> +		arg = (ret =  3300000) ? 1 : 0;
-
-This should be (ret == 3300000).
-
-Cheers
-Jon
+Could the property name be just "enable-manual-drd" instead of
+"mediatek,enable-manual-drd"? I expect to have to add this
+functionality to our USB driver in the near future.
