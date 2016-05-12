@@ -1,59 +1,43 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: NULL pointer dereference when 'rmmod gpio_lynxpoint'
-Date: Thu, 12 May 2016 17:11:24 +0300
-Message-ID: <20160512141124.GU1713@lahna.fi.intel.com>
-References: <CAOMFOmXMJ47HQrc4vVXF1+JbxHmH78HTncnnUHfzseCs47EQ6w@mail.gmail.com>
- <CACRpkdbDww+JdAD6BXKc_PnXFRD5o=0OTqOfTjTYNdTMsqtH2g@mail.gmail.com>
- <CAOMFOmWTc11KrzGhWzowM7LW0F6S5qRshNG1KWm_NZZ7R3MJ_g@mail.gmail.com>
- <CACRpkdbwb9v=7qOdqNuvJhstfzv3M7OxCRM=ipOLiEp7=C5z3w@mail.gmail.com>
- <CAOMFOmVUj_KRU20bpkqTUaCWNTVCoALz-vskgPKaW1TTR2gRPQ@mail.gmail.com>
- <CACRpkdZjc6YQmnNg81HVybeDXTer6t-F=qXrGV+D7gtD+8MKqw@mail.gmail.com>
- <CAOMFOmWTvH0ObHjnBAbKkew79oFN4OMrjou5x6V1HRc=CnP91w@mail.gmail.com>
- <20160511140233.GQ1713@lahna.fi.intel.com>
- <CAOMFOmX59DVU4U37jjHpNHLVfhqydNx3SHsMduHWud_rUoHWXw@mail.gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 6/6] pinctrl: tegra: Add driver to configure voltage and
+ power state of io pads
+Date: Thu, 12 May 2016 15:02:49 -0400
+Message-ID: <CABxcv=mFRGWQXTxRYEKMbY3=XvrGL2713kUu9o2M4zgRVCje0Q@mail.gmail.com>
+References: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com>
+	<1462191434-28933-7-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:1840 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751491AbcELOLa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 12 May 2016 10:11:30 -0400
-Content-Disposition: inline
-In-Reply-To: <CAOMFOmX59DVU4U37jjHpNHLVfhqydNx3SHsMduHWud_rUoHWXw@mail.gmail.com>
+Received: from mail-ig0-f195.google.com ([209.85.213.195]:33436 "EHLO
+	mail-ig0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752574AbcELTCu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 May 2016 15:02:50 -0400
+Received: by mail-ig0-f195.google.com with SMTP id rc4so338990igc.0
+        for <linux-gpio@vger.kernel.org>; Thu, 12 May 2016 12:02:50 -0700 (PDT)
+In-Reply-To: <1462191434-28933-7-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Anatol Pomozov <anatol.pomozov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Matt DeVillier <matt.devillier@gmail.com>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>
 
-On Thu, May 12, 2016 at 06:35:20AM -0700, Anatol Pomozov wrote:
-> I use Chromebox with Matt's coreboot firmware and Arch Linux that
-> currently compiles LYNX gpio as a module.
->
-> There are 2 crashes:
-> 1) ~25% chance of crash at boot time. Just boot the device and the
-> system crashes when tries to probe the driver
-> 2) system crashes when try to 'rmmod'. See stack trace in the first
-> message of this thread.
+Hello Laxman,
 
-I tried pretty much the same on a Broadwell based machine (uses the same
-GPIO driver) and I did not see any crashes. I don't have Haswell based
-machines around anymore.
+On Mon, May 2, 2016 at 8:17 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-Since you seem to be able get it crashing pretty easily, I wonder if you
-can try following to debug the first crash:
+[snip]
 
- 1. Blacklist gpio-lynxpoint
- 2. Boot the system
- 3. Send me contents of /proc/interrupts and /sys/kernel/debug/gpio
- 4. Run 'insmod gpio-lynxpoint.ko'
- 5. Send me full dmesg of the crash (if you can get it).
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c b/drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c
+> new file mode 100644
+> index 0000000..ab06c71
+> --- /dev/null
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c
+> @@ -0,0 +1,301 @@
+> +/*
+> + * Generic ADC thermal driver
+> + *
 
-And the second crash:
+This seems to be a copy and paste error from
+drivers/thermal/thermal-generic-adc.c since this is a pinctrl driver.
 
- 1. Remoge gpio-lynxpoint from blacklist
- 2. Boot the system
- 3. Run 'rmmod gpio-lynxpoint'
- 4. Send me full dmesg of the crash (if you can get it).
-
-Hopefully with that information we can find root cause of both crashes
-(which may be the same).
+Best regards,
+Javier
