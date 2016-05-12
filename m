@@ -1,44 +1,59 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH ] pinctrl: tegra: Get rid of parked_reg
-Date: Thu, 12 May 2016 19:12:49 +0530
-Message-ID: <1463060569-9213-1-git-send-email-ldewangan@nvidia.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: NULL pointer dereference when 'rmmod gpio_lynxpoint'
+Date: Thu, 12 May 2016 17:11:24 +0300
+Message-ID: <20160512141124.GU1713@lahna.fi.intel.com>
+References: <CAOMFOmXMJ47HQrc4vVXF1+JbxHmH78HTncnnUHfzseCs47EQ6w@mail.gmail.com>
+ <CACRpkdbDww+JdAD6BXKc_PnXFRD5o=0OTqOfTjTYNdTMsqtH2g@mail.gmail.com>
+ <CAOMFOmWTc11KrzGhWzowM7LW0F6S5qRshNG1KWm_NZZ7R3MJ_g@mail.gmail.com>
+ <CACRpkdbwb9v=7qOdqNuvJhstfzv3M7OxCRM=ipOLiEp7=C5z3w@mail.gmail.com>
+ <CAOMFOmVUj_KRU20bpkqTUaCWNTVCoALz-vskgPKaW1TTR2gRPQ@mail.gmail.com>
+ <CACRpkdZjc6YQmnNg81HVybeDXTer6t-F=qXrGV+D7gtD+8MKqw@mail.gmail.com>
+ <CAOMFOmWTvH0ObHjnBAbKkew79oFN4OMrjou5x6V1HRc=CnP91w@mail.gmail.com>
+ <20160511140233.GQ1713@lahna.fi.intel.com>
+ <CAOMFOmX59DVU4U37jjHpNHLVfhqydNx3SHsMduHWud_rUoHWXw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:14169 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752198AbcELNyc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 May 2016 09:54:32 -0400
+Received: from mga03.intel.com ([134.134.136.65]:1840 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751491AbcELOLa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 12 May 2016 10:11:30 -0400
+Content-Disposition: inline
+In-Reply-To: <CAOMFOmX59DVU4U37jjHpNHLVfhqydNx3SHsMduHWud_rUoHWXw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, swarren@wwwdotorg.org
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+To: Anatol Pomozov <anatol.pomozov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Matt DeVillier <matt.devillier@gmail.com>
 
-Remove the use of parked_reg and use parked_bit for to know
-whether field is supported or not.
+On Thu, May 12, 2016 at 06:35:20AM -0700, Anatol Pomozov wrote:
+> I use Chromebox with Matt's coreboot firmware and Arch Linux that
+> currently compiles LYNX gpio as a module.
+>
+> There are 2 crashes:
+> 1) ~25% chance of crash at boot time. Just boot the device and the
+> system crashes when tries to probe the driver
+> 2) system crashes when try to 'rmmod'. See stack trace in the first
+> message of this thread.
 
-This is fix for the patch
-commit 1d18a3f0f0809f6c71f1f6e9e268ee904ce0b588
-"pinctrl: tegra: avoid parked_reg and parked_bank
+I tried pretty much the same on a Broadwell based machine (uses the same
+GPIO driver) and I did not see any crashes. I don't have Haswell based
+machines around anymore.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
- drivers/pinctrl/tegra/pinctrl-tegra20.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Since you seem to be able get it crashing pretty easily, I wonder if you
+can try following to debug the first crash:
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-index 91254d0..ad62451 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-@@ -2030,7 +2030,7 @@ static struct tegra_function tegra20_functions[] = {
- 		.tri_reg = -1,					\
- 		.drv_reg = ((r) - PINGROUP_REG_A),		\
- 		.drv_bank = 3,					\
--		.parked_reg = -1,				\
-+		.parked_bit = -1,				\
- 		.hsm_bit = hsm_b,				\
- 		.schmitt_bit = schmitt_b,			\
- 		.lpmd_bit = lpmd_b,				\
--- 
-2.1.4
+ 1. Blacklist gpio-lynxpoint
+ 2. Boot the system
+ 3. Send me contents of /proc/interrupts and /sys/kernel/debug/gpio
+ 4. Run 'insmod gpio-lynxpoint.ko'
+ 5. Send me full dmesg of the crash (if you can get it).
 
+And the second crash:
+
+ 1. Remoge gpio-lynxpoint from blacklist
+ 2. Boot the system
+ 3. Run 'rmmod gpio-lynxpoint'
+ 4. Send me full dmesg of the crash (if you can get it).
+
+Hopefully with that information we can find root cause of both crashes
+(which may be the same).
