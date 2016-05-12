@@ -1,164 +1,202 @@
-From: chunfeng yun <chunfeng.yun@mediatek.com>
-Subject: Re: [PATCH 3/6] dt-bindings: mtu3: add devicetree bindings
-Date: Thu, 12 May 2016 15:24:04 +0800
-Message-ID: <1463037844.11651.118.camel@mhfsdcap03>
-References: <1462868614-20602-1-git-send-email-chunfeng.yun@mediatek.com>
-	 <1462868614-20602-4-git-send-email-chunfeng.yun@mediatek.com>
-	 <20160511145409.GA23042@rob-hp-laptop>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v9 1/2] gpio: mmio: add DT support for memory-mapped GPIOs
+Date: Thu, 12 May 2016 19:26:32 +0900
+Message-ID: <0a1ab2b6-b4c5-44d7-abb4-ce1e9da7e477@gmail.com>
+References: <cover.1462911225.git.chunkeey@googlemail.com>
+ <cover.1462911225.git.chunkeey@googlemail.com>
+ <2c0675cd6f67bd487105c46c38c72d49d84d4df8.1462911225.git.chunkeey@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([218.249.47.110]:39532 "EHLO
-	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751395AbcELHYR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 May 2016 03:24:17 -0400
-In-Reply-To: <20160511145409.GA23042@rob-hp-laptop>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2c0675cd6f67bd487105c46c38c72d49d84d4df8.1462911225.git.chunkeey@googlemail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christian Lamparter <chunkeey@googlemail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =?iso-8859-1?Q?=C1lvaro_Fern=E1ndez_Rojas?= <noltari@gmail.com>, Alexander Shiyan <shc_work@mail.ru>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Joachim Eastwood <manabian@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Matthias Brugger <matthias.bgg@gmail.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Pawel Moll <pawel.moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Sascha Hauer <s.hauer@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Biao Huang <biao.huang@mediatek.com>, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
 
-Hi,
+On Wednesday, May 11, 2016 6:34:34 PM JST, Christian Lamparter wrote:
+> From: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+>
+> This patch adds support for defining memory-mapped GPIOs which
+> are compatible with the existing gpio-mmio interface. The generic
+> library provides support for many memory-mapped GPIO controllers
+> that are found in various on-board FPGA and ASIC solutions that
+> are used to control board's switches, LEDs, chip-selects,
+> Ethernet/USB PHY power, etc.
+>
+> For setting GPIO's there are three configurations:
 
-On Wed, 2016-05-11 at 09:54 -0500, Rob Herring wrote:
-> On Tue, May 10, 2016 at 04:23:31PM +0800, Chunfeng Yun wrote:
-> > add a DT binding doc for MediaTek USB3 DRD driver
-> > 
-> > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> > ---
-> >  Documentation/devicetree/bindings/usb/mtu3.txt |   86 ++++++++++++++++++++++++
-> >  1 file changed, 86 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/usb/mtu3.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/usb/mtu3.txt b/Documentation/devicetree/bindings/usb/mtu3.txt
-> > new file mode 100644
-> > index 0000000..ff142a5
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/usb/mtu3.txt
-> > @@ -0,0 +1,86 @@
-> > +The device node for Mediatek USB3.0 DRD controller
-> > +
-> > +Required properties:
-> > + - compatible : should be "mediatek,mt8173-mtu3"
-> > + - reg : specifies physical base address and size of the registers
-> > + - reg-names: should be "mac" for device IP and "ippc" for IP port control
-> > + - interrupts : interrupt used by the device IP
-> > + - power-domains : a phandle to USB power domain node to control USB's
-> > +	mtcmos
-> > + - vusb33-supply : regulator of USB avdd3.3v
-> > + - clocks : a list of phandle + clock-specifier pairs, one for each
-> > +	entry in clock-names
-> > + - clock-names : must contain "sys_ck" for clock of controller;
-> > +	"wakeup_deb_p0" and "wakeup_deb_p1" are optional, they are
-> > +	depends on "mediatek,enable-wakeup"
-> > + - phys : a list of phandle + phy specifier pairs
-> 
-> How many?
-It depends on implementation; there are two phys on mt8173 platform
+s/GPIO's/GPIOs
 
-> 
-> > + - dr_mode : should be one of "host", "peripheral" or "otg",
-> > +	refer to usb/generic.txt
-> > +
-> > +Optional properties:
-> > + - #address-cells, #size-cells : should be '2' if the device has sub-nodes
-> > +	with 'reg' property
-> > + - ranges : allows valid 1:1 translation between child's address space and
-> > +	parent's address space
-> > + - extcon : external connector for vbus and idpin changes detection, needed
-> > +	when supports dual-role mode.
-> > + - vbus-supply : reference to the VBUS regulator, needed when supports
-> > +	dual-role mode.
-> > + - pinctl-names : a pinctrl state named "default" must be defined,
-> > +	"id_float" and "id_ground" are optinal which depends on
-> > +	"mediatek,enable-manual-drd"
-> > + - pinctrl-0 : pin control group
-> > +	See: Documentation/devicetree/bindings/pinctrl/pinctrl-binding.txt
-> > +
-> > + - maximum-speed : valid arguments are "super-speed", "high-speed" and
-> > +	"full-speed"; refer to usb/generic.txt
-> > + - mediatek,enable-wakeup : supports ip sleep wakeup used by host mode
-> > + - mediatek,syscon-wakeup : phandle to syscon used to access USB wakeup
-> > +	control register, it depends on "mediatek,enable-wakeup".
-> 
-> There is a standard wake-up source binding. That assumes asserting the 
-> device's irq (or one of the irqs) will cause wake-up.
-> 
-> The syscon-wakeup should probably get implemented as a stacked 
-> irqdomain.
-> 
-Syscon-wakeup is used to control which usb wakeup mode we want to use,
-such as ip sleep(usb suspend/resume signal), or line state(changes of D
-+/-). And it doesn't trigger device's interrupt, so can't implement
-device's irq to wake up system.
+> 	1. single input/output register resource (named "dat"),
+> 	2. set/clear pair (named "set" and "clr"),
+> 	3. single output register resource and single input resource
+> 	   ("set" and dat").
+>
+> The configuration is detected by which resources are present.
+> For the single output register, this drives a 1 by setting a bit
+> and a zero by clearing a bit.  For the set clr pair, this drives
+> a 1 by setting a bit in the set register and clears it by setting
+> a bit in the clear register. The configuration is detected by
+> which resources are present.
 
-> > + - mediatek,enable-manual-drd : supports manual dual-role switch by sysfs
-> > +	interface; only used when receptacle is TYPE-A and also wants to support
-> > +	dual-role mode.
-> 
-> sysfs is a Linux detail that doesn't apply to the binding. Does the 
-> property mean "the IP block supports or doesn't support switching"  or 
-> "I want to enable switching feature". Only the former belongs in DT.
-> 
-It is the former case, and has little relation with sysfs interface.
-I will modify it later, sorry for my unclear description. 
+The last sentence of this paragraph repeats for first one.
 
-> As far as the sysfs interface, it should be generic, not Mediatek 
-> specific.
-> 
-> > +
-> > +Sub-nodes:
-> > +The xhci should be added as subnode to mtu3 as shown in the following example
-> > +if host mode is enabled. The DT binding details of xhci can be found in:
-> > +Documentation/devicetree/bindings/usb/mt8173-xhci.txt
-> 
-> Is XHCI really a sub-block? It seems mostly independent.
-Yes, the mtk's usb3 controller contains three parts: mu3d IP, xHCI IP
-and IPPC (IP power and control).
+>
+> For setting the GPIO direction, there are three configurations:
+> 	a. simple bidirectional GPIOs that requires no configuration.
+> 	b. an output direction register (named "dirout")
+> 	   where a 1 bit indicates the GPIO is an output.
+> 	c. an input direction register (named "dirin")
+> 	   where a 1 bit indicates the GPIO is an input.
+>
+> The first user for this binding is "wd,mbl-gpio".
+>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+> Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
+> ---
+>  drivers/gpio/gpio-mmio.c | 68=20
+> ++++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 66 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+> index 6c1cb3b..f72e40e 100644
+> --- a/drivers/gpio/gpio-mmio.c
+> +++ b/drivers/gpio/gpio-mmio.c
+> @@ -61,6 +61,8 @@ o        `                     ~~~~\___/~~~~ =20
+>   ` controller in FPGA is ,.`
+>  #include <linux/bitops.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/mod_devicetable.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> =20
+>  static void bgpio_write8(void __iomem *reg, unsigned long data)
+>  {
+> @@ -569,6 +571,58 @@ static void __iomem *bgpio_map(struct=20
+> platform_device *pdev,
+>  	return devm_ioremap_resource(&pdev->dev, r);
+>  }
+> =20
+> +#ifdef CONFIG_OF
+> +static int bgpio_basic_mmio_parse_dt(struct platform_device *pdev,
+> +				     struct bgpio_pdata *pdata,
+> +				     unsigned long *flags)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +
+> +	pdata->base =3D -1;
+> +
+> +	if (of_property_read_bool(dev->of_node, "no-output"))
+> +		*flags |=3D BGPIOF_NO_OUTPUT;
 
-> 
-> > +
-> > +Example:
-> > +ssusb: usb@11271000 {
-> > +	compatible = "mediatek,mt8173-mtu3";
-> > +	reg = <0 0x11271000 0 0x3000>,
-> > +	      <0 0x11280700 0 0x0100>;
-> > +	reg-names = "mac", "ippc";
-> > +	interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_LOW>;
-> > +	phys = <&phy_port0 PHY_TYPE_USB3>,
-> > +	       <&phy_port1 PHY_TYPE_USB2>;
-> > +	power-domains = <&scpsys MT8173_POWER_DOMAIN_USB>;
-> > +	clocks = <&topckgen CLK_TOP_USB30_SEL>,
-> > +		 <&pericfg CLK_PERI_USB0>,
-> > +		 <&pericfg CLK_PERI_USB1>;
-> > +	clock-names = "sys_ck",
-> > +		      "wakeup_deb_p0",
-> > +		      "wakeup_deb_p1";
-> > +	vusb33-supply = <&mt6397_vusb_reg>;
-> > +	vbus-supply = <&usb_p0_vbus>;
-> > +	extcon = <&extcon_usb>;
-> > +	dr_mode = "otg";
-> > +	mediatek,enable-wakeup;
-> > +	mediatek,syscon-wakeup = <&pericfg>;
-> > +	#address-cells = <2>;
-> > +	#size-cells = <2>;
-> > +	ranges;
-> > +	status = "disabled";
-> > +
-> > +	usb_host: xhci@11270000 {
-> > +		compatible = "mediatek,mt8173-xhci";
-> > +		reg = <0 0x11270000 0 0x1000>;
-> > +		interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_LOW>;
-> > +		power-domains = <&scpsys MT8173_POWER_DOMAIN_USB>;
-> > +		clocks = <&topckgen CLK_TOP_USB30_SEL>;
-> > +		clock-names = "sys_ck";
-> > +		vusb33-supply = <&mt6397_vusb_reg>;
-> > +		status = "disabled";
-> > +	};
-> > +};
-> > -- 
-> > 1.7.9.5
-> > 
+I don't think it is a good idea to add "generic" properties. Whether a=20
+controller is capable of output or not should be determined by its=20
+compatible string only, and not a vague property.
 
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id bgpio_of_match[] =3D {
+> +	{ .compatible =3D "wd,mbl-gpio", .data =3D bgpio_basic_mmio_parse_d=
+t },
 
+Mmm cannot you determine whether your controller is capable of output o=
+r=20
+not just from the compatible property here? If so, the=20
+bgpio_basic_mmio_parse_dt seems to be unneeded. If not, then this is=20
+dependent on the wd,mbl-gpio binding and should be renamed accordingly.
+
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, bgpio_of_match);
+> +
+> +static struct bgpio_pdata *bgpio_parse_dt(struct platform_device *pd=
+ev,
+> +					  unsigned long *flags)
+> +{
+> +	const int (*parse_dt)(struct platform_device *,
+> +			      struct bgpio_pdata *, unsigned long *);
+> +	struct bgpio_pdata *pdata;
+> +	int err;
+> +
+> +	parse_dt =3D of_device_get_match_data(&pdev->dev);
+> +	if (!parse_dt)
+> +		return NULL;
+> +
+> +	pdata =3D devm_kzalloc(&pdev->dev, sizeof(struct bgpio_pdata),
+> +			     GFP_KERNEL);
+> +	if (!pdata)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	err =3D parse_dt(pdev, pdata, flags);
+> +	if (err)
+> +		return ERR_PTR(err);
+> +
+> +	return pdata;
+> +}
+> +#else
+> +static struct bgpio_pdata *bgpio_parse_dt(struct platform_device *pd=
+ev,
+> +					  unsigned long *flags)
+> +{
+> +	return NULL;
+> +}
+> +#endif /* CONFIG_OF */
+> +
+>  static int bgpio_pdev_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev =3D &pdev->dev;
+> @@ -579,10 +633,19 @@ static int bgpio_pdev_probe(struct=20
+> platform_device *pdev)
+>  	void __iomem *dirout;
+>  	void __iomem *dirin;
+>  	unsigned long sz;
+> -	unsigned long flags =3D pdev->id_entry->driver_data;
+> +	unsigned long flags =3D 0;
+>  	int err;
+>  	struct gpio_chip *gc;
+> -	struct bgpio_pdata *pdata =3D dev_get_platdata(dev);
+> +	struct bgpio_pdata *pdata;
+> +
+> +	pdata =3D bgpio_parse_dt(pdev, &flags);
+> +	if (IS_ERR(pdata))
+> +		return PTR_ERR(pdata);
+> +
+> +	if (!pdata) {
+> +		pdata =3D dev_get_platdata(dev);
+> +		flags =3D pdev->id_entry->driver_data;
+> +	}
+> =20
+>  	r =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "dat");
+>  	if (!r)
+> @@ -646,6 +709,7 @@ MODULE_DEVICE_TABLE(platform, bgpio_id_table);
+>  static struct platform_driver bgpio_driver =3D {
+>  	.driver =3D {
+>  		.name =3D "basic-mmio-gpio",
+> +		.of_match_table =3D of_match_ptr(bgpio_of_match),
+>  	},
+>  	.id_table =3D bgpio_id_table,
+>  	.probe =3D bgpio_pdev_probe,
+
+It seems to me that this patch does two things:
+
+1) Add code to support device tree lookup
+2) Add support for "wd,mbl-gpio".
+
+If true, these two things should be in their own patches. You should al=
+so=20
+have another patch that adds the DT bindings for "wd,mbl-gpio", so I wo=
+uld=20
+do things in that order:
+
+1/3: DT support for basic-mmio-gpio
+2/3: DT bindings for "wd,mbl-gpio" (and have them validated by the DT=20
+people - e.g. do you really need a "reg" property or is it here just to=
+ fit=20
+with what bgpio_pdev_probe expects? More about this on 2/2)
+3/3: Support for "wd,mbl-gpio" in basic-mmio-gpio
