@@ -1,57 +1,80 @@
-From: chunfeng yun <chunfeng.yun@mediatek.com>
-Subject: Re: [PATCH 3/6] dt-bindings: mtu3: add devicetree bindings
-Date: Fri, 13 May 2016 11:19:13 +0800
-Message-ID: <1463109553.11651.127.camel@mhfsdcap03>
-References: <1462868614-20602-1-git-send-email-chunfeng.yun@mediatek.com>
-	 <1462868614-20602-4-git-send-email-chunfeng.yun@mediatek.com>
-	 <20160511145409.GA23042@rob-hp-laptop>
-	 <1463037844.11651.118.camel@mhfsdcap03>
-	 <CAOGqxeUYEGKq5yhHbgcjPZtY06ZfDp2iCLZDqS3uyfCW523B4w@mail.gmail.com>
-	 <1463104820.11651.125.camel@mhfsdcap03>
-	 <CAL_JsqJKW_C-LtCchAMn5c_VHxBz6n3DBBRFn9hCXcaAbpZrUg@mail.gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V12 1/2] gpio: add DT binding doc for gpio of PMIC max77620/max20024
+Date: Fri, 13 May 2016 10:49:12 +0530
+Message-ID: <1463116755-30469-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([218.249.47.110]:44676 "EHLO
-	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751502AbcEMDTZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 May 2016 23:19:25 -0400
-In-Reply-To: <CAL_JsqJKW_C-LtCchAMn5c_VHxBz6n3DBBRFn9hCXcaAbpZrUg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Alan Cooper <alcooperx@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Matthias Brugger <matthias.bgg@gmail.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Pawel Moll <pawel.moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Sascha Hauer <s.hauer@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Biao Huang <biao.huang@mediatek.com>, USB list <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, linux-gpio@vger.ke
 
-On Thu, 2016-05-12 at 22:09 -0500, Rob Herring wrote:
-> On Thu, May 12, 2016 at 9:00 PM, chunfeng yun <chunfeng.yun@mediatek.com> wrote:
-> > Hi,
-> >
-> > On Thu, 2016-05-12 at 19:02 -0400, Alan Cooper wrote:
-> >> On Thu, May 12, 2016 at 3:24 AM, chunfeng yun <chunfeng.yun@mediatek.com> wrote:
-> >> >> > + - mediatek,enable-manual-drd : supports manual dual-role switch by sysfs
-> >> >> > +   interface; only used when receptacle is TYPE-A and also wants to support
-> >> >> > +   dual-role mode.
-> >> >>
-> >> >> sysfs is a Linux detail that doesn't apply to the binding. Does the
-> >> >> property mean "the IP block supports or doesn't support switching"  or
-> >> >> "I want to enable switching feature". Only the former belongs in DT.
-> >> >>
-> >> > It is the former case, and has little relation with sysfs interface.
-> >> > I will modify it later, sorry for my unclear description.
-> >>
-> >> Could the property name be just "enable-manual-drd" instead of
-> >> "mediatek,enable-manual-drd"? I expect to have to add this
-> >> functionality to our USB driver in the near future.
-> >
-> > Do you mean provide some APIs to in common USB driver?
-> 
-> Probably, but first just put the property in a common binding doc.
-> 
-Ok, I modify it later
+Maxim Semiconductor's PMIC MAX77620/MAX20024 has 8 GPIO pins
+which act as GPIO as well as special function mode.
 
-Thanks.
+Add DT binding document to support these pins in GPIO
+mode via GPIO framework.
 
-> Rob
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
+---
+This as part of the max77620 series and mfd patch are already applied.
+This can go in subsystem branch.
 
+Changes from V4:
+- Separate out from gpio driver
+
+Changes from V5/V6/V7:
+- None
+
+Changes from V8:
+- Collected Linus ack.
+
+Changes from V9i/V10:
+None
+---
+ .../devicetree/bindings/gpio/gpio-max77620.txt     | 25 ++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-max77620.txt
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-max77620.txt b/Documentation/devicetree/bindings/gpio/gpio-max77620.txt
+new file mode 100644
+index 0000000..410e716
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-max77620.txt
+@@ -0,0 +1,25 @@
++GPIO driver for MAX77620 Power management IC from Maxim Semiconductor.
++
++Device has 8 GPIO pins which can be configured as GPIO as well as the
++special IO functions.
++
++Required properties:
++-------------------
++- gpio-controller : 	Marks the device node as a gpio controller.
++- #gpio-cells : 	Should be two.  The first cell is the pin number and
++			the second cell is used to specify the gpio polarity:
++				0 = active high
++				1 = active low
++For more details, please refer generic GPIO DT binding document
++<devicetree/bindings/gpio/gpio.txt>.
++
++Example:
++--------
++#include <dt-bindings/mfd/max77620.h>
++...
++max77620@3c {
++	compatible = "maxim,max77620";
++
++	gpio-controller;
++	#gpio-cells = <2>;
++};
+-- 
+2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
