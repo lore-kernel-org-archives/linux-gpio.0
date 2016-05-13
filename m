@@ -1,46 +1,57 @@
-From: Rob Herring <robh@kernel.org>
+From: chunfeng yun <chunfeng.yun@mediatek.com>
 Subject: Re: [PATCH 3/6] dt-bindings: mtu3: add devicetree bindings
-Date: Thu, 12 May 2016 22:09:08 -0500
-Message-ID: <CAL_JsqJKW_C-LtCchAMn5c_VHxBz6n3DBBRFn9hCXcaAbpZrUg@mail.gmail.com>
+Date: Fri, 13 May 2016 11:19:13 +0800
+Message-ID: <1463109553.11651.127.camel@mhfsdcap03>
 References: <1462868614-20602-1-git-send-email-chunfeng.yun@mediatek.com>
- <1462868614-20602-4-git-send-email-chunfeng.yun@mediatek.com>
- <20160511145409.GA23042@rob-hp-laptop> <1463037844.11651.118.camel@mhfsdcap03>
- <CAOGqxeUYEGKq5yhHbgcjPZtY06ZfDp2iCLZDqS3uyfCW523B4w@mail.gmail.com> <1463104820.11651.125.camel@mhfsdcap03>
+	 <1462868614-20602-4-git-send-email-chunfeng.yun@mediatek.com>
+	 <20160511145409.GA23042@rob-hp-laptop>
+	 <1463037844.11651.118.camel@mhfsdcap03>
+	 <CAOGqxeUYEGKq5yhHbgcjPZtY06ZfDp2iCLZDqS3uyfCW523B4w@mail.gmail.com>
+	 <1463104820.11651.125.camel@mhfsdcap03>
+	 <CAL_JsqJKW_C-LtCchAMn5c_VHxBz6n3DBBRFn9hCXcaAbpZrUg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:60245 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753104AbcEMDJe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 12 May 2016 23:09:34 -0400
-In-Reply-To: <1463104820.11651.125.camel@mhfsdcap03>
+Received: from mailgw01.mediatek.com ([218.249.47.110]:44676 "EHLO
+	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751502AbcEMDTZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 May 2016 23:19:25 -0400
+In-Reply-To: <CAL_JsqJKW_C-LtCchAMn5c_VHxBz6n3DBBRFn9hCXcaAbpZrUg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: chunfeng yun <chunfeng.yun@mediatek.com>
-Cc: Alan Cooper <alcooperx@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Matthias Brugger <matthias.bgg@gmail.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Pawel Moll <pawel.moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Sascha Hauer <s.hauer@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Biao Huang <biao.huang@mediatek.com>, USB list <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel
+To: Rob Herring <robh@kernel.org>
+Cc: Alan Cooper <alcooperx@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Matthias Brugger <matthias.bgg@gmail.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Pawel Moll <pawel.moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Sascha Hauer <s.hauer@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Biao Huang <biao.huang@mediatek.com>, USB list <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, linux-gpio@vger.ke
 
-On Thu, May 12, 2016 at 9:00 PM, chunfeng yun <chunfeng.yun@mediatek.com> wrote:
-> Hi,
->
-> On Thu, 2016-05-12 at 19:02 -0400, Alan Cooper wrote:
->> On Thu, May 12, 2016 at 3:24 AM, chunfeng yun <chunfeng.yun@mediatek.com> wrote:
->> >> > + - mediatek,enable-manual-drd : supports manual dual-role switch by sysfs
->> >> > +   interface; only used when receptacle is TYPE-A and also wants to support
->> >> > +   dual-role mode.
->> >>
->> >> sysfs is a Linux detail that doesn't apply to the binding. Does the
->> >> property mean "the IP block supports or doesn't support switching"  or
->> >> "I want to enable switching feature". Only the former belongs in DT.
->> >>
->> > It is the former case, and has little relation with sysfs interface.
->> > I will modify it later, sorry for my unclear description.
->>
->> Could the property name be just "enable-manual-drd" instead of
->> "mediatek,enable-manual-drd"? I expect to have to add this
->> functionality to our USB driver in the near future.
->
-> Do you mean provide some APIs to in common USB driver?
+On Thu, 2016-05-12 at 22:09 -0500, Rob Herring wrote:
+> On Thu, May 12, 2016 at 9:00 PM, chunfeng yun <chunfeng.yun@mediatek.com> wrote:
+> > Hi,
+> >
+> > On Thu, 2016-05-12 at 19:02 -0400, Alan Cooper wrote:
+> >> On Thu, May 12, 2016 at 3:24 AM, chunfeng yun <chunfeng.yun@mediatek.com> wrote:
+> >> >> > + - mediatek,enable-manual-drd : supports manual dual-role switch by sysfs
+> >> >> > +   interface; only used when receptacle is TYPE-A and also wants to support
+> >> >> > +   dual-role mode.
+> >> >>
+> >> >> sysfs is a Linux detail that doesn't apply to the binding. Does the
+> >> >> property mean "the IP block supports or doesn't support switching"  or
+> >> >> "I want to enable switching feature". Only the former belongs in DT.
+> >> >>
+> >> > It is the former case, and has little relation with sysfs interface.
+> >> > I will modify it later, sorry for my unclear description.
+> >>
+> >> Could the property name be just "enable-manual-drd" instead of
+> >> "mediatek,enable-manual-drd"? I expect to have to add this
+> >> functionality to our USB driver in the near future.
+> >
+> > Do you mean provide some APIs to in common USB driver?
+> 
+> Probably, but first just put the property in a common binding doc.
+> 
+Ok, I modify it later
 
-Probably, but first just put the property in a common binding doc.
+Thanks.
 
-Rob
+> Rob
+
+
