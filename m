@@ -1,42 +1,30 @@
-From: Martyn Welch <martyn.welch@collabora.co.uk>
-Subject: Re: [PATCH v5 1/2] USB: serial: cp210x: Adding GPIO support for
- CP2105
-Date: Mon, 16 May 2016 10:50:56 +0100
-Message-ID: <57399800.2010706@collabora.co.uk>
-References: <cover.1459269397.git.martyn.welch@collabora.co.uk>
- <79ce9ed7dd2124eb5a608b156318237867fe9987.1459269397.git.martyn.welch@collabora.co.uk>
- <570CAB70.5080609@collabora.co.uk> <20160412080854.GA14046@localhost>
- <570CAEA3.4070305@collabora.co.uk>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 2/2] dt-bindings: Add Oxford Semiconductor OXNAS
+ pinctrl and gpio bindings
+Date: Mon, 16 May 2016 09:52:57 -0500
+Message-ID: <20160516145257.GA31044@rob-hp-laptop>
+References: <1462952062-5316-1-git-send-email-narmstrong@baylibre.com>
+ <1462952062-5316-3-git-send-email-narmstrong@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38733 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750729AbcEPJvA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 16 May 2016 05:51:00 -0400
-In-Reply-To: <570CAEA3.4070305@collabora.co.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1462952062-5316-3-git-send-email-narmstrong@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
 
+On Wed, May 11, 2016 at 09:34:22AM +0200, Neil Armstrong wrote:
+> Add pinctrl and gpio DT bindings for Oxford Semiconductor OXNAS SoC Family.
+> This version supports the ARM926EJ-S based OX810SE SoC with 34 IO pins.
+> 
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio_oxnas.txt        | 47 ++++++++++++++++++
+>  .../devicetree/bindings/pinctrl/oxnas,pinctrl.txt  | 57 ++++++++++++++++++++++
+>  2 files changed, 104 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/oxnas,pinctrl.txt
 
-
-On 12/04/16 09:15, Martyn Welch wrote:
-> On 12/04/16 09:08, Johan Hovold wrote:
->> On Tue, Apr 12, 2016 at 09:01:52AM +0100, Martyn Welch wrote:
->>> Johan,
->>>
->>> Thanks for reviewing the other patch in this series. I haven't seen any
->>> feedback regarding this patch, is it still in your queue?
->>
->> It is, and I will get to it. I've managed to gather some review backlog
->> this past month that I need to get through first.
->>
-
-Hi Johan,
-
-Any idea when you'll get a chance to review this patch?
-
-Martyn
+Acked-by: Rob Herring <robh@kernel.org>
