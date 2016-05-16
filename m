@@ -1,151 +1,48 @@
-From: Christian Lamparter <chunkeey@googlemail.com>
-Subject: [PATCH v10 1/2] gpio: mmio: add DT support for memory-mapped GPIOs
-Date: Fri, 13 May 2016 23:07:11 +0200
-Message-ID: <4af460fea30b60fbb1d621fcb568c5f3b04e1eee.1463172434.git.chunkeey@googlemail.com>
-References: <cover.1463172434.git.chunkeey@googlemail.com>
+From: "Zhang, Rui" <rui.zhang@intel.com>
+Subject: [PATCH] gpiolib-acpi: add _DEP support for Acer One 10
+Date: Mon, 16 May 2016 03:18:25 +0000
+Message-ID: <1463368705.22433.15.camel@rzhang1-mobl4>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36440 "EHLO
-	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753515AbcEMVH3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 May 2016 17:07:29 -0400
-In-Reply-To: <cover.1463172434.git.chunkeey@googlemail.com>
-In-Reply-To: <cover.1463172434.git.chunkeey@googlemail.com>
-References: <cover.1463172434.git.chunkeey@googlemail.com>
+Received: from mga09.intel.com ([134.134.136.24]:20785 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751895AbcEPDS3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 15 May 2016 23:18:29 -0400
+Content-Language: en-US
+Content-ID: <0CEBD190FB512F44B1DBAD7D925E9225@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Christian Lamparter <chunkeey@googlemail.com>
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: linux-acpi <linux-acpi@intel.com>, "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>, "stace75@gmail.com" <stace75@gmail.com>, "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>
 
-=46rom: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
-
-This patch adds support for defining memory-mapped GPIOs which
-are compatible with the existing gpio-mmio interface. The generic
-library provides support for many memory-mapped GPIO controllers
-that are found in various on-board FPGA and ASIC solutions that
-are used to control board's switches, LEDs, chip-selects,
-Ethernet/USB PHY power, etc.
-
-=46or setting GPIOs there are three configurations:
-	1. single input/output register resource (named "dat"),
-	2. set/clear pair (named "set" and "clr"),
-	3. single output register resource and single input resource
-	   ("set" and dat").
-
-The configuration is detected by which resources are present.
-=46or the single output register, this drives a 1 by setting a bit
-and a zero by clearing a bit.  For the set clr pair, this drives
-a 1 by setting a bit in the set register and clears it by setting
-a bit in the clear register.
-
-=46or setting the GPIO direction, there are three configurations:
-	a. simple bidirectional GPIOs that requires no configuration.
-	b. an output direction register (named "dirout")
-	   where a 1 bit indicates the GPIO is an output.
-	c. an input direction register (named "dirin")
-	   where a 1 bit indicates the GPIO is an input.
-
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
-Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
----
- drivers/gpio/gpio-mmio.c | 47 ++++++++++++++++++++++++++++++++++++++++=
-+++++--
- 1 file changed, 45 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
-index 6c1cb3b..af583be 100644
---- a/drivers/gpio/gpio-mmio.c
-+++ b/drivers/gpio/gpio-mmio.c
-@@ -61,6 +61,8 @@ o        `                     ~~~~\___/~~~~    ` con=
-troller in FPGA is ,.`
- #include <linux/bitops.h>
- #include <linux/platform_device.h>
- #include <linux/mod_devicetable.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-=20
- static void bgpio_write8(void __iomem *reg, unsigned long data)
- {
-@@ -569,6 +571,37 @@ static void __iomem *bgpio_map(struct platform_dev=
-ice *pdev,
- 	return devm_ioremap_resource(&pdev->dev, r);
- }
-=20
-+#ifdef CONFIG_OF
-+static const struct of_device_id bgpio_of_match[] =3D {
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, bgpio_of_match);
-+
-+static struct bgpio_pdata *bgpio_parse_dt(struct platform_device *pdev=
-,
-+					  unsigned long *flags)
-+{
-+	struct bgpio_pdata *pdata;
-+
-+	if (!of_match_device(bgpio_of_match, &pdev->dev))
-+		return NULL;
-+
-+	pdata =3D devm_kzalloc(&pdev->dev, sizeof(struct bgpio_pdata),
-+			     GFP_KERNEL);
-+	if (!pdata)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pdata->base =3D -1;
-+
-+	return pdata;
-+}
-+#else
-+static struct bgpio_pdata *bgpio_parse_dt(struct platform_device *pdev=
-,
-+					  unsigned long *flags)
-+{
-+	return NULL;
-+}
-+#endif /* CONFIG_OF */
-+
- static int bgpio_pdev_probe(struct platform_device *pdev)
- {
- 	struct device *dev =3D &pdev->dev;
-@@ -579,10 +612,19 @@ static int bgpio_pdev_probe(struct platform_devic=
-e *pdev)
- 	void __iomem *dirout;
- 	void __iomem *dirin;
- 	unsigned long sz;
--	unsigned long flags =3D pdev->id_entry->driver_data;
-+	unsigned long flags =3D 0;
- 	int err;
- 	struct gpio_chip *gc;
--	struct bgpio_pdata *pdata =3D dev_get_platdata(dev);
-+	struct bgpio_pdata *pdata;
-+
-+	pdata =3D bgpio_parse_dt(pdev, &flags);
-+	if (IS_ERR(pdata))
-+		return PTR_ERR(pdata);
-+
-+	if (!pdata) {
-+		pdata =3D dev_get_platdata(dev);
-+		flags =3D pdev->id_entry->driver_data;
-+	}
-=20
- 	r =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "dat");
- 	if (!r)
-@@ -646,6 +688,7 @@ MODULE_DEVICE_TABLE(platform, bgpio_id_table);
- static struct platform_driver bgpio_driver =3D {
- 	.driver =3D {
- 		.name =3D "basic-mmio-gpio",
-+		.of_match_table =3D of_match_ptr(bgpio_of_match),
- 	},
- 	.id_table =3D bgpio_id_table,
- 	.probe =3D bgpio_pdev_probe,
---=20
-2.8.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+RnJvbSA4NTkwYmRjYWNjOTRhMWFiMjYwYjRlYTJlNmU3NDdiMGJjMWQ5YmY4IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQ0KRnJvbTogWmhhbmcgUnVpIDxydWkuemhhbmdAaW50ZWwuY29tPg0KRGF0
+ZTogV2VkLCAxMSBNYXkgMjAxNiAwOTowMjoyOCArMDgwMA0KU3ViamVjdDogW1BBVENIXSBncGlv
+bGliLWFjcGk6IGFkZCBfREVQIHN1cHBvcnQgZm9yIEFjZXIgT25lIDEwDQoNCk9uIEFjZXIgT25l
+IDEwLCB0aGUgQUNQSSBiYXR0ZXJ5IGRyaXZlciBjYW4gbm90IGJlIHByb2JlZCBiZWNhdXNlDQpp
+dCBkZXBlbmRzIG9uIHRoZSBHUElPIGNvbnRyb2xsZXIgYXMgd2VsbCBhcyB0aGUgSTJDIGNvbnRy
+b2xsZXIgdG8gd29yaywNCiAgICAgICAgRGV2aWNlIChCQVRDKQ0KICAgICAgICB7DQogICAgICAg
+ICAgICBOYW1lIChfSElELCBFaXNhSWQgKCJQTlAwQzBBIikgLyogQ29udHJvbCBNZXRob2QgQmF0
+dGVyeSAqLykNCiAgICAgICAgICAgIC4uLg0KICAgICAgICAgICAgTmFtZSAoX0RFUCwgUGFja2Fn
+ZSAoMHgwMykgIC8vIF9ERVA6IERlcGVuZGVuY2llcw0KICAgICAgICAgICAgew0KICAgICAgICAg
+ICAgICAgIEkyQzEsDQogICAgICAgICAgICAgICAgR1BPMiwNCiAgICAgICAgICAgICAgICBHUE8w
+DQogICAgICAgICAgICB9KQ0KICAgICAgICAgICAgLi4uDQogICAgICAgIH0NCg0KVGhlIEkyQyBk
+ZXBlbmRlbmN5IGFsc28gZXhpc3RzIG9uIG90aGVyIHBsYXRmb3JtcyBhbmQgaGFzIGJlZW4gZml4
+ZWQgYnkgY29tbWl0DQo0MGU3ZmNiMTkyOTMgKCJBQ1BJOiBBZGQgX0RFUCBzdXBwb3J0IHRvIGZp
+eCBiYXR0ZXJ5IGlzc3VlIG9uIEFzdXMgVDEwMFRBIiksDQp0aGlzIHBhdGNoIHJlc29sdmVzIHRo
+ZSBHUElPIGRlcGVuZGVuY3kgZm9yIEFjZXIgT25lIDEwLg0KDQpMaW5rOmh0dHBzOi8vYnVnemls
+bGEua2VybmVsLm9yZy9zaG93X2J1Zy5jZ2k/aWQ9MTE1MTkxDQpDQzogTWlrYSBXZXN0ZXJiZXJn
+IDxtaWthLndlc3RlcmJlcmdAbGludXguaW50ZWwuY29tPg0KQ0M6IFJhZmFlbCBKLiBXeXNvY2tp
+IDxyYWZhZWwuai53eXNvY2tpQGludGVsLmNvbT4NClRlc3RlZC1ieTogU3RhY2UgQS4gWmFjaGFy
+b3YgPHN0YWNlNzVAZ21haWwuY29tPg0KU2lnbmVkLW9mZi1ieTogWmhhbmcgUnVpIDxydWkuemhh
+bmdAaW50ZWwuY29tPg0KLS0tDQogZHJpdmVycy9ncGlvL2dwaW9saWItYWNwaS5jIHwgMSArDQog
+MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+aW8vZ3Bpb2xpYi1hY3BpLmMgYi9kcml2ZXJzL2dwaW8vZ3Bpb2xpYi1hY3BpLmMNCmluZGV4IDY4
+MjA3MGQuLjRiODA5YjAgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpb2xpYi1hY3BpLmMN
+CisrKyBiL2RyaXZlcnMvZ3Bpby9ncGlvbGliLWFjcGkuYw0KQEAgLTgzNiw2ICs4MzYsNyBAQCB2
+b2lkIGFjcGlfZ3Bpb2NoaXBfYWRkKHN0cnVjdCBncGlvX2NoaXAgKmNoaXApDQogCX0NCiANCiAJ
+YWNwaV9ncGlvY2hpcF9yZXF1ZXN0X3JlZ2lvbnMoYWNwaV9ncGlvKTsNCisJYWNwaV93YWxrX2Rl
+cF9kZXZpY2VfbGlzdChoYW5kbGUpOw0KIH0NCiANCiB2b2lkIGFjcGlfZ3Bpb2NoaXBfcmVtb3Zl
+KHN0cnVjdCBncGlvX2NoaXAgKmNoaXApDQotLSANCjEuOS4xDQoNCg0K
