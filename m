@@ -1,43 +1,70 @@
-From: Purna Chandra Mandal <purna.mandal-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-Subject: [PATCH 11/11] dt/bindings: Correct clk binding example for PIC32 gpio.
-Date: Tue, 17 May 2016 10:36:00 +0530
-Message-ID: <1463461560-9629-11-git-send-email-purna.mandal@microchip.com>
-References: <1463461560-9629-1-git-send-email-purna.mandal@microchip.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1463461560-9629-1-git-send-email-purna.mandal-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Purna Chandra Mandal <purna.mandal-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] pinctrl: samsung: Suppress unbinding to prevent theoretical
+ attacks
+Date: Tue, 17 May 2016 08:02:06 +0200
+Message-ID: <1463464926-17482-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Update binding example based on new clock binding scheme.
-[1] Documentation/devicetree/bindings/clock/microchip,pic32.txt
+Although unbinding a pinctrl driver requires root privileges but it
+still might be used theoretically in certain attacks (by triggering NULL
+pointer exception or memory corruption).
 
-Signed-off-by: Purna Chandra Mandal <purna.mandal-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
+Samsung pincontrol drivers are essential for system operation so their
+removal is not expected. They do not implement remove() driver callback
+and they are not buildable as modules.
+
+Suppression of the unbinding will prevent triggering NULL pointer
+exception like this (Odroid XU3):
+
+  $ echo 13400000.pinctrl > /sys/bus/platform/drivers/samsung-pinctrl/unbind
+  $ cat /sys/kernel/debug/gpio
+
+  Unable to handle kernel NULL pointer dereference at virtual address 00000c44
+  pgd = ec41c000
+  [00000c44] *pgd=6d448835, *pte=00000000, *ppte=00000000
+  Internal error: Oops: 17 [#1] PREEMPT SMP ARM
+    (samsung_gpio_get) from [<c034f9a0>] (gpiolib_seq_show+0x1b0/0x26c)
+    (gpiolib_seq_show) from [<c01fb8c0>] (seq_read+0x304/0x4b8)
+    (seq_read) from [<c02dbc78>] (full_proxy_read+0x4c/0x64)
+    (full_proxy_read) from [<c01d9fb0>] (__vfs_read+0x2c/0x110)
+    (__vfs_read) from [<c01db400>] (vfs_read+0x8c/0x110)
+    (vfs_read) from [<c01db4c4>] (SyS_read+0x40/0x8c)
+    (SyS_read) from [<c01078c0>] (ret_fast_syscall+0x0/0x3c)
+
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
+ drivers/pinctrl/samsung/pinctrl-exynos5440.c | 1 +
+ drivers/pinctrl/samsung/pinctrl-samsung.c    | 1 +
+ 2 files changed, 2 insertions(+)
 
- Documentation/devicetree/bindings/gpio/microchip,pic32-gpio.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/gpio/microchip,pic32-gpio.txt b/Documentation/devicetree/bindings/gpio/microchip,pic32-gpio.txt
-index ef37528..dd031fc 100644
---- a/Documentation/devicetree/bindings/gpio/microchip,pic32-gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/microchip,pic32-gpio.txt
-@@ -33,7 +33,7 @@ gpio0: gpio0@1f860000 {
- 	gpio-controller;
- 	interrupt-controller;
- 	#interrupt-cells = <2>;
--	clocks = <&PBCLK4>;
-+	clocks = <&rootclk PB4CLK>;
- 	microchip,gpio-bank = <0>;
- 	gpio-ranges = <&pic32_pinctrl 0 0 16>;
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+index fb71fc3e5aa0..3000df80709f 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+@@ -998,6 +998,7 @@ static struct platform_driver exynos5440_pinctrl_driver = {
+ 	.driver = {
+ 		.name	= "exynos5440-pinctrl",
+ 		.of_match_table = exynos5440_pinctrl_dt_match,
++		.suppress_bind_attrs = true,
+ 	},
  };
+ 
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index ed0b70881e19..513fe6b23248 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -1274,6 +1274,7 @@ static struct platform_driver samsung_pinctrl_driver = {
+ 	.driver = {
+ 		.name	= "samsung-pinctrl",
+ 		.of_match_table = samsung_pinctrl_dt_match,
++		.suppress_bind_attrs = true,
+ 	},
+ };
+ 
 -- 
-1.8.3.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.9.1
