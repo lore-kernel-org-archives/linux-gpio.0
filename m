@@ -1,74 +1,62 @@
 From: Patrice Chotard <patrice.chotard@st.com>
-Subject: Re: pinctrl: stm32: Implement .pin_config_dbg_show()
-Date: Tue, 17 May 2016 09:40:54 +0200
-Message-ID: <573ACB06.1080106@st.com>
-References: <20160517073152.GB10872@mwanda>
+Subject: Re: [PATCH] pinctrl: stm32: fix debugfs format string
+Date: Tue, 17 May 2016 09:43:18 +0200
+Message-ID: <573ACB96.6030808@st.com>
+References: <1463147643-568615-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:52917 "EHLO
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35775 "EHLO
 	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752233AbcEQHlD (ORCPT
+	by vger.kernel.org with ESMTP id S1752520AbcEQHnz (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 17 May 2016 03:41:03 -0400
-In-Reply-To: <20160517073152.GB10872@mwanda>
+	Tue, 17 May 2016 03:43:55 -0400
+In-Reply-To: <1463147643-568615-1-git-send-email-arnd@arndb.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Irina Tirdea <irina.tirdea@intel.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi Dan
+Hi Arnd
 
-I have already send a fix for this to the mailing list:
+I have already send a fix for this on the mailing list on 12th may 
+([PATCH 0/2] pinctrl: stm32: .pin_config_dbg_show fixes).
+I don't know if Linus will merged it on his pinctrl branch.
 
-     _ [PATCH 0/2] pinctrl: stm32: .pin_config_dbg_show fixes
-
-Sorry for that
+Sorry
 
 Patrice
 
-On 05/17/2016 09:31 AM, Dan Carpenter wrote:
-> Hello Patrice Chotard,
+On 05/13/2016 03:53 PM, Arnd Bergmann wrote:
+> The newly added stm32_pconf_dbg_show function has an incorrect format
+> string that does not match the arguments, as reported by the gcc warning:
 >
-> The patch 3beed93c1617: "pinctrl: stm32: Implement
-> .pin_config_dbg_show()" from Apr 29, 2016, leads to the following
-> static checker warning:
+> drivers/pinctrl/stm32/pinctrl-stm32.c: In function 'stm32_pconf_dbg_show':
+> drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: error: too many arguments for format [-Werror=format-extra-args]
 >
-> 	drivers/pinctrl/stm32/pinctrl-stm32.c:798 stm32_pconf_dbg_show()
-> 	warn: excess argument passed to 'seq_printf'
+> This changes the format string in a way that gets rid of the warning.
 >
-> drivers/pinctrl/stm32/pinctrl-stm32.c
->     781          /* output */
->     782          case 1:
->     783                  drive = stm32_pconf_get_driving(bank, offset);
->     784                  speed = stm32_pconf_get_speed(bank, offset);
->     785                  val = stm32_pconf_output_get(bank, offset);
->     786                  seq_printf(s, "- %s - %s - %s - %s %s",
->     787                             val ? "high" : "low",
->     788                             drive ? "open drain" : "push pull",
->     789                             biasing[bias],
->     790                             speeds[speed], "speed");
->     791                  break;
->     792
->     793          /* alternate */
->     794          case 2:
->     795                  drive = stm32_pconf_get_driving(bank, offset);
->     796                  speed = stm32_pconf_get_speed(bank, offset);
->     797                  seq_printf(s, "%d - %s -%s", alt,
->     798                             drive ? "open drain" : "push pull",
->     799                             biasing[bias],
->     800                             speeds[speed], "speed");
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 3beed93c1617 ("pinctrl: stm32: Implement .pin_config_dbg_show()")
+> ---
+> I could not find a documentation for the debugfs format, so no
+> idea if this is the intended format.
+> ---
+>   drivers/pinctrl/stm32/pinctrl-stm32.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Yup.  Too many arguments.  Also do you want a space between "-%s"?
->
->     801                  break;
->     802
->     803          /* analog */
->     804          case 3:
->     805                  break;
->     806          }
->
-> regards,
-> dan carpenter
+> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+> index e51c1cf5270b..4ffbe9551299 100644
+> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
+> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+> @@ -794,7 +794,7 @@ static void stm32_pconf_dbg_show(struct pinctrl_dev *pctldev,
+>   	case 2:
+>   		drive = stm32_pconf_get_driving(bank, offset);
+>   		speed = stm32_pconf_get_speed(bank, offset);
+> -		seq_printf(s, "%d - %s -%s", alt,
+> +		seq_printf(s, "%d - %s - %s - %s %s ", alt,
+>   			   drive ? "open drain" : "push pull",
+>   			   biasing[bias],
+>   			   speeds[speed], "speed");
 
