@@ -1,70 +1,59 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] pinctrl: samsung: Suppress unbinding to prevent theoretical
- attacks
-Date: Tue, 17 May 2016 08:02:06 +0200
-Message-ID: <1463464926-17482-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: re: pinctrl: stm32: Implement .pin_config_dbg_show()
+Date: Tue, 17 May 2016 10:31:52 +0300
+Message-ID: <20160517073152.GB10872@mwanda>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from userp1040.oracle.com ([156.151.31.81]:23933 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752261AbcEQHcH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 May 2016 03:32:07 -0400
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: patrice.chotard@st.com
+Cc: linux-gpio@vger.kernel.org
 
-Although unbinding a pinctrl driver requires root privileges but it
-still might be used theoretically in certain attacks (by triggering NULL
-pointer exception or memory corruption).
+Hello Patrice Chotard,
 
-Samsung pincontrol drivers are essential for system operation so their
-removal is not expected. They do not implement remove() driver callback
-and they are not buildable as modules.
+The patch 3beed93c1617: "pinctrl: stm32: Implement
+.pin_config_dbg_show()" from Apr 29, 2016, leads to the following
+static checker warning:
 
-Suppression of the unbinding will prevent triggering NULL pointer
-exception like this (Odroid XU3):
+	drivers/pinctrl/stm32/pinctrl-stm32.c:798 stm32_pconf_dbg_show()
+	warn: excess argument passed to 'seq_printf'
 
-  $ echo 13400000.pinctrl > /sys/bus/platform/drivers/samsung-pinctrl/unbind
-  $ cat /sys/kernel/debug/gpio
+drivers/pinctrl/stm32/pinctrl-stm32.c
+   781          /* output */
+   782          case 1:
+   783                  drive = stm32_pconf_get_driving(bank, offset);
+   784                  speed = stm32_pconf_get_speed(bank, offset);
+   785                  val = stm32_pconf_output_get(bank, offset);
+   786                  seq_printf(s, "- %s - %s - %s - %s %s",
+   787                             val ? "high" : "low",
+   788                             drive ? "open drain" : "push pull",
+   789                             biasing[bias],
+   790                             speeds[speed], "speed");
+   791                  break;
+   792  
+   793          /* alternate */
+   794          case 2:
+   795                  drive = stm32_pconf_get_driving(bank, offset);
+   796                  speed = stm32_pconf_get_speed(bank, offset);
+   797                  seq_printf(s, "%d - %s -%s", alt,
+   798                             drive ? "open drain" : "push pull",
+   799                             biasing[bias],
+   800                             speeds[speed], "speed");
 
-  Unable to handle kernel NULL pointer dereference at virtual address 00000c44
-  pgd = ec41c000
-  [00000c44] *pgd=6d448835, *pte=00000000, *ppte=00000000
-  Internal error: Oops: 17 [#1] PREEMPT SMP ARM
-    (samsung_gpio_get) from [<c034f9a0>] (gpiolib_seq_show+0x1b0/0x26c)
-    (gpiolib_seq_show) from [<c01fb8c0>] (seq_read+0x304/0x4b8)
-    (seq_read) from [<c02dbc78>] (full_proxy_read+0x4c/0x64)
-    (full_proxy_read) from [<c01d9fb0>] (__vfs_read+0x2c/0x110)
-    (__vfs_read) from [<c01db400>] (vfs_read+0x8c/0x110)
-    (vfs_read) from [<c01db4c4>] (SyS_read+0x40/0x8c)
-    (SyS_read) from [<c01078c0>] (ret_fast_syscall+0x0/0x3c)
+Yup.  Too many arguments.  Also do you want a space between "-%s"?
 
-Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/pinctrl/samsung/pinctrl-exynos5440.c | 1 +
- drivers/pinctrl/samsung/pinctrl-samsung.c    | 1 +
- 2 files changed, 2 insertions(+)
+   801                  break;
+   802  
+   803          /* analog */
+   804          case 3:
+   805                  break;
+   806          }
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-index fb71fc3e5aa0..3000df80709f 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
-@@ -998,6 +998,7 @@ static struct platform_driver exynos5440_pinctrl_driver = {
- 	.driver = {
- 		.name	= "exynos5440-pinctrl",
- 		.of_match_table = exynos5440_pinctrl_dt_match,
-+		.suppress_bind_attrs = true,
- 	},
- };
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index ed0b70881e19..513fe6b23248 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1274,6 +1274,7 @@ static struct platform_driver samsung_pinctrl_driver = {
- 	.driver = {
- 		.name	= "samsung-pinctrl",
- 		.of_match_table = samsung_pinctrl_dt_match,
-+		.suppress_bind_attrs = true,
- 	},
- };
- 
--- 
-1.9.1
+regards,
+dan carpenter
