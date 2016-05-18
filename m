@@ -1,41 +1,48 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH] pinctrl: stm32: fix incorrect pinctl format message
-Date: Tue, 17 May 2016 17:26:55 +0100
-Message-ID: <1463502415-17920-1-git-send-email-colin.king@canonical.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:41820 "EHLO
-	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750792AbcEQQ1G (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 May 2016 12:27:06 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 1/2] USB: serial: cp210x: Adding GPIO support for
+ CP2105
+Date: Wed, 18 May 2016 10:45:41 +0200
+Message-ID: <20160518084541.GD6303@localhost>
+References: <cover.1459269397.git.martyn.welch@collabora.co.uk>
+ <79ce9ed7dd2124eb5a608b156318237867fe9987.1459269397.git.martyn.welch@collabora.co.uk>
+ <570CAB70.5080609@collabora.co.uk>
+ <20160412080854.GA14046@localhost>
+ <570CAEA3.4070305@collabora.co.uk>
+ <57399800.2010706@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <57399800.2010706-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Patrice Chotard <patrice.chotard@st.com>, Irina Tirdea <irina.tirdea@intel.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, May 16, 2016 at 10:50:56AM +0100, Martyn Welch wrote:
+> On 12/04/16 09:15, Martyn Welch wrote:
+> > On 12/04/16 09:08, Johan Hovold wrote:
+> >> On Tue, Apr 12, 2016 at 09:01:52AM +0100, Martyn Welch wrote:
+> >>> Johan,
+> >>>
+> >>> Thanks for reviewing the other patch in this series. I haven't seen any
+> >>> feedback regarding this patch, is it still in your queue?
+> >>
+> >> It is, and I will get to it. I've managed to gather some review backlog
+> >> this past month that I need to get through first.
+> >>
+> 
+> Hi Johan,
+> 
+> Any idea when you'll get a chance to review this patch?
 
-There are missing string format specifiers in the seq_printf
-that are causing a build warning.  Add these missing string
-format specifiers to fix this.
+I have three patches in my queue that didn't make the cut due to lack
+off time on my side. They're at the top of the list.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pinctrl/stm32/pinctrl-stm32.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sorry about the delay.
 
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index e51c1cf..ae9fab8 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -794,7 +794,7 @@ static void stm32_pconf_dbg_show(struct pinctrl_dev *pctldev,
- 	case 2:
- 		drive = stm32_pconf_get_driving(bank, offset);
- 		speed = stm32_pconf_get_speed(bank, offset);
--		seq_printf(s, "%d - %s -%s", alt,
-+		seq_printf(s, "%d - %s - %s - %s %s", alt,
- 			   drive ? "open drain" : "push pull",
- 			   biasing[bias],
- 			   speeds[speed], "speed");
--- 
-2.8.1
-
+Johan
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
