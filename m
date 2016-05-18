@@ -1,32 +1,46 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 11/11] dt/bindings: Correct clk binding example for PIC32
- gpio.
-Date: Wed, 18 May 2016 11:52:39 -0500
-Message-ID: <20160518165239.GA4593@rob-hp-laptop>
-References: <1463461560-9629-1-git-send-email-purna.mandal@microchip.com>
- <1463461560-9629-11-git-send-email-purna.mandal@microchip.com>
+From: Kevin Smith <kevin.smith@elecsyscorp.com>
+Subject: Expose named GPIOs through sysfs
+Date: Wed, 18 May 2016 20:43:36 +0000
+Message-ID: <573CD3FA.10306@elecsyscorp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1463461560-9629-11-git-send-email-purna.mandal-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Purna Chandra Mandal <purna.mandal-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from s12p02o142.mxlogic.net ([208.65.145.65]:40679 "EHLO
+	s12p02o142.mxlogic.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752082AbcERUva (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 May 2016 16:51:30 -0400
+Content-Language: en-US
+Content-ID: <10EA2305E9E00145A53AC45AAE7790D4@dciincorporated.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, May 17, 2016 at 10:36:00AM +0530, Purna Chandra Mandal wrote:
-> Update binding example based on new clock binding scheme.
-> [1] Documentation/devicetree/bindings/clock/microchip,pic32.txt
-> 
-> Signed-off-by: Purna Chandra Mandal <purna.mandal-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-> ---
-> 
->  Documentation/devicetree/bindings/gpio/microchip,pic32-gpio.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGVsbG8sDQoNCkkgaGF2ZSBzZXZlcmFsIEdQSU9zIHRoYXQgYXJlIG5vdCBhc3NvY2lhdGVkIHdp
+dGgga2VybmVsIGRyaXZlcnMgdGhhdCBJIA0Kd291bGQgbGlrZSB0byBleHBvc2UgdG8gdXNlcnNw
+YWNlIHdpdGggbmFtZXMgY29ycmVzcG9uZGluZyB0byB0aGVpciANCmZ1bmN0aW9ucy4gIEkgYW0g
+b24gQXJtLCBzbyBJIHdvdWxkIGxpa2UgdG8gYmUgYWJsZSB0byBzcGVjaWZ5IHRoaXMgDQp0aHJv
+dWdoIGEgZGV2aWNlIHRyZWUuDQoNCkFzIGEgY29uY3JldGUgZXhhbXBsZSwgSSBoYXZlIGEgVVNC
+IGRldmljZSB0aGF0IGlzIGNvbnRyb2xsZWQgd2l0aCBhIA0KdXNlcnNwYWNlIGxpYnVzYiBkcml2
+ZXIgd2hpY2ggaGFzIGEgcmVzZXQgcGluIGNvbm5lY3RlZCBieSBHUElPLiAgSSANCndvdWxkIGxp
+a2UgdG8gZXhwb3NlIHRoaXMgbGluZSBhcyBkZXZfcmVzZXQuICBSaWdodCBub3csIHVzZXJzcGFj
+ZSBoYXMgDQp0byBrbm93IHRoZSBHUElPIG51bWJlciwgZXhwb3J0IHRoZSBncGlvLCBtYW51YWxs
+eSBjb25maWd1cmUgaXQgYXMgYW4gDQpvdXRwdXQsIHRoZW4gc2V0IGl0cyB2YWx1ZS4gIEluc3Rl
+YWQsIEkgd291bGQgbGlrZSB0aGUgZGV2aWNlIHRvIHNpbXBseSANCnNob3cgdXAgYXMgL3N5cy9j
+bGFzcy9ncGlvL2Rldl9yZXNldC8gKG9yIHNpbWlsYXIpIHdpdGggdGhlIGV4cGVjdGVkIA0KR1BJ
+TyBwcm9wZXJ0aWVzIGluIHRoaXMgZGlyZWN0b3J5Lg0KDQpBcyBhIHdvcmthcm91bmQsIEkgaGF2
+ZSBzZWVuIHNvbWUgcGVvcGxlIGNvbmZpZ3VyZSBHUElPcyB3aXRoIHRoZSBMRUQgDQpkcml2ZXIg
+YW5kIGNvbnRyb2wgdGhlIHBpbiB3aXRoICJicmlnaHRuZXNzIiwgYnV0IHRoaXMgc2VlbXMgbGlr
+ZSBhIA0KaGFjay4gIEkgYW0gYXdhcmUgb2YgZ3Bpby1ob2csIGJ1dCBhcyBmYXIgYXMgSSBjYW4g
+dGVsbCwgb25jZSBob2dnZWQsIA0KdGhlIEdQSU8gaXMgbm90IGV4cG9zZWQgYW5kIGNhbm5vdCBi
+ZSBjaGFuZ2VkIChhdCBsZWFzdCBieSB1c2Vyc3BhY2UpLg0KDQpJIHNlZSB0aGF0IHRoZXJlIGhh
+dmUgYmVlbiBzaW1pbGFyIGRpc2N1c3Npb25zIGJlZm9yZSBbMV0sIGJ1dCB0aGV5IA0KZG9uJ3Qg
+c2VlbSB0byBoYXZlIHJlYWNoZWQgYSBjb25jbHVzaW9uLiAgQmVmb3JlIHdvcmtpbmcgb24gc29t
+ZXRoaW5nLCBJIA0Kd2FudGVkIHRvIGNvbnRhY3QgdGhlIGxpc3QgdG8gZ2V0IHNvbWUgZGlyZWN0
+aW9uIG9uIHRoZSByaWdodCB3YXkgdG8gDQpwcm9jZWVkLiAgSXMgYSBkZWRpY2F0ZWQgZHJpdmVy
+IHRoZSByaWdodCB3YXkgdG8gZG8gdGhpcz8gIE9yIGFuIG9wdGlvbiANCmFkZGVkIHRvIHRoZSBH
+UElPIHN5c3RlbT8gIEkgc2VlIHNvbWUgcHJvcG9zYWxzIGluIFsyXSAuLi4gaXMgDQppbXBsZW1l
+bnRpbmcgdGhlIHN1Z2dlc3Rpb25zIHRoZXJlIHRoZSBiZXN0IHdheT8NCg0KVGhhbmsgeW91LA0K
+S2V2aW4gU21pdGgNCg0KWzFdIGh0dHBzOi8vd3d3Lm1haWwtYXJjaGl2ZS5jb20vbGludXgtZ3Bp
+b0B2Z2VyLmtlcm5lbC5vcmcvbXNnMDA4NjQuaHRtbA0KWzJdIGh0dHBzOi8vd3d3Lm1haWwtYXJj
+aGl2ZS5jb20vbGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmcvbXNnMDEwODQuaHRtbA==
