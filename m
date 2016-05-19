@@ -1,46 +1,33 @@
-From: Kevin Smith <kevin.smith@elecsyscorp.com>
-Subject: Expose named GPIOs through sysfs
-Date: Wed, 18 May 2016 20:43:36 +0000
-Message-ID: <573CD3FA.10306@elecsyscorp.com>
+From: Vignesh R <vigneshr@ti.com>
+Subject: [PATCH 0/2] AM335x ICE: Add support for PCA9536 GPIO expander
+Date: Thu, 19 May 2016 12:17:28 +0530
+Message-ID: <1463640450-16762-1-git-send-email-vigneshr@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from s12p02o142.mxlogic.net ([208.65.145.65]:40679 "EHLO
-	s12p02o142.mxlogic.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752082AbcERUva (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 May 2016 16:51:30 -0400
-Content-Language: en-US
-Content-ID: <10EA2305E9E00145A53AC45AAE7790D4@dciincorporated.com>
+Received: from comal.ext.ti.com ([198.47.26.152]:44576 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752061AbcESGsZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 19 May 2016 02:48:25 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>
+Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vignesh R <vigneshr@ti.com>
 
-SGVsbG8sDQoNCkkgaGF2ZSBzZXZlcmFsIEdQSU9zIHRoYXQgYXJlIG5vdCBhc3NvY2lhdGVkIHdp
-dGgga2VybmVsIGRyaXZlcnMgdGhhdCBJIA0Kd291bGQgbGlrZSB0byBleHBvc2UgdG8gdXNlcnNw
-YWNlIHdpdGggbmFtZXMgY29ycmVzcG9uZGluZyB0byB0aGVpciANCmZ1bmN0aW9ucy4gIEkgYW0g
-b24gQXJtLCBzbyBJIHdvdWxkIGxpa2UgdG8gYmUgYWJsZSB0byBzcGVjaWZ5IHRoaXMgDQp0aHJv
-dWdoIGEgZGV2aWNlIHRyZWUuDQoNCkFzIGEgY29uY3JldGUgZXhhbXBsZSwgSSBoYXZlIGEgVVNC
-IGRldmljZSB0aGF0IGlzIGNvbnRyb2xsZWQgd2l0aCBhIA0KdXNlcnNwYWNlIGxpYnVzYiBkcml2
-ZXIgd2hpY2ggaGFzIGEgcmVzZXQgcGluIGNvbm5lY3RlZCBieSBHUElPLiAgSSANCndvdWxkIGxp
-a2UgdG8gZXhwb3NlIHRoaXMgbGluZSBhcyBkZXZfcmVzZXQuICBSaWdodCBub3csIHVzZXJzcGFj
-ZSBoYXMgDQp0byBrbm93IHRoZSBHUElPIG51bWJlciwgZXhwb3J0IHRoZSBncGlvLCBtYW51YWxs
-eSBjb25maWd1cmUgaXQgYXMgYW4gDQpvdXRwdXQsIHRoZW4gc2V0IGl0cyB2YWx1ZS4gIEluc3Rl
-YWQsIEkgd291bGQgbGlrZSB0aGUgZGV2aWNlIHRvIHNpbXBseSANCnNob3cgdXAgYXMgL3N5cy9j
-bGFzcy9ncGlvL2Rldl9yZXNldC8gKG9yIHNpbWlsYXIpIHdpdGggdGhlIGV4cGVjdGVkIA0KR1BJ
-TyBwcm9wZXJ0aWVzIGluIHRoaXMgZGlyZWN0b3J5Lg0KDQpBcyBhIHdvcmthcm91bmQsIEkgaGF2
-ZSBzZWVuIHNvbWUgcGVvcGxlIGNvbmZpZ3VyZSBHUElPcyB3aXRoIHRoZSBMRUQgDQpkcml2ZXIg
-YW5kIGNvbnRyb2wgdGhlIHBpbiB3aXRoICJicmlnaHRuZXNzIiwgYnV0IHRoaXMgc2VlbXMgbGlr
-ZSBhIA0KaGFjay4gIEkgYW0gYXdhcmUgb2YgZ3Bpby1ob2csIGJ1dCBhcyBmYXIgYXMgSSBjYW4g
-dGVsbCwgb25jZSBob2dnZWQsIA0KdGhlIEdQSU8gaXMgbm90IGV4cG9zZWQgYW5kIGNhbm5vdCBi
-ZSBjaGFuZ2VkIChhdCBsZWFzdCBieSB1c2Vyc3BhY2UpLg0KDQpJIHNlZSB0aGF0IHRoZXJlIGhh
-dmUgYmVlbiBzaW1pbGFyIGRpc2N1c3Npb25zIGJlZm9yZSBbMV0sIGJ1dCB0aGV5IA0KZG9uJ3Qg
-c2VlbSB0byBoYXZlIHJlYWNoZWQgYSBjb25jbHVzaW9uLiAgQmVmb3JlIHdvcmtpbmcgb24gc29t
-ZXRoaW5nLCBJIA0Kd2FudGVkIHRvIGNvbnRhY3QgdGhlIGxpc3QgdG8gZ2V0IHNvbWUgZGlyZWN0
-aW9uIG9uIHRoZSByaWdodCB3YXkgdG8gDQpwcm9jZWVkLiAgSXMgYSBkZWRpY2F0ZWQgZHJpdmVy
-IHRoZSByaWdodCB3YXkgdG8gZG8gdGhpcz8gIE9yIGFuIG9wdGlvbiANCmFkZGVkIHRvIHRoZSBH
-UElPIHN5c3RlbT8gIEkgc2VlIHNvbWUgcHJvcG9zYWxzIGluIFsyXSAuLi4gaXMgDQppbXBsZW1l
-bnRpbmcgdGhlIHN1Z2dlc3Rpb25zIHRoZXJlIHRoZSBiZXN0IHdheT8NCg0KVGhhbmsgeW91LA0K
-S2V2aW4gU21pdGgNCg0KWzFdIGh0dHBzOi8vd3d3Lm1haWwtYXJjaGl2ZS5jb20vbGludXgtZ3Bp
-b0B2Z2VyLmtlcm5lbC5vcmcvbXNnMDA4NjQuaHRtbA0KWzJdIGh0dHBzOi8vd3d3Lm1haWwtYXJj
-aGl2ZS5jb20vbGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmcvbXNnMDEwODQuaHRtbA==
+
+
+This patch series adds support for TI PCA9536 GPIO expander present on
+AM335x ICE board.
+
+Vignesh R (2):
+  gpio: pca953x: Add support for TI PCA9536
+  ARM: dts: am335x-icev2: Add DT node for TI PCA9536
+
+ Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 1 +
+ arch/arm/boot/dts/am335x-icev2.dts                      | 7 +++++++
+ drivers/gpio/gpio-pca953x.c                             | 1 +
+ 3 files changed, 9 insertions(+)
+
+-- 
+2.8.2
+
