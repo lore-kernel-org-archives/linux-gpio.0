@@ -1,31 +1,33 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH] arm64: vulcan: enable GPIOLIB in Kconfig
-Date: Fri, 20 May 2016 11:11:20 -0700
-Message-ID: <573F5348.6040907@gmail.com>
-References: <1461819767-17539-1-git-send-email-kamlakant.patel@broadcom.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/2] gpio: pca953x: Add support for TI PCA9536
+Date: Fri, 20 May 2016 16:44:07 -0500
+Message-ID: <20160520214407.GA18432@rob-hp-laptop>
+References: <1463640450-16762-1-git-send-email-vigneshr@ti.com>
+ <1463640450-16762-2-git-send-email-vigneshr@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f65.google.com ([209.85.220.65]:33247 "EHLO
-	mail-pa0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750759AbcETSLX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 May 2016 14:11:23 -0400
-Received: by mail-pa0-f65.google.com with SMTP id gh9so11650852pac.0
-        for <linux-gpio@vger.kernel.org>; Fri, 20 May 2016 11:11:23 -0700 (PDT)
-In-Reply-To: <1461819767-17539-1-git-send-email-kamlakant.patel@broadcom.com>
+Received: from mail.kernel.org ([198.145.29.136]:58414 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751065AbcETVoN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 20 May 2016 17:44:13 -0400
+Content-Disposition: inline
+In-Reply-To: <1463640450-16762-2-git-send-email-vigneshr@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: kamlakant.patel@broadcom.com, Will Deacon <will.deacon@arm.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, "Jayachandran C ." <jchandra@broadcom.com>, linux-arm-kernel@lists.infradead.org
+To: Vignesh R <vigneshr@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Tony Lindgren <tony@atomide.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 04/27/2016 10:02 PM, kamlakant.patel@broadcom.com wrote:
-> From: Kamlakant Patel <kamlakant.patel@broadcom.com>
+On Thu, May 19, 2016 at 12:17:29PM +0530, Vignesh R wrote:
+> TI PCA9536 is 4-Bit I2C GPIO expander without interrupt support[1].
+> Add support for the same.
 > 
-> Add select GPIOLIB in Kconfig for Broadcom Vulcan ARM64 GPIO driver.
+> [1] TRM: http://www.ti.com/lit/ds/symlink/pca9536.pdf
 > 
-> Signed-off-by: Kamlakant Patel <kamlakant.patel@broadcom.com>
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 1 +
+>  drivers/gpio/gpio-pca953x.c                             | 1 +
+>  2 files changed, 2 insertions(+)
 
-Applied to soc-arm64/next, thanks!
--- 
-Florian
+Acked-by: Rob Herring <robh@kernel.org>
