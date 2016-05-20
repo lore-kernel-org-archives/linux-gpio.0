@@ -1,54 +1,77 @@
-From: Martinez Kristofer <kristofer.s.martinez@gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: am335x-icev2: Add DT node for TI PCA9536
-Date: Thu, 19 May 2016 17:58:36 +0800
-Message-ID: <CABtop_EjYF+8i4=GTLWyKGO3CMm9o3Qgv104ZrOJYyExAwDuoA@mail.gmail.com>
-References: <1463640450-16762-1-git-send-email-vigneshr@ti.com> <1463640450-16762-3-git-send-email-vigneshr@ti.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v3] gpio: UniPhier: add driver for UniPhier GPIO controller
+Date: Fri, 20 May 2016 13:30:10 +0900
+Message-ID: <CAK7LNAQcfrvuG6fD+gN2Ojq4wzCSNa=qpr5kh2QSFJZMCA2UaQ@mail.gmail.com>
+References: <1436841787-7734-1-git-send-email-yamada.masahiro@socionext.com>
+	<CACRpkdYaAMw5U3pctf96j0QpY2Qf+e=LX740F0okCmVU6pXkhA@mail.gmail.com>
+	<CAK7LNAQ+_ynWT944fPZsHCzMBLtfNu5AnppzaOxNgPSBTvj_tw@mail.gmail.com>
+	<CACRpkdZK41P-1JQsL6RiywqFEUj6=g5xJMKy86wDdp6BxLJNzQ@mail.gmail.com>
+	<CAK7LNASd9z99RBmUgLVEM1WuLNSzGFM8qzrHwDf58tgGDy2SAw@mail.gmail.com>
+	<CACRpkdbBfidn_otxzSV-8HMv2AuD-htUbcRHZ8n9CHAUO=TB9w@mail.gmail.com>
+	<CAK7LNAQH+Ge61+MJo2rLmjCBJRnYviT3LyCo0nrOPRQL+RtK2g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1463640450-16762-3-git-send-email-vigneshr@ti.com>
+In-Reply-To: <CAK7LNAQH+Ge61+MJo2rLmjCBJRnYviT3LyCo0nrOPRQL+RtK2g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vignesh R <vigneshr@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 19, 2016 at 2:47 PM, Vignesh R <vigneshr@ti.com> wrote:
-> AM335x ICE board has a TI PCA9536 chip connected to I2C0 at address
-> 0x41. Add DT entry for the same.
->
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> ---
->  arch/arm/boot/dts/am335x-icev2.dts | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/am335x-icev2.dts b/arch/arm/boot/dts/am335x-icev2.dts
-> index e271013e78a6..7d8b8fefdf08 100644
-> --- a/arch/arm/boot/dts/am335x-icev2.dts
-> +++ b/arch/arm/boot/dts/am335x-icev2.dts
-> @@ -206,6 +206,13 @@
->                 gpio-controller;
->                 #gpio-cells = <2>;
->         };
-> +
-> +       pca9536: gpio@41 {
-> +               compatible = "ti,pca9536";
-> +               reg = <0x41>;
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +       };
->  };
->
->  #include "tps65910.dtsi"
+Hi Linus,
 
-Acked-by: Kristofer Martinez <Kristofer.S.Martinez@gmail.com>
 
-M.K.
+2015-07-16 16:48 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> Hi Linus,
 
-> --
-> 2.8.2
 >
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> OK, I will do it in v4.
+
+
+I has been away from my GPIO driver upstreaming
+for a long time for some reason.
+
+I sent v3 ten months ago.
+http://patchwork.ozlabs.org/patch/494860/
+
+
+In the meantime, there have been various updates
+in the GPIO frame-work.
+
+So, I'd like to know the recommended driver coding style
+based on 4.7-rc1.
+
+
+Diving into the git-log so far, I came up the following list:
+
+[1] The "dev" member of gpiochip was renamed to "parent"
+
+[2] The most recommended register function is now
+    devm_gpiochip_add_data()
+
+[3] Pass the driver private data to the
+    3rd argument of devm_gpiochip_add_data().
+
+[4] Do not use container_of() to covert
+    from gpiochip to driver private data.
+    Instead, gpiochip_get_data() should be used.
+
+    (I used of_mm_gpio_chip in v3,
+     but I needed to use container_of() to
+     convert from gpiochip to of_mm_gpio_chip.
+     I am wondering if you are happy with it or not.)
+
+[5] gpiochip.owner is being deprecated.
+    So, platform drivers need not set
+     "gpiochip.owner =  THIS_MODULE".
+
+
+Correct?
+Is there anything else missing?
+
+Any advice is appreciated.
+
+
+-- 
+Best Regards
+Masahiro Yamada
