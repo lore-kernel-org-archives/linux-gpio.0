@@ -1,33 +1,56 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/2] gpio: pca953x: Add support for TI PCA9536
-Date: Fri, 20 May 2016 16:44:07 -0500
-Message-ID: <20160520214407.GA18432@rob-hp-laptop>
-References: <1463640450-16762-1-git-send-email-vigneshr@ti.com>
- <1463640450-16762-2-git-send-email-vigneshr@ti.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: Re: [PATCH] pinctrl: samsung: Suppress unbinding to prevent
+ theoretical attacks
+Date: Fri, 20 May 2016 22:29:50 -0400
+Message-ID: <7d725a0a-216e-40d9-8a65-62eeb2faaf34@osg.samsung.com>
+References: <1463464926-17482-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:58414 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751065AbcETVoN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 20 May 2016 17:44:13 -0400
-Content-Disposition: inline
-In-Reply-To: <1463640450-16762-2-git-send-email-vigneshr@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1463464926-17482-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Vignesh R <vigneshr@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Tony Lindgren <tony@atomide.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Thu, May 19, 2016 at 12:17:29PM +0530, Vignesh R wrote:
-> TI PCA9536 is 4-Bit I2C GPIO expander without interrupt support[1].
-> Add support for the same.
+Hello Krzysztof,
+
+On 05/17/2016 02:02 AM, Krzysztof Kozlowski wrote:
+> Although unbinding a pinctrl driver requires root privileges but it
+> still might be used theoretically in certain attacks (by triggering NULL
+> pointer exception or memory corruption).
 > 
-> [1] TRM: http://www.ti.com/lit/ds/symlink/pca9536.pdf
+> Samsung pincontrol drivers are essential for system operation so their
+> removal is not expected. They do not implement remove() driver callback
+> and they are not buildable as modules.
 > 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> Suppression of the unbinding will prevent triggering NULL pointer
+> exception like this (Odroid XU3):
+> 
+>   $ echo 13400000.pinctrl > /sys/bus/platform/drivers/samsung-pinctrl/unbind
+>   $ cat /sys/kernel/debug/gpio
+> 
+>   Unable to handle kernel NULL pointer dereference at virtual address 00000c44
+>   pgd = ec41c000
+>   [00000c44] *pgd=6d448835, *pte=00000000, *ppte=00000000
+>   Internal error: Oops: 17 [#1] PREEMPT SMP ARM
+>     (samsung_gpio_get) from [<c034f9a0>] (gpiolib_seq_show+0x1b0/0x26c)
+>     (gpiolib_seq_show) from [<c01fb8c0>] (seq_read+0x304/0x4b8)
+>     (seq_read) from [<c02dbc78>] (full_proxy_read+0x4c/0x64)
+>     (full_proxy_read) from [<c01d9fb0>] (__vfs_read+0x2c/0x110)
+>     (__vfs_read) from [<c01db400>] (vfs_read+0x8c/0x110)
+>     (vfs_read) from [<c01db4c4>] (SyS_read+0x40/0x8c)
+>     (SyS_read) from [<c01078c0>] (ret_fast_syscall+0x0/0x3c)
+> 
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
->  Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 1 +
->  drivers/gpio/gpio-pca953x.c                             | 1 +
->  2 files changed, 2 insertions(+)
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
