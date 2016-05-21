@@ -1,56 +1,52 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH] pinctrl: samsung: Suppress unbinding to prevent
- theoretical attacks
-Date: Fri, 20 May 2016 22:29:50 -0400
-Message-ID: <7d725a0a-216e-40d9-8a65-62eeb2faaf34@osg.samsung.com>
-References: <1463464926-17482-1-git-send-email-k.kozlowski@samsung.com>
+From: <hongkun.cao@mediatek.com>
+Subject: [PATCH] pinctrl: mediatek: fix dual-edge code defect
+Date: Sat, 21 May 2016 15:23:39 +0800
+Message-ID: <1463815419-11719-1-git-send-email-hongkun.cao@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1463464926-17482-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, matthias.bgg@gmail.com, linus.walleij@linaro.org, erin.lo@mediatek.com
+Cc: devicetree@vger.kernel.org, "hongkun.cao" <hongkun.cao@mediatek.com>, srv_heupstream@mediatek.com, hongzhou.yang@mediatek.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, yingjoe.chen@mediatek.com, inux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Krzysztof,
+From: "hongkun.cao" <hongkun.cao@mediatek.com>
 
-On 05/17/2016 02:02 AM, Krzysztof Kozlowski wrote:
-> Although unbinding a pinctrl driver requires root privileges but it
-> still might be used theoretically in certain attacks (by triggering NULL
-> pointer exception or memory corruption).
-> 
-> Samsung pincontrol drivers are essential for system operation so their
-> removal is not expected. They do not implement remove() driver callback
-> and they are not buildable as modules.
-> 
-> Suppression of the unbinding will prevent triggering NULL pointer
-> exception like this (Odroid XU3):
-> 
->   $ echo 13400000.pinctrl > /sys/bus/platform/drivers/samsung-pinctrl/unbind
->   $ cat /sys/kernel/debug/gpio
-> 
->   Unable to handle kernel NULL pointer dereference at virtual address 00000c44
->   pgd = ec41c000
->   [00000c44] *pgd=6d448835, *pte=00000000, *ppte=00000000
->   Internal error: Oops: 17 [#1] PREEMPT SMP ARM
->     (samsung_gpio_get) from [<c034f9a0>] (gpiolib_seq_show+0x1b0/0x26c)
->     (gpiolib_seq_show) from [<c01fb8c0>] (seq_read+0x304/0x4b8)
->     (seq_read) from [<c02dbc78>] (full_proxy_read+0x4c/0x64)
->     (full_proxy_read) from [<c01d9fb0>] (__vfs_read+0x2c/0x110)
->     (__vfs_read) from [<c01db400>] (vfs_read+0x8c/0x110)
->     (vfs_read) from [<c01db4c4>] (SyS_read+0x40/0x8c)
->     (SyS_read) from [<c01078c0>] (ret_fast_syscall+0x0/0x3c)
-> 
-> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
+When a dual-edge irq is triggered, an incorrect irq will be reported on
+condition that the external signal is not stable and this incorrect irq
+has been registered.
+Correct the register offset.
 
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: hongkun.cao <hongkun.cao@mediatek.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Best regards,
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index 2bbe6f7..92ae49f 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1255,9 +1255,10 @@ static void mtk_eint_irq_handler(struct irq_desc *desc)
+ 	const struct mtk_desc_pin *pin;
+ 
+ 	chained_irq_enter(chip, desc);
+-	for (eint_num = 0; eint_num < pctl->devdata->ap_num; eint_num += 32) {
++	for (eint_num = 0;
++	     eint_num < pctl->devdata->ap_num;
++	     eint_num += 32, reg += 4) {
+ 		status = readl(reg);
+-		reg += 4;
+ 		while (status) {
+ 			offset = __ffs(status);
+ 			index = eint_num + offset;
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.7.9.5
