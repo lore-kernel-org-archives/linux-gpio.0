@@ -1,53 +1,60 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: xway: use devm_gpiochip_add_data()
-Date: Mon, 23 May 2016 11:02:53 +0200
-Message-ID: <1463994173-13599-1-git-send-email-linus.walleij@linaro.org>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH] pinctrl: mediatek: fix dual-edge code defect
+Date: Mon, 23 May 2016 12:39:33 +0200
+Message-ID: <5742DDE5.7050701@gmail.com>
+References: <1463815419-11719-1-git-send-email-hongkun.cao@mediatek.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:35006 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753303AbcEWJDA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 May 2016 05:03:00 -0400
-Received: by mail-lb0-f179.google.com with SMTP id ww9so53195390lbc.2
-        for <linux-gpio@vger.kernel.org>; Mon, 23 May 2016 02:02:59 -0700 (PDT)
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34230 "EHLO
+	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750882AbcEWKji (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 May 2016 06:39:38 -0400
+In-Reply-To: <1463815419-11719-1-git-send-email-hongkun.cao@mediatek.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, John Crispin <blogic@openwrt.org>, Pramod Gurav <pramod.gurav@smartplayin.com>, Martin Schiller <mschiller@tdt.de>
+To: hongkun.cao@mediatek.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linus.walleij@linaro.org, erin.lo@mediatek.com
+Cc: devicetree@vger.kernel.org, srv_heupstream@mediatek.com, hongzhou.yang@mediatek.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, inux-mediatek@lists.infradead.org, yingjoe.chen@mediatek.com, linux-arm-kernel@lists.infradead.org
 
-Avoid a gpiochip_free() and use standard functions.
 
-Cc: John Crispin <blogic@openwrt.org>
-Cc: Pramod Gurav <pramod.gurav@smartplayin.com>
-Cc: Martin Schiller <mschiller@tdt.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/pinctrl-xway.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
-index a13f2b6f6fc0..b9375544dff0 100644
---- a/drivers/pinctrl/pinctrl-xway.c
-+++ b/drivers/pinctrl/pinctrl-xway.c
-@@ -1724,9 +1724,9 @@ static int pinmux_xway_probe(struct platform_device *pdev)
- 	}
- 	xway_pctrl_desc.pins = xway_info.pads;
- 
--	/* load the gpio chip */
-+	/* register the gpio chip */
- 	xway_chip.parent = &pdev->dev;
--	ret = gpiochip_add(&xway_chip);
-+	ret = devm_gpiochip_add_data(&pdev->dev, &xway_chip, NULL);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to register gpio chip\n");
- 		return ret;
-@@ -1749,7 +1749,6 @@ static int pinmux_xway_probe(struct platform_device *pdev)
- 	/* register with the generic lantiq layer */
- 	ret = ltq_pinctrl_register(pdev, &xway_info);
- 	if (ret) {
--		gpiochip_remove(&xway_chip);
- 		dev_err(&pdev->dev, "Failed to register pinctrl driver\n");
- 		return ret;
- 	}
--- 
-2.4.11
+On 21/05/16 09:23, hongkun.cao@mediatek.com wrote:
+> From: "hongkun.cao" <hongkun.cao@mediatek.com>
+>
+> When a dual-edge irq is triggered, an incorrect irq will be reported on
+> condition that the external signal is not stable and this incorrect irq
+> has been registered.
+> Correct the register offset.
+>
 
+I'm not sure what you want to say. From what I can see the without this 
+fix, the the wrong IRQ will be cleared and raised. Is this what you are 
+addressing?
+
+If so:
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+
+> Signed-off-by: hongkun.cao <hongkun.cao@mediatek.com>
+> ---
+>   drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> index 2bbe6f7..92ae49f 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> @@ -1255,9 +1255,10 @@ static void mtk_eint_irq_handler(struct irq_desc *desc)
+>   	const struct mtk_desc_pin *pin;
+>
+>   	chained_irq_enter(chip, desc);
+> -	for (eint_num = 0; eint_num < pctl->devdata->ap_num; eint_num += 32) {
+> +	for (eint_num = 0;
+> +	     eint_num < pctl->devdata->ap_num;
+> +	     eint_num += 32, reg += 4) {
+>   		status = readl(reg);
+> -		reg += 4;
+>   		while (status) {
+>   			offset = __ffs(status);
+>   			index = eint_num + offset;
+>
