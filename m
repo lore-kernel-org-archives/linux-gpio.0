@@ -1,64 +1,38 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V12 2/2] pinctrl: max77620: add pincontrol driver for
- MAX77620/MAX20024
-Date: Tue, 24 May 2016 16:48:15 +0530
-Message-ID: <57443877.4010106@nvidia.com>
-References: <1463116755-30469-1-git-send-email-ldewangan@nvidia.com>	<1463116755-30469-4-git-send-email-ldewangan@nvidia.com> <CACRpkdZNDEL855=Mruwm4U7eFz-QiuvXuDP83QPOupkpj2Jpkg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: dt-bindings: add ibm,ppc4xx-gpio binding
+Date: Tue, 24 May 2016 13:43:29 +0200
+Message-ID: <CACRpkdb2o3b3jN2de7qMmaPmtYK2QArQeHuhQrQgGb8p284T=Q@mail.gmail.com>
+References: <c7b118c342c161954126e2e82cf1a0a6a127b4c2.1463002267.git.chunkeey@googlemail.com>
+	<20160516152746.GA13649@rob-hp-laptop>
+	<20160516165618.GA29776@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:11948 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751581AbcEXLaY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 May 2016 07:30:24 -0400
-In-Reply-To: <CACRpkdZNDEL855=Mruwm4U7eFz-QiuvXuDP83QPOupkpj2Jpkg@mail.gmail.com>
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:33276 "EHLO
+	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754811AbcEXLna (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 May 2016 07:43:30 -0400
+Received: by mail-oi0-f46.google.com with SMTP id k23so21572723oih.0
+        for <linux-gpio@vger.kernel.org>; Tue, 24 May 2016 04:43:30 -0700 (PDT)
+In-Reply-To: <20160516165618.GA29776@rob-hp-laptop>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Christian Lamparter <chunkeey@googlemail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Alistair Popple <alistair@popple.id.au>, Matt Porter <mporter@kernel.crashing.org>
 
+On Mon, May 16, 2016 at 6:56 PM, Rob Herring <robh@kernel.org> wrote:
+> On Mon, May 16, 2016 at 10:27:46AM -0500, Rob Herring wrote:
+>> On Thu, May 12, 2016 at 12:07:48AM +0200, Christian Lamparter wrote:
 
-On Tuesday 24 May 2016 04:51 PM, Linus Walleij wrote:
-> On Fri, May 13, 2016 at 7:19 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+>> > This patch adds binding information for IBM/AMCC/APM GPIO
+>> > Controllers of the PowerPC 4XX series and compatible SoCs.
+(...)
+>> Acked-by: Rob Herring <robh@kernel.org>
 >
->> MAXIM Semiconductor's PMIC, MAX77620/MAX20024 has 8 GPIO pins
->> which also act as the special function in alternate mode. Also
->> there is configuration like push-pull, open drain, FPS timing
->> etc for these pins.
->>
->> Add pin control driver to configure these parameters through
->> pin control APIs.
->>
->> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Patch applied for the next kernel cycle.
-Thank you very much.
+> As this is just a binding doc, I've applied it.
 
->
->> +       switch (param) {
->> +       case PIN_CONFIG_DRIVE_OPEN_DRAIN:
->> +               if (mpci->pin_info[pin].drv_type == MAX77620_PIN_OD_DRV)
->> +                       arg = 1;
->> +               break;
-> Hmmmm OK is this one of those cases we discussed where
-> you need to be able to tell the pin config back-end to do the
-> open draining (etc) from the GPIO driver?
+OK less work on my part :)
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-The back end request was for tegra-gpio, not for this. On Tegra GPIO the 
-open drain configurations are in different register space i.e. pin 
-control register space instead of gpio controller.
-
-In this driver, it is configuration via pinctrl. Here pincontrol and 
-gpio driver share same registers.
-Now, as we have the method to configure the open drain bit from the GPIO 
-interface, we really dont need to do this from pinctrl framework.
-
-For doing from GPIO framework, the client need to aware that gpio is 
-open drain type.
-
-Can we make something that open drain of pins can be provided via some 
-common interface like DT of controller based on platforms configuration  
-and client need not to worry about this? For client, it will be simple 
-gpio calls.
-
+Yours,
+Linus Walleij
