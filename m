@@ -1,18 +1,18 @@
 From: Kevin Hilman <khilman@baylibre.com>
 Subject: Re: [PATCH 0/7] pinctrl: meson: Add a bunch more pins
-Date: Tue, 24 May 2016 09:14:28 -0700
-Message-ID: <m2eg8rigbf.fsf@baylibre.com>
+Date: Tue, 24 May 2016 11:29:00 -0700
+Message-ID: <m260u3ia37.fsf@baylibre.com>
 References: <1462544486-9516-1-git-send-email-khilman@baylibre.com>
 	<CACRpkdY9oGZLt431NwTaFmZk98O8n3ZnMA1odhYZtcH7P1p=Jg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f178.google.com ([209.85.192.178]:34173 "EHLO
-	mail-pf0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752102AbcEXQOe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 May 2016 12:14:34 -0400
-Received: by mail-pf0-f178.google.com with SMTP id y69so8376775pfb.1
-        for <linux-gpio@vger.kernel.org>; Tue, 24 May 2016 09:14:33 -0700 (PDT)
+Received: from mail-pf0-f177.google.com ([209.85.192.177]:35285 "EHLO
+	mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752581AbcEXS3D (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 May 2016 14:29:03 -0400
+Received: by mail-pf0-f177.google.com with SMTP id g64so9551359pfb.2
+        for <linux-gpio@vger.kernel.org>; Tue, 24 May 2016 11:29:02 -0700 (PDT)
 In-Reply-To: <CACRpkdY9oGZLt431NwTaFmZk98O8n3ZnMA1odhYZtcH7P1p=Jg@mail.gmail.com>
 	(Linus Walleij's message of "Tue, 24 May 2016 11:23:37 +0200")
 Sender: linux-gpio-owner@vger.kernel.org
@@ -37,6 +37,12 @@ Linus Walleij <linus.walleij@linaro.org> writes:
 > Torvalds' HEAD and resend, and include Carlo's ACK on them
 > so I can merge them in the next kernel cycle?
 
-Coming right up...
+Looking closer, these have dependencies on the DT changes that you've
+suggested we take through arm-soc, so it would be cleaner if I take
+these with your ack through the amlogic tree.
+
+Since it's a brand new driver, I don't expect there to be conflicts.
+
+Does that work for you?
 
 Kevin
