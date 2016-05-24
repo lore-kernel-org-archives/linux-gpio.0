@@ -1,64 +1,29 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH] pinctrl: oxnas: Add GPIO get_direction
-Date: Tue, 24 May 2016 12:03:24 +0200
-Message-ID: <1464084204-2271-1-git-send-email-narmstrong@baylibre.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v10 0/2] gpio: add DT support for memory-mapped GPIOs
+Date: Tue, 24 May 2016 12:43:03 +0200
+Message-ID: <CACRpkdZybWKbZVaQ9hcEfb2oghMwZEq-J48hk19fb_RgtOSgKg@mail.gmail.com>
+References: <cover.1463172434.git.chunkeey@googlemail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1463172434.git.chunkeey@googlemail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>
+To: Christian Lamparter <chunkeey@googlemail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Joachim Eastwood <manabian@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Implement a get_direction callback for the OXNAS GPIO driver in order
-to have pin output polarity in debugfs and new userspace ABI.
+On Fri, May 13, 2016 at 11:07 PM, Christian Lamparter
+<chunkeey@googlemail.com> wrote:
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/pinctrl/pinctrl-oxnas.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+> v9 -> v10:
+>         - split "gpio: mmio: add DT support for memory-mapped GPIOs"
+>           into two parts.
+>                 - PATCH 1/2 adds the DT infrastructure
+>                 - PATCH 2/2 adds the "wd,mbl-gpio" driver binding and
+>                   property parser.
+>         - removed "move clps711x, moxart, ts4800 and gpio-ge into gpio-mmio"
 
-Linus,
+This minimal patch set looks good to me, Alexandre is this OK with you?
 
-Sorry, I should have implemented it earlier but I was focused to
-have a clean driver for upstream !
-
-Thanks,
-Neil
-
-diff --git a/drivers/pinctrl/pinctrl-oxnas.c b/drivers/pinctrl/pinctrl-oxnas.c
-index 5fd113c..2c6abef 100644
---- a/drivers/pinctrl/pinctrl-oxnas.c
-+++ b/drivers/pinctrl/pinctrl-oxnas.c
-@@ -49,6 +49,7 @@
- 
- /* GPIO Registers */
- #define INPUT_VALUE	0x00
-+#define OUTPUT_EN	0x04
- #define IRQ_PENDING	0x0c
- #define OUTPUT_SET	0x14
- #define OUTPUT_CLEAR	0x18
-@@ -431,6 +432,15 @@ static int oxnas_gpio_request_enable(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
-+static int oxnas_gpio_get_direction(struct gpio_chip *chip,
-+				      unsigned int offset)
-+{
-+	struct oxnas_gpio_bank *bank = gpiochip_get_data(chip);
-+	u32 mask = BIT(offset);
-+
-+	return !(readl_relaxed(bank->reg_base + OUTPUT_EN) & mask);
-+}
-+
- static int oxnas_gpio_direction_input(struct gpio_chip *chip,
- 				      unsigned int offset)
- {
-@@ -664,6 +674,7 @@ static void oxnas_gpio_irq_handler(struct irq_desc *desc)
- 			.label = "GPIO" #_bank,				\
- 			.request = gpiochip_generic_request,		\
- 			.free = gpiochip_generic_free,			\
-+			.get_direction = oxnas_gpio_get_direction,	\
- 			.direction_input = oxnas_gpio_direction_input,	\
- 			.direction_output = oxnas_gpio_direction_output, \
- 			.get = oxnas_gpio_get,				\
--- 
-1.9.1
+Yours,
+Linus Walleij
