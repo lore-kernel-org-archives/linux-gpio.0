@@ -1,57 +1,42 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH] gpio: core: Do not call get_direction in atomic context for sleeping gpio
-Date: Tue, 24 May 2016 18:48:22 +0530
-Message-ID: <1464095903-29145-1-git-send-email-ldewangan@nvidia.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH 0/7] pinctrl: meson: Add a bunch more pins
+Date: Tue, 24 May 2016 09:14:28 -0700
+Message-ID: <m2eg8rigbf.fsf@baylibre.com>
+References: <1462544486-9516-1-git-send-email-khilman@baylibre.com>
+	<CACRpkdY9oGZLt431NwTaFmZk98O8n3ZnMA1odhYZtcH7P1p=Jg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from nat-hk.nvidia.com ([203.18.50.4]:29982 "EHLO
-	hkmmgate102.nvidia.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753075AbcEXNag (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 May 2016 09:30:36 -0400
+Received: from mail-pf0-f178.google.com ([209.85.192.178]:34173 "EHLO
+	mail-pf0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752102AbcEXQOe (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 May 2016 12:14:34 -0400
+Received: by mail-pf0-f178.google.com with SMTP id y69so8376775pfb.1
+        for <linux-gpio@vger.kernel.org>; Tue, 24 May 2016 09:14:33 -0700 (PDT)
+In-Reply-To: <CACRpkdY9oGZLt431NwTaFmZk98O8n3ZnMA1odhYZtcH7P1p=Jg@mail.gmail.com>
+	(Linus Walleij's message of "Tue, 24 May 2016 11:23:37 +0200")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-amlogic@lists.infradead.org, Carlo Caione <carlo@caione.org>, linux-meson <linux-meson@googlegroups.com>, Andreas =?utf-8?Q?F=C3=A4rb?= =?utf-8?Q?er?= <afaerber@suse.de>, Victor Wan <victor.wan@amlogic.com>, Jerry Cao <jerry.cao@amlogic.com>, Xing Wu <xing.xu@amlogic.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-When adding the gpiochip, the GPIO HW drivers' callback get_direction()
-get called in atomic context. Some of the GPIO HW drivers can sleep when
-accessing the register and hence it can create the sleeping call in
-atomic context.
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-Call get_direction() in non-atomic context from gpiochip_add() if GPIO
-HW driver is having sleepable callback i.e. chip->can_sleep = 1.
+> On Fri, May 6, 2016 at 4:21 PM, Kevin Hilman <khilman@baylibre.com> wrote:
+>
+>> Add support for several more devices, both in the EE domain and in the
+>> AO domain.  Also, add the pins to the corresponding DTS files.
+>>
+>> Tested on odroid-c2 and Amlogic P200 boards, and verified with working
+>> ethernet.
+>>
+>> Depends on the initial GXBB pinctrl support from Carlo[1].  Also
+>> available in my git tree[2] with all the dependencies included.
+>
+> These don't apply anomore sadly, Kevin can you rebase on
+> Torvalds' HEAD and resend, and include Carlo's ACK on them
+> so I can merge them in the next kernel cycle?
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Coming right up...
 
----
-This is found when implementing the get_direction() of max77620 on 20160520
-linux-next.
-
- drivers/gpio/gpiolib.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d407f904..4d04171 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -636,7 +636,15 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 			 * If we have .get_direction, set up the initial
- 			 * direction flag from the hardware.
- 			 */
--			int dir = chip->get_direction(chip, i);
-+			int dir;
-+
-+			if (chip->can_sleep)
-+				spin_unlock_irqrestore(&gpio_lock, flags);
-+
-+			dir = chip->get_direction(chip, i);
-+
-+			if (chip->can_sleep)
-+				spin_lock_irqsave(&gpio_lock, flags);
- 
- 			if (!dir)
- 				set_bit(FLAG_IS_OUT, &desc->flags);
--- 
-2.1.4
-
+Kevin
