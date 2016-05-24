@@ -1,71 +1,68 @@
-From: Sylvain Lemieux <slemieux.tyco@gmail.com>
-Subject: Re: [PATCH] gpio: lpc32xx: disable broken to_irq support
-Date: Tue, 24 May 2016 08:54:04 -0400
-Message-ID: <1464094444.27117.7.camel@localhost>
-References: <1462988400-21738-1-git-send-email-slemieux.tyco@gmail.com>
-	 <CACRpkdZuT-NQJSQAK6RMdGUqiMTo3d31uGoXqgSS1cCyGzy5ow@mail.gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 2/3] gpio: max77620: Implement gpio_get_direction callback
+Date: Tue, 24 May 2016 18:43:45 +0530
+Message-ID: <1464095626-28424-2-git-send-email-ldewangan@nvidia.com>
+References: <1464095626-28424-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35971 "EHLO
-	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751865AbcEXMyJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 May 2016 08:54:09 -0400
-Received: by mail-io0-f194.google.com with SMTP id m17so1237160ioi.3
-        for <linux-gpio@vger.kernel.org>; Tue, 24 May 2016 05:54:08 -0700 (PDT)
-In-Reply-To: <CACRpkdZuT-NQJSQAK6RMdGUqiMTo3d31uGoXqgSS1cCyGzy5ow@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1464095626-28424-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Vladimir Zapolskiy <vz@mleia.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+Implement gpio_get_direction() callback for MAX77620 GPIO.
+This is useful for debugfs and the userspace ABI.
 
-On Tue, 2016-05-24 at 12:57 +0200, Linus Walleij wrote:
-> On Wed, May 11, 2016 at 7:40 PM, Sylvain Lemieux
-> <slemieux.tyco@gmail.com> wrote:
-> 
-> > From: Sylvain Lemieux <slemieux@tycoint.com>
-> >
-> > The "to_irq" functionality is broken inside this driver since commit
-> > 76ba59f8366f ("genirq: Add irq_domain-aware core IRQ handler").
-> >
-> > The addition of the new lpc32xx irqchip driver in 4.7, fixed the
-> > lpc32xx platform interrupt issue.
-> >
-> > When switching to the new lpc32xx irqchip driver, a warning appear
-> > in the lpc32xx gpio driver: warning: "NR_IRQS" redefined.
-> >
-> > To remove this warning (temporary solution), this patch
-> > disables the broken "to_irq" mapping functionality support.
-> >
-> > Signed-off-by: Sylvain Lemieux <slemieux@tycoint.com>
-> 
-> Patch applied for fixes with Vladimir's ACK.
-> 
-> > * The final solution is to replace the existing lpc32xx gpio driver.
-> >   This work is currently in progress; refer to the following URL:
-> >   http://thread.gmane.org/gmane.linux.drivers.devicetree/144696
-> 
-> Hm, I see that the ambition was to merge the new irqchip
-> driver and the new GPIO driver in the same merge window.
-> Sorry if I was being too lazy/picky/whatever about the patch(es)
-> I guess I didn't quite get the scope of this change. :(
-> 
-The new LPC32xx GPIO driver can go in a separate merge window; 
-another version of the patchset is required.
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+ drivers/gpio/gpio-max77620.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-For 4.7, the goal was to remove the broken dependency in the 
-existing driver.
-
-> I should say that as long as we can agree that the new code
-> makes the kernel as a whole a better place, I am happy to
-> merge it. Sometimes also I need to zoom out from the GPIO
-> and pin control subsystem(s) and see the big picture.
-> 
-> Yours,
-> Linus Walleij
-
-Sylvain Lemieux
-
+diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
+index 35f365c..0bb6d93 100644
+--- a/drivers/gpio/gpio-max77620.c
++++ b/drivers/gpio/gpio-max77620.c
+@@ -9,6 +9,7 @@
+  */
+ 
+ #include <linux/gpio/driver.h>
++#include <linux/gpio.h>
+ #include <linux/interrupt.h>
+ #include <linux/mfd/max77620.h>
+ #include <linux/module.h>
+@@ -152,6 +153,23 @@ static int max77620_gpio_dir_output(struct gpio_chip *gc, unsigned int offset,
+ 	return ret;
+ }
+ 
++static int max77620_gpio_get_direction(struct gpio_chip *gc,
++				       unsigned int offset)
++{
++	struct max77620_gpio *mgpio = gpiochip_get_data(gc);
++	unsigned int val;
++	int ret;
++
++	ret = regmap_read(mgpio->rmap, GPIO_REG_ADDR(offset), &val);
++	if (ret < 0) {
++		dev_err(mgpio->dev, "GPIO register read failed: %d\n", ret);
++		return ret;
++	}
++
++	return (val & MAX77620_CNFG_GPIO_DIR_MASK) ?
++		GPIOF_DIR_IN : GPIOF_DIR_OUT;
++}
++
+ static int max77620_gpio_set_debounce(struct gpio_chip *gc,
+ 				      unsigned int offset,
+ 				      unsigned int debounce)
+@@ -236,6 +254,7 @@ static int max77620_gpio_probe(struct platform_device *pdev)
+ 	mgpio->gpio_chip.direction_input = max77620_gpio_dir_input;
+ 	mgpio->gpio_chip.get = max77620_gpio_get;
+ 	mgpio->gpio_chip.direction_output = max77620_gpio_dir_output;
++	mgpio->gpio_chip.get_direction = max77620_gpio_get_direction;
+ 	mgpio->gpio_chip.set_debounce = max77620_gpio_set_debounce;
+ 	mgpio->gpio_chip.set = max77620_gpio_set;
+ 	mgpio->gpio_chip.to_irq = max77620_gpio_to_irq;
+-- 
+2.1.4
