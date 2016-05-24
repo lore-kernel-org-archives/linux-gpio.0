@@ -1,45 +1,74 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v4 4/4] watchdog: ebc-c384_wdt: Allow build for X86_64
-Date: Mon, 23 May 2016 20:31:19 -0400
-Message-ID: <5f866ba9a06692b5a1360b116e2651c3b1596a79.1464049539.git.vilhelm.gray@gmail.com>
-References: <cover.1464049539.git.vilhelm.gray@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:36563 "EHLO
-	mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751947AbcEXAb1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 May 2016 20:31:27 -0400
-In-Reply-To: <cover.1464049539.git.vilhelm.gray@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: hongkun.cao <hongkun.cao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: mediatek: fix dual-edge code defect
+Date: Tue, 24 May 2016 11:10:54 +0800
+Message-ID: <1464059454.27362.16.camel@mtksdaap41>
+References: <1463815419-11719-1-git-send-email-hongkun.cao@mediatek.com>
+ <5742DDE5.7050701@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <5742DDE5.7050701-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, erin.lo-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: gregkh@linuxfoundation.org, akpm@linux-foundation.org
-Cc: x86@kernel.org, linux-next@vger.kernel.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, sfr@canb.auug.org.au, linux@roeck-us.net, William Breathitt Gray <vilhelm.gray@gmail.com>, Wim Van Sebroeck <wim@iguana.be>
 
-With the introduction of the ISA_BUS_API Kconfig option, ISA-style
-drivers may be built for X86_64 architectures. This patch changes the
-ISA Kconfig option dependency of the WinSystems EBC-C384 watchdog timer
-driver to ISA_BUS_API, thus allowing it to build for X86_64 as it is
-expected to.
+On Mon, 2016-05-23 at 12:39 +0200, Matthias Brugger wrote:
+> 
+> On 21/05/16 09:23, hongkun.cao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org wrote:
+> > From: "hongkun.cao" <hongkun.cao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> >
+> > When a dual-edge irq is triggered, an incorrect irq will be reported on
+> > condition that the external signal is not stable and this incorrect irq
+> > has been registered.
+> > Correct the register offset.
+> >
+> 
+> I'm not sure what you want to say. From what I can see the without this 
+> fix, the the wrong IRQ will be cleared and raised. Is this what you are 
+> addressing?
+> 
+> If so:
 
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Wim Van Sebroeck <wim@iguana.be>
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/watchdog/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi, Matthias,
+Thanks for your comments.
+Yes, you are right.
+Suppose there are two irqs registered in our system with special
+relationship, One hardware irq  number is 17 with both edge trigger, and
+the other hardware irq number is 49(17+32),then hardware irq 49 may be
+reported unexpectedly if hardware irq 17 occurred.
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index b54f26c..3938e2d 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -746,7 +746,7 @@ config ALIM7101_WDT
- 
- config EBC_C384_WDT
- 	tristate "WinSystems EBC-C384 Watchdog Timer"
--	depends on X86 && ISA
-+	depends on ISA_BUS_API
- 	select WATCHDOG_CORE
- 	help
- 	  Enables watchdog timer support for the watchdog timer on the
--- 
-2.7.3
-
+> Reviewed-by: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> 
+> > Signed-off-by: hongkun.cao <hongkun.cao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> > ---
+> >   drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    5 +++--
+> >   1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> > index 2bbe6f7..92ae49f 100644
+> > --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> > +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> > @@ -1255,9 +1255,10 @@ static void mtk_eint_irq_handler(struct irq_desc *desc)
+> >   	const struct mtk_desc_pin *pin;
+> >
+> >   	chained_irq_enter(chip, desc);
+> > -	for (eint_num = 0; eint_num < pctl->devdata->ap_num; eint_num += 32) {
+> > +	for (eint_num = 0;
+> > +	     eint_num < pctl->devdata->ap_num;
+> > +	     eint_num += 32, reg += 4) {
+> >   		status = readl(reg);
+> > -		reg += 4;
+> >   		while (status) {
+> >   			offset = __ffs(status);
+> >   			index = eint_num + offset;
+> >
