@@ -1,51 +1,94 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V12 2/2] pinctrl: max77620: add pincontrol driver for MAX77620/MAX20024
-Date: Tue, 24 May 2016 13:53:36 +0200
-Message-ID: <CACRpkdagHFegb0HHyshqOZyJLrdpZwMnQvBtsGeZhOB1p9Lgfg@mail.gmail.com>
-References: <1463116755-30469-1-git-send-email-ldewangan@nvidia.com>
-	<1463116755-30469-4-git-send-email-ldewangan@nvidia.com>
-	<CACRpkdZNDEL855=Mruwm4U7eFz-QiuvXuDP83QPOupkpj2Jpkg@mail.gmail.com>
-	<57443877.4010106@nvidia.com>
+From: <patrice.chotard@st.com>
+Subject: [PATCH v2] pinctrl: stm32: factorize stm32_pconf_input/output_get()
+Date: Tue, 24 May 2016 13:57:43 +0200
+Message-ID: <1464091063-22341-2-git-send-email-patrice.chotard@st.com>
+References: <1464091063-22341-1-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <57443877.4010106@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53608 "EHLO
+	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1755035AbcEXL62 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 24 May 2016 07:58:28 -0400
+In-Reply-To: <1464091063-22341-1-git-send-email-patrice.chotard@st.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: patrice.chotard@st.com
 
-On Tue, May 24, 2016 at 1:18 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+From: Patrice Chotard <patrice.chotard@st.com>
 
-> In this driver, it is configuration via pinctrl. Here pincontrol and gpio
-> driver share same registers.
-> Now, as we have the method to configure the open drain bit from the GPIO
-> interface, we really dont need to do this from pinctrl framework.
+As these 2 functions code are 95% similar, factorize them.
 
-OK good that works too...
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 31 ++++++++++---------------------
+ 1 file changed, 10 insertions(+), 21 deletions(-)
 
-> For doing from GPIO framework, the client need to aware that gpio is open
-> drain type.
->
-> Can we make something that open drain of pins can be provided via some
-> common interface like DT of controller based on platforms configuration  and
-> client need not to worry about this? For client, it will be simple gpio
-> calls.
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index ae9fab8..4ae596b 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -638,8 +638,8 @@ static u32 stm32_pconf_get_bias(struct stm32_gpio_bank *bank,
+ 	return (val >> (offset * 2));
+ }
+ 
+-static bool stm32_pconf_input_get(struct stm32_gpio_bank *bank,
+-	unsigned int offset)
++static bool stm32_pconf_get(struct stm32_gpio_bank *bank,
++	unsigned int offset, bool dir)
+ {
+ 	unsigned long flags;
+ 	u32 val;
+@@ -647,23 +647,12 @@ static bool stm32_pconf_input_get(struct stm32_gpio_bank *bank,
+ 	clk_enable(bank->clk);
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 
+-	val = !!(readl_relaxed(bank->base + STM32_GPIO_IDR) & BIT(offset));
+-
+-	spin_unlock_irqrestore(&bank->lock, flags);
+-	clk_disable(bank->clk);
+-
+-	return val;
+-}
+-
+-static bool stm32_pconf_output_get(struct stm32_gpio_bank *bank,
+-	unsigned int offset)
+-{
+-	unsigned long flags;
+-	u32 val;
+-
+-	clk_enable(bank->clk);
+-	spin_lock_irqsave(&bank->lock, flags);
+-	val = !!(readl_relaxed(bank->base + STM32_GPIO_ODR) & BIT(offset));
++	if (dir)
++		val = !!(readl_relaxed(bank->base + STM32_GPIO_IDR) &
++			 BIT(offset));
++	else
++		val = !!(readl_relaxed(bank->base + STM32_GPIO_ODR) &
++			 BIT(offset));
+ 
+ 	spin_unlock_irqrestore(&bank->lock, flags);
+ 	clk_disable(bank->clk);
+@@ -772,7 +761,7 @@ static void stm32_pconf_dbg_show(struct pinctrl_dev *pctldev,
+ 	switch (mode) {
+ 	/* input */
+ 	case 0:
+-		val = stm32_pconf_input_get(bank, offset);
++		val = stm32_pconf_get(bank, offset, true);
+ 		seq_printf(s, "- %s - %s",
+ 			   val ? "high" : "low",
+ 			   biasing[bias]);
+@@ -782,7 +771,7 @@ static void stm32_pconf_dbg_show(struct pinctrl_dev *pctldev,
+ 	case 1:
+ 		drive = stm32_pconf_get_driving(bank, offset);
+ 		speed = stm32_pconf_get_speed(bank, offset);
+-		val = stm32_pconf_output_get(bank, offset);
++		val = stm32_pconf_get(bank, offset, false);
+ 		seq_printf(s, "- %s - %s - %s - %s %s",
+ 			   val ? "high" : "low",
+ 			   drive ? "open drain" : "push pull",
+-- 
+1.9.1
 
-We have GPIO_OPEN_DRAIN in
-include/dt-bindings/gpio/gpio.h
-that can be added on the consumer side of the GPIO line
-in the DT, it should work (just like GPIO_ACTIVE_LOW for example).
-
-For descriptor tables
-include/linux/gpio/machine.h
-provides the same mechanism with the flag GPIO_OPEN_DRAIN
-
-Notice that in both cases it is the consumer that specifies that it
-needs the line to be set up as open drain, not the controller,
-as it is a resource, the consumer needs to request what it needs.
-
-So this can be done already today. Unless there is some bug.
-
-Yours,
-Linus Walleij
