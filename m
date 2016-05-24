@@ -1,40 +1,26 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: nomadik: fix inversion of gpio direction
-Date: Tue, 24 May 2016 14:41:10 +0200
-Message-ID: <1464093670-29370-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:36038 "EHLO
-	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752299AbcEXMlQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 May 2016 08:41:16 -0400
-Received: by mail-lf0-f43.google.com with SMTP id e130so5677572lfe.3
-        for <linux-gpio@vger.kernel.org>; Tue, 24 May 2016 05:41:15 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: oxnas: Add GPIO get_direction
+Date: Tue, 24 May 2016 14:51:56 +0200
+Message-ID: <CACRpkdb1zaMk4sL3yowDMb83NAfN0SXiYwcbctEAPe-S5V7w=w@mail.gmail.com>
+References: <1464084204-2271-1-git-send-email-narmstrong@baylibre.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1464084204-2271-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-The input/output directions were inversed on the GPIO direction
-read function. Loose a ! and it is correct.
+On Tue, May 24, 2016 at 12:03 PM, Neil Armstrong
+<narmstrong@baylibre.com> wrote:
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/nomadik/pinctrl-nomadik.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Implement a get_direction callback for the OXNAS GPIO driver in order
+> to have pin output polarity in debugfs and new userspace ABI.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-index ccbfc325c778..38faceff2f08 100644
---- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-@@ -854,7 +854,7 @@ static int nmk_gpio_get_dir(struct gpio_chip *chip, unsigned offset)
- 
- 	clk_enable(nmk_chip->clk);
- 
--	dir = !!(readl(nmk_chip->addr + NMK_GPIO_DIR) & BIT(offset));
-+	dir = !(readl(nmk_chip->addr + NMK_GPIO_DIR) & BIT(offset));
- 
- 	clk_disable(nmk_chip->clk);
- 
--- 
-2.4.11
+Patch applied.
 
+Yours,
+Linus Walleij
