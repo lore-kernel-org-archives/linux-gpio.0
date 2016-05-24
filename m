@@ -1,38 +1,51 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: dt-bindings: add ibm,ppc4xx-gpio binding
-Date: Tue, 24 May 2016 13:43:29 +0200
-Message-ID: <CACRpkdb2o3b3jN2de7qMmaPmtYK2QArQeHuhQrQgGb8p284T=Q@mail.gmail.com>
-References: <c7b118c342c161954126e2e82cf1a0a6a127b4c2.1463002267.git.chunkeey@googlemail.com>
-	<20160516152746.GA13649@rob-hp-laptop>
-	<20160516165618.GA29776@rob-hp-laptop>
+Subject: Re: [PATCH V12 2/2] pinctrl: max77620: add pincontrol driver for MAX77620/MAX20024
+Date: Tue, 24 May 2016 13:53:36 +0200
+Message-ID: <CACRpkdagHFegb0HHyshqOZyJLrdpZwMnQvBtsGeZhOB1p9Lgfg@mail.gmail.com>
+References: <1463116755-30469-1-git-send-email-ldewangan@nvidia.com>
+	<1463116755-30469-4-git-send-email-ldewangan@nvidia.com>
+	<CACRpkdZNDEL855=Mruwm4U7eFz-QiuvXuDP83QPOupkpj2Jpkg@mail.gmail.com>
+	<57443877.4010106@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:33276 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754811AbcEXLna (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 May 2016 07:43:30 -0400
-Received: by mail-oi0-f46.google.com with SMTP id k23so21572723oih.0
-        for <linux-gpio@vger.kernel.org>; Tue, 24 May 2016 04:43:30 -0700 (PDT)
-In-Reply-To: <20160516165618.GA29776@rob-hp-laptop>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <57443877.4010106@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Christian Lamparter <chunkeey@googlemail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Alistair Popple <alistair@popple.id.au>, Matt Porter <mporter@kernel.crashing.org>
 
-On Mon, May 16, 2016 at 6:56 PM, Rob Herring <robh@kernel.org> wrote:
-> On Mon, May 16, 2016 at 10:27:46AM -0500, Rob Herring wrote:
->> On Thu, May 12, 2016 at 12:07:48AM +0200, Christian Lamparter wrote:
+On Tue, May 24, 2016 at 1:18 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
->> > This patch adds binding information for IBM/AMCC/APM GPIO
->> > Controllers of the PowerPC 4XX series and compatible SoCs.
-(...)
->> Acked-by: Rob Herring <robh@kernel.org>
+> In this driver, it is configuration via pinctrl. Here pincontrol and gpio
+> driver share same registers.
+> Now, as we have the method to configure the open drain bit from the GPIO
+> interface, we really dont need to do this from pinctrl framework.
+
+OK good that works too...
+
+> For doing from GPIO framework, the client need to aware that gpio is open
+> drain type.
 >
-> As this is just a binding doc, I've applied it.
+> Can we make something that open drain of pins can be provided via some
+> common interface like DT of controller based on platforms configuration  and
+> client need not to worry about this? For client, it will be simple gpio
+> calls.
 
-OK less work on my part :)
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+We have GPIO_OPEN_DRAIN in
+include/dt-bindings/gpio/gpio.h
+that can be added on the consumer side of the GPIO line
+in the DT, it should work (just like GPIO_ACTIVE_LOW for example).
+
+For descriptor tables
+include/linux/gpio/machine.h
+provides the same mechanism with the flag GPIO_OPEN_DRAIN
+
+Notice that in both cases it is the consumer that specifies that it
+needs the line to be set up as open drain, not the controller,
+as it is a resource, the consumer needs to request what it needs.
+
+So this can be done already today. Unless there is some bug.
 
 Yours,
 Linus Walleij
