@@ -1,55 +1,64 @@
 From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH v2 1/2] pinctrl: Add Oxford Semiconductor OXNAS pinctrl
- and gpio driver
-Date: Tue, 24 May 2016 11:37:15 +0200
-Message-ID: <574420CB.30908@baylibre.com>
-References: <1462952062-5316-1-git-send-email-narmstrong@baylibre.com>
- <1462952062-5316-2-git-send-email-narmstrong@baylibre.com>
- <CACRpkdZPMqRNn9rmcC4HYVKrdS7cxBD7O7oE4YPrP7L-0_Wakg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] pinctrl: oxnas: Add GPIO get_direction
+Date: Tue, 24 May 2016 12:03:24 +0200
+Message-ID: <1464084204-2271-1-git-send-email-narmstrong@baylibre.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZPMqRNn9rmcC4HYVKrdS7cxBD7O7oE4YPrP7L-0_Wakg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 05/24/2016 11:35 AM, Linus Walleij wrote:
-> On Wed, May 11, 2016 at 9:34 AM, Neil Armstrong <narmstrong@baylibre.com> wrote:
-> 
->> Add pinctrl and gpio control support to Oxford Semiconductor OXNAS SoC Family.
->> This version supports the ARM926EJ-S based OX810SE SoC with 34 IO pins.
->>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> 
-> I tried implementing a .get_direction() callback for the Oxnas GPIO
-> (this is good to have, for debugfs and for the new userspace ABI).
-> 
-> However:
-> 
->> +/* GPIO Registers */
->> +#define INPUT_VALUE    0x00
->> +#define IRQ_PENDING    0x0c
->> +#define OUTPUT_SET     0x14
->> +#define OUTPUT_CLEAR   0x18
->> +#define OUTPUT_EN_SET  0x1c
->> +#define OUTPUT_EN_CLEAR        0x20
->> +#define RE_IRQ_ENABLE  0x28
->> +#define FE_IRQ_ENABLE  0x2c
-> 
-> No pure OUTPUT_EN register to read the direction from?
-> Or is it one of the undocumented ones?
-I'm not sure it was documented, I can have a look further.
+Implement a get_direction callback for the OXNAS GPIO driver in order
+to have pin output polarity in debugfs and new userspace ABI.
 
-> 
-> Could you take a stab at implementing .get_direction() and
-> send a patch?
-I can have a look ASAP.
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/pinctrl/pinctrl-oxnas.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
+Linus,
+
+Sorry, I should have implemented it earlier but I was focused to
+have a clean driver for upstream !
+
+Thanks,
 Neil
-> 
-> Yours,
-> Linus Walleij
-> 
+
+diff --git a/drivers/pinctrl/pinctrl-oxnas.c b/drivers/pinctrl/pinctrl-oxnas.c
+index 5fd113c..2c6abef 100644
+--- a/drivers/pinctrl/pinctrl-oxnas.c
++++ b/drivers/pinctrl/pinctrl-oxnas.c
+@@ -49,6 +49,7 @@
+ 
+ /* GPIO Registers */
+ #define INPUT_VALUE	0x00
++#define OUTPUT_EN	0x04
+ #define IRQ_PENDING	0x0c
+ #define OUTPUT_SET	0x14
+ #define OUTPUT_CLEAR	0x18
+@@ -431,6 +432,15 @@ static int oxnas_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	return 0;
+ }
+ 
++static int oxnas_gpio_get_direction(struct gpio_chip *chip,
++				      unsigned int offset)
++{
++	struct oxnas_gpio_bank *bank = gpiochip_get_data(chip);
++	u32 mask = BIT(offset);
++
++	return !(readl_relaxed(bank->reg_base + OUTPUT_EN) & mask);
++}
++
+ static int oxnas_gpio_direction_input(struct gpio_chip *chip,
+ 				      unsigned int offset)
+ {
+@@ -664,6 +674,7 @@ static void oxnas_gpio_irq_handler(struct irq_desc *desc)
+ 			.label = "GPIO" #_bank,				\
+ 			.request = gpiochip_generic_request,		\
+ 			.free = gpiochip_generic_free,			\
++			.get_direction = oxnas_gpio_get_direction,	\
+ 			.direction_input = oxnas_gpio_direction_input,	\
+ 			.direction_output = oxnas_gpio_direction_output, \
+ 			.get = oxnas_gpio_get,				\
+-- 
+1.9.1
