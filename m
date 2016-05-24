@@ -1,94 +1,26 @@
 From: <patrice.chotard@st.com>
-Subject: [PATCH v2] pinctrl: stm32: factorize stm32_pconf_input/output_get()
-Date: Tue, 24 May 2016 13:57:43 +0200
-Message-ID: <1464091063-22341-2-git-send-email-patrice.chotard@st.com>
-References: <1464091063-22341-1-git-send-email-patrice.chotard@st.com>
+Subject: [PATCH v2] pinctrl: stm32: .pin_config_dbg_show fixes
+Date: Tue, 24 May 2016 13:57:42 +0200
+Message-ID: <1464091063-22341-1-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53608 "EHLO
-	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755035AbcEXL62 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 24 May 2016 07:58:28 -0400
-In-Reply-To: <1464091063-22341-1-git-send-email-patrice.chotard@st.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>
 Cc: patrice.chotard@st.com
+List-Id: linux-gpio@vger.kernel.org
 
 From: Patrice Chotard <patrice.chotard@st.com>
 
-As these 2 functions code are 95% similar, factorize them.
+v1 -> v2
+	_ rebase on top of Linus Torsvald tree.
+	_ remove "[PATCH 1/2]: pinctrl: stm32: fix warning", already fixed by Linus Torvalds
 
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
----
+Patrice Chotard (1):
+  pinctrl: stm32: factorize stm32_pconf_input/output_get()
+
  drivers/pinctrl/stm32/pinctrl-stm32.c | 31 ++++++++++---------------------
  1 file changed, 10 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index ae9fab8..4ae596b 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -638,8 +638,8 @@ static u32 stm32_pconf_get_bias(struct stm32_gpio_bank *bank,
- 	return (val >> (offset * 2));
- }
- 
--static bool stm32_pconf_input_get(struct stm32_gpio_bank *bank,
--	unsigned int offset)
-+static bool stm32_pconf_get(struct stm32_gpio_bank *bank,
-+	unsigned int offset, bool dir)
- {
- 	unsigned long flags;
- 	u32 val;
-@@ -647,23 +647,12 @@ static bool stm32_pconf_input_get(struct stm32_gpio_bank *bank,
- 	clk_enable(bank->clk);
- 	spin_lock_irqsave(&bank->lock, flags);
- 
--	val = !!(readl_relaxed(bank->base + STM32_GPIO_IDR) & BIT(offset));
--
--	spin_unlock_irqrestore(&bank->lock, flags);
--	clk_disable(bank->clk);
--
--	return val;
--}
--
--static bool stm32_pconf_output_get(struct stm32_gpio_bank *bank,
--	unsigned int offset)
--{
--	unsigned long flags;
--	u32 val;
--
--	clk_enable(bank->clk);
--	spin_lock_irqsave(&bank->lock, flags);
--	val = !!(readl_relaxed(bank->base + STM32_GPIO_ODR) & BIT(offset));
-+	if (dir)
-+		val = !!(readl_relaxed(bank->base + STM32_GPIO_IDR) &
-+			 BIT(offset));
-+	else
-+		val = !!(readl_relaxed(bank->base + STM32_GPIO_ODR) &
-+			 BIT(offset));
- 
- 	spin_unlock_irqrestore(&bank->lock, flags);
- 	clk_disable(bank->clk);
-@@ -772,7 +761,7 @@ static void stm32_pconf_dbg_show(struct pinctrl_dev *pctldev,
- 	switch (mode) {
- 	/* input */
- 	case 0:
--		val = stm32_pconf_input_get(bank, offset);
-+		val = stm32_pconf_get(bank, offset, true);
- 		seq_printf(s, "- %s - %s",
- 			   val ? "high" : "low",
- 			   biasing[bias]);
-@@ -782,7 +771,7 @@ static void stm32_pconf_dbg_show(struct pinctrl_dev *pctldev,
- 	case 1:
- 		drive = stm32_pconf_get_driving(bank, offset);
- 		speed = stm32_pconf_get_speed(bank, offset);
--		val = stm32_pconf_output_get(bank, offset);
-+		val = stm32_pconf_get(bank, offset, false);
- 		seq_printf(s, "- %s - %s - %s - %s %s",
- 			   val ? "high" : "low",
- 			   drive ? "open drain" : "push pull",
 -- 
 1.9.1
-
