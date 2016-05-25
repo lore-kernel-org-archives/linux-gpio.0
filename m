@@ -1,39 +1,62 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: return -ENOMEM instead of -EINVAL for kasprintf() failure
-Date: Wed, 25 May 2016 20:14:13 +0900
-Message-ID: <1464174853-9297-1-git-send-email-yamada.masahiro@socionext.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: interrupts properties and API usage with GPIO controllers/Device Tree
+Date: Wed, 25 May 2016 14:45:00 -0700
+Message-ID: <57461CDC.603@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conuserg-11.nifty.com ([210.131.2.78]:24096 "EHLO
-	conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751223AbcEYLNe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 May 2016 07:13:34 -0400
+Received: from mail-pa0-f66.google.com ([209.85.220.66]:34102 "EHLO
+	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750732AbcEYVpE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 May 2016 17:45:04 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+To: linus.walleij@linaro.org, gregory.0xf0@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
 
--ENOMEM is more suitable error code because kasprintf() fails
-in case of memory shortage.
+Hi Linus, Gregory,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Recently came across an use case that looks like the following:
 
- drivers/pinctrl/pinmux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+gpio0: gpio@deadbeef {
+	compatible = "brcm,brcmstb-gpio";
+	#interrrupt-cells = <2>;
+	#gpio-cells = <2>;
+	gpio-controller;
+	interrupt-controller;
+	...
+};
 
-diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-index d94d76c..ece7028 100644
---- a/drivers/pinctrl/pinmux.c
-+++ b/drivers/pinctrl/pinmux.c
-@@ -256,7 +256,7 @@ int pinmux_request_gpio(struct pinctrl_dev *pctldev,
- 	/* Conjure some name stating what chip and pin this is taken by */
- 	owner = kasprintf(GFP_KERNEL, "%s:%d", range->name, gpio);
- 	if (!owner)
--		return -EINVAL;
-+		return -ENOMEM;
- 
- 	ret = pin_request(pctldev, pin, owner, range);
- 	if (ret < 0)
+test@cafeb00b {
+	interrupt-parent = <&gpio0>;
+	interrupts = <99 3>;
+};
+
+The driver consuming the test node's interrupts property tries to get
+the interrupt by using platform_get_irq() or of_irq_parse_and_map() and
+in the case of the gpio-brcmstb.c, this fails because the interrupt is
+out of range  as flagged by kernel/irq/irqdomain.c::irq_domain_associate.
+
+Unlike other GPIO provider drivers gpio-brcmstb.c, this driver registers
+one gpiolib irqchip per each of its banks, and still uses the generic
+map/unmap functions for its irq_domain_ops, so there is no way we can
+provide a valid mapping outside of the gpio_to_irq() function
+unfortunately since gpiochip_irq_map() does
+
+So here are a few questions for either of you:
+
+- is this a valid API and Device Tree use case: call
+of_irq_parse_and_map on an "interrupts" property which has not been
+acquired using the GPIO API and then gpio_to_irq? While gpio_to_irq()
+works, are not we losing the second specifier in the interrupt cells
+about what kind of interrupt type this is?
+
+- would it be acceptable to export gpiochip_irq_map and
+gpiochip_irq_export to make them accessible as helpers so we could just
+wrap things a bit around or should I just open code the same things and
+allow gpiochip_irqchip_add to be passed custom irq_domain_ops for instance?
+
+Thanks!
 -- 
-1.9.1
-
+Florian
