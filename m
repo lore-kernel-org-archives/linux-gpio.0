@@ -1,82 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: flush direction status in gpiochip_lock_as_irq()
-Date: Wed, 25 May 2016 11:00:10 +0200
-Message-ID: <1464166810-32553-1-git-send-email-linus.walleij@linaro.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: return -ENOMEM instead of -EINVAL for kasprintf() failure
+Date: Wed, 25 May 2016 20:14:13 +0900
+Message-ID: <1464174853-9297-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:34567 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752236AbcEYJAQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 May 2016 05:00:16 -0400
-Received: by mail-lb0-f174.google.com with SMTP id sh2so13413880lbb.1
-        for <linux-gpio@vger.kernel.org>; Wed, 25 May 2016 02:00:15 -0700 (PDT)
+Received: from conuserg-11.nifty.com ([210.131.2.78]:24096 "EHLO
+	conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751223AbcEYLNe (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 May 2016 07:13:34 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 
-As irqchip and gpiochip functions are orthogonal, the IRQ
-set-up or something else can have changed the direction of
-the GPIO line from what the GPIO descriptor knows when we
-get into gpiochip_lock_as_irq(). Make sure to re-read the
-direction setting if we have the .get_direction() callback
-enabled for the chip.
+-ENOMEM is more suitable error code because kasprintf() fails
+in case of memory shortage.
 
-Else we get problems like this:
-
-iio iio:device2: interrupts on the rising edge
-gpio gpiochip2: (8012e080.gpio): gpiochip_lock_as_irq:
-  tried to flag a GPIO set as output for IRQ
-gpio gpiochip2: (8012e080.gpio): unable to lock HW IRQ 0 for IRQ
-genirq: Failed to request resources for l3g4200d-trigger
-  (irq 111) on irqchip nmk1-32-63
-iio iio:device2: failed to request trigger IRQ.
-st-gyro-i2c: probe of 2-0068 failed with error -22
-
-Fixes: 72d320006177 ("gpio: set up initial state from .get_direction()")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/gpio/gpiolib.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d407f904a31c..e901d2666b46 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2066,17 +2066,30 @@ EXPORT_SYMBOL_GPL(gpiod_to_irq);
-  */
- int gpiochip_lock_as_irq(struct gpio_chip *chip, unsigned int offset)
- {
--	if (offset >= chip->ngpio)
+ drivers/pinctrl/pinmux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index d94d76c..ece7028 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -256,7 +256,7 @@ int pinmux_request_gpio(struct pinctrl_dev *pctldev,
+ 	/* Conjure some name stating what chip and pin this is taken by */
+ 	owner = kasprintf(GFP_KERNEL, "%s:%d", range->name, gpio);
+ 	if (!owner)
 -		return -EINVAL;
-+	struct gpio_desc *desc;
-+
-+	desc = gpiochip_get_desc(chip, offset);
-+	if (IS_ERR(desc))
-+		return PTR_ERR(desc);
-+
-+	/* Flush direction if something changed behind our back */
-+	if (chip->get_direction) {
-+		int dir = chip->get_direction(chip, offset);
-+
-+		if (dir)
-+			clear_bit(FLAG_IS_OUT, &desc->flags);
-+		else
-+			set_bit(FLAG_IS_OUT, &desc->flags);
-+	}
++		return -ENOMEM;
  
--	if (test_bit(FLAG_IS_OUT, &chip->gpiodev->descs[offset].flags)) {
-+	if (test_bit(FLAG_IS_OUT, &desc->flags)) {
- 		chip_err(chip,
- 			  "%s: tried to flag a GPIO set as output for IRQ\n",
- 			  __func__);
- 		return -EIO;
- 	}
- 
--	set_bit(FLAG_USED_AS_IRQ, &chip->gpiodev->descs[offset].flags);
-+	set_bit(FLAG_USED_AS_IRQ, &desc->flags);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(gpiochip_lock_as_irq);
+ 	ret = pin_request(pctldev, pin, owner, range);
+ 	if (ret < 0)
 -- 
-2.4.11
+1.9.1
 
