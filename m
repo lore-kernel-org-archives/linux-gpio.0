@@ -1,56 +1,114 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH 0/7] pinctrl: meson: Add a bunch more pins
-Date: Tue, 24 May 2016 14:45:17 -0700
-Message-ID: <m2posbgmfm.fsf@baylibre.com>
-References: <1462544486-9516-1-git-send-email-khilman@baylibre.com>
-	<CACRpkdY9oGZLt431NwTaFmZk98O8n3ZnMA1odhYZtcH7P1p=Jg@mail.gmail.com>
-	<m260u3ia37.fsf@baylibre.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:34178 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751411AbcEXVpU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 May 2016 17:45:20 -0400
-Received: by mail-pa0-f51.google.com with SMTP id qo8so10446001pab.1
-        for <linux-gpio@vger.kernel.org>; Tue, 24 May 2016 14:45:19 -0700 (PDT)
-In-Reply-To: <m260u3ia37.fsf@baylibre.com> (Kevin Hilman's message of "Tue, 24
-	May 2016 11:29:00 -0700")
-Sender: linux-gpio-owner@vger.kernel.org
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: copy per-pin driver private data to struct pin_desc
+Date: Wed, 25 May 2016 14:09:31 +0900
+Message-ID: <1464152971-11533-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-amlogic@lists.infradead.org, Carlo Caione <carlo@caione.org>, linux-meson <linux-meson@googlegroups.com>, Andreas =?utf-8?Q?F=C3=A4rb?= =?utf-8?Q?er?= <afaerber@suse.de>, Victor Wan <victor.wan@amlogic.com>, Jerry Cao <jerry.cao@amlogic.com>, Xing Wu <xing.xu@amlogic.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Kevin Hilman <khilman@baylibre.com> writes:
+Currently, struct pinctrl_pin_desc can have per-pin driver private
+data, but it is not copied to struct pin_desc.
 
-> Linus Walleij <linus.walleij@linaro.org> writes:
->
->> On Fri, May 6, 2016 at 4:21 PM, Kevin Hilman <khilman@baylibre.com> wrote:
->>
->>> Add support for several more devices, both in the EE domain and in the
->>> AO domain.  Also, add the pins to the corresponding DTS files.
->>>
->>> Tested on odroid-c2 and Amlogic P200 boards, and verified with working
->>> ethernet.
->>>
->>> Depends on the initial GXBB pinctrl support from Carlo[1].  Also
->>> available in my git tree[2] with all the dependencies included.
->>
->> These don't apply anomore sadly, Kevin can you rebase on
->> Torvalds' HEAD and resend, and include Carlo's ACK on them
->> so I can merge them in the next kernel cycle?
->
-> Looking closer, these have dependencies on the DT changes that you've
-> suggested we take through arm-soc, so it would be cleaner if I take
-> these with your ack through the amlogic tree.
->
-> Since it's a brand new driver, I don't expect there to be conflicts.
->
-> Does that work for you?
+For a driver with sparse pin space, for-loop search like below would
+be necessary in order to get the driver-specific data for a desired
+pin number.
 
-FWIW, rebase available here (with all deps, some of which I think
-you'ved already merged):
+  for (i = 0; i < pctldev->desc->npins; i++)
+          if (pin_number == pctldev->desc->pins[i].number)
+                  return pctldev->desc->pins[i].drv_data;
 
-git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux.git amlogic/v4.7/pinctrl
+This is not efficient for a driver with a large number of pins.
+So, copy the data to struct pin_desc when each pin is registered
+for the faster radix tree lookup.
 
-Kevin
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/pinctrl/core.c | 22 ++++++++++++----------
+ drivers/pinctrl/core.h |  2 ++
+ 2 files changed, 14 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 03c08c1..fb38e20 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -225,13 +225,14 @@ static void pinctrl_free_pindescs(struct pinctrl_dev *pctldev,
+ }
+ 
+ static int pinctrl_register_one_pin(struct pinctrl_dev *pctldev,
+-				    unsigned number, const char *name)
++				    const struct pinctrl_pin_desc *pin)
+ {
+ 	struct pin_desc *pindesc;
+ 
+-	pindesc = pin_desc_get(pctldev, number);
++	pindesc = pin_desc_get(pctldev, pin->number);
+ 	if (pindesc != NULL) {
+-		dev_err(pctldev->dev, "pin %d already registered\n", number);
++		dev_err(pctldev->dev, "pin %d already registered\n",
++			pin->number);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -245,10 +246,10 @@ static int pinctrl_register_one_pin(struct pinctrl_dev *pctldev,
+ 	pindesc->pctldev = pctldev;
+ 
+ 	/* Copy basic pin info */
+-	if (name) {
+-		pindesc->name = name;
++	if (pin->name) {
++		pindesc->name = pin->name;
+ 	} else {
+-		pindesc->name = kasprintf(GFP_KERNEL, "PIN%u", number);
++		pindesc->name = kasprintf(GFP_KERNEL, "PIN%u", pin->number);
+ 		if (pindesc->name == NULL) {
+ 			kfree(pindesc);
+ 			return -ENOMEM;
+@@ -256,9 +257,11 @@ static int pinctrl_register_one_pin(struct pinctrl_dev *pctldev,
+ 		pindesc->dynamic_name = true;
+ 	}
+ 
+-	radix_tree_insert(&pctldev->pin_desc_tree, number, pindesc);
++	pindesc->drv_data = pin->drv_data;
++
++	radix_tree_insert(&pctldev->pin_desc_tree, pin->number, pindesc);
+ 	pr_debug("registered pin %d (%s) on %s\n",
+-		 number, pindesc->name, pctldev->desc->name);
++		 pin->number, pindesc->name, pctldev->desc->name);
+ 	return 0;
+ }
+ 
+@@ -270,8 +273,7 @@ static int pinctrl_register_pins(struct pinctrl_dev *pctldev,
+ 	int ret = 0;
+ 
+ 	for (i = 0; i < num_descs; i++) {
+-		ret = pinctrl_register_one_pin(pctldev,
+-					       pins[i].number, pins[i].name);
++		ret = pinctrl_register_one_pin(pctldev, &pins[i]);
+ 		if (ret)
+ 			return ret;
+ 	}
+diff --git a/drivers/pinctrl/core.h b/drivers/pinctrl/core.h
+index ca08723..747c423 100644
+--- a/drivers/pinctrl/core.h
++++ b/drivers/pinctrl/core.h
+@@ -134,6 +134,7 @@ struct pinctrl_setting {
+  * @name: a name for the pin, e.g. the name of the pin/pad/finger on a
+  *	datasheet or such
+  * @dynamic_name: if the name of this pin was dynamically allocated
++ * @drv_data: driver-defined per-pin data. pinctrl core does not touch this
+  * @mux_usecount: If zero, the pin is not claimed, and @owner should be NULL.
+  *	If non-zero, this pin is claimed by @owner. This field is an integer
+  *	rather than a boolean, since pinctrl_get() might process multiple
+@@ -148,6 +149,7 @@ struct pin_desc {
+ 	struct pinctrl_dev *pctldev;
+ 	const char *name;
+ 	bool dynamic_name;
++	void *drv_data;
+ 	/* These fields only added when supporting pinmux drivers */
+ #ifdef CONFIG_PINMUX
+ 	unsigned mux_usecount;
+-- 
+1.9.1
