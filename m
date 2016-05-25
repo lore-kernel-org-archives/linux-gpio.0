@@ -1,58 +1,82 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: Re: [PATCH] pinctrl: digicolor: add missing platform_set_drvdata()
- call
-Date: Wed, 25 May 2016 09:48:32 +0300
-Message-ID: <20160525064832.GG2178@tarshish>
-References: <1464155932-25344-1-git-send-email-yamada.masahiro@socionext.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1464155932-25344-1-git-send-email-yamada.masahiro@socionext.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: flush direction status in gpiochip_lock_as_irq()
+Date: Wed, 25 May 2016 11:00:10 +0200
+Message-ID: <1464166810-32553-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:34567 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752236AbcEYJAQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 May 2016 05:00:16 -0400
+Received: by mail-lb0-f174.google.com with SMTP id sh2so13413880lbb.1
+        for <linux-gpio@vger.kernel.org>; Wed, 25 May 2016 02:00:15 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-Hi Masahiro Yamada,
+As irqchip and gpiochip functions are orthogonal, the IRQ
+set-up or something else can have changed the direction of
+the GPIO line from what the GPIO descriptor knows when we
+get into gpiochip_lock_as_irq(). Make sure to re-read the
+direction setting if we have the .get_direction() callback
+enabled for the chip.
 
-On Wed, May 25, 2016 at 02:58:52PM +0900, Masahiro Yamada wrote:
-> gc_pinctrl_remove() calls platform_get_drvdata(), but I see neither
-> platform_set_drvdata() nor dev_set_drvdata() anywhere in this driver.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Else we get problems like this:
 
-Acked-by: Baruch Siach <baruch@tkos.co.il>
+iio iio:device2: interrupts on the rising edge
+gpio gpiochip2: (8012e080.gpio): gpiochip_lock_as_irq:
+  tried to flag a GPIO set as output for IRQ
+gpio gpiochip2: (8012e080.gpio): unable to lock HW IRQ 0 for IRQ
+genirq: Failed to request resources for l3g4200d-trigger
+  (irq 111) on irqchip nmk1-32-63
+iio iio:device2: failed to request trigger IRQ.
+st-gyro-i2c: probe of 2-0068 failed with error -22
 
-Thanks,
-baruch
+Fixes: 72d320006177 ("gpio: set up initial state from .get_direction()")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpiolib.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
->  drivers/pinctrl/pinctrl-digicolor.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
-> index 30ee564..c8073d4 100644
-> --- a/drivers/pinctrl/pinctrl-digicolor.c
-> +++ b/drivers/pinctrl/pinctrl-digicolor.c
-> @@ -332,6 +332,8 @@ static int dc_pinctrl_probe(struct platform_device *pdev)
->  		return PTR_ERR(pmap->pctl);
->  	}
->  
-> +	platform_set_drvdata(pdev, pmap);
-> +
->  	return dc_gpiochip_add(pmap, pdev->dev.of_node);
->  }
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d407f904a31c..e901d2666b46 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2066,17 +2066,30 @@ EXPORT_SYMBOL_GPL(gpiod_to_irq);
+  */
+ int gpiochip_lock_as_irq(struct gpio_chip *chip, unsigned int offset)
+ {
+-	if (offset >= chip->ngpio)
+-		return -EINVAL;
++	struct gpio_desc *desc;
++
++	desc = gpiochip_get_desc(chip, offset);
++	if (IS_ERR(desc))
++		return PTR_ERR(desc);
++
++	/* Flush direction if something changed behind our back */
++	if (chip->get_direction) {
++		int dir = chip->get_direction(chip, offset);
++
++		if (dir)
++			clear_bit(FLAG_IS_OUT, &desc->flags);
++		else
++			set_bit(FLAG_IS_OUT, &desc->flags);
++	}
+ 
+-	if (test_bit(FLAG_IS_OUT, &chip->gpiodev->descs[offset].flags)) {
++	if (test_bit(FLAG_IS_OUT, &desc->flags)) {
+ 		chip_err(chip,
+ 			  "%s: tried to flag a GPIO set as output for IRQ\n",
+ 			  __func__);
+ 		return -EIO;
+ 	}
+ 
+-	set_bit(FLAG_USED_AS_IRQ, &chip->gpiodev->descs[offset].flags);
++	set_bit(FLAG_USED_AS_IRQ, &desc->flags);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_lock_as_irq);
 -- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+2.4.11
+
