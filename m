@@ -1,62 +1,32 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: interrupts properties and API usage with GPIO controllers/Device Tree
-Date: Wed, 25 May 2016 14:45:00 -0700
-Message-ID: <57461CDC.603@gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 11/11] dt/bindings: Correct clk binding example for PIC32 gpio.
+Date: Thu, 26 May 2016 10:38:58 +0200
+Message-ID: <CACRpkdbXvKyqjtGREUbHhgVm=DU9p4P2HysqnfOu7DAvZ--eRw@mail.gmail.com>
+References: <1463461560-9629-1-git-send-email-purna.mandal@microchip.com>
+	<1463461560-9629-11-git-send-email-purna.mandal@microchip.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f66.google.com ([209.85.220.66]:34102 "EHLO
-	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750732AbcEYVpE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 May 2016 17:45:04 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1463461560-9629-11-git-send-email-purna.mandal-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Purna Chandra Mandal <purna.mandal-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux MIPS <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gregory.0xf0@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
 
-Hi Linus, Gregory,
+On Tue, May 17, 2016 at 7:06 AM, Purna Chandra Mandal
+<purna.mandal-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org> wrote:
 
-Recently came across an use case that looks like the following:
+> Update binding example based on new clock binding scheme.
+> [1] Documentation/devicetree/bindings/clock/microchip,pic32.txt
+>
+> Signed-off-by: Purna Chandra Mandal <purna.mandal-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
 
-gpio0: gpio@deadbeef {
-	compatible = "brcm,brcmstb-gpio";
-	#interrrupt-cells = <2>;
-	#gpio-cells = <2>;
-	gpio-controller;
-	interrupt-controller;
-	...
-};
+Patch applied and squashed into the other pic32 patch
+with Rob's ACK.
 
-test@cafeb00b {
-	interrupt-parent = <&gpio0>;
-	interrupts = <99 3>;
-};
-
-The driver consuming the test node's interrupts property tries to get
-the interrupt by using platform_get_irq() or of_irq_parse_and_map() and
-in the case of the gpio-brcmstb.c, this fails because the interrupt is
-out of range  as flagged by kernel/irq/irqdomain.c::irq_domain_associate.
-
-Unlike other GPIO provider drivers gpio-brcmstb.c, this driver registers
-one gpiolib irqchip per each of its banks, and still uses the generic
-map/unmap functions for its irq_domain_ops, so there is no way we can
-provide a valid mapping outside of the gpio_to_irq() function
-unfortunately since gpiochip_irq_map() does
-
-So here are a few questions for either of you:
-
-- is this a valid API and Device Tree use case: call
-of_irq_parse_and_map on an "interrupts" property which has not been
-acquired using the GPIO API and then gpio_to_irq? While gpio_to_irq()
-works, are not we losing the second specifier in the interrupt cells
-about what kind of interrupt type this is?
-
-- would it be acceptable to export gpiochip_irq_map and
-gpiochip_irq_export to make them accessible as helpers so we could just
-wrap things a bit around or should I just open code the same things and
-allow gpiochip_irqchip_add to be passed custom irq_domain_ops for instance?
-
-Thanks!
--- 
-Florian
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
