@@ -1,92 +1,88 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: interrupts properties and API usage with GPIO controllers/Device
- Tree
-Date: Fri, 27 May 2016 17:23:00 +0300
-Message-ID: <57485844.3050807@ti.com>
-References: <57461CDC.603@gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] gpio: handle compatible ioctl() pointers
+Date: Fri, 27 May 2016 10:22:22 -0700
+Message-ID: <20160527172222.GB25540@dtor-ws>
+References: <1464352373-25108-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([198.47.19.11]:59868 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752154AbcE0OXb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 27 May 2016 10:23:31 -0400
-In-Reply-To: <57461CDC.603@gmail.com>
+Received: from mail-pa0-f66.google.com ([209.85.220.66]:34916 "EHLO
+	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756010AbcE0RW0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 May 2016 13:22:26 -0400
+Received: by mail-pa0-f66.google.com with SMTP id gp3so6400989pac.2
+        for <linux-gpio@vger.kernel.org>; Fri, 27 May 2016 10:22:26 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1464352373-25108-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>, linus.walleij@linaro.org, gregory.0xf0@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
-On 05/26/2016 12:45 AM, Florian Fainelli wrote:
-> Hi Linus, Gregory,
+On Fri, May 27, 2016 at 02:32:53PM +0200, Linus Walleij wrote:
+> If we're using the compatible ioctl() we need to handle the
+> argument pointer in a special way or there will be trouble.
 > 
-> Recently came across an use case that looks like the following:
+> Fixes: 3c702e9987e2 ("gpio: add a userspace chardev ABI for GPIOs")
+> Reported-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+
+Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+> ---
+>  drivers/gpio/gpiolib.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
 > 
-> gpio0: gpio@deadbeef {
-> 	compatible = "brcm,brcmstb-gpio";
-> 	#interrrupt-cells = <2>;
-> 	#gpio-cells = <2>;
-> 	gpio-controller;
-> 	interrupt-controller;
-> 	...
-> };
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index e901d2666b46..f1ef27014e6e 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/cdev.h>
+>  #include <linux/fs.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/compat.h>
+>  #include <uapi/linux/gpio.h>
+>  
+>  #include "gpiolib.h"
+> @@ -316,7 +317,7 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  {
+>  	struct gpio_device *gdev = filp->private_data;
+>  	struct gpio_chip *chip = gdev->chip;
+> -	int __user *ip = (int __user *)arg;
+> +	void __user *ip = (void __user *)arg;
+>  
+>  	/* We fail any subsequent ioctl():s when the chip is gone */
+>  	if (!chip)
+> @@ -388,6 +389,14 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  	return -EINVAL;
+>  }
+>  
+> +#ifdef CONFIG_COMPAT
+> +static long gpio_ioctl_compat(struct file *filp, unsigned int cmd,
+> +			      unsigned long arg)
+> +{
+> +	return gpio_ioctl(filep, cmd, (unsigned long)compat_ptr(arg));
+> +}
+> +#endif
+> +
+>  /**
+>   * gpio_chrdev_open() - open the chardev for ioctl operations
+>   * @inode: inode for this chardev
+> @@ -431,7 +440,9 @@ static const struct file_operations gpio_fileops = {
+>  	.owner = THIS_MODULE,
+>  	.llseek = noop_llseek,
+>  	.unlocked_ioctl = gpio_ioctl,
+> -	.compat_ioctl = gpio_ioctl,
+> +#ifdef CONFIG_COMPAT
+> +	.compat_ioctl = gpio_ioctl_compat,
+> +#endif
+>  };
+>  
+>  static void gpiodevice_release(struct device *dev)
+> -- 
+> 2.4.11
 > 
-> test@cafeb00b {
-> 	interrupt-parent = <&gpio0>;
-> 	interrupts = <99 3>;
-> };
-> 
-> The driver consuming the test node's interrupts property tries to get
-> the interrupt by using platform_get_irq() or of_irq_parse_and_map() and
-> in the case of the gpio-brcmstb.c, this fails because the interrupt is
-> out of range  as flagged by kernel/irq/irqdomain.c::irq_domain_associate.
-> 
-> Unlike other GPIO provider drivers gpio-brcmstb.c, this driver registers
-> one gpiolib irqchip per each of its banks, and still uses the generic
-> map/unmap functions for its irq_domain_ops, so there is no way we can
-> provide a valid mapping outside of the gpio_to_irq() function
-> unfortunately since gpiochip_irq_map() does
-
-And this is not working :( Each irq_domain has to be assigned to separate DT node,
-otherwise IRQ mapping will not work (most probably will work, but only for bank 0)
-
-Such kind of GPIO controllers are incompatible with gpiochip_irqchip_add() and required
-to have one, common irq_domain for all internal banks.
-
-like 	irq_domain = irq_domain_add_xxx(dev->of_node, ngpio, irq, 0,
-							&davinci_gpio_irq_ops,
-							chips);
-
-ngpio = 120 in case of bcm7445.dtsi
-and custom .map() function need to be implemented 
-
-More or less similar situation is with davinci_gpio.
-
-> 
-> So here are a few questions for either of you:
-> 
-> - is this a valid API and Device Tree use case: call
-> of_irq_parse_and_map on an "interrupts" property which has not been
-> acquired using the GPIO API and then gpio_to_irq? 
-
-this is valid use case
-
-> While gpio_to_irq()
-> works, are not we losing the second specifier in the interrupt cells
-> about what kind of interrupt type this is?
-> 
-> - would it be acceptable to export gpiochip_irq_map and
-> gpiochip_irq_export to make them accessible as helpers so we could just
-> wrap things a bit around or should I just open code the same things and
-> allow gpiochip_irqchip_add to be passed custom irq_domain_ops for instance?
-> 
-
-Yah, custom implementation might be needed.
-
-Another interesting, related question (as for me) is "Is there a limitation
- that gpio bank can have only 32 GPIO pins (from gpiolib point of view)?" 
 
 -- 
-regards,
--grygorii
+Dmitry
