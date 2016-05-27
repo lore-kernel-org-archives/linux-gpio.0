@@ -1,86 +1,41 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [RESEND PATCH] gpio: pcf857x: restore the initial line state of all pcf lines
-Date: Fri, 27 May 2016 12:05:29 +0530
-Message-ID: <1464330929-10910-1-git-send-email-kishon@ti.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] pinctrl: samsung: Suppress unbinding to prevent
+ theoretical attacks
+Date: Fri, 27 May 2016 10:42:29 +0200
+Message-ID: <57480875.2040502@samsung.com>
+References: <1463464926-17482-1-git-send-email-k.kozlowski@samsung.com>
+ <CACRpkdYdo5XsJvb9GTYph7P=u31treiDX6HZGbG_AGzW5hp1HQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([198.47.19.11]:44838 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754034AbcE0Gff (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 27 May 2016 02:35:35 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:32744 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932456AbcE0Ime (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 May 2016 04:42:34 -0400
+In-reply-to: <CACRpkdYdo5XsJvb9GTYph7P=u31treiDX6HZGbG_AGzW5hp1HQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Cc: nsekhar@ti.com, kishon@ti.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-The reset values for all the PCF lines are high and hence on
-shutdown we should drive all the lines high in order to
-bring it to the reset state.
+On 05/26/2016 11:08 AM, Linus Walleij wrote:
+> On Tue, May 17, 2016 at 8:02 AM, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+> 
+>> Although unbinding a pinctrl driver requires root privileges but it
+>> still might be used theoretically in certain attacks (by triggering NULL
+>> pointer exception or memory corruption).
+> 
+> Patch applied with Javier's review tag.
+> 
+> I suspect this kind of patch should be done to a few
+> GPIO controller :/
 
-This is actually required since PCF doesn't have a reset
-line and even after warm reset (by invoking "reboot" in
-prompt) the PCF lines maintains it's previous programmed
-state. This becomes a problem if the boards are designed to
-work with the default initial state.
+Probably yes... Either the driver properly and safely handles unbind
+(remove() callback) or it should be forbidden. In the same time, even if
+remove() is implemented, unbinding some of the core SoC drivers is like
+shooting self in the foot.
 
-DRA7XX_evm uses PCF8575 and one of the PCF output lines
-feeds to MMC/SD VDD and this line should be driven high in order
-for the MMC/SD to be detected.  This line is modelled as
-regulator and the hsmmc driver takes care of enabling and
-disabling it. In the case of 'reboot', during shutdown path
-as part of it's cleanup process the hsmmc driver disables
-this regulator. This makes MMC *boot* not functional.
-
-Fix it by driving all the pcf lines high.
-
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
----
-This patch was sent long back [1].
-But there was a concern that contention might occur if the
-PCF shutdown handler is invoked before the shutdown handler
-of the PCF's consumers. In that case PCF shutdown handler can't
-drive all the pcf lines high without knowing if the PCF
-consumers are still active.
-
-However commit 52cdbdd4985 ("driver core: correct device's
-shutdown order") will make sure shutdown handler of PCF's
-consumers are invoked before invoking the shutdown
-handler of PCF. So it should be safe to merge this now.
-
-[1] -> https://patchwork.ozlabs.org/patch/420382/
-
- drivers/gpio/gpio-pcf857x.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-index 169c09a..d168410 100644
---- a/drivers/gpio/gpio-pcf857x.c
-+++ b/drivers/gpio/gpio-pcf857x.c
-@@ -440,6 +440,14 @@ static int pcf857x_remove(struct i2c_client *client)
- 	return status;
- }
- 
-+static void pcf857x_shutdown(struct i2c_client *client)
-+{
-+	struct pcf857x *gpio = i2c_get_clientdata(client);
-+
-+	/* Drive all the I/O lines high */
-+	gpio->write(gpio->client, BIT(gpio->chip.ngpio) - 1);
-+}
-+
- static struct i2c_driver pcf857x_driver = {
- 	.driver = {
- 		.name	= "pcf857x",
-@@ -447,6 +455,7 @@ static struct i2c_driver pcf857x_driver = {
- 	},
- 	.probe	= pcf857x_probe,
- 	.remove	= pcf857x_remove,
-+	.shutdown = pcf857x_shutdown,
- 	.id_table = pcf857x_id,
- };
- 
--- 
-1.7.9.5
-
+Best regards,
+Krzysztof
