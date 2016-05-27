@@ -1,111 +1,86 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH v2 3/4] pinctrl: amlogic: gxbb: add more UART pins
-Date: Thu, 26 May 2016 14:24:24 -0700
-Message-ID: <1464297865-8965-4-git-send-email-khilman@baylibre.com>
-References: <1464297865-8965-1-git-send-email-khilman@baylibre.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [RESEND PATCH] gpio: pcf857x: restore the initial line state of all pcf lines
+Date: Fri, 27 May 2016 12:05:29 +0530
+Message-ID: <1464330929-10910-1-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:36781 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755127AbcEZVYb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 May 2016 17:24:31 -0400
-Received: by mail-pa0-f43.google.com with SMTP id eu11so23954734pad.3
-        for <linux-gpio@vger.kernel.org>; Thu, 26 May 2016 14:24:31 -0700 (PDT)
-In-Reply-To: <1464297865-8965-1-git-send-email-khilman@baylibre.com>
+Received: from bear.ext.ti.com ([198.47.19.11]:44838 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754034AbcE0Gff (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 27 May 2016 02:35:35 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Carlo Caione <carlo@caione.org>, Victor Wan <victor.wan@amlogic.com>, Jerry Cao <jerry.cao@amlogic.com>, Xing Wu <xing.xu@amlogic.com>
+To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Cc: nsekhar@ti.com, kishon@ti.com
 
-Add EE domain pins for UART A, B & C.
+The reset values for all the PCF lines are high and hence on
+shutdown we should drive all the lines high in order to
+bring it to the reset state.
 
-Acked-by: Carlo Caione <carlo@endlessm.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+This is actually required since PCF doesn't have a reset
+line and even after warm reset (by invoking "reboot" in
+prompt) the PCF lines maintains it's previous programmed
+state. This becomes a problem if the boards are designed to
+work with the default initial state.
+
+DRA7XX_evm uses PCF8575 and one of the PCF output lines
+feeds to MMC/SD VDD and this line should be driven high in order
+for the MMC/SD to be detected.  This line is modelled as
+regulator and the hsmmc driver takes care of enabling and
+disabling it. In the case of 'reboot', during shutdown path
+as part of it's cleanup process the hsmmc driver disables
+this regulator. This makes MMC *boot* not functional.
+
+Fix it by driving all the pcf lines high.
+
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 ---
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 48 ++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+This patch was sent long back [1].
+But there was a concern that contention might occur if the
+PCF shutdown handler is invoked before the shutdown handler
+of the PCF's consumers. In that case PCF shutdown handler can't
+drive all the pcf lines high without knowing if the PCF
+consumers are still active.
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index f0459f26c16c..b2ec5f8ada33 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -163,6 +163,21 @@ static const unsigned int sdcard_d3_pins[] = { PIN(CARD_4, EE_OFF) };
- static const unsigned int sdcard_cmd_pins[] = { PIN(CARD_3, EE_OFF) };
- static const unsigned int sdcard_clk_pins[] = { PIN(CARD_2, EE_OFF) };
+However commit 52cdbdd4985 ("driver core: correct device's
+shutdown order") will make sure shutdown handler of PCF's
+consumers are invoked before invoking the shutdown
+handler of PCF. So it should be safe to merge this now.
+
+[1] -> https://patchwork.ozlabs.org/patch/420382/
+
+ drivers/gpio/gpio-pcf857x.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
+index 169c09a..d168410 100644
+--- a/drivers/gpio/gpio-pcf857x.c
++++ b/drivers/gpio/gpio-pcf857x.c
+@@ -440,6 +440,14 @@ static int pcf857x_remove(struct i2c_client *client)
+ 	return status;
+ }
  
-+static const unsigned int uart_tx_a_pins[]	= { PIN(GPIOX_12, EE_OFF) };
-+static const unsigned int uart_rx_a_pins[]	= { PIN(GPIOX_13, EE_OFF) };
-+static const unsigned int uart_cts_a_pins[]	= { PIN(GPIOX_14, EE_OFF) };
-+static const unsigned int uart_rts_a_pins[]	= { PIN(GPIOX_15, EE_OFF) };
++static void pcf857x_shutdown(struct i2c_client *client)
++{
++	struct pcf857x *gpio = i2c_get_clientdata(client);
 +
-+static const unsigned int uart_tx_b_pins[]	= { PIN(GPIODV_24, EE_OFF) };
-+static const unsigned int uart_rx_b_pins[]	= { PIN(GPIODV_25, EE_OFF) };
-+static const unsigned int uart_cts_b_pins[]	= { PIN(GPIODV_26, EE_OFF) };
-+static const unsigned int uart_rts_b_pins[]	= { PIN(GPIODV_27, EE_OFF) };
++	/* Drive all the I/O lines high */
++	gpio->write(gpio->client, BIT(gpio->chip.ngpio) - 1);
++}
 +
-+static const unsigned int uart_tx_c_pins[]	= { PIN(GPIOY_13, EE_OFF) };
-+static const unsigned int uart_rx_c_pins[]	= { PIN(GPIOY_14, EE_OFF) };
-+static const unsigned int uart_cts_c_pins[]	= { PIN(GPIOX_11, EE_OFF) };
-+static const unsigned int uart_rts_c_pins[]	= { PIN(GPIOX_12, EE_OFF) };
-+
- static const struct pinctrl_pin_desc meson_gxbb_aobus_pins[] = {
- 	MESON_PIN(GPIOAO_0, 0),
- 	MESON_PIN(GPIOAO_1, 0),
-@@ -324,6 +339,24 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 
- 	GPIO_GROUP(GPIO_TEST_N, EE_OFF),
- 
-+	/* Bank X */
-+	GROUP(uart_tx_a,	4,	13),
-+	GROUP(uart_rx_a,	4,	12),
-+	GROUP(uart_cts_a,	4,	11),
-+	GROUP(uart_rts_a,	4,	10),
-+
-+	/* Bank Y */
-+	GROUP(uart_cts_c,	1,	19),
-+	GROUP(uart_rts_c,	1,	18),
-+	GROUP(uart_tx_c,	1,	17),
-+	GROUP(uart_rx_c,	1,	16),
-+
-+	/* Bank DV */
-+	GROUP(uart_tx_b,	2,	29),
-+	GROUP(uart_rx_b,	2,	28),
-+	GROUP(uart_cts_b,	2,	27),
-+	GROUP(uart_rts_b,	2,	26),
-+
- 	/* Bank BOOT */
- 	GROUP(emmc_nand_d07,	4,	30),
- 	GROUP(emmc_clk,		4,	18),
-@@ -416,6 +449,18 @@ static const char * const sdcard_groups[] = {
- 	"sdcard_cmd", "sdcard_clk",
+ static struct i2c_driver pcf857x_driver = {
+ 	.driver = {
+ 		.name	= "pcf857x",
+@@ -447,6 +455,7 @@ static struct i2c_driver pcf857x_driver = {
+ 	},
+ 	.probe	= pcf857x_probe,
+ 	.remove	= pcf857x_remove,
++	.shutdown = pcf857x_shutdown,
+ 	.id_table = pcf857x_id,
  };
  
-+static const char * const uart_a_groups[] = {
-+	"uart_tx_a", "uart_rx_a", "uart_cts_a", "uart_rts_a",
-+};
-+
-+static const char * const uart_b_groups[] = {
-+	"uart_tx_b", "uart_rx_b", "uart_cts_b", "uart_rts_b",
-+};
-+
-+static const char * const uart_c_groups[] = {
-+	"uart_tx_c", "uart_rx_c", "uart_cts_c", "uart_rts_c",
-+};
-+
- static const char * const gpio_aobus_groups[] = {
- 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
- 	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
-@@ -442,6 +487,9 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(emmc),
- 	FUNCTION(sdcard),
-+	FUNCTION(uart_a),
-+	FUNCTION(uart_b),
-+	FUNCTION(uart_c),
- };
- 
- static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
 -- 
-2.7.4
+1.7.9.5
 
