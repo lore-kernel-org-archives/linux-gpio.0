@@ -1,41 +1,76 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] pinctrl: samsung: Suppress unbinding to prevent
- theoretical attacks
-Date: Fri, 27 May 2016 10:42:29 +0200
-Message-ID: <57480875.2040502@samsung.com>
-References: <1463464926-17482-1-git-send-email-k.kozlowski@samsung.com>
- <CACRpkdYdo5XsJvb9GTYph7P=u31treiDX6HZGbG_AGzW5hp1HQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: handle compatible ioctl() pointers
+Date: Fri, 27 May 2016 14:32:53 +0200
+Message-ID: <1464352373-25108-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:32744 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932456AbcE0Ime (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 May 2016 04:42:34 -0400
-In-reply-to: <CACRpkdYdo5XsJvb9GTYph7P=u31treiDX6HZGbG_AGzW5hp1HQ@mail.gmail.com>
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:36067 "EHLO
+	mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750957AbcE0MdA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 May 2016 08:33:00 -0400
+Received: by mail-lf0-f42.google.com with SMTP id b73so22782979lfb.3
+        for <linux-gpio@vger.kernel.org>; Fri, 27 May 2016 05:32:59 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-On 05/26/2016 11:08 AM, Linus Walleij wrote:
-> On Tue, May 17, 2016 at 8:02 AM, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
-> 
->> Although unbinding a pinctrl driver requires root privileges but it
->> still might be used theoretically in certain attacks (by triggering NULL
->> pointer exception or memory corruption).
-> 
-> Patch applied with Javier's review tag.
-> 
-> I suspect this kind of patch should be done to a few
-> GPIO controller :/
+If we're using the compatible ioctl() we need to handle the
+argument pointer in a special way or there will be trouble.
 
-Probably yes... Either the driver properly and safely handles unbind
-(remove() callback) or it should be forbidden. In the same time, even if
-remove() is implemented, unbinding some of the core SoC drivers is like
-shooting self in the foot.
+Fixes: 3c702e9987e2 ("gpio: add a userspace chardev ABI for GPIOs")
+Reported-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpiolib.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e901d2666b46..f1ef27014e6e 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -20,6 +20,7 @@
+ #include <linux/cdev.h>
+ #include <linux/fs.h>
+ #include <linux/uaccess.h>
++#include <linux/compat.h>
+ #include <uapi/linux/gpio.h>
+ 
+ #include "gpiolib.h"
+@@ -316,7 +317,7 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+ 	struct gpio_device *gdev = filp->private_data;
+ 	struct gpio_chip *chip = gdev->chip;
+-	int __user *ip = (int __user *)arg;
++	void __user *ip = (void __user *)arg;
+ 
+ 	/* We fail any subsequent ioctl():s when the chip is gone */
+ 	if (!chip)
+@@ -388,6 +389,14 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	return -EINVAL;
+ }
+ 
++#ifdef CONFIG_COMPAT
++static long gpio_ioctl_compat(struct file *filp, unsigned int cmd,
++			      unsigned long arg)
++{
++	return gpio_ioctl(filep, cmd, (unsigned long)compat_ptr(arg));
++}
++#endif
++
+ /**
+  * gpio_chrdev_open() - open the chardev for ioctl operations
+  * @inode: inode for this chardev
+@@ -431,7 +440,9 @@ static const struct file_operations gpio_fileops = {
+ 	.owner = THIS_MODULE,
+ 	.llseek = noop_llseek,
+ 	.unlocked_ioctl = gpio_ioctl,
+-	.compat_ioctl = gpio_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl = gpio_ioctl_compat,
++#endif
+ };
+ 
+ static void gpiodevice_release(struct device *dev)
+-- 
+2.4.11
+
