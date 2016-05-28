@@ -1,40 +1,55 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v5 4/4] watchdog: ebc-c384_wdt: Allow build for X86_64
-Date: Fri, 27 May 2016 18:09:27 -0400
-Message-ID: <383c17191c8261b578f057a969277fbbe918ef01.1464380034.git.vilhelm.gray@gmail.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH v5 3/4] iio: stx104: Allow build for X86_64
+Date: Sat, 28 May 2016 18:15:47 +0100
+Message-ID: <1d62168c-ab95-ff67-fd04-f8c3ba4f81a2@kernel.org>
 References: <cover.1464380034.git.vilhelm.gray@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1464380034.git.vilhelm.gray@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org, akpm@linux-foundation.org
-Cc: x86@kernel.org, linux-next@vger.kernel.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, sfr@canb.auug.org.au, linux@roeck-us.net, William Breathitt Gray <vilhelm.gray@gmail.com>, Wim Van Sebroeck <wim@iguana.be>
+ <26bbe8f7c46b2504068f11c1f6219e1df6879822.1464380034.git.vilhelm.gray@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:56633 "EHLO
+	saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752870AbcE1RPy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 28 May 2016 13:15:54 -0400
+In-Reply-To: <26bbe8f7c46b2504068f11c1f6219e1df6879822.1464380034.git.vilhelm.gray@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>, gregkh@linuxfoundation.org, akpm@linux-foundation.org
+Cc: x86@kernel.org, linux-next@vger.kernel.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, sfr@canb.auug.org.au, linux@roeck-us.net, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>
 
-With the introduction of the ISA_BUS_API Kconfig option, ISA-style
-drivers may be built for X86_64 architectures. This patch changes the
-ISA Kconfig option dependency of the WinSystems EBC-C384 watchdog timer
-driver to ISA_BUS_API, thus allowing it to build for X86_64 as it is
-expected to.
+On 27/05/16 23:09, William Breathitt Gray wrote:
+> With the introduction of the ISA_BUS_API Kconfig option, ISA-style
+> drivers may be built for X86_64 architectures. This patch changes the
+> ISA Kconfig option dependency of the Apex Embedded Systems STX104 DAC
+> driver to ISA_BUS_API, thus allowing it to build for X86_64 as it is
+> expected to.
+> 
+> Cc: Hartmut Knaack <knaack.h@gmx.de>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+I've only been following this discussion very vaguely, but the consensus seems
+to be good, so feel free to apply this one with my Ack for IIO.
+Acked-by: Jonathan Cameron <jic23@kernel.org>
+> ---
+>  drivers/iio/dac/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
+> index e63b957..f7c71da 100644
+> --- a/drivers/iio/dac/Kconfig
+> +++ b/drivers/iio/dac/Kconfig
+> @@ -247,7 +247,7 @@ config MCP4922
+>  
+>  config STX104
+>  	tristate "Apex Embedded Systems STX104 DAC driver"
+> -	depends on X86 && ISA
+> +	depends on X86 && ISA_BUS_API
+>  	help
+>  	  Say yes here to build support for the 2-channel DAC on the Apex
+>  	  Embedded Systems STX104 integrated analog PC/104 card. The base port
+> 
 
-Cc: Wim Van Sebroeck <wim@iguana.be>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/watchdog/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index b54f26c..b4b3e25 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -746,7 +746,7 @@ config ALIM7101_WDT
- 
- config EBC_C384_WDT
- 	tristate "WinSystems EBC-C384 Watchdog Timer"
--	depends on X86 && ISA
-+	depends on X86 && ISA_BUS_API
- 	select WATCHDOG_CORE
- 	help
- 	  Enables watchdog timer support for the watchdog timer on the
--- 
-2.7.3
