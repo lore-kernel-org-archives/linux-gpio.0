@@ -1,53 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: drop lock before reading GPIO direction
-Date: Mon, 30 May 2016 17:14:22 +0200
-Message-ID: <1464621262-32689-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: core: Do not call get_direction in atomic context
+ for sleeping gpio
+Date: Mon, 30 May 2016 17:15:58 +0200
+Message-ID: <CACRpkdZjW9KxkDFx3YatYyCzSd3+Vtw6V+Tzp=9H4S2fMAmQJA@mail.gmail.com>
+References: <1464095903-29145-1-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:34904 "EHLO
-	mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751736AbcE3PO1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 May 2016 11:14:27 -0400
-Received: by mail-lf0-f50.google.com with SMTP id w16so61767962lfd.2
-        for <linux-gpio@vger.kernel.org>; Mon, 30 May 2016 08:14:26 -0700 (PDT)
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:34258 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933483AbcE3PP7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 May 2016 11:15:59 -0400
+Received: by mail-oi0-f51.google.com with SMTP id b65so272901079oia.1
+        for <linux-gpio@vger.kernel.org>; Mon, 30 May 2016 08:15:59 -0700 (PDT)
+In-Reply-To: <1464095903-29145-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-When adding the gpiochip, the GPIO HW drivers' callback get_direction()
-could get called in atomic context. Some of the GPIO HW drivers may
-sleep when accessing the register.
+On Tue, May 24, 2016 at 3:18 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-Move the lock before initializing the descriptors.
+> When adding the gpiochip, the GPIO HW drivers' callback get_direction()
+> get called in atomic context. Some of the GPIO HW drivers can sleep when
+> accessing the register and hence it can create the sleeping call in
+> atomic context.
+>
+> Call get_direction() in non-atomic context from gpiochip_add() if GPIO
+> HW driver is having sleepable callback i.e. chip->can_sleep = 1.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>
+> ---
+> This is found when implementing the get_direction() of max77620 on 20160520
+> linux-next.
 
-Reported-by: Laxman Dewangan <ldewangan@nvidia.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I chose to send a new patch just moving the lock release before the
+direction check. I just sent it with you as Reported-by.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 246b6b051b0d..24f60d28f0c0 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -629,6 +629,8 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 		goto err_free_label;
- 	}
- 
-+	spin_unlock_irqrestore(&gpio_lock, flags);
-+
- 	for (i = 0; i < chip->ngpio; i++) {
- 		struct gpio_desc *desc = &gdev->descs[i];
- 
-@@ -660,8 +662,6 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 		}
- 	}
- 
--	spin_unlock_irqrestore(&gpio_lock, flags);
--
- #ifdef CONFIG_PINCTRL
- 	INIT_LIST_HEAD(&gdev->pin_ranges);
- #endif
--- 
-2.4.11
-
+Yours,
+Linus Walleij
