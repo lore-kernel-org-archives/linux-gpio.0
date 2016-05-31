@@ -1,68 +1,44 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: Moving pinctrl node under syscon for UniPhier pinctrl driver
-Date: Tue, 31 May 2016 17:40:16 +0900
-Message-ID: <CAK7LNARprew8qYJjf=_H-q-Pa+mJRgzRJxMAPagkNNr1x3YcjA@mail.gmail.com>
-References: <CAK7LNARp2t8y=8OaCTLG3ozBO-ZpyxVdEpo2M74TQ9ctcSnepQ@mail.gmail.com>
-	<CACRpkdY_5mK29fvnqnXQLXDJyWzCPui5rApAa3v=uoa6+zG3fQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RESEND PATCH] gpio: pcf857x: restore the initial line state of
+ all pcf lines
+Date: Tue, 31 May 2016 10:40:34 +0200
+Message-ID: <CACRpkdYLzZ3PeQDoje+_9GE9a_FaVWeRNhPP5fu+q2ixXj7Sew@mail.gmail.com>
+References: <1464330929-10910-1-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:35761 "EHLO
-	conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755853AbcEaIkX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 04:40:23 -0400
-Received: from mail-yw0-f174.google.com (mail-yw0-f174.google.com [209.85.161.174]) (authenticated)
-	by conssluserg-03.nifty.com with ESMTP id u4V8eGSE000316
-	for <linux-gpio@vger.kernel.org>; Tue, 31 May 2016 17:40:17 +0900
-Received: by mail-yw0-f174.google.com with SMTP id x189so181589647ywe.3
-        for <linux-gpio@vger.kernel.org>; Tue, 31 May 2016 01:40:17 -0700 (PDT)
-In-Reply-To: <CACRpkdY_5mK29fvnqnXQLXDJyWzCPui5rApAa3v=uoa6+zG3fQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1464330929-10910-1-git-send-email-kishon@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+On Fri, May 27, 2016 at 8:35 AM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
 
-2016-05-31 17:18 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-
->> But, this effectively breaks the current DT binding.
+> The reset values for all the PCF lines are high and hence on
+> shutdown we should drive all the lines high in order to
+> bring it to the reset state.
 >
-> Does it really? What matters is if it still works after the change.
-
-Yes.
-I use syscon_node_to_regmap().
-I want to get the regmap of the parent node, not of itself.
-
-
->> [1] Add the new binding support with a new compatible string.
->>     (note the old binding is still supported for backward compatibility)
->>
->> [2] Wait a couple of releases, keeping both of the two bindings
->>
->> [3] Drop the old binding support
->>
->> If it is OK, I want to move it forward.
+> This is actually required since PCF doesn't have a reset
+> line and even after warm reset (by invoking "reboot" in
+> prompt) the PCF lines maintains it's previous programmed
+> state. This becomes a problem if the boards are designed to
+> work with the default initial state.
 >
-> It is OK with *ME* because I'm just the GPIO maintainer and I'm
-> not really picky about breaking DT ABI's, I think you need to crack
-> a few eggs to make an omelet from time to time.
+> DRA7XX_evm uses PCF8575 and one of the PCF output lines
+> feeds to MMC/SD VDD and this line should be driven high in order
+> for the MMC/SD to be detected.  This line is modelled as
+> regulator and the hsmmc driver takes care of enabling and
+> disabling it. In the case of 'reboot', during shutdown path
+> as part of it's cleanup process the hsmmc driver disables
+> this regulator. This makes MMC *boot* not functional.
 >
-> The problem is rather the devicetree people: do *THEY* accept
-> this?
+> Fix it by driving all the pcf lines high.
+>
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 
-This case is really an SoC-specific matter.
-I hope it is acceptable because I am not disturbing other vendors at all.
+Patch applied.
 
-I broke another DT before on my board,
-https://lkml.org/lkml/2016/2/25/89
-in this discussion, Olof said it is a good practice
-to keep the old binding around, but I do not have to
-keep it forever.
-
-I am not sure how strict devicetree people are, though.
-
-
--- 
-Best Regards
-Masahiro Yamada
+Yours,
+Linus Walleij
