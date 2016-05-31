@@ -1,35 +1,41 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH] pinctrl: oxnas: Rename pinctrl_utils_dt_free_map to pinctrl_utils_free_map
-Date: Tue, 31 May 2016 11:36:15 +0200
-Message-ID: <1464687375-1370-1-git-send-email-narmstrong@baylibre.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: interrupts properties and API usage with GPIO controllers/Device
+ Tree
+Date: Tue, 31 May 2016 12:51:05 +0300
+Message-ID: <574D5E89.10906@ti.com>
+References: <57461CDC.603@gmail.com> <57485844.3050807@ti.com>
+ <CACRpkdYULz6fgw8N_yLCGYzqV7DjeJGmh1b0e9coxpGqSgZf+A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([198.47.19.11]:50415 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751083AbcEaJve (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 31 May 2016 05:51:34 -0400
+In-Reply-To: <CACRpkdYULz6fgw8N_yLCGYzqV7DjeJGmh1b0e9coxpGqSgZf+A@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
 
-Rename pinctrl_utils_dt_free_map to pinctrl_utils_free_map, introduced in
-d32f7fd3bbc3 ("pinctrl: Rename pinctrl_utils_dt_free_map to pinctrl_utils_free_map")
-but not reported into oxnas driver.
+On 05/31/2016 11:49 AM, Linus Walleij wrote:
+> On Fri, May 27, 2016 at 4:23 PM, Grygorii Strashko
+> <grygorii.strashko@ti.com> wrote:
+>
+>> Another interesting, related question (as for me) is "Is there a limitation
+>>   that gpio bank can have only 32 GPIO pins (from gpiolib point of view)?"
+>
+> Do you mean for this driver or in general?
 
-Fixes: 611dac1e48a4 ("pinctrl: Add Oxford Semiconductor OXNAS pinctrl and gpio driver")
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/pinctrl/pinctrl-oxnas.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+In general.
 
-diff --git a/drivers/pinctrl/pinctrl-oxnas.c b/drivers/pinctrl/pinctrl-oxnas.c
-index 2c6abef..917a7d2 100644
---- a/drivers/pinctrl/pinctrl-oxnas.c
-+++ b/drivers/pinctrl/pinctrl-oxnas.c
-@@ -321,7 +321,7 @@ static const struct pinctrl_ops oxnas_pinctrl_ops = {
- 	.get_group_name = oxnas_pinctrl_get_group_name,
- 	.get_group_pins = oxnas_pinctrl_get_group_pins,
- 	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
--	.dt_free_map = pinctrl_utils_dt_free_map,
-+	.dt_free_map = pinctrl_utils_free_map,
- };
- 
- static int oxnas_pinmux_get_functions_count(struct pinctrl_dev *pctldev)
+>
+> The gpio MMIO driver has this limitation, but not the subsystem
+> and gpiolib as far as I know.
+
+Thanks.
+
 -- 
-1.9.1
+regards,
+-grygorii
