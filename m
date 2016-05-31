@@ -1,42 +1,47 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: core: Do not call get_direction in atomic context
- for sleeping gpio
-Date: Mon, 30 May 2016 17:15:58 +0200
-Message-ID: <CACRpkdZjW9KxkDFx3YatYyCzSd3+Vtw6V+Tzp=9H4S2fMAmQJA@mail.gmail.com>
-References: <1464095903-29145-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 2/3] gpio: max77620: Implement gpio_get_direction callback
+Date: Tue, 31 May 2016 11:23:06 +0530
+Message-ID: <574D26C2.1090502@nvidia.com>
+References: <1464095626-28424-1-git-send-email-ldewangan@nvidia.com>	<1464095626-28424-2-git-send-email-ldewangan@nvidia.com> <CACRpkdbM=Ew6sPzGYFSst8p8AtaLAeDTxOaXUMBS8Qj2=HcuRA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:34258 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933483AbcE3PP7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 May 2016 11:15:59 -0400
-Received: by mail-oi0-f51.google.com with SMTP id b65so272901079oia.1
-        for <linux-gpio@vger.kernel.org>; Mon, 30 May 2016 08:15:59 -0700 (PDT)
-In-Reply-To: <1464095903-29145-1-git-send-email-ldewangan@nvidia.com>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:9685 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751288AbcEaGFe (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 02:05:34 -0400
+In-Reply-To: <CACRpkdbM=Ew6sPzGYFSst8p8AtaLAeDTxOaXUMBS8Qj2=HcuRA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, May 24, 2016 at 3:18 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-> When adding the gpiochip, the GPIO HW drivers' callback get_direction()
-> get called in atomic context. Some of the GPIO HW drivers can sleep when
-> accessing the register and hence it can create the sleeping call in
-> atomic context.
+On Monday 30 May 2016 08:33 PM, Linus Walleij wrote:
+> On Tue, May 24, 2016 at 3:13 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 >
-> Call get_direction() in non-atomic context from gpiochip_add() if GPIO
-> HW driver is having sleepable callback i.e. chip->can_sleep = 1.
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->
-> ---
-> This is found when implementing the get_direction() of max77620 on 20160520
-> linux-next.
+>> Implement gpio_get_direction() callback for MAX77620 GPIO.
+>> This is useful for debugfs and the userspace ABI.
+>>
+>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>>   #include <linux/gpio/driver.h>
+>> +#include <linux/gpio.h>
+> No. This is a sign that something is wrong, no driver should include
+> this unless it is using GPIOs as a resource itself.
+This is just to use the flag GPIOF_*
 
-I chose to send a new patch just moving the lock release before the
-direction check. I just sent it with you as Reported-by.
+As you said below, we can use the 0 and 1, there is no need to include 
+header.
+Will post the v2 patch for this.
 
-Yours,
-Linus Walleij
+
+>> +       return (val & MAX77620_CNFG_GPIO_DIR_MASK) ?
+>> +               GPIOF_DIR_IN : GPIOF_DIR_OUT;
+> Just return 0 or 1. The driver-internal API isn't smarter than that.
+>
+
+
+
+Thanks,
+Laxman
