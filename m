@@ -1,34 +1,68 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5 2/4] gpio: Allow PC/104 devices on X86_64
-Date: Tue, 31 May 2016 10:41:49 +0200
-Message-ID: <CACRpkdaOzZ1DvEUKtomBU=GH1kYfjKJjUfM-=45PhdzZA=dPgg@mail.gmail.com>
-References: <cover.1464380034.git.vilhelm.gray@gmail.com>
-	<61880bededb77bbc3ea3422e48ce717d2a2ff489.1464380034.git.vilhelm.gray@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: interrupts properties and API usage with GPIO controllers/Device Tree
+Date: Tue, 31 May 2016 10:48:53 +0200
+Message-ID: <CACRpkdbys9JDCdwxpFuYFd_c=i2KaoTTf0WWX+J4qbiubSJNWA@mail.gmail.com>
+References: <57461CDC.603@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <61880bededb77bbc3ea3422e48ce717d2a2ff489.1464380034.git.vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:33493 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755946AbcEaIsy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 04:48:54 -0400
+Received: by mail-oi0-f51.google.com with SMTP id k23so292697645oih.0
+        for <linux-gpio@vger.kernel.org>; Tue, 31 May 2016 01:48:54 -0700 (PDT)
+In-Reply-To: <57461CDC.603@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Gregory Fong <gregory.0xf0@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
 
-On Sat, May 28, 2016 at 12:08 AM, William Breathitt Gray
-<vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+On Wed, May 25, 2016 at 11:45 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
 
-> With the introduction of the ISA_BUS_API Kconfig option, ISA-style
-> drivers may be built for X86_64 architectures. This patch changes the
-> ISA Kconfig option dependency of the PC/104 drivers to ISA_BUS_API, thus
-> allowing them to build for X86_64 as they are expected to.
->
-> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Reviewed-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-> Signed-off-by: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> - is this a valid API and Device Tree use case: call
+> of_irq_parse_and_map on an "interrupts" property which has not been
+> acquired using the GPIO API and then gpio_to_irq?
 
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Yes. See Documentation/gpio/driver.txt:
 
-Or should I apply this directly to the GPIO tree?
+-------
+
+It is legal for any IRQ consumer to request an IRQ from any irqchip no matter
+if that is a combined GPIO+IRQ driver. The basic premise is that gpio_chip and
+irq_chip are orthogonal, and offering their services independent of each
+other.
+
+gpiod_to_irq() is just a convenience function to figure out the IRQ for a
+certain GPIO line and should not be relied upon to have been called before
+the IRQ is used.
+
+So always prepare the hardware and make it ready for action in respective
+callbacks from the GPIO and irqchip APIs. Do not rely on gpiod_to_irq() having
+been called first.
+
+This orthogonality leads to ambiguities that we need to solve: if there is
+competition inside the subsystem which side is using the resource (a certain
+GPIO line and register for example) it needs to deny certain operations and
+keep track of usage inside of the gpiolib subsystem. This is why the API
+below exists.
+
+-----
+
+> While gpio_to_irq()
+> works, are not we losing the second specifier in the interrupt cells
+> about what kind of interrupt type this is?
+
+Yeah and .set_type() needs to work. See other drivers for inspiration...
+
+> - would it be acceptable to export gpiochip_irq_map and
+> gpiochip_irq_export to make them accessible as helpers so we could just
+> wrap things a bit around or should I just open code the same things and
+> allow gpiochip_irqchip_add to be passed custom irq_domain_ops for instance?
+
+Rather than poke around in gpiolib internals, make a separate
+implementation for corner cases unless you can make it really
+clean and nice for all consumers.
 
 Yours,
 Linus Walleij
