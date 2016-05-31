@@ -1,77 +1,84 @@
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 11/17] pinctrl: uniphier: support per-pin input enable for new SoCs
-Date: Tue, 31 May 2016 17:05:17 +0900
-Message-ID: <1464681923-7469-12-git-send-email-yamada.masahiro@socionext.com>
-References: <1464681923-7469-1-git-send-email-yamada.masahiro@socionext.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1464681923-7469-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 00/17] pinctrl: uniphier: many clean-ups and support new
+ pinctrl drivers
+Date: Tue, 31 May 2016 17:05:06 +0900
+Message-ID: <1464681923-7469-1-git-send-email-yamada.masahiro@socionext.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Upcoming new pinctrl drivers for PH1-LD11 and PH-LD20 support input
-signal gating for each pin.  (While, existing ones only support it
-per pin-group.)  This commit updates the core part for that.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Here is a bunch of updates of UniPhier pinctrl drivers
+(hopefully, for Linux 4.8-rc1).
 
- drivers/pinctrl/uniphier/pinctrl-uniphier-core.c | 24 +++++++++++++-----------
- drivers/pinctrl/uniphier/pinctrl-uniphier.h      |  1 +
- 2 files changed, 14 insertions(+), 11 deletions(-)
+Socionext Inc. developed two new ARMv8 SoCs this year.
 
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-index ca2562a..d774a8e 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-@@ -433,22 +433,24 @@ static int uniphier_conf_pin_input_enable(struct pinctrl_dev *pctldev,
- {
- 	struct uniphier_pinctrl_priv *priv = pinctrl_dev_get_drvdata(pctldev);
- 	unsigned int iectrl = uniphier_pin_get_iectrl(desc->drv_data);
-+	unsigned int reg, mask;
- 
--	if (enable == 0) {
--		/*
--		 * Multiple pins share one input enable, so per-pin disabling
--		 * is impossible.
--		 */
--		dev_err(pctldev->dev, "unable to disable input\n");
-+	/*
-+	 * Multiple pins share one input enable, per-pin disabling is
-+	 * impossible.
-+	 */
-+	if (!(priv->socdata->caps & UNIPHIER_PINCTRL_CAPS_PERPIN_IECTRL) &&
-+	    !enable)
- 		return -EINVAL;
--	}
- 
-+	/* UNIPHIER_PIN_IECTRL_NONE means the pin is always input-enabled */
- 	if (iectrl == UNIPHIER_PIN_IECTRL_NONE)
--		/* This pin is always input-enabled. nothing to do. */
--		return 0;
-+		return enable ? 0 : -EINVAL;
-+
-+	reg = UNIPHIER_PINCTRL_IECTRL + iectrl / 32 * 4;
-+	mask = BIT(iectrl % 32);
- 
--	return regmap_update_bits(priv->regmap, UNIPHIER_PINCTRL_IECTRL,
--				  BIT(iectrl), BIT(iectrl));
-+	return regmap_update_bits(priv->regmap, reg, mask, enable ? mask : 0);
- }
- 
- static int uniphier_conf_pin_config_set(struct pinctrl_dev *pctldev,
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier.h b/drivers/pinctrl/uniphier/pinctrl-uniphier.h
-index 3fd5020..9941a4c 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier.h
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier.h
-@@ -166,6 +166,7 @@ struct uniphier_pinctrl_socdata {
- 	const struct uniphier_pinmux_function *functions;
- 	int functions_count;
- 	unsigned int caps;
-+#define UNIPHIER_PINCTRL_CAPS_PERPIN_IECTRL	BIT(1)
- #define UNIPHIER_PINCTRL_CAPS_DBGMUX_SEPARATE	BIT(0)
- };
- 
+New pinctrl driver support will be added by 16/17, 17/17.
+
+But, before doing new development, it is usually nice
+to clean the existing code.  So, this series also includes
+several clean-up patches.
+
+The new SoCs added some new SoC-specific features
+(more fine-grained drive control, sparse pin space,
+per-pin input enable gating, etc.), so I needed to update
+the core support code for Uniphier pinctrl.
+
+1/17 touches the core of pinctrl frame work, but
+I included it in this series because it is a prerequisite
+for 9/17.
+
+
+
+Masahiro Yamada (17):
+  pinctrl: copy per-pin driver private data to struct pin_desc
+  pinctrl: uniphier: rename function and variable names
+  pinctrl: uniphier: fix register offsets for drive strength control
+  pinctrl: uniphier: set pinctrl_desc owner in common probe function
+  pinctrl: uniphier: set pinctrl_desc name in common probe function
+  pinctrl: uniphier: allocate struct pinctrl_desc in probe function
+  pinctrl: uniphier: rename macros for drive strength control
+  pinctrl: uniphier: support 3-bit drive strength control
+  pinctrl: uniphier: support pin configuration in sparse pin space
+  pinctrl: uniphier: introduce capability flag
+  pinctrl: uniphier: support per-pin input enable for new SoCs
+  pinctrl: uniphier: support pin configuration for dedicated pins
+  pinctrl: uniphier: add dedicated pins to pin tables of PH1-LD4/sLD8
+  pinctrl: uniphier: add System Bus pin-mux settings
+  pinctrl: uniphier: allow to have pinctrl node under syscon node
+  pinctrl: uniphier: add UniPhier PH1-LD11 pinctrl driver
+  pinctrl: uniphier: add UniPhier PH1-LD20 pinctrl driver
+
+ drivers/pinctrl/core.c                           |   22 +-
+ drivers/pinctrl/core.h                           |    2 +
+ drivers/pinctrl/uniphier/Kconfig                 |   20 +-
+ drivers/pinctrl/uniphier/Makefile                |    2 +
+ drivers/pinctrl/uniphier/pinctrl-uniphier-core.c |  292 +++---
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c |  956 ++++++++++++++++++++
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 1037 ++++++++++++++++++++++
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c  |  480 +++++-----
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c |  595 +++++++------
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c |  787 ++++++++--------
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c |  653 +++++++-------
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c |  581 ++++++------
+ drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c |  441 +++++----
+ drivers/pinctrl/uniphier/pinctrl-uniphier.h      |   59 +-
+ 14 files changed, 4088 insertions(+), 1839 deletions(-)
+ create mode 100644 drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+ create mode 100644 drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+
 -- 
 1.9.1
