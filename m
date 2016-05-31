@@ -1,53 +1,73 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH v5 2/4] gpio: Allow PC/104 devices on X86_64
-Date: Tue, 31 May 2016 07:23:06 -0400
-Message-ID: <20160531112251.GA5674@sophia>
-References: <cover.1464380034.git.vilhelm.gray@gmail.com>
- <61880bededb77bbc3ea3422e48ce717d2a2ff489.1464380034.git.vilhelm.gray@gmail.com>
- <CACRpkdaOzZ1DvEUKtomBU=GH1kYfjKJjUfM-=45PhdzZA=dPgg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] tools/gpio: add the gpio-hammer tool
+Date: Tue, 31 May 2016 13:59:42 +0200
+Message-ID: <CACRpkdYr8GSmQ-=G4XcTtfrBcKsXUsJOvE7W35Fk-ovDiyaPJA@mail.gmail.com>
+References: <1461660866-18683-1-git-send-email-linus.walleij@linaro.org>
+	<1461660866-18683-2-git-send-email-linus.walleij@linaro.org>
+	<20160427160034.GA20392@deathstar>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaOzZ1DvEUKtomBU=GH1kYfjKJjUfM-=45PhdzZA=dPgg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Guenter Roeck <linux@roeck-us.net>, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:33858 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752861AbcEaL7o (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 07:59:44 -0400
+Received: by mail-oi0-f47.google.com with SMTP id e72so20366654oib.1
+        for <linux-gpio@vger.kernel.org>; Tue, 31 May 2016 04:59:43 -0700 (PDT)
+In-Reply-To: <20160427160034.GA20392@deathstar>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Michael Welling <mwelling@ieee.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Markus Pargmann <mpa@pengutronix.de>, Lee Campbell <leecam@google.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Johan Hovold <johan@kernel.org>
 
-On Tue, May 31, 2016 at 10:41:49AM +0200, Linus Walleij wrote:
->On Sat, May 28, 2016 at 12:08 AM, William Breathitt Gray
-><vilhelm.gray@gmail.com> wrote:
->
->> With the introduction of the ISA_BUS_API Kconfig option, ISA-style
->> drivers may be built for X86_64 architectures. This patch changes the
->> ISA Kconfig option dependency of the PC/104 drivers to ISA_BUS_API, thus
->> allowing them to build for X86_64 as they are expected to.
+On Wed, Apr 27, 2016 at 6:00 PM, Michael Welling <mwelling@ieee.org> wrote:
+> On Tue, Apr 26, 2016 at 10:54:26AM +0200, Linus Walleij wrote:
+>> The gpio-hammer is used from userspace as an example of how
+>> to retrieve a GPIO handle for one or several GPIO lines and
+>> hammer the outputs from low to high and back again. It will
+>> pulse the selected lines once per second for a specified
+>> number of times or indefinitely if no loop count is
+>> supplied.
 >>
->> Cc: Alexandre Courbot <gnurou@gmail.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
->> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+>> Example output:
+>> $ gpio-hammer -n gpiochip0 -o5 -o6 -o7
+>> Hammer lines [5, 6, 7] on gpiochip0, initial states: [1, 1, 1]
+>> [-] [5: 0, 6: 0, 7: 0]
+>>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 >
->Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Tested-by: Michael Welling <mwelling@ieee.org>
+
+Thanks! :)
+
+> Below is the output from my target.
+
+You can now get rid of all the "unnamed" in the first column
+by supplying the line/rail names in gpio-line-names = "A", "B" ...;
+in the GPIO controller node in the device tree for the platform,
+if it uses device tree too boot.
+
+> You will notice that a kernel warning is
+> spewed out if I use the mcp23s08.
+> The processor GPIOs work fine as verified by blinking LEDs.
 >
->Or should I apply this directly to the GPIO tree?
->
->Yours,
->Linus Walleij
+> root@som3517-som200:~# ./lsgpio
+> GPIO chip: gpiochip4, "mcp23s08", 8 GPIO lines
+>         line  0: unnamed unused
+>         line  1: unnamed unused
+>         line  2: unnamed unused
+>         line  3: unnamed unused
+>         line  4: unnamed unused
+>         line  5: unnamed unused
+>         line  6: unnamed unused
+>         line  7: unnamed unused
 
-Greg K-H,
+> root@som3517-som200:~# ./gpio-hammer -n gpiochip4 -o0
+> [  187.511606] ------------[ cut here ]------------
+> [  187.516949] WARNING: CPU: 0 PID: 830 at /home/michael/projects/linux/linux-git/drivers/gpio/gpiolib.c:1907 gpiod_get_value+0x60/0xa4
 
-Would you be able to pick up this entire patchset via driver-core; I
-figure that tree is the most appropriate to receive any core ISA bus
-driver changes (unless you see a more fitting path to take).
+Ah that's right, I have to use gpiod_get_value_cansleep(). Will
+fix that.
 
-If possible, I'd like this patchset to find its way into one of the
-coming release candidates in order to resolve the regression mentioned
-in the cover letter: as of 4.7-rc1, the drivers which switched to
-utilize the ISA bus driver are now restricted to X86_32 despite being
-allowed in X86_64 in the 4.6 release.
-
-Thanks,
-
-William Breathitt Gray
+Yours,
+Linus Walleij
