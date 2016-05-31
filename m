@@ -1,60 +1,55 @@
-From: "George G. Davis" <george_davis@mentor.com>
-Subject: Re: [PATCH] net: fec: dt: convert phy-reset-gpios to use GPIOD API
-Date: Tue, 31 May 2016 14:33:01 -0400
-Message-ID: <20160531183301.GA56552@gandalf.middle.earth.net>
-References: <1464715071-56012-1-git-send-email-george_davis@mentor.com>
- <CAOMZO5C7nMsV6LtjtO7AZdj8H4248YBr-DYMQ77z-h9rJhURbg@mail.gmail.com>
- <20160531182450.GA20696@gandalf.middle.earth.net>
- <20160531182642.GY19428@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] gpio: pca953x: enfore type for i2c_smbus_write_word_data()
+Date: Tue, 31 May 2016 22:03:43 +0300
+Message-ID: <1464721423-10969-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:46685 "EHLO
-	relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755738AbcEaSdD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 14:33:03 -0400
-Content-Disposition: inline
-In-Reply-To: <20160531182642.GY19428@n2100.arm.linux.org.uk>
+Received: from mga03.intel.com ([134.134.136.65]:15672 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753247AbcEaTDt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 31 May 2016 15:03:49 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Fabio Estevam <festevam@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Fugang Duan <fugang.duan@nxp.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Yong Li <sdliyong@gmail.com>, Phil Reid <preid@electromag.com.au>
 
-Hello Russell,
+The commit 9b8e3ec34318 ("gpio: pca953x: Use correct u16 value for register
+word write") fixed regression in pca953x_write_regs(). At the same time the
+solution introduced a sparse warning:
 
-On Tue, May 31, 2016 at 07:26:42PM +0100, Russell King - ARM Linux wrote:
-> On Tue, May 31, 2016 at 02:24:50PM -0400, George G. Davis wrote:
-> > Hello Fabio,
-> > 
-> > On Tue, May 31, 2016 at 02:26:54PM -0300, Fabio Estevam wrote:
-> > > On Tue, May 31, 2016 at 2:17 PM, George G. Davis
-> > > <george_davis@mentor.com> wrote:
-> > > > Convert the i.MX FEC driver and DT files to use the GPIOD API
-> > > > which automatically handles GPIO polarity.
-> > > >
-> > > > Signed-off-by: George G. Davis <george_davis@mentor.com>
-> > > 
-> > > In order to avoid breaking old dtb's a property called
-> > > 'phy-reset-active-high' has been introduced.
-> > > 
-> > > Check: 962d8cdc3133435a ("net: fec: Rename "phy-reset-active-low"
-> > > property") and 64f10f6ebf5a6d3ae ("net: fec: Add
-> > > "phy-reset-active-low" property to DT").
-> > 
-> > The GPIOD API handles GPIO active assertion levels as defined by the 
-> > DT binding. So the phy-reset-active-high and/or phy-reset-active-low
-> > property is not needed when using the GPIOD API - just define
-> > GPIO_ACTIVE_LOW or GPIO_ACTIVE_HIGH as required for the board and the
-> > GPIOD API will handle active assert/deassert level as needed.
-> 
-> You must retain compatibility with _existing_ DT files.  Hence,
-> while you can convert to using the gpiod API, you still need to
-> be compatible with the old way of specifying this - iow, you must
-> support the old properties in the code.
+drivers/gpio/gpio-pca953x.c:168:39: warning: incorrect type in argument 3 (different base types)
+drivers/gpio/gpio-pca953x.c:168:39:    expected unsigned short [unsigned] [usertype] value
+drivers/gpio/gpio-pca953x.c:168:39:    got restricted __le16 [usertype] <noident>
 
-Sigh, thanks for the ClueBat. Got it. I'll rework the patch to retain
-compatibility with existing DT files.
+Fix the code by enforcing the type of i2c_smbus_write_word_data() parameter.
 
+Cc: Yong Li <sdliyong@gmail.com>
+Cc: Phil Reid <preid@electromag.com.au>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-pca953x.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index d8233be..21b21cd 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -163,10 +163,13 @@ static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
+ 					NBANK(chip), val);
+ 	} else {
+ 		switch (chip->chip_type) {
+-		case PCA953X_TYPE:
+-			ret = i2c_smbus_write_word_data(chip->client,
+-			    reg << 1, cpu_to_le16(get_unaligned((u16 *)val)));
++		case PCA953X_TYPE: {
++			__le16 word = cpu_to_le16(get_unaligned((u16 *)val));
++
++			ret = i2c_smbus_write_word_data(chip->client, reg << 1,
++							(__force u16)word);
+ 			break;
++		}
+ 		case PCA957X_TYPE:
+ 			ret = i2c_smbus_write_byte_data(chip->client, reg << 1,
+ 							val[0]);
 -- 
-Regards,
-George
+2.8.1
+
