@@ -1,69 +1,83 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V2] gpio: max77620: Implement gpio_get_direction callback
-Date: Tue, 31 May 2016 18:34:35 +0530
-Message-ID: <1464699875-6641-1-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] gpio: pca953x: remove redundant assignments
+Date: Tue, 31 May 2016 17:05:57 +0300
+Message-ID: <1464703557-60539-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:3765 "EHLO
-	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753290AbcEaNRQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 09:17:16 -0400
+Received: from mga14.intel.com ([192.55.52.115]:26416 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754407AbcEaOL4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 31 May 2016 10:11:56 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Implement gpio_get_direction() callback for MAX77620 GPIO.
-This is useful for debugfs and the userspace ABI.
+There are few redundant assignments of ret variable which is updated anyway.
+Remove them for good.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+While here, correct indentation of the constant definition and remove one empty
+line.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
-Changes from V1:
-Earlier it was part of series to implement get_directiona dn set_single_mode.
-Other patches are alreadya pplied and hence making this as single patch.
-On this patch:
-- remove the inclusion of gpio.h
-- Do not use GPIOF flags.
+ drivers/gpio/gpio-pca953x.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
- drivers/gpio/gpio-max77620.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index 8658c32..3f34b52 100644
---- a/drivers/gpio/gpio-max77620.c
-+++ b/drivers/gpio/gpio-max77620.c
-@@ -152,6 +152,22 @@ static int max77620_gpio_dir_output(struct gpio_chip *gc, unsigned int offset,
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 7630285..d8233be 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -44,7 +44,7 @@
+ 
+ #define PCA_GPIO_MASK		0x00FF
+ #define PCA_INT			0x0100
+-#define PCA_PCAL			0x0200
++#define PCA_PCAL		0x0200
+ #define PCA953X_TYPE		0x1000
+ #define PCA957X_TYPE		0x2000
+ #define PCA_TYPE_MASK		0xF000
+@@ -135,7 +135,7 @@ static int pca953x_read_single(struct pca953x_chip *chip, int reg, u32 *val,
+ static int pca953x_write_single(struct pca953x_chip *chip, int reg, u32 val,
+ 				int off)
+ {
+-	int ret = 0;
++	int ret;
+ 	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+ 	int offset = off / BANK_SZ;
+ 
+@@ -235,7 +235,6 @@ static int pca953x_gpio_direction_input(struct gpio_chip *gc, unsigned off)
+ 		goto exit;
+ 
+ 	chip->reg_direction[off / BANK_SZ] = reg_val;
+-	ret = 0;
+ exit:
+ 	mutex_unlock(&chip->i2c_lock);
  	return ret;
+@@ -286,7 +285,6 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
+ 		goto exit;
+ 
+ 	chip->reg_direction[off / BANK_SZ] = reg_val;
+-	ret = 0;
+ exit:
+ 	mutex_unlock(&chip->i2c_lock);
+ 	return ret;
+@@ -351,7 +349,6 @@ exit:
+ 	mutex_unlock(&chip->i2c_lock);
  }
  
-+static int max77620_gpio_get_direction(struct gpio_chip *gc,
-+				       unsigned int offset)
-+{
-+	struct max77620_gpio *mgpio = gpiochip_get_data(gc);
-+	unsigned int val;
+-
+ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+ 		unsigned long *mask, unsigned long *bits)
+ {
+@@ -820,7 +817,7 @@ static int pca953x_remove(struct i2c_client *client)
+ {
+ 	struct pca953x_platform_data *pdata = dev_get_platdata(&client->dev);
+ 	struct pca953x_chip *chip = i2c_get_clientdata(client);
+-	int ret = 0;
 +	int ret;
-+
-+	ret = regmap_read(mgpio->rmap, GPIO_REG_ADDR(offset), &val);
-+	if (ret < 0) {
-+		dev_err(mgpio->dev, "GPIO register read failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return !!(val & MAX77620_CNFG_GPIO_DIR_MASK);
-+}
-+
- static int max77620_gpio_set_debounce(struct gpio_chip *gc,
- 				      unsigned int offset,
- 				      unsigned int debounce)
-@@ -258,6 +274,7 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 	mgpio->gpio_chip.direction_input = max77620_gpio_dir_input;
- 	mgpio->gpio_chip.get = max77620_gpio_get;
- 	mgpio->gpio_chip.direction_output = max77620_gpio_dir_output;
-+	mgpio->gpio_chip.get_direction = max77620_gpio_get_direction;
- 	mgpio->gpio_chip.set_debounce = max77620_gpio_set_debounce;
- 	mgpio->gpio_chip.set = max77620_gpio_set;
- 	mgpio->gpio_chip.set_single_ended = max77620_gpio_set_single_ended;
+ 
+ 	if (pdata && pdata->teardown) {
+ 		ret = pdata->teardown(client, chip->gpio_chip.base,
 -- 
-2.1.4
+2.8.1
 
