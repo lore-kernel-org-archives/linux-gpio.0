@@ -1,68 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: interrupts properties and API usage with GPIO controllers/Device Tree
-Date: Tue, 31 May 2016 10:48:53 +0200
-Message-ID: <CACRpkdbys9JDCdwxpFuYFd_c=i2KaoTTf0WWX+J4qbiubSJNWA@mail.gmail.com>
+Date: Tue, 31 May 2016 10:49:55 +0200
+Message-ID: <CACRpkdYULz6fgw8N_yLCGYzqV7DjeJGmh1b0e9coxpGqSgZf+A@mail.gmail.com>
 References: <57461CDC.603@gmail.com>
+	<57485844.3050807@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:33493 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755946AbcEaIsy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 04:48:54 -0400
-Received: by mail-oi0-f51.google.com with SMTP id k23so292697645oih.0
-        for <linux-gpio@vger.kernel.org>; Tue, 31 May 2016 01:48:54 -0700 (PDT)
-In-Reply-To: <57461CDC.603@gmail.com>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:32899 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756398AbcEaIt4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 04:49:56 -0400
+Received: by mail-oi0-f48.google.com with SMTP id k23so292718712oih.0
+        for <linux-gpio@vger.kernel.org>; Tue, 31 May 2016 01:49:55 -0700 (PDT)
+In-Reply-To: <57485844.3050807@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Gregory Fong <gregory.0xf0@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
 
-On Wed, May 25, 2016 at 11:45 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+On Fri, May 27, 2016 at 4:23 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-> - is this a valid API and Device Tree use case: call
-> of_irq_parse_and_map on an "interrupts" property which has not been
-> acquired using the GPIO API and then gpio_to_irq?
+> Another interesting, related question (as for me) is "Is there a limitation
+>  that gpio bank can have only 32 GPIO pins (from gpiolib point of view)?"
 
-Yes. See Documentation/gpio/driver.txt:
+Do you mean for this driver or in general?
 
--------
-
-It is legal for any IRQ consumer to request an IRQ from any irqchip no matter
-if that is a combined GPIO+IRQ driver. The basic premise is that gpio_chip and
-irq_chip are orthogonal, and offering their services independent of each
-other.
-
-gpiod_to_irq() is just a convenience function to figure out the IRQ for a
-certain GPIO line and should not be relied upon to have been called before
-the IRQ is used.
-
-So always prepare the hardware and make it ready for action in respective
-callbacks from the GPIO and irqchip APIs. Do not rely on gpiod_to_irq() having
-been called first.
-
-This orthogonality leads to ambiguities that we need to solve: if there is
-competition inside the subsystem which side is using the resource (a certain
-GPIO line and register for example) it needs to deny certain operations and
-keep track of usage inside of the gpiolib subsystem. This is why the API
-below exists.
-
------
-
-> While gpio_to_irq()
-> works, are not we losing the second specifier in the interrupt cells
-> about what kind of interrupt type this is?
-
-Yeah and .set_type() needs to work. See other drivers for inspiration...
-
-> - would it be acceptable to export gpiochip_irq_map and
-> gpiochip_irq_export to make them accessible as helpers so we could just
-> wrap things a bit around or should I just open code the same things and
-> allow gpiochip_irqchip_add to be passed custom irq_domain_ops for instance?
-
-Rather than poke around in gpiolib internals, make a separate
-implementation for corner cases unless you can make it really
-clean and nice for all consumers.
+The gpio MMIO driver has this limitation, but not the subsystem
+and gpiolib as far as I know.
 
 Yours,
 Linus Walleij
