@@ -1,27 +1,118 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: of: add missing of_node_put() to of_gpiochip_add_pin_range()
-Date: Tue, 31 May 2016 10:05:25 +0200
-Message-ID: <CACRpkdaX=N2Hv1rVw7jmVYcvma5CaKAiOmMsQAu=vKW_gYg=jg@mail.gmail.com>
-References: <1463968329-9530-1-git-send-email-yamada.masahiro@socionext.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1463968329-9530-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 04/17] pinctrl: uniphier: set pinctrl_desc owner in common probe function
+Date: Tue, 31 May 2016 17:05:10 +0900
+Message-ID: <1464681923-7469-5-git-send-email-yamada.masahiro@socionext.com>
+References: <1464681923-7469-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conuserg-12.nifty.com ([210.131.2.79]:24706 "EHLO
+	conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756212AbcEaIGP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 04:06:15 -0400
+In-Reply-To: <1464681923-7469-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Mon, May 23, 2016 at 3:52 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+The owner of the struct pinctrl_desc matches that of platform_driver.
+Set it in the common probe function.
 
-> As the comment block of of_parse_phandle_with_fixed_args() says,
-> the caller is responsible to call of_node_put() on the returned
-> node when done.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Patch applied.
+ drivers/pinctrl/uniphier/pinctrl-uniphier-core.c | 1 +
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c  | 1 -
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c | 1 -
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c | 1 -
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c | 1 -
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c | 1 -
+ drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c | 1 -
+ 7 files changed, 1 insertion(+), 6 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
+index 5d08de0..ab89efb 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
+@@ -670,6 +670,7 @@ int uniphier_pinctrl_probe(struct platform_device *pdev,
+ 	desc->pctlops = &uniphier_pctlops;
+ 	desc->pmxops = &uniphier_pmxops;
+ 	desc->confops = &uniphier_confops;
++	desc->owner = dev->driver->owner;
+ 
+ 	priv->pctldev = devm_pinctrl_register(dev, desc, priv);
+ 	if (IS_ERR(priv->pctldev)) {
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
+index ad193c7..5353ce4 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
+@@ -861,7 +861,6 @@ static struct pinctrl_desc uniphier_ld4_pinctrl_desc = {
+ 	.name = DRIVER_NAME,
+ 	.pins = uniphier_ld4_pins,
+ 	.npins = ARRAY_SIZE(uniphier_ld4_pins),
+-	.owner = THIS_MODULE,
+ };
+ 
+ static int uniphier_ld4_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
+index 0782a6d..c405960 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
+@@ -1249,7 +1249,6 @@ static struct pinctrl_desc uniphier_ld6b_pinctrl_desc = {
+ 	.name = DRIVER_NAME,
+ 	.pins = uniphier_ld6b_pins,
+ 	.npins = ARRAY_SIZE(uniphier_ld6b_pins),
+-	.owner = THIS_MODULE,
+ };
+ 
+ static int uniphier_ld6b_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+index 2d45307..54b08d5 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
+@@ -1535,7 +1535,6 @@ static struct pinctrl_desc uniphier_pro4_pinctrl_desc = {
+ 	.name = DRIVER_NAME,
+ 	.pins = uniphier_pro4_pins,
+ 	.npins = ARRAY_SIZE(uniphier_pro4_pins),
+-	.owner = THIS_MODULE,
+ };
+ 
+ static int uniphier_pro4_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+index 8452dad..19b15db 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
+@@ -1326,7 +1326,6 @@ static struct pinctrl_desc uniphier_pro5_pinctrl_desc = {
+ 	.name = DRIVER_NAME,
+ 	.pins = uniphier_pro5_pins,
+ 	.npins = ARRAY_SIZE(uniphier_pro5_pins),
+-	.owner = THIS_MODULE,
+ };
+ 
+ static int uniphier_pro5_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+index 89d3fdb..762de0e 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
+@@ -1244,7 +1244,6 @@ static struct pinctrl_desc uniphier_pxs2_pinctrl_desc = {
+ 	.name = DRIVER_NAME,
+ 	.pins = uniphier_pxs2_pins,
+ 	.npins = ARRAY_SIZE(uniphier_pxs2_pins),
+-	.owner = THIS_MODULE,
+ };
+ 
+ static int uniphier_pxs2_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
+index ab635f2..9fe8762 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
+@@ -769,7 +769,6 @@ static struct pinctrl_desc uniphier_sld8_pinctrl_desc = {
+ 	.name = DRIVER_NAME,
+ 	.pins = uniphier_sld8_pins,
+ 	.npins = ARRAY_SIZE(uniphier_sld8_pins),
+-	.owner = THIS_MODULE,
+ };
+ 
+ static int uniphier_sld8_pinctrl_probe(struct platform_device *pdev)
+-- 
+1.9.1
+
