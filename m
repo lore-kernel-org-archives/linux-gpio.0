@@ -1,34 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: interrupts properties and API usage with GPIO controllers/Device Tree
-Date: Tue, 31 May 2016 10:49:55 +0200
-Message-ID: <CACRpkdYULz6fgw8N_yLCGYzqV7DjeJGmh1b0e9coxpGqSgZf+A@mail.gmail.com>
-References: <57461CDC.603@gmail.com>
-	<57485844.3050807@ti.com>
+Subject: Re: [PATCH] pinctrl: imx: fix initialization of imx_pinctrl_desc
+Date: Tue, 31 May 2016 10:55:16 +0200
+Message-ID: <CACRpkdb5zv_YwbZw_=bcss=ssuqDPcXc6gDa+U0TsaN-8gie-w@mail.gmail.com>
+References: <1463563919-4144-1-git-send-email-van.freenix@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:32899 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756398AbcEaIt4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 04:49:56 -0400
-Received: by mail-oi0-f48.google.com with SMTP id k23so292718712oih.0
-        for <linux-gpio@vger.kernel.org>; Tue, 31 May 2016 01:49:55 -0700 (PDT)
-In-Reply-To: <57485844.3050807@ti.com>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:34041 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755946AbcEaIzR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 04:55:17 -0400
+Received: by mail-oi0-f51.google.com with SMTP id e72so16453231oib.1
+        for <linux-gpio@vger.kernel.org>; Tue, 31 May 2016 01:55:16 -0700 (PDT)
+In-Reply-To: <1463563919-4144-1-git-send-email-van.freenix@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
+To: Peng Fan <van.freenix@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Stefan Agner <stefan@agner.ch>, Vladimir Zapolskiy <vz@mleia.com>
 
-On Fri, May 27, 2016 at 4:23 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+On Wed, May 18, 2016 at 11:31 AM, Peng Fan <van.freenix@gmail.com> wrote:
 
-> Another interesting, related question (as for me) is "Is there a limitation
->  that gpio bank can have only 32 GPIO pins (from gpiolib point of view)?"
+> To i.MX7D, there are two iomux controllers, iomuxc and iomuxc_lpsr.
+> They should not share one pin controller descriptor, otherwise
+> the value filled into imx_pinctrl_desc when probing the first
+> iomux controller will be overridden when probing the second one.
+>
+> In this patch, discard the static allcoated imx_pinctrl_desc and
+> switch to dynamically allcate pin controller descriptor for each
+> iomux controller.
+>
+> Signed-off-by: Peng Fan <van.freenix@gmail.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Vladimir Zapolskiy <vz@mleia.com>
 
-Do you mean for this driver or in general?
-
-The gpio MMIO driver has this limitation, but not the subsystem
-and gpiolib as far as I know.
+Looks reasonable to me so patch applied since noone is responding.
 
 Yours,
 Linus Walleij
