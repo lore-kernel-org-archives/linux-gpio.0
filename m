@@ -1,73 +1,69 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] tools/gpio: add the gpio-hammer tool
-Date: Tue, 31 May 2016 13:59:42 +0200
-Message-ID: <CACRpkdYr8GSmQ-=G4XcTtfrBcKsXUsJOvE7W35Fk-ovDiyaPJA@mail.gmail.com>
-References: <1461660866-18683-1-git-send-email-linus.walleij@linaro.org>
-	<1461660866-18683-2-git-send-email-linus.walleij@linaro.org>
-	<20160427160034.GA20392@deathstar>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V2] gpio: max77620: Implement gpio_get_direction callback
+Date: Tue, 31 May 2016 18:34:35 +0530
+Message-ID: <1464699875-6641-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:33858 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752861AbcEaL7o (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 07:59:44 -0400
-Received: by mail-oi0-f47.google.com with SMTP id e72so20366654oib.1
-        for <linux-gpio@vger.kernel.org>; Tue, 31 May 2016 04:59:43 -0700 (PDT)
-In-Reply-To: <20160427160034.GA20392@deathstar>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:3765 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753290AbcEaNRQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 09:17:16 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Welling <mwelling@ieee.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Markus Pargmann <mpa@pengutronix.de>, Lee Campbell <leecam@google.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Johan Hovold <johan@kernel.org>
+To: linus.walleij@linaro.org
+Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 
-On Wed, Apr 27, 2016 at 6:00 PM, Michael Welling <mwelling@ieee.org> wrote:
-> On Tue, Apr 26, 2016 at 10:54:26AM +0200, Linus Walleij wrote:
->> The gpio-hammer is used from userspace as an example of how
->> to retrieve a GPIO handle for one or several GPIO lines and
->> hammer the outputs from low to high and back again. It will
->> pulse the selected lines once per second for a specified
->> number of times or indefinitely if no loop count is
->> supplied.
->>
->> Example output:
->> $ gpio-hammer -n gpiochip0 -o5 -o6 -o7
->> Hammer lines [5, 6, 7] on gpiochip0, initial states: [1, 1, 1]
->> [-] [5: 0, 6: 0, 7: 0]
->>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->
-> Tested-by: Michael Welling <mwelling@ieee.org>
+Implement gpio_get_direction() callback for MAX77620 GPIO.
+This is useful for debugfs and the userspace ABI.
 
-Thanks! :)
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+Changes from V1:
+Earlier it was part of series to implement get_directiona dn set_single_mode.
+Other patches are alreadya pplied and hence making this as single patch.
+On this patch:
+- remove the inclusion of gpio.h
+- Do not use GPIOF flags.
 
-> Below is the output from my target.
+ drivers/gpio/gpio-max77620.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-You can now get rid of all the "unnamed" in the first column
-by supplying the line/rail names in gpio-line-names = "A", "B" ...;
-in the GPIO controller node in the device tree for the platform,
-if it uses device tree too boot.
+diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
+index 8658c32..3f34b52 100644
+--- a/drivers/gpio/gpio-max77620.c
++++ b/drivers/gpio/gpio-max77620.c
+@@ -152,6 +152,22 @@ static int max77620_gpio_dir_output(struct gpio_chip *gc, unsigned int offset,
+ 	return ret;
+ }
+ 
++static int max77620_gpio_get_direction(struct gpio_chip *gc,
++				       unsigned int offset)
++{
++	struct max77620_gpio *mgpio = gpiochip_get_data(gc);
++	unsigned int val;
++	int ret;
++
++	ret = regmap_read(mgpio->rmap, GPIO_REG_ADDR(offset), &val);
++	if (ret < 0) {
++		dev_err(mgpio->dev, "GPIO register read failed: %d\n", ret);
++		return ret;
++	}
++
++	return !!(val & MAX77620_CNFG_GPIO_DIR_MASK);
++}
++
+ static int max77620_gpio_set_debounce(struct gpio_chip *gc,
+ 				      unsigned int offset,
+ 				      unsigned int debounce)
+@@ -258,6 +274,7 @@ static int max77620_gpio_probe(struct platform_device *pdev)
+ 	mgpio->gpio_chip.direction_input = max77620_gpio_dir_input;
+ 	mgpio->gpio_chip.get = max77620_gpio_get;
+ 	mgpio->gpio_chip.direction_output = max77620_gpio_dir_output;
++	mgpio->gpio_chip.get_direction = max77620_gpio_get_direction;
+ 	mgpio->gpio_chip.set_debounce = max77620_gpio_set_debounce;
+ 	mgpio->gpio_chip.set = max77620_gpio_set;
+ 	mgpio->gpio_chip.set_single_ended = max77620_gpio_set_single_ended;
+-- 
+2.1.4
 
-> You will notice that a kernel warning is
-> spewed out if I use the mcp23s08.
-> The processor GPIOs work fine as verified by blinking LEDs.
->
-> root@som3517-som200:~# ./lsgpio
-> GPIO chip: gpiochip4, "mcp23s08", 8 GPIO lines
->         line  0: unnamed unused
->         line  1: unnamed unused
->         line  2: unnamed unused
->         line  3: unnamed unused
->         line  4: unnamed unused
->         line  5: unnamed unused
->         line  6: unnamed unused
->         line  7: unnamed unused
-
-> root@som3517-som200:~# ./gpio-hammer -n gpiochip4 -o0
-> [  187.511606] ------------[ cut here ]------------
-> [  187.516949] WARNING: CPU: 0 PID: 830 at /home/michael/projects/linux/linux-git/drivers/gpio/gpiolib.c:1907 gpiod_get_value+0x60/0xa4
-
-Ah that's right, I have to use gpiod_get_value_cansleep(). Will
-fix that.
-
-Yours,
-Linus Walleij
