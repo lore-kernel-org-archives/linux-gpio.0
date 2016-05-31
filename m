@@ -1,60 +1,46 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
+From: "George G. Davis" <george_davis@mentor.com>
 Subject: Re: [PATCH] net: fec: dt: convert phy-reset-gpios to use GPIOD API
-Date: Tue, 31 May 2016 19:47:48 +0200
-Message-ID: <20160531174748.GI26768@pengutronix.de>
+Date: Tue, 31 May 2016 14:24:50 -0400
+Message-ID: <20160531182450.GA20696@gandalf.middle.earth.net>
 References: <1464715071-56012-1-git-send-email-george_davis@mentor.com>
+ <CAOMZO5C7nMsV6LtjtO7AZdj8H4248YBr-DYMQ77z-h9rJhURbg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:50806 "EHLO
-	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755398AbcEaRrx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 31 May 2016 13:47:53 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:45228 "EHLO
+	relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755903AbcEaSYy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 14:24:54 -0400
 Content-Disposition: inline
-In-Reply-To: <1464715071-56012-1-git-send-email-george_davis@mentor.com>
+In-Reply-To: <CAOMZO5C7nMsV6LtjtO7AZdj8H4248YBr-DYMQ77z-h9rJhURbg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "George G. Davis" <george_davis@mentor.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, netdev@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Fugang Duan <fugang.duan@nxp.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Kumar Gala <galak@codeaurora.org>, Shawn Guo <shawnguo@kernel.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Fugang Duan <fugang.duan@nxp.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Russell King <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-Hello George,
+Hello Fabio,
 
-On Tue, May 31, 2016 at 01:17:51PM -0400, George G. Davis wrote:
-> Convert the i.MX FEC driver and DT files to use the GPIOD API
-> which automatically handles GPIO polarity.
+On Tue, May 31, 2016 at 02:26:54PM -0300, Fabio Estevam wrote:
+> On Tue, May 31, 2016 at 2:17 PM, George G. Davis
+> <george_davis@mentor.com> wrote:
+> > Convert the i.MX FEC driver and DT files to use the GPIOD API
+> > which automatically handles GPIO polarity.
+> >
+> > Signed-off-by: George G. Davis <george_davis@mentor.com>
+> 
+> In order to avoid breaking old dtb's a property called
+> 'phy-reset-active-high' has been introduced.
+> 
+> Check: 962d8cdc3133435a ("net: fec: Rename "phy-reset-active-low"
+> property") and 64f10f6ebf5a6d3ae ("net: fec: Add
+> "phy-reset-active-low" property to DT").
 
-additionally to what Fabio said, there is also a nicer approach in the
-making. The resulting dts would look as follows:
+The GPIOD API handles GPIO active assertion levels as defined by the 
+DT binding. So the phy-reset-active-high and/or phy-reset-active-low
+property is not needed when using the GPIOD API - just define
+GPIO_ACTIVE_LOW or GPIO_ACTIVE_HIGH as required for the board and the
+GPIOD API will handle active assert/deassert level as needed.
 
-	&fec {
-		phy-handle =3D <&ethphy>;
-		...
-
-		mdio {
-			#address-cells =3D <1>;
-			#size-cells =3D <0>;
-
-			ethphy: ethernet-phy@7 {
-				...
-
-				reset-gpios =3D <&gpio1 25 GPIO_ACTIVE_LOW>;
-			};
-		};
-	};
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Regards,
+George
