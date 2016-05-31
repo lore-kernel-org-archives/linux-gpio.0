@@ -1,34 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: oxnas: Rename pinctrl_utils_dt_free_map to pinctrl_utils_free_map
-Date: Tue, 31 May 2016 12:59:51 +0200
-Message-ID: <CACRpkdb0yrqbyk8k38DpZ1KP1WvPv6qxsDNgXm9XHCsiJRgmmg@mail.gmail.com>
-References: <1464687375-1370-1-git-send-email-narmstrong@baylibre.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH v5 2/4] gpio: Allow PC/104 devices on X86_64
+Date: Tue, 31 May 2016 07:23:06 -0400
+Message-ID: <20160531112251.GA5674@sophia>
+References: <cover.1464380034.git.vilhelm.gray@gmail.com>
+ <61880bededb77bbc3ea3422e48ce717d2a2ff489.1464380034.git.vilhelm.gray@gmail.com>
+ <CACRpkdaOzZ1DvEUKtomBU=GH1kYfjKJjUfM-=45PhdzZA=dPgg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:32873 "EHLO
-	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750852AbcEaK7w (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 May 2016 06:59:52 -0400
-Received: by mail-oi0-f54.google.com with SMTP id k23so295413412oih.0
-        for <linux-gpio@vger.kernel.org>; Tue, 31 May 2016 03:59:52 -0700 (PDT)
-In-Reply-To: <1464687375-1370-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaOzZ1DvEUKtomBU=GH1kYfjKJjUfM-=45PhdzZA=dPgg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Guenter Roeck <linux@roeck-us.net>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, May 31, 2016 at 11:36 AM, Neil Armstrong
-<narmstrong@baylibre.com> wrote:
-
-> Rename pinctrl_utils_dt_free_map to pinctrl_utils_free_map, introduced in
-> d32f7fd3bbc3 ("pinctrl: Rename pinctrl_utils_dt_free_map to pinctrl_utils_free_map")
-> but not reported into oxnas driver.
+On Tue, May 31, 2016 at 10:41:49AM +0200, Linus Walleij wrote:
+>On Sat, May 28, 2016 at 12:08 AM, William Breathitt Gray
+><vilhelm.gray@gmail.com> wrote:
 >
-> Fixes: 611dac1e48a4 ("pinctrl: Add Oxford Semiconductor OXNAS pinctrl and gpio driver")
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> With the introduction of the ISA_BUS_API Kconfig option, ISA-style
+>> drivers may be built for X86_64 architectures. This patch changes the
+>> ISA Kconfig option dependency of the PC/104 drivers to ISA_BUS_API, thus
+>> allowing them to build for X86_64 as they are expected to.
+>>
+>> Cc: Alexandre Courbot <gnurou@gmail.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+>> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+>
+>Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+>Or should I apply this directly to the GPIO tree?
+>
+>Yours,
+>Linus Walleij
 
-Patch applied.
+Greg K-H,
 
-Yours,
-Linus Walleij
+Would you be able to pick up this entire patchset via driver-core; I
+figure that tree is the most appropriate to receive any core ISA bus
+driver changes (unless you see a more fitting path to take).
+
+If possible, I'd like this patchset to find its way into one of the
+coming release candidates in order to resolve the regression mentioned
+in the cover letter: as of 4.7-rc1, the drivers which switched to
+utilize the ISA bus driver are now restricted to X86_32 despite being
+allowed in X86_64 in the 4.6 release.
+
+Thanks,
+
+William Breathitt Gray
