@@ -1,55 +1,44 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] gpio: pca953x: enfore type for i2c_smbus_write_word_data()
-Date: Tue, 31 May 2016 22:03:43 +0300
-Message-ID: <1464721423-10969-1-git-send-email-andriy.shevchenko@linux.intel.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: [PATCH] pinctrl: single: Fix missing flush of posted write for a wakeirq
+Date: Tue, 31 May 2016 14:17:06 -0700
+Message-ID: <1464729426-11187-1-git-send-email-tony@atomide.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:15672 "EHLO mga03.intel.com"
+Received: from muru.com ([72.249.23.125]:55105 "EHLO muru.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753247AbcEaTDt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 31 May 2016 15:03:49 -0400
+	id S1750813AbcEaVRQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 31 May 2016 17:17:16 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Yong Li <sdliyong@gmail.com>, Phil Reid <preid@electromag.com.au>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org
 
-The commit 9b8e3ec34318 ("gpio: pca953x: Use correct u16 value for register
-word write") fixed regression in pca953x_write_regs(). At the same time the
-solution introduced a sparse warning:
+With many repeated suspend resume cycles, the pin specific wakeirq
+may not always work on omaps. This is because the write to enable the
+pin interrupt may not have reached the device over the interconnect
+before suspend happens.
 
-drivers/gpio/gpio-pca953x.c:168:39: warning: incorrect type in argument 3 (different base types)
-drivers/gpio/gpio-pca953x.c:168:39:    expected unsigned short [unsigned] [usertype] value
-drivers/gpio/gpio-pca953x.c:168:39:    got restricted __le16 [usertype] <noident>
+Let's fix the issue with a flush of posted write with a readback.
 
-Fix the code by enforcing the type of i2c_smbus_write_word_data() parameter.
-
-Cc: Yong Li <sdliyong@gmail.com>
-Cc: Phil Reid <preid@electromag.com.au>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reported-by: Nishanth Menon <nm@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/gpio/gpio-pca953x.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/pinctrl/pinctrl-single.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index d8233be..21b21cd 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -163,10 +163,13 @@ static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
- 					NBANK(chip), val);
- 	} else {
- 		switch (chip->chip_type) {
--		case PCA953X_TYPE:
--			ret = i2c_smbus_write_word_data(chip->client,
--			    reg << 1, cpu_to_le16(get_unaligned((u16 *)val)));
-+		case PCA953X_TYPE: {
-+			__le16 word = cpu_to_le16(get_unaligned((u16 *)val));
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+index cf9bafa..bfdf720 100644
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -1580,6 +1580,9 @@ static inline void pcs_irq_set(struct pcs_soc_data *pcs_soc,
+ 		else
+ 			mask &= ~soc_mask;
+ 		pcs->write(mask, pcswi->reg);
 +
-+			ret = i2c_smbus_write_word_data(chip->client, reg << 1,
-+							(__force u16)word);
- 			break;
-+		}
- 		case PCA957X_TYPE:
- 			ret = i2c_smbus_write_byte_data(chip->client, reg << 1,
- 							val[0]);
++		/* flush posted write */
++		mask = pcs->read(pcswi->reg);
+ 		raw_spin_unlock(&pcs->lock);
+ 	}
+ 
 -- 
 2.8.1
 
