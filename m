@@ -1,42 +1,46 @@
-From: Alexander Shiyan <shc_work@mail.ru>
-Subject: [PATCH] pinctrl: imx: Do not treat a PIN without MUX register as an error
-Date: Wed,  1 Jun 2016 22:21:53 +0300
-Message-ID: <1464808913-7796-1-git-send-email-shc_work@mail.ru>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] tools/gpio: add the gpio-hammer tool
+Date: Wed, 1 Jun 2016 23:40:04 +0200
+Message-ID: <CACRpkdYEfYFwnhgEGf2AmCkj7QUJm-GeQW3_CE2H4vWSNngp_Q@mail.gmail.com>
+References: <1461660866-18683-1-git-send-email-linus.walleij@linaro.org>
+	<1461660866-18683-2-git-send-email-linus.walleij@linaro.org>
+	<20160427160034.GA20392@deathstar>
+	<CACRpkdYr8GSmQ-=G4XcTtfrBcKsXUsJOvE7W35Fk-ovDiyaPJA@mail.gmail.com>
+	<20160601034343.GA3749@deathstar>
+	<CACRpkdZrdwPwnLDnHfBxEi67cUsfUAo+ugHnZWxywg5Vjdzghw@mail.gmail.com>
+	<20160601180906.GA5286@deathstar>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fallback7.mail.ru ([94.100.181.128]:48017 "EHLO
-	fallback7.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751249AbcFATfj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jun 2016 15:35:39 -0400
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:35256 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751367AbcFAVkF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jun 2016 17:40:05 -0400
+Received: by mail-oi0-f48.google.com with SMTP id w184so48939414oiw.2
+        for <linux-gpio@vger.kernel.org>; Wed, 01 Jun 2016 14:40:05 -0700 (PDT)
+In-Reply-To: <20160601180906.GA5286@deathstar>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Adrian Alonso <aalonso@freescale.com>, Philipp Zabel <p.zabel@pengutronix.de>, Alexander Shiyan <shc_work@mail.ru>
+To: Michael Welling <mwelling@ieee.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Markus Pargmann <mpa@pengutronix.de>, Lee Campbell <leecam@google.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Johan Hovold <johan@kernel.org>
 
-Some PINs do not have a MUX register, it is not an error.
-It is necessary to allow the continuation of the PINs configuration,
-otherwise the whole PIN-group will be configured incorrectly.
+On Wed, Jun 1, 2016 at 8:09 PM, Michael Welling <mwelling@ieee.org> wrote:
 
-Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
----
- drivers/pinctrl/freescale/pinctrl-imx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Is there a way to name a group of GPIOs?
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index 47ccfcc..eccb474 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -209,9 +209,9 @@ static int imx_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
- 		pin_reg = &info->pin_regs[pin_id];
- 
- 		if (pin_reg->mux_reg == -1) {
--			dev_err(ipctl->dev, "Pin(%s) does not support mux function\n",
-+			dev_dbg(ipctl->dev, "Pin(%s) does not support mux function\n",
- 				info->pins[pin_id].name);
--			return -EINVAL;
-+			continue;
- 		}
- 
- 		if (info->flags & SHARE_MUX_CONF_REG) {
--- 
-2.4.9
+Do you mean from the producer side or the consumer side?
+There is gpio-line-names in DT for the producer side.
 
+>From the consumer side the same consumer name will be used
+on all lines if more than one is selected, which I think makes
+sense. (It's just a label after all.)
+
+> It seems you are passing around a byte of data for each GPIO state.
+> Is there a reason why the bits couldn't bit masked into single variable
+> given the max number of handles is 64?
+
+Sorry not following, I guess you need to post me some part of
+the patch or so...
+
+Yours,
+Linus Walleij
