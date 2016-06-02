@@ -1,61 +1,52 @@
-From: Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
-Subject: Re: [PATCH] gpio: zynq: initialize clock even without CONFIG_PM
-Date: Thu, 2 Jun 2016 18:43:57 +0200
-Message-ID: <5750624D.8010506@gmail.com>
-References: <20160601110259.GA30501@laureti-dev>
- <CACRpkdYeRn7oxOnYv44R8+FMG4CdMrFQ9sjyZC6SDT-OY4Yezg@mail.gmail.com>
+From: <tthayer@opensource.altera.com>
+Subject: [PATCHv2 2/8] MAINTAINERS: Add Altera Arria10 System Resource Chip
+Date: Thu, 2 Jun 2016 12:52:22 -0500
+Message-ID: <1464889948-28793-3-git-send-email-tthayer@opensource.altera.com>
+References: <1464889948-28793-1-git-send-email-tthayer@opensource.altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36591 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751840AbcFBQoB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jun 2016 12:44:01 -0400
-Received: by mail-wm0-f65.google.com with SMTP id a20so5739770wma.3
-        for <linux-gpio@vger.kernel.org>; Thu, 02 Jun 2016 09:44:01 -0700 (PDT)
-In-Reply-To: <CACRpkdYeRn7oxOnYv44R8+FMG4CdMrFQ9sjyZC6SDT-OY4Yezg@mail.gmail.com>
+Received: from mail-bn1bon0056.outbound.protection.outlook.com ([157.56.111.56]:13230
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S933003AbcFBRrs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 2 Jun 2016 13:47:48 -0400
+In-Reply-To: <1464889948-28793-1-git-send-email-tthayer@opensource.altera.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Helmut Grohne <h.grohne@intenta.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>
+To: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, dinguyen@opensource.altera.com
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Thor Thayer <tthayer@opensource.altera.com>
 
-On 06/02/2016 02:30 PM, Linus Walleij wrote:
-> On Wed, Jun 1, 2016 at 1:03 PM, Helmut Grohne <h.grohne@intenta.de> wrote:
->
->> When the PM initialization was moved in the commit referenced below, the
->> code enabling the clock was removed from the probe function. On
->> CONFIG_PM=y kernels, this is not a problem as the pm resume hook enables
->> the clock, but when power management is disabled, all those pm_*
->> functions are noops and the clock is never enabled resulting in a
->> dysfunctional gpio controller.
->>
->> Put the clock initialization back to support CONFIG_PM=n.
->>
->> Signed-off-by: Helmut Grohne <h.grohne@intenta.de>
->> Fixes: 3773c195d387 ("gpio: zynq: Do PM initialization earlier to support gpio hogs")
->
-> This does not apply to my kernel tree, can you rebase it on
-> v4.7-rc1?
->
-> Sould it be tagged for stable and sent to fixes?
->
-> Yours,
-> Linus Walleij
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+From: Thor Thayer <tthayer@opensource.altera.com>
 
-I just ran into that problem when using v4.7-rc1 for our Zynq-7015 based 
-custom board running without CONFIG_PM. It relies on MIO based GPIO for 
-hardware identification, which immediately ceased to work.
+Add maintainer for the Altera Arria10 Max5 System Resource chip files.
 
-Rebasing Helmut's patch for v4.7-rc1 fixes this issue, so I can confirm 
-it works!
+Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
+Acked-by: Lee Jones <lee.jones@linaro.org>i
+---
+v2  Remove altera-a10sr-hwmon.c file.
+---
+ MAINTAINERS |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Regards,
-Helmut Buchsbaum
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4f74a5f..7683240 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -607,6 +607,13 @@ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
+ F:	drivers/gpio/gpio-altera.c
+ 
++ALTERA SYSTEM RESOURCE DRIVER FOR ARRIA10 DEVKIT
++M:	Thor Thayer <tthayer@opensource.altera.com>
++S:	Maintained
++F:	drivers/gpio/gpio-altera-a10sr.c
++F:	drivers/mfd/altera-a10sr.c
++F:	include/linux/mfd/altera-a10sr.h
++
+ ALTERA TRIPLE SPEED ETHERNET DRIVER
+ M:	Vince Bridgers <vbridger@opensource.altera.com>
+ L:	netdev@vger.kernel.org
+-- 
+1.7.9.5
 
