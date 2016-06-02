@@ -1,39 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: single: Fix missing flush of posted write for a wakeirq
-Date: Thu, 2 Jun 2016 14:27:33 +0200
-Message-ID: <CACRpkdZUJU90S1Qsqx=8uk33tsXfnpsViJGr_ysgZcmRBH9KHA@mail.gmail.com>
-References: <1464729426-11187-1-git-send-email-tony@atomide.com>
+Subject: Re: [PATCH] gpio: zynq: initialize clock even without CONFIG_PM
+Date: Thu, 2 Jun 2016 14:30:17 +0200
+Message-ID: <CACRpkdYeRn7oxOnYv44R8+FMG4CdMrFQ9sjyZC6SDT-OY4Yezg@mail.gmail.com>
+References: <20160601110259.GA30501@laureti-dev>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:33943 "EHLO
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:35893 "EHLO
 	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753239AbcFBM1e (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jun 2016 08:27:34 -0400
-Received: by mail-oi0-f41.google.com with SMTP id e72so74270161oib.1
-        for <linux-gpio@vger.kernel.org>; Thu, 02 Jun 2016 05:27:34 -0700 (PDT)
-In-Reply-To: <1464729426-11187-1-git-send-email-tony@atomide.com>
+	with ESMTP id S1753125AbcFBMaS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jun 2016 08:30:18 -0400
+Received: by mail-oi0-f41.google.com with SMTP id j1so74128316oih.3
+        for <linux-gpio@vger.kernel.org>; Thu, 02 Jun 2016 05:30:18 -0700 (PDT)
+In-Reply-To: <20160601110259.GA30501@laureti-dev>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
+To: Helmut Grohne <h.grohne@intenta.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>
 
-On Tue, May 31, 2016 at 11:17 PM, Tony Lindgren <tony@atomide.com> wrote:
+On Wed, Jun 1, 2016 at 1:03 PM, Helmut Grohne <h.grohne@intenta.de> wrote:
 
-> With many repeated suspend resume cycles, the pin specific wakeirq
-> may not always work on omaps. This is because the write to enable the
-> pin interrupt may not have reached the device over the interconnect
-> before suspend happens.
+> When the PM initialization was moved in the commit referenced below, the
+> code enabling the clock was removed from the probe function. On
+> CONFIG_PM=y kernels, this is not a problem as the pm resume hook enables
+> the clock, but when power management is disabled, all those pm_*
+> functions are noops and the clock is never enabled resulting in a
+> dysfunctional gpio controller.
 >
-> Let's fix the issue with a flush of posted write with a readback.
+> Put the clock initialization back to support CONFIG_PM=n.
 >
-> Reported-by: Nishanth Menon <nm@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Helmut Grohne <h.grohne@intenta.de>
+> Fixes: 3773c195d387 ("gpio: zynq: Do PM initialization earlier to support gpio hogs")
 
-Patch applied.
+This does not apply to my kernel tree, can you rebase it on
+v4.7-rc1?
 
-Is it a regression that needs to be sent to fixes and tagged
-for stable?
+Sould it be tagged for stable and sent to fixes?
 
 Yours,
 Linus Walleij
