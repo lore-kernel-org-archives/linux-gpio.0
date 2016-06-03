@@ -1,54 +1,42 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH 1/2] gpiolib: Fix NULL pointer deference
-Date: Fri,  3 Jun 2016 19:10:01 +0200
-Message-ID: <1464973802-9286-1-git-send-email-ricardo.ribalda@gmail.com>
+From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Subject: [PATCH 0/2] gpio: of: Support cascaded GPIO
+Date: Fri,  3 Jun 2016 23:26:54 +0300
+Message-ID: <1464985616-11821-1-git-send-email-pantelis.antoniou@konsulko.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:35831 "EHLO
-	mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932905AbcFCRKI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Jun 2016 13:10:08 -0400
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:38455 "EHLO
+	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932578AbcFCU1B (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Jun 2016 16:27:01 -0400
+Received: by mail-wm0-f41.google.com with SMTP id m124so3786161wme.1
+        for <linux-gpio@vger.kernel.org>; Fri, 03 Jun 2016 13:27:01 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robherring2@gmail.com>, Frank Rowand <frowand.list@gmail.com>, Matt Porter <mporter@konsulko.com>, Koen Kooi <koen@dominion.thruhere.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Pantelis Antoniou <panto@antoniou-consulting.com>
 
-Under some circumstances, a gpiochip might be half cleaned from the
-gpio_device list.
+These two patches enable GPIO cascades where a match may be
+retried until the finalr real GPIO is located.
 
-This patch makes sure that the chip pointer is still valid, before
-calling the match function.
+The first patch removes the const specifier from gpiospec at of_xlate(),
+while the second introduces the new method of_gpiochip_find() that
+performs the cascade operation.
 
-[  104.088296] BUG: unable to handle kernel NULL pointer dereference at
-0000000000000090
-[  104.089772] IP: [<ffffffff813d2045>] of_gpiochip_find_and_xlate+0x15/0x80
-[  104.128273] Call Trace:
-[  104.129802]  [<ffffffff813d2030>] ? of_parse_own_gpio+0x1f0/0x1f0
-[  104.131353]  [<ffffffff813cd910>] gpiochip_find+0x60/0x90
-[  104.132868]  [<ffffffff813d21ba>] of_get_named_gpiod_flags+0x9a/0x120
-...
-[  104.141586]  [<ffffffff8163d12b>] gpio_led_probe+0x11b/0x360
+Pantelis Antoniou (2):
+  gpio: Remove const from gpiospec in of_xlate
+  gpio: Support cascaded GPIO chip lookup for OF
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
+ drivers/gpio/gpio-brcmstb.c |  2 +-
+ drivers/gpio/gpio-davinci.c |  2 +-
+ drivers/gpio/gpio-etraxfs.c |  2 +-
+ drivers/gpio/gpio-lpc32xx.c |  2 +-
+ drivers/gpio/gpio-pxa.c     |  2 +-
+ drivers/gpio/gpiolib-of.c   | 18 +++++----------
+ drivers/gpio/gpiolib.c      | 54 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpiolib.h      | 14 ++++++++++++
+ include/linux/gpio/driver.h |  2 +-
+ include/linux/of_gpio.h     |  2 +-
+ 10 files changed, 80 insertions(+), 20 deletions(-)
 
-We might want to cc: stable on these two patches
-
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d407f904a31c..0626cc96744b 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -858,7 +858,7 @@ struct gpio_chip *gpiochip_find(void *data,
- 
- 	spin_lock_irqsave(&gpio_lock, flags);
- 	list_for_each_entry(gdev, &gpio_devices, list)
--		if (match(gdev->chip, data))
-+		if (gdev->chip && match(gdev->chip, data))
- 			break;
- 
- 	/* No match? */
 -- 
-2.8.1
+1.7.12
 
