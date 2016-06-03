@@ -1,39 +1,97 @@
-From: Gerd Hoffmann <kraxel@redhat.com>
-Subject: [PATCH v2 1/9] pinctrl: walk into bcm subdir unconditionally
-Date: Fri,  3 Jun 2016 08:18:20 +0200
-Message-ID: <1464934708-24769-2-git-send-email-kraxel@redhat.com>
-References: <1464934708-24769-1-git-send-email-kraxel@redhat.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:40886 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751255AbcFCGSj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 3 Jun 2016 02:18:39 -0400
-In-Reply-To: <1464934708-24769-1-git-send-email-kraxel@redhat.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Iban Rodriguez <irodriguez@cemitec.com>
+Subject: [PATCH] gpio: xilinx: Add support to set multiple GPIO at once
+Date: Fri, 3 Jun 2016 14:54:41 +0200
+Message-ID: <1464958481-672-1-git-send-email-irodriguez@cemitec.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Iban Rodriguez <irodriguez@cemitec.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Cc: Gerd Hoffmann <kraxel@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-There is no ARCH_BCM on arm64, and we need pinctrl-bcm2835 for the rpi3.
+Add function to set multiple GPIO of the same chip at the same time
+and register it
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Signed-off-by: Iban Rodriguez <irodriguez@cemitec.com>
 ---
- drivers/pinctrl/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-xilinx.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index e4bc115..88586c0 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -35,7 +35,7 @@ obj-$(CONFIG_PINCTRL_TB10X)	+= pinctrl-tb10x.o
- obj-$(CONFIG_PINCTRL_ST) 	+= pinctrl-st.o
- obj-$(CONFIG_PINCTRL_ZYNQ)	+= pinctrl-zynq.o
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index d0fbb7f..4b0cf51 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -133,6 +133,53 @@ static void xgpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ }
  
--obj-$(CONFIG_ARCH_BCM)		+= bcm/
-+obj-y				+= bcm/
- obj-$(CONFIG_PINCTRL_BERLIN)	+= berlin/
- obj-y				+= freescale/
- obj-$(CONFIG_X86)		+= intel/
+ /**
++ * xgpio_set_multiple - Write the specified signals of the GPIO device.
++ * @gc:     Pointer to gpio_chip device structure.
++ * @mask:   Mask of the GPIOS to modify.
++ * @bits:   Value to be wrote on each GPIO
++ *
++ * This function writes the specified values into the specified signals of the
++ * GPIO devices.
++ */
++static void xgpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
++			       unsigned long *bits)
++{
++	unsigned long flags;
++	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
++	struct xgpio_instance *chip = gpiochip_get_data(gc);
++	int index = xgpio_index(chip, 0);
++	int offset, i;
++
++	spin_lock_irqsave(&chip->gpio_lock[index], flags);
++
++	/* Write to GPIO signals */
++	for (i = 0; i < gc->ngpio; i++) {
++		if (*mask == 0)
++			break;
++		if (index !=  xgpio_index(chip, i)) {
++			xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET +
++				       xgpio_regoffset(chip, i),
++				       chip->gpio_state[index]);
++			spin_unlock_irqrestore(&chip->gpio_lock[index], flags);
++			index =  xgpio_index(chip, i);
++			spin_lock_irqsave(&chip->gpio_lock[index], flags);
++		}
++		if (__test_and_clear_bit(i, mask)) {
++			offset =  xgpio_offset(chip, i);
++			if (test_bit(i, bits))
++				chip->gpio_state[index] |= BIT(offset);
++			else
++				chip->gpio_state[index] &= ~BIT(offset);
++		}
++	}
++
++	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET +
++		       xgpio_regoffset(chip, i), chip->gpio_state[index]);
++
++	spin_unlock_irqrestore(&chip->gpio_lock[index], flags);
++}
++
++/**
+  * xgpio_dir_in - Set the direction of the specified GPIO signal as input.
+  * @gc:     Pointer to gpio_chip device structure.
+  * @gpio:   GPIO signal number.
+@@ -306,6 +353,7 @@ static int xgpio_probe(struct platform_device *pdev)
+ 	chip->mmchip.gc.direction_output = xgpio_dir_out;
+ 	chip->mmchip.gc.get = xgpio_get;
+ 	chip->mmchip.gc.set = xgpio_set;
++	chip->mmchip.gc.set_multiple = xgpio_set_multiple;
+ 
+ 	chip->mmchip.save_regs = xgpio_save_regs;
+ 
 -- 
-1.8.3.1
-
+1.9.1
