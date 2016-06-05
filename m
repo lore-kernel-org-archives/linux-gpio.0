@@ -1,102 +1,55 @@
-From: kamlakant.patel@broadcom.com
-Subject: [PATCH 2/2] gpio: Add ACPI support for XLP GPIO controller
-Date: Sun,  5 Jun 2016 14:00:44 +0530
-Message-ID: <1465115444-25068-2-git-send-email-kamlakant.patel@broadcom.com>
-References: <1465115444-25068-1-git-send-email-kamlakant.patel@broadcom.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH] gpio: lpc18xx: convert GPIO_LPC18XX from bool to tristate
+Date: Sun, 5 Jun 2016 14:23:43 -0400
+Message-ID: <1465151023-23340-1-git-send-email-paul.gortmaker@windriver.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:40295 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751081AbcFEIkw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 5 Jun 2016 04:40:52 -0400
-In-Reply-To: <1465115444-25068-1-git-send-email-kamlakant.patel@broadcom.com>
+Received: from mail.windriver.com ([147.11.1.11]:48975 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751509AbcFESX7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 5 Jun 2016 14:23:59 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kamlakant Patel <kamlakant.patel@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Jayachandran C <jchandra@broadcom.com>
+To: linux-kernel@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Joachim Eastwood <manabian@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-From: Kamlakant Patel <kamlakant.patel@broadcom.com>
+The Kconfig currently controlling compilation of this code is:
 
-Add ACPI support for GPIO controller on Broadcom Vulcan ARM64.
-ACPI ID for this device is BRCM9006.
+ config GPIO_LPC18XX
+       bool "NXP LPC18XX/43XX GPIO support"
 
-Signed-off-by: Kamlakant Patel <kamlakant.patel@broadcom.com>
+...meaning that it currently is not being built as a module by anyone.
+
+When targeting orphaned modular code in non-modular drivers, this
+came up.  Joachim indicated that the driver was actually meant to
+be tristate but ended up bool by accident.  So here we make it
+tristate instead of removing the modular code that was essentially
+orphaned.
+
+Cc: Joachim Eastwood <manabian@gmail.com>
+Acked-by: Joachim Eastwood <manabian@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/gpio/gpio-xlp.c |   36 +++++++++++++++++++++++++++++-------
- 1 files changed, 29 insertions(+), 7 deletions(-)
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-xlp.c b/drivers/gpio/gpio-xlp.c
-index 6acf8aa..4620d05 100644
---- a/drivers/gpio/gpio-xlp.c
-+++ b/drivers/gpio/gpio-xlp.c
-@@ -19,6 +19,7 @@
- #include <linux/irq.h>
- #include <linux/interrupt.h>
- #include <linux/irqchip/chained_irq.h>
-+#include <linux/acpi.h>
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 92443817b1ae..03aaa2a1f431 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -249,7 +249,7 @@ config GPIO_LOONGSON
+ 	  driver for GPIO functionality on Loongson-2F/3A/3B processors.
  
- /*
-  * XLP GPIO has multiple 32 bit registers for each feature where each register
-@@ -299,7 +300,6 @@ static int xlp_gpio_probe(struct platform_device *pdev)
- 	struct gpio_chip *gc;
- 	struct resource *iores;
- 	struct xlp_gpio_priv *priv;
--	const struct of_device_id *of_id;
- 	void __iomem *gpio_base;
- 	int irq_base, irq, err;
- 	int ngpio;
-@@ -321,13 +321,26 @@ static int xlp_gpio_probe(struct platform_device *pdev)
- 	if (irq < 0)
- 		return irq;
- 
--	of_id = of_match_device(xlp_gpio_of_ids, &pdev->dev);
--	if (!of_id) {
--		dev_err(&pdev->dev, "Failed to get soc type!\n");
--		return -ENODEV;
--	}
-+	if (pdev->dev.of_node) {
-+		const struct of_device_id *of_id;
- 
--	soc_type = (uintptr_t) of_id->data;
-+		of_id = of_match_device(xlp_gpio_of_ids, &pdev->dev);
-+		if (!of_id) {
-+			dev_err(&pdev->dev, "Unable to match OF ID\n");
-+			return -ENODEV;
-+		}
-+		soc_type = (uintptr_t) of_id->data;
-+	} else {
-+		const struct acpi_device_id *acpi_id;
-+
-+		acpi_id = acpi_match_device(pdev->dev.driver->acpi_match_table,
-+						&pdev->dev);
-+		if (!acpi_id || !acpi_id->driver_data) {
-+			dev_err(&pdev->dev, "Unable to match ACPI ID\n");
-+			return -ENODEV;
-+		}
-+		soc_type = (uintptr_t) acpi_id->driver_data;
-+	}
- 
- 	switch (soc_type) {
- 	case XLP_GPIO_VARIANT_XLP832:
-@@ -425,10 +438,19 @@ out_free_desc:
- 	return err;
- }
- 
-+#ifdef CONFIG_ACPI
-+static const struct acpi_device_id xlp_gpio_acpi_match[] = {
-+	{ "BRCM9006", GPIO_VARIANT_VULCAN },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(acpi, xlp_gpio_acpi_match);
-+#endif
-+
- static struct platform_driver xlp_gpio_driver = {
- 	.driver		= {
- 		.name	= "xlp-gpio",
- 		.of_match_table = xlp_gpio_of_ids,
-+		.acpi_match_table = ACPI_PTR(xlp_gpio_acpi_match),
- 	},
- 	.probe		= xlp_gpio_probe,
- };
+ config GPIO_LPC18XX
+-	bool "NXP LPC18XX/43XX GPIO support"
++	tristate "NXP LPC18XX/43XX GPIO support"
+ 	default y if ARCH_LPC18XX
+ 	depends on OF_GPIO && (ARCH_LPC18XX || COMPILE_TEST)
+ 	help
 -- 
-1.7.1
+2.8.0
 
