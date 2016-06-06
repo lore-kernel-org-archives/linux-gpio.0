@@ -1,48 +1,38 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [RFC 0/3] pinctrl: sh-pfc: add r8a7795 support for voltage switching
-Date: Mon,  6 Jun 2016 08:50:08 +0200
-Message-ID: <1465195811-3041-1-git-send-email-wsa@the-dreams.de>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:47457 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750956AbcFFGuZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 6 Jun 2016 02:50:25 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [RFC 1/3] pinctrl: sh-pfc: refactor voltage setting
+Date: Mon, 6 Jun 2016 09:15:41 +0200
+Message-ID: <CAMuHMdUH8V0potD361qzqXT=xRXPPb0VQh8KbV41NWVw3iHjrA@mail.gmail.com>
+References: <1465195811-3041-1-git-send-email-wsa@the-dreams.de> <1465195811-3041-2-git-send-email-wsa@the-dreams.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1465195811-3041-2-git-send-email-wsa@the-dreams.de>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa@the-dreams.de>
 
-This series adds support for PFC voltage switching for r8a7795. I decided to
-refactor voltage switching because all Gen2 and Gen3 hardware follow the same
-style to do that. So, we can put generic handling to the core and keep only
-pin-to-bit mapping SoC specific. See patch 1 for details.
+On Mon, Jun 6, 2016 at 8:50 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> All known hardware being able to switch voltages has the same POCCTRL
+> register. So, factor out the common code to the core and keep only
+> the pin-to-bit mapping SoC specific. Convert the only user, r8a7790.
+> In case POCCTRL should ever get more complex (more voltages to select?),
+> we should probably switch over to a describing array like drive strength
+> does currently.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Tested on a Lager board (r8a7790/H2) and a Salvator-X (r8a7795/H3) by using
-UHS/non-UHS SD cards. They work fine with SDR50 and the POCCTRL register
-setting was also verified.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Branch is here:
+Gr{oetje,eeting}s,
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/h3-pfc-set-voltage
+                        Geert
 
-Please let me know what you think.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Thanks,
-
-   Wolfram
-
-Wolfram Sang (3):
-  pinctrl: sh-pfc: refactor voltage setting
-  pinctrl: sh-pfc: r8a7795: add support for voltage switching
-  arm64: dts: r8a7795: salvator: enable UHS for SDHI 0 & 3
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 22 +++++++-
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c               | 58 +++++-----------------
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 24 ++++++++-
- drivers/pinctrl/sh-pfc/pinctrl.c                   | 41 +++++++++------
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |  4 +-
- 5 files changed, 82 insertions(+), 67 deletions(-)
-
--- 
-2.8.1
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
