@@ -1,7 +1,7 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 2/3] pinctrl: sh-pfc: r8a7795: add support for voltage switching
-Date: Mon,  6 Jun 2016 18:08:26 +0200
-Message-ID: <1465229307-1961-3-git-send-email-wsa@the-dreams.de>
+Subject: [PATCH 3/3] arm64: dts: r8a7795: salvator: enable UHS for SDHI 0 & 3
+Date: Mon,  6 Jun 2016 18:08:27 +0200
+Message-ID: <1465229307-1961-4-git-send-email-wsa@the-dreams.de>
 References: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 In-Reply-To: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
@@ -15,56 +15,70 @@ From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 44632b1a5c978c..33be5d56e3162a 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -17,8 +17,12 @@
- 	PORT_GP_CFG_16(0, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
- 	PORT_GP_CFG_28(1, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
- 	PORT_GP_CFG_15(2, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
--	PORT_GP_CFG_16(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
--	PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_12(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(3, 12, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_1(3, 13, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_1(3, 14, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_1(3, 15, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
- 	PORT_GP_CFG_26(5, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
- 	PORT_GP_CFG_32(6, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
- 	PORT_GP_CFG_4(7, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH)
-@@ -4765,8 +4769,28 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 	{ },
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index abb25cfc20bd57..726426693f1fa0 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -229,11 +229,25 @@
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
++		power-source = <3300>;
++	};
++
++	sdhi0_pins_uhs: sd0_uhs {
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
++		power-source = <1800>;
+ 	};
+ 
+ 	sdhi3_pins: sd3 {
+ 		groups = "sdhi3_data4", "sdhi3_ctrl";
+ 		function = "sdhi3";
++		power-source = <3300>;
++	};
++
++	sdhi3_pins_uhs: sd3_uhs {
++		groups = "sdhi3_data4", "sdhi3_ctrl";
++		function = "sdhi3";
++		power-source = <1800>;
+ 	};
+ 
+ 	sound_pins: sound {
+@@ -374,25 +388,29 @@
+ 
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+-	pinctrl-names = "default";
++	pinctrl-1 = <&sdhi0_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
+ 
+ 	vmmc-supply = <&vcc_sdhi0>;
+ 	vqmmc-supply = <&vccq_sdhi0>;
+ 	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
+ 	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
+ 	bus-width = <4>;
++	sd-uhs-sdr50;
+ 	status = "okay";
  };
  
-+static int r8a7795_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl)
-+{
-+	int bit = -EINVAL;
-+
-+	*pocctrl = 0xe6060380;
-+
-+	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 11))
-+		bit = pin & 0x1f;
-+
-+	if (pin >= RCAR_GP_PIN(4, 0) && pin <= RCAR_GP_PIN(4, 17))
-+		bit = (pin & 0x1f) + 12;
-+
-+	return bit;
-+}
-+
-+static const struct sh_pfc_soc_operations r8a7795_pinmux_ops = {
-+	.pin_to_pocctrl = r8a7795_pin_to_pocctrl,
-+};
-+
- const struct sh_pfc_soc_info r8a7795_pinmux_info = {
- 	.name = "r8a77950_pfc",
-+	.ops = &r8a7795_pinmux_ops,
- 	.unlock_reg = 0xe6060000, /* PMMR */
+ &sdhi3 {
+ 	pinctrl-0 = <&sdhi3_pins>;
+-	pinctrl-names = "default";
++	pinctrl-1 = <&sdhi3_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
  
- 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
+ 	vmmc-supply = <&vcc_sdhi3>;
+ 	vqmmc-supply = <&vccq_sdhi3>;
+ 	cd-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
+ 	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
+ 	bus-width = <4>;
++	sd-uhs-sdr50;
+ 	status = "okay";
+ };
+ 
 -- 
 2.8.1
