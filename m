@@ -1,35 +1,28 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [RFC 3/3] arm64: dts: r8a7795: salvator: enable UHS for SDHI 0 & 3
-Date: Mon, 6 Jun 2016 09:26:21 +0200
-Message-ID: <CAMuHMdW-_FT3-RUi8Eo=t5bFn70oy9eiV5=WeEw5S8cVaK7gaQ@mail.gmail.com>
-References: <1465195811-3041-1-git-send-email-wsa@the-dreams.de> <1465195811-3041-4-git-send-email-wsa@the-dreams.de>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 1/5] pinctrl: cherryview: convert bare unsigned to
+ unsigned int
+Date: Mon, 6 Jun 2016 13:28:19 +0300
+Message-ID: <20160606102819.GU1743@lahna.fi.intel.com>
+References: <1464904543-4094-1-git-send-email-dan@emutex.com>
+ <1464904543-4094-2-git-send-email-dan@emutex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:32826 "EHLO
-	mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751655AbcFFH0W (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jun 2016 03:26:22 -0400
-In-Reply-To: <1465195811-3041-4-git-send-email-wsa@the-dreams.de>
+Received: from mga01.intel.com ([192.55.52.88]:58664 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751632AbcFFK2Z (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 6 Jun 2016 06:28:25 -0400
+Content-Disposition: inline
+In-Reply-To: <1464904543-4094-2-git-send-email-dan@emutex.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Dan O'Donovan <dan@emutex.com>
+Cc: linus.walleij@linaro.org, heikki.krogerus@linux.intel.com, linux-gpio@vger.kernel.org
 
-On Mon, Jun 6, 2016 at 8:50 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Thu, Jun 02, 2016 at 10:55:39PM +0100, Dan O'Donovan wrote:
+> Addresses checkpatch warnings such as the following for this driver:
+> 
+>  WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I don't know if this is useful. Things like this make backporting real
+fixes harder. For new code, it makes sense but not for converting existing.
