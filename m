@@ -1,81 +1,70 @@
-From: Vincent Pelletier <plr.vincent@gmail.com> (by way of Vincent
-	Pelletier <plr.vincent@gmail.com>)
-Subject: gpio: gpio-f7188x: Implement get_direction.
-Date: Mon,  6 Jun 2016 00:56:08 +0000
-Message-ID: <b45b37f797e1bfaa2de5e38b8119be55f9a784ce.1465174568.git.plr.vincent@gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: [RFC 2/3] pinctrl: sh-pfc: r8a7795: add support for voltage switching
+Date: Mon,  6 Jun 2016 08:50:10 +0200
+Message-ID: <1465195811-3041-3-git-send-email-wsa@the-dreams.de>
+References: <1465195811-3041-1-git-send-email-wsa@the-dreams.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36388 "EHLO
-	mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751141AbcFFA5f (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 5 Jun 2016 20:57:35 -0400
-Received: by mail-pf0-f193.google.com with SMTP id 62so16639439pfd.3
-        for <linux-gpio@vger.kernel.org>; Sun, 05 Jun 2016 17:57:34 -0700 (PDT)
-Received: from localhost (p11140-ipngn5801hodogaya.kanagawa.ocn.ne.jp. [222.148.106.140])
-        by smtp.gmail.com with ESMTPSA id l67sm22851633pfi.10.2016.06.05.17.57.33
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 05 Jun 2016 17:57:34 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by localhost (Postfix) with ESMTPSA id 01B27900808
-	for <linux-gpio@vger.kernel.org>; Mon,  6 Jun 2016 00:57:32 +0000 (GMT)
+Received: from sauhun.de ([89.238.76.85]:47462 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751409AbcFFGuZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 6 Jun 2016 02:50:25 -0400
+In-Reply-To: <1465195811-3041-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: Vincent Donnefort <vdonnefort@gmail.com>, Vincent Pelletier <plr.vincent@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Avoids gpiolib assumptions on initial pin direction, allowing user to observe
-power-on settings.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/gpio/gpio-f7188x.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
-index 62f8ac3..ef3a980 100644
---- a/drivers/gpio/gpio-f7188x.c
-+++ b/drivers/gpio/gpio-f7188x.c
-@@ -124,6 +124,7 @@ static inline void superio_exit(int base)
-  * GPIO chip.
-  */
- 
-+static int f7188x_gpio_get_direction(struct gpio_chip *chip, unsigned offset);
- static int f7188x_gpio_direction_in(struct gpio_chip *chip, unsigned offset);
- static int f7188x_gpio_get(struct gpio_chip *chip, unsigned offset);
- static int f7188x_gpio_direction_out(struct gpio_chip *chip,
-@@ -135,6 +136,7 @@ static void f7188x_gpio_set(struct gpio_chip *chip, unsigned offset, int value);
- 		.chip = {						\
- 			.label            = DRVNAME,			\
- 			.owner            = THIS_MODULE,		\
-+			.get_direction    = f7188x_gpio_get_direction,	\
- 			.direction_input  = f7188x_gpio_direction_in,	\
- 			.get              = f7188x_gpio_get,		\
- 			.direction_output = f7188x_gpio_direction_out,	\
-@@ -204,6 +206,26 @@ static struct f7188x_gpio_bank f81866_gpio_bank[] = {
- 	F7188X_GPIO_BANK(80, 8, 0x88),
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 44632b1a5c978c..8e068d8534de00 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -17,8 +17,8 @@
+ 	PORT_GP_CFG_16(0, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+ 	PORT_GP_CFG_28(1, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+ 	PORT_GP_CFG_15(2, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_16(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
++	PORT_GP_CFG_16(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
++	PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
+ 	PORT_GP_CFG_26(5, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+ 	PORT_GP_CFG_32(6, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+ 	PORT_GP_CFG_4(7, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH)
+@@ -4765,8 +4765,28 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
+ 	{ },
  };
  
-+static int f7188x_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
++static int r8a7795_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl)
 +{
-+	int err;
-+	struct f7188x_gpio_bank *bank =
-+		container_of(chip, struct f7188x_gpio_bank, chip);
-+	struct f7188x_sio *sio = bank->data->sio;
-+	u8 dir;
++	int bit = -EINVAL;
 +
-+	err = superio_enter(sio->addr);
-+	if (err)
-+		return err;
-+	superio_select(sio->addr, SIO_LD_GPIO);
++	*pocctrl = 0xe6060380;
 +
-+	dir = superio_inb(sio->addr, gpio_dir(bank->regbase));
++	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 11))
++		bit = pin & 0x1f;
 +
-+	superio_exit(sio->addr);
++	if (pin >= RCAR_GP_PIN(4, 0) && pin <= RCAR_GP_PIN(4, 17))
++		bit = (pin & 0x1f) + 12;
 +
-+	return !(dir & 1 << offset);
++	return bit;
 +}
 +
- static int f7188x_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
- {
- 	int err;
++static const struct sh_pfc_soc_operations r8a7795_pinmux_ops = {
++	.pin_to_pocctrl = r8a7795_pin_to_pocctrl,
++};
++
+ const struct sh_pfc_soc_info r8a7795_pinmux_info = {
+ 	.name = "r8a77950_pfc",
++	.ops = &r8a7795_pinmux_ops,
+ 	.unlock_reg = 0xe6060000, /* PMMR */
+ 
+ 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
 -- 
 2.8.1
 
