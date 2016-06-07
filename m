@@ -1,25 +1,21 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 8/9] pinctrl: digicolor: make it explicitly non-modular
-Date: Mon, 6 Jun 2016 22:43:07 -0400
-Message-ID: <1465267388-17884-9-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 5/9] pinctrl: amd: make it explicitly non-modular
+Date: Mon, 6 Jun 2016 22:43:04 -0400
+Message-ID: <1465267388-17884-6-git-send-email-paul.gortmaker@windriver.com>
 References: <1465267388-17884-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail5.windriver.com ([192.103.53.11]:58690 "EHLO mail5.wrs.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753152AbcFGCnp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 6 Jun 2016 22:43:45 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1465267388-17884-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Baruch Siach <baruch@tkos.co.il>, linux-gpio@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Ken Xue <Ken.Xue@amd.com>, Jeff Wu <Jeff.Wu@amd.com>
+List-Id: linux-gpio@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/pinctrl/Kconfig:config PINCTRL_DIGICOLOR
-drivers/pinctrl/Kconfig:        bool
+config PINCTRL_AMD
+        bool "AMD GPIO pin control"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -36,57 +32,68 @@ this commit.
 
 Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
+We also delete the MODULE_LICENSE tag etc. since all that information
+is already contained at the top of the file in the comments.
+
 Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Baruch Siach <baruch@tkos.co.il>
 Cc: linux-gpio@vger.kernel.org
+Cc: Ken Xue <Ken.Xue@amd.com>
+Cc: Jeff Wu <Jeff.Wu@amd.com>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/pinctrl/pinctrl-digicolor.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+ drivers/pinctrl/pinctrl-amd.c | 23 +++--------------------
+ 1 file changed, 3 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
-index c8073d442dcb..aba3da5ee844 100644
---- a/drivers/pinctrl/pinctrl-digicolor.c
-+++ b/drivers/pinctrl/pinctrl-digicolor.c
-@@ -15,7 +15,7 @@
-  * - Pin pad configuration (pull up/down, strength)
-  */
- 
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 634b4d30eefb..b466d70b9004 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -13,7 +13,7 @@
+ #include <linux/err.h>
+ #include <linux/bug.h>
+ #include <linux/kernel.h>
 -#include <linux/module.h>
 +#include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -337,27 +337,17 @@ static int dc_pinctrl_probe(struct platform_device *pdev)
- 	return dc_gpiochip_add(pmap, pdev->dev.of_node);
+ #include <linux/spinlock.h>
+ #include <linux/compiler.h>
+ #include <linux/types.h>
+@@ -828,35 +828,18 @@ out2:
+ 	return ret;
  }
  
--static int dc_pinctrl_remove(struct platform_device *pdev)
+-static int amd_gpio_remove(struct platform_device *pdev)
 -{
--	struct dc_pinmap *pmap = platform_get_drvdata(pdev);
+-	struct amd_gpio *gpio_dev;
 -
--	gpiochip_remove(&pmap->chip);
+-	gpio_dev = platform_get_drvdata(pdev);
+-
+-	gpiochip_remove(&gpio_dev->gc);
 -
 -	return 0;
 -}
 -
- static const struct of_device_id dc_pinctrl_ids[] = {
- 	{ .compatible = "cnxt,cx92755-pinctrl" },
- 	{ /* sentinel */ }
+ static const struct acpi_device_id amd_gpio_acpi_match[] = {
+ 	{ "AMD0030", 0 },
+ 	{ "AMDI0030", 0},
+ 	{ },
  };
--MODULE_DEVICE_TABLE(of, dc_pinctrl_ids);
+-MODULE_DEVICE_TABLE(acpi, amd_gpio_acpi_match);
  
- static struct platform_driver dc_pinctrl_driver = {
- 	.driver = {
- 		.name = DRIVER_NAME,
- 		.of_match_table = dc_pinctrl_ids,
+ static struct platform_driver amd_gpio_driver = {
+ 	.driver		= {
+ 		.name	= "amd_gpio",
 +		.suppress_bind_attrs = true,
+ 		.acpi_match_table = ACPI_PTR(amd_gpio_acpi_match),
  	},
- 	.probe = dc_pinctrl_probe,
--	.remove = dc_pinctrl_remove,
+ 	.probe		= amd_gpio_probe,
+-	.remove		= amd_gpio_remove,
  };
--module_platform_driver(dc_pinctrl_driver);
-+builtin_platform_driver(dc_pinctrl_driver);
+-
+-module_platform_driver(amd_gpio_driver);
+-
+-MODULE_LICENSE("GPL v2");
+-MODULE_AUTHOR("Ken Xue <Ken.Xue@amd.com>, Jeff Wu <Jeff.Wu@amd.com>");
+-MODULE_DESCRIPTION("AMD GPIO pinctrl driver");
++builtin_platform_driver(amd_gpio_driver);
 -- 
 2.8.0
-
