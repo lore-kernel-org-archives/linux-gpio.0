@@ -1,39 +1,57 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH] gpio: tegra: Make lockdep class file-scoped
-Date: Tue, 7 Jun 2016 11:34:10 +0530
-Message-ID: <575663DA.7040609@nvidia.com>
-References: <20160606165627.32676-1-thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/9] pinctrl: as3722: make it explicitly non-modular
+Date: Tue, 7 Jun 2016 12:06:18 +0530
+Message-ID: <57566B62.3060908@nvidia.com>
+References: <1465267388-17884-1-git-send-email-paul.gortmaker@windriver.com> <1465267388-17884-2-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:13521 "EHLO
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:16027 "EHLO
 	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751565AbcFGGRE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jun 2016 02:17:04 -0400
-In-Reply-To: <20160606165627.32676-1-thierry.reding@gmail.com>
+	with ESMTP id S1753464AbcFGGtK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jun 2016 02:49:10 -0400
+In-Reply-To: <1465267388-17884-2-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
 
-On Monday 06 June 2016 10:26 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Tuesday 07 June 2016 08:13 AM, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
 >
-> Commit b546be0db955 ("gpio: tegra: Get rid of all file scoped global
-> variables") moved all file scoped variables into the driver-private
-> structure to allow potentially multiple instances of the driver. The
-> change also included turning the lockdep class into a driver-private
-> field, which doesn't work and produces error messages such as this:
+> config PINCTRL_AS3722
+>          bool "Pinctrl and GPIO driver for ams AS3722 PMIC"
 >
-> 	[    0.142310] BUG: key ffff8000fb3f7ab0 not in .data!
+> ...meaning that it currently is not being built as a module by anyone.
 >
-> Make the lockdep class file-scoped again to fix this issue.
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+>
+> We explicitly disallow a driver unbind, since that doesn't have a
+> sensible use case anyway, and it allows us to drop the ".remove"
+> code for non-modular drivers.
+>
+> Since module_platform_driver() uses the same init level priority as
+> builtin_platform_driver() the init ordering remains unchanged with
+> this commit.
+>
+> Also note that MODULE_ALIAS and MODULE_DEVICE_TABLE are a no-op for
+> non-modular code and hence both are removed.
+>
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+>
+> Cc: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 >
 
-When I tested on T210, I did not get this issue. Want to know that how 
-did you get this issue so that I can add that part on my testing.
 
+I will say lets make the driver as tristate.
+
+tristate "Pinctrl and GPIO driver for ams AS3722 PMIC"
 
 
