@@ -1,58 +1,89 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH] pinctrl: at91-pio4: fix non-exported functions
-Date: Tue,  7 Jun 2016 18:07:45 +0100
-Message-ID: <1465319265-27630-1-git-send-email-ben.dooks@codethink.co.uk>
+Subject: [PATCH] pinctrl: nomadik: fix warnings from unexported functions
+Date: Tue,  7 Jun 2016 18:25:02 +0100
+Message-ID: <1465320302-5770-1-git-send-email-ben.dooks@codethink.co.uk>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 82-70-136-246.dsl.in-addr.zen.co.uk ([82.70.136.246]:36606 "EHLO
+Received: from 82-70-136-246.dsl.in-addr.zen.co.uk ([82.70.136.246]:36788 "EHLO
 	rainbowdash.ducie.codethink.co.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750760AbcFGRH6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jun 2016 13:07:58 -0400
+	by vger.kernel.org with ESMTP id S1755428AbcFGRZM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jun 2016 13:25:12 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-kernel@lists.codethink.co.uk
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Ludovic Desroches <ludovic.desroches@atmel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@unipv.it>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-The atmel_pctl_find_group_by_pin() and the atmel_pinctrl_remove()
-functions are not exported, so fix the warnings about these
-being exported without definitions by making them static.
+There are five functions in the driver that are defined but
+only used locally. Make these static to avoid the following
+warnings:
 
-drivers/pinctrl/pinctrl-at91-pio4.c:424:20: warning: symbol 'atmel_pctl_find_group_by_pin' was not declared. Should it be static?
-drivers/pinctrl/pinctrl-at91-pio4.c:1077:5: warning: symbol 'atmel_pinctrl_remove' was not declared. Should it be static?
+drivers/pinctrl/nomadik/pinctrl-nomadik.c:1036:6: warning: symbol 'nmk_gpio_clocks_enable' was not declared. Should it be static?
+drivers/pinctrl/nomadik/pinctrl-nomadik.c:1050:6: warning: symbol 'nmk_gpio_clocks_disable' was not declared. Should it be static?
+drivers/pinctrl/nomadik/pinctrl-nomadik.c:1073:6: warning: symbol 'nmk_gpio_wakeups_suspend' was not declared. Should it be static?
+drivers/pinctrl/nomadik/pinctrl-nomadik.c:1094:6: warning: symbol 'nmk_gpio_wakeups_resume' was not declared. Should it be static?
+drivers/pinctrl/nomadik/pinctrl-nomadik.c:1120:6: warning: symbol 'nmk_gpio_read_pull' was not declared. Should it be static?
+
+Note, this now produces warnings that these functions
+are defined but not used.
 
 Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
-Cc: Ludovic Desroches <ludovic.desroches@atmel.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alessandro Rubini <rubini@unipv.it>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-gpio@vger.kernel.org
 ---
- drivers/pinctrl/pinctrl-at91-pio4.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index a025b40..22c6ad0 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -421,8 +421,8 @@ static int atmel_pctl_get_group_pins(struct pinctrl_dev *pctldev,
- 	return 0;
- }
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index 38facef..a7cce0f 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -1033,7 +1033,7 @@ static inline void nmk_gpio_dbg_show_one(struct seq_file *s,
+ #define nmk_gpio_dbg_show	NULL
+ #endif
  
--struct atmel_group *atmel_pctl_find_group_by_pin(struct pinctrl_dev *pctldev,
--						 unsigned pin)
-+static struct atmel_group *
-+atmel_pctl_find_group_by_pin(struct pinctrl_dev *pctldev, unsigned pin)
+-void nmk_gpio_clocks_enable(void)
++static void nmk_gpio_clocks_enable(void)
  {
- 	struct atmel_pioctrl *atmel_pioctrl = pinctrl_dev_get_drvdata(pctldev);
  	int i;
-@@ -1074,7 +1074,7 @@ clk_prepare_enable_error:
- 	return ret;
+ 
+@@ -1047,7 +1047,7 @@ void nmk_gpio_clocks_enable(void)
+ 	}
  }
  
--int atmel_pinctrl_remove(struct platform_device *pdev)
-+static int atmel_pinctrl_remove(struct platform_device *pdev)
+-void nmk_gpio_clocks_disable(void)
++static void nmk_gpio_clocks_disable(void)
  {
- 	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
+ 	int i;
  
+@@ -1070,7 +1070,7 @@ void nmk_gpio_clocks_disable(void)
+  * PM ops are not used since this needs to be done at the end, after all the
+  * other drivers are done with their suspend callbacks.
+  */
+-void nmk_gpio_wakeups_suspend(void)
++static void nmk_gpio_wakeups_suspend(void)
+ {
+ 	int i;
+ 
+@@ -1091,7 +1091,7 @@ void nmk_gpio_wakeups_suspend(void)
+ 	}
+ }
+ 
+-void nmk_gpio_wakeups_resume(void)
++static void nmk_gpio_wakeups_resume(void)
+ {
+ 	int i;
+ 
+@@ -1117,7 +1117,7 @@ void nmk_gpio_wakeups_resume(void)
+  * Note: only pull up/down set via this driver can
+  * be detected due to HW limitations.
+  */
+-void nmk_gpio_read_pull(int gpio_bank, u32 *pull_up)
++statoc void nmk_gpio_read_pull(int gpio_bank, u32 *pull_up)
+ {
+ 	if (gpio_bank < NUM_BANKS) {
+ 		struct nmk_gpio_chip *chip = nmk_gpio_chips[gpio_bank];
 -- 
 2.8.1
 
