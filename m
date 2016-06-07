@@ -1,99 +1,164 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH 7/9] pinctrl: zynq: make it explicitly non-modular
-Date: Tue, 7 Jun 2016 09:15:39 +0200
-Message-ID: <5756749B.1080707@xilinx.com>
-References: <1465267388-17884-1-git-send-email-paul.gortmaker@windriver.com>
- <1465267388-17884-8-git-send-email-paul.gortmaker@windriver.com>
+From: kbuild test robot <fengguang.wu@intel.com>
+Subject: [gpio:chardev-step-2 18/21] gpiolib.c:undefined reference to
+ `anon_inode_getfd'
+Date: Tue, 7 Jun 2016 15:49:55 +0800
+Message-ID: <201606071554.ezwT1otG%fengguang.wu@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/mixed; boundary="huq684BweRXVnRxX"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-sn1nam02on0056.outbound.protection.outlook.com ([104.47.36.56]:45242
-	"EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750893AbcFGHuI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 7 Jun 2016 03:50:08 -0400
-In-Reply-To: <1465267388-17884-8-git-send-email-paul.gortmaker@windriver.com>
+Received: from mga14.intel.com ([192.55.52.115]:8632 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752333AbcFGI7A (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 7 Jun 2016 04:59:00 -0400
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org
+Cc: kbuild-all@01.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On 7.6.2016 04:43, Paul Gortmaker wrote:
-> The Kconfig currently controlling compilation of this code is:
->=20
-> config PINCTRL_ZYNQ
->         bool "Pinctrl driver for Xilinx Zynq"
->=20
-> ...meaning that it currently is not being built as a module by anyone=
-=2E
->=20
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
->=20
-> Since module_platform_driver() uses the same init level priority as
-> builtin_platform_driver() the init ordering remains unchanged with
-> this commit.
->=20
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->=20
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> is already contained at the top of the file in the comments.
->=20
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Michal Simek <michal.simek@xilinx.com>
-> Cc: "S=C3=B6ren Brinkmann" <soren.brinkmann@xilinx.com>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> ---
->  drivers/pinctrl/pinctrl-zynq.c | 13 +------------
->  1 file changed, 1 insertion(+), 12 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl=
--zynq.c
-> index 8fdc60c5aeaf..7afdbede6823 100644
-> --- a/drivers/pinctrl/pinctrl-zynq.c
-> +++ b/drivers/pinctrl/pinctrl-zynq.c
-> @@ -20,7 +20,7 @@
->   */
->  #include <linux/io.h>
->  #include <linux/mfd/syscon.h>
-> -#include <linux/module.h>
-> +#include <linux/init.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/pinctrl/pinctrl.h>
-> @@ -1210,7 +1210,6 @@ static const struct of_device_id zynq_pinctrl_o=
-f_match[] =3D {
->  	{ .compatible =3D "xlnx,pinctrl-zynq" },
->  	{ }
->  };
-> -MODULE_DEVICE_TABLE(of, zynq_pinctrl_of_match);
-> =20
->  static struct platform_driver zynq_pinctrl_driver =3D {
->  	.driver =3D {
-> @@ -1225,13 +1224,3 @@ static int __init zynq_pinctrl_init(void)
->  	return platform_driver_register(&zynq_pinctrl_driver);
->  }
->  arch_initcall(zynq_pinctrl_init);
-> -
-> -static void __exit zynq_pinctrl_exit(void)
-> -{
-> -	platform_driver_unregister(&zynq_pinctrl_driver);
-> -}
-> -module_exit(zynq_pinctrl_exit);
-> -
-> -MODULE_AUTHOR("S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>");
-> -MODULE_DESCRIPTION("Xilinx Zynq pinctrl driver");
-> -MODULE_LICENSE("GPL");
->=20
 
-Acked-by: Michal Simek <michal.simek@xilinx.com>
+--huq684BweRXVnRxX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Michal
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git chardev-step-2
+head:   2b1573d40f910233a00ac3a4c249d5b9c2fb3c21
+commit: 7579d81abef9957c2aaaca8b37d62811ff1bea4c [18/21] gpio: userspace ABI for reading/writing GPIO lines
+config: m68k-m5475evb_defconfig (attached as .config)
+compiler: m68k-linux-gcc (GCC) 4.9.0
+reproduce:
+        wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        git checkout 7579d81abef9957c2aaaca8b37d62811ff1bea4c
+        # save the attached .config to linux build tree
+        make.cross ARCH=m68k 
+
+All errors (new ones prefixed by >>):
+
+   drivers/built-in.o: In function `linehandle_create':
+>> gpiolib.c:(.text+0x21ea): undefined reference to `anon_inode_getfd'
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+--huq684BweRXVnRxX
+Content-Type: application/octet-stream
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+
+--huq684BweRXVnRxX--
