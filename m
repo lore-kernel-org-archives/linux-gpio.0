@@ -1,71 +1,46 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 3/9] pinctrl: at91: make it explicitly non-modular
-Date: Mon, 6 Jun 2016 22:43:02 -0400
-Message-ID: <1465267388-17884-4-git-send-email-paul.gortmaker@windriver.com>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH 7/9] pinctrl: zynq: make it explicitly non-modular
+Date: Mon, 6 Jun 2016 19:54:59 -0700
+Message-ID: <20160607025459.GV3766@xsjsorenbubuntu>
 References: <1465267388-17884-1-git-send-email-paul.gortmaker@windriver.com>
+ <1465267388-17884-8-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:49851 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753390AbcFGCpg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jun 2016 22:45:36 -0400
-In-Reply-To: <1465267388-17884-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1465267388-17884-8-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+On Mon, 2016-06-06 at 22:43:06 -0400, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
+>=20
+> config PINCTRL_ZYNQ
+>         bool "Pinctrl driver for Xilinx Zynq"
+>=20
+> ...meaning that it currently is not being built as a module by anyone=
+=2E
+>=20
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+>=20
+> Since module_platform_driver() uses the same init level priority as
+> builtin_platform_driver() the init ordering remains unchanged with
+> this commit.
+>=20
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+>=20
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+>=20
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Michal Simek <michal.simek@xilinx.com>
+> Cc: "S=C3=B6ren Brinkmann" <soren.brinkmann@xilinx.com>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Acked-by: "S=C3=B6ren Brinkmann" <soren.brinkmann@xilinx.com>
 
-drivers/pinctrl/Kconfig:config PINCTRL_AT91
-drivers/pinctrl/Kconfig:        bool "AT91 pinctrl driver"
-
-...meaning that it currently is not being built as a module by anyone.
-
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
-
-Since module_init was not being used in this driver, we don't need
-to be concerned with initcall ordering changes when removing it.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
-
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/pinctrl/pinctrl-at91.c | 11 -----------
- 1 file changed, 11 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index b7c0d6f7c046..cb9a0849b8ba 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -9,7 +9,6 @@
- #include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/init.h>
--#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/of_address.h>
-@@ -1818,13 +1817,3 @@ static int __init at91_pinctrl_init(void)
- 	return platform_register_drivers(drivers, ARRAY_SIZE(drivers));
- }
- arch_initcall(at91_pinctrl_init);
--
--static void __exit at91_pinctrl_exit(void)
--{
--	platform_unregister_drivers(drivers, ARRAY_SIZE(drivers));
--}
--
--module_exit(at91_pinctrl_exit);
--MODULE_AUTHOR("Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>");
--MODULE_DESCRIPTION("Atmel AT91 pinctrl driver");
--MODULE_LICENSE("GPL v2");
--- 
-2.8.0
-
+	S=C3=B6ren
