@@ -1,52 +1,107 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: uniphier: fix NAND pin-mux settings for PH1-LD11/LD20
-Date: Tue,  7 Jun 2016 10:36:05 +0900
-Message-ID: <1465263365-13966-1-git-send-email-yamada.masahiro@socionext.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 2/9] pinctrl: baytrail: make it explicitly non-modular
+Date: Mon, 6 Jun 2016 22:43:01 -0400
+Message-ID: <1465267388-17884-3-git-send-email-paul.gortmaker@windriver.com>
+References: <1465267388-17884-1-git-send-email-paul.gortmaker@windriver.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conuserg-09.nifty.com ([210.131.2.76]:48366 "EHLO
-	conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750788AbcFGBgD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jun 2016 21:36:03 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:58675 "EHLO mail5.wrs.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752018AbcFGCnb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 6 Jun 2016 22:43:31 -0400
+In-Reply-To: <1465267388-17884-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-My mistake in the initial support patches.
+The Kconfig currently controlling compilation of this code is:
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+config PINCTRL_BAYTRAIL
+        bool "Intel Baytrail GPIO pin control"
+
+...meaning that it currently is not being built as a module by anyone.
+
+Lets remove the modular code that is essentially orphaned, so that
+when reading the driver there is no doubt it is builtin-only.
+
+We explicitly disallow a driver unbind, since that doesn't have a
+sensible use case anyway, and it allows us to drop the ".remove"
+code for non-modular drivers.
+
+Since module_init() was already not in use in this driver, we don't
+have any concerns with init ordering changes here.
+
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
+is already contained at the top of the file in the comments.
+
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 25 ++++---------------------
+ 1 file changed, 4 insertions(+), 21 deletions(-)
 
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 2 +-
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-index 418ccd6..150942f 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-@@ -484,7 +484,7 @@ static const unsigned i2c4_pins[] = {61, 62};
- static const int i2c4_muxvals[] = {1, 1};
- static const unsigned nand_pins[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
- 				     15, 16, 17};
--static const int nand_muxvals[] = {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
-+static const int nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
- static const unsigned sd_pins[] = {10, 11, 12, 13, 14, 15, 16, 17};
- static const int sd_muxvals[] = {3, 3, 3, 3, 3, 3, 3, 3};  /* No SDVOLC */
- static const unsigned system_bus_pins[] = {1, 2, 6, 7, 8, 9, 10, 11, 12, 13,
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-index 2cb26b7..7311453 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
-@@ -565,7 +565,7 @@ static const unsigned i2c4_pins[] = {61, 62};
- static const int i2c4_muxvals[] = {1, 1};
- static const unsigned nand_pins[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
- 				     15, 16, 17};
--static const int nand_muxvals[] = {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
-+static const int nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
- static const unsigned sd_pins[] = {10, 11, 12, 13, 14, 15, 16, 17};
- static const int sd_muxvals[] = {3, 3, 3, 3, 3, 3, 3, 3};  /* No SDVOLC */
- static const unsigned system_bus_pins[] = {1, 2, 6, 7, 8, 9, 10, 11, 12, 13,
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index 677a811b3a6f..b2df03e9e431 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -15,7 +15,6 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/types.h>
+ #include <linux/bitops.h>
+@@ -1822,17 +1821,6 @@ static int byt_pinctrl_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int byt_pinctrl_remove(struct platform_device *pdev)
+-{
+-	struct byt_gpio *vg = platform_get_drvdata(pdev);
+-
+-	pm_runtime_disable(&pdev->dev);
+-	gpiochip_remove(&vg->chip);
+-	pinctrl_unregister(vg->pctl_dev);
+-
+-	return 0;
+-}
+-
+ #ifdef CONFIG_PM_SLEEP
+ static int byt_gpio_suspend(struct device *dev)
+ {
+@@ -1930,10 +1918,11 @@ static const struct dev_pm_ops byt_gpio_pm_ops = {
+ 
+ static struct platform_driver byt_gpio_driver = {
+ 	.probe          = byt_pinctrl_probe,
+-	.remove         = byt_pinctrl_remove,
+ 	.driver         = {
+-		.name   = "byt_gpio",
+-		.pm	= &byt_gpio_pm_ops,
++		.name			= "byt_gpio",
++		.pm			= &byt_gpio_pm_ops,
++		.suppress_bind_attrs	= true,
++
+ 		.acpi_match_table = ACPI_PTR(byt_gpio_acpi_match),
+ 	},
+ };
+@@ -1943,9 +1932,3 @@ static int __init byt_gpio_init(void)
+ 	return platform_driver_register(&byt_gpio_driver);
+ }
+ subsys_initcall(byt_gpio_init);
+-
+-static void __exit byt_gpio_exit(void)
+-{
+-	platform_driver_unregister(&byt_gpio_driver);
+-}
+-module_exit(byt_gpio_exit);
 -- 
-1.9.1
+2.8.0
 
