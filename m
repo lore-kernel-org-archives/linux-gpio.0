@@ -1,63 +1,66 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH] pinctrl: sh-pfc: fix warnings by include core.h
-Date: Tue,  7 Jun 2016 18:33:06 +0100
-Message-ID: <1465320786-10333-1-git-send-email-ben.dooks@codethink.co.uk>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 82-70-136-246.dsl.in-addr.zen.co.uk ([82.70.136.246]:36890 "EHLO
-	rainbowdash.ducie.codethink.co.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755428AbcFGRdN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jun 2016 13:33:13 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 2/2] gpio: Support cascaded GPIO chip lookup for OF
+Date: Tue, 7 Jun 2016 16:00:53 -0500
+Message-ID: <CAL_JsqLi4=6v-8B8eF-H1iQGa+3Zh=rzAWbCAJubnLNEitPaLQ@mail.gmail.com>
+References: <1464985616-11821-1-git-send-email-pantelis.antoniou@konsulko.com> <1464985616-11821-3-git-send-email-pantelis.antoniou@konsulko.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1464985616-11821-3-git-send-email-pantelis.antoniou@konsulko.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Frank Rowand <frowand.list@gmail.com>, Matt Porter <mporter@konsulko.com>, Koen Kooi <koen@dominion.thruhere.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Pantelis Antoniou <panto@antoniou-consulting.com>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@lists.codethink.co.uk
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@unipv.it>, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-Fix warnings about emev2_pinmux_info and r8a7779_pinmux_info
-by using core.h instead of sh_pfc.h in these files. This gives
-the declarations of the two structures and removes the following
-warnings:
++Mark R
 
-drivers/pinctrl/sh-pfc/pfc-emev2.c:1695:30: warning: symbol 'emev2_pinmux_info' was not declared. Should it be static?
-drivers/pinctrl/sh-pfc/pfc-r8a7779.c:3888:30: warning: symbol 'r8a7779_pinmux_info' was not declared. Should it be static?
+On Fri, Jun 3, 2016 at 3:26 PM, Pantelis Antoniou
+<pantelis.antoniou@konsulko.com> wrote:
+> In certain cases it makes sense to create cascaded GPIO which
+> are not real GPIOs, merely point to the real backend GPIO chip.
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alessandro Rubini <rubini@unipv.it>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org
----
- drivers/pinctrl/sh-pfc/pfc-emev2.c   | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7779.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+In what cases? Make it clear what this is for. Connectors of course,
+but are there any other use cases you have in mind.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-emev2.c b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-index 1cbbe04..f943854 100644
---- a/drivers/pinctrl/sh-pfc/pfc-emev2.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-@@ -10,7 +10,7 @@
- #include <linux/init.h>
- #include <linux/kernel.h>
- 
--#include "sh_pfc.h"
-+#include "core.h"
- 
- #define CPU_ALL_PORT(fn, pfx, sfx)					\
- 	PORT_10(0,  fn, pfx, sfx),	PORT_90(0,  fn, pfx, sfx),	\
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-index 5bef934..098d01e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-@@ -21,7 +21,7 @@
- 
- #include <linux/kernel.h>
- 
--#include "sh_pfc.h"
-+#include "core.h"
- 
- #define CPU_ALL_PORT(fn, sfx)						\
- 	PORT_GP_32(0, fn, sfx),						\
--- 
-2.8.1
+> In order to support this, cascaded of_xlate lookup need to be
+> performed.
+>
+> For example let's take a connector that we want to abstract
+> having two GPIO pins from different GPIO controllers, connector
+> pin #0 connected to gpioA controller with offset 10 and gpioB
+> with 4.
 
+A connector's GPIO number may or may not be related to connector pins.
+
+> In pseudo DT form this is analogous to:
+>
+>         gpioA: gpioa@80000 {
+>                 compatible = "foocorp,gpio";
+>                 ...
+>         };
+>
+>         gpioB: gpiob@80800 {
+>                 compatible = "foocorp,gpio";
+>                 ....
+>         };
+>
+>         gpioC: controller_gpio {
+>                 compatible = "cascaded-gpio";
+
+This compatible is kind of meaningless. I'd expect this to be a
+connector compatible.
+
+>                 gpios = <&gpioA 10>, <&gpioB 5>;
+
+As we discussed at ELC, I think this should be modeled after
+interrupt-map property like this:
+
+gpio-map = <0 0 &soc_gpio 10 0>, <1 0 &soc_gpio 5 0>;
+gpio-map-mask = <0xff 0>;
+
+This is more flexible, a known pattern, and allows remapping of flag cells.
+
+Also, we will likely have interrupt capable GPIOs, so they are going
+to need interrupt-map anyway.
+
+Rob
