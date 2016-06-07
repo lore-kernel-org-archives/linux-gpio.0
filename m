@@ -1,60 +1,100 @@
-From: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
 Subject: Re: [PATCH 27/32] gpio: Add support for the FXL6408 GPIO expander.
-Date: Mon, 06 Jun 2016 16:50:31 -0700
-Message-ID: <87port98s8.fsf@eliezer.anholt.net>
-References: <1464817421-8519-1-git-send-email-kraxel@redhat.com> <1464817421-8519-28-git-send-email-kraxel@redhat.com>
+Date: Mon, 6 Jun 2016 17:02:29 -0700
+Message-ID: <57560F15.6020006@gmail.com>
+References: <1464817421-8519-1-git-send-email-kraxel@redhat.com>
+ <1464817421-8519-28-git-send-email-kraxel@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1464817421-8519-28-git-send-email-kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "open list:BROADCOM BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1464817421-8519-28-git-send-email-kraxel@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Gerd Hoffmann <kraxel@redhat.com>, linux-rpi-kernel@lists.infradead.org
+Cc: Eric Anholt <eric@anholt.net>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "open list:BROADCOM BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." <bcm-kernel-feedback-list@broadcom.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-
-Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org> writes:
-
-> From: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>
->
+On 06/01/2016 02:43 PM, Gerd Hoffmann wrote:
+> From: Eric Anholt <eric@anholt.net>
+> 
 > This commit needs to be split up and cleaned up.  Also we should add
 > interrupt support before pushing upstream.
->
-> Signed-off-by: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> 
+> Conflicts:
+> 	arch/arm64/boot/dts/broadcom/bcm2837-rpi-3-b.dts
+> ---
+>  arch/arm64/boot/dts/broadcom/bcm2837-rpi-3-b.dts |  16 ++
+>  drivers/gpio/Kconfig                             |   6 +
+>  drivers/gpio/Makefile                            |   1 +
+>  drivers/gpio/gpio-fxl6408.c                      | 244 +++++++++++++++++++++++
+>  4 files changed, 267 insertions(+)
+>  create mode 100644 drivers/gpio/gpio-fxl6408.c
+> 
+> diff --git a/arch/arm64/boot/dts/broadcom/bcm2837-rpi-3-b.dts b/arch/arm64/boot/dts/broadcom/bcm2837-rpi-3-b.dts
+> index 099dd48d..4bc191e 100644
+> --- a/arch/arm64/boot/dts/broadcom/bcm2837-rpi-3-b.dts
+> +++ b/arch/arm64/boot/dts/broadcom/bcm2837-rpi-3-b.dts
+> @@ -39,3 +39,19 @@
+>  &hdmi {
+>  	hpd-gpios = <&gpio 46 GPIO_ACTIVE_LOW>;
+>  };
+> +
+> +/* Connect the GPIO expander to I2C1 */
+> +&i2c0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&i2c0_gpio44>;
+> +
+> +	gpio_expander: gpio@43 {
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		reg = <0x43>;
+> +		compatible = "fcs,fxl6408";
+> +	};
+> +};
+> +
+> +bt {
+> +};
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 48da857..34056cd 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -665,6 +665,12 @@ config GPIO_ADNP
+>  	  enough to represent all pins, but the driver will assume a
+>  	  register layout for 64 pins (8 registers).
+>  
+> +config GPIO_FXL6408
+> +	tristate "FXL6408 I2C GPIO expander"
+> +	help
+> +	  This option enables support for 8 GPIOs found
+> +	  on the Fairchild Semiconductor FXL6408.
+> +
+>  config GPIO_MAX7300
+>  	tristate "Maxim MAX7300 GPIO expander"
+>  	select GPIO_MAX730X
+> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> index 991598e..59a25ef 100644
+> --- a/drivers/gpio/Makefile
+> +++ b/drivers/gpio/Makefile
+> @@ -43,6 +43,7 @@ obj-$(CONFIG_GPIO_EM)		+= gpio-em.o
+>  obj-$(CONFIG_GPIO_EP93XX)	+= gpio-ep93xx.o
+>  obj-$(CONFIG_GPIO_ETRAXFS)	+= gpio-etraxfs.o
+>  obj-$(CONFIG_GPIO_F7188X)	+= gpio-f7188x.o
+> +obj-$(CONFIG_GPIO_FXL6408)	+= gpio-fxl6408.o
+>  obj-$(CONFIG_GPIO_GE_FPGA)	+= gpio-ge.o
+>  obj-$(CONFIG_GPIO_GRGPIO)	+= gpio-grgpio.o
+>  obj-$(CONFIG_GPIO_ICH)		+= gpio-ich.o
+> diff --git a/drivers/gpio/gpio-fxl6408.c b/drivers/gpio/gpio-fxl6408.c
+> new file mode 100644
+> index 0000000..02b2816
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-fxl6408.c
+> @@ -0,0 +1,244 @@
+> +/*
+> + *  Copyright (C) 2016 Broadcom Limited.
 
-OK, I've confirmed with the firmware maintainers: We really can't drive
-this natively from Linux.  The firmware is polling one of the fxl6408's
-pins 10 times a second for detecting under-voltage, so if we also try to
-drive it we'll end up smashing each others' I2C transactions.  We'll
-need to do a GPIO driver using the GET/SET_GPIO_STATE firmware calls,
-instead.  Unfortunately, we don't have a direction-setting API for that
-at the moment, but it'll at least let us read the HDMI HPD signal.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJXVgxIAAoJELXWKTbR/J7oiOUP/iCUKM2ALetrzGMef5oPyWRw
-iBh/BAo0aPbYCN1ISB3/uL92QFEIo6HqirK/Xcn4adzUiMO6Vlqa9KLZEtgkATlu
-VdsZO5pktTv4RUHw0oCMUm1UO7wp/3StbdcwgPl5kHBQIggvD3C4zbuM2BN/xlvR
-mw+n0Drp3mTJJ0/6hLORBhceCuqg0D8OwB4/cCNCnb/splZDpNxWHNDdJNCxTKzP
-N9nkeX2cJ2YFBF8vziL880AjSle2ktVFrMPg/EZ/TwwxSwfdm0rKUH1FFn3BbG/K
-40c5jx8sKGBRX+bAZNYeAS12o9ChQDqXCka4UVWqal6uhuQoKTZCIuFfrR+eKpSy
-bR0MG9yh+vOmAZxRehgCi8bhrvm3uYgu9f/VlijdNLxUw/lxN3u+Lw+JoyZo9LDY
-MZb9QdT3sXAKCVnzfxbyppHX6M6emZDlj6WrYSZQLo+1hQxzcIo1hCSZd2/db8Wb
-uJV7aes1hnHEBfP8LbxHSqQ5vmEKXTfrqDkjTEqWDbxx1jiIuyMBm80YB1OF/qeZ
-NlS/B8awjgl6ShSCI160YYaAb4gr1U3aLGiT7HiOHJIcNZW71oxSTmaHbyPo3dQu
-6nHPTAdzC7qtTC2JWlvFQ/8i3lnQRgdummUDkREkq/1dSG03ElgWR6dhI3g2S0wb
-RNfxNK0s0gm/OSbv2g9U
-=UGRD
------END PGP SIGNATURE-----
---=-=-=--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+BTW, since you need to resubmit that, the new Copyright should be
+without the "Limited", just Broadcom, which covers all entities.
+-- 
+Florian
