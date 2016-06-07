@@ -1,36 +1,63 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH] pinctrl: nomadik: fix warnings from unexported functions
-Date: Tue, 7 Jun 2016 18:30:59 +0100
-Message-ID: <d3712327-9d20-08ae-30b1-2b6d52e30420@codethink.co.uk>
-References: <1465320302-5770-1-git-send-email-ben.dooks@codethink.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] pinctrl: sh-pfc: fix warnings by include core.h
+Date: Tue,  7 Jun 2016 18:33:06 +0100
+Message-ID: <1465320786-10333-1-git-send-email-ben.dooks@codethink.co.uk>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:39815 "EHLO
-	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755837AbcFGRbE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jun 2016 13:31:04 -0400
-In-Reply-To: <1465320302-5770-1-git-send-email-ben.dooks@codethink.co.uk>
+Received: from 82-70-136-246.dsl.in-addr.zen.co.uk ([82.70.136.246]:36890 "EHLO
+	rainbowdash.ducie.codethink.co.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1755428AbcFGRdN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jun 2016 13:33:13 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-kernel@lists.codethink.co.uk
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@unipv.it>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@unipv.it>, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-On 07/06/16 18:25, Ben Dooks wrote:
-> There are five functions in the driver that are defined but
-> only used locally. Make these static to avoid the following
-> warnings:
-> 
-> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1036:6: warning: symbol 'nmk_gpio_clocks_enable' was not declared. Should it be static?
-> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1050:6: warning: symbol 'nmk_gpio_clocks_disable' was not declared. Should it be static?
-> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1073:6: warning: symbol 'nmk_gpio_wakeups_suspend' was not declared. Should it be static?
-> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1094:6: warning: symbol 'nmk_gpio_wakeups_resume' was not declared. Should it be static?
-> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1120:6: warning: symbol 'nmk_gpio_read_pull' was not declared. Should it be static?
+Fix warnings about emev2_pinmux_info and r8a7779_pinmux_info
+by using core.h instead of sh_pfc.h in these files. This gives
+the declarations of the two structures and removes the following
+warnings:
 
-Apologies, wrong version of the patch without a typo fix in it.
+drivers/pinctrl/sh-pfc/pfc-emev2.c:1695:30: warning: symbol 'emev2_pinmux_info' was not declared. Should it be static?
+drivers/pinctrl/sh-pfc/pfc-r8a7779.c:3888:30: warning: symbol 'r8a7779_pinmux_info' was not declared. Should it be static?
 
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alessandro Rubini <rubini@unipv.it>
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org
+---
+ drivers/pinctrl/sh-pfc/pfc-emev2.c   | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7779.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/pinctrl/sh-pfc/pfc-emev2.c b/drivers/pinctrl/sh-pfc/pfc-emev2.c
+index 1cbbe04..f943854 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-emev2.c
++++ b/drivers/pinctrl/sh-pfc/pfc-emev2.c
+@@ -10,7 +10,7 @@
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ 
+-#include "sh_pfc.h"
++#include "core.h"
+ 
+ #define CPU_ALL_PORT(fn, pfx, sfx)					\
+ 	PORT_10(0,  fn, pfx, sfx),	PORT_90(0,  fn, pfx, sfx),	\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
+index 5bef934..098d01e 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
+@@ -21,7 +21,7 @@
+ 
+ #include <linux/kernel.h>
+ 
+-#include "sh_pfc.h"
++#include "core.h"
+ 
+ #define CPU_ALL_PORT(fn, sfx)						\
+ 	PORT_GP_32(0, fn, sfx),						\
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+2.8.1
+
