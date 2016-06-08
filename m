@@ -1,39 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 27/32] gpio: Add support for the FXL6408 GPIO expander.
-Date: Wed, 8 Jun 2016 11:10:58 +0200
-Message-ID: <CACRpkdax3AmnprT48zL7J92ddMvLYeRXi9OrQK_JrBT8_zZQoA@mail.gmail.com>
-References: <1464817421-8519-1-git-send-email-kraxel@redhat.com> <1464817421-8519-28-git-send-email-kraxel@redhat.com>
+Subject: Re: [PATCH] pinctrl: uniphier: fix NAND pin-mux settings for PH1-LD11/LD20
+Date: Wed, 8 Jun 2016 11:13:34 +0200
+Message-ID: <CACRpkdbZP4xXNXP2OqSVBCHe1xCd9_W=VzWoykgGuTUh2RfH6Q@mail.gmail.com>
+References: <1465263365-13966-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:36826 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1423148AbcFHJK7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 05:10:59 -0400
-Received: by mail-oi0-f41.google.com with SMTP id p204so2944719oih.3
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 02:10:59 -0700 (PDT)
-In-Reply-To: <1464817421-8519-28-git-send-email-kraxel@redhat.com>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:33916 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1423268AbcFHJNf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 05:13:35 -0400
+Received: by mail-oi0-f42.google.com with SMTP id e72so3149267oib.1
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 02:13:35 -0700 (PDT)
+In-Reply-To: <1465263365-13966-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Alexandre Courbot <gnurou@gmail.com>, "open list:BROADCOM BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." <bcm-kernel-feedback-list@broadcom.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.ker>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Jun 1, 2016 at 11:43 PM, Gerd Hoffmann <kraxel@redhat.com> wrote:
+On Tue, Jun 7, 2016 at 3:36 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-> +#define FXL6408_OUTPUT                 0x05
-> +/* Bits here make the output High-Z, instead of the OUTPUT value. */
-> +#define FXL6408_OUTPUT_HIGH_Z          0x07
-(...)
-> +       /* Disable High-Z of outputs, so that our OUTPUT updates
-> +        * actually take effect.
-> +        */
-> +       i2c_smbus_write_byte_data(client, FXL6408_OUTPUT_HIGH_Z, 0);
+> My mistake in the initial support patches.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-High-Z is probably the same as open drain right? And if not open drain,
-it is push-pull.
-
-So you want to implement .set_single_ended() for configuring the lines in
-"high-z", i.e. open drain output mode.
+Patch applied.
 
 Yours,
 Linus Walleij
