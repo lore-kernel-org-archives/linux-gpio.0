@@ -1,46 +1,114 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [Linux-kernel] [PATCH] pinctrl: nomadik: fix warnings from
- unexported functions
-Date: Wed, 8 Jun 2016 14:14:32 +0200
-Message-ID: <CACRpkdZk3gCP1D2cpYDr2H_C8B07iepdBnNnn=x5Kf48WWGRrA@mail.gmail.com>
-References: <1465320302-5770-1-git-send-email-ben.dooks@codethink.co.uk>
- <d3712327-9d20-08ae-30b1-2b6d52e30420@codethink.co.uk> <40be947d-89f6-2552-7bd2-91d16a378b2f@codethink.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:33905 "EHLO
-	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161028AbcFHMOd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 08:14:33 -0400
-Received: by mail-oi0-f54.google.com with SMTP id e72so9180960oib.1
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 05:14:33 -0700 (PDT)
-In-Reply-To: <40be947d-89f6-2552-7bd2-91d16a378b2f@codethink.co.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 2/2] gpio: Support cascaded GPIO chip lookup for OF
+Date: Wed, 8 Jun 2016 16:41:12 +0300
+Message-ID: <8F93AE08-B340-481B-A5B3-F42227D9D729@konsulko.com>
+References: <1464985616-11821-1-git-send-email-pantelis.antoniou@konsulko.com> <1464985616-11821-3-git-send-email-pantelis.antoniou@konsulko.com> <CAL_JsqLi4=6v-8B8eF-H1iQGa+3Zh=rzAWbCAJubnLNEitPaLQ@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAL_JsqLi4=6v-8B8eF-H1iQGa+3Zh=rzAWbCAJubnLNEitPaLQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Matt Porter <mporter-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>, Koen Kooi <koen-QLwJDigV5abLmq1fohREcCpxlwaOVQ5f@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-kernel@lists.codethink.co.uk, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alessandro Rubini <rubini@unipv.it>
 
-On Wed, Jun 8, 2016 at 11:15 AM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
+Hi Rob,
 
-> On 07/06/16 18:30, Ben Dooks wrote:
->> On 07/06/16 18:25, Ben Dooks wrote:
->>> There are five functions in the driver that are defined but
->>> only used locally. Make these static to avoid the following
->>> warnings:
->>>
->>> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1036:6: warning: symbol 'nmk_gpio_clocks_enable' was not declared. Should it be static?
->>> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1050:6: warning: symbol 'nmk_gpio_clocks_disable' was not declared. Should it be static?
->>> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1073:6: warning: symbol 'nmk_gpio_wakeups_suspend' was not declared. Should it be static?
->>> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1094:6: warning: symbol 'nmk_gpio_wakeups_resume' was not declared. Should it be static?
->>> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1120:6: warning: symbol 'nmk_gpio_read_pull' was not declared. Should it be static?
->>
->> Apologies, wrong version of the patch without a typo fix in it.
->
-> Given these functions are not being used, should I just consider a
-> patch to remove these. If they are not being considered for future
-> development it might be a good idea?
+> On Jun 8, 2016, at 00:00 , Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>=20
+> +Mark R
+>=20
+> On Fri, Jun 3, 2016 at 3:26 PM, Pantelis Antoniou
+> <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org> wrote:
+>> In certain cases it makes sense to create cascaded GPIO which
+>> are not real GPIOs, merely point to the real backend GPIO chip.
+>=20
+> In what cases? Make it clear what this is for. Connectors of course,
+> but are there any other use cases you have in mind.
+>=20
 
-Yeah just kill them. If I need them back, I can always revert.
+Connectors is one obvious use-case. In fact even when there is no
+connector but there is an obvious interface abstraction point you
+might want to use it.
 
-Yours,
-Linus Walleij
+=46or instance a SoC package may have a number of different GPIO
+controllers (that may or may not use the same IP block). You could
+abstract all the gpio controllers away in a single GPIO controller
+block.
+
+>> In order to support this, cascaded of_xlate lookup need to be
+>> performed.
+>>=20
+>> For example let's take a connector that we want to abstract
+>> having two GPIO pins from different GPIO controllers, connector
+>> pin #0 connected to gpioA controller with offset 10 and gpioB
+>> with 4.
+>=20
+> A connector's GPIO number may or may not be related to connector pins=
+=2E
+>=20
+
+Obviously, this is just an example.
+
+>> In pseudo DT form this is analogous to:
+>>=20
+>>        gpioA: gpioa@80000 {
+>>                compatible =3D "foocorp,gpio";
+>>                ...
+>>        };
+>>=20
+>>        gpioB: gpiob@80800 {
+>>                compatible =3D "foocorp,gpio";
+>>                ....
+>>        };
+>>=20
+>>        gpioC: controller_gpio {
+>>                compatible =3D "cascaded-gpio";
+>=20
+> This compatible is kind of meaningless. I'd expect this to be a
+> connector compatible.
+>=20
+
+No, because this gpio patch is completely independent of the
+existence of a connector.
+=20
+>>                gpios =3D <&gpioA 10>, <&gpioB 5>;
+>=20
+> As we discussed at ELC, I think this should be modeled after
+> interrupt-map property like this:
+>=20
+> gpio-map =3D <0 0 &soc_gpio 10 0>, <1 0 &soc_gpio 5 0>;
+> gpio-map-mask =3D <0xff 0>;
+>=20
+> This is more flexible, a known pattern, and allows remapping of flag =
+cells.
+>=20
+
+It=E2=80=99s just syntactic sugar. It can work either way.
+
+> Also, we will likely have interrupt capable GPIOs, so they are going
+> to need interrupt-map anyway.
+>=20
+
+Devices that use interrupts usually convert the GPIO to an interrupt an=
+d use it.
+Since the xlat op will return the real GPIO spec the interrupt conversi=
+on will work.
+
+Bare interrupt lines are sort-of out of fashion nowadays I think. I=E2=80=
+=99m eager to be
+proven wrong though with a recent portable expansion board that uses th=
+em.
+
+> Rob
+
+Regards
+
+=E2=80=94 Pantelis
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
