@@ -1,52 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: include <linux/io-mapping.h> in gpiolib-of
-Date: Wed,  8 Jun 2016 11:02:46 +0200
-Message-ID: <1465376566-29052-1-git-send-email-linus.walleij@linaro.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] gpio: pca953x: enfore type for
+ i2c_smbus_write_word_data()
+Date: Wed, 08 Jun 2016 12:06:19 +0300
+Message-ID: <1465376779.1767.116.camel@linux.intel.com>
+References: <1464721423-10969-1-git-send-email-andriy.shevchenko@linux.intel.com>
+ <CADO9-pd60y8u7fQ-thBfpKr58t-=i2D9gyW-PWcz1_CyvgOFsA@mail.gmail.com>
+ <1464784534.1767.11.camel@linux.intel.com>
+	 <CADO9-pdtfOKdAtwueg0YZ0GHnLkPwL842SXhpx+ENt+11wepPA@mail.gmail.com>
+ <1464878595.1767.28.camel@linux.intel.com>
+	 <CACRpkdbM_57-uYLRfQycD8pudvnruV4QMW8UJP+txKRs2MK1wA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:34458 "EHLO
-	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753098AbcFHJCw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 05:02:52 -0400
-Received: by mail-lf0-f46.google.com with SMTP id s186so1332169lfs.1
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 02:02:52 -0700 (PDT)
+Received: from mga11.intel.com ([192.55.52.93]:35236 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755953AbcFHJFX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 8 Jun 2016 05:05:23 -0400
+In-Reply-To: <CACRpkdbM_57-uYLRfQycD8pudvnruV4QMW8UJP+txKRs2MK1wA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Yong Li <sdliyong@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Phil Reid <preid@electromag.com.au>
 
-When enabling the gpiolib for all archs a build robot came
-up with this:
+On Wed, 2016-06-08 at 10:03 +0200, Linus Walleij wrote:
+> On Thu, Jun 2, 2016 at 4:43 PM, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > Linus, by the way do we need to go with this to stable and -rc2?
+> 
+> If it's just a compilation warning, no.
+> 
+> If it is causing real regressions on hardware yes.
 
-All errors (new ones prefixed by >>):
+I believe it's just a static analyzer warning.
 
-   drivers/gpio/gpiolib-of.c: In function 'of_mm_gpiochip_add_data':
->> drivers/gpio/gpiolib-of.c:317:2: error: implicit declaration of
-   function 'iounmap' [-Werror=implicit-function-declaration]
-     iounmap(mm_gc->regs);
-     ^~~~~~~
-   cc1: some warnings being treated as errors
+> 
+> I have applied it for the next kernel as of now.
 
-Fix this by including <linux/io-mapping.h> explicitly.
+Thanks!
 
-Fixes: 296ad4acb8ef ("gpio: remove deps on ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB")
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib-of.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index d22dcc38179d..4aabddb38b59 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -16,6 +16,7 @@
- #include <linux/errno.h>
- #include <linux/module.h>
- #include <linux/io.h>
-+#include <linux/io-mapping.h>
- #include <linux/gpio/consumer.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
 -- 
-2.4.11
-
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
