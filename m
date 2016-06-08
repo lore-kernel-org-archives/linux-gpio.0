@@ -1,43 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpiolib: Fix NULL pointer deference
-Date: Wed, 8 Jun 2016 10:39:30 +0200
-Message-ID: <CACRpkdZ42659nZnKaahFDahLY1Ey4dtTGt2nY69se=pu=jnpFw@mail.gmail.com>
-References: <1464973802-9286-1-git-send-email-ricardo.ribalda@gmail.com>
+Subject: Re: [PATCH 1/2] gpio: xlp: Fix vulcan IRQ descriptor allocation
+Date: Wed, 8 Jun 2016 10:53:25 +0200
+Message-ID: <CACRpkdZWjFZ0+WnAeSJH3UHQYbrMenjQ-Lu+NYeu5TY0m=bGcA@mail.gmail.com>
+References: <1465115444-25068-1-git-send-email-kamlakant.patel@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1464973802-9286-1-git-send-email-ricardo.ribalda@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Roger Quadros <rogerq@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:35679 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1422827AbcFHIx0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 04:53:26 -0400
+Received: by mail-oi0-f53.google.com with SMTP id s139so2427729oie.2
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 01:53:26 -0700 (PDT)
+In-Reply-To: <1465115444-25068-1-git-send-email-kamlakant.patel@broadcom.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Kamlakant Patel <kamlakant.patel@broadcom.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jayachandran C <jchandra@broadcom.com>
 
-On Fri, Jun 3, 2016 at 7:10 PM, Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
+On Sun, Jun 5, 2016 at 10:30 AM,  <kamlakant.patel@broadcom.com> wrote:
 
-> Under some circumstances, a gpiochip might be half cleaned from the
-> gpio_device list.
+> From: Kamlakant Patel <kamlakant.patel@broadcom.com>
 >
-> This patch makes sure that the chip pointer is still valid, before
-> calling the match function.
+> irq_alloc_descs need not be called in case of Vulcan, where we use
+> a dynamic IRQ range for GPIO interrupt numbers.
 >
-> [  104.088296] BUG: unable to handle kernel NULL pointer dereference at
-> 0000000000000090
-> [  104.089772] IP: [<ffffffff813d2045>] of_gpiochip_find_and_xlate+0x15/0x80
-> [  104.128273] Call Trace:
-> [  104.129802]  [<ffffffff813d2030>] ? of_parse_own_gpio+0x1f0/0x1f0
-> [  104.131353]  [<ffffffff813cd910>] gpiochip_find+0x60/0x90
-> [  104.132868]  [<ffffffff813d21ba>] of_get_named_gpiod_flags+0x9a/0x120
-> ...
-> [  104.141586]  [<ffffffff8163d12b>] gpio_led_probe+0x11b/0x360
+> Update code not to call irq_alloc_descs and pass 0 as irq_base in
+> case of Vulcan.
 >
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> Signed-off-by: Kamlakant Patel <kamlakant.patel@broadcom.com>
 
-Oh there is the fix that Roger and Grygorii needs.
-
-Applied to fixes and tagged for stable.
-
-Sorry for screwing things up :(
+Patch applied.
 
 Yours,
 Linus Walleij
