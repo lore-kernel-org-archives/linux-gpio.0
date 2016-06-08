@@ -1,71 +1,34 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: Re: [PATCH] pinctrl: at91-pio4: fix non-exported functions
-Date: Wed, 8 Jun 2016 08:33:01 +0200
-Message-ID: <20160608063301.GG373@odux.rfo.atmel.com>
-References: <1465319265-27630-1-git-send-email-ben.dooks@codethink.co.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: imx: Do not treat a PIN without MUX register as
+ an error
+Date: Wed, 8 Jun 2016 09:52:32 +0200
+Message-ID: <CACRpkdaZFs=equFmDYatYR2h1BM=H1VA3v-7J1+CTNaHBY8L0A@mail.gmail.com>
+References: <1464808913-7796-1-git-send-email-shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.243]:50170 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755872AbcFHGdB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 02:33:01 -0400
-Content-Disposition: inline
-In-Reply-To: <1465319265-27630-1-git-send-email-ben.dooks@codethink.co.uk>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:33138 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932331AbcFHHwd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 03:52:33 -0400
+Received: by mail-oi0-f41.google.com with SMTP id k23so594250oih.0
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 00:52:32 -0700 (PDT)
+In-Reply-To: <1464808913-7796-1-git-send-email-shc_work@mail.ru>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-kernel@lists.codethink.co.uk, Ludovic Desroches <ludovic.desroches@atmel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>, Adrian Alonso <aalonso@freescale.com>, Philipp Zabel <p.zabel@pengutronix.de>
 
-On Tue, Jun 07, 2016 at 06:07:45PM +0100, Ben Dooks wrote:
-> The atmel_pctl_find_group_by_pin() and the atmel_pinctrl_remove()
-> functions are not exported, so fix the warnings about these
-> being exported without definitions by making them static.
-> 
-> drivers/pinctrl/pinctrl-at91-pio4.c:424:20: warning: symbol 'atmel_pctl_find_group_by_pin' was not declared. Should it be static?
-> drivers/pinctrl/pinctrl-at91-pio4.c:1077:5: warning: symbol 'atmel_pinctrl_remove' was not declared. Should it be static?
-> 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> ---
-> Cc: Ludovic Desroches <ludovic.desroches@atmel.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-gpio@vger.kernel.org
+On Wed, Jun 1, 2016 at 9:21 PM, Alexander Shiyan <shc_work@mail.ru> wrote:
 
-Thanks for fixing this. It conflicts with 'pinctrl: make non-modular
-drivers really non modular' patches because of atmel_pinctrl_remove
-removal.
+> Some PINs do not have a MUX register, it is not an error.
+> It is necessary to allow the continuation of the PINs configuration,
+> otherwise the whole PIN-group will be configured incorrectly.
+>
+> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
 
-Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+No reply from the i.MX maintainers for a week but the issue seems
+serious so I have applied it for fixes and tagged for stable.
 
-> ---
->  drivers/pinctrl/pinctrl-at91-pio4.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-> index a025b40..22c6ad0 100644
-> --- a/drivers/pinctrl/pinctrl-at91-pio4.c
-> +++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-> @@ -421,8 +421,8 @@ static int atmel_pctl_get_group_pins(struct pinctrl_dev *pctldev,
->  	return 0;
->  }
->  
-> -struct atmel_group *atmel_pctl_find_group_by_pin(struct pinctrl_dev *pctldev,
-> -						 unsigned pin)
-> +static struct atmel_group *
-> +atmel_pctl_find_group_by_pin(struct pinctrl_dev *pctldev, unsigned pin)
->  {
->  	struct atmel_pioctrl *atmel_pioctrl = pinctrl_dev_get_drvdata(pctldev);
->  	int i;
-> @@ -1074,7 +1074,7 @@ clk_prepare_enable_error:
->  	return ret;
->  }
->  
-> -int atmel_pinctrl_remove(struct platform_device *pdev)
-> +static int atmel_pinctrl_remove(struct platform_device *pdev)
->  {
->  	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
->  
-> -- 
-> 2.8.1
-> 
+Yours,
+Linus Walleij
