@@ -1,40 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: tegra: Make lockdep class file-scoped
-Date: Wed, 8 Jun 2016 13:41:05 +0200
-Message-ID: <CACRpkdadWc68-vqZejwBwTA2agFCSxAzxA1V5s4KcwSZFwarCg@mail.gmail.com>
-References: <20160606165627.32676-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] gpio: select ANON_INODES
+Date: Wed,  8 Jun 2016 13:46:56 +0200
+Message-ID: <1465386416-31743-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:34197 "EHLO
-	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932604AbcFHLlH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 07:41:07 -0400
-Received: by mail-oi0-f50.google.com with SMTP id e72so7953991oib.1
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 04:41:07 -0700 (PDT)
-In-Reply-To: <20160606165627.32676-1-thierry.reding@gmail.com>
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:34064 "EHLO
+	mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751635AbcFHLrA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 07:47:00 -0400
+Received: by mail-lf0-f42.google.com with SMTP id s186so3948204lfs.1
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 04:47:00 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-On Mon, Jun 6, 2016 at 6:56 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
+The build servers found that gpiolib is using ANON_INODES but
+has forgotten to select it. Fix this.
 
-> From: Thierry Reding <treding@nvidia.com>
->
-> Commit b546be0db955 ("gpio: tegra: Get rid of all file scoped global
-> variables") moved all file scoped variables into the driver-private
-> structure to allow potentially multiple instances of the driver. The
-> change also included turning the lockdep class into a driver-private
-> field, which doesn't work and produces error messages such as this:
->
->         [    0.142310] BUG: key ffff8000fb3f7ab0 not in .data!
->
-> Make the lockdep class file-scoped again to fix this issue.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+Fixes: 521a2ad6f862 ("gpio: add userspace ABI for GPIO line information")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Patch applied for fixes.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 48da857f4774..a116609b1914 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -33,6 +33,7 @@ config ARCH_REQUIRE_GPIOLIB
+ 
+ menuconfig GPIOLIB
+ 	bool "GPIO Support"
++	select ANON_INODES
+ 	help
+ 	  This enables GPIO support through the generic GPIO library.
+ 	  You only need to enable this, if you also want to enable
+-- 
+2.4.11
 
-Yours,
-Linus Walleij
