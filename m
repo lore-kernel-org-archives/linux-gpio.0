@@ -1,45 +1,39 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] gpio: pca953x: enfore type for
- i2c_smbus_write_word_data()
-Date: Wed, 08 Jun 2016 12:06:19 +0300
-Message-ID: <1465376779.1767.116.camel@linux.intel.com>
-References: <1464721423-10969-1-git-send-email-andriy.shevchenko@linux.intel.com>
- <CADO9-pd60y8u7fQ-thBfpKr58t-=i2D9gyW-PWcz1_CyvgOFsA@mail.gmail.com>
- <1464784534.1767.11.camel@linux.intel.com>
-	 <CADO9-pdtfOKdAtwueg0YZ0GHnLkPwL842SXhpx+ENt+11wepPA@mail.gmail.com>
- <1464878595.1767.28.camel@linux.intel.com>
-	 <CACRpkdbM_57-uYLRfQycD8pudvnruV4QMW8UJP+txKRs2MK1wA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 27/32] gpio: Add support for the FXL6408 GPIO expander.
+Date: Wed, 8 Jun 2016 11:10:58 +0200
+Message-ID: <CACRpkdax3AmnprT48zL7J92ddMvLYeRXi9OrQK_JrBT8_zZQoA@mail.gmail.com>
+References: <1464817421-8519-1-git-send-email-kraxel@redhat.com> <1464817421-8519-28-git-send-email-kraxel@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:35236 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755953AbcFHJFX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 8 Jun 2016 05:05:23 -0400
-In-Reply-To: <CACRpkdbM_57-uYLRfQycD8pudvnruV4QMW8UJP+txKRs2MK1wA@mail.gmail.com>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:36826 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1423148AbcFHJK7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 05:10:59 -0400
+Received: by mail-oi0-f41.google.com with SMTP id p204so2944719oih.3
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 02:10:59 -0700 (PDT)
+In-Reply-To: <1464817421-8519-28-git-send-email-kraxel@redhat.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Yong Li <sdliyong@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Phil Reid <preid@electromag.com.au>
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Alexandre Courbot <gnurou@gmail.com>, "open list:BROADCOM BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." <bcm-kernel-feedback-list@broadcom.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.ker>
 
-On Wed, 2016-06-08 at 10:03 +0200, Linus Walleij wrote:
-> On Thu, Jun 2, 2016 at 4:43 PM, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > Linus, by the way do we need to go with this to stable and -rc2?
-> 
-> If it's just a compilation warning, no.
-> 
-> If it is causing real regressions on hardware yes.
+On Wed, Jun 1, 2016 at 11:43 PM, Gerd Hoffmann <kraxel@redhat.com> wrote:
 
-I believe it's just a static analyzer warning.
+> +#define FXL6408_OUTPUT                 0x05
+> +/* Bits here make the output High-Z, instead of the OUTPUT value. */
+> +#define FXL6408_OUTPUT_HIGH_Z          0x07
+(...)
+> +       /* Disable High-Z of outputs, so that our OUTPUT updates
+> +        * actually take effect.
+> +        */
+> +       i2c_smbus_write_byte_data(client, FXL6408_OUTPUT_HIGH_Z, 0);
 
-> 
-> I have applied it for the next kernel as of now.
+High-Z is probably the same as open drain right? And if not open drain,
+it is push-pull.
 
-Thanks!
+So you want to implement .set_single_ended() for configuring the lines in
+"high-z", i.e. open drain output mode.
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Yours,
+Linus Walleij
