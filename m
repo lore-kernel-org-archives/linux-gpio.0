@@ -1,31 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: uniphier: fix NAND pin-mux settings for PH1-LD11/LD20
-Date: Wed, 8 Jun 2016 11:13:34 +0200
-Message-ID: <CACRpkdbZP4xXNXP2OqSVBCHe1xCd9_W=VzWoykgGuTUh2RfH6Q@mail.gmail.com>
-References: <1465263365-13966-1-git-send-email-yamada.masahiro@socionext.com>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [Linux-kernel] [PATCH] pinctrl: nomadik: fix warnings from
+ unexported functions
+Date: Wed, 8 Jun 2016 10:15:30 +0100
+Message-ID: <40be947d-89f6-2552-7bd2-91d16a378b2f@codethink.co.uk>
+References: <1465320302-5770-1-git-send-email-ben.dooks@codethink.co.uk>
+ <d3712327-9d20-08ae-30b1-2b6d52e30420@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:33916 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1423268AbcFHJNf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 05:13:35 -0400
-Received: by mail-oi0-f42.google.com with SMTP id e72so3149267oib.1
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 02:13:35 -0700 (PDT)
-In-Reply-To: <1465263365-13966-1-git-send-email-yamada.masahiro@socionext.com>
+Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:60233 "EHLO
+	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752000AbcFHJPf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 05:15:35 -0400
+In-Reply-To: <d3712327-9d20-08ae-30b1-2b6d52e30420@codethink.co.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-kernel@lists.codethink.co.uk
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, Alessandro Rubini <rubini@unipv.it>
 
-On Tue, Jun 7, 2016 at 3:36 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On 07/06/16 18:30, Ben Dooks wrote:
+> On 07/06/16 18:25, Ben Dooks wrote:
+>> There are five functions in the driver that are defined but
+>> only used locally. Make these static to avoid the following
+>> warnings:
+>>
+>> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1036:6: warning: symbol 'nmk_gpio_clocks_enable' was not declared. Should it be static?
+>> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1050:6: warning: symbol 'nmk_gpio_clocks_disable' was not declared. Should it be static?
+>> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1073:6: warning: symbol 'nmk_gpio_wakeups_suspend' was not declared. Should it be static?
+>> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1094:6: warning: symbol 'nmk_gpio_wakeups_resume' was not declared. Should it be static?
+>> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1120:6: warning: symbol 'nmk_gpio_read_pull' was not declared. Should it be static?
+> 
+> Apologies, wrong version of the patch without a typo fix in it.
 
-> My mistake in the initial support patches.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Given these functions are not being used, should I just consider a
+patch to remove these. If they are not being considered for future
+development it might be a good idea?
 
-Patch applied.
-
-Yours,
-Linus Walleij
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genies
