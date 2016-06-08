@@ -1,40 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: select ANON_INODES
-Date: Wed,  8 Jun 2016 13:46:56 +0200
-Message-ID: <1465386416-31743-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: bcm-kona: fix bcm_kona_gpio_reset() warnings
+Date: Wed, 8 Jun 2016 14:04:33 +0200
+Message-ID: <CACRpkdZ-s7CzSrp7VNq8KGJbbxSDcJ5aYEmwSARQ3iKPrb++ZA@mail.gmail.com>
+References: <1465316537-8403-1-git-send-email-ben.dooks@codethink.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:34064 "EHLO
-	mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751635AbcFHLrA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 07:47:00 -0400
-Received: by mail-lf0-f42.google.com with SMTP id s186so3948204lfs.1
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 04:47:00 -0700 (PDT)
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:34385 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933099AbcFHMEe (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 08:04:34 -0400
+Received: by mail-oi0-f42.google.com with SMTP id e72so8787489oib.1
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 05:04:34 -0700 (PDT)
+In-Reply-To: <1465316537-8403-1-git-send-email-ben.dooks@codethink.co.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, Markus Mayer <mmayer@broadcom.com>, Ray Jui <rjui@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-The build servers found that gpiolib is using ANON_INODES but
-has forgotten to select it. Fix this.
+On Tue, Jun 7, 2016 at 6:22 PM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
 
-Fixes: 521a2ad6f862 ("gpio: add userspace ABI for GPIO line information")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+> The bcm_kona_gpio_reset() calls bcm_kona_gpio_write_lock_regs()
+> with what looks like the wrong parameter. The write_lock_regs
+> function takes a pointer to the registers, not the bcm_kona_gpio
+> structure.
+>
+> Fix the warning, and probably bug by changing the function to
+> pass reg_base instead of kona_gpio, fixing the following warning:
+>
+> drivers/gpio/gpio-bcm-kona.c:550:47: warning: incorrect type in argument 1 (different address spaces)
+> drivers/gpio/gpio-bcm-kona.c:550:47:    expected void [noderef] <asn:2>*reg_base
+> drivers/gpio/gpio-bcm-kona.c:550:47:    got struct bcm_kona_gpio *kona_gpio
+> drivers/gpio/gpio-bcm-kona.c:554:47: warning: incorrect type in argument 1 (different address spaces)
+> drivers/gpio/gpio-bcm-kona.c:554:47:    expected void [noderef] <asn:2>*reg_base
+> drivers/gpio/gpio-bcm-kona.c:554:47:    got struct bcm_kona_gpio *kona_gpio
+>
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 48da857f4774..a116609b1914 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -33,6 +33,7 @@ config ARCH_REQUIRE_GPIOLIB
- 
- menuconfig GPIOLIB
- 	bool "GPIO Support"
-+	select ANON_INODES
- 	help
- 	  This enables GPIO support through the generic GPIO library.
- 	  You only need to enable this, if you also want to enable
--- 
-2.4.11
+Patch applied with the ACKs and tagged for stable.
 
+Yours,
+Linus Walleij
