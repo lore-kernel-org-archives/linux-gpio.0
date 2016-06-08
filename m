@@ -1,38 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: zynq: initialize clock even without CONFIG_PM
-Date: Wed, 8 Jun 2016 10:37:12 +0200
-Message-ID: <CACRpkdYo6wQapLO8_OD0VZR+PaJJmXAzA6VLimU+NPfJLb4DRg@mail.gmail.com>
-References: <20160603121526.GA23642@laureti-dev>
+Subject: Re: [PATCH 1/2] gpiolib: Fix NULL pointer deference
+Date: Wed, 8 Jun 2016 10:39:30 +0200
+Message-ID: <CACRpkdZ42659nZnKaahFDahLY1Ey4dtTGt2nY69se=pu=jnpFw@mail.gmail.com>
+References: <1464973802-9286-1-git-send-email-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:35179 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1422787AbcFHIhO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 04:37:14 -0400
-Received: by mail-oi0-f48.google.com with SMTP id s139so1911584oie.2
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 01:37:13 -0700 (PDT)
-In-Reply-To: <20160603121526.GA23642@laureti-dev>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1464973802-9286-1-git-send-email-ricardo.ribalda@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Roger Quadros <rogerq@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Helmut Grohne <h.grohne@intenta.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
 
-On Fri, Jun 3, 2016 at 2:15 PM, Helmut Grohne <h.grohne@intenta.de> wrote:
+On Fri, Jun 3, 2016 at 7:10 PM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
 
-> When the PM initialization was moved in the commit referenced below, the
-> code enabling the clock was removed from the probe function. On
-> CONFIG_PM=y kernels, this is not a problem as the pm resume hook enables
-> the clock, but when power management is disabled, all those pm_*
-> functions are noops and the clock is never enabled resulting in a
-> dysfunctional gpio controller.
+> Under some circumstances, a gpiochip might be half cleaned from the
+> gpio_device list.
 >
-> Put the clock initialization back to support CONFIG_PM=n.
+> This patch makes sure that the chip pointer is still valid, before
+> calling the match function.
 >
-> Signed-off-by: Helmut Grohne <h.grohne@intenta.de>
-> Fixes: 3773c195d387 ("gpio: zynq: Do PM initialization earlier to support gpio hogs")
+> [  104.088296] BUG: unable to handle kernel NULL pointer dereference at
+> 0000000000000090
+> [  104.089772] IP: [<ffffffff813d2045>] of_gpiochip_find_and_xlate+0x15/0x80
+> [  104.128273] Call Trace:
+> [  104.129802]  [<ffffffff813d2030>] ? of_parse_own_gpio+0x1f0/0x1f0
+> [  104.131353]  [<ffffffff813cd910>] gpiochip_find+0x60/0x90
+> [  104.132868]  [<ffffffff813d21ba>] of_get_named_gpiod_flags+0x9a/0x120
+> ...
+> [  104.141586]  [<ffffffff8163d12b>] gpio_led_probe+0x11b/0x360
+>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-This v2 patch applied for fixes and tagged for stable.
+Oh there is the fix that Roger and Grygorii needs.
+
+Applied to fixes and tagged for stable.
+
+Sorry for screwing things up :(
 
 Yours,
 Linus Walleij
