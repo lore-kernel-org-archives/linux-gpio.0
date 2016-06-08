@@ -1,31 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: single: Fix missing flush of posted write for a wakeirq
-Date: Wed, 8 Jun 2016 10:05:53 +0200
-Message-ID: <CACRpkdb=GH+cAikrZfX57VOYNQkEnq+Dybjcw+2ORukeV2J6oQ@mail.gmail.com>
-References: <1464729426-11187-1-git-send-email-tony@atomide.com>
- <CACRpkdZUJU90S1Qsqx=8uk33tsXfnpsViJGr_ysgZcmRBH9KHA@mail.gmail.com> <20160602151953.GD5995@atomide.com>
+Subject: Re: [PATCH] gpio: 104-dio-48e: Fix control port offset computation
+ off-by-one error
+Date: Wed, 8 Jun 2016 10:08:34 +0200
+Message-ID: <CACRpkdawGmR6oLG-Vvs=O=KsLM=8RmSSF7M-xCh-A4vgnk+-pw@mail.gmail.com>
+References: <1464897609-7389-1-git-send-email-vilhelm.gray@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:34932 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756062AbcFHIFz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 04:05:55 -0400
-Received: by mail-oi0-f53.google.com with SMTP id s139so908950oie.2
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 01:05:54 -0700 (PDT)
-In-Reply-To: <20160602151953.GD5995@atomide.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1464897609-7389-1-git-send-email-vilhelm.gray@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 
-On Thu, Jun 2, 2016 at 5:19 PM, Tony Lindgren <tony@atomide.com> wrote:
+On Thu, Jun 2, 2016 at 10:00 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-> So yeah, I'd vote yes for stable tag on this one.
+> There are only two control ports, each controlling three distinct I/O
+> ports. To compute the control port address offset for a respective I/O
+> port, the I/O port address offset should be divided by 3; dividing by 2
+> may result in not only the wrong address offset but possibly also an
+> out-of-bounds array memory access for a non-existent third control port.
+>
+> Fixes: 1b06d64f7374 ("gpio: Add GPIO support for the ACCES 104-DIO-48E")
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-I trust you :)
-
-Put in my fixes branch and tagged for stable.
+Patch applied.
 
 Yours,
 Linus Walleij
