@@ -1,66 +1,111 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 2/2] gpio: Support cascaded GPIO chip lookup for OF
-Date: Tue, 7 Jun 2016 16:00:53 -0500
-Message-ID: <CAL_JsqLi4=6v-8B8eF-H1iQGa+3Zh=rzAWbCAJubnLNEitPaLQ@mail.gmail.com>
-References: <1464985616-11821-1-git-send-email-pantelis.antoniou@konsulko.com> <1464985616-11821-3-git-send-email-pantelis.antoniou@konsulko.com>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: Re: [PATCH 9/9] pinctrl: at91-pio4: make it explicitly non-modular
+Date: Wed, 8 Jun 2016 08:27:24 +0200
+Message-ID: <20160608062724.GF373@odux.rfo.atmel.com>
+References: <1465267388-17884-1-git-send-email-paul.gortmaker@windriver.com>
+ <1465267388-17884-10-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1464985616-11821-3-git-send-email-pantelis.antoniou@konsulko.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Frank Rowand <frowand.list@gmail.com>, Matt Porter <mporter@konsulko.com>, Koen Kooi <koen@dominion.thruhere.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Pantelis Antoniou <panto@antoniou-consulting.com>, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.243]:48800 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932066AbcFHG1Z (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 02:27:25 -0400
+Content-Disposition: inline
+In-Reply-To: <1465267388-17884-10-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-kernel@vger.kernel.org, Ludovic Desroches <ludovic.desroches@atmel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-+Mark R
+On Mon, Jun 06, 2016 at 10:43:08PM -0400, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
+> 
+> drivers/pinctrl/Kconfig:config PINCTRL_AT91PIO4
+> drivers/pinctrl/Kconfig:        bool "AT91 PIO4 pinctrl driver"
+> 
+> ...meaning that it currently is not being built as a module by anyone.
+> 
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> 
+> We explicitly disallow a driver unbind, since that doesn't have a
+> sensible use case anyway, and it allows us to drop the ".remove"
+> code for non-modular drivers.
+> 
+> Since module_platform_driver() uses the same init level priority as
+> builtin_platform_driver() the init ordering remains unchanged with
+> this commit.
+> 
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> 
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+> 
+> Cc: Ludovic Desroches <ludovic.desroches@atmel.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-On Fri, Jun 3, 2016 at 3:26 PM, Pantelis Antoniou
-<pantelis.antoniou@konsulko.com> wrote:
-> In certain cases it makes sense to create cascaded GPIO which
-> are not real GPIOs, merely point to the real backend GPIO chip.
+Thanks for cleaning this stuff.
+Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
 
-In what cases? Make it clear what this is for. Connectors of course,
-but are there any other use cases you have in mind.
-
-> In order to support this, cascaded of_xlate lookup need to be
-> performed.
->
-> For example let's take a connector that we want to abstract
-> having two GPIO pins from different GPIO controllers, connector
-> pin #0 connected to gpioA controller with offset 10 and gpioB
-> with 4.
-
-A connector's GPIO number may or may not be related to connector pins.
-
-> In pseudo DT form this is analogous to:
->
->         gpioA: gpioa@80000 {
->                 compatible = "foocorp,gpio";
->                 ...
->         };
->
->         gpioB: gpiob@80800 {
->                 compatible = "foocorp,gpio";
->                 ....
->         };
->
->         gpioC: controller_gpio {
->                 compatible = "cascaded-gpio";
-
-This compatible is kind of meaningless. I'd expect this to be a
-connector compatible.
-
->                 gpios = <&gpioA 10>, <&gpioB 5>;
-
-As we discussed at ELC, I think this should be modeled after
-interrupt-map property like this:
-
-gpio-map = <0 0 &soc_gpio 10 0>, <1 0 &soc_gpio 5 0>;
-gpio-map-mask = <0xff 0>;
-
-This is more flexible, a known pattern, and allows remapping of flag cells.
-
-Also, we will likely have interrupt capable GPIOs, so they are going
-to need interrupt-map anyway.
-
-Rob
+> ---
+>  drivers/pinctrl/pinctrl-at91-pio4.c | 22 +++-------------------
+>  1 file changed, 3 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+> index a025b40d246b..4438dca85c1c 100644
+> --- a/drivers/pinctrl/pinctrl-at91-pio4.c
+> +++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+> @@ -20,7 +20,7 @@
+>  #include <linux/gpio.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+> -#include <linux/module.h>
+> +#include <linux/init.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pinctrl/pinconf.h>
+> @@ -879,7 +879,6 @@ static const struct of_device_id atmel_pctrl_of_match[] = {
+>  		/* sentinel */
+>  	}
+>  };
+> -MODULE_DEVICE_TABLE(of, atmel_pctrl_of_match);
+>  
+>  static int atmel_pinctrl_probe(struct platform_device *pdev)
+>  {
+> @@ -1074,28 +1073,13 @@ clk_prepare_enable_error:
+>  	return ret;
+>  }
+>  
+> -int atmel_pinctrl_remove(struct platform_device *pdev)
+> -{
+> -	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
+> -
+> -	irq_domain_remove(atmel_pioctrl->irq_domain);
+> -	clk_disable_unprepare(atmel_pioctrl->clk);
+> -	gpiochip_remove(atmel_pioctrl->gpio_chip);
+> -
+> -	return 0;
+> -}
+> -
+>  static struct platform_driver atmel_pinctrl_driver = {
+>  	.driver = {
+>  		.name = "pinctrl-at91-pio4",
+>  		.of_match_table = atmel_pctrl_of_match,
+>  		.pm = &atmel_pctrl_pm_ops,
+> +		.suppress_bind_attrs = true,
+>  	},
+>  	.probe = atmel_pinctrl_probe,
+> -	.remove = atmel_pinctrl_remove,
+>  };
+> -module_platform_driver(atmel_pinctrl_driver);
+> -
+> -MODULE_AUTHOR(Ludovic Desroches <ludovic.desroches@atmel.com>);
+> -MODULE_DESCRIPTION("Atmel PIO4 pinctrl driver");
+> -MODULE_LICENSE("GPL v2");
+> +builtin_platform_driver(atmel_pinctrl_driver);
+> -- 
+> 2.8.0
+> 
