@@ -1,36 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: xlp: Fix vulcan IRQ descriptor allocation
-Date: Wed, 8 Jun 2016 10:53:25 +0200
-Message-ID: <CACRpkdZWjFZ0+WnAeSJH3UHQYbrMenjQ-Lu+NYeu5TY0m=bGcA@mail.gmail.com>
-References: <1465115444-25068-1-git-send-email-kamlakant.patel@broadcom.com>
+Subject: Re: [PATCH 2/2] gpiolib: Fix unaligned used of reference counters
+Date: Wed, 8 Jun 2016 10:41:37 +0200
+Message-ID: <CACRpkdak7ZT7fyVpfZB26m7xshJssV-8dxNWjOE22j6L2EUO0w@mail.gmail.com>
+References: <1464973802-9286-1-git-send-email-ricardo.ribalda@gmail.com> <1464973802-9286-2-git-send-email-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:35679 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1422827AbcFHIx0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 04:53:26 -0400
-Received: by mail-oi0-f53.google.com with SMTP id s139so2427729oie.2
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Jun 2016 01:53:26 -0700 (PDT)
-In-Reply-To: <1465115444-25068-1-git-send-email-kamlakant.patel@broadcom.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1464973802-9286-2-git-send-email-ricardo.ribalda@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Roger Quadros <rogerq@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Kamlakant Patel <kamlakant.patel@broadcom.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jayachandran C <jchandra@broadcom.com>
 
-On Sun, Jun 5, 2016 at 10:30 AM,  <kamlakant.patel@broadcom.com> wrote:
+On Fri, Jun 3, 2016 at 7:10 PM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
 
-> From: Kamlakant Patel <kamlakant.patel@broadcom.com>
+> gpiolib relies on the reference counters to clean up the gpio_device
+> structure.
 >
-> irq_alloc_descs need not be called in case of Vulcan, where we use
-> a dynamic IRQ range for GPIO interrupt numbers.
+> Although the number of get/put is properly aligned on gpiolib.c
+> itself, it does not take into consideration how the referece counters
+> are affected by other external functions such as cdev_add and device_add.
 >
-> Update code not to call irq_alloc_descs and pass 0 as irq_base in
-> case of Vulcan.
+> Because of this, after the last call to put_device, the reference counter
+> has a value of +3, therefore never calling gpiodevice_release.
 >
-> Signed-off-by: Kamlakant Patel <kamlakant.patel@broadcom.com>
+> Due to the fact that some of the device  has already been cleaned on
+> gpiochip_remove, the library will end up OOPsing the kernel (e.g. a call
+> to of_gpiochip_find_and_xlate).
+>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-Patch applied.
+Again, thanks for fixing my stupid mistakes.
+
+Applied and tagged for stable.
 
 Yours,
 Linus Walleij
