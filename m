@@ -1,42 +1,54 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [Linux-kernel] [PATCH] pinctrl: nomadik: fix warnings from
- unexported functions
-Date: Wed, 8 Jun 2016 10:15:30 +0100
-Message-ID: <40be947d-89f6-2552-7bd2-91d16a378b2f@codethink.co.uk>
-References: <1465320302-5770-1-git-send-email-ben.dooks@codethink.co.uk>
- <d3712327-9d20-08ae-30b1-2b6d52e30420@codethink.co.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v10 1/2] gpio: mmio: add DT support for memory-mapped GPIOs
+Date: Wed, 8 Jun 2016 11:16:14 +0200
+Message-ID: <CACRpkdZ4A+HtYa0fn+uuHFaBXTELK3A9xRrZ==C85+33d5r5Zg@mail.gmail.com>
+References: <cover.1463172434.git.chunkeey@googlemail.com> <4af460fea30b60fbb1d621fcb568c5f3b04e1eee.1463172434.git.chunkeey@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:60233 "EHLO
-	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752000AbcFHJPf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Jun 2016 05:15:35 -0400
-In-Reply-To: <d3712327-9d20-08ae-30b1-2b6d52e30420@codethink.co.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4af460fea30b60fbb1d621fcb568c5f3b04e1eee.1463172434.git.chunkeey@googlemail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christian Lamparter <chunkeey@googlemail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Joachim Eastwood <manabian@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@lists.codethink.co.uk
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, Alessandro Rubini <rubini@unipv.it>
 
-On 07/06/16 18:30, Ben Dooks wrote:
-> On 07/06/16 18:25, Ben Dooks wrote:
->> There are five functions in the driver that are defined but
->> only used locally. Make these static to avoid the following
->> warnings:
->>
->> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1036:6: warning: symbol 'nmk_gpio_clocks_enable' was not declared. Should it be static?
->> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1050:6: warning: symbol 'nmk_gpio_clocks_disable' was not declared. Should it be static?
->> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1073:6: warning: symbol 'nmk_gpio_wakeups_suspend' was not declared. Should it be static?
->> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1094:6: warning: symbol 'nmk_gpio_wakeups_resume' was not declared. Should it be static?
->> drivers/pinctrl/nomadik/pinctrl-nomadik.c:1120:6: warning: symbol 'nmk_gpio_read_pull' was not declared. Should it be static?
-> 
-> Apologies, wrong version of the patch without a typo fix in it.
+On Fri, May 13, 2016 at 11:07 PM, Christian Lamparter
+<chunkeey@googlemail.com> wrote:
 
-Given these functions are not being used, should I just consider a
-patch to remove these. If they are not being considered for future
-development it might be a good idea?
+> From: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+>
+> This patch adds support for defining memory-mapped GPIOs which
+> are compatible with the existing gpio-mmio interface. The generic
+> library provides support for many memory-mapped GPIO controllers
+> that are found in various on-board FPGA and ASIC solutions that
+> are used to control board's switches, LEDs, chip-selects,
+> Ethernet/USB PHY power, etc.
+>
+> For setting GPIOs there are three configurations:
+>         1. single input/output register resource (named "dat"),
+>         2. set/clear pair (named "set" and "clr"),
+>         3. single output register resource and single input resource
+>            ("set" and dat").
+>
+> The configuration is detected by which resources are present.
+> For the single output register, this drives a 1 by setting a bit
+> and a zero by clearing a bit.  For the set clr pair, this drives
+> a 1 by setting a bit in the set register and clears it by setting
+> a bit in the clear register.
+>
+> For setting the GPIO direction, there are three configurations:
+>         a. simple bidirectional GPIOs that requires no configuration.
+>         b. an output direction register (named "dirout")
+>            where a 1 bit indicates the GPIO is an output.
+>         c. an input direction register (named "dirin")
+>            where a 1 bit indicates the GPIO is an input.
+>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+> Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
 
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genies
+Patch applied with Alex' ACK.
+
+Yours,
+Linus Walleij
