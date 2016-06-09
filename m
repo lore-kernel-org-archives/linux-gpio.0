@@ -1,56 +1,43 @@
 From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH] pinctrl: sh-pfc: fix warnings by include core.h
-Date: Thu, 9 Jun 2016 09:25:38 +0100
-Message-ID: <bc71a41f-46bd-8c94-c761-0d90b503d52b@codethink.co.uk>
-References: <1465320786-10333-1-git-send-email-ben.dooks@codethink.co.uk>
- <CACRpkdaq8jzBT8o8RVnnA6xQ1YVqFoYf+wgmrWciJx0qbDLs=g@mail.gmail.com>
- <CAMuHMdU6AmOi1+gDMkqKpQ2+QGrv=FtGpx21a951Vr3+F=C5UA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdU6AmOi1+gDMkqKpQ2+QGrv=FtGpx21a951Vr3+F=C5UA@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@lists.codethink.co.uk, Alessandro Rubini <rubini@unipv.it>, linux-renesas-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: [PATCH] pinctrl: u300: make u300_pmx_registers static
+Date: Thu,  9 Jun 2016 11:55:00 +0100
+Message-ID: <1465469700-9026-1-git-send-email-ben.dooks@codethink.co.uk>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from 82-70-136-246.dsl.in-addr.zen.co.uk ([82.70.136.246]:58092 "EHLO
+	rainbowdash.ducie.codethink.co.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752246AbcFIKzF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Jun 2016 06:55:05 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@lists.codethink.co.uk
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On 09/06/16 09:08, Geert Uytterhoeven wrote:
-> Hi Linus, Ben,
-> 
-> On Wed, Jun 8, 2016 at 2:08 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Tue, Jun 7, 2016 at 7:33 PM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
->>
->>> Fix warnings about emev2_pinmux_info and r8a7779_pinmux_info
->>> by using core.h instead of sh_pfc.h in these files. This gives
->>> the declarations of the two structures and removes the following
->>> warnings:
->>>
->>> drivers/pinctrl/sh-pfc/pfc-emev2.c:1695:30: warning: symbol 'emev2_pinmux_info' was not declared. Should it be static?
->>> drivers/pinctrl/sh-pfc/pfc-r8a7779.c:3888:30: warning: symbol 'r8a7779_pinmux_info' was not declared. Should it be static?
->>>
->>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> 
-> Ben: Thanks for your patch!
-> 
->>
->> Geert/Laurent:
->>
->> - take a look at this patch
-> 
-> These are fixes for sparse warnings, and look fine to me.
-> However, it seems "core.h" should be included by all the remaining
-> drivers/pinctrl/sh-pfc/pfc-sh* files for ARCH=sh, too.
-> At which point I start to question: why not merge core.h with sh_pfc.h?
-> 
->> - shall I apply this directly?
-> 
-> i could take it through sh-pfc-for-v4.8.
-> I expect more pfc stuff to follow soon anyway.
+The array u300_pmx_registers is not declared or used outside
+of the driver, so make it static to avoid the following warning:
 
-Up to you what you want to do, thought these items should be fixed.
+drivers/pinctrl/pinctrl-u300.c:673:11: warning: symbol 'u300_pmx_registers' was not declared. Should it be static?
 
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+---
+ drivers/pinctrl/pinctrl-u300.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/pinctrl/pinctrl-u300.c b/drivers/pinctrl/pinctrl-u300.c
+index d1af908..9cc80a5 100644
+--- a/drivers/pinctrl/pinctrl-u300.c
++++ b/drivers/pinctrl/pinctrl-u300.c
+@@ -670,7 +670,7 @@ struct u300_pmx {
+  * u300_pmx_registers - the array of registers read/written for each pinmux
+  * shunt setting
+  */
+-const u32 u300_pmx_registers[] = {
++static const u32 u300_pmx_registers[] = {
+ 	U300_SYSCON_PMC1LR,
+ 	U300_SYSCON_PMC1HR,
+ 	U300_SYSCON_PMC2R,
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+2.8.1
+
