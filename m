@@ -1,63 +1,44 @@
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v3 2/3] x86/platform/p2sb: New Primary to Sideband bridge
- support driver for Intel SOC's
-Date: Thu, 9 Jun 2016 17:05:38 +0300
-Message-ID: <20160609140538.GL1791@lahna.fi.intel.com>
-References: <1465282553-28396-1-git-send-email-jui.nee.tan@intel.com>
- <1465282553-28396-3-git-send-email-jui.nee.tan@intel.com>
+Subject: Re: [PATCH 2/9] pinctrl: baytrail: make it explicitly non-modular
+Date: Thu, 9 Jun 2016 17:10:57 +0300
+Message-ID: <20160609141057.GM1791@lahna.fi.intel.com>
+References: <1465267388-17884-1-git-send-email-paul.gortmaker@windriver.com>
+ <1465267388-17884-3-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:56328 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751212AbcFIOGm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 9 Jun 2016 10:06:42 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1465282553-28396-3-git-send-email-jui.nee.tan@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1465267388-17884-3-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-kernel@vger.kernel.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tan Jui Nee <jui.nee.tan@intel.com>
-Cc: heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jonathan.yong@intel.com, ong.hock.yu@intel.com, weifeng.voon@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
 
-On Tue, Jun 07, 2016 at 02:55:52PM +0800, Tan Jui Nee wrote:
-> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Mon, Jun 06, 2016 at 10:43:01PM -0400, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
 > 
-> There is already one and at least one more user coming which
-> require an access to Primary to Sideband bridge (P2SB) in order
-> to get IO or MMIO bar hidden by BIOS.
-> Create a driver to access P2SB for x86 devices.
+> config PINCTRL_BAYTRAIL
+>         bool "Intel Baytrail GPIO pin control"
 > 
-> Signed-off-by: Yong, Jonathan <jonathan.yong@intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  arch/x86/Kconfig                 | 14 ++++++
->  arch/x86/include/asm/p2sb.h      | 27 +++++++++++
->  arch/x86/platform/intel/Makefile |  1 +
->  arch/x86/platform/intel/p2sb.c   | 99 ++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 141 insertions(+)
->  create mode 100644 arch/x86/include/asm/p2sb.h
->  create mode 100644 arch/x86/platform/intel/p2sb.c
+> ...meaning that it currently is not being built as a module by anyone.
 > 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 2dc18605..589045e 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -606,6 +606,20 @@ config IOSF_MBI_DEBUG
->  
->  	  If you don't require the option or are in doubt, say N.
->  
-> +config X86_INTEL_NON_ACPI
-> +	bool "Enable support non-ACPI Intel platforms"
-> +	select PINCTRL
-> +	---help---
-> +	  Select this option to enables MMIO BAR access over the P2SB for
-> +	  non-ACPI Intel SoC platforms. This driver uses the P2SB hide/unhide
-> +	  mechanism cooperatively to pass the PCI BAR address to the platform
-> +	  driver, currently GPIO on the following SoC products.
-> +	   - Apollo Lake
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> 
+> We explicitly disallow a driver unbind, since that doesn't have a
+> sensible use case anyway, and it allows us to drop the ".remove"
+> code for non-modular drivers.
+> 
+> Since module_init() was already not in use in this driver, we don't
+> have any concerns with init ordering changes here.
+> 
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> 
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+> 
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Why do we need Kconfig option for this?
+Yeah, probably good thing to do. No objections from me.
 
-I think better is to make P2SB available on CPUs which have one, and
-that can be detected runtime. If P2SB is not available then p2sb_bar()
-returns -ENODEV.
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
