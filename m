@@ -1,43 +1,29 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH] pinctrl: u300: make u300_pmx_registers static
-Date: Thu,  9 Jun 2016 11:55:00 +0100
-Message-ID: <1465469700-9026-1-git-send-email-ben.dooks@codethink.co.uk>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v3 1/3] pinctrl/broxton: enable platform device in the
+ absent of ACPI enumeration
+Date: Thu, 9 Jun 2016 17:01:34 +0300
+Message-ID: <20160609140134.GK1791@lahna.fi.intel.com>
+References: <1465282553-28396-1-git-send-email-jui.nee.tan@intel.com>
+ <1465282553-28396-2-git-send-email-jui.nee.tan@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 82-70-136-246.dsl.in-addr.zen.co.uk ([82.70.136.246]:58092 "EHLO
-	rainbowdash.ducie.codethink.co.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752246AbcFIKzF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Jun 2016 06:55:05 -0400
+Received: from mga04.intel.com ([192.55.52.120]:39072 "EHLO mga04.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752144AbcFIOBs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 9 Jun 2016 10:01:48 -0400
+Content-Disposition: inline
+In-Reply-To: <1465282553-28396-2-git-send-email-jui.nee.tan@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@lists.codethink.co.uk
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: Tan Jui Nee <jui.nee.tan@intel.com>
+Cc: heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jonathan.yong@intel.com, ong.hock.yu@intel.com, weifeng.voon@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
 
-The array u300_pmx_registers is not declared or used outside
-of the driver, so make it static to avoid the following warning:
+On Tue, Jun 07, 2016 at 02:55:51PM +0800, Tan Jui Nee wrote:
+> This is to cater the need for non-ACPI system whereby
+> a platform device has to be created in order to bind
+> with the Apollo Lake Pinctrl GPIO platform driver.
+> 
+> Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
 
-drivers/pinctrl/pinctrl-u300.c:673:11: warning: symbol 'u300_pmx_registers' was not declared. Should it be static?
-
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
----
- drivers/pinctrl/pinctrl-u300.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-u300.c b/drivers/pinctrl/pinctrl-u300.c
-index d1af908..9cc80a5 100644
---- a/drivers/pinctrl/pinctrl-u300.c
-+++ b/drivers/pinctrl/pinctrl-u300.c
-@@ -670,7 +670,7 @@ struct u300_pmx {
-  * u300_pmx_registers - the array of registers read/written for each pinmux
-  * shunt setting
-  */
--const u32 u300_pmx_registers[] = {
-+static const u32 u300_pmx_registers[] = {
- 	U300_SYSCON_PMC1LR,
- 	U300_SYSCON_PMC1HR,
- 	U300_SYSCON_PMC2R,
--- 
-2.8.1
-
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
