@@ -1,82 +1,48 @@
 From: Dan O'Donovan <dan@emutex.com>
-Subject: Re: [PATCH 4/5] pinctrl: cherryview: prevent concurrent access to
- GPIO controllers
-Date: Thu, 9 Jun 2016 17:11:07 +0100
-Message-ID: <5759951B.5090209@emutex.com>
+Subject: Re: [PATCH 5/5] pinctrl: cherryview: restore padctrl1 reg when gpio
+ is disabled
+Date: Thu, 9 Jun 2016 17:41:04 +0100
+Message-ID: <57599C20.2030908@emutex.com>
 References: <1464904543-4094-1-git-send-email-dan@emutex.com>
- <1464904543-4094-5-git-send-email-dan@emutex.com>
- <20160606103124.GV1743@lahna.fi.intel.com>
+ <1464904543-4094-6-git-send-email-dan@emutex.com>
+ <20160606104052.GX1743@lahna.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bert.emutex.com ([91.103.1.109]:32800 "EHLO bert.emutex.com"
+Received: from bert.emutex.com ([91.103.1.109]:32809 "EHLO bert.emutex.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751168AbcFIQLK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 9 Jun 2016 12:11:10 -0400
-In-Reply-To: <20160606103124.GV1743@lahna.fi.intel.com>
+	id S932283AbcFIQlH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 9 Jun 2016 12:41:07 -0400
+In-Reply-To: <20160606104052.GX1743@lahna.fi.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc: linus.walleij@linaro.org, heikki.krogerus@linux.intel.com, linux-gpio@vger.kernel.org
 
+On 06/06/2016 11:40 AM, Mika Westerberg wrote:
+> On Thu, Jun 02, 2016 at 10:55:43PM +0100, Dan O'Donovan wrote:
+>> chv_gpio_request_enable() clears some bits in the padctrl1 register
+>> when GPIO mode is selected, but these bits are not restored by
+>> chv_gpio_disable_free() when GPIO mode is unselected and this can
+>> prevent other pin modes (e.g. I2C) from functioning correctly
+>> thereafter on that pin.  This patch adds saving/restoring of those
+>> bits.
+> Not sure how useful this is. If you want to mux I2C out of pins (even if
+> they were previosly configured as GPIO), you should call pinctrl to do
+> that (or let the core to do that automatically). Expecting that certain
+> (possibly unknown state) is restored does seem fragile to me.
+Perhaps my description of the change was misleading.  Consider this scenario:
+ * chv_pinmux_set_mux() is invoked at start-up (triggered by registering a pin map), and this sets a pin to an alternate mode (e.g. I2C, PWM, whatever).
+   - For some pins/modes, this may set the INVRXTX bits in the PADCTRL1 register.  These bits may have also been set early by the BIOS.
+ * some time later, the user exports the pin via sysfs for use as a GPIO, which triggers chv_gpio_request_enable()
+   - chv_gpio_request_enable() clears some bits in the PADCTRL1 register (including INVRXTX)
+ * later again, the user unexports the GPIO pin, which triggers chv_gpio_disable_free().
+   - this returns the pin to its previously-selected alternate mode (GPIO is disabled).  However, the INVRXTX bits are not restored here, so the alternate mode no longer works.
 
-On 06/06/2016 11:31 AM, Mika Westerberg wrote:
-> On Thu, Jun 02, 2016 at 10:55:42PM +0100, Dan O'Donovan wrote:
->> Due to a silicon issue on the Atom X5-Z8000 "Cherry Trail" processor
->> series, a common lock must be used to prevent concurrent accesses
->> across the 4 GPIO controllers managed by this driver.
->>
->> See Intel Atom Z8000 Processor Series Specification Update
->> (Rev. 005), errata #CHT34, for further information.
->>
->> Signed-off-by: Dan O'Donovan <dan@emutex.com>
-> This should be the first patch in the series. It should also be tagged
-> for stable.
-Makes sense.  I'll submit a new patch set to address this and other comments.  Thanks!
+>From the way the driver is written (possibly influenced by the hardware design), it appears that this can be a valid usage scenario - i.e. the pin can optionally be set to an alternate mode initially, but the user can bring it in/out of GPIO mode thereafter.  But, because the entry and exit from GPIO mode is not "symmetrical", it loses some configuration that was previously set for the alternate mode.
+
+Admittedly, I've only encountered this scenario in validation testing - I'm not sure if there is a real use-case that would require this - so I can certainly drop this patch if you feel that a fix isn't warranted here.
 >
->> ---
->>  drivers/pinctrl/intel/pinctrl-cherryview.c | 84 ++++++++++++++++--------------
->>  1 file changed, 46 insertions(+), 38 deletions(-)
->>
->> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
->> index 7df4b40..5064f93 100644
->> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
->> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
->> @@ -160,7 +160,6 @@ struct chv_pin_context {
->>   * @pctldev: Pointer to the pin controller device
->>   * @chip: GPIO chip in this pin controller
->>   * @regs: MMIO registers
->> - * @lock: Lock to serialize register accesses
->>   * @intr_lines: Stores mapping between 16 HW interrupt wires and GPIO
->>   *		offset (in GPIO number space)
->>   * @community: Community this pinctrl instance represents
->> @@ -174,7 +173,6 @@ struct chv_pinctrl {
->>  	struct pinctrl_dev *pctldev;
->>  	struct gpio_chip chip;
->>  	void __iomem *regs;
->> -	raw_spinlock_t lock;
->>  	unsigned int intr_lines[16];
->>  	const struct chv_community *community;
->>  	u32 saved_intmask;
->> @@ -659,6 +657,17 @@ static const struct chv_community *chv_communities[] = {
->>  	&southeast_community,
->>  };
->>  
->> +/*
->> + * Lock to serialize register accesses
->> + *
->> + * Due to a silicon issue, a shared lock must be used to prevent
->> + * concurrent accesses across the 4 GPIO controllers.
->> + *
->> + * See Intel Atom Z8000 Processor Series Specification Update (Rev. 005),
->> + * errata #CHT34, for further information.
->> + */
->> +static DEFINE_RAW_SPINLOCK(chv_reg_lock);
-> Can we call it chv_lock instead?
-Ok
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+> Also what happens if the pin was originally muxed as GPIO?
+This shouldn't make any difference, I think.  The change here is just attempting to make chv_gpio_disable_free() reverse the action of chv_gpio_request_enable() - by restoring PADCTRL register fields to their previous state (whatever that was) before chv_gpio_request_enable() was called.
