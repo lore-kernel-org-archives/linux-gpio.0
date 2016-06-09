@@ -1,48 +1,66 @@
-From: Dan O'Donovan <dan@emutex.com>
-Subject: Re: [PATCH 5/5] pinctrl: cherryview: restore padctrl1 reg when gpio
- is disabled
-Date: Thu, 9 Jun 2016 17:41:04 +0100
-Message-ID: <57599C20.2030908@emutex.com>
-References: <1464904543-4094-1-git-send-email-dan@emutex.com>
- <1464904543-4094-6-git-send-email-dan@emutex.com>
- <20160606104052.GX1743@lahna.fi.intel.com>
+From: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>
+Subject: Re: [PATCH 27/32] gpio: Add support for the FXL6408 GPIO expander.
+Date: Thu, 09 Jun 2016 10:22:27 -0700
+Message-ID: <878tyexooc.fsf@eliezer.anholt.net>
+References: <1464817421-8519-1-git-send-email-kraxel@redhat.com> <1464817421-8519-28-git-send-email-kraxel@redhat.com> <CACRpkdax3AmnprT48zL7J92ddMvLYeRXi9OrQK_JrBT8_zZQoA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bert.emutex.com ([91.103.1.109]:32809 "EHLO bert.emutex.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932283AbcFIQlH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 9 Jun 2016 12:41:07 -0400
-In-Reply-To: <20160606104052.GX1743@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdax3AmnprT48zL7J92ddMvLYeRXi9OrQK_JrBT8_zZQoA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: linux-rpi-kernel <linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "open list:BROADCOM BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linus.walleij@linaro.org, heikki.krogerus@linux.intel.com, linux-gpio@vger.kernel.org
 
-On 06/06/2016 11:40 AM, Mika Westerberg wrote:
-> On Thu, Jun 02, 2016 at 10:55:43PM +0100, Dan O'Donovan wrote:
->> chv_gpio_request_enable() clears some bits in the padctrl1 register
->> when GPIO mode is selected, but these bits are not restored by
->> chv_gpio_disable_free() when GPIO mode is unselected and this can
->> prevent other pin modes (e.g. I2C) from functioning correctly
->> thereafter on that pin.  This patch adds saving/restoring of those
->> bits.
-> Not sure how useful this is. If you want to mux I2C out of pins (even if
-> they were previosly configured as GPIO), you should call pinctrl to do
-> that (or let the core to do that automatically). Expecting that certain
-> (possibly unknown state) is restored does seem fragile to me.
-Perhaps my description of the change was misleading.  Consider this scenario:
- * chv_pinmux_set_mux() is invoked at start-up (triggered by registering a pin map), and this sets a pin to an alternate mode (e.g. I2C, PWM, whatever).
-   - For some pins/modes, this may set the INVRXTX bits in the PADCTRL1 register.  These bits may have also been set early by the BIOS.
- * some time later, the user exports the pin via sysfs for use as a GPIO, which triggers chv_gpio_request_enable()
-   - chv_gpio_request_enable() clears some bits in the PADCTRL1 register (including INVRXTX)
- * later again, the user unexports the GPIO pin, which triggers chv_gpio_disable_free().
-   - this returns the pin to its previously-selected alternate mode (GPIO is disabled).  However, the INVRXTX bits are not restored here, so the alternate mode no longer works.
+--=-=-=
+Content-Type: text/plain
 
->From the way the driver is written (possibly influenced by the hardware design), it appears that this can be a valid usage scenario - i.e. the pin can optionally be set to an alternate mode initially, but the user can bring it in/out of GPIO mode thereafter.  But, because the entry and exit from GPIO mode is not "symmetrical", it loses some configuration that was previously set for the alternate mode.
+Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> writes:
 
-Admittedly, I've only encountered this scenario in validation testing - I'm not sure if there is a real use-case that would require this - so I can certainly drop this patch if you feel that a fix isn't warranted here.
+> On Wed, Jun 1, 2016 at 11:43 PM, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org> wrote:
 >
-> Also what happens if the pin was originally muxed as GPIO?
-This shouldn't make any difference, I think.  The change here is just attempting to make chv_gpio_disable_free() reverse the action of chv_gpio_request_enable() - by restoring PADCTRL register fields to their previous state (whatever that was) before chv_gpio_request_enable() was called.
+>> +#define FXL6408_OUTPUT                 0x05
+>> +/* Bits here make the output High-Z, instead of the OUTPUT value. */
+>> +#define FXL6408_OUTPUT_HIGH_Z          0x07
+> (...)
+>> +       /* Disable High-Z of outputs, so that our OUTPUT updates
+>> +        * actually take effect.
+>> +        */
+>> +       i2c_smbus_write_byte_data(client, FXL6408_OUTPUT_HIGH_Z, 0);
+>
+> High-Z is probably the same as open drain right? And if not open drain,
+> it is push-pull.
+>
+> So you want to implement .set_single_ended() for configuring the lines in
+> "high-z", i.e. open drain output mode.
+
+I'll keep this in mind for whenever I end up writing my next GPIO
+driver, but this one is dead for now (not actually usable because of the
+closed firmware).
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJXWaXUAAoJELXWKTbR/J7oXlIP/28c/qu7DAusjvxWdu43Lil3
+N0vb72w2v/VIIMm30+NM0iuEQfm/zHigSsaMCiNm4rhA/wcKU3kdEjT28WBVlP9E
+BnfSdbk3jwqFezkG/tB0BFUpTwQQG86AbZ9svKJYPL2AxJFnzA+wa+SkmlXLeVku
+vHr/l6h4pqDoXggcfmPMBG3Waev7QVsqI9JRGil4C5z4Hiqp/wEyoLeZ2jnwdpQY
+1SVxWDkfJU+yVq5Z4FKUk7YvRxzfekhTC0zxmqkKBueIHflZ6XP/9mb2N+sTTJbR
+3nY7fwDzXDYZQUfarXN5xrAzAKpTC7sMURPLe4f8GkR3RGnpaL2cSp9xeSVN2rlt
+dlajNq1mHf6oWjGkC4JPGk/MFuRygdvyvZMHMF6CdS7l3LW7uKQzWIfjMxQ6I3wb
+/gwZV1QFz5FDLxUuDxbIZlzQ3nFsBK8RYZyfrkIrU6eU7+KH9CCeImgggXIPFOhG
+bhxWO0OYN1G7C5UIkQ5yyIrUZwbcbSt8TfmZGWAcA0w53Sb6bCk+Edt16mP9ANbh
+F9HK4rdL5pzx5FouQv1yQsKqeUQqyZOtpV+oCBgYvnulMBPAVVE6Rs7Q4BnCBJcI
+e7vtjp1nDfwFDUtraCShQh/oN8kWxovw8T7ewaWpruXKyRNIIsDNKCgfg7zYy0lB
+JxuFqUIXHPVKmSi+BZEU
+=PAcr
+-----END PGP SIGNATURE-----
+--=-=-=--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
