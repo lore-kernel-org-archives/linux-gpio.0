@@ -1,33 +1,80 @@
 From: Dan O'Donovan <dan@emutex.com>
-Subject: Re: [PATCH 1/5] pinctrl: cherryview: convert bare unsigned to
- unsigned int
-Date: Thu, 9 Jun 2016 17:04:04 +0100
-Message-ID: <57599374.6030001@emutex.com>
+Subject: Re: [PATCH 4/5] pinctrl: cherryview: prevent concurrent access to
+ GPIO controllers
+Date: Thu, 9 Jun 2016 17:11:07 +0100
+Message-ID: <5759951B.5090209@emutex.com>
 References: <1464904543-4094-1-git-send-email-dan@emutex.com>
- <1464904543-4094-2-git-send-email-dan@emutex.com>
- <20160606102819.GU1743@lahna.fi.intel.com>
+ <1464904543-4094-5-git-send-email-dan@emutex.com>
+ <20160606103124.GV1743@lahna.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bert.emutex.com ([91.103.1.109]:32796 "EHLO bert.emutex.com"
+Received: from bert.emutex.com ([91.103.1.109]:32800 "EHLO bert.emutex.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751168AbcFIQEI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 9 Jun 2016 12:04:08 -0400
-In-Reply-To: <20160606102819.GU1743@lahna.fi.intel.com>
+	id S1751168AbcFIQLK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 9 Jun 2016 12:11:10 -0400
+In-Reply-To: <20160606103124.GV1743@lahna.fi.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc: linus.walleij@linaro.org, heikki.krogerus@linux.intel.com, linux-gpio@vger.kernel.org
 
-On 06/06/2016 11:28 AM, Mika Westerberg wrote:
-> On Thu, Jun 02, 2016 at 10:55:39PM +0100, Dan O'Donovan wrote:
->> Addresses checkpatch warnings such as the following for this driver:
+
+On 06/06/2016 11:31 AM, Mika Westerberg wrote:
+> On Thu, Jun 02, 2016 at 10:55:42PM +0100, Dan O'Donovan wrote:
+>> Due to a silicon issue on the Atom X5-Z8000 "Cherry Trail" processor
+>> series, a common lock must be used to prevent concurrent accesses
+>> across the 4 GPIO controllers managed by this driver.
 >>
->>  WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
-> I don't know if this is useful. Things like this make backporting real
-> fixes harder. For new code, it makes sense but not for converting existing.
-Fair point.  I'll drop that patch so in the next version.  Thanks!
+>> See Intel Atom Z8000 Processor Series Specification Update
+>> (Rev. 005), errata #CHT34, for further information.
+>>
+>> Signed-off-by: Dan O'Donovan <dan@emutex.com>
+> This should be the first patch in the series. It should also be tagged
+> for stable.
+Makes sense.  I'll submit a new patch set to address this and other comments.  Thanks!
+>
+>> ---
+>>  drivers/pinctrl/intel/pinctrl-cherryview.c | 84 ++++++++++++++++--------------
+>>  1 file changed, 46 insertions(+), 38 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+>> index 7df4b40..5064f93 100644
+>> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
+>> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+>> @@ -160,7 +160,6 @@ struct chv_pin_context {
+>>   * @pctldev: Pointer to the pin controller device
+>>   * @chip: GPIO chip in this pin controller
+>>   * @regs: MMIO registers
+>> - * @lock: Lock to serialize register accesses
+>>   * @intr_lines: Stores mapping between 16 HW interrupt wires and GPIO
+>>   *		offset (in GPIO number space)
+>>   * @community: Community this pinctrl instance represents
+>> @@ -174,7 +173,6 @@ struct chv_pinctrl {
+>>  	struct pinctrl_dev *pctldev;
+>>  	struct gpio_chip chip;
+>>  	void __iomem *regs;
+>> -	raw_spinlock_t lock;
+>>  	unsigned int intr_lines[16];
+>>  	const struct chv_community *community;
+>>  	u32 saved_intmask;
+>> @@ -659,6 +657,17 @@ static const struct chv_community *chv_communities[] = {
+>>  	&southeast_community,
+>>  };
+>>  
+>> +/*
+>> + * Lock to serialize register accesses
+>> + *
+>> + * Due to a silicon issue, a shared lock must be used to prevent
+>> + * concurrent accesses across the 4 GPIO controllers.
+>> + *
+>> + * See Intel Atom Z8000 Processor Series Specification Update (Rev. 005),
+>> + * errata #CHT34, for further information.
+>> + */
+>> +static DEFINE_RAW_SPINLOCK(chv_reg_lock);
+> Can we call it chv_lock instead?
+Ok
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
 > the body of a message to majordomo@vger.kernel.org
