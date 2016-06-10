@@ -1,43 +1,53 @@
-From: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>
-Subject: Re: [PATCH 27/32] gpio: Add support for the FXL6408 GPIO expander.
-Date: Thu, 09 Jun 2016 10:22:27 -0700
-Message-ID: <878tyexooc.fsf@eliezer.anholt.net>
-References: <1464817421-8519-1-git-send-email-kraxel@redhat.com> <1464817421-8519-28-git-send-email-kraxel@redhat.com> <CACRpkdax3AmnprT48zL7J92ddMvLYeRXi9OrQK_JrBT8_zZQoA@mail.gmail.com>
+From: Eric Anholt <eric@anholt.net>
+Subject: Re: [PATCH v2 1/9] pinctrl: walk into bcm subdir unconditionally
+Date: Thu, 09 Jun 2016 17:16:11 -0700
+Message-ID: <87mvmtx5is.fsf@eliezer.anholt.net>
+References: <1464934708-24769-1-git-send-email-kraxel@redhat.com> <1464934708-24769-2-git-send-email-kraxel@redhat.com> <CACRpkdZKii2QR2TWYZdG-cdTn2UeVDcE3d39xPffWwipHcthpg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; boundary="=-=-=";
 	micalg=pgp-sha512; protocol="application/pgp-signature"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdax3AmnprT48zL7J92ddMvLYeRXi9OrQK_JrBT8_zZQoA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: linux-rpi-kernel <linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "open list:BROADCOM BCM281XX/BCM11XXX/BCM216XX ARM ARCHITE..." <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from anholt.net ([50.246.234.109]:56831 "EHLO anholt.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751514AbcFJAQQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 9 Jun 2016 20:16:16 -0400
+In-Reply-To: <CACRpkdZKii2QR2TWYZdG-cdTn2UeVDcE3d39xPffWwipHcthpg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Gerd Hoffmann <kraxel@redhat.com>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
 --=-=-=
 Content-Type: text/plain
 
-Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> writes:
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-> On Wed, Jun 1, 2016 at 11:43 PM, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org> wrote:
+> On Fri, Jun 3, 2016 at 8:18 AM, Gerd Hoffmann <kraxel@redhat.com> wrote:
 >
->> +#define FXL6408_OUTPUT                 0x05
->> +/* Bits here make the output High-Z, instead of the OUTPUT value. */
->> +#define FXL6408_OUTPUT_HIGH_Z          0x07
-> (...)
->> +       /* Disable High-Z of outputs, so that our OUTPUT updates
->> +        * actually take effect.
->> +        */
->> +       i2c_smbus_write_byte_data(client, FXL6408_OUTPUT_HIGH_Z, 0);
+>> There is no ARCH_BCM on arm64, and we need pinctrl-bcm2835 for the rpi3.
+>>
+>> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+>> ---
+>>  drivers/pinctrl/Makefile | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+>> index e4bc115..88586c0 100644
+>> --- a/drivers/pinctrl/Makefile
+>> +++ b/drivers/pinctrl/Makefile
+>> @@ -35,7 +35,7 @@ obj-$(CONFIG_PINCTRL_TB10X)   += pinctrl-tb10x.o
+>>  obj-$(CONFIG_PINCTRL_ST)       += pinctrl-st.o
+>>  obj-$(CONFIG_PINCTRL_ZYNQ)     += pinctrl-zynq.o
+>>
+>> -obj-$(CONFIG_ARCH_BCM)         += bcm/
+>> +obj-y                          += bcm/
 >
-> High-Z is probably the same as open drain right? And if not open drain,
-> it is push-pull.
->
-> So you want to implement .set_single_ended() for configuring the lines in
-> "high-z", i.e. open drain output mode.
+> Looks OK to me, but would like Stephen's or Eric's ACK?
 
-I'll keep this in mind for whenever I end up writing my next GPIO
-driver, but this one is dead for now (not actually usable because of the
-closed firmware).
+It looks like this is the only instance of filtering the directory on
+CONFIG_ARCH_BCM, so regardless of the patch 4 resolution,
+
+Acked-by: Eric Anholt <eric@anholt.net>
 
 --=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
@@ -45,22 +55,18 @@ Content-Type: application/pgp-signature; name="signature.asc"
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBCgAGBQJXWaXUAAoJELXWKTbR/J7oXlIP/28c/qu7DAusjvxWdu43Lil3
-N0vb72w2v/VIIMm30+NM0iuEQfm/zHigSsaMCiNm4rhA/wcKU3kdEjT28WBVlP9E
-BnfSdbk3jwqFezkG/tB0BFUpTwQQG86AbZ9svKJYPL2AxJFnzA+wa+SkmlXLeVku
-vHr/l6h4pqDoXggcfmPMBG3Waev7QVsqI9JRGil4C5z4Hiqp/wEyoLeZ2jnwdpQY
-1SVxWDkfJU+yVq5Z4FKUk7YvRxzfekhTC0zxmqkKBueIHflZ6XP/9mb2N+sTTJbR
-3nY7fwDzXDYZQUfarXN5xrAzAKpTC7sMURPLe4f8GkR3RGnpaL2cSp9xeSVN2rlt
-dlajNq1mHf6oWjGkC4JPGk/MFuRygdvyvZMHMF6CdS7l3LW7uKQzWIfjMxQ6I3wb
-/gwZV1QFz5FDLxUuDxbIZlzQ3nFsBK8RYZyfrkIrU6eU7+KH9CCeImgggXIPFOhG
-bhxWO0OYN1G7C5UIkQ5yyIrUZwbcbSt8TfmZGWAcA0w53Sb6bCk+Edt16mP9ANbh
-F9HK4rdL5pzx5FouQv1yQsKqeUQqyZOtpV+oCBgYvnulMBPAVVE6Rs7Q4BnCBJcI
-e7vtjp1nDfwFDUtraCShQh/oN8kWxovw8T7ewaWpruXKyRNIIsDNKCgfg7zYy0lB
-JxuFqUIXHPVKmSi+BZEU
-=PAcr
+iQIcBAEBCgAGBQJXWgbLAAoJELXWKTbR/J7ogoEP/RyLlUD2hiP6R3JB6T83rtjx
+PXly9Vp8asxeEeXQ80yKCoEz+uN6Ln+jWrKRxfUl+AJWOUuPFEaYr0E6SzPdCWf9
+itjqppDPaqPRuAADZB56flkPhzJb0KP4KGAE2UQrxZLccJLHxVlMWCRl47Fi/Zu3
+XMIDbBjuw8Giloqv7lFtQDeCtp1mU7CibybyGRiM5ou+2ogapqYCPEd0Fkv/osiA
+eMbA9SoWvMa7S5bDE9vNVha7LSsqY+WGSdywAOBFglyV4BqyiiSZBdjDy9EUMKto
+s4OxDclneziKE6LJorXOeIxUOe3hGlfm+J3RyzqJ/7u2RZJeM2VUmaDo26OSM+NB
+3Jn7+FQPzMnLhGovKUm8fKVYpwMbZ01uOkhGRM9tF1KxF4HeKU3Ytk/uRwhoMBYa
+CE/JFysZOmFZGpeQFB0LtY1F3MVFlVHBjoLDwZ+HwO9ymS8M2TCmKe0BhjHEppgj
+IwyUnjVeygtAjc4pMg8Otfk0hd5LYNMnAph02/E4enWWh5MlDC50W6itoQSbRB9o
+qRy6hPY7WTFbEb8vyNcY/VtS93k+Tcm22XygsxO8KRzDwmkhSYm0FQo27WtfzVuS
+/pJD+bpqLSAbd2hA9LwBoXBMWngpuHV3EDZbvpm99es2OacvRuPxakJvZ3zzIldf
+dRwlhmLhZGaq9cnWER3v
+=IiiS
 -----END PGP SIGNATURE-----
 --=-=-=--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
