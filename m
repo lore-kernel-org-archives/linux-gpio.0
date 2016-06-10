@@ -1,88 +1,53 @@
-From: Dan O'Donovan <dan@emutex.com>
-Subject: [PATCH v2 3/3] pinctrl: cherryview: add handlers for pin_config_group_get/set
-Date: Fri, 10 Jun 2016 13:23:36 +0100
-Message-ID: <1465561416-29732-4-git-send-email-dan@emutex.com>
-References: <1464904543-4094-1-git-send-email-dan@emutex.com>
- <1465561416-29732-1-git-send-email-dan@emutex.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bert.emutex.com ([91.103.1.109]:32862 "EHLO bert.emutex.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932949AbcFJMWa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 10 Jun 2016 08:22:30 -0400
-In-Reply-To: <1465561416-29732-1-git-send-email-dan@emutex.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 2/3] pinctrl: sh-pfc: Improve core and user API separation
+Date: Fri, 10 Jun 2016 14:48:32 +0200
+Message-ID: <CAMuHMdXWoYv5Yu56L-Kzu8gJ1HJEQ++qud-yDEfwoanJKiGu6g@mail.gmail.com>
+References: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
+ <1465553103-6345-3-git-send-email-geert+renesas@glider.be> <4919239.TD95LLyWB6@avalon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <4919239.TD95LLyWB6@avalon>
+Sender: linux-sh-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Ben Dooks <ben.dooks@codethink.co.uk>, Laxman Dewangan <ldewangan@nvidia.com>, linux-renesas-soc@vger.kernel.org, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: mika.westerberg@linux.intel.com, linus.walleij@linaro.org
-Cc: heikki.krogerus@linux.intel.com, linux-gpio@vger.kernel.org, Dan O'Donovan <dan@emutex.com>
 
-Pin config get/set handlers for pin groups were previously not
-implemented by this driver.  The pin_config_group_set is
-particularly useful for applying a common config setting to all
-pins in a specified group with a single call, without the caller
-needing to reference each individual pin by name.
+Hi Laurent,
 
-Signed-off-by: Dan O'Donovan <dan@emutex.com>
----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 42 ++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+On Fri, Jun 10, 2016 at 2:16 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Friday 10 Jun 2016 12:05:02 Geert Uytterhoeven wrote:
+>> The Renesas Pin Function Controller uses two header files:
+>>   - sh_pfc.h, for use by both core code and SoC-specific drivers,
+>>   - core.h, for internal use by the core code only.
+>>
+>> Several SoC-specific drivers include core.h, as they need the sh_pfc
+>> structure, which is passed explicitly to the various SoC-specific
+>> callbacks, and used there.
+>>
+>> Hence move its definition from core.h to sh_pfc.h, and remove the
+>> inclusion of core.h from all SoC-specific files.
+>
+> The idea behind sh_pfc.h is to store all structures and macros needed by the
+> SoC drivers to define SoC data, in order to keep core.h clean. It you move
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index 7b3f147..5749a4ee 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1176,10 +1176,52 @@ static int chv_config_set(struct pinctrl_dev *pctldev, unsigned pin,
- 	return 0;
- }
- 
-+static int chv_config_group_get(struct pinctrl_dev *pctldev,
-+				unsigned int group,
-+				unsigned long *config)
-+{
-+	const unsigned int *pins;
-+	unsigned int npins;
-+	int ret;
-+
-+	ret = chv_get_group_pins(pctldev, group, &pins, &npins);
-+	if (ret)
-+		return ret;
-+
-+	ret = chv_config_get(pctldev, pins[0], config);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int chv_config_group_set(struct pinctrl_dev *pctldev,
-+				unsigned int group, unsigned long *configs,
-+				unsigned int num_configs)
-+{
-+	const unsigned int *pins;
-+	unsigned int npins;
-+	int i, ret;
-+
-+	ret = chv_get_group_pins(pctldev, group, &pins, &npins);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < npins; i++) {
-+		ret = chv_config_set(pctldev, pins[i], configs, num_configs);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct pinconf_ops chv_pinconf_ops = {
- 	.is_generic = true,
- 	.pin_config_set = chv_config_set,
- 	.pin_config_get = chv_config_get,
-+	.pin_config_group_get = chv_config_group_get,
-+	.pin_config_group_set = chv_config_group_set,
- };
- 
- static struct pinctrl_desc chv_pinctrl_desc = {
--- 
-2.1.4
+So should there be 3 includes:
+  1. structures and macros needed by the SoC drivers to define SoC data,
+  2. internal API,
+  3. API for users (SoC-specific drivers)?
 
+> most of core.h to sh_pfc.h I'd rather merge the two files.
+
+That's the other option...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
