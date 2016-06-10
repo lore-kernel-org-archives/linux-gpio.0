@@ -1,36 +1,56 @@
-From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: dts: am335x-icev2: Add DT node for TI PCA9536
-Date: Fri, 10 Jun 2016 04:09:25 -0700
-Message-ID: <20160610110925.GY22406@atomide.com>
-References: <1463640450-16762-1-git-send-email-vigneshr@ti.com>
- <1463640450-16762-3-git-send-email-vigneshr@ti.com>
- <CACRpkdbRt4Vi=kzs_gZDkR14KBmFsKKZawbT25PW0sMpuX7LkQ@mail.gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 0/3] pinctrl: sh-pfc: add r8a7795 support for voltage
+ switching
+Date: Fri, 10 Jun 2016 13:12:00 +0200
+Message-ID: <20160610111200.GB1626@katana>
+References: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
+ <CAMuHMdWyt2e9f=8r+q9U=BLFW2R9OSh5GCnpvsMniXWahQ_qzg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ZfOjI3PrQbgiZnxM"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdbRt4Vi=kzs_gZDkR14KBmFsKKZawbT25PW0sMpuX7LkQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Vignesh R <vigneshr-l0cyMroinI0@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <CAMuHMdWyt2e9f=8r+q9U=BLFW2R9OSh5GCnpvsMniXWahQ_qzg@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-* Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> [160526 01:42]:
-> On Thu, May 19, 2016 at 8:47 AM, Vignesh R <vigneshr-l0cyMroinI0@public.gmane.org> wrote:
-> 
-> > AM335x ICE board has a TI PCA9536 chip connected to I2C0 at address
-> > 0x41. Add DT entry for the same.
-> >
-> > Signed-off-by: Vignesh R <vigneshr-l0cyMroinI0@public.gmane.org>
-> 
-> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> 
-> Pls take this through the ARM SoC TI git tree.
 
-Applying this patch into omap-for-v4.8/dt thanks.
+--ZfOjI3PrQbgiZnxM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Tony
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+> BTW, are these a hard dependency for patch 3, or will the missing power
+> source control just be ignored?
+
+Long answer short: It is a hard dependency.
+
+It shouldn't be, but fixing this might need patches to pfc, mmc-core,
+and sdhi driver. Need to think about it. (and even then, patch 3 will be
+depending on these yet-to-come fixes).
+
+
+--ZfOjI3PrQbgiZnxM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXWqCAAAoJEBQN5MwUoCm2HcwQAJYqYzf8zCx5brUXHooneq0f
+r6U0aXouZRiSSDI8D79J2gNyTHounQ/hq288Dr958s0fIxTYcF8vGpPL7RA7uFRN
+MGpkpl2L/iv/CkoYG3CtafUmdXywVCu52I0PT0LSV5Yx7ZkJYPn3B2lSUGQj9LhK
+tknOEfntxWrowRXm/tGZR3zKaGnfErgQO+0ksMyuPbVeY5xyNSWBO3vpjo4UCo2B
+JrGt05Pj6i7ndXNIJ1b0gGICshJBEjUvZvqPPU+JgC1BXzjA4Ud8kyphAk3b4eUr
+7T9xYU9B1it7MSF5aZ5Dqu3oTPBzyV15lCKpzjxGqS0J3QH1fx7XXQWEprpEdfRG
+6pXggf5eEdckvY6nRQG5zPwZK9w1Qm4gsYmI0RdS+/YdJ45VqM6SxmuT2apnm0nz
+KoHhElEITSXPzEwfe+9Bbmr31rGWbaFrhqrawLMUVzOsD0/o793kXWbnFMOUgO5F
+WjPDUyCkIhri3wzOvcVl9owSwJG/j9W5dccZZw15s3ofAYo/c+F6k2sdrg+qRUZU
+sFJHG8v974IfDb+6Elaa/o7h+80ENsk8+zVc3XipwQl5/MlaSFtES15Ss0awequU
+M+hFZz4A5hFbTGyKiotrsvlJwA8qvj5XykJyG4UpFcEnQOWd25oAOX9ykZ2Ptyrq
+fM2doNF/p5Xl9V/yitlm
+=6l97
+-----END PGP SIGNATURE-----
+
+--ZfOjI3PrQbgiZnxM--
