@@ -1,60 +1,46 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: sh7757: Fix duplicate initializer in GPIO pinmux data
-Date: Fri, 10 Jun 2016 15:17:48 +0300
-Message-ID: <2053199.LgvzIZkihe@avalon>
-References: <1465552699-5990-1-git-send-email-geert+renesas@glider.be>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1465552699-5990-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
+From: Dan O'Donovan <dan@emutex.com>
+Subject: [PATCH v2 0/3] pinctrl: cherryview: fixes and enhancements
+Date: Fri, 10 Jun 2016 13:23:33 +0100
+Message-ID: <1465561416-29732-1-git-send-email-dan@emutex.com>
+References: <1464904543-4094-1-git-send-email-dan@emutex.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bert.emutex.com ([91.103.1.109]:32856 "EHLO bert.emutex.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932826AbcFJMWQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 10 Jun 2016 08:22:16 -0400
+In-Reply-To: <1464904543-4094-1-git-send-email-dan@emutex.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: mika.westerberg@linux.intel.com, linus.walleij@linaro.org
+Cc: heikki.krogerus@linux.intel.com, linux-gpio@vger.kernel.org, Dan O'Donovan <dan@emutex.com>
 
-Hi Geert,
+This series includes a number of fixes and enhancements for the
+Cherryview pinctrl/gpio driver, developed during integration on the
+UP Board (based on the Intel X5-Z8350 "Cherry Trail" Atom SoC).
 
-Thank you for the patch.
+Patch 1 provides a workaround for a documented silicon bug which
+causes data corruption of concurrent accesses to the GPIO controller
+registers on this SoC.
 
-On Friday 10 Jun 2016 11:58:19 Geert Uytterhoeven wrote:
-> With C=1:
-> 
->     drivers/pinctrl/sh-pfc/pfc-sh7757.c:1613:9: warning: Initializer entry
-> defined twice drivers/pinctrl/sh-pfc/pfc-sh7757.c:1628:9:   also defined
-> here
-> 
-> Remove the duplicate initializer to fix this.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The other patches implement additional pin config functions/options
+for this driver.
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Changes since v1:
+ * Addressed review comments from Mika Westerberg:
+   - Drop clean-up of checkpatch warnings (impacts back-porting)
+   - Re-order series to put fixes ahead of enhancements
+   - Rename a variable
+   - Tag concurrency fix (patch 1) for stable
+   - Drop fix restoring PADCTRL1 bits when GPIO disabled (rejected)
 
-> ---
-> Based on the comment near the definition of A16_MARK, which states A16
-> belongs to the "PTV" section.
-> 
-> I do not have a sh7757 datasheet.
-> ---
->  drivers/pinctrl/sh-pfc/pfc-sh7757.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7757.c
-> b/drivers/pinctrl/sh-pfc/pfc-sh7757.c index
-> 0555a1fe076ed353..6d8c31caefc105e0 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-sh7757.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-sh7757.c
-> @@ -1625,7 +1625,6 @@ static const struct pinmux_func pinmux_func_gpios[] =
-> { GPIO_FN(VBIOS_CS),
-> 
->  	/* PTW (mobule: LBSC, EVC, SCIF) */
-> -	GPIO_FN(A16),
->  	GPIO_FN(A15),
->  	GPIO_FN(A14),
->  	GPIO_FN(A13),
+Dan O'Donovan (3):
+  pinctrl: cherryview: prevent concurrent access to GPIO controllers
+  pinctrl: cherryview: add option to set open-drain pin config
+  pinctrl: cherryview: add handlers for pin_config_group_get/set
+
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 155 ++++++++++++++++++++++-------
+ 1 file changed, 119 insertions(+), 36 deletions(-)
 
 -- 
-Regards,
-
-Laurent Pinchart
+2.1.4
 
