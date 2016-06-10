@@ -1,61 +1,37 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 0/3] pinctrl: sh-pfc: add r8a7795 support for voltage switching
-Date: Fri, 10 Jun 2016 09:03:33 +0200
-Message-ID: <CAMuHMdWyt2e9f=8r+q9U=BLFW2R9OSh5GCnpvsMniXWahQ_qzg@mail.gmail.com>
-References: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: [PATCH 0/4] Trivial GPIO/pinctrl documentation fixes
+Date: Fri, 10 Jun 2016 16:46:32 +0930
+Message-ID: <1465542996-12534-1-git-send-email-andrew@aj.id.au>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from sub3.mail.dreamhost.com ([69.163.253.7]:57973 "EHLO
+	homiemail-a22.g.dreamhost.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750710AbcFJHRI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 10 Jun 2016 03:17:08 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, trivial@kernel.org, Andrew Jeffery <andrew@aj.id.au>
 
-Hi Wolfram,
+Hi all,
 
-On Mon, Jun 6, 2016 at 6:08 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> This series adds support for PFC voltage switching for r8a7795. I decided to
-> refactor voltage switching because all Gen2 and Gen3 hardware follow the same
-> style to do that. So, we can put generic handling to the core and keep only
-> pin-to-bit mapping SoC specific. See patch 1 for details.
->
-> Tested on a Lager board (r8a7790/H2) and a Salvator-X (r8a7795/H3) by using
-> UHS/non-UHS SD cards. They work fine with SDR50 and the POCCTRL register
-> setting was also verified.
->
-> Branch is here:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/h3-pfc-set-voltage
->
-> Changes since RFC:
-> * be precise in encoding which pins can do voltage switching on bank3
-> * addded Geert's reviewed tag (thanks!)
->
-> Please apply,
->
->    Wolfram
->
-> Wolfram Sang (3):
->   pinctrl: sh-pfc: refactor voltage setting
->   pinctrl: sh-pfc: r8a7795: add support for voltage switching
->   arm64: dts: r8a7795: salvator: enable UHS for SDHI 0 & 3
+The patches fix some file paths and minor grammatical issues in the
+GPIO/pinctrl documentation. Patches 3 and 4 are separate to ease review.
 
-Thanks for your series!
+Cheers,
 
-I've queued the first two patches in sh-pfc-for-v4.8, and will send a pull
-request after next renesas-drivers release.
+Andrew
 
-BTW, are these a hard dependency for patch 3, or will the missing power
-source control just be ignored?
+Andrew Jeffery (4):
+  drivers-on-gpio.txt: Fix paths to GPIO driver source files
+  pinctrl.txt: Fix grammar in pinmux request list
+  pinctrl.txt: s/have/has/ in GPIO driver interaction description
+  pinctrl.txt: Reflow/wrap paragraph describing GPIO interaction
 
-Gr{oetje,eeting}s,
+ Documentation/gpio/drivers-on-gpio.txt | 13 +++++++------
+ Documentation/pinctrl.txt              | 22 +++++++++++-----------
+ 2 files changed, 18 insertions(+), 17 deletions(-)
 
-                        Geert
+-- 
+2.7.4
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
