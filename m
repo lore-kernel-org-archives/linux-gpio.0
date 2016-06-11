@@ -1,476 +1,239 @@
-From: Bin Gao <bin.gao@linux.intel.com>
-Subject: [PATCH] gpio: add Intel WhiskeyCove GPIO driver
-Date: Fri, 10 Jun 2016 23:01:51 -0700
-Message-ID: <20160611060150.GA88066@worksta>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH v2] iio: stx104: Add GPIO support for the Apex Embedded
+ Systems STX104
+Date: Sat, 11 Jun 2016 17:43:34 +0100
+Message-ID: <ce949c16-e16f-c221-9ef2-e97f1d701bc1@kernel.org>
+References: <1464975762-24052-1-git-send-email-vilhelm.gray@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:33791 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751362AbcFKF6L (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 11 Jun 2016 01:58:11 -0400
-Content-Disposition: inline
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:52365 "EHLO
+	saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751180AbcFKQnh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 11 Jun 2016 12:43:37 -0400
+In-Reply-To: <1464975762-24052-1-git-send-email-vilhelm.gray@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Bin Gao <bin.gao@intel.com>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-This patch introduces a separate GPIO driver for Intel WhiskeyCove PMIC.
-This driver is based on gpio-crystalcove.c.
+On 03/06/16 18:42, William Breathitt Gray wrote:
+> The Apex Embedded Systems STX104 device features eight lines of digital
+> I/O (four digital inputs and four digital outputs). This patch adds GPIO
+> support for these eight lines of digital I/O via GPIOLIB.
+> 
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+This is a gpio chip support patch.  Even though the driver is in IIO we
+need to get it reviewed by appropriate maintainer.
 
-Signed-off-by: Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>
-Signed-off-by: Bin Gao <bin.gao@intel.com>
----
- drivers/gpio/Kconfig      |  13 ++
- drivers/gpio/Makefile     |   1 +
- drivers/gpio/gpio-wcove.c | 402 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 416 insertions(+)
- create mode 100644 drivers/gpio/gpio-wcove.c
+Cc'd Linus, Alexandre and the list.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 48da857..0bb6893 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -805,6 +805,19 @@ config GPIO_CRYSTAL_COVE
- 	  This driver can also be built as a module. If so, the module will be
- 	  called gpio-crystalcove.
- 
-+config GPIO_WHISKEY_COVE
-+	tristate "GPIO support for Whiskey Cove PMIC"
-+	depends on INTEL_SOC_PMIC
-+	select GPIOLIB_IRQCHIP
-+	help
-+	  Support for GPIO pins on Whiskey Cove PMIC.
-+
-+	  Say Yes if you have a Intel SoC based tablet with Whsikey Cove PMIC
-+	  inside.
-+
-+	  This driver can also be built as a module. If so, the module will be
-+	  called gpio-wcove.
-+
- config GPIO_CS5535
- 	tristate "AMD CS5535/CS5536 GPIO support"
- 	depends on MFD_CS5535
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 991598e..fff6914 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -34,6 +34,7 @@ obj-$(CONFIG_GPIO_BT8XX)	+= gpio-bt8xx.o
- obj-$(CONFIG_GPIO_CLPS711X)	+= gpio-clps711x.o
- obj-$(CONFIG_GPIO_CS5535)	+= gpio-cs5535.o
- obj-$(CONFIG_GPIO_CRYSTAL_COVE)	+= gpio-crystalcove.o
-+obj-$(CONFIG_GPIO_WHISKEY_COVE)	+= gpio-wcove.o
- obj-$(CONFIG_GPIO_DA9052)	+= gpio-da9052.o
- obj-$(CONFIG_GPIO_DA9055)	+= gpio-da9055.o
- obj-$(CONFIG_GPIO_DAVINCI)	+= gpio-davinci.o
-diff --git a/drivers/gpio/gpio-wcove.c b/drivers/gpio/gpio-wcove.c
-new file mode 100644
-index 0000000..20d83e3
---- /dev/null
-+++ b/drivers/gpio/gpio-wcove.c
-@@ -0,0 +1,402 @@
-+/*
-+ * gpio-wcove.c - Intel Whiskey Cove GPIO Driver
-+ *
-+ * This driver is written based on gpio-crystalcove.c
-+ *
-+ * Copyright (C) 2015 Intel Corporation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License version
-+ * 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/interrupt.h>
-+#include <linux/platform_device.h>
-+#include <linux/gpio.h>
-+#include <linux/seq_file.h>
-+#include <linux/bitops.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/intel_soc_pmic.h>
-+
-+#define WCOVE_GPIO_NUM	13
-+#define WCOVE_VGPIO_NUM	94
-+
-+#define UPDATE_IRQ_TYPE		BIT(0)
-+#define UPDATE_IRQ_MASK		BIT(1)
-+
-+#define GPIOIRQ0		0x4e0b
-+#define GPIOIRQ1		0x4e0c
-+#define MGPIOIRQ0		0x4e19
-+#define MGPIOIRQ1		0x4e1a
-+#define GPIO0P0CTLO		0x4e44
-+#define GPIO0P0CTLI		0x4e51
-+#define GPIO1P0CTLO		0x4e4b
-+#define GPIO1P0CTLI		0x4e58
-+#define GPIO2P0CTLO		0x4e4f
-+#define GPIO2P0CTLI		0x4e5c
-+
-+#define CTLI_INTCNT_DIS		(0)
-+#define CTLI_INTCNT_NE		(1 << 1)
-+#define CTLI_INTCNT_PE		(2 << 1)
-+#define CTLI_INTCNT_BE		(3 << 1)
-+
-+#define CTLO_DIR_IN		(0)
-+#define CTLO_DIR_OUT		(1 << 5)
-+
-+#define CTLO_DRV_CMOS		(0)
-+#define CTLO_DRV_OD		(1 << 4)
-+
-+#define CTLO_DRV_REN		(1 << 3)
-+
-+#define CTLO_RVAL_2KDW		(0)
-+#define CTLO_RVAL_2KUP		(1 << 1)
-+#define CTLO_RVAL_50KDW		(2 << 1)
-+#define CTLO_RVAL_50KUP		(3 << 1)
-+
-+#define CTLO_INPUT_SET	(CTLO_DRV_CMOS | CTLO_DRV_REN | CTLO_RVAL_2KUP)
-+#define CTLO_OUTPUT_SET	(CTLO_DIR_OUT | CTLO_INPUT_SET)
-+
-+enum ctrl_register {
-+	CTRL_IN,
-+	CTRL_OUT,
-+};
-+
-+/*
-+ * struct wcove_gpio - Whiskey Cove GPIO controller
-+ * @buslock: for bus lock/sync and unlock.
-+ * @chip: the abstract gpio_chip structure.
-+ * @regmap: the regmap from the parent device.
-+ * @update: pending IRQ setting update, to be written to the chip upon unlock.
-+ * @intcnt_value: the Interrupt Detect value to be written.
-+ * @set_irq_mask: true if the IRQ mask needs to be set, false to clear.
-+ */
-+struct wcove_gpio {
-+	struct mutex buslock; /* irq_bus_lock */
-+	struct gpio_chip chip;
-+	struct regmap *regmap;
-+	struct regmap_irq_chip_data *regmap_irq_chip;
-+	int update;
-+	int intcnt_value;
-+	bool set_irq_mask;
-+};
-+
-+static inline struct wcove_gpio *to_wg(struct gpio_chip *gc)
-+{
-+	return container_of(gc, struct wcove_gpio, chip);
-+}
-+
-+static inline int to_reg(int gpio, enum ctrl_register reg_type)
-+{
-+	int reg;
-+
-+	if (reg_type == CTRL_IN) {
-+		if (gpio < 7)
-+			reg = GPIO0P0CTLI + gpio;
-+		else if (gpio < 11)
-+			reg = GPIO1P0CTLI + (gpio % 7);
-+		else
-+			reg = GPIO2P0CTLI + (gpio % 11);
-+	} else {
-+		if (gpio < 7)
-+			reg = GPIO0P0CTLO + gpio;
-+		else if (gpio < 11)
-+			reg = GPIO1P0CTLO + (gpio % 7);
-+		else
-+			reg = GPIO2P0CTLO + (gpio % 11);
-+	}
-+
-+	return reg;
-+}
-+
-+static void wcove_update_irq_mask(struct wcove_gpio *wg,
-+					int gpio)
-+{
-+	u8 mirq = gpio < 7 ? MGPIOIRQ0 : MGPIOIRQ1;
-+	int mask = BIT(gpio % 7);
-+
-+	if (wg->set_irq_mask)
-+		regmap_update_bits(wg->regmap, mirq, mask, mask);
-+	else
-+		regmap_update_bits(wg->regmap, mirq, mask, 0);
-+}
-+
-+static void wcove_update_irq_ctrl(struct wcove_gpio *wg, int gpio)
-+{
-+	int reg = to_reg(gpio, CTRL_IN);
-+
-+	regmap_update_bits(wg->regmap, reg, CTLI_INTCNT_BE, wg->intcnt_value);
-+}
-+
-+static int wcove_gpio_dir_in(struct gpio_chip *chip, unsigned int gpio)
-+{
-+	struct wcove_gpio *wg = to_wg(chip);
-+
-+	if (gpio > WCOVE_VGPIO_NUM)
-+		return 0;
-+
-+	return regmap_write(wg->regmap, to_reg(gpio, CTRL_OUT),
-+			    CTLO_INPUT_SET);
-+}
-+
-+static int wcove_gpio_dir_out(struct gpio_chip *chip, unsigned int gpio,
-+				    int value)
-+{
-+	struct wcove_gpio *wg = to_wg(chip);
-+
-+	if (gpio > WCOVE_VGPIO_NUM)
-+		return 0;
-+
-+	return regmap_write(wg->regmap, to_reg(gpio, CTRL_OUT),
-+			    CTLO_OUTPUT_SET | value);
-+}
-+
-+static int wcove_gpio_get(struct gpio_chip *chip, unsigned int gpio)
-+{
-+	struct wcove_gpio *wg = to_wg(chip);
-+	int ret;
-+	unsigned int val;
-+
-+	if (gpio > WCOVE_VGPIO_NUM)
-+		return 0;
-+
-+	ret = regmap_read(wg->regmap, to_reg(gpio, CTRL_IN), &val);
-+	if (ret)
-+		return ret;
-+
-+	return val & 0x1;
-+}
-+
-+static void wcove_gpio_set(struct gpio_chip *chip,
-+				 unsigned int gpio, int value)
-+{
-+	struct wcove_gpio *wg = to_wg(chip);
-+
-+	if (gpio > WCOVE_VGPIO_NUM)
-+		return;
-+
-+	if (value)
-+		regmap_update_bits(wg->regmap, to_reg(gpio, CTRL_OUT), 1, 1);
-+	else
-+		regmap_update_bits(wg->regmap, to_reg(gpio, CTRL_OUT), 1, 0);
-+}
-+
-+static int wcove_irq_type(struct irq_data *data, unsigned int type)
-+{
-+	struct wcove_gpio *wg = to_wg(irq_data_get_irq_chip_data(data));
-+
-+	switch (type) {
-+	case IRQ_TYPE_NONE:
-+		wg->intcnt_value = CTLI_INTCNT_DIS;
-+		break;
-+	case IRQ_TYPE_EDGE_BOTH:
-+		wg->intcnt_value = CTLI_INTCNT_BE;
-+		break;
-+	case IRQ_TYPE_EDGE_RISING:
-+		wg->intcnt_value = CTLI_INTCNT_PE;
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		wg->intcnt_value = CTLI_INTCNT_NE;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	wg->update |= UPDATE_IRQ_TYPE;
-+
-+	return 0;
-+}
-+
-+static void wcove_bus_lock(struct irq_data *data)
-+{
-+	struct wcove_gpio *wg = to_wg(irq_data_get_irq_chip_data(data));
-+
-+	mutex_lock(&wg->buslock);
-+}
-+
-+static void wcove_bus_sync_unlock(struct irq_data *data)
-+{
-+	struct wcove_gpio *wg = to_wg(irq_data_get_irq_chip_data(data));
-+	int gpio = data->hwirq;
-+
-+	if (wg->update & UPDATE_IRQ_TYPE)
-+		wcove_update_irq_ctrl(wg, gpio);
-+	if (wg->update & UPDATE_IRQ_MASK)
-+		wcove_update_irq_mask(wg, gpio);
-+	wg->update = 0;
-+
-+	mutex_unlock(&wg->buslock);
-+}
-+
-+static void wcove_irq_unmask(struct irq_data *data)
-+{
-+	struct wcove_gpio *wg = to_wg(irq_data_get_irq_chip_data(data));
-+
-+	wg->set_irq_mask = false;
-+	wg->update |= UPDATE_IRQ_MASK;
-+}
-+
-+static void wcove_irq_mask(struct irq_data *data)
-+{
-+	struct wcove_gpio *wg = to_wg(irq_data_get_irq_chip_data(data));
-+
-+	wg->set_irq_mask = true;
-+	wg->update |= UPDATE_IRQ_MASK;
-+}
-+
-+static struct irq_chip wcove_irqchip = {
-+	.name			= "Whiskey Cove",
-+	.irq_mask		= wcove_irq_mask,
-+	.irq_unmask		= wcove_irq_unmask,
-+	.irq_set_type		= wcove_irq_type,
-+	.irq_bus_lock		= wcove_bus_lock,
-+	.irq_bus_sync_unlock	= wcove_bus_sync_unlock,
-+};
-+
-+static irqreturn_t wcove_gpio_irq_handler(int irq, void *data)
-+{
-+	struct wcove_gpio *wg = data;
-+	unsigned int p0, p1, virq;
-+	int pending, gpio;
-+
-+	if (regmap_read(wg->regmap, GPIOIRQ0, &p0) ||
-+	    regmap_read(wg->regmap, GPIOIRQ1, &p1))
-+		return IRQ_NONE;
-+
-+	pending = p0 | (p1 << 8);
-+
-+	for (gpio = 0; gpio < WCOVE_GPIO_NUM; gpio++) {
-+		if (pending & BIT(gpio)) {
-+			virq = irq_find_mapping(wg->chip.irqdomain, gpio);
-+			handle_nested_irq(virq);
-+		}
-+	}
-+
-+	regmap_write(wg->regmap, GPIOIRQ0, p0);
-+	regmap_write(wg->regmap, GPIOIRQ1, p1);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void wcove_gpio_dbg_show(struct seq_file *s,
-+				      struct gpio_chip *chip)
-+{
-+	struct wcove_gpio *wg = to_wg(chip);
-+	int gpio, offset;
-+	unsigned int ctlo, ctli, mirq, irq;
-+
-+	for (gpio = 0; gpio < WCOVE_GPIO_NUM; gpio++) {
-+		regmap_read(wg->regmap, to_reg(gpio, CTRL_OUT), &ctlo);
-+		regmap_read(wg->regmap, to_reg(gpio, CTRL_IN), &ctli);
-+		regmap_read(wg->regmap, gpio < 7 ? MGPIOIRQ0 : MGPIOIRQ1,
-+			    &mirq);
-+		regmap_read(wg->regmap, gpio < 7 ? GPIOIRQ0 : GPIOIRQ1,
-+			    &irq);
-+
-+		offset = gpio % 8;
-+		seq_printf(s, " gpio-%-2d %s %s %s %s ctlo=%2x,%s %s\n",
-+			   gpio, ctlo & CTLO_DIR_OUT ? "out" : "in ",
-+			   ctli & 0x1 ? "hi" : "lo",
-+			   ctli & CTLI_INTCNT_NE ? "fall" : "    ",
-+			   ctli & CTLI_INTCNT_PE ? "rise" : "    ",
-+			   ctlo,
-+			   mirq & BIT(offset) ? "mask  " : "unmask",
-+			   irq & BIT(offset) ? "pending" : "       ");
-+	}
-+}
-+
-+static int wcove_gpio_probe(struct platform_device *pdev)
-+{
-+	int virq, retval, irq = platform_get_irq(pdev, 0);
-+	struct wcove_gpio *wg;
-+	struct device *dev = pdev->dev.parent;
-+	struct intel_soc_pmic *pmic = dev_get_drvdata(dev);
-+
-+	if (irq < 0)
-+		return irq;
-+
-+	wg = devm_kzalloc(&pdev->dev, sizeof(*wg), GFP_KERNEL);
-+	if (!wg)
-+		return -ENOMEM;
-+
-+	wg->regmap_irq_chip = pmic->irq_chip_data_level2;
-+
-+	platform_set_drvdata(pdev, wg);
-+
-+	mutex_init(&wg->buslock);
-+	wg->chip.label = KBUILD_MODNAME;
-+	wg->chip.direction_input = wcove_gpio_dir_in;
-+	wg->chip.direction_output = wcove_gpio_dir_out;
-+	wg->chip.get = wcove_gpio_get;
-+	wg->chip.set = wcove_gpio_set;
-+	wg->chip.base = -1;
-+	wg->chip.ngpio = WCOVE_VGPIO_NUM;
-+	wg->chip.can_sleep = true;
-+	wg->chip.parent = dev;
-+	wg->chip.dbg_show = wcove_gpio_dbg_show;
-+	wg->regmap = pmic->regmap;
-+
-+	retval = gpiochip_add(&wg->chip);
-+	if (retval) {
-+		dev_warn(&pdev->dev, "add gpio chip error: %d\n", retval);
-+		return retval;
-+	}
-+
-+	gpiochip_irqchip_add(&wg->chip, &wcove_irqchip, 0,
-+			     handle_simple_irq, IRQ_TYPE_NONE);
-+
-+	virq = regmap_irq_get_virq(wg->regmap_irq_chip, irq);
-+	if (virq < 0) {
-+		dev_err(&pdev->dev,
-+				"failed to get virtual interrupt=%d\n", irq);
-+		retval = virq;
-+		goto out_remove_gpio;
-+	}
-+
-+	retval = devm_request_threaded_irq(&pdev->dev, virq,
-+			NULL, wcove_gpio_irq_handler,
-+			IRQF_ONESHOT, pdev->name, wg);
-+
-+	if (retval) {
-+		dev_warn(&pdev->dev, "request irq failed: %d, virq: %d\n",
-+							retval, virq);
-+		goto out_remove_gpio;
-+	}
-+
-+	return 0;
-+
-+out_remove_gpio:
-+	gpiochip_remove(&wg->chip);
-+	return retval;
-+}
-+
-+static int wcove_gpio_remove(struct platform_device *pdev)
-+{
-+	struct wcove_gpio *wg = platform_get_drvdata(pdev);
-+
-+	gpiochip_remove(&wg->chip);
-+	return 0;
-+}
-+
-+static const struct platform_device_id pmic_gpio_id_table[] = {
-+	{ "bxt_wcove_gpio", },
-+};
-+
-+static struct platform_driver wcove_gpio_driver = {
-+	.probe = wcove_gpio_probe,
-+	.remove = wcove_gpio_remove,
-+	.driver = {
-+		.name = "wcove_gpio",
-+	},
-+	.id_table = pmic_gpio_id_table,
-+};
-+
-+module_platform_driver(wcove_gpio_driver);
-+
-+MODULE_AUTHOR("Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>");
-+MODULE_DESCRIPTION("Intel Whiskey Cove GPIO Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-1.9.1
+> ---
+> Changes in v2:
+>   - Change GPIOLIB Kconfig selection to a dependency for the STX104 Kconfig
+>     option; STX104 should only be available to systems configured for GPIOLIB
+> 
+>  drivers/iio/dac/Kconfig  |  11 +++--
+>  drivers/iio/dac/stx104.c | 118 ++++++++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 122 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
+> index 61d5008..35a3d49 100644
+> --- a/drivers/iio/dac/Kconfig
+> +++ b/drivers/iio/dac/Kconfig
+> @@ -246,13 +246,14 @@ config MCP4922
+>  	  will be called mcp4922.
+>  
+>  config STX104
+> -	tristate "Apex Embedded Systems STX104 DAC driver"
+> +	tristate "Apex Embedded Systems STX104 driver"
+>  	depends on ISA
+> +	depends on GPIOLIB
+>  	help
+> -	  Say yes here to build support for the 2-channel DAC on the Apex
+> -	  Embedded Systems STX104 integrated analog PC/104 card. The base port
+> -	  addresses for the devices may be configured via the "base" module
+> -	  parameter array.
+> +	  Say yes here to build support for the 2-channel DAC and GPIO on the
+> +	  Apex Embedded Systems STX104 integrated analog PC/104 card. The base
+> +	  port addresses for the devices may be configured via the base array
+> +	  module parameter.
+>  
+>  config VF610_DAC
+>  	tristate "Vybrid vf610 DAC driver"
+> diff --git a/drivers/iio/dac/stx104.c b/drivers/iio/dac/stx104.c
+> index 174f4b7..dc445cf 100644
+> --- a/drivers/iio/dac/stx104.c
+> +++ b/drivers/iio/dac/stx104.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/bitops.h>
+>  #include <linux/device.h>
+>  #include <linux/errno.h>
+> +#include <linux/gpio/driver.h>
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/types.h>
+>  #include <linux/io.h>
+> @@ -21,6 +22,7 @@
+>  #include <linux/isa.h>
+>  #include <linux/module.h>
+>  #include <linux/moduleparam.h>
+> +#include <linux/spinlock.h>
+>  
+>  #define STX104_NUM_CHAN 2
+>  
+> @@ -56,6 +58,20 @@ struct stx104_iio {
+>  	unsigned base;
+>  };
+>  
+> +/**
+> + * struct stx104_gpio - GPIO device private data structure
+> + * @chip:	instance of the gpio_chip
+> + * @lock:	synchronization lock to prevent I/O race conditions
+> + * @base:	base port address of the GPIO device
+> + * @out_state:	output bits state
+> + */
+> +struct stx104_gpio {
+> +	struct gpio_chip chip;
+> +	spinlock_t lock;
+> +	unsigned int base;
+> +	unsigned int out_state;
+> +};
+> +
+>  static int stx104_read_raw(struct iio_dev *indio_dev,
+>  	struct iio_chan_spec const *chan, int *val, int *val2, long mask)
+>  {
+> @@ -95,15 +111,74 @@ static const struct iio_chan_spec stx104_channels[STX104_NUM_CHAN] = {
+>  	STX104_CHAN(1)
+>  };
+>  
+> +static int stx104_gpio_get_direction(struct gpio_chip *chip,
+> +	unsigned int offset)
+> +{
+> +	if (offset < 4)
+> +		return 1;
+> +
+> +	return 0;
+> +}
+> +
+> +static int stx104_gpio_direction_input(struct gpio_chip *chip,
+> +	unsigned int offset)
+> +{
+> +	return 0;
+> +}
+> +
+> +static int stx104_gpio_direction_output(struct gpio_chip *chip,
+> +	unsigned int offset, int value)
+> +{
+> +	return 0;
+Not return an error if the relevant pin can't be an output?
+> +}
+> +
+> +static int stx104_gpio_get(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +	struct stx104_gpio *const stx104gpio = gpiochip_get_data(chip);
+> +
+> +	if (offset >= 4)
+> +		return -EINVAL;
+> +
+> +	return !!(inb(stx104gpio->base) & BIT(offset));
+> +}
+> +
+> +static void stx104_gpio_set(struct gpio_chip *chip, unsigned int offset,
+> +	int value)
+> +{
+> +	struct stx104_gpio *const stx104gpio = gpiochip_get_data(chip);
+> +	const unsigned int mask = BIT(offset) >> 4;
+> +	unsigned long flags;
+> +
+> +	if (offset < 4)
+> +		return;
+> +
+> +	spin_lock_irqsave(&stx104gpio->lock, flags);
+> +
+> +	if (value)
+> +		stx104gpio->out_state |= mask;
+> +	else
+> +		stx104gpio->out_state &= ~mask;
+> +
+> +	outb(stx104gpio->out_state, stx104gpio->base);
+> +
+> +	spin_unlock_irqrestore(&stx104gpio->lock, flags);
+> +}
+> +
+>  static int stx104_probe(struct device *dev, unsigned int id)
+>  {
+>  	struct iio_dev *indio_dev;
+>  	struct stx104_iio *priv;
+> +	struct stx104_gpio *stx104gpio;
+> +	int err;
+>  
+>  	indio_dev = devm_iio_device_alloc(dev, sizeof(*priv));
+>  	if (!indio_dev)
+>  		return -ENOMEM;
+>  
+> +	stx104gpio = devm_kzalloc(dev, sizeof(*stx104gpio), GFP_KERNEL);
+> +	if (!stx104gpio)
+> +		return -ENOMEM;
+> +
+>  	if (!devm_request_region(dev, base[id], STX104_EXTENT,
+>  		dev_name(dev))) {
+>  		dev_err(dev, "Unable to lock port addresses (0x%X-0x%X)\n",
+> @@ -124,14 +199,53 @@ static int stx104_probe(struct device *dev, unsigned int id)
+>  	outw(0, base[id] + 4);
+>  	outw(0, base[id] + 6);
+>  
+> -	return devm_iio_device_register(dev, indio_dev);
+> +	err = devm_iio_device_register(dev, indio_dev);
+> +	if (err) {
+> +		dev_err(dev, "IIO device registering failed (%d)\n", err);
+> +		return err;
+> +	}
+> +
+> +	stx104gpio->chip.label = dev_name(dev);
+> +	stx104gpio->chip.parent = dev;
+> +	stx104gpio->chip.owner = THIS_MODULE;
+> +	stx104gpio->chip.base = -1;
+> +	stx104gpio->chip.ngpio = 8;
+> +	stx104gpio->chip.get_direction = stx104_gpio_get_direction;
+> +	stx104gpio->chip.direction_input = stx104_gpio_direction_input;
+> +	stx104gpio->chip.direction_output = stx104_gpio_direction_output;
+> +	stx104gpio->chip.get = stx104_gpio_get;
+> +	stx104gpio->chip.set = stx104_gpio_set;
+> +	stx104gpio->base = base[id] + 3;
+> +	stx104gpio->out_state = 0x0;
+> +
+> +	spin_lock_init(&stx104gpio->lock);
+> +
+> +	dev_set_drvdata(dev, stx104gpio);
+> +
+> +	err = gpiochip_add_data(&stx104gpio->chip, stx104gpio);
+> +	if (err) {
+> +		dev_err(dev, "GPIO registering failed (%d)\n", err);
+> +		return err;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int stx104_remove(struct device *dev, unsigned int id)
+> +{
+> +	struct stx104_gpio *const stx104gpio = dev_get_drvdata(dev);
+> +
+> +	gpiochip_remove(&stx104gpio->chip);
+> +
+> +	return 0;
+>  }
+>  
+>  static struct isa_driver stx104_driver = {
+>  	.probe = stx104_probe,
+>  	.driver = {
+>  		.name = "stx104"
+> -	}
+> +	},
+> +	.remove = stx104_remove
+>  };
+>  
+>  static void __exit stx104_exit(void)
+> 
 
