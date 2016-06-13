@@ -1,7 +1,7 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 2/2] pinctrl: as3722: convert PINCTRL_AS3722 from bool to tristate
-Date: Mon, 13 Jun 2016 17:10:22 -0400
-Message-ID: <20160613211022.32033-3-paul.gortmaker@windriver.com>
+Subject: [PATCH 1/2] pinctrl: palmas: convert PINCTRL_PALMAS from bool to tristate
+Date: Mon, 13 Jun 2016 17:10:21 -0400
+Message-ID: <20160613211022.32033-2-paul.gortmaker@windriver.com>
 References: <20160613211022.32033-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -14,8 +14,8 @@ List-Id: linux-gpio@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-config PINCTRL_AS3722
-        bool "Pinctrl and GPIO driver for ams AS3722 PMIC"
+config PINCTRL_PALMAS
+        bool "Pinctrl driver for the PALMAS Series MFD devices"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -38,16 +38,16 @@ Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index a92e61870024..2f805014cc21 100644
+index ea25eeeceef1..a92e61870024 100644
 --- a/drivers/pinctrl/Kconfig
 +++ b/drivers/pinctrl/Kconfig
-@@ -35,7 +35,7 @@ config PINCTRL_ADI2
- 	  machine and arch are selected to build.
+@@ -218,7 +218,7 @@ config PINCTRL_MAX77620
+ 	  open drain, FPS slots etc.
  
- config PINCTRL_AS3722
--	bool "Pinctrl and GPIO driver for ams AS3722 PMIC"
-+	tristate "Pinctrl and GPIO driver for ams AS3722 PMIC"
- 	depends on MFD_AS3722 && GPIOLIB
+ config PINCTRL_PALMAS
+-	bool "Pinctrl driver for the PALMAS Series MFD devices"
++	tristate "Pinctrl driver for the PALMAS Series MFD devices"
+ 	depends on OF && MFD_PALMAS
  	select PINMUX
  	select GENERIC_PINCONF
 -- 
