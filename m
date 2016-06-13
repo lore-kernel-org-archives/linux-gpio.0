@@ -1,55 +1,68 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 9/9] pinctrl: at91-pio4: make it explicitly non-modular
-Date: Mon, 13 Jun 2016 08:39:54 +0200
-Message-ID: <CACRpkdZJ-BpLuCAk5ZDwn-Mg07sn7M2wFxxs_+Kyf-exRoHhTA@mail.gmail.com>
-References: <1465267388-17884-1-git-send-email-paul.gortmaker@windriver.com> <1465267388-17884-10-git-send-email-paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 2/2] gpio: Support cascaded GPIO chip lookup for OF
+Date: Mon, 13 Jun 2016 08:48:45 +0200
+Message-ID: <CACRpkdb-movUA67=8WrCcYTO5WyAjUcur44R=vQ0iaBp-tMSmg@mail.gmail.com>
+References: <1464985616-11821-1-git-send-email-pantelis.antoniou@konsulko.com>
+ <1464985616-11821-3-git-send-email-pantelis.antoniou@konsulko.com>
+ <CAL_JsqLi4=6v-8B8eF-H1iQGa+3Zh=rzAWbCAJubnLNEitPaLQ@mail.gmail.com> <8F93AE08-B340-481B-A5B3-F42227D9D729@konsulko.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:34422 "EHLO
-	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964781AbcFMGjz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jun 2016 02:39:55 -0400
-Received: by mail-oi0-f50.google.com with SMTP id d132so90337818oig.1
-        for <linux-gpio@vger.kernel.org>; Sun, 12 Jun 2016 23:39:55 -0700 (PDT)
-In-Reply-To: <1465267388-17884-10-git-send-email-paul.gortmaker@windriver.com>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:36258 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964818AbcFMGsq convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jun 2016 02:48:46 -0400
+Received: by mail-oi0-f43.google.com with SMTP id p204so194118621oih.3
+        for <linux-gpio@vger.kernel.org>; Sun, 12 Jun 2016 23:48:46 -0700 (PDT)
+In-Reply-To: <8F93AE08-B340-481B-A5B3-F42227D9D729@konsulko.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ludovic Desroches <ludovic.desroches@atmel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Cc: Rob Herring <robherring2@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Frank Rowand <frowand.list@gmail.com>, Matt Porter <mporter@konsulko.com>, Koen Kooi <koen@dominion.thruhere.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Guenter Roeck <linux@roeck-us.net>, Marek Vasut <marex@denx.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
 
-On Tue, Jun 7, 2016 at 4:43 AM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
+On Wed, Jun 8, 2016 at 3:41 PM, Pantelis Antoniou
+<pantelis.antoniou@konsulko.com> wrote:
 
-> The Kconfig currently controlling compilation of this code is:
+> Devices that use interrupts usually convert the GPIO to an interrupt =
+and use it.
+> Since the xlat op will return the real GPIO spec the interrupt conver=
+sion will work.
 >
-> drivers/pinctrl/Kconfig:config PINCTRL_AT91PIO4
-> drivers/pinctrl/Kconfig:        bool "AT91 PIO4 pinctrl driver"
->
-> ...meaning that it currently is not being built as a module by anyone.
->
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
->
-> We explicitly disallow a driver unbind, since that doesn't have a
-> sensible use case anyway, and it allows us to drop the ".remove"
-> code for non-modular drivers.
->
-> Since module_platform_driver() uses the same init level priority as
-> builtin_platform_driver() the init ordering remains unchanged with
-> this commit.
->
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> is already contained at the top of the file in the comments.
->
-> Cc: Ludovic Desroches <ludovic.desroches@atmel.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Bare interrupt lines are sort-of out of fashion nowadays I think. I=E2=
+=80=99m eager to be
+> proven wrong though with a recent portable expansion board that uses =
+them.
 
-Patch applied with Ludovic's ACK.
+No. We have established since several years back that gpiochip and inte=
+rrupt
+chip use cases are orthogonal, and there is absolutely *NO* requirement=
+ that
+a consumer call .to_irq() on a GPIO line before using it as an interrup=
+t, if the
+driver exposes an interrupt chip.
+
+It is true that external interrupt lines are out-of-fashion and usually=
+ replaced
+with GPIOs that can trigger IRQs. However the latter have two interface=
+s
+independent of each other.
+
+A practical usecase is the SMSC911x ethernet drivers that have their IR=
+Q
+wired to both external interrupt lines and GPIO lines used as IRQ in di=
+fferent
+use cases. It should not need to know whether the interrupt provider is=
+ a
+"real" IRQ line or a GPIO line providing an IRQ. It just wants "some IR=
+Q",
+and this should be hidden from the driver and the hardware's DT binding=
+s.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
