@@ -1,40 +1,49 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] gpio: 104-idi-48: Fix missing spin_lock_init for ack_lock
-Date: Mon, 13 Jun 2016 13:48:53 +0800
-Message-ID: <1465796933.11725.1.camel@ingics.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/9] pinctrl: baytrail: make it explicitly non-modular
+Date: Mon, 13 Jun 2016 08:26:47 +0200
+Message-ID: <CACRpkdZKnxsa2EjAU4zkLaDLexqAeqtChC_Xa=2=1tveN0VVjg@mail.gmail.com>
+References: <1465267388-17884-1-git-send-email-paul.gortmaker@windriver.com> <1465267388-17884-3-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f66.google.com ([209.85.220.66]:35032 "EHLO
-	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750803AbcFMFs6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jun 2016 01:48:58 -0400
-Received: by mail-pa0-f66.google.com with SMTP id hf6so1908240pac.2
-        for <linux-gpio@vger.kernel.org>; Sun, 12 Jun 2016 22:48:58 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1465267388-17884-3-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-Fixes: 9ae482104cb9 ("gpio: 104-idi-48: Clear pending interrupt once in IRQ handler")
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/gpio/gpio-104-idi-48.c | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, Jun 7, 2016 at 4:43 AM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 
-diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
-index 6c75c83..2d2763e 100644
---- a/drivers/gpio/gpio-104-idi-48.c
-+++ b/drivers/gpio/gpio-104-idi-48.c
-@@ -247,6 +247,7 @@ static int idi_48_probe(struct device *dev, unsigned int id)
- 	idi48gpio->irq = irq[id];
- 
- 	spin_lock_init(&idi48gpio->lock);
-+	spin_lock_init(&idi48gpio->ack_lock);
- 
- 	dev_set_drvdata(dev, idi48gpio);
- 
--- 
-2.5.0
+> The Kconfig currently controlling compilation of this code is:
+>
+> config PINCTRL_BAYTRAIL
+>         bool "Intel Baytrail GPIO pin control"
+>
+> ...meaning that it currently is not being built as a module by anyone.
+>
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+>
+> We explicitly disallow a driver unbind, since that doesn't have a
+> sensible use case anyway, and it allows us to drop the ".remove"
+> code for non-modular drivers.
+>
+> Since module_init() was already not in use in this driver, we don't
+> have any concerns with init ordering changes here.
+>
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+>
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
+Patch applied with Mika's ACK.
+
+Yours,
+Linus Walleij
