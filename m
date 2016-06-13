@@ -1,13 +1,13 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/4] drivers-on-gpio.txt: Fix paths to GPIO driver source files
-Date: Mon, 13 Jun 2016 09:30:00 +0200
-Message-ID: <CACRpkdbsU932XVdVsTn7VWcV5POj3otBtzBmUWB+7mysrhb0ew@mail.gmail.com>
-References: <1465542996-12534-1-git-send-email-andrew@aj.id.au> <1465542996-12534-2-git-send-email-andrew@aj.id.au>
+Subject: Re: [PATCH 2/4] pinctrl.txt: Fix grammar in pinmux request list
+Date: Mon, 13 Jun 2016 09:31:50 +0200
+Message-ID: <CACRpkdZvJpoydn0pdtvnkd+4k2FvoFgaTqgXm3CmtEa2uHLyiA@mail.gmail.com>
+References: <1465542996-12534-1-git-send-email-andrew@aj.id.au> <1465542996-12534-3-git-send-email-andrew@aj.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1465542996-12534-2-git-send-email-andrew@aj.id.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1465542996-12534-3-git-send-email-andrew@aj.id.au>
+Sender: linux-doc-owner@vger.kernel.org
 To: Andrew Jeffery <andrew@aj.id.au>
 Cc: Jonathan Corbet <corbet@lwn.net>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jiri Kosina <trivial@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
