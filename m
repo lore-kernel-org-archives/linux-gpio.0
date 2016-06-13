@@ -1,33 +1,26 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pca953x: Fix NBANK calculation for PCA9536
-Date: Mon, 13 Jun 2016 09:22:27 +0200
-Message-ID: <CACRpkdYZEbefjr-iHT3yahkBovFuE2Ofvr8_Mr+X++pJSVwzfA@mail.gmail.com>
-References: <20160609053204.32398-1-vigneshr@ti.com>
+Subject: Re: [PATCH v2 1/9] pinctrl: walk into bcm subdir unconditionally
+Date: Mon, 13 Jun 2016 09:26:55 +0200
+Message-ID: <CACRpkdZ+RnCo=GhsRrY0+VxLYcETrUZZGrbH-O3rwO7rRSG-ow@mail.gmail.com>
+References: <1464934708-24769-1-git-send-email-kraxel@redhat.com> <1464934708-24769-2-git-send-email-kraxel@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160609053204.32398-1-vigneshr@ti.com>
+In-Reply-To: <1464934708-24769-2-git-send-email-kraxel@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vignesh R <vigneshr@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jun 9, 2016 at 7:32 AM, Vignesh R <vigneshr@ti.com> wrote:
+On Fri, Jun 3, 2016 at 8:18 AM, Gerd Hoffmann <kraxel@redhat.com> wrote:
 
-> NBANK() macro assumes that ngpios is a multiple of 8(BANK_SZ) and
-> hence results in 0 banks for PCA9536 which has just 4 gpios. This is
-> wrong as PCA9356 has 1 bank with 4 gpios. This results in uninitialized
-> PCA953X_INVERT register. Fix this by using DIV_ROUND_UP macro in
-> NBANK().
+> There is no ARCH_BCM on arm64, and we need pinctrl-bcm2835 for the rpi3.
 >
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 
-Patch applied.
-
-Is this really a regression or affecting systems in development?
-
-Which machine/device tree makes this problematic?
+I see I got an identical patch from Florian Fainelli and applied it.
+Sorry for my clashes, confusion and screwups... Added Eric's
+ACK on the applied patch.
 
 Yours,
 Linus Walleij
