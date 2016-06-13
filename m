@@ -1,51 +1,50 @@
-From: Vignesh R <vigneshr@ti.com>
-Subject: Re: [PATCH] gpio: pca953x: Fix NBANK calculation for PCA9536
-Date: Mon, 13 Jun 2016 14:34:04 +0530
-Message-ID: <575E7704.5090503@ti.com>
-References: <20160609053204.32398-1-vigneshr@ti.com>
- <CACRpkdYZEbefjr-iHT3yahkBovFuE2Ofvr8_Mr+X++pJSVwzfA@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2 0/3] pinctrl: cherryview: fixes and enhancements
+Date: Mon, 13 Jun 2016 12:21:22 +0300
+Message-ID: <20160613092122.GE1791@lahna.fi.intel.com>
+References: <1464904543-4094-1-git-send-email-dan@emutex.com>
+ <1465561416-29732-1-git-send-email-dan@emutex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:46686 "EHLO comal.ext.ti.com"
+Received: from mga02.intel.com ([134.134.136.20]:35898 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1161137AbcFMJEJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 13 Jun 2016 05:04:09 -0400
-In-Reply-To: <CACRpkdYZEbefjr-iHT3yahkBovFuE2Ofvr8_Mr+X++pJSVwzfA@mail.gmail.com>
+	id S964807AbcFMJV1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 13 Jun 2016 05:21:27 -0400
+Content-Disposition: inline
+In-Reply-To: <1465561416-29732-1-git-send-email-dan@emutex.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Dan O'Donovan <dan@emutex.com>
+Cc: linus.walleij@linaro.org, heikki.krogerus@linux.intel.com, linux-gpio@vger.kernel.org
 
+On Fri, Jun 10, 2016 at 01:23:33PM +0100, Dan O'Donovan wrote:
+> This series includes a number of fixes and enhancements for the
+> Cherryview pinctrl/gpio driver, developed during integration on the
+> UP Board (based on the Intel X5-Z8350 "Cherry Trail" Atom SoC).
+> 
+> Patch 1 provides a workaround for a documented silicon bug which
+> causes data corruption of concurrent accesses to the GPIO controller
+> registers on this SoC.
+> 
+> The other patches implement additional pin config functions/options
+> for this driver.
+> 
+> Changes since v1:
+>  * Addressed review comments from Mika Westerberg:
+>    - Drop clean-up of checkpatch warnings (impacts back-porting)
+>    - Re-order series to put fixes ahead of enhancements
+>    - Rename a variable
+>    - Tag concurrency fix (patch 1) for stable
+>    - Drop fix restoring PADCTRL1 bits when GPIO disabled (rejected)
+> 
+> Dan O'Donovan (3):
+>   pinctrl: cherryview: prevent concurrent access to GPIO controllers
+>   pinctrl: cherryview: add option to set open-drain pin config
+>   pinctrl: cherryview: add handlers for pin_config_group_get/set
 
+Looks good to me now, thanks.
 
-On Monday 13 June 2016 12:52 PM, Linus Walleij wrote:
-> On Thu, Jun 9, 2016 at 7:32 AM, Vignesh R <vigneshr@ti.com> wrote:
-> 
->> NBANK() macro assumes that ngpios is a multiple of 8(BANK_SZ) and
->> hence results in 0 banks for PCA9536 which has just 4 gpios. This is
->> wrong as PCA9356 has 1 bank with 4 gpios. This results in uninitialized
->> PCA953X_INVERT register. Fix this by using DIV_ROUND_UP macro in
->> NBANK().
->>
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> 
-> Patch applied.
-> 
-> Is this really a regression or affecting systems in development?
-> 
-> Which machine/device tree makes this problematic?
-> 
+For the whole series,
 
-I observed this on am335x-icev2 evm which is system in development.
-Basically, variable with uninitialized value (junk) gets written to
-PCA953X_INVERT register(in device_pca953x_init()) causing driver to
-report wrong gpio pin status. So, this bug will affect any platform with
-PCA9536 chip. Quick grep on arch/*/boot/dts/ folder shows one platform
-already using pca9536 chip. Hence, I added Cc to stable kernel.
-
--- 
-Regards
-Vignesh
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
