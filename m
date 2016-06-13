@@ -1,29 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: 104-idi-48: Fix missing spin_lock_init for ack_lock
-Date: Mon, 13 Jun 2016 14:48:52 +0200
-Message-ID: <CACRpkdZHYSD+1-N-1jdWzs_XnfSXwuH0qpjuypWUYXL1EcB+OQ@mail.gmail.com>
-References: <1465796933.11725.1.camel@ingics.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] pinctrl: max77620: Remove unused structure definition
+Date: Mon, 13 Jun 2016 13:51:44 +0100
+Message-ID: <1465822304-16493-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:35410 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1422747AbcFMMsx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jun 2016 08:48:53 -0400
-Received: by mail-oi0-f42.google.com with SMTP id w5so126320911oib.2
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jun 2016 05:48:53 -0700 (PDT)
-In-Reply-To: <1465796933.11725.1.camel@ingics.com>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:3544 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1422860AbcFMMv5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jun 2016 08:51:57 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>
 
-On Mon, Jun 13, 2016 at 7:48 AM, Axel Lin <axel.lin@ingics.com> wrote:
+The strucuture 'max77620_cfg_param' is defined but never used by the
+max77620 driver. Remove this structure definition.
 
-> Fixes: 9ae482104cb9 ("gpio: 104-idi-48: Clear pending interrupt once in IRQ handler")
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/pinctrl/pinctrl-max77620.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Patch applied for fixes with William's ACK.
+diff --git a/drivers/pinctrl/pinctrl-max77620.c b/drivers/pinctrl/pinctrl-max77620.c
+index 19005a01b667..d9ff53e8f715 100644
+--- a/drivers/pinctrl/pinctrl-max77620.c
++++ b/drivers/pinctrl/pinctrl-max77620.c
+@@ -50,11 +50,6 @@ struct max77620_pin_function {
+ 	int mux_option;
+ };
+ 
+-struct max77620_cfg_param {
+-	const char *property;
+-	enum max77620_pinconf_param param;
+-};
+-
+ static const struct pinconf_generic_params max77620_cfg_params[] = {
+ 	{
+ 		.property = "maxim,active-fps-source",
+-- 
+2.1.4
 
-Yours,
-Linus Walleij
