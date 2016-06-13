@@ -1,26 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/9] pinctrl: walk into bcm subdir unconditionally
-Date: Mon, 13 Jun 2016 09:26:55 +0200
-Message-ID: <CACRpkdZ+RnCo=GhsRrY0+VxLYcETrUZZGrbH-O3rwO7rRSG-ow@mail.gmail.com>
-References: <1464934708-24769-1-git-send-email-kraxel@redhat.com> <1464934708-24769-2-git-send-email-kraxel@redhat.com>
+Subject: Re: [PATCH] pinctrl: u300: make u300_pmx_registers static
+Date: Mon, 13 Jun 2016 09:28:16 +0200
+Message-ID: <CACRpkdbO3KdgGrrdRckmY1NfGzDeiPB4TzZAiaZE2zzeKBScXw@mail.gmail.com>
+References: <1465469700-9026-1-git-send-email-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1464934708-24769-2-git-send-email-kraxel@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:33504 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965004AbcFMH2S (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jun 2016 03:28:18 -0400
+Received: by mail-oi0-f51.google.com with SMTP id u201so68311211oie.0
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jun 2016 00:28:17 -0700 (PDT)
+In-Reply-To: <1465469700-9026-1-git-send-email-ben.dooks@codethink.co.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Jun 3, 2016 at 8:18 AM, Gerd Hoffmann <kraxel@redhat.com> wrote:
+On Thu, Jun 9, 2016 at 12:55 PM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
 
-> There is no ARCH_BCM on arm64, and we need pinctrl-bcm2835 for the rpi3.
+> The array u300_pmx_registers is not declared or used outside
+> of the driver, so make it static to avoid the following warning:
 >
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> drivers/pinctrl/pinctrl-u300.c:673:11: warning: symbol 'u300_pmx_registers' was not declared. Should it be static?
+>
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 
-I see I got an identical patch from Florian Fainelli and applied it.
-Sorry for my clashes, confusion and screwups... Added Eric's
-ACK on the applied patch.
+Patch applied.
 
 Yours,
 Linus Walleij
