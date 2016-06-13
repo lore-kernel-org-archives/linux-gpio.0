@@ -1,39 +1,40 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 0/3] pinctrl: sh-pfc: add r8a7795 support for voltage
- switching
-Date: Mon, 13 Jun 2016 11:03:34 +0900
-Message-ID: <20160613020333.GB5280@verge.net.au>
-References: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
- <CAMuHMdWyt2e9f=8r+q9U=BLFW2R9OSh5GCnpvsMniXWahQ_qzg@mail.gmail.com>
- <20160610111200.GB1626@katana>
- <CAMuHMdXnk2O4Q6O5OYVfdMujFEiit3pU4OD-DNL+qawgwAOyUw@mail.gmail.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] gpio: 104-idi-48: Fix missing spin_lock_init for ack_lock
+Date: Mon, 13 Jun 2016 13:48:53 +0800
+Message-ID: <1465796933.11725.1.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXnk2O4Q6O5OYVfdMujFEiit3pU4OD-DNL+qawgwAOyUw@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f66.google.com ([209.85.220.66]:35032 "EHLO
+	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750803AbcFMFs6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jun 2016 01:48:58 -0400
+Received: by mail-pa0-f66.google.com with SMTP id hf6so1908240pac.2
+        for <linux-gpio@vger.kernel.org>; Sun, 12 Jun 2016 22:48:58 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On Fri, Jun 10, 2016 at 01:21:39PM +0200, Geert Uytterhoeven wrote:
-> Hi Wolfram,
-> 
-> On Fri, Jun 10, 2016 at 1:12 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> >> BTW, are these a hard dependency for patch 3, or will the missing power
-> >> source control just be ignored?
-> >
-> > Long answer short: It is a hard dependency.
-> >
-> > It shouldn't be, but fixing this might need patches to pfc, mmc-core,
-> > and sdhi driver. Need to think about it. (and even then, patch 3 will be
-> > depending on these yet-to-come fixes).
-> 
-> Thanks, good to know! ;-)
-> 
-> Simon: So either you can merge sh-pfc-for-v4.8 first (after I have sent the
-> pull request, and Linus W. has merged it!), or the DTS update will have to wait
-> for v4.9.
+Fixes: 9ae482104cb9 ("gpio: 104-idi-48: Clear pending interrupt once in IRQ handler")
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/gpio/gpio-104-idi-48.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I prefer to wait to v4.9 unless there is a good reason no to.
+diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
+index 6c75c83..2d2763e 100644
+--- a/drivers/gpio/gpio-104-idi-48.c
++++ b/drivers/gpio/gpio-104-idi-48.c
+@@ -247,6 +247,7 @@ static int idi_48_probe(struct device *dev, unsigned int id)
+ 	idi48gpio->irq = irq[id];
+ 
+ 	spin_lock_init(&idi48gpio->lock);
++	spin_lock_init(&idi48gpio->ack_lock);
+ 
+ 	dev_set_drvdata(dev, idi48gpio);
+ 
+-- 
+2.5.0
+
