@@ -1,49 +1,161 @@
-From: Dan O'Donovan <dan@emutex.com>
-Subject: Re: [PATCH v2 1/3] pinctrl: cherryview: prevent concurrent access to
- GPIO controllers
-Date: Mon, 13 Jun 2016 13:30:11 +0100
-Message-ID: <575EA753.3020600@emutex.com>
-References: <1464904543-4094-1-git-send-email-dan@emutex.com>
- <1465561416-29732-1-git-send-email-dan@emutex.com>
- <1465561416-29732-2-git-send-email-dan@emutex.com>
- <CACRpkdaPHcooBkA4PtApQ=8NgQk4G8sZ-=FkRJ7nQOnyXKc5hQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: add Intel WhiskeyCove GPIO driver
+Date: Mon, 13 Jun 2016 14:43:16 +0200
+Message-ID: <CACRpkdY632ooGJWVBVAUXdTvFNkFnnadey4LUGh9u+GvMrt=jA@mail.gmail.com>
+References: <20160611060150.GA88066@worksta>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bert.emutex.com ([91.103.1.109]:32942 "EHLO bert.emutex.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S965222AbcFMMaQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 13 Jun 2016 08:30:16 -0400
-In-Reply-To: <CACRpkdaPHcooBkA4PtApQ=8NgQk4G8sZ-=FkRJ7nQOnyXKc5hQ@mail.gmail.com>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:33737 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1423011AbcFMMnS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jun 2016 08:43:18 -0400
+Received: by mail-oi0-f43.google.com with SMTP id u201so78225336oie.0
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jun 2016 05:43:17 -0700 (PDT)
+In-Reply-To: <20160611060150.GA88066@worksta>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>
+To: Bin Gao <bin.gao@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Bin Gao <bin.gao@intel.com>
 
+On Sat, Jun 11, 2016 at 8:01 AM, Bin Gao <bin.gao@linux.intel.com> wrote:
 
-On 06/13/2016 01:23 PM, Linus Walleij wrote:
-> On Fri, Jun 10, 2016 at 2:23 PM, Dan O'Donovan <dan@emutex.com> wrote:
+> This patch introduces a separate GPIO driver for Intel WhiskeyCove PMIC.
+> This driver is based on gpio-crystalcove.c.
 >
->> Due to a silicon issue on the Atom X5-Z8000 "Cherry Trail" processor
->> series, a common lock must be used to prevent concurrent accesses
->> across the 4 GPIO controllers managed by this driver.
->>
->> See Intel Atom Z8000 Processor Series Specification Update
->> (Rev. 005), errata #CHT34, for further information.
->>
->> Signed-off-by: Dan O'Donovan <dan@emutex.com>
->> Cc: stable <stable@vger.kernel.org>
-> Patch applied.
->
-> Does it *really* need to go into fixes right now or can it wait until
-> the next merge window?
-I have no objection to waiting until the next merge window for this.  Thanks Linus.
->
-> Since the rest of the patches seem to depend on it it creates a problem
-> where some apply to the fixes branch etc and need special care, that
-> is why I'm asking. If it is super-important, I will fix it.
->
-> Yours,
-> Linus Walleij
+> Signed-off-by: Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>
+> Signed-off-by: Bin Gao <bin.gao@intel.com>
 
+It is always good to let Mika and Mathias look at new Intel GPIO
+drivers, so added them to the To: line.
+
+> +config GPIO_WHISKEY_COVE
+> +       tristate "GPIO support for Whiskey Cove PMIC"
+> +       depends on INTEL_SOC_PMIC
+> +       select GPIOLIB_IRQCHIP
+> +       help
+> +         Support for GPIO pins on Whiskey Cove PMIC.
+> +
+> +         Say Yes if you have a Intel SoC based tablet with Whsikey Cove PMIC
+
+Speling
+
+> +#include <linux/interrupt.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/gpio.h>
+
+No use just #include <linux/gpio/driver.h>
+
+> +#include <linux/seq_file.h>
+> +#include <linux/bitops.h>
+> +#include <linux/regmap.h>
+> +#include <linux/mfd/intel_soc_pmic.h>
+> +
+> +#define WCOVE_GPIO_NUM 13
+> +#define WCOVE_VGPIO_NUM        94
+> +
+> +#define UPDATE_IRQ_TYPE                BIT(0)
+> +#define UPDATE_IRQ_MASK                BIT(1)
+> +
+> +#define GPIOIRQ0               0x4e0b
+> +#define GPIOIRQ1               0x4e0c
+> +#define MGPIOIRQ0              0x4e19
+> +#define MGPIOIRQ1              0x4e1a
+> +#define GPIO0P0CTLO            0x4e44
+> +#define GPIO0P0CTLI            0x4e51
+> +#define GPIO1P0CTLO            0x4e4b
+> +#define GPIO1P0CTLI            0x4e58
+> +#define GPIO2P0CTLO            0x4e4f
+> +#define GPIO2P0CTLI            0x4e5c
+> +
+> +#define CTLI_INTCNT_DIS                (0)
+> +#define CTLI_INTCNT_NE         (1 << 1)
+> +#define CTLI_INTCNT_PE         (2 << 1)
+> +#define CTLI_INTCNT_BE         (3 << 1)
+> +
+> +#define CTLO_DIR_IN            (0)
+> +#define CTLO_DIR_OUT           (1 << 5)
+> +
+> +#define CTLO_DRV_CMOS          (0)
+> +#define CTLO_DRV_OD            (1 << 4)
+
+That is likely what we call push-pull and open drain driving.
+Implement .set_single_ended() for this driver so you can handle
+that properly in the driver.
+
+> +#define CTLO_DRV_REN           (1 << 3)
+> +
+> +#define CTLO_RVAL_2KDW         (0)
+> +#define CTLO_RVAL_2KUP         (1 << 1)
+> +#define CTLO_RVAL_50KDW                (2 << 1)
+> +#define CTLO_RVAL_50KUP                (3 << 1)
+
+Looks like pull-up settings. That is strictly speaking pin control.
+
+But OK I am trying to find the right way to abstract this without
+making GPIO too heavyweight.
+
+> +static inline struct wcove_gpio *to_wg(struct gpio_chip *gc)
+> +{
+> +       return container_of(gc, struct wcove_gpio, chip);
+> +}
+
+No don't do that. Use devm_gpiochip_add_data() and just
+use gpiochip_get_data() to get the pointer out. Look at any
+other driver in the upstream kernel, I think I converted them all.
+
+> +static inline int to_reg(int gpio, enum ctrl_register reg_type)
+> +{
+> +       int reg;
+> +
+> +       if (reg_type == CTRL_IN) {
+> +               if (gpio < 7)
+> +                       reg = GPIO0P0CTLI + gpio;
+> +               else if (gpio < 11)
+> +                       reg = GPIO1P0CTLI + (gpio % 7);
+> +               else
+> +                       reg = GPIO2P0CTLI + (gpio % 11);
+> +       } else {
+> +               if (gpio < 7)
+> +                       reg = GPIO0P0CTLO + gpio;
+> +               else if (gpio < 11)
+> +                       reg = GPIO1P0CTLO + (gpio % 7);
+> +               else
+> +                       reg = GPIO2P0CTLO + (gpio % 11);
+> +       }
+> +
+> +       return reg;
+> +}
+
+You could add a kerneldoc to this function explaining how these
+GPIO registers are laid out.
+
+> +static void wcove_gpio_set(struct gpio_chip *chip,
+> +                                unsigned int gpio, int value)
+> +{
+> +       struct wcove_gpio *wg = to_wg(chip);
+> +
+> +       if (gpio > WCOVE_VGPIO_NUM)
+> +               return;
+
+gpiolib already protects against this, you can drop it everywhere.
+
+> +static irqreturn_t wcove_gpio_irq_handler(int irq, void *data)
+> +{
+> +       struct wcove_gpio *wg = data;
+> +       unsigned int p0, p1, virq;
+> +       int pending, gpio;
+> +
+> +       if (regmap_read(wg->regmap, GPIOIRQ0, &p0) ||
+> +           regmap_read(wg->regmap, GPIOIRQ1, &p1))
+> +               return IRQ_NONE;
+
+What does this mean? If we fail to read regmaps then
+it was not our IRQ?
+
+Should be an error message or something at least I think?
+
+Apart from that it looks all right.
+
+Yours,
+Linus Walleij
