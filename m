@@ -1,32 +1,56 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] pinctrl: sh-pfc: Cleanups
-Date: Mon, 13 Jun 2016 14:00:06 +0200
-Message-ID: <CACRpkdZ6q=M=UamEvtNKwcA_4M+ujCYQ0EWbBX2BukwcFe_OTQ@mail.gmail.com>
-References: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH] pinctrl: xway: Change structure initialisation to c99 style
+Date: Mon, 13 Jun 2016 14:03:59 +0200
+Message-ID: <CACRpkdZBL1VW9ZTCt8YkC5GTFOfaT_rH=SdSwvfs=9dO-y0+sQ@mail.gmail.com>
+References: <20160611040252.GA20307@amitoj-Inspiron-3542>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:34009 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1423140AbcFMMAH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jun 2016 08:00:07 -0400
-Received: by mail-oi0-f53.google.com with SMTP id d132so100021823oig.1
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jun 2016 05:00:07 -0700 (PDT)
-In-Reply-To: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:35210 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1422736AbcFMMEB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jun 2016 08:04:01 -0400
+Received: by mail-oi0-f43.google.com with SMTP id w5so124656496oib.2
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jun 2016 05:04:00 -0700 (PDT)
+In-Reply-To: <20160611040252.GA20307@amitoj-Inspiron-3542>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Laxman Dewangan <ldewangan@nvidia.com>, linux-renesas-soc@vger.kernel.org, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
 
-On Fri, Jun 10, 2016 at 12:05 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Sat, Jun 11, 2016 at 6:02 AM, Amitoj Kaur Chawla
+<amitoj1606@gmail.com> wrote:
 
-> This series contains various cleanups for the Renesas Pin Function
-> Controller driver subsystem.
+> Replace the in order struct initialisation style with explicit field
+> style.
+>
+> The Coccinelle semantic patch used to make this change is as follows:
+>
+> @decl@
+> identifier i1,fld;
+> type T;
+> field list[n] fs;
+> @@
+>
+> struct i1 {
+>  fs
+>  T fld;
+>  ...};
+>
+> @@
+> identifier decl.i1,i2,decl.fld;
+> expression e;
+> position bad.p, bad.fix;
+> @@
+>
+> struct i1 i2@p = { ...,
+> + .fld = e
+> - e@fix
+>  ,...};
+>
+> Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-I guess I will get them by pull request from you.
+Patch applied, thanks!
 
 Yours,
 Linus Walleij
