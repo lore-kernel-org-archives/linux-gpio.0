@@ -1,102 +1,61 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH] gpio: omap: make gpio numbering deterministical by using
- of aliases
-Date: Tue, 14 Jun 2016 18:10:56 +0300
-Message-ID: <57601E80.1060003@ti.com>
-References: <1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <575FE7F0.6090200@ti.com> <20160614120152.GW26768@pengutronix.de>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: [PATCH] hsi: Build hsi_boardinfo.c into hsi core if enabled
+Date: Tue, 14 Jun 2016 11:13:04 -0500
+Message-ID: <57602D10.4080708@ti.com>
+References: <201606140808.bRJtAy1i%fengguang.wu@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:60790 "EHLO comal.ext.ti.com"
+Received: from arroyo.ext.ti.com ([198.47.19.12]:51706 "EHLO arroyo.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751213AbcFNPLl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 14 Jun 2016 11:11:41 -0400
-In-Reply-To: <20160614120152.GW26768@pengutronix.de>
+	id S1751364AbcFNQNx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 14 Jun 2016 12:13:53 -0400
+In-Reply-To: <201606140808.bRJtAy1i%fengguang.wu@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, Russell King <linux@armlinux.org.uk>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Rusty Russell <rusty@rustcorp.com.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, linux-pwm@vger.kernel.org, lguest@lists.ozlabs.org, linux-wireless@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linuxp
 
-On 06/14/2016 03:01 PM, Uwe Kleine-K=F6nig wrote:
-> Hello Grygorii,
->=20
-> On Tue, Jun 14, 2016 at 02:18:08PM +0300, Grygorii Strashko wrote:
->> On 06/14/2016 01:03 PM, Uwe Kleine-K=F6nig wrote:
->>> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
->>> index b98ede78c9d8..6814245a54aa 100644
->>> --- a/drivers/gpio/gpio-omap.c
->>> +++ b/drivers/gpio/gpio-omap.c
->>> @@ -1034,6 +1034,7 @@ static int omap_gpio_chip_init(struct gpio_ba=
-nk *bank, struct irq_chip *irqc)
->>>    	static int gpio;
->>>    	int irq_base =3D 0;
->>>    	int ret;
->>> +	int gpio_alias_id;
->>>   =20
->>>    	/*
->>>    	 * REVISIT eventually switch from OMAP-specific gpio structs
->>> @@ -1056,6 +1057,17 @@ static int omap_gpio_chip_init(struct gpio_b=
-ank *bank, struct irq_chip *irqc)
->>>    		bank->chip.label =3D "gpio";
->>>    		bank->chip.base =3D gpio;
->>
->> I think, the gpio base correction should be done here
->=20
-> What is the upside of doing it here? It has the downside that it need=
-s
-> one more indention level. The only difference I see is that it doesn'=
-t
-> apply for mpuio devices then and wonder if that is relevant.
+If the HSI core is built as a module hsi_boardinfo may still
+be built-in as its Kconfig type is bool, which can cause build
+issues. Fix this by building this code into the HSI core when
+enabled.
 
-Personally, I prefer not ti touch mpuio code unless really required.
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
+This build error seems to be due to Kconfig symbol CONFIG_HSI_BOARDINFO
+being a bool but depending on a tristate (CONFIG_HSI). This is normally
+okay when it is just a flag to enable a feature in source, but the
+helper code file hsi_boardinfo.c is built as a separate entity when
+enabled. This patch is probably how it was intended, and is more like
+how others do this kind of thing.
 
->  =20
->>>    	}
->>> +
->>> +	/*
->>> +	 * Traditionally the base is given out in first-come-first-serve =
-order.
->>> +	 * This might shuffle the numbering of gpios if the probe order c=
-hanges.
->>> +	 * So make the base deterministical if the device tree specifies =
-alias
->>> +	 * ids.
->>> +	 */
->>> +	gpio_alias_id =3D of_alias_get_id(bank->chip.of_node, "gpio");
->>> +	if (gpio_alias_id >=3D 0)
->>> +		bank->chip.base =3D bank->width * gpio_alias_id;
->>> +
->>
->> Unfortunately, this driver is still used by non-DT platforms, so abo=
-ve code will
->>   break build if !OF && !OF_GPIO
->=20
-> Without CONFIG_OF of_alias_get_id still exists and returns -ENOSYS wh=
-ich
-> should make the added code a nop. Does your compiler agree with you t=
-hat
-> my patch breaks building the driver?
+This patch should be applied before the parent patch:
 
-make ARCH=3Darm omap1_defconfig
-make ARCH=3Darm ./drivers/gpio/gpio-omap.o
+ drivers/hsi/Makefile              | 3 ++-
+ drivers/hsi/{hsi.c => hsi_core.c} | 0
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+ rename drivers/hsi/{hsi.c => hsi_core.c} (100%)
 
-
-drivers/gpio/gpio-omap.c: In function 'omap_gpio_chip_init':
-drivers/gpio/gpio-omap.c:1066:44: error: 'struct gpio_chip' has no memb=
-er named 'of_node'
-  gpio_alias_id =3D of_alias_get_id(bank->chip.of_node, "gpio");
-                                            ^
-make[1]: *** [drivers/gpio/gpio-omap.o] Error 1
-make: *** [drivers/gpio/gpio-omap.o] Error 2
-
-
---=20
-regards,
--grygorii
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/hsi/Makefile b/drivers/hsi/Makefile
+index 360371e..9694478 100644
+--- a/drivers/hsi/Makefile
++++ b/drivers/hsi/Makefile
+@@ -1,7 +1,8 @@
+ #
+ # Makefile for HSI
+ #
+-obj-$(CONFIG_HSI_BOARDINFO)    += hsi_boardinfo.o
+ obj-$(CONFIG_HSI)              += hsi.o
++hsi-objs                       := hsi_core.o
++hsi-$(CONFIG_HSI_BOARDINFO)    += hsi_boardinfo.o
+ obj-y                          += controllers/
+ obj-y                          += clients/
+diff --git a/drivers/hsi/hsi.c b/drivers/hsi/hsi_core.c
+similarity index 100%
+rename from drivers/hsi/hsi.c
+rename to drivers/hsi/hsi_core.c
+-- 
+2.8.3
