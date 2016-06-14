@@ -1,27 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 01/12] gpio: Only descend into gpio directory when
- CONFIG_GPIOLIB is set
-Date: Tue, 14 Jun 2016 08:58:49 +0200
-Message-ID: <CACRpkdaEkCzp3W4x3HSurpHb1qtkJp-SvWCAQivuL3x8CBY-iQ@mail.gmail.com>
-References: <20160613200211.14790-1-afd@ti.com> <20160613200211.14790-2-afd@ti.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: fix property name in bindings doc
+Date: Tue, 14 Jun 2016 09:04:03 +0200
+Message-ID: <CACRpkdbp865-gdEx==_a_6kvkY_MqStU+-2J3LVo3KOnL6tvFw@mail.gmail.com>
+References: <1465571485-8493-1-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <20160613200211.14790-2-afd@ti.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Russell King <linux@armlinux.org.uk>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Sebastian Reichel <sre@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Rusty Russell <rusty@rustcorp.com.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, lguest@lists.ozlabs.org, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>, linux-me
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:35256 "EHLO
+	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751687AbcFNHEE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jun 2016 03:04:04 -0400
+Received: by mail-oi0-f44.google.com with SMTP id w5so163903223oib.2
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Jun 2016 00:04:04 -0700 (PDT)
+In-Reply-To: <1465571485-8493-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On Mon, Jun 13, 2016 at 10:02 PM, Andrew F. Davis <afd@ti.com> wrote:
+On Fri, Jun 10, 2016 at 5:11 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 
-> When CONFIG_GPIOLIB is not set make will still descend into the gpio
-> directory but nothing will be built. This produces unneeded build
-> artifacts and messages in addition to slowing the build. Fix this here.
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 >
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> It must be "drive-strength", with a hyphen.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Patch applied. Strange that this went unnoticed for years.
+Geert are you queuing this too?
 
 Yours,
 Linus Walleij
