@@ -1,84 +1,85 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: [PATCH 1/2 v2] gpio: omap: make gpio numbering deterministical by using of aliases
-Date: Tue, 14 Jun 2016 20:57:11 +0200
-Message-ID: <1465930632-18941-2-git-send-email-u.kleine-koenig@pengutronix.de>
-References: <1465930632-18941-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH] gpiolib-acpi: add _DEP support for Acer One 10
+Date: Tue, 14 Jun 2016 23:38:52 +0200
+Message-ID: <2b7fdb9a-0c7a-e120-c2c9-acde736f420e@intel.com>
+References: <1463368705.22433.15.camel@rzhang1-mobl4>
+ <CACRpkdbheZ55Hc5egwrbQOBQaDjkq+_-N3Hm0+b=Vqmau5=a1w@mail.gmail.com>
+ <20160614100139.GI1740@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:33471 "EHLO
-	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932575AbcFNS5s (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 14 Jun 2016 14:57:48 -0400
-In-Reply-To: <1465930632-18941-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Received: from mga01.intel.com ([192.55.52.88]:44637 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750771AbcFNVi5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 14 Jun 2016 17:38:57 -0400
+In-Reply-To: <20160614100139.GI1740@lahna.fi.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "Zhang, Rui" <rui.zhang@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-acpi <linux-acpi@intel.com>, "stace75@gmail.com" <stace75@gmail.com>
 
-Traditionally the n-th gpio device probed by the omap gpio driver got
-the gpio number range [n*32 .. n*32+31].
-When order of the devices probed by the driver changes (which can happe=
-n
-already now when some devices have a pinctrl and so the first probe
-attempt returns -ENODEV) the numbering changes.
+On 6/14/2016 12:01 PM, Mika Westerberg wrote:
+> On Tue, Jun 14, 2016 at 09:33:30AM +0200, Linus Walleij wrote:
+>> Mika, Rafael: this came from Intel, can you review it? Should it be applied?
+> Looks reasonable so unless Rafael objects you can add my,
+>
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-To ensure a deterministical numbering use of_alias_get_id to determine
-the base for a given device. If no respective alias exists fall back to
-the traditional numbering.
+No objections.
 
-=46or the unusual case where only a part of the gpio devices have a
-matching alias some of them might fail to probe. But if none of them ha=
-s
-an alias or all, there is no conflict which should be good enough to
-maintain backward compatibility.
+>> Yours,
+>> Linus Walleij
+>>
+>> On Mon, May 16, 2016 at 5:18 AM, Zhang, Rui <rui.zhang@intel.com> wrote:
+>>
+>>>  From 8590bdcacc94a1ab260b4ea2e6e747b0bc1d9bf8 Mon Sep 17 00:00:00 2001
+>>> From: Zhang Rui <rui.zhang@intel.com>
+>>> Date: Wed, 11 May 2016 09:02:28 +0800
+>>> Subject: [PATCH] gpiolib-acpi: add _DEP support for Acer One 10
+>>>
+>>> On Acer One 10, the ACPI battery driver can not be probed because
+>>> it depends on the GPIO controller as well as the I2C controller to work,
+>>>          Device (BATC)
+>>>          {
+>>>              Name (_HID, EisaId ("PNP0C0A") /* Control Method Battery */)
+>>>              ...
+>>>              Name (_DEP, Package (0x03)  // _DEP: Dependencies
+>>>              {
+>>>                  I2C1,
+>>>                  GPO2,
+>>>                  GPO0
+>>>              })
+>>>              ...
+>>>          }
+>>>
+>>> The I2C dependency also exists on other platforms and has been fixed by commit
+>>> 40e7fcb19293 ("ACPI: Add _DEP support to fix battery issue on Asus T100TA"),
+>>> this patch resolves the GPIO dependency for Acer One 10.
+>>>
+>>> Link:https://bugzilla.kernel.org/show_bug.cgi?id=115191
+>>> CC: Mika Westerberg <mika.westerberg@linux.intel.com>
+>>> CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>> Tested-by: Stace A. Zacharov <stace75@gmail.com>
+>>> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+>>> ---
+>>>   drivers/gpio/gpiolib-acpi.c | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+>>> index 682070d..4b809b0 100644
+>>> --- a/drivers/gpio/gpiolib-acpi.c
+>>> +++ b/drivers/gpio/gpiolib-acpi.c
+>>> @@ -836,6 +836,7 @@ void acpi_gpiochip_add(struct gpio_chip *chip)
+>>>          }
+>>>
+>>>          acpi_gpiochip_request_regions(acpi_gpio);
+>>> +       acpi_walk_dep_device_list(handle);
+>>>   }
+>>>
+>>>   void acpi_gpiochip_remove(struct gpio_chip *chip)
+>>> --
+>>> 1.9.1
+>>>
+>>>
 
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
----
- drivers/gpio/gpio-omap.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index b98ede78c9d8..4d91792e7266 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1053,9 +1053,26 @@ static int omap_gpio_chip_init(struct gpio_bank =
-*bank, struct irq_chip *irqc)
- 			bank->chip.parent =3D &omap_mpuio_device.dev;
- 		bank->chip.base =3D OMAP_MPUIO(0);
- 	} else {
-+		int gpio_alias_id __maybe_unused;
-+
- 		bank->chip.label =3D "gpio";
--		bank->chip.base =3D gpio;
-+
-+#if defined(CONFIG_OF_GPIO)
-+		/*
-+		 * Traditionally the base is given out in first-come-first-serve
-+		 * order.  This might shuffle the numbering of gpios if the
-+		 * probe order changes.  So make the base deterministical if the
-+		 * device tree specifies alias ids.
-+		 */
-+		gpio_alias_id =3D of_alias_get_id(bank->chip.of_node, "gpio");
-+		if (gpio_alias_id >=3D 0)
-+			bank->chip.base =3D bank->width * gpio_alias_id;
-+		else
-+#endif
-+			bank->chip.base =3D gpio;
- 	}
-+
-+
- 	bank->chip.ngpio =3D bank->width;
-=20
- 	ret =3D gpiochip_add_data(&bank->chip, bank);
---=20
-2.8.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
