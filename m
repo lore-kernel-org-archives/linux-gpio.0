@@ -1,92 +1,99 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: [PATCH] gpio: omap: make gpio numbering deterministical by using of aliases
-Date: Tue, 14 Jun 2016 12:03:24 +0200
-Message-ID: <1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 5/5] gpio: of: factor out common code to a new helper function
+Date: Tue, 14 Jun 2016 19:07:07 +0900
+Message-ID: <1465898827-2229-6-git-send-email-yamada.masahiro@socionext.com>
+References: <1465898827-2229-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:35617 "EHLO
-	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751512AbcFNKDe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 14 Jun 2016 06:03:34 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:55837 "EHLO
+	conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751326AbcFNKGg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jun 2016 06:06:36 -0400
+In-Reply-To: <1465898827-2229-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
 
-Traditionally the n-th gpio device probed by the omap gpio driver got
-the gpio number range [n*32 .. n*32+31].
-When order of the devices probed by the driver changes (which can happe=
-n
-already now when some devices have a pinctrl and so the first probe
-attempt returns -ENODEV) the numbering changes.
+The conversion from a DT spec to struct gpio_desc is common between
+of_get_named_gpiod_flags() and of_parse_own_gpio().  Factor out the
+common code to a new helper, of_xlate_and_get_gpiod_flags().
 
-To ensure a deterministical numbering use of_alias_get_id to determine
-the number base for a given device. If no respective alias exists fall
-back to the traditional numbering.
-
-=46or the unusual case where only a part of the gpio devices have a
-matching alias some of them might fail to probe. But if none of them ha=
-s
-an alias or all, there is no conflict which should be good enough to
-maintain backward compatibility.
-
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
-Hello,
 
-if you're happy with this patch I can follow up and add the respective
-aliases to the device trees.
+ drivers/gpio/gpiolib-of.c | 37 ++++++++++++++++++-------------------
+ 1 file changed, 18 insertions(+), 19 deletions(-)
 
-Best regards
-Uwe
-
- drivers/gpio/gpio-omap.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index b98ede78c9d8..6814245a54aa 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1034,6 +1034,7 @@ static int omap_gpio_chip_init(struct gpio_bank *=
-bank, struct irq_chip *irqc)
- 	static int gpio;
- 	int irq_base =3D 0;
- 	int ret;
-+	int gpio_alias_id;
-=20
- 	/*
- 	 * REVISIT eventually switch from OMAP-specific gpio structs
-@@ -1056,6 +1057,17 @@ static int omap_gpio_chip_init(struct gpio_bank =
-*bank, struct irq_chip *irqc)
- 		bank->chip.label =3D "gpio";
- 		bank->chip.base =3D gpio;
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index d5e19f6..75e7b39 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -37,6 +37,22 @@ static struct gpio_chip *of_find_gpiochip_by_node(struct device_node *np)
+ 	return gpiochip_find(np, of_gpiochip_match_node);
+ }
+ 
++static struct gpio_desc *of_xlate_and_get_gpiod_flags(struct gpio_chip *chip,
++					struct of_phandle_args *gpiospec,
++					enum of_gpio_flags *flags)
++{
++	int ret;
++
++	if (chip->of_gpio_n_cells != gpiospec->args_count)
++		return ERR_PTR(-EINVAL);
++
++	ret = chip->of_xlate(chip, gpiospec, flags);
++	if (ret < 0)
++		return ERR_PTR(ret);
++
++	return gpiochip_get_desc(chip, ret);
++}
++
+ /**
+  * of_get_named_gpiod_flags() - Get a GPIO descriptor and flags for GPIO API
+  * @np:		device node to get GPIO from
+@@ -69,18 +85,8 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
+ 		desc = ERR_PTR(-EPROBE_DEFER);
+ 		goto out;
  	}
-+
-+	/*
-+	 * Traditionally the base is given out in first-come-first-serve orde=
-r.
-+	 * This might shuffle the numbering of gpios if the probe order chang=
-es.
-+	 * So make the base deterministical if the device tree specifies alia=
-s
-+	 * ids.
-+	 */
-+	gpio_alias_id =3D of_alias_get_id(bank->chip.of_node, "gpio");
-+	if (gpio_alias_id >=3D 0)
-+		bank->chip.base =3D bank->width * gpio_alias_id;
-+
- 	bank->chip.ngpio =3D bank->width;
-=20
- 	ret =3D gpiochip_add_data(&bank->chip, bank);
---=20
-2.8.1
+-	if (chip->of_gpio_n_cells != gpiospec.args_count) {
+-		desc = ERR_PTR(-EINVAL);
+-		goto out;
+-	}
+-
+-	ret = chip->of_xlate(chip, &gpiospec, flags);
+-	if (ret < 0) {
+-		desc = ERR_PTR(ret);
+-		goto out;
+-	}
+ 
+-	desc = gpiochip_get_desc(chip, ret);
++	desc = of_xlate_and_get_gpiod_flags(chip, &gpiospec, flags);
+ 	if (IS_ERR(desc))
+ 		goto out;
+ 
+@@ -145,9 +151,6 @@ static struct gpio_desc *of_parse_own_gpio(struct device_node *np,
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+-	if (tmp != chip->of_gpio_n_cells)
+-		return ERR_PTR(-EINVAL);
+-
+ 	gpiospec.np = chip_np;
+ 	gpiospec.args_count = tmp;
+ 
+@@ -155,11 +158,7 @@ static struct gpio_desc *of_parse_own_gpio(struct device_node *np,
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+-	ret = chip->of_xlate(chip, &gpiospec, &xlate_flags);
+-	if (ret < 0)
+-		return ERR_PTR(ret);
+-
+-	desc = gpiochip_get_desc(chip, ret);
++	desc = of_xlate_and_get_gpiod_flags(chip, &gpiospec, &xlate_flags);
+ 	if (IS_ERR(desc))
+ 		return desc;
+ 
+-- 
+1.9.1
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
