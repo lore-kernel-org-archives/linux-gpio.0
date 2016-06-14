@@ -1,43 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] iio: stx104: Add GPIO support for the Apex Embedded
- Systems STX104
-Date: Tue, 14 Jun 2016 08:53:48 +0200
-Message-ID: <CACRpkdZ__YaP24hC9y17tnsXC5HybzmQmHdpTCUYSNWciKg5zA@mail.gmail.com>
-References: <20160613130628.GA28944@sophia>
+Subject: Re: [PATCH 1/2] pinctrl: fix incorrect inline keyword in multiple drivers
+Date: Tue, 14 Jun 2016 08:55:05 +0200
+Message-ID: <CACRpkdZSqFfp6v-jk1Xv3RVK4xz-Di_4rj_TmHnsmFRPswSB7A@mail.gmail.com>
+References: <1465831250-2689101-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:35208 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751316AbcFNGxu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jun 2016 02:53:50 -0400
-Received: by mail-oi0-f45.google.com with SMTP id w5so163598979oib.2
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jun 2016 23:53:50 -0700 (PDT)
-In-Reply-To: <20160613130628.GA28944@sophia>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:33311 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751370AbcFNGzH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jun 2016 02:55:07 -0400
+Received: by mail-oi0-f41.google.com with SMTP id u201so115624912oie.0
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jun 2016 23:55:06 -0700 (PDT)
+In-Reply-To: <1465831250-2689101-1-git-send-email-arnd@arndb.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Heiko Stuebner <heiko@sntech.de>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>, Shawn Guo <shawnguo@kernel.org>, Adrian Alonso <aalonso@freescale.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "open list:ARM/STI ARCHITECTURE" <kernel@stlinux.com>
 
-On Mon, Jun 13, 2016 at 3:06 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Mon, Jun 13, 2016 at 5:18 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-> The Apex Embedded Systems STX104 device features eight lines of digital
-> I/O (four digital inputs and four digital outputs). This patch adds GPIO
-> support for these eight lines of digital I/O via GPIOLIB.
+> When building with 'make W=1', we get harmless warnings about
+> five drivers in drivers/pinctrl, which all contain a copy of
+> the same line:
 >
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-> ---
-> Changes in v3:
->   - Revert v2 change; any arch should be able to select GPIOLIB
->   - Return -EINVAL when attempting to set a GPIO to a direction it
->     cannot be
->   - Call stx104_gpio_set to have an initial value when setting a GPIO to
->     output direction
+> drivers/pinctrl/freescale/pinctrl-imx1-core.c:160:1: error: 'inline' is not at beginning of declaration [-Werror=old-style-declaration]
+>
+> This replaces the somewhat nonstandard 'static const inline'
+> with 'static inline const', which has the same meaning but
+> does not cause this warning.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Patch applied.
 
 Yours,
 Linus Walleij
