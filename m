@@ -1,38 +1,57 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] gpio: pca953x: enable driver on Intel Edison
-Date: Wed, 15 Jun 2016 01:57:56 +0300
-Message-ID: <1465945076-25517-1-git-send-email-andriy.shevchenko@linux.intel.com>
+From: Bin Gao <bin.gao@linux.intel.com>
+Subject: Re: [PATCH] gpio: add Intel WhiskeyCove GPIO driver
+Date: Tue, 14 Jun 2016 16:39:27 -0700
+Message-ID: <20160614233927.GA25061@worksta>
+References: <20160611060150.GA88066@worksta>
+ <20160614100931.GJ1740@lahna.fi.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:54372 "EHLO mga03.intel.com"
+Received: from mga14.intel.com ([192.55.52.115]:58847 "EHLO mga14.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752862AbcFNW6B (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 14 Jun 2016 18:58:01 -0400
+	id S1751190AbcFNXfo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 14 Jun 2016 19:35:44 -0400
+Content-Disposition: inline
+In-Reply-To: <20160614100931.GJ1740@lahna.fi.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Bin Gao <bin.gao@intel.com>
 
-Intel Edison board has 4 GPIO expanders PCA9555a connected to I2C bus. Add an
-ID to support them.
+On Tue, Jun 14, 2016 at 01:09:31PM +0300, Mika Westerberg wrote:
+> On Fri, Jun 10, 2016 at 11:01:51PM -0700, Bin Gao wrote:
+> > +static const struct platform_device_id pmic_gpio_id_table[] = {
+> > +	{ "bxt_wcove_gpio", },
+> > +};
+> 
+> Do you really need this?
+> 
+> > +
+> > +static struct platform_driver wcove_gpio_driver = {
+> > +	.probe = wcove_gpio_probe,
+> > +	.remove = wcove_gpio_remove,
+> > +	.driver = {
+> > +		.name = "wcove_gpio",
+> > +	},
+> > +	.id_table = pmic_gpio_id_table,
+> 
+> and this?
+> 
+> > +};
+> > +
+> > +module_platform_driver(wcove_gpio_driver);
+> > +
+> > +MODULE_AUTHOR("Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>");
+> > +MODULE_DESCRIPTION("Intel Whiskey Cove GPIO Driver");
+> > +MODULE_LICENSE("GPL v2");
+> 
+> You can add
+> 
+> MODULE_ALIAS("platform:wcove_gpio");
+> 
+> to get the module loaded automatically.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-pca953x.c | 2 ++
- 1 file changed, 2 insertions(+)
+Mika,
+Thanks for your review. I'll address these in patch v2.
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 21b21cd..8b630a4 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -67,6 +67,8 @@ static const struct i2c_device_id pca953x_id[] = {
- 	{ "pca9575", 16 | PCA957X_TYPE | PCA_INT, },
- 	{ "pca9698", 40 | PCA953X_TYPE, },
- 
-+	{ "pcal9555a", 16 | PCA953X_TYPE | PCA_INT | PCA_PCAL, },
-+
- 	{ "max7310", 8  | PCA953X_TYPE, },
- 	{ "max7312", 16 | PCA953X_TYPE | PCA_INT, },
- 	{ "max7313", 16 | PCA953X_TYPE | PCA_INT, },
--- 
-2.8.1
-
+-Bin
