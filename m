@@ -1,59 +1,54 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 2/2] pinctrl: uniphier: fix meaningless drive control offsets
-Date: Wed, 15 Jun 2016 17:18:06 +0900
-Message-ID: <1465978686-28578-3-git-send-email-yamada.masahiro@socionext.com>
-References: <1465978686-28578-1-git-send-email-yamada.masahiro@socionext.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] gpio: omap: make gpio numbering deterministical by using
+ of aliases
+Date: Wed, 15 Jun 2016 01:27:06 -0700
+Message-ID: <20160615082705.GW22406@atomide.com>
+References: <1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <CACRpkdaVRTj4jpGQp9nDKo8RAPDPUaApp4jAdBGRgd45bqo2zQ@mail.gmail.com>
+ <20160615072404.GB26768@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conuserg-08.nifty.com ([210.131.2.75]:37711 "EHLO
-	conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752003AbcFOITI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jun 2016 04:19:08 -0400
-In-Reply-To: <1465978686-28578-1-git-send-email-yamada.masahiro@socionext.com>
+Received: from muru.com ([72.249.23.125]:56360 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751529AbcFOI1K (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 15 Jun 2016 04:27:10 -0400
+Content-Disposition: inline
+In-Reply-To: <20160615072404.GB26768@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
 
-These are input-only pins.  They do not support drive controlling
-in the first place.
+* Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de> [160615 00:27]=
+:
+> On Wed, Jun 15, 2016 at 08:56:58AM +0200, Linus Walleij wrote:
+> > The way forward is to use the character device and use gpiochip
+> > devices with offset indexes and look up GPIOs by name from the
+> > character devices. If nothing substantial happens I am merging the
+> > final pieces of the GPIO chardev ABI for v4.8 and that is doing all=
+ that
+> > sysfs was doing and then some. I just need to change a small thing
+> > before sending the final version for review.
+>=20
+> Hmm, so /sys/class/gpio was obsoleted before the substitution was rea=
+dy?
+> I'd say an overlapping of several kernel versions would be good as we
+> cannot expect that userspace changes as fast as the kernel.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Well the /sys/class/gpio is an interface, and we'll have to maintain
+it basically forever as we all know. It also works just fine for simple
+things, so let's make sure it is usable. Having it inconsistent can
+cause nasty side effects upgrading kernels.
 
- drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Naturally I don't have any objections for adding a character device :)
 
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
-index 8c61493..002bd6e 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
-@@ -138,7 +138,7 @@ static const struct pinctrl_pin_desc uniphier_pro4_pins[] = {
- 			     38, UNIPHIER_PIN_DRV_1BIT,
- 			     38, UNIPHIER_PIN_PULL_DOWN),
- 	UNIPHIER_PINCTRL_PIN(39, "BOOTSWAP", UNIPHIER_PIN_IECTRL_NONE,
--			     39, UNIPHIER_PIN_DRV_NONE,
-+			     -1, UNIPHIER_PIN_DRV_NONE,
- 			     39, UNIPHIER_PIN_PULL_UP),
- 	UNIPHIER_PINCTRL_PIN(40, "NFD0", UNIPHIER_PIN_IECTRL_NONE,
- 			     2, UNIPHIER_PIN_DRV_2BIT,
-@@ -639,7 +639,7 @@ static const struct pinctrl_pin_desc uniphier_pro4_pins[] = {
- 			     191, UNIPHIER_PIN_DRV_1BIT,
- 			     191, UNIPHIER_PIN_PULL_DOWN),
- 	UNIPHIER_PINCTRL_PIN(206, "CLK54I", UNIPHIER_PIN_IECTRL_NONE,
--			     192, UNIPHIER_PIN_DRV_NONE,
-+			     -1, UNIPHIER_PIN_DRV_NONE,
- 			     192, UNIPHIER_PIN_PULL_DOWN),
- 	UNIPHIER_PINCTRL_PIN(207, "YIN0", UNIPHIER_PIN_IECTRL_NONE,
- 			     193, UNIPHIER_PIN_DRV_1BIT,
-@@ -1005,7 +1005,7 @@ static const struct pinctrl_pin_desc uniphier_pro4_pins[] = {
- 			     311, UNIPHIER_PIN_DRV_1BIT,
- 			     311, UNIPHIER_PIN_PULL_UP),
- 	UNIPHIER_PINCTRL_PIN(328, "DMDISO", UNIPHIER_PIN_IECTRL_NONE,
--			     312, UNIPHIER_PIN_DRV_NONE,
-+			     -1, UNIPHIER_PIN_DRV_NONE,
- 			     312, UNIPHIER_PIN_PULL_DOWN),
- };
- 
--- 
-1.9.1
+Regards,
 
+Tony
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
