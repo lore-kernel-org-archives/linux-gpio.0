@@ -1,68 +1,61 @@
-From: Vincent Pelletier <plr.vincent@gmail.com>
-Subject: Re: [RFC] qnap-tsx51: add new driver for leds and button support on
- QNAP TS-x51 series
-Date: Wed, 15 Jun 2016 00:45:04 +0000
-Message-ID: <20160615004504.7b83d83c@gmail.com>
-References: <20160606004406.29f016de@gmail.com>
-	<CACRpkdZ57_evCC=+hev9kNpY4bNViG+oBP7pOh8HkgRA0-oLXA@mail.gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 12/12] leds: Only descend into leds directory when
+ CONFIG_NEW_LEDS is set
+Date: Wed, 15 Jun 2016 08:48:50 +0200
+Message-ID: <5760FA52.7010806@samsung.com>
+References: <20160613200211.14790-1-afd@ti.com>
+ <20160613200211.14790-13-afd@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f68.google.com ([209.85.220.68]:34077 "EHLO
-	mail-pa0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752618AbcFOApI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jun 2016 20:45:08 -0400
-Received: by mail-pa0-f68.google.com with SMTP id us13so284426pab.1
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Jun 2016 17:45:08 -0700 (PDT)
-In-Reply-To: <CACRpkdZ57_evCC=+hev9kNpY4bNViG+oBP7pOh8HkgRA0-oLXA@mail.gmail.com>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:15908 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751493AbcFOGs4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jun 2016 02:48:56 -0400
+In-reply-to: <20160613200211.14790-13-afd@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Russell King <linux@armlinux.org.uk>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Rusty Russell <rusty@rustcorp.com.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, linux-pwm@vger.kernel.org, lguest@lists.ozlabs.org, linux-wireless@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, linux-media@vger.kernel.org
 
-On Tue, 14 Jun 2016 09:17:18 +0200, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> Yes, you can have static mappings, it's a bit tricky and only
-> done in a few places in the kernel. You have to add a static
-> lookup table using #include <linux/gpio/machine.h>
-> 
-> See:
-> arch/arm/mach-integrator/impd1.c function impd1_probe()
-> for an example.
-> 
-> git grep gpiod_add_lookup_table
-> for other examples.
+Hi Andrew,
 
-Thanks for the examples.
+Thanks for the patch.
 
-I notice that no driver using gpiod_add_lookup_table also uses
-gpiod_get for the gpios it just declared (output reordered & annotated):
+Please address the issue [1] raised by test bot and resubmit.
 
-  $ git grep -l gpiod_add_lookup_table | xargs grep -l gpiod_get
-  Documentation/gpio/board.txt
-  drivers/gpio/gpiolib.c
-  include/linux/gpio/machine.h
-    All above are on the gpio subsystem side, so it makes sense to
-    reference both.
-  drivers/mfd/intel_soc_pmic_core.c
-    This one declares a "panel" descriptor and gets one for
-    "intel_soc_pmic", so it is not using the descriptor it declares.
-  $
+Thanks,
+Jacek Anaszewski
 
-So I wonder if it makes sense at all for a driver to both define a gpio
-lookup table and then look for each gpio it just defined.
+[1] https://lkml.org/lkml/2016/6/13/1091
 
-Maybe I am doing it wrong and/or at the wrong level ?
+On 06/13/2016 10:02 PM, Andrew F. Davis wrote:
+> When CONFIG_NEW_LEDS is not set make will still descend into the leds
+> directory but nothing will be built. This produces unneeded build
+> artifacts and messages in addition to slowing the build. Fix this here.
+>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> ---
+>   drivers/Makefile | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/Makefile b/drivers/Makefile
+> index 567e32c..fa514d5 100644
+> --- a/drivers/Makefile
+> +++ b/drivers/Makefile
+> @@ -127,7 +127,7 @@ obj-$(CONFIG_CPU_FREQ)		+= cpufreq/
+>   obj-$(CONFIG_CPU_IDLE)		+= cpuidle/
+>   obj-$(CONFIG_MMC)		+= mmc/
+>   obj-$(CONFIG_MEMSTICK)		+= memstick/
+> -obj-y				+= leds/
+> +obj-$(CONFIG_NEW_LEDS)		+= leds/
+>   obj-$(CONFIG_INFINIBAND)	+= infiniband/
+>   obj-$(CONFIG_SGI_SN)		+= sn/
+>   obj-y				+= firmware/
+>
 
-I looked at the ACPI API and try to find a way to extend the
-incomplete tables when my platform module gets loaded. It seems
-possible with devicetree (drivers/of/dynamic.c) but I couldn't find a
-way with APCI yet. I did find that it's possible to override acpi
-entire tables, but that seems overkill for my needs (it's not that the
-existing tables are wrong, they are incomplete) and hard to maintain
-(depends on bios revision).
 
-Regards,
 -- 
-Vincent Pelletier
+Best regards,
+Jacek Anaszewski
