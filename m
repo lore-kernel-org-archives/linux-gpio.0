@@ -1,64 +1,69 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH] gpio: omap: make gpio numbering deterministical by using
- of aliases
-Date: Wed, 15 Jun 2016 12:56:47 +0300
-Message-ID: <5761265F.2050508@ti.com>
-References: <1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <CACRpkdaVRTj4jpGQp9nDKo8RAPDPUaApp4jAdBGRgd45bqo2zQ@mail.gmail.com>
- <20160615072404.GB26768@pengutronix.de> <20160615082705.GW22406@atomide.com>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH] hsi: Build hsi_boardinfo.c into hsi core if enabled
+Date: Wed, 15 Jun 2016 14:48:42 +0200
+Message-ID: <20160615124842.GA6702@earth>
+References: <201606140808.bRJtAy1i%fengguang.wu@intel.com>
+ <57602D10.4080708@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([198.47.19.12]:57123 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751889AbcFOJ5Z (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 15 Jun 2016 05:57:25 -0400
-In-Reply-To: <20160615082705.GW22406@atomide.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="h31gzZEtNLTqOjlF"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <57602D10.4080708@ti.com>
+Sender: linux-leds-owner@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: kbuild test robot <lkp@intel.com>, kbuild-all@01.org, Russell King <linux@armlinux.org.uk>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Rusty Russell <rusty@rustcorp.com.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, linux-pwm@vger.kernel.org, lguest@lists.ozlabs.org, linux-wireless@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linuxppc-dev@lists.ozlab
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On 06/15/2016 11:27 AM, Tony Lindgren wrote:
-> * Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de> [160615 00:2=
-7]:
->> On Wed, Jun 15, 2016 at 08:56:58AM +0200, Linus Walleij wrote:
->>> The way forward is to use the character device and use gpiochip
->>> devices with offset indexes and look up GPIOs by name from the
->>> character devices. If nothing substantial happens I am merging the
->>> final pieces of the GPIO chardev ABI for v4.8 and that is doing all=
- that
->>> sysfs was doing and then some. I just need to change a small thing
->>> before sending the final version for review.
->>
->> Hmm, so /sys/class/gpio was obsoleted before the substitution was re=
-ady?
->> I'd say an overlapping of several kernel versions would be good as w=
-e
->> cannot expect that userspace changes as fast as the kernel.
+
+--h31gzZEtNLTqOjlF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Andrew,
+
+On Tue, Jun 14, 2016 at 11:13:04AM -0500, Andrew F. Davis wrote:
+> If the HSI core is built as a module hsi_boardinfo may still
+> be built-in as its Kconfig type is bool, which can cause build
+> issues. Fix this by building this code into the HSI core when
+> enabled.
 >=20
-> Well the /sys/class/gpio is an interface, and we'll have to maintain
-> it basically forever as we all know. It also works just fine for simp=
-le
-> things, so let's make sure it is usable. Having it inconsistent can
-> cause nasty side effects upgrading kernels.
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> ---
+> This build error seems to be due to Kconfig symbol CONFIG_HSI_BOARDINFO
+> being a bool but depending on a tristate (CONFIG_HSI). This is normally
+> okay when it is just a flag to enable a feature in source, but the
+> helper code file hsi_boardinfo.c is built as a separate entity when
+> enabled. This patch is probably how it was intended, and is more like
+> how others do this kind of thing.
 >=20
+> This patch should be applied before the parent patch:
 
-Wouldn't gpio-line-names be helpful for such cases as mentioned in [1],=
-[2]
-But I don't know it these properties were exposed in legacy GPIO sysfs =
-interface also.
+Thanks, I applied both patches.
 
-[1] http://www.spinics.net/lists/linux-gpio/msg15040.html
-[2] https://patchwork.ozlabs.org/patch/617713/
-=20
+-- Sebastian
 
---=20
-regards,
--grygorii
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--h31gzZEtNLTqOjlF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJXYU6oAAoJENju1/PIO/qae6QP/35LQ3B8vO2lZZLD3fJoRLEz
+yJp80KFgWVGLlJIxoywl6Lm8tK1b48miCd73ee7Euagta3zJqZMutPO3lCiaExQh
+QXIykcVyzZXxa6AELhlPXbJlffoetyTvq7n831+Hk1IqhwOgCpm8jSVszgw11fyH
+FIDtsW7QpUnhq/lBIl+6yc8OYszH3N69Cv0sS3J5neDT2W9dochTcv01JEMAmFIL
+8TWT+5hZ/7WvvXt2tDJ03uP7aNbpDOAhutNaAjsYZEA9pX+SVa17O9eQGT5tAT5a
+0pWIFazcVt06+phTF28XlkPqVhSA0wtXeRoyLuz+UHFjGWJiwmbKTJ6QipFclEL7
+yXNE8V+g2FRiH4ZqBQ3EQtzusatln5CixirVF1wtPXp75mpZ9XHynDS2tvI6GmO+
+7jPGFRtp8QueA6LzlQN6AskCEm7BpVX2CbwTc4k3W5BDn3kmeVKdcd7a5fVLfN7Z
+y6e3kkYa8MSNfu/GFEXzeYfraIrtjwE2JfcqjDp8SgOcEaxI46n5fXNhqs4Mq/Kd
+FXUswYrJPl+hbCAklxt0YouQP55fzhBBc6FZIf3sCg/Tw1RhUs7ka0X0yKwGBp1r
+K8rHk8x9QA7ypJ66vOr4bYmqvXn5SzBb6pF4HkKLFDIrWYTrym/z2uD+H4wFq6ZN
+3viKiXS2qFAhhSbKm82E
+=h2dd
+-----END PGP SIGNATURE-----
+
+--h31gzZEtNLTqOjlF--
