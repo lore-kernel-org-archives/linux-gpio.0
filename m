@@ -1,51 +1,66 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib-acpi: add _DEP support for Acer One 10
-Date: Wed, 15 Jun 2016 08:49:11 +0200
-Message-ID: <CACRpkdZ8LhhfMWrYbZyovXS3+WiFotuhEujg1faS7WHWHxowHg@mail.gmail.com>
-References: <1463368705.22433.15.camel@rzhang1-mobl4>
+Subject: Re: [PATCH] gpio: omap: make gpio numbering deterministical by using
+ of aliases
+Date: Wed, 15 Jun 2016 08:56:58 +0200
+Message-ID: <CACRpkdaVRTj4jpGQp9nDKo8RAPDPUaApp4jAdBGRgd45bqo2zQ@mail.gmail.com>
+References: <1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:35312 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753219AbcFOGtM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jun 2016 02:49:12 -0400
-Received: by mail-oi0-f42.google.com with SMTP id w5so19877989oib.2
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Jun 2016 23:49:12 -0700 (PDT)
-In-Reply-To: <1463368705.22433.15.camel@rzhang1-mobl4>
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:33562 "EHLO
+	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750841AbcFOG47 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jun 2016 02:56:59 -0400
+Received: by mail-oi0-f50.google.com with SMTP id u201so20237415oie.0
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Jun 2016 23:56:59 -0700 (PDT)
+In-Reply-To: <1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Zhang, Rui" <rui.zhang@intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-acpi <linux-acpi@intel.com>, "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>, "stace75@gmail.com" <stace75@gmail.com>, "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Mon, May 16, 2016 at 5:18 AM, Zhang, Rui <rui.zhang@intel.com> wrote:
+On Tue, Jun 14, 2016 at 12:03 PM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
 
-> On Acer One 10, the ACPI battery driver can not be probed because
-> it depends on the GPIO controller as well as the I2C controller to work,
->         Device (BATC)
->         {
->             Name (_HID, EisaId ("PNP0C0A") /* Control Method Battery */)
->             ...
->             Name (_DEP, Package (0x03)  // _DEP: Dependencies
->             {
->                 I2C1,
->                 GPO2,
->                 GPO0
->             })
->             ...
->         }
+> Traditionally the n-th gpio device probed by the omap gpio driver got
+> the gpio number range [n*32 .. n*32+31].
+> When order of the devices probed by the driver changes (which can hap=
+pen
+> already now when some devices have a pinctrl and so the first probe
+> attempt returns -ENODEV) the numbering changes.
 >
-> The I2C dependency also exists on other platforms and has been fixed by commit
-> 40e7fcb19293 ("ACPI: Add _DEP support to fix battery issue on Asus T100TA"),
-> this patch resolves the GPIO dependency for Acer One 10.
->
-> Link:https://bugzilla.kernel.org/show_bug.cgi?id=115191
-> CC: Mika Westerberg <mika.westerberg@linux.intel.com>
-> CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Tested-by: Stace A. Zacharov <stace75@gmail.com>
-> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+> To ensure a deterministical numbering use of_alias_get_id to determin=
+e
+> the number base for a given device. If no respective alias exists fal=
+l
+> back to the traditional numbering.
 
-Patch applied with the ACKs.
+I'm not too happy about this approach.
+
+The patch doesn't mention what practical problems it is trying to
+solve.
+
+I am very much suspecting the sysfs ABI to be what you're trying to
+get consistent, and that is OBSOLETED, see
+fe95046e960b4b76e73dc1486955d93f47276134
+"gpio: ABI: mark the sysfs ABI as obsolete"
+
+The GPIO numbering scheme is a matter of Linux internals and
+not about hardware description IMO.
+
+The way forward is to use the character device and use gpiochip
+devices with offset indexes and look up GPIOs by name from the
+character devices. If nothing substantial happens I am merging the
+final pieces of the GPIO chardev ABI for v4.8 and that is doing all tha=
+t
+sysfs was doing and then some. I just need to change a small thing
+before sending the final version for review.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
