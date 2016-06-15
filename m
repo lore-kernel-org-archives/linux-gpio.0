@@ -1,61 +1,51 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 12/12] leds: Only descend into leds directory when
- CONFIG_NEW_LEDS is set
-Date: Wed, 15 Jun 2016 08:48:50 +0200
-Message-ID: <5760FA52.7010806@samsung.com>
-References: <20160613200211.14790-1-afd@ti.com>
- <20160613200211.14790-13-afd@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpiolib-acpi: add _DEP support for Acer One 10
+Date: Wed, 15 Jun 2016 08:49:11 +0200
+Message-ID: <CACRpkdZ8LhhfMWrYbZyovXS3+WiFotuhEujg1faS7WHWHxowHg@mail.gmail.com>
+References: <1463368705.22433.15.camel@rzhang1-mobl4>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:15908 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751493AbcFOGs4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jun 2016 02:48:56 -0400
-In-reply-to: <20160613200211.14790-13-afd@ti.com>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:35312 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753219AbcFOGtM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jun 2016 02:49:12 -0400
+Received: by mail-oi0-f42.google.com with SMTP id w5so19877989oib.2
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Jun 2016 23:49:12 -0700 (PDT)
+In-Reply-To: <1463368705.22433.15.camel@rzhang1-mobl4>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Russell King <linux@armlinux.org.uk>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Rusty Russell <rusty@rustcorp.com.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, linux-pwm@vger.kernel.org, lguest@lists.ozlabs.org, linux-wireless@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, linux-media@vger.kernel.org
+To: "Zhang, Rui" <rui.zhang@intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-acpi <linux-acpi@intel.com>, "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>, "stace75@gmail.com" <stace75@gmail.com>, "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>
 
-Hi Andrew,
+On Mon, May 16, 2016 at 5:18 AM, Zhang, Rui <rui.zhang@intel.com> wrote:
 
-Thanks for the patch.
-
-Please address the issue [1] raised by test bot and resubmit.
-
-Thanks,
-Jacek Anaszewski
-
-[1] https://lkml.org/lkml/2016/6/13/1091
-
-On 06/13/2016 10:02 PM, Andrew F. Davis wrote:
-> When CONFIG_NEW_LEDS is not set make will still descend into the leds
-> directory but nothing will be built. This produces unneeded build
-> artifacts and messages in addition to slowing the build. Fix this here.
+> On Acer One 10, the ACPI battery driver can not be probed because
+> it depends on the GPIO controller as well as the I2C controller to work,
+>         Device (BATC)
+>         {
+>             Name (_HID, EisaId ("PNP0C0A") /* Control Method Battery */)
+>             ...
+>             Name (_DEP, Package (0x03)  // _DEP: Dependencies
+>             {
+>                 I2C1,
+>                 GPO2,
+>                 GPO0
+>             })
+>             ...
+>         }
 >
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> ---
->   drivers/Makefile | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> The I2C dependency also exists on other platforms and has been fixed by commit
+> 40e7fcb19293 ("ACPI: Add _DEP support to fix battery issue on Asus T100TA"),
+> this patch resolves the GPIO dependency for Acer One 10.
 >
-> diff --git a/drivers/Makefile b/drivers/Makefile
-> index 567e32c..fa514d5 100644
-> --- a/drivers/Makefile
-> +++ b/drivers/Makefile
-> @@ -127,7 +127,7 @@ obj-$(CONFIG_CPU_FREQ)		+= cpufreq/
->   obj-$(CONFIG_CPU_IDLE)		+= cpuidle/
->   obj-$(CONFIG_MMC)		+= mmc/
->   obj-$(CONFIG_MEMSTICK)		+= memstick/
-> -obj-y				+= leds/
-> +obj-$(CONFIG_NEW_LEDS)		+= leds/
->   obj-$(CONFIG_INFINIBAND)	+= infiniband/
->   obj-$(CONFIG_SGI_SN)		+= sn/
->   obj-y				+= firmware/
->
+> Link:https://bugzilla.kernel.org/show_bug.cgi?id=115191
+> CC: Mika Westerberg <mika.westerberg@linux.intel.com>
+> CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Tested-by: Stace A. Zacharov <stace75@gmail.com>
+> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 
+Patch applied with the ACKs.
 
--- 
-Best regards,
-Jacek Anaszewski
+Yours,
+Linus Walleij
