@@ -1,65 +1,64 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] tools/gpio: add the gpio-hammer tool
-Date: Wed, 15 Jun 2016 11:48:17 +0200
-Message-ID: <CACRpkdYGy-3L4LR=qCSsjWKHEMAARPvybSM0AA_ujzznPJTWNw@mail.gmail.com>
-References: <1461660866-18683-1-git-send-email-linus.walleij@linaro.org>
- <1461660866-18683-2-git-send-email-linus.walleij@linaro.org>
- <20160427160034.GA20392@deathstar> <CACRpkdYr8GSmQ-=G4XcTtfrBcKsXUsJOvE7W35Fk-ovDiyaPJA@mail.gmail.com>
- <20160601034343.GA3749@deathstar> <CACRpkdZrdwPwnLDnHfBxEi67cUsfUAo+ugHnZWxywg5Vjdzghw@mail.gmail.com>
- <20160601180906.GA5286@deathstar> <CACRpkdYEfYFwnhgEGf2AmCkj7QUJm-GeQW3_CE2H4vWSNngp_Q@mail.gmail.com>
- <20160602145927.GA4198@deathstar>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpio: omap: make gpio numbering deterministical by using
+ of aliases
+Date: Wed, 15 Jun 2016 12:56:47 +0300
+Message-ID: <5761265F.2050508@ti.com>
+References: <1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <CACRpkdaVRTj4jpGQp9nDKo8RAPDPUaApp4jAdBGRgd45bqo2zQ@mail.gmail.com>
+ <20160615072404.GB26768@pengutronix.de> <20160615082705.GW22406@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:32779 "EHLO
-	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750882AbcFOJsS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jun 2016 05:48:18 -0400
-Received: by mail-oi0-f54.google.com with SMTP id u201so25590744oie.0
-        for <linux-gpio@vger.kernel.org>; Wed, 15 Jun 2016 02:48:18 -0700 (PDT)
-In-Reply-To: <20160602145927.GA4198@deathstar>
+Received: from arroyo.ext.ti.com ([198.47.19.12]:57123 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751889AbcFOJ5Z (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 15 Jun 2016 05:57:25 -0400
+In-Reply-To: <20160615082705.GW22406@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Welling <mwelling@ieee.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Markus Pargmann <mpa@pengutronix.de>, Lee Campbell <leecam@google.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Johan Hovold <johan@kernel.org>
+To: Tony Lindgren <tony@atomide.com>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Thu, Jun 2, 2016 at 4:59 PM, Michael Welling <mwelling@ieee.org> wrote:
-> On Wed, Jun 01, 2016 at 11:40:04PM +0200, Linus Walleij wrote:
->> On Wed, Jun 1, 2016 at 8:09 PM, Michael Welling <mwelling@ieee.org> wrote:
+On 06/15/2016 11:27 AM, Tony Lindgren wrote:
+> * Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de> [160615 00:2=
+7]:
+>> On Wed, Jun 15, 2016 at 08:56:58AM +0200, Linus Walleij wrote:
+>>> The way forward is to use the character device and use gpiochip
+>>> devices with offset indexes and look up GPIOs by name from the
+>>> character devices. If nothing substantial happens I am merging the
+>>> final pieces of the GPIO chardev ABI for v4.8 and that is doing all=
+ that
+>>> sysfs was doing and then some. I just need to change a small thing
+>>> before sending the final version for review.
 >>
->> > Is there a way to name a group of GPIOs?
->>
->> Do you mean from the producer side or the consumer side?
->
-> Producer side is what I am thinking.
->
->> There is gpio-line-names in DT for the producer side.
->>
-> The gpio-line-names are naming individual GPIO on a controller.
-> I am looking to take a set of GPIOs and name them as a group and
-> be able to access them by that name. Either individually or
-> simultaneously.
+>> Hmm, so /sys/class/gpio was obsoleted before the substitution was re=
+ady?
+>> I'd say an overlapping of several kernel versions would be good as w=
+e
+>> cannot expect that userspace changes as fast as the kernel.
+>=20
+> Well the /sys/class/gpio is an interface, and we'll have to maintain
+> it basically forever as we all know. It also works just fine for simp=
+le
+> things, so let's make sure it is usable. Having it inconsistent can
+> cause nasty side effects upgrading kernels.
+>=20
 
-There is no such mechanism currently, all lines are individual
-resources.
+Wouldn't gpio-line-names be helpful for such cases as mentioned in [1],=
+[2]
+But I don't know it these properties were exposed in legacy GPIO sysfs =
+interface also.
 
->> Sorry not following, I guess you need to post me some part of
->> the patch or so...
->
-> +       fprintf(stdout, "] on %s, initial states: [", device_name);
-> +       for (i = 0; i < nlines; i++) {
-> +               fprintf(stdout, "%d", data.values[i]);
->
-> data.values[i];
->
-> Each bit is stored in a byte.
+[1] http://www.spinics.net/lists/linux-gpio/msg15040.html
+[2] https://patchwork.ozlabs.org/patch/617713/
+=20
 
-Yeah the userspace interface is wasteful in that sense. It's a trade-off
-between storage and simplicity and I had to choose something.
-
-If I try to bitstuff the bits then I need to add another ABI to describe
-how the bits are stuffed in the words. So I get complexity somewhere
-else instead.
-
-Yours,
-Linus Walleij
+--=20
+regards,
+-grygorii
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
