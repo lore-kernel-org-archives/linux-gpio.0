@@ -1,63 +1,37 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] pinctrl: Don't create a pinctrl handle if no pinctrl entries exist
-Date: Thu, 16 Jun 2016 13:39:09 +0100
-Message-ID: <1466080749-23567-1-git-send-email-jonathanh@nvidia.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH v2] gpio: make library immune to error pointers
+Date: Thu, 16 Jun 2016 16:05:47 +0300
+Message-ID: <5762A42B.6000502@ti.com>
+References: <1466076157-9805-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:8625 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753919AbcFPMjX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jun 2016 08:39:23 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1466076157-9805-1-git-send-email-linus.walleij@linaro.org>
+Sender: stable-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 
-When pinctrl_get() is called for a device, it will return a valid handle
-even if the device itself has no pinctrl state entries defined in
-device-tree. This is caused by the function pinctrl_dt_to_map() which
-will return success even if the first pinctrl state, 'pinctrl-0', is not
-found in the device-tree node for a device.
+On 06/16/2016 02:22 PM, Linus Walleij wrote:
+> Most functions that take a GPIO descriptor in need to check the
+> descriptor for IS_ERR(). We do this mostly in the VALIDATE_DESC()
+> macro except for the gpiod_to_irq() function which needs special
+> handling.
+>
+> Cc: stable@vger.kernel.org
+> Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - Complain when descriptors contain error values so the offending
+>    code can be fixed.
+> ---
 
-According to the pinctrl device-tree binding documentation, pinctrl
-states must be numbered starting from 0 and so 'pinctrl-0' should always
-be present if a device uses pinctrl and therefore, if 'pinctrl-0' is not
-present it seems valid that we should not return a valid pinctrl handle.
+Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Fix this by returning an error code if the property 'pinctrl-0' is not
-present for a device.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
 
-I was wondering if this meant we are creating pinctrl handles for
-devices on boot that don't use pinctrl (when
-calling pinctrl_bind_pins()). However, although devm_pinctrl_get()
-does return successful for all devices, the subsequent call to
-pinctrl_lookup_state() (to get the default state) will fail and so
-we will destroy the pinctrl handle afterall.
-
- drivers/pinctrl/devicetree.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-index fe04e748dfe4..f41c16e11a11 100644
---- a/drivers/pinctrl/devicetree.c
-+++ b/drivers/pinctrl/devicetree.c
-@@ -195,8 +195,11 @@ int pinctrl_dt_to_map(struct pinctrl *p)
- 		propname = kasprintf(GFP_KERNEL, "pinctrl-%d", state);
- 		prop = of_find_property(np, propname, &size);
- 		kfree(propname);
--		if (!prop)
-+		if (!prop) {
-+			if (state == 0)
-+				return -ENODEV;
- 			break;
-+		}
- 		list = prop->value;
- 		size /= sizeof(*list);
- 
 -- 
-2.1.4
-
+regards,
+-grygorii
