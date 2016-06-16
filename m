@@ -1,55 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: make library immune to error pointers
-Date: Thu, 16 Jun 2016 11:59:20 +0200
-Message-ID: <1466071160-16722-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, stable@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: avoid uninitialized data in gpio kfifo
+Date: Thu, 16 Jun 2016 12:00:53 +0200
+Message-ID: <CACRpkdbQLb-wgm2JXKnxQ4+nPZhgAu+Mh78a=P4zj1NcdLQmUw@mail.gmail.com>
+References: <20160616090254.964288-1-arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160616090254.964288-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Most functions that take a GPIO descriptor in need to check the
-descriptor for IS_ERR(). We do this mostly in the VALIDATE_DESC()
-macro except for the gpiod_to_irq() function which needs special
-handling.
+On Thu, Jun 16, 2016 at 11:02 AM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-Cc: stable@vger.kernel.org
-Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> gcc reports a theoretical case for returning uninitialized data in
+> the kfifo when a GPIO interrupt happens and neither
+> GPIOEVENT_REQUEST_RISING_EDGE nor GPIOEVENT_REQUEST_FALLING_EDGE
+> are set:
+>
+> drivers/gpio/gpiolib.c: In function 'lineevent_irq_thread':
+> drivers/gpio/gpiolib.c:683:87: error: 'ge.id' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+>
+> This case should not happen, but to be on the safe side, let's
+> return from the irq handler without adding data to the FIFO
+> to ensure we can never leak stack data to user space.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index f39bf05993e7..1a8dbc791892 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1371,7 +1371,7 @@ done:
-  * optional GPIO and calls should just bail out.
-  */
- #define VALIDATE_DESC(desc) do { \
--	if (!desc) \
-+	if (!desc || IS_ERR(desc)) \
- 		return 0; \
- 	if (!desc->gdev) { \
- 		pr_warn("%s: invalid GPIO\n", __func__); \
-@@ -1384,7 +1384,7 @@ done:
- 	} } while (0)
- 
- #define VALIDATE_DESC_VOID(desc) do { \
--	if (!desc) \
-+	if (!desc || IS_ERR(desc)) \
- 		return; \
- 	if (!desc->gdev) { \
- 		pr_warn("%s: invalid GPIO\n", __func__); \
-@@ -2061,7 +2061,7 @@ int gpiod_to_irq(const struct gpio_desc *desc)
- 	 * requires this function to not return zero on an invalid descriptor
- 	 * but rather a negative error number.
- 	 */
--	if (!desc || !desc->gdev || !desc->gdev->chip)
-+	if (!desc || IS_ERR(desc) || !desc->gdev || !desc->gdev->chip)
- 		return -EINVAL;
- 
- 	chip = desc->gdev->chip;
--- 
-2.4.11
+Patch applied, good catch, thanks!
+
+Yours,
+Linus Walleij
