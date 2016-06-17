@@ -1,42 +1,70 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] gpio: 74x164: Use spi_write() helper instead of open coding
-Date: Fri, 17 Jun 2016 18:39:28 +0200
-Message-ID: <1466181568-24049-1-git-send-email-geert+renesas@glider.be>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC PATCH 11/13] arm64: tegra: Add SOR power-domain node
+Date: Fri, 17 Jun 2016 18:42:02 +0200
+Message-ID: <20160617164202.GJ27475@ulmo.ba.sec>
+References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
+ <1466165027-17917-12-git-send-email-jonathanh@nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="HcccYpVZDxQ8hzPO"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:58555 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752024AbcFQQjr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jun 2016 12:39:47 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34301 "EHLO
+	mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752450AbcFQQmH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jun 2016 12:42:07 -0400
+Content-Disposition: inline
+In-Reply-To: <1466165027-17917-12-git-send-email-jonathanh@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gpio/gpio-74x164.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
-index 80f9ddf13343c67e..a6607faf2fdf822e 100644
---- a/drivers/gpio/gpio-74x164.c
-+++ b/drivers/gpio/gpio-74x164.c
-@@ -35,13 +35,8 @@ struct gen_74x164_chip {
- 
- static int __gen_74x164_write_config(struct gen_74x164_chip *chip)
- {
--	struct spi_transfer xfer = {
--		.tx_buf = chip->buffer,
--		.len = chip->registers,
--	};
--
--	return spi_sync_transfer(to_spi_device(chip->gpio_chip.parent),
--				 &xfer, 1);
-+	return spi_write(to_spi_device(chip->gpio_chip.parent), chip->buffer,
-+			 chip->registers);
- }
- 
- static int gen_74x164_get_value(struct gpio_chip *gc, unsigned offset)
--- 
-1.9.1
+--HcccYpVZDxQ8hzPO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Jun 17, 2016 at 01:03:45PM +0100, Jon Hunter wrote:
+> Add node for SOR power-domain for Tegra210 and populate the SOR
+> power-domain phandle for SOR and DPAUX nodes that are dependent
+> on this power-domain.
+>=20
+> Please note that although neither the SOR or DPAUX drivers currently
+> support runtime power-management, by populating the power-domain node
+> the SOR power-domain will be turned on before probing SOR or DPAUX
+> devices and kept on while the devices are bound.
+>=20
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+
+I've got patches queued in my drm-tegra tree to add support for runtime
+PM for the SOR driver. Will that in some way clash with this work if
+merged in parallel?
+
+Thierry
+
+--HcccYpVZDxQ8hzPO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXZChaAAoJEN0jrNd/PrOhlDgP/2Q7shmXSdCM1gr237rbLzy2
++w01Uc0h98GKJ7NgwasyC7d7hwqxgO/Te+PGxXcEenr1Fg1NkTPjDQGR+LCJsUqX
+MbL0lYiwo2rGEJXNLcclzBadlvTs/rrxFksBHfObxRqhq1pmTXlxULmw/EsY1JfL
+9QBaKOIevGqqUIRH25SXORgUDoGjPlofv+Cz7BoOmoelL5VsemKd+beLb1TBtOGX
+Ca/rqXIyb6GYfKwrlyoq0oGa0OngoZI2imLUziZenhca4oQnwvFYu7Jl2Ij5/t/N
+M/VDOpKQmyzODycaayLswDf/sOn/4UtAaKJuxjhPbu1Awn1knzMkh78sppPDA/fy
+z3X5VtywVtodLiinDUQ3Rrr4d/dzOSRgUr5Zv8S7fR85ATW+RoBtr8PWNfcDzXST
+G8y4PIMH+rtOjt9rOFIHNo9vwlRSDv6ei5YPoqI+7z1tG/XCUbfviNx9Hip0PJC3
+Aw8IS/K0K8PfR1V1uEDDZKrvscfqsUN+pHRm67OP2hzVl/jQt/ODXX3lVw3UD13P
+SG+C55BfMi7cKSfHGtGdDHjpArFJvJ2GawklB/WWgQCB9lED+HUTj/5XJJCWEJ/u
+kJUmWAkFHjrekAtYh5jEWbNvv4qhE9aMzWGN7CwTCo2SF7SejbipmkDLCjCducvx
+G1faXWzZcLR+FuRLE/O5
+=HyVL
+-----END PGP SIGNATURE-----
+
+--HcccYpVZDxQ8hzPO--
