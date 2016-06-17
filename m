@@ -1,28 +1,32 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH v2] gpio: make library immune to error pointers
-Date: Fri, 17 Jun 2016 10:15:55 +0900
-Message-ID: <0ae84216-3e0b-be52-8a5d-23dee2a8fcf3@nvidia.com>
-References: <1466076157-9805-1-git-send-email-linus.walleij@linaro.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] gpio: sch: Fix Oops on module load on Asus Eee PC 1201
+Date: Fri, 17 Jun 2016 11:10:34 +0300
+Message-ID: <20160617081034.GF1739@lahna.fi.intel.com>
+References: <20160506214917.GA1691@pitrat4.localdomain>
+ <20160509070245.GJ15974@lahna.fi.intel.com>
+ <20160509192652.GA1320@pitrat4.localdomain>
+ <CABy3NjSJTygdP3POxQQqxDA6=Jx4DeQ47KONASfm46kei7wBDQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from nat-hk.nvidia.com ([203.18.50.4]:2268 "EHLO
-	hkmmgate101.nvidia.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753830AbcFQBQB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jun 2016 21:16:01 -0400
-In-Reply-To: <1466076157-9805-1-git-send-email-linus.walleij@linaro.org>
+Received: from mga09.intel.com ([134.134.136.24]:51844 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752303AbcFQIKj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 17 Jun 2016 04:10:39 -0400
+Content-Disposition: inline
+In-Reply-To: <CABy3NjSJTygdP3POxQQqxDA6=Jx4DeQ47KONASfm46kei7wBDQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: stable@vger.kernel.org
+To: Colin Pitrat <colin.pitrat@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, rebecca.swee.fun.chang@intel.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/16/2016 08:22 PM, Linus Walleij wrote:
-> Most functions that take a GPIO descriptor in need to check the
-> descriptor for IS_ERR(). We do this mostly in the VALIDATE_DESC()
-> macro except for the gpiod_to_irq() function which needs special
-> handling.
+On Thu, Jun 16, 2016 at 08:20:15PM +0100, Colin Pitrat wrote:
+>    Hello,
+>    do you have news on this issue ?
+>    Is there any way I can help ?
 
-More resilience sounds good to have.
+Yeah, rework the patch according:
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+https://lkml.org/lkml/2016/5/9/61
+
+:-)
