@@ -1,32 +1,45 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 10/13] drm/tegra: Add pinctrl support for DPAUX
-Date: Fri, 17 Jun 2016 13:42:14 +0100
-Message-ID: <5763F026.40001@nvidia.com>
-References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
- <1466165027-17917-11-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1466165027-17917-11-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: [PATCH] [NEXT] gpiolib: make lineevent_irq_thread static
+Date: Fri, 17 Jun 2016 16:03:13 +0100
+Message-ID: <1466175793-19006-1-git-send-email-ben.dooks@codethink.co.uk>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from 82-70-136-246.dsl.in-addr.zen.co.uk ([82.70.136.246]:38226 "EHLO
+	rainbowdash.ducie.codethink.co.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751103AbcFQPDa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 17 Jun 2016 11:03:30 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@lists.codethink.co.uk
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
+The lineevent_irq_thread is not exported, so make it static
+to fix the following warning:
 
+drivers/gpio/gpiolib.c:654:13: warning: symbol 'lineevent_irq_thread' was not declared. Should it be static?
 
-On 17/06/16 13:03, Jon Hunter wrote:
-> The DPAUX pins are shared with an internal I2C controller. To allow
-> these pins to be muxed to the I2C controller, register a pinctrl device
-> for the DPAUX device. Make Tegra DRM support dependent on PINCTRL to
-> avoid any compilation issues.
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Cc: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I forgot to add a comment here to say that this is based upon work from
-Thierry Reding and give credit for that.
-
-Cheers
-Jon
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 8b3db59..7f32fc8 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -651,7 +651,7 @@ static const struct file_operations lineevent_fileops = {
+ #endif
+ };
+ 
+-irqreturn_t lineevent_irq_thread(int irq, void *p)
++static irqreturn_t lineevent_irq_thread(int irq, void *p)
+ {
+ 	struct lineevent_state *le = p;
+ 	struct gpioevent_data ge;
 -- 
-nvpublic
+2.8.1
+
