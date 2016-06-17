@@ -1,42 +1,72 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC] qnap-tsx51: add new driver for leds and button support on
- QNAP TS-x51 series
-Date: Fri, 17 Jun 2016 23:02:47 +0200
-Message-ID: <CACRpkdZx8S61zZhcWfEniC-yDhMXyTwZYgXc=sO+74kujT=g-w@mail.gmail.com>
-References: <20160606004406.29f016de@gmail.com> <CACRpkdZ57_evCC=+hev9kNpY4bNViG+oBP7pOh8HkgRA0-oLXA@mail.gmail.com>
- <20160615004504.7b83d83c@gmail.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: Re: [PATCH 12/12] leds: Only descend into leds directory when
+ CONFIG_NEW_LEDS is set
+Date: Fri, 17 Jun 2016 17:46:21 -0500
+Message-ID: <57647DBD.2010406@ti.com>
+References: <20160613200211.14790-1-afd@ti.com>
+ <20160613200211.14790-13-afd@ti.com> <5760FA52.7010806@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:34713 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751136AbcFQVCs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jun 2016 17:02:48 -0400
-Received: by mail-oi0-f47.google.com with SMTP id d132so134508534oig.1
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Jun 2016 14:02:48 -0700 (PDT)
-In-Reply-To: <20160615004504.7b83d83c@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <5760FA52.7010806@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Russell King <linux@armlinux.org.uk>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Rusty Russell <rusty@rustcorp.com.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, linux-pwm@vger.kernel.org, lguest@lists.ozlabs.org, linux-wireless@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, linux-med
 List-Id: linux-gpio@vger.kernel.org
-To: Vincent Pelletier <plr.vincent@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Jun 15, 2016 at 2:45 AM, Vincent Pelletier
-<plr.vincent@gmail.com> wrote:
+On 06/15/2016 01:48 AM, Jacek Anaszewski wrote:
+> Hi Andrew,
+> 
+> Thanks for the patch.
+> 
+> Please address the issue [1] raised by test bot and resubmit.
+> 
+> Thanks,
+> Jacek Anaszewski
+> 
+> [1] https://lkml.org/lkml/2016/6/13/1091
+> 
 
-> So I wonder if it makes sense at all for a driver to both define a gpio
-> lookup table and then look for each gpio it just defined.
->
-> Maybe I am doing it wrong and/or at the wrong level ?
+It looks like some systems use 'gpio_led_register_device' to make an
+in-memory copy of their LED device table so the original can be removed
+as .init.rodata. This doesn't necessarily depend on the LED subsystem
+but it kind of seems useless when the rest of the subsystem is disabled.
 
-Well ask yourself what you are doing I guess, GPIO is
-General Purpose Input Output, a trap some people fall into
-is confusing that with their special purpose input/outputs,
-and sometimes they are input-only or output-only on top of
-that. That is not GPIO.
+One solution could be to use a dummy 'gpio_led_register_device' when the
+subsystem is not enabled. Another is just to remove the five or so uses
+of 'gpio_led_register_device' and have those systems register LED device
+tables like other systems do.
 
-So what is the use case for these electronics? If it is not
-supposed to be used by misc input/output, it is not GPIO,
-and it is better for the driver to manage it at will.
+If nether of these are acceptable then this patch can be dropped from
+this series for now.
 
-Yours,
-Linus Walleij
+Thanks,
+Andrew
+
+> On 06/13/2016 10:02 PM, Andrew F. Davis wrote:
+>> When CONFIG_NEW_LEDS is not set make will still descend into the leds
+>> directory but nothing will be built. This produces unneeded build
+>> artifacts and messages in addition to slowing the build. Fix this here.
+>>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>> ---
+>>   drivers/Makefile | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/Makefile b/drivers/Makefile
+>> index 567e32c..fa514d5 100644
+>> --- a/drivers/Makefile
+>> +++ b/drivers/Makefile
+>> @@ -127,7 +127,7 @@ obj-$(CONFIG_CPU_FREQ)        += cpufreq/
+>>   obj-$(CONFIG_CPU_IDLE)        += cpuidle/
+>>   obj-$(CONFIG_MMC)        += mmc/
+>>   obj-$(CONFIG_MEMSTICK)        += memstick/
+>> -obj-y                += leds/
+>> +obj-$(CONFIG_NEW_LEDS)        += leds/
+>>   obj-$(CONFIG_INFINIBAND)    += infiniband/
+>>   obj-$(CONFIG_SGI_SN)        += sn/
+>>   obj-y                += firmware/
+>>
+> 
+> 
