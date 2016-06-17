@@ -1,87 +1,32 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [RFC PATCH 11/13] arm64: tegra: Add SOR power-domain node
-Date: Fri, 17 Jun 2016 13:03:45 +0100
-Message-ID: <1466165027-17917-12-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH 10/13] drm/tegra: Add pinctrl support for DPAUX
+Date: Fri, 17 Jun 2016 13:42:14 +0100
+Message-ID: <5763F026.40001@nvidia.com>
 References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
+ <1466165027-17917-11-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1466165027-17917-11-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add node for SOR power-domain for Tegra210 and populate the SOR
-power-domain phandle for SOR and DPAUX nodes that are dependent
-on this power-domain.
 
-Please note that although neither the SOR or DPAUX drivers currently
-support runtime power-management, by populating the power-domain node
-the SOR power-domain will be turned on before probing SOR or DPAUX
-devices and kept on while the devices are bound.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+On 17/06/16 13:03, Jon Hunter wrote:
+> The DPAUX pins are shared with an internal I2C controller. To allow
+> these pins to be muxed to the I2C controller, register a pinctrl device
+> for the DPAUX device. Make Tegra DRM support dependent on PINCTRL to
+> avoid any compilation issues.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index ebf44f4059f8..94f780b43037 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -34,6 +34,7 @@
- 			clock-names = "dpaux", "parent";
- 			resets = <&tegra_car 207>;
- 			reset-names = "dpaux";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -154,6 +155,7 @@
- 			clock-names = "sor", "parent", "dp", "safe";
- 			resets = <&tegra_car 182>;
- 			reset-names = "sor";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -168,6 +170,7 @@
- 			clock-names = "sor", "parent", "dp", "safe";
- 			resets = <&tegra_car 183>;
- 			reset-names = "sor";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -180,6 +183,7 @@
- 			clock-names = "dpaux", "parent";
- 			resets = <&tegra_car 181>;
- 			reset-names = "dpaux";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -592,6 +596,20 @@
- 				resets = <&tegra_car 198>;
- 				#power-domain-cells = <0>;
- 			};
-+
-+			pd_sor: sor {
-+				clocks = <&tegra_car TEGRA210_CLK_SOR0>,
-+					 <&tegra_car TEGRA210_CLK_DSIA>,
-+					 <&tegra_car TEGRA210_CLK_DSIB>,
-+					 <&tegra_car TEGRA210_CLK_MIPI_CAL>,
-+					 <&tegra_car TEGRA210_CLK_DPAUX>;
-+				resets = <&tegra_car TEGRA210_CLK_SOR0>,
-+					 <&tegra_car TEGRA210_CLK_DSIA>,
-+					 <&tegra_car TEGRA210_CLK_DSIB>,
-+					 <&tegra_car TEGRA210_CLK_DPAUX>,
-+					 <&tegra_car TEGRA210_CLK_MIPI_CAL>;
-+				#power-domain-cells = <0>;
-+			};
- 		};
- 	};
- 
+I forgot to add a comment here to say that this is based upon work from
+Thierry Reding and give credit for that.
+
+Cheers
+Jon
+
 -- 
-2.1.4
+nvpublic
