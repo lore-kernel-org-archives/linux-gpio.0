@@ -1,38 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/2] pinctrl: Add MDM9615 TLMM pinctrl driver and bindings
-Date: Fri, 17 Jun 2016 22:16:15 +0200
-Message-ID: <CACRpkdbCio=a4GX=WTjvD_moENw7G+O6JWHBiCc4F9DsD7=TQQ@mail.gmail.com>
-References: <1466158535-17962-1-git-send-email-narmstrong@baylibre.com>
+Subject: Re: [RFC] qnap-tsx51: add new driver for leds and button support on
+ QNAP TS-x51 series
+Date: Fri, 17 Jun 2016 23:02:47 +0200
+Message-ID: <CACRpkdZx8S61zZhcWfEniC-yDhMXyTwZYgXc=sO+74kujT=g-w@mail.gmail.com>
+References: <20160606004406.29f016de@gmail.com> <CACRpkdZ57_evCC=+hev9kNpY4bNViG+oBP7pOh8HkgRA0-oLXA@mail.gmail.com>
+ <20160615004504.7b83d83c@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1466158535-17962-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "Ivan T. Ivanov" <iivanov@mm-sol.com>
-Cc: Andy Gross <andy.gross@linaro.org>, Sricharan R <sricharan@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, linux-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:34713 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751136AbcFQVCs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jun 2016 17:02:48 -0400
+Received: by mail-oi0-f47.google.com with SMTP id d132so134508534oig.1
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Jun 2016 14:02:48 -0700 (PDT)
+In-Reply-To: <20160615004504.7b83d83c@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Vincent Pelletier <plr.vincent@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Jun 17, 2016 at 12:15 PM, Neil Armstrong
-<narmstrong@baylibre.com> wrote:
+On Wed, Jun 15, 2016 at 2:45 AM, Vincent Pelletier
+<plr.vincent@gmail.com> wrote:
 
-> In order to support the Qualcomm MDM9615 in the Sierra Wireless WP854=
-8
-> Modules, add the MDM9615 TLMM pinctrl driver and bindings.
+> So I wonder if it makes sense at all for a driver to both define a gpio
+> lookup table and then look for each gpio it just defined.
 >
-> This patchset is part of a global SoC + Module + Board support for th=
-e
-> Sierra Wireless mangOH Board support with the WP8548 module.
->
-> Neil Armstrong (2):
->   pinctrl: qcom: Add support for MDM9615 TLMM
->   dt-bindings: pinctrl: Add MDM9615 TLMM bindings
+> Maybe I am doing it wrong and/or at the wrong level ?
 
-Nice! But you need to send it to Bj=C3=B6rn Andersson and Ivan Ivanov
-(See To: line) for review.
+Well ask yourself what you are doing I guess, GPIO is
+General Purpose Input Output, a trap some people fall into
+is confusing that with their special purpose input/outputs,
+and sometimes they are input-only or output-only on top of
+that. That is not GPIO.
 
-Bj=C3=B6rn, Ivan: can you find the patches or does Neil need to resend =
-them?
+So what is the use case for these electronics? If it is not
+supposed to be used by misc input/output, it is not GPIO,
+and it is better for the driver to manage it at will.
 
 Yours,
 Linus Walleij
