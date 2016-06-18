@@ -1,34 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [patch] gpiolib: potential oops on failure path
-Date: Sat, 18 Jun 2016 10:57:31 +0200
-Message-ID: <CACRpkdZB22aKoui-5t7h61k4JmLh9nShgcQUmc2LrGv490uGxA@mail.gmail.com>
-References: <20160617091550.GB25609@mwanda> <CACRpkdbYYyH805OGa-gkWkj0+JiApKo-kND=h1Oaycd86EcLRw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbYYyH805OGa-gkWkj0+JiApKo-kND=h1Oaycd86EcLRw@mail.gmail.com>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: [PATCH] gpio: make the iterator point to last handle
+Date: Sat, 18 Jun 2016 10:59:53 +0200
+Message-ID: <1466240393-28288-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:34157 "EHLO
+	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751061AbcFRI77 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Jun 2016 04:59:59 -0400
+Received: by mail-lf0-f52.google.com with SMTP id h129so10373932lfh.1
+        for <linux-gpio@vger.kernel.org>; Sat, 18 Jun 2016 01:59:58 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Dan Carpenter <dan.carpenter@oracle.com>, Walter Harms <wharms@bfs.de>
 
-On Sat, Jun 18, 2016 at 10:52 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Fri, Jun 17, 2016 at 11:15 AM, Dan Carpenter
-> <dan.carpenter@oracle.com> wrote:
->
->> If anon_inode_getfd() fails then "i" is set to GPIOHANDLES_MAX.  It
->> means that we will read beyond the end of the array and dereference an
->> invalid pointer.
->>
->> Fixes: d7c51b47ac11 ('gpio: userspace ABI for reading/writing GPIO lines')
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> Ouch, yeah that happens when you request max number of handles, thanks.
->
-> Patch applied.
+When initializing the GPIO handles, we use the iterator (i)
+to back off if something goes wrong. But since the iterator
+is also used after we pass the loop, we must decrement by
+one after exiting the loop so that we point at the last
+element in the array.
 
-Ah no, I saw the real problem now. Sending another patch.
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Walter Harms <wharms@bfs.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpiolib.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index c826844abdeb..b504364fd644 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -474,6 +474,8 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
+ 		dev_dbg(&gdev->dev, "registered chardev handle for line %d\n",
+ 			offset);
+ 	}
++	/* Let i point at the last handle */
++	i--;
+ 	lh->numdescs = handlereq.lines;
+ 
+ 	fd = anon_inode_getfd("gpio-linehandle",
+-- 
+2.4.11
+
