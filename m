@@ -1,73 +1,71 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: intel: Prevent force threading of the
- interrupt handler
-Date: Sat, 18 Jun 2016 10:36:21 +0200
-Message-ID: <CACRpkdYUpyTGPsNc1Yea6ZzWbLeu2UCKU8MkA8PuakponpR-dw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: intel: Use raw_spinlock for locking
+Date: Sat, 18 Jun 2016 10:36:55 +0200
+Message-ID: <CACRpkdagdL_0iD9SokuSGu2KxDEOnygAfe+M0m66igVb441VAA@mail.gmail.com>
 References: <1466065537-82027-1-git-send-email-mika.westerberg@linux.intel.com>
- <1466065537-82027-2-git-send-email-mika.westerberg@linux.intel.com>
+ <CACRpkdYjmoRSKEAFWwwb3MZQgycDKRU=CeEDG3HMUMmCD6U3TQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:36652 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750883AbcFRIgW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Jun 2016 04:36:22 -0400
-Received: by mail-oi0-f42.google.com with SMTP id p204so148589443oih.3
-        for <linux-gpio@vger.kernel.org>; Sat, 18 Jun 2016 01:36:22 -0700 (PDT)
-In-Reply-To: <1466065537-82027-2-git-send-email-mika.westerberg@linux.intel.com>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:36831 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750977AbcFRIg5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Jun 2016 04:36:57 -0400
+Received: by mail-oi0-f52.google.com with SMTP id p204so148599216oih.3
+        for <linux-gpio@vger.kernel.org>; Sat, 18 Jun 2016 01:36:56 -0700 (PDT)
+In-Reply-To: <CACRpkdYjmoRSKEAFWwwb3MZQgycDKRU=CeEDG3HMUMmCD6U3TQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Kim Tatt Chuah <kim.tatt.chuah@intel.com>, Thomas Gleixner <tglx@linutronix.de>
 
-On Thu, Jun 16, 2016 at 10:25 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+On Sat, Jun 18, 2016 at 10:34 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Thu, Jun 16, 2016 at 10:25 AM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+>
+>> When running -rt kernel and GPIO interrupt happens we get following
+>>
+>>  BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:931
+>>  in_atomic(): 1, irqs_disabled(): 0, pid: 530, name: irq/14-INT3452:
+>>  Preemption disabled at:[<ffffffff810b4dab>] handle_edge_irq+0x1b/0x190
+>>
+>>  CPU: 0 PID: 530 Comm: irq/14-INT3452: Not tainted 4.6.2-rt5 #1060
+>>   0000000000000000 ffff88007a257d58 ffffffff812d8494 0000000000000000
+>>   ffff88017a330000 ffff88007a257d78 ffffffff81083a11 ffff88007a252430
+>>   ffff88007a252430 ffff88007a257d90 ffffffff8167ef20 000000000000001a
+>>  Call Trace:
+>>   [<ffffffff812d8494>] dump_stack+0x4f/0x6b
+>>   [<ffffffff81083a11>] ___might_sleep+0xe1/0x160
+>>   [<ffffffff8167ef20>] rt_spin_lock+0x20/0x50
+>>   [<ffffffff81308c6d>] intel_gpio_irq_ack+0x2d/0x80
+>>   [<ffffffff810b4e0b>] handle_edge_irq+0x7b/0x190
+>>   [<ffffffff810b0d82>] generic_handle_irq+0x22/0x30
+>>   [<ffffffff81307abc>] intel_gpio_irq+0xdc/0x150
+>>   [<ffffffff810b2293>] irq_forced_thread_fn+0x23/0x70
+>>   [<ffffffff810b250b>] irq_thread+0x13b/0x1d0
+>>   [<ffffffff8167b844>] ? __schedule+0x2e4/0x5a0
+>>   [<ffffffff810b2270>] ? irq_finalize_oneshot.part.37+0xd0/0xd0
+>>   [<ffffffff810b25a0>] ? irq_thread+0x1d0/0x1d0
+>>   [<ffffffff810b23d0>] ? wake_threads_waitq+0x30/0x30
+>>   [<ffffffff8107e624>] kthread+0xd4/0xf0
+>>   [<ffffffff8167ec27>] ? _raw_spin_unlock_irq+0x17/0x40
+>>   [<ffffffff8167f592>] ret_from_fork+0x22/0x40
+>>   [<ffffffff8107e550>] ? kthread_worker_fn+0x190/0x190
+>>
+>> The reason why this happens is because intel_gpio_irq_ack() is called with
+>> desc->lock raw_spinlock locked which cannot sleep but our normal spinlock
+>> (which is converted to rtmutex in -rt) is allowed to sleep. This causes
+>> might_sleep() to trigger.
+>>
+>> Fix this by converting the normal spinlock to a raw_spinlock.
+>>
+>> Reported-by: Kim Tatt Chuah <kim.tatt.chuah@intel.com>
+>> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>
+> Patch applied for fixes.
 
-> The pinctrl-intel needs to use request_irq() instead of chained interrupt
-> handling because it shares the interrupt with multiple GPIO host
-> controllers found on Intel CPUs. In -rt all such interrupts are forced to
-> run in thread context which triggers following warning:
->
->  WARNING: CPU: 0 PID: 530 at kernel/irq/handle.c:151 handle_irq_event_percpu+0x23d/0x240
->  irq 348 handler irq_default_primary_handler+0x0/0x10 enabled interrupts
->  Modules linked in:
->  CPU: 0 PID: 530 Comm: irq/14-INT3452: Not tainted 4.6.2-rt5 #1060
->   0000000000000000 ffff88007a257c98 ffffffff812d8494 ffff88007a257ce8
->   0000000000000000 ffff88007a257cd8 ffffffff8105e554 000000977a257d90
->   ffff88007a37a380 000000000000015c 0000000000000002 0000000000000000
->  Call Trace:
->   [<ffffffff812d8494>] dump_stack+0x4f/0x6b
->   [<ffffffff8105e554>] __warn+0xe4/0x100
->   [<ffffffff8105e5bf>] warn_slowpath_fmt+0x4f/0x60
->   [<ffffffff810b18f0>] ? __synchronize_hardirq+0x60/0x60
->   [<ffffffff810b17fd>] handle_irq_event_percpu+0x23d/0x240
->   [<ffffffff810b1862>] handle_irq_event+0x62/0x90
->   [<ffffffff810b4e1f>] handle_edge_irq+0x8f/0x190
->   [<ffffffff810b0d82>] generic_handle_irq+0x22/0x30
->   [<ffffffff81307abc>] intel_gpio_irq+0xdc/0x150
->   [<ffffffff810b2293>] irq_forced_thread_fn+0x23/0x70
->   [<ffffffff810b250b>] irq_thread+0x13b/0x1d0
->   [<ffffffff8167b844>] ? __schedule+0x2e4/0x5a0
->   [<ffffffff810b2270>] ? irq_finalize_oneshot.part.37+0xd0/0xd0
->   [<ffffffff810b25a0>] ? irq_thread+0x1d0/0x1d0
->   [<ffffffff810b23d0>] ? wake_threads_waitq+0x30/0x30
->   [<ffffffff8107e624>] kthread+0xd4/0xf0
->   [<ffffffff8167ec27>] ? _raw_spin_unlock_irq+0x17/0x40
->   [<ffffffff8167f592>] ret_from_fork+0x22/0x40
->   [<ffffffff8107e550>] ? kthread_worker_fn+0x190/0x190
->
-> The handle_irq_event_* functions (and I suppose generic_handle_irq()) is
-> expected to be called with interrupts disabled and they rightfully complain
-> here because we run in thread context with interrupts enabled.
->
-> Fix this by adding IRQF_NO_THREAD flag when the master interrupt is
-> requested. This prevents forced threading of the interrupt used by the GPIO
-> host controllers.
->
-> Reported-by: Kim Tatt Chuah <kim.tatt.chuah@intel.com>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-
-Patch applied.
+Oh rather for -devel (next), since -rt is out-of-tree.
 
 Yours,
 Linus Walleij
