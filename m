@@ -1,36 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [patch] gpiolib: potential oops on failure path
-Date: Sat, 18 Jun 2016 10:52:52 +0200
-Message-ID: <CACRpkdbYYyH805OGa-gkWkj0+JiApKo-kND=h1Oaycd86EcLRw@mail.gmail.com>
-References: <20160617091550.GB25609@mwanda>
+Date: Sat, 18 Jun 2016 10:54:28 +0200
+Message-ID: <CACRpkda_yi08Nrkapz-00sb4HOze4J2nds92JnXroLK_7xNhwQ@mail.gmail.com>
+References: <20160617091550.GB25609@mwanda> <5763C2C1.8000505@bfs.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:33309 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750864AbcFRIwy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Jun 2016 04:52:54 -0400
-Received: by mail-oi0-f41.google.com with SMTP id u201so148673145oie.0
-        for <linux-gpio@vger.kernel.org>; Sat, 18 Jun 2016 01:52:53 -0700 (PDT)
-In-Reply-To: <20160617091550.GB25609@mwanda>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <5763C2C1.8000505@bfs.de>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: wharms@bfs.de
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Jun 17, 2016 at 11:15 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
+On Fri, Jun 17, 2016 at 11:28 AM, walter harms <wharms@bfs.de> wrote:
+> Am 17.06.2016 11:15, schrieb Dan Carpenter:
 
-> If anon_inode_getfd() fails then "i" is set to GPIOHANDLES_MAX.  It
-> means that we will read beyond the end of the array and dereference an
-> invalid pointer.
+>>  out_free_descs:
+>> +     if (i == GPIOHANDLES_MAX)
+>> +             i--;
+>>       for (; i >= 0; i--)
+>>               gpiod_free(lh->descs[i]);
+>>       kfree(lh->label);
 >
-> Fixes: d7c51b47ac11 ('gpio: userspace ABI for reading/writing GPIO lines')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> Since we have already noticed that programmes are bad at counting backwards
+> is it possible to change the loop into counting up ?
+>
+> btw: if lh->descs[i] is initialized to NULL it would be more robust just to free everything like:
+>
+> for(i=0;i< GPIOHANDLES_MAX; i++)
+>   gpiod_free(lh->descs[i]);
+>
+> just my two cents,
 
-Ouch, yeah that happens when you request max number of handles, thanks.
-
-Patch applied.
+The loop looks like that for a reason: i is indexing upwards while
+grabbing the descriptors, then it rewinds that way to free them if
+something went wrong during init.
 
 Yours,
 Linus Walleij
