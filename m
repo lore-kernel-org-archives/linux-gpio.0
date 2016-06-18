@@ -1,34 +1,66 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: omap: make gpio numbering deterministical by using
- of aliases
-Date: Sat, 18 Jun 2016 10:30:18 +0200
-Message-ID: <CACRpkdZ178-P=uVx7PTZdR4ut6fToNbNn+d70y21QRKtwrk9Dg@mail.gmail.com>
-References: <1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <CACRpkdaVRTj4jpGQp9nDKo8RAPDPUaApp4jAdBGRgd45bqo2zQ@mail.gmail.com>
- <20160615072404.GB26768@pengutronix.de> <20160615082705.GW22406@atomide.com> <5761265F.2050508@ti.com>
+Subject: Re: [PATCH 1/2] pinctrl: intel: Use raw_spinlock for locking
+Date: Sat, 18 Jun 2016 10:34:18 +0200
+Message-ID: <CACRpkdYjmoRSKEAFWwwb3MZQgycDKRU=CeEDG3HMUMmCD6U3TQ@mail.gmail.com>
+References: <1466065537-82027-1-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:36745 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750883AbcFRIaT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Jun 2016 04:30:19 -0400
-Received: by mail-oi0-f43.google.com with SMTP id p204so148483450oih.3
-        for <linux-gpio@vger.kernel.org>; Sat, 18 Jun 2016 01:30:19 -0700 (PDT)
-In-Reply-To: <5761265F.2050508@ti.com>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:35585 "EHLO
+	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750883AbcFRIeT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Jun 2016 04:34:19 -0400
+Received: by mail-oi0-f44.google.com with SMTP id v7so37343324oig.2
+        for <linux-gpio@vger.kernel.org>; Sat, 18 Jun 2016 01:34:19 -0700 (PDT)
+In-Reply-To: <1466065537-82027-1-git-send-email-mika.westerberg@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Kim Tatt Chuah <kim.tatt.chuah@intel.com>, Thomas Gleixner <tglx@linutronix.de>
 
-On Wed, Jun 15, 2016 at 11:56 AM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+On Thu, Jun 16, 2016 at 10:25 AM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 
-> Wouldn't gpio-line-names be helpful for such cases as mentioned in [1],[2]
-> But I don't know it these properties were exposed in legacy GPIO sysfs interface also.
+> When running -rt kernel and GPIO interrupt happens we get following
+>
+>  BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:931
+>  in_atomic(): 1, irqs_disabled(): 0, pid: 530, name: irq/14-INT3452:
+>  Preemption disabled at:[<ffffffff810b4dab>] handle_edge_irq+0x1b/0x190
+>
+>  CPU: 0 PID: 530 Comm: irq/14-INT3452: Not tainted 4.6.2-rt5 #1060
+>   0000000000000000 ffff88007a257d58 ffffffff812d8494 0000000000000000
+>   ffff88017a330000 ffff88007a257d78 ffffffff81083a11 ffff88007a252430
+>   ffff88007a252430 ffff88007a257d90 ffffffff8167ef20 000000000000001a
+>  Call Trace:
+>   [<ffffffff812d8494>] dump_stack+0x4f/0x6b
+>   [<ffffffff81083a11>] ___might_sleep+0xe1/0x160
+>   [<ffffffff8167ef20>] rt_spin_lock+0x20/0x50
+>   [<ffffffff81308c6d>] intel_gpio_irq_ack+0x2d/0x80
+>   [<ffffffff810b4e0b>] handle_edge_irq+0x7b/0x190
+>   [<ffffffff810b0d82>] generic_handle_irq+0x22/0x30
+>   [<ffffffff81307abc>] intel_gpio_irq+0xdc/0x150
+>   [<ffffffff810b2293>] irq_forced_thread_fn+0x23/0x70
+>   [<ffffffff810b250b>] irq_thread+0x13b/0x1d0
+>   [<ffffffff8167b844>] ? __schedule+0x2e4/0x5a0
+>   [<ffffffff810b2270>] ? irq_finalize_oneshot.part.37+0xd0/0xd0
+>   [<ffffffff810b25a0>] ? irq_thread+0x1d0/0x1d0
+>   [<ffffffff810b23d0>] ? wake_threads_waitq+0x30/0x30
+>   [<ffffffff8107e624>] kthread+0xd4/0xf0
+>   [<ffffffff8167ec27>] ? _raw_spin_unlock_irq+0x17/0x40
+>   [<ffffffff8167f592>] ret_from_fork+0x22/0x40
+>   [<ffffffff8107e550>] ? kthread_worker_fn+0x190/0x190
+>
+> The reason why this happens is because intel_gpio_irq_ack() is called with
+> desc->lock raw_spinlock locked which cannot sleep but our normal spinlock
+> (which is converted to rtmutex in -rt) is allowed to sleep. This causes
+> might_sleep() to trigger.
+>
+> Fix this by converting the normal spinlock to a raw_spinlock.
+>
+> Reported-by: Kim Tatt Chuah <kim.tatt.chuah@intel.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-The line names only expose through the chardev interface because the
-sysfs ABI is frozen and should not be extended.
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
