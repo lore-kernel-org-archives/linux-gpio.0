@@ -1,7 +1,7 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
+From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 Subject: Re: [PATCH v5 2/4] gpio: Allow PC/104 devices on X86_64
-Date: Fri, 17 Jun 2016 23:39:04 -0400
-Message-ID: <20160618033812.GA20596@sophia>
+Date: Fri, 17 Jun 2016 20:47:31 -0700
+Message-ID: <20160618034731.GA1815@kroah.com>
 References: <cover.1464380034.git.vilhelm.gray@gmail.com>
  <61880bededb77bbc3ea3422e48ce717d2a2ff489.1464380034.git.vilhelm.gray@gmail.com>
  <CACRpkdaOzZ1DvEUKtomBU=GH1kYfjKJjUfM-=45PhdzZA=dPgg@mail.gmail.com>
@@ -11,56 +11,55 @@ References: <cover.1464380034.git.vilhelm.gray@gmail.com>
  <20160618023607.GA7390@kroah.com>
  <20160618024959.GA4702@sophia>
  <20160618031810.GA29160@kroah.com>
+ <20160618033812.GA20596@sophia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:35297 "EHLO
-	mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751134AbcFRDjL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jun 2016 23:39:11 -0400
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20160618031810.GA29160@kroah.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <20160618033812.GA20596@sophia>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thorsten Leemhuis <regressions-rCxcAJFjeRkk+I/owrrOrA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, sasha.levin-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org, xiaolong.ye-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>, Linus Walleij <linus.walleij@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Guenter Roeck <linux@roeck-us.net>, Alexandre Courbot <gnurou@gmail.com>, sasha.levin@oracle.com, xiaolong.ye@intel.com
 
-On Fri, Jun 17, 2016 at 08:18:10PM -0700, Greg KH wrote:
->On Fri, Jun 17, 2016 at 10:49:59PM -0400, William Breathitt Gray wrote:
->> The PC/104 drivers were changed to utilize the ISA bus driver as part of
->> the original patchset which attempted to decouple the X86_32 dependency
->> from the ISA Kconfig option; these drivers were updated with the
->> intention of building on X86_64 in addition to X86_32.
->> 
->> However, the respective patches were merged without the decoupling
->> changes (since decoupling was the wrong approach), resulting in an
->> unintentional regression: the PC/104 drivers are now restricted to
->> X86_32 due to the ISA Kconfig option dependency, while they were capable
->> of building for X86_64 in previous kernel versions.
->> 
->> This patchset should fix this regression by introducing the ISA_BUS_API
->> Kconfig option, and the respective Kconfig dependency changes for the
->> drivers, in order to allow them to build for both X86_64 and X86_32 as
->> originally capable.
->
->Ah, ok, that makes more sense, thanks.  I'll go queue these up now.
->
->greg k-h
+On Fri, Jun 17, 2016 at 11:39:04PM -0400, William Breathitt Gray wrote:
+> On Fri, Jun 17, 2016 at 08:18:10PM -0700, Greg KH wrote:
+> >On Fri, Jun 17, 2016 at 10:49:59PM -0400, William Breathitt Gray wrote:
+> >> The PC/104 drivers were changed to utilize the ISA bus driver as part of
+> >> the original patchset which attempted to decouple the X86_32 dependency
+> >> from the ISA Kconfig option; these drivers were updated with the
+> >> intention of building on X86_64 in addition to X86_32.
+> >> 
+> >> However, the respective patches were merged without the decoupling
+> >> changes (since decoupling was the wrong approach), resulting in an
+> >> unintentional regression: the PC/104 drivers are now restricted to
+> >> X86_32 due to the ISA Kconfig option dependency, while they were capable
+> >> of building for X86_64 in previous kernel versions.
+> >> 
+> >> This patchset should fix this regression by introducing the ISA_BUS_API
+> >> Kconfig option, and the respective Kconfig dependency changes for the
+> >> drivers, in order to allow them to build for both X86_64 and X86_32 as
+> >> originally capable.
+> >
+> >Ah, ok, that makes more sense, thanks.  I'll go queue these up now.
+> >
+> >greg k-h
+> 
+> Greg K-H,
+> 
+> Please also consider picking up the following two patches which fix bugs
+> discovered during the ISA bus driver utilization conversion:
+> 
+>   1. https://patchwork.kernel.org/patch/9046831/
+>   2. https://patchwork.kernel.org/patch/9074641/
+> 
+> The second patch in particular fixes a kernel BUG which prevents some
+> drivers that call isa_register_driver from being built-in. This was
+> first reported by Sasha Levin (https://lkml.org/lkml/2016/5/11/719), and
+> the patch was later tested by Ye Xiaolong
+> (https://lkml.org/lkml/2016/5/31/164).
 
-Greg K-H,
+Now queued up, thanks for the prompt, they were still setting in my
+queue.
 
-Please also consider picking up the following two patches which fix bugs
-discovered during the ISA bus driver utilization conversion:
-
-  1. https://patchwork.kernel.org/patch/9046831/
-  2. https://patchwork.kernel.org/patch/9074641/
-
-The second patch in particular fixes a kernel BUG which prevents some
-drivers that call isa_register_driver from being built-in. This was
-first reported by Sasha Levin (https://lkml.org/lkml/2016/5/11/719), and
-the patch was later tested by Ye Xiaolong
-(https://lkml.org/lkml/2016/5/31/164).
-
-Thanks,
-
-William Breathitt Gray
+greg k-h
