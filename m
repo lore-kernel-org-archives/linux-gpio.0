@@ -1,123 +1,42 @@
-From: Colin Pitrat <colin.pitrat@gmail.com>
-Subject: [PATCH v3] gpio: sch: Fix Oops on module load on Asus Eee PC 1201
-Date: Sat, 18 Jun 2016 19:05:04 +0100
-Message-ID: <20160618180458.GA1425@pitrat4.localdomain>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: [PATCH] Revert "pinctrl: digicolor: add missing platform_set_drvdata() call"
+Date: Sat, 18 Jun 2016 23:01:06 +0300
+Message-ID: <8ee4285e8b0e2602ac5cec9845a937895147c5cb.1466280066.git.baruch@tkos.co.il>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33441 "EHLO
-	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751433AbcFRSFM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Jun 2016 14:05:12 -0400
-Content-Disposition: inline
+Received: from guitar.tcltek.co.il ([192.115.133.116]:44477 "EHLO
+	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751042AbcFRUBt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 18 Jun 2016 16:01:49 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, mika.westerberg@linux.intel.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>, Masahiro Yamada <yamada.masahiro@socionext.com>, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-This fixes the issue descirbe in bug 117531 
-(https://bugzilla.kernel.org/show_bug.cgi?id=117531).
-It's a regression introduced in linux 4.5 that causes a Oops at load of
-gpio_sch and prevents powering off the computer.
+This reverts commit 8b2b3dcb343bf8cb62efc1bd6a9dbe850005e2ac.
 
-The issue is that sch_gpio_reg_set is called in sch_gpio_probe before
-gpio_chip data is initialized with the pointer to the sch_gpio struct. As
-sch_gpio_reg_set calls gpiochip_get_data, it returns NULL which causes
-the Oops.
+Commit 546c6d79301 (pinctrl: digicolor: make it explicitly non-modular) removed
+the platform_get_drvdata() call, so platform_set_drvdata() is no longer needed.
 
-The patch follows Mika's advice (https://lkml.org/lkml/2016/5/9/61) and
-consists in modifying sch_gpio_reg_get and sch_gpio_reg_set to take a
-sch_gpio struct directly instead of a gpio_chip, which avoids the call to
-gpiochip_get_data.
-
-Thanks Mika for your patience with me :-)
-
-Signed-off-by: Colin Pitrat <colin.pitrat@gmail.com>
-
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 ---
- drivers/gpio/gpio-sch.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ drivers/pinctrl/pinctrl-digicolor.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
-index e85e753..eb43ae4 100644
---- a/drivers/gpio/gpio-sch.c
-+++ b/drivers/gpio/gpio-sch.c
-@@ -61,9 +61,8 @@ static unsigned sch_gpio_bit(struct sch_gpio *sch, unsigned gpio)
- 	return gpio % 8;
+diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
+index aba3da5ee844..639a57ecc7c2 100644
+--- a/drivers/pinctrl/pinctrl-digicolor.c
++++ b/drivers/pinctrl/pinctrl-digicolor.c
+@@ -332,8 +332,6 @@ static int dc_pinctrl_probe(struct platform_device *pdev)
+ 		return PTR_ERR(pmap->pctl);
+ 	}
+ 
+-	platform_set_drvdata(pdev, pmap);
+-
+ 	return dc_gpiochip_add(pmap, pdev->dev.of_node);
  }
  
--static int sch_gpio_reg_get(struct gpio_chip *gc, unsigned gpio, unsigned reg)
-+static int sch_gpio_reg_get(struct sch_gpio *sch, unsigned gpio, unsigned reg)
- {
--	struct sch_gpio *sch = gpiochip_get_data(gc);
- 	unsigned short offset, bit;
- 	u8 reg_val;
- 
-@@ -75,10 +74,9 @@ static int sch_gpio_reg_get(struct gpio_chip *gc, unsigned gpio, unsigned reg)
- 	return reg_val;
- }
- 
--static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned reg,
-+static void sch_gpio_reg_set(struct sch_gpio *sch, unsigned gpio, unsigned reg,
- 			     int val)
- {
--	struct sch_gpio *sch = gpiochip_get_data(gc);
- 	unsigned short offset, bit;
- 	u8 reg_val;
- 
-@@ -98,14 +96,15 @@ static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
- 	struct sch_gpio *sch = gpiochip_get_data(gc);
- 
- 	spin_lock(&sch->lock);
--	sch_gpio_reg_set(gc, gpio_num, GIO, 1);
-+	sch_gpio_reg_set(sch, gpio_num, GIO, 1);
- 	spin_unlock(&sch->lock);
- 	return 0;
- }
- 
- static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num)
- {
--	return sch_gpio_reg_get(gc, gpio_num, GLV);
-+	struct sch_gpio *sch = gpiochip_get_data(gc);
-+	return sch_gpio_reg_get(sch, gpio_num, GLV);
- }
- 
- static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
-@@ -113,7 +112,7 @@ static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
- 	struct sch_gpio *sch = gpiochip_get_data(gc);
- 
- 	spin_lock(&sch->lock);
--	sch_gpio_reg_set(gc, gpio_num, GLV, val);
-+	sch_gpio_reg_set(sch, gpio_num, GLV, val);
- 	spin_unlock(&sch->lock);
- }
- 
-@@ -123,7 +122,7 @@ static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
- 	struct sch_gpio *sch = gpiochip_get_data(gc);
- 
- 	spin_lock(&sch->lock);
--	sch_gpio_reg_set(gc, gpio_num, GIO, 0);
-+	sch_gpio_reg_set(sch, gpio_num, GIO, 0);
- 	spin_unlock(&sch->lock);
- 
- 	/*
-@@ -182,13 +181,13 @@ static int sch_gpio_probe(struct platform_device *pdev)
- 		 * GPIO7 is configured by the CMC as SLPIOVR
- 		 * Enable GPIO[9:8] core powered gpios explicitly
- 		 */
--		sch_gpio_reg_set(&sch->chip, 8, GEN, 1);
--		sch_gpio_reg_set(&sch->chip, 9, GEN, 1);
-+		sch_gpio_reg_set(sch, 8, GEN, 1);
-+		sch_gpio_reg_set(sch, 9, GEN, 1);
- 		/*
- 		 * SUS_GPIO[2:0] enabled by default
- 		 * Enable SUS_GPIO3 resume powered gpio explicitly
- 		 */
--		sch_gpio_reg_set(&sch->chip, 13, GEN, 1);
-+		sch_gpio_reg_set(sch, 13, GEN, 1);
- 		break;
- 
- 	case PCI_DEVICE_ID_INTEL_ITC_LPC:
 -- 
-2.8.3
+2.8.1
 
