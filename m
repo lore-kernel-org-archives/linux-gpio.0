@@ -1,72 +1,70 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH 12/12] leds: Only descend into leds directory when
- CONFIG_NEW_LEDS is set
-Date: Fri, 17 Jun 2016 17:46:21 -0500
-Message-ID: <57647DBD.2010406@ti.com>
-References: <20160613200211.14790-1-afd@ti.com>
- <20160613200211.14790-13-afd@ti.com> <5760FA52.7010806@samsung.com>
+From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH v5 2/4] gpio: Allow PC/104 devices on X86_64
+Date: Fri, 17 Jun 2016 19:36:07 -0700
+Message-ID: <20160618023607.GA7390@kroah.com>
+References: <cover.1464380034.git.vilhelm.gray@gmail.com>
+ <61880bededb77bbc3ea3422e48ce717d2a2ff489.1464380034.git.vilhelm.gray@gmail.com>
+ <CACRpkdaOzZ1DvEUKtomBU=GH1kYfjKJjUfM-=45PhdzZA=dPgg@mail.gmail.com>
+ <20160531112251.GA5674@sophia>
+ <20160531152541.GB13304@kroah.com>
+ <057d8c0b-074c-609a-35da-5a01f07b6d31@leemhuis.info>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-Reply-To: <5760FA52.7010806@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Russell King <linux@armlinux.org.uk>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Rusty Russell <rusty@rustcorp.com.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, linux-pwm@vger.kernel.org, lguest@lists.ozlabs.org, linux-wireless@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, linux-med
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <057d8c0b-074c-609a-35da-5a01f07b6d31-rCxcAJFjeRkk+I/owrrOrA@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thorsten Leemhuis <regressions-rCxcAJFjeRkk+I/owrrOrA@public.gmane.org>
+Cc: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 06/15/2016 01:48 AM, Jacek Anaszewski wrote:
-> Hi Andrew,
-> 
-> Thanks for the patch.
-> 
-> Please address the issue [1] raised by test bot and resubmit.
-> 
-> Thanks,
-> Jacek Anaszewski
-> 
-> [1] https://lkml.org/lkml/2016/6/13/1091
-> 
+On Fri, Jun 17, 2016 at 12:47:14PM +0200, Thorsten Leemhuis wrote:
+> On 31.05.2016 17:25, Greg KH wrote:
+> > On Tue, May 31, 2016 at 07:23:06AM -0400, William Breathitt Gray wr=
+ote:
+> >> On Tue, May 31, 2016 at 10:41:49AM +0200, Linus Walleij wrote:
+> >>> On Sat, May 28, 2016 at 12:08 AM, William Breathitt Gray
+> >>> <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> >>>> With the introduction of the ISA_BUS_API Kconfig option, ISA-sty=
+le
+> >>>> drivers may be built for X86_64 architectures. This patch change=
+s the
+> >>>> ISA Kconfig option dependency of the PC/104 drivers to ISA_BUS_A=
+PI, thus
+> >>>> allowing them to build for X86_64 as they are expected to.
+> > [=E2=80=A6]
+> >> Greg K-H,
+> >>
+> >> Would you be able to pick up this entire patchset via driver-core;=
+ I
+> >> figure that tree is the most appropriate to receive any core ISA b=
+us
+> >> driver changes (unless you see a more fitting path to take).
+> > [=E2=80=A6]
+> > Yes, I can take this through the driver core tree as that's where t=
+he
+> > original series came from...
+>=20
+> Was this series merged or did it fell through the cracks? I currently
+> assume the latter, as I can't see it in neither mainline nor linux-ne=
+xt
+> (but maybe I'm missing something). Just wondering, because I have thi=
+s
+> issue on my regression list for 4.7.
+>=20
+> For the whole context see:
+> http://thread.gmane.org/gmane.linux.kernel.gpio/17016/
+>=20
+> Sincerely, your regression tracker for Linux 4.7 (http://bit.ly/28JRm=
+Jo)
 
-It looks like some systems use 'gpio_led_register_device' to make an
-in-memory copy of their LED device table so the original can be removed
-as .init.rodata. This doesn't necessarily depend on the LED subsystem
-but it kind of seems useless when the rest of the subsystem is disabled.
+I don't think this is a regression, I was going to queue these up for
+4.8-rc1.  As it is now, 4.7-rc is working just fine in this regards,
+right?
 
-One solution could be to use a dummy 'gpio_led_register_device' when the
-subsystem is not enabled. Another is just to remove the five or so uses
-of 'gpio_led_register_device' and have those systems register LED device
-tables like other systems do.
+Or am I missing something?
 
-If nether of these are acceptable then this patch can be dropped from
-this series for now.
+thanks,
 
-Thanks,
-Andrew
-
-> On 06/13/2016 10:02 PM, Andrew F. Davis wrote:
->> When CONFIG_NEW_LEDS is not set make will still descend into the leds
->> directory but nothing will be built. This produces unneeded build
->> artifacts and messages in addition to slowing the build. Fix this here.
->>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
->> ---
->>   drivers/Makefile | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/Makefile b/drivers/Makefile
->> index 567e32c..fa514d5 100644
->> --- a/drivers/Makefile
->> +++ b/drivers/Makefile
->> @@ -127,7 +127,7 @@ obj-$(CONFIG_CPU_FREQ)        += cpufreq/
->>   obj-$(CONFIG_CPU_IDLE)        += cpuidle/
->>   obj-$(CONFIG_MMC)        += mmc/
->>   obj-$(CONFIG_MEMSTICK)        += memstick/
->> -obj-y                += leds/
->> +obj-$(CONFIG_NEW_LEDS)        += leds/
->>   obj-$(CONFIG_INFINIBAND)    += infiniband/
->>   obj-$(CONFIG_SGI_SN)        += sn/
->>   obj-y                += firmware/
->>
-> 
-> 
+greg k-h
