@@ -1,85 +1,42 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH] gpio: omap: make gpio numbering deterministical by using
- of aliases
-Date: Sun, 19 Jun 2016 03:08:23 +0200
-Message-ID: <20160619010823.GC26875@pengutronix.de>
-References: <1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <CACRpkdaVRTj4jpGQp9nDKo8RAPDPUaApp4jAdBGRgd45bqo2zQ@mail.gmail.com>
- <20160615072404.GB26768@pengutronix.de>
- <CACRpkdYK1C5px+A_O1sF99KTPTob9qTQpipEaRLHnNx5=AokLg@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v3] gpio: sch: Fix Oops on module load on Asus Eee PC 1201
+Date: Sun, 19 Jun 2016 16:02:38 +0900
+Message-ID: <CAAVeFuJq1cxcXjHcdLsOW7qNNBHtM0fgQJBSfGy=5j4vVV3Q1Q@mail.gmail.com>
+References: <20160618180458.GA1425@pitrat4.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:45880 "EHLO
-	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751115AbcFSBIh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 18 Jun 2016 21:08:37 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYK1C5px+A_O1sF99KTPTob9qTQpipEaRLHnNx5=AokLg@mail.gmail.com>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36686 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751455AbcFSHC7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 19 Jun 2016 03:02:59 -0400
+In-Reply-To: <20160618180458.GA1425@pitrat4.localdomain>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Mark Rutland <mark.rutland@arm.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Santosh Shilimkar <ssantosh@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org
+To: Colin Pitrat <colin.pitrat@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hello Linus,
+On Sun, Jun 19, 2016 at 3:05 AM, Colin Pitrat <colin.pitrat@gmail.com> wrote:
+> This fixes the issue descirbe in bug 117531
+> (https://bugzilla.kernel.org/show_bug.cgi?id=117531).
+> It's a regression introduced in linux 4.5 that causes a Oops at load of
+> gpio_sch and prevents powering off the computer.
+>
+> The issue is that sch_gpio_reg_set is called in sch_gpio_probe before
+> gpio_chip data is initialized with the pointer to the sch_gpio struct. As
+> sch_gpio_reg_set calls gpiochip_get_data, it returns NULL which causes
+> the Oops.
+>
+> The patch follows Mika's advice (https://lkml.org/lkml/2016/5/9/61) and
+> consists in modifying sch_gpio_reg_get and sch_gpio_reg_set to take a
+> sch_gpio struct directly instead of a gpio_chip, which avoids the call to
+> gpiochip_get_data.
+>
+> Thanks Mika for your patience with me :-)
+>
+> Signed-off-by: Colin Pitrat <colin.pitrat@gmail.com>
 
-On Sat, Jun 18, 2016 at 10:25:45AM +0200, Linus Walleij wrote:
-> On Wed, Jun 15, 2016 at 9:24 AM, Uwe Kleine-K=F6nig
-> <u.kleine-koenig@pengutronix.de> wrote:
-> > On Wed, Jun 15, 2016 at 08:56:58AM +0200, Linus Walleij wrote:
->=20
-> >> The GPIO numbering scheme is a matter of Linux internals and
-> >> not about hardware description IMO.
-> >
-> > Not sure if I should agree here or not. It's very usual that the
-> > "internal" gpio numbers match the hardware reference manual. I know=
- this
-> > from imx, at91, all pre-dt platforms, I'm sure there are more, and =
-I bet
-> > I'm not the only one relying on this for omap.
->=20
-> I think it will still match nicely against the chip-local offsets of =
-the
-> primary gpiochip so it'll be fine with a chardev too. The same was/is
+Besides fixing the issue, avoiding an upcast from gpio_chip in
+functions that are not driver hooks seems a good practice to me.
 
-I cannot follow. What is the primary gpiochip? The first one? What is a
-"chip-local offset". Just 3 for the fourth gpio of a given gpio bank?
-I guess the problem is that I didn't follow development of the gpio
-chardev.
-
-> the case of the first interrupts on x86 I think, but with the plethor=
-a of
-> irqchips and dependency on probe order etc the assumption is
-> nowadays to dangerous.
->=20
-> >
-> > And this is very usual in the dt world, too:
-> >
-> > $ git grep -El 'gpio. =3D \&gpio' arch/arm/boot/dts | wc -l
-> > 37
->=20
-> Aha I didn't even know. Well I guess I could allow it for OMAP too
-> then, but I want an ACK from one of the DT binding maintainers.
-
-I added Rob, Frank, Mark and the device tree list to the recipients of
-this mail. Can you please comment? There is already a v2 that you can
-find at http://thread.gmane.org/gmane.linux.kernel.gpio/17399/ in case
-it didn't hit your mailbox. If you tell me that you want it, I can also
-bounce you the series.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
