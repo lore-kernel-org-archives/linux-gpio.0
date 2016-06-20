@@ -1,42 +1,69 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v3] gpio: sch: Fix Oops on module load on Asus Eee PC 1201
-Date: Mon, 20 Jun 2016 10:46:44 +0300
-Message-ID: <20160620074644.GU1739@lahna.fi.intel.com>
-References: <20160618180458.GA1425@pitrat4.localdomain>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [RFC PATCH 02/13] drm/tegra: Add helper functions for setting up
+ DPAUX pads
+Date: Mon, 20 Jun 2016 08:59:19 +0100
+Message-ID: <5767A257.6080106@nvidia.com>
+References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
+ <1466165027-17917-3-git-send-email-jonathanh@nvidia.com>
+ <20160617161138.GC27475@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:38862 "EHLO mga04.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751896AbcFTHqt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 20 Jun 2016 03:46:49 -0400
-Content-Disposition: inline
-In-Reply-To: <20160618180458.GA1425@pitrat4.localdomain>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20160617161138.GC27475@ulmo.ba.sec>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Colin Pitrat <colin.pitrat@gmail.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Jun 18, 2016 at 07:05:04PM +0100, Colin Pitrat wrote:
-> This fixes the issue descirbe in bug 117531 
-> (https://bugzilla.kernel.org/show_bug.cgi?id=117531).
-> It's a regression introduced in linux 4.5 that causes a Oops at load of
-> gpio_sch and prevents powering off the computer.
-> 
-> The issue is that sch_gpio_reg_set is called in sch_gpio_probe before
-> gpio_chip data is initialized with the pointer to the sch_gpio struct. As
-> sch_gpio_reg_set calls gpiochip_get_data, it returns NULL which causes
-> the Oops.
-> 
-> The patch follows Mika's advice (https://lkml.org/lkml/2016/5/9/61) and
-> consists in modifying sch_gpio_reg_get and sch_gpio_reg_set to take a
-> sch_gpio struct directly instead of a gpio_chip, which avoids the call to
-> gpiochip_get_data.
-> 
-> Thanks Mika for your patience with me :-)
-> 
-> Signed-off-by: Colin Pitrat <colin.pitrat@gmail.com>
-
-Looks good now, thanks :)
-
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Ck9uIDE3LzA2LzE2IDE3OjExLCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPiAqIFBHUCBTaWduZWQg
+YnkgYW4gdW5rbm93biBrZXkKPiAKPiBPbiBGcmksIEp1biAxNywgMjAxNiBhdCAwMTowMzozNlBN
+ICswMTAwLCBKb24gSHVudGVyIHdyb3RlOgo+PiBJbiBwcmVwYXJhdGlvbiBmb3IgYWRkaW5nIHBp
+bmN0cmwgc3VwcG9ydCBmb3IgdGhlIERQQVVYIHBhZHMsIGFkZAo+PiBoZWxwZXJzIGZ1bmN0aW9u
+cyBmb3IgY29uZmlndXJpbmcgdGhlIHBhZHMgYW5kIGNvbnRyb2xsaW5nIHRoZSBwb3dlcgo+PiBm
+b3IgdGhlIHBhZHMuCj4+Cj4+IFBsZWFzZSBub3RlIHRoYXQgYWx0aG91Z2ggYSBzaW1wbGUgaWYt
+c3RhdGVtZW50IGNvdWxkIGJlIHVzZWQgaW5zdGVhZAo+PiBvZiBhIGNhc2Ugc3RhdGVtZW50IGZv
+ciBjb25maWd1cmluZyB0aGUgcGFkcyBhcyB0aGVyZSBhcmUgb25seSB0d28KPj4gcG9zc2libGUg
+bW9kZXMsIGEgY2FzZSBzdGF0ZW1lbnQgaXMgdXNlZCBiZWNhdXNlIHdoZW4gaW50ZWdyYXRpbmcg
+d2l0aAo+PiB0aGUgcGluY3RybCBmcmFtZXdvcmssIHdlIG5lZWQgdG8gYmUgYWJsZSB0byBoYW5k
+bGUgaW52YWxpZCBtb2RlcyB0aGF0Cj4+IGNvdWxkIGJlIHBhc3NlZC4KPj4KPj4gU2lnbmVkLW9m
+Zi1ieTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+Cj4+IC0tLQo+PiAgZHJpdmVy
+cy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMgfCA3NSArKysrKysrKysrKysrKysrKysrKysrKysrKy0t
+LS0tLS0tLS0tLS0tLS0tCj4+ICAxIGZpbGUgY2hhbmdlZCwgNDUgaW5zZXJ0aW9ucygrKSwgMzAg
+ZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBh
+dXguYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcGF1eC5jCj4+IGluZGV4IDA4NzRhN2U1YjM3
+Yi4uYWEzYTAzN2ZjZDNiIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBh
+dXguYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBhdXguYwo+PiBAQCAtMjY3LDYg
+KzI2Nyw0NSBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgdGVncmFfZHBhdXhfaXJxKGludCBpcnEsIHZv
+aWQgKmRhdGEpCj4+ICAJcmV0dXJuIHJldDsKPj4gIH0KPj4gIAo+PiArc3RhdGljIHZvaWQgdGVn
+cmFfZHBhdXhfcG93ZXJkb3duKHN0cnVjdCB0ZWdyYV9kcGF1eCAqZHBhdXgsIGJvb2wgZW5hYmxl
+KQo+PiArewo+PiArCXUzMiB2YWx1ZSA9IHRlZ3JhX2RwYXV4X3JlYWRsKGRwYXV4LCBEUEFVWF9I
+WUJSSURfU1BBUkUpOwo+PiArCj4+ICsJaWYgKGVuYWJsZSkKPj4gKwkJdmFsdWUgfD0gRFBBVVhf
+SFlCUklEX1NQQVJFX1BBRF9QT1dFUl9ET1dOOwo+PiArCWVsc2UKPj4gKwkJdmFsdWUgJj0gfkRQ
+QVVYX0hZQlJJRF9TUEFSRV9QQURfUE9XRVJfRE9XTjsKPj4gKwo+PiArCXRlZ3JhX2RwYXV4X3dy
+aXRlbChkcGF1eCwgdmFsdWUsIERQQVVYX0hZQlJJRF9TUEFSRSk7Cj4+ICt9Cj4gCj4gSSdkIGxp
+a2UgZm9yIHRoaXMgdG8gYmUgdHdvIGZ1bmN0aW9ucyB3aXRob3V0IHRoZSBib29sZWFuIHBhcmFt
+ZXRlci4gVGhlCj4gcmVhc29uIGlzIHRoYXQgd2l0aG91dCBsb29raW5nIGF0IHRoZSBpbXBsZW1l
+bnRhdGlvbiB0aGVyZSdzIG5vIHdheSB0bwo+IHVuZGVyc3RhbmQgd2hhdCB0aGUgbWVhbmluZyBv
+ZiB0cnVlIGFuZCBmYWxzZSBpcy4gSWYgaW5zdGVhZCB5b3UgY2FsbAo+IHRoaXM6Cj4gCj4gCXN0
+YXRpYyB2b2lkIHRlZ3JhX2RwYXV4X3BhZF9wb3dlcl9kb3duKHN0cnVjdCB0ZWdyYV9kcGF1eCAq
+ZHBhdXgpCj4gCXsKPiAJCS4uLgo+IAl9Cj4gCj4gYW5kCj4gCj4gCXN0YXRpYyB2b2lkIHRlZ3Jh
+X2RwYXV4X3BhZF9wb3dlcl91cChzdHJ1Y3QgdGVncmFfZHBhdXggKmRwYXV4KQo+IAl7Cj4gCQku
+Li4KPiAJfQo+IAo+IHlvdSBjYW4gZWFzaWx5IGRlZHVjZSBmcm9tIHRoZSBuYW1lIHdoYXQncyBn
+b2luZyBvbi4KCk9LLCBmaW5lIHdpdGggbWUuIEkgd2FzIG5vdCBzdXJlIGlmIGl0IHdhcyBvYnZp
+b3VzIG9yIG5vdC4KCj4+ICtzdGF0aWMgaW50IHRlZ3JhX2RwYXV4X2NvbmZpZyhzdHJ1Y3QgdGVn
+cmFfZHBhdXggKmRwYXV4LCBpbnQgZnVuY3Rpb24pCj4gCj4gQ2FuIGZ1bmN0aW9uIG5vdCBiZSB1
+bnNpZ25lZD8KClllcyBpdCBjYW4gYW5kIGluIGZhY3Qgc2hvdWxkIGJlLiBJIGhhZCB0aG91Z2h0
+IHRoYXQgaXQgbmVlZGVkIHRvIGJlCnNpZ25lZCB0byBtYXRjaCB3aXRoIHRoZSBwaW5jdHJsLW9w
+cyBidXQgb24gY2xvc2VyIGluc3BlY3Rpb24gdGhhdCBpcwpub3QgdGhlIGNhc2UuCgpKb24KCi0t
+IApudnB1YmxpYwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
