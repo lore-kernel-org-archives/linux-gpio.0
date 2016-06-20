@@ -1,53 +1,29 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH] gpio: sx150x: Update OF configuration
-Date: Mon, 20 Jun 2016 11:03:41 +0200
-Message-ID: <5767B16D.8080600@baylibre.com>
-References: <1466157063-10955-1-git-send-email-narmstrong@baylibre.com>
- <CACRpkdbDMo=cV5bmcWNbeHU+c-AyokpaFNNZJF4UPY+twDX8bw@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] gpio: lynxpoint: avoid potential warning on error
+ path
+Date: Mon, 20 Jun 2016 12:05:16 +0300
+Message-ID: <20160620090516.GA1739@lahna.fi.intel.com>
+References: <1466352404-23685-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:36427 "EHLO
-	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932173AbcFTJJR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jun 2016 05:09:17 -0400
-Received: by mail-wm0-f50.google.com with SMTP id f126so60337491wma.1
-        for <linux-gpio@vger.kernel.org>; Mon, 20 Jun 2016 02:09:16 -0700 (PDT)
-In-Reply-To: <CACRpkdbDMo=cV5bmcWNbeHU+c-AyokpaFNNZJF4UPY+twDX8bw@mail.gmail.com>
+Received: from mga01.intel.com ([192.55.52.88]:22799 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751959AbcFTJGD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 20 Jun 2016 05:06:03 -0400
+Content-Disposition: inline
+In-Reply-To: <1466352404-23685-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On 06/18/2016 11:02 AM, Linus Walleij wrote:
-> On Fri, Jun 17, 2016 at 11:51 AM, Neil Armstrong
-> <narmstrong@baylibre.com> wrote:
+On Sun, Jun 19, 2016 at 07:06:44PM +0300, Andy Shevchenko wrote:
+> When devres API is in use we are not supposed to call plain gpiochip_remove().
+> Remove redundant call to gpiochip_remove().
 > 
->> In case of OF probing, the driver fails to initialize :
->> - gpio_chip.base must be -1
->> - irq_summary must be either -1 or valid
->> - There is no way to use the other configurations
->>
->> Add OF parsing function to complete the HW configuration, make
->> OF configuration dynamic instead of static with #defines and
->> update the DT bindings.
->>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> 
-> As you can see from the result of the build robot, the removal
-> of #ifdef CONFIG_OF_GPIO does not play well with non-DT
-> configurarions.
-> 
-> You need to figure something out here so that it builds for
-> both.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-OK, I'll find out.
+Good catch!
 
-Thanks,
-Neil
-
-> Yours,
-> Linus Walleij
-> 
-
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
