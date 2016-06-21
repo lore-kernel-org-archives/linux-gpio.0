@@ -1,46 +1,66 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 1/2 v2] gpio: omap: make gpio numbering deterministical
- by using of aliases
-Date: Tue, 21 Jun 2016 04:28:59 -0700
-Message-ID: <20160621112858.GO22406@atomide.com>
-References: <1465930632-18941-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <1465930632-18941-2-git-send-email-u.kleine-koenig@pengutronix.de>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: Re: [PATCH] leds: Add no-op gpio_led_register_device when LED
+ subsystem is disabled
+Date: Tue, 21 Jun 2016 06:48:10 -0500
+Message-ID: <5769297A.4050608@ti.com>
+References: <20160613200211.14790-1-afd@ti.com>
+ <20160613200211.14790-13-afd@ti.com> <5760FA52.7010806@samsung.com>
+ <57647DBD.2010406@ti.com> <57679E38.3080901@samsung.com>
+ <57686A94.2010704@ti.com> <5768E815.5080706@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1465930632-18941-2-git-send-email-u.kleine-koenig@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, kernel@pengutronix.de, Santosh Shilimkar <ssantosh@kernel.org>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <5768E815.5080706@samsung.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, linux-i2c@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, lguest@lists.ozlabs.org, Samuel Ortiz <sameo@linux.intel.com>, Russell King <linux@armlinux.org.uk>, linux-leds@vger.kernel.org, linux-mmc@vger.kernel.org, linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Rusty Russell <rusty@rustcorp.com.au>, linux-gpio@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-gpio@vger.kernel.org
 
-KiBVd2UgS2xlaW5lLUvDtm5pZyA8dS5rbGVpbmUta29lbmlnQHBlbmd1dHJvbml4LmRlPiBbMTYw
-NjE0IDEyOjAzXToKPiBUcmFkaXRpb25hbGx5IHRoZSBuLXRoIGdwaW8gZGV2aWNlIHByb2JlZCBi
-eSB0aGUgb21hcCBncGlvIGRyaXZlciBnb3QKPiB0aGUgZ3BpbyBudW1iZXIgcmFuZ2UgW24qMzIg
-Li4gbiozMiszMV0uCj4gV2hlbiBvcmRlciBvZiB0aGUgZGV2aWNlcyBwcm9iZWQgYnkgdGhlIGRy
-aXZlciBjaGFuZ2VzICh3aGljaCBjYW4gaGFwcGVuCj4gYWxyZWFkeSBub3cgd2hlbiBzb21lIGRl
-dmljZXMgaGF2ZSBhIHBpbmN0cmwgYW5kIHNvIHRoZSBmaXJzdCBwcm9iZQo+IGF0dGVtcHQgcmV0
-dXJucyAtRU5PREVWKSB0aGUgbnVtYmVyaW5nIGNoYW5nZXMuCj4gCj4gVG8gZW5zdXJlIGEgZGV0
-ZXJtaW5pc3RpY2FsIG51bWJlcmluZyB1c2Ugb2ZfYWxpYXNfZ2V0X2lkIHRvIGRldGVybWluZQo+
-IHRoZSBiYXNlIGZvciBhIGdpdmVuIGRldmljZS4gSWYgbm8gcmVzcGVjdGl2ZSBhbGlhcyBleGlz
-dHMgZmFsbCBiYWNrIHRvCj4gdGhlIHRyYWRpdGlvbmFsIG51bWJlcmluZy4KPiAKPiBGb3IgdGhl
-IHVudXN1YWwgY2FzZSB3aGVyZSBvbmx5IGEgcGFydCBvZiB0aGUgZ3BpbyBkZXZpY2VzIGhhdmUg
-YQo+IG1hdGNoaW5nIGFsaWFzIHNvbWUgb2YgdGhlbSBtaWdodCBmYWlsIHRvIHByb2JlLiBCdXQg
-aWYgbm9uZSBvZiB0aGVtIGhhcwo+IGFuIGFsaWFzIG9yIGFsbCwgdGhlcmUgaXMgbm8gY29uZmxp
-Y3Qgd2hpY2ggc2hvdWxkIGJlIGdvb2QgZW5vdWdoIHRvCj4gbWFpbnRhaW4gYmFja3dhcmQgY29t
-cGF0aWJpbGl0eS4KCkkgdGhpbmsgZG9pbmcgdGhpcyBpcyBhIGdvb2QgaWRlYSB0byBwcmV2ZW50
-IG5hc3R5IHN1cHJpc2VzIHdoZW4KdXBncmFkaW5nIGEga2VybmVsIG9uIHNvbWUgZGV2aWNlOgoK
-QWNrZWQtYnk6IFRvbnkgTGluZGdyZW4gPHRvbnlAYXRvbWlkZS5jb20+CgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxp
-bmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3Rz
-LmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+T24gMDYvMjEvMjAxNiAwMjowOSBBTSwgSmFjZWsgQW5hc3pld3NraSB3cm90ZToKPiBIaSBBbmRy
+ZXcsCj4gCj4gVGhpcyBwYXRjaCBkb2Vzbid0IGFwcGx5LCBwbGVhc2UgcmViYXNlIG9udG8gcmVj
+ZW50IExFRCB0cmVlLgo+IAo+IE9uIDA2LzIxLzIwMTYgMTI6MTMgQU0sIEFuZHJldyBGLiBEYXZp
+cyB3cm90ZToKPj4gU29tZSBzeXN0ZW1zIHVzZSAnZ3Bpb19sZWRfcmVnaXN0ZXJfZGV2aWNlJyB0
+byBtYWtlIGFuIGluLW1lbW9yeSBjb3B5IG9mCj4+IHRoZWlyIExFRCBkZXZpY2UgdGFibGUgc28g
+dGhlIG9yaWdpbmFsIGNhbiBiZSByZW1vdmVkIGFzIC5pbml0LnJvZGF0YS4KPj4gV2hlbiB0aGUg
+TEVEIHN1YnN5c3RlbSBpcyBub3QgZW5hYmxlZCBzb3VyY2UgaW4gdGhlIGxlZCBkaXJlY3Rvcnkg
+aXMgbm90Cj4+IGJ1aWx0IGFuZCBzbyB0aGlzIGZ1bmN0aW9uIG1heSBiZSB1bmRlZmluZWQuIEZp
+eCB0aGlzIGhlcmUuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEFuZHJldyBGLiBEYXZpcyA8YWZkQHRp
+LmNvbT4KPj4gLS0tCj4+ICAgaW5jbHVkZS9saW51eC9sZWRzLmggfCA4ICsrKysrKysrCj4+ICAg
+MSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvaW5jbHVk
+ZS9saW51eC9sZWRzLmggYi9pbmNsdWRlL2xpbnV4L2xlZHMuaAo+PiBpbmRleCBkMmIxMzA2Li5h
+NGEzZGE2IDEwMDY0NAo+PiAtLS0gYS9pbmNsdWRlL2xpbnV4L2xlZHMuaAo+PiArKysgYi9pbmNs
+dWRlL2xpbnV4L2xlZHMuaAo+PiBAQCAtMzg2LDggKzM4NiwxNiBAQCBzdHJ1Y3QgZ3Bpb19sZWRf
+cGxhdGZvcm1fZGF0YSB7Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgdW5zaWduZWQgbG9uZyAqZGVsYXlfb2ZmKTsKPiAKPiBDdXJyZW50bHkgdGhlcmUgaXMgc29t
+ZSBzdHVmZiBoZXJlLCBhbmQgaW4gZmFjdCBpdCBoYXMgYmVlbiBmb3IKPiBhIGxvbmcgdGltZS4K
+PiAKPiBQYXRjaCAiW1BBVENIIDEyLzEyXSBsZWRzOiBPbmx5IGRlc2NlbmQgaW50byBsZWRzIGRp
+cmVjdG9yeSB3aGVuCj4gQ09ORklHX05FV19MRURTIGlzIHNldCIgYWxzbyBkb2Vzbid0IGFwcGx5
+Lgo+IFdoYXQgcmVwb3NpdG9yeSBhcmUgeW91IHVzaW5nPwo+IAoKdjQuNy1yYzQsIGl0IG1heSBu
+b3QgYXBwbHkgZHVlIHRvIHRoZSBzdXJyb3VuZGluZyBsaW5lcyBiZWluZyBjaGFuZ2VkIGluCnRo
+ZSBvdGhlciBwYXRjaGVzIHdoaWNoIG1heSBub3QgYmUgYXBwbGllZCB0byB5b3VyIHRyZWUuIEl0
+IGlzIGEgc2luZ2xlCmxpbmUgY2hhbmdlIHBlciBwYXRjaCBzbyBob3BlZnVsbHkgdGhlIG1lcmdl
+IGNvbmZsaWN0IHJlc29sdXRpb25zIHdpbGwKYmUgdHJpdmlhbC4KCkEgYmV0dGVyIHNvbHV0aW9u
+IGNvdWxkIGhhdmUgYmVlbiBnZXR0aW5nIGFuIGFjayBmcm9tIGVhY2ggbWFpbnRhaW5lcgphbmQg
+aGF2aW5nIHNvbWVvbmUgcHVsbCB0aGUgd2hvbGUgc2VyaWVzIGludG8gb25lIHRyZWUsIGJ1dCBw
+YXJ0cyBoYXZlCmFscmVhZHkgYmVlbiBwaWNrZWQgc28gaXQgbWF5IGJlIGEgbGl0dGxlIGxhdGUg
+Zm9yIHRoYXQuCgo+PiAgIH07Cj4+Cj4+ICsjaWZkZWYgQ09ORklHX05FV19MRURTCj4+ICAgc3Ry
+dWN0IHBsYXRmb3JtX2RldmljZSAqZ3Bpb19sZWRfcmVnaXN0ZXJfZGV2aWNlKAo+PiAgICAgICAg
+ICAgICAgICAgIGludCBpZCwgY29uc3Qgc3RydWN0IGdwaW9fbGVkX3BsYXRmb3JtX2RhdGEgKnBk
+YXRhKTsKPj4gKyNlbHNlCj4+ICtzdGF0aWMgaW5saW5lIHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
+KmdwaW9fbGVkX3JlZ2lzdGVyX2RldmljZSgKPj4gKyAgICAgICAgICAgICAgIGludCBpZCwgY29u
+c3Qgc3RydWN0IGdwaW9fbGVkX3BsYXRmb3JtX2RhdGEgKnBkYXRhKQo+PiArewo+PiArICAgICAg
+IHJldHVybiAwOwo+PiArfQo+PiArI2VuZGlmCj4+Cj4+ICAgZW51bSBjcHVfbGVkX2V2ZW50IHsK
+Pj4gICAgICAgICAgQ1BVX0xFRF9JRExFX1NUQVJULCAgICAgLyogQ1BVIGVudGVycyBpZGxlICov
+Cj4+Cj4gCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CkxpbnV4cHBjLWRldiBtYWlsaW5nIGxpc3QKTGludXhwcGMtZGV2QGxpc3RzLm96bGFicy5vcmcK
+aHR0cHM6Ly9saXN0cy5vemxhYnMub3JnL2xpc3RpbmZvL2xpbnV4cHBjLWRldg==
