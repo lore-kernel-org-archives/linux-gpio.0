@@ -1,59 +1,66 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [RFC] pinctrl: sh-pfc: propagate errors on group config
-Date: Tue, 21 Jun 2016 15:11:46 +0200
-Message-ID: <CAMuHMdXWwZaCoLz8TTLBVg8qmKpiw0wKGUawd6ti0wg3X5e6xA@mail.gmail.com>
-References: <1466404822-2540-1-git-send-email-wsa@the-dreams.de>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH 1/2 v2] gpio: omap: make gpio numbering deterministical by
+ using of aliases
+Date: Tue, 21 Jun 2016 20:01:36 +0300
+Message-ID: <576972F0.7090207@ti.com>
+References: <1465930632-18941-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <1465930632-18941-2-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1466404822-2540-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1465930632-18941-2-git-send-email-u.kleine-koenig@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Wolfram,
-
-On Mon, Jun 20, 2016 at 8:40 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> On group configuration, bail out if setting one of the individual pins
-> fails. We don't need to roll-back, the pinctrl core will do this for us.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> Tested on a Lager and Salvator-X without problems. Needs probably more testing
-> on various HW to avoid regressions?
-
-Your patch causes the display to fail on r8a7740/armadillo.
-
-Disabling the error propagation and adding more debug prints reveals:
-
-+sh_pfc_pinconf_validate: pin 58: 15 not supported
-+sh_pfc_pinconf_set:694: config 0: sh_pfc_pinconf_validate() failed
-+sh_pfc_pinconf_group_set:781: sh_pfc_pinconf_set() failed -524 for
-pin 0 of group lcd0_data24_0
-+sh_pfc_pinconf_validate: pin 57: 15 not supported
-+sh_pfc_pinconf_set:694: config 0: sh_pfc_pinconf_validate() failed
-+sh_pfc_pinconf_group_set:781: sh_pfc_pinconf_set() failed -524 for
-pin 1 of group lcd0_data24_0
-+sh_pfc_pinconf_validate: pin 56: 15 not supported
-+sh_pfc_pinconf_set:694: config 0: sh_pfc_pinconf_validate() failed
-+sh_pfc_pinconf_group_set:781: sh_pfc_pinconf_set() failed -524 for
-pin 2 of group lcd0_data24_0
- ...
-
-15 = PIN_CONFIG_OUTPUT
-
-No idea why this is set for all pins of the lcd0_data24_0 group (and not for any
-other pin or group on any other SoC).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+T24gMDYvMTQvMjAxNiAwOTo1NyBQTSwgVXdlIEtsZWluZS1Lw7ZuaWcgd3JvdGU6Cj4gVHJhZGl0
+aW9uYWxseSB0aGUgbi10aCBncGlvIGRldmljZSBwcm9iZWQgYnkgdGhlIG9tYXAgZ3BpbyBkcml2
+ZXIgZ290Cj4gdGhlIGdwaW8gbnVtYmVyIHJhbmdlIFtuKjMyIC4uIG4qMzIrMzFdLgo+IFdoZW4g
+b3JkZXIgb2YgdGhlIGRldmljZXMgcHJvYmVkIGJ5IHRoZSBkcml2ZXIgY2hhbmdlcyAod2hpY2gg
+Y2FuIGhhcHBlbgo+IGFscmVhZHkgbm93IHdoZW4gc29tZSBkZXZpY2VzIGhhdmUgYSBwaW5jdHJs
+IGFuZCBzbyB0aGUgZmlyc3QgcHJvYmUKPiBhdHRlbXB0IHJldHVybnMgLUVOT0RFVikgdGhlIG51
+bWJlcmluZyBjaGFuZ2VzLgo+Cj4gVG8gZW5zdXJlIGEgZGV0ZXJtaW5pc3RpY2FsIG51bWJlcmlu
+ZyB1c2Ugb2ZfYWxpYXNfZ2V0X2lkIHRvIGRldGVybWluZQo+IHRoZSBiYXNlIGZvciBhIGdpdmVu
+IGRldmljZS4gSWYgbm8gcmVzcGVjdGl2ZSBhbGlhcyBleGlzdHMgZmFsbCBiYWNrIHRvCj4gdGhl
+IHRyYWRpdGlvbmFsIG51bWJlcmluZy4KPgo+IEZvciB0aGUgdW51c3VhbCBjYXNlIHdoZXJlIG9u
+bHkgYSBwYXJ0IG9mIHRoZSBncGlvIGRldmljZXMgaGF2ZSBhCj4gbWF0Y2hpbmcgYWxpYXMgc29t
+ZSBvZiB0aGVtIG1pZ2h0IGZhaWwgdG8gcHJvYmUuIEJ1dCBpZiBub25lIG9mIHRoZW0gaGFzCj4g
+YW4gYWxpYXMgb3IgYWxsLCB0aGVyZSBpcyBubyBjb25mbGljdCB3aGljaCBzaG91bGQgYmUgZ29v
+ZCBlbm91Z2ggdG8KPiBtYWludGFpbiBiYWNrd2FyZCBjb21wYXRpYmlsaXR5Lgo+Cj4gU2lnbmVk
+LW9mZi1ieTogVXdlIEtsZWluZS1Lw7ZuaWcgPHUua2xlaW5lLWtvZW5pZ0BwZW5ndXRyb25peC5k
+ZT4KPiAtLS0KPiAgIGRyaXZlcnMvZ3Bpby9ncGlvLW9tYXAuYyB8IDE5ICsrKysrKysrKysrKysr
+KysrKy0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxOCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0p
+Cj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncGlvL2dwaW8tb21hcC5jIGIvZHJpdmVycy9ncGlv
+L2dwaW8tb21hcC5jCj4gaW5kZXggYjk4ZWRlNzhjOWQ4Li40ZDkxNzkyZTcyNjYgMTAwNjQ0Cj4g
+LS0tIGEvZHJpdmVycy9ncGlvL2dwaW8tb21hcC5jCj4gKysrIGIvZHJpdmVycy9ncGlvL2dwaW8t
+b21hcC5jCj4gQEAgLTEwNTMsOSArMTA1MywyNiBAQCBzdGF0aWMgaW50IG9tYXBfZ3Bpb19jaGlw
+X2luaXQoc3RydWN0IGdwaW9fYmFuayAqYmFuaywgc3RydWN0IGlycV9jaGlwICppcnFjKQo+ICAg
+CQkJYmFuay0+Y2hpcC5wYXJlbnQgPSAmb21hcF9tcHVpb19kZXZpY2UuZGV2Owo+ICAgCQliYW5r
+LT5jaGlwLmJhc2UgPSBPTUFQX01QVUlPKDApOwo+ICAgCX0gZWxzZSB7Cj4gKwkJaW50IGdwaW9f
+YWxpYXNfaWQgX19tYXliZV91bnVzZWQ7Cj4gKwo+ICAgCQliYW5rLT5jaGlwLmxhYmVsID0gImdw
+aW8iOwo+IC0JCWJhbmstPmNoaXAuYmFzZSA9IGdwaW87Cj4gKwo+ICsjaWYgZGVmaW5lZChDT05G
+SUdfT0ZfR1BJTykKPiArCQkvKgo+ICsJCSAqIFRyYWRpdGlvbmFsbHkgdGhlIGJhc2UgaXMgZ2l2
+ZW4gb3V0IGluIGZpcnN0LWNvbWUtZmlyc3Qtc2VydmUKPiArCQkgKiBvcmRlci4gIFRoaXMgbWln
+aHQgc2h1ZmZsZSB0aGUgbnVtYmVyaW5nIG9mIGdwaW9zIGlmIHRoZQo+ICsJCSAqIHByb2JlIG9y
+ZGVyIGNoYW5nZXMuICBTbyBtYWtlIHRoZSBiYXNlIGRldGVybWluaXN0aWNhbCBpZiB0aGUKPiAr
+CQkgKiBkZXZpY2UgdHJlZSBzcGVjaWZpZXMgYWxpYXMgaWRzLgo+ICsJCSAqLwo+ICsJCWdwaW9f
+YWxpYXNfaWQgPSBvZl9hbGlhc19nZXRfaWQoYmFuay0+Y2hpcC5vZl9ub2RlLCAiZ3BpbyIpOwo+
+ICsJCWlmIChncGlvX2FsaWFzX2lkID49IDApCj4gKwkJCWJhbmstPmNoaXAuYmFzZSA9IGJhbmst
+PndpZHRoICogZ3Bpb19hbGlhc19pZDsKPiArCQllbHNlCj4gKyNlbmRpZgo+ICsJCQliYW5rLT5j
+aGlwLmJhc2UgPSBncGlvOwo+ICAgCX0KPiArCj4gKwo+ICAgCWJhbmstPmNoaXAubmdwaW8gPSBi
+YW5rLT53aWR0aDsKPgo+ICAgCXJldCA9IGdwaW9jaGlwX2FkZF9kYXRhKCZiYW5rLT5jaGlwLCBi
+YW5rKTsKPgoKUmV2aWV3ZWQtYnk6IEdyeWdvcmlpIFN0cmFzaGtvIDxncnlnb3JpaS5zdHJhc2hr
+b0B0aS5jb20+CgotLSAKcmVnYXJkcywKLWdyeWdvcmlpCgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdAps
+aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVh
+ZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
