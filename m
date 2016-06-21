@@ -1,66 +1,115 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH] leds: Add no-op gpio_led_register_device when LED
- subsystem is disabled
-Date: Tue, 21 Jun 2016 06:48:10 -0500
-Message-ID: <5769297A.4050608@ti.com>
-References: <20160613200211.14790-1-afd@ti.com>
- <20160613200211.14790-13-afd@ti.com> <5760FA52.7010806@samsung.com>
- <57647DBD.2010406@ti.com> <57679E38.3080901@samsung.com>
- <57686A94.2010704@ti.com> <5768E815.5080706@samsung.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] pinctrl: intel: Add Intel Merrifield pin
+ controller support
+Date: Tue, 21 Jun 2016 16:04:21 +0300
+Message-ID: <1466514261.30123.221.camel@linux.intel.com>
+References: <1466351099-22282-1-git-send-email-andriy.shevchenko@linux.intel.com>
+	 <20160620092007.GB1739@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <5768E815.5080706@samsung.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, linux-i2c@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, lguest@lists.ozlabs.org, Samuel Ortiz <sameo@linux.intel.com>, Russell King <linux@armlinux.org.uk>, linux-leds@vger.kernel.org, linux-mmc@vger.kernel.org, linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Rusty Russell <rusty@rustcorp.com.au>, linux-gpio@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga14.intel.com ([192.55.52.115]:32980 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751432AbcFUNFB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 21 Jun 2016 09:05:01 -0400
+In-Reply-To: <20160620092007.GB1739@lahna.fi.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-T24gMDYvMjEvMjAxNiAwMjowOSBBTSwgSmFjZWsgQW5hc3pld3NraSB3cm90ZToKPiBIaSBBbmRy
-ZXcsCj4gCj4gVGhpcyBwYXRjaCBkb2Vzbid0IGFwcGx5LCBwbGVhc2UgcmViYXNlIG9udG8gcmVj
-ZW50IExFRCB0cmVlLgo+IAo+IE9uIDA2LzIxLzIwMTYgMTI6MTMgQU0sIEFuZHJldyBGLiBEYXZp
-cyB3cm90ZToKPj4gU29tZSBzeXN0ZW1zIHVzZSAnZ3Bpb19sZWRfcmVnaXN0ZXJfZGV2aWNlJyB0
-byBtYWtlIGFuIGluLW1lbW9yeSBjb3B5IG9mCj4+IHRoZWlyIExFRCBkZXZpY2UgdGFibGUgc28g
-dGhlIG9yaWdpbmFsIGNhbiBiZSByZW1vdmVkIGFzIC5pbml0LnJvZGF0YS4KPj4gV2hlbiB0aGUg
-TEVEIHN1YnN5c3RlbSBpcyBub3QgZW5hYmxlZCBzb3VyY2UgaW4gdGhlIGxlZCBkaXJlY3Rvcnkg
-aXMgbm90Cj4+IGJ1aWx0IGFuZCBzbyB0aGlzIGZ1bmN0aW9uIG1heSBiZSB1bmRlZmluZWQuIEZp
-eCB0aGlzIGhlcmUuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEFuZHJldyBGLiBEYXZpcyA8YWZkQHRp
-LmNvbT4KPj4gLS0tCj4+ICAgaW5jbHVkZS9saW51eC9sZWRzLmggfCA4ICsrKysrKysrCj4+ICAg
-MSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvaW5jbHVk
-ZS9saW51eC9sZWRzLmggYi9pbmNsdWRlL2xpbnV4L2xlZHMuaAo+PiBpbmRleCBkMmIxMzA2Li5h
-NGEzZGE2IDEwMDY0NAo+PiAtLS0gYS9pbmNsdWRlL2xpbnV4L2xlZHMuaAo+PiArKysgYi9pbmNs
-dWRlL2xpbnV4L2xlZHMuaAo+PiBAQCAtMzg2LDggKzM4NiwxNiBAQCBzdHJ1Y3QgZ3Bpb19sZWRf
-cGxhdGZvcm1fZGF0YSB7Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgdW5zaWduZWQgbG9uZyAqZGVsYXlfb2ZmKTsKPiAKPiBDdXJyZW50bHkgdGhlcmUgaXMgc29t
-ZSBzdHVmZiBoZXJlLCBhbmQgaW4gZmFjdCBpdCBoYXMgYmVlbiBmb3IKPiBhIGxvbmcgdGltZS4K
-PiAKPiBQYXRjaCAiW1BBVENIIDEyLzEyXSBsZWRzOiBPbmx5IGRlc2NlbmQgaW50byBsZWRzIGRp
-cmVjdG9yeSB3aGVuCj4gQ09ORklHX05FV19MRURTIGlzIHNldCIgYWxzbyBkb2Vzbid0IGFwcGx5
-Lgo+IFdoYXQgcmVwb3NpdG9yeSBhcmUgeW91IHVzaW5nPwo+IAoKdjQuNy1yYzQsIGl0IG1heSBu
-b3QgYXBwbHkgZHVlIHRvIHRoZSBzdXJyb3VuZGluZyBsaW5lcyBiZWluZyBjaGFuZ2VkIGluCnRo
-ZSBvdGhlciBwYXRjaGVzIHdoaWNoIG1heSBub3QgYmUgYXBwbGllZCB0byB5b3VyIHRyZWUuIEl0
-IGlzIGEgc2luZ2xlCmxpbmUgY2hhbmdlIHBlciBwYXRjaCBzbyBob3BlZnVsbHkgdGhlIG1lcmdl
-IGNvbmZsaWN0IHJlc29sdXRpb25zIHdpbGwKYmUgdHJpdmlhbC4KCkEgYmV0dGVyIHNvbHV0aW9u
-IGNvdWxkIGhhdmUgYmVlbiBnZXR0aW5nIGFuIGFjayBmcm9tIGVhY2ggbWFpbnRhaW5lcgphbmQg
-aGF2aW5nIHNvbWVvbmUgcHVsbCB0aGUgd2hvbGUgc2VyaWVzIGludG8gb25lIHRyZWUsIGJ1dCBw
-YXJ0cyBoYXZlCmFscmVhZHkgYmVlbiBwaWNrZWQgc28gaXQgbWF5IGJlIGEgbGl0dGxlIGxhdGUg
-Zm9yIHRoYXQuCgo+PiAgIH07Cj4+Cj4+ICsjaWZkZWYgQ09ORklHX05FV19MRURTCj4+ICAgc3Ry
-dWN0IHBsYXRmb3JtX2RldmljZSAqZ3Bpb19sZWRfcmVnaXN0ZXJfZGV2aWNlKAo+PiAgICAgICAg
-ICAgICAgICAgIGludCBpZCwgY29uc3Qgc3RydWN0IGdwaW9fbGVkX3BsYXRmb3JtX2RhdGEgKnBk
-YXRhKTsKPj4gKyNlbHNlCj4+ICtzdGF0aWMgaW5saW5lIHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
-KmdwaW9fbGVkX3JlZ2lzdGVyX2RldmljZSgKPj4gKyAgICAgICAgICAgICAgIGludCBpZCwgY29u
-c3Qgc3RydWN0IGdwaW9fbGVkX3BsYXRmb3JtX2RhdGEgKnBkYXRhKQo+PiArewo+PiArICAgICAg
-IHJldHVybiAwOwo+PiArfQo+PiArI2VuZGlmCj4+Cj4+ICAgZW51bSBjcHVfbGVkX2V2ZW50IHsK
-Pj4gICAgICAgICAgQ1BVX0xFRF9JRExFX1NUQVJULCAgICAgLyogQ1BVIGVudGVycyBpZGxlICov
-Cj4+Cj4gCj4gCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CkxpbnV4cHBjLWRldiBtYWlsaW5nIGxpc3QKTGludXhwcGMtZGV2QGxpc3RzLm96bGFicy5vcmcK
-aHR0cHM6Ly9saXN0cy5vemxhYnMub3JnL2xpc3RpbmZvL2xpbnV4cHBjLWRldg==
+On Mon, 2016-06-20 at 12:20 +0300, Mika Westerberg wrote:
+> On Sun, Jun 19, 2016 at 06:44:59PM +0300, Andy Shevchenko wrote:
+> > This driver adds pinctrl support for Intel Merrifield. The IP block
+> > which is
+> > called Family-Level Interface Shim is a separate entity in SoC. The
+> > GPIO driver
+> > (gpio-intel-mid.c) will be updated accordingly to support pinctrl
+> > interface.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Mika, my answers below. (For the rest I agree with you and fixed that
+locally)
+
+> > +
+> > +/**
+> > + * struct mrfld_pinctrl_soc_data - Intel pin controller per-SoC
+> > configuration
+> > + * @name: Name of the family
+> > + * @pins: Array if pins this pinctrl controls
+> > + * @npins: Number of pins in the array
+> > + * @groups: Array of pin groups
+> > + * @ngroups: Number of groups in the array
+> > + * @functions: Array of functions
+> > + * @nfunctions: Number of functions in the array
+> > + * @families: Array of families this pinctrl handles
+> > + * @nfamilies: Number of families in the array
+> > + *
+> > + * The @families is used as a template by the core driver. It will
+> > make
+> > + * copy of all families and fill in rest of the information.
+> > + */
+> > +struct mrfld_pinctrl_soc_data {
+> > +	const char *name;
+> > +	const struct pinctrl_pin_desc *pins;
+> > +	size_t npins;
+> > +	const struct intel_pingroup *groups;
+> > +	size_t ngroups;
+> > +	const struct intel_function *functions;
+> > +	size_t nfunctions;
+> > +	const struct mrfld_family *families;
+> > +	size_t nfamilies;
+> > +};
+> > +
+> > +static const struct mrfld_pinctrl_soc_data mrfld_soc_data = {
+> > +	.pins = mrfld_pins,
+> > +	.npins = ARRAY_SIZE(mrfld_pins),
+> > +	.groups = mrfld_groups,
+> > +	.ngroups = ARRAY_SIZE(mrfld_groups),
+> > +	.functions = mrfld_functions,
+> > +	.nfunctions = ARRAY_SIZE(mrfld_functions),
+> > +	.families = mrfld_families,
+> > +	.nfamilies = ARRAY_SIZE(mrfld_families),
+> > +};
+> > +
+> 
+> These are pointless. There can be only one kind of SoC data in
+> Merrifield so please drop these. See for example pinctrl-cherryview.c.
+
+I didn't quite get what should I look for? In mentioned driver we have
+struct chv_community which contains same fields. IIRC I took it from
+exactly that driver.
+
+> +static int mrfld_pinmux_set_mux(struct pinctrl_dev *pctldev,
+> > unsigned function,
+> > +				unsigned group)
+> > +{
+> > +	struct mrfld_pinctrl *mp =
+> > pinctrl_dev_get_drvdata(pctldev);
+> > +	const struct intel_pingroup *grp = &mp->soc->groups[group];
+> > +	unsigned long flags;
+> > +	unsigned int i;
+> > +
+> > +	spin_lock_irqsave(&mp->lock, flags);
+> 
+> If you ever need to call the backing pinctrl functions from irqchip
+> driver, please use raw_spinlock instead.
+
+Frankly speaking I dunno. How may I check this?
+
+> +static int mrfld_pinctrl_remove(struct platform_device *pdev)
+> > +{
+> > +	return 0;
+> > +}
+> 
+> Is this really needed?
+
+Not for now. I hope we still may remove module without this callback in
+place. At least that's how I read __device_release_driver().
+
+-- 
+
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
