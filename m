@@ -1,66 +1,64 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH 1/2 v2] gpio: omap: make gpio numbering deterministical by
- using of aliases
-Date: Tue, 21 Jun 2016 20:01:36 +0300
-Message-ID: <576972F0.7090207@ti.com>
-References: <1465930632-18941-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <1465930632-18941-2-git-send-email-u.kleine-koenig@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1465930632-18941-2-git-send-email-u.kleine-koenig@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: [PATCH] pinctrl: sirf/atlas7: make unexported structs static
+Date: Tue, 21 Jun 2016 18:33:13 +0100
+Message-ID: <1466530393-18755-1-git-send-email-ben.dooks@codethink.co.uk>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from 82-70-136-246.dsl.in-addr.zen.co.uk ([82.70.136.246]:45914 "EHLO
+	rainbowdash.ducie.codethink.co.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752538AbcFURdS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 21 Jun 2016 13:33:18 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@lists.codethink.co.uk
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-T24gMDYvMTQvMjAxNiAwOTo1NyBQTSwgVXdlIEtsZWluZS1Lw7ZuaWcgd3JvdGU6Cj4gVHJhZGl0
-aW9uYWxseSB0aGUgbi10aCBncGlvIGRldmljZSBwcm9iZWQgYnkgdGhlIG9tYXAgZ3BpbyBkcml2
-ZXIgZ290Cj4gdGhlIGdwaW8gbnVtYmVyIHJhbmdlIFtuKjMyIC4uIG4qMzIrMzFdLgo+IFdoZW4g
-b3JkZXIgb2YgdGhlIGRldmljZXMgcHJvYmVkIGJ5IHRoZSBkcml2ZXIgY2hhbmdlcyAod2hpY2gg
-Y2FuIGhhcHBlbgo+IGFscmVhZHkgbm93IHdoZW4gc29tZSBkZXZpY2VzIGhhdmUgYSBwaW5jdHJs
-IGFuZCBzbyB0aGUgZmlyc3QgcHJvYmUKPiBhdHRlbXB0IHJldHVybnMgLUVOT0RFVikgdGhlIG51
-bWJlcmluZyBjaGFuZ2VzLgo+Cj4gVG8gZW5zdXJlIGEgZGV0ZXJtaW5pc3RpY2FsIG51bWJlcmlu
-ZyB1c2Ugb2ZfYWxpYXNfZ2V0X2lkIHRvIGRldGVybWluZQo+IHRoZSBiYXNlIGZvciBhIGdpdmVu
-IGRldmljZS4gSWYgbm8gcmVzcGVjdGl2ZSBhbGlhcyBleGlzdHMgZmFsbCBiYWNrIHRvCj4gdGhl
-IHRyYWRpdGlvbmFsIG51bWJlcmluZy4KPgo+IEZvciB0aGUgdW51c3VhbCBjYXNlIHdoZXJlIG9u
-bHkgYSBwYXJ0IG9mIHRoZSBncGlvIGRldmljZXMgaGF2ZSBhCj4gbWF0Y2hpbmcgYWxpYXMgc29t
-ZSBvZiB0aGVtIG1pZ2h0IGZhaWwgdG8gcHJvYmUuIEJ1dCBpZiBub25lIG9mIHRoZW0gaGFzCj4g
-YW4gYWxpYXMgb3IgYWxsLCB0aGVyZSBpcyBubyBjb25mbGljdCB3aGljaCBzaG91bGQgYmUgZ29v
-ZCBlbm91Z2ggdG8KPiBtYWludGFpbiBiYWNrd2FyZCBjb21wYXRpYmlsaXR5Lgo+Cj4gU2lnbmVk
-LW9mZi1ieTogVXdlIEtsZWluZS1Lw7ZuaWcgPHUua2xlaW5lLWtvZW5pZ0BwZW5ndXRyb25peC5k
-ZT4KPiAtLS0KPiAgIGRyaXZlcnMvZ3Bpby9ncGlvLW9tYXAuYyB8IDE5ICsrKysrKysrKysrKysr
-KysrKy0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxOCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0p
-Cj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncGlvL2dwaW8tb21hcC5jIGIvZHJpdmVycy9ncGlv
-L2dwaW8tb21hcC5jCj4gaW5kZXggYjk4ZWRlNzhjOWQ4Li40ZDkxNzkyZTcyNjYgMTAwNjQ0Cj4g
-LS0tIGEvZHJpdmVycy9ncGlvL2dwaW8tb21hcC5jCj4gKysrIGIvZHJpdmVycy9ncGlvL2dwaW8t
-b21hcC5jCj4gQEAgLTEwNTMsOSArMTA1MywyNiBAQCBzdGF0aWMgaW50IG9tYXBfZ3Bpb19jaGlw
-X2luaXQoc3RydWN0IGdwaW9fYmFuayAqYmFuaywgc3RydWN0IGlycV9jaGlwICppcnFjKQo+ICAg
-CQkJYmFuay0+Y2hpcC5wYXJlbnQgPSAmb21hcF9tcHVpb19kZXZpY2UuZGV2Owo+ICAgCQliYW5r
-LT5jaGlwLmJhc2UgPSBPTUFQX01QVUlPKDApOwo+ICAgCX0gZWxzZSB7Cj4gKwkJaW50IGdwaW9f
-YWxpYXNfaWQgX19tYXliZV91bnVzZWQ7Cj4gKwo+ICAgCQliYW5rLT5jaGlwLmxhYmVsID0gImdw
-aW8iOwo+IC0JCWJhbmstPmNoaXAuYmFzZSA9IGdwaW87Cj4gKwo+ICsjaWYgZGVmaW5lZChDT05G
-SUdfT0ZfR1BJTykKPiArCQkvKgo+ICsJCSAqIFRyYWRpdGlvbmFsbHkgdGhlIGJhc2UgaXMgZ2l2
-ZW4gb3V0IGluIGZpcnN0LWNvbWUtZmlyc3Qtc2VydmUKPiArCQkgKiBvcmRlci4gIFRoaXMgbWln
-aHQgc2h1ZmZsZSB0aGUgbnVtYmVyaW5nIG9mIGdwaW9zIGlmIHRoZQo+ICsJCSAqIHByb2JlIG9y
-ZGVyIGNoYW5nZXMuICBTbyBtYWtlIHRoZSBiYXNlIGRldGVybWluaXN0aWNhbCBpZiB0aGUKPiAr
-CQkgKiBkZXZpY2UgdHJlZSBzcGVjaWZpZXMgYWxpYXMgaWRzLgo+ICsJCSAqLwo+ICsJCWdwaW9f
-YWxpYXNfaWQgPSBvZl9hbGlhc19nZXRfaWQoYmFuay0+Y2hpcC5vZl9ub2RlLCAiZ3BpbyIpOwo+
-ICsJCWlmIChncGlvX2FsaWFzX2lkID49IDApCj4gKwkJCWJhbmstPmNoaXAuYmFzZSA9IGJhbmst
-PndpZHRoICogZ3Bpb19hbGlhc19pZDsKPiArCQllbHNlCj4gKyNlbmRpZgo+ICsJCQliYW5rLT5j
-aGlwLmJhc2UgPSBncGlvOwo+ICAgCX0KPiArCj4gKwo+ICAgCWJhbmstPmNoaXAubmdwaW8gPSBi
-YW5rLT53aWR0aDsKPgo+ICAgCXJldCA9IGdwaW9jaGlwX2FkZF9kYXRhKCZiYW5rLT5jaGlwLCBi
-YW5rKTsKPgoKUmV2aWV3ZWQtYnk6IEdyeWdvcmlpIFN0cmFzaGtvIDxncnlnb3JpaS5zdHJhc2hr
-b0B0aS5jb20+CgotLSAKcmVnYXJkcywKLWdyeWdvcmlpCgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdAps
-aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVh
-ZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+Fix the sparse warnings by making any unexported symbols static.
+This fixes the following sparse warnings:
+
+drivers/pinctrl/sirf/pinctrl-atlas7.c:552:26: warning: symbol 'atlas7_ioc_pad_confs' was not declared. Should it be static?
+drivers/pinctrl/sirf/pinctrl-atlas7.c:1005:25: warning: symbol 'altas7_pin_groups' was not declared. Should it be static?
+drivers/pinctrl/sirf/pinctrl-atlas7.c:4767:28: warning: symbol 'atlas7_ioc_data' was not declared. Should it be static?
+
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+---
+ drivers/pinctrl/sirf/pinctrl-atlas7.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+index 168c0f5..c35280a 100644
+--- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
++++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+@@ -549,7 +549,7 @@ static const struct pinctrl_pin_desc atlas7_ioc_pads[] = {
+ 	PINCTRL_PIN(163, "jtag_trstn"),
+ };
+ 
+-struct atlas7_pad_config atlas7_ioc_pad_confs[] = {
++static struct atlas7_pad_config atlas7_ioc_pad_confs[] = {
+ 	/* The Configuration of IOC_RTC Pads */
+ 	PADCONF(0, 3, 0x0, 0x100, 0x200, -1, 0, 0, 0, 0),
+ 	PADCONF(1, 3, 0x0, 0x100, 0x200, -1, 4, 2, 2, 0),
+@@ -1002,7 +1002,7 @@ static const unsigned int vi_vip1_high8bit_pins[] = { 82, 83, 84, 103, 104,
+ 		105, 106, 107, 102, 97, 98, };
+ 
+ /* definition of pin group table */
+-struct atlas7_pin_group altas7_pin_groups[] = {
++static struct atlas7_pin_group altas7_pin_groups[] = {
+ 	GROUP("gnss_gpio_grp", gnss_gpio_pins),
+ 	GROUP("lcd_vip_gpio_grp", lcd_vip_gpio_pins),
+ 	GROUP("sdio_i2s_gpio_grp", sdio_i2s_gpio_pins),
+@@ -4764,7 +4764,7 @@ static struct atlas7_pmx_func atlas7_pmx_functions[] = {
+ 			&vi_vip1_high8bit_grp_mux),
+ };
+ 
+-struct atlas7_pinctrl_data atlas7_ioc_data = {
++static struct atlas7_pinctrl_data atlas7_ioc_data = {
+ 	.pads = (struct pinctrl_pin_desc *)atlas7_ioc_pads,
+ 	.pads_cnt = ARRAY_SIZE(atlas7_ioc_pads),
+ 	.grps = (struct atlas7_pin_group *)altas7_pin_groups,
+-- 
+2.8.1
+
