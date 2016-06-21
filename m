@@ -1,115 +1,88 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] pinctrl: intel: Add Intel Merrifield pin
- controller support
-Date: Tue, 21 Jun 2016 16:04:21 +0300
-Message-ID: <1466514261.30123.221.camel@linux.intel.com>
-References: <1466351099-22282-1-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <20160620092007.GB1739@lahna.fi.intel.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] leds: Add no-op gpio_led_register_device when LED
+ subsystem is disabled
+Date: Tue, 21 Jun 2016 15:11:01 +0200
+Message-ID: <57693CE5.7050904@samsung.com>
+References: <20160613200211.14790-1-afd@ti.com>
+ <20160613200211.14790-13-afd@ti.com> <5760FA52.7010806@samsung.com>
+ <57647DBD.2010406@ti.com> <57679E38.3080901@samsung.com>
+ <57686A94.2010704@ti.com> <5768E815.5080706@samsung.com>
+ <5769297A.4050608@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:32980 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751432AbcFUNFB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 21 Jun 2016 09:05:01 -0400
-In-Reply-To: <20160620092007.GB1739@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <5769297A.4050608@ti.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Russell King <linux@armlinux.org.uk>, Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel <sre@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Rusty Russell <rusty@rustcorp.com.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, linux-pwm@vger.kernel.org, lguest@lists.ozlabs.org, linux-wireless@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-leds@vger.kernel.org, linux-media@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Mon, 2016-06-20 at 12:20 +0300, Mika Westerberg wrote:
-> On Sun, Jun 19, 2016 at 06:44:59PM +0300, Andy Shevchenko wrote:
-> > This driver adds pinctrl support for Intel Merrifield. The IP block
-> > which is
-> > called Family-Level Interface Shim is a separate entity in SoC. The
-> > GPIO driver
-> > (gpio-intel-mid.c) will be updated accordingly to support pinctrl
-> > interface.
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On 06/21/2016 01:48 PM, Andrew F. Davis wrote:
+> On 06/21/2016 02:09 AM, Jacek Anaszewski wrote:
+>> Hi Andrew,
+>>
+>> This patch doesn't apply, please rebase onto recent LED tree.
+>>
+>> On 06/21/2016 12:13 AM, Andrew F. Davis wrote:
+>>> Some systems use 'gpio_led_register_device' to make an in-memory copy of
+>>> their LED device table so the original can be removed as .init.rodata.
+>>> When the LED subsystem is not enabled source in the led directory is not
+>>> built and so this function may be undefined. Fix this here.
+>>>
+>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>>> ---
+>>>    include/linux/leds.h | 8 ++++++++
+>>>    1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>>> index d2b1306..a4a3da6 100644
+>>> --- a/include/linux/leds.h
+>>> +++ b/include/linux/leds.h
+>>> @@ -386,8 +386,16 @@ struct gpio_led_platform_data {
+>>>                                           unsigned long *delay_off);
+>>
+>> Currently there is some stuff here, and in fact it has been for
+>> a long time.
+>>
+>> Patch "[PATCH 12/12] leds: Only descend into leds directory when
+>> CONFIG_NEW_LEDS is set" also doesn't apply.
+>> What repository are you using?
+>>
+>
+> v4.7-rc4, it may not apply due to the surrounding lines being changed in
+> the other patches which may not be applied to your tree. It is a single
+> line change per patch so hopefully the merge conflict resolutions will
+> be trivial.
+>
+> A better solution could have been getting an ack from each maintainer
+> and having someone pull the whole series into one tree, but parts have
+> already been picked so it may be a little late for that.
 
-Mika, my answers below. (For the rest I agree with you and fixed that
-locally)
+OK, I resolved the issues and applied, thanks.
 
-> > +
-> > +/**
-> > + * struct mrfld_pinctrl_soc_data - Intel pin controller per-SoC
-> > configuration
-> > + * @name: Name of the family
-> > + * @pins: Array if pins this pinctrl controls
-> > + * @npins: Number of pins in the array
-> > + * @groups: Array of pin groups
-> > + * @ngroups: Number of groups in the array
-> > + * @functions: Array of functions
-> > + * @nfunctions: Number of functions in the array
-> > + * @families: Array of families this pinctrl handles
-> > + * @nfamilies: Number of families in the array
-> > + *
-> > + * The @families is used as a template by the core driver. It will
-> > make
-> > + * copy of all families and fill in rest of the information.
-> > + */
-> > +struct mrfld_pinctrl_soc_data {
-> > +	const char *name;
-> > +	const struct pinctrl_pin_desc *pins;
-> > +	size_t npins;
-> > +	const struct intel_pingroup *groups;
-> > +	size_t ngroups;
-> > +	const struct intel_function *functions;
-> > +	size_t nfunctions;
-> > +	const struct mrfld_family *families;
-> > +	size_t nfamilies;
-> > +};
-> > +
-> > +static const struct mrfld_pinctrl_soc_data mrfld_soc_data = {
-> > +	.pins = mrfld_pins,
-> > +	.npins = ARRAY_SIZE(mrfld_pins),
-> > +	.groups = mrfld_groups,
-> > +	.ngroups = ARRAY_SIZE(mrfld_groups),
-> > +	.functions = mrfld_functions,
-> > +	.nfunctions = ARRAY_SIZE(mrfld_functions),
-> > +	.families = mrfld_families,
-> > +	.nfamilies = ARRAY_SIZE(mrfld_families),
-> > +};
-> > +
-> 
-> These are pointless. There can be only one kind of SoC data in
-> Merrifield so please drop these. See for example pinctrl-cherryview.c.
+>>>    };
+>>>
+>>> +#ifdef CONFIG_NEW_LEDS
+>>>    struct platform_device *gpio_led_register_device(
+>>>                   int id, const struct gpio_led_platform_data *pdata);
+>>> +#else
+>>> +static inline struct platform_device *gpio_led_register_device(
+>>> +               int id, const struct gpio_led_platform_data *pdata)
+>>> +{
+>>> +       return 0;
+>>> +}
+>>> +#endif
+>>>
+>>>    enum cpu_led_event {
+>>>           CPU_LED_IDLE_START,     /* CPU enters idle */
+>>>
+>>
+>>
+>
+>
 
-I didn't quite get what should I look for? In mentioned driver we have
-struct chv_community which contains same fields. IIRC I took it from
-exactly that driver.
-
-> +static int mrfld_pinmux_set_mux(struct pinctrl_dev *pctldev,
-> > unsigned function,
-> > +				unsigned group)
-> > +{
-> > +	struct mrfld_pinctrl *mp =
-> > pinctrl_dev_get_drvdata(pctldev);
-> > +	const struct intel_pingroup *grp = &mp->soc->groups[group];
-> > +	unsigned long flags;
-> > +	unsigned int i;
-> > +
-> > +	spin_lock_irqsave(&mp->lock, flags);
-> 
-> If you ever need to call the backing pinctrl functions from irqchip
-> driver, please use raw_spinlock instead.
-
-Frankly speaking I dunno. How may I check this?
-
-> +static int mrfld_pinctrl_remove(struct platform_device *pdev)
-> > +{
-> > +	return 0;
-> > +}
-> 
-> Is this really needed?
-
-Not for now. I hope we still may remove module without this callback in
-place. At least that's how I read __device_release_driver().
 
 -- 
-
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Best regards,
+Jacek Anaszewski
