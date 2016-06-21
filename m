@@ -1,64 +1,70 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] pinctrl: Flag strict is a field in struct
- pinmux_ops
-Date: Tue, 21 Jun 2016 23:30:39 +0300
-Message-ID: <1466541039.30123.224.camel@linux.intel.com>
-References: <1466462448-98833-1-git-send-email-andriy.shevchenko@linux.intel.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [RFC] pinctrl: sh-pfc: propagate errors on group config
+Date: Tue, 21 Jun 2016 22:37:08 +0200
+Message-ID: <20160621203707.GB1682@katana>
+References: <1466404822-2540-1-git-send-email-wsa@the-dreams.de>
+ <CAMuHMdXWwZaCoLz8TTLBVg8qmKpiw0wKGUawd6ti0wg3X5e6xA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:51116 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751926AbcFUUal (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 21 Jun 2016 16:30:41 -0400
-In-Reply-To: <1466462448-98833-1-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="V0207lvV8h4k8FAm"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXWwZaCoLz8TTLBVg8qmKpiw0wKGUawd6ti0wg3X5e6xA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Tue, 2016-06-21 at 01:40 +0300, Andy Shevchenko wrote:
-> Documentation incorrectly refers to struct pinctrl_desc, where no suc=
-h
-> flag is
-> available. Replace the name of the struct.
+
+--V0207lvV8h4k8FAm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> > On group configuration, bail out if setting one of the individual pins
+> > fails. We don't need to roll-back, the pinctrl core will do this for us.
+> >
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > ---
+> >
+> > Tested on a Lager and Salvator-X without problems. Needs probably more =
+testing
+> > on various HW to avoid regressions?
 >=20
+> Your patch causes the display to fail on r8a7740/armadillo.
 
-+ Fixes: commit 8c4c2016345f ("pinctrl: move strict option to
-pinmux_ops")
-=C2=A0 =C2=A0=C2=A0
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> =C2=A0Documentation/pinctrl.txt | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+I would have been surprised if this patch didn't uncover some hidden
+issues.
+
+> 15 =3D PIN_CONFIG_OUTPUT
 >=20
-> diff --git a/Documentation/pinctrl.txt b/Documentation/pinctrl.txt
-> index 4976389e..dd15a69 100644
-> --- a/Documentation/pinctrl.txt
-> +++ b/Documentation/pinctrl.txt
-> @@ -831,7 +831,7 @@ separate memory range only intended for GPIO
-> driving, and the register
-> =C2=A0range dealing with pin config and pin multiplexing get placed i=
-nto a
-> =C2=A0different memory range and a separate section of the data sheet=
-=2E
-> =C2=A0
-> -A flag "strict" in struct pinctrl_desc is available to check and den=
-y
-> +A flag "strict" in struct pinmux_ops is available to check and deny
-> =C2=A0simultaneous access to the same pin from GPIO and pin multiplex=
-ing
-> =C2=A0consumers on hardware of this type. The pinctrl driver should s=
-et
-> this flag
-> =C2=A0accordingly.
+> No idea why this is set for all pins of the lcd0_data24_0 group (and not =
+for any
+> other pin or group on any other SoC).
 
---=20
+Me neither. Sadly no bandwith here to dig into it.
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+--V0207lvV8h4k8FAm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXaaVzAAoJEBQN5MwUoCm2BlEP/1voXyw7+8ZF9oBEWabB/oaq
+1bytH+YDLpPrEhIJtdoqEYdLv8VuyGUQgGXRA6oCiMbLhrAozBGjiIrC4qGemn3r
+LbMYqGpT5hyjo+tHggtyf6MVRmzfNoXlpPsu7ExSrTIM8/b0TI1DwtnscQFd5uwz
+p+EpeIEPJZj32LZx8ZKIpgQg8LzUzv6U3m4Tgvs9+KjsiGPfVoXl+J9KkeQt+XR+
+Jsj9grv74zX+koWQj3tcn9hZPBJzxPU1mX7oeMBniMGI8Ttmxo28u1EnFni4yvl3
+d5bDX0dQu3vesdPW/gKt98F3njdiHLyl66uv44oa/3EkOr7u8Y9g+iSJgTDC37LU
+6xXpmxQ1XtAFdZqSCxcgwXLTQf+hYM0m66hAFZm9VFYycGtGIfXK+6rpZkobkEDG
+PTOzpq9fkroccJxHvFzUgBbv3eE1aGu7LYUWj7Cfy3DpQO3HrrdQb7VUzoRwJ/8V
+8cQjyadqG+w9it5Ei9H+Jiw4/Teje7yQdgxdfyspm5glyRNHW31IQD9cxEBgpQ6j
+JlPPtE9E13ij/v4ujf2rJto/PsDX6r88vzS4pkDpwaK+271ozB73KS+8xhPUdN26
+oaCJZ7xqQ0SiaqWcy8ZZsBhg73NYjIPZC6z4Fau3xRQ99ugjEDS9gXc8USeaRiEm
+1IWUca/5jKsGnIfkRUY3
+=NoDh
+-----END PGP SIGNATURE-----
+
+--V0207lvV8h4k8FAm--
