@@ -1,76 +1,117 @@
-From: "Tan, Jui Nee" <jui.nee.tan@intel.com>
-Subject: RE: [PATCH v3 2/3] x86/platform/p2sb: New Primary to Sideband
- bridge support driver for Intel SOC's
-Date: Tue, 21 Jun 2016 05:03:20 +0000
-Message-ID: <0158A29DB680F54A88142ED28D55B1D008244AF1@PGSMSX107.gar.corp.intel.com>
-References: <1465282553-28396-1-git-send-email-jui.nee.tan@intel.com>
- <1465282553-28396-3-git-send-email-jui.nee.tan@intel.com>
- <20160609140538.GL1791@lahna.fi.intel.com>
- <1465826071.30123.18.camel@linux.intel.com>
- <20160613142514.GA1740@lahna.fi.intel.com>
- <1465831152.30123.21.camel@linux.intel.com>
- <20160613155907.GB1740@lahna.fi.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Tan Jui Nee <jui.nee.tan@intel.com>
+Subject: [PATCH v4 1/3] pinctrl/broxton: enable platform device in the absent of ACPI enumeration
+Date: Tue, 21 Jun 2016 13:10:29 +0800
+Message-ID: <1466485831-20416-2-git-send-email-jui.nee.tan@intel.com>
+References: <1466485831-20416-1-git-send-email-jui.nee.tan@intel.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160613155907.GB1740@lahna.fi.intel.com>
-Content-Language: en-US
+In-Reply-To: <1466485831-20416-1-git-send-email-jui.nee.tan@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, "ptyser@xes-inc.com" <ptyser@xes-inc.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "Yong, Jonathan" <jonathan.yong@intel.com>, "Yu, Ong Hock" <ong.hock.yu@intel.com>, "Voon, Weifeng" <weifeng.voon@intel.com>, "Wan Mohamad, Wan Ahmad Zainie" <wan.ahmad.zainie.wan.mohamad@intel.com>
+To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jui.nee.tan@intel.com, jonathan.yong@intel.com, ong.hock.yu@intel.com, weifeng.voon@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
 List-Id: linux-gpio@vger.kernel.org
 
+This is to cater the need for non-ACPI system whereby
+a platform device has to be created in order to bind
+with the Apollo Lake Pinctrl GPIO platform driver.
 
+Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+Changes in V4:
+	- added Mika's ACK
 
-> -----Original Message-----
-> From: Mika Westerberg [mailto:mika.westerberg@linux.intel.com]
-> Sent: Monday, June 13, 2016 11:59 PM
-> To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Tan, Jui Nee <jui.nee.tan@intel.com>; heikki.krogerus@linux.intel=
-=2Ecom;
-> tglx@linutronix.de; mingo@redhat.com; hpa@zytor.com; x86@kernel.org;
-> ptyser@xes-inc.com; lee.jones@linaro.org; linux-gpio@vger.kernel.org;
-> linux-kernel@vger.kernel.org; Yong, Jonathan <jonathan.yong@intel.com=
->;
-> Yu, Ong Hock <ong.hock.yu@intel.com>; Voon, Weifeng
-> <weifeng.voon@intel.com>; Wan Mohamad, Wan Ahmad Zainie
-> <wan.ahmad.zainie.wan.mohamad@intel.com>
-> Subject: Re: [PATCH v3 2/3] x86/platform/p2sb: New Primary to Sideban=
-d
-> bridge support driver for Intel SOC's
->=20
-> On Mon, Jun 13, 2016 at 06:19:12PM +0300, Andy Shevchenko wrote:
-> > On Mon, 2016-06-13 at 17:25 +0300, Mika Westerberg wrote:
-> > > On Mon, Jun 13, 2016 at 04:54:31PM +0300, Andy Shevchenko wrote:
-> > > > Would work to me, though still the same question: is it possibl=
-e
-> > > > to avoid building it on even most of Intel platforms, since the=
-re,
-> > > > I assume, will be not many users of the module?
-> > >
-> > > Well, even if you make it configurable via Kconfig, I guess distr=
-os
-> > > will have to enable it in order to support as wide range of CPUs =
-as
-> > > possible in a single binary.
-> >
-> > Good point.
-> >
-> > Then perhaps the following we can do:
-> > =A0- add a static boolean flag
-> > =A0- add __init function where we check either PCI root bridge ID o=
-r CPU
-> > ID (I don't know which one is better, I suppose second one, though =
-it
-> > will require an update of arch/x86/include/asm/intel-family.h)
-> > =A0- add a check into the function.
-> >
-> > What do you think?
->=20
-> Maybe, or make it modular and use MODULE_DEVICE_TABLE(x86cpu, ...) to
-> match the corresponding CPUs.
-We need CONFIG_X86_INTEL_NON_ACPI Kconfig option to select CONFIG_PINCT=
-RL.
-This is to solve kbuidbot complaint about kernel configuration, i.e.
-CONFIG_PINCTRL=3Dn. Appreciate if you could advise something on this.
+Changes in V3:
+	- No change
+
+Changes in V2:
+	- No change
+
+ drivers/pinctrl/intel/pinctrl-broxton.c | 43 ++++++++++++++++++++++++---------
+ 1 file changed, 31 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/pinctrl/intel/pinctrl-broxton.c b/drivers/pinctrl/intel/pinctrl-broxton.c
+index 5979d38..59cb7a6 100644
+--- a/drivers/pinctrl/intel/pinctrl-broxton.c
++++ b/drivers/pinctrl/intel/pinctrl-broxton.c
+@@ -1,7 +1,7 @@
+ /*
+  * Intel Broxton SoC pinctrl/GPIO driver
+  *
+- * Copyright (C) 2015, Intel Corporation
++ * Copyright (C) 2015, 2016 Intel Corporation
+  * Author: Mika Westerberg <mika.westerberg@linux.intel.com>
+  *
+  * This program is free software; you can redistribute it and/or modify
+@@ -1003,29 +1003,46 @@ static const struct acpi_device_id bxt_pinctrl_acpi_match[] = {
+ };
+ MODULE_DEVICE_TABLE(acpi, bxt_pinctrl_acpi_match);
+ 
++static const struct platform_device_id bxt_pinctrl_platform_ids[] = {
++	{ "apl-pinctrl", (kernel_ulong_t)&apl_pinctrl_soc_data },
++	{ "broxton-pinctrl", (kernel_ulong_t)&bxt_pinctrl_soc_data },
++	{ },
++};
++
+ static int bxt_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	const struct intel_pinctrl_soc_data *soc_data = NULL;
+ 	const struct intel_pinctrl_soc_data **soc_table;
+-	const struct acpi_device_id *id;
+ 	struct acpi_device *adev;
+ 	int i;
+ 
+ 	adev = ACPI_COMPANION(&pdev->dev);
+-	if (!adev)
+-		return -ENODEV;
++	if (adev) {
++		const struct acpi_device_id *id;
+ 
+-	id = acpi_match_device(bxt_pinctrl_acpi_match, &pdev->dev);
+-	if (!id)
+-		return -ENODEV;
++		id = acpi_match_device(bxt_pinctrl_acpi_match, &pdev->dev);
++		if (!id)
++			return -ENODEV;
+ 
+-	soc_table = (const struct intel_pinctrl_soc_data **)id->driver_data;
++		soc_table = (const struct intel_pinctrl_soc_data **)
++			id->driver_data;
+ 
+-	for (i = 0; soc_table[i]; i++) {
+-		if (!strcmp(adev->pnp.unique_id, soc_table[i]->uid)) {
+-			soc_data = soc_table[i];
+-			break;
++		for (i = 0; soc_table[i]; i++) {
++			if (!strcmp(adev->pnp.unique_id, soc_table[i]->uid)) {
++				soc_data = soc_table[i];
++				break;
++			}
+ 		}
++	} else {
++		const struct platform_device_id *pid;
++
++		pid = platform_get_device_id(pdev);
++		if (!pid)
++			return -ENODEV;
++
++		soc_table = (const struct intel_pinctrl_soc_data **)
++			pid->driver_data;
++		soc_data = soc_table[pdev->id];
+ 	}
+ 
+ 	if (!soc_data)
+@@ -1047,6 +1064,7 @@ static struct platform_driver bxt_pinctrl_driver = {
+ 		.acpi_match_table = bxt_pinctrl_acpi_match,
+ 		.pm = &bxt_pinctrl_pm_ops,
+ 	},
++	.id_table = bxt_pinctrl_platform_ids,
+ };
+ 
+ static int __init bxt_pinctrl_init(void)
+@@ -1064,3 +1082,4 @@ module_exit(bxt_pinctrl_exit);
+ MODULE_AUTHOR("Mika Westerberg <mika.westerberg@linux.intel.com>");
+ MODULE_DESCRIPTION("Intel Broxton SoC pinctrl/GPIO driver");
+ MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:broxton-pinctrl");
+-- 
+1.9.1
