@@ -1,42 +1,79 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v3 2/3] x86/platform/p2sb: New Primary to Sideband bridge
- support driver for Intel SOC's
-Date: Tue, 21 Jun 2016 10:23:39 +0300
-Message-ID: <20160621072339.GT1739@lahna.fi.intel.com>
-References: <1465282553-28396-1-git-send-email-jui.nee.tan@intel.com>
- <1465282553-28396-3-git-send-email-jui.nee.tan@intel.com>
- <20160609140538.GL1791@lahna.fi.intel.com>
- <1465826071.30123.18.camel@linux.intel.com>
- <20160613142514.GA1740@lahna.fi.intel.com>
- <1465831152.30123.21.camel@linux.intel.com>
- <20160613155907.GB1740@lahna.fi.intel.com>
- <0158A29DB680F54A88142ED28D55B1D008244AF1@PGSMSX107.gar.corp.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add DRIF support
+Date: Tue, 21 Jun 2016 09:37:25 +0200
+Message-ID: <CAMuHMdXYW5ObuDPm7aCr5uTaPYBrTAREM6Z16XWF3q7YBtFgNw@mail.gmail.com>
+References: <1466165981-65284-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <CAMuHMdXz5mvR=+iWBap=jV7w94phuLXJSNKtOCqjxCEFNy=QDg@mail.gmail.com> <SG2PR06MB103835BE72B262243B46864BC3570@SG2PR06MB1038.apcprd06.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:35357 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932550AbcFUH0S (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 21 Jun 2016 03:26:18 -0400
-Content-Disposition: inline
-In-Reply-To: <0158A29DB680F54A88142ED28D55B1D008244AF1@PGSMSX107.gar.corp.intel.com>
+Received: from mail-io0-f173.google.com ([209.85.223.173]:36418 "EHLO
+	mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750696AbcFUIjs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Jun 2016 04:39:48 -0400
+In-Reply-To: <SG2PR06MB103835BE72B262243B46864BC3570@SG2PR06MB1038.apcprd06.prod.outlook.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Tan, Jui Nee" <jui.nee.tan@intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, "ptyser@xes-inc.com" <ptyser@xes-inc.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "Yong, Jonathan" <jonathan.yong@intel.com>, "Yu, Ong Hock" <ong.hock.yu@intel.com>, "Voon, Weifeng" <weifeng.voon@intel.com>, "Wan Mohamad, Wan Ahmad Zainie" <wan.ahmad.zainie.wan.mohamad@intel.com>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Chris Paterson <Chris.Paterson2@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-renesas-soc@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Jun 21, 2016 at 05:03:20AM +0000, Tan, Jui Nee wrote:
-> > Maybe, or make it modular and use MODULE_DEVICE_TABLE(x86cpu, ...) to
-> > match the corresponding CPUs.
+Hi Ramesh,
+
+CC linux-gpio, LinusW, Laurent
+
+On Fri, Jun 17, 2016 at 4:16 PM, Ramesh Shanmugasundaram
+<ramesh.shanmugasundaram@bp.renesas.com> wrote:
+>> >  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 121
+>> > +++++++++++++++++++++++++++++++++++
+>> >  1 file changed, 121 insertions(+)
+>> >
+>> > diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+>> > b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+>> > index 33be5d56..6f246ec 100644
+>> > --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+>> > +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+>> > @@ -1658,6 +1658,91 @@ static const unsigned int canfd1_data_mux[] = {
+>> >         CANFD1_TX_MARK,         CANFD1_RX_MARK,
+>> >  };
+>> >
+>> > +/* - DRIF
+>> > +--------------------------------------------------------------- */
+>> static const unsigned int drif0_data_a_pins[] = {
+>> > +       /* CLK, SYNC, D0, D1 */
+>> > +       RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9), RCAR_GP_PIN(6, 10),
+>> > +       RCAR_GP_PIN(6, 7),
+>> > +};
+>> > +static const unsigned int drif0_data_a_mux[] = {
+>> > +       RIF0_CLK_A_MARK, RIF0_SYNC_A_MARK, RIF0_D0_A_MARK,
+>> > +RIF0_D1_A_MARK, };
+>>
+>> According to my information, each DRIF module consists of two sub-modules
+>> (that's why there are 8 module clocks for 4 DRIF modules), each handling a
+>> data pin, but sharing the CLK and SYNC signals.
+>> Hence it's possible to receive using only one data pin. Is that correct?
 >
-> We need CONFIG_X86_INTEL_NON_ACPI Kconfig option to select CONFIG_PINCTRL.
-> This is to solve kbuidbot complaint about kernel configuration, i.e.
-> CONFIG_PINCTRL=n. Appreciate if you could advise something on this.
+> Yes, that is correct.
+>
+>> Shouldn't the pinctrl data reflect that? The second unused data pin could
+>> be used for something else.
+>
+> Is that possible? For e.g. when MOD_SEL0(bit8 -> sel_drif2) is set to 0, all the 4 pins are owned by DRIF IP(RIF2_XXX_A set) even though one of the RIF2_D0_A or RIF2_D1_A may be unused depending on the master it interfaces with. Am I missing something?
 
-Good point.
+You're right, the whole block is switched.
 
-Then I guess you might add similar Kconfig option but can you call it
-something else than CONFIG_X86_INTEL_NON_ACPI. Perhaps something that
-relates to the actual product so distro people can then decide whether
-they want to support it or not. Along the lines of CONFIG_X86_INTEL_CE
-and so on.
+The unused data pin can still be configured as a GPIO, as the GPSR register
+(to select between GPIO and IP function) takes precedence.
+
+Linus/Laurent: I assume the GPIO also takes precedence in the Linux pinctrl
+subsystem, or would it return an error, as the pin is claimed by the IP group?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
