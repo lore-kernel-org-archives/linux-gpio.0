@@ -1,92 +1,73 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] gpio: omap: make gpio numbering deterministical by using
- of aliases
-Date: Wed, 22 Jun 2016 17:16:44 +0100
-Message-ID: <20160622161644.GD31817@leverpostej>
-References: <1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <CACRpkdaVRTj4jpGQp9nDKo8RAPDPUaApp4jAdBGRgd45bqo2zQ@mail.gmail.com>
- <20160615072404.GB26768@pengutronix.de>
- <CACRpkdYK1C5px+A_O1sF99KTPTob9qTQpipEaRLHnNx5=AokLg@mail.gmail.com>
- <20160619010823.GC26875@pengutronix.de>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] gpio: convince line to become input in irq helper
+Date: Wed, 22 Jun 2016 10:12:27 -0700
+Message-ID: <20160622171227.GQ1256@tuxbot>
+References: <1466606015-16326-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:48992 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752205AbcFVQQu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 22 Jun 2016 12:16:50 -0400
+Received: from mail-pf0-f182.google.com ([209.85.192.182]:33381 "EHLO
+	mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751927AbcFVRMb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Jun 2016 13:12:31 -0400
+Received: by mail-pf0-f182.google.com with SMTP id i123so19511148pfg.0
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Jun 2016 10:12:31 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20160619010823.GC26875@pengutronix.de>
+In-Reply-To: <1466606015-16326-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Santosh Shilimkar <ssantosh@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
-On Sun, Jun 19, 2016 at 03:08:23AM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> Hello Linus,
->=20
-> On Sat, Jun 18, 2016 at 10:25:45AM +0200, Linus Walleij wrote:
-> > On Wed, Jun 15, 2016 at 9:24 AM, Uwe Kleine-K=C3=B6nig
-> > <u.kleine-koenig@pengutronix.de> wrote:
-> > > On Wed, Jun 15, 2016 at 08:56:58AM +0200, Linus Walleij wrote:
-> >=20
-> > >> The GPIO numbering scheme is a matter of Linux internals and
-> > >> not about hardware description IMO.
-> > >
-> > > Not sure if I should agree here or not. It's very usual that the
-> > > "internal" gpio numbers match the hardware reference manual. I kn=
-ow this
-> > > from imx, at91, all pre-dt platforms, I'm sure there are more, an=
-d I bet
-> > > I'm not the only one relying on this for omap.
-> >=20
-> > I think it will still match nicely against the chip-local offsets o=
-f the
-> > primary gpiochip so it'll be fine with a chardev too. The same was/=
-is
->=20
-> I cannot follow. What is the primary gpiochip? The first one? What is=
- a
-> "chip-local offset". Just 3 for the fourth gpio of a given gpio bank?
-> I guess the problem is that I didn't follow development of the gpio
-> chardev.
+On Wed 22 Jun 07:33 PDT 2016, Linus Walleij wrote:
 
-If I've understood correctly, Linus was on about the id space for GPIOs
-under a particular gpiochip. If I've understand correctly, you're tryin=
-g
-to ensure consistent numbering the the *global* ID space shared by all
-GPIO chips present in a system?
+> The generic IRQ helper library just checks if the IRQ line is
+> set as input before activating it for interrupts. As we
+> recently started to check things better with .get_dir() it
+> turns out that it's good to try to convince the line to become
+> an input before attempting to lock it as IRQ.
+> 
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-> > the case of the first interrupts on x86 I think, but with the pleth=
-ora of
-> > irqchips and dependency on probe order etc the assumption is
-> > nowadays to dangerous.
-> >=20
-> > > And this is very usual in the dt world, too:
-> > >
-> > > $ git grep -El 'gpio. =3D \&gpio' arch/arm/boot/dts | wc -l
-> > > 37
-> >=20
-> > Aha I didn't even know. Well I guess I could allow it for OMAP too
-> > then, but I want an ACK from one of the DT binding maintainers.
+I really like this.
 
-In general, our use of aliases is rather ill-defined. It would be nicer
-if we could address devices in a similar manner to disks or partitions,
-e.g. by path or uuid, but I don't think we have anything sensible we ca=
-n
-use there.
+> ---
+>  drivers/gpio/gpiolib.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 58d822d7e8da..b9a6a5c69fbb 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1010,6 +1010,23 @@ static int gpiochip_irq_reqres(struct irq_data *d)
+>  	if (!try_module_get(chip->gpiodev->owner))
+>  		return -ENODEV;
+>  
+> +	/*
+> +	 * If it is possible to switch this GPIO to an input
+> +	 * this is a good time to do it.
+> +	 */
+> +	if (chip->direction_input) {
+> +		struct gpio_desc *desc;
+> +		int ret;
+> +
+> +		desc = gpiochip_get_desc(chip, d->hwirq);
+> +		if (IS_ERR(desc))
+> +			return PTR_ERR(desc);
+> +
+> +	        ret = chip->direction_input(chip, d->hwirq);
+> +		if (!ret)
+> +			clear_bit(FLAG_IS_OUT, &desc->flags);
 
-Given that, I can see the use of an alias to provide a consistent way o=
-f
-referring to a particular gpiochip (and maybe we need to expose the
-alises information somehow to userspace), but IMO that's independent of
-any global ID space, probe ordering, etc.
+With this updated semantics I think it's a mistake to not propagate this
+error. Clients will not be able to rely on it and have to continue
+configuring their pins as input just to be sure.
 
-Thanks,
-Mark.
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +	}
+> +
+>  	if (gpiochip_lock_as_irq(chip, d->hwirq)) {
+>  		chip_err(chip,
+>  			"unable to lock HW IRQ %lu for IRQ\n",
+
+Regards,
+Bjorn
