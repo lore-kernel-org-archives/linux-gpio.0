@@ -1,41 +1,77 @@
-From: Cristina Ciocan <cristina.ciocan@intel.com>
-Subject: [PATCH] pinctrl: baytrail: Fix mingled clock pins
-Date: Wed, 22 Jun 2016 14:17:19 +0300
-Message-ID: <1466594239-10988-1-git-send-email-cristina.ciocan@intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:17926 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751077AbcFVLN0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 22 Jun 2016 07:13:26 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: RE: [PATCH] pinctrl: sh-pfc: r8a7795: Add DRIF support
+Date: Wed, 22 Jun 2016 13:51:19 +0000
+Message-ID: <SG2PR06MB10389B08AD94500736362E4AC32C0@SG2PR06MB1038.apcprd06.prod.outlook.com>
+References: <1466165981-65284-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <CAMuHMdXz5mvR=+iWBap=jV7w94phuLXJSNKtOCqjxCEFNy=QDg@mail.gmail.com>
+ <SG2PR06MB103835BE72B262243B46864BC3570@SG2PR06MB1038.apcprd06.prod.outlook.com>
+ <CAMuHMdXYW5ObuDPm7aCr5uTaPYBrTAREM6Z16XWF3q7YBtFgNw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdXYW5ObuDPm7aCr5uTaPYBrTAREM6Z16XWF3q7YBtFgNw@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Chris Paterson <Chris.Paterson2@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, irina.tirdea@intel.com, Cristina Ciocan <cristina.ciocan@intel.com>
 
-Fix plt clock 3, 4 and 5 pins, which were not in the proper order.
-
-Signed-off-by: Cristina Ciocan <cristina.ciocan@intel.com>
----
- drivers/pinctrl/intel/pinctrl-baytrail.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 677a811..7abfd42 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -401,9 +401,9 @@ static const struct byt_simple_func_mux byt_score_sata_mux[] = {
- static const unsigned int byt_score_plt_clk0_pins[] = { 96 };
- static const unsigned int byt_score_plt_clk1_pins[] = { 97 };
- static const unsigned int byt_score_plt_clk2_pins[] = { 98 };
--static const unsigned int byt_score_plt_clk4_pins[] = { 99 };
--static const unsigned int byt_score_plt_clk5_pins[] = { 100 };
--static const unsigned int byt_score_plt_clk3_pins[] = { 101 };
-+static const unsigned int byt_score_plt_clk3_pins[] = { 99 };
-+static const unsigned int byt_score_plt_clk4_pins[] = { 100 };
-+static const unsigned int byt_score_plt_clk5_pins[] = { 101 };
- static const struct byt_simple_func_mux byt_score_plt_clk_mux[] = {
- 	SIMPLE_FUNC("plt_clk", 1),
- };
--- 
-1.9.1
-
+SGkgR2VlcnQsDQoNCj4gQ0MgbGludXgtZ3BpbywgTGludXNXLCBMYXVyZW50DQo+IA0KPiBPbiBG
+cmksIEp1biAxNywgMjAxNiBhdCA0OjE2IFBNLCBSYW1lc2ggU2hhbm11Z2FzdW5kYXJhbQ0KPiA8
+cmFtZXNoLnNoYW5tdWdhc3VuZGFyYW1AYnAucmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+PiA+ICBk
+cml2ZXJzL3BpbmN0cmwvc2gtcGZjL3BmYy1yOGE3Nzk1LmMgfCAxMjENCj4gPj4gPiArKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+PiA+ICAxIGZpbGUgY2hhbmdlZCwgMTIx
+IGluc2VydGlvbnMoKykNCj4gPj4gPg0KPiA+PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0
+cmwvc2gtcGZjL3BmYy1yOGE3Nzk1LmMNCj4gPj4gPiBiL2RyaXZlcnMvcGluY3RybC9zaC1wZmMv
+cGZjLXI4YTc3OTUuYw0KPiA+PiA+IGluZGV4IDMzYmU1ZDU2Li42ZjI0NmVjIDEwMDY0NA0KPiA+
+PiA+IC0tLSBhL2RyaXZlcnMvcGluY3RybC9zaC1wZmMvcGZjLXI4YTc3OTUuYw0KPiA+PiA+ICsr
+KyBiL2RyaXZlcnMvcGluY3RybC9zaC1wZmMvcGZjLXI4YTc3OTUuYw0KPiA+PiA+IEBAIC0xNjU4
+LDYgKzE2NTgsOTEgQEAgc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCBjYW5mZDFfZGF0YV9tdXhb
+XSA9DQo+IHsNCj4gPj4gPiAgICAgICAgIENBTkZEMV9UWF9NQVJLLCAgICAgICAgIENBTkZEMV9S
+WF9NQVJLLA0KPiA+PiA+ICB9Ow0KPiA+PiA+DQo+ID4+ID4gKy8qIC0gRFJJRg0KPiA+PiA+ICst
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0gKi8NCj4gPj4gc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCBkcmlmMF9kYXRhX2FfcGlu
+c1tdID0gew0KPiA+PiA+ICsgICAgICAgLyogQ0xLLCBTWU5DLCBEMCwgRDEgKi8NCj4gPj4gPiAr
+ICAgICAgIFJDQVJfR1BfUElOKDYsIDgpLCBSQ0FSX0dQX1BJTig2LCA5KSwgUkNBUl9HUF9QSU4o
+NiwgMTApLA0KPiA+PiA+ICsgICAgICAgUkNBUl9HUF9QSU4oNiwgNyksDQo+ID4+ID4gK307DQo+
+ID4+ID4gK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgZHJpZjBfZGF0YV9hX211eFtdID0gew0K
+PiA+PiA+ICsgICAgICAgUklGMF9DTEtfQV9NQVJLLCBSSUYwX1NZTkNfQV9NQVJLLCBSSUYwX0Qw
+X0FfTUFSSywNCj4gPj4gPiArUklGMF9EMV9BX01BUkssIH07DQo+ID4+DQo+ID4+IEFjY29yZGlu
+ZyB0byBteSBpbmZvcm1hdGlvbiwgZWFjaCBEUklGIG1vZHVsZSBjb25zaXN0cyBvZiB0d28NCj4g
+Pj4gc3ViLW1vZHVsZXMgKHRoYXQncyB3aHkgdGhlcmUgYXJlIDggbW9kdWxlIGNsb2NrcyBmb3Ig
+NCBEUklGDQo+ID4+IG1vZHVsZXMpLCBlYWNoIGhhbmRsaW5nIGEgZGF0YSBwaW4sIGJ1dCBzaGFy
+aW5nIHRoZSBDTEsgYW5kIFNZTkMNCj4gc2lnbmFscy4NCj4gPj4gSGVuY2UgaXQncyBwb3NzaWJs
+ZSB0byByZWNlaXZlIHVzaW5nIG9ubHkgb25lIGRhdGEgcGluLiBJcyB0aGF0DQo+IGNvcnJlY3Q/
+DQo+ID4NCj4gPiBZZXMsIHRoYXQgaXMgY29ycmVjdC4NCj4gPg0KPiA+PiBTaG91bGRuJ3QgdGhl
+IHBpbmN0cmwgZGF0YSByZWZsZWN0IHRoYXQ/IFRoZSBzZWNvbmQgdW51c2VkIGRhdGEgcGluDQo+
+ID4+IGNvdWxkIGJlIHVzZWQgZm9yIHNvbWV0aGluZyBlbHNlLg0KPiA+DQo+ID4gSXMgdGhhdCBw
+b3NzaWJsZT8gRm9yIGUuZy4gd2hlbiBNT0RfU0VMMChiaXQ4IC0+IHNlbF9kcmlmMikgaXMgc2V0
+IHRvIDAsDQo+IGFsbCB0aGUgNCBwaW5zIGFyZSBvd25lZCBieSBEUklGIElQKFJJRjJfWFhYX0Eg
+c2V0KSBldmVuIHRob3VnaCBvbmUgb2YgdGhlDQo+IFJJRjJfRDBfQSBvciBSSUYyX0QxX0EgbWF5
+IGJlIHVudXNlZCBkZXBlbmRpbmcgb24gdGhlIG1hc3RlciBpdCBpbnRlcmZhY2VzDQo+IHdpdGgu
+IEFtIEkgbWlzc2luZyBzb21ldGhpbmc/DQo+IA0KPiBZb3UncmUgcmlnaHQsIHRoZSB3aG9sZSBi
+bG9jayBpcyBzd2l0Y2hlZC4NCj4gDQo+IFRoZSB1bnVzZWQgZGF0YSBwaW4gY2FuIHN0aWxsIGJl
+IGNvbmZpZ3VyZWQgYXMgYSBHUElPLCBhcyB0aGUgR1BTUg0KPiByZWdpc3RlciAodG8gc2VsZWN0
+IGJldHdlZW4gR1BJTyBhbmQgSVAgZnVuY3Rpb24pIHRha2VzIHByZWNlZGVuY2UuDQoNCklzIHRo
+aXMgcHJlY2VkZW5jZSBtZW50aW9uZWQgaW4gaC93IG1hbnVhbCBvciBpcyBpdCBiYXNlZCBvbiBj
+dXJyZW50IGNvZGUgJiBleGVjdXRpb24gb3JkZXI/IEkgYXNzdW1lIGl0J3MgdGhlIGxhdGVyPw0K
+DQo+IA0KPiBMaW51cy9MYXVyZW50OiBJIGFzc3VtZSB0aGUgR1BJTyBhbHNvIHRha2VzIHByZWNl
+ZGVuY2UgaW4gdGhlIExpbnV4DQo+IHBpbmN0cmwgc3Vic3lzdGVtLCBvciB3b3VsZCBpdCByZXR1
+cm4gYW4gZXJyb3IsIGFzIHRoZSBwaW4gaXMgY2xhaW1lZCBieQ0KPiB0aGUgSVAgZ3JvdXA/DQo+
+IA0KDQpMb29raW5nIGF0IHRoZSBjb2RlLCBwaW5jdHJsIGNvcmUgZG9lcyBub3QgYWxsb3cgbXVs
+dGlwbGUgcGluIHJlcXVlc3RzL2NsYWltcyB3aGVuICJzdHJpY3QiIHBteG9wcyBmbGFnIGlzIHNl
+dC4gSG93ZXZlciwgUmVuZXNhcyBwaW5jdHJsIGRyaXZlciBkb2VzIG5vdCBzZXQgdGhpcyBmbGFn
+LiBTbyB0aGUgcmVxdWVzdCBjYW4gcHJvY2VlZCBmdXJ0aGVyIGluIG91ciBjYXNlLg0KDQpPbiBt
+eSBib2FyZCwgYWZ0ZXIgSVAgY2xhaW1pbmcgYWxsIHRoZSA0IHBpbnMgSSBjb3VsZCBzdGlsbCBl
+eHBvcnQgb25lIG9mIHRoZSBwaW5zIGFzIEdQSU8gKHBpbmN0cmwgc3Vic3lzdGVtIGlzIE9LIHdp
+dGggaXQpLiBGcm9tIHRoaXMgcG9pbnQgSVAgZGlkIG5vdCByZWNlaXZlIGFueSBkYXRhIG9uIHRo
+aXMgcGluIGFzIGV4cGVjdGVkLiBUaGUgb3RoZXIgd2F5IGFyb3VuZCBpcyBhcm91bmQgKEdQSU8t
+PklQKSBpcyBub3QgcG9zc2libGUgYmVjYXVzZSBvZiB0aGlzIGNoZWNrIGluIHNoX3BmY19mdW5j
+X3NldF9tdXguDQoNCjM1OSAgICAgICAgICAgICAgICAgaWYgKGNmZy0+dHlwZSAhPSBQSU5NVVhf
+VFlQRV9OT05FKSB7DQoNCkkgYW0gaGFwcHkgd2l0aCBzcGxpdHRpbmcgdGhlIGRyaWYgcGlucyBp
+bnRvIHRocmVlIGdyb3VwcyBiYXNlZCBvbiB0aGUgYWJvdmUgb2JzZXJ2YXRpb24NCg0KICAtICJk
+cmlmMF9jdHJsX2FfcGlucyIgZm9yIENMSyBhbmQgU1lOQywNCiAgLSAiZHJpZjBfZGF0YTBfYV9w
+aW5zIGZvciBEMCwNCiAgLSAiZHJpZjBfZGF0YTFfYV9waW5zIGZvciBEMS4NCg0KSWYgeW91IGFy
+ZSBPSywgSSB3aWxsIHNlbmQgdGhlIHJld29ya2VkIHBhdGNoLg0KDQpUaGFua3MsDQpSYW1lc2gN
+Cg==
