@@ -1,42 +1,80 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH 00/13] Add support for Tegra DPAUX pinctrl
-Date: Thu, 23 Jun 2016 11:21:05 +0200
-Message-ID: <CACRpkdYGT9zwyi2Lsd6tyG5dVnPNH+1w9wo+w3=b7YX1pfBJUw@mail.gmail.com>
-References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
- <20160617165611.GO27475@ulmo.ba.sec> <20160617165842.GP27475@ulmo.ba.sec>
- <CACRpkdaEUUCs3UR9U331wuFTkRswU4tFEg6JLoMVkHeSXfS_sA@mail.gmail.com> <20160623080400.GA8136@ulmo.ba.sec>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpio: omap: make gpio numbering deterministical by using
+ of aliases
+Date: Thu, 23 Jun 2016 12:38:07 +0300
+Message-ID: <576BADFF.3000802@ti.com>
+References: <1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <CACRpkdaVRTj4jpGQp9nDKo8RAPDPUaApp4jAdBGRgd45bqo2zQ@mail.gmail.com>
+ <20160615072404.GB26768@pengutronix.de>
+ <CACRpkdYK1C5px+A_O1sF99KTPTob9qTQpipEaRLHnNx5=AokLg@mail.gmail.com>
+ <20160619010823.GC26875@pengutronix.de> <20160622161644.GD31817@leverpostej>
+ <CACRpkdazjgZX3cY2Q6AoQRmX14x-YU6SQ=Q38tZHt8xX6St24g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160623080400.GA8136-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:DRM PANEL DRIVERS" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([198.47.19.12]:41590 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751018AbcFWJiv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 23 Jun 2016 05:38:51 -0400
+In-Reply-To: <CACRpkdazjgZX3cY2Q6AoQRmX14x-YU6SQ=Q38tZHt8xX6St24g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Kevin Hilman <khilman@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Santosh Shilimkar <ssantosh@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Thu, Jun 23, 2016 at 10:04 AM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Thu, Jun 23, 2016 at 09:49:20AM +0200, Linus Walleij wrote:
->> On Fri, Jun 17, 2016 at 6:58 PM, Thierry Reding
->> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+On 06/23/2016 12:04 PM, Linus Walleij wrote:
+> On Wed, Jun 22, 2016 at 6:16 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> 
+>> In general, our use of aliases is rather ill-defined. It would be nicer
+>> if we could address devices in a similar manner to disks or partitions,
+>> e.g. by path or uuid, but I don't think we have anything sensible we can
+>> use there.
 >>
->> > Oh wait... there's the pinctrl helper function that is a build-
->> > dependency. Linus, would you be okay if I took that through the
->> > drm-tegra tree along with the DPAUX driver change, and provide a
->> > stable branch for you to resolve conflicts against if needed?
->>
->> I have already applied it, but I can rebase and pull that patch out
->> on a separate immutable branch and then  merge that branch
->> into my devel and then you can pull it too.
->>
->> Would that work?
->
-> Yes, that would be just fine.
+>> Given that, I can see the use of an alias to provide a consistent way of
+>> referring to a particular gpiochip (and maybe we need to expose the
+>> alises information somehow to userspace), but IMO that's independent of
+>> any global ID space, probe ordering, etc.
+> 
+>  From the kernel point of view the way forward to identify and refer to
+> a particular gpiochip is using /dev/gpiochipN the character device.
+> 
+> If complete topology of the bus placement etc is needed, userspace
+> can traverse /sys/bus/gpio/*
+> 
+> This solves the big problem with the current global numbering system
+> in /sys/class/gpio/*
 
-OK use this:
-https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=devel-dt-free-map
+Hm. May be i misunderstood samthing (and sry, if my following question
+is dummy as I've not followed closely new GPIO ABI development), but..
 
-I merged that into my devel branch too.
+- from above description it seems that  global numbering system is not really
+solved :( instead it's been moved one level up and now the same happens with
+gpiocipX devices :( Wouldn't it be reasonable to add possibility to create named/labeled
+gpiocipX devices from the very beginning, like: "/dev/gpiocipX[_name|label], or "/dev/gpiocip[_name|label]", or ..
 
-Yours,
-Linus Walleij
+Actually, struct gpio_chip has label field already.
+
+PS. From my experience, the worst case with dev numbering usually happens after 
+few insmod/rmmod (or sometimes after suspend/resume) iterations - ttyX ;..(.
+
+> 
+> So what this alias should address would be two things:
+> 
+> - Solve the immediate issue of the global number space for the
+>    legacy sysfs ABI, but also:
+> 
+> - Determine which chip is gpiochip0, gpiochip1, .. etc in the
+>    new ABI, so the devices get consistent numbering.
+> 
+> The latter is lightly frowned upon by the udev people: they think it
+> is more proper to traverse /sys to get topological information about
+> the devices.
+> 
+> I would appreciate if a patch to add alias handling would take care
+> of both these things if we apply it.
+> 
+
+-- 
+regards,
+-grygorii
