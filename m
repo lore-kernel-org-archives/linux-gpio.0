@@ -1,104 +1,50 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2 v2] gpio: omap: make gpio numbering deterministical by
- using of aliases
-Date: Thu, 23 Jun 2016 10:54:05 +0200
-Message-ID: <CACRpkdYHHLyBTJYPw_pMds0z-BtPPHf7mEcjE2ayTw7jRqNDdA@mail.gmail.com>
-References: <1465930632-18941-1-git-send-email-u.kleine-koenig@pengutronix.de> <1465930632-18941-2-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: use PINMUX_SINGLE() for I2C
+Date: Thu, 23 Jun 2016 10:55:28 +0200
+Message-ID: <CAMuHMdWjCZgFmJKy1HfHhi82v4DOvbtvZ6MA=X7EE_Qr-prRdw@mail.gmail.com>
+References: <87twgnrp2z.wl%kuninori.morimoto.gx@renesas.com> <CACRpkdbTdZAdoSiwqCDJsrwqzoyHoj4kOR+28+go8ZbMXAR4vg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:36311 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751231AbcFWIyI convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2016 04:54:08 -0400
-Received: by mail-oi0-f52.google.com with SMTP id f189so60452103oig.3
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2016 01:54:07 -0700 (PDT)
-In-Reply-To: <1465930632-18941-2-git-send-email-u.kleine-koenig@pengutronix.de>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34544 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751865AbcFWIza (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2016 04:55:30 -0400
+In-Reply-To: <CACRpkdbTdZAdoSiwqCDJsrwqzoyHoj4kOR+28+go8ZbMXAR4vg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Looping in DT people.
+Hi Linus,
 
-Please send subsequent patches also to devicetree@vger.kernel.org
-
-On Tue, Jun 14, 2016 at 8:57 PM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-
-> Traditionally the n-th gpio device probed by the omap gpio driver got
-> the gpio number range [n*32 .. n*32+31].
-> When order of the devices probed by the driver changes (which can hap=
-pen
-> already now when some devices have a pinctrl and so the first probe
-> attempt returns -ENODEV) the numbering changes.
+On Thu, Jun 23, 2016 at 10:47 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Tue, Jun 21, 2016 at 9:21 AM, Kuninori Morimoto
+> <kuninori.morimoto.gx@renesas.com> wrote:
 >
-> To ensure a deterministical numbering use of_alias_get_id to determin=
-e
-> the base for a given device. If no respective alias exists fall back =
-to
-> the traditional numbering.
+>> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>>
+>> Now we have PINMUX_SINGLE(). Let's use it instead of PINMUX_IPSR_NOGP()
+>>
+>> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 >
-> For the unusual case where only a part of the gpio devices have a
-> matching alias some of them might fail to probe. But if none of them =
-has
-> an alias or all, there is no conflict which should be good enough to
-> maintain backward compatibility.
->
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> ---
->  drivers/gpio/gpio-omap.c | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index b98ede78c9d8..4d91792e7266 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -1053,9 +1053,26 @@ static int omap_gpio_chip_init(struct gpio_ban=
-k *bank, struct irq_chip *irqc)
->                         bank->chip.parent =3D &omap_mpuio_device.dev;
->                 bank->chip.base =3D OMAP_MPUIO(0);
->         } else {
-> +               int gpio_alias_id __maybe_unused;
-> +
->                 bank->chip.label =3D "gpio";
-> -               bank->chip.base =3D gpio;
-> +
-> +#if defined(CONFIG_OF_GPIO)
-> +               /*
-> +                * Traditionally the base is given out in first-come-=
-first-serve
-> +                * order.  This might shuffle the numbering of gpios =
-if the
-> +                * probe order changes.  So make the base determinist=
-ical if the
-> +                * device tree specifies alias ids.
-> +                */
-> +               gpio_alias_id =3D of_alias_get_id(bank->chip.of_node,=
- "gpio");
-> +               if (gpio_alias_id >=3D 0)
-> +                       bank->chip.base =3D bank->width * gpio_alias_=
-id;
-> +               else
-> +#endif
-> +                       bank->chip.base =3D gpio;
->         }
-> +
-> +
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-I need:
+Thx!
 
-- A hunk of the patch to hit
-  Documentation/devicetree/bindings/gpio/gpio.txt
-  and describe the alias usage there
+> Geert, are you queuing this?
 
--  an ACK from a DT bindings maintainer for this.
+Sure, it's time to prepare a pull request soon...
 
-Yours,
-Linus Walleij
+Gr{oetje,eeting}s,
+
+                        Geert
+
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
