@@ -1,31 +1,36 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH 00/13] Add support for Tegra DPAUX pinctrl
-Date: Thu, 23 Jun 2016 09:49:20 +0200
-Message-ID: <CACRpkdaEUUCs3UR9U331wuFTkRswU4tFEg6JLoMVkHeSXfS_sA@mail.gmail.com>
-References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
- <20160617165611.GO27475@ulmo.ba.sec> <20160617165842.GP27475@ulmo.ba.sec>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] Revert "pinctrl: digicolor: add missing
+ platform_set_drvdata() call"
+Date: Thu, 23 Jun 2016 09:50:36 +0200
+Message-ID: <CACRpkdZhan_u56CWOp0LPcSLxva0ejUK9mU0NB3nh1SAFyd_vg@mail.gmail.com>
+References: <8ee4285e8b0e2602ac5cec9845a937895147c5cb.1466280066.git.baruch@tkos.co.il>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160617165842.GP27475-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:DRM PANEL DRIVERS" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:36351 "EHLO
+	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750919AbcFWHui (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2016 03:50:38 -0400
+Received: by mail-oi0-f44.google.com with SMTP id f189so58492730oig.3
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2016 00:50:38 -0700 (PDT)
+In-Reply-To: <8ee4285e8b0e2602ac5cec9845a937895147c5cb.1466280066.git.baruch@tkos.co.il>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-On Fri, Jun 17, 2016 at 6:58 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+On Sat, Jun 18, 2016 at 10:01 PM, Baruch Siach <baruch@tkos.co.il> wrote:
 
-> Oh wait... there's the pinctrl helper function that is a build-
-> dependency. Linus, would you be okay if I took that through the
-> drm-tegra tree along with the DPAUX driver change, and provide a
-> stable branch for you to resolve conflicts against if needed?
+> This reverts commit 8b2b3dcb343bf8cb62efc1bd6a9dbe850005e2ac.
+>
+> Commit 546c6d79301 (pinctrl: digicolor: make it explicitly non-modular) removed
+> the platform_get_drvdata() call, so platform_set_drvdata() is no longer needed.
+>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 
-I have already applied it, but I can rebase and pull that patch out
-on a separate immutable branch and then  merge that branch
-into my devel and then you can pull it too.
-
-Would that work?
+Patch/revert applied.
 
 Yours,
 Linus Walleij
