@@ -1,50 +1,62 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: use PINMUX_SINGLE() for I2C
-Date: Thu, 23 Jun 2016 10:55:28 +0200
-Message-ID: <CAMuHMdWjCZgFmJKy1HfHhi82v4DOvbtvZ6MA=X7EE_Qr-prRdw@mail.gmail.com>
-References: <87twgnrp2z.wl%kuninori.morimoto.gx@renesas.com> <CACRpkdbTdZAdoSiwqCDJsrwqzoyHoj4kOR+28+go8ZbMXAR4vg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: omap: make gpio numbering deterministical by using
+ of aliases
+Date: Thu, 23 Jun 2016 11:04:12 +0200
+Message-ID: <CACRpkdazjgZX3cY2Q6AoQRmX14x-YU6SQ=Q38tZHt8xX6St24g@mail.gmail.com>
+References: <1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <CACRpkdaVRTj4jpGQp9nDKo8RAPDPUaApp4jAdBGRgd45bqo2zQ@mail.gmail.com>
+ <20160615072404.GB26768@pengutronix.de> <CACRpkdYK1C5px+A_O1sF99KTPTob9qTQpipEaRLHnNx5=AokLg@mail.gmail.com>
+ <20160619010823.GC26875@pengutronix.de> <20160622161644.GD31817@leverpostej>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34544 "EHLO
-	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751865AbcFWIza (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2016 04:55:30 -0400
-In-Reply-To: <CACRpkdbTdZAdoSiwqCDJsrwqzoyHoj4kOR+28+go8ZbMXAR4vg@mail.gmail.com>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:35024 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750954AbcFWJEO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2016 05:04:14 -0400
+Received: by mail-oi0-f43.google.com with SMTP id r2so60792578oih.2
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2016 02:04:13 -0700 (PDT)
+In-Reply-To: <20160622161644.GD31817@leverpostej>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Santosh Shilimkar <ssantosh@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Hi Linus,
+On Wed, Jun 22, 2016 at 6:16 PM, Mark Rutland <mark.rutland@arm.com> wrote:
 
-On Thu, Jun 23, 2016 at 10:47 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Tue, Jun 21, 2016 at 9:21 AM, Kuninori Morimoto
-> <kuninori.morimoto.gx@renesas.com> wrote:
+> In general, our use of aliases is rather ill-defined. It would be nicer
+> if we could address devices in a similar manner to disks or partitions,
+> e.g. by path or uuid, but I don't think we have anything sensible we can
+> use there.
 >
->> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->>
->> Now we have PINMUX_SINGLE(). Let's use it instead of PINMUX_IPSR_NOGP()
->>
->> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Given that, I can see the use of an alias to provide a consistent way of
+> referring to a particular gpiochip (and maybe we need to expose the
+> alises information somehow to userspace), but IMO that's independent of
+> any global ID space, probe ordering, etc.
 
-Thx!
+>From the kernel point of view the way forward to identify and refer to
+a particular gpiochip is using /dev/gpiochipN the character device.
 
-> Geert, are you queuing this?
+If complete topology of the bus placement etc is needed, userspace
+can traverse /sys/bus/gpio/*
 
-Sure, it's time to prepare a pull request soon...
+This solves the big problem with the current global numbering system
+in /sys/class/gpio/*
 
-Gr{oetje,eeting}s,
+So what this alias should address would be two things:
 
-                        Geert
+- Solve the immediate issue of the global number space for the
+  legacy sysfs ABI, but also:
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+- Determine which chip is gpiochip0, gpiochip1, .. etc in the
+  new ABI, so the devices get consistent numbering.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+The latter is lightly frowned upon by the udev people: they think it
+is more proper to traverse /sys to get topological information about
+the devices.
+
+I would appreciate if a patch to add alias handling would take care
+of both these things if we apply it.
+
+Yours,
+Linus Walleij
