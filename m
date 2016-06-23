@@ -1,40 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 0/2] tools/gpio: switch to tools buildsystem
-Date: Thu, 23 Jun 2016 09:59:34 +0200
-Message-ID: <CACRpkdYhr1Q-D4w9=_irdejigE=8zkskAtQ2t8vWFQCRfSJOqw@mail.gmail.com>
-References: <1466368872-99495-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v3] gpio: sch: Fix Oops on module load on Asus Eee PC 1201
+Date: Thu, 23 Jun 2016 10:02:27 +0200
+Message-ID: <CACRpkdZVFO5hZNz8UgC2K3cH0P5qOO1eJyhTbW6eb=GdxaRnxQ@mail.gmail.com>
+References: <20160618180458.GA1425@pitrat4.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:36759 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750950AbcFWH7f (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2016 03:59:35 -0400
-Received: by mail-oi0-f49.google.com with SMTP id f189so58760042oig.3
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2016 00:59:34 -0700 (PDT)
-In-Reply-To: <1466368872-99495-1-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160618180458.GA1425@pitrat4.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Colin Pitrat <colin.pitrat@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Sun, Jun 19, 2016 at 10:41 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Sat, Jun 18, 2016 at 8:05 PM, Colin Pitrat <colin.pitrat@gmail.com> wrote:
 
-> Current environment is not allowed to easily build the tools.
-> Move to tools buildsystem to allow user build gpio tools using only existing
-> kernel sources. Besides that support O=/path/to/build/dir option.
+> This fixes the issue descirbe in bug 117531
+> (https://bugzilla.kernel.org/show_bug.cgi?id=117531).
+> It's a regression introduced in linux 4.5 that causes a Oops at load of
+> gpio_sch and prevents powering off the computer.
 >
-> In v3:
-> - fold patch 1 & 2 (Alexandre Courbot)
-> - add CROSS_COMPILE prefix to ld (Alexandre Courbot)
-> - move definition of bindir to last patch
+> The issue is that sch_gpio_reg_set is called in sch_gpio_probe before
+> gpio_chip data is initialized with the pointer to the sch_gpio struct. As
+> sch_gpio_reg_set calls gpiochip_get_data, it returns NULL which causes
+> the Oops.
+>
+> The patch follows Mika's advice (https://lkml.org/lkml/2016/5/9/61) and
+> consists in modifying sch_gpio_reg_get and sch_gpio_reg_set to take a
+> sch_gpio struct directly instead of a gpio_chip, which avoids the call to
+> gpiochip_get_data.
+>
+> Thanks Mika for your patience with me :-)
+>
+> Signed-off-by: Colin Pitrat <colin.pitrat@gmail.com>
 
-Both patches applied with Alexandre's ACK/Test tags.
-Excellent work, thank you for fixing up my uglyhacks.
+Patch applied for fixes with Alex' and Mika's ACK.
 
-I think my tools were inspired by tools/iio, now that needs
-fixing too...
+I will add some stable tags as well.
 
 Yours,
 Linus Walleij
