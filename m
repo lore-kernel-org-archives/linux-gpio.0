@@ -1,34 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: rockchip: make rockchip_irq_gc_mask_set_bit static
-Date: Thu, 23 Jun 2016 10:49:22 +0200
-Message-ID: <CACRpkdZuGXGcZsGVu2bA28_CgUAjmoyC1m46jHxHmQNbcHO94w@mail.gmail.com>
-References: <1466530701-26685-1-git-send-email-ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH v1 1/1] pinctrl: Flag strict is a field in struct pinmux_ops
+Date: Thu, 23 Jun 2016 10:50:59 +0200
+Message-ID: <CACRpkdYLmb1nxek5rufx+W5YeNYbavBpi2HHteZ9+pQZFZXrRw@mail.gmail.com>
+References: <1466462448-98833-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:35480 "EHLO
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:35500 "EHLO
 	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751023AbcFWItX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2016 04:49:23 -0400
-Received: by mail-oi0-f50.google.com with SMTP id r2so60326052oih.2
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2016 01:49:23 -0700 (PDT)
-In-Reply-To: <1466530701-26685-1-git-send-email-ben.dooks@codethink.co.uk>
+	with ESMTP id S1751664AbcFWIvA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2016 04:51:00 -0400
+Received: by mail-oi0-f50.google.com with SMTP id r2so60376270oih.2
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2016 01:51:00 -0700 (PDT)
+In-Reply-To: <1466462448-98833-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-kernel@lists.codethink.co.uk, Heiko Stuebner <heiko@sntech.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Jun 21, 2016 at 7:38 PM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
+On Tue, Jun 21, 2016 at 12:40 AM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-> The rockchip_irq_gc_mask_set_bit() function is not exported our used
-> outside of ppinctrl-rockchip.c so fix the following sparse error by
-> making it static:
+> Documentation incorrectly refers to struct pinctrl_desc, where no such flag is
+> available. Replace the name of the struct.
 >
-> drivers/pinctrl/pinctrl-rockchip.c:2010:6: warning: symbol 'rockchip_irq_gc_mask_set_bit' was not declared. Should it be static?
->
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Patch applied as obviously correct.
+Patch applied.
 
 Yours,
 Linus Walleij
