@@ -1,32 +1,45 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/1] gpio: lynxpoint: avoid potential warning on error path
-Date: Thu, 23 Jun 2016 10:04:33 +0200
-Message-ID: <CACRpkdZd92zcx-FgojoE9jQXiBd+yjXZewDY2XfY9cH3Q1ShEQ@mail.gmail.com>
-References: <1466352404-23685-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] gpio: sx150x: Update OF configuration
+Date: Thu, 23 Jun 2016 10:08:33 +0200
+Message-ID: <CACRpkdbWPKbQRnO4v9GcY4BMTbp1ivMO6TFa-u-QpRyyZED0oQ@mail.gmail.com>
+References: <1466157063-10955-1-git-send-email-narmstrong@baylibre.com> <20160620155744.GA1419@rob-hp-laptop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:34137 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751000AbcFWIEf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2016 04:04:35 -0400
-Received: by mail-oi0-f42.google.com with SMTP id s66so58907942oif.1
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2016 01:04:35 -0700 (PDT)
-In-Reply-To: <1466352404-23685-1-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160620155744.GA1419@rob-hp-laptop>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Sun, Jun 19, 2016 at 6:06 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Mon, Jun 20, 2016 at 5:57 PM, Rob Herring <robh@kernel.org> wrote:
+> On Fri, Jun 17, 2016 at 11:51:03AM +0200, Neil Armstrong wrote:
 
-> When devres API is in use we are not supposed to call plain gpiochip_remove().
-> Remove redundant call to gpiochip_remove().
+>> +Optional Properties:
+>> +- oscio-is-gpo: Boolean, Indicated the oscio pin can be used as additional
+>> +             output gpo port.
+>> +
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> +- pull-up-ports: Array of port numbers which must have pull-up enabled.
+>> +- pull-down-ports: Array of port numbers which must have pull-down enabled.
+>> +- open-drain-ports: Array of port numbers which must be configured as open-drain,
+>> +                     Push-Pull mode is default.
+>> +- polarity-invert-ports: Array of port numbers whih port polarity must be inverted.
+>
+> Seems like these should be done in a common way.
+>
+> If not, they all need a vendor prefix.
 
-Patch applied with Mika's ACK.
+Actually on second look, this takes the sx150 to pin control territory.
+
+I am starting to feel like a move to drivers/pinctrl/* might be warranted.
+
+Neil you worked on other pin controllers IIRC, do you think it would
+be much work to make a combined GPIO+pinctrl driver and move
+this over to drivers/pinctrl?
+
+I know refactoring across subsystems can be a pain, but at least
+I'm maintaining both and happy to help out.
 
 Yours,
 Linus Walleij
