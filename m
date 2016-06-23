@@ -1,29 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: 74x164: Use spi_write() helper instead of open coding
-Date: Thu, 23 Jun 2016 09:45:47 +0200
-Message-ID: <CACRpkda9y+MpJD2+UVR4NOg2NUTkKPD1f=kfRD-5Ajd=N91gPA@mail.gmail.com>
-References: <1466181568-24049-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [RFC PATCH 13/13] arm64: tegra: Add DPAUX pinctrl bindings
+Date: Thu, 23 Jun 2016 09:46:48 +0200
+Message-ID: <CACRpkdY5po-1Bwd8_5ynVQZhRVqur=x=QjiM_D4YsgHsMbnGwg@mail.gmail.com>
+References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com> <1466165027-17917-14-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:33429 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750775AbcFWHps (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2016 03:45:48 -0400
-Received: by mail-oi0-f43.google.com with SMTP id u201so58344081oie.0
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2016 00:45:47 -0700 (PDT)
-In-Reply-To: <1466181568-24049-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <1466165027-17917-14-git-send-email-jonathanh@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Jun 17, 2016 at 6:39 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Fri, Jun 17, 2016 at 2:03 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Add the DPAUX pinctrl states for the DPAUX nodes defining all three
+> possible states of "aux", "i2c" and "off". Also add the 'i2c-bus'
+> node for the DPAUX nodes so that the I2C driver core does not attempt
+> to parse the pinctrl state nodes.
+>
+> Populate the nodes for the pinctrl clients of the DPAUX pin controller.
+> There are two clients for each DPAUX instance, namely the SOR and one of
+> the I2C adapters. The SOR clients may used the DPAUX pins in either AUX
+> or I2C modes and so for these devices we don't define any of the generic
+> pinctrl states (default, idle, etc) because the SOR driver will directly
+> set the state needed. For I2C clients only the I2C mode is used and so
+> we can simplify matters by using the generic pinctrl states for default
+> and idle.
+>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-Patch applied.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Yours,
+Yours
 Linus Walleij
