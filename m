@@ -1,71 +1,79 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: omap: make gpio numbering deterministical by using
- of aliases
-Date: Thu, 23 Jun 2016 14:08:33 +0200
-Message-ID: <CACRpkdaAcsikDgdbchKkx4i0Pk12qp7gTDUQJvj+kmCOtiRiqA@mail.gmail.com>
-References: <1465898604-16294-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <CACRpkdaVRTj4jpGQp9nDKo8RAPDPUaApp4jAdBGRgd45bqo2zQ@mail.gmail.com>
- <20160615072404.GB26768@pengutronix.de> <CACRpkdYK1C5px+A_O1sF99KTPTob9qTQpipEaRLHnNx5=AokLg@mail.gmail.com>
- <20160619010823.GC26875@pengutronix.de> <20160622161644.GD31817@leverpostej>
- <CACRpkdazjgZX3cY2Q6AoQRmX14x-YU6SQ=Q38tZHt8xX6St24g@mail.gmail.com> <576BADFF.3000802@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.8
+Date: Thu, 23 Jun 2016 15:39:21 +0200
+Message-ID: <1466689161-27672-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:35296 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750978AbcFWMIf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2016 08:08:35 -0400
-Received: by mail-oi0-f47.google.com with SMTP id r2so66674376oih.2
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jun 2016 05:08:34 -0700 (PDT)
-In-Reply-To: <576BADFF.3000802@ti.com>
+Received: from albert.telenet-ops.be ([195.130.137.90]:36418 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751682AbcFWNj3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2016 09:39:29 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Kevin Hilman <khilman@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Santosh Shilimkar <ssantosh@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Thu, Jun 23, 2016 at 11:38 AM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+	Hi Linus,
 
->> This solves the big problem with the current global numbering system
->> in /sys/class/gpio/*
->
-> Hm. May be i misunderstood samthing (and sry, if my following question
-> is dummy as I've not followed closely new GPIO ABI development), but..
->
-> - from above description it seems that  global numbering system is not really
-> solved :( instead it's been moved one level up and now the same happens with
-> gpiocipX devices :(
+The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 
-Yes that is true, but also the discovery mechanism is changed so it should
-not be a problem: by traversing /sys/bus/gpio/* you know from the topology
-information which GPIO chip is which. This is the same method that e.g. USB,
-IIO or disks use: you have to complement the device name with bus information
-from sysfs.
+  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
 
-/sys/class/gpio/* on the other hand has no such information: it is flat.
+are available in the git repository at:
 
-But as I wrote in the other mail in response to Mark Rutland: if it is desired
-to have predictable numbering of the GPIO chips the exact same alias
-method can be used for that, and a patch utilizing aliases should fix also
-this for the character device usecase.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.8-tag1
 
-My own position on these aliases is "eating popcorn", I'm happy with it,
-happy without it, the people who care need to argue for it with the DT
-maintainers.
+for you to fetch changes up to 2d7758319889bf9def19e0a7a5daf1f87c9a9116:
 
-> Wouldn't it be reasonable to add possibility to create named/labeled
-> gpiocipX devices from the very beginning, like: "/dev/gpiocipX[_name|label], or "/dev/gpiocip[_name|label]", or ..
->
-> Actually, struct gpio_chip has label field already.
+  pinctrl: sh-pfc: r8a7795: Add DRIF support (2016-06-23 11:01:21 +0200)
 
-I don't think that would be nice. There is an ioctl() to get that information
-(amongst other stuff) from the device. Check tools/gpio/lsgpio.c
+----------------------------------------------------------------
+pinctrl: sh-pfc: Updates for v4.8
 
-> PS. From my experience, the worst case with dev numbering usually happens after
-> few insmod/rmmod (or sometimes after suspend/resume) iterations - ttyX ;..(.
+  - Voltage switching support for R-Car H3,
+  - DRIF pin support for R-Car H3,
+  - Cleanups and fixes.
 
-In the GPIO case I think the numbers will be reused as we're using
-<linux/idr.h> infrastructure (same method as IIO).
+Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (4):
+      pinctrl: sh-pfc: sh7757: Fix duplicate initializer in GPIO pinmux data
+      pinctrl: sh-pfc: Move SoC-specific forward declarations to sh_pfc.h
+      pinctrl: sh-pfc: Improve core and user API separation
+      pinctrl: sh-pfc: Convert to devm_gpiochip_add_data()
 
-Yours,
-Linus Walleij
+Kuninori Morimoto (1):
+      pinctrl: sh-pfc: r8a7795: Use PINMUX_SINGLE() for I2C
+
+Ramesh Shanmugasundaram (1):
+      pinctrl: sh-pfc: r8a7795: Add DRIF support
+
+Wolfram Sang (3):
+      pinctrl: sh-pfc: refactor voltage setting
+      pinctrl: sh-pfc: r8a7795: add support for voltage switching
+      pinctrl: sh-pfc: fix property name in bindings doc
+
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   2 +-
+ drivers/pinctrl/sh-pfc/core.c                      |  10 -
+ drivers/pinctrl/sh-pfc/core.h                      |  58 ----
+ drivers/pinctrl/sh-pfc/gpio.c                      |  13 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a73a4.c               |   1 -
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c               |   1 -
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c               |   2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c               |  59 +---
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c               |   1 -
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 327 ++++++++++++++++++++-
+ drivers/pinctrl/sh-pfc/pfc-sh7757.c                |   1 -
+ drivers/pinctrl/sh-pfc/pinctrl.c                   |  41 ++-
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |  55 +++-
+ 13 files changed, 413 insertions(+), 158 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
