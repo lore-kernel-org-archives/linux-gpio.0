@@ -1,98 +1,51 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 11/12] arm64: tegra: Add SOR power-domain node
-Date: Thu, 23 Jun 2016 16:59:04 +0100
-Message-ID: <1466697545-11868-12-git-send-email-jonathanh@nvidia.com>
-References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:8414 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751491AbcFWQAb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jun 2016 12:00:31 -0400
-In-Reply-To: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Ivan Ivanov <iivanov.xz@gmail.com>
+Subject: Re: [PATCH 0/2] pinctrl: Add MDM9615 TLMM pinctrl driver and bindings
+Date: Fri, 24 Jun 2016 14:50:39 +0300
+Message-ID: <A97F15DA-BB8B-4F77-8F21-E8C2F41DEC63@gmail.com>
+References: <1466158535-17962-1-git-send-email-narmstrong@baylibre.com> <CACRpkdbCio=a4GX=WTjvD_moENw7G+O6JWHBiCc4F9DsD7=TQQ@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbCio=a4GX=WTjvD_moENw7G+O6JWHBiCc4F9DsD7=TQQ@mail.gmail.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, Andy Gross <andy.gross@linaro.org>, Sricharan R <sricharan@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, linux-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 
-Add node for SOR power-domain for Tegra210 and populate the SOR
-power-domain phandle for SOR and DPAUX nodes that are dependent
-on this power-domain.
 
-Please note that although neither the SOR or DPAUX drivers currently
-support runtime power-management, by populating the power-domain node
-the SOR power-domain will be turned on before probing SOR or DPAUX
-devices and kept on while the devices are bound.
+> On Jun 17, 2016, at 23:16, Linus Walleij <linus.walleij@linaro.org> w=
+rote:
+>=20
+> On Fri, Jun 17, 2016 at 12:15 PM, Neil Armstrong
+> <narmstrong@baylibre.com> wrote:
+>=20
+>> In order to support the Qualcomm MDM9615 in the Sierra Wireless WP85=
+48
+>> Modules, add the MDM9615 TLMM pinctrl driver and bindings.
+>>=20
+>> This patchset is part of a global SoC + Module + Board support for t=
+he
+>> Sierra Wireless mangOH Board support with the WP8548 module.
+>>=20
+>> Neil Armstrong (2):
+>>  pinctrl: qcom: Add support for MDM9615 TLMM
+>>  dt-bindings: pinctrl: Add MDM9615 TLMM bindings
+>=20
+> Nice! But you need to send it to Bj=C3=B6rn Andersson and Ivan Ivanov
+> (See To: line) for review.
+>=20
+> Bj=C3=B6rn, Ivan: can you find the patches or does Neil need to resen=
+d them?
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index ebf44f4059f8..ef317f0d773f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -34,6 +34,7 @@
- 			clock-names = "dpaux", "parent";
- 			resets = <&tegra_car 207>;
- 			reset-names = "dpaux";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -154,6 +155,7 @@
- 			clock-names = "sor", "parent", "dp", "safe";
- 			resets = <&tegra_car 182>;
- 			reset-names = "sor";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -168,6 +170,7 @@
- 			clock-names = "sor", "parent", "dp", "safe";
- 			resets = <&tegra_car 183>;
- 			reset-names = "sor";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -180,6 +183,7 @@
- 			clock-names = "dpaux", "parent";
- 			resets = <&tegra_car 181>;
- 			reset-names = "dpaux";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -592,6 +596,26 @@
- 				resets = <&tegra_car 198>;
- 				#power-domain-cells = <0>;
- 			};
-+
-+			pd_sor: sor {
-+				clocks = <&tegra_car TEGRA210_CLK_SOR0>,
-+					 <&tegra_car TEGRA210_CLK_SOR1>,
-+					 <&tegra_car TEGRA210_CLK_CSI>,
-+					 <&tegra_car TEGRA210_CLK_DSIA>,
-+					 <&tegra_car TEGRA210_CLK_DSIB>,
-+					 <&tegra_car TEGRA210_CLK_DPAUX>,
-+					 <&tegra_car TEGRA210_CLK_DPAUX1>,
-+					 <&tegra_car TEGRA210_CLK_MIPI_CAL>;
-+				resets = <&tegra_car TEGRA210_CLK_SOR0>,
-+					 <&tegra_car TEGRA210_CLK_SOR1>,
-+					 <&tegra_car TEGRA210_CLK_CSI>,
-+					 <&tegra_car TEGRA210_CLK_DSIA>,
-+					 <&tegra_car TEGRA210_CLK_DSIB>,
-+					 <&tegra_car TEGRA210_CLK_DPAUX>,
-+					 <&tegra_car TEGRA210_CLK_DPAUX1>,
-+					 <&tegra_car TEGRA210_CLK_MIPI_CAL>;
-+				#power-domain-cells = <0>;
-+			};
- 		};
- 	};
- 
--- 
-2.1.4
+I will not be able to review them, because I no longer
+have access to documentation
 
+
+Sorry,
+Ivan--
+To unsubscribe from this list: send the line "unsubscribe linux-arm-msm=
+" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
