@@ -1,7 +1,7 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 19/19] pinctrl: remove orphaned exported ".remove" function
-Date: Sat, 25 Jun 2016 22:46:52 -0400
-Message-ID: <20160626024652.5081-20-paul.gortmaker@windriver.com>
+Subject: [PATCH 15/19] pinctrl: imx7d: make it explicitly non-modular
+Date: Sat, 25 Jun 2016 22:46:48 -0400
+Message-ID: <20160626024652.5081-16-paul.gortmaker@windriver.com>
 References: <20160626024652.5081-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,68 +9,66 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20160626024652.5081-1-paul.gortmaker@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Anson Huang <Anson.Huang@freescale.com>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/pinctrl/freescale/Kconfig:config PINCTRL_MXS
-drivers/pinctrl/freescale/Kconfig:	bool
+drivers/pinctrl/freescale/Kconfig:config PINCTRL_IMX7D
+drivers/pinctrl/freescale/Kconfig:	bool "IMX7D pinctrl driver"
 
 ...meaning that it currently is not being built as a module by anyone.
 
-It also doesn't have any modular functionality, so it doesn't need
-module.h included at all.
+Lets remove the modular code that is essentially orphaned, so that
+when reading the driver there is no doubt it is builtin-only.
 
-What it does have is an exported function that was used as a shared
-".remove" by other drivers, but those use cases (imx23 and imx28)
-are now gone, and hence this can disappear as well.
+Since module_init was not in use by this driver, the init ordering
+remains unchanged with this commit.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
+was (or is now) contained at the top of the file in the comments.
 
 Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Anson Huang <Anson.Huang@freescale.com>
 Cc: linux-gpio@vger.kernel.org
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/pinctrl/freescale/pinctrl-mxs.c | 12 ------------
- drivers/pinctrl/freescale/pinctrl-mxs.h |  1 -
- 2 files changed, 13 deletions(-)
+ drivers/pinctrl/freescale/pinctrl-imx7d.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-mxs.c b/drivers/pinctrl/freescale/pinctrl-mxs.c
-index 6bbda6b4ab50..41b5b07d5a2b 100644
---- a/drivers/pinctrl/freescale/pinctrl-mxs.c
-+++ b/drivers/pinctrl/freescale/pinctrl-mxs.c
-@@ -12,7 +12,6 @@
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx7d.c b/drivers/pinctrl/freescale/pinctrl-imx7d.c
+index d30d91f80dfd..a465a66c3ef4 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx7d.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx7d.c
+@@ -1,4 +1,7 @@
+ /*
++ * Freescale imx7d pinctrl driver
++ *
++ * Author: Anson Huang <Anson.Huang@freescale.com>
+  * Copyright (C) 2014-2015 Freescale Semiconductor, Inc.
+  *
+  * This program is free software; you can redistribute it and/or modify
+@@ -9,7 +12,6 @@
  #include <linux/err.h>
  #include <linux/init.h>
  #include <linux/io.h>
 -#include <linux/module.h>
  #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/pinctrl/machine.h>
-@@ -553,14 +552,3 @@ err:
- 	return ret;
+ #include <linux/of_device.h>
+ #include <linux/pinctrl/pinctrl.h>
+@@ -402,13 +404,3 @@ static int __init imx7d_pinctrl_init(void)
+ 	return platform_driver_register(&imx7d_pinctrl_driver);
  }
- EXPORT_SYMBOL_GPL(mxs_pinctrl_probe);
+ arch_initcall(imx7d_pinctrl_init);
 -
--int mxs_pinctrl_remove(struct platform_device *pdev)
+-static void __exit imx7d_pinctrl_exit(void)
 -{
--	struct mxs_pinctrl_data *d = platform_get_drvdata(pdev);
--
--	pinctrl_unregister(d->pctl);
--	iounmap(d->base);
--
--	return 0;
+-	platform_driver_unregister(&imx7d_pinctrl_driver);
 -}
--EXPORT_SYMBOL_GPL(mxs_pinctrl_remove);
-diff --git a/drivers/pinctrl/freescale/pinctrl-mxs.h b/drivers/pinctrl/freescale/pinctrl-mxs.h
-index fdd88d0bae22..34dbf75208dc 100644
---- a/drivers/pinctrl/freescale/pinctrl-mxs.h
-+++ b/drivers/pinctrl/freescale/pinctrl-mxs.h
-@@ -86,6 +86,5 @@ struct mxs_pinctrl_soc_data {
- 
- int mxs_pinctrl_probe(struct platform_device *pdev,
- 		      struct mxs_pinctrl_soc_data *soc);
--int mxs_pinctrl_remove(struct platform_device *pdev);
- 
- #endif /* __PINCTRL_MXS_H */
+-module_exit(imx7d_pinctrl_exit);
+-
+-MODULE_AUTHOR("Anson Huang <Anson.Huang@freescale.com>");
+-MODULE_DESCRIPTION("Freescale imx7d pinctrl driver");
+-MODULE_LICENSE("GPL v2");
 -- 
 2.8.4
