@@ -1,7 +1,7 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 17/19] pinctrl: imx23: make it explicitly non-modular
-Date: Sat, 25 Jun 2016 22:46:50 -0400
-Message-ID: <20160626024652.5081-18-paul.gortmaker@windriver.com>
+Subject: [PATCH 19/19] pinctrl: remove orphaned exported ".remove" function
+Date: Sat, 25 Jun 2016 22:46:52 -0400
+Message-ID: <20160626024652.5081-20-paul.gortmaker@windriver.com>
 References: <20160626024652.5081-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,89 +9,68 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20160626024652.5081-1-paul.gortmaker@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/pinctrl/freescale/Kconfig:config PINCTRL_IMX23
+drivers/pinctrl/freescale/Kconfig:config PINCTRL_MXS
 drivers/pinctrl/freescale/Kconfig:	bool
 
 ...meaning that it currently is not being built as a module by anyone.
 
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
+It also doesn't have any modular functionality, so it doesn't need
+module.h included at all.
 
-We explicitly disallow a driver unbind, since that doesn't have a
-sensible use case anyway, and it allows us to drop the ".remove"
-code for non-modular drivers.
-
-Since module_init wasn't actually used by this driver, the init
-ordering remains unchanged with this commit.
-
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-was (or is now) contained at the top of the file in the comments.
+What it does have is an exported function that was used as a shared
+".remove" by other drivers, but those use cases (imx23 and imx28)
+are now gone, and hence this can disappear as well.
 
 Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Shawn Guo <shawn.guo@linaro.org>
 Cc: linux-gpio@vger.kernel.org
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/pinctrl/freescale/pinctrl-imx23.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+ drivers/pinctrl/freescale/pinctrl-mxs.c | 12 ------------
+ drivers/pinctrl/freescale/pinctrl-mxs.h |  1 -
+ 2 files changed, 13 deletions(-)
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx23.c b/drivers/pinctrl/freescale/pinctrl-imx23.c
-index 955cbf4f094f..89b4f160138f 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx23.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx23.c
-@@ -1,4 +1,7 @@
- /*
-+ * Freescale i.MX23 pinctrl driver
-+ *
-+ * Author: Shawn Guo <shawn.guo@linaro.org>
-  * Copyright 2012 Freescale Semiconductor, Inc.
-  *
-  * The code contained herein is licensed under the GNU General Public
-@@ -10,7 +13,6 @@
-  */
- 
+diff --git a/drivers/pinctrl/freescale/pinctrl-mxs.c b/drivers/pinctrl/freescale/pinctrl-mxs.c
+index 6bbda6b4ab50..41b5b07d5a2b 100644
+--- a/drivers/pinctrl/freescale/pinctrl-mxs.c
++++ b/drivers/pinctrl/freescale/pinctrl-mxs.c
+@@ -12,7 +12,6 @@
+ #include <linux/err.h>
  #include <linux/init.h>
+ #include <linux/io.h>
 -#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/pinctrl/pinctrl.h>
- #include "pinctrl-mxs.h"
-@@ -276,15 +278,14 @@ static const struct of_device_id imx23_pinctrl_of_match[] = {
- 	{ .compatible = "fsl,imx23-pinctrl", },
- 	{ /* sentinel */ }
- };
--MODULE_DEVICE_TABLE(of, imx23_pinctrl_of_match);
- 
- static struct platform_driver imx23_pinctrl_driver = {
- 	.driver = {
- 		.name = "imx23-pinctrl",
-+		.suppress_bind_attrs = true,
- 		.of_match_table = imx23_pinctrl_of_match,
- 	},
- 	.probe = imx23_pinctrl_probe,
--	.remove = mxs_pinctrl_remove,
- };
- 
- static int __init imx23_pinctrl_init(void)
-@@ -292,13 +293,3 @@ static int __init imx23_pinctrl_init(void)
- 	return platform_driver_register(&imx23_pinctrl_driver);
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/pinctrl/machine.h>
+@@ -553,14 +552,3 @@ err:
+ 	return ret;
  }
- postcore_initcall(imx23_pinctrl_init);
+ EXPORT_SYMBOL_GPL(mxs_pinctrl_probe);
 -
--static void __exit imx23_pinctrl_exit(void)
+-int mxs_pinctrl_remove(struct platform_device *pdev)
 -{
--	platform_driver_unregister(&imx23_pinctrl_driver);
--}
--module_exit(imx23_pinctrl_exit);
+-	struct mxs_pinctrl_data *d = platform_get_drvdata(pdev);
 -
--MODULE_AUTHOR("Shawn Guo <shawn.guo@linaro.org>");
--MODULE_DESCRIPTION("Freescale i.MX23 pinctrl driver");
--MODULE_LICENSE("GPL v2");
+-	pinctrl_unregister(d->pctl);
+-	iounmap(d->base);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(mxs_pinctrl_remove);
+diff --git a/drivers/pinctrl/freescale/pinctrl-mxs.h b/drivers/pinctrl/freescale/pinctrl-mxs.h
+index fdd88d0bae22..34dbf75208dc 100644
+--- a/drivers/pinctrl/freescale/pinctrl-mxs.h
++++ b/drivers/pinctrl/freescale/pinctrl-mxs.h
+@@ -86,6 +86,5 @@ struct mxs_pinctrl_soc_data {
+ 
+ int mxs_pinctrl_probe(struct platform_device *pdev,
+ 		      struct mxs_pinctrl_soc_data *soc);
+-int mxs_pinctrl_remove(struct platform_device *pdev);
+ 
+ #endif /* __PINCTRL_MXS_H */
 -- 
 2.8.4
