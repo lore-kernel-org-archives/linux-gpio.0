@@ -1,65 +1,28 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 06/19] pinctrl: imx35: make it explicitly non-modular
-Date: Sat, 25 Jun 2016 22:46:39 -0400
-Message-ID: <20160626024652.5081-7-paul.gortmaker@windriver.com>
-References: <20160626024652.5081-1-paul.gortmaker@windriver.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160626024652.5081-1-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Dong Aisheng <dong.aisheng@linaro.org>, linux-gpio@vger.kernel.org
+From: Stephen Boyd <stephen.boyd@linaro.org>
+Subject: [PATCH 0/2] Support HSIC "pins" on msm8974 tlmm
+Date: Sat, 25 Jun 2016 22:21:30 -0700
+Message-ID: <20160626052132.7178-1-stephen.boyd@linaro.org>
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+This is part of a larger patch series that adds support for the
+USB HSIC controller on msm8974 based SoCs. The first patch here
+is a minor fix for a problem that isn't happening yet but could
+happen in the future. The second patch adds an hsic pin so
+we can configure the hsic bits that live in the TLMM register
+space.
 
-drivers/pinctrl/freescale/Kconfig:config PINCTRL_IMX35
-drivers/pinctrl/freescale/Kconfig:	bool "IMX35 pinctrl driver"
+Stephen Boyd (2):
+  pinctrl: qcom: Clear all function selection bits
+  pinctrl: qcom: msm8974: Add hsic_ctl pinmux
 
-...meaning that it currently is not being built as a module by anyone.
+ .../bindings/pinctrl/qcom,msm8974-pinctrl.txt      |  5 ++-
+ drivers/pinctrl/qcom/pinctrl-msm.c                 |  6 ++-
+ drivers/pinctrl/qcom/pinctrl-msm8x74.c             | 43 +++++++++++++++++++++-
+ 3 files changed, 50 insertions(+), 4 deletions(-)
 
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
-
-Since module_init was not in use by this driver, the init ordering
-remains unchanged with this commit.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
-
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Dong Aisheng <dong.aisheng@linaro.org>
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/pinctrl/freescale/pinctrl-imx35.c | 10 ----------
- 1 file changed, 10 deletions(-)
-
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx35.c b/drivers/pinctrl/freescale/pinctrl-imx35.c
-index 13eb224a29a9..6315ba6af431 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx35.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx35.c
-@@ -16,7 +16,6 @@
- #include <linux/err.h>
- #include <linux/init.h>
- #include <linux/io.h>
--#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/pinctrl/pinctrl.h>
-@@ -1028,12 +1027,3 @@ static int __init imx35_pinctrl_init(void)
- 	return platform_driver_register(&imx35_pinctrl_driver);
- }
- arch_initcall(imx35_pinctrl_init);
--
--static void __exit imx35_pinctrl_exit(void)
--{
--	platform_driver_unregister(&imx35_pinctrl_driver);
--}
--module_exit(imx35_pinctrl_exit);
--MODULE_AUTHOR("Dong Aisheng <dong.aisheng@linaro.org>");
--MODULE_DESCRIPTION("Freescale IMX35 pinctrl driver");
--MODULE_LICENSE("GPL v2");
 -- 
-2.8.4
+2.9.0.rc2.8.ga28705d
