@@ -1,56 +1,44 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH v3] iio: stx104: Add GPIO support for the Apex Embedded
- Systems STX104
-Date: Sun, 26 Jun 2016 17:10:29 +0100
-Message-ID: <ba04432f-f6f5-e7ea-0b68-7a415e9af964@kernel.org>
-References: <20160613130628.GA28944@sophia>
- <CACRpkdZ__YaP24hC9y17tnsXC5HybzmQmHdpTCUYSNWciKg5zA@mail.gmail.com>
+From: Venkat Reddy Talla <vreddytalla@nvidia.com>
+Subject: [PATCH 1/1] gpio: max77620: get gpio value based on direction
+Date: Mon, 27 Jun 2016 16:26:24 +0530
+Message-ID: <1467024984-28138-1-git-send-email-vreddytalla@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from saturn.retrosnub.co.uk ([178.18.118.26]:47666 "EHLO
-	saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751265AbcFZQKb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 26 Jun 2016 12:10:31 -0400
-In-Reply-To: <CACRpkdZ__YaP24hC9y17tnsXC5HybzmQmHdpTCUYSNWciKg5zA@mail.gmail.com>
+Received: from nat-hk.nvidia.com ([203.18.50.4]:12016 "EHLO
+	hkmmgate101.nvidia.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751511AbcF0K4q (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jun 2016 06:56:46 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ldewangan@nvidia.com, vreddytalla@nvidia.com
 
-On 14/06/16 07:53, Linus Walleij wrote:
-> On Mon, Jun 13, 2016 at 3:06 PM, William Breathitt Gray
-> <vilhelm.gray@gmail.com> wrote:
-> 
->> The Apex Embedded Systems STX104 device features eight lines of digital
->> I/O (four digital inputs and four digital outputs). This patch adds GPIO
->> support for these eight lines of digital I/O via GPIOLIB.
->>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Alexandre Courbot <gnurou@gmail.com>
->> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
->> ---
->> Changes in v3:
->>   - Revert v2 change; any arch should be able to select GPIOLIB
->>   - Return -EINVAL when attempting to set a GPIO to a direction it
->>     cannot be
->>   - Call stx104_gpio_set to have an initial value when setting a GPIO to
->>     output direction
-> 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Applied to the togreg branch of iio.git - initially pushed out as testing
-for the autobuilders to play with it.
+Gpio direction is determined by DIRx bit of GPIO
+configuration register, return max77620 gpio value
+based on direction in or out.
 
-Thanks,
+Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
+---
+ drivers/gpio/gpio-max77620.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Jonathan
-> 
-> Yours,
-> Linus Walleij
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
+index 8658c32..b46b436 100644
+--- a/drivers/gpio/gpio-max77620.c
++++ b/drivers/gpio/gpio-max77620.c
+@@ -123,7 +123,10 @@ static int max77620_gpio_get(struct gpio_chip *gc, unsigned int offset)
+ 		return ret;
+ 	}
+ 
+-	return !!(val & MAX77620_CNFG_GPIO_INPUT_VAL_MASK);
++	if  (val & MAX77620_CNFG_GPIO_DIR_MASK)
++		return !!(val & MAX77620_CNFG_GPIO_INPUT_VAL_MASK);
++	else
++		return !!(val & MAX77620_CNFG_GPIO_OUTPUT_VAL_MASK);
+ }
+ 
+ static int max77620_gpio_dir_output(struct gpio_chip *gc, unsigned int offset,
+-- 
+2.1.4
 
