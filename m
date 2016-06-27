@@ -1,62 +1,49 @@
-From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Subject: [PATCH] pinctrl: stm32: Modify error handling for pinctrl_register
-Date: Mon, 27 Jun 2016 19:53:10 +0530
-Message-ID: <20160627142310.GA26798@amitoj-Inspiron-3542>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jun 27 (pinctrl && !CONFIG_OF)
+Date: Mon, 27 Jun 2016 11:15:25 -0700
+Message-ID: <57716D3D.4070302@infradead.org>
+References: <20160627163939.20e454d5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f65.google.com ([209.85.220.65]:36008 "EHLO
-	mail-pa0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751806AbcF0OXP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jun 2016 10:23:15 -0400
-Content-Disposition: inline
+Received: from bombadil.infradead.org ([198.137.202.9]:50104 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751601AbcF0SP3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jun 2016 14:15:29 -0400
+In-Reply-To: <20160627163939.20e454d5@canb.auug.org.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, mcoquelin.stm32@gmail.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: julia.lawall@lip6.fr
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Linus Torvalds <torvalds@linux-foundation.org>
 
-pinctrl_register returns an ERR_PTR on error.
+On 06/26/16 23:39, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20160624:
+> 
 
-The Coccinelle semantic patch used to make this change is as follows:
+on i386, when CONFIG_OF is not enabled ...
+but OF_GPIO is enabled due to this in drivers/gpio/Kconfig:
 
-@@
-expression e,e1,e2;
-@@
+config OF_GPIO
+	def_bool y
+	depends on OF || COMPILE_TEST
 
-e = pinctrl_register(...)
-... when != e = e1
-if (
--   e == NULL
-+   IS_ERR(e)
-   ) {
-     ...
-     return
--      e2
-+      PTR_ERR(e)
-     ;
-     }
+(above from commit 1e4a80640338924b9f9fd7a121ac31d08134410a
+from Alexander Stein <alexanders83@web.de>)
 
-Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
----
- drivers/pinctrl/stm32/pinctrl-stm32.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index 8deb566..857bb3d 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -814,9 +814,9 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 	pctl->dev = &pdev->dev;
- 
- 	pctl->pctl_dev = pinctrl_register(&pctl->pctl_desc, &pdev->dev, pctl);
--	if (!pctl->pctl_dev) {
-+	if (IS_ERR(pctl->pctl_dev)) {
- 		dev_err(&pdev->dev, "Failed pinctrl registration\n");
--		return -EINVAL;
-+		return PTR_ERR(pctl->pctl_dev);
- 	}
- 
- 	for (i = 0; i < pctl->nbanks; i++)
+../drivers/pinctrl/bcm/pinctrl-iproc-gpio.c:381:20: error: 'pinconf_generic_dt_node_to_map_pin' undeclared here (not in a function)
+../drivers/pinctrl/bcm/pinctrl-cygnus-mux.c:739:20: error: 'pinconf_generic_dt_node_to_map_group' undeclared here (not in a function)
+../drivers/pinctrl/bcm/pinctrl-nsp-gpio.c:365:20: error: 'pinconf_generic_dt_node_to_map_pin' undeclared here (not in a function)
+
+because that function is only present when CONFIG_OF is enabled.
+
+
+Also, why does that commit (1e4a80640338924b9f9fd7a121ac31d08134410a)
+not have any other S-O-B lines in it?  like whoever merged it?
+
+
 -- 
-1.9.1
-
+~Randy
