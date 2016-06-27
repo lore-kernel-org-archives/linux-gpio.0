@@ -1,69 +1,62 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH 07/12] dt-bindings: i2c: Add support for 'i2c-bus' subnode
-Date: Mon, 27 Jun 2016 14:04:09 +0200
-Message-ID: <0e9ab029-ed95-c3cb-61f5-6acd9da12a24@axentia.se>
-References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
- <1466697545-11868-8-git-send-email-jonathanh@nvidia.com>
+From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+Subject: [PATCH] pinctrl: stm32: Modify error handling for pinctrl_register
+Date: Mon, 27 Jun 2016 19:53:10 +0530
+Message-ID: <20160627142310.GA26798@amitoj-Inspiron-3542>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <1466697545-11868-8-git-send-email-jonathanh@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f65.google.com ([209.85.220.65]:36008 "EHLO
+	mail-pa0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751806AbcF0OXP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jun 2016 10:23:15 -0400
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, mcoquelin.stm32@gmail.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: julia.lawall@lip6.fr
 
-On 2016-06-23 17:59, Jon Hunter wrote:
-> The I2C driver core for boards using device-tree assumes any subnode of
-> an I2C adapter in the device-tree blob as being a I2C slave device.
-> Although this makes complete sense, some I2C adapters may have subnodes
-> which are not I2C slaves but subnodes presenting other features. For
-> example some Tegra devices have an I2C interface which may share its
-> pins with other devices and to share these pins subnodes for
-> representing these pins so they have be shared via the pinctrl framework
-> are needed.
-> 
-> To allow I2C adapters to have non-I2C specific subnodes in device-tree
-> that are not parsed by the I2C driver core by adding support for a
-> 'i2c-bus' subnode where I2C slaves can be placed. If the 'i2c-bus'
-> subnode is present then all I2C slaves must be placed under this subnode.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> ---
->  Documentation/devicetree/bindings/i2c/i2c.txt | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c.txt b/Documentation/devicetree/bindings/i2c/i2c.txt
-> index f31b2ad1552b..71bea55d4c1b 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c.txt
-> +++ b/Documentation/devicetree/bindings/i2c/i2c.txt
-> @@ -32,6 +32,14 @@ wants to support one of the below features, it should adapt the bindings below.
->  - clock-frequency
->  	frequency of bus clock in Hz.
->  
-> +- i2c-bus
-> +	For I2C adapters that have child nodes that are a mixture of both I2C
-> +	devices and non-I2C devices (such as a pin controller), the 'i2c-bus'
-> +	subnode can be used for populating I2C devices. If the 'i2c-bus'
-> +	subnode is present, only subnodes of this will be considered as I2C
-> +	slaves. The properties, '#address-cells' and '#size-cells' must be
-> +	defined under this subnode if present.
+pinctrl_register returns an ERR_PTR on error.
 
-Hmmm, those #-properties are listed above, under "Required properties", which
-is no longer 100% true. Maybe rephrase to
+The Coccinelle semantic patch used to make this change is as follows:
 
-	slaves. The required properties '#address-cells' and '#size-cells'
-	must be	defined under this subnode instead, if this subnode is present.
+@@
+expression e,e1,e2;
+@@
 
-to make the rules (even) clearer?
+e = pinctrl_register(...)
+... when != e = e1
+if (
+-   e == NULL
++   IS_ERR(e)
+   ) {
+     ...
+     return
+-      e2
++      PTR_ERR(e)
+     ;
+     }
 
-Cheers,
-Peter
+Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> +
->  - i2c-scl-falling-time-ns
->  	Number of nanoseconds the SCL signal takes to fall; t(f) in the I2C
->  	specification.
-> 
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index 8deb566..857bb3d 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -814,9 +814,9 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 	pctl->dev = &pdev->dev;
+ 
+ 	pctl->pctl_dev = pinctrl_register(&pctl->pctl_desc, &pdev->dev, pctl);
+-	if (!pctl->pctl_dev) {
++	if (IS_ERR(pctl->pctl_dev)) {
+ 		dev_err(&pdev->dev, "Failed pinctrl registration\n");
+-		return -EINVAL;
++		return PTR_ERR(pctl->pctl_dev);
+ 	}
+ 
+ 	for (i = 0; i < pctl->nbanks; i++)
+-- 
+1.9.1
+
