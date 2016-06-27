@@ -1,44 +1,69 @@
-From: Venkat Reddy Talla <vreddytalla@nvidia.com>
-Subject: [PATCH 1/1] gpio: max77620: get gpio value based on direction
-Date: Mon, 27 Jun 2016 16:26:24 +0530
-Message-ID: <1467024984-28138-1-git-send-email-vreddytalla@nvidia.com>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH 07/12] dt-bindings: i2c: Add support for 'i2c-bus' subnode
+Date: Mon, 27 Jun 2016 14:04:09 +0200
+Message-ID: <0e9ab029-ed95-c3cb-61f5-6acd9da12a24@axentia.se>
+References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
+ <1466697545-11868-8-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from nat-hk.nvidia.com ([203.18.50.4]:12016 "EHLO
-	hkmmgate101.nvidia.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751511AbcF0K4q (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jun 2016 06:56:46 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <1466697545-11868-8-git-send-email-jonathanh@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: ldewangan@nvidia.com, vreddytalla@nvidia.com
 
-Gpio direction is determined by DIRx bit of GPIO
-configuration register, return max77620 gpio value
-based on direction in or out.
+On 2016-06-23 17:59, Jon Hunter wrote:
+> The I2C driver core for boards using device-tree assumes any subnode of
+> an I2C adapter in the device-tree blob as being a I2C slave device.
+> Although this makes complete sense, some I2C adapters may have subnodes
+> which are not I2C slaves but subnodes presenting other features. For
+> example some Tegra devices have an I2C interface which may share its
+> pins with other devices and to share these pins subnodes for
+> representing these pins so they have be shared via the pinctrl framework
+> are needed.
+> 
+> To allow I2C adapters to have non-I2C specific subnodes in device-tree
+> that are not parsed by the I2C driver core by adding support for a
+> 'i2c-bus' subnode where I2C slaves can be placed. If the 'i2c-bus'
+> subnode is present then all I2C slaves must be placed under this subnode.
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c.txt | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c.txt b/Documentation/devicetree/bindings/i2c/i2c.txt
+> index f31b2ad1552b..71bea55d4c1b 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c.txt
+> +++ b/Documentation/devicetree/bindings/i2c/i2c.txt
+> @@ -32,6 +32,14 @@ wants to support one of the below features, it should adapt the bindings below.
+>  - clock-frequency
+>  	frequency of bus clock in Hz.
+>  
+> +- i2c-bus
+> +	For I2C adapters that have child nodes that are a mixture of both I2C
+> +	devices and non-I2C devices (such as a pin controller), the 'i2c-bus'
+> +	subnode can be used for populating I2C devices. If the 'i2c-bus'
+> +	subnode is present, only subnodes of this will be considered as I2C
+> +	slaves. The properties, '#address-cells' and '#size-cells' must be
+> +	defined under this subnode if present.
 
-Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
----
- drivers/gpio/gpio-max77620.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Hmmm, those #-properties are listed above, under "Required properties", which
+is no longer 100% true. Maybe rephrase to
 
-diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index 8658c32..b46b436 100644
---- a/drivers/gpio/gpio-max77620.c
-+++ b/drivers/gpio/gpio-max77620.c
-@@ -123,7 +123,10 @@ static int max77620_gpio_get(struct gpio_chip *gc, unsigned int offset)
- 		return ret;
- 	}
- 
--	return !!(val & MAX77620_CNFG_GPIO_INPUT_VAL_MASK);
-+	if  (val & MAX77620_CNFG_GPIO_DIR_MASK)
-+		return !!(val & MAX77620_CNFG_GPIO_INPUT_VAL_MASK);
-+	else
-+		return !!(val & MAX77620_CNFG_GPIO_OUTPUT_VAL_MASK);
- }
- 
- static int max77620_gpio_dir_output(struct gpio_chip *gc, unsigned int offset,
--- 
-2.1.4
+	slaves. The required properties '#address-cells' and '#size-cells'
+	must be	defined under this subnode instead, if this subnode is present.
 
+to make the rules (even) clearer?
+
+Cheers,
+Peter
+
+> +
+>  - i2c-scl-falling-time-ns
+>  	Number of nanoseconds the SCL signal takes to fall; t(f) in the I2C
+>  	specification.
+> 
