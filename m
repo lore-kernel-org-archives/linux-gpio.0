@@ -1,36 +1,72 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v5 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake
- GPIO pinctrl in non-ACPI system
-Date: Tue, 28 Jun 2016 11:19:17 +0300
-Message-ID: <20160628081917.GF1711@lahna.fi.intel.com>
-References: <1467100608-11549-1-git-send-email-jui.nee.tan@intel.com>
- <1467100608-11549-4-git-send-email-jui.nee.tan@intel.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 07/12] dt-bindings: i2c: Add support for 'i2c-bus' subnode
+Date: Tue, 28 Jun 2016 09:21:05 +0100
+Message-ID: <57723371.4060806@nvidia.com>
+References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
+ <1466697545-11868-8-git-send-email-jonathanh@nvidia.com>
+ <0e9ab029-ed95-c3cb-61f5-6acd9da12a24@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1467100608-11549-4-git-send-email-jui.nee.tan@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tan Jui Nee <jui.nee.tan@intel.com>
-Cc: heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jonathan.yong@intel.com, ong.hock.yu@intel.com, weifeng.voon@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <0e9ab029-ed95-c3cb-61f5-6acd9da12a24@axentia.se>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Peter Rosin <peda@axentia.se>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jun 28, 2016 at 03:56:48PM +0800, Tan Jui Nee wrote:
-> +config X86_INTEL_APL
-> +	bool "Non-ACPI support for Intel Apollo Lake platforms"
-> +	select PINCTRL
-> +	---help---
-> +	  Select this option to enable MMIO BAR access over the P2SB for
-> +	  non-ACPI Intel Apollo Lake SoC platforms. This driver uses the P2SB
-> +	  hide/unhide mechanism cooperatively to pass the PCI BAR address to
-> +	  the platform driver, currently GPIO.
-> +
-
-Sorry but IMHO this still does not explain the option clearly enough.
-You are using this in some automotive IVI system with specialized
-bootloader, correct? Why not use that here instead?
-
-Something along the lines of
-
-  config X86_INTEL_IVI
-      bool "Intel in-vehicle infotainment (IVI) systems used in cars"
+Ck9uIDI3LzA2LzE2IDEzOjA0LCBQZXRlciBSb3NpbiB3cm90ZToKPiBPbiAyMDE2LTA2LTIzIDE3
+OjU5LCBKb24gSHVudGVyIHdyb3RlOgo+PiBUaGUgSTJDIGRyaXZlciBjb3JlIGZvciBib2FyZHMg
+dXNpbmcgZGV2aWNlLXRyZWUgYXNzdW1lcyBhbnkgc3Vibm9kZSBvZgo+PiBhbiBJMkMgYWRhcHRl
+ciBpbiB0aGUgZGV2aWNlLXRyZWUgYmxvYiBhcyBiZWluZyBhIEkyQyBzbGF2ZSBkZXZpY2UuCj4+
+IEFsdGhvdWdoIHRoaXMgbWFrZXMgY29tcGxldGUgc2Vuc2UsIHNvbWUgSTJDIGFkYXB0ZXJzIG1h
+eSBoYXZlIHN1Ym5vZGVzCj4+IHdoaWNoIGFyZSBub3QgSTJDIHNsYXZlcyBidXQgc3Vibm9kZXMg
+cHJlc2VudGluZyBvdGhlciBmZWF0dXJlcy4gRm9yCj4+IGV4YW1wbGUgc29tZSBUZWdyYSBkZXZp
+Y2VzIGhhdmUgYW4gSTJDIGludGVyZmFjZSB3aGljaCBtYXkgc2hhcmUgaXRzCj4+IHBpbnMgd2l0
+aCBvdGhlciBkZXZpY2VzIGFuZCB0byBzaGFyZSB0aGVzZSBwaW5zIHN1Ym5vZGVzIGZvcgo+PiBy
+ZXByZXNlbnRpbmcgdGhlc2UgcGlucyBzbyB0aGV5IGhhdmUgYmUgc2hhcmVkIHZpYSB0aGUgcGlu
+Y3RybCBmcmFtZXdvcmsKPj4gYXJlIG5lZWRlZC4KPj4KPj4gVG8gYWxsb3cgSTJDIGFkYXB0ZXJz
+IHRvIGhhdmUgbm9uLUkyQyBzcGVjaWZpYyBzdWJub2RlcyBpbiBkZXZpY2UtdHJlZQo+PiB0aGF0
+IGFyZSBub3QgcGFyc2VkIGJ5IHRoZSBJMkMgZHJpdmVyIGNvcmUgYnkgYWRkaW5nIHN1cHBvcnQg
+Zm9yIGEKPj4gJ2kyYy1idXMnIHN1Ym5vZGUgd2hlcmUgSTJDIHNsYXZlcyBjYW4gYmUgcGxhY2Vk
+LiBJZiB0aGUgJ2kyYy1idXMnCj4+IHN1Ym5vZGUgaXMgcHJlc2VudCB0aGVuIGFsbCBJMkMgc2xh
+dmVzIG11c3QgYmUgcGxhY2VkIHVuZGVyIHRoaXMgc3Vibm9kZS4KPj4KPj4gU2lnbmVkLW9mZi1i
+eTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+Cj4+IEFja2VkLWJ5OiBUaGllcnJ5
+IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+PiAtLS0KPj4gIERvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9pMmMvaTJjLnR4dCB8IDggKysrKysrKysKPj4gIDEgZmlsZSBjaGFu
+Z2VkLCA4IGluc2VydGlvbnMoKykKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9pMmMvaTJjLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9pMmMvaTJjLnR4dAo+PiBpbmRleCBmMzFiMmFkMTU1MmIuLjcxYmVhNTVkNGMxYiAx
+MDA2NDQKPj4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2kyYy9pMmMu
+dHh0Cj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pMmMvaTJjLnR4
+dAo+PiBAQCAtMzIsNiArMzIsMTQgQEAgd2FudHMgdG8gc3VwcG9ydCBvbmUgb2YgdGhlIGJlbG93
+IGZlYXR1cmVzLCBpdCBzaG91bGQgYWRhcHQgdGhlIGJpbmRpbmdzIGJlbG93Lgo+PiAgLSBjbG9j
+ay1mcmVxdWVuY3kKPj4gIAlmcmVxdWVuY3kgb2YgYnVzIGNsb2NrIGluIEh6Lgo+PiAgCj4+ICst
+IGkyYy1idXMKPj4gKwlGb3IgSTJDIGFkYXB0ZXJzIHRoYXQgaGF2ZSBjaGlsZCBub2RlcyB0aGF0
+IGFyZSBhIG1peHR1cmUgb2YgYm90aCBJMkMKPj4gKwlkZXZpY2VzIGFuZCBub24tSTJDIGRldmlj
+ZXMgKHN1Y2ggYXMgYSBwaW4gY29udHJvbGxlciksIHRoZSAnaTJjLWJ1cycKPj4gKwlzdWJub2Rl
+IGNhbiBiZSB1c2VkIGZvciBwb3B1bGF0aW5nIEkyQyBkZXZpY2VzLiBJZiB0aGUgJ2kyYy1idXMn
+Cj4+ICsJc3Vibm9kZSBpcyBwcmVzZW50LCBvbmx5IHN1Ym5vZGVzIG9mIHRoaXMgd2lsbCBiZSBj
+b25zaWRlcmVkIGFzIEkyQwo+PiArCXNsYXZlcy4gVGhlIHByb3BlcnRpZXMsICcjYWRkcmVzcy1j
+ZWxscycgYW5kICcjc2l6ZS1jZWxscycgbXVzdCBiZQo+PiArCWRlZmluZWQgdW5kZXIgdGhpcyBz
+dWJub2RlIGlmIHByZXNlbnQuCj4gCj4gSG1tbSwgdGhvc2UgIy1wcm9wZXJ0aWVzIGFyZSBsaXN0
+ZWQgYWJvdmUsIHVuZGVyICJSZXF1aXJlZCBwcm9wZXJ0aWVzIiwgd2hpY2gKPiBpcyBubyBsb25n
+ZXIgMTAwJSB0cnVlLiBNYXliZSByZXBocmFzZSB0bwo+IAo+IAlzbGF2ZXMuIFRoZSByZXF1aXJl
+ZCBwcm9wZXJ0aWVzICcjYWRkcmVzcy1jZWxscycgYW5kICcjc2l6ZS1jZWxscycKPiAJbXVzdCBi
+ZQlkZWZpbmVkIHVuZGVyIHRoaXMgc3Vibm9kZSBpbnN0ZWFkLCBpZiB0aGlzIHN1Ym5vZGUgaXMg
+cHJlc2VudC4KPiAKPiB0byBtYWtlIHRoZSBydWxlcyAoZXZlbikgY2xlYXJlcj8KCkkgc2VlIHdo
+YXQgeW91IGFyZSBzYXlpbmcgYnV0IEkgd29uZGVyIGlmIHRoZSBmb2xsb3dpbmcgaXMgYmV0dGVy
+IC4uLgoKIHNsYXZlcy4gVGhlIHJlcXVpcmVkIHByb3BlcnRpZXMgJyNhZGRyZXNzLWNlbGxzJyBh
+bmQgJyNzaXplLWNlbGxzJwogbXVzdCBiZSBkZWZpbmVkIHVuZGVyIHRoaXMgc3Vibm9kZSBpZiBw
+cmVzZW50IGFuZCBub3QgdGhlIHBhcmVudCBub2RlLgoKQ2hlZXJzCkpvbgoKLS0gCm52cHVibGlj
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
