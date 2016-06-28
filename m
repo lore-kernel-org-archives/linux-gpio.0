@@ -1,73 +1,73 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH v6 5/6]  mfd: tps65218: Use mfd_add_devices instead of  of_platform_populate
-Date: Tue, 28 Jun 2016 18:00:53 +0530
-Message-ID: <1467117054-12943-6-git-send-email-j-keerthy@ti.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v6 3/6] input: tps65218-pwrbutton: Add platform_device_id
+ table
+Date: Tue, 28 Jun 2016 10:04:41 -0700
+Message-ID: <20160628170441.GA13114@dtor-ws>
 References: <1467117054-12943-1-git-send-email-j-keerthy@ti.com>
+ <1467117054-12943-4-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([198.47.19.11]:58708 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932165AbcF1Mb4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 28 Jun 2016 08:31:56 -0400
-In-Reply-To: <1467117054-12943-1-git-send-email-j-keerthy@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1467117054-12943-4-git-send-email-j-keerthy@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Keerthy <j-keerthy@ti.com>
+Cc: gnurou@gmail.com, devicetree@vger.kernel.org, tony@atomide.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, linux-input@vger.kernel.org, linux-omap@vger.kernel.org, lee.jones@linaro.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: dmitry.torokhov@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, tony@atomide.com
-Cc: linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, j-keerthy@ti.com
 
-mfd_add_devices enables parsing device tree nodes without compatibles
-for regulators and gpio modules. Replace of_platform_populate with
-mfd_add_devices. mfd_cell currently is populated with regulators,
-gpio and powerbutton.
+On Tue, Jun 28, 2016 at 06:00:51PM +0530, Keerthy wrote:
+> platform_device_id table is needed for adding the tps65218-pwrbutton
+> module to the mfd_cell array.
+> 
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Changes in v4:
+> ---
+> 
+> Changes in v4:
+> 
+>   * Added the missing ';' for struct platform_device_id.
+> 
+>  drivers/input/misc/tps65218-pwrbutton.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/input/misc/tps65218-pwrbutton.c b/drivers/input/misc/tps65218-pwrbutton.c
+> index 2bba8de..33d141a 100644
+> --- a/drivers/input/misc/tps65218-pwrbutton.c
+> +++ b/drivers/input/misc/tps65218-pwrbutton.c
+> @@ -113,12 +113,19 @@ static const struct of_device_id of_tps65218_pwr_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, of_tps65218_pwr_match);
+>  
+> +static const struct platform_device_id tps65218_pwrbtn_id_table[] = {
+> +	{ "tps65218-pwrbutton", },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(platform, tps65218_pwrbtn_id_table);
+> +
+>  static struct platform_driver tps65218_pwron_driver = {
+>  	.probe	= tps65218_pwron_probe,
+>  	.driver	= {
+>  		.name	= "tps65218_pwrbutton",
+>  		.of_match_table = of_tps65218_pwr_match,
+>  	},
+> +	.id_table = tps65218_pwrbtn_id_table,
+>  };
+>  module_platform_driver(tps65218_pwron_driver);
+>  
+> -- 
+> 1.9.1
+> 
 
-  * Regrouped the mfd cells better.
-
- drivers/mfd/tps65218.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mfd/tps65218.c b/drivers/mfd/tps65218.c
-index 9bca1b1..13834a0 100644
---- a/drivers/mfd/tps65218.c
-+++ b/drivers/mfd/tps65218.c
-@@ -33,6 +33,18 @@
- 
- #define TPS65218_PASSWORD_REGS_UNLOCK   0x7D
- 
-+static const struct mfd_cell tps65218_cells[] = {
-+	{
-+		.name = "tps65218-pwrbutton",
-+		.of_compatible = "ti,tps65218-pwrbutton",
-+	},
-+	{
-+		.name = "tps65218-gpio",
-+		.of_compatible = "ti,tps65218-gpio",
-+	},
-+	{ .name = "tps65218-regulator", },
-+};
-+
- /**
-  * tps65218_reg_write: Write a single tps65218 register.
-  *
-@@ -245,8 +257,10 @@ static int tps65218_probe(struct i2c_client *client,
- 
- 	tps->rev = chipid & TPS65218_CHIPID_REV_MASK;
- 
--	ret = of_platform_populate(client->dev.of_node, NULL, NULL,
--				   &client->dev);
-+	ret = mfd_add_devices(tps->dev, PLATFORM_DEVID_AUTO, tps65218_cells,
-+			      ARRAY_SIZE(tps65218_cells), NULL, 0,
-+			      regmap_irq_get_domain(tps->irq_data));
-+
- 	if (ret < 0)
- 		goto err_irq;
- 
 -- 
-1.9.1
-
+Dmitry
