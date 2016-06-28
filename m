@@ -1,111 +1,90 @@
-From: Keerthy <a0393675@ti.com>
-Subject: Re: [PATCH v3 02/10] Documentation: regulator: tps65218: Update
- examples
-Date: Tue, 28 Jun 2016 13:15:14 +0530
-Message-ID: <57722B0A.2070706@ti.com>
-References: <1467093980-11458-1-git-send-email-j-keerthy@ti.com>
- <1467093980-11458-3-git-send-email-j-keerthy@ti.com>
- <20160628065950.GE6720@dell>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20160628065950.GE6720@dell>
-Sender: linux-input-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Keerthy <j-keerthy@ti.com>
-Cc: dmitry.torokhov@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, broonie@kernel.org, tony@atomide.com, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
+From: Tan Jui Nee <jui.nee.tan@intel.com>
+Subject: [PATCH v5 0/3] pinctrl/broxton: enable platform device in the absent of ACPI enumeration
+Date: Tue, 28 Jun 2016 15:56:45 +0800
+Message-ID: <1467100608-11549-1-git-send-email-jui.nee.tan@intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga14.intel.com ([192.55.52.115]:26730 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751237AbcF1H5o (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 28 Jun 2016 03:57:44 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jui.nee.tan@intel.com, jonathan.yong@intel.com, ong.hock.yu@intel.com, weifeng.voon@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
 
+Hi,
+The patches are to cater the need for non-ACPI system whereby
+a platform device has to be created in order to bind with
+Apollo Lake Pinctrl GPIO platform driver.
 
+The MMIO BAR is accessed over the Primary to Sideband bridge
+(P2SB). Since the BIOS prevents the P2SB device from being
+enumerated by the PCI subsystem, so we need to hide/unhide P2SB
+to lookup the P2SB BAR and pass the PCI BAR address to the gpio
+platform driver.
 
-On Tuesday 28 June 2016 12:29 PM, Lee Jones wrote:
-> This is a more common format for DT bindings:
->
->    dt-bindings: regulator:
->
-> On Tue, 28 Jun 2016, Keerthy wrote:
->> This updates the device tree according to the preferred way of parsing
->
-> Nit: Device Tree
+All these three patches have dependencies on each other.
 
-Okay.
+Changes in V5:
+	- Split lpc-ich driver into two parts (lpc_ich-core and lpc_ich-apl).
+	  The file lpc_ich-apl.c introduces gpio platform driver in MFD.
+	- Rename Kconfig option CONFIG_X86_INTEL_NON_ACPI to CONFIG_X86_INTEL_APL
+	  so that it reflects actual product as suggested by Mika.
+	- The patch: 
+	  [PATCH] pinctrl/broxton: enable platform device in the absent of ACPI enumeration
+	  is removed in V5 patch-set as the patch is already applied in Linus' pinctrl tree.
 
->
->> the nodes using the regulator framework.
->>
->> Acked-by: Rob Herring <robh@kernel.org>
->> Signed-off-by: Keerthy <j-keerthy@ti.com>
->> ---
->>   .../devicetree/bindings/regulator/tps65218.txt     | 87 ++++++++++++++++++----
->>   1 file changed, 71 insertions(+), 16 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/regulator/tps65218.txt b/Documentation/devicetree/bindings/regulator/tps65218.txt
->> index fccc1d2..5e1888f 100644
->> --- a/Documentation/devicetree/bindings/regulator/tps65218.txt
->> +++ b/Documentation/devicetree/bindings/regulator/tps65218.txt
->> @@ -1,23 +1,78 @@
->>   TPS65218 family of regulators
->>
->>   Required properties:
->> -For tps65218 regulators/LDOs
->> -- compatible:
->> -  - "ti,tps65218-dcdc1" for DCDC1
->> -  - "ti,tps65218-dcdc2" for DCDC2
->> -  - "ti,tps65218-dcdc3" for DCDC3
->> -  - "ti,tps65218-dcdc4" for DCDC4
->> -  - "ti,tps65218-dcdc5" for DCDC5
->> -  - "ti,tps65218-dcdc6" for DCDC6
->> -  - "ti,tps65218-ldo1" for LDO1
->> -
->> -Optional properties:
->> -- Any optional property defined in bindings/regulator/regulator.txt
->> +- compatible: "ti,tps65218"
->> +- reg: I2C slave address
->
-> '\n' here for clarity.
+Changes in V4:
+	- Move Kconfig option CONFIG_X86_INTEL_NON_ACPI from
+	  [PATCH 2/3] x86/platform/p2sb: New Primary to Sideband bridge support driver for Intel SOC's
+	  to
+	  [PATCH 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake GPIO pinctrl in non-ACPI system
+	  since the config is used in latter patch.
+	- Select CONFIG_P2SB when CONFIG_LPC_ICH is enabled.
+	- Remove #ifdef CONFIG_X86_INTEL_NON_ACPI and use
+	  #if defined(CONFIG_X86_INTEL_NON_ACPI) when lpc_ich_misc is called
+	  as suggested by Lee Jones.
+	- Use single dimensional array instead of 2D array for apl_gpio_io_res
+	  structure and use DEFINE_RES_IRQ for its IRQ resource.
 
-Okay.
+Changes in V3:
+	- Simplify register addresses calculation and use DEFINE_RES_MEM_NAMED
+	  defines for apl_gpio_io_res structure
+	- Define magic number for P2SB PCI ID
+	- Replace switch-case with if-else since currently we have only one
+	  use case
+	- Only call mfd_add_devices() once for all gpio communities
 
->
->> +- list of regulators provided by this controller, must be named
->
-> Sentences start with an uppercase char.
+Changes in V2:
+	- Add new config option CONFIG_X86_INTEL_NON_ACPI and "select PINCTRL"
+	  to fix kbuildbot error
 
-Okay.
+Andy Shevchenko (1):
+  x86/platform/p2sb: New Primary to Sideband bridge support driver for
+    Intel SOC's
 
->
->> +  after their hardware counterparts: dcdc[1-6] and ldo1
->> +- This is the list of child nodes that specify the regulator
->> +  initialization data for defined regulators. Not all regulators for the given
->> +  device need to be present. The definition for each of these nodes is defined
->> +  using the standard binding for regulators found at
->> +  Documentation/devicetree/bindings/regulator/regulator.txt.
->
-> Use relative path names for brevity.
+Tan Jui Nee (2):
+  mfd: lpc_ich: Prepare to split lpc-ich driver
+  mfd: lpc_ich: Add support for Intel Apollo Lake GPIO pinctrl in
+    non-ACPI system
 
-Okay.
+ arch/x86/Kconfig                 |   13 +
+ arch/x86/include/asm/p2sb.h      |   27 +
+ arch/x86/platform/intel/Makefile |    1 +
+ arch/x86/platform/intel/p2sb.c   |   99 ++++
+ drivers/mfd/Kconfig              |    3 +-
+ drivers/mfd/Makefile             |    1 +
+ drivers/mfd/lpc_ich-apl.c        |  126 +++++
+ drivers/mfd/lpc_ich-core.c       | 1137 ++++++++++++++++++++++++++++++++++++++
+ drivers/mfd/lpc_ich.c            | 1126 -------------------------------------
+ include/linux/mfd/lpc_ich.h      |    7 +
+ 10 files changed, 1413 insertions(+), 1127 deletions(-)
+ create mode 100644 arch/x86/include/asm/p2sb.h
+ create mode 100644 arch/x86/platform/intel/p2sb.c
+ create mode 100644 drivers/mfd/lpc_ich-apl.c
+ create mode 100644 drivers/mfd/lpc_ich-core.c
+ delete mode 100644 drivers/mfd/lpc_ich.c
 
->
-> ./regulator.txt
->
->> +  The valid names for regulators are:
->> +  tps65217: regulator-dcdc1, regulator-dcdc2, regulator-dcdc3, regulator-dcdc4,
->> +  regulator-dcdc5, regulator-dcdc6, regulator-ldo1, regulator-ls3
->> +  Each regulator is defined using the standard binding for regulators.
->>
->>   Example:
->> +tps65218: tps65218@24 {
->
-> Is this label used?
+-- 
+1.9.1
 
-Yes. This can be used in the dts files.
-
->
->> +	reg = <0x24>;
->> +	compatible = "ti,tps65218";
->> +	interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>; /* NMIn */
->> +	interrupt-controller;
->> +	#interrupt-cells = <2>;
->
-> [...]
->
