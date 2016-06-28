@@ -1,82 +1,69 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 5/6] mfd: tps65218: Use mfd_add_devices instead of
- of_platform_populate
-Date: Tue, 28 Jun 2016 11:56:58 +0100
-Message-ID: <20160628105658.GA17585@dell>
+From: Keerthy <a0393675@ti.com>
+Subject: Re: [PATCH v4 0/6] mfd: tps65218: Clean ups
+Date: Tue, 28 Jun 2016 17:57:07 +0530
+Message-ID: <57726D1B.4050008@ti.com>
 References: <1467105729-28249-1-git-send-email-j-keerthy@ti.com>
- <1467105729-28249-6-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1467105729-28249-6-git-send-email-j-keerthy@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: dmitry.torokhov@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, broonie@kernel.org, tony@atomide.com, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([198.47.19.11]:58588 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751419AbcF1M1m (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 28 Jun 2016 08:27:42 -0400
+In-Reply-To: <1467105729-28249-1-git-send-email-j-keerthy@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>, dmitry.torokhov@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, tony@atomide.com
+Cc: linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Tue, 28 Jun 2016, Keerthy wrote:
 
-> mfd_add_devices enables parsing device tree nodes without compatibles
-> for regulators and gpio modules. Replace of_platform_populate with
-> mfd_add_devices. mfd_cell currently is populated with regulators,
-> gpio and powerbutton.
->=20
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> ---
->=20
+
+On Tuesday 28 June 2016 02:52 PM, Keerthy wrote:
+> The series cleans up mainly the regulator driver and implements
+> the device tree parsing using the regulator framework. Removes
+> all the redundant compatibles for the individual regulators.
+> Adds platform_device_id table for the gpio and power button modules.
+>
+> One of the patch removes redundant read wrapper and makes
+> use of regmap_read wherever necessary.
+>
+> The series is checked for all the regulator registrations on
+> am437x-gp-evm and am437x-sk-evm.
+>
+> Boot log on am437x-sk-evm: http://pastebin.ubuntu.com/18016754/
+
+Seems like with https://lkml.org/lkml/2016/6/24/122 pulled in. Only
+mfd and regulator patches need a bit of re-basing. I am sending a v6
+of the series with all the driver patches.
+
+>
 > Changes in v4:
->=20
->   * Regrouped the mfd cells better.
->=20
->  drivers/mfd/tps65218.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
-
-=46or my own reference:
-  Acked-by: Lee Jones <lee.jones@linaro.org>
-
-> diff --git a/drivers/mfd/tps65218.c b/drivers/mfd/tps65218.c
-> index f20a531..f13c8d9 100644
-> --- a/drivers/mfd/tps65218.c
-> +++ b/drivers/mfd/tps65218.c
-> @@ -33,6 +33,18 @@
-> =20
->  #define TPS65218_PASSWORD_REGS_UNLOCK   0x7D
-> =20
-> +static const struct mfd_cell tps65218_cells[] =3D {
-> +	{
-> +		.name =3D "tps65218-pwrbutton",
-> +		.of_compatible =3D "ti,tps65218-pwrbutton",
-> +	},
-> +	{
-> +		.name =3D "tps65218-gpio",
-> +		.of_compatible =3D "ti,tps65218-gpio",
-> +	},
-> +	{ .name =3D "tps65218-regulator", },
-> +};
-> +
->  /**
->   * tps65218_reg_write: Write a single tps65218 register.
->   *
-> @@ -236,8 +248,10 @@ static int tps65218_probe(struct i2c_client *cli=
-ent,
->  	if (ret < 0)
->  		return ret;
-> =20
-> -	ret =3D of_platform_populate(client->dev.of_node, NULL, NULL,
-> -				   &client->dev);
-> +	ret =3D mfd_add_devices(tps->dev, PLATFORM_DEVID_AUTO, tps65218_cel=
-ls,
-> +			      ARRAY_SIZE(tps65218_cells), NULL, 0,
-> +			      regmap_irq_get_domain(tps->irq_data));
-> +
->  	if (ret < 0)
->  		goto err_irq;
-> =20
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+>
+> For gpio-tps65218 reatined the compatible table.
+> Fixed missing ';' in the power button patch.
+> Fixed comments on the Documentation patch.
+> Split the Device Tree patches to a separate series.
+>
+> Changes in v3:
+>
+> Missed making corresponding changes in the power button and gpio
+> drivers. Added couple of patches to fix them to use mfd_cell way
+> of parsing.
+>
+> Keerthy (6):
+>    mfd: tps65218: Remove redundant read wrapper
+>    Documentation: regulator: tps65218: Update examples
+>    input: tps65218-pwrbutton: Add platform_device_id table
+>    gpio: tps65218-gpio: Add platform_device_id table
+>    mfd: tps65218: Use mfd_add_devices instead of of_platform_populate
+>    regulator: tps65218: Remove all the compatibles
+>
+>   .../devicetree/bindings/regulator/tps65218.txt     |  87 ++++++++++---
+>   drivers/gpio/gpio-tps65218.c                       |  10 +-
+>   drivers/input/misc/tps65218-pwrbutton.c            |  10 +-
+>   drivers/mfd/tps65218.c                             |  32 ++---
+>   drivers/regulator/tps65218-regulator.c             | 134 ++++++++-------------
+>   include/linux/mfd/tps65218.h                       |   2 -
+>   6 files changed, 152 insertions(+), 123 deletions(-)
+>
