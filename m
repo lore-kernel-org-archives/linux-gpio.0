@@ -1,56 +1,46 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH 08/12] i2c: core: Add support for 'i2c-bus' subnode
-Date: Tue, 28 Jun 2016 23:33:57 +0200
-Message-ID: <20160628213357.GB1598@katana>
-References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
- <1466697545-11868-9-git-send-email-jonathanh@nvidia.com>
- <20160628210952.GA1760@mithrandir.ba.sec>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 1/1] gpio: max77620: get gpio value based on direction
+Date: Wed, 29 Jun 2016 14:08:50 +0900
+Message-ID: <CAAVeFuJRrQ2_5mU-eRu=iuBygv7WQtnRov9zUWXPaBV=7Wdpdg@mail.gmail.com>
+References: <1467024984-28138-1-git-send-email-vreddytalla@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="s2ZSL+KKDSLx8OML"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160628210952.GA1760-+E7KM1FDEuO2P7RxrfNFTMXXUOn6P5/W@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34826 "EHLO
+	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751916AbcF2FK6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2016 01:10:58 -0400
+In-Reply-To: <1467024984-28138-1-git-send-email-vreddytalla@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Venkat Reddy Talla <vreddytalla@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
 
+On Mon, Jun 27, 2016 at 7:56 PM, Venkat Reddy Talla
+<vreddytalla@nvidia.com> wrote:
+> Gpio direction is determined by DIRx bit of GPIO
+> configuration register, return max77620 gpio value
+> based on direction in or out.
+>
+> Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
+> ---
+>  drivers/gpio/gpio-max77620.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
+> index 8658c32..b46b436 100644
+> --- a/drivers/gpio/gpio-max77620.c
+> +++ b/drivers/gpio/gpio-max77620.c
+> @@ -123,7 +123,10 @@ static int max77620_gpio_get(struct gpio_chip *gc, unsigned int offset)
+>                 return ret;
+>         }
+>
+> -       return !!(val & MAX77620_CNFG_GPIO_INPUT_VAL_MASK);
+> +       if  (val & MAX77620_CNFG_GPIO_DIR_MASK)
+> +               return !!(val & MAX77620_CNFG_GPIO_INPUT_VAL_MASK);
+> +       else
+> +               return !!(val & MAX77620_CNFG_GPIO_OUTPUT_VAL_MASK);
 
---s2ZSL+KKDSLx8OML
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Looks sensible!
 
-
-> Would you be okay if I take this patch along with the device tree
-> binding change into a stable branch and provide a tag for you to pull
-> into the I2C tree?
-
-Yes, once my comments to the previous patch are addressed, we can do
-that. For this patch already:
-
-Acked-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-
-
---s2ZSL+KKDSLx8OML
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXcu1FAAoJEBQN5MwUoCm2kTwP/3kia79Z9rkH1PliyhtW6xbz
-qCGsXd8gr58rDLdkREaMSUn6wBKf/huMAPNsW/YkKpM+D5l8xsK74TZZ6vExWgDb
-QfQHAY5VGDpbvjvhjxuh5DdpxWlhKnhb6hM0gjW52DNbGdhm8rDnEpugJ2/LMPZC
-j1PX9snIRefkFUuEjFlXihNAeZiy/Vc/U1DvDF4yCPGXJ3qlUuK7Yl0LnPKIHvg/
-q1F6wxJ/bEeW48Q+Nxrhfz7esCYqjkrw6Gmewm/+CXcXnKYmaTm2wS4hfU3cKwLz
-7ZxXXKdnna+JeJ9RPkkO0Tx/NkMof7ihGSUc8QDVAj/gwrfI4eovysirPUlPaieY
-beIU+Vh+Rhh/UUXjkPNEbZ5GqinkxN3x9vqM7eDA5pCyCmlFQBM9bTa1T65SpJaT
-BVi+kU3k3rEpjQS5z1xtcIyLNchLlN8RaOV+W4TaTsrWqXc1IritthyXWlTChr65
-JyC/dxVJTCI06b+3isrnivx7Bzi9vkKlt/0PddXZ+3tkddik0bB8BbHphJZuVfkv
-7Vw92HwpNLzDRzOsItiyRNHVXfC7qCUsCtReSGpmRcYFUo64B3DYyx01uH3qpD0F
-WAVplZf3Az9cHg+5t1JhcABoPmLPx4X0Z8H4jmJmOgnRgrtB28RFVO6k4YInmc2b
-FILM4AlgiKqej+NYHj2n
-=PcTT
------END PGP SIGNATURE-----
-
---s2ZSL+KKDSLx8OML--
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
