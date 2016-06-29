@@ -1,24 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 09/19] pinctrl: imx53: make it explicitly non-modular
-Date: Wed, 29 Jun 2016 09:38:09 +0200
-Message-ID: <CACRpkdbe_rK=010mu05U_1+1TJqzJbOwp8Tu6QTmZNzrrOcBWQ@mail.gmail.com>
-References: <20160626024652.5081-1-paul.gortmaker@windriver.com> <20160626024652.5081-10-paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 10/19] pinctrl: imx6dl: make it explicitly non-modular
+Date: Wed, 29 Jun 2016 09:39:18 +0200
+Message-ID: <CACRpkdb7_dkbsgyQWdkCHr8uB7DooMqYSEJFB6fpO5+Y7+2WsQ@mail.gmail.com>
+References: <20160626024652.5081-1-paul.gortmaker@windriver.com> <20160626024652.5081-11-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160626024652.5081-10-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <dong.aisheng@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:34310 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752482AbcF2Hjs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2016 03:39:48 -0400
+Received: by mail-ob0-f177.google.com with SMTP id ru5so14238722obc.1
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Jun 2016 00:39:19 -0700 (PDT)
+In-Reply-To: <20160626024652.5081-11-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
 On Sun, Jun 26, 2016 at 4:46 AM, Paul Gortmaker
 <paul.gortmaker@windriver.com> wrote:
 
 > The Kconfig currently controlling compilation of this code is:
 >
-> drivers/pinctrl/freescale/Kconfig:config PINCTRL_IMX53
-> drivers/pinctrl/freescale/Kconfig:      bool "IMX53 pinctrl driver"
+> drivers/pinctrl/freescale/Kconfig:config PINCTRL_IMX6Q
+> drivers/pinctrl/freescale/Kconfig:      bool "IMX6Q/DL pinctrl driver"
 >
 > ...meaning that it currently is not being built as a module by anyone.
 >
@@ -29,10 +35,10 @@ On Sun, Jun 26, 2016 at 4:46 AM, Paul Gortmaker
 > remains unchanged with this commit.
 >
 > We also delete the MODULE_LICENSE tag etc. since all that information
-> is already contained at the top of the file in the comments.
+> was (or is now) contained at the top of the file in the comments.
 >
 > Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Dong Aisheng <dong.aisheng@linaro.org>
+> Cc: Shawn Guo <shawn.guo@linaro.org>
 > Cc: linux-gpio@vger.kernel.org
 > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
