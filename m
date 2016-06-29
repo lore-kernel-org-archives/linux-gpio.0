@@ -1,92 +1,39 @@
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: uniphier: remove pointless pin-mux settings for PH1-LD11
-Date: Wed, 29 Jun 2016 17:57:13 +0900
-Message-ID: <1467190633-19990-1-git-send-email-yamada.masahiro@socionext.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: uniphier: remove pointless SD pin-mux setting
+ for PH1-LD11
+Date: Wed, 29 Jun 2016 17:58:42 +0900
+Message-ID: <CAK7LNAQYi3Na1=HwYiXXHmn6sp+22m-LVLPcGZ9LdvkfK0VyvA@mail.gmail.com>
+References: <1467189910-14125-1-git-send-email-yamada.masahiro@socionext.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:65512 "EHLO
+	conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751427AbcF2I7N (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2016 04:59:13 -0400
+In-Reply-To: <1467189910-14125-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-This SoC has no SD card controller.  Nor does it have USB port3.
-These pin-mux settings have no point.
+2016-06-29 17:45 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> This SoC has no SD card controller.  This pin-muxing has no point.
+>
+> Fixes: 70f2f9c4cf25 ("pinctrl: uniphier: add UniPhier PH1-LD11 pinctrl driver")
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Fixes: 70f2f9c4cf25 ("pinctrl: uniphier: add UniPhier PH1-LD11 pinctrl driver")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
 
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 10 ----------
- 1 file changed, 10 deletions(-)
+I found another mistake in this driver.
 
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-index 608cd73..89a260e 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-@@ -485,8 +485,6 @@ static const int i2c4_muxvals[] = {1, 1};
- static const unsigned nand_pins[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
- 				     15, 16, 17};
- static const int nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
--static const unsigned sd_pins[] = {10, 11, 12, 13, 14, 15, 16, 17};
--static const int sd_muxvals[] = {3, 3, 3, 3, 3, 3, 3, 3};  /* No SDVOLC */
- static const unsigned system_bus_pins[] = {1, 2, 6, 7, 8, 9, 10, 11, 12, 13,
- 					   14, 15, 16, 17};
- static const int system_bus_muxvals[] = {0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-@@ -507,8 +505,6 @@ static const unsigned usb1_pins[] = {48, 49};
- static const int usb1_muxvals[] = {0, 0};
- static const unsigned usb2_pins[] = {50, 51};
- static const int usb2_muxvals[] = {0, 0};
--static const unsigned usb3_pins[] = {52, 53};
--static const int usb3_muxvals[] = {0, 0};
- static const unsigned port_range_pins[] = {
- 	159, 160, 161, 162, 163, 164, 165, 166,		/* PORT0x */
- 	0, 1, 2, 3, 4, 5, 6, 7,				/* PORT1x */
-@@ -598,7 +594,6 @@ static const struct uniphier_pinctrl_group uniphier_ld11_groups[] = {
- 	UNIPHIER_PINCTRL_GROUP(i2c3),
- 	UNIPHIER_PINCTRL_GROUP(i2c4),
- 	UNIPHIER_PINCTRL_GROUP(nand),
--	UNIPHIER_PINCTRL_GROUP(sd),
- 	UNIPHIER_PINCTRL_GROUP(system_bus),
- 	UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
- 	UNIPHIER_PINCTRL_GROUP(uart0),
-@@ -608,7 +603,6 @@ static const struct uniphier_pinctrl_group uniphier_ld11_groups[] = {
- 	UNIPHIER_PINCTRL_GROUP(usb0),
- 	UNIPHIER_PINCTRL_GROUP(usb1),
- 	UNIPHIER_PINCTRL_GROUP(usb2),
--	UNIPHIER_PINCTRL_GROUP(usb3),
- 	UNIPHIER_PINCTRL_GROUP_GPIO_RANGE_PORT(port_range),
- 	UNIPHIER_PINCTRL_GROUP_GPIO_RANGE_IRQ(xirq),
- 	UNIPHIER_PINCTRL_GROUP_GPIO_RANGE_IRQ(xirq_alternatives),
-@@ -826,7 +820,6 @@ static const char * const i2c1_groups[] = {"i2c1"};
- static const char * const i2c3_groups[] = {"i2c3"};
- static const char * const i2c4_groups[] = {"i2c4"};
- static const char * const nand_groups[] = {"nand"};
--static const char * const sd_groups[] = {"sd"};
- static const char * const system_bus_groups[] = {"system_bus",
- 						 "system_bus_cs1"};
- static const char * const uart0_groups[] = {"uart0"};
-@@ -836,7 +829,6 @@ static const char * const uart3_groups[] = {"uart3"};
- static const char * const usb0_groups[] = {"usb0"};
- static const char * const usb1_groups[] = {"usb1"};
- static const char * const usb2_groups[] = {"usb2"};
--static const char * const usb3_groups[] = {"usb3"};
- static const char * const port_groups[] = {
- 	"port00",  "port01",  "port02",  "port03",
- 	"port04",  "port05",  "port06",  "port07",
-@@ -907,7 +899,6 @@ static const struct uniphier_pinmux_function uniphier_ld11_functions[] = {
- 	UNIPHIER_PINMUX_FUNCTION(i2c3),
- 	UNIPHIER_PINMUX_FUNCTION(i2c4),
- 	UNIPHIER_PINMUX_FUNCTION(nand),
--	UNIPHIER_PINMUX_FUNCTION(sd),
- 	UNIPHIER_PINMUX_FUNCTION(system_bus),
- 	UNIPHIER_PINMUX_FUNCTION(uart0),
- 	UNIPHIER_PINMUX_FUNCTION(uart1),
-@@ -916,7 +907,6 @@ static const struct uniphier_pinmux_function uniphier_ld11_functions[] = {
- 	UNIPHIER_PINMUX_FUNCTION(usb0),
- 	UNIPHIER_PINMUX_FUNCTION(usb1),
- 	UNIPHIER_PINMUX_FUNCTION(usb2),
--	UNIPHIER_PINMUX_FUNCTION(usb3),
- 	UNIPHIER_PINMUX_FUNCTION(port),
- 	UNIPHIER_PINMUX_FUNCTION(xirq),
- };
+So, I'd like to replace this patch with the following one:
+http://patchwork.ozlabs.org/patch/641896/
+
+
+(Copy-paste work often ends up several mistakes...)
+
+
+
 -- 
-1.9.1
+Best Regards
+Masahiro Yamada
