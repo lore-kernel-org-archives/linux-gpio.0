@@ -1,63 +1,97 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/4] gpio: userspace ABI for reading/writing GPIO lines
-Date: Wed, 29 Jun 2016 11:05:49 +0200
-Message-ID: <CACRpkdbRG3w+=GvnJUN9b+Nbej7gfDR5duTwjmdxTLc-p03O7w@mail.gmail.com>
-References: <1464868289-1766-1-git-send-email-linus.walleij@linaro.org> <2026706.RhdqQzbNxG@ws-stein>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V2 02/11] drm/tegra: Clean-up if probing DPAUX fails
+Date: Wed, 29 Jun 2016 10:17:48 +0100
+Message-ID: <1467191877-26017-3-git-send-email-jonathanh@nvidia.com>
+References: <1467191877-26017-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:35671 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751334AbcF2JFv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2016 05:05:51 -0400
-Received: by mail-ob0-f181.google.com with SMTP id o10so3914075obp.2
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Jun 2016 02:05:50 -0700 (PDT)
-In-Reply-To: <2026706.RhdqQzbNxG@ws-stein>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <1467191877-26017-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Lee Campbell <leecam@google.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Johan Hovold <johan@kernel.org>
 
-On Wed, Jun 29, 2016 at 10:53 AM, Alexander Stein
-<alexander.stein@systec-electronic.com> wrote:
-> On Thursday 02 June 2016 13:51:26, Linus Walleij wrote:
+If the probing of the DPAUX fails, then clocks are left enabled and the
+DPAUX reset de-asserted. Add code to perform the necessary clean-up on
+probe failure by disabling clocks and asserting the reset.
 
->> +     fd = anon_inode_getfd("gpio-linehandle",
->> +                           &linehandle_fileops,
->> +                           lh,
->> +                           O_RDONLY | O_CLOEXEC);
->
-> When will linehandle_release actually be called? When we explicitely call
-> close(req.fd) or when application exits and all FDs will be closed anyway?
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/gpu/drm/tegra/dpaux.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-As far as I understand: both.
-
-And I don't think anything else makes sense? If an application is terminated,
-the operating environment will close all open file handles as far as I know,
-at least that is how I always thought it works.
-
-But hey, it's userspace so what do I know...
-
-Anyways if it doesn't work like so, there are a bunch of subsystems in
-the kernel using it so they would all have severe problems.
-
->> +     if (fd < 0) {
->> +             ret = fd;
->> +             goto out_free_descs;
->> +     }
->> +
->> +     handlereq.fd = fd;
->> +     if (copy_to_user(ip, &handlereq, sizeof(handlereq)))
->> +             return -EFAULT;
->
-> If I'm right above doesn't that then leak lh until application eventually
-> exits? Userspace won't receive the newly created fd. The same would apply to
-> patch 3/4.
-
-I don't understand....
-
-The userspace application reads the .fd fields of the handle request after
-issuing the ioctl() and it then contains the new file handle.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index b24a0f14821a..0874a7e5b37b 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -321,28 +321,30 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dpaux->clk_parent)) {
+ 		dev_err(&pdev->dev, "failed to get parent clock: %ld\n",
+ 			PTR_ERR(dpaux->clk_parent));
+-		return PTR_ERR(dpaux->clk_parent);
++		err = PTR_ERR(dpaux->clk_parent);
++		goto assert_reset;
+ 	}
+ 
+ 	err = clk_prepare_enable(dpaux->clk_parent);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to enable parent clock: %d\n",
+ 			err);
+-		return err;
++		goto assert_reset;
+ 	}
+ 
+ 	err = clk_set_rate(dpaux->clk_parent, 270000000);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to set clock to 270 MHz: %d\n",
+ 			err);
+-		return err;
++		goto disable_parent_clk;
+ 	}
+ 
+ 	dpaux->vdd = devm_regulator_get(&pdev->dev, "vdd");
+ 	if (IS_ERR(dpaux->vdd)) {
+ 		dev_err(&pdev->dev, "failed to get VDD supply: %ld\n",
+ 			PTR_ERR(dpaux->vdd));
+-		return PTR_ERR(dpaux->vdd);
++		err = PTR_ERR(dpaux->vdd);
++		goto disable_parent_clk;
+ 	}
+ 
+ 	err = devm_request_irq(dpaux->dev, dpaux->irq, tegra_dpaux_irq, 0,
+@@ -350,7 +352,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	if (err < 0) {
+ 		dev_err(dpaux->dev, "failed to request IRQ#%u: %d\n",
+ 			dpaux->irq, err);
+-		return err;
++		goto disable_parent_clk;
+ 	}
+ 
+ 	disable_irq(dpaux->irq);
+@@ -360,7 +362,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 
+ 	err = drm_dp_aux_register(&dpaux->aux);
+ 	if (err < 0)
+-		return err;
++		goto disable_parent_clk;
+ 
+ 	/*
+ 	 * Assume that by default the DPAUX/I2C pads will be used for HDMI,
+@@ -393,6 +395,14 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, dpaux);
+ 
+ 	return 0;
++
++disable_parent_clk:
++	clk_disable_unprepare(dpaux->clk_parent);
++assert_reset:
++	reset_control_assert(dpaux->rst);
++	clk_disable_unprepare(dpaux->clk);
++
++	return err;
+ }
+ 
+ static int tegra_dpaux_remove(struct platform_device *pdev)
+-- 
+2.1.4
