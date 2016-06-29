@@ -1,52 +1,63 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: stm32: Modify error handling for pinctrl_register
-Date: Wed, 29 Jun 2016 10:33:25 +0200
-Message-ID: <CACRpkdZURfExVneWCWT6xW4xgdVrFAoDYBfn=t2RKsohLzTb4A@mail.gmail.com>
-References: <20160627142310.GA26798@amitoj-Inspiron-3542>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: uniphier: remove pointless SD pin-mux setting for PH1-LD11
+Date: Wed, 29 Jun 2016 17:45:10 +0900
+Message-ID: <1467189910-14125-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:35840 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750828AbcF2Id0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2016 04:33:26 -0400
-Received: by mail-ob0-f174.google.com with SMTP id mu6so15829258obc.3
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Jun 2016 01:33:26 -0700 (PDT)
-In-Reply-To: <20160627142310.GA26798@amitoj-Inspiron-3542>
+Received: from conuserg-10.nifty.com ([210.131.2.77]:41650 "EHLO
+	conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751537AbcF2Ipy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2016 04:45:54 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Mon, Jun 27, 2016 at 4:23 PM, Amitoj Kaur Chawla
-<amitoj1606@gmail.com> wrote:
+This SoC has no SD card controller.  This pin-muxing has no point.
 
-> pinctrl_register returns an ERR_PTR on error.
->
-> The Coccinelle semantic patch used to make this change is as follows:
->
-> @@
-> expression e,e1,e2;
-> @@
->
-> e = pinctrl_register(...)
-> ... when != e = e1
-> if (
-> -   e == NULL
-> +   IS_ERR(e)
->    ) {
->      ...
->      return
-> -      e2
-> +      PTR_ERR(e)
->      ;
->      }
->
-> Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+Fixes: 70f2f9c4cf25 ("pinctrl: uniphier: add UniPhier PH1-LD11 pinctrl driver")
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-I already have a patch like this in my tree it seems.
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-But very nice that cocinelle is now finding this!
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+index 608cd73..2c43576 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+@@ -485,8 +485,6 @@ static const int i2c4_muxvals[] = {1, 1};
+ static const unsigned nand_pins[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+ 				     15, 16, 17};
+ static const int nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+-static const unsigned sd_pins[] = {10, 11, 12, 13, 14, 15, 16, 17};
+-static const int sd_muxvals[] = {3, 3, 3, 3, 3, 3, 3, 3};  /* No SDVOLC */
+ static const unsigned system_bus_pins[] = {1, 2, 6, 7, 8, 9, 10, 11, 12, 13,
+ 					   14, 15, 16, 17};
+ static const int system_bus_muxvals[] = {0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+@@ -598,7 +596,6 @@ static const struct uniphier_pinctrl_group uniphier_ld11_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP(i2c3),
+ 	UNIPHIER_PINCTRL_GROUP(i2c4),
+ 	UNIPHIER_PINCTRL_GROUP(nand),
+-	UNIPHIER_PINCTRL_GROUP(sd),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus),
+ 	UNIPHIER_PINCTRL_GROUP(system_bus_cs1),
+ 	UNIPHIER_PINCTRL_GROUP(uart0),
+@@ -826,7 +823,6 @@ static const char * const i2c1_groups[] = {"i2c1"};
+ static const char * const i2c3_groups[] = {"i2c3"};
+ static const char * const i2c4_groups[] = {"i2c4"};
+ static const char * const nand_groups[] = {"nand"};
+-static const char * const sd_groups[] = {"sd"};
+ static const char * const system_bus_groups[] = {"system_bus",
+ 						 "system_bus_cs1"};
+ static const char * const uart0_groups[] = {"uart0"};
+@@ -907,7 +903,6 @@ static const struct uniphier_pinmux_function uniphier_ld11_functions[] = {
+ 	UNIPHIER_PINMUX_FUNCTION(i2c3),
+ 	UNIPHIER_PINMUX_FUNCTION(i2c4),
+ 	UNIPHIER_PINMUX_FUNCTION(nand),
+-	UNIPHIER_PINMUX_FUNCTION(sd),
+ 	UNIPHIER_PINMUX_FUNCTION(system_bus),
+ 	UNIPHIER_PINMUX_FUNCTION(uart0),
+ 	UNIPHIER_PINMUX_FUNCTION(uart1),
+-- 
+1.9.1
 
-Yours,
-Linus Walleij
