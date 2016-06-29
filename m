@@ -1,62 +1,69 @@
-From: Alexander Stein <alexanders83@web.de>
-Subject: Re: Re: linux-next: Tree for Jun 27 (pinctrl && !CONFIG_OF)
-Date: Wed, 29 Jun 2016 07:54:29 +0200
-Message-ID: <7003426.R6hER1qrYx@ws-stein>
-References: <20160627163939.20e454d5@canb.auug.org.au> <2044946.aGLaEK2W6I@ws-stein> <3990550.tEk9cGVQPW@wuerfel>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v4.7
+Date: Wed, 29 Jun 2016 09:15:22 +0200
+Message-ID: <CACRpkdaXSyYLwdtJh7GysTbESTp91CmaWbLaAZPDG=nv05Ve3A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.4]:49651 "EHLO mout.web.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751003AbcF2GCO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 29 Jun 2016 02:02:14 -0400
-In-Reply-To: <3990550.tEk9cGVQPW@wuerfel>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, "Linus Walleij (linus.walleij@linaro.org)" <linus.walleij@linaro.org>
 
-On Tuesday 28 June 2016, 10:37:52 wrote Arnd Bergmann:
-> > > I think the commit should just be reverted, it clearly breaks
-> > > stuff, and whatever needs it can be fixed in a better way.
-> > 
-> > Why not depend PINCTRL_IPROC_GPIO on CONFIG_OF as Randy stated 
-> > pinconf_generic_dt_node_to_map_pin and friends are only present if 
-CONFIG_OF 
-> > is enabled. Depending on OF_GPIO only is enough under the assumption a) 
-you 
-> > made below.
-> > Also what about providing dummy implementation for those missing function 
-in 
-> > case CONFIG_OF is disabled, my preference as more code can be compile 
-tested.
-> >
-> > > Specifically, we have three ways that the OF_GPIO symbol
-> > > is used:
-> > > 
-> > > a) it is implicitly enabled when both GPIOLIB and OF are turned on
-> > 
-> > or if COMPILE_TEST is enabled
-> > 
-> > I think a problem in this and possibly other cases is that COMPILE_TEST 
-> > loosens the Kconfig dependencies to some degree. How to proceed? Allow 
-compile 
-> > testing drivers only if some optional settings are enabled?
-> 
-> I think we can start by reverting your patch: for compile-testing we can
-> always enable CONFIG_OF these days, which will also turn on OF_GPIO.
+Hi Linus,
 
-My intention was to compile test (device tree) drivers also without CONFIG_OF 
-which is disabled by defconfig default on arch/x86/configs/*
+here are a bunch of fixes for pin control. Just drivers and
+a MAINTAINERS fixup.
 
-> Compile-testing drivers that need OF_GPIO while OF is disabled makes
-> no sense to me, it's not a configuration that anybody can ever use
-> and it adds no build coverage.
+Please pull them in!
 
-That seems sensible. If we can agree that anyone who wants to compile test 
-drivers has to enable CONFIG_OF even it is not needed for the current 
-configuration.
+Yours,
+Linus Walleij
 
-Best regards,
-Alexander
+The following changes since commit 33688abb2802ff3a230bd2441f765477b94cc89e:
+
+  Linux 4.7-rc4 (2016-06-19 21:30:02 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.7-3
+
+for you to fetch changes up to b41aa4f8476545e2b663b1549759a8c3a66f47b0:
+
+  pinctrl: baytrail: Fix mingled clock pins (2016-06-23 11:05:04 +0200)
+
+----------------------------------------------------------------
+Pin control fixes for the v4.7 cycle:
+
+- Driver fixes for i.MX, single register, Tegra and BayTrail.
+
+- MAINTAINERS entry for the documentation
+
+----------------------------------------------------------------
+Alexander Shiyan (1):
+      pinctrl: imx: Do not treat a PIN without MUX register as an error
+
+Andy Shevchenko (1):
+      MAINTAINERS: belong Documentation/pinctrl.txt properly
+
+Axel Lin (1):
+      pinctrl: tegra: Fix build dependency
+
+Cristina Ciocan (1):
+      pinctrl: baytrail: Fix mingled clock pins
+
+Thierry Reding (1):
+      gpio: tegra: Make lockdep class file-scoped
+
+Tony Lindgren (1):
+      pinctrl: single: Fix missing flush of posted write for a wakeirq
+
+ MAINTAINERS                              | 1 +
+ drivers/gpio/gpio-tegra.c                | 9 +++++++--
+ drivers/pinctrl/Makefile                 | 2 +-
+ drivers/pinctrl/freescale/pinctrl-imx.c  | 4 ++--
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 6 +++---
+ drivers/pinctrl/pinctrl-single.c         | 3 +++
+ drivers/pinctrl/tegra/Makefile           | 2 +-
+ 7 files changed, 18 insertions(+), 9 deletions(-)
