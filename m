@@ -1,461 +1,301 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH v5 2/3] mfd: lp873x: Add lp873x PMIC support
-Date: Wed, 29 Jun 2016 21:14:26 +0530
-Message-ID: <1467215067-6486-3-git-send-email-j-keerthy@ti.com>
-References: <1467215067-6486-1-git-send-email-j-keerthy@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1467215067-6486-1-git-send-email-j-keerthy@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org
-Cc: linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, robh+dt@kernel.org, j-keerthy@ti.com, tony@atomide.com
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Add bias pinconf support
+Date: Wed, 29 Jun 2016 18:06:04 +0200
+Message-ID: <1467216364-27235-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35673 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752346AbcF2QHM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2016 12:07:12 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be
+Cc: horms@verge.net.au, magnus.damm@gmail.com, linux-gpio@vger.kernel.org, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-The LP873X chip is a power management IC for Portable Navigation Systems
-    and Tablet Computing devices. It contains the following components:
+Implements pull-up and pull-down. On this SoC there is no simple mapping of
+GP pins to bias register bits, so we need a table.
 
-     - Regulators.
-     - Configurable General Purpose Output Signals(GPO).
-
-PMIC interacts with the main processor through i2c. PMIC has
-couple of LDOs(Linear Regulators), couple of BUCKs (Step-Down DC-DC
-Converter Cores) and GPOs(General Purpose Output Signals).
-
-Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
 
-Changes in v4:
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 254 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 242 insertions(+), 12 deletions(-)
 
-  * Added Author.
-  * Added the mfd_cell for gpio.
-
-Changes in v3:
-
-  * Reordered the probe code.
-  * Fixed Typo in Kconfig description.
-  * Removed unused member from struct lp873x.
-
- drivers/mfd/Kconfig        |  14 +++
- drivers/mfd/Makefile       |   2 +
- drivers/mfd/lp873x.c       |  99 +++++++++++++++++
- include/linux/mfd/lp873x.h | 264 +++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 379 insertions(+)
- create mode 100644 drivers/mfd/lp873x.c
- create mode 100644 include/linux/mfd/lp873x.h
-
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 9987d86..e68ac28 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1221,6 +1221,20 @@ config MFD_TPS65217
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called tps65217.
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index b74cdd3..0f1a111 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -13,19 +13,23 @@
+ #include "core.h"
+ #include "sh_pfc.h"
  
-+config MFD_LP873X
-+	tristate "TI LP873X Power Management IC"
-+	depends on I2C
-+	select MFD_CORE
-+	select REGMAP_I2C
-+	help
-+	  If you say yes here then you get support for the LP873X series of
-+	  power management integrated circuits(PMIC).
-+	  These include voltage regulators, Thermal protection, Configurable
-+	  general purpose outputs(GPO) that are used in portable devices.
++#define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | \
++		   SH_PFC_PIN_CFG_PULL_UP | \
++		   SH_PFC_PIN_CFG_PULL_DOWN)
 +
-+	  This driver can also be built as a module.  If so, the module
-+	  will be called lp873x.
-+
- config MFD_TPS65218
- 	tristate "TI TPS65218 Power Management chips"
- 	depends on I2C
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 2ba3ba3..7d9b965 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -22,6 +22,8 @@ obj-$(CONFIG_HTC_EGPIO)		+= htc-egpio.o
- obj-$(CONFIG_HTC_PASIC3)	+= htc-pasic3.o
- obj-$(CONFIG_HTC_I2CPLD)	+= htc-i2cpld.o
+ #define CPU_ALL_PORT(fn, sfx)						\
+-	PORT_GP_CFG_16(0, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_28(1, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_15(2, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_12(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
+-	PORT_GP_CFG_1(3, 12, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_1(3, 13, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_1(3, 14, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_1(3, 15, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
+-	PORT_GP_CFG_26(5, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_32(6, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_4(7, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH)
++	PORT_GP_CFG_16(0, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_28(1, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_15(2, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_12(3, fn, sfx, CFG_FLAGS | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
++	PORT_GP_CFG_1(3, 12, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_1(3, 13, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_1(3, 14, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_1(3, 15, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_18(4, fn, sfx, CFG_FLAGS | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
++	PORT_GP_CFG_26(5, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_32(6, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_4(7, fn, sfx, CFG_FLAGS)
+ /*
+  * F_() : just information
+  * FM() : macro for FN_xxx / xxx_MARK
+@@ -5073,8 +5077,234 @@ static int r8a7795_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *poc
+ 	return bit;
+ }
  
-+obj-$(CONFIG_MFD_LP873X)	+= lp873x.o
++#define PUEN	0xe6060400
++#define PUD	0xe6060440
 +
- obj-$(CONFIG_MFD_DAVINCI_VOICECODEC)	+= davinci_voicecodec.o
- obj-$(CONFIG_MFD_DM355EVM_MSP)	+= dm355evm_msp.o
- obj-$(CONFIG_MFD_TI_AM335X_TSCADC)	+= ti_am335x_tscadc.o
-diff --git a/drivers/mfd/lp873x.c b/drivers/mfd/lp873x.c
-new file mode 100644
-index 0000000..54ed0ce
---- /dev/null
-+++ b/drivers/mfd/lp873x.c
-@@ -0,0 +1,99 @@
-+/*
-+ * Copyright (C) 2016 Texas Instruments Incorporated - http://www.ti.com/
-+ *
-+ * Author: Keerthy <j-keerthy@ti.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation version 2.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether express or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
++#define PU0	0x00
++#define PU1	0x04
++#define PU2	0x08
++#define PU3	0x0c
++#define PU4	0x10
++#define PU5	0x14
++#define PU6	0x18
 +
-+#include <linux/interrupt.h>
-+#include <linux/mfd/core.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/regmap.h>
++static const struct {
++	u16 reg : 11;
++	u16 bit : 5;
++} pullups[] = {
++	[RCAR_GP_PIN(2, 11)] = { PU0, 31 },	/* AVB_PHY_INT */
++	[RCAR_GP_PIN(2, 10)] = { PU0, 30 },	/* AVB_MAGIC */
++	[RCAR_GP_PIN(2,  9)] = { PU0, 29 },	/* AVB_MDC */
 +
-+#include <linux/mfd/lp873x.h>
++	[RCAR_GP_PIN(1, 19)] = { PU1, 31 },	/* A19 */
++	[RCAR_GP_PIN(1, 18)] = { PU1, 30 },	/* A18 */
++	[RCAR_GP_PIN(1, 17)] = { PU1, 29 },	/* A17 */
++	[RCAR_GP_PIN(1, 16)] = { PU1, 28 },	/* A16 */
++	[RCAR_GP_PIN(1, 15)] = { PU1, 27 },	/* A15 */
++	[RCAR_GP_PIN(1, 14)] = { PU1, 26 },	/* A14 */
++	[RCAR_GP_PIN(1, 13)] = { PU1, 25 },	/* A13 */
++	[RCAR_GP_PIN(1, 12)] = { PU1, 24 },	/* A12 */
++	[RCAR_GP_PIN(1, 11)] = { PU1, 23 },	/* A11 */
++	[RCAR_GP_PIN(1, 10)] = { PU1, 22 },	/* A10 */
++	[RCAR_GP_PIN(1,  9)] = { PU1, 21 },	/* A9 */
++	[RCAR_GP_PIN(1,  8)] = { PU1, 20 },	/* A8 */
++	[RCAR_GP_PIN(1,  7)] = { PU1, 19 },	/* A7 */
++	[RCAR_GP_PIN(1,  6)] = { PU1, 18 },	/* A6 */
++	[RCAR_GP_PIN(1,  5)] = { PU1, 17 },	/* A5 */
++	[RCAR_GP_PIN(1,  4)] = { PU1, 16 },	/* A4 */
++	[RCAR_GP_PIN(1,  3)] = { PU1, 15 },	/* A3 */
++	[RCAR_GP_PIN(1,  2)] = { PU1, 14 },	/* A2 */
++	[RCAR_GP_PIN(1,  1)] = { PU1, 13 },	/* A1 */
++	[RCAR_GP_PIN(1,  0)] = { PU1, 12 },	/* A0 */
++	[RCAR_GP_PIN(2,  8)] = { PU1, 11 },	/* PWM2_A */
++	[RCAR_GP_PIN(2,  7)] = { PU1, 10 },	/* PWM1_A */
++	[RCAR_GP_PIN(2,  6)] = { PU1,  9 },	/* PWM0 */
++	[RCAR_GP_PIN(2,  5)] = { PU1,  8 },	/* IRQ5 */
++	[RCAR_GP_PIN(2,  4)] = { PU1,  7 },	/* IRQ4 */
++	[RCAR_GP_PIN(2,  3)] = { PU1,  6 },	/* IRQ3 */
++	[RCAR_GP_PIN(2,  2)] = { PU1,  5 },	/* IRQ2 */
++	[RCAR_GP_PIN(2,  1)] = { PU1,  4 },	/* IRQ1 */
++	[RCAR_GP_PIN(2,  0)] = { PU1,  3 },	/* IRQ0 */
++	[RCAR_GP_PIN(2, 14)] = { PU1,  2 },	/* AVB_AVTP_CAPTURE_A */
++	[RCAR_GP_PIN(2, 13)] = { PU1,  1 },	/* AVB_AVTP_MATCH_A */
++	[RCAR_GP_PIN(2, 12)] = { PU1,  0 },	/* AVB_LINK */
 +
-+static const struct regmap_config lp873x_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = LP873X_REG_MAX,
++	[RCAR_GP_PIN(7,  3)] = { PU2, 29 },	/* HDMI1_CEC */
++	[RCAR_GP_PIN(7,  2)] = { PU2, 28 },	/* HDMI0_CEC */
++	[RCAR_GP_PIN(7,  1)] = { PU2, 27 },	/* AVS2 */
++	[RCAR_GP_PIN(7,  0)] = { PU2, 26 },	/* AVS1 */
++	[RCAR_GP_PIN(0, 15)] = { PU2, 25 },	/* D15 */
++	[RCAR_GP_PIN(0, 14)] = { PU2, 24 },	/* D14 */
++	[RCAR_GP_PIN(0, 13)] = { PU2, 23 },	/* D13 */
++	[RCAR_GP_PIN(0, 12)] = { PU2, 22 },	/* D12 */
++	[RCAR_GP_PIN(0, 11)] = { PU2, 21 },	/* D11 */
++	[RCAR_GP_PIN(0, 10)] = { PU2, 20 },	/* D10 */
++	[RCAR_GP_PIN(0,  9)] = { PU2, 19 },	/* D9 */
++	[RCAR_GP_PIN(0,  8)] = { PU2, 18 },	/* D8 */
++	[RCAR_GP_PIN(0,  7)] = { PU2, 17 },	/* D7 */
++	[RCAR_GP_PIN(0,  6)] = { PU2, 16 },	/* D6 */
++	[RCAR_GP_PIN(0,  5)] = { PU2, 15 },	/* D5 */
++	[RCAR_GP_PIN(0,  4)] = { PU2, 14 },	/* D4 */
++	[RCAR_GP_PIN(0,  3)] = { PU2, 13 },	/* D3 */
++	[RCAR_GP_PIN(0,  2)] = { PU2, 12 },	/* D2 */
++	[RCAR_GP_PIN(0,  1)] = { PU2, 11 },	/* D1 */
++	[RCAR_GP_PIN(0,  0)] = { PU2, 10 },	/* D0 */
++	[RCAR_GP_PIN(1, 27)] = { PU2,  8 },	/* EX_WAIT0_A */
++	[RCAR_GP_PIN(1, 26)] = { PU2,  7 },	/* WE1_N */
++	[RCAR_GP_PIN(1, 25)] = { PU2,  6 },	/* WE0_N */
++	[RCAR_GP_PIN(1, 24)] = { PU2,  5 },	/* RD_WR_N */
++	[RCAR_GP_PIN(1, 23)] = { PU2,  4 },	/* RD_N */
++	[RCAR_GP_PIN(1, 22)] = { PU2,  3 },	/* BS_N */
++	[RCAR_GP_PIN(1, 21)] = { PU2,  2 },	/* CS1_N_A26 */
++	[RCAR_GP_PIN(1, 20)] = { PU2,  1 },	/* CS0_N */
++
++	[RCAR_GP_PIN(4,  9)] = { PU3, 31 },	/* SD3_DAT0 */
++	[RCAR_GP_PIN(4,  8)] = { PU3, 30 },	/* SD3_CMD */
++	[RCAR_GP_PIN(4,  7)] = { PU3, 29 },	/* SD3_CLK */
++	[RCAR_GP_PIN(4,  6)] = { PU3, 28 },	/* SD2_DS */
++	[RCAR_GP_PIN(4,  5)] = { PU3, 27 },	/* SD2_DAT3 */
++	[RCAR_GP_PIN(4,  4)] = { PU3, 26 },	/* SD2_DAT2 */
++	[RCAR_GP_PIN(4,  3)] = { PU3, 25 },	/* SD2_DAT1 */
++	[RCAR_GP_PIN(4,  2)] = { PU3, 24 },	/* SD2_DAT0 */
++	[RCAR_GP_PIN(4,  1)] = { PU3, 23 },	/* SD2_CMD */
++	[RCAR_GP_PIN(4,  0)] = { PU3, 22 },	/* SD2_CLK */
++	[RCAR_GP_PIN(3, 11)] = { PU3, 21 },	/* SD1_DAT3 */
++	[RCAR_GP_PIN(3, 10)] = { PU3, 20 },	/* SD1_DAT2 */
++	[RCAR_GP_PIN(3,  9)] = { PU3, 19 },	/* SD1_DAT1 */
++	[RCAR_GP_PIN(3,  8)] = { PU3, 18 },	/* SD1_DAT0 */
++	[RCAR_GP_PIN(3,  7)] = { PU3, 17 },	/* SD1_CMD */
++	[RCAR_GP_PIN(3,  6)] = { PU3, 16 },	/* SD1_CLK */
++	[RCAR_GP_PIN(3,  5)] = { PU3, 15 },	/* SD0_DAT3 */
++	[RCAR_GP_PIN(3,  4)] = { PU3, 14 },	/* SD0_DAT2 */
++	[RCAR_GP_PIN(3,  3)] = { PU3, 13 },	/* SD0_DAT1 */
++	[RCAR_GP_PIN(3,  2)] = { PU3, 12 },	/* SD0_DAT0 */
++	[RCAR_GP_PIN(3,  1)] = { PU3, 11 },	/* SD0_CMD */
++	[RCAR_GP_PIN(3,  0)] = { PU3, 10 },	/* SD0_CLK */
++
++	[RCAR_GP_PIN(5, 19)] = { PU4, 31 },	/* MSIOF0_SS1 */
++	[RCAR_GP_PIN(5, 18)] = { PU4, 30 },	/* MSIOF0_SYNC */
++	[RCAR_GP_PIN(5, 17)] = { PU4, 29 },	/* MSIOF0_SCK */
++	[RCAR_GP_PIN(5, 16)] = { PU4, 28 },	/* HRTS0_N */
++	[RCAR_GP_PIN(5, 15)] = { PU4, 27 },	/* HCTS0_N */
++	[RCAR_GP_PIN(5, 14)] = { PU4, 26 },	/* HTX0 */
++	[RCAR_GP_PIN(5, 13)] = { PU4, 25 },	/* HRX0 */
++	[RCAR_GP_PIN(5, 12)] = { PU4, 24 },	/* HSCK0 */
++	[RCAR_GP_PIN(5, 11)] = { PU4, 23 },	/* RX2_A */
++	[RCAR_GP_PIN(5, 10)] = { PU4, 22 },	/* TX2_A */
++	[RCAR_GP_PIN(5,  9)] = { PU4, 21 },	/* SCK2 */
++	[RCAR_GP_PIN(5,  8)] = { PU4, 20 },	/* RTS1_N_TANS */
++	[RCAR_GP_PIN(5,  7)] = { PU4, 19 },	/* CTS1_N */
++	[RCAR_GP_PIN(5,  6)] = { PU4, 18 },	/* TX1_A */
++	[RCAR_GP_PIN(5,  5)] = { PU4, 17 },	/* RX1_A */
++	[RCAR_GP_PIN(5,  4)] = { PU4, 16 },	/* RTS0_N_TANS */
++	[RCAR_GP_PIN(5,  3)] = { PU4, 15 },	/* CTS0_N */
++	[RCAR_GP_PIN(5,  2)] = { PU4, 14 },	/* TX0 */
++	[RCAR_GP_PIN(5,  1)] = { PU4, 13 },	/* RX0 */
++	[RCAR_GP_PIN(5,  0)] = { PU4, 12 },	/* SCK0 */
++	[RCAR_GP_PIN(3, 15)] = { PU4, 11 },	/* SD1_WP */
++	[RCAR_GP_PIN(3, 14)] = { PU4, 10 },	/* SD1_CD */
++	[RCAR_GP_PIN(3, 13)] = { PU4,  9 },	/* SD0_WP */
++	[RCAR_GP_PIN(3, 12)] = { PU4,  8 },	/* SD0_CD */
++	[RCAR_GP_PIN(4, 17)] = { PU4,  7 },	/* SD3_DS */
++	[RCAR_GP_PIN(4, 16)] = { PU4,  6 },	/* SD3_DAT7 */
++	[RCAR_GP_PIN(4, 15)] = { PU4,  5 },	/* SD3_DAT6 */
++	[RCAR_GP_PIN(4, 14)] = { PU4,  4 },	/* SD3_DAT5 */
++	[RCAR_GP_PIN(4, 13)] = { PU4,  3 },	/* SD3_DAT4 */
++	[RCAR_GP_PIN(4, 12)] = { PU4,  2 },	/* SD3_DAT3 */
++	[RCAR_GP_PIN(4, 11)] = { PU4,  1 },	/* SD3_DAT2 */
++	[RCAR_GP_PIN(4, 10)] = { PU4,  0 },	/* SD3_DAT1 */
++
++	[RCAR_GP_PIN(6, 24)] = { PU5, 31 },	/* USB0_PWEN */
++	[RCAR_GP_PIN(6, 23)] = { PU5, 30 },	/* AUDIO_CLKB_B */
++	[RCAR_GP_PIN(6, 22)] = { PU5, 29 },	/* AUDIO_CLKA_A */
++	[RCAR_GP_PIN(6, 21)] = { PU5, 28 },	/* SSI_SDATA9_A */
++	[RCAR_GP_PIN(6, 20)] = { PU5, 27 },	/* SSI_SDATA8 */
++	[RCAR_GP_PIN(6, 19)] = { PU5, 26 },	/* SSI_SDATA7 */
++	[RCAR_GP_PIN(6, 18)] = { PU5, 25 },	/* SSI_WS78 */
++	[RCAR_GP_PIN(6, 17)] = { PU5, 24 },	/* SSI_SCK78 */
++	[RCAR_GP_PIN(6, 16)] = { PU5, 23 },	/* SSI_SDATA6 */
++	[RCAR_GP_PIN(6, 15)] = { PU5, 22 },	/* SSI_WS6 */
++	[RCAR_GP_PIN(6, 14)] = { PU5, 21 },	/* SSI_SCK6 */
++	[RCAR_GP_PIN(6, 13)] = { PU5, 20 },	/* SSI_SDATA5 */
++	[RCAR_GP_PIN(6, 12)] = { PU5, 19 },	/* SSI_WS5 */
++	[RCAR_GP_PIN(6, 11)] = { PU5, 18 },	/* SSI_SCK5 */
++	[RCAR_GP_PIN(6, 10)] = { PU5, 17 },	/* SSI_SDATA4 */
++	[RCAR_GP_PIN(6,  9)] = { PU5, 16 },	/* SSI_WS4 */
++	[RCAR_GP_PIN(6,  8)] = { PU5, 15 },	/* SSI_SCK4 */
++	[RCAR_GP_PIN(6,  7)] = { PU5, 14 },	/* SSI_SDATA3 */
++	[RCAR_GP_PIN(6,  6)] = { PU5, 13 },	/* SSI_WS34 */
++	[RCAR_GP_PIN(6,  5)] = { PU5, 12 },	/* SSI_SCK34 */
++	[RCAR_GP_PIN(6,  4)] = { PU5, 11 },	/* SSI_SDATA2_A */
++	[RCAR_GP_PIN(6,  3)] = { PU5, 10 },	/* SSI_SDATA1_A */
++	[RCAR_GP_PIN(6,  2)] = { PU5,  9 },	/* SSI_SDATA0 */
++	[RCAR_GP_PIN(6,  1)] = { PU5,  8 },	/* SSI_WS01239 */
++	[RCAR_GP_PIN(6,  0)] = { PU5,  7 },	/* SSI_SCK01239 */
++	[RCAR_GP_PIN(5, 25)] = { PU5,  5 },	/* MLB_DAT */
++	[RCAR_GP_PIN(5, 24)] = { PU5,  4 },	/* MLB_SIG */
++	[RCAR_GP_PIN(5, 23)] = { PU5,  3 },	/* MLB_CLK */
++	[RCAR_GP_PIN(5, 22)] = { PU5,  2 },	/* MSIOF0_RXD */
++	[RCAR_GP_PIN(5, 21)] = { PU5,  1 },	/* MSIOF0_SS2 */
++	[RCAR_GP_PIN(5, 20)] = { PU5,  0 },	/* MSIOF0_TXD */
++
++	[RCAR_GP_PIN(6, 31)] = { PU6,  6 },	/* USB31_OVC */
++	[RCAR_GP_PIN(6, 30)] = { PU6,  5 },	/* USB31_PWEN */
++	[RCAR_GP_PIN(6, 29)] = { PU6,  4 },	/* USB30_OVC */
++	[RCAR_GP_PIN(6, 28)] = { PU6,  3 },	/* USB30_PWEN */
++	[RCAR_GP_PIN(6, 27)] = { PU6,  2 },	/* USB1_OVC */
++	[RCAR_GP_PIN(6, 26)] = { PU6,  1 },	/* USB1_PWEN */
++	[RCAR_GP_PIN(6, 25)] = { PU6,  0 },	/* USB0_OVC */
 +};
 +
-+static const struct mfd_cell lp873x_cells[] = {
-+	{ .name = "lp873x-regulator", },
-+	{ .name = "lp873x-gpio", },
-+};
-+
-+static int lp873x_probe(struct i2c_client *client,
-+			const struct i2c_device_id *ids)
++static unsigned int r8a7795_pinmux_get_bias(struct sh_pfc *pfc,
++					    unsigned int pin)
 +{
-+	struct lp873x *lp873;
-+	int ret;
-+	unsigned int otpid;
++	u32 reg;
++	u32 bit;
 +
-+	lp873 = devm_kzalloc(&client->dev, sizeof(*lp873), GFP_KERNEL);
-+	if (!lp873)
-+		return -ENOMEM;
++	if (WARN_ON_ONCE(!pullups[pin].reg))
++		return PIN_CONFIG_BIAS_DISABLE;
 +
-+	lp873->dev = &client->dev;
++	reg = pullups[pin].reg;
++	bit = BIT(pullups[pin].bit);
 +
-+	lp873->regmap = devm_regmap_init_i2c(client, &lp873x_regmap_config);
-+	if (IS_ERR(lp873->regmap)) {
-+		ret = PTR_ERR(lp873->regmap);
-+		dev_err(lp873->dev, "Failed to initialize register map: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	mutex_init(&lp873->lp873_lock);
-+
-+	ret = regmap_read(lp873->regmap, LP873X_REG_OTP_REV, &otpid);
-+	if (ret) {
-+		dev_err(lp873->dev, "Failed to read OTP ID\n");
-+		return ret;
-+	}
-+
-+	lp873->rev = otpid & LP873X_OTP_REV_OTP_ID;
-+	i2c_set_clientdata(client, lp873);
-+	ret = mfd_add_devices(lp873->dev, PLATFORM_DEVID_AUTO, lp873x_cells,
-+			      ARRAY_SIZE(lp873x_cells), NULL, 0, NULL);
-+
-+	return ret;
++	if (sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit) {
++		if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
++			return PIN_CONFIG_BIAS_PULL_UP;
++		else
++			return PIN_CONFIG_BIAS_PULL_DOWN;
++	} else
++		return PIN_CONFIG_BIAS_DISABLE;
 +}
 +
-+static const struct of_device_id of_lp873x_match_table[] = {
-+	{ .compatible = "ti,lp8733", },
-+	{ .compatible = "ti,lp8732", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, of_lp873x_match_table);
++static void r8a7795_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
++				   unsigned int bias)
++{
++	u32 enable, updown;
++	u32 reg;
++	u32 bit;
 +
-+static const struct i2c_device_id lp873x_id_table[] = {
-+	{ "lp873x", LP873X },
-+	{ "lp8732", LP873X },
-+	{ "lp8733", LP873X },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(i2c, lp873x_id_table);
++	if (WARN_ON_ONCE(!pullups[pin].reg))
++		return;
 +
-+static struct i2c_driver lp873x_driver = {
-+	.driver		= {
-+		.name	= "lp873x",
-+		.of_match_table = of_lp873x_match_table,
-+	},
-+	.probe		= lp873x_probe,
-+	.id_table	= lp873x_id_table,
-+};
-+module_i2c_driver(lp873x_driver);
++	reg = pullups[pin].reg;
++	bit = BIT(pullups[pin].bit);
 +
-+MODULE_AUTHOR("J Keerthy <j-keerthy@ti.com>");
-+MODULE_DESCRIPTION("LP873X chip family multi-function driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/mfd/lp873x.h b/include/linux/mfd/lp873x.h
-new file mode 100644
-index 0000000..fb7ec55
---- /dev/null
-+++ b/include/linux/mfd/lp873x.h
-@@ -0,0 +1,264 @@
-+/*
-+ * Functions to access LP873X power management chip.
-+ *
-+ * Copyright (C) 2016 Texas Instruments Incorporated - http://www.ti.com/
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License as
-+ * published by the Free Software Foundation version 2.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether express or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
++	enable = sh_pfc_read_reg(pfc, PUEN + reg, 32) & ~bit;
++	if (bias != PIN_CONFIG_BIAS_DISABLE)
++		enable |= bit;
 +
-+#ifndef __LINUX_MFD_LP873X_H
-+#define __LINUX_MFD_LP873X_H
++	updown = sh_pfc_read_reg(pfc, PUD + reg, 32) & ~bit;
++	if (bias == PIN_CONFIG_BIAS_PULL_UP)
++		updown |= bit;
 +
-+#include <linux/i2c.h>
-+#include <linux/regulator/driver.h>
-+#include <linux/regulator/machine.h>
++	sh_pfc_write_reg(pfc, PUD + reg, 32, updown);
++	sh_pfc_write_reg(pfc, PUEN + reg, 32, enable);
++}
 +
-+/* LP873x chip id list */
-+#define LP873X			0x00
-+
-+/* All register addresses */
-+#define LP873X_REG_DEV_REV		0X00
-+#define LP873X_REG_OTP_REV		0X01
-+#define LP873X_REG_BUCK0_CTRL_1		0X02
-+#define LP873X_REG_BUCK0_CTRL_2		0X03
-+#define LP873X_REG_BUCK1_CTRL_1		0X04
-+#define LP873X_REG_BUCK1_CTRL_2		0X05
-+#define LP873X_REG_BUCK0_VOUT		0X06
-+#define LP873X_REG_BUCK1_VOUT		0X07
-+#define LP873X_REG_LDO0_CTRL		0X08
-+#define LP873X_REG_LDO1_CTRL            0X09
-+#define LP873X_REG_LDO0_VOUT		0X0A
-+#define LP873X_REG_LDO1_VOUT		0X0B
-+#define LP873X_REG_BUCK0_DELAY		0X0C
-+#define LP873X_REG_BUCK1_DELAY		0X0D
-+#define LP873X_REG_LDO0_DELAY		0X0E
-+#define LP873X_REG_LDO1_DELAY		0X0F
-+#define LP873X_REG_GPO_DELAY		0X10
-+#define LP873X_REG_GPO2_DELAY		0X11
-+#define LP873X_REG_GPO_CTRL		0X12
-+#define LP873X_REG_CONFIG		0X13
-+#define LP873X_REG_PLL_CTRL		0X14
-+#define LP873X_REG_PGOOD_CTRL1		0X15
-+#define LP873X_REG_PGOOD_CTRL2		0X16
-+#define LP873X_REG_PG_FAULT		0X17
-+#define LP873X_REG_RESET		0X18
-+#define LP873X_REG_INT_TOP_1		0X19
-+#define LP873X_REG_INT_TOP_2		0X1A
-+#define LP873X_REG_INT_BUCK		0X1B
-+#define LP873X_REG_INT_LDO		0X1C
-+#define LP873X_REG_TOP_STAT		0X1D
-+#define LP873X_REG_BUCK_STAT		0X1E
-+#define LP873X_REG_LDO_STAT		0x1F
-+#define LP873X_REG_TOP_MASK_1		0x20
-+#define LP873X_REG_TOP_MASK_2		0x21
-+#define LP873X_REG_BUCK_MASK		0x22
-+#define LP873X_REG_LDO_MASK		0x23
-+#define LP873X_REG_SEL_I_LOAD		0x24
-+#define LP873X_REG_I_LOAD_2		0x25
-+#define LP873X_REG_I_LOAD_1		0x26
-+
-+#define LP873X_REG_MAX			LP873X_REG_I_LOAD_1
-+
-+/* Register field definitions */
-+#define LP873X_DEV_REV_DEV_ID			0xC0
-+#define LP873X_DEV_REV_ALL_LAYER		0x30
-+#define LP873X_DEV_REV_METAL_LAYER		0x0F
-+
-+#define LP873X_OTP_REV_OTP_ID			0xFF
-+
-+#define LP873X_BUCK0_CTRL_1_BUCK0_FPWM		BIT(3)
-+#define LP873X_BUCK0_CTRL_1_BUCK0_RDIS_EN	BIT(2)
-+#define LP873X_BUCK0_CTRL_1_BUCK0_EN_PIN_CTRL	BIT(1)
-+#define LP873X_BUCK0_CTRL_1_BUCK0_EN		BIT(0)
-+
-+#define LP873X_BUCK0_CTRL_2_BUCK0_ILIM		0x38
-+#define LP873X_BUCK0_CTRL_2_BUCK0_SLEW_RATE	0x07
-+
-+#define LP873X_BUCK1_CTRL_1_BUCK1_FPWM		BIT(3)
-+#define LP873X_BUCK1_CTRL_1_BUCK1_RDIS_EN	BIT(2)
-+#define LP873X_BUCK1_CTRL_1_BUCK1_EN_PIN_CTRL	BIT(1)
-+#define LP873X_BUCK1_CTRL_1_BUCK1_EN		BIT(0)
-+
-+#define LP873X_BUCK1_CTRL_2_BUCK1_ILIM		0x38
-+#define LP873X_BUCK1_CTRL_2_BUCK1_SLEW_RATE	0x07
-+
-+#define LP873X_BUCK0_VOUT_BUCK0_VSET		0xFF
-+
-+#define LP873X_BUCK1_VOUT_BUCK1_VSET		0xFF
-+
-+#define LP873X_LDO0_CTRL_LDO0_RDIS_EN		BIT(2)
-+#define LP873X_LDO0_CTRL_LDO0_EN_PIN_CTRL	BIT(1)
-+#define LP873X_LDO0_CTRL_LDO0_EN		BIT(0)
-+
-+#define LP873X_LDO1_CTRL_LDO1_RDIS_EN		BIT(2)
-+#define LP873X_LDO1_CTRL_LDO1_EN_PIN_CTRL	BIT(1)
-+#define LP873X_LDO1_CTRL_LDO1_EN		BIT(0)
-+
-+#define LP873X_LDO0_VOUT_LDO0_VSET		0x1F
-+
-+#define LP873X_LDO1_VOUT_LDO1_VSET		0x1F
-+
-+#define LP873X_BUCK0_DELAY_BUCK0_SD_DELAY	0xF0
-+#define LP873X_BUCK0_DELAY_BUCK0_SU_DELAY	0x0F
-+
-+#define LP873X_BUCK1_DELAY_BUCK1_SD_DELAY	0xF0
-+#define LP873X_BUCK1_DELAY_BUCK1_SU_DELAY	0x0F
-+
-+#define LP873X_LDO0_DELAY_LDO0_SD_DELAY	0xF0
-+#define LP873X_LDO0_DELAY_LDO0_SU_DELAY	0x0F
-+
-+#define LP873X_LDO1_DELAY_LDO1_SD_DELAY	0xF0
-+#define LP873X_LDO1_DELAY_LDO1_SU_DELAY	0x0F
-+
-+#define LP873X_GPO_DELAY_GPO_SD_DELAY		0xF0
-+#define LP873X_GPO_DELAY_GPO_SU_DELAY		0x0F
-+
-+#define LP873X_GPO2_DELAY_GPO2_SD_DELAY	0xF0
-+#define LP873X_GPO2_DELAY_GPO2_SU_DELAY	0x0F
-+
-+#define LP873X_GPO_CTRL_GPO2_OD		BIT(6)
-+#define LP873X_GPO_CTRL_GPO2_EN_PIN_CTRL	BIT(5)
-+#define LP873X_GPO_CTRL_GPO2_EN		BIT(4)
-+#define LP873X_GPO_CTRL_GPO_OD			BIT(2)
-+#define LP873X_GPO_CTRL_GPO_EN_PIN_CTRL	BIT(1)
-+#define LP873X_GPO_CTRL_GPO_EN			BIT(0)
-+
-+#define LP873X_CONFIG_SU_DELAY_SEL		BIT(6)
-+#define LP873X_CONFIG_SD_DELAY_SEL		BIT(5)
-+#define LP873X_CONFIG_CLKIN_PIN_SEL		BIT(4)
-+#define LP873X_CONFIG_CLKIN_PD			BIT(3)
-+#define LP873X_CONFIG_EN_PD			BIT(2)
-+#define LP873X_CONFIG_TDIE_WARN_LEVEL		BIT(1)
-+#define LP873X_EN_SPREAD_SPEC			BIT(0)
-+
-+#define LP873X_PLL_CTRL_EN_PLL			BIT(6)
-+#define LP873X_EXT_CLK_FREQ			0x1F
-+
-+#define LP873X_PGOOD_CTRL1_PGOOD_POL		BIT(7)
-+#define LP873X_PGOOD_CTRL1_PGOOD_OD		BIT(6)
-+#define LP873X_PGOOD_CTRL1_PGOOD_WINDOW_LDO	BIT(5)
-+#define LP873X_PGOOD_CTRL1_PGOOD_WINDOWN_BUCK	BIT(4)
-+#define LP873X_PGOOD_CTRL1_PGOOD_EN_PGOOD_LDO1	BIT(3)
-+#define LP873X_PGOOD_CTRL1_PGOOD_EN_PGOOD_LDO0	BIT(2)
-+#define LP873X_PGOOD_CTRL1_PGOOD_EN_PGOOD_BUCK1	BIT(1)
-+#define LP873X_PGOOD_CTRL1_PGOOD_EN_PGOOD_BUCK0	BIT(0)
-+
-+#define LP873X_PGOOD_CTRL2_EN_PGOOD_TWARN	BIT(2)
-+#define LP873X_PGOOD_CTRL2_EN_PG_FAULT_GATE	BIT(1)
-+#define LP873X_PGOOD_CTRL2_PGOOD_MODE		BIT(0)
-+
-+#define LP873X_PG_FAULT_PG_FAULT_LDO1		BIT(3)
-+#define LP873X_PG_FAULT_PG_FAULT_LDO0		BIT(2)
-+#define LP873X_PG_FAULT_PG_FAULT_BUCK1		BIT(1)
-+#define LP873X_PG_FAULT_PG_FAULT_BUCK0		BIT(0)
-+
-+#define LP873X_RESET_SW_RESET			BIT(0)
-+
-+#define LP873X_INT_TOP_1_PGOOD_INT		BIT(7)
-+#define LP873X_INT_TOP_1_LDO_INT		BIT(6)
-+#define LP873X_INT_TOP_1_BUCK_INT		BIT(5)
-+#define LP873X_INT_TOP_1_SYNC_CLK_INT		BIT(4)
-+#define LP873X_INT_TOP_1_TDIE_SD_INT		BIT(3)
-+#define LP873X_INT_TOP_1_TDIE_WARN_INT		BIT(2)
-+#define LP873X_INT_TOP_1_OVP_INT		BIT(1)
-+#define LP873X_INT_TOP_1_I_MEAS_INT		BIT(0)
-+
-+#define LP873X_INT_TOP_2_RESET_REG_INT		BIT(0)
-+
-+#define LP873X_INT_BUCK_BUCK1_PG_INT		BIT(6)
-+#define LP873X_INT_BUCK_BUCK1_SC_INT		BIT(5)
-+#define LP873X_INT_BUCK_BUCK1_ILIM_INT		BIT(4)
-+#define LP873X_INT_BUCK_BUCK0_PG_INT		BIT(2)
-+#define LP873X_INT_BUCK_BUCK0_SC_INT		BIT(1)
-+#define LP873X_INT_BUCK_BUCK0_ILIM_INT		BIT(0)
-+
-+#define LP873X_INT_LDO_LDO1_PG_INT		BIT(6)
-+#define LP873X_INT_LDO_LDO1_SC_INT		BIT(5)
-+#define LP873X_INT_LDO_LDO1_ILIM_INT		BIT(4)
-+#define LP873X_INT_LDO_LDO0_PG_INT		BIT(2)
-+#define LP873X_INT_LDO_LDO0_SC_INT		BIT(1)
-+#define LP873X_INT_LDO_LDO0_ILIM_INT		BIT(0)
-+
-+#define LP873X_TOP_STAT_PGOOD_STAT		BIT(7)
-+#define LP873X_TOP_STAT_SYNC_CLK_STAT		BIT(4)
-+#define LP873X_TOP_STAT_TDIE_SD_STAT		BIT(3)
-+#define LP873X_TOP_STAT_TDIE_WARN_STAT		BIT(2)
-+#define LP873X_TOP_STAT_OVP_STAT		BIT(1)
-+
-+#define LP873X_BUCK_STAT_BUCK1_STAT		BIT(7)
-+#define LP873X_BUCK_STAT_BUCK1_PG_STAT		BIT(6)
-+#define LP873X_BUCK_STAT_BUCK1_ILIM_STAT	BIT(4)
-+#define LP873X_BUCK_STAT_BUCK0_STAT		BIT(3)
-+#define LP873X_BUCK_STAT_BUCK0_PG_STAT		BIT(2)
-+#define LP873X_BUCK_STAT_BUCK0_ILIM_STAT	BIT(0)
-+
-+#define LP873X_LDO_STAT_LDO1_STAT		BIT(7)
-+#define LP873X_LDO_STAT_LDO1_PG_STAT		BIT(6)
-+#define LP873X_LDO_STAT_LDO1_ILIM_STAT		BIT(4)
-+#define LP873X_LDO_STAT_LDO0_STAT		BIT(3)
-+#define LP873X_LDO_STAT_LDO0_PG_STAT		BIT(2)
-+#define LP873X_LDO_STAT_LDO0_ILIM_STAT		BIT(0)
-+
-+#define LP873X_TOP_MASK_1_PGOOD_INT_MASK	BIT(7)
-+#define LP873X_TOP_MASK_1_SYNC_CLK_MASK	BIT(4)
-+#define LP873X_TOP_MASK_1_TDIE_WARN_MASK	BIT(2)
-+#define LP873X_TOP_MASK_1_I_MEAS_MASK		BIT(0)
-+
-+#define LP873X_TOP_MASK_2_RESET_REG_MASK	BIT(0)
-+
-+#define LP873X_BUCK_MASK_BUCK1_PGF_MASK	BIT(7)
-+#define LP873X_BUCK_MASK_BUCK1_PGR_MASK	BIT(6)
-+#define LP873X_BUCK_MASK_BUCK1_ILIM_MASK	BIT(4)
-+#define LP873X_BUCK_MASK_BUCK0_PGF_MASK	BIT(3)
-+#define LP873X_BUCK_MASK_BUCK0_PGR_MASK	BIT(2)
-+#define LP873X_BUCK_MASK_BUCK0_ILIM_MASK	BIT(0)
-+
-+#define LP873X_LDO_MASK_LDO1_PGF_MASK		BIT(7)
-+#define LP873X_LDO_MASK_LDO1_PGR_MASK		BIT(6)
-+#define LP873X_LDO_MASK_LDO1_ILIM_MASK		BIT(4)
-+#define LP873X_LDO_MASK_LDO0_PGF_MASK		BIT(3)
-+#define LP873X_LDO_MASK_LDO0_PGR_MASK		BIT(2)
-+#define LP873X_LDO_MASK_LDO0_ILIM_MASK		BIT(0)
-+
-+#define LP873X_SEL_I_LOAD_CURRENT_BUCK_SELECT	BIT(0)
-+
-+#define LP873X_I_LOAD_2_BUCK_LOAD_CURRENT	BIT(0)
-+
-+#define LP873X_I_LOAD_1_BUCK_LOAD_CURRENT	0xFF
-+
-+#define LP873X_MAX_REG_ID		LP873X_LDO_1
-+
-+/* Number of step-down converters available */
-+#define LP873X_NUM_BUCK		2
-+/* Number of LDO voltage regulators available */
-+#define LP873X_NUM_LDO		2
-+/* Number of total regulators available */
-+#define LP873X_NUM_REGULATOR		(LP873X_NUM_BUCK + LP873X_NUM_LDO)
-+
-+enum lp873x_regulator_id {
-+	/* BUCK's */
-+	LP873X_BUCK_0,
-+	LP873X_BUCK_1,
-+	/* LDOs */
-+	LP873X_LDO_0,
-+	LP873X_LDO_1,
-+};
-+
-+/**
-+ * struct lp873x - state holder for the lp873x driver
-+ * Device data may be used to access the LP873X chip
-+ */
-+struct lp873x {
-+	struct device *dev;
-+	u8 rev;
-+	struct mutex lp873_lock;	/* lock guarding the data structure */
-+	struct regmap *regmap;
-+};
-+#endif /*  __LINUX_MFD_LP873X_H */
+ static const struct sh_pfc_soc_operations r8a7795_pinmux_ops = {
+ 	.pin_to_pocctrl = r8a7795_pin_to_pocctrl,
++	.get_bias = r8a7795_pinmux_get_bias,
++	.set_bias = r8a7795_pinmux_set_bias,
+ };
+ 
+ const struct sh_pfc_soc_info r8a7795_pinmux_info = {
 -- 
-1.9.1
+2.7.4
+
