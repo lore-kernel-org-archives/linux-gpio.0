@@ -1,54 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 17/19] pinctrl: imx23: make it explicitly non-modular
-Date: Wed, 29 Jun 2016 09:55:03 +0200
-Message-ID: <CACRpkdbhXDVBAkUbTmmCUthL9jZ0CFidV-5Tp-ZwKLUUzsBTEg@mail.gmail.com>
-References: <20160626024652.5081-1-paul.gortmaker@windriver.com> <20160626024652.5081-18-paul.gortmaker@windriver.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.8
+Date: Wed, 29 Jun 2016 10:03:16 +0200
+Message-ID: <CACRpkdYOsaG=7qQk0Woh3dCYKg=SwhKKH5m=Z+opra8GkTwBFA@mail.gmail.com>
+References: <1466689161-27672-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:34341 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751334AbcF2ICL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2016 04:02:11 -0400
-Received: by mail-ob0-f173.google.com with SMTP id ru5so14886702obc.1
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Jun 2016 01:02:11 -0700 (PDT)
-In-Reply-To: <20160626024652.5081-18-paul.gortmaker@windriver.com>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:34008 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751334AbcF2IDR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2016 04:03:17 -0400
+Received: by mail-ob0-f174.google.com with SMTP id ru5so14920285obc.1
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Jun 2016 01:03:17 -0700 (PDT)
+In-Reply-To: <1466689161-27672-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-On Sun, Jun 26, 2016 at 4:46 AM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
+On Thu, Jun 23, 2016 at 3:39 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> The Kconfig currently controlling compilation of this code is:
+>         Hi Linus,
 >
-> drivers/pinctrl/freescale/Kconfig:config PINCTRL_IMX23
-> drivers/pinctrl/freescale/Kconfig:      bool
+> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 >
-> ...meaning that it currently is not being built as a module by anyone.
+>   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
 >
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
+> are available in the git repository at:
 >
-> We explicitly disallow a driver unbind, since that doesn't have a
-> sensible use case anyway, and it allows us to drop the ".remove"
-> code for non-modular drivers.
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.8-tag1
 >
-> Since module_init wasn't actually used by this driver, the init
-> ordering remains unchanged with this commit.
+> for you to fetch changes up to 2d7758319889bf9def19e0a7a5daf1f87c9a9116:
 >
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+>   pinctrl: sh-pfc: r8a7795: Add DRIF support (2016-06-23 11:01:21 +0200)
 >
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> was (or is now) contained at the top of the file in the comments.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Shawn Guo <shawn.guo@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ----------------------------------------------------------------
+> pinctrl: sh-pfc: Updates for v4.8
 
-Patch applied.
+Pulled into the pin control devel branch for v4.8.
+
+Thanks for your efforts to keep the PFC development together!
 
 Yours,
 Linus Walleij
