@@ -1,69 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.7
-Date: Wed, 29 Jun 2016 09:15:22 +0200
-Message-ID: <CACRpkdaXSyYLwdtJh7GysTbESTp91CmaWbLaAZPDG=nv05Ve3A@mail.gmail.com>
+Subject: Re: [PATCH 01/19] pinctrl: freescale: remove needless module.h include
+Date: Wed, 29 Jun 2016 09:30:34 +0200
+Message-ID: <CACRpkdafYJ_bnYu6HxSmtisheOgNZiJH=C-R+0M9-icrz+w1PA@mail.gmail.com>
+References: <20160626024652.5081-1-paul.gortmaker@windriver.com> <20160626024652.5081-2-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:33436 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751173AbcF2Haf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jun 2016 03:30:35 -0400
+Received: by mail-ob0-f172.google.com with SMTP id xn17so14048350obc.0
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Jun 2016 00:30:35 -0700 (PDT)
+In-Reply-To: <20160626024652.5081-2-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+On Sun, Jun 26, 2016 at 4:46 AM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 
-here are a bunch of fixes for pin control. Just drivers and
-a MAINTAINERS fixup.
+> None of these files have anything modular in them, so they
+> don't need to be bringing in module.h and all its dependencies.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-Please pull them in!
+Patch applied.
 
 Yours,
 Linus Walleij
-
-The following changes since commit 33688abb2802ff3a230bd2441f765477b94cc89e:
-
-  Linux 4.7-rc4 (2016-06-19 21:30:02 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.7-3
-
-for you to fetch changes up to b41aa4f8476545e2b663b1549759a8c3a66f47b0:
-
-  pinctrl: baytrail: Fix mingled clock pins (2016-06-23 11:05:04 +0200)
-
-----------------------------------------------------------------
-Pin control fixes for the v4.7 cycle:
-
-- Driver fixes for i.MX, single register, Tegra and BayTrail.
-
-- MAINTAINERS entry for the documentation
-
-----------------------------------------------------------------
-Alexander Shiyan (1):
-      pinctrl: imx: Do not treat a PIN without MUX register as an error
-
-Andy Shevchenko (1):
-      MAINTAINERS: belong Documentation/pinctrl.txt properly
-
-Axel Lin (1):
-      pinctrl: tegra: Fix build dependency
-
-Cristina Ciocan (1):
-      pinctrl: baytrail: Fix mingled clock pins
-
-Thierry Reding (1):
-      gpio: tegra: Make lockdep class file-scoped
-
-Tony Lindgren (1):
-      pinctrl: single: Fix missing flush of posted write for a wakeirq
-
- MAINTAINERS                              | 1 +
- drivers/gpio/gpio-tegra.c                | 9 +++++++--
- drivers/pinctrl/Makefile                 | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx.c  | 4 ++--
- drivers/pinctrl/intel/pinctrl-baytrail.c | 6 +++---
- drivers/pinctrl/pinctrl-single.c         | 3 +++
- drivers/pinctrl/tegra/Makefile           | 2 +-
- 7 files changed, 18 insertions(+), 9 deletions(-)
