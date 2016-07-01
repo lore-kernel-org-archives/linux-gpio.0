@@ -1,12 +1,12 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: fix overly long lines
-Date: Fri, 1 Jul 2016 09:50:32 +0200
-Message-ID: <CAMuHMdXYLg7nQ1rTHnuTG2-2J1veApAcizA6j_5-UE1jPs2TPA@mail.gmail.com>
-References: <1748403.xeiuK39ynx@wasted.cogentembedded.com> <6941131.ZKfJHhvm82@wasted.cogentembedded.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: add R8A7792 PFC support
+Date: Fri, 1 Jul 2016 10:04:50 +0200
+Message-ID: <CAMuHMdX3VnYBM+xmSrgnAudeH+-ghcLt2GKbGLemGt+SzfQ4zg@mail.gmail.com>
+References: <1748403.xeiuK39ynx@wasted.cogentembedded.com> <19325938.k24uiBRvOQ@wasted.cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <6941131.ZKfJHhvm82@wasted.cogentembedded.com>
+In-Reply-To: <19325938.k24uiBRvOQ@wasted.cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
@@ -14,18 +14,29 @@ List-Id: linux-gpio@vger.kernel.org
 
 Hi Sergei,
 
-On Wed, Jun 29, 2016 at 11:20 PM, Sergei Shtylyov
+On Wed, Jun 29, 2016 at 11:21 PM, Sergei Shtylyov
 <sergei.shtylyov@cogentembedded.com> wrote:
-> The PORT_GP_CFG_<n>() macros take up more than 80 columns -- and not for
-> a good reason. Make the header file checkpatch.pl-proof at least in this
-> respect...
->
+> Add the PFC support for the R8A7792 SoC including pin groups for some
+> on-chip devices such as SCIF, INTC, and LBSC...
+
+Thanks for your patch!
+
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> --- /dev/null
+> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
 
-But it doesn't apply, due to "pinctrl: sh-pfc: Initial R8A7796 PFC support"
-which was submitted one day earlier.
+
+> +/* - LSBC ------------------------------------------------------------------- */
+
+LBSC
+
+> +static const unsigned int lbsc_cs0_pins[] = {
+> +       /* CS0# */
+> +       RCAR_GP_PIN(3, 27),
+> +};
+
+I've only reviewed the numbers of GPIOs per bank, and the pins.
 
 Gr{oetje,eeting}s,
 
