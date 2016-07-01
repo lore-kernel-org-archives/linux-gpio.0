@@ -1,58 +1,84 @@
-From: Nathan Williams <ngwilliams@gmail.com>
-Subject: gpio-mcp23s08 DT usage with shared chip select
-Date: Fri, 01 Jul 2016 12:11:40 +1000
-Message-ID: <1467339100.28816.25.camel@linux>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: [PATCH] gpio: document how to order GPIO controllers
+Date: Fri,  1 Jul 2016 08:42:13 +0200
+Message-ID: <1467355333-8813-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:33605 "EHLO
-	mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752018AbcGACME (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Jun 2016 22:12:04 -0400
-Received: by mail-pf0-f196.google.com with SMTP id c74so8788102pfb.0
-        for <linux-gpio@vger.kernel.org>; Thu, 30 Jun 2016 19:11:59 -0700 (PDT)
-Received: from [192.168.0.130] ([203.217.56.15])
-        by smtp.googlemail.com with ESMTPSA id i3sm852403pfk.30.2016.06.30.19.11.56
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Jun 2016 19:11:58 -0700 (PDT)
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:55035 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752622AbcGAGmd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Jul 2016 02:42:33 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: kernel@pengutronix.de, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi,
+This uses the same approach that is already used for spi, i2c and
+several other controllers to ensure a consistent numbering independent
+of probe order. This is in use for several gpio drivers that already no=
+w
+use of_alias_get_id(np, "gpio").
 
-I'm using gpio-mcp23s08 for two MCP23S17 chips that use the same SPI
-chip select (and different addresses).
+Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+---
+Hello,
 
-My device tree contains:
+Linus requested such a patch as part of a change that introduces
+this mechanism to the gpio-omap driver[1]. IMHO this is better done in =
+a
+separate patch, so here it comes.
 
-&spi0 {
-        status = "okay";
-        bus-num = <0>;
-        num-cs = <2>;
-        cs-gpios =
-                <&portc 2 0>,
-                <&portc 3 0>;
+Best regards
+Uwe
 
-        gpio@1 {
-                compatible = "microchip,mcp23s17";
-                gpio-controller;
-                #gpio-cells = <2>;
-                microchip,spi-present-mask = <0x03>;
-                reg = <1>;
-                spi-max-frequency = <1000000>;
-        };
-};
+[1] http://thread.gmane.org/gmane.linux.kernel.gpio/17399/focus=3D17629
 
-The driver registers both gpiochips but both are labelled "mcp23s17" and
-I can't differentiate between the chips without probing the hardware.
+ Documentation/devicetree/bindings/gpio/gpio.txt | 18 +++++++++++++++++=
++
+ 1 file changed, 18 insertions(+)
 
-I'd also like to be able to give each GPIO a name with gpio-line-names.
-What's the best way to achieve this? Add support to the driver for child
-DT nodes for each gpiochip?
+diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Document=
+ation/devicetree/bindings/gpio/gpio.txt
+index 68d28f62a6f4..5dbacc8f094a 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -227,6 +227,24 @@ Example of two SOC GPIO banks defined as gpio-cont=
+roller nodes:
+ 		#gpio-cells =3D <2>;
+ 	};
+=20
++Usually the GPIO banks in SoCs are ordered, that is there is a dedicat=
+ed "first
++gpio bank". To fix this ordering in the device tree use aliases starti=
+ng at 0
++(even if the first bank is called "GPIO1" in the hardware reference).
++This is necessary/handy to ensure deterministical numbering of GPIOs a=
+nd GPIO
++controllers.
++
++Example of a machine having 4 GPIO banks.
++
++	/ {
++		aliases {
++			...
++			gpio0 =3D &gpio1;
++			gpio1 =3D &gpio2;
++			gpio2 =3D &gpio3;
++			gpio3 =3D &gpio4;
++		};
++	};
++
+ 2.1) gpio- and pin-controller interaction
+ -----------------------------------------
+=20
+--=20
+2.8.1
 
-Regards,
-Nathan
-
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
