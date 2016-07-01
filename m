@@ -1,84 +1,39 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: [PATCH] gpio: document how to order GPIO controllers
-Date: Fri,  1 Jul 2016 08:42:13 +0200
-Message-ID: <1467355333-8813-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: fix overly long lines
+Date: Fri, 1 Jul 2016 09:50:32 +0200
+Message-ID: <CAMuHMdXYLg7nQ1rTHnuTG2-2J1veApAcizA6j_5-UE1jPs2TPA@mail.gmail.com>
+References: <1748403.xeiuK39ynx@wasted.cogentembedded.com> <6941131.ZKfJHhvm82@wasted.cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:55035 "EHLO
-	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752622AbcGAGmd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Jul 2016 02:42:33 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <6941131.ZKfJHhvm82@wasted.cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: kernel@pengutronix.de, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This uses the same approach that is already used for spi, i2c and
-several other controllers to ensure a consistent numbering independent
-of probe order. This is in use for several gpio drivers that already no=
-w
-use of_alias_get_id(np, "gpio").
+Hi Sergei,
 
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
----
-Hello,
+On Wed, Jun 29, 2016 at 11:20 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> The PORT_GP_CFG_<n>() macros take up more than 80 columns -- and not for
+> a good reason. Make the header file checkpatch.pl-proof at least in this
+> respect...
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Linus requested such a patch as part of a change that introduces
-this mechanism to the gpio-omap driver[1]. IMHO this is better done in =
-a
-separate patch, so here it comes.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Best regards
-Uwe
+But it doesn't apply, due to "pinctrl: sh-pfc: Initial R8A7796 PFC support"
+which was submitted one day earlier.
 
-[1] http://thread.gmane.org/gmane.linux.kernel.gpio/17399/focus=3D17629
+Gr{oetje,eeting}s,
 
- Documentation/devicetree/bindings/gpio/gpio.txt | 18 +++++++++++++++++=
-+
- 1 file changed, 18 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Document=
-ation/devicetree/bindings/gpio/gpio.txt
-index 68d28f62a6f4..5dbacc8f094a 100644
---- a/Documentation/devicetree/bindings/gpio/gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -227,6 +227,24 @@ Example of two SOC GPIO banks defined as gpio-cont=
-roller nodes:
- 		#gpio-cells =3D <2>;
- 	};
-=20
-+Usually the GPIO banks in SoCs are ordered, that is there is a dedicat=
-ed "first
-+gpio bank". To fix this ordering in the device tree use aliases starti=
-ng at 0
-+(even if the first bank is called "GPIO1" in the hardware reference).
-+This is necessary/handy to ensure deterministical numbering of GPIOs a=
-nd GPIO
-+controllers.
-+
-+Example of a machine having 4 GPIO banks.
-+
-+	/ {
-+		aliases {
-+			...
-+			gpio0 =3D &gpio1;
-+			gpio1 =3D &gpio2;
-+			gpio2 =3D &gpio3;
-+			gpio3 =3D &gpio4;
-+		};
-+	};
-+
- 2.1) gpio- and pin-controller interaction
- -----------------------------------------
-=20
---=20
-2.8.1
+                        Geert
 
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
