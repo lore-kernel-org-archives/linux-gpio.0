@@ -1,192 +1,107 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: [PATCH] Revert "gpiolib: Split GPIO flags parsing and GPIO configuration"
-Date: Sun,  3 Jul 2016 18:32:05 +0200
-Message-ID: <1467563525-30227-1-git-send-email-johan@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
+From: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+Subject: [PATCH] pinctrl: sunxi: fix nand0 function name for sun8i
+Date: Mon,  4 Jul 2016 10:29:31 +0800
+Message-ID: <20160704022931.46223-1-icenowy@aosc.xyz>
+Reply-To: icenowy-ymACFijhrKM@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBCZLPFN5Q4OBBJUU465QKGQEEDCW3FQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, k@japko.eu
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This reverts commit 923b93e451db876d1479d3e4458fce14fec31d1c.
+In sun4/5/6/7i, all the pin function related to NAND0 controller is
+named "nand0". However, in sun8i, some of the functions are named as
+"nand". This patch renamed them to "nand0", for the consistency.
 
-Make sure consumers do not overwrite gpio flags for pins that have
-already been claimed.
-
-While adding support for gpio drivers to refuse a request using
-unsupported flags, the order of when the requested flag was checked and
-the new flags were applied was reversed to that consumers could
-overwrite flags for already requested gpios.
-
-This not only affects device-tree setups where two drivers could request
-the same gpio using conflicting configurations, but also allowed user
-space to clear gpio flags for already claimed pins simply by attempting
-to export them through the sysfs interface. By for example clearing the
-FLAG_ACTIVE_LOW flag this way, user space could effectively change the
-polarity of a signal.
-
-Reverting this change obviously prevents gpio drivers from doing sanity
-checks on the flags in their request callbacks. Fortunately only one
-recently added driver (gpio-tps65218 in v4.6) appears to do this, and a
-follow up patch could restore this functionality through a different
-interface.
-
-Cc: stable <stable@vger.kernel.org>	# 4.4
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
 ---
- drivers/gpio/gpiolib-legacy.c |  8 +++----
- drivers/gpio/gpiolib.c        | 52 +++++++++++++------------------------------
- 2 files changed, 20 insertions(+), 40 deletions(-)
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c | 6 +++---
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c | 6 +++---
+ drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c  | 6 +++---
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-legacy.c b/drivers/gpio/gpiolib-legacy.c
-index 3a5c7011ad3b..8b830996fe02 100644
---- a/drivers/gpio/gpiolib-legacy.c
-+++ b/drivers/gpio/gpiolib-legacy.c
-@@ -28,6 +28,10 @@ int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
- 	if (!desc && gpio_is_valid(gpio))
- 		return -EPROBE_DEFER;
- 
-+	err = gpiod_request(desc, label);
-+	if (err)
-+		return err;
-+
- 	if (flags & GPIOF_OPEN_DRAIN)
- 		set_bit(FLAG_OPEN_DRAIN, &desc->flags);
- 
-@@ -37,10 +41,6 @@ int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
- 	if (flags & GPIOF_ACTIVE_LOW)
- 		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
- 
--	err = gpiod_request(desc, label);
--	if (err)
--		return err;
--
- 	if (flags & GPIOF_DIR_IN)
- 		err = gpiod_direction_input(desc);
- 	else
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 570771ed19e6..be74bd370f1f 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1352,14 +1352,6 @@ static int __gpiod_request(struct gpio_desc *desc, const char *label)
- 		spin_lock_irqsave(&gpio_lock, flags);
- 	}
- done:
--	if (status < 0) {
--		/* Clear flags that might have been set by the caller before
--		 * requesting the GPIO.
--		 */
--		clear_bit(FLAG_ACTIVE_LOW, &desc->flags);
--		clear_bit(FLAG_OPEN_DRAIN, &desc->flags);
--		clear_bit(FLAG_OPEN_SOURCE, &desc->flags);
--	}
- 	spin_unlock_irqrestore(&gpio_lock, flags);
- 	return status;
- }
-@@ -2587,28 +2579,13 @@ struct gpio_desc *__must_check gpiod_get_optional(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(gpiod_get_optional);
- 
--/**
-- * gpiod_parse_flags - helper function to parse GPIO lookup flags
-- * @desc:	gpio to be setup
-- * @lflags:	gpio_lookup_flags - returned from of_find_gpio() or
-- *		of_get_gpio_hog()
-- *
-- * Set the GPIO descriptor flags based on the given GPIO lookup flags.
-- */
--static void gpiod_parse_flags(struct gpio_desc *desc, unsigned long lflags)
--{
--	if (lflags & GPIO_ACTIVE_LOW)
--		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
--	if (lflags & GPIO_OPEN_DRAIN)
--		set_bit(FLAG_OPEN_DRAIN, &desc->flags);
--	if (lflags & GPIO_OPEN_SOURCE)
--		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
--}
- 
- /**
-  * gpiod_configure_flags - helper function to configure a given GPIO
-  * @desc:	gpio whose value will be assigned
-  * @con_id:	function within the GPIO consumer
-+ * @lflags:	gpio_lookup_flags - returned from of_find_gpio() or
-+ *		of_get_gpio_hog()
-  * @dflags:	gpiod_flags - optional GPIO initialization flags
-  *
-  * Return 0 on success, -ENOENT if no GPIO has been assigned to the
-@@ -2616,10 +2593,17 @@ static void gpiod_parse_flags(struct gpio_desc *desc, unsigned long lflags)
-  * occurred while trying to acquire the GPIO.
-  */
- static int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
--				 enum gpiod_flags dflags)
-+		unsigned long lflags, enum gpiod_flags dflags)
- {
- 	int status;
- 
-+	if (lflags & GPIO_ACTIVE_LOW)
-+		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
-+	if (lflags & GPIO_OPEN_DRAIN)
-+		set_bit(FLAG_OPEN_DRAIN, &desc->flags);
-+	if (lflags & GPIO_OPEN_SOURCE)
-+		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
-+
- 	/* No particular flag request, return here... */
- 	if (!(dflags & GPIOD_FLAGS_BIT_DIR_SET)) {
- 		pr_debug("no flags found for %s\n", con_id);
-@@ -2686,13 +2670,11 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
- 		return desc;
- 	}
- 
--	gpiod_parse_flags(desc, lookupflags);
--
- 	status = gpiod_request(desc, con_id);
- 	if (status < 0)
- 		return ERR_PTR(status);
- 
--	status = gpiod_configure_flags(desc, con_id, flags);
-+	status = gpiod_configure_flags(desc, con_id, lookupflags, flags);
- 	if (status < 0) {
- 		dev_dbg(dev, "setup of GPIO %s failed\n", con_id);
- 		gpiod_put(desc);
-@@ -2748,6 +2730,10 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 	if (IS_ERR(desc))
- 		return desc;
- 
-+	ret = gpiod_request(desc, NULL);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
- 	if (active_low)
- 		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
- 
-@@ -2758,10 +2744,6 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 			set_bit(FLAG_OPEN_SOURCE, &desc->flags);
- 	}
- 
--	ret = gpiod_request(desc, NULL);
--	if (ret)
--		return ERR_PTR(ret);
--
- 	return desc;
- }
- EXPORT_SYMBOL_GPL(fwnode_get_named_gpiod);
-@@ -2814,8 +2796,6 @@ int gpiod_hog(struct gpio_desc *desc, const char *name,
- 	chip = gpiod_to_chip(desc);
- 	hwnum = gpio_chip_hwgpio(desc);
- 
--	gpiod_parse_flags(desc, lflags);
--
- 	local_desc = gpiochip_request_own_desc(chip, hwnum, name);
- 	if (IS_ERR(local_desc)) {
- 		status = PTR_ERR(local_desc);
-@@ -2824,7 +2804,7 @@ int gpiod_hog(struct gpio_desc *desc, const char *name,
- 		return status;
- 	}
- 
--	status = gpiod_configure_flags(desc, name, dflags);
-+	status = gpiod_configure_flags(desc, name, lflags, dflags);
- 	if (status < 0) {
- 		pr_err("setup of hog GPIO %s (chip %s, offset %d) failed, %d\n",
- 		       name, chip->label, hwnum, status);
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c
+index 55083d2..ce483b0 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c
+@@ -180,17 +180,17 @@ static const struct sunxi_desc_pin sun8i_a23_pins[] = {
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 14),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "nand"),		/* DQ6 */
++		  SUNXI_FUNCTION(0x2, "nand0"),		/* DQ6 */
+ 		  SUNXI_FUNCTION(0x3, "mmc2")),		/* D6 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 15),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "nand"),		/* DQ7 */
++		  SUNXI_FUNCTION(0x2, "nand0"),		/* DQ7 */
+ 		  SUNXI_FUNCTION(0x3, "mmc2")),		/* D7 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 16),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "nand"),		/* DQS */
++		  SUNXI_FUNCTION(0x2, "nand0"),		/* DQS */
+ 		  SUNXI_FUNCTION(0x3, "mmc2")),		/* RST */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 17),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
+index 8b381d6..3040abe 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
+@@ -140,17 +140,17 @@ static const struct sunxi_desc_pin sun8i_a33_pins[] = {
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 14),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "nand"),		/* DQ6 */
++		  SUNXI_FUNCTION(0x2, "nand0"),		/* DQ6 */
+ 		  SUNXI_FUNCTION(0x3, "mmc2")),		/* D6 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 15),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "nand"),		/* DQ7 */
++		  SUNXI_FUNCTION(0x2, "nand0"),		/* DQ7 */
+ 		  SUNXI_FUNCTION(0x3, "mmc2")),		/* D7 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 16),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "nand"),		/* DQS */
++		  SUNXI_FUNCTION(0x2, "nand0"),		/* DQS */
+ 		  SUNXI_FUNCTION(0x3, "mmc2")),		/* RST */
+ 	/* Hole */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 2),
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c
+index 11760bb..26a2ad3 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c
+@@ -219,17 +219,17 @@ static const struct sunxi_desc_pin sun8i_h3_pins[] = {
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 14),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "nand"),		/* DQ6 */
++		  SUNXI_FUNCTION(0x2, "nand0"),		/* DQ6 */
+ 		  SUNXI_FUNCTION(0x3, "mmc2")),		/* D6 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 15),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "nand"),		/* DQ7 */
++		  SUNXI_FUNCTION(0x2, "nand0"),		/* DQ7 */
+ 		  SUNXI_FUNCTION(0x3, "mmc2")),		/* D7 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(C, 16),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "nand"),		/* DQS */
++		  SUNXI_FUNCTION(0x2, "nand0"),		/* DQS */
+ 		  SUNXI_FUNCTION(0x3, "mmc2")),		/* RST */
+ 	/* Hole */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 0),
 -- 
-2.7.3
+2.9.0
