@@ -1,33 +1,35 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: sunxi: fix nand0 function name for sun8i
-Date: Tue, 5 Jul 2016 15:46:41 +0200
-Message-ID: <CACRpkdbp3AENFW8ixHmyCdkpTNH8WMdJtYJ0Wuwbh9NLVrhR_A@mail.gmail.com>
-References: <20160704022931.46223-1-icenowy@aosc.xyz>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] Revert "gpiolib: Split GPIO flags parsing and GPIO configuration"
+Date: Tue, 5 Jul 2016 15:50:52 +0200
+Message-ID: <CACRpkdZQnQEZmvtadVZUE8_XN-w0zrk+aTKvFC-fyA3wrirTmg@mail.gmail.com>
+References: <1467563525-30227-1-git-send-email-johan@kernel.org>
+ <58708801.29lRIIaT3y@avalon> <CACRpkdZFUjFUApC-pZEjw7O54uCeivEvkjEBah_eq1x4nhnv+w@mail.gmail.com>
+ <20160705091220.GC17168@localhost>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBQXU525QKGQEZF665OI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20160704022931.46223-1-icenowy-ymACFijhrKM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Krzysztof Adamski <k@japko.eu>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:33754 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752448AbcGENux (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jul 2016 09:50:53 -0400
+Received: by mail-oi0-f43.google.com with SMTP id u201so229504455oie.0
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Jul 2016 06:50:53 -0700 (PDT)
+In-Reply-To: <20160705091220.GC17168@localhost>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Jul 4, 2016 at 4:29 AM, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org> wrote:
+On Tue, Jul 5, 2016 at 11:12 AM, Johan Hovold <johan@kernel.org> wrote:
 
-> In sun4/5/6/7i, all the pin function related to NAND0 controller is
-> named "nand0". However, in sun8i, some of the functions are named as
-> "nand". This patch renamed them to "nand0", for the consistency.
->
-> Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+> Your call. :)
 
-Patch applied with Maxime's ACK.
+The patch is on my fixes branch and will go to Torvalds
+by the end of the week unless I'm convinced otherwise ...
+
+It turns out the patch is very isolated and doesn't collide with
+any gpio development since 4.4 (which is impressive in itself)
+so reverting is not a problem at all, as I thought earlier.
 
 Yours,
 Linus Walleij
