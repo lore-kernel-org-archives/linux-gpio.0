@@ -1,44 +1,57 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7792: add EtherAVB pin groups
-Date: Tue, 5 Jul 2016 14:00:21 +0300
-Message-ID: <c78b6ffe-9969-85a4-221b-f5adeea724f9@cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
- <1734030.FmmGtJt7OA@wasted.cogentembedded.com>
- <CAMuHMdX9bxt9W_0NxPZn5Hi9314rBuDnecvL2TfqrwKm6r0q6g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] gpio: of: Allow overriding the device node
+Date: Tue,  5 Jul 2016 14:11:14 +0200
+Message-ID: <20160705121114.10650-1-thierry.reding@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:35461 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754824AbcGELAb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jul 2016 07:00:31 -0400
-Received: by mail-lf0-f48.google.com with SMTP id l188so132128898lfe.2
-        for <linux-gpio@vger.kernel.org>; Tue, 05 Jul 2016 04:00:25 -0700 (PDT)
-In-Reply-To: <CAMuHMdX9bxt9W_0NxPZn5Hi9314rBuDnecvL2TfqrwKm6r0q6g@mail.gmail.com>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34316 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751427AbcGEMLS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jul 2016 08:11:18 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello.
+From: Thierry Reding <treding@nvidia.com>
 
-On 7/5/2016 9:57 AM, Geert Uytterhoeven wrote:
+When registering a GPIO chip, drivers can override the device tree node
+associated with the chip by setting the chip's ->of_node field. If set,
+this field is supposed to take precedence over the ->parent->of_node
+field, but the code doesn't actually do that.
 
->> Add the EtherAVB pin groups to the R8A7792 PFC driver.
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> However, you forgot to add the avb_avtp_match group.
-> Is that intentional?
+Commit 762c2e46c059 ("gpio: of: remove of_gpiochip_and_xlate() and
+struct gg_data") exposes this because it now no longer matches on the
+GPIO chip's ->of_node field, but the GPIO device's ->of_node field that
+is set using the procedure described above.
 
-    No, it didn't get created in the original Renesas patch and I forgot about it.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpio/gpiolib.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-> Gr{oetje,eeting}s,
->
->                         Geert
-
-MBR, Sergei
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 47a3cc0e437b..eae7664b2723 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1047,13 +1047,14 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
+ 	if (chip->parent) {
+ 		gdev->dev.parent = chip->parent;
+ 		gdev->dev.of_node = chip->parent->of_node;
+-	} else {
++	}
++
+ #ifdef CONFIG_OF_GPIO
+ 	/* If the gpiochip has an assigned OF node this takes precedence */
+-		if (chip->of_node)
+-			gdev->dev.of_node = chip->of_node;
++	if (chip->of_node)
++		gdev->dev.of_node = chip->of_node;
+ #endif
+-	}
++
+ 	gdev->id = ida_simple_get(&gpio_ida, 0, 0, GFP_KERNEL);
+ 	if (gdev->id < 0) {
+ 		status = gdev->id;
+-- 
+2.8.3
 
