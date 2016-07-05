@@ -1,36 +1,47 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: of: Allow overriding the device node
-Date: Tue, 5 Jul 2016 17:25:15 +0200
-Message-ID: <CACRpkdbAKHy8PjUr-fWToMKu3jZqfhkQHahQRfw6EFxqNYfY0w@mail.gmail.com>
-References: <20160705121114.10650-1-thierry.reding@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7792: add EtherAVB pin groups
+Date: Tue, 5 Jul 2016 17:46:06 +0200
+Message-ID: <CAMuHMdXWJVBt7=b46cyz_Gzh4QQDDPGa72HoXupNvR9NCc03tA@mail.gmail.com>
+References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com> <1734030.FmmGtJt7OA@wasted.cogentembedded.com>
+ <CAMuHMdX9bxt9W_0NxPZn5Hi9314rBuDnecvL2TfqrwKm6r0q6g@mail.gmail.com> <CACRpkdb3QSU_6HJR8kLtQ5t4wnH7mkAs-C=Mxz+suggDW+UxYQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160705121114.10650-1-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdb3QSU_6HJR8kLtQ5t4wnH7mkAs-C=Mxz+suggDW+UxYQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 5, 2016 at 2:11 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
+Hi Linus,
 
-> From: Thierry Reding <treding@nvidia.com>
+On Tue, Jul 5, 2016 at 4:54 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Jul 5, 2016 at 8:57 AM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> Hi Sergei,
+>>
+>> On Mon, Jul 4, 2016 at 9:52 PM, Sergei Shtylyov
+>> <sergei.shtylyov@cogentembedded.com> wrote:
+>>> Add the EtherAVB pin groups to the R8A7792 PFC driver.
+>>>
+>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 >
-> When registering a GPIO chip, drivers can override the device tree node
-> associated with the chip by setting the chip's ->of_node field. If set,
-> this field is supposed to take precedence over the ->parent->of_node
-> field, but the code doesn't actually do that.
+> Should I just apply it?
 >
-> Commit 762c2e46c059 ("gpio: of: remove of_gpiochip_and_xlate() and
-> struct gg_data") exposes this because it now no longer matches on the
-> GPIO chip's ->of_node field, but the GPIO device's ->of_node field that
-> is set using the procedure described above.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> It's late in the kernel cycle but I do not mind stuff like
+> this so much.
 
-Thanks for catching this, patch applied with Alexandre's ACK.
+You can't, as I haven't send a pull request for the initial r8a7792 support yet,
+so this patch won't apply ;-)
 
-Masahiro: does this look all right to you?
+Gr{oetje,eeting}s,
 
-Yours,
-Linus Walleij
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
