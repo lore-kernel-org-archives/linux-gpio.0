@@ -1,35 +1,94 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] Revert "gpiolib: Split GPIO flags parsing and GPIO configuration"
-Date: Tue, 5 Jul 2016 15:50:52 +0200
-Message-ID: <CACRpkdZQnQEZmvtadVZUE8_XN-w0zrk+aTKvFC-fyA3wrirTmg@mail.gmail.com>
-References: <1467563525-30227-1-git-send-email-johan@kernel.org>
- <58708801.29lRIIaT3y@avalon> <CACRpkdZFUjFUApC-pZEjw7O54uCeivEvkjEBah_eq1x4nhnv+w@mail.gmail.com>
- <20160705091220.GC17168@localhost>
+From: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Subject: Re: [PATCH 2/3] pinctrl: Add STM32F746 MCU support
+Date: Tue, 5 Jul 2016 10:02:18 -0400
+Message-ID: <20160705140218.GD26134@windriver.com>
+References: <1467726017-20041-1-git-send-email-alexandre.torgue@st.com>
+ <1467726017-20041-3-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:33754 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752448AbcGENux (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jul 2016 09:50:53 -0400
-Received: by mail-oi0-f43.google.com with SMTP id u201so229504455oie.0
-        for <linux-gpio@vger.kernel.org>; Tue, 05 Jul 2016 06:50:53 -0700 (PDT)
-In-Reply-To: <20160705091220.GC17168@localhost>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1467726017-20041-3-git-send-email-alexandre.torgue-qxv4g6HH51o@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Jul 5, 2016 at 11:12 AM, Johan Hovold <johan@kernel.org> wrote:
+[[PATCH 2/3] pinctrl: Add STM32F746 MCU support] On 05/07/2016 (Tue 15:40) Alexandre TORGUE wrote:
 
-> Your call. :)
+> From: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> 
+> This patch which adds STM32F746 pinctrl and GPIO support, relies on the
+> generic STM32 pinctrl driver.
+> 
+> Signed-off-by: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
+> 
+> diff --git a/drivers/pinctrl/stm32/Kconfig b/drivers/pinctrl/stm32/Kconfig
+> index 0f28841..4c40dae 100644
+> --- a/drivers/pinctrl/stm32/Kconfig
+> +++ b/drivers/pinctrl/stm32/Kconfig
+> @@ -13,4 +13,10 @@ config PINCTRL_STM32F429
+>  	default MACH_STM32F429
+>  	select PINCTRL_STM32
+>  
+> +config PINCTRL_STM32F746
+> +	bool "STMicroelectronics STM32F746 pin control" if COMPILE_TEST && !MACH_STM32F746
+        ^^^^
 
-The patch is on my fixes branch and will go to Torvalds
-by the end of the week unless I'm convinced otherwise ...
+> +	depends on OF
+> +	default MACH_STM32F746
+> +	select PINCTRL_STM32
+> +
+> +	),
+> +};
+> +
 
-It turns out the patch is very isolated and doesn't collide with
-any gpio development since 4.4 (which is impressive in itself)
-so reverting is not a problem at all, as I thought earlier.
+[...]
 
-Yours,
-Linus Walleij
+> +static const struct of_device_id stm32f746_pctrl_match[] = {
+> +	{
+> +		.compatible = "st,stm32f746-pinctrl",
+> +		.data = &stm32f746_match_data,
+> +	},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, stm32f746_pctrl_match);
+  ^^^^^^^^^^^^^^^^^^^^
+
+> +
+> +static struct platform_driver stm32f746_pinctrl_driver = {
+> +	.probe = stm32_pctl_probe,
+> +	.driver = {
+> +		.name = "stm32f746-pinctrl",
+> +		.of_match_table = stm32f746_pctrl_match,
+> +	},
+> +};
+> +
+> +static int __init stm32f746_pinctrl_init(void)
+> +{
+> +	return platform_driver_register(&stm32f746_pinctrl_driver);
+> +}
+> +
+> +module_init(stm32f746_pinctrl_init);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("STM32F746 Pinctrl Driver");
+> +MODULE_AUTHOR("Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>");
+
+...and here as well.  Please don't use modular support functions and
+infrastructure for code that is only built-in.  Either make sure it can
+be modular and use a tristate Kconfig, or delete all the MODULE_<tags>
+and use device_initcall() to register the driver.
+
+Thanks,
+Paul.
+--
+
+> -- 
+> 1.9.1
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
