@@ -1,46 +1,34 @@
-From: Keerthy <a0393675@ti.com>
-Subject: Re: [PATCH v5 3/3] gpio: lp873x: Add support for General Purpose
- Outputs
-Date: Tue, 5 Jul 2016 10:19:16 +0530
-Message-ID: <577B3C4C.1090008@ti.com>
-References: <1467215067-6486-1-git-send-email-j-keerthy@ti.com>
- <1467215067-6486-4-git-send-email-j-keerthy@ti.com>
- <CACRpkdZ-gcedMc53V8LZm3vhhd+n0PPudF_fSd_5kSmKX3obkg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: Tree for Jun 27 (pinctrl && !CONFIG_OF)
+Date: Tue, 5 Jul 2016 08:48:53 +0200
+Message-ID: <CACRpkdbh8Z9UFWvq3jjoQayfhq7mYCoA_mkyH-MLrY5nrEfB5Q@mail.gmail.com>
+References: <20160627163939.20e454d5@canb.auug.org.au> <57716D3D.4070302@infradead.org>
+ <CACRpkdb2a=7QhW5A7yucC-DPo4NmNNcd3NcOznVtk0+8XMtbHA@mail.gmail.com> <577A8AE9.3010807@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:56589 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750840AbcGEEt1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jul 2016 00:49:27 -0400
-In-Reply-To: <CACRpkdZ-gcedMc53V8LZm3vhhd+n0PPudF_fSd_5kSmKX3obkg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+In-Reply-To: <577A8AE9.3010807@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Linus Torvalds <torvalds@linux-foundation.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Keerthy <j-keerthy@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Lee Jones <lee.jones@linaro.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>
 
+On Mon, Jul 4, 2016 at 6:12 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
 
+>> I merged it I think, Alex made a long series enabling compile
+>> testing and I started to cherry-pick the first commits to let
+>> them trickle in.
+>
+> I guess that when you do a git pull of a series of patches, you
+> sign the pull commit but not each patch in the series?
+> That could explain it.
 
-On Monday 04 July 2016 04:52 PM, Linus Walleij wrote:
-> On Wed, Jun 29, 2016 at 5:44 PM, Keerthy <j-keerthy@ti.com> wrote:
->
->> Add driver for lp873x PMIC family GPOs. Two GPOs are supported
->> and can be configured in Open-drain output or Push-pull output.
->>
->> Signed-off-by: Keerthy <j-keerthy@ti.com>
->
-> Looks all right to me.
->
->> +#include <linux/mfd/lp873x.h>
->
-> I guess this means Lee must merge this.
->
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+I think I cherry-picked it actually. But yeah.
 
-Thanks Linus!
+> I agree with Arnd that this particular commit should be reverted
+> (1e4a80640338924b9f9fd7a121ac31d08134410a).
 
->
-> Yours,
-> Linus Walleij
->
+I've reverted it for fixes.
+
+Yours,
+Linus Walleij
