@@ -1,83 +1,57 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: document how to order GPIO controllers
-Date: Wed, 6 Jul 2016 14:34:39 +0200
-Message-ID: <CACRpkdZhx3yTbtuj-ZTP+mtUSr4uxL4bHtu8jVZOoxrUy6=iYw@mail.gmail.com>
-References: <1467355333-8813-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <20160705140546.GA10601@rob-hp-laptop> <20160705180447.GP16643@pengutronix.de>
- <CACRpkdbH+KRXbxFdfyAE44fBNctK4cWV+KRLwQBTzSGLvLMEDg@mail.gmail.com> <20160706102750.GH23470@localhost>
+Subject: Re: [PATCH v2] gpio: convince line to become input in irq helper
+Date: Wed, 6 Jul 2016 14:38:51 +0200
+Message-ID: <CACRpkdaVa_NXv5FokcTxKxXfekp=aaE3QM1pe3+49ErTwbJHVQ@mail.gmail.com>
+References: <1466630758-26231-1-git-send-email-linus.walleij@linaro.org>
+ <CAMuHMdXVEjyctU88-u=FJcY0AwLKvFxdizkPTTjt_X=xM_H6UQ@mail.gmail.com>
+ <CACRpkdZpRSrt4u_h11ROavVFZDh6OYJ49gJ6eD0y4gGuOxzMYg@mail.gmail.com> <577CCA48.7090003@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:35497 "EHLO
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:33359 "EHLO
 	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752001AbcGFMel (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2016 08:34:41 -0400
-Received: by mail-oi0-f52.google.com with SMTP id r2so268511591oih.2
-        for <linux-gpio@vger.kernel.org>; Wed, 06 Jul 2016 05:34:41 -0700 (PDT)
-In-Reply-To: <20160706102750.GH23470@localhost>
+	with ESMTP id S1754078AbcGFMix (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2016 08:38:53 -0400
+Received: by mail-oi0-f52.google.com with SMTP id u201so268120949oie.0
+        for <linux-gpio@vger.kernel.org>; Wed, 06 Jul 2016 05:38:53 -0700 (PDT)
+In-Reply-To: <577CCA48.7090003@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Rob Herring <robh@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, =?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-On Wed, Jul 6, 2016 at 12:27 PM, Johan Hovold <johan@kernel.org> wrote:
-> On Wed, Jul 06, 2016 at 11:34:37AM +0200, Linus Walleij wrote:
+On Wed, Jul 6, 2016 at 11:07 AM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
->> I *THINK* the view of the device core maintainers is that udev
->> and sysfs hierarchies should be used to uniquely identify a certain
->> device, and that relying on device numbering is too fragile.
+> first of all for slow GPIO controllers (like pcf857x) it might be unsafe to call
+> .direction_input() from .irq_request_resources() callback because it
+> will be called in atomic context under raw_spin_lock_irqsave().
 >
-> I thought the whole idea (or at least a large part of) the new
-> user-space interface was to allow lookups by line names precisely in
-> order not to have to rely on gpio numbers, which may not only change
-> between boots, but also between hardware revisions, etc.
+>
+> __setup_irq
+>    |- raw_spin_lock_irqsave()
+>         |- irq_request_resources()
+>         |- [ __irq_set_trigger() ]
+>         |- [ irq_startup() ]
+>         |- [ __enable_irq() ]
+>    |- raw_spin_unlock_irqrestore()
+>
+> [and it can be unsafe for fast GPIO chips also ;( , for example if it's
+> required to do some kind of PM management actions before accessing HW - most of
+> drivers expect their GPIOchip callbacks to be called only after gpiochip.request() or
+> .irq_startup().]
+>
+> In  my opinion this change breaks orthogonality of IRQchip vs GPIOchip interfaces
+> because it adds and (what is more important) hides call of GPIOchip callback
+> from inside IRQchip interface somewhere in  the depths of gpiolib framework.
+> As result, GPIO drivers lose possibility to properly handle GPIO vs IRQ interface's
+> differences like: locking, slow vs fast, hw specific settings, features of frameworks.
+>
+> I propose to revert it, sry,
 
-That is true for the individual pins, but not the device names.
-Devices are just names gpiochipN where N is the instance
-number. Topological info on the device can be found in sysfs.
+Aw typical, you are right.
 
-The discussion here pertaining to the new chardev is just about
-the intuitiveness of the number N, whether it should be
-"whatever" or something predictable.
-
-For the purpose of picking a certain named GPIO line (see below)
-knowing this number is unnecessary. To that mechanism all gpio
-chips are equal and the instance number does not matter.
-
-> What's wrong with naming the pins in DT and use that for lookups?
-
-That works. It relies on the developers using sane naming conventions
-though. (This problem is prevalent everywhere I guess, a human problem,
-not a technical one.) I made this patch:
-http://marc.info/?l=linux-arm-kernel&m=146672328215354&w=2
-
-There is a standard document for these boards (96board) specifying
-the names of the GPIO lines to be "GPIO-A" thru "GPIO-L".
-
-So a user can iterate across the gpiochips (as is done in lsgpio)
-and pick the lines with the right names.
-
-This works fine, given you have such conventions or equal.
-
-I.e. the person writing the DTS file naming the lines must not
-be a complete lunatic.
-
-I can think of scenarios where bad use can make things problematic:
-i.e. name two lines the same thing, albeit on different GPIO chips.
-That is currently allowed, and if that happens, the user must
-use topological information about the gpiochip (from sysfs) to
-uniquely identify the GPIO line.
-
-I wouldn't recommend that since it is essentially inventing a
-problem for oneself to solve, but I don't know what reasons
-people may have to do something like that. There is no technical
-problem with it.
-
-> I've been too busy with other stuff this spring to follow the new
-> user-space interface development, but I assume that this had been taken
-> into account in the design?
-
-I think so...
+OK I'll take this patch and it's fixes out of the GPIO tree :(
 
 Yours,
 Linus Walleij
