@@ -1,43 +1,59 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] pinctrl: imx21: include linux/module.h
-Date: Wed,  6 Jul 2016 14:52:40 +0200
-Message-ID: <20160706125254.1663066-1-arnd@arndb.de>
+Subject: [PATCH] gpio: tegra: don't auto-enable for COMPILE_TEST
+Date: Wed,  6 Jul 2016 14:54:03 +0200
+Message-ID: <20160706125424.1687264-1-arnd@arndb.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.75]:58292 "EHLO
+Received: from mout.kundenserver.de ([212.227.126.131]:51229 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753932AbcGFMtz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2016 08:49:55 -0400
+	with ESMTP id S1753282AbcGFMvQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2016 08:51:16 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Paul Gortmaker <paul.gortmaker@windriver.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Alexander Stein <alexanders83@web.de>, Arnd Bergmann <arnd@arndb.de>, William Breathitt Gray <vilhelm.gray@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The pinctrl driver includes a device table, but the macro used for
-declaring it is declared in a header that is not visible here:
+I stumbled over a build error with COMPILE_TEST and CONFIG_OF
+disabled:
 
-drivers/pinctrl/freescale/pinctrl-imx21.c:328:1: error: data definition has no type or storage class [-Werror]
- MODULE_DEVICE_TABLE(of, imx21_pinctrl_of_match);
+drivers/gpio/gpio-tegra.c: In function 'tegra_gpio_probe':
+drivers/gpio/gpio-tegra.c:603:9: error: 'struct gpio_chip' has no member named 'of_node'
 
-This adds the missing include.
+The problem is that the newly added GPIO_TEGRA Kconfig symbol
+does not have a dependency on CONFIG_OF. However, there is another
+problem here as the driver gets enabled unconditionally whenever
+COMPILE_TEST is set.
+
+This fixes both problems, by making the symbol user-visible
+when COMPILE_TEST is set and default-enabled for ARCH_TEGRA=y.
+
+As a side-effect, it is now possible to compile-test a Tegra
+kernel with GPIO support disabled, which is harmless.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: e2756baa4217 ("pinctrl: imx21: make it explicitly non-modular")
+Fixes: 4dd4dd1d2120 ("gpio: tegra: Allow compile test")
 ---
- drivers/pinctrl/freescale/pinctrl-imx21.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/Kconfig | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx21.c b/drivers/pinctrl/freescale/pinctrl-imx21.c
-index b9f9b3b8eeb1..8cf33d608164 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx21.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx21.c
-@@ -13,6 +13,7 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pinctrl/pinctrl.h>
-+#include <linux/module.h>
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 681c2dcd697b..513a3d174706 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -402,9 +402,12 @@ config GPIO_TB10X
+ 	select OF_GPIO
  
- #include "pinctrl-imx1.h"
+ config GPIO_TEGRA
+-	bool
+-	default y
++	bool "NVIDIA Tegra GPIO support"
++	default ARCH_TEGRA
+ 	depends on ARCH_TEGRA || COMPILE_TEST
++	depends on OF
++	help
++	  Say yes here to support GPIO pins on NVIDIA Tegra SoCs.
  
+ config GPIO_TS4800
+ 	tristate "TS-4800 DIO blocks and compatibles"
 -- 
 2.9.0
 
