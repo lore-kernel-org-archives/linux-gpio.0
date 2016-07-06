@@ -1,39 +1,69 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] gpio: rcar: document R8A7792 support
-Date: Wed, 06 Jul 2016 00:53:53 +0300
-Message-ID: <1977343.FhZjzuj3ub@wasted.cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] gpio: of: Allow overriding the device node
+Date: Wed, 6 Jul 2016 10:05:52 +0900
+Message-ID: <CAK7LNATyxRmOQb69ZM9kHF+FibSZSmHU1bJAzSM_CGrXgfjJEw@mail.gmail.com>
+References: <20160705121114.10650-1-thierry.reding@gmail.com> <CACRpkdbAKHy8PjUr-fWToMKu3jZqfhkQHahQRfw6EFxqNYfY0w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, gnurou@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:39020 "EHLO
+	conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751252AbcGFBGE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jul 2016 21:06:04 -0400
+In-Reply-To: <CACRpkdbAKHy8PjUr-fWToMKu3jZqfhkQHahQRfw6EFxqNYfY0w@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Renesas R8A7792 SoC is a member of the R-Car gen2 family that is supported
-by  the Renesas R-Car GPIO driver.
+Hi.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+2016-07-06 0:25 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Tue, Jul 5, 2016 at 2:11 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+>> From: Thierry Reding <treding@nvidia.com>
+>>
+>> When registering a GPIO chip, drivers can override the device tree node
+>> associated with the chip by setting the chip's ->of_node field. If set,
+>> this field is supposed to take precedence over the ->parent->of_node
+>> field, but the code doesn't actually do that.
+>>
+>> Commit 762c2e46c059 ("gpio: of: remove of_gpiochip_and_xlate() and
+>> struct gg_data") exposes this because it now no longer matches on the
+>> GPIO chip's ->of_node field, but the GPIO device's ->of_node field that
+>> is set using the procedure described above.
+>>
+>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>
+> Thanks for catching this, patch applied with Alexandre's ACK.
+>
+> Masahiro: does this look all right to you?
 
----
-The patch is against the 'devel' branch of Linus Walleij's 'linux-gpio.git'
-repo.
+Yes.
+Now, the code matches to the comment.  Nice!
 
- Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt |    1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Index: linux-gpio/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-===================================================================
---- linux-gpio.orig/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ linux-gpio/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -7,6 +7,7 @@ Required Properties:
-     - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO controller.
-     - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO controller.
-     - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2-W) compatible GPIO controller.
-+    - "renesas,gpio-r8a7792": for R8A7792 (R-Car V2H) compatible GPIO controller.
-     - "renesas,gpio-r8a7793": for R8A7793 (R-Car M2-N) compatible GPIO controller.
-     - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
-     - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
+
+Question:
+
+When we reference the node of gpiochip,
+we should use
+  chip->gpiodev->dev->of_node
+
+instead of
+  chip->of_node
+
+because we can make chip->of_node optional
+as long as chip->parent is set in the probe method.
+
+Correct?
+
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
