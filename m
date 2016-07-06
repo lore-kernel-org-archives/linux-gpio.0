@@ -1,115 +1,47 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: document how to order GPIO controllers
-Date: Wed, 6 Jul 2016 11:34:37 +0200
-Message-ID: <CACRpkdbH+KRXbxFdfyAE44fBNctK4cWV+KRLwQBTzSGLvLMEDg@mail.gmail.com>
-References: <1467355333-8813-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <20160705140546.GA10601@rob-hp-laptop> <20160705180447.GP16643@pengutronix.de>
+From: Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: [PATCH v2] Add STM32F746 MCU pinctrl support
+Date: Wed, 6 Jul 2016 11:46:57 +0200
+Message-ID: <1467798418-12124-1-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:32891 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751900AbcGFJej convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2016 05:34:39 -0400
-Received: by mail-oi0-f48.google.com with SMTP id u201so263240579oie.0
-        for <linux-gpio@vger.kernel.org>; Wed, 06 Jul 2016 02:34:38 -0700 (PDT)
-In-Reply-To: <20160705180447.GP16643@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Patrice Chotard <patrice.chotard@st.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Jul 5, 2016 at 8:04 PM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> [Rob]:
+This series adds STM32F746 pinctrl and GPIO support, relies on the
+generic STM32 pinctrl driver.
 
->> Like SPI and I2C, I'm against further abuse of aliases for this purp=
-ose
->> [1].
+I only send a V2 for this patch as others have already been taken by Linus in
+V1.
 
-So what about the usecase for serial ports, where we use this
-to make sure the console come out where we want it? Is that
-also considered abuse or legitimate use? Note: I'm not trying to be
-snarky, I'm trying to understand what is the right and wrong use
-of alias. I'm confused about it right now :(
+Changes since v1:
 
->> Why is deterministic numbering needed?
+Thanks to Paul Gortmaker remarks, remove all modular API as this driver is only
+built-in one.
 
-This is the big question, we all agree on that.
+Regards
 
-> in my case (with a pre 4.8 kernel) it's to control GPIO48 with
-> /sys/class/gpio/gpio48.
+Alex
 
-That is understandable. However as many people have pointed
-out, if this is inherently broken since the introduction of
-off-chip devices and even more by deferred probing. For some
-odd silicon state making one GPIO's clock or something randomly
-defer the probe, this would happen to become unpredictable
-also on SoC-embedded GPIO chips. It's just that we don't see
-it very much because it is deterministic in practice.
+Alexandre TORGUE (1):
+  pinctrl: Add STM32F746 MCU support
 
-We need to face it: relying on fixed GPIO numbering is just a
-big fragile mess that we're trying to duct-tape.
+ drivers/pinctrl/stm32/Kconfig             |    6 +
+ drivers/pinctrl/stm32/Makefile            |    2 +
+ drivers/pinctrl/stm32/pinctrl-stm32f746.c | 1686 +++++++++++++++++++++++++++++
+ 3 files changed, 1694 insertions(+)
+ create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32f746.c
 
-> But also when using the gpio chardev device
-> (that will hit 4.8-rc1 AFAIK) there is one device file per gpio chip.
-
-Yeah and the argument is that the numbering also of the chip
-instance should be made more deterministic, so gpiochip0,
-gpiochip1 ... gpiochipN are intuitive to a human user.
-
-> root@hostname:/sys/bus/gpio/devices ls -l
-> lrwxrwxrwx    1 root     root             0 Jul  5 20:52 gpiochip0 ->=
- ../../../devices/platform/soc/53f00000.aips/53f9c000.gpio/gpiochip0
-> lrwxrwxrwx    1 root     root             0 Jul  5 20:52 gpiochip1 ->=
- ../../../devices/platform/soc/53f00000.aips/53fa4000.gpio/gpiochip1
-> lrwxrwxrwx    1 root     root             0 Jul  5 20:52 gpiochip2 ->=
- ../../../devices/platform/soc/53f00000.aips/53fcc000.gpio/gpiochip2
-> lrwxrwxrwx    1 root     root             0 Jul  5 20:52 gpiochip3 ->=
- ../../../devices/platform/soc/53f00000.aips/53fd0000.gpio/gpiochip3
->
-> That is we have:
->
->         Hardware name | software gpiochip
->             GPIO4     |      gpiochip0
->             GPIO3     |      gpiochip1
->             GPIO1     |      gpiochip2
->             GPIO2     |      gpiochip3
->
-> I bet that's the probe order because when sorted by address (and so
-> by order in the device tree) we have exactly this ordering. (Compare
-> with $(grep gpio@ arch/arm/boot/dts/imx25.dtsi).)
-
-That is super-unintuitive for a human user, I agree 100%.
-
-> For a new interface this is OK, still I predict users will complain i=
-f
-> the numbers used don't match naturally the hardware names. And IMHO t=
-hey
-> are right.
-
-I agree, and I think that if aliases can alleviate the situation we sho=
-uld
-allow them and encourage them. They are the best duct-tape we can
-find for the DT systems.
-
-Unfortunately it is not my call, because DT bindings and alias use
-is not under my jurisdiction.
-
-I *THINK* the view of the device core maintainers is that udev
-and sysfs hierarchies should be used to uniquely identify a certain
-device, and that relying on device numbering is too fragile.
-
-The network and disks people faced this problem before us, and
-their solution was things like using sysfs/udev to make sure
-the device get presented the right way to userspace and
-handled the way it should.
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+1.9.1
