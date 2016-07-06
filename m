@@ -1,48 +1,35 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH] pinctrl: imx21: Remove the MODULE_DEVICE_TABLE() macro
-Date: Wed, 6 Jul 2016 10:38:18 -0400
-Message-ID: <20160706143818.GG26134@windriver.com>
+Date: Wed, 6 Jul 2016 16:52:20 +0200
+Message-ID: <CACRpkdbzfC1vjPapEQOKZncmmZdqDBLxoZaLv+m4uybgKbkQcw@mail.gmail.com>
 References: <1467811517-20187-1-git-send-email-festevam@gmail.com>
- <CACRpkdapf3uLXU9gWfVc_DpHVPVbiDozEvbpaRxOu8G9tLGiQg@mail.gmail.com>
+ <CACRpkdapf3uLXU9gWfVc_DpHVPVbiDozEvbpaRxOu8G9tLGiQg@mail.gmail.com> <20160706143818.GG26134@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:36737 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753825AbcGFOi3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2016 10:38:29 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdapf3uLXU9gWfVc_DpHVPVbiDozEvbpaRxOu8G9tLGiQg@mail.gmail.com>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:36197 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753650AbcGFOwW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2016 10:52:22 -0400
+Received: by mail-oi0-f47.google.com with SMTP id f189so273843901oig.3
+        for <linux-gpio@vger.kernel.org>; Wed, 06 Jul 2016 07:52:21 -0700 (PDT)
+In-Reply-To: <20160706143818.GG26134@windriver.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
 Cc: Fabio Estevam <festevam@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-[Re: [PATCH] pinctrl: imx21: Remove the MODULE_DEVICE_TABLE() macro] On 06/07/2016 (Wed 15:42) Linus Walleij wrote:
+n Wed, Jul 6, 2016 at 4:38 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 
-> On Wed, Jul 6, 2016 at 3:25 PM, Fabio Estevam <festevam@gmail.com> wrote:
-> 
-> > Commit e2756baa4217 ("pinctrl: imx21: make it explicitly non-modular")
-> > missed the removal of the MODULE_DEVICE_TABLE() macro causing the
-> > following build error:
-> >
-> > drivers/pinctrl/freescale/pinctrl-imx21.c:328:1: error: data definition has no type or storage class [-Werror]
-> >  MODULE_DEVICE_TABLE(of, imx21_pinctrl_of_match);
-> >
-> > ,so remove the macro to fix this problem.
-> >
-> > Reported-by: Arnd Bergmann <arnd@arndb.de>
-> > Signed-off-by: Fabio Estevam <festevam@gmail.com>
-> 
-> Patch applied with Arnd's ACK.
+>> Patch applied with Arnd's ACK.
+>
+> Thanks and sorry this one snuck through.  I'm going to add walking all
+> the various defconfigs to my build coverage akin to what linux-next does
+> overnight.  It seems the allmodconfig builds didn't hit this file...
 
-Thanks and sorry this one snuck through.  I'm going to add walking all
-the various defconfigs to my build coverage akin to what linux-next does
-overnight.  It seems the allmodconfig builds didn't hit this file...
+Don't worry. I'm a big fan of your work on cleaning up this mess and
+surely I'm ready to do my part of making it happen.
 
-Paul.
---
-
-> 
-> Yours,
-> Linus Walleij
+Yours,
+Linus Walleij
