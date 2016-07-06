@@ -1,59 +1,48 @@
-From: Jan =?ISO-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>
-Subject: Permissions for GPIOs [Was: [PATCH] gpio: document how to order
- GPIO controllers]
-Date: Wed, 06 Jul 2016 16:12:14 +0200
-Message-ID: <1467814334.2472.154.camel@pengutronix.de>
-References: <1467355333-8813-1-git-send-email-u.kleine-koenig@pengutronix.de>
-	 <20160705140546.GA10601@rob-hp-laptop>
-	 <20160705180447.GP16643@pengutronix.de>
-	 <CACRpkdbH+KRXbxFdfyAE44fBNctK4cWV+KRLwQBTzSGLvLMEDg@mail.gmail.com>
-	 <20160706102750.GH23470@localhost>
-	 <CACRpkdZhx3yTbtuj-ZTP+mtUSr4uxL4bHtu8jVZOoxrUy6=iYw@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH] pinctrl: imx21: Remove the MODULE_DEVICE_TABLE() macro
+Date: Wed, 6 Jul 2016 10:38:18 -0400
+Message-ID: <20160706143818.GG26134@windriver.com>
+References: <1467811517-20187-1-git-send-email-festevam@gmail.com>
+ <CACRpkdapf3uLXU9gWfVc_DpHVPVbiDozEvbpaRxOu8G9tLGiQg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:48833 "EHLO
-	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751834AbcGFOMZ convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 6 Jul 2016 10:12:25 -0400
-In-Reply-To: <CACRpkdZhx3yTbtuj-ZTP+mtUSr4uxL4bHtu8jVZOoxrUy6=iYw@mail.gmail.com>
+Received: from mail1.windriver.com ([147.11.146.13]:36737 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753825AbcGFOi3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2016 10:38:29 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdapf3uLXU9gWfVc_DpHVPVbiDozEvbpaRxOu8G9tLGiQg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Fabio Estevam <festevam@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mi, 2016-07-06 at 14:34 +0200, Linus Walleij wrote:
-> On Wed, Jul 6, 2016 at 12:27 PM, Johan Hovold <johan@kernel.org> wrote:
-> > What's wrong with naming the pins in DT and use that for lookups?
+[Re: [PATCH] pinctrl: imx21: Remove the MODULE_DEVICE_TABLE() macro] On 06/07/2016 (Wed 15:42) Linus Walleij wrote:
+
+> On Wed, Jul 6, 2016 at 3:25 PM, Fabio Estevam <festevam@gmail.com> wrote:
 > 
-> That works. It relies on the developers using sane naming conventions
-> though. (This problem is prevalent everywhere I guess, a human problem,
-> not a technical one.) I made this patch:
-> http://marc.info/?l=linux-arm-kernel&m=146672328215354&w=2
+> > Commit e2756baa4217 ("pinctrl: imx21: make it explicitly non-modular")
+> > missed the removal of the MODULE_DEVICE_TABLE() macro causing the
+> > following build error:
+> >
+> > drivers/pinctrl/freescale/pinctrl-imx21.c:328:1: error: data definition has no type or storage class [-Werror]
+> >  MODULE_DEVICE_TABLE(of, imx21_pinctrl_of_match);
+> >
+> > ,so remove the macro to fix this problem.
+> >
+> > Reported-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Fabio Estevam <festevam@gmail.com>
 > 
-> There is a standard document for these boards (96board) specifying
-> the names of the GPIO lines to be "GPIO-A" thru "GPIO-L".
+> Patch applied with Arnd's ACK.
+
+Thanks and sorry this one snuck through.  I'm going to add walking all
+the various defconfigs to my build coverage akin to what linux-next does
+overnight.  It seems the allmodconfig builds didn't hit this file...
+
+Paul.
+--
+
 > 
-> So a user can iterate across the gpiochips (as is done in lsgpio)
-> and pick the lines with the right names.
-
-This discussion caused me remember a concern regarding the chardev
-interface: Is it still be possible to give specific users/groups access
-to individual GPIOs? This is currently possible in the sysfs interface
-with chown/chmod. I don't see how per-GPIO permissions would translate
-to a per-gpiochip device.
-
-Am I overlooking some better way to give non-root users granular access
-to GPIOs? Or is that intentionally out of scope for the chardev
-interface?
-
-Yours,
-Jan
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
+> Yours,
+> Linus Walleij
