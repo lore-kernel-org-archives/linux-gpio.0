@@ -1,67 +1,57 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/2] gpio: intel-mid: Sort header block alphabetically
-Date: Wed,  6 Jul 2016 12:50:13 +0300
-Message-ID: <1467798613-70389-2-git-send-email-andriy.shevchenko@linux.intel.com>
-References: <1467798613-70389-1-git-send-email-andriy.shevchenko@linux.intel.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v4] gpio: add Intel WhiskeyCove GPIO driver
+Date: Wed, 6 Jul 2016 13:07:15 +0300
+Message-ID: <20160706100715.GA23527@lahna.fi.intel.com>
+References: <20160627235616.GA9303@worksta>
+ <CACRpkdZJ0AUWmxLApzryCZbQcQmwWO1A-NLMP46WsLkJBZgprQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:29938 "EHLO mga02.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:48514 "EHLO mga01.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752644AbcGFJuS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 6 Jul 2016 05:50:18 -0400
-In-Reply-To: <1467798613-70389-1-git-send-email-andriy.shevchenko@linux.intel.com>
+	id S1751108AbcGFKHV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 6 Jul 2016 06:07:21 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZJ0AUWmxLApzryCZbQcQmwWO1A-NLMP46WsLkJBZgprQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, David Cohen <david.a.cohen@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bin Gao <bin.gao@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Yegnesh S Iyer <yegnesh.s.iyer@intel.com>, Bin Gao <bin.gao@intel.com>
 
-Sort the header inclusion lines by alphabetical order.
+On Wed, Jul 06, 2016 at 10:57:19AM +0200, Linus Walleij wrote:
+> On Tue, Jun 28, 2016 at 1:56 AM, Bin Gao <bin.gao@linux.intel.com> wrote:
+> 
+> > This patch introduces a separate GPIO driver for Intel WhiskeyCove PMIC.
+> > This driver is based on gpio-crystalcove.c.
+> >
+> > Signed-off-by: Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>
+> > Signed-off-by: Bin Gao <bin.gao@intel.com>
+> > ---
+> > Changes in v4:
+> >  - Converted CTLI_INTCNT_XX macros to less verbose ones INT_DETECT_XX.
+> >  - Add comments about why there is no .pm for the driver.
+> >  - Header files re-ordered.
+> >  - Various coding style change to address Andy's comments.
+> 
+> Mika can I have your ACK/review tag on this driver so I can merge it?
+> I prefer to have all Intel stuff bearing your seal of approval.
 
-While here, update Intel Copyright.
+Thanks for your trust :)
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-intel-mid.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+I don't have much comments in addition to what you already pointed out.
+I'll just wait for the next revision and give my ack then.
 
-diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
-index c0f7cce..164de64 100644
---- a/drivers/gpio/gpio-intel-mid.c
-+++ b/drivers/gpio/gpio-intel-mid.c
-@@ -1,7 +1,7 @@
- /*
-  * Intel MID GPIO driver
-  *
-- * Copyright (c) 2008-2014 Intel Corporation.
-+ * Copyright (c) 2008-2014,2016 Intel Corporation.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -19,18 +19,18 @@
-  * Clovertrail platform Cloverview chip.
-  */
- 
--#include <linux/module.h>
--#include <linux/pci.h>
--#include <linux/platform_device.h>
--#include <linux/kernel.h>
- #include <linux/delay.h>
--#include <linux/stddef.h>
--#include <linux/interrupt.h>
- #include <linux/init.h>
-+#include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/gpio/driver.h>
--#include <linux/slab.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/pci.h>
-+#include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/slab.h>
-+#include <linux/stddef.h>
- 
- #define INTEL_MID_IRQ_TYPE_EDGE		(1 << 0)
- #define INTEL_MID_IRQ_TYPE_LEVEL	(1 << 1)
--- 
-2.8.1
+> > +static irqreturn_t wcove_gpio_irq_handler(int irq, void *data)
+> > +{
+> > +       int pending;
+> > +       unsigned int p0, p1, virq, gpio;
+> > +       struct wcove_gpio *wg = data;
 
+Bin,
+
+Since you are going to make another iteration, please arrange the
+declarations like:
+
+	unsigned int p0, p1, virq, gpio;
+	struct wcove_gpio *wg = data;
+	int pending;
