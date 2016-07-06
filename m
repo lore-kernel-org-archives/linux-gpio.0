@@ -1,51 +1,47 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH -next] sh-pfc: Use PTR_ERR_OR_ZERO() to simplify the code
-Date: Wed, 06 Jul 2016 16:01:53 +0300
-Message-ID: <1961959.7IpAs0pFbF@avalon>
-References: <1467806612-23904-1-git-send-email-weiyj_lk@163.com>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH] pinctrl: imx21: include linux/module.h
+Date: Wed, 6 Jul 2016 10:15:41 -0300
+Message-ID: <CAOMZO5APrVUAi+QbnLVJ61T_oJRQQDF_eLi8_HeqK=L+aVBzwQ@mail.gmail.com>
+References: <20160706125254.1663066-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1467806612-23904-1-git-send-email-weiyj_lk@163.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: weiyj_lk@163.com
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:35047 "EHLO
+	mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753703AbcGFNPn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2016 09:15:43 -0400
+In-Reply-To: <20160706125254.1663066-1-arnd@arndb.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-Hello Wei,
+Hi Arnd,
 
-Thank you for the patch.
+On Wed, Jul 6, 2016 at 9:52 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> The pinctrl driver includes a device table, but the macro used for
+> declaring it is declared in a header that is not visible here:
+>
+> drivers/pinctrl/freescale/pinctrl-imx21.c:328:1: error: data definition has no type or storage class [-Werror]
+>  MODULE_DEVICE_TABLE(of, imx21_pinctrl_of_match);
+>
+> This adds the missing include.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: e2756baa4217 ("pinctrl: imx21: make it explicitly non-modular")
 
-On Wednesday 06 Jul 2016 12:03:32 weiyj_lk@163.com wrote:
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
-> 
-> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR.
-> 
-> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+I think the correct fix here would be:
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+--- a/drivers/pinctrl/freescale/pinctrl-imx21.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx21.c
+@@ -325,7 +325,6 @@ static const struct of_device_id imx21_pinctrl_of_match[] =
+        { .compatible = "fsl,imx21-iomuxc", },
+        { }
+ };
+-MODULE_DEVICE_TABLE(of, imx21_pinctrl_of_match);
 
-> ---
->  drivers/pinctrl/sh-pfc/pinctrl.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c
-> b/drivers/pinctrl/sh-pfc/pinctrl.c index d4e65bc..e208ee0 100644
-> --- a/drivers/pinctrl/sh-pfc/pinctrl.c
-> +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-> @@ -814,8 +814,5 @@ int sh_pfc_register_pinctrl(struct sh_pfc *pfc)
->  	pmx->pctl_desc.npins = pfc->info->nr_pins;
-> 
->  	pmx->pctl = devm_pinctrl_register(pfc->dev, &pmx->pctl_desc, pmx);
-> -	if (IS_ERR(pmx->pctl))
-> -		return PTR_ERR(pmx->pctl);
-> -
-> -	return 0;
-> +	return PTR_ERR_OR_ZERO(pmx->pctl);
->  }
+ static struct platform_driver imx21_pinctrl_driver = {
+        .driver = {
 
--- 
-Regards,
 
-Laurent Pinchart
+If you agree I can send a formal patch.
