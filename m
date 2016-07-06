@@ -1,40 +1,83 @@
-From: weiyj_lk@163.com
-Subject: [PATCH -next] gpiolib: remove duplicated include from gpiolib.c
-Date: Wed,  6 Jul 2016 12:26:52 +0000
-Message-ID: <1467808012-32321-1-git-send-email-weiyj_lk@163.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: document how to order GPIO controllers
+Date: Wed, 6 Jul 2016 14:34:39 +0200
+Message-ID: <CACRpkdZhx3yTbtuj-ZTP+mtUSr4uxL4bHtu8jVZOoxrUy6=iYw@mail.gmail.com>
+References: <1467355333-8813-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <20160705140546.GA10601@rob-hp-laptop> <20160705180447.GP16643@pengutronix.de>
+ <CACRpkdbH+KRXbxFdfyAE44fBNctK4cWV+KRLwQBTzSGLvLMEDg@mail.gmail.com> <20160706102750.GH23470@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from m12-13.163.com ([220.181.12.13]:47439 "EHLO m12-13.163.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753767AbcGFM1c (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 6 Jul 2016 08:27:32 -0400
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:35497 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752001AbcGFMel (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jul 2016 08:34:41 -0400
+Received: by mail-oi0-f52.google.com with SMTP id r2so268511591oih.2
+        for <linux-gpio@vger.kernel.org>; Wed, 06 Jul 2016 05:34:41 -0700 (PDT)
+In-Reply-To: <20160706102750.GH23470@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-gpio@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Rob Herring <robh@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+On Wed, Jul 6, 2016 at 12:27 PM, Johan Hovold <johan@kernel.org> wrote:
+> On Wed, Jul 06, 2016 at 11:34:37AM +0200, Linus Walleij wrote:
 
-Remove duplicated include.
+>> I *THINK* the view of the device core maintainers is that udev
+>> and sysfs hierarchies should be used to uniquely identify a certain
+>> device, and that relying on device numbering is too fragile.
+>
+> I thought the whole idea (or at least a large part of) the new
+> user-space interface was to allow lookups by line names precisely in
+> order not to have to rely on gpio numbers, which may not only change
+> between boots, but also between hardware revisions, etc.
 
-Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
----
- drivers/gpio/gpiolib.c | 1 -
- 1 file changed, 1 deletion(-)
+That is true for the individual pins, but not the device names.
+Devices are just names gpiochipN where N is the instance
+number. Topological info on the device can be found in sysfs.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 7c47c46..9f57d1e 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -16,7 +16,6 @@
- #include <linux/gpio/driver.h>
- #include <linux/gpio/machine.h>
- #include <linux/pinctrl/consumer.h>
--#include <linux/idr.h>
- #include <linux/cdev.h>
- #include <linux/fs.h>
- #include <linux/uaccess.h>
+The discussion here pertaining to the new chardev is just about
+the intuitiveness of the number N, whether it should be
+"whatever" or something predictable.
 
+For the purpose of picking a certain named GPIO line (see below)
+knowing this number is unnecessary. To that mechanism all gpio
+chips are equal and the instance number does not matter.
 
+> What's wrong with naming the pins in DT and use that for lookups?
+
+That works. It relies on the developers using sane naming conventions
+though. (This problem is prevalent everywhere I guess, a human problem,
+not a technical one.) I made this patch:
+http://marc.info/?l=linux-arm-kernel&m=146672328215354&w=2
+
+There is a standard document for these boards (96board) specifying
+the names of the GPIO lines to be "GPIO-A" thru "GPIO-L".
+
+So a user can iterate across the gpiochips (as is done in lsgpio)
+and pick the lines with the right names.
+
+This works fine, given you have such conventions or equal.
+
+I.e. the person writing the DTS file naming the lines must not
+be a complete lunatic.
+
+I can think of scenarios where bad use can make things problematic:
+i.e. name two lines the same thing, albeit on different GPIO chips.
+That is currently allowed, and if that happens, the user must
+use topological information about the gpiochip (from sysfs) to
+uniquely identify the GPIO line.
+
+I wouldn't recommend that since it is essentially inventing a
+problem for oneself to solve, but I don't know what reasons
+people may have to do something like that. There is no technical
+problem with it.
+
+> I've been too busy with other stuff this spring to follow the new
+> user-space interface development, but I assume that this had been taken
+> into account in the design?
+
+I think so...
+
+Yours,
+Linus Walleij
