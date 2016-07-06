@@ -1,36 +1,60 @@
 From: weiyj_lk@163.com
-Subject: [PATCH -next] sh-pfc: Use PTR_ERR_OR_ZERO() to simplify the code
-Date: Wed,  6 Jul 2016 12:03:32 +0000
-Message-ID: <1467806612-23904-1-git-send-email-weiyj_lk@163.com>
+Subject: [PATCH -next] pinctrl: nsp: remove redundant dev_err call in nsp_pinmux_probe()
+Date: Wed,  6 Jul 2016 12:02:51 +0000
+Message-ID: <1467806571-23811-1-git-send-email-weiyj_lk@163.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from m12-15.163.com ([220.181.12.15]:49789 "EHLO m12-15.163.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753826AbcGFMEZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 6 Jul 2016 08:04:25 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>
+Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com
 
 From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR.
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
 Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 ---
- drivers/pinctrl/sh-pfc/pinctrl.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/pinctrl/bcm/pinctrl-nsp-mux.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
-index d4e65bc..e208ee0 100644
---- a/drivers/pinctrl/sh-pfc/pinctrl.c
-+++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-@@ -814,8 +814,5 @@ int sh_pfc_register_pinctrl(struct sh_pfc *pfc)
- 	pmx->pctl_desc.npins = pfc->info->nr_pins;
+diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
+index 7df0880b..4149db3 100644
+--- a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
++++ b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
+@@ -573,10 +573,8 @@ static int nsp_pinmux_probe(struct platform_device *pdev)
  
- 	pmx->pctl = devm_pinctrl_register(pfc->dev, &pmx->pctl_desc, pmx);
--	if (IS_ERR(pmx->pctl))
--		return PTR_ERR(pmx->pctl);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(pmx->pctl);
- }
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	pinctrl->base0 = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(pinctrl->base0)) {
+-		dev_err(&pdev->dev, "unable to map I/O space\n");
++	if (IS_ERR(pinctrl->base0))
+ 		return PTR_ERR(pinctrl->base0);
+-	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 	pinctrl->base1 = devm_ioremap_nocache(&pdev->dev, res->start,
+@@ -588,10 +586,8 @@ static int nsp_pinmux_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+ 	pinctrl->base2 = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(pinctrl->base2)) {
+-		dev_err(&pdev->dev, "unable to map I/O space\n");
++	if (IS_ERR(pinctrl->base2))
+ 		return PTR_ERR(pinctrl->base2);
+-	}
+ 
+ 	ret = nsp_mux_log_init(pinctrl);
+ 	if (ret) {
+
+
+
+
