@@ -1,62 +1,48 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] gpio: rcar: add R8A7792 support
-Date: Thu, 07 Jul 2016 17:11:45 +0300
-Message-ID: <3799541.jpRKLHA1Qm@wasted.cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] gpio: intel-mid: Make it depend to X86_INTEL_MID
+Date: Thu,  7 Jul 2016 23:45:08 +0300
+Message-ID: <1467924308-137452-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:33893 "EHLO
-	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751052AbcGGOMG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Jul 2016 10:12:06 -0400
-Received: by mail-lf0-f47.google.com with SMTP id h129so12261517lfh.1
-        for <linux-gpio@vger.kernel.org>; Thu, 07 Jul 2016 07:11:49 -0700 (PDT)
-In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+Received: from mga01.intel.com ([192.55.52.88]:22750 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751206AbcGGUpU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 7 Jul 2016 16:45:20 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, gnurou@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, David Cohen <david.a.cohen@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Renesas  R8A7792 SoC is a member of the R-Car gen2 family, add support for
-its GPIO controllers.
+This GPIO controller is a part of Intel MID platforms which are somehow
+different to pure PCs. Thus, there is no need that driver is compiled for them.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Replace dependency to X86_INTEL_MID.
 
+While here, fix capitalization of MID abbreviation.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
-The patch is against the 'devel' branch of Linus Walleij's 'linux-gpio.git'
-repo.  It replaces previously posted patch "gpio: rcar: document R8A7792
-support."
+ drivers/gpio/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt |    1 +
- drivers/gpio/gpio-rcar.c                                     |    3 +++
- 2 files changed, 4 insertions(+)
-
-Index: linux-gpio/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-===================================================================
---- linux-gpio.orig/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ linux-gpio/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -7,6 +7,7 @@ Required Properties:
-     - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO controller.
-     - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO controller.
-     - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2-W) compatible GPIO controller.
-+    - "renesas,gpio-r8a7792": for R8A7792 (R-Car V2H) compatible GPIO controller.
-     - "renesas,gpio-r8a7793": for R8A7793 (R-Car M2-N) compatible GPIO controller.
-     - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
-     - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
-Index: linux-gpio/drivers/gpio/gpio-rcar.c
-===================================================================
---- linux-gpio.orig/drivers/gpio/gpio-rcar.c
-+++ linux-gpio/drivers/gpio/gpio-rcar.c
-@@ -335,6 +335,9 @@ static const struct of_device_id gpio_rc
- 		.compatible = "renesas,gpio-r8a7791",
- 		.data = &gpio_rcar_info_gen2,
- 	}, {
-+		.compatible = "renesas,gpio-r8a7792",
-+		.data = &gpio_rcar_info_gen2,
-+	}, {
- 		.compatible = "renesas,gpio-r8a7793",
- 		.data = &gpio_rcar_info_gen2,
- 	}, {
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index c9e9e55..98dd47a 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1038,11 +1038,11 @@ config GPIO_BT8XX
+ 	  If unsure, say N.
+ 
+ config GPIO_INTEL_MID
+-	bool "Intel Mid GPIO support"
+-	depends on X86
++	bool "Intel MID GPIO support"
++	depends on X86_INTEL_MID
+ 	select GPIOLIB_IRQCHIP
+ 	help
+-	  Say Y here to support Intel Mid GPIO.
++	  Say Y here to support Intel MID GPIO.
+ 
+ config GPIO_MERRIFIELD
+ 	tristate "Intel Merrifield GPIO support"
+-- 
+2.8.1
 
