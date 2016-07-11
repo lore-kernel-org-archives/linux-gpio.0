@@ -1,38 +1,61 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/1] gpio: merrifield: Protect irq_ack() and gpio_set()
- by lock
-Date: Mon, 11 Jul 2016 14:22:51 +0200
-Message-ID: <CACRpkdY+AZ-Jg0twvy4GfA_bNChbKzPu1p9uf+hD6LBnRXQvNg@mail.gmail.com>
-References: <1468231586-104167-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH RFC] drivers: misc: boardcfg: Export GPIOs from device
+ tree to user space
+Date: Mon, 11 Jul 2016 14:29:46 +0200
+Message-ID: <CACRpkdZuUxQbceMAMsB8W34jAANd16wANEzaw=jOH_9HJcb4qA@mail.gmail.com>
+References: <1467887440-17737-1-git-send-email-dirk.behme@de.bosch.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:34128 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751203AbcGKMWx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jul 2016 08:22:53 -0400
-Received: by mail-oi0-f41.google.com with SMTP id s66so144659774oif.1
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Jul 2016 05:22:52 -0700 (PDT)
-In-Reply-To: <1468231586-104167-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:36124 "EHLO
+	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932081AbcGKM3s (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jul 2016 08:29:48 -0400
+Received: by mail-oi0-f46.google.com with SMTP id w18so1712398oiw.3
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Jul 2016 05:29:47 -0700 (PDT)
+In-Reply-To: <1467887440-17737-1-git-send-email-dirk.behme@de.bosch.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, David Cohen <david.a.cohen@linux.intel.com>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Oleksij Rempel <fixed-term.Oleksij.Rempel@de.bosch.com>, Jonas Oester <jonas.oester@de.bosch.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Mon, Jul 11, 2016 at 12:06 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Thu, Jul 7, 2016 at 12:30 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
 
-> There is a potential race when two threads do the writes to the same register
-> in parallel.
+> From: Oleksij Rempel <fixed-term.Oleksij.Rempel@de.bosch.com>
 >
-> Prevent out of order in such case by protecting I/O access by spin lock.
+> The device tree is the only source of board dependent information in
+> the system, and thus it is the logical place to list which GPIOs, ADC
+> channels etc. to use for various functions.  It is straight-forward to
+> use this information in kernel space and the contents of the device
+> tree can also be exported to user space.
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> If user space applications need to use GPIOs, they can do so over the
+> existing sysfs interface and they could use the device tree
+> information to find out which GPIO pin to use for a given function,
+> but unfortunately the numbering of GPIOs exported through sysfs is
+> totally unrelated to the device tree standard for how references to
+> GPIO pins are made.  This patch creates a virtual device which is used
+> to provide symbolic links to GPIO pins in sysfs using logical names
+> taken from the device tree.
+>
+> Signed-off-by: Jonas Oester <jonas.oester@de.bosch.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
 
-Patch applied.
+NACK! But a year ago it would have been a completely valid reasoning.
 
-May I convince you to send a patch adding yourself as maintainer
-for this driver in the MAINTAINERS file?
+In kernel v4.6 I introduced a GPIO character device, and since v4.7
+it is possible to name lines from the device tree using gpio-names
+like I do in this patch:
+http://marc.info/?l=linux-arm-kernel&m=146672328215354&w=2
+
+For the kernel v4.8 merge window I am also adding ABIs to hammer
+GPIOs up/down and to listen for GPIO events using the character
+device.
+
+Just checkout linux-next, go to tools/gpio and enjoy the new stuff
+from userspace as it was designed by the example of lsgpio,
+gpio-hammer and gpio-event-mon.
 
 Yours,
 Linus Walleij
