@@ -1,40 +1,33 @@
-From: Alexandre TORGUE <alexandre.torgue@st.com>
-Subject: [PATCH] pinctrl: stm32f429: driver init call change
-Date: Mon, 11 Jul 2016 16:55:19 +0200
-Message-ID: <1468248919-6061-1-git-send-email-alexandre.torgue@st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/1] MAINTAINERS: Add INTEL MERRIFIELD GPIO entry
+Date: Mon, 11 Jul 2016 17:16:28 +0200
+Message-ID: <CACRpkdYFxJ1Q06uQBbaFD_4soNR-U6a7=P-EiKDLnwPiFPuuhQ@mail.gmail.com>
+References: <1468242318-14656-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:38953 "EHLO
-	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S933733AbcGKO4A (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 11 Jul 2016 10:56:00 -0400
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:34970 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759182AbcGKPQe (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jul 2016 11:16:34 -0400
+Received: by mail-oi0-f49.google.com with SMTP id r2so152013128oih.2
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Jul 2016 08:16:34 -0700 (PDT)
+In-Reply-To: <1468242318-14656-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Patrice Chotard <patrice.chotard@st.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, David Cohen <david.a.cohen@linux.intel.com>
 
-As nothing special is done in driver init then device_initcall() can be
-changed in builtin_platform_driver() call.
+On Mon, Jul 11, 2016 at 3:05 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+> Add gpio-merrifield.c to MAINTAINERS database per Linus' ask.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32f429.c b/drivers/pinctrl/stm32/pinctrl-stm32f429.c
-index e9b15dc..a5d50ca 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32f429.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32f429.c
-@@ -1583,9 +1583,4 @@ static struct platform_driver stm32f429_pinctrl_driver = {
- 		.of_match_table = stm32f429_pctrl_match,
- 	},
- };
--
--static int __init stm32f429_pinctrl_init(void)
--{
--	return platform_driver_register(&stm32f429_pinctrl_driver);
--}
--device_initcall(stm32f429_pinctrl_init);
-+builtin_platform_driver(stm32f429_pinctrl_driver);
--- 
-1.9.1
+Patch applied.
 
+Thanks!
+
+Yours,
+Linus Walleij
