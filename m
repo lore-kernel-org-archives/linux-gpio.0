@@ -1,34 +1,50 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH -next] pinctrl: nsp: remove redundant dev_err call in nsp_pinmux_probe()
-Date: Mon, 11 Jul 2016 09:55:35 +0200
-Message-ID: <CACRpkdbcqjUFfThB_6mT0fYQca6VsLRAk1c1nTCEwptvPfqMjQ@mail.gmail.com>
-References: <1467806571-23811-1-git-send-email-weiyj_lk@163.com>
+From: Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: [PATCH v3]Add STM32F746 MCU pinctrl support
+Date: Mon, 11 Jul 2016 10:43:39 +0200
+Message-ID: <1468226620-574-1-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:33508 "EHLO
-	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757698AbcGKHzg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jul 2016 03:55:36 -0400
-Received: by mail-oi0-f44.google.com with SMTP id u201so136674548oie.0
-        for <linux-gpio@vger.kernel.org>; Mon, 11 Jul 2016 00:55:36 -0700 (PDT)
-In-Reply-To: <1467806571-23811-1-git-send-email-weiyj_lk@163.com>
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54775 "EHLO
+	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751743AbcGKIoV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 11 Jul 2016 04:44:21 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: weiyj_lk@163.com
-Cc: Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Patrice Chotard <patrice.chotard@st.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-On Wed, Jul 6, 2016 at 2:02 PM,  <weiyj_lk@163.com> wrote:
+This series adds STM32F746 pinctrl and GPIO support, relies on the
+generic STM32 pinctrl driver.
 
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
->
-> There is a error message within devm_ioremap_resource
-> already, so remove the dev_err call to avoid redundant
-> error message.
->
-> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+Changes since v2:
 
-Patch applied with Ray's ACK.
+According to Linus remark, use builtin_platform_driver() instead of 
+device_initcall() as there are nothing to do in driver init function
+(except to register driver).
 
-Yours,
-Linus Walleij
+As soon this patch will be accepted, I will send the same update for 
+stm32f429 pinctrl. 
+
+Changes since v1:
+
+Thanks to Paul Gortmaker remarks, remove all modular API as this driver is only
+built-in one.
+
+Regards
+
+Alex
+
+Alexandre TORGUE (1):
+  pinctrl: Add STM32F746 MCU support
+
+ drivers/pinctrl/stm32/Kconfig             |    6 +
+ drivers/pinctrl/stm32/Makefile            |    2 +
+ drivers/pinctrl/stm32/pinctrl-stm32f746.c | 1681 +++++++++++++++++++++++++++++
+ 3 files changed, 1689 insertions(+)
+ create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32f746.c
+
+-- 
+1.9.1
+
