@@ -1,64 +1,38 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 1/1] gpio: merrifield: Introduce GPIO driver to
- support Merrifield
-Date: Mon, 11 Jul 2016 13:08:48 +0300
-Message-ID: <1468231728.30123.538.camel@linux.intel.com>
-References: <1467976103-133151-1-git-send-email-andriy.shevchenko@linux.intel.com>
- <20160711045503.GF14693@lahna.fi.intel.com>
-	 <CACRpkdYHioyktfNojP6U+NQ4PjAos7d=ZvR0uRK16ZKGbuyXwQ@mail.gmail.com>
-	 <1468230187.30123.533.camel@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/1] gpio: merrifield: Protect irq_ack() and gpio_set()
+ by lock
+Date: Mon, 11 Jul 2016 14:22:51 +0200
+Message-ID: <CACRpkdY+AZ-Jg0twvy4GfA_bNChbKzPu1p9uf+hD6LBnRXQvNg@mail.gmail.com>
+References: <1468231586-104167-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:1823 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932162AbcGKKI5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 11 Jul 2016 06:08:57 -0400
-In-Reply-To: <1468230187.30123.533.camel@linux.intel.com>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:34128 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751203AbcGKMWx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jul 2016 08:22:53 -0400
+Received: by mail-oi0-f41.google.com with SMTP id s66so144659774oif.1
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Jul 2016 05:22:52 -0700 (PDT)
+In-Reply-To: <1468231586-104167-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, David Cohen <david.a.cohen@linux.intel.com>, "Wood, Brian J" <brian.j.wood@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, David Cohen <david.a.cohen@linux.intel.com>
 
-On Mon, 2016-07-11 at 12:43 +0300, Andy Shevchenko wrote:
-> On Mon, 2016-07-11 at 11:13 +0200, Linus Walleij wrote:
-> > On Mon, Jul 11, 2016 at 6:55 AM, Mika Westerberg
-> > <mika.westerberg@linux.intel.com> wrote:
-> > > On Fri, Jul 08, 2016 at 02:08:23PM +0300, Andy Shevchenko wrote:
-> > > > +static void mrfld_irq_ack(struct irq_data *d)
-> > > > +{
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct mrfld_gpio *priv =3D irq_=
-data_get_irq_chip_data(d);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 gpio =3D irqd_to_hwirq(d);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0void __iomem *gisr =3D gpio_reg(=
-&priv->chip, gpio, GISR);
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0writel(BIT(gpio % 32), gisr);
-> > >=20
-> > > It just occured me that you actually need to take the lock here.
-> > > If
-> > > another thread is doing series of updates on the same register
-> > > this
-> > > might step over what the other thread is doing.
-> >=20
-> > I accept incremental patches, I think it's safe to begin with this
-> > merged
-> > and work from there if there are issues.
->=20
-> You were faster than me in case it's already merged. Otherwise there
-> is
-> v3 I sent today.
+On Mon, Jul 11, 2016 at 12:06 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-Discard that one. I sent an incremental patch.
-"gpio: merrifield: Protect irq_ack() and gpio_set() by lock"
+> There is a potential race when two threads do the writes to the same register
+> in parallel.
+>
+> Prevent out of order in such case by protecting I/O access by spin lock.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
---=20
+Patch applied.
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+May I convince you to send a patch adding yourself as maintainer
+for this driver in the MAINTAINERS file?
+
+Yours,
+Linus Walleij
