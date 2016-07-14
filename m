@@ -1,104 +1,155 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH] gpio: document how to order GPIO controllers
-Date: Wed, 13 Jul 2016 15:14:12 +0200
-Message-ID: <20160713131412.GO6442@localhost>
-References: <1467355333-8813-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <20160705140546.GA10601@rob-hp-laptop>
- <20160705180447.GP16643@pengutronix.de>
- <CACRpkdbH+KRXbxFdfyAE44fBNctK4cWV+KRLwQBTzSGLvLMEDg@mail.gmail.com>
- <20160706102750.GH23470@localhost>
- <CACRpkdZhx3yTbtuj-ZTP+mtUSr4uxL4bHtu8jVZOoxrUy6=iYw@mail.gmail.com>
+From: "Tan, Jui Nee" <jui.nee.tan@intel.com>
+Subject: RE: [PATCH v5 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake
+ GPIO pinctrl in non-ACPI system
+Date: Thu, 14 Jul 2016 08:10:54 +0000
+Message-ID: <0158A29DB680F54A88142ED28D55B1D00826E3CF@PGSMSX107.gar.corp.intel.com>
+References: <1467100608-11549-1-git-send-email-jui.nee.tan@intel.com>
+ <1467100608-11549-4-git-send-email-jui.nee.tan@intel.com>
+ <CAHp75VfG+3EPy3TZ=Co098zTXzmd5ekWbrhZ759CEKFMzyEiUw@mail.gmail.com>
+ <20160628091527.GO6720@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZhx3yTbtuj-ZTP+mtUSr4uxL4bHtu8jVZOoxrUy6=iYw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga03.intel.com ([134.134.136.65]:36795 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750930AbcGNILE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 14 Jul 2016 04:11:04 -0400
+In-Reply-To: <20160628091527.GO6720@dell>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, "ptyser@xes-inc.com" <ptyser@xes-inc.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Yong, Jonathan" <jonathan.yong@intel.com>, "Yu, Ong Hock" <ong.hock.yu@intel.com>, "Voon, Weifeng" <weifeng.voon@intel.com>, "Wan Mohamad, Wan Ahmad Zainie" <wan.ahmad.zainie.wan.mohamad@intel.com>
 
-On Wed, Jul 06, 2016 at 02:34:39PM +0200, Linus Walleij wrote:
-> On Wed, Jul 6, 2016 at 12:27 PM, Johan Hovold <johan@kernel.org> wrote:
-> > On Wed, Jul 06, 2016 at 11:34:37AM +0200, Linus Walleij wrote:
-> 
-> >> I *THINK* the view of the device core maintainers is that udev
-> >> and sysfs hierarchies should be used to uniquely identify a certain
-> >> device, and that relying on device numbering is too fragile.
-> >
-> > I thought the whole idea (or at least a large part of) the new
-> > user-space interface was to allow lookups by line names precisely in
-> > order not to have to rely on gpio numbers, which may not only change
-> > between boots, but also between hardware revisions, etc.
-> 
-> That is true for the individual pins, but not the device names.
-> Devices are just names gpiochipN where N is the instance
-> number. Topological info on the device can be found in sysfs.
-> 
-> The discussion here pertaining to the new chardev is just about
-> the intuitiveness of the number N, whether it should be
-> "whatever" or something predictable.
-> 
-> For the purpose of picking a certain named GPIO line (see below)
-> knowing this number is unnecessary. To that mechanism all gpio
-> chips are equal and the instance number does not matter.
-
-My point was that with gpio line names (and possibly topological
-information to resolve duplicates), the N number should not matter
-anymore.
-
-[ It was also a comment to a comment made earlier in the thread were the
-use case was said to be to "control GPIO48 with /sys/class/gpio/gpio48".
-And it seems we are in agreement there. ]
-
-If one needs to look up a particular gpiochip based on some hardware
-naming convention, why not associate a name with the chip instead of
-trying to shoehorn the dynamic gpiochip range in there?
-
-> > What's wrong with naming the pins in DT and use that for lookups?
-> 
-> That works. It relies on the developers using sane naming conventions
-> though. (This problem is prevalent everywhere I guess, a human problem,
-> not a technical one.) I made this patch:
-> http://marc.info/?l=linux-arm-kernel&m=146672328215354&w=2
-> 
-> There is a standard document for these boards (96board) specifying
-> the names of the GPIO lines to be "GPIO-A" thru "GPIO-L".
-> 
-> So a user can iterate across the gpiochips (as is done in lsgpio)
-> and pick the lines with the right names.
-> 
-> This works fine, given you have such conventions or equal.
-> 
-> I.e. the person writing the DTS file naming the lines must not
-> be a complete lunatic.
-
-Again, it seems we're on the same page here.
-
-> I can think of scenarios where bad use can make things problematic:
-> i.e. name two lines the same thing, albeit on different GPIO chips.
-> That is currently allowed, and if that happens, the user must
-> use topological information about the gpiochip (from sysfs) to
-> uniquely identify the GPIO line.
-> 
-> I wouldn't recommend that since it is essentially inventing a
-> problem for oneself to solve, but I don't know what reasons
-> people may have to do something like that. There is no technical
-> problem with it.
-
-And this may even be unavoidable with dynamic buses such as USB or
-greybus, where you can have multiple devices associating the same name
-with a pin. That's fine as long as the user-space interface allows for a
-way to distinguish them (e.g. through topological information).
-
-Thanks,
-Johan
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGVlIEpvbmVzIFttYWls
+dG86bGVlLmpvbmVzQGxpbmFyby5vcmddDQo+IFNlbnQ6IFR1ZXNkYXksIEp1bmUgMjgsIDIwMTYg
+NToxNSBQTQ0KPiBUbzogQW5keSBTaGV2Y2hlbmtvIDxhbmR5LnNoZXZjaGVua29AZ21haWwuY29t
+Pg0KPiBDYzogVGFuLCBKdWkgTmVlIDxqdWkubmVlLnRhbkBpbnRlbC5jb20+OyBNaWthIFdlc3Rl
+cmJlcmcNCj4gPG1pa2Eud2VzdGVyYmVyZ0BsaW51eC5pbnRlbC5jb20+OyBLcm9nZXJ1cywgSGVp
+a2tpDQo+IDxoZWlra2kua3JvZ2VydXNAbGludXguaW50ZWwuY29tPjsgQW5keSBTaGV2Y2hlbmtv
+DQo+IDxhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb20+OyBUaG9tYXMgR2xlaXhuZXIN
+Cj4gPHRnbHhAbGludXRyb25peC5kZT47IEluZ28gTW9sbmFyIDxtaW5nb0ByZWRoYXQuY29tPjsg
+SC4gUGV0ZXIgQW52aW4NCj4gPGhwYUB6eXRvci5jb20+OyB4ODZAa2VybmVsLm9yZzsgcHR5c2Vy
+QHhlcy1pbmMuY29tOyBMaW51cyBXYWxsZWlqDQo+IDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+
+OyBsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmc7IFlvbmcsIEpvbmF0aGFuIDxqb25hdGhhbi55b25nQGludGVsLmNvbT47IFl1LA0KPiBP
+bmcgSG9jayA8b25nLmhvY2sueXVAaW50ZWwuY29tPjsgVm9vbiwgV2VpZmVuZw0KPiA8d2VpZmVu
+Zy52b29uQGludGVsLmNvbT47IFdhbiBNb2hhbWFkLCBXYW4gQWhtYWQgWmFpbmllDQo+IDx3YW4u
+YWhtYWQuemFpbmllLndhbi5tb2hhbWFkQGludGVsLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRD
+SCB2NSAzLzNdIG1mZDogbHBjX2ljaDogQWRkIHN1cHBvcnQgZm9yIEludGVsIEFwb2xsbyBMYWtl
+DQo+IEdQSU8gcGluY3RybCBpbiBub24tQUNQSSBzeXN0ZW0NCj4gDQo+IE9uIFR1ZSwgMjggSnVu
+IDIwMTYsIEFuZHkgU2hldmNoZW5rbyB3cm90ZToNCj4gDQo+ID4gT24gVHVlLCBKdW4gMjgsIDIw
+MTYgYXQgMTA6NTYgQU0sIFRhbiBKdWkgTmVlIDxqdWkubmVlLnRhbkBpbnRlbC5jb20+DQo+IHdy
+b3RlOg0KPiA+ID4gVGhpcyBkcml2ZXIgdXNlcyB0aGUgUDJTQiBoaWRlL3VuaGlkZSBtZWNoYW5p
+c20gY29vcGVyYXRpdmVseSB0bw0KPiA+ID4gcGFzcyB0aGUgUENJIEJBUiBhZGRyZXNzIHRvIHRo
+ZSBncGlvIHBsYXRmb3JtIGRyaXZlci4NCj4gPg0KPiA+ID4gLS0tIGEvZHJpdmVycy9tZmQvS2Nv
+bmZpZw0KPiA+ID4gKysrIGIvZHJpdmVycy9tZmQvS2NvbmZpZw0KPiA+ID4gQEAgLTM2OSw4ICsz
+NjksOSBAQCBjb25maWcgTUZEX0lOVEVMX1FVQVJLX0kyQ19HUElPDQo+ID4gPg0KPiA+ID4gIGNv
+bmZpZyBMUENfSUNIDQo+ID4gPiAgICAgICAgIHRyaXN0YXRlICJJbnRlbCBJQ0ggTFBDIg0KPiA+
+ID4gLSAgICAgICBkZXBlbmRzIG9uIFBDSQ0KPiA+ID4gKyAgICAgICBkZXBlbmRzIG9uIFg4NiAm
+JiBQQ0kNCj4gPg0KPiA+IFRoaXMgbWlnaHQgZGVzZXJ2ZSB0byBiZSBhIHNlcGFyYXRlIGNoYW5n
+ZS4gTGVlLCB3aGF0IGlzIHlvdXIgb3Bpbmlvbj8NCj4gDQo+IEkgaGF2ZSBubyBzdHJvbmcgb3Bp
+bmlvbi4gIEtlZXAgaXQgaW4gaWYgeW91IGxpa2UuDQo+IA0KPiBbLi4uXQ0KPiANCj4gPiA+IEBA
+IC0xNTUsNyArMTU1LDcgQEAgb2JqLSQoQ09ORklHX1BNSUNfQURQNTUyMCkgICs9IGFkcDU1MjAu
+bw0KPiA+ID4gIG9iai0kKENPTkZJR19NRkRfS0VNUExEKSAgICAgICArPSBrZW1wbGQtY29yZS5v
+DQo+ID4gPiAgb2JqLSQoQ09ORklHX01GRF9JTlRFTF9RVUFSS19JMkNfR1BJTykgKz0NCj4gaW50
+ZWxfcXVhcmtfaTJjX2dwaW8ubw0KPiA+ID4gIG9iai0kKENPTkZJR19MUENfU0NIKSAgICAgICAg
+ICArPSBscGNfc2NoLm8NCj4gPg0KPiA+ID4gLWxwY19pY2gtb2JqcyAgICAgICAgICAgOj0gbHBj
+X2ljaC1jb3JlLm8NCj4gPiA+ICtscGNfaWNoLW9ianMgICAgICAgICAgIDo9IGxwY19pY2gtY29y
+ZS5vIGxwY19pY2gtYXBsLm8NCj4gPiA+ICBvYmotJChDT05GSUdfTFBDX0lDSCkgICAgICAgICAg
+Kz0gbHBjX2ljaC5vDQo+ID4NCj4gPiBJIGRvbid0IGtub3cgaWYgdGhlcmUgaXMgYW55IHJlcXVp
+cmVtZW50LCBidXQgd2hhdCBJIHNlZSBpbiBvdGhlcg0KPiA+IE1ha2VmaWxlcyBpcw0KPiA+DQo+
+ID4gb2JqLSQoQ09ORklHX0RSVl9PUFRJT04pID0gZHJ2X25hbWUubw0KPiA+IGRydl9uYW1lLW9i
+anMgOj0gbWFpbi5vIGF1eDEubw0KPiANCj4gWWVzLCB0aGlzIGlzIG5pY2VyLg0KPiANCj4gPiBQ
+ZXJoYXBzIHlvdSBtYXkgZG8gdGhlIHNhbWUuDQo+IA0KVGhhbmtzIGZvciB5b3VyIGNvbW1lbnQu
+IFRoZSBjaGFuZ2VzIHdpbGwgYmUgYXBwbGllZCBpbiBuZXh0IHBhdGNoLXNldC4NCj4gPiA+ICsr
+KyBiL2RyaXZlcnMvbWZkL2xwY19pY2gtYXBsLmMNCj4gPiA+IEBAIC0wLDAgKzEsMTI2IEBADQo+
+ID4gPiArLyoNCj4gPiA+ICsgKiBQdXJwb3NlOiBDcmVhdGUgYSBwbGF0Zm9ybSBkZXZpY2UgdG8g
+YmluZCB3aXRoIEludGVsIEFwb2xsbyBMYWtlDQo+ID4gPiArICogUGluY3RybCBHUElPIHBsYXRm
+b3JtIGRyaXZlcg0KPiA+ID4gKyAqIENvcHlyaWdodCAoQykgMjAxNiBJbnRlbCBDb3Jwb3JhdGlv
+bg0KPiA+ID4gKyAqDQo+ID4gPiArICogVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlv
+dSBjYW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vcg0KPiA+ID4gK21vZGlmeQ0KPiA+ID4gKyAqIGl0
+IHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UgdmVyc2lv
+biAyDQo+ID4gPiArYXMNCj4gPiA+ICsgKiBwdWJsaXNoZWQgYnkgdGhlIEZyZWUgU29mdHdhcmUg
+Rm91bmRhdGlvbi4NCj4gPiA+ICsgKi8NCj4gPiA+ICsNCj4gPiA+ICsjaW5jbHVkZSA8bGludXgv
+bWZkL2NvcmUuaD4NCj4gPiA+ICsjaW5jbHVkZSA8bGludXgvbWZkL2xwY19pY2guaD4NCj4gPiA+
+ICsjaW5jbHVkZSA8bGludXgvcGluY3RybC9waW5jdHJsLmg+DQo+ID4gPiArI2luY2x1ZGUgPGFz
+bS9wMnNiLmg+DQo+ID4gPiArDQo+ID4NCj4gPiA+ICsjaWYgZGVmaW5lZChDT05GSUdfWDg2X0lO
+VEVMX0FQTCkNCj4gDQo+IEknbSBub3QgYWNjZXB0aW5nIHRoaXMga2luZCBvZiAjaWZlcnkgaW4g
+Ki5jIGZpbGVzLg0KPiANCj4gPiBBbmQgd2h5IHlvdSBjYW4ndCB1c2UNCj4gPg0KPiA+IGlmZXEg
+KCQoQ09ORklHXy4uLix5KSkNCj4gPiBscGNfaWNoLW9ianMgKz0gLi4uDQo+ID4gZW5kaWYNCj4g
+Pg0KPiA+IGluIHRoZSBNYWtlZmlsZT8NCj4gDQo+IFsuLi5dDQo+IA0KQXBwbGllZCB3aXRoIEFu
+ZHkncyBzdWdnZXN0aW9uIGFuZCAjaWZlcnkgaW4gKi5jIGZpbGVzIHdpbGwgYmUgcmVtb3ZlZCBp
+bg0KbmV4dCBwYXRjaC1zZXQuDQo+ID4gPiAraW50IGxwY19pY2hfbWlzYyhzdHJ1Y3QgcGNpX2Rl
+diAqZGV2KSB7DQo+ID4gPiArICAgICAgIHVuc2lnbmVkIGludCBhcGxfcDJzYiA9IFBDSV9ERVZG
+TihQQ0lfSURTRUxfUDJTQiwgMCk7DQo+ID4gPiArICAgICAgIHVuc2lnbmVkIGludCBpOw0KPiA+
+ID4gKyAgICAgICBpbnQgcmV0Ow0KPiA+ID4gKw0KPiA+ID4gKyAgICAgICAvKg0KPiA+ID4gKyAg
+ICAgICAgKiBBcG9sbG8gbGFrZSwgaGFzIG5vdCAxLCBidXQgNCBncGlvIGNvbnRyb2xsZXJzLA0K
+PiA+ID4gKyAgICAgICAgKiBoYW5kbGUgaXQgYSBiaXQgZGlmZmVyZW50bHkuDQo+ID4gPiArICAg
+ICAgICAqLw0KPiA+ID4gKw0KPiA+ID4gKyAgICAgICBmb3IgKGkgPSAwOyBpIDwgQVJSQVlfU0la
+RShhcGxfZ3Bpb19pb19yZXMpLTE7IGkrKykgew0KPiA+ID4gKyAgICAgICAgICAgICAgIHN0cnVj
+dCByZXNvdXJjZSAqcmVzID0gJmFwbF9ncGlvX2lvX3Jlc1tpXTsNCj4gPiA+ICsNCj4gPiA+ICsg
+ICAgICAgICAgICAgICBhcGxfZ3Bpb19kZXZpY2VzW2ldLnJlc291cmNlcyA9IHJlczsNCj4gPiA+
+ICsNCj4gPiA+ICsgICAgICAgICAgICAgICAvKiBGaWxsIE1FTSByZXNvdXJjZSAqLw0KPiA+ID4g
+KyAgICAgICAgICAgICAgIHJldCA9IHAyc2JfYmFyKGRldiwgYXBsX3Ayc2IsIHJlcysrKTsNCj4g
+PiA+ICsgICAgICAgICAgICAgICBpZiAocmV0KQ0KPiA+ID4gKyAgICAgICAgICAgICAgICAgICAg
+ICAgZ290byB3YXJuX2NvbnRpbnVlOw0KPiA+ID4gKw0KPiA+ID4gKyAgICAgICAgICAgICAgIGFw
+bF9waW5jdHJsX3BkYXRhLm5hbWUgPSBrYXNwcmludGYoR0ZQX0tFUk5FTCwgIiV1IiwNCj4gPiA+
+ICsgICAgICAgICAgICAgICAgICAgICAgIGkgKyAxKTsNCj4gPiA+ICsgICAgICAgfQ0KPiA+ID4g
+Kw0KPiA+ID4gKyAgICAgICBpZiAoYXBsX3BpbmN0cmxfcGRhdGEubmFtZSkNCj4gPiA+ICsgICAg
+ICAgICAgICAgICByZXQgPSBtZmRfYWRkX2RldmljZXMoJmRldi0+ZGV2LCBhcGxfZ3Bpb19kZXZp
+Y2VzLT5pZCwNCj4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGFwbF9ncGlvX2RldmljZXMs
+IEFSUkFZX1NJWkUoYXBsX2dwaW9fZGV2aWNlcyksDQo+ID4gPiArICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIE5VTEwsIDAsIE5VTEwpOw0KPiA+ID4gKyAgICAgICBlbHNlDQo+ID4gPiAr
+ICAgICAgICAgICAgICAgcmV0ID0gLUVOT01FTTsNCj4gPiA+ICsNCj4gPiA+ICt3YXJuX2NvbnRp
+bnVlOg0KPiA+ID4gKyAgICAgICBpZiAocmV0KQ0KPiA+ID4gKyAgICAgICAgICAgICAgIGRldl93
+YXJuKCZkZXYtPmRldiwNCj4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICJGYWlsZWQgdG8g
+YWRkIEFwb2xsbyBMYWtlIEdQSU8gJXM6ICVkXG4iLA0KPiA+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBhcGxfcGluY3RybF9wZGF0YS5uYW1lLCByZXQpOw0KPiA+ID4gKw0KPiA+
+ID4gKyAgICAgICBrZnJlZShhcGxfcGluY3RybF9wZGF0YS5uYW1lKTsNCj4gPiA+ICsgICAgICAg
+cmV0dXJuIDA7DQo+ID4gPiArfQ0KPiA+ID4gKyNlbmRpZg0KPiA+DQo+ID4gUmVnYXJkaW5nIHRv
+IHRoZSBhYm92ZSBJIGRvbid0IHNlZSBMZWUncyBjb21tZW50cyBhZGRyZXNzZWQuIENhbiB5b3UN
+Cj4gPiByZW1pbmQgd2hhciBpcyB0aGUgcmVzdWx0IG9mIHRoYXQgZGlzY3Vzc2lvbj8NCj4gDQo+
+IEkgZG9uJ3QgaGF2ZSB0aW1lIHRvIGRvIGEgZnVsbCByZXZpZXcgbm93LCBidXQgdGhpcyBkb2Vz
+IGxvb2sgbmFzdHkuDQo+IA0KPiBbLi4uXQ0KPiANCkkgd291bGQgZ3JlYXRseSBhcHByZWNpYXRl
+IHRvIGhhdmUgeW91ciBmZWVkYmFjayBvbiB0aGF0LiANCkkgaGF2ZSBtYWtlIG1pbm9yIGNoYW5n
+ZXMsIHNvbWV0aGluZyBsaWtlIGJlbG93Og0KLi4uDQoJZm9yIChpID0gMDsgaSA8IEFSUkFZX1NJ
+WkUoYXBsX2dwaW9faW9fcmVzKS0xOyBpKyspIHsNCgkJc3RydWN0IHJlc291cmNlICpyZXMgPSAm
+YXBsX2dwaW9faW9fcmVzW2ldOw0KDQoJCWFwbF9ncGlvX2RldmljZXNbaV0ucmVzb3VyY2VzID0g
+cmVzOw0KDQoJCS8qIEZpbGwgTUVNIHJlc291cmNlICovDQoJCXJldCA9IHAyc2JfYmFyKGRldiwg
+YXBsX3Ayc2IsIHJlcysrKTsNCgkJaWYgKHJldCkNCgkJCWdvdG8gd2Fybl9jb250aW51ZTsNCg0K
+CQlhcGxfcGluY3RybF9wZGF0YS5uYW1lID0ga2FzcHJpbnRmKEdGUF9LRVJORUwsICIldSIsDQoJ
+CQlpICsgMSk7DQoJCWlmIChhcGxfcGluY3RybF9wZGF0YS5uYW1lID09IE5VTEwpIHsNCgkJCXJl
+dCA9IC1FTk9NRU07DQoJCQlnb3RvIHdhcm5fY29udGludWU7DQoJCX0NCgl9DQoNCglyZXQgPSBt
+ZmRfYWRkX2RldmljZXMoJmRldi0+ZGV2LCAwLA0KCQlhcGxfZ3Bpb19kZXZpY2VzLCBBUlJBWV9T
+SVpFKGFwbF9ncGlvX2RldmljZXMpLA0KCQkJTlVMTCwgMCwgTlVMTCk7DQoNCndhcm5fY29udGlu
+dWU6DQouLi4NCkkgaGF2ZSB0ZXN0ZWQgdGhpcyBvbiBJbnRlbCBBcG9sbG8gTGFrZSBwbGF0Zm9y
+bSBhbmQgaXQgd29ya3MgZmluZS4NCj4gPiA+IC0tLSBhL2luY2x1ZGUvbGludXgvbWZkL2xwY19p
+Y2guaA0KPiA+ID4gKysrIGIvaW5jbHVkZS9saW51eC9tZmQvbHBjX2ljaC5oDQo+ID4gPiBAQCAt
+NDMsNCArNDMsMTEgQEAgc3RydWN0IGxwY19pY2hfaW5mbyB7DQo+ID4gPiAgICAgICAgIHU4IHVz
+ZV9ncGlvOw0KPiA+ID4gIH07DQo+ID4NCj4gPiA+ICsjaWYgZGVmaW5lZChDT05GSUdfWDg2X0lO
+VEVMX0FQTCkNCj4gPiA+ICtpbnQgbHBjX2ljaF9taXNjKHN0cnVjdCBwY2lfZGV2ICpkZXYpOyAj
+ZWxzZSBzdGF0aWMgaW5saW5lIGludA0KPiA+ID4gK2xwY19pY2hfbWlzYyhzdHJ1Y3QgcGNpX2Rl
+diAqZGV2KSB7IHJldHVybiAtRU5PREVWOyB9DQo+ID4NCj4gPiBJdCBjb3VsZCBiZSBvbmUgbGlu
+ZSwgLi4uDQo+IA0KPiBJIGRvbid0IHdhbnQgaXQgaW4gaGVyZSBhdCBhbGwuDQo+IA0KbHBjX2lj
+aF9taXNjKCkgZnVuY3Rpb24gd2lsbCBiZSBtb3ZlZCBmcm9tIC4uLi9pbmNsdWRlL2xpbnV4L21m
+ZC9scGNfaWNoLmggdG8NCi4uLi9kcml2ZXJzL21mZC9scGNfaWNoLWFwbC5oLg0KbHBjX2ljaC1h
+cGwuaCBpcyBhIG5ld2x5IGNyZWF0ZWQgZmlsZSwgd2hpY2ggaXMgc29tZXRoaW5nIGxpa2UgdGhp
+czoNCgkjaWYgSVNfRU5BQkxFRChDT05GSUdfWDg2X0lOVEVMX0lWSSkNCglpbnQgbHBjX2ljaF9h
+cGxfZ3BpbyhzdHJ1Y3QgcGNpX2RldiAqZGV2LCBlbnVtIGxwY19jaGlwc2V0cyBjaGlwc2V0KTsN
+CgkjZWxzZSAvKiBDT05GSUdfWDg2X0lOVEVMX0lWSSBpcyBub3Qgc2V0ICovDQoJc3RhdGljIGlu
+bGluZSBpbnQgbHBjX2ljaF9hcGxfZ3BpbyhzdHJ1Y3QgcGNpX2RldiAqZGV2LCBlbnVtIGxwY19j
+aGlwc2V0cyBjaGlwc2V0KQ0KCXsNCgkJcmV0dXJuIC1FTk9ERVY7DQoJfQ0KCSNlbmRpZg0KSXMg
+dGhpcyBhY2NlcHRhYmxlPw0KPiA+ID4gKyNlbmRpZg0KPiA+DQo+ID4gLi4uYnV0IHRoZSBuYW1l
+IG9mIHRoaXMgZnVuY3Rpb24gc2hvdWxkIG5vdCBiZSBzbyBnZW5lcmljLiBXaGF0IGlmDQo+ID4g
+dG9tb3Jyb3cgeW91IHdpbGwgZ2V0IG9uZSBtb3JlIG1vZHVsZSB3aGljaCBuZWVkcyBvbmUgbW9y
+ZSBmdW5jdGlvbj8NCj4gPg0KUmVuYW1lIGxwY19pY2hfbWlzYygpIHRvIGxwY19pY2hfYXBsX2dw
+aW8oKS4NCj4gPiBNb3Jlb3ZlciB0aGlzIGlzIGEgcGFydCBvZiBpbnRlcm5hbCBkcml2ZXIgaW50
+ZXJmYWNlLCBJIHdvdWxkIG1vdmUNCj4gPiB0aGlzIHBhcnQgaW50byBzcGVjaWFsIGhlYWRlciB1
+bmRlciBkcml2ZXJzL21mZC4NCj4gPg0KPiANClRoYW5rcyBmb3IgcG9pbnRpbmcgdGhhdCBvdXQu
+DQpUaGUgZnVuY3Rpb24gbHBjX2ljaF9taXNjKCkgd2lsbCBiZSByZW5hbWVkIHRvIGxwY19pY2hf
+YXBsX2dwaW8oKSBpbiBuZXh0DQpwYXRjaC1zZXQuDQo+IC0tDQo+IExlZSBKb25lcw0KPiBMaW5h
+cm8gU1RNaWNyb2VsZWN0cm9uaWNzIExhbmRpbmcgVGVhbSBMZWFkIExpbmFyby5vcmcg4pSCIE9w
+ZW4gc291cmNlDQo+IHNvZnR3YXJlIGZvciBBUk0gU29DcyBGb2xsb3cgTGluYXJvOiBGYWNlYm9v
+ayB8IFR3aXR0ZXIgfCBCbG9nDQo=
