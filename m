@@ -1,60 +1,50 @@
-From: "Tan, Jui Nee" <jui.nee.tan@intel.com>
-Subject: RE: [PATCH v5 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake
- GPIO pinctrl in non-ACPI system
-Date: Thu, 14 Jul 2016 08:10:08 +0000
-Message-ID: <0158A29DB680F54A88142ED28D55B1D00826E3BF@PGSMSX107.gar.corp.intel.com>
-References: <1467100608-11549-1-git-send-email-jui.nee.tan@intel.com>
- <1467100608-11549-4-git-send-email-jui.nee.tan@intel.com>
- <20160628081917.GF1711@lahna.fi.intel.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a7792: add EtherAVB pin groups
+Date: Thu, 14 Jul 2016 15:09:08 +0300
+Message-ID: <c97c4dfe-9db0-d8ec-0bd1-6b26911e653e@cogentembedded.com>
+References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+ <1525017.NKJprrWkDB@wasted.cogentembedded.com>
+ <CAMuHMdV086grEjTUxkhihF5t5NcO-pKt_8GfXhUWrMsq1zVbYg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:41241 "EHLO mga04.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751284AbcGNIQg convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Jul 2016 04:16:36 -0400
-In-Reply-To: <20160628081917.GF1711@lahna.fi.intel.com>
-Content-Language: en-US
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:34356 "EHLO
+	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751115AbcGNMJL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Jul 2016 08:09:11 -0400
+Received: by mail-lf0-f44.google.com with SMTP id l69so5006404lfg.1
+        for <linux-gpio@vger.kernel.org>; Thu, 14 Jul 2016 05:09:10 -0700 (PDT)
+In-Reply-To: <CAMuHMdV086grEjTUxkhihF5t5NcO-pKt_8GfXhUWrMsq1zVbYg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>, "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, "ptyser@xes-inc.com" <ptyser@xes-inc.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Yong, Jonathan" <jonathan.yong@intel.com>, "Yu, Ong Hock" <ong.hock.yu@intel.com>, "Voon, Weifeng" <weifeng.voon@intel.com>, "Wan Mohamad, Wan Ahmad Zainie" <wan.ahmad.zainie.wan.mohamad@intel.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 
+Hello.
 
+On 7/13/2016 9:13 AM, Geert Uytterhoeven wrote:
 
-> -----Original Message-----
-> From: Mika Westerberg [mailto:mika.westerberg@linux.intel.com]
-> Sent: Tuesday, June 28, 2016 4:19 PM
-> To: Tan, Jui Nee <jui.nee.tan@intel.com>
-> Cc: heikki.krogerus@linux.intel.com; andriy.shevchenko@linux.intel.com;
-> tglx@linutronix.de; mingo@redhat.com; hpa@zytor.com; x86@kernel.org;
-> ptyser@xes-inc.com; lee.jones@linaro.org; linus.walleij@linaro.org; linux-
-> gpio@vger.kernel.org; linux-kernel@vger.kernel.org; Yong, Jonathan
-> <jonathan.yong@intel.com>; Yu, Ong Hock <ong.hock.yu@intel.com>; Voon,
-> Weifeng <weifeng.voon@intel.com>; Wan Mohamad, Wan Ahmad Zainie
-> <wan.ahmad.zainie.wan.mohamad@intel.com>
-> Subject: Re: [PATCH v5 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake
-> GPIO pinctrl in non-ACPI system
-> 
-> On Tue, Jun 28, 2016 at 03:56:48PM +0800, Tan Jui Nee wrote:
-> > +config X86_INTEL_APL
-> > +	bool "Non-ACPI support for Intel Apollo Lake platforms"
-> > +	select PINCTRL
-> > +	---help---
-> > +	  Select this option to enable MMIO BAR access over the P2SB for
-> > +	  non-ACPI Intel Apollo Lake SoC platforms. This driver uses the P2SB
-> > +	  hide/unhide mechanism cooperatively to pass the PCI BAR address
-> to
-> > +	  the platform driver, currently GPIO.
-> > +
-> 
-> Sorry but IMHO this still does not explain the option clearly enough.
-> You are using this in some automotive IVI system with specialized
-> bootloader, correct? Why not use that here instead?
-> 
-> Something along the lines of
-> 
->   config X86_INTEL_IVI
->       bool "Intel in-vehicle infotainment (IVI) systems used in cars"
-Thanks for your comments. The changes will be applied in next patch-set.
+>> Add the EtherAVB pin groups to the R8A7792 PFC driver.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+>> ---
+>> The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
+>> repo plus my 2 R8A7792 PFC patches posted before...
+>>
+>> Changes in version 2:
+>> - added AVB_AVTP_MATCH pin group.
+>
+> Thanks for the update!
+
+    Not at all. How about queuing the PFC patches? :-)
+
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+
+MBR, Sergei
+
