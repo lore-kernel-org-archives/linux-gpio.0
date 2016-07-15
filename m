@@ -1,62 +1,47 @@
-From: Andy Gross <andy.gross@linaro.org>
-Subject: Re: [PATCH 3/4] qcom: ipq4019: ASoC tlmm/pinctrl support
-Date: Fri, 15 Jul 2016 15:23:13 -0500
-Message-ID: <20160715202313.GA3509@hector.attlocal.net>
-References: <1468566426-19598-1-git-send-email-njaigane@codeaurora.org>
- <1468566426-19598-4-git-send-email-njaigane@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1468566426-19598-4-git-send-email-njaigane@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: njaigane@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux@qca.qualcomm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, twp@codeaurora.org, david.brown@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, plai@codeaurora.org, bgoswami@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, bjorn.andersson@linaro.org, varada@codeaurora.org, pradeepb@codeaurora.org, snlakshm@codeaurora.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, bselvara@codeaurora.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] pinctrl: bcm: add OF dependencies
+Date: Fri, 15 Jul 2016 22:29:54 +0200
+Message-ID: <20160715203012.1715182-1-arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ray Jui <rjui@broadcom.com>, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>, Pramod Kumar <pramodku@broadcom.com>, Rob Herring <robh@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jul 15, 2016 at 12:37:05PM +0530, njaigane@codeaurora.org wrote:
-> From: Jaiganesh Narayanan <njaigane@codeaurora.org>
-> 
-> This patch adds the tlmm/pinctrl support for IPQ4019 ASoC.
-> 
-> Signed-off-by: Jaiganesh Narayanan <njaigane@codeaurora.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-ipq4019.c | 116 +++++++++++++++++++++++++--------
->  1 file changed, 88 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-ipq4019.c b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-> index b68ae42..bc22597 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-> @@ -1,5 +1,5 @@
->  /*
-> - * Copyright (c) 2015, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
->   *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License version 2 and
-> @@ -283,6 +283,18 @@ enum ipq4019_functions {
->  	qca_mux_blsp_uart0,
->  	qca_mux_blsp_spi1,
->  	qca_mux_blsp_spi0,
-> +	qca_mux_i2s_rx_mclk,
-> +	qca_mux_i2s_rx_bclk,
-> +	qca_mux_i2s_rx_fsync,
-> +	qca_mux_i2s_rxd,
-> +	qca_mux_i2s_tx_mclk,
-> +	qca_mux_i2s_tx_bclk,
-> +	qca_mux_i2s_tx_fsync,
-> +	qca_mux_i2s_txd1,
-> +	qca_mux_i2s_txd2,
-> +	qca_mux_i2s_txd3,
-> +	qca_mux_i2s_spdif_out,
-> +	qca_mux_i2s_spdif_in,
+Building without CONFIG_OF gives us these warnings for the broadcom
+pinctrl drivers:
 
-You'll also need to add all of these to the
-Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
+drivers/pinctrl/bcm/pinctrl-nsp-mux.c:356:20: error: 'pinconf_generic_dt_node_to_map_group' undeclared here (not in a function)
+drivers/pinctrl/bcm/pinctrl-cygnus-mux.c:739:20: error: 'pinconf_generic_dt_node_to_map_group' undeclared here (not in a function)
 
-I was also going to suggest just using qca_i2s and having a single function, but
-it seems like there is at least 1 pin that supports more than one i2s mode.
+The function is only available when CONFIG_OF is set, so we should add
+a Kconfig dependency for both drivers.
 
-Regards,
-Andy
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: cc4fa83f66e9 ("pinctrl: nsp: add pinmux driver support for Broadcom NSP SoC")
+---
+ drivers/pinctrl/bcm/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/pinctrl/bcm/Kconfig b/drivers/pinctrl/bcm/Kconfig
+index 7967c6723676..63246770bd74 100644
+--- a/drivers/pinctrl/bcm/Kconfig
++++ b/drivers/pinctrl/bcm/Kconfig
+@@ -60,6 +60,7 @@ config PINCTRL_IPROC_GPIO
+ config PINCTRL_CYGNUS_MUX
+ 	bool "Broadcom Cygnus IOMUX driver"
+ 	depends on (ARCH_BCM_CYGNUS || COMPILE_TEST)
++	depends on OF
+ 	select PINMUX
+ 	select GENERIC_PINCONF
+ 	default ARCH_BCM_CYGNUS
+@@ -103,6 +104,7 @@ config PINCTRL_NS2_MUX
+ config PINCTRL_NSP_MUX
+ 	bool "Broadcom NSP IOMUX driver"
+ 	depends on (ARCH_BCM_NSP || COMPILE_TEST)
++	depends on OF
+ 	select PINMUX
+ 	select GENERIC_PINCONF
+ 	default ARCH_BCM_NSP
+-- 
+2.9.0
