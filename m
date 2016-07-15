@@ -1,101 +1,239 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7792: add CAN pin groups
-Date: Thu, 14 Jul 2016 22:51:40 +0300
-Message-ID: <9478063.142ffU0CUS@wasted.cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH v6 1/3] x86/platform/p2sb: New Primary to Sideband bridge
+ support driver for Intel SOC's
+Date: Thu, 14 Jul 2016 20:00:59 -0400
+Message-ID: <CAP=VYLrAPm--4x=CWMri4o8cvL23q8spM0q5Z9nOXM5YzpgRTA@mail.gmail.com>
+References: <1468483919-31258-1-git-send-email-jui.nee.tan@intel.com> <1468483919-31258-2-git-send-email-jui.nee.tan@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:33635 "EHLO
-	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751160AbcGNTvp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Jul 2016 15:51:45 -0400
-Received: by mail-lf0-f47.google.com with SMTP id b199so72400147lfe.0
-        for <linux-gpio@vger.kernel.org>; Thu, 14 Jul 2016 12:51:44 -0700 (PDT)
-In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:32939 "EHLO
+	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751224AbcGOABb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Jul 2016 20:01:31 -0400
+In-Reply-To: <1468483919-31258-2-git-send-email-jui.nee.tan@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org, geert+renesas@glider.be
+To: Tan Jui Nee <jui.nee.tan@intel.com>
+Cc: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, "tglx@linutronix.de" <tglx@linutronix.de>, mingo@redhat.com, "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>, ptyser@xes-inc.com, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, jonathan.yong@intel.com, ong.hock.yu@intel.com, weifeng.voon@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
 
-Add CAN0/1 data/clock pin groups to R8A7792 PFC driver.
+On Thu, Jul 14, 2016 at 4:11 AM, Tan Jui Nee <jui.nee.tan@intel.com> wrote:
+> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> There is already one and at least one more user coming which
+> require an access to Primary to Sideband bridge (P2SB) in order
+> to get IO or MMIO bar hidden by BIOS.
+> Create a driver to access P2SB for x86 devices.
+>
+> Signed-off-by: Yong, Jonathan <jonathan.yong@intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> Changes in V6:
+>         - No change
+>
+> Changes in V5:
+>         - No change
+>
+> Changes in V4:
+>         - Move Kconfig option CONFIG_X86_INTEL_NON_ACPI from
+>           [PATCH 2/3] x86/platform/p2sb: New Primary to Sideband bridge support driver for Intel SOC's
+>           to
+>           [PATCH 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake GPIO pinctrl in non-ACPI system
+>           since the config is used in latter patch.
+>
+> Changes in V3:
+>         - No change
+>
+> Changes in V2:
+>         - Add new config option CONFIG_X86_INTEL_NON_ACPI and "select PINCTRL"
+>           to fix kbuildbot error
+>
+>  arch/x86/Kconfig                 |  4 ++
+>  arch/x86/include/asm/p2sb.h      | 27 +++++++++++
+>  arch/x86/platform/intel/Makefile |  1 +
+>  arch/x86/platform/intel/p2sb.c   | 99 ++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 131 insertions(+)
+>  create mode 100644 arch/x86/include/asm/p2sb.h
+>  create mode 100644 arch/x86/platform/intel/p2sb.c
+>
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index d9a94da..d305d81 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -604,6 +604,10 @@ config IOSF_MBI_DEBUG
+>
+>           If you don't require the option or are in doubt, say N.
+>
+> +config P2SB
+> +       tristate
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+OK, this is tristate, but then....
 
----
-The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
-repo plus my 4 R8A7792 PFC patches posted before...
+> +       depends on PCI
+> +
+>  config X86_RDC321X
+>         bool "RDC R-321x SoC"
+>         depends on X86_32
+> diff --git a/arch/x86/include/asm/p2sb.h b/arch/x86/include/asm/p2sb.h
+> new file mode 100644
+> index 0000000..686e07b
+> --- /dev/null
+> +++ b/arch/x86/include/asm/p2sb.h
+> @@ -0,0 +1,27 @@
+> +/*
+> + * Primary to Sideband bridge (P2SB) access support
+> + */
+> +
+> +#ifndef P2SB_SYMS_H
+> +#define P2SB_SYMS_H
+> +
+> +#include <linux/ioport.h>
+> +#include <linux/pci.h>
+> +
+> +#if IS_ENABLED(CONFIG_P2SB)
+> +
+> +int p2sb_bar(struct pci_dev *pdev, unsigned int devfn,
+> +       struct resource *res);
+> +
+> +#else /* CONFIG_P2SB is not set */
+> +
+> +static inline
+> +int p2sb_bar(struct pci_dev *pdev, unsigned int devfn,
+> +       struct resource *res)
+> +{
+> +       return -ENODEV;
+> +}
+> +
+> +#endif /* CONFIG_P2SB */
+> +
+> +#endif /* P2SB_SYMS_H */
+> diff --git a/arch/x86/platform/intel/Makefile b/arch/x86/platform/intel/Makefile
+> index b878032..dbf9f10 100644
+> --- a/arch/x86/platform/intel/Makefile
+> +++ b/arch/x86/platform/intel/Makefile
+> @@ -1 +1,2 @@
+>  obj-$(CONFIG_IOSF_MBI)                 += iosf_mbi.o
+> +obj-$(CONFIG_P2SB)                     += p2sb.o
+> diff --git a/arch/x86/platform/intel/p2sb.c b/arch/x86/platform/intel/p2sb.c
+> new file mode 100644
+> index 0000000..8be47a4
+> --- /dev/null
+> +++ b/arch/x86/platform/intel/p2sb.c
+> @@ -0,0 +1,99 @@
+> +/*
+> + * Primary to Sideband bridge (P2SB) driver
+> + *
+> + * Copyright (c) 2016, Intel Corporation.
+> + *
+> + * Authors: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> + *                     Jonathan Yong <jonathan.yong@intel.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + */
+> +
+> +#include <linux/ioport.h>
+> +#include <linux/module.h>
 
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c |   37 +++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+...and module.h is included, but yet...
 
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-@@ -809,6 +809,28 @@ static const unsigned int avb_avtp_match
- static const unsigned int avb_avtp_match_mux[] = {
- 	AVB_AVTP_MATCH_MARK,
- };
-+/* - CAN -------------------------------------------------------------------- */
-+static const unsigned int can0_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(10, 27), RCAR_GP_PIN(10, 28),
-+};
-+static const unsigned int can0_data_mux[] = {
-+	CAN0_TX_MARK, CAN0_RX_MARK,
-+};
-+static const unsigned int can1_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(10, 30), RCAR_GP_PIN(10, 31),
-+};
-+static const unsigned int can1_data_mux[] = {
-+	CAN1_TX_MARK, CAN1_RX_MARK,
-+};
-+static const unsigned int can_clk_pins[] = {
-+	/* CAN_CLK */
-+	RCAR_GP_PIN(10, 29),
-+};
-+static const unsigned int can_clk_mux[] = {
-+	CAN_CLK_MARK,
-+};
- /* - INTC ------------------------------------------------------------------- */
- static const unsigned int intc_irq0_pins[] = {
- 	/* IRQ0 */
-@@ -978,6 +1000,9 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(avb_mii),
- 	SH_PFC_PIN_GROUP(avb_gmii),
- 	SH_PFC_PIN_GROUP(avb_avtp_match),
-+	SH_PFC_PIN_GROUP(can0_data),
-+	SH_PFC_PIN_GROUP(can1_data),
-+	SH_PFC_PIN_GROUP(can_clk),
- 	SH_PFC_PIN_GROUP(intc_irq0),
- 	SH_PFC_PIN_GROUP(intc_irq1),
- 	SH_PFC_PIN_GROUP(intc_irq2),
-@@ -1012,6 +1037,16 @@ static const char * const avb_groups[] =
- 	"avb_avtp_match",
- };
- 
-+static const char * const can0_groups[] = {
-+	"can0_data",
-+	"can_clk",
-+};
-+
-+static const char * const can1_groups[] = {
-+	"can1_data",
-+	"can_clk",
-+};
-+
- static const char * const intc_groups[] = {
- 	"intc_irq0",
- 	"intc_irq1",
-@@ -1051,6 +1086,8 @@ static const char * const sdhi0_groups[]
- 
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
-+	SH_PFC_FUNCTION(can0),
-+	SH_PFC_FUNCTION(can1),
- 	SH_PFC_FUNCTION(intc),
- 	SH_PFC_FUNCTION(lbsc),
- 	SH_PFC_FUNCTION(scif0),
+> +#include <linux/pci.h>
+> +#include <linux/spinlock.h>
+> +
+> +#include <asm/p2sb.h>
+> +
+> +#define SBREG_BAR      0x10
+> +#define SBREG_HIDE     0xe1
+> +
+> +static DEFINE_SPINLOCK(p2sb_spinlock);
+> +
+> +/*
+> + * p2sb_bar - Get Primary to Sideband bridge (P2SB) BAR
+> + * @pdev:      PCI device to get PCI bus to communicate with
+> + * @devfn:     PCI device and function to communicate with
+> + * @res:       resources to be filled in
+> + *
+> + * The BIOS prevents the P2SB device from being enumerated by the PCI
+> + * subsystem, so we need to unhide and hide it back to lookup the P2SB BAR.
+> + *
+> + * Locking is handled by spinlock - cannot sleep.
+> + *
+> + * Return:
+> + * 0 on success or appropriate errno value on error.
+> + */
+> +int p2sb_bar(struct pci_dev *pdev, unsigned int devfn,
+> +       struct resource *res)
+> +{
+> +       u32 base_addr;
+> +       u64 base64_addr;
+> +       unsigned long flags;
+> +
+> +       if (!res)
+> +               return -EINVAL;
+> +
+> +       spin_lock(&p2sb_spinlock);
+> +
+> +       /* Unhide the P2SB device */
+> +       pci_bus_write_config_byte(pdev->bus, devfn, SBREG_HIDE, 0x00);
+> +
+> +       /* Check if device present */
+> +       pci_bus_read_config_dword(pdev->bus, devfn, 0, &base_addr);
+> +       if (base_addr == 0xffffffff || base_addr == 0x00000000) {
+> +               spin_unlock(&p2sb_spinlock);
+> +               dev_warn(&pdev->dev, "P2SB device access disabled by BIOS?\n");
+> +               return -ENODEV;
+> +       }
+> +
+> +       /* Get IO or MMIO BAR */
+> +       pci_bus_read_config_dword(pdev->bus, devfn, SBREG_BAR, &base_addr);
+> +       if ((base_addr & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO) {
+> +               flags = IORESOURCE_IO;
+> +               base64_addr = base_addr & PCI_BASE_ADDRESS_IO_MASK;
+> +       } else {
+> +               flags = IORESOURCE_MEM;
+> +               base64_addr = base_addr & PCI_BASE_ADDRESS_MEM_MASK;
+> +               if (base_addr & PCI_BASE_ADDRESS_MEM_TYPE_64) {
+> +                       flags |= IORESOURCE_MEM_64;
+> +                       pci_bus_read_config_dword(pdev->bus, devfn,
+> +                               SBREG_BAR + 4, &base_addr);
+> +                       base64_addr |= (u64)base_addr << 32;
+> +               }
+> +       }
+> +
+> +       /* Hide the P2SB device */
+> +       pci_bus_write_config_byte(pdev->bus, devfn, SBREG_HIDE, 0x01);
+> +
+> +       spin_unlock(&p2sb_spinlock);
+> +
+> +       /* User provides prefilled resources */
+> +       res->start += (resource_size_t)base64_addr;
+> +       res->end += (resource_size_t)base64_addr;
+> +       res->flags = flags;
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(p2sb_bar);
+> +
+> +MODULE_LICENSE("GPL");
 
+...the above is the only modular "use" that I can find.  So is the
+tristate bogus?   Without a module_init and a module_exit I am
+confused....
+
+I just finished an audit of arch/x86 for bogus uses of module.h
+so I'd like to ensure we don't add more.
+
+Thanks,
+Paul.
+--
+
+> --
+> 1.9.1
+>
