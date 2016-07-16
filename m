@@ -1,33 +1,43 @@
-From: =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
-	<jeremy.lefaure@lse.epita.fr>
-Subject: [PATCH 0/2] pinctrl: add missing dependencies on CONFIG_OF
-Date: Sat, 16 Jul 2016 19:16:15 +0200
-Message-ID: <20160716171617.6745-1-jeremy.lefaure@lse.epita.fr>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] pinctrl: qcom: Add generic ssbi and spmi GPIO/MPP
+ bindings
+Date: Sat, 16 Jul 2016 14:25:22 -0500
+Message-ID: <20160716192522.GA8272@rob-hp-laptop>
+References: <20160711190109.16758-1-sboyd@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from blatinox.fr ([51.254.120.209]:43845 "EHLO vps202351.ovh.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751668AbcGPRYm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 16 Jul 2016 13:24:42 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160711190109.16758-1-sboyd@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org
 
-These two patches fix a missing dependency on CONFIG_OF for
-PINCTRL_CYGNUS_MUX and PINCTRL_NSP_MUX Kconfig symbols.
+On Mon, Jul 11, 2016 at 12:01:09PM -0700, Stephen Boyd wrote:
+> The drivers don't really need to know which PMIC they're for, so
+> make a generic binding for them. This alleviates us from updating
+> the drivers every time a new PMIC comes out. It's still
+> recommended that we update the binding with new PMIC models and
+> always specify the specific model for the MPPs and gpios before
+> the generic compatible string in devicetree, but this at least
+> cuts down on adding more and more compatible strings to the
+> drivers until we actually need them.
+> 
+> Cc: <devicetree@vger.kernel.org>
+> Acked-by: "Ivan T. Ivanov" <iivanov.xz@gmail.com>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+> 
+> This seems to been missed 6 months ago when sent as an RFC. The dts
+> side changes have already been made and Rob H said it "Seems okay to
+> me".
+> 
+>  Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 5 ++++-
+>  Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt  | 5 ++++-
+>  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c                     | 1 +
+>  drivers/pinctrl/qcom/pinctrl-spmi-mpp.c                      | 1 +
+>  4 files changed, 10 insertions(+), 2 deletions(-)
 
-Since these two changes concern two different drivers, I split into
-two commits:
-[PATCH 1/2] pinctrl: cygnus-mux: add missing dependency on CONFIG_OF
-[PATCH 2/2] pinctrl: nsp: add missing dependency on CONFIG_OF
-
-Thank you for your time,
-J=C3=A9r=C3=A9my Lefaure
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Rob Herring <robh@kernel.org>
