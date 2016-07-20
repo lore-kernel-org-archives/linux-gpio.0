@@ -1,47 +1,103 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 2/4] mfd: axp20x: Add AXP209 GPIO driver to the mfd
-Date: Wed, 20 Jul 2016 16:11:37 +0200
-Message-ID: <20160720141139.25098-3-maxime.ripard@free-electrons.com>
-References: <20160720141139.25098-1-maxime.ripard@free-electrons.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 01/12] pinctrl: dt-bindings: Add documentation for Aspeed
+ pin controllers
+Date: Wed, 20 Jul 2016 14:05:19 -0500
+Message-ID: <20160720190519.GA9190@rob-hp-laptop>
+References: <1468994313-13538-1-git-send-email-andrew@aj.id.au>
+ <1468994313-13538-2-git-send-email-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160720141139.25098-1-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Lee Jones <lee.jones@linaro.org>, Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1468994313-13538-2-git-send-email-andrew@aj.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Joel Stanley <joel@jms.id.au>, linux-arm-kernel@lists.infradead.org, Jeremy Kerr <jk@ozlabs.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Now that we have a GPIO driver for the AXP209, we can add it to our MFD.
+On Wed, Jul 20, 2016 at 03:28:22PM +0930, Andrew Jeffery wrote:
+> Outline expectations on the pin controller's relationship with the
+> System Control Unit (SCU) IP through syscon, and document the compatible
+> strings for 4th and 5th generation Aspeed SoC pin controllers.
+> 
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> ---
+>  .../devicetree/bindings/pinctrl/pinctrl-aspeed.txt | 45 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
+> new file mode 100644
+> index 000000000000..5aac6a0a2e89
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
+> @@ -0,0 +1,45 @@
+> +Aspeed Pin Controllers
+> +----------------------
+> +
+> +The Aspeed SoCs vary in functionality inside a generation but have a common mux
+> +device register layout.
+> +
+> +Required properties:
+> +- compatible: should be one of the following:
+> +	"aspeed,g4-pinctrl";
+> +	"aspeed,g5-pinctrl"
+> +
+> +The pin controller node should be a child of a syscon node with the required
+> +property:
+> +- compatible: "syscon", "simple-mfd"
+> +
+> +Refer to the the bindings described in
+> +Documentation/devicetree/bindings/mfd/syscon.txt
+> +
+> +Subnode format:
+> +
+> +Please refer to pinctrl-bindings.txt in this directory for details of the
+> +common pinctrl bindings used by client devices.
+> +
+> +The required properties of child nodes are (as defined in pinctrl-bindings):
+> +- function
+> +- groups
+> +
+> +Each function has only one associated pin group. Each group is named by its
+> +function.
+> +
+> +Examples:
+> +
+> +syscon: scu@1e6e2000 {
+> +	compatible = "syscon", "simple-mfd";
+> +	reg = <0x1e6e2000 0x1a8>;
+> +
+> +	pinctrl: pinctrl@1e6e2000 {
+> +		compatible = "aspeed,g4-pinctrl";
+> +
+> +		pinctrl_i2c3_default: i2c3_default {
+> +			function = "I2C3";
+> +			groups = "I2C3";
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/mfd/axp20x.c | 3 +++
- 1 file changed, 3 insertions(+)
+All these strings need to be documented.
 
-diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
-index fd80b0981f0f..4b3e073c47b7 100644
---- a/drivers/mfd/axp20x.c
-+++ b/drivers/mfd/axp20x.c
-@@ -508,6 +508,9 @@ static const struct regmap_irq_chip axp809_regmap_irq_chip = {
- 
- static struct mfd_cell axp20x_cells[] = {
- 	{
-+		.name		= "axp20x-gpio",
-+		.of_compatible	= "x-powers,axp209-gpio",
-+	}, {
- 		.name		= "axp20x-pek",
- 		.num_resources	= ARRAY_SIZE(axp20x_pek_resources),
- 		.resources	= axp20x_pek_resources,
--- 
-2.9.0
+> +		};
+> +	};
+> +};
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1209323b7e43..b5f2d3576d3a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1003,6 +1003,7 @@ S:	Maintained
+>  F:	arch/arm/mach-aspeed/
+>  F:	arch/arm/boot/dts/aspeed-*
+>  F:	drivers/*/*aspeed*
+> +F:	Documentation/devicetree/bindings/*/*aspeed*
+>  
+>  ARM/ATMEL AT91RM9200, AT91SAM9 AND SAMA5 SOC SUPPORT
+>  M:	Nicolas Ferre <nicolas.ferre@atmel.com>
+> -- 
+> 2.7.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
