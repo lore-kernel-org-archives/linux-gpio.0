@@ -1,14 +1,14 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 3/3] ARM: pxa: add module.h for spitz symbol_get/symbol_put
- usage
-Date: Wed, 20 Jul 2016 00:13:32 -0400
-Message-ID: <20160720041332.30789-4-paul.gortmaker@windriver.com>
-References: <20160720041332.30789-1-paul.gortmaker@windriver.com>
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: [PATCH 01/12] pinctrl: dt-bindings: Add documentation for Aspeed pin
+ controllers
+Date: Wed, 20 Jul 2016 15:28:22 +0930
+Message-ID: <1468994313-13538-2-git-send-email-andrew@aj.id.au>
+References: <1468994313-13538-1-git-send-email-andrew@aj.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160720041332.30789-1-paul.gortmaker@windriver.com>
+In-Reply-To: <1468994313-13538-1-git-send-email-andrew@aj.id.au>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,54 +18,83 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Russell King <linux@armlinux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>, Daniel Mack <daniel@zonque.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, linux-arm-kernel@lists.infradead.org, Jeremy Kerr <jk@ozlabs.org>
 List-Id: linux-gpio@vger.kernel.org
 
-During unrelated work, attempting to remove an include of the
-linux/module.h in favour of "struct module;" in order to reduce
-header entanglement, we found doing so caused a build failure in
-this file.
+Outline expectations on the pin controller's relationship with the
+System Control Unit (SCU) IP through syscon, and document the compatible
+strings for 4th and 5th generation Aspeed SoC pin controllers.
 
-mach-pxa/spitz.c: In function 'spitz_bl_kick_battery':
-mach-pxa/spitz.c:524:2: error: implicit declaration of function 'symbol_get' [-Werror=implicit-function-declaration]
-mach-pxa/spitz.c:524:12: warning: assignment makes pointer from integer without a cast [enabled by default]
-mach-pxa/spitz.c:527:3: error: implicit declaration of function 'symbol_put' [-Werror=implicit-function-declaration]
-
-It turns out this file uses symbol_get/symbol_put which live in the
-module.h header, but it wasn't including module.h -- which was
-being masked by the module.h in include/linux/gpio/driver.h - the
-one we want to remove/replace.
-
-With ARM and GPIO being different subsystems, we'll need to get
-this in ARM 1st, and then wait a release before changing the GPIO
-header, otherwise we'll risk triggering build failures.
-
-Cc: Daniel Mack <daniel@zonque.org>
-Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-omap@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 ---
- arch/arm/mach-pxa/spitz.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/pinctrl/pinctrl-aspeed.txt | 45 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ 2 files changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
 
-diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
-index b410698808ca..8078e3cdb6c8 100644
---- a/arch/arm/mach-pxa/spitz.c
-+++ b/arch/arm/mach-pxa/spitz.c
-@@ -13,6 +13,7 @@
-  */
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
+new file mode 100644
+index 000000000000..5aac6a0a2e89
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
+@@ -0,0 +1,45 @@
++Aspeed Pin Controllers
++----------------------
++
++The Aspeed SoCs vary in functionality inside a generation but have a common mux
++device register layout.
++
++Required properties:
++- compatible: should be one of the following:
++	"aspeed,g4-pinctrl";
++	"aspeed,g5-pinctrl"
++
++The pin controller node should be a child of a syscon node with the required
++property:
++- compatible: "syscon", "simple-mfd"
++
++Refer to the the bindings described in
++Documentation/devicetree/bindings/mfd/syscon.txt
++
++Subnode format:
++
++Please refer to pinctrl-bindings.txt in this directory for details of the
++common pinctrl bindings used by client devices.
++
++The required properties of child nodes are (as defined in pinctrl-bindings):
++- function
++- groups
++
++Each function has only one associated pin group. Each group is named by its
++function.
++
++Examples:
++
++syscon: scu@1e6e2000 {
++	compatible = "syscon", "simple-mfd";
++	reg = <0x1e6e2000 0x1a8>;
++
++	pinctrl: pinctrl@1e6e2000 {
++		compatible = "aspeed,g4-pinctrl";
++
++		pinctrl_i2c3_default: i2c3_default {
++			function = "I2C3";
++			groups = "I2C3";
++		};
++	};
++};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1209323b7e43..b5f2d3576d3a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1003,6 +1003,7 @@ S:	Maintained
+ F:	arch/arm/mach-aspeed/
+ F:	arch/arm/boot/dts/aspeed-*
+ F:	drivers/*/*aspeed*
++F:	Documentation/devicetree/bindings/*/*aspeed*
  
- #include <linux/kernel.h>
-+#include <linux/module.h>	/* symbol_get ; symbol_put */
- #include <linux/platform_device.h>
- #include <linux/delay.h>
- #include <linux/gpio_keys.h>
+ ARM/ATMEL AT91RM9200, AT91SAM9 AND SAMA5 SOC SUPPORT
+ M:	Nicolas Ferre <nicolas.ferre@atmel.com>
 -- 
-2.8.4
+2.7.4
