@@ -1,58 +1,122 @@
-From: Helmut Grohne <h.grohne@intenta.de>
-Subject: Re: [PATCH 4.6 69/81] gpio: zynq: initialize clock even without
- CONFIG_PM
-Date: Thu, 21 Jul 2016 12:57:54 +0200
-Message-ID: <20160721105754.GA5086@laureti-dev>
-References: <20160622223743.240652686@linuxfoundation.org>
- <20160622223746.777833462@linuxfoundation.org>
- <CAKfKVtEFF=PvZ62N-Re9BX4iq+pCK5qchbp7N3TworkpRkAZZQ@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 06/12] gpio: Add Aspeed driver
+Date: Thu, 21 Jul 2016 16:12:44 -0400
+Message-ID: <CAP=VYLrJfRmKOoDWTpBrD5+iPdX6J9r609FzZ0CkzDd7vGBWyw@mail.gmail.com>
+References: <1468994313-13538-1-git-send-email-andrew@aj.id.au> <1468994313-13538-7-git-send-email-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.intenta.de ([194.31.246.158]:45430 "EHLO mail.intenta.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751932AbcGULEC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 21 Jul 2016 07:04:02 -0400
-Content-Disposition: inline
-In-Reply-To: <CAKfKVtEFF=PvZ62N-Re9BX4iq+pCK5qchbp7N3TworkpRkAZZQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1468994313-13538-7-git-send-email-andrew@aj.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, devicetree@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Alistair Popple <alistair@popple.id.au>
 List-Id: linux-gpio@vger.kernel.org
-To: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 
-On Fri, Jul 08, 2016 at 10:23:07AM +0200, Shubhrajyoti Datta wrote:
->  A small issue
-> 
-> Now it will be off by 1 ie we enable twice in probe.
-> 
-> solution is that either there should be get_sync or clk_enable but not both.
+On Wed, Jul 20, 2016 at 1:58 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+> From: Joel Stanley <joel@jms.id.au>
+>
+> The Aspeed SoCs contain GPIOs grouped by letter, where each letter group
+> contains 8 pins. The GPIO letter groups are then banked in sets of four
+> in the register layout.
+>
+> The implementation exposes multiple banks through the one driver, and
+> requests and releases pins via the pinctrl subsystem. The hardware
+> supports generation of interrupts with per-pin triggers, and exposes this
+> capability through an irqchip and devicetree.
+>
+> A number of supported features are not yet implemented: Configuration of
+> interrupt direction (ARM or LPC), debouncing, and provides WDT reset
+> tolerance for output ports.
+>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> Signed-off-by: Alistair Popple <alistair@popple.id.au>
+> Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> ---
+>  arch/arm/mach-aspeed/Kconfig |   4 +
+>  drivers/gpio/Kconfig         |   8 +-
+>  drivers/gpio/Makefile        |   1 +
+>  drivers/gpio/gpio-aspeed.c   | 456 +++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 468 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpio/gpio-aspeed.c
+>
+> diff --git a/arch/arm/mach-aspeed/Kconfig b/arch/arm/mach-aspeed/Kconfig
+> index 25a0ae01429e..a52de9d3adfb 100644
+> --- a/arch/arm/mach-aspeed/Kconfig
+> +++ b/arch/arm/mach-aspeed/Kconfig
+> @@ -6,6 +6,10 @@ menuconfig ARCH_ASPEED
+>         select ASPEED_WATCHDOG
+>         select MOXART_TIMER
+>         select PINCTRL
+> +       select GPIOLIB
+> +       select GPIO_ASPEED
+> +       select GPIO_SYSFS
+> +
+>         help
+>           Say Y here if you want to run your kernel on an ASpeed BMC SoC.
+>
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 536112fd2466..2c21b5db09cd 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -137,6 +137,13 @@ config GPIO_ATH79
+>           Select this option to enable GPIO driver for
+>           Atheros AR71XX/AR724X/AR913X SoC devices.
+>
+> +config GPIO_ASPEED
+> +       bool "Aspeed GPIO support"
 
-As far as I understand the inner workings of pm_runtime_get_sync this is
-not a problem.
+Since this is a bool Kconfig...
 
-> > +       ret = clk_prepare_enable(gpio->clk);
-> > +       if (ret) {
-> > +               dev_err(&pdev->dev, "Unable to enable clock.\n");
-> > +               return ret;
-> > +       }
-> 
-> This will now enable the first time.
-> >
-> > +       pm_runtime_set_active(&pdev->dev);
-> the the pm core that it is enabled .
+> +       depends on (ARCH_ASPEED || COMPILE_TEST) && OF
+> +       select GENERIC_IRQ_CHIP
+> +       help
+> +         Say Y here to support Aspeed AST2400 and AST2500 GPIO controllers.
+> +
 
-This function sets pdev->dev.power.runtime_status to RPM_ACTIVE (via
-__update_runtime_status).
+[...]
 
-> >         pm_runtime_enable(&pdev->dev);
-> >         ret = pm_runtime_get_sync(&pdev->dev);
-> 
-> this will enable the second time.
+ > diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+> new file mode 100644
+> index 000000000000..7885adc1332a
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-aspeed.c
+> @@ -0,0 +1,456 @@
+> +/*
+> + * Copyright 2015 IBM Corp
+> + *
+> + * Joel Stanley <joel@jms.id.au>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * as published by the Free Software Foundation; either version
+> + * 2 of the License, or (at your option) any later version.
+> + */
+> +
+> +#include <linux/module.h>
 
-The bulk of the work is done by rpm_resume. Close to the top of the
-function the runtime_status field is compared to RPM_ACTIVE and if so,
-the resume operation is skipped.
+...can you please get rid of module.h and all the MODULE_<xyz>
+stuff and use the built in registration?   Alternatively change it to
+a tristate if there is a valid use case for it to be modular.
 
-Is there any mistake in that analysis?
+Thanks.
+Paul.
+--
 
-Helmut
+> +#include <linux/kernel.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/pinctrl/consumer.h>
+> +
+> +struct aspeed_gpio {
+> +       struct gpio_chip chip;
+> +       spinlock_t lock;
+> +       void __iomem *base;
+> +       int irq;
+> +       struct irq_chip irq_chip;
+> +       struct irq_domain *irq_domain;
+> +};
+> +
