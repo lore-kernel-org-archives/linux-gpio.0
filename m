@@ -1,84 +1,58 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH 07/12] syscon: dt-bindings: Add documentation for Aspeed
- system control units
-Date: Thu, 21 Jul 2016 10:34:40 +0930
-Message-ID: <1469063080.954.109.camel@aj.id.au>
-References: <1468994313-13538-1-git-send-email-andrew@aj.id.au>
-	 <1468994313-13538-8-git-send-email-andrew@aj.id.au>
-	 <20160720190901.GA11147@rob-hp-laptop>
+From: Helmut Grohne <h.grohne@intenta.de>
+Subject: Re: [PATCH 4.6 69/81] gpio: zynq: initialize clock even without
+ CONFIG_PM
+Date: Thu, 21 Jul 2016 12:57:54 +0200
+Message-ID: <20160721105754.GA5086@laureti-dev>
+References: <20160622223743.240652686@linuxfoundation.org>
+ <20160622223746.777833462@linuxfoundation.org>
+ <CAKfKVtEFF=PvZ62N-Re9BX4iq+pCK5qchbp7N3TworkpRkAZZQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-8WBvbCmfS2pW6k2UH5Jt"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160720190901.GA11147@rob-hp-laptop>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Joel Stanley <joel@jms.id.au>, linux-arm-kernel@lists.infradead.org, Jeremy Kerr <jk@ozlabs.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.intenta.de ([194.31.246.158]:45430 "EHLO mail.intenta.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751932AbcGULEC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 21 Jul 2016 07:04:02 -0400
+Content-Disposition: inline
+In-Reply-To: <CAKfKVtEFF=PvZ62N-Re9BX4iq+pCK5qchbp7N3TworkpRkAZZQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 
+On Fri, Jul 08, 2016 at 10:23:07AM +0200, Shubhrajyoti Datta wrote:
+>  A small issue
+> 
+> Now it will be off by 1 ie we enable twice in probe.
+> 
+> solution is that either there should be get_sync or clk_enable but not both.
 
---=-8WBvbCmfS2pW6k2UH5Jt
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+As far as I understand the inner workings of pm_runtime_get_sync this is
+not a problem.
 
-On Wed, 2016-07-20 at 14:09 -0500, Rob Herring wrote:
-> On Wed, Jul 20, 2016 at 03:28:28PM +0930, Andrew Jeffery wrote:
-> >=20
-> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> > ---
-> > =C2=A0Documentation/devicetree/bindings/mfd/aspeed-scu.txt | 16 +++++++=
-+++++++++
-> > =C2=A01 file changed, 16 insertions(+)
-> > =C2=A0create mode 100644 Documentation/devicetree/bindings/mfd/aspeed-s=
-cu.txt
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/mfd/aspeed-scu.txt b/Doc=
-umentation/devicetree/bindings/mfd/aspeed-scu.txt
-> > new file mode 100644
-> > index 000000000000..4df798799101
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mfd/aspeed-scu.txt
-> > @@ -0,0 +1,16 @@
-> > +The Aspeed System Control Unit manages the global behaviour of the SoC=
-,
-> > +configuring elements such as clocks, pinmux, and reset.
-> > +
-> > +Required properties:
-> > +- compatible:	One of:
-> > +		"aspeed,g4-scu", "syscon", "simple-mfd"
-> > +		"aspeed,g5-scu", "syscon", "simple-mfd"
-> These (and the pinctrl probably) really need SoC specific compatible=C2=
-=A0
-> strings. You can keep these as fallbacks though. These are the parts of=
-=C2=A0
-> SoCs that really vary chip to chip.
+> > +       ret = clk_prepare_enable(gpio->clk);
+> > +       if (ret) {
+> > +               dev_err(&pdev->dev, "Unable to enable clock.\n");
+> > +               return ret;
+> > +       }
+> 
+> This will now enable the first time.
+> >
+> > +       pm_runtime_set_active(&pdev->dev);
+> the the pm core that it is enabled .
 
-I'll add the SoC-specific compatible strings.
+This function sets pdev->dev.power.runtime_status to RPM_ACTIVE (via
+__update_runtime_status).
 
-Cheers,
+> >         pm_runtime_enable(&pdev->dev);
+> >         ret = pm_runtime_get_sync(&pdev->dev);
+> 
+> this will enable the second time.
 
-Andrew
---=-8WBvbCmfS2pW6k2UH5Jt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+The bulk of the work is done by rpm_resume. Close to the top of the
+function the runtime_status field is compared to RPM_ACTIVE and if so,
+the resume operation is skipped.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Is there any mistake in that analysis?
 
-iQIcBAABCgAGBQJXkB+oAAoJEJ0dnzgO5LT5vxUP/2Dx8GaIpMweeGpvXspe76bx
-TpKHdwYrReT6skORIh3M64WZfyunkw/ER9jR1MwGOSBYEQj/TPw9/JN8S2uKKAAN
-LmWUL+yzYCyWmRi/DLEI+iD137YrRLcETUm4yTQQra+/OZs9T090LM/NtZizFcCq
-JuszVmwEwqMO6NFD/9/0RxC8z8RSGsZG5jP8pNrSh3Cfp41U3Kw636Z+2q848j85
-0aUxoGdKYs/ok5UwKDCIBZAXQI9BzDcXDMetq/vJYjpnOLHCzP7m0kteRD62x4xN
-/RJqEN9jPkn8LsDV54GiYYMAhd5JzmI06yboZ289Xthz/TBFqQ8DtCW2AerC+3S7
-fqqvyVot08yxTafYKSkU7k1dR6qK5lgRdmxm9HJxK6ppZpBk3M/VKFI9tYMxNs9G
-kFjqN7/74mUIio/L23DfBW+YO3ld+8EWmPcXqV10cVYhQabTQDTqvsJZ6L3JP1ZV
-XJ3i8CZo14THPq2Jo9P261/CovvrzchSOEwKHmiIoHSvnv+5sUqjKkgc+2t0grkx
-Mkf8YnzWLM+2+Ba56fp1DiFmFQj40Qz4rG2SOMJcGe687FBQqDlfVCf6cMc7Dlf7
-Ru5O+67hUtfR3NVYWhw+YCPoJ4Uc/lx0vvrC8L6BxCWAjzP5hx2wzk9sarroILjA
-pTh2iS1T+le5hVRBIQSf
-=zTJI
------END PGP SIGNATURE-----
-
---=-8WBvbCmfS2pW6k2UH5Jt--
+Helmut
