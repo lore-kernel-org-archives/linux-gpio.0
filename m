@@ -1,37 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] ARM: fix three implicit module use cases fed via gpio
-Date: Fri, 22 Jul 2016 17:29:05 +0200
-Message-ID: <CACRpkdbSGPfMTQs9pD+-eDMf7LjnWH1xcpsUcCbgLF5GxMK7Aw@mail.gmail.com>
-References: <20160720041332.30789-1-paul.gortmaker@windriver.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] pinctrl: xway: fix typo
+Date: Fri, 22 Jul 2016 17:45:26 +0200
+Message-ID: <1469202326-9281-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:33741 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751830AbcGVP3G (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2016 11:29:06 -0400
-Received: by mail-oi0-f47.google.com with SMTP id j185so167453364oih.0
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Jul 2016 08:29:06 -0700 (PDT)
-In-Reply-To: <20160720041332.30789-1-paul.gortmaker@windriver.com>
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:34510 "EHLO
+	mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751082AbcGVPpk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2016 11:45:40 -0400
+Received: by mail-lf0-f51.google.com with SMTP id l69so88292910lfg.1
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jul 2016 08:45:38 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Russell King <linux@armlinux.org.uk>, Tony Lindgren <tony@atomide.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Amitoj Kaur Chawla <amitoj1606@gmail.com>
 
-On Wed, Jul 20, 2016 at 6:13 AM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
+A typo in the previous commit to this file needs fixing.
 
-> While working on some for-4.9 cleanups of linux/gpio/driver.h it was
-> found that changes there caused build failures when walking all the
-> ARM defconfigs, in ARM specific mach-* files.
-(...)
-> Paul Gortmaker (3):
->   ARM: mach-omap2: remove bogus "or_module" from rx51-peripherals
->   ARM: pxa: add module.h for corgi symbol_get/symbol_put usage
->   ARM: pxa: add module.h for spitz symbol_get/symbol_put usage
+Cc: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Fixes: 6b4316aecec0 ("pinctrl: xway: Change structure initialisation to c99 style")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/pinctrl-xway.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-For all three:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
+index dac88a2a1693..f3775f823e8b 100644
+--- a/drivers/pinctrl/pinctrl-xway.c
++++ b/drivers/pinctrl/pinctrl-xway.c
+@@ -1647,7 +1647,7 @@ static struct pinctrl_xway_soc danube_pinctrl = {
+ 	.funcs = danube_funcs,
+ 	.num_funcs = ARRAY_SIZE(danube_funcs),
+ 	.exin = danube_exin_pin_map,
+-	.num-exin = 3
++	.num_exin = 3
+ };
+ 
+ /* XWAY xRX100 Family */
+-- 
+2.7.4
 
-Yours,
-Linus Walleij
