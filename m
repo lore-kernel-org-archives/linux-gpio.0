@@ -1,42 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] Revert "pinctrl: amd: make it explicitly non-modular"
-Date: Fri, 22 Jul 2016 17:27:09 +0200
-Message-ID: <CACRpkdYNZ_R3ak99f4c+z-p22hPWWR1w_UxKCy2-LebodGKv9Q@mail.gmail.com>
-References: <20160719003030.26420-1-paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 0/3] ARM: fix three implicit module use cases fed via gpio
+Date: Fri, 22 Jul 2016 17:29:05 +0200
+Message-ID: <CACRpkdbSGPfMTQs9pD+-eDMf7LjnWH1xcpsUcCbgLF5GxMK7Aw@mail.gmail.com>
+References: <20160720041332.30789-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160719003030.26420-1-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jean Delvare <jdelvare@suse.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:33741 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751830AbcGVP3G (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2016 11:29:06 -0400
+Received: by mail-oi0-f47.google.com with SMTP id j185so167453364oih.0
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jul 2016 08:29:06 -0700 (PDT)
+In-Reply-To: <20160720041332.30789-1-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Russell King <linux@armlinux.org.uk>, Tony Lindgren <tony@atomide.com>
 
-On Tue, Jul 19, 2016 at 2:30 AM, Paul Gortmaker
+On Wed, Jul 20, 2016 at 6:13 AM, Paul Gortmaker
 <paul.gortmaker@windriver.com> wrote:
 
-> This reverts commit b8c2b10a9bc0272a20e096852f8fbbf361749dda.
->
-> This patch was in my queue at the same time that a conversion of
-> the same driver from bool --> tristate was pending and merged.
->
-> That is commit 337ea0fb1535 ("pinctrl: Turn AMD support to tristate")
->
-> Normally the conflict would show up in the build coverage I do,
-> however in this case an avoidable instance of linux/module.h in
-> linux/gpio/driver.h (!) causes the build failure to be masked and
-> instead the tristate gets built-in even for selected "=m".
->
-> In working on removing module.h from driver.h this issue was then
-> revealed (along with other implicit module.h assumptions in gpio,
-> and mfd -- which will be fixed separately.)
->
-> Cc: Jean Delvare <jdelvare@suse.de>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> While working on some for-4.9 cleanups of linux/gpio/driver.h it was
+> found that changes there caused build failures when walking all the
+> ARM defconfigs, in ARM specific mach-* files.
+(...)
+> Paul Gortmaker (3):
+>   ARM: mach-omap2: remove bogus "or_module" from rx51-peripherals
+>   ARM: pxa: add module.h for corgi symbol_get/symbol_put usage
+>   ARM: pxa: add module.h for spitz symbol_get/symbol_put usage
 
-Patch applied with Jean's ACK.
+For all three:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
