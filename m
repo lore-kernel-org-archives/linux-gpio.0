@@ -1,38 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: bcm: add OF dependencies
-Date: Fri, 22 Jul 2016 16:44:05 +0200
-Message-ID: <CACRpkdZFqZ-BiWye1J3DJcY-TSMS+EJZbEEHyGTxJm8+Ed1JHA@mail.gmail.com>
-References: <20160715203012.1715182-1-arnd@arndb.de>
+Subject: Re: [PATCH v4 1/2] dt-bindings: Update iProc GPIO bindings
+Date: Fri, 22 Jul 2016 16:46:14 +0200
+Message-ID: <CACRpkdZohemfZm_k+W7uZOxmRBJ1dMvcYox2hZdej4xrEuhdVw@mail.gmail.com>
+References: <1468862418-31477-1-git-send-email-ray.jui@broadcom.com> <1468862418-31477-2-git-send-email-ray.jui@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:36370 "EHLO
-	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751580AbcGVOoG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2016 10:44:06 -0400
-Received: by mail-oi0-f44.google.com with SMTP id w18so165625418oiw.3
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Jul 2016 07:44:06 -0700 (PDT)
-In-Reply-To: <20160715203012.1715182-1-arnd@arndb.de>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:35286 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751591AbcGVOqQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2016 10:46:16 -0400
+Received: by mail-oi0-f41.google.com with SMTP id l72so165869578oig.2
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jul 2016 07:46:15 -0700 (PDT)
+In-Reply-To: <1468862418-31477-2-git-send-email-ray.jui@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Ray Jui <rjui@broadcom.com>, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>, Pramod Kumar <pramodku@broadcom.com>, Rob Herring <robh@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Ray Jui <ray.jui@broadcom.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Fri, Jul 15, 2016 at 10:29 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Mon, Jul 18, 2016 at 7:20 PM, Ray Jui <ray.jui@broadcom.com> wrote:
 
-> Building without CONFIG_OF gives us these warnings for the broadcom
-> pinctrl drivers:
+> Update the iProc GPIO binding document to add new compatible strings
+> "brcm,iproc-nsp-gpio" and "brcm,iproc-stingray-gpio" to support the
+> iProc based GPIO controller used in the NSP and Stingray SoCs,
+> respectively
 >
-> drivers/pinctrl/bcm/pinctrl-nsp-mux.c:356:20: error: 'pinconf_generic_dt_node_to_map_group' undeclared here (not in a function)
-> drivers/pinctrl/bcm/pinctrl-cygnus-mux.c:739:20: error: 'pinconf_generic_dt_node_to_map_group' undeclared here (not in a function)
->
-> The function is only available when CONFIG_OF is set, so we should add
-> a Kconfig dependency for both drivers.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: cc4fa83f66e9 ("pinctrl: nsp: add pinmux driver support for Broadcom NSP SoC")
+> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
 
-Patch applied.
+Patch applied with Rob's ACK.
 
 Yours,
 Linus Walleij
