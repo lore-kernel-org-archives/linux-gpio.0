@@ -1,54 +1,57 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 1/3] ARM: mach-omap2: remove bogus "or_module" from
- rx51-peripherals
-Date: Fri, 22 Jul 2016 10:02:42 -0400
-Message-ID: <20160722140242.GC11410@windriver.com>
-References: <20160720041332.30789-1-paul.gortmaker@windriver.com>
- <20160720041332.30789-2-paul.gortmaker@windriver.com>
- <20160722064101.GW28140@atomide.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: document how to order GPIO controllers
+Date: Fri, 22 Jul 2016 16:34:58 +0200
+Message-ID: <CACRpkdYMrfRmmY=ABPj2zoA-kW0gkPRwzeC=U3XhKs1PGRe4vA@mail.gmail.com>
+References: <1467355333-8813-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <20160705140546.GA10601@rob-hp-laptop> <20160705180447.GP16643@pengutronix.de>
+ <CACRpkdbH+KRXbxFdfyAE44fBNctK4cWV+KRLwQBTzSGLvLMEDg@mail.gmail.com>
+ <20160706102750.GH23470@localhost> <CACRpkdZhx3yTbtuj-ZTP+mtUSr4uxL4bHtu8jVZOoxrUy6=iYw@mail.gmail.com>
+ <20160713131412.GO6442@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:64781 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751001AbcGVODR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2016 10:03:17 -0400
-Content-Disposition: inline
-In-Reply-To: <20160722064101.GW28140@atomide.com>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:34947 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751396AbcGVOe7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2016 10:34:59 -0400
+Received: by mail-oi0-f51.google.com with SMTP id l72so165401556oig.2
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jul 2016 07:34:59 -0700 (PDT)
+In-Reply-To: <20160713131412.GO6442@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Johan Hovold <johan@kernel.org>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Rob Herring <robh@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-[Re: [PATCH 1/3] ARM: mach-omap2: remove bogus "or_module" from rx51-peripherals] On 21/07/2016 (Thu 23:41) Tony Lindgren wrote:
+On Wed, Jul 13, 2016 at 3:14 PM, Johan Hovold <johan@kernel.org> wrote:
+> On Wed, Jul 06, 2016 at 02:34:39PM +0200, Linus Walleij wrote:
 
-> Hi,
-> 
-> * Paul Gortmaker <paul.gortmaker@windriver.com> [160719 21:17]:
-> > During unrelated work, attempting to remove an include of the
-> > linux/module.h in favour of "struct module;" in order to reduce
-> > header entanglement, we found doing so caused a build failure in
-> > this file.
-> 
-> We're planning to drop this file after v4.8-rc1 after I've
-> verified that legacy booting still works at v4.8-rc1.
-> 
-> Are you OK if I pick this patch into my omap-for-v4.8/legacy
-> branch? Or if you have a minimal immutable branch against v4.7-rc1
-> with just this patch I can merge it in no problem.
+>> For the purpose of picking a certain named GPIO line (see below)
+>> knowing this number is unnecessary. To that mechanism all gpio
+>> chips are equal and the instance number does not matter.
+>
+> My point was that with gpio line names (and possibly topological
+> information to resolve duplicates), the N number should not matter
+> anymore.
 
-Is the legacy branch a contingency plan for the case where legacy
-booting doesn't work?  If so, that should be OK.
+Agreed. It doesn't, with the new ABI. Not for technical reasons, at all.
 
-Having the patch present, or having the file deleted both take care of
-my concern -- which was was introducing build regressions when adding
-the gpio header cleanup into for-4.9 content.  
+> If one needs to look up a particular gpiochip based on some hardware
+> naming convention, why not associate a name with the chip instead of
+> trying to shoehorn the dynamic gpiochip range in there?
 
-THanks,
-Paul.
---
+With the new ABI it is possible to set a "label" for the gpiochip, currently
+described as "a functional name for this GPIO chip, such as a product
+number" and it's certainly possible to manage this name carefully for
+a system to look up a certain chip.
 
-> 
-> Regards,
-> 
-> Tony
+[About obtaining topological  information from sysfs]
+> And this may even be unavoidable with dynamic buses such as USB or
+> greybus, where you can have multiple devices associating the same name
+> with a pin. That's fine as long as the user-space interface allows for a
+> way to distinguish them (e.g. through topological information).
+
+This should work fine AFAICT. All the ABI and information is in place
+to deal with this.
+
+Yours,
+Linus Walleij
