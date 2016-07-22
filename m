@@ -1,35 +1,26 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 1/3] ARM: mach-omap2: remove bogus "or_module" from
- rx51-peripherals
-Date: Thu, 21 Jul 2016 23:41:02 -0700
-Message-ID: <20160722064101.GW28140@atomide.com>
-References: <20160720041332.30789-1-paul.gortmaker@windriver.com>
- <20160720041332.30789-2-paul.gortmaker@windriver.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160720041332.30789-2-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Martyn Welch <martyn.welch@collabora.co.uk>
+Subject: [RESEND PATCH v5 0/1] USB: serial: GPIO support for cp210x
+Date: Fri, 22 Jul 2016 11:33:14 +0100
+Message-ID: <cover.1469182892.git.martyn.welch@collabora.co.uk>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:59703 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753298AbcGVKdg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2016 06:33:36 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Martyn Welch <martyn.welch@collabora.co.uk>
 
-Hi,
+This patch series includes a resend of v5 of a patch to provide GPIO support
+for cp210x.
 
-* Paul Gortmaker <paul.gortmaker@windriver.com> [160719 21:17]:
-> During unrelated work, attempting to remove an include of the
-> linux/module.h in favour of "struct module;" in order to reduce
-> header entanglement, we found doing so caused a build failure in
-> this file.
+Martyn Welch (1):
+  USB: serial: cp210x: Adding GPIO support for CP2105
 
-We're planning to drop this file after v4.8-rc1 after I've
-verified that legacy booting still works at v4.8-rc1.
+ drivers/usb/serial/cp210x.c | 351 +++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 348 insertions(+), 3 deletions(-)
 
-Are you OK if I pick this patch into my omap-for-v4.8/legacy
-branch? Or if you have a minimal immutable branch against v4.7-rc1
-with just this patch I can merge it in no problem.
+-- 
+1.8.3.1
 
-Regards,
-
-Tony
