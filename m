@@ -1,42 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 2/2] pinctrl: iproc: Add NSP and Stingray GPIO support
-Date: Fri, 22 Jul 2016 16:48:35 +0200
-Message-ID: <CACRpkda7RC6mpLgXLk46PxPFH1SJii-2RHFTyt9EZJWm2OHJTA@mail.gmail.com>
-References: <1468862418-31477-1-git-send-email-ray.jui@broadcom.com> <1468862418-31477-3-git-send-email-ray.jui@broadcom.com>
+Subject: Re: [PATCH 0/2] pinctrl: add missing dependencies on CONFIG_OF
+Date: Fri, 22 Jul 2016 17:09:57 +0200
+Message-ID: <CACRpkdaLqQ=xLB7YmLG-p1ykk8uOTCWFs3odqq+GApWxA5ZLOA@mail.gmail.com>
+References: <20160716171617.6745-1-jeremy.lefaure@lse.epita.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1468862418-31477-3-git-send-email-ray.jui@broadcom.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ray Jui <ray.jui@broadcom.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pramod Kumar <pramodku@broadcom.com>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:33131 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751317AbcGVPJ7 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jul 2016 11:09:59 -0400
+Received: by mail-oi0-f42.google.com with SMTP id j185so166660940oih.0
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jul 2016 08:09:58 -0700 (PDT)
+In-Reply-To: <20160716171617.6745-1-jeremy.lefaure@lse.epita.fr>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?B?SsOpcsOpbXkgTGVmYXVyZQ==?= <jeremy.lefaure@lse.epita.fr>, Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Jul 18, 2016 at 7:20 PM, Ray Jui <ray.jui@broadcom.com> wrote:
+On Sat, Jul 16, 2016 at 7:16 PM, J=C3=A9r=C3=A9my Lefaure
+<jeremy.lefaure@lse.epita.fr> wrote:
 
-> The iProc GPIO controller is shared among multiple iProc based SoCs.
-> In the NSP integration, the drive strength pinctrl function is
-> disabled. In the integration of Stingray, pinctrl is handled by another
-> block and this GPIO controller is solely used as a GPIO controller, and
-> therefore should not be registered to the pinconf framework
+> These two patches fix a missing dependency on CONFIG_OF for
+> PINCTRL_CYGNUS_MUX and PINCTRL_NSP_MUX Kconfig symbols.
 >
-> This patch introduces new SoC specific compatible strings
-> "brcm,iproc-nsp-gpio" for NSP with drive strength feature disabled and
-> "brcm,iproc-stingray-gpio" for Stingray with all PINCONF features
-> disabled
->
-> This patch is developed based on the initial work from Yendapally
-> Reddy Dhananjaya <yendapally.reddy@broadcom.com> who attempted to
-> disable drive strength configuration for the iProc based NSP chip. In
-> addition, Pramod Kumar <pramod.kumar@broadcom.com> also contributed to
-> make the support more generic across all currently supported PINCONF
-> functions in the iProc GPIO/PINCONF driver
->
-> Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
-> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> Since these two changes concern two different drivers, I split into
+> two commits:
+> [PATCH 1/2] pinctrl: cygnus-mux: add missing dependency on CONFIG_OF
+> [PATCH 2/2] pinctrl: nsp: add missing dependency on CONFIG_OF
 
-Patch applied. I see no reason to hold it back, if it survives the
-test builds.
+I got a similar patch from Arnd Bergmann which is already merged.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
