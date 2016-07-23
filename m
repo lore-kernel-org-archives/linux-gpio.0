@@ -1,56 +1,102 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 1/3] ARM: mach-omap2: remove bogus "or_module" from
- rx51-peripherals
-Date: Fri, 22 Jul 2016 22:55:24 -0700
-Message-ID: <20160723055524.GA28140@atomide.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH 0/3] ARM: fix three implicit module use cases fed via gpio
+Date: Sat, 23 Jul 2016 10:09:20 +0200
+Message-ID: <8737n022tr.fsf@belgarion.home>
 References: <20160720041332.30789-1-paul.gortmaker@windriver.com>
- <20160720041332.30789-2-paul.gortmaker@windriver.com>
- <20160722064101.GW28140@atomide.com>
- <20160722140242.GC11410@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160722140242.GC11410@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:50248 "EHLO
+	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751328AbcGWIJ0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Jul 2016 04:09:26 -0400
+In-Reply-To: <20160720041332.30789-1-paul.gortmaker@windriver.com> (Paul
+	Gortmaker's message of "Wed, 20 Jul 2016 00:13:29 -0400")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, Tony Lindgren <tony@atomide.com>
+Cc: linux-kernel@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, Russell King <linux@armlinux.org.uk>
 
-* Paul Gortmaker <paul.gortmaker@windriver.com> [160722 07:02]:
-> [Re: [PATCH 1/3] ARM: mach-omap2: remove bogus "or_module" from rx51-peripherals] On 21/07/2016 (Thu 23:41) Tony Lindgren wrote:
-> 
-> > Hi,
-> > 
-> > * Paul Gortmaker <paul.gortmaker@windriver.com> [160719 21:17]:
-> > > During unrelated work, attempting to remove an include of the
-> > > linux/module.h in favour of "struct module;" in order to reduce
-> > > header entanglement, we found doing so caused a build failure in
-> > > this file.
-> > 
-> > We're planning to drop this file after v4.8-rc1 after I've
-> > verified that legacy booting still works at v4.8-rc1.
-> > 
-> > Are you OK if I pick this patch into my omap-for-v4.8/legacy
-> > branch? Or if you have a minimal immutable branch against v4.7-rc1
-> > with just this patch I can merge it in no problem.
-> 
-> Is the legacy branch a contingency plan for the case where legacy
-> booting doesn't work?  If so, that should be OK.
+Paul Gortmaker <paul.gortmaker@windriver.com> writes:
 
-Well it's just a branch of omap legacy booting related patches
-for v4.8. But looking at it now, looks like I already pushed out the
-removal of the last two remaining board files before I took few weeks
-off. But I did not add it to Linux next to keep things working
-until -rc1.
+> While working on some for-4.9 cleanups of linux/gpio/driver.h it was
+> found that changes there caused build failures when walking all the
+> ARM defconfigs, in ARM specific mach-* files.
+>
+> The proposed GPIO header change is just this:
+>
+>  ---------------------------------------      
+>      --- a/include/linux/gpio/driver.h
+>      +++ b/include/linux/gpio/driver.h
+>      @@ -3,7 +3,6 @@
+>       
+>       #include <linux/device.h>
+>       #include <linux/types.h>
+>      -#include <linux/module.h>
+>       #include <linux/irq.h>
+>       #include <linux/irqchip/chained_irq.h>
+>       #include <linux/irqdomain.h>
+>      @@ -16,6 +15,7 @@ struct of_phandle_args;
+>       struct device_node;
+>       struct seq_file;
+>       struct gpio_device;
+>      +struct module;
+>       
+>       #ifdef CONFIG_GPIOLIB
+>  ---------------------------------------      
+>
+> ...which is what we've already got in ~50 other include/linux/* files to
+> try and keep cross contamination entanglement at a minimum.
+>
+> So we uncovered three users in ARM specific files relying on the above
+> presence in this header, vs. dealing with it within the driver itself.
+>
+> But with ARM and GPIO being different subsystems, we'll need to get
+> this in ARM 1st, and then wait a release before changing the GPIO
+> header, otherwise we'll risk triggering these three build failures.
+>
+> So, if folks consider these three trivial changes OK for late in the
+> for-4.8 cycle, then great.  Otherwise I'll resubmit the ARM parts for
+> for-4.9 and the GPIO bits for the one after that.
+>
+> [Yes, there were gpio implicit users too, but they are easily sync'd
+> with the gpio header change being at the end of that series.]
+>
+> Paul.
+> --
+>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Daniel Mack <daniel@zonque.org>
+> Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Tony Lindgren <tony@atomide.com>
+>
+> Paul Gortmaker (3):
+>   ARM: mach-omap2: remove bogus "or_module" from rx51-peripherals
+>   ARM: pxa: add module.h for corgi symbol_get/symbol_put usage
+>   ARM: pxa: add module.h for spitz symbol_get/symbol_put usage
+>
+>  arch/arm/mach-omap2/board-rx51-peripherals.c | 2 +-
+>  arch/arm/mach-pxa/corgi.c                    | 1 +
+>  arch/arm/mach-pxa/spitz.c                    | 1 +
+>  3 files changed, 3 insertions(+), 1 deletion(-)
 
-> Having the patch present, or having the file deleted both take care of
-> my concern -- which was was introducing build regressions when adding
-> the gpio header cleanup into for-4.9 content.  
+Hi Paul,
 
-OK. As I've already pushed out the board-*.c removal branch, I
-suggest we just drop the $subject patch to avoid a merge conflict.
+I'll take the mach-pxa changes to pxa/for-next tree with Linus's ack.
+Tony, I think you will carry the remaining omap2 one, right ?
 
-Regards,
+As for the cycle, I'd prefer have it for-4.9 as we're at rc7 and it's a bit late
+for me. If you want your GPIO bits to get in 4.9 I think I can commit to request
+pull very early (-rc1 time) or give my ack so that Linus can carry these changes
+through the gpio tree with the other changes.
 
-Tony
+Cheers.
+
+-- 
+Robert
