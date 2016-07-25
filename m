@@ -1,326 +1,382 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] bulk GPIO changes for v4.8
-Date: Mon, 25 Jul 2016 10:02:26 +0200
-Message-ID: <CACRpkdZrwcNX5AKarfZ6GJFig3DtizmC+ZDpDGC1Pg+aPcKyXg@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v6] gpio: add Intel WhiskeyCove PMIC GPIO driver
+Date: Mon, 25 Jul 2016 16:31:31 +0300
+Message-ID: <CAHp75Ve_6P6AorPkBYgcRdJkKAHpBmO870du28o9fevxO8B83w@mail.gmail.com>
+References: <20160719184508.GB111962@worksta>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:33987 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751968AbcGYIC2 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Jul 2016 04:02:28 -0400
-Received: by mail-oi0-f49.google.com with SMTP id l65so241279730oib.1
-        for <linux-gpio@vger.kernel.org>; Mon, 25 Jul 2016 01:02:28 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160719184508.GB111962@worksta>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bin Gao <bin.gao@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Yegnesh S Iyer <yegnesh.s.iyer@intel.com>, Bin Gao <bin.gao@intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-Hi Linus,
+On Tue, Jul 19, 2016 at 9:45 PM, Bin Gao <bin.gao@linux.intel.com> wrote:
+> This patch introduces a separate GPIO driver for Intel WhiskeyCove PMIC.
+> This driver is based on gpio-crystalcove.c.
+>
+> Signed-off-by: Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>
+> Signed-off-by: Bin Gao <bin.gao@intel.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-here is the bulk of the GPIO changes for the v4.8 kernel cycle. The big
-news is the completion of the chardev ABI which I'm very happy about
-and apart from that it's an ordinary, quite busy cycle. The details are
-in the signed tag.
+There are still (minor) issues, since the patch most likely will not
+make v4.8-rc1, my comments below.
 
-The patches are tested in linux-next for some time, patches to other
-subsystem mostly have ACKs.
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 536112f..0f33982 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -806,6 +806,19 @@ config GPIO_CRYSTAL_COVE
+>           This driver can also be built as a module. If so, the module will be
+>           called gpio-crystalcove.
+>
+> +config GPIO_WHISKEY_COVE
 
-I got overly ambitious with configureing lines as input for IRQ lines b=
-ut
-it turns out that some controllers have their interrupt-enable and
-input-enabling in orthogonal settings so the assumption that all IRQ
-lines are input lines does not hold. Oh well, revert and back to the
-drawing board with that.
+I think it should follow alphabetical order.
 
-Please pull it in!
+> --- a/drivers/gpio/Makefile
+> +++ b/drivers/gpio/Makefile
+> @@ -34,6 +34,7 @@ obj-$(CONFIG_GPIO_BT8XX)      += gpio-bt8xx.o
+>  obj-$(CONFIG_GPIO_CLPS711X)    += gpio-clps711x.o
+>  obj-$(CONFIG_GPIO_CS5535)      += gpio-cs5535.o
+>  obj-$(CONFIG_GPIO_CRYSTAL_COVE)        += gpio-crystalcove.o
+> +obj-$(CONFIG_GPIO_WHISKEY_COVE)        += gpio-wcove.o
 
-Yours,
-Linus Walleij
+Ditto.
+
+> +++ b/drivers/gpio/gpio-wcove.c
+> @@ -0,0 +1,439 @@
+> +/*
+> + * gpio-wcove.c - Intel Whiskey Cove GPIO Driver
+
+No file name.
+
+> + */
+> +
+> +#include <linux/seq_file.h>
+> +#include <linux/bitops.h>
+> +#include <linux/regmap.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/mfd/intel_soc_pmic.h>
+
+Perhaps alphabetical order.
+
+> +/* GPIO output control registers(one per pin): 0x4e44 - 0x4e50 */
+
+Space before (.
+
+> +#define GPIO_OUT_CTRL_BASE     0x4e44
+> +/* GPIO input control registers(one per pin): 0x4e51 - 0x4e5d */
+
+Ditto.
+
+Needs to be changed in a whole file.
+
+> +#define CTLI_INTCNT_DIS                (0)
+
+It seems I commented this.
+Please, use
+(0 << 1)
+
+> +#define CTLI_INTCNT_NE         (1 << 1)
+> +#define CTLI_INTCNT_PE         (2 << 1)
+> +#define CTLI_INTCNT_BE         (3 << 1)
+> +
+> +#define CTLO_DIR_IN            (0)
+
+(0 << 5)
+
+> +#define CTLO_DIR_OUT           (1 << 5)
+> +
+
+> +#define CTLO_DRV_MASK          (1 << 4)
+
+I'm not sure it makes sense for 1 bit, perhaps you may use _SHIFT macro instead.
+
+> +#define CTLO_DRV_OD            (0)
+
+(0 << 4)
+
+> +#define CTLO_DRV_CMOS          CTLO_DRV_MASK
+
+Perhaps
+(1 << 4)
+
+> +
+> +#define CTLO_DRV_REN           (1 << 3)
+> +
+> +#define CTLO_RVAL_2KDW         (0)
+
+(0 << 1)
+
+> +#define CTLO_RVAL_2KUP         (1 << 1)
+> +#define CTLO_RVAL_50KDW                (2 << 1)
+
+Usually DN is used as opposite abbreviation to UP, until else is
+mentioned in datasheet.
+
+> +#define CTLO_RVAL_50KUP                (3 << 1)
+> +
+> +#define CTLO_INPUT_SET (CTLO_DRV_CMOS | CTLO_DRV_REN | CTLO_RVAL_2KUP)
+> +#define CTLO_OUTPUT_SET        (CTLO_DIR_OUT | CTLO_INPUT_SET)
+> +
+> +enum ctrl_register {
+> +       CTRL_IN,
+> +       CTRL_OUT,
+> +};
+> +
+> +/*
+> + * struct wcove_gpio - Whiskey Cove GPIO controller
+> + * @buslock: for bus lock/sync and unlock.
+> + * @chip: the abstract gpio_chip structure.
+> + * @regmap: the regmap from the parent device.
+> + * @regmap_irq_chip: the regmap of the gpio irq chip.
+> + * @update: pending IRQ setting update, to be written to the chip upon unlock.
+> + * @intcnt_value: the Interrupt Detect value to be written.
+> + * @set_irq_mask: true if the IRQ mask needs to be set, false to clear.
+> + */
+> +struct wcove_gpio {
+> +       struct mutex buslock; /* irq_bus_lock */
+
+Useless comment, use above kernel doc lines.
+
+> +       struct gpio_chip chip;
+> +       struct regmap *regmaop;
+> +       struct regmap_irq_chip_data *regmap_irq_chip;
+> +       int update;
+> +       int intcnt_value;
+
+Does value suffix has a value?
+
+> +       bool set_irq_mask;
+> +};
+> +
+> +static inline unsigned int to_reg(int gpio, enum ctrl_register reg_type)
+> +{
+> +       unsigned int reg;
+> +       int bank;
+> +
+> +       if (gpio < BANK0_NR_PINS)
+> +               bank = 0;
+> +       else if (gpio < (BANK0_NR_PINS + BANK1_NR_PINS))
+
+Internal parens are redundant.
+
+> +               bank = 1;
+> +       else
+> +               bank = 2;
+> +
+> +       if (reg_type == CTRL_IN)
+> +               reg = GPIO_IN_CTRL_BASE + bank;
+> +       else
+> +               reg = GPIO_OUT_CTRL_BASE + bank;
+> +
+> +       return reg;
+> +}
+> +
+> +static void wcove_update_irq_mask(struct wcove_gpio *wg, int gpio)
+> +{
+> +       unsigned int reg, mask;
+> +       int group;
+> +
+> +       group = gpio < GROUP0_NR_IRQS ? 0 : 1;
+
+Entire line is useless.
+
+> +       reg = IRQ_MASK_BASE + group;
+> +       mask = (group == 0) ? BIT(gpio % GROUP0_NR_IRQS) :
+> +               BIT((gpio - GROUP0_NR_IRQS) % GROUP1_NR_IRQS);
+
+#define IRQ_MASK_BASE(x)   (... + (x))
+#define IRQ_MASK_BASE0   ...
+#define IRQ_MASK_BASE1   ...
+
+if (gpio < ...) {
+ reg = IRQ_MASK_BASE0;
+ mask = BIT(...);
+} else {
+ reg = IRQ_MASK_BASE1;
+ mask = BIT(...);
+}
+
+Above will be more readable.
+
+> +
+> +       if (wg->set_irq_mask)
+> +               regmap_update_bits(wg->regmap, reg, mask, mask);
+> +       else
+> +               regmap_update_bits(wg->regmap, reg, mask, 0);
+> +}
+
+> +static irqreturn_t wcove_gpio_irq_handler(int irq, void *data)
+> +{
+> +       unsigned int pending, virq, gpio, mask, offset;
+> +       struct wcove_gpio *wg = data;
+> +       u8 p[2];
+> +
+> +       if (regmap_bulk_read(wg->regmap, IRQ_STATUS_BASE, p, 2)) {
+> +               pr_err("Failed to read irq status register\n");
+
+dev_err() ?
+
+> +               return IRQ_NONE;
+> +       }
+> +
+> +       pending = p[0] | (p[1] << 8);
+> +       if (!pending)
+> +               return IRQ_NONE;
+> +
+> +       /* Iterate until no interrupt is pending */
+> +       while (pending) {
+> +               /* One iteration is for all pending bits */
+
+> +               for (gpio = 0; gpio < GROUP0_NR_IRQS; gpio++) {
+> +                       if (!(pending & BIT(gpio)))
+> +                               continue;
+
+for_each_bit() ?
 
 
-The following changes since commit af8c34ce6ae32addda3788d54a7e340cad22=
-516b:
+> +                       offset = (gpio > GROUP0_NR_IRQS) ? 1 : 0;
+> +                       mask = (offset == 1) ? BIT(gpio - GROUP0_NR_IRQS) :
+> +                                                               BIT(gpio);
+> +                       virq = irq_find_mapping(wg->chip.irqdomain, gpio);
+> +                       handle_nested_irq(virq);
+> +                       regmap_update_bits(wg->regmap, IRQ_STATUS_BASE + offset,
+> +                                                               mask, mask);
+> +               }
+> +               /* Next iteration */
+> +               if (regmap_bulk_read(wg->regmap, IRQ_STATUS_BASE, p, 2)) {
+> +                       pr_err("Failed to read irq status register\n");
 
-  Linux 4.7-rc2 (2016-06-05 14:31:26 -0700)
+Ditto.
 
-are available in the git repository at:
+> +                       break;
+> +               }
+> +               pending = p[0] | (p[1] << 8);
+> +       }
+> +
+> +       return IRQ_HANDLED;
+> +}
+> +
+> +static void wcove_gpio_dbg_show(struct seq_file *s,
+> +                                     struct gpio_chip *chip)
+> +{
+> +       unsigned int ctlo, ctli, irq_mask, irq_status;
+> +       struct wcove_gpio *wg = gpiochip_get_data(chip);
+> +       int gpio, offset, group, ret = 0;
+> +
+> +       for (gpio = 0; gpio < WCOVE_GPIO_NUM; gpio++) {
+> +               group = gpio < GROUP0_NR_IRQS ? 0 : 1;
+> +               ret += regmap_read(wg->regmap, to_reg(gpio, CTRL_OUT), &ctlo);
+> +               ret += regmap_read(wg->regmap, to_reg(gpio, CTRL_IN), &ctli);
+> +               ret += regmap_read(wg->regmap, IRQ_MASK_BASE + group,
+> +                                                       &irq_mask);
+> +               ret += regmap_read(wg->regmap, IRQ_STATUS_BASE + group,
+> +                                                       &irq_status);
+> +               if (ret) {
+> +                       pr_err("Failed to read registers: ctrl out/in or irq status/mask\n");
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.8-1
+dev_err() ?
 
-for you to fetch changes up to 224f9e6d538c4cfb2fa8dc4206fceb9431271388=
-:
+> +                       break;
+> +               }
+> +
+> +               offset = gpio % 8;
+> +               seq_printf(s, " gpio-%-2d %s %s %s %s ctlo=%2x,%s %s\n",
+> +                          gpio, ctlo & CTLO_DIR_OUT ? "out" : "in ",
+> +                          ctli & 0x1 ? "hi" : "lo",
+> +                          ctli & CTLI_INTCNT_NE ? "fall" : "    ",
+> +                          ctli & CTLI_INTCNT_PE ? "rise" : "    ",
+> +                          ctlo,
+> +                          irq_mask & BIT(offset) ? "mask  " : "unmask",
+> +                          irq_status & BIT(offset) ? "pending" : "       ");
+> +       }
+> +}
+> +
+> +static int wcove_gpio_probe(struct platform_device *pdev)
+> +{
+> +       struct intel_soc_pmic *pmic;
+> +       struct wcove_gpio *wg;
+> +       int virq, retval, irq;
+> +       struct device *dev;
+> +
+> +       pmic = dev_get_drvdata(pdev->dev.parent);
 
-  MAINTAINERS: Add INTEL MERRIFIELD GPIO entry (2016-07-22 15:30:43 +02=
-00)
+I think this line needs a comment to answer to the question "why parent?"
 
-----------------------------------------------------------------
-This is the bulk of GPIO changes for the v4.8 kernel cycle.
+> +       if (!pmic)
+> +               return -ENODEV;
+> +
+> +       irq = platform_get_irq(pdev, 0);
+> +       if (irq < 0)
+> +               return irq;
+> +
+> +       dev = &pdev->dev;
+> +
+> +       wg = devm_kzalloc(dev, sizeof(*wg), GFP_KERNEL);
+> +       if (!wg)
+> +               return -ENOMEM;
+> +
+> +       wg->regmap_irq_chip = pmic->irq_chip_data_level2;
+> +
+> +       platform_set_drvdata(pdev, wg);
+> +
+> +       mutex_init(&wg->buslock);
+> +       wg->chip.label = KBUILD_MODNAME;
+> +       wg->chip.direction_input = wcove_gpio_dir_in;
+> +       wg->chip.direction_output = wcove_gpio_dir_out;
+> +       wg->chip.get = wcove_gpio_get;
+> +       wg->chip.set = wcove_gpio_set;
+> +       wg->chip.set_single_ended = wcove_gpio_set_single_ended,
+> +       wg->chip.base = -1;
+> +       wg->chip.ngpio = WCOVE_VGPIO_NUM;
+> +       wg->chip.can_sleep = true;
+> +       wg->chip.parent = pdev->dev.parent;
+> +       wg->chip.dbg_show = wcove_gpio_dbg_show;
+> +       wg->regmap = pmic->regmap;
+> +
+> +       retval = devm_gpiochip_add_data(dev, &wg->chip, wg);
+> +       if (retval) {
+> +               dev_warn(dev, "add gpio chip error: %d\n", retval);
+> +               return retval;
+> +       }
+> +
+> +       gpiochip_irqchip_add(&wg->chip, &wcove_irqchip, 0,
+> +                            handle_simple_irq, IRQ_TYPE_NONE);
+> +
+> +       virq = regmap_irq_get_virq(wg->regmap_irq_chip, irq);
+> +       if (virq < 0) {
+> +               dev_err(dev, "failed to get virtual irq by irq %d\n", irq);
+> +               retval = virq;
+> +               goto out_remove_gpio;
+> +       }
+> +
+> +       retval = devm_request_threaded_irq(dev, virq, NULL,
+> +               wcove_gpio_irq_handler, IRQF_ONESHOT, pdev->name, wg);
+> +
+> +       if (retval) {
+> +               dev_warn(dev, "request irq(%d) failed: %d\n", retval, virq);
 
-Core changes:
+It's not a warning as I can see.
+Also question if it's useful at all to print anything here?
 
-- The big item is of course the completion of the character
-  device ABI. It has now replaced and surpassed the former
-  unmaintainable sysfs ABI: we can now hammer (bitbang)
-  individual lines or sets of lines and read individual lines
-  or sets of lines from userspace, and we can also register
-  to listen to GPIO events from userspace. As a tie-in we
-  have two new tools in tools/gpio: gpio-hammer and
-  gpio-event-mon that illustrate the proper use of the new
-  ABI. As someone said: the wild west days of GPIO are now
-  over.
+> +               goto out_remove_gpio;
+> +       }
+> +
+> +       return 0;
+> +
 
-- Continued to remove the pointless
-  ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB Kconfig symbols.
-  I'm patching hexagon, openrisc, powerpc, sh, unicore,
-  ia64 and microblaze. These are either ACKed by their
-  maintainers or patched anyways after a grace period and
-  no response from maintainers. Some archs (ARM) come in from
-  their trees, and others (x86) are still not fixed, so I
-  might send a second pull request to root it out later in
-  this merge window, or just defer to v4.9.
+> +out_remove_gpio:
+> +       devm_gpiochip_remove(dev, &wg->chip);
+> +       return retval;
 
-- The GPIO tools are moved to the tools build system.
+Useless lines.
 
-New drivers:
-
-- New driver for the MAX77620/MAX20024.
-
-- New driver for the Intel Merrifield.
-
-- Enabled PCA953x for the TI PCA9536.
-
-- Enabled PCA953x for the Intel Edison.
-
-- Enabled R8A7792 in the RCAR driver.
-
-Driver improvements:
-
-- The STMPE and F7188x now supports the .get_direction()
-  callback.
-
-- The Xilinx driver supports setting multiple lines at
-  once.
-
-- ACPI support for the Vulcan GPIO controller.
-
-- The MMIO GPIO driver supports device tree probing.
-
-- The Acer One 10 is supported through the _DEP ACPI
-  attribute.
-
-Cleanups:
-
-- A major cleanup of the OF/DT support code. It is way
-  easier to read and understand now, probably this improves
-  performance too.
-
-- Drop a few redundant .owner assignments.
-
-- Remove CLPS711x boardfile support: we are 100% DT.
-
-----------------------------------------------------------------
-Alexander Shiyan (3):
-      gpio: clps711x: Change the compatibility string
-      gpio: syscon: Change the compatibility string
-      gpio: clps711x: Remove board support
-
-Andrew F. Davis (1):
-      gpio: Only descend into gpio directory when CONFIG_GPIOLIB is set
-
-Andrew Jeffery (1):
-      gpio: Fix paths to GPIO driver source files
-
-Andy Shevchenko (13):
-      gpio: pca953x: remove redundant assignments
-      gpio: pca953x: enfore type for i2c_smbus_write_word_data()
-      gpio: pca953x: enable driver on Intel Edison
-      gpio: intel-mid: switch to devm_gpiochip_add_data()
-      tools/gpio: move to tools buildsystem
-      tools/gpio: add install section
-      gpio: lynxpoint: avoid potential warning on error path
-      gpio: intel-mid: Remove potentially harmful code
-      gpio: intel-mid: Sort header block alphabetically
-      gpio: intel-mid: Make it depend to X86_INTEL_MID
-      gpio: merrifield: Introduce GPIO driver to support Merrifield
-      gpio: merrifield: Protect irq_ack() and gpio_set() by lock
-      MAINTAINERS: Add INTEL MERRIFIELD GPIO entry
-
-Arnd Bergmann (1):
-      gpiolib: avoid uninitialized data in gpio kfifo
-
-Ben Dooks (1):
-      gpiolib: make lineevent_irq_thread static
-
-Christian Lamparter (1):
-      gpio: mmio: add MyBook Live GPIO support
-
-Geert Uytterhoeven (1):
-      gpio: 74x164: Use spi_write() helper instead of open coding
-
-Iban Rodriguez (1):
-      gpio: xilinx: Add support to set multiple GPIO at once
-
-Kamlakant Patel (2):
-      gpio: xlp: Fix vulcan IRQ descriptor allocation
-      gpio: Add ACPI support for XLP GPIO controller
-
-Keerthy (1):
-      gpio: tps65218: Add platform_device_id table
-
-Kishon Vijay Abraham I (1):
-      gpio: pcf857x: restore the initial line state of all pcf lines
-
-Lars-Peter Clausen (1):
-      gpiolib: of_find_gpio(): Don't discard errors
-
-Laxman Dewangan (4):
-      gpio: add DT binding doc for gpio of PMIC max77620/max20024
-      gpio: max77620: add gpio driver for MAX77620/MAX20024
-      gpio: max77620: Configure interrupt trigger level
-      gpio: max77620: use the new open drain callback
-
-Linus Walleij (17):
-      gpio: stmpe: implement .get_direction()
-      hexagon: update TODO list
-      pinctrl: xway: use devm_gpiochip_add_data()
-      openrisc: do away with ARCH_REQUIRE_GPIOLIB
-      powerpc: do away with ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB
-      sh: do away with ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB
-      unicore: do away with ARCH_REQUIRE_GPIOLIB
-      ia64: remove ARCH_WANT_OPTIONAL_GPIOLIB
-      microblaze: remove ARCH_WANT_OPTIONAL_GPIOLIB
-      gpio: userspace ABI for reading/writing GPIO lines
-      tools/gpio: add the gpio-hammer tool
-      gpio: userspace ABI for reading GPIO line events
-      tools/gpio: add the gpio-event-mon tool
-      gpio: make the iterator point to last handle
-      gpio: convince line to become input in irq helper
-      gpio: free handles in fringe cases
-      Revert "gpio: convince line to become input in irq helper"
-
-Masahiro Yamada (7):
-      gpio: of: add missing of_node_put() to of_gpiochip_add_pin_range(=
-)
-      gpio: remove redundant owner assignments of drivers
-      gpio: of: optimize "gpios" property parsing of of_parse_own_gpio(=
-)
-      gpio: of: drop needless gpio_chip look-up in of_parse_own_gpio()
-      gpio: of: move chip->of_gpio_n_cells checking to of_gpiochip_add(=
-)
-      gpio: of: remove of_gpiochip_and_xlate() and struct gg_data
-      gpio: of: factor out common code to a new helper function
-
-Paul Gortmaker (1):
-      gpio: lpc18xx: convert GPIO_LPC18XX from bool to tristate
-
-Rui Zhang (1):
-      gpio: acpi: add _DEP support for Acer One 10
-
-Sergei Shtylyov (1):
-      gpio: rcar: add R8A7792 support
-
-Thierry Reding (1):
-      gpio: of: Allow overriding the device node
-
-Venkat Reddy Talla (1):
-      gpio: max77620: get gpio value based on direction
-
-Vignesh R (2):
-      gpio: pca953x: Add support for TI PCA9536
-      gpio: pca953x: Fix NBANK calculation for PCA9536
-
-Wei Yongjun (2):
-      gpiolib: remove duplicated include from gpiolib.c
-      gpio: dwapb: add missing fwnode_handle_put() in dwapb_gpio_get_pd=
-ata()
-
-plr.vincent@gmail.com (1):
-      gpio: f7188x: Implement get_direction.
-
-=C3=81lvaro Fern=C3=A1ndez Rojas (1):
-      gpio: mmio: add DT support for memory-mapped GPIOs
-
- .../bindings/gpio/cirrus,clps711x-mctrl-gpio.txt   |   4 +-
- .../devicetree/bindings/gpio/gpio-clps711x.txt     |   4 +-
- .../devicetree/bindings/gpio/gpio-max77620.txt     |  25 +
- .../devicetree/bindings/gpio/gpio-pca953x.txt      |   1 +
- .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |   1 +
- Documentation/gpio/drivers-on-gpio.txt             |  13 +-
- MAINTAINERS                                        |   6 +
- arch/hexagon/Kconfig                               |   3 +-
- arch/ia64/Kconfig                                  |   1 -
- arch/microblaze/Kconfig                            |   1 -
- arch/openrisc/Kconfig                              |   2 +-
- arch/powerpc/Kconfig                               |   1 -
- arch/powerpc/platforms/40x/Kconfig                 |   2 +-
- arch/powerpc/platforms/44x/Kconfig                 |   2 +-
- arch/powerpc/platforms/512x/Kconfig                |   1 -
- arch/powerpc/platforms/83xx/Kconfig                |   3 -
- arch/powerpc/platforms/85xx/Kconfig                |   4 +-
- arch/powerpc/platforms/86xx/Kconfig                |   7 +-
- arch/powerpc/platforms/8xx/Kconfig                 |   2 +-
- arch/powerpc/platforms/Kconfig                     |   8 +-
- arch/sh/Kconfig                                    |  11 +-
- arch/sh/boards/Kconfig                             |  17 +-
- arch/sh/boards/mach-highlander/Kconfig             |   2 +-
- arch/sh/boards/mach-rsk/Kconfig                    |   6 +-
- arch/unicore32/Kconfig                             |   2 +-
- drivers/Makefile                                   |   2 +-
- drivers/gpio/Kconfig                               |  24 +-
- drivers/gpio/Makefile                              |   2 +
- drivers/gpio/gpio-74x164.c                         |   9 +-
- drivers/gpio/gpio-clps711x.c                       |  10 +-
- drivers/gpio/gpio-dwapb.c                          |   1 +
- drivers/gpio/gpio-f7188x.c                         |  22 +
- drivers/gpio/gpio-intel-mid.c                      |  37 +-
- drivers/gpio/gpio-lynxpoint.c                      |   1 -
- drivers/gpio/gpio-max77620.c                       | 315 +++++++++++++
- drivers/gpio/gpio-menz127.c                        |   1 -
- drivers/gpio/gpio-merrifield.c                     | 444 +++++++++++++=
-+++++
- drivers/gpio/gpio-mmio.c                           |  51 +-
- drivers/gpio/gpio-palmas.c                         |   1 -
- drivers/gpio/gpio-pca953x.c                        |  23 +-
- drivers/gpio/gpio-pcf857x.c                        |   9 +
- drivers/gpio/gpio-rcar.c                           |   3 +
- drivers/gpio/gpio-rdc321x.c                        |   1 -
- drivers/gpio/gpio-sch311x.c                        |   1 -
- drivers/gpio/gpio-stmpe.c                          |  18 +-
- drivers/gpio/gpio-syscon.c                         |   4 +-
- drivers/gpio/gpio-tc3589x.c                        |   1 -
- drivers/gpio/gpio-tps65218.c                       |   7 +
- drivers/gpio/gpio-tps6586x.c                       |   1 -
- drivers/gpio/gpio-tps65910.c                       |   1 -
- drivers/gpio/gpio-viperboard.c                     |   1 -
- drivers/gpio/gpio-wm831x.c                         |   1 -
- drivers/gpio/gpio-wm8350.c                         |   1 -
- drivers/gpio/gpio-wm8994.c                         |   1 -
- drivers/gpio/gpio-xilinx.c                         |  48 ++
- drivers/gpio/gpio-xlp.c                            |  52 ++-
- drivers/gpio/gpiolib-acpi.c                        |   1 +
- drivers/gpio/gpiolib-of.c                          | 127 +++--
- drivers/gpio/gpiolib.c                             | 511 +++++++++++++=
-+++++++-
- drivers/pinctrl/pinctrl-xway.c                     |   5 +-
- include/uapi/linux/gpio.h                          | 105 ++++-
- tools/Makefile                                     |   7 +-
- tools/gpio/Build                                   |   3 +
- tools/gpio/Makefile                                |  75 ++-
- tools/gpio/gpio-event-mon.c                        | 192 ++++++++
- tools/gpio/gpio-hammer.c                           | 189 ++++++++
- 66 files changed, 2207 insertions(+), 230 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-max7762=
-0.txt
- create mode 100644 drivers/gpio/gpio-max77620.c
- create mode 100644 drivers/gpio/gpio-merrifield.c
- create mode 100644 tools/gpio/Build
- create mode 100644 tools/gpio/gpio-event-mon.c
- create mode 100644 tools/gpio/gpio-hammer.c
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+With Best Regards,
+Andy Shevchenko
