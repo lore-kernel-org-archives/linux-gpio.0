@@ -1,65 +1,39 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] pinctrl: meson: Drop pinctrl_unregister for devm_
- registered device
-Date: Tue, 26 Jul 2016 10:00:53 -0700
-Message-ID: <20160726170053.GA40841@dtor-ws>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH] pinctrl: meson: Drop pinctrl_unregister for devm_ registered device
+Date: Tue, 26 Jul 2016 14:56:44 -0700
+Message-ID: <m2a8h4ukpv.fsf@baylibre.com>
 References: <1469544718-32001-1-git-send-email-weiyj.lk@gmail.com>
+	<20160726170053.GA40841@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:33965 "EHLO
-	mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757365AbcGZRA6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jul 2016 13:00:58 -0400
-Received: by mail-pf0-f193.google.com with SMTP id g202so276705pfb.1
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jul 2016 10:00:58 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1469544718-32001-1-git-send-email-weiyj.lk@gmail.com>
+Received: from mail-pf0-f182.google.com ([209.85.192.182]:34356 "EHLO
+	mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757444AbcGZV4r (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jul 2016 17:56:47 -0400
+Received: by mail-pf0-f182.google.com with SMTP id p64so3592049pfb.1
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Jul 2016 14:56:46 -0700 (PDT)
+In-Reply-To: <20160726170053.GA40841@dtor-ws> (Dmitry Torokhov's message of
+	"Tue, 26 Jul 2016 10:00:53 -0700")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Wei Yongjun <weiyj.lk@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
 
-On Tue, Jul 26, 2016 at 02:51:58PM +0000, Wei Yongjun wrote:
-> It's not necessary to unregister pin controller device registered
-> with devm_pinctrl_register() and using pinctrl_unregister() leads
-> to a double free.
-> 
-> This is detected by Coccinelle semantic patch.
-> 
-> Signed-off-by: Wei Yongjun <weiyj.lk@gmail.com>
+Dmitry Torokhov <dmitry.torokhov@gmail.com> writes:
 
-Fixes: e649f7ec8c5f ("pinctrl: meson: Use devm_pinctrl_register() for
-pinctrl registration")
+> On Tue, Jul 26, 2016 at 02:51:58PM +0000, Wei Yongjun wrote:
+>> It's not necessary to unregister pin controller device registered
+>> with devm_pinctrl_register() and using pinctrl_unregister() leads
+>> to a double free.
+>> 
+>> This is detected by Coccinelle semantic patch.
+>> 
+>> Signed-off-by: Wei Yongjun <weiyj.lk@gmail.com>
+>
+> Fixes: e649f7ec8c5f ("pinctrl: meson: Use devm_pinctrl_register() for
+> pinctrl registration")
+>
+> Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-
-> ---
->  drivers/pinctrl/meson/pinctrl-meson.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-> index 11623c6..44e69c9 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson.c
-> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
-> @@ -727,13 +727,7 @@ static int meson_pinctrl_probe(struct platform_device *pdev)
->  		return PTR_ERR(pc->pcdev);
->  	}
->  
-> -	ret = meson_gpiolib_register(pc);
-> -	if (ret) {
-> -		pinctrl_unregister(pc->pcdev);
-> -		return ret;
-> -	}
-> -
-> -	return 0;
-> +	return meson_gpiolib_register(pc);
->  }
->  
->  static struct platform_driver meson_pinctrl_driver = {
-> 
-
-Thanks.
-
--- 
-Dmitry
+Acked-by: Kevin Hilman <khilman@baylibre.com>
