@@ -1,46 +1,54 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] pinctrl/amd: Remove the default de-bounce time
-Date: Thu, 28 Jul 2016 06:37:47 -0700
-Message-ID: <20160728133747.GA26440@kroah.com>
-References: <CY1PR12MB0042A0DCB603A5B0935CA08CDC000@CY1PR12MB0042.namprd12.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Pinctrl hogging
+Date: Thu, 28 Jul 2016 18:12:58 +0200
+Message-ID: <CACRpkdZxsdgMf+iAcMv1gC6p=JFg0dpZ=UW2TksKZhhOwA6G+A@mail.gmail.com>
+References: <CAES_P+8mP6kOokwVcmtzyHsWRByJyaK=YynPa7vfYsvHD1k6Bw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41364 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756719AbcG1Nhe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jul 2016 09:37:34 -0400
-Content-Disposition: inline
-In-Reply-To: <CY1PR12MB0042A0DCB603A5B0935CA08CDC000@CY1PR12MB0042.namprd12.prod.outlook.com>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:35603 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759013AbcG1QM7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jul 2016 12:12:59 -0400
+Received: by mail-oi0-f41.google.com with SMTP id l72so69834519oig.2
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Jul 2016 09:12:59 -0700 (PDT)
+In-Reply-To: <CAES_P+8mP6kOokwVcmtzyHsWRByJyaK=YynPa7vfYsvHD1k6Bw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Agrawal, Nitesh-kumar" <Nitesh-kumar.Agrawal@amd.com>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>, SPG_Linux_Kernel <SPG_Linux_Kernel@amd.com>, "Xue, Ken" <Ken.Xue@amd.com>, "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>, "Sen, Pankaj" <Pankaj.Sen@amd.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>
+To: noman pouigt <variksla@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Jul 28, 2016 at 10:04:02AM +0000, Agrawal, Nitesh-kumar wrote:
-> In the function amd_gpio_irq_enable and amd_gpio_direction_input, rem=
-ove the code which is setting the default de-bounce time to 2.75ms.
->=20
-> The driver code shall use the same settings as specified in BIOS.
-> Any default assignment impacts TouchPad behaviour when the LevelTrig =
-is set to EDGE FALLING.
->=20
-> Reviewed-by:=A0 Ken Xue <Ken.Xue@amd.com>
-> Signed-off-by: Nitesh Kumar Agrawal <Nitesh-kumar.Agrawal@amd.com>
-> ---
->  drivers/pinctrl/pinctrl-amd.c | 20 +-------------------
->  1 file changed, 1 insertion(+), 19 deletions(-)
+On Thu, Jul 21, 2016 at 6:21 PM, noman pouigt <variksla@gmail.com> wrote:
 
-<formletter>
+> Is there any way to configure default settings for some of the gpios
+> eventhough there is no one driving them?
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read Documentation/stable_kernel_rules.txt
-for how to do this properly.
+There are gpio hogs but I don't remember which kernel we
+introduced them in. Please keep in sync with upstream.
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/Documentation/devicetree/bindings/gpio/gpio.txt?id=6b516a1093006a39368dd11a5396be5bb00c99df
 
-</formletter>
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> I am also trying to configure
+> some of the gpios as irq lines using just the device tree without
+> writing any device driver for it as it will be used by userspace.
+
+I don't recommend randomly using GPIO from userspace. Have you read:
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/gpio/drivers-on-gpio.txt
+
+If you still have a valid usecase for userspace GPIO, consider
+getting the latest v4.8 kernel when it's out in some two months
+and use the new chardev ABI that I just merged. The sysfs
+ABI is not good, and that is why it has been obsolted.
+
+We can name lines with gpio-line-names =""; in device tree and
+there are example tools for how to use GPIOs from userspace
+in a proper way:
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/tools/gpio
+
+> Just to workaround this problem I have created a dummy driver
+> specifically for this purpose. Is there any better way?
+
+Keeping in touch with upstream and driving changes upstream is
+always the best solution.
+
+Yours,
+Linus Walleij
