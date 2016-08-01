@@ -1,63 +1,40 @@
-From: Atsushi Nemoto <anemo@mba.ocn.ne.jp>
-Subject: Re: Revisiting rbtx4927: gpiod_direction_output_raw: invalid GPIO
-Date: Mon, 01 Aug 2016 23:23:59 +0900 (JST)
-Message-ID: <20160801.232359.1867350514422089320.anemo@mba.ocn.ne.jp>
-References: <CAMuHMdUARn_SxhkWiTsGdSixFv9a=VjKLLgQMfPTtxufrjepCg@mail.gmail.com>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: [PATCH 1/2] dt: bindings: add binding for Allwinner A64 R_PIO pinctrl
+Date: Mon,  1 Aug 2016 22:59:38 +0800
+Message-ID: <20160801145939.50583-1-icenowy@aosc.xyz>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <CAMuHMdUARn_SxhkWiTsGdSixFv9a=VjKLLgQMfPTtxufrjepCg@mail.gmail.com>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: geert@linux-m68k.org
-Cc: linux-mips@linux-mips.org, linux-gpio@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Andre Przywara <andre.przywara@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Jens Kuske <jenskuske@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Vishnu Patekar <vishnupatekar0510@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-arm-kernel@lists.infradead.org, Krzysztof Adamski <k@japko.eu>, Icenowy Zheng <icenowy@aosc.xyz>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Geert, sorry for loooong delay ...
-
-On Thu, 14 Apr 2016 21:06:05 +0200, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> I've just updated my old rbtx4927 from v3.13-rc3 to v4.6-rc3.
-> Surprisingly, it boots to nfsroot without any kernel changes.
-
-Good news!  I'm happy to hear that.
-
-> However, there's an annoying warning in the boot log:
-> 
->         gpiod_direction_output_raw: invalid GPIO
-> 
-> This is caused by the following code in arch/mips/txx9/rbtx4927/setup.c:
-> 
->         static void __init rbtx4927_mem_setup(void)
->         {
-> 
->                 /* TX4927-SIO DTR on (PIO[15]) */
->                 gpio_request(15, "sio-dtr");
-> 
-> returns -EPROBE_DEFER
-> 
->                 gpio_direction_output(15, 1);
-> 
-> VALIDATE_DESC triggers the warning.
-> 
-> Probably a silly GPIO conversion was missed during the last 2+ years?
-
-Maybe txx9_gpio_init() failed to add gpio_chip since it was called too
-early on startup.
-
-Nowadays gpiochip_add_data calls kzalloc so cannot be called from
-plat_mem_setup context.
-
-Could you try moving these txx9_gpio_init(), gpio_request() and
-gpio_direction_output() calls to rbtx4927_arch_init() or
-rbtx4927_device_init()?
-
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 ---
-Atsushi Nemoto
+ Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+index 6961722..ee73f9f 100644
+--- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+@@ -23,6 +23,7 @@ Required properties:
+   "allwinner,sun8i-h3-pinctrl"
+   "allwinner,sun8i-h3-r-pinctrl"
+   "allwinner,sun50i-a64-pinctrl"
++  "allwinner,sun50i-a64-r-pinctrl"
+ 
+ - reg: Should contain the register physical address and length for the
+   pin controller.
+-- 
+2.9.0
