@@ -1,78 +1,79 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 08/12] i2c: core: Add support for 'i2c-bus' subnode
-Date: Tue, 2 Aug 2016 07:49:08 +0100
-Message-ID: <d0647634-7fc9-05e1-21b0-f96bccd5fc6a@nvidia.com>
-References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
- <1466697545-11868-9-git-send-email-jonathanh@nvidia.com>
- <CAAObsKDGVz0XCxeqt+W31RZ-KEvqPnQaH0dkTUj2zL9oFZrPBw@mail.gmail.com>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: Re: Can't pinctrl-baytrail be a module?
+Date: Tue, 2 Aug 2016 10:38:01 +0200
+Message-ID: <20160802103801.765b8202@endymion>
+References: <s5hwpqbh0v7.wl-tiwai@suse.de>
+	<20160211125645.GU16826@lahna.fi.intel.com>
+	<s5hpow3gzt3.wl-tiwai@suse.de>
+	<56BC903C.9000008@linux.intel.com>
+	<s5hh9hef5j2.wl-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAObsKDGVz0XCxeqt+W31RZ-KEvqPnQaH0dkTUj2zL9oFZrPBw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx2.suse.de ([195.135.220.15]:41889 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751640AbcHBIil (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 2 Aug 2016 04:38:41 -0400
+In-Reply-To: <s5hh9hef5j2.wl-tiwai@suse.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: Takashi Iwai <tiwai@suse.de>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-
-On 02/08/16 07:26, Tomeu Vizoso wrote:
-> On 23 June 2016 at 17:59, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> If the 'i2c-bus' device-tree node is present for an I2C adapter then
->> parse this subnode for I2C slaves.
->>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/i2c/i2c-core.c | 10 ++++++++--
->>  1 file changed, 8 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
->> index 952d2f0c02c5..71ad532be1d8 100644
->> --- a/drivers/i2c/i2c-core.c
->> +++ b/drivers/i2c/i2c-core.c
->> @@ -1452,7 +1452,7 @@ static struct i2c_client *of_i2c_register_device(struct i2c_adapter *adap,
->>
->>  static void of_i2c_register_devices(struct i2c_adapter *adap)
->>  {
->> -       struct device_node *node;
->> +       struct device_node *bus, *node;
->>
->>         /* Only register child devices if the adapter has a node pointer set */
->>         if (!adap->dev.of_node)
->> @@ -1460,11 +1460,17 @@ static void of_i2c_register_devices(struct i2c_adapter *adap)
->>
->>         dev_dbg(&adap->dev, "of_i2c: walking child nodes\n");
->>
->> -       for_each_available_child_of_node(adap->dev.of_node, node) {
->> +       bus = of_get_child_by_name(adap->dev.of_node, "i2c-bus");
->> +       if (!bus)
->> +               bus = of_node_get(adap->dev.of_node);
->> +
->> +       for_each_available_child_of_node(bus, node) {
->>                 if (of_node_test_and_set_flag(node, OF_POPULATED))
->>                         continue;
->>                 of_i2c_register_device(adap, node);
->>         }
->> +
->> +       of_node_put(bus);
->>  }
+On Fri, 12 Feb 2016 13:59:45 +0100, Takashi Iwai wrote:
+> On Thu, 11 Feb 2016 14:44:28 +0100,
+> Mathias Nyman wrote:
+> > 
+> > On 11.02.2016 15:08, Takashi Iwai wrote:
+> > > On Thu, 11 Feb 2016 13:56:45 +0100,
+> > > Mika Westerberg wrote:
+> > >>
+> > >> +Jean and Mathias
+> > >>
+> > >> On Thu, Feb 11, 2016 at 01:45:16PM +0100, Takashi Iwai wrote:
+> > >>> Hi,
+> > >>>
+> > >>> while discussing whether to enable pinctrl drivers on openSUSE distro
+> > >>> kernels, I wonder why pinctrl-baytrail is built-in only.  Basically
+> > >>> the forced built-in is the only reason against the enablement in
+> > >>> distro kernels.
+> > >>>
+> > >>> The other Intel pinctrl drivers seem to be tristate.
+> > >>> Any missing piece there?
+> > >>
+> > >> Jean sent a patch against this couple of hours ago.
+> > >
+> > > I noticed it right after I send my mail, too, sorry :)
+> > >
+> > >> I explained to him
+> > >> that there is some ACPI GPIO magic happening on Baytrail-T based
+> > >> machines such as Asus T100 where the GPIO driver is needed early at
+> > >> boot, or something along those lines. I've CC'd Mathias Nyman the
+> > >> original author who hopefully remembers this better.
+> > >
+> > > I know of pinctrl-cherryview is needed before others like shdci, but
+> > > for Baytrail-T, it's more than that?
+> > >
+> > 
+> > If I remember correctly the reason was that the gpio driver was supposed
+> > to work with Hardware reduced ACPI events (in ACPI 5).
+> > Basically ACPI telling operating system it wants an ACPI event handler run
+> > when a certain gpio interrupt is triggered, and the HW reduced ACPI expects the OS gpio driver to do it.
 > 
-> Sorry for not commenting earlier, but I only found the issue yesterday.
+> OK, so this is an implicit dependency.  If this is the only issue, it
+> sounds like the driver can be a module.
 > 
-> I'm bothered as well by the "modalias failure" error message but in my
-> case the node doesn't have any i2c devices, so this patch isn't a
-> complete solution to that problem.
+> > I haven't followed up on this at all. Can't say if we have any HW reduced baytrail variants out there.
+> > 
+> > For Lynxpoint there was also some issue that pnpacpi reserved the IO resources before a modular gpio driver could get it,
+> > I think it was fixed, might be that baytrail would face same issue.
+> 
+> Could you give any pointer, if you remember?
 
-But it is a i2c adapter correct? I guess I don't completely understand
-the problem?
+Mathias, any progress on this?
 
-> Has this been considered already?
-
-Why can't you add a place-holder 'i2c-bus' node for i2c devices so when
-they are adding in the future they are placed under this node? This is
-what I did for dpaux. See patch 12/12 of this series.
-
-Jon
-
+Thanks,
 -- 
-nvpublic
+Jean Delvare
+SUSE L3 Support
