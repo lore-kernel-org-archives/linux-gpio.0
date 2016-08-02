@@ -1,59 +1,42 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] pinctrl: intel: merrifield: Add missed header
-Date: Tue,  2 Aug 2016 18:18:33 +0300
-Message-ID: <1470151113-75409-1-git-send-email-andriy.shevchenko@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Baole Ni <baolex.ni@intel.com>
+Subject: [PATCH 0176/1285] Replace numeric parameter like 0444 with macro
+Date: Tue,  2 Aug 2016 18:46:50 +0800
+Message-ID: <20160802104650.25471-1-baolex.ni@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:46013 "EHLO mga11.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:15779 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S967156AbcHBPVt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 2 Aug 2016 11:21:49 -0400
+	id S1755893AbcHBLga (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 2 Aug 2016 07:36:30 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: m@bues.ch, linus.walleij@linaro.org, gnurou@gmail.com, tony.luck@intel.com, matt@codeblueprint.co.uk, m.chehab@samsung.com, lho@apm.com, dougthompson@xmission.com, bp@alien8.de
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, chuansheng.liu@intel.com, baolex.ni@intel.com, lee.jones@linaro.org
 
-On x86 builds the absense of <linux/io.h> makes static analyzer and compiler
-unhappy which fails to build the driver.
+I find that the developers often just specified the numeric value
+when calling a macro which is defined with a parameter for access permission.
+As we know, these numeric value for access permission have had the corresponding macro,
+and that using macro can improve the robustness and readability of the code,
+thus, I suggest replacing the numeric parameter with the macro.
 
-CHECK   drivers/pinctrl/intel/pinctrl-merrifield.c
-drivers/pinctrl/intel/pinctrl-merrifield.c:518:17: error: undefined identifier 'readl'
-drivers/pinctrl/intel/pinctrl-merrifield.c:570:17: error: undefined identifier 'readl'
-drivers/pinctrl/intel/pinctrl-merrifield.c:575:9: error: undefined identifier 'writel'
-drivers/pinctrl/intel/pinctrl-merrifield.c:645:17: error: undefined identifier 'readl'
-  CC      drivers/pinctrl/intel/pinctrl-merrifield.o
-drivers/pinctrl/intel/pinctrl-merrifield.c: In function ‘mrfld_pin_dbg_show’:
-drivers/pinctrl/intel/pinctrl-merrifield.c:518:10: error: implicit declaration of function ‘readl’ [-Werror=implicit-function-declaration]
-  value = readl(bufcfg);
-            ^
-drivers/pinctrl/intel/pinctrl-merrifield.c: In function ‘mrfld_update_bufcfg’:
-drivers/pinctrl/intel/pinctrl-merrifield.c:575:2: error: implicit declaration of function ‘writel’ [-Werror=implicit-function-declaration]
-  writel(value, bufcfg);
-    ^
-cc1: some warnings being treated as errors
-
-Add header to the top of the module.
-
-Fixes: 4e80c8f50574 ("pinctrl: intel: Add Intel Merrifield pin controller support")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Chuansheng Liu <chuansheng.liu@intel.com>
+Signed-off-by: Baole Ni <baolex.ni@intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-merrifield.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpio-bt8xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-merrifield.c b/drivers/pinctrl/intel/pinctrl-merrifield.c
-index eb4990f..7fb7656 100644
---- a/drivers/pinctrl/intel/pinctrl-merrifield.c
-+++ b/drivers/pinctrl/intel/pinctrl-merrifield.c
-@@ -11,6 +11,7 @@
+diff --git a/drivers/gpio/gpio-bt8xx.c b/drivers/gpio/gpio-bt8xx.c
+index acefb25..606b3c7 100644
+--- a/drivers/gpio/gpio-bt8xx.c
++++ b/drivers/gpio/gpio-bt8xx.c
+@@ -74,7 +74,7 @@ struct bt8xxgpio {
  
- #include <linux/bitops.h>
- #include <linux/err.h>
-+#include <linux/io.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/pinctrl/pinconf.h>
+ 
+ static int modparam_gpiobase = -1/* dynamic */;
+-module_param_named(gpiobase, modparam_gpiobase, int, 0444);
++module_param_named(gpiobase, modparam_gpiobase, int, S_IRUSR | S_IRGRP | S_IROTH);
+ MODULE_PARM_DESC(gpiobase, "The GPIO number base. -1 means dynamic, which is the default.");
+ 
+ 
 -- 
-2.8.1
+2.9.2
 
