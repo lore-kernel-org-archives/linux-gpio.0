@@ -1,58 +1,91 @@
 From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?=
 	<noltari@gmail.com>
-Subject: [PATCH v2 2/2] gpio: mmio: add brcm,bcm6345 support
-Date: Wed,  3 Aug 2016 14:05:57 +0200
-Message-ID: <1470225957-5692-2-git-send-email-noltari@gmail.com>
+Subject: [PATCH v2 1/2] gpio: dt-bindings: add brcm,bcm6345-gpio bindings
+Date: Wed,  3 Aug 2016 14:05:56 +0200
+Message-ID: <1470225957-5692-1-git-send-email-noltari@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34959 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757746AbcHCMGP (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36543 "EHLO
+	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757640AbcHCMGP (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Aug 2016 08:06:15 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: linus.walleij@linaro.org, gnurou@gmail.com, chunkeey@googlemail.com, =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
 
-From: Christian Lamparter <chunkeey@googlemail.com>
+This patch adds the device tree bindings for the Broadcom's BCM6345
+memory-mapped GPIO controllers.
 
-This patch adds support for the GPIO found in Broadcom's bcm63xx-gpio
-chips.
-This GPIO controller is used in the following Broadcom SoCs: BCM6338, BCM6345.
-It can be used in newer SoCs, without the capability of pin multiplexing.
+The gpios will be supported by gpio-mmio code of the
+GPIO generic library.
 
-Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
 Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
 ---
- v2: fix build
+ v2: add improvements suggested by Jonas Gorski:
+  - use native-endian instead of big-endian.
+  - use gpio alias instead of gpio0.
+  - be less dramatic with newer Broadcom SoCs.
+  - reorder patches.
 
- drivers/gpio/gpio-mmio.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../devicetree/bindings/gpio/brcm,bcm6345-gpio.txt | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.txt
 
-diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
-index 6ec144b..d7d03ad 100644
---- a/drivers/gpio/gpio-mmio.c
-+++ b/drivers/gpio/gpio-mmio.c
-@@ -573,6 +573,7 @@ static void __iomem *bgpio_map(struct platform_device *pdev,
- 
- #ifdef CONFIG_OF
- static const struct of_device_id bgpio_of_match[] = {
-+	{ .compatible = "brcm,bcm6345-gpio" },
- 	{ .compatible = "wd,mbl-gpio" },
- 	{ }
- };
-@@ -593,6 +594,9 @@ static struct bgpio_pdata *bgpio_parse_dt(struct platform_device *pdev,
- 
- 	pdata->base = -1;
- 
-+	if (of_device_is_big_endian(pdev->dev.of_node))
-+		*flags |= BGPIOF_BIG_ENDIAN_BYTE_ORDER;
+diff --git a/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.txt b/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.txt
+new file mode 100644
+index 0000000..e785314
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpio.txt
+@@ -0,0 +1,46 @@
++Bindings for the Broadcom's brcm,bcm6345-gpio memory-mapped GPIO controllers.
 +
- 	if (of_property_read_bool(pdev->dev.of_node, "no-output"))
- 		*flags |= BGPIOF_NO_OUTPUT;
- 
++These bindings can be used on any BCM63xx SoC. However, BCM6338 and BCM6345
++are the only ones which don't need a pinctrl driver.
++BCM6338 have 8-bit data and dirout registers, where GPIO state can be read
++and/or written, and the direction changed from input to output.
++BCM6345 have 16-bit data and dirout registers, where GPIO state can be read
++and/or written, and the direction changed from input to output.
++
++Required properties:
++	- compatible: should be "brcm,bcm6345-gpio"
++	- reg-names: must contain
++		"dat" - data register
++		"dirout" - direction (output) register
++	- reg: address + size pairs describing the GPIO register sets;
++		order must correspond with the order of entries in reg-names
++	- #gpio-cells: must be set to 2. The first cell is the pin number and
++			the second cell is used to specify the gpio polarity:
++			0 = active high
++			1 = active low
++	- gpio-controller: Marks the device node as a gpio controller.
++
++Optional properties:
++	- native-endian: use native endian memory.
++
++Examples:
++	- BCM6338:
++	gpio: gpio-controller@fffe0407 {
++		compatible = "brcm,bcm6345-gpio";
++		reg-names = "dirout", "dat";
++		reg = <0xfffe0407 1>, <0xfffe040f 1>;
++
++		#gpio-cells = <2>;
++		gpio-controller;
++	};
++
++	- BCM6345:
++	gpio: gpio-controller@fffe0406 {
++		compatible = "brcm,bcm6345-gpio";
++		reg-names = "dirout", "dat";
++		reg = <0xfffe0406 2>, <0xfffe040a 2>;
++		native-endian;
++
++		#gpio-cells = <2>;
++		gpio-controller;
++	};
 -- 
 2.1.4
 
