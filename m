@@ -1,202 +1,122 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7792: add DU pin groups
-Date: Fri, 05 Aug 2016 23:54:20 +0300
-Message-ID: <2705887.l4rVHM5oaI@wasted.cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 2/2] gpio: add Technologic I2C-FPGA gpio support
+Date: Fri, 5 Aug 2016 18:45:49 -0400
+Message-ID: <CAP=VYLotrmxG0q1g6fcWQqcfoSM6TMVwkOqMKZQbXtUZsAQkmA@mail.gmail.com>
+References: <1470408106-8078-1-git-send-email-lucile.quirion@savoirfairelinux.com>
+ <1470408106-8078-3-git-send-email-lucile.quirion@savoirfairelinux.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org, geert+renesas@glider.be
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1470408106-8078-3-git-send-email-lucile.quirion@savoirfairelinux.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lucile Quirion <lucile.quirion@savoirfairelinux.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, kernel@savoirfairelinux.com
 List-Id: linux-gpio@vger.kernel.org
 
-Add DU pin groups to the R8A7792 PFC driver.
+On Fri, Aug 5, 2016 at 10:41 AM, Lucile Quirion
+<lucile.quirion@savoirfairelinux.com> wrote:
+> This driver is generic and aims to support all Technologic Systems's
+> boards embedding FPGA GPIOs with an I2C interface.
+>
+> This driver supports TS-4900, TS-7970, TS-7990 and TS-4100 series.
+>
+> Signed-off-by: Lucile Quirion <lucile.quirion@savoirfairelinux.com>
+> ---
+>  drivers/gpio/Kconfig       |   6 ++
+>  drivers/gpio/Makefile      |   1 +
+>  drivers/gpio/gpio-ts4900.c | 238 +++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 245 insertions(+)
+>  create mode 100644 drivers/gpio/gpio-ts4900.c
+>
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 98dd47a..459fb71 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -779,6 +779,12 @@ config GPIO_TPIC2810
+>           To compile this driver as a module, choose M here: the module will
+>           be called gpio-tpic2810.
+>
+> +config GPIO_TS4900
+> +       bool "Technologic Systems FPGA I2C GPIO"
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Please don't use module.h and MODULE_<xyz> macros in drivers that are bool.
 
----
-The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
-repo plus my 7 R8A7792 PFC patches  posted before (those should  be collected
-by Geert)...
+Either delete all the module related stuff and use a builtin registration fcn,
+or use a tristate Kconfig if there is a genuine use case for a modular driver.
 
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c |  144 +++++++++++++++++++++++++++++++++++
- 1 file changed, 144 insertions(+)
+Thanks,
+Paul.
+--
 
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-@@ -834,6 +834,120 @@ static const unsigned int can_clk_pins[]
- static const unsigned int can_clk_mux[] = {
- 	CAN_CLK_MARK,
- };
-+/* - DU --------------------------------------------------------------------- */
-+static const unsigned int du0_rgb666_pins[] = {
-+	/* R[7:2], G[7:2], B[7:2] */
-+	RCAR_GP_PIN(0, 7), RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 5),
-+	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 3), RCAR_GP_PIN(0, 2),
-+	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
-+	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
-+	RCAR_GP_PIN(0, 23), RCAR_GP_PIN(0, 22), RCAR_GP_PIN(0, 21),
-+	RCAR_GP_PIN(0, 20), RCAR_GP_PIN(0, 19), RCAR_GP_PIN(0, 18),
-+};
-+static const unsigned int du0_rgb666_mux[] = {
-+	DU0_DR7_Y9_DATA7_MARK, DU0_DR6_Y8_DATA6_MARK, DU0_DR5_Y7_DATA5_MARK,
-+	DU0_DR4_Y6_DATA4_MARK, DU0_DR3_Y5_DATA3_MARK, DU0_DR2_Y4_DATA2_MARK,
-+	DU0_DG7_Y3_DATA15_MARK, DU0_DG6_Y2_DATA14_MARK, DU0_DG5_Y1_DATA13_MARK,
-+	DU0_DG4_Y0_DATA12_MARK, DU0_DG3_C7_DATA11_MARK, DU0_DG2_C6_DATA10_MARK,
-+	DU0_DB7_C5_MARK, DU0_DB6_C4_MARK, DU0_DB5_C3_MARK,
-+	DU0_DB4_C2_MARK, DU0_DB3_C1_MARK, DU0_DB2_C0_MARK,
-+};
-+static const unsigned int du0_rgb888_pins[] = {
-+	/* R[7:0], G[7:0], B[7:0] */
-+	RCAR_GP_PIN(0, 7), RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 5),
-+	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 3), RCAR_GP_PIN(0, 2),
-+	RCAR_GP_PIN(0, 1), RCAR_GP_PIN(0, 0),
-+	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
-+	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
-+	RCAR_GP_PIN(0, 9), RCAR_GP_PIN(0, 8),
-+	RCAR_GP_PIN(0, 23), RCAR_GP_PIN(0, 22), RCAR_GP_PIN(0, 21),
-+	RCAR_GP_PIN(0, 20), RCAR_GP_PIN(0, 19), RCAR_GP_PIN(0, 18),
-+	RCAR_GP_PIN(0, 17), RCAR_GP_PIN(0, 16),
-+};
-+static const unsigned int du0_rgb888_mux[] = {
-+	DU0_DR7_Y9_DATA7_MARK, DU0_DR6_Y8_DATA6_MARK, DU0_DR5_Y7_DATA5_MARK,
-+	DU0_DR4_Y6_DATA4_MARK, DU0_DR3_Y5_DATA3_MARK, DU0_DR2_Y4_DATA2_MARK,
-+	DU0_DR1_DATA1_MARK, DU0_DR0_DATA0_MARK,
-+	DU0_DG7_Y3_DATA15_MARK, DU0_DG6_Y2_DATA14_MARK, DU0_DG5_Y1_DATA13_MARK,
-+	DU0_DG4_Y0_DATA12_MARK, DU0_DG3_C7_DATA11_MARK, DU0_DG2_C6_DATA10_MARK,
-+	DU0_DG1_DATA9_MARK, DU0_DG0_DATA8_MARK,
-+	DU0_DB7_C5_MARK, DU0_DB6_C4_MARK, DU0_DB5_C3_MARK,
-+	DU0_DB4_C2_MARK, DU0_DB3_C1_MARK, DU0_DB2_C0_MARK,
-+	DU0_DB1_MARK, DU0_DB0_MARK,
-+};
-+static const unsigned int du0_sync_pins[] = {
-+	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC */
-+	RCAR_GP_PIN(0, 25), RCAR_GP_PIN(0, 24),
-+};
-+static const unsigned int du0_sync_mux[] = {
-+	DU0_EXVSYNC_DU0_VSYNC_MARK, DU0_EXHSYNC_DU0_HSYNC_MARK,
-+};
-+static const unsigned int du0_oddf_pins[] = {
-+	/* EXODDF/ODDF/DISP/CDE */
-+	RCAR_GP_PIN(0, 26),
-+};
-+static const unsigned int du0_oddf_mux[] = {
-+	DU0_EXODDF_DU0_ODDF_DISP_CDE_MARK
-+};
-+static const unsigned int du0_disp_pins[] = {
-+	/* DISP */
-+	RCAR_GP_PIN(0, 27),
-+};
-+static const unsigned int du0_disp_mux[] = {
-+	DU0_DISP_MARK,
-+};
-+static const unsigned int du0_cde_pins[] = {
-+	/* CDE */
-+	RCAR_GP_PIN(0, 28),
-+};
-+static const unsigned int du0_cde_mux[] = {
-+	DU0_CDE_MARK,
-+};
-+static const unsigned int du1_rgb666_pins[] = {
-+	/* R[7:2], G[7:2], B[7:2] */
-+	RCAR_GP_PIN(1, 5), RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 3),
-+	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 1), RCAR_GP_PIN(1, 0),
-+	RCAR_GP_PIN(1, 11), RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 9),
-+	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 7), RCAR_GP_PIN(1, 6),
-+	RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 16), RCAR_GP_PIN(1, 15),
-+	RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13), RCAR_GP_PIN(1, 12),
-+};
-+static const unsigned int du1_rgb666_mux[] = {
-+	DU1_DR7_DATA5_MARK, DU1_DR6_DATA4_MARK, DU1_DR5_Y7_DATA3_MARK,
-+	DU1_DR4_Y6_DATA2_MARK, DU1_DR3_Y5_DATA1_MARK, DU1_DR2_Y4_DATA0_MARK,
-+	DU1_DG7_Y3_DATA11_MARK, DU1_DG6_Y2_DATA10_MARK, DU1_DG5_Y1_DATA9_MARK,
-+	DU1_DG4_Y0_DATA8_MARK, DU1_DG3_C7_DATA7_MARK, DU1_DG2_C6_DATA6_MARK,
-+	DU1_DB7_C5_MARK, DU1_DB6_C4_MARK, DU1_DB5_C3_DATA15_MARK,
-+	DU1_DB4_C2_DATA14_MARK, DU1_DB3_C1_DATA13_MARK, DU1_DB2_C0_DATA12_MARK,
-+};
-+static const unsigned int du1_sync_pins[] = {
-+	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC */
-+	RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
-+};
-+static const unsigned int du1_sync_mux[] = {
-+	DU1_EXVSYNC_DU1_VSYNC_MARK, DU1_EXHSYNC_DU1_HSYNC_MARK,
-+};
-+static const unsigned int du1_oddf_pins[] = {
-+	/* EXODDF/ODDF/DISP/CDE */
-+	RCAR_GP_PIN(1, 20),
-+};
-+static const unsigned int du1_oddf_mux[] = {
-+	DU1_EXODDF_DU1_ODDF_DISP_CDE_MARK
-+};
-+static const unsigned int du1_disp_pins[] = {
-+	/* DISP */
-+	RCAR_GP_PIN(1, 21),
-+};
-+static const unsigned int du1_disp_mux[] = {
-+	DU1_DISP_MARK,
-+};
-+static const unsigned int du1_cde_pins[] = {
-+	/* CDE */
-+	RCAR_GP_PIN(1, 22),
-+};
-+static const unsigned int du1_cde_mux[] = {
-+	DU1_CDE_MARK,
-+};
- /* - INTC ------------------------------------------------------------------- */
- static const unsigned int intc_irq0_pins[] = {
- 	/* IRQ0 */
-@@ -1448,6 +1562,17 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(can0_data),
- 	SH_PFC_PIN_GROUP(can1_data),
- 	SH_PFC_PIN_GROUP(can_clk),
-+	SH_PFC_PIN_GROUP(du0_rgb666),
-+	SH_PFC_PIN_GROUP(du0_rgb888),
-+	SH_PFC_PIN_GROUP(du0_sync),
-+	SH_PFC_PIN_GROUP(du0_oddf),
-+	SH_PFC_PIN_GROUP(du0_disp),
-+	SH_PFC_PIN_GROUP(du0_cde),
-+	SH_PFC_PIN_GROUP(du1_rgb666),
-+	SH_PFC_PIN_GROUP(du1_sync),
-+	SH_PFC_PIN_GROUP(du1_oddf),
-+	SH_PFC_PIN_GROUP(du1_disp),
-+	SH_PFC_PIN_GROUP(du1_cde),
- 	SH_PFC_PIN_GROUP(intc_irq0),
- 	SH_PFC_PIN_GROUP(intc_irq1),
- 	SH_PFC_PIN_GROUP(intc_irq2),
-@@ -1548,6 +1673,23 @@ static const char * const can1_groups[]
- 	"can_clk",
- };
- 
-+static const char * const du0_groups[] = {
-+	"du0_rgb666",
-+	"du0_rgb888",
-+	"du0_sync",
-+	"du0_oddf",
-+	"du0_disp",
-+	"du0_cde",
-+};
-+
-+static const char * const du1_groups[] = {
-+	"du1_rgb666",
-+	"du1_sync",
-+	"du1_oddf",
-+	"du1_disp",
-+	"du1_cde",
-+};
-+
- static const char * const intc_groups[] = {
- 	"intc_irq0",
- 	"intc_irq1",
-@@ -1662,6 +1804,8 @@ static const struct sh_pfc_function pinm
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(can0),
- 	SH_PFC_FUNCTION(can1),
-+	SH_PFC_FUNCTION(du0),
-+	SH_PFC_FUNCTION(du1),
- 	SH_PFC_FUNCTION(intc),
- 	SH_PFC_FUNCTION(lbsc),
- 	SH_PFC_FUNCTION(scif0),
+> +       help
+> +         Say yes here to enabled the GPIO driver for Technologic's FPGA core.
+> +         Series supported include TS-4100, TS-4900, TS-7970 and TS-7990.
+> +
+>  endmenu
+>
+>  menu "MFD GPIO expanders"
+> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> index 2a035ed..4dcc21f 100644
+> --- a/drivers/gpio/Makefile
+> +++ b/drivers/gpio/Makefile
+> @@ -110,6 +110,7 @@ obj-$(CONFIG_GPIO_TPS6586X) += gpio-tps6586x.o
+>  obj-$(CONFIG_GPIO_TPS65910)    += gpio-tps65910.o
+>  obj-$(CONFIG_GPIO_TPS65912)    += gpio-tps65912.o
+>  obj-$(CONFIG_GPIO_TS4800)      += gpio-ts4800.o
+> +obj-$(CONFIG_GPIO_TS4900)      += gpio-ts4900.o
+>  obj-$(CONFIG_GPIO_TS5500)      += gpio-ts5500.o
+>  obj-$(CONFIG_GPIO_TWL4030)     += gpio-twl4030.o
+>  obj-$(CONFIG_GPIO_TWL6040)     += gpio-twl6040.o
+> diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
+> new file mode 100644
+> index 0000000..104d1e0
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-ts4900.c
+> @@ -0,0 +1,238 @@
+> +/*
+> + * Digital I/O driver for Technologic Systems I2C FPGA Core
+> + *
+> + * Copyright (C) 2015 Technologic Systems
+> + * Copyright (C) 2016 Savoir-Faire Linux
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+> + * kind, whether expressed or implied; without even the implied warranty
+> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License version 2 for more details.
+> + */
+> +
+> +#include <linux/gpio/driver.h>
+> +#include <linux/i2c.h>
+> +#include <linux/of_device.h>
+> +#include <linux/module.h>
+> +
+
+[...]
+
+> +static const struct i2c_device_id ts4900_gpio_id_table[] = {
+> +       { "ts4900-gpio", },
+> +       { /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, ts4900_gpio_id_table);
+> +
+> +static struct i2c_driver ts4900_gpio_driver = {
+> +       .driver = {
+> +               .name = "ts4900-gpio",
+> +               .of_match_table = ts4900_gpio_of_match_table,
+> +       },
+> +       .probe = ts4900_gpio_probe,
+> +       .remove = ts4900_gpio_remove,
+> +       .id_table = ts4900_gpio_id_table,
+> +};
+> +module_i2c_driver(ts4900_gpio_driver);
+> +
+> +MODULE_AUTHOR("Technologic Systems");
+> +MODULE_DESCRIPTION("GPIO interface for Technologic Systems I2C-FPGA core");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.5.5
+>
