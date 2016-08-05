@@ -1,146 +1,206 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 09/10] mfd: Add STMPE1600 support
-Date: Thu, 4 Aug 2016 16:10:10 +0100
-Message-ID: <20160804151010.GD5154@x1>
-References: <1461845589-4826-1-git-send-email-patrice.chotard@st.com>
- <1461845589-4826-10-git-send-email-patrice.chotard@st.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 2/3] mfd: lp873x: Add lp873x PMIC support
+Date: Fri, 5 Aug 2016 09:03:22 +0100
+Message-ID: <20160805080322.GO5243@dell>
+References: <1467215067-6486-1-git-send-email-j-keerthy@ti.com>
+ <1467215067-6486-3-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1461845589-4826-10-git-send-email-patrice.chotard@st.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: patrice.chotard@st.com
-Cc: gnurou@gmail.com, amelie.delaunay@st.com, dev@lynxeye.de, marcel.ziswiler@toradex.com, vireshk@kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, stefan@agner.ch, linux-gpio@vger.kernel.org, thierry.reding@gmail.com, kernel@pengutronix.de, dinguyen@opensource.altera.com, shawnguo@kernel.org, shiraz.linux.kernel@gmail.com, linux-arm-kernel@lists.infradead.org, maxime.coquelin@st.com
+In-Reply-To: <1467215067-6486-3-git-send-email-j-keerthy-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-T24gVGh1LCAyOCBBcHIgMjAxNiwgcGF0cmljZS5jaG90YXJkQHN0LmNvbSB3cm90ZToKCj4gRnJv
-bTogUGF0cmljZSBDaG90YXJkIDxwYXRyaWNlLmNob3RhcmRAc3QuY29tPgo+IAo+IFNUTVBFMTYw
-MCBpcyBhIDE2LWJpdCBwb3J0IGV4cGFuZGVyLgo+IERhdGFzaGVldCBpcyBhdmFpbGFibGUgaGVy
-ZSA6Cj4gaHR0cDovL3d3dzIuc3QuY29tL2NvbnRlbnQvc3RfY29tL2VuL3Byb2R1Y3RzL2ludGVy
-ZmFjZXMtYW5kLXRyYW5zY2VpdmVycy8KPiBpLW8tZXhwYW5kZXJzLWFuZC1sZXZlbC10cmFuc2xh
-dG9ycy9pLW8tZXhwYW5kZXJzL3N0bXBlMTYwMC5odG1sCj4gCj4gU2lnbmVkLW9mZi1ieTogQW1l
-bGllIERFTEFVTkFZIDxhbWVsaWUuZGVsYXVuYXlAc3QuY29tPgo+IFNpZ25lZC1vZmYtYnk6IFBh
-dHJpY2UgQ2hvdGFyZCA8cGF0cmljZS5jaG90YXJkQHN0LmNvbT4KPiBBY2tlZC1ieTogTGludXMg
-V2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPgo+IC0tLQo+ICBkcml2ZXJzL21mZC9z
-dG1wZS1pMmMuYyAgIHwgIDIgKysKPiAgZHJpdmVycy9tZmQvc3RtcGUuYyAgICAgICB8IDY1ICsr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tCj4gIGRyaXZlcnMv
-bWZkL3N0bXBlLmggICAgICAgfCAyMSArKysrKysrKysrKysrKysKPiAgaW5jbHVkZS9saW51eC9t
-ZmQvc3RtcGUuaCB8ICAxICsKPiAgNCBmaWxlcyBjaGFuZ2VkLCA4NCBpbnNlcnRpb25zKCspLCA1
-IGRlbGV0aW9ucygtKQoKSWYgaXQncyBnb29kIGVub3VnaCBmb3IgTGludXMgLi4uCgpBY2tlZC1i
-eTogTGVlIEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4KCj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvbWZkL3N0bXBlLWkyYy5jIGIvZHJpdmVycy9tZmQvc3RtcGUtaTJjLmMKPiBpbmRleCBjM2Y0
-YWFiLi44NjNjMzlhIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvbWZkL3N0bXBlLWkyYy5jCj4gKysr
-IGIvZHJpdmVycy9tZmQvc3RtcGUtaTJjLmMKPiBAQCAtNTcsNiArNTcsNyBAQCBzdGF0aWMgY29u
-c3Qgc3RydWN0IG9mX2RldmljZV9pZCBzdG1wZV9vZl9tYXRjaFtdID0gewo+ICAJeyAuY29tcGF0
-aWJsZSA9ICJzdCxzdG1wZTYxMCIsIC5kYXRhID0gKHZvaWQgKilTVE1QRTYxMCwgfSwKPiAgCXsg
-LmNvbXBhdGlibGUgPSAic3Qsc3RtcGU4MDEiLCAuZGF0YSA9ICh2b2lkICopU1RNUEU4MDEsIH0s
-Cj4gIAl7IC5jb21wYXRpYmxlID0gInN0LHN0bXBlODExIiwgLmRhdGEgPSAodm9pZCAqKVNUTVBF
-ODExLCB9LAo+ICsJeyAuY29tcGF0aWJsZSA9ICJzdCxzdG1wZTE2MDAiLCAuZGF0YSA9ICh2b2lk
-ICopU1RNUEUxNjAwLCB9LAo+ICAJeyAuY29tcGF0aWJsZSA9ICJzdCxzdG1wZTE2MDEiLCAuZGF0
-YSA9ICh2b2lkICopU1RNUEUxNjAxLCB9LAo+ICAJeyAuY29tcGF0aWJsZSA9ICJzdCxzdG1wZTE4
-MDEiLCAuZGF0YSA9ICh2b2lkICopU1RNUEUxODAxLCB9LAo+ICAJeyAuY29tcGF0aWJsZSA9ICJz
-dCxzdG1wZTI0MDEiLCAuZGF0YSA9ICh2b2lkICopU1RNUEUyNDAxLCB9LAo+IEBAIC0xMDEsNiAr
-MTAyLDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBpMmNfZGV2aWNlX2lkIHN0bXBlX2kyY19pZFtd
-ID0gewo+ICAJeyAic3RtcGU2MTAiLCBTVE1QRTYxMCB9LAo+ICAJeyAic3RtcGU4MDEiLCBTVE1Q
-RTgwMSB9LAo+ICAJeyAic3RtcGU4MTEiLCBTVE1QRTgxMSB9LAo+ICsJeyAic3RtcGUxNjAwIiwg
-U1RNUEUxNjAwIH0sCj4gIAl7ICJzdG1wZTE2MDEiLCBTVE1QRTE2MDEgfSwKPiAgCXsgInN0bXBl
-MTgwMSIsIFNUTVBFMTgwMSB9LAo+ICAJeyAic3RtcGUyNDAxIiwgU1RNUEUyNDAxIH0sCj4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvbWZkL3N0bXBlLmMgYi9kcml2ZXJzL21mZC9zdG1wZS5jCj4gaW5k
-ZXggYTA2MDgwOS4uM2E2NTMzMSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL21mZC9zdG1wZS5jCj4g
-KysrIGIvZHJpdmVycy9tZmQvc3RtcGUuYwo+IEBAIC01MzIsNiArNTMyLDU5IEBAIHN0YXRpYyBz
-dHJ1Y3Qgc3RtcGVfdmFyaWFudF9pbmZvIHN0bXBlNjEwID0gewo+ICB9Owo+ICAKPiAgLyoKPiAr
-ICogU1RNUEUxNjAwCj4gKyAqIENvbXBhcmVkIHRvIGFsbCBvdGhlcnMgU1RNUEUgdmFyaWFudCwg
-TFNCIGFuZCBNU0IgcmVncyBhcmUgbG9jYXRlZCBpbiB0aGlzCj4gKyAqIG9yZGVyIDoJTFNCICAg
-YWRkcgo+ICsgKgkJTVNCICAgYWRkciArIDEKPiArICogQXMgdGhlcmUgaXMgb25seSAyICogOGJp
-dHMgcmVnaXN0ZXJzIGZvciBHUE1SL0dQU1IvSUVHUElPUFIsIENTQiBpbmRleCBpcyBNU0IgcmVn
-aXN0ZXJzCj4gKyAqLwo+ICsKPiArc3RhdGljIGNvbnN0IHU4IHN0bXBlMTYwMF9yZWdzW10gPSB7
-Cj4gKwlbU1RNUEVfSURYX0NISVBfSURdCT0gU1RNUEUxNjAwX1JFR19DSElQX0lELAo+ICsJW1NU
-TVBFX0lEWF9TWVNfQ1RSTF0JPSBTVE1QRTE2MDBfUkVHX1NZU19DVFJMLAo+ICsJW1NUTVBFX0lE
-WF9JQ1JfTFNCXQk9IFNUTVBFMTYwMF9SRUdfU1lTX0NUUkwsCj4gKwlbU1RNUEVfSURYX0dQTVJf
-TFNCXQk9IFNUTVBFMTYwMF9SRUdfR1BNUl9MU0IsCj4gKwlbU1RNUEVfSURYX0dQTVJfQ1NCXQk9
-IFNUTVBFMTYwMF9SRUdfR1BNUl9NU0IsCj4gKwlbU1RNUEVfSURYX0dQU1JfTFNCXQk9IFNUTVBF
-MTYwMF9SRUdfR1BTUl9MU0IsCj4gKwlbU1RNUEVfSURYX0dQU1JfQ1NCXQk9IFNUTVBFMTYwMF9S
-RUdfR1BTUl9NU0IsCj4gKwlbU1RNUEVfSURYX0dQRFJfTFNCXQk9IFNUTVBFMTYwMF9SRUdfR1BE
-Ul9MU0IsCj4gKwlbU1RNUEVfSURYX0dQRFJfQ1NCXQk9IFNUTVBFMTYwMF9SRUdfR1BEUl9NU0Is
-Cj4gKwlbU1RNUEVfSURYX0lFR1BJT1JfTFNCXQk9IFNUTVBFMTYwMF9SRUdfSUVHUElPUl9MU0Is
-Cj4gKwlbU1RNUEVfSURYX0lFR1BJT1JfQ1NCXQk9IFNUTVBFMTYwMF9SRUdfSUVHUElPUl9NU0Is
-Cj4gKwlbU1RNUEVfSURYX0lTR1BJT1JfTFNCXQk9IFNUTVBFMTYwMF9SRUdfSVNHUElPUl9MU0Is
-Cj4gK307Cj4gKwo+ICtzdGF0aWMgc3RydWN0IHN0bXBlX3ZhcmlhbnRfYmxvY2sgc3RtcGUxNjAw
-X2Jsb2Nrc1tdID0gewo+ICsJewo+ICsJCS5jZWxsCT0gJnN0bXBlX2dwaW9fY2VsbCwKPiArCQku
-aXJxCT0gMCwKPiArCQkuYmxvY2sJPSBTVE1QRV9CTE9DS19HUElPLAo+ICsJfSwKPiArfTsKPiAr
-Cj4gK3N0YXRpYyBpbnQgc3RtcGUxNjAwX2VuYWJsZShzdHJ1Y3Qgc3RtcGUgKnN0bXBlLCB1bnNp
-Z25lZCBpbnQgYmxvY2tzLAo+ICsJCQkgICBib29sIGVuYWJsZSkKPiArewo+ICsJaWYgKGJsb2Nr
-cyAmIFNUTVBFX0JMT0NLX0dQSU8pCj4gKwkJcmV0dXJuIDA7Cj4gKwllbHNlCj4gKwkJcmV0dXJu
-IC1FSU5WQUw7Cj4gK30KPiArCj4gK3N0YXRpYyBzdHJ1Y3Qgc3RtcGVfdmFyaWFudF9pbmZvIHN0
-bXBlMTYwMCA9IHsKPiArCS5uYW1lCQk9ICJzdG1wZTE2MDAiLAo+ICsJLmlkX3ZhbAkJPSBTVE1Q
-RTE2MDBfSUQsCj4gKwkuaWRfbWFzawk9IDB4ZmZmZiwKPiArCS5udW1fZ3Bpb3MJPSAxNiwKPiAr
-CS5hZl9iaXRzCT0gMCwKPiArCS5yZWdzCQk9IHN0bXBlMTYwMF9yZWdzLAo+ICsJLmJsb2NrcwkJ
-PSBzdG1wZTE2MDBfYmxvY2tzLAo+ICsJLm51bV9ibG9ja3MJPSBBUlJBWV9TSVpFKHN0bXBlMTYw
-MF9ibG9ja3MpLAo+ICsJLm51bV9pcnFzCT0gU1RNUEUxNjAwX05SX0lOVEVSTkFMX0lSUVMsCj4g
-KwkuZW5hYmxlCQk9IHN0bXBlMTYwMF9lbmFibGUsCj4gK307Cj4gKwo+ICsvKgo+ICAgKiBTVE1Q
-RTE2MDEKPiAgICovCj4gIAo+IEBAIC05MjgsNiArOTgxLDcgQEAgc3RhdGljIHN0cnVjdCBzdG1w
-ZV92YXJpYW50X2luZm8gKnN0bXBlX3ZhcmlhbnRfaW5mb1tTVE1QRV9OQlJfUEFSVFNdID0gewo+
-ICAJW1NUTVBFNjEwXQk9ICZzdG1wZTYxMCwKPiAgCVtTVE1QRTgwMV0JPSAmc3RtcGU4MDEsCj4g
-IAlbU1RNUEU4MTFdCT0gJnN0bXBlODExLAo+ICsJW1NUTVBFMTYwMF0JPSAmc3RtcGUxNjAwLAo+
-ICAJW1NUTVBFMTYwMV0JPSAmc3RtcGUxNjAxLAo+ICAJW1NUTVBFMTgwMV0JPSAmc3RtcGUxODAx
-LAo+ICAJW1NUTVBFMjQwMV0JPSAmc3RtcGUyNDAxLAo+IEBAIC05NTQsNyArMTAwOCw4IEBAIHN0
-YXRpYyBpcnFyZXR1cm5fdCBzdG1wZV9pcnEoaW50IGlycSwgdm9pZCAqZGF0YSkKPiAgCWludCBy
-ZXQ7Cj4gIAlpbnQgaTsKPiAgCj4gLQlpZiAodmFyaWFudC0+aWRfdmFsID09IFNUTVBFODAxX0lE
-KSB7Cj4gKwlpZiAodmFyaWFudC0+aWRfdmFsID09IFNUTVBFODAxX0lEIHx8Cj4gKwkgICAgdmFy
-aWFudC0+aWRfdmFsID09IFNUTVBFMTYwMF9JRCkgewo+ICAJCWludCBiYXNlID0gaXJxX2NyZWF0
-ZV9tYXBwaW5nKHN0bXBlLT5kb21haW4sIDApOwo+ICAKPiAgCQloYW5kbGVfbmVzdGVkX2lycShi
-YXNlKTsKPiBAQCAtMTEyOCwxMyArMTE4MywxMyBAQCBzdGF0aWMgaW50IHN0bXBlX2NoaXBfaW5p
-dChzdHJ1Y3Qgc3RtcGUgKnN0bXBlKQo+ICAJCXJldHVybiByZXQ7Cj4gIAo+ICAJaWYgKHN0bXBl
-LT5pcnEgPj0gMCkgewo+IC0JCWlmIChpZCA9PSBTVE1QRTgwMV9JRCkKPiArCQlpZiAoaWQgPT0g
-U1RNUEU4MDFfSUQgfHwgaWQgPT0gU1RNUEUxNjAwX0lEKQo+ICAJCQlpY3IgPSBTVE1QRV9TWVNf
-Q1RSTF9JTlRfRU47Cj4gIAkJZWxzZQo+ICAJCQlpY3IgPSBTVE1QRV9JQ1JfTFNCX0dJTTsKPiAg
-Cj4gLQkJLyogU1RNUEU4MDEgZG9lc24ndCBzdXBwb3J0IEVkZ2UgaW50ZXJydXB0cyAqLwo+IC0J
-CWlmIChpZCAhPSBTVE1QRTgwMV9JRCkgewo+ICsJCS8qIFNUTVBFODAxIGFuZCBTVE1QRTE2MDAg
-ZG9uJ3Qgc3VwcG9ydCBFZGdlIGludGVycnVwdHMgKi8KPiArCQlpZiAoaWQgIT0gU1RNUEU4MDFf
-SUQgJiYgaWQgIT0gU1RNUEUxNjAwX0lEKSB7Cj4gIAkJCWlmIChpcnFfdHJpZ2dlciA9PSBJUlFG
-X1RSSUdHRVJfRkFMTElORyB8fAo+ICAJCQkJCWlycV90cmlnZ2VyID09IElSUUZfVFJJR0dFUl9S
-SVNJTkcpCj4gIAkJCQlpY3IgfD0gU1RNUEVfSUNSX0xTQl9FREdFOwo+IEBAIC0xMTQyLDcgKzEx
-OTcsNyBAQCBzdGF0aWMgaW50IHN0bXBlX2NoaXBfaW5pdChzdHJ1Y3Qgc3RtcGUgKnN0bXBlKQo+
-ICAKPiAgCQlpZiAoaXJxX3RyaWdnZXIgPT0gSVJRRl9UUklHR0VSX1JJU0lORyB8fAo+ICAJCQkJ
-aXJxX3RyaWdnZXIgPT0gSVJRRl9UUklHR0VSX0hJR0gpIHsKPiAtCQkJaWYgKGlkID09IFNUTVBF
-ODAxX0lEKQo+ICsJCQlpZiAoaWQgPT0gU1RNUEU4MDFfSUQgfHwgaWQgPT0gU1RNUEUxNjAwX0lE
-KQo+ICAJCQkJaWNyIHw9IFNUTVBFX1NZU19DVFJMX0lOVF9ISTsKPiAgCQkJZWxzZQo+ICAJCQkJ
-aWNyIHw9IFNUTVBFX0lDUl9MU0JfSElHSDsKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZmQvc3Rt
-cGUuaCBiL2RyaXZlcnMvbWZkL3N0bXBlLmgKPiBpbmRleCBmMTI3MzQyLi5mN2VmZGQ4IDEwMDY0
-NAo+IC0tLSBhL2RyaXZlcnMvbWZkL3N0bXBlLmgKPiArKysgYi9kcml2ZXJzL21mZC9zdG1wZS5o
-Cj4gQEAgLTE2NCw2ICsxNjQsMjcgQEAgaW50IHN0bXBlX3JlbW92ZShzdHJ1Y3Qgc3RtcGUgKnN0
-bXBlKTsKPiAgI2RlZmluZSBTVE1QRTgxMV9TWVNfQ1RSTDJfVFNfT0ZGCSgxIDw8IDMpCj4gIAo+
-ICAvKgo+ICsgKiBTVE1QRTE2MDAKPiArICovCj4gKyNkZWZpbmUgU1RNUEUxNjAwX0lECQkJMHgw
-MDE2Cj4gKyNkZWZpbmUgU1RNUEUxNjAwX05SX0lOVEVSTkFMX0lSUVMJMTYKPiArCj4gKyNkZWZp
-bmUgU1RNUEUxNjAwX1JFR19DSElQX0lECQkweDAwCj4gKyNkZWZpbmUgU1RNUEUxNjAwX1JFR19T
-WVNfQ1RSTAkJMHgwMwo+ICsjZGVmaW5lIFNUTVBFMTYwMF9SRUdfSUVHUElPUl9MU0IJMHgwOAo+
-ICsjZGVmaW5lIFNUTVBFMTYwMF9SRUdfSUVHUElPUl9NU0IJMHgwOQo+ICsjZGVmaW5lIFNUTVBF
-MTYwMF9SRUdfSVNHUElPUl9MU0IJMHgwQQo+ICsjZGVmaW5lIFNUTVBFMTYwMF9SRUdfSVNHUElP
-Ul9NU0IJMHgwQgo+ICsjZGVmaW5lIFNUTVBFMTYwMF9SRUdfR1BNUl9MU0IJCTB4MTAKPiArI2Rl
-ZmluZSBTVE1QRTE2MDBfUkVHX0dQTVJfTVNCCQkweDExCj4gKyNkZWZpbmUgU1RNUEUxNjAwX1JF
-R19HUFNSX0xTQgkJMHgxMgo+ICsjZGVmaW5lIFNUTVBFMTYwMF9SRUdfR1BTUl9NU0IJCTB4MTMK
-PiArI2RlZmluZSBTVE1QRTE2MDBfUkVHX0dQRFJfTFNCCQkweDE0Cj4gKyNkZWZpbmUgU1RNUEUx
-NjAwX1JFR19HUERSX01TQgkJMHgxNQo+ICsjZGVmaW5lIFNUTVBFMTYwMF9SRUdfR1BQSVJfTFNC
-CQkweDE2Cj4gKyNkZWZpbmUgU1RNUEUxNjAwX1JFR19HUFBJUl9NU0IJCTB4MTcKPiArCj4gKy8q
-Cj4gICAqIFNUTVBFMTYwMQo+ICAgKi8KPiAgCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgv
-bWZkL3N0bXBlLmggYi9pbmNsdWRlL2xpbnV4L21mZC9zdG1wZS5oCj4gaW5kZXggM2RjZWQ0YS4u
-MDE3MGJkNiAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2xpbnV4L21mZC9zdG1wZS5oCj4gKysrIGIv
-aW5jbHVkZS9saW51eC9tZmQvc3RtcGUuaAo+IEBAIC0yNiw2ICsyNiw3IEBAIGVudW0gc3RtcGVf
-cGFydG51bSB7Cj4gIAlTVE1QRTYxMCwKPiAgCVNUTVBFODAxLAo+ICAJU1RNUEU4MTEsCj4gKwlT
-VE1QRTE2MDAsCj4gIAlTVE1QRTE2MDEsCj4gIAlTVE1QRTE4MDEsCj4gIAlTVE1QRTI0MDEsCgot
-LSAKTGVlIEpvbmVzCkxpbmFybyBTVE1pY3JvZWxlY3Ryb25pY3MgTGFuZGluZyBUZWFtIExlYWQK
-TGluYXJvLm9yZyDilIIgT3BlbiBzb3VyY2Ugc29mdHdhcmUgZm9yIEFSTSBTb0NzCkZvbGxvdyBM
-aW5hcm86IEZhY2Vib29rIHwgVHdpdHRlciB8IEJsb2cKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0Cmxp
-bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFk
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+On Wed, 29 Jun 2016, Keerthy wrote:
+
+> The LP873X chip is a power management IC for Portable Navigation Systems
+>     and Tablet Computing devices. It contains the following components:
+> 
+>      - Regulators.
+>      - Configurable General Purpose Output Signals(GPO).
+> 
+> PMIC interacts with the main processor through i2c. PMIC has
+> couple of LDOs(Linear Regulators), couple of BUCKs (Step-Down DC-DC
+> Converter Cores) and GPOs(General Purpose Output Signals).
+> 
+> Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+> ---
+> 
+> Changes in v4:
+> 
+>   * Added Author.
+>   * Added the mfd_cell for gpio.
+> 
+> Changes in v3:
+> 
+>   * Reordered the probe code.
+>   * Fixed Typo in Kconfig description.
+>   * Removed unused member from struct lp873x.
+> 
+>  drivers/mfd/Kconfig        |  14 +++
+>  drivers/mfd/Makefile       |   2 +
+>  drivers/mfd/lp873x.c       |  99 +++++++++++++++++
+>  include/linux/mfd/lp873x.h | 264 +++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 379 insertions(+)
+>  create mode 100644 drivers/mfd/lp873x.c
+>  create mode 100644 include/linux/mfd/lp873x.h
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 9987d86..e68ac28 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1221,6 +1221,20 @@ config MFD_TPS65217
+>  	  This driver can also be built as a module.  If so, the module
+>  	  will be called tps65217.
+>  
+> +config MFD_LP873X
+
+Nicer as MFD_TI_LP873X I think.
+
+> +	tristate "TI LP873X Power Management IC"
+> +	depends on I2C
+> +	select MFD_CORE
+> +	select REGMAP_I2C
+> +	help
+> +	  If you say yes here then you get support for the LP873X series of
+> +	  power management integrated circuits(PMIC).
+
+Power Management Integrated Circuits (PMIC).
+
+> +	  These include voltage regulators, Thermal protection, Configurable
+> +	  general purpose outputs(GPO) that are used in portable devices.
+
+Some here.  Please standardise your capitalisation.
+
+> +	  This driver can also be built as a module.  If so, the module
+> +	  will be called lp873x.
+> +
+>  config MFD_TPS65218
+>  	tristate "TI TPS65218 Power Management chips"
+>  	depends on I2C
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 2ba3ba3..7d9b965 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -22,6 +22,8 @@ obj-$(CONFIG_HTC_EGPIO)		+= htc-egpio.o
+>  obj-$(CONFIG_HTC_PASIC3)	+= htc-pasic3.o
+>  obj-$(CONFIG_HTC_I2CPLD)	+= htc-i2cpld.o
+>  
+> +obj-$(CONFIG_MFD_LP873X)	+= lp873x.o
+> +
+>  obj-$(CONFIG_MFD_DAVINCI_VOICECODEC)	+= davinci_voicecodec.o
+>  obj-$(CONFIG_MFD_DM355EVM_MSP)	+= dm355evm_msp.o
+>  obj-$(CONFIG_MFD_TI_AM335X_TSCADC)	+= ti_am335x_tscadc.o
+> diff --git a/drivers/mfd/lp873x.c b/drivers/mfd/lp873x.c
+> new file mode 100644
+> index 0000000..54ed0ce
+> --- /dev/null
+> +++ b/drivers/mfd/lp873x.c
+> @@ -0,0 +1,99 @@
+> +/*
+> + * Copyright (C) 2016 Texas Instruments Incorporated - http://www.ti.com/
+> + *
+> + * Author: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation version 2.
+> + *
+> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+> + * kind, whether express or implied; without even the implied warranty
+> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/interrupt.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <linux/mfd/lp873x.h>
+> +
+> +static const struct regmap_config lp873x_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.max_register = LP873X_REG_MAX,
+> +};
+> +
+> +static const struct mfd_cell lp873x_cells[] = {
+> +	{ .name = "lp873x-regulator", },
+> +	{ .name = "lp873x-gpio", },
+> +};
+> +
+> +static int lp873x_probe(struct i2c_client *client,
+> +			const struct i2c_device_id *ids)
+> +{
+> +	struct lp873x *lp873;
+> +	int ret;
+> +	unsigned int otpid;
+> +
+> +	lp873 = devm_kzalloc(&client->dev, sizeof(*lp873), GFP_KERNEL);
+> +	if (!lp873)
+> +		return -ENOMEM;
+> +
+> +	lp873->dev = &client->dev;
+> +
+> +	lp873->regmap = devm_regmap_init_i2c(client, &lp873x_regmap_config);
+> +	if (IS_ERR(lp873->regmap)) {
+> +		ret = PTR_ERR(lp873->regmap);
+> +		dev_err(lp873->dev, "Failed to initialize register map: %d\n",
+> +			ret);
+
+Nit: I'd prefer you break after "->dev,".
+
+> +		return ret;
+> +	}
+> +
+> +	mutex_init(&lp873->lp873_lock);
+
+How many locks do you have in 'struct lp873x'?
+
+I suggest that 'lock' will do fine.
+
+> +	ret = regmap_read(lp873->regmap, LP873X_REG_OTP_REV, &otpid);
+> +	if (ret) {
+> +		dev_err(lp873->dev, "Failed to read OTP ID\n");
+> +		return ret;
+> +	}
+> +
+> +	lp873->rev = otpid & LP873X_OTP_REV_OTP_ID;
+> +	i2c_set_clientdata(client, lp873);
+> +	ret = mfd_add_devices(lp873->dev, PLATFORM_DEVID_AUTO, lp873x_cells,
+> +			      ARRAY_SIZE(lp873x_cells), NULL, 0, NULL);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id of_lp873x_match_table[] = {
+> +	{ .compatible = "ti,lp8733", },
+> +	{ .compatible = "ti,lp8732", },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, of_lp873x_match_table);
+> +
+> +static const struct i2c_device_id lp873x_id_table[] = {
+> +	{ "lp873x", LP873X },
+> +	{ "lp8732", LP873X },
+> +	{ "lp8733", LP873X },
+
+Do you use these IDs at any point?
+
+[...]
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
