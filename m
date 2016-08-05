@@ -1,7 +1,7 @@
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2] pinctrl: sh-pfc: r8a7792: add VIN pin groups
-Date: Fri, 05 Aug 2016 23:52:32 +0300
-Message-ID: <3792658.DACycCOyRo@wasted.cogentembedded.com>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7792: add DU pin groups
+Date: Fri, 05 Aug 2016 23:54:20 +0300
+Message-ID: <2705887.l4rVHM5oaI@wasted.cogentembedded.com>
 References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -12,627 +12,191 @@ Sender: linux-renesas-soc-owner@vger.kernel.org
 To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org, geert+renesas@glider.be
 List-Id: linux-gpio@vger.kernel.org
 
-Add VIN[0-5] pin groups to the R8A7792 PFC driver.
+Add DU pin groups to the R8A7792 PFC driver.
 
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
 ---
 The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
-repo plus my 6 R8A7792 PFC patches  posted before (those should  be collected
+repo plus my 7 R8A7792 PFC patches  posted before (those should  be collected
 by Geert)...
 
-Changes in version 2:
-- fixed the SoC model in the changelog.
-
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c |  577 +++++++++++++++++++++++++++++++++++
- 1 file changed, 577 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7792.c |  144 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 144 insertions(+)
 
 Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
 ===================================================================
 --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
 +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-@@ -994,6 +994,448 @@ static const unsigned int sdhi0_wp_pins[
- static const unsigned int sdhi0_wp_mux[] = {
- 	SD0_WP_MARK,
+@@ -834,6 +834,120 @@ static const unsigned int can_clk_pins[]
+ static const unsigned int can_clk_mux[] = {
+ 	CAN_CLK_MARK,
  };
-+/* - VIN0 ------------------------------------------------------------------- */
-+static const union vin_data vin0_data_pins = {
-+	.data24 = {
-+		/* B */
-+		RCAR_GP_PIN(4, 4), RCAR_GP_PIN(4, 5),
-+		RCAR_GP_PIN(4, 6), RCAR_GP_PIN(4, 7),
-+		RCAR_GP_PIN(4, 8), RCAR_GP_PIN(4, 9),
-+		RCAR_GP_PIN(4, 10), RCAR_GP_PIN(4, 11),
-+		/* G */
-+		RCAR_GP_PIN(4, 12), RCAR_GP_PIN(4, 13),
-+		RCAR_GP_PIN(4, 14), RCAR_GP_PIN(4, 15),
-+		RCAR_GP_PIN(8, 1), RCAR_GP_PIN(8, 2),
-+		RCAR_GP_PIN(8, 3), RCAR_GP_PIN(8, 4),
-+		/* R */
-+		RCAR_GP_PIN(8, 5), RCAR_GP_PIN(8, 6),
-+		RCAR_GP_PIN(8, 7), RCAR_GP_PIN(8, 8),
-+		RCAR_GP_PIN(8, 9), RCAR_GP_PIN(8, 10),
-+		RCAR_GP_PIN(8, 11), RCAR_GP_PIN(8, 12),
-+	},
-+};
-+static const union vin_data vin0_data_mux = {
-+	.data24 = {
-+		/* B */
-+		VI0_D0_B0_C0_MARK, VI0_D1_B1_C1_MARK,
-+		VI0_D2_B2_C2_MARK, VI0_D3_B3_C3_MARK,
-+		VI0_D4_B4_C4_MARK, VI0_D5_B5_C5_MARK,
-+		VI0_D6_B6_C6_MARK, VI0_D7_B7_C7_MARK,
-+		/* G */
-+		VI0_D8_G0_Y0_MARK, VI0_D9_G1_Y1_MARK,
-+		VI0_D10_G2_Y2_MARK, VI0_D11_G3_Y3_MARK,
-+		VI0_D12_G4_Y4_MARK, VI0_D13_G5_Y5_MARK,
-+		VI0_D14_G6_Y6_MARK, VI0_D15_G7_Y7_MARK,
-+		/* R */
-+		VI0_D16_R0_MARK, VI0_D17_R1_MARK,
-+		VI0_D18_R2_MARK, VI0_D19_R3_MARK,
-+		VI0_D20_R4_MARK, VI0_D21_R5_MARK,
-+		VI0_D22_R6_MARK, VI0_D23_R7_MARK,
-+	},
-+};
-+static const unsigned int vin0_data18_pins[] = {
-+	/* B */
-+	RCAR_GP_PIN(4, 6), RCAR_GP_PIN(4, 7),
-+	RCAR_GP_PIN(4, 8), RCAR_GP_PIN(4, 9),
-+	RCAR_GP_PIN(4, 10), RCAR_GP_PIN(4, 11),
-+	/* G */
-+	RCAR_GP_PIN(4, 14), RCAR_GP_PIN(4, 15),
-+	RCAR_GP_PIN(8, 1), RCAR_GP_PIN(8, 2),
-+	RCAR_GP_PIN(8, 3), RCAR_GP_PIN(8, 4),
-+	/* R */
-+	RCAR_GP_PIN(8, 7), RCAR_GP_PIN(8, 8),
-+	RCAR_GP_PIN(8, 9), RCAR_GP_PIN(8, 10),
-+	RCAR_GP_PIN(8, 11), RCAR_GP_PIN(8, 12),
-+};
-+static const unsigned int vin0_data18_mux[] = {
-+	/* B */
-+	VI0_D2_B2_C2_MARK, VI0_D3_B3_C3_MARK,
-+	VI0_D4_B4_C4_MARK, VI0_D5_B5_C5_MARK,
-+	VI0_D6_B6_C6_MARK, VI0_D7_B7_C7_MARK,
-+	/* G */
-+	VI0_D10_G2_Y2_MARK, VI0_D11_G3_Y3_MARK,
-+	VI0_D12_G4_Y4_MARK, VI0_D13_G5_Y5_MARK,
-+	VI0_D14_G6_Y6_MARK, VI0_D15_G7_Y7_MARK,
-+	/* R */
-+	VI0_D18_R2_MARK, VI0_D19_R3_MARK,
-+	VI0_D20_R4_MARK, VI0_D21_R5_MARK,
-+	VI0_D22_R6_MARK, VI0_D23_R7_MARK,
-+};
-+static const unsigned int vin0_sync_pins[] = {
-+	/* HSYNC#, VSYNC# */
-+	RCAR_GP_PIN(4, 2), RCAR_GP_PIN(4, 3),
-+};
-+static const unsigned int vin0_sync_mux[] = {
-+	VI0_HSYNC_N_MARK, VI0_VSYNC_N_MARK,
-+};
-+static const unsigned int vin0_field_pins[] = {
-+	RCAR_GP_PIN(4, 16),
-+};
-+static const unsigned int vin0_field_mux[] = {
-+	VI0_FIELD_MARK,
-+};
-+static const unsigned int vin0_clkenb_pins[] = {
-+	RCAR_GP_PIN(4, 1),
-+};
-+static const unsigned int vin0_clkenb_mux[] = {
-+	VI0_CLKENB_MARK,
-+};
-+static const unsigned int vin0_clk_pins[] = {
-+	RCAR_GP_PIN(4, 0),
-+};
-+static const unsigned int vin0_clk_mux[] = {
-+	VI0_CLK_MARK,
-+};
-+/* - VIN1 ------------------------------------------------------------------- */
-+static const union vin_data vin1_data_pins = {
-+	.data24 = {
-+		/* B */
-+		RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 5),
-+		RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 7),
-+		RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 9),
-+		RCAR_GP_PIN(5, 10), RCAR_GP_PIN(5, 11),
-+		/* G */
-+		RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 13),
-+		RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
-+		RCAR_GP_PIN(8, 5), RCAR_GP_PIN(8, 6),
-+		RCAR_GP_PIN(8, 6), RCAR_GP_PIN(8, 7),
-+		/* R */
-+		RCAR_GP_PIN(9, 5), RCAR_GP_PIN(9, 6),
-+		RCAR_GP_PIN(9, 7), RCAR_GP_PIN(9, 8),
-+		RCAR_GP_PIN(9, 9), RCAR_GP_PIN(9, 10),
-+		RCAR_GP_PIN(9, 11), RCAR_GP_PIN(9, 12),
-+	},
-+};
-+static const union vin_data vin1_data_mux = {
-+	.data24 = {
-+		/* B */
-+		VI1_D0_B0_C0_MARK, VI1_D1_B1_C1_MARK,
-+		VI1_D2_B2_C2_MARK, VI1_D3_B3_C3_MARK,
-+		VI1_D4_B4_C4_MARK, VI1_D5_B5_C5_MARK,
-+		VI1_D6_B6_C6_MARK, VI1_D7_B7_C7_MARK,
-+		/* G */
-+		VI1_D8_G0_Y0_MARK, VI1_D9_G1_Y1_MARK,
-+		VI1_D10_G2_Y2_MARK, VI1_D11_G3_Y3_MARK,
-+		VI1_D12_G4_Y4_MARK, VI1_D13_G5_Y5_MARK,
-+		VI1_D14_G6_Y6_MARK, VI1_D15_G7_Y7_MARK,
-+		/* R */
-+		VI1_D16_R0_MARK, VI1_D17_R1_MARK,
-+		VI1_D18_R2_MARK, VI1_D19_R3_MARK,
-+		VI1_D20_R4_MARK, VI1_D21_R5_MARK,
-+		VI1_D22_R6_MARK, VI1_D23_R7_MARK,
-+	},
-+};
-+static const unsigned int vin1_data18_pins[] = {
-+	/* B */
-+	RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 7),
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 9),
-+	RCAR_GP_PIN(5, 10), RCAR_GP_PIN(5, 11),
-+	/* G */
-+	RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
-+	RCAR_GP_PIN(8, 5), RCAR_GP_PIN(8, 6),
-+	RCAR_GP_PIN(8, 6), RCAR_GP_PIN(8, 7),
-+	/* R */
-+	RCAR_GP_PIN(9, 7), RCAR_GP_PIN(9, 8),
-+	RCAR_GP_PIN(9, 9), RCAR_GP_PIN(9, 10),
-+	RCAR_GP_PIN(9, 11), RCAR_GP_PIN(9, 12),
-+};
-+static const unsigned int vin1_data18_mux[] = {
-+	/* B */
-+	VI1_D2_B2_C2_MARK, VI1_D3_B3_C3_MARK,
-+	VI1_D4_B4_C4_MARK, VI1_D5_B5_C5_MARK,
-+	VI1_D6_B6_C6_MARK, VI1_D7_B7_C7_MARK,
-+	/* G */
-+	VI1_D10_G2_Y2_MARK, VI1_D11_G3_Y3_MARK,
-+	VI1_D12_G4_Y4_MARK, VI1_D13_G5_Y5_MARK,
-+	VI1_D14_G6_Y6_MARK, VI1_D15_G7_Y7_MARK,
-+	/* R */
-+	VI1_D18_R2_MARK, VI1_D19_R3_MARK,
-+	VI1_D20_R4_MARK, VI1_D21_R5_MARK,
-+	VI1_D22_R6_MARK, VI1_D23_R7_MARK,
-+};
-+static const union vin_data vin1_data_b_pins = {
-+	.data24 = {
-+		/* B */
-+		RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 5),
-+		RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 7),
-+		RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 9),
-+		RCAR_GP_PIN(5, 10), RCAR_GP_PIN(5, 11),
-+		/* G */
-+		RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 13),
-+		RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
-+		RCAR_GP_PIN(9, 1), RCAR_GP_PIN(9, 2),
-+		RCAR_GP_PIN(9, 3), RCAR_GP_PIN(9, 4),
-+		/* R */
-+		RCAR_GP_PIN(9, 5), RCAR_GP_PIN(9, 6),
-+		RCAR_GP_PIN(9, 7), RCAR_GP_PIN(9, 8),
-+		RCAR_GP_PIN(9, 9), RCAR_GP_PIN(9, 10),
-+		RCAR_GP_PIN(9, 11), RCAR_GP_PIN(9, 12),
-+	},
-+};
-+static const union vin_data vin1_data_b_mux = {
-+	.data24 = {
-+		/* B */
-+		VI1_D0_B0_C0_MARK, VI1_D1_B1_C1_MARK,
-+		VI1_D2_B2_C2_MARK, VI1_D3_B3_C3_MARK,
-+		VI1_D4_B4_C4_MARK, VI1_D5_B5_C5_MARK,
-+		VI1_D6_B6_C6_MARK, VI1_D7_B7_C7_MARK,
-+		/* G */
-+		VI1_D8_G0_Y0_MARK, VI1_D9_G1_Y1_MARK,
-+		VI1_D10_G2_Y2_MARK, VI1_D11_G3_Y3_MARK,
-+		VI1_D12_G4_Y4_B_MARK, VI1_D13_G5_Y5_B_MARK,
-+		VI1_D14_G6_Y6_B_MARK, VI1_D15_G7_Y7_B_MARK,
-+		/* R */
-+		VI1_D16_R0_MARK, VI1_D17_R1_MARK,
-+		VI1_D18_R2_MARK, VI1_D19_R3_MARK,
-+		VI1_D20_R4_MARK, VI1_D21_R5_MARK,
-+		VI1_D22_R6_MARK, VI1_D23_R7_MARK,
-+	},
-+};
-+static const unsigned int vin1_data18_b_pins[] = {
-+	/* B */
-+	RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 7),
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 9),
-+	RCAR_GP_PIN(5, 10), RCAR_GP_PIN(5, 11),
-+	/* G */
-+	RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
-+	RCAR_GP_PIN(9, 1), RCAR_GP_PIN(9, 2),
-+	RCAR_GP_PIN(9, 3), RCAR_GP_PIN(9, 4),
-+	/* R */
-+	RCAR_GP_PIN(9, 7), RCAR_GP_PIN(9, 8),
-+	RCAR_GP_PIN(9, 9), RCAR_GP_PIN(9, 10),
-+	RCAR_GP_PIN(9, 11), RCAR_GP_PIN(9, 12),
-+};
-+static const unsigned int vin1_data18_b_mux[] = {
-+	/* B */
-+	VI1_D2_B2_C2_MARK, VI1_D3_B3_C3_MARK,
-+	VI1_D4_B4_C4_MARK, VI1_D5_B5_C5_MARK,
-+	VI1_D6_B6_C6_MARK, VI1_D7_B7_C7_MARK,
-+	/* G */
-+	VI1_D10_G2_Y2_MARK, VI1_D11_G3_Y3_MARK,
-+	VI1_D12_G4_Y4_B_MARK, VI1_D13_G5_Y5_B_MARK,
-+	VI1_D14_G6_Y6_B_MARK, VI1_D15_G7_Y7_B_MARK,
-+	/* R */
-+	VI1_D18_R2_MARK, VI1_D19_R3_MARK,
-+	VI1_D20_R4_MARK, VI1_D21_R5_MARK,
-+	VI1_D22_R6_MARK, VI1_D23_R7_MARK,
-+};
-+static const unsigned int vin1_sync_pins[] = {
-+	/* HSYNC#, VSYNC# */
-+	RCAR_GP_PIN(5, 2), RCAR_GP_PIN(5, 3),
-+};
-+static const unsigned int vin1_sync_mux[] = {
-+	VI1_HSYNC_N_MARK, VI1_VSYNC_N_MARK,
-+};
-+static const unsigned int vin1_field_pins[] = {
-+	RCAR_GP_PIN(5, 16),
-+};
-+static const unsigned int vin1_field_mux[] = {
-+	VI1_FIELD_MARK,
-+};
-+static const unsigned int vin1_clkenb_pins[] = {
-+	RCAR_GP_PIN(5, 1),
-+};
-+static const unsigned int vin1_clkenb_mux[] = {
-+	VI1_CLKENB_MARK,
-+};
-+static const unsigned int vin1_clk_pins[] = {
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int vin1_clk_mux[] = {
-+	VI1_CLK_MARK,
-+};
-+/* - VIN2 ------------------------------------------------------------------- */
-+static const union vin_data vin2_data_pins = {
-+	.data16 = {
-+		RCAR_GP_PIN(6, 4), RCAR_GP_PIN(6, 5),
-+		RCAR_GP_PIN(6, 6), RCAR_GP_PIN(6, 7),
-+		RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
-+		RCAR_GP_PIN(6, 10), RCAR_GP_PIN(6, 11),
-+		RCAR_GP_PIN(6, 12), RCAR_GP_PIN(6, 13),
-+		RCAR_GP_PIN(6, 14), RCAR_GP_PIN(6, 15),
-+		RCAR_GP_PIN(8, 9), RCAR_GP_PIN(8, 10),
-+		RCAR_GP_PIN(8, 11), RCAR_GP_PIN(8, 12),
-+	},
-+};
-+static const union vin_data vin2_data_mux = {
-+	.data16 = {
-+		VI2_D0_C0_MARK, VI2_D1_C1_MARK,
-+		VI2_D2_C2_MARK,	VI2_D3_C3_MARK,
-+		VI2_D4_C4_MARK, VI2_D5_C5_MARK,
-+		VI2_D6_C6_MARK, VI2_D7_C7_MARK,
-+		VI2_D8_Y0_MARK,	VI2_D9_Y1_MARK,
-+		VI2_D10_Y2_MARK, VI2_D11_Y3_MARK,
-+		VI2_D12_Y4_MARK, VI2_D13_Y5_MARK,
-+		VI2_D14_Y6_MARK, VI2_D15_Y7_MARK,
-+	},
-+};
-+static const unsigned int vin2_sync_pins[] = {
-+	/* HSYNC#, VSYNC# */
-+	RCAR_GP_PIN(6, 2), RCAR_GP_PIN(6, 3),
-+};
-+static const unsigned int vin2_sync_mux[] = {
-+	VI2_HSYNC_N_MARK, VI2_VSYNC_N_MARK,
-+};
-+static const unsigned int vin2_field_pins[] = {
-+	RCAR_GP_PIN(6, 16),
-+};
-+static const unsigned int vin2_field_mux[] = {
-+	VI2_FIELD_MARK,
-+};
-+static const unsigned int vin2_clkenb_pins[] = {
-+	RCAR_GP_PIN(6, 1),
-+};
-+static const unsigned int vin2_clkenb_mux[] = {
-+	VI2_CLKENB_MARK,
-+};
-+static const unsigned int vin2_clk_pins[] = {
-+	RCAR_GP_PIN(6, 0),
-+};
-+static const unsigned int vin2_clk_mux[] = {
-+	VI2_CLK_MARK,
-+};
-+/* - VIN3 ------------------------------------------------------------------- */
-+static const union vin_data vin3_data_pins = {
-+	.data16 = {
-+		RCAR_GP_PIN(7, 4), RCAR_GP_PIN(7, 5),
-+		RCAR_GP_PIN(7, 6), RCAR_GP_PIN(7, 7),
-+		RCAR_GP_PIN(7, 8), RCAR_GP_PIN(7, 9),
-+		RCAR_GP_PIN(7, 10), RCAR_GP_PIN(7, 11),
-+		RCAR_GP_PIN(7, 12), RCAR_GP_PIN(7, 13),
-+		RCAR_GP_PIN(7, 14), RCAR_GP_PIN(7, 15),
-+		RCAR_GP_PIN(8, 13), RCAR_GP_PIN(8, 14),
-+		RCAR_GP_PIN(8, 15), RCAR_GP_PIN(8, 16),
-+	},
-+};
-+static const union vin_data vin3_data_mux = {
-+	.data16 = {
-+		VI3_D0_C0_MARK, VI3_D1_C1_MARK,
-+		VI3_D2_C2_MARK,	VI3_D3_C3_MARK,
-+		VI3_D4_C4_MARK, VI3_D5_C5_MARK,
-+		VI3_D6_C6_MARK, VI3_D7_C7_MARK,
-+		VI3_D8_Y0_MARK, VI3_D9_Y1_MARK,
-+		VI3_D10_Y2_MARK, VI3_D11_Y3_MARK,
-+		VI3_D12_Y4_MARK, VI3_D13_Y5_MARK,
-+		VI3_D14_Y6_MARK, VI3_D15_Y7_MARK,
-+	},
-+};
-+static const unsigned int vin3_sync_pins[] = {
-+	/* HSYNC#, VSYNC# */
-+	RCAR_GP_PIN(7, 2), RCAR_GP_PIN(7, 3),
-+};
-+static const unsigned int vin3_sync_mux[] = {
-+	VI3_HSYNC_N_MARK, VI3_VSYNC_N_MARK,
-+};
-+static const unsigned int vin3_field_pins[] = {
-+	RCAR_GP_PIN(7, 16),
-+};
-+static const unsigned int vin3_field_mux[] = {
-+	VI3_FIELD_MARK,
-+};
-+static const unsigned int vin3_clkenb_pins[] = {
-+	RCAR_GP_PIN(7, 1),
-+};
-+static const unsigned int vin3_clkenb_mux[] = {
-+	VI3_CLKENB_MARK,
-+};
-+static const unsigned int vin3_clk_pins[] = {
-+	RCAR_GP_PIN(7, 0),
-+};
-+static const unsigned int vin3_clk_mux[] = {
-+	VI3_CLK_MARK,
-+};
-+/* - VIN4 ------------------------------------------------------------------- */
-+static const union vin_data vin4_data_pins = {
-+	.data12 = {
-+		RCAR_GP_PIN(8, 4), RCAR_GP_PIN(8, 5),
-+		RCAR_GP_PIN(8, 6), RCAR_GP_PIN(8, 7),
-+		RCAR_GP_PIN(8, 8), RCAR_GP_PIN(8, 9),
-+		RCAR_GP_PIN(8, 10), RCAR_GP_PIN(8, 11),
-+		RCAR_GP_PIN(8, 12), RCAR_GP_PIN(8, 13),
-+		RCAR_GP_PIN(8, 14), RCAR_GP_PIN(8, 15),
-+	},
-+};
-+static const union vin_data vin4_data_mux = {
-+	.data12 = {
-+		VI4_D0_C0_MARK, VI4_D1_C1_MARK,
-+		VI4_D2_C2_MARK, VI4_D3_C3_MARK,
-+		VI4_D4_C4_MARK, VI4_D5_C5_MARK,
-+		VI4_D6_C6_MARK, VI4_D7_C7_MARK,
-+		VI4_D8_Y0_MARK,	VI4_D9_Y1_MARK,
-+		VI4_D10_Y2_MARK, VI4_D11_Y3_MARK,
-+	},
-+};
-+static const unsigned int vin4_sync_pins[] = {
-+	 /* HSYNC#, VSYNC# */
-+	RCAR_GP_PIN(8, 2), RCAR_GP_PIN(8, 3),
-+};
-+static const unsigned int vin4_sync_mux[] = {
-+	VI4_HSYNC_N_MARK, VI4_VSYNC_N_MARK,
-+};
-+static const unsigned int vin4_field_pins[] = {
-+	RCAR_GP_PIN(8, 16),
-+};
-+static const unsigned int vin4_field_mux[] = {
-+	VI4_FIELD_MARK,
-+};
-+static const unsigned int vin4_clkenb_pins[] = {
-+	RCAR_GP_PIN(8, 1),
-+};
-+static const unsigned int vin4_clkenb_mux[] = {
-+	VI4_CLKENB_MARK,
-+};
-+static const unsigned int vin4_clk_pins[] = {
-+	RCAR_GP_PIN(8, 0),
-+};
-+static const unsigned int vin4_clk_mux[] = {
-+	VI4_CLK_MARK,
-+};
-+/* - VIN5 ------------------------------------------------------------------- */
-+static const union vin_data vin5_data_pins = {
-+	.data12 = {
-+		RCAR_GP_PIN(9, 4), RCAR_GP_PIN(9, 5),
-+		RCAR_GP_PIN(9, 6), RCAR_GP_PIN(9, 7),
-+		RCAR_GP_PIN(9, 8), RCAR_GP_PIN(9, 9),
-+		RCAR_GP_PIN(9, 10), RCAR_GP_PIN(9, 11),
-+		RCAR_GP_PIN(9, 12), RCAR_GP_PIN(9, 13),
-+		RCAR_GP_PIN(9, 14), RCAR_GP_PIN(9, 15),
-+	},
-+};
-+static const union vin_data vin5_data_mux = {
-+	.data12 = {
-+		VI5_D0_C0_MARK, VI5_D1_C1_MARK,
-+		VI5_D2_C2_MARK, VI5_D3_C3_MARK,
-+		VI5_D4_C4_MARK, VI5_D5_C5_MARK,
-+		VI5_D6_C6_MARK, VI5_D7_C7_MARK,
-+		VI5_D8_Y0_MARK, VI5_D9_Y1_MARK,
-+		VI5_D10_Y2_MARK, VI5_D11_Y3_MARK,
-+	},
-+};
-+static const unsigned int vin5_sync_pins[] = {
-+	/* HSYNC#, VSYNC# */
-+	RCAR_GP_PIN(9, 2), RCAR_GP_PIN(9, 3),
-+};
-+static const unsigned int vin5_sync_mux[] = {
-+	VI5_HSYNC_N_MARK, VI5_VSYNC_N_MARK,
-+};
-+static const unsigned int vin5_field_pins[] = {
-+	RCAR_GP_PIN(9, 16),
-+};
-+static const unsigned int vin5_field_mux[] = {
-+	VI5_FIELD_MARK,
-+};
-+static const unsigned int vin5_clkenb_pins[] = {
-+	RCAR_GP_PIN(9, 1),
-+};
-+static const unsigned int vin5_clkenb_mux[] = {
-+	VI5_CLKENB_MARK,
-+};
-+static const unsigned int vin5_clk_pins[] = {
-+	RCAR_GP_PIN(9, 0),
-+};
-+static const unsigned int vin5_clk_mux[] = {
-+	VI5_CLK_MARK,
-+};
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_link),
-@@ -1028,6 +1470,62 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(sdhi0_ctrl),
- 	SH_PFC_PIN_GROUP(sdhi0_cd),
- 	SH_PFC_PIN_GROUP(sdhi0_wp),
-+	VIN_DATA_PIN_GROUP(vin0_data, 24),
-+	VIN_DATA_PIN_GROUP(vin0_data, 20),
-+	SH_PFC_PIN_GROUP(vin0_data18),
-+	VIN_DATA_PIN_GROUP(vin0_data, 16),
-+	VIN_DATA_PIN_GROUP(vin0_data, 12),
-+	VIN_DATA_PIN_GROUP(vin0_data, 10),
-+	VIN_DATA_PIN_GROUP(vin0_data, 8),
-+	SH_PFC_PIN_GROUP(vin0_sync),
-+	SH_PFC_PIN_GROUP(vin0_field),
-+	SH_PFC_PIN_GROUP(vin0_clkenb),
-+	SH_PFC_PIN_GROUP(vin0_clk),
-+	VIN_DATA_PIN_GROUP(vin1_data, 24),
-+	VIN_DATA_PIN_GROUP(vin1_data, 20),
-+	SH_PFC_PIN_GROUP(vin1_data18),
-+	VIN_DATA_PIN_GROUP(vin1_data, 16),
-+	VIN_DATA_PIN_GROUP(vin1_data, 12),
-+	VIN_DATA_PIN_GROUP(vin1_data, 10),
-+	VIN_DATA_PIN_GROUP(vin1_data, 8),
-+	VIN_DATA_PIN_GROUP(vin1_data_b, 24),
-+	VIN_DATA_PIN_GROUP(vin1_data_b, 20),
-+	SH_PFC_PIN_GROUP(vin1_data18_b),
-+	VIN_DATA_PIN_GROUP(vin1_data_b, 16),
-+	SH_PFC_PIN_GROUP(vin1_sync),
-+	SH_PFC_PIN_GROUP(vin1_field),
-+	SH_PFC_PIN_GROUP(vin1_clkenb),
-+	SH_PFC_PIN_GROUP(vin1_clk),
-+	VIN_DATA_PIN_GROUP(vin2_data, 16),
-+	VIN_DATA_PIN_GROUP(vin2_data, 12),
-+	VIN_DATA_PIN_GROUP(vin2_data, 10),
-+	VIN_DATA_PIN_GROUP(vin2_data, 8),
-+	SH_PFC_PIN_GROUP(vin2_sync),
-+	SH_PFC_PIN_GROUP(vin2_field),
-+	SH_PFC_PIN_GROUP(vin2_clkenb),
-+	SH_PFC_PIN_GROUP(vin2_clk),
-+	VIN_DATA_PIN_GROUP(vin3_data, 16),
-+	VIN_DATA_PIN_GROUP(vin3_data, 12),
-+	VIN_DATA_PIN_GROUP(vin3_data, 10),
-+	VIN_DATA_PIN_GROUP(vin3_data, 8),
-+	SH_PFC_PIN_GROUP(vin3_sync),
-+	SH_PFC_PIN_GROUP(vin3_field),
-+	SH_PFC_PIN_GROUP(vin3_clkenb),
-+	SH_PFC_PIN_GROUP(vin3_clk),
-+	VIN_DATA_PIN_GROUP(vin4_data, 12),
-+	VIN_DATA_PIN_GROUP(vin4_data, 10),
-+	VIN_DATA_PIN_GROUP(vin4_data, 8),
-+	SH_PFC_PIN_GROUP(vin4_sync),
-+	SH_PFC_PIN_GROUP(vin4_field),
-+	SH_PFC_PIN_GROUP(vin4_clkenb),
-+	SH_PFC_PIN_GROUP(vin4_clk),
-+	VIN_DATA_PIN_GROUP(vin5_data, 12),
-+	VIN_DATA_PIN_GROUP(vin5_data, 10),
-+	VIN_DATA_PIN_GROUP(vin5_data, 8),
-+	SH_PFC_PIN_GROUP(vin5_sync),
-+	SH_PFC_PIN_GROUP(vin5_field),
-+	SH_PFC_PIN_GROUP(vin5_clkenb),
-+	SH_PFC_PIN_GROUP(vin5_clk),
++/* - DU --------------------------------------------------------------------- */
++static const unsigned int du0_rgb666_pins[] = {
++	/* R[7:2], G[7:2], B[7:2] */
++	RCAR_GP_PIN(0, 7), RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 5),
++	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 3), RCAR_GP_PIN(0, 2),
++	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
++	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
++	RCAR_GP_PIN(0, 23), RCAR_GP_PIN(0, 22), RCAR_GP_PIN(0, 21),
++	RCAR_GP_PIN(0, 20), RCAR_GP_PIN(0, 19), RCAR_GP_PIN(0, 18),
++};
++static const unsigned int du0_rgb666_mux[] = {
++	DU0_DR7_Y9_DATA7_MARK, DU0_DR6_Y8_DATA6_MARK, DU0_DR5_Y7_DATA5_MARK,
++	DU0_DR4_Y6_DATA4_MARK, DU0_DR3_Y5_DATA3_MARK, DU0_DR2_Y4_DATA2_MARK,
++	DU0_DG7_Y3_DATA15_MARK, DU0_DG6_Y2_DATA14_MARK, DU0_DG5_Y1_DATA13_MARK,
++	DU0_DG4_Y0_DATA12_MARK, DU0_DG3_C7_DATA11_MARK, DU0_DG2_C6_DATA10_MARK,
++	DU0_DB7_C5_MARK, DU0_DB6_C4_MARK, DU0_DB5_C3_MARK,
++	DU0_DB4_C2_MARK, DU0_DB3_C1_MARK, DU0_DB2_C0_MARK,
++};
++static const unsigned int du0_rgb888_pins[] = {
++	/* R[7:0], G[7:0], B[7:0] */
++	RCAR_GP_PIN(0, 7), RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 5),
++	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 3), RCAR_GP_PIN(0, 2),
++	RCAR_GP_PIN(0, 1), RCAR_GP_PIN(0, 0),
++	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
++	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
++	RCAR_GP_PIN(0, 9), RCAR_GP_PIN(0, 8),
++	RCAR_GP_PIN(0, 23), RCAR_GP_PIN(0, 22), RCAR_GP_PIN(0, 21),
++	RCAR_GP_PIN(0, 20), RCAR_GP_PIN(0, 19), RCAR_GP_PIN(0, 18),
++	RCAR_GP_PIN(0, 17), RCAR_GP_PIN(0, 16),
++};
++static const unsigned int du0_rgb888_mux[] = {
++	DU0_DR7_Y9_DATA7_MARK, DU0_DR6_Y8_DATA6_MARK, DU0_DR5_Y7_DATA5_MARK,
++	DU0_DR4_Y6_DATA4_MARK, DU0_DR3_Y5_DATA3_MARK, DU0_DR2_Y4_DATA2_MARK,
++	DU0_DR1_DATA1_MARK, DU0_DR0_DATA0_MARK,
++	DU0_DG7_Y3_DATA15_MARK, DU0_DG6_Y2_DATA14_MARK, DU0_DG5_Y1_DATA13_MARK,
++	DU0_DG4_Y0_DATA12_MARK, DU0_DG3_C7_DATA11_MARK, DU0_DG2_C6_DATA10_MARK,
++	DU0_DG1_DATA9_MARK, DU0_DG0_DATA8_MARK,
++	DU0_DB7_C5_MARK, DU0_DB6_C4_MARK, DU0_DB5_C3_MARK,
++	DU0_DB4_C2_MARK, DU0_DB3_C1_MARK, DU0_DB2_C0_MARK,
++	DU0_DB1_MARK, DU0_DB0_MARK,
++};
++static const unsigned int du0_sync_pins[] = {
++	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC */
++	RCAR_GP_PIN(0, 25), RCAR_GP_PIN(0, 24),
++};
++static const unsigned int du0_sync_mux[] = {
++	DU0_EXVSYNC_DU0_VSYNC_MARK, DU0_EXHSYNC_DU0_HSYNC_MARK,
++};
++static const unsigned int du0_oddf_pins[] = {
++	/* EXODDF/ODDF/DISP/CDE */
++	RCAR_GP_PIN(0, 26),
++};
++static const unsigned int du0_oddf_mux[] = {
++	DU0_EXODDF_DU0_ODDF_DISP_CDE_MARK
++};
++static const unsigned int du0_disp_pins[] = {
++	/* DISP */
++	RCAR_GP_PIN(0, 27),
++};
++static const unsigned int du0_disp_mux[] = {
++	DU0_DISP_MARK,
++};
++static const unsigned int du0_cde_pins[] = {
++	/* CDE */
++	RCAR_GP_PIN(0, 28),
++};
++static const unsigned int du0_cde_mux[] = {
++	DU0_CDE_MARK,
++};
++static const unsigned int du1_rgb666_pins[] = {
++	/* R[7:2], G[7:2], B[7:2] */
++	RCAR_GP_PIN(1, 5), RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 3),
++	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 1), RCAR_GP_PIN(1, 0),
++	RCAR_GP_PIN(1, 11), RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 9),
++	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 7), RCAR_GP_PIN(1, 6),
++	RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 16), RCAR_GP_PIN(1, 15),
++	RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13), RCAR_GP_PIN(1, 12),
++};
++static const unsigned int du1_rgb666_mux[] = {
++	DU1_DR7_DATA5_MARK, DU1_DR6_DATA4_MARK, DU1_DR5_Y7_DATA3_MARK,
++	DU1_DR4_Y6_DATA2_MARK, DU1_DR3_Y5_DATA1_MARK, DU1_DR2_Y4_DATA0_MARK,
++	DU1_DG7_Y3_DATA11_MARK, DU1_DG6_Y2_DATA10_MARK, DU1_DG5_Y1_DATA9_MARK,
++	DU1_DG4_Y0_DATA8_MARK, DU1_DG3_C7_DATA7_MARK, DU1_DG2_C6_DATA6_MARK,
++	DU1_DB7_C5_MARK, DU1_DB6_C4_MARK, DU1_DB5_C3_DATA15_MARK,
++	DU1_DB4_C2_DATA14_MARK, DU1_DB3_C1_DATA13_MARK, DU1_DB2_C0_DATA12_MARK,
++};
++static const unsigned int du1_sync_pins[] = {
++	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC */
++	RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
++};
++static const unsigned int du1_sync_mux[] = {
++	DU1_EXVSYNC_DU1_VSYNC_MARK, DU1_EXHSYNC_DU1_HSYNC_MARK,
++};
++static const unsigned int du1_oddf_pins[] = {
++	/* EXODDF/ODDF/DISP/CDE */
++	RCAR_GP_PIN(1, 20),
++};
++static const unsigned int du1_oddf_mux[] = {
++	DU1_EXODDF_DU1_ODDF_DISP_CDE_MARK
++};
++static const unsigned int du1_disp_pins[] = {
++	/* DISP */
++	RCAR_GP_PIN(1, 21),
++};
++static const unsigned int du1_disp_mux[] = {
++	DU1_DISP_MARK,
++};
++static const unsigned int du1_cde_pins[] = {
++	/* CDE */
++	RCAR_GP_PIN(1, 22),
++};
++static const unsigned int du1_cde_mux[] = {
++	DU1_CDE_MARK,
++};
+ /* - INTC ------------------------------------------------------------------- */
+ static const unsigned int intc_irq0_pins[] = {
+ 	/* IRQ0 */
+@@ -1448,6 +1562,17 @@ static const struct sh_pfc_pin_group pin
+ 	SH_PFC_PIN_GROUP(can0_data),
+ 	SH_PFC_PIN_GROUP(can1_data),
+ 	SH_PFC_PIN_GROUP(can_clk),
++	SH_PFC_PIN_GROUP(du0_rgb666),
++	SH_PFC_PIN_GROUP(du0_rgb888),
++	SH_PFC_PIN_GROUP(du0_sync),
++	SH_PFC_PIN_GROUP(du0_oddf),
++	SH_PFC_PIN_GROUP(du0_disp),
++	SH_PFC_PIN_GROUP(du0_cde),
++	SH_PFC_PIN_GROUP(du1_rgb666),
++	SH_PFC_PIN_GROUP(du1_sync),
++	SH_PFC_PIN_GROUP(du1_oddf),
++	SH_PFC_PIN_GROUP(du1_disp),
++	SH_PFC_PIN_GROUP(du1_cde),
+ 	SH_PFC_PIN_GROUP(intc_irq0),
+ 	SH_PFC_PIN_GROUP(intc_irq1),
+ 	SH_PFC_PIN_GROUP(intc_irq2),
+@@ -1548,6 +1673,23 @@ static const char * const can1_groups[]
+ 	"can_clk",
  };
  
- static const char * const avb_groups[] = {
-@@ -1087,6 +1585,79 @@ static const char * const sdhi0_groups[]
- 	"sdhi0_wp",
- };
- 
-+static const char * const vin0_groups[] = {
-+	"vin0_data24",
-+	"vin0_data20",
-+	"vin0_data18",
-+	"vin0_data16",
-+	"vin0_data12",
-+	"vin0_data10",
-+	"vin0_data8",
-+	"vin0_sync",
-+	"vin0_field",
-+	"vin0_clkenb",
-+	"vin0_clk",
++static const char * const du0_groups[] = {
++	"du0_rgb666",
++	"du0_rgb888",
++	"du0_sync",
++	"du0_oddf",
++	"du0_disp",
++	"du0_cde",
 +};
 +
-+static const char * const vin1_groups[] = {
-+	"vin1_data24",
-+	"vin1_data20",
-+	"vin1_data18",
-+	"vin1_data16",
-+	"vin1_data12",
-+	"vin1_data10",
-+	"vin1_data8",
-+	"vin1_data24_b",
-+	"vin1_data20_b",
-+	"vin1_data16_b",
-+	"vin1_sync",
-+	"vin1_field",
-+	"vin1_clkenb",
-+	"vin1_clk",
++static const char * const du1_groups[] = {
++	"du1_rgb666",
++	"du1_sync",
++	"du1_oddf",
++	"du1_disp",
++	"du1_cde",
 +};
 +
-+static const char * const vin2_groups[] = {
-+	"vin2_data16",
-+	"vin2_data12",
-+	"vin2_data10",
-+	"vin2_data8",
-+	"vin2_sync",
-+	"vin2_field",
-+	"vin2_clkenb",
-+	"vin2_clk",
-+};
-+
-+static const char * const vin3_groups[] = {
-+	"vin3_data16",
-+	"vin3_data12",
-+	"vin3_data10",
-+	"vin3_data8",
-+	"vin3_sync",
-+	"vin3_field",
-+	"vin3_clkenb",
-+	"vin3_clk",
-+};
-+
-+static const char * const vin4_groups[] = {
-+	"vin4_data12",
-+	"vin4_data10",
-+	"vin4_data8",
-+	"vin4_sync",
-+	"vin4_field",
-+	"vin4_clkenb",
-+	"vin4_clk",
-+};
-+
-+static const char * const vin5_groups[] = {
-+	"vin5_data12",
-+	"vin5_data10",
-+	"vin5_data8",
-+	"vin5_sync",
-+	"vin5_field",
-+	"vin5_clkenb",
-+	"vin5_clk",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
+ static const char * const intc_groups[] = {
+ 	"intc_irq0",
+ 	"intc_irq1",
+@@ -1662,6 +1804,8 @@ static const struct sh_pfc_function pinm
  	SH_PFC_FUNCTION(avb),
  	SH_PFC_FUNCTION(can0),
-@@ -1096,6 +1667,12 @@ static const struct sh_pfc_function pinm
+ 	SH_PFC_FUNCTION(can1),
++	SH_PFC_FUNCTION(du0),
++	SH_PFC_FUNCTION(du1),
+ 	SH_PFC_FUNCTION(intc),
+ 	SH_PFC_FUNCTION(lbsc),
  	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif3),
- 	SH_PFC_FUNCTION(sdhi0),
-+	SH_PFC_FUNCTION(vin0),
-+	SH_PFC_FUNCTION(vin1),
-+	SH_PFC_FUNCTION(vin2),
-+	SH_PFC_FUNCTION(vin3),
-+	SH_PFC_FUNCTION(vin4),
-+	SH_PFC_FUNCTION(vin5),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
