@@ -1,122 +1,139 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 2/2] gpio: add Technologic I2C-FPGA gpio support
-Date: Fri, 5 Aug 2016 18:45:49 -0400
-Message-ID: <CAP=VYLotrmxG0q1g6fcWQqcfoSM6TMVwkOqMKZQbXtUZsAQkmA@mail.gmail.com>
-References: <1470408106-8078-1-git-send-email-lucile.quirion@savoirfairelinux.com>
- <1470408106-8078-3-git-send-email-lucile.quirion@savoirfairelinux.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH v2 02/10] mfd: stmpe: Add reset support for all STMPE
+ variant
+Date: Sat, 06 Aug 2016 19:54:03 -0700
+Message-ID: <8798334c6e5272a08ed665f7fc649fd1@agner.ch>
+References: <1461845589-4826-1-git-send-email-patrice.chotard@st.com>
+ <1461845589-4826-3-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1470408106-8078-3-git-send-email-lucile.quirion@savoirfairelinux.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lucile Quirion <lucile.quirion@savoirfairelinux.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, kernel@savoirfairelinux.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kmu-office.ch ([178.209.48.109]:43981 "EHLO
+	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751040AbcHGC7A (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 6 Aug 2016 22:59:00 -0400
+In-Reply-To: <1461845589-4826-3-git-send-email-patrice.chotard@st.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: patrice.chotard@st.com
+Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, maxime.coquelin@st.com, amelie.delaunay@st.com, shawnguo@kernel.org, kernel@pengutronix.de, dinguyen@opensource.altera.com, vireshk@kernel.org, shiraz.linux.kernel@gmail.com, thierry.reding@gmail.com, marcel.ziswiler@toradex.com, dev@lynxeye.de
 
-On Fri, Aug 5, 2016 at 10:41 AM, Lucile Quirion
-<lucile.quirion@savoirfairelinux.com> wrote:
-> This driver is generic and aims to support all Technologic Systems's
-> boards embedding FPGA GPIOs with an I2C interface.
->
-> This driver supports TS-4900, TS-7970, TS-7990 and TS-4100 series.
->
-> Signed-off-by: Lucile Quirion <lucile.quirion@savoirfairelinux.com>
+On 2016-04-28 05:13, patrice.chotard@st.com wrote:
+> From: Patrice Chotard <patrice.chotard@st.com>
+> 
+> Reset was only implemented for STMPE1801 variant despite
+> all variant have a SOFT_RESET bit.
+> 
+> For STMPE2401/2403/801/1601/1801 SOFT_RESET bit is bit 7
+> of SYS_CTRL register.
+> For STMPE610/811 (which have the same variant id) SOFT_RESET
+> bit is bit 1 of SYS_CTRL register.
+> 
+> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
 > ---
->  drivers/gpio/Kconfig       |   6 ++
->  drivers/gpio/Makefile      |   1 +
->  drivers/gpio/gpio-ts4900.c | 238 +++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 245 insertions(+)
->  create mode 100644 drivers/gpio/gpio-ts4900.c
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 98dd47a..459fb71 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -779,6 +779,12 @@ config GPIO_TPIC2810
->           To compile this driver as a module, choose M here: the module will
->           be called gpio-tpic2810.
->
-> +config GPIO_TS4900
-> +       bool "Technologic Systems FPGA I2C GPIO"
+>  drivers/mfd/stmpe.c | 23 +++++++++++++++--------
+>  drivers/mfd/stmpe.h |  7 +++++--
+>  2 files changed, 20 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
+> index c553b73..af682d0 100644
+> --- a/drivers/mfd/stmpe.c
+> +++ b/drivers/mfd/stmpe.c
+> @@ -735,13 +735,22 @@ static int stmpe1801_enable(struct stmpe *stmpe,
+> unsigned int blocks,
+>  				enable ? mask : 0);
+>  }
+>  
+> -static int stmpe1801_reset(struct stmpe *stmpe)
+> +static int stmpe_reset(struct stmpe *stmpe)
+>  {
+> +	u16 id_val = stmpe->variant->id_val;
+>  	unsigned long timeout;
+>  	int ret = 0;
+> +	u8 reset_bit;
+> +
+> +	if (id_val == STMPE811_ID)
+> +		/* STMPE801 and STMPE610 use bit 1 of SYS_CTRL register */
+> +		reset_bit = STMPE811_SYS_CTRL_RESET;
+> +	else
+> +		/* all other STMPE variant use bit 7 of SYS_CTRL register */
+> +		reset_bit = STMPE_SYS_CTRL_RESET;
 
-Please don't use module.h and MODULE_<xyz> macros in drivers that are bool.
+Wouldn't it be nicer to have this in struct stmpe_variant_info like
+id_mask...?
 
-Either delete all the module related stuff and use a builtin registration fcn,
-or use a tristate Kconfig if there is a genuine use case for a modular driver.
-
-Thanks,
-Paul.
 --
+Stefan
 
-> +       help
-> +         Say yes here to enabled the GPIO driver for Technologic's FPGA core.
-> +         Series supported include TS-4100, TS-4900, TS-7970 and TS-7990.
+>  
+>  	ret = __stmpe_set_bits(stmpe, stmpe->regs[STMPE_IDX_SYS_CTRL],
+> -		STMPE1801_MSK_SYS_CTRL_RESET, STMPE1801_MSK_SYS_CTRL_RESET);
+> +			       reset_bit, reset_bit);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> @@ -750,7 +759,7 @@ static int stmpe1801_reset(struct stmpe *stmpe)
+>  		ret = __stmpe_reg_read(stmpe, stmpe->regs[STMPE_IDX_SYS_CTRL]);
+>  		if (ret < 0)
+>  			return ret;
+> -		if (!(ret & STMPE1801_MSK_SYS_CTRL_RESET))
+> +		if (!(ret & reset_bit))
+>  			return 0;
+>  		usleep_range(100, 200);
+>  	}
+> @@ -1074,11 +1083,9 @@ static int stmpe_chip_init(struct stmpe *stmpe)
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (id == STMPE1801_ID)	{
+> -		ret =  stmpe1801_reset(stmpe);
+> -		if (ret < 0)
+> -			return ret;
+> -	}
+> +	ret =  stmpe_reset(stmpe);
+> +	if (ret < 0)
+> +		return ret;
+>  
+>  	if (stmpe->irq >= 0) {
+>  		if (id == STMPE801_ID)
+> diff --git a/drivers/mfd/stmpe.h b/drivers/mfd/stmpe.h
+> index 406f9f2..4ae343d 100644
+> --- a/drivers/mfd/stmpe.h
+> +++ b/drivers/mfd/stmpe.h
+> @@ -104,6 +104,8 @@ int stmpe_remove(struct stmpe *stmpe);
+>  #define STMPE_ICR_LSB_EDGE	(1 << 1)
+>  #define STMPE_ICR_LSB_GIM	(1 << 0)
+>  
+> +#define STMPE_SYS_CTRL_RESET	(1 << 7)
 > +
->  endmenu
->
->  menu "MFD GPIO expanders"
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index 2a035ed..4dcc21f 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -110,6 +110,7 @@ obj-$(CONFIG_GPIO_TPS6586X) += gpio-tps6586x.o
->  obj-$(CONFIG_GPIO_TPS65910)    += gpio-tps65910.o
->  obj-$(CONFIG_GPIO_TPS65912)    += gpio-tps65912.o
->  obj-$(CONFIG_GPIO_TS4800)      += gpio-ts4800.o
-> +obj-$(CONFIG_GPIO_TS4900)      += gpio-ts4900.o
->  obj-$(CONFIG_GPIO_TS5500)      += gpio-ts5500.o
->  obj-$(CONFIG_GPIO_TWL4030)     += gpio-twl4030.o
->  obj-$(CONFIG_GPIO_TWL6040)     += gpio-twl6040.o
-> diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
-> new file mode 100644
-> index 0000000..104d1e0
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-ts4900.c
-> @@ -0,0 +1,238 @@
-> +/*
-> + * Digital I/O driver for Technologic Systems I2C FPGA Core
-> + *
-> + * Copyright (C) 2015 Technologic Systems
-> + * Copyright (C) 2016 Savoir-Faire Linux
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> + * kind, whether expressed or implied; without even the implied warranty
-> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License version 2 for more details.
-> + */
+>  /*
+>   * STMPE801
+>   */
+> @@ -126,6 +128,7 @@ int stmpe_remove(struct stmpe *stmpe);
+>  /*
+>   * STMPE811
+>   */
+> +#define STMPE811_ID			0x0811
+>  
+>  #define STMPE811_IRQ_TOUCH_DET		0
+>  #define STMPE811_IRQ_FIFO_TH		1
+> @@ -155,6 +158,8 @@ int stmpe_remove(struct stmpe *stmpe);
+>  #define STMPE811_REG_GPIO_FE		0x16
+>  #define STMPE811_REG_GPIO_AF		0x17
+>  
+> +#define STMPE811_SYS_CTRL_RESET		(1 << 1)
 > +
-> +#include <linux/gpio/driver.h>
-> +#include <linux/i2c.h>
-> +#include <linux/of_device.h>
-> +#include <linux/module.h>
-> +
-
-[...]
-
-> +static const struct i2c_device_id ts4900_gpio_id_table[] = {
-> +       { "ts4900-gpio", },
-> +       { /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, ts4900_gpio_id_table);
-> +
-> +static struct i2c_driver ts4900_gpio_driver = {
-> +       .driver = {
-> +               .name = "ts4900-gpio",
-> +               .of_match_table = ts4900_gpio_of_match_table,
-> +       },
-> +       .probe = ts4900_gpio_probe,
-> +       .remove = ts4900_gpio_remove,
-> +       .id_table = ts4900_gpio_id_table,
-> +};
-> +module_i2c_driver(ts4900_gpio_driver);
-> +
-> +MODULE_AUTHOR("Technologic Systems");
-> +MODULE_DESCRIPTION("GPIO interface for Technologic Systems I2C-FPGA core");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.5.5
->
+>  #define STMPE811_SYS_CTRL2_ADC_OFF	(1 << 0)
+>  #define STMPE811_SYS_CTRL2_TSC_OFF	(1 << 1)
+>  #define STMPE811_SYS_CTRL2_GPIO_OFF	(1 << 2)
+> @@ -244,8 +249,6 @@ int stmpe_remove(struct stmpe *stmpe);
+>  #define STMPE1801_REG_GPIO_PULL_UP_MID		0x23
+>  #define STMPE1801_REG_GPIO_PULL_UP_HIGH		0x24
+>  
+> -#define STMPE1801_MSK_SYS_CTRL_RESET		(1 << 7)
+> -
+>  #define STMPE1801_MSK_INT_EN_KPC		(1 << 1)
+>  #define STMPE1801_MSK_INT_EN_GPIO		(1 << 3)
