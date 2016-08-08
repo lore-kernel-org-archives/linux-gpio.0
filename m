@@ -1,38 +1,58 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7792: add DU pin groups
-Date: Mon, 8 Aug 2016 14:06:49 +0200
-Message-ID: <CAMuHMdVgzQNHx_QcUuvrUrA_i3K=UP+PoXv80cj7j48-D+Q9pA@mail.gmail.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com> <2705887.l4rVHM5oaI@wasted.cogentembedded.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v6 2/3] mfd: lpc_ich: Rename lpc-ich driver
+Date: Mon, 8 Aug 2016 14:43:03 +0100
+Message-ID: <20160808134303.GS5243@dell>
+References: <1468483919-31258-1-git-send-email-jui.nee.tan@intel.com>
+ <1468483919-31258-3-git-send-email-jui.nee.tan@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <2705887.l4rVHM5oaI@wasted.cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1468483919-31258-3-git-send-email-jui.nee.tan@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tan Jui Nee <jui.nee.tan@intel.com>
+Cc: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jonathan.yong@intel.com, ong.hock.yu@intel.com, weifeng.voon@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Sergei,
+On Thu, 14 Jul 2016, Tan Jui Nee wrote:
 
-On Fri, Aug 5, 2016 at 10:54 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add DU pin groups to the R8A7792 PFC driver.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> This patch follows the example of mfd/wm831x to rename the driver
+> from "lpc_ich" to "lpc_ich-core".
+> 
+> Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
+> ---
+> Changes in V6:
+> 	- none, just a subject line and commit message change.
+> 
+>  drivers/mfd/Makefile                      | 1 +
+>  drivers/mfd/{lpc_ich.c => lpc_ich-core.c} | 0
+>  2 files changed, 1 insertion(+)
+>  rename drivers/mfd/{lpc_ich.c => lpc_ich-core.c} (100%)
 
-Thanks!
+Looks a bit odd.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I suggest 'lpc_ich_core.c' instead.
 
-Will queue in sh-pfc-for-v4.9.
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 42a66e1..1dfe5fb 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -155,6 +155,7 @@ obj-$(CONFIG_PMIC_ADP5520)	+= adp5520.o
+>  obj-$(CONFIG_MFD_KEMPLD)	+= kempld-core.o
+>  obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+= intel_quark_i2c_gpio.o
+>  obj-$(CONFIG_LPC_SCH)		+= lpc_sch.o
+> +lpc_ich-objs		:= lpc_ich-core.o
+>  obj-$(CONFIG_LPC_ICH)		+= lpc_ich.o
+>  obj-$(CONFIG_MFD_RDC321X)	+= rdc321x-southbridge.o
+>  obj-$(CONFIG_MFD_JANZ_CMODIO)	+= janz-cmodio.o
+> diff --git a/drivers/mfd/lpc_ich.c b/drivers/mfd/lpc_ich-core.c
+> similarity index 100%
+> rename from drivers/mfd/lpc_ich.c
+> rename to drivers/mfd/lpc_ich-core.c
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
