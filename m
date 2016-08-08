@@ -1,139 +1,56 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH v2 02/10] mfd: stmpe: Add reset support for all STMPE
- variant
-Date: Sat, 06 Aug 2016 19:54:03 -0700
-Message-ID: <8798334c6e5272a08ed665f7fc649fd1@agner.ch>
-References: <1461845589-4826-1-git-send-email-patrice.chotard@st.com>
- <1461845589-4826-3-git-send-email-patrice.chotard@st.com>
+From: <linux-gpio@vger.kernel.org>
+Subject: RE: linux-gpio
+Date: Sun, 7 Aug 2016 22:38:26 -0400
+Message-ID: <000101d1f150$3733936a$c0a80001@hinet.net>
+Reply-To: <linux-gpio@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: application/zip; name="hffnb.linux-gpio.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:43981 "EHLO
-	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751040AbcHGC7A (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 6 Aug 2016 22:59:00 -0400
-In-Reply-To: <1461845589-4826-3-git-send-email-patrice.chotard@st.com>
+Received: from [203.223.45.82] ([203.223.45.82]:47731 "HELO hinet.net"
+	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+	id S1751983AbcHHCi0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 7 Aug 2016 22:38:26 -0400
+Content-Disposition: attachment
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: patrice.chotard@st.com
-Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, maxime.coquelin@st.com, amelie.delaunay@st.com, shawnguo@kernel.org, kernel@pengutronix.de, dinguyen@opensource.altera.com, vireshk@kernel.org, shiraz.linux.kernel@gmail.com, thierry.reding@gmail.com, marcel.ziswiler@toradex.com, dev@lynxeye.de
+To: linux-gpio <linux-gpio@vger.kernel.org>
 
-On 2016-04-28 05:13, patrice.chotard@st.com wrote:
-> From: Patrice Chotard <patrice.chotard@st.com>
-> 
-> Reset was only implemented for STMPE1801 variant despite
-> all variant have a SOFT_RESET bit.
-> 
-> For STMPE2401/2403/801/1601/1801 SOFT_RESET bit is bit 7
-> of SYS_CTRL register.
-> For STMPE610/811 (which have the same variant id) SOFT_RESET
-> bit is bit 1 of SYS_CTRL register.
-> 
-> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/mfd/stmpe.c | 23 +++++++++++++++--------
->  drivers/mfd/stmpe.h |  7 +++++--
->  2 files changed, 20 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
-> index c553b73..af682d0 100644
-> --- a/drivers/mfd/stmpe.c
-> +++ b/drivers/mfd/stmpe.c
-> @@ -735,13 +735,22 @@ static int stmpe1801_enable(struct stmpe *stmpe,
-> unsigned int blocks,
->  				enable ? mask : 0);
->  }
->  
-> -static int stmpe1801_reset(struct stmpe *stmpe)
-> +static int stmpe_reset(struct stmpe *stmpe)
->  {
-> +	u16 id_val = stmpe->variant->id_val;
->  	unsigned long timeout;
->  	int ret = 0;
-> +	u8 reset_bit;
-> +
-> +	if (id_val == STMPE811_ID)
-> +		/* STMPE801 and STMPE610 use bit 1 of SYS_CTRL register */
-> +		reset_bit = STMPE811_SYS_CTRL_RESET;
-> +	else
-> +		/* all other STMPE variant use bit 7 of SYS_CTRL register */
-> +		reset_bit = STMPE_SYS_CTRL_RESET;
-
-Wouldn't it be nicer to have this in struct stmpe_variant_info like
-id_mask...?
-
---
-Stefan
-
->  
->  	ret = __stmpe_set_bits(stmpe, stmpe->regs[STMPE_IDX_SYS_CTRL],
-> -		STMPE1801_MSK_SYS_CTRL_RESET, STMPE1801_MSK_SYS_CTRL_RESET);
-> +			       reset_bit, reset_bit);
->  	if (ret < 0)
->  		return ret;
->  
-> @@ -750,7 +759,7 @@ static int stmpe1801_reset(struct stmpe *stmpe)
->  		ret = __stmpe_reg_read(stmpe, stmpe->regs[STMPE_IDX_SYS_CTRL]);
->  		if (ret < 0)
->  			return ret;
-> -		if (!(ret & STMPE1801_MSK_SYS_CTRL_RESET))
-> +		if (!(ret & reset_bit))
->  			return 0;
->  		usleep_range(100, 200);
->  	}
-> @@ -1074,11 +1083,9 @@ static int stmpe_chip_init(struct stmpe *stmpe)
->  	if (ret)
->  		return ret;
->  
-> -	if (id == STMPE1801_ID)	{
-> -		ret =  stmpe1801_reset(stmpe);
-> -		if (ret < 0)
-> -			return ret;
-> -	}
-> +	ret =  stmpe_reset(stmpe);
-> +	if (ret < 0)
-> +		return ret;
->  
->  	if (stmpe->irq >= 0) {
->  		if (id == STMPE801_ID)
-> diff --git a/drivers/mfd/stmpe.h b/drivers/mfd/stmpe.h
-> index 406f9f2..4ae343d 100644
-> --- a/drivers/mfd/stmpe.h
-> +++ b/drivers/mfd/stmpe.h
-> @@ -104,6 +104,8 @@ int stmpe_remove(struct stmpe *stmpe);
->  #define STMPE_ICR_LSB_EDGE	(1 << 1)
->  #define STMPE_ICR_LSB_GIM	(1 << 0)
->  
-> +#define STMPE_SYS_CTRL_RESET	(1 << 7)
-> +
->  /*
->   * STMPE801
->   */
-> @@ -126,6 +128,7 @@ int stmpe_remove(struct stmpe *stmpe);
->  /*
->   * STMPE811
->   */
-> +#define STMPE811_ID			0x0811
->  
->  #define STMPE811_IRQ_TOUCH_DET		0
->  #define STMPE811_IRQ_FIFO_TH		1
-> @@ -155,6 +158,8 @@ int stmpe_remove(struct stmpe *stmpe);
->  #define STMPE811_REG_GPIO_FE		0x16
->  #define STMPE811_REG_GPIO_AF		0x17
->  
-> +#define STMPE811_SYS_CTRL_RESET		(1 << 1)
-> +
->  #define STMPE811_SYS_CTRL2_ADC_OFF	(1 << 0)
->  #define STMPE811_SYS_CTRL2_TSC_OFF	(1 << 1)
->  #define STMPE811_SYS_CTRL2_GPIO_OFF	(1 << 2)
-> @@ -244,8 +249,6 @@ int stmpe_remove(struct stmpe *stmpe);
->  #define STMPE1801_REG_GPIO_PULL_UP_MID		0x23
->  #define STMPE1801_REG_GPIO_PULL_UP_HIGH		0x24
->  
-> -#define STMPE1801_MSK_SYS_CTRL_RESET		(1 << 7)
-> -
->  #define STMPE1801_MSK_INT_EN_KPC		(1 << 1)
->  #define STMPE1801_MSK_INT_EN_GPIO		(1 << 3)
+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
