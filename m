@@ -1,587 +1,93 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v6 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake
- GPIO pinctrl in non-ACPI system
-Date: Tue, 9 Aug 2016 08:16:01 +0100
-Message-ID: <20160809071601.GT5243@dell>
-References: <1468483919-31258-1-git-send-email-jui.nee.tan@intel.com>
- <1468483919-31258-4-git-send-email-jui.nee.tan@intel.com>
+Subject: Re: [PATCH v5 2/3] mfd: lp873x: Add lp873x PMIC support
+Date: Tue, 9 Aug 2016 10:44:16 +0100
+Message-ID: <20160809094416.GX5243@dell>
+References: <1467215067-6486-1-git-send-email-j-keerthy@ti.com>
+ <1467215067-6486-3-git-send-email-j-keerthy@ti.com>
+ <20160805080322.GO5243@dell>
+ <57A44D21.2080106@ti.com>
+ <20160805090147.GT5243@dell>
+ <57A81849.7010707@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:35948 "EHLO
-	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751651AbcHIHOg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Aug 2016 03:14:36 -0400
-Received: by mail-wm0-f47.google.com with SMTP id q128so15304158wma.1
-        for <linux-gpio@vger.kernel.org>; Tue, 09 Aug 2016 00:14:35 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1468483919-31258-4-git-send-email-jui.nee.tan@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <57A81849.7010707@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Keerthy <a0393675@ti.com>
+Cc: Keerthy <j-keerthy@ti.com>, linus.walleij@linaro.org, gnurou@gmail.com, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, robh+dt@kernel.org, tony@atomide.com
 List-Id: linux-gpio@vger.kernel.org
-To: Tan Jui Nee <jui.nee.tan@intel.com>
-Cc: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jonathan.yong@intel.com, ong.hock.yu@intel.com, weifeng.voon@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
 
-On Thu, 14 Jul 2016, Tan Jui Nee wrote:
+On Mon, 08 Aug 2016, Keerthy wrote:
+> On Friday 05 August 2016 02:31 PM, Lee Jones wrote:
+> > On Fri, 05 Aug 2016, Keerthy wrote:
+> > > On Friday 05 August 2016 01:33 PM, Lee Jones wrote:
+> > > > On Wed, 29 Jun 2016, Keerthy wrote:
+> > > > 
+> > > > > The LP873X chip is a power management IC for Portable Navigation Systems
+> > > > >       and Tablet Computing devices. It contains the following components:
+> > > > > 
+> > > > >        - Regulators.
+> > > > >        - Configurable General Purpose Output Signals(GPO).
+> > > > > 
+> > > > > PMIC interacts with the main processor through i2c. PMIC has
+> > > > > couple of LDOs(Linear Regulators), couple of BUCKs (Step-Down DC-DC
+> > > > > Converter Cores) and GPOs(General Purpose Output Signals).
+> > > > > 
+> > > > > Signed-off-by: Keerthy <j-keerthy@ti.com>
+> > > > > ---
+> > > > > 
+> > > > > Changes in v4:
+> > > > > 
+> > > > >     * Added Author.
+> > > > >     * Added the mfd_cell for gpio.
+> > > > > 
+> > > > > Changes in v3:
+> > > > > 
+> > > > >     * Reordered the probe code.
+> > > > >     * Fixed Typo in Kconfig description.
+> > > > >     * Removed unused member from struct lp873x.
+> > > > > 
+> > > > >    drivers/mfd/Kconfig        |  14 +++
+> > > > >    drivers/mfd/Makefile       |   2 +
+> > > > >    drivers/mfd/lp873x.c       |  99 +++++++++++++++++
+> > > > >    include/linux/mfd/lp873x.h | 264 +++++++++++++++++++++++++++++++++++++++++++++
+> > > > >    4 files changed, 379 insertions(+)
+> > > > >    create mode 100644 drivers/mfd/lp873x.c
+> > > > >    create mode 100644 include/linux/mfd/lp873x.h
 
-> This driver uses the P2SB hide/unhide mechanism cooperatively
-> to pass the PCI BAR address to the gpio platform driver.
+[...]
+
+> > > > > +static const struct i2c_device_id lp873x_id_table[] = {
+> > > > > +	{ "lp873x", LP873X },
+> > > > > +	{ "lp8732", LP873X },
+> > > > > +	{ "lp8733", LP873X },
+> > > > 
+> > > > Do you use these IDs at any point?
+> > > 
+> > > I have lp8733 and lp8732 at the moment. They are register exact but
+> > > different parts none the less. Hence having separate strings. As of now no
+> > > differences seen in gpio/regulator modules so not using them anywhere.
+> > 
+> > I have a patch-set pending on the I2C list that removes all unused
+> > 'struct i2c_device_id' tables.  To identify which ones are in use and
+> > which ones can be removed, it would help if you could remove the
+> > unused .id field.
 > 
-> Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
-> ---
-> Changes in V6:
-> 	- Rename CONFIG_X86_INTEL_APL to CONFIG_X86_INTEL_IVI so that it
-> 	  relates to the actual product, as suggested by Mika.
-> 	- Rework Makefile according Andy's comments.
-> 	- Rename lpc_ich_misc() to lpc_ich_add_gpio() so that the name should not
-> 	  be so generic, as suggested by Andy.
-> 	- Call lpc_ich_add_gpio() via priv->chipset.
-> 	- lpc_ich_add_gpio() function will be moved from 
-> 	  .../include/linux/mfd/lpc_ich.h to
-> 	  .../drivers/mfd/lpc_ich-apl.h
-> 	  as this is a part of internal driver interface as suggested by Andy.
-> 	- Move enum lpc_chipsets from 
-> 	  .../drivers/mfd/lpc_ich-core.c to
-> 	  .../include/linux/mfd/lpc_ich.h
-> 	  as lpc_chipsets is also accessed by lpc_ich_add_gpio().
-> 	- Check if kasprintf return value for all 4 gpio controllers before
-> 	  proceed to add platform device by using mfd_add_devices().
+> I guess you are referring to this:
 > 
-> Changes in V5:
-> 	- Split lpc-ich driver into two parts (lpc_ich-core and lpc_ich-apl).
-> 	  The file lpc_ich-apl.c introduces gpio platform driver in MFD.
-> 	- Rename Kconfig option CONFIG_X86_INTEL_NON_ACPI to CONFIG_X86_INTEL_APL
-> 	  so that it reflects actual product as suggested by Mika.
+> http://www.gossamer-threads.com/lists/linux/kernel/2457552
 > 
-> Changes in V4:
-> 	- Move Kconfig option CONFIG_X86_INTEL_NON_ACPI from
-> 	  [PATCH 2/3] x86/platform/p2sb: New Primary to Sideband bridge support driver for Intel SOC's
-> 	  to
-> 	  [PATCH 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake GPIO pinctrl in non-ACPI system
-> 	  since the config is used in latter patch.
-> 	- Select CONFIG_P2SB when CONFIG_LPC_ICH is enabled.
-> 	- Remove #ifdef CONFIG_X86_INTEL_NON_ACPI and use
-> 	  #if defined(CONFIG_X86_INTEL_NON_ACPI) when lpc_ich_misc is called
-> 	  as suggested by Lee Jones.
-> 	- Use single dimensional array instead of 2D array for apl_gpio_io_res
-> 	  structure and use DEFINE_RES_IRQ for its IRQ resource.
-> 
-> Changes in V3:
-> 	- Simplify register addresses calculation and use DEFINE_RES_MEM_NAMED
-> 	  defines for apl_gpio_io_res structure
-> 	- Define magic number for P2SB PCI ID
-> 	- Replace switch-case with if-else since currently we have only one
-> 	  use case
-> 	- Only call mfd_add_devices() once for all gpio communities
-> 
-> Changes in V2:
-> 	- Add new config option CONFIG_X86_INTEL_NON_ACPI and "select PINCTRL"
-> 	  to fix kbuildbot error
-> 
->  arch/x86/Kconfig            |   9 +++
->  drivers/mfd/Kconfig         |   3 +-
->  drivers/mfd/Makefile        |   5 +-
->  drivers/mfd/lpc_ich-apl.c   | 130 ++++++++++++++++++++++++++++++++++++++++++++
->  drivers/mfd/lpc_ich-apl.h   |  28 ++++++++++
->  drivers/mfd/lpc_ich-core.c  |  81 ++++-----------------------
->  include/linux/mfd/lpc_ich.h |  73 +++++++++++++++++++++++++
->  7 files changed, 256 insertions(+), 73 deletions(-)
->  create mode 100644 drivers/mfd/lpc_ich-apl.c
->  create mode 100644 drivers/mfd/lpc_ich-apl.h
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index d305d81..c0b427b 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -513,6 +513,15 @@ config X86_INTEL_CE
->  	  This option compiles in support for the CE4100 SOC for settop
->  	  boxes and media devices.
->  
-> +config X86_INTEL_IVI
-> +	bool "Intel in-vehicle infotainment (IVI) systems used in cars"
-> +	select PINCTRL
-> +	---help---
-> +	  Select this option to enable MMIO BAR access over the P2SB for
-> +	  non-ACPI Intel Apollo Lake SoC platforms. This driver uses the P2SB
-> +	  hide/unhide mechanism cooperatively to pass the PCI BAR address to
-> +	  the platform driver, currently GPIO.
-> +
+> I applied the above series and i see that by using driver_new in lp873x
+> MFD driver i no longer need the mandatory i2c_device_id. Thanks.
+> I will send a series on top of your i2c set v5 without any unused device_id.
+> I will add a dependency on your set.
 
-This should be a separate patch.
-
->  config X86_INTEL_MID
->  	bool "Intel MID platform support"
->  	depends on X86_EXTENDED_PLATFORM
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 1bcf601..dc4e543 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -369,8 +369,9 @@ config MFD_INTEL_QUARK_I2C_GPIO
->  
->  config LPC_ICH
->  	tristate "Intel ICH LPC"
-> -	depends on PCI
-> +	depends on X86 && PCI
->  	select MFD_CORE
-> +	select P2SB
->  	help
->  	  The LPC bridge function of the Intel ICH provides support for
->  	  many functional units. This driver provides needed support for
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 1dfe5fb..0aa3e1f 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -155,8 +155,11 @@ obj-$(CONFIG_PMIC_ADP5520)	+= adp5520.o
->  obj-$(CONFIG_MFD_KEMPLD)	+= kempld-core.o
->  obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+= intel_quark_i2c_gpio.o
->  obj-$(CONFIG_LPC_SCH)		+= lpc_sch.o
-> -lpc_ich-objs		:= lpc_ich-core.o
->  obj-$(CONFIG_LPC_ICH)		+= lpc_ich.o
-> +lpc_ich-objs		:= lpc_ich-core.o
-> +ifeq ($(CONFIG_X86_INTEL_IVI),y)
-> +lpc_ich-objs += lpc_ich-apl.o
-> +endif
->  obj-$(CONFIG_MFD_RDC321X)	+= rdc321x-southbridge.o
->  obj-$(CONFIG_MFD_JANZ_CMODIO)	+= janz-cmodio.o
->  obj-$(CONFIG_MFD_JZ4740_ADC)	+= jz4740-adc.o
-> diff --git a/drivers/mfd/lpc_ich-apl.c b/drivers/mfd/lpc_ich-apl.c
-> new file mode 100644
-> index 0000000..e4b9688
-> --- /dev/null
-> +++ b/drivers/mfd/lpc_ich-apl.c
-> @@ -0,0 +1,130 @@
-> +/*
-> + * Purpose: Create a platform device to bind with Intel Apollo Lake
-
-Never seen this before.  Looks like more of a commit log entry than
-something that should live in a source file header.
-
-> + * Pinctrl GPIO platform driver
-
-No need to mention "platform driver" here. Most drivers are.
-
-> + * Copyright (C) 2016 Intel Corporation
-
-Author?
-
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <linux/pci.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mfd/lpc_ich.h>
-> +#include <linux/pinctrl/pinctrl.h>
-> +#include <asm/p2sb.h>
-
-Alphabetical.
-
-> +#include "lpc_ich-apl.h"
-
-Don't' mix '_'s with '-'s.
-
-> +/* Offset data for Apollo Lake GPIO communities */
-> +#define APL_GPIO_SOUTHWEST_OFFSET	0xc00000
-> +#define APL_GPIO_NORTHWEST_OFFSET	0xc40000
-> +#define APL_GPIO_NORTH_OFFSET		0xc50000
-> +#define APL_GPIO_WEST_OFFSET		0xc70000
-> +
-> +#define APL_GPIO_SOUTHWEST_NPIN		43
-> +#define APL_GPIO_NORTHWEST_NPIN		77
-> +#define APL_GPIO_NORTH_NPIN		78
-> +#define APL_GPIO_WEST_NPIN		47
-> +
-> +#define APL_GPIO_IRQ 14
-> +
-> +#define PCI_IDSEL_P2SB	0x0d
-> +
-> +static struct resource apl_gpio_io_res[] = {
-> +	DEFINE_RES_MEM_NAMED(APL_GPIO_NORTH_OFFSET,
-> +		APL_GPIO_NORTH_NPIN * SZ_8, "apl_pinctrl_n"),
-> +	DEFINE_RES_MEM_NAMED(APL_GPIO_NORTHWEST_OFFSET,
-> +		APL_GPIO_NORTHWEST_NPIN * SZ_8, "apl_pinctrl_nw"),
-> +	DEFINE_RES_MEM_NAMED(APL_GPIO_WEST_OFFSET,
-> +		APL_GPIO_WEST_NPIN * SZ_8, "apl_pinctrl_w"),
-> +	DEFINE_RES_MEM_NAMED(APL_GPIO_SOUTHWEST_OFFSET,
-> +		APL_GPIO_SOUTHWEST_NPIN * SZ_8, "apl_pinctrl_sw"),
-> +	DEFINE_RES_IRQ(APL_GPIO_IRQ),
-> +};
-> +
-> +static struct pinctrl_pin_desc apl_pinctrl_pdata;
-
-This seems pretty pointless.  What's it for?
-
-> +static struct mfd_cell apl_gpio_devices[] = {
-> +	{
-> +		.name = "apl-pinctrl",
-> +		.id = 0,
-> +		.num_resources = ARRAY_SIZE(apl_gpio_io_res),
-> +		.resources = apl_gpio_io_res,
-> +		.pdata_size = sizeof(apl_pinctrl_pdata),
-> +		.platform_data = &apl_pinctrl_pdata,
-> +		.ignore_resource_conflicts = true,
-> +	},
-> +	{
-> +		.name = "apl-pinctrl",
-> +		.id = 1,
-> +		.num_resources = ARRAY_SIZE(apl_gpio_io_res),
-> +		.resources = apl_gpio_io_res,
-> +		.pdata_size = sizeof(apl_pinctrl_pdata),
-> +		.platform_data = &apl_pinctrl_pdata,
-> +		.ignore_resource_conflicts = true,
-> +	},
-> +	{
-> +		.name = "apl-pinctrl",
-> +		.id = 2,
-> +		.num_resources = ARRAY_SIZE(apl_gpio_io_res),
-> +		.resources = apl_gpio_io_res,
-> +		.pdata_size = sizeof(apl_pinctrl_pdata),
-> +		.platform_data = &apl_pinctrl_pdata,
-> +		.ignore_resource_conflicts = true,
-> +	},
-> +	{
-> +		.name = "apl-pinctrl",
-> +		.id = 3,
-> +		.num_resources = ARRAY_SIZE(apl_gpio_io_res),
-> +		.resources = apl_gpio_io_res,
-> +		.pdata_size = sizeof(apl_pinctrl_pdata),
-> +		.platform_data = &apl_pinctrl_pdata,
-> +		.ignore_resource_conflicts = true,
-> +	},
-> +};
-> +
-> +int lpc_ich_add_gpio(struct pci_dev *dev, enum lpc_chipsets chipset)
-> +{
-> +	unsigned int apl_p2sb = PCI_DEVFN(PCI_IDSEL_P2SB, 0);
-
-You only use this variable one.  Just switch it out for the macro.
-
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	if (chipset != LPC_APL)
-> +		return -ENODEV;
-> +	/*
-> +	 * Apollo lake, has not 1, but 4 gpio controllers,
-> +	 * handle it a bit differently.
-> +	 */
-> +
-> +	for (i = 0; i < ARRAY_SIZE(apl_gpio_io_res)-1; i++) {
-
-This is fragile.  Just define a GPIO_CONTROLLER_COUNT or similar.
-
-> +		struct resource *res = &apl_gpio_io_res[i];
-> +
-> +		apl_gpio_devices[i].resources = res;
-
-What's happening here?  Are you manually pulling resources out of the
-resource structure and linking them to the device cells?
-
-Why?
-
-> +		/* Fill MEM resource */
-> +		ret = p2sb_bar(dev, apl_p2sb, res++);
-
-Why res++?
-
-> +		if (ret)
-> +			goto warn_continue;
-> +
-> +		apl_pinctrl_pdata.name = kasprintf(GFP_KERNEL, "%u",
-> +			i + 1);
-
-Are you sure this does what you think it does?
-
-
-I think you will keep changing *.name, and the only one you will
-see/use is the last one.
-
-Have you tested this?
-
-> +		if (apl_pinctrl_pdata.name == NULL) {
-> +			ret = -ENOMEM;
-> +			goto warn_continue;
-
-No, this is a failure.  You need to 'error' out and return ret.
-
-> +		}
-> +	}
-> +
-> +	ret = mfd_add_devices(&dev->dev, 0,
-> +		apl_gpio_devices, ARRAY_SIZE(apl_gpio_devices),
-> +			NULL, 0, NULL);
-> +
-> +warn_continue:
-> +	if (ret)
-> +		dev_warn(&dev->dev,
-> +			"Failed to add Apollo Lake GPIO %s: %d\n",
-> +				apl_pinctrl_pdata.name, ret);
-> +
-> +	kfree(apl_pinctrl_pdata.name);
-
-You've just passed the child device a NULL pointer.
-
-> +	return 0;
-
-Why are you returning 0 even during failure?
-
-> +}
-> diff --git a/drivers/mfd/lpc_ich-apl.h b/drivers/mfd/lpc_ich-apl.h
-> new file mode 100644
-> index 0000000..db8325d
-> --- /dev/null
-> +++ b/drivers/mfd/lpc_ich-apl.h
-> @@ -0,0 +1,28 @@
-> +/*
-> + * lpc_ich-apl.h - Intel in-vehicle infotainment (IVI) systems used in cars
-> + *                 support
-
-The "In", "Vehicle" and "Infotainment" should be capitalised.
-
-> + * Copyright (C) 2016, Intel Corporation
-> + *
-> + * Authors: Tan, Jui Nee <jui.nee.tan@intel.com>
-
-"Author"
-
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#ifndef __LPC_ICH_APL_H__
-> +#define __LPC_ICH_APL_H__
-> +
-> +#include <linux/pci.h>
-> +
-> +#if IS_ENABLED(CONFIG_X86_INTEL_IVI)
-> +int lpc_ich_add_gpio(struct pci_dev *dev, enum lpc_chipsets chipset);
-> +#else /* CONFIG_X86_INTEL_IVI is not set */
-> +static inline int lpc_ich_add_gpio(struct pci_dev *dev, enum lpc_chipsets chipset)
-> +{
-> +	return -ENODEV;
-> +}
-> +#endif
-> +
-> +#endif
-> diff --git a/drivers/mfd/lpc_ich-core.c b/drivers/mfd/lpc_ich-core.c
-> index bd3aa45..e09d1e2 100644
-> --- a/drivers/mfd/lpc_ich-core.c
-> +++ b/drivers/mfd/lpc_ich-core.c
-> @@ -69,6 +69,8 @@
->  #include <linux/mfd/lpc_ich.h>
->  #include <linux/platform_data/itco_wdt.h>
->  
-> +#include "lpc_ich-apl.h"
-> +
->  #define ACPIBASE		0x40
->  #define ACPIBASE_GPE_OFF	0x28
->  #define ACPIBASE_GPE_END	0x2f
-> @@ -147,77 +149,6 @@ static struct mfd_cell lpc_ich_gpio_cell = {
->  	.ignore_resource_conflicts = true,
->  };
->  
-> -/* chipset related info */
-> -enum lpc_chipsets {
-> -	LPC_ICH = 0,	/* ICH */
-> -	LPC_ICH0,	/* ICH0 */
-> -	LPC_ICH2,	/* ICH2 */
-> -	LPC_ICH2M,	/* ICH2-M */
-> -	LPC_ICH3,	/* ICH3-S */
-> -	LPC_ICH3M,	/* ICH3-M */
-> -	LPC_ICH4,	/* ICH4 */
-> -	LPC_ICH4M,	/* ICH4-M */
-> -	LPC_CICH,	/* C-ICH */
-> -	LPC_ICH5,	/* ICH5 & ICH5R */
-> -	LPC_6300ESB,	/* 6300ESB */
-> -	LPC_ICH6,	/* ICH6 & ICH6R */
-> -	LPC_ICH6M,	/* ICH6-M */
-> -	LPC_ICH6W,	/* ICH6W & ICH6RW */
-> -	LPC_631XESB,	/* 631xESB/632xESB */
-> -	LPC_ICH7,	/* ICH7 & ICH7R */
-> -	LPC_ICH7DH,	/* ICH7DH */
-> -	LPC_ICH7M,	/* ICH7-M & ICH7-U */
-> -	LPC_ICH7MDH,	/* ICH7-M DH */
-> -	LPC_NM10,	/* NM10 */
-> -	LPC_ICH8,	/* ICH8 & ICH8R */
-> -	LPC_ICH8DH,	/* ICH8DH */
-> -	LPC_ICH8DO,	/* ICH8DO */
-> -	LPC_ICH8M,	/* ICH8M */
-> -	LPC_ICH8ME,	/* ICH8M-E */
-> -	LPC_ICH9,	/* ICH9 */
-> -	LPC_ICH9R,	/* ICH9R */
-> -	LPC_ICH9DH,	/* ICH9DH */
-> -	LPC_ICH9DO,	/* ICH9DO */
-> -	LPC_ICH9M,	/* ICH9M */
-> -	LPC_ICH9ME,	/* ICH9M-E */
-> -	LPC_ICH10,	/* ICH10 */
-> -	LPC_ICH10R,	/* ICH10R */
-> -	LPC_ICH10D,	/* ICH10D */
-> -	LPC_ICH10DO,	/* ICH10DO */
-> -	LPC_PCH,	/* PCH Desktop Full Featured */
-> -	LPC_PCHM,	/* PCH Mobile Full Featured */
-> -	LPC_P55,	/* P55 */
-> -	LPC_PM55,	/* PM55 */
-> -	LPC_H55,	/* H55 */
-> -	LPC_QM57,	/* QM57 */
-> -	LPC_H57,	/* H57 */
-> -	LPC_HM55,	/* HM55 */
-> -	LPC_Q57,	/* Q57 */
-> -	LPC_HM57,	/* HM57 */
-> -	LPC_PCHMSFF,	/* PCH Mobile SFF Full Featured */
-> -	LPC_QS57,	/* QS57 */
-> -	LPC_3400,	/* 3400 */
-> -	LPC_3420,	/* 3420 */
-> -	LPC_3450,	/* 3450 */
-> -	LPC_EP80579,	/* EP80579 */
-> -	LPC_CPT,	/* Cougar Point */
-> -	LPC_CPTD,	/* Cougar Point Desktop */
-> -	LPC_CPTM,	/* Cougar Point Mobile */
-> -	LPC_PBG,	/* Patsburg */
-> -	LPC_DH89XXCC,	/* DH89xxCC */
-> -	LPC_PPT,	/* Panther Point */
-> -	LPC_LPT,	/* Lynx Point */
-> -	LPC_LPT_LP,	/* Lynx Point-LP */
-> -	LPC_WBG,	/* Wellsburg */
-> -	LPC_AVN,	/* Avoton SoC */
-> -	LPC_BAYTRAIL,   /* Bay Trail SoC */
-> -	LPC_COLETO,	/* Coleto Creek */
-> -	LPC_WPT_LP,	/* Wildcat Point-LP */
-> -	LPC_BRASWELL,	/* Braswell SoC */
-> -	LPC_LEWISBURG,	/* Lewisburg */
-> -	LPC_9S,		/* 9 Series */
-> -};
-
-What does this move have to do with this patch?
-
-I think it should be separate and be paired with a reason for the
-change.
-
->  static struct lpc_ich_info lpc_chipset_info[] = {
->  	[LPC_ICH] = {
->  		.name = "ICH",
-> @@ -531,6 +462,10 @@ static struct lpc_ich_info lpc_chipset_info[] = {
->  		.name = "9 Series",
->  		.iTCO_version = 2,
->  	},
-> +	[LPC_APL]  = {
-> +		.name = "Apollo Lake SoC",
-> +		.iTCO_version = 5,
-> +	},
-
-Enabling a new platform should be a separate patch.
-
->  };
->  
->  /*
-> @@ -679,6 +614,7 @@ static const struct pci_device_id lpc_ich_ids[] = {
->  	{ PCI_VDEVICE(INTEL, 0x3b14), LPC_3420},
->  	{ PCI_VDEVICE(INTEL, 0x3b16), LPC_3450},
->  	{ PCI_VDEVICE(INTEL, 0x5031), LPC_EP80579},
-> +	{ PCI_VDEVICE(INTEL, 0x5ae8), LPC_APL},
->  	{ PCI_VDEVICE(INTEL, 0x8c40), LPC_LPT},
->  	{ PCI_VDEVICE(INTEL, 0x8c41), LPC_LPT},
->  	{ PCI_VDEVICE(INTEL, 0x8c42), LPC_LPT},
-> @@ -1093,6 +1029,9 @@ static int lpc_ich_probe(struct pci_dev *dev,
->  			cell_added = true;
->  	}
->  
-> +	if (!lpc_ich_add_gpio(dev, priv->chipset))
-> +		cell_added = true;
-> +
->  	/*
->  	 * We only care if at least one or none of the cells registered
->  	 * successfully.
-> diff --git a/include/linux/mfd/lpc_ich.h b/include/linux/mfd/lpc_ich.h
-> index 2b300b4..03c2ca3 100644
-> --- a/include/linux/mfd/lpc_ich.h
-> +++ b/include/linux/mfd/lpc_ich.h
-> @@ -34,6 +34,7 @@ enum {
->  	ICH_V10CORP_GPIO,
->  	ICH_V10CONS_GPIO,
->  	AVOTON_GPIO,
-> +	APL_GPIO,
->  };
->  
->  struct lpc_ich_info {
-> @@ -43,4 +44,76 @@ struct lpc_ich_info {
->  	u8 use_gpio;
->  };
->  
-> +/* chipset related info */
-> +enum lpc_chipsets {
-> +	LPC_ICH = 0,	/* ICH */
-> +	LPC_ICH0,	/* ICH0 */
-> +	LPC_ICH2,	/* ICH2 */
-> +	LPC_ICH2M,	/* ICH2-M */
-> +	LPC_ICH3,	/* ICH3-S */
-> +	LPC_ICH3M,	/* ICH3-M */
-> +	LPC_ICH4,	/* ICH4 */
-> +	LPC_ICH4M,	/* ICH4-M */
-> +	LPC_CICH,	/* C-ICH */
-> +	LPC_ICH5,	/* ICH5 & ICH5R */
-> +	LPC_6300ESB,	/* 6300ESB */
-> +	LPC_ICH6,	/* ICH6 & ICH6R */
-> +	LPC_ICH6M,	/* ICH6-M */
-> +	LPC_ICH6W,	/* ICH6W & ICH6RW */
-> +	LPC_631XESB,	/* 631xESB/632xESB */
-> +	LPC_ICH7,	/* ICH7 & ICH7R */
-> +	LPC_ICH7DH,	/* ICH7DH */
-> +	LPC_ICH7M,	/* ICH7-M & ICH7-U */
-> +	LPC_ICH7MDH,	/* ICH7-M DH */
-> +	LPC_NM10,	/* NM10 */
-> +	LPC_ICH8,	/* ICH8 & ICH8R */
-> +	LPC_ICH8DH,	/* ICH8DH */
-> +	LPC_ICH8DO,	/* ICH8DO */
-> +	LPC_ICH8M,	/* ICH8M */
-> +	LPC_ICH8ME,	/* ICH8M-E */
-> +	LPC_ICH9,	/* ICH9 */
-> +	LPC_ICH9R,	/* ICH9R */
-> +	LPC_ICH9DH,	/* ICH9DH */
-> +	LPC_ICH9DO,	/* ICH9DO */
-> +	LPC_ICH9M,	/* ICH9M */
-> +	LPC_ICH9ME,	/* ICH9M-E */
-> +	LPC_ICH10,	/* ICH10 */
-> +	LPC_ICH10R,	/* ICH10R */
-> +	LPC_ICH10D,	/* ICH10D */
-> +	LPC_ICH10DO,	/* ICH10DO */
-> +	LPC_PCH,	/* PCH Desktop Full Featured */
-> +	LPC_PCHM,	/* PCH Mobile Full Featured */
-> +	LPC_P55,	/* P55 */
-> +	LPC_PM55,	/* PM55 */
-> +	LPC_H55,	/* H55 */
-> +	LPC_QM57,	/* QM57 */
-> +	LPC_H57,	/* H57 */
-> +	LPC_HM55,	/* HM55 */
-> +	LPC_Q57,	/* Q57 */
-> +	LPC_HM57,	/* HM57 */
-> +	LPC_PCHMSFF,	/* PCH Mobile SFF Full Featured */
-> +	LPC_QS57,	/* QS57 */
-> +	LPC_3400,	/* 3400 */
-> +	LPC_3420,	/* 3420 */
-> +	LPC_3450,	/* 3450 */
-> +	LPC_EP80579,	/* EP80579 */
-> +	LPC_CPT,	/* Cougar Point */
-> +	LPC_CPTD,	/* Cougar Point Desktop */
-> +	LPC_CPTM,	/* Cougar Point Mobile */
-> +	LPC_PBG,	/* Patsburg */
-> +	LPC_DH89XXCC,	/* DH89xxCC */
-> +	LPC_PPT,	/* Panther Point */
-> +	LPC_LPT,	/* Lynx Point */
-> +	LPC_LPT_LP,	/* Lynx Point-LP */
-> +	LPC_WBG,	/* Wellsburg */
-> +	LPC_AVN,	/* Avoton SoC */
-> +	LPC_BAYTRAIL,   /* Bay Trail SoC */
-> +	LPC_COLETO,	/* Coleto Creek */
-> +	LPC_WPT_LP,	/* Wildcat Point-LP */
-> +	LPC_BRASWELL,	/* Braswell SoC */
-> +	LPC_LEWISBURG,	/* Lewisburg */
-> +	LPC_9S,		/* 9 Series */
-> +	LPC_APL,	/* Apollo Lake SoC */
-> +};
-> +
->  #endif
+I would not do that if I were you.  That set has been pending for
+years.  I'm just saying, when that patch-set is accepted, it will be
+easier to identify removable tables if they do not contain populated,
+but unused .id entries.
 
 -- 
 Lee Jones
