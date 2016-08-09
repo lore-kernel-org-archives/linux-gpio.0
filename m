@@ -1,300 +1,590 @@
-From: Lucile Quirion <lucile.quirion@savoirfairelinux.com>
-Subject: [PATCH v2 2/2] gpio: add Technologic I2C-FPGA gpio support
-Date: Mon,  8 Aug 2016 12:46:06 -0400
-Message-ID: <1470674766-17491-3-git-send-email-lucile.quirion@savoirfairelinux.com>
-References: <1470674766-17491-1-git-send-email-lucile.quirion@savoirfairelinux.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1470674766-17491-1-git-send-email-lucile.quirion@savoirfairelinux.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, kernel@savoirfairelinux.com, Lucile Quirion <lucile.quirion@savoirfairelinux.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v6 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake
+ GPIO pinctrl in non-ACPI system
+Date: Tue, 9 Aug 2016 08:16:01 +0100
+Message-ID: <20160809071601.GT5243@dell>
+References: <1468483919-31258-1-git-send-email-jui.nee.tan@intel.com>
+ <1468483919-31258-4-git-send-email-jui.nee.tan@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:35948 "EHLO
+	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751651AbcHIHOg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Aug 2016 03:14:36 -0400
+Received: by mail-wm0-f47.google.com with SMTP id q128so15304158wma.1
+        for <linux-gpio@vger.kernel.org>; Tue, 09 Aug 2016 00:14:35 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1468483919-31258-4-git-send-email-jui.nee.tan@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tan Jui Nee <jui.nee.tan@intel.com>
+Cc: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jonathan.yong@intel.com, ong.hock.yu@intel.com, weifeng.voon@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
 
-This driver is generic and aims to support all Technologic Systems's
-boards embedding FPGA GPIOs with an I2C interface.
+On Thu, 14 Jul 2016, Tan Jui Nee wrote:
 
-This driver supports TS-4900, TS-7970, TS-7990 and TS-4100 series.
+> This driver uses the P2SB hide/unhide mechanism cooperatively
+> to pass the PCI BAR address to the gpio platform driver.
+> 
+> Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
+> ---
+> Changes in V6:
+> 	- Rename CONFIG_X86_INTEL_APL to CONFIG_X86_INTEL_IVI so that it
+> 	  relates to the actual product, as suggested by Mika.
+> 	- Rework Makefile according Andy's comments.
+> 	- Rename lpc_ich_misc() to lpc_ich_add_gpio() so that the name should not
+> 	  be so generic, as suggested by Andy.
+> 	- Call lpc_ich_add_gpio() via priv->chipset.
+> 	- lpc_ich_add_gpio() function will be moved from 
+> 	  .../include/linux/mfd/lpc_ich.h to
+> 	  .../drivers/mfd/lpc_ich-apl.h
+> 	  as this is a part of internal driver interface as suggested by Andy.
+> 	- Move enum lpc_chipsets from 
+> 	  .../drivers/mfd/lpc_ich-core.c to
+> 	  .../include/linux/mfd/lpc_ich.h
+> 	  as lpc_chipsets is also accessed by lpc_ich_add_gpio().
+> 	- Check if kasprintf return value for all 4 gpio controllers before
+> 	  proceed to add platform device by using mfd_add_devices().
+> 
+> Changes in V5:
+> 	- Split lpc-ich driver into two parts (lpc_ich-core and lpc_ich-apl).
+> 	  The file lpc_ich-apl.c introduces gpio platform driver in MFD.
+> 	- Rename Kconfig option CONFIG_X86_INTEL_NON_ACPI to CONFIG_X86_INTEL_APL
+> 	  so that it reflects actual product as suggested by Mika.
+> 
+> Changes in V4:
+> 	- Move Kconfig option CONFIG_X86_INTEL_NON_ACPI from
+> 	  [PATCH 2/3] x86/platform/p2sb: New Primary to Sideband bridge support driver for Intel SOC's
+> 	  to
+> 	  [PATCH 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake GPIO pinctrl in non-ACPI system
+> 	  since the config is used in latter patch.
+> 	- Select CONFIG_P2SB when CONFIG_LPC_ICH is enabled.
+> 	- Remove #ifdef CONFIG_X86_INTEL_NON_ACPI and use
+> 	  #if defined(CONFIG_X86_INTEL_NON_ACPI) when lpc_ich_misc is called
+> 	  as suggested by Lee Jones.
+> 	- Use single dimensional array instead of 2D array for apl_gpio_io_res
+> 	  structure and use DEFINE_RES_IRQ for its IRQ resource.
+> 
+> Changes in V3:
+> 	- Simplify register addresses calculation and use DEFINE_RES_MEM_NAMED
+> 	  defines for apl_gpio_io_res structure
+> 	- Define magic number for P2SB PCI ID
+> 	- Replace switch-case with if-else since currently we have only one
+> 	  use case
+> 	- Only call mfd_add_devices() once for all gpio communities
+> 
+> Changes in V2:
+> 	- Add new config option CONFIG_X86_INTEL_NON_ACPI and "select PINCTRL"
+> 	  to fix kbuildbot error
+> 
+>  arch/x86/Kconfig            |   9 +++
+>  drivers/mfd/Kconfig         |   3 +-
+>  drivers/mfd/Makefile        |   5 +-
+>  drivers/mfd/lpc_ich-apl.c   | 130 ++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/mfd/lpc_ich-apl.h   |  28 ++++++++++
+>  drivers/mfd/lpc_ich-core.c  |  81 ++++-----------------------
+>  include/linux/mfd/lpc_ich.h |  73 +++++++++++++++++++++++++
+>  7 files changed, 256 insertions(+), 73 deletions(-)
+>  create mode 100644 drivers/mfd/lpc_ich-apl.c
+>  create mode 100644 drivers/mfd/lpc_ich-apl.h
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index d305d81..c0b427b 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -513,6 +513,15 @@ config X86_INTEL_CE
+>  	  This option compiles in support for the CE4100 SOC for settop
+>  	  boxes and media devices.
+>  
+> +config X86_INTEL_IVI
+> +	bool "Intel in-vehicle infotainment (IVI) systems used in cars"
+> +	select PINCTRL
+> +	---help---
+> +	  Select this option to enable MMIO BAR access over the P2SB for
+> +	  non-ACPI Intel Apollo Lake SoC platforms. This driver uses the P2SB
+> +	  hide/unhide mechanism cooperatively to pass the PCI BAR address to
+> +	  the platform driver, currently GPIO.
+> +
 
-Signed-off-by: Lucile Quirion <lucile.quirion@savoirfairelinux.com>
----
- drivers/gpio/Kconfig       |   6 ++
- drivers/gpio/Makefile      |   1 +
- drivers/gpio/gpio-ts4900.c | 238 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 245 insertions(+)
- create mode 100644 drivers/gpio/gpio-ts4900.c
+This should be a separate patch.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 98dd47a..3320616 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -779,6 +779,12 @@ config GPIO_TPIC2810
- 	  To compile this driver as a module, choose M here: the module will
- 	  be called gpio-tpic2810.
- 
-+config GPIO_TS4900
-+	tristate "Technologic Systems FPGA I2C GPIO"
-+	help
-+	  Say yes here to enabled the GPIO driver for Technologic's FPGA core.
-+	  Series supported include TS-4100, TS-4900, TS-7970 and TS-7990.
-+
- endmenu
- 
- menu "MFD GPIO expanders"
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 2a035ed..4dcc21f 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -110,6 +110,7 @@ obj-$(CONFIG_GPIO_TPS6586X)	+= gpio-tps6586x.o
- obj-$(CONFIG_GPIO_TPS65910)	+= gpio-tps65910.o
- obj-$(CONFIG_GPIO_TPS65912)	+= gpio-tps65912.o
- obj-$(CONFIG_GPIO_TS4800)	+= gpio-ts4800.o
-+obj-$(CONFIG_GPIO_TS4900)	+= gpio-ts4900.o
- obj-$(CONFIG_GPIO_TS5500)	+= gpio-ts5500.o
- obj-$(CONFIG_GPIO_TWL4030)	+= gpio-twl4030.o
- obj-$(CONFIG_GPIO_TWL6040)	+= gpio-twl6040.o
-diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
-new file mode 100644
-index 0000000..104d1e0
---- /dev/null
-+++ b/drivers/gpio/gpio-ts4900.c
-@@ -0,0 +1,238 @@
-+/*
-+ * Digital I/O driver for Technologic Systems I2C FPGA Core
-+ *
-+ * Copyright (C) 2015 Technologic Systems
-+ * Copyright (C) 2016 Savoir-Faire Linux
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether expressed or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License version 2 for more details.
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/i2c.h>
-+#include <linux/of_device.h>
-+#include <linux/module.h>
-+
-+#define DEFAULT_PIN_NUMBER	32
-+/*
-+ * Register bits used by the GPIO device
-+ * Some boards, such as TS-7970 do not have a separate input bit
-+ */
-+#define TS4900_GPIO_OE		0x01
-+#define TS4900_GPIO_OD		0x02
-+#define TS4900_GPIO_ID		0x04
-+#define TS7970_GPIO_ID		0x02
-+
-+struct ts4900_gpio_priv {
-+	struct i2c_client *client;
-+	struct gpio_chip gpio_chip;
-+	unsigned int input_bit;
-+};
-+
-+static int ts4900_gpio_write(struct i2c_client *client, u16 addr, u8 data)
-+{
-+	struct i2c_msg msg;
-+	u8 buf[3];
-+	int ret;
-+
-+	buf[0] = addr >> 8;
-+	buf[1] = addr & 0xFF;
-+	buf[2] = data;
-+
-+	msg.addr = client->addr;
-+	msg.flags = 0;
-+	msg.len = 3;
-+	msg.buf = buf;
-+
-+	ret = i2c_transfer(client->adapter, &msg, 1);
-+	if (ret != 1) {
-+		dev_err(&client->dev, "%s: write error, ret=%d\n",
-+			__func__, ret);
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ts4900_gpio_read(struct i2c_client *client, u16 addr)
-+{
-+	struct i2c_msg msgs[2];
-+	u8 buf[2];
-+	int ret;
-+
-+	buf[0] = addr >> 8;
-+	buf[1] = addr & 0xFF;
-+
-+	msgs[0].addr = client->addr;
-+	msgs[0].flags = 0;
-+	msgs[0].len = 2;
-+	msgs[0].buf = buf;
-+
-+	msgs[1].addr = client->addr;
-+	msgs[1].flags = I2C_M_RD;
-+	msgs[1].len = 1;
-+	msgs[1].buf = buf;
-+
-+	ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
-+	if (ret != ARRAY_SIZE(msgs)) {
-+		dev_err(&client->dev, "%s: read error, ret=%d\n",
-+			__func__, ret);
-+		return -EIO;
-+	}
-+
-+	return buf[0];
-+}
-+
-+static int __ts4900_gpio_direction_output(struct i2c_client *client, int gpio,
-+				     int value)
-+{
-+	u8 reg = 0;
-+
-+	if (value)
-+		reg = TS4900_GPIO_OD | TS4900_GPIO_OE;
-+	else
-+		reg = TS4900_GPIO_OE;
-+
-+	return ts4900_gpio_write(client, gpio, reg);
-+}
-+
-+static int ts4900_gpio_direction_input(struct gpio_chip *chip,
-+				       unsigned int offset)
-+{
-+	struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
-+
-+	/*
-+	 * This will clear the output enable bit, the other bits are
-+	 * dontcare when this is cleared
-+	 */
-+	return ts4900_gpio_write(priv->client, offset, 0);
-+}
-+
-+static int ts4900_gpio_direction_output(struct gpio_chip *chip,
-+					unsigned int offset, int value)
-+{
-+	struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
-+
-+	return __ts4900_gpio_direction_output(priv->client, offset, value);
-+}
-+
-+static int ts4900_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
-+	int ret;
-+	u8 reg;
-+
-+	reg = ts4900_gpio_read(priv->client, offset);
-+
-+	ret = (reg & priv->input_bit) ? 1 : 0;
-+
-+	return ret;
-+}
-+
-+static void ts4900_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			    int value)
-+{
-+	struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
-+
-+	__ts4900_gpio_direction_output(priv->client, offset, value);
-+}
-+
-+static struct gpio_chip template_chip = {
-+	.label			= "ts4900-gpio",
-+	.owner			= THIS_MODULE,
-+	.direction_input	= ts4900_gpio_direction_input,
-+	.direction_output	= ts4900_gpio_direction_output,
-+	.get			= ts4900_gpio_get,
-+	.set			= ts4900_gpio_set,
-+	.base			= -1,
-+	.can_sleep		= true,
-+};
-+
-+static const struct of_device_id ts4900_gpio_of_match_table[] = {
-+	{
-+		.compatible = "technologic,ts4900-gpio",
-+		.data = (void *)TS4900_GPIO_ID,
-+	}, {
-+		.compatible = "technologic,ts7970-gpio",
-+		.data = (void *)TS7970_GPIO_ID,
-+	},
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, ts4900_gpio_of_match_table);
-+
-+static int ts4900_gpio_probe(struct i2c_client *client,
-+			const struct i2c_device_id *id)
-+{
-+	const struct of_device_id *match;
-+	struct ts4900_gpio_priv *priv;
-+	u32 ngpio;
-+	int ret;
-+
-+	if (!i2c_check_functionality(client->adapter,
-+				     I2C_FUNC_SMBUS_BYTE_DATA))
-+		return -EIO;
-+
-+	match = of_match_device(ts4900_gpio_of_match_table, &client->dev);
-+	if (!match)
-+		return -EINVAL;
-+
-+	if (of_property_read_u32(client->dev.of_node, "ngpios", &ngpio))
-+		ngpio = DEFAULT_PIN_NUMBER;
-+
-+	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	i2c_set_clientdata(client, priv);
-+
-+	priv->client = client;
-+	priv->gpio_chip = template_chip;
-+	priv->gpio_chip.label = "ts4900-gpio";
-+	priv->gpio_chip.ngpio = ngpio;
-+	priv->gpio_chip.parent = &client->dev;
-+	priv->input_bit = (uintptr_t)match->data;
-+
-+	ret = gpiochip_add_data(&priv->gpio_chip, priv);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "Unable to register gpiochip\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ts4900_gpio_remove(struct i2c_client *client)
-+{
-+	struct ts4900_gpio_priv *priv = i2c_get_clientdata(client);
-+
-+	gpiochip_remove(&priv->gpio_chip);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id ts4900_gpio_id_table[] = {
-+	{ "ts4900-gpio", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(i2c, ts4900_gpio_id_table);
-+
-+static struct i2c_driver ts4900_gpio_driver = {
-+	.driver = {
-+		.name = "ts4900-gpio",
-+		.of_match_table = ts4900_gpio_of_match_table,
-+	},
-+	.probe = ts4900_gpio_probe,
-+	.remove = ts4900_gpio_remove,
-+	.id_table = ts4900_gpio_id_table,
-+};
-+module_i2c_driver(ts4900_gpio_driver);
-+
-+MODULE_AUTHOR("Technologic Systems");
-+MODULE_DESCRIPTION("GPIO interface for Technologic Systems I2C-FPGA core");
-+MODULE_LICENSE("GPL");
+>  config X86_INTEL_MID
+>  	bool "Intel MID platform support"
+>  	depends on X86_EXTENDED_PLATFORM
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 1bcf601..dc4e543 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -369,8 +369,9 @@ config MFD_INTEL_QUARK_I2C_GPIO
+>  
+>  config LPC_ICH
+>  	tristate "Intel ICH LPC"
+> -	depends on PCI
+> +	depends on X86 && PCI
+>  	select MFD_CORE
+> +	select P2SB
+>  	help
+>  	  The LPC bridge function of the Intel ICH provides support for
+>  	  many functional units. This driver provides needed support for
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 1dfe5fb..0aa3e1f 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -155,8 +155,11 @@ obj-$(CONFIG_PMIC_ADP5520)	+= adp5520.o
+>  obj-$(CONFIG_MFD_KEMPLD)	+= kempld-core.o
+>  obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+= intel_quark_i2c_gpio.o
+>  obj-$(CONFIG_LPC_SCH)		+= lpc_sch.o
+> -lpc_ich-objs		:= lpc_ich-core.o
+>  obj-$(CONFIG_LPC_ICH)		+= lpc_ich.o
+> +lpc_ich-objs		:= lpc_ich-core.o
+> +ifeq ($(CONFIG_X86_INTEL_IVI),y)
+> +lpc_ich-objs += lpc_ich-apl.o
+> +endif
+>  obj-$(CONFIG_MFD_RDC321X)	+= rdc321x-southbridge.o
+>  obj-$(CONFIG_MFD_JANZ_CMODIO)	+= janz-cmodio.o
+>  obj-$(CONFIG_MFD_JZ4740_ADC)	+= jz4740-adc.o
+> diff --git a/drivers/mfd/lpc_ich-apl.c b/drivers/mfd/lpc_ich-apl.c
+> new file mode 100644
+> index 0000000..e4b9688
+> --- /dev/null
+> +++ b/drivers/mfd/lpc_ich-apl.c
+> @@ -0,0 +1,130 @@
+> +/*
+> + * Purpose: Create a platform device to bind with Intel Apollo Lake
+
+Never seen this before.  Looks like more of a commit log entry than
+something that should live in a source file header.
+
+> + * Pinctrl GPIO platform driver
+
+No need to mention "platform driver" here. Most drivers are.
+
+> + * Copyright (C) 2016 Intel Corporation
+
+Author?
+
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/pci.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/lpc_ich.h>
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <asm/p2sb.h>
+
+Alphabetical.
+
+> +#include "lpc_ich-apl.h"
+
+Don't' mix '_'s with '-'s.
+
+> +/* Offset data for Apollo Lake GPIO communities */
+> +#define APL_GPIO_SOUTHWEST_OFFSET	0xc00000
+> +#define APL_GPIO_NORTHWEST_OFFSET	0xc40000
+> +#define APL_GPIO_NORTH_OFFSET		0xc50000
+> +#define APL_GPIO_WEST_OFFSET		0xc70000
+> +
+> +#define APL_GPIO_SOUTHWEST_NPIN		43
+> +#define APL_GPIO_NORTHWEST_NPIN		77
+> +#define APL_GPIO_NORTH_NPIN		78
+> +#define APL_GPIO_WEST_NPIN		47
+> +
+> +#define APL_GPIO_IRQ 14
+> +
+> +#define PCI_IDSEL_P2SB	0x0d
+> +
+> +static struct resource apl_gpio_io_res[] = {
+> +	DEFINE_RES_MEM_NAMED(APL_GPIO_NORTH_OFFSET,
+> +		APL_GPIO_NORTH_NPIN * SZ_8, "apl_pinctrl_n"),
+> +	DEFINE_RES_MEM_NAMED(APL_GPIO_NORTHWEST_OFFSET,
+> +		APL_GPIO_NORTHWEST_NPIN * SZ_8, "apl_pinctrl_nw"),
+> +	DEFINE_RES_MEM_NAMED(APL_GPIO_WEST_OFFSET,
+> +		APL_GPIO_WEST_NPIN * SZ_8, "apl_pinctrl_w"),
+> +	DEFINE_RES_MEM_NAMED(APL_GPIO_SOUTHWEST_OFFSET,
+> +		APL_GPIO_SOUTHWEST_NPIN * SZ_8, "apl_pinctrl_sw"),
+> +	DEFINE_RES_IRQ(APL_GPIO_IRQ),
+> +};
+> +
+> +static struct pinctrl_pin_desc apl_pinctrl_pdata;
+
+This seems pretty pointless.  What's it for?
+
+> +static struct mfd_cell apl_gpio_devices[] = {
+> +	{
+> +		.name = "apl-pinctrl",
+> +		.id = 0,
+> +		.num_resources = ARRAY_SIZE(apl_gpio_io_res),
+> +		.resources = apl_gpio_io_res,
+> +		.pdata_size = sizeof(apl_pinctrl_pdata),
+> +		.platform_data = &apl_pinctrl_pdata,
+> +		.ignore_resource_conflicts = true,
+> +	},
+> +	{
+> +		.name = "apl-pinctrl",
+> +		.id = 1,
+> +		.num_resources = ARRAY_SIZE(apl_gpio_io_res),
+> +		.resources = apl_gpio_io_res,
+> +		.pdata_size = sizeof(apl_pinctrl_pdata),
+> +		.platform_data = &apl_pinctrl_pdata,
+> +		.ignore_resource_conflicts = true,
+> +	},
+> +	{
+> +		.name = "apl-pinctrl",
+> +		.id = 2,
+> +		.num_resources = ARRAY_SIZE(apl_gpio_io_res),
+> +		.resources = apl_gpio_io_res,
+> +		.pdata_size = sizeof(apl_pinctrl_pdata),
+> +		.platform_data = &apl_pinctrl_pdata,
+> +		.ignore_resource_conflicts = true,
+> +	},
+> +	{
+> +		.name = "apl-pinctrl",
+> +		.id = 3,
+> +		.num_resources = ARRAY_SIZE(apl_gpio_io_res),
+> +		.resources = apl_gpio_io_res,
+> +		.pdata_size = sizeof(apl_pinctrl_pdata),
+> +		.platform_data = &apl_pinctrl_pdata,
+> +		.ignore_resource_conflicts = true,
+> +	},
+> +};
+> +
+> +int lpc_ich_add_gpio(struct pci_dev *dev, enum lpc_chipsets chipset)
+> +{
+> +	unsigned int apl_p2sb = PCI_DEVFN(PCI_IDSEL_P2SB, 0);
+
+You only use this variable one.  Just switch it out for the macro.
+
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	if (chipset != LPC_APL)
+> +		return -ENODEV;
+> +	/*
+> +	 * Apollo lake, has not 1, but 4 gpio controllers,
+> +	 * handle it a bit differently.
+> +	 */
+> +
+> +	for (i = 0; i < ARRAY_SIZE(apl_gpio_io_res)-1; i++) {
+
+This is fragile.  Just define a GPIO_CONTROLLER_COUNT or similar.
+
+> +		struct resource *res = &apl_gpio_io_res[i];
+> +
+> +		apl_gpio_devices[i].resources = res;
+
+What's happening here?  Are you manually pulling resources out of the
+resource structure and linking them to the device cells?
+
+Why?
+
+> +		/* Fill MEM resource */
+> +		ret = p2sb_bar(dev, apl_p2sb, res++);
+
+Why res++?
+
+> +		if (ret)
+> +			goto warn_continue;
+> +
+> +		apl_pinctrl_pdata.name = kasprintf(GFP_KERNEL, "%u",
+> +			i + 1);
+
+Are you sure this does what you think it does?
+
+
+I think you will keep changing *.name, and the only one you will
+see/use is the last one.
+
+Have you tested this?
+
+> +		if (apl_pinctrl_pdata.name == NULL) {
+> +			ret = -ENOMEM;
+> +			goto warn_continue;
+
+No, this is a failure.  You need to 'error' out and return ret.
+
+> +		}
+> +	}
+> +
+> +	ret = mfd_add_devices(&dev->dev, 0,
+> +		apl_gpio_devices, ARRAY_SIZE(apl_gpio_devices),
+> +			NULL, 0, NULL);
+> +
+> +warn_continue:
+> +	if (ret)
+> +		dev_warn(&dev->dev,
+> +			"Failed to add Apollo Lake GPIO %s: %d\n",
+> +				apl_pinctrl_pdata.name, ret);
+> +
+> +	kfree(apl_pinctrl_pdata.name);
+
+You've just passed the child device a NULL pointer.
+
+> +	return 0;
+
+Why are you returning 0 even during failure?
+
+> +}
+> diff --git a/drivers/mfd/lpc_ich-apl.h b/drivers/mfd/lpc_ich-apl.h
+> new file mode 100644
+> index 0000000..db8325d
+> --- /dev/null
+> +++ b/drivers/mfd/lpc_ich-apl.h
+> @@ -0,0 +1,28 @@
+> +/*
+> + * lpc_ich-apl.h - Intel in-vehicle infotainment (IVI) systems used in cars
+> + *                 support
+
+The "In", "Vehicle" and "Infotainment" should be capitalised.
+
+> + * Copyright (C) 2016, Intel Corporation
+> + *
+> + * Authors: Tan, Jui Nee <jui.nee.tan@intel.com>
+
+"Author"
+
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef __LPC_ICH_APL_H__
+> +#define __LPC_ICH_APL_H__
+> +
+> +#include <linux/pci.h>
+> +
+> +#if IS_ENABLED(CONFIG_X86_INTEL_IVI)
+> +int lpc_ich_add_gpio(struct pci_dev *dev, enum lpc_chipsets chipset);
+> +#else /* CONFIG_X86_INTEL_IVI is not set */
+> +static inline int lpc_ich_add_gpio(struct pci_dev *dev, enum lpc_chipsets chipset)
+> +{
+> +	return -ENODEV;
+> +}
+> +#endif
+> +
+> +#endif
+> diff --git a/drivers/mfd/lpc_ich-core.c b/drivers/mfd/lpc_ich-core.c
+> index bd3aa45..e09d1e2 100644
+> --- a/drivers/mfd/lpc_ich-core.c
+> +++ b/drivers/mfd/lpc_ich-core.c
+> @@ -69,6 +69,8 @@
+>  #include <linux/mfd/lpc_ich.h>
+>  #include <linux/platform_data/itco_wdt.h>
+>  
+> +#include "lpc_ich-apl.h"
+> +
+>  #define ACPIBASE		0x40
+>  #define ACPIBASE_GPE_OFF	0x28
+>  #define ACPIBASE_GPE_END	0x2f
+> @@ -147,77 +149,6 @@ static struct mfd_cell lpc_ich_gpio_cell = {
+>  	.ignore_resource_conflicts = true,
+>  };
+>  
+> -/* chipset related info */
+> -enum lpc_chipsets {
+> -	LPC_ICH = 0,	/* ICH */
+> -	LPC_ICH0,	/* ICH0 */
+> -	LPC_ICH2,	/* ICH2 */
+> -	LPC_ICH2M,	/* ICH2-M */
+> -	LPC_ICH3,	/* ICH3-S */
+> -	LPC_ICH3M,	/* ICH3-M */
+> -	LPC_ICH4,	/* ICH4 */
+> -	LPC_ICH4M,	/* ICH4-M */
+> -	LPC_CICH,	/* C-ICH */
+> -	LPC_ICH5,	/* ICH5 & ICH5R */
+> -	LPC_6300ESB,	/* 6300ESB */
+> -	LPC_ICH6,	/* ICH6 & ICH6R */
+> -	LPC_ICH6M,	/* ICH6-M */
+> -	LPC_ICH6W,	/* ICH6W & ICH6RW */
+> -	LPC_631XESB,	/* 631xESB/632xESB */
+> -	LPC_ICH7,	/* ICH7 & ICH7R */
+> -	LPC_ICH7DH,	/* ICH7DH */
+> -	LPC_ICH7M,	/* ICH7-M & ICH7-U */
+> -	LPC_ICH7MDH,	/* ICH7-M DH */
+> -	LPC_NM10,	/* NM10 */
+> -	LPC_ICH8,	/* ICH8 & ICH8R */
+> -	LPC_ICH8DH,	/* ICH8DH */
+> -	LPC_ICH8DO,	/* ICH8DO */
+> -	LPC_ICH8M,	/* ICH8M */
+> -	LPC_ICH8ME,	/* ICH8M-E */
+> -	LPC_ICH9,	/* ICH9 */
+> -	LPC_ICH9R,	/* ICH9R */
+> -	LPC_ICH9DH,	/* ICH9DH */
+> -	LPC_ICH9DO,	/* ICH9DO */
+> -	LPC_ICH9M,	/* ICH9M */
+> -	LPC_ICH9ME,	/* ICH9M-E */
+> -	LPC_ICH10,	/* ICH10 */
+> -	LPC_ICH10R,	/* ICH10R */
+> -	LPC_ICH10D,	/* ICH10D */
+> -	LPC_ICH10DO,	/* ICH10DO */
+> -	LPC_PCH,	/* PCH Desktop Full Featured */
+> -	LPC_PCHM,	/* PCH Mobile Full Featured */
+> -	LPC_P55,	/* P55 */
+> -	LPC_PM55,	/* PM55 */
+> -	LPC_H55,	/* H55 */
+> -	LPC_QM57,	/* QM57 */
+> -	LPC_H57,	/* H57 */
+> -	LPC_HM55,	/* HM55 */
+> -	LPC_Q57,	/* Q57 */
+> -	LPC_HM57,	/* HM57 */
+> -	LPC_PCHMSFF,	/* PCH Mobile SFF Full Featured */
+> -	LPC_QS57,	/* QS57 */
+> -	LPC_3400,	/* 3400 */
+> -	LPC_3420,	/* 3420 */
+> -	LPC_3450,	/* 3450 */
+> -	LPC_EP80579,	/* EP80579 */
+> -	LPC_CPT,	/* Cougar Point */
+> -	LPC_CPTD,	/* Cougar Point Desktop */
+> -	LPC_CPTM,	/* Cougar Point Mobile */
+> -	LPC_PBG,	/* Patsburg */
+> -	LPC_DH89XXCC,	/* DH89xxCC */
+> -	LPC_PPT,	/* Panther Point */
+> -	LPC_LPT,	/* Lynx Point */
+> -	LPC_LPT_LP,	/* Lynx Point-LP */
+> -	LPC_WBG,	/* Wellsburg */
+> -	LPC_AVN,	/* Avoton SoC */
+> -	LPC_BAYTRAIL,   /* Bay Trail SoC */
+> -	LPC_COLETO,	/* Coleto Creek */
+> -	LPC_WPT_LP,	/* Wildcat Point-LP */
+> -	LPC_BRASWELL,	/* Braswell SoC */
+> -	LPC_LEWISBURG,	/* Lewisburg */
+> -	LPC_9S,		/* 9 Series */
+> -};
+
+What does this move have to do with this patch?
+
+I think it should be separate and be paired with a reason for the
+change.
+
+>  static struct lpc_ich_info lpc_chipset_info[] = {
+>  	[LPC_ICH] = {
+>  		.name = "ICH",
+> @@ -531,6 +462,10 @@ static struct lpc_ich_info lpc_chipset_info[] = {
+>  		.name = "9 Series",
+>  		.iTCO_version = 2,
+>  	},
+> +	[LPC_APL]  = {
+> +		.name = "Apollo Lake SoC",
+> +		.iTCO_version = 5,
+> +	},
+
+Enabling a new platform should be a separate patch.
+
+>  };
+>  
+>  /*
+> @@ -679,6 +614,7 @@ static const struct pci_device_id lpc_ich_ids[] = {
+>  	{ PCI_VDEVICE(INTEL, 0x3b14), LPC_3420},
+>  	{ PCI_VDEVICE(INTEL, 0x3b16), LPC_3450},
+>  	{ PCI_VDEVICE(INTEL, 0x5031), LPC_EP80579},
+> +	{ PCI_VDEVICE(INTEL, 0x5ae8), LPC_APL},
+>  	{ PCI_VDEVICE(INTEL, 0x8c40), LPC_LPT},
+>  	{ PCI_VDEVICE(INTEL, 0x8c41), LPC_LPT},
+>  	{ PCI_VDEVICE(INTEL, 0x8c42), LPC_LPT},
+> @@ -1093,6 +1029,9 @@ static int lpc_ich_probe(struct pci_dev *dev,
+>  			cell_added = true;
+>  	}
+>  
+> +	if (!lpc_ich_add_gpio(dev, priv->chipset))
+> +		cell_added = true;
+> +
+>  	/*
+>  	 * We only care if at least one or none of the cells registered
+>  	 * successfully.
+> diff --git a/include/linux/mfd/lpc_ich.h b/include/linux/mfd/lpc_ich.h
+> index 2b300b4..03c2ca3 100644
+> --- a/include/linux/mfd/lpc_ich.h
+> +++ b/include/linux/mfd/lpc_ich.h
+> @@ -34,6 +34,7 @@ enum {
+>  	ICH_V10CORP_GPIO,
+>  	ICH_V10CONS_GPIO,
+>  	AVOTON_GPIO,
+> +	APL_GPIO,
+>  };
+>  
+>  struct lpc_ich_info {
+> @@ -43,4 +44,76 @@ struct lpc_ich_info {
+>  	u8 use_gpio;
+>  };
+>  
+> +/* chipset related info */
+> +enum lpc_chipsets {
+> +	LPC_ICH = 0,	/* ICH */
+> +	LPC_ICH0,	/* ICH0 */
+> +	LPC_ICH2,	/* ICH2 */
+> +	LPC_ICH2M,	/* ICH2-M */
+> +	LPC_ICH3,	/* ICH3-S */
+> +	LPC_ICH3M,	/* ICH3-M */
+> +	LPC_ICH4,	/* ICH4 */
+> +	LPC_ICH4M,	/* ICH4-M */
+> +	LPC_CICH,	/* C-ICH */
+> +	LPC_ICH5,	/* ICH5 & ICH5R */
+> +	LPC_6300ESB,	/* 6300ESB */
+> +	LPC_ICH6,	/* ICH6 & ICH6R */
+> +	LPC_ICH6M,	/* ICH6-M */
+> +	LPC_ICH6W,	/* ICH6W & ICH6RW */
+> +	LPC_631XESB,	/* 631xESB/632xESB */
+> +	LPC_ICH7,	/* ICH7 & ICH7R */
+> +	LPC_ICH7DH,	/* ICH7DH */
+> +	LPC_ICH7M,	/* ICH7-M & ICH7-U */
+> +	LPC_ICH7MDH,	/* ICH7-M DH */
+> +	LPC_NM10,	/* NM10 */
+> +	LPC_ICH8,	/* ICH8 & ICH8R */
+> +	LPC_ICH8DH,	/* ICH8DH */
+> +	LPC_ICH8DO,	/* ICH8DO */
+> +	LPC_ICH8M,	/* ICH8M */
+> +	LPC_ICH8ME,	/* ICH8M-E */
+> +	LPC_ICH9,	/* ICH9 */
+> +	LPC_ICH9R,	/* ICH9R */
+> +	LPC_ICH9DH,	/* ICH9DH */
+> +	LPC_ICH9DO,	/* ICH9DO */
+> +	LPC_ICH9M,	/* ICH9M */
+> +	LPC_ICH9ME,	/* ICH9M-E */
+> +	LPC_ICH10,	/* ICH10 */
+> +	LPC_ICH10R,	/* ICH10R */
+> +	LPC_ICH10D,	/* ICH10D */
+> +	LPC_ICH10DO,	/* ICH10DO */
+> +	LPC_PCH,	/* PCH Desktop Full Featured */
+> +	LPC_PCHM,	/* PCH Mobile Full Featured */
+> +	LPC_P55,	/* P55 */
+> +	LPC_PM55,	/* PM55 */
+> +	LPC_H55,	/* H55 */
+> +	LPC_QM57,	/* QM57 */
+> +	LPC_H57,	/* H57 */
+> +	LPC_HM55,	/* HM55 */
+> +	LPC_Q57,	/* Q57 */
+> +	LPC_HM57,	/* HM57 */
+> +	LPC_PCHMSFF,	/* PCH Mobile SFF Full Featured */
+> +	LPC_QS57,	/* QS57 */
+> +	LPC_3400,	/* 3400 */
+> +	LPC_3420,	/* 3420 */
+> +	LPC_3450,	/* 3450 */
+> +	LPC_EP80579,	/* EP80579 */
+> +	LPC_CPT,	/* Cougar Point */
+> +	LPC_CPTD,	/* Cougar Point Desktop */
+> +	LPC_CPTM,	/* Cougar Point Mobile */
+> +	LPC_PBG,	/* Patsburg */
+> +	LPC_DH89XXCC,	/* DH89xxCC */
+> +	LPC_PPT,	/* Panther Point */
+> +	LPC_LPT,	/* Lynx Point */
+> +	LPC_LPT_LP,	/* Lynx Point-LP */
+> +	LPC_WBG,	/* Wellsburg */
+> +	LPC_AVN,	/* Avoton SoC */
+> +	LPC_BAYTRAIL,   /* Bay Trail SoC */
+> +	LPC_COLETO,	/* Coleto Creek */
+> +	LPC_WPT_LP,	/* Wildcat Point-LP */
+> +	LPC_BRASWELL,	/* Braswell SoC */
+> +	LPC_LEWISBURG,	/* Lewisburg */
+> +	LPC_9S,		/* 9 Series */
+> +	LPC_APL,	/* Apollo Lake SoC */
+> +};
+> +
+>  #endif
+
 -- 
-2.5.5
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
