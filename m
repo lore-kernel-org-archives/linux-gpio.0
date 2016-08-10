@@ -1,14 +1,12 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [GIT PULL] Immutable branch between MFD and GPIO due for v4.9
-Date: Wed, 10 Aug 2016 09:42:25 +0100
-Message-ID: <20160810084225.GQ1581@dell>
-References: <1470814755-19447-1-git-send-email-patrice.chotard@st.com>
+From: Keerthy <j-keerthy@ti.com>
+Subject: [PATCH v7 0/5] The series cleans up mainly the regulator driver and
+ implements
+Date: Wed, 10 Aug 2016 18:22:20 +0530
+Message-ID: <1470833545-29462-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1470814755-19447-1-git-send-email-patrice.chotard@st.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,41 +16,65 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: patrice.chotard@st.com
-Cc: gnurou@gmail.com, amelie.delaunay@st.com, vireshk@kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, thierry.reding@gmail.com, kernel@pengutronix.de, dinguyen@opensource.altera.com, shawnguo@kernel.org, shiraz.linux.kernel@gmail.com, linux-arm-kernel@lists.infradead.org
+To: broonie@kernel.org, lee.jones@linaro.org, tony@atomide.com
+Cc: gnurou@gmail.com, d-gerlach@ti.com, devicetree@vger.kernel.org, j-keerthy@ti.com, linus.walleij@linaro.org, dmitry.torokhov@gmail.com, linux-kernel@vger.kernel.org, t-kristo@ti.com, linux-gpio@vger.kernel.org, robh+dt@kernel.org, russ.dill@ti.com, linux-input@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-RW5qb3khCgpUaGUgZm9sbG93aW5nIGNoYW5nZXMgc2luY2UgY29tbWl0IDI5YjQ4MTdkNDAxOGRm
-NzgwODYxNTdlYTNhNTVjMWQ5NDI0YTdjZmM6CgogIExpbnV4IDQuOC1yYzEgKDIwMTYtMDgtMDcg
-MTg6MTg6MDAgLTA3MDApCgphcmUgYXZhaWxhYmxlIGluIHRoZSBnaXQgcmVwb3NpdG9yeSBhdDoK
-CiAgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2xlZS9tZmQu
-Z2l0IHRhZ3MvaWItbWZkLWdwaW8tdjQuOQoKZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRv
-IGM2YTA1YTA1NjNlZmQ2Y2RkYWZlNGU4Yzg1N2NmODdkMTMxMWU4M2I6CgogIGdwaW86IHN0bXBl
-OiBBZGQgU1RNUEUxNjAwIHN1cHBvcnQgKDIwMTYtMDgtMTAgMDk6MjU6MjYgKzAxMDApCgotLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tCkltbXV0YWJsZSBicmFuY2ggYmV0d2VlbiBNRkQgYW5kIEdQSU8gZHVlIGZvciB0aGUgdjQu
-OSBtZXJnZSB3aW5kb3cKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KUGF0cmljZSBDaG90YXJkICgxMCk6CiAgICAgIG1mZDog
-c3RtcGU6IEFkZCBTVE1QRV9JRFhfU1lTX0NUUkwvMiBlbnVtCiAgICAgIG1mZDogc3RtcGU6IEFk
-ZCByZXNldCBzdXBwb3J0IGZvciBhbGwgU1RNUEUgdmFyaWFudAogICAgICBncGlvOiBzdG1wZTog
-Rml4IGVkZ2UgYW5kIHJpc2luZy9mYWxsaW5nIGVkZ2UgZGV0ZWN0aW9uCiAgICAgIGdwaW86IHN0
-bXBlOiBXcml0ZSBpbnQgc3RhdHVzIHJlZ2lzdGVyIG9ubHkgd2hlbiBuZWVkZWQKICAgICAgbWZk
-OiBzdG1wZTogVXNlIGdlbmVyaWMgYml0IG1hc2sgbmFtZQogICAgICBtZmQ6IHN0bXBlOiBSZXdv
-cmsgcmVnaXN0ZXJzIGFjY2VzcwogICAgICBncGlvOiBzdG1wZTogUmV3b3JrIHJlZ2lzdGVycyBh
-Y2Nlc3MKICAgICAgRG9jdW1lbnRhdGlvbjogZHQ6IEFkZCBzdG1wZTE2MDAgY29tcGF0aWJsZSBz
-dHJpbmcgdG8gU1RNUEUgTUZECiAgICAgIG1mZDogQWRkIFNUTVBFMTYwMCBzdXBwb3J0CiAgICAg
-IGdwaW86IHN0bXBlOiBBZGQgU1RNUEUxNjAwIHN1cHBvcnQKCiBEb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvbWZkL3N0bXBlLnR4dCB8ICAgMiArLQogZHJpdmVycy9ncGlvL2dwaW8t
-c3RtcGUuYyAgICAgICAgICAgICAgICAgICAgICAgfCAxNjcgKysrKysrKysrKysrKysrKystLS0t
-LS0tCiBkcml2ZXJzL21mZC9zdG1wZS1pMmMuYyAgICAgICAgICAgICAgICAgICAgICAgICB8ICAg
-MiArCiBkcml2ZXJzL21mZC9zdG1wZS5jICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDE2
-MSArKysrKysrKysrKysrKysrKysrLS0tLQogZHJpdmVycy9tZmQvc3RtcGUuaCAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgfCAgODUgKysrKysrKysrKy0tCiBpbmNsdWRlL2xpbnV4L21mZC9z
-dG1wZS5oICAgICAgICAgICAgICAgICAgICAgICB8ICAyMSArKysKIDYgZmlsZXMgY2hhbmdlZCwg
-MzUyIGluc2VydGlvbnMoKyksIDg2IGRlbGV0aW9ucygtKQoKLS0gCkxlZSBKb25lcwpMaW5hcm8g
-U1RNaWNyb2VsZWN0cm9uaWNzIExhbmRpbmcgVGVhbSBMZWFkCkxpbmFyby5vcmcg4pSCIE9wZW4g
-c291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwpGb2xsb3cgTGluYXJvOiBGYWNlYm9vayB8IFR3
-aXR0ZXIgfCBCbG9nCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3Rz
-LmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9saW51eC1hcm0ta2VybmVsCg==
+One of the patch removes redundant read wrapper and makes
+use of regmap_read wherever necessary.
+
+The series is checked for all the regulator registrations on
+am437x-gp-evm.
+
+Boot log: http://pastebin.ubuntu.com/22905402/
+
+The series is based on linux-next on top of series titled:
+[PATCH v3 0/2] regulator: Enable suspend configuration
+
+Do not have the link of the above series available at the moment.
+
+Changes in v7:
+
+Rebasing to latest next branch. GPIO patch of this series
+pushed to linux-next by Linus. Hence posting the remaining
+patches with respective Acks from the domain Maintainers.
+
+Changes in v6:
+
+Rebased regulator/mfd clean up patches against linux-next +
+https://lkml.org/lkml/2016/6/24/122 series.
+
+Changes in v5:
+
+Rebased regulator clean up patch against linux-next.
+
+Changes in v4:
+
+For gpio-tps65218 reatined the compatible table.
+Fixed missing ';' in the power button patch.
+Fixed comments on the Documentation patch.
+Split the Device Tree patches to a separate series.
+
+Changes in v3:
+
+Missed making corresponding changes in the power button and gpio
+drivers. Added couple of patches to fix them to use mfd_cell way
+of parsing.
+
+Keerthy (5):
+  mfd: tps65218: Remove redundant read wrapper
+  Documentation: regulator: tps65218: Update examples
+  input: tps65218-pwrbutton: Add platform_device_id table
+  mfd: tps65218: Use mfd_add_devices instead of of_platform_populate
+  regulator: tps65218: Remove all the compatibles
+
+ .../devicetree/bindings/regulator/tps65218.txt     |  87 +++++++++---
+ drivers/gpio/gpio-tps65218.c                       |   3 +-
+ drivers/input/misc/tps65218-pwrbutton.c            |  10 +-
+ drivers/mfd/tps65218.c                             |  34 ++---
+ drivers/regulator/tps65218-regulator.c             | 153 ++++++++-------------
+ include/linux/mfd/tps65218.h                       |   3 +-
+ 6 files changed, 158 insertions(+), 132 deletions(-)
+
+-- 
+1.9.1
