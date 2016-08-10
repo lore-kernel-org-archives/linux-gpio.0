@@ -1,44 +1,62 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v7 3/3] regulator: lp873x: Change the MFD config option
- as per latest naming
-Date: Wed, 10 Aug 2016 12:42:05 +0100
-Message-ID: <20160810114205.GK9347@sirena.org.uk>
-References: <1470824291-14902-1-git-send-email-j-keerthy@ti.com>
- <1470824291-14902-4-git-send-email-j-keerthy@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: include/linux/io-mapping.h:130:39: error: implicit declaration of
+ function 'ioremap_wc'
+Date: Wed, 10 Aug 2016 15:37:10 +0200
+Message-ID: <CACRpkdbq7S4AKC13dwc87Vg7ys=Qzc3HvQa90=w-QyXcED118A@mail.gmail.com>
+References: <201608071408.Vl9JXt1A%fengguang.wu@intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="AYsPlKobQGgtCvjI"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1470824291-14902-4-git-send-email-j-keerthy@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: lee.jones@linaro.org, linus.walleij@linaro.org, linux-omap@vger.kernel.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:35071 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965165AbcHJS5J (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Aug 2016 14:57:09 -0400
+Received: by mail-oi0-f52.google.com with SMTP id 4so71928329oih.2
+        for <linux-gpio@vger.kernel.org>; Wed, 10 Aug 2016 11:57:09 -0700 (PDT)
+In-Reply-To: <201608071408.Vl9JXt1A%fengguang.wu@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: kbuild test robot <fengguang.wu@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: "kbuild-all@01.org" <kbuild-all@01.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
+On Sun, Aug 7, 2016 at 8:51 AM, kbuild test robot
+<fengguang.wu@intel.com> wrote:
 
---AYsPlKobQGgtCvjI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> FYI, the error/warning still remains.
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   0cbbc422d56668528f6efd1234fe908010284082
+> commit: 7d4defe21c682c934a19fce1ba8b54b7bde61b08 gpio: include <linux/io-mapping.h> in gpiolib-of
+> date:   9 weeks ago
+> config: um-allyesconfig (attached as .config)
+> compiler: gcc-6 (Debian 6.1.1-9) 6.1.1 20160705
+> reproduce:
+>         git checkout 7d4defe21c682c934a19fce1ba8b54b7bde61b08
+>         # save the attached .config to linux build tree
+>         make ARCH=um
+>
+> All errors (new ones prefixed by >>):
+>
+>    In file included from drivers/gpio/gpiolib-of.c:19:0:
+>    include/linux/io-mapping.h: In function 'io_mapping_create_wc':
+>>> include/linux/io-mapping.h:130:39: error: implicit declaration of function 'ioremap_wc' [-Werror=implicit-function-declaration]
+>      return (struct io_mapping __force *) ioremap_wc(base, size);
+>                                           ^~~~~~~~~~
+>    include/linux/io-mapping.h:130:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+>      return (struct io_mapping __force *) ioremap_wc(base, size);
+>             ^
+>    include/linux/io-mapping.h: In function 'io_mapping_free':
+>>> include/linux/io-mapping.h:136:2: error: implicit declaration of function 'iounmap' [-Werror=implicit-function-declaration]
+>      iounmap((void __force __iomem *) mapping);
+>      ^~~~~~~
+>    cc1: some warnings being treated as errors
+>
+> vim +/ioremap_wc +130 include/linux/io-mapping.h
 
-On Wed, Aug 10, 2016 at 03:48:11PM +0530, Keerthy wrote:
-> Change the MFD config option as per latest naming
+I have tried to fix this but don't know what the problem really is,
+as all archs seem to work fine except UM. I need help with this :/
 
-Acked-by: Mark Brown <broonie@kernel.org>
+Involving the linux-gpio list...
 
---AYsPlKobQGgtCvjI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXqxMMAAoJECTWi3JdVIfQp1MH/33w6L5QTFGMCDLSczXb924y
-X3JNXZRhbIMNEexLYYZAC/fvvkNA5VG87cydyihZKX9CIGj/p0eEvB6Lkn7ij7na
-MWsx9ZairnLx5HSvrdCM2T7HzRECcvPPK1QCbsPFMY8PUCzQPxMxRjIV8fIUrS+b
-zv96uPVzumU0IWmjkDqpLu1B0MW2d+PjKeyMheHv9D/4TWoqWULCvhW0szYKEX/y
-zVaZFBgAaDdrKPGBoUViQXI3PKDVFyzZ+x+utC6Hb/CEYPKksZ2WThllwc31EQ54
-n3jcVIjOtSuyrC6XNqpPZNq5mTT+y/4OlBhUTIVXrcebgZXd4UgWvXNzTn5xf7c=
-=8Hf8
------END PGP SIGNATURE-----
-
---AYsPlKobQGgtCvjI--
+Yours,
+Linus Walleij
