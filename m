@@ -1,7 +1,7 @@
 From: <patrice.chotard@st.com>
-Subject: [RESEND v2 07/10] gpio: stmpe: rework registers access
-Date: Wed, 10 Aug 2016 09:39:12 +0200
-Message-ID: <1470814755-19447-8-git-send-email-patrice.chotard@st.com>
+Subject: [RESEND v2 10/10] gpio: stmpe: Add STMPE1600 support
+Date: Wed, 10 Aug 2016 09:39:15 +0200
+Message-ID: <1470814755-19447-11-git-send-email-patrice.chotard@st.com>
 References: <1470814755-19447-1-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,162 +23,128 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Patrice Chotard <patrice.chotard@st.com>
 
-This update allows to use registers map as following :
-regs[reg_index + offset] instead of
-regs[reg_index] + offset
+The particularities of this variant are:
+- GPIO_XXX_LSB and GPIO_XXX_MSB memory locations are inverted compared
+  to other variants.
+- There is no Edge detection, Rising Edge and Falling Edge registers.
+- IRQ flags are cleared when read, no need to write in Status register.
 
-This makes code clearer and will facilitate the addition of STMPE1600
-on which LSB and MSB registers are respectively located at addr and addr + 1.
-Despite for all others STMPE variant, LSB and MSB registers are respectively
-located in reverse order at addr + 1 and addr.
-
-For variant which have 3 registers's bank, we use LSB,CSB and MSB indexes
-which contains respectively LSB (or LOW), CSB (or MID) and MSB (or HIGH)
-register addresses (STMPE1801/STMPE24xx).
-For variant which have 2 registers's bank, we use LSB and CSB indexes only.
-In this case the CSB index contains the MSB regs address (STMPE 1601).
-
+Signed-off-by: Amelie DELAUNAY <amelie.delaunay@st.com>
 Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-stmpe.c | 48 ++++++++++++++++++++++++++---------------------
- 1 file changed, 27 insertions(+), 21 deletions(-)
+ drivers/gpio/gpio-stmpe.c | 48 +++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 38 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index 2789bdc..6d6d76a 100644
+index 6d6d76a..32c5a72 100644
 --- a/drivers/gpio/gpio-stmpe.c
 +++ b/drivers/gpio/gpio-stmpe.c
-@@ -21,6 +21,8 @@
-  */
- enum { REG_RE, REG_FE, REG_IE };
+@@ -128,8 +128,9 @@ static int stmpe_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 	if (type & IRQ_TYPE_LEVEL_LOW || type & IRQ_TYPE_LEVEL_HIGH)
+ 		return -EINVAL;
  
-+enum { LSB, CSB, MSB };
-+
- #define CACHE_NR_REGS	3
- /* No variant has more than 24 GPIOs */
- #define CACHE_NR_BANKS	(24 / 8)
-@@ -40,7 +42,7 @@ static int stmpe_gpio_get(struct gpio_chip *chip, unsigned offset)
- {
- 	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(chip);
- 	struct stmpe *stmpe = stmpe_gpio->stmpe;
--	u8 reg = stmpe->regs[STMPE_IDX_GPMR_LSB] - (offset / 8);
-+	u8 reg = stmpe->regs[STMPE_IDX_GPMR_LSB + (offset / 8)];
- 	u8 mask = 1 << (offset % 8);
- 	int ret;
+-	/* STMPE801 doesn't have RE and FE registers */
+-	if (stmpe_gpio->stmpe->partnum == STMPE801)
++	/* STMPE801 and STMPE 1600 don't have RE and FE registers */
++	if (stmpe_gpio->stmpe->partnum == STMPE801 ||
++	    stmpe_gpio->stmpe->partnum == STMPE1600)
+ 		return 0;
  
-@@ -56,7 +58,7 @@ static void stmpe_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
- 	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(chip);
- 	struct stmpe *stmpe = stmpe_gpio->stmpe;
- 	int which = val ? STMPE_IDX_GPSR_LSB : STMPE_IDX_GPCR_LSB;
--	u8 reg = stmpe->regs[which] - (offset / 8);
-+	u8 reg = stmpe->regs[which + (offset / 8)];
- 	u8 mask = 1 << (offset % 8);
- 
- 	/*
-@@ -74,7 +76,7 @@ static int stmpe_gpio_direction_output(struct gpio_chip *chip,
- {
- 	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(chip);
- 	struct stmpe *stmpe = stmpe_gpio->stmpe;
--	u8 reg = stmpe->regs[STMPE_IDX_GPDR_LSB] - (offset / 8);
-+	u8 reg = stmpe->regs[STMPE_IDX_GPDR_LSB + (offset / 8)];
- 	u8 mask = 1 << (offset % 8);
- 
- 	stmpe_gpio_set(chip, offset, val);
-@@ -87,7 +89,7 @@ static int stmpe_gpio_direction_input(struct gpio_chip *chip,
- {
- 	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(chip);
- 	struct stmpe *stmpe = stmpe_gpio->stmpe;
--	u8 reg = stmpe->regs[STMPE_IDX_GPDR_LSB] - (offset / 8);
-+	u8 reg = stmpe->regs[STMPE_IDX_GPDR_LSB + (offset / 8)];
- 	u8 mask = 1 << (offset % 8);
- 
- 	return stmpe_set_bits(stmpe, reg, mask, 0);
-@@ -157,10 +159,16 @@ static void stmpe_gpio_irq_sync_unlock(struct irq_data *d)
- 	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(gc);
- 	struct stmpe *stmpe = stmpe_gpio->stmpe;
- 	int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
--	static const u8 regmap[] = {
--		[REG_RE]	= STMPE_IDX_GPRER_LSB,
--		[REG_FE]	= STMPE_IDX_GPFER_LSB,
--		[REG_IE]	= STMPE_IDX_IEGPIOR_LSB,
-+	static const u8 regmap[CACHE_NR_REGS][CACHE_NR_BANKS] = {
-+		[REG_RE][LSB] = STMPE_IDX_GPRER_LSB,
-+		[REG_RE][CSB] = STMPE_IDX_GPRER_CSB,
-+		[REG_RE][MSB] = STMPE_IDX_GPRER_MSB,
-+		[REG_FE][LSB] = STMPE_IDX_GPFER_LSB,
-+		[REG_FE][CSB] = STMPE_IDX_GPFER_CSB,
-+		[REG_FE][MSB] = STMPE_IDX_GPFER_MSB,
-+		[REG_IE][LSB] = STMPE_IDX_IEGPIOR_LSB,
-+		[REG_IE][CSB] = STMPE_IDX_IEGPIOR_CSB,
-+		[REG_IE][MSB] = STMPE_IDX_IEGPIOR_MSB,
- 	};
+ 	if (type & IRQ_TYPE_EDGE_RISING)
+@@ -173,9 +174,10 @@ static void stmpe_gpio_irq_sync_unlock(struct irq_data *d)
  	int i, j;
  
-@@ -178,7 +186,7 @@ static void stmpe_gpio_irq_sync_unlock(struct irq_data *d)
- 				continue;
+ 	for (i = 0; i < CACHE_NR_REGS; i++) {
+-		/* STMPE801 doesn't have RE and FE registers */
+-		if ((stmpe->partnum == STMPE801) &&
+-				(i != REG_IE))
++		/* STMPE801 and STMPE1600 don't have RE and FE registers */
++		if ((stmpe->partnum == STMPE801 ||
++		     stmpe->partnum == STMPE1600) &&
++		     (i != REG_IE))
+ 			continue;
  
- 			stmpe_gpio->oldregs[i][j] = new;
--			stmpe_reg_write(stmpe, stmpe->regs[regmap[i]] - j, new);
-+			stmpe_reg_write(stmpe, stmpe->regs[regmap[i][j]], new);
- 		}
- 	}
- 
-@@ -214,9 +222,9 @@ static void stmpe_dbg_show_one(struct seq_file *s,
+ 		for (j = 0; j < num_banks; j++) {
+@@ -208,11 +210,21 @@ static void stmpe_gpio_irq_unmask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
  	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(gc);
- 	struct stmpe *stmpe = stmpe_gpio->stmpe;
- 	const char *label = gpiochip_is_requested(gc, offset);
--	int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
- 	bool val = !!stmpe_gpio_get(gc, offset);
--	u8 dir_reg = stmpe->regs[STMPE_IDX_GPDR_LSB] - (offset / 8);
-+	u8 bank = offset / 8;
-+	u8 dir_reg = stmpe->regs[STMPE_IDX_GPDR_LSB + bank];
- 	u8 mask = 1 << (offset % 8);
- 	int ret;
- 	u8 dir;
-@@ -257,18 +265,16 @@ static void stmpe_dbg_show_one(struct seq_file *s,
- 		case STMPE1601:
- 		case STMPE2401:
- 		case STMPE2403:
--			edge_det_reg = stmpe->regs[STMPE_IDX_GPEDR_MSB] +
--				       num_banks - 1 - (offset / 8);
-+			edge_det_reg = stmpe->regs[STMPE_IDX_GPEDR_LSB + bank];
- 			ret = stmpe_reg_read(stmpe, edge_det_reg);
- 			if (ret < 0)
- 				return;
- 			edge_det = !!(ret & mask);
++	struct stmpe *stmpe = stmpe_gpio->stmpe;
+ 	int offset = d->hwirq;
+ 	int regoffset = offset / 8;
+ 	int mask = 1 << (offset % 8);
  
- 		case STMPE1801:
--			rise_reg = stmpe->regs[STMPE_IDX_GPRER_LSB] -
--				   (offset / 8);
--			fall_reg = stmpe->regs[STMPE_IDX_GPFER_LSB] -
--				   (offset / 8);
-+			rise_reg = stmpe->regs[STMPE_IDX_GPRER_LSB + bank];
-+			fall_reg = stmpe->regs[STMPE_IDX_GPFER_LSB + bank];
+ 	stmpe_gpio->regs[REG_IE][regoffset] |= mask;
 +
- 			ret = stmpe_reg_read(stmpe, rise_reg);
- 			if (ret < 0)
- 				return;
-@@ -279,8 +285,7 @@ static void stmpe_dbg_show_one(struct seq_file *s,
++	/*
++	 * STMPE1600 workaround: to be able to get IRQ from pins,
++	 * a read must be done on GPMR register, or a write in
++	 * GPSR or GPCR registers
++	 */
++	if (stmpe->partnum == STMPE1600)
++		stmpe_reg_read(stmpe,
++			       stmpe->regs[STMPE_IDX_GPMR_LSB + regoffset]);
+ }
+ 
+ static void stmpe_dbg_show_one(struct seq_file *s,
+@@ -285,6 +297,7 @@ static void stmpe_dbg_show_one(struct seq_file *s,
  			fall = !!(ret & mask);
  
  		case STMPE801:
--			irqen_reg = stmpe->regs[STMPE_IDX_IEGPIOR_LSB] -
--				    (offset / 8);
-+			irqen_reg = stmpe->regs[STMPE_IDX_IEGPIOR_LSB + bank];
++		case STMPE1600:
+ 			irqen_reg = stmpe->regs[STMPE_IDX_IEGPIOR_LSB + bank];
  			break;
  
- 		default:
-@@ -362,8 +367,9 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
- 		 */
- 		if (stmpe->partnum != STMPE801 || stmpe->partnum != STMPE1801) {
- 			stmpe_reg_write(stmpe, statmsbreg + i, status[i]);
--			stmpe_reg_write(stmpe, stmpe->regs[STMPE_IDX_GPEDR_MSB]
--					+ i, status[i]);
-+			stmpe_reg_write(stmpe,
-+					stmpe->regs[STMPE_IDX_GPEDR_LSB + i],
-+					status[i]);
- 		}
- 	}
+@@ -331,18 +344,32 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
+ {
+ 	struct stmpe_gpio *stmpe_gpio = dev;
+ 	struct stmpe *stmpe = stmpe_gpio->stmpe;
+-	u8 statmsbreg = stmpe->regs[STMPE_IDX_ISGPIOR_MSB];
++	u8 statmsbreg;
+ 	int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
+ 	u8 status[num_banks];
+ 	int ret;
+ 	int i;
  
++	/*
++	 * the stmpe_block_read() call below, imposes to set statmsbreg
++	 * with the register located at the lowest address. As STMPE1600
++	 * variant is the only one which respect registers address's order
++	 * (LSB regs located at lowest address than MSB ones) whereas all
++	 * the others have a registers layout with MSB located before the
++	 * LSB regs.
++	 */
++	if (stmpe->partnum == STMPE1600)
++		statmsbreg = stmpe->regs[STMPE_IDX_ISGPIOR_LSB];
++	else
++		statmsbreg = stmpe->regs[STMPE_IDX_ISGPIOR_MSB];
++
+ 	ret = stmpe_block_read(stmpe, statmsbreg, num_banks, status);
+ 	if (ret < 0)
+ 		return IRQ_NONE;
+ 
+ 	for (i = 0; i < num_banks; i++) {
+-		int bank = num_banks - i - 1;
++		int bank = (stmpe_gpio->stmpe->partnum == STMPE1600) ? i :
++			   num_banks - i - 1;
+ 		unsigned int enabled = stmpe_gpio->regs[REG_IE][bank];
+ 		unsigned int stat = status[i];
+ 
+@@ -362,10 +389,11 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
+ 
+ 		/*
+ 		 * interrupt status register write has no effect on
+-		 * 801 and 1801, bits are cleared when read.
+-		 * Edge detect register is not present on 801 and 1801
++		 * 801/1801/1600, bits are cleared when read.
++		 * Edge detect register is not present on 801/1600/1801
+ 		 */
+-		if (stmpe->partnum != STMPE801 || stmpe->partnum != STMPE1801) {
++		if (stmpe->partnum != STMPE801 || stmpe->partnum != STMPE1600 ||
++		    stmpe->partnum != STMPE1801) {
+ 			stmpe_reg_write(stmpe, statmsbreg + i, status[i]);
+ 			stmpe_reg_write(stmpe,
+ 					stmpe->regs[STMPE_IDX_GPEDR_LSB + i],
 -- 
 1.9.1
