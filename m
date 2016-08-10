@@ -1,30 +1,68 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/1] pinctrl: intel: merrifield: Add missed header
-Date: Wed, 10 Aug 2016 15:47:40 +0200
-Message-ID: <CACRpkda3zE2CVpNOH-P-qfU+rR6x03jzgwPG+cMWrX8XL6_13A@mail.gmail.com>
-References: <1470151113-75409-1-git-send-email-andriy.shevchenko@linux.intel.com>
+From: Keerthy <j-keerthy@ti.com>
+Subject: [PATCH v7 0/3] mfd: lp873x: Add lp873x PMIC support
+Date: Wed, 10 Aug 2016 15:48:08 +0530
+Message-ID: <1470824291-14902-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:34640 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934899AbcHJTXd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Aug 2016 15:23:33 -0400
-Received: by mail-oi0-f48.google.com with SMTP id l203so72722718oib.1
-        for <linux-gpio@vger.kernel.org>; Wed, 10 Aug 2016 12:23:33 -0700 (PDT)
-In-Reply-To: <1470151113-75409-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Received: from arroyo.ext.ti.com ([198.47.19.12]:33004 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S936546AbcHJSp1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 10 Aug 2016 14:45:27 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: broonie@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org
+Cc: linux-omap@vger.kernel.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, j-keerthy@ti.com
 
-On Tue, Aug 2, 2016 at 5:18 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+The LP873X chip is a power management IC for Portable Navigation Systems
+    and Tablet Computing devices. It contains the following components:
 
-> On x86 builds the absense of <linux/io.h> makes static analyzer and compiler
-> unhappy which fails to build the driver.
+     - Regulators.
+     - Configurable General Purpose Output Signals(GPO).
 
-Patch applied. Thanks a lot Andy!
+PMIC interacts with the main processor through i2c. PMIC has
+couple of LDOs(Linear Regulators), couple of BUCKs (Step-Down DC-DC
+Converter Cores) and GPOs(General Purpose Output Signals).
 
-Yours,
-Linus Walleij
+The regulator patch is already queued:
+http://marc.info/?l=linux-kernel&m=146298767110771&w=2
+
+DT patch also queued:
+
+Hence posting the remaining patches of the series with
+the comments fixed on mfd driver.
+
+Chages in v7:
+
+Reverted the dependency on http://www.gossamer-threads.com/lists/linux/kernel/2457552.
+
+Changes in v6:
+
+Series depends on: http://www.gossamer-threads.com/lists/linux/kernel/2457552
+probe_new used.
+
+Chnages in v4:
+
+Added GPO driver support. 
+
+Keerthy (3):
+  mfd: lp873x: Add lp873x PMIC support
+  gpio: lp873x: Add support for General Purpose Outputs
+  regulator: lp873x: Change the MFD config option as per latest naming
+
+ drivers/gpio/Kconfig       |  10 ++
+ drivers/gpio/Makefile      |   1 +
+ drivers/gpio/gpio-lp873x.c | 185 +++++++++++++++++++++++++++++++
+ drivers/mfd/Kconfig        |  14 +++
+ drivers/mfd/Makefile       |   2 +
+ drivers/mfd/lp873x.c       |  96 +++++++++++++++++
+ drivers/regulator/Kconfig  |   2 +-
+ include/linux/mfd/lp873x.h | 264 +++++++++++++++++++++++++++++++++++++++++++++
+ 8 files changed, 573 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpio/gpio-lp873x.c
+ create mode 100644 drivers/mfd/lp873x.c
+ create mode 100644 include/linux/mfd/lp873x.h
+
+-- 
+1.9.1
+
