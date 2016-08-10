@@ -1,13 +1,15 @@
-From: <patrice.chotard@st.com>
-Subject: [RESEND v2 10/10] gpio: stmpe: Add STMPE1600 support
-Date: Wed, 10 Aug 2016 09:39:15 +0200
-Message-ID: <1470814755-19447-11-git-send-email-patrice.chotard@st.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RESEND v2 01/10] mfd: stmpe: Add STMPE_IDX_SYS_CTRL/2 enum
+Date: Wed, 10 Aug 2016 09:28:49 +0100
+Message-ID: <20160810082849.GG1581@dell>
 References: <1470814755-19447-1-git-send-email-patrice.chotard@st.com>
+ <1470814755-19447-2-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1470814755-19447-1-git-send-email-patrice.chotard@st.com>
+Content-Disposition: inline
+In-Reply-To: <1470814755-19447-2-git-send-email-patrice.chotard@st.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,134 +19,116 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: lee.jones@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Cc: gnurou@gmail.com, amelie.delaunay@st.com, vireshk@kernel.org, Patrice Chotard <patrice.chotard@st.com>, thierry.reding@gmail.com, kernel@pengutronix.de, dinguyen@opensource.altera.com, shawnguo@kernel.org, shiraz.linux.kernel@gmail.com, linux-arm-kernel@lists.infradead.org
+To: patrice.chotard@st.com
+Cc: gnurou@gmail.com, amelie.delaunay@st.com, vireshk@kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, thierry.reding@gmail.com, kernel@pengutronix.de, dinguyen@opensource.altera.com, shawnguo@kernel.org, shiraz.linux.kernel@gmail.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Patrice Chotard <patrice.chotard@st.com>
-
-The particularities of this variant are:
-- GPIO_XXX_LSB and GPIO_XXX_MSB memory locations are inverted compared
-  to other variants.
-- There is no Edge detection, Rising Edge and Falling Edge registers.
-- IRQ flags are cleared when read, no need to write in Status register.
-
-Signed-off-by: Amelie DELAUNAY <amelie.delaunay@st.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-stmpe.c | 48 +++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 38 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index 6d6d76a..32c5a72 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -128,8 +128,9 @@ static int stmpe_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	if (type & IRQ_TYPE_LEVEL_LOW || type & IRQ_TYPE_LEVEL_HIGH)
- 		return -EINVAL;
- 
--	/* STMPE801 doesn't have RE and FE registers */
--	if (stmpe_gpio->stmpe->partnum == STMPE801)
-+	/* STMPE801 and STMPE 1600 don't have RE and FE registers */
-+	if (stmpe_gpio->stmpe->partnum == STMPE801 ||
-+	    stmpe_gpio->stmpe->partnum == STMPE1600)
- 		return 0;
- 
- 	if (type & IRQ_TYPE_EDGE_RISING)
-@@ -173,9 +174,10 @@ static void stmpe_gpio_irq_sync_unlock(struct irq_data *d)
- 	int i, j;
- 
- 	for (i = 0; i < CACHE_NR_REGS; i++) {
--		/* STMPE801 doesn't have RE and FE registers */
--		if ((stmpe->partnum == STMPE801) &&
--				(i != REG_IE))
-+		/* STMPE801 and STMPE1600 don't have RE and FE registers */
-+		if ((stmpe->partnum == STMPE801 ||
-+		     stmpe->partnum == STMPE1600) &&
-+		     (i != REG_IE))
- 			continue;
- 
- 		for (j = 0; j < num_banks; j++) {
-@@ -208,11 +210,21 @@ static void stmpe_gpio_irq_unmask(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(gc);
-+	struct stmpe *stmpe = stmpe_gpio->stmpe;
- 	int offset = d->hwirq;
- 	int regoffset = offset / 8;
- 	int mask = 1 << (offset % 8);
- 
- 	stmpe_gpio->regs[REG_IE][regoffset] |= mask;
-+
-+	/*
-+	 * STMPE1600 workaround: to be able to get IRQ from pins,
-+	 * a read must be done on GPMR register, or a write in
-+	 * GPSR or GPCR registers
-+	 */
-+	if (stmpe->partnum == STMPE1600)
-+		stmpe_reg_read(stmpe,
-+			       stmpe->regs[STMPE_IDX_GPMR_LSB + regoffset]);
- }
- 
- static void stmpe_dbg_show_one(struct seq_file *s,
-@@ -285,6 +297,7 @@ static void stmpe_dbg_show_one(struct seq_file *s,
- 			fall = !!(ret & mask);
- 
- 		case STMPE801:
-+		case STMPE1600:
- 			irqen_reg = stmpe->regs[STMPE_IDX_IEGPIOR_LSB + bank];
- 			break;
- 
-@@ -331,18 +344,32 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
- {
- 	struct stmpe_gpio *stmpe_gpio = dev;
- 	struct stmpe *stmpe = stmpe_gpio->stmpe;
--	u8 statmsbreg = stmpe->regs[STMPE_IDX_ISGPIOR_MSB];
-+	u8 statmsbreg;
- 	int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
- 	u8 status[num_banks];
- 	int ret;
- 	int i;
- 
-+	/*
-+	 * the stmpe_block_read() call below, imposes to set statmsbreg
-+	 * with the register located at the lowest address. As STMPE1600
-+	 * variant is the only one which respect registers address's order
-+	 * (LSB regs located at lowest address than MSB ones) whereas all
-+	 * the others have a registers layout with MSB located before the
-+	 * LSB regs.
-+	 */
-+	if (stmpe->partnum == STMPE1600)
-+		statmsbreg = stmpe->regs[STMPE_IDX_ISGPIOR_LSB];
-+	else
-+		statmsbreg = stmpe->regs[STMPE_IDX_ISGPIOR_MSB];
-+
- 	ret = stmpe_block_read(stmpe, statmsbreg, num_banks, status);
- 	if (ret < 0)
- 		return IRQ_NONE;
- 
- 	for (i = 0; i < num_banks; i++) {
--		int bank = num_banks - i - 1;
-+		int bank = (stmpe_gpio->stmpe->partnum == STMPE1600) ? i :
-+			   num_banks - i - 1;
- 		unsigned int enabled = stmpe_gpio->regs[REG_IE][bank];
- 		unsigned int stat = status[i];
- 
-@@ -362,10 +389,11 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
- 
- 		/*
- 		 * interrupt status register write has no effect on
--		 * 801 and 1801, bits are cleared when read.
--		 * Edge detect register is not present on 801 and 1801
-+		 * 801/1801/1600, bits are cleared when read.
-+		 * Edge detect register is not present on 801/1600/1801
- 		 */
--		if (stmpe->partnum != STMPE801 || stmpe->partnum != STMPE1801) {
-+		if (stmpe->partnum != STMPE801 || stmpe->partnum != STMPE1600 ||
-+		    stmpe->partnum != STMPE1801) {
- 			stmpe_reg_write(stmpe, statmsbreg + i, status[i]);
- 			stmpe_reg_write(stmpe,
- 					stmpe->regs[STMPE_IDX_GPEDR_LSB + i],
--- 
-1.9.1
+T24gV2VkLCAxMCBBdWcgMjAxNiwgcGF0cmljZS5jaG90YXJkQHN0LmNvbSB3cm90ZToKCj4gRnJv
+bTogUGF0cmljZSBDaG90YXJkIDxwYXRyaWNlLmNob3RhcmRAc3QuY29tPgo+IAo+IEFzIFNUTVBF
+MTgwMS8xNjAxLzI0eHggaGFzIGEgU1lTX0NUUkwgcmVnaXN0ZXIgYW5kCj4gU1RNUEUxNjAxLzI0
+MDMgaGFzIGV2ZW4gYSBTWVNfQ1RSTDIgcmVnaXN0ZXIsIGFkZAo+IFNUTVBFX0lEWF9TWVNfQ1RS
+TC8yIGFuZCB1cGRhdGUgZHJpdmVyIGNvZGUgYWNjb3JkaW5nbHkKPiAKPiBUaGlzIHVwZGF0ZSBw
+cmVwYXJlcyB0aGUgZ3JvdW5kIGZvciBub3QgeWV0IHN1cHBvcnRlZCBTVE1QRTE2MDAKPiB3aGlj
+aCBzaGFyZSBzaW1pbGFyIFJFR19TWVNfQ1RSTCByZWdpc3Rlci4KPiAKPiBTaWduZWQtb2ZmLWJ5
+OiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+Cj4gQWNrZWQtYnk6IExp
+bnVzIFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz4KPiBBY2tlZC1ieTogTGVlIEpv
+bmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4KPiAtLS0KPiAgZHJpdmVycy9tZmQvc3RtcGUuYyAg
+ICAgICB8IDIxICsrKysrKysrKysrKysrLS0tLS0tLQo+ICBkcml2ZXJzL21mZC9zdG1wZS5oICAg
+ICAgIHwgIDIgKysKPiAgaW5jbHVkZS9saW51eC9tZmQvc3RtcGUuaCB8ICAyICsrCj4gIDMgZmls
+ZXMgY2hhbmdlZCwgMTggaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKCkFwcGxpZWQsIHRo
+YW5rcy4KCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWZkL3N0bXBlLmMgYi9kcml2ZXJzL21mZC9z
+dG1wZS5jCj4gaW5kZXggZmI4ZjllOC4uYzU1M2I3MyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL21m
+ZC9zdG1wZS5jCj4gKysrIGIvZHJpdmVycy9tZmQvc3RtcGUuYwo+IEBAIC00NDgsNiArNDQ4LDgg
+QEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtZmRfY2VsbCBzdG1wZV90c19jZWxsID0gewo+ICAKPiAg
+c3RhdGljIGNvbnN0IHU4IHN0bXBlODExX3JlZ3NbXSA9IHsKPiAgCVtTVE1QRV9JRFhfQ0hJUF9J
+RF0JPSBTVE1QRTgxMV9SRUdfQ0hJUF9JRCwKPiArCVtTVE1QRV9JRFhfU1lTX0NUUkxdCT0gU1RN
+UEU4MTFfUkVHX1NZU19DVFJMLAo+ICsJW1NUTVBFX0lEWF9TWVNfQ1RSTDJdCT0gU1RNUEU4MTFf
+UkVHX1NZU19DVFJMMiwKPiAgCVtTVE1QRV9JRFhfSUNSX0xTQl0JPSBTVE1QRTgxMV9SRUdfSU5U
+X0NUUkwsCj4gIAlbU1RNUEVfSURYX0lFUl9MU0JdCT0gU1RNUEU4MTFfUkVHX0lOVF9FTiwKPiAg
+CVtTVE1QRV9JRFhfSVNSX01TQl0JPSBTVE1QRTgxMV9SRUdfSU5UX1NUQSwKPiBAQCAtNDkwLDcg
+KzQ5Miw3IEBAIHN0YXRpYyBpbnQgc3RtcGU4MTFfZW5hYmxlKHN0cnVjdCBzdG1wZSAqc3RtcGUs
+IHVuc2lnbmVkIGludCBibG9ja3MsCj4gIAlpZiAoYmxvY2tzICYgU1RNUEVfQkxPQ0tfVE9VQ0hT
+Q1JFRU4pCj4gIAkJbWFzayB8PSBTVE1QRTgxMV9TWVNfQ1RSTDJfVFNDX09GRjsKPiAgCj4gLQly
+ZXR1cm4gX19zdG1wZV9zZXRfYml0cyhzdG1wZSwgU1RNUEU4MTFfUkVHX1NZU19DVFJMMiwgbWFz
+aywKPiArCXJldHVybiBfX3N0bXBlX3NldF9iaXRzKHN0bXBlLCBzdG1wZS0+cmVnc1tTVE1QRV9J
+RFhfU1lTX0NUUkwyXSwgbWFzaywKPiAgCQkJCWVuYWJsZSA/IDAgOiBtYXNrKTsKPiAgfQo+ICAK
+PiBAQCAtNTM1LDYgKzUzNyw4IEBAIHN0YXRpYyBzdHJ1Y3Qgc3RtcGVfdmFyaWFudF9pbmZvIHN0
+bXBlNjEwID0gewo+ICAKPiAgc3RhdGljIGNvbnN0IHU4IHN0bXBlMTYwMV9yZWdzW10gPSB7Cj4g
+IAlbU1RNUEVfSURYX0NISVBfSURdCT0gU1RNUEUxNjAxX1JFR19DSElQX0lELAo+ICsJW1NUTVBF
+X0lEWF9TWVNfQ1RSTF0JPSBTVE1QRTE2MDFfUkVHX1NZU19DVFJMLAo+ICsJW1NUTVBFX0lEWF9T
+WVNfQ1RSTDJdCT0gU1RNUEUxNjAxX1JFR19TWVNfQ1RSTDIsCj4gIAlbU1RNUEVfSURYX0lDUl9M
+U0JdCT0gU1RNUEUxNjAxX1JFR19JQ1JfTFNCLAo+ICAJW1NUTVBFX0lEWF9JRVJfTFNCXQk9IFNU
+TVBFMTYwMV9SRUdfSUVSX0xTQiwKPiAgCVtTVE1QRV9JRFhfSVNSX01TQl0JPSBTVE1QRTE2MDFf
+UkVHX0lTUl9NU0IsCj4gQEAgLTYxOSwxMyArNjIzLDEzIEBAIHN0YXRpYyBpbnQgc3RtcGUxNjAx
+X2F1dG9zbGVlcChzdHJ1Y3Qgc3RtcGUgKnN0bXBlLAo+ICAJCXJldHVybiB0aW1lb3V0Owo+ICAJ
+fQo+ICAKPiAtCXJldCA9IF9fc3RtcGVfc2V0X2JpdHMoc3RtcGUsIFNUTVBFMTYwMV9SRUdfU1lT
+X0NUUkwyLAo+ICsJcmV0ID0gX19zdG1wZV9zZXRfYml0cyhzdG1wZSwgc3RtcGUtPnJlZ3NbU1RN
+UEVfSURYX1NZU19DVFJMMl0sCj4gIAkJCVNUTVBFMTYwMV9BVVRPU0xFRVBfVElNRU9VVF9NQVNL
+LAo+ICAJCQl0aW1lb3V0KTsKPiAgCWlmIChyZXQgPCAwKQo+ICAJCXJldHVybiByZXQ7Cj4gIAo+
+IC0JcmV0dXJuIF9fc3RtcGVfc2V0X2JpdHMoc3RtcGUsIFNUTVBFMTYwMV9SRUdfU1lTX0NUUkwy
+LAo+ICsJcmV0dXJuIF9fc3RtcGVfc2V0X2JpdHMoc3RtcGUsIHN0bXBlLT5yZWdzW1NUTVBFX0lE
+WF9TWVNfQ1RSTDJdLAo+ICAJCQlTVFBNRTE2MDFfQVVUT1NMRUVQX0VOQUJMRSwKPiAgCQkJU1RQ
+TUUxNjAxX0FVVE9TTEVFUF9FTkFCTEUpOwo+ICB9Cj4gQEAgLTY1MCw3ICs2NTQsNyBAQCBzdGF0
+aWMgaW50IHN0bXBlMTYwMV9lbmFibGUoc3RydWN0IHN0bXBlICpzdG1wZSwgdW5zaWduZWQgaW50
+IGJsb2NrcywKPiAgCWVsc2UKPiAgCQltYXNrICY9IH5TVE1QRTE2MDFfU1lTX0NUUkxfRU5BQkxF
+X1NQV007Cj4gIAo+IC0JcmV0dXJuIF9fc3RtcGVfc2V0X2JpdHMoc3RtcGUsIFNUTVBFMTYwMV9S
+RUdfU1lTX0NUUkwsIG1hc2ssCj4gKwlyZXR1cm4gX19zdG1wZV9zZXRfYml0cyhzdG1wZSwgc3Rt
+cGUtPnJlZ3NbU1RNUEVfSURYX1NZU19DVFJMXSwgbWFzaywKPiAgCQkJCWVuYWJsZSA/IG1hc2sg
+OiAwKTsKPiAgfQo+ICAKPiBAQCAtNjg5LDYgKzY5Myw3IEBAIHN0YXRpYyBzdHJ1Y3Qgc3RtcGVf
+dmFyaWFudF9pbmZvIHN0bXBlMTYwMSA9IHsKPiAgICovCj4gIHN0YXRpYyBjb25zdCB1OCBzdG1w
+ZTE4MDFfcmVnc1tdID0gewo+ICAJW1NUTVBFX0lEWF9DSElQX0lEXQk9IFNUTVBFMTgwMV9SRUdf
+Q0hJUF9JRCwKPiArCVtTVE1QRV9JRFhfU1lTX0NUUkxdCT0gU1RNUEUxODAxX1JFR19TWVNfQ1RS
+TCwKPiAgCVtTVE1QRV9JRFhfSUNSX0xTQl0JPSBTVE1QRTE4MDFfUkVHX0lOVF9DVFJMX0xPVywK
+PiAgCVtTVE1QRV9JRFhfSUVSX0xTQl0JPSBTVE1QRTE4MDFfUkVHX0lOVF9FTl9NQVNLX0xPVywK
+PiAgCVtTVE1QRV9JRFhfSVNSX0xTQl0JPSBTVE1QRTE4MDFfUkVHX0lOVF9TVEFfTE9XLAo+IEBA
+IC03MzUsMTQgKzc0MCwxNCBAQCBzdGF0aWMgaW50IHN0bXBlMTgwMV9yZXNldChzdHJ1Y3Qgc3Rt
+cGUgKnN0bXBlKQo+ICAJdW5zaWduZWQgbG9uZyB0aW1lb3V0Owo+ICAJaW50IHJldCA9IDA7Cj4g
+IAo+IC0JcmV0ID0gX19zdG1wZV9zZXRfYml0cyhzdG1wZSwgU1RNUEUxODAxX1JFR19TWVNfQ1RS
+TCwKPiArCXJldCA9IF9fc3RtcGVfc2V0X2JpdHMoc3RtcGUsIHN0bXBlLT5yZWdzW1NUTVBFX0lE
+WF9TWVNfQ1RSTF0sCj4gIAkJU1RNUEUxODAxX01TS19TWVNfQ1RSTF9SRVNFVCwgU1RNUEUxODAx
+X01TS19TWVNfQ1RSTF9SRVNFVCk7Cj4gIAlpZiAocmV0IDwgMCkKPiAgCQlyZXR1cm4gcmV0Owo+
+ICAKPiAgCXRpbWVvdXQgPSBqaWZmaWVzICsgbXNlY3NfdG9famlmZmllcygxMDApOwo+ICAJd2hp
+bGUgKHRpbWVfYmVmb3JlKGppZmZpZXMsIHRpbWVvdXQpKSB7Cj4gLQkJcmV0ID0gX19zdG1wZV9y
+ZWdfcmVhZChzdG1wZSwgU1RNUEUxODAxX1JFR19TWVNfQ1RSTCk7Cj4gKwkJcmV0ID0gX19zdG1w
+ZV9yZWdfcmVhZChzdG1wZSwgc3RtcGUtPnJlZ3NbU1RNUEVfSURYX1NZU19DVFJMXSk7Cj4gIAkJ
+aWYgKHJldCA8IDApCj4gIAkJCXJldHVybiByZXQ7Cj4gIAkJaWYgKCEocmV0ICYgU1RNUEUxODAx
+X01TS19TWVNfQ1RSTF9SRVNFVCkpCj4gQEAgLTc3Myw2ICs3NzgsOCBAQCBzdGF0aWMgc3RydWN0
+IHN0bXBlX3ZhcmlhbnRfaW5mbyBzdG1wZTE4MDEgPSB7Cj4gIAo+ICBzdGF0aWMgY29uc3QgdTgg
+c3RtcGUyNHh4X3JlZ3NbXSA9IHsKPiAgCVtTVE1QRV9JRFhfQ0hJUF9JRF0JPSBTVE1QRTI0WFhf
+UkVHX0NISVBfSUQsCj4gKwlbU1RNUEVfSURYX1NZU19DVFJMXQk9IFNUTVBFMjRYWF9SRUdfU1lT
+X0NUUkwsCj4gKwlbU1RNUEVfSURYX1NZU19DVFJMMl0JPSBTVE1QRTI0WFhfUkVHX1NZU19DVFJM
+MiwKPiAgCVtTVE1QRV9JRFhfSUNSX0xTQl0JPSBTVE1QRTI0WFhfUkVHX0lDUl9MU0IsCj4gIAlb
+U1RNUEVfSURYX0lFUl9MU0JdCT0gU1RNUEUyNFhYX1JFR19JRVJfTFNCLAo+ICAJW1NUTVBFX0lE
+WF9JU1JfTVNCXQk9IFNUTVBFMjRYWF9SRUdfSVNSX01TQiwKPiBAQCAtODE5LDcgKzgyNiw3IEBA
+IHN0YXRpYyBpbnQgc3RtcGUyNHh4X2VuYWJsZShzdHJ1Y3Qgc3RtcGUgKnN0bXBlLCB1bnNpZ25l
+ZCBpbnQgYmxvY2tzLAo+ICAJaWYgKGJsb2NrcyAmIFNUTVBFX0JMT0NLX0tFWVBBRCkKPiAgCQlt
+YXNrIHw9IFNUTVBFMjRYWF9TWVNfQ1RSTF9FTkFCTEVfS1BDOwo+ICAKPiAtCXJldHVybiBfX3N0
+bXBlX3NldF9iaXRzKHN0bXBlLCBTVE1QRTI0WFhfUkVHX1NZU19DVFJMLCBtYXNrLAo+ICsJcmV0
+dXJuIF9fc3RtcGVfc2V0X2JpdHMoc3RtcGUsIHN0bXBlLT5yZWdzW1NUTVBFX0lEWF9TWVNfQ1RS
+TF0sIG1hc2ssCj4gIAkJCQllbmFibGUgPyBtYXNrIDogMCk7Cj4gIH0KPiAgCj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvbWZkL3N0bXBlLmggYi9kcml2ZXJzL21mZC9zdG1wZS5oCj4gaW5kZXggODRh
+ZGI0Ni4uNDA2ZjlmMiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL21mZC9zdG1wZS5oCj4gKysrIGIv
+ZHJpdmVycy9tZmQvc3RtcGUuaAo+IEBAIC0xMzgsNiArMTM4LDcgQEAgaW50IHN0bXBlX3JlbW92
+ZShzdHJ1Y3Qgc3RtcGUgKnN0bXBlKTsKPiAgI2RlZmluZSBTVE1QRTgxMV9OUl9JTlRFUk5BTF9J
+UlFTCTgKPiAgCj4gICNkZWZpbmUgU1RNUEU4MTFfUkVHX0NISVBfSUQJCTB4MDAKPiArI2RlZmlu
+ZSBTVE1QRTgxMV9SRUdfU1lTX0NUUkwJCTB4MDMKPiAgI2RlZmluZSBTVE1QRTgxMV9SRUdfU1lT
+X0NUUkwyCQkweDA0Cj4gICNkZWZpbmUgU1RNUEU4MTFfUkVHX1NQSV9DRkcJCTB4MDgKPiAgI2Rl
+ZmluZSBTVE1QRTgxMV9SRUdfSU5UX0NUUkwJCTB4MDkKPiBAQCAtMjY0LDYgKzI2NSw3IEBAIGlu
+dCBzdG1wZV9yZW1vdmUoc3RydWN0IHN0bXBlICpzdG1wZSk7Cj4gICNkZWZpbmUgU1RNUEUyNFhY
+X05SX0lOVEVSTkFMX0lSUVMJOQo+ICAKPiAgI2RlZmluZSBTVE1QRTI0WFhfUkVHX1NZU19DVFJM
+CQkweDAyCj4gKyNkZWZpbmUgU1RNUEUyNFhYX1JFR19TWVNfQ1RSTDIJCTB4MDMKPiAgI2RlZmlu
+ZSBTVE1QRTI0WFhfUkVHX0lDUl9MU0IJCTB4MTEKPiAgI2RlZmluZSBTVE1QRTI0WFhfUkVHX0lF
+Ul9MU0IJCTB4MTMKPiAgI2RlZmluZSBTVE1QRTI0WFhfUkVHX0lTUl9NU0IJCTB4MTQKPiBkaWZm
+IC0tZ2l0IGEvaW5jbHVkZS9saW51eC9tZmQvc3RtcGUuaCBiL2luY2x1ZGUvbGludXgvbWZkL3N0
+bXBlLmgKPiBpbmRleCBjYjgzODgzLi42YzY2OTBmIDEwMDY0NAo+IC0tLSBhL2luY2x1ZGUvbGlu
+dXgvbWZkL3N0bXBlLmgKPiArKysgYi9pbmNsdWRlL2xpbnV4L21mZC9zdG1wZS5oCj4gQEAgLTM5
+LDYgKzM5LDggQEAgZW51bSBzdG1wZV9wYXJ0bnVtIHsKPiAgICovCj4gIGVudW0gewo+ICAJU1RN
+UEVfSURYX0NISVBfSUQsCj4gKwlTVE1QRV9JRFhfU1lTX0NUUkwsCj4gKwlTVE1QRV9JRFhfU1lT
+X0NUUkwyLAo+ICAJU1RNUEVfSURYX0lDUl9MU0IsCj4gIAlTVE1QRV9JRFhfSUVSX0xTQiwKPiAg
+CVNUTVBFX0lEWF9JU1JfTFNCLAoKLS0gCkxlZSBKb25lcwpMaW5hcm8gU1RNaWNyb2VsZWN0cm9u
+aWNzIExhbmRpbmcgVGVhbSBMZWFkCkxpbmFyby5vcmcg4pSCIE9wZW4gc291cmNlIHNvZnR3YXJl
+IGZvciBBUk0gU29DcwpGb2xsb3cgTGluYXJvOiBGYWNlYm9vayB8IFR3aXR0ZXIgfCBCbG9nCgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0t
+a2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcK
+aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2Vy
+bmVsCg==
