@@ -1,11 +1,16 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH v7 0/5] mfd: tps65218: Clean ups
-Date: Wed, 10 Aug 2016 18:24:01 +0530
-Message-ID: <1470833641-29546-1-git-send-email-j-keerthy@ti.com>
+From: Patrice Chotard <patrice.chotard@st.com>
+Subject: Re: [PATCH v2 02/10] mfd: stmpe: Add reset support for all STMPE
+ variant
+Date: Wed, 10 Aug 2016 18:00:22 +0200
+Message-ID: <6fcee179-45e1-6480-c4da-7dbc03b1843d@st.com>
+References: <1461845589-4826-1-git-send-email-patrice.chotard@st.com>
+ <1461845589-4826-3-git-send-email-patrice.chotard@st.com>
+ <8798334c6e5272a08ed665f7fc649fd1@agner.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <8798334c6e5272a08ed665f7fc649fd1@agner.ch>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -15,70 +20,62 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: broonie@kernel.org, lee.jones@linaro.org, tony@atomide.com
-Cc: gnurou@gmail.com, d-gerlach@ti.com, devicetree@vger.kernel.org, j-keerthy@ti.com, linus.walleij@linaro.org, dmitry.torokhov@gmail.com, linux-kernel@vger.kernel.org, t-kristo@ti.com, linux-gpio@vger.kernel.org, robh+dt@kernel.org, russ.dill@ti.com, linux-input@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: gnurou@gmail.com, amelie.delaunay@st.com, dev@lynxeye.de, marcel.ziswiler@toradex.com, shawnguo@kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, thierry.reding@gmail.com, kernel@pengutronix.de, vireshk@kernel.org, dinguyen@opensource.altera.com, lee.jones@linaro.org, shiraz.linux.kernel@gmail.com, linux-arm-kernel@lists.infradead.org, maxime.coquelin@st.com
 List-Id: linux-gpio@vger.kernel.org
 
-The series cleans up mainly the regulator driver and implements
-the device tree parsing using the regulator framework. Removes
-all the redundant compatibles for the individual regulators.
-Adds platform_device_id table for the gpio and power button modules.
+Hi Stefan
 
-One of the patch removes redundant read wrapper and makes
-use of regmap_read wherever necessary.
 
-The series is checked for all the regulator registrations on
-am437x-gp-evm.
+On 08/07/2016 04:54 AM, Stefan Agner wrote:
+> On 2016-04-28 05:13, patrice.chotard@st.com wrote:
+>> From: Patrice Chotard <patrice.chotard@st.com>
+>>
+>> Reset was only implemented for STMPE1801 variant despite
+>> all variant have a SOFT_RESET bit.
+>>
+>> For STMPE2401/2403/801/1601/1801 SOFT_RESET bit is bit 7
+>> of SYS_CTRL register.
+>> For STMPE610/811 (which have the same variant id) SOFT_RESET
+>> bit is bit 1 of SYS_CTRL register.
+>>
+>> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>> Acked-by: Lee Jones <lee.jones@linaro.org>
+>> ---
+>>  drivers/mfd/stmpe.c | 23 +++++++++++++++--------
+>>  drivers/mfd/stmpe.h |  7 +++++--
+>>  2 files changed, 20 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
+>> index c553b73..af682d0 100644
+>> --- a/drivers/mfd/stmpe.c
+>> +++ b/drivers/mfd/stmpe.c
+>> @@ -735,13 +735,22 @@ static int stmpe1801_enable(struct stmpe *stmpe,
+>> unsigned int blocks,
+>>  				enable ? mask : 0);
+>>  }
+>>  
+>> -static int stmpe1801_reset(struct stmpe *stmpe)
+>> +static int stmpe_reset(struct stmpe *stmpe)
+>>  {
+>> +	u16 id_val = stmpe->variant->id_val;
+>>  	unsigned long timeout;
+>>  	int ret = 0;
+>> +	u8 reset_bit;
+>> +
+>> +	if (id_val == STMPE811_ID)
+>> +		/* STMPE801 and STMPE610 use bit 1 of SYS_CTRL register */
+>> +		reset_bit = STMPE811_SYS_CTRL_RESET;
+>> +	else
+>> +		/* all other STMPE variant use bit 7 of SYS_CTRL register */
+>> +		reset_bit = STMPE_SYS_CTRL_RESET;
+> Wouldn't it be nicer to have this in struct stmpe_variant_info like
+> id_mask...?
 
-Boot log: http://pastebin.ubuntu.com/22905402/
+For information this series has just been pushed by Lee Jones.
+I will have a look at your proposal and submit an update , but after my 3 weeks of vacations ;-)
 
-The series is based on linux-next on top of series titled:
-[PATCH v3 0/2] regulator: Enable suspend configuration
+Thanks
 
-Do not have the link of the above series available at the moment.
-
-Changes in v7:
-
-Rebasing to latest next branch. GPIO patch of this series
-pushed to linux-next by Linus. Hence posting the remaining
-patches with respective Acks from the domain Maintainers.
-
-Changes in v6:
-
-Rebased regulator/mfd clean up patches against linux-next +
-https://lkml.org/lkml/2016/6/24/122 series.
-
-Changes in v5:
-
-Rebased regulator clean up patch against linux-next.
-
-Changes in v4:
-
-For gpio-tps65218 reatined the compatible table.
-Fixed missing ';' in the power button patch.
-Fixed comments on the Documentation patch.
-Split the Device Tree patches to a separate series.
-
-Changes in v3:
-
-Missed making corresponding changes in the power button and gpio
-drivers. Added couple of patches to fix them to use mfd_cell way
-of parsing.
-
-Keerthy (5):
-  mfd: tps65218: Remove redundant read wrapper
-  Documentation: regulator: tps65218: Update examples
-  input: tps65218-pwrbutton: Add platform_device_id table
-  mfd: tps65218: Use mfd_add_devices instead of of_platform_populate
-  regulator: tps65218: Remove all the compatibles
-
- .../devicetree/bindings/regulator/tps65218.txt     |  87 +++++++++---
- drivers/gpio/gpio-tps65218.c                       |   3 +-
- drivers/input/misc/tps65218-pwrbutton.c            |  10 +-
- drivers/mfd/tps65218.c                             |  34 ++---
- drivers/regulator/tps65218-regulator.c             | 153 ++++++++-------------
- include/linux/mfd/tps65218.h                       |   3 +-
- 6 files changed, 158 insertions(+), 132 deletions(-)
-
--- 
-1.9.1
+Patrice
