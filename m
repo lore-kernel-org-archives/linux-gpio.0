@@ -1,8 +1,8 @@
 From: <patrice.chotard@st.com>
-Subject: [RESEND v2 08/10] Documentation: dt: add stmpe1600 compatible string
- to stmpe mfd
-Date: Wed, 10 Aug 2016 09:39:13 +0200
-Message-ID: <1470814755-19447-9-git-send-email-patrice.chotard@st.com>
+Subject: [RESEND v2 04/10] gpio: stmpe: write int status register only when
+ needed
+Date: Wed, 10 Aug 2016 09:39:09 +0200
+Message-ID: <1470814755-19447-5-git-send-email-patrice.chotard@st.com>
 References: <1470814755-19447-1-git-send-email-patrice.chotard@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -24,27 +24,41 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Patrice Chotard <patrice.chotard@st.com>
 
-This patch adds a new compatible string for stmpe mfd to support
-stmpe1600 variant.
+On STMPE801/1801 datasheets, it's mentionned writing
+in interrupt status register has no effect, bits are
+cleared when reading.
 
 Signed-off-by: Amelie DELAUNAY <amelie.delaunay@st.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- Documentation/devicetree/bindings/mfd/stmpe.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-stmpe.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/stmpe.txt b/Documentation/devicetree/bindings/mfd/stmpe.txt
-index 3fb68bf..f9065a5 100644
---- a/Documentation/devicetree/bindings/mfd/stmpe.txt
-+++ b/Documentation/devicetree/bindings/mfd/stmpe.txt
-@@ -4,7 +4,7 @@ STMPE is an MFD device which may expose the following inbuilt devices: gpio,
- keypad, touchscreen, adc, pwm, rotator.
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index bfc918c..2789bdc 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -355,12 +355,16 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
+ 			stat &= ~(1 << bit);
+ 		}
  
- Required properties:
-- - compatible                   : "st,stmpe[610|801|811|1601|2401|2403]"
-+ - compatible                   : "st,stmpe[610|801|811|1600|1601|2401|2403]"
-  - reg                          : I2C/SPI address of the device
+-		stmpe_reg_write(stmpe, statmsbreg + i, status[i]);
+-
+-		/* Edge detect register is not present on 801 and 1801 */
+-		if (stmpe->partnum != STMPE801 || stmpe->partnum != STMPE1801)
++		/*
++		 * interrupt status register write has no effect on
++		 * 801 and 1801, bits are cleared when read.
++		 * Edge detect register is not present on 801 and 1801
++		 */
++		if (stmpe->partnum != STMPE801 || stmpe->partnum != STMPE1801) {
++			stmpe_reg_write(stmpe, statmsbreg + i, status[i]);
+ 			stmpe_reg_write(stmpe, stmpe->regs[STMPE_IDX_GPEDR_MSB]
+ 					+ i, status[i]);
++		}
+ 	}
  
- Optional properties:
+ 	return IRQ_HANDLED;
 -- 
 1.9.1
