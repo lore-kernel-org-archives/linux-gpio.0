@@ -1,100 +1,332 @@
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc: sysdev: cpm: fix gpio save_regs functions
-Date: Thu, 11 Aug 2016 10:50:40 +0200 (CEST)
-Message-ID: <20160811085040.2EC561A2456@localhost.localdomain>
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 06/12] gpio: Add Aspeed driver
+Date: Thu, 11 Aug 2016 11:20:10 +0200
+Message-ID: <CACRpkdYvZdTa7dpSs5=vnK77wpRGFT2W3e3=AS3GJGY7CXdwRA@mail.gmail.com>
+References: <1468994313-13538-1-git-send-email-andrew@aj.id.au> <1468994313-13538-7-git-send-email-andrew@aj.id.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1468994313-13538-7-git-send-email-andrew-zrmu5oMJ5Fs@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Jeremy Kerr <jk-mnsaURCQ41sdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alistair Popple <alistair-Y4h6yKqj69EXC2x5gXVKYQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-of_mm_gpiochip_add_data() calls mm_gc->save_regs() before
-setting the data. Therefore ->save_regs() cannot use
-gpiochip_get_data()
+On Wed, Jul 20, 2016 at 7:58 AM, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org> wrote:
 
-[    0.275940] Unable to handle kernel paging request for data at address 0x00000130
-[    0.283120] Faulting instruction address: 0xc01b44cc
-[    0.288175] Oops: Kernel access of bad area, sig: 11 [#1]
-[    0.293343] PREEMPT CMPC885
-[    0.296141] CPU: 0 PID: 1 Comm: swapper Not tainted 4.7.0-g65124df-dirty #68
-[    0.304131] task: c6074000 ti: c6080000 task.ti: c6080000
-[    0.309459] NIP: c01b44cc LR: c0011720 CTR: c0011708
-[    0.314372] REGS: c6081d90 TRAP: 0300   Not tainted  (4.7.0-g65124df-dirty)
-[    0.322267] MSR: 00009032 <EE,ME,IR,DR,RI>  CR: 24000028  XER: 20000000
-[    0.328813] DAR: 00000130 DSISR: c0000000
-GPR00: c01b6d0c c6081e40 c6074000 c6017000 c9028000 c601d028 c6081dd8 00000000
-GPR08: c601d028 00000000 ffffffff 00000001 24000044 00000000 c0002790 00000000
-GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 c05643b0 00000083
-GPR24: c04a1a6c c0560000 c04a8308 c04c6480 c0012498 c6017000 c7ffcc78 c6017000
-[    0.360806] NIP [c01b44cc] gpiochip_get_data+0x4/0xc
-[    0.365684] LR [c0011720] cpm1_gpio16_save_regs+0x18/0x44
-[    0.370972] Call Trace:
-[    0.373451] [c6081e50] [c01b6d0c] of_mm_gpiochip_add_data+0x70/0xdc
-[    0.379624] [c6081e70] [c00124c0] cpm_init_par_io+0x28/0x118
-[    0.385238] [c6081e80] [c04a8ac0] do_one_initcall+0xb0/0x17c
-[    0.390819] [c6081ef0] [c04a8cbc] kernel_init_freeable+0x130/0x1dc
-[    0.396924] [c6081f30] [c00027a4] kernel_init+0x14/0x110
-[    0.402177] [c6081f40] [c000b424] ret_from_kernel_thread+0x5c/0x64
-[    0.408233] Instruction dump:
-[    0.411168] 4182fafc 3f80c040 48234c6d 3bc0fff0 3b9c5ed0 4bfffaf4 81290020 712a0004
-[    0.418825] 4182fb34 48234c51 4bfffb2c 81230004 <80690130> 4e800020 7c0802a6 9421ffe0
-[    0.426763] ---[ end trace fe4113ee21d72ffa ]---
+> diff --git a/arch/arm/mach-aspeed/Kconfig b/arch/arm/mach-aspeed/Kconfig
+> index 25a0ae01429e..a52de9d3adfb 100644
+> --- a/arch/arm/mach-aspeed/Kconfig
+> +++ b/arch/arm/mach-aspeed/Kconfig
+> @@ -6,6 +6,10 @@ menuconfig ARCH_ASPEED
+>         select ASPEED_WATCHDOG
+>         select MOXART_TIMER
+>         select PINCTRL
+> +       select GPIOLIB
+> +       select GPIO_ASPEED
 
-fixes: e65078f1f3490 ("powerpc: sysdev: cpm1: use gpiochip data pointer")
-fixes: a14a2d484b386 ("powerpc: cpm_common: use gpiochip data pointer")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/sysdev/cpm1.c       | 6 ++++--
- arch/powerpc/sysdev/cpm_common.c | 3 ++-
- 2 files changed, 6 insertions(+), 3 deletions(-)
+Again this needs to be a separate patch to ARM SoC.
 
-diff --git a/arch/powerpc/sysdev/cpm1.c b/arch/powerpc/sysdev/cpm1.c
-index 6c11099..81d4947 100644
---- a/arch/powerpc/sysdev/cpm1.c
-+++ b/arch/powerpc/sysdev/cpm1.c
-@@ -534,7 +534,8 @@ struct cpm1_gpio16_chip {
- 
- static void cpm1_gpio16_save_regs(struct of_mm_gpio_chip *mm_gc)
- {
--	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
-+	struct cpm1_gpio16_chip *cpm1_gc =
-+		container_of(mm_gc, struct cpm1_gpio16_chip, mm_gc);
- 	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
- 
- 	cpm1_gc->cpdata = in_be16(&iop->dat);
-@@ -649,7 +650,8 @@ struct cpm1_gpio32_chip {
- 
- static void cpm1_gpio32_save_regs(struct of_mm_gpio_chip *mm_gc)
- {
--	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
-+	struct cpm1_gpio32_chip *cpm1_gc =
-+		container_of(mm_gc, struct cpm1_gpio32_chip, mm_gc);
- 	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
- 
- 	cpm1_gc->cpdata = in_be32(&iop->dat);
-diff --git a/arch/powerpc/sysdev/cpm_common.c b/arch/powerpc/sysdev/cpm_common.c
-index 911456d..947f420 100644
---- a/arch/powerpc/sysdev/cpm_common.c
-+++ b/arch/powerpc/sysdev/cpm_common.c
-@@ -94,7 +94,8 @@ struct cpm2_gpio32_chip {
- 
- static void cpm2_gpio32_save_regs(struct of_mm_gpio_chip *mm_gc)
- {
--	struct cpm2_gpio32_chip *cpm2_gc = gpiochip_get_data(&mm_gc->gc);
-+	struct cpm2_gpio32_chip *cpm2_gc =
-+		container_of(mm_gc, struct cpm2_gpio32_chip, mm_gc);
- 	struct cpm2_ioports __iomem *iop = mm_gc->regs;
- 
- 	cpm2_gc->cpdata = in_be32(&iop->dat);
--- 
-2.1.0
+> +       select GPIO_SYSFS
+
+NAK over my dead body. I strongly discourage the use of the
+GPIO sysfs, use the new character device, see
+toos/gpio/* for examples.
+
+> +config GPIO_ASPEED
+> +       bool "Aspeed GPIO support"
+> +       depends on (ARCH_ASPEED || COMPILE_TEST) && OF
+> +       select GENERIC_IRQ_CHIP
+
+Why are you using GENERIC_IRQ_CHIP but not
+GPIOLIB_IRQCHIP? Well I guess I may find out by
+reading the code...
+
+> +       help
+> +         Say Y here to support Aspeed AST2400 and AST2500 GPIO controllers.
+> +
+>  config GPIO_BCM_KONA
+>         bool "Broadcom Kona GPIO"
+>         depends on OF_GPIO && (ARCH_BCM_MOBILE || COMPILE_TEST)
+> @@ -1072,7 +1079,6 @@ config GPIO_SODAVILLE
+>         select GENERIC_IRQ_CHIP
+>         help
+>           Say Y here to support Intel Sodaville GPIO.
+> -
+>  endmenu
+
+Drop this unrelated whitespace change.
+
+> +#define GPIO_BANK(x)   ((x) >> 5)
+> +#define GPIO_OFFSET(x) ((x) & 0x1f)
+> +#define GPIO_BIT(x)    BIT(GPIO_OFFSET(x))
+
+Clever, maybe needs some comments on how they work?
+Or is it obvious from context?
+
+> +#define GPIO_DATA      0x00
+> +#define GPIO_DIR       0x04
+> +
+> +#define GPIO_IRQ_ENABLE        0x00
+> +#define GPIO_IRQ_TYPE0 0x04
+> +#define GPIO_IRQ_TYPE1 0x08
+> +#define GPIO_IRQ_TYPE2 0x0c
+> +#define GPIO_IRQ_STATUS        0x10
+
+> +static inline struct aspeed_gpio *to_aspeed_gpio(struct gpio_chip *chip)
+> +{
+> +       return container_of(chip, struct aspeed_gpio, chip);
+> +}
+
+NAK rewrite your code to use devm_gpiochip_add_data() and
+then use gpiochip_get_data() inline in every function that
+needs to get the state container from the gpiochip. Read
+the code in the upstream kernel for *any* driver because I
+think I changed this virtually everywhere.
+
+(...)
+> +static void __aspeed_gpio_irq_set_mask(struct irq_data *d, bool set)
+
+Why __underscoring. It is just confusing, drop the underscores.
+The function does set the mask.
+
+> +{
+> +       const struct aspeed_gpio_bank *bank;
+> +       struct aspeed_gpio *gpio;
+> +       unsigned long flags;
+> +       u32 reg, bit;
+> +       void *addr;
+> +       int rc;
+> +
+> +       rc = irqd_to_aspeed_gpio_data(d, &gpio, &bank, &bit);
+> +       if (rc)
+> +               return;
+> +
+> +       addr = bank_irq_reg(gpio, bank, GPIO_IRQ_ENABLE);
+> +
+> +       spin_lock_irqsave(&gpio->lock, flags);
+> +
+> +       reg = ioread32(addr);
+> +       if (set)
+> +               reg |= bit;
+> +       else
+> +               reg &= bit;
+> +       iowrite32(reg, addr);
+
+Hm, if this was done with regmap it would be regmap_update_bits()
+simply ... maybe you should just throw a 32bit MMIO regmap over
+the registers? (Not required, just an idea to simplify stuff...)
+
+> +static int aspeed_gpio_set_type(struct irq_data *d, unsigned int type)
+> +{
+> +       u32 type0, type1, type2, bit, reg;
+> +       const struct aspeed_gpio_bank *bank;
+> +       irq_flow_handler_t handler;
+> +       struct aspeed_gpio *gpio;
+> +       unsigned long flags;
+> +       void *addr;
+> +       int rc;
+> +
+> +       rc = irqd_to_aspeed_gpio_data(d, &gpio, &bank, &bit);
+> +       if (rc)
+> +               return -EINVAL;
+> +
+> +       type0 = type1 = type2 = 0;
+
+Assign zero when declaring instead:
+
+u32 type0 = 0;
+u32 type1 = 0;
+...
+
+> +
+> +       switch (type & IRQ_TYPE_SENSE_MASK) {
+> +       case IRQ_TYPE_EDGE_BOTH:
+> +               type2 |= bit;
+> +       case IRQ_TYPE_EDGE_RISING:
+> +               type0 |= bit;
+> +       case IRQ_TYPE_EDGE_FALLING:
+> +               handler = handle_edge_irq;
+> +               break;
+> +       case IRQ_TYPE_LEVEL_HIGH:
+> +               type0 |= bit;
+> +       case IRQ_TYPE_LEVEL_LOW:
+> +               type1 |= bit;
+> +               handler = handle_level_irq;
+> +               break;
+> +       default:
+> +               return -EINVAL;
+> +       }
+
+Very nice, this looks exactly as it should, handling the different
+IRQs very nicely.
+
+> +       spin_lock_irqsave(&gpio->lock, flags);
+> +
+> +       addr = bank_irq_reg(gpio, bank, GPIO_IRQ_TYPE0);
+> +       reg = ioread32(addr);
+> +       reg = (reg & ~bit) | type0;
+> +       iowrite32(reg, addr);
+> +
+> +       addr = bank_irq_reg(gpio, bank, GPIO_IRQ_TYPE1);
+> +       reg = ioread32(addr);
+> +       reg = (reg & ~bit) | type1;
+> +       iowrite32(reg, addr);
+> +
+> +       addr = bank_irq_reg(gpio, bank, GPIO_IRQ_TYPE2);
+> +       reg = ioread32(addr);
+> +       reg = (reg & ~bit) | type2;
+> +       iowrite32(reg, addr);
+> +
+> +       spin_unlock_irqrestore(&gpio->lock, flags);
+> +
+> +       irq_set_handler_locked(d, handler);
+> +
+> +       return 0;
+> +}
+
+Overall very nice .set_type().
+
+> +static void aspeed_gpio_irq_handler(struct irq_desc *desc)
+> +{
+> +       struct aspeed_gpio *gpio = irq_desc_get_handler_data(desc);
+> +       struct irq_chip *chip = irq_desc_get_chip(desc);
+> +       unsigned int i, p, girq;
+> +       unsigned long reg;
+> +
+> +       chained_irq_enter(chip, desc);
+> +
+> +       for (i = 0; i < ARRAY_SIZE(aspeed_gpio_banks); i++) {
+> +               const struct aspeed_gpio_bank *bank = &aspeed_gpio_banks[i];
+> +
+> +               reg = ioread32(bank_irq_reg(gpio, bank, GPIO_IRQ_STATUS));
+> +
+> +               for_each_set_bit(p, &reg, 32) {
+> +                       girq = irq_find_mapping(gpio->irq_domain, i * 32 + p);
+> +                       generic_handle_irq(girq);
+> +               }
+> +
+> +       }
+> +
+> +       chained_irq_exit(chip, desc);
+> +}
+
+This looks so generic so I think you should be using
+GPIOLIB_IRQCHIP.
+
+> +
+> +static struct irq_chip aspeed_gpio_irqchip = {
+> +       .name           = "aspeed-gpio",
+> +       .irq_ack        = aspeed_gpio_irq_ack,
+> +       .irq_mask       = aspeed_gpio_irq_mask,
+> +       .irq_unmask     = aspeed_gpio_irq_unmask,
+> +       .irq_set_type   = aspeed_gpio_set_type,
+> +};
+
+There is a missing .request/.release resources marking the lines
+as irq to the GPIO core. But if you switch to using GPIOLIB_IRQCHIP
+the core will handle all that for you.
+
+> +static int aspeed_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       struct aspeed_gpio *gpio = to_aspeed_gpio(chip);
+> +
+> +       return irq_find_mapping(gpio->irq_domain, offset);
+> +}
+> +
+> +static void aspeed_gpio_setup_irqs(struct aspeed_gpio *gpio,
+> +               struct platform_device *pdev)
+> +{
+> +       int i, irq;
+> +
+> +       /* request our upstream IRQ */
+> +       gpio->irq = platform_get_irq(pdev, 0);
+> +       if (gpio->irq < 0)
+> +               return;
+> +
+> +       /* establish our irq domain to provide IRQs for each extended bank */
+> +       gpio->irq_domain = irq_domain_add_linear(pdev->dev.of_node,
+> +                       gpio->chip.ngpio, &irq_domain_simple_ops, NULL);
+> +       if (!gpio->irq_domain)
+> +               return;
+> +
+> +       for (i = 0; i < gpio->chip.ngpio; i++) {
+> +               irq = irq_create_mapping(gpio->irq_domain, i);
+> +               irq_set_chip_data(irq, gpio);
+> +               irq_set_chip_and_handler(irq, &aspeed_gpio_irqchip,
+> +                               handle_simple_irq);
+> +               irq_set_probe(irq);
+> +       }
+> +
+> +       irq_set_chained_handler_and_data(gpio->irq,
+> +                       aspeed_gpio_irq_handler, gpio);
+> +}
+
+Also all this goes away with GPILIB_IRQCHIP, so use it.
+
+See e.g. drivers/gpio/gpio-pl061.c for an example of a similar
+driver doing this.
+
+> +static int __init aspeed_gpio_probe(struct platform_device *pdev)
+> +{
+> +       struct aspeed_gpio *gpio;
+> +       struct resource *res;
+> +       int rc;
+> +
+> +       gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
+> +       if (!gpio)
+> +               return -ENOMEM;
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       if (!res)
+> +               return -ENXIO;
+> +
+> +       gpio->base = devm_ioremap_resource(&pdev->dev, res);
+> +       if (!gpio->base)
+> +               return -ENOMEM;
+> +
+> +       spin_lock_init(&gpio->lock);
+> +
+> +       gpio->chip.ngpio = ARRAY_SIZE(aspeed_gpio_banks) * 32;
+> +
+> +       gpio->chip.parent = &pdev->dev;
+> +       gpio->chip.direction_input = aspeed_gpio_dir_in;
+> +       gpio->chip.direction_output = aspeed_gpio_dir_out;
+
+Please add gpio->chip.get_direction() to complete the picture.
+
+> +       gpio->chip.request = aspeed_gpio_request;
+> +       gpio->chip.free = aspeed_gpio_free;
+> +       gpio->chip.get = aspeed_gpio_get;
+> +       gpio->chip.set = aspeed_gpio_set;
+> +       gpio->chip.to_irq = aspeed_gpio_to_irq;
+
+.to_irq goes away with GPILIB_IRQCHIP.
+
+> +       gpio->chip.label = dev_name(&pdev->dev);
+> +       gpio->chip.base = -1;
+> +
+> +       platform_set_drvdata(pdev, gpio);
+> +
+> +       rc = gpiochip_add(&gpio->chip);
+> +       if (rc < 0)
+> +               return rc;
+
+Use devm_gpiochip_add_data(), then gpiochip_irqchip_add().
+
+> +static int aspeed_gpio_remove(struct platform_device *pdev)
+> +{
+> +       struct aspeed_gpio *gpio = platform_get_drvdata(pdev);
+> +
+> +       gpiochip_remove(&gpio->chip);
+> +       return 0;
+> +}
+
+And then this is not even needed. (devm*)
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
