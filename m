@@ -1,32 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/1] gpio: pca954x: Add vcc regulator and enable it
-Date: Thu, 11 Aug 2016 10:14:58 +0200
-Message-ID: <CACRpkdYDgbtog5t72KxrVQPjwz3Xd92hBJH1afDE57qYQSDv1g@mail.gmail.com>
-References: <1469763595-38245-1-git-send-email-preid@electromag.com.au> <1469763595-38245-2-git-send-email-preid@electromag.com.au>
+Subject: Re: [PATCH] pinctrl: qcom: Add generic ssbi and spmi GPIO/MPP bindings
+Date: Thu, 11 Aug 2016 10:19:32 +0200
+Message-ID: <CACRpkdazPheA1s2FX2ugEyCFmrKiq36QEmEuCGJRt-vQTFWFVw@mail.gmail.com>
+References: <20160711190109.16758-1-sboyd@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:33439 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932289AbcHKIO7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Aug 2016 04:14:59 -0400
-Received: by mail-oi0-f53.google.com with SMTP id c15so91682028oig.0
-        for <linux-gpio@vger.kernel.org>; Thu, 11 Aug 2016 01:14:59 -0700 (PDT)
-In-Reply-To: <1469763595-38245-2-git-send-email-preid@electromag.com.au>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:33714 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932289AbcHKITd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Aug 2016 04:19:33 -0400
+Received: by mail-oi0-f51.google.com with SMTP id c15so91795397oig.0
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Aug 2016 01:19:33 -0700 (PDT)
+In-Reply-To: <20160711190109.16758-1-sboyd@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Phil Reid <preid@electromag.com.au>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Fri, Jul 29, 2016 at 5:39 AM, Phil Reid <preid@electromag.com.au> wrote:
+On Mon, Jul 11, 2016 at 9:01 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-> Some i2c gpio devices are connected to a switchable power supply
-> which needs to be enabled prior to probing the device. This patch
-> allows the drive to enable the devices vcc regulator prior to probing.
+> The drivers don't really need to know which PMIC they're for, so
+> make a generic binding for them. This alleviates us from updating
+> the drivers every time a new PMIC comes out. It's still
+> recommended that we update the binding with new PMIC models and
+> always specify the specific model for the MPPs and gpios before
+> the generic compatible string in devicetree, but this at least
+> cuts down on adding more and more compatible strings to the
+> drivers until we actually need them.
 >
-> Signed-off-by: Phil Reid <preid@electromag.com.au>
+> Cc: <devicetree@vger.kernel.org>
+> Acked-by: "Ivan T. Ivanov" <iivanov.xz@gmail.com>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Patch applied!
+Patch applied with Rob's ACK.
 
 Yours,
 Linus Walleij
