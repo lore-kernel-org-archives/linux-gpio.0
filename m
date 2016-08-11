@@ -1,66 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] powerpc: sysdev: cpm: fix gpio save_regs functions
-Date: Thu, 11 Aug 2016 13:54:23 +0200
-Message-ID: <CACRpkdZYZNyNRZMCNNUc=2FRqvb1nUjn5kZjuA8CHS=FG8G0MQ@mail.gmail.com>
-References: <20160811085040.2EC561A2456@localhost.localdomain>
+Subject: Re: [GIT PULL] Immutable branch between MFD and GPIO due for v4.9
+Date: Thu, 11 Aug 2016 14:07:49 +0200
+Message-ID: <CACRpkdZWWsoroECFu8CxePmcK7ss_9O1WdD-3yFF_xUmzR9ZhA@mail.gmail.com>
+References: <1470814755-19447-1-git-send-email-patrice.chotard@st.com> <20160810084225.GQ1581@dell>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:33504 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751340AbcHKLyY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Aug 2016 07:54:24 -0400
-Received: by mail-oi0-f43.google.com with SMTP id c15so1729873oig.0
-        for <linux-gpio@vger.kernel.org>; Thu, 11 Aug 2016 04:54:24 -0700 (PDT)
-In-Reply-To: <20160811085040.2EC561A2456@localhost.localdomain>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:36834 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751494AbcHKMHw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Aug 2016 08:07:52 -0400
+Received: by mail-oi0-f48.google.com with SMTP id f189so1954222oig.3
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Aug 2016 05:07:51 -0700 (PDT)
+In-Reply-To: <20160810084225.GQ1581@dell>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Patrice CHOTARD <patrice.chotard@st.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, amelie.delaunay@st.com, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Dinh Nguyen <dinguyen@opensource.altera.com>, Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
 
-On Thu, Aug 11, 2016 at 10:50 AM, Christophe Leroy
-<christophe.leroy@c-s.fr> wrote:
+On Wed, Aug 10, 2016 at 10:42 AM, Lee Jones <lee.jones@linaro.org> wrote:
 
-> of_mm_gpiochip_add_data() calls mm_gc->save_regs() before
-> setting the data. Therefore ->save_regs() cannot use
-> gpiochip_get_data()
->
-> [    0.275940] Unable to handle kernel paging request for data at address 0x00000130
-> [    0.283120] Faulting instruction address: 0xc01b44cc
-> [    0.288175] Oops: Kernel access of bad area, sig: 11 [#1]
-> [    0.293343] PREEMPT CMPC885
-> [    0.296141] CPU: 0 PID: 1 Comm: swapper Not tainted 4.7.0-g65124df-dirty #68
-> [    0.304131] task: c6074000 ti: c6080000 task.ti: c6080000
-> [    0.309459] NIP: c01b44cc LR: c0011720 CTR: c0011708
-> [    0.314372] REGS: c6081d90 TRAP: 0300   Not tainted  (4.7.0-g65124df-dirty)
-> [    0.322267] MSR: 00009032 <EE,ME,IR,DR,RI>  CR: 24000028  XER: 20000000
-> [    0.328813] DAR: 00000130 DSISR: c0000000
-> GPR00: c01b6d0c c6081e40 c6074000 c6017000 c9028000 c601d028 c6081dd8 00000000
-> GPR08: c601d028 00000000 ffffffff 00000001 24000044 00000000 c0002790 00000000
-> GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 c05643b0 00000083
-> GPR24: c04a1a6c c0560000 c04a8308 c04c6480 c0012498 c6017000 c7ffcc78 c6017000
-> [    0.360806] NIP [c01b44cc] gpiochip_get_data+0x4/0xc
-> [    0.365684] LR [c0011720] cpm1_gpio16_save_regs+0x18/0x44
-> [    0.370972] Call Trace:
-> [    0.373451] [c6081e50] [c01b6d0c] of_mm_gpiochip_add_data+0x70/0xdc
-> [    0.379624] [c6081e70] [c00124c0] cpm_init_par_io+0x28/0x118
-> [    0.385238] [c6081e80] [c04a8ac0] do_one_initcall+0xb0/0x17c
-> [    0.390819] [c6081ef0] [c04a8cbc] kernel_init_freeable+0x130/0x1dc
-> [    0.396924] [c6081f30] [c00027a4] kernel_init+0x14/0x110
-> [    0.402177] [c6081f40] [c000b424] ret_from_kernel_thread+0x5c/0x64
-> [    0.408233] Instruction dump:
-> [    0.411168] 4182fafc 3f80c040 48234c6d 3bc0fff0 3b9c5ed0 4bfffaf4 81290020 712a0004
-> [    0.418825] 4182fb34 48234c51 4bfffb2c 81230004 <80690130> 4e800020 7c0802a6 9421ffe0
-> [    0.426763] ---[ end trace fe4113ee21d72ffa ]---
->
-> fixes: e65078f1f3490 ("powerpc: sysdev: cpm1: use gpiochip data pointer")
-> fixes: a14a2d484b386 ("powerpc: cpm_common: use gpiochip data pointer")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Immutable branch between MFD and GPIO due for the v4.9 merge window
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Sorry for screwing stuff up :(
+Awesome, pulled into the GPIO devel branch for v4.9.
 
 Yours,
 Linus Walleij
