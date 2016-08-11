@@ -1,33 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v7] gpio: add Intel WhiskeyCove PMIC GPIO driver
-Date: Thu, 11 Aug 2016 13:30:37 +0200
-Message-ID: <CACRpkdah_05qExCpNKcJXUG9rRuw9BjkoB4uUE2j0UWG0z9_xw@mail.gmail.com>
-References: <20160725215938.GC211765@worksta>
+Subject: Re: [PATCH 1/2] dt: bindings: add binding for Allwinner A64 R_PIO
+ pinctrl
+Date: Thu, 11 Aug 2016 13:35:14 +0200
+Message-ID: <CACRpkdbQfXf67sJZZUvjFC+SK_9N5O5iVAaU+LC=KcR8KH=Fdg@mail.gmail.com>
+References: <20160801145939.50583-1-icenowy@aosc.xyz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160725215938.GC211765@worksta>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bin Gao <bin.gao@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Yegnesh S Iyer <yegnesh.s.iyer@intel.com>, Bin Gao <bin.gao@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20160801145939.50583-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Icenowy Zheng <icenowy@aosc.xyz>, Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andre Przywara <andre.przywara@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Krzysztof Adamski <k@japko.eu>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jul 25, 2016 at 11:59 PM, Bin Gao <bin.gao@linux.intel.com> wrote:
+On Mon, Aug 1, 2016 at 4:59 PM, Icenowy Zheng <icenowy@aosc.xyz> wrote:
 
-> This patch introduces a separate GPIO driver for Intel WhiskeyCove PMIC.
-> This driver is based on gpio-crystalcove.c.
->
-> Signed-off-by: Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>
-> Signed-off-by: Bin Gao <bin.gao@intel.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
-> Changes in v7:
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+(...)
+> +  "allwinner,sun50i-a64-r-pinctrl"
 
-This v7 patch applied.
-
-Can you please send a separate patch adding .get_direction() to the
-gpiochip? It's a feature I've been pushing more and more recently.
+Maxime, can you look at these two patches from Icenowy?
 
 Yours,
 Linus Walleij
