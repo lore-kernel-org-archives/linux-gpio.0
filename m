@@ -1,52 +1,33 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6 3/4] gpio: lp873x: Add support for General Purpose Outputs
-Date: Thu, 11 Aug 2016 15:30:54 +0200
-Message-ID: <CACRpkdbFHbxcKHC827A1v8q1JPFk8jZsbJEHFpXi1Ddz054Xdw@mail.gmail.com>
-References: <1470635218-15951-1-git-send-email-j-keerthy@ti.com> <1470635218-15951-4-git-send-email-j-keerthy@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/2] gpio: add bindings for Technologic I2C-FPGA gpio controller
+Date: Thu, 11 Aug 2016 15:31:38 +0200
+Message-ID: <CACRpkdaZ8-YoNCxY2FSu1LDiwsHqWarqU9_mPTqXKmYhxXOz-w@mail.gmail.com>
+References: <1470674766-17491-1-git-send-email-lucile.quirion@savoirfairelinux.com>
+ <1470674766-17491-2-git-send-email-lucile.quirion@savoirfairelinux.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1470635218-15951-4-git-send-email-j-keerthy-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:32948 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751148AbcHKNbk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Aug 2016 09:31:40 -0400
+Received: by mail-oi0-f52.google.com with SMTP id c15so4967991oig.0
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Aug 2016 06:31:39 -0700 (PDT)
+In-Reply-To: <1470674766-17491-2-git-send-email-lucile.quirion@savoirfairelinux.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lucile Quirion <lucile.quirion@savoirfairelinux.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, kernel <kernel@savoirfairelinux.com>
 
-On Mon, Aug 8, 2016 at 7:46 AM, Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org> wrote:
+On Mon, Aug 8, 2016 at 6:46 PM, Lucile Quirion
+<lucile.quirion@savoirfairelinux.com> wrote:
 
-> Add driver for lp873x PMIC family GPOs. Two GPOs are supported
-> and can be configured in Open-drain output or Push-pull output.
+> Device tree binding documentation for Technologic's I2C-FPGA GPIO
+> controller.
 >
-> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+> Signed-off-by: Lucile Quirion <lucile.quirion@savoirfairelinux.com>
 
-Still looks pretty nice, just thought of some things if
-you're anyway working on the code:
-
-> +       return regmap_update_bits(gpio->lp873->regmap, LP873X_REG_GPO_CTRL,
-> +                                 BIT(offset * 4), value ? BIT(offset * 4) : 0);
-(...)
-(...)
-> +       return val & BIT(offset * 4);
-(...)
-> +       regmap_update_bits(gpio->lp873->regmap, LP873X_REG_GPO_CTRL,
-> +                          BIT(offset * 4), value ? BIT(offset * 4) : 0);
-(...)
-> +               return regmap_update_bits(gpio->lp873->regmap,
-> +                                         LP873X_REG_GPO_CTRL,
-> +                                         BIT(offset * 4 + 2),
-> +                                         BIT(offset * 4 + 2));
-> +       case LINE_MODE_PUSH_PULL:
-> +               return regmap_update_bits(gpio->lp873->regmap,
-> +                                         LP873X_REG_GPO_CTRL,
-> +                                         BIT(offset * 4 + 2), 0);
-
-This 4 +2 etc business is a bit hard to understand, could you create
-a macro with a clever name that makes it more understandable?
+My comment on v1 applied also to v2.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
