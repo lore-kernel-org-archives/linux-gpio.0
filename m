@@ -1,34 +1,49 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/2] gpio: mmio: add brcm,bcm6345 support
-Date: Thu, 11 Aug 2016 16:18:08 +0200
-Message-ID: <CACRpkdYj0FzNBzB-FTygGxF7VzWZxuL7+Yvo+kXTTRc_ySNVzw@mail.gmail.com>
-References: <1470225957-5692-2-git-send-email-noltari@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] gpio: refactor gpiochip_find() slightly
+Date: Fri, 12 Aug 2016 01:21:58 +0900
+Message-ID: <1470932518-8748-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1470225957-5692-2-git-send-email-noltari@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Christian Lamparter <chunkeey@googlemail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Aug 3, 2016 at 2:05 PM, Álvaro Fernández Rojas
-<noltari@gmail.com> wrote:
+The if...else... block after the loop can be dropped with
+a slight refactoring.
 
-> From: Christian Lamparter <chunkeey@googlemail.com>
->
-> This patch adds support for the GPIO found in Broadcom's bcm63xx-gpio
-> chips.
-> This GPIO controller is used in the following Broadcom SoCs: BCM6338, BCM6345.
-> It can be used in newer SoCs, without the capability of pin multiplexing.
->
-> Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
-> Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Excellent patch, especially how it does endianness, applied.
+ drivers/gpio/gpiolib.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-Forget my earlier (erroneous) remarks.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 53ff25a..deaf4d4 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1363,19 +1363,15 @@ struct gpio_chip *gpiochip_find(void *data,
+ 					     void *data))
+ {
+ 	struct gpio_device *gdev;
+-	struct gpio_chip *chip;
++	struct gpio_chip *chip = NULL;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 	list_for_each_entry(gdev, &gpio_devices, list)
+-		if (gdev->chip && match(gdev->chip, data))
++		if (gdev->chip && match(gdev->chip, data)) {
++			chip = gdev->chip;
+ 			break;
+-
+-	/* No match? */
+-	if (&gdev->list == &gpio_devices)
+-		chip = NULL;
+-	else
+-		chip = gdev->chip;
++		}
+ 
+ 	spin_unlock_irqrestore(&gpio_lock, flags);
+ 
+-- 
+1.9.1
