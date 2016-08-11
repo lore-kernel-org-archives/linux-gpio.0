@@ -1,77 +1,100 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 02/12] pinctrl: Add core pinctrl support for Aspeed SoCs
-Date: Thu, 11 Aug 2016 10:41:16 +0200
-Message-ID: <CACRpkdZ0p+jNHBV1AqhVWQ2Q8RRrHVfsAz3XU3_+f6My22=Zxg@mail.gmail.com>
-References: <1468994313-13538-1-git-send-email-andrew@aj.id.au>
- <1468994313-13538-3-git-send-email-andrew@aj.id.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1468994313-13538-3-git-send-email-andrew@aj.id.au>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Russell King <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jeremy Kerr <jk@ozlabs.org>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc: sysdev: cpm: fix gpio save_regs functions
+Date: Thu, 11 Aug 2016 10:50:40 +0200 (CEST)
+Message-ID: <20160811085040.2EC561A2456@localhost.localdomain>
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jul 20, 2016 at 7:58 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+of_mm_gpiochip_add_data() calls mm_gc->save_regs() before
+setting the data. Therefore ->save_regs() cannot use
+gpiochip_get_data()
 
-> --- a/arch/arm/mach-aspeed/Kconfig
-> +++ b/arch/arm/mach-aspeed/Kconfig
-> @@ -5,6 +5,7 @@ menuconfig ARCH_ASPEED
->         select WATCHDOG
->         select ASPEED_WATCHDOG
->         select MOXART_TIMER
-> +       select PINCTRL
->         help
->           Say Y here if you want to run your kernel on an ASpeed BMC SoC.
+[    0.275940] Unable to handle kernel paging request for data at address 0x00000130
+[    0.283120] Faulting instruction address: 0xc01b44cc
+[    0.288175] Oops: Kernel access of bad area, sig: 11 [#1]
+[    0.293343] PREEMPT CMPC885
+[    0.296141] CPU: 0 PID: 1 Comm: swapper Not tainted 4.7.0-g65124df-dirty #68
+[    0.304131] task: c6074000 ti: c6080000 task.ti: c6080000
+[    0.309459] NIP: c01b44cc LR: c0011720 CTR: c0011708
+[    0.314372] REGS: c6081d90 TRAP: 0300   Not tainted  (4.7.0-g65124df-dirty)
+[    0.322267] MSR: 00009032 <EE,ME,IR,DR,RI>  CR: 24000028  XER: 20000000
+[    0.328813] DAR: 00000130 DSISR: c0000000
+GPR00: c01b6d0c c6081e40 c6074000 c6017000 c9028000 c601d028 c6081dd8 00000000
+GPR08: c601d028 00000000 ffffffff 00000001 24000044 00000000 c0002790 00000000
+GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 c05643b0 00000083
+GPR24: c04a1a6c c0560000 c04a8308 c04c6480 c0012498 c6017000 c7ffcc78 c6017000
+[    0.360806] NIP [c01b44cc] gpiochip_get_data+0x4/0xc
+[    0.365684] LR [c0011720] cpm1_gpio16_save_regs+0x18/0x44
+[    0.370972] Call Trace:
+[    0.373451] [c6081e50] [c01b6d0c] of_mm_gpiochip_add_data+0x70/0xdc
+[    0.379624] [c6081e70] [c00124c0] cpm_init_par_io+0x28/0x118
+[    0.385238] [c6081e80] [c04a8ac0] do_one_initcall+0xb0/0x17c
+[    0.390819] [c6081ef0] [c04a8cbc] kernel_init_freeable+0x130/0x1dc
+[    0.396924] [c6081f30] [c00027a4] kernel_init+0x14/0x110
+[    0.402177] [c6081f40] [c000b424] ret_from_kernel_thread+0x5c/0x64
+[    0.408233] Instruction dump:
+[    0.411168] 4182fafc 3f80c040 48234c6d 3bc0fff0 3b9c5ed0 4bfffaf4 81290020 712a0004
+[    0.418825] 4182fb34 48234c51 4bfffb2c 81230004 <80690130> 4e800020 7c0802a6 9421ffe0
+[    0.426763] ---[ end trace fe4113ee21d72ffa ]---
 
-This needs to be a separate patch sent to the ARM SoC tree.
-I don't like to merge patches to other subsystems if it can be
-avoided.
+fixes: e65078f1f3490 ("powerpc: sysdev: cpm1: use gpiochip data pointer")
+fixes: a14a2d484b386 ("powerpc: cpm_common: use gpiochip data pointer")
+Cc: stable@vger.kernel.org
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/sysdev/cpm1.c       | 6 ++++--
+ arch/powerpc/sysdev/cpm_common.c | 3 ++-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-> +static inline void aspeed_sig_desc_print_val(
-> +               const struct aspeed_sig_desc *desc, bool enable, u32 rv)
-> +{
-> +#if defined(CONFIG_DEBUG_PINCTRL)
-> +       pr_debug("SCU%x[0x%08x]=0x%x, got 0x%x from 0x%08x\n", desc->reg,
-> +                       desc->mask, enable ? desc->enable : desc->disable,
-> +                       (rv & desc->mask) >> __ffs(desc->mask), rv);
-> +#endif
-> +}
-
-You can just use pr_debug(). CONFIG_DEBUG_PINCTRL enables
-DEBUG_KERNEL which activates debug prints so this is a truism.
-
-> +static bool aspeed_sig_desc_eval(const struct aspeed_sig_desc *desc,
-> +               bool enabled, struct regmap *map)
-> +static bool aspeed_sig_expr_eval(const struct aspeed_sig_expr *expr,
-> +               bool enabled, struct regmap *map)
-
-These need kerneldoc too, they are kind of hard to understand.
-
-> +static bool aspeed_gpio_in_exprs(const struct aspeed_sig_expr **exprs)
-> +{
-> +       if (!exprs)
-> +               return false;
-> +
-> +       while (*exprs) {
-> +               if (strncmp((*exprs)->signal, "GPIO", 4) == 0)
-> +                       return true;
-
-This looks a bit fragile and hard to debug. Do you have some better
-idea of how to do this but not resort to string comparison?
-
-Apart from that it looks pretty alright, complex but such is life
-with complex hardware.
-
-Yours,
-Linus Walleij
+diff --git a/arch/powerpc/sysdev/cpm1.c b/arch/powerpc/sysdev/cpm1.c
+index 6c11099..81d4947 100644
+--- a/arch/powerpc/sysdev/cpm1.c
++++ b/arch/powerpc/sysdev/cpm1.c
+@@ -534,7 +534,8 @@ struct cpm1_gpio16_chip {
+ 
+ static void cpm1_gpio16_save_regs(struct of_mm_gpio_chip *mm_gc)
+ {
+-	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
++	struct cpm1_gpio16_chip *cpm1_gc =
++		container_of(mm_gc, struct cpm1_gpio16_chip, mm_gc);
+ 	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
+ 
+ 	cpm1_gc->cpdata = in_be16(&iop->dat);
+@@ -649,7 +650,8 @@ struct cpm1_gpio32_chip {
+ 
+ static void cpm1_gpio32_save_regs(struct of_mm_gpio_chip *mm_gc)
+ {
+-	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
++	struct cpm1_gpio32_chip *cpm1_gc =
++		container_of(mm_gc, struct cpm1_gpio32_chip, mm_gc);
+ 	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
+ 
+ 	cpm1_gc->cpdata = in_be32(&iop->dat);
+diff --git a/arch/powerpc/sysdev/cpm_common.c b/arch/powerpc/sysdev/cpm_common.c
+index 911456d..947f420 100644
+--- a/arch/powerpc/sysdev/cpm_common.c
++++ b/arch/powerpc/sysdev/cpm_common.c
+@@ -94,7 +94,8 @@ struct cpm2_gpio32_chip {
+ 
+ static void cpm2_gpio32_save_regs(struct of_mm_gpio_chip *mm_gc)
+ {
+-	struct cpm2_gpio32_chip *cpm2_gc = gpiochip_get_data(&mm_gc->gc);
++	struct cpm2_gpio32_chip *cpm2_gc =
++		container_of(mm_gc, struct cpm2_gpio32_chip, mm_gc);
+ 	struct cpm2_ioports __iomem *iop = mm_gc->regs;
+ 
+ 	cpm2_gc->cpdata = in_be32(&iop->dat);
+-- 
+2.1.0
