@@ -1,68 +1,32 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH v7 0/3] mfd: lp873x: Add lp873x PMIC support
-Date: Wed, 10 Aug 2016 15:48:08 +0530
-Message-ID: <1470824291-14902-1-git-send-email-j-keerthy@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/1] gpio: pca954x: Add vcc regulator and enable it
+Date: Thu, 11 Aug 2016 10:14:58 +0200
+Message-ID: <CACRpkdYDgbtog5t72KxrVQPjwz3Xd92hBJH1afDE57qYQSDv1g@mail.gmail.com>
+References: <1469763595-38245-1-git-send-email-preid@electromag.com.au> <1469763595-38245-2-git-send-email-preid@electromag.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([198.47.19.12]:33004 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S936546AbcHJSp1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 10 Aug 2016 14:45:27 -0400
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:33439 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932289AbcHKIO7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Aug 2016 04:14:59 -0400
+Received: by mail-oi0-f53.google.com with SMTP id c15so91682028oig.0
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Aug 2016 01:14:59 -0700 (PDT)
+In-Reply-To: <1469763595-38245-2-git-send-email-preid@electromag.com.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: broonie@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org
-Cc: linux-omap@vger.kernel.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, j-keerthy@ti.com
+To: Phil Reid <preid@electromag.com.au>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-The LP873X chip is a power management IC for Portable Navigation Systems
-    and Tablet Computing devices. It contains the following components:
+On Fri, Jul 29, 2016 at 5:39 AM, Phil Reid <preid@electromag.com.au> wrote:
 
-     - Regulators.
-     - Configurable General Purpose Output Signals(GPO).
+> Some i2c gpio devices are connected to a switchable power supply
+> which needs to be enabled prior to probing the device. This patch
+> allows the drive to enable the devices vcc regulator prior to probing.
+>
+> Signed-off-by: Phil Reid <preid@electromag.com.au>
 
-PMIC interacts with the main processor through i2c. PMIC has
-couple of LDOs(Linear Regulators), couple of BUCKs (Step-Down DC-DC
-Converter Cores) and GPOs(General Purpose Output Signals).
+Patch applied!
 
-The regulator patch is already queued:
-http://marc.info/?l=linux-kernel&m=146298767110771&w=2
-
-DT patch also queued:
-
-Hence posting the remaining patches of the series with
-the comments fixed on mfd driver.
-
-Chages in v7:
-
-Reverted the dependency on http://www.gossamer-threads.com/lists/linux/kernel/2457552.
-
-Changes in v6:
-
-Series depends on: http://www.gossamer-threads.com/lists/linux/kernel/2457552
-probe_new used.
-
-Chnages in v4:
-
-Added GPO driver support. 
-
-Keerthy (3):
-  mfd: lp873x: Add lp873x PMIC support
-  gpio: lp873x: Add support for General Purpose Outputs
-  regulator: lp873x: Change the MFD config option as per latest naming
-
- drivers/gpio/Kconfig       |  10 ++
- drivers/gpio/Makefile      |   1 +
- drivers/gpio/gpio-lp873x.c | 185 +++++++++++++++++++++++++++++++
- drivers/mfd/Kconfig        |  14 +++
- drivers/mfd/Makefile       |   2 +
- drivers/mfd/lp873x.c       |  96 +++++++++++++++++
- drivers/regulator/Kconfig  |   2 +-
- include/linux/mfd/lp873x.h | 264 +++++++++++++++++++++++++++++++++++++++++++++
- 8 files changed, 573 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpio/gpio-lp873x.c
- create mode 100644 drivers/mfd/lp873x.c
- create mode 100644 include/linux/mfd/lp873x.h
-
--- 
-1.9.1
-
+Yours,
+Linus Walleij
