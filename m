@@ -1,49 +1,61 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 02/12] pinctrl: Add core pinctrl support for Aspeed SoCs
-Date: Fri, 12 Aug 2016 15:18:13 +0200
-Message-ID: <CACRpkdaN=wR4amskqMapTJzaTTMJZe2EQWRnyLMQkq_zuhr2eA@mail.gmail.com>
-References: <1468994313-13538-1-git-send-email-andrew@aj.id.au>
- <1468994313-13538-3-git-send-email-andrew@aj.id.au> <CACRpkdZ0p+jNHBV1AqhVWQ2Q8RRrHVfsAz3XU3_+f6My22=Zxg@mail.gmail.com>
- <1470962022.27272.68.camel@aj.id.au>
+Subject: Re: [PATCH v3 2/2] gpio: add Technologic I2C-FPGA gpio support
+Date: Fri, 12 Aug 2016 15:48:34 +0200
+Message-ID: <CACRpkdZL3=DDy1L4xZ9dkds=n-UpyVPHomhhda0QcWtOW02TBw@mail.gmail.com>
+References: <1470947524-8137-1-git-send-email-lucile.quirion@savoirfairelinux.com>
+ <1470947524-8137-3-git-send-email-lucile.quirion@savoirfairelinux.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:32884 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752225AbcHLNSP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Aug 2016 09:18:15 -0400
-Received: by mail-oi0-f52.google.com with SMTP id c15so33882511oig.0
-        for <linux-gpio@vger.kernel.org>; Fri, 12 Aug 2016 06:18:14 -0700 (PDT)
-In-Reply-To: <1470962022.27272.68.camel@aj.id.au>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1470947524-8137-3-git-send-email-lucile.quirion@savoirfairelinux.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lucile Quirion <lucile.quirion@savoirfairelinux.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, kernel <kernel@savoirfairelinux.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Aug 12, 2016 at 2:33 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+On Thu, Aug 11, 2016 at 10:32 PM, Lucile Quirion
+<lucile.quirion@savoirfairelinux.com> wrote:
 
->> > +
->> > +       while (*exprs) {
->> > +               if (strncmp((*exprs)->signal, "GPIO", 4) == 0)
->> > +                       return true;
->> This looks a bit fragile and hard to debug. Do you have some better
->> idea of how to do this but not resort to string comparison?
+> This driver is generic and aims to support all Technologic Systems's
+> boards embedding FPGA GPIOs with an I2C interface.
 >
-> Yes, this is a little unfortunate. GPIO is not always a pin's lowest
-> priority function (e.g. the RGMII/RMII pins), so this makes the GPIO
-> case like any other mux function: We need to know when to stop
-> iterating the arrays when disabling mux functions of higher priority.
-> The alternative is probably to introduce another field to struct
-> aspeed_sig_expr and set that as necessary, but that feels redundant if
-> we keep to a consistent naming for the GPIOs.
+> This driver supports TS-4900, TS-7970, TS-7990 and TS-4100 series.
+>
+> Signed-off-by: Lucile Quirion <lucile.quirion@savoirfairelinux.com>
 
-I would probably prefer that option (introduce another field)
-but you should make the overall decision, it's no strong opinion
-from my side.
+Much smaller and nicer now :)
 
-> Would it be acceptable to document that requirement?
+> +config GPIO_TS4900
+> +       tristate "Technologic Systems FPGA I2C GPIO"
 
-Sure.
+select REGMAP_I2C
+
+Here.
+
+> +#include <linux/gpio.h>
+
+Drop that. You should not use this header in drivers.
+
+> +static int ts4900_gpio_get_direction(struct gpio_chip *chip,
+> +                                    unsigned int offset)
+> +{
+> +       struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
+> +       unsigned int reg;
+> +
+> +       regmap_read(priv->regmap, offset, &reg);
+> +
+> +       return (reg & TS4900_GPIO_OE) ? GPIOF_DIR_OUT : GPIOF_DIR_IN;
+
+Do not use GPIOF_DIR_OUT/GPIOF_DIR_IN. These are for the
+machine descriptions, not drivers. Just return 0/1.
+
+You can even:
+
+return !(reg & TS4900_GPIO_OE);
+
+I think that returns 0 on output and 1 on input.
+
+After these fixes I will be happy I think.
 
 Yours,
 Linus Walleij
