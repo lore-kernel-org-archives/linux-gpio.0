@@ -1,253 +1,43 @@
-From: Lucile Quirion <lucile.quirion@savoirfairelinux.com>
-Subject: [PATCH v4 2/2] gpio: add Technologic I2C-FPGA gpio support
-Date: Fri, 12 Aug 2016 11:16:49 -0400
-Message-ID: <1471015009-5925-3-git-send-email-lucile.quirion@savoirfairelinux.com>
-References: <1471015009-5925-1-git-send-email-lucile.quirion@savoirfairelinux.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1471015009-5925-1-git-send-email-lucile.quirion@savoirfairelinux.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, kernel@savoirfairelinux.com, Lucile Quirion <lucile.quirion@savoirfairelinux.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH 02/12] pinctrl: Add core pinctrl support for Aspeed SoCs
+Date: Sat, 13 Aug 2016 10:58:14 +1000
+Message-ID: <1471049894.12231.41.camel@kernel.crashing.org>
+References: <1468994313-13538-1-git-send-email-andrew@aj.id.au>
+ <1468994313-13538-3-git-send-email-andrew@aj.id.au>
+ <CACRpkdZ0p+jNHBV1AqhVWQ2Q8RRrHVfsAz3XU3_+f6My22=Zxg@mail.gmail.com>
+ <1470962022.27272.68.camel@aj.id.au>
+ <CACRpkdaN=wR4amskqMapTJzaTTMJZe2EQWRnyLMQkq_zuhr2eA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdaN=wR4amskqMapTJzaTTMJZe2EQWRnyLMQkq_zuhr2eA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Andrew Jeffery <andrew@aj.id.au>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jeremy Kerr <jk@ozlabs.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This driver is generic and aims to support all Technologic Systems's
-boards embedding FPGA GPIOs with an I2C interface.
+On Fri, 2016-08-12 at 15:18 +0200, Linus Walleij wrote:
+> I would probably prefer that option (introduce another field)
+> but you should make the overall decision, it's no strong opinion
+> from my side.
+> 
+> > Would it be acceptable to document that requirement?
 
-This driver supports TS-4900, TS-7970, TS-7990 and TS-4100 series.
+It might make it a bit less nasty (and easier to change later on
+if necessary) to use some kind of:
 
-Signed-off-by: Lucile Quirion <lucile.quirion@savoirfairelinux.com>
----
- drivers/gpio/Kconfig       |   7 ++
- drivers/gpio/Makefile      |   1 +
- drivers/gpio/gpio-ts4900.c | 190 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 198 insertions(+)
- create mode 100644 drivers/gpio/gpio-ts4900.c
+	bool ast_signal_is_gpio(...)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 98dd47a..3f84574 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -779,6 +779,13 @@ config GPIO_TPIC2810
- 	  To compile this driver as a module, choose M here: the module will
- 	  be called gpio-tpic2810.
- 
-+config GPIO_TS4900
-+	tristate "Technologic Systems FPGA I2C GPIO"
-+	select REGMAP_I2C
-+	help
-+	  Say yes here to enabled the GPIO driver for Technologic's FPGA core.
-+	  Series supported include TS-4100, TS-4900, TS-7970 and TS-7990.
-+
- endmenu
- 
- menu "MFD GPIO expanders"
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 2a035ed..4dcc21f 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -110,6 +110,7 @@ obj-$(CONFIG_GPIO_TPS6586X)	+= gpio-tps6586x.o
- obj-$(CONFIG_GPIO_TPS65910)	+= gpio-tps65910.o
- obj-$(CONFIG_GPIO_TPS65912)	+= gpio-tps65912.o
- obj-$(CONFIG_GPIO_TS4800)	+= gpio-ts4800.o
-+obj-$(CONFIG_GPIO_TS4900)	+= gpio-ts4900.o
- obj-$(CONFIG_GPIO_TS5500)	+= gpio-ts5500.o
- obj-$(CONFIG_GPIO_TWL4030)	+= gpio-twl4030.o
- obj-$(CONFIG_GPIO_TWL6040)	+= gpio-twl6040.o
-diff --git a/drivers/gpio/gpio-ts4900.c b/drivers/gpio/gpio-ts4900.c
-new file mode 100644
-index 0000000..9dd9aca
---- /dev/null
-+++ b/drivers/gpio/gpio-ts4900.c
-@@ -0,0 +1,190 @@
-+/*
-+ * Digital I/O driver for Technologic Systems I2C FPGA Core
-+ *
-+ * Copyright (C) 2015 Technologic Systems
-+ * Copyright (C) 2016 Savoir-Faire Linux
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether expressed or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License version 2 for more details.
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/i2c.h>
-+#include <linux/of_device.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+
-+#define DEFAULT_PIN_NUMBER	32
-+/*
-+ * Register bits used by the GPIO device
-+ * Some boards, such as TS-7970 do not have a separate input bit
-+ */
-+#define TS4900_GPIO_OE		0x01
-+#define TS4900_GPIO_OUT		0x02
-+#define TS4900_GPIO_IN		0x04
-+#define TS7970_GPIO_IN		0x02
-+
-+struct ts4900_gpio_priv {
-+	struct regmap *regmap;
-+	struct gpio_chip gpio_chip;
-+	unsigned int input_bit;
-+};
-+
-+static int ts4900_gpio_get_direction(struct gpio_chip *chip,
-+				     unsigned int offset)
-+{
-+	struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
-+	unsigned int reg;
-+
-+	regmap_read(priv->regmap, offset, &reg);
-+
-+	return !(reg & TS4900_GPIO_OE);
-+}
-+
-+static int ts4900_gpio_direction_input(struct gpio_chip *chip,
-+				       unsigned int offset)
-+{
-+	struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
-+
-+	/*
-+	 * This will clear the output enable bit, the other bits are
-+	 * dontcare when this is cleared
-+	 */
-+	return regmap_write(priv->regmap, offset, 0);
-+}
-+
-+static int ts4900_gpio_direction_output(struct gpio_chip *chip,
-+					unsigned int offset, int value)
-+{
-+	struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
-+	int ret;
-+
-+	if (value)
-+		ret = regmap_write(priv->regmap, offset, TS4900_GPIO_OE |
-+							 TS4900_GPIO_OUT);
-+	else
-+		ret = regmap_write(priv->regmap, offset, TS4900_GPIO_OE);
-+
-+	return ret;
-+}
-+
-+static int ts4900_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
-+	unsigned int reg;
-+
-+	regmap_read(priv->regmap, offset, &reg);
-+
-+	return !!(reg & priv->input_bit);
-+}
-+
-+static void ts4900_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			    int value)
-+{
-+	struct ts4900_gpio_priv *priv = gpiochip_get_data(chip);
-+
-+	if (value)
-+		regmap_update_bits(priv->regmap, offset, TS4900_GPIO_OUT,
-+				   TS4900_GPIO_OUT);
-+	else
-+		regmap_update_bits(priv->regmap, offset, TS4900_GPIO_OUT, 0);
-+}
-+
-+static const struct regmap_config ts4900_regmap_config = {
-+	.reg_bits = 16,
-+	.val_bits = 8,
-+};
-+
-+static struct gpio_chip template_chip = {
-+	.label			= "ts4900-gpio",
-+	.owner			= THIS_MODULE,
-+	.get_direction		= ts4900_gpio_get_direction,
-+	.direction_input	= ts4900_gpio_direction_input,
-+	.direction_output	= ts4900_gpio_direction_output,
-+	.get			= ts4900_gpio_get,
-+	.set			= ts4900_gpio_set,
-+	.base			= -1,
-+	.can_sleep		= true,
-+};
-+
-+static const struct of_device_id ts4900_gpio_of_match_table[] = {
-+	{
-+		.compatible = "technologic,ts4900-gpio",
-+		.data = (void *)TS4900_GPIO_IN,
-+	}, {
-+		.compatible = "technologic,ts7970-gpio",
-+		.data = (void *)TS7970_GPIO_IN,
-+	},
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, ts4900_gpio_of_match_table);
-+
-+static int ts4900_gpio_probe(struct i2c_client *client,
-+			const struct i2c_device_id *id)
-+{
-+	const struct of_device_id *match;
-+	struct ts4900_gpio_priv *priv;
-+	u32 ngpio;
-+	int ret;
-+
-+	match = of_match_device(ts4900_gpio_of_match_table, &client->dev);
-+	if (!match)
-+		return -EINVAL;
-+
-+	if (of_property_read_u32(client->dev.of_node, "ngpios", &ngpio))
-+		ngpio = DEFAULT_PIN_NUMBER;
-+
-+	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->gpio_chip = template_chip;
-+	priv->gpio_chip.label = "ts4900-gpio";
-+	priv->gpio_chip.ngpio = ngpio;
-+	priv->gpio_chip.parent = &client->dev;
-+	priv->input_bit = (uintptr_t)match->data;
-+
-+	priv->regmap = devm_regmap_init_i2c(client, &ts4900_regmap_config);
-+	if (IS_ERR(priv->regmap)) {
-+		ret = PTR_ERR(priv->regmap);
-+		dev_err(&client->dev, "Failed to allocate register map: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	ret = devm_gpiochip_add_data(&client->dev, &priv->gpio_chip, priv);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "Unable to register gpiochip\n");
-+		return ret;
-+	}
-+
-+	i2c_set_clientdata(client, priv);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id ts4900_gpio_id_table[] = {
-+	{ "ts4900-gpio", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(i2c, ts4900_gpio_id_table);
-+
-+static struct i2c_driver ts4900_gpio_driver = {
-+	.driver = {
-+		.name = "ts4900-gpio",
-+		.of_match_table = ts4900_gpio_of_match_table,
-+	},
-+	.probe = ts4900_gpio_probe,
-+	.id_table = ts4900_gpio_id_table,
-+};
-+module_i2c_driver(ts4900_gpio_driver);
-+
-+MODULE_AUTHOR("Technologic Systems");
-+MODULE_DESCRIPTION("GPIO interface for Technologic Systems I2C-FPGA core");
-+MODULE_LICENSE("GPL");
--- 
-2.5.5
+And stick the strcmp in there.
+
+Cheers,
+Ben.
