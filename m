@@ -1,50 +1,41 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 1/2] dt: bindings: add binding for Allwinner A64 R_PIO
- pinctrl
-Date: Mon, 15 Aug 2016 21:56:13 +0800
-Message-ID: <CAGb2v67EiCwG73SsoJQQfPuFznU8cXLw4cBqSzHKLwmFh1hW2A@mail.gmail.com>
-References: <20160801145939.50583-1-icenowy@aosc.xyz>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] pinctrl: exynos: remove duplicate calls in irq handler
+Date: Mon, 15 Aug 2016 18:59:41 +0200
+Message-ID: <20160815165941.GA3769@kozik-lap>
+References: <1471256227-6282-1-git-send-email-strongbox8@zoho.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160801145939.50583-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andre Przywara <andre.przywara@arm.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Krzysztof Adamski <k@japko.eu>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1471256227-6282-1-git-send-email-strongbox8@zoho.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: perr <strongbox8@zoho.com>
+Cc: tomasz.figa@gmail.com, k.kozlowski@samsung.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Aug 1, 2016 at 10:59 PM, Icenowy Zheng <icenowy@aosc.xyz> wrote:
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-
-A commit message would be nice.
-
-ChenYu
-
+On Mon, Aug 15, 2016 at 06:17:07PM +0800, perr wrote:
+> Because chained_irq_enter() has already called chip->irq_mask() and
+> chip->irq_ack(), also chained_irq_exit() will call chip->irq_unmask(),
+> so it's not necessary to call chip->irq_*() here.
+> 
+> Signed-off-by: perr <strongbox8@zoho.com>
+> 
 > ---
->  Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/pinctrl/samsung/pinctrl-exynos.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-> index 6961722..ee73f9f 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-> @@ -23,6 +23,7 @@ Required properties:
->    "allwinner,sun8i-h3-pinctrl"
->    "allwinner,sun8i-h3-r-pinctrl"
->    "allwinner,sun50i-a64-pinctrl"
-> +  "allwinner,sun50i-a64-r-pinctrl"
->
->  - reg: Should contain the register physical address and length for the
->    pin controller.
-> --
-> 2.9.0
->
+
+
+Looks correct so for the patch itself:
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+However, your name "Perr" confuses me a little bit. For the
+Signed-off-by statement, as mentioned in
+Documentation/SubmittingPatches, a real name is required. The name
+should match the author.
+
+Would you be so kind as to use a full, real name? Unless Perr is your
+full, real name... then sorry for the trouble.
+
+Best regards,
+Krzysztof
