@@ -1,60 +1,43 @@
-From: Bin Gao <bin.gao@linux.intel.com>
-Subject: [PATCH] gpio: wcove-gpio: add get_direction method
-Date: Mon, 15 Aug 2016 11:03:23 -0700
-Message-ID: <20160815180323.GA229243@worksta>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH] pinctrl: meson: get rid of unneeded domain structures
+Date: Mon, 15 Aug 2016 17:57:59 -0500
+Message-ID: <m2a8gdabd4.fsf@baylibre.com>
+References: <1471110078-5946-1-git-send-email-b.galvani@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:18093 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752930AbcHOR67 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 15 Aug 2016 13:58:59 -0400
-Content-Disposition: inline
+Received: from mail-it0-f44.google.com ([209.85.214.44]:38543 "EHLO
+	mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750796AbcHOW6B (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Aug 2016 18:58:01 -0400
+Received: by mail-it0-f44.google.com with SMTP id n128so19965586ith.1
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Aug 2016 15:58:01 -0700 (PDT)
+In-Reply-To: <1471110078-5946-1-git-send-email-b.galvani@gmail.com> (Beniamino
+	Galvani's message of "Sat, 13 Aug 2016 19:41:18 +0200")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bin Gao <bin.gao@intel.com>
+To: Beniamino Galvani <b.galvani@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 
-This patch adds .get_direction method for the gpio_chip structure
-of the wcove_gpio driver.
+Beniamino Galvani <b.galvani@gmail.com> writes:
 
-Signed-off-by: Bin Gao <bin.gao@intel.com>
----
- drivers/gpio/gpio-wcove.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+> The driver originally supported more domains (register ranges) per
+> pinctrl device, but since commit 9dab1868ec0d ("pinctrl: amlogic: Make
+> driver independent from two-domain configuration") each device gets
+> assigned a single domain and we instantiate multiple pinctrl devices
+> in the DT.
+>
+> Therefore, now the 'meson_domain' and 'meson_domain_data' structures
+> don't have any reason to exist and can be removed to make the model
+> simpler to understand. This commit doesn't change behavior.
+>
+> Tested on a Odroid-C2.
+>
+> Signed-off-by: Beniamino Galvani <b.galvani@gmail.com>
 
-diff --git a/drivers/gpio/gpio-wcove.c b/drivers/gpio/gpio-wcove.c
-index f5c88df..e11d6a3 100644
---- a/drivers/gpio/gpio-wcove.c
-+++ b/drivers/gpio/gpio-wcove.c
-@@ -164,6 +164,19 @@ static int wcove_gpio_dir_out(struct gpio_chip *chip, unsigned int gpio,
- 			    CTLO_OUTPUT_SET | value);
- }
- 
-+static int wcove_gpio_get_direction(struct gpio_chip *chip, unsigned int gpio)
-+{
-+	struct wcove_gpio *wg = gpiochip_get_data(chip);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(wg->regmap, to_reg(gpio, CTRL_OUT), &val);
-+	if (ret)
-+		return ret;
-+
-+	return !(val & CTLO_DIR_OUT);
-+}
-+
- static int wcove_gpio_get(struct gpio_chip *chip, unsigned int gpio)
- {
- 	struct wcove_gpio *wg = gpiochip_get_data(chip);
-@@ -394,6 +407,7 @@ static int wcove_gpio_probe(struct platform_device *pdev)
- 	wg->chip.label = KBUILD_MODNAME;
- 	wg->chip.direction_input = wcove_gpio_dir_in;
- 	wg->chip.direction_output = wcove_gpio_dir_out;
-+	wg->chip.get_direction = wcove_gpio_get_direction;
- 	wg->chip.get = wcove_gpio_get;
- 	wg->chip.set = wcove_gpio_set;
- 	wg->chip.set_single_ended = wcove_gpio_set_single_ended,
--- 
-1.9.1
+Looks good and boot tested on meson-gxbb-p200:
 
+Acked-by: Kevin Hilman <khilman@baylibre.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+
+Kevin
