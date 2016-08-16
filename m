@@ -1,17 +1,17 @@
-From: "Ken.Lin" <Ken.Lin@advantech.com.tw>
-Subject: RE: [PATCH] ARM: dts: imx6q-bx50v3: configure unused pca953x pins
-Date: Tue, 16 Aug 2016 02:42:33 +0000
-Message-ID: <56fb5916ee464557974bf9a0b1e5df88@taipei09.ADVANTECH.CORP>
-References: <1471023911-2763-1-git-send-email-akshay.bhat@timesys.com>
- <20160815053033.ds27jg3c7vnx7ujw@pengutronix.de>
- <a23f6081bea242bfba70b805f2a93494@taipei08.ADVANTECH.CORP>
- <20160815072825.hffvzlxpzlph6bk7@pengutronix.de>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH 2/2] pinctrl: sunxi: Add A64 R_PIO controller support
+Date: Tue, 16 Aug 2016 11:03:09 +0800
+Message-ID: <15541471316589@web3g.yandex.ru>
+References: <20160801145939.50583-1-icenowy@aosc.xyz>
+ <20160801145939.50583-2-icenowy@aosc.xyz>
+ <CAGb2v64nzOOwZFGzukXehv6Bx6nikHdnuGUkRMJWS8bjfMkeXQ@mail.gmail.com>
+ <363591471306006@web8j.yandex.ru>
+ <CAGb2v64jQT+EQ01ZGSJ=3_FMnG5kckz_AEd3ME2Osi+sYO1dmg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160815072825.hffvzlxpzlph6bk7@pengutronix.de>
-Content-Language: zh-TW
+In-Reply-To: <CAGb2v64jQT+EQ01ZGSJ=3_FMnG5kckz_AEd3ME2Osi+sYO1dmg@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -21,145 +21,176 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Akshay Bhat <akshay.bhat@timesys.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andre Przywara <andre.przywara@arm.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Rob Herring <robh+dt@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Krzysztof Adamski <k@japko.eu>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
-
-Without the patch to configure unused pins (floating inputs as default) wel=
-l based on the project specific schematics design, the unhandled interrupts=
- (return IRQ_NONE in pca953x_irq_handler) would probably exceed a certain r=
-ate count and result in the below backtrace which ends up disabling the IRQ=
- (the shared pca953x all interrupt).
-
-[15994.165307] irq 72: nobody cared (try booting with the "irqpoll" option)
-[15994.172052] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.0.0 #1
-[15994.177904] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-[15994.184448] Backtrace:
-[15994.186974] [<80012638>] (dump_backtrace) from [<80012854>] (show_stack+=
-0x18/0x1c)
-[15994.194561]  r6:80a77864 r5:00000000 r4:00000000 r3:00000000
-[15994.200351] [<8001283c>] (show_stack) from [<80727924>] (dump_stack+0x8c=
-/0xa4)
-[15994.207614] [<80727898>] (dump_stack) from [<80071d18>] (__report_bad_ir=
-q+0x28/0xc8)
-[15994.215373]  r6:00000048 r5:00000000 r4:ee14e100 r3:00000000
-[15994.221154] [<80071cf0>] (__report_bad_irq) from [<800722cc>] (note_inte=
-rrupt+0x254/0x2b4)
-[15994.229434]  r6:00000048 r5:00000000 r4:ee14e100 r3:00000000
-[15994.235217] [<80072078>] (note_interrupt) from [<8006fc14>] (handle_irq_=
-event_percpu+0xd0/0x140)
-[15994.244018]  r10:80abaf34 r9:ee14e100 r8:00000048 r7:00002088 r6:0000000=
-2 r5:00000002
-[15994.251982]  r4:00000000 r3:00000000
-[15994.255633] [<8006fb44>] (handle_irq_event_percpu) from [<8006fcc8>] (ha=
-ndle_irq_event+0x44/0x64)
-[15994.264520]  r10:00000000 r9:ee14cd10 r8:00000001 r7:00000008 r6:ed9bbbc=
-0 r5:ee14e160
-[15994.272484]  r4:ee14e100
-[15994.275068] [<8006fc84>] (handle_irq_event) from [<80072b04>] (handle_le=
-vel_irq+0xbc/0x144)
-[15994.283433]  r6:ee14cb00 r5:ee14e160 r4:ee14e100 r3:00022008
-[15994.289213] [<80072a48>] (handle_level_irq) from [<8006f18c>] (generic_h=
-andle_irq+0x30/0x44)
-[15994.297666]  r5:00000008 r4:00000048
-[15994.301328] [<8006f15c>] (generic_handle_irq) from [<802eef20>] (mxc_gpi=
-o_irq_handler+0x34/0x114)
-[15994.310216]  r4:00000003 r3:00000020
-[15994.313869] [<802eeeec>] (mxc_gpio_irq_handler) from [<802ef088>] (mx3_g=
-pio_irq_handler+0x88/0xe4)
-[15994.322843]  r10:00000000 r9:ee008000 r8:00000001 r7:00000000 r6:ee14cb0=
-0 r5:ee14cd10
-[15994.330806]  r4:80a77ae4
-[15994.333390] [<802ef000>] (mx3_gpio_irq_handler) from [<8006f18c>] (gener=
-ic_handle_irq+0x30/0x44)
-[15994.342191]  r6:80a5aaf8 r5:00000043 r4:00000043 r3:802ef000
-[15994.347971] [<8006f15c>] (generic_handle_irq) from [<8006f4ac>] (__handl=
-e_domain_irq+0x6c/0xe8)
-[15994.356684]  r4:80a53d8c r3:00000167
-[15994.360331] [<8006f440>] (__handle_domain_irq) from [<800087bc>] (gic_ha=
-ndle_irq+0x28/0x68)
-[15994.368697]  r9:80a5a9c8 r8:80abaf31 r7:f4000100 r6:80a5ac6c r5:80a59f18=
- r4:f400010c
-[15994.376584] [<80008794>] (gic_handle_irq) from [<800133a4>] (__irq_svc+0=
-x44/0x5c)
-[15994.384085] Exception stack(0x80a59f18 to 0x80a59f60)
-[15994.389157] 9f00:                                                       =
-00000001 00000001
-[15994.397361] 9f20: 00000000 80021120 80a58000 80a5a97c 80733270 80abaf31 =
-80abaf31 80a5a9c8
-[15994.405565] 9f40: 00000000 80a59f6c 80a59f30 80a59f60 80062ab0 8000f89c =
-20010013 ffffffff
-[15994.413756]  r7:80a59f4c r6:ffffffff r5:20010013 r4:8000f89c
-[15994.419545] [<8000f874>] (arch_cpu_idle) from [<8005dc08>] (cpu_startup_=
-entry+0x120/0x18c)
-[15994.427851] [<8005dae8>] (cpu_startup_entry) from [<80723428>] (rest_ini=
-t+0xac/0xd4)
-[15994.435611]  r7:80a5a8c0 r3:80733660
-[15994.439263] [<8072337c>] (rest_init) from [<809fac94>] (start_kernel+0x3=
-58/0x3cc)
-[15994.446762]  r5:80abb180 r4:80a5aa84
-[15994.450413] [<809fa93c>] (start_kernel) from [<10008074>] (0x10008074)
-[15994.456956] handlers:
-[15994.459258] [<8006fce8>] irq_default_primary_handler threaded [<802ef8ac=
->] pca953x_irq_handler
-[15994.467942] Disabling IRQ #72
-
-
-Cheers,
-Ken Lin
-
------Original Message-----
-From: Uwe Kleine-K=F6nig [mailto:u.kleine-koenig@pengutronix.de] =
-
-Sent: Monday, August 15, 2016 3:28 PM
-To: Ken.Lin
-Cc: Akshay Bhat; shawnguo@kernel.org; kernel@pengutronix.de; linux-arm-kern=
-el@lists.infradead.org; linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: imx6q-bx50v3: configure unused pca953x pins
-
-Hello,
-
-Cc +=3D linux-gpio
-
-On Mon, Aug 15, 2016 at 06:18:07AM +0000, Ken.Lin wrote:
-> 1. As you can see in the datasheet(that I attached to this email), at =
-
-> power on, P00 - P17 are configured as inputs (by chip default setting, =
-
-> datasheet P.3) and an interrupt is generated by any rising or falling =
-
-> edge of the port inputs in the input mode (datasheet P.10)
-
-ah, I see. All input pins generate an irq. The driver should handle this ju=
-st fine however. So I hope you don't see an oops or messages about unhandle=
-d irqs, right?
-
-> 2. The unhandled interrupts ( return IRQ_NONE in pca953x_irq_handler) =
-
-> in GPIO expander driver (drivers/gpio/gpio-pca953x.c) could happen =
-
-> when unused GPIO pins in GPIO expander are not well configured.
-
-Hmm, maybe the driver should return IRQ_HANDLED in this case, too. After al=
-l the irq reason is known and it was expected that an irq happend, right?
-
-> 3. As a result, we tried to configure the unused (default floating
-> inputs) pca953x GPIO pins as GPO low to avoid the unexpected =
-
-> interrupts (could be observed during the interference situation e.g.
-> putting fingers on the unused pin to make the signal level change)
-
-So changing these to outputs might still make sense to prevent these from f=
-loating or triggering unused irqs, but this should not make a semantical di=
-fference for your machine. (It might have more load and a bigger irq count,=
- but apart from that everything should be the same.)
-
-Best regards
-Uwe
-
--- =
-
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+CgoxNi4wOC4yMDE2LCAwOToyOCwgIkNoZW4tWXUgVHNhaSIgPHdlbnNAY3NpZS5vcmc+Ogo+IE9u
+IFR1ZSwgQXVnIDE2LCAyMDE2IGF0IDg6MDYgQU0sIEljZW5vd3kgWmhlbmcgPGljZW5vd3lAYW9z
+Yy54eXo+IHdyb3RlOgo+PiDCoDE1LjA4LjIwMTYsIDIxOjU2LCAiQ2hlbi1ZdSBUc2FpIiA8d2Vu
+c0Bjc2llLm9yZz46Cj4+PiDCoEhpLAo+Pj4KPj4+IMKgT24gTW9uLCBBdWcgMSwgMjAxNiBhdCAx
+MDo1OSBQTSwgSWNlbm93eSBaaGVuZyA8aWNlbm93eUBhb3NjLnh5ej4gd3JvdGU6Cj4+Pj4gwqDC
+oFRoZSBBNjQgaGFzIGEgUl9QSU8gcGluIGNvbnRyb2xsZXIsIHNpbWlsYXIgdG8gdGhlIG9uZSBm
+b3VuZCBvbiB0aGUgSDMgU29Dcy4KPj4+PiDCoMKgQWRkIHN1cHBvcnQgZm9yIHRoZSBwaW5zIGNv
+bnRyb2xsZWQgYnkgdGhlIFJfUElPIGNvbnRyb2xsZXIuCj4+Pj4KPj4+PiDCoMKgU2lnbmVkLW9m
+Zi1ieTogSWNlbm93eSBaaGVuZyA8aWNlbm93eUBhb3NjLnh5ej4KPj4+PiDCoMKgLS0tCj4+Pj4g
+wqDCoMKgZHJpdmVycy9waW5jdHJsL3N1bnhpL0tjb25maWcgfCA1ICsKPj4+PiDCoMKgwqBkcml2
+ZXJzL3BpbmN0cmwvc3VueGkvTWFrZWZpbGUgfCAxICsKPj4+PiDCoMKgwqBkcml2ZXJzL3BpbmN0
+cmwvc3VueGkvcGluY3RybC1zdW41MGktYTY0LXIuYyB8IDE0OCArKysrKysrKysrKysrKysrKysr
+KysrKysrKysKPj4+PiDCoMKgwqAzIGZpbGVzIGNoYW5nZWQsIDE1NCBpbnNlcnRpb25zKCspCj4+
+Pj4gwqDCoMKgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvcGluY3RybC9zdW54aS9waW5jdHJs
+LXN1bjUwaS1hNjQtci5jCj4+Pj4KPj4+PiDCoMKgZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3Ry
+bC9zdW54aS9LY29uZmlnIGIvZHJpdmVycy9waW5jdHJsL3N1bnhpL0tjb25maWcKPj4+PiDCoMKg
+aW5kZXggYWFmMDc1Yi4uYzRiNDc2ZiAxMDA2NDQKPj4+PiDCoMKgLS0tIGEvZHJpdmVycy9waW5j
+dHJsL3N1bnhpL0tjb25maWcKPj4+PiDCoMKgKysrIGIvZHJpdmVycy9waW5jdHJsL3N1bnhpL0tj
+b25maWcKPj4+PiDCoMKgQEAgLTcyLDQgKzcyLDkgQEAgY29uZmlnIFBJTkNUUkxfU1VONTBJX0E2
+NAo+Pj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgYm9vbAo+Pj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
+c2VsZWN0IFBJTkNUUkxfU1VOWEkKPj4+Pgo+Pj4+IMKgwqArY29uZmlnIFBJTkNUUkxfU1VONTBJ
+X0E2NF9SCj4+Pj4gwqDCoCsgYm9vbAo+Pj4+IMKgwqArIGRlcGVuZHMgb24gUkVTRVRfQ09OVFJP
+TExFUgo+Pj4+IMKgwqArIHNlbGVjdCBQSU5DVFJMX1NVTlhJCj4+Pj4gwqDCoCsKPj4+PiDCoMKg
+wqBlbmRpZgo+Pj4+IMKgwqBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL3N1bnhpL01ha2Vm
+aWxlIGIvZHJpdmVycy9waW5jdHJsL3N1bnhpL01ha2VmaWxlCj4+Pj4gwqDCoGluZGV4IDJkOGI2
+NGUuLmQ2ZWFiZGQgMTAwNjQ0Cj4+Pj4gwqDCoC0tLSBhL2RyaXZlcnMvcGluY3RybC9zdW54aS9N
+YWtlZmlsZQo+Pj4+IMKgwqArKysgYi9kcml2ZXJzL3BpbmN0cmwvc3VueGkvTWFrZWZpbGUKPj4+
+PiDCoMKgQEAgLTEzLDYgKzEzLDcgQEAgb2JqLSQoQ09ORklHX1BJTkNUUkxfU1VOOElfQTIzKSAr
+PSBwaW5jdHJsLXN1bjhpLWEyMy5vCj4+Pj4gwqDCoMKgb2JqLSQoQ09ORklHX1BJTkNUUkxfU1VO
+OElfQTIzX1IpICs9IHBpbmN0cmwtc3VuOGktYTIzLXIubwo+Pj4+IMKgwqDCoG9iai0kKENPTkZJ
+R19QSU5DVFJMX1NVTjhJX0EzMykgKz0gcGluY3RybC1zdW44aS1hMzMubwo+Pj4+IMKgwqDCoG9i
+ai0kKENPTkZJR19QSU5DVFJMX1NVTjUwSV9BNjQpICs9IHBpbmN0cmwtc3VuNTBpLWE2NC5vCj4+
+Pj4gwqDCoCtvYmotJChDT05GSUdfUElOQ1RSTF9TVU41MElfQTY0X1IpICs9IHBpbmN0cmwtc3Vu
+NTBpLWE2NC1yLm8KPj4+PiDCoMKgwqBvYmotJChDT05GSUdfUElOQ1RSTF9TVU44SV9BODNUKSAr
+PSBwaW5jdHJsLXN1bjhpLWE4M3Qubwo+Pj4+IMKgwqDCoG9iai0kKENPTkZJR19QSU5DVFJMX1NV
+TjhJX0gzKSArPSBwaW5jdHJsLXN1bjhpLWgzLm8KPj4+PiDCoMKgwqBvYmotJChDT05GSUdfUElO
+Q1RSTF9TVU44SV9IM19SKSArPSBwaW5jdHJsLXN1bjhpLWgzLXIubwo+Pj4+IMKgwqBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9waW5jdHJsL3N1bnhpL3BpbmN0cmwtc3VuNTBpLWE2NC1yLmMgYi9kcml2
+ZXJzL3BpbmN0cmwvc3VueGkvcGluY3RybC1zdW41MGktYTY0LXIuYwo+Pj4+IMKgwqBuZXcgZmls
+ZSBtb2RlIDEwMDY0NAo+Pj4+IMKgwqBpbmRleCAwMDAwMDAwLi5iODM2MjY0Cj4+Pj4gwqDCoC0t
+LSAvZGV2L251bGwKPj4+PiDCoMKgKysrIGIvZHJpdmVycy9waW5jdHJsL3N1bnhpL3BpbmN0cmwt
+c3VuNTBpLWE2NC1yLmMKPj4+PiDCoMKgQEAgLTAsMCArMSwxNDggQEAKPj4+PiDCoMKgKy8qCj4+
+Pj4gwqDCoCsgKiBBbGx3aW5uZXIgQTY0IFNvQ3Mgc3BlY2lhbCBwaW5zIHBpbmN0cmwgZHJpdmVy
+Lgo+Pj4+IMKgwqArICoKPj4+PiDCoMKgKyAqIEJhc2VkIG9uIHBpbmN0cmwtc3VuOGktYTIzLXIu
+Ywo+Pj4+IMKgwqArICoKPj4+PiDCoMKgKyAqIENvcHlyaWdodCAoQykgMjAxNiBJY2Vub3d5IFpo
+ZW5nCj4+Pj4gwqDCoCsgKiBJY2Vub3d5IFpoZW5nIDxpY2Vub3d5QGFvc2MueHl6Pgo+Pj4+IMKg
+wqArICoKPj4+PiDCoMKgKyAqIENvcHlyaWdodCAoQykgMjAxNCBDaGVuLVl1IFRzYWkKPj4+PiDC
+oMKgKyAqIENoZW4tWXUgVHNhaSA8d2Vuc0Bjc2llLm9yZz4KPj4+PiDCoMKgKyAqCj4+Pj4gwqDC
+oCsgKiBDb3B5cmlnaHQgKEMpIDIwMTQgQm9yaXMgQnJlemlsbG9uCj4+Pj4gwqDCoCsgKiBCb3Jp
+cyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVsZWN0cm9ucy5jb20+Cj4+Pj4gwqDC
+oCsgKgo+Pj4+IMKgwqArICogQ29weXJpZ2h0IChDKSAyMDE0IE1heGltZSBSaXBhcmQKPj4+PiDC
+oMKgKyAqIE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAZnJlZS1lbGVjdHJvbnMuY29tPgo+
+Pj4+IMKgwqArICoKPj4+PiDCoMKgKyAqIFRoaXMgZmlsZSBpcyBsaWNlbnNlZCB1bmRlciB0aGUg
+dGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYwo+Pj4+IMKgwqArICogTGljZW5zZSB2ZXJz
+aW9uIDIuIFRoaXMgcHJvZ3JhbSBpcyBsaWNlbnNlZCAiYXMgaXMiIHdpdGhvdXQgYW55Cj4+Pj4g
+wqDCoCsgKiB3YXJyYW50eSBvZiBhbnkga2luZCwgd2hldGhlciBleHByZXNzIG9yIGltcGxpZWQu
+Cj4+Pj4gwqDCoCsgKi8KPj4+PiDCoMKgKwo+Pj4+IMKgwqArI2luY2x1ZGUgPGxpbnV4L21vZHVs
+ZS5oPgo+Pj4+IMKgwqArI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgo+Pj4+IMKg
+wqArI2luY2x1ZGUgPGxpbnV4L29mLmg+Cj4+Pj4gwqDCoCsjaW5jbHVkZSA8bGludXgvb2ZfZGV2
+aWNlLmg+Cj4+Pgo+Pj4gwqBQbGVhc2Ugc29ydCB0aGUgaGVhZGVycy4KPj4gwqBUaGlzIGZpbGUg
+aXMgYmFzZWQgb24gcGluY3RybC1zdW44aS1hMjMtci5jIGFuZCBwaW5jdHJsLXN1bjhpLWgzLXIu
+Yywgd2hpY2gKPj4gwqBib3RoIGhhdmUgI2luY2x1ZGUgaW4gdGhpcyBzZXF1ZW5jZS4KPgo+IEFu
+ZCB3ZSBzaG91bGQgcHJvYmFibHkgZml4IHRoZW0gdG9vLgo+Cj4+Pj4gwqDCoCsjaW5jbHVkZSA8
+bGludXgvcGluY3RybC9waW5jdHJsLmg+Cj4+Pj4gwqDCoCsjaW5jbHVkZSA8bGludXgvcmVzZXQu
+aD4KPj4+PiDCoMKgKwo+Pj4+IMKgwqArI2luY2x1ZGUgInBpbmN0cmwtc3VueGkuaCIKPj4+PiDC
+oMKgKwo+Pj4+IMKgwqArc3RhdGljIGNvbnN0IHN0cnVjdCBzdW54aV9kZXNjX3BpbiBzdW41MGlf
+YTY0X3JfcGluc1tdID0gewo+Pj4+IMKgwqArIFNVTlhJX1BJTihTVU5YSV9QSU5DVFJMX1BJTihM
+LCAwKSwKPj4+PiDCoMKgKyBTVU5YSV9GVU5DVElPTigweDAsICJncGlvX2luIiksCj4+Pj4gwqDC
+oCsgU1VOWElfRlVOQ1RJT04oMHgxLCAiZ3Bpb19vdXQiKSwKPj4+PiDCoMKgKyBTVU5YSV9GVU5D
+VElPTigweDIsICJzX3JzYiIpLCAvKiBTQ0sgKi8KPj4+PiDCoMKgKyBTVU5YSV9GVU5DVElPTigw
+eDMsICJzX3R3aSIpLCAvKiBTQ0sgKi8KPj4+Cj4+PiDCoFdlIHVzZSAiaTJjIiBpbnN0ZWFkIG9m
+ICJ0d2kiLgo+PiDCoFNvIGFzIGFib3ZlLCBpbiBBMjMgLyBIMyBSX1BJTyBkcml2ZXIsIHRoZXkn
+cmUgY2FsbGVkIGFzICJzX3R3aSIgb3RoZXIgdGhhbiAic19pMmMiCj4KPiBUaGVzZSBhcyB3ZWxs
+LgpJIHRoaW5rIGl0IGJlY29tZSBzb21lIGtpbmQgb2YgZHQgYmluZGluZy4uLiBDaGFuZ2luZyBp
+dCBtYXkgY2F1c2UgZXhpc3RpbmcgZHQKbm90IHRvIHdvcmsuLi4KQWx0aG91Z2ggZm9yIEE2NCB3
+ZSBjYW4gaGF2ZSBzX2kyYywgb2YgY291cnNlIQo+Cj4gQ2hlbll1Cj4KPj4+PiDCoMKgKyBTVU5Y
+SV9GVU5DVElPTl9JUlFfQkFOSygweDYsIDAsIDApKSwgLyogUExfRUlOVDAgKi8KPj4+PiDCoMKg
+KyBTVU5YSV9QSU4oU1VOWElfUElOQ1RSTF9QSU4oTCwgMSksCj4+Pj4gwqDCoCsgU1VOWElfRlVO
+Q1RJT04oMHgwLCAiZ3Bpb19pbiIpLAo+Pj4+IMKgwqArIFNVTlhJX0ZVTkNUSU9OKDB4MSwgImdw
+aW9fb3V0IiksCj4+Pj4gwqDCoCsgU1VOWElfRlVOQ1RJT04oMHgyLCAic19yc2IiKSwgLyogU0RB
+ICovCj4+Pj4gwqDCoCsgU1VOWElfRlVOQ1RJT04oMHgzLCAic190d2kiKSwgLyogU0RBICovCj4+
+Pgo+Pj4gwqBTYW1lIGhlcmUuCj4+Pgo+Pj4+IMKgwqArIFNVTlhJX0ZVTkNUSU9OX0lSUV9CQU5L
+KDB4NiwgMCwgMSkpLCAvKiBQTF9FSU5UMSAqLwo+Pj4+IMKgwqArIFNVTlhJX1BJTihTVU5YSV9Q
+SU5DVFJMX1BJTihMLCAyKSwKPj4+PiDCoMKgKyBTVU5YSV9GVU5DVElPTigweDAsICJncGlvX2lu
+IiksCj4+Pj4gwqDCoCsgU1VOWElfRlVOQ1RJT04oMHgxLCAiZ3Bpb19vdXQiKSwKPj4+PiDCoMKg
+KyBTVU5YSV9GVU5DVElPTigweDIsICJzX3VhcnQiKSwgLyogVFggKi8KPj4+PiDCoMKgKyBTVU5Y
+SV9GVU5DVElPTl9JUlFfQkFOSygweDYsIDAsIDIpKSwgLyogUExfRUlOVDIgKi8KPj4+PiDCoMKg
+KyBTVU5YSV9QSU4oU1VOWElfUElOQ1RSTF9QSU4oTCwgMyksCj4+Pj4gwqDCoCsgU1VOWElfRlVO
+Q1RJT04oMHgwLCAiZ3Bpb19pbiIpLAo+Pj4+IMKgwqArIFNVTlhJX0ZVTkNUSU9OKDB4MSwgImdw
+aW9fb3V0IiksCj4+Pj4gwqDCoCsgU1VOWElfRlVOQ1RJT04oMHgyLCAic191YXJ0IiksIC8qIFJY
+ICovCj4+Pj4gwqDCoCsgU1VOWElfRlVOQ1RJT05fSVJRX0JBTksoMHg2LCAwLCAzKSksIC8qIFBM
+X0VJTlQzICovCj4+Pj4gwqDCoCsgU1VOWElfUElOKFNVTlhJX1BJTkNUUkxfUElOKEwsIDQpLAo+
+Pj4+IMKgwqArIFNVTlhJX0ZVTkNUSU9OKDB4MCwgImdwaW9faW4iKSwKPj4+PiDCoMKgKyBTVU5Y
+SV9GVU5DVElPTigweDEsICJncGlvX291dCIpLAo+Pj4+IMKgwqArIFNVTlhJX0ZVTkNUSU9OKDB4
+MywgInNfanRhZyIpLCAvKiBNUyAqLwo+Pj4+IMKgwqArIFNVTlhJX0ZVTkNUSU9OX0lSUV9CQU5L
+KDB4NiwgMCwgNCkpLCAvKiBQTF9FSU5UNCAqLwo+Pj4+IMKgwqArIFNVTlhJX1BJTihTVU5YSV9Q
+SU5DVFJMX1BJTihMLCA1KSwKPj4+PiDCoMKgKyBTVU5YSV9GVU5DVElPTigweDAsICJncGlvX2lu
+IiksCj4+Pj4gwqDCoCsgU1VOWElfRlVOQ1RJT04oMHgxLCAiZ3Bpb19vdXQiKSwKPj4+PiDCoMKg
+KyBTVU5YSV9GVU5DVElPTigweDMsICJzX2p0YWciKSwgLyogQ0sgKi8KPj4+PiDCoMKgKyBTVU5Y
+SV9GVU5DVElPTl9JUlFfQkFOSygweDYsIDAsIDUpKSwgLyogUExfRUlOVDUgKi8KPj4+PiDCoMKg
+KyBTVU5YSV9QSU4oU1VOWElfUElOQ1RSTF9QSU4oTCwgNiksCj4+Pj4gwqDCoCsgU1VOWElfRlVO
+Q1RJT04oMHgwLCAiZ3Bpb19pbiIpLAo+Pj4+IMKgwqArIFNVTlhJX0ZVTkNUSU9OKDB4MSwgImdw
+aW9fb3V0IiksCj4+Pj4gwqDCoCsgU1VOWElfRlVOQ1RJT04oMHgzLCAic19qdGFnIiksIC8qIERP
+ICovCj4+Pj4gwqDCoCsgU1VOWElfRlVOQ1RJT05fSVJRX0JBTksoMHg2LCAwLCA2KSksIC8qIFBM
+X0VJTlQ2ICovCj4+Pj4gwqDCoCsgU1VOWElfUElOKFNVTlhJX1BJTkNUUkxfUElOKEwsIDcpLAo+
+Pj4+IMKgwqArIFNVTlhJX0ZVTkNUSU9OKDB4MCwgImdwaW9faW4iKSwKPj4+PiDCoMKgKyBTVU5Y
+SV9GVU5DVElPTigweDEsICJncGlvX291dCIpLAo+Pj4+IMKgwqArIFNVTlhJX0ZVTkNUSU9OKDB4
+MywgInNfanRhZyIpLCAvKiBESSAqLwo+Pj4+IMKgwqArIFNVTlhJX0ZVTkNUSU9OX0lSUV9CQU5L
+KDB4NiwgMCwgNykpLCAvKiBQTF9FSU5UNyAqLwo+Pj4+IMKgwqArIFNVTlhJX1BJTihTVU5YSV9Q
+SU5DVFJMX1BJTihMLCA4KSwKPj4+PiDCoMKgKyBTVU5YSV9GVU5DVElPTigweDAsICJncGlvX2lu
+IiksCj4+Pj4gwqDCoCsgU1VOWElfRlVOQ1RJT04oMHgxLCAiZ3Bpb19vdXQiKSwKPj4+PiDCoMKg
+KyBTVU5YSV9GVU5DVElPTigweDIsICJzX3R3aSIpLCAvKiBTQ0sgKi8KPj4+Cj4+PiDCoERpdHRv
+Lgo+Pj4KPj4+PiDCoMKgKyBTVU5YSV9GVU5DVElPTl9JUlFfQkFOSygweDYsIDAsIDgpKSwgLyog
+UExfRUlOVDggKi8KPj4+PiDCoMKgKyBTVU5YSV9QSU4oU1VOWElfUElOQ1RSTF9QSU4oTCwgOSks
+Cj4+Pj4gwqDCoCsgU1VOWElfRlVOQ1RJT04oMHgwLCAiZ3Bpb19pbiIpLAo+Pj4+IMKgwqArIFNV
+TlhJX0ZVTkNUSU9OKDB4MSwgImdwaW9fb3V0IiksCj4+Pj4gwqDCoCsgU1VOWElfRlVOQ1RJT04o
+MHgyLCAic190d2kiKSwgLyogU0RBICovCj4+Pgo+Pj4gwqBEaXR0by4KPj4+Cj4+Pj4gwqDCoCsg
+U1VOWElfRlVOQ1RJT05fSVJRX0JBTksoMHg2LCAwLCA5KSksIC8qIFBMX0VJTlQ5ICovCj4+Pj4g
+wqDCoCsgU1VOWElfUElOKFNVTlhJX1BJTkNUUkxfUElOKEwsIDEwKSwKPj4+PiDCoMKgKyBTVU5Y
+SV9GVU5DVElPTigweDAsICJncGlvX2luIiksCj4+Pj4gwqDCoCsgU1VOWElfRlVOQ1RJT04oMHgx
+LCAiZ3Bpb19vdXQiKSwKPj4+PiDCoMKgKyBTVU5YSV9GVU5DVElPTigweDIsICJzX3B3bSIpLAo+
+Pj4+IMKgwqArIFNVTlhJX0ZVTkNUSU9OX0lSUV9CQU5LKDB4NiwgMCwgMTApKSwgLyogUExfRUlO
+VDEwICovCj4+Pj4gwqDCoCsgU1VOWElfUElOKFNVTlhJX1BJTkNUUkxfUElOKEwsIDExKSwKPj4+
+PiDCoMKgKyBTVU5YSV9GVU5DVElPTigweDAsICJncGlvX2luIiksCj4+Pj4gwqDCoCsgU1VOWElf
+RlVOQ1RJT04oMHgxLCAiZ3Bpb19vdXQiKSwKPj4+PiDCoMKgKyBTVU5YSV9GVU5DVElPTigweDIs
+ICJzX2Npcl9yeCIpLAo+Pj4+IMKgwqArIFNVTlhJX0ZVTkNUSU9OX0lSUV9CQU5LKDB4NiwgMCwg
+MTEpKSwgLyogUExfRUlOVDExICovCj4+Pgo+Pj4gwqBZb3UgbWlzc2VkIFBMMTIuCj4+IMKgU29y
+cnkuLi4gSSBmb3Jnb3QgdG8gYWRkIGl0Li4uCj4+Pj4gwqDCoCt9Owo+Pj4+IMKgwqArCj4+Pj4g
+wqDCoCtzdGF0aWMgY29uc3Qgc3RydWN0IHN1bnhpX3BpbmN0cmxfZGVzYyBzdW41MGlfYTY0X3Jf
+cGluY3RybF9kYXRhID0gewo+Pj4+IMKgwqArIC5waW5zID0gc3VuNTBpX2E2NF9yX3BpbnMsCj4+
+Pj4gwqDCoCsgLm5waW5zID0gQVJSQVlfU0laRShzdW41MGlfYTY0X3JfcGlucyksCj4+Pj4gwqDC
+oCsgLnBpbl9iYXNlID0gUExfQkFTRSwKPj4+PiDCoMKgKyAuaXJxX2JhbmtzID0gMSwKPj4+PiDC
+oMKgK307Cj4+Pj4gwqDCoCsKPj4+PiDCoMKgK3N0YXRpYyBpbnQgc3VuNTBpX2E2NF9yX3BpbmN0
+cmxfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPj4+PiDCoMKgK3sKPj4+PiDC
+oMKgKyBzdHJ1Y3QgcmVzZXRfY29udHJvbCAqcnN0YzsKPj4+PiDCoMKgKyBpbnQgcmV0Owo+Pj4+
+IMKgwqArCj4+Pj4gwqDCoCsgcnN0YyA9IGRldm1fcmVzZXRfY29udHJvbF9nZXQoJnBkZXYtPmRl
+diwgTlVMTCk7Cj4+Pj4gwqDCoCsgaWYgKElTX0VSUihyc3RjKSkgewo+Pj4+IMKgwqArIGRldl9l
+cnIoJnBkZXYtPmRldiwgIlJlc2V0IGNvbnRyb2xsZXIgbWlzc2luZ1xuIik7Cj4+Pj4gwqDCoCsg
+cmV0dXJuIFBUUl9FUlIocnN0Yyk7Cj4+Pj4gwqDCoCsgfQo+Pj4+IMKgwqArCj4+Pj4gwqDCoCsg
+cmV0ID0gcmVzZXRfY29udHJvbF9kZWFzc2VydChyc3RjKTsKPj4+PiDCoMKgKyBpZiAocmV0KQo+
+Pj4+IMKgwqArIHJldHVybiByZXQ7Cj4+Pj4gwqDCoCsKPj4+PiDCoMKgKyByZXQgPSBzdW54aV9w
+aW5jdHJsX2luaXQocGRldiwKPj4+PiDCoMKgKyAmc3VuNTBpX2E2NF9yX3BpbmN0cmxfZGF0YSk7
+Cj4+Pj4gwqDCoCsKPj4+PiDCoMKgKyBpZiAocmV0KQo+Pj4+IMKgwqArIHJlc2V0X2NvbnRyb2xf
+YXNzZXJ0KHJzdGMpOwo+Pj4+IMKgwqArCj4+Pj4gwqDCoCsgcmV0dXJuIHJldDsKPj4+PiDCoMKg
+K30KPj4+PiDCoMKgKwo+Pj4+IMKgwqArc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQg
+c3VuNTBpX2E2NF9yX3BpbmN0cmxfbWF0Y2hbXSA9IHsKPj4+PiDCoMKgKyB7IC5jb21wYXRpYmxl
+ID0gImFsbHdpbm5lcixzdW41MGktYTY0LXItcGluY3RybCIsIH0sCj4+Pj4gwqDCoCsge30KPj4+
+PiDCoMKgK307Cj4+Pj4gwqDCoCtNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCBzdW41MGlfYTY0X3Jf
+cGluY3RybF9tYXRjaCk7Cj4+Pj4gwqDCoCsKPj4+PiDCoMKgK3N0YXRpYyBzdHJ1Y3QgcGxhdGZv
+cm1fZHJpdmVyIHN1bjUwaV9hNjRfcl9waW5jdHJsX2RyaXZlciA9IHsKPj4+PiDCoMKgKyAucHJv
+YmUgPSBzdW41MGlfYTY0X3JfcGluY3RybF9wcm9iZSwKPj4+PiDCoMKgKyAuZHJpdmVyID0gewo+
+Pj4+IMKgwqArIC5uYW1lID0gInN1bjUwaS1hNjQtci1waW5jdHJsIiwKPj4+PiDCoMKgKyAub2Zf
+bWF0Y2hfdGFibGUgPSBzdW41MGlfYTY0X3JfcGluY3RybF9tYXRjaCwKPj4+PiDCoMKgKyB9LAo+
+Pj4+IMKgwqArfTsKPj4+PiDCoMKgK21vZHVsZV9wbGF0Zm9ybV9kcml2ZXIoc3VuNTBpX2E2NF9y
+X3BpbmN0cmxfZHJpdmVyKTsKPj4+PiDCoMKgKwo+Pj4+IMKgwqArTU9EVUxFX0FVVEhPUigiSWNl
+bm93eSBaaGVuZyA8aWNlbm93eUBhb3NjLnh5ej4iKTsKPj4+PiDCoMKgK01PRFVMRV9BVVRIT1Io
+IkNoZW4tWXUgVHNhaSA8d2Vuc0Bjc2llLm9yZz4iKTsKPj4+PiDCoMKgK01PRFVMRV9BVVRIT1Io
+IkJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGZyZWUtZWxlY3Ryb25zLmNvbSIpOwo+
+Pj4+IMKgwqArTU9EVUxFX0FVVEhPUigiTWF4aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVl
+LWVsZWN0cm9ucy5jb20iKTsKPj4+PiDCoMKgK01PRFVMRV9ERVNDUklQVElPTigiQWxsd2lubmVy
+IEE2NCBSX1BJTyBwaW5jdHJsIGRyaXZlciIpOwo+Pj4+IMKgwqArTU9EVUxFX0xJQ0VOU0UoIkdQ
+TCIpOwo+Pj4KPj4+IMKgU2luY2UgeW91IGhhdmUgYSBib29sIEtjb25maWcgc3ltYm9sLCB5b3Ug
+Y2FuIGRyb3AgYWxsIHRoZSBtb2R1bGUgcmVsYXRlZAo+Pj4gwqBzdHVmZi4gSnVzdCB1c2UgYnVp
+bHRpbl9wbGF0Zm9ybV9kcml2ZXIgbGlrZSB0aGUgQTY0IG1haW4gcGluY3RybCBkcml2ZXIKPj4+
+IMKgZG9lcy4KPj4+Cj4+PiDCoFJlZ2FyZHMKPj4+IMKgQ2hlbll1Cj4+Pgo+Pj4+IMKgwqAtLQo+
+Pj4+IMKgwqAyLjkuMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0
+cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGlu
+Zm8vbGludXgtYXJtLWtlcm5lbAo=
