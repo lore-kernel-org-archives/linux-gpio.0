@@ -1,16 +1,17 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 2/2] pinctrl: sunxi: Add A64 R_PIO controller support
-Date: Tue, 16 Aug 2016 09:27:54 +0800
-Message-ID: <CAGb2v64jQT+EQ01ZGSJ=3_FMnG5kckz_AEd3ME2Osi+sYO1dmg@mail.gmail.com>
-References: <20160801145939.50583-1-icenowy@aosc.xyz>
- <20160801145939.50583-2-icenowy@aosc.xyz>
- <CAGb2v64nzOOwZFGzukXehv6Bx6nikHdnuGUkRMJWS8bjfMkeXQ@mail.gmail.com>
- <363591471306006@web8j.yandex.ru>
+From: "Ken.Lin" <Ken.Lin@advantech.com.tw>
+Subject: RE: [PATCH] ARM: dts: imx6q-bx50v3: configure unused pca953x pins
+Date: Tue, 16 Aug 2016 02:42:33 +0000
+Message-ID: <56fb5916ee464557974bf9a0b1e5df88@taipei09.ADVANTECH.CORP>
+References: <1471023911-2763-1-git-send-email-akshay.bhat@timesys.com>
+ <20160815053033.ds27jg3c7vnx7ujw@pengutronix.de>
+ <a23f6081bea242bfba70b805f2a93494@taipei08.ADVANTECH.CORP>
+ <20160815072825.hffvzlxpzlph6bk7@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <363591471306006@web8j.yandex.ru>
+In-Reply-To: <20160815072825.hffvzlxpzlph6bk7@pengutronix.de>
+Content-Language: zh-TW
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,245 +21,145 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andre Przywara <andre.przywara@arm.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Krzysztof Adamski <k@japko.eu>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Akshay Bhat <akshay.bhat@timesys.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Aug 16, 2016 at 8:06 AM, Icenowy Zheng <icenowy@aosc.xyz> wrote:
->
->
-> 15.08.2016, 21:56, "Chen-Yu Tsai" <wens@csie.org>:
->> Hi,
->>
->> On Mon, Aug 1, 2016 at 10:59 PM, Icenowy Zheng <icenowy@aosc.xyz> wrote:
->>>  The A64 has a R_PIO pin controller, similar to the one found on the H3 SoCs.
->>>  Add support for the pins controlled by the R_PIO controller.
->>>
->>>  Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
->>>  ---
->>>   drivers/pinctrl/sunxi/Kconfig | 5 +
->>>   drivers/pinctrl/sunxi/Makefile | 1 +
->>>   drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c | 148 +++++++++++++++++++++++++++
->>>   3 files changed, 154 insertions(+)
->>>   create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c
->>>
->>>  diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
->>>  index aaf075b..c4b476f 100644
->>>  --- a/drivers/pinctrl/sunxi/Kconfig
->>>  +++ b/drivers/pinctrl/sunxi/Kconfig
->>>  @@ -72,4 +72,9 @@ config PINCTRL_SUN50I_A64
->>>          bool
->>>          select PINCTRL_SUNXI
->>>
->>>  +config PINCTRL_SUN50I_A64_R
->>>  + bool
->>>  + depends on RESET_CONTROLLER
->>>  + select PINCTRL_SUNXI
->>>  +
->>>   endif
->>>  diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
->>>  index 2d8b64e..d6eabdd 100644
->>>  --- a/drivers/pinctrl/sunxi/Makefile
->>>  +++ b/drivers/pinctrl/sunxi/Makefile
->>>  @@ -13,6 +13,7 @@ obj-$(CONFIG_PINCTRL_SUN8I_A23) += pinctrl-sun8i-a23.o
->>>   obj-$(CONFIG_PINCTRL_SUN8I_A23_R) += pinctrl-sun8i-a23-r.o
->>>   obj-$(CONFIG_PINCTRL_SUN8I_A33) += pinctrl-sun8i-a33.o
->>>   obj-$(CONFIG_PINCTRL_SUN50I_A64) += pinctrl-sun50i-a64.o
->>>  +obj-$(CONFIG_PINCTRL_SUN50I_A64_R) += pinctrl-sun50i-a64-r.o
->>>   obj-$(CONFIG_PINCTRL_SUN8I_A83T) += pinctrl-sun8i-a83t.o
->>>   obj-$(CONFIG_PINCTRL_SUN8I_H3) += pinctrl-sun8i-h3.o
->>>   obj-$(CONFIG_PINCTRL_SUN8I_H3_R) += pinctrl-sun8i-h3-r.o
->>>  diff --git a/drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c b/drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c
->>>  new file mode 100644
->>>  index 0000000..b836264
->>>  --- /dev/null
->>>  +++ b/drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c
->>>  @@ -0,0 +1,148 @@
->>>  +/*
->>>  + * Allwinner A64 SoCs special pins pinctrl driver.
->>>  + *
->>>  + * Based on pinctrl-sun8i-a23-r.c
->>>  + *
->>>  + * Copyright (C) 2016 Icenowy Zheng
->>>  + * Icenowy Zheng <icenowy@aosc.xyz>
->>>  + *
->>>  + * Copyright (C) 2014 Chen-Yu Tsai
->>>  + * Chen-Yu Tsai <wens@csie.org>
->>>  + *
->>>  + * Copyright (C) 2014 Boris Brezillon
->>>  + * Boris Brezillon <boris.brezillon@free-electrons.com>
->>>  + *
->>>  + * Copyright (C) 2014 Maxime Ripard
->>>  + * Maxime Ripard <maxime.ripard@free-electrons.com>
->>>  + *
->>>  + * This file is licensed under the terms of the GNU General Public
->>>  + * License version 2. This program is licensed "as is" without any
->>>  + * warranty of any kind, whether express or implied.
->>>  + */
->>>  +
->>>  +#include <linux/module.h>
->>>  +#include <linux/platform_device.h>
->>>  +#include <linux/of.h>
->>>  +#include <linux/of_device.h>
->>
->> Please sort the headers.
-> This file is based on pinctrl-sun8i-a23-r.c and pinctrl-sun8i-h3-r.c, which
-> both have #include in this sequence.
+Hi,
 
-And we should probably fix them too.
+Without the patch to configure unused pins (floating inputs as default) wel=
+l based on the project specific schematics design, the unhandled interrupts=
+ (return IRQ_NONE in pca953x_irq_handler) would probably exceed a certain r=
+ate count and result in the below backtrace which ends up disabling the IRQ=
+ (the shared pca953x all interrupt).
 
->>
->>>  +#include <linux/pinctrl/pinctrl.h>
->>>  +#include <linux/reset.h>
->>>  +
->>>  +#include "pinctrl-sunxi.h"
->>>  +
->>>  +static const struct sunxi_desc_pin sun50i_a64_r_pins[] = {
->>>  + SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
->>>  + SUNXI_FUNCTION(0x0, "gpio_in"),
->>>  + SUNXI_FUNCTION(0x1, "gpio_out"),
->>>  + SUNXI_FUNCTION(0x2, "s_rsb"), /* SCK */
->>>  + SUNXI_FUNCTION(0x3, "s_twi"), /* SCK */
->>
->> We use "i2c" instead of "twi".
-> So as above, in A23 / H3 R_PIO driver, they're called as "s_twi" other than "s_i2c"
+[15994.165307] irq 72: nobody cared (try booting with the "irqpoll" option)
+[15994.172052] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.0.0 #1
+[15994.177904] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
+[15994.184448] Backtrace:
+[15994.186974] [<80012638>] (dump_backtrace) from [<80012854>] (show_stack+=
+0x18/0x1c)
+[15994.194561]  r6:80a77864 r5:00000000 r4:00000000 r3:00000000
+[15994.200351] [<8001283c>] (show_stack) from [<80727924>] (dump_stack+0x8c=
+/0xa4)
+[15994.207614] [<80727898>] (dump_stack) from [<80071d18>] (__report_bad_ir=
+q+0x28/0xc8)
+[15994.215373]  r6:00000048 r5:00000000 r4:ee14e100 r3:00000000
+[15994.221154] [<80071cf0>] (__report_bad_irq) from [<800722cc>] (note_inte=
+rrupt+0x254/0x2b4)
+[15994.229434]  r6:00000048 r5:00000000 r4:ee14e100 r3:00000000
+[15994.235217] [<80072078>] (note_interrupt) from [<8006fc14>] (handle_irq_=
+event_percpu+0xd0/0x140)
+[15994.244018]  r10:80abaf34 r9:ee14e100 r8:00000048 r7:00002088 r6:0000000=
+2 r5:00000002
+[15994.251982]  r4:00000000 r3:00000000
+[15994.255633] [<8006fb44>] (handle_irq_event_percpu) from [<8006fcc8>] (ha=
+ndle_irq_event+0x44/0x64)
+[15994.264520]  r10:00000000 r9:ee14cd10 r8:00000001 r7:00000008 r6:ed9bbbc=
+0 r5:ee14e160
+[15994.272484]  r4:ee14e100
+[15994.275068] [<8006fc84>] (handle_irq_event) from [<80072b04>] (handle_le=
+vel_irq+0xbc/0x144)
+[15994.283433]  r6:ee14cb00 r5:ee14e160 r4:ee14e100 r3:00022008
+[15994.289213] [<80072a48>] (handle_level_irq) from [<8006f18c>] (generic_h=
+andle_irq+0x30/0x44)
+[15994.297666]  r5:00000008 r4:00000048
+[15994.301328] [<8006f15c>] (generic_handle_irq) from [<802eef20>] (mxc_gpi=
+o_irq_handler+0x34/0x114)
+[15994.310216]  r4:00000003 r3:00000020
+[15994.313869] [<802eeeec>] (mxc_gpio_irq_handler) from [<802ef088>] (mx3_g=
+pio_irq_handler+0x88/0xe4)
+[15994.322843]  r10:00000000 r9:ee008000 r8:00000001 r7:00000000 r6:ee14cb0=
+0 r5:ee14cd10
+[15994.330806]  r4:80a77ae4
+[15994.333390] [<802ef000>] (mx3_gpio_irq_handler) from [<8006f18c>] (gener=
+ic_handle_irq+0x30/0x44)
+[15994.342191]  r6:80a5aaf8 r5:00000043 r4:00000043 r3:802ef000
+[15994.347971] [<8006f15c>] (generic_handle_irq) from [<8006f4ac>] (__handl=
+e_domain_irq+0x6c/0xe8)
+[15994.356684]  r4:80a53d8c r3:00000167
+[15994.360331] [<8006f440>] (__handle_domain_irq) from [<800087bc>] (gic_ha=
+ndle_irq+0x28/0x68)
+[15994.368697]  r9:80a5a9c8 r8:80abaf31 r7:f4000100 r6:80a5ac6c r5:80a59f18=
+ r4:f400010c
+[15994.376584] [<80008794>] (gic_handle_irq) from [<800133a4>] (__irq_svc+0=
+x44/0x5c)
+[15994.384085] Exception stack(0x80a59f18 to 0x80a59f60)
+[15994.389157] 9f00:                                                       =
+00000001 00000001
+[15994.397361] 9f20: 00000000 80021120 80a58000 80a5a97c 80733270 80abaf31 =
+80abaf31 80a5a9c8
+[15994.405565] 9f40: 00000000 80a59f6c 80a59f30 80a59f60 80062ab0 8000f89c =
+20010013 ffffffff
+[15994.413756]  r7:80a59f4c r6:ffffffff r5:20010013 r4:8000f89c
+[15994.419545] [<8000f874>] (arch_cpu_idle) from [<8005dc08>] (cpu_startup_=
+entry+0x120/0x18c)
+[15994.427851] [<8005dae8>] (cpu_startup_entry) from [<80723428>] (rest_ini=
+t+0xac/0xd4)
+[15994.435611]  r7:80a5a8c0 r3:80733660
+[15994.439263] [<8072337c>] (rest_init) from [<809fac94>] (start_kernel+0x3=
+58/0x3cc)
+[15994.446762]  r5:80abb180 r4:80a5aa84
+[15994.450413] [<809fa93c>] (start_kernel) from [<10008074>] (0x10008074)
+[15994.456956] handlers:
+[15994.459258] [<8006fce8>] irq_default_primary_handler threaded [<802ef8ac=
+>] pca953x_irq_handler
+[15994.467942] Disabling IRQ #72
 
-These as well.
 
-ChenYu
+Cheers,
+Ken Lin
 
->>
->>>  + SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)), /* PL_EINT0 */
->>>  + SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
->>>  + SUNXI_FUNCTION(0x0, "gpio_in"),
->>>  + SUNXI_FUNCTION(0x1, "gpio_out"),
->>>  + SUNXI_FUNCTION(0x2, "s_rsb"), /* SDA */
->>>  + SUNXI_FUNCTION(0x3, "s_twi"), /* SDA */
->>
->> Same here.
->>
->>>  + SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)), /* PL_EINT1 */
->>>  + SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
->>>  + SUNXI_FUNCTION(0x0, "gpio_in"),
->>>  + SUNXI_FUNCTION(0x1, "gpio_out"),
->>>  + SUNXI_FUNCTION(0x2, "s_uart"), /* TX */
->>>  + SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)), /* PL_EINT2 */
->>>  + SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 3),
->>>  + SUNXI_FUNCTION(0x0, "gpio_in"),
->>>  + SUNXI_FUNCTION(0x1, "gpio_out"),
->>>  + SUNXI_FUNCTION(0x2, "s_uart"), /* RX */
->>>  + SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)), /* PL_EINT3 */
->>>  + SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 4),
->>>  + SUNXI_FUNCTION(0x0, "gpio_in"),
->>>  + SUNXI_FUNCTION(0x1, "gpio_out"),
->>>  + SUNXI_FUNCTION(0x3, "s_jtag"), /* MS */
->>>  + SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)), /* PL_EINT4 */
->>>  + SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 5),
->>>  + SUNXI_FUNCTION(0x0, "gpio_in"),
->>>  + SUNXI_FUNCTION(0x1, "gpio_out"),
->>>  + SUNXI_FUNCTION(0x3, "s_jtag"), /* CK */
->>>  + SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 5)), /* PL_EINT5 */
->>>  + SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 6),
->>>  + SUNXI_FUNCTION(0x0, "gpio_in"),
->>>  + SUNXI_FUNCTION(0x1, "gpio_out"),
->>>  + SUNXI_FUNCTION(0x3, "s_jtag"), /* DO */
->>>  + SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 6)), /* PL_EINT6 */
->>>  + SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 7),
->>>  + SUNXI_FUNCTION(0x0, "gpio_in"),
->>>  + SUNXI_FUNCTION(0x1, "gpio_out"),
->>>  + SUNXI_FUNCTION(0x3, "s_jtag"), /* DI */
->>>  + SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 7)), /* PL_EINT7 */
->>>  + SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 8),
->>>  + SUNXI_FUNCTION(0x0, "gpio_in"),
->>>  + SUNXI_FUNCTION(0x1, "gpio_out"),
->>>  + SUNXI_FUNCTION(0x2, "s_twi"), /* SCK */
->>
->> Ditto.
->>
->>>  + SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 8)), /* PL_EINT8 */
->>>  + SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 9),
->>>  + SUNXI_FUNCTION(0x0, "gpio_in"),
->>>  + SUNXI_FUNCTION(0x1, "gpio_out"),
->>>  + SUNXI_FUNCTION(0x2, "s_twi"), /* SDA */
->>
->> Ditto.
->>
->>>  + SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)), /* PL_EINT9 */
->>>  + SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 10),
->>>  + SUNXI_FUNCTION(0x0, "gpio_in"),
->>>  + SUNXI_FUNCTION(0x1, "gpio_out"),
->>>  + SUNXI_FUNCTION(0x2, "s_pwm"),
->>>  + SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 10)), /* PL_EINT10 */
->>>  + SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 11),
->>>  + SUNXI_FUNCTION(0x0, "gpio_in"),
->>>  + SUNXI_FUNCTION(0x1, "gpio_out"),
->>>  + SUNXI_FUNCTION(0x2, "s_cir_rx"),
->>>  + SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)), /* PL_EINT11 */
->>
->> You missed PL12.
-> Sorry... I forgot to add it...
->>
->>>  +};
->>>  +
->>>  +static const struct sunxi_pinctrl_desc sun50i_a64_r_pinctrl_data = {
->>>  + .pins = sun50i_a64_r_pins,
->>>  + .npins = ARRAY_SIZE(sun50i_a64_r_pins),
->>>  + .pin_base = PL_BASE,
->>>  + .irq_banks = 1,
->>>  +};
->>>  +
->>>  +static int sun50i_a64_r_pinctrl_probe(struct platform_device *pdev)
->>>  +{
->>>  + struct reset_control *rstc;
->>>  + int ret;
->>>  +
->>>  + rstc = devm_reset_control_get(&pdev->dev, NULL);
->>>  + if (IS_ERR(rstc)) {
->>>  + dev_err(&pdev->dev, "Reset controller missing\n");
->>>  + return PTR_ERR(rstc);
->>>  + }
->>>  +
->>>  + ret = reset_control_deassert(rstc);
->>>  + if (ret)
->>>  + return ret;
->>>  +
->>>  + ret = sunxi_pinctrl_init(pdev,
->>>  + &sun50i_a64_r_pinctrl_data);
->>>  +
->>>  + if (ret)
->>>  + reset_control_assert(rstc);
->>>  +
->>>  + return ret;
->>>  +}
->>>  +
->>>  +static const struct of_device_id sun50i_a64_r_pinctrl_match[] = {
->>>  + { .compatible = "allwinner,sun50i-a64-r-pinctrl", },
->>>  + {}
->>>  +};
->>>  +MODULE_DEVICE_TABLE(of, sun50i_a64_r_pinctrl_match);
->>>  +
->>>  +static struct platform_driver sun50i_a64_r_pinctrl_driver = {
->>>  + .probe = sun50i_a64_r_pinctrl_probe,
->>>  + .driver = {
->>>  + .name = "sun50i-a64-r-pinctrl",
->>>  + .of_match_table = sun50i_a64_r_pinctrl_match,
->>>  + },
->>>  +};
->>>  +module_platform_driver(sun50i_a64_r_pinctrl_driver);
->>>  +
->>>  +MODULE_AUTHOR("Icenowy Zheng <icenowy@aosc.xyz>");
->>>  +MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
->>>  +MODULE_AUTHOR("Boris Brezillon <boris.brezillon@free-electrons.com");
->>>  +MODULE_AUTHOR("Maxime Ripard <maxime.ripard@free-electrons.com");
->>>  +MODULE_DESCRIPTION("Allwinner A64 R_PIO pinctrl driver");
->>>  +MODULE_LICENSE("GPL");
->>
->> Since you have a bool Kconfig symbol, you can drop all the module related
->> stuff. Just use builtin_platform_driver like the A64 main pinctrl driver
->> does.
->>
->> Regards
->> ChenYu
->>
->>>  --
->>>  2.9.0
+-----Original Message-----
+From: Uwe Kleine-K=F6nig [mailto:u.kleine-koenig@pengutronix.de] =
+
+Sent: Monday, August 15, 2016 3:28 PM
+To: Ken.Lin
+Cc: Akshay Bhat; shawnguo@kernel.org; kernel@pengutronix.de; linux-arm-kern=
+el@lists.infradead.org; linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: imx6q-bx50v3: configure unused pca953x pins
+
+Hello,
+
+Cc +=3D linux-gpio
+
+On Mon, Aug 15, 2016 at 06:18:07AM +0000, Ken.Lin wrote:
+> 1. As you can see in the datasheet(that I attached to this email), at =
+
+> power on, P00 - P17 are configured as inputs (by chip default setting, =
+
+> datasheet P.3) and an interrupt is generated by any rising or falling =
+
+> edge of the port inputs in the input mode (datasheet P.10)
+
+ah, I see. All input pins generate an irq. The driver should handle this ju=
+st fine however. So I hope you don't see an oops or messages about unhandle=
+d irqs, right?
+
+> 2. The unhandled interrupts ( return IRQ_NONE in pca953x_irq_handler) =
+
+> in GPIO expander driver (drivers/gpio/gpio-pca953x.c) could happen =
+
+> when unused GPIO pins in GPIO expander are not well configured.
+
+Hmm, maybe the driver should return IRQ_HANDLED in this case, too. After al=
+l the irq reason is known and it was expected that an irq happend, right?
+
+> 3. As a result, we tried to configure the unused (default floating
+> inputs) pca953x GPIO pins as GPO low to avoid the unexpected =
+
+> interrupts (could be observed during the interference situation e.g.
+> putting fingers on the unused pin to make the signal level change)
+
+So changing these to outputs might still make sense to prevent these from f=
+loating or triggering unused irqs, but this should not make a semantical di=
+fference for your machine. (It might have more load and a bigger irq count,=
+ but apart from that everything should be the same.)
+
+Best regards
+Uwe
+
+-- =
+
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
