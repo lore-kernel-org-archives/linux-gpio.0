@@ -1,205 +1,231 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 4/7] pinctrl: samsung: Add GPFx support of Exynos5433
-Date: Tue, 16 Aug 2016 10:46:02 +0200
-Message-ID: <7a90ee6f-7a2e-e866-b2fa-6f0fff44d647@samsung.com>
-References: <1471328843-26653-1-git-send-email-cw00.choi@samsung.com>
- <1471328843-26653-5-git-send-email-cw00.choi@samsung.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH v2 2/2] pinctrl: sunxi: Add A64 R_PIO controller support
+Date: Tue, 16 Aug 2016 17:12:53 +0800
+Message-ID: <CAGb2v64dP+0WKBdX+mNxjgb1PPH9N0rA+DCia+VM2eNdTZbiog@mail.gmail.com>
+References: <20160816050709.7412-1-icenowy@aosc.xyz>
+ <20160816050709.7412-2-icenowy@aosc.xyz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1471328843-26653-5-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: krzk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, human.hwang-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ideal.song-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ingi2.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanwoo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20160816050709.7412-2-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andre Przywara <andre.przywara@arm.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Krzysztof Adamski <k@japko.eu>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 08/16/2016 08:27 AM, Chanwoo Choi wrote:
-> From: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> 
-> This patch add the support of GPFx pin of Exynos5433 SoC. Exynos5433 has
-> different memory map of GPFx from previous Exynos SoC. Exynos GPIO has
-> following register to control gpio funciton. Usually, all registers of GPIO
-> are included in same domain.
-> - CON / DAT / PUD / DRV / CONPDN / PUDPDN
-> - EINT_CON/ EINT_FLTCON0, EINT_FLTCON1 / EINT_MASK / EINT_PEND
-> 
-> But, GPFx are included in two domain as following. So, this patch supports
-> the GPFx pin which handle the on separate two domains.
-> - ALIVE domain : CON / DAT / PUD / DRV / CONPDN / PUDPDN
-> - IMEM domain  : EINT_CON/ EINT_FLTCON0, EINT_FLTCON1 / EINT_MASK / EINT_PEND
-> 
-> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-> Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Signed-off-by: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On Tue, Aug 16, 2016 at 1:07 PM, Icenowy Zheng <icenowy@aosc.xyz> wrote:
+> The A64 has a R_PIO pin controller, similar to the one found on the H3 SoC.
+> Add support for the pins controlled by the R_PIO controller.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 > ---
->  .../bindings/pinctrl/samsung-pinctrl.txt           |  1 +
->  drivers/pinctrl/samsung/pinctrl-exynos.c           |  5 +++
->  drivers/pinctrl/samsung/pinctrl-exynos.h           | 11 ++++++
->  drivers/pinctrl/samsung/pinctrl-samsung.c          | 43 ++++++++++++++++++----
->  drivers/pinctrl/samsung/pinctrl-samsung.h          |  5 +++
->  5 files changed, 57 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-> index 6db16b90873a..807fba1f829f 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-> @@ -19,6 +19,7 @@ Required Properties:
->    - "samsung,exynos5260-pinctrl": for Exynos5260 compatible pin-controller.
->    - "samsung,exynos5410-pinctrl": for Exynos5410 compatible pin-controller.
->    - "samsung,exynos5420-pinctrl": for Exynos5420 compatible pin-controller.
-> +  - "samsung,exynos5433-pinctrl": for Exynos5433 compatible pin-controller.
->    - "samsung,exynos7-pinctrl": for Exynos7 compatible pin-controller.
->  
->  - reg: Base address of the pin controller hardware module and length of
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> index 051b5bf701a8..4f95983e0cdd 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> @@ -1350,6 +1350,11 @@ static const struct samsung_pin_bank_data exynos5433_pin_banks0[] = {
->  	EXYNOS_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
->  	EXYNOS_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
->  	EXYNOS_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
-> +	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x020, "gpf1", 0x1004),
-> +	EXYNOS_PIN_BANK_EINTW_EXT(4, 0x040, "gpf2", 0x1008),
-> +	EXYNOS_PIN_BANK_EINTW_EXT(4, 0x060, "gpf3", 0x100c),
-> +	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x080, "gpf4", 0x1010),
-> +	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x0a0, "gpf5", 0x1014),
->  };
->  
->  /* pin banks of exynos5433 pin-controller - AUD */
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
-> index 0f0f7cedb2dc..4b737b6c434d 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.h
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
-> @@ -79,6 +79,17 @@
->  		.name		= id			\
->  	}
->  
-> +#define EXYNOS_PIN_BANK_EINTW_EXT(pins, reg, id, offs)	\
-> +	{						\
-> +		.type		= &bank_type_off,	\
-> +		.pctl_offset	= reg,			\
-> +		.nr_pins	= pins,			\
-> +		.eint_type	= EINT_TYPE_WKUP,	\
-> +		.eint_offset	= offs,			\
-> +		.eint_ext	= true,			\
-> +		.name		= id			\
-> +	}
+> Changes in v2:
+> - Changed the name of I2C functions from "s_twi" to "s_i2c"
+> - Rearranged the sequence of #include
+> - Changed the driver info part from module to a builtin driver
+>
+>  drivers/pinctrl/sunxi/Kconfig                |   5 +
+>  drivers/pinctrl/sunxi/Makefile               |   1 +
+>  drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c | 145 +++++++++++++++++++++++++++
+>  3 files changed, 151 insertions(+)
+>  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c
+>
+> diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
+> index aaf075b..c4b476f 100644
+> --- a/drivers/pinctrl/sunxi/Kconfig
+> +++ b/drivers/pinctrl/sunxi/Kconfig
+> @@ -72,4 +72,9 @@ config PINCTRL_SUN50I_A64
+>         bool
+>         select PINCTRL_SUNXI
+>
+> +config PINCTRL_SUN50I_A64_R
+> +       bool
+> +       depends on RESET_CONTROLLER
+> +       select PINCTRL_SUNXI
 > +
->  /**
->   * struct exynos_weint_data: irq specific data for all the wakeup interrupts
->   * generated by the external wakeup interrupt controller.
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index 513fe6b23248..57e22085c2db 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -338,6 +338,7 @@ static void pin_to_reg_bank(struct samsung_pinctrl_drv_data *drvdata,
->  			struct samsung_pin_bank **bank)
->  {
->  	struct samsung_pin_bank *b;
-> +	void __iomem *virt_base = drvdata->virt_base;
->  
->  	b = drvdata->pin_banks;
->  
-> @@ -345,7 +346,10 @@ static void pin_to_reg_bank(struct samsung_pinctrl_drv_data *drvdata,
->  			((b->pin_base + b->nr_pins - 1) < pin))
->  		b++;
->  
-> -	*reg = drvdata->virt_base + b->pctl_offset;
-> +	if (b->eint_ext)
-> +		virt_base = drvdata->ext_base;
+>  endif
+> diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
+> index 2d8b64e..d6eabdd 100644
+> --- a/drivers/pinctrl/sunxi/Makefile
+> +++ b/drivers/pinctrl/sunxi/Makefile
+> @@ -13,6 +13,7 @@ obj-$(CONFIG_PINCTRL_SUN8I_A23)               += pinctrl-sun8i-a23.o
+>  obj-$(CONFIG_PINCTRL_SUN8I_A23_R)      += pinctrl-sun8i-a23-r.o
+>  obj-$(CONFIG_PINCTRL_SUN8I_A33)                += pinctrl-sun8i-a33.o
+>  obj-$(CONFIG_PINCTRL_SUN50I_A64)       += pinctrl-sun50i-a64.o
+> +obj-$(CONFIG_PINCTRL_SUN50I_A64_R)     += pinctrl-sun50i-a64-r.o
+>  obj-$(CONFIG_PINCTRL_SUN8I_A83T)       += pinctrl-sun8i-a83t.o
+>  obj-$(CONFIG_PINCTRL_SUN8I_H3)         += pinctrl-sun8i-h3.o
+>  obj-$(CONFIG_PINCTRL_SUN8I_H3_R)       += pinctrl-sun8i-h3-r.o
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c b/drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c
+> new file mode 100644
+> index 0000000..440cfe9
+> --- /dev/null
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c
+> @@ -0,0 +1,145 @@
+> +/*
+> + * Allwinner A64 SoCs special pins pinctrl driver.
+> + *
+> + * Based on pinctrl-sun8i-a23-r.c
+> + *
+> + * Copyright (C) 2016 Icenowy Zheng
+> + * Icenowy Zheng <icenowy@aosc.xyz>
+> + *
+> + * Copyright (C) 2014 Chen-Yu Tsai
+> + * Chen-Yu Tsai <wens@csie.org>
+> + *
+> + * Copyright (C) 2014 Boris Brezillon
+> + * Boris Brezillon <boris.brezillon@free-electrons.com>
+> + *
+> + * Copyright (C) 2014 Maxime Ripard
+> + * Maxime Ripard <maxime.ripard@free-electrons.com>
+> + *
+> + * This file is licensed under the terms of the GNU General Public
+> + * License version 2.  This program is licensed "as is" without any
+> + * warranty of any kind, whether express or implied.
+> + */
 > +
-> +	*reg = virt_base + b->pctl_offset;
->  	*offset = pin - b->pin_base;
->  	if (bank)
->  		*bank = b;
-> @@ -523,10 +527,12 @@ static void samsung_gpio_set_value(struct gpio_chip *gc,
->  {
->  	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
->  	const struct samsung_pin_bank_type *type = bank->type;
-> +	void __iomem *virt_base = bank->eint_ext ?
-> +		bank->drvdata->ext_base : bank->drvdata->virt_base;
+> +#include <linux/module.h>
 
-I would prefer to avoid '?' operator because it makes the line difficult
-to read. However I wonder whether this check here and later is needed at
-all. It obfuscates the code so how about:
-1. In pinctrl-samsung always access virt_base as it was before.
-The virt_base in probe will be in domain of GPF_CON registers.
-2. Rename ext_base to eint_base
-3. Always assign eint_base in probe():
-	if (exynos5433)
-		eint_base = iomap()...
-	else
-		eint_base = virt_base;
-4. in pinctrl-exynos.c access the eint_base.
+You can drop this one.
 
-No need of scattered if() through various calls and simpler flow.
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset.h>
+> +
+> +#include "pinctrl-sunxi.h"
+> +
+> +static const struct sunxi_desc_pin sun50i_a64_r_pins[] = {
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_rsb"),         /* SCK */
+> +                 SUNXI_FUNCTION(0x3, "s_i2c"),         /* SCK */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),  /* PL_EINT0 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_rsb"),         /* SDA */
+> +                 SUNXI_FUNCTION(0x3, "s_i2c"),         /* SDA */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),  /* PL_EINT1 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_uart"),        /* TX */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)),  /* PL_EINT2 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 3),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_uart"),        /* RX */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)),  /* PL_EINT3 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 4),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x3, "s_jtag"),        /* MS */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)),  /* PL_EINT4 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 5),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x3, "s_jtag"),        /* CK */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 5)),  /* PL_EINT5 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 6),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x3, "s_jtag"),        /* DO */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 6)),  /* PL_EINT6 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 7),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x3, "s_jtag"),        /* DI */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 7)),  /* PL_EINT7 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 8),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_i2c"),         /* SCK */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 8)),  /* PL_EINT8 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 9),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_i2c"),         /* SDA */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),  /* PL_EINT9 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 10),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_pwm"),
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 10)), /* PL_EINT10 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 11),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_cir_rx"),
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)), /* PL_EINT11 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 12),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 12)), /* PL_EINT12 */
+> +};
+> +
+> +static const struct sunxi_pinctrl_desc sun50i_a64_r_pinctrl_data = {
+> +       .pins = sun50i_a64_r_pins,
+> +       .npins = ARRAY_SIZE(sun50i_a64_r_pins),
+> +       .pin_base = PL_BASE,
+> +       .irq_banks = 1,
+> +};
+> +
+> +static int sun50i_a64_r_pinctrl_probe(struct platform_device *pdev)
+> +{
+> +       struct reset_control *rstc;
+> +       int ret;
+> +
+> +       rstc = devm_reset_control_get(&pdev->dev, NULL);
+> +       if (IS_ERR(rstc)) {
+> +               dev_err(&pdev->dev, "Reset controller missing\n");
+> +               return PTR_ERR(rstc);
+> +       }
+> +
+> +       ret = reset_control_deassert(rstc);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = sunxi_pinctrl_init(pdev,
+> +                                &sun50i_a64_r_pinctrl_data);
+> +
+> +       if (ret)
+> +               reset_control_assert(rstc);
+> +
+> +       return ret;
+> +}
+> +
+> +static const struct of_device_id sun50i_a64_r_pinctrl_match[] = {
+> +       { .compatible = "allwinner,sun50i-a64-r-pinctrl", },
+> +       {}
+> +};
+> +MODULE_DEVICE_TABLE(of, sun50i_a64_r_pinctrl_match);
 
->  	void __iomem *reg;
->  	u32 data;
->  
-> -	reg = bank->drvdata->virt_base + bank->pctl_offset;
-> +	reg = virt_base + bank->pctl_offset;
->  
->  	data = readl(reg + type->reg_offset[PINCFG_TYPE_DAT]);
->  	data &= ~(1 << offset);
-> @@ -553,8 +559,10 @@ static int samsung_gpio_get(struct gpio_chip *gc, unsigned offset)
->  	u32 data;
->  	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
->  	const struct samsung_pin_bank_type *type = bank->type;
-> +	void __iomem *virt_base = bank->eint_ext ?
-> +		bank->drvdata->ext_base : bank->drvdata->virt_base;
->  
-> -	reg = bank->drvdata->virt_base + bank->pctl_offset;
-> +	reg = virt_base + bank->pctl_offset;
->  
->  	data = readl(reg + type->reg_offset[PINCFG_TYPE_DAT]);
->  	data >>= offset;
-> @@ -574,6 +582,7 @@ static int samsung_gpio_set_direction(struct gpio_chip *gc,
->  	const struct samsung_pin_bank_type *type;
->  	struct samsung_pin_bank *bank;
->  	struct samsung_pinctrl_drv_data *drvdata;
-> +	void __iomem *virt_base;
->  	void __iomem *reg;
->  	u32 data, mask, shift;
->  
-> @@ -581,7 +590,8 @@ static int samsung_gpio_set_direction(struct gpio_chip *gc,
->  	type = bank->type;
->  	drvdata = bank->drvdata;
->  
-> -	reg = drvdata->virt_base + bank->pctl_offset +
-> +	virt_base = bank->eint_ext ? drvdata->ext_base : drvdata->virt_base;
-> +	reg = virt_base + bank->pctl_offset +
->  					type->reg_offset[PINCFG_TYPE_FUNC];
->  
->  	mask = (1 << type->fld_width[PINCFG_TYPE_FUNC]) - 1;
-> @@ -1007,6 +1017,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
->  		bank->eint_type = bdata->eint_type;
->  		bank->eint_mask = bdata->eint_mask;
->  		bank->eint_offset = bdata->eint_offset;
-> +		bank->eint_ext = bdata->eint_ext;
->  		bank->name = bdata->name;
->  
->  		spin_lock_init(&bank->slock);
-> @@ -1065,6 +1076,14 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
->  	if (IS_ERR(drvdata->virt_base))
->  		return PTR_ERR(drvdata->virt_base);
->  
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+Nor do you need MODULE_DEVICE_TABLE.
 
-Additional reg should be documented in bindings documentation.
+Otherwise this looks good.
 
-Best regards,
-Krzysztof
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ChenYu
+
+> +
+> +static struct platform_driver sun50i_a64_r_pinctrl_driver = {
+> +       .probe  = sun50i_a64_r_pinctrl_probe,
+> +       .driver = {
+> +               .name           = "sun50i-a64-r-pinctrl",
+> +               .of_match_table = sun50i_a64_r_pinctrl_match,
+> +       },
+> +};
+> +builtin_platform_driver(sun50i_a64_r_pinctrl_driver);
+> --
+> 2.9.2
+>
