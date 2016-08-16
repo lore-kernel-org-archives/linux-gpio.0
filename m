@@ -1,33 +1,41 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add DU support
-Date: Tue, 16 Aug 2016 10:23:07 +0200
-Message-ID: <CAMuHMdVJ6fN1ak1zMYXKPe6h1aEmhHjWdCQLPw5EsGZq61w99A@mail.gmail.com>
-References: <1470993268-11590-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1470993268-11590-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
+From: LABBE Corentin <clabbe.montjoie@gmail.com>
+Subject: [PATCH] pinctrl: palmas: fix a possible NULL dereference
+Date: Tue, 16 Aug 2016 10:36:53 +0200
+Message-ID: <1471336613-25040-1-git-send-email-clabbe.montjoie@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, LABBE Corentin <clabbe.montjoie@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Aug 12, 2016 at 11:14 AM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> Only the DU parallel RGB output signals are included, HDMI and TCON pins
-> will be added in separate groups.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+of_match_device could return NULL, and so cause a NULL pointer
+dereference later at line 1009:
+pinctrl_data = match->data;
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+For fixing this problem, we use of_device_get_match_data(), this will
+simplify the code a little by using a standard function for
+getting the match data.
 
-Gr{oetje,eeting}s,
+Reported-by: coverity (CID 1324136)
+Signed-off-by: LABBE Corentin <clabbe.montjoie@gmail.com>
+---
+ drivers/pinctrl/pinctrl-palmas.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/pinctrl-palmas.c b/drivers/pinctrl/pinctrl-palmas.c
+index 8edb3f8c..a30146d 100644
+--- a/drivers/pinctrl/pinctrl-palmas.c
++++ b/drivers/pinctrl/pinctrl-palmas.c
+@@ -1004,9 +1004,7 @@ static int palmas_pinctrl_probe(struct platform_device *pdev)
+ 	bool enable_dvfs2 = false;
+ 
+ 	if (pdev->dev.of_node) {
+-		const struct of_device_id *match;
+-		match = of_match_device(palmas_pinctrl_of_match, &pdev->dev);
+-		pinctrl_data = match->data;
++		pinctrl_data = of_device_get_match_data(&pdev->dev);
+ 		enable_dvfs1 = of_property_read_bool(pdev->dev.of_node,
+ 					"ti,palmas-enable-dvfs1");
+ 		enable_dvfs2 = of_property_read_bool(pdev->dev.of_node,
+-- 
+2.7.3
