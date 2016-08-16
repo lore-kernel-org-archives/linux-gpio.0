@@ -1,49 +1,49 @@
-From: perr perr <strongbox8@zoho.com>
-Subject: [RESEND][PATCH v2] pinctrl: exynos: remove duplicate calls in irq
- handler
-Date: Tue, 16 Aug 2016 18:45:29 +0800
-Message-ID: <15692f4c2b0.efa5c46c29252.3567074676558581477@zoho.com>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: Re: [PATCH v2 1/2] dt: bindings: add binding for Allwinner A64 R_PIO
+ pinctrl
+Date: Tue, 16 Aug 2016 18:56:47 +0800
+Message-ID: <1672001471345007@web4j.yandex.ru>
+References: <20160816050709.7412-1-icenowy@aosc.xyz>
+ <CAGb2v65ca+HFq9Mr21E7QSN845O2H7BYKg5uAmRhECJe5dK6ag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: tomasz.figa@gmail.com
-Cc: k.kozlowski@samsung.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAGb2v65ca+HFq9Mr21E7QSN845O2H7BYKg5uAmRhECJe5dK6ag@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andre Przywara <andre.przywara@arm.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Rob Herring <robh+dt@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Krzysztof Adamski <k@japko.eu>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Because chained_irq_enter() has already called chip->irq_mask() and 
-chip->irq_ack(), also chained_irq_exit() will call chip->irq_unmask(), 
-so it's not necessary to call chip->irq_*() here. 
- 
-Signed-off-by: Perr Zhang <strongbox8@zoho.com> 
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com> 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
---- 
- drivers/pinctrl/samsung/pinctrl-exynos.c | 6 +----- 
- 1 file changed, 1 insertion(+), 5 deletions(-) 
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c 
-index 051b5bf..d32fa2b 100644 
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c 
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c 
-@@ -428,14 +428,10 @@ static void exynos_irq_eint0_15(struct irq_desc *desc) 
-     int eint_irq; 
-  
-     chained_irq_enter(chip, desc); 
--    chip->irq_mask(&desc->irq_data); 
-- 
--    if (chip->irq_ack) 
--        chip->irq_ack(&desc->irq_data); 
-  
-     eint_irq = irq_linear_revmap(bank->irq_domain, eintd->irq); 
-     generic_handle_irq(eint_irq); 
--    chip->irq_unmask(&desc->irq_data); 
-+ 
-     chained_irq_exit(chip, desc); 
- } 
-  
---  
-1.9.3 
- 
+CgoxNi4wOC4yMDE2LCAxNzoxNCwgIkNoZW4tWXUgVHNhaSIgPHdlbnNAY3NpZS5vcmc+Ogo+IE9u
+IFR1ZSwgQXVnIDE2LCAyMDE2IGF0IDE6MDcgUE0sIEljZW5vd3kgWmhlbmcgPGljZW5vd3lAYW9z
+Yy54eXo+IHdyb3RlOgo+PiDCoFNpZ25lZC1vZmYtYnk6IEljZW5vd3kgWmhlbmcgPGljZW5vd3lA
+YW9zYy54eXo+Cj4KPiBDb21taXQgbWVzc2FnZSBwbGVhc2UuIDopCkknbSB0b28gc2lsbHkgdG8g
+ZGVjaWRlIHdoYXQgc2hvdWxkIGJlIHdyaXR0ZW4gaGVyZS4uLgo+Cj4gU29tZXRoaW5nIHNpbWls
+YXIgdG8gdGhlIG9uZSBpbiB0aGUgcGluY3RybCBkcml2ZXIgcGF0Y2ggd291bGQgZG8uCj4KPiBD
+aGVuWXUKPgo+PiDCoC0tLQo+PiDCoMKgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L3BpbmN0cmwvYWxsd2lubmVyLHN1bnhpLXBpbmN0cmwudHh0IHwgMSArCj4+IMKgwqAxIGZpbGUg
+Y2hhbmdlZCwgMSBpbnNlcnRpb24oKykKPj4KPj4gwqBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvYWxsd2lubmVyLHN1bnhpLXBpbmN0cmwudHh0
+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvYWxsd2lubmVyLHN1
+bnhpLXBpbmN0cmwudHh0Cj4+IMKgaW5kZXggNjk2MTcyMi4uZWU3M2Y5ZiAxMDA2NDQKPj4gwqAt
+LS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9hbGx3aW5uZXIs
+c3VueGktcGluY3RybC50eHQKPj4gwqArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvcGluY3RybC9hbGx3aW5uZXIsc3VueGktcGluY3RybC50eHQKPj4gwqBAQCAtMjMsNiAr
+MjMsNyBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzOgo+PiDCoMKgwqDCoCJhbGx3aW5uZXIsc3VuOGkt
+aDMtcGluY3RybCIKPj4gwqDCoMKgwqAiYWxsd2lubmVyLHN1bjhpLWgzLXItcGluY3RybCIKPj4g
+wqDCoMKgwqAiYWxsd2lubmVyLHN1bjUwaS1hNjQtcGluY3RybCIKPj4gwqArICJhbGx3aW5uZXIs
+c3VuNTBpLWE2NC1yLXBpbmN0cmwiCj4+Cj4+IMKgwqAtIHJlZzogU2hvdWxkIGNvbnRhaW4gdGhl
+IHJlZ2lzdGVyIHBoeXNpY2FsIGFkZHJlc3MgYW5kIGxlbmd0aCBmb3IgdGhlCj4+IMKgwqDCoMKg
+cGluIGNvbnRyb2xsZXIuCj4+IMKgLS0KPj4gwqAyLjkuMgoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QK
+bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRl
+YWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
