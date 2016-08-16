@@ -1,47 +1,43 @@
-From: perr perr <strongbox8@zoho.com>
-Subject: [RESEND][PATCH] pinctrl: exynos: remove duplicate calls in irq
- handler
-Date: Tue, 16 Aug 2016 14:49:54 +0800
-Message-ID: <156921d1559.dd4cb9f127644.6244938289269001596@zoho.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: tomasz.figa@gmail.com
-Cc: k.kozlowski@samsung.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: Fix OF build problem on UM
+Date: Tue, 16 Aug 2016 10:06:41 +0200
+Message-ID: <1471334801-2814-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:35432 "EHLO
+	mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750928AbcHPIGq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Aug 2016 04:06:46 -0400
+Received: by mail-wm0-f49.google.com with SMTP id f65so128178902wmi.0
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Aug 2016 01:06:46 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, stable@vger.kernel.org
 
-Because chained_irq_enter() has already called chip->irq_mask() and 
-chip->irq_ack(), also chained_irq_exit() will call chip->irq_unmask(), 
-so it's not necessary to call chip->irq_*() here. 
+The UserMode (UM) Linux build was failing in gpiolib-of as it requires
+ioremap()/iounmap() to exist, which is absent from UM. The non-existence
+of IO memory is negatively defined as CONFIG_NO_IOMEM so put a reverse
+dependency on !NO_IOMEM for OF_GPIO to fix the build.
+
+Cc: stable@vger.kernel.org
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 98dd47a30fc7..a6026f2fe7f5 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -50,6 +50,7 @@ config GPIO_DEVRES
+ config OF_GPIO
+ 	def_bool y
+ 	depends on OF
++	depends on !NO_IOMEM
  
-Signed-off-by: Perr Zhang<strongbox8@zoho.com> 
- 
---- 
- drivers/pinctrl/samsung/pinctrl-exynos.c | 6 +----- 
- 1 file changed, 1 insertion(+), 5 deletions(-) 
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c 
-index 051b5bf..d32fa2b 100644 
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c 
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c 
-@@ -428,14 +428,10 @@ static void exynos_irq_eint0_15(struct irq_desc *desc) 
-     int eint_irq; 
-  
-     chained_irq_enter(chip, desc); 
--    chip->irq_mask(&desc->irq_data); 
-- 
--    if (chip->irq_ack) 
--        chip->irq_ack(&desc->irq_data); 
-  
-     eint_irq = irq_linear_revmap(bank->irq_domain, eintd->irq); 
-     generic_handle_irq(eint_irq); 
--    chip->irq_unmask(&desc->irq_data); 
-+ 
-     chained_irq_exit(chip, desc); 
- } 
-  
---  
-1.9.3 
- 
+ config GPIO_ACPI
+ 	def_bool y
+-- 
+2.7.4
+
