@@ -1,52 +1,63 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v2 1/2] dt: bindings: add binding for Allwinner A64 R_PIO
- pinctrl
-Date: Tue, 16 Aug 2016 17:13:34 +0800
-Message-ID: <CAGb2v65ca+HFq9Mr21E7QSN845O2H7BYKg5uAmRhECJe5dK6ag@mail.gmail.com>
-References: <20160816050709.7412-1-icenowy@aosc.xyz>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RESEND][PATCH] pinctrl: exynos: remove duplicate calls in irq
+ handler
+Date: Tue, 16 Aug 2016 11:16:10 +0200
+Message-ID: <41a0d7c4-c199-0c1a-a861-10ba25337594@samsung.com>
+References: <156921d1559.dd4cb9f127644.6244938289269001596@zoho.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160816050709.7412-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andre Przywara <andre.przywara@arm.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Krzysztof Adamski <k@japko.eu>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <156921d1559.dd4cb9f127644.6244938289269001596@zoho.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: perr perr <strongbox8@zoho.com>, tomasz.figa@gmail.com
+Cc: s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Aug 16, 2016 at 1:07 PM, Icenowy Zheng <icenowy@aosc.xyz> wrote:
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+On 08/16/2016 08:49 AM, perr perr wrote:
+> Because chained_irq_enter() has already called chip->irq_mask() and 
+> chip->irq_ack(), also chained_irq_exit() will call chip->irq_unmask(), 
+> so it's not necessary to call chip->irq_*() here. 
+>  
+> Signed-off-by: Perr Zhang<strongbox8@zoho.com> 
+>  
+> --- 
+>  drivers/pinctrl/samsung/pinctrl-exynos.c | 6 +----- 
+>  1 file changed, 1 insertion(+), 5 deletions(-) 
 
-Commit message please. :)
+Hi,
 
-Something similar to the one in the pinctrl driver patch would do.
+Thanks for fixing Signed-off-by but now the commiter name does not match
+Signed-off-by. In the same time you skipped the tags you got already
+(Tomasz's ack and my reviewed-by).
 
-ChenYu
+BR,
+Krzysztof
 
-> ---
->  Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-> index 6961722..ee73f9f 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-> @@ -23,6 +23,7 @@ Required properties:
->    "allwinner,sun8i-h3-pinctrl"
->    "allwinner,sun8i-h3-r-pinctrl"
->    "allwinner,sun50i-a64-pinctrl"
-> +  "allwinner,sun50i-a64-r-pinctrl"
->
->  - reg: Should contain the register physical address and length for the
->    pin controller.
-> --
-> 2.9.2
->
+>  
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c 
+> index 051b5bf..d32fa2b 100644 
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c 
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c 
+> @@ -428,14 +428,10 @@ static void exynos_irq_eint0_15(struct irq_desc *desc) 
+>      int eint_irq; 
+>   
+>      chained_irq_enter(chip, desc); 
+> -    chip->irq_mask(&desc->irq_data); 
+> - 
+> -    if (chip->irq_ack) 
+> -        chip->irq_ack(&desc->irq_data); 
+>   
+>      eint_irq = irq_linear_revmap(bank->irq_domain, eintd->irq); 
+>      generic_handle_irq(eint_irq); 
+> -    chip->irq_unmask(&desc->irq_data); 
+> + 
+>      chained_irq_exit(chip, desc); 
+>  } 
+>   
+> --  
+> 1.9.3 
+>  
+> 
+> 
+> 
