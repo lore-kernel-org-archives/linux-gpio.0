@@ -1,120 +1,79 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
-Date: Thu, 18 Aug 2016 15:13:28 +0300
-Message-ID: <20160818121328.GE30827@lahna.fi.intel.com>
-References: <1432281368-88687-1-git-send-email-mika.westerberg@linux.intel.com>
- <20150601092348.GK1747@lahna.fi.intel.com>
- <CACRpkdbQpx4oas72PSVXkyxCv4Vz+3PTistDh7EKB126E0Q_GQ@mail.gmail.com>
- <20150602141520.GE4057@lahna.fi.intel.com>
- <CALUN=qLAvUipcHArE_NT7Opv8iDjaZ3OTAsgs_jpXtBbvpwUXQ@mail.gmail.com>
- <20160817081344.GM30827@lahna.fi.intel.com>
- <CALUN=q+LAfTf_=V4tXy3_h48K2BLtNOjxK4=AKRTtdjfW8970g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: Revisiting rbtx4927: gpiod_direction_output_raw: invalid GPIO
+Date: Thu, 18 Aug 2016 14:36:54 +0200
+Message-ID: <CAMuHMdW6e=Tms0TXLVomRm7EdhPNpvFTO13nx3W2cyx52VDUmQ@mail.gmail.com>
+References: <CAMuHMdUARn_SxhkWiTsGdSixFv9a=VjKLLgQMfPTtxufrjepCg@mail.gmail.com>
+ <20160801.232359.1867350514422089320.anemo@mba.ocn.ne.jp>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CALUN=q+LAfTf_=V4tXy3_h48K2BLtNOjxK4=AKRTtdjfW8970g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anisse Astier <anisse@astier.eu>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <20160801.232359.1867350514422089320.anemo@mba.ocn.ne.jp>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Atsushi Nemoto <anemo@mba.ocn.ne.jp>
+Cc: Linux MIPS Mailing List <linux-mips@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Aug 17, 2016 at 03:42:58PM +0200, Anisse Astier wrote:
-> On Wed, Aug 17, 2016 at 10:13 AM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> > On Tue, Aug 16, 2016 at 06:12:40PM +0200, Anisse Astier wrote:
-> >> Hi Mika,
-> >>
-> >> Did you find a way to fix this issue ? I'm seeing a similar problem on a
-> >> laptop where this masks the interrupt used for ACPI events (brightness,
-> >> lid, battery).
-> >
-> > I seem to have forgotten this completely :-/
-> >
-> > Can you send me output of /sys/kernel/debug/pinctrl/INT33FF:*/pins for
-> > that particular EC pin?
-> >
-> > In addition if you apply this patch do you see that ACPI events start
-> > working?
-> 
-> >From what I've seen it's in the north range, I don't know which pin in
-> particular it is yet.
-> 
-> If the interrupts aren't masked for the north community, ACPI events
-> start working.
-> 
-> 
-> # cat /sys/kernel/debug/pinctrl/INT33FF\:01/pins
-> registered pins: 59
-> pin 0 (GPIO_DFX_0) GPIO ctrl0 0x00118102 ctrl1 0x05c00000
-> pin 1 (GPIO_DFX_3) GPIO ctrl0 0x2c018100 ctrl1 0x05c00000
-> pin 2 (GPIO_DFX_7) GPIO ctrl0 0x00918102 ctrl1 0x05c00000
-> pin 3 (GPIO_DFX_1) GPIO ctrl0 0x18118100 ctrl1 0x05c00000
-> pin 4 (GPIO_DFX_5) GPIO ctrl0 0x00918102 ctrl1 0x05c00000
-> pin 5 (GPIO_DFX_4) GPIO ctrl0 0x00118102 ctrl1 0x05c00000
-> pin 6 (GPIO_DFX_8) GPIO ctrl0 0x00918102 ctrl1 0x05c00000
-> pin 7 (GPIO_DFX_2) GPIO ctrl0 0x00118100 ctrl1 0x05c00000
-> pin 8 (GPIO_DFX_6) GPIO ctrl0 0x00918102 ctrl1 0x05c00000
-> pin 15 (GPIO_SUS0) GPIO ctrl0 0x3c018201 ctrl1 0x05c00001
-> pin 16 (SEC_GPIO_SUS10) GPIO ctrl0 0x00118100 ctrl1 0x05c00000
-> pin 17 (GPIO_SUS3) GPIO ctrl0 0x4c118100 ctrl1 0x05c00000
-> pin 18 (GPIO_SUS7) GPIO ctrl0 0xfc918201 ctrl1 0x05c00001
-> pin 19 (GPIO_SUS1) mode 6 ctrl0 0x00160301 ctrl1 0x05c00000
-> pin 20 (GPIO_SUS5) mode 1 ctrl0 0x00910200 ctrl1 0x05c00000
-> pin 21 (SEC_GPIO_SUS11) GPIO ctrl0 0x5c118100 ctrl1 0x05c00000
-> pin 22 (GPIO_SUS4) mode 6 ctrl0 0x00960301 ctrl1 0x05c00000
-> pin 23 (SEC_GPIO_SUS8) mode 1 ctrl0 0x00910300 ctrl1 0x05c00000
-> pin 24 (GPIO_SUS2) GPIO ctrl0 0x00918102 ctrl1 0x05c00000
-> pin 25 (GPIO_SUS6) GPIO ctrl0 0xec918201 ctrl1 0x05c00001
+Hi Nemoto-san,
 
-It is this one (GPIO_SUS6).
+On Mon, Aug 1, 2016 at 4:23 PM, Atsushi Nemoto <anemo@mba.ocn.ne.jp> wrote:
+> On Thu, 14 Apr 2016 21:06:05 +0200, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> I've just updated my old rbtx4927 from v3.13-rc3 to v4.6-rc3.
+>> Surprisingly, it boots to nfsroot without any kernel changes.
+>
+> Good news!  I'm happy to hear that.
+>
+>> However, there's an annoying warning in the boot log:
+>>
+>>         gpiod_direction_output_raw: invalid GPIO
+>>
+>> This is caused by the following code in arch/mips/txx9/rbtx4927/setup.c:
+>>
+>>         static void __init rbtx4927_mem_setup(void)
+>>         {
+>>
+>>                 /* TX4927-SIO DTR on (PIO[15]) */
+>>                 gpio_request(15, "sio-dtr");
+>>
+>> returns -EPROBE_DEFER
+>>
+>>                 gpio_direction_output(15, 1);
+>>
+>> VALIDATE_DESC triggers the warning.
 
-I wonder if we can relax the driver so that it only masks pins which are
-not configured to generate interrupts by the BIOS. I quickly tried
-following on one Braswell machine and it did not generate spurious
-interrupts.
+Note that as of commit 54d77198fdfbc4f0 ("gpio: bail out silently on NULL
+descriptors"), the warning is gone. But the underlying issue isn't.
 
-Can you check if this works for you?
+>> Probably a silly GPIO conversion was missed during the last 2+ years?
+>
+> Maybe txx9_gpio_init() failed to add gpio_chip since it was called too
+> early on startup.
+>
+> Nowadays gpiochip_add_data calls kzalloc so cannot be called from
+> plat_mem_setup context.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index 5749a4eee746..579e0e48bdee 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1513,6 +1513,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
- 	const struct chv_gpio_pinrange *range;
- 	struct gpio_chip *chip = &pctrl->chip;
- 	int ret, i, offset;
-+	u32 intmask = 0;
- 
- 	*chip = chv_gpio_chip;
- 
-@@ -1539,8 +1540,27 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
- 		offset += range->npins;
- 	}
- 
--	/* Mask and clear all interrupts */
--	chv_writel(0, pctrl->regs + CHV_INTMASK);
-+	/*
-+	 * Mask all interrupts except those which BIOS has configured to
-+	 * actually generate interrupts in their padctrl registers.
-+	 */
-+	for (i = 0; i < pctrl->community->npins; i++) {
-+		unsigned pin = pctrl->community->pins[i].number;
-+		u32 intsel, ctrl1;
-+
-+		intsel = readl(chv_padreg(pctrl, pin, CHV_PADCTRL0));
-+		intsel &= CHV_PADCTRL0_INTSEL_MASK;
-+		intsel >>= CHV_PADCTRL0_INTSEL_SHIFT;
-+		ctrl1 = readl(chv_padreg(pctrl, pin, CHV_PADCTRL1));
-+
-+		if (intsel && (ctrl1 & CHV_PADCTRL1_INTWAKECFG_MASK))
-+			intmask |= BIT(intsel);
-+	}
-+
-+	intmask &= readl(pctrl->regs + CHV_INTMASK);
-+	writel(intmask, pctrl->regs + CHV_INTMASK);
-+
-+	/* Clear all interrupts */
- 	chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
- 
- 	ret = gpiochip_irqchip_add(chip, &chv_gpio_irqchip, 0,
+That's correct. It failed (silently) with -12, which is -ENOMEM...
+
+> Could you try moving these txx9_gpio_init(), gpio_request() and
+> gpio_direction_output() calls to rbtx4927_arch_init() or
+> rbtx4927_device_init()?
+
+Thanks, that works! Will send patches soon...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
