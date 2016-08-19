@@ -1,11 +1,13 @@
-From: Li Yang <leoyang.li@nxp.com>
-Subject: [PATCH v4] i2c: imx: make bus recovery through pinctrl optional
-Date: Fri, 19 Aug 2016 15:49:25 -0500
-Message-ID: <1471639765-4461-1-git-send-email-leoyang.li@nxp.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v4 0/6] Add Meson 8b / GXBB support to the IR driver
+Date: Fri, 19 Aug 2016 23:55:41 +0200
+Message-ID: <20160819215547.20063-1-martin.blumenstingl@googlemail.com>
+References: <20160628191802.21227-1-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20160628191802.21227-1-martin.blumenstingl@googlemail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -15,65 +17,60 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Gao Pan <pandy.gao@nxp.com>, Li Yang <leoyang.li@nxp.com>
+To: linux-media@vger.kernel.org, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org, narmstrong@baylibre.com, khilman@baylibre.com, carlo@caione.org
+Cc: mark.rutland@arm.com, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, catalin.marinas@arm.com, linus.walleij@linaro.org, will.deacon@arm.com, robh+dt@kernel.org, mchehab@kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-U2luY2UgY29tbWl0IDFjNGI2YzNiY2YzMCAoImkyYzogaW14OiBpbXBsZW1lbnQgYnVzIHJlY292
-ZXJ5IikgdGhlCmRyaXZlciBzdGFydHMgdG8gdXNlIGdwaW8vcGluY3RybCB0byBkbyBpMmMgYnVz
-IHJlY292ZXJ5LiAgQnV0IHBpbmN0cmwKaXMgbm90IGFsd2F5cyBhdmFpbGFibGUgZm9yIHBsYXRm
-b3JtcyB1c2luZyB0aGlzIGRyaXZlciBzdWNoIGFzIGxzMTAyMWEKYW5kIGxzMTA0M2EsIGFuZCB0
-aGUgZGV2aWNlIHRyZWUgYmluZGluZyBhbHNvIG1lbnRpb25lZCB0aGlzIGdwaW8gYmFzZWQKcmVj
-b3ZlcnkgbWVjaGFuaXNtIGFzIG9wdGlvbmFsLiAgVGhlIHBhdGNoIG1ha2UgaXQgcmVhbGx5IG9w
-dGlvbmFsIHRoYXQKdGhlIHByb2JlIGZ1bmN0aW9uIHdvbid0IGJhaWxvdXQgd2hlbiBwaW5jdHJs
-IGlzIG5vdCBhdmFpbGFibGUgYW5kIGl0Cndvbid0IHRyeSB0byByZWdpc3RlciByZWNvdmVyeSBm
-dW5jdGlvbnMgaWYgcGluY3RybCBpcyBOVUxMIHdoZW4gdGhlClBJTkNUUkwgaXMgbm90IGVuYWJs
-ZWQgYXQgYWxsLgoKU2lnbmVkLW9mZi1ieTogTGkgWWFuZyA8bGVveWFuZy5saUBueHAuY29tPgpD
-YzogR2FvIFBhbiA8cGFuZHkuZ2FvQG54cC5jb20+CkNjOiBVd2UgS2xlaW5lLUvDtm5pZyA8dS5r
-bGVpbmUta29lbmlnQHBlbmd1dHJvbml4LmRlPgpBY2tlZC1ieTogTGludXMgV2FsbGVpaiA8bGlu
-dXMud2FsbGVpakBsaW5hcm8ub3JnPgotLS0KSSBsb3N0IHRyYWNrIG9mIHRoZSBvcmlnaW4gcGF0
-Y2gsIGJ1dCBwcm9ibGVtIHJlYWxseSBzaG93cyB1cAppbiB0ZXN0aW5nIHdoZW4gUElOQ1RSTCBp
-cyBlbmFibGVkIGluIGtlcm5lbCBjb25maWcuICBTbyBoZXJlIGlzCnRoZSB1cGRhdGVkIHBhdGNo
-LgoKdjQ6ClJlbW92ZSB0aGUgdXNlIG9mIElTX0VSUl9PUl9OVUxMCk1vdmUgdGhlIGNvbmRpdGlv
-biBqdWRnZW1lbnQgdG8gaTJjX2lteF9pbml0X3JlY292ZXJ5X2luZm8oKQpDaGFuZ2UgdGhlIHRp
-bWluZyBvZiByZWNvdmVyeSBpbml0aWFsaXphdGlvbiB0byBiZSBhZnRlciBidXMgcmVnaXN0cmF0
-aW9uCgp2MzoKUmViYXNlZCB0byBXb2xmcmFtJ3MgZm9yLW5leHQgYnJhbmNoCkFkZGVkIGFja2Vk
-LWJ5IGZyb20gTGludXMgV2FsbGVpagpVcGRhdGUgdG8gdXNlIG5ldyBueHAgZW1haWwgYWRkcmVz
-c2VzIGR1ZSB0byBjb21wYW55IG1lcmdlCgogZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1pbXguYyB8
-IDE5ICsrKysrKysrKysrKysrKystLS0KIDEgZmlsZSBjaGFuZ2VkLCAxNiBpbnNlcnRpb25zKCsp
-LCAzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtaW14
-LmMgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLWlteC5jCmluZGV4IDE4NDRiYzkuLjAwYWM0YzIg
-MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtaW14LmMKKysrIGIvZHJpdmVycy9p
-MmMvYnVzc2VzL2kyYy1pbXguYwpAQCAtOTg5LDYgKzk4OSwxNSBAQCBzdGF0aWMgdm9pZCBpMmNf
-aW14X2luaXRfcmVjb3ZlcnlfaW5mbyhzdHJ1Y3QgaW14X2kyY19zdHJ1Y3QgKmkyY19pbXgsCiB7
-CiAJc3RydWN0IGkyY19idXNfcmVjb3ZlcnlfaW5mbyAqcmluZm8gPSAmaTJjX2lteC0+cmluZm87
-CiAKKwkvKiBpZiBwaW5jdHJsIGlzIG5vdCBzdXBwb3J0ZWQgb24gdGhlIHN5c3RlbSAqLworCWlm
-IChJU19FUlIoaTJjX2lteC0+cGluY3RybCkpCisJCWkyY19pbXgtPnBpbmN0cmwgPSBOVUxMOwor
-CisJaWYgKCFpMmNfaW14LT5waW5jdHJsKSB7CisJCWRldl9pbmZvKCZpMmNfaW14LT5hZGFwdGVy
-LmRldiwgImNhbid0IGdldCBwaW5jdHJsLCBidXMgcmVjb3Zlcnkgbm90IHN1cHBvcnRlZFxuIik7
-CisJCXJldHVybjsKKwl9CisKIAlpMmNfaW14LT5waW5jdHJsX3BpbnNfZGVmYXVsdCA9IHBpbmN0
-cmxfbG9va3VwX3N0YXRlKGkyY19pbXgtPnBpbmN0cmwsCiAJCQlQSU5DVFJMX1NUQVRFX0RFRkFV
-TFQpOwogCWkyY19pbXgtPnBpbmN0cmxfcGluc19ncGlvID0gcGluY3RybF9sb29rdXBfc3RhdGUo
-aTJjX2lteC0+cGluY3RybCwKQEAgLTEwODEsOCArMTA5MCwxMSBAQCBzdGF0aWMgaW50IGkyY19p
-bXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAkJcmV0dXJuIHJldDsKIAl9
-CiAKKwkvKiBvcHRpb25hbCBidXMgcmVjb3ZlcnkgZmVhdHVyZSB0aHJvdWdoIHBpbmN0cmwgKi8K
-IAlpMmNfaW14LT5waW5jdHJsID0gZGV2bV9waW5jdHJsX2dldCgmcGRldi0+ZGV2KTsKLQlpZiAo
-SVNfRVJSKGkyY19pbXgtPnBpbmN0cmwpKSB7CisJLyogYmFpbG91dCBvbiAtRU5PTUVNIG9yIC1F
-UFJPQkVfREVGRVIsIGNvbnRpbnVlIGZvciBvdGhlciBlcnJvcnMgKi8KKwlpZiAoUFRSX0VSUihp
-MmNfaW14LT5waW5jdHJsKSA9PSAtRU5PTUVNIHx8CisJCQlQVFJfRVJSKGkyY19pbXgtPnBpbmN0
-cmwpID09IC1FUFJPQkVfREVGRVIpIHsKIAkJcmV0ID0gUFRSX0VSUihpMmNfaW14LT5waW5jdHJs
-KTsKIAkJZ290byBjbGtfZGlzYWJsZTsKIAl9CkBAIC0xMTI1LDggKzExMzcsNiBAQCBzdGF0aWMg
-aW50IGkyY19pbXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAkJCWkyY19p
-bXgsIElNWF9JMkNfSTJDUik7CiAJaW14X2kyY193cml0ZV9yZWcoaTJjX2lteC0+aHdkYXRhLT5p
-MnNyX2Nscl9vcGNvZGUsIGkyY19pbXgsIElNWF9JMkNfSTJTUik7CiAKLQlpMmNfaW14X2luaXRf
-cmVjb3ZlcnlfaW5mbyhpMmNfaW14LCBwZGV2KTsKLQogCS8qIEFkZCBJMkMgYWRhcHRlciAqLwog
-CXJldCA9IGkyY19hZGRfbnVtYmVyZWRfYWRhcHRlcigmaTJjX2lteC0+YWRhcHRlcik7CiAJaWYg
-KHJldCA8IDApIHsKQEAgLTExNDYsNiArMTE1Niw5IEBAIHN0YXRpYyBpbnQgaTJjX2lteF9wcm9i
-ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCS8qIEluaXQgRE1BIGNvbmZpZyBpZiBz
-dXBwb3J0ZWQgKi8KIAlpMmNfaW14X2RtYV9yZXF1ZXN0KGkyY19pbXgsIHBoeV9hZGRyKTsKIAor
-CS8qIEluaXQgYnVzIHJlY292ZXJ5IGlmIHN1cHBvcnRlZCAqLworCWkyY19pbXhfaW5pdF9yZWNv
-dmVyeV9pbmZvKGkyY19pbXgsIHBkZXYpOworCiAJcmV0dXJuIDA7ICAgLyogUmV0dXJuIE9LICov
-CiAKIHJwbV9kaXNhYmxlOgotLSAKMS45LjAKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1h
-cm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+Newer Amlogic platforms (Meson 8b and GXBB) use a slightly different
+register layout for their Infrared Remoete Controller. The decoder mode
+is now configured in another register. Without the changes to the
+meson-ir driver we are simply getting incorrect "durations" reported
+from the hardware (because the hardware is not in time measurement aka
+software decode mode).
+
+This problem was also noticed by some people trying to use this on an
+ODROID-C1 and ODROID-C2 - the workaround there (probably because the
+datasheets were not publicy available yet at that time) was to switch
+to ir_raw_event_store_edge (which leaves it up to the kernel to measure
+the duration of a pulse). See [0] and [1] for the corresponding
+patches.
+
+Changes in v4:
+- added support for pinctrl configuration which makes it possible to
+  use the IR decoder when doing a cold-boot. Without these pinctrl
+  changes the IR decoder was only working when booting into stock
+  Android, then rebooting and booting the mainline kernel (with the
+  other patches from this series). Thanks to Kevin Hilman for spotting
+  this issue.
+- rebased dts changes to Kevin's v4.8/integ branch
+
+As discussed on IRC (thanks Neil):
+
+Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+
+
+[0] https://github.com/erdoukki/linux-amlogic-1/commit/969b2e2242fb14a13cb651f9a1cf771b599c958b
+[1] http://forum.odroid.com/viewtopic.php?f=135&t=20504
+
+
+Martin Blumenstingl (3):
+  pinctrl: amlogic: gxbb: add the IR remote pin
+  ARM64: dts: amlogic: add the pin for the IR remote
+  ARM64: dts: meson-gxbb: Enable the the IR decoder on supported boards
+
+Neil Armstrong (3):
+  dt-bindings: media: meson-ir: Add Meson8b and GXBB compatible strings
+  media: rc: meson-ir: Add support for newer versions of the IR decoder
+  ARM64: dts: meson-gxbb: Add Infrared Remote Controller decoder
+
+ .../devicetree/bindings/media/meson-ir.txt         |  5 +++-
+ .../arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts |  6 +++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi   |  6 +++++
+ .../boot/dts/amlogic/meson-gxbb-vega-s95.dtsi      |  6 +++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        | 14 +++++++++++
+ drivers/media/rc/meson-ir.c                        | 29 ++++++++++++++++++----
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c         |  8 ++++++
+ 7 files changed, 68 insertions(+), 6 deletions(-)
+
+-- 
+2.9.3
