@@ -1,47 +1,80 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2] gpio: Fix OF build problem on UM
-Date: Fri, 19 Aug 2016 14:52:36 +0200
-Message-ID: <1471611156-4220-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: Fix OF build problem on UM
+Date: Fri, 19 Aug 2016 14:53:12 +0200
+Message-ID: <CACRpkdZnRrUwWuQsXDC7ws-LpMxacZbkBErEc4W__73bgFoXHQ@mail.gmail.com>
+References: <1471334801-2814-1-git-send-email-linus.walleij@linaro.org>
+ <CAMuHMdU3j6_sye_WqKgcReD+Nym-2=ymEh98D50nD2jEifOXRQ@mail.gmail.com>
+ <CACRpkdY+8beEcyvx1TYZr_=Q9zdvj8PoWX4qL+UoiEGS1ppBpA@mail.gmail.com> <CAMuHMdWiu9pucXTzzQSY-FjVojaV3W2BF-m7BVcQXWhT8zrAdQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:35150 "EHLO
-        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750889AbcHSMwn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Aug 2016 08:52:43 -0400
-Received: by mail-lf0-f46.google.com with SMTP id f93so32211727lfi.2
-        for <linux-gpio@vger.kernel.org>; Fri, 19 Aug 2016 05:52:43 -0700 (PDT)
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:35317 "EHLO
+        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752088AbcHSMxN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Aug 2016 08:53:13 -0400
+Received: by mail-oi0-f44.google.com with SMTP id 4so61973473oih.2
+        for <linux-gpio@vger.kernel.org>; Fri, 19 Aug 2016 05:53:13 -0700 (PDT)
+In-Reply-To: <CAMuHMdWiu9pucXTzzQSY-FjVojaV3W2BF-m7BVcQXWhT8zrAdQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, stable <stable@vger.kernel.org>
 
-The UserMode (UM) Linux build was failing in gpiolib-of as it requires
-ioremap()/iounmap() to exist, which is absent from UM. The non-existence
-of IO memory is negatively defined as CONFIG_NO_IOMEM which means we
-need to depend on HAS_IOMEM.
+On Fri, Aug 19, 2016 at 11:16 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Fri, Aug 19, 2016 at 10:53 AM, Linus Walleij
+> <linus.walleij@linaro.org> wrote:
+>> On Wed, Aug 17, 2016 at 11:03 AM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>>> On Tue, Aug 16, 2016 at 10:06 AM, Linus Walleij
+>>> <linus.walleij@linaro.org> wrote:
+>>>> The UserMode (UM) Linux build was failing in gpiolib-of as it requires
+>>>> ioremap()/iounmap() to exist, which is absent from UM. The non-existence
+>>>> of IO memory is negatively defined as CONFIG_NO_IOMEM so put a reverse
+>>>> dependency on !NO_IOMEM for OF_GPIO to fix the build.
+>>>>
+>>>> Cc: stable@vger.kernel.org
+>>>> Reported-by: kbuild test robot <fengguang.wu@intel.com>
+>>>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>>>> ---
+>>>>  drivers/gpio/Kconfig | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+>>>> index 98dd47a30fc7..a6026f2fe7f5 100644
+>>>> --- a/drivers/gpio/Kconfig
+>>>> +++ b/drivers/gpio/Kconfig
+>>>> @@ -50,6 +50,7 @@ config GPIO_DEVRES
+>>>>  config OF_GPIO
+>>>>         def_bool y
+>>>>         depends on OF
+>>>> +       depends on !NO_IOMEM
+>>>
+>>> depends on HAS_IOMEM?
+>>
+>> Apparently not, and that is the scary thing.
+>>
+>> HAS_IOMEM depends on !NO_IOMEM indeed but
+>> it also selects GENERIC_IO, and AFAICT there are
+>> some configs out there in the intersection between,
+>> that have IOMEM but are not using GENERIC_IO,
+>> tell me if I'm wrong :/
+>
+> lib/Kconfig:
+>
+>     config HAS_IOMEM
+>             bool
+>             depends on !NO_IOMEM
+>             select GENERIC_IO
+>             default y
+>
+> Hence if NO_IOMEM is not set, HAS_IOMEM and GENERIC_IO are always set.
+>
+> UML selects GENERIC_IO, but not HAS_IOMEM (it sets NO_IOMEM).
 
-Cc: stable@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Depend on HAS_IOMEM rather than !NO_IOMEM
----
- drivers/gpio/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Ah you're right.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 98dd47a30fc7..24f833c3d3ba 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -50,6 +50,7 @@ config GPIO_DEVRES
- config OF_GPIO
- 	def_bool y
- 	depends on OF
-+	depends on HAS_IOMEM
- 
- config GPIO_ACPI
- 	def_bool y
--- 
-2.7.4
+OK sent a new version!
 
+Yours,
+Linus Walleij
