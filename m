@@ -1,25 +1,59 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: wcove-gpio: add get_direction method
-Date: Fri, 19 Aug 2016 15:02:47 +0200
-Message-ID: <CACRpkdZa0Q8vMktJON2-SVwNDxOteZzkj-dVa-HuKrA5B+Occg@mail.gmail.com>
-References: <20160815180323.GA229243@worksta>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 02/13] Documentation: add BCM6328 pincontroller binding
+ documentation
+Date: Fri, 19 Aug 2016 09:14:36 -0500
+Message-ID: <20160819141436.GA6970@rob-hp-laptop>
+References: <1471604025-21575-1-git-send-email-jonas.gorski@gmail.com>
+ <1471604025-21575-3-git-send-email-jonas.gorski@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160815180323.GA229243@worksta>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bin Gao <bin.gao@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bin Gao <bin.gao@intel.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:34088 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753576AbcHSOP0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Aug 2016 10:15:26 -0400
+Content-Disposition: inline
+In-Reply-To: <1471604025-21575-3-git-send-email-jonas.gorski@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Kevin Cernekee <cernekee@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, =?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>
 
-On Mon, Aug 15, 2016 at 8:03 PM, Bin Gao <bin.gao@linux.intel.com> wrote:
+On Fri, Aug 19, 2016 at 12:53:34PM +0200, Jonas Gorski wrote:
+> Add binding documentation for the pincontrol core found in BCM6328 SoCs.
+> 
+> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+> ---
+>  .../bindings/pinctrl/brcm,bcm6328-pinctrl.txt      | 61 ++++++++++++++++++++++
+>  1 file changed, 61 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm6328-pinctrl.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm6328-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/brcm,bcm6328-pinctrl.txt
+> new file mode 100644
+> index 0000000..401224e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm6328-pinctrl.txt
+> @@ -0,0 +1,61 @@
+> +* Broadcom BCM6328 pin controller
+> +
+> +Required properties:
+> +- compatible: Must be "brcm,bcm6328-pinctrl".
+> +- reg: Register specifies of dirout, dat, mode, mux registers.
+> +- reg-names: Must be "dirout", "dat", "mode", "mux".
+> +- gpio-controller: Identifies this node as a GPIO controller.
+> +- #gpio-cells: Must be <2>.
+> +
+> +Example:
+> +
+> +pinctrl: pin-controller@10000080 {
+> +	compatible = "brcm,bcm6328-pinctrl";
+> +	reg = <0x10000080 0x8>,
+> +	      <0x10000088 0x8>,
+> +	      <0x10000098 0x4>,
+> +	      <0x1000009c 0xc>;
+> +	reg-names = "dirout", "dat", "mode", "mux";
 
-> This patch adds .get_direction method for the gpio_chip structure
-> of the wcove_gpio driver.
->
-> Signed-off-by: Bin Gao <bin.gao@intel.com>
+What's in the holes? Just do one range or perhaps this should be part of 
+some larger block.
 
-Patch applied.
-
-Yours,
-Linus Walleij
+Rob
