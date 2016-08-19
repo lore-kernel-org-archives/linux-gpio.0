@@ -1,51 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: Fix OF build problem on UM
-Date: Fri, 19 Aug 2016 10:53:17 +0200
-Message-ID: <CACRpkdY+8beEcyvx1TYZr_=Q9zdvj8PoWX4qL+UoiEGS1ppBpA@mail.gmail.com>
-References: <1471334801-2814-1-git-send-email-linus.walleij@linaro.org> <CAMuHMdU3j6_sye_WqKgcReD+Nym-2=ymEh98D50nD2jEifOXRQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: refactor gpiochip_find() slightly
+Date: Fri, 19 Aug 2016 10:56:09 +0200
+Message-ID: <CACRpkdasM0U2sS_AeZmjJg70ZTJ_=X6sygnRVD6NPVfyMr4=3g@mail.gmail.com>
+References: <1470932518-8748-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdU3j6_sye_WqKgcReD+Nym-2=ymEh98D50nD2jEifOXRQ@mail.gmail.com>
-Sender: stable-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, stable <stable@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:35472 "EHLO
+        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752431AbcHSI4f (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Aug 2016 04:56:35 -0400
+Received: by mail-oi0-f54.google.com with SMTP id 4so55461342oih.2
+        for <linux-gpio@vger.kernel.org>; Fri, 19 Aug 2016 01:56:10 -0700 (PDT)
+In-Reply-To: <1470932518-8748-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Aug 17, 2016 at 11:03 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Tue, Aug 16, 2016 at 10:06 AM, Linus Walleij
-> <linus.walleij@linaro.org> wrote:
->> The UserMode (UM) Linux build was failing in gpiolib-of as it requires
->> ioremap()/iounmap() to exist, which is absent from UM. The non-existence
->> of IO memory is negatively defined as CONFIG_NO_IOMEM so put a reverse
->> dependency on !NO_IOMEM for OF_GPIO to fix the build.
->>
->> Cc: stable@vger.kernel.org
->> Reported-by: kbuild test robot <fengguang.wu@intel.com>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->>  drivers/gpio/Kconfig | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
->> index 98dd47a30fc7..a6026f2fe7f5 100644
->> --- a/drivers/gpio/Kconfig
->> +++ b/drivers/gpio/Kconfig
->> @@ -50,6 +50,7 @@ config GPIO_DEVRES
->>  config OF_GPIO
->>         def_bool y
->>         depends on OF
->> +       depends on !NO_IOMEM
+On Thu, Aug 11, 2016 at 6:21 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+
+> The if...else... block after the loop can be dropped with
+> a slight refactoring.
 >
-> depends on HAS_IOMEM?
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Apparently not, and that is the scary thing.
+Patch applied.
 
-HAS_IOMEM depends on !NO_IOMEM indeed but
-it also selects GENERIC_IO, and AFAICT there are
-some configs out there in the intersection between,
-that have IOMEM but are not using GENERIC_IO,
-tell me if I'm wrong :/
-
+Yours,
 Linus Walleij
