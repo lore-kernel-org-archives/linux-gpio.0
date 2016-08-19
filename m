@@ -1,81 +1,108 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] gpio: Fix OF build problem on UM
-Date: Fri, 19 Aug 2016 11:16:47 +0200
-Message-ID: <CAMuHMdWiu9pucXTzzQSY-FjVojaV3W2BF-m7BVcQXWhT8zrAdQ@mail.gmail.com>
-References: <1471334801-2814-1-git-send-email-linus.walleij@linaro.org>
- <CAMuHMdU3j6_sye_WqKgcReD+Nym-2=ymEh98D50nD2jEifOXRQ@mail.gmail.com> <CACRpkdY+8beEcyvx1TYZr_=Q9zdvj8PoWX4qL+UoiEGS1ppBpA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34440 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750879AbcHSJQt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Aug 2016 05:16:49 -0400
-In-Reply-To: <CACRpkdY+8beEcyvx1TYZr_=Q9zdvj8PoWX4qL+UoiEGS1ppBpA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Jonas Gorski <jonas.gorski-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 00/13] pinctrl: add BCM63XX pincontrol support
+Date: Fri, 19 Aug 2016 12:53:32 +0200
+Message-ID: <1471604025-21575-1-git-send-email-jonas.gorski@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Kevin Cernekee <cernekee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, stable <stable@vger.kernel.org>
 
-On Fri, Aug 19, 2016 at 10:53 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Wed, Aug 17, 2016 at 11:03 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Tue, Aug 16, 2016 at 10:06 AM, Linus Walleij
->> <linus.walleij@linaro.org> wrote:
->>> The UserMode (UM) Linux build was failing in gpiolib-of as it requires
->>> ioremap()/iounmap() to exist, which is absent from UM. The non-existence
->>> of IO memory is negatively defined as CONFIG_NO_IOMEM so put a reverse
->>> dependency on !NO_IOMEM for OF_GPIO to fix the build.
->>>
->>> Cc: stable@vger.kernel.org
->>> Reported-by: kbuild test robot <fengguang.wu@intel.com>
->>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->>> ---
->>>  drivers/gpio/Kconfig | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
->>> index 98dd47a30fc7..a6026f2fe7f5 100644
->>> --- a/drivers/gpio/Kconfig
->>> +++ b/drivers/gpio/Kconfig
->>> @@ -50,6 +50,7 @@ config GPIO_DEVRES
->>>  config OF_GPIO
->>>         def_bool y
->>>         depends on OF
->>> +       depends on !NO_IOMEM
->>
->> depends on HAS_IOMEM?
->
-> Apparently not, and that is the scary thing.
->
-> HAS_IOMEM depends on !NO_IOMEM indeed but
-> it also selects GENERIC_IO, and AFAICT there are
-> some configs out there in the intersection between,
-> that have IOMEM but are not using GENERIC_IO,
-> tell me if I'm wrong :/
+This patchset adds appropriate binding documentation and drivers for
+pin controller cores found in the BCM63XX MIPS SoCs currently supported.
 
-lib/Kconfig:
+While the GPIO part is always the same, the pinmux part varies quite a
+lot between different SoCs. Sometimes they have defined groups which
+can be muxed into different functions, sometimes each function has a
+different group. Sometimes you can mux individual pins. Often it is a
+combination of single pins and groups.
 
-    config HAS_IOMEM
-            bool
-            depends on !NO_IOMEM
-            select GENERIC_IO
-            default y
+Some core versions require the GPIO direction to be set according to the
+function, most do not. Sometimes the mux register(s) contain bits for
+unrelated other functions.
 
-Hence if NO_IOMEM is not set, HAS_IOMEM and GENERIC_IO are always set.
+I intentionally left out any MIPS patches so keep the patchset smaller
+and to make it clearer to which tree this belongs.
 
-UML selects GENERIC_IO, but not HAS_IOMEM (it sets NO_IOMEM).
+Some implementation notes:
 
-Perhaps you're confusing GENERIC_IO with GENERIC_IOMAP?
+BCM6348 has one mux function that enables two unrelated functions at the
+same time; additional SPI CS signals as well as extra UART pins. This
+means that in case both the uart as well as the spi driver needs it, it
+would need to be requested globally, as the same mux can't be requested
+by two different devices. Since this is a linux internal detail, I
+chose to not try to split this function and try to work around it in
+the driver (by refcounting etc).
 
-Gr{oetje,eeting}s,
+BCM6358 has two "invert-mii-clock" bits in its GPIO Mode register for
+the ethernet cores. This didn't seem to fit well into pinmux/conf; at
+best as two pins which you could apply exactly one property,
+"brcm,invert-clock". So I chose syscon so the ethernet driver can poke
+at the bits itself.
 
-                        Geert
+BCM6368 has several additional bits in its GPIO BaseMode register for
+enabling RGMII pins, UTOPIA, or changing the PCI clock to 66 MHz. These
+seemed to fit even less.
+
+
+Based on the current HEAD of linux-pinctrl/for-next.
+
+Jonas Gorski (13):
+  pinctrl: add bcm63xx base code
+  Documentation: add BCM6328 pincontroller binding documentation
+  pinctrl: add a pincontrol driver for BCM6328
+  Documentation: add BCM6348 pincontroller binding documentation
+  pinctrl: add a pincontrol driver for BCM6348
+  Documentation: add BCM6358 pincontroller binding documentation
+  pinctrl: add a pincontrol driver for BCM6358
+  Documentation: add BCM6362 pincontroller binding documentation
+  pinctrl: add a pincontrol driver for BCM6362
+  Documentation: add BCM6368 pincontroller binding documentation
+  pinctrl: add a pincontrol driver for BCM6368
+  Documentation: add BCM63268 pincontroller binding documentation
+  pinctrl: add a pincontrol driver for BCM63268
+
+ .../bindings/pinctrl/brcm,bcm63268-pinctrl.txt     |  88 +++
+ .../bindings/pinctrl/brcm,bcm6328-pinctrl.txt      |  61 ++
+ .../bindings/pinctrl/brcm,bcm6348-pinctrl.txt      |  32 +
+ .../bindings/pinctrl/brcm,bcm6358-pinctrl.txt      |  44 ++
+ .../bindings/pinctrl/brcm,bcm6362-pinctrl.txt      |  79 +++
+ .../bindings/pinctrl/brcm,bcm6368-pinctrl.txt      |  67 ++
+ MAINTAINERS                                        |   1 +
+ drivers/pinctrl/Kconfig                            |   1 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/bcm63xx/Kconfig                    |  47 ++
+ drivers/pinctrl/bcm63xx/Makefile                   |   7 +
+ drivers/pinctrl/bcm63xx/pinctrl-bcm63268.c         | 710 +++++++++++++++++++++
+ drivers/pinctrl/bcm63xx/pinctrl-bcm6328.c          | 456 +++++++++++++
+ drivers/pinctrl/bcm63xx/pinctrl-bcm6348.c          | 392 ++++++++++++
+ drivers/pinctrl/bcm63xx/pinctrl-bcm6358.c          | 393 ++++++++++++
+ drivers/pinctrl/bcm63xx/pinctrl-bcm6362.c          | 692 ++++++++++++++++++++
+ drivers/pinctrl/bcm63xx/pinctrl-bcm6368.c          | 573 +++++++++++++++++
+ drivers/pinctrl/bcm63xx/pinctrl-bcm63xx.c          | 141 ++++
+ drivers/pinctrl/bcm63xx/pinctrl-bcm63xx.h          |  14 +
+ 19 files changed, 3799 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm63268-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm6328-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm6348-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm6358-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm6362-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,bcm6368-pinctrl.txt
+ create mode 100644 drivers/pinctrl/bcm63xx/Kconfig
+ create mode 100644 drivers/pinctrl/bcm63xx/Makefile
+ create mode 100644 drivers/pinctrl/bcm63xx/pinctrl-bcm63268.c
+ create mode 100644 drivers/pinctrl/bcm63xx/pinctrl-bcm6328.c
+ create mode 100644 drivers/pinctrl/bcm63xx/pinctrl-bcm6348.c
+ create mode 100644 drivers/pinctrl/bcm63xx/pinctrl-bcm6358.c
+ create mode 100644 drivers/pinctrl/bcm63xx/pinctrl-bcm6362.c
+ create mode 100644 drivers/pinctrl/bcm63xx/pinctrl-bcm6368.c
+ create mode 100644 drivers/pinctrl/bcm63xx/pinctrl-bcm63xx.c
+ create mode 100644 drivers/pinctrl/bcm63xx/pinctrl-bcm63xx.h
+
+-- 
+2.1.4
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
