@@ -1,44 +1,79 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 4/8] gpio: dt-bindings: Add documentation for Aspeed
- GPIO controllers
-Date: Fri, 19 Aug 2016 09:36:42 -0500
-Message-ID: <20160819143641.GA19513@rob-hp-laptop>
-References: <20160819124414.24242-1-andrew@aj.id.au>
- <20160819124414.24242-5-andrew@aj.id.au>
+From: Li Yang <leoyang.li@nxp.com>
+Subject: [PATCH v4] i2c: imx: make bus recovery through pinctrl optional
+Date: Fri, 19 Aug 2016 15:49:25 -0500
+Message-ID: <1471639765-4461-1-git-send-email-leoyang.li@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160819124414.24242-5-andrew-zrmu5oMJ5Fs@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Jeremy Kerr <jk-mnsaURCQ41sdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Gao Pan <pandy.gao@nxp.com>, Li Yang <leoyang.li@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Aug 19, 2016 at 10:14:10PM +0930, Andrew Jeffery wrote:
-> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-> ---
-> 
-> Since v1:
-> 
-> Rob: I haven't added your Acked-by here as I've made the following changes and
-> wanted to get your input:
-> 
-> * Remove interrupt-controller as an optional property
-> * Defer to interrupt-controller bindings document for sub-node properties
-> 
-> I had a discussion with Joel about whether the interrupt-controller capability
-> should be optional and the conclusion was that it should always be configured
-> by the driver. This makes an optional interrupt-controller property feel
-> redundant (and possibly inaccurate if left out) so I've removed it.
-
-I don't follow. What do you mean byt "configured by the driver". If the 
-block supports interrupts, then it should be marked as an 
-interrupt-controller. It never should have been optional. The OS can 
-ignore the interrupt properties if it chooses. 
-
-Rob
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+U2luY2UgY29tbWl0IDFjNGI2YzNiY2YzMCAoImkyYzogaW14OiBpbXBsZW1lbnQgYnVzIHJlY292
+ZXJ5IikgdGhlCmRyaXZlciBzdGFydHMgdG8gdXNlIGdwaW8vcGluY3RybCB0byBkbyBpMmMgYnVz
+IHJlY292ZXJ5LiAgQnV0IHBpbmN0cmwKaXMgbm90IGFsd2F5cyBhdmFpbGFibGUgZm9yIHBsYXRm
+b3JtcyB1c2luZyB0aGlzIGRyaXZlciBzdWNoIGFzIGxzMTAyMWEKYW5kIGxzMTA0M2EsIGFuZCB0
+aGUgZGV2aWNlIHRyZWUgYmluZGluZyBhbHNvIG1lbnRpb25lZCB0aGlzIGdwaW8gYmFzZWQKcmVj
+b3ZlcnkgbWVjaGFuaXNtIGFzIG9wdGlvbmFsLiAgVGhlIHBhdGNoIG1ha2UgaXQgcmVhbGx5IG9w
+dGlvbmFsIHRoYXQKdGhlIHByb2JlIGZ1bmN0aW9uIHdvbid0IGJhaWxvdXQgd2hlbiBwaW5jdHJs
+IGlzIG5vdCBhdmFpbGFibGUgYW5kIGl0Cndvbid0IHRyeSB0byByZWdpc3RlciByZWNvdmVyeSBm
+dW5jdGlvbnMgaWYgcGluY3RybCBpcyBOVUxMIHdoZW4gdGhlClBJTkNUUkwgaXMgbm90IGVuYWJs
+ZWQgYXQgYWxsLgoKU2lnbmVkLW9mZi1ieTogTGkgWWFuZyA8bGVveWFuZy5saUBueHAuY29tPgpD
+YzogR2FvIFBhbiA8cGFuZHkuZ2FvQG54cC5jb20+CkNjOiBVd2UgS2xlaW5lLUvDtm5pZyA8dS5r
+bGVpbmUta29lbmlnQHBlbmd1dHJvbml4LmRlPgpBY2tlZC1ieTogTGludXMgV2FsbGVpaiA8bGlu
+dXMud2FsbGVpakBsaW5hcm8ub3JnPgotLS0KSSBsb3N0IHRyYWNrIG9mIHRoZSBvcmlnaW4gcGF0
+Y2gsIGJ1dCBwcm9ibGVtIHJlYWxseSBzaG93cyB1cAppbiB0ZXN0aW5nIHdoZW4gUElOQ1RSTCBp
+cyBlbmFibGVkIGluIGtlcm5lbCBjb25maWcuICBTbyBoZXJlIGlzCnRoZSB1cGRhdGVkIHBhdGNo
+LgoKdjQ6ClJlbW92ZSB0aGUgdXNlIG9mIElTX0VSUl9PUl9OVUxMCk1vdmUgdGhlIGNvbmRpdGlv
+biBqdWRnZW1lbnQgdG8gaTJjX2lteF9pbml0X3JlY292ZXJ5X2luZm8oKQpDaGFuZ2UgdGhlIHRp
+bWluZyBvZiByZWNvdmVyeSBpbml0aWFsaXphdGlvbiB0byBiZSBhZnRlciBidXMgcmVnaXN0cmF0
+aW9uCgp2MzoKUmViYXNlZCB0byBXb2xmcmFtJ3MgZm9yLW5leHQgYnJhbmNoCkFkZGVkIGFja2Vk
+LWJ5IGZyb20gTGludXMgV2FsbGVpagpVcGRhdGUgdG8gdXNlIG5ldyBueHAgZW1haWwgYWRkcmVz
+c2VzIGR1ZSB0byBjb21wYW55IG1lcmdlCgogZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1pbXguYyB8
+IDE5ICsrKysrKysrKysrKysrKystLS0KIDEgZmlsZSBjaGFuZ2VkLCAxNiBpbnNlcnRpb25zKCsp
+LCAzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtaW14
+LmMgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLWlteC5jCmluZGV4IDE4NDRiYzkuLjAwYWM0YzIg
+MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtaW14LmMKKysrIGIvZHJpdmVycy9p
+MmMvYnVzc2VzL2kyYy1pbXguYwpAQCAtOTg5LDYgKzk4OSwxNSBAQCBzdGF0aWMgdm9pZCBpMmNf
+aW14X2luaXRfcmVjb3ZlcnlfaW5mbyhzdHJ1Y3QgaW14X2kyY19zdHJ1Y3QgKmkyY19pbXgsCiB7
+CiAJc3RydWN0IGkyY19idXNfcmVjb3ZlcnlfaW5mbyAqcmluZm8gPSAmaTJjX2lteC0+cmluZm87
+CiAKKwkvKiBpZiBwaW5jdHJsIGlzIG5vdCBzdXBwb3J0ZWQgb24gdGhlIHN5c3RlbSAqLworCWlm
+IChJU19FUlIoaTJjX2lteC0+cGluY3RybCkpCisJCWkyY19pbXgtPnBpbmN0cmwgPSBOVUxMOwor
+CisJaWYgKCFpMmNfaW14LT5waW5jdHJsKSB7CisJCWRldl9pbmZvKCZpMmNfaW14LT5hZGFwdGVy
+LmRldiwgImNhbid0IGdldCBwaW5jdHJsLCBidXMgcmVjb3Zlcnkgbm90IHN1cHBvcnRlZFxuIik7
+CisJCXJldHVybjsKKwl9CisKIAlpMmNfaW14LT5waW5jdHJsX3BpbnNfZGVmYXVsdCA9IHBpbmN0
+cmxfbG9va3VwX3N0YXRlKGkyY19pbXgtPnBpbmN0cmwsCiAJCQlQSU5DVFJMX1NUQVRFX0RFRkFV
+TFQpOwogCWkyY19pbXgtPnBpbmN0cmxfcGluc19ncGlvID0gcGluY3RybF9sb29rdXBfc3RhdGUo
+aTJjX2lteC0+cGluY3RybCwKQEAgLTEwODEsOCArMTA5MCwxMSBAQCBzdGF0aWMgaW50IGkyY19p
+bXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAkJcmV0dXJuIHJldDsKIAl9
+CiAKKwkvKiBvcHRpb25hbCBidXMgcmVjb3ZlcnkgZmVhdHVyZSB0aHJvdWdoIHBpbmN0cmwgKi8K
+IAlpMmNfaW14LT5waW5jdHJsID0gZGV2bV9waW5jdHJsX2dldCgmcGRldi0+ZGV2KTsKLQlpZiAo
+SVNfRVJSKGkyY19pbXgtPnBpbmN0cmwpKSB7CisJLyogYmFpbG91dCBvbiAtRU5PTUVNIG9yIC1F
+UFJPQkVfREVGRVIsIGNvbnRpbnVlIGZvciBvdGhlciBlcnJvcnMgKi8KKwlpZiAoUFRSX0VSUihp
+MmNfaW14LT5waW5jdHJsKSA9PSAtRU5PTUVNIHx8CisJCQlQVFJfRVJSKGkyY19pbXgtPnBpbmN0
+cmwpID09IC1FUFJPQkVfREVGRVIpIHsKIAkJcmV0ID0gUFRSX0VSUihpMmNfaW14LT5waW5jdHJs
+KTsKIAkJZ290byBjbGtfZGlzYWJsZTsKIAl9CkBAIC0xMTI1LDggKzExMzcsNiBAQCBzdGF0aWMg
+aW50IGkyY19pbXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAkJCWkyY19p
+bXgsIElNWF9JMkNfSTJDUik7CiAJaW14X2kyY193cml0ZV9yZWcoaTJjX2lteC0+aHdkYXRhLT5p
+MnNyX2Nscl9vcGNvZGUsIGkyY19pbXgsIElNWF9JMkNfSTJTUik7CiAKLQlpMmNfaW14X2luaXRf
+cmVjb3ZlcnlfaW5mbyhpMmNfaW14LCBwZGV2KTsKLQogCS8qIEFkZCBJMkMgYWRhcHRlciAqLwog
+CXJldCA9IGkyY19hZGRfbnVtYmVyZWRfYWRhcHRlcigmaTJjX2lteC0+YWRhcHRlcik7CiAJaWYg
+KHJldCA8IDApIHsKQEAgLTExNDYsNiArMTE1Niw5IEBAIHN0YXRpYyBpbnQgaTJjX2lteF9wcm9i
+ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCS8qIEluaXQgRE1BIGNvbmZpZyBpZiBz
+dXBwb3J0ZWQgKi8KIAlpMmNfaW14X2RtYV9yZXF1ZXN0KGkyY19pbXgsIHBoeV9hZGRyKTsKIAor
+CS8qIEluaXQgYnVzIHJlY292ZXJ5IGlmIHN1cHBvcnRlZCAqLworCWkyY19pbXhfaW5pdF9yZWNv
+dmVyeV9pbmZvKGkyY19pbXgsIHBkZXYpOworCiAJcmV0dXJuIDA7ICAgLyogUmV0dXJuIE9LICov
+CiAKIHJwbV9kaXNhYmxlOgotLSAKMS45LjAKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1h
+cm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
