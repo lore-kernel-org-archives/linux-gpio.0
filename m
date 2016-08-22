@@ -1,33 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.9
-Date: Mon, 22 Aug 2016 15:59:49 +0200
-Message-ID: <CACRpkdYDL8dhyoRodKWfaOj2ya2_4qQq=+sRj+wUaHyW7Lkjdg@mail.gmail.com>
-References: <1471446328-15537-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add DU support
+Date: Mon, 22 Aug 2016 16:00:49 +0200
+Message-ID: <CACRpkda4cZ+-QXvXE8G5CKACSPYyEOmBJ_8GWFZ20KqKQwdTmA@mail.gmail.com>
+References: <1470993268-11590-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdVJ6fN1ak1zMYXKPe6h1aEmhHjWdCQLPw5EsGZq61w99A@mail.gmail.com>
+ <CACRpkdZjsHCxTQ00Dfe94sHEMeFP3VUUkZfhGFO+oiQVsmkXXA@mail.gmail.com> <CAMuHMdVTtjuiE6eEdD6Rhp2UykOBgjHjdn3=VJc=ROKziOqfWg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1471446328-15537-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <CAMuHMdVTtjuiE6eEdD6Rhp2UykOBgjHjdn3=VJc=ROKziOqfWg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Aug 17, 2016 at 5:05 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Mon, Aug 22, 2016 at 2:23 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Mon, Aug 22, 2016 at 2:10 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
->         Hi Linus,
+>> Geert, I assume you will queue this?
 >
-> The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
->
->   Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.9-tag1
+> Sure, it's part of the pull request I sent last week ;-)
 
-Pulled into pinctrl's devel branch.
-
-Thanks for your continued efforts!
+Gah good that you remind me, because in some magic way I
+managed to miss that. Pulled it now, sorry.
 
 Yours,
 Linus Walleij
