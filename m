@@ -1,82 +1,82 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH v2 4/8] gpio: dt-bindings: Add documentation for Aspeed
- GPIO controllers
-Date: Mon, 22 Aug 2016 09:46:00 +0930
-Message-ID: <1471824960.5707.3.camel@aj.id.au>
-References: <20160819124414.24242-1-andrew@aj.id.au>
-         <20160819124414.24242-5-andrew@aj.id.au>
-         <20160819143641.GA19513@rob-hp-laptop>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for v4.8, take one
+Date: Mon, 22 Aug 2016 10:46:50 +0200
+Message-ID: <CACRpkdZVTv+yGMSZQkb7NQVU3iZEjFGkWBf0PmR5j0Zhz16m8g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-oOuNSQ4nXhWxghMvDaki"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160819143641.GA19513@rob-hp-laptop>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:35183 "EHLO
+        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752226AbcHVIqv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Aug 2016 04:46:51 -0400
+Received: by mail-oi0-f46.google.com with SMTP id 4so141853853oih.2
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Aug 2016 01:46:51 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+
+Hi Linus,
+
+here are a few GPIO fixes for v4.8. I was expecting some fallout from
+the new chardev rework but nothing like that turned up att all. Instead
+a Kconfig confusion that I think I have finally nailed, then some ordinary
+driver noise and trivia.
+
+Please pull these changes!
+
+Yours,
+Linus Walleij
 
 
---=-oOuNSQ4nXhWxghMvDaki
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
 
-On Fri, 2016-08-19 at 09:36 -0500, Rob Herring wrote:
-> On Fri, Aug 19, 2016 at 10:14:10PM +0930, Andrew Jeffery wrote:
-> >=20
-> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> > ---
-> >=20
-> > Since v1:
-> >=20
-> > Rob: I haven't added your Acked-by here as I've made the following chan=
-ges and
-> > wanted to get your input:
-> >=20
-> > * Remove interrupt-controller as an optional property
-> > * Defer to interrupt-controller bindings document for sub-node properti=
-es
-> >=20
-> > I had a discussion with Joel about whether the interrupt-controller cap=
-ability
-> > should be optional and the conclusion was that it should always be conf=
-igured
-> > by the driver. This makes an optional interrupt-controller property fee=
-l
-> > redundant (and possibly inaccurate if left out) so I've removed it.
-> I don't follow. What do you mean byt "configured by the driver". If the=
-=C2=A0
-> block supports interrupts, then it should be marked as an=C2=A0
-> interrupt-controller. It never should have been optional. The OS can=C2=
-=A0
-> ignore the interrupt properties if it chooses.=C2=A0
+  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
 
-Right, clearly there was some confusion on my part. I will fix that up.
-Thanks for clarifying.
+are available in the git repository at:
 
-Andrew
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.8-2
 
---=-oOuNSQ4nXhWxghMvDaki
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+for you to fetch changes up to 048c28c91e56781082bc17d181e460b81e7e8bcb:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+  gpio: make any OF dependent driver depend on OF_GPIO (2016-08-19
+15:01:29 +0200)
 
-iQIcBAABCgAGBQJXukRAAAoJEJ0dnzgO5LT5GQwP/1ZUW8Ey1pnU9o5AQOfwj0P8
-ghc0xKXXpAKX7mXcR3kOdlesAnrZtL6ZP3WK7xFuDLFU2qf6kuQoxItqWkwKvihN
-mwNjN+AQ8WQ22tildGIC4gL+bHOZ5aIpy7LJ3Ec1RX/i55zKXDNzeF98ALg0Jz2L
-iMPKIYNrg9zmIYAUzUIv6sewI0DVyo7Dp+Y+YoU87SzKVxZ33DuNOmC8Ij0yEvJb
-5twIHT2nCVPyzBMXSS6ZPqYK8B1g13NoR5CGyeV21c2tmfO0vaiUSok0spEFv0dt
-rxXypQ52RNtHXVEw/Q81CkxJC1MPpPjRLp1nLMlOCQDB9UqKYOUTaUvw/6mhv85h
-9uRbQ4fn4fv6h63hDL3ed7uYP2MdPdOa7jS0w2PA+2qVGga6helJmo7w1JrEaxIh
-ED0yF/4eUeEE/V4dKm7MRcmxd+dr1wm2U2XTerpsfThraM0e67cVZFUGZPD3OFQd
-shixEic7WgNfdvjZA4zCc29uUqJKWWJ+IOlbf61P60ljA+ZmsprIaMCn0AB/n8Re
-XVQzMTQVZI64AkhFyudtD1llQw5LECK+K8PMbyX4x0ppQvG8euGo/Nk/76Akh+4V
-WEHWrmtbQbb11sGB+jOSYeMnNtkYll31T4f+1kZhJWayWq5CHm40hsyg4K8zGhOw
-+mG/CSQ48VpQK0RJKtp9
-=0Fri
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+GPIO fixes for v4.8:
 
---=-oOuNSQ4nXhWxghMvDaki--
+This fixes a Kconfig issue with UM: when I made GPIOLIB
+available to all archs, that included UM, but the OF part
+of GPIOLIB requires HAS_IOMEM, so we add HAS_IOMEM as a
+dependency to OF_GPIO.
+
+This in turn exposed the fact that a few GPIO drivers were
+implicitly assuming OF_GPIO as their dependency but instead
+depended on OF alone (the typical problem being a pointer
+inside gpio_chip not existing unless OF_GPIO is selected)
+and then UM would fail to compile with these drivers
+instead. Then I lost patience and made any GPIO driver
+depending on just OF depend on OF_GPIO instead, that is
+certainly what they meant and the only thing that makes
+sense anyway. GPIO with just OF but !OF_GPIO does not make
+sense.
+
+Also a fix for the max730x driver data pointer, and a minor
+comment fix for the GPIO tools.
+
+----------------------------------------------------------------
+Baruch Siach (1):
+      tools/gpio: fix gpio-event-mon header comment
+
+Christophe Leroy (1):
+      gpio: max730x: set gpiochip data pointer before using it
+
+Linus Walleij (2):
+      gpio: Fix OF build problem on UM
+      gpio: make any OF dependent driver depend on OF_GPIO
+
+ drivers/gpio/Kconfig        | 11 ++++++-----
+ drivers/gpio/gpio-max730x.c |  8 ++++----
+ tools/gpio/gpio-event-mon.c |  2 +-
+ 3 files changed, 11 insertions(+), 10 deletions(-)
