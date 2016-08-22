@@ -1,47 +1,151 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add DU support
-Date: Mon, 22 Aug 2016 14:23:19 +0200
-Message-ID: <CAMuHMdVTtjuiE6eEdD6Rhp2UykOBgjHjdn3=VJc=ROKziOqfWg@mail.gmail.com>
-References: <1470993268-11590-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
- <CAMuHMdVJ6fN1ak1zMYXKPe6h1aEmhHjWdCQLPw5EsGZq61w99A@mail.gmail.com> <CACRpkdZjsHCxTQ00Dfe94sHEMeFP3VUUkZfhGFO+oiQVsmkXXA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 01/13] pinctrl: add bcm63xx base code
+Date: Mon, 22 Aug 2016 14:46:00 +0200
+Message-ID: <CACRpkdbAWJruB=4rv_SoPZ5D5XgWjebK_Qmv2GLgOOrSyqXcDA@mail.gmail.com>
+References: <1471604025-21575-1-git-send-email-jonas.gorski@gmail.com> <1471604025-21575-2-git-send-email-jonas.gorski@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZjsHCxTQ00Dfe94sHEMeFP3VUUkZfhGFO+oiQVsmkXXA@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:33287 "EHLO
+        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752152AbcHVMqC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Aug 2016 08:46:02 -0400
+Received: by mail-oi0-f49.google.com with SMTP id c15so148526213oig.0
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Aug 2016 05:46:02 -0700 (PDT)
+In-Reply-To: <1471604025-21575-2-git-send-email-jonas.gorski@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kevin Cernekee <cernekee@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
 
-Hi Linus,
+On Fri, Aug 19, 2016 at 12:53 PM, Jonas Gorski <jonas.gorski@gmail.com> wrote:
 
-On Mon, Aug 22, 2016 at 2:10 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Aug 16, 2016 at 10:23 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Fri, Aug 12, 2016 at 11:14 AM, Laurent Pinchart
->> <laurent.pinchart+renesas@ideasonboard.com> wrote:
->>> Only the DU parallel RGB output signals are included, HDMI and TCON pins
->>> will be added in separate groups.
->>>
->>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Setup directory and add a helper for bcm63xx pinctrl support.
 >
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
 
-Thanks!
+>  drivers/pinctrl/bcm63xx/Kconfig           |   3 +
+>  drivers/pinctrl/bcm63xx/Makefile          |   1 +
 
-> Geert, I assume you will queue this?
+Why not just put it in the existing pinctrl/bcm directory?
 
-Sure, it's part of the pull request I sent last week ;-)
+The drivers in there share nothing but being Broadcom
+anyways. And when you're at it, do take a look at the
+other Broadcom drivers to check if they would
+happen to share something with your hardware, I find
+it dazzling that hardware engineers repeatedly reinvents
+pin controllers but what can I do.
 
-Gr{oetje,eeting}s,
+> +config PINCTRL_BCM63XX
+> +       bool
+> +       select GPIO_GENERIC
 
-                        Geert
+depends on ARCH_****?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+depends on OF_GPIO?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Will it really be used on non-DT systems?
+
+> +#define BANK_SIZE      sizeof(u32)
+> +#define PINS_PER_BANK  (BANK_SIZE * BITS_PER_BYTE)
+> +
+> +#ifdef CONFIG_OF
+> +static int bcm63xx_gpio_of_xlate(struct gpio_chip *gc,
+> +                                const struct of_phandle_args *gpiospec,
+> +                                u32 *flags)
+> +{
+> +       struct gpio_chip *base = gpiochip_get_data(gc);
+> +       int pin = gpiospec->args[0];
+> +
+> +       if (gc != &base[pin / PINS_PER_BANK])
+> +               return -EINVAL;
+> +
+> +       pin = pin % PINS_PER_BANK;
+> +
+> +       if (pin >= gc->ngpio)
+> +               return -EINVAL;
+> +
+> +       if (flags)
+> +               *flags = gpiospec->args[1];
+> +
+> +       return pin;
+> +}
+> +#endif
+
+- Do you really have to support the !OF_GPIO case? (depend in Kconfig,
+  get rid of #ifdef)
+
+- The only reason for not using of_gpio_simple_xlate() seems to be that
+  you have several GPIO banks. So why not model every bank as a
+  separate device? Or did you consider this already?
+
+> +               gc[i].request = gpiochip_generic_request;
+> +               gc[i].free = gpiochip_generic_free;
+> +
+> +#ifdef CONFIG_OF
+> +               gc[i].of_gpio_n_cells = 2;
+> +               gc[i].of_xlate = bcm63xx_gpio_of_xlate;
+> +#endif
+> +
+> +               gc[i].label = label;
+> +               gc[i].ngpio = pins;
+> +
+> +               devm_gpiochip_add_data(dev, &gc[i], gc);
+
+Because this also gets pretty hairy... since you don't have one device
+per gpiochip.
+
+> +static void bcm63xx_setup_pinranges(struct gpio_chip *gc, const char *name,
+> +                                   int ngpio)
+> +{
+> +       int i, chips = DIV_ROUND_UP(ngpio, PINS_PER_BANK);
+> +
+> +       for (i = 0; i < chips; i++) {
+> +               int offset, pins;
+> +
+> +               offset = i * PINS_PER_BANK;
+> +               pins = min_t(int, ngpio - offset, PINS_PER_BANK);
+> +
+> +               gpiochip_add_pin_range(&gc[i], name, 0, offset, pins);
+> +       }
+> +}
+
+And this, same thing. Could be so much easier if it was just the same
+driver instantiated twice for two banks.
+
+> +       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dirout");
+> +       dirout = devm_ioremap_resource(&pdev->dev, res);
+> +       if (IS_ERR(dirout))
+> +               return ERR_CAST(dirout);
+> +
+> +       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dat");
+> +       data = devm_ioremap_resource(&pdev->dev, res);
+> +       if (IS_ERR(data))
+> +               return ERR_CAST(data);
+> +
+> +       sz = resource_size(res);
+> +
+> +       ret = bcm63xx_setup_gpio(&pdev->dev, gc, dirout, data, sz, ngpio);
+> +       if (ret)
+> +               return ERR_PTR(ret);
+> +
+> +       pctldev = devm_pinctrl_register(&pdev->dev, desc, priv);
+> +       if (IS_ERR(pctldev))
+> +               return pctldev;
+> +
+> +       bcm63xx_setup_pinranges(gc, pinctrl_dev_get_devname(pctldev), ngpio);
+> +
+> +       dev_info(&pdev->dev, "registered at mmio %p\n", dirout);
+> +
+> +       return pctldev;
+
+A current trend in simple MMIO devices is to simply add themselves as a
+compatible string in drivers/gpio/gpio-mmio.c. Example:
+
+https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/commit/drivers/gpio/gpio-mmio.c?h=devel&id=05cc995f4d44c2b14a1f15f3271cc9715cb81099
+
+This could be a viable approach if you find a way to flag that such a GPIO
+has a pin control backend.
+
+Yours,
+Linus Walleij
