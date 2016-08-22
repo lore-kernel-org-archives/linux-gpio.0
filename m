@@ -1,172 +1,53 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [RESEND PATCH 1/2] pinctrl: meson-gxbb: add pins for PWM
-Date: Mon, 22 Aug 2016 16:40:59 +0200
-Message-ID: <1471876860-5620-2-git-send-email-narmstrong@baylibre.com>
-References: <1471876860-5620-1-git-send-email-narmstrong@baylibre.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1471876860-5620-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, khilman@baylibre.com, carlo@caione.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+From: Anisse Astier <anisse@astier.eu>
+Subject: Re: [PATCH v2] pinctrl: cherryview: Do not mask all interrupts in probe
+Date: Mon, 22 Aug 2016 17:56:48 +0200
+Message-ID: <CALUN=qLiLZcTg8krfJmgrK2=SqYYGcpguna3gpOisSoOvRhs9g@mail.gmail.com>
+References: <1471866172-64154-1-git-send-email-mika.westerberg@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35859 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754777AbcHVP5b (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Aug 2016 11:57:31 -0400
+Received: by mail-wm0-f66.google.com with SMTP id i138so14081452wmf.3
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Aug 2016 08:57:10 -0700 (PDT)
+In-Reply-To: <1471866172-64154-1-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, linux-gpio@vger.kernel.org
 
-Add support for PWM pins, for EE and AO domains.
+On Mon, Aug 22, 2016 at 1:42 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> The Cherryview GPIO controller has 8 or 16 wires connected to the I/O-APIC
+> which can be used directly by the platform/BIOS or drivers. One such wire
+> is used as SCI (System Control Interrupt) which ACPI depends on to be able
+> to trigger GPEs (General Purpose Events).
+>
+> The pinctrl driver itself uses another IRQ resource which is wire OR of all
+> the 8 (or 16) wires and follows what BIOS has programmed to the IntSel
+> register of each pin.
+>
+> Currently the driver masks all interrupts at probe time and this prevents
+> these direct interrupts from working as expected. The reason for this is
+> that some early stage prototypes had some pins misconfigured causing lots
+> of spurious interrupts.
+>
+> We fix this by leaving the interrupt mask untouched. This allows SCI and
+> other direct interrupts work properly. What comes to the possible spurious
+> interrupts we switch the default handler to be handle_bad_irq() instead of
+> handle_simple_irq() (which was not correct anyway).
+>
+> Reported-by: Yu C Chen <yu.c.chen@intel.com>
+> Reported-by: Anisse Astier <anisse@astier.eu>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 78 ++++++++++++++++++++++++++++++
- 1 file changed, 78 insertions(+)
+Tested-by: Anisse Astier <anisse@astier.eu>
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 7eeb053..1c6ffb3 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -193,6 +193,14 @@ static const unsigned int eth_txd1_pins[]	= { PIN(GPIOZ_11, EE_OFF) };
- static const unsigned int eth_txd2_pins[]	= { PIN(GPIOZ_12, EE_OFF) };
- static const unsigned int eth_txd3_pins[]	= { PIN(GPIOZ_13, EE_OFF) };
- 
-+static const unsigned int pwm_a_x_pins[]	= { PIN(GPIOX_6, EE_OFF) };
-+static const unsigned int pwm_a_y_pins[]	= { PIN(GPIOY_16, EE_OFF) };
-+static const unsigned int pwm_b_pins[]		= { PIN(GPIODV_29, EE_OFF) };
-+static const unsigned int pwm_d_pins[]		= { PIN(GPIODV_28, EE_OFF) };
-+static const unsigned int pwm_e_pins[]		= { PIN(GPIOX_19, EE_OFF) };
-+static const unsigned int pwm_f_x_pins[]	= { PIN(GPIOX_7, EE_OFF) };
-+static const unsigned int pwm_f_y_pins[]	= { PIN(GPIOY_15, EE_OFF) };
-+
- static const struct pinctrl_pin_desc meson_gxbb_aobus_pins[] = {
- 	MESON_PIN(GPIOAO_0, 0),
- 	MESON_PIN(GPIOAO_1, 0),
-@@ -227,6 +235,11 @@ static const unsigned int i2c_slave_sda_ao_pins[] = {PIN(GPIOAO_5, 0) };
- 
- static const unsigned int remote_input_ao_pins[] = {PIN(GPIOAO_7, 0) };
- 
-+static const unsigned int pwm_ao_a_3_pins[]	= { PIN(GPIOAO_3, 0) };
-+static const unsigned int pwm_ao_a_6_pins[]	= { PIN(GPIOAO_6, 0) };
-+static const unsigned int pwm_ao_a_12_pins[]	= { PIN(GPIOAO_12, 0) };
-+static const unsigned int pwm_ao_b_pins[]	= { PIN(GPIOAO_13, 0) };
-+
- static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GPIO_GROUP(GPIOZ_0, EE_OFF),
- 	GPIO_GROUP(GPIOZ_1, EE_OFF),
-@@ -361,12 +374,17 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GROUP(uart_rx_a,	4,	12),
- 	GROUP(uart_cts_a,	4,	11),
- 	GROUP(uart_rts_a,	4,	10),
-+	GROUP(pwm_a_x,		3,	17),
-+	GROUP(pwm_e,		2,	30),
-+	GROUP(pwm_f_x,		3,	18),
- 
- 	/* Bank Y */
- 	GROUP(uart_cts_c,	1,	19),
- 	GROUP(uart_rts_c,	1,	18),
- 	GROUP(uart_tx_c,	1,	17),
- 	GROUP(uart_rx_c,	1,	16),
-+	GROUP(pwm_a_y,		1,	21),
-+	GROUP(pwm_f_y,		1,	20),
- 
- 	/* Bank Z */
- 	GROUP(eth_mdio,		6,	1),
-@@ -389,6 +407,8 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GROUP(uart_rx_b,	2,	28),
- 	GROUP(uart_cts_b,	2,	27),
- 	GROUP(uart_rts_b,	2,	26),
-+	GROUP(pwm_b,		3,	21),
-+	GROUP(pwm_d,		3,	20),
- 
- 	/* Bank BOOT */
- 	GROUP(emmc_nand_d07,	4,	30),
-@@ -435,6 +455,10 @@ static struct meson_pmx_group meson_gxbb_aobus_groups[] = {
- 	GROUP(i2c_slave_sck_ao, 0,	2),
- 	GROUP(i2c_slave_sda_ao, 0,	1),
- 	GROUP(remote_input_ao,	0,	0),
-+	GROUP(pwm_ao_a_3,	0,	22),
-+	GROUP(pwm_ao_a_6,	0,	18),
-+	GROUP(pwm_ao_a_12,	0,	17),
-+	GROUP(pwm_ao_b,		0,	3),
- };
- 
- static const char * const gpio_periphs_groups[] = {
-@@ -502,6 +526,34 @@ static const char * const eth_groups[] = {
- 	"eth_txd0", "eth_txd1", "eth_txd2", "eth_txd3",
- };
- 
-+static const char * const pwm_a_x_groups[] = {
-+	"pwm_a_x",
-+};
-+
-+static const char * const pwm_a_y_groups[] = {
-+	"pwm_a_y",
-+};
-+
-+static const char * const pwm_b_groups[] = {
-+	"pwm_b",
-+};
-+
-+static const char * const pwm_d_groups[] = {
-+	"pwm_d",
-+};
-+
-+static const char * const pwm_e_groups[] = {
-+	"pwm_e",
-+};
-+
-+static const char * const pwm_f_x_groups[] = {
-+	"pwm_f_x",
-+};
-+
-+static const char * const pwm_f_y_groups[] = {
-+	"pwm_f_y",
-+};
-+
- static const char * const gpio_aobus_groups[] = {
- 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
- 	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
-@@ -526,6 +578,21 @@ static const char * const i2c_slave_ao_groups[] = {
- 
- static const char * const remote_input_ao_groups[] = {
- 	"remote_input_ao",
-+
-+static const char * const pwm_ao_a_3_groups[] = {
-+	"pwm_ao_a_3",
-+};
-+
-+static const char * const pwm_ao_a_6_groups[] = {
-+	"pwm_ao_a_6",
-+};
-+
-+static const char * const pwm_ao_a_12_groups[] = {
-+	"pwm_ao_a_12",
-+};
-+
-+static const char * const pwm_ao_b_groups[] = {
-+	"pwm_ao_b",
- };
- 
- static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
-@@ -536,6 +603,13 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
- 	FUNCTION(uart_b),
- 	FUNCTION(uart_c),
- 	FUNCTION(eth),
-+	FUNCTION(pwm_a_x),
-+	FUNCTION(pwm_a_y),
-+	FUNCTION(pwm_b),
-+	FUNCTION(pwm_d),
-+	FUNCTION(pwm_e),
-+	FUNCTION(pwm_f_x),
-+	FUNCTION(pwm_f_y),
- };
- 
- static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
-@@ -545,6 +619,10 @@ static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
- 	FUNCTION(i2c_ao),
- 	FUNCTION(i2c_slave_ao),
- 	FUNCTION(remote_input_ao),
-+	FUNCTION(pwm_ao_a_3),
-+	FUNCTION(pwm_ao_a_6),
-+	FUNCTION(pwm_ao_a_12),
-+	FUNCTION(pwm_ao_b),
- };
- 
- static struct meson_bank meson_gxbb_periphs_banks[] = {
--- 
-1.9.1
+
+I confirm this is working and I still get the ACPI events
+
+Regards,
+
+Anisse
