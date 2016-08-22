@@ -1,31 +1,117 @@
 From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [RESEND PATCH 0/2] pinctrl: meson-gxbb: Export pins for PWMs
-Date: Mon, 22 Aug 2016 16:40:58 +0200
-Message-ID: <1471876860-5620-1-git-send-email-narmstrong@baylibre.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:35396 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754903AbcHVOlM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Aug 2016 10:41:12 -0400
-Received: by mail-wm0-f41.google.com with SMTP id f65so123764777wmi.0
-        for <linux-gpio@vger.kernel.org>; Mon, 22 Aug 2016 07:41:06 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, khilman@baylibre.com, carlo@caione.org
+Subject: [RESEND PATCH 2/2] ARM64: dts: meson-gxbb: Add PWM pinctrl nodes
+Date: Mon, 22 Aug 2016 16:41:00 +0200
+Message-ID: <1471876860-5620-3-git-send-email-narmstrong@baylibre.com>
+References: <1471876860-5620-1-git-send-email-narmstrong@baylibre.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1471876860-5620-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, khilman@baylibre.com, carlo@caione.org, devicetree@vger.kernel.org
 Cc: Neil Armstrong <narmstrong@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-Add PWM pins in the meson-gxbb pinctrl driver and export then in the GXBB dtsi.
+Add DT nodes for PWMs in EE and AO domains.
 
-Resent rebased on git.linaro.org/people/linus.walleij/linux-pinctrl.git branch devel.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 77 +++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-Neil Armstrong (2):
-  pinctrl: meson-gxbb: add pins for PWM
-  ARM64: dts: meson-gxbb: Add PWM pinctrl nodes
-
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 77 ++++++++++++++++++++++++++++
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c  | 78 +++++++++++++++++++++++++++++
- 2 files changed, 155 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index e502c24..9aeb88a 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -203,6 +203,34 @@
+ 						function = "uart_ao";
+ 					};
+ 				};
++
++				pwm_ao_a_3_pins: pwm_ao_a_3 {
++					mux {
++						groups = "pwm_ao_a_3";
++						function = "pwm_ao_a_3";
++					};
++				};
++
++				pwm_ao_a_6_pins: pwm_ao_a_6 {
++					mux {
++						groups = "pwm_ao_a_6";
++						function = "pwm_ao_a_6";
++					};
++				};
++
++				pwm_ao_a_12_pins: pwm_ao_a_12 {
++					mux {
++						groups = "pwm_ao_a_12";
++						function = "pwm_ao_a_12";
++					};
++				};
++
++				pwm_ao_b_pins: pwm_ao_b {
++					mux {
++						groups = "pwm_ao_b";
++						function = "pwm_ao_b";
++					};
++				};
+ 			};
+ 
+ 			uart_AO: serial@4c0 {
+@@ -306,6 +334,55 @@
+ 						function = "eth";
+ 					};
+ 				};
++
++				pwm_a_x_pins: pwm_a_x {
++					mux {
++						groups = "pwm_a_x";
++						function = "pwm_a_x";
++					};
++				};
++
++				pwm_a_y_pins: pwm_a_y {
++					mux {
++						groups = "pwm_a_y";
++						function = "pwm_a_y";
++					};
++				};
++
++				pwm_b_pins: pwm_b {
++					mux {
++						groups = "pwm_b";
++						function = "pwm_b";
++					};
++				};
++
++				pwm_d_pins: pwm_d {
++					mux {
++						groups = "pwm_d";
++						function = "pwm_d";
++					};
++				};
++
++				pwm_e_pins: pwm_e {
++					mux {
++						groups = "pwm_e";
++						function = "pwm_e";
++					};
++				};
++
++				pwm_f_x_pins: pwm_f_x {
++					mux {
++						groups = "pwm_f_x";
++						function = "pwm_f_x";
++					};
++				};
++
++				pwm_f_y_pins: pwm_f_y {
++					mux {
++						groups = "pwm_f_y";
++						function = "pwm_f_y";
++					};
++				};
+ 			};
+ 		};
+ 
 -- 
 1.9.1
-
