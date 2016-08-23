@@ -1,78 +1,78 @@
-From: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Subject: [PATCH 4/6] pinctrl: rockchip: make it explicitly non-modular
-Date: Tue, 23 Aug 2016 17:19:42 -0400
-Message-ID: <20160823211944.18554-5-paul.gortmaker@windriver.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 6/6] pinctrl: sirf: make core support explicitly non-modular
+Date: Tue, 23 Aug 2016 17:19:44 -0400
+Message-ID: <20160823211944.18554-7-paul.gortmaker@windriver.com>
 References: <20160823211944.18554-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20160823211944.18554-1-paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail1.windriver.com ([147.11.146.13]:47208 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755826AbcHWVWl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Aug 2016 17:22:41 -0400
+In-Reply-To: <20160823211944.18554-1-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Rongjun Ying <rongjun.ying@csr.com>, Yuping Luo <yuping.luo@csr.com>, Barry Song <baohua@kernel.org>, linux-gpio@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+The Makefile currently controlling compilation of this code is:
 
-drivers/pinctrl/Kconfig:config PINCTRL_ROCKCHIP
-drivers/pinctrl/Kconfig:        bool
+  drivers/pinctrl/sirf/pinctrl-sirf.o
+      --> drivers/pinctrl/sirf/Makefile:obj-y += pinctrl-sirf.o
 
 ...meaning that it currently is not being built as a module by anyone.
 
 Lets remove the couple traces of modular infrastructure use, so that
 when reading the driver there is no doubt it is builtin-only.
 
-Note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
 We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
+was (or is now) contained at the top of the file in the comments.
 
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rongjun Ying <rongjun.ying@csr.com>
+Cc: Yuping Luo <yuping.luo@csr.com>
+Cc: Barry Song <baohua@kernel.org>
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/pinctrl/pinctrl-rockchip.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/pinctrl/sirf/pinctrl-sirf.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 44902c63f507..49bf7dcb7ed8 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -23,7 +23,7 @@
-  * GNU General Public License for more details.
+diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
+index 762c0c9c1278..0df72be60704 100644
+--- a/drivers/pinctrl/sirf/pinctrl-sirf.c
++++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
+@@ -1,6 +1,11 @@
+ /*
+  * pinmux driver for CSR SiRFprimaII
+  *
++ * Authors:
++ *	Rongjun Ying <rongjun.ying@csr.com>
++ *	Yuping Luo <yuping.luo@csr.com>
++ *	Barry Song <baohua.song@csr.com>
++ *
+  * Copyright (c) 2011 - 2014 Cambridge Silicon Radio Limited, a CSR plc group
+  * company.
+  *
+@@ -8,7 +13,6 @@
   */
  
+ #include <linux/init.h>
 -#include <linux/module.h>
-+#include <linux/init.h>
+ #include <linux/irq.h>
  #include <linux/platform_device.h>
  #include <linux/io.h>
- #include <linux/bitops.h>
-@@ -2704,7 +2704,6 @@ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
- 		.data = (void *)&rk3399_pin_ctrl },
- 	{},
- };
--MODULE_DEVICE_TABLE(of, rockchip_pinctrl_dt_match);
- 
- static struct platform_driver rockchip_pinctrl_driver = {
- 	.probe		= rockchip_pinctrl_probe,
-@@ -2720,7 +2719,3 @@ static int __init rockchip_pinctrl_drv_register(void)
- 	return platform_driver_register(&rockchip_pinctrl_driver);
+@@ -884,9 +888,3 @@ static int __init sirfsoc_gpio_init(void)
+ 	return sirfsoc_gpio_probe(np);
  }
- postcore_initcall(rockchip_pinctrl_drv_register);
+ subsys_initcall(sirfsoc_gpio_init);
 -
--MODULE_AUTHOR("Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>");
--MODULE_DESCRIPTION("Rockchip pinctrl driver");
--MODULE_LICENSE("GPL v2");
+-MODULE_AUTHOR("Rongjun Ying <rongjun.ying@csr.com>");
+-MODULE_AUTHOR("Yuping Luo <yuping.luo@csr.com>");
+-MODULE_AUTHOR("Barry Song <baohua.song@csr.com>");
+-MODULE_DESCRIPTION("SIRFSOC pin control driver");
+-MODULE_LICENSE("GPL");
 -- 
 2.8.4
+
