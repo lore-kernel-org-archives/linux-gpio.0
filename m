@@ -1,98 +1,47 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH 2/2] ARM: dts: sun8i: Add extra UART pinmux settings for
- A23/33
-Date: Tue, 23 Aug 2016 13:42:51 +0200
-Message-ID: <20160823114251.GL2598@lukather>
-References: <20160823055826.20591-1-icenowy@aosc.xyz>
- <20160823055826.20591-2-icenowy@aosc.xyz>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH] dt-bindings: GPIO: Add TPIC2810 binding
+Date: Tue, 23 Aug 2016 14:45:15 +0300
+Message-ID: <1471952715-20749-1-git-send-email-rogerq@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4271476954058811775=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160823055826.20591-2-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, Roger Quadros <rogerq@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
+From: "Andrew F. Davis" <afd@ti.com>
 
---===============4271476954058811775==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FxavXfDenm+F7xE/"
-Content-Disposition: inline
+Add binding for TPIC2810 GPO device.
 
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+---
+ Documentation/devicetree/bindings/gpio/gpio-tpic2810.txt | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tpic2810.txt
 
---FxavXfDenm+F7xE/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Tue, Aug 23, 2016 at 01:58:26PM +0800, Icenowy Zheng wrote:
-> A23/33 have 4 UART controllers outside PRCM. However, the devicetree used
-> to mentioned only UART0's pinmux settings. Some extra UART controllers ha=
-ve
-> RTS/CTS, and is suitable for using as bluetooth UART controller.
->=20
-> Add the pinmux settings for the UART controller, to make use of the
-> bluetooth function of some tablets.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-
-Our policy is that we avoid adding unused pinctrl nodes to not cripple
-the DT for no particular reason.
-
-So please add only the nodes you'll need in your tablet.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---FxavXfDenm+F7xE/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXvDa7AAoJEBx+YmzsjxAgjXYP/3O/JXDm1N9boh97caSQMlLb
-nmrUq/sj4yb1p3j7y0VeoIG+RvXxuRZWWWniFDx5oRzMTx0K0QtnoQ8XzrLL+9Em
-0EBeZOjzg0iSUhqgIq/518VBYYVos5aDsWGME1iROnSd6IXYgbwpONP6TGQEtebl
-oEVpPYUK1E1DlroQYkrhRiOsbcBuNSJJrTAWRuzZNxG+QGmHkaYBEUIi02qfoRqm
-L3X+J2BzGHpWp3vUI3sKkmlWx32C7k8qmTv52lB8KeJnW2/7SNLByftjmt+0Byn+
-B8KyG9LijNpqMIyv6it0deHdayY4reo85JTrNREU9AU3AHmHsNJIPkVu8+sruAb/
-JWPfwISLQ9X5klNMtt8ykhi+XqEFkpIuML5u3VwrLbXlOCsDw9/wLuJf8CWG4rPP
-Thi0zPZ+V8yQolhuoBj2M39Y7LU5/k8ajuuo+e9yFn6Kp5415bNc4DaGt7hFu0ar
-N5bCQAGTqNt+qabLXt12l3D5pdaFOa6i1cn2Np2Ql4SHgE9u3fLb97sB78dQ8I7W
-bsUVVbdComS/gadL29sL/bqFK4caVVekD0xgLDmus6w6rmz8uCHRoXZINwOJLm4x
-sbnrgzYZcmaXMgcUyhSC07/bDO+XRCIM3tSPXcY9JvcsY2PJ/2Ry2xkCX2mF/CHm
-t771Je7VPzXdFaf5/qod
-=T0J+
------END PGP SIGNATURE-----
-
---FxavXfDenm+F7xE/--
-
-
---===============4271476954058811775==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============4271476954058811775==--
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-tpic2810.txt b/Documentation/devicetree/bindings/gpio/gpio-tpic2810.txt
+new file mode 100644
+index 0000000..1afc2de
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-tpic2810.txt
+@@ -0,0 +1,16 @@
++TPIC2810 GPIO controller bindings
++
++Required properties:
++ - compatible		: Should be "ti,tpic2810".
++ - reg			: The I2C address of the device
++ - gpio-controller	: Marks the device node as a GPIO controller.
++ - #gpio-cells		: Should be two. For consumer use see gpio.txt.
++
++Example:
++
++	gpio@60 {
++		compatible = "ti,tpic2810";
++		reg = <0x60>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
+-- 
+2.7.4
