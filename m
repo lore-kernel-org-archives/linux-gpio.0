@@ -1,48 +1,62 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Subject: [PATCH] gpio: Remove superfluous include of io-mapping.h
-Date: Tue, 23 Aug 2016 21:32:03 +0100
-Message-ID: <20160823203203.14134-1-chris@chris-wilson.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 3/6] pinctrl: nomadik: make core support explicitly non-modular
+Date: Tue, 23 Aug 2016 17:19:41 -0400
+Message-ID: <20160823211944.18554-4-paul.gortmaker@windriver.com>
+References: <20160823211944.18554-1-paul.gortmaker@windriver.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail1.windriver.com ([147.11.146.13]:47201 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755941AbcHWVUD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Aug 2016 17:20:03 -0400
+In-Reply-To: <20160823211944.18554-1-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@unipv.it>, linux-gpio@vger.kernel.org
 
-The io-mapping.h include arose from the need to workaround an arch/um
-compile failure:
+The Kconfig currently controlling compilation of this code is:
 
-   drivers/gpio/gpio-mpc8xxx.c: In function 'mpc8xxx_probe':
->> drivers/gpio/gpio-mpc8xxx.c:373:2: error: implicit declaration of
->> function 'iounmap' [-Werror=implicit-function-declaration]
-     iounmap(mpc8xxx_gc->regs);
-     ^~~~~~~
+drivers/pinctrl/nomadik/Kconfig:config PINCTRL_NOMADIK
+drivers/pinctrl/nomadik/Kconfig:        bool "Nomadik pin controller driver"
 
-from commit 296ad4acb8ef ("gpio: remove deps on
-ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB") but io-mapping.h doesn't provide
-iounmap so the problem persisted and eventually (will be) silenced by
-making OF_GPIO depend on !NO_IOMEM (i.e. disabling building under
-arch/um). My desire to remove the unneed include to io-mapping is to
-simplify verification of changes to io-mapping.h
+...meaning that it currently is not being built as a module by anyone.
 
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Lets remove the couple traces of modular infrastructure use, so that
+when reading the driver there is no doubt it is builtin-only.
+
+We delete the MODULE_LICENSE tag etc. since all that information
+is already contained at the top of the file in the comments.
+
 Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: Alessandro Rubini <rubini@unipv.it>
 Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/gpio/gpiolib-of.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 75e7b3919ea7..a28feb3edf33 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -16,7 +16,6 @@
- #include <linux/errno.h>
- #include <linux/module.h>
- #include <linux/io.h>
--#include <linux/io-mapping.h>
- #include <linux/gpio/consumer.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index 6f2e1da11b1e..205fb399268a 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -11,7 +11,6 @@
+  * published by the Free Software Foundation.
+  */
+ #include <linux/kernel.h>
+-#include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/device.h>
+ #include <linux/platform_device.h>
+@@ -1983,7 +1982,3 @@ static int __init nmk_pinctrl_init(void)
+ 	return platform_driver_register(&nmk_pinctrl_driver);
+ }
+ core_initcall(nmk_pinctrl_init);
+-
+-MODULE_AUTHOR("Prafulla WADASKAR and Alessandro Rubini");
+-MODULE_DESCRIPTION("Nomadik GPIO Driver");
+-MODULE_LICENSE("GPL");
 -- 
-2.9.3
+2.8.4
+
