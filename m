@@ -1,74 +1,94 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 2/4] gpio: mxc: drop unused MODULE_ tags from non-modular code
-Date: Mon, 22 Aug 2016 12:48:31 -0400
-Message-ID: <20160822164833.3633-3-paul.gortmaker@windriver.com>
-References: <20160822164833.3633-1-paul.gortmaker@windriver.com>
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: Re: [PATCH v2 5/8] pinctrl: Add core support for Aspeed SoCs
+Date: Tue, 23 Aug 2016 12:00:51 +0930
+Message-ID: <1471919451.5707.89.camel@aj.id.au>
+References: <20160819124414.24242-1-andrew@aj.id.au>
+         <20160819124414.24242-6-andrew@aj.id.au>
+         <CACRpkdaBuwqGPbfLK8bR5A4NSefifw8VqPyUbgtAtweqoEnD7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160822164833.3633-1-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@caiaq.de>, Juergen Beisert <kernel@pengutronix.de>, linux-gpio@vger.kernel.org
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-Lk+1qTMxgDNwQXnUB8Gy"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:36297 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752793AbcHWCbJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 22 Aug 2016 22:31:09 -0400
+In-Reply-To: <CACRpkdaBuwqGPbfLK8bR5A4NSefifw8VqPyUbgtAtweqoEnD7g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Joel Stanley <joel@jms.id.au>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-The Kconfig currently controlling compilation of this code is:
 
-drivers/gpio/Kconfig:config GPIO_MXC
-drivers/gpio/Kconfig:   def_bool y
+--=-Lk+1qTMxgDNwQXnUB8Gy
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-...meaning that it currently is not being built as a module by anyone.
+T24gTW9uLCAyMDE2LTA4LTIyIGF0IDE1OjQ1ICswMjAwLCBMaW51cyBXYWxsZWlqIHdyb3RlOgo+
+IE9uIEZyaSwgQXVnIDE5LCAyMDE2IGF0IDI6NDQgUE0sIEFuZHJldyBKZWZmZXJ5IDxhbmRyZXdA
+YWouaWQuYXU+IHdyb3RlOgo+IAo+ID4gCj4gPiArKysgYi9kcml2ZXJzL3BpbmN0cmwvYXNwZWVk
+L0tjb25maWcKPiA+IEBAIC0wLDAgKzEsOCBAQAo+ID4gK2NvbmZpZyBQSU5DVFJMX0FTUEVFRAo+
+ID4gK8KgwqDCoMKgwqDCoMKgYm9vbAo+ID4gK8KgwqDCoMKgwqDCoMKgZGVwZW5kcyBvbiAoQVJD
+SF9BU1BFRUQgfHwgQ09NUElMRV9URVNUKSAmJiBPRgo+ID4gK8KgwqDCoMKgwqDCoMKgc2VsZWN0
+IFBJTk1VWAo+ID4gK8KgwqDCoMKgwqDCoMKgc2VsZWN0IFBJTkNPTkYKPiA+ICvCoMKgwqDCoMKg
+wqDCoHNlbGVjdCBHRU5FUklDX1BJTkNPTkYKPiA+ICvCoMKgwqDCoMKgwqDCoHNlbGVjdCBNRkRf
+U1lTQ09OCj4gPiArwqDCoMKgwqDCoMKgwqBzZWxlY3QgUkVHTUFQX01NSU8KPiBTaW5jZSB0aGlz
+IGRldmljZSBpcyBzcGF3biBmcm9tIHRoZSBzeXNjb24sIHNob3VsZCBpdCBub3QgYmUKPiAiZGVw
+ZW5kcyBvbiBNRkRfU1lTQ09OIj8KPiAKPiAoTm8gYmlnIGRlYWwsIGlmIHlvdSB0aGluayB0aGlz
+IGlzIHJpZ2h0IHRoZW4gZ28gd2l0aCBpdC4pCgpJIHRoaW5rIHRoYXQncyBhIGZhaXIgcG9pbnQs
+IEkgd2lsbCBsb29rIGF0IHJlYXJyYW5naW5nIGl0LgoKPiAKPiA+IAo+ID4gKyNpbmNsdWRlIAo+
+IFdoYXQgaXMgdGhpcyBpbmNsdWRlIGZvcj8KCkNydWZ0IGZyb20gcGFzdCBpdGVyYXRpb25zLiBX
+aWxsIHJlbW92ZS4KCj4gCj4gPiAKPiA+ICsjaW5jbHVkZSAKPiA+ICsjaW5jbHVkZSAKPiA+ICsj
+aW5jbHVkZSAKPiA+ICsjaW5jbHVkZSAKPiA+ICsjaW5jbHVkZSAiLi4vY29yZS5oIgo+ID4gKyNp
+bmNsdWRlICJwaW5jdHJsLWFzcGVlZC5oIgo+IE5vICNpbmNsdWRlID8KPiAKPiBNYXliZSBzb21l
+ICNpbmNsdWRlcyBhcmUgY2VudHJhbGl6ZWQgdG8gcGluY3RybC1hc3BlZWQuaAo+IEkgZG9uJ3Qg
+a25vdywganVzdCBtYWtlIHN1cmUgeW91IGRvbid0IGhhdmUgaW1wbGljaXQgaW5jbHVkZXMuCgps
+aW51eC9yZWdtYXAuaCBpcyBpbmNsdWRlZCBpbiBwaW5jdHJsLWFzcGVlZC5oCgo+IAo+ID4gCj4g
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKHJlZ21hcF9yZWFkKG1hcCwgZGVz
+Yy0+cmVnLCAmdmFsKSA8IDApCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoHJldHVybiBmYWxzZTsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqB2YWwgJj0gfmRlc2MtPm1hc2s7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgdmFsIHw9IHBhdHRlcm4gPDwgX19mZnMoZGVzYy0+bWFzayk7Cj4gPiArCj4gPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKHJlZ21hcF93cml0ZShtYXAsIGRlc2Mt
+PnJlZywgdmFsKSA8IDApCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoHJldHVybiBmYWxzZTsKPiBVc2U6Cj4gCj4gcmVnbWFwX3VwZGF0ZV9iaXRzKG1h
+cCwKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqBkZXNjLT5yZWcsCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZGVzYy0+bWFzaywKPiDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwYXR0ZXJuIDw8IF9fZmZz
+LT5kZXNjLT5tYXNrKTsKPiAKPiBPciBzb21ldGhpbmcgbGlrZSB0aGF0IGluc3RlYWQgb2YgcmVp
+bXBsZW1lbnRpbmcKPiBtYXNrLWFuZC1zZXQuIFJlZ21hcCBhbHJlYWR5IGtub3dzIGhvdyB0byBk
+byB0aGUKPiBidXNpbmVzcy4KPiAKPiAoQXBwbGllZCBldmVyeXdoZXJlIGluIHRoZSBkcml2ZXIg
+d2hlcmUgeW91IGhhdmUgYQo+IG1hc2stYW5kLXNldCBsaWtlIHRoaXMpLgoKUmlnaHQsIEkgd2ls
+bCBjbGVhbiB0aGF0IHVwLgoKPiAKPiBUaGUgZXhwcmVzc2lvbiBjb3JlIGVuZ2luZSBpcyBzdGls
+bCBhIGNvbXBsZXRlIG15c3RlcnkKPiBmb3IgbWUsIEkgd2lsbCBqdXN0IHRydXN0IHlvdSB0aGF0
+IGl0IHdvcmtzIGFzIGludGVuZGVkLgoKR2FoISBIb3dldmVyLCB0aGFua3MhCgpJIHdpbGwgY2xl
+YW4gdXAgdGhlIGlzc3VlcyBhYm92ZSBhbmQgcmUtc2VuZC4KCkNoZWVycywKCkFuZHJldw==
 
-Lets remove the couple traces of modular infrastructure use, so that
-when reading the driver there is no doubt it is builtin-only.
 
-We delete the MODULE_LICENSE tag etc. since all that information
-was (or is now) contained at the top of the file in the comments.
-Note the original e-mail had a missing/typo'd @ symbol anyway.
+--=-Lk+1qTMxgDNwQXnUB8Gy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-We don't replace module.h with init.h since the file already has that.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Daniel Mack <daniel@caiaq.de>
-Cc: Juergen Beisert <kernel@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/gpio/gpio-mxc.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+iQIcBAABCgAGBQJXu7VbAAoJEJ0dnzgO5LT5LicP/1Zt1lXQPYPlMbg65mg8Waox
+w7ovipWX2QvaurweIa50WcrHYpNtR5zZ8hsan663Nhzj61drEvOO76JW8bRr8he8
+7SIFf/dXeg+2cPmwr5vQnG/L72L54wnEfeS0NdgPu0BngQCzMXsrgepFbq1ZamWA
+t9Q4d3RxkHRPjXg0zDG4CltrjjQoa9GKXUgIRCHRo17J2Zw1eMyeNWCZhzf6oEdD
+ZSPPMRpov9OZDEdOKABtc5DhfZSpaTOfhiz8lQym9anhabzO3d5SRoP6miz1V75O
+fbL3smjZPQ21vETujLo/ycC0nZ0OK4GzdRHrweXFz3ZdvCqlXVo7oQ/e4DgwQKn6
+g4Kb+9vgWcvdN3Lqk+PokmiZ/nK2s5Sxwft1bFRmiDIbvk1iNLBoPe7bJwPUxhFA
+pFw1Cd6p1LnXUK0tHcbLeBSKzPy6T1Y/u1Hyby4CGd2iDgutZHKYmzaBsS0sMNId
+Ql+uk5fAweY1pFpzZSOWz/3dwN1D9PmFlggQiXjNIs/hA6jrZPaUvkM+auZM4Ber
+ExPxtThshMwznZcCgbB9ZzoWW08GWpQtfJjaDyXIHGToCRJCyhfhBcq+oFZbinj5
+E4XInuqMGED/PF6S0oBSmiwmgmd423AkjSGKs7Er5SNTZh89kTqvLMmyCxW2YiLg
+u/yq2mEjTKhyxa40Sq40
+=dKG6
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 1b342a3842c8..e35af5249478 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -2,7 +2,8 @@
-  * MXC GPIO support. (c) 2008 Daniel Mack <daniel@caiaq.de>
-  * Copyright 2008 Juergen Beisert, kernel@pengutronix.de
-  *
-- * Based on code from Freescale,
-+ * Based on code from Freescale Semiconductor,
-+ * Authors: Daniel Mack, Juergen Beisert.
-  * Copyright (C) 2004-2010 Freescale Semiconductor, Inc. All Rights Reserved.
-  *
-  * This program is free software; you can redistribute it and/or
-@@ -33,7 +34,6 @@
- #include <linux/gpio.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
--#include <linux/module.h>
- #include <linux/bug.h>
- 
- enum mxc_gpio_hwtype {
-@@ -511,9 +511,3 @@ static int __init gpio_mxc_init(void)
- 	return platform_driver_register(&mxc_gpio_driver);
- }
- postcore_initcall(gpio_mxc_init);
--
--MODULE_AUTHOR("Freescale Semiconductor, "
--	      "Daniel Mack <danielncaiaq.de>, "
--	      "Juergen Beisert <kernel@pengutronix.de>");
--MODULE_DESCRIPTION("Freescale MXC GPIO");
--MODULE_LICENSE("GPL");
--- 
-2.8.4
+--=-Lk+1qTMxgDNwQXnUB8Gy--
+
