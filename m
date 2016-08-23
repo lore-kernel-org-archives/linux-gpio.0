@@ -1,89 +1,106 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [RESEND PATCH 1/2] pinctrl: meson-gxbb: add pins for PWM
-Date: Tue, 23 Aug 2016 10:00:57 +0200
-Message-ID: <45c22d0c-9cfd-b0a0-4499-6b306dfdcdd5@baylibre.com>
-References: <1471876860-5620-1-git-send-email-narmstrong@baylibre.com>
- <1471876860-5620-2-git-send-email-narmstrong@baylibre.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 03/13] pinctrl: add a pincontrol driver for BCM6328
+Date: Tue, 23 Aug 2016 10:57:44 +0200
+Message-ID: <CACRpkdYN6YZkYAiCHH4o3X2UjQdxxdbpp6sueNFUbQuzJUO8xA@mail.gmail.com>
+References: <1471604025-21575-1-git-send-email-jonas.gorski@gmail.com>
+ <1471604025-21575-4-git-send-email-jonas.gorski@gmail.com>
+ <CACRpkdbZDmHimo9K1rUcs-4MyOSZH5SHUD3kuSYANppLUU0WwQ@mail.gmail.com> <CAOiHx=nE76PYpTJRMQw0YahFMwBwXmDnWD27D-ZJ8toFkYfm=g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1471876860-5620-2-git-send-email-narmstrong@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, khilman@baylibre.com, carlo@caione.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:35694 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932969AbcHWI5p (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Aug 2016 04:57:45 -0400
+Received: by mail-oi0-f45.google.com with SMTP id 4so188004549oih.2
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Aug 2016 01:57:45 -0700 (PDT)
+In-Reply-To: <CAOiHx=nE76PYpTJRMQw0YahFMwBwXmDnWD27D-ZJ8toFkYfm=g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kevin Cernekee <cernekee@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
 
-On 08/22/2016 04:40 PM, Neil Armstrong wrote:
-> Add support for PWM pins, for EE and AO domains.
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 78 ++++++++++++++++++++++++++++++
->  1 file changed, 78 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-> index 7eeb053..1c6ffb3 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+On Mon, Aug 22, 2016 at 3:54 PM, Jonas Gorski <jonas.gorski@gmail.com> wrote:
+> On 22 August 2016 at 15:15, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Fri, Aug 19, 2016 at 12:53 PM, Jonas Gorski <jonas.gorski@gmail.com> wrote:
+>>
+>>> Add a pincontrol driver for BCM6328. BCM628 supports muxing 32 pins as
+>>> GPIOs, as LEDs for the integrated LED controller, or various other
+>>> functions. Its pincontrol mux registers also control other aspects, like
+>>> switching the second USB port between host and device mode.
+>>>
+>>> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+>>
+>> This looks good. Just thinking following the other patches
+>> that maybe this should be a syscon child driver.
+>>
+>>> +#define BCM6328_NGPIO          32
+>>
+>> I wonder why the pin control driver cares about that?
+>>
+>>> +struct bcm6328_pinctrl {
+>>> +       struct pinctrl_dev *pctldev;
+>>> +       struct pinctrl_desc desc;
+>>> +
+>>> +       void __iomem *mode;
+>>> +       void __iomem *mux[3];
+>>> +
+>>> +       /* register access lock */
+>>> +       spinlock_t lock;
+>>> +
+>>> +       struct gpio_chip gpio;
+>>
+>> Usually this should be the other way around: the gpio_chip
+>> knows about the pin controller, the pin controller does not
+>> know about the gpio_chip.
+>>
+>> I don't see it used in the code either? Artifact?
+>
+> That's because some of the drivers require it, and kept it here so to
+> keep the drivers as similar as possible.
 
-[...]
+No dead code please. I think that is just confusing.
 
->  static const char * const gpio_aobus_groups[] = {
->  	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
->  	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
-> @@ -526,6 +578,21 @@ static const char * const i2c_slave_ao_groups[] = {
->  
->  static const char * const remote_input_ao_groups[] = {
->  	"remote_input_ao",
-> +
+>> Why all this __raw_* accessors? What is wrong with readl_relaxed()
+>> and writel_relaxed()? Or MIPS doesn't have them?
+>
+> BCM63XX is one of those weird targets that are usually big endian, and
+> there are no native endian / big endian *_relaxed() accessors.
 
-Linus,
+Aha OK.
 
-Well, I missed my rebase, I'll post a v2 to fix that.
+>> Nice, but why not just add
+>> depends on OF
+>> to the Kconfig and get rid of the #ifdef?
+>
+> As mentioned for the generic part, I want to use it on a !OF target as well.
 
-Neil
+OK.
 
-> +static const char * const pwm_ao_a_3_groups[] = {
-> +	"pwm_ao_a_3",
-> +};
-> +
-> +static const char * const pwm_ao_a_6_groups[] = {
-> +	"pwm_ao_a_6",
-> +};
-> +
-> +static const char * const pwm_ao_a_12_groups[] = {
-> +	"pwm_ao_a_12",
-> +};
-> +
-> +static const char * const pwm_ao_b_groups[] = {
-> +	"pwm_ao_b",
->  };
->  
->  static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
-> @@ -536,6 +603,13 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
->  	FUNCTION(uart_b),
->  	FUNCTION(uart_c),
->  	FUNCTION(eth),
-> +	FUNCTION(pwm_a_x),
-> +	FUNCTION(pwm_a_y),
-> +	FUNCTION(pwm_b),
-> +	FUNCTION(pwm_d),
-> +	FUNCTION(pwm_e),
-> +	FUNCTION(pwm_f_x),
-> +	FUNCTION(pwm_f_y),
->  };
->  
->  static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
-> @@ -545,6 +619,10 @@ static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
->  	FUNCTION(i2c_ao),
->  	FUNCTION(i2c_slave_ao),
->  	FUNCTION(remote_input_ao),
-> +	FUNCTION(pwm_ao_a_3),
-> +	FUNCTION(pwm_ao_a_6),
-> +	FUNCTION(pwm_ao_a_12),
-> +	FUNCTION(pwm_ao_b),
->  };
->  
->  static struct meson_bank meson_gxbb_periphs_banks[] = {
-> 
+>>> +       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mode");
+>>> +       mode = devm_ioremap_resource(&pdev->dev, res);
+>>> +       if (IS_ERR(mode))
+>>> +               return PTR_ERR(mode);
+>>> +
+>>> +       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mux");
+>>> +       mux = devm_ioremap_resource(&pdev->dev, res);
+>>> +       if (IS_ERR(mux))
+>>> +               return PTR_ERR(mux);
+>>
+>> This mishmash of remap windows makes me prefer the syscon
+>> design pattern.
+>
+> At least for this one I would still need to have multiple syscons
+
+Having multiple syscons is not a problem.
+
+> because there already is one OF enabled driver that uses a non-syscon
+> access to drivers within this range.
+
+I don't understand this. Can you explain? If another driver is using
+a non-syscon pattern then surely it can be refactored due to being
+done the wrong way in the first place. I have done so myself when
+running into similar issues.
+
+Yours,
+Linus Walleij
