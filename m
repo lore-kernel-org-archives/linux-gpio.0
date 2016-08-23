@@ -1,40 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] pinctrl: sunxi: fix uart1 CTS/RTS pins at PG on
- A23/A33
-Date: Tue, 23 Aug 2016 11:27:10 +0200
-Message-ID: <CACRpkdaHY=TFE3H=CM2fu3etHcWq569MDOE2cJY=PGZauHwO2g@mail.gmail.com>
-References: <20160823055826.20591-1-icenowy@aosc.xyz>
- <20160823064755.GA2598@lukather>
+Subject: Re: [PATCH 1/4] gpio: msic: drop unused MODULE_ tags from non-modular code
+Date: Tue, 23 Aug 2016 11:22:02 +0200
+Message-ID: <CACRpkdZY2nDbsBgutnbfQVnDpKFY9xKd+km8u=-oJqODbp5XFQ@mail.gmail.com>
+References: <20160822164833.3633-1-paul.gortmaker@windriver.com> <20160822164833.3633-2-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160823064755.GA2598@lukather>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Icenowy Zheng <icenowy@aosc.xyz>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160822164833.3633-2-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Aug 23, 2016 at 8:47 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> On Tue, Aug 23, 2016 at 01:58:25PM +0800, Icenowy Zheng wrote:
->> PG8, PG9 is said to be the CTS/RTS pins for UART1 according to the A23/33
->> datasheets. However, the function is wrongly named "uart2" in the pinctrl
->> driver. This patch fixes this by modifying them to be named "uart1".
->>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
->
-> This looks good, but could you send it to stable?
+On Mon, Aug 22, 2016 at 6:48 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 
-If that is an ACK I can tag it for stable when applying.
+> The Kconfig currently controlling compilation of this code is:
+>
+> drivers/gpio/Kconfig:config GPIO_MSIC
+> drivers/gpio/Kconfig:   bool "Intel MSIC mixed signal gpio support"
+>
+> ...meaning that it currently is not being built as a module by anyone.
+>
+> Lets remove the couple traces of modular infrastructure use, so that
+> when reading the driver there is no doubt it is builtin-only.
+>
+> We delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+>
+> We don't replace module.h with init.h since the file already has that.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+
+Patch applied.
 
 Yours,
 Linus Walleij
