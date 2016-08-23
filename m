@@ -1,64 +1,44 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH 3/4] gpio: spear-spics: drop unused MODULE_ tags from
- non-modular code
-Date: Wed, 24 Aug 2016 00:19:28 +0900
-Message-ID: <CAK7LNAS73g5vXNM+C5Pv5hj12ooRwrWiS_W7b16jH4tfASCWkw@mail.gmail.com>
-References: <20160822164833.3633-1-paul.gortmaker@windriver.com> <20160822164833.3633-4-paul.gortmaker@windriver.com>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmVbMl06IFtQQVRDSCAwNy8xM10gcGluY3RybDogYWRkIGEgcGluY29udHJv?=
+ =?UTF-8?B?bCBkcml2ZXIgZm9yIEJDTTYzNTg=?=
+Date: Tue, 23 Aug 2016 18:43:42 +0300
+Message-ID: <1471967022.3197919@f302.i.mail.ru>
+References: <1471604025-21575-1-git-send-email-jonas.gorski@gmail.com>
+ <CAOiHx==PWHx7-JEjVObLnrDOa4fSrs1sPPU7TAO7jGsnkAJLMQ@mail.gmail.com>
+ <CACRpkdYDZhA4_fvzFh5heE=Hvh9157rWRHdm+1k28hROSwk=7g@mail.gmail.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160822164833.3633-4-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from fallback3.mail.ru ([94.100.181.189]:56002 "EHLO
+        fallback3.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753004AbcHWQtN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Aug 2016 12:49:13 -0400
+In-Reply-To: <CACRpkdYDZhA4_fvzFh5heE=Hvh9157rWRHdm+1k28hROSwk=7g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>
+Cc: =?UTF-8?B?bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc=?= <linux-gpio@vger.kernel.org>, =?UTF-8?B?ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc=?= <devicetree@vger.kernel.org>, =?UTF-8?B?Um9iIEhlcnJpbmc=?= <robh+dt@kernel.org>, =?UTF-8?B?TWFyayBSdXRsYW5k?= <mark.rutland@arm.com>, =?UTF-8?B?S2V2aW4gQ2VybmVrZWU=?= <cernekee@gmail.com>, =?UTF-8?B?RmxvcmlhbiBGYWluZWxsaQ==?= <f.fainelli@gmail.com>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, =?UTF-8?B?Sm9uYXMgR29yc2tp?= <jonas.gorski@gmail.com>
 
-2016-08-23 1:48 GMT+09:00 Paul Gortmaker <paul.gortmaker@windriver.com>:
-> The Kconfig currently controlling compilation of this code is:
->
-> drivers/gpio/Kconfig:config GPIO_SPEAR_SPICS
-> drivers/gpio/Kconfig:   bool "ST SPEAr13xx SPI Chip Select as GPIO support"
->
-> ...meaning that it currently is not being built as a module by anyone.
->
-> Lets remove the couple traces of modular infrastructure use, so that
-> when reading the driver there is no doubt it is builtin-only.
->
-> We delete the MODULE_LICENSE tag etc. since all that information
-> is now contained at the top of the file in the comments.
->
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Shiraz Hashim <shiraz.linux.kernel@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> ---
->  drivers/gpio/gpio-spear-spics.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-spear-spics.c b/drivers/gpio/gpio-spear-spics.c
-> index 7ffd16495286..22267479ba68 100644
-> --- a/drivers/gpio/gpio-spear-spics.c
-> +++ b/drivers/gpio/gpio-spear-spics.c
-> @@ -12,7 +12,7 @@
->  #include <linux/err.h>
->  #include <linux/gpio.h>
->  #include <linux/io.h>
-> -#include <linux/module.h>
-> +#include <linux/init.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/types.h>
-
-Please keep the includes sorted alphabetically,
-i.e. <linux/init.h> above <linux/io.h>.
-
-I was a little late, though.
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+PtCS0YLQvtGA0L3QuNC6LCAyMyDQsNCy0LPRg9GB0YLQsCAyMDE2LCAxMjoxOCArMDM6MDAg0L7R
+giBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+Ogo+Cj5PbiBNb24sIEF1
+ZyAyMiwgMjAxNiBhdCAzOjU3IFBNLCBKb25hcyBHb3Jza2kgPCBqb25hcy5nb3Jza2lAZ21haWwu
+Y29tID4gd3JvdGU6Cj4+IE9uIDIyIEF1Z3VzdCAyMDE2IGF0IDE1OjIxLCBMaW51cyBXYWxsZWlq
+IDwgbGludXMud2FsbGVpakBsaW5hcm8ub3JnID4gd3JvdGU6Cj4KPj4+PiArICAgICAgIGVsc2UK
+Pj4+PiArICAgICAgICAgICAgICAgbW9kZSA9IHN5c2Nvbl9yZWdtYXBfbG9va3VwX2J5X3BkZXZu
+YW1lKCJzeXNjb24uZmZmZTAwOTgiKTsKPj4+Cj4+PiBUaGF0IGxvb2tzIHZlcnkgdmVyeSBmcmFn
+aWxlLgo+Pgo+PiBGb3IgIU9GIEkgbmVlZCB0byB1c2UgdGhlIHBkZXZuYW1lLCBzbyBJIG5lZWQg
+dG8gImd1ZXNzIiB0aGUgcmlnaHQKPj4gb25lLCBhbmQgdXNpbmcgdGhlIHNjaGVtZSBvZiAic3lz
+Y29uLjxhZGRyZXNzPiIgc2VlbWVkIHRvIGJlIHRoZSBvbmUKPj4gbW9zdCBsaWtlbHkgbm90IGNv
+bmZsaWN0aW5nIHdpdGggYW55dGhpbmcgZWxzZS4KPgo+T0sgZnJvbSBteSBzaWRlLCBJIGNhbiBs
+aXZlIHdpdGggdGhhdC4KPgo+Q0M6aW5nIHRoZSBzeXNjb24gcGRldiBzdXBwb3J0IGF1dGhvcjog
+QWxleGFuZGVyIHdoYXQgaXMgeW91cgo+dGhvdWdodHMgYWJvdXQgdGhpcz8gSXMgdGhlcmUgYSBn
+b29kIGNvbnZlbnRpb24gdG8gZm9sbG93IGZvcgo+cGRldiBsb29rdXBzPwoKQmVjYXVzZSB0aGUg
+cGxhdGZvcm0gb24gd2hpY2ggdGhpcyBmZWF0dXJlIHdhcyB1c2VkIGlzIGZ1bGx5IGNvbnZlcnRl
+ZCAgdG8gRFQsCkkgd2FzIHBsYW5uaW5nIHRvIHNlbmQgYSBwYXRjaCB0byByZW1vdmUgdGhpcyBm
+dW5jdGlvbiA6KQoKU3VjaCB1c2FnZSBpcyBpbiBteSB2aWV3IHBlcmZlY3RseSBhY2NlcHRhYmxl
+IGZvciB0aGUgcGVyaW9kIHVudGlsIHRoZQpwbGF0Zm9ybSBpcyBncmFkdWFsbHkgYmVpbmcgY29u
+dmVydGVkIHRvIERULCBidXQgdGhlIGJlc3Qgd2F5LCBvZiBjb3Vyc2UsCmlzIHVzaW5nIHN5c2Nv
+bl9yZWdtYXBfbG9va3VwX2J5X2NvbXBhdGlibGUoKSBvciBzeXNjb25fcmVnbWFwX2xvb2t1cF9i
+eV9waGFuZGxlKCkuCgotLS0KCg==
