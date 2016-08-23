@@ -1,42 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 07/13] pinctrl: add a pincontrol driver for BCM6358
-Date: Tue, 23 Aug 2016 11:18:42 +0200
-Message-ID: <CACRpkdYDZhA4_fvzFh5heE=Hvh9157rWRHdm+1k28hROSwk=7g@mail.gmail.com>
-References: <1471604025-21575-1-git-send-email-jonas.gorski@gmail.com>
- <1471604025-21575-8-git-send-email-jonas.gorski@gmail.com>
- <CACRpkdaFYA2T2HXK-5xi9z_9-31ZCPCV2K1iy4Qt7JQed754tQ@mail.gmail.com> <CAOiHx==PWHx7-JEjVObLnrDOa4fSrs1sPPU7TAO7jGsnkAJLMQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] gpio: vf610: drop unused MODULE_ tags from
+ non-modular code
+Date: Tue, 23 Aug 2016 11:25:12 +0200
+Message-ID: <CACRpkda=0HgC11pZw_gQnkY5RfY0Ac=-DGjQTvWiN5HAn0k9bQ@mail.gmail.com>
+References: <20160822164833.3633-1-paul.gortmaker@windriver.com> <20160822164833.3633-5-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:34531 "EHLO
-        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751255AbcHWJUU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Aug 2016 05:20:20 -0400
-Received: by mail-oi0-f47.google.com with SMTP id l203so188198689oib.1
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Aug 2016 02:18:43 -0700 (PDT)
-In-Reply-To: <CAOiHx==PWHx7-JEjVObLnrDOa4fSrs1sPPU7TAO7jGsnkAJLMQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160822164833.3633-5-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Stefan Agner <stefan@agner.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jonas Gorski <jonas.gorski@gmail.com>, Alexander Shiyan <shc_work@mail.ru>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kevin Cernekee <cernekee@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
 
-On Mon, Aug 22, 2016 at 3:57 PM, Jonas Gorski <jonas.gorski@gmail.com> wrote:
-> On 22 August 2016 at 15:21, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Mon, Aug 22, 2016 at 6:48 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 
->>> +       else
->>> +               mode = syscon_regmap_lookup_by_pdevname("syscon.fffe0098");
->>
->> That looks very very fragile.
+> The Kconfig currently controlling compilation of this code is:
 >
-> For !OF I need to use the pdevname, so I need to "guess" the right
-> one, and using the scheme of "syscon.<address>" seemed to be the one
-> most likely not conflicting with anything else.
+> drivers/gpio/Kconfig:config GPIO_VF610
+> drivers/gpio/Kconfig:   def_bool y
+>
+> ...meaning that it currently is not being built as a module by anyone.
+>
+> Lets remove the couple traces of modular infrastructure use, so that
+> when reading the driver there is no doubt it is builtin-only.
+>
+> We delete the MODULE_LICENSE tag etc. since all that information
+> is now contained at the top of the file in the comments.
+>
+> We don't replace module.h with init.h since the file already has that.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-OK from my side, I can live with that.
-
-CC:ing the syscon pdev support author: Alexander what is your
-thoughts about this? Is there a good convention to follow for
-pdev lookups?
+Patch applied.
 
 Yours,
 Linus Walleij
