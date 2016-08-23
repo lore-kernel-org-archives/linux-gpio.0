@@ -1,74 +1,71 @@
-From: Keerthy <a0393675-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v7 0/3] mfd: lp873x: Add lp873x PMIC support
-Date: Tue, 23 Aug 2016 10:12:04 +0530
-Message-ID: <5c7c9cba-36db-6912-2520-cc64140f9175@ti.com>
-References: <1470824291-14902-1-git-send-email-j-keerthy@ti.com>
+From: Icenowy Zheng <icenowy@aosc.xyz>
+Subject: [PATCH 1/2] pinctrl: sunxi: fix uart1 CTS/RTS pins at PG on A23/A33
+Date: Tue, 23 Aug 2016 13:58:25 +0800
+Message-ID: <20160823055826.20591-1-icenowy@aosc.xyz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1470824291-14902-1-git-send-email-j-keerthy-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King <linux@armlinux.org.uk>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Hans de Goede <hdegoede@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Icenowy Zheng <icenowy@aosc.xyz>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Lee Jones,
+PG8, PG9 is said to be the CTS/RTS pins for UART1 according to the A23/33
+datasheets. However, the function is wrongly named "uart2" in the pinctrl
+driver. This patch fixes this by modifying them to be named "uart1".
 
-On Wednesday 10 August 2016 03:48 PM, Keerthy wrote:
-> The LP873X chip is a power management IC for Portable Navigation Systems
->     and Tablet Computing devices. It contains the following components:
->
->      - Regulators.
->      - Configurable General Purpose Output Signals(GPO).
->
-> PMIC interacts with the main processor through i2c. PMIC has
-> couple of LDOs(Linear Regulators), couple of BUCKs (Step-Down DC-DC
-> Converter Cores) and GPOs(General Purpose Output Signals).
->
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+---
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c | 4 ++--
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Kindly pull this set if there are no further comments.
-
-> The regulator patch is already queued:
-> http://marc.info/?l=linux-kernel&m=146298767110771&w=2
->
-> DT patch also queued:
->
-> Hence posting the remaining patches of the series with
-> the comments fixed on mfd driver.
->
-> Chages in v7:
->
-> Reverted the dependency on http://www.gossamer-threads.com/lists/linux/kernel/2457552.
->
-> Changes in v6:
->
-> Series depends on: http://www.gossamer-threads.com/lists/linux/kernel/2457552
-> probe_new used.
->
-> Chnages in v4:
->
-> Added GPO driver support.
->
-> Keerthy (3):
->   mfd: lp873x: Add lp873x PMIC support
->   gpio: lp873x: Add support for General Purpose Outputs
->   regulator: lp873x: Change the MFD config option as per latest naming
->
->  drivers/gpio/Kconfig       |  10 ++
->  drivers/gpio/Makefile      |   1 +
->  drivers/gpio/gpio-lp873x.c | 185 +++++++++++++++++++++++++++++++
->  drivers/mfd/Kconfig        |  14 +++
->  drivers/mfd/Makefile       |   2 +
->  drivers/mfd/lp873x.c       |  96 +++++++++++++++++
->  drivers/regulator/Kconfig  |   2 +-
->  include/linux/mfd/lp873x.h | 264 +++++++++++++++++++++++++++++++++++++++++++++
->  8 files changed, 573 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpio/gpio-lp873x.c
->  create mode 100644 drivers/mfd/lp873x.c
->  create mode 100644 include/linux/mfd/lp873x.h
->
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c
+index ce483b0..f9d661e 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c
+@@ -485,12 +485,12 @@ static const struct sunxi_desc_pin sun8i_a23_pins[] = {
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(G, 8),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "uart2"),		/* RTS */
++		  SUNXI_FUNCTION(0x2, "uart1"),		/* RTS */
+ 		  SUNXI_FUNCTION_IRQ_BANK(0x4, 2, 8)),	/* PG_EINT8 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(G, 9),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "uart2"),		/* CTS */
++		  SUNXI_FUNCTION(0x2, "uart1"),		/* CTS */
+ 		  SUNXI_FUNCTION_IRQ_BANK(0x4, 2, 9)),	/* PG_EINT9 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(G, 10),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
+index 3040abe..3131cac 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
+@@ -407,12 +407,12 @@ static const struct sunxi_desc_pin sun8i_a33_pins[] = {
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(G, 8),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "uart2"),		/* RTS */
++		  SUNXI_FUNCTION(0x2, "uart1"),		/* RTS */
+ 		  SUNXI_FUNCTION_IRQ_BANK(0x4, 1, 8)),	/* PG_EINT8 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(G, 9),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x2, "uart2"),		/* CTS */
++		  SUNXI_FUNCTION(0x2, "uart1"),		/* CTS */
+ 		  SUNXI_FUNCTION_IRQ_BANK(0x4, 1, 9)),	/* PG_EINT9 */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(G, 10),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+-- 
+2.9.3
