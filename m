@@ -1,48 +1,33 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Subject: Re: [PATCH] gpio: Remove superfluous include of io-mapping.h
-Date: Wed, 24 Aug 2016 13:08:15 +0100
-Message-ID: <20160824120815.GC28943@nuc-i3427.alporthouse.com>
-References: <20160823203203.14134-1-chris@chris-wilson.co.uk>
- <CACRpkdZR+1+9MXSKL-MeHOmPTueAvg0xHRre8ApnoYM3inqmUw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] dt-bindings: GPIO: Add TPIC2810 binding
+Date: Wed, 24 Aug 2016 14:21:16 +0200
+Message-ID: <CACRpkdbXw50FyctBjYarXbjk5F+bSmFP-tBvK_Dm7ApwX74+Dw@mail.gmail.com>
+References: <1471952715-20749-1-git-send-email-rogerq@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZR+1+9MXSKL-MeHOmPTueAvg0xHRre8ApnoYM3inqmUw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:34513 "EHLO
+        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754593AbcHXMVR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Aug 2016 08:21:17 -0400
+Received: by mail-oi0-f43.google.com with SMTP id l203so19626932oib.1
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Aug 2016 05:21:17 -0700 (PDT)
+In-Reply-To: <1471952715-20749-1-git-send-email-rogerq@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Roger Quadros <rogerq@ti.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Andrew F. Davis" <afd@ti.com>
 
-On Wed, Aug 24, 2016 at 01:55:28PM +0200, Linus Walleij wrote:
-> On Tue, Aug 23, 2016 at 10:32 PM, Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> 
-> > The io-mapping.h include arose from the need to workaround an arch/um
-> > compile failure:
-> >
-> >    drivers/gpio/gpio-mpc8xxx.c: In function 'mpc8xxx_probe':
-> >>> drivers/gpio/gpio-mpc8xxx.c:373:2: error: implicit declaration of
-> >>> function 'iounmap' [-Werror=implicit-function-declaration]
-> >      iounmap(mpc8xxx_gc->regs);
-> >      ^~~~~~~
-> >
-> > from commit 296ad4acb8ef ("gpio: remove deps on
-> > ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB") but io-mapping.h doesn't provide
-> > iounmap so the problem persisted and eventually (will be) silenced by
-> > making OF_GPIO depend on !NO_IOMEM (i.e. disabling building under
-> > arch/um). My desire to remove the unneed include to io-mapping is to
-> > simplify verification of changes to io-mapping.h
-> >
-> > Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Alexandre Courbot <gnurou@gmail.com>
-> > Cc: linux-gpio@vger.kernel.org
-> 
-> I chose to to a proper revert instead, but I have added your for
-> Reported-by:
+On Tue, Aug 23, 2016 at 1:45 PM, Roger Quadros <rogerq@ti.com> wrote:
 
-Thanks, this will help me hide from 0day as well :)
--Chris
+> From: "Andrew F. Davis" <afd@ti.com>
+>
+> Add binding for TPIC2810 GPO device.
+>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
 
--- 
-Chris Wilson, Intel Open Source Technology Centre
+Patch applied.
+
+Yours,
+Linus Walleij
