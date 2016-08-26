@@ -1,62 +1,89 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCH 1/5] gpio: pca954x: fix undefined error code from remove
-Date: Fri, 26 Aug 2016 23:47:10 +0800
-Message-ID: <56953594-6173-9dcc-535d-7fd9cbfa512c@electromag.com.au>
-References: <20160826152546.604384-1-arnd@arndb.de>
- <20160826152546.604384-2-arnd@arndb.de>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH 2/2] ARM: dts: sun8i: Add extra UART pinmux settings for
+ A23/33
+Date: Fri, 26 Aug 2016 22:18:42 +0200
+Message-ID: <20160826201842.GB3165@lukather>
+References: <20160823055826.20591-1-icenowy@aosc.xyz>
+ <20160823055826.20591-2-icenowy@aosc.xyz>
+ <20160823114251.GL2598@lukather>
+ <69271471960265@web26h.yandex.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160826152546.604384-2-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="qlTNgmc+xy1dBmNv"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:53008 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752864AbcHZUTG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Aug 2016 16:19:06 -0400
+Content-Disposition: inline
+In-Reply-To: <69271471960265@web26h.yandex.ru>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-
-On 26/08/2016 23:25, Arnd Bergmann wrote:
-> The recent addition of the regulator support has led to the pca953x_remove
-> function returning uninitialized data when no platform data pointer is
-> provided, as gcc warns when using -Wmaybe-uninitialized:
->
-> drivers/gpio/gpio-pca953x.c: In function 'pca953x_remove':
-> drivers/gpio/gpio-pca953x.c:860:9: error: 'ret' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->
-> This restores the previous behavior, returning 0 on success.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: e23efa311110 ("gpio: pca954x: Add vcc regulator and enable it")
-> Cc: Phil Reid <preid@electromag.com.au>
-> ---
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
->
->  drivers/gpio/gpio-pca953x.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index cbe2824461eb..b9d31d737dbf 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -853,6 +853,8 @@ static int pca953x_remove(struct i2c_client *client)
->  		if (ret < 0)
->  			dev_err(&client->dev, "%s failed, %d\n",
->  					"teardown", ret);
-> +	} else {
-> +		ret = 0;
->  	}
->
->  	regulator_disable(chip->regulator);
->
-Ahh, commit 8c7a92dad1621f38d1ff4fe9eaac898d6f33a0a3 gpio: pca953x: remove redundant assignments
-removed the 'redundant' initialisation of ret in this function.
-Looks like I did not have this commit in my tree when I submitted did the regulator patch.
-Sorry about that. Alternative to the 'else' is to add init at definition.
-
-Acked-by: Phil Reid <preid@electromag.com.au>
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
 
--- 
-Regards
-Phil Reid
+--qlTNgmc+xy1dBmNv
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Tue, Aug 23, 2016 at 09:51:05PM +0800, Icenowy Zheng wrote:
+>=20
+>=20
+> 23.08.2016, 19:42, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
+> > Hi,
+> >
+> > On Tue, Aug 23, 2016 at 01:58:26PM +0800, Icenowy Zheng wrote:
+> >> =A0A23/33 have 4 UART controllers outside PRCM. However, the devicetre=
+e used
+> >> =A0to mentioned only UART0's pinmux settings. Some extra UART controll=
+ers have
+> >> =A0RTS/CTS, and is suitable for using as bluetooth UART controller.
+> >>
+> >> =A0Add the pinmux settings for the UART controller, to make use of the
+> >> =A0bluetooth function of some tablets.
+> >>
+> >> =A0Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+> >
+> > Our policy is that we avoid adding unused pinctrl nodes to not cripple
+> > the DT for no particular reason.
+> >
+> > So please add only the nodes you'll need in your tablet.
+>=20
+> Then... if what I needs is the PG group of uart1, should I name it as
+> uart1_pins_a or uart1_pins_b?
+
+We don't have any rules here, whichever comes first wins.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--qlTNgmc+xy1dBmNv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXwKQiAAoJEBx+YmzsjxAgaLAQAI/BBtHjw2uh/WLqAjlqTA51
+vr5S9Xu6RyjpCaQbusNaywd1P9qW1rANu3Mh4RYvYTJLmq4QpbZWK6mFDGogDtZi
+eAPja6lCWcEB3Vho3xZP0NuiNHxv709DgeHHXHjmN3ajFtqVq3kk1Y2Sq4+8Gk45
+pM3bVWPx5wmpp2E2bddF311PwWT5w9g8O0SdeEgnScb7JN8APCaveHJD2iI/R5xS
+0qQwlEBt00KXEjSCm6jqO97TdfIAwFS1C0gcd9JJ67M+ndkLbnM3+B11mJLZ+2Pa
+M/DNevnHqwpTYfKWhpR2CHBQ93vjMSiSX+ACwZ90a7uL9jszT8w88xZQioqqlfi+
+E2YASMJSkvq3yHfe4VwSoxoqxXLt+988KAbQ+Hb33Derfqn4o/eC/Y/1nCWRAYil
+x15prVkb8JFn2ANwXw+PO+30RieLBvlcf4pupBBdTRZCAPWTieMIVLppfJ1KmGLi
+YAcj5SGZ/usBLSBPvDZv2T3wxUJUPiWvV7sPplhMm7ttC+TKFuBwWLCykaBJxGM3
+6I0tFr/FvvPmnytoKcrxK93TBanD8Oe+R/jXI4qruSQ/IMNmKEGy6IDUQEGZJr2K
+jr14XE6l12yWCEDWEfU7ob/YYO4wqzjck/UFw0VW8fOhwWllXm/56nP3DIaqaBcr
+PvICdrynIgZybRkJehMk
+=nDIn
+-----END PGP SIGNATURE-----
+
+--qlTNgmc+xy1dBmNv--
