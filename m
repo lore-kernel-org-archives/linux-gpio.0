@@ -1,89 +1,47 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH 2/2] ARM: dts: sun8i: Add extra UART pinmux settings for
- A23/33
-Date: Fri, 26 Aug 2016 22:18:42 +0200
-Message-ID: <20160826201842.GB3165@lukather>
-References: <20160823055826.20591-1-icenowy@aosc.xyz>
- <20160823055826.20591-2-icenowy@aosc.xyz>
- <20160823114251.GL2598@lukather>
- <69271471960265@web26h.yandex.ru>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/6] pinctrl: mediatek: make mtk-common explicitly non-modular
+Date: Sat, 27 Aug 2016 13:12:18 +0200
+Message-ID: <CACRpkdY+XSQHpaTi2KOeP15Hqsaw59G7xFUVGE8umLjvdMV9SA@mail.gmail.com>
+References: <20160823211944.18554-1-paul.gortmaker@windriver.com> <20160823211944.18554-2-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="qlTNgmc+xy1dBmNv"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:53008 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752864AbcHZUTG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Aug 2016 16:19:06 -0400
-Content-Disposition: inline
-In-Reply-To: <69271471960265@web26h.yandex.ru>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:34229 "EHLO
+        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751316AbcH0LMT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 27 Aug 2016 07:12:19 -0400
+Received: by mail-oi0-f47.google.com with SMTP id l203so142547669oib.1
+        for <linux-gpio@vger.kernel.org>; Sat, 27 Aug 2016 04:12:19 -0700 (PDT)
+In-Reply-To: <20160823211944.18554-2-paul.gortmaker@windriver.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
+On Tue, Aug 23, 2016 at 11:19 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 
---qlTNgmc+xy1dBmNv
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The Makefile currently controlling compilation of this code is:
+>
+>   drivers/pinctrl/mediatek/pinctrl-mtk-common.o
+>     ---> drivers/pinctrl/mediatek/Makefile:obj-y += pinctrl-mtk-common.o
+>
+> ...meaning that it currently is not being built as a module by anyone.
+>
+> Lets remove the couple traces of modular infrastructure use, so that
+> when reading the driver there is no doubt it is builtin-only.
+>
+> We delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+>
+> We don't replace module.h with init.h since the file doesn't need that.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-Hi,
+Patch applied.
 
-On Tue, Aug 23, 2016 at 09:51:05PM +0800, Icenowy Zheng wrote:
->=20
->=20
-> 23.08.2016, 19:42, "Maxime Ripard" <maxime.ripard@free-electrons.com>:
-> > Hi,
-> >
-> > On Tue, Aug 23, 2016 at 01:58:26PM +0800, Icenowy Zheng wrote:
-> >> =A0A23/33 have 4 UART controllers outside PRCM. However, the devicetre=
-e used
-> >> =A0to mentioned only UART0's pinmux settings. Some extra UART controll=
-ers have
-> >> =A0RTS/CTS, and is suitable for using as bluetooth UART controller.
-> >>
-> >> =A0Add the pinmux settings for the UART controller, to make use of the
-> >> =A0bluetooth function of some tablets.
-> >>
-> >> =A0Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-> >
-> > Our policy is that we avoid adding unused pinctrl nodes to not cripple
-> > the DT for no particular reason.
-> >
-> > So please add only the nodes you'll need in your tablet.
->=20
-> Then... if what I needs is the PG group of uart1, should I name it as
-> uart1_pins_a or uart1_pins_b?
-
-We don't have any rules here, whichever comes first wins.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---qlTNgmc+xy1dBmNv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXwKQiAAoJEBx+YmzsjxAgaLAQAI/BBtHjw2uh/WLqAjlqTA51
-vr5S9Xu6RyjpCaQbusNaywd1P9qW1rANu3Mh4RYvYTJLmq4QpbZWK6mFDGogDtZi
-eAPja6lCWcEB3Vho3xZP0NuiNHxv709DgeHHXHjmN3ajFtqVq3kk1Y2Sq4+8Gk45
-pM3bVWPx5wmpp2E2bddF311PwWT5w9g8O0SdeEgnScb7JN8APCaveHJD2iI/R5xS
-0qQwlEBt00KXEjSCm6jqO97TdfIAwFS1C0gcd9JJ67M+ndkLbnM3+B11mJLZ+2Pa
-M/DNevnHqwpTYfKWhpR2CHBQ93vjMSiSX+ACwZ90a7uL9jszT8w88xZQioqqlfi+
-E2YASMJSkvq3yHfe4VwSoxoqxXLt+988KAbQ+Hb33Derfqn4o/eC/Y/1nCWRAYil
-x15prVkb8JFn2ANwXw+PO+30RieLBvlcf4pupBBdTRZCAPWTieMIVLppfJ1KmGLi
-YAcj5SGZ/usBLSBPvDZv2T3wxUJUPiWvV7sPplhMm7ttC+TKFuBwWLCykaBJxGM3
-6I0tFr/FvvPmnytoKcrxK93TBanD8Oe+R/jXI4qruSQ/IMNmKEGy6IDUQEGZJr2K
-jr14XE6l12yWCEDWEfU7ob/YYO4wqzjck/UFw0VW8fOhwWllXm/56nP3DIaqaBcr
-PvICdrynIgZybRkJehMk
-=nDIn
------END PGP SIGNATURE-----
-
---qlTNgmc+xy1dBmNv--
+Yours,
+Linus Walleij
