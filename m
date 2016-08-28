@@ -1,41 +1,22 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 6/6] pinctrl: sirf: make core support explicitly non-modular
-Date: Sat, 27 Aug 2016 13:16:39 +0200
-Message-ID: <CACRpkdaQ=9TKzyTV=HZ9cB7c2teaXRU8SMvqs5wsu4nXCmxBfQ@mail.gmail.com>
-References: <20160823211944.18554-1-paul.gortmaker@windriver.com> <20160823211944.18554-7-paul.gortmaker@windriver.com>
+From: Jack <ebpmrhs@itajai.sc.gov.br>
+Subject: Hello Beautiful,
+Date: Sun, 28 Aug 2016 08:18:57 -0300 (BRT)
+Message-ID: <348957499.40949.1472383137347.JavaMail.zimbra@itajai.sc.gov.br>
+Reply-To: Jack <2936410069@qq.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160823211944.18554-7-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rongjun Ying <rongjun.ying@csr.com>, Yuping Luo <yuping.luo@csr.com>, Barry Song <baohua@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from pmi-zmail.itajai.sc.gov.br ([177.200.207.150]:44193 "EHLO
+        pmi-zmail.itajai.sc.gov.br" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755261AbcH1NKG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 28 Aug 2016 09:10:06 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Aug 23, 2016 at 11:19 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
+Good day dear, i hope this mail meets you well? my name is Jack, from the U.S. I know this may seem inappropriate so i ask for your forgiveness but i wish to get to know you better, if I may be so bold. I consider myself an easy-going man, adventurous, honest and fun loving person but I am currently looking for a relationship in which I will feel loved. I promise to answer any question that you may want to ask me...all i need is just your attention and the chance to know you more.
 
-> The Makefile currently controlling compilation of this code is:
->
->   drivers/pinctrl/sirf/pinctrl-sirf.o
->       --> drivers/pinctrl/sirf/Makefile:obj-y += pinctrl-sirf.o
->
-> ...meaning that it currently is not being built as a module by anyone.
->
-> Lets remove the couple traces of modular infrastructure use, so that
-> when reading the driver there is no doubt it is builtin-only.
->
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> was (or is now) contained at the top of the file in the comments.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Rongjun Ying <rongjun.ying@csr.com>
-> Cc: Yuping Luo <yuping.luo@csr.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Please tell me more about yourself, if you do not mind. Hope to hear back from you soon.
 
-Patch applied.
-
-Yours,
-Linus Walleij
+Jack.
