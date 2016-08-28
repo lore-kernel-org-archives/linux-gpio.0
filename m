@@ -1,36 +1,20 @@
-From: Rask Ingemann Lambertsen <ccc94453@vip.cybercity.dk>
-Subject: Re: [PATCH 2/2] ARM64: dts: meson-gxbb: add the SDIO pins
-Date: Sun, 28 Aug 2016 21:13:53 +0200
-Message-ID: <20160828191353.wpwbqsxdg5pdmese@vip.cybercity.dk>
-References: <20160828164725.19429-1-martin.blumenstingl@googlemail.com>
- <20160828164725.19429-3-martin.blumenstingl@googlemail.com>
+From: Mrs Julie Leach <info@uoi.gr>
+Subject: Great Offer
+Date: Mon, 29 Aug 2016 01:40:07 +0300
+Message-ID: <1472424007.57c3684761c08__44334.9317102276$1472433739$gmane$org@webmail.uoi.gr>
+Reply-To: julieleach01@hotmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20160828164725.19429-3-martin.blumenstingl@googlemail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: khilman@baylibre.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, carlo@caione.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from phoenix.noc.uoi.gr ([195.130.120.68]:24725 "EHLO
+        phoenix.noc.uoi.gr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756349AbcH2BWL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 28 Aug 2016 21:22:11 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Aug 28, 2016 at 06:47:25PM +0200, Martin Blumenstingl wrote:
->  				uart_a_pins: uart_a {
->  					mux {
->  						groups = "uart_tx_a",
 
-You shouldn't use underscores in node names. Use hyphens instead, perhaps.
-https://www.mail-archive.com/linux-kernel%40vger.kernel.org/msg1122967.html
-https://www.mail-archive.com/linux-kernel%40vger.kernel.org/msg1145633.html
 
--- 
-Rask Ingemann Lambertsen
+You are a recipient to Mrs Julie Leach Donation of $2 million USD. Contact
+(julieleach104@hotmail.com) for claims.
