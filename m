@@ -1,8 +1,7 @@
 From: Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 21/33] ARM: sa1100: provide infrastructure to support generic
- CF sockets
-Date: Mon, 29 Aug 2016 11:25:53 +0100
-Message-ID: <E1beJlJ-0000nl-3j@rmk-PC.armlinux.org.uk>
+Subject: [PATCH 32/33] pcmcia: sa1100*: remove redundant bvd1/bvd2 setting
+Date: Mon, 29 Aug 2016 11:26:49 +0100
+Message-ID: <E1beJmD-0000oq-Ix@rmk-PC.armlinux.org.uk>
 References: <20160829102328.GA28796@n2100.armlinux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -10,8 +9,8 @@ Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
 Received: from pandora.armlinux.org.uk ([78.32.30.218]:56367 "EHLO
         pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756406AbcH2Kcw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2016 06:32:52 -0400
+        with ESMTP id S1756406AbcH2Kcz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2016 06:32:55 -0400
 In-Reply-To: <20160829102328.GA28796@n2100.armlinux.org.uk>
 Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
@@ -19,90 +18,50 @@ List-Id: linux-gpio@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-pcmcia@lists.infradead.org
 Cc: Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-Provide the SoC-level infrastructure to support the generic CF sockets.
+bvd1 and bvd2 both default to 1 in the generic soc_common code, so
+having a driver repeat this is redundant.  Remove it.
 
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 ---
- arch/arm/mach-sa1100/clock.c   |  2 ++
- arch/arm/mach-sa1100/generic.c | 14 +++++++++++++-
- arch/arm/mach-sa1100/generic.h |  3 +++
- 3 files changed, 18 insertions(+), 1 deletion(-)
+ drivers/pcmcia/sa1100_shannon.c | 4 ----
+ drivers/pcmcia/sa1100_simpad.c  | 4 ++--
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-sa1100/clock.c b/arch/arm/mach-sa1100/clock.c
-index 0db46895c82a..f6f75c9325bf 100644
---- a/arch/arm/mach-sa1100/clock.c
-+++ b/arch/arm/mach-sa1100/clock.c
-@@ -137,6 +137,8 @@ static struct clk_lookup sa11xx_clkregs[] = {
- 	CLKDEV_INIT("sa1100-rtc", NULL, NULL),
- 	CLKDEV_INIT("sa11x0-fb", NULL, &clk_cpu),
- 	CLKDEV_INIT("sa11x0-pcmcia", NULL, &clk_cpu),
-+	CLKDEV_INIT("sa11x0-pcmcia.0", NULL, &clk_cpu),
-+	CLKDEV_INIT("sa11x0-pcmcia.1", NULL, &clk_cpu),
- 	/* sa1111 names devices using internal offsets, PCMCIA is at 0x1800 */
- 	CLKDEV_INIT("1800", NULL, &clk_cpu),
- 	CLKDEV_INIT(NULL, "OSTIMER0", &clk_36864),
-diff --git a/arch/arm/mach-sa1100/generic.c b/arch/arm/mach-sa1100/generic.c
-index 3e09beddb6e8..a005eef1a24e 100644
---- a/arch/arm/mach-sa1100/generic.c
-+++ b/arch/arm/mach-sa1100/generic.c
-@@ -10,6 +10,7 @@
-  * published by the Free Software Foundation.
-  */
- #include <linux/gpio.h>
-+#include <linux/gpio/machine.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-@@ -232,11 +233,19 @@ void sa11x0_register_lcd(struct sa1100fb_mach_info *inf)
- 	sa11x0_register_device(&sa11x0fb_device, inf);
- }
- 
-+static bool sa11x0pcmcia_legacy = true;
- static struct platform_device sa11x0pcmcia_device = {
- 	.name		= "sa11x0-pcmcia",
- 	.id		= -1,
- };
- 
-+void sa11x0_register_pcmcia(int socket, struct gpiod_lookup_table *table)
-+{
-+	gpiod_add_lookup_table(table);
-+	platform_device_register_simple("sa11x0-pcmcia", socket, NULL, 0);
-+	sa11x0pcmcia_legacy = false;
-+}
-+
- static struct platform_device sa11x0mtd_device = {
- 	.name		= "sa1100-mtd",
- 	.id		= -1,
-@@ -311,7 +320,6 @@ static struct platform_device *sa11x0_devices[] __initdata = {
- 	&sa11x0uart1_device,
- 	&sa11x0uart3_device,
- 	&sa11x0ssp_device,
--	&sa11x0pcmcia_device,
- 	&sa11x0rtc_device,
- 	&sa11x0dma_device,
- };
-@@ -319,6 +327,10 @@ static struct platform_device *sa11x0_devices[] __initdata = {
- static int __init sa1100_init(void)
+diff --git a/drivers/pcmcia/sa1100_shannon.c b/drivers/pcmcia/sa1100_shannon.c
+index 51985c8ba830..7409cb36083b 100644
+--- a/drivers/pcmcia/sa1100_shannon.c
++++ b/drivers/pcmcia/sa1100_shannon.c
+@@ -32,15 +32,11 @@ shannon_pcmcia_socket_state(struct soc_pcmcia_socket *skt,
  {
- 	pm_power_off = sa1100_power_off;
-+
-+	if (sa11x0pcmcia_legacy)
-+		platform_device_register(&sa11x0pcmcia_device);
-+
- 	return platform_add_devices(sa11x0_devices, ARRAY_SIZE(sa11x0_devices));
- }
+ 	switch (skt->nr) {
+ 	case 0:
+-		state->bvd1   = 1; 
+-		state->bvd2   = 1; 
+ 		state->vs_3v  = 1; /* FIXME Can only apply 3.3V on Shannon. */
+ 		state->vs_Xv  = 0;
+ 		break;
  
-diff --git a/arch/arm/mach-sa1100/generic.h b/arch/arm/mach-sa1100/generic.h
-index 68199b603ff7..22c432979150 100644
---- a/arch/arm/mach-sa1100/generic.h
-+++ b/arch/arm/mach-sa1100/generic.h
-@@ -46,3 +46,6 @@ static inline int sa11x0_pm_init(void) { return 0; }
- #endif
+ 	case 1:
+-		state->bvd1   = 1; 
+-		state->bvd2   = 1; 
+ 		state->vs_3v  = 1; /* FIXME Can only apply 3.3V on Shannon. */
+ 		state->vs_Xv  = 0;
+ 		break;
+diff --git a/drivers/pcmcia/sa1100_simpad.c b/drivers/pcmcia/sa1100_simpad.c
+index e14b2f5a18bb..b59bbe68c6d7 100644
+--- a/drivers/pcmcia/sa1100_simpad.c
++++ b/drivers/pcmcia/sa1100_simpad.c
+@@ -38,8 +38,8 @@ simpad_pcmcia_socket_state(struct soc_pcmcia_socket *skt,
+ {
+ 	long cs3reg = simpad_get_cs3_ro();
  
- int sa11xx_clk_init(void);
-+
-+struct gpiod_lookup_table;
-+void sa11x0_register_pcmcia(int socket, struct gpiod_lookup_table *);
+-	state->bvd1 = 1; /* Might be cs3reg & PCMCIA_BVD1 */
+-	state->bvd2 = 1; /* Might be cs3reg & PCMCIA_BVD2 */
++	/* bvd1 might be cs3reg & PCMCIA_BVD1 */
++	/* bvd2 might be cs3reg & PCMCIA_BVD2 */
+ 
+ 	if ((cs3reg & (PCMCIA_VS1|PCMCIA_VS2)) ==
+ 			(PCMCIA_VS1|PCMCIA_VS2)) {
 -- 
 2.1.0
 
