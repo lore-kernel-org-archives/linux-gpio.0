@@ -1,106 +1,122 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2] gpio: pca953x: fix a lockdep warning
-Date: Mon, 29 Aug 2016 10:33:20 +0200
-Message-ID: <1472459600-10815-1-git-send-email-bgolaszewski@baylibre.com>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: [RFC PATCH 00/33] SA11x0/PXA GPIO rework (Core + PCMCIA only)
+Date: Mon, 29 Aug 2016 11:23:28 +0100
+Message-ID: <20160829102328.GA28796@n2100.armlinux.org.uk>
+References: <20160829100232.GC1041@n2100.armlinux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:38488 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756638AbcH2Ida (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2016 04:33:30 -0400
-Received: by mail-wm0-f48.google.com with SMTP id o80so79448009wme.1
-        for <linux-gpio@vger.kernel.org>; Mon, 29 Aug 2016 01:33:29 -0700 (PDT)
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:56211 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756515AbcH2KXi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2016 06:23:38 -0400
+Content-Disposition: inline
+In-Reply-To: <20160829100232.GC1041@n2100.armlinux.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-pcmcia@lists.infradead.org
+Cc: Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-If an I2C GPIO multiplexer is driven by a GPIO provided by an expander
-when there's a second expander using the same device driver on one of
-the I2C bus segments, lockdep prints a deadlock warning when trying to
-set the direction or the value of the GPIOs provided by the second
-expander.
+Following on from the PCMCIA fixes, this series reworks GPIO on SA11x0
+and PXA platforms.  This is a subset of a larger series, which I'm
+splitting up due to its size.  This part contains the base and PCMCIA
+updates.  Further updates for IrDA drivers, DMA engine, serial, and
+ethernet will follow in time.
 
-The below diagram presents the setup:
+Modern gpiolib provides us with a very flexible way to handle hardware
+control and status signals without distributing board specifics in
+drivers.  Legacy board files are able to describe the relationship
+between physical GPIOs to drivers through gpio lookup tables, as well
+as their polarity.
 
-                                               - - - - -
- -------             ---------  Bus segment 1 |         |
-|       |           |         |---------------  Devices
-|       | SCL/SDA   |         |               |         |
-| Linux |-----------| I2C MUX |                - - - - -
-|       |    |      |         | Bus segment 2
-|       |    |      |         |-------------------
- -------     |       ---------                    |
-             |           |                    - - - - -
-        ------------     | MUX GPIO          |         |
-       |            |    |                     Devices
-       |    GPIO    |    |                   |         |
-       | Expander 1 |----                     - - - - -
-       |            |                             |
-        ------------                              | SCL/SDA
-                                                  |
-                                             ------------
-                                            |            |
-                                            |    GPIO    |
-                                            | Expander 2 |
-                                            |            |
-                                             ------------
+Drivers using the gpio descriptor APIs are able to lookup these GPIOs,
+which may be optional, and binding to the appropriate GPIO provider.
+What's even nicer is that this is forwards compatible with DT.
 
-The reason for lockdep warning is that we take the chip->i2c_lock in
-pca953x_gpio_set_value() or pca953x_gpio_direction_output() and then
-come right back to pca953x_gpio_set_value() when the GPIO mux kicks
-in. The locks actually protect different expanders, but lockdep
-doesn't see this and says:
+Several platforms provide "miscellaneous" control and status registers
+which are very GPIO-like.  We add a fixed-direction GPIO driver to
+gpiolib to support these, where the register address, number of GPIOs,
+and their direction are all fixed at initialisation time.  This allows
+(eg) the Assabet board control/status register, the Neponset control
+and modem signal registers, and Lubbock miscellaneous write register
+to be modelled as a set of GPIOs.
 
-  Possible unsafe locking scenario:
+This permits us to implement reusable drivers for PCMCIA - we can
+get rid of several board specific PCMCIA drivers in favour of a more
+generic driver for the SoC.
 
-        CPU0
-        ----
-   lock(&chip->i2c_lock);
-   lock(&chip->i2c_lock);
+Over the full series, we have a net increase in kernel LoC of less
+than 200 lines, with the following significant changes:
 
-  *** DEADLOCK ***
+ 59 files changed, 1690 insertions(+), 1504 deletions(-)
+ rename arch/arm/mach-sa1100/{include/mach => }/cerf.h (66%)
+ delete mode 100644 arch/arm/mach-sa1100/include/mach/neponset.h
+ rename arch/arm/mach-sa1100/{include/mach => }/nanoengine.h (69%)
+ create mode 100644 drivers/gpio/gpio-reg.c
+ create mode 100644 drivers/pcmcia/max1600.c
+ create mode 100644 drivers/pcmcia/max1600.h
+ delete mode 100644 drivers/pcmcia/sa1100_assabet.c
+ delete mode 100644 drivers/pcmcia/sa1100_cerf.c
+ delete mode 100644 drivers/pcmcia/sa1100_nanoengine.c
+ create mode 100644 include/linux/gpio-reg.h
+ delete mode 100644 include/linux/platform_data/irda-sa11x0.h
+ delete mode 100644 include/linux/sa11x0-dma.h
 
-  May be due to missing lock nesting notation
+However, deleting the unused SA-1101.h header file gives is a net
+decrease in LoC.
 
-To shut lockdep up, use mutex_lock_nested() and use the GPIO base
-number as the subclass argument (it has the same type).
+For this series only:
 
-NOTE: this only fixes a specific issue we're experiencing with our
-setup. The problem would probably occur as well with other I2C
-expanders under similar circumstances. A proper fix would probably be
-to implement an I2C-GPIO expander framework that would unduplicate
-common code for all drivers.
+ arch/arm/common/sa1111.c                    | 227 ++++++++++++++++++--------
+ arch/arm/include/asm/hardware/sa1111.h      |   4 -
+ arch/arm/mach-pxa/Kconfig                   |   1 +
+ arch/arm/mach-pxa/lubbock.c                 |  40 ++++-
+ arch/arm/mach-sa1100/Kconfig                |   1 +
+ arch/arm/mach-sa1100/assabet.c              | 130 +++++++++++++--
+ arch/arm/mach-sa1100/cerf.c                 |  18 ++-
+ arch/arm/mach-sa1100/clock.c                |   2 +
+ arch/arm/mach-sa1100/generic.c              |  14 +-
+ arch/arm/mach-sa1100/generic.h              |   3 +
+ arch/arm/mach-sa1100/h3xxx.c                |  17 ++
+ arch/arm/mach-sa1100/include/mach/assabet.h |   6 -
+ arch/arm/mach-sa1100/jornada720.c           |  12 ++
+ arch/arm/mach-sa1100/nanoengine.c           |  23 +++
+ arch/arm/mach-sa1100/neponset.c             | 172 +++++++++++++-------
+ arch/arm/mach-sa1100/shannon.c              |  13 ++
+ arch/arm/mach-sa1100/simpad.c               |  12 ++
+ drivers/gpio/Kconfig                        |   6 +
+ drivers/gpio/Makefile                       |   1 +
+ drivers/gpio/gpio-reg.c                     | 139 ++++++++++++++++
+ drivers/gpio/gpio-sa1100.c                  | 218 ++++++++++++++++---------
+ drivers/pcmcia/Kconfig                      |   5 +
+ drivers/pcmcia/Makefile                     |   3 +-
+ drivers/pcmcia/max1600.c                    | 119 ++++++++++++++
+ drivers/pcmcia/max1600.h                    |  31 ++++
+ drivers/pcmcia/sa1100_assabet.c             | 106 -------------
+ drivers/pcmcia/sa1100_cerf.c                |  92 -----------
+ drivers/pcmcia/sa1100_generic.c             | 129 +++++++++++++--
+ drivers/pcmcia/sa1100_generic.h             |   3 -
+ drivers/pcmcia/sa1100_h3600.c               |  16 +-
+ drivers/pcmcia/sa1100_nanoengine.c          | 133 ----------------
+ drivers/pcmcia/sa1100_shannon.c             |  29 +---
+ drivers/pcmcia/sa1100_simpad.c              |  16 +-
+ drivers/pcmcia/sa1111_generic.h             |   1 +
+ drivers/pcmcia/sa1111_jornada720.c          |  81 ++++++----
+ drivers/pcmcia/sa1111_lubbock.c             | 110 +++----------
+ drivers/pcmcia/sa1111_neponset.c            |  79 +++------
+ drivers/pcmcia/soc_common.c                 | 238 +++++++++++++++++++---------
+ drivers/pcmcia/soc_common.h                 |  24 ++-
+ include/linux/gpio-reg.h                    |  12 ++
+ 40 files changed, 1400 insertions(+), 886 deletions(-)
+ create mode 100644 drivers/gpio/gpio-reg.c
+ create mode 100644 drivers/pcmcia/max1600.c
+ create mode 100644 drivers/pcmcia/max1600.h
+ delete mode 100644 drivers/pcmcia/sa1100_assabet.c
+ delete mode 100644 drivers/pcmcia/sa1100_cerf.c
+ delete mode 100644 drivers/pcmcia/sa1100_nanoengine.c
+ create mode 100644 include/linux/gpio-reg.h
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
-v1 -> v2:
-- tweaked the commit message
-- expanded the comment
-
- drivers/gpio/gpio-pca953x.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 02f2a56..3387bdd 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -329,7 +329,15 @@ static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
- 	u8 reg_val;
- 	int ret, offset = 0;
- 
--	mutex_lock(&chip->i2c_lock);
-+	/*
-+	 * We're using mutex_lock_nested() here to avoid a lockdep warning
-+	 * when there are two pca953x expanders, of which one is used to
-+	 * control an i2c gpio mux.
-+	 *
-+	 * We're using the GPIO base number to distinguish the lock
-+	 * subclasses.
-+	 */
-+	mutex_lock_nested(&chip->i2c_lock, chip->gpio_start);
- 	if (val)
- 		reg_val = chip->reg_output[off / BANK_SZ]
- 			| (1u << (off % BANK_SZ));
 -- 
-2.7.4
-
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
