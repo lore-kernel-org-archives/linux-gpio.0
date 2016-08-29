@@ -1,16 +1,17 @@
 From: Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 10/33] pcmcia: soc_common: switch to using gpio_descs
-Date: Mon, 29 Aug 2016 11:24:56 +0100
-Message-ID: <E1beJkO-0000mg-Lu@rmk-PC.armlinux.org.uk>
+Subject: [PATCH 26/33] ARM: sa1100/shannon: switch shannon PCMCIA to use gpiod
+ APIs
+Date: Mon, 29 Aug 2016 11:26:18 +0100
+Message-ID: <E1beJli-0000oF-Q0@rmk-PC.armlinux.org.uk>
 References: <20160829102328.GA28796@n2100.armlinux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:56282 "EHLO
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:56311 "EHLO
         pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750909AbcH2KZZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2016 06:25:25 -0400
+        with ESMTP id S1757039AbcH2K0Z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2016 06:26:25 -0400
 In-Reply-To: <20160829102328.GA28796@n2100.armlinux.org.uk>
 Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
@@ -18,154 +19,93 @@ List-Id: linux-gpio@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-pcmcia@lists.infradead.org
 Cc: Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-Switch to using the gpiod_* consumer API rather than the legacy API.
+Switch shannon's PCMCIA implementation to use the gpiod APIs.
 
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 ---
- drivers/pcmcia/soc_common.c | 57 +++++++++++++++++++++++++++++++++------------
- drivers/pcmcia/soc_common.h |  3 +++
- 2 files changed, 45 insertions(+), 15 deletions(-)
+ arch/arm/mach-sa1100/shannon.c  | 13 +++++++++++++
+ drivers/pcmcia/sa1100_shannon.c | 25 ++++++-------------------
+ 2 files changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/pcmcia/soc_common.c b/drivers/pcmcia/soc_common.c
-index d5ca760c4eb2..5d167512e96e 100644
---- a/drivers/pcmcia/soc_common.c
-+++ b/drivers/pcmcia/soc_common.c
-@@ -33,6 +33,7 @@
+diff --git a/arch/arm/mach-sa1100/shannon.c b/arch/arm/mach-sa1100/shannon.c
+index c8866bce7386..f2cc896e582f 100644
+--- a/arch/arm/mach-sa1100/shannon.c
++++ b/arch/arm/mach-sa1100/shannon.c
+@@ -4,6 +4,7 @@
  
- #include <linux/cpufreq.h>
- #include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
  #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-@@ -114,8 +115,8 @@ static void __soc_pcmcia_hw_shutdown(struct soc_pcmcia_socket *skt,
- 	for (i = 0; i < nr; i++) {
- 		if (skt->stat[i].irq)
- 			free_irq(skt->stat[i].irq, skt);
--		if (gpio_is_valid(skt->stat[i].gpio))
--			gpio_free(skt->stat[i].gpio);
-+		if (skt->stat[i].desc)
-+			gpiod_put(skt->stat[i].desc);
+ #include <linux/device.h>
++#include <linux/gpio/machine.h>
+ #include <linux/kernel.h>
+ #include <linux/platform_data/sa11x0-serial.h>
+ #include <linux/tty.h>
+@@ -71,8 +72,20 @@ static struct sa1100fb_mach_info shannon_lcd_info = {
+ 	.lccr3		= LCCR3_ACBsDiv(512),
+ };
+ 
++static struct gpiod_lookup_table shannon_pcmcia_gpio_table = {
++	.dev_id = "sa11x0-pcmcia",
++	.table = {
++		GPIO_LOOKUP("gpio", 24, "pcmcia0-detect", GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP("gpio", 25, "pcmcia1-detect", GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP("gpio", 26, "pcmcia0-ready", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("gpio", 27, "pcmcia1-ready", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
++
+ static void __init shannon_init(void)
+ {
++	gpiod_add_lookup_table(&shannon_pcmcia_gpio_table);
+ 	sa11x0_ppc_configure_mcp();
+ 	sa11x0_register_lcd(&shannon_lcd_info);
+ 	sa11x0_register_mtd(&shannon_flash_data, &shannon_flash_resource, 1);
+diff --git a/drivers/pcmcia/sa1100_shannon.c b/drivers/pcmcia/sa1100_shannon.c
+index b07a2dc3296e..51985c8ba830 100644
+--- a/drivers/pcmcia/sa1100_shannon.c
++++ b/drivers/pcmcia/sa1100_shannon.c
+@@ -8,35 +8,22 @@
+ #include <linux/kernel.h>
+ #include <linux/device.h>
+ #include <linux/init.h>
+-#include <linux/io.h>
+ 
+-#include <mach/hardware.h>
+ #include <asm/mach-types.h>
+-#include <mach/shannon.h>
+-#include <asm/irq.h>
++
+ #include "sa1100_generic.h"
+ 
+ static int shannon_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
+ {
+-	/* All those are inputs */
+-	GAFR &= ~(GPIO_GPIO(SHANNON_GPIO_EJECT_0) |
+-		  GPIO_GPIO(SHANNON_GPIO_EJECT_1) |
+-		  GPIO_GPIO(SHANNON_GPIO_RDY_0) |
+-		  GPIO_GPIO(SHANNON_GPIO_RDY_1));
+-
+ 	if (skt->nr == 0) {
+-		skt->stat[SOC_STAT_CD].gpio = SHANNON_GPIO_EJECT_0;
+-		skt->stat[SOC_STAT_CD].name = "PCMCIA_CD_0";
+-		skt->stat[SOC_STAT_RDY].gpio = SHANNON_GPIO_RDY_0;
+-		skt->stat[SOC_STAT_RDY].name = "PCMCIA_RDY_0";
++		skt->stat[SOC_STAT_CD].name = "pcmcia0-detect";
++		skt->stat[SOC_STAT_RDY].name = "pcmcia0-ready";
+ 	} else {
+-		skt->stat[SOC_STAT_CD].gpio = SHANNON_GPIO_EJECT_1;
+-		skt->stat[SOC_STAT_CD].name = "PCMCIA_CD_1";
+-		skt->stat[SOC_STAT_RDY].gpio = SHANNON_GPIO_RDY_1;
+-		skt->stat[SOC_STAT_RDY].name = "PCMCIA_RDY_1";
++		skt->stat[SOC_STAT_CD].name = "pcmcia1-detect";
++		skt->stat[SOC_STAT_RDY].name = "pcmcia1-ready";
  	}
  
- 	if (skt->ops->hw_shutdown)
-@@ -129,6 +130,30 @@ static void soc_pcmcia_hw_shutdown(struct soc_pcmcia_socket *skt)
- 	__soc_pcmcia_hw_shutdown(skt, ARRAY_SIZE(skt->stat));
+-	return 0;
++	return soc_pcmcia_request_gpiods(skt);
  }
  
-+int soc_pcmcia_request_gpiods(struct soc_pcmcia_socket *skt)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(skt->stat); i++) {
-+		struct gpio_desc *desc;
-+
-+		desc = gpiod_get(skt->socket.dev.parent,
-+				 skt->stat[i].name, GPIOD_IN);
-+		if (IS_ERR(desc)) {
-+			dev_err(skt->socket.dev.parent,
-+				"Failed to get GPIO for %s: %ld\n",
-+				skt->stat[i].name, PTR_ERR(desc));
-+			__soc_pcmcia_hw_shutdown(skt, i);
-+			return PTR_ERR(desc);
-+		}
-+
-+		skt->stat[i].desc = desc;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(soc_pcmcia_request_gpiods);
-+
- static int soc_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
- {
- 	int ret = 0, i;
-@@ -143,8 +168,6 @@ static int soc_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
- 
- 	for (i = 0; i < ARRAY_SIZE(skt->stat); i++) {
- 		if (gpio_is_valid(skt->stat[i].gpio)) {
--			int irq;
--
- 			ret = gpio_request_one(skt->stat[i].gpio, GPIOF_IN,
- 					       skt->stat[i].name);
- 			if (ret) {
-@@ -152,7 +175,11 @@ static int soc_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
- 				return ret;
- 			}
- 
--			irq = gpio_to_irq(skt->stat[i].gpio);
-+			skt->stat[i].desc = gpio_to_desc(skt->stat[i].gpio);
-+		}
-+
-+		if (skt->stat[i].desc) {
-+			int irq = gpiod_to_irq(skt->stat[i].desc);
- 
- 			if (i == SOC_STAT_RDY)
- 				skt->socket.pci_irq = irq;
-@@ -166,8 +193,8 @@ static int soc_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
- 					  IRQF_TRIGGER_NONE,
- 					  skt->stat[i].name, skt);
- 			if (ret) {
--				if (gpio_is_valid(skt->stat[i].gpio))
--					gpio_free(skt->stat[i].gpio);
-+				if (skt->stat[i].desc)
-+					gpiod_put(skt->stat[i].desc);
- 				__soc_pcmcia_hw_shutdown(skt, i);
- 				return ret;
- 			}
-@@ -209,16 +236,16 @@ static unsigned int soc_common_pcmcia_skt_state(struct soc_pcmcia_socket *skt)
- 	state.bvd2 = 1;
- 
- 	/* CD is active low by default */
--	if (gpio_is_valid(skt->stat[SOC_STAT_CD].gpio))
--		state.detect = !gpio_get_value(skt->stat[SOC_STAT_CD].gpio);
-+	if (skt->stat[SOC_STAT_CD].desc)
-+		state.detect = !gpiod_get_raw_value(skt->stat[SOC_STAT_CD].desc);
- 
- 	/* RDY and BVD are active high by default */
--	if (gpio_is_valid(skt->stat[SOC_STAT_RDY].gpio))
--		state.ready = !!gpio_get_value(skt->stat[SOC_STAT_RDY].gpio);
--	if (gpio_is_valid(skt->stat[SOC_STAT_BVD1].gpio))
--		state.bvd1 = !!gpio_get_value(skt->stat[SOC_STAT_BVD1].gpio);
--	if (gpio_is_valid(skt->stat[SOC_STAT_BVD2].gpio))
--		state.bvd2 = !!gpio_get_value(skt->stat[SOC_STAT_BVD2].gpio);
-+	if (skt->stat[SOC_STAT_RDY].desc)
-+		state.ready = !!gpiod_get_value(skt->stat[SOC_STAT_RDY].desc);
-+	if (skt->stat[SOC_STAT_BVD1].desc)
-+		state.bvd1 = !!gpiod_get_value(skt->stat[SOC_STAT_BVD1].desc);
-+	if (skt->stat[SOC_STAT_BVD2].desc)
-+		state.bvd2 = !!gpiod_get_value(skt->stat[SOC_STAT_BVD2].desc);
- 
- 	skt->ops->socket_state(skt, &state);
- 
-diff --git a/drivers/pcmcia/soc_common.h b/drivers/pcmcia/soc_common.h
-index 94762a54d731..ee40db16dc40 100644
---- a/drivers/pcmcia/soc_common.h
-+++ b/drivers/pcmcia/soc_common.h
-@@ -17,6 +17,7 @@
- 
- 
- struct device;
-+struct gpio_desc;
- struct pcmcia_low_level;
- 
- /*
-@@ -52,6 +53,7 @@ struct soc_pcmcia_socket {
- 
- 	struct {
- 		int		gpio;
-+		struct gpio_desc *desc;
- 		unsigned int	irq;
- 		const char	*name;
- 	} stat[4];
-@@ -136,6 +138,7 @@ void soc_pcmcia_init_one(struct soc_pcmcia_socket *skt,
- 	struct pcmcia_low_level *ops, struct device *dev);
- void soc_pcmcia_remove_one(struct soc_pcmcia_socket *skt);
- int soc_pcmcia_add_one(struct soc_pcmcia_socket *skt);
-+int soc_pcmcia_request_gpiods(struct soc_pcmcia_socket *skt);
- 
- 
- #ifdef CONFIG_PCMCIA_DEBUG
+ static void
 -- 
 2.1.0
 
