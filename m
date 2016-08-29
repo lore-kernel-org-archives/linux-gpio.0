@@ -1,46 +1,101 @@
-From: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH v5 0/6] Add Meson 8b / GXBB support to the IR driver
-Date: Mon, 29 Aug 2016 14:28:10 -0500
-Message-ID: <m2shtniddh.fsf@baylibre.com>
-References: <20160819215547.20063-1-martin.blumenstingl@googlemail.com>
-        <20160820095424.636-1-martin.blumenstingl@googlemail.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH 05/33] gpio: add generic single-register fixed-direction GPIO driver
+Date: Mon, 29 Aug 2016 21:39:54 +0200
+Message-ID: <87eg57e54l.fsf@belgarion.home>
+References: <20160829102328.GA28796@n2100.armlinux.org.uk>
+        <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160820095424.636-1-martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> (Martin
-        Blumenstingl's message of "Sat, 20 Aug 2016 11:54:18 +0200")
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, b.galvani-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:46881 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755702AbcH2TkC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2016 15:40:02 -0400
+In-Reply-To: <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk> (Russell King's
+        message of "Mon, 29 Aug 2016 11:24:31 +0100")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
-Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> writes:
+Hi Russell,
 
-> Newer Amlogic platforms (Meson 8b and GXBB) use a slightly different
-> register layout for their Infrared Remoete Controller. The decoder mode
-> is now configured in another register. Without the changes to the
-> meson-ir driver we are simply getting incorrect "durations" reported
-> from the hardware (because the hardware is not in time measurement aka
-> software decode mode).
+Russell King <rmk+kernel@armlinux.org.uk> writes:
+
+> Add a simple, generic, single register fixed-direction GPIO driver.
+> This is able to support a single register where a fixed number of
+> bits are used for input and a fixed number of bits used for output.
 >
-> This problem was also noticed by some people trying to use this on an
-> ODROID-C1 and ODROID-C2 - the workaround there (probably because the
-> datasheets were not publicy available yet at that time) was to switch
-> to ir_raw_event_store_edge (which leaves it up to the kernel to measure
-> the duration of a pulse). See [0] and [1] for the corresponding
-> patches.
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> ---
+>  drivers/gpio/Kconfig     |   6 ++
+>  drivers/gpio/Makefile    |   1 +
+>  drivers/gpio/gpio-reg.c  | 139 +++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/gpio-reg.h |  12 ++++
+>  4 files changed, 158 insertions(+)
+>  create mode 100644 drivers/gpio/gpio-reg.c
+>  create mode 100644 include/linux/gpio-reg.h
 >
-> Changes in v5:
-> - changed pin function and group names to remote_input_ao so they match
->   with the datasheet
->
-> Tested-by: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 98dd47a30fc7..49bd8b89712e 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -365,6 +365,12 @@ config GPIO_RCAR
+>  	help
+>  	  Say yes here to support GPIO on Renesas R-Car SoCs.
+>  
+> +config GPIO_REG
+> +	bool
+So I suppose it is on purpose you forbid it to be a module. Is there a way to
+write either in the commit message or in the Kconfig this purpose, so that
+nobody on "purpose" changes this bool to tristate ?
 
-Thanks for the respin.  I'll take the driver and DT/bindings through the
-arm-soc tree and Linus has taken the pinctrl patch.
+> +	help
+> +	  A 32-bit single register GPIO fixed in/out implementation.  This
+> +	  can be used to represent any register as a set of GPIO signals.
+Another question I was asking myself was how it differenciated itself from
+gpio-mmio, ie. what brought the need for this driver that isn't available with
+gpio-mmio ?
 
-Kevin
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I seem to understand that this is mainly for platform code, hence the "builtin
+only" necessity, and if I'm right a part of your cover letter could very well
+fit within this patch's commit message.
+
+> diff --git a/drivers/gpio/gpio-reg.c b/drivers/gpio/gpio-reg.c
+> new file mode 100644
+> index 000000000000..fc7e0a395f9f
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-reg.c
+
+...zip...
+> +static void gpio_reg_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+> +	unsigned long *bits)
+> +{
+> +	struct gpio_reg *r = to_gpio_reg(gc);
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&r->lock, flags);
+> +	r->out = (r->out & ~*mask) | *bits;
+Shouldn't this be :
+	r->out = (r->out & ~*mask) | (*bits & *mask);
+
+> diff --git a/include/linux/gpio-reg.h b/include/linux/gpio-reg.h
+> new file mode 100644
+> index 000000000000..0352bec7319a
+> --- /dev/null
+> +++ b/include/linux/gpio-reg.h
+> @@ -0,0 +1,12 @@
+> +#ifndef GPIO_REG_H
+> +#define GPIO_REG_H
+> +
+> +struct device;
+> +
+> +struct gpio_chip *gpio_reg_init(struct device *dev, void __iomem *reg,
+> +	int base, int num, const char *label, u32 direction, u32 def_out,
+> +	const char *const *names);
+Maybe this one would deserve a doxygen comment ?
+
+Cheers.
+
+-- 
+Robert
