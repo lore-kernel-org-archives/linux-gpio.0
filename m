@@ -1,61 +1,46 @@
-From: "winton.liu" <18502523564@163.com>
-Subject: [PATCH] tools/gpio: delete useless file gpio-utils.c
-Date: Mon, 29 Aug 2016 19:31:32 +0800
-Message-ID: <1472470292-3751-2-git-send-email-18502523564@163.com>
-References: <1472470292-3751-1-git-send-email-18502523564@163.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from m50-133.163.com ([123.125.50.133]:58399 "EHLO m50-133.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756777AbcH2L1z (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 29 Aug 2016 07:27:55 -0400
-In-Reply-To: <1472470292-3751-1-git-send-email-18502523564@163.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v5 0/6] Add Meson 8b / GXBB support to the IR driver
+Date: Mon, 29 Aug 2016 14:28:10 -0500
+Message-ID: <m2shtniddh.fsf@baylibre.com>
+References: <20160819215547.20063-1-martin.blumenstingl@googlemail.com>
+        <20160820095424.636-1-martin.blumenstingl@googlemail.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160820095424.636-1-martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> (Martin
+        Blumenstingl's message of "Sat, 20 Aug 2016 11:54:18 +0200")
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, b.galvani-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: gnurou@gmail.com, linus.walleij@linaro.org, "winton.liu" <18502523564@163.com>
 
-From: "winton.liu" <18502523564@163.com>
+Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> writes:
 
-1.gpio-utils.c only include a header file.
-2.gpio-utils.c is not used in other code
-Delete the useless code
+> Newer Amlogic platforms (Meson 8b and GXBB) use a slightly different
+> register layout for their Infrared Remoete Controller. The decoder mode
+> is now configured in another register. Without the changes to the
+> meson-ir driver we are simply getting incorrect "durations" reported
+> from the hardware (because the hardware is not in time measurement aka
+> software decode mode).
+>
+> This problem was also noticed by some people trying to use this on an
+> ODROID-C1 and ODROID-C2 - the workaround there (probably because the
+> datasheets were not publicy available yet at that time) was to switch
+> to ir_raw_event_store_edge (which leaves it up to the kernel to measure
+> the duration of a pulse). See [0] and [1] for the corresponding
+> patches.
+>
+> Changes in v5:
+> - changed pin function and group names to remote_input_ao so they match
+>   with the datasheet
+>
+> Tested-by: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
 
-Signed-off-by: winton.liu <18502523564@163.com>
----
- tools/gpio/Build        |    6 +++---
- tools/gpio/gpio-utils.c |   11 -----------
- 2 files changed, 3 insertions(+), 14 deletions(-)
- delete mode 100644 tools/gpio/gpio-utils.c
+Thanks for the respin.  I'll take the driver and DT/bindings through the
+arm-soc tree and Linus has taken the pinctrl patch.
 
-diff --git a/tools/gpio/Build b/tools/gpio/Build
-index 620c193..6df304f 100644
---- a/tools/gpio/Build
-+++ b/tools/gpio/Build
-@@ -1,3 +1,3 @@
--lsgpio-y += lsgpio.o gpio-utils.o
--gpio-hammer-y += gpio-hammer.o gpio-utils.o
--gpio-event-mon-y += gpio-event-mon.o gpio-utils.o
-+lsgpio-y += lsgpio.o
-+gpio-hammer-y += gpio-hammer.o
-+gpio-event-mon-y += gpio-event-mon.o
-diff --git a/tools/gpio/gpio-utils.c b/tools/gpio/gpio-utils.c
-deleted file mode 100644
-index 8208718..0000000
---- a/tools/gpio/gpio-utils.c
-+++ /dev/null
-@@ -1,11 +0,0 @@
--/*
-- * GPIO tools - helpers library for the GPIO tools
-- *
-- * Copyright (C) 2015 Linus Walleij
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- */
--
--#include "gpio-utils.h"
--- 
-1.7.9.5
-
-
+Kevin
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
