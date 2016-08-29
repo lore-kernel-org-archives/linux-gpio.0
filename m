@@ -1,8 +1,7 @@
 From: Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 13/33] pcmcia: soc_common: restore previous socket state on
- error
-Date: Mon, 29 Aug 2016 11:25:12 +0100
-Message-ID: <E1beJke-0000my-2P@rmk-PC.armlinux.org.uk>
+Subject: [PATCH 31/33] ARM: pxa/lubbock: convert PCMCIA to use MAX1600 driver
+Date: Mon, 29 Aug 2016 11:26:44 +0100
+Message-ID: <E1beJm8-0000ok-E7@rmk-PC.armlinux.org.uk>
 References: <20160829102328.GA28796@n2100.armlinux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -10,8 +9,8 @@ Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
 Received: from pandora.armlinux.org.uk ([78.32.30.218]:56367 "EHLO
         pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750860AbcH2Kas (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2016 06:30:48 -0400
+        with ESMTP id S1750828AbcH2Kc2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2016 06:32:28 -0400
 In-Reply-To: <20160829102328.GA28796@n2100.armlinux.org.uk>
 Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
@@ -19,59 +18,230 @@ List-Id: linux-gpio@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-pcmcia@lists.infradead.org
 Cc: Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-If an attempt to set a socket state returns an error, restore the
-previous socket state.  If restoring the previous socket state
-fails, warn about this.
-
-This allows us to have simple error handling in the socket state
-configuration handlers - there is no need for every handler
-implementation to manually undo the updates, which can be complex
-when regulators are involved.
+As Lubbock now provides GPIOs via gpiolib for controlling the socket
+power, we can use the MAX1600 driver.  Switch Lubbock to use this
+driver, which simplifies the code.
 
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 ---
- drivers/pcmcia/soc_common.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ arch/arm/mach-pxa/lubbock.c     |  16 ++++++
+ drivers/pcmcia/Kconfig          |   1 +
+ drivers/pcmcia/sa1111_lubbock.c | 110 ++++++++--------------------------------
+ 3 files changed, 38 insertions(+), 89 deletions(-)
 
-diff --git a/drivers/pcmcia/soc_common.c b/drivers/pcmcia/soc_common.c
-index 822de207c408..d8508c41d7da 100644
---- a/drivers/pcmcia/soc_common.c
-+++ b/drivers/pcmcia/soc_common.c
-@@ -292,6 +292,14 @@ static int soc_common_pcmcia_config_skt(
- 	int ret;
+diff --git a/arch/arm/mach-pxa/lubbock.c b/arch/arm/mach-pxa/lubbock.c
+index e974d1eb0f88..8686c5d0dc3b 100644
+--- a/arch/arm/mach-pxa/lubbock.c
++++ b/arch/arm/mach-pxa/lubbock.c
+@@ -136,6 +136,20 @@ static struct pxa2xx_udc_mach_info udc_info __initdata = {
+ 	// no D+ pullup; lubbock can't connect/disconnect in software
+ };
  
- 	ret = skt->ops->configure_socket(skt, state);
-+	if (ret < 0) {
-+		pr_err("soc_common_pcmcia: unable to configure socket %d\n",
-+		       skt->nr);
-+		/* restore the previous state */
-+		WARN_ON(skt->ops->configure_socket(skt, &skt->cs_state));
-+		return ret;
-+	}
++/* GPIOs for SA1111 PCMCIA */
++static struct gpiod_lookup_table sa1111_pcmcia_gpio_table = {
++	.dev_id = "1800",
++	.table = {
++		{ "sa1111", 0, "a0vpp", GPIO_ACTIVE_HIGH },
++		{ "sa1111", 1, "a1vpp", GPIO_ACTIVE_HIGH },
++		{ "sa1111", 2, "a0vcc", GPIO_ACTIVE_HIGH },
++		{ "sa1111", 3, "a1vcc", GPIO_ACTIVE_HIGH },
++		{ "lubbock", 14, "b0vcc", GPIO_ACTIVE_HIGH },
++		{ "lubbock", 15, "b1vcc", GPIO_ACTIVE_HIGH },
++		{ },
++	},
++};
 +
- 	if (ret == 0) {
- 		struct gpio_desc *descs[2];
- 		int values[2], n = 0;
-@@ -324,10 +332,6 @@ static int soc_common_pcmcia_config_skt(
- 		skt->cs_state = *state;
- 	}
+ static struct resource sa1111_resources[] = {
+ 	[0] = {
+ 		.start	= 0x10000000,
+@@ -475,6 +489,8 @@ static void __init lubbock_init(void)
+ 	pxa_set_btuart_info(NULL);
+ 	pxa_set_stuart_info(NULL);
  
--	if (ret < 0)
--		printk(KERN_ERR "soc_common_pcmcia: unable to configure "
--		       "socket %d\n", skt->nr);
--
- 	return ret;
- }
++	gpiod_add_lookup_table(&sa1111_pcmcia_gpio_table);
++
+ 	clk_add_alias("SA1111_CLK", NULL, "GPIO11_CLK", NULL);
+ 	pxa_set_udc_info(&udc_info);
+ 	pxa_set_fb_info(NULL, &sharp_lm8v31);
+diff --git a/drivers/pcmcia/Kconfig b/drivers/pcmcia/Kconfig
+index 1441c1945088..1b4b641a1e04 100644
+--- a/drivers/pcmcia/Kconfig
++++ b/drivers/pcmcia/Kconfig
+@@ -195,6 +195,7 @@ config PCMCIA_SA1111
+ 	select PCMCIA_SA11XX_BASE if ARCH_SA1100
+ 	select PCMCIA_PXA2XX if ARCH_LUBBOCK && SA1111
+ 	select PCMCIA_MAX1600 if ASSABET_NEPONSET
++	select PCMCIA_MAX1600 if ARCH_LUBBOCK && SA1111
+ 	help
+ 	  Say Y  here to include support for SA1111-based PCMCIA or CF
+ 	  sockets, found on the Jornada 720, Graphicsmaster and other
+diff --git a/drivers/pcmcia/sa1111_lubbock.c b/drivers/pcmcia/sa1111_lubbock.c
+index c5caf5790451..9d5ffc71ae51 100644
+--- a/drivers/pcmcia/sa1111_lubbock.c
++++ b/drivers/pcmcia/sa1111_lubbock.c
+@@ -24,20 +24,33 @@
+ #include <mach/hardware.h>
+ #include <asm/hardware/sa1111.h>
+ #include <asm/mach-types.h>
+-#include <mach/lubbock.h>
  
-@@ -776,6 +780,8 @@ int soc_pcmcia_add_one(struct soc_pcmcia_socket *skt)
+ #include "sa1111_generic.h"
++#include "max1600.h"
++
++static int lubbock_pcmcia_hw_init(struct soc_pcmcia_socket *skt)
++{
++	struct sa1111_pcmcia_socket *s = to_skt(skt);
++	struct max1600 *m;
++	int ret;
++
++	ret = max1600_init(skt->socket.dev.parent, &m,
++			   skt->nr ? MAX1600_CHAN_B : MAX1600_CHAN_A,
++			   MAX1600_CODE_HIGH);
++	if (ret == 0)
++		s->driver_data = m;
++
++	return ret;
++}
+ 
+ static int
+ lubbock_pcmcia_configure_socket(struct soc_pcmcia_socket *skt,
+ 				const socket_state_t *state)
  {
- 	int ret;
+ 	struct sa1111_pcmcia_socket *s = to_skt(skt);
+-	unsigned int pa_dwr_mask, pa_dwr_set, misc_mask, misc_set;
++	struct max1600 *m = s->driver_data;
+ 	int ret = 0;
  
-+	skt->cs_state = dead_socket;
-+
- 	setup_timer(&skt->poll_timer, soc_common_pcmcia_poll_event,
- 		    (unsigned long)skt);
- 	skt->poll_timer.expires = jiffies + SOC_PCMCIA_POLL_PERIOD;
+-	pa_dwr_mask = pa_dwr_set = misc_mask = misc_set = 0;
+-
+ 	/* Lubbock uses the Maxim MAX1602, with the following connections:
+ 	 *
+ 	 * Socket 0 (PCMCIA):
+@@ -71,74 +84,7 @@ lubbock_pcmcia_configure_socket(struct soc_pcmcia_socket *skt,
+  again:
+ 	switch (skt->nr) {
+ 	case 0:
+-		pa_dwr_mask = GPIO_A0 | GPIO_A1 | GPIO_A2 | GPIO_A3;
+-
+-		switch (state->Vcc) {
+-		case 0: /* Hi-Z */
+-			break;
+-
+-		case 33: /* VY */
+-			pa_dwr_set |= GPIO_A3;
+-			break;
+-
+-		case 50: /* VX */
+-			pa_dwr_set |= GPIO_A2;
+-			break;
+-
+-		default:
+-			printk(KERN_ERR "%s(): unrecognized Vcc %u\n",
+-			       __func__, state->Vcc);
+-			ret = -1;
+-		}
+-
+-		switch (state->Vpp) {
+-		case 0: /* Hi-Z */
+-			break;
+-
+-		case 120: /* 12IN */
+-			pa_dwr_set |= GPIO_A1;
+-			break;
+-
+-		default: /* VCC */
+-			if (state->Vpp == state->Vcc)
+-				pa_dwr_set |= GPIO_A0;
+-			else {
+-				printk(KERN_ERR "%s(): unrecognized Vpp %u\n",
+-				       __func__, state->Vpp);
+-				ret = -1;
+-				break;
+-			}
+-		}
+-		break;
+-
+ 	case 1:
+-		misc_mask = (1 << 15) | (1 << 14);
+-
+-		switch (state->Vcc) {
+-		case 0: /* Hi-Z */
+-			break;
+-
+-		case 33: /* VY */
+-			misc_set |= 1 << 15;
+-			break;
+-
+-		case 50: /* VX */
+-			misc_set |= 1 << 14;
+-			break;
+-
+-		default:
+-			printk(KERN_ERR "%s(): unrecognized Vcc %u\n",
+-			       __func__, state->Vcc);
+-			ret = -1;
+-			break;
+-		}
+-
+-		if (state->Vpp != state->Vcc && state->Vpp != 0) {
+-			printk(KERN_ERR "%s(): CF slot cannot support Vpp %u\n",
+-			       __func__, state->Vpp);
+-			ret = -1;
+-			break;
+-		}
+ 		break;
+ 
+ 	default:
+@@ -147,11 +93,8 @@ lubbock_pcmcia_configure_socket(struct soc_pcmcia_socket *skt,
+ 
+ 	if (ret == 0)
+ 		ret = sa1111_pcmcia_configure_socket(skt, state);
+-
+-	if (ret == 0) {
+-		lubbock_set_misc_wr(misc_mask, misc_set);
+-		sa1111_set_io(s->dev, pa_dwr_mask, pa_dwr_set);
+-	}
++	if (ret == 0)
++		ret = max1600_configure(m, state->Vcc, state->Vpp);
+ 
+ #if 1
+ 	if (ret == 0 && state->Vcc == 33) {
+@@ -175,8 +118,7 @@ lubbock_pcmcia_configure_socket(struct soc_pcmcia_socket *skt,
+ 			/*
+ 			 * Switch to 5V,  Configure socket with 5V voltage
+ 			 */
+-			lubbock_set_misc_wr(misc_mask, 0);
+-			sa1111_set_io(s->dev, pa_dwr_mask, 0);
++			max1600_configure(m, 0, 0);
+ 
+ 			/*
+ 			 * It takes about 100ms to turn off Vcc.
+@@ -201,6 +143,7 @@ lubbock_pcmcia_configure_socket(struct soc_pcmcia_socket *skt,
+ 
+ static struct pcmcia_low_level lubbock_pcmcia_ops = {
+ 	.owner			= THIS_MODULE,
++	.hw_init		= lubbock_pcmcia_hw_init,
+ 	.configure_socket	= lubbock_pcmcia_configure_socket,
+ 	.first			= 0,
+ 	.nr			= 2,
+@@ -213,17 +156,6 @@ int pcmcia_lubbock_init(struct sa1111_dev *sadev)
+ 	int ret = -ENODEV;
+ 
+ 	if (machine_is_lubbock()) {
+-		/*
+-		 * Set GPIO_A<3:0> to be outputs for the MAX1600,
+-		 * and switch to standby mode.
+-		 */
+-		sa1111_set_io_dir(sadev, GPIO_A0|GPIO_A1|GPIO_A2|GPIO_A3, 0, 0);
+-		sa1111_set_io(sadev, GPIO_A0|GPIO_A1|GPIO_A2|GPIO_A3, 0);
+-		sa1111_set_sleep_io(sadev, GPIO_A0|GPIO_A1|GPIO_A2|GPIO_A3, 0);
+-
+-		/* Set CF Socket 1 power to standby mode. */
+-		lubbock_set_misc_wr((1 << 15) | (1 << 14), 0);
+-
+ 		pxa2xx_drv_pcmcia_ops(&lubbock_pcmcia_ops);
+ 		pxa2xx_configure_sockets(&sadev->dev);
+ 		ret = sa1111_pcmcia_add(sadev, &lubbock_pcmcia_ops,
 -- 
 2.1.0
 
