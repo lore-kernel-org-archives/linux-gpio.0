@@ -1,99 +1,70 @@
 From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH 05/33] gpio: add generic single-register fixed-direction GPIO driver
-Date: Mon, 29 Aug 2016 21:39:54 +0200
-Message-ID: <87eg57e54l.fsf@belgarion.home>
+Subject: Re: [PATCH 06/33] ARM: pxa/lubbock: add GPIO driver for LUB_MISC_WR
+ register
+Date: Mon, 29 Aug 2016 21:57:20 +0200
+Message-ID: <87a8fve4bj.fsf@belgarion.home>
 References: <20160829102328.GA28796@n2100.armlinux.org.uk>
-        <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk>
+ <E1beJk4-0000mH-4P@rmk-PC.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:46881 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755702AbcH2TkC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2016 15:40:02 -0400
-In-Reply-To: <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk> (Russell King's
-        message of "Mon, 29 Aug 2016 11:24:31 +0100")
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pcmcia-bounces+glkpd-linux-pcmcia=m.gmane.org@lists.infradead.org>
+In-Reply-To: <E1beJk4-0000mH-4P@rmk-PC.armlinux.org.uk> (Russell King's
+ message of "Mon, 29 Aug 2016 11:24:36 +0100")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-pcmcia>,
+ <mailto:linux-pcmcia-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-pcmcia/>
+List-Post: <mailto:linux-pcmcia@lists.infradead.org>
+List-Help: <mailto:linux-pcmcia-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-pcmcia>,
+ <mailto:linux-pcmcia-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-pcmcia" <linux-pcmcia-bounces@lists.infradead.org>
+Errors-To: linux-pcmcia-bounces+glkpd-linux-pcmcia=m.gmane.org@lists.infradead.org
 To: Russell King <rmk+kernel@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-
-Hi Russell,
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-pcmcia@lists.infradead.org, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-gpio@vger.kernel.org, Kristoffer Ericson <kristoffer.ericson@gmail.com>, linux-arm-kernel@lists.infradead.org, Daniel Mack <daniel@zonque.org>
+List-Id: linux-gpio@vger.kernel.org
 
 Russell King <rmk+kernel@armlinux.org.uk> writes:
 
-> Add a simple, generic, single register fixed-direction GPIO driver.
-> This is able to support a single register where a fixed number of
-> bits are used for input and a fixed number of bits used for output.
->
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> ---
->  drivers/gpio/Kconfig     |   6 ++
->  drivers/gpio/Makefile    |   1 +
->  drivers/gpio/gpio-reg.c  | 139 +++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/gpio-reg.h |  12 ++++
->  4 files changed, 158 insertions(+)
->  create mode 100644 drivers/gpio/gpio-reg.c
->  create mode 100644 include/linux/gpio-reg.h
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 98dd47a30fc7..49bd8b89712e 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -365,6 +365,12 @@ config GPIO_RCAR
->  	help
->  	  Say yes here to support GPIO on Renesas R-Car SoCs.
->  
-> +config GPIO_REG
-> +	bool
-So I suppose it is on purpose you forbid it to be a module. Is there a way to
-write either in the commit message or in the Kconfig this purpose, so that
-nobody on "purpose" changes this bool to tristate ?
-
-> +	help
-> +	  A 32-bit single register GPIO fixed in/out implementation.  This
-> +	  can be used to represent any register as a set of GPIO signals.
-Another question I was asking myself was how it differenciated itself from
-gpio-mmio, ie. what brought the need for this driver that isn't available with
-gpio-mmio ?
-
-I seem to understand that this is mainly for platform code, hence the "builtin
-only" necessity, and if I'm right a part of your cover letter could very well
-fit within this patch's commit message.
-
-> diff --git a/drivers/gpio/gpio-reg.c b/drivers/gpio/gpio-reg.c
-> new file mode 100644
-> index 000000000000..fc7e0a395f9f
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-reg.c
-
+..zip...
+> diff --git a/arch/arm/mach-pxa/lubbock.c b/arch/arm/mach-pxa/lubbock.c
+> index 7245f3359564..e974d1eb0f88 100644
+> --- a/arch/arm/mach-pxa/lubbock.c
+> +++ b/arch/arm/mach-pxa/lubbock.c
 ...zip...
-> +static void gpio_reg_set_multiple(struct gpio_chip *gc, unsigned long *mask,
-> +	unsigned long *bits)
-> +{
-> +	struct gpio_reg *r = to_gpio_reg(gc);
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&r->lock, flags);
-> +	r->out = (r->out & ~*mask) | *bits;
-Shouldn't this be :
-	r->out = (r->out & ~*mask) | (*bits & *mask);
 
-> diff --git a/include/linux/gpio-reg.h b/include/linux/gpio-reg.h
-> new file mode 100644
-> index 000000000000..0352bec7319a
-> --- /dev/null
-> +++ b/include/linux/gpio-reg.h
-> @@ -0,0 +1,12 @@
-> +#ifndef GPIO_REG_H
-> +#define GPIO_REG_H
+> @@ -110,20 +111,18 @@ static unsigned long lubbock_pin_config[] __initdata = {
+>  };
+>  
+>  #define LUB_HEXLED		__LUB_REG(LUBBOCK_FPGA_PHYS + 0x010)
+> -#define LUB_MISC_WR		__LUB_REG(LUBBOCK_FPGA_PHYS + 0x080)
+>  
+>  void lubbock_set_hexled(uint32_t value)
+>  {
+>  	LUB_HEXLED = value;
+>  }
+>  
+> +static struct gpio_chip *lubbock_misc_wr_gc;
 > +
-> +struct device;
-> +
-> +struct gpio_chip *gpio_reg_init(struct device *dev, void __iomem *reg,
-> +	int base, int num, const char *label, u32 direction, u32 def_out,
-> +	const char *const *names);
-Maybe this one would deserve a doxygen comment ?
+>  void lubbock_set_misc_wr(unsigned int mask, unsigned int set)
+>  {
+> -	unsigned long flags;
+> -
+> -	local_irq_save(flags);
+> -	LUB_MISC_WR = (LUB_MISC_WR & ~mask) | (set & mask);
+> -	local_irq_restore(flags);
+> +	unsigned long m = mask, v = set;
+> +	lubbock_misc_wr_gc->set_multiple(lubbock_misc_wr_gc, &m, &v);
+If gpio_reg_init() failed (and I know, the probability of a lack of memory at
+that stage of the kernel boot is ridiculous), this will end up as an NULL
+pointer dereference if either IRDA or PCMCIA is used.
+
+If it's expected, then the the pr_err() below would deserve a pr_crit(). I would
+as well take an option on a "panic()" if lubbock_misc_wr_gc allocation fails. If
+not, maybe a not-NULL test on lubbock_misc_wr_gc is in order, even if that would
+be "hidding under the carpet" and rather difficult to debug later.
+
+Apart this detail point, it's good for me.
 
 Cheers.
 
