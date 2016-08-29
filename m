@@ -1,59 +1,106 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH] pinctrl: imx: output one pin/config pair per line in
- pinconf-groups
-Date: Mon, 29 Aug 2016 11:29:04 +0800
-Message-ID: <20160829032904.GA31367@tiger>
-References: <1471644337-10162-1-git-send-email-vladimir_zapolskiy@mentor.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2] gpio: pca953x: fix a lockdep warning
+Date: Mon, 29 Aug 2016 10:33:20 +0200
+Message-ID: <1472459600-10815-1-git-send-email-bgolaszewski@baylibre.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:58864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755273AbcH2D30 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 28 Aug 2016 23:29:26 -0400
-Content-Disposition: inline
-In-Reply-To: <1471644337-10162-1-git-send-email-vladimir_zapolskiy@mentor.com>
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:38488 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756638AbcH2Ida (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2016 04:33:30 -0400
+Received: by mail-wm0-f48.google.com with SMTP id o80so79448009wme.1
+        for <linux-gpio@vger.kernel.org>; Mon, 29 Aug 2016 01:33:29 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-On Sat, Aug 20, 2016 at 01:05:37AM +0300, Vladimir Zapolskiy wrote:
-> cat /sys/kernel/debug/pinctrl/${pinctrl}/pinconf-groups output is
-> hardly readable, if a pin group contains more than one pin the output
-> is glued and looks like this:
-> 
->   MX6Q_PAD_SD1_DAT0: 0x17071MX6Q_PAD_SD1_CMD: 0x17071MX6Q_PAD_SD1_CLK: 0x17071
-> 
-> Add two space indentation and a new line separator to improve
-> readability of the output.
-> 
-> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+If an I2C GPIO multiplexer is driven by a GPIO provided by an expander
+when there's a second expander using the same device driver on one of
+the I2C bus segments, lockdep prints a deadlock warning when trying to
+set the direction or the value of the GPIOs provided by the second
+expander.
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+The below diagram presents the setup:
 
-> ---
->  drivers/pinctrl/freescale/pinctrl-imx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-> index 71391757938b..56fd88013850 100644
-> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
-> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-> @@ -501,7 +501,7 @@ static void imx_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
->  		ret = imx_pinconf_get(pctldev, pin->pin, &config);
->  		if (ret)
->  			return;
-> -		seq_printf(s, "%s: 0x%lx", name, config);
-> +		seq_printf(s, "  %s: 0x%lx\n", name, config);
->  	}
->  }
->  
-> -- 
-> 2.8.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+                                               - - - - -
+ -------             ---------  Bus segment 1 |         |
+|       |           |         |---------------  Devices
+|       | SCL/SDA   |         |               |         |
+| Linux |-----------| I2C MUX |                - - - - -
+|       |    |      |         | Bus segment 2
+|       |    |      |         |-------------------
+ -------     |       ---------                    |
+             |           |                    - - - - -
+        ------------     | MUX GPIO          |         |
+       |            |    |                     Devices
+       |    GPIO    |    |                   |         |
+       | Expander 1 |----                     - - - - -
+       |            |                             |
+        ------------                              | SCL/SDA
+                                                  |
+                                             ------------
+                                            |            |
+                                            |    GPIO    |
+                                            | Expander 2 |
+                                            |            |
+                                             ------------
+
+The reason for lockdep warning is that we take the chip->i2c_lock in
+pca953x_gpio_set_value() or pca953x_gpio_direction_output() and then
+come right back to pca953x_gpio_set_value() when the GPIO mux kicks
+in. The locks actually protect different expanders, but lockdep
+doesn't see this and says:
+
+  Possible unsafe locking scenario:
+
+        CPU0
+        ----
+   lock(&chip->i2c_lock);
+   lock(&chip->i2c_lock);
+
+  *** DEADLOCK ***
+
+  May be due to missing lock nesting notation
+
+To shut lockdep up, use mutex_lock_nested() and use the GPIO base
+number as the subclass argument (it has the same type).
+
+NOTE: this only fixes a specific issue we're experiencing with our
+setup. The problem would probably occur as well with other I2C
+expanders under similar circumstances. A proper fix would probably be
+to implement an I2C-GPIO expander framework that would unduplicate
+common code for all drivers.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+v1 -> v2:
+- tweaked the commit message
+- expanded the comment
+
+ drivers/gpio/gpio-pca953x.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 02f2a56..3387bdd 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -329,7 +329,15 @@ static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
+ 	u8 reg_val;
+ 	int ret, offset = 0;
+ 
+-	mutex_lock(&chip->i2c_lock);
++	/*
++	 * We're using mutex_lock_nested() here to avoid a lockdep warning
++	 * when there are two pca953x expanders, of which one is used to
++	 * control an i2c gpio mux.
++	 *
++	 * We're using the GPIO base number to distinguish the lock
++	 * subclasses.
++	 */
++	mutex_lock_nested(&chip->i2c_lock, chip->gpio_start);
+ 	if (val)
+ 		reg_val = chip->reg_output[off / BANK_SZ]
+ 			| (1u << (off % BANK_SZ));
+-- 
+2.7.4
+
