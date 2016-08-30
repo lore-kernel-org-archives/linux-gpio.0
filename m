@@ -1,45 +1,26 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 05/33] gpio: add generic single-register fixed-direction
- GPIO driver
-Date: Tue, 30 Aug 2016 23:47:09 +0200
-Message-ID: <CACRpkdbNn0VXf7bHcfAq2qe2WpiZUxO-HRvikh4nv-svgJf+pg@mail.gmail.com>
-References: <20160829102328.GA28796@n2100.armlinux.org.uk> <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk>
- <CACRpkdZJy9gZwH9__qXAf6nURN7xV6CbOaGC-JL6X5rDHN55VQ@mail.gmail.com> <20160830214253.GP1041@n2100.armlinux.org.uk>
+From: <tuisong@service.email.58.com>
+Subject: Yale Warehousing - link from a friend
+Date: Tue, 30 Aug 2016 18:44:47 +0100
+Message-ID: <20160830-18444791-ee4@DS8831>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:35632 "EHLO
-        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753969AbcH3VrL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Aug 2016 17:47:11 -0400
-Received: by mail-oi0-f43.google.com with SMTP id p186so10357009oia.2
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Aug 2016 14:47:10 -0700 (PDT)
-In-Reply-To: <20160830214253.GP1041@n2100.armlinux.org.uk>
+Received: from web05.indzine.co.uk ([94.136.53.39]:52381 "EHLO DS8831.home"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751118AbcHaFqo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 31 Aug 2016 01:46:44 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
+To: linux-gpio@vger.kernel.org
 
-On Tue, Aug 30, 2016 at 11:42 PM, Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
-> On Tue, Aug 30, 2016 at 11:25:19PM +0200, Linus Walleij wrote:
+Your Friend 江通乔 has sent you a link from the Yale Warehousing Website :
 
->> > +#define to_gpio_reg(x) container_of(x, struct gpio_reg, gc)
->>
->> You don't need that trickery anymore, just:
->>
->> > +static int gpio_reg_get_direction(struct gpio_chip *gc, unsigned offset)
->> > +{
->> > +       struct gpio_reg *r = to_gpio_reg(gc);
->>
->> struct gpio_reg *r = gpiochip_get_data(gc);
->>
->> (applied everywhere)
->
-> I prefer my method by a long shot
+fdzvlhxdbx
 
-Sure it's no strong preference. Keep it like this if you like.
-I'm very happy with the series either way!
+荷官再现制服诱惑，畅享足球盛宴，上万种电子老虎机，各类彩票下注！
+全场最低1元投注即享天天反水1.2%,支付宝、微信、最低存款10元，安全快捷实时到账！
+澳门金沙集团，官网开户：http://www.834516.com/?linux-gpio@vger.kernel.org
+我们坚持以信誉和口碑赢得市场，真诚服务，满意您所需要。
+------------------------------------------
+                    宁愿跑起来被拌倒无数次，也不愿规规矩矩走一辈子。就算跌倒也要豪迈的笑。
 
-Yours,
-Linus Walleij
+
