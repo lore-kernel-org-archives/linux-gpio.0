@@ -1,41 +1,55 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCAwNS8zM10gZ3BpbzogYWRkIGdlbmVyaWMgc2luZ2xlLXJl?=
- =?UTF-8?B?Z2lzdGVyIGZpeGVkLWRpcmVjdGlvbiBHUElPIGRyaXZlcg==?=
-Date: Tue, 30 Aug 2016 09:08:03 +0300
-Message-ID: <1472537283.46556776@f170.i.mail.ru>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: [PATCH 05/33] gpio: add generic single-register fixed-direction
+ GPIO driver
+Date: Tue, 30 Aug 2016 08:41:06 +0100
+Message-ID: <20160830074105.GJ1041@n2100.armlinux.org.uk>
 References: <20160829102328.GA28796@n2100.armlinux.org.uk>
  <87eg57e54l.fsf@belgarion.home>
  <20160829231232.GI1041@n2100.armlinux.org.uk>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+ <1472537283.46556776@f170.i.mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-pcmcia-bounces+glkpd-linux-pcmcia=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160829231232.GI1041@n2100.armlinux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-pcmcia>,
- <mailto:linux-pcmcia-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-pcmcia/>
-List-Post: <mailto:linux-pcmcia@lists.infradead.org>
-List-Help: <mailto:linux-pcmcia-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-pcmcia>,
- <mailto:linux-pcmcia-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-pcmcia" <linux-pcmcia-bounces@lists.infradead.org>
-Errors-To: linux-pcmcia-bounces+glkpd-linux-pcmcia=m.gmane.org@lists.infradead.org
-To: =?UTF-8?B?UnVzc2VsbCBLaW5nIC0gQVJNIExpbnV4?= <linux@armlinux.org.uk>
-Cc: =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>, =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>, linux-pcmcia@lists.infradead.org, =?UTF-8?B?SGFvamlhbiBaaHVhbmc=?= <haojian.zhuang@gmail.com>, linux-gpio@vger.kernel.org, =?UTF-8?B?S3Jpc3RvZmZlciBFcmljc29u?= <kristoffer.ericson@gmail.com>, =?UTF-8?B?RGFuaWVsIE1hY2s=?= <daniel@zonque.org>, =?UTF-8?B?Um9iZXJ0IEphcnptaWs=?= <robert.jarzmik@free.fr>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:35437 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752756AbcH3HlV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Aug 2016 03:41:21 -0400
+Content-Disposition: inline
+In-Reply-To: <1472537283.46556776@f170.i.mail.ru>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-pcmcia@lists.infradead.org, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-gpio@vger.kernel.org, Kristoffer Ericson <kristoffer.ericson@gmail.com>, linux-arm-kernel@lists.infradead.org, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-PtCS0YLQvtGA0L3QuNC6LCAzMCDQsNCy0LPRg9GB0YLQsCAyMDE2LCAyOjEyICswMzowMCDQvtGC
-IFJ1c3NlbGwgS2luZyAtIEFSTSBMaW51eCA8bGludXhAYXJtbGludXgub3JnLnVrPjoKPgo+T24g
-TW9uLCBBdWcgMjksIDIwMTYgYXQgMDk6Mzk6NTRQTSArMDIwMCwgUm9iZXJ0IEphcnptaWsgd3Jv
-dGU6Cj4+IEhpIFJ1c3NlbGwsCj4+IAo+PiBSdXNzZWxsIEtpbmcgPCBybWsra2VybmVsQGFybWxp
-bnV4Lm9yZy51ayA+IHdyaXRlczoKPj4gCj4+ID4gQWRkIGEgc2ltcGxlLCBnZW5lcmljLCBzaW5n
-bGUgcmVnaXN0ZXIgZml4ZWQtZGlyZWN0aW9uIEdQSU8gZHJpdmVyLgo+PiA+IFRoaXMgaXMgYWJs
-ZSB0byBzdXBwb3J0IGEgc2luZ2xlIHJlZ2lzdGVyIHdoZXJlIGEgZml4ZWQgbnVtYmVyIG9mCj4+
-ID4gYml0cyBhcmUgdXNlZCBmb3IgaW5wdXQgYW5kIGEgZml4ZWQgbnVtYmVyIG9mIGJpdHMgdXNl
-ZCBmb3Igb3V0cHV0Lgo+PiA+Cj4+ID4gU2lnbmVkLW9mZi1ieTogUnVzc2VsbCBLaW5nIDwgcm1r
-K2tlcm5lbEBhcm1saW51eC5vcmcudWsgPgoKVGhlcmUgaXMgYSBHUElPIGRyaXZlciB3aGljaCBh
-bHJlYWR5IHBlcmZvcm1zIHRoZXNlIHRhc2tzLgpQbGFlYXNlIHRha2UgYSBsb29rIG9uIHRoZSBn
-cGlvLTc0eHgtbW1pbyBkcml2ZXIuCgotLS0KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCkxpbnV4IFBDTUNJQSByZWltcGxlbWVudGF0aW9uIGxpc3QKaHR0
-cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1wY21jaWEK
+On Tue, Aug 30, 2016 at 09:08:03AM +0300, Alexander Shiyan wrote:
+> >Вторник, 30 августа 2016, 2:12 +03:00 от Russell King - ARM Linux <linux@armlinux.org.uk>:
+> >
+> >On Mon, Aug 29, 2016 at 09:39:54PM +0200, Robert Jarzmik wrote:
+> >> Hi Russell,
+> >> 
+> >> Russell King < rmk+kernel@armlinux.org.uk > writes:
+> >> 
+> >> > Add a simple, generic, single register fixed-direction GPIO driver.
+> >> > This is able to support a single register where a fixed number of
+> >> > bits are used for input and a fixed number of bits used for output.
+> >> >
+> >> > Signed-off-by: Russell King < rmk+kernel@armlinux.org.uk >
+> 
+> There is a GPIO driver which already performs these tasks.
+> Plaease take a look on the gpio-74xx-mmio driver.
+
+I did, and no it doesn't, because:
+
+1. It is either all-in or all-out, it doesn't support a mixture of
+   fixed-directions for a single register.
+2. It is DT-only, I need it for legacy platforms.
+3. It uses the bgpio stuff, which is unsuitable for reasons already
+   covered in a previous reply.
+
+So, gpio-74xx-mmio is unsuitable.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
