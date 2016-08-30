@@ -1,120 +1,42 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH 05/33] gpio: add generic single-register fixed-direction
- GPIO driver
-Date: Tue, 30 Aug 2016 00:12:32 +0100
-Message-ID: <20160829231232.GI1041@n2100.armlinux.org.uk>
-References: <20160829102328.GA28796@n2100.armlinux.org.uk>
- <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk>
- <87eg57e54l.fsf@belgarion.home>
+From: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
+Subject: Re: [PATCH v2 1/8] MAINTAINERS: Add glob for Aspeed devicetree bindings
+Date: Tue, 30 Aug 2016 15:34:05 +0930
+Message-ID: <CACPK8Xe8J-cVUeo0PhmBqQ8PW=eEHsPAO5=W9t10WL+FKhLN-w@mail.gmail.com>
+References: <20160819124414.24242-1-andrew@aj.id.au> <20160819124414.24242-2-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:60961 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753932AbcH2XMm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Aug 2016 19:12:42 -0400
-Content-Disposition: inline
-In-Reply-To: <87eg57e54l.fsf@belgarion.home>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160819124414.24242-2-andrew-zrmu5oMJ5Fs@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Jeremy Kerr <jk-mnsaURCQ41sdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Mon, Aug 29, 2016 at 09:39:54PM +0200, Robert Jarzmik wrote:
-> Hi Russell,
-> 
-> Russell King <rmk+kernel@armlinux.org.uk> writes:
-> 
-> > Add a simple, generic, single register fixed-direction GPIO driver.
-> > This is able to support a single register where a fixed number of
-> > bits are used for input and a fixed number of bits used for output.
-> >
-> > Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> > ---
-> >  drivers/gpio/Kconfig     |   6 ++
-> >  drivers/gpio/Makefile    |   1 +
-> >  drivers/gpio/gpio-reg.c  | 139 +++++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/gpio-reg.h |  12 ++++
-> >  4 files changed, 158 insertions(+)
-> >  create mode 100644 drivers/gpio/gpio-reg.c
-> >  create mode 100644 include/linux/gpio-reg.h
-> >
-> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> > index 98dd47a30fc7..49bd8b89712e 100644
-> > --- a/drivers/gpio/Kconfig
-> > +++ b/drivers/gpio/Kconfig
-> > @@ -365,6 +365,12 @@ config GPIO_RCAR
-> >  	help
-> >  	  Say yes here to support GPIO on Renesas R-Car SoCs.
-> >  
-> > +config GPIO_REG
-> > +	bool
-> So I suppose it is on purpose you forbid it to be a module. Is there a way to
-> write either in the commit message or in the Kconfig this purpose, so that
-> nobody on "purpose" changes this bool to tristate ?
+On Fri, Aug 19, 2016 at 10:14 PM, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org> wrote:
+> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
 
-The only forbidding is that it's used from code early at boot, so it has
-to be available to the kernel for some of these platforms to function.
-Even if it's changed to tristate, the select from these platforms would
-force it to be built-in.
+Acked-by: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
 
-> > +	help
-> > +	  A 32-bit single register GPIO fixed in/out implementation.  This
-> > +	  can be used to represent any register as a set of GPIO signals.
-> Another question I was asking myself was how it differenciated itself from
-> gpio-mmio, ie. what brought the need for this driver that isn't available with
-> gpio-mmio ?
-
-gpio-mmio doesn't allow the fixed direction - it assumes that you always
-have some form of direction register.  It also doesn't do the double-read
-that's necessary for some platforms to get the "current" state of inputs.
-It also doesn't do the "use 32-bit accessors even for smaller numbers of
-GPIOs".  Lastly, it assumes that the current output state can be read
-from the registers - this is not always the case (and is not the case for
-Assabet.)
-
-> I seem to understand that this is mainly for platform code, hence the
-> "builtin only" necessity, and if I'm right a part of your cover letter
-> could very well fit within this patch's commit message.
-
-Apart from the missing MODULE_* tags and symbol exports, there's nothing
-whic prohibits it becoming a module.
-
-> > +static void gpio_reg_set_multiple(struct gpio_chip *gc, unsigned long *mask,
-> > +	unsigned long *bits)
-> > +{
-> > +	struct gpio_reg *r = to_gpio_reg(gc);
-> > +	unsigned long flags;
-> > +
-> > +	spin_lock_irqsave(&r->lock, flags);
-> > +	r->out = (r->out & ~*mask) | *bits;
-> Shouldn't this be :
-> 	r->out = (r->out & ~*mask) | (*bits & *mask);
-
-Possibly, but the latter is redundant when used through gpiolib.
-
-> > diff --git a/include/linux/gpio-reg.h b/include/linux/gpio-reg.h
-> > new file mode 100644
-> > index 000000000000..0352bec7319a
-> > --- /dev/null
-> > +++ b/include/linux/gpio-reg.h
-> > @@ -0,0 +1,12 @@
-> > +#ifndef GPIO_REG_H
-> > +#define GPIO_REG_H
-> > +
-> > +struct device;
-> > +
-> > +struct gpio_chip *gpio_reg_init(struct device *dev, void __iomem *reg,
-> > +	int base, int num, const char *label, u32 direction, u32 def_out,
-> > +	const char *const *names);
-> Maybe this one would deserve a doxygen comment ?
-
-Maybe, but I've been told not to put such comments in header files.
-I've already spent the last two weeks on this stuff (at the expense
-of reading mail), I've not got around to thinking about any kind of
-documentation.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a306795a7450..b9d5a9d4eee6 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1027,6 +1027,7 @@ S:        Maintained
+>  F:     arch/arm/mach-aspeed/
+>  F:     arch/arm/boot/dts/aspeed-*
+>  F:     drivers/*/*aspeed*
+> +F:     Documentation/devicetree/bindings/*/*aspeed*
+>
+>  ARM/ATMEL AT91RM9200, AT91SAM9 AND SAMA5 SOC SUPPORT
+>  M:     Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
+> --
+> 2.9.3
+>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
