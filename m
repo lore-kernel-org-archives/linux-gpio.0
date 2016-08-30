@@ -1,62 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 05/33] gpio: add generic single-register fixed-direction
- GPIO driver
-Date: Tue, 30 Aug 2016 23:25:19 +0200
-Message-ID: <CACRpkdZJy9gZwH9__qXAf6nURN7xV6CbOaGC-JL6X5rDHN55VQ@mail.gmail.com>
-References: <20160829102328.GA28796@n2100.armlinux.org.uk> <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk>
+Subject: Re: [RFC PATCH 00/33] SA11x0/PXA GPIO rework (Core + PCMCIA only)
+Date: Tue, 30 Aug 2016 23:31:58 +0200
+Message-ID: <CACRpkdYuAh1r+N_yJkb9G24Y4zVvEdR8=U-K7etCQvuSZtr+6g@mail.gmail.com>
+References: <20160829100232.GC1041@n2100.armlinux.org.uk> <20160829102328.GA28796@n2100.armlinux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:35618 "EHLO
-        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753220AbcH3VZV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Aug 2016 17:25:21 -0400
-Received: by mail-oi0-f42.google.com with SMTP id p186so9678279oia.2
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Aug 2016 14:25:20 -0700 (PDT)
-In-Reply-To: <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:33796 "EHLO
+        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751608AbcH3Vb7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Aug 2016 17:31:59 -0400
+Received: by mail-oi0-f44.google.com with SMTP id l203so44928487oib.1
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Aug 2016 14:31:59 -0700 (PDT)
+In-Reply-To: <20160829102328.GA28796@n2100.armlinux.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King <rmk+kernel@armlinux.org.uk>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
 Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-On Mon, Aug 29, 2016 at 12:24 PM, Russell King
-<rmk+kernel@armlinux.org.uk> wrote:
+On Mon, Aug 29, 2016 at 12:23 PM, Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
 
-> Add a simple, generic, single register fixed-direction GPIO driver.
-> This is able to support a single register where a fixed number of
-> bits are used for input and a fixed number of bits used for output.
->
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> Following on from the PCMCIA fixes, this series reworks GPIO on SA11x0
+> and PXA platforms.  This is a subset of a larger series, which I'm
+> splitting up due to its size.  This part contains the base and PCMCIA
+> updates.  Further updates for IrDA drivers, DMA engine, serial, and
+> ethernet will follow in time.
 
-Clever, I like it!
+For all the GPIO patches:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
->  include/linux/gpio-reg.h |  12 ++++
+With the smallish changes needed to patch 5/33 that one is acked too.
 
-Can we put this in include/linux/gpio/gpio-reg.h?
+In fact I would ACK it anyway, because the net total cleanup is so
+nice on the kernel at large... SA11x0 has never been prettier than
+after this series.
 
-I try to do some scopeing to <linux/gpio/*> there.
-
-> +#define to_gpio_reg(x) container_of(x, struct gpio_reg, gc)
-
-You don't need that trickery anymore, just:
-
-> +static int gpio_reg_get_direction(struct gpio_chip *gc, unsigned offset)
-> +{
-> +       struct gpio_reg *r = to_gpio_reg(gc);
-
-struct gpio_reg *r = gpiochip_get_data(gc);
-
-(applied everywhere)
-
-> +       if (dev)
-> +               ret = devm_gpiochip_add_data(dev, &r->gc, r);
-> +       else
-> +               ret = gpiochip_add_data(&r->gc, r);
-
-Aha both device and device-less, I see.
-
-Apart from that it looks nice, any other questionmarks were
-fixed in the other replies.
+I suspect you want to keep the series together and queue it in the ARM
+tree? Else tell me what to apply in the GPIO tree.
 
 Yours,
 Linus Walleij
