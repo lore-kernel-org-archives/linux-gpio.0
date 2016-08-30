@@ -1,55 +1,92 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH 05/33] gpio: add generic single-register fixed-direction
- GPIO driver
-Date: Tue, 30 Aug 2016 08:41:06 +0100
-Message-ID: <20160830074105.GJ1041@n2100.armlinux.org.uk>
-References: <20160829102328.GA28796@n2100.armlinux.org.uk>
- <87eg57e54l.fsf@belgarion.home>
- <20160829231232.GI1041@n2100.armlinux.org.uk>
- <1472537283.46556776@f170.i.mail.ru>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: [PATCH v3 0/8] aspeed: Add pinctrl and gpio drivers
+Date: Tue, 30 Aug 2016 17:24:19 +0930
+Message-ID: <20160830075427.11493-1-andrew@aj.id.au>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:35437 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752756AbcH3HlV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Aug 2016 03:41:21 -0400
-Content-Disposition: inline
-In-Reply-To: <1472537283.46556776@f170.i.mail.ru>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:40308 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751629AbcH3Hys (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 30 Aug 2016 03:54:48 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-pcmcia@lists.infradead.org, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-gpio@vger.kernel.org, Kristoffer Ericson <kristoffer.ericson@gmail.com>, linux-arm-kernel@lists.infradead.org, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>
+To: Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>
 
-On Tue, Aug 30, 2016 at 09:08:03AM +0300, Alexander Shiyan wrote:
-> >Вторник, 30 августа 2016, 2:12 +03:00 от Russell King - ARM Linux <linux@armlinux.org.uk>:
-> >
-> >On Mon, Aug 29, 2016 at 09:39:54PM +0200, Robert Jarzmik wrote:
-> >> Hi Russell,
-> >> 
-> >> Russell King < rmk+kernel@armlinux.org.uk > writes:
-> >> 
-> >> > Add a simple, generic, single register fixed-direction GPIO driver.
-> >> > This is able to support a single register where a fixed number of
-> >> > bits are used for input and a fixed number of bits used for output.
-> >> >
-> >> > Signed-off-by: Russell King < rmk+kernel@armlinux.org.uk >
-> 
-> There is a GPIO driver which already performs these tasks.
-> Plaease take a look on the gpio-74xx-mmio driver.
+Hi all,
 
-I did, and no it doesn't, because:
+Here's v3 of the Aspeed pinctrl and gpio driver patches, which aims to address
+the review comments on v2:
 
-1. It is either all-in or all-out, it doesn't support a mixture of
-   fixed-directions for a single register.
-2. It is DT-only, I need it for legacy platforms.
-3. It uses the bgpio stuff, which is unsuitable for reasons already
-   covered in a previous reply.
+  https://lkml.org/lkml/2016/8/19/394
 
-So, gpio-74xx-mmio is unsuitable.
+The combined series has been tested with both the AST2400 (g4) and AST2500 (g5)
+SoCs on OpenPOWER Palmetto and Aspeed AST2500 EVB machines respectively, and
+similarly in QEMU with the palmetto-bmc and ast2500-evb machines[1].
+
+Since v2:
+
+* Add interrupt-controller as a required property to gpio devicetree node
+* Drop unit address in pinctrl devicetree example
+* PINCTRL_ASPEED depends on MFD_SYSCON rather than selecting it
+* Use regmap_update_bits() where possible
+
+Since v1:
+
+* Split the series in two: driver and SoC patches.
+* Update devicetree bindings documentation
+* Add documentation for aspeed pinctrl core functions
+* Fix bugs in existing signal descriptors
+* Add a number of pin and mux function declarations
+* Provide debug information on unexpected conditions
+
+Cheers,
+
+Andrew
+
+[1] https://lists.gnu.org/archive/html/qemu-arm/2016-08/msg00019.html
+
+---
+
+Andrew Jeffery (7):
+  MAINTAINERS: Add glob for Aspeed devicetree bindings
+  syscon: dt-bindings: Add documentation for Aspeed system control units
+  pinctrl: dt-bindings: Add documentation for Aspeed pin controllers
+  gpio: dt-bindings: Add documentation for Aspeed GPIO controllers
+  pinctrl: Add core support for Aspeed SoCs
+  pinctrl: Add pinctrl-aspeed-g4 driver
+  pinctrl: Add pinctrl-aspeed-g5 driver
+
+Joel Stanley (1):
+  gpio: Add Aspeed driver
+
+ .../devicetree/bindings/gpio/gpio-aspeed.txt       |   36 +
+ .../devicetree/bindings/mfd/aspeed-scu.txt         |   18 +
+ .../devicetree/bindings/pinctrl/pinctrl-aspeed.txt |   65 ++
+ MAINTAINERS                                        |    2 +
+ drivers/gpio/Kconfig                               |    7 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-aspeed.c                         |  457 ++++++++
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/aspeed/Kconfig                     |   24 +
+ drivers/pinctrl/aspeed/Makefile                    |    6 +
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c         | 1231 ++++++++++++++++++++
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c         |  808 +++++++++++++
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c            |  498 ++++++++
+ drivers/pinctrl/aspeed/pinctrl-aspeed.h            |  569 +++++++++
+ 15 files changed, 3724 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-aspeed.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/aspeed-scu.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt
+ create mode 100644 drivers/gpio/gpio-aspeed.c
+ create mode 100644 drivers/pinctrl/aspeed/Kconfig
+ create mode 100644 drivers/pinctrl/aspeed/Makefile
+ create mode 100644 drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
+ create mode 100644 drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
+ create mode 100644 drivers/pinctrl/aspeed/pinctrl-aspeed.c
+ create mode 100644 drivers/pinctrl/aspeed/pinctrl-aspeed.h
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.9.3.1.g0db844e
+
