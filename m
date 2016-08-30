@@ -1,56 +1,62 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH 05/33] gpio: add generic single-register fixed-direction
  GPIO driver
-Date: Tue, 30 Aug 2016 19:46:12 +0100
-Message-ID: <20160830184612.GO1041@n2100.armlinux.org.uk>
-References: <20160829102328.GA28796@n2100.armlinux.org.uk>
- <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk>
- <87eg57e54l.fsf@belgarion.home>
- <20160830091805.GL1041@n2100.armlinux.org.uk>
- <87k2eycip0.fsf@belgarion.home>
+Date: Tue, 30 Aug 2016 23:25:19 +0200
+Message-ID: <CACRpkdZJy9gZwH9__qXAf6nURN7xV6CbOaGC-JL6X5rDHN55VQ@mail.gmail.com>
+References: <20160829102328.GA28796@n2100.armlinux.org.uk> <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:39430 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756381AbcH3SqW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Aug 2016 14:46:22 -0400
-Content-Disposition: inline
-In-Reply-To: <87k2eycip0.fsf@belgarion.home>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:35618 "EHLO
+        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753220AbcH3VZV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Aug 2016 17:25:21 -0400
+Received: by mail-oi0-f42.google.com with SMTP id p186so9678279oia.2
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Aug 2016 14:25:20 -0700 (PDT)
+In-Reply-To: <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-On Tue, Aug 30, 2016 at 06:42:03PM +0200, Robert Jarzmik wrote:
-> Russell King - ARM Linux <linux@armlinux.org.uk> writes:
-> 
-> > On Mon, Aug 29, 2016 at 09:39:54PM +0200, Robert Jarzmik wrote:
-> >> Maybe this one would deserve a doxygen comment ?
-> >
-> > Does this solve it?
-> Oh yes, that's very nice, especially the "1 = in" for which I have always a
-> doubt.
-> 
-> Reviewed-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> 
-> I hope to have an "attempt" to test all your series on the lubbock board in the
-> next days. The "attempt" part is because last time I checked pcmcia support was
-> broken on lubbock (ie. CONFIG_PCMCIA_SA1111 activated implies an Oops), and I
-> don't remember having repaired it (and it's disabled on my test farm which is a
-> sign I was not very confident about this part).
-> 
-> If you happen to have somewhere a branch I can pull, with all your series (at
-> least "[RFC PATCH 00/33] SA11x0/PXA GPIO rework (Core + PCMCIA only)" and
-> "[PATCH 0/8] SA11x0/PXA remainder & cleanups"), that would spare me the multiple
-> git-am to make the test(s).
+On Mon, Aug 29, 2016 at 12:24 PM, Russell King
+<rmk+kernel@armlinux.org.uk> wrote:
 
-If you can wait a day or two, I'll push a branch out for everything in
-all these multiple series.
+> Add a simple, generic, single register fixed-direction GPIO driver.
+> This is able to support a single register where a fixed number of
+> bits are used for input and a fixed number of bits used for output.
+>
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 
-Thanks.
+Clever, I like it!
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+>  include/linux/gpio-reg.h |  12 ++++
+
+Can we put this in include/linux/gpio/gpio-reg.h?
+
+I try to do some scopeing to <linux/gpio/*> there.
+
+> +#define to_gpio_reg(x) container_of(x, struct gpio_reg, gc)
+
+You don't need that trickery anymore, just:
+
+> +static int gpio_reg_get_direction(struct gpio_chip *gc, unsigned offset)
+> +{
+> +       struct gpio_reg *r = to_gpio_reg(gc);
+
+struct gpio_reg *r = gpiochip_get_data(gc);
+
+(applied everywhere)
+
+> +       if (dev)
+> +               ret = devm_gpiochip_add_data(dev, &r->gc, r);
+> +       else
+> +               ret = gpiochip_add_data(&r->gc, r);
+
+Aha both device and device-less, I see.
+
+Apart from that it looks nice, any other questionmarks were
+fixed in the other replies.
+
+Yours,
+Linus Walleij
