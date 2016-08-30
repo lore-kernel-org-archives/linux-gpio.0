@@ -1,63 +1,73 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH v3 4/8] gpio: dt-bindings: Add documentation for Aspeed GPIO controllers
-Date: Tue, 30 Aug 2016 17:24:23 +0930
-Message-ID: <20160830075427.11493-5-andrew@aj.id.au>
-References: <20160830075427.11493-1-andrew@aj.id.au>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160830075427.11493-1-andrew@aj.id.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: [PATCH 05/33] gpio: add generic single-register fixed-direction
+ GPIO driver
+Date: Tue, 30 Aug 2016 10:18:06 +0100
+Message-ID: <20160830091805.GL1041@n2100.armlinux.org.uk>
+References: <20160829102328.GA28796@n2100.armlinux.org.uk>
+ <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk>
+ <87eg57e54l.fsf@belgarion.home>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:36012 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757571AbcH3JSR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Aug 2016 05:18:17 -0400
+Content-Disposition: inline
+In-Reply-To: <87eg57e54l.fsf@belgarion.home>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-Acked-by: Joel Stanley <joel@jms.id.au>
----
- .../devicetree/bindings/gpio/gpio-aspeed.txt       | 36 ++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-aspeed.txt
+On Mon, Aug 29, 2016 at 09:39:54PM +0200, Robert Jarzmik wrote:
+> Maybe this one would deserve a doxygen comment ?
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-aspeed.txt b/Documentation/devicetree/bindings/gpio/gpio-aspeed.txt
-new file mode 100644
-index 000000000000..09f26cac18d1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-aspeed.txt
-@@ -0,0 +1,36 @@
-+Aspeed GPIO controller Device Tree Bindings
-+-------------------------------------------
-+
-+Required properties:
-+- #gpio-cells 		: Should be two
-+			  - First cell is the GPIO line number
-+			  - Second cell is used to specify optional
-+			    parameters (unused)
-+
-+- compatible		: Either "aspeed,ast2400-gpio" or "aspeed,ast2500-gpio"
-+
-+- reg			: Address and length of the register set for the device
-+- gpio-controller	: Marks the device node as a GPIO controller.
-+- interrupts		: Interrupt specifier (see interrupt bindings for
-+			  details)
-+- interrupt-controller	: Mark the GPIO controller as an interrupt-controller
-+
-+Optional properties:
-+
-+- interrupt-parent     : The parent interrupt controller, optional if inherited
-+
-+The gpio and interrupt properties are further described in their respective
-+bindings documentation:
-+
-+- Documentation/devicetree/bindings/gpio/gpio.txt
-+- Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-+
-+  Example:
-+	gpio@1e780000 {
-+		#gpio-cells = <2>;
-+		compatible = "aspeed,ast2400-gpio";
-+		gpio-controller;
-+		interrupts = <20>;
-+		reg = <0x1e780000 0x1000>;
-+		interrupt-controller;
-+	};
+Does this solve it?
+
+diff --git a/drivers/gpio/gpio-reg.c b/drivers/gpio/gpio-reg.c
+index fc7e0a395f9f..b91488ec122c 100644
+--- a/drivers/gpio/gpio-reg.c
++++ b/drivers/gpio/gpio-reg.c
+@@ -1,3 +1,12 @@
++/*
++ * gpio-reg: single register individually fixed-direction GPIOs
++ *
++ * Copyright (C) 2016 Russell King
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ */
+ #include <linux/gpio/driver.h>
+ #include <linux/gpio-reg.h>
+ #include <linux/io.h>
+@@ -87,6 +96,22 @@ static void gpio_reg_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+ 	spin_unlock_irqrestore(&r->lock, flags);
+ }
+ 
++/**
++ * gpio_reg_init - add a fixed in/out register as gpio
++ * @dev: optional struct device associated with this register
++ * @base: start gpio number, or -1 to allocate
++ * @num: number of GPIOs, maximum 32
++ * @label: GPIO chip label
++ * @direction: bitmask of fixed direction, one per GPIO signal, 1 = in
++ * @def_out: initial GPIO output value
++ * @names: array of %num strings describing each GPIO signal
++ *
++ * Add a single-register GPIO device containing up to 32 GPIO signals,
++ * where each GPIO has a fixed input or output configuration.  Only
++ * input GPIOs are assumed to be readable from the register, and only
++ * then after a double-read.  Output values are assumed not to be
++ * readable.
++ */
+ struct gpio_chip *gpio_reg_init(struct device *dev, void __iomem *reg,
+ 	int base, int num, const char *label, u32 direction, u32 def_out,
+ 	const char *const *names)
+
+
 -- 
-2.9.3.1.g0db844e
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
