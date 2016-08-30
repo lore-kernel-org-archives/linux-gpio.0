@@ -1,43 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH 00/33] SA11x0/PXA GPIO rework (Core + PCMCIA only)
-Date: Tue, 30 Aug 2016 23:31:58 +0200
-Message-ID: <CACRpkdYuAh1r+N_yJkb9G24Y4zVvEdR8=U-K7etCQvuSZtr+6g@mail.gmail.com>
-References: <20160829100232.GC1041@n2100.armlinux.org.uk> <20160829102328.GA28796@n2100.armlinux.org.uk>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH 05/33] gpio: add generic single-register fixed-direction
+ GPIO driver
+Date: Tue, 30 Aug 2016 23:32:16 +0200
+Message-ID: <87fupmc59b.fsf@belgarion.home>
+References: <20160829102328.GA28796@n2100.armlinux.org.uk>
+ <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk>
+ <87eg57e54l.fsf@belgarion.home>
+ <20160830091805.GL1041@n2100.armlinux.org.uk>
+ <87k2eycip0.fsf@belgarion.home>
+ <20160830184612.GO1041@n2100.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:33796 "EHLO
-        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751608AbcH3Vb7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Aug 2016 17:31:59 -0400
-Received: by mail-oi0-f44.google.com with SMTP id l203so44928487oib.1
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Aug 2016 14:31:59 -0700 (PDT)
-In-Reply-To: <20160829102328.GA28796@n2100.armlinux.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20160830184612.GO1041@n2100.armlinux.org.uk> (Russell King's
+ message of "Tue, 30 Aug 2016 19:46:12 +0100")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-pcmcia@lists.infradead.org, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-gpio@vger.kernel.org, Kristoffer Ericson <kristoffer.ericson@gmail.com>, linux-arm-kernel@lists.infradead.org, Daniel Mack <daniel@zonque.org>
+List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Aug 29, 2016 at 12:23 PM, Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
+Russell King - ARM Linux <linux@armlinux.org.uk> writes:
 
-> Following on from the PCMCIA fixes, this series reworks GPIO on SA11x0
-> and PXA platforms.  This is a subset of a larger series, which I'm
-> splitting up due to its size.  This part contains the base and PCMCIA
-> updates.  Further updates for IrDA drivers, DMA engine, serial, and
-> ethernet will follow in time.
+> If you can wait a day or two, I'll push a branch out for everything in
+> all these multiple series.
+Sure, just ping me when you have something.
 
-For all the GPIO patches:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Cheers.
 
-With the smallish changes needed to patch 5/33 that one is acked too.
-
-In fact I would ACK it anyway, because the net total cleanup is so
-nice on the kernel at large... SA11x0 has never been prettier than
-after this series.
-
-I suspect you want to keep the series together and queue it in the ARM
-tree? Else tell me what to apply in the GPIO tree.
-
-Yours,
-Linus Walleij
+-- 
+Robert
