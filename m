@@ -1,66 +1,47 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 1/6] backlight: pwm_bl: Handle gpio that can sleep
-Date: Wed, 31 Aug 2016 13:25:14 +0100
-Message-ID: <20160831122514.GE9415@dell>
-References: <20160831081817.5191-1-maxime.ripard@free-electrons.com>
- <20160831081817.5191-2-maxime.ripard@free-electrons.com>
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@intel.com>
+Subject: [PATCH] pinctrl: intel: merrifield: fix dup size in probe
+Date: Wed, 31 Aug 2016 14:30:50 +0200
+Message-ID: <20160831123050.13202-1-vincent.stehle@intel.com>
+References: <1466678976-52598-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:37946 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759680AbcHaMX3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Aug 2016 08:23:29 -0400
-Received: by mail-wm0-f46.google.com with SMTP id 1so37538606wmz.1
-        for <linux-gpio@vger.kernel.org>; Wed, 31 Aug 2016 05:23:28 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20160831081817.5191-2-maxime.ripard@free-electrons.com>
+Received: from mga07.intel.com ([134.134.136.100]:44084 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933992AbcHaMdN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 31 Aug 2016 08:33:13 -0400
+In-Reply-To: <1466678976-52598-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Jingoo Han <jingoohan1@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
+To: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Wed, 31 Aug 2016, Maxime Ripard wrote:
+In function mrfld_pinctrl_probe(), when duplicating the mrfld_families
+array the requested memory region length is multiplied once too many by the
+number of elements in the original array. Fix this to spare some memory.
 
-> Some backlight GPIOs might be connected to some i2c based expanders whose
-> access might sleep.
-> 
-> Since it's not in any critical path, use the cansleep variant of the GPIO
-> API.
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/video/backlight/pwm_bl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Fixes: 4e80c8f505741cbd ("pinctrl: intel: Add Intel Merrifield pin controller support")
+Signed-off-by: Vincent Stehlé <vincent.stehle@intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/intel/pinctrl-merrifield.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks.
-
-> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-> index b2b366bb0f97..12614006211e 100644
-> --- a/drivers/video/backlight/pwm_bl.c
-> +++ b/drivers/video/backlight/pwm_bl.c
-> @@ -55,7 +55,7 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
->  		dev_err(pb->dev, "failed to enable power supply\n");
->  
->  	if (pb->enable_gpio)
-> -		gpiod_set_value(pb->enable_gpio, 1);
-> +		gpiod_set_value_cansleep(pb->enable_gpio, 1);
->  
->  	pwm_enable(pb->pwm);
->  	pb->enabled = true;
-> @@ -70,7 +70,7 @@ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
->  	pwm_disable(pb->pwm);
->  
->  	if (pb->enable_gpio)
-> -		gpiod_set_value(pb->enable_gpio, 0);
-> +		gpiod_set_value_cansleep(pb->enable_gpio, 0);
->  
->  	regulator_disable(pb->power_supply);
->  	pb->enabled = false;
-
+diff --git a/drivers/pinctrl/intel/pinctrl-merrifield.c b/drivers/pinctrl/intel/pinctrl-merrifield.c
+index 7fb7656..7826c7f 100644
+--- a/drivers/pinctrl/intel/pinctrl-merrifield.c
++++ b/drivers/pinctrl/intel/pinctrl-merrifield.c
+@@ -854,7 +854,7 @@ static int mrfld_pinctrl_probe(struct platform_device *pdev)
+ 	 */
+ 	nfamilies = ARRAY_SIZE(mrfld_families),
+ 	families = devm_kmemdup(&pdev->dev, mrfld_families,
+-					    nfamilies * sizeof(mrfld_families),
++					    sizeof(mrfld_families),
+ 					    GFP_KERNEL);
+ 	if (!families)
+ 		return -ENOMEM;
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.9.3
+
