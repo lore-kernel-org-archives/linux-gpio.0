@@ -1,24 +1,50 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v2 2/4] ARM: dts: sun8i: Add PWM controller node in H3
-Date: Wed, 31 Aug 2016 16:42:59 +0800
-Message-ID: <CAGb2v67tEt0u+Dr08zkDqBwWfZj3b2tKExzYehhsmCrQz33eSg@mail.gmail.com>
-References: <20160831082520.25962-1-woogyom.kim@gmail.com> <20160831082520.25962-3-woogyom.kim@gmail.com>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: [PATCH 05/33] gpio: add generic single-register fixed-direction
+ GPIO driver
+Date: Wed, 31 Aug 2016 09:49:38 +0100
+Message-ID: <20160831084938.GQ1041@n2100.armlinux.org.uk>
+References: <20160829102328.GA28796@n2100.armlinux.org.uk>
+ <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk>
+ <87eg57e54l.fsf@belgarion.home>
+ <20160830091805.GL1041@n2100.armlinux.org.uk>
+ <87k2eycip0.fsf@belgarion.home>
+ <20160830184612.GO1041@n2100.armlinux.org.uk>
+ <87fupmc59b.fsf@belgarion.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160831082520.25962-3-woogyom.kim@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Milo Kim <woogyom.kim@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, devicetree <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-pwm@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pcmcia-bounces+glkpd-linux-pcmcia=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <87fupmc59b.fsf@belgarion.home>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-pcmcia>,
+ <mailto:linux-pcmcia-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-pcmcia/>
+List-Post: <mailto:linux-pcmcia@lists.infradead.org>
+List-Help: <mailto:linux-pcmcia-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-pcmcia>,
+ <mailto:linux-pcmcia-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-pcmcia" <linux-pcmcia-bounces@lists.infradead.org>
+Errors-To: linux-pcmcia-bounces+glkpd-linux-pcmcia=m.gmane.org@lists.infradead.org
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-pcmcia@lists.infradead.org, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-gpio@vger.kernel.org, Kristoffer Ericson <kristoffer.ericson@gmail.com>, linux-arm-kernel@lists.infradead.org, Daniel Mack <daniel@zonque.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Aug 31, 2016 at 4:25 PM, Milo Kim <woogyom.kim@gmail.com> wrote:
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Milo Kim <woogyom.kim@gmail.com>
+On Tue, Aug 30, 2016 at 11:32:16PM +0200, Robert Jarzmik wrote:
+> Russell King - ARM Linux <linux@armlinux.org.uk> writes:
+> 
+> > If you can wait a day or two, I'll push a branch out for everything in
+> > all these multiple series.
+> Sure, just ping me when you have something.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+git://git.armlinux.org.uk/~rmk/linux-arm.git sa1100
+
+should get you something suitable to test.  It's based on 4.7-rc3 plus
+my fixes branch.
+
+It would be great to have this tested on Lubbock, and get the PCMCIA
+issues fixed.  Maybe we can look at converting mainstone as well?
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
