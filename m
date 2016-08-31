@@ -1,58 +1,81 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: intel: merrifield: fix dup size in probe
-Date: Wed, 31 Aug 2016 16:54:49 +0300
-Message-ID: <1472651689.4887.412.camel@linux.intel.com>
-References: <1466678976-52598-1-git-send-email-andriy.shevchenko@linux.intel.com>
-         <20160831123050.13202-1-vincent.stehle@intel.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [GIT PULL] Immutable branch between MFD, GPIO and Regulator due
+ for the v4.9 merge window
+Date: Wed, 31 Aug 2016 16:21:09 +0100
+Message-ID: <20160831152109.GQ9415@dell>
+References: <1472633892-8261-1-git-send-email-j-keerthy@ti.com>
+ <20160831122435.GD9415@dell>
+ <8e1378ce-b757-39f9-7c36-707f2d9db21e@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160831123050.13202-1-vincent.stehle@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vincent =?ISO-8859-1?Q?Stehl=E9?= <vincent.stehle@intel.com>, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:36546 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935097AbcHaPTX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Aug 2016 11:19:23 -0400
+Received: by mail-wm0-f54.google.com with SMTP id c133so37462331wmd.1
+        for <linux-gpio@vger.kernel.org>; Wed, 31 Aug 2016 08:19:22 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <8e1378ce-b757-39f9-7c36-707f2d9db21e@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Keerthy <a0393675@ti.com>
+Cc: Keerthy <j-keerthy@ti.com>, broonie@kernel.org, linus.walleij@linaro.org, linux-omap@vger.kernel.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2016-08-31 at 14:30 +0200, Vincent Stehlé wrote:
-> In function mrfld_pinctrl_probe(), when duplicating the mrfld_families
-> array the requested memory region length is multiplied once too many
-> by the
-> number of elements in the original array. Fix this to spare some
-> memory.
+On Wed, 31 Aug 2016, Keerthy wrote:
 
-Good catch!
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-P.S. Linus, perhaps this is material for -rc5.
-
+> On Wednesday 31 August 2016 05:54 PM, Lee Jones wrote:
+> > Enjoy!
 > 
-> Fixes: 4e80c8f505741cbd ("pinctrl: intel: Add Intel Merrifield pin
-> controller support")
-> Signed-off-by: Vincent Stehlé <vincent.stehle@intel.com>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/pinctrl/intel/pinctrl-merrifield.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Thanks! Just curious to know where to pull the below patch from:
 > 
-> diff --git a/drivers/pinctrl/intel/pinctrl-merrifield.c
-> b/drivers/pinctrl/intel/pinctrl-merrifield.c
-> index 7fb7656..7826c7f 100644
-> --- a/drivers/pinctrl/intel/pinctrl-merrifield.c
-> +++ b/drivers/pinctrl/intel/pinctrl-merrifield.c
-> @@ -854,7 +854,7 @@ static int mrfld_pinctrl_probe(struct
-> platform_device *pdev)
->  	 */
->  	nfamilies = ARRAY_SIZE(mrfld_families),
->  	families = devm_kmemdup(&pdev->dev, mrfld_families,
-> -					    nfamilies *
-> sizeof(mrfld_families),
-> +					    sizeof(mrfld_families),
->  					    GFP_KERNEL);
->  	if (!families)
->  		return -ENOMEM;
+> https://patchwork.kernel.org/patch/9266665/
+> 
+> I checked in couple of other branches in your tree could not find the above
+> patch.
+
+The name has changed.  Pull my MFD branch and look for:
+
+  ea7f225 Documentation: mfd: Add DT bindings for the LP873X
+
+> > The following changes since commit 694d0d0bb2030d2e36df73e2d23d5770511dbc8d:
+> > 
+> >   Linux 4.8-rc2 (2016-08-14 19:11:36 -0700)
+> > 
+> > are available in the git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-gpio-regulator-v4.9
+> > 
+> > for you to fetch changes up to f618ed218dc01207882a8f02b1310c7daaf5156a:
+> > 
+> >   regulator: lp873x: Change the MFD config option as per latest naming (2016-08-31 13:20:44 +0100)
+> > 
+> > ----------------------------------------------------------------
+> > Immutable branch between MFD, GPIO and Regulator due for the v4.9 merge window
+> > 
+> > ----------------------------------------------------------------
+> > Keerthy (3):
+> >       mfd: lp873x: Add lp873x PMIC support
+> >       gpio: lp873x: Add support for General Purpose Outputs
+> >       regulator: lp873x: Change the MFD config option as per latest naming
+> > 
+> >  drivers/gpio/Kconfig       |  10 ++
+> >  drivers/gpio/Makefile      |   1 +
+> >  drivers/gpio/gpio-lp873x.c | 193 ++++++++++++++++++++++++++++++++
+> >  drivers/mfd/Kconfig        |  14 +++
+> >  drivers/mfd/Makefile       |   2 +
+> >  drivers/mfd/lp873x.c       |  99 +++++++++++++++++
+> >  drivers/regulator/Kconfig  |   2 +-
+> >  include/linux/mfd/lp873x.h | 269 +++++++++++++++++++++++++++++++++++++++++++++
+> >  8 files changed, 589 insertions(+), 1 deletion(-)
+> >  create mode 100644 drivers/gpio/gpio-lp873x.c
+> >  create mode 100644 drivers/mfd/lp873x.c
+> >  create mode 100644 include/linux/mfd/lp873x.h
+> > 
 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
