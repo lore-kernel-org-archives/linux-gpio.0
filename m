@@ -1,71 +1,45 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 4/6] ARM: sunxi: Support the Nextthing GR8
-Date: Wed, 31 Aug 2016 16:25:27 +0800
-Message-ID: <CAGb2v66CDdSJMN4STHug1bGU2fnRK=Y24kwKS_8EtD6PZg3T-A@mail.gmail.com>
-References: <20160831081817.5191-1-maxime.ripard@free-electrons.com> <20160831081817.5191-5-maxime.ripard@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+From: Milo Kim <woogyom.kim@gmail.com>
+Subject: [PATCH v2 1/4] ARM: dts: sun8i: Add PWM pin in H3
+Date: Wed, 31 Aug 2016 17:25:17 +0900
+Message-ID: <20160831082520.25962-2-woogyom.kim@gmail.com>
+References: <20160831082520.25962-1-woogyom.kim@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160831081817.5191-5-maxime.ripard@free-electrons.com>
+In-Reply-To: <20160831082520.25962-1-woogyom.kim@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
+To: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Milo Kim <woogyom.kim@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Aug 31, 2016 at 4:18 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The GR8 is an SoC made by Nextthing Co, loosely based on the sun5i family.
->
-> It has a number of new controllers compared to the A10s and A13 (SPDIF, I2S),
-> but some controllers missing too (Ethernet, less I2C, less UARTs).
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
->  MAINTAINERS                                     | 1 +
->  arch/arm/mach-sunxi/sunxi.c                     | 1 +
+H3 PA5 pin is assigned for single PWM channel.
 
-Please update Documentation/arm/sunxi/README as well. I don't suppose
-there's a datasheet available?
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Milo Kim <woogyom.kim@gmail.com>
+---
+ arch/arm/boot/dts/sun8i-h3.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-ChenYu
-
->  3 files changed, 3 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
-> index 7e79fcc36b0d..3975d0a0e4c2 100644
-> --- a/Documentation/devicetree/bindings/arm/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/arm/sunxi.txt
-> @@ -14,3 +14,4 @@ using one of the following compatible strings:
->    allwinner,sun8i-a83t
->    allwinner,sun8i-h3
->    allwinner,sun9i-a80
-> +  nextthing,gr8
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 20bb1d00098c..c6a9e6fda1d0 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -982,6 +982,7 @@ M:  Chen-Yu Tsai <wens@csie.org>
->  L:     linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  S:     Maintained
->  N:     sun[x456789]i
-> +F:     arch/arm/boot/dts/gr8*
->
->  ARM/Allwinner SoC Clock Support
->  M:     Emilio López <emilio@elopez.com.ar>
-> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-> index 95dca8c2c9ed..2e2bde271205 100644
-> --- a/arch/arm/mach-sunxi/sunxi.c
-> +++ b/arch/arm/mach-sunxi/sunxi.c
-> @@ -22,6 +22,7 @@ static const char * const sunxi_board_dt_compat[] = {
->         "allwinner,sun5i-a10s",
->         "allwinner,sun5i-a13",
->         "allwinner,sun5i-r8",
-> +       "nextthing,gr8",
->         NULL,
->  };
->
-> --
-> 2.9.2
->
+diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+index fdf9fdb..05d0c4b 100644
+--- a/arch/arm/boot/dts/sun8i-h3.dtsi
++++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+@@ -360,6 +360,13 @@
+ 				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+ 			};
+ 
++			pwm0_pin_a: pwm0@0 {
++				allwinner,pins = "PA5";
++				allwinner,function = "pwm0";
++				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
++			};
++
+ 			uart0_pins_a: uart0@0 {
+ 				allwinner,pins = "PA4", "PA5";
+ 				allwinner,function = "uart0";
+-- 
+2.9.3
