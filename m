@@ -1,81 +1,63 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [GIT PULL] Immutable branch between MFD, GPIO and Regulator due
- for the v4.9 merge window
-Date: Wed, 31 Aug 2016 16:21:09 +0100
-Message-ID: <20160831152109.GQ9415@dell>
-References: <1472633892-8261-1-git-send-email-j-keerthy@ti.com>
- <20160831122435.GD9415@dell>
- <8e1378ce-b757-39f9-7c36-707f2d9db21e@ti.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v2 2/4] ARM: dts: sun8i: Add PWM controller node in H3
+Date: Wed, 31 Aug 2016 18:16:48 +0200
+Message-ID: <20160831161648.GH14379@lukather>
+References: <20160831082520.25962-1-woogyom.kim@gmail.com>
+ <20160831082520.25962-3-woogyom.kim@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:36546 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935097AbcHaPTX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Aug 2016 11:19:23 -0400
-Received: by mail-wm0-f54.google.com with SMTP id c133so37462331wmd.1
-        for <linux-gpio@vger.kernel.org>; Wed, 31 Aug 2016 08:19:22 -0700 (PDT)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="tKtFalx5NIx0HZ72"
+Return-path: <linux-pwm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <8e1378ce-b757-39f9-7c36-707f2d9db21e@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <20160831082520.25962-3-woogyom.kim@gmail.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Milo Kim <woogyom.kim@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Keerthy <a0393675@ti.com>
-Cc: Keerthy <j-keerthy@ti.com>, broonie@kernel.org, linus.walleij@linaro.org, linux-omap@vger.kernel.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 31 Aug 2016, Keerthy wrote:
 
-> On Wednesday 31 August 2016 05:54 PM, Lee Jones wrote:
-> > Enjoy!
-> 
-> Thanks! Just curious to know where to pull the below patch from:
-> 
-> https://patchwork.kernel.org/patch/9266665/
-> 
-> I checked in couple of other branches in your tree could not find the above
-> patch.
+--tKtFalx5NIx0HZ72
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The name has changed.  Pull my MFD branch and look for:
+On Wed, Aug 31, 2016 at 05:25:18PM +0900, Milo Kim wrote:
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Milo Kim <woogyom.kim@gmail.com>
 
-  ea7f225 Documentation: mfd: Add DT bindings for the LP873X
+Applied, thanks
 
-> > The following changes since commit 694d0d0bb2030d2e36df73e2d23d5770511dbc8d:
-> > 
-> >   Linux 4.8-rc2 (2016-08-14 19:11:36 -0700)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-gpio-regulator-v4.9
-> > 
-> > for you to fetch changes up to f618ed218dc01207882a8f02b1310c7daaf5156a:
-> > 
-> >   regulator: lp873x: Change the MFD config option as per latest naming (2016-08-31 13:20:44 +0100)
-> > 
-> > ----------------------------------------------------------------
-> > Immutable branch between MFD, GPIO and Regulator due for the v4.9 merge window
-> > 
-> > ----------------------------------------------------------------
-> > Keerthy (3):
-> >       mfd: lp873x: Add lp873x PMIC support
-> >       gpio: lp873x: Add support for General Purpose Outputs
-> >       regulator: lp873x: Change the MFD config option as per latest naming
-> > 
-> >  drivers/gpio/Kconfig       |  10 ++
-> >  drivers/gpio/Makefile      |   1 +
-> >  drivers/gpio/gpio-lp873x.c | 193 ++++++++++++++++++++++++++++++++
-> >  drivers/mfd/Kconfig        |  14 +++
-> >  drivers/mfd/Makefile       |   2 +
-> >  drivers/mfd/lp873x.c       |  99 +++++++++++++++++
-> >  drivers/regulator/Kconfig  |   2 +-
-> >  include/linux/mfd/lp873x.h | 269 +++++++++++++++++++++++++++++++++++++++++++++
-> >  8 files changed, 589 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/gpio/gpio-lp873x.c
-> >  create mode 100644 drivers/mfd/lp873x.c
-> >  create mode 100644 include/linux/mfd/lp873x.h
-> > 
+Maxime
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--tKtFalx5NIx0HZ72
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXxwLvAAoJEBx+YmzsjxAgqF8QAIID66yQNV5MpJ1n5d8gs4VA
+pxnxK+ccO/M92Ub1MiVm6h7KrauZMGrVCYYPswEu+eAK2dXzOHa+eHH2ZexSInTO
+KABa+w7qXjSA+12GWS5KY9F/fL9p4minyrQAePqkxNyh9pwjjUEbObzXpwJbpaGN
+j3zLdUvOtknJ4ZM3xDnRa24OMLL2LAXLbNK/INPHkfmUpC2cpAvmsg0n+dzfouPt
+Vu/rIUA5y8uMn6A34D38focwlBQrQjBNU7+8IC57UlkkF9xjvTXIyK2fnM6dzvvW
+bQ+Yrw3bIQ1S5D0YSRaf9s0K0cF5y5jeBd4jEKc0QsF6vofW3b+flHQ0PQGxJUva
+WiNNH5eoGII9RKWEJB8MmU5Zu/U3zQ1l4q2oB/CMCq2CgOqnEeK4OOx0JVImfAnh
+ExF73WavkiOk7cDo5680dQi50eNAIL2d7Q1d/uDdT/2nCBBlJpLGAt3uObdc+pub
+7IOMRKJGWd9GPclH/xOKb2HmggMl7ThBajNHs6iBColu0erx3XYECCrVuSnHm0uX
+nfWzkFxFZQSDI08DmI7sJzU3STceC45fwR99BhfPSzUxRKq0zZo1NSnndnpDmjN0
+0zHivYwnPOxAWaAciWh6qWJmeZ8V7VAGZcswbLGS561IJjJwfn7s6lNaOlxopLxX
+tSmiJR8Heh1oLDYwfttU
+=ci+e
+-----END PGP SIGNATURE-----
+
+--tKtFalx5NIx0HZ72--
