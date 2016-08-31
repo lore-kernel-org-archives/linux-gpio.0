@@ -1,55 +1,63 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: [GIT PULL] Immutable branch between MFD, GPIO and Regulator due for
- the v4.9 merge window
-Date: Wed, 31 Aug 2016 13:24:35 +0100
-Message-ID: <20160831122435.GD9415@dell>
-References: <1472633892-8261-1-git-send-email-j-keerthy@ti.com>
+Subject: Re: [PATCH 1/6] backlight: pwm_bl: Handle gpio that can sleep
+Date: Wed, 31 Aug 2016 13:25:14 +0100
+Message-ID: <20160831122514.GE9415@dell>
+References: <20160831081817.5191-1-maxime.ripard@free-electrons.com>
+ <20160831081817.5191-2-maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:37946 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759680AbcHaMX3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Aug 2016 08:23:29 -0400
+Received: by mail-wm0-f46.google.com with SMTP id 1so37538606wmz.1
+        for <linux-gpio@vger.kernel.org>; Wed, 31 Aug 2016 05:23:28 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1472633892-8261-1-git-send-email-j-keerthy@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: broonie@kernel.org, linus.walleij@linaro.org, linux-omap@vger.kernel.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20160831081817.5191-2-maxime.ripard@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Jingoo Han <jingoohan1@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
 
-Enjoy!
+On Wed, 31 Aug 2016, Maxime Ripard wrote:
 
-The following changes since commit 694d0d0bb2030d2e36df73e2d23d5770511dbc8d:
+> Some backlight GPIOs might be connected to some i2c based expanders whose
+> access might sleep.
+> 
+> Since it's not in any critical path, use the cansleep variant of the GPIO
+> API.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/video/backlight/pwm_bl.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-  Linux 4.8-rc2 (2016-08-14 19:11:36 -0700)
+Applied, thanks.
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-gpio-regulator-v4.9
-
-for you to fetch changes up to f618ed218dc01207882a8f02b1310c7daaf5156a:
-
-  regulator: lp873x: Change the MFD config option as per latest naming (2016-08-31 13:20:44 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD, GPIO and Regulator due for the v4.9 merge window
-
-----------------------------------------------------------------
-Keerthy (3):
-      mfd: lp873x: Add lp873x PMIC support
-      gpio: lp873x: Add support for General Purpose Outputs
-      regulator: lp873x: Change the MFD config option as per latest naming
-
- drivers/gpio/Kconfig       |  10 ++
- drivers/gpio/Makefile      |   1 +
- drivers/gpio/gpio-lp873x.c | 193 ++++++++++++++++++++++++++++++++
- drivers/mfd/Kconfig        |  14 +++
- drivers/mfd/Makefile       |   2 +
- drivers/mfd/lp873x.c       |  99 +++++++++++++++++
- drivers/regulator/Kconfig  |   2 +-
- include/linux/mfd/lp873x.h | 269 +++++++++++++++++++++++++++++++++++++++++++++
- 8 files changed, 589 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpio/gpio-lp873x.c
- create mode 100644 drivers/mfd/lp873x.c
- create mode 100644 include/linux/mfd/lp873x.h
+> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> index b2b366bb0f97..12614006211e 100644
+> --- a/drivers/video/backlight/pwm_bl.c
+> +++ b/drivers/video/backlight/pwm_bl.c
+> @@ -55,7 +55,7 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
+>  		dev_err(pb->dev, "failed to enable power supply\n");
+>  
+>  	if (pb->enable_gpio)
+> -		gpiod_set_value(pb->enable_gpio, 1);
+> +		gpiod_set_value_cansleep(pb->enable_gpio, 1);
+>  
+>  	pwm_enable(pb->pwm);
+>  	pb->enabled = true;
+> @@ -70,7 +70,7 @@ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
+>  	pwm_disable(pb->pwm);
+>  
+>  	if (pb->enable_gpio)
+> -		gpiod_set_value(pb->enable_gpio, 0);
+> +		gpiod_set_value_cansleep(pb->enable_gpio, 0);
+>  
+>  	regulator_disable(pb->power_supply);
+>  	pb->enabled = false;
 
 -- 
 Lee Jones
