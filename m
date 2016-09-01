@@ -1,32 +1,19 @@
-From: John williams <terezaintrovini@gmail.com>
-Subject: Dear Sir/Madam
-Date: Wed, 31 Aug 2016 07:13:24 -1200
-Message-ID: <CACw7J-Vye4SxyL_U-z+gZuPSbvKjjxytfy3z9iNCWbb0oXT3Fw__28460.2662934505$1472670813$gmane$org@mail.gmail.com>
-Reply-To: william-john92@hotmail.com
+From: Mrs Julie Leach <info@kundl.at>
+Subject: Greetings
+Date: Thu, 01 Sep 2016 02:07:22 +0200
+Message-ID: <20160901000748.4E5471C58EB__42434.4074134298$1472688880$gmane$org@smtp2.mynet.at>
+Reply-To: julieleach865@outlook.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:34427 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751762AbcHaTNZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 Aug 2016 15:13:25 -0400
-Received: by mail-yw0-f194.google.com with SMTP id j12so2309746ywb.1
-        for <linux-gpio@vger.kernel.org>; Wed, 31 Aug 2016 12:13:25 -0700 (PDT)
+Received: from smtp2.mynet.at ([83.218.160.49]:41607 "EHLO smtp2.mynet.at"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753869AbcIAAOY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 31 Aug 2016 20:14:24 -0400
+Content-Description: Mail message body
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Recipients <info@kundl.at>
 
--- 
-
-
-Dear Sir/Madam, we would like to see your company latest catalogs.
-Your early reply is highly appreciated.
-Thank You !
-Best Regards,
-Mr. John williams
-(Purchasing Manager)
-*****************************************************
-Trade Company limited.
-2755 lake pine path apt 122,
-St Joseph, Trade Square Centre MI United States
-Telephone: +1 (248) 854 5480
-E-mail: william-john92@hotmail.com
+You are a recipient to Mrs Julie Leach Donation of $3 million USD. Contact ( julieleach86@outlook.com ) for claims.
