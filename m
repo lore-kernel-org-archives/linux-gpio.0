@@ -1,45 +1,89 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [RFC PATCH 00/33] SA11x0/PXA GPIO rework (Core + PCMCIA only)
-Date: Thu, 1 Sep 2016 16:34:16 +0100
-Message-ID: <20160901153416.GY1041@n2100.armlinux.org.uk>
-References: <20160829100232.GC1041@n2100.armlinux.org.uk>
- <20160829102328.GA28796@n2100.armlinux.org.uk>
- <CACRpkdYuAh1r+N_yJkb9G24Y4zVvEdR8=U-K7etCQvuSZtr+6g@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH 2/3] pinctrl: nsp: constify pinctrl_ops and pinmux_ops
+ structures
+Date: Thu,  1 Sep 2016 20:42:20 +0200
+Message-ID: <1472755341-9995-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <1472755341-9995-1-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:56271 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754360AbcIAPei (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Sep 2016 11:34:38 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYuAh1r+N_yJkb9G24Y4zVvEdR8=U-K7etCQvuSZtr+6g@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1472755341-9995-1-git-send-email-Julia.Lawall@lip6.fr>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ray Jui <rjui@broadcom.com>
+Cc: Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-On Tue, Aug 30, 2016 at 11:31:58PM +0200, Linus Walleij wrote:
-> For all the GPIO patches:
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> With the smallish changes needed to patch 5/33 that one is acked too.
-> 
-> In fact I would ACK it anyway, because the net total cleanup is so
-> nice on the kernel at large... SA11x0 has never been prettier than
-> after this series.
+Check for pinctrl_ops and pinmux_ops structures that are only stored in the
+pctlops field and the pmxops field, respectively, of a pinctrl_desc
+structure.  These fields are declared const, so pinctrl_ops and pinmux_ops
+structures that have this property can be declared as const also.
 
-Thanks, ack applied to all the gpio patches.
+The semantic patch that makes this change in the pinctrl_ops is as
+follows.  The pinmux_ops case is similar.  (http://coccinelle.lip6.fr/)
 
-> I suspect you want to keep the series together and queue it in the ARM
-> tree? Else tell me what to apply in the GPIO tree.
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct pinctrl_ops i@p = { ... };
 
-Yes, I need to keep the series together because of the dependencies -
-trying to split it up will lead to conflicts and breakage from missing
-include files, and when it's not from missing include files, it'll be
-non-functional.
+@ok@
+identifier r.i;
+struct pinctrl_desc e;
+position p;
+@@
+e.pctlops = &i@p;
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct pinctrl_ops e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct pinctrl_ops i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/pinctrl/bcm/pinctrl-nsp-mux.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
+index 4149db3..35c1765 100644
+--- a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
++++ b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
+@@ -348,7 +348,7 @@ static void nsp_pin_dbg_show(struct pinctrl_dev *pctrl_dev,
+ 	seq_printf(s, " %s", dev_name(pctrl_dev->dev));
+ }
+ 
+-static struct pinctrl_ops nsp_pinctrl_ops = {
++static const struct pinctrl_ops nsp_pinctrl_ops = {
+ 	.get_groups_count = nsp_get_groups_count,
+ 	.get_group_name = nsp_get_group_name,
+ 	.get_group_pins = nsp_get_group_pins,
+@@ -518,7 +518,7 @@ static void nsp_gpio_disable_free(struct pinctrl_dev *pctrl_dev,
+ 	spin_unlock_irqrestore(&pinctrl->lock, flags);
+ }
+ 
+-static struct pinmux_ops nsp_pinmux_ops = {
++static const struct pinmux_ops nsp_pinmux_ops = {
+ 	.get_functions_count = nsp_get_functions_count,
+ 	.get_function_name = nsp_get_function_name,
+ 	.get_function_groups = nsp_get_function_groups,
