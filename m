@@ -1,115 +1,83 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH 05/33] gpio: add generic single-register fixed-direction
- GPIO driver
-Date: Fri, 2 Sep 2016 00:02:48 +0100
-Message-ID: <20160901230248.GA1041@n2100.armlinux.org.uk>
-References: <87eg57e54l.fsf@belgarion.home>
- <20160830091805.GL1041@n2100.armlinux.org.uk>
- <87k2eycip0.fsf@belgarion.home>
- <20160830184612.GO1041@n2100.armlinux.org.uk>
- <87fupmc59b.fsf@belgarion.home>
- <20160831084938.GQ1041@n2100.armlinux.org.uk>
- <20160831102721.GR1041@n2100.armlinux.org.uk>
- <87twe0krym.fsf@belgarion.home>
- <20160901092754.GU1041@n2100.armlinux.org.uk>
- <87oa47l1tn.fsf@belgarion.home>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH 4/6] ARM: sunxi: Support the Nextthing GR8
+Date: Fri, 2 Sep 2016 08:28:35 +0200
+Message-ID: <20160902062835.GA6313@lukather>
+References: <20160831081817.5191-1-maxime.ripard@free-electrons.com>
+ <20160831081817.5191-5-maxime.ripard@free-electrons.com>
+ <CAGb2v66CDdSJMN4STHug1bGU2fnRK=Y24kwKS_8EtD6PZg3T-A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:59208 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750775AbcIAXDB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Sep 2016 19:03:01 -0400
+Received: from down.free-electrons.com ([37.187.137.238]:39215 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750899AbcIBG2i (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2016 02:28:38 -0400
 Content-Disposition: inline
-In-Reply-To: <87oa47l1tn.fsf@belgarion.home>
+In-Reply-To: <CAGb2v66CDdSJMN4STHug1bGU2fnRK=Y24kwKS_8EtD6PZg3T-A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-pcmcia@lists.infradead.org, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-gpio@vger.kernel.org, Kristoffer Ericson <kristoffer.ericson@gmail.com>, linux-arm-kernel@lists.infradead.org, Daniel Mack <daniel@zonque.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
 
-On Thu, Sep 01, 2016 at 11:58:28PM +0200, Robert Jarzmik wrote:
-> Russell King - ARM Linux <linux@armlinux.org.uk> writes:
-> > On Thu, Sep 01, 2016 at 09:19:13AM +0200, Robert Jarzmik wrote:
-> > It looks like:
+
+--bg08WKrSYDhXBjb5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Chen-Yu,
+
+On Wed, Aug 31, 2016 at 04:25:27PM +0800, Chen-Yu Tsai wrote:
+> On Wed, Aug 31, 2016 at 4:18 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > The GR8 is an SoC made by Nextthing Co, loosely based on the sun5i fami=
+ly.
 > >
-> > (a) pcmcia_probe() in drivers/pcmcia/sa1111_generic.c doesn't check the
-> >     return value from the platform specific init functions, meaning if
-> >     they fail, the driver still binds.  (note: they return -ENODEV to
-> >     indicate that they should skip to the next platform.)
-> You're right, I submitted a patch for that, and I confirm it actually happens on
-> lubbock.
-
-That'll work fine for lubbock, but not the others (we can have several
-of the others enabled on sa11x0 platforms - eg, badge4 with neponset.)
-
-> > (b) there is no clock provided for the sa1111 pcmcia device (aka "1800").
-> >     This should be the same clock as pxa2xx-pcmcia.
-> Again right in the spot.
-> I added temporarily a clock until I have a more complete understanding in
-> lubbock.c :
-> +	clk_add_alias(NULL, "1800", "SA1111_CLK", NULL);
-> 
-> With this, things look way better :
-> [    1.507480] pcmcia_socket pcmcia_socket1: pccard: PCMCIA card inserted into slot 1
-
-Yay!
-
-> I'm still investigating the new message errors:
-> [    0.479157] genirq: Setting trigger mode 3 for irq 387 failed (sa1111_type_highirq+0x0/0x6c)
-> [    0.488213] genirq: Setting trigger mode 3 for irq 389 failed (sa1111_type_highirq+0x0/0x6c)
-> [    0.507449] genirq: Setting trigger mode 3 for irq 388 failed (sa1111_type_highirq+0x0/0x6c)
-> [    0.516492] genirq: Setting trigger mode 3 for irq 390 failed (sa1111_type_highirq+0x0/0x6c)
-
-Ignore those for now - the old ARM IRQ stuff was silent on that, but genirq
-is more noisy.  I should probably make the sa1111 irqchip handle the both-
-edge case itself.
-
-> Moreover, I have a bit of homework as I also see :
->  - no SA1111 interrupts at all, especially nothing when I insert/remove my
->    CompactFlash card
->    This might be an effect of pxa_cplds_irqs.c I created, I must have a look.
-
-Do you get other SA1111 interrupts (eg, the PS/2 interrupts) delivered?
-
->  - cat /sys/class/pcmcia_socket/pcmcia_socket1/cis 
->    cat: read error: Input/output error
->    That will cost me a review of the memory timings registers MCIO1/MECR/xxx,
->    the power lines, etc ...
-
-Hmm, on Neponset with a CF card inserted, I can cat that, and it reports
-the CIS.  Any error messages in the kernel log?
-
->  - cat /sys/class/pcmcia_socket/pcmcia_socket1/status 
-> slot     : 1
-> status   : SS_READY SS_DETECT SS_POWERON SS_3VCARD
-> csc_mask : SS_DETECT
-> cs_flags : SS_OUTPUT_ENA
-> Vcc      : 33
-> Vpp      : 33
-> IRQ      : 0 (386)
-
-That looks hopeful, but the IRQ hasn't been properly assigned (probably
-because no driver has bound to the card.)
-
-> >> As your gpios are contiguous (0 .. 31), why an array instead of a simple offset
-> >> so that your translation is only a linear irq = gpio + offset ?
+> > It has a number of new controllers compared to the A10s and A13 (SPDIF,=
+ I2S),
+> > but some controllers missing too (Ethernet, less I2C, less UARTs).
 > >
-> > There isn't a linear translation here:
-> ...zip...
-> > MST_PCMCIA_nCD		=> MAINSTONE_S0_CD_IRQ or MAINSTONE_S1_CD_IRQ
-> > MST_PCMCIA_nSTSCHG_BVD1 => MAINSTONE_S0_STSCHG_IRQ or MAINSTONE_S1_STSCHG_IRQ
-> > MST_PCMCIA_nIRQ		=> MAINSTONE_S0_IRQ or MAINSTONE_S1_IRQ
-> >
-> > So they aren't linear, and every "gpio" doesn't have a corresponding
-> > interrupt.
-> Ah yes, too bad, it would have been so much simpler.
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
+> >  MAINTAINERS                                     | 1 +
+> >  arch/arm/mach-sunxi/sunxi.c                     | 1 +
+>=20
+> Please update Documentation/arm/sunxi/README as well.
 
-Indeed, but a tabular approach isn't that painful, especially if we
-also insist on knowing an irqdomain as well, which relieves us of
-having to know absolute interrupt numbers, which may end up being
-dynamically allocated eventually.
+I will.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+> I don't suppose there's a datasheet available?
+
+Not at the moment, unfortunately.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--bg08WKrSYDhXBjb5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXyRwTAAoJEBx+YmzsjxAgx64QAIapya3+v9shCksr/8o0p3qc
+RmhXjG6b+10sVc13iULISAlrZGr4iST4hwos52FlI3ETIRrp514/oxhebGbs8JT4
+KZQRNcBZhRcIg3ySk3AJpmJ+2q2JtcLPWkPrr2WEuhoMJGg2o04KLbhve9f5booT
+UueOIj8Ir82emdLyLPtN98P/2IWd3Cyu5eDrg0soiPMN2RkHW/cNfNtra7PPhfaR
+CQmXof0PSRtLKqsba5drx9DFgmYwceYDb2YiR1t10WoTi+aIDI2zWjSsurzNFcW/
+EBW2DsXt9JKBjYqW12kvqGHwE799UbwnkHvr8/J3NpqR4+EXQdMCsXWW9Pt2vW3+
+TTcLhw0VQKlcH6ggihVTbIeb1VxsYIsibMdsSx4DNC9cZi+o6KcAcyzIzn+OOmHs
+PgEcByvk8+hSdespRaWXZ35q8vLhyoAsWNl8EFyL35kUz6630QUxdv6JAa1ti4EY
+0Zv1ojFpnSfhWbntfnjTFm4yg4xZ4ObdUACLB10K95RBkZomOiB0qT5VquBDt0kD
+R2xtM+6lffKES3M7xup+/H5O2UZQVwJOg30PV9hi8uXu4EfQxb+3wXCLKrORXMoS
++xltPWAVUxz6FQ2BRc7fPaqXntlIvavl+3U2EDQ3QEt1/Fuk685h0AarEq/7n2vQ
+NvgJr85q3eNbYvzKaPCp
+=UG+G
+-----END PGP SIGNATURE-----
+
+--bg08WKrSYDhXBjb5--
