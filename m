@@ -1,22 +1,16 @@
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7792: add DU pin groups
-Date: Sat, 03 Sep 2016 00:49:14 +0300
-Message-ID: <1497777.FvT8ieIrQm@wasted.cogentembedded.com>
+Subject: [PATCH resend] pinctrl: sh-pfc: r8a7792: add QSPI pin groups
+Date: Sat, 03 Sep 2016 00:50:30 +0300
+Message-ID: <4521660.ueRdz9Zt8E@wasted.cogentembedded.com>
 References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:32922 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751861AbcIBVtY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2016 17:49:24 -0400
-Received: by mail-lf0-f47.google.com with SMTP id b199so92698425lfe.0
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Sep 2016 14:49:23 -0700 (PDT)
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org, geert+renesas@glider.be
+List-Id: linux-gpio@vger.kernel.org
 
 Add QSPI pin groups to the R8A7792 PFC driver.
 
@@ -28,6 +22,8 @@ Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 ---
 The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
 repo...
+
+Disregard the patch just posted with the stale subject please.
 
  drivers/pinctrl/sh-pfc/pfc-r8a7792.c |   33 +++++++++++++++++++++++++++++++++
  1 file changed, 33 insertions(+)
@@ -97,4 +93,3 @@ Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
  	SH_PFC_FUNCTION(scif0),
  	SH_PFC_FUNCTION(scif3),
  	SH_PFC_FUNCTION(sdhi0),
-
