@@ -1,65 +1,76 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: [PATCH 0/3] gpio/pinctrl: imx: let IOMUX controller know about
- on-SoC GPIOs
-Date: Fri, 2 Sep 2016 16:11:46 +0300
-Message-ID: <cc5ab313-c3c6-bfd4-d2b8-92a7d153cf05@mentor.com>
-References: <1471644615-10320-1-git-send-email-vladimir_zapolskiy@mentor.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 4/8] gpio: dt-bindings: Add documentation for Aspeed
+ GPIO controllers
+Date: Fri, 2 Sep 2016 10:00:45 -0500
+Message-ID: <20160902150045.GA17024@rob-hp-laptop>
+References: <20160830075427.11493-1-andrew@aj.id.au>
+ <20160830075427.11493-5-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:45256 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751097AbcIBNLv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Sep 2016 09:11:51 -0400
-In-Reply-To: <1471644615-10320-1-git-send-email-vladimir_zapolskiy@mentor.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160830075427.11493-5-andrew@aj.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>, Deepak Das <deepak_das@mentor.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Shawn, Fabio,
+On Tue, Aug 30, 2016 at 05:24:23PM +0930, Andrew Jeffery wrote:
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> Acked-by: Joel Stanley <joel@jms.id.au>
+> ---
+>  .../devicetree/bindings/gpio/gpio-aspeed.txt       | 36 ++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-aspeed.txt
 
-On 08/20/2016 01:10 AM, Vladimir Zapolskiy wrote:
-> The change establishes a connection between on-SoC IOMUX controller(s)
-> and GPIO controllers found on some SoC from Freescale/NXP iMX series,
-> if a GPIO controller device node contains common gpio-ranges information.
->
-> The change is backward compatible with respect to potentially not updated
-> outdated DTB data without gpio-ranges propery, for such boards the only
-> functional change is lowered initcall priority of GPIO controller driver,
-> which in general anyway is exected to be used only after pinctrl/pinmux
-> controller.
->
-> If this change is applied the next interesting applications may be done
-> as a follow-up work, for example switching pad function to GPIO on gpiod
-> request, converting iomux controller driver to strict type and so on.
->
-> For actual values of gpio-ranges properties please reference series
-> "ARM: dts: imx: add gpio-ranges properties to some iMX GPIO controllers"
-> http://archive.arm.linux.org.uk/lurker/message/20160819.220621.86d845d1.en.html
->
-> Deepak Das (1):
->   gpio: mxc: lower level of gpio_mxc_init() initcall
->
-> Vladimir Zapolskiy (2):
->   pinctrl: imx: accept gpio request/free from pinctrl
->   gpio: mxc: add generic gpio request/free callbacks to pinctrl
->
->  drivers/gpio/gpio-mxc.c                 | 7 ++++++-
->  drivers/pinctrl/freescale/pinctrl-imx.c | 4 ++--
->  2 files changed, 8 insertions(+), 3 deletions(-)
->
+Acked-by: Rob Herring <robh@kernel.org>
 
-no comments so far, please could you express your concerns about
-this change? IMHO it would be nice to have this feature enabled
-in v4.9.
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-aspeed.txt b/Documentation/devicetree/bindings/gpio/gpio-aspeed.txt
+> new file mode 100644
+> index 000000000000..09f26cac18d1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-aspeed.txt
+> @@ -0,0 +1,36 @@
+> +Aspeed GPIO controller Device Tree Bindings
+> +-------------------------------------------
+> +
+> +Required properties:
+> +- #gpio-cells 		: Should be two
+> +			  - First cell is the GPIO line number
+> +			  - Second cell is used to specify optional
+> +			    parameters (unused)
+> +
+> +- compatible		: Either "aspeed,ast2400-gpio" or "aspeed,ast2500-gpio"
 
-I assume that the most worrisome commit is the change of GPIO controller
-driver init level, but I belive it is safe enough, no?
+I'd prefer this be listed first if you respin this.
 
-Thank you.
-
---
-With best wishes,
-Vladimir
+> +
+> +- reg			: Address and length of the register set for the device
+> +- gpio-controller	: Marks the device node as a GPIO controller.
+> +- interrupts		: Interrupt specifier (see interrupt bindings for
+> +			  details)
+> +- interrupt-controller	: Mark the GPIO controller as an interrupt-controller
+> +
+> +Optional properties:
+> +
+> +- interrupt-parent     : The parent interrupt controller, optional if inherited
+> +
+> +The gpio and interrupt properties are further described in their respective
+> +bindings documentation:
+> +
+> +- Documentation/devicetree/bindings/gpio/gpio.txt
+> +- Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+> +
+> +  Example:
+> +	gpio@1e780000 {
+> +		#gpio-cells = <2>;
+> +		compatible = "aspeed,ast2400-gpio";
+> +		gpio-controller;
+> +		interrupts = <20>;
+> +		reg = <0x1e780000 0x1000>;
+> +		interrupt-controller;
+> +	};
+> -- 
+> 2.9.3.1.g0db844e
+> 
