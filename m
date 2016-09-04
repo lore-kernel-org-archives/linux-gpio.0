@@ -1,43 +1,69 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH 2/2] ARM64: dts: meson-gxbb: add the SDIO pins
-Date: Sun, 4 Sep 2016 19:55:55 +0200
-Message-ID: <CAFBinCBxY8HW26xb1PMdtPfVOAWk3FAQfcU7Qi-ithi==b=y0A@mail.gmail.com>
-References: <20160828164725.19429-1-martin.blumenstingl@googlemail.com>
- <20160828164725.19429-3-martin.blumenstingl@googlemail.com> <20160828191353.wpwbqsxdg5pdmese@vip.cybercity.dk>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH 05/33] gpio: add generic single-register fixed-direction
+ GPIO driver
+Date: Sun, 04 Sep 2016 21:04:59 +0200
+Message-ID: <878tv7jxk4.fsf@belgarion.home>
+References: <20160829102328.GA28796@n2100.armlinux.org.uk>
+ <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk>
+ <87eg57e54l.fsf@belgarion.home>
+ <20160830091805.GL1041@n2100.armlinux.org.uk>
+ <87k2eycip0.fsf@belgarion.home>
+ <20160830184612.GO1041@n2100.armlinux.org.uk>
+ <87fupmc59b.fsf@belgarion.home>
+ <20160831084938.GQ1041@n2100.armlinux.org.uk>
+ <20160903102549.GK1041@n2100.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33411 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753118AbcIDR4R (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 4 Sep 2016 13:56:17 -0400
-Received: by mail-wm0-f68.google.com with SMTP id w207so10087318wmw.0
-        for <linux-gpio@vger.kernel.org>; Sun, 04 Sep 2016 10:56:17 -0700 (PDT)
-In-Reply-To: <20160828191353.wpwbqsxdg5pdmese@vip.cybercity.dk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20160903102549.GK1041@n2100.armlinux.org.uk> (Russell King's
+ message of "Sat, 3 Sep 2016 11:25:49 +0100")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-pcmcia@lists.infradead.org, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-gpio@vger.kernel.org, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Daniel Mack <daniel@zonque.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rask Ingemann Lambertsen <ccc94453@vip.cybercity.dk>, Rob Herring <robh@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linus.walleij@linaro.org, khilman@baylibre.com, carlo@caione.org, linux-arm-kernel@lists.infradead.org
 
-On Sun, Aug 28, 2016 at 9:13 PM, Rask Ingemann Lambertsen
-<ccc94453@vip.cybercity.dk> wrote:
-> On Sun, Aug 28, 2016 at 06:47:25PM +0200, Martin Blumenstingl wrote:
->>                               uart_a_pins: uart_a {
->>                                       mux {
->>                                               groups = "uart_tx_a",
+Russell King - ARM Linux <linux@armlinux.org.uk> writes:
+
+> On Wed, Aug 31, 2016 at 09:49:38AM +0100, Russell King - ARM Linux wrote:
+>> On Tue, Aug 30, 2016 at 11:32:16PM +0200, Robert Jarzmik wrote:
+>> > Russell King - ARM Linux <linux@armlinux.org.uk> writes:
+>> > 
+>> > > If you can wait a day or two, I'll push a branch out for everything in
+>> > > all these multiple series.
+>> > Sure, just ping me when you have something.
+>> 
+>> git://git.armlinux.org.uk/~rmk/linux-arm.git sa1100
+>> 
+>> should get you something suitable to test.  It's based on 4.7-rc3 plus
+>> my fixes branch.
 >
-> You shouldn't use underscores in node names. Use hyphens instead, perhaps.
-> https://www.mail-archive.com/linux-kernel%40vger.kernel.org/msg1122967.html
-> https://www.mail-archive.com/linux-kernel%40vger.kernel.org/msg1145633.html
-The part which you found there is just the context of my patch, not an
-actual change.
-However, basically all of the GXBB .dts files are using underscores in
-the node names.
-Do "we" have to change this globally?
+> Branch updated, hopefully with everything that we've agreed on so far,
+> all the bug fixes, plus a few extra bits...
 
-Regarding my patch: I got a NACK from Neil Armstrong off-list:
-The SDIO IRQ pin is missing in my series.
+And retested with my 3 patches on top of it. Everything works fine :
+ - CF insertion is correctly detected now !
+ - AT/2 keyboard interrupts fire, keys are there, etc ...
+ - the AT/2 warning is now gone
 
+The pxa_cplds_irqs patch will make it work as before, better than today for
+sure. I think edge type interrupts (such as sa1111), if they come close enough,
+might be lost with the current implementation, but anyway, that's for another
+time.
 
-Regards,
-Martin
+There is one patch in my serie that I left up to you, as I wasn't very sure
+about the accuracy of my commit message, nor been able to write down all the
+requirements implied on sa1111 with this additional test.
+
+Cheers.
+
+--
+Robert
