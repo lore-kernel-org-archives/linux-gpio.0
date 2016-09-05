@@ -1,85 +1,77 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 3/6] drm/panel: simple: Add A10 EVB 5 inch panel support
-Date: Mon, 5 Sep 2016 22:00:01 +0800
-Message-ID: <CAGb2v66GsA8uNaaZfnnHFgBLA-LChCnO3vLhdtfzHNU0nHXH4Q@mail.gmail.com>
-References: <20160831081817.5191-1-maxime.ripard@free-electrons.com> <20160831081817.5191-4-maxime.ripard@free-electrons.com>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] sh-pfc: return pinconf with arguments in packed format
+Date: Mon,  5 Sep 2016 16:19:57 +0200
+Message-ID: <20160905141957.25982-1-niklas.soderlund+renesas@ragnatech.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:50936 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932413AbcIEOA0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2016 10:00:26 -0400
-In-Reply-To: <20160831081817.5191-4-maxime.ripard@free-electrons.com>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:39854 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934322AbcIEOUq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2016 10:20:46 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
+To: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 
-On Wed, Aug 31, 2016 at 4:18 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The A10-EVB from Allwinner comes with an unidentified panel, with the only
-> mark on the PCB being A10-SUB-EVB-5LCD.
->
-> Add timings to simple panel to handle it.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  drivers/gpu/drm/panel/panel-simple.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> index 85143d1b9b31..be371b053aab 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -386,6 +386,29 @@ static void panel_simple_shutdown(struct device *dev)
->         panel_simple_disable(&panel->base);
->  }
->
-> +static const struct drm_display_mode allwinner_a10_sub_evb_5lcd_mode = {
-> +       .clock = 33000,
-> +       .hdisplay = 800,
-> +       .hsync_start = 800 + 209,
-> +       .hsync_end = 800 + 209 + 1,
-> +       .htotal = 800 + 209 + 1 + 45,
-> +       .vdisplay = 480,
-> +       .vsync_start = 480 + 22,
-> +       .vsync_end = 480 + 22 + 1,
-> +       .vtotal = 480 + 22 + 1 + 22,
-> +       .vrefresh = 60,
+The pinconf-generic code expects configurations with arguments to be
+returned in a packed format in order to be displayed properly by
+pinconf_generic_dump_one().
 
-I assume the numbers came from the fex file? Allwinner LCD timing numbers
-aren't very precise. This seems to yield a refresh rate of 58.x Hz.
-The dot clock can go below MHz resolution, so it should be possible
-to set it to a more proper clock rate here.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/pinctrl/sh-pfc/pinctrl.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-ChenYu
+diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+index e208ee0..c577258 100644
+--- a/drivers/pinctrl/sh-pfc/pinctrl.c
++++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+@@ -596,6 +596,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 	struct sh_pfc *pfc = pmx->pfc;
+ 	enum pin_config_param param = pinconf_to_config_param(*config);
+ 	unsigned long flags;
++	unsigned int arg;
+ 
+ 	if (!sh_pfc_pinconf_validate(pfc, _pin, param))
+ 		return -ENOTSUPP;
+@@ -616,7 +617,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		if (bias != param)
+ 			return -EINVAL;
+ 
+-		*config = 0;
++		arg = 0;
+ 		break;
+ 	}
+ 
+@@ -627,7 +628,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		*config = ret;
++		arg = ret;
+ 		break;
+ 	}
+ 
+@@ -646,7 +647,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		val = sh_pfc_read_reg(pfc, pocctrl, 32);
+ 		spin_unlock_irqrestore(&pfc->lock, flags);
+ 
+-		*config = (val & BIT(bit)) ? 3300 : 1800;
++		arg = (val & BIT(bit)) ? 3300 : 1800;
+ 		break;
+ 	}
+ 
+@@ -654,6 +655,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		return -ENOTSUPP;
+ 	}
+ 
++	*config = pinconf_to_config_packed(param, arg);
+ 	return 0;
+ }
+ 
+-- 
+2.9.3
 
-> +};
-> +
-> +static const struct panel_desc allwinner_a10_sub_evb_5lcd = {
-> +       .modes = &allwinner_a10_sub_evb_5lcd_mode,
-> +       .num_modes = 1,
-> +       .size = {
-> +               .width = 110,
-> +               .height = 67,
-> +       },
-> +       .bus_format = MEDIA_BUS_FMT_RGB666_1X18,
-> +};
-> +
->  static const struct drm_display_mode ampire_am800480r3tmqwa1h_mode = {
->         .clock = 33333,
->         .hdisplay = 800,
-> @@ -1515,6 +1538,9 @@ static const struct panel_desc urt_umsh_8596md_parallel = {
->
->  static const struct of_device_id platform_of_match[] = {
->         {
-> +               .compatible = "allwinner,sun4i-a10-sub-evb-5-lcd",
-> +               .data = &allwinner_a10_sub_evb_5lcd,
-> +       }, {
->                 .compatible = "ampire,am800480r3tmqwa1h",
->                 .data = &ampire_am800480r3tmqwa1h,
->         }, {
-> --
-> 2.9.2
->
