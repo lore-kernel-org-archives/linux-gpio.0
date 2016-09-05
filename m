@@ -1,16 +1,15 @@
 From: Alexandre Torgue <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
-Subject: Re: [PATCH v3 2/9] drivers: irqchip: Add STM32 external interrupts
- support
-Date: Mon, 5 Sep 2016 09:47:27 +0200
-Message-ID: <d790a3fd-766a-36d3-7a05-40b3198777c6@st.com>
+Subject: Re: [PATCH v3 6/9] pinctrl: Add IRQ support to STM32 gpios
+Date: Mon, 5 Sep 2016 09:53:40 +0200
+Message-ID: <670d8249-0f72-50d1-5c1f-07fe53ac524b@st.com>
 References: <1472830398-13275-1-git-send-email-alexandre.torgue@st.com>
- <1472830398-13275-3-git-send-email-alexandre.torgue@st.com>
- <alpine.DEB.2.20.1609022052470.5647@nanos>
+ <1472830398-13275-7-git-send-email-alexandre.torgue@st.com>
+ <alpine.DEB.2.20.1609022057490.5647@nanos>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <alpine.DEB.2.20.1609022052470.5647@nanos>
+In-Reply-To: <alpine.DEB.2.20.1609022057490.5647@nanos>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
 Cc: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, bruherrera-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
@@ -18,76 +17,103 @@ List-Id: linux-gpio@vger.kernel.org
 
 Hi Thomas,
 
-On 09/02/2016 08:57 PM, Thomas Gleixner wrote:
-> Alexandre,
->
+On 09/02/2016 09:10 PM, Thomas Gleixner wrote:
 > On Fri, 2 Sep 2016, Alexandre TORGUE wrote:
+>> +static int stm32_gpio_domain_translate(struct irq_domain *d,
+>> +				       struct irq_fwspec *fwspec,
+>> +				       unsigned long *hwirq,
+>> +				       unsigned int *type)
+>> +{
+>> +	if ((fwspec->param_count != 2) ||
+>> +		(fwspec->param[0] >= STM32_GPIO_IRQ_LINE))
+>> +		return -EINVAL;
 >
-> This all looks very reasonable. The only complaint I have is your variable
-> declaration ordering or the lack thereof.
->
-> 1)
->> +	struct irq_domain *domain = irq_desc_get_handler_data(desc);
->> +	struct irq_chip_generic *gc = domain->gc->gc[0];
->> +	struct irq_chip *chip = irq_desc_get_chip(desc);
->> +	unsigned long pending;
->> +	int n;
->
-> 2)
->> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
->> +	u32 rtsr, ftsr;
->> +	int pin = data->hwirq;
->
-> 3)
->> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
->> +	int pin = data->hwirq;
->> +	u32 emr;
->
-> 4)
->> +	irq_hw_number_t hwirq;
->> +	struct irq_fwspec *fwspec = data;
->> +	struct irq_chip_generic *gc = d->gc->gc[0];
->
-> 5)
->> +	int nr_irqs, nr_exti, ret, i;
->> +	unsigned int clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
->> +	struct irq_domain *domain;
->> +	struct irq_chip_generic *gc;
->> +	void *base;
->
-> #1 and 3 have the ordering which is preferred in the irq code.
->
-> #2, #4 and #5 are three permutations which are way harder to read.
->
->> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
->> +	int pin = data->hwirq;
->> +	u32 rtsr, ftsr;
->
->> +	struct irq_chip_generic *gc = d->gc->gc[0];
->> +	struct irq_fwspec *fwspec = data;
->> +	irq_hw_number_t hwirq;
->
->> +	unsigned int clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
->> +	int nr_irqs, nr_exti, ret, i;
->> +	struct irq_chip_generic *gc;
->> +	struct irq_domain *domain;
->> +	void *base;
->
-> Can you spot the difference?
+> Just a nitpick. This is unnecessarily hard to parse because you indented
+> the line break like a conditional statement
 
-Thanks for review and for proposal. It Will be in next version.
+I agree. I will modify it as the one below.
+>
+>> +	if ((fwspec->param_count != 2) ||
+>> +	    (fwspec->param[0] >= STM32_GPIO_IRQ_LINE))
+>> +		return -EINVAL;
+>
+> Makes it immediately obvious that the second line belongs to the if.
+>
+>> +static void stm32_gpio_domain_activate(struct irq_domain *d,
+>> +				       struct irq_data *irq_data)
+>> +{
+>> +	struct stm32_gpio_bank *bank = d->host_data;
+>> +	struct stm32_pinctrl *pctl = dev_get_drvdata(bank->gpio_chip.parent);
+>> +
+>> +	if (gpiochip_lock_as_irq(&bank->gpio_chip, irq_data->hwirq)) {
+>> +		dev_err(pctl->dev,
+>> +			"Unable to configure STM32 %s%ld as IRQ\n",
+>> +			bank->gpio_chip.label, irq_data->hwirq);
+>> +		return;
+>
+> Hmm, that's nasty. When an interrupt is mapped then we don't expect the
+> activate function to fail. You really should lock that interrupt when it's
+> mapped.
 
-Regards
+Ok. I will remove it from here.
+
+>
+>> +	}
+>> +	regmap_field_write(pctl->irqmux[irq_data->hwirq], bank->range.id);
+>> +}
+>
+>> +static int stm32_gpio_domain_alloc(struct irq_domain *domain,
+>> +				   unsigned int virq,
+>> +				   unsigned int nr_irqs, void *data)
+>> +{
+>> +	struct irq_fwspec *fwspec = data;
+>> +	struct irq_fwspec parent_fwspec;
+>> +	struct stm32_pinctrl *pctl = domain->host_data;
+>> +	irq_hw_number_t hwirq;
+>> +	unsigned int i;
+>> +
+>> +	hwirq = fwspec->param[0];
+>> +	for (i = 0; i < nr_irqs; i++)
+>> +		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
+>> +					      &stm32_gpio_irq_chip, pctl);
+>> +
+>> +	parent_fwspec.fwnode = domain->parent->fwnode;
+>> +	parent_fwspec.param_count = 2;
+>> +	parent_fwspec.param[0] = fwspec->param[0];
+>> +	parent_fwspec.param[1] = fwspec->param[1];
+>> +
+>> +	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
+>> +			&parent_fwspec);
+>
+> So doing it here would be probably the right thing to do:
+>
+>
+> 	ret = gpiochip_lock_as_irq();
+> 	if (ret)
+> 		return ret;
+>
+>    	ret = irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
+> 	      				   &parent_fwspec);
+> 	if (ret)
+> 		gpiochip_unlock_as_irq();
+>
+> 	return ret;
+>
+> So of course you need your own free() function which undoes that lock
+> thingy.
+
+Ok thanks for proposal.
+
+Best regards.
 
 Alex
+
 
 >
 > Thanks,
 >
 > 	tglx
 >
-
-
 
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
