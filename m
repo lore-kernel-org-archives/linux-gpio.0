@@ -1,142 +1,38 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7792: add MSIOF pin groups
-Date: Mon, 05 Sep 2016 23:17:31 +0300
-Message-ID: <2011444.8BtcIjeJf3@wasted.cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: imx: output one pin/config pair per line in pinconf-groups
+Date: Tue, 6 Sep 2016 00:19:07 +0200
+Message-ID: <CACRpkdbwh=k3GD-7wSq9iBoBhyQ4SFD75xaLnx6g8WbRZ5X7Gg@mail.gmail.com>
+References: <1471644337-10162-1-git-send-email-vladimir_zapolskiy@mentor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org, geert+renesas@glider.be
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:35986 "EHLO
+        mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754754AbcIEWTI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2016 18:19:08 -0400
+Received: by mail-oi0-f50.google.com with SMTP id w78so71078245oie.3
+        for <linux-gpio@vger.kernel.org>; Mon, 05 Sep 2016 15:19:08 -0700 (PDT)
+In-Reply-To: <1471644337-10162-1-git-send-email-vladimir_zapolskiy@mentor.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Add MSIOF0/1 pin groups to the R8A7792 PFC driver.
+On Sat, Aug 20, 2016 at 12:05 AM, Vladimir Zapolskiy
+<vladimir_zapolskiy@mentor.com> wrote:
 
-Based  on the original (and large) patch by Vladimir Barinov
-<vladimir.barinov@cogentembedded.com>.
+> cat /sys/kernel/debug/pinctrl/${pinctrl}/pinconf-groups output is
+> hardly readable, if a pin group contains more than one pin the output
+> is glued and looks like this:
+>
+>   MX6Q_PAD_SD1_DAT0: 0x17071MX6Q_PAD_SD1_CMD: 0x17071MX6Q_PAD_SD1_CLK: 0x17071
+>
+> Add two space indentation and a new line separator to improve
+> readability of the output.
+>
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Patch applied with Shawn's ACK.
 
----
-The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
-repo plus the QSPI patch last week...
-
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c |   82 +++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
-
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-@@ -1034,6 +1034,64 @@ static const unsigned int lbsc_ex_cs5_pi
- static const unsigned int lbsc_ex_cs5_mux[] = {
- 	EX_CS5_N_MARK,
- };
-+/* - MSIOF0 ----------------------------------------------------------------- */
-+static const unsigned int msiof0_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(10, 0),
-+};
-+static const unsigned int msiof0_clk_mux[] = {
-+	MSIOF0_SCK_MARK,
-+};
-+static const unsigned int msiof0_sync_pins[] = {
-+	/* SYNC */
-+	RCAR_GP_PIN(10, 1),
-+};
-+static const unsigned int msiof0_sync_mux[] = {
-+	MSIOF0_SYNC_MARK,
-+};
-+static const unsigned int msiof0_rx_pins[] = {
-+	/* RXD */
-+	RCAR_GP_PIN(10, 4),
-+};
-+static const unsigned int msiof0_rx_mux[] = {
-+	MSIOF0_RXD_MARK,
-+};
-+static const unsigned int msiof0_tx_pins[] = {
-+	/* TXD */
-+	RCAR_GP_PIN(10, 3),
-+};
-+static const unsigned int msiof0_tx_mux[] = {
-+	MSIOF0_TXD_MARK,
-+};
-+/* - MSIOF1 ----------------------------------------------------------------- */
-+static const unsigned int msiof1_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(10, 5),
-+};
-+static const unsigned int msiof1_clk_mux[] = {
-+	MSIOF1_SCK_MARK,
-+};
-+static const unsigned int msiof1_sync_pins[] = {
-+	/* SYNC */
-+	RCAR_GP_PIN(10, 6),
-+};
-+static const unsigned int msiof1_sync_mux[] = {
-+	MSIOF1_SYNC_MARK,
-+};
-+static const unsigned int msiof1_rx_pins[] = {
-+	/* RXD */
-+	RCAR_GP_PIN(10, 9),
-+};
-+static const unsigned int msiof1_rx_mux[] = {
-+	MSIOF1_RXD_MARK,
-+};
-+static const unsigned int msiof1_tx_pins[] = {
-+	/* TXD */
-+	RCAR_GP_PIN(10, 8),
-+};
-+static const unsigned int msiof1_tx_mux[] = {
-+	MSIOF1_TXD_MARK,
-+};
- /* - QSPI ------------------------------------------------------------------- */
- static const unsigned int qspi_ctrl_pins[] = {
- 	/* SPCLK, SSL */
-@@ -1608,6 +1666,14 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(lbsc_ex_cs3),
- 	SH_PFC_PIN_GROUP(lbsc_ex_cs4),
- 	SH_PFC_PIN_GROUP(lbsc_ex_cs5),
-+	SH_PFC_PIN_GROUP(msiof0_clk),
-+	SH_PFC_PIN_GROUP(msiof0_sync),
-+	SH_PFC_PIN_GROUP(msiof0_rx),
-+	SH_PFC_PIN_GROUP(msiof0_tx),
-+	SH_PFC_PIN_GROUP(msiof1_clk),
-+	SH_PFC_PIN_GROUP(msiof1_sync),
-+	SH_PFC_PIN_GROUP(msiof1_rx),
-+	SH_PFC_PIN_GROUP(msiof1_tx),
- 	SH_PFC_PIN_GROUP(qspi_ctrl),
- 	SH_PFC_PIN_GROUP(qspi_data2),
- 	SH_PFC_PIN_GROUP(qspi_data4),
-@@ -1734,6 +1800,20 @@ static const char * const lbsc_groups[]
- 	"lbsc_ex_cs5",
- };
- 
-+static const char * const msiof0_groups[] = {
-+	"msiof0_clk",
-+	"msiof0_sync",
-+	"msiof0_rx",
-+	"msiof0_tx",
-+};
-+
-+static const char * const msiof1_groups[] = {
-+	"msiof1_clk",
-+	"msiof1_sync",
-+	"msiof1_rx",
-+	"msiof1_tx",
-+};
-+
- static const char * const qspi_groups[] = {
- 	"qspi_ctrl",
- 	"qspi_data2",
-@@ -1840,6 +1920,8 @@ static const struct sh_pfc_function pinm
- 	SH_PFC_FUNCTION(du1),
- 	SH_PFC_FUNCTION(intc),
- 	SH_PFC_FUNCTION(lbsc),
-+	SH_PFC_FUNCTION(msiof0),
-+	SH_PFC_FUNCTION(msiof1),
- 	SH_PFC_FUNCTION(qspi),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif3),
+Yours,
+Linus Walleij
