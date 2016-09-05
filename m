@@ -1,257 +1,1133 @@
 From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 6/6] ARM: dts: gr8: Add support for the GR8 evaluation
- board
-Date: Mon, 5 Sep 2016 20:42:23 +0800
-Message-ID: <CAGb2v676VgeAx0mAhhts5=mRJaTNQB-_Z+gVXHFbLn4j0LjYOw@mail.gmail.com>
-References: <20160831081817.5191-1-maxime.ripard@free-electrons.com>
- <20160831081817.5191-7-maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH 5/6] ARM: dts: Add NextThing GR8 dtsi
+Date: Mon, 5 Sep 2016 20:47:17 +0800
+Message-ID: <CAGb2v65NWau4TC27UcW7xSirHcSQprypC4JVP=Vgi2z7HO+uUA@mail.gmail.com>
+References: <20160831081817.5191-1-maxime.ripard@free-electrons.com> <20160831081817.5191-6-maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160831081817.5191-7-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, David Airlie <airlied@linux.ie>, Jingoo Han <jingoohan1@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Alexander Kaplan <alex@nextthing.co>, Mylene Josserand <mylene.josserand@free-electrons.com>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:50618 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754957AbcIEMrn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2016 08:47:43 -0400
+In-Reply-To: <20160831081817.5191-6-maxime.ripard@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
 
-SGksCgpPbiBXZWQsIEF1ZyAzMSwgMjAxNiBhdCA0OjE4IFBNLCBNYXhpbWUgUmlwYXJkCjxtYXhp
-bWUucmlwYXJkQGZyZWUtZWxlY3Ryb25zLmNvbT4gd3JvdGU6Cj4gRnJvbTogTXlsw6huZSBKb3Nz
-ZXJhbmQgPG15bGVuZS5qb3NzZXJhbmRAZnJlZS1lbGVjdHJvbnMuY29tPgo+Cj4gVGhlIEdSOC1F
-VkIgaXMgYSBzbWFsbCBib2FyZCB3aXRoIGFuIE5leHRUaGluZyBHUjgsIGFuIEh5bml4IE1MQyBO
-QU5ELAo+IGFuIEFYUDIwOSBQTUlDLCBVU0IgaG9zdCBhbmQgT1RHLCBhbiBTUERJRiBvdXRwdXQg
-YW5kIGEgY29ubmVjdG9ycyBmb3IgQ1NJLAo+IEkyUyBhbmQgTENELgo+Cj4gU2lnbmVkLW9mZi1i
-eTogTXlsw6huZSBKb3NzZXJhbmQgPG15bGVuZS5qb3NzZXJhbmRAZnJlZS1lbGVjdHJvbnMuY29t
-Pgo+IFNpZ25lZC1vZmYtYnk6IE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAZnJlZS1lbGVj
-dHJvbnMuY29tPgo+IC0tLQo+ICBhcmNoL2FybS9ib290L2R0cy9NYWtlZmlsZSAgICB8ICAgMyAr
-LQo+ICBhcmNoL2FybS9ib290L2R0cy9ncjgtZXZiLmR0cyB8IDM3OCArKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysKPiAgMiBmaWxlcyBjaGFuZ2VkLCAzODAgaW5zZXJ0
-aW9ucygrKSwgMSBkZWxldGlvbigtKQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9hcm0vYm9v
-dC9kdHMvZ3I4LWV2Yi5kdHMKPgo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9NYWtl
-ZmlsZSBiL2FyY2gvYXJtL2Jvb3QvZHRzL01ha2VmaWxlCj4gaW5kZXggN2RkNGEwN2M0Nzg0Li44
-MjI2YjBhMmUxNzggMTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvTWFrZWZpbGUKPiAr
-KysgYi9hcmNoL2FybS9ib290L2R0cy9NYWtlZmlsZQo+IEBAIC03MzQsNyArNzM0LDggQEAgZHRi
-LSQoQ09ORklHX01BQ0hfU1VONUkpICs9IFwKPiAgICAgICAgIHN1bjVpLWExMy1vbGludXhpbm8t
-bWljcm8uZHRiIFwKPiAgICAgICAgIHN1bjVpLWExMy1xOC10YWJsZXQuZHRiIFwKPiAgICAgICAg
-IHN1bjVpLWExMy11dG9vLXA2Ni5kdGIgXAo+IC0gICAgICAgc3VuNWktcjgtY2hpcC5kdGIKPiAr
-ICAgICAgIHN1bjVpLXI4LWNoaXAuZHRiIFwKPiArICAgICAgIGdyOC1ldmIuZHRiCj4gIGR0Yi0k
-KENPTkZJR19NQUNIX1NVTjZJKSArPSBcCj4gICAgICAgICBzdW42aS1hMzEtYXBwNC1ldmIxLmR0
-YiBcCj4gICAgICAgICBzdW42aS1hMzEtY29sb21idXMuZHRiIFwKPiBkaWZmIC0tZ2l0IGEvYXJj
-aC9hcm0vYm9vdC9kdHMvZ3I4LWV2Yi5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9ncjgtZXZiLmR0
-cwo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gaW5kZXggMDAwMDAwMDAwMDAwLi5lMzM0ZDE4ZDdi
-ZjAKPiAtLS0gL2Rldi9udWxsCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZ3I4LWV2Yi5kdHMK
-PiBAQCAtMCwwICsxLDM3OCBAQAo+ICsvKgo+ICsgKiBDb3B5cmlnaHQgMjAxNiBGcmVlIEVsZWN0
-cm9ucwo+ICsgKiBDb3B5cmlnaHQgMjAxNiBOZXh0VGhpbmcgQ28KPiArICoKPiArICogTXlsw6hu
-ZSBKb3NzZXJhbmQgPG15bGVuZS5qb3NzZXJhbmRAZnJlZS1lbGVjdHJvbnMuY29tPgo+ICsgKgo+
-ICsgKiBUaGlzIGZpbGUgaXMgZHVhbC1saWNlbnNlZDogeW91IGNhbiB1c2UgaXQgZWl0aGVyIHVu
-ZGVyIHRoZSB0ZXJtcwo+ICsgKiBvZiB0aGUgR1BMIG9yIHRoZSBYMTEgbGljZW5zZSwgYXQgeW91
-ciBvcHRpb24uIE5vdGUgdGhhdCB0aGlzIGR1YWwKPiArICogbGljZW5zaW5nIG9ubHkgYXBwbGll
-cyB0byB0aGlzIGZpbGUsIGFuZCBub3QgdGhpcyBwcm9qZWN0IGFzIGEKPiArICogd2hvbGUuCj4g
-KyAqCj4gKyAqICBhKSBUaGlzIGZpbGUgaXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3Ry
-aWJ1dGUgaXQgYW5kL29yCj4gKyAqICAgICBtb2RpZnkgaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRo
-ZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSBhcwo+ICsgKiAgICAgcHVibGlzaGVkIGJ5IHRo
-ZSBGcmVlIFNvZnR3YXJlIEZvdW5kYXRpb247IGVpdGhlciB2ZXJzaW9uIDIgb2YgdGhlCj4gKyAq
-ICAgICBMaWNlbnNlLCBvciAoYXQgeW91ciBvcHRpb24pIGFueSBsYXRlciB2ZXJzaW9uLgo+ICsg
-Kgo+ICsgKiAgICAgVGhpcyBmaWxlIGlzIGRpc3RyaWJ1dGVkIGluIHRoZSBob3BlIHRoYXQgaXQg
-d2lsbCBiZSB1c2VmdWwsCj4gKyAqICAgICBidXQgV0lUSE9VVCBBTlkgV0FSUkFOVFk7IHdpdGhv
-dXQgZXZlbiB0aGUgaW1wbGllZCB3YXJyYW50eSBvZgo+ICsgKiAgICAgTUVSQ0hBTlRBQklMSVRZ
-IG9yIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NFLiAgU2VlIHRoZQo+ICsgKiAgICAg
-R05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UgZm9yIG1vcmUgZGV0YWlscy4KPiArICoKPiArICog
-T3IsIGFsdGVybmF0aXZlbHksCj4gKyAqCj4gKyAqICBiKSBQZXJtaXNzaW9uIGlzIGhlcmVieSBn
-cmFudGVkLCBmcmVlIG9mIGNoYXJnZSwgdG8gYW55IHBlcnNvbgo+ICsgKiAgICAgb2J0YWluaW5n
-IGEgY29weSBvZiB0aGlzIHNvZnR3YXJlIGFuZCBhc3NvY2lhdGVkIGRvY3VtZW50YXRpb24KPiAr
-ICogICAgIGZpbGVzICh0aGUgIlNvZnR3YXJlIiksIHRvIGRlYWwgaW4gdGhlIFNvZnR3YXJlIHdp
-dGhvdXQKPiArICogICAgIHJlc3RyaWN0aW9uLCBpbmNsdWRpbmcgd2l0aG91dCBsaW1pdGF0aW9u
-IHRoZSByaWdodHMgdG8gdXNlLAo+ICsgKiAgICAgY29weSwgbW9kaWZ5LCBtZXJnZSwgcHVibGlz
-aCwgZGlzdHJpYnV0ZSwgc3VibGljZW5zZSwgYW5kL29yCj4gKyAqICAgICBzZWxsIGNvcGllcyBv
-ZiB0aGUgU29mdHdhcmUsIGFuZCB0byBwZXJtaXQgcGVyc29ucyB0byB3aG9tIHRoZQo+ICsgKiAg
-ICAgU29mdHdhcmUgaXMgZnVybmlzaGVkIHRvIGRvIHNvLCBzdWJqZWN0IHRvIHRoZSBmb2xsb3dp
-bmcKPiArICogICAgIGNvbmRpdGlvbnM6Cj4gKyAqCj4gKyAqICAgICBUaGUgYWJvdmUgY29weXJp
-Z2h0IG5vdGljZSBhbmQgdGhpcyBwZXJtaXNzaW9uIG5vdGljZSBzaGFsbCBiZQo+ICsgKiAgICAg
-aW5jbHVkZWQgaW4gYWxsIGNvcGllcyBvciBzdWJzdGFudGlhbCBwb3J0aW9ucyBvZiB0aGUgU29m
-dHdhcmUuCj4gKyAqCj4gKyAqICAgICBUSEUgU09GVFdBUkUgSVMgUFJPVklERUQgIkFTIElTIiwg
-V0lUSE9VVCBXQVJSQU5UWSBPRiBBTlkgS0lORCwKPiArICogICAgIEVYUFJFU1MgT1IgSU1QTElF
-RCwgSU5DTFVESU5HIEJVVCBOT1QgTElNSVRFRCBUTyBUSEUgV0FSUkFOVElFUwo+ICsgKiAgICAg
-T0YgTUVSQ0hBTlRBQklMSVRZLCBGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVSUE9TRSBBTkQK
-PiArICogICAgIE5PTklORlJJTkdFTUVOVC4gSU4gTk8gRVZFTlQgU0hBTEwgVEhFIEFVVEhPUlMg
-T1IgQ09QWVJJR0hUCj4gKyAqICAgICBIT0xERVJTIEJFIExJQUJMRSBGT1IgQU5ZIENMQUlNLCBE
-QU1BR0VTIE9SIE9USEVSIExJQUJJTElUWSwKPiArICogICAgIFdIRVRIRVIgSU4gQU4gQUNUSU9O
-IE9GIENPTlRSQUNULCBUT1JUIE9SIE9USEVSV0lTRSwgQVJJU0lORwo+ICsgKiAgICAgRlJPTSwg
-T1VUIE9GIE9SIElOIENPTk5FQ1RJT04gV0lUSCBUSEUgU09GVFdBUkUgT1IgVEhFIFVTRSBPUgo+
-ICsgKiAgICAgT1RIRVIgREVBTElOR1MgSU4gVEhFIFNPRlRXQVJFLgo+ICsgKi8KPiArCj4gKy9k
-dHMtdjEvOwo+ICsjaW5jbHVkZSAiZ3I4LmR0c2kiCj4gKyNpbmNsdWRlICJzdW54aS1jb21tb24t
-cmVndWxhdG9ycy5kdHNpIgo+ICsKPiArI2luY2x1ZGUgPGR0LWJpbmRpbmdzL2dwaW8vZ3Bpby5o
-Pgo+ICsjaW5jbHVkZSA8ZHQtYmluZGluZ3MvaW5wdXQvaW5wdXQuaD4KPiArI2luY2x1ZGUgPGR0
-LWJpbmRpbmdzL2ludGVycnVwdC1jb250cm9sbGVyL2lycS5oPgo+ICsKPiArLyB7Cj4gKyAgICAg
-ICBtb2RlbCA9ICJOZXh0VGhpbmcgR1I4LUVWQiI7Cj4gKyAgICAgICBjb21wYXRpYmxlID0gIm5l
-eHR0aGluZyxncjgtZXZiIiwgIm5leHR0aGluZyxncjgiOwo+ICsKPiArICAgICAgIGFsaWFzZXMg
-ewo+ICsgICAgICAgICAgICAgICBpMmMwID0gJmkyYzA7Cj4gKyAgICAgICAgICAgICAgIGkyYzEg
-PSAmaTJjMTsKPiArICAgICAgICAgICAgICAgaTJjMiA9ICZpMmMyOwo+ICsgICAgICAgICAgICAg
-ICBzZXJpYWwwID0gJnVhcnQxOwo+ICsgICAgICAgICAgICAgICBzZXJpYWwxID0gJnVhcnQyOwo+
-ICsgICAgICAgfTsKPiArCj4gKyAgICAgICBjaG9zZW4gewo+ICsgICAgICAgICAgICAgICBzdGRv
-dXQtcGF0aCA9ICJzZXJpYWwwOjExNTIwMG44IjsKPiArICAgICAgIH07Cj4gKwo+ICsgICAgICAg
-YmFja2xpZ2h0OiBiYWNrbGlnaHQgewo+ICsgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInB3
-bS1iYWNrbGlnaHQiOwo+ICsgICAgICAgICAgICAgICBwd21zID0gPCZwd20gMCAxMDAwMCAwPjsK
-PiArICAgICAgICAgICAgICAgZW5hYmxlLWdwaW9zID0gPCZheHBfZ3BpbyAxIEdQSU9fQUNUSVZF
-X0hJR0g+Owo+ICsKPiArICAgICAgICAgICAgICAgYnJpZ2h0bmVzcy1sZXZlbHMgPSA8MCAxMCAy
-MCAzMCA0MCA1MCA2MCA3MCA4MCA5MCAxMDA+Owo+ICsgICAgICAgICAgICAgICBkZWZhdWx0LWJy
-aWdodG5lc3MtbGV2ZWwgPSA8OD47Cj4gKyAgICAgICB9Owo+ICsKPiArICAgICAgIHBhbmVsIHsK
-PiArICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJhbGx3aW5uZXIsc3VuNGktYTEwLXN1Yi1l
-dmItNS1sY2QiOwo+ICsgICAgICAgICAgICAgICBlbmFibGUtZ3Bpb3MgPSA8JmF4cF9ncGlvIDAg
-R1BJT19BQ1RJVkVfSElHSD47Cj4gKyAgICAgICAgICAgICAgIGJhY2tsaWdodCA9IDwmYmFja2xp
-Z2h0PjsKPiArICAgICAgICAgICAgICAgcG93ZXItc3VwcGx5ID0gPCZyZWdfdmNjM3YwPjsKPiAr
-ICAgICAgICAgICAgICAgI2FkZHJlc3MtY2VsbHMgPSA8MT47Cj4gKyAgICAgICAgICAgICAgICNz
-aXplLWNlbGxzID0gPDA+Owo+ICsKPiArICAgICAgICAgICAgICAgcG9ydEAwIHsKPiArICAgICAg
-ICAgICAgICAgICAgICAgICByZWcgPSA8MD47Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgI2Fk
-ZHJlc3MtY2VsbHMgPSA8MT47Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgI3NpemUtY2VsbHMg
-PSA8MD47Cj4gKwo+ICsgICAgICAgICAgICAgICAgICAgICAgIHBhbmVsX2lucHV0OiBlbmRwb2lu
-dEAwIHsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJlZyA9IDwwPjsKPiArICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJlbW90ZS1lbmRwb2ludCA9IDwmdGNvbjBfb3V0
-X3BhbmVsPjsKPiArICAgICAgICAgICAgICAgICAgICAgICB9Owo+ICsgICAgICAgICAgICAgICB9
-Owo+ICsgICAgICAgfTsKPiArfTsKPiArCj4gKyZiZTAgewo+ICsgICAgICAgc3RhdHVzID0gIm9r
-YXkiOwo+ICt9Owo+ICsKPiArJmNvZGVjIHsKPiArICAgICAgIHN0YXR1cyA9ICJva2F5IjsKPiAr
-fTsKPiArCj4gKyZlaGNpMCB7Cj4gKyAgICAgICBzdGF0dXMgPSAib2theSI7Cj4gK307Cj4gKwo+
-ICsmaTJjMCB7Cj4gKyAgICAgICBwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOwo+ICsgICAgICAg
-cGluY3RybC0wID0gPCZpMmMwX3BpbnNfYT47Cj4gKyAgICAgICBzdGF0dXMgPSAib2theSI7Cj4g
-Kwo+ICsgICAgICAgYXhwMjA5OiBwbWljQDM0IHsKPiArICAgICAgICAgICAgICAgcmVnID0gPDB4
-MzQ+Owo+ICsKPiArICAgICAgICAgICAgICAgLyoKPiArICAgICAgICAgICAgICAgKiBUaGUgaW50
-ZXJydXB0IGlzIHJvdXRlZCB0aHJvdWdoIHRoZSAiRXh0ZXJuYWwgRmFzdAo+ICsgICAgICAgICAg
-ICAgICAqIEludGVycnVwdCBSZXF1ZXN0IiBwaW4gKGJhbGwgRzEzIG9mIHRoZSBtb2R1bGUpCj4g
-KyAgICAgICAgICAgICAgICogZGlyZWN0bHkgdG8gdGhlIG1haW4gaW50ZXJydXB0IGNvbnRyb2xs
-ZXIsIHdpdGhvdXQKPiArICAgICAgICAgICAgICAgKiBhbnkgb3RoZXIgY29udHJvbGxlciBpbnRl
-cmZlcmluZy4KPiArICAgICAgICAgICAgICAgKi8KPiArICAgICAgICAgICAgICAgaW50ZXJydXB0
-cyA9IDwwPjsKPiArICAgICAgIH07Cj4gK307Cj4gKwo+ICsjaW5jbHVkZSAiYXhwMjA5LmR0c2ki
-Cj4gKwo+ICsmaTJjMSB7Cj4gKyAgICAgICBwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOwo+ICsg
-ICAgICAgcGluY3RybC0wID0gPCZpMmMxX3BpbnNfYT47Cj4gKyAgICAgICBzdGF0dXMgPSAib2th
-eSI7Cj4gKwo+ICsgICAgICAgcGNmODU2MzogcnRjQDUxIHsKPiArICAgICAgICAgICAgICAgY29t
-cGF0aWJsZSA9ICJwaGcscGNmODU2MyI7Cj4gKyAgICAgICAgICAgICAgIHJlZyA9IDwweDUxPjsK
-PiArICAgICAgIH07Cj4gKwo+ICsgICAgICAgd204OTc4OiBjb2RlY0AxYSB7Cj4gKyAgICAgICAg
-ICAgICAgICNzb3VuZC1kYWktY2VsbHMgPSA8MD47Cj4gKyAgICAgICAgICAgICAgIGNvbXBhdGli
-bGUgPSAid2xmLHdtODk3OCI7Cj4gKyAgICAgICAgICAgICAgIHJlZyA9IDwweDFhPjsKPiArICAg
-ICAgIH07Cj4gK307Cj4gKwo+ICsmaTJjMiB7Cj4gKyAgICAgICBwaW5jdHJsLW5hbWVzID0gImRl
-ZmF1bHQiOwo+ICsgICAgICAgcGluY3RybC0wID0gPCZpMmMyX3BpbnNfYT47Cj4gKyAgICAgICBz
-dGF0dXMgPSAib2theSI7Cj4gK307Cj4gKwo+ICsmaTJzMCB7Cj4gKyAgICAgICBwaW5jdHJsLW5h
-bWVzID0gImRlZmF1bHQiOwo+ICsgICAgICAgcGluY3RybC0wID0gPCZpMnMwX3BpbnNfYT47Cj4g
-KyAgICAgICBzdGF0dXMgPSAib2theSI7Cj4gK307Cj4gKwo+ICsmaXIwIHsKPiArICAgICAgIHBp
-bmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7Cj4gKyAgICAgICBwaW5jdHJsLTAgPSA8JmlyMF9yeF9w
-aW5zX2E+Owo+ICsgICAgICAgc3RhdHVzID0gIm9rYXkiOwo+ICt9Owo+ICsKPiArJmxyYWRjIHsK
-PiArICAgICAgIHZyZWYtc3VwcGx5ID0gPCZyZWdfbGRvMj47Cj4gKyAgICAgICBzdGF0dXMgPSAi
-b2theSI7Cj4gKwo+ICsgICAgICAgYnV0dG9uQDE5MCB7Cj4gKyAgICAgICAgICAgICAgIGxhYmVs
-ID0gIlZvbHVtZSBVcCI7Cj4gKyAgICAgICAgICAgICAgIGxpbnV4LGNvZGUgPSA8S0VZX1ZPTFVN
-RVVQPjsKPiArICAgICAgICAgICAgICAgY2hhbm5lbCA9IDwwPjsKPiArICAgICAgICAgICAgICAg
-dm9sdGFnZSA9IDwxOTAwMDA+Owo+ICsgICAgICAgfTsKPiArCj4gKyAgICAgICBidXR0b25AMzkw
-IHsKPiArICAgICAgICAgICAgICAgbGFiZWwgPSAiVm9sdW1lIERvd24iOwo+ICsgICAgICAgICAg
-ICAgICBsaW51eCxjb2RlID0gPEtFWV9WT0xVTUVET1dOPjsKPiArICAgICAgICAgICAgICAgY2hh
-bm5lbCA9IDwwPjsKPiArICAgICAgICAgICAgICAgdm9sdGFnZSA9IDwzOTAwMDA+Owo+ICsgICAg
-ICAgfTsKPiArCj4gKyAgICAgICBidXR0b25ANjAwIHsKPiArICAgICAgICAgICAgICAgbGFiZWwg
-PSAiTWVudSI7Cj4gKyAgICAgICAgICAgICAgIGxpbnV4LGNvZGUgPSA8S0VZX01FTlU+Owo+ICsg
-ICAgICAgICAgICAgICBjaGFubmVsID0gPDA+Owo+ICsgICAgICAgICAgICAgICB2b2x0YWdlID0g
-PDYwMDAwMD47Cj4gKyAgICAgICB9Owo+ICsKPiArICAgICAgIGJ1dHRvbkA4MDAgewo+ICsgICAg
-ICAgICAgICAgICBsYWJlbCA9ICJTZWFyY2giOwo+ICsgICAgICAgICAgICAgICBsaW51eCxjb2Rl
-ID0gPEtFWV9TRUFSQ0g+Owo+ICsgICAgICAgICAgICAgICBjaGFubmVsID0gPDA+Owo+ICsgICAg
-ICAgICAgICAgICB2b2x0YWdlID0gPDgwMDAwMD47Cj4gKyAgICAgICB9Owo+ICsKPiArICAgICAg
-IGJ1dHRvbkA5ODAgewo+ICsgICAgICAgICAgICAgICBsYWJlbCA9ICJIb21lIjsKPiArICAgICAg
-ICAgICAgICAgbGludXgsY29kZSA9IDxLRVlfSE9NRVBBR0U+Owo+ICsgICAgICAgICAgICAgICBj
-aGFubmVsID0gPDA+Owo+ICsgICAgICAgICAgICAgICB2b2x0YWdlID0gPDk4MDAwMD47Cj4gKyAg
-ICAgICB9Owo+ICsKPiArICAgICAgIGJ1dHRvbkAxMTgwIHsKPiArICAgICAgICAgICAgICAgbGFi
-ZWwgPSAiRXNjIjsKPiArICAgICAgICAgICAgICAgbGludXgsY29kZSA9IDxLRVlfRVNDPjsKPiAr
-ICAgICAgICAgICAgICAgY2hhbm5lbCA9IDwwPjsKPiArICAgICAgICAgICAgICAgdm9sdGFnZSA9
-IDwxMTgwMDAwPjsKPiArICAgICAgIH07Cj4gKwo+ICsgICAgICAgYnV0dG9uQDE0MDAgewo+ICsg
-ICAgICAgICAgICAgICBsYWJlbCA9ICJFbnRlciI7Cj4gKyAgICAgICAgICAgICAgIGxpbnV4LGNv
-ZGUgPSA8S0VZX0VOVEVSPjsKPiArICAgICAgICAgICAgICAgY2hhbm5lbCA9IDwwPjsKPiArICAg
-ICAgICAgICAgICAgdm9sdGFnZSA9IDwxNDAwMDAwPjsKPiArICAgICAgIH07Cj4gK307Cj4gKwo+
-ICsmbW1jMCB7Cj4gKyAgICAgICBwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOwo+ICsgICAgICAg
-cGluY3RybC0wID0gPCZtbWMwX3BpbnNfYT4sIDwmbW1jMF9jZF9waW5fZ3I4X2V2Yj47Cj4gKyAg
-ICAgICB2bW1jLXN1cHBseSA9IDwmcmVnX3ZjYzN2Mz47Cj4gKyAgICAgICBidXMtd2lkdGggPSA8
-ND47Cj4gKyAgICAgICBjZC1ncGlvcyA9IDwmcGlvIDYgMCBHUElPX0FDVElWRV9ISUdIPjsgLyog
-UEcwICovCj4gKyAgICAgICBjZC1pbnZlcnRlZDsKPiArICAgICAgIHN0YXR1cyA9ICJva2F5IjsK
-PiArfTsKPiArCj4gKyZuZmMgewo+ICsgICAgICAgcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsK
-PiArICAgICAgIHBpbmN0cmwtMCA9IDwmbmFuZF9waW5zX2EgJm5hbmRfY3MwX3BpbnNfYSAmbmFu
-ZF9yYjBfcGluc19hPjsKPiArCj4gKyAgICAgICAvKiBNTEMgU3VwcG9ydCBzdWNrcyBmb3Igbm93
-ICovCj4gKyAgICAgICBzdGF0dXMgPSAiZGlzYWJsZWQiOwo+ICt9Owo+ICsKPiArJm9oY2kwIHsK
-PiArICAgICAgIHN0YXR1cyA9ICJva2F5IjsKPiArfTsKPiArCj4gKyZvdGdfc3JhbSB7Cj4gKyAg
-ICAgICBzdGF0dXMgPSAib2theSI7Cj4gK307Cj4gKwo+ICsmcGlvIHsKPiArICAgICAgIG1tYzBf
-Y2RfcGluX2dyOF9ldmI6IG1tYzAtY2QtcGluQDAgewo+ICsgICAgICAgICAgICAgICBhbGx3aW5u
-ZXIscGlucyA9ICJQRzAiOwo+ICsgICAgICAgICAgICAgICBhbGx3aW5uZXIsZnVuY3Rpb24gPSAi
-Z3Bpb19pbiI7Cj4gKyAgICAgICAgICAgICAgIGFsbHdpbm5lcixkcml2ZSA9IDxTVU40SV9QSU5D
-VFJMXzEwX01BPjsKPiArICAgICAgICAgICAgICAgYWxsd2lubmVyLHB1bGwgPSA8U1VONElfUElO
-Q1RSTF9OT19QVUxMPjsKPiArICAgICAgIH07Cj4gKwo+ICsgICAgICAgdXNiMF9pZF9waW5fZ3I4
-X2V2YjogdXNiMC1pZC1waW5AMCB7Cj4gKyAgICAgICAgICAgICAgIGFsbHdpbm5lcixwaW5zID0g
-IlBHMiI7Cj4gKyAgICAgICAgICAgICAgIGFsbHdpbm5lcixmdW5jdGlvbiA9ICJncGlvX2luIjsK
-PiArICAgICAgICAgICAgICAgYWxsd2lubmVyLGRyaXZlID0gPFNVTjRJX1BJTkNUUkxfMTBfTUE+
-Owo+ICsgICAgICAgICAgICAgICBhbGx3aW5uZXIscHVsbCA9IDxTVU40SV9QSU5DVFJMX05PX1BV
-TEw+Owo+ICsgICAgICAgfTsKPiArCj4gKyAgICAgICB1c2IwX3ZidXNfZGV0X3Bpbl9ncjhfZXZi
-OiB1c2IwLXZidXMtZGV0LXBpbkAwIHsKPiArICAgICAgICAgICAgICAgYWxsd2lubmVyLHBpbnMg
-PSAiUEcxIjsKPiArICAgICAgICAgICAgICAgYWxsd2lubmVyLGZ1bmN0aW9uID0gImdwaW9faW4i
-Owo+ICsgICAgICAgICAgICAgICBhbGx3aW5uZXIsZHJpdmUgPSA8U1VONElfUElOQ1RSTF8xMF9N
-QT47Cj4gKyAgICAgICAgICAgICAgIGFsbHdpbm5lcixwdWxsID0gPFNVTjRJX1BJTkNUUkxfTk9f
-UFVMTD47Cj4gKyAgICAgICB9Owo+ICsKPiArICAgICAgIHVzYjFfdmJ1c19waW5fZ3I4X2V2Yjog
-dXNiMS12YnVzLXBpbkAwIHsKPiArICAgICAgICAgICAgICAgYWxsd2lubmVyLHBpbnMgPSAiUEcx
-MyI7Cj4gKyAgICAgICAgICAgICAgIGFsbHdpbm5lcixmdW5jdGlvbiA9ICJncGlvX291dCI7Cj4g
-KyAgICAgICAgICAgICAgIGFsbHdpbm5lcixkcml2ZSA9IDxTVU40SV9QSU5DVFJMXzEwX01BPjsK
-PiArICAgICAgICAgICAgICAgYWxsd2lubmVyLHB1bGwgPSA8U1VONElfUElOQ1RSTF9OT19QVUxM
-PjsKPiArICAgICAgIH07Cj4gK307Cj4gKwo+ICsmcHdtIHsKPiArICAgICAgIHBpbmN0cmwtbmFt
-ZXMgPSAiZGVmYXVsdCI7Cj4gKyAgICAgICBwaW5jdHJsLTAgPSA8JnB3bTBfcGluc19hPjsKPiAr
-ICAgICAgIHN0YXR1cyA9ICJva2F5IjsKPiArfTsKPiArCj4gKyZyZWdfZGNkYzIgewo+ICsgICAg
-ICAgcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8MTAwMDAwMD47Cj4gKyAgICAgICByZWd1bGF0
-b3ItbWF4LW1pY3Jvdm9sdCA9IDwxNDAwMDAwPjsKPiArICAgICAgIHJlZ3VsYXRvci1uYW1lID0g
-InZkZC1jcHUiOwo+ICsgICAgICAgcmVndWxhdG9yLWFsd2F5cy1vbjsKPiArfTsKPiArCj4gKyZy
-ZWdfZGNkYzMgewo+ICsgICAgICAgcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8MTAwMDAwMD47
-Cj4gKyAgICAgICByZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwxMzAwMDAwPjsKPiArICAgICAg
-IHJlZ3VsYXRvci1uYW1lID0gInZkZC1zeXMiOwo+ICsgICAgICAgcmVndWxhdG9yLWFsd2F5cy1v
-bjsKPiArfTsKPiArCj4gKyZyZWdfbGRvMSB7Cj4gKyAgICAgICByZWd1bGF0b3ItbmFtZSA9ICJ2
-ZGQtcnRjIjsKPiArfTsKPiArCj4gKyZyZWdfbGRvMiB7Cj4gKyAgICAgICByZWd1bGF0b3ItbWlu
-LW1pY3Jvdm9sdCA9IDwyNzAwMDAwPjsKPiArICAgICAgIHJlZ3VsYXRvci1tYXgtbWljcm92b2x0
-ID0gPDMzMDAwMDA+Owo+ICsgICAgICAgcmVndWxhdG9yLW5hbWUgPSAiYXZjYyI7Cj4gKyAgICAg
-ICByZWd1bGF0b3ItYWx3YXlzLW9uOwo+ICt9Owo+ICsKPiArJnJlZ191c2IxX3ZidXMgewo+ICsg
-ICAgICAgcGluY3RybC0wID0gPCZ1c2IxX3ZidXNfcGluX2dyOF9ldmI+Owo+ICsgICAgICAgZ3Bp
-byA9IDwmcGlvIDYgMTMgR1BJT19BQ1RJVkVfSElHSD47Cj4gKyAgICAgICBzdGF0dXMgPSAib2th
-eSI7Cj4gK307Cj4gKwo+ICsmcnRwIHsKPiArICAgICAgIGFsbHdpbm5lcix0cy1hdHRhY2hlZDsK
-PiArfTsKPiArCj4gKyZzcGRpZiB7Cj4gKyAgICAgICBwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQi
-Owo+ICsgICAgICAgcGluY3RybC0wID0gPCZzcGRpZl90eF9waW5zX2E+Owo+ICsgICAgICAgc3Rh
-dHVzID0gIm9rYXkiOwo+ICt9Owo+ICsKPiArJnRjb24wIHsKPiArICAgICAgIHBpbmN0cmwtbmFt
-ZXMgPSAiZGVmYXVsdCI7Cj4gKyAgICAgICBwaW5jdHJsLTAgPSA8JmxjZF9yZ2I2NjZfcGlucz47
-Cj4gKyAgICAgICBzdGF0dXMgPSAib2theSI7Cj4gK307Cj4gKwo+ICsmdGNvbjBfb3V0IHsKPiAr
-ICAgICAgICNhZGRyZXNzLWNlbGxzID0gPDE+Owo+ICsgICAgICAgI3NpemUtY2VsbHMgPSA8MD47
-Cj4gKwo+ICsgICAgICAgdGNvbjBfb3V0X3BhbmVsOiBlbmRwb2ludEAwIHsKPiArICAgICAgICAg
-ICAgICAgcmVnID0gPDA+Owo+ICsgICAgICAgICAgICAgICByZW1vdGUtZW5kcG9pbnQgPSA8JnBh
-bmVsX2lucHV0PjsKPiArICAgICAgIH07Cj4gK307Cj4gKwo+ICsmdHZlMCB7Cj4gKyAgICAgICBz
-dGF0dXMgPSAib2theSI7Cj4gK307Cj4gKwo+ICsmdWFydDEgewo+ICsgICAgICAgcGluY3RybC1u
-YW1lcyA9ICJkZWZhdWx0IjsKPiArICAgICAgIHBpbmN0cmwtMCA9IDwmdWFydDFfcGluc19hPiwg
-PCZ1YXJ0MV9jdHNfcnRzX3BpbnNfYT47Cj4gKyAgICAgICBzdGF0dXMgPSAib2theSI7Cj4gK307
-Cj4gKwo+ICsmdXNiX290ZyB7Cj4gKyAgICAgICAvKgo+ICsgICAgICAgICogVGhlIEdSOC1FVkIg
-aGFzIGEgc29tZXdoYXQgaW50ZXJlc3RpbmcgZGVzaWduLiBUaGVyZSdzIGEKPiArICAgICAgICAq
-IHBpbiBzdXBwb3NlZCB0byBjb250cm9sIFZCVVMsIGFuIElEIHBpbiwgYSBWQlVTIGRldGVjdCBw
-aW4sCj4gKyAgICAgICAgKiBzbyBldmVyeXRoaW5nIHNob3VsZCB3b3JrIGp1c3QgZmluZS4KPiAr
-ICAgICAgICAqCj4gKyAgICAgICAgKiBFeGNlcHQgdGhhdCB0aGUgcGluIHN1cHBvc2VkIHRvIGNv
-bnRyb2wgVkJVUyBpcyBub3QKPiArICAgICAgICAqIGNvbm5lY3RlZCB0byBhbnkgY29udHJvbGxh
-YmxlIG91dHB1dCwgbmVpdGhlciB0byB0aGUgU29DCj4gKyAgICAgICAgKiB0aHJvdWdoIGEgR1BJ
-TyBvciB0byB0aGUgUE1JQywgYW5kIGl0IGlzIHB1bGxlZCBkb3duLAo+ICsgICAgICAgICogbWVh
-bmluZyB0aGF0IHdlIHdpbGwgbmV2ZXIgYmUgYWJsZSB0byBlbmFibGUgVkJVUyBvbiB0aGlzCj4g
-KyAgICAgICAgKiBib2FyZC4KPiArICAgICAgICAqLwoKSUlSQywgSGFucyBtYWRlIE9URyB3b3Jr
-IHdpdGggYm9hcmRzIHRoYXQgZG9uJ3QgaGF2ZSBWQlVTIGNvbnRyb2wuCkFsbCB5b3UgbmVlZCBp
-cyBhIHBvd2VyZWQgaHViLiBBbmQgc2luY2UgdGhlcmUncyBubyBjaGFuY2Ugb2YgVkJVUwpnb2lu
-ZyBiYWNrIHRocm91Z2ggdGhlIGNvbm5lY3Rpb24gdG8gaHVydCB0aGUgaG9zdCBvbiB0aGUgb3Ro
-ZXIgZW5kCndoZW4gaW4gcGVyaXBoZXJhbCBtb2RlLCBJIHRoaW5rIGl0J3Mgb2sgdG8gcHV0IGl0
-IGluIE9URyBtb2RlIGhlcmUuCgpUaGUgcmVzdCBsb29rcyBmaW5lLgoKQ2hlbll1Cgo+ICsgICAg
-ICAgZHJfbW9kZSA9ICJwZXJpcGhlcmFsIjsKPiArICAgICAgIHN0YXR1cyA9ICJva2F5IjsKPiAr
-fTsKPiArCj4gKyZ1c2JfcG93ZXJfc3VwcGx5IHsKPiArICAgICAgIHN0YXR1cyA9ICJva2F5IjsK
-PiArfTsKPiArCj4gKyZ1c2JwaHkgewo+ICsgICAgICAgcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0
-IjsKPiArICAgICAgIHBpbmN0cmwtMCA9IDwmdXNiMF9pZF9waW5fZ3I4X2V2Yj4sIDwmdXNiMF92
-YnVzX2RldF9waW5fZ3I4X2V2Yj47Cj4gKyAgICAgICB1c2IwX2lkX2RldC1ncGlvID0gPCZwaW8g
-NiAyIEdQSU9fQUNUSVZFX0hJR0g+OyAvKiBQRzIgKi8KPiArICAgICAgIHVzYjBfdmJ1c19kZXQt
-Z3BpbyA9IDwmcGlvIDYgMSBHUElPX0FDVElWRV9ISUdIPjsgLyogUEcxICovCj4gKyAgICAgICB1
-c2IwX3ZidXNfcG93ZXItc3VwcGx5ID0gPCZ1c2JfcG93ZXJfc3VwcGx5PjsKPiArICAgICAgIHVz
-YjFfdmJ1cy1zdXBwbHkgPSA8JnJlZ191c2IxX3ZidXM+Owo+ICsgICAgICAgc3RhdHVzID0gIm9r
-YXkiOwo+ICt9Owo+IC0tCj4gMi45LjIKPgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJt
-LWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21h
-aWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+On Wed, Aug 31, 2016 at 4:18 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> From: Mylène Josserand <mylene.josserand@free-electrons.com>
+>
+> The GR8 is an SoC made by Nextthing loosely based on the sun5i family.
+>
+> Since it's not clear yet what we can factor out and merge with the A10s and
+> A13 support, let's keep it out of the sun5i.dtsi include tree. We will
+> figure out what can be shared when things settle down.
+>
+> Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  arch/arm/boot/dts/gr8.dtsi | 1080 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 1080 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/gr8.dtsi
+>
+> diff --git a/arch/arm/boot/dts/gr8.dtsi b/arch/arm/boot/dts/gr8.dtsi
+> new file mode 100644
+> index 000000000000..d21cfa3f3c14
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/gr8.dtsi
+> @@ -0,0 +1,1080 @@
+> +/*
+> + * Copyright 2016 Mylène Josserand
+> + *
+> + * Mylène Josserand <mylene.josserand@free-electrons.com>
+> + *
+> + * This file is dual-licensed: you can use it either under the terms
+> + * of the GPL or the X11 license, at your option. Note that this dual
+> + * licensing only applies to this file, and not this project as a
+> + * whole.
+> + *
+> + *  a) This library is free software; you can redistribute it and/or
+> + *     modify it under the terms of the GNU General Public License as
+> + *     published by the Free Software Foundation; either version 2 of the
+> + *     License, or (at your option) any later version.
+> + *
+> + *     This library is distributed in the hope that it will be useful,
+> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + *     GNU General Public License for more details.
+> + *
+> + * Or, alternatively,
+> + *
+> + *  b) Permission is hereby granted, free of charge, to any person
+> + *     obtaining a copy of this software and associated documentation
+> + *     files (the "Software"), to deal in the Software without
+> + *     restriction, including without limitation the rights to use,
+> + *     copy, modify, merge, publish, distribute, sublicense, and/or
+> + *     sell copies of the Software, and to permit persons to whom the
+> + *     Software is furnished to do so, subject to the following
+> + *     conditions:
+> + *
+> + *     The above copyright notice and this permission notice shall be
+> + *     included in all copies or substantial portions of the Software.
+> + *
+> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> + *     OTHER DEALINGS IN THE SOFTWARE.
+> + */
+> +
+> +#include "skeleton.dtsi"
+> +
+> +#include <dt-bindings/clock/sun4i-a10-pll2.h>
+> +#include <dt-bindings/dma/sun4i-a10.h>
+> +#include <dt-bindings/pinctrl/sun4i-a10.h>
+> +
+> +/ {
+> +       interrupt-parent = <&intc>;
+> +
+> +       cpus {
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               cpu0: cpu@0 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a8";
+> +                       reg = <0x0>;
+> +                       clocks = <&cpu>;
+> +               };
+> +       };
+> +
+> +       clocks {
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ranges;
+> +
+> +               /*
+> +                * This is a dummy clock, to be used as placeholder on
+> +                * other mux clocks when a specific parent clock is not
+> +                * yet implemented. It should be dropped when the driver
+> +                * is complete.
+> +                */
+> +               dummy: dummy {
+> +                       #clock-cells = <0>;
+> +                       compatible = "fixed-clock";
+> +                       clock-frequency = <0>;
+> +               };
+> +
+> +               osc24M: clk@01c20050 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-osc-clk";
+> +                       reg = <0x01c20050 0x4>;
+> +                       clock-frequency = <24000000>;
+> +                       clock-output-names = "osc24M";
+> +               };
+> +
+> +               osc3M: osc3M_clk {
+> +                       compatible = "fixed-factor-clock";
+> +                       #clock-cells = <0>;
+> +                       clock-div = <8>;
+> +                       clock-mult = <1>;
+> +                       clocks = <&osc24M>;
+> +                       clock-output-names = "osc3M";
+> +               };
+> +
+> +               osc32k: clk@0 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "fixed-clock";
+> +                       clock-frequency = <32768>;
+> +                       clock-output-names = "osc32k";
+> +               };
+> +
+> +               pll1: clk@01c20000 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-pll1-clk";
+> +                       reg = <0x01c20000 0x4>;
+> +                       clocks = <&osc24M>;
+> +                       clock-output-names = "pll1";
+> +               };
+> +
+> +               pll2: clk@01c20008 {
+> +                       #clock-cells = <1>;
+> +                       compatible = "allwinner,sun5i-a13-pll2-clk";
+> +                       reg = <0x01c20008 0x8>;
+> +                       clocks = <&osc24M>;
+> +                       clock-output-names = "pll2-1x", "pll2-2x",
+> +                                            "pll2-4x", "pll2-8x";
+> +               };
+> +
+> +               pll3: clk@01c20010 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-pll3-clk";
+> +                       reg = <0x01c20010 0x4>;
+> +                       clocks = <&osc3M>;
+> +                       clock-output-names = "pll3";
+> +               };
+> +
+> +               pll3x2: pll3x2_clk {
+> +                       compatible = "fixed-factor-clock";
+> +                       #clock-cells = <0>;
+> +                       clock-div = <1>;
+> +                       clock-mult = <2>;
+> +                       clocks = <&pll3>;
+> +                       clock-output-names = "pll3-2x";
+> +               };
+> +
+> +               pll4: clk@01c20018 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-pll1-clk";
+> +                       reg = <0x01c20018 0x4>;
+> +                       clocks = <&osc24M>;
+> +                       clock-output-names = "pll4";
+> +               };
+> +
+> +               pll5: clk@01c20020 {
+> +                       #clock-cells = <1>;
+> +                       compatible = "allwinner,sun4i-a10-pll5-clk";
+> +                       reg = <0x01c20020 0x4>;
+> +                       clocks = <&osc24M>;
+> +                       clock-output-names = "pll5_ddr", "pll5_other";
+> +               };
+> +
+> +               pll6: clk@01c20028 {
+> +                       #clock-cells = <1>;
+> +                       compatible = "allwinner,sun4i-a10-pll6-clk";
+> +                       reg = <0x01c20028 0x4>;
+> +                       clocks = <&osc24M>;
+> +                       clock-output-names = "pll6_sata", "pll6_other", "pll6";
+> +               };
+> +
+> +               pll7: clk@01c20030 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-pll3-clk";
+> +                       reg = <0x01c20030 0x4>;
+> +                       clocks = <&osc3M>;
+> +                       clock-output-names = "pll7";
+> +               };
+> +
+> +               pll7x2: pll7x2_clk {
+> +                       compatible = "fixed-factor-clock";
+> +                       #clock-cells = <0>;
+> +                       clock-div = <1>;
+> +                       clock-mult = <2>;
+> +                       clocks = <&pll7>;
+> +                       clock-output-names = "pll7-2x";
+> +               };
+> +
+> +               /* dummy is 200M */
+> +               cpu: cpu@01c20054 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-cpu-clk";
+> +                       reg = <0x01c20054 0x4>;
+> +                       clocks = <&osc32k>, <&osc24M>, <&pll1>, <&dummy>;
+> +                       clock-output-names = "cpu";
+> +               };
+> +
+> +               axi: axi@01c20054 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-axi-clk";
+> +                       reg = <0x01c20054 0x4>;
+> +                       clocks = <&cpu>;
+> +                       clock-output-names = "axi";
+> +               };
+> +
+> +               ahb: ahb@01c20054 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun5i-a13-ahb-clk";
+> +                       reg = <0x01c20054 0x4>;
+> +                       clocks = <&axi>, <&cpu>, <&pll6 1>;
+> +                       clock-output-names = "ahb";
+> +                       /*
+> +                        * Use PLL6 as parent, instead of CPU/AXI
+> +                        * which has rate changes due to cpufreq
+> +                        */
+> +                       assigned-clocks = <&ahb>;
+> +                       assigned-clock-parents = <&pll6 1>;
+> +               };
+> +
+> +               apb0: apb0@01c20054 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-apb0-clk";
+> +                       reg = <0x01c20054 0x4>;
+> +                       clocks = <&ahb>;
+> +                       clock-output-names = "apb0";
+> +               };
+> +
+> +               apb1: clk@01c20058 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-apb1-clk";
+> +                       reg = <0x01c20058 0x4>;
+> +                       clocks = <&osc24M>, <&pll6 1>, <&osc32k>;
+> +                       clock-output-names = "apb1";
+> +               };
+> +
+> +               axi_gates: clk@01c2005c {
+> +                       #clock-cells = <1>;
+> +                       compatible = "allwinner,sun4i-a10-axi-gates-clk";
+> +                       reg = <0x01c2005c 0x4>;
+> +                       clocks = <&axi>;
+> +                       clock-indices = <0>;
+> +                       clock-output-names = "axi_dram";
+> +               };
+> +
+> +               ahb_gates: clk@01c20060 {
+> +                       #clock-cells = <1>;
+> +                       compatible = "allwinner,sun5i-a13-ahb-gates-clk";
+> +                       reg = <0x01c20060 0x8>;
+> +                       clocks = <&ahb>;
+> +                       clock-indices = <0>, <1>,
+> +                                       <2>, <5>, <6>,
+> +                                       <7>, <8>, <9>,
+> +                                       <10>, <13>,
+> +                                       <14>, <20>,
+> +                                       <21>, <22>,
+> +                                       <28>, <32>, <34>,
+> +                                       <36>, <40>, <44>,
+> +                                       <46>, <51>,
+> +                                       <52>;
+> +                       clock-output-names = "ahb_usbotg", "ahb_ehci",
+> +                                            "ahb_ohci", "ahb_ss", "ahb_dma",
+> +                                            "ahb_bist", "ahb_mmc0", "ahb_mmc1",
+> +                                            "ahb_mmc2", "ahb_nand",
+> +                                            "ahb_sdram", "ahb_spi0",
+> +                                            "ahb_spi1", "ahb_spi2",
+> +                                            "ahb_stimer", "ahb_ve", "ahb_tve",
+> +                                            "ahb_lcd", "ahb_csi", "ahb_de_be",
+> +                                            "ahb_de_fe", "ahb_iep",
+> +                                            "ahb_mali400";
+> +               };
+> +
+> +               apb0_gates: clk@01c20068 {
+> +                       #clock-cells = <1>;
+> +                       compatible = "allwinner,sun5i-a13-apb0-gates-clk";
+> +                       reg = <0x01c20068 0x4>;
+> +                       clocks = <&apb0>;
+> +                       clock-indices = <0>, <3>,
+> +                                       <5>, <6>;
+> +                       clock-output-names = "apb0_codec", "apb0_i2s0",
+> +                                            "apb0_pio", "apb0_ir";
+> +               };
+
+I assume the ahb and apb0 gates would be different? In the cover letter
+you mentioned that ethernet is gone, but i2s was added?
+
+Otherwise,
+
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+
+> +
+> +               apb1_gates: clk@01c2006c {
+> +                       #clock-cells = <1>;
+> +                       compatible = "allwinner,sun5i-a13-apb1-gates-clk";
+> +                       reg = <0x01c2006c 0x4>;
+> +                       clocks = <&apb1>;
+> +                       clock-indices = <0>, <1>,
+> +                                       <2>, <17>,
+> +                                       <18>;
+> +                       clock-output-names = "apb1_i2c0", "apb1_i2c1",
+> +                                            "apb1_i2c2", "apb1_uart1",
+> +                                            "apb1_uart2";
+> +               };
+> +
+> +               nand_clk: clk@01c20080 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-mod0-clk";
+> +                       reg = <0x01c20080 0x4>;
+> +                       clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
+> +                       clock-output-names = "nand";
+> +               };
+> +
+> +               ms_clk: clk@01c20084 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-mod0-clk";
+> +                       reg = <0x01c20084 0x4>;
+> +                       clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
+> +                       clock-output-names = "ms";
+> +               };
+> +
+> +               mmc0_clk: clk@01c20088 {
+> +                       #clock-cells = <1>;
+> +                       compatible = "allwinner,sun4i-a10-mmc-clk";
+> +                       reg = <0x01c20088 0x4>;
+> +                       clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
+> +                       clock-output-names = "mmc0",
+> +                                            "mmc0_output",
+> +                                            "mmc0_sample";
+> +               };
+> +
+> +               mmc1_clk: clk@01c2008c {
+> +                       #clock-cells = <1>;
+> +                       compatible = "allwinner,sun4i-a10-mmc-clk";
+> +                       reg = <0x01c2008c 0x4>;
+> +                       clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
+> +                       clock-output-names = "mmc1",
+> +                                            "mmc1_output",
+> +                                            "mmc1_sample";
+> +               };
+> +
+> +               mmc2_clk: clk@01c20090 {
+> +                       #clock-cells = <1>;
+> +                       compatible = "allwinner,sun4i-a10-mmc-clk";
+> +                       reg = <0x01c20090 0x4>;
+> +                       clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
+> +                       clock-output-names = "mmc2",
+> +                                            "mmc2_output",
+> +                                            "mmc2_sample";
+> +               };
+> +
+> +               ts_clk: clk@01c20098 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-mod0-clk";
+> +                       reg = <0x01c20098 0x4>;
+> +                       clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
+> +                       clock-output-names = "ts";
+> +               };
+> +
+> +               ss_clk: clk@01c2009c {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-mod0-clk";
+> +                       reg = <0x01c2009c 0x4>;
+> +                       clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
+> +                       clock-output-names = "ss";
+> +               };
+> +
+> +               spi0_clk: clk@01c200a0 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-mod0-clk";
+> +                       reg = <0x01c200a0 0x4>;
+> +                       clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
+> +                       clock-output-names = "spi0";
+> +               };
+> +
+> +               spi1_clk: clk@01c200a4 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-mod0-clk";
+> +                       reg = <0x01c200a4 0x4>;
+> +                       clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
+> +                       clock-output-names = "spi1";
+> +               };
+> +
+> +               spi2_clk: clk@01c200a8 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-mod0-clk";
+> +                       reg = <0x01c200a8 0x4>;
+> +                       clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
+> +                       clock-output-names = "spi2";
+> +               };
+> +
+> +               ir0_clk: clk@01c200b0 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-mod0-clk";
+> +                       reg = <0x01c200b0 0x4>;
+> +                       clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
+> +                       clock-output-names = "ir0";
+> +               };
+> +
+> +               i2s0_clk: clk@01c200b8 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-mod1-clk";
+> +                       reg = <0x01c200b8 0x4>;
+> +                       clocks = <&pll2 SUN4I_A10_PLL2_8X>,
+> +                                <&pll2 SUN4I_A10_PLL2_4X>,
+> +                                <&pll2 SUN4I_A10_PLL2_2X>,
+> +                                <&pll2 SUN4I_A10_PLL2_1X>;
+> +                       clock-output-names = "i2s0";
+> +               };
+> +
+> +               spdif_clk: clk@01c200c0 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-mod1-clk";
+> +                       reg = <0x01c200c0 0x4>;
+> +                       clocks = <&pll2 SUN4I_A10_PLL2_8X>,
+> +                                <&pll2 SUN4I_A10_PLL2_4X>,
+> +                                <&pll2 SUN4I_A10_PLL2_2X>,
+> +                                <&pll2 SUN4I_A10_PLL2_1X>;
+> +                       clock-output-names = "spdif";
+> +               };
+> +
+> +               usb_clk: clk@01c200cc {
+> +                       #clock-cells = <1>;
+> +                       #reset-cells = <1>;
+> +                       compatible = "allwinner,sun5i-a13-usb-clk";
+> +                       reg = <0x01c200cc 0x4>;
+> +                       clocks = <&pll6 1>;
+> +                       clock-output-names = "usb_ohci0", "usb_phy";
+> +               };
+> +
+> +               dram_gates: clk@01c20100 {
+> +                       #clock-cells = <1>;
+> +                       compatible = "nextthing,gr8-dram-gates-clk",
+> +                                    "allwinner,sun4i-a10-gates-clk";
+> +                       reg = <0x01c20100 0x4>;
+> +                       clocks = <&pll5 0>;
+> +                       clock-indices = <0>,
+> +                                       <1>,
+> +                                       <25>,
+> +                                       <26>,
+> +                                       <29>,
+> +                                       <31>;
+> +                       clock-output-names = "dram_ve",
+> +                                            "dram_csi",
+> +                                            "dram_de_fe",
+> +                                            "dram_de_be",
+> +                                            "dram_ace",
+> +                                            "dram_iep";
+> +               };
+> +
+> +               de_be_clk: clk@01c20104 {
+> +                       #clock-cells = <0>;
+> +                       #reset-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-display-clk";
+> +                       reg = <0x01c20104 0x4>;
+> +                       clocks = <&pll3>, <&pll7>, <&pll5 1>;
+> +                       clock-output-names = "de-be";
+> +               };
+> +
+> +               de_fe_clk: clk@01c2010c {
+> +                       #clock-cells = <0>;
+> +                       #reset-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-display-clk";
+> +                       reg = <0x01c2010c 0x4>;
+> +                       clocks = <&pll3>, <&pll7>, <&pll5 1>;
+> +                       clock-output-names = "de-fe";
+> +               };
+> +
+> +               tcon_ch0_clk: clk@01c20118 {
+> +                       #clock-cells = <0>;
+> +                       #reset-cells = <1>;
+> +                       compatible = "allwinner,sun4i-a10-tcon-ch0-clk";
+> +                       reg = <0x01c20118 0x4>;
+> +                       clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
+> +                       clock-output-names = "tcon-ch0-sclk";
+> +               };
+> +
+> +               tcon_ch1_clk: clk@01c2012c {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-tcon-ch1-clk";
+> +                       reg = <0x01c2012c 0x4>;
+> +                       clocks = <&pll3>, <&pll7>, <&pll3x2>, <&pll7x2>;
+> +                       clock-output-names = "tcon-ch1-sclk";
+> +               };
+> +
+> +               codec_clk: clk@01c20140 {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-codec-clk";
+> +                       reg = <0x01c20140 0x4>;
+> +                       clocks = <&pll2 SUN4I_A10_PLL2_1X>;
+> +                       clock-output-names = "codec";
+> +               };
+> +
+> +               mbus_clk: clk@01c2015c {
+> +                       #clock-cells = <0>;
+> +                       compatible = "allwinner,sun5i-a13-mbus-clk";
+> +                       reg = <0x01c2015c 0x4>;
+> +                       clocks = <&osc24M>, <&pll6 1>, <&pll5 1>;
+> +                       clock-output-names = "mbus";
+> +               };
+> +       };
+> +
+> +       display-engine {
+> +               compatible = "allwinner,sun5i-a13-display-engine";
+> +               allwinner,pipelines = <&fe0>;
+> +       };
+> +
+> +       soc@01c00000 {
+> +               compatible = "simple-bus";
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ranges;
+> +
+> +               sram-controller@01c00000 {
+> +                       compatible = "allwinner,sun4i-a10-sram-controller";
+> +                       reg = <0x01c00000 0x30>;
+> +                       #address-cells = <1>;
+> +                       #size-cells = <1>;
+> +                       ranges;
+> +
+> +                       sram_a: sram@00000000 {
+> +                               compatible = "mmio-sram";
+> +                               reg = <0x00000000 0xc000>;
+> +                               #address-cells = <1>;
+> +                               #size-cells = <1>;
+> +                               ranges = <0 0x00000000 0xc000>;
+> +                       };
+> +
+> +                       sram_d: sram@00010000 {
+> +                               compatible = "mmio-sram";
+> +                               reg = <0x00010000 0x1000>;
+> +                               #address-cells = <1>;
+> +                               #size-cells = <1>;
+> +                               ranges = <0 0x00010000 0x1000>;
+> +
+> +                               otg_sram: sram-section@0000 {
+> +                                       compatible = "allwinner,sun4i-a10-sram-d";
+> +                                       reg = <0x0000 0x1000>;
+> +                                       status = "disabled";
+> +                               };
+> +                       };
+> +               };
+> +
+> +               dma: dma-controller@01c02000 {
+> +                       compatible = "allwinner,sun4i-a10-dma";
+> +                       reg = <0x01c02000 0x1000>;
+> +                       interrupts = <27>;
+> +                       clocks = <&ahb_gates 6>;
+> +                       #dma-cells = <2>;
+> +               };
+> +
+> +               nfc: nand@01c03000 {
+> +                       compatible = "allwinner,sun4i-a10-nand";
+> +                       reg = <0x01c03000 0x1000>;
+> +                       interrupts = <37>;
+> +                       clocks = <&ahb_gates 13>, <&nand_clk>;
+> +                       clock-names = "ahb", "mod";
+> +                       dmas = <&dma SUN4I_DMA_DEDICATED 3>;
+> +                       dma-names = "rxtx";
+> +                       status = "disabled";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +               };
+> +
+> +               spi0: spi@01c05000 {
+> +                       compatible = "allwinner,sun4i-a10-spi";
+> +                       reg = <0x01c05000 0x1000>;
+> +                       interrupts = <10>;
+> +                       clocks = <&ahb_gates 20>, <&spi0_clk>;
+> +                       clock-names = "ahb", "mod";
+> +                       dmas = <&dma SUN4I_DMA_DEDICATED 27>,
+> +                              <&dma SUN4I_DMA_DEDICATED 26>;
+> +                       dma-names = "rx", "tx";
+> +                       status = "disabled";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +               };
+> +
+> +               spi1: spi@01c06000 {
+> +                       compatible = "allwinner,sun4i-a10-spi";
+> +                       reg = <0x01c06000 0x1000>;
+> +                       interrupts = <11>;
+> +                       clocks = <&ahb_gates 21>, <&spi1_clk>;
+> +                       clock-names = "ahb", "mod";
+> +                       dmas = <&dma SUN4I_DMA_DEDICATED 9>,
+> +                              <&dma SUN4I_DMA_DEDICATED 8>;
+> +                       dma-names = "rx", "tx";
+> +                       status = "disabled";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +               };
+> +
+> +               tve0: tv-encoder@01c0a000 {
+> +                       compatible = "allwinner,sun4i-a10-tv-encoder";
+> +                       reg = <0x01c0a000 0x1000>;
+> +                       clocks = <&ahb_gates 34>;
+> +                       resets = <&tcon_ch0_clk 0>;
+> +                       status = "disabled";
+> +
+> +                       port {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               tve0_in_tcon0: endpoint@0 {
+> +                                       reg = <0>;
+> +                                       remote-endpoint = <&tcon0_out_tve0>;
+> +                               };
+> +                       };
+> +               };
+> +
+> +               tcon0: lcd-controller@01c0c000 {
+> +                       compatible = "allwinner,sun5i-a13-tcon";
+> +                       reg = <0x01c0c000 0x1000>;
+> +                       interrupts = <44>;
+> +                       resets = <&tcon_ch0_clk 1>;
+> +                       reset-names = "lcd";
+> +                       clocks = <&ahb_gates 36>,
+> +                                <&tcon_ch0_clk>,
+> +                                <&tcon_ch1_clk>;
+> +                       clock-names = "ahb",
+> +                                     "tcon-ch0",
+> +                                     "tcon-ch1";
+> +                       clock-output-names = "tcon-pixel-clock";
+> +                       status = "disabled";
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               tcon0_in: port@0 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <0>;
+> +
+> +                                       tcon0_in_be0: endpoint@0 {
+> +                                               reg = <0>;
+> +                                               remote-endpoint = <&be0_out_tcon0>;
+> +                                       };
+> +                               };
+> +
+> +                               tcon0_out: port@1 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <1>;
+> +
+> +                                       tcon0_out_tve0: endpoint@1 {
+> +                                               reg = <1>;
+> +                                               remote-endpoint = <&tve0_in_tcon0>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               mmc0: mmc@01c0f000 {
+> +                       compatible = "allwinner,sun5i-a13-mmc";
+> +                       reg = <0x01c0f000 0x1000>;
+> +                       clocks = <&ahb_gates 8>,
+> +                                <&mmc0_clk 0>,
+> +                                <&mmc0_clk 1>,
+> +                                <&mmc0_clk 2>;
+> +                       clock-names = "ahb",
+> +                                     "mmc",
+> +                                     "output",
+> +                                     "sample";
+> +                       interrupts = <32>;
+> +                       status = "disabled";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +               };
+> +
+> +               mmc1: mmc@01c10000 {
+> +                       compatible = "allwinner,sun5i-a13-mmc";
+> +                       reg = <0x01c10000 0x1000>;
+> +                       clocks = <&ahb_gates 9>,
+> +                                <&mmc1_clk 0>,
+> +                                <&mmc1_clk 1>,
+> +                                <&mmc1_clk 2>;
+> +                       clock-names = "ahb",
+> +                                     "mmc",
+> +                                     "output",
+> +                                     "sample";
+> +                       interrupts = <33>;
+> +                       status = "disabled";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +               };
+> +
+> +               mmc2: mmc@01c11000 {
+> +                       compatible = "allwinner,sun5i-a13-mmc";
+> +                       reg = <0x01c11000 0x1000>;
+> +                       clocks = <&ahb_gates 10>,
+> +                                <&mmc2_clk 0>,
+> +                                <&mmc2_clk 1>,
+> +                                <&mmc2_clk 2>;
+> +                       clock-names = "ahb",
+> +                                     "mmc",
+> +                                     "output",
+> +                                     "sample";
+> +                       interrupts = <34>;
+> +                       status = "disabled";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +               };
+> +
+> +               usb_otg: usb@01c13000 {
+> +                       compatible = "allwinner,sun4i-a10-musb";
+> +                       reg = <0x01c13000 0x0400>;
+> +                       clocks = <&ahb_gates 0>;
+> +                       interrupts = <38>;
+> +                       interrupt-names = "mc";
+> +                       phys = <&usbphy 0>;
+> +                       phy-names = "usb";
+> +                       extcon = <&usbphy 0>;
+> +                       allwinner,sram = <&otg_sram 1>;
+> +                       status = "disabled";
+> +
+> +                       dr_mode = "otg";
+> +               };
+> +
+> +               usbphy: phy@01c13400 {
+> +                       #phy-cells = <1>;
+> +                       compatible = "allwinner,sun5i-a13-usb-phy";
+> +                       reg = <0x01c13400 0x10 0x01c14800 0x4>;
+> +                       reg-names = "phy_ctrl", "pmu1";
+> +                       clocks = <&usb_clk 8>;
+> +                       clock-names = "usb_phy";
+> +                       resets = <&usb_clk 0>, <&usb_clk 1>;
+> +                       reset-names = "usb0_reset", "usb1_reset";
+> +                       status = "disabled";
+> +               };
+> +
+> +               ehci0: usb@01c14000 {
+> +                       compatible = "allwinner,sun5i-a13-ehci", "generic-ehci";
+> +                       reg = <0x01c14000 0x100>;
+> +                       interrupts = <39>;
+> +                       clocks = <&ahb_gates 1>;
+> +                       phys = <&usbphy 1>;
+> +                       phy-names = "usb";
+> +                       status = "disabled";
+> +               };
+> +
+> +               ohci0: usb@01c14400 {
+> +                       compatible = "allwinner,sun5i-a13-ohci", "generic-ohci";
+> +                       reg = <0x01c14400 0x100>;
+> +                       interrupts = <40>;
+> +                       clocks = <&usb_clk 6>, <&ahb_gates 2>;
+> +                       phys = <&usbphy 1>;
+> +                       phy-names = "usb";
+> +                       status = "disabled";
+> +               };
+> +
+> +               spi2: spi@01c17000 {
+> +                       compatible = "allwinner,sun4i-a10-spi";
+> +                       reg = <0x01c17000 0x1000>;
+> +                       interrupts = <12>;
+> +                       clocks = <&ahb_gates 22>, <&spi2_clk>;
+> +                       clock-names = "ahb", "mod";
+> +                       dmas = <&dma SUN4I_DMA_DEDICATED 29>,
+> +                              <&dma SUN4I_DMA_DEDICATED 28>;
+> +                       dma-names = "rx", "tx";
+> +                       status = "disabled";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +               };
+> +
+> +               intc: interrupt-controller@01c20400 {
+> +                       compatible = "allwinner,sun4i-a10-ic";
+> +                       reg = <0x01c20400 0x400>;
+> +                       interrupt-controller;
+> +                       #interrupt-cells = <1>;
+> +               };
+> +
+> +               pio: pinctrl@01c20800 {
+> +                       compatible = "nextthing,gr8-pinctrl";
+> +                       reg = <0x01c20800 0x400>;
+> +                       interrupts = <28>;
+> +                       clocks = <&apb0_gates 5>;
+> +                       gpio-controller;
+> +                       interrupt-controller;
+> +                       #interrupt-cells = <3>;
+> +                       #gpio-cells = <3>;
+> +
+> +                       i2c0_pins_a: i2c0@0 {
+> +                               allwinner,pins = "PB0", "PB1";
+> +                               allwinner,function = "i2c0";
+> +                               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+> +                               allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+> +                       };
+> +
+> +                       i2c1_pins_a: i2c1@0 {
+> +                               allwinner,pins = "PB15", "PB16";
+> +                               allwinner,function = "i2c1";
+> +                               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+> +                               allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+> +                       };
+> +
+> +                       i2c2_pins_a: i2c2@0 {
+> +                               allwinner,pins = "PB17", "PB18";
+> +                               allwinner,function = "i2c2";
+> +                               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+> +                               allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+> +                       };
+> +
+> +                       i2s0_pins_a: i2s0@0 {
+> +                               allwinner,pins = "PB5", "PB6", "PB7", "PB8", "PB9";
+> +                               allwinner,function = "i2s0";
+> +                               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+> +                               allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+> +                       };
+> +
+> +                       ir0_rx_pins_a: ir0@0 {
+> +                               allwinner,pins = "PB4";
+> +                               allwinner,function = "ir0";
+> +                               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+> +                               allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+> +                       };
+> +
+> +                       lcd_rgb666_pins: lcd_rgb666@0 {
+> +                               allwinner,pins = "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
+> +                                                "PD10", "PD11", "PD12", "PD13", "PD14", "PD15",
+> +                                                "PD18", "PD19", "PD20", "PD21", "PD22", "PD23",
+> +                                                "PD24", "PD25", "PD26", "PD27";
+> +                               allwinner,function = "lcd0";
+> +                               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+> +                               allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+> +                       };
+> +
+> +                       mmc0_pins_a: mmc0@0 {
+> +                               allwinner,pins = "PF0", "PF1", "PF2", "PF3",
+> +                                                "PF4", "PF5";
+> +                               allwinner,function = "mmc0";
+> +                               allwinner,drive = <SUN4I_PINCTRL_30_MA>;
+> +                               allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+> +                       };
+> +
+> +                       nand_pins_a: nand_base0@0 {
+> +                               allwinner,pins = "PC0", "PC1", "PC2",
+> +                                               "PC5", "PC8", "PC9", "PC10",
+> +                                               "PC11", "PC12", "PC13", "PC14",
+> +                                               "PC15";
+> +                               allwinner,function = "nand0";
+> +                               allwinner,drive = <0>;
+> +                               allwinner,pull = <0>;
+> +                       };
+> +
+> +                       nand_cs0_pins_a: nand_cs@0 {
+> +                               allwinner,pins = "PC4";
+> +                               allwinner,function = "nand0";
+> +                               allwinner,drive = <0>;
+> +                               allwinner,pull = <0>;
+> +                       };
+> +
+> +                       nand_rb0_pins_a: nand_rb@0 {
+> +                               allwinner,pins = "PC6";
+> +                               allwinner,function = "nand0";
+> +                               allwinner,drive = <0>;
+> +                               allwinner,pull = <0>;
+> +                       };
+> +
+> +                       uart1_pins_a: uart1@1 {
+> +                               allwinner,pins = "PG3", "PG4";
+> +                               allwinner,function = "uart1";
+> +                               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+> +                               allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+> +                       };
+> +
+> +                       uart1_cts_rts_pins_a: uart1-cts-rts@0 {
+> +                               allwinner,pins = "PG5", "PG6";
+> +                               allwinner,function = "uart1";
+> +                               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+> +                               allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+> +                       };
+> +
+> +                       pwm0_pins_a: pwm0@0 {
+> +                               allwinner,pins = "PB2";
+> +                               allwinner,function = "pwm0";
+> +                               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+> +                               allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+> +                       };
+> +
+> +                       spdif_tx_pins_a: spdif@0 {
+> +                               allwinner,pins = "PB10";
+> +                               allwinner,function = "spdif";
+> +                               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+> +                               allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
+> +                       };
+> +               };
+> +
+> +               pwm: pwm@01c20e00 {
+> +                       compatible = "allwinner,sun5i-a10s-pwm";
+> +                       reg = <0x01c20e00 0xc>;
+> +                       clocks = <&osc24M>;
+> +                       #pwm-cells = <3>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               timer@01c20c00 {
+> +                       compatible = "allwinner,sun4i-a10-timer";
+> +                       reg = <0x01c20c00 0x90>;
+> +                       interrupts = <22>;
+> +                       clocks = <&osc24M>;
+> +               };
+> +
+> +               wdt: watchdog@01c20c90 {
+> +                       compatible = "allwinner,sun4i-a10-wdt";
+> +                       reg = <0x01c20c90 0x10>;
+> +               };
+> +
+> +               spdif: spdif@01c21000 {
+> +                       #sound-dai-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-spdif";
+> +                       reg = <0x01c21000 0x400>;
+> +                       interrupts = <13>;
+> +                       clocks = <&apb0_gates 1>, <&spdif_clk>;
+> +                       clock-names = "apb", "spdif";
+> +                       dmas = <&dma SUN4I_DMA_NORMAL 2>,
+> +                              <&dma SUN4I_DMA_NORMAL 2>;
+> +                       dma-names = "rx", "tx";
+> +                       status = "disabled";
+> +               };
+> +
+> +               ir0: ir@01c21800 {
+> +                       compatible = "allwinner,sun4i-a10-ir";
+> +                       clocks = <&apb0_gates 6>, <&ir0_clk>;
+> +                       clock-names = "apb", "ir";
+> +                       interrupts = <5>;
+> +                       reg = <0x01c21800 0x40>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               i2s0: i2s@01c22400 {
+> +                       #sound-dai-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-i2s";
+> +                       reg = <0x01c22400 0x400>;
+> +                       interrupts = <16>;
+> +                       clocks = <&apb0_gates 3>, <&i2s0_clk>;
+> +                       clock-names = "apb", "mod";
+> +                       dmas = <&dma SUN4I_DMA_NORMAL 3>,
+> +                              <&dma SUN4I_DMA_NORMAL 3>;
+> +                       dma-names = "rx", "tx";
+> +                       status = "disabled";
+> +               };
+> +
+> +               lradc: lradc@01c22800 {
+> +                       compatible = "allwinner,sun4i-a10-lradc-keys";
+> +                       reg = <0x01c22800 0x100>;
+> +                       interrupts = <31>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               codec: codec@01c22c00 {
+> +                       #sound-dai-cells = <0>;
+> +                       compatible = "allwinner,sun4i-a10-codec";
+> +                       reg = <0x01c22c00 0x40>;
+> +                       interrupts = <30>;
+> +                       clocks = <&apb0_gates 0>, <&codec_clk>;
+> +                       clock-names = "apb", "codec";
+> +                       dmas = <&dma SUN4I_DMA_NORMAL 19>,
+> +                              <&dma SUN4I_DMA_NORMAL 19>;
+> +                       dma-names = "rx", "tx";
+> +                       status = "disabled";
+> +               };
+> +
+> +               rtp: rtp@01c25000 {
+> +                       compatible = "allwinner,sun5i-a13-ts";
+> +                       reg = <0x01c25000 0x100>;
+> +                       interrupts = <29>;
+> +                       #thermal-sensor-cells = <0>;
+> +               };
+> +
+> +               uart1: serial@01c28400 {
+> +                       compatible = "snps,dw-apb-uart";
+> +                       reg = <0x01c28400 0x400>;
+> +                       interrupts = <2>;
+> +                       reg-shift = <2>;
+> +                       reg-io-width = <4>;
+> +                       clocks = <&apb1_gates 17>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               uart2: serial@01c28800 {
+> +                       compatible = "snps,dw-apb-uart";
+> +                       reg = <0x01c28800 0x400>;
+> +                       interrupts = <3>;
+> +                       reg-shift = <2>;
+> +                       reg-io-width = <4>;
+> +                       clocks = <&apb1_gates 18>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               i2c0: i2c@01c2ac00 {
+> +                       compatible = "allwinner,sun4i-a10-i2c";
+> +                       reg = <0x01c2ac00 0x400>;
+> +                       interrupts = <7>;
+> +                       clocks = <&apb1_gates 0>;
+> +                       status = "disabled";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +               };
+> +
+> +               i2c1: i2c@01c2b000 {
+> +                       compatible = "allwinner,sun4i-a10-i2c";
+> +                       reg = <0x01c2b000 0x400>;
+> +                       interrupts = <8>;
+> +                       clocks = <&apb1_gates 1>;
+> +                       status = "disabled";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +               };
+> +
+> +               i2c2: i2c@01c2b400 {
+> +                       compatible = "allwinner,sun4i-a10-i2c";
+> +                       reg = <0x01c2b400 0x400>;
+> +                       interrupts = <9>;
+> +                       clocks = <&apb1_gates 2>;
+> +                       status = "disabled";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +               };
+> +
+> +               timer@01c60000 {
+> +                       compatible = "allwinner,sun5i-a13-hstimer";
+> +                       reg = <0x01c60000 0x1000>;
+> +                       interrupts = <82>, <83>;
+> +                       clocks = <&ahb_gates 28>;
+> +               };
+> +
+> +               fe0: display-frontend@01e00000 {
+> +                       compatible = "allwinner,sun5i-a13-display-frontend";
+> +                       reg = <0x01e00000 0x20000>;
+> +                       interrupts = <47>;
+> +                       clocks = <&ahb_gates 46>, <&de_fe_clk>,
+> +                                <&dram_gates 25>;
+> +                       clock-names = "ahb", "mod",
+> +                                     "ram";
+> +                       resets = <&de_fe_clk>;
+> +                       status = "disabled";
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               fe0_out: port@1 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <1>;
+> +
+> +                                       fe0_out_be0: endpoint@0 {
+> +                                               reg = <0>;
+> +                                               remote-endpoint = <&be0_in_fe0>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               be0: display-backend@01e60000 {
+> +                       compatible = "allwinner,sun5i-a13-display-backend";
+> +                       reg = <0x01e60000 0x10000>;
+> +                       clocks = <&ahb_gates 44>, <&de_be_clk>,
+> +                                <&dram_gates 26>;
+> +                       clock-names = "ahb", "mod",
+> +                                     "ram";
+> +                       resets = <&de_be_clk>;
+> +                       status = "disabled";
+> +
+> +                       assigned-clocks = <&de_be_clk>;
+> +                       assigned-clock-rates = <300000000>;
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               be0_in: port@0 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <0>;
+> +
+> +                                       be0_in_fe0: endpoint@0 {
+> +                                               reg = <0>;
+> +                                               remote-endpoint = <&fe0_out_be0>;
+> +                                       };
+> +                               };
+> +
+> +                               be0_out: port@1 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <1>;
+> +
+> +                                       be0_out_tcon0: endpoint@0 {
+> +                                               reg = <0>;
+> +                                               remote-endpoint = <&tcon0_in_be0>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +       };
+> +};
+> --
+> 2.9.2
+>
