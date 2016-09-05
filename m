@@ -1,31 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: zynq: fix typo in sdio1_3_grp pin list
-Date: Tue, 6 Sep 2016 00:50:09 +0200
-Message-ID: <CACRpkdaN5u-08KfM0_hH2+oJOy_ueWv67Sw98PtfT1mJWYF_Jg@mail.gmail.com>
-References: <1472132911-28380-1-git-send-email-dg@emlix.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] soc: fsl/qe: fix gpio save_regs functions
+Date: Tue,  6 Sep 2016 00:52:16 +0200 (CEST)
+Message-ID: <20160905225217.C34571A245A@localhost.localdomain>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:35401 "EHLO
-        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932286AbcIEWuL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2016 18:50:11 -0400
-Received: by mail-oi0-f54.google.com with SMTP id s131so4097536oie.2
-        for <linux-gpio@vger.kernel.org>; Mon, 05 Sep 2016 15:50:10 -0700 (PDT)
-In-Reply-To: <1472132911-28380-1-git-send-email-dg@emlix.com>
+Received: from pegase1.c-s.fr ([93.17.236.30]:59246 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932286AbcIEWwZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 5 Sep 2016 18:52:25 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Daniel_Gl=C3=B6ckner?= <dg@emlix.com>
-Cc: =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org, stable@vger.kernel.org
 
-On Thu, Aug 25, 2016 at 3:48 PM, Daniel Gl=C3=B6ckner <dg@emlix.com> wrote:
+of_mm_gpiochip_add_data() calls mm_gc->save_regs() before
+setting the data. Therefore ->save_regs() cannot use
+gpiochip_get_data()
 
-> It contains pin 50 instead of pin 40.
->
-> Signed-off-by: Daniel Gl=C3=B6ckner <dg@emlix.com>
+An Oops is encountered without this fix.
 
-Patch applied with S=C3=B6ren's review tag.
+fixes: 1e714e54b5ca5 ("powerpc: qe_lib-gpio: use gpiochip data pointer")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: <stable@vger.kernel.org>
+---
+ drivers/soc/fsl/qe/gpio.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
+index 333eb22..0aaf429 100644
+--- a/drivers/soc/fsl/qe/gpio.c
++++ b/drivers/soc/fsl/qe/gpio.c
+@@ -41,7 +41,8 @@ struct qe_gpio_chip {
+ 
+ static void qe_gpio_save_regs(struct of_mm_gpio_chip *mm_gc)
+ {
+-	struct qe_gpio_chip *qe_gc = gpiochip_get_data(&mm_gc->gc);
++	struct qe_gpio_chip *qe_gc =
++		container_of(mm_gc, struct qe_gpio_chip, mm_gc);
+ 	struct qe_pio_regs __iomem *regs = mm_gc->regs;
+ 
+ 	qe_gc->cpdata = in_be32(&regs->cpdata);
+-- 
+2.1.0
+
