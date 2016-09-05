@@ -1,74 +1,63 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/5] gpio: pca953x: code shrink
-Date: Mon, 5 Sep 2016 16:40:25 +0200
-Message-ID: <CAMuHMdVrpTrXyE_J3qKhpLa9_9xSHvcqJ6dw5-FutDzKn45P_w@mail.gmail.com>
-References: <1473085895-31711-1-git-send-email-bgolaszewski@baylibre.com> <1473085895-31711-3-git-send-email-bgolaszewski@baylibre.com>
+Subject: Re: [PATCH] sh-pfc: return pinconf with arguments in packed format
+Date: Mon, 5 Sep 2016 17:54:44 +0200
+Message-ID: <CAMuHMdXu2CNyu_92MHOyVpL5wJWLm6zaojFhkk1c1joYLZ4K5A@mail.gmail.com>
+References: <20160905141957.25982-1-niklas.soderlund+renesas@ragnatech.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:32778 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755164AbcIEOk0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2016 10:40:26 -0400
-In-Reply-To: <1473085895-31711-3-git-send-email-bgolaszewski@baylibre.com>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34882 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752686AbcIEPyq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2016 11:54:46 -0400
+In-Reply-To: <20160905141957.25982-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
 
-On Mon, Sep 5, 2016 at 4:31 PM, Bartosz Golaszewski
-<bgolaszewski@baylibre.com> wrote:
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -94,6 +94,24 @@ MODULE_DEVICE_TABLE(acpi, pca953x_acpi_ids);
->
->  #define NBANK(chip) DIV_ROUND_UP(chip->gpio_chip.ngpio, BANK_SZ)
->
-> +struct pca953x_offset {
-> +       int direction;
-> +       int output;
-> +       int input;
-> +};
-> +
-> +static struct pca953x_offset pca953x_offsets = {
+Hi Niklas,
 
-const
+On Mon, Sep 5, 2016 at 4:19 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> The pinconf-generic code expects configurations with arguments to be
+> returned in a packed format in order to be displayed properly by
+> pinconf_generic_dump_one().
 
-> +       .direction = PCA953X_DIRECTION,
-> +       .output = PCA953X_OUTPUT,
-> +       .input = PCA953X_INPUT,
-> +};
-> +
-> +static struct pca953x_offset pca957x_offsets = {
+Some more user-oriented explanation could be helpful, like saying that
+/sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins on r8a7795/salvator-x n=
+ow
+shows
 
-const
+    pin 96 (GP_3_0): input bias disabled, output drive strength (9
+mA), pin power source (3300 selector)
 
-> +       .direction = PCA957X_CFG,
-> +       .output = PCA957X_OUT,
-> +       .input = PCA957X_IN,
-> +};
-> +
->  struct pca953x_chip {
->         unsigned gpio_start;
->         u8 reg_output[MAX_BANK];
-> @@ -113,6 +131,8 @@ struct pca953x_chip {
->         const char *const *names;
->         int     chip_type;
->         unsigned long driver_data;
-> +
-> +       struct pca953x_offset *offset;
+instead of
 
-const
+    pin 96 (GP_3_0): input bias disabled, output drive strength (0
+mA), pin power source (0 selector)
 
->  };
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+P.S. It seems like we should get rid of the WARN_ON_ONCE() checks in our
+     pinctrl code, and return proper errors, as these are triggered by read=
+ing
+     the sysfs files.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
                                 -- Linus Torvalds
