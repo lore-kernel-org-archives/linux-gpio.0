@@ -1,71 +1,110 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 4/4] pwm: sunxi: Add H3 support
-Date: Mon, 5 Sep 2016 12:09:19 +0200
-Message-ID: <20160905100919.GD31424@ulmo.ba.sec>
-References: <20160831082520.25962-1-woogyom.kim@gmail.com>
- <20160831082520.25962-5-woogyom.kim@gmail.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH 0/3] gpio/pinctrl: imx: let IOMUX controller know about
+ on-SoC GPIOs
+Date: Mon, 5 Sep 2016 14:49:16 +0300
+Message-ID: <1c1d23a0-9656-2682-e573-13385a002998@mentor.com>
+References: <1471644615-10320-1-git-send-email-vladimir_zapolskiy@mentor.com>
+ <cc5ab313-c3c6-bfd4-d2b8-92a7d153cf05@mentor.com>
+ <20160905021201.GC25778@tiger>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="T7mxYSe680VjQnyC"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160831082520.25962-5-woogyom.kim-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Milo Kim <woogyom.kim-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relay1.mentorg.com ([192.94.38.131]:55336 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932174AbcIELtV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2016 07:49:21 -0400
+In-Reply-To: <20160905021201.GC25778@tiger>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>, Deepak Das <deepak_das@mentor.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
+Hi Shawn,
 
---T7mxYSe680VjQnyC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 09/05/2016 05:12 AM, Shawn Guo wrote:
+> On Fri, Sep 02, 2016 at 04:11:46PM +0300, Vladimir Zapolskiy wrote:
+>> Hi Shawn, Fabio,
+>>
+>> On 08/20/2016 01:10 AM, Vladimir Zapolskiy wrote:
+>>> The change establishes a connection between on-SoC IOMUX controller(s)
+>>> and GPIO controllers found on some SoC from Freescale/NXP iMX series,
+>>> if a GPIO controller device node contains common gpio-ranges information.
+>>>
+>>> The change is backward compatible with respect to potentially not updated
+>>> outdated DTB data without gpio-ranges propery, for such boards the only
+>>> functional change is lowered initcall priority of GPIO controller driver,
+>>> which in general anyway is exected to be used only after pinctrl/pinmux
+>>> controller.
+>>>
+>>> If this change is applied the next interesting applications may be done
+>>> as a follow-up work, for example switching pad function to GPIO on gpiod
+>>> request, converting iomux controller driver to strict type and so on.
+>>>
+>>> For actual values of gpio-ranges properties please reference series
+>>> "ARM: dts: imx: add gpio-ranges properties to some iMX GPIO controllers"
+>>> http://archive.arm.linux.org.uk/lurker/message/20160819.220621.86d845d1.en.html
+>>>
+>>> Deepak Das (1):
+>>>  gpio: mxc: lower level of gpio_mxc_init() initcall
+>>>
+>>> Vladimir Zapolskiy (2):
+>>>  pinctrl: imx: accept gpio request/free from pinctrl
+>>>  gpio: mxc: add generic gpio request/free callbacks to pinctrl
+>>>
+>>> drivers/gpio/gpio-mxc.c                 | 7 ++++++-
+>>> drivers/pinctrl/freescale/pinctrl-imx.c | 4 ++--
+>>> 2 files changed, 8 insertions(+), 3 deletions(-)
+>>>
+>>
+>> no comments so far, please could you express your concerns about
+>> this change? IMHO it would be nice to have this feature enabled
+>> in v4.9.
+>>
+>> I assume that the most worrisome commit is the change of GPIO controller
+>> driver init level, but I belive it is safe enough, no?
+>
+> If I understand it correctly, with the change, most of GPIO client
+> device drivers use the same init level as GPIO driver.  So we are not
+> sure if GPIO driver is ready when client drivers try to request GPIO.
 
-On Wed, Aug 31, 2016 at 05:25:20PM +0900, Milo Kim wrote:
-> H3 PWM controller has same register layout as sun4i driver, so it works
-> by adding H3 specific data.
->=20
-> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> Cc: Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-> Cc: linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Signed-off-by: Milo Kim <woogyom.kim-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  Documentation/devicetree/bindings/pwm/pwm-sun4i.txt | 1 +
->  drivers/pwm/pwm-sun4i.c                             | 9 +++++++++
->  2 files changed, 10 insertions(+)
+please give it a test run (with and without DTS gpio-ranges changes,
+or just 2/3 from the series), I've tested on iMX6Q SabreLite, SabreAuto,
+SabreSD and I don't see any regressions or noticeable increase of
+-EPROBE_DEFER hits due to not ready GPIOs.
 
-Applied, thanks.
+> most of GPIO client device drivers use the same init level as GPIO driver.
 
-Thierry
+IMHO that will be the case, if the change 2/3 from the series is applied.
 
---T7mxYSe680VjQnyC
-Content-Type: application/pgp-signature; name="signature.asc"
+Statisticaly most of GPIO consumers should settle on device_initcall or
+module_init level, the latter one is translated to device_initcall if
+a driver is built-in, so the proposed downgrading of GPIO controller
+driver init call level looks to be appropriate.
 
------BEGIN PGP SIGNATURE-----
+However pinctrl/pinmux driver should definitely have higher init level
+priority in comparison to GPIO controller driver, every GPIO consumer
+is a pinctrl/pinmux consumer as well, most of iMX pinctrl/pinmux drivers
+are initialized at arch_initcall level, so there is a plenty of options
+to satisfy (GPIO driver initcall) < (pinmux/pinctrl driver initcall)
+equation:
+* change pinmux/pinctrl driver initcall level to postcore_initcall
+   and GPIO driver initcall level to arch_initcall or lower one,
+* keep pinmux/pinctrl driver at arch_initcall level, set GPIO driver
+   initcall level to any lower than arch_initcall (e.g. device_initcall)
+* keep everything as is, drop 2/3 and rely on -EPROBE_DEFER from
+   GPIO driver probe due to not yet initialized pinctrl driver.
 
-iQIcBAABCAAGBQJXzUROAAoJEN0jrNd/PrOhexEP/R7Q5H3A6p3e637LK75PQ7a8
-UTIbIWNaW9OL0j/3u3HY7qRxcSdmtySgp3r8fsYryciw1d0a3WTFB+K3c99YFxtd
-Hiibc8GOvMAJ2yfPldhnbxnGRBG/xkWjMUCQEmncO7XrZclr/QUymGmsXJptTJiZ
-JTGfK26PWt3wyaD8fKwhIlAbiJ2/oJYcdnri9fY+IrfLYxJHbdTdsvnyy16cNfSR
-eeWHyPtVY9UEQTLvhDbkTwvBYGCbBKnUYPQu6ba89kM8PTXlofpyCFWjHGG8NYFJ
-gbipmp/s2YQHxDmZydvBxa6g9SmWAgnMppOozNr0rbI+iSn3e2Ct/h03d2uVkzMY
-7GVacz5wMKQDR+xqwGh5Jsb2HZnAXOpbKjKemBU/IPANPHHLXkGEbYh6WpWfciXz
-Cq5A+NgAohSXl67uM/R5VUMAPMz40pE+w1UjppJ+nDFrPbkZo3q7YHHwcCm5HQoX
-g4WDkRcxOKFTMBlyK3yiE+8PTpPpUsGKrOWIame7uyxky7XTc8fvvNrEIvGKjXjO
-DHgnWYz89YWdJ/+GedYBLK6nifKb53tyCgF/9Yh/dDgU7xsFDPVQNPmiLQA4WhBa
-foPsBnTeTMCc/UYdwP0kPHEJh6em8khlPahMHatFbjY0A+VPOwfaBk9dMla3o6Hy
-tNoNBKwR5VmBYmtbTdXO
-=J2jr
------END PGP SIGNATURE-----
+> It shouldn't be a problem if every client driver handle the failure
+> with deferred probing, but I'm not sure that's the case now.
+>
 
---T7mxYSe680VjQnyC--
+ From what I see it is the case for the most critical drivers, for the
+rest I believe it is a bug, which can be revealed by shifting GPIO
+driver initcall level and fixed, see also
+
+https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2016-August/003419.html
+
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+With best wishes,
+Vladimir
