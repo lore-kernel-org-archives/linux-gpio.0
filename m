@@ -1,63 +1,56 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] sh-pfc: return pinconf with arguments in packed format
-Date: Mon, 5 Sep 2016 17:54:44 +0200
-Message-ID: <CAMuHMdXu2CNyu_92MHOyVpL5wJWLm6zaojFhkk1c1joYLZ4K5A@mail.gmail.com>
-References: <20160905141957.25982-1-niklas.soderlund+renesas@ragnatech.se>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: [PATCH] dt-binding: mrvl-gpio: remove orion-gpio description
+Date: Mon,  5 Sep 2016 22:00:10 +0300
+Message-ID: <9d76063cb0b0a0ff96cfd6f389f3697db7734015.1473102010.git.baruch@tkos.co.il>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34882 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752686AbcIEPyq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Sep 2016 11:54:46 -0400
-In-Reply-To: <20160905141957.25982-1-niklas.soderlund+renesas@ragnatech.se>
+Received: from guitar.tcltek.co.il ([192.115.133.116]:47751 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933391AbcIETCj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 5 Sep 2016 15:02:39 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Baruch Siach <baruch@tkos.co.il>
 
-Hi Niklas,
+The Orion GPIO controller binding description in mrvl-gpio.txt is obsolete, and
+duplicates the description in gpio-mvebu.txt.
 
-On Mon, Sep 5, 2016 at 4:19 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> The pinconf-generic code expects configurations with arguments to be
-> returned in a packed format in order to be displayed properly by
-> pinconf_generic_dump_one().
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+ .../devicetree/bindings/gpio/mrvl-gpio.txt         | 23 ----------------------
+ 1 file changed, 23 deletions(-)
 
-Some more user-oriented explanation could be helpful, like saying that
-/sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins on r8a7795/salvator-x n=
-ow
-shows
+diff --git a/Documentation/devicetree/bindings/gpio/mrvl-gpio.txt b/Documentation/devicetree/bindings/gpio/mrvl-gpio.txt
+index 98d198396956..c3d016532d8e 100644
+--- a/Documentation/devicetree/bindings/gpio/mrvl-gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/mrvl-gpio.txt
+@@ -44,26 +44,3 @@ Example for a PXA3xx platform:
+ 		interrupt-controller;
+ 		#interrupt-cells = <0x2>;
+ 	};
+-
+-* Marvell Orion GPIO Controller
+-
+-Required properties:
+-- compatible         : Should be "marvell,orion-gpio"
+-- reg                : Address and length of the register set for controller.
+-- gpio-controller    : So we know this is a gpio controller.
+-- ngpio              : How many gpios this controller has.
+-- interrupts	     : Up to 4 Interrupts for the controller.
+-
+-Optional properties:
+-- mask-offset        : For SMP Orions, offset for Nth CPU
+-
+-Example:
+-
+-		gpio0: gpio@10100 {
+-			compatible = "marvell,orion-gpio";
+-			#gpio-cells = <2>;
+-			gpio-controller;
+-			reg = <0x10100 0x40>;
+-			ngpio = <32>;
+-			interrupts = <35>, <36>, <37>, <38>;
+-		};
+-- 
+2.9.3
 
-    pin 96 (GP_3_0): input bias disabled, output drive strength (9
-mA), pin power source (3300 selector)
-
-instead of
-
-    pin 96 (GP_3_0): input bias disabled, output drive strength (0
-mA), pin power source (0 selector)
-
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
-
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-P.S. It seems like we should get rid of the WARN_ON_ONCE() checks in our
-     pinctrl code, and return proper errors, as these are triggered by read=
-ing
-     the sysfs files.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
