@@ -1,121 +1,123 @@
-From: Alexandre Torgue <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
-Subject: Re: [PATCH v3 6/9] pinctrl: Add IRQ support to STM32 gpios
-Date: Mon, 5 Sep 2016 09:53:40 +0200
-Message-ID: <670d8249-0f72-50d1-5c1f-07fe53ac524b@st.com>
-References: <1472830398-13275-1-git-send-email-alexandre.torgue@st.com>
- <1472830398-13275-7-git-send-email-alexandre.torgue@st.com>
- <alpine.DEB.2.20.1609022057490.5647@nanos>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2 3/7] pinctrl: samsung: Add the support the multiple
+ IORESOURCE_MEM for one pin-bank
+Date: Mon, 05 Sep 2016 17:08:28 +0900
+Message-ID: <57CD27FC.2020201@samsung.com>
+References: <1472046551-703-1-git-send-email-cw00.choi@samsung.com>
+ <1472046551-703-4-git-send-email-cw00.choi@samsung.com>
+ <CA+Ln22Ew=8S382zn+M8Ys5vztqvzp1+3EOTKtd81WSfuSyvY6w@mail.gmail.com>
+ <CGME20160825144434epcas1p42890a972743a8c8787444651f91a4fa6@epcas1p4.samsung.com>
+ <CA+Ln22Guw1LghdV64cSKjByDExr+2HnvEK7DNkYz+XPAmVuAzA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <alpine.DEB.2.20.1609022057490.5647@nanos>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Cc: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, bruherrera-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-reply-to: <CA+Ln22Guw1LghdV64cSKjByDExr+2HnvEK7DNkYz+XPAmVuAzA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, "sw0312.kim" <sw0312.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, InKi Dae <inki.dae@samsung.com>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Beomho Seo <beomho.seo@samsung.com>, jaewon02.kim@samsung.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Thomas,
+Hi Tomasz,
 
-On 09/02/2016 09:10 PM, Thomas Gleixner wrote:
-> On Fri, 2 Sep 2016, Alexandre TORGUE wrote:
->> +static int stm32_gpio_domain_translate(struct irq_domain *d,
->> +				       struct irq_fwspec *fwspec,
->> +				       unsigned long *hwirq,
->> +				       unsigned int *type)
->> +{
->> +	if ((fwspec->param_count != 2) ||
->> +		(fwspec->param[0] >= STM32_GPIO_IRQ_LINE))
->> +		return -EINVAL;
->
-> Just a nitpick. This is unnecessarily hard to parse because you indented
-> the line break like a conditional statement
+I'm sorry for late reply.
 
-I agree. I will modify it as the one below.
->
->> +	if ((fwspec->param_count != 2) ||
->> +	    (fwspec->param[0] >= STM32_GPIO_IRQ_LINE))
->> +		return -EINVAL;
->
-> Makes it immediately obvious that the second line belongs to the if.
->
->> +static void stm32_gpio_domain_activate(struct irq_domain *d,
->> +				       struct irq_data *irq_data)
->> +{
->> +	struct stm32_gpio_bank *bank = d->host_data;
->> +	struct stm32_pinctrl *pctl = dev_get_drvdata(bank->gpio_chip.parent);
->> +
->> +	if (gpiochip_lock_as_irq(&bank->gpio_chip, irq_data->hwirq)) {
->> +		dev_err(pctl->dev,
->> +			"Unable to configure STM32 %s%ld as IRQ\n",
->> +			bank->gpio_chip.label, irq_data->hwirq);
->> +		return;
->
-> Hmm, that's nasty. When an interrupt is mapped then we don't expect the
-> activate function to fail. You really should lock that interrupt when it's
-> mapped.
+On 2016년 08월 25일 23:41, Tomasz Figa wrote:
+> 2016-08-25 23:30 GMT+09:00 Tomasz Figa <tomasz.figa@gmail.com>:
+>>> +       }
+>>> +
+>>> +#define EXYNOS_PIN_BANK_EINTN_EXT(pins, reg, id, pctl_idx, eint_idx)   \
+>>> +       {                                               \
+>>> +               .type           = &bank_type_off,       \
+>>> +               .pctl_offset    = reg,                  \
+>>> +               .nr_pins        = pins,                 \
+>>> +               .eint_type      = EINT_TYPE_NONE,       \
+>>> +               .name           = id,                   \
+>>> +               .pctl_res_idx   = pctl_idx,             \
+>>> +               .eint_res_idx   = eint_dix              \
+>>> +       }
+>>
+>> Your patch 4/7 doesn't seem to use this one, so this is dead code for
+>> the time being. Please add when there is real need for it.
+>>
+>> Also it doesn't really make much sense to have index for both pctl and
+>> eint. Please define first entry of regs property as always pointing to
+>> pctl registers and by also eint registers for usual controllers. Then
+>> second regs entry would be eint registers for controllers with
+>> separate register blocks. Then there is only a need to have
+>> eint_res_idx in the driver and no need for pctl_res_idx, because it
+>> would be always 0.
+> 
+> Ah, sorry, I got confused again by which registers are where in these
+> GPF banks. Let's make it the other way around and make DT contain eint
+> registers in first regs entry and hardcode eint_res_idx to 0 for the
+> time being.
 
-Ok. I will remove it from here.
+I got with slight confusion.
+Do you mean that you want to remove the 'eint_res_idx' because
+it is always zero(0) as your comment. And do you agree to add 'pctl_res_idx'?
 
->
->> +	}
->> +	regmap_field_write(pctl->irqmux[irq_data->hwirq], bank->range.id);
->> +}
->
->> +static int stm32_gpio_domain_alloc(struct irq_domain *domain,
->> +				   unsigned int virq,
->> +				   unsigned int nr_irqs, void *data)
->> +{
->> +	struct irq_fwspec *fwspec = data;
->> +	struct irq_fwspec parent_fwspec;
->> +	struct stm32_pinctrl *pctl = domain->host_data;
->> +	irq_hw_number_t hwirq;
->> +	unsigned int i;
->> +
->> +	hwirq = fwspec->param[0];
->> +	for (i = 0; i < nr_irqs; i++)
->> +		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
->> +					      &stm32_gpio_irq_chip, pctl);
->> +
->> +	parent_fwspec.fwnode = domain->parent->fwnode;
->> +	parent_fwspec.param_count = 2;
->> +	parent_fwspec.param[0] = fwspec->param[0];
->> +	parent_fwspec.param[1] = fwspec->param[1];
->> +
->> +	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
->> +			&parent_fwspec);
->
-> So doing it here would be probably the right thing to do:
->
->
-> 	ret = gpiochip_lock_as_irq();
-> 	if (ret)
-> 		return ret;
->
->    	ret = irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
-> 	      				   &parent_fwspec);
-> 	if (ret)
-> 		gpiochip_unlock_as_irq();
->
-> 	return ret;
->
-> So of course you need your own free() function which undoes that lock
-> thingy.
+Also, as you commented, the eint_res_idx for both GPA and GPFx is zero(0).
 
-Ok thanks for proposal.
+Example:
+	pinctrl_alive: pinctrl@10580000 {
+		compatible = "samsung,exynos5433-pinctrl";
+                      /* ALIVE domain    ,  IMEM domain  */
+		reg = <0x10580000 0x1a20>, <0x11090000 0x100>;
 
-Best regards.
+		wakeup-interrupt-controller {
+			compatible = "samsung,exynos7-wakeup-eint";
+			interrupts = <GIC_SPI 16 0>;
+		};
+	};
 
-Alex
+	GPA's eint_res_idx is 0
+	GPA's pctl_res_idx is 0
+
+	GPFx's eint_res_idx is 0
+	GPFx's pctl_res_idx is 1
 
 
->
-> Thanks,
->
-> 	tglx
->
+ However it should be still beneficial to refactor the code
+> and calculate per-bank eint_base to avoid adding the offset every
+> time, similarly to pctl_base/offset, from my suggestion below.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I agree. I'll modify it according to your comment.
+
+> 
+>>> @@ -345,7 +346,8 @@ static void pin_to_reg_bank(struct samsung_pinctrl_drv_data *drvdata,
+>>>                         ((b->pin_base + b->nr_pins - 1) < pin))
+>>>                 b++;
+>>>
+>>> -       *reg = drvdata->virt_base + b->pctl_offset;
+>>> +       pctl_res_idx = b->pctl_res_idx;
+>>> +       *reg = drvdata->virt_base[pctl_res_idx] + b->pctl_offset;
+>>
+>> I suggested something slightly different. Instead of
+>> bank::pctl_res_idx, I proposed bank::pctl_base.
+>> bank_info::pctl_res_idx would be specified only in init driver data
+>> and bank::pctl_base would be calculated at probe time as
+>> drvdata->virt_base[bank_info->pctl_res_idx] + bank_info->pctl_offset.
+>> This would eliminate the need to do any indexing and adding further in
+>> the code and make things simpler.
+>>
+>> Taking my other comments above, pctl part would be unchanged and only
+>> eint addresses and offsets would be affected.
+> 
+> Ah, scratch this one sentence. I got confused with the register layout
+> again, sorry. Please refactor both eint and pctl as I suggested in the
+> upper paragraph.
+> 
+> Best regards,
+> Tomasz
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
+
+-- 
+Best Regards,
+Chanwoo Choi
