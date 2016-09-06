@@ -1,70 +1,39 @@
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Subject: Re: [PATCH] sh-pfc: return pinconf with arguments in packed format
-Date: Tue, 6 Sep 2016 08:28:34 +0200
-Message-ID: <20160906062833.GD27014@bigcity.dyn.berto.se>
-References: <20160905141957.25982-1-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdXu2CNyu_92MHOyVpL5wJWLm6zaojFhkk1c1joYLZ4K5A@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7792: add MSIOF pin groups
+Date: Tue, 6 Sep 2016 09:02:40 +0200
+Message-ID: <CAMuHMdUiwBwPkwmt5u43PD6C6pqM8MrN_1emuOydNjtGQBcrKw@mail.gmail.com>
+References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com> <2011444.8BtcIjeJf3@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXu2CNyu_92MHOyVpL5wJWLm6zaojFhkk1c1joYLZ4K5A@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35530 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753911AbcIFHCl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2016 03:02:41 -0400
+In-Reply-To: <2011444.8BtcIjeJf3@wasted.cogentembedded.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hi Geert,
+On Mon, Sep 5, 2016 at 10:17 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add MSIOF0/1 pin groups to the R8A7792 PFC driver.
+>
+> Based  on the original (and large) patch by Vladimir Barinov
+> <vladimir.barinov@cogentembedded.com>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Thanks for your review.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On 2016-09-05 17:54:44 +0200, Geert Uytterhoeven wrote:
-> Hi Niklas,
-> 
-> On Mon, Sep 5, 2016 at 4:19 PM, Niklas Söderlund
-> <niklas.soderlund+renesas@ragnatech.se> wrote:
-> > The pinconf-generic code expects configurations with arguments to be
-> > returned in a packed format in order to be displayed properly by
-> > pinconf_generic_dump_one().
-> 
-> Some more user-oriented explanation could be helpful, like saying that
-> /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins on r8a7795/salvator-x now
-> shows
-> 
->     pin 96 (GP_3_0): input bias disabled, output drive strength (9
-> mA), pin power source (3300 selector)
-> 
-> instead of
-> 
->     pin 96 (GP_3_0): input bias disabled, output drive strength (0
-> mA), pin power source (0 selector)
+Gr{oetje,eeting}s,
 
-Good idea, I will send a v2 with a more user-oriented explanation.
+                        Geert
 
-> 
-> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> 
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Thanks for testing.
-
-> 
-> P.S. It seems like we should get rid of the WARN_ON_ONCE() checks in our
->      pinctrl code, and return proper errors, as these are triggered by reading
->      the sysfs files.
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-
--- 
-Regards,
-Niklas Söderlund
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
