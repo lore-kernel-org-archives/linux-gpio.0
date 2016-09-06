@@ -1,72 +1,86 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/3] pinctrl: zx: Add ZTE pinctrl dts document
-Date: Tue, 6 Sep 2016 16:43:19 +0200
-Message-ID: <CACRpkdaDCiwbnXCu2LwEZcKxQHweKpY7nw20w+fDQ7AnsOHY1g@mail.gmail.com>
-References: <1472213965-4899-1-git-send-email-jun.nie@linaro.org> <CACRpkdZ5aHJs8EK29_y7wYZhyHAUdD99wy2RRGD-CZdoJo+NrA@mail.gmail.com>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2] sh-pfc: return pinconf with arguments in packed format
+Date: Tue,  6 Sep 2016 17:14:14 +0200
+Message-ID: <20160906151414.1104-1-niklas.soderlund+renesas@ragnatech.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZ5aHJs8EK29_y7wYZhyHAUdD99wy2RRGD-CZdoJo+NrA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jun Nie <jun.nie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jason Liu <jason.liu-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Sep 6, 2016 at 4:15 PM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+The pinconf-generic code expects configurations with arguments to be
+returned in a packed format in order to be displayed properly by
+pinconf_generic_dump_one().
 
-> pa: pinctrla {
->     compatible = "parent-device-compat";
->     (...)
-> };
->
-> pb: pinctrlb {
->     compatible = "child-device-compat";
->     pinctrl-parent = &pinctrla;
->     (...)
-> };
+Reading /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins on
+r8a7795/salvator-x now shows:
 
-After thinking some more I kind of fancy the GPIO ranges
-approach to be reused:
+    pin 101 (GP_3_5): output drive strength (9 mA), pin power source (3300 selector)
 
-pa: pinctrla {
-    compatible = "parent-device-compat";
-    (...)
-};
+Instead of:
 
-pb: pinctrlb {
-    compatible = "child-device-compat";
-    pinctrl-ranges = <&pa 0 31 0>;
-    (...)
-};
+    pin 101 (GP_3_5): output drive strength (0 mA), pin power source (0 selector)
 
-The definition and use would be similar to gpio-ranges, see:
-Documentation/devicetree/bindings/gpio/gpio.txt, but these
-bindings are specified in BNF which IMO is just confusing.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+* Changes since v1:
+- Add more user oriented information in commit message.
+- Add Tested-by tag from Geert.
+---
+ drivers/pinctrl/sh-pfc/pinctrl.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Anyways its <phandle local-offset count remote-offset>
-
-Also group names are supported for GPIO ranges.
-
-In the Linux implementation this facilitates reuse of the
-existing GPIO ranges parsing and resolution.
-
-To make cross-calls we need an abstract call akin to the
-existing pinctrl_request_gpio() and pinctrl_free_gpio()
-just named pinctrl_request_hierarchical()
-pinctrl_free_hierarchical() or so so it is chrystal clear
-what is going on when reading the code.
-
-As this passes through the pinctrl driver core, new callbacks
-are needed in struct pinmux_ops such as
-.hierarchical_request(), .hierarchical_free().
-
-This is going to be complex, but a way more maintainable
-solution than doing the hack in patch 1/3 where we totally
-loose control and definition of what happens.
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+index e208ee0..c577258 100644
+--- a/drivers/pinctrl/sh-pfc/pinctrl.c
++++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+@@ -596,6 +596,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 	struct sh_pfc *pfc = pmx->pfc;
+ 	enum pin_config_param param = pinconf_to_config_param(*config);
+ 	unsigned long flags;
++	unsigned int arg;
+ 
+ 	if (!sh_pfc_pinconf_validate(pfc, _pin, param))
+ 		return -ENOTSUPP;
+@@ -616,7 +617,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		if (bias != param)
+ 			return -EINVAL;
+ 
+-		*config = 0;
++		arg = 0;
+ 		break;
+ 	}
+ 
+@@ -627,7 +628,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		*config = ret;
++		arg = ret;
+ 		break;
+ 	}
+ 
+@@ -646,7 +647,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		val = sh_pfc_read_reg(pfc, pocctrl, 32);
+ 		spin_unlock_irqrestore(&pfc->lock, flags);
+ 
+-		*config = (val & BIT(bit)) ? 3300 : 1800;
++		arg = (val & BIT(bit)) ? 3300 : 1800;
+ 		break;
+ 	}
+ 
+@@ -654,6 +655,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		return -ENOTSUPP;
+ 	}
+ 
++	*config = pinconf_to_config_packed(param, arg);
+ 	return 0;
+ }
+ 
+-- 
+2.9.3
