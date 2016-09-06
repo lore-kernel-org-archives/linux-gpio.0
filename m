@@ -1,86 +1,67 @@
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2] sh-pfc: return pinconf with arguments in packed format
-Date: Tue,  6 Sep 2016 17:14:14 +0200
-Message-ID: <20160906151414.1104-1-niklas.soderlund+renesas@ragnatech.se>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [RFC PATCH] pinctrl: Add SX150X GPIO Extender Pinctrl Driver
+Date: Tue, 6 Sep 2016 12:43:28 +0200
+Message-ID: <3922b85b-1072-6770-c8d7-58a68ecc290e@axentia.se>
+References: <1472130692-14404-1-git-send-email-narmstrong@baylibre.com>
+ <CACRpkdZJy6N2uCnPLrM0V=67=xJzge94bYesHjL3r4itgE-9GA@mail.gmail.com>
+ <85f4ae6f-2563-967c-1e75-28a864405f53@axentia.se>
+ <44e8d692-832f-fbbf-2930-0cd7c140a754@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ve1eur01on0100.outbound.protection.outlook.com ([104.47.1.100]:40555
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932180AbcIFPS7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 6 Sep 2016 11:18:59 -0400
+In-Reply-To: <44e8d692-832f-fbbf-2930-0cd7c140a754@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Wei Chen <Wei.Chen@csr.com>, Roland Stigge <stigge@antcom.de>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-The pinconf-generic code expects configurations with arguments to be
-returned in a packed format in order to be displayed properly by
-pinconf_generic_dump_one().
+On 2016-09-06 10:20, Neil Armstrong wrote:
+> Hi Linus, Peter,
+> 
+> On 09/06/2016 08:44 AM, Peter Rosin wrote:
+>> I intend to test this, but it might be a couple of days. I need
+>> to bring the damn thing out of the closet and find the right
+>> cables etc etc. And I of course have other stuff to do as well...
+> 
+> Is it a DT only platform you intent to test with ? In this case the current version is OK.
 
-Reading /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins on
-r8a7795/salvator-x now shows:
+Yes, it's DT-only, but I don't expect it to be compatible as I linked
+the wrong patch, see below...
 
-    pin 101 (GP_3_5): output drive strength (9 mA), pin power source (3300 selector)
+*snip*
 
-Instead of:
+>> No, we have not, because we depend on yet to be upstreamed drivers
+>> for all of our boards, sometimes written by us, sometimes from
+>> the CPU vendor. For this driver, we were using a rejected patch
+>> to configure the pins from DT in the gpio driver written by
+>> Wei Chen [1] 
+> 
+> Actually it seems the patch was accepted, but it is not enough to handle
+> DT completely since the gpio base is incorrect, this was the subject
+> of my previous patch [2], make is DT compliant even for IRQ management.
+> But having a pinctrl version seens far more reasonable.
 
-    pin 101 (GP_3_5): output drive strength (0 mA), pin power source (0 selector)
+Oh crap, wrong link... Here's a better one:
+https://patchwork.kernel.org/patch/5437921/
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-* Changes since v1:
-- Add more user oriented information in commit message.
-- Add Tested-by tag from Geert.
----
- drivers/pinctrl/sh-pfc/pinctrl.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+>> One thing I noted at the very end of the patch was that I on
+>> first glance did not see any i2c_del_driver call, maybe use the
+>> module_i2c_driver macro?
+> 
+> Well, it's not present in the gpio version and since it manages IRQs, I assume it was
+> decided to not use is as a module since it's needed to attach very early.
 
-diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
-index e208ee0..c577258 100644
---- a/drivers/pinctrl/sh-pfc/pinctrl.c
-+++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-@@ -596,6 +596,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
- 	struct sh_pfc *pfc = pmx->pfc;
- 	enum pin_config_param param = pinconf_to_config_param(*config);
- 	unsigned long flags;
-+	unsigned int arg;
- 
- 	if (!sh_pfc_pinconf_validate(pfc, _pin, param))
- 		return -ENOTSUPP;
-@@ -616,7 +617,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
- 		if (bias != param)
- 			return -EINVAL;
- 
--		*config = 0;
-+		arg = 0;
- 		break;
- 	}
- 
-@@ -627,7 +628,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
- 		if (ret < 0)
- 			return ret;
- 
--		*config = ret;
-+		arg = ret;
- 		break;
- 	}
- 
-@@ -646,7 +647,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
- 		val = sh_pfc_read_reg(pfc, pocctrl, 32);
- 		spin_unlock_irqrestore(&pfc->lock, flags);
- 
--		*config = (val & BIT(bit)) ? 3300 : 1800;
-+		arg = (val & BIT(bit)) ? 3300 : 1800;
- 		break;
- 	}
- 
-@@ -654,6 +655,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
- 		return -ENOTSUPP;
- 	}
- 
-+	*config = pinconf_to_config_packed(param, arg);
- 	return 0;
- }
- 
--- 
-2.9.3
+I just noted the omission, someone else will shirley know better than
+me about what to do about it...
+
+(BTW, we're not using interrupts)
+
+Cheers,
+Peter
+
