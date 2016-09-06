@@ -1,137 +1,70 @@
-From: Jun Nie <jun.nie@linaro.org>
-Subject: Re: [PATCH 1/3] pinctrl: export pin_request to support parent pin
-Date: Tue, 6 Sep 2016 14:07:22 +0800
-Message-ID: <CABymUCOxD-tgt2S73zebJqZiKK8UiOTp0EeBBOv=gV66eAZ1pQ@mail.gmail.com>
-References: <1472213942-4815-1-git-send-email-jun.nie@linaro.org>
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Subject: Re: [PATCH] sh-pfc: return pinconf with arguments in packed format
+Date: Tue, 6 Sep 2016 08:28:34 +0200
+Message-ID: <20160906062833.GD27014@bigcity.dyn.berto.se>
+References: <20160905141957.25982-1-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdXu2CNyu_92MHOyVpL5wJWLm6zaojFhkk1c1joYLZ4K5A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f170.google.com ([209.85.220.170]:36812 "EHLO
-        mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753391AbcIFGHX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2016 02:07:23 -0400
-Received: by mail-qk0-f170.google.com with SMTP id l2so208090987qkf.3
-        for <linux-gpio@vger.kernel.org>; Mon, 05 Sep 2016 23:07:23 -0700 (PDT)
-In-Reply-To: <1472213942-4815-1-git-send-email-jun.nie@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXu2CNyu_92MHOyVpL5wJWLm6zaojFhkk1c1joYLZ4K5A@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Shawn Guo <shawn.guo@linaro.org>, Jason Liu <jason.liu@linaro.org>, Jun Nie <jun.nie@linaro.org>
 
-2016-08-26 20:19 GMT+08:00 Jun Nie <jun.nie@linaro.org>:
-> Some pin functions may be controlled in 2nd level multiplex.
-> We need configure 1st level multiplex when request such
-> functions. Export pin_request functionality so that parent
-> can be configured automatically with calling it in
-> pinmux_ops->request().
->
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> ---
->  drivers/pinctrl/core.c          | 20 ++++++++++++++++++++
->  drivers/pinctrl/pinmux.c        |  3 ++-
->  drivers/pinctrl/pinmux.h        |  9 +++++++++
->  include/linux/pinctrl/pinctrl.h |  2 ++
->  4 files changed, 33 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-> index fb38e20..0782a93 100644
-> --- a/drivers/pinctrl/core.c
-> +++ b/drivers/pinctrl/core.c
-> @@ -688,6 +688,26 @@ int pinctrl_gpio_direction_output(unsigned gpio)
->  }
->  EXPORT_SYMBOL_GPL(pinctrl_gpio_direction_output);
->
-> +/**
-> + * pinctrl_request_pin() - request a single pin to be used
-> + * @offset: the pin number from pinctrl dev pin number space
-> + */
-> +int pinctrl_request_pin(struct pinctrl_dev *pctldev,
-> +                       int offset, const char *owner)
-> +{
-> +       int ret;
-> +
-> +       mutex_lock(&pctldev->mutex);
-> +
-> +       ret = pin_request(pctldev, offset, owner, NULL);
-> +
-> +       mutex_unlock(&pctldev->mutex);
-> +
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(pinctrl_request_pin);
-> +
-> +
->  static struct pinctrl_state *find_state(struct pinctrl *p,
->                                         const char *name)
->  {
-> diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-> index ece7028..b18c1f0 100644
-> --- a/drivers/pinctrl/pinmux.c
-> +++ b/drivers/pinctrl/pinmux.c
-> @@ -80,7 +80,7 @@ int pinmux_validate_map(struct pinctrl_map const *map, int i)
->   * @gpio_range: the range matching the GPIO pin if this is a request for a
->   *     single GPIO pin
->   */
-> -static int pin_request(struct pinctrl_dev *pctldev,
-> +int pin_request(struct pinctrl_dev *pctldev,
->                        int pin, const char *owner,
->                        struct pinctrl_gpio_range *gpio_range)
->  {
-> @@ -180,6 +180,7 @@ out:
->
->         return status;
->  }
-> +EXPORT_SYMBOL(pin_request);
->
->  /**
->   * pin_free() - release a single muxed in pin so something else can be muxed
-> diff --git a/drivers/pinctrl/pinmux.h b/drivers/pinctrl/pinmux.h
-> index d1a98b1c..6ff9baf 100644
-> --- a/drivers/pinctrl/pinmux.h
-> +++ b/drivers/pinctrl/pinmux.h
-> @@ -30,6 +30,9 @@ int pinmux_map_to_setting(struct pinctrl_map const *map,
->  void pinmux_free_setting(struct pinctrl_setting const *setting);
->  int pinmux_enable_setting(struct pinctrl_setting const *setting);
->  void pinmux_disable_setting(struct pinctrl_setting const *setting);
-> +int pin_request(struct pinctrl_dev *pctldev,
-> +               int pin, const char *owner,
-> +               struct pinctrl_gpio_range *gpio_range);
->
->  #else
->
-> @@ -83,6 +86,12 @@ static inline void pinmux_disable_setting(
->  {
->  }
->
-> +int pin_request(struct pinctrl_dev *pctldev,
-> +               int pin, const char *owner,
-> +               struct pinctrl_gpio_range *gpio_range)
-> +{
-> +}
-> +
->  #endif
->
->  #if defined(CONFIG_PINMUX) && defined(CONFIG_DEBUG_FS)
-> diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
-> index a42e57d..13bb7a1 100644
-> --- a/include/linux/pinctrl/pinctrl.h
-> +++ b/include/linux/pinctrl/pinctrl.h
-> @@ -167,6 +167,8 @@ pinctrl_find_gpio_range_from_pin(struct pinctrl_dev *pctldev,
->  extern int pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
->                                 const char *pin_group, const unsigned **pins,
->                                 unsigned *num_pins);
-> +extern int pinctrl_request_pin(struct pinctrl_dev *pctldev,
-> +                               int offset, const char *owner);
->
->  #ifdef CONFIG_OF
->  extern struct pinctrl_dev *of_pinctrl_get(struct device_node *np);
+Hi Geert,
+
+Thanks for your review.
+
+On 2016-09-05 17:54:44 +0200, Geert Uytterhoeven wrote:
+> Hi Niklas,
+> 
+> On Mon, Sep 5, 2016 at 4:19 PM, Niklas Söderlund
+> <niklas.soderlund+renesas@ragnatech.se> wrote:
+> > The pinconf-generic code expects configurations with arguments to be
+> > returned in a packed format in order to be displayed properly by
+> > pinconf_generic_dump_one().
+> 
+> Some more user-oriented explanation could be helpful, like saying that
+> /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins on r8a7795/salvator-x now
+> shows
+> 
+>     pin 96 (GP_3_0): input bias disabled, output drive strength (9
+> mA), pin power source (3300 selector)
+> 
+> instead of
+> 
+>     pin 96 (GP_3_0): input bias disabled, output drive strength (0
+> mA), pin power source (0 selector)
+
+Good idea, I will send a v2 with a more user-oriented explanation.
+
+> 
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Thanks for testing.
+
+> 
+> P.S. It seems like we should get rid of the WARN_ON_ONCE() checks in our
+>      pinctrl code, and return proper errors, as these are triggered by reading
+>      the sysfs files.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 > --
-> 1.9.1
->
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
-Linus,
-
-Do you have any comments on these change and following ZX pinctrl driver?
-
-Thank you!
-Jun
+-- 
+Regards,
+Niklas Söderlund
