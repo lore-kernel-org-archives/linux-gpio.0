@@ -1,276 +1,129 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH v4 2/9] drivers: irqchip: Add STM32 external interrupts
- support
-Date: Tue, 6 Sep 2016 17:37:37 +0000
-Message-ID: <20160906173737.GU10637@io.lakedaemon.net>
-References: <1473180341-1999-1-git-send-email-alexandre.torgue@st.com>
- <1473180341-1999-3-git-send-email-alexandre.torgue@st.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v5] i2c: imx: make bus recovery through pinctrl optional
+Date: Tue, 6 Sep 2016 20:58:49 +0200
+Message-ID: <20160906185849.27pjhawadca5pwow@pengutronix.de>
+References: <1471644322-22670-1-git-send-email-leoyang.li@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from outbound1a.ore.mailhop.org ([54.213.22.21]:63845 "EHLO
-        outbound1a.ore.mailhop.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934475AbcIFRhq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Sep 2016 13:37:46 -0400
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1473180341-1999-3-git-send-email-alexandre.torgue@st.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1471644322-22670-1-git-send-email-leoyang.li@nxp.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Li Yang <leoyang.li@nxp.com>
+Cc: Gao Pan <pandy.gao@nxp.com>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre TORGUE <alexandre.torgue@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com, lee.jones@linaro.org
 
-On Tue, Sep 06, 2016 at 06:45:34PM +0200, Alexandre TORGUE wrote:
-> The STM32 external interrupt controller consists of edge detectors that
-> generate interrupts requests or wake-up events.
-> 
-> Each line can be independently configured as interrupt or wake-up source,
-> and triggers either on rising, falling or both edges. Each line can also
-> be masked independently.
-> 
-> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
-> 
-> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-> index 7f87289..bc62d1f 100644
-> --- a/drivers/irqchip/Kconfig
-> +++ b/drivers/irqchip/Kconfig
-> @@ -264,3 +264,7 @@ config EZNPS_GIC
->  	select IRQ_DOMAIN
->  	help
->  	  Support the EZchip NPS400 global interrupt controller
-> +
-> +config STM32_EXTI
-> +	bool
-> +	select IRQ_DOMAIN
-> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-> index 4c203b6..96383b2 100644
-> --- a/drivers/irqchip/Makefile
-> +++ b/drivers/irqchip/Makefile
-> @@ -71,3 +71,4 @@ obj-$(CONFIG_MVEBU_ODMI)		+= irq-mvebu-odmi.o
->  obj-$(CONFIG_LS_SCFG_MSI)		+= irq-ls-scfg-msi.o
->  obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
->  obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o
-> +obj-$(CONFIG_STM32_EXTI) 		+= irq-stm32-exti.o
-> diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
-> new file mode 100644
-> index 0000000..763c17c
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-stm32-exti.c
-> @@ -0,0 +1,203 @@
-> +/*
-> + * Copyright (C) Maxime Coquelin 2015
-> + * Author:  Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> + * License terms:  GNU General Public License (GPL), version 2
-> + */
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqchip.h>
-> +#include <linux/irqchip/chained_irq.h>
-> +#include <linux/irqchip/chained_irq.h>
+On Fri, Aug 19, 2016 at 05:05:22PM -0500, Li Yang wrote:
+> Since commit 1c4b6c3bcf30 ("i2c: imx: implement bus recovery") the
+> driver starts to use gpio/pinctrl to do i2c bus recovery.  But pinctrl
+> is not always available for platforms with this controller such as ls1021a
+> and ls1043a, and the device tree binding also mentioned this gpio based
+> recovery mechanism as optional.  The patch makes it really optional that
+> the probe function won't bailout but just disable the bus recovery functi=
+on
+> when pinctrl is not available.
+> =
 
-double paste?
-double paste?
+> Signed-off-by: Li Yang <leoyang.li@nxp.com>
+> Cc: Gao Pan <pandy.gao@nxp.com>
+> Cc: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> v5:
+> Revert the last minute change of recovery info initialization timing, it
+> will cause problem if initialized after i2c_add_numbered_adapter()
+> =
 
-If there are no other critiques, I'll fix this up when I pull in patches
-1 and 2.
+> v4:
+> Remove the use of IS_ERR_OR_NULL
+> Move the condition judgement to i2c_imx_init_recovery_info()
+> Change the timing of recovery initialization to be after bus registration
+> =
 
-thx,
+> v3:
+> Rebased to Wolfram's for-next branch
+> Added acked-by from Linus Walleij
+> Update to use new nxp email addresses due to company merge
+> =
 
-Jason.
+>  drivers/i2c/busses/i2c-imx.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+> =
 
-> +#include <linux/irqdomain.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_irq.h>
+> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+> index 1844bc9..7ae7992 100644
+> --- a/drivers/i2c/busses/i2c-imx.c
+> +++ b/drivers/i2c/busses/i2c-imx.c
+> @@ -989,6 +989,15 @@ static void i2c_imx_init_recovery_info(struct imx_i2=
+c_struct *i2c_imx,
+>  {
+>  	struct i2c_bus_recovery_info *rinfo =3D &i2c_imx->rinfo;
+>  =
+
+> +	/* if pinctrl is not supported on the system */
+> +	if (IS_ERR(i2c_imx->pinctrl))
+> +		i2c_imx->pinctrl =3D NULL;
 > +
-> +#define EXTI_IMR	0x0
-> +#define EXTI_EMR	0x4
-> +#define EXTI_RTSR	0x8
-> +#define EXTI_FTSR	0xc
-> +#define EXTI_SWIER	0x10
-> +#define EXTI_PR		0x14
-> +
-> +static void stm32_irq_handler(struct irq_desc *desc)
-> +{
-> +	struct irq_domain *domain = irq_desc_get_handler_data(desc);
-> +	struct irq_chip_generic *gc = domain->gc->gc[0];
-> +	struct irq_chip *chip = irq_desc_get_chip(desc);
-> +	unsigned long pending;
-> +	int n;
-> +
-> +	chained_irq_enter(chip, desc);
-> +
-> +	while ((pending = irq_reg_readl(gc, EXTI_PR))) {
-> +		for_each_set_bit(n, &pending, BITS_PER_LONG) {
-> +			generic_handle_irq(irq_find_mapping(domain, n));
-> +			irq_reg_writel(gc, BIT(n), EXTI_PR);
-> +		}
+> +	if (!i2c_imx->pinctrl) {
+> +		dev_info(&pdev->dev, "can't get pinctrl, bus recovery not supported\n"=
+);
+> +		return;
 > +	}
 > +
-> +	chained_irq_exit(chip, desc);
-> +}
-> +
-> +static int stm32_irq_set_type(struct irq_data *data, unsigned int type)
-> +{
-> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
-> +	int pin = data->hwirq;
-> +	u32 rtsr, ftsr;
-> +
-> +	irq_gc_lock(gc);
-> +
-> +	rtsr = irq_reg_readl(gc, EXTI_RTSR);
-> +	ftsr = irq_reg_readl(gc, EXTI_FTSR);
-> +
-> +	switch (type) {
-> +	case IRQ_TYPE_EDGE_RISING:
-> +		rtsr |= BIT(pin);
-> +		ftsr &= ~BIT(pin);
-> +		break;
-> +	case IRQ_TYPE_EDGE_FALLING:
-> +		rtsr &= ~BIT(pin);
-> +		ftsr |= BIT(pin);
-> +		break;
-> +	case IRQ_TYPE_EDGE_BOTH:
-> +		rtsr |= BIT(pin);
-> +		ftsr |= BIT(pin);
-> +		break;
-> +	default:
-> +		irq_gc_unlock(gc);
-> +		return -EINVAL;
-> +	}
-> +
-> +	irq_reg_writel(gc, rtsr, EXTI_RTSR);
-> +	irq_reg_writel(gc, ftsr, EXTI_FTSR);
-> +
-> +	irq_gc_unlock(gc);
-> +
-> +	return 0;
-> +}
-> +
-> +static int stm32_irq_set_wake(struct irq_data *data, unsigned int on)
-> +{
-> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
-> +	int pin = data->hwirq;
-> +	u32 emr;
-> +
-> +	irq_gc_lock(gc);
-> +
-> +	emr = irq_reg_readl(gc, EXTI_EMR);
-> +	if (on)
-> +		emr |= BIT(pin);
-> +	else
-> +		emr &= ~BIT(pin);
-> +	irq_reg_writel(gc, emr, EXTI_EMR);
-> +
-> +	irq_gc_unlock(gc);
-> +
-> +	return 0;
-> +}
-> +
-> +static int stm32_exti_alloc(struct irq_domain *d, unsigned int virq,
-> +			    unsigned int nr_irqs, void *data)
-> +{
-> +	struct irq_chip_generic *gc = d->gc->gc[0];
-> +	struct irq_fwspec *fwspec = data;
-> +	irq_hw_number_t hwirq;
-> +
-> +	hwirq = fwspec->param[0];
-> +
-> +	irq_map_generic_chip(d, virq, hwirq);
-> +	irq_domain_set_info(d, virq, hwirq, &gc->chip_types->chip, gc,
-> +			    handle_simple_irq, NULL, NULL);
-> +
-> +	return 0;
-> +}
-> +
-> +static void stm32_exti_free(struct irq_domain *d, unsigned int virq,
-> +			    unsigned int nr_irqs)
-> +{
-> +	struct irq_data *data = irq_get_irq_data(virq);
-> +
-> +	irq_gc_mask_clr_bit(data->parent_data);
-> +	irq_domain_reset_irq_data(data);
-> +}
-> +
-> +struct irq_domain_ops irq_exti_domain_ops = {
-> +	.map	= irq_map_generic_chip,
-> +	.xlate	= irq_domain_xlate_onetwocell,
-> +	.alloc  = stm32_exti_alloc,
-> +	.free	= stm32_exti_free,
-> +};
-> +
-> +static int __init stm32_exti_init(struct device_node *node,
-> +				  struct device_node *parent)
-> +{
-> +	unsigned int clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
-> +	int nr_irqs, nr_exti, ret, i;
-> +	struct irq_chip_generic *gc;
-> +	struct irq_domain *domain;
-> +	void *base;
-> +
-> +	base = of_iomap(node, 0);
-> +	if (!base) {
-> +		pr_err("%s: Unable to map registers\n", node->full_name);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	/* Determine number of irqs supported */
-> +	writel_relaxed(~0UL, base + EXTI_RTSR);
-> +	nr_exti = fls(readl_relaxed(base + EXTI_RTSR));
-> +	writel_relaxed(0, base + EXTI_RTSR);
-> +
-> +	pr_info("%s: %d External IRQs detected\n", node->full_name, nr_exti);
-> +
-> +	domain = irq_domain_add_linear(node, nr_exti,
-> +				       &irq_exti_domain_ops, NULL);
-> +	if (!domain) {
-> +		pr_err("%s: Could not register interrupt domain.\n",
-> +				node->name);
-> +		ret = -ENOMEM;
-> +		goto out_unmap;
-> +	}
-> +
-> +	ret = irq_alloc_domain_generic_chips(domain, nr_exti, 1, "exti",
-> +					     handle_edge_irq, clr, 0, 0);
-> +	if (ret) {
-> +		pr_err("%s: Could not allocate generic interrupt chip.\n",
-> +			node->full_name);
-> +		goto out_free_domain;
-> +	}
-> +
-> +	gc = domain->gc->gc[0];
-> +	gc->reg_base                         = base;
-> +	gc->chip_types->type               = IRQ_TYPE_EDGE_BOTH;
-> +	gc->chip_types->chip.name          = gc->chip_types[0].chip.name;
-> +	gc->chip_types->chip.irq_ack       = irq_gc_ack_set_bit;
-> +	gc->chip_types->chip.irq_mask      = irq_gc_mask_clr_bit;
-> +	gc->chip_types->chip.irq_unmask    = irq_gc_mask_set_bit;
-> +	gc->chip_types->chip.irq_set_type  = stm32_irq_set_type;
-> +	gc->chip_types->chip.irq_set_wake  = stm32_irq_set_wake;
-> +	gc->chip_types->regs.ack           = EXTI_PR;
-> +	gc->chip_types->regs.mask          = EXTI_IMR;
-> +	gc->chip_types->handler            = handle_edge_irq;
-> +
-> +	nr_irqs = of_irq_count(node);
-> +	for (i = 0; i < nr_irqs; i++) {
-> +		unsigned int irq = irq_of_parse_and_map(node, i);
-> +
-> +		irq_set_handler_data(irq, domain);
-> +		irq_set_chained_handler(irq, stm32_irq_handler);
-> +	}
-> +
-> +	return 0;
-> +
-> +out_free_domain:
-> +	irq_domain_remove(domain);
-> +out_unmap:
-> +	iounmap(base);
-> +	return ret;
-> +}
-> +
-> +IRQCHIP_DECLARE(stm32_exti, "st,stm32-exti", stm32_exti_init);
-> -- 
-> 1.9.1
-> 
+>  	i2c_imx->pinctrl_pins_default =3D pinctrl_lookup_state(i2c_imx->pinctrl,
+>  			PINCTRL_STATE_DEFAULT);
+>  	i2c_imx->pinctrl_pins_gpio =3D pinctrl_lookup_state(i2c_imx->pinctrl,
+> @@ -1081,8 +1090,11 @@ static int i2c_imx_probe(struct platform_device *p=
+dev)
+>  		return ret;
+>  	}
+>  =
+
+> +	/* optional bus recovery feature through pinctrl */
+>  	i2c_imx->pinctrl =3D devm_pinctrl_get(&pdev->dev);
+> -	if (IS_ERR(i2c_imx->pinctrl)) {
+> +	/* bailout on -ENOMEM or -EPROBE_DEFER, continue for other errors */
+> +	if (PTR_ERR(i2c_imx->pinctrl) =3D=3D -ENOMEM ||
+> +			PTR_ERR(i2c_imx->pinctrl) =3D=3D -EPROBE_DEFER) {
+>  		ret =3D PTR_ERR(i2c_imx->pinctrl);
+>  		goto clk_disable;
+>  	}
+
+devm_pinctrl_get might return the following error-valued pointers:
+ - -EINVAL
+ - -ENOMEM
+ - -ENODEV
+ - -EPROBE_DEFER
+
+There are several error paths returning -EINVAL, one is when an invalid
+phandle is used. Do you really want to ignore that?
+
+IMO error handling is better done with inverse logic, that is continue
+on some explicit error, bail out on all unknown stuff. This tends to be
+more robust. Also the comment should be improved to not explain that for
+-ENOMEM and -EPROBE_DEFER we bail out (which should be obvious for
+anyone who can read C) but to explain why.
+
+Also I'd put
+
+	i2c_imx->pinctrl =3D NULL;
+
+directly after devm_pinctrl_get() which I consider the more obvious
+place for this.
+
+Best regards
+Uwe
+
+-- =
+
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
