@@ -1,30 +1,77 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 6/8] pinctrl: Add pinctrl-aspeed-g4 driver
-Date: Wed, 7 Sep 2016 16:53:13 +0200
-Message-ID: <CACRpkdYGHfsxXrFmoQ8vHq8af12ZMatYwHaBcXXNXVqSKK=1cw@mail.gmail.com>
-References: <20160830075427.11493-1-andrew@aj.id.au> <20160830075427.11493-7-andrew@aj.id.au>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 2/4] ARM: sunxi: Support the Nextthing GR8
+Date: Wed,  7 Sep 2016 16:53:58 +0200
+Message-ID: <20160907145400.27192-3-maxime.ripard@free-electrons.com>
+References: <20160907145400.27192-1-maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160830075427.11493-7-andrew@aj.id.au>
+In-Reply-To: <20160907145400.27192-1-maxime.ripard@free-electrons.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Joel Stanley <joel@jms.id.au>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Aug 30, 2016 at 9:54 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+The GR8 is an SoC made by Nextthing Co, loosely based on the sun5i family.
 
-> A subset of the pins and functions are exposed. The selection of
-> functions and pins is driven by the development of OpenBMC[1] on the
-> AST2400 SoC, particularly around booting the OpenPOWER Palmetto
-> development machine.
->
-> [1] https://github.com/openbmc/docs
->
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> Reviewed-by: Joel Stanley <joel@jms.id.au>
+It has a number of new controllers compared to the A10s and A13 (SPDIF, I2S),
+but some controllers missing too (Ethernet, less I2C, less UARTs).
 
-Patch applied.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+---
+ Documentation/arm/sunxi/README                  | 2 ++
+ Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
+ MAINTAINERS                                     | 1 +
+ arch/arm/mach-sunxi/sunxi.c                     | 1 +
+ 4 files changed, 5 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
+index e5a115f24471..77f57efbea83 100644
+--- a/Documentation/arm/sunxi/README
++++ b/Documentation/arm/sunxi/README
+@@ -31,6 +31,8 @@ SunXi family
+         + User Manual
+           http://dl.linux-sunxi.org/A13/A13%20User%20Manual%20-%20v1.2%20%282013-01-08%29.pdf
+ 
++      - Next Thing Co GR8 (sun5i)
++
+     * Dual ARM Cortex-A7 based SoCs
+       - Allwinner A20 (sun7i)
+         + User Manual
+diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
+index 7e79fcc36b0d..3975d0a0e4c2 100644
+--- a/Documentation/devicetree/bindings/arm/sunxi.txt
++++ b/Documentation/devicetree/bindings/arm/sunxi.txt
+@@ -14,3 +14,4 @@ using one of the following compatible strings:
+   allwinner,sun8i-a83t
+   allwinner,sun8i-h3
+   allwinner,sun9i-a80
++  nextthing,gr8
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 20bb1d00098c..7be47efb2159 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -982,6 +982,7 @@ M:	Chen-Yu Tsai <wens@csie.org>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ N:	sun[x456789]i
++F:	arch/arm/boot/dts/ntc-gr8*
+ 
+ ARM/Allwinner SoC Clock Support
+ M:	Emilio López <emilio@elopez.com.ar>
+diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+index 95dca8c2c9ed..2e2bde271205 100644
+--- a/arch/arm/mach-sunxi/sunxi.c
++++ b/arch/arm/mach-sunxi/sunxi.c
+@@ -22,6 +22,7 @@ static const char * const sunxi_board_dt_compat[] = {
+ 	"allwinner,sun5i-a10s",
+ 	"allwinner,sun5i-a13",
+ 	"allwinner,sun5i-r8",
++	"nextthing,gr8",
+ 	NULL,
+ };
+ 
+-- 
+2.9.3
