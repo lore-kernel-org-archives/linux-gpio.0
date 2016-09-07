@@ -1,73 +1,53 @@
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 1/5] gpio: pca953x: coding style fixes
-Date: Wed,  7 Sep 2016 11:24:53 +0200
-Message-ID: <1473240297-19881-2-git-send-email-bgolaszewski@baylibre.com>
+Subject: [PATCH v2 4/5] gpio: pca953x: remove an unused variable
+Date: Wed,  7 Sep 2016 11:24:56 +0200
+Message-ID: <1473240297-19881-5-git-send-email-bgolaszewski@baylibre.com>
 References: <1473240297-19881-1-git-send-email-bgolaszewski@baylibre.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:35450 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757224AbcIGJZE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 05:25:04 -0400
-Received: by mail-wm0-f46.google.com with SMTP id i204so75603893wma.0
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 02:25:04 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1473240297-19881-1-git-send-email-bgolaszewski@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+List-Id: linux-gpio@vger.kernel.org
 
-pca953x_gpio_set_multiple() has some coding style issues that make it
-harder to read. Tweak the code a bit.
+The chip_type variable in struct pca953x_chip is no longer required.
+
+Remove it.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-pca953x.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 02f2a56..2312f8d 100644
+index 6b62898..00bb2ea 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -355,13 +355,13 @@ exit:
- }
+@@ -129,7 +129,6 @@ struct pca953x_chip {
+ 	struct i2c_client *client;
+ 	struct gpio_chip gpio_chip;
+ 	const char *const *names;
+-	int	chip_type;
+ 	unsigned long driver_data;
  
- static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
--		unsigned long *mask, unsigned long *bits)
-+				      unsigned long *mask, unsigned long *bits)
- {
- 	struct pca953x_chip *chip = gpiochip_get_data(gc);
- 	u8 reg_val[MAX_BANK];
--	int ret, offset = 0;
-+	int ret, bank, offset = 0;
- 	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
--	int bank;
-+	unsigned int bankmask, bankval;
- 
- 	switch (chip->chip_type) {
- 	case PCA953X_TYPE:
-@@ -374,15 +374,16 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
- 
- 	memcpy(reg_val, chip->reg_output, NBANK(chip));
- 	mutex_lock(&chip->i2c_lock);
--	for(bank=0; bank<NBANK(chip); bank++) {
--		unsigned bankmask = mask[bank / sizeof(*mask)] >>
--				    ((bank % sizeof(*mask)) * 8);
--		if(bankmask) {
--			unsigned bankval  = bits[bank / sizeof(*bits)] >>
--					    ((bank % sizeof(*bits)) * 8);
-+	for (bank = 0; bank < NBANK(chip); bank++) {
-+		bankmask = mask[bank / sizeof(*mask)] >>
-+			   ((bank % sizeof(*mask)) * 8);
-+		if (bankmask) {
-+			bankval = bits[bank / sizeof(*bits)] >>
-+				  ((bank % sizeof(*bits)) * 8);
- 			reg_val[bank] = (reg_val[bank] & ~bankmask) | bankval;
+ 	const struct pca953x_offset *offset;
+@@ -760,8 +759,6 @@ static int pca953x_probe(struct i2c_client *client,
  		}
  	}
-+
- 	ret = i2c_smbus_write_i2c_block_data(chip->client, offset << bank_shift, NBANK(chip), reg_val);
- 	if (ret)
- 		goto exit;
+ 
+-	chip->chip_type = PCA_CHIP_TYPE(chip->driver_data);
+-
+ 	mutex_init(&chip->i2c_lock);
+ 
+ 	/* initialize cached registers from their original values.
+@@ -774,7 +771,7 @@ static int pca953x_probe(struct i2c_client *client,
+ 	else if (chip->gpio_chip.ngpio >= 24)
+ 		chip->write_regs = pca953x_write_regs_24;
+ 
+-	if (chip->chip_type == PCA953X_TYPE)
++	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE)
+ 		ret = device_pca953x_init(chip, invert);
+ 	else
+ 		ret = device_pca957x_init(chip, invert);
 -- 
 2.7.4
-
