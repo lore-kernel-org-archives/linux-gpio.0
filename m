@@ -1,42 +1,43 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v5] i2c: imx: make bus recovery through pinctrl optional
-Date: Wed, 7 Sep 2016 07:55:47 +0200
-Message-ID: <20160907055547.opp57zyxhlplhxhm@pengutronix.de>
-References: <1471644322-22670-1-git-send-email-leoyang.li@nxp.com>
- <20160906185849.27pjhawadca5pwow@pengutronix.de>
- <CADRPPNQ+1qBNL5WA=Jo_keE7BPnoOs7a2T6CpTuciiF16qK6xQ@mail.gmail.com>
- <87ca69fb85848a0a86b34a9a9037a57b@agner.ch>
- <CADRPPNSPye45bmFshfwb+gDA0x0ygs4Ofa6HMYbKt9ER0oeccg@mail.gmail.com>
- <CAChUvXOGjTn6K5588UVgjbRWUY+weDtk2qbOU-NM4=kA2znh=Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAChUvXOGjTn6K5588UVgjbRWUY+weDtk2qbOU-NM4=kA2znh=Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tracy Smith <tlsmith3777@gmail.com>
-Cc: Leo Li <pku.leo@gmail.com>, Stefan Agner <stefan@agner.ch>, Gao Pan <pandy.gao@nxp.com>, Wolfram Sang <wsa@the-dreams.de>, lkml <linux-kernel@vger.kernel.org>, Li Yang <leoyang.li@nxp.com>, linux-gpio@vger.kernel.org, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 0/5] gpio: pca953x: code refactoring
+Date: Wed,  7 Sep 2016 11:24:52 +0200
+Message-ID: <1473240297-19881-1-git-send-email-bgolaszewski@baylibre.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:35436 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757226AbcIGJZD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 05:25:03 -0400
+Received: by mail-wm0-f43.google.com with SMTP id i204so75603248wma.0
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 02:25:03 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Hello,
+I'm working on converting the pca953x driver to using regmap, but since
+it's not a trivial task I figured I'd post a couple refactoring patches
+I did so far for 4.9.
 
-On Tue, Sep 06, 2016 at 06:35:38PM -0500, Tracy Smith wrote:
-> >The patch makes it really optional that
-> >the probe function won't bailout but just disable the bus recovery function
-> >when pinctrl is not available.
-> 
-> in the case of the LS1043A and LS1021A, if the bus recovery function is
-> disabled, how will bus recovery occur?  Is there no option to recover the
-> bus for the LS1021a and LS1043a?
+The first patch just fixes a couple coding style issues. The second
+removes a couple unnecessary switches. Last three refactor the
+read/write_regs functions to avoid if-elses by using function pointers
+to smaller, specialized routines.
 
-Right. That's the situation that we had for all drivers some time ago.
-Most of the time this is no problem.
+Tested with pca9534 and pca9535 chips.
 
-Best regards
-Uwe
+v1 -> v2:
+- constified the offset structures in patch 2/5
+
+Bartosz Golaszewski (5):
+  gpio: pca953x: coding style fixes
+  gpio: pca953x: code shrink
+  gpio: pca953x: refactor pca953x_write_regs()
+  gpio: pca953x: remove an unused variable
+  gpio: pca953x: refactor pca953x_read_regs()
+
+ drivers/gpio/gpio-pca953x.c | 270 ++++++++++++++++++++++----------------------
+ 1 file changed, 136 insertions(+), 134 deletions(-)
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.7.4
+
