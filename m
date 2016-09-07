@@ -1,152 +1,48 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v2 4/4] ARM: dts: gr8: Add support for the GR8 evaluation board
-Date: Wed, 7 Sep 2016 23:23:56 +0800
-Message-ID: <CAGb2v66Ed1u5NaC9ev=ohywCbssy6BnkPcThY2D9O=_eNK1pdA@mail.gmail.com>
-References: <20160907145400.27192-1-maxime.ripard@free-electrons.com> <20160907145400.27192-5-maxime.ripard@free-electrons.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 2/8] syscon: dt-bindings: Add documentation for Aspeed
+ system control units
+Date: Wed, 7 Sep 2016 17:30:46 +0100
+Message-ID: <20160907163046.GD4921@dell>
+References: <20160830075427.11493-1-andrew@aj.id.au>
+ <20160830075427.11493-3-andrew@aj.id.au>
+ <CACRpkdYa5pwQ1zW6BGO429WTOG_y0DPMCVGjpViQc9k5m2_yyA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:50582 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1161025AbcIGPY2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 11:24:28 -0400
-In-Reply-To: <20160907145400.27192-5-maxime.ripard@free-electrons.com>
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:38360 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938857AbcIGQ26 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 12:28:58 -0400
+Received: by mail-wm0-f54.google.com with SMTP id 1so42483546wmz.1
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 09:28:57 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYa5pwQ1zW6BGO429WTOG_y0DPMCVGjpViQc9k5m2_yyA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Wed, Sep 7, 2016 at 10:54 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> From: Mylène Josserand <mylene.josserand@free-electrons.com>
->
-> The GR8-EVB is a small board with an NextThing GR8, an Hynix MLC NAND,
-> an AXP209 PMIC, USB host and OTG, an SPDIF output and a connectors for CSI,
-> I2S and LCD.
->
-> Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
->  arch/arm/boot/dts/Makefile        |   1 +
->  arch/arm/boot/dts/ntc-gr8-evb.dts | 342 ++++++++++++++++++++++++++++++++++++++
+On Wed, 07 Sep 2016, Linus Walleij wrote:
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+> On Tue, Aug 30, 2016 at 9:54 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+> 
+> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> > Acked-by: Rob Herring <robh@kernel.org>
+> > Acked-by: Joel Stanley <joel@jms.id.au>
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> I guess the MFD maintainer (Lee Jones) should merge this?
+> 
+> Why is he not on CC?
 
->  arch/arm/boot/dts/ntc-gr8.dtsi    |  14 +-
->  3 files changed, 350 insertions(+), 7 deletions(-)
->  create mode 100644 arch/arm/boot/dts/ntc-gr8-evb.dts
->
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index bb906f23d161..b2814271b397 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -719,6 +719,7 @@ dtb-$(CONFIG_MACH_SUN4I) += \
->         sun4i-a10-pcduino2.dtb \
->         sun4i-a10-pov-protab2-ips9.dtb
->  dtb-$(CONFIG_MACH_SUN5I) += \
-> +       ntc-gr8-evb.dtb \
->         sun5i-a10s-auxtek-t003.dtb \
->         sun5i-a10s-auxtek-t004.dtb \
->         sun5i-a10s-mk802.dtb \
-> diff --git a/arch/arm/boot/dts/ntc-gr8-evb.dts b/arch/arm/boot/dts/ntc-gr8-evb.dts
-> new file mode 100644
-> index 000000000000..7da1afddcab5
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/ntc-gr8-evb.dts
+Thanks Linus.
 
-[...]
+Yes, please resend, so I can take it in.
 
-> +&i2c1 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&i2c1_pins_a>;
-> +       status = "okay";
-> +
-> +       pcf8563: rtc@51 {
-> +               compatible = "phg,pcf8563";
-> +               reg = <0x51>;
-> +       };
-> +
-> +       wm8978: codec@1a {
-> +               #sound-dai-cells = <0>;
-> +               compatible = "wlf,wm8978";
-> +               reg = <0x1a>;
-> +       };
-
-Seems like I2S support will happen soon? :)
-
-> +};
-
-[...]
-
-> diff --git a/arch/arm/boot/dts/ntc-gr8.dtsi b/arch/arm/boot/dts/ntc-gr8.dtsi
-> index d21cfa3f3c14..cdb7a12946c4 100644
-> --- a/arch/arm/boot/dts/ntc-gr8.dtsi
-> +++ b/arch/arm/boot/dts/ntc-gr8.dtsi
-
-This looks like the wrong patch. Nevertheless...
-
-> @@ -228,7 +228,7 @@
->
->                 axi_gates: clk@01c2005c {
->                         #clock-cells = <1>;
-> -                       compatible = "allwinner,sun4i-a10-axi-gates-clk";
-> +                       compatible = "allwinner,sun4i-a10-gates-clk";
->                         reg = <0x01c2005c 0x4>;
->                         clocks = <&axi>;
->                         clock-indices = <0>;
-> @@ -244,7 +244,7 @@
->                                         <2>, <5>, <6>,
->                                         <7>, <8>, <9>,
->                                         <10>, <13>,
-> -                                       <14>, <20>,
-> +                                       <14>, <17>, <20>,
->                                         <21>, <22>,
->                                         <28>, <32>, <34>,
->                                         <36>, <40>, <44>,
-> @@ -254,7 +254,7 @@
->                                              "ahb_ohci", "ahb_ss", "ahb_dma",
->                                              "ahb_bist", "ahb_mmc0", "ahb_mmc1",
->                                              "ahb_mmc2", "ahb_nand",
-> -                                            "ahb_sdram", "ahb_spi0",
-> +                                            "ahb_sdram", "ahb_sdram", "ahb_spi0",
-
-I don't think this will work. Copy/paste error?
-
-Regards
-ChenYu
-
->                                              "ahb_spi1", "ahb_spi2",
->                                              "ahb_stimer", "ahb_ve", "ahb_tve",
->                                              "ahb_lcd", "ahb_csi", "ahb_de_be",
-> @@ -264,7 +264,7 @@
->
->                 apb0_gates: clk@01c20068 {
->                         #clock-cells = <1>;
-> -                       compatible = "allwinner,sun5i-a13-apb0-gates-clk";
-> +                       compatible = "allwinner,sun4i-a10-gates-clk";
->                         reg = <0x01c20068 0x4>;
->                         clocks = <&apb0>;
->                         clock-indices = <0>, <3>,
-> @@ -275,15 +275,15 @@
->
->                 apb1_gates: clk@01c2006c {
->                         #clock-cells = <1>;
-> -                       compatible = "allwinner,sun5i-a13-apb1-gates-clk";
-> +                       compatible = "allwinner,sun4i-a10-gates-clk";
->                         reg = <0x01c2006c 0x4>;
->                         clocks = <&apb1>;
->                         clock-indices = <0>, <1>,
->                                         <2>, <17>,
-> -                                       <18>;
-> +                                       <18>, <19>;
->                         clock-output-names = "apb1_i2c0", "apb1_i2c1",
->                                              "apb1_i2c2", "apb1_uart1",
-> -                                            "apb1_uart2";
-> +                                            "apb1_uart2", "apb1_uart3";
->                 };
->
->                 nand_clk: clk@01c20080 {
-> --
-> 2.9.3
->
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
