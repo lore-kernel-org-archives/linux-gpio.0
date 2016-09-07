@@ -1,78 +1,72 @@
-From: Li Yang <leoyang.li@nxp.com>
-Subject: [PATCH v6] i2c: imx: make bus recovery through pinctrl optional
-Date: Wed, 7 Sep 2016 12:03:16 -0500
-Message-ID: <1473267796-10403-1-git-send-email-leoyang.li@nxp.com>
+From: Rask Ingemann Lambertsen <ccc94453@vip.cybercity.dk>
+Subject: Re: [PATCH 5/6] ARM: dts: Add NextThing GR8 dtsi
+Date: Wed, 7 Sep 2016 19:51:48 +0200
+Message-ID: <20160907175148.c3fioqbr2k2pdqri@x1-6-00-0f-9f-c6-3e-90.cpe.webspeed.dk>
+References: <20160831081817.5191-6-maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Gao Pan <pandy.gao@nxp.com>, Li Yang <leoyang.li@nxp.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from SMTPOUT03.DKBAL.mailcore.com ([85.235.243.176]:63440 "EHLO
+        SMTPOUT02.DKBAL.mailcore.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754952AbcIGRv5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 13:51:57 -0400
+Content-Disposition: inline
+In-Reply-To: <20160831081817.5191-6-maxime.ripard@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, David Airlie <airlied@linux.ie>, Jingoo Han <jingoohan1@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Alexander Kaplan <alex@nextthing.co>, Mylene Josserand <mylene.josserand@free-electrons.com>, Lee Jones <lee.jones@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-U2luY2UgY29tbWl0IDFjNGI2YzNiY2YzMCAoImkyYzogaW14OiBpbXBsZW1lbnQgYnVzIHJlY292
-ZXJ5IikgdGhlCmRyaXZlciBzdGFydHMgdG8gdXNlIGdwaW8vcGluY3RybCB0byBkbyBpMmMgYnVz
-IHJlY292ZXJ5LiAgQnV0IHBpbmN0cmwKaXMgbm90IGFsd2F5cyBhdmFpbGFibGUgZm9yIHBsYXRm
-b3JtcyB3aXRoIHRoaXMgY29udHJvbGxlciBzdWNoIGFzCmxzMTAyMWEgYW5kIGxzMTA0M2EsIGFu
-ZCB0aGUgZGV2aWNlIHRyZWUgYmluZGluZyBhbHNvIG1lbnRpb25lZCB0aGlzCmdwaW8gYmFzZWQg
-cmVjb3ZlcnkgbWVjaGFuaXNtIGFzIG9wdGlvbmFsLiAgVGhlIHBhdGNoIG1ha2VzIGl0IHJlYWxs
-eQpvcHRpb25hbCB0aGF0IHRoZSBwcm9iZSBmdW5jdGlvbiB3b24ndCBiYWlsb3V0IGJ1dCBqdXN0
-IGRpc2FibGUgdGhlCmJ1cyByZWNvdmVyeSBmdW5jdGlvbiB3aGVuIHBpbmN0cmwgaXMgbm90IHVz
-YWJsZS4KClNpZ25lZC1vZmYtYnk6IExpIFlhbmcgPGxlb3lhbmcubGlAbnhwLmNvbT4KQ2M6IEdh
-byBQYW4gPHBhbmR5Lmdhb0BueHAuY29tPgpDYzogVXdlIEtsZWluZS1Lw7ZuaWcgPHUua2xlaW5l
-LWtvZW5pZ0BwZW5ndXRyb25peC5kZT4KQWNrZWQtYnk6IExpbnVzIFdhbGxlaWogPGxpbnVzLndh
-bGxlaWpAbGluYXJvLm9yZz4KLS0tCnY2OgpVcGRhdGUgY29kZSBjb21tZW50Cgp2NToKUmV2ZXJ0
-IHRoZSBsYXN0IG1pbnV0ZSBjaGFuZ2Ugb2YgcmVjb3ZlcnkgaW5mbyBpbml0aWFsaXphdGlvbiB0
-aW1pbmcsIGl0CndpbGwgY2F1c2UgcHJvYmxlbSBpZiBpbml0aWFsaXplZCBhZnRlciBpMmNfYWRk
-X251bWJlcmVkX2FkYXB0ZXIoKQoKdjQ6ClJlbW92ZSB0aGUgdXNlIG9mIElTX0VSUl9PUl9OVUxM
-Ck1vdmUgdGhlIGNvbmRpdGlvbiBqdWRnZW1lbnQgdG8gaTJjX2lteF9pbml0X3JlY292ZXJ5X2lu
-Zm8oKQpDaGFuZ2UgdGhlIHRpbWluZyBvZiByZWNvdmVyeSBpbml0aWFsaXphdGlvbiB0byBiZSBh
-ZnRlciBidXMgcmVnaXN0cmF0aW9uCgp2MzoKUmViYXNlZCB0byBXb2xmcmFtJ3MgZm9yLW5leHQg
-YnJhbmNoCkFkZGVkIGFja2VkLWJ5IGZyb20gTGludXMgV2FsbGVpagpVcGRhdGUgdG8gdXNlIG5l
-dyBueHAgZW1haWwgYWRkcmVzc2VzIGR1ZSB0byBjb21wYW55IG1lcmdlCgogZHJpdmVycy9pMmMv
-YnVzc2VzL2kyYy1pbXguYyB8IDIyICsrKysrKysrKysrKysrKysrKysrKy0KIDEgZmlsZSBjaGFu
-Z2VkLCAyMSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9pMmMvYnVzc2VzL2kyYy1pbXguYyBiL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtaW14LmMKaW5k
-ZXggMTg0NGJjOS4uZjUyZmY0NyAxMDA2NDQKLS0tIGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1p
-bXguYworKysgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLWlteC5jCkBAIC05ODksNiArOTg5LDE0
-IEBAIHN0YXRpYyB2b2lkIGkyY19pbXhfaW5pdF9yZWNvdmVyeV9pbmZvKHN0cnVjdCBpbXhfaTJj
-X3N0cnVjdCAqaTJjX2lteCwKIHsKIAlzdHJ1Y3QgaTJjX2J1c19yZWNvdmVyeV9pbmZvICpyaW5m
-byA9ICZpMmNfaW14LT5yaW5mbzsKIAorCS8qIElmIHBpbmN0cmwgaXMgbm90IGF2YWlsYWJsZSBk
-aXNhYmxlIGJ1cyByZWNvdmVyeSAqLworCWlmIChJU19FUlIoaTJjX2lteC0+cGluY3RybCkpCisJ
-CWkyY19pbXgtPnBpbmN0cmwgPSBOVUxMOworCWlmICghaTJjX2lteC0+cGluY3RybCkgeworCQlk
-ZXZfaW5mbygmcGRldi0+ZGV2LCAiY2FuJ3QgZ2V0IHBpbmN0cmwsIGJ1cyByZWNvdmVyeSBub3Qg
-c3VwcG9ydGVkXG4iKTsKKwkJcmV0dXJuOworCX0KKwogCWkyY19pbXgtPnBpbmN0cmxfcGluc19k
-ZWZhdWx0ID0gcGluY3RybF9sb29rdXBfc3RhdGUoaTJjX2lteC0+cGluY3RybCwKIAkJCVBJTkNU
-UkxfU1RBVEVfREVGQVVMVCk7CiAJaTJjX2lteC0+cGluY3RybF9waW5zX2dwaW8gPSBwaW5jdHJs
-X2xvb2t1cF9zdGF0ZShpMmNfaW14LT5waW5jdHJsLApAQCAtMTA4MSw4ICsxMDg5LDE5IEBAIHN0
-YXRpYyBpbnQgaTJjX2lteF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCQly
-ZXR1cm4gcmV0OwogCX0KIAorCS8qCisJICogSWYgcGluY3RybCBpcyBhdmFpbGFibGUgaXQgbWln
-aHQgYmUgcG9zc2libGUgdG8gc3dpdGNoIHRoZQorCSAqIFNEQSBhbmQgU0NMIGxpbmVzIHRvIHRo
-ZWlyIEdQSU8gZnVuY3Rpb25zIGFuZCBkbyBhIHJlY292ZXJ5CisJICogcHJvY2VkdXJlIGluIHRo
-aXMgbW9kZS4gSWYgdGhlcmUgaXMgYW55dGhpbmcgd3Jvbmcgd2l0aAorCSAqIHBpbmN0cmwgd2Ug
-Y2Fubm90IGRvIHRoaXMgYW5kIHNpbXBseSBub3QgZW5hYmxlIGl0LgorCSAqLwogCWkyY19pbXgt
-PnBpbmN0cmwgPSBkZXZtX3BpbmN0cmxfZ2V0KCZwZGV2LT5kZXYpOwotCWlmIChJU19FUlIoaTJj
-X2lteC0+cGluY3RybCkpIHsKKwkvKgorCSAqIEJhaWxvdXQgb24gY3JpdGljYWwgZXJyb3JzLCBj
-b250aW51ZSBmb3Igb3RoZXIgZXJyb3JzLgorCSAqIEJ1cyByZWNvdmVyeSB3aWxsIG5vdCBiZSBl
-bmFibGVkIGlmIHBpbmN0cmwgaXMgbm90IGF2YWlsYWJsZS4KKwkgKi8KKwlpZiAoUFRSX0VSUihp
-MmNfaW14LT5waW5jdHJsKSA9PSAtRU5PTUVNIHx8CisJCQlQVFJfRVJSKGkyY19pbXgtPnBpbmN0
-cmwpID09IC1FUFJPQkVfREVGRVIpIHsKIAkJcmV0ID0gUFRSX0VSUihpMmNfaW14LT5waW5jdHJs
-KTsKIAkJZ290byBjbGtfZGlzYWJsZTsKIAl9CkBAIC0xMTI1LDYgKzExNDQsNyBAQCBzdGF0aWMg
-aW50IGkyY19pbXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAkJCWkyY19p
-bXgsIElNWF9JMkNfSTJDUik7CiAJaW14X2kyY193cml0ZV9yZWcoaTJjX2lteC0+aHdkYXRhLT5p
-MnNyX2Nscl9vcGNvZGUsIGkyY19pbXgsIElNWF9JMkNfSTJTUik7CiAKKwkvKiBJbml0IGJ1cyBy
-ZWNvdmVyeSBpbmZvIGlmIHN1cHBvcnRlZCAqLwogCWkyY19pbXhfaW5pdF9yZWNvdmVyeV9pbmZv
-KGkyY19pbXgsIHBkZXYpOwogCiAJLyogQWRkIEkyQyBhZGFwdGVyICovCi0tIAoxLjkuMAoKCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1r
-ZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpo
-dHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJu
-ZWwK
+On Wed, Aug 31, 2016 at 4:18 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> From: Mylène Josserand <mylene.josserand@free-electrons.com>
+>
+> The GR8 is an SoC made by Nextthing loosely based on the sun5i family.
+>
+> Since it's not clear yet what we can factor out and merge with the A10s and
+> A13 support, let's keep it out of the sun5i.dtsi include tree. We will
+> figure out what can be shared when things settle down.
+>
+> Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  arch/arm/boot/dts/gr8.dtsi | 1080 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 1080 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/gr8.dtsi
+>
+> diff --git a/arch/arm/boot/dts/gr8.dtsi b/arch/arm/boot/dts/gr8.dtsi
+> new file mode 100644
+> index 000000000000..d21cfa3f3c14
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/gr8.dtsi
+
+In the node names, you sometimes use underscores and sometimes use hyphens.
+Here are the ones I spotted:
+
+> +               osc3M: osc3M_clk {
+> +               pll3x2: pll3x2_clk {
+> +               pll7x2: pll7x2_clk {
+> +       display-engine {
+> +               sram-controller@01c00000 {
+> +                               otg_sram: sram-section@0000 {
+> +               dma: dma-controller@01c02000 {
+> +               tve0: tv-encoder@01c0a000 {
+> +               tcon0: lcd-controller@01c0c000 {
+> +               intc: interrupt-controller@01c20400 {
+> +                       lcd_rgb666_pins: lcd_rgb666@0 {
+> +                       nand_pins_a: nand_base0@0 {
+> +                       nand_cs0_pins_a: nand_cs@0 {
+> +                       nand_rb0_pins_a: nand_rb@0 {
+> +                       uart1_cts_rts_pins_a: uart1-cts-rts@0 {
+> +               fe0: display-frontend@01e00000 {
+> +               be0: display-backend@01e60000 {
+
+Underscores should not be used in node names. [1][2] Since you're adding a
+new file here, please use hyphens instead.
+
+[1] https://www.mail-archive.com/linux-kernel%40vger.kernel.org/msg1122967.html
+[2] https://www.mail-archive.com/linux-kernel%40vger.kernel.org/msg1145633.html
+
+-- 
+Rask Ingemann Lambertsen
