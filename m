@@ -1,36 +1,45 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 01/33] gpio: sa1100: fix irq probing for ucb1x00
-Date: Thu, 8 Sep 2016 00:25:48 +0200
-Message-ID: <CACRpkdbuU4uE-OYNhK4Pk+nwQO2r9BW5m0cM_qGx6KrYTxQVsw@mail.gmail.com>
-References: <20160829102328.GA28796@n2100.armlinux.org.uk> <E1beJje-0000lm-Ei@rmk-PC.armlinux.org.uk>
+Subject: Re: [PATCH v2 3/4] pinctrl: sunxi: Remove unsupported PWM channel
+ pinmux in H3
+Date: Thu, 8 Sep 2016 01:09:29 +0200
+Message-ID: <CACRpkda8uMuOi41O5Cq3o-PXynoZfkxAD7P2fHS-uCUQt_B_kA@mail.gmail.com>
+References: <20160831082520.25962-1-woogyom.kim@gmail.com>
+ <20160831082520.25962-4-woogyom.kim@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:33003 "EHLO
-        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750823AbcIGWZt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 18:25:49 -0400
-Received: by mail-oi0-f46.google.com with SMTP id y2so46776057oie.0
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 15:25:49 -0700 (PDT)
-In-Reply-To: <E1beJje-0000lm-Ei@rmk-PC.armlinux.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20160831082520.25962-4-woogyom.kim@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Milo Kim <woogyom.kim@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof Adamski <k@japko.eu>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Icenowy Zheng <icenowy@aosc.xyz>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jens Kuske <jenskuske@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King <rmk+kernel@armlinux.org.uk>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-On Mon, Aug 29, 2016 at 12:24 PM, Russell King
-<rmk+kernel@armlinux.org.uk> wrote:
+On Wed, Aug 31, 2016 at 10:25 AM, Milo Kim <woogyom.kim@gmail.com> wrote:
 
-> ucb1x00 has used IRQ probing since it's dawn to find the GPIO interrupt
-> that it's connected to.  However, commit 23393d49fb75 ("gpio: kill off
-> set_irq_flags usage") broke this by disabling IRQ probing on GPIO
-> interrupts.  Fix this.
+> H3 has single PWM channel. The second PWM channel is not supported,
+> so the pinctrl function should be removed.
 >
-> Fixes: 23393d49fb75 ("gpio: kill off set_irq_flags usage")
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Icenowy Zheng <icenowy@aosc.xyz>
+> Cc: Jens Kuske <jenskuske@gmail.com>
+> Cc: Krzysztof Adamski <k@japko.eu>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Milo Kim <woogyom.kim@gmail.com>
 
-Patch applied per Russell's request. Trying to get this tested
-and upstream ASAP.
+Patch applied with Chen-Yu's ACK.
 
 Yours,
 Linus Walleij
