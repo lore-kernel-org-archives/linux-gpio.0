@@ -1,29 +1,52 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 4/8] gpio: dt-bindings: Add documentation for Aspeed
- GPIO controllers
-Date: Wed, 7 Sep 2016 16:43:08 +0200
-Message-ID: <CACRpkdYpmSS3jA=r13r-_UPEKxUvO=U=EUXAtwuZLmxnGDhiwA@mail.gmail.com>
-References: <20160830075427.11493-1-andrew@aj.id.au> <20160830075427.11493-5-andrew@aj.id.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160830075427.11493-5-andrew-zrmu5oMJ5Fs@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-Cc: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Jeremy Kerr <jk-mnsaURCQ41sdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v4 0/5] gpio: pca953x: code refactoring
+Date: Wed,  7 Sep 2016 16:49:25 +0200
+Message-ID: <1473259770-26224-1-git-send-email-bgolaszewski@baylibre.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:38893 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753488AbcIGOtk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 10:49:40 -0400
+Received: by mail-wm0-f48.google.com with SMTP id 1so37083605wmz.1
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 07:49:39 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-On Tue, Aug 30, 2016 at 9:54 AM, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org> wrote:
+I'm working on converting the pca953x driver to using regmap, but since
+it's not a trivial task I figured I'd post a couple refactoring patches
+I did so far for 4.9.
 
-> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-> Acked-by: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
+The first patch just fixes a couple coding style issues. The second
+removes a couple unnecessary switches. Last three refactor the
+read/write_regs functions to avoid if-elses by using function pointers
+to smaller, specialized routines.
 
-Patch applied to the GPIO tree with Rob's ACK and moved the compatible
-to the first line in the process.
+Tested with pca9534 and pca9535 chips.
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+v1 -> v2:
+- constified the offset structures in patch 2/5
+
+v2 -> v3:
+- modified the order of the patches so that minor coding style fixes
+  no longer create noise for the later changes
+- moved the **_write_regs_16() assignments to where other variants
+  are assigned
+
+v3 -> v4:
+- minor style fixes
+
+Bartosz Golaszewski (5):
+  gpio: pca953x: code shrink
+  gpio: pca953x: refactor pca953x_write_regs()
+  gpio: pca953x: refactor pca953x_read_regs()
+  gpio: pca953x: remove an unused variable
+  gpio: pca953x: coding style fixes
+
+ drivers/gpio/gpio-pca953x.c | 271 ++++++++++++++++++++++----------------------
+ 1 file changed, 136 insertions(+), 135 deletions(-)
+
+-- 
+2.7.4
+
