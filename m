@@ -1,31 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [GIT PULL] Immutable branch between MFD, GPIO and Regulator due
- for the v4.9 merge window
-Date: Wed, 7 Sep 2016 22:03:58 +0200
-Message-ID: <CACRpkdbfOdaouKEooLsGRYXhbwkjfNoTXTqunumF4bOPjOUD4w@mail.gmail.com>
-References: <1472633892-8261-1-git-send-email-j-keerthy@ti.com> <20160831122435.GD9415@dell>
+Subject: Re: [PATCH] pinctrl: samsung: Remove an always false dev->of_node test
+Date: Wed, 7 Sep 2016 22:11:31 +0200
+Message-ID: <CACRpkdaYeoLaiYfbtr4QF-H2z-zjfa-JjEX_4cUtUZQ13VyxeQ@mail.gmail.com>
+References: <1472731140-18034-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160831122435.GD9415@dell>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Keerthy <j-keerthy@ti.com>, Mark Brown <broonie@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1472731140-18034-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Aug 31, 2016 at 2:24 PM, Lee Jones <lee.jones@linaro.org> wrote:
+On Thu, Sep 1, 2016 at 1:59 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
 
-> The following changes since commit 694d0d0bb2030d2e36df73e2d23d5770511dbc8d:
+> samsung_pinctrl_probe() can be called only after matching
+> the driver by the compatible string so this already implies
+> a non null dev->of_node.  Remove the always false test
+> and related error trace. While at it drop another error log
+> in case of memory allocation failure - any errors are logged
+> by the memory subsystem.
 >
->   Linux 4.8-rc2 (2016-08-14 19:11:36 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-gpio-regulator-v4.9
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hm it is based on a later release candidate than my tree so I'll wait
-and see if I
-have to pull it (like if there are clashes in linux-next...)
+Patch applied with Krzysztof's review tag.
 
 Yours,
 Linus Walleij
