@@ -1,32 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] soc: fsl/qe: fix gpio save_regs functions
-Date: Thu, 8 Sep 2016 00:05:42 +0200
-Message-ID: <CACRpkda1vj_BGYP2-4aSS=hcY2jkaaJuY59DOjiSt0JUSgBcBw@mail.gmail.com>
-References: <20160905225217.C34571A245A@localhost.localdomain>
+Subject: Re: [PATCH] gpio: rcar: Add r8a7796 (R-Car M3-W) support
+Date: Thu, 8 Sep 2016 00:08:45 +0200
+Message-ID: <CACRpkdaq+Wfh2hXT9xuAuoSisr8bbiMpHCLCQdM-xvcefUEFuw@mail.gmail.com>
+References: <1473158139-8291-1-git-send-email-horms+renesas@verge.net.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20160905225217.C34571A245A@localhost.localdomain>
-Sender: stable-owner@vger.kernel.org
-To: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1473158139-8291-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Sep 6, 2016 at 12:52 AM, Christophe Leroy
-<christophe.leroy@c-s.fr> wrote:
+On Tue, Sep 6, 2016 at 12:35 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
 
-> of_mm_gpiochip_add_data() calls mm_gc->save_regs() before
-> setting the data. Therefore ->save_regs() cannot use
-> gpiochip_get_data()
+> R-Car Gen3's GPIO blocks are identical to Gen2's in every respect.
 >
-> An Oops is encountered without this fix.
+> Based on work for the r8a7795 (R-Car H3) by Ulrich Hecht.
 >
-> fixes: 1e714e54b5ca5 ("powerpc: qe_lib-gpio: use gpiochip data pointer")
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> Cc: <stable@vger.kernel.org>
+> Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Aha sorry for my regular screwups. :(
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Patch applied.
 
 Yours,
 Linus Walleij
