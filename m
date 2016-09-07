@@ -1,82 +1,100 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v2 1/4] pinctrl: sunxi: Add GR8 controller support
-Date: Wed, 7 Sep 2016 21:27:19 +0200
-Message-ID: <20160907192719.GD28134@lukather>
-References: <20160907145400.27192-1-maxime.ripard@free-electrons.com>
- <20160907145400.27192-2-maxime.ripard@free-electrons.com>
- <CACRpkdZv+B72T1F=syKnfOu4MDne5ev+eUc-5EXfUysd_fo4BQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 3/4] ARM: dts: Add NextThing GR8 dtsi
+Date: Wed, 7 Sep 2016 21:37:19 +0200
+Message-ID: <CACRpkdZsxA7avmO85R=-Quu7FQwSVMPhQMDmmgL+xbkVTB-2HQ@mail.gmail.com>
+References: <20160907145400.27192-1-maxime.ripard@free-electrons.com> <20160907145400.27192-4-maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="VUDLurXRWRKrGuMn"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:48236 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752721AbcIGT1V (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 15:27:21 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZv+B72T1F=syKnfOu4MDne5ev+eUc-5EXfUysd_fo4BQ@mail.gmail.com>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:35795 "EHLO
+        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753627AbcIGThU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 15:37:20 -0400
+Received: by mail-oi0-f42.google.com with SMTP id s131so40846028oie.2
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 12:37:20 -0700 (PDT)
+In-Reply-To: <20160907145400.27192-4-maxime.ripard@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Chen-Yu Tsai <wens@csie.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
 
+On Wed, Sep 7, 2016 at 4:53 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
 
---VUDLurXRWRKrGuMn
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Myl=C3=A8ne Josserand <mylene.josserand@free-electrons.com>
+>
+> The GR8 is an SoC made by Nextthing loosely based on the sun5i family.
+>
+> Since it's not clear yet what we can factor out and merge with the A10s a=
+nd
+> A13 support, let's keep it out of the sun5i.dtsi include tree. We will
+> figure out what can be shared when things settle down.
+>
+> Signed-off-by: Myl=C3=A8ne Josserand <mylene.josserand@free-electrons.com=
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Hi Linus,
+Acked-by: Linus Walleij <linus,walleij@linaro.org>
 
-On Wed, Sep 07, 2016 at 09:17:08PM +0200, Linus Walleij wrote:
-> On Wed, Sep 7, 2016 at 4:53 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->=20
-> > From: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
-> >
-> > Just like the other member of the sunxi family, let's add a pinctrl tab=
-le
-> > for the muxing options.
-> >
-> > Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > Acked-by: Chen-Yu Tsai <wens@csie.org>
->=20
-> This v2 patch applied to the pinctrl tree.
+I was just thinking:
 
-Thanks!
+> +                       i2c0_pins_a: i2c0@0 {
+> +                               allwinner,pins =3D "PB0", "PB1";
+> +                               allwinner,function =3D "i2c0";
+> +                               allwinner,drive =3D <SUN4I_PINCTRL_10_MA>=
+;
+> +                               allwinner,pull =3D <SUN4I_PINCTRL_NO_PULL=
+>;
+> +                       };
 
-> I guess the rest of the patches will go through other trees like ARM
-> SoC?
+It would be *NICE* if the sunxi driver would start to support the new stand=
+ard
+bindings for this stuff, see
+Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
 
-Indeed, I'll pick them through my tree.
+So you could just use pins, function and the drive-strength and
+bias-disable in this case.
 
-Maxime
+Since I know the AllWinner support is a community project I have much highe=
+r
+tolerance with this legacy binding sticking around for the new generation o=
+f
+SoCs but still, if you find time.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+I mean it like supporting these in *addition* to the custom ones, so there =
+can
+be a smooth phase-over.
 
---VUDLurXRWRKrGuMn
-Content-Type: application/pgp-signature; name="signature.asc"
+Check for example Laurent's commit for SH-PFC:
+commit 16ccaf5bb5a52372bfebd3dfbb79dd810ad49c09
+"pinctrl: sh-pfc: Accept standard function, pins and groups properties"
+It's awesome, and since, they have improved the looks of Renesas
+DTS files a lot.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+It could look a bit like this nice thing from
+lpc4337-ciaa.dts:
 
-iQIcBAEBAgAGBQJX0GoXAAoJEBx+YmzsjxAgfygP/j8nTQBZufmE+xpofx7oHDRC
-8M6RdsOCbn4TiYM63jGxt7EzxGSzVhFsY2SDxGwm+rTPs+lFB3LRtlCUTTzaYgZa
-rEBGOWNxmFlgFxerIBbpv0zUiG+YWylspeCbMUCSqqEPOS3EpVOLbnkVTSusk5Dm
-rhMRCByx4b3209+/L/6Yat590hK7Lpi2bhFXWrfVDuFIKJxv/2/PNkrnM/GJui5H
-JtwHnq/BCojWvbYfqBeqvqmratQC8C3Kk6q5D8qcHaaUq2wBCGJo1sccHUoaMmXZ
-1r1cxubvUT6jqROUVEXh68vlVqoa3QHm8tLejJW2vCBuKdjwV6uoB2aNUv/V7u5e
-xxGGFUoJ9iNpV1Y0tr9qWBTyDx13ObEywff6oWnxcEAZfSqMHTrWMHrg/vHXyRrN
-Li9kAO7NHLDvooD0ERWMPMiV1VmgTrxSsLGv3mtTDbgyxynA5O9s837jpJjVKNOA
-hPc46qDic+AC0n77Phf5Sy8xPms5+OHwGM1KsknmTBN+uMr51SYDMqQDgqO/qbz/
-SQRH2eZKeEQXAXEO3zaMSRqN3Mzj4Hx7BLBfsqysGs7jsn11Vxh9OdirxCJ5rYji
-Nt0r0AOLcxHb75Hw6g/m6mYEutz4mOoG/T/TmyGO6eBMnX1HXFSbAmTMuw1zgv+u
-2DXZ1LAbPMRRWa8yNxES
-=KLd/
------END PGP SIGNATURE-----
+&pinctrl {
+        enet_rmii_pins: enet-rmii-pins {
+                enet_rmii_rxd_cfg {
+                        pins =3D "p1_15", "p0_0";
+                        function =3D "enet";
+                        slew-rate =3D <1>;
+                        bias-disable;
+                        input-enable;
+                        input-schmitt-disable;
+                };
 
---VUDLurXRWRKrGuMn--
+                enet_rmii_txd_cfg {
+                        pins =3D "p1_18", "p1_20";
+                        function =3D "enet";
+                        slew-rate =3D <1>;
+                        bias-disable;
+                        input-enable;
+                        input-schmitt-disable;
+                };
+(etc)
+
+Yours,
+Linus Walleij
