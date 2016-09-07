@@ -1,30 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: samsung: Remove an always false dev->of_node test
-Date: Wed, 7 Sep 2016 22:11:31 +0200
-Message-ID: <CACRpkdaYeoLaiYfbtr4QF-H2z-zjfa-JjEX_4cUtUZQ13VyxeQ@mail.gmail.com>
-References: <1472731140-18034-1-git-send-email-s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/3] pinctrl: ns2: constify pinctrl_ops and pinmux_ops structures
+Date: Wed, 7 Sep 2016 22:40:17 +0200
+Message-ID: <CACRpkda4cY9KbhOmS-vC6YiDHHvU+27_MwkZEbfbHRnNFjigKA@mail.gmail.com>
+References: <1472755341-9995-1-git-send-email-Julia.Lawall@lip6.fr> <1472755341-9995-2-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1472731140-18034-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:36404 "EHLO
+        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752159AbcIGUkS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 16:40:18 -0400
+Received: by mail-oi0-f53.google.com with SMTP id w78so42884201oie.3
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 13:40:18 -0700 (PDT)
+In-Reply-To: <1472755341-9995-2-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Ray Jui <rjui@broadcom.com>, kernel-janitors@vger.kernel.org, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Sep 1, 2016 at 1:59 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
+On Thu, Sep 1, 2016 at 8:42 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
 
-> samsung_pinctrl_probe() can be called only after matching
-> the driver by the compatible string so this already implies
-> a non null dev->of_node.  Remove the always false test
-> and related error trace. While at it drop another error log
-> in case of memory allocation failure - any errors are logged
-> by the memory subsystem.
->
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Check for pinctrl_ops and pinmux_ops structures that are only stored in the
+> pctlops field and the pmxops field, respectively, of a pinctrl_desc
+> structure.  These fields are declared const, so pinctrl_ops and pinmux_ops
+> structures that have this property can be declared as const also.
 
-Patch applied with Krzysztof's review tag.
+Patch applied.
 
 Yours,
 Linus Walleij
