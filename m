@@ -1,82 +1,57 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v3 5/5] gpio: pca953x: coding style fixes
-Date: Wed, 07 Sep 2016 17:00:01 +0300
-Message-ID: <1473256801.11323.73.camel@linux.intel.com>
+Subject: Re: [PATCH v3 0/5] gpio: pca953x: code refactoring
+Date: Wed, 07 Sep 2016 17:00:37 +0300
+Message-ID: <1473256837.11323.74.camel@linux.intel.com>
 References: <1473255472-16090-1-git-send-email-bgolaszewski@baylibre.com>
-         <1473255472-16090-6-git-send-email-bgolaszewski@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:17502 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752900AbcIGOAG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 7 Sep 2016 10:00:06 -0400
-In-Reply-To: <1473255472-16090-6-git-send-email-bgolaszewski@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1473255472-16090-1-git-send-email-bgolaszewski@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
 On Wed, 2016-09-07 at 15:37 +0200, Bartosz Golaszewski wrote:
-> pca953x_gpio_set_multiple() has some coding style issues that make it
-> harder to read. Tweak the code a bit.
+> I'm working on converting the pca953x driver to using regmap, but
+> since
+> it's not a trivial task I figured I'd post a couple refactoring
+> patches
+> I did so far for 4.9.
 > 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/gpio/gpio-pca953x.c | 19 ++++++++++---------
->  1 file changed, 10 insertions(+), 9 deletions(-)
+> The first patch just fixes a couple coding style issues. The second
+> removes a couple unnecessary switches. Last three refactor the
+> read/write_regs functions to avoid if-elses by using function pointers
+> to smaller, specialized routines.
+
+Still few style comments, otherwise
+
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
 > 
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index b08ed52..bbec5d7 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -360,25 +360,26 @@ exit:
->  }
->  
->  static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
-> -		unsigned long *mask, unsigned long *bits)
-> +				      unsigned long *mask, unsigned
-> long *bits)
->  {
->  	struct pca953x_chip *chip = gpiochip_get_data(gc);
->  	u8 reg_val[MAX_BANK];
-> -	int ret;
-> +	int ret, bank;
->  	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
-> -	int bank;
-> +	unsigned int bankmask, bankval;
-
-I doubt it's the best representation. Can we use reversed xmas tree?
-Also, I would not unify ret and bank on the same line.
-
-
->  
->  	memcpy(reg_val, chip->reg_output, NBANK(chip));
->  	mutex_lock(&chip->i2c_lock);
-> -	for(bank=0; bank<NBANK(chip); bank++) {
-> -		unsigned bankmask = mask[bank / sizeof(*mask)] >>
-> -				    ((bank % sizeof(*mask)) * 8);
-> -		if(bankmask) {
-> -			unsigned bankval  = bits[bank /
-> sizeof(*bits)] >>
-> -					    ((bank % sizeof(*bits)) *
-> 8);
-> +	for (bank = 0; bank < NBANK(chip); bank++) {
-> +		bankmask = mask[bank / sizeof(*mask)] >>
-> +			   ((bank % sizeof(*mask)) * 8);
-> +		if (bankmask) {
-> +			bankval = bits[bank / sizeof(*bits)] >>
-> +				  ((bank % sizeof(*bits)) * 8);
->  			reg_val[bank] = (reg_val[bank] & ~bankmask) |
-> bankval;
->  		}
->  	}
-> +
->  	ret = i2c_smbus_write_i2c_block_data(chip->client,
->  					     chip->offset->output <<
-> bank_shift,
->  					     NBANK(chip), reg_val);
+> Tested with pca9534 and pca9535 chips.
+> 
+> v1 -> v2:
+> - constified the offset structures in patch 2/5
+> 
+> v2 -> v3:
+> - modified the order of the patches so that minor coding style fixes
+>   no longer create noise for the later changes
+> - moved the **_write_regs_16() assignments to where other variants
+>   are assigned
+> 
+> Bartosz Golaszewski (5):
+>   gpio: pca953x: code shrink
+>   gpio: pca953x: refactor pca953x_write_regs()
+>   gpio: pca953x: refactor pca953x_read_regs()
+>   gpio: pca953x: remove an unused variable
+>   gpio: pca953x: coding style fixes
+> 
+>  drivers/gpio/gpio-pca953x.c | 268 ++++++++++++++++++++++-------------
+> ---------
+>  1 file changed, 134 insertions(+), 134 deletions(-)
+> 
 
 -- 
 Andy Shevchenko <andriy.shevchenko@linux.intel.com>
