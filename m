@@ -1,26 +1,28 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH 1/2] pinctrl: meson-gxbb: add the pins for the
- SDIO/sd_emmc_a controller
-Date: Wed, 7 Sep 2016 20:55:30 +0200
-Message-ID: <CAFBinCDm5quZyyC2t_1SQqT+p=eJQ0H_LoNZM6wfUZugvCi_7g@mail.gmail.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH 1/2] pinctrl: meson-gxbb: add the pins for the SDIO/sd_emmc_a controller
+Date: Wed, 07 Sep 2016 12:07:39 -0700
+Message-ID: <7hk2enttok.fsf@baylibre.com>
 References: <20160828164725.19429-1-martin.blumenstingl@googlemail.com>
- <20160828164725.19429-2-martin.blumenstingl@googlemail.com> <CACRpkdbPVeUA+BSPgQ1XmFJw_J6-V_2BM9h3kO2yq-vUfySsGQ@mail.gmail.com>
+        <20160828164725.19429-2-martin.blumenstingl@googlemail.com>
+        <CACRpkdbPVeUA+BSPgQ1XmFJw_J6-V_2BM9h3kO2yq-vUfySsGQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:32936 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932548AbcIGSzx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 14:55:53 -0400
-Received: by mail-wm0-f68.google.com with SMTP id b187so368781wme.0
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 11:55:52 -0700 (PDT)
+Received: from mail-pf0-f175.google.com ([209.85.192.175]:35987 "EHLO
+        mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750957AbcIGTHl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 15:07:41 -0400
+Received: by mail-pf0-f175.google.com with SMTP id 128so9378535pfb.3
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 12:07:41 -0700 (PDT)
 In-Reply-To: <CACRpkdbPVeUA+BSPgQ1XmFJw_J6-V_2BM9h3kO2yq-vUfySsGQ@mail.gmail.com>
+        (Linus Walleij's message of "Wed, 7 Sep 2016 16:24:29 +0200")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Carlo Caione <carlo@caione.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, Sep 7, 2016 at 4:24 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+Linus Walleij <linus.walleij@linaro.org> writes:
+
 > On Sun, Aug 28, 2016 at 6:47 PM, Martin Blumenstingl
 > <martin.blumenstingl@googlemail.com> wrote:
 >
@@ -31,17 +33,12 @@ On Wed, Sep 7, 2016 at 4:24 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 >
 > No reply from maintainers, but you obviously know what you're doing so
 > patch applied.
-I forgot to reply to this one as well (sorry about that):
-I received a NACK off-list for both patches because the SDIO IRQ pin is missing.
 
-Nothing is broken with this patch applied, just one pin is missing.
-Depending on how you'd like to proceed you can:
-- either drop the patch from your tree and wait for v2
-- leave it in your tree and I'll send a patch on top of this one to
-add the missing pin
+Oh, I thought Neil already responded, but I'm not seeing it now.  This
+patch is missing the SDIO IRQ line.
 
-Please let me know how you'd like to handle this and sorry again.
+Martin can you respin?
 
+Sorry for the lag, I'm still catching up after some vacation,
 
-Regards,
-Martin
+Kevin
