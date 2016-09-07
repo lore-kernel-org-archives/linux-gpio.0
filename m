@@ -1,104 +1,97 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v2 3/4] pinctrl: sunxi: Remove unsupported PWM channel
- pinmux in H3
-Date: Wed, 7 Sep 2016 21:54:53 +0200
-Message-ID: <20160907195453.GE28134@lukather>
-References: <20160831082520.25962-1-woogyom.kim@gmail.com>
- <20160831082520.25962-4-woogyom.kim@gmail.com>
- <CACRpkdb7rr8Lpc6VZ4Ba=_YOwFDqVwwut1w_BDAfYHm6Qp=W_g@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl/amd: Configure GPIO register using BIOS settings
+Date: Wed, 7 Sep 2016 21:56:05 +0200
+Message-ID: <CACRpkdZueiySFjk0+iLO1CGdg54+XHqxmOqgp1bXHr7+OmDH_A@mail.gmail.com>
+References: <CY1PR12MB00420E90B52B0F478D9DF1CDDCE30@CY1PR12MB0042.namprd12.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1531566852405253900=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdb7rr8Lpc6VZ4Ba=_YOwFDqVwwut1w_BDAfYHm6Qp=W_g@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof Adamski <k@japko.eu>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Icenowy Zheng <icenowy@aosc.xyz>, Milo Kim <woogyom.kim@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jens Kuske <jenskuske@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:36223 "EHLO
+        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755453AbcIGT4G (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 15:56:06 -0400
+Received: by mail-oi0-f54.google.com with SMTP id w78so41289675oie.3
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 12:56:06 -0700 (PDT)
+In-Reply-To: <CY1PR12MB00420E90B52B0F478D9DF1CDDCE30@CY1PR12MB0042.namprd12.prod.outlook.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Agrawal, Nitesh-kumar" <Nitesh-kumar.Agrawal@amd.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Wang Hongcheng <annie.wang@amd.com>, Ken Xue <Ken.Xue@amd.com>
+Cc: "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, "Sen, Pankaj" <Pankaj.Sen@amd.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
+On Wed, Aug 31, 2016 at 10:50 AM, Agrawal, Nitesh-kumar
+<Nitesh-kumar.Agrawal@amd.com> wrote:
 
---===============1531566852405253900==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5Mfx4RzfBqgnTE/w"
-Content-Disposition: inline
+I'm adding Wei and Wang to the patch as they worked on the driver in the
+past and I'd like to hear what they say. Could you folks provide
+some ACK or comments?
 
+The indentation is horrible in the patch, I don't know if it is a result
+of the mailer though, the it's not your fault and I can fix it up for sure
+if you have a problem getting it right.
 
---5Mfx4RzfBqgnTE/w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Just make sure you run scripts/checkpatch.pl before sending the patches.
 
-Hi,
+> In the function amd_gpio_irq_set_type, use the settings provided by
+> the BIOS,when the LevelTrig is Edge and activeLevel is HIGH, to configure
+> the GPIO registers. Ignore the settings from client.
+>
+> Reviewed-by:Pankaj Sen <Pankaj.Sen@amd.com>
+> Signed-off-by:Nitesh Kumar Agrawal <Nitesh-kumar.Agrawal@amd.com>
+> ---
+>  drivers/pinctrl/pinctrl-amd.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>
+> diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+> index 828148d..a645082 100644
+> --- a/drivers/pinctrl/pinctrl-amd.c
+> +++ b/drivers/pinctrl/pinctrl-amd.c
+> @@ -385,12 +385,26 @@ static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+>         int ret = 0;
+>         u32 pin_reg;
+>         unsigned long flags;
+> +        u32 levelTrig;
 
-On Wed, Sep 07, 2016 at 09:41:19PM +0200, Linus Walleij wrote:
-> On Wed, Aug 31, 2016 at 10:25 AM, Milo Kim <woogyom.kim@gmail.com> wrote:
->=20
-> > H3 has single PWM channel. The second PWM channel is not supported,
-> > so the pinctrl function should be removed.
-> >
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > Cc: Chen-Yu Tsai <wens@csie.org>
-> > Cc: Icenowy Zheng <icenowy@aosc.xyz>
-> > Cc: Jens Kuske <jenskuske@gmail.com>
-> > Cc: Krzysztof Adamski <k@japko.eu>
-> > Cc: linux-gpio@vger.kernel.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Signed-off-by: Milo Kim <woogyom.kim@gmail.com>
->=20
-> Maxime what is your opinion on this patch?
+Please refrain from using CamelCase, just call it level_trig.
 
-Chen-Yu is the Allwinner co-maintainer, so you can trust his Acked-by,
-but you have mine too.
+Also: this seems to be a bool.
 
-Maxime
+> +        u32 activeLevel;
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+No CamelCase. This doesn't seem to be a bool though, can't really tell.
 
---5Mfx4RzfBqgnTE/w
-Content-Type: application/pgp-signature; name="signature.asc"
+>         struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>         struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+>
+>         spin_lock_irqsave(&gpio_dev->lock, flags);
+>         pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
+>
+> +        /*
+> +         When LevelTrig is set EDGE and activeLevel is set HIGH in BIOS
+> +         default settings, ignore incoming settings from client and use
+> +         BIOS settings to configure GPIO register.
+> +        */
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+/*
+ * Please comment like this
+ * with a star in the beginning on every line
+ * I know I am picky.
+ */
 
-iQIcBAEBAgAGBQJX0HCNAAoJEBx+YmzsjxAgJ3oP/2wKE5mheG98smt4fsZgVCXa
-sMsQEGtUfUfwhth9UWDweH/Eu3rRQoMq0VyZBbkGQaeoLp6whcdEi6pJQrl/VSNQ
-rK6ynw/D6jz/UsZOuE6Ps3fiXMcXJP7LouSpZBP2TaFDYG2K//x6+qwJQERXLYg4
-14HhhfIROpUVhv1PShYQl0KbYmr87STIVzyP5Yzx0XFVBcs++qKpbg2IYpdoyh6B
-wiFHshNWWHFvhLc15uV170kferup+zUuA4sSIjWzpIYqWFiAXSADanPnY2PdLPU6
-8P7izvF5jfl2o8oDN5MDJ9WWgRGTq0YqqvToMcQRrDVnLCOqYPeXv1DyK3QhCY9n
-MHYTXNZW77UdOyLVgT8OQSNMU47pX1Vf3zGxPzTw+rnyuwVGju2qu5QGkmtZB0R0
-KS4ov+fI27v8aUuTCgyKOyOOxqMclk6qx+dZK05EqM91vbzt3V2P3SH8YWti8a7b
-Ms49U/oyn7YbkIEeUtRavlj6pL9kNwTT165xGLrn/TKt2Xb18GRigvHc7POtBCeN
-X2b0cM2/U1nRx0tALj8gUhOHtyg1kqANCScF+nNh8wULHjT5pHzJxpMTRpv6Aprs
-ItBNxCHxw204VJ5JJvOzXGgzCsT/qDY0f7IrB0wYYgNtTBOniMGJYChZXwyT3Z6i
-0iGXa9Z0H8o5LF2UYgxl
-=3lLA
------END PGP SIGNATURE-----
+> +        levelTrig = pin_reg & (LEVEL_TRIGGER << LEVEL_TRIG_OFF);
 
---5Mfx4RzfBqgnTE/w--
+So if this was a bool it would be:
 
+level_trig = !!(pin_reg & (LEVEL_TRIGGER << LEVEL_TRIG_OFF));
 
---===============1531566852405253900==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Notice how the double-bang (!!) clamps the result to a bool.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> +        activeLevel = pin_reg & (ACTIVE_LEVEL_MASK << ACTIVE_LEVEL_OFF);
+> +
+> +        if((!levelTrig)&&((activeLevel>> ACTIVE_LEVEL_OFF) == ACTIVE_HIGH)) {
+> +           type = IRQ_TYPE_EDGE_FALLING;
+> +        }
 
---===============1531566852405253900==--
+The thing looks a bit unorthodox but I guess you know what you're doing.
+
+Yours,
+Linus Walleij
