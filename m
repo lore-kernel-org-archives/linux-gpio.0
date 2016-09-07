@@ -1,43 +1,73 @@
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 0/5] gpio: pca953x: code refactoring
-Date: Wed,  7 Sep 2016 11:24:52 +0200
-Message-ID: <1473240297-19881-1-git-send-email-bgolaszewski@baylibre.com>
+Subject: [PATCH v2 1/5] gpio: pca953x: coding style fixes
+Date: Wed,  7 Sep 2016 11:24:53 +0200
+Message-ID: <1473240297-19881-2-git-send-email-bgolaszewski@baylibre.com>
+References: <1473240297-19881-1-git-send-email-bgolaszewski@baylibre.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:35436 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757226AbcIGJZD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 05:25:03 -0400
-Received: by mail-wm0-f43.google.com with SMTP id i204so75603248wma.0
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 02:25:03 -0700 (PDT)
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:35450 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757224AbcIGJZE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 05:25:04 -0400
+Received: by mail-wm0-f46.google.com with SMTP id i204so75603893wma.0
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 02:25:04 -0700 (PDT)
+In-Reply-To: <1473240297-19881-1-git-send-email-bgolaszewski@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-I'm working on converting the pca953x driver to using regmap, but since
-it's not a trivial task I figured I'd post a couple refactoring patches
-I did so far for 4.9.
+pca953x_gpio_set_multiple() has some coding style issues that make it
+harder to read. Tweak the code a bit.
 
-The first patch just fixes a couple coding style issues. The second
-removes a couple unnecessary switches. Last three refactor the
-read/write_regs functions to avoid if-elses by using function pointers
-to smaller, specialized routines.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/gpio/gpio-pca953x.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-Tested with pca9534 and pca9535 chips.
-
-v1 -> v2:
-- constified the offset structures in patch 2/5
-
-Bartosz Golaszewski (5):
-  gpio: pca953x: coding style fixes
-  gpio: pca953x: code shrink
-  gpio: pca953x: refactor pca953x_write_regs()
-  gpio: pca953x: remove an unused variable
-  gpio: pca953x: refactor pca953x_read_regs()
-
- drivers/gpio/gpio-pca953x.c | 270 ++++++++++++++++++++++----------------------
- 1 file changed, 136 insertions(+), 134 deletions(-)
-
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 02f2a56..2312f8d 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -355,13 +355,13 @@ exit:
+ }
+ 
+ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+-		unsigned long *mask, unsigned long *bits)
++				      unsigned long *mask, unsigned long *bits)
+ {
+ 	struct pca953x_chip *chip = gpiochip_get_data(gc);
+ 	u8 reg_val[MAX_BANK];
+-	int ret, offset = 0;
++	int ret, bank, offset = 0;
+ 	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+-	int bank;
++	unsigned int bankmask, bankval;
+ 
+ 	switch (chip->chip_type) {
+ 	case PCA953X_TYPE:
+@@ -374,15 +374,16 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+ 
+ 	memcpy(reg_val, chip->reg_output, NBANK(chip));
+ 	mutex_lock(&chip->i2c_lock);
+-	for(bank=0; bank<NBANK(chip); bank++) {
+-		unsigned bankmask = mask[bank / sizeof(*mask)] >>
+-				    ((bank % sizeof(*mask)) * 8);
+-		if(bankmask) {
+-			unsigned bankval  = bits[bank / sizeof(*bits)] >>
+-					    ((bank % sizeof(*bits)) * 8);
++	for (bank = 0; bank < NBANK(chip); bank++) {
++		bankmask = mask[bank / sizeof(*mask)] >>
++			   ((bank % sizeof(*mask)) * 8);
++		if (bankmask) {
++			bankval = bits[bank / sizeof(*bits)] >>
++				  ((bank % sizeof(*bits)) * 8);
+ 			reg_val[bank] = (reg_val[bank] & ~bankmask) | bankval;
+ 		}
+ 	}
++
+ 	ret = i2c_smbus_write_i2c_block_data(chip->client, offset << bank_shift, NBANK(chip), reg_val);
+ 	if (ret)
+ 		goto exit;
 -- 
 2.7.4
 
