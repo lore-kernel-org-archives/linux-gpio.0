@@ -1,50 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 8/8] gpio: Add Aspeed driver
-Date: Wed, 7 Sep 2016 16:59:17 +0200
-Message-ID: <CACRpkdbXu7i1_wHuF-tMK6vxK-UFV_YihQzrGKC3EmCtbrMozA@mail.gmail.com>
-References: <20160830075427.11493-1-andrew@aj.id.au> <20160830075427.11493-9-andrew@aj.id.au>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v4 1/5] gpio: pca953x: code shrink
+Date: Wed, 07 Sep 2016 08:09:33 -0700
+Message-ID: <1473260973.29864.13.camel@perches.com>
+References: <1473259770-26224-1-git-send-email-bgolaszewski@baylibre.com>
+         <1473259770-26224-2-git-send-email-bgolaszewski@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:35429 "EHLO
-        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752299AbcIGO7T (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 10:59:19 -0400
-Received: by mail-oi0-f44.google.com with SMTP id s131so29262548oie.2
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 07:59:18 -0700 (PDT)
-In-Reply-To: <20160830075427.11493-9-andrew@aj.id.au>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1473259770-26224-2-git-send-email-bgolaszewski@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Joel Stanley <joel@jms.id.au>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alistair Popple <alistair@popple.id.au>
 
-On Tue, Aug 30, 2016 at 9:54 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+On Wed, 2016-09-07 at 16:49 +0200, Bartosz Golaszewski wrote:
+> There are multiple places in the driver code where a
+> switch (chip->chip_type) is used to determine the proper register
+> offset.
+> 
+> Unduplicate the code by adding a simple structure holding the possible
+> offsets that differ between the pca953x and pca957x chip families and
+> use it to avoid the checks.
+[]
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+[]
+> @@ -94,6 +94,24 @@ MODULE_DEVICE_TABLE(acpi, pca953x_acpi_ids);
+>  
+>  #define NBANK(chip) DIV_ROUND_UP(chip->gpio_chip.ngpio, BANK_SZ)
+>  
+> +struct pca953x_offset {
+> > +	int direction;
+> > +	int output;
+> > +	int input;
+> +};
 
-> From: Joel Stanley <joel@jms.id.au>
->
-> The Aspeed SoCs contain GPIOs banked by letter, where each bank contains
-> 8 pins. The GPIO banks are then grouped in sets of four in the register
-> layout.
->
-> The implementation exposes multiple banks through the one driver and
-> requests and releases pins via the pinctrl subsystem. The hardware
-> supports generation of interrupts from all GPIO-capable pins.
->
-> A number of hardware features are not yet supported: Configuration of
-> interrupt direction (ARM or LPC), debouncing, and WDT reset tolerance
-> for output ports.
->
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
-> Signed-off-by: Alistair Popple <alistair@popple.id.au>
-> Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+The struct name seems suboptimal.
+Maybe pca95xx_reg_io_config or some such.
 
-Patch applied to the GPIO tree.
+> +static const struct pca953x_offset pca953x_offsets = {
+> > +	.direction = PCA953X_DIRECTION,
+> > +	.output = PCA953X_OUTPUT,
+> > +	.input = PCA953X_INPUT,
+> +};
+> +
+> +static const struct pca953x_offset pca957x_offsets = {
+> > +	.direction = PCA957X_CFG,
+> > +	.output = PCA957X_OUT,
+> > +	.input = PCA957X_IN,
+> +};
 
-As there are no compile-time dependencies between the
-pin control and GPIO drivers I choose to merge the pinctrl
-stuff through the pinctrl tree and the GPIO stuff through the GPIO
-tree.
+The more naming consistency for #defines would be nice too
+at some point.
 
-Yours,
-Linus Walleij
+> 
