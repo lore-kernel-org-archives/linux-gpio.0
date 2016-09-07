@@ -1,32 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/5] gpio: pca953x: code refactoring
-Date: Thu, 8 Sep 2016 00:02:40 +0200
-Message-ID: <CACRpkdb9snPXT+7y2gavPA_wDcN0VJKLKqhKCwTmGNTb1fkJfA@mail.gmail.com>
-References: <1473085895-31711-1-git-send-email-bgolaszewski@baylibre.com>
+Subject: Re: [PATCH] soc: fsl/qe: fix gpio save_regs functions
+Date: Thu, 8 Sep 2016 00:05:42 +0200
+Message-ID: <CACRpkda1vj_BGYP2-4aSS=hcY2jkaaJuY59DOjiSt0JUSgBcBw@mail.gmail.com>
+References: <20160905225217.C34571A245A@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:36736 "EHLO
-        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753998AbcIGWCl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 18:02:41 -0400
-Received: by mail-oi0-f53.google.com with SMTP id w78so45595556oie.3
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 15:02:40 -0700 (PDT)
-In-Reply-To: <1473085895-31711-1-git-send-email-bgolaszewski@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20160905225217.C34571A245A@localhost.localdomain>
+Sender: stable-owner@vger.kernel.org
+To: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Sep 5, 2016 at 4:31 PM, Bartosz Golaszewski
-<bgolaszewski@baylibre.com> wrote:
+On Tue, Sep 6, 2016 at 12:52 AM, Christophe Leroy
+<christophe.leroy@c-s.fr> wrote:
 
-> I'm working on converting the pca953x driver to using regmap, but since
-> it's not a trivial task I figured I'd post a couple refactoring patches
-> I did so far for 4.9.
+> of_mm_gpiochip_add_data() calls mm_gc->save_regs() before
+> setting the data. Therefore ->save_regs() cannot use
+> gpiochip_get_data()
+>
+> An Oops is encountered without this fix.
+>
+> fixes: 1e714e54b5ca5 ("powerpc: qe_lib-gpio: use gpiochip data pointer")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Cc: <stable@vger.kernel.org>
 
-I'm in. I'm also ready to merge more patches on top late, because
-it is a noble goal.
+Aha sorry for my regular screwups. :(
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
