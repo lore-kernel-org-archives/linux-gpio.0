@@ -1,69 +1,43 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH 2/6] pinctrl: sunxi: Add GR8 controller support
-Date: Wed, 7 Sep 2016 16:04:33 +0200
-Message-ID: <20160907140433.GA28134@lukather>
-References: <20160831081817.5191-1-maxime.ripard@free-electrons.com>
- <20160831081817.5191-3-maxime.ripard@free-electrons.com>
- <CAGb2v66gZ4q4oJV5=xdbzLKKWtbm1PUQMOrm_J9CsLLHObCJhQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/5] gpio: pca954x: fix undefined error code from remove
+Date: Wed, 7 Sep 2016 16:15:20 +0200
+Message-ID: <CACRpkdafOgFE+3-8wuqO1trYdHyy0S3nxNzLJuGTmFS_aYY3eQ@mail.gmail.com>
+References: <20160826152546.604384-1-arnd@arndb.de> <20160826152546.604384-2-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="5mCyUwZo2JvN/JJP"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:38284 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753833AbcIGOEg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 10:04:36 -0400
-Content-Disposition: inline
-In-Reply-To: <CAGb2v66gZ4q4oJV5=xdbzLKKWtbm1PUQMOrm_J9CsLLHObCJhQ@mail.gmail.com>
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:35780 "EHLO
+        mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752404AbcIGOPi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 10:15:38 -0400
+Received: by mail-oi0-f50.google.com with SMTP id s131so27340323oie.2
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 07:15:21 -0700 (PDT)
+In-Reply-To: <20160826152546.604384-2-arnd@arndb.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Phil Reid <preid@electromag.com.au>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
+On Fri, Aug 26, 2016 at 5:25 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
---5mCyUwZo2JvN/JJP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The recent addition of the regulator support has led to the pca953x_remove
+> function returning uninitialized data when no platform data pointer is
+> provided, as gcc warns when using -Wmaybe-uninitialized:
+>
+> drivers/gpio/gpio-pca953x.c: In function 'pca953x_remove':
+> drivers/gpio/gpio-pca953x.c:860:9: error: 'ret' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+>
+> This restores the previous behavior, returning 0 on success.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: e23efa311110 ("gpio: pca954x: Add vcc regulator and enable it")
+> Cc: Phil Reid <preid@electromag.com.au>
+> ---
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: linux-gpio@vger.kernel.org
 
-On Mon, Sep 05, 2016 at 08:49:55PM +0800, Chen-Yu Tsai wrote:
-> > +       SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 6),
-> > +                 SUNXI_FUNCTION(0x0, "gpio_in"),
-> > +                 SUNXI_FUNCTION(0x1, "gpio_out"),
-> > +                 SUNXI_FUNCTION(0x2, "lcd0"),          /* D6 */
-> > +                 SUNXI_FUNCTION(0x3, "emac")),         /* ECRS */
->=20
-> The cover letter said ethernet was gone?
+Patch applied with Phil's ACK.
 
-That was my understanding, I doubled check and it's indeed there. I'll
-amend the commit log. Thanks!
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---5mCyUwZo2JvN/JJP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX0B5xAAoJEBx+YmzsjxAgFdsP/Rxh317YGdWJqWlUBi3srWMs
-+DF/Jk9f7UJ67r83FgOxQxk4dcT92FDglqp3I4L1tWBJBSxXL/rkCQzV5DNCdzu1
-+ubCnYi+M5VaqeicZbJzWVnRROliq6RCpvIVEdpRmwXOs9NKbD9z0ifgF9YfOMnI
-E+2zRvTIRJwjLX248rsinQYdIP3Me1LMoPJIe5ol50zYHiO64fRn+rGw+lbzJNDd
-oHHMkNi9wmrtQ+E6tABcOodmQiSesdIWaLYkPu4tA2fX8J90JNfuvOHHJAbThKh9
-JLvWFsPfxsW+HHkPb6vy0+5MouJL9tL0XAAkH2BpXk6J2dZVQ/IDK6ziqRRPBFrW
-PgtiKB1VRKZB+IkvsY4wGQAeb7ArkjNgQ7o7wyTL7Bp3s4mme7CmGCXpldV/Tkc5
-S7C3VRVf6Q+qHL4zP4xv5G1/k7ABs0HIl2WTBvOUvNEM9hj/AJPWRubkcflrvH2F
-w0K+zGJoJrIfwkpbGouCmV+WdU8A5K/Cu31/a/FzhD0su1F1CdcIQOgNV2msfPpG
-//YIs9kQsnk6OxowGpaLuCTSsvB+fBQJFOKBAKvyrTRx/hy23tEJmIMsqcA/gnOx
-H2myMO3vOAmLN9uNfbCvsx/xcT8tDG+jVcEWvqMcU6Ak4OVadPe9zD7VyBj3f8Ci
-bW2+8MnoLwlCj390vTsV
-=b/7r
------END PGP SIGNATURE-----
-
---5mCyUwZo2JvN/JJP--
+Yours,
+Linus Walleij
