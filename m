@@ -1,41 +1,30 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 5/6] ARM: dts: Add NextThing GR8 dtsi
-Date: Wed, 7 Sep 2016 16:51:55 +0200
-Message-ID: <CABxcv=kJCuP==QVRqyuoORSoWKAEqXmt5iRjdvDcCcr4MSm0gQ@mail.gmail.com>
-References: <20160831081817.5191-1-maxime.ripard@free-electrons.com>
- <20160831081817.5191-6-maxime.ripard@free-electrons.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 6/8] pinctrl: Add pinctrl-aspeed-g4 driver
+Date: Wed, 7 Sep 2016 16:53:13 +0200
+Message-ID: <CACRpkdYGHfsxXrFmoQ8vHq8af12ZMatYwHaBcXXNXVqSKK=1cw@mail.gmail.com>
+References: <20160830075427.11493-1-andrew@aj.id.au> <20160830075427.11493-7-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160831081817.5191-6-maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-fbdev@vger.kernel.org, David Airlie <airlied@linux.ie>, Jingoo Han <jingoohan1@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Alexander Kaplan <alex@nextthing.co>, Mylene Josserand <mylene.josserand@free-electrons.com>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160830075427.11493-7-andrew@aj.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: Joel Stanley <joel@jms.id.au>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Maxime,
+On Tue, Aug 30, 2016 at 9:54 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
 
-On Wed, Aug 31, 2016 at 10:18 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
+> A subset of the pins and functions are exposed. The selection of
+> functions and pins is driven by the development of OpenBMC[1] on the
+> AST2400 SoC, particularly around booting the OpenPOWER Palmetto
+> development machine.
+>
+> [1] https://github.com/openbmc/docs
+>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> Reviewed-by: Joel Stanley <joel@jms.id.au>
 
-[snip]
+Patch applied.
 
-> +
-> +#include "skeleton.dtsi"
-> +
-
-The skeleton.dtsi has been deprecated and shouldn't be used in new DTS files:
-
-http://www.spinics.net/lists/arm-kernel/msg528080.html
-
-Best regards,
-Javier
+Yours,
+Linus Walleij
