@@ -1,58 +1,69 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v3 0/5] gpio: pca953x: code refactoring
-Date: Wed, 07 Sep 2016 17:00:37 +0300
-Message-ID: <1473256837.11323.74.camel@linux.intel.com>
-References: <1473255472-16090-1-git-send-email-bgolaszewski@baylibre.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH 2/6] pinctrl: sunxi: Add GR8 controller support
+Date: Wed, 7 Sep 2016 16:04:33 +0200
+Message-ID: <20160907140433.GA28134@lukather>
+References: <20160831081817.5191-1-maxime.ripard@free-electrons.com>
+ <20160831081817.5191-3-maxime.ripard@free-electrons.com>
+ <CAGb2v66gZ4q4oJV5=xdbzLKKWtbm1PUQMOrm_J9CsLLHObCJhQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1473255472-16090-1-git-send-email-bgolaszewski@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="5mCyUwZo2JvN/JJP"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:38284 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753833AbcIGOEg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 10:04:36 -0400
+Content-Disposition: inline
+In-Reply-To: <CAGb2v66gZ4q4oJV5=xdbzLKKWtbm1PUQMOrm_J9CsLLHObCJhQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
 
-On Wed, 2016-09-07 at 15:37 +0200, Bartosz Golaszewski wrote:
-> I'm working on converting the pca953x driver to using regmap, but
-> since
-> it's not a trivial task I figured I'd post a couple refactoring
-> patches
-> I did so far for 4.9.
-> 
-> The first patch just fixes a couple coding style issues. The second
-> removes a couple unnecessary switches. Last three refactor the
-> read/write_regs functions to avoid if-elses by using function pointers
-> to smaller, specialized routines.
 
-Still few style comments, otherwise
+--5mCyUwZo2JvN/JJP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Mon, Sep 05, 2016 at 08:49:55PM +0800, Chen-Yu Tsai wrote:
+> > +       SUNXI_PIN(SUNXI_PINCTRL_PIN(D, 6),
+> > +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> > +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> > +                 SUNXI_FUNCTION(0x2, "lcd0"),          /* D6 */
+> > +                 SUNXI_FUNCTION(0x3, "emac")),         /* ECRS */
+>=20
+> The cover letter said ethernet was gone?
 
-> 
-> Tested with pca9534 and pca9535 chips.
-> 
-> v1 -> v2:
-> - constified the offset structures in patch 2/5
-> 
-> v2 -> v3:
-> - modified the order of the patches so that minor coding style fixes
->   no longer create noise for the later changes
-> - moved the **_write_regs_16() assignments to where other variants
->   are assigned
-> 
-> Bartosz Golaszewski (5):
->   gpio: pca953x: code shrink
->   gpio: pca953x: refactor pca953x_write_regs()
->   gpio: pca953x: refactor pca953x_read_regs()
->   gpio: pca953x: remove an unused variable
->   gpio: pca953x: coding style fixes
-> 
->  drivers/gpio/gpio-pca953x.c | 268 ++++++++++++++++++++++-------------
-> ---------
->  1 file changed, 134 insertions(+), 134 deletions(-)
-> 
+That was my understanding, I doubled check and it's indeed there. I'll
+amend the commit log. Thanks!
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--5mCyUwZo2JvN/JJP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX0B5xAAoJEBx+YmzsjxAgFdsP/Rxh317YGdWJqWlUBi3srWMs
++DF/Jk9f7UJ67r83FgOxQxk4dcT92FDglqp3I4L1tWBJBSxXL/rkCQzV5DNCdzu1
++ubCnYi+M5VaqeicZbJzWVnRROliq6RCpvIVEdpRmwXOs9NKbD9z0ifgF9YfOMnI
+E+2zRvTIRJwjLX248rsinQYdIP3Me1LMoPJIe5ol50zYHiO64fRn+rGw+lbzJNDd
+oHHMkNi9wmrtQ+E6tABcOodmQiSesdIWaLYkPu4tA2fX8J90JNfuvOHHJAbThKh9
+JLvWFsPfxsW+HHkPb6vy0+5MouJL9tL0XAAkH2BpXk6J2dZVQ/IDK6ziqRRPBFrW
+PgtiKB1VRKZB+IkvsY4wGQAeb7ArkjNgQ7o7wyTL7Bp3s4mme7CmGCXpldV/Tkc5
+S7C3VRVf6Q+qHL4zP4xv5G1/k7ABs0HIl2WTBvOUvNEM9hj/AJPWRubkcflrvH2F
+w0K+zGJoJrIfwkpbGouCmV+WdU8A5K/Cu31/a/FzhD0su1F1CdcIQOgNV2msfPpG
+//YIs9kQsnk6OxowGpaLuCTSsvB+fBQJFOKBAKvyrTRx/hy23tEJmIMsqcA/gnOx
+H2myMO3vOAmLN9uNfbCvsx/xcT8tDG+jVcEWvqMcU6Ak4OVadPe9zD7VyBj3f8Ci
+bW2+8MnoLwlCj390vTsV
+=b/7r
+-----END PGP SIGNATURE-----
+
+--5mCyUwZo2JvN/JJP--
