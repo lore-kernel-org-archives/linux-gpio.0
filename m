@@ -1,57 +1,58 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 6/9] pinctrl: Add IRQ support to STM32 gpios
-Date: Wed, 7 Sep 2016 23:06:12 +0200
-Message-ID: <CACRpkdZ_r0phJeScTYs_LmEHavcjGo6YjHPEHo-rKAv+rLgiFg@mail.gmail.com>
-References: <1473180341-1999-1-git-send-email-alexandre.torgue@st.com> <1473180341-1999-7-git-send-email-alexandre.torgue@st.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] gpio: mcp23s08: make driver depend on OF_GPIO
+Date: Wed,  7 Sep 2016 23:17:10 +0200
+Message-ID: <1473283030-22371-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:33205 "EHLO
-        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751304AbcIGVGN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 17:06:13 -0400
-Received: by mail-oi0-f45.google.com with SMTP id y2so44273571oie.0
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 14:06:13 -0700 (PDT)
-In-Reply-To: <1473180341-1999-7-git-send-email-alexandre.torgue@st.com>
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:35258 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750772AbcIGVRQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 17:17:16 -0400
+Received: by mail-lf0-f47.google.com with SMTP id l131so7552656lfl.2
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 14:17:15 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre TORGUE <alexandre.torgue@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>, Lee Jones <lee.jones@linaro.org>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexander Stein <alexander.stein@systec-electronic.com>, Phil Reid <preid@electromag.com.au>
 
-On Tue, Sep 6, 2016 at 6:45 PM, Alexandre TORGUE
-<alexandre.torgue@st.com> wrote:
+The MCP23S08 driver certainly accesses fields inside the
+struct gpio_chip that are only available under CONFIG_OF_GPIO
+not just CONFIG_OF, so update the Kconfig and driver to reflect
+this.
 
-> This patch adds IRQ support to STM32 gpios.
->
-> The EXTI controller has 16 lines dedicated to GPIOs.
-> EXTI line n can be connected to only line n of one of the GPIO ports, for
-> example EXTI0 can be connected to either PA0, or PB0, or PC0...
-> This port selection is done by specifying the port number into System
-> Config registers.
->
-> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Phil Reid <preid@electromag.com.au>
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/Kconfig         | 1 +
+ drivers/gpio/gpio-mcp23s08.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-> +++ b/drivers/pinctrl/stm32/Kconfig
-> @@ -6,6 +6,8 @@ config PINCTRL_STM32
->         select PINMUX
->         select GENERIC_PINCONF
->         select GPIOLIB
-> +       select GPIOLIB_IRQCHIP
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 66a94103798b..24caedb00a7a 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1131,6 +1131,7 @@ menu "SPI or I2C GPIO expanders"
+ 
+ config GPIO_MCP23S08
+ 	tristate "Microchip MCP23xxx I/O expander"
++	depends on OF_GPIO
+ 	select GPIOLIB_IRQCHIP
+ 	help
+ 	  SPI/I2C driver for Microchip MCP23S08/MCP23S17/MCP23008/MCP23017
+diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
+index ac22efc1840e..99d37b56c258 100644
+--- a/drivers/gpio/gpio-mcp23s08.c
++++ b/drivers/gpio/gpio-mcp23s08.c
+@@ -564,7 +564,7 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
+ 	mcp->chip.direction_output = mcp23s08_direction_output;
+ 	mcp->chip.set = mcp23s08_set;
+ 	mcp->chip.dbg_show = mcp23s08_dbg_show;
+-#ifdef CONFIG_OF
++#ifdef CONFIG_OF_GPIO
+ 	mcp->chip.of_gpio_n_cells = 2;
+ 	mcp->chip.of_node = dev->of_node;
+ #endif
+-- 
+2.7.4
 
-But you're not really using GPIOLIB_IRQCHIP. You have a different,
-super-complex irqchip in use.
-
-So just don't select this.
-
-> +       bank->gpio_chip.irqdomain = irq_domain_create_hierarchy(pctl->domain,
-> +                                       0, STM32_GPIO_IRQ_LINE, bank->fwnode,
-> +                                       &stm32_gpio_domain_ops, bank);
-
-Don't use that irqdomain pointer inside the gpio_chip.
-
-Instead declare the irqdomain pointer inside struct stm32_gpio_bank
-or something like that.
-
-Yours,
-Linus Walleij
