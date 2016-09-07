@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 5/5] gpio: pca953x: refactor pca953x_read_regs()
-Date: Wed,  7 Sep 2016 11:24:57 +0200
-Message-ID: <1473240297-19881-6-git-send-email-bgolaszewski@baylibre.com>
+Subject: [PATCH v2 3/5] gpio: pca953x: refactor pca953x_write_regs()
+Date: Wed,  7 Sep 2016 11:24:55 +0200
+Message-ID: <1473240297-19881-4-git-send-email-bgolaszewski@baylibre.com>
 References: <1473240297-19881-1-git-send-email-bgolaszewski@baylibre.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1473240297-19881-1-git-send-email-bgolaszewski@baylibre.com>
@@ -10,100 +10,132 @@ To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.co
 Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Avoid the unnecessary if-else in pca953x_read_regs() by spltting the
-routine into smaller, specialized functions and calling the right one
-via a function pointer held in struct pca953x.
+Avoid the unnecessary if-else in pca953x_write_regs() by splitting
+the routine into smaller, specialized functions and calling the right
+one via a function pointer held in struct pca953x_chip.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-pca953x.c | 55 ++++++++++++++++++++++++++++++++-------------
- 1 file changed, 39 insertions(+), 16 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 75 ++++++++++++++++++++++++++++-----------------
+ 1 file changed, 47 insertions(+), 28 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 00bb2ea..e417c42 100644
+index 195944b..6b62898 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -134,6 +134,7 @@ struct pca953x_chip {
- 	const struct pca953x_offset *offset;
+@@ -133,6 +133,8 @@ struct pca953x_chip {
+ 	unsigned long driver_data;
  
- 	int (*write_regs)(struct pca953x_chip *, int, u8 *);
-+	int (*read_regs)(struct pca953x_chip *, int, u8 *);
+ 	const struct pca953x_offset *offset;
++
++	int (*write_regs)(struct pca953x_chip *, int, u8 *);
  };
  
  static int pca953x_read_single(struct pca953x_chip *chip, int reg, u32 *val,
-@@ -219,24 +220,41 @@ static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
+@@ -172,38 +174,44 @@ static int pca953x_write_single(struct pca953x_chip *chip, int reg, u32 val,
  	return 0;
  }
  
--static int pca953x_read_regs(struct pca953x_chip *chip, int reg, u8 *val)
-+static int pca953x_read_regs_8(struct pca953x_chip *chip, int reg, u8 *val)
+-static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
++static int pca953x_write_regs_8(struct pca953x_chip *chip, int reg, u8 *val)
  {
- 	int ret;
+-	int ret = 0;
++	return i2c_smbus_write_byte_data(chip->client, reg, *val);
++}
  
--	if (chip->gpio_chip.ngpio <= 8) {
--		ret = i2c_smbus_read_byte_data(chip->client, reg);
--		*val = ret;
--	} else if (chip->gpio_chip.ngpio >= 24) {
+-	if (chip->gpio_chip.ngpio <= 8)
+-		ret = i2c_smbus_write_byte_data(chip->client, reg, *val);
+-	else if (chip->gpio_chip.ngpio >= 24) {
 -		int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
-+	ret = i2c_smbus_read_byte_data(chip->client, reg);
-+	*val = ret;
- 
--		ret = i2c_smbus_read_i2c_block_data(chip->client,
+-		ret = i2c_smbus_write_i2c_block_data(chip->client,
 -					(reg << bank_shift) | REG_ADDR_AI,
 -					NBANK(chip), val);
 -	} else {
--		ret = i2c_smbus_read_word_data(chip->client, reg << 1);
--		val[0] = (u16)ret & 0xFF;
--		val[1] = (u16)ret >> 8;
+-		switch (chip->chip_type) {
+-		case PCA953X_TYPE: {
+-			__le16 word = cpu_to_le16(get_unaligned((u16 *)val));
++static int pca953x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
++{
++	__le16 word = cpu_to_le16(get_unaligned((u16 *)val));
+ 
+-			ret = i2c_smbus_write_word_data(chip->client, reg << 1,
+-							(__force u16)word);
+-			break;
+-		}
+-		case PCA957X_TYPE:
+-			ret = i2c_smbus_write_byte_data(chip->client, reg << 1,
+-							val[0]);
+-			if (ret < 0)
+-				break;
+-			ret = i2c_smbus_write_byte_data(chip->client,
+-							(reg << 1) + 1,
+-							val[1]);
+-			break;
+-		}
 -	}
-+	return ret;
++	return i2c_smbus_write_word_data(chip->client,
++					 reg << 1, (__force u16)word);
 +}
 +
-+static int pca953x_read_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
++static int pca957x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
 +{
 +	int ret;
+ 
++	ret = i2c_smbus_write_byte_data(chip->client, reg << 1, val[0]);
++	if (ret < 0)
++		return ret;
 +
-+	ret = i2c_smbus_read_word_data(chip->client, reg << 1);
-+	val[0] = (u16)ret & 0xFF;
-+	val[1] = (u16)ret >> 8;
-+
-+	return ret;
++	return i2c_smbus_write_byte_data(chip->client, (reg << 1) + 1, val[1]);
 +}
 +
-+static int pca953x_read_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
++static int pca953x_write_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
 +{
 +	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
 +
-+	return i2c_smbus_read_i2c_block_data(chip->client,
-+					     (reg << bank_shift) | REG_ADDR_AI,
-+					     NBANK(chip), val);
++	return i2c_smbus_write_i2c_block_data(chip->client,
++					      (reg << bank_shift) | REG_ADDR_AI,
++					      NBANK(chip), val);
 +}
 +
-+static int pca953x_read_regs(struct pca953x_chip *chip, int reg, u8 *val)
++static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
 +{
-+	int ret;
++	int ret = 0;
 +
-+	ret = chip->read_regs(chip, reg, val);
++	ret = chip->write_regs(chip, reg, val);
  	if (ret < 0) {
- 		dev_err(&chip->client->dev, "failed reading register\n");
+ 		dev_err(&chip->client->dev, "failed writing register\n");
  		return ret;
-@@ -766,10 +784,15 @@ static int pca953x_probe(struct i2c_client *client,
+@@ -645,6 +653,9 @@ static int device_pca953x_init(struct pca953x_chip *chip, u32 invert)
+ 
+ 	chip->offset = &pca953x_offsets;
+ 
++	if (!chip->write_regs)
++		chip->write_regs = pca953x_write_regs_16;
++
+ 	ret = pca953x_read_regs(chip, PCA953X_OUTPUT, chip->reg_output);
+ 	if (ret)
+ 		goto out;
+@@ -672,6 +683,9 @@ static int device_pca957x_init(struct pca953x_chip *chip, u32 invert)
+ 
+ 	chip->offset = &pca957x_offsets;
+ 
++	if (!chip->write_regs)
++		chip->write_regs = pca957x_write_regs_16;
++
+ 	ret = pca953x_read_regs(chip, PCA957X_OUT, chip->reg_output);
+ 	if (ret)
+ 		goto out;
+@@ -755,6 +769,11 @@ static int pca953x_probe(struct i2c_client *client,
  	 */
  	pca953x_setup_gpio(chip, chip->driver_data & PCA_GPIO_MASK);
  
--	if (chip->gpio_chip.ngpio <= 8)
-+	if (chip->gpio_chip.ngpio <= 8) {
- 		chip->write_regs = pca953x_write_regs_8;
--	else if (chip->gpio_chip.ngpio >= 24)
-+		chip->read_regs = pca953x_read_regs_8;
-+	} else if (chip->gpio_chip.ngpio >= 24) {
- 		chip->write_regs = pca953x_write_regs_24;
-+		chip->read_regs = pca953x_read_regs_24;
-+	} else {
-+		chip->read_regs = pca953x_read_regs_16;
-+	}
- 
- 	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE)
++	if (chip->gpio_chip.ngpio <= 8)
++		chip->write_regs = pca953x_write_regs_8;
++	else if (chip->gpio_chip.ngpio >= 24)
++		chip->write_regs = pca953x_write_regs_24;
++
+ 	if (chip->chip_type == PCA953X_TYPE)
  		ret = device_pca953x_init(chip, invert);
+ 	else
 -- 
 2.7.4
