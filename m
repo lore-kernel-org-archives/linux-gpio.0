@@ -1,80 +1,69 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH 2/7] pinctrl: amlogic: gxbb: add nand pins
-Date: Wed,  7 Sep 2016 17:13:38 +0200
-Message-ID: <1473261223-15412-3-git-send-email-jbrunet@baylibre.com>
-References: <1473261223-15412-1-git-send-email-jbrunet@baylibre.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1473261223-15412-1-git-send-email-jbrunet@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v4 5/5] gpio: pca953x: coding style fixes
+Date: Wed, 07 Sep 2016 18:17:37 +0300
+Message-ID: <1473261457.11323.88.camel@linux.intel.com>
+References: <1473259770-26224-1-git-send-email-bgolaszewski@baylibre.com>
+         <1473259770-26224-6-git-send-email-bgolaszewski@baylibre.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga05.intel.com ([192.55.52.43]:7955 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932898AbcIGPRp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 7 Sep 2016 11:17:45 -0400
+In-Reply-To: <1473259770-26224-6-git-send-email-bgolaszewski@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-Add EE domains pins for the NAND flash controller.
-Even tough we have no driver for the NAND flash controller yet, we need
-to have these pins in pinctrl as the actual pin are shared with the spifc
-controller. The bootloader on the S905-P200 setup pinmux for the NAND
-controller so we need the kernel to properly deactivate this if necessary.
+On Wed, 2016-09-07 at 16:49 +0200, Bartosz Golaszewski wrote:
+> pca953x_gpio_set_multiple() has some coding style issues that make it
+> harder to read. Tweak the code a bit.
+> 
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Usually give one day for reviewers to have a chance to follow your
+changes.
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 802ad83..08e6cdd 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -168,6 +168,15 @@ static const unsigned int sdcard_d3_pins[] = { PIN(CARD_4, EE_OFF) };
- static const unsigned int sdcard_cmd_pins[] = { PIN(CARD_3, EE_OFF) };
- static const unsigned int sdcard_clk_pins[] = { PIN(CARD_2, EE_OFF) };
- 
-+static const unsigned int nand_ce0_pins[]	= { PIN(BOOT_8, EE_OFF) };
-+static const unsigned int nand_ce1_pins[]	= { PIN(BOOT_9, EE_OFF) };
-+static const unsigned int nand_rb0_pins[]	= { PIN(BOOT_10, EE_OFF) };
-+static const unsigned int nand_ale_pins[]	= { PIN(BOOT_11, EE_OFF) };
-+static const unsigned int nand_cle_pins[]	= { PIN(BOOT_12, EE_OFF) };
-+static const unsigned int nand_wen_clk_pins[]	= { PIN(BOOT_13, EE_OFF) };
-+static const unsigned int nand_ren_wr_pins[]	= { PIN(BOOT_14, EE_OFF) };
-+static const unsigned int nand_dqs_pins[]	= { PIN(BOOT_15, EE_OFF) };
-+
- static const unsigned int uart_tx_a_pins[]	= { PIN(GPIOX_12, EE_OFF) };
- static const unsigned int uart_rx_a_pins[]	= { PIN(GPIOX_13, EE_OFF) };
- static const unsigned int uart_cts_a_pins[]	= { PIN(GPIOX_14, EE_OFF) };
-@@ -402,6 +411,14 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GROUP(spifc_q,		5,	3),
- 	GROUP(spifc_c,		5,	2),
- 	GROUP(spifc_cs,		5,	0),
-+	GROUP(nand_ce0,		4,	26),
-+	GROUP(nand_ce1,		4,	27),
-+	GROUP(nand_rb0,		4,	25),
-+	GROUP(nand_ale,		4,	24),
-+	GROUP(nand_cle,		4,	23),
-+	GROUP(nand_wen_clk,	4,	22),
-+	GROUP(nand_ren_wr,	4,	21),
-+	GROUP(nand_dqs,		4,	20),
- 
- 	/* Bank CARD */
- 	GROUP(sdcard_d1,	2,	14),
-@@ -493,6 +510,11 @@ static const char * const sdcard_groups[] = {
- 	"sdcard_cmd", "sdcard_clk",
- };
- 
-+static const char * const nand_groups[] = {
-+	"nand_ce0", "nand_ce1", "nand_rb0", "nand_ale", "nand_cle",
-+	"nand_wen_clk", "nand_ren_wr", "nand_dqs",
-+};
-+
- static const char * const uart_a_groups[] = {
- 	"uart_tx_a", "uart_rx_a", "uart_cts_a", "uart_rts_a",
- };
-@@ -539,6 +561,7 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
- 	FUNCTION(emmc),
- 	FUNCTION(spifc),
- 	FUNCTION(sdcard),
-+	FUNCTION(nand),
- 	FUNCTION(uart_a),
- 	FUNCTION(uart_b),
- 	FUNCTION(uart_c),
+And one comment below.
+
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/gpio/gpio-pca953x.c | 22 ++++++++++++----------
+>  1 file changed, 12 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index b08ed52..079c311 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -360,25 +360,27 @@ exit:
+>  }
+>  
+>  static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+> -		unsigned long *mask, unsigned long *bits)
+> +				      unsigned long *mask, unsigned
+> long *bits)
+>  {
+>  	struct pca953x_chip *chip = gpiochip_get_data(gc);
+> +	unsigned int bankmask, bankval;
+> +	int bank_shift, bank, ret;
+>  	u8 reg_val[MAX_BANK];
+> -	int ret;
+> -	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+> -	int bank;
+
+I meant to keep int ret apart.
+
+struct pca953x_chip *chip = gpiochip_get_data(gc);
+unsigned int bank_mask, bank_val, bank_shift, bank;
+u8 reg_val[MAX_BANK];
+int ret;
+
+And perhaps _ in the names of bank* to be consistent.
+
+
 -- 
-2.7.4
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
