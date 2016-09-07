@@ -1,31 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: rcar: Add r8a7796 (R-Car M3-W) support
-Date: Thu, 8 Sep 2016 00:08:45 +0200
-Message-ID: <CACRpkdaq+Wfh2hXT9xuAuoSisr8bbiMpHCLCQdM-xvcefUEFuw@mail.gmail.com>
-References: <1473158139-8291-1-git-send-email-horms+renesas@verge.net.au>
+Subject: Re: [RFC PATCH] pinctrl: Add SX150X GPIO Extender Pinctrl Driver
+Date: Thu, 8 Sep 2016 00:15:55 +0200
+Message-ID: <CACRpkdYwAwCs+L8OG5xBmqJ+1BwL8OyJyJuYuCB584jLxTxdag@mail.gmail.com>
+References: <1472130692-14404-1-git-send-email-narmstrong@baylibre.com>
+ <CACRpkdZJy6N2uCnPLrM0V=67=xJzge94bYesHjL3r4itgE-9GA@mail.gmail.com>
+ <85f4ae6f-2563-967c-1e75-28a864405f53@axentia.se> <44e8d692-832f-fbbf-2930-0cd7c140a754@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1473158139-8291-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:36204 "EHLO
+        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750823AbcIGWP5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 18:15:57 -0400
+Received: by mail-oi0-f54.google.com with SMTP id w78so46000168oie.3
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 15:15:57 -0700 (PDT)
+In-Reply-To: <44e8d692-832f-fbbf-2930-0cd7c140a754@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Peter Rosin <peda@axentia.se>, Wei Chen <Wei.Chen@csr.com>, Roland Stigge <stigge@antcom.de>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Sep 6, 2016 at 12:35 PM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
+On Tue, Sep 6, 2016 at 10:20 AM, Neil Armstrong <narmstrong@baylibre.com> wrote:
 
-> R-Car Gen3's GPIO blocks are identical to Gen2's in every respect.
+> To make a slot-in replacement, it misses the sx150x_platform_data management
+> like the gpio version, I only made a pure DT version. It should be easy to add back.
 >
-> Based on work for the r8a7795 (R-Car H3) by Ulrich Hecht.
->
-> Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> But I see it nowhere... is it really necessary ?
 
-Patch applied.
+If that is not used in the kernel, don't care to support it.
+We're not designing for out-of-tree usecases, and here apparently
+out-of-tree patches would be needed to make use of it.
 
 Yours,
 Linus Walleij
