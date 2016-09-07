@@ -1,81 +1,152 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v4 5/5] gpio: pca953x: coding style fixes
-Date: Wed, 7 Sep 2016 17:19:41 +0200
-Message-ID: <CAMpxmJWdNozn0NV-_VPtxxF=msN1WfOQNF5fZMj13E5QEJvijA@mail.gmail.com>
-References: <1473259770-26224-1-git-send-email-bgolaszewski@baylibre.com>
- <1473259770-26224-6-git-send-email-bgolaszewski@baylibre.com> <1473261457.11323.88.camel@linux.intel.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH v2 4/4] ARM: dts: gr8: Add support for the GR8 evaluation board
+Date: Wed, 7 Sep 2016 23:23:56 +0800
+Message-ID: <CAGb2v66Ed1u5NaC9ev=ohywCbssy6BnkPcThY2D9O=_eNK1pdA@mail.gmail.com>
+References: <20160907145400.27192-1-maxime.ripard@free-electrons.com> <20160907145400.27192-5-maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f54.google.com ([209.85.214.54]:36649 "EHLO
-        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752727AbcIGPTn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 11:19:43 -0400
-Received: by mail-it0-f54.google.com with SMTP id i184so203719721itf.1
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 08:19:42 -0700 (PDT)
-In-Reply-To: <1473261457.11323.88.camel@linux.intel.com>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:50582 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161025AbcIGPY2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 11:24:28 -0400
+In-Reply-To: <20160907145400.27192-5-maxime.ripard@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
 
-2016-09-07 17:17 GMT+02:00 Andy Shevchenko <andriy.shevchenko@linux.intel.com>:
-> On Wed, 2016-09-07 at 16:49 +0200, Bartosz Golaszewski wrote:
->> pca953x_gpio_set_multiple() has some coding style issues that make it
->> harder to read. Tweak the code a bit.
->>
+On Wed, Sep 7, 2016 at 10:54 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> From: Mylène Josserand <mylene.josserand@free-electrons.com>
 >
-> Usually give one day for reviewers to have a chance to follow your
-> changes.
+> The GR8-EVB is a small board with an NextThing GR8, an Hynix MLC NAND,
+> an AXP209 PMIC, USB host and OTG, an SPDIF output and a connectors for CSI,
+> I2S and LCD.
 >
+> Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  arch/arm/boot/dts/Makefile        |   1 +
+>  arch/arm/boot/dts/ntc-gr8-evb.dts | 342 ++++++++++++++++++++++++++++++++++++++
 
-Sure, I re-posted immediately because the changes were minor.
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 
-Thanks,
-Bartosz
+>  arch/arm/boot/dts/ntc-gr8.dtsi    |  14 +-
+>  3 files changed, 350 insertions(+), 7 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/ntc-gr8-evb.dts
+>
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index bb906f23d161..b2814271b397 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -719,6 +719,7 @@ dtb-$(CONFIG_MACH_SUN4I) += \
+>         sun4i-a10-pcduino2.dtb \
+>         sun4i-a10-pov-protab2-ips9.dtb
+>  dtb-$(CONFIG_MACH_SUN5I) += \
+> +       ntc-gr8-evb.dtb \
+>         sun5i-a10s-auxtek-t003.dtb \
+>         sun5i-a10s-auxtek-t004.dtb \
+>         sun5i-a10s-mk802.dtb \
+> diff --git a/arch/arm/boot/dts/ntc-gr8-evb.dts b/arch/arm/boot/dts/ntc-gr8-evb.dts
+> new file mode 100644
+> index 000000000000..7da1afddcab5
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/ntc-gr8-evb.dts
 
-> And one comment below.
+[...]
+
+> +&i2c1 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&i2c1_pins_a>;
+> +       status = "okay";
+> +
+> +       pcf8563: rtc@51 {
+> +               compatible = "phg,pcf8563";
+> +               reg = <0x51>;
+> +       };
+> +
+> +       wm8978: codec@1a {
+> +               #sound-dai-cells = <0>;
+> +               compatible = "wlf,wm8978";
+> +               reg = <0x1a>;
+> +       };
+
+Seems like I2S support will happen soon? :)
+
+> +};
+
+[...]
+
+> diff --git a/arch/arm/boot/dts/ntc-gr8.dtsi b/arch/arm/boot/dts/ntc-gr8.dtsi
+> index d21cfa3f3c14..cdb7a12946c4 100644
+> --- a/arch/arm/boot/dts/ntc-gr8.dtsi
+> +++ b/arch/arm/boot/dts/ntc-gr8.dtsi
+
+This looks like the wrong patch. Nevertheless...
+
+> @@ -228,7 +228,7 @@
 >
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> ---
->>  drivers/gpio/gpio-pca953x.c | 22 ++++++++++++----------
->>  1 file changed, 12 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
->> index b08ed52..079c311 100644
->> --- a/drivers/gpio/gpio-pca953x.c
->> +++ b/drivers/gpio/gpio-pca953x.c
->> @@ -360,25 +360,27 @@ exit:
->>  }
->>
->>  static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
->> -             unsigned long *mask, unsigned long *bits)
->> +                                   unsigned long *mask, unsigned
->> long *bits)
->>  {
->>       struct pca953x_chip *chip = gpiochip_get_data(gc);
->> +     unsigned int bankmask, bankval;
->> +     int bank_shift, bank, ret;
->>       u8 reg_val[MAX_BANK];
->> -     int ret;
->> -     int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
->> -     int bank;
+>                 axi_gates: clk@01c2005c {
+>                         #clock-cells = <1>;
+> -                       compatible = "allwinner,sun4i-a10-axi-gates-clk";
+> +                       compatible = "allwinner,sun4i-a10-gates-clk";
+>                         reg = <0x01c2005c 0x4>;
+>                         clocks = <&axi>;
+>                         clock-indices = <0>;
+> @@ -244,7 +244,7 @@
+>                                         <2>, <5>, <6>,
+>                                         <7>, <8>, <9>,
+>                                         <10>, <13>,
+> -                                       <14>, <20>,
+> +                                       <14>, <17>, <20>,
+>                                         <21>, <22>,
+>                                         <28>, <32>, <34>,
+>                                         <36>, <40>, <44>,
+> @@ -254,7 +254,7 @@
+>                                              "ahb_ohci", "ahb_ss", "ahb_dma",
+>                                              "ahb_bist", "ahb_mmc0", "ahb_mmc1",
+>                                              "ahb_mmc2", "ahb_nand",
+> -                                            "ahb_sdram", "ahb_spi0",
+> +                                            "ahb_sdram", "ahb_sdram", "ahb_spi0",
+
+I don't think this will work. Copy/paste error?
+
+Regards
+ChenYu
+
+>                                              "ahb_spi1", "ahb_spi2",
+>                                              "ahb_stimer", "ahb_ve", "ahb_tve",
+>                                              "ahb_lcd", "ahb_csi", "ahb_de_be",
+> @@ -264,7 +264,7 @@
 >
-> I meant to keep int ret apart.
+>                 apb0_gates: clk@01c20068 {
+>                         #clock-cells = <1>;
+> -                       compatible = "allwinner,sun5i-a13-apb0-gates-clk";
+> +                       compatible = "allwinner,sun4i-a10-gates-clk";
+>                         reg = <0x01c20068 0x4>;
+>                         clocks = <&apb0>;
+>                         clock-indices = <0>, <3>,
+> @@ -275,15 +275,15 @@
 >
-> struct pca953x_chip *chip = gpiochip_get_data(gc);
-> unsigned int bank_mask, bank_val, bank_shift, bank;
-> u8 reg_val[MAX_BANK];
-> int ret;
+>                 apb1_gates: clk@01c2006c {
+>                         #clock-cells = <1>;
+> -                       compatible = "allwinner,sun5i-a13-apb1-gates-clk";
+> +                       compatible = "allwinner,sun4i-a10-gates-clk";
+>                         reg = <0x01c2006c 0x4>;
+>                         clocks = <&apb1>;
+>                         clock-indices = <0>, <1>,
+>                                         <2>, <17>,
+> -                                       <18>;
+> +                                       <18>, <19>;
+>                         clock-output-names = "apb1_i2c0", "apb1_i2c1",
+>                                              "apb1_i2c2", "apb1_uart1",
+> -                                            "apb1_uart2";
+> +                                            "apb1_uart2", "apb1_uart3";
+>                 };
 >
-> And perhaps _ in the names of bank* to be consistent.
->
->
+>                 nand_clk: clk@01c20080 {
 > --
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Intel Finland Oy
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 2.9.3
+>
