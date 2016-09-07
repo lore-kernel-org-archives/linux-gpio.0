@@ -1,45 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/4] pinctrl: sunxi: Remove unsupported PWM channel
- pinmux in H3
-Date: Thu, 8 Sep 2016 01:09:29 +0200
-Message-ID: <CACRpkda8uMuOi41O5Cq3o-PXynoZfkxAD7P2fHS-uCUQt_B_kA@mail.gmail.com>
-References: <20160831082520.25962-1-woogyom.kim@gmail.com>
- <20160831082520.25962-4-woogyom.kim@gmail.com>
+Subject: Re: [PATCH 1/5] gpio: pca953x: coding style fixes
+Date: Thu, 8 Sep 2016 01:15:14 +0200
+Message-ID: <CACRpkdYGh2iqoY-uyoBxmgN3WoB7cKMrHYXvXqgj1K9s6U5sjg@mail.gmail.com>
+References: <1473085895-31711-1-git-send-email-bgolaszewski@baylibre.com>
+ <1473085895-31711-2-git-send-email-bgolaszewski@baylibre.com> <CACRpkdb18bvEasNLoOvMXYcKcig1UL2hBDGRgOoT1yto5t6+qQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160831082520.25962-4-woogyom.kim@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Milo Kim <woogyom.kim@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof Adamski <k@japko.eu>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Icenowy Zheng <icenowy@aosc.xyz>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jens Kuske <jenskuske@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdb18bvEasNLoOvMXYcKcig1UL2hBDGRgOoT1yto5t6+qQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Aug 31, 2016 at 10:25 AM, Milo Kim <woogyom.kim@gmail.com> wrote:
-
-> H3 has single PWM channel. The second PWM channel is not supported,
-> so the pinctrl function should be removed.
+On Wed, Sep 7, 2016 at 11:55 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Sep 5, 2016 at 4:31 PM, Bartosz Golaszewski
+> <bgolaszewski@baylibre.com> wrote:
 >
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Icenowy Zheng <icenowy@aosc.xyz>
-> Cc: Jens Kuske <jenskuske@gmail.com>
-> Cc: Krzysztof Adamski <k@japko.eu>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Milo Kim <woogyom.kim@gmail.com>
+>> pca953x_gpio_set_multiple() has some coding style issues that make it
+>> harder to read. Tweak the code a bit.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Much better like this.
+>
+> Patch applied.
 
-Patch applied with Chen-Yu's ACK.
+Ah I see there was a later version and it was moved around.
+
+OK backing this out. Let's go for latest version and also please
+rebase it onto my devel branch.
 
 Yours,
 Linus Walleij
