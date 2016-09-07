@@ -1,285 +1,66 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 2/5] gpio: pca953x: code shrink
-Date: Wed,  7 Sep 2016 11:24:54 +0200
-Message-ID: <1473240297-19881-3-git-send-email-bgolaszewski@baylibre.com>
-References: <1473240297-19881-1-git-send-email-bgolaszewski@baylibre.com>
+From: "Agrawal, Nitesh-kumar" <Nitesh-kumar.Agrawal@amd.com>
+Subject: RE: [PATCH] pinctrl/amd: Configure GPIO register using BIOS settings
+Date: Wed, 7 Sep 2016 08:56:09 +0000
+Message-ID: <CY1PR12MB0042F7C1AA27735D3091519BDCF80@CY1PR12MB0042.namprd12.prod.outlook.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:36294 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757230AbcIGJZF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 05:25:05 -0400
-Received: by mail-wm0-f49.google.com with SMTP id b187so105323162wme.1
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Sep 2016 02:25:05 -0700 (PDT)
-In-Reply-To: <1473240297-19881-1-git-send-email-bgolaszewski@baylibre.com>
+Received: from mail-bn3nam01on0059.outbound.protection.outlook.com ([104.47.33.59]:12835
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964896AbcIGK2b (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 7 Sep 2016 06:28:31 -0400
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+To: "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Cc: "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, "Sen, Pankaj" <Pankaj.Sen@amd.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-There are multiple places in the driver code where a
-switch (chip->chip_type) is used to determine the proper register
-offset.
+In the function amd_gpio_irq_set_type, use the settings provided by
+the BIOS,when the LevelTrig is Edge and activeLevel is HIGH, to configure
+the GPIO registers. Ignore the settings from client.
 
-Unduplicate the code by adding a simple structure holding the possible
-offsets that differ between the pca953x and pca957x chip families and
-use it to avoid the checks.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by:Pankaj Sen <Pankaj.Sen@amd.com>
+Signed-off-by:Nitesh Kumar Agrawal <Nitesh-kumar.Agrawal@amd.com>
 ---
- drivers/gpio/gpio-pca953x.c | 122 +++++++++++++++-----------------------------
- 1 file changed, 42 insertions(+), 80 deletions(-)
+ drivers/pinctrl/pinctrl-amd.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 2312f8d..195944b 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -94,6 +94,24 @@ MODULE_DEVICE_TABLE(acpi, pca953x_acpi_ids);
- 
- #define NBANK(chip) DIV_ROUND_UP(chip->gpio_chip.ngpio, BANK_SZ)
- 
-+struct pca953x_offset {
-+	int direction;
-+	int output;
-+	int input;
-+};
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 828148d..a645082 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -385,12 +385,26 @@ static int amd_gpio_irq_set_type(struct irq_data *d, =
+unsigned int type)
+ 	int ret =3D 0;
+ 	u32 pin_reg;
+ 	unsigned long flags;
++        u32 levelTrig;
++        u32 activeLevel;
+ 	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
+ 	struct amd_gpio *gpio_dev =3D gpiochip_get_data(gc);
+=20
+ 	spin_lock_irqsave(&gpio_dev->lock, flags);
+ 	pin_reg =3D readl(gpio_dev->base + (d->hwirq)*4);
+=20
++        /*
++         When LevelTrig is set EDGE and activeLevel is set HIGH in BIOS
++         default settings, ignore incoming settings from client and use
++         BIOS settings to configure GPIO register.
++        */
++        levelTrig =3D pin_reg & (LEVEL_TRIGGER << LEVEL_TRIG_OFF);
++        activeLevel =3D pin_reg & (ACTIVE_LEVEL_MASK << ACTIVE_LEVEL_OFF);
 +
-+static const struct pca953x_offset pca953x_offsets = {
-+	.direction = PCA953X_DIRECTION,
-+	.output = PCA953X_OUTPUT,
-+	.input = PCA953X_INPUT,
-+};
++        if((!levelTrig)&&((activeLevel>> ACTIVE_LEVEL_OFF) =3D=3D ACTIVE_H=
+IGH)) {
++           type =3D IRQ_TYPE_EDGE_FALLING;
++        }
 +
-+static const struct pca953x_offset pca957x_offsets = {
-+	.direction = PCA957X_CFG,
-+	.output = PCA957X_OUT,
-+	.input = PCA957X_IN,
-+};
-+
- struct pca953x_chip {
- 	unsigned gpio_start;
- 	u8 reg_output[MAX_BANK];
-@@ -113,6 +131,8 @@ struct pca953x_chip {
- 	const char *const *names;
- 	int	chip_type;
- 	unsigned long driver_data;
-+
-+	const struct pca953x_offset *offset;
- };
- 
- static int pca953x_read_single(struct pca953x_chip *chip, int reg, u32 *val,
-@@ -222,20 +242,12 @@ static int pca953x_gpio_direction_input(struct gpio_chip *gc, unsigned off)
- {
- 	struct pca953x_chip *chip = gpiochip_get_data(gc);
- 	u8 reg_val;
--	int ret, offset = 0;
-+	int ret;
- 
- 	mutex_lock(&chip->i2c_lock);
- 	reg_val = chip->reg_direction[off / BANK_SZ] | (1u << (off % BANK_SZ));
- 
--	switch (chip->chip_type) {
--	case PCA953X_TYPE:
--		offset = PCA953X_DIRECTION;
--		break;
--	case PCA957X_TYPE:
--		offset = PCA957X_CFG;
--		break;
--	}
--	ret = pca953x_write_single(chip, offset, reg_val, off);
-+	ret = pca953x_write_single(chip, chip->offset->direction, reg_val, off);
- 	if (ret)
- 		goto exit;
- 
-@@ -250,7 +262,7 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
- {
- 	struct pca953x_chip *chip = gpiochip_get_data(gc);
- 	u8 reg_val;
--	int ret, offset = 0;
-+	int ret;
- 
- 	mutex_lock(&chip->i2c_lock);
- 	/* set output level */
-@@ -261,15 +273,7 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
- 		reg_val = chip->reg_output[off / BANK_SZ]
- 			& ~(1u << (off % BANK_SZ));
- 
--	switch (chip->chip_type) {
--	case PCA953X_TYPE:
--		offset = PCA953X_OUTPUT;
--		break;
--	case PCA957X_TYPE:
--		offset = PCA957X_OUT;
--		break;
--	}
--	ret = pca953x_write_single(chip, offset, reg_val, off);
-+	ret = pca953x_write_single(chip, chip->offset->output, reg_val, off);
- 	if (ret)
- 		goto exit;
- 
-@@ -277,15 +281,7 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
- 
- 	/* then direction */
- 	reg_val = chip->reg_direction[off / BANK_SZ] & ~(1u << (off % BANK_SZ));
--	switch (chip->chip_type) {
--	case PCA953X_TYPE:
--		offset = PCA953X_DIRECTION;
--		break;
--	case PCA957X_TYPE:
--		offset = PCA957X_CFG;
--		break;
--	}
--	ret = pca953x_write_single(chip, offset, reg_val, off);
-+	ret = pca953x_write_single(chip, chip->offset->direction, reg_val, off);
- 	if (ret)
- 		goto exit;
- 
-@@ -299,18 +295,10 @@ static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
- {
- 	struct pca953x_chip *chip = gpiochip_get_data(gc);
- 	u32 reg_val;
--	int ret, offset = 0;
-+	int ret;
- 
- 	mutex_lock(&chip->i2c_lock);
--	switch (chip->chip_type) {
--	case PCA953X_TYPE:
--		offset = PCA953X_INPUT;
--		break;
--	case PCA957X_TYPE:
--		offset = PCA957X_IN;
--		break;
--	}
--	ret = pca953x_read_single(chip, offset, &reg_val, off);
-+	ret = pca953x_read_single(chip, chip->offset->input, &reg_val, off);
- 	mutex_unlock(&chip->i2c_lock);
- 	if (ret < 0) {
- 		/* NOTE:  diagnostic already emitted; that's all we should
-@@ -327,7 +315,7 @@ static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
- {
- 	struct pca953x_chip *chip = gpiochip_get_data(gc);
- 	u8 reg_val;
--	int ret, offset = 0;
-+	int ret;
- 
- 	mutex_lock(&chip->i2c_lock);
- 	if (val)
-@@ -337,15 +325,7 @@ static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
- 		reg_val = chip->reg_output[off / BANK_SZ]
- 			& ~(1u << (off % BANK_SZ));
- 
--	switch (chip->chip_type) {
--	case PCA953X_TYPE:
--		offset = PCA953X_OUTPUT;
--		break;
--	case PCA957X_TYPE:
--		offset = PCA957X_OUT;
--		break;
--	}
--	ret = pca953x_write_single(chip, offset, reg_val, off);
-+	ret = pca953x_write_single(chip, chip->offset->output, reg_val, off);
- 	if (ret)
- 		goto exit;
- 
-@@ -359,19 +339,10 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
- {
- 	struct pca953x_chip *chip = gpiochip_get_data(gc);
- 	u8 reg_val[MAX_BANK];
--	int ret, bank, offset = 0;
-+	int ret, bank;
- 	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
- 	unsigned int bankmask, bankval;
- 
--	switch (chip->chip_type) {
--	case PCA953X_TYPE:
--		offset = PCA953X_OUTPUT;
--		break;
--	case PCA957X_TYPE:
--		offset = PCA957X_OUT;
--		break;
--	}
--
- 	memcpy(reg_val, chip->reg_output, NBANK(chip));
- 	mutex_lock(&chip->i2c_lock);
- 	for (bank = 0; bank < NBANK(chip); bank++) {
-@@ -384,7 +355,9 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
- 		}
- 	}
- 
--	ret = i2c_smbus_write_i2c_block_data(chip->client, offset << bank_shift, NBANK(chip), reg_val);
-+	ret = i2c_smbus_write_i2c_block_data(chip->client,
-+					     chip->offset->output << bank_shift,
-+					     NBANK(chip), reg_val);
- 	if (ret)
- 		goto exit;
- 
-@@ -516,7 +489,7 @@ static bool pca953x_irq_pending(struct pca953x_chip *chip, u8 *pending)
- 	bool pending_seen = false;
- 	bool trigger_seen = false;
- 	u8 trigger[MAX_BANK];
--	int ret, i, offset = 0;
-+	int ret, i;
- 
- 	if (chip->driver_data & PCA_PCAL) {
- 		/* Read the current interrupt status from the device */
-@@ -541,15 +514,7 @@ static bool pca953x_irq_pending(struct pca953x_chip *chip, u8 *pending)
- 		return pending_seen;
- 	}
- 
--	switch (chip->chip_type) {
--	case PCA953X_TYPE:
--		offset = PCA953X_INPUT;
--		break;
--	case PCA957X_TYPE:
--		offset = PCA957X_IN;
--		break;
--	}
--	ret = pca953x_read_regs(chip, offset, cur_stat);
-+	ret = pca953x_read_regs(chip, chip->offset->input, cur_stat);
- 	if (ret)
- 		return false;
- 
-@@ -609,20 +574,13 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
- 			     int irq_base)
- {
- 	struct i2c_client *client = chip->client;
--	int ret, i, offset = 0;
-+	int ret, i;
- 
- 	if (client->irq && irq_base != -1
- 			&& (chip->driver_data & PCA_INT)) {
- 
--		switch (chip->chip_type) {
--		case PCA953X_TYPE:
--			offset = PCA953X_INPUT;
--			break;
--		case PCA957X_TYPE:
--			offset = PCA957X_IN;
--			break;
--		}
--		ret = pca953x_read_regs(chip, offset, chip->irq_stat);
-+		ret = pca953x_read_regs(chip,
-+					chip->offset->input, chip->irq_stat);
- 		if (ret)
- 			return ret;
- 
-@@ -685,6 +643,8 @@ static int device_pca953x_init(struct pca953x_chip *chip, u32 invert)
- 	int ret;
- 	u8 val[MAX_BANK];
- 
-+	chip->offset = &pca953x_offsets;
-+
- 	ret = pca953x_read_regs(chip, PCA953X_OUTPUT, chip->reg_output);
- 	if (ret)
- 		goto out;
-@@ -710,6 +670,8 @@ static int device_pca957x_init(struct pca953x_chip *chip, u32 invert)
- 	int ret;
- 	u8 val[MAX_BANK];
- 
-+	chip->offset = &pca957x_offsets;
-+
- 	ret = pca953x_read_regs(chip, PCA957X_OUT, chip->reg_output);
- 	if (ret)
- 		goto out;
--- 
+ 	switch (type & IRQ_TYPE_SENSE_MASK) {
+ 	case IRQ_TYPE_EDGE_RISING:
+ 		pin_reg &=3D ~BIT(LEVEL_TRIG_OFF);
+--=20
 2.7.4
 
+Any comments or feedback on the above patch
