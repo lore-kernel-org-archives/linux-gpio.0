@@ -1,144 +1,106 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH v3 5/8] pinctrl: Add core support for Aspeed SoCs
-Date: Thu, 08 Sep 2016 13:28:25 +0930
-Message-ID: <1473307105.10397.23.camel@aj.id.au>
-References: <20160830075427.11493-1-andrew@aj.id.au>
-         <20160830075427.11493-6-andrew@aj.id.au>
-         <CACRpkdb2ftH5B5VqKW9rPU=LMeWjrfo9jBTP5DKbNYeZAoMC8Q@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH v2 3/4] ARM: dts: Add NextThing GR8 dtsi
+Date: Thu, 8 Sep 2016 12:46:14 +0800
+Message-ID: <CAGb2v64h7kq2jWzUJ74vDdOOQOXPxjx3ruSsJMXvyr7fP63BGg@mail.gmail.com>
+References: <20160907145400.27192-1-maxime.ripard@free-electrons.com>
+ <20160907145400.27192-4-maxime.ripard@free-electrons.com> <CACRpkdZsxA7avmO85R=-Quu7FQwSVMPhQMDmmgL+xbkVTB-2HQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-qeU/vWnpy8W66rRoLqYD"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:58270 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752176AbcIHD6h (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 23:58:37 -0400
-In-Reply-To: <CACRpkdb2ftH5B5VqKW9rPU=LMeWjrfo9jBTP5DKbNYeZAoMC8Q@mail.gmail.com>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:53222 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752017AbcIHEql (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Sep 2016 00:46:41 -0400
+In-Reply-To: <CACRpkdZsxA7avmO85R=-Quu7FQwSVMPhQMDmmgL+xbkVTB-2HQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Joel Stanley <joel@jms.id.au>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
+
+On Thu, Sep 8, 2016 at 3:37 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Sep 7, 2016 at 4:53 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+>
+>> From: Mylène Josserand <mylene.josserand@free-electrons.com>
+>>
+>> The GR8 is an SoC made by Nextthing loosely based on the sun5i family.
+>>
+>> Since it's not clear yet what we can factor out and merge with the A10s and
+>> A13 support, let's keep it out of the sun5i.dtsi include tree. We will
+>> figure out what can be shared when things settle down.
+>>
+>> Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
+>> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>
+> Acked-by: Linus Walleij <linus,walleij@linaro.org>
+>
+> I was just thinking:
+>
+>> +                       i2c0_pins_a: i2c0@0 {
+>> +                               allwinner,pins = "PB0", "PB1";
+>> +                               allwinner,function = "i2c0";
+>> +                               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+>> +                               allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+>> +                       };
+>
+> It would be *NICE* if the sunxi driver would start to support the new standard
+> bindings for this stuff, see
+> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+>
+> So you could just use pins, function and the drive-strength and
+> bias-disable in this case.
+>
+> Since I know the AllWinner support is a community project I have much higher
+> tolerance with this legacy binding sticking around for the new generation of
+> SoCs but still, if you find time.
+>
+> I mean it like supporting these in *addition* to the custom ones, so there can
+> be a smooth phase-over.
+>
+> Check for example Laurent's commit for SH-PFC:
+> commit 16ccaf5bb5a52372bfebd3dfbb79dd810ad49c09
+> "pinctrl: sh-pfc: Accept standard function, pins and groups properties"
+> It's awesome, and since, they have improved the looks of Renesas
+> DTS files a lot.
+>
+> It could look a bit like this nice thing from
+> lpc4337-ciaa.dts:
+>
+> &pinctrl {
+>         enet_rmii_pins: enet-rmii-pins {
+>                 enet_rmii_rxd_cfg {
+>                         pins = "p1_15", "p0_0";
+>                         function = "enet";
+>                         slew-rate = <1>;
+>                         bias-disable;
+>                         input-enable;
+>                         input-schmitt-disable;
+>                 };
+>
+>                 enet_rmii_txd_cfg {
+>                         pins = "p1_18", "p1_20";
+>                         function = "enet";
+>                         slew-rate = <1>;
+>                         bias-disable;
+>                         input-enable;
+>                         input-schmitt-disable;
+>                 };
+> (etc)
+
+This looks nice. I've slightly looked at the generic pinconf stuff.
+I think we should be able to support them, though the sunxi pinctrl
+driver currently doesn't work well with it though. For example,
+it doesn't declare ".is_generic = true", it doesn't filter
+unsupported pinconf parameters, and it doesn't reply to queries
+correctly. I will fix these bits.
+
+Also, I think we are needlessly using pin groups, 1 pin per group.
+Can pinconf/pinctrl work without them? Would there be any harm
+converting the sunxi driver to work directly with pins? This would
+make it match generic pinconf parsing, and make it easier to get
+both working together.
 
 
---=-qeU/vWnpy8W66rRoLqYD
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, 2016-09-07 at 16:50 +0200, Linus Walleij wrote:
-> On Tue, Aug 30, 2016 at 9:54 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
->=20
-> >=20
-> > The Aspeed SoCs typically provide more than 200 pins for GPIO and other
-> > functions. The signal enabled on a pin is determined on a priority
-> > basis, where a given pin can provide a number of different signal types=
-.
-> >=20
-> > In addition to the priority levels, the Aspeed pin controllers describe
-> > the signal active on a pin by compound logical expressions involving
-> > multiple operators, registers and bits. Some difficulty arises as a
-> > pin's function bit masks for each priority level are frequently not the
-> > same (i.e. we cannot just flip a bit to change from a high to low
-> > priority signal), or even in the same register(s). Some configuration
-> > bits affect multiple pins, while in other cases the signals for a bus
-> > must each be enabled individually.
-> >=20
-> > Together, these features give rise to some complexity in the
-> > implementation. A more complete description of the complexities is
-> > provided in the associated header file.
-> >=20
-> > The patch doesn't implement pinctrl/pinmux/pinconf for any particular
-> > Aspeed SoC, rather it adds the framework for defining pinmux
-> > configurations.
-> >=20
-> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> > Reviewed-by: Joel Stanley <joel@jms.id.au>
-> Patch applied! It's not getting better than this through iteration, it is=
- better
-> to get the system up and develop inside the mainline tree from now on.
->=20
-> >=20
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -1027,6 +1027,7 @@ S:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0Maintained
-> > =C2=A0F:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0arch/arm/mach-aspeed/
-> > =C2=A0F:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0arch/arm/boot/dts/aspeed-*
-> > =C2=A0F:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0drivers/*/*aspeed*
-> > +F:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0drivers/pinctrl/aspeed/
-> > =C2=A0F:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Documentation/devicetree/bindings=
-/*/*aspeed*
-> I dropped this hunk of the patch, because:
->=20
-> (A) I didn't merge the glob patch and
-
-Okay
-
-> (B) the glob covers this driver too, it is a tautology/truism
-
-So experimenting with this my results don't agree - without the hunk
-get_maintainer.pl falls back to git and s-o-bs to pick up the Aspeed
-maintainer:
-
-With the hunk:
-
-    $ ./scripts/get_maintainer.pl drivers/pinctrl/aspeed/pinctrl-aspeed.c
-    Joel Stanley <    joel@jms.id.au    > (maintainer:ARM/ASPEED MACHINE SU=
-PPORT)
-    Linus Walleij <    linus.walleij@linaro.org    > (maintainer:PIN CONTRO=
-L SUBSYSTEM)
-    linux-gpio@vger.kernel.org     (open list:PIN CONTROL SUBSYSTEM)
-
-Without the hunk:
-
-    $ ./scripts/get_maintainer.pl drivers/pinctrl/aspeed/pinctrl-aspeed.c
-    Linus Walleij <    linus.walleij@linaro.org    > (maintainer:PIN CONTRO=
-L SUBSYSTEM)
-    Joel Stanley <    joel@jms.id.au    > (commit_signer:1/1=3D100%)
-    Andrew Jeffery <    andrew@aj.id.au    > (commit_signer:1/1=3D100%,auth=
-ored:1/1=3D100%,added_lines:498/498=3D100%)
-    linux-gpio@vger.kernel.org     (open list:PIN CONTROL SUBSYSTEM)
-    linux-kernel@vger.kernel.org     (open list)
-
-So removing git as a fallback Joel isn't listed as a relevant
-maintainer despite the glob:
-
-    $ ./scripts/get_maintainer.pl --no-git-fallback drivers/pinctrl/aspeed/=
-pinctrl-aspeed.c
-    Linus Walleij <    linus.walleij@linaro.org    > (maintainer:PIN CONTRO=
-L SUBSYSTEM)
-    linux-gpio@vger.kernel.org     (open list:PIN CONTROL SUBSYSTEM)
-    linux-kernel@vger.kernel.org     (open list)
-
-I expect it's the case that the globbing doesn't match directories like
-the hunk in question does with its trailing '/'. However, given we will
-likely do something different in light of Arnd's suggestion it probably
-doesn't matter.
-
-Cheers,
-
-Andrew
---=-qeU/vWnpy8W66rRoLqYD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCgAGBQJX0OHhAAoJEJ0dnzgO5LT5cfoP/jG46VWSd8VSqbHrc/MTtl+Q
-xa/YtU9PEXHP5pkcTr6Hh7GWV1vSoMf/q1SAWITawM/wuzUW7U3+L+maqwJp2g4d
-m6yrCSwlGvOjeW7z6H+HSU7lMBd1xjHAX29qg8g994+5woj8ofdtsrJlgFSBbBbf
-v7/PxTBvHBA1spYXsF078ooy7JdZSfsdK1JDcgW1uz2Obf7A5xLGvV/YvIXtow4O
-n6hSj/L8enQpfNmTg3vAv3xGBVEKm1V/WvXQMeUHyozRJHvLJOt1XLww9tTM62E3
-qwEq7gd/GzGW+Bqqq+0jttURgU0iolfMr6d+0GMsHniN0LfnFAkrym9wsBKBReq0
-8WIkF1SFSZ3CCSd3sx2SGzUb1F0TpSN8opPerl3nNlTNjzaox4083r0FsS5F6lK6
-eqy5Jj8ypLrEXvyVlnQnzmNLfiNrGllfQzkFn2crIZu+gEpmKtEFF9+ZqzZ1UfMy
-93B7PvAd+ZHIQONiQ2grwcL4pveGI+OlA3agjXZCwXKTtYUYGzlz5NntXkTTj05u
-aUjjyVlPZTwIYGQ0hbTyZZotuHjmigbcirUKPgEfSYsDSYU0dgNGiJpKHEK58Ape
-huM67jzOnzfthto5U4NvoyCTBde7G+CkQ/jTzcT23S0NCGRzhGWM+rIVopsaBZyN
-+jW4eqh443ZS9aTm2mgF
-=HKLk
------END PGP SIGNATURE-----
-
---=-qeU/vWnpy8W66rRoLqYD--
-
+Regards
+ChenYu
