@@ -1,87 +1,106 @@
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v2 3/4] ARM: dts: Add NextThing GR8 dtsi
-Date: Thu, 8 Sep 2016 09:37:48 +0200
-Message-ID: <20160908073748.GF8913@lukather>
+Subject: Re: [PATCH v2 4/4] ARM: dts: gr8: Add support for the GR8 evaluation
+ board
+Date: Thu, 8 Sep 2016 09:40:17 +0200
+Message-ID: <20160908074017.GG8913@lukather>
 References: <20160907145400.27192-1-maxime.ripard@free-electrons.com>
- <20160907145400.27192-4-maxime.ripard@free-electrons.com>
- <CACRpkdZsxA7avmO85R=-Quu7FQwSVMPhQMDmmgL+xbkVTB-2HQ@mail.gmail.com>
- <CAGb2v64h7kq2jWzUJ74vDdOOQOXPxjx3ruSsJMXvyr7fP63BGg@mail.gmail.com>
+ <20160907145400.27192-5-maxime.ripard@free-electrons.com>
+ <CAGb2v66Ed1u5NaC9ev=ohywCbssy6BnkPcThY2D9O=_eNK1pdA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="B0nZA57HJSoPbsHY"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="hcut4fGOf7Kh6EdG"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:37028 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752396AbcIHHkj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Sep 2016 03:40:39 -0400
 Content-Disposition: inline
-In-Reply-To: <CAGb2v64h7kq2jWzUJ74vDdOOQOXPxjx3ruSsJMXvyr7fP63BGg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
+In-Reply-To: <CAGb2v66Ed1u5NaC9ev=ohywCbssy6BnkPcThY2D9O=_eNK1pdA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
 
 
---B0nZA57HJSoPbsHY
+--hcut4fGOf7Kh6EdG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 08, 2016 at 12:46:14PM +0800, Chen-Yu Tsai wrote:
-> > I mean it like supporting these in *addition* to the custom ones, so th=
-ere can
-> > be a smooth phase-over.
-> >
-> > Check for example Laurent's commit for SH-PFC:
-> > commit 16ccaf5bb5a52372bfebd3dfbb79dd810ad49c09
-> > "pinctrl: sh-pfc: Accept standard function, pins and groups properties"
-> > It's awesome, and since, they have improved the looks of Renesas
-> > DTS files a lot.
-> >
-> > It could look a bit like this nice thing from
-> > lpc4337-ciaa.dts:
-> >
-> > &pinctrl {
-> >         enet_rmii_pins: enet-rmii-pins {
-> >                 enet_rmii_rxd_cfg {
-> >                         pins =3D "p1_15", "p0_0";
-> >                         function =3D "enet";
-> >                         slew-rate =3D <1>;
-> >                         bias-disable;
-> >                         input-enable;
-> >                         input-schmitt-disable;
-> >                 };
-> >
-> >                 enet_rmii_txd_cfg {
-> >                         pins =3D "p1_18", "p1_20";
-> >                         function =3D "enet";
-> >                         slew-rate =3D <1>;
-> >                         bias-disable;
-> >                         input-enable;
-> >                         input-schmitt-disable;
-> >                 };
-> > (etc)
+On Wed, Sep 07, 2016 at 11:23:56PM +0800, Chen-Yu Tsai wrote:
+> > +&i2c1 {
+> > +       pinctrl-names =3D "default";
+> > +       pinctrl-0 =3D <&i2c1_pins_a>;
+> > +       status =3D "okay";
+> > +
+> > +       pcf8563: rtc@51 {
+> > +               compatible =3D "phg,pcf8563";
+> > +               reg =3D <0x51>;
+> > +       };
+> > +
+> > +       wm8978: codec@1a {
+> > +               #sound-dai-cells =3D <0>;
+> > +               compatible =3D "wlf,wm8978";
+> > +               reg =3D <0x1a>;
+> > +       };
 >=20
-> This looks nice.
+> Seems like I2S support will happen soon? :)
 
-Indeed.
+Indeed :)
 
-> I've slightly looked at the generic pinconf stuff.  I think we
-> should be able to support them, though the sunxi pinctrl driver
-> currently doesn't work well with it though. For example, it doesn't
-> declare ".is_generic =3D true", it doesn't filter unsupported pinconf
-> parameters, and it doesn't reply to queries correctly. I will fix
-> these bits.
+It's not working for the moment, which is why it's not enabled through
+a simple-card, but I'll work on it ASAP.
+
+(same thing with SPDIF).
+
 >=20
-> Also, I think we are needlessly using pin groups, 1 pin per group.
-> Can pinconf/pinctrl work without them? Would there be any harm
-> converting the sunxi driver to work directly with pins? This would
-> make it match generic pinconf parsing, and make it easier to get
-> both working together.
+> > +};
+>=20
+> [...]
+>=20
+> > diff --git a/arch/arm/boot/dts/ntc-gr8.dtsi b/arch/arm/boot/dts/ntc-gr8=
+=2Edtsi
+> > index d21cfa3f3c14..cdb7a12946c4 100644
+> > --- a/arch/arm/boot/dts/ntc-gr8.dtsi
+> > +++ b/arch/arm/boot/dts/ntc-gr8.dtsi
+>=20
+> This looks like the wrong patch. Nevertheless...
 
-I think it comes from a requirement that you had to have groups at
-some point (I don't know if it's still the case), which is why we
-ended up with single-pin groups, because we can mux each pins entirely
-separately.
+Hmmm, indeed.
 
-If it's not required anymore, then yes, it makes total sense to remove
-it.
+>=20
+> > @@ -228,7 +228,7 @@
+> >
+> >                 axi_gates: clk@01c2005c {
+> >                         #clock-cells =3D <1>;
+> > -                       compatible =3D "allwinner,sun4i-a10-axi-gates-c=
+lk";
+> > +                       compatible =3D "allwinner,sun4i-a10-gates-clk";
+> >                         reg =3D <0x01c2005c 0x4>;
+> >                         clocks =3D <&axi>;
+> >                         clock-indices =3D <0>;
+> > @@ -244,7 +244,7 @@
+> >                                         <2>, <5>, <6>,
+> >                                         <7>, <8>, <9>,
+> >                                         <10>, <13>,
+> > -                                       <14>, <20>,
+> > +                                       <14>, <17>, <20>,
+> >                                         <21>, <22>,
+> >                                         <28>, <32>, <34>,
+> >                                         <36>, <40>, <44>,
+> > @@ -254,7 +254,7 @@
+> >                                              "ahb_ohci", "ahb_ss", "ahb=
+_dma",
+> >                                              "ahb_bist", "ahb_mmc0", "a=
+hb_mmc1",
+> >                                              "ahb_mmc2", "ahb_nand",
+> > -                                            "ahb_sdram", "ahb_spi0",
+> > +                                            "ahb_sdram", "ahb_sdram", =
+"ahb_spi0",
+>=20
+> I don't think this will work. Copy/paste error?
+
+Yes, that was supposed to be ethernet. Sorry.
 
 Maxime
 
@@ -90,25 +109,25 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---B0nZA57HJSoPbsHY
+--hcut4fGOf7Kh6EdG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJX0RVMAAoJEBx+YmzsjxAgQ6oP/ivMp0S8i0TcbjdmaYNF3yPl
-CPg9cHQ4Vg2rO2yqtFaUjfohxLnPg0yrr7GoVU3gEBVzGEjp+3MEypYsKiaBBeM9
-FOEoiXy88Hh+rJqcS/3c+6P6zlBvNsNfrfJZjJXtmYIXRdBub8zwGFZZEK5006uI
-aYt1AJ4ZJ+Y+G1aopYKu8cgvUXaPN8dpHPTUAIPfxjB7FLqRI+V/QgBxErcYxuRc
-4DPAlYycK3RG+Jid8x++FwYu/SuT3cMdVWQWo5HCxHAYAXpoOBfzdZdZmfV6x3m4
-00CeZczmxapnVdBtdKWpQlFL2bN+uw9tfi2G3PIxdh+SaQYd9Jkkvm52CNCHdvie
-mnKQrSdvh9zc2BYsg9jVZg55SAh9L/Jp8Aln9fytk1pRqOL+QDAvXS7D8Ck10EWV
-4ph4VI2Q80bNj1xaa382JsGox81v4Sn1vmU3EfvuJky+scXc9Didc5+R+jZuGYVl
-qp659x+w7CzTNNrVBWMPJu1Wrh0Sy9PJjG93BHshktK1o3N8tZK6f9A/SAqhyUpg
-KAGWR2NOE1D72Dzanwb/jibmu4lOgHxEnqR9Hbivb0NP6/1nDEIm0BairFdmn4j1
-sDhNcp1b+mkr0q2yki2WQBNyB9NFUkiL5ZdYQLtH2QPyxFK84GzGr22KkrE1+1Xq
-V3zLL6fXCJFLVJIobVu9
-=drSZ
+iQIcBAEBAgAGBQJX0RXgAAoJEBx+YmzsjxAgDXIQAMC1sESnaJGKyKa6Mr8mcrRf
+DKJ1OVfmfHUjkvLTy8RCAev3vJwW8UZH6e3vmM5SmnlUqYwPWn0vGNMzNP9eXWIK
+oNStFscFoHDLpBDHM7dl56xJv+SDnsrjaGil166uQ4Dcn+PZtYMrJacN13RkD5Or
+zjwbcvykCNkpU/bqZXnxnTE97zFz6RmtBOY+9MRKiJQR9f4qgdFyZxclitodTFC2
+CE2rO6h5vA1sASh41CbtiEJLiTOJobW9CwIy63P4Y9tzCLjzeIF/TT+CGdF5A0Dp
+XOExczRR76hQI7hsplp9Ymde/lfulMsahAbqRSHk4pbSJDsdxnr8EBOFZYVcFzBL
+Z03SKqh1ikwYyB9IZXyqV2S/mbh+fFDMDmqXUQODofqRMDQ5wMQYJ2ADc4MUGPYr
+jYs5FRwy/pfQZItaqHTWqRhzFrXn7mFQDCr5W9iAntGjUPvTPkHMoktlMbfdsQY/
+rEhrboCnm9LWIDiVYwABfOdxZbnT4Z3wlyQB0X0VMRIbUzRTn3F2Ne9a8AEqzmd/
+0dwoAZch2qdpnkv+IRJv7oK32joMDAhzqFbxXagBLug7B4R9Uaeb5FrRUIlWJ7gV
++f40VUmYefM6do/DaEmeChNia8GV3LkQxWIfdrFagDyTVD6jZh8KIJYLm1nA8sdx
+KthL6/UYTCycIUy4ScJP
+=BmFF
 -----END PGP SIGNATURE-----
 
---B0nZA57HJSoPbsHY--
+--hcut4fGOf7Kh6EdG--
