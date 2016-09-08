@@ -1,219 +1,284 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v2 3/4] ARM: dts: Add NextThing GR8 dtsi
-Date: Thu, 8 Sep 2016 09:41:55 +0200
-Message-ID: <20160908074155.GH8913@lukather>
-References: <20160907145400.27192-1-maxime.ripard@free-electrons.com>
- <20160907145400.27192-4-maxime.ripard@free-electrons.com>
- <CAGb2v67WLn6Sv9ie9CrA52zHf0xbwVd7YrJ_2pF3UW8LmxVvRQ@mail.gmail.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH v4 2/9] drivers: irqchip: Add STM32 external interrupts
+ support
+Date: Thu, 8 Sep 2016 11:03:11 +0200
+Message-ID: <550daf4a-0093-0b54-a305-eddd3882d993@st.com>
+References: <1473180341-1999-1-git-send-email-alexandre.torgue@st.com>
+ <1473180341-1999-3-git-send-email-alexandre.torgue@st.com>
+ <20160906173737.GU10637@io.lakedaemon.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="D6IIOQQv2Iwyp54J"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:37064 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1755601AbcIHHmH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Sep 2016 03:42:07 -0400
-Content-Disposition: inline
-In-Reply-To: <CAGb2v67WLn6Sv9ie9CrA52zHf0xbwVd7YrJ_2pF3UW8LmxVvRQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160906173737.GU10637@io.lakedaemon.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jason Cooper <jason@lakedaemon.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com, lee.jones@linaro.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
+
+Hi Jason,
+
+On 09/06/2016 07:37 PM, Jason Cooper wrote:
+> On Tue, Sep 06, 2016 at 06:45:34PM +0200, Alexandre TORGUE wrote:
+>> The STM32 external interrupt controller consists of edge detectors that
+>> generate interrupts requests or wake-up events.
+>>
+>> Each line can be independently configured as interrupt or wake-up source,
+>> and triggers either on rising, falling or both edges. Each line can also
+>> be masked independently.
+>>
+>> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+>>
+>> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+>> index 7f87289..bc62d1f 100644
+>> --- a/drivers/irqchip/Kconfig
+>> +++ b/drivers/irqchip/Kconfig
+>> @@ -264,3 +264,7 @@ config EZNPS_GIC
+>>  	select IRQ_DOMAIN
+>>  	help
+>>  	  Support the EZchip NPS400 global interrupt controller
+>> +
+>> +config STM32_EXTI
+>> +	bool
+>> +	select IRQ_DOMAIN
+>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+>> index 4c203b6..96383b2 100644
+>> --- a/drivers/irqchip/Makefile
+>> +++ b/drivers/irqchip/Makefile
+>> @@ -71,3 +71,4 @@ obj-$(CONFIG_MVEBU_ODMI)		+= irq-mvebu-odmi.o
+>>  obj-$(CONFIG_LS_SCFG_MSI)		+= irq-ls-scfg-msi.o
+>>  obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
+>>  obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o
+>> +obj-$(CONFIG_STM32_EXTI) 		+= irq-stm32-exti.o
+>> diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
+>> new file mode 100644
+>> index 0000000..763c17c
+>> --- /dev/null
+>> +++ b/drivers/irqchip/irq-stm32-exti.c
+>> @@ -0,0 +1,203 @@
+>> +/*
+>> + * Copyright (C) Maxime Coquelin 2015
+>> + * Author:  Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>> + * License terms:  GNU General Public License (GPL), version 2
+>> + */
+>> +
+>> +#include <linux/bitops.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/io.h>
+>> +#include <linux/irq.h>
+>> +#include <linux/irqchip.h>
+>> +#include <linux/irqchip/chained_irq.h>
+>> +#include <linux/irqchip/chained_irq.h>
+>
+> double paste?
+> double paste?
+>
+> If there are no other critiques, I'll fix this up when I pull in patches
+> 1 and 2.
+>
+Yes bad copy/paste. I have to send a v5 with Linus (W) remarks. So I 
+will fix it in the v5.
+
+Thanks
+
+Alex
 
 
---D6IIOQQv2Iwyp54J
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Sep 08, 2016 at 12:32:48AM +0800, Chen-Yu Tsai wrote:
-> On Wed, Sep 7, 2016 at 10:53 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > From: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
-> >
-> > The GR8 is an SoC made by Nextthing loosely based on the sun5i family.
-> >
-> > Since it's not clear yet what we can factor out and merge with the A10s=
- and
-> > A13 support, let's keep it out of the sun5i.dtsi include tree. We will
-> > figure out what can be shared when things settle down.
-> >
-> > Signed-off-by: Myl=E8ne Josserand <mylene.josserand@free-electrons.com>
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  arch/arm/boot/dts/ntc-gr8.dtsi | 1080 ++++++++++++++++++++++++++++++++=
-++++++++
-> >  1 file changed, 1080 insertions(+)
-> >  create mode 100644 arch/arm/boot/dts/ntc-gr8.dtsi
-> >
-> > diff --git a/arch/arm/boot/dts/ntc-gr8.dtsi b/arch/arm/boot/dts/ntc-gr8=
-=2Edtsi
-> > new file mode 100644
-> > index 000000000000..d21cfa3f3c14
-> > --- /dev/null
-> > +++ b/arch/arm/boot/dts/ntc-gr8.dtsi
-> > @@ -0,0 +1,1080 @@
->=20
-> [...]
->=20
-> > +               pll3x2: pll3x2_clk {
-> > +                       compatible =3D "fixed-factor-clock";
->=20
-> I think you want "allwinner,sun4i-a10-pll3-2x-clk"?
-
-Indeed.
-
-> > +               tcon_ch1_clk: clk@01c2012c {
-> > +                       #clock-cells =3D <0>;
-> > +                       compatible =3D "allwinner,sun4i-a10-tcon-ch1-cl=
-k";
-> > +                       reg =3D <0x01c2012c 0x4>;
-> > +                       clocks =3D <&pll3>, <&pll7>, <&pll3x2>, <&pll7x=
-2>;
-> > +                       clock-output-names =3D "tcon-ch1-sclk";
-> > +               };
->=20
-> Nit: Is there a ve_clk we could add?
-
-I don't know. No one uses it, and the next item on my todo list is to
-move the sun5i SoCs to sunxi-ng, so it seems a bit useless to add that
-one.
-
->=20
-> [...]
->=20
-> > +               pio: pinctrl@01c20800 {
-> > +                       compatible =3D "nextthing,gr8-pinctrl";
-> > +                       reg =3D <0x01c20800 0x400>;
-> > +                       interrupts =3D <28>;
-> > +                       clocks =3D <&apb0_gates 5>;
-> > +                       gpio-controller;
-> > +                       interrupt-controller;
-> > +                       #interrupt-cells =3D <3>;
-> > +                       #gpio-cells =3D <3>;
-> > +
-> > +                       i2c0_pins_a: i2c0@0 {
-> > +                               allwinner,pins =3D "PB0", "PB1";
-> > +                               allwinner,function =3D "i2c0";
-> > +                               allwinner,drive =3D <SUN4I_PINCTRL_10_M=
-A>;
-> > +                               allwinner,pull =3D <SUN4I_PINCTRL_NO_PU=
-LL>;
-> > +                       };
-> > +
-> > +                       i2c1_pins_a: i2c1@0 {
-> > +                               allwinner,pins =3D "PB15", "PB16";
-> > +                               allwinner,function =3D "i2c1";
-> > +                               allwinner,drive =3D <SUN4I_PINCTRL_10_M=
-A>;
-> > +                               allwinner,pull =3D <SUN4I_PINCTRL_NO_PU=
-LL>;
-> > +                       };
-> > +
-> > +                       i2c2_pins_a: i2c2@0 {
-> > +                               allwinner,pins =3D "PB17", "PB18";
-> > +                               allwinner,function =3D "i2c2";
-> > +                               allwinner,drive =3D <SUN4I_PINCTRL_10_M=
-A>;
-> > +                               allwinner,pull =3D <SUN4I_PINCTRL_NO_PU=
-LL>;
-> > +                       };
-> > +
-> > +                       i2s0_pins_a: i2s0@0 {
-> > +                               allwinner,pins =3D "PB5", "PB6", "PB7",=
- "PB8", "PB9";
-> > +                               allwinner,function =3D "i2s0";
-> > +                               allwinner,drive =3D <SUN4I_PINCTRL_10_M=
-A>;
-> > +                               allwinner,pull =3D <SUN4I_PINCTRL_NO_PU=
-LL>;
-> > +                       };
->=20
-> You may want to split out the MCLK pin. Some codecs don't need it, and the
-> pin can be allocated for other uses.
-
-ACK.
-
->=20
-> > +
-> > +                       ir0_rx_pins_a: ir0@0 {
-> > +                               allwinner,pins =3D "PB4";
-> > +                               allwinner,function =3D "ir0";
-> > +                               allwinner,drive =3D <SUN4I_PINCTRL_10_M=
-A>;
-> > +                               allwinner,pull =3D <SUN4I_PINCTRL_NO_PU=
-LL>;
-> > +                       };
-> > +
-> > +                       lcd_rgb666_pins: lcd_rgb666@0 {
-> > +                               allwinner,pins =3D "PD2", "PD3", "PD4",=
- "PD5", "PD6", "PD7",
-> > +                                                "PD10", "PD11", "PD12"=
-, "PD13", "PD14", "PD15",
-> > +                                                "PD18", "PD19", "PD20"=
-, "PD21", "PD22", "PD23",
-> > +                                                "PD24", "PD25", "PD26"=
-, "PD27";
-> > +                               allwinner,function =3D "lcd0";
-> > +                               allwinner,drive =3D <SUN4I_PINCTRL_10_M=
-A>;
-> > +                               allwinner,pull =3D <SUN4I_PINCTRL_NO_PU=
-LL>;
-> > +                       };
-> > +
-> > +                       mmc0_pins_a: mmc0@0 {
-> > +                               allwinner,pins =3D "PF0", "PF1", "PF2",=
- "PF3",
-> > +                                                "PF4", "PF5";
-> > +                               allwinner,function =3D "mmc0";
-> > +                               allwinner,drive =3D <SUN4I_PINCTRL_30_M=
-A>;
-> > +                               allwinner,pull =3D <SUN4I_PINCTRL_NO_PU=
-LL>;
-> > +                       };
-> > +
-> > +                       nand_pins_a: nand_base0@0 {
-> > +                               allwinner,pins =3D "PC0", "PC1", "PC2",
-> > +                                               "PC5", "PC8", "PC9", "P=
-C10",
-> > +                                               "PC11", "PC12", "PC13",=
- "PC14",
-> > +                                               "PC15";
-> > +                               allwinner,function =3D "nand0";
-> > +                               allwinner,drive =3D <0>;
-> > +                               allwinner,pull =3D <0>;
->=20
-> Macros for the nand pins?
-
-Indeed.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---D6IIOQQv2Iwyp54J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX0RZCAAoJEBx+YmzsjxAglDYP/1eDhlSn6hetT0w2Yh3BIjuN
-vBTz67wevefxic4mazTw64aMcLTVNckej4ms9GvrPToZq5mADz6G895CIZeH+hQK
-9dzK7wXh0o7TXw9OwVq1fi6F4KbyqbIqq9KD3sSZNee3dXQd4SwTQ/MS4L7mHYYz
-ar1sGNsne8rQc456GAbtVjqHumYf39EvbcKru8eOZP5Jju7FUaphIq7kUFQL4R4E
-9FWqrLzeXIe9kE+oczLcQWhz4axqetryL2BBSQ++L0x+hEoghJSxVHYFWs+owfvW
-Rx47u+K7NJ8exlwQkulgjL6B8q1Cr6t8EuAEeARoId7TuYGVJEFg/20V247kgYb2
-mCTUSeIvYT+JW3t4j3w/sw/A1+SrVemLu6YjajsAxKOQrrU0EBh7YZT9/Xv+pfSq
-rCG4iWN2CewUMzyzCMCQHuQS5s1rkq+oxxdtrSQRH5tF/YMqrHNX6EeMscvxsSi1
-gPJezuu2MSIAL6Yicv03djP9Hh9OP7E/NfhP16Y+pmD+M5L2visSBE44o/wkLar/
-ooN+6bUTLo7h+nM28yuYVJn+aIdEYnR/tgSIxUeWtn0P0HnwoBJCGGA7AHkWl09p
-A2IRSz66lEj7Q+GN2O7k8M21ML3uG2IDCxtPpefyIJJDt4SGweCxo0OKomgO81vo
-nf/ePUsc4VnwwlAyhkQZ
-=BAyj
------END PGP SIGNATURE-----
-
---D6IIOQQv2Iwyp54J--
+> thx,
+>
+> Jason.
+>
+>> +#include <linux/irqdomain.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_irq.h>
+>> +
+>> +#define EXTI_IMR	0x0
+>> +#define EXTI_EMR	0x4
+>> +#define EXTI_RTSR	0x8
+>> +#define EXTI_FTSR	0xc
+>> +#define EXTI_SWIER	0x10
+>> +#define EXTI_PR		0x14
+>> +
+>> +static void stm32_irq_handler(struct irq_desc *desc)
+>> +{
+>> +	struct irq_domain *domain = irq_desc_get_handler_data(desc);
+>> +	struct irq_chip_generic *gc = domain->gc->gc[0];
+>> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+>> +	unsigned long pending;
+>> +	int n;
+>> +
+>> +	chained_irq_enter(chip, desc);
+>> +
+>> +	while ((pending = irq_reg_readl(gc, EXTI_PR))) {
+>> +		for_each_set_bit(n, &pending, BITS_PER_LONG) {
+>> +			generic_handle_irq(irq_find_mapping(domain, n));
+>> +			irq_reg_writel(gc, BIT(n), EXTI_PR);
+>> +		}
+>> +	}
+>> +
+>> +	chained_irq_exit(chip, desc);
+>> +}
+>> +
+>> +static int stm32_irq_set_type(struct irq_data *data, unsigned int type)
+>> +{
+>> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
+>> +	int pin = data->hwirq;
+>> +	u32 rtsr, ftsr;
+>> +
+>> +	irq_gc_lock(gc);
+>> +
+>> +	rtsr = irq_reg_readl(gc, EXTI_RTSR);
+>> +	ftsr = irq_reg_readl(gc, EXTI_FTSR);
+>> +
+>> +	switch (type) {
+>> +	case IRQ_TYPE_EDGE_RISING:
+>> +		rtsr |= BIT(pin);
+>> +		ftsr &= ~BIT(pin);
+>> +		break;
+>> +	case IRQ_TYPE_EDGE_FALLING:
+>> +		rtsr &= ~BIT(pin);
+>> +		ftsr |= BIT(pin);
+>> +		break;
+>> +	case IRQ_TYPE_EDGE_BOTH:
+>> +		rtsr |= BIT(pin);
+>> +		ftsr |= BIT(pin);
+>> +		break;
+>> +	default:
+>> +		irq_gc_unlock(gc);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	irq_reg_writel(gc, rtsr, EXTI_RTSR);
+>> +	irq_reg_writel(gc, ftsr, EXTI_FTSR);
+>> +
+>> +	irq_gc_unlock(gc);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int stm32_irq_set_wake(struct irq_data *data, unsigned int on)
+>> +{
+>> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
+>> +	int pin = data->hwirq;
+>> +	u32 emr;
+>> +
+>> +	irq_gc_lock(gc);
+>> +
+>> +	emr = irq_reg_readl(gc, EXTI_EMR);
+>> +	if (on)
+>> +		emr |= BIT(pin);
+>> +	else
+>> +		emr &= ~BIT(pin);
+>> +	irq_reg_writel(gc, emr, EXTI_EMR);
+>> +
+>> +	irq_gc_unlock(gc);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int stm32_exti_alloc(struct irq_domain *d, unsigned int virq,
+>> +			    unsigned int nr_irqs, void *data)
+>> +{
+>> +	struct irq_chip_generic *gc = d->gc->gc[0];
+>> +	struct irq_fwspec *fwspec = data;
+>> +	irq_hw_number_t hwirq;
+>> +
+>> +	hwirq = fwspec->param[0];
+>> +
+>> +	irq_map_generic_chip(d, virq, hwirq);
+>> +	irq_domain_set_info(d, virq, hwirq, &gc->chip_types->chip, gc,
+>> +			    handle_simple_irq, NULL, NULL);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void stm32_exti_free(struct irq_domain *d, unsigned int virq,
+>> +			    unsigned int nr_irqs)
+>> +{
+>> +	struct irq_data *data = irq_get_irq_data(virq);
+>> +
+>> +	irq_gc_mask_clr_bit(data->parent_data);
+>> +	irq_domain_reset_irq_data(data);
+>> +}
+>> +
+>> +struct irq_domain_ops irq_exti_domain_ops = {
+>> +	.map	= irq_map_generic_chip,
+>> +	.xlate	= irq_domain_xlate_onetwocell,
+>> +	.alloc  = stm32_exti_alloc,
+>> +	.free	= stm32_exti_free,
+>> +};
+>> +
+>> +static int __init stm32_exti_init(struct device_node *node,
+>> +				  struct device_node *parent)
+>> +{
+>> +	unsigned int clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
+>> +	int nr_irqs, nr_exti, ret, i;
+>> +	struct irq_chip_generic *gc;
+>> +	struct irq_domain *domain;
+>> +	void *base;
+>> +
+>> +	base = of_iomap(node, 0);
+>> +	if (!base) {
+>> +		pr_err("%s: Unable to map registers\n", node->full_name);
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	/* Determine number of irqs supported */
+>> +	writel_relaxed(~0UL, base + EXTI_RTSR);
+>> +	nr_exti = fls(readl_relaxed(base + EXTI_RTSR));
+>> +	writel_relaxed(0, base + EXTI_RTSR);
+>> +
+>> +	pr_info("%s: %d External IRQs detected\n", node->full_name, nr_exti);
+>> +
+>> +	domain = irq_domain_add_linear(node, nr_exti,
+>> +				       &irq_exti_domain_ops, NULL);
+>> +	if (!domain) {
+>> +		pr_err("%s: Could not register interrupt domain.\n",
+>> +				node->name);
+>> +		ret = -ENOMEM;
+>> +		goto out_unmap;
+>> +	}
+>> +
+>> +	ret = irq_alloc_domain_generic_chips(domain, nr_exti, 1, "exti",
+>> +					     handle_edge_irq, clr, 0, 0);
+>> +	if (ret) {
+>> +		pr_err("%s: Could not allocate generic interrupt chip.\n",
+>> +			node->full_name);
+>> +		goto out_free_domain;
+>> +	}
+>> +
+>> +	gc = domain->gc->gc[0];
+>> +	gc->reg_base                         = base;
+>> +	gc->chip_types->type               = IRQ_TYPE_EDGE_BOTH;
+>> +	gc->chip_types->chip.name          = gc->chip_types[0].chip.name;
+>> +	gc->chip_types->chip.irq_ack       = irq_gc_ack_set_bit;
+>> +	gc->chip_types->chip.irq_mask      = irq_gc_mask_clr_bit;
+>> +	gc->chip_types->chip.irq_unmask    = irq_gc_mask_set_bit;
+>> +	gc->chip_types->chip.irq_set_type  = stm32_irq_set_type;
+>> +	gc->chip_types->chip.irq_set_wake  = stm32_irq_set_wake;
+>> +	gc->chip_types->regs.ack           = EXTI_PR;
+>> +	gc->chip_types->regs.mask          = EXTI_IMR;
+>> +	gc->chip_types->handler            = handle_edge_irq;
+>> +
+>> +	nr_irqs = of_irq_count(node);
+>> +	for (i = 0; i < nr_irqs; i++) {
+>> +		unsigned int irq = irq_of_parse_and_map(node, i);
+>> +
+>> +		irq_set_handler_data(irq, domain);
+>> +		irq_set_chained_handler(irq, stm32_irq_handler);
+>> +	}
+>> +
+>> +	return 0;
+>> +
+>> +out_free_domain:
+>> +	irq_domain_remove(domain);
+>> +out_unmap:
+>> +	iounmap(base);
+>> +	return ret;
+>> +}
+>> +
+>> +IRQCHIP_DECLARE(stm32_exti, "st,stm32-exti", stm32_exti_init);
+>> --
+>> 1.9.1
+>>
