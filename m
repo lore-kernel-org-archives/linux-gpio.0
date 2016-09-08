@@ -1,64 +1,70 @@
-From: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-Subject: Re: [PATCH v3 4/8] gpio: dt-bindings: Add documentation for Aspeed
- GPIO controllers
-Date: Thu, 08 Sep 2016 10:49:28 +0930
-Message-ID: <1473297568.10397.8.camel@aj.id.au>
-References: <20160830075427.11493-1-andrew@aj.id.au>
-         <20160830075427.11493-5-andrew@aj.id.au>
-         <CACRpkdYpmSS3jA=r13r-_UPEKxUvO=U=EUXAtwuZLmxnGDhiwA@mail.gmail.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH 0/3] gpio/pinctrl: imx: let IOMUX controller know about
+ on-SoC GPIOs
+Date: Thu, 8 Sep 2016 09:41:07 +0800
+Message-ID: <20160908014107.GA2533@x250>
+References: <1471644615-10320-1-git-send-email-vladimir_zapolskiy@mentor.com>
+ <cc5ab313-c3c6-bfd4-d2b8-92a7d153cf05@mentor.com>
+ <20160905021201.GC25778@tiger>
+ <1c1d23a0-9656-2682-e573-13385a002998@mentor.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-itkszrbsvJgze70C5TWB"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdYpmSS3jA=r13r-_UPEKxUvO=U=EUXAtwuZLmxnGDhiwA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Jeremy Kerr <jk-mnsaURCQ41sdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:44046 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752176AbcIHBlW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 7 Sep 2016 21:41:22 -0400
+Content-Disposition: inline
+In-Reply-To: <1c1d23a0-9656-2682-e573-13385a002998@mentor.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Sascha Hauer <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Deepak Das <deepak_das@mentor.com>, linux-arm-kernel@lists.infradead.org
 
+On Mon, Sep 05, 2016 at 02:49:16PM +0300, Vladimir Zapolskiy wrote:
+> >If I understand it correctly, with the change, most of GPIO client
+> >device drivers use the same init level as GPIO driver.  So we are not
+> >sure if GPIO driver is ready when client drivers try to request GPIO.
+> 
+> please give it a test run (with and without DTS gpio-ranges changes,
+> or just 2/3 from the series), I've tested on iMX6Q SabreLite, SabreAuto,
+> SabreSD and I don't see any regressions or noticeable increase of
+> -EPROBE_DEFER hits due to not ready GPIOs.
+> 
+> >most of GPIO client device drivers use the same init level as GPIO driver.
+> 
+> IMHO that will be the case, if the change 2/3 from the series is applied.
+> 
+> Statisticaly most of GPIO consumers should settle on device_initcall or
+> module_init level, the latter one is translated to device_initcall if
+> a driver is built-in, so the proposed downgrading of GPIO controller
+> driver init call level looks to be appropriate.
+> 
+> However pinctrl/pinmux driver should definitely have higher init level
+> priority in comparison to GPIO controller driver, every GPIO consumer
+> is a pinctrl/pinmux consumer as well, most of iMX pinctrl/pinmux drivers
+> are initialized at arch_initcall level, so there is a plenty of options
+> to satisfy (GPIO driver initcall) < (pinmux/pinctrl driver initcall)
+> equation:
+> * change pinmux/pinctrl driver initcall level to postcore_initcall
+>   and GPIO driver initcall level to arch_initcall or lower one,
+> * keep pinmux/pinctrl driver at arch_initcall level, set GPIO driver
+>   initcall level to any lower than arch_initcall (e.g. device_initcall)
+> * keep everything as is, drop 2/3 and rely on -EPROBE_DEFER from
+>   GPIO driver probe due to not yet initialized pinctrl driver.
+> 
+> >It shouldn't be a problem if every client driver handle the failure
+> >with deferred probing, but I'm not sure that's the case now.
+> >
+> 
+> From what I see it is the case for the most critical drivers, for the
+> rest I believe it is a bug, which can be revealed by shifting GPIO
+> driver initcall level and fixed, see also
+> 
+> https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2016-August/003419.html
 
---=-itkszrbsvJgze70C5TWB
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Okay, fair enough.
 
-On Wed, 2016-09-07 at 16:43 +0200, Linus Walleij wrote:
-> On Tue, Aug 30, 2016 at 9:54 AM, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org> wrote:
->=20
-> >=20
-> > Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-> > Acked-by: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
-> Patch applied to the GPIO tree with Rob's ACK and moved the compatible
-> to the first line in the process.
+For the series,
 
-Thanks for applying the fixup.
-
-Andrew
---=-itkszrbsvJgze70C5TWB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCgAGBQJX0LygAAoJEJ0dnzgO5LT5NDoQAKDgpM/CEqNh6hUkk82Jp/DK
-eb8YrPzZHWtm7+NVH2sHUePULKnxvgsrpHKvgCR4qN7F0Opr9Xf02znp1rPqq1ZV
-ms1faIngSE2Rkj2zsn6+9hTfOqaKYtY4hY83dCQm6YisF12C++XiHnJ0agUZZyAz
-e4SWY+nFJZuP7utJWAHlEfJ6p9oVdArxd9Fsur/NkFEXY65CSJX1867YgJTc2+UN
-y0UdXhsLK2RbUwWYXC/gWKSz1Z0X8fuOzdLAA2AJLN0Z5yMQYAiNFGKeGq3Ne41/
-ZNy2NQAEb7yKds8ClzmkyY4FzOVk0LkVWEg4EIvQFEDQAwdKvw1rVnFQOQGvcs/+
-1PxYdHDSZNg6s/hVlSVlp7Ivq27Y3So1PiHNp8pF8y+aFpqL1bc/DbBd9LPjb2wy
-e6ME3afjzS3YjfBQ7CczdyA9vcyz1tfsJIWjdAHEK0VJyjhfMStLOdhXy+CJZetK
-wye84fg8KOqnVP1v0Wy2AkZ4VA8Wopk4oB2a/wyGjed73t+T2LEKFH/Bh09QzyA0
-2cHIGRn8DplcLw5fmrQ2hKkAIzsfh7Zxu6GyndkY+hu+/B7K5vgPQIeGHhs7dmgt
-84TpSBCnyWWQ2Ir1VEwfQTM+Xw02dWyanRBPLuy/Romgy79CBzkx1nFA21FDQREy
-yOHFLBIGckjdXpQ70dBY
-=9WfY
------END PGP SIGNATURE-----
-
---=-itkszrbsvJgze70C5TWB--
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Shawn Guo <shawnguo@kernel.org>
