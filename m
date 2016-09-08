@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v5 6/6] gpio: pca953x: make the define names consistent
-Date: Thu,  8 Sep 2016 12:48:22 +0200
-Message-ID: <1473331702-26711-7-git-send-email-bgolaszewski@baylibre.com>
+Subject: [PATCH v5 4/6] gpio: pca953x: remove an unused variable
+Date: Thu,  8 Sep 2016 12:48:20 +0200
+Message-ID: <1473331702-26711-5-git-send-email-bgolaszewski@baylibre.com>
 References: <1473331702-26711-1-git-send-email-bgolaszewski@baylibre.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1473331702-26711-1-git-send-email-bgolaszewski@baylibre.com>
@@ -10,60 +10,45 @@ To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.co
 Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The register offset defines for the pca953x and pca957x expander
-families should have the same names to better reflect their similar
-purposes.
+The chip_type variable in struct pca953x_chip is no longer required.
+
+Remove it.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-pca953x.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 71e1344..78ab25e 100644
+index 4c46cc8..02893c6 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -29,12 +29,12 @@
+@@ -129,7 +129,6 @@ struct pca953x_chip {
+ 	struct i2c_client *client;
+ 	struct gpio_chip gpio_chip;
+ 	const char *const *names;
+-	int	chip_type;
+ 	unsigned long driver_data;
  
- #define REG_ADDR_AI		0x80
+ 	const struct pca953x_reg_config *regs;
+@@ -771,8 +770,6 @@ static int pca953x_probe(struct i2c_client *client,
+ 		}
+ 	}
  
--#define PCA957X_IN		0
-+#define PCA957X_INPUT		0
- #define PCA957X_INVRT		1
- #define PCA957X_BKEN		2
- #define PCA957X_PUPD		3
--#define PCA957X_CFG		4
--#define PCA957X_OUT		5
-+#define PCA957X_DIRECTION	4
-+#define PCA957X_OUTPUT		5
- #define PCA957X_MSK		6
- #define PCA957X_INTS		7
+-	chip->chip_type = PCA_CHIP_TYPE(chip->driver_data);
+-
+ 	mutex_init(&chip->i2c_lock);
  
-@@ -107,9 +107,9 @@ static const struct pca953x_reg_config pca953x_regs = {
- };
+ 	/* initialize cached registers from their original values.
+@@ -794,7 +791,7 @@ static int pca953x_probe(struct i2c_client *client,
+ 		chip->read_regs = pca953x_read_regs_16;
+ 	}
  
- static const struct pca953x_reg_config pca957x_regs = {
--	.direction = PCA957X_CFG,
--	.output = PCA957X_OUT,
--	.input = PCA957X_IN,
-+	.direction = PCA957X_DIRECTION,
-+	.output = PCA957X_OUTPUT,
-+	.input = PCA957X_INPUT,
- };
- 
- struct pca953x_chip {
-@@ -699,10 +699,10 @@ static int device_pca957x_init(struct pca953x_chip *chip, u32 invert)
- 
- 	chip->regs = &pca957x_regs;
- 
--	ret = pca953x_read_regs(chip, PCA957X_OUT, chip->reg_output);
-+	ret = pca953x_read_regs(chip, PCA957X_OUTPUT, chip->reg_output);
- 	if (ret)
- 		goto out;
--	ret = pca953x_read_regs(chip, PCA957X_CFG, chip->reg_direction);
-+	ret = pca953x_read_regs(chip, PCA957X_DIRECTION, chip->reg_direction);
- 	if (ret)
- 		goto out;
- 
+-	if (chip->chip_type == PCA953X_TYPE)
++	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE)
+ 		ret = device_pca953x_init(chip, invert);
+ 	else
+ 		ret = device_pca957x_init(chip, invert);
 -- 
 2.7.4
