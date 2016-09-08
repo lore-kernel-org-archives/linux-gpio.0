@@ -1,58 +1,39 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH v3 2/8] syscon: dt-bindings: Add documentation for
- Aspeed system control units
-Date: Thu, 08 Sep 2016 10:33:01 +0930
-Message-ID: <1473296581.10397.6.camel@aj.id.au>
+From: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Subject: Re: [PATCH v3 4/8] gpio: dt-bindings: Add documentation for Aspeed
+ GPIO controllers
+Date: Thu, 08 Sep 2016 10:49:28 +0930
+Message-ID: <1473297568.10397.8.camel@aj.id.au>
 References: <20160830075427.11493-1-andrew@aj.id.au>
-         <20160830075427.11493-3-andrew@aj.id.au>
-         <CACRpkdYa5pwQ1zW6BGO429WTOG_y0DPMCVGjpViQc9k5m2_yyA@mail.gmail.com>
-         <20160907163046.GD4921@dell>
+         <20160830075427.11493-5-andrew@aj.id.au>
+         <CACRpkdYpmSS3jA=r13r-_UPEKxUvO=U=EUXAtwuZLmxnGDhiwA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-Vtrs5oezF7pzVhCmVJMJ"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:40685 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751334AbcIHBDK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 21:03:10 -0400
-In-Reply-To: <20160907163046.GD4921@dell>
-Sender: linux-gpio-owner@vger.kernel.org
+        protocol="application/pgp-signature"; boundary="=-itkszrbsvJgze70C5TWB"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdYpmSS3jA=r13r-_UPEKxUvO=U=EUXAtwuZLmxnGDhiwA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Jeremy Kerr <jk-mnsaURCQ41sdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Joel Stanley <joel@jms.id.au>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
 
---=-Vtrs5oezF7pzVhCmVJMJ
+--=-itkszrbsvJgze70C5TWB
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2016-09-07 at 17:30 +0100, Lee Jones wrote:
-> On Wed, 07 Sep 2016, Linus Walleij wrote:
+On Wed, 2016-09-07 at 16:43 +0200, Linus Walleij wrote:
+> On Tue, Aug 30, 2016 at 9:54 AM, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org> wrote:
 >=20
 > >=20
-> > On Tue, Aug 30, 2016 at 9:54 AM, Andrew Jeffery <andrew@aj.id.au> wrote=
-:
-> >=20
-> > >=20
-> > > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> > > Acked-by: Rob Herring <robh@kernel.org>
-> > > Acked-by: Joel Stanley <joel@jms.id.au>
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> >=20
-> > I guess the MFD maintainer (Lee Jones) should merge this?
-> >=20
-> > Why is he not on CC?
-> Thanks Linus.
->=20
-> Yes, please resend, so I can take it in.
->=20
+> > Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+> > Acked-by: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
+> Patch applied to the GPIO tree with Rob's ACK and moved the compatible
+> to the first line in the process.
 
-Will do.
-
-Cheers,
+Thanks for applying the fixup.
 
 Andrew
---=-Vtrs5oezF7pzVhCmVJMJ
+--=-itkszrbsvJgze70C5TWB
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
@@ -60,20 +41,24 @@ Content-Transfer-Encoding: 7bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCgAGBQJX0LjFAAoJEJ0dnzgO5LT5VRMQAIzjJG2ZeK2Ht9bFWUaRpQAU
-tWEwy8ip8gyO5KEMBHs+iDiWHsa/dZdTgSBhuZCFoCFg+ImBaGaAYjwW3uzLnbgx
-Dmca9luAeZnvhU2U0g5vmMEopnILdyvHKSFQ67innsmP0bA4msxaTTPFHI60NVzr
-78xirZziHLKxeR9C5Geu0BGdKICV5ArayeOwijbInDy7cpNVvigAp2qRwWsG75dP
-8CpC5VzyqkUf68VA2aHEsWM7UeU5p9MIVZ11xYRFQhwboWiuDYY/k+xu3jIDZkAQ
-NFyT5TaqX2kxp4qG20JKcqfe13RDIUelEFbXu7faroNLIwPhepyaXZjr7CnIjw7J
-eec4VD0617qezFFH8isEi4vzNOfZugtyfNX41gZkm2sfI/4/frOkTITsA4nZjPqe
-ijM9lLQHZksisfAKKYpqUNvKSTEmq3ewU/Ke0o7986G/USX89fAR3Qt38T8sp8q1
-+k4sBz4GrSKOQ823l5jIZWOg1P3glKCgIJhQDdAOHJMRi32Frgkiao7xH/D43L98
-+ZlGNPKfb8NpzVuQkqCmDvoHJWb8KMp+Co/s8x9L8x4A8WH/WpY3zTi7JtAwMtlb
-4NVMvg1lhBWpM97kY0I1PAdunw2ZL1X1m8fYWpEQ2Xxmg/tehes5imxtkVWn7GSJ
-OZHrphMMmr+Ebx0y1nAC
-=DQYd
+iQIcBAABCgAGBQJX0LygAAoJEJ0dnzgO5LT5NDoQAKDgpM/CEqNh6hUkk82Jp/DK
+eb8YrPzZHWtm7+NVH2sHUePULKnxvgsrpHKvgCR4qN7F0Opr9Xf02znp1rPqq1ZV
+ms1faIngSE2Rkj2zsn6+9hTfOqaKYtY4hY83dCQm6YisF12C++XiHnJ0agUZZyAz
+e4SWY+nFJZuP7utJWAHlEfJ6p9oVdArxd9Fsur/NkFEXY65CSJX1867YgJTc2+UN
+y0UdXhsLK2RbUwWYXC/gWKSz1Z0X8fuOzdLAA2AJLN0Z5yMQYAiNFGKeGq3Ne41/
+ZNy2NQAEb7yKds8ClzmkyY4FzOVk0LkVWEg4EIvQFEDQAwdKvw1rVnFQOQGvcs/+
+1PxYdHDSZNg6s/hVlSVlp7Ivq27Y3So1PiHNp8pF8y+aFpqL1bc/DbBd9LPjb2wy
+e6ME3afjzS3YjfBQ7CczdyA9vcyz1tfsJIWjdAHEK0VJyjhfMStLOdhXy+CJZetK
+wye84fg8KOqnVP1v0Wy2AkZ4VA8Wopk4oB2a/wyGjed73t+T2LEKFH/Bh09QzyA0
+2cHIGRn8DplcLw5fmrQ2hKkAIzsfh7Zxu6GyndkY+hu+/B7K5vgPQIeGHhs7dmgt
+84TpSBCnyWWQ2Ir1VEwfQTM+Xw02dWyanRBPLuy/Romgy79CBzkx1nFA21FDQREy
+yOHFLBIGckjdXpQ70dBY
+=9WfY
 -----END PGP SIGNATURE-----
 
---=-Vtrs5oezF7pzVhCmVJMJ--
+--=-itkszrbsvJgze70C5TWB--
 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
