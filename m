@@ -1,284 +1,98 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH v4 2/9] drivers: irqchip: Add STM32 external interrupts
- support
-Date: Thu, 8 Sep 2016 11:03:11 +0200
-Message-ID: <550daf4a-0093-0b54-a305-eddd3882d993@st.com>
-References: <1473180341-1999-1-git-send-email-alexandre.torgue@st.com>
- <1473180341-1999-3-git-send-email-alexandre.torgue@st.com>
- <20160906173737.GU10637@io.lakedaemon.net>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH 5/6] ARM: dts: Add NextThing GR8 dtsi
+Date: Thu, 8 Sep 2016 11:57:46 +0200
+Message-ID: <20160908095746.GN8913@lukather>
+References: <20160831081817.5191-1-maxime.ripard@free-electrons.com>
+ <20160831081817.5191-6-maxime.ripard@free-electrons.com>
+ <CABxcv=kJCuP==QVRqyuoORSoWKAEqXmt5iRjdvDcCcr4MSm0gQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160906173737.GU10637@io.lakedaemon.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jason Cooper <jason@lakedaemon.net>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com, lee.jones@linaro.org
+Content-Type: multipart/mixed; boundary="===============1970535638=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CABxcv=kJCuP==QVRqyuoORSoWKAEqXmt5iRjdvDcCcr4MSm0gQ@mail.gmail.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-fbdev@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, Linux Kernel <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Vetter <daniel.vetter@intel.com>, Alexander Kaplan <alex@nextthing.co>, Mylene Josserand <mylene.josserand@free-electrons.com>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Jason,
 
-On 09/06/2016 07:37 PM, Jason Cooper wrote:
-> On Tue, Sep 06, 2016 at 06:45:34PM +0200, Alexandre TORGUE wrote:
->> The STM32 external interrupt controller consists of edge detectors that
->> generate interrupts requests or wake-up events.
->>
->> Each line can be independently configured as interrupt or wake-up source,
->> and triggers either on rising, falling or both edges. Each line can also
->> be masked independently.
->>
->> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
->> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
->>
->> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
->> index 7f87289..bc62d1f 100644
->> --- a/drivers/irqchip/Kconfig
->> +++ b/drivers/irqchip/Kconfig
->> @@ -264,3 +264,7 @@ config EZNPS_GIC
->>  	select IRQ_DOMAIN
->>  	help
->>  	  Support the EZchip NPS400 global interrupt controller
->> +
->> +config STM32_EXTI
->> +	bool
->> +	select IRQ_DOMAIN
->> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
->> index 4c203b6..96383b2 100644
->> --- a/drivers/irqchip/Makefile
->> +++ b/drivers/irqchip/Makefile
->> @@ -71,3 +71,4 @@ obj-$(CONFIG_MVEBU_ODMI)		+= irq-mvebu-odmi.o
->>  obj-$(CONFIG_LS_SCFG_MSI)		+= irq-ls-scfg-msi.o
->>  obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
->>  obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o
->> +obj-$(CONFIG_STM32_EXTI) 		+= irq-stm32-exti.o
->> diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
->> new file mode 100644
->> index 0000000..763c17c
->> --- /dev/null
->> +++ b/drivers/irqchip/irq-stm32-exti.c
->> @@ -0,0 +1,203 @@
->> +/*
->> + * Copyright (C) Maxime Coquelin 2015
->> + * Author:  Maxime Coquelin <mcoquelin.stm32@gmail.com>
->> + * License terms:  GNU General Public License (GPL), version 2
->> + */
->> +
->> +#include <linux/bitops.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/io.h>
->> +#include <linux/irq.h>
->> +#include <linux/irqchip.h>
->> +#include <linux/irqchip/chained_irq.h>
->> +#include <linux/irqchip/chained_irq.h>
->
-> double paste?
-> double paste?
->
-> If there are no other critiques, I'll fix this up when I pull in patches
-> 1 and 2.
->
-Yes bad copy/paste. I have to send a v5 with Linus (W) remarks. So I 
-will fix it in the v5.
-
-Thanks
-
-Alex
+--===============1970535638==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rPgHZmYkQ+bUEpVC"
+Content-Disposition: inline
 
 
-> thx,
->
-> Jason.
->
->> +#include <linux/irqdomain.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_irq.h>
->> +
->> +#define EXTI_IMR	0x0
->> +#define EXTI_EMR	0x4
->> +#define EXTI_RTSR	0x8
->> +#define EXTI_FTSR	0xc
->> +#define EXTI_SWIER	0x10
->> +#define EXTI_PR		0x14
->> +
->> +static void stm32_irq_handler(struct irq_desc *desc)
->> +{
->> +	struct irq_domain *domain = irq_desc_get_handler_data(desc);
->> +	struct irq_chip_generic *gc = domain->gc->gc[0];
->> +	struct irq_chip *chip = irq_desc_get_chip(desc);
->> +	unsigned long pending;
->> +	int n;
->> +
->> +	chained_irq_enter(chip, desc);
->> +
->> +	while ((pending = irq_reg_readl(gc, EXTI_PR))) {
->> +		for_each_set_bit(n, &pending, BITS_PER_LONG) {
->> +			generic_handle_irq(irq_find_mapping(domain, n));
->> +			irq_reg_writel(gc, BIT(n), EXTI_PR);
->> +		}
->> +	}
->> +
->> +	chained_irq_exit(chip, desc);
->> +}
->> +
->> +static int stm32_irq_set_type(struct irq_data *data, unsigned int type)
->> +{
->> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
->> +	int pin = data->hwirq;
->> +	u32 rtsr, ftsr;
->> +
->> +	irq_gc_lock(gc);
->> +
->> +	rtsr = irq_reg_readl(gc, EXTI_RTSR);
->> +	ftsr = irq_reg_readl(gc, EXTI_FTSR);
->> +
->> +	switch (type) {
->> +	case IRQ_TYPE_EDGE_RISING:
->> +		rtsr |= BIT(pin);
->> +		ftsr &= ~BIT(pin);
->> +		break;
->> +	case IRQ_TYPE_EDGE_FALLING:
->> +		rtsr &= ~BIT(pin);
->> +		ftsr |= BIT(pin);
->> +		break;
->> +	case IRQ_TYPE_EDGE_BOTH:
->> +		rtsr |= BIT(pin);
->> +		ftsr |= BIT(pin);
->> +		break;
->> +	default:
->> +		irq_gc_unlock(gc);
->> +		return -EINVAL;
->> +	}
->> +
->> +	irq_reg_writel(gc, rtsr, EXTI_RTSR);
->> +	irq_reg_writel(gc, ftsr, EXTI_FTSR);
->> +
->> +	irq_gc_unlock(gc);
->> +
->> +	return 0;
->> +}
->> +
->> +static int stm32_irq_set_wake(struct irq_data *data, unsigned int on)
->> +{
->> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
->> +	int pin = data->hwirq;
->> +	u32 emr;
->> +
->> +	irq_gc_lock(gc);
->> +
->> +	emr = irq_reg_readl(gc, EXTI_EMR);
->> +	if (on)
->> +		emr |= BIT(pin);
->> +	else
->> +		emr &= ~BIT(pin);
->> +	irq_reg_writel(gc, emr, EXTI_EMR);
->> +
->> +	irq_gc_unlock(gc);
->> +
->> +	return 0;
->> +}
->> +
->> +static int stm32_exti_alloc(struct irq_domain *d, unsigned int virq,
->> +			    unsigned int nr_irqs, void *data)
->> +{
->> +	struct irq_chip_generic *gc = d->gc->gc[0];
->> +	struct irq_fwspec *fwspec = data;
->> +	irq_hw_number_t hwirq;
->> +
->> +	hwirq = fwspec->param[0];
->> +
->> +	irq_map_generic_chip(d, virq, hwirq);
->> +	irq_domain_set_info(d, virq, hwirq, &gc->chip_types->chip, gc,
->> +			    handle_simple_irq, NULL, NULL);
->> +
->> +	return 0;
->> +}
->> +
->> +static void stm32_exti_free(struct irq_domain *d, unsigned int virq,
->> +			    unsigned int nr_irqs)
->> +{
->> +	struct irq_data *data = irq_get_irq_data(virq);
->> +
->> +	irq_gc_mask_clr_bit(data->parent_data);
->> +	irq_domain_reset_irq_data(data);
->> +}
->> +
->> +struct irq_domain_ops irq_exti_domain_ops = {
->> +	.map	= irq_map_generic_chip,
->> +	.xlate	= irq_domain_xlate_onetwocell,
->> +	.alloc  = stm32_exti_alloc,
->> +	.free	= stm32_exti_free,
->> +};
->> +
->> +static int __init stm32_exti_init(struct device_node *node,
->> +				  struct device_node *parent)
->> +{
->> +	unsigned int clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
->> +	int nr_irqs, nr_exti, ret, i;
->> +	struct irq_chip_generic *gc;
->> +	struct irq_domain *domain;
->> +	void *base;
->> +
->> +	base = of_iomap(node, 0);
->> +	if (!base) {
->> +		pr_err("%s: Unable to map registers\n", node->full_name);
->> +		return -ENOMEM;
->> +	}
->> +
->> +	/* Determine number of irqs supported */
->> +	writel_relaxed(~0UL, base + EXTI_RTSR);
->> +	nr_exti = fls(readl_relaxed(base + EXTI_RTSR));
->> +	writel_relaxed(0, base + EXTI_RTSR);
->> +
->> +	pr_info("%s: %d External IRQs detected\n", node->full_name, nr_exti);
->> +
->> +	domain = irq_domain_add_linear(node, nr_exti,
->> +				       &irq_exti_domain_ops, NULL);
->> +	if (!domain) {
->> +		pr_err("%s: Could not register interrupt domain.\n",
->> +				node->name);
->> +		ret = -ENOMEM;
->> +		goto out_unmap;
->> +	}
->> +
->> +	ret = irq_alloc_domain_generic_chips(domain, nr_exti, 1, "exti",
->> +					     handle_edge_irq, clr, 0, 0);
->> +	if (ret) {
->> +		pr_err("%s: Could not allocate generic interrupt chip.\n",
->> +			node->full_name);
->> +		goto out_free_domain;
->> +	}
->> +
->> +	gc = domain->gc->gc[0];
->> +	gc->reg_base                         = base;
->> +	gc->chip_types->type               = IRQ_TYPE_EDGE_BOTH;
->> +	gc->chip_types->chip.name          = gc->chip_types[0].chip.name;
->> +	gc->chip_types->chip.irq_ack       = irq_gc_ack_set_bit;
->> +	gc->chip_types->chip.irq_mask      = irq_gc_mask_clr_bit;
->> +	gc->chip_types->chip.irq_unmask    = irq_gc_mask_set_bit;
->> +	gc->chip_types->chip.irq_set_type  = stm32_irq_set_type;
->> +	gc->chip_types->chip.irq_set_wake  = stm32_irq_set_wake;
->> +	gc->chip_types->regs.ack           = EXTI_PR;
->> +	gc->chip_types->regs.mask          = EXTI_IMR;
->> +	gc->chip_types->handler            = handle_edge_irq;
->> +
->> +	nr_irqs = of_irq_count(node);
->> +	for (i = 0; i < nr_irqs; i++) {
->> +		unsigned int irq = irq_of_parse_and_map(node, i);
->> +
->> +		irq_set_handler_data(irq, domain);
->> +		irq_set_chained_handler(irq, stm32_irq_handler);
->> +	}
->> +
->> +	return 0;
->> +
->> +out_free_domain:
->> +	irq_domain_remove(domain);
->> +out_unmap:
->> +	iounmap(base);
->> +	return ret;
->> +}
->> +
->> +IRQCHIP_DECLARE(stm32_exti, "st,stm32-exti", stm32_exti_init);
->> --
->> 1.9.1
->>
+--rPgHZmYkQ+bUEpVC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Javier,
+
+On Wed, Sep 07, 2016 at 04:51:55PM +0200, Javier Martinez Canillas wrote:
+> Hello Maxime,
+>=20
+> On Wed, Aug 31, 2016 at 10:18 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+>=20
+> [snip]
+>=20
+> > +
+> > +#include "skeleton.dtsi"
+> > +
+>=20
+> The skeleton.dtsi has been deprecated and shouldn't be used in new DTS fi=
+les:
+>=20
+> http://www.spinics.net/lists/arm-kernel/msg528080.html
+
+Ok, thanks, I'll change it in the v3.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--rPgHZmYkQ+bUEpVC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX0TYaAAoJEBx+YmzsjxAgMfwP/iJmcNOhfbP+IClHg60l97Zt
+LXejNjamLaWFZXClcCrlrvBM4xFpyJGGfk1ydDwB+8Wfos6s6l0Mu4TwFxH9+muK
+3RbyU5wmrDON6Ax/rQr9Oo1rkrIAaKmj1rQ+crNaeAJuK2uAcM7bsm+M51t9pkUo
+oh7o9pbfn1J2Hl82ldA1oV6jn29HAf9sxki0Q/RhQI198pHoZXZk5G4kCjlGrF73
+eXRFgn2u/9SSvVtsVVMj53fE7smifTNOo16afWK/dtRW8Jiost4P0Vdn6vfCnXGF
+0Is/374PZIu/2xtktNCfgBTmp2sZLnS5KLs3oprePaJ4P7Ft4moih27KN9OCDzU2
+O6qXI6NogmgHY9CR0dUgAtMeJ4ELoc8Dj2WJpr9qmij+6VkT12j+piOBF9xhKfPJ
+9KCAnoF2hqJIaGtYr8uX8DUwf4CI8COFt3sk7ziAeLYA029TtfSpoBpFmVwR2V3L
+ArwwO04ot9MuYFytv6OxPyOwtJzb6AneEzstgYz8KriaDsA4yO4Rff+/+Blv1iCk
+wpWnpjGN0qjOxskuZJJvgbvxupb2vTvSsT68Se5ddvxuwgai1mhm1EWWxN4xGBrd
+Upxw8zYbFZkGr4BEtOQrSLnTpJWZcKnIbF0rjV9wi4a6Sh7WjeagdMXx5eEi9jaX
+czY/3y9OG9ha5VsnUhRG
+=2Uu2
+-----END PGP SIGNATURE-----
+
+--rPgHZmYkQ+bUEpVC--
+
+--===============1970535638==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1970535638==--
