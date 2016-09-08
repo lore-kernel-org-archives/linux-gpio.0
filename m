@@ -1,106 +1,50 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v2 3/4] ARM: dts: Add NextThing GR8 dtsi
-Date: Thu, 8 Sep 2016 12:46:14 +0800
-Message-ID: <CAGb2v64h7kq2jWzUJ74vDdOOQOXPxjx3ruSsJMXvyr7fP63BGg@mail.gmail.com>
-References: <20160907145400.27192-1-maxime.ripard@free-electrons.com>
- <20160907145400.27192-4-maxime.ripard@free-electrons.com> <CACRpkdZsxA7avmO85R=-Quu7FQwSVMPhQMDmmgL+xbkVTB-2HQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:53222 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752017AbcIHEql (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Sep 2016 00:46:41 -0400
-In-Reply-To: <CACRpkdZsxA7avmO85R=-Quu7FQwSVMPhQMDmmgL+xbkVTB-2HQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Subject: [PATCH] syscon: dt-bindings: Add documentation for Aspeed system control units
+Date: Thu,  8 Sep 2016 14:43:18 +0930
+Message-ID: <1473311598-32722-1-git-send-email-andrew@aj.id.au>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Jeremy Kerr <jk-mnsaURCQ41sdnm+yROfE0A@public.gmane.org>, "linux-gpio @ vger . kernel . org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel @ vger . kernel . org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree @ vger . kernel . org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chen-Yu Tsai <wens@csie.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
 
-On Thu, Sep 8, 2016 at 3:37 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Sep 7, 2016 at 4:53 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->
->> From: Mylène Josserand <mylene.josserand@free-electrons.com>
->>
->> The GR8 is an SoC made by Nextthing loosely based on the sun5i family.
->>
->> Since it's not clear yet what we can factor out and merge with the A10s and
->> A13 support, let's keep it out of the sun5i.dtsi include tree. We will
->> figure out what can be shared when things settle down.
->>
->> Signed-off-by: Mylène Josserand <mylene.josserand@free-electrons.com>
->> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
->
-> Acked-by: Linus Walleij <linus,walleij@linaro.org>
->
-> I was just thinking:
->
->> +                       i2c0_pins_a: i2c0@0 {
->> +                               allwinner,pins = "PB0", "PB1";
->> +                               allwinner,function = "i2c0";
->> +                               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
->> +                               allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
->> +                       };
->
-> It would be *NICE* if the sunxi driver would start to support the new standard
-> bindings for this stuff, see
-> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
->
-> So you could just use pins, function and the drive-strength and
-> bias-disable in this case.
->
-> Since I know the AllWinner support is a community project I have much higher
-> tolerance with this legacy binding sticking around for the new generation of
-> SoCs but still, if you find time.
->
-> I mean it like supporting these in *addition* to the custom ones, so there can
-> be a smooth phase-over.
->
-> Check for example Laurent's commit for SH-PFC:
-> commit 16ccaf5bb5a52372bfebd3dfbb79dd810ad49c09
-> "pinctrl: sh-pfc: Accept standard function, pins and groups properties"
-> It's awesome, and since, they have improved the looks of Renesas
-> DTS files a lot.
->
-> It could look a bit like this nice thing from
-> lpc4337-ciaa.dts:
->
-> &pinctrl {
->         enet_rmii_pins: enet-rmii-pins {
->                 enet_rmii_rxd_cfg {
->                         pins = "p1_15", "p0_0";
->                         function = "enet";
->                         slew-rate = <1>;
->                         bias-disable;
->                         input-enable;
->                         input-schmitt-disable;
->                 };
->
->                 enet_rmii_txd_cfg {
->                         pins = "p1_18", "p1_20";
->                         function = "enet";
->                         slew-rate = <1>;
->                         bias-disable;
->                         input-enable;
->                         input-schmitt-disable;
->                 };
-> (etc)
+Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Acked-by: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
+ Documentation/devicetree/bindings/mfd/aspeed-scu.txt | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/aspeed-scu.txt
 
-This looks nice. I've slightly looked at the generic pinconf stuff.
-I think we should be able to support them, though the sunxi pinctrl
-driver currently doesn't work well with it though. For example,
-it doesn't declare ".is_generic = true", it doesn't filter
-unsupported pinconf parameters, and it doesn't reply to queries
-correctly. I will fix these bits.
+diff --git a/Documentation/devicetree/bindings/mfd/aspeed-scu.txt b/Documentation/devicetree/bindings/mfd/aspeed-scu.txt
+new file mode 100644
+index 000000000000..4fc5b83726d6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/aspeed-scu.txt
+@@ -0,0 +1,18 @@
++The Aspeed System Control Unit manages the global behaviour of the SoC,
++configuring elements such as clocks, pinmux, and reset.
++
++Required properties:
++- compatible:	One of:
++		"aspeed,ast2400-scu", "syscon", "simple-mfd"
++		"aspeed,g4-scu", "syscon", "simple-mfd"
++		"aspeed,ast2500-scu", "syscon", "simple-mfd"
++		"aspeed,g5-scu", "syscon", "simple-mfd"
++
++- reg:		contains the offset and length of the SCU memory region
++
++Example:
++
++syscon: syscon@1e6e2000 {
++	compatible = "aspeed,ast2400-scu", "syscon", "simple-mfd";
++	reg = <0x1e6e2000 0x1a8>;
++};
+-- 
+2.7.4
 
-Also, I think we are needlessly using pin groups, 1 pin per group.
-Can pinconf/pinctrl work without them? Would there be any harm
-converting the sunxi driver to work directly with pins? This would
-make it match generic pinconf parsing, and make it easier to get
-both working together.
-
-
-Regards
-ChenYu
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
