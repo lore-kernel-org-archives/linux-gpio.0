@@ -1,118 +1,74 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: [PATCH] gpio: lpc32xx: remove unused platform data file
-Date: Thu,  8 Sep 2016 02:58:32 +0300
-Message-ID: <1473292712-8061-1-git-send-email-vz@mleia.com>
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: Re: [PATCH v3 2/8] syscon: dt-bindings: Add documentation for
+ Aspeed system control units
+Date: Thu, 08 Sep 2016 10:31:20 +0930
+Message-ID: <1473296480.10397.5.camel@aj.id.au>
+References: <20160830075427.11493-1-andrew@aj.id.au>
+         <20160830075427.11493-3-andrew@aj.id.au>
+         <CACRpkdYa5pwQ1zW6BGO429WTOG_y0DPMCVGjpViQc9k5m2_yyA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-n8nOTLL/hwz6Ch3AnXLt"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mleia.com ([178.79.152.223]:43534 "EHLO mail.mleia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751673AbcIGX6l (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 7 Sep 2016 19:58:41 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:52291 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751081AbcIHBBc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 21:01:32 -0400
+In-Reply-To: <CACRpkdYa5pwQ1zW6BGO429WTOG_y0DPMCVGjpViQc9k5m2_yyA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>
+Cc: Joel Stanley <joel@jms.id.au>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeremy Kerr <jk@ozlabs.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-ARM LPC32xx platform is device-tree only, there is no need to keep
-a file with GPIO platform data structures, however some of macro
-definitions should be moved to the driver code, which is the only user
-of the removed header file.
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
----
- drivers/gpio/gpio-lpc32xx.c                | 15 ++++++++-
- include/linux/platform_data/gpio-lpc32xx.h | 50 ------------------------------
- 2 files changed, 14 insertions(+), 51 deletions(-)
- delete mode 100644 include/linux/platform_data/gpio-lpc32xx.h
+--=-n8nOTLL/hwz6Ch3AnXLt
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpio/gpio-lpc32xx.c b/drivers/gpio/gpio-lpc32xx.c
-index fc5f197..92b3ae2 100644
---- a/drivers/gpio/gpio-lpc32xx.c
-+++ b/drivers/gpio/gpio-lpc32xx.c
-@@ -25,7 +25,6 @@
- #include <linux/of_gpio.h>
- #include <linux/platform_device.h>
- #include <linux/module.h>
--#include <linux/platform_data/gpio-lpc32xx.h>
- 
- #include <mach/hardware.h>
- #include <mach/platform.h>
-@@ -68,6 +67,20 @@
- #define GPI3_PIN_IN_SEL(x, y)			(((x) >> (y)) & 1)
- #define GPO3_PIN_IN_SEL(x, y)			(((x) >> (y)) & 1)
- 
-+#define LPC32XX_GPIO_P0_MAX	8
-+#define LPC32XX_GPIO_P1_MAX	24
-+#define LPC32XX_GPIO_P2_MAX	13
-+#define LPC32XX_GPIO_P3_MAX	6
-+#define LPC32XX_GPI_P3_MAX	29
-+#define LPC32XX_GPO_P3_MAX	24
-+
-+#define LPC32XX_GPIO_P0_GRP	0
-+#define LPC32XX_GPIO_P1_GRP	(LPC32XX_GPIO_P0_GRP + LPC32XX_GPIO_P0_MAX)
-+#define LPC32XX_GPIO_P2_GRP	(LPC32XX_GPIO_P1_GRP + LPC32XX_GPIO_P1_MAX)
-+#define LPC32XX_GPIO_P3_GRP	(LPC32XX_GPIO_P2_GRP + LPC32XX_GPIO_P2_MAX)
-+#define LPC32XX_GPI_P3_GRP	(LPC32XX_GPIO_P3_GRP + LPC32XX_GPIO_P3_MAX)
-+#define LPC32XX_GPO_P3_GRP	(LPC32XX_GPI_P3_GRP + LPC32XX_GPI_P3_MAX)
-+
- struct gpio_regs {
- 	void __iomem *inp_state;
- 	void __iomem *outp_state;
-diff --git a/include/linux/platform_data/gpio-lpc32xx.h b/include/linux/platform_data/gpio-lpc32xx.h
-deleted file mode 100644
-index a544e96..0000000
---- a/include/linux/platform_data/gpio-lpc32xx.h
-+++ /dev/null
-@@ -1,50 +0,0 @@
--/*
-- * Author: Kevin Wells <kevin.wells@nxp.com>
-- *
-- * Copyright (C) 2010 NXP Semiconductors
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
--
--#ifndef __MACH_GPIO_LPC32XX_H
--#define __MACH_GPIO_LPC32XX_H
--
--/*
-- * Note!
-- * Muxed GP pins need to be setup to the GP state in the board level
-- * code prior to using this driver.
-- * GPI pins : 28xP3 group
-- * GPO pins : 24xP3 group
-- * GPIO pins: 8xP0 group, 24xP1 group, 13xP2 group, 6xP3 group
-- */
--
--#define LPC32XX_GPIO_P0_MAX 8
--#define LPC32XX_GPIO_P1_MAX 24
--#define LPC32XX_GPIO_P2_MAX 13
--#define LPC32XX_GPIO_P3_MAX 6
--#define LPC32XX_GPI_P3_MAX 29
--#define LPC32XX_GPO_P3_MAX 24
--
--#define LPC32XX_GPIO_P0_GRP 0
--#define LPC32XX_GPIO_P1_GRP (LPC32XX_GPIO_P0_GRP + LPC32XX_GPIO_P0_MAX)
--#define LPC32XX_GPIO_P2_GRP (LPC32XX_GPIO_P1_GRP + LPC32XX_GPIO_P1_MAX)
--#define LPC32XX_GPIO_P3_GRP (LPC32XX_GPIO_P2_GRP + LPC32XX_GPIO_P2_MAX)
--#define LPC32XX_GPI_P3_GRP (LPC32XX_GPIO_P3_GRP + LPC32XX_GPIO_P3_MAX)
--#define LPC32XX_GPO_P3_GRP (LPC32XX_GPI_P3_GRP + LPC32XX_GPI_P3_MAX)
--
--/*
-- * A specific GPIO can be selected with this macro
-- * ie, GPIO_05 can be selected with LPC32XX_GPIO(LPC32XX_GPIO_P3_GRP, 5)
-- * See the LPC32x0 User's guide for GPIO group numbers
-- */
--#define LPC32XX_GPIO(x, y) ((x) + (y))
--
--#endif /* __MACH_GPIO_LPC32XX_H */
--- 
-2.8.1
+On Wed, 2016-09-07 at 16:38 +0200, Linus Walleij wrote:
+> On Tue, Aug 30, 2016 at 9:54 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+>=20
+> >=20
+> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> > Acked-by: Rob Herring <robh@kernel.org>
+> > Acked-by: Joel Stanley <joel@jms.id.au>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>=20
+> I guess the MFD maintainer (Lee Jones) should merge this?
+>=20
+> Why is he not on CC?
+
+I used get_maintainer.pl on the series to construct the CC, but Lee
+wasn't listed in the output. I'll poke further at MAINTAINERs in the
+future to make sure I have coverage for affected subsystems.
+
+Andrew
+
+>=20
+> Yours,
+> Linus Walleij
+--=-n8nOTLL/hwz6Ch3AnXLt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCgAGBQJX0LhgAAoJEJ0dnzgO5LT548sP/jbAWuLIkS/lUobXdP0M5UqA
+CjyoFtWipBzAjDym0QFoM+PDgsm6IqaUgpZiDNwnNB2XQKlMFlIqU519MH+IZ7Wc
+2VP3sSJa5aKv226+BBtbynRbV8NFekWyvNBEXJ3l4ucOPzC3dgeYKVU2ry6ME1h6
+M4v7V8H7Kbm+ZPLiwyk2m60YlnH4cLMWLfMJNhtGF6Hrq35oGp1BwVpT6QhzGoyw
+s4m1Ub8CwLd7FQ+qf0dsNSe3rzFXYO36evBWZjtvreWaPjKqSqW9/3Hm2K7paIY+
+77vZ0MQl6FH5sbo+XCycjJkho7+a1VX0Dmkvn1m9KkPW0+oRUgwuvvpBNYifHBQX
+R587atgGY1nSBZxo3pUITzWX5P771z5ariqHHPy7stezXEdDnWfJrpkYV9Eh06d6
+IG2orBAn/qk/eDmifC9E1u8f79PURkVIkWqcG8ajqAVRQoczxRyj+3AE1bG8vB3Y
+k17nbMtKZsFfEOjmfkwDrJnkEjcEZuaW/mNagDnYeRUPV/f+epYBS8gVesb58rX/
+vV4y7h9oJaP4F27QpSm1+T+UDTwyPE/5GzktUmrDhiRLcJJni3AweQpjOrzfM4ge
+sUrXwVr59Fac1xwzJP3nAEoFsKc2eJkRNf1RAJJb349T+2ABCvAAa8OHsck+Ki/M
+kjAr5eW+8IxOSCgPPKt2
+=nrkr
+-----END PGP SIGNATURE-----
+
+--=-n8nOTLL/hwz6Ch3AnXLt--
 
