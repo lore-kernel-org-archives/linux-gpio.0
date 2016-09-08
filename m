@@ -1,52 +1,63 @@
 From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH v2 0/3] gpio/pinctrl: imx: let IOMUX controller know about on-SoC GPIOs
-Date: Thu, 8 Sep 2016 04:48:13 +0300
-Message-ID: <1473299296-22458-1-git-send-email-vladimir_zapolskiy@mentor.com>
+Subject: [PATCH v2 1/3] pinctrl: imx: accept gpio request/free from pinctrl
+Date: Thu, 8 Sep 2016 04:48:14 +0300
+Message-ID: <1473299296-22458-2-git-send-email-vladimir_zapolskiy@mentor.com>
+References: <1473299296-22458-1-git-send-email-vladimir_zapolskiy@mentor.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:56952 "EHLO
+Received: from relay1.mentorg.com ([192.94.38.131]:56951 "EHLO
         relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753170AbcIHBsf (ORCPT
+        with ESMTP id S1756047AbcIHBsf (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Sep 2016 21:48:35 -0400
+In-Reply-To: <1473299296-22458-1-git-send-email-vladimir_zapolskiy@mentor.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>
 Cc: Deepak Das <deepak_das@mentor.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-The change establishes a connection between on-SoC IOMUX controller(s)
-and GPIO controllers found on some SoC from Freescale/NXP iMX series,
-if a GPIO controller device node contains common gpio-ranges information.
+While only Freescale Vybrid SoC has settings of GPIO capabilities done
+by iomux controller, it is only a matter of GPIO controller driver
+implementation for the rest of Freescale/NXP SoCs from iMX series.
 
-The change is backward compatible with respect to potentially not updated
-outdated DTB data without gpio-ranges propery, for such boards the only
-functional change is lowered initcall priority of GPIO controller driver,
-which in general anyway is exected to be used only after pinctrl/pinmux
-controller.
+As a practical example on GPIO request a pad function should be
+switched to GPIO, but because this requires updates to all particular
+iMX pinctrl drivers, for simplicity at the moment add only a proper
+connection between shared pinctrl-imx and pinctrl/pinmux core, namely
+.gpio_request_enable/.gpio_disable_free/.gpio_set_direction callbacks
+should return success to a caller. This change allows to progress by
+adding request/free callbacks into gpio-mxc.c driver.
 
-If this change is applied the next interesting applications may be done
-as a follow-up work, for example switching pad function to GPIO on gpiod
-request, converting iomux controller driver to strict type and so on.
-
-For actual values of gpio-ranges properties please reference series
-"ARM: dts: imx: add gpio-ranges properties to some iMX GPIO controllers"
-http://www.spinics.net/lists/arm-kernel/msg525258.html
-
+Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+---
 Changes from v1 to v2:
-* replaced 2/3 by an own change providing a better commit description
-  and which moves gpio_mxc_init() call to subsys_initcall() instead of
-  apparently too late device_initcall(), this mitigates Shawn's
-  expressed concern about the change.
+* none
 
-Vladimir Zapolskiy (3):
-  pinctrl: imx: accept gpio request/free from pinctrl
-  gpio: mxc: shift gpio_mxc_init() to subsys_initcall level
-  gpio: mxc: add generic gpio request/free callbacks to pinctrl
-
- drivers/gpio/gpio-mxc.c                 | 7 ++++++-
  drivers/pinctrl/freescale/pinctrl-imx.c | 4 ++--
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 71391757938b..6e248ca10169 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -315,7 +315,7 @@ static int imx_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 
+ 	/* Currently implementation only for shared mux/conf register */
+ 	if (!(info->flags & SHARE_MUX_CONF_REG))
+-		return -EINVAL;
++		return 0;
+ 
+ 	pin_reg = &info->pin_regs[offset];
+ 	if (pin_reg->mux_reg == -1)
+@@ -380,7 +380,7 @@ static int imx_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
+ 	 * They are part of the shared mux/conf register.
+ 	 */
+ 	if (!(info->flags & SHARE_MUX_CONF_REG))
+-		return -EINVAL;
++		return 0;
+ 
+ 	pin_reg = &info->pin_regs[offset];
+ 	if (pin_reg->mux_reg == -1)
 -- 
 2.8.1
 
