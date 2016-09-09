@@ -1,91 +1,33 @@
-From: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
-Subject: [PATCH v5 8/9] ARM: dts: Declare push button as GPIO key on stm32f429 boards
-Date: Fri, 9 Sep 2016 16:42:03 +0200
-Message-ID: <1473432124-6784-9-git-send-email-alexandre.torgue@st.com>
-References: <1473432124-6784-1-git-send-email-alexandre.torgue@st.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7796: Add voltage switch operations
+ for SDHI
+Date: Fri, 9 Sep 2016 17:06:42 +0200
+Message-ID: <20160909150641.GA13747@verge.net.au>
+References: <1473335853-32102-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdUM4B0KQMS127VGTSV8DkDGaUAy_vfK1XK6EnVd5p9DPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1473432124-6784-1-git-send-email-alexandre.torgue-qxv4g6HH51o@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, bruherrera-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUM4B0KQMS127VGTSV8DkDGaUAy_vfK1XK6EnVd5p9DPQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Signed-off-by: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
+On Fri, Sep 09, 2016 at 10:24:55AM +0200, Geert Uytterhoeven wrote:
+> On Thu, Sep 8, 2016 at 1:57 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> > This patch supports the {get,set}_io_voltage operations of SDHI.
+> >
+> > This operates the POCCTRL0 register on R8A7796 SoC and makes 1.8v/3.3v
+> > voltage switch.
+> >
+> > Based on work by Takeshi Kihara and Wolfram Sang.
+> >
+> > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/stm32429i-eval.dts b/arch/arm/boot/dts/stm32429i-eval.dts
-index 6bfc595..0fd78e4 100644
---- a/arch/arm/boot/dts/stm32429i-eval.dts
-+++ b/arch/arm/boot/dts/stm32429i-eval.dts
-@@ -47,6 +47,7 @@
- 
- /dts-v1/;
- #include "stm32f429.dtsi"
-+#include <dt-bindings/input/input.h>
- 
- / {
- 	model = "STMicroelectronics STM32429i-EVAL board";
-@@ -82,6 +83,23 @@
- 		};
- 	};
- 
-+	gpio_keys {
-+		compatible = "gpio-keys";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		autorepeat;
-+		button@0 {
-+			label = "Wake up";
-+			linux,code = <KEY_WAKEUP>;
-+			gpios = <&gpioa 0 0>;
-+		};
-+		button@1 {
-+			label = "Tamper";
-+			linux,code = <KEY_RESTART>;
-+			gpios = <&gpioc 13 0>;
-+		};
-+	};
-+
- 	usbotg_hs_phy: usbphy {
- 		#phy-cells = <0>;
- 		compatible = "usb-nop-xceiv";
-diff --git a/arch/arm/boot/dts/stm32f429-disco.dts b/arch/arm/boot/dts/stm32f429-disco.dts
-index 0140807..7d0415e 100644
---- a/arch/arm/boot/dts/stm32f429-disco.dts
-+++ b/arch/arm/boot/dts/stm32f429-disco.dts
-@@ -47,6 +47,7 @@
- 
- /dts-v1/;
- #include "stm32f429.dtsi"
-+#include <dt-bindings/input/input.h>
- 
- / {
- 	model = "STMicroelectronics STM32F429i-DISCO board";
-@@ -75,6 +76,18 @@
- 			linux,default-trigger = "heartbeat";
- 		};
- 	};
-+
-+	gpio_keys {
-+		compatible = "gpio-keys";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		autorepeat;
-+		button@0 {
-+			label = "User";
-+			linux,code = <KEY_HOME>;
-+			gpios = <&gpioa 0 0>;
-+		};
-+	};
- };
- 
- &clk_hse {
--- 
-1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks, will you queue this up?
