@@ -1,107 +1,50 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH 3/6] drm/panel: simple: Add A10 EVB 5 inch panel support
-Date: Fri, 9 Sep 2016 16:34:13 +0200
-Message-ID: <20160909143413.GA8881@lukather>
-References: <20160831081817.5191-1-maxime.ripard@free-electrons.com>
- <20160831081817.5191-4-maxime.ripard@free-electrons.com>
- <CAGb2v66GsA8uNaaZfnnHFgBLA-LChCnO3vLhdtfzHNU0nHXH4Q@mail.gmail.com>
+From: Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: [PATCH v5 1/9] Documentation: dt-bindings: Document STM32 EXTI controller bindings
+Date: Fri, 9 Sep 2016 16:41:56 +0200
+Message-ID: <1473432124-6784-2-git-send-email-alexandre.torgue@st.com>
+References: <1473432124-6784-1-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="M9NhX3UHpAaciwkO"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAGb2v66GsA8uNaaZfnnHFgBLA-LChCnO3vLhdtfzHNU0nHXH4Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:54295 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751464AbcIIOnC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Sep 2016 10:43:02 -0400
+In-Reply-To: <1473432124-6784-1-git-send-email-alexandre.torgue@st.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com, lee.jones@linaro.org
 
+Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
 
---M9NhX3UHpAaciwkO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+new file mode 100644
+index 0000000..6e7703d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+@@ -0,0 +1,20 @@
++STM32 External Interrupt Controller
++
++Required properties:
++
++- compatible: Should be "st,stm32-exti"
++- reg: Specifies base physical address and size of the registers
++- interrupt-controller: Indentifies the node as an interrupt controller
++- #interrupt-cells: Specifies the number of cells to encode an interrupt
++  specifier, shall be 2
++- interrupts: interrupts references to primary interrupt controller
++
++Example:
++
++exti: interrupt-controller@40013c00 {
++	compatible = "st,stm32-exti";
++	interrupt-controller;
++	#interrupt-cells = <2>;
++	reg = <0x40013C00 0x400>;
++	interrupts = <1>, <2>, <3>, <6>, <7>, <8>, <9>, <10>, <23>, <40>, <41>, <42>, <62>, <76>;
++};
+-- 
+1.9.1
 
-Hi,
-
-On Mon, Sep 05, 2016 at 10:00:01PM +0800, Chen-Yu Tsai wrote:
-> On Wed, Aug 31, 2016 at 4:18 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > The A10-EVB from Allwinner comes with an unidentified panel, with the o=
-nly
-> > mark on the PCB being A10-SUB-EVB-5LCD.
-> >
-> > Add timings to simple panel to handle it.
-> >
-> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > ---
-> >  drivers/gpu/drm/panel/panel-simple.c | 26 ++++++++++++++++++++++++++
-> >  1 file changed, 26 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/pan=
-el/panel-simple.c
-> > index 85143d1b9b31..be371b053aab 100644
-> > --- a/drivers/gpu/drm/panel/panel-simple.c
-> > +++ b/drivers/gpu/drm/panel/panel-simple.c
-> > @@ -386,6 +386,29 @@ static void panel_simple_shutdown(struct device *d=
-ev)
-> >         panel_simple_disable(&panel->base);
-> >  }
-> >
-> > +static const struct drm_display_mode allwinner_a10_sub_evb_5lcd_mode =
-=3D {
-> > +       .clock =3D 33000,
-> > +       .hdisplay =3D 800,
-> > +       .hsync_start =3D 800 + 209,
-> > +       .hsync_end =3D 800 + 209 + 1,
-> > +       .htotal =3D 800 + 209 + 1 + 45,
-> > +       .vdisplay =3D 480,
-> > +       .vsync_start =3D 480 + 22,
-> > +       .vsync_end =3D 480 + 22 + 1,
-> > +       .vtotal =3D 480 + 22 + 1 + 22,
-> > +       .vrefresh =3D 60,
->=20
-> I assume the numbers came from the fex file? Allwinner LCD timing numbers
-> aren't very precise. This seems to yield a refresh rate of 58.x Hz.
-> The dot clock can go below MHz resolution, so it should be possible
-> to set it to a more proper clock rate here.
-
-Indeed.
-
-Upon closer inspection, it seems (from the ribbon) that the display is
-an hannstar, but there's no screen reference anywhere.
-
-By looking into it using the available references, the date of
-production found on that panel, and so on, it seems like it is an
-HSD050IDW1-A, whose timings do not seem to far off. But it's pure
-speculation at this point.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---M9NhX3UHpAaciwkO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX0shlAAoJEBx+YmzsjxAgi0MQAL+SGuCP/Ez+Bv8DhjHxciA5
-7hY1NGYv6/5Ecv2XA5rRuPSDJC8EExt3YmUSmZe/ebgfpyhApbAL7VIsXnTyZuPg
-nymd1+/BniM5Y5C+paAfCXRSbYdPOTpFkiHBVBehUmo+Zqn7ITqXbDLrWLrKABjD
-c40qtxMCiZ1Apnj31HpaBl9XmcvpPc1QEcNT3DguCZA8Dl3Mq0UVhpmSl+eIhNPQ
-1qnT9YTwg3el7pxqidUxYXNhr2HdOFuj3g+2/RWVTrCzUc0eh03An5SA3iiDXZnm
-VEqfXfpa2C6OQd3hYrHupCzbKtLu/7Xcmi7dsFzs7IP7xh2/OA8j59+rccCyt0wI
-bPKDdQ5f4mzDDDJX/pQvchcjs6qK8Pbvq75BPN4KIpu2X2OFD/xaSsc9RemKvJhB
-55s2ycAAvvrIC/R9GNCZxaJQlnnmKjl/jtEvAPpv9glFUzo0D9Vw0cfom8Cet6/0
-3wf/dyUA/xmTlOV7tQ6daEKchEunHcroP0rWq8qvWU4FunIooUMdnE0/aZbhGDwg
-VNSQ6BHBmU76YchVWKG32M46uBaVCLVvLtb/FnnqboKKWJCwVnWi5p6pzmOyvfaV
-vFSpWwDXIulc9dScsZKjvHydAEsRD04Z3pQCT0+O0n23gMk+uRm/y+qVprVWWxqT
-tHobgud5s6Fgsy0pNAJH
-=wPyb
------END PGP SIGNATURE-----
-
---M9NhX3UHpAaciwkO--
