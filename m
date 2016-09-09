@@ -1,92 +1,44 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH v2 2/4] pinctrl: amlogic: gxbb: add nand pins
-Date: Fri,  9 Sep 2016 10:28:56 +0200
-Message-ID: <1473409738-27175-3-git-send-email-jbrunet@baylibre.com>
-References: <1473409738-27175-1-git-send-email-jbrunet@baylibre.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] gpio: pca953x: initialize ret to zero to avoid returning garbage
+Date: Fri,  9 Sep 2016 09:31:54 +0100
+Message-ID: <20160909083154.26442-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1473409738-27175-1-git-send-email-jbrunet@baylibre.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jerome Brunet <jbrunet@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from youngberry.canonical.com ([91.189.89.112]:56176 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750867AbcIIIdW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Sep 2016 04:33:22 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-Add EE domains pins for the NAND flash controller.
-Even tough we have no driver for the NAND flash controller yet, we need
-to have these pins in pinctrl as the actual pin are shared with the spifc
-controller. The bootloader on the S905-P200 setup pinmux for the NAND
-controller so we need the kernel to properly deactivate this if necessary.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Acked-by: Kevin Hilman <khilman@baylibre.com>
+ret is not initialized so it contains garbage.  Ensure garbage
+is not returned in the case that pdata && pdata->teardown is false
+by initializing ret to 0.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/gpio/gpio-pca953x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index f74dbd5d350b..699f93c51040 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -168,6 +168,15 @@ static const unsigned int sdcard_d3_pins[] = { PIN(CARD_4, EE_OFF) };
- static const unsigned int sdcard_cmd_pins[] = { PIN(CARD_3, EE_OFF) };
- static const unsigned int sdcard_clk_pins[] = { PIN(CARD_2, EE_OFF) };
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index cbe2824..52f3d5c 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -845,7 +845,7 @@ static int pca953x_remove(struct i2c_client *client)
+ {
+ 	struct pca953x_platform_data *pdata = dev_get_platdata(&client->dev);
+ 	struct pca953x_chip *chip = i2c_get_clientdata(client);
+-	int ret;
++	int ret = 0;
  
-+static const unsigned int nand_ce0_pins[]	= { PIN(BOOT_8, EE_OFF) };
-+static const unsigned int nand_ce1_pins[]	= { PIN(BOOT_9, EE_OFF) };
-+static const unsigned int nand_rb0_pins[]	= { PIN(BOOT_10, EE_OFF) };
-+static const unsigned int nand_ale_pins[]	= { PIN(BOOT_11, EE_OFF) };
-+static const unsigned int nand_cle_pins[]	= { PIN(BOOT_12, EE_OFF) };
-+static const unsigned int nand_wen_clk_pins[]	= { PIN(BOOT_13, EE_OFF) };
-+static const unsigned int nand_ren_wr_pins[]	= { PIN(BOOT_14, EE_OFF) };
-+static const unsigned int nand_dqs_pins[]	= { PIN(BOOT_15, EE_OFF) };
-+
- static const unsigned int uart_tx_a_pins[]	= { PIN(GPIOX_12, EE_OFF) };
- static const unsigned int uart_rx_a_pins[]	= { PIN(GPIOX_13, EE_OFF) };
- static const unsigned int uart_cts_a_pins[]	= { PIN(GPIOX_14, EE_OFF) };
-@@ -402,6 +411,14 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GROUP(nor_q,		5,	3),
- 	GROUP(nor_c,		5,	2),
- 	GROUP(nor_cs,		5,	0),
-+	GROUP(nand_ce0,		4,	26),
-+	GROUP(nand_ce1,		4,	27),
-+	GROUP(nand_rb0,		4,	25),
-+	GROUP(nand_ale,		4,	24),
-+	GROUP(nand_cle,		4,	23),
-+	GROUP(nand_wen_clk,	4,	22),
-+	GROUP(nand_ren_wr,	4,	21),
-+	GROUP(nand_dqs,		4,	20),
- 
- 	/* Bank CARD */
- 	GROUP(sdcard_d1,	2,	14),
-@@ -493,6 +510,11 @@ static const char * const sdcard_groups[] = {
- 	"sdcard_cmd", "sdcard_clk",
- };
- 
-+static const char * const nand_groups[] = {
-+	"nand_ce0", "nand_ce1", "nand_rb0", "nand_ale", "nand_cle",
-+	"nand_wen_clk", "nand_ren_wr", "nand_dqs",
-+};
-+
- static const char * const uart_a_groups[] = {
- 	"uart_tx_a", "uart_rx_a", "uart_cts_a", "uart_rts_a",
- };
-@@ -539,6 +561,7 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
- 	FUNCTION(emmc),
- 	FUNCTION(nor),
- 	FUNCTION(sdcard),
-+	FUNCTION(nand),
- 	FUNCTION(uart_a),
- 	FUNCTION(uart_b),
- 	FUNCTION(uart_c),
+ 	if (pdata && pdata->teardown) {
+ 		ret = pdata->teardown(client, chip->gpio_chip.base,
 -- 
-2.7.4
+2.9.3
+
