@@ -1,164 +1,665 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH v5] i2c: imx: make bus recovery through pinctrl optional
-Date: Fri, 09 Sep 2016 13:34:31 -0700
-Message-ID: <649e7e70becb94adf3b8c4ae2409ea00@agner.ch>
-References: <1471644322-22670-1-git-send-email-leoyang.li@nxp.com>
- <20160906185849.27pjhawadca5pwow@pengutronix.de>
- <CADRPPNQ+1qBNL5WA=Jo_keE7BPnoOs7a2T6CpTuciiF16qK6xQ@mail.gmail.com>
- <87ca69fb85848a0a86b34a9a9037a57b@agner.ch>
- <CADRPPNSPye45bmFshfwb+gDA0x0ygs4Ofa6HMYbKt9ER0oeccg@mail.gmail.com>
- <8f8f7ffc4aef513ef5064ba0491fbc63@agner.ch>
- <CADRPPNR4oiRVgFqaM=1=Zn_JzrVJDVmozWsouLByXRtaHCh=qQ@mail.gmail.com>
- <306f579a2f2362595a55c53e48657563@agner.ch>
- <CADRPPNS3PecYRaAMR+0RuzU+gE3y5ZN-x7HzqggrdDsN-CkArg@mail.gmail.com>
+From: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [RESEND PATCH v5 1/1] USB: serial: cp210x: Adding GPIO support
+ for CP2105
+Date: Fri, 9 Sep 2016 21:55:03 +0100
+Message-ID: <20160909205503.GA20334@hermes.home>
+References: <cover.1469182892.git.martyn.welch@collabora.co.uk>
+ <48345361784d4f2f9b81bf41d34ff17510bd4d80.1469182892.git.martyn.welch@collabora.co.uk>
+ <20160820120629.GA2501@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <CADRPPNS3PecYRaAMR+0RuzU+gE3y5ZN-x7HzqggrdDsN-CkArg@mail.gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Leo Li <pku.leo@gmail.com>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Gao Pan <pandy.gao@nxp.com>, Wolfram Sang <wsa@the-dreams.de>, lkml <linux-kernel@vger.kernel.org>, Li Yang <leoyang.li@nxp.com>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160820120629.GA2501@localhost>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Karl Palsson <karlp-PhA6lrgffZtPR4JQBCEnsQ@public.gmane.org>, Konstantin Shkolnyy <Konstantin.Shkolnyy-S6d6foEdJf7QT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2016-09-09 12:37, Leo Li wrote:
-> On Fri, Sep 9, 2016 at 11:51 AM, Stefan Agner <stefan@agner.ch> wrote:
->> On 2016-09-08 16:57, Leo Li wrote:
->>> On Thu, Sep 8, 2016 at 5:39 PM, Stefan Agner <stefan@agner.ch> wrote:
->>>> On 2016-09-06 15:40, Leo Li wrote:
->>>>> On Tue, Sep 6, 2016 at 4:51 PM, Stefan Agner <stefan@agner.ch> wrote:
->>>>>> On 2016-09-06 13:06, Leo Li wrote:
->>>>>>> On Tue, Sep 6, 2016 at 1:58 PM, Uwe Kleine-König
->>>>>>> <u.kleine-koenig@pengutronix.de> wrote:
->>>>>>>> On Fri, Aug 19, 2016 at 05:05:22PM -0500, Li Yang wrote:
->>>> <snip>
->>>>>>>>> @@ -1081,8 +1090,11 @@ static int i2c_imx_probe(struct platform_device *pdev)
->>>>>>>>>               return ret;
->>>>>>>>>       }
->>>>>>>>>
->>>>>>>>> +     /* optional bus recovery feature through pinctrl */
->>>>>>>>>       i2c_imx->pinctrl = devm_pinctrl_get(&pdev->dev);
->>>>>>>>> -     if (IS_ERR(i2c_imx->pinctrl)) {
->>>>>>>>> +     /* bailout on -ENOMEM or -EPROBE_DEFER, continue for other errors */
->>>>>>>>> +     if (PTR_ERR(i2c_imx->pinctrl) == -ENOMEM ||
->>>>>>>>> +                     PTR_ERR(i2c_imx->pinctrl) == -EPROBE_DEFER) {
->>>>>>>>>               ret = PTR_ERR(i2c_imx->pinctrl);
->>>>>>>>>               goto clk_disable;
->>>>>>>>>       }
->>>>>>>>
->>>>>>>> devm_pinctrl_get might return the following error-valued pointers:
->>>>>>>>  - -EINVAL
->>>>>>>>  - -ENOMEM
->>>>>>>>  - -ENODEV
->>>>>>>>  - -EPROBE_DEFER
->>>>>>>>
->>>>>>>> There are several error paths returning -EINVAL, one is when an invalid
->>>>>>>> phandle is used. Do you really want to ignore that?
->>>>>>>>
->>>>>>>> IMO error handling is better done with inverse logic, that is continue
->>>>>>>> on some explicit error, bail out on all unknown stuff. This tends to be
->>>>>>>> more robust. Also the comment should be improved to not explain that for
->>>>>>>> -ENOMEM and -EPROBE_DEFER we bail out (which should be obvious for
->>>>>>>> anyone who can read C) but to explain why.
->>>>>>>
->>>>>>> What you said is true for normal error handling, but in this scenario
->>>>>>> it is intentional to ignore all pinctrl related errors except critical
->>>>>>> ones because failing to have pinctrl for an optional feature shouldn't
->>>>>>> impact the function of normal i2c.  We choose to catch -ENOMEM because
->>>>>>> the error could also cause problem for i2c probe, and -EPROBE_DEFER
->>>>>>> because it's possible that the pinctrl will be ready later and we want
->>>>>>> to give it a chance.  The i2c driver really don't care why the pinctrl
->>>>>>> was not usable.  I thought I added comment before the
->>>>>>
->>>>>> I don't agree. E.g. -EINVAL would appear if you pass devm_pinctrl_get an
->>>>>> invalid device. Currently you would silently ignore that, which is not
->>>>>> what you want.
->>>>>
->>>>> It is not silently ignored, there will be a message printed out saying
->>>>> pinctrl is not available and bus recovery is not supported.  On the
->>>>> contrary, without this change the entire i2c driver fails to work
->>>>> silently if pinctrl is somehow not working.  And if the system is so
->>>>> broken that the pointer to the i2c device is NULL, the probe of i2c
->>>>> would have already failed before this point.  We shouldn't count on an
->>>>> optional function of the driver to catch fundamental issues like this.
->>>>>
->>>>>>
->>>>>> You want to get the pinctrl in any case expect there isn't one. And that
->>>>>> is how you should formulate your if statement.
->>>>>>
->>>>>> /*
->>>>>>  * It is ok if no pinctrl device is available. We'll not be able to use
->>>>>> the
->>>>>>  * bus recovery feature, but otherwise the driver works fine...
->>>>>>  */
->>>>>> if (PTR_ERR(i2c_imx->pinctrl) != -ENODEV)
->>>>>
->>>>> I agree that there could be other possibilities that the pinctrl
->>>>> failed to work beside the reason I described in the commit
->>>>> message(platform doesn't support pinctrl at all).  But I don't think
->>>>> any of them other than the -ENOMEM and -EPROBE_DEFER deserves a bail
->>>>> out for the entire i2c driver.
->>>>
->>>> FWIW, I disagree. If there is pinctrl defined, you want be sure that it
->>>> gets applied properly, no matter what. E.g. when devm_pinctrl_get return
->>>> EINVAL (Uwe's example) the driver will continue and likely fail in
->>>> mysterious ways later on because the pins have not been muxed properly.
->>>> The driver should not load in that situation so that the developer is
->>>> forced to fix his mistakes. The only reason to bail out here is if there
->>>> is no pin controller (ENODEV). And it seems that Uwe also tends to that
->>>> solution.
->>>
->>> With this patch the i2c bus recovery feature will be disabled if the
->>> devm_pinctrl_get() fails.  The pin mux setting will not be changed in
->>> either i2c probe stage or at runtime.  I don't think it can cause any
->>> trouble to normal I2C operation.  IMO, it is not good to *force*
->>
->> If you have a pin controller, and you make a typo in your device tree
->> which leads to a wrong phandle and devm_pinctrl_get returning -EINVAL,
->> the system won't mux the pins... And that will certainly affect normal
->> I2C operation!
+On Sat, Aug 20, 2016 at 02:06:29PM +0200, Johan Hovold wrote:
+> [ +CC: Karl and Konstantin ]
 > 
-> I see why we are having different understanding now.  The i2c-imx
-> driver doesn't rely on the pinctrl to get the correct pin-mux setting
-> for I2C operation.   The pinctrl code was just added for recently for
-> the bus recovery function.  The assumption is that the correct
-> pin-muxing has been taken care of by platform code or reset logic.
-> The pinctrl is only used to enter/exit bus recovery mode, nothing
-> else.  Hence optional.  So a typo in the pinctrl node only impacts bus
-> recovery function.
+> On Fri, Jul 22, 2016 at 11:33:15AM +0100, Martyn Welch wrote:
+> > This patch adds support for the GPIO found on the CP2105. Unlike the GPIO
+> > provided by some of the other devices supported by the cp210x driver, the
+> > GPIO on the CP2015 is muxed on pins otherwise used for serial control
+> > lines. The GPIO have been configured in 2 separate banks as the choice to
+> > configure the pins for GPIO is made separately for pins shared with each
+> > of the 2 serial ports this device provides, though the choice is made for
+> > all pins associated with that port in one go. The choice of whether to use
+> > the pins for GPIO or serial is made by adding configuration to a one-time
+> > programable PROM in the chip and can not be changed at runtime. The device
+> > defaults to GPIO.
+> > 
+> > This device supports either push-pull or open-drain modes, it doesn't
+> > provide an explicit input mode, though the state of the GPIO can be read
+> > when used in open-drain mode. Like with pin use, the mode is configured in
+> > the one-time programable PROM and can't be changed at runtime.
+> > 
+> > Signed-off-by: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+> > Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> > ---
+> > 
+> > V2: - Doesn't break build when gpiolib isn't selected.
+> > 
+> > V3: - Tracking GPIO state so pins no longer get their state changed should
+> >       the pin be in open-drain mode and be pulled down externally whilst
+> >       another pin is set.
+> >     - Reworked buffers and moved to byte accesses to remove the
+> >       questionable buffer size logic and byte swapping.
+> >     - Added error reporting.
+> >     - Removed incorrect/pointless comments.
+> >     - Renamed tmp variable to make use clearer.
+> > 
+> > V4: - Fixed memory leak in cp210x_gpio_get error path.
+> > 
+> > V5: - Determining shared GPIO based on device type.
+> >     - Reordered vendor specific values by value.
+> >     - Use interface device for gpio messages.
+> >     - Remove unnecessary empty lines.
+> >     - Using kzalloc rather than kcalloc.
+> >     - Added locking to port_priv->output_state.
+> >     - Added dummy cp2105_shared_gpio_init for !CONFIG_GPIOLIB.
+> >     - Removed unnecessary masking on u8.
+> >     - Added support for use of GPIO pin as RS485 traffic indication or
+> >       activity LEDs.
+> >     - Use correct dev for GPIO device.
+> >     - Set can_sleep.
+> >     - Roll in initial configuration state support.
+> >     - Print error message & continue if GPIO fails.
+> >     - Simplified ifdef'ing.
+> 
+> My apologies for the extreme delay for v5 review.
 > 
 
-You are right, the framework usually makes sure that default pinctrl
-gets applied. I got that wrong.
+Sorry for the delayed response too.
 
->>
->>> people fix problem that they don't really care by deliberately enlarge
->>> the problem.  That's why we don't panic() on any error we found.  For
->>> those who do care about the bus recovery, they can get the information
->>> from the console.
->>
->> IMHO, it is just stupid to ignore errors and then let the developer
->> later on trace back what the initial issue was. Error out early is a
->> common sense software design principle...
->>
->> I am not asking for a panic(), I am just suggesting to only ignore
->> pinctrl if it returns -ENODEV, the case you care are about.
+> >  drivers/usb/serial/cp210x.c | 351 +++++++++++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 348 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
+> > index 4d6a5c6..b3153b8 100644
+> > --- a/drivers/usb/serial/cp210x.c
+> > +++ b/drivers/usb/serial/cp210x.c
+> > @@ -23,6 +23,9 @@
+> >  #include <linux/usb.h>
+> >  #include <linux/uaccess.h>
+> >  #include <linux/usb/serial.h>
+> > +#include <linux/gpio/driver.h>
+> > +#include <linux/bitops.h>
+> > +#include <linux/mutex.h>
+> >  
+> >  #define DRIVER_DESC "Silicon Labs CP210x RS232 serial adaptor driver"
+> >  
+> > @@ -44,10 +47,14 @@ static int cp210x_tiocmset(struct tty_struct *, unsigned int, unsigned int);
+> >  static int cp210x_tiocmset_port(struct usb_serial_port *port,
+> >  		unsigned int, unsigned int);
+> >  static void cp210x_break_ctl(struct tty_struct *, int);
+> > +static int cp210x_attach(struct usb_serial *);
+> > +static void cp210x_release(struct usb_serial *);
+> >  static int cp210x_port_probe(struct usb_serial_port *);
+> >  static int cp210x_port_remove(struct usb_serial_port *);
+> >  static void cp210x_dtr_rts(struct usb_serial_port *p, int on);
+> >  
+> > +#define CP210X_FEATURE_HAS_SHARED_GPIO		BIT(0)
 > 
-> It was just an analogy for enlarging the problem for getting
-> attention.  But you probably thought that it was not enlarging the
-> problem as you think pinctrl is required by the driver instead of an
-> optional thing.
+> This one is not currently used, so should be removed.
+> 
 
-Yeah it is a bit a wording thing: In my understanding, pinctrl is
-required on SoC's witch have a pin controller... It is just that the
-driver does not need to get the pinctrl by itself because the stack is
-taking care of it implicitly. And yes, that makes the particular example
-not a real world example.
+Agh, oops, missed that.
 
-However, I still feel that only bailing out if -ENODEV is returned is
-the cleaner solution, and expresses better what your intention is. But
-then I am not the pinctrl maintainer and I don't feel that it is worth
-debating more around it, so whatever...
+> > +
+> >  static const struct usb_device_id id_table[] = {
+> >  	{ USB_DEVICE(0x045B, 0x0053) }, /* Renesas RX610 RX-Stick */
+> >  	{ USB_DEVICE(0x0471, 0x066A) }, /* AKTAKOM ACE-1001 cable */
+> > @@ -207,9 +214,20 @@ static const struct usb_device_id id_table[] = {
+> >  
+> >  MODULE_DEVICE_TABLE(usb, id_table);
+> >  
+> > +struct cp210x_dev_private {
+> 
+> Rename this cp210x_serial_private.
+> 
 
+OK
+
+> > +	u8	partnum;
+> > +};
+> > +
+> >  struct cp210x_port_private {
+> >  	__u8			bInterfaceNumber;
+> >  	bool			has_swapped_line_ctl;
+> > +#ifdef CONFIG_GPIOLIB
+> > +	struct usb_serial	*serial;
+> > +	struct gpio_chip	gc;
+> > +	struct mutex		output_lock;
+> > +	unsigned int		output_state;
+> > +	unsigned int		*gpio_map;
+> > +#endif
+> 
+> As mentioned in my comments to v4, these belong in the interface private
+> data (i.e. private data of the parent device).
+> 
+
+Ah, sorry.
+
+> >  };
+> >  
+> >  static struct usb_serial_driver cp210x_device = {
+> > @@ -228,6 +246,8 @@ static struct usb_serial_driver cp210x_device = {
+> >  	.tx_empty		= cp210x_tx_empty,
+> >  	.tiocmget		= cp210x_tiocmget,
+> >  	.tiocmset		= cp210x_tiocmset,
+> > +	.attach			= cp210x_attach,
+> > +	.release		= cp210x_release,
+> >  	.port_probe		= cp210x_port_probe,
+> >  	.port_remove		= cp210x_port_remove,
+> >  	.dtr_rts		= cp210x_dtr_rts
+> > @@ -270,6 +290,7 @@ static struct usb_serial_driver * const serial_drivers[] = {
+> >  #define CP210X_SET_CHARS	0x19
+> >  #define CP210X_GET_BAUDRATE	0x1D
+> >  #define CP210X_SET_BAUDRATE	0x1E
+> > +#define CP210X_VENDOR_SPECIFIC	0xFF
+> >  
+> >  /* CP210X_IFC_ENABLE */
+> >  #define UART_ENABLE		0x0001
+> > @@ -312,6 +333,30 @@ static struct usb_serial_driver * const serial_drivers[] = {
+> >  #define CONTROL_WRITE_DTR	0x0100
+> >  #define CONTROL_WRITE_RTS	0x0200
+> >  
+> > +/* CP210X_VENDOR_SPECIFIC values */
+> > +#define CP210X_READ_LATCH	0x00C2
+> > +#define CP210X_GET_PARTNUM	0x370B
+> > +#define CP210X_GET_PORTCONFIG	0x370C
+> > +#define CP210X_GET_DEVICEMODE	0x3711
+> > +#define CP210X_WRITE_LATCH	0x37E1
+> > +
+> > +/* Part number definitions */
+> > +#define CP2101_PARTNUM		0x01
+> > +#define CP2102_PARTNUM		0x02
+> > +#define CP2103_PARTNUM		0x03
+> > +#define CP2104_PARTNUM		0x04
+> > +#define CP2105_PARTNUM		0x05
+> > +#define CP2108_PARTNUM		0x08
+> 
+> Please use a CP210X_ prefix, and rename these CP210X_PARTNUM_CP2101,
+> etc.
+> 
+
+OK
+
+> > +
+> > +/* CP2105 port configuration values */
+> > +#define CP2105_SCI_GPIO0_TXLED_MODE	0x01
+> > +#define CP2105_SCI_GPIO1_RXLED_MODE	0x02
+> > +
+> > +
+> 
+> Remove one newline.
+> 
+
+OK
+
+> > +#define CP2105_ECI_GPIO0_TXLED_MODE	0x01
+> > +#define CP2105_ECI_GPIO1_RXLED_MODE	0x02
+> > +#define CP2105_ECI_GPIO1_RS485_MODE	0x04
+> 
+> If all of these are bitmasks, you should use BIT(n).
+> 
+
+I guess they are - will convert.
+
+> Also move all of these vendor-specific defines last (i.e. above
+> cp210x_read_reg_block).
+> 
+
+OK
+
+> > +
+> >  /* CP210X_GET_COMM_STATUS returns these 0x13 bytes */
+> >  struct cp210x_comm_status {
+> >  	__le32   ulErrors;
+> > @@ -1104,11 +1149,263 @@ static void cp210x_break_ctl(struct tty_struct *tty, int break_state)
+> >  	cp210x_write_u16_reg(port, CP210X_SET_BREAK, state);
+> >  }
+> >  
+> > +#ifdef CONFIG_GPIOLIB
+> > +static int cp210x_gpio_direction_get(struct gpio_chip *gc, unsigned gpio)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +static int cp210x_gpio_get(struct gpio_chip *gc, unsigned gpio)
+> > +{
+> > +	struct cp210x_port_private *port_priv =
+> > +			 container_of(gc, struct cp210x_port_private, gc);
+> 
+> Just use tabs for indentation here.
+> 
+
+OK
+
+> > +	struct usb_serial *serial = port_priv->serial;
+> > +	u8 *buf;
+> > +	int result;
+> > +
+> > +	buf = kzalloc(sizeof(*buf), GFP_KERNEL);
+> > +	if (!buf)
+> > +		return -ENOMEM;
+> > +
+> > +	result = usb_control_msg(serial->dev, usb_rcvctrlpipe(serial->dev, 0),
+> > +				 CP210X_VENDOR_SPECIFIC,
+> > +				 REQTYPE_INTERFACE_TO_HOST, CP210X_READ_LATCH,
+> > +				 port_priv->bInterfaceNumber, buf, 1,
+> > +				 USB_CTRL_GET_TIMEOUT);
+> 
+> Please consider adding generic helpers for these vendor requests as that
+> would allow you to remove a lot of the buffer-management code.
+> 
+> We could even consider using those to implement the current reg_block
+> helpers later.
+> 
+> > +	if (result != 1) {
+> > +		dev_err(&serial->interface->dev,
+> > +			"failed to get gpio state: %d\n", result);
+> > +		result = 0;
+> > +		goto err;
+> > +	}
+> > +
+> > +	result = (*buf >> port_priv->gpio_map[gpio]) & 0x1;
+> > +
+> > +err:
+> > +	kfree(buf);
+> > +
+> > +	return result;
+> > +}
+> > +
+> > +static void cp210x_gpio_set(struct gpio_chip *gc, unsigned gpio, int value)
+> > +{
+> > +	struct cp210x_port_private *port_priv =
+> > +			 container_of(gc, struct cp210x_port_private, gc);
+> > +	struct usb_serial *serial = port_priv->serial;
+> > +	int result;
+> > +	u8 *buf;
+> > +
+> > +	buf = kzalloc(sizeof(*buf) * 2, GFP_KERNEL);
+> > +	if (!buf)
+> > +		return;
+> > +
+> > +	mutex_lock(&port_priv->output_lock);
+> > +
+> > +	if (value == 0)
+> > +		port_priv->output_state &= ~BIT(port_priv->gpio_map[gpio]);
+> > +	else
+> > +		port_priv->output_state |= BIT(port_priv->gpio_map[gpio]);
+> > +
+> > +	mutex_unlock(&port_priv->output_lock);
+> > +
+> > +	buf[1] = port_priv->output_state;
+> > +	buf[0] = 0xFF;
+> 
+> You should consider using a struct for this message instead of a raw
+> byte array. Perhaps the field names could be found in one of those
+> SiLabs application notes.
+> 
+
+I'll have a look, but I think they just used raw byte arrays from memory.
+
+> > +
+> > +	result = usb_control_msg(serial->dev,
+> > +				 usb_sndctrlpipe(serial->dev, 0),
+> > +				 CP210X_VENDOR_SPECIFIC,
+> > +				 REQTYPE_HOST_TO_INTERFACE, CP210X_WRITE_LATCH,
+> > +				 port_priv->bInterfaceNumber, buf, 2,
+> > +				 USB_CTRL_SET_TIMEOUT);
+> > +	if (result != 2) {
+> > +		dev_err(&serial->interface->dev,
+> > +			"failed to set gpio state: %d\n", result);
+> > +	}
+> > +
+> > +	kfree(buf);
+> > +}
+> > +
+> > +/*
+> > + * This function is for configuring GPIO using shared pins, where other signals
+> > + * are made unavailable by configuring the use of GPIO. This is believed to be
+> > + * only applicable to the cp2105 at this point, the other devices supported by
+> > + * this driver that provide GPIO do so in a way that does not impact other
+> > + * signals and are thus expected to have very different initialisation.
+> > + */
+> 
+> Instead of exposing a varying number of gpios and hence varying chip
+> offsets depending on current configuration, I think we should always
+> register all gpios and instead (possibly) refuse requests for them in
+> case the corresponding pin is currently not configured for gpio
+> function.
+> 
+> This way gpio base+offset will always map to the same physical pin.
+> 
+> Judging from the various cp210x datasheets, this scheme will fit the
+> other device types as well.
+> 
+
+I'd like to hear Linus' take on that prior to making that change as I'd
+prefer not to do it then have him NACK it. Linus?
+
+> > +static int cp2105_shared_gpio_init(struct usb_serial_port *port)
+> > +{
+> > +	struct usb_serial *serial = port->serial;
+> > +	struct cp210x_port_private *port_priv = usb_get_serial_port_data(port);
+> > +	u8 *mode;
+> > +	u8 *config;
+> > +	int result;
+> > +	int i;
+> > +
+> > +	mode = kzalloc(sizeof(*mode) * 2, GFP_KERNEL);
+> > +	if (!mode)
+> > +		return -ENOMEM;
+> > +
+> > +	config = kzalloc(sizeof(*config) * 15, GFP_KERNEL);
+> > +	if (!config) {
+> > +		result = -ENOMEM;
+> > +		goto err1;
+> > +	}
+> 
+> Same as above, please use packed structs for these messages too instead
+> of hard-coding sizes and offsets (cf. struct cp210x_comm_status).
+> 
+> I think I saw some more structure to them in Karl's OTP scripts, and
+> perhaps Konstantin can also provide some insight?
+> 
+
+Ok, will take a look.
+
+> > +
+> > +	result = usb_control_msg(serial->dev, usb_rcvctrlpipe(serial->dev, 0),
+> > +				 CP210X_VENDOR_SPECIFIC, REQTYPE_DEVICE_TO_HOST,
+> > +				 CP210X_GET_DEVICEMODE,
+> > +				 port_priv->bInterfaceNumber, mode,
+> > +				 2, USB_CTRL_GET_TIMEOUT);
+> > +	if (result != 2) {
+> > +		dev_err(&port->dev, "failed to get device mode: %d\n", result);
+> > +		if (result > 0)
+> > +			result = -EPROTO;
+> > +
+> > +		goto err2;
+> > +	}
+> > +
+> > +	result = usb_control_msg(serial->dev, usb_rcvctrlpipe(serial->dev, 0),
+> > +				 CP210X_VENDOR_SPECIFIC, REQTYPE_DEVICE_TO_HOST,
+> > +				 CP210X_GET_PORTCONFIG,
+> > +				 port_priv->bInterfaceNumber, config, 15,
+> > +				 USB_CTRL_GET_TIMEOUT);
+> > +	if (result != 15) {
+> > +		dev_err(&port->dev, "failed to get port config: %d\n", result);
+> > +		if (result > 0)
+> > +			result = -EPROTO;
+> > +
+> > +		goto err2;
+> > +	}
+> > +
+> > +	/*  2 banks of GPIO - One for the pins taken from each serial port */
+> > +	if (port_priv->bInterfaceNumber == 0) {
+> > +		if (mode[0] == 0) {
+> > +			result = 0;
+> > +			goto err2;
+> > +		}
+> > +
+> > +		port_priv->gc.label = "cp210x_eci";
+> > +		port_priv->gc.ngpio = 2;
+> > +		port_priv->gpio_map = kzalloc(sizeof(*port_priv->gpio_map) *
+> > +					      port_priv->gc.ngpio,
+> > +					      GFP_KERNEL);
+> 
+> You must check for allocation failures.
+> 
+> I don't think you'll need gpio_map at all if you always register all
+> gpios.
+> 
+> You may want a single bitmask to store which pins are configured for
+> gpio-function, and use that in a new request() callback instead.
+> 
+> Just use the same label for all cp210x gpiochips, there will never be
+> more than one per interface anyway.
+> 
+
+OK
+
+> > +
+> > +		i = 0;
+> > +
+> > +		if (config[13] & CP2105_ECI_GPIO0_TXLED_MODE) {
+> > +			port_priv->gc.ngpio -= 1;
+> > +		} else {
+> > +			port_priv->gpio_map[i] = 0;
+> > +			i++;
+> > +		}
+> > +
+> > +		if (config[13] & (CP2105_ECI_GPIO1_RXLED_MODE |
+> > +				  CP2105_ECI_GPIO1_RS485_MODE)) {
+> > +			port_priv->gc.ngpio -= 1;
+> > +		} else {
+> > +			port_priv->gpio_map[i] = 1;
+> > +			i++;
+> > +		}
+> > +
+> > +		if (port_priv->gc.ngpio == 0) {
+> > +			result = 0;
+> > +			goto err2;
+> > +		}
+> > +	} else if (port_priv->bInterfaceNumber == 1) {
+> > +		if (mode[1] == 0) {
+> > +			result = 0;
+> > +			goto err2;
+> > +		}
+> > +
+> > +		port_priv->gc.label = "cp210x_sci";
+> > +		port_priv->gc.ngpio = 3;
+> > +		port_priv->gpio_map = kzalloc(sizeof(*port_priv->gpio_map) *
+> > +					      port_priv->gc.ngpio,
+> > +					      GFP_KERNEL);
+> 
+> Error handling missing here too.
+> 
+
+OK
+
+> > +
+> > +		i = 0;
+> > +
+> > +		if (config[12] & CP2105_SCI_GPIO0_TXLED_MODE) {
+> > +			port_priv->gc.ngpio -= 1;
+> > +		} else {
+> > +			port_priv->gpio_map[i] = 0;
+> > +			i++;
+> > +		}
+> > +
+> > +		if (config[12] & CP2105_SCI_GPIO1_RXLED_MODE) {
+> > +			port_priv->gc.ngpio -= 1;
+> > +		} else {
+> > +			port_priv->gpio_map[i] = 1;
+> > +			i++;
+> > +		}
+> > +
+> > +		port_priv->gpio_map[i] = 2;
+> > +	} else {
+> > +		result = -ENODEV;
+> > +		goto err2;
+> > +	}
+> > +
+> > +	port_priv->gc.get_direction = cp210x_gpio_direction_get;
+> > +	port_priv->gc.get = cp210x_gpio_get;
+> > +	port_priv->gc.set = cp210x_gpio_set;
+> > +	port_priv->gc.owner = THIS_MODULE;
+> > +	port_priv->gc.parent = &serial->interface->dev;
+> > +	port_priv->gc.base = -1;
+> > +	port_priv->gc.can_sleep = true;
+> > +
+> > +	port_priv->serial = serial;
+> > +
+> > +	/*
+> > +	 * Need to track the state of the output pins, the read function
+> > +	 * returns value seen on the pin, not the value being currently
+> > +	 * driven.
+> > +	 */
+> > +	if (port_priv->bInterfaceNumber == 0)
+> > +		port_priv->output_state = (config[4] >> 2) & 0x3;
+> > +	else
+> > +		port_priv->output_state = (config[5] >> 1) & 0x7;
+> > +
+> > +	mutex_init(&port_priv->output_lock);
+> > +
+> > +	result = gpiochip_add(&port_priv->gc);
+> > +
+> > +err2:
+> 
+> Please rename these out_free_config...
+> 
+
+OK
+
+> > +	kfree(config);
+> > +err1:
+> 
+> ...and out_free_mode, which is more descriptive.
+> 
+
+OK
+
+> > +	kfree(mode);
+> > +
+> > +	return result;
+> > +}
+> > +
+> > +void cp210x_shared_gpio_remove(struct usb_serial_port *port)
+> > +{
+> > +	struct cp210x_port_private *port_priv;
+> > +
+> > +	port_priv = usb_get_serial_port_data(port);
+> > +
+> > +	if (port_priv->gc.label)
+> > +		gpiochip_remove(&port_priv->gc);
+> 
+> This can be done unconditionally after the changes suggested above.
+> 
+> > +}
+> > +
+> > +#else
+> > +
+> > +static int cp2105_shared_gpio_init(struct usb_serial_port *port)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +void cp210x_shared_gpio_remove(struct usb_serial_port *port)
+> > +{
+> > +	/* Nothing to do */
+> > +}
+> > +#endif
+> > +
+> >  static int cp210x_port_probe(struct usb_serial_port *port)
+> >  {
+> >  	struct usb_serial *serial = port->serial;
+> >  	struct usb_host_interface *cur_altsetting;
+> >  	struct cp210x_port_private *port_priv;
+> > +	struct cp210x_dev_private *dev_priv = usb_get_serial_data(serial);
+> >  	int ret;
+> >  
+> >  	port_priv = kzalloc(sizeof(*port_priv), GFP_KERNEL);
+> > @@ -1121,12 +1418,22 @@ static int cp210x_port_probe(struct usb_serial_port *port)
+> >  	usb_set_serial_port_data(port, port_priv);
+> >  
+> >  	ret = cp210x_detect_swapped_line_ctl(port);
+> > -	if (ret) {
+> > -		kfree(port_priv);
+> > -		return ret;
+> > +	if (ret)
+> > +		goto err_ctl;
+> > +
+> > +	if (dev_priv->partnum == CP2105_PARTNUM) {
+> > +		ret = cp2105_shared_gpio_init(port);
+> > +		if (ret < 0)
+> > +			dev_err(&port->dev,
+> > +				"GPIO initialisation failed, continuing without GPIO support\n");
+> >  	}
+> 
+> So move this to attach().
+> 
+
+OK
+
+> >  
+> >  	return 0;
+> > +
+> > +err_ctl:
+> > +	kfree(port_priv);
+> > +
+> > +	return ret;
+> >  }
+> >  
+> >  static int cp210x_port_remove(struct usb_serial_port *port)
+> > @@ -1134,11 +1441,49 @@ static int cp210x_port_remove(struct usb_serial_port *port)
+> >  	struct cp210x_port_private *port_priv;
+> >  
+> >  	port_priv = usb_get_serial_port_data(port);
+> > +
+> > +	cp210x_shared_gpio_remove(port);
+> > +
+> >  	kfree(port_priv);
+> >  
+> >  	return 0;
+> >  }
+> >  
+> > +static int cp210x_attach(struct usb_serial *serial)
+> > +{
+> > +	struct cp210x_dev_private *priv;
+> > +	int result;
+> > +
+> > +	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+> > +	if (!priv)
+> > +		return -ENOMEM;
+> > +
+> > +	result = usb_control_msg(serial->dev, usb_rcvctrlpipe(serial->dev, 0),
+> > +				 CP210X_VENDOR_SPECIFIC, REQTYPE_DEVICE_TO_HOST,
+> > +				 CP210X_GET_PARTNUM, 0, &priv->partnum, 1,
+> 
+> Always use a dedicated DMA-able buffer for transfers like this one.
+> Adding a couple of helper function for this as suggested above, would
+> take care of that.
+> 
+
+OK
+
+> > +				 USB_CTRL_GET_TIMEOUT);
+> > +	if (result != 1) {
+> > +		dev_err(&serial->interface->dev, "failed to get model: %d\n",
+> > +			result);
+> > +		goto err;
+> > +	}
+> > +
+> > +	usb_set_serial_data(serial, (void *)priv);
+> > +
+> > +	return 0;
+> > +err:
+> > +	kfree(priv);
+> > +
+> > +	return result;
+> > +}
+> > +
+> > +static void cp210x_release(struct usb_serial *serial)
+> > +{
+> > +	struct cp210x_dev_private *priv = usb_get_serial_data(serial);
+> > +
+> > +	kfree(priv);
+> > +}
+> > +
+> >  module_usb_serial_driver(serial_drivers, id_table);
+> >  
+> >  MODULE_DESCRIPTION(DRIVER_DESC);
+> 
+> Thanks,
+> Johan
 --
-Stefan
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
