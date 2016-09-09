@@ -1,44 +1,77 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH] gpio: pca953x: initialize ret to zero to avoid returning garbage
-Date: Fri,  9 Sep 2016 09:31:54 +0100
-Message-ID: <20160909083154.26442-1-colin.king@canonical.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
+Date: Fri, 9 Sep 2016 11:58:32 +0300
+Message-ID: <20160909085832.GK15313@lahna.fi.intel.com>
+References: <20160817081344.GM30827@lahna.fi.intel.com>
+ <CALUN=q+LAfTf_=V4tXy3_h48K2BLtNOjxK4=AKRTtdjfW8970g@mail.gmail.com>
+ <20160818121328.GE30827@lahna.fi.intel.com>
+ <CALUN=qJ_KEXXD4T11h3Xxjxx9LExBnzevVKGQ1K=XGZn-SS_rg@mail.gmail.com>
+ <20160818135813.GJ30827@lahna.fi.intel.com>
+ <20160908101303.GA22716@ktx>
+ <20160908102402.GC15313@lahna.fi.intel.com>
+ <20160908162843.GB22716@ktx>
+ <20160909061834.GG15313@lahna.fi.intel.com>
+ <20160909082358.GA23895@ktx>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:56176 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750867AbcIIIdW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Sep 2016 04:33:22 -0400
+Received: from mga02.intel.com ([134.134.136.20]:55733 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750816AbcIII6h (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 9 Sep 2016 04:58:37 -0400
+Content-Disposition: inline
+In-Reply-To: <20160909082358.GA23895@ktx>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Phidias Chiang <phidias.chiang@canonical.com>
+Cc: Anisse Astier <anisse@astier.eu>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Sep 09, 2016 at 04:23:58PM +0800, Phidias Chiang wrote:
+> On Fri, Sep 09, 2016 at 09:18:34AM +0300, Mika Westerberg wrote:
+> > On Fri, Sep 09, 2016 at 12:28:43AM +0800, Phidias Chiang wrote:
+> > 
+> > Hmm, how can that happen? The patch removes clearing of INTMASK and only
+> > other place where it is cleared temporarily is on resume. Can you add
+> > dev_info() calls like:
+> > 
+> > 	/* Clear all interrupts */
+> > 	chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
+> > 	dev_info(pctrl->dev, "INTMASK0: 0x%08x\n", readl(pctrl->regs + CHV_INTMASK));
+> > 
+> > 	...
+> > 
+> > 	gpiochip_set_chained_irqchip(chip, &chv_gpio_irqchip, irq,
+> > 				     chv_gpio_irq_handler);
+> > 	dev_info(pctrl->dev, "INTMASK1: 0x%08x\n", readl(pctrl->regs + CHV_INTMASK));
+> > 	return 0;
+> > 
+> > It should print the same values both time.
+> > 
+> > Also which interrupt does not work and can you send me output of
+> > /proc/interrupts?
+> 
+> Output in dmesg:
+> [    2.054475] cherryview-pinctrl INT33FF:00: INTMASK0: 0x00000006
+> [    2.055247] cherryview-pinctrl INT33FF:00: INTMASK1: 0x00000000
+> [    2.055375] cherryview-pinctrl INT33FF:01: INTMASK0: 0x00004000
+> [    2.056931] cherryview-pinctrl INT33FF:01: INTMASK1: 0x00000000
+> [    2.057036] cherryview-pinctrl INT33FF:02: INTMASK0: 0x00000000
+> [    2.057367] cherryview-pinctrl INT33FF:02: INTMASK1: 0x00000000
+> [    2.057489] cherryview-pinctrl INT33FF:03: INTMASK0: 0x00000000
+> [    2.058337] cherryview-pinctrl INT33FF:03: INTMASK1: 0x00000000
+> 
+> So it's somehow got cleared in the process after.
 
-ret is not initialized so it contains garbage.  Ensure garbage
-is not returned in the case that pdata && pdata->teardown is false
-by initializing ret to 0.
+Only other place where we touch INTMASK register is
+chv_gpio_irq_mask_unmask(). Can you add some debug there to find out the
+caller?
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpio/gpio-pca953x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> And the following link is the complete /proc/interrupts:
+> http://pastebin.com/qwamyKZb
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index cbe2824..52f3d5c 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -845,7 +845,7 @@ static int pca953x_remove(struct i2c_client *client)
- {
- 	struct pca953x_platform_data *pdata = dev_get_platdata(&client->dev);
- 	struct pca953x_chip *chip = i2c_get_clientdata(client);
--	int ret;
-+	int ret = 0;
- 
- 	if (pdata && pdata->teardown) {
- 		ret = pdata->teardown(client, chip->gpio_chip.base,
--- 
-2.9.3
+Looks quite normal.
 
+> THe interrupt doesn't work is 9, when I made it work it responsed to
+> pressing hotkeys.
+
+9 is the SCI interrupt used by ACPI which explains.
