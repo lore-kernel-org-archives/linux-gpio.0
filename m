@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v6 2/5] gpio: pca953x: refactor pca953x_write_regs()
-Date: Fri,  9 Sep 2016 11:17:35 +0200
-Message-ID: <1473412658-13120-3-git-send-email-bgolaszewski@baylibre.com>
+Subject: [PATCH v6 4/5] gpio: pca953x: remove an unused variable
+Date: Fri,  9 Sep 2016 11:17:37 +0200
+Message-ID: <1473412658-13120-5-git-send-email-bgolaszewski@baylibre.com>
 References: <1473412658-13120-1-git-send-email-bgolaszewski@baylibre.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1473412658-13120-1-git-send-email-bgolaszewski@baylibre.com>
@@ -10,119 +10,45 @@ To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.co
 Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Avoid the unnecessary if-else in pca953x_write_regs() by splitting
-the routine into smaller, specialized functions and calling the right
-one via a function pointer held in struct pca953x_chip.
+The chip_type variable in struct pca953x_chip is no longer required.
+
+Remove it.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-pca953x.c | 75 ++++++++++++++++++++++++++++-----------------
- 1 file changed, 47 insertions(+), 28 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 5d65c9e..e9defeb 100644
+index e7bf3b3..e36a9bf 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -135,6 +135,8 @@ struct pca953x_chip {
+@@ -130,7 +130,6 @@ struct pca953x_chip {
+ 	struct i2c_client *client;
+ 	struct gpio_chip gpio_chip;
+ 	const char *const *names;
+-	int	chip_type;
+ 	unsigned long driver_data;
  	struct regulator *regulator;
  
- 	const struct pca953x_reg_config *regs;
-+
-+	int (*write_regs)(struct pca953x_chip *, int, u8 *);
- };
+@@ -791,8 +790,6 @@ static int pca953x_probe(struct i2c_client *client,
+ 		}
+ 	}
  
- static int pca953x_read_single(struct pca953x_chip *chip, int reg, u32 *val,
-@@ -174,38 +176,44 @@ static int pca953x_write_single(struct pca953x_chip *chip, int reg, u32 val,
- 	return 0;
- }
+-	chip->chip_type = PCA_CHIP_TYPE(chip->driver_data);
+-
+ 	mutex_init(&chip->i2c_lock);
  
--static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
-+static int pca953x_write_regs_8(struct pca953x_chip *chip, int reg, u8 *val)
- {
--	int ret = 0;
-+	return i2c_smbus_write_byte_data(chip->client, reg, *val);
-+}
+ 	/* initialize cached registers from their original values.
+@@ -814,7 +811,7 @@ static int pca953x_probe(struct i2c_client *client,
+ 		chip->read_regs = pca953x_read_regs_16;
+ 	}
  
--	if (chip->gpio_chip.ngpio <= 8)
--		ret = i2c_smbus_write_byte_data(chip->client, reg, *val);
--	else if (chip->gpio_chip.ngpio >= 24) {
--		int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
--		ret = i2c_smbus_write_i2c_block_data(chip->client,
--					(reg << bank_shift) | REG_ADDR_AI,
--					NBANK(chip), val);
--	} else {
--		switch (chip->chip_type) {
--		case PCA953X_TYPE: {
--			__le16 word = cpu_to_le16(get_unaligned((u16 *)val));
-+static int pca953x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
-+{
-+	__le16 word = cpu_to_le16(get_unaligned((u16 *)val));
- 
--			ret = i2c_smbus_write_word_data(chip->client, reg << 1,
--							(__force u16)word);
--			break;
--		}
--		case PCA957X_TYPE:
--			ret = i2c_smbus_write_byte_data(chip->client, reg << 1,
--							val[0]);
--			if (ret < 0)
--				break;
--			ret = i2c_smbus_write_byte_data(chip->client,
--							(reg << 1) + 1,
--							val[1]);
--			break;
--		}
--	}
-+	return i2c_smbus_write_word_data(chip->client,
-+					 reg << 1, (__force u16)word);
-+}
-+
-+static int pca957x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
-+{
-+	int ret;
-+
-+	ret = i2c_smbus_write_byte_data(chip->client, reg << 1, val[0]);
-+	if (ret < 0)
-+		return ret;
-+
-+	return i2c_smbus_write_byte_data(chip->client, (reg << 1) + 1, val[1]);
-+}
- 
-+static int pca953x_write_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
-+{
-+	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
-+
-+	return i2c_smbus_write_i2c_block_data(chip->client,
-+					      (reg << bank_shift) | REG_ADDR_AI,
-+					      NBANK(chip), val);
-+}
-+
-+static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
-+{
-+	int ret = 0;
-+
-+	ret = chip->write_regs(chip, reg, val);
- 	if (ret < 0) {
- 		dev_err(&chip->client->dev, "failed writing register\n");
- 		return ret;
-@@ -774,6 +782,17 @@ static int pca953x_probe(struct i2c_client *client,
- 	 */
- 	pca953x_setup_gpio(chip, chip->driver_data & PCA_GPIO_MASK);
- 
-+	if (chip->gpio_chip.ngpio <= 8) {
-+		chip->write_regs = pca953x_write_regs_8;
-+	} else if (chip->gpio_chip.ngpio >= 24) {
-+		chip->write_regs = pca953x_write_regs_24;
-+	} else {
-+		if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE)
-+			chip->write_regs = pca953x_write_regs_16;
-+		else
-+			chip->write_regs = pca957x_write_regs_16;
-+	}
-+
- 	if (chip->chip_type == PCA953X_TYPE)
+-	if (chip->chip_type == PCA953X_TYPE)
++	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE)
  		ret = device_pca953x_init(chip, invert);
  	else
+ 		ret = device_pca957x_init(chip, invert);
 -- 
 2.7.4
