@@ -1,44 +1,45 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH] gpio: gpiolib: fix an incorrect use of WARN_ON()
-Date: Fri,  9 Sep 2016 11:19:29 +0200
-Message-ID: <1473412769-17428-1-git-send-email-bgolaszewski@baylibre.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:38159 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752452AbcIIJTh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Sep 2016 05:19:37 -0400
-Received: by mail-wm0-f46.google.com with SMTP id 1so21515972wmz.1
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Sep 2016 02:19:36 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] pinctrl: aspeed: fix regmap error handling
+Date: Fri,  9 Sep 2016 11:26:50 +0200
+Message-ID: <20160909092715.403663-1-arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This breaks the build due to the format string being passed as
-argument. Fix it by using WARN().
+The newly added aspeed driver tries to check for a negative return
+value from a pinctrl function, but stores the intermediate value in
+a 'bool' variable, which cannot work:
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+drivers/pinctrl/aspeed/pinctrl-aspeed.c: In function 'aspeed_sig_expr_set':
+drivers/pinctrl/aspeed/pinctrl-aspeed.c:192:11: error: comparison of constant '0' with boolean expression is always false [-Werror=bool-compare]
+
+This slightly reworks the logic to use an explicit comparison with zero
+before assigning to the temporary variable.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-NOTE This patch applies on top of linux-gpio devel branch.
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/gpio/gpiolib.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 95effec..384ed0a 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1618,8 +1618,8 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
- 	 * used to configure the interrupts, as you may end-up with
- 	 * conflicting triggers. Tell the user, and reset to NONE.
- 	 */
--	if (WARN_ON(of_node && type != IRQ_TYPE_NONE,
--		    "%s: Ignoring %d default trigger\n", of_node->full_name))
-+	if (WARN(of_node && type != IRQ_TYPE_NONE,
-+		 "%s: Ignoring default trigger\n", of_node->full_name))
- 		type = IRQ_TYPE_NONE;
+diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+index 7d461fc30d3c..0391f9f13f3e 100644
+--- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
++++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+@@ -187,10 +187,10 @@ static bool aspeed_sig_expr_set(const struct aspeed_sig_expr *expr,
+ 			continue;
  
- 	gpiochip->irqchip = irqchip;
+ 		ret = regmap_update_bits(map, desc->reg, desc->mask,
+-				pattern << __ffs(desc->mask));
++				pattern << __ffs(desc->mask)) == 0;
+ 
+-		if (ret < 0)
+-			return false;
++		if (!ret)
++			return ret;
+ 	}
+ 
+ 	return aspeed_sig_expr_eval(expr, enable, map);
 -- 
-2.7.4
-
+2.9.0
