@@ -1,52 +1,67 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7796: Add voltage switch operations
- for SDHI
-Date: Sat, 10 Sep 2016 13:31:03 +0200
-Message-ID: <CAMuHMdVY2EHNzJwr_MdhwUem7kn=QuR=uYWUx6z1Yp23Y3C_dA@mail.gmail.com>
-References: <1473335853-32102-1-git-send-email-horms+renesas@verge.net.au>
- <CAMuHMdUM4B0KQMS127VGTSV8DkDGaUAy_vfK1XK6EnVd5p9DPQ@mail.gmail.com> <20160909150641.GA13747@verge.net.au>
+From: Wei Yongjun <weiyj.lk@gmail.com>
+Subject: [PATCH -next] gpio: lp873x: Use devm_gpiochip_add_data() for gpio registration
+Date: Sat, 10 Sep 2016 12:04:42 +0000
+Message-ID: <1473509082-3996-1-git-send-email-weiyj.lk@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:36683 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751505AbcIJLbF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 10 Sep 2016 07:31:05 -0400
-In-Reply-To: <20160909150641.GA13747@verge.net.au>
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:34766 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751219AbcIJMEs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 10 Sep 2016 08:04:48 -0400
+Received: by mail-pf0-f195.google.com with SMTP id g202so5381977pfb.1
+        for <linux-gpio@vger.kernel.org>; Sat, 10 Sep 2016 05:04:48 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Keerthy <j-keerthy@ti.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org
 
-Hi Simon,
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-On Fri, Sep 9, 2016 at 5:06 PM, Simon Horman <horms@verge.net.au> wrote:
-> On Fri, Sep 09, 2016 at 10:24:55AM +0200, Geert Uytterhoeven wrote:
->> On Thu, Sep 8, 2016 at 1:57 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
->> > This patch supports the {get,set}_io_voltage operations of SDHI.
->> >
->> > This operates the POCCTRL0 register on R8A7796 SoC and makes 1.8v/3.3v
->> > voltage switch.
->> >
->> > Based on work by Takeshi Kihara and Wolfram Sang.
->> >
->> > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> > Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
->>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Thanks, will you queue this up?
+Use devm_gpiochip_add_data() for GPIO registration and remove the need
+of driver callback .remove.
 
-Yes, I will, on Monday.
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpio/gpio-lp873x.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/gpio/gpio-lp873x.c b/drivers/gpio/gpio-lp873x.c
+index f10d49d..2386b0f 100644
+--- a/drivers/gpio/gpio-lp873x.c
++++ b/drivers/gpio/gpio-lp873x.c
+@@ -154,7 +154,7 @@ static int lp873x_gpio_probe(struct platform_device *pdev)
+ 	gpio->chip = template_chip;
+ 	gpio->chip.parent = gpio->lp873->dev;
+ 
+-	ret = gpiochip_add_data(&gpio->chip, gpio);
++	ret = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
+ 		return ret;
+@@ -163,15 +163,6 @@ static int lp873x_gpio_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int lp873x_gpio_remove(struct platform_device *pdev)
+-{
+-	struct lp873x_gpio *gpio = platform_get_drvdata(pdev);
+-
+-	gpiochip_remove(&gpio->chip);
+-
+-	return 0;
+-}
+-
+ static const struct platform_device_id lp873x_gpio_id_table[] = {
+ 	{ "lp873x-gpio", },
+ 	{ /* sentinel */ }
+@@ -183,7 +174,6 @@ static struct platform_driver lp873x_gpio_driver = {
+ 		.name = "lp873x-gpio",
+ 	},
+ 	.probe = lp873x_gpio_probe,
+-	.remove = lp873x_gpio_remove,
+ 	.id_table = lp873x_gpio_id_table,
+ };
+ module_platform_driver(lp873x_gpio_driver);
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
