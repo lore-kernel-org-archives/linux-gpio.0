@@ -1,83 +1,47 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
-Date: Sun, 11 Sep 2016 11:05:06 +0300
-Message-ID: <20160911080506.GO15313@lahna.fi.intel.com>
-References: <CALUN=q+LAfTf_=V4tXy3_h48K2BLtNOjxK4=AKRTtdjfW8970g@mail.gmail.com>
- <20160818121328.GE30827@lahna.fi.intel.com>
- <CALUN=qJ_KEXXD4T11h3Xxjxx9LExBnzevVKGQ1K=XGZn-SS_rg@mail.gmail.com>
- <20160818135813.GJ30827@lahna.fi.intel.com>
- <20160908101303.GA22716@ktx>
- <20160908102402.GC15313@lahna.fi.intel.com>
- <20160908162843.GB22716@ktx>
- <20160909061834.GG15313@lahna.fi.intel.com>
- <20160909082358.GA23895@ktx>
- <20160909085832.GK15313@lahna.fi.intel.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] pinctrl: ret needs to be an int for -ve return value from regmap_update_bits
+Date: Sun, 11 Sep 2016 09:36:25 +0100
+Message-ID: <20160911083625.7451-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160909085832.GK15313@lahna.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Phidias Chiang <phidias.chiang@canonical.com>
-Cc: Anisse Astier <anisse@astier.eu>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from youngberry.canonical.com ([91.189.89.112]:47569 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751629AbcIKIhz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Sep 2016 04:37:55 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-On Fri, Sep 09, 2016 at 11:58:32AM +0300, Mika Westerberg wrote:
-> On Fri, Sep 09, 2016 at 04:23:58PM +0800, Phidias Chiang wrote:
-> > On Fri, Sep 09, 2016 at 09:18:34AM +0300, Mika Westerberg wrote:
-> > > On Fri, Sep 09, 2016 at 12:28:43AM +0800, Phidias Chiang wrote:
-> > > 
-> > > Hmm, how can that happen? The patch removes clearing of INTMASK and only
-> > > other place where it is cleared temporarily is on resume. Can you add
-> > > dev_info() calls like:
-> > > 
-> > > 	/* Clear all interrupts */
-> > > 	chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
-> > > 	dev_info(pctrl->dev, "INTMASK0: 0x%08x\n", readl(pctrl->regs + CHV_INTMASK));
-> > > 
-> > > 	...
-> > > 
-> > > 	gpiochip_set_chained_irqchip(chip, &chv_gpio_irqchip, irq,
-> > > 				     chv_gpio_irq_handler);
-> > > 	dev_info(pctrl->dev, "INTMASK1: 0x%08x\n", readl(pctrl->regs + CHV_INTMASK));
-> > > 	return 0;
-> > > 
-> > > It should print the same values both time.
-> > > 
-> > > Also which interrupt does not work and can you send me output of
-> > > /proc/interrupts?
-> > 
-> > Output in dmesg:
-> > [    2.054475] cherryview-pinctrl INT33FF:00: INTMASK0: 0x00000006
-> > [    2.055247] cherryview-pinctrl INT33FF:00: INTMASK1: 0x00000000
-> > [    2.055375] cherryview-pinctrl INT33FF:01: INTMASK0: 0x00004000
-> > [    2.056931] cherryview-pinctrl INT33FF:01: INTMASK1: 0x00000000
-> > [    2.057036] cherryview-pinctrl INT33FF:02: INTMASK0: 0x00000000
-> > [    2.057367] cherryview-pinctrl INT33FF:02: INTMASK1: 0x00000000
-> > [    2.057489] cherryview-pinctrl INT33FF:03: INTMASK0: 0x00000000
-> > [    2.058337] cherryview-pinctrl INT33FF:03: INTMASK1: 0x00000000
-> > 
-> > So it's somehow got cleared in the process after.
-> 
-> Only other place where we touch INTMASK register is
-> chv_gpio_irq_mask_unmask(). Can you add some debug there to find out the
-> caller?
+From: Colin Ian King <colin.king@canonical.com>
 
-Something like this:
+Macro regmap_update_bits can return a -ve on an error value so ret
+needs to be an integer rather than a bool type.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index 0fe8fad..95fa3b1 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1357,6 +1357,11 @@ static void chv_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
- 		value |= BIT(intr_line);
- 	chv_writel(value, pctrl->regs + CHV_INTMASK);
+Fixes warning found by static analysis with cppcheck:
+[drivers/pinctrl/aspeed/pinctrl-aspeed.c:192]: (warning) Comparison of
+  a boolean expression with an integer other than 0 or 1.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+index 7d461fc..75935ab 100644
+--- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
++++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+@@ -166,7 +166,7 @@ static bool aspeed_sig_expr_set(const struct aspeed_sig_expr *expr,
+ 				bool enable, struct regmap *map)
+ {
+ 	int i;
+-	bool ret;
++	int ret;
  
-+	if (printk_ratelimit()) {
-+		dev_info(pctrl->dev, "%smask pin %u intmask 0x%08x\n",
-+			 mask ? "" : "un", pin, readl(pctrl->regs + CHV_INTMASK));
-+	}
-+
- 	raw_spin_unlock_irqrestore(&chv_lock, flags);
- }
- 
+ 	ret = aspeed_sig_expr_eval(expr, enable, map);
+ 	if (ret)
+-- 
+2.9.3
+
