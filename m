@@ -1,67 +1,83 @@
-From: Wei Yongjun <weiyj.lk@gmail.com>
-Subject: [PATCH -next] gpio: lp873x: Use devm_gpiochip_add_data() for gpio registration
-Date: Sat, 10 Sep 2016 12:04:42 +0000
-Message-ID: <1473509082-3996-1-git-send-email-weiyj.lk@gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
+Date: Sun, 11 Sep 2016 11:05:06 +0300
+Message-ID: <20160911080506.GO15313@lahna.fi.intel.com>
+References: <CALUN=q+LAfTf_=V4tXy3_h48K2BLtNOjxK4=AKRTtdjfW8970g@mail.gmail.com>
+ <20160818121328.GE30827@lahna.fi.intel.com>
+ <CALUN=qJ_KEXXD4T11h3Xxjxx9LExBnzevVKGQ1K=XGZn-SS_rg@mail.gmail.com>
+ <20160818135813.GJ30827@lahna.fi.intel.com>
+ <20160908101303.GA22716@ktx>
+ <20160908102402.GC15313@lahna.fi.intel.com>
+ <20160908162843.GB22716@ktx>
+ <20160909061834.GG15313@lahna.fi.intel.com>
+ <20160909082358.GA23895@ktx>
+ <20160909085832.GK15313@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34766 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751219AbcIJMEs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 10 Sep 2016 08:04:48 -0400
-Received: by mail-pf0-f195.google.com with SMTP id g202so5381977pfb.1
-        for <linux-gpio@vger.kernel.org>; Sat, 10 Sep 2016 05:04:48 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160909085832.GK15313@lahna.fi.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Phidias Chiang <phidias.chiang@canonical.com>
+Cc: Anisse Astier <anisse@astier.eu>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Keerthy <j-keerthy@ti.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+On Fri, Sep 09, 2016 at 11:58:32AM +0300, Mika Westerberg wrote:
+> On Fri, Sep 09, 2016 at 04:23:58PM +0800, Phidias Chiang wrote:
+> > On Fri, Sep 09, 2016 at 09:18:34AM +0300, Mika Westerberg wrote:
+> > > On Fri, Sep 09, 2016 at 12:28:43AM +0800, Phidias Chiang wrote:
+> > > 
+> > > Hmm, how can that happen? The patch removes clearing of INTMASK and only
+> > > other place where it is cleared temporarily is on resume. Can you add
+> > > dev_info() calls like:
+> > > 
+> > > 	/* Clear all interrupts */
+> > > 	chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
+> > > 	dev_info(pctrl->dev, "INTMASK0: 0x%08x\n", readl(pctrl->regs + CHV_INTMASK));
+> > > 
+> > > 	...
+> > > 
+> > > 	gpiochip_set_chained_irqchip(chip, &chv_gpio_irqchip, irq,
+> > > 				     chv_gpio_irq_handler);
+> > > 	dev_info(pctrl->dev, "INTMASK1: 0x%08x\n", readl(pctrl->regs + CHV_INTMASK));
+> > > 	return 0;
+> > > 
+> > > It should print the same values both time.
+> > > 
+> > > Also which interrupt does not work and can you send me output of
+> > > /proc/interrupts?
+> > 
+> > Output in dmesg:
+> > [    2.054475] cherryview-pinctrl INT33FF:00: INTMASK0: 0x00000006
+> > [    2.055247] cherryview-pinctrl INT33FF:00: INTMASK1: 0x00000000
+> > [    2.055375] cherryview-pinctrl INT33FF:01: INTMASK0: 0x00004000
+> > [    2.056931] cherryview-pinctrl INT33FF:01: INTMASK1: 0x00000000
+> > [    2.057036] cherryview-pinctrl INT33FF:02: INTMASK0: 0x00000000
+> > [    2.057367] cherryview-pinctrl INT33FF:02: INTMASK1: 0x00000000
+> > [    2.057489] cherryview-pinctrl INT33FF:03: INTMASK0: 0x00000000
+> > [    2.058337] cherryview-pinctrl INT33FF:03: INTMASK1: 0x00000000
+> > 
+> > So it's somehow got cleared in the process after.
+> 
+> Only other place where we touch INTMASK register is
+> chv_gpio_irq_mask_unmask(). Can you add some debug there to find out the
+> caller?
 
-Use devm_gpiochip_add_data() for GPIO registration and remove the need
-of driver callback .remove.
+Something like this:
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/gpio/gpio-lp873x.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
-
-diff --git a/drivers/gpio/gpio-lp873x.c b/drivers/gpio/gpio-lp873x.c
-index f10d49d..2386b0f 100644
---- a/drivers/gpio/gpio-lp873x.c
-+++ b/drivers/gpio/gpio-lp873x.c
-@@ -154,7 +154,7 @@ static int lp873x_gpio_probe(struct platform_device *pdev)
- 	gpio->chip = template_chip;
- 	gpio->chip.parent = gpio->lp873->dev;
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index 0fe8fad..95fa3b1 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1357,6 +1357,11 @@ static void chv_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
+ 		value |= BIT(intr_line);
+ 	chv_writel(value, pctrl->regs + CHV_INTMASK);
  
--	ret = gpiochip_add_data(&gpio->chip, gpio);
-+	ret = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
- 		return ret;
-@@ -163,15 +163,6 @@ static int lp873x_gpio_probe(struct platform_device *pdev)
- 	return 0;
++	if (printk_ratelimit()) {
++		dev_info(pctrl->dev, "%smask pin %u intmask 0x%08x\n",
++			 mask ? "" : "un", pin, readl(pctrl->regs + CHV_INTMASK));
++	}
++
+ 	raw_spin_unlock_irqrestore(&chv_lock, flags);
  }
  
--static int lp873x_gpio_remove(struct platform_device *pdev)
--{
--	struct lp873x_gpio *gpio = platform_get_drvdata(pdev);
--
--	gpiochip_remove(&gpio->chip);
--
--	return 0;
--}
--
- static const struct platform_device_id lp873x_gpio_id_table[] = {
- 	{ "lp873x-gpio", },
- 	{ /* sentinel */ }
-@@ -183,7 +174,6 @@ static struct platform_driver lp873x_gpio_driver = {
- 		.name = "lp873x-gpio",
- 	},
- 	.probe = lp873x_gpio_probe,
--	.remove = lp873x_gpio_remove,
- 	.id_table = lp873x_gpio_id_table,
- };
- module_platform_driver(lp873x_gpio_driver);
-
