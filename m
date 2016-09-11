@@ -1,49 +1,66 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 0/6] constify gpio_chip structures
-Date: Sun, 11 Sep 2016 14:14:36 +0200
-Message-ID: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:54838 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755728AbcIKMcw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 11 Sep 2016 08:32:52 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: [PATCH 3/6] pinctrl: mediatek: constify gpio_chip structures
+Date: Sun, 11 Sep 2016 14:14:39 +0200
+Message-ID: <1473596082-32690-4-git-send-email-Julia.Lawall@lip6.fr>
+References: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, linux-mediatek@lists.infradead.org, alsa-devel@alsa-project.org
 
-Constify gpio_chip structures
+These structures are only used to copy into other structures, so declare
+them as const.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct gpio_chip i@p = { ... };
+
+@ok@
+identifier r.i;
+expression e;
+position p;
+@@
+e = i@p;
+
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct gpio_chip e;
+@@
+e@i@p
+
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct gpio_chip i = { ... };
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-
- drivers/gpio/gpio-arizona.c                   |    2 +-
- drivers/gpio/gpio-bcm-kona.c                  |    2 +-
- drivers/gpio/gpio-da9052.c                    |    2 +-
- drivers/gpio/gpio-da9055.c                    |    2 +-
- drivers/gpio/gpio-it87.c                      |    2 +-
- drivers/gpio/gpio-lp873x.c                    |    2 +-
- drivers/gpio/gpio-lpc18xx.c                   |    2 +-
- drivers/gpio/gpio-pisosr.c                    |    2 +-
- drivers/gpio/gpio-sch.c                       |    2 +-
- drivers/gpio/gpio-stmpe.c                     |    2 +-
- drivers/gpio/gpio-tc3589x.c                   |    2 +-
- drivers/gpio/gpio-tpic2810.c                  |    2 +-
- drivers/gpio/gpio-tps65086.c                  |    2 +-
- drivers/gpio/gpio-tps65218.c                  |    2 +-
- drivers/gpio/gpio-tps65912.c                  |    2 +-
- drivers/gpio/gpio-ts4900.c                    |    2 +-
- drivers/gpio/gpio-twl4030.c                   |    2 +-
- drivers/gpio/gpio-wm831x.c                    |    2 +-
- drivers/gpio/gpio-wm8350.c                    |    2 +-
- drivers/gpio/gpio-wm8994.c                    |    2 +-
- drivers/mfd/sm501.c                           |    2 +-
  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    2 +-
- drivers/pinctrl/stm32/pinctrl-stm32.c         |    2 +-
- sound/soc/codecs/rt5677.c                     |    2 +-
- sound/soc/codecs/wm5100.c                     |    2 +-
- sound/soc/codecs/wm8903.c                     |    2 +-
- sound/soc/codecs/wm8962.c                     |    2 +-
- sound/soc/codecs/wm8996.c                     |    2 +-
- sound/soc/soc-ac97.c                          |    2 +-
- 29 files changed, 29 insertions(+), 29 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index ba2b03d..f9aef2a 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1054,7 +1054,7 @@ static int mtk_gpio_set_debounce(struct gpio_chip *chip, unsigned offset,
+ 	return 0;
+ }
+ 
+-static struct gpio_chip mtk_gpio_chip = {
++static const struct gpio_chip mtk_gpio_chip = {
+ 	.owner			= THIS_MODULE,
+ 	.request		= gpiochip_generic_request,
+ 	.free			= gpiochip_generic_free,
