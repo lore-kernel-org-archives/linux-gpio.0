@@ -1,76 +1,86 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 0/2] MIPS: TXx9: Move GPIO setup from .mem_setup() to .arch_init()
-Date: Sun, 11 Sep 2016 10:48:31 +0200
-Message-ID: <1473583713-10275-1-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH v2 1/2] MIPS: TXx9: tx39xx: Move GPIO setup from .mem_setup() to .arch_init()
+Date: Sun, 11 Sep 2016 10:48:32 +0200
+Message-ID: <1473583713-10275-2-git-send-email-geert@linux-m68k.org>
+References: <1473583713-10275-1-git-send-email-geert@linux-m68k.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:57070 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751425AbcIKIsh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Sep 2016 04:48:37 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:41947 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751629AbcIKIsi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Sep 2016 04:48:38 -0400
+In-Reply-To: <1473583713-10275-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Ralf Baechle <ralf@linux-mips.org>, Atsushi Nemoto <anemo@mba.ocn.ne.jp>
 Cc: linux-mips@linux-mips.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-	Hi Ralf, Nemoto-san,
+txx9_gpio_init() calls gpiochip_add_data(), which fails with -ENOMEM as
+it is called too early in the boot process. This causes all subsequent
+GPIO operations to fail silently.
 
-After upgrading my good old rbtx4927 from v3.13-rc3 to v4.6-rc3, I
-noticed the following warning:
+Postpone all GPIO setup to .arch_init() time to fix this.
 
-	gpiod_direction_output_raw: invalid GPIO
+Suggested-by: Atsushi Nemoto <anemo@mba.ocn.ne.jp>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
+Untested due to lack of hardware.
 
-This is caused by the following code in arch/mips/txx9/rbtx4927/setup.c:
-
-	static void __init rbtx4927_mem_setup(void)
-	{
-
-		/* TX4927-SIO DTR on (PIO[15]) */
-		gpio_request(15, "sio-dtr");
-
-returns -EPROBE_DEFER
-
-		gpio_direction_output(15, 1);
-
-VALIDATE_DESC triggers the warning.
-
-Note that as of commit 54d77198fdfbc4f0 ("gpio: bail out silently on
-NULL descriptors") the warning message is no longer printed, but the
-underlying issue is still there.
-
-Nemoto-san pointed out that the GPIO setup may now be done too early,
-and that indeed is the case.  Hence the following patch series postpones
-GPIO setup from .mem_setup() time to .arch_init() time to fix it, for
-all TXx9 platforms.
-
-Changes since v1:
+v2:
   - Add Acked-by.
-
-This has been tested on RBTX4927 only.
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  MIPS: TXx9: tx39xx: Move GPIO setup from .mem_setup() to .arch_init()
-  MIPS: TXx9: tx49xx: Move GPIO setup from .mem_setup() to .arch_init()
-
+---
  arch/mips/txx9/generic/setup_tx3927.c |  1 -
- arch/mips/txx9/generic/setup_tx4927.c |  1 -
- arch/mips/txx9/generic/setup_tx4938.c |  1 -
  arch/mips/txx9/jmr3927/setup.c        | 11 +++++++++--
- arch/mips/txx9/rbtx4927/setup.c       | 32 ++++++++++++++++++++++----------
- arch/mips/txx9/rbtx4938/setup.c       |  1 +
- 6 files changed, 32 insertions(+), 15 deletions(-)
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
+diff --git a/arch/mips/txx9/generic/setup_tx3927.c b/arch/mips/txx9/generic/setup_tx3927.c
+index 110e05c3eb8fb638..d3b83a92cf26c707 100644
+--- a/arch/mips/txx9/generic/setup_tx3927.c
++++ b/arch/mips/txx9/generic/setup_tx3927.c
+@@ -92,7 +92,6 @@ void __init tx3927_setup(void)
+ 	/* PIO */
+ 	__raw_writel(0, &tx3927_pioptr->maskcpu);
+ 	__raw_writel(0, &tx3927_pioptr->maskext);
+-	txx9_gpio_init(TX3927_PIO_REG, 0, 16);
+ 
+ 	conf = read_c0_conf();
+ 	if (conf & TX39_CONF_DCE) {
+diff --git a/arch/mips/txx9/jmr3927/setup.c b/arch/mips/txx9/jmr3927/setup.c
+index 3206f76f300b727a..a455166dc6d44fe7 100644
+--- a/arch/mips/txx9/jmr3927/setup.c
++++ b/arch/mips/txx9/jmr3927/setup.c
+@@ -142,8 +142,6 @@ static void __init jmr3927_board_init(void)
+ 
+ 	/* PIO[15:12] connected to LEDs */
+ 	__raw_writel(0x0000f000, &tx3927_pioptr->dir);
+-	gpio_request(11, "dipsw1");
+-	gpio_request(10, "dipsw2");
+ 
+ 	jmr3927_pci_setup();
+ 
+@@ -204,6 +202,14 @@ static void __init jmr3927_device_init(void)
+ 	txx9_iocled_init(iocled_base, -1, 8, 1, "green", NULL);
+ }
+ 
++static void __init jmr3927_arch_init(void)
++{
++	txx9_gpio_init(TX3927_PIO_REG, 0, 16);
++
++	gpio_request(11, "dipsw1");
++	gpio_request(10, "dipsw2");
++}
++
+ struct txx9_board_vec jmr3927_vec __initdata = {
+ 	.system = "Toshiba JMR_TX3927",
+ 	.prom_init = jmr3927_prom_init,
+@@ -211,6 +217,7 @@ struct txx9_board_vec jmr3927_vec __initdata = {
+ 	.irq_setup = jmr3927_irq_setup,
+ 	.time_init = jmr3927_time_init,
+ 	.device_init = jmr3927_device_init,
++	.arch_init = jmr3927_arch_init,
+ #ifdef CONFIG_PCI
+ 	.pci_map_irq = jmr3927_pci_map_irq,
+ #endif
 -- 
 1.9.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
