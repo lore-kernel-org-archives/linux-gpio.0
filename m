@@ -1,43 +1,107 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 0/2] add support for the SDIO pins on GXBB
-Date: Sun, 11 Sep 2016 14:39:01 +0200
-Message-ID: <20160911123903.20027-1-martin.blumenstingl@googlemail.com>
-References: <20160828164725.19429-1-martin.blumenstingl@googlemail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36635 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754568AbcIKMjP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Sep 2016 08:39:15 -0400
-Received: by mail-wm0-f68.google.com with SMTP id d7so1976081wmi.3
-        for <linux-gpio@vger.kernel.org>; Sun, 11 Sep 2016 05:39:15 -0700 (PDT)
-In-Reply-To: <20160828164725.19429-1-martin.blumenstingl@googlemail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Joachim  Eastwood <manabian@gmail.com>
+Subject: Re: [PATCH 1/6] gpio: constify gpio_chip structures
+Date: Sun, 11 Sep 2016 15:13:17 +0200
+Message-ID: <CAGhQ9VwrKZ0wzu=PAUkkpfsnZpYwvvya4kCAFwvV+J3WtSWBaA@mail.gmail.com>
+References: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1473596082-32690-2-git-send-email-Julia.Lawall@lip6.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1473596082-32690-2-git-send-email-Julia.Lawall@lip6.fr>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Support Opensource <support.opensource@diasemi.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, patches@opensource.wolfsonmicro.com, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linus.walleij@linaro.org, khilman@baylibre.com, carlo@caione.org
-Cc: linux-arm-kernel@lists.infradead.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-This series adds the pins for the SDIO controller (sd_emmc_a) found on
-Meson GXBB SoCs.
+Hi Julia,
 
-Changes since v1:
-- add the missing SDIO interrupt pin:
-  The initial pinctrl patch was already applied to linux-pinctrl's
-  for-next branch, so patch 1 applies on top of the already existing
-  patch (both can be squashed if needed).
-  The dts patch was not applied anywhere yet, so patch 2 contains a
-  fixed version of the patch (provided by Neil Armstrong - thanks!).
+On 11 September 2016 at 14:14, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> These structures are only used to copy into other structures, so declare
+> them as const.
+>
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+>
+> // <smpl>
+> @r disable optional_qualifier@
+> identifier i;
+> position p;
+> @@
+> static struct gpio_chip i@p = { ... };
+>
+> @ok@
+> identifier r.i;
+> expression e;
+> position p;
+> @@
+> e = i@p;
+>
+> @bad@
+> position p != {r.p,ok.p};
+> identifier r.i;
+> struct gpio_chip e;
+> @@
+> e@i@p
+>
+> @depends on !bad disable optional_qualifier@
+> identifier r.i;
+> @@
+> static
+> +const
+>  struct gpio_chip i = { ... };
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> ---
+>  drivers/gpio/gpio-arizona.c  |    2 +-
+>  drivers/gpio/gpio-bcm-kona.c |    2 +-
+>  drivers/gpio/gpio-da9052.c   |    2 +-
+>  drivers/gpio/gpio-da9055.c   |    2 +-
+>  drivers/gpio/gpio-it87.c     |    2 +-
+>  drivers/gpio/gpio-lp873x.c   |    2 +-
+>  drivers/gpio/gpio-lpc18xx.c  |    2 +-
+>  drivers/gpio/gpio-pisosr.c   |    2 +-
+>  drivers/gpio/gpio-sch.c      |    2 +-
+>  drivers/gpio/gpio-stmpe.c    |    2 +-
+>  drivers/gpio/gpio-tc3589x.c  |    2 +-
+>  drivers/gpio/gpio-tpic2810.c |    2 +-
+>  drivers/gpio/gpio-tps65086.c |    2 +-
+>  drivers/gpio/gpio-tps65218.c |    2 +-
+>  drivers/gpio/gpio-tps65912.c |    2 +-
+>  drivers/gpio/gpio-ts4900.c   |    2 +-
+>  drivers/gpio/gpio-twl4030.c  |    2 +-
+>  drivers/gpio/gpio-wm831x.c   |    2 +-
+>  drivers/gpio/gpio-wm8350.c   |    2 +-
+>  drivers/gpio/gpio-wm8994.c   |    2 +-
+>  20 files changed, 20 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-lpc18xx.c b/drivers/gpio/gpio-lpc18xx.c
+> index 98832c9..f12e02e 100644
+> --- a/drivers/gpio/gpio-lpc18xx.c
+> +++ b/drivers/gpio/gpio-lpc18xx.c
+> @@ -78,7 +78,7 @@ static int lpc18xx_gpio_direction_output(struct gpio_chip *chip,
+>         return lpc18xx_gpio_direction(chip, offset, true);
+>  }
+>
+> -static struct gpio_chip lpc18xx_chip = {
+> +static const struct gpio_chip lpc18xx_chip = {
+>         .label                  = "lpc18xx/43xx-gpio",
+>         .request                = gpiochip_generic_request,
+>         .free                   = gpiochip_generic_free,
+
+For lpc18xx:
+Acked-by: Joachim Eastwood <manabian@gmail.com>
 
 
-Martin Blumenstingl (1):
-  pinctrl: meson-gxbb: add the missing SDIO interrupt pin
-
-Neil Armstrong (1):
-  ARM64: dts: meson-gxbb: add the SDIO pins
-
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 19 +++++++++++++++++++
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c  |  4 +++-
- 2 files changed, 22 insertions(+), 1 deletion(-)
-
--- 
-2.9.3
-
+regards,
+Joachim Eastwood
