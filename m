@@ -1,61 +1,59 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 8/8] gpio: don't include module.h in shared driver header
-Date: Mon, 12 Sep 2016 18:16:31 -0400
-Message-ID: <20160912221631.15812-9-paul.gortmaker@windriver.com>
+Subject: [PATCH 6/8] gpio: loongson1: fix implicit assumption module.h is present
+Date: Mon, 12 Sep 2016 18:16:29 -0400
+Message-ID: <20160912221631.15812-7-paul.gortmaker@windriver.com>
 References: <20160912221631.15812-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail5.windriver.com ([192.103.53.11]:38244 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757415AbcILWQ7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 12 Sep 2016 18:16:59 -0400
+Return-path: <linux-mips-bounce@linux-mips.org>
 In-Reply-To: <20160912221631.15812-1-paul.gortmaker@windriver.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
 To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Keguang Zhang <keguang.zhang@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-mips@linux-mips.org, linux-gpio@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-Most shared headers in include/linux don't need to know what the
-internals of a struct module are; all they care about is that it
-is a struct and hence they may require a pointer to one.
+The Kconfig for this file is:
 
-The advantage in this is that module.h is including a lot of stuff
-itself, and an otherwise empty C file that just contains module.h
-will result in ~750kB from CPP (compared to say 12kB from init.h)
+drivers/gpio/Kconfig:config GPIO_LOONGSON1
+drivers/gpio/Kconfig:   tristate "Loongson1 GPIO support"
 
-So we have approximately 50 instances of "struct module;" in the
-various include/linux headers already that help us keep module.h
-out of other headers; here we do the same for gpio.
+...but however it does not include module.h -- it in turn gets it from
+another header (gpio/driver.h) and we'd like to replace that with a
+forward delcaration of "struct module;" but if we do, this file will
+fail to compile.
 
+So we fix this first to avoid putting build failures into the bisect
+commit history.
+
+Cc: Keguang Zhang <keguang.zhang@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-mips@linux-mips.org
 Cc: linux-gpio@vger.kernel.org
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- include/linux/gpio/driver.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-loongson1.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 50882e09289b..216e6f275aa8 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -3,7 +3,6 @@
+diff --git a/drivers/gpio/gpio-loongson1.c b/drivers/gpio/gpio-loongson1.c
+index 10c09bdd8514..ad0a5958fcd0 100644
+--- a/drivers/gpio/gpio-loongson1.c
++++ b/drivers/gpio/gpio-loongson1.c
+@@ -8,6 +8,7 @@
+  * warranty of any kind, whether express or implied.
+  */
  
- #include <linux/device.h>
- #include <linux/types.h>
--#include <linux/module.h>
- #include <linux/irq.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/irqdomain.h>
-@@ -16,6 +15,7 @@ struct of_phandle_args;
- struct device_node;
- struct seq_file;
- struct gpio_device;
-+struct module;
- 
- #ifdef CONFIG_GPIOLIB
++#include <linux/module.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/platform_device.h>
  
 -- 
 2.8.4
-
