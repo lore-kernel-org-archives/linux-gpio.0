@@ -1,38 +1,34 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 6/9] pinctrl: Add IRQ support to STM32 gpios
-Date: Mon, 12 Sep 2016 14:58:34 +0200
-Message-ID: <CACRpkdYYoMqCqq=L53LFUxCM=q00q5YhcxB=+-ZhxkAUbJEB5Q@mail.gmail.com>
-References: <1473180341-1999-1-git-send-email-alexandre.torgue@st.com>
- <1473180341-1999-7-git-send-email-alexandre.torgue@st.com>
- <CACRpkdZ_r0phJeScTYs_LmEHavcjGo6YjHPEHo-rKAv+rLgiFg@mail.gmail.com> <0063a1ef-1b09-7cfc-f18b-76f2bb07eb84@st.com>
+From: Phidias Chiang <phidias.chiang@canonical.com>
+Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
+Date: Mon, 12 Sep 2016 21:04:44 +0800
+Message-ID: <20160912130444.GB2411@ktx>
+References: <20160818135813.GJ30827@lahna.fi.intel.com>
+ <20160908101303.GA22716@ktx>
+ <20160908102402.GC15313@lahna.fi.intel.com>
+ <20160908162843.GB22716@ktx>
+ <20160909061834.GG15313@lahna.fi.intel.com>
+ <20160909082358.GA23895@ktx>
+ <20160909085832.GK15313@lahna.fi.intel.com>
+ <20160911080506.GO15313@lahna.fi.intel.com>
+ <20160912065656.GA2411@ktx>
+ <20160912090401.GB1811@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f44.google.com ([209.85.214.44]:37069 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758068AbcILM7E (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Sep 2016 08:59:04 -0400
-Received: by mail-it0-f44.google.com with SMTP id 186so10114291itf.0
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Sep 2016 05:58:35 -0700 (PDT)
-In-Reply-To: <0063a1ef-1b09-7cfc-f18b-76f2bb07eb84@st.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160912090401.GB1811@lahna.fi.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Anisse Astier <anisse@astier.eu>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>, Lee Jones <lee.jones@linaro.org>
 
-On Thu, Sep 8, 2016 at 5:47 PM, Alexandre Torgue
-<alexandre.torgue@st.com> wrote:
+On Mon, Sep 12, 2016 at 12:04:01PM +0300, Mika Westerberg wrote:
+> 
+> OK, I see what is going on now. When I changed handle_simple_irq to
+> handle_bad_irq, the IRQ core in __irq_do_set_handler() thinks the
+> handler is uninstalled and masks the line.
+> 
+> If you change handle_bad_irq to handle_simple_irq, in call to
+> gpiochip_irqchip_add(), does it work then?
 
-> Just one question, when you say "super-complex irqchip in use", do you mean
-> I could use another (simplest) solution to handle this EXTI controller?
-
-I don't know, GPIOLIB_IRQCHIP is to be used for some specific
-cases documented in Documentation/gpio/driver.txt.
-
-For anything complex, we either need to have this hairy code
-or invent new abstractions.
-
-For now, I assume this is needed...
-
-Yours,
-Linus Walleij
+Yes it does :), thank you for the support!
