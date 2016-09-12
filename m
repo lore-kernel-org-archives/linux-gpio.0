@@ -1,45 +1,38 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
-Date: Mon, 12 Sep 2016 16:11:11 +0300
-Message-ID: <20160912131111.GG1811@lahna.fi.intel.com>
-References: <20160908101303.GA22716@ktx>
- <20160908102402.GC15313@lahna.fi.intel.com>
- <20160908162843.GB22716@ktx>
- <20160909061834.GG15313@lahna.fi.intel.com>
- <20160909082358.GA23895@ktx>
- <20160909085832.GK15313@lahna.fi.intel.com>
- <20160911080506.GO15313@lahna.fi.intel.com>
- <20160912065656.GA2411@ktx>
- <20160912090401.GB1811@lahna.fi.intel.com>
- <20160912130444.GB2411@ktx>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: iop: Use generic GPIO MMIO functions for driver
+Date: Mon, 12 Sep 2016 15:34:32 +0200
+Message-ID: <CACRpkdb7=QCw6CNT_Z_yQwJbtizajs1nm8LtSnhHRot3HxnLwg@mail.gmail.com>
+References: <1473402003-24424-1-git-send-email-shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:11858 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757742AbcILNUW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 12 Sep 2016 09:20:22 -0400
-Content-Disposition: inline
-In-Reply-To: <20160912130444.GB2411@ktx>
+Received: from mail-it0-f48.google.com ([209.85.214.48]:36165 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756086AbcILNed (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Sep 2016 09:34:33 -0400
+Received: by mail-it0-f48.google.com with SMTP id o3so9460108ita.1
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Sep 2016 06:34:33 -0700 (PDT)
+In-Reply-To: <1473402003-24424-1-git-send-email-shc_work@mail.ru>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Phidias Chiang <phidias.chiang@canonical.com>
-Cc: Anisse Astier <anisse@astier.eu>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Mon, Sep 12, 2016 at 09:04:44PM +0800, Phidias Chiang wrote:
-> On Mon, Sep 12, 2016 at 12:04:01PM +0300, Mika Westerberg wrote:
-> > 
-> > OK, I see what is going on now. When I changed handle_simple_irq to
-> > handle_bad_irq, the IRQ core in __irq_do_set_handler() thinks the
-> > handler is uninstalled and masks the line.
-> > 
-> > If you change handle_bad_irq to handle_simple_irq, in call to
-> > gpiochip_irqchip_add(), does it work then?
-> 
-> Yes it does :), thank you for the support!
+On Fri, Sep 9, 2016 at 8:20 AM, Alexander Shiyan <shc_work@mail.ru> wrote:
 
-Thanks for testing.
+> This patch switches the driver to use the generic GPIO MMIO functions
+> that removes a bit of redundant and duplicate code.
+> ---
+> Compile tested only.
+>
+> Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
 
-So we need to use handle_simple_irq here instead.
+I don't know if people using IOP exist for real.
 
-Linus, do you see any problems with that?
+If this doesn't work for them, I hope they turn up and greet us
+with a fix.
+
+Patch applied.
+
+Yours,
+Linus Walleij
