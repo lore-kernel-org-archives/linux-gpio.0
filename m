@@ -1,48 +1,54 @@
-From: Leo Li <pku.leo@gmail.com>
-Subject: Re: [PATCH v5] i2c: imx: make bus recovery through pinctrl optional
-Date: Mon, 12 Sep 2016 13:29:47 -0500
-Message-ID: <CADRPPNQW92jqwNgmxVK69Sqp13utoy=owSKMAxkC7tgRgjygGw@mail.gmail.com>
-References: <1471644322-22670-1-git-send-email-leoyang.li@nxp.com>
- <20160906185849.27pjhawadca5pwow@pengutronix.de> <CADRPPNQ+1qBNL5WA=Jo_keE7BPnoOs7a2T6CpTuciiF16qK6xQ@mail.gmail.com>
- <87ca69fb85848a0a86b34a9a9037a57b@agner.ch> <CADRPPNSPye45bmFshfwb+gDA0x0ygs4Ofa6HMYbKt9ER0oeccg@mail.gmail.com>
- <CAChUvXOGjTn6K5588UVgjbRWUY+weDtk2qbOU-NM4=kA2znh=Q@mail.gmail.com>
- <20160907055547.opp57zyxhlplhxhm@pengutronix.de> <CAChUvXMPDZB7=ZArQ5+6ae42N=Bsgv_OczGXnyhBjEdjt_yvsw@mail.gmail.com>
- <CADRPPNSLZ-Ck+40LZLdpEXPaBm+61AtrpRPgAcTCojWSsTBQDw@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 1/8] gpio: palmas: fix implicit assumption module.h is present
+Date: Mon, 12 Sep 2016 18:16:24 -0400
+Message-ID: <20160912221631.15812-2-paul.gortmaker@windriver.com>
+References: <20160912221631.15812-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <CADRPPNSLZ-Ck+40LZLdpEXPaBm+61AtrpRPgAcTCojWSsTBQDw@mail.gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Gao Pan <pandy.gao@nxp.com>, Ying Zhang <ying.zhang22455@nxp.com>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Li Yang <leoyang.li@nxp.com>, Stefan Agner <stefan@agner.ch>, lkml <linux-kernel@vger.kernel.org>, Tracy Smith <tlsmith3777@gmail.com>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail1.windriver.com ([147.11.146.13]:55386 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751234AbcILWQu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Sep 2016 18:16:50 -0400
+In-Reply-To: <20160912221631.15812-1-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On Mon, Sep 12, 2016 at 11:35 AM, Leo Li <pku.leo@gmail.com> wrote:
-> On Wed, Sep 7, 2016 at 5:07 AM, Tracy Smith <tlsmith3777@gmail.com> wrote:
->> Hello, bus recovery is needed generally speaking because of potential
->> protocol errors that might cause a failure condition hanging the bus.
->>
->> It happens frequently during bring-up of new I2C devices because firmware in
->> I2C controllers fail to handle properly protocol errors.
->>
->> Can NXP add bus recovery for the LS1021A and LS1043A in a separate patch--
->> unless there is no HW bus recovery mechanism?
->>
->> The concern is while fixing I.MX, NXP will fail to fix the driver bus
->> recovery for the LS1021A and LS1043A and the bus will hang.
->>
->> If bus recovery is supported on the LS1021A and the LS1043A, a patch should
->> be provided or added in this patch instead of simply disabling bus recovery.
->> Request NXP to consider the patch if there is HW support for bus recovery.
->
-> FYI.  http://patchwork.ozlabs.org/patch/573879/
+This file is currently getting module.h from a global gpio header
+and it will fail to build once we remove module.h from that.
 
-Hi Gao Pan,
+However, the driver is controlled with the following Kconfig:
 
-Do you think the operations in the proposed patch is also usable on
-the I.MX SoC for bus recovery?  If so, would it be better to align the
-bus recovery implementation for both I.MX and QorIQ to use the same
-logic inside the IP?
+drivers/gpio/Kconfig:config GPIO_PALMAS
+drivers/gpio/Kconfig:   bool "TI PALMAS series PMICs GPIO"
 
-Regards,
-Leo
+and hence the line of MODULE_DEVICE_TABLE is a no-op that can simply
+be deleted.  In fact it should have been removed in an earlier commit
+that did demodularization, however the unseen include prevented my
+build testing from detecting it.
+
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ drivers/gpio/gpio-palmas.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-palmas.c b/drivers/gpio/gpio-palmas.c
+index 839474430229..3d818195e351 100644
+--- a/drivers/gpio/gpio-palmas.c
++++ b/drivers/gpio/gpio-palmas.c
+@@ -152,7 +152,6 @@ static const struct of_device_id of_palmas_gpio_match[] = {
+ 	{ .compatible = "ti,tps80036-gpio", .data = &tps80036_dev_data,},
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(of, of_palmas_gpio_match);
+ 
+ static int palmas_gpio_probe(struct platform_device *pdev)
+ {
+-- 
+2.8.4
+
