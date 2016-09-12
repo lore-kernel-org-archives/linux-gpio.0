@@ -1,107 +1,69 @@
-From: Joachim  Eastwood <manabian@gmail.com>
-Subject: Re: [PATCH 1/6] gpio: constify gpio_chip structures
-Date: Sun, 11 Sep 2016 15:13:17 +0200
-Message-ID: <CAGhQ9VwrKZ0wzu=PAUkkpfsnZpYwvvya4kCAFwvV+J3WtSWBaA@mail.gmail.com>
-References: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr>
- <1473596082-32690-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Joel Stanley <joel@jms.id.au>
+Subject: Re: [PATCH] pinctrl: aspeed: fix regmap error handling
+Date: Mon, 12 Sep 2016 10:52:03 +0930
+Message-ID: <CACPK8XeLYDjm+vkdoM7Lv5pK4+Ls9tTyfV2j3HuE=vaAsWav5w@mail.gmail.com>
+References: <20160909092715.403663-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1473596082-32690-2-git-send-email-Julia.Lawall@lip6.fr>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Support Opensource <support.opensource@diasemi.com>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, patches@opensource.wolfsonmicro.com, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:33983 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753130AbcILBWZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Sep 2016 21:22:25 -0400
+In-Reply-To: <20160909092715.403663-1-arnd@arndb.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Jeffery <andrew@aj.id.au>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, colin.king@canonical.com
 
-Hi Julia,
+On Fri, Sep 9, 2016 at 6:56 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> The newly added aspeed driver tries to check for a negative return
+> value from a pinctrl function, but stores the intermediate value in
+> a 'bool' variable, which cannot work:
+>
+> drivers/pinctrl/aspeed/pinctrl-aspeed.c: In function 'aspeed_sig_expr_set':
+> drivers/pinctrl/aspeed/pinctrl-aspeed.c:192:11: error: comparison of constant '0' with boolean expression is always false [-Werror=bool-compare]
+>
+> This slightly reworks the logic to use an explicit comparison with zero
+> before assigning to the temporary variable.
 
-On 11 September 2016 at 14:14, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> These structures are only used to copy into other structures, so declare
-> them as const.
->
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct gpio_chip i@p = { ... };
->
-> @ok@
-> identifier r.i;
-> expression e;
-> position p;
-> @@
-> e = i@p;
->
-> @bad@
-> position p != {r.p,ok.p};
-> identifier r.i;
-> struct gpio_chip e;
-> @@
-> e@i@p
->
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct gpio_chip i = { ... };
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
+Thanks for finding this Arnd.
+
+Colin also found the issue. Thanks Colin!
+
+I think we should take this version of the fix. Linus, can you put
+this in your tree please?
+
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Acked-by: Joel Stanley <joel@jms.id.au>
+
+Cheers,
+
+Joel
+
 > ---
->  drivers/gpio/gpio-arizona.c  |    2 +-
->  drivers/gpio/gpio-bcm-kona.c |    2 +-
->  drivers/gpio/gpio-da9052.c   |    2 +-
->  drivers/gpio/gpio-da9055.c   |    2 +-
->  drivers/gpio/gpio-it87.c     |    2 +-
->  drivers/gpio/gpio-lp873x.c   |    2 +-
->  drivers/gpio/gpio-lpc18xx.c  |    2 +-
->  drivers/gpio/gpio-pisosr.c   |    2 +-
->  drivers/gpio/gpio-sch.c      |    2 +-
->  drivers/gpio/gpio-stmpe.c    |    2 +-
->  drivers/gpio/gpio-tc3589x.c  |    2 +-
->  drivers/gpio/gpio-tpic2810.c |    2 +-
->  drivers/gpio/gpio-tps65086.c |    2 +-
->  drivers/gpio/gpio-tps65218.c |    2 +-
->  drivers/gpio/gpio-tps65912.c |    2 +-
->  drivers/gpio/gpio-ts4900.c   |    2 +-
->  drivers/gpio/gpio-twl4030.c  |    2 +-
->  drivers/gpio/gpio-wm831x.c   |    2 +-
->  drivers/gpio/gpio-wm8350.c   |    2 +-
->  drivers/gpio/gpio-wm8994.c   |    2 +-
->  20 files changed, 20 insertions(+), 20 deletions(-)
+>  drivers/pinctrl/aspeed/pinctrl-aspeed.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >
-> diff --git a/drivers/gpio/gpio-lpc18xx.c b/drivers/gpio/gpio-lpc18xx.c
-> index 98832c9..f12e02e 100644
-> --- a/drivers/gpio/gpio-lpc18xx.c
-> +++ b/drivers/gpio/gpio-lpc18xx.c
-> @@ -78,7 +78,7 @@ static int lpc18xx_gpio_direction_output(struct gpio_chip *chip,
->         return lpc18xx_gpio_direction(chip, offset, true);
->  }
+> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+> index 7d461fc30d3c..0391f9f13f3e 100644
+> --- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+> @@ -187,10 +187,10 @@ static bool aspeed_sig_expr_set(const struct aspeed_sig_expr *expr,
+>                         continue;
 >
-> -static struct gpio_chip lpc18xx_chip = {
-> +static const struct gpio_chip lpc18xx_chip = {
->         .label                  = "lpc18xx/43xx-gpio",
->         .request                = gpiochip_generic_request,
->         .free                   = gpiochip_generic_free,
-
-For lpc18xx:
-Acked-by: Joachim Eastwood <manabian@gmail.com>
-
-
-regards,
-Joachim Eastwood
+>                 ret = regmap_update_bits(map, desc->reg, desc->mask,
+> -                               pattern << __ffs(desc->mask));
+> +                               pattern << __ffs(desc->mask)) == 0;
+>
+> -               if (ret < 0)
+> -                       return false;
+> +               if (!ret)
+> +                       return ret;
+>         }
+>
+>         return aspeed_sig_expr_eval(expr, enable, map);
+> --
+> 2.9.0
+>
