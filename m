@@ -1,59 +1,39 @@
-From: Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 1/6] pinctrl: bcm2835: add pull defines to dt bindings
-Date: Mon, 12 Sep 2016 10:22:51 +0200
-Message-ID: <1473668576-22256-2-git-send-email-kraxel@redhat.com>
-References: <1473668576-22256-1-git-send-email-kraxel@redhat.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1473668576-22256-1-git-send-email-kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 1/3] pinctrl: sh-pfc: Add PORT_GP_24 helper macro
+Date: Mon, 12 Sep 2016 10:44:00 +0200
+Message-ID: <CAMuHMdX9kyj2j8=aWB4JSwSUi6asYY_yTUxn88JvA4bhe3ZGpA@mail.gmail.com>
+References: <1473665795-7418-1-git-send-email-horms+renesas@verge.net.au> <1473665795-7418-2-git-send-email-horms+renesas@verge.net.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:35597 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751579AbcILIo2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Sep 2016 04:44:28 -0400
+In-Reply-To: <1473665795-7418-2-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Also delete (unused) private enum from driver.
-The pull defines can be used instead if needed.
+On Mon, Sep 12, 2016 at 9:36 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> This follows the style of existing PORT_GP_X macros and
+> will be used by a follow-up patch for the r8a7791 SoC.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
----
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 6 ------
- include/dt-bindings/pinctrl/bcm2835.h | 5 +++++
- 2 files changed, 5 insertions(+), 6 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index fa77165..4cf612b 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -76,12 +76,6 @@ enum bcm2835_pinconf_param {
- 	BCM2835_PINCONF_PARAM_PULL,
- };
- 
--enum bcm2835_pinconf_pull {
--	BCM2835_PINCONFIG_PULL_NONE,
--	BCM2835_PINCONFIG_PULL_DOWN,
--	BCM2835_PINCONFIG_PULL_UP,
--};
--
- #define BCM2835_PINCONF_PACK(_param_, _arg_) ((_param_) << 16 | (_arg_))
- #define BCM2835_PINCONF_UNPACK_PARAM(_conf_) ((_conf_) >> 16)
- #define BCM2835_PINCONF_UNPACK_ARG(_conf_) ((_conf_) & 0xffff)
-diff --git a/include/dt-bindings/pinctrl/bcm2835.h b/include/dt-bindings/pinctrl/bcm2835.h
-index 6f0bc37..e4e4fdf 100644
---- a/include/dt-bindings/pinctrl/bcm2835.h
-+++ b/include/dt-bindings/pinctrl/bcm2835.h
-@@ -24,4 +24,9 @@
- #define BCM2835_FSEL_ALT2	6
- #define BCM2835_FSEL_ALT3	7
- 
-+/* brcm,pull property */
-+#define BCM2835_PUD_OFF		0
-+#define BCM2835_PUD_DOWN	1
-+#define BCM2835_PUD_UP		2
-+
- #endif /* __DT_BINDINGS_PINCTRL_BCM2835_H__ */
--- 
-1.8.3.1
+(will queue in sh-pfc-for-v4.9)
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
