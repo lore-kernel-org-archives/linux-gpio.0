@@ -1,58 +1,59 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: lockdep: incorrect deadlock warning with two GPIO expanders
-Date: Mon, 12 Sep 2016 17:33:56 +0200
-Message-ID: <20160912153356.GD10121@twins.programming.kicks-ass.net>
-References: <CAMpxmJUuj5VrzEu4YZUVxr-ZqFU4VGJpjyHimMJug23EC7j=sQ@mail.gmail.com>
- <20160912120938.GR10153@twins.programming.kicks-ass.net>
- <CAMpxmJW5WNF2zE+fjmpDxubAYA_A67iQhNGTvSAL-MD-6dFTCw@mail.gmail.com>
+From: Leo Li <pku.leo@gmail.com>
+Subject: Re: [PATCH v5] i2c: imx: make bus recovery through pinctrl optional
+Date: Mon, 12 Sep 2016 11:27:13 -0500
+Message-ID: <CADRPPNQbTCs9TLqUSNUTG6YBn3fs8F6FKUw1G582D4ExcL1oVQ@mail.gmail.com>
+References: <1471644322-22670-1-git-send-email-leoyang.li@nxp.com>
+ <20160906185849.27pjhawadca5pwow@pengutronix.de> <CADRPPNQ+1qBNL5WA=Jo_keE7BPnoOs7a2T6CpTuciiF16qK6xQ@mail.gmail.com>
+ <87ca69fb85848a0a86b34a9a9037a57b@agner.ch> <CADRPPNSPye45bmFshfwb+gDA0x0ygs4Ofa6HMYbKt9ER0oeccg@mail.gmail.com>
+ <8f8f7ffc4aef513ef5064ba0491fbc63@agner.ch> <CADRPPNR4oiRVgFqaM=1=Zn_JzrVJDVmozWsouLByXRtaHCh=qQ@mail.gmail.com>
+ <306f579a2f2362595a55c53e48657563@agner.ch> <CADRPPNS3PecYRaAMR+0RuzU+gE3y5ZN-x7HzqggrdDsN-CkArg@mail.gmail.com>
+ <20160912102136.04c0728d@ipc1.ka-ro>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMpxmJW5WNF2zE+fjmpDxubAYA_A67iQhNGTvSAL-MD-6dFTCw@mail.gmail.com>
+In-Reply-To: <20160912102136.04c0728d@ipc1.ka-ro>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Ingo Molnar <mingo@redhat.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>
+To: =?UTF-8?Q?Lothar_Wa=C3=9Fmann?= <LW@karo-electronics.de>
+Cc: Stefan Agner <stefan@agner.ch>, Gao Pan <pandy.gao@nxp.com>, Wolfram Sang <wsa@the-dreams.de>, lkml <linux-kernel@vger.kernel.org>, Li Yang <leoyang.li@nxp.com>, linux-gpio@vger.kernel.org, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Sep 12, 2016 at 05:16:14PM +0200, Bartosz Golaszewski wrote:
+On Mon, Sep 12, 2016 at 3:21 AM, Lothar Wa=C3=9Fmann <LW@karo-electronics.d=
+e> wrote:
+> Hi,
+>
+> On Fri, 9 Sep 2016 14:37:12 -0500 Leo Li wrote:
+>> On Fri, Sep 9, 2016 at 11:51 AM, Stefan Agner <stefan@agner.ch> wrote:
+>> > On 2016-09-08 16:57, Leo Li wrote:
+> [...]
+>> >> people fix problem that they don't really care by deliberately enlarg=
+e
+>> >> the problem.  That's why we don't panic() on any error we found.  For
+>> >> those who do care about the bus recovery, they can get the informatio=
+n
+>> >> from the console.
+>> >
+>> > IMHO, it is just stupid to ignore errors and then let the developer
+>> > later on trace back what the initial issue was. Error out early is a
+>> > common sense software design principle...
+>> >
+>> > I am not asking for a panic(), I am just suggesting to only ignore
+>> > pinctrl if it returns -ENODEV, the case you care are about.
+>>
+>> It was just an analogy for enlarging the problem for getting
+>> attention.  But you probably thought that it was not enlarging the
+>> problem as you think pinctrl is required by the driver instead of an
+>> optional thing.
+>>
+> The I2C bus recovery is a feature which is not used during normal
+> operation and you won't find that it's not working unless something
+> unusual happens (probably only in a productive environment). It may even
+> be hard to trigger a condition to test the feature.
+> Thus IMO it is vital that the driver complains loudly if something is
+> missing to make this feature work if requested.
 
-> >>                                                - - - - -
-> >>  -------             ---------  Bus segment 1 |         |
-> >> |       |           |         |---------------  Devices
-> >> |       | SCL/SDA   |         |               |         |
-> >> | Linux |-----------| I2C MUX |                - - - - -
-> >> |       |    |      |         | Bus segment 2
-> >> |       |    |      |         |-------------------
-> >>  -------     |       ---------                    |
-> >>              |           |                    - - - - -
-> >>         ------------     | MUX GPIO          |         |
-> >>        |            |    |                     Devices
-> >>        |    GPIO    |    |                   |         |
-> >>        | Expander 1 |----                     - - - - -
-> >>        |            |                             |
-> >>         ------------                              | SCL/SDA
-> >>                                                   |
-> >>                                              ------------
-> >>                                             |            |
-> >>                                             |    GPIO    |
-> >>                                             | Expander 2 |
-> >>                                             |            |
-> >>                                              ------------
+I agree.  A message is already added in this patch to mention that bus
+recovery is not supported due to pinctrl when there is a problem.
 
-> > The tricky part, and here I have absolutely no clue what so ever, is
-> > being able to tell at pca953x_probe() time that this is so.
-> >
-> 
-> AFAIK there is no clean way to tell that a GPIO is used by an I2C
-> multiplexer at probe time. Linus, Alexandre could you confirm?
-
-You cannot inspect the device tree while probing?
-
-> It uses the fact that the two expanders we have are of different type
-> (pca9534 and pca9535). The id pointer points to per-chip device info
-> residing in .data which makes it suitable for mutex key.
-> 
-> I don't think such hack is suitable for mainline though.
-
-Right, that works by accident rather than anything else :-)
+Regards,
+Leo
