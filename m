@@ -1,44 +1,29 @@
-From: Leo Li <pku.leo@gmail.com>
-Subject: Re: [PATCH v5] i2c: imx: make bus recovery through pinctrl optional
-Date: Mon, 12 Sep 2016 11:47:37 -0500
-Message-ID: <CADRPPNQQNW+qz6LywsSA9OHnJ+pp-uSKDXjhvMup55qM7uVcJg@mail.gmail.com>
-References: <1471644322-22670-1-git-send-email-leoyang.li@nxp.com>
- <20160906185849.27pjhawadca5pwow@pengutronix.de> <CADRPPNQ+1qBNL5WA=Jo_keE7BPnoOs7a2T6CpTuciiF16qK6xQ@mail.gmail.com>
- <87ca69fb85848a0a86b34a9a9037a57b@agner.ch> <CADRPPNSPye45bmFshfwb+gDA0x0ygs4Ofa6HMYbKt9ER0oeccg@mail.gmail.com>
- <8f8f7ffc4aef513ef5064ba0491fbc63@agner.ch> <CADRPPNR4oiRVgFqaM=1=Zn_JzrVJDVmozWsouLByXRtaHCh=qQ@mail.gmail.com>
- <306f579a2f2362595a55c53e48657563@agner.ch> <CADRPPNS3PecYRaAMR+0RuzU+gE3y5ZN-x7HzqggrdDsN-CkArg@mail.gmail.com>
- <649e7e70becb94adf3b8c4ae2409ea00@agner.ch> <20160909205926.dbxmvhqvfsqzk6dx@pengutronix.de>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH v2 1/4] pinctrl: amlogic: gxbb: add spi nor pins
+Date: Mon, 12 Sep 2016 10:51:01 -0700
+Message-ID: <7hinu1qa62.fsf@baylibre.com>
+References: <1473409738-27175-1-git-send-email-jbrunet@baylibre.com>
+        <1473409738-27175-2-git-send-email-jbrunet@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:34834 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750747AbcILQrk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Sep 2016 12:47:40 -0400
-In-Reply-To: <20160909205926.dbxmvhqvfsqzk6dx@pengutronix.de>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:36350 "EHLO
+        mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754686AbcILRvD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Sep 2016 13:51:03 -0400
+Received: by mail-pa0-f46.google.com with SMTP id id6so52812359pad.3
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Sep 2016 10:51:02 -0700 (PDT)
+In-Reply-To: <1473409738-27175-2-git-send-email-jbrunet@baylibre.com> (Jerome
+        Brunet's message of "Fri, 9 Sep 2016 10:28:55 +0200")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Stefan Agner <stefan@agner.ch>, Gao Pan <pandy.gao@nxp.com>, Wolfram Sang <wsa@the-dreams.de>, lkml <linux-kernel@vger.kernel.org>, Li Yang <leoyang.li@nxp.com>, linux-gpio@vger.kernel.org, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Fri, Sep 9, 2016 at 3:59 PM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> Hello,
+Jerome Brunet <jbrunet@baylibre.com> writes:
+
+> Add EE domains pins for the SPI flash controller
 >
-> On Fri, Sep 09, 2016 at 01:34:31PM -0700, Stefan Agner wrote:
->> Yeah it is a bit a wording thing: In my understanding, pinctrl is
->> required on SoC's witch have a pin controller... It is just that the
->> driver does not need to get the pinctrl by itself because the stack is
->> taking care of it implicitly. And yes, that makes the particular example
->> not a real world example.
->
-> At first I thought, too, that it's a fatal problem if getting the
-> pinctrl stuff fails. IMHO that shows that the comments (or the code) are
-> still not good enough.
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Ya.  If it has confused more than one people, it is likely to confuse
-more.  I agree with you that we should make it more clear.
-
-Thanks,
-Leo
+Acked-by: Kevin Hilman <khilman@baylibre.com>
