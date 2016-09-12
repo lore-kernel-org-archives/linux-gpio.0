@@ -1,55 +1,101 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 2/8] gpio: sx150x: fix implicit assumption module.h is present
-Date: Mon, 12 Sep 2016 18:16:25 -0400
-Message-ID: <20160912221631.15812-3-paul.gortmaker@windriver.com>
-References: <20160912221631.15812-1-paul.gortmaker@windriver.com>
+From: Li Yang <leoyang.li@nxp.com>
+Subject: [PATCH v7] i2c: imx: make bus recovery through pinctrl optional
+Date: Mon, 12 Sep 2016 17:22:30 -0500
+Message-ID: <1473718950-6667-1-git-send-email-leoyang.li@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160912221631.15812-1-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Gao Pan <pandy.gao@nxp.com>, Li Yang <leoyang.li@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
 
-This file is currently getting module.h from a global gpio header
-and it will faii to build once we remove module.h from that.
-
-However, the driver is controlled with the following Kconfig:
-
-drivers/gpio/Kconfig:config GPIO_SX150X
-drivers/gpio/Kconfig:   bool "Semtech SX150x I2C GPIO expander"
-
-and hence the two lines of MODULE_DEVICE_TABLE are no-ops that
-can simply be deleted.
-
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/gpio/gpio-sx150x.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-sx150x.c b/drivers/gpio/gpio-sx150x.c
-index a177ebd921d5..af95de89db01 100644
---- a/drivers/gpio/gpio-sx150x.c
-+++ b/drivers/gpio/gpio-sx150x.c
-@@ -236,7 +236,6 @@ static const struct i2c_device_id sx150x_id[] = {
- 	{"sx1502q", 3},
- 	{}
- };
--MODULE_DEVICE_TABLE(i2c, sx150x_id);
- 
- static const struct of_device_id sx150x_of_match[] = {
- 	{ .compatible = "semtech,sx1508q" },
-@@ -245,7 +244,6 @@ static const struct of_device_id sx150x_of_match[] = {
- 	{ .compatible = "semtech,sx1502q" },
- 	{},
- };
--MODULE_DEVICE_TABLE(of, sx150x_of_match);
- 
- static s32 sx150x_i2c_write(struct i2c_client *client, u8 reg, u8 val)
- {
--- 
-2.8.4
+U2luY2UgY29tbWl0IDFjNGI2YzNiY2YzMCAoImkyYzogaW14OiBpbXBsZW1lbnQgYnVzIHJlY292
+ZXJ5IikgdGhlCmRyaXZlciBzdGFydHMgdG8gdXNlIGdwaW8vcGluY3RybCB0byBzdXBwb3J0IG9w
+dGlvbmFsIGJ1cyByZWNvdmVyeQpmZWF0dXJlLiAgQnV0IHBpbmN0cmwgaXMgbm90IGFsd2F5cyB1
+c2FibGUuICBUaGVyZSBhcmUgcGxhdGZvcm1zIHN1Y2gKYXMgbHMxMDIxYSBhbmQgbHMxMDQzYSB0
+aGF0IGRvbid0IHN1cHBvcnQgcGluY3RybCwgYW5kIGl0IGNvdWxkIGp1c3QKYmUgYnJva2VuIGR1
+ZSB0byBvbGQvYnJva2VuIGRldmljZSB0cmVlLiAgVGhlIHBhdGNoIG1ha2VzIGl0IHJlYWxseQpv
+cHRpb25hbCB0aGF0IHRoZSBwcm9iZSBmdW5jdGlvbiB3b24ndCBiYWlsb3V0IG9uIHBpbmN0cmwg
+cHJvYmxlbXMKaW5zdGVhZCBpdCBqdXN0IGRpc2FibGVzIGJ1cyByZWNvdmVyeSBhbmQgcHJpbnRz
+IG91dCBub3RpZmljYXRpb24gd2hlbgp0aGVyZSBpcyBwcm9ibGVtIHdpdGggcGluY3RybC4gIFNp
+bmNlIHBpbmN0cmwgaXMgb25seSB1c2VkIGJ5IGJ1cwpyZWNvdmVyeSBpbiB0aGlzIGRyaXZlciwg
+bW92ZSBwaW5jdHJsIGluaXRpYWxpemF0aW9uIGludG8gYnVzIHJlY292ZXJ5CmluaXQgZnVuY3Rp
+b24gdG8gcHJldmVudCBjb25mdXNpb24uCgpTaWduZWQtb2ZmLWJ5OiBMaSBZYW5nIDxsZW95YW5n
+LmxpQG54cC5jb20+CkNjOiBHYW8gUGFuIDxwYW5keS5nYW9AbnhwLmNvbT4KQ2M6IFV3ZSBLbGVp
+bmUtS8O2bmlnIDx1LmtsZWluZS1rb2VuaWdAcGVuZ3V0cm9uaXguZGU+CkFja2VkLWJ5OiBMaW51
+cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+Ci0tLQp2NzoKTW92ZSBwaW5jdHJs
+IGluaXQgaW50byB0aGUgaTJjX2lteF9pbml0X3JlY292ZXJ5X2luZm8oKQpVcGRhdGUgY29tbWl0
+IG1lc3NhZ2UgYW5kIGNvZGUgY29tbWVudAoKdjY6ClVwZGF0ZSBjb2RlIGNvbW1lbnQKCnY1OgpS
+ZXZlcnQgdGhlIGxhc3QgbWludXRlIGNoYW5nZSBvZiByZWNvdmVyeSBpbmZvIGluaXRpYWxpemF0
+aW9uIHRpbWluZywgaXQKd2lsbCBjYXVzZSBwcm9ibGVtIGlmIGluaXRpYWxpemVkIGFmdGVyIGky
+Y19hZGRfbnVtYmVyZWRfYWRhcHRlcigpCgp2NDoKUmVtb3ZlIHRoZSB1c2Ugb2YgSVNfRVJSX09S
+X05VTEwKTW92ZSB0aGUgY29uZGl0aW9uIGp1ZGdlbWVudCB0byBpMmNfaW14X2luaXRfcmVjb3Zl
+cnlfaW5mbygpCkNoYW5nZSB0aGUgdGltaW5nIG9mIHJlY292ZXJ5IGluaXRpYWxpemF0aW9uIHRv
+IGJlIGFmdGVyIGJ1cyByZWdpc3RyYXRpb24KCnYzOgpSZWJhc2VkIHRvIFdvbGZyYW0ncyBmb3It
+bmV4dCBicmFuY2gKQWRkZWQgYWNrZWQtYnkgZnJvbSBMaW51cyBXYWxsZWlqClVwZGF0ZSB0byB1
+c2UgbmV3IG54cCBlbWFpbCBhZGRyZXNzZXMgZHVlIHRvIGNvbXBhbnkgbWVyZ2UKCiBkcml2ZXJz
+L2kyYy9idXNzZXMvaTJjLWlteC5jIHwgMzEgKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0t
+LQogMSBmaWxlIGNoYW5nZWQsIDIyIGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pCgpkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1pbXguYyBiL2RyaXZlcnMvaTJjL2J1c3Nl
+cy9pMmMtaW14LmMKaW5kZXggMTg0NGJjOS4uNTRjZTljMSAxMDA2NDQKLS0tIGEvZHJpdmVycy9p
+MmMvYnVzc2VzL2kyYy1pbXguYworKysgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLWlteC5jCkBA
+IC05ODQsMTEgKzk4NCwyNCBAQCBzdGF0aWMgdm9pZCBpMmNfaW14X3VucHJlcGFyZV9yZWNvdmVy
+eShzdHJ1Y3QgaTJjX2FkYXB0ZXIgKmFkYXApCiAJcGluY3RybF9zZWxlY3Rfc3RhdGUoaTJjX2lt
+eC0+cGluY3RybCwgaTJjX2lteC0+cGluY3RybF9waW5zX2RlZmF1bHQpOwogfQogCi1zdGF0aWMg
+dm9pZCBpMmNfaW14X2luaXRfcmVjb3ZlcnlfaW5mbyhzdHJ1Y3QgaW14X2kyY19zdHJ1Y3QgKmky
+Y19pbXgsCisvKgorICogV2Ugc3dpdGNoIFNDTCBhbmQgU0RBIHRvIHRoZWlyIEdQSU8gZnVuY3Rp
+b24gYW5kIGRvIHNvbWUgYml0YmFuZ2luZworICogZm9yIGJ1cyByZWNvdmVyeS4gVGhlc2UgYWx0
+ZXJuYXRpdmUgcGlubXV4IHNldHRpbmdzIGNhbiBiZQorICogZGVzY3JpYmVkIGluIHRoZSBkZXZp
+Y2UgdHJlZSBieSBhIHNlcGFyYXRlIHBpbmN0cmwgc3RhdGUgImdwaW8iLiBJZgorICogdGhpcyBp
+cyBtaXNzaW5nIHRoaXMgaXMgbm90IGEgYmlnIHByb2JsZW0sIHRoZSBvbmx5IGltcGxpY2F0aW9u
+IGlzCisgKiB0aGF0IHdlIGNhbid0IGRvIGJ1cyByZWNvdmVyeS4KKyAqLworc3RhdGljIGludCBp
+MmNfaW14X2luaXRfcmVjb3ZlcnlfaW5mbyhzdHJ1Y3QgaW14X2kyY19zdHJ1Y3QgKmkyY19pbXgs
+CiAJCXN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiB7CiAJc3RydWN0IGkyY19idXNfcmVj
+b3ZlcnlfaW5mbyAqcmluZm8gPSAmaTJjX2lteC0+cmluZm87CiAKKwlpMmNfaW14LT5waW5jdHJs
+ID0gZGV2bV9waW5jdHJsX2dldCgmcGRldi0+ZGV2KTsKKwlpZiAoIWkyY19pbXgtPnBpbmN0cmwg
+fHwgSVNfRVJSKGkyY19pbXgtPnBpbmN0cmwpKSB7CisJCWRldl9pbmZvKCZwZGV2LT5kZXYsICJj
+YW4ndCBnZXQgcGluY3RybCwgYnVzIHJlY292ZXJ5IG5vdCBzdXBwb3J0ZWRcbiIpOworCQlyZXR1
+cm4gUFRSX0VSUihpMmNfaW14LT5waW5jdHJsKTsKKwl9CisKIAlpMmNfaW14LT5waW5jdHJsX3Bp
+bnNfZGVmYXVsdCA9IHBpbmN0cmxfbG9va3VwX3N0YXRlKGkyY19pbXgtPnBpbmN0cmwsCiAJCQlQ
+SU5DVFJMX1NUQVRFX0RFRkFVTFQpOwogCWkyY19pbXgtPnBpbmN0cmxfcGluc19ncGlvID0gcGlu
+Y3RybF9sb29rdXBfc3RhdGUoaTJjX2lteC0+cGluY3RybCwKQEAgLTEwMDEsNyArMTAxNCw3IEBA
+IHN0YXRpYyB2b2lkIGkyY19pbXhfaW5pdF9yZWNvdmVyeV9pbmZvKHN0cnVjdCBpbXhfaTJjX3N0
+cnVjdCAqaTJjX2lteCwKIAkgICAgSVNfRVJSKGkyY19pbXgtPnBpbmN0cmxfcGluc19kZWZhdWx0
+KSB8fAogCSAgICBJU19FUlIoaTJjX2lteC0+cGluY3RybF9waW5zX2dwaW8pKSB7CiAJCWRldl9k
+YmcoJnBkZXYtPmRldiwgInJlY292ZXJ5IGluZm9ybWF0aW9uIGluY29tcGxldGVcbiIpOwotCQly
+ZXR1cm47CisJCXJldHVybiAwOwogCX0KIAogCWRldl9kYmcoJnBkZXYtPmRldiwgInVzaW5nIHNj
+bC1ncGlvICVkIGFuZCBzZGEtZ3BpbyAlZCBmb3IgcmVjb3ZlcnlcbiIsCkBAIC0xMDExLDYgKzEw
+MjQsOCBAQCBzdGF0aWMgdm9pZCBpMmNfaW14X2luaXRfcmVjb3ZlcnlfaW5mbyhzdHJ1Y3QgaW14
+X2kyY19zdHJ1Y3QgKmkyY19pbXgsCiAJcmluZm8tPnVucHJlcGFyZV9yZWNvdmVyeSA9IGkyY19p
+bXhfdW5wcmVwYXJlX3JlY292ZXJ5OwogCXJpbmZvLT5yZWNvdmVyX2J1cyA9IGkyY19nZW5lcmlj
+X2dwaW9fcmVjb3Zlcnk7CiAJaTJjX2lteC0+YWRhcHRlci5idXNfcmVjb3ZlcnlfaW5mbyA9IHJp
+bmZvOworCisJcmV0dXJuIDA7CiB9CiAKIHN0YXRpYyB1MzIgaTJjX2lteF9mdW5jKHN0cnVjdCBp
+MmNfYWRhcHRlciAqYWRhcHRlcikKQEAgLTEwODEsMTIgKzEwOTYsNiBAQCBzdGF0aWMgaW50IGky
+Y19pbXhfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAkJcmV0dXJuIHJldDsK
+IAl9CiAKLQlpMmNfaW14LT5waW5jdHJsID0gZGV2bV9waW5jdHJsX2dldCgmcGRldi0+ZGV2KTsK
+LQlpZiAoSVNfRVJSKGkyY19pbXgtPnBpbmN0cmwpKSB7Ci0JCXJldCA9IFBUUl9FUlIoaTJjX2lt
+eC0+cGluY3RybCk7Ci0JCWdvdG8gY2xrX2Rpc2FibGU7Ci0JfQotCiAJLyogUmVxdWVzdCBJUlEg
+Ki8KIAlyZXQgPSBkZXZtX3JlcXVlc3RfaXJxKCZwZGV2LT5kZXYsIGlycSwgaTJjX2lteF9pc3Is
+IDAsCiAJCQkJcGRldi0+bmFtZSwgaTJjX2lteCk7CkBAIC0xMTI1LDcgKzExMzQsMTEgQEAgc3Rh
+dGljIGludCBpMmNfaW14X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJCQlp
+MmNfaW14LCBJTVhfSTJDX0kyQ1IpOwogCWlteF9pMmNfd3JpdGVfcmVnKGkyY19pbXgtPmh3ZGF0
+YS0+aTJzcl9jbHJfb3Bjb2RlLCBpMmNfaW14LCBJTVhfSTJDX0kyU1IpOwogCi0JaTJjX2lteF9p
+bml0X3JlY292ZXJ5X2luZm8oaTJjX2lteCwgcGRldik7CisJLyogSW5pdCBvcHRpb25hbCBidXMg
+cmVjb3ZlcnkgZnVuY3Rpb24gKi8KKwlyZXQgPSBpMmNfaW14X2luaXRfcmVjb3ZlcnlfaW5mbyhp
+MmNfaW14LCBwZGV2KTsKKwkvKiBHaXZlIGl0IGFub3RoZXIgY2hhbmNlIGlmIHBpbmN0cmwgdXNl
+ZCBpcyBub3QgcmVhZHkgeWV0ICovCisJaWYgKHJldCA9PSAtRVBST0JFX0RFRkVSKQorCQlnb3Rv
+IHJwbV9kaXNhYmxlOwogCiAJLyogQWRkIEkyQyBhZGFwdGVyICovCiAJcmV0ID0gaTJjX2FkZF9u
+dW1iZXJlZF9hZGFwdGVyKCZpMmNfaW14LT5hZGFwdGVyKTsKLS0gCjEuOS4wCgoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBt
+YWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9s
+aXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
