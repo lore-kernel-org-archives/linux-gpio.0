@@ -1,55 +1,59 @@
-From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
-Subject: Re: [PATCH v5] i2c: imx: make bus recovery through pinctrl optional
-Date: Mon, 12 Sep 2016 10:21:36 +0200
-Message-ID: <20160912102136.04c0728d@ipc1.ka-ro>
-References: <1471644322-22670-1-git-send-email-leoyang.li@nxp.com>
-        <20160906185849.27pjhawadca5pwow@pengutronix.de>
-        <CADRPPNQ+1qBNL5WA=Jo_keE7BPnoOs7a2T6CpTuciiF16qK6xQ@mail.gmail.com>
-        <87ca69fb85848a0a86b34a9a9037a57b@agner.ch>
-        <CADRPPNSPye45bmFshfwb+gDA0x0ygs4Ofa6HMYbKt9ER0oeccg@mail.gmail.com>
-        <8f8f7ffc4aef513ef5064ba0491fbc63@agner.ch>
-        <CADRPPNR4oiRVgFqaM=1=Zn_JzrVJDVmozWsouLByXRtaHCh=qQ@mail.gmail.com>
-        <306f579a2f2362595a55c53e48657563@agner.ch>
-        <CADRPPNS3PecYRaAMR+0RuzU+gE3y5ZN-x7HzqggrdDsN-CkArg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CADRPPNS3PecYRaAMR+0RuzU+gE3y5ZN-x7HzqggrdDsN-CkArg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Leo Li <pku.leo@gmail.com>
-Cc: Stefan Agner <stefan@agner.ch>, Gao Pan <pandy.gao@nxp.com>, Wolfram Sang <wsa@the-dreams.de>, lkml <linux-kernel@vger.kernel.org>, Li Yang <leoyang.li@nxp.com>, linux-gpio@vger.kernel.org, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 1/6] pinctrl: bcm2835: add pull defines to dt bindings
+Date: Mon, 12 Sep 2016 10:22:51 +0200
+Message-ID: <1473668576-22256-2-git-send-email-kraxel@redhat.com>
+References: <1473668576-22256-1-git-send-email-kraxel@redhat.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1473668576-22256-1-git-send-email-kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+Also delete (unused) private enum from driver.
+The pull defines can be used instead if needed.
 
-On Fri, 9 Sep 2016 14:37:12 -0500 Leo Li wrote:
-> On Fri, Sep 9, 2016 at 11:51 AM, Stefan Agner <stefan@agner.ch> wrote:
-> > On 2016-09-08 16:57, Leo Li wrote:
-[...]
-> >> people fix problem that they don't really care by deliberately enlarge
-> >> the problem.  That's why we don't panic() on any error we found.  For
-> >> those who do care about the bus recovery, they can get the information
-> >> from the console.
-> >
-> > IMHO, it is just stupid to ignore errors and then let the developer
-> > later on trace back what the initial issue was. Error out early is a
-> > common sense software design principle...
-> >
-> > I am not asking for a panic(), I am just suggesting to only ignore
-> > pinctrl if it returns -ENODEV, the case you care are about.
-> 
-> It was just an analogy for enlarging the problem for getting
-> attention.  But you probably thought that it was not enlarging the
-> problem as you think pinctrl is required by the driver instead of an
-> optional thing.
-> 
-The I2C bus recovery is a feature which is not used during normal
-operation and you won't find that it's not working unless something
-unusual happens (probably only in a productive environment). It may even
-be hard to trigger a condition to test the feature.
-Thus IMO it is vital that the driver complains loudly if something is
-missing to make this feature work if requested.
+Signed-off-by: Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 6 ------
+ include/dt-bindings/pinctrl/bcm2835.h | 5 +++++
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index fa77165..4cf612b 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -76,12 +76,6 @@ enum bcm2835_pinconf_param {
+ 	BCM2835_PINCONF_PARAM_PULL,
+ };
+ 
+-enum bcm2835_pinconf_pull {
+-	BCM2835_PINCONFIG_PULL_NONE,
+-	BCM2835_PINCONFIG_PULL_DOWN,
+-	BCM2835_PINCONFIG_PULL_UP,
+-};
+-
+ #define BCM2835_PINCONF_PACK(_param_, _arg_) ((_param_) << 16 | (_arg_))
+ #define BCM2835_PINCONF_UNPACK_PARAM(_conf_) ((_conf_) >> 16)
+ #define BCM2835_PINCONF_UNPACK_ARG(_conf_) ((_conf_) & 0xffff)
+diff --git a/include/dt-bindings/pinctrl/bcm2835.h b/include/dt-bindings/pinctrl/bcm2835.h
+index 6f0bc37..e4e4fdf 100644
+--- a/include/dt-bindings/pinctrl/bcm2835.h
++++ b/include/dt-bindings/pinctrl/bcm2835.h
+@@ -24,4 +24,9 @@
+ #define BCM2835_FSEL_ALT2	6
+ #define BCM2835_FSEL_ALT3	7
+ 
++/* brcm,pull property */
++#define BCM2835_PUD_OFF		0
++#define BCM2835_PUD_DOWN	1
++#define BCM2835_PUD_UP		2
++
+ #endif /* __DT_BINDINGS_PINCTRL_BCM2835_H__ */
+-- 
+1.8.3.1
 
-Lothar Waßmann
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
