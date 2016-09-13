@@ -1,44 +1,52 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v5 2/9] drivers: irqchip: Add STM32 external interrupts
- support
-Date: Tue, 13 Sep 2016 17:21:26 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1609131713490.6233@nanos>
-References: <1473432124-6784-1-git-send-email-alexandre.torgue@st.com> <1473432124-6784-3-git-send-email-alexandre.torgue@st.com>
+From: "Gao, Bin" <bin.gao@intel.com>
+Subject: RE: [PATCH v7] gpio: add Intel WhiskeyCove PMIC GPIO driver
+Date: Tue, 13 Sep 2016 15:49:28 +0000
+Message-ID: <4460FA1017EA3844B646E90DA4E984057E2CD209@ORSMSX112.amr.corp.intel.com>
+References: <20160725215938.GC211765@worksta>
+ <CAP=VYLrS3=YDjaeTsnRA1DOZG14yc9VNeAzcyG9o5AKCH9Fhfw@mail.gmail.com>
+ <CAHp75Vfc8SVjiT=S5hSEa1p5anFuaGZAO_op9T=Cgm-BO9FB-Q@mail.gmail.com>
+ <20160913133726.GI28311@windriver.com>
+ <CAHp75Vd6X_f7sO0MqjTBgbpWHSNKxiL6iQytmYqTnb=3W8Lz-w@mail.gmail.com>
+ <20160913144617.GL28311@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from Galois.linutronix.de ([146.0.238.70]:59219 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759360AbcIMPX4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 11:23:56 -0400
-In-Reply-To: <1473432124-6784-3-git-send-email-alexandre.torgue@st.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160913144617.GL28311@windriver.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Gortmaker, Paul (Wind River)" <paul.gortmaker@windriver.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Bin Gao <bin.gao@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Iyer, Yegnesh S" <yegnesh.s.iyer@intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre TORGUE <alexandre.torgue@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com, lee.jones@linaro.org
 
-On Fri, 9 Sep 2016, Alexandre TORGUE wrote:
-> +static void stm32_exti_free(struct irq_domain *d, unsigned int virq,
-> +			    unsigned int nr_irqs)
-> +{
-> +	struct irq_data *data = irq_get_irq_data(virq);
-> +
-> +	irq_gc_mask_clr_bit(data->parent_data);
 
-I have a hard time to understand this. The irq domain is not hierarchical.
+On Fri, Sep 13, 2016 at 07:46:31AM, Paul Gortmaker wrote:
+>> On Tue, Sep 13, 2016 at 4:37 PM, Paul Gortmaker 
+>> <paul.gortmaker@windriver.com> wrote:
+>> >> > This looks like an invalid address, and ....
+>> >>
+>> >> >> +MODULE_AUTHOR("Ajay Thomas 
+>> >> >> +<ajay.thomas.david.rajamanickam@intel.com>");
+>> >> >
+>> >> > ...the same here.  In fact it sure looks like two names.  Anyway 
+>> >> > I just got a bounce when I tried to use it...
+>> >>
+>> >> It might be that person is no longer working for Intel, though I 
+>> >> think It would be better log message for that.
+>> >
+>> > That might make sense if the driver was old, but it hasn't even hit 
+>> > mainline yet -- it is only in linux-next, so it cant be more than a 
+>> > few weeks old.
+>> 
+>> It's already quite off topic, so, I would just say that it is still 
+>> valid point. Starting from some version of the series (which takes 
+>> couple of months?) Bin Gao did improvements.
+>
+>Not sure why you would call it off topic -- a new driver appearing in mainline should have a valid author entry, and if it is an accidental merge of two names into one then Bin Gao is the person who can ack that and subsequently fix it.
+>
+>P.
 
-> +	irq_domain_reset_irq_data(data);
+The original email is correct and it's not an accidental merge of two names.
+The cause is Ajay quitted Intel one month back so his email address is no longer valid. 
 
-> +	domain = irq_domain_add_linear(node, nr_exti,
-> +				       &irq_exti_domain_ops, NULL);
-
-It's a simple linear domain. So how can data->parent_data be a valid
-irq_data pointer? Answer: It can't!
-
-But it doesn't blow up in your face simply because the alloc/free callbacks
-are never invoked for simple non hierarchical domains. So you should have
-removed that stuff after copying some other irqchip driver.
-
-Thanks,
-
-	tglx
+-Bin
