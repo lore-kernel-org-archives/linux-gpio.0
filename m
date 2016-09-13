@@ -1,50 +1,46 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH v7] gpio: add Intel WhiskeyCove PMIC GPIO driver
-Date: Mon, 12 Sep 2016 18:37:07 -0400
-Message-ID: <CAP=VYLrS3=YDjaeTsnRA1DOZG14yc9VNeAzcyG9o5AKCH9Fhfw@mail.gmail.com>
-References: <20160725215938.GC211765@worksta>
+From: Phil Reid <preid@electromag.com.au>
+Subject: Re: [PATCH] gpio: pca953x: initialize ret to zero to avoid returning
+ garbage
+Date: Tue, 13 Sep 2016 12:04:00 +0800
+Message-ID: <944b682f-6217-f759-7429-339274cd5894@electromag.com.au>
+References: <20160909083154.26442-1-colin.king@canonical.com>
+ <CACRpkdYHRjUoANEibzexrmGQiVHL4cgYWZPr6H-_GA1HqqpTNw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:34390 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752078AbcILWhj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Sep 2016 18:37:39 -0400
-In-Reply-To: <20160725215938.GC211765@worksta>
+Received: from anchovy3.45ru.net.au ([203.30.46.155]:36467 "EHLO
+        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750869AbcIMEEF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 00:04:05 -0400
+In-Reply-To: <CACRpkdYHRjUoANEibzexrmGQiVHL4cgYWZPr6H-_GA1HqqpTNw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bin Gao <bin.gao@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Yegnesh S Iyer <yegnesh.s.iyer@intel.com>, Bin Gao <bin.gao@intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Colin King <colin.king@canonical.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
 
-On Mon, Jul 25, 2016 at 5:59 PM, Bin Gao <bin.gao@linux.intel.com> wrote:
-> This patch introduces a separate GPIO driver for Intel WhiskeyCove PMIC.
-> This driver is based on gpio-crystalcove.c.
+On 12/09/2016 21:40, Linus Walleij wrote:
+> On Fri, Sep 9, 2016 at 10:31 AM, Colin King <colin.king@canonical.com> wrote:
 >
-> Signed-off-by: Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>
-
-This looks like an invalid address, and ....
-
-> Signed-off-by: Bin Gao <bin.gao@intel.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
-
-[....]
-
-> +module_platform_driver(wcove_gpio_driver);
-> +
-> +MODULE_AUTHOR("Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>");
-
-...the same here.  In fact it sure looks like two names.  Anyway I just got a
-bounce when I tried to use it...
-
-Paul.
---
-
-> +MODULE_AUTHOR("Bin Gao <bin.gao@intel.com>");
-> +MODULE_DESCRIPTION("Intel Whiskey Cove GPIO Driver");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:bxt_wcove_gpio");
-> --
-> 1.9.1
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> ret is not initialized so it contains garbage.  Ensure garbage
+>> is not returned in the case that pdata && pdata->teardown is false
+>> by initializing ret to 0.
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 >
+> Patch applied.
+G'day Linus,
+
+
+I believe this does the same as Arnd Bergmanns patch from 26 Aug.
+[PATCH 1/5] gpio: pca954x: fix undefined error code from remove
+
+IMO Colin's is the cleaner solution.
+Arnd's could be removed.
+
+-- 
+Regards
+Phil Reid
+
