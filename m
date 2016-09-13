@@ -1,41 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH -next] gpio: lp873x: Use devm_gpiochip_add_data() for gpio registration
-Date: Tue, 13 Sep 2016 10:27:49 +0200
-Message-ID: <CACRpkdZnfUfPj19Wts1pd5Nxqi-Zp+kTxZCvXrsSM6DjjJpHUQ@mail.gmail.com>
-References: <1473509082-3996-1-git-send-email-weiyj.lk@gmail.com>
+Subject: Re: [GIT PULL] Immutable branch between MFD, GPIO and Regulator due
+ for the v4.9 merge window
+Date: Tue, 13 Sep 2016 10:32:49 +0200
+Message-ID: <CACRpkdYLO3ih7vDfUk3rGq-59J2OWz2ZON8qHGQLFNbicGZYYA@mail.gmail.com>
+References: <1472633892-8261-1-git-send-email-j-keerthy@ti.com>
+ <20160831122435.GD9415@dell> <CACRpkdbfOdaouKEooLsGRYXhbwkjfNoTXTqunumF4bOPjOUD4w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:34654 "EHLO
-        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751967AbcIMI1u (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 04:27:50 -0400
-Received: by mail-oi0-f46.google.com with SMTP id m11so370546727oif.1
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2016 01:27:50 -0700 (PDT)
-In-Reply-To: <1473509082-3996-1-git-send-email-weiyj.lk@gmail.com>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:34284 "EHLO
+        mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755520AbcIMIcv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 04:32:51 -0400
+Received: by mail-oi0-f48.google.com with SMTP id m11so370716909oif.1
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2016 01:32:50 -0700 (PDT)
+In-Reply-To: <CACRpkdbfOdaouKEooLsGRYXhbwkjfNoTXTqunumF4bOPjOUD4w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wei Yongjun <weiyj.lk@gmail.com>, Lee Jones <lee.jones@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Keerthy <j-keerthy@ti.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Keerthy <j-keerthy@ti.com>, Mark Brown <broonie@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sat, Sep 10, 2016 at 2:04 PM, Wei Yongjun <weiyj.lk@gmail.com> wrote:
-
-> From: Wei Yongjun <weiyongjun1@huawei.com>
+On Wed, Sep 7, 2016 at 10:03 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Aug 31, 2016 at 2:24 PM, Lee Jones <lee.jones@linaro.org> wrote:
 >
-> Use devm_gpiochip_add_data() for GPIO registration and remove the need
-> of driver callback .remove.
+>> The following changes since commit 694d0d0bb2030d2e36df73e2d23d5770511dbc8d:
+>>
+>>   Linux 4.8-rc2 (2016-08-14 19:11:36 -0700)
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-gpio-regulator-v4.9
 >
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/gpio/gpio-lp873x.c | 12 +-----------
+> Hm it is based on a later release candidate than my tree so I'll wait
+> and see if I
+> have to pull it (like if there are clashes in linux-next...)
 
-This patch is in Lee's MFD tree, either send it to him so he can merge it
-or defer to after the merge window and I can take it.
-
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-(Yeah I know I can also pull in Lee's immutable branch, just
-want to avoid the complexity.)
+Bah I'm getting patches for the GPIO driver so I caved in and
+merged v4.8-rc1 and then pulled in this, all looks good.
 
 Yours,
 Linus Walleij
