@@ -1,83 +1,51 @@
-From: Deepak Das <deepak_das@mentor.com>
-Subject: Re: [PATCH] driver: base: pinctrl: return error from
- pinctrl_bind_pins()
-Date: Tue, 13 Sep 2016 19:11:38 +0530
-Message-ID: <57D80212.7060303@mentor.com>
-References: <57D7A700.8080402@mentor.com>
- <CACRpkdandEmr5PTfhUt39wMezMpbE9wEHDTR=jMidzUZY2Cn7A@mail.gmail.com>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/4] pinctrl: sh-pfc: Support named pins with custom configuration
+Date: Tue, 13 Sep 2016 16:03:11 +0200
+Message-ID: <20160913140314.22035-2-niklas.soderlund+renesas@ragnatech.se>
+References: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:64377 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750940AbcIMNlo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 09:41:44 -0400
-In-Reply-To: <CACRpkdandEmr5PTfhUt39wMezMpbE9wEHDTR=jMidzUZY2Cn7A@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, vzapolsk <Vladimir_Zapolskiy@mentor.com>
 
+Pins not associated with a GPIO port can still have other configuration
+parameters. Add a new macro SH_PFC_PIN_NAMED_CFG which allows for named
+pins to be declared with a set of configurations. The new macro is an
+modification of SH_PFC_PIN_NAMED to allow for optional configuration to
+be assigned.
 
+The flag SH_PFC_PIN_CFG_NO_GPIO is still enforced as this should only be
+used to define pins not associated with a GPIO port.
 
-On Tuesday 13 September 2016 05:29 PM, Linus Walleij wrote:
-> On Tue, Sep 13, 2016 at 9:13 AM, Deepak <deepak_das@mentor.com> wrote:
->
->> strict pin controller returns -EINVAL in case of pin request which
->> is already claimed by somebody else.
->> Following is the sequence of calling pin_request() from
->> pinctrl_bind_pins():-
->> pinctrl_bind_pins()->pinctrl_select_state()->pinmux_enable_setting()->
->> pin_request()
->>
->> But pinctrl_bind_pins() only returns -EPROBE_DEFER which makes device
->> driver probe successful even if the pin request is rejected by the pin
->> controller subsystem.
->>
->> This commit modifies pinctrl_bind_pins() to return error if the pin is
->> rejected by pin control subsystem.
->>
->> Signed-off-by: Deepak Das <deepak_das@mentor.com>
->
-> Aha
->
->>       /* Only return deferrals */
->> -    if (ret != -EPROBE_DEFER)
->> +    if ((ret != -EPROBE_DEFER) && (ret != -EINVAL))
->>           ret = 0;
->
-> I rewrote this when applying, like this:
->
-> -       /* Only return deferrals */
-> -       if (ret != -EPROBE_DEFER)
-> -               ret = 0;
-> +       /* Return deferrals */
-> +       if (ret == -EPROBE_DEFER)
-> +               return ret;
-> +       if (ret == -EINVAL) {
-> +               dev_err(dev, "could not initialize pin control state\n");
-> +               return ret;
-> +       }
-> +       /* We ignore errors like -ENOENT meaning no pinctrl state */
->
-> -       return ret;
-> +       return 0;
->
-> Can you confim that this works for you too?
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Yes, This works for me as well but do we really need this extra error 
-message ?
-error message is printed before returning -EINVAL from most places, 
-Although I did not checked all places. For example, error message in 
-pin_request():-
-dev_err(pctldev->dev, "pin %s already requested by %s; cannot claim for 
-%s\n", desc->name, desc->mux_owner, owner);
-
-Thanks,
-Deepak Das
->
-> Yours,
-> Linus Walleij
->
-
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index 5e966c0..a6a2346 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -507,6 +507,14 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
+ 		.configs = SH_PFC_PIN_CFG_NO_GPIO,			\
+ 	}
+ 
++/* SH_PFC_PIN_NAMED_CFG - Expand to a sh_pfc_pin entry with the given name */
++#define SH_PFC_PIN_NAMED_CFG(row, col, _name, cfgs)			\
++	{								\
++		.pin = PIN_NUMBER(row, col),				\
++		.name = __stringify(PIN_##_name),			\
++		.configs = SH_PFC_PIN_CFG_NO_GPIO | cfgs,		\
++	}
++
+ /* PINMUX_DATA_ALL - Expand to a list of PORT_name_DATA, PORT_name_FN0,
+  *		     PORT_name_OUT, PORT_name_IN marks
+  */
+-- 
+2.9.3
