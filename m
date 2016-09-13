@@ -1,44 +1,35 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v7] i2c: imx: make bus recovery through pinctrl optional
-Date: Tue, 13 Sep 2016 08:47:29 +0200
-Message-ID: <20160913064729.6jtwlpkpi36gxtpj@pengutronix.de>
-References: <1473718950-6667-1-git-send-email-leoyang.li@nxp.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v7] gpio: add Intel WhiskeyCove PMIC GPIO driver
+Date: Tue, 13 Sep 2016 10:02:56 +0300
+Message-ID: <CAHp75Vfc8SVjiT=S5hSEa1p5anFuaGZAO_op9T=Cgm-BO9FB-Q@mail.gmail.com>
+References: <20160725215938.GC211765@worksta> <CAP=VYLrS3=YDjaeTsnRA1DOZG14yc9VNeAzcyG9o5AKCH9Fhfw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:45700 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751389AbcIMGrf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 13 Sep 2016 02:47:35 -0400
-Content-Disposition: inline
-In-Reply-To: <1473718950-6667-1-git-send-email-leoyang.li@nxp.com>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:32925 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751608AbcIMHC5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 03:02:57 -0400
+In-Reply-To: <CAP=VYLrS3=YDjaeTsnRA1DOZG14yc9VNeAzcyG9o5AKCH9Fhfw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Li Yang <leoyang.li@nxp.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Gao Pan <pandy.gao@nxp.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Bin Gao <bin.gao@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Yegnesh S Iyer <yegnesh.s.iyer@intel.com>, Bin Gao <bin.gao@intel.com>
 
-On Mon, Sep 12, 2016 at 05:22:30PM -0500, Li Yang wrote:
-> Since commit 1c4b6c3bcf30 ("i2c: imx: implement bus recovery") the
-> driver starts to use gpio/pinctrl to support optional bus recovery
-> feature.  But pinctrl is not always usable.  There are platforms such
-> as ls1021a and ls1043a that don't support pinctrl, and it could just
-> be broken due to old/broken device tree.  The patch makes it really
-> optional that the probe function won't bailout on pinctrl problems
-> instead it just disables bus recovery and prints out notification when
-> there is problem with pinctrl.  Since pinctrl is only used by bus
-> recovery in this driver, move pinctrl initialization into bus recovery
-> init function to prevent confusion.
-> 
-> Signed-off-by: Li Yang <leoyang.li@nxp.com>
-> Cc: Gao Pan <pandy.gao@nxp.com>
-> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+On Tue, Sep 13, 2016 at 1:37 AM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+>> Signed-off-by: Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>
+>
+> This looks like an invalid address, and ....
 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>> +MODULE_AUTHOR("Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>");
+>
+> ...the same here.  In fact it sure looks like two names.  Anyway I just got a
+> bounce when I tried to use it...
+
+It might be that person is no longer working for Intel, though I think
+It would be better log message for that.
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+With Best Regards,
+Andy Shevchenko
