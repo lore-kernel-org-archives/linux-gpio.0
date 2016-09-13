@@ -1,71 +1,60 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/4] ARM: dts: Add NextThing GR8 dtsi
-Date: Tue, 13 Sep 2016 11:09:53 +0200
-Message-ID: <CACRpkdapvA89yexwROCxr4t+MijCwidBrpYTow+zDx6D0WdSGw@mail.gmail.com>
-References: <20160907145400.27192-1-maxime.ripard@free-electrons.com>
- <20160908073748.GF8913@lukather> <CACRpkdbrvDZGM3OJsAMk4T5awSSbrJ4MDyKXV2C45ZSE7zUVNQ@mail.gmail.com>
- <1975640.ctuo4Obpao@avalon>
+Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
+Date: Tue, 13 Sep 2016 11:18:49 +0200
+Message-ID: <CACRpkdZRguTg4davCW-x6HvRJgOxNz8R4KyeFCEnQzyXPkP6cg@mail.gmail.com>
+References: <20160908101303.GA22716@ktx> <20160908102402.GC15313@lahna.fi.intel.com>
+ <20160908162843.GB22716@ktx> <20160909061834.GG15313@lahna.fi.intel.com>
+ <20160909082358.GA23895@ktx> <20160909085832.GK15313@lahna.fi.intel.com>
+ <20160911080506.GO15313@lahna.fi.intel.com> <20160912065656.GA2411@ktx>
+ <20160912090401.GB1811@lahna.fi.intel.com> <20160912130444.GB2411@ktx> <20160912131111.GG1811@lahna.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1975640.ctuo4Obpao@avalon>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:36243 "EHLO
+        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756826AbcIMJSv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 05:18:51 -0400
+Received: by mail-oi0-f44.google.com with SMTP id q188so256747550oia.3
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2016 02:18:50 -0700 (PDT)
+In-Reply-To: <20160912131111.GG1811@lahna.fi.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Phidias Chiang <phidias.chiang@canonical.com>, Anisse Astier <anisse@astier.eu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Sep 12, 2016 at 2:47 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Monday 12 Sep 2016 14:40:15 Linus Walleij wrote:
+On Mon, Sep 12, 2016 at 3:11 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Mon, Sep 12, 2016 at 09:04:44PM +0800, Phidias Chiang wrote:
+>> On Mon, Sep 12, 2016 at 12:04:01PM +0300, Mika Westerberg wrote:
+>> >
+>> > OK, I see what is going on now. When I changed handle_simple_irq to
+>> > handle_bad_irq, the IRQ core in __irq_do_set_handler() thinks the
+>> > handler is uninstalled and masks the line.
+>> >
+>> > If you change handle_bad_irq to handle_simple_irq, in call to
+>> > gpiochip_irqchip_add(), does it work then?
+>>
+>> Yes it does :), thank you for the support!
+>
+> Thanks for testing.
+>
+> So we need to use handle_simple_irq here instead.
+>
+> Linus, do you see any problems with that?
 
->> HOWEVER it often turns out that while you can programmatically
->> and individually set pins to any function (and biasing etc), the
->> person designing the hardware was not thinking that you should
->> be able to do whatever you like, e.g. even if it is possible to
->> take two pins and use one of them for half an SPI bus and the
->> other for half an I2C bus, that doesn't mean that this is useful
->> or makes any kind of electronic sense, it just makes "software
->> sense".
-(...)
-> I'd argue that you would find out about lots of clever/insane use cases that
-> don't fit this model if you looked at all the hardware available out there,
-> especially non-phone devices. Your SPI example is a good one, I've seen SPI
-> being used in unidirectional mode only, with only MISO or MOSI mattering. In
-> that case the other pin could be used as a GPIO for a totally unrelated
-> purpose when the design is short on GPIOs or when GPIOs have been allocated
-> without any knowledge of the Linux pinctrl subsystem.
+I need to see the patch in its context with a commit message,
+I can't figure it out from the thread.
 
-That is true sometimes. It is a tradeoff, I can also imagine actually
-driving an I2C bus just to use the SCL line as a clock for something,
-constantly feeding nonsense data through the I2C block and
-ignoring SDA and reusing that pin as GPIO. (And a lot of other
-theoretical usecases.)
+handle_simple_irq() is for something generic not level- or
+edge-triggered. If you support specific triggers only, it
+should not be used.
 
-Some pin controller hardware helpully only let you select groups
-and makes such hacks impossible.
+Nominally assigning handle_bad_irq() until a specific
+edge or level is requested is the right thing to do, since
+the IRQ is really not configured for anything at all and
+hence has undefined behaviour.
 
-Also I guess the target audience of the SoC will affect the
-hackishness of the usecases, and affect what they might attempt
-to shoehorn into the design.
-
-So model on whatever makes most sense, is usually how I think about
-it. Or as the IETF says "rough consensus and running code".
-
-I guess it is a bit of grayzone, and that is why both solutions coexist.
-
-> Looking at the sh-pfc driver, I wish the hardware had followed the pinctrl-
-> single model. sh-pfc is a good example of how bloated a pinctrl driver can
-> become when there is no choice but model all the relationships betweens pins
-> and functions in C code.
-
-It might be true, there are so many variables to the equation that
-I cannot tell.
-
-Debuggability and readability of code and device trees and different
-groups of people reading code vs device trees is another factor.
-
-Scaringly, what is best for me as subsystem maintainer (that all
-drivers look identical) is not always best for the users.
+But write a patch and involve the irqchip people I guess?
 
 Yours,
 Linus Walleij
