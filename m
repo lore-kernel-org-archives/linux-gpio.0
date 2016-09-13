@@ -1,61 +1,35 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH v5 5/9] Documentation: dt-bindings: Add IRQ related
- properties of STM32 pinctrl
-Date: Tue, 13 Sep 2016 14:34:48 +0200
-Message-ID: <0359b2c7-cda5-b744-7051-4b19af0fcfcd@st.com>
-References: <1473432124-6784-1-git-send-email-alexandre.torgue@st.com>
- <1473432124-6784-6-git-send-email-alexandre.torgue@st.com>
- <CACRpkdbZtNscuJ0bQMYt09ZKACQ0PBG8XMmGo7XnDy5fMGk9_g@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: pca953x: initialize ret to zero to avoid returning garbage
+Date: Tue, 13 Sep 2016 14:46:19 +0200
+Message-ID: <CACRpkdZOd2qeCCvC3f0n4SZtmt9PQMOyOGuyS7Oio6qLRc+0vQ@mail.gmail.com>
+References: <20160909083154.26442-1-colin.king@canonical.com>
+ <CACRpkdYHRjUoANEibzexrmGQiVHL4cgYWZPr6H-_GA1HqqpTNw@mail.gmail.com>
+ <944b682f-6217-f759-7429-339274cd5894@electromag.com.au> <18457294.js4cyg49EU@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbZtNscuJ0bQMYt09ZKACQ0PBG8XMmGo7XnDy5fMGk9_g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>, Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:36778 "EHLO
+        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751091AbcIMMqU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 08:46:20 -0400
+Received: by mail-oi0-f42.google.com with SMTP id q188so263881798oia.3
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2016 05:46:20 -0700 (PDT)
+In-Reply-To: <18457294.js4cyg49EU@wuerfel>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Phil Reid <preid@electromag.com.au>, Colin King <colin.king@canonical.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Linus,
+On Tue, Sep 13, 2016 at 2:31 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-On 09/13/2016 10:18 AM, Linus Walleij wrote:
-> On Fri, Sep 9, 2016 at 4:42 PM, Alexandre TORGUE
-> <alexandre.torgue@st.com> wrote:
->
->> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
->> Acked-by: Rob Herring <robh@kernel.org>
->> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->> index 587bffb..a0eed99 100644
->> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->> @@ -14,6 +14,9 @@ Required properies:
->>   - #size-cells : The value of this property must be 1
->>   - ranges      : defines mapping between pin controller node (parent) to
->>     gpio-bank node (children).
->> + - interrupt-parent: phandle of the interrupt parent to which the external
->> +   GPIO interrupts are forwarded to.
->> + - st,syscfg: phandle of the syscfg node used for IRQ mux selection.
->
-> Actually this doc is incomplete.
->
-> This is a phandle + offset, not just a phandle.
->
-> It is a small detail so I don't care much, either send a patch to
-> fix up this doc (I have already merged it) or patch the driver
-> to not retrieve the offset and instead use
-> #define SYSCFG_OFFSET 0x08
-> or something...
+> Please try to avoid adding initializations in the local variable
+> declaration, they just hide otherwise useful warnings when
+> you get a function that actually does something incorrect
+> in some code paths.
 
-I'll send a patch for Documentation.
-Do I need to wait  this series is officially released (4.9-rc1) or can I 
-send it now ?
+Agreed, sorry for my ignorance :(
 
-Regards
-Alex
+I duly corrected the git and reverted the other patch instead of yours.
 
->
-> Yours,
-> Linus Walleij
->
+Yours,
+Linus Walleij
