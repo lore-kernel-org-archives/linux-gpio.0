@@ -1,37 +1,71 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: ret needs to be an int for -ve return value from regmap_update_bits
-Date: Tue, 13 Sep 2016 10:44:13 +0200
-Message-ID: <CACRpkdaRWSNghaSpjCHGdiGA9NP81y+8A4x447sJYVN_=59fzA@mail.gmail.com>
-References: <20160911083625.7451-1-colin.king@canonical.com>
+Subject: Re: [PATCH v2 3/4] ARM: dts: Add NextThing GR8 dtsi
+Date: Tue, 13 Sep 2016 11:09:53 +0200
+Message-ID: <CACRpkdapvA89yexwROCxr4t+MijCwidBrpYTow+zDx6D0WdSGw@mail.gmail.com>
+References: <20160907145400.27192-1-maxime.ripard@free-electrons.com>
+ <20160908073748.GF8913@lukather> <CACRpkdbrvDZGM3OJsAMk4T5awSSbrJ4MDyKXV2C45ZSE7zUVNQ@mail.gmail.com>
+ <1975640.ctuo4Obpao@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:32938 "EHLO
-        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752456AbcIMIoO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 04:44:14 -0400
-Received: by mail-oi0-f53.google.com with SMTP id y2so371651130oie.0
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2016 01:44:14 -0700 (PDT)
-In-Reply-To: <20160911083625.7451-1-colin.king@canonical.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1975640.ctuo4Obpao@avalon>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
 List-Id: linux-gpio@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sun, Sep 11, 2016 at 10:36 AM, Colin King <colin.king@canonical.com> wrote:
+On Mon, Sep 12, 2016 at 2:47 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Monday 12 Sep 2016 14:40:15 Linus Walleij wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Macro regmap_update_bits can return a -ve on an error value so ret
-> needs to be an integer rather than a bool type.
->
-> Fixes warning found by static analysis with cppcheck:
-> [drivers/pinctrl/aspeed/pinctrl-aspeed.c:192]: (warning) Comparison of
->   a boolean expression with an integer other than 0 or 1.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> HOWEVER it often turns out that while you can programmatically
+>> and individually set pins to any function (and biasing etc), the
+>> person designing the hardware was not thinking that you should
+>> be able to do whatever you like, e.g. even if it is possible to
+>> take two pins and use one of them for half an SPI bus and the
+>> other for half an I2C bus, that doesn't mean that this is useful
+>> or makes any kind of electronic sense, it just makes "software
+>> sense".
+(...)
+> I'd argue that you would find out about lots of clever/insane use cases that
+> don't fit this model if you looked at all the hardware available out there,
+> especially non-phone devices. Your SPI example is a good one, I've seen SPI
+> being used in unidirectional mode only, with only MISO or MOSI mattering. In
+> that case the other pin could be used as a GPIO for a totally unrelated
+> purpose when the design is short on GPIOs or when GPIOs have been allocated
+> without any knowledge of the Linux pinctrl subsystem.
 
-Dropping this but added your Reported-by to Arnds patch.
+That is true sometimes. It is a tradeoff, I can also imagine actually
+driving an I2C bus just to use the SCL line as a clock for something,
+constantly feeding nonsense data through the I2C block and
+ignoring SDA and reusing that pin as GPIO. (And a lot of other
+theoretical usecases.)
+
+Some pin controller hardware helpully only let you select groups
+and makes such hacks impossible.
+
+Also I guess the target audience of the SoC will affect the
+hackishness of the usecases, and affect what they might attempt
+to shoehorn into the design.
+
+So model on whatever makes most sense, is usually how I think about
+it. Or as the IETF says "rough consensus and running code".
+
+I guess it is a bit of grayzone, and that is why both solutions coexist.
+
+> Looking at the sh-pfc driver, I wish the hardware had followed the pinctrl-
+> single model. sh-pfc is a good example of how bloated a pinctrl driver can
+> become when there is no choice but model all the relationships betweens pins
+> and functions in C code.
+
+It might be true, there are so many variables to the equation that
+I cannot tell.
+
+Debuggability and readability of code and device trees and different
+groups of people reading code vs device trees is another factor.
+
+Scaringly, what is best for me as subsystem maintainer (that all
+drivers look identical) is not always best for the users.
 
 Yours,
 Linus Walleij
