@@ -1,53 +1,75 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH v7] gpio: add Intel WhiskeyCove PMIC GPIO driver
-Date: Tue, 13 Sep 2016 10:46:17 -0400
-Message-ID: <20160913144617.GL28311@windriver.com>
-References: <20160725215938.GC211765@worksta>
- <CAP=VYLrS3=YDjaeTsnRA1DOZG14yc9VNeAzcyG9o5AKCH9Fhfw@mail.gmail.com>
- <CAHp75Vfc8SVjiT=S5hSEa1p5anFuaGZAO_op9T=Cgm-BO9FB-Q@mail.gmail.com>
- <20160913133726.GI28311@windriver.com>
- <CAHp75Vd6X_f7sO0MqjTBgbpWHSNKxiL6iQytmYqTnb=3W8Lz-w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vd6X_f7sO0MqjTBgbpWHSNKxiL6iQytmYqTnb=3W8Lz-w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Bin Gao <bin.gao@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Yegnesh S Iyer <yegnesh.s.iyer@intel.com>, Bin Gao <bin.gao@intel.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [RESEND PATCH v2 1/4] pinctrl: amlogic: gxbb: add spi nor pins
+Date: Tue, 13 Sep 2016 17:12:21 +0200
+Message-ID: <1473779542-2635-1-git-send-email-jbrunet@baylibre.com>
+References: <1473409738-27175-1-git-send-email-jbrunet@baylibre.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:36073 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754132AbcIMPNB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 11:13:01 -0400
+Received: by mail-wm0-f53.google.com with SMTP id b187so580274wme.1
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2016 08:13:00 -0700 (PDT)
+In-Reply-To: <1473409738-27175-1-git-send-email-jbrunet@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-[Re: [PATCH v7] gpio: add Intel WhiskeyCove PMIC GPIO driver] On 13/09/2016 (Tue 17:35) Andy Shevchenko wrote:
+Add EE domains pins for the SPI flash controller
 
-> On Tue, Sep 13, 2016 at 4:37 PM, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
-> >> > This looks like an invalid address, and ....
-> >>
-> >> >> +MODULE_AUTHOR("Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>");
-> >> >
-> >> > ...the same here.  In fact it sure looks like two names.  Anyway I just got a
-> >> > bounce when I tried to use it...
-> >>
-> >> It might be that person is no longer working for Intel, though I think
-> >> It would be better log message for that.
-> >
-> > That might make sense if the driver was old, but it hasn't even hit
-> > mainline yet -- it is only in linux-next, so it cant be more than a few
-> > weeks old.
-> 
-> It's already quite off topic, so, I would just say that it is still
-> valid point. Starting from some version of the series (which takes
-> couple of months?) Bin Gao did improvements.
+Acked-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Not sure why you would call it off topic -- a new driver appearing in
-mainline should have a valid author entry, and if it is an accidental
-merge of two names into one then Bin Gao is the person who can ack that
-and subsequently fix it.
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+index f115638e8699..573901887cee 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+@@ -156,6 +156,11 @@ static const unsigned int emmc_clk_pins[] = { PIN(BOOT_8, EE_OFF) };
+ static const unsigned int emmc_cmd_pins[] = { PIN(BOOT_10, EE_OFF) };
+ static const unsigned int emmc_ds_pins[] = { PIN(BOOT_15, EE_OFF) };
+ 
++static const unsigned int nor_d_pins[]		= { PIN(BOOT_11, EE_OFF) };
++static const unsigned int nor_q_pins[]		= { PIN(BOOT_12, EE_OFF) };
++static const unsigned int nor_c_pins[]		= { PIN(BOOT_13, EE_OFF) };
++static const unsigned int nor_cs_pins[]		= { PIN(BOOT_15, EE_OFF) };
++
+ static const unsigned int sdcard_d0_pins[] = { PIN(CARD_1, EE_OFF) };
+ static const unsigned int sdcard_d1_pins[] = { PIN(CARD_0, EE_OFF) };
+ static const unsigned int sdcard_d2_pins[] = { PIN(CARD_5, EE_OFF) };
+@@ -430,6 +435,10 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
+ 	GROUP(emmc_clk,		4,	18),
+ 	GROUP(emmc_cmd,		4,	19),
+ 	GROUP(emmc_ds,		4,	31),
++	GROUP(nor_d,		5,	1),
++	GROUP(nor_q,		5,	3),
++	GROUP(nor_c,		5,	2),
++	GROUP(nor_cs,		5,	0),
+ 
+ 	/* Bank CARD */
+ 	GROUP(sdcard_d1,	2,	14),
+@@ -517,6 +526,10 @@ static const char * const emmc_groups[] = {
+ 	"emmc_nand_d07", "emmc_clk", "emmc_cmd", "emmc_ds",
+ };
+ 
++static const char * const nor_groups[] = {
++	"nor_d", "nor_q", "nor_c", "nor_cs",
++};
++
+ static const char * const sdcard_groups[] = {
+ 	"sdcard_d0", "sdcard_d1", "sdcard_d2", "sdcard_d3",
+ 	"sdcard_cmd", "sdcard_clk",
+@@ -619,6 +632,7 @@ static const char * const pwm_ao_b_groups[] = {
+ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(emmc),
++	FUNCTION(nor),
+ 	FUNCTION(sdcard),
+ 	FUNCTION(sdio),
+ 	FUNCTION(uart_a),
+-- 
+2.7.4
 
-P.
---
-
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
