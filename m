@@ -1,89 +1,44 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [RESEND PATCH v2 2/4] pinctrl: amlogic: gxbb: add nand pins
-Date: Tue, 13 Sep 2016 17:12:22 +0200
-Message-ID: <1473779542-2635-2-git-send-email-jbrunet@baylibre.com>
-References: <1473779542-2635-1-git-send-email-jbrunet@baylibre.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v5 2/9] drivers: irqchip: Add STM32 external interrupts
+ support
+Date: Tue, 13 Sep 2016 17:21:26 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1609131713490.6233@nanos>
+References: <1473432124-6784-1-git-send-email-alexandre.torgue@st.com> <1473432124-6784-3-git-send-email-alexandre.torgue@st.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:35341 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753562AbcIMPNI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 11:13:08 -0400
-Received: by mail-lf0-f44.google.com with SMTP id l131so112669529lfl.2
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2016 08:13:07 -0700 (PDT)
-In-Reply-To: <1473779542-2635-1-git-send-email-jbrunet@baylibre.com>
-In-Reply-To: <1473409738-27175-1-git-send-email-jbrunet@baylibre.com>
+Received: from Galois.linutronix.de ([146.0.238.70]:59219 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759360AbcIMPX4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 11:23:56 -0400
+In-Reply-To: <1473432124-6784-3-git-send-email-alexandre.torgue@st.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: Alexandre TORGUE <alexandre.torgue@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com, lee.jones@linaro.org
 
-Add EE domains pins for the NAND flash controller.
-Even tough we have no driver for the NAND flash controller yet, we need
-to have these pins in pinctrl as the actual pin are shared with the spifc
-controller. The bootloader on the S905-P200 setup pinmux for the NAND
-controller so we need the kernel to properly deactivate this if necessary.
+On Fri, 9 Sep 2016, Alexandre TORGUE wrote:
+> +static void stm32_exti_free(struct irq_domain *d, unsigned int virq,
+> +			    unsigned int nr_irqs)
+> +{
+> +	struct irq_data *data = irq_get_irq_data(virq);
+> +
+> +	irq_gc_mask_clr_bit(data->parent_data);
 
-Acked-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+I have a hard time to understand this. The irq domain is not hierarchical.
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 573901887cee..b06cc12f2500 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -176,6 +176,15 @@ static const unsigned int sdio_cmd_pins[] = { PIN(GPIOX_4, EE_OFF) };
- static const unsigned int sdio_clk_pins[] = { PIN(GPIOX_5, EE_OFF) };
- static const unsigned int sdio_irq_pins[] = { PIN(GPIOX_7, EE_OFF) };
- 
-+static const unsigned int nand_ce0_pins[]	= { PIN(BOOT_8, EE_OFF) };
-+static const unsigned int nand_ce1_pins[]	= { PIN(BOOT_9, EE_OFF) };
-+static const unsigned int nand_rb0_pins[]	= { PIN(BOOT_10, EE_OFF) };
-+static const unsigned int nand_ale_pins[]	= { PIN(BOOT_11, EE_OFF) };
-+static const unsigned int nand_cle_pins[]	= { PIN(BOOT_12, EE_OFF) };
-+static const unsigned int nand_wen_clk_pins[]	= { PIN(BOOT_13, EE_OFF) };
-+static const unsigned int nand_ren_wr_pins[]	= { PIN(BOOT_14, EE_OFF) };
-+static const unsigned int nand_dqs_pins[]	= { PIN(BOOT_15, EE_OFF) };
-+
- static const unsigned int uart_tx_a_pins[]	= { PIN(GPIOX_12, EE_OFF) };
- static const unsigned int uart_rx_a_pins[]	= { PIN(GPIOX_13, EE_OFF) };
- static const unsigned int uart_cts_a_pins[]	= { PIN(GPIOX_14, EE_OFF) };
-@@ -439,6 +448,14 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GROUP(nor_q,		5,	3),
- 	GROUP(nor_c,		5,	2),
- 	GROUP(nor_cs,		5,	0),
-+	GROUP(nand_ce0,		4,	26),
-+	GROUP(nand_ce1,		4,	27),
-+	GROUP(nand_rb0,		4,	25),
-+	GROUP(nand_ale,		4,	24),
-+	GROUP(nand_cle,		4,	23),
-+	GROUP(nand_wen_clk,	4,	22),
-+	GROUP(nand_ren_wr,	4,	21),
-+	GROUP(nand_dqs,		4,	20),
- 
- 	/* Bank CARD */
- 	GROUP(sdcard_d1,	2,	14),
-@@ -540,6 +557,11 @@ static const char * const sdio_groups[] = {
- 	"sdio_cmd", "sdio_clk", "sdio_irq",
- };
- 
-+static const char * const nand_groups[] = {
-+	"nand_ce0", "nand_ce1", "nand_rb0", "nand_ale", "nand_cle",
-+	"nand_wen_clk", "nand_ren_wr", "nand_dqs",
-+};
-+
- static const char * const uart_a_groups[] = {
- 	"uart_tx_a", "uart_rx_a", "uart_cts_a", "uart_rts_a",
- };
-@@ -635,6 +657,7 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
- 	FUNCTION(nor),
- 	FUNCTION(sdcard),
- 	FUNCTION(sdio),
-+	FUNCTION(nand),
- 	FUNCTION(uart_a),
- 	FUNCTION(uart_b),
- 	FUNCTION(uart_c),
--- 
-2.7.4
+> +	irq_domain_reset_irq_data(data);
 
+> +	domain = irq_domain_add_linear(node, nr_exti,
+> +				       &irq_exti_domain_ops, NULL);
+
+It's a simple linear domain. So how can data->parent_data be a valid
+irq_data pointer? Answer: It can't!
+
+But it doesn't blow up in your face simply because the alloc/free callbacks
+are never invoked for simple non hierarchical domains. So you should have
+removed that stuff after copying some other irqchip driver.
+
+Thanks,
+
+	tglx
