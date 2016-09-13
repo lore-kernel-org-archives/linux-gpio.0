@@ -1,31 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/6] pinctrl: mediatek: constify gpio_chip structures
-Date: Tue, 13 Sep 2016 10:40:04 +0200
-Message-ID: <CACRpkdZD2QD50B785M5a8LpoaJuwBjmn-yo0tmwJaMVj2Et39A@mail.gmail.com>
-References: <1473596082-32690-1-git-send-email-Julia.Lawall@lip6.fr> <1473596082-32690-4-git-send-email-Julia.Lawall@lip6.fr>
+Subject: Re: [PATCH] pinctrl: aspeed: fix regmap error handling
+Date: Tue, 13 Sep 2016 10:42:50 +0200
+Message-ID: <CACRpkdb6oWqHtAr26UgA4NtN5hvpCFqTJpj8LOw=YQcNZwJtaw@mail.gmail.com>
+References: <20160909092715.403663-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:36379 "EHLO
-        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755922AbcIMIkF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 04:40:05 -0400
-Received: by mail-oi0-f41.google.com with SMTP id q188so255443479oia.3
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2016 01:40:05 -0700 (PDT)
-In-Reply-To: <1473596082-32690-4-git-send-email-Julia.Lawall@lip6.fr>
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:35695 "EHLO
+        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755559AbcIMImw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 04:42:52 -0400
+Received: by mail-oi0-f46.google.com with SMTP id d191so154974260oih.2
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2016 01:42:52 -0700 (PDT)
+In-Reply-To: <20160909092715.403663-1-arnd@arndb.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sun, Sep 11, 2016 at 2:14 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+On Fri, Sep 9, 2016 at 11:26 AM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-> These structures are only used to copy into other structures, so declare
-> them as const.
-(...)
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> The newly added aspeed driver tries to check for a negative return
+> value from a pinctrl function, but stores the intermediate value in
+> a 'bool' variable, which cannot work:
+>
+> drivers/pinctrl/aspeed/pinctrl-aspeed.c: In function 'aspeed_sig_expr_set':
+> drivers/pinctrl/aspeed/pinctrl-aspeed.c:192:11: error: comparison of constant '0' with boolean expression is always false [-Werror=bool-compare]
+>
+> This slightly reworks the logic to use an explicit comparison with zero
+> before assigning to the temporary variable.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Patch applied.
+Patch applied with the ACKs.
+Also added Colin as Reported-by.
 
 Yours,
 Linus Walleij
