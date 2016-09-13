@@ -1,48 +1,71 @@
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/4] pinctrl: sh-pfc: r8a7795: Support none GPIO pins with configurable drive-strength
-Date: Tue, 13 Sep 2016 16:03:10 +0200
-Message-ID: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 1/4] pinctrl: sh-pfc: Support named pins with custom configuration
+Date: Tue, 13 Sep 2016 17:28:10 +0300
+Message-ID: <6167007.snST7ECEYM@avalon>
+References: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se> <20160913140314.22035-2-niklas.soderlund+renesas@ragnatech.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20160913140314.22035-2-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
-To: geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+Hi Niklas,
 
-This series adds support to control the drive strength for none GPIO 
-pins. All pins expect one (FSCLKST) which can have its drive strength 
-controlled is now supported. I have also added the new pins to the 
-correct groups, or added groups to mimic other sh-pfc drivers. One 
-notable exception is the group avb_mdc which on other SoC are called 
-avb_mdio, see commit for explanation.
+Thank you for the patch
 
-I did not add FSCLKST since I can't figure out which physical pin it's 
-mapped to. Looking at the code that is already there and documentation 
-it should be a GPIO pin controlled by IPSR7[15:12] but the documentation 
-and code is lacking that part and I can't with a 100% certainty figure 
-out which physical pin it is.
+On Tuesday 13 Sep 2016 16:03:11 Niklas S=F6derlund wrote:
+> Pins not associated with a GPIO port can still have other configurati=
+on
+> parameters. Add a new macro SH_PFC_PIN_NAMED_CFG which allows for nam=
+ed
+> pins to be declared with a set of configurations. The new macro is an=
 
-The series is based on top of v4.8-rc5 and tested on Salvator-X. My test 
-is a bit crude and is setting a few of the AVB pins to a higher 
-drive-strength value then the others and observing that the AVB fails to 
-work after the pfc settings are applied (NFS root failing to mount after 
-kernel is fetched over TFTP).
+> modification of SH_PFC_PIN_NAMED to allow for optional configuration =
+to
+> be assigned.
+>=20
+> The flag SH_PFC_PIN_CFG_NO_GPIO is still enforced as this should only=
+ be
+> used to define pins not associated with a GPIO port.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
 
-Niklas Söderlund (4):
-  pinctrl: sh-pfc: Support named pins with custom configuration
-  pinctrl: sh-pfc: r8a7795: Support none GPIO pins with configurable
-    drive-strength
-  pinctrl: sh-pfc: r8a7795: Add group for AVB MDIO and MII pins
-  pinctrl: sh-pfc: r8a7795: Add group for QSPI0 and QSPI1 pins
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 254 ++++++++++++++++++++++++++++++++---
- drivers/pinctrl/sh-pfc/sh_pfc.h      |   8 ++
- 2 files changed, 243 insertions(+), 19 deletions(-)
+> ---
+>  drivers/pinctrl/sh-pfc/sh_pfc.h | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> b/drivers/pinctrl/sh-pfc/sh_pfc.h index 5e966c0..a6a2346 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -507,6 +507,14 @@ extern const struct sh_pfc_soc_info shx3_pinmux_=
+info;
+>  =09=09.configs =3D SH_PFC_PIN_CFG_NO_GPIO,=09=09=09\
+>  =09}
+>=20
+> +/* SH_PFC_PIN_NAMED_CFG - Expand to a sh_pfc_pin entry with the give=
+n name
+> */ +#define SH_PFC_PIN_NAMED_CFG(row, col, _name, cfgs)=09=09=09
+\
+> +=09{=09=09=09=09=09=09=09=09\
+> +=09=09.pin =3D PIN_NUMBER(row, col),=09=09=09=09\
+> +=09=09.name =3D __stringify(PIN_##_name),=09=09=09\
+> +=09=09.configs =3D SH_PFC_PIN_CFG_NO_GPIO | cfgs,=09=09\
+> +=09}
+> +
+>  /* PINMUX_DATA_ALL - Expand to a list of PORT_name_DATA, PORT_name_F=
+N0,
+>   *=09=09     PORT_name_OUT, PORT_name_IN marks
+>   */
 
--- 
-2.9.3
+--=20
+Regards,
+
+Laurent Pinchart
