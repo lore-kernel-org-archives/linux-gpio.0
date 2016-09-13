@@ -1,71 +1,42 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/4] pinctrl: sh-pfc: Support named pins with custom configuration
-Date: Tue, 13 Sep 2016 17:28:10 +0300
-Message-ID: <6167007.snST7ECEYM@avalon>
-References: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se> <20160913140314.22035-2-niklas.soderlund+renesas@ragnatech.se>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v7] gpio: add Intel WhiskeyCove PMIC GPIO driver
+Date: Tue, 13 Sep 2016 17:35:57 +0300
+Message-ID: <CAHp75Vd6X_f7sO0MqjTBgbpWHSNKxiL6iQytmYqTnb=3W8Lz-w@mail.gmail.com>
+References: <20160725215938.GC211765@worksta> <CAP=VYLrS3=YDjaeTsnRA1DOZG14yc9VNeAzcyG9o5AKCH9Fhfw@mail.gmail.com>
+ <CAHp75Vfc8SVjiT=S5hSEa1p5anFuaGZAO_op9T=Cgm-BO9FB-Q@mail.gmail.com> <20160913133726.GI28311@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20160913140314.22035-2-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35403 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758527AbcIMOf7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 10:35:59 -0400
+In-Reply-To: <20160913133726.GI28311@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Bin Gao <bin.gao@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Yegnesh S Iyer <yegnesh.s.iyer@intel.com>, Bin Gao <bin.gao@intel.com>
 
-Hi Niklas,
+On Tue, Sep 13, 2016 at 4:37 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+>> > This looks like an invalid address, and ....
+>>
+>> >> +MODULE_AUTHOR("Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>");
+>> >
+>> > ...the same here.  In fact it sure looks like two names.  Anyway I just got a
+>> > bounce when I tried to use it...
+>>
+>> It might be that person is no longer working for Intel, though I think
+>> It would be better log message for that.
+>
+> That might make sense if the driver was old, but it hasn't even hit
+> mainline yet -- it is only in linux-next, so it cant be more than a few
+> weeks old.
 
-Thank you for the patch
+It's already quite off topic, so, I would just say that it is still
+valid point. Starting from some version of the series (which takes
+couple of months?) Bin Gao did improvements.
 
-On Tuesday 13 Sep 2016 16:03:11 Niklas S=F6derlund wrote:
-> Pins not associated with a GPIO port can still have other configurati=
-on
-> parameters. Add a new macro SH_PFC_PIN_NAMED_CFG which allows for nam=
-ed
-> pins to be declared with a set of configurations. The new macro is an=
-
-> modification of SH_PFC_PIN_NAMED to allow for optional configuration =
-to
-> be assigned.
->=20
-> The flag SH_PFC_PIN_CFG_NO_GPIO is still enforced as this should only=
- be
-> used to define pins not associated with a GPIO port.
->=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
-.se>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/pinctrl/sh-pfc/sh_pfc.h | 8 ++++++++
->  1 file changed, 8 insertions(+)
->=20
-> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> b/drivers/pinctrl/sh-pfc/sh_pfc.h index 5e966c0..a6a2346 100644
-> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> @@ -507,6 +507,14 @@ extern const struct sh_pfc_soc_info shx3_pinmux_=
-info;
->  =09=09.configs =3D SH_PFC_PIN_CFG_NO_GPIO,=09=09=09\
->  =09}
->=20
-> +/* SH_PFC_PIN_NAMED_CFG - Expand to a sh_pfc_pin entry with the give=
-n name
-> */ +#define SH_PFC_PIN_NAMED_CFG(row, col, _name, cfgs)=09=09=09
-\
-> +=09{=09=09=09=09=09=09=09=09\
-> +=09=09.pin =3D PIN_NUMBER(row, col),=09=09=09=09\
-> +=09=09.name =3D __stringify(PIN_##_name),=09=09=09\
-> +=09=09.configs =3D SH_PFC_PIN_CFG_NO_GPIO | cfgs,=09=09\
-> +=09}
-> +
->  /* PINMUX_DATA_ALL - Expand to a list of PORT_name_DATA, PORT_name_F=
-N0,
->   *=09=09     PORT_name_OUT, PORT_name_IN marks
->   */
-
---=20
-Regards,
-
-Laurent Pinchart
+-- 
+With Best Regards,
+Andy Shevchenko
