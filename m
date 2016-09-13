@@ -1,253 +1,101 @@
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/4] pinctrl: sh-pfc: r8a7795: Support none GPIO pins with configurable drive-strength
-Date: Tue, 13 Sep 2016 16:03:12 +0200
-Message-ID: <20160913140314.22035-3-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 3/4] pinctrl: sh-pfc: r8a7795: Add group for AVB MDIO and MII pins
+Date: Tue, 13 Sep 2016 16:03:13 +0200
+Message-ID: <20160913140314.22035-4-niklas.soderlund+renesas@ragnatech.se>
 References: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54302 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756712AbcIMODc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 10:03:32 -0400
 In-Reply-To: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 Cc: laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-List-Id: linux-gpio@vger.kernel.org
 
-There are pins on the Salvator-X which is not part of a GPIO bank nor
-can be muxed between different functions. They do however allow for the
-drive-strength to be configured. Add those pins to the list of pins and
-to the drive-strength configuration registers.
+Group the AVB pins into similar groups found in other sh-pfc drivers.
+The pins can not be muxed between functions other then AVB but there
+drive strength can be controlled.
 
-The pins can now be referred to in DT by there physical location and the
-drive-strength modified.
+The group avb_mdc containing ADV_MDC and ADV_MDIO are on other SoCs
+called avb_mdio. In pfc-r8a7795 the adv_mdc group already existed and
+is in use in DT. Therefor the ADV_MDIO pin to the existing group
+instead of renaming it.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 155 +++++++++++++++++++++++++++++++----
- 1 file changed, 139 insertions(+), 16 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index b74cdd3..4a60f15 100644
+index 4a60f15..7b9a355 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -518,7 +518,22 @@ MOD_SEL0_3		MOD_SEL1_3 \
- MOD_SEL0_2_1		MOD_SEL1_2 \
- 			MOD_SEL1_1 \
- 			MOD_SEL1_0		MOD_SEL2_0
--
-+/*
-+ * These pins are not able to be muxed but have other properties
-+ * that can be set, such as drive-strength or pull-up/pull-down enable.
-+ */
-+#define PINMUX_STATIC \
-+	FM(QSPI0_SPCLK) FM(QSPI0_SSL) FM(QSPI0_MOSI_IO0) FM(QSPI0_MISO_IO1) \
-+	FM(QSPI0_IO2) FM(QSPI0_IO3) \
-+	FM(QSPI1_SPCLK) FM(QSPI1_SSL) FM(QSPI1_MOSI_IO0) FM(QSPI1_MISO_IO1) \
-+	FM(QSPI1_IO2) FM(QSPI1_IO3) \
-+	FM(RPC_INT) FM(RPC_WP) FM(RPC_RESET) \
-+	FM(AVB_TX_CTL) FM(AVB_TXC) FM(AVB_TD0) FM(AVB_TD1) FM(AVB_TD2) FM(AVB_TD3) \
-+	FM(AVB_RX_CTL) FM(AVB_RXC) FM(AVB_RD0) FM(AVB_RD1) FM(AVB_RD2) FM(AVB_RD3) \
-+	FM(AVB_TXREFCLK) FM(AVB_MDIO) \
-+	FM(CLKOUT) FM(PRESETOUT) \
-+	FM(DU_DOTCLKIN0) FM(DU_DOTCLKIN1) FM(DU_DOTCLKIN2) FM(DU_DOTCLKIN3) \
-+	FM(TMS) FM(TDO) FM(ASEBRK) FM(MLB_REF)
- 
- enum {
- 	PINMUX_RESERVED = 0,
-@@ -544,6 +559,7 @@ enum {
- 	PINMUX_GPSR
- 	PINMUX_IPSR
- 	PINMUX_MOD_SELS
-+	PINMUX_STATIC
- 	PINMUX_MARK_END,
- #undef F_
- #undef FM
-@@ -1408,10 +1424,70 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP17_7_4,	STP_ISSYNC_0_E,		SEL_SSP1_0_4),
- 	PINMUX_IPSR_MSEL(IP17_7_4,	RIF2_D1_B,		SEL_DRIF2_1),
- 	PINMUX_IPSR_GPSR(IP17_7_4,	TPU0TO3),
+@@ -1635,11 +1635,11 @@ static const unsigned int avb_phy_int_mux[] = {
+ 	AVB_PHY_INT_MARK,
+ };
+ static const unsigned int avb_mdc_pins[] = {
+-	/* AVB_MDC */
+-	RCAR_GP_PIN(2, 9),
++	/* AVB_MDC, AVB_MDIO */
++	RCAR_GP_PIN(2, 9), PIN_NUMBER('A', 9),
+ };
+ static const unsigned int avb_mdc_mux[] = {
+-	AVB_MDC_MARK,
++	AVB_MDC_MARK, AVB_MDIO_MARK,
+ };
+ static const unsigned int avb_avtp_pps_pins[] = {
+ 	/* AVB_AVTP_PPS */
+@@ -1676,6 +1676,28 @@ static const unsigned int avb_avtp_capture_b_pins[] = {
+ static const unsigned int avb_avtp_capture_b_mux[] = {
+ 	AVB_AVTP_CAPTURE_B_MARK,
+ };
++static const unsigned int avb_mii_pins[] = {
++	/*
++	 * AVB_TX_CTL, AVB_TXC, AVB_TD0,
++	 * AVB_TD1, AVB_TD2, AVB_TD3,
++	 * AVB_RX_CTL, AVB_RXC, AVB_RD0,
++	 * AVB_RD1, AVB_RD2, AVB_RD3,
++	 * AVB_TXREFCLK
++	 */
++	PIN_NUMBER('A', 8), PIN_NUMBER('A', 19), PIN_NUMBER('A', 18),
++	PIN_NUMBER('B', 18), PIN_NUMBER('A', 17), PIN_NUMBER('B', 17),
++	PIN_NUMBER('A', 16), PIN_NUMBER('B', 19), PIN_NUMBER('A', 13),
++	PIN_NUMBER('B', 13), PIN_NUMBER('A', 14), PIN_NUMBER('B', 14),
++	PIN_NUMBER('A', 12),
 +
-+/*
-+ * Static pins can not be muxed between different functions but
-+ * still needs a mark entry in the pinmux list. Add each static
-+ * pin to the list without an associated function. The sh-pfc
-+ * core will do the right thing and skip trying to mux then pin
-+ * while still applying configuration to it
-+ */
-+#define FM(x)	PINMUX_DATA(x##_MARK, 0),
-+	PINMUX_STATIC
-+#undef FM
++};
++static const unsigned int avb_mii_mux[] = {
++	AVB_TX_CTL_MARK, AVB_TXC_MARK, AVB_TD0_MARK,
++	AVB_TD1_MARK, AVB_TD2_MARK, AVB_TD3_MARK,
++	AVB_RX_CTL_MARK, AVB_RXC_MARK, AVB_RD0_MARK,
++	AVB_RD1_MARK, AVB_RD2_MARK, AVB_RD3_MARK,
++	AVB_TXREFCLK_MARK,
++};
+ 
+ /* - CAN ------------------------------------------------------------------ */
+ static const unsigned int can0_data_a_pins[] = {
+@@ -3632,6 +3654,7 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
+ 	SH_PFC_PIN_GROUP(avb_avtp_match_b),
+ 	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
++	SH_PFC_PIN_GROUP(avb_mii),
+ 	SH_PFC_PIN_GROUP(can0_data_a),
+ 	SH_PFC_PIN_GROUP(can0_data_b),
+ 	SH_PFC_PIN_GROUP(can1_data),
+@@ -3928,6 +3951,7 @@ static const char * const avb_groups[] = {
+ 	"avb_avtp_capture_a",
+ 	"avb_avtp_match_b",
+ 	"avb_avtp_capture_b",
++	"avb_mii",
  };
  
-+/*
-+ * R8A7795 has 7 banks with 32 PGIOS in each = 224 GPIOs.
-+ * Physical layout rows: A - AW, cols: 1 - 39.
-+ */
-+#define ROW_GROUP_A(r) ('Z' - 'A' + 1 + (r))
-+#define PIN_NUMBER(r, c) (((r) - 'A') * 39 + (c) + 300)
-+#define PIN_A_NUMBER(r, c) PIN_NUMBER(ROW_GROUP_A(r), c)
-+
- static const struct sh_pfc_pin pinmux_pins[] = {
- 	PINMUX_GPIO_GP_ALL(),
-+
-+	/* Pins not associated with a GPIO port */
-+	SH_PFC_PIN_NAMED_CFG('A',  8,  A8, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* AVB_TX_CTL */
-+	SH_PFC_PIN_NAMED_CFG('A',  9,  A9, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* AVB_MDIO */
-+	SH_PFC_PIN_NAMED_CFG('A', 12, A12, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* AVB_TXCREFCLK */
-+	SH_PFC_PIN_NAMED_CFG('A', 13, A13, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* AVB_RD0 */
-+	SH_PFC_PIN_NAMED_CFG('A', 14, A14, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* AVB_RD2 */
-+	SH_PFC_PIN_NAMED_CFG('A', 16, A16, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* AVB_RX_CTL */
-+	SH_PFC_PIN_NAMED_CFG('A', 17, A17, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* AVB_TD2 */
-+	SH_PFC_PIN_NAMED_CFG('A', 18, A18, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* AVB_TD0 */
-+	SH_PFC_PIN_NAMED_CFG('A', 19, A19, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* AVB_TXC */
-+	SH_PFC_PIN_NAMED_CFG('B', 13, B13, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* AVB_RD1 */
-+	SH_PFC_PIN_NAMED_CFG('B', 14, B14, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* AVB_RD3 */
-+	SH_PFC_PIN_NAMED_CFG('B', 17, B17, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* AVB_TD3 */
-+	SH_PFC_PIN_NAMED_CFG('B', 18, B18, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* AVB_TD1 */
-+	SH_PFC_PIN_NAMED_CFG('B', 19, B19, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* AVB_RXC */
-+	SH_PFC_PIN_NAMED_CFG('C',  1,  C1, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* PRESETOUT# */
-+	SH_PFC_PIN_NAMED_CFG('F',  1,  F1, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* CLKOUT */
-+	SH_PFC_PIN_NAMED_CFG('H', 37, H37, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* MLB_REF */
-+	SH_PFC_PIN_NAMED_CFG('V',  3,  V3, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* QSPI1_SPCLK */
-+	SH_PFC_PIN_NAMED_CFG('V',  5,  V5, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* QSPI1_SSL */
-+	SH_PFC_PIN_NAMED_CFG('V',  6,  V6, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* RPC_WP# */
-+	SH_PFC_PIN_NAMED_CFG('V',  7,  V7, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* RPC_RESET# */
-+	SH_PFC_PIN_NAMED_CFG('W',  3,  W3, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* QSPI0_SPCLK */
-+	SH_PFC_PIN_NAMED_CFG('Y',  3,  Y3, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* QSPI0_SSL */
-+	SH_PFC_PIN_NAMED_CFG('Y',  6,  Y6, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* QSPI0_IO2 */
-+	SH_PFC_PIN_NAMED_CFG('Y',  7,  Y7, SH_PFC_PIN_CFG_DRIVE_STRENGTH),			/* RPC_INT# */
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('B'),  4,  AB4, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	/* QSPI0_MISO_IO1 */
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('B'),  6,  AB6, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	/* QSPI0_IO3 */
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('C'),  3,  AC3, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	/* QSPI1_IO3 */
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('C'),  5,  AC5, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	/* QSPI0_MOSI_IO0 */
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('C'),  7,  AC7, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	/* QSPI1_MOSI_IO0 */
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('E'),  4,  AE4, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	/* QSPI1_IO2 */
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('E'),  5,  AE5, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	/* QSPI1_MISO_IO1 */
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  7,  AP7, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	/* DU_DOTCLKIN0 */
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('P'),  8,  AP8, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	/* DU_DOTCLKIN1 */
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  7,  AR7, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	/* DU_DOTCLKIN2 */
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  8,  AR8, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	/* DU_DOTCLKIN3 */
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'), 30, AR30, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	/* TMS */
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 28, AT28, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	/* TDO */
-+	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, AT30, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	/* ASEBRK */
- };
- 
- /* - AUDIO CLOCK ------------------------------------------------------------ */
-@@ -4858,10 +4934,45 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- };
- 
- static const struct pinmux_drive_reg pinmux_drive_regs[] = {
-+	{ PINMUX_DRIVE_REG("DRVCTRL0", 0xe6060300) {
-+		{ PIN_NUMBER('W', 3),   28, 2 },	/* QSPI0_SPCLK */
-+		{ PIN_A_NUMBER('C', 5), 24, 2 },	/* QSPI0_MOSI_IO0 */
-+		{ PIN_A_NUMBER('B', 4), 20, 2 },	/* QSPI0_MISO_IO1 */
-+		{ PIN_NUMBER('Y', 6),   16, 2 },	/* QSPI0_IO2 */
-+		{ PIN_A_NUMBER('B', 6), 12, 2 },	/* QSPI0_IO3 */
-+		{ PIN_NUMBER('Y', 3),    8, 2 },	/* QSPI0_SSL */
-+		{ PIN_NUMBER('V', 3),    4, 2 },	/* QSPI1_SPCLK */
-+		{ PIN_A_NUMBER('C', 7),  0, 2 },	/* QSPI1_MOSI_IO0 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL1", 0xe6060304) {
-+		{ PIN_A_NUMBER('E', 5), 28, 2 },	/* QSPI1_MISO_IO1 */
-+		{ PIN_A_NUMBER('E', 4), 24, 2 },	/* QSPI1_IO2 */
-+		{ PIN_A_NUMBER('C', 3), 20, 2 },	/* QSPI1_IO3 */
-+		{ PIN_NUMBER('V', 5),   16, 2 },	/* QSPI1_SSL */
-+		{ PIN_NUMBER('Y', 7),   12, 2 },	/* RPC_INT# */
-+		{ PIN_NUMBER('V', 6),    8, 2 },	/* RPC_WP# */
-+		{ PIN_NUMBER('V', 7),    4, 2 },	/* RPC_RESET# */
-+		{ PIN_NUMBER('A', 16),   0, 3 },	/* AVB_RX_CTL */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL2", 0xe6060308) {
-+		{ PIN_NUMBER('B', 19),  28, 3 },	/* AVB_RXC */
-+		{ PIN_NUMBER('A', 13),  24, 3 },	/* AVB_RD0 */
-+		{ PIN_NUMBER('B', 13),  20, 3 },	/* AVB_RD1 */
-+		{ PIN_NUMBER('A', 14),  16, 3 },	/* AVB_RD2 */
-+		{ PIN_NUMBER('B', 14),  12, 3 },	/* AVB_RD3 */
-+		{ PIN_NUMBER('A', 8),    8, 3 },	/* AVB_TX_CTL */
-+		{ PIN_NUMBER('A', 19),   4, 3 },	/* AVB_TXC */
-+		{ PIN_NUMBER('A', 18),   0, 3 },	/* AVB_TD0 */
-+	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL3", 0xe606030c) {
--		{ RCAR_GP_PIN(2,  9),  8, 3 },	/* AVB_MDC */
--		{ RCAR_GP_PIN(2, 10),  4, 3 },	/* AVB_MAGIC */
--		{ RCAR_GP_PIN(2, 11),  0, 3 },	/* AVB_PHY_INT */
-+		{ PIN_NUMBER('B', 18),  28, 3 },	/* AVB_TD1 */
-+		{ PIN_NUMBER('A', 17),  24, 3 },	/* AVB_TD2 */
-+		{ PIN_NUMBER('B', 17),  20, 3 },	/* AVB_TD3 */
-+		{ PIN_NUMBER('A', 12),  16, 3 },	/* AVB_TXCREFCLK */
-+		{ PIN_NUMBER('A', 9),   12, 3 },	/* AVB_MDIO */
-+		{ RCAR_GP_PIN(2,  9),    8, 3 },	/* AVB_MDC */
-+		{ RCAR_GP_PIN(2, 10),    4, 3 },	/* AVB_MAGIC */
-+		{ RCAR_GP_PIN(2, 11),    0, 3 },	/* AVB_PHY_INT */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL4", 0xe6060310) {
- 		{ RCAR_GP_PIN(2, 12), 28, 3 },	/* AVB_LINK */
-@@ -4904,6 +5015,7 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 		{ RCAR_GP_PIN(1, 19),  0, 3 },	/* A19 */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL8", 0xe6060320) {
-+		{ PIN_NUMBER('F', 1), 28, 3 },	/* CLKOUT */
- 		{ RCAR_GP_PIN(1, 20), 24, 3 },	/* CS0 */
- 		{ RCAR_GP_PIN(1, 21), 20, 3 },	/* CS1_A26 */
- 		{ RCAR_GP_PIN(1, 22), 16, 3 },	/* BS */
-@@ -4914,6 +5026,7 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL9", 0xe6060324) {
- 		{ RCAR_GP_PIN(1, 27), 28, 3 },	/* EX_WAIT0 */
-+		{ PIN_NUMBER('C', 1), 24, 3 },	/* PRESETOUT# */
- 		{ RCAR_GP_PIN(0,  0), 20, 3 },	/* D0 */
- 		{ RCAR_GP_PIN(0,  1), 16, 3 },	/* D1 */
- 		{ RCAR_GP_PIN(0,  2), 12, 3 },	/* D2 */
-@@ -4932,20 +5045,29 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 		{ RCAR_GP_PIN(0, 13),  0, 3 },	/* D13 */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL11", 0xe606032c) {
--		{ RCAR_GP_PIN(0, 14), 28, 3 },	/* D14 */
--		{ RCAR_GP_PIN(0, 15), 24, 3 },	/* D15 */
--		{ RCAR_GP_PIN(7,  0), 20, 3 },	/* AVS1 */
--		{ RCAR_GP_PIN(7,  1), 16, 3 },	/* AVS2 */
--		{ RCAR_GP_PIN(7,  2), 12, 3 },	/* HDMI0_CEC */
--		{ RCAR_GP_PIN(7,  3),  8, 3 },	/* HDMI1_CEC */
-+		{ RCAR_GP_PIN(0, 14),   28, 3 },	/* D14 */
-+		{ RCAR_GP_PIN(0, 15),   24, 3 },	/* D15 */
-+		{ RCAR_GP_PIN(7,  0),   20, 3 },	/* AVS1 */
-+		{ RCAR_GP_PIN(7,  1),   16, 3 },	/* AVS2 */
-+		{ RCAR_GP_PIN(7,  2),   12, 3 },	/* HDMI0_CEC */
-+		{ RCAR_GP_PIN(7,  3),    8, 3 },	/* HDMI1_CEC */
-+		{ PIN_A_NUMBER('P', 7),  4, 2 },	/* DU_DOTCLKIN0 */
-+		{ PIN_A_NUMBER('P', 8),  0, 2 },	/* DU_DOTCLKIN1 */
-+	} },
-+	{ PINMUX_DRIVE_REG("DRVCTRL12", 0xe6060330) {
-+		{ PIN_A_NUMBER('R', 7),  28, 2 },	/* DU_DOTCLKIN2 */
-+		{ PIN_A_NUMBER('R', 8),  24, 2 },	/* DU_DOTCLKIN3 */
-+		{ PIN_A_NUMBER('R', 30),  4, 2 },	/* TMS */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL13", 0xe6060334) {
--		{ RCAR_GP_PIN(3,  0), 20, 3 },	/* SD0_CLK */
--		{ RCAR_GP_PIN(3,  1), 16, 3 },	/* SD0_CMD */
--		{ RCAR_GP_PIN(3,  2), 12, 3 },	/* SD0_DAT0 */
--		{ RCAR_GP_PIN(3,  3),  8, 3 },	/* SD0_DAT1 */
--		{ RCAR_GP_PIN(3,  4),  4, 3 },	/* SD0_DAT2 */
--		{ RCAR_GP_PIN(3,  5),  0, 3 },	/* SD0_DAT3 */
-+		{ PIN_A_NUMBER('T', 28), 28, 2 },	/* TDO */
-+		{ PIN_A_NUMBER('T', 30), 24, 2 },	/* ASEBRK */
-+		{ RCAR_GP_PIN(3,  0),    20, 3 },	/* SD0_CLK */
-+		{ RCAR_GP_PIN(3,  1),    16, 3 },	/* SD0_CMD */
-+		{ RCAR_GP_PIN(3,  2),    12, 3 },	/* SD0_DAT0 */
-+		{ RCAR_GP_PIN(3,  3),     8, 3 },	/* SD0_DAT1 */
-+		{ RCAR_GP_PIN(3,  4),     4, 3 },	/* SD0_DAT2 */
-+		{ RCAR_GP_PIN(3,  5),     0, 3 },	/* SD0_DAT3 */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL14", 0xe6060338) {
- 		{ RCAR_GP_PIN(3,  6), 28, 3 },	/* SD1_CLK */
-@@ -5014,6 +5136,7 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 		{ RCAR_GP_PIN(5, 23), 16, 3 },	/* MLB_CLK */
- 		{ RCAR_GP_PIN(5, 24), 12, 3 },	/* MLB_SIG */
- 		{ RCAR_GP_PIN(5, 25),  8, 3 },	/* MLB_DAT */
-+		{ PIN_NUMBER('H', 37),  4, 3 },	/* MLB_REF */
- 		{ RCAR_GP_PIN(6,  0),  0, 3 },	/* SSI_SCK01239 */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRVCTRL21", 0xe6060354) {
+ static const char * const can0_groups[] = {
 -- 
 2.9.3
+
