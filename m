@@ -1,130 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
-Date: Tue, 13 Sep 2016 14:22:25 +0200
-Message-ID: <CACRpkdY9+poXW1cw4K20edGYjiuPN9DH0umsEAh31iHXGJhx6g@mail.gmail.com>
-References: <20160908162843.GB22716@ktx> <20160909061834.GG15313@lahna.fi.intel.com>
- <20160909082358.GA23895@ktx> <20160909085832.GK15313@lahna.fi.intel.com>
- <20160911080506.GO15313@lahna.fi.intel.com> <20160912065656.GA2411@ktx>
- <20160912090401.GB1811@lahna.fi.intel.com> <20160912130444.GB2411@ktx>
- <20160912131111.GG1811@lahna.fi.intel.com> <CACRpkdZRguTg4davCW-x6HvRJgOxNz8R4KyeFCEnQzyXPkP6cg@mail.gmail.com>
- <20160913093302.GL1811@lahna.fi.intel.com>
+Subject: Re: lockdep: incorrect deadlock warning with two GPIO expanders
+Date: Tue, 13 Sep 2016 14:29:24 +0200
+Message-ID: <CACRpkdb00e=YexmCRwv=evVLjBDM6Pjqtcs+Mnc8JVD1Ssa5mA@mail.gmail.com>
+References: <CAMpxmJUuj5VrzEu4YZUVxr-ZqFU4VGJpjyHimMJug23EC7j=sQ@mail.gmail.com>
+ <20160912120938.GR10153@twins.programming.kicks-ass.net> <CAMpxmJW5WNF2zE+fjmpDxubAYA_A67iQhNGTvSAL-MD-6dFTCw@mail.gmail.com>
+ <20160912153356.GD10121@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:35008 "EHLO
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:33289 "EHLO
         mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751790AbcIMMW1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 08:22:27 -0400
-Received: by mail-oi0-f41.google.com with SMTP id w11so7124983oia.2
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2016 05:22:27 -0700 (PDT)
-In-Reply-To: <20160913093302.GL1811@lahna.fi.intel.com>
+        with ESMTP id S1750951AbcIMM3Z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 08:29:25 -0400
+Received: by mail-oi0-f41.google.com with SMTP id y2so379299847oie.0
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2016 05:29:25 -0700 (PDT)
+In-Reply-To: <20160912153356.GD10121@twins.programming.kicks-ass.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Phidias Chiang <phidias.chiang@canonical.com>, Anisse Astier <anisse@astier.eu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Alexandre Courbot <gnurou@gmail.com>, Ingo Molnar <mingo@redhat.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>
 
-On Tue, Sep 13, 2016 at 11:33 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Tue, Sep 13, 2016 at 11:18:49AM +0200, Linus Walleij wrote:
->> On Mon, Sep 12, 2016 at 3:11 PM, Mika Westerberg
->> <mika.westerberg@linux.intel.com> wrote:
->> > On Mon, Sep 12, 2016 at 09:04:44PM +0800, Phidias Chiang wrote:
->> >> On Mon, Sep 12, 2016 at 12:04:01PM +0300, Mika Westerberg wrote:
->> >> >
->> >> > OK, I see what is going on now. When I changed handle_simple_irq to
->> >> > handle_bad_irq, the IRQ core in __irq_do_set_handler() thinks the
->> >> > handler is uninstalled and masks the line.
->> >> >
->> >> > If you change handle_bad_irq to handle_simple_irq, in call to
->> >> > gpiochip_irqchip_add(), does it work then?
->> >>
->> >> Yes it does :), thank you for the support!
->> >
->> > Thanks for testing.
->> >
->> > So we need to use handle_simple_irq here instead.
->> >
->> > Linus, do you see any problems with that?
->>
->> I need to see the patch in its context with a commit message,
->> I can't figure it out from the thread.
->>
->> handle_simple_irq() is for something generic not level- or
->> edge-triggered. If you support specific triggers only, it
->> should not be used.
->>
->> Nominally assigning handle_bad_irq() until a specific
->> edge or level is requested is the right thing to do, since
->> the IRQ is really not configured for anything at all and
->> hence has undefined behaviour.
->
-> For Cherryview/Braswell some interrupts are actually configured by the
-> BIOS but they are routed directly to the I/O-APIC and are supposed to be
-> handled without involvement of the GPIO driver (an example of this is
-> the ACPI SCI interrupt). However, INTMASK GPIO register can still be
-> used to mask the interrupt in question.
+On Mon, Sep 12, 2016 at 5:33 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Mon, Sep 12, 2016 at 05:16:14PM +0200, Bartosz Golaszewski wrote:
 
-A-ha! But why are you registering a irqdomain entry for an interrupt
-that cannot be used, hm?
+>> AFAIK there is no clean way to tell that a GPIO is used by an I2C
+>> multiplexer at probe time. Linus, Alexandre could you confirm?
 
-> So when we specify handle_bad_irq as handler the IRQ core thinks the
-> handler is being uninstalled and masks the interrupt.
+Nominally, the GPIO descriptors are just abstract resources such
+as regulators or clocks, they can be used for a lot but just like
+a clock, regulator, dma channel etc does not know who is using
+it and for what, it does not know this, no.
 
-You should not register any handle for it.
+> You cannot inspect the device tree while probing?
 
-In fact, IMO the irqdomain should reject it being mapped, as it is not
-for the kernel to use.
+Of course it *can* but we would end up encoding a special
+case every time something like this happens, tied to just
+device tree, then another bolt-on for ACPI etc.
 
-Check:
-drivers/irqchip/irq-vic.c
-
-We supply a u32 to the driver from the device tree named "valid-mask".
-This has bits set to 1 for the valid (to be mapped) IRQs and zero
-for those we may not touch.
-
-So in our vic_irqdomain_map() call we have:
-
-/* Skip invalid IRQs, only register handlers for the real ones */
-if (!(v->valid_sources & (1 << hwirq)))
-        return -EPERM;
-
-So it can never be mapped.
-
-Also notice:
-
-/* create an IRQ mapping for each valid IRQ */
-for (i = 0; i < fls(valid_sources); i++)
-        if (valid_sources & (1 << i))
-                irq_create_mapping(v->domain, i);
-
-So we only create mappings where there are valid IRQs,
-skipping over any "holes" in the mapping.
-
-We should do something like this.
-
-To make this play nicely with gpiolib_irqchip_add() I suggest
-adding a bitmap valid_mask to struct gpio_chip() in
-include/linux/gpio/driver.h
-inside the CONFIG_GPIOLIB_IRQCHIP
-
-I guess
-
-u32 bitmap[MAX_IRQS_FOR_A_GPIO_CHIP];
-
-Then augment the generic GPIO IRQCHIP helpers in
-drivers/gpio/gpiolib.c per above so that the invalid
-IRQs can't be mapped.
-
-The driver would just:
-
-/* Mark line N as invalid: used by BIOS */
-set_bit(&chip->valid_mask, N);
-
-Before calling gpiolib_irqchip_add().
-
-This has the downside of roofing the number of lines that can
-be flagged as valid/invalid, but I'm open to more advanced
-ideas on this, but the check needs to be fast in the irqdomain.
+I have a hard time following the problem really, I'm
+afraid I'm simply just not smart enough :(
 
 Yours,
 Linus Walleij
