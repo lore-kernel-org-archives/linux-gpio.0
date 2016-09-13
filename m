@@ -1,46 +1,46 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCH] gpio: pca953x: initialize ret to zero to avoid returning
- garbage
-Date: Tue, 13 Sep 2016 12:04:00 +0800
-Message-ID: <944b682f-6217-f759-7429-339274cd5894@electromag.com.au>
-References: <20160909083154.26442-1-colin.king@canonical.com>
- <CACRpkdYHRjUoANEibzexrmGQiVHL4cgYWZPr6H-_GA1HqqpTNw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Joel Stanley <joel@jms.id.au>
+Subject: [PATCH] gpio: aspeed: Fix missing licence warning in modpost
+Date: Tue, 13 Sep 2016 13:50:44 +0930
+Message-ID: <20160913042044.31764-1-joel@jms.id.au>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anchovy3.45ru.net.au ([203.30.46.155]:36467 "EHLO
-        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750869AbcIMEEF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 00:04:05 -0400
-In-Reply-To: <CACRpkdYHRjUoANEibzexrmGQiVHL4cgYWZPr6H-_GA1HqqpTNw@mail.gmail.com>
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:36635 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752145AbcIMEU6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 00:20:58 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Colin King <colin.king@canonical.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Jeffery <andrew@aj.id.au>
 
-On 12/09/2016 21:40, Linus Walleij wrote:
-> On Fri, Sep 9, 2016 at 10:31 AM, Colin King <colin.king@canonical.com> wrote:
->
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> ret is not initialized so it contains garbage.  Ensure garbage
->> is not returned in the case that pdata && pdata->teardown is false
->> by initializing ret to 0.
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->
-> Patch applied.
-G'day Linus,
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
+ > After merging the gpio tree, today's linux-next build (x86_64
+ > allmodconfig) produced this warning:
+ >
+ > WARNING: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-aspeed.o
+ >
+ > Introduced by commit
+ >
+ >   361b79119a4b ("gpio: Add Aspeed driver")
 
-I believe this does the same as Arnd Bergmanns patch from 26 Aug.
-[PATCH 1/5] gpio: pca954x: fix undefined error code from remove
+Fix it by adding the correct licence.
 
-IMO Colin's is the cleaner solution.
-Arnd's could be removed.
+Fixes: 361b79119a4b ("gpio: Add Aspeed driver")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+ drivers/gpio/gpio-aspeed.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+index 64348a6fb60f..9f7266e05f0a 100644
+--- a/drivers/gpio/gpio-aspeed.c
++++ b/drivers/gpio/gpio-aspeed.c
+@@ -455,3 +455,4 @@ static struct platform_driver aspeed_gpio_driver = {
+ module_platform_driver_probe(aspeed_gpio_driver, aspeed_gpio_probe);
+ 
+ MODULE_DESCRIPTION("Aspeed GPIO Driver");
++MODULE_LICENSE("GPL");
 -- 
-Regards
-Phil Reid
+2.9.3
 
