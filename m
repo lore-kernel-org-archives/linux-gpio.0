@@ -1,35 +1,52 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v7] gpio: add Intel WhiskeyCove PMIC GPIO driver
-Date: Tue, 13 Sep 2016 10:02:56 +0300
-Message-ID: <CAHp75Vfc8SVjiT=S5hSEa1p5anFuaGZAO_op9T=Cgm-BO9FB-Q@mail.gmail.com>
-References: <20160725215938.GC211765@worksta> <CAP=VYLrS3=YDjaeTsnRA1DOZG14yc9VNeAzcyG9o5AKCH9Fhfw@mail.gmail.com>
+From: Deepak <deepak_das@mentor.com>
+Subject: [PATCH] driver: base: pinctrl: return error from pinctrl_bind_pins()
+Date: Tue, 13 Sep 2016 12:43:04 +0530
+Message-ID: <57D7A700.8080402@mentor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:32925 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751608AbcIMHC5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 03:02:57 -0400
-In-Reply-To: <CAP=VYLrS3=YDjaeTsnRA1DOZG14yc9VNeAzcyG9o5AKCH9Fhfw@mail.gmail.com>
+Received: from relay1.mentorg.com ([192.94.38.131]:47893 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751608AbcIMHNJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 03:13:09 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Bin Gao <bin.gao@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Yegnesh S Iyer <yegnesh.s.iyer@intel.com>, Bin Gao <bin.gao@intel.com>
+To: linus.walleij@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, vzapolsk <Vladimir_Zapolskiy@mentor.com>
 
-On Tue, Sep 13, 2016 at 1:37 AM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
->> Signed-off-by: Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>
->
-> This looks like an invalid address, and ....
+strict pin controller returns -EINVAL in case of pin request which
+is already claimed by somebody else.
+Following is the sequence of calling pin_request() from
+pinctrl_bind_pins():-
+pinctrl_bind_pins()->pinctrl_select_state()->pinmux_enable_setting()->
+pin_request()
 
->> +MODULE_AUTHOR("Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>");
->
-> ...the same here.  In fact it sure looks like two names.  Anyway I just got a
-> bounce when I tried to use it...
+But pinctrl_bind_pins() only returns -EPROBE_DEFER which makes device
+driver probe successful even if the pin request is rejected by the pin
+controller subsystem.
 
-It might be that person is no longer working for Intel, though I think
-It would be better log message for that.
+This commit modifies pinctrl_bind_pins() to return error if the pin is
+rejected by pin control subsystem.
 
+Signed-off-by: Deepak Das <deepak_das@mentor.com>
+---
+  drivers/base/pinctrl.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/base/pinctrl.c b/drivers/base/pinctrl.c
+index 0762975..e65c1af 100644
+--- a/drivers/base/pinctrl.c
++++ b/drivers/base/pinctrl.c
+@@ -92,7 +92,7 @@ cleanup_alloc:
+      dev->pins = NULL;
+
+      /* Only return deferrals */
+-    if (ret != -EPROBE_DEFER)
++    if ((ret != -EPROBE_DEFER) && (ret != -EINVAL))
+          ret = 0;
+
+      return ret;
 -- 
-With Best Regards,
-Andy Shevchenko
+1.9.1
+
