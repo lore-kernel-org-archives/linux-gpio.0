@@ -1,39 +1,58 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: aspeed: fix regmap error handling
-Date: Tue, 13 Sep 2016 10:42:50 +0200
-Message-ID: <CACRpkdb6oWqHtAr26UgA4NtN5hvpCFqTJpj8LOw=YQcNZwJtaw@mail.gmail.com>
-References: <20160909092715.403663-1-arnd@arndb.de>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH -next] gpio: lp873x: Use devm_gpiochip_add_data() for
+ gpio registration
+Date: Tue, 13 Sep 2016 09:45:52 +0100
+Message-ID: <20160913084552.GC22903@dell>
+References: <1473509082-3996-1-git-send-email-weiyj.lk@gmail.com>
+ <CACRpkdZnfUfPj19Wts1pd5Nxqi-Zp+kTxZCvXrsSM6DjjJpHUQ@mail.gmail.com>
+ <CACRpkdZ3-H5ekHn2p3owhEmpBFLkWxPUJP_a2jgq_DUz2D+Dbw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:35695 "EHLO
-        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755559AbcIMImw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 04:42:52 -0400
-Received: by mail-oi0-f46.google.com with SMTP id d191so154974260oih.2
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2016 01:42:52 -0700 (PDT)
-In-Reply-To: <20160909092715.403663-1-arnd@arndb.de>
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:38844 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752456AbcIMInz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 04:43:55 -0400
+Received: by mail-wm0-f50.google.com with SMTP id 1so187703590wmz.1
+        for <linux-gpio@vger.kernel.org>; Tue, 13 Sep 2016 01:43:55 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZ3-H5ekHn2p3owhEmpBFLkWxPUJP_a2jgq_DUz2D+Dbw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Wei Yongjun <weiyj.lk@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Keerthy <j-keerthy@ti.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Sep 9, 2016 at 11:26 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Tue, 13 Sep 2016, Linus Walleij wrote:
 
-> The newly added aspeed driver tries to check for a negative return
-> value from a pinctrl function, but stores the intermediate value in
-> a 'bool' variable, which cannot work:
->
-> drivers/pinctrl/aspeed/pinctrl-aspeed.c: In function 'aspeed_sig_expr_set':
-> drivers/pinctrl/aspeed/pinctrl-aspeed.c:192:11: error: comparison of constant '0' with boolean expression is always false [-Werror=bool-compare]
->
-> This slightly reworks the logic to use an explicit comparison with zero
-> before assigning to the temporary variable.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> On Tue, Sep 13, 2016 at 10:27 AM, Linus Walleij
+> <linus.walleij@linaro.org> wrote:
+> > On Sat, Sep 10, 2016 at 2:04 PM, Wei Yongjun <weiyj.lk@gmail.com> wrote:
+> >
+> >> From: Wei Yongjun <weiyongjun1@huawei.com>
+> >>
+> >> Use devm_gpiochip_add_data() for GPIO registration and remove the need
+> >> of driver callback .remove.
+> >>
+> >> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> >> ---
+> >>  drivers/gpio/gpio-lp873x.c | 12 +-----------
+> >
+> > This patch is in Lee's MFD tree, either send it to him so he can merge it
+> > or defer to after the merge window and I can take it.
+> >
+> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> >
+> > (Yeah I know I can also pull in Lee's immutable branch, just
+> > want to avoid the complexity.)
+> 
+> Changed my mind: pulled in Lee's immutable branch and applied
+> this on top. Much better idea. Thanks both Wei and Lee.
 
-Patch applied with the ACKs.
-Also added Colin as Reported-by.
+:)
 
-Yours,
-Linus Walleij
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
