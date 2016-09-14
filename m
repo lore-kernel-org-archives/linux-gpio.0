@@ -1,45 +1,48 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH] dt-binding: mrvl-gpio: remove orion-gpio description
-Date: Wed, 14 Sep 2016 16:25:27 +0200
-Message-ID: <87wpieblt4.fsf@free-electrons.com>
-References: <9d76063cb0b0a0ff96cfd6f389f3697db7734015.1473102010.git.baruch@tkos.co.il>
-        <20160905192813.GB2719@lunn.ch>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
+Date: Wed, 14 Sep 2016 18:12:34 +0300
+Message-ID: <20160914151234.GZ1811@lahna.fi.intel.com>
+References: <20160912090401.GB1811@lahna.fi.intel.com>
+ <20160912130444.GB2411@ktx>
+ <20160912131111.GG1811@lahna.fi.intel.com>
+ <CACRpkdZRguTg4davCW-x6HvRJgOxNz8R4KyeFCEnQzyXPkP6cg@mail.gmail.com>
+ <20160913093302.GL1811@lahna.fi.intel.com>
+ <CACRpkdY9+poXW1cw4K20edGYjiuPN9DH0umsEAh31iHXGJhx6g@mail.gmail.com>
+ <20160913125214.GO1811@lahna.fi.intel.com>
+ <CACRpkdY-8_+jp+J55FnDHrt-y6woFTEqs7JPxR+KRRcuWPpQWw@mail.gmail.com>
+ <20160914082610.GV1811@lahna.fi.intel.com>
+ <CACRpkdYRYR0hSacpxieG6k9qHyjMFsr6ViYU3HCcQEzB9NXLGQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:40199 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1761961AbcINOZl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 10:25:41 -0400
-In-Reply-To: <20160905192813.GB2719@lunn.ch> (Andrew Lunn's message of "Mon, 5
-        Sep 2016 21:28:13 +0200")
+Received: from mga11.intel.com ([192.55.52.93]:26502 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1761813AbcINPOw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 14 Sep 2016 11:14:52 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYRYR0hSacpxieG6k9qHyjMFsr6ViYU3HCcQEzB9NXLGQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Baruch Siach <baruch@tkos.co.il>, Andrew Lunn <andrew@lunn.ch>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Phidias Chiang <phidias.chiang@canonical.com>, Anisse Astier <anisse@astier.eu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Baruch, Andrew,
- 
- On lun., sept. 05 2016, Andrew Lunn <andrew@lunn.ch> wrote:
+On Wed, Sep 14, 2016 at 02:46:01PM +0200, Linus Walleij wrote:
+> > I'm going to re-read the hardware spec and see if there is anything we
+> > can do about this. The newer hardware (Skylake, Broxton) has a bit that
+> > tells the IRQ is routed directly to I/O-APIC but unfortunately Braswell
+> > misses that. There may be something else, though.
+> 
+> So as far as we can determine:
+> 
+> (A) we are running on Braswell and
+> (B) we are probing this driver
+> 
+> we can conclude that
+> 
+> (C) IRQs A,B,C are reserved by BIOS?
+> 
+> That sounds doable?
 
-> On Mon, Sep 05, 2016 at 10:00:10PM +0300, Baruch Siach wrote:
->> The Orion GPIO controller binding description in mrvl-gpio.txt is obsolete, and
->> duplicates the description in gpio-mvebu.txt.
->> 
->> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
->
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Yes, it's doable but that requires some hard coding in the driver :-/
 
-Applied on mvebu/dt
-
-Thanks,
-
-Gregory
->
->     Andrew
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+I'll look into it.
