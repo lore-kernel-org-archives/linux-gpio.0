@@ -1,73 +1,76 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
-Date: Wed, 14 Sep 2016 14:46:01 +0200
-Message-ID: <CACRpkdYRYR0hSacpxieG6k9qHyjMFsr6ViYU3HCcQEzB9NXLGQ@mail.gmail.com>
-References: <20160911080506.GO15313@lahna.fi.intel.com> <20160912065656.GA2411@ktx>
- <20160912090401.GB1811@lahna.fi.intel.com> <20160912130444.GB2411@ktx>
- <20160912131111.GG1811@lahna.fi.intel.com> <CACRpkdZRguTg4davCW-x6HvRJgOxNz8R4KyeFCEnQzyXPkP6cg@mail.gmail.com>
- <20160913093302.GL1811@lahna.fi.intel.com> <CACRpkdY9+poXW1cw4K20edGYjiuPN9DH0umsEAh31iHXGJhx6g@mail.gmail.com>
- <20160913125214.GO1811@lahna.fi.intel.com> <CACRpkdY-8_+jp+J55FnDHrt-y6woFTEqs7JPxR+KRRcuWPpQWw@mail.gmail.com>
- <20160914082610.GV1811@lahna.fi.intel.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH v5 2/9] drivers: irqchip: Add STM32 external interrupts
+ support
+Date: Wed, 14 Sep 2016 15:05:55 +0200
+Message-ID: <facd1c7c-d696-eae1-02e4-5a0c9285add0@st.com>
+References: <1473432124-6784-1-git-send-email-alexandre.torgue@st.com>
+ <1473432124-6784-3-git-send-email-alexandre.torgue@st.com>
+ <alpine.DEB.2.20.1609131713490.6233@nanos>
+ <6941f61d-0b33-4108-0135-b11887cd0488@st.com>
+ <alpine.DEB.2.20.1609141103420.6233@nanos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:36593 "EHLO
-        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756249AbcINMqD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 08:46:03 -0400
-Received: by mail-oi0-f47.google.com with SMTP id q188so18979059oia.3
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Sep 2016 05:46:03 -0700 (PDT)
-In-Reply-To: <20160914082610.GV1811@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <alpine.DEB.2.20.1609141103420.6233@nanos>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com, lee.jones@linaro.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Phidias Chiang <phidias.chiang@canonical.com>, Anisse Astier <anisse@astier.eu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Sep 14, 2016 at 10:26 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Tue, Sep 13, 2016 at 10:57:31PM +0200, Linus Walleij wrote:
+Hi Thomas,
 
->> Isn't this (a list of what IRQs are reserved by BIOS) by sheer logic
->> something that ACPI should provide?
+On 09/14/2016 11:19 AM, Thomas Gleixner wrote:
+> On Tue, 13 Sep 2016, Alexandre Torgue wrote:
+>> On 09/13/2016 05:21 PM, Thomas Gleixner wrote:
+>>> On Fri, 9 Sep 2016, Alexandre TORGUE wrote:
+>>>> +static void stm32_exti_free(struct irq_domain *d, unsigned int virq,
+>>>> +			    unsigned int nr_irqs)
+>>>> +{
+>>>> +	struct irq_data *data = irq_get_irq_data(virq);
+>>>> +
+>>>> +	irq_gc_mask_clr_bit(data->parent_data);
+>>>
+>>> I have a hard time to understand this. The irq domain is not hierarchical.
 >>
->> Or is this one of those "well we could alter ACPI tables but we can't
->> because they already shipped so we just can't so now we need to
->> hack around it"?
->
-> Isn't it always the case? ;-)
->
-> Once the hardware enters stores the firmware cannot be changed anymore
-> and we get all the fun working around problems in the OS.
-
-To me this is just a big proof that the ACPI design-by-committee isn't
-working. With Device Tree we review bindings and drivers together
-and then we tend to not miss stuff like this as much.
-
-But I realize as soon as I say that someone will pull out a counter-example
-of stupid DT bindings used in the wild and make me look stupid.
-
->> Letting Linux map an interrupt it cannot access and then papering it
->> over by using handle_simple_irq() just feels wrong to me.
+>> Actually, I wanted to test ".free" callback function of gpio_irq_domain in
+>> STM32 pinctrl driver. To do that I modified gpio driver: just after getting
+>> virq through gpio_to_irq, I called "irq_dispose_mapping(virq)".
+>> I know it is dirty but I thought it was the only way to test.
 >>
->> I would argue for associating the mask of BIOS-reserved IRQs with
->> something in ACPI and implement the mentioned scheme to avoid
->> even mapping them seems most logical.
+>> Doing that, I see that ".free" callback of gpio domain is called but as it is
+>> hirerchical ".free" callback for parent domain (exti one) is also called. I
+>> observed that virq was well unmapped, but not masked at exti level. It is for
+>> this reason than I added "irq_gc_mask_clr_bit(data->parent_data);" which mask
+>> interrupt at exti level.
 >
-> I'm going to re-read the hardware spec and see if there is anything we
-> can do about this. The newer hardware (Skylake, Broxton) has a bit that
-> tells the IRQ is routed directly to I/O-APIC but unfortunately Braswell
-> misses that. There may be something else, though.
+> Aargh. I really misread the patch, but this is entirely non obvious and you
+> should do:
+>
+>        struct irq_data *data = irq_domain_get_irq_data(d, virq);
+>
+>        irq_gc_mask_clr_bit(d);
+>
+> Then it is entirely clear that you mask the interrupt of _this_ (the exti)
+> domain.
 
-So as far as we can determine:
+Ok, it's easier to understand like that.
 
-(A) we are running on Braswell and
-(B) we are probing this driver
+>
+> Now what really bugs me is that you do that at all. An interrupt which is
+> freed must be masked already. Why is it unmasked in the first place?
 
-we can conclude that
+Honestly I don't know. When "devm_free_irq" is called to release virq, 
+there is no issue and interrupt is well masked. But, when I tried to use
+"irq_dispose_mapping(virq)" I observed that .free is called (child and 
+parent domain) but interrupt is not masked.
 
-(C) IRQs A,B,C are reserved by BIOS?
+Regards
 
-That sounds doable?
+Alex
 
-Yours,
-Linus Walleij
+>
+> Thanks,
+>
+> 	tglx
+>
