@@ -1,59 +1,88 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v5 2/9] drivers: irqchip: Add STM32 external interrupts
- support
-Date: Wed, 14 Sep 2016 11:19:02 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1609141103420.6233@nanos>
-References: <1473432124-6784-1-git-send-email-alexandre.torgue@st.com> <1473432124-6784-3-git-send-email-alexandre.torgue@st.com> <alpine.DEB.2.20.1609131713490.6233@nanos> <6941f61d-0b33-4108-0135-b11887cd0488@st.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH] pintctrl: amlogic: gxbb: add i2c pins
+Date: Wed, 14 Sep 2016 11:45:28 +0200
+Message-ID: <1473846328-17339-1-git-send-email-jbrunet@baylibre.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from Galois.linutronix.de ([146.0.238.70]:33477 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751567AbcINJVh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 05:21:37 -0400
-In-Reply-To: <6941f61d-0b33-4108-0135-b11887cd0488@st.com>
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:35953 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751621AbcINJpf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 05:45:35 -0400
+Received: by mail-wm0-f53.google.com with SMTP id b187so37732714wme.1
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Sep 2016 02:45:35 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com, lee.jones@linaro.org
+To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Tue, 13 Sep 2016, Alexandre Torgue wrote:
-> On 09/13/2016 05:21 PM, Thomas Gleixner wrote:
-> > On Fri, 9 Sep 2016, Alexandre TORGUE wrote:
-> > > +static void stm32_exti_free(struct irq_domain *d, unsigned int virq,
-> > > +			    unsigned int nr_irqs)
-> > > +{
-> > > +	struct irq_data *data = irq_get_irq_data(virq);
-> > > +
-> > > +	irq_gc_mask_clr_bit(data->parent_data);
-> > 
-> > I have a hard time to understand this. The irq domain is not hierarchical.
-> 
-> Actually, I wanted to test ".free" callback function of gpio_irq_domain in
-> STM32 pinctrl driver. To do that I modified gpio driver: just after getting
-> virq through gpio_to_irq, I called "irq_dispose_mapping(virq)".
-> I know it is dirty but I thought it was the only way to test.
-> 
-> Doing that, I see that ".free" callback of gpio domain is called but as it is
-> hirerchical ".free" callback for parent domain (exti one) is also called. I
-> observed that virq was well unmapped, but not masked at exti level. It is for
-> this reason than I added "irq_gc_mask_clr_bit(data->parent_data);" which mask
-> interrupt at exti level.
+Add EE domains pins for the i2c devices A,B,C
 
-Aargh. I really misread the patch, but this is entirely non obvious and you
-should do:
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-       struct irq_data *data = irq_domain_get_irq_data(d, virq);
-
-       irq_gc_mask_clr_bit(d);
-
-Then it is entirely clear that you mask the interrupt of _this_ (the exti)
-domain.
-
-Now what really bugs me is that you do that at all. An interrupt which is
-freed must be masked already. Why is it unmasked in the first place?
-
-Thanks,
-
-	tglx
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+index b06cc12f2500..c3928aa3fefa 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+@@ -200,6 +200,15 @@ static const unsigned int uart_rx_c_pins[]	= { PIN(GPIOY_14, EE_OFF) };
+ static const unsigned int uart_cts_c_pins[]	= { PIN(GPIOX_11, EE_OFF) };
+ static const unsigned int uart_rts_c_pins[]	= { PIN(GPIOX_12, EE_OFF) };
+ 
++static const unsigned int i2c_sck_a_pins[]	= { PIN(GPIODV_25, EE_OFF) };
++static const unsigned int i2c_sda_a_pins[]	= { PIN(GPIODV_24, EE_OFF) };
++
++static const unsigned int i2c_sck_b_pins[]	= { PIN(GPIODV_27, EE_OFF) };
++static const unsigned int i2c_sda_b_pins[]	= { PIN(GPIODV_26, EE_OFF) };
++
++static const unsigned int i2c_sck_c_pins[]	= { PIN(GPIODV_29, EE_OFF) };
++static const unsigned int i2c_sda_c_pins[]	= { PIN(GPIODV_28, EE_OFF) };
++
+ static const unsigned int eth_mdio_pins[]	= { PIN(GPIOZ_0, EE_OFF) };
+ static const unsigned int eth_mdc_pins[]	= { PIN(GPIOZ_1, EE_OFF) };
+ static const unsigned int eth_clk_rx_clk_pins[]	= { PIN(GPIOZ_2, EE_OFF) };
+@@ -438,6 +447,12 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
+ 	GROUP(uart_rts_b,	2,	26),
+ 	GROUP(pwm_b,		3,	21),
+ 	GROUP(pwm_d,		3,	20),
++	GROUP(i2c_sck_a,	7,	27),
++	GROUP(i2c_sda_a,	7,	26),
++	GROUP(i2c_sck_b,	7,	25),
++	GROUP(i2c_sda_b,	7,	24),
++	GROUP(i2c_sck_c,	7,	23),
++	GROUP(i2c_sda_c,	7,	22),
+ 
+ 	/* Bank BOOT */
+ 	GROUP(emmc_nand_d07,	4,	30),
+@@ -574,6 +589,18 @@ static const char * const uart_c_groups[] = {
+ 	"uart_tx_c", "uart_rx_c", "uart_cts_c", "uart_rts_c",
+ };
+ 
++static const char * const i2c_a_groups[] = {
++	"i2c_sck_a", "i2c_sda_a",
++};
++
++static const char * const i2c_b_groups[] = {
++	"i2c_sck_b", "i2c_sda_b",
++};
++
++static const char * const i2c_c_groups[] = {
++	"i2c_sck_c", "i2c_sda_c",
++};
++
+ static const char * const eth_groups[] = {
+ 	"eth_mdio", "eth_mdc", "eth_clk_rx_clk", "eth_rx_dv",
+ 	"eth_rxd0", "eth_rxd1", "eth_rxd2", "eth_rxd3",
+@@ -661,6 +688,9 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
+ 	FUNCTION(uart_a),
+ 	FUNCTION(uart_b),
+ 	FUNCTION(uart_c),
++	FUNCTION(i2c_a),
++	FUNCTION(i2c_b),
++	FUNCTION(i2c_c),
+ 	FUNCTION(eth),
+ 	FUNCTION(pwm_a_x),
+ 	FUNCTION(pwm_a_y),
+-- 
+2.7.4
 
