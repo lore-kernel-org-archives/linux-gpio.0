@@ -1,88 +1,62 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH] pintctrl: amlogic: gxbb: add i2c pins
-Date: Wed, 14 Sep 2016 11:45:28 +0200
-Message-ID: <1473846328-17339-1-git-send-email-jbrunet@baylibre.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] pinctrl: stm32: add IRQ_DOMAIN_HIERARCHY dependency
+Date: Wed, 14 Sep 2016 12:13:06 +0200
+Message-ID: <20160914101323.3254566-1-arnd@arndb.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:35953 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751621AbcINJpf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 05:45:35 -0400
-Received: by mail-wm0-f53.google.com with SMTP id b187so37732714wme.1
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Sep 2016 02:45:35 -0700 (PDT)
+Received: from mout.kundenserver.de ([212.227.126.131]:54774 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755829AbcINKOH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 06:14:07 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Arnd Bergmann <arnd@arndb.de>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Patrice Chotard <patrice.chotard@st.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Add EE domains pins for the i2c devices A,B,C
+The newly added irqchip support for the stm32 pinctrl driver uses
+hierarchical IRQ domains as provided by the NVIC primary irqchip.
+This works great for any configuration that may be relevant on
+stm32, but when doing compile-testing (randconfig), we can
+enable it without NVIC or any other primary irqchip that
+enables IRQ_DOMAIN_HIERARCHY:
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+drivers/pinctrl/stm32/pinctrl-stm32.c:212:13: error: 'irq_chip_eoi_parent' undeclared here (not in a function)
+drivers/pinctrl/stm32/pinctrl-stm32.c:213:20: error: 'irq_chip_mask_parent' undeclared here (not in a function)
+drivers/pinctrl/stm32/pinctrl-stm32.c:214:20: error: 'irq_chip_unmask_parent' undeclared here (not in a function)
+drivers/pinctrl/stm32/pinctrl-stm32.c:215:20: error: 'irq_chip_set_type_parent' undeclared here (not in a function)
+
+This adds a Kconfig dependency to limit compile-testing to
+configurations that have IRQ_DOMAIN_HIERARCHY already enabled.
+It's not obvious whether we should use 'depends on' or 'select'
+here, I think either one works, with 'depends on' being more
+intuitive, while 'select' would be less likely to cause dependency
+loops.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 0eb9f683336d ("pinctrl: Add IRQ support to STM32 gpios")
 ---
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/pinctrl/stm32/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index b06cc12f2500..c3928aa3fefa 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -200,6 +200,15 @@ static const unsigned int uart_rx_c_pins[]	= { PIN(GPIOY_14, EE_OFF) };
- static const unsigned int uart_cts_c_pins[]	= { PIN(GPIOX_11, EE_OFF) };
- static const unsigned int uart_rts_c_pins[]	= { PIN(GPIOX_12, EE_OFF) };
+diff --git a/drivers/pinctrl/stm32/Kconfig b/drivers/pinctrl/stm32/Kconfig
+index 24bc68308af2..c03dce7a22df 100644
+--- a/drivers/pinctrl/stm32/Kconfig
++++ b/drivers/pinctrl/stm32/Kconfig
+@@ -10,13 +10,13 @@ config PINCTRL_STM32
  
-+static const unsigned int i2c_sck_a_pins[]	= { PIN(GPIODV_25, EE_OFF) };
-+static const unsigned int i2c_sda_a_pins[]	= { PIN(GPIODV_24, EE_OFF) };
-+
-+static const unsigned int i2c_sck_b_pins[]	= { PIN(GPIODV_27, EE_OFF) };
-+static const unsigned int i2c_sda_b_pins[]	= { PIN(GPIODV_26, EE_OFF) };
-+
-+static const unsigned int i2c_sck_c_pins[]	= { PIN(GPIODV_29, EE_OFF) };
-+static const unsigned int i2c_sda_c_pins[]	= { PIN(GPIODV_28, EE_OFF) };
-+
- static const unsigned int eth_mdio_pins[]	= { PIN(GPIOZ_0, EE_OFF) };
- static const unsigned int eth_mdc_pins[]	= { PIN(GPIOZ_1, EE_OFF) };
- static const unsigned int eth_clk_rx_clk_pins[]	= { PIN(GPIOZ_2, EE_OFF) };
-@@ -438,6 +447,12 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GROUP(uart_rts_b,	2,	26),
- 	GROUP(pwm_b,		3,	21),
- 	GROUP(pwm_d,		3,	20),
-+	GROUP(i2c_sck_a,	7,	27),
-+	GROUP(i2c_sda_a,	7,	26),
-+	GROUP(i2c_sck_b,	7,	25),
-+	GROUP(i2c_sda_b,	7,	24),
-+	GROUP(i2c_sck_c,	7,	23),
-+	GROUP(i2c_sda_c,	7,	22),
+ config PINCTRL_STM32F429
+ 	bool "STMicroelectronics STM32F429 pin control" if COMPILE_TEST && !MACH_STM32F429
+-	depends on OF
++	depends on OF && IRQ_DOMAIN_HIERARCHY
+ 	default MACH_STM32F429
+ 	select PINCTRL_STM32
  
- 	/* Bank BOOT */
- 	GROUP(emmc_nand_d07,	4,	30),
-@@ -574,6 +589,18 @@ static const char * const uart_c_groups[] = {
- 	"uart_tx_c", "uart_rx_c", "uart_cts_c", "uart_rts_c",
- };
+ config PINCTRL_STM32F746
+ 	bool "STMicroelectronics STM32F746 pin control" if COMPILE_TEST && !MACH_STM32F746
+-	depends on OF
++	depends on OF && IRQ_DOMAIN_HIERARCHY
+ 	default MACH_STM32F746
+ 	select PINCTRL_STM32
  
-+static const char * const i2c_a_groups[] = {
-+	"i2c_sck_a", "i2c_sda_a",
-+};
-+
-+static const char * const i2c_b_groups[] = {
-+	"i2c_sck_b", "i2c_sda_b",
-+};
-+
-+static const char * const i2c_c_groups[] = {
-+	"i2c_sck_c", "i2c_sda_c",
-+};
-+
- static const char * const eth_groups[] = {
- 	"eth_mdio", "eth_mdc", "eth_clk_rx_clk", "eth_rx_dv",
- 	"eth_rxd0", "eth_rxd1", "eth_rxd2", "eth_rxd3",
-@@ -661,6 +688,9 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
- 	FUNCTION(uart_a),
- 	FUNCTION(uart_b),
- 	FUNCTION(uart_c),
-+	FUNCTION(i2c_a),
-+	FUNCTION(i2c_b),
-+	FUNCTION(i2c_c),
- 	FUNCTION(eth),
- 	FUNCTION(pwm_a_x),
- 	FUNCTION(pwm_a_y),
 -- 
-2.7.4
+2.9.0
 
