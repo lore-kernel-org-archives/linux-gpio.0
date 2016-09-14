@@ -1,47 +1,63 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 18/33] pcmcia: sa1100: provide generic CF support
-Date: Wed, 14 Sep 2016 10:52:39 +0200
-Message-ID: <CACRpkda7qHx4JVdVv+q3=twTup9rDD2ke8K-tSH9CkhZMQqemg@mail.gmail.com>
-References: <20160829102328.GA28796@n2100.armlinux.org.uk> <E1beJl3-0000nS-Nw@rmk-PC.armlinux.org.uk>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 3/4] pinctrl: sh-pfc: r8a7795: Add group for AVB MDIO and
+ MII pins
+Date: Wed, 14 Sep 2016 12:05:32 +0300
+Message-ID: <fce28dc4-f227-5e27-d31c-a6b5bca1c471@cogentembedded.com>
+References: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se>
+ <20160913140314.22035-4-niklas.soderlund+renesas@ragnatech.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:34358 "EHLO
-        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751621AbcINIxN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 04:53:13 -0400
-Received: by mail-oi0-f45.google.com with SMTP id m11so11572245oif.1
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Sep 2016 01:52:40 -0700 (PDT)
-In-Reply-To: <E1beJl3-0000nS-Nw@rmk-PC.armlinux.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20160913140314.22035-4-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>, geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King <rmk+kernel@armlinux.org.uk>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-On Mon, Aug 29, 2016 at 12:25 PM, Russell King
-<rmk+kernel@armlinux.org.uk> wrote:
+On 9/13/2016 5:03 PM, Niklas Söderlund wrote:
 
-> Provide generic non-voltage sensing socket support for StrongARM
-> platforms using the gpiolib and regulator subsystems to obtain the
-> resources to control the socket.
+> Group the AVB pins into similar groups found in other sh-pfc drivers.
+> The pins can not be muxed between functions other then AVB but there
+> drive strength can be controlled.
 >
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-(...)
+> The group avb_mdc containing ADV_MDC and ADV_MDIO are on other SoCs
+> called avb_mdio. In pfc-r8a7795 the adv_mdc group already existed and
+                                       ^^^^^^^ avb_mdc?
 
-> +static int sa11x0_drv_pcmcia_probe(struct platform_device *pdev)
-> +{
-> +       struct soc_pcmcia_socket *skt;
-> +       struct device *dev = &pdev->dev;
-> +
-> +       if (dev->id == -1)
-> +               return sa11x0_drv_pcmcia_legacy_probe(pdev);
+> is in use in DT. Therefor the ADV_MDIO pin to the existing group
 
-There is a typo there, it should be pdev->id rather than dev->id.
+    Therefore. And you missed a verb.
 
-After fixing this, my legacy h3600 PCMCIA started probing again.
+> instead of renaming it.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 30 +++++++++++++++++++++++++++---
+>  1 file changed, 27 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> index 4a60f15..7b9a355 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+[...]
+>  static const unsigned int can0_data_a_pins[] = {
+> @@ -3632,6 +3654,7 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+>  	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
+>  	SH_PFC_PIN_GROUP(avb_avtp_match_b),
+>  	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
+> +	SH_PFC_PIN_GROUP(avb_mii),
+>  	SH_PFC_PIN_GROUP(can0_data_a),
+>  	SH_PFC_PIN_GROUP(can0_data_b),
+>  	SH_PFC_PIN_GROUP(can1_data),
+> @@ -3928,6 +3951,7 @@ static const char * const avb_groups[] = {
+>  	"avb_avtp_capture_a",
+>  	"avb_avtp_match_b",
+>  	"avb_avtp_capture_b",
+> +	"avb_mii",
 
-(It revealed another bug in fetching GPIOs but it is an orthogobal
-problem altogether, looking into it.)
+    I'd prefer if this group preceded the capture/match groups.
 
-Yours,
-Linus Walleij
+[...]
+
+MBR, Sergei
