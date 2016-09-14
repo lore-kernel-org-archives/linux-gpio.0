@@ -1,71 +1,59 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.9 (take three)
-Date: Wed, 14 Sep 2016 09:59:28 +0200
-Message-ID: <1473839968-7876-1-git-send-email-geert+renesas@glider.be>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:34344 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760286AbcINH7f (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 03:59:35 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v3 1/6] pinctrl: bcm2835: add pull defines to dt bindings
+Date: Wed, 14 Sep 2016 10:23:30 +0200
+Message-ID: <1473841415-937-2-git-send-email-kraxel@redhat.com>
+References: <1473841415-937-1-git-send-email-kraxel@redhat.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1473841415-937-1-git-send-email-kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-	Hi Linus,
+Also delete (unused) private enum from driver.
+The pull defines can be used instead if needed.
 
-The following changes since commit 374cf6992de89fc38d4d923c89b40816d341d678:
+Signed-off-by: Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 6 ------
+ include/dt-bindings/pinctrl/bcm2835.h | 5 +++++
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
-  pinctrl: sh-pfc: r8a7796: Add SDHI pins, groups and functions (2016-08-19 09:37:20 +0200)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.9-tag3
-
-for you to fetch changes up to 77fd4136e58c642482f03d293d5717658a569b4b:
-
-  pinctrl: sh-pfc: r8a7794: Implement voltage switching for SDHI (2016-09-14 09:26:54 +0200)
-
-----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v4.9 (take three)
-
-  - Return pinconf with arguments in packed format,
-  - MSIOF and QSPI pin groups on R-Car V2H,
-  - Voltage switching for SDHI on R-Car M2-W, E2, and M3-W.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Niklas Söderlund (1):
-      pinctrl: sh-pfc: Return pinconf with arguments in packed format
-
-Sergei Shtylyov (2):
-      pinctrl: sh-pfc: r8a7792: Add QSPI pin groups
-      pinctrl: sh-pfc: r8a7792: Add MSIOF pin groups
-
-Simon Horman (4):
-      pinctrl: sh-pfc: r8a7796: Add voltage switch operations for SDHI
-      pinctrl: sh-pfc: Add PORT_GP_24 helper macro
-      pinctrl: sh-pfc: r8a7791: Implement voltage switching for SDHI
-      pinctrl: sh-pfc: r8a7794: Implement voltage switching for SDHI
-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |  29 ++++++++-
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c | 115 +++++++++++++++++++++++++++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  28 ++++++++-
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c |  28 ++++++++-
- drivers/pinctrl/sh-pfc/pinctrl.c     |   8 ++-
- drivers/pinctrl/sh-pfc/sh_pfc.h      |   8 ++-
- 6 files changed, 207 insertions(+), 9 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index fa77165..4cf612b 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -76,12 +76,6 @@ enum bcm2835_pinconf_param {
+ 	BCM2835_PINCONF_PARAM_PULL,
+ };
+ 
+-enum bcm2835_pinconf_pull {
+-	BCM2835_PINCONFIG_PULL_NONE,
+-	BCM2835_PINCONFIG_PULL_DOWN,
+-	BCM2835_PINCONFIG_PULL_UP,
+-};
+-
+ #define BCM2835_PINCONF_PACK(_param_, _arg_) ((_param_) << 16 | (_arg_))
+ #define BCM2835_PINCONF_UNPACK_PARAM(_conf_) ((_conf_) >> 16)
+ #define BCM2835_PINCONF_UNPACK_ARG(_conf_) ((_conf_) & 0xffff)
+diff --git a/include/dt-bindings/pinctrl/bcm2835.h b/include/dt-bindings/pinctrl/bcm2835.h
+index 6f0bc37..e4e4fdf 100644
+--- a/include/dt-bindings/pinctrl/bcm2835.h
++++ b/include/dt-bindings/pinctrl/bcm2835.h
+@@ -24,4 +24,9 @@
+ #define BCM2835_FSEL_ALT2	6
+ #define BCM2835_FSEL_ALT3	7
+ 
++/* brcm,pull property */
++#define BCM2835_PUD_OFF		0
++#define BCM2835_PUD_DOWN	1
++#define BCM2835_PUD_UP		2
++
+ #endif /* __DT_BINDINGS_PINCTRL_BCM2835_H__ */
+-- 
+1.8.3.1
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
