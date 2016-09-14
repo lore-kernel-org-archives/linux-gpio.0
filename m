@@ -1,27 +1,103 @@
-From: FDF <agri3234@bears.unco.edu>
-Subject: Hello::
-Date: Wed, 14 Sep 2016 00:18:18 -1000
-Message-ID: <CY1PR01MB13277DD52A29B11E943A0AEDE5F10@CY1PR01MB1327.prod.exchangelabs.com>
-Reply-To: <charity@e-cb.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 10/33] pcmcia: soc_common: switch to using gpio_descs
+Date: Wed, 14 Sep 2016 13:29:04 +0200
+Message-ID: <CACRpkdZvNnVG5U3XQPm5KJDLci76xFP7JOO78AZ3a8QVBs0ZQg@mail.gmail.com>
+References: <20160829102328.GA28796@n2100.armlinux.org.uk> <E1beJkO-0000mg-Lu@rmk-PC.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-cys01nam02hn0222.outbound.protection.outlook.com ([104.47.37.222]:13041
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1760265AbcINLTh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 14 Sep 2016 07:19:37 -0400
-Content-Description: Mail message body
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:34708 "EHLO
+        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756146AbcINL3G (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 07:29:06 -0400
+Received: by mail-oi0-f53.google.com with SMTP id m11so16382547oif.1
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Sep 2016 04:29:05 -0700 (PDT)
+In-Reply-To: <E1beJkO-0000mg-Lu@rmk-PC.armlinux.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Recipients <agri3234@bears.unco.edu>
+To: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-You have been selected as one of our trustee in your country. and on accept=
-ance of this,the sum of (Five Million Euros) will be released to you for ph=
-ilanthropic and humanitarian work for all of mankind who are in great need =
-among your friends, family and people around you.
+On Mon, Aug 29, 2016 at 12:24 PM, Russell King
+<rmk+kernel@armlinux.org.uk> wrote:
 
-REPLY FOR MORE DETAILS.
-Regards
-Olivier Xavier.
+> Switch to using the gpiod_* consumer API rather than the legacy API.
+>
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+(...)
+
+> +int soc_pcmcia_request_gpiods(struct soc_pcmcia_socket *skt)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(skt->stat); i++) {
+> +               struct gpio_desc *desc;
+> +
+
+Here I inserted:
+
+        /* Skip over unnamed GPIOs, assume unused */
+        if (!skt->stat[i].name)
+            continue;
+
+to get it working again on h3600.
+
+> +               desc = gpiod_get(skt->socket.dev.parent,
+> +                                skt->stat[i].name, GPIOD_IN);
+> +               if (IS_ERR(desc)) {
+> +                       dev_err(skt->socket.dev.parent,
+> +                               "Failed to get GPIO for %s: %ld\n",
+> +                               skt->stat[i].name, PTR_ERR(desc));
+> +                       __soc_pcmcia_hw_shutdown(skt, i);
+> +                       return PTR_ERR(desc);
+> +               }
+
+
+It bugs out for me on the legacy h3600, since it only defines
+two of these pins not all of the ARRAY_SIZE(skt->stat) pins
+will succeed and we get an error message like this:
+
+sa11x0-pcmcia sa11x0-pcmcia: Failed to get GPIO for (null): -2
+sa11x0-pcmcia: probe of sa11x0-pcmcia failed with error -2
+
+With the patch above it goes away and the log is silent.
+The debugfs gpio file looks like this:
+
+cat gpio
+gpiochip0: GPIOs 0-27, gpio:
+ gpio-0   (                    |Power Button        ) in  hi
+ gpio-10  (                    |pcmcia1-detect      ) in  hi
+ gpio-11  (                    |pcmcia1-ready       ) in  hi
+ gpio-17  (                    |pcmcia0-detect      ) in  hi
+ gpio-18  (                    |Action button       ) in  hi
+ gpio-21  (                    |pcmcia0-ready       ) in  hi
+ gpio-23  (                    |dcd                 ) in  hi
+ gpio-25  (                    |cts                 ) in  lo
+ gpio-26  (                    |rts                 ) out lo
+
+gpiochip1: GPIOs 28-43, parent: platform/htc-egpio, htc-egpio:
+ gpio-28  (                    |Flash Vpp           ) out lo
+ gpio-29  (                    |PCMCIA CARD RESET   ) out lo
+ gpio-30  (                    |OPT RESET           ) out lo
+ gpio-32  (                    |OPT NVRAM ON        ) out lo
+ gpio-33  (                    |OPT ON              ) out lo
+ gpio-34  (                    |LCD power           ) out lo
+ gpio-36  (                    |LCD control         ) out lo
+ gpio-42  (                    |LCD 5v              ) out lo
+ gpio-43  (                    |LCD 9v/-6.5v        ) out lo
+
+Which seems like before the patch series.
+
+I still suspect the PCMCIA is not really working but I have
+limited experience of the bus so I don't really know how
+to test it deeply or have my PCMCIA ethernet or harddrive
+probe properly.
+
+There are no regressions however, so with something like
+the above patch applied:
+Tested-by: Linus Walleij <linus.walleij@linaro.org>
+
+For the whole patch series on H3600.
+
+Yours,
+Linus Walleij
