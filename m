@@ -1,95 +1,51 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v2 3/4] ARM: dts: Add NextThing GR8 dtsi
-Date: Wed, 14 Sep 2016 10:56:56 +0800
-Message-ID: <CAGb2v66YUOcHXkE521zXNOmqCJ60oJ7+LQA=LS371ZPdEXdrqg@mail.gmail.com>
-References: <20160907145400.27192-1-maxime.ripard@free-electrons.com>
- <20160907145400.27192-4-maxime.ripard@free-electrons.com> <CACRpkdZsxA7avmO85R=-Quu7FQwSVMPhQMDmmgL+xbkVTB-2HQ@mail.gmail.com>
- <CAGb2v64h7kq2jWzUJ74vDdOOQOXPxjx3ruSsJMXvyr7fP63BGg@mail.gmail.com>
- <20160908073748.GF8913@lukather> <CACRpkdbrvDZGM3OJsAMk4T5awSSbrJ4MDyKXV2C45ZSE7zUVNQ@mail.gmail.com>
+From: Deepak Das <deepak_das@mentor.com>
+Subject: Re: [PATCH] driver: base: pinctrl: return error from
+ pinctrl_bind_pins()
+Date: Wed, 14 Sep 2016 11:52:00 +0530
+Message-ID: <57D8EC88.1060808@mentor.com>
+References: <57D7A700.8080402@mentor.com>
+ <CACRpkdandEmr5PTfhUt39wMezMpbE9wEHDTR=jMidzUZY2Cn7A@mail.gmail.com>
+ <57D80212.7060303@mentor.com>
+ <CACRpkdZewXRXqj2nFTwbnbEor=OSV44AGedwCWOVROmktxcZQQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:58148 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751518AbcINC5V (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Sep 2016 22:57:21 -0400
-In-Reply-To: <CACRpkdbrvDZGM3OJsAMk4T5awSSbrJ4MDyKXV2C45ZSE7zUVNQ@mail.gmail.com>
+Received: from relay1.mentorg.com ([192.94.38.131]:56299 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751764AbcINGWI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 02:22:08 -0400
+In-Reply-To: <CACRpkdZewXRXqj2nFTwbnbEor=OSV44AGedwCWOVROmktxcZQQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mylene Josserand <mylene.josserand@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexander Kaplan <alex@nextthing.co>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, vzapolsk <Vladimir_Zapolskiy@mentor.com>
+
+
+
+On Wednesday 14 September 2016 02:31 AM, Linus Walleij wrote:
+> On Tue, Sep 13, 2016 at 3:41 PM, Deepak Das <deepak_das@mentor.com> wrote:
+>
+>>> Can you confim that this works for you too?
+>>
+>> Yes, This works for me as well but do we really need this extra error
+>> message ?
+>
+> Nah, good point. I'll go in and drop it then.
 
 Hi Linus,
 
-On Mon, Sep 12, 2016 at 8:40 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Sep 8, 2016 at 9:37 AM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->> On Thu, Sep 08, 2016 at 12:46:14PM +0800, Chen-Yu Tsai wrote:
->
->>> Also, I think we are needlessly using pin groups, 1 pin per group.
->>> Can pinconf/pinctrl work without them? Would there be any harm
->>> converting the sunxi driver to work directly with pins? This would
->>> make it match generic pinconf parsing, and make it easier to get
->>> both working together.
->>
->> I think it comes from a requirement that you had to have groups at
->> some point (I don't know if it's still the case), which is why we
->> ended up with single-pin groups, because we can mux each pins entirely
->> separately.
->>
->> If it's not required anymore, then yes, it makes total sense to remove
->> it.
->
-> The groups vs individual pins is an eternal debate that has
-> been going on since the inception of pinctrl.
->
-> If you see it from the point of the programmer, you may just see
-> a register for each pin and they seem all independent. This is
-> why pinctrl-single exist, and that driver is for this purpose: one
-> register per pin, software-wise independent.
->
-> HOWEVER it often turns out that while you can programmatically
-> and individually set pins to any function (and biasing etc), the
-> person designing the hardware was not thinking that you should
-> be able to do whatever you like, e.g. even if it is possible to
-> take two pins and use one of them for half an SPI bus and the
-> other for half an I2C bus, that doesn't mean that this is useful
-> or makes any kind of electronic sense, it just makes "software
-> sense".
->
-> So for a deeper understanding, several SoCs (amongst them
-> my own and Qualcomm etc) define groups that are not really
-> about software restrictions for what you can do with the pins, but
-> about usecase and electronic restrictions for what can be done
-> with the pins.
->
-> E.g. it makes *sense* to have a group for muxing I2C on two
-> pins, and not allow one of them to be muxed to I2C and the other
-> not, because it does not make electronic sense.
->
-> One-group-per-pin groups is usually coming from a failure or
-> inability to identify these electronically sound and usecase
-> oriented pingroups.
->
-> Some (like pinctrl-single) say they don't care, and wish to
-> see things as the world is just software and one register per
-> pin, removing those electric usecase restrictions, and only
-> keeping the muxing restrictions to e.g. the four different functions
-> that can be muxed on that pin, disregarding the bigger picture.
->
-> I don't know about this driver or the pins it manages,
-> I seldom have time or brains to dive in and review things
-> deeply enough :(
+I will release V2 version of this patch with following change :-
+-       /* Only return deferrals */
++       /* Return deferrals & invalid pin requests */
+         if ((ret != -EPROBE_DEFER) && (ret != -EINVAL))
+                 ret = 0;
 
-Thanks for the explanation. I suppose sunxi falls into the "don't
-care" group. We mainly enforce proper use cases through the DT
-pinmux settings. Of course this doesn't prevent the user from
-using weird settings out of tree, but then again what's preventing
-them from hacking the kernel anyway.
+Thanks & regards,
+Deepak Das
 
-Back to my original question: is it possible to drop the pin group
-support completely? Looking at struct pinctrl_ops the answer seems
-to be no.
+>
+> Yours,
+> Linus Walleij
+>
 
-Regards
-ChenYu
