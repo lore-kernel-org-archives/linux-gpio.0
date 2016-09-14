@@ -1,96 +1,135 @@
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 14/19] pinctrl: st: Remove obsolete platforms from pinctrl-st dt doc
-Date: Wed, 14 Sep 2016 14:27:52 +0100
-Message-ID: <1473859677-9231-15-git-send-email-peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH 13/19] pinctrl: st: Remove STiH415/6 SoC pinctrl driver support.
+Date: Wed, 14 Sep 2016 14:27:51 +0100
+Message-ID: <1473859677-9231-14-git-send-email-peter.griffin@linaro.org>
 References: <1473859677-9231-1-git-send-email-peter.griffin@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:38420 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1762376AbcINN3T (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 09:29:19 -0400
-Received: by mail-wm0-f43.google.com with SMTP id 1so31259535wmz.1
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Sep 2016 06:29:18 -0700 (PDT)
-In-Reply-To: <1473859677-9231-1-git-send-email-peter.griffin@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1473859677-9231-1-git-send-email-peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, patrice.chotard-qxv4g6HH51o@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, devicetree@vger.kernel.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, linus.walleij@linaro.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org
 
 STiH415/6 SoC support is being removed from the kernel.
-This patch updates the ST pinctrl dt doc and removes
-references to these obsolete platforms. It also updates
-the dt example to the currently supported STiH407
-platform.
+This patch updates the ST pinctrl driver and removes
+references to these obsolete platforms. As some structures
+referenced by STiH407 based configuration were shared with
+STiH416 we update these names to match the remaining
+supported platform.
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Cc: <linus.walleij@linaro.org>
-Cc: <robh+dt@kernel.org>
-Cc: <linux-gpio@vger.kernel.org>
+Signed-off-by: Peter Griffin <peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 ---
- .../devicetree/bindings/pinctrl/pinctrl-st.txt     | 33 +++++++++++-----------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+ drivers/pinctrl/pinctrl-st.c | 76 ++++++++------------------------------------
+ 1 file changed, 14 insertions(+), 62 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-st.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-st.txt
-index 26bcb18..78160cc 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-st.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-st.txt
-@@ -30,8 +30,7 @@ Second type has a dedicated interrupt per gpio bank.
+diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
+index 0de1c67..e110441 100644
+--- a/drivers/pinctrl/pinctrl-st.c
++++ b/drivers/pinctrl/pinctrl-st.c
+@@ -335,61 +335,25 @@ struct st_pinctrl {
+ };
  
- Pin controller node:
- Required properties:
--- compatible	: should be "st,<SOC>-<pio-block>-pinctrl"
--	like st,stih415-sbc-pinctrl, st,stih415-front-pinctrl and so on.
-+- compatible	: should be "st,stih407-<pio-block>-pinctrl"
- - st,syscfg		: Should be a phandle of the syscfg node.
- - st,retime-pin-mask	: Should be mask to specify which pins can be retimed.
- 	If the property is not present, it is assumed that all the pins in the
-@@ -76,23 +75,23 @@ include/dt-bindings/interrupt-controller/irq.h
- 
- Example:
- 	pin-controller-sbc {
--		#address-cells	= <1>;
--		#size-cells	= <1>;
--		compatible	= "st,stih415-sbc-pinctrl";
--		st,syscfg	= <&syscfg_sbc>;
--		reg 		= <0xfe61f080 0x4>;
--		reg-names	= "irqmux";
--		interrupts 	= <GIC_SPI 180 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-names	= "irqmux";
--		ranges 		= <0 0xfe610000 0x5000>;
+ /* SOC specific data */
+-/* STiH415 data */
+-static const unsigned int stih415_input_delays[] = {0, 500, 1000, 1500};
+-static const unsigned int stih415_output_delays[] = {0, 1000, 2000, 3000};
 -
--		PIO0: gpio@fe610000 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "st,stih407-sbc-pinctrl";
-+		st,syscfg = <&syscfg_sbc>;
-+		reg = <0x0961f080 0x4>;
-+		reg-names = "irqmux";
-+		interrupts = <GIC_SPI 188 IRQ_TYPE_NONE>;
-+		interrupt-names = "irqmux";
-+		ranges = <0 0x09610000 0x6000>;
-+
-+		pio0: gpio@09610000 {
- 			gpio-controller;
--			#gpio-cells	= <1>;
-+			#gpio-cells = <1>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
--			reg		= <0 0x100>;
--			st,bank-name	= "PIO0";
-+			reg = <0x0 0x100>;
-+			st,bank-name = "PIO0";
- 		};
- 		...
- 		pin-functions nodes follow...
-@@ -162,7 +161,7 @@ pin-controller {
+-#define STIH415_PCTRL_COMMON_DATA				\
+-	.rt_style	= st_retime_style_packed,		\
+-	.input_delays	= stih415_input_delays,			\
+-	.ninput_delays	= ARRAY_SIZE(stih415_input_delays),	\
+-	.output_delays = stih415_output_delays,			\
+-	.noutput_delays = ARRAY_SIZE(stih415_output_delays)
+-
+-static const struct st_pctl_data  stih415_sbc_data = {
+-	STIH415_PCTRL_COMMON_DATA,
+-	.alt = 0, .oe = 5, .pu = 7, .od = 9, .rt = 16,
+-};
+-
+-static const struct st_pctl_data  stih415_front_data = {
+-	STIH415_PCTRL_COMMON_DATA,
+-	.alt = 0, .oe = 8, .pu = 10, .od = 12, .rt = 16,
+-};
+-
+-static const struct st_pctl_data  stih415_rear_data = {
+-	STIH415_PCTRL_COMMON_DATA,
+-	.alt = 0, .oe = 6, .pu = 8, .od = 10, .rt = 38,
+-};
+-
+-static const struct st_pctl_data  stih415_left_data = {
+-	STIH415_PCTRL_COMMON_DATA,
+-	.alt = 0, .oe = 3, .pu = 4, .od = 5, .rt = 6,
+-};
+-
+-static const struct st_pctl_data  stih415_right_data = {
+-	STIH415_PCTRL_COMMON_DATA,
+-	.alt = 0, .oe = 5, .pu = 7, .od = 9, .rt = 11,
+-};
  
- sdhci0:sdhci@fe810000{
- 	...
--	interrupt-parent = <&PIO3>;
-+	interrupt-parent = <&pio3>;
- 	#interrupt-cells = <2>;
- 	interrupts = <3 IRQ_TYPE_LEVEL_HIGH>; /* Interrupt line via PIO3-3 */
- 	interrupt-names = "card-detect";
+-/* STiH416 data */
+-static const unsigned int stih416_delays[] = {0, 300, 500, 750, 1000, 1250,
++static const unsigned int stih407_delays[] = {0, 300, 500, 750, 1000, 1250,
+ 			1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250 };
+ 
+-static const struct st_pctl_data  stih416_data = {
+-	.rt_style	= st_retime_style_dedicated,
+-	.input_delays	= stih416_delays,
+-	.ninput_delays	= ARRAY_SIZE(stih416_delays),
+-	.output_delays	= stih416_delays,
+-	.noutput_delays = ARRAY_SIZE(stih416_delays),
++static const struct st_pctl_data  stih407_data = {
++	.rt_style       = st_retime_style_dedicated,
++	.input_delays   = stih407_delays,
++	.ninput_delays  = ARRAY_SIZE(stih407_delays),
++	.output_delays  = stih407_delays,
++	.noutput_delays = ARRAY_SIZE(stih407_delays),
+ 	.alt = 0, .oe = 40, .pu = 50, .od = 60, .rt = 100,
+ };
+ 
+ static const struct st_pctl_data stih407_flashdata = {
+ 	.rt_style	= st_retime_style_none,
+-	.input_delays	= stih416_delays,
+-	.ninput_delays	= ARRAY_SIZE(stih416_delays),
+-	.output_delays	= stih416_delays,
+-	.noutput_delays = ARRAY_SIZE(stih416_delays),
++	.input_delays	= stih407_delays,
++	.ninput_delays	= ARRAY_SIZE(stih407_delays),
++	.output_delays	= stih407_delays,
++	.noutput_delays = ARRAY_SIZE(stih407_delays),
+ 	.alt = 0,
+ 	.oe = -1, /* Not Available */
+ 	.pu = -1, /* Not Available */
+@@ -1579,21 +1543,9 @@ static int st_gpiolib_register_bank(struct st_pinctrl *info,
+ }
+ 
+ static const struct of_device_id st_pctl_of_match[] = {
+-	{ .compatible = "st,stih415-sbc-pinctrl", .data = &stih415_sbc_data },
+-	{ .compatible = "st,stih415-rear-pinctrl", .data = &stih415_rear_data },
+-	{ .compatible = "st,stih415-left-pinctrl", .data = &stih415_left_data },
+-	{ .compatible = "st,stih415-right-pinctrl",
+-		.data = &stih415_right_data },
+-	{ .compatible = "st,stih415-front-pinctrl",
+-		.data = &stih415_front_data },
+-	{ .compatible = "st,stih416-sbc-pinctrl", .data = &stih416_data},
+-	{ .compatible = "st,stih416-front-pinctrl", .data = &stih416_data},
+-	{ .compatible = "st,stih416-rear-pinctrl", .data = &stih416_data},
+-	{ .compatible = "st,stih416-fvdp-fe-pinctrl", .data = &stih416_data},
+-	{ .compatible = "st,stih416-fvdp-lite-pinctrl", .data = &stih416_data},
+-	{ .compatible = "st,stih407-sbc-pinctrl", .data = &stih416_data},
+-	{ .compatible = "st,stih407-front-pinctrl", .data = &stih416_data},
+-	{ .compatible = "st,stih407-rear-pinctrl", .data = &stih416_data},
++	{ .compatible = "st,stih407-sbc-pinctrl", .data = &stih407_data},
++	{ .compatible = "st,stih407-front-pinctrl", .data = &stih407_data},
++	{ .compatible = "st,stih407-rear-pinctrl", .data = &stih407_data},
+ 	{ .compatible = "st,stih407-flash-pinctrl", .data = &stih407_flashdata},
+ 	{ /* sentinel */ }
+ };
 -- 
 1.9.1
 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
