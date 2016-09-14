@@ -1,48 +1,28 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
-Date: Wed, 14 Sep 2016 18:12:34 +0300
-Message-ID: <20160914151234.GZ1811@lahna.fi.intel.com>
-References: <20160912090401.GB1811@lahna.fi.intel.com>
- <20160912130444.GB2411@ktx>
- <20160912131111.GG1811@lahna.fi.intel.com>
- <CACRpkdZRguTg4davCW-x6HvRJgOxNz8R4KyeFCEnQzyXPkP6cg@mail.gmail.com>
- <20160913093302.GL1811@lahna.fi.intel.com>
- <CACRpkdY9+poXW1cw4K20edGYjiuPN9DH0umsEAh31iHXGJhx6g@mail.gmail.com>
- <20160913125214.GO1811@lahna.fi.intel.com>
- <CACRpkdY-8_+jp+J55FnDHrt-y6woFTEqs7JPxR+KRRcuWPpQWw@mail.gmail.com>
- <20160914082610.GV1811@lahna.fi.intel.com>
- <CACRpkdYRYR0hSacpxieG6k9qHyjMFsr6ViYU3HCcQEzB9NXLGQ@mail.gmail.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH] pintctrl: amlogic: gxbb: add i2c pins
+Date: Wed, 14 Sep 2016 08:18:18 -0700
+Message-ID: <7hvaxymrwl.fsf@baylibre.com>
+References: <1473846328-17339-1-git-send-email-jbrunet@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:26502 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1761813AbcINPOw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 14 Sep 2016 11:14:52 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYRYR0hSacpxieG6k9qHyjMFsr6ViYU3HCcQEzB9NXLGQ@mail.gmail.com>
+Received: from mail-pf0-f181.google.com ([209.85.192.181]:32827 "EHLO
+        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754281AbcINPSU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 11:18:20 -0400
+Received: by mail-pf0-f181.google.com with SMTP id g202so6707596pfb.0
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Sep 2016 08:18:20 -0700 (PDT)
+In-Reply-To: <1473846328-17339-1-git-send-email-jbrunet@baylibre.com> (Jerome
+        Brunet's message of "Wed, 14 Sep 2016 11:45:28 +0200")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Phidias Chiang <phidias.chiang@canonical.com>, Anisse Astier <anisse@astier.eu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Wed, Sep 14, 2016 at 02:46:01PM +0200, Linus Walleij wrote:
-> > I'm going to re-read the hardware spec and see if there is anything we
-> > can do about this. The newer hardware (Skylake, Broxton) has a bit that
-> > tells the IRQ is routed directly to I/O-APIC but unfortunately Braswell
-> > misses that. There may be something else, though.
-> 
-> So as far as we can determine:
-> 
-> (A) we are running on Braswell and
-> (B) we are probing this driver
-> 
-> we can conclude that
-> 
-> (C) IRQs A,B,C are reserved by BIOS?
-> 
-> That sounds doable?
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-Yes, it's doable but that requires some hard coding in the driver :-/
+> Add EE domains pins for the i2c devices A,B,C
+>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-I'll look into it.
+Acked-by: Kevin Hilman <khilman@baylibre.com>
