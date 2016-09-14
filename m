@@ -1,84 +1,79 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
-Date: Wed, 14 Sep 2016 11:26:10 +0300
-Message-ID: <20160914082610.GV1811@lahna.fi.intel.com>
-References: <20160911080506.GO15313@lahna.fi.intel.com>
- <20160912065656.GA2411@ktx>
- <20160912090401.GB1811@lahna.fi.intel.com>
- <20160912130444.GB2411@ktx>
- <20160912131111.GG1811@lahna.fi.intel.com>
- <CACRpkdZRguTg4davCW-x6HvRJgOxNz8R4KyeFCEnQzyXPkP6cg@mail.gmail.com>
- <20160913093302.GL1811@lahna.fi.intel.com>
- <CACRpkdY9+poXW1cw4K20edGYjiuPN9DH0umsEAh31iHXGJhx6g@mail.gmail.com>
- <20160913125214.GO1811@lahna.fi.intel.com>
- <CACRpkdY-8_+jp+J55FnDHrt-y6woFTEqs7JPxR+KRRcuWPpQWw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 05/33] gpio: add generic single-register fixed-direction
+ GPIO driver
+Date: Wed, 14 Sep 2016 10:50:12 +0200
+Message-ID: <CACRpkda3jzCOXG5Qrmqo95gnF4vcAe=i-sanJ2k_4BdrE08PkA@mail.gmail.com>
+References: <20160829102328.GA28796@n2100.armlinux.org.uk> <E1beJjz-0000mA-0o@rmk-PC.armlinux.org.uk>
+ <87eg57e54l.fsf@belgarion.home> <20160830091805.GL1041@n2100.armlinux.org.uk>
+ <87k2eycip0.fsf@belgarion.home> <20160830184612.GO1041@n2100.armlinux.org.uk>
+ <87fupmc59b.fsf@belgarion.home> <20160831084938.GQ1041@n2100.armlinux.org.uk>
+ <CACRpkdZBNH=4qZEfcLzqZAN=tum2f3YeoQj0D5PsH+P0Cf+7LQ@mail.gmail.com>
+ <20160905122611.GO1041@n2100.armlinux.org.uk> <CACRpkdZkCHqYYpYKA+Nvj4XY1zecdbZxMuRe=bbdziJL2fHf6w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:28786 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755890AbcINI0Q (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 14 Sep 2016 04:26:16 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdY-8_+jp+J55FnDHrt-y6woFTEqs7JPxR+KRRcuWPpQWw@mail.gmail.com>
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:32932 "EHLO
+        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751621AbcINIuO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 04:50:14 -0400
+Received: by mail-oi0-f46.google.com with SMTP id r126so11551499oib.0
+        for <linux-gpio@vger.kernel.org>; Wed, 14 Sep 2016 01:50:13 -0700 (PDT)
+In-Reply-To: <CACRpkdZkCHqYYpYKA+Nvj4XY1zecdbZxMuRe=bbdziJL2fHf6w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Phidias Chiang <phidias.chiang@canonical.com>, Anisse Astier <anisse@astier.eu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>
 
-On Tue, Sep 13, 2016 at 10:57:31PM +0200, Linus Walleij wrote:
-> On Tue, Sep 13, 2016 at 2:52 PM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> > [Me]
-> >> A-ha! But why are you registering a irqdomain entry for an interrupt
-> >> that cannot be used, hm?
-> >
-> > Unfortunately there is no way to figure out from the hardware (or
-> > firmware) whether the interrupt is supposed to be used by the GPIO
-> > driver or something else.
-> 
-> So the fact that we kept it in valid-mask in the DT was a hint: it is
-> part of the hardware description.
-> 
-> Isn't this (a list of what IRQs are reserved by BIOS) by sheer logic
-> something that ACPI should provide?
-> 
-> Or is this one of those "well we could alter ACPI tables but we can't
-> because they already shipped so we just can't so now we need to
-> hack around it"?
+On Thu, Sep 8, 2016 at 3:21 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Sep 5, 2016 at 2:26 PM, Russell King - ARM Linux
+> <linux@armlinux.org.uk> wrote:
+>> On Mon, Sep 05, 2016 at 11:06:28AM +0200, Linus Walleij wrote:
+>>> I couldn't resist testing on the Compaq iPAQ h3600. It works the
+>>> same as before so:
+>>> Tested-by: Linus Walleij <linus.walleij@linaro.org> [for Compaq iPAQ H3600]
+>>
+>> Great news.  I've been thinking about digging out my h3600, but it's
+>> very old, and hasn't been turned on for many years.  I'm not sure what
+>> state it's in.
+>>
+>> I've been hoping to try booting some kernels with qemu-system-arm, but
+>> so far I've completely failed to get qemu-system-arm to do anything
+>> useful - it just sits there doing apparently nothing, irrespective of
+>> which platform I choose or which kernel I give it.
+>>
+>>> The only news in the bootlog is this:
+>>> sa11x0-pcmcia: probe of sa11x0-pcmcia failed with error -2
+>>
+>> Not so great news - that's -ENOENT.  Did that happen before these
+>> changes?  That could be that the gpiod lookup table isn't found.
+>> However, if that were the case, I'd have expected an error message
+>> along the lines of:
+>>
+>> Failed to get GPIO for xxx: -nnn
+>>
+>> from soc_pcmcia_request_gpiods().  The other possibility is that
+>> we're not getting to sa11x0_drv_pcmcia_legacy_probe() but instead
+>> trying to initialise it as a generic sa11x0 socket, and
+>> sa11x0_pcmcia_hw_init() is failing as a result.
+>>
+>> We should be using the legacy probe on H3600, so sa11x0_pcmcia_hw_init()
+>> should never be reached.
+>
+> However that is what happens, this is my callstack after
+> adding some prints:
+>
+> sa11x0_pcmcia_init
+> sa11x0_drv_pcmcia_probe
+> soc_pcmcia_init_one
+> soc_pcmcia_add_one
+> soc_pcmcia_hw_init
+> sa11x0_pcmcia_hw_init
+> soc_pcmcia_add_one: pcmcia HW init failed
+> sa11x0-pcmcia: probe of sa11x0-pcmcia failed with error -2
 
-Isn't it always the case? ;-)
+Bah I found the cause, just a simple oneliner typo in one of
+the patches. I will comment on the patch in question so you can
+fix it up on your branch.
 
-Once the hardware enters stores the firmware cannot be changed anymore
-and we get all the fun working around problems in the OS.
-
-> Letting Linux map an interrupt it cannot access and then papering it
-> over by using handle_simple_irq() just feels wrong to me.
-> 
-> I would argue for associating the mask of BIOS-reserved IRQs with
-> something in ACPI and implement the mentioned scheme to avoid
-> even mapping them seems most logical.
-
-I'm going to re-read the hardware spec and see if there is anything we
-can do about this. The newer hardware (Skylake, Broxton) has a bit that
-tells the IRQ is routed directly to I/O-APIC but unfortunately Braswell
-misses that. There may be something else, though.
-
-> If we have to use handle_simple_irq() by default on all I prefer to put
-> in a very fat comment of the type:
-> 
-> /*
->  * HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK
->  *
->  * Some interrupts are BIOS-reserved but we don't know which ones!
->  * So we anyway map them and assign the handle_simple_irq() handle
->  * to them, leaving them unmasked, pretending they can be used, and
->  * pray no-one will accidentally use these GPIO IRQs.
->  *
->  * HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK
->   */
-
-OK, got it.
-
-Let me try to come up with a solution that both works and does not
-involve using handle_simple_irq.
+Yours,
+Linus Walleij
