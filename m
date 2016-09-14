@@ -1,59 +1,84 @@
-From: Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 1/6] pinctrl: bcm2835: add pull defines to dt bindings
-Date: Wed, 14 Sep 2016 10:23:30 +0200
-Message-ID: <1473841415-937-2-git-send-email-kraxel@redhat.com>
-References: <1473841415-937-1-git-send-email-kraxel@redhat.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1473841415-937-1-git-send-email-kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
+Date: Wed, 14 Sep 2016 11:26:10 +0300
+Message-ID: <20160914082610.GV1811@lahna.fi.intel.com>
+References: <20160911080506.GO15313@lahna.fi.intel.com>
+ <20160912065656.GA2411@ktx>
+ <20160912090401.GB1811@lahna.fi.intel.com>
+ <20160912130444.GB2411@ktx>
+ <20160912131111.GG1811@lahna.fi.intel.com>
+ <CACRpkdZRguTg4davCW-x6HvRJgOxNz8R4KyeFCEnQzyXPkP6cg@mail.gmail.com>
+ <20160913093302.GL1811@lahna.fi.intel.com>
+ <CACRpkdY9+poXW1cw4K20edGYjiuPN9DH0umsEAh31iHXGJhx6g@mail.gmail.com>
+ <20160913125214.GO1811@lahna.fi.intel.com>
+ <CACRpkdY-8_+jp+J55FnDHrt-y6woFTEqs7JPxR+KRRcuWPpQWw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga03.intel.com ([134.134.136.65]:28786 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755890AbcINI0Q (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 14 Sep 2016 04:26:16 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdY-8_+jp+J55FnDHrt-y6woFTEqs7JPxR+KRRcuWPpQWw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Phidias Chiang <phidias.chiang@canonical.com>, Anisse Astier <anisse@astier.eu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Also delete (unused) private enum from driver.
-The pull defines can be used instead if needed.
+On Tue, Sep 13, 2016 at 10:57:31PM +0200, Linus Walleij wrote:
+> On Tue, Sep 13, 2016 at 2:52 PM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> > [Me]
+> >> A-ha! But why are you registering a irqdomain entry for an interrupt
+> >> that cannot be used, hm?
+> >
+> > Unfortunately there is no way to figure out from the hardware (or
+> > firmware) whether the interrupt is supposed to be used by the GPIO
+> > driver or something else.
+> 
+> So the fact that we kept it in valid-mask in the DT was a hint: it is
+> part of the hardware description.
+> 
+> Isn't this (a list of what IRQs are reserved by BIOS) by sheer logic
+> something that ACPI should provide?
+> 
+> Or is this one of those "well we could alter ACPI tables but we can't
+> because they already shipped so we just can't so now we need to
+> hack around it"?
 
-Signed-off-by: Gerd Hoffmann <kraxel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
----
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 6 ------
- include/dt-bindings/pinctrl/bcm2835.h | 5 +++++
- 2 files changed, 5 insertions(+), 6 deletions(-)
+Isn't it always the case? ;-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index fa77165..4cf612b 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -76,12 +76,6 @@ enum bcm2835_pinconf_param {
- 	BCM2835_PINCONF_PARAM_PULL,
- };
- 
--enum bcm2835_pinconf_pull {
--	BCM2835_PINCONFIG_PULL_NONE,
--	BCM2835_PINCONFIG_PULL_DOWN,
--	BCM2835_PINCONFIG_PULL_UP,
--};
--
- #define BCM2835_PINCONF_PACK(_param_, _arg_) ((_param_) << 16 | (_arg_))
- #define BCM2835_PINCONF_UNPACK_PARAM(_conf_) ((_conf_) >> 16)
- #define BCM2835_PINCONF_UNPACK_ARG(_conf_) ((_conf_) & 0xffff)
-diff --git a/include/dt-bindings/pinctrl/bcm2835.h b/include/dt-bindings/pinctrl/bcm2835.h
-index 6f0bc37..e4e4fdf 100644
---- a/include/dt-bindings/pinctrl/bcm2835.h
-+++ b/include/dt-bindings/pinctrl/bcm2835.h
-@@ -24,4 +24,9 @@
- #define BCM2835_FSEL_ALT2	6
- #define BCM2835_FSEL_ALT3	7
- 
-+/* brcm,pull property */
-+#define BCM2835_PUD_OFF		0
-+#define BCM2835_PUD_DOWN	1
-+#define BCM2835_PUD_UP		2
-+
- #endif /* __DT_BINDINGS_PINCTRL_BCM2835_H__ */
--- 
-1.8.3.1
+Once the hardware enters stores the firmware cannot be changed anymore
+and we get all the fun working around problems in the OS.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Letting Linux map an interrupt it cannot access and then papering it
+> over by using handle_simple_irq() just feels wrong to me.
+> 
+> I would argue for associating the mask of BIOS-reserved IRQs with
+> something in ACPI and implement the mentioned scheme to avoid
+> even mapping them seems most logical.
+
+I'm going to re-read the hardware spec and see if there is anything we
+can do about this. The newer hardware (Skylake, Broxton) has a bit that
+tells the IRQ is routed directly to I/O-APIC but unfortunately Braswell
+misses that. There may be something else, though.
+
+> If we have to use handle_simple_irq() by default on all I prefer to put
+> in a very fat comment of the type:
+> 
+> /*
+>  * HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK
+>  *
+>  * Some interrupts are BIOS-reserved but we don't know which ones!
+>  * So we anyway map them and assign the handle_simple_irq() handle
+>  * to them, leaving them unmasked, pretending they can be used, and
+>  * pray no-one will accidentally use these GPIO IRQs.
+>  *
+>  * HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK
+>   */
+
+OK, got it.
+
+Let me try to come up with a solution that both works and does not
+involve using handle_simple_irq.
