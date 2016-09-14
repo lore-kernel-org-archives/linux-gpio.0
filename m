@@ -1,54 +1,71 @@
-From: Deepak Das <deepak_das@mentor.com>
-Subject: [PATCH v2] driver: base: pinctrl: return error from,
- pinctrl_bind_pins()
-Date: Wed, 14 Sep 2016 12:04:18 +0530
-Message-ID: <57D8EF6A.2050200@mentor.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.9 (take three)
+Date: Wed, 14 Sep 2016 09:59:28 +0200
+Message-ID: <1473839968-7876-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: vzapolsk <Vladimir_Zapolskiy@mentor.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:34344 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760286AbcINH7f (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 03:59:35 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-strict pin controller returns -EINVAL in case of pin request which
-is already claimed by somebody else.
-Following is the sequence of calling pin_request() from
-pinctrl_bind_pins():-
-pinctrl_bind_pins()->pinctrl_select_state()->pinmux_enable_setting()->
-pin_request()
+	Hi Linus,
 
-But pinctrl_bind_pins() only returns -EPROBE_DEFER which makes device
-driver probe successful even if the pin request is rejected by the pin
-controller subsystem.
+The following changes since commit 374cf6992de89fc38d4d923c89b40816d341d678:
 
-This commit modifies pinctrl_bind_pins() to return error if the pin is
-rejected by pin control subsystem.
+  pinctrl: sh-pfc: r8a7796: Add SDHI pins, groups and functions (2016-08-19 09:37:20 +0200)
 
-Signed-off-by: Deepak Das <deepak_das@mentor.com>
----
-Changes from v1 to v2:
-* Modified the comment to indicate return error in case of
-   invalid pin requests
+are available in the git repository at:
 
-  drivers/base/pinctrl.c | 4 ++--
-  1 file changed, 2 insertions(+), 2 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.9-tag3
 
-diff --git a/drivers/base/pinctrl.c b/drivers/base/pinctrl.c
-index 5fb74b4..12f0eb5 100644
---- a/drivers/base/pinctrl.c
-+++ b/drivers/base/pinctrl.c
-@@ -80,8 +80,8 @@ cleanup_alloc:
-         devm_kfree(dev, dev->pins);
-         dev->pins = NULL;
+for you to fetch changes up to 77fd4136e58c642482f03d293d5717658a569b4b:
 
--       /* Only return deferrals */
--       if (ret != -EPROBE_DEFER)
-+       /* Return deferrals & invalid pin requests */
-+       if ((ret != -EPROBE_DEFER) && (ret != -EINVAL))
-                 ret = 0;
+  pinctrl: sh-pfc: r8a7794: Implement voltage switching for SDHI (2016-09-14 09:26:54 +0200)
 
-         return ret;
+----------------------------------------------------------------
+pinctrl: sh-pfc: Updates for v4.9 (take three)
+
+  - Return pinconf with arguments in packed format,
+  - MSIOF and QSPI pin groups on R-Car V2H,
+  - Voltage switching for SDHI on R-Car M2-W, E2, and M3-W.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Niklas Söderlund (1):
+      pinctrl: sh-pfc: Return pinconf with arguments in packed format
+
+Sergei Shtylyov (2):
+      pinctrl: sh-pfc: r8a7792: Add QSPI pin groups
+      pinctrl: sh-pfc: r8a7792: Add MSIOF pin groups
+
+Simon Horman (4):
+      pinctrl: sh-pfc: r8a7796: Add voltage switch operations for SDHI
+      pinctrl: sh-pfc: Add PORT_GP_24 helper macro
+      pinctrl: sh-pfc: r8a7791: Implement voltage switching for SDHI
+      pinctrl: sh-pfc: r8a7794: Implement voltage switching for SDHI
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c |  29 ++++++++-
+ drivers/pinctrl/sh-pfc/pfc-r8a7792.c | 115 +++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  28 ++++++++-
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c |  28 ++++++++-
+ drivers/pinctrl/sh-pfc/pinctrl.c     |   8 ++-
+ drivers/pinctrl/sh-pfc/sh_pfc.h      |   8 ++-
+ 6 files changed, 207 insertions(+), 9 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
 --
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
