@@ -1,58 +1,59 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH 18/33] pcmcia: sa1100: provide generic CF support
-Date: Wed, 14 Sep 2016 10:06:02 +0100
-Message-ID: <20160914090602.GB1041@n2100.armlinux.org.uk>
-References: <20160829102328.GA28796@n2100.armlinux.org.uk>
- <E1beJl3-0000nS-Nw@rmk-PC.armlinux.org.uk>
- <CACRpkda7qHx4JVdVv+q3=twTup9rDD2ke8K-tSH9CkhZMQqemg@mail.gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v5 2/9] drivers: irqchip: Add STM32 external interrupts
+ support
+Date: Wed, 14 Sep 2016 11:19:02 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1609141103420.6233@nanos>
+References: <1473432124-6784-1-git-send-email-alexandre.torgue@st.com> <1473432124-6784-3-git-send-email-alexandre.torgue@st.com> <alpine.DEB.2.20.1609131713490.6233@nanos> <6941f61d-0b33-4108-0135-b11887cd0488@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:51993 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755890AbcINJGP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 05:06:15 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkda7qHx4JVdVv+q3=twTup9rDD2ke8K-tSH9CkhZMQqemg@mail.gmail.com>
+Received: from Galois.linutronix.de ([146.0.238.70]:33477 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751567AbcINJVh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 05:21:37 -0400
+In-Reply-To: <6941f61d-0b33-4108-0135-b11887cd0488@st.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-pcmcia@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kristoffer Ericson <kristoffer.ericson@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
+To: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com, lee.jones@linaro.org
 
-On Wed, Sep 14, 2016 at 10:52:39AM +0200, Linus Walleij wrote:
-> On Mon, Aug 29, 2016 at 12:25 PM, Russell King
-> <rmk+kernel@armlinux.org.uk> wrote:
+On Tue, 13 Sep 2016, Alexandre Torgue wrote:
+> On 09/13/2016 05:21 PM, Thomas Gleixner wrote:
+> > On Fri, 9 Sep 2016, Alexandre TORGUE wrote:
+> > > +static void stm32_exti_free(struct irq_domain *d, unsigned int virq,
+> > > +			    unsigned int nr_irqs)
+> > > +{
+> > > +	struct irq_data *data = irq_get_irq_data(virq);
+> > > +
+> > > +	irq_gc_mask_clr_bit(data->parent_data);
+> > 
+> > I have a hard time to understand this. The irq domain is not hierarchical.
 > 
-> > Provide generic non-voltage sensing socket support for StrongARM
-> > platforms using the gpiolib and regulator subsystems to obtain the
-> > resources to control the socket.
-> >
-> > Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> (...)
+> Actually, I wanted to test ".free" callback function of gpio_irq_domain in
+> STM32 pinctrl driver. To do that I modified gpio driver: just after getting
+> virq through gpio_to_irq, I called "irq_dispose_mapping(virq)".
+> I know it is dirty but I thought it was the only way to test.
 > 
-> > +static int sa11x0_drv_pcmcia_probe(struct platform_device *pdev)
-> > +{
-> > +       struct soc_pcmcia_socket *skt;
-> > +       struct device *dev = &pdev->dev;
-> > +
-> > +       if (dev->id == -1)
-> > +               return sa11x0_drv_pcmcia_legacy_probe(pdev);
-> 
-> There is a typo there, it should be pdev->id rather than dev->id.
-> 
-> After fixing this, my legacy h3600 PCMCIA started probing again.
+> Doing that, I see that ".free" callback of gpio domain is called but as it is
+> hirerchical ".free" callback for parent domain (exti one) is also called. I
+> observed that virq was well unmapped, but not masked at exti level. It is for
+> this reason than I added "irq_gc_mask_clr_bit(data->parent_data);" which mask
+> interrupt at exti level.
 
-Thanks, I've included a change there, should be part of the branch by
-the time you get this email - sa1100 head should be 9ad0f8181616.  If
-not, it's probably still being pushed out over my slow 'net link.
+Aargh. I really misread the patch, but this is entirely non obvious and you
+should do:
 
-> (It revealed another bug in fetching GPIOs but it is an orthogobal
-> problem altogether, looking into it.)
+       struct irq_data *data = irq_domain_get_irq_data(d, virq);
 
-If you're referring to the generic sa1100 pcmcia code, there's a fix
-for that already in my branch.
+       irq_gc_mask_clr_bit(d);
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+Then it is entirely clear that you mask the interrupt of _this_ (the exti)
+domain.
+
+Now what really bugs me is that you do that at all. An interrupt which is
+freed must be masked already. Why is it unmasked in the first place?
+
+Thanks,
+
+	tglx
+
