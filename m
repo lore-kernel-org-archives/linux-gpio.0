@@ -1,34 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH -next] gpio: aspeed: fix return value check in aspeed_gpio_probe()
-Date: Thu, 15 Sep 2016 14:24:22 +0200
-Message-ID: <CACRpkdabEO44MGtwe4ychidBh8XG95U-dpiC1WvdFCfv-SF1+g@mail.gmail.com>
-References: <1473903032-20524-1-git-send-email-weiyj.lk@gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 13/19] pinctrl: st: Remove STiH415/6 SoC pinctrl driver support.
+Date: Thu, 15 Sep 2016 14:33:59 +0200
+Message-ID: <CACRpkdaqueB4+LJxiqDx9xERYAO=3M3tRgQjafgTqsW+H3eaRA@mail.gmail.com>
+References: <1473859677-9231-1-git-send-email-peter.griffin@linaro.org> <1473859677-9231-14-git-send-email-peter.griffin@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:34467 "EHLO
-        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933268AbcIOMbO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Sep 2016 08:31:14 -0400
-Received: by mail-oi0-f41.google.com with SMTP id m11so66527912oif.1
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Sep 2016 05:31:14 -0700 (PDT)
-In-Reply-To: <1473903032-20524-1-git-send-email-weiyj.lk@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1473859677-9231-14-git-send-email-peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter Griffin <peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:ARM/STI ARCHITECTURE" <kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org>, Patrice CHOTARD <patrice.chotard-qxv4g6HH51o@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: Joel Stanley <joel@jms.id.au>, Alexandre Courbot <gnurou@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Sep 15, 2016 at 3:30 AM, Wei Yongjun <weiyj.lk@gmail.com> wrote:
+On Wed, Sep 14, 2016 at 3:27 PM, Peter Griffin <peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
 
-> From: Wei Yongjun <weiyongjun1@huawei.com>
+> STiH415/6 SoC support is being removed from the kernel.
+> This patch updates the ST pinctrl driver and removes
+> references to these obsolete platforms. As some structures
+> referenced by STiH407 based configuration were shared with
+> STiH416 we update these names to match the remaining
+> supported platform.
 >
-> In case of error, the function devm_ioremap_resource() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check should
-> be replaced with IS_ERR().
->
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Signed-off-by: Peter Griffin <peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 
-Patch applied with Joel's ACK.
+Patch applied.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
