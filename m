@@ -1,136 +1,129 @@
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 1/2] gpiolib: Add possibility to mask which GPIOs are added to IRQ domain
-Date: Thu, 15 Sep 2016 18:52:09 +0300
-Message-ID: <20160915155210.94413-1-mika.westerberg@linux.intel.com>
+Subject: [PATCH 2/2] pinctrl: cherryview: Do not add all southwest and north GPIOs to IRQ domain
+Date: Thu, 15 Sep 2016 18:52:10 +0300
+Message-ID: <20160915155210.94413-2-mika.westerberg@linux.intel.com>
 References: <CACRpkdZBbcL87Hq94sFYdDOWnC7S_JGtArTNMimAps663UQNgw@mail.gmail.com>
+ <20160915155210.94413-1-mika.westerberg@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:10250 "EHLO mga02.intel.com"
+Received: from mga05.intel.com ([192.55.52.43]:54359 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751032AbcIOPwR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1751302AbcIOPwR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Thu, 15 Sep 2016 11:52:17 -0400
-In-Reply-To: <CACRpkdZBbcL87Hq94sFYdDOWnC7S_JGtArTNMimAps663UQNgw@mail.gmail.com>
+In-Reply-To: <20160915155210.94413-1-mika.westerberg@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Phidias Chiang <phidias.chiang@canonical.com>, Anisse Astier <anisse@astier.eu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-When using GPIO irqchip helpers to setup irqchip for a gpiolib based
-driver, it is not possible to select which GPIOs to add to the IRQ domain.
-Instead it just adds all GPIOs which is not always desired. For example
-there might be GPIOs that for some reason just cannot be used as interrupts
-at all.
+It turns out that for north and southwest communities, they can only
+generate GPIO interrupts for lower 8 interrupts (IntSel value). The upper
+part (8-15) can only generate GPEs (General Purpose Events).
 
-To make this possible we add valid_mask to each gpio_chip and by default
-assume all GPIOs can be used as interrupts. Drivers can then tune this
-using clear_bit() or similar before they call gpiochip_irqchip_add().
+Now the reason why EC events such as pressing hotkeys does not work if we
+mask all the interrupts is that in order to generate either interrupts or
+GPEs the INTMASK register must have that particular interrupt unmasked. In
+case of GPEs the CPU does not trigger normal interrupt (and thus the GPIO
+driver does not see it) but instead it causes SCI (System Control
+Interrupt) to be triggered with the GPE in question set.
 
-Suggested-by: Linus Walleij <linus.walleij@linaro.org>
+To make this all work as expected we only add those GPIOs to the IRQ domain
+that can actually generate interrupts (IntSel value 0-7) and skip others.
+
+Reported-by: Phidias Chiang <phidias.chiang@canonical.com>
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/gpio/gpiolib.c      | 32 +++++++++++++++++++++++++++++---
- include/linux/gpio/driver.h |  1 +
- 2 files changed, 30 insertions(+), 3 deletions(-)
+Hi Phidias and Anisse,
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 53ff25ac66d8..d84c23b47f44 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1186,6 +1186,18 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- 		if (status)
- 			goto err_remove_chip;
- 	}
-+
-+#ifdef CONFIG_GPIOLIB_IRQCHIP
-+	chip->valid_mask = kcalloc(BITS_TO_LONGS(chip->ngpio), sizeof(long),
-+				   GFP_KERNEL);
-+	if (!chip->valid_mask)
-+		return -ENOMEM;
-+
-+	/* All GPIOs are valid interrupt sources by default */
-+	for (i = 0; i < chip->ngpio; i++)
-+		set_bit(i, chip->valid_mask);
-+#endif
-+
- 	return 0;
+Can you try this series out? It should finally fix the EC event issue(s)
+you have reported.
+
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 31 ++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index 0fe8fad25e4d..717ef1b00adb 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -134,6 +134,7 @@ struct chv_gpio_pinrange {
+  * @gpio_ranges: An array of GPIO ranges in this community
+  * @ngpio_ranges: Number of GPIO ranges
+  * @ngpios: Total number of GPIOs in this community
++ * @nirqs: Total number of IRQs this community can generate
+  */
+ struct chv_community {
+ 	const char *uid;
+@@ -146,6 +147,7 @@ struct chv_community {
+ 	const struct chv_gpio_pinrange *gpio_ranges;
+ 	size_t ngpio_ranges;
+ 	size_t ngpios;
++	size_t nirqs;
+ };
  
- err_remove_chip:
-@@ -1442,9 +1454,12 @@ void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
+ struct chv_pin_context {
+@@ -396,6 +398,12 @@ static const struct chv_community southwest_community = {
+ 	.gpio_ranges = southwest_gpio_ranges,
+ 	.ngpio_ranges = ARRAY_SIZE(southwest_gpio_ranges),
+ 	.ngpios = ARRAY_SIZE(southwest_pins),
++	/*
++	 * Southwest community can benerate GPIO interrupts only for the
++	 * first 8 interrupts. The upper half (8-15) can only be used to
++	 * trigger GPEs.
++	 */
++	.nirqs = 8,
+ };
+ 
+ static const struct pinctrl_pin_desc north_pins[] = {
+@@ -479,6 +487,12 @@ static const struct chv_community north_community = {
+ 	.gpio_ranges = north_gpio_ranges,
+ 	.ngpio_ranges = ARRAY_SIZE(north_gpio_ranges),
+ 	.ngpios = ARRAY_SIZE(north_pins),
++	/*
++	 * North community can benerate GPIO interrupts only for the first
++	 * 8 interrupts. The upper half (8-15) can only be used to trigger
++	 * GPEs.
++	 */
++	.nirqs = 8,
+ };
+ 
+ static const struct pinctrl_pin_desc east_pins[] = {
+@@ -521,6 +535,7 @@ static const struct chv_community east_community = {
+ 	.gpio_ranges = east_gpio_ranges,
+ 	.ngpio_ranges = ARRAY_SIZE(east_gpio_ranges),
+ 	.ngpios = ARRAY_SIZE(east_pins),
++	.nirqs = 16,
+ };
+ 
+ static const struct pinctrl_pin_desc southeast_pins[] = {
+@@ -646,6 +661,7 @@ static const struct chv_community southeast_community = {
+ 	.gpio_ranges = southeast_gpio_ranges,
+ 	.ngpio_ranges = ARRAY_SIZE(southeast_gpio_ranges),
+ 	.ngpios = ARRAY_SIZE(southeast_pins),
++	.nirqs = 16,
+ };
+ 
+ static const struct chv_community *chv_communities[] = {
+@@ -1539,6 +1555,21 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+ 		offset += range->npins;
  	}
  
- 	/* Set the parent IRQ for all affected IRQs */
--	for (offset = 0; offset < gpiochip->ngpio; offset++)
-+	for (offset = 0; offset < gpiochip->ngpio; offset++) {
-+		if (!test_bit(offset, gpiochip->valid_mask))
-+			continue;
- 		irq_set_parent(irq_find_mapping(gpiochip->irqdomain, offset),
- 			       parent_irq);
++	/* Do not add GPIOs that can only generate GPEs to the IRQ domain */
++	for (i = 0; i < pctrl->community->npins; i++) {
++		const struct pinctrl_pin_desc *desc;
++		u32 intsel;
++
++		desc = &pctrl->community->pins[i];
++
++		intsel = readl(chv_padreg(pctrl, desc->number, CHV_PADCTRL0));
++		intsel &= CHV_PADCTRL0_INTSEL_MASK;
++		intsel >>= CHV_PADCTRL0_INTSEL_SHIFT;
++
++		if (intsel >= pctrl->community->nirqs)
++			clear_bit(i, chip->valid_mask);
 +	}
- }
- EXPORT_SYMBOL_GPL(gpiochip_set_chained_irqchip);
- 
-@@ -1551,9 +1566,12 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
- 
- 	/* Remove all IRQ mappings and delete the domain */
- 	if (gpiochip->irqdomain) {
--		for (offset = 0; offset < gpiochip->ngpio; offset++)
-+		for (offset = 0; offset < gpiochip->ngpio; offset++) {
-+			if (!test_bit(offset, gpiochip->valid_mask))
-+				continue;
- 			irq_dispose_mapping(
- 				irq_find_mapping(gpiochip->irqdomain, offset));
-+		}
- 		irq_domain_remove(gpiochip->irqdomain);
- 	}
- 
-@@ -1562,6 +1580,9 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
- 		gpiochip->irqchip->irq_release_resources = NULL;
- 		gpiochip->irqchip = NULL;
- 	}
 +
-+	kfree(gpiochip->valid_mask);
-+	gpiochip->valid_mask = NULL;
- }
+ 	/* Clear all interrupts */
+ 	chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
  
- /**
-@@ -1597,6 +1618,7 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
- 			  struct lock_class_key *lock_key)
- {
- 	struct device_node *of_node;
-+	bool irq_base_set = false;
- 	unsigned int offset;
- 	unsigned irq_base = 0;
- 
-@@ -1646,13 +1668,17 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
- 	 * necessary to allocate descriptors for all IRQs.
- 	 */
- 	for (offset = 0; offset < gpiochip->ngpio; offset++) {
-+		if (!test_bit(offset, gpiochip->valid_mask))
-+			continue;
- 		irq_base = irq_create_mapping(gpiochip->irqdomain, offset);
--		if (offset == 0)
-+		if (!irq_base_set) {
- 			/*
- 			 * Store the base into the gpiochip to be used when
- 			 * unmapping the irqs.
- 			 */
- 			gpiochip->irq_base = irq_base;
-+			irq_base_set = true;
-+		}
- 	}
- 
- 	acpi_gpiochip_request_interrupts(gpiochip);
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 50882e09289b..8a7430230562 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -191,6 +191,7 @@ struct gpio_chip {
- 	unsigned int		irq_default_type;
- 	int			irq_parent;
- 	struct lock_class_key	*lock_key;
-+	unsigned long		*valid_mask;
- #endif
- 
- #if defined(CONFIG_OF_GPIO)
 -- 
 2.9.3
 
