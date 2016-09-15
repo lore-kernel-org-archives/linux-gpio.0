@@ -1,59 +1,56 @@
-From: Joel Stanley <joel@jms.id.au>
-Subject: Re: [PATCH -next] gpio: aspeed: fix return value check in aspeed_gpio_probe()
-Date: Thu, 15 Sep 2016 11:18:12 +0930
-Message-ID: <CACPK8XcGYs9W1Wk=oXM9txDN5fiEszSuNh9y4Vhc55YUTj6nAQ@mail.gmail.com>
-References: <1473903032-20524-1-git-send-email-weiyj.lk@gmail.com>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: lockdep: incorrect deadlock warning with two GPIO expanders
+Date: Thu, 15 Sep 2016 09:51:50 +0200
+Message-ID: <20160915075150.GO5008@twins.programming.kicks-ass.net>
+References: <CAMpxmJUuj5VrzEu4YZUVxr-ZqFU4VGJpjyHimMJug23EC7j=sQ@mail.gmail.com>
+ <20160912120938.GR10153@twins.programming.kicks-ass.net>
+ <CAMpxmJW5WNF2zE+fjmpDxubAYA_A67iQhNGTvSAL-MD-6dFTCw@mail.gmail.com>
+ <20160912153356.GD10121@twins.programming.kicks-ass.net>
+ <CACRpkdb00e=YexmCRwv=evVLjBDM6Pjqtcs+Mnc8JVD1Ssa5mA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:36355 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754281AbcIOBse (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Sep 2016 21:48:34 -0400
-Received: by mail-vk0-f65.google.com with SMTP id c124so333612vka.3
-        for <linux-gpio@vger.kernel.org>; Wed, 14 Sep 2016 18:48:33 -0700 (PDT)
-In-Reply-To: <1473903032-20524-1-git-send-email-weiyj.lk@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdb00e=YexmCRwv=evVLjBDM6Pjqtcs+Mnc8JVD1Ssa5mA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Alexandre Courbot <gnurou@gmail.com>, Ingo Molnar <mingo@redhat.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>
 
-On Thu, Sep 15, 2016 at 11:00 AM, Wei Yongjun <weiyj.lk@gmail.com> wrote:
-> From: Wei Yongjun <weiyongjun1@huawei.com>
->
-> In case of error, the function devm_ioremap_resource() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check should
-> be replaced with IS_ERR().
->
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+On Tue, Sep 13, 2016 at 02:29:24PM +0200, Linus Walleij wrote:
+> On Mon, Sep 12, 2016 at 5:33 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+> > On Mon, Sep 12, 2016 at 05:16:14PM +0200, Bartosz Golaszewski wrote:
+> 
+> >> AFAIK there is no clean way to tell that a GPIO is used by an I2C
+> >> multiplexer at probe time. Linus, Alexandre could you confirm?
+> 
+> Nominally, the GPIO descriptors are just abstract resources such
+> as regulators or clocks, they can be used for a lot but just like
+> a clock, regulator, dma channel etc does not know who is using
+> it and for what, it does not know this, no.
+> 
+> > You cannot inspect the device tree while probing?
+> 
+> Of course it *can* but we would end up encoding a special
+> case every time something like this happens, tied to just
+> device tree, then another bolt-on for ACPI etc.
+> 
+> I have a hard time following the problem really, I'm
+> afraid I'm simply just not smart enough :(
 
-Acked-by: Joel Stanley <joel@jms.id.au>
+Why would this be DT or ACPI specific? Linux itself has a tree/graph of
+all busses and devices right? That's what all this drivers/base/ stuff
+is on about.
 
-Thanks for the patch!
+So can't you walk up that and see if you encounter the exact same driver
+again?
 
-Cheers,
+Something like:
 
-Joel
+	for (nr = 0, parent = dev->parent; parent; parent = parent->parent) {
+		if (parent->device_driver == &pca953x_driver.driver)
+			nr++;
+	}
 
-> ---
->  drivers/gpio/gpio-aspeed.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-> index 9f7266e..8aa3406 100644
-> --- a/drivers/gpio/gpio-aspeed.c
-> +++ b/drivers/gpio/gpio-aspeed.c
-> @@ -413,8 +413,8 @@ static int __init aspeed_gpio_probe(struct platform_device *pdev)
->                 return -ENXIO;
->
->         gpio->base = devm_ioremap_resource(&pdev->dev, res);
-> -       if (!gpio->base)
-> -               return -ENOMEM;
-> +       if (IS_ERR(gpio->base))
-> +               return PTR_ERR(gpio->base);
->
->         spin_lock_init(&gpio->lock);
->
->
->
->
+Again, I have no clue how any of this works, but that seems like
+something that ought to work.
