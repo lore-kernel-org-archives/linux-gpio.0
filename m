@@ -1,47 +1,59 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
-Date: Thu, 15 Sep 2016 14:39:47 +0200
-Message-ID: <CACRpkdZBbcL87Hq94sFYdDOWnC7S_JGtArTNMimAps663UQNgw@mail.gmail.com>
-References: <20160912090401.GB1811@lahna.fi.intel.com> <20160912130444.GB2411@ktx>
- <20160912131111.GG1811@lahna.fi.intel.com> <CACRpkdZRguTg4davCW-x6HvRJgOxNz8R4KyeFCEnQzyXPkP6cg@mail.gmail.com>
- <20160913093302.GL1811@lahna.fi.intel.com> <CACRpkdY9+poXW1cw4K20edGYjiuPN9DH0umsEAh31iHXGJhx6g@mail.gmail.com>
- <20160913125214.GO1811@lahna.fi.intel.com> <CACRpkdY-8_+jp+J55FnDHrt-y6woFTEqs7JPxR+KRRcuWPpQWw@mail.gmail.com>
- <20160914082610.GV1811@lahna.fi.intel.com> <CACRpkdYRYR0hSacpxieG6k9qHyjMFsr6ViYU3HCcQEzB9NXLGQ@mail.gmail.com>
- <20160914151234.GZ1811@lahna.fi.intel.com>
+Subject: Re: lockdep: incorrect deadlock warning with two GPIO expanders
+Date: Thu, 15 Sep 2016 14:41:35 +0200
+Message-ID: <CACRpkdbbx4YA4paPGF1PtWYrPLR=dDVH8Q7FWd2gUCygT2HwtQ@mail.gmail.com>
+References: <CAMpxmJUuj5VrzEu4YZUVxr-ZqFU4VGJpjyHimMJug23EC7j=sQ@mail.gmail.com>
+ <20160912120938.GR10153@twins.programming.kicks-ass.net> <CAMpxmJW5WNF2zE+fjmpDxubAYA_A67iQhNGTvSAL-MD-6dFTCw@mail.gmail.com>
+ <20160912153356.GD10121@twins.programming.kicks-ass.net> <CACRpkdb00e=YexmCRwv=evVLjBDM6Pjqtcs+Mnc8JVD1Ssa5mA@mail.gmail.com>
+ <20160915075150.GO5008@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160914151234.GZ1811@lahna.fi.intel.com>
+In-Reply-To: <20160915075150.GO5008@twins.programming.kicks-ass.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Phidias Chiang <phidias.chiang@canonical.com>, Anisse Astier <anisse@astier.eu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Alexandre Courbot <gnurou@gmail.com>, Ingo Molnar <mingo@redhat.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Sep 14, 2016 at 5:12 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Wed, Sep 14, 2016 at 02:46:01PM +0200, Linus Walleij wrote:
->> > I'm going to re-read the hardware spec and see if there is anything we
->> > can do about this. The newer hardware (Skylake, Broxton) has a bit that
->> > tells the IRQ is routed directly to I/O-APIC but unfortunately Braswell
->> > misses that. There may be something else, though.
+On Thu, Sep 15, 2016 at 9:51 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Tue, Sep 13, 2016 at 02:29:24PM +0200, Linus Walleij wrote:
+>> On Mon, Sep 12, 2016 at 5:33 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+>> > On Mon, Sep 12, 2016 at 05:16:14PM +0200, Bartosz Golaszewski wrote:
 >>
->> So as far as we can determine:
+>> >> AFAIK there is no clean way to tell that a GPIO is used by an I2C
+>> >> multiplexer at probe time. Linus, Alexandre could you confirm?
 >>
->> (A) we are running on Braswell and
->> (B) we are probing this driver
+>> Nominally, the GPIO descriptors are just abstract resources such
+>> as regulators or clocks, they can be used for a lot but just like
+>> a clock, regulator, dma channel etc does not know who is using
+>> it and for what, it does not know this, no.
 >>
->> we can conclude that
+>> > You cannot inspect the device tree while probing?
 >>
->> (C) IRQs A,B,C are reserved by BIOS?
+>> Of course it *can* but we would end up encoding a special
+>> case every time something like this happens, tied to just
+>> device tree, then another bolt-on for ACPI etc.
 >>
->> That sounds doable?
+>> I have a hard time following the problem really, I'm
+>> afraid I'm simply just not smart enough :(
 >
-> Yes, it's doable but that requires some hard coding in the driver :-/
+> Why would this be DT or ACPI specific? Linux itself has a tree/graph of
+> all busses and devices right? That's what all this drivers/base/ stuff
+> is on about.
+>
+> So can't you walk up that and see if you encounter the exact same driver
+> again?
+>
+> Something like:
+>
+>         for (nr = 0, parent = dev->parent; parent; parent = parent->parent) {
+>                 if (parent->device_driver == &pca953x_driver.driver)
+>                         nr++;
+>         }
 
->From my point of view that is the lesser of two evils.
+Oh clever. Of course.
 
-We only have hard-coding (syntactic) madness over having
-behaviour-dependent (semantic) madness.
+Bartosz can you try out this approach?
 
 Yours,
 Linus Walleij
