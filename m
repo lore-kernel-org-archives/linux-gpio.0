@@ -1,59 +1,85 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v7 0/5] mfd: tps65218: Clean ups
-Date: Fri, 16 Sep 2016 14:31:53 +0100
-Message-ID: <20160916133153.GB27974@sirena.org.uk>
-References: <1470833641-29546-1-git-send-email-j-keerthy@ti.com>
- <ab94aff0-8470-57e5-2039-12f09bb0ca33@ti.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Requesting as a GPIO a pin already used through pinctrl
+Date: Fri, 16 Sep 2016 15:58:08 +0200
+Message-ID: <20160916135808.GA17518@lukather>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="x0PBmTWHB3bjoOVh"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:40564 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1756478AbcIPN6K (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Sep 2016 09:58:10 -0400
 Content-Disposition: inline
-In-Reply-To: <ab94aff0-8470-57e5-2039-12f09bb0ca33-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Keerthy <a0393675-l0cyMroinI0@public.gmane.org>
-Cc: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, t-kristo-l0cyMroinI0@public.gmane.org, russ.dill-l0cyMroinI0@public.gmane.org, d-gerlach-l0cyMroinI0@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>
 
 
---x0PBmTWHB3bjoOVh
+--jRHKVT23PllUwdXP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 16, 2016 at 05:12:38PM +0530, Keerthy wrote:
+Hi,
 
-> Should i repost this series? I do not see this series in linux-next yet.
+I just came across an interesting issue on our Allwinner SoCs.
 
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
+We have, like most of the SoCs these days, a bunch of boards that go
+through pinctrl to ensure their exclusive usage for a particular
+device. If a second pinctrl user comes in and tries to request one of
+those pins, it gets an error. Everything works fine.
 
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, though there are some other maintainers who like them - if in
-doubt look at how patches for the subsystem are normally handled.
+However, things are getting weird when you have that requested pin
+assigned to one device, and you try to export the GPIO on that pin
+(through sysfs for example, but given the implementation, I think that
+it would work alike by calling gpiod_request).
 
---x0PBmTWHB3bjoOVh
+In this case, you get no error, and the GPIO is indeed exported,
+allowing the user to change the direction and / or value of the pin,
+taking away that pin from its device.
+
+It seems from a look at the code that the request and
+gpio_request_enable callbacks in the pinmux_ops, called in
+pin_request, were meant to prevent such a thing.
+
+But looking at all the drivers around, no one seems to take that case
+into consideration, and this has been confirmed on an AT91 (which uses
+an entirely different driver).
+
+I have the feeling that the core should prevent that, making sure that
+the gpiod_request returns EBUSY in such a case, but I'm not really
+sure whether it's the case or not, and if it is, where that check is
+happening.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--jRHKVT23PllUwdXP
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
 
-iQEcBAEBCAAGBQJX2/RIAAoJECTWi3JdVIfQPPkH/jSgAYL6LPWH9DVs7MlSV08n
-WbmJLJLXXYLjnVNJLvxp6tGNNs9ZpoEwoVrXJgAtcUv7ItcP7jbDA62AJilcHGGU
-ziEXEAcSAhqsVgUxMVA6BiCjiTgN92xm4fvjveQQZzNX9tBpxBsUaE2fmFk0DvgV
-JI/lkrN0+KrnJZhktyLAlX5nB5u1oKXnw9vnAIuQ2bYcV5+Muy0m121zkTwdTabp
-TQUVSeA+M4WzNpoL8vtjL/dBoZlGvOIjkUhUKFzfmTbspYGRztem/dS3bzUhXZCL
-DGY1lVarhBijvZ6BCAtzNFPJOTLdZ1swZO3wzl7er4a1UvDVU8WQGJr0PQym6uE=
-=4Yre
+iQIcBAEBAgAGBQJX2/pwAAoJEBx+YmzsjxAgWVgP/jOsjEZ1JpPash3l/0uWSADu
+9G9YgB7ipQRUwt5Bugbt2NNljYiVm8AlDGSI0JeqRCxKkMS5A8+sXszdinw/XjFg
+aDIXpMx6VEGctRWRZQAS6mz+H5q6Cbb7u9qPVrWhFu9LBqeESVFlZ1hupg354Tov
+nZBtYO7knsi+LJk8Zuczg/sCxbgHWD61qarYTGBQ0hYLs7HuXbKkJpbMaPlJS6pf
+N473DCmIZZEGsMxLrvqNz0nEU8s3sHsHEy7Jmr2QE/yAr15IbrRyzL6R4q7Ey1Tz
+1VAqxqsP5CU1euTl2n4+F3POhWEbuCxdXB6WAqjjdQ+ppjDW+uk6MoeJqlV8UYjy
+4sqNnNFpUD/B5IHHdHWOFnLewcozMUvNNrnlcLhNf8BrlycmhHfu8ZYzXWwtC1An
+uW/E63u+aZ9pMUmmIB3SD5BGACE57Y2O0oRhg0UOb8At3VJRIE6HckFws2aao2Qw
+MbPD2QRgNhw6e3cIOCPLJYtlVE8D7hHrwGYE5FwoLoQd9nKoJjtduVn9LeAnA2Bm
+sbwYpC8CwYfLhnKhfRsJHzGTimfnt5gAmhlP96NwvgK/2buYgVbPLS3PbR2Lyxv8
+7nSbbRDHxCNCzvjBv0Jo3UAAeVT7npOvPHiHKWW9AAIhPHUbvHLisDHU18OT0898
+KWC4SRuV9AVL71qQXxXo
+=GFyH
 -----END PGP SIGNATURE-----
 
---x0PBmTWHB3bjoOVh--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--jRHKVT23PllUwdXP--
