@@ -1,40 +1,69 @@
-From: Amitesh Singh <singh.amitesh@gmail.com>
-Subject: [PATCH] gpio: f7188x: use gpiochip_get_data instead of container_of
-Date: Fri, 16 Sep 2016 22:28:53 +0530
-Message-ID: <1474045133-3892-1-git-send-email-singh.amitesh@gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v2 0/4] gpio: fix an incorrect lockdep warning
+Date: Fri, 16 Sep 2016 19:26:21 +0200
+Message-ID: <20160916172621.GA1426@katana>
+References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:32787 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754848AbcIPQ7B (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Sep 2016 12:59:01 -0400
+Received: from sauhun.de ([89.238.76.85]:54007 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755706AbcIPR0o (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 16 Sep 2016 13:26:44 -0400
+Content-Disposition: inline
+In-Reply-To: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Peter Rosin <peda@axentia.se>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-gpiochip_add_data is already used to add data pointer and chip.
-Lets rely on gpiochip_get_data which is getting used in other
-gpio_chip functions.
 
-Signed-off-by: Amitesh Singh <singh.amitesh@gmail.com>
----
- drivers/gpio/gpio-f7188x.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+--1yeeQ81UyVL57Vl7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
-index 600be84..e8accde 100644
---- a/drivers/gpio/gpio-f7188x.c
-+++ b/drivers/gpio/gpio-f7188x.c
-@@ -214,8 +214,7 @@ static struct f7188x_gpio_bank f81866_gpio_bank[] = {
- static int f7188x_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
- {
- 	int err;
--	struct f7188x_gpio_bank *bank =
--		container_of(chip, struct f7188x_gpio_bank, chip);
-+	struct f7188x_gpio_bank *bank = gpiochip_get_data(chip);
- 	struct f7188x_sio *sio = bank->data->sio;
- 	u8 dir;
- 
--- 
-2.7.4
+On Fri, Sep 16, 2016 at 06:02:41PM +0200, Bartosz Golaszewski wrote:
+> If an I2C GPIO multiplexer is driven by a GPIO provided by an expander
+> when there's a second expander using the same device driver on one of
+> the I2C bus segments, lockdep prints a deadlock warning when trying to
+> set the direction or the value of the GPIOs provided by the second
+> expander.
+>=20
+> This series exports an already existing function from i2c-core as
+> public API and reuses it in pca953x to pass a correct lock subclass
+> to lockdep.
 
+Looks good from my POV, but will wait for Peter to comment.
+
+If accepted, I'd think this should go via my I2C tree and I would like
+to ask Linus to ack patch 4. D'accord, everyone?
+
+Thanks,
+
+   Wolfram
+
+
+--1yeeQ81UyVL57Vl7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX3Cs9AAoJEBQN5MwUoCm2K5EQAJtJcdtBmS+r8yqnZms8cC0C
+wasFOZeKBqYzRGwx0Nk+xG3JXd9z7R/P2Qh+KXGQoyxW3x284V+aMaLQWk2tNAAy
+NS0O4BTPUUJPaKIHCE9ueO9DU61UL0DOVH+MeoOIz6U3/mEVqc/ZP8pvP07f82nH
+feb4vG8nTH211e561fvJ6VGPqBoj0GyMu/HMrYIF2CkPxuaCavSgDPpul9CKF85D
+4g1W9it4HGPHkBUQApwmS32H/m2rsk+3U6LelCjEOfGNi0cio88MThLG2NmKGzC2
+BJP/+n/A050/8fIj+YfBcaxyYO50xJjNiyAP9qwuACJ/iZ01I3SYQlV8P1kpQcB7
+Oi9q3T444mwkbi3ple6kb71imvFpvexUUsJdptEfvygpeCv5pGPZ+78RdTJDvYc1
+PHST2B6gaNDG23iYWFXKvpRUfoIhdcnxXCoIB7YzQHyQqSSgTDug5Z7kTjvJ+QOi
+hkIaYL44uL/eyF+8lHcNpZdCUQVq3Uy3pmY5MQjmguXCZG69XCMt32Na56p8bccf
+iDmi5qwYGaf9ss8hRuyNGJrB+WOEkhLrIU2K1ZTMpoSLZOsF2WA4OVDmPSSia+y2
+mUClel4F3yJ5NDbuagcTSKr1rOeAHNJlGDkcx7CFk0tO7yfvNfD+EBdB7k3f5/I0
+hAUSas0U99NRRSmhALuH
+=cYoO
+-----END PGP SIGNATURE-----
+
+--1yeeQ81UyVL57Vl7--
