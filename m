@@ -1,85 +1,103 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Requesting as a GPIO a pin already used through pinctrl
-Date: Fri, 16 Sep 2016 15:58:08 +0200
-Message-ID: <20160916135808.GA17518@lukather>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH] gpio: pca953x: fix an incorrect lockdep warning
+Date: Fri, 16 Sep 2016 16:18:04 +0200
+Message-ID: <1474035484-25134-1-git-send-email-bgolaszewski@baylibre.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:40564 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1756478AbcIPN6K (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Sep 2016 09:58:10 -0400
-Content-Disposition: inline
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:36365 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752215AbcIPOSL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Sep 2016 10:18:11 -0400
+Received: by mail-wm0-f43.google.com with SMTP id b187so39682149wme.1
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Sep 2016 07:18:10 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
+If an I2C GPIO multiplexer is driven by a GPIO provided by an expander
+when there's a second expander using the same device driver on one of
+the I2C bus segments, lockdep prints a deadlock warning when trying to
+set the direction or the value of the GPIOs provided by the second
+expander.
 
---jRHKVT23PllUwdXP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The below diagram presents the setup:
 
-Hi,
+                                               - - - - -
+ -------             ---------  Bus segment 1 |         |
+|       |           |         |---------------  Devices
+|       | SCL/SDA   |         |               |         |
+| Linux |-----------| I2C MUX |                - - - - -
+|       |    |      |         | Bus segment 2
+|       |    |      |         |-------------------
+ -------     |       ---------                    |
+             |           |                    - - - - -
+        ------------     | MUX GPIO          |         |
+       |            |    |                     Devices
+       |    GPIO    |    |                   |         |
+       | Expander 1 |----                     - - - - -
+       |            |                             |
+        ------------                              | SCL/SDA
+                                                  |
+                                             ------------
+                                            |            |
+                                            |    GPIO    |
+                                            | Expander 2 |
+                                            |            |
+                                             ------------
 
-I just came across an interesting issue on our Allwinner SoCs.
+The reason for lockdep warning is that we take the chip->i2c_lock in
+pca953x_gpio_set_value() or pca953x_gpio_direction_output() and then
+come right back to pca953x_gpio_set_value() when the GPIO mux kicks
+in. The locks actually protect different expanders, but for lockdep
+both are of the same class, so it says:
 
-We have, like most of the SoCs these days, a bunch of boards that go
-through pinctrl to ensure their exclusive usage for a particular
-device. If a second pinctrl user comes in and tries to request one of
-those pins, it gets an error. Everything works fine.
+  Possible unsafe locking scenario:
 
-However, things are getting weird when you have that requested pin
-assigned to one device, and you try to export the GPIO on that pin
-(through sysfs for example, but given the implementation, I think that
-it would work alike by calling gpiod_request).
+        CPU0
+        ----
+   lock(&chip->i2c_lock);
+   lock(&chip->i2c_lock);
 
-In this case, you get no error, and the GPIO is indeed exported,
-allowing the user to change the direction and / or value of the pin,
-taking away that pin from its device.
+  *** DEADLOCK ***
 
-It seems from a look at the code that the request and
-gpio_request_enable callbacks in the pinmux_ops, called in
-pin_request, were meant to prevent such a thing.
+  May be due to missing lock nesting notation
 
-But looking at all the drivers around, no one seems to take that case
-into consideration, and this has been confirmed on an AT91 (which uses
-an entirely different driver).
+In order to get rid of the warning, check if the i2c adapter of the
+expander is multiplexed (by checking if it has a parent adapter) and,
+if so, set a different lock subclass for chip->i2c_lock.
 
-I have the feeling that the core should prevent that, making sure that
-the gpiod_request returns EBUSY in such a case, but I'm not really
-sure whether it's the case or not, and if it is, where that check is
-happening.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+Note: a similar issue would occur with other gpio expanders under
+similar circumstances. If this patch get's merged, I'll prepare
+a common solution for all gpio drivers which use an internal i2c lock.
 
-Thanks!
-Maxime
+ drivers/gpio/gpio-pca953x.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 02f2a56..2d49b25 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -787,6 +787,18 @@ static int pca953x_probe(struct i2c_client *client,
+ 
+ 	mutex_init(&chip->i2c_lock);
+ 
++	/*
++	 * If the i2c adapter we're connected to is multiplexed (which is
++	 * indicated by it having a parent adapter) we need to use a
++	 * different lock subclass. It's caused by the fact that in a rare
++	 * case of using an i2c-gpio multiplexer controlled by a gpio
++	 * provided by an expander using the same driver, lockdep would
++	 * incorrectly detect a deadlock, since we'd take a second lock
++	 * of the same class without releasing the first one.
++	 */
++	if (i2c_parent_is_i2c_adapter(client->adapter))
++		lockdep_set_subclass(&chip->i2c_lock, SINGLE_DEPTH_NESTING);
++
+ 	/* initialize cached registers from their original values.
+ 	 * we can't share this chip with another i2c master.
+ 	 */
+-- 
+2.7.4
 
---jRHKVT23PllUwdXP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX2/pwAAoJEBx+YmzsjxAgWVgP/jOsjEZ1JpPash3l/0uWSADu
-9G9YgB7ipQRUwt5Bugbt2NNljYiVm8AlDGSI0JeqRCxKkMS5A8+sXszdinw/XjFg
-aDIXpMx6VEGctRWRZQAS6mz+H5q6Cbb7u9qPVrWhFu9LBqeESVFlZ1hupg354Tov
-nZBtYO7knsi+LJk8Zuczg/sCxbgHWD61qarYTGBQ0hYLs7HuXbKkJpbMaPlJS6pf
-N473DCmIZZEGsMxLrvqNz0nEU8s3sHsHEy7Jmr2QE/yAr15IbrRyzL6R4q7Ey1Tz
-1VAqxqsP5CU1euTl2n4+F3POhWEbuCxdXB6WAqjjdQ+ppjDW+uk6MoeJqlV8UYjy
-4sqNnNFpUD/B5IHHdHWOFnLewcozMUvNNrnlcLhNf8BrlycmhHfu8ZYzXWwtC1An
-uW/E63u+aZ9pMUmmIB3SD5BGACE57Y2O0oRhg0UOb8At3VJRIE6HckFws2aao2Qw
-MbPD2QRgNhw6e3cIOCPLJYtlVE8D7hHrwGYE5FwoLoQd9nKoJjtduVn9LeAnA2Bm
-sbwYpC8CwYfLhnKhfRsJHzGTimfnt5gAmhlP96NwvgK/2buYgVbPLS3PbR2Lyxv8
-7nSbbRDHxCNCzvjBv0Jo3UAAeVT7npOvPHiHKWW9AAIhPHUbvHLisDHU18OT0898
-KWC4SRuV9AVL71qQXxXo
-=GFyH
------END PGP SIGNATURE-----
-
---jRHKVT23PllUwdXP--
