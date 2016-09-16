@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 4/4] gpio: pca953x: fix an incorrect lockdep warning
-Date: Fri, 16 Sep 2016 18:02:45 +0200
-Message-ID: <1474041765-17818-5-git-send-email-bgolaszewski@baylibre.com>
+Subject: [PATCH v2 3/4] i2c: add a warning to i2c_adapter_depth()
+Date: Fri, 16 Sep 2016 18:02:44 +0200
+Message-ID: <1474041765-17818-4-git-send-email-bgolaszewski@baylibre.com>
 References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
 Return-path: <linux-i2c-owner@vger.kernel.org>
 In-Reply-To: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
@@ -10,74 +10,30 @@ To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.co
 Cc: linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-If an I2C GPIO multiplexer is driven by a GPIO provided by an expander
-when there's a second expander using the same device driver on one of
-the I2C bus segments, lockdep prints a deadlock warning when trying to
-set the direction or the value of the GPIOs provided by the second
-expander.
+This routine is only used together with lockdep for nested locking.
+The number of lock subclasses is limited to 8 as defined in lockdep.h
 
-The below diagram presents the setup:
-
-                                               - - - - -
- -------             ---------  Bus segment 1 |         |
-|       |           |         |---------------  Devices
-|       | SCL/SDA   |         |               |         |
-| Linux |-----------| I2C MUX |                - - - - -
-|       |    |      |         | Bus segment 2
-|       |    |      |         |-------------------
- -------     |       ---------                    |
-             |           |                    - - - - -
-        ------------     | MUX GPIO          |         |
-       |            |    |                     Devices
-       |    GPIO    |    |                   |         |
-       | Expander 1 |----                     - - - - -
-       |            |                             |
-        ------------                              | SCL/SDA
-                                                  |
-                                             ------------
-                                            |            |
-                                            |    GPIO    |
-                                            | Expander 2 |
-                                            |            |
-                                             ------------
-
-The reason for lockdep warning is that we take the chip->i2c_lock in
-pca953x_gpio_set_value() or pca953x_gpio_direction_output() and then
-come right back to pca953x_gpio_set_value() when the GPIO mux kicks
-in. The locks actually protect different expanders, but for lockdep
-both are of the same class, so it says:
-
-  Possible unsafe locking scenario:
-
-        CPU0
-        ----
-   lock(&chip->i2c_lock);
-   lock(&chip->i2c_lock);
-
-  *** DEADLOCK ***
-
-  May be due to missing lock nesting notation
-
-In order to get rid of the warning, retrieve the adapter nesting depth
-and use it as lockdep subclass for chip->i2c_lock.
+Emit a warning if the adapter depth exceeds the maximum number of
+lockdep subclasses.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-pca953x.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/i2c/i2c-core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 02f2a56..892dc04 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -786,6 +786,8 @@ static int pca953x_probe(struct i2c_client *client,
- 	chip->chip_type = PCA_CHIP_TYPE(chip->driver_data);
+diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+index c9b8df8..75cefa8 100644
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@ -1342,6 +1342,9 @@ unsigned int i2c_adapter_depth(struct i2c_adapter *adapter)
+ 	while ((adapter = i2c_parent_is_i2c_adapter(adapter)))
+ 		depth++;
  
- 	mutex_init(&chip->i2c_lock);
-+	lockdep_set_subclass(&chip->i2c_lock,
-+			     i2c_adapter_depth(client->adapter));
- 
- 	/* initialize cached registers from their original values.
- 	 * we can't share this chip with another i2c master.
++	WARN_ONCE(depth >= MAX_LOCKDEP_SUBCLASSES,
++		  "adapter depth exceeds lockdep subclass limit\n");
++
+ 	return depth;
+ }
+ EXPORT_SYMBOL_GPL(i2c_adapter_depth);
 -- 
 2.7.4
