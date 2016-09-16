@@ -1,69 +1,66 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v2 0/4] gpio: fix an incorrect lockdep warning
-Date: Fri, 16 Sep 2016 19:26:21 +0200
-Message-ID: <20160916172621.GA1426@katana>
-References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v7 0/5] mfd: tps65218: Clean ups
+Date: Fri, 16 Sep 2016 18:36:20 +0100
+Message-ID: <20160916173620.GB10189@sirena.org.uk>
+References: <1470833641-29546-1-git-send-email-j-keerthy@ti.com>
+ <ab94aff0-8470-57e5-2039-12f09bb0ca33@ti.com>
+ <20160916133153.GB27974@sirena.org.uk>
+ <0a30f210-0a23-0899-51b0-28f200ddd0a4@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:54007 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755706AbcIPR0o (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 16 Sep 2016 13:26:44 -0400
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="DKU6Jbt7q3WqK7+M"
+Return-path: <linux-input-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <0a30f210-0a23-0899-51b0-28f200ddd0a4@ti.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Keerthy <a0393675@ti.com>
+Cc: Keerthy <j-keerthy@ti.com>, lee.jones@linaro.org, tony@atomide.com, dmitry.torokhov@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, devicetree@vger.kernel.org, robh+dt@kernel.org, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, t-kristo@ti.com, russ.dill@ti.com, d-gerlach@ti.com, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Peter Rosin <peda@axentia.se>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
 
---1yeeQ81UyVL57Vl7
+--DKU6Jbt7q3WqK7+M
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 16, 2016 at 06:02:41PM +0200, Bartosz Golaszewski wrote:
-> If an I2C GPIO multiplexer is driven by a GPIO provided by an expander
-> when there's a second expander using the same device driver on one of
-> the I2C bus segments, lockdep prints a deadlock warning when trying to
-> set the direction or the value of the GPIOs provided by the second
-> expander.
->=20
-> This series exports an already existing function from i2c-core as
-> public API and reuses it in pca953x to pass a correct lock subclass
-> to lockdep.
+On Fri, Sep 16, 2016 at 09:51:38PM +0530, Keerthy wrote:
+> On Friday 16 September 2016 07:01 PM, Mark Brown wrote:
+> > On Fri, Sep 16, 2016 at 05:12:38PM +0530, Keerthy wrote:
 
-Looks good from my POV, but will wait for Peter to comment.
+> > > Should i repost this series? I do not see this series in linux-next yet.
 
-If accepted, I'd think this should go via my I2C tree and I would like
-to ask Linus to ack patch 4. D'accord, everyone?
+> > Please don't send content free pings and please allow a reasonable time
+> > for review.  People get busy, go on holiday, attend conferences and so
 
-Thanks,
+> I should have been clearer.
+> The last Lee Jones conveyed that:
 
-   Wolfram
+> "I can't take this series yet, since it relies on a change which was
+> taken into Mark's Regulator tree"
 
+> https://lkml.org/lkml/2016/8/31/312
 
---1yeeQ81UyVL57Vl7
+> So wanted to check if i needed to re-base/repost this series again.
+> Sorry about the confusion i think that is because of $Subject goof up in the
+> 0th patch of the series.
+
+I'm afraid I've no real idea what this series is about or what patches
+it might depend on, sorry.  If you're waiting for me to do something
+you'll need to tell me what it is but if it's a dependency that needs
+cross merging then reposting this series isn't going to be needed.
+
+--DKU6Jbt7q3WqK7+M
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJX3Cs9AAoJEBQN5MwUoCm2K5EQAJtJcdtBmS+r8yqnZms8cC0C
-wasFOZeKBqYzRGwx0Nk+xG3JXd9z7R/P2Qh+KXGQoyxW3x284V+aMaLQWk2tNAAy
-NS0O4BTPUUJPaKIHCE9ueO9DU61UL0DOVH+MeoOIz6U3/mEVqc/ZP8pvP07f82nH
-feb4vG8nTH211e561fvJ6VGPqBoj0GyMu/HMrYIF2CkPxuaCavSgDPpul9CKF85D
-4g1W9it4HGPHkBUQApwmS32H/m2rsk+3U6LelCjEOfGNi0cio88MThLG2NmKGzC2
-BJP/+n/A050/8fIj+YfBcaxyYO50xJjNiyAP9qwuACJ/iZ01I3SYQlV8P1kpQcB7
-Oi9q3T444mwkbi3ple6kb71imvFpvexUUsJdptEfvygpeCv5pGPZ+78RdTJDvYc1
-PHST2B6gaNDG23iYWFXKvpRUfoIhdcnxXCoIB7YzQHyQqSSgTDug5Z7kTjvJ+QOi
-hkIaYL44uL/eyF+8lHcNpZdCUQVq3Uy3pmY5MQjmguXCZG69XCMt32Na56p8bccf
-iDmi5qwYGaf9ss8hRuyNGJrB+WOEkhLrIU2K1ZTMpoSLZOsF2WA4OVDmPSSia+y2
-mUClel4F3yJ5NDbuagcTSKr1rOeAHNJlGDkcx7CFk0tO7yfvNfD+EBdB7k3f5/I0
-hAUSas0U99NRRSmhALuH
-=cYoO
+iQEcBAEBCAAGBQJX3C2TAAoJECTWi3JdVIfQGj0H/iVOdp2Lh7frV2xuRRNB0bc2
+bcpGth4vDDKFM9ltDXz4OWNN/04F8GhBC6KVIxVAoYBZChMPJxx49E8retJatvhV
+n/vtCKHxz1DVozcoXcEC9Baf9KcqhvKdUiNcSJZFcWPFTEfq+0YodaY5hwE4gu2c
+v/ZcJ1ZoP9nH0dAd87AyyideKxniC4d/MbieXfHbN3UNQDXNeU35mYiX8NQiDwDW
+7olwLGyi5xEOrcPYV3snClbFVXBRU4s/okTHwsR7VkRsaWbu/7zmk26FJalBS1zP
+8ZE0i6uoocobwvk9c5xDTNvNDTzcZ236TUdi3iigpANaRgrijmjD+geVp9qRxk0=
+=KS2e
 -----END PGP SIGNATURE-----
 
---1yeeQ81UyVL57Vl7--
+--DKU6Jbt7q3WqK7+M--
