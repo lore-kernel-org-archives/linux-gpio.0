@@ -1,40 +1,59 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: lockdep: incorrect deadlock warning with two GPIO expanders
-Date: Fri, 16 Sep 2016 14:00:58 +0200
-Message-ID: <CAMpxmJUj-YS48CCfexZ3q0hxk60MS+1B51h=KRO63tpwmffBcQ@mail.gmail.com>
-References: <CAMpxmJUuj5VrzEu4YZUVxr-ZqFU4VGJpjyHimMJug23EC7j=sQ@mail.gmail.com>
- <20160912120938.GR10153@twins.programming.kicks-ass.net> <CAMpxmJW5WNF2zE+fjmpDxubAYA_A67iQhNGTvSAL-MD-6dFTCw@mail.gmail.com>
- <20160912153356.GD10121@twins.programming.kicks-ass.net> <CACRpkdb00e=YexmCRwv=evVLjBDM6Pjqtcs+Mnc8JVD1Ssa5mA@mail.gmail.com>
- <20160915075150.GO5008@twins.programming.kicks-ass.net> <CACRpkdbbx4YA4paPGF1PtWYrPLR=dDVH8Q7FWd2gUCygT2HwtQ@mail.gmail.com>
- <CAMpxmJV+qBF4OL2WejqhdR3StmU-yOWDXVN8jJPWVTiMOJQxjg@mail.gmail.com>
- <20160915133922.GE5016@twins.programming.kicks-ass.net> <20160916105626.GH5020@twins.programming.kicks-ass.net>
- <CAMpxmJVxBGHK9Y96_6Sp4p2hCki_J=errR41zp28uBtXuDmKjA@mail.gmail.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v7 0/5] mfd: tps65218: Clean ups
+Date: Fri, 16 Sep 2016 14:31:53 +0100
+Message-ID: <20160916133153.GB27974@sirena.org.uk>
+References: <1470833641-29546-1-git-send-email-j-keerthy@ti.com>
+ <ab94aff0-8470-57e5-2039-12f09bb0ca33@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f169.google.com ([209.85.223.169]:34010 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756183AbcIPMBA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Sep 2016 08:01:00 -0400
-Received: by mail-io0-f169.google.com with SMTP id q92so23005284ioi.1
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Sep 2016 05:00:59 -0700 (PDT)
-In-Reply-To: <CAMpxmJVxBGHK9Y96_6Sp4p2hCki_J=errR41zp28uBtXuDmKjA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="x0PBmTWHB3bjoOVh"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <ab94aff0-8470-57e5-2039-12f09bb0ca33-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Keerthy <a0393675-l0cyMroinI0@public.gmane.org>
+Cc: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, t-kristo-l0cyMroinI0@public.gmane.org, russ.dill-l0cyMroinI0@public.gmane.org, d-gerlach-l0cyMroinI0@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Ingo Molnar <mingo@redhat.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>
 
-2016-09-16 13:14 GMT+02:00 Bartosz Golaszewski <bgolaszewski@baylibre.com>:
->
-> The whole thing is a bit more complicated - I'm trying to figure out
-> the code behind it, but the first expander has four parents whose
-> driver == pca953x, while the second has five of them. There is no
-> device name, but kobj->name corresponds with the i2c device
-> sub-directories on correct addresses and busses (1-0021 for the first
-> one and 4-0020 for the second on my board).
 
-Actually nevermind my last e-mail - I did a braindead mistake when
-obtaining logs.
+--x0PBmTWHB3bjoOVh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Bartosz
+On Fri, Sep 16, 2016 at 05:12:38PM +0530, Keerthy wrote:
+
+> Should i repost this series? I do not see this series in linux-next yet.
+
+Please don't send content free pings and please allow a reasonable time
+for review.  People get busy, go on holiday, attend conferences and so=20
+on so unless there is some reason for urgency (like critical bug fixes)
+please allow at least a couple of weeks for review.  If there have been
+review comments then people may be waiting for those to be addressed.
+
+Sending content free pings adds to the mail volume (if they are seen at
+all) which is often the problem and since they can't be reviewed
+directly if something has gone wrong you'll have to resend the patches
+anyway, though there are some other maintainers who like them - if in
+doubt look at how patches for the subsystem are normally handled.
+
+--x0PBmTWHB3bjoOVh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJX2/RIAAoJECTWi3JdVIfQPPkH/jSgAYL6LPWH9DVs7MlSV08n
+WbmJLJLXXYLjnVNJLvxp6tGNNs9ZpoEwoVrXJgAtcUv7ItcP7jbDA62AJilcHGGU
+ziEXEAcSAhqsVgUxMVA6BiCjiTgN92xm4fvjveQQZzNX9tBpxBsUaE2fmFk0DvgV
+JI/lkrN0+KrnJZhktyLAlX5nB5u1oKXnw9vnAIuQ2bYcV5+Muy0m121zkTwdTabp
+TQUVSeA+M4WzNpoL8vtjL/dBoZlGvOIjkUhUKFzfmTbspYGRztem/dS3bzUhXZCL
+DGY1lVarhBijvZ6BCAtzNFPJOTLdZ1swZO3wzl7er4a1UvDVU8WQGJr0PQym6uE=
+=4Yre
+-----END PGP SIGNATURE-----
+
+--x0PBmTWHB3bjoOVh--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
