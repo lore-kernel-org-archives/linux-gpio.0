@@ -1,37 +1,67 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 0/4] gpio: fix an incorrect lockdep warning
-Date: Sat, 17 Sep 2016 03:19:52 +0200
-Message-ID: <20160917011952.GK5016@twins.programming.kicks-ass.net>
-References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
+From: Keerthy <a0393675@ti.com>
+Subject: Re: [PATCH v7 0/5] mfd: tps65218: Clean ups
+Date: Sat, 17 Sep 2016 09:23:51 +0530
+Message-ID: <4c5b4ca3-4594-455e-8c0b-2f6cc4e6b8e2@ti.com>
+References: <1470833641-29546-1-git-send-email-j-keerthy@ti.com>
+ <ab94aff0-8470-57e5-2039-12f09bb0ca33@ti.com>
+ <20160916133153.GB27974@sirena.org.uk>
+ <0a30f210-0a23-0899-51b0-28f200ddd0a4@ti.com>
+ <20160916173620.GB10189@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:52192 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753821AbcIQBUG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Sep 2016 21:20:06 -0400
-Content-Disposition: inline
-In-Reply-To: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
+Received: from bear.ext.ti.com ([198.47.19.11]:57758 "EHLO bear.ext.ti.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754249AbcIQDye (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 16 Sep 2016 23:54:34 -0400
+In-Reply-To: <20160916173620.GB10189@sirena.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Ingo Molnar <mingo@redhat.com>, Wolfram Sang <wsa@the-dreams.de>, Peter Rosin <peda@axentia.se>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Keerthy <j-keerthy@ti.com>, lee.jones@linaro.org, tony@atomide.com, dmitry.torokhov@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, devicetree@vger.kernel.org, robh+dt@kernel.org, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, t-kristo@ti.com, russ.dill@ti.com, d-gerlach@ti.com, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Sep 16, 2016 at 06:02:41PM +0200, Bartosz Golaszewski wrote:
-> If an I2C GPIO multiplexer is driven by a GPIO provided by an expander
-> when there's a second expander using the same device driver on one of
-> the I2C bus segments, lockdep prints a deadlock warning when trying to
-> set the direction or the value of the GPIOs provided by the second
-> expander.
-> 
-> This series exports an already existing function from i2c-core as
-> public API and reuses it in pca953x to pass a correct lock subclass
-> to lockdep.
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-> Note: if this series gets merged, I'll prepare follow-up patches for
-> other expanders for which a similar problem could potentially occur.
+On Friday 16 September 2016 11:06 PM, Mark Brown wrote:
+> On Fri, Sep 16, 2016 at 09:51:38PM +0530, Keerthy wrote:
+>> On Friday 16 September 2016 07:01 PM, Mark Brown wrote:
+>>> On Fri, Sep 16, 2016 at 05:12:38PM +0530, Keerthy wrote:
+>
+>>>> Should i repost this series? I do not see this series in linux-next yet.
+>
+>>> Please don't send content free pings and please allow a reasonable time
+>>> for review.  People get busy, go on holiday, attend conferences and so
+>
+>> I should have been clearer.
+>> The last Lee Jones conveyed that:
+>
+>> "I can't take this series yet, since it relies on a change which was
+>> taken into Mark's Regulator tree"
+>
+>> https://lkml.org/lkml/2016/8/31/312
+>
+>> So wanted to check if i needed to re-base/repost this series again.
+>> Sorry about the confusion i think that is because of $Subject goof up in the
+>> 0th patch of the series.
+>
+> I'm afraid I've no real idea what this series is about or what patches
+> it might depend on, sorry.  If you're waiting for me to do something
+> you'll need to tell me what it is but if it's a dependency that needs
+> cross merging then reposting this series isn't going to be needed.
 
-We can't push this annotation into the i2c core, can we? Since the mutex
-is in driver specific code, not more generic...
+The series cleans up mainly the regulator driver and implements
+the device tree parsing using the regulator framework. Removes
+all the redundant compatibles for the individual regulators.
+Adds platform_device_id table for the gpio and power button modules.
+
+This has been reviewed extensively.
+
+Looks like v7 no longer applies directly on the linux-next branch as it 
+conflicts with:
+
+https://kernel.googlesource.com/pub/scm/linux/kernel/git/dtor/input/+/722dc54628ca5cffd3b4581b523775aa422b55df
+
+I will rebase and repost on the current linux-next and post v8.
+
+>
