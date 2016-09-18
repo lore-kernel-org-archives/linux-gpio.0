@@ -1,32 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: f7188x: use gpiochip_get_data instead of container_of
-Date: Sun, 18 Sep 2016 13:35:28 +0200
-Message-ID: <CACRpkdZUH_=wTYDDyXNQg+9mBYxRDzMNAgBPS6Kx8vRCMi6FiQ@mail.gmail.com>
-References: <1474045133-3892-1-git-send-email-singh.amitesh@gmail.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH] Fix no. of gpio cells in the pxa gpio binding doucmentation
+Date: Sun, 18 Sep 2016 19:23:00 +0200
+Message-ID: <871t0hf7gr.fsf@belgarion.home>
+References: <57CD0EB8.1030500@zilogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:35096 "EHLO
-        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932674AbcIRLf3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 18 Sep 2016 07:35:29 -0400
-Received: by mail-oi0-f42.google.com with SMTP id w11so159619996oia.2
-        for <linux-gpio@vger.kernel.org>; Sun, 18 Sep 2016 04:35:29 -0700 (PDT)
-In-Reply-To: <1474045133-3892-1-git-send-email-singh.amitesh@gmail.com>
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:50957 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751581AbcIRRXD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 18 Sep 2016 13:23:03 -0400
+In-Reply-To: <57CD0EB8.1030500@zilogic.com> (Vijay Kumar's message of "Mon, 05
+        Sep 2016 11:50:40 +0530")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Amitesh Singh <singh.amitesh@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Vijay Kumar <vijaykumar@zilogic.com>
+Cc: linux-gpio@vger.kernel.org
 
-On Fri, Sep 16, 2016 at 6:58 PM, Amitesh Singh <singh.amitesh@gmail.com> wrote:
+Vijay Kumar <vijaykumar@zilogic.com> writes:
 
-> gpiochip_add_data is already used to add data pointer and chip.
-> Lets rely on gpiochip_get_data which is getting used in other
-> gpio_chip functions.
+> Fix the no. of gpio cells in pxa gpio binding documentation.
 >
-> Signed-off-by: Amitesh Singh <singh.amitesh@gmail.com>
+> The no. of gpio cells for the pxa gpio is actually 2. But is
+> incorrectly specified as 1, in the binding documentation. From the
+> driver code, the second cell specifies the standard flags as described
+> in gpio.txt.
+>
+> Signed-off-by: Vijay Kumar B. <vijaykumar@zilogic.com>
 
-Patch applied.
+Yes, that's correct. I'll add this to pxa/dt tree, thanks.
 
-Yours,
-Linus Walleij
+Cheers.
+
+--
+Robert
