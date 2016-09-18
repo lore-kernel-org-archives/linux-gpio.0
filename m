@@ -1,53 +1,43 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 0/4] gpio: fix an incorrect lockdep warning
-Date: Sat, 17 Sep 2016 20:59:54 +0200
-Message-ID: <CAMpxmJWh+cyTBE_ABujUuu_Q1dkmbzsON1Z2xNYrhbbxxQeSMg@mail.gmail.com>
-References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
- <20160917011952.GK5016@twins.programming.kicks-ass.net> <20160917101821.GB4753@katana>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpiolib: Add possibility to mask which GPIOs are
+ added to IRQ domain
+Date: Sun, 18 Sep 2016 13:16:52 +0200
+Message-ID: <CACRpkdbo1MggZOdzv==C5ZhGnyjkDon6+H_jAQCALVqBUjzo0A@mail.gmail.com>
+References: <CACRpkdZBbcL87Hq94sFYdDOWnC7S_JGtArTNMimAps663UQNgw@mail.gmail.com>
+ <20160915155210.94413-1-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160917101821.GB4753@katana>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Ingo Molnar <mingo@redhat.com>, Peter Rosin <peda@axentia.se>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:36863 "EHLO
+        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754009AbcIRLQx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 18 Sep 2016 07:16:53 -0400
+Received: by mail-oi0-f51.google.com with SMTP id t83so30814863oie.3
+        for <linux-gpio@vger.kernel.org>; Sun, 18 Sep 2016 04:16:53 -0700 (PDT)
+In-Reply-To: <20160915155210.94413-1-mika.westerberg@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Phidias Chiang <phidias.chiang@canonical.com>, Anisse Astier <anisse@astier.eu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-2016-09-17 12:18 GMT+02:00 Wolfram Sang <wsa@the-dreams.de>:
-> On Sat, Sep 17, 2016 at 03:19:52AM +0200, Peter Zijlstra wrote:
->> On Fri, Sep 16, 2016 at 06:02:41PM +0200, Bartosz Golaszewski wrote:
->> > If an I2C GPIO multiplexer is driven by a GPIO provided by an expander
->> > when there's a second expander using the same device driver on one of
->> > the I2C bus segments, lockdep prints a deadlock warning when trying to
->> > set the direction or the value of the GPIOs provided by the second
->> > expander.
->> >
->> > This series exports an already existing function from i2c-core as
->> > public API and reuses it in pca953x to pass a correct lock subclass
->> > to lockdep.
->>
->> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+On Thu, Sep 15, 2016 at 5:52 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+
+> When using GPIO irqchip helpers to setup irqchip for a gpiolib based
+> driver, it is not possible to select which GPIOs to add to the IRQ domain.
+> Instead it just adds all GPIOs which is not always desired. For example
+> there might be GPIOs that for some reason just cannot be used as interrupts
+> at all.
 >
-> Oops, I overlooked that I need your ack as well :) Thanks!
+> To make this possible we add valid_mask to each gpio_chip and by default
+> assume all GPIOs can be used as interrupts. Drivers can then tune this
+> using clear_bit() or similar before they call gpiochip_irqchip_add().
 >
->> > Note: if this series gets merged, I'll prepare follow-up patches for
->> > other expanders for which a similar problem could potentially occur.
->>
->> We can't push this annotation into the i2c core, can we? Since the mutex
->> is in driver specific code, not more generic...
->
-> Afraid so.
->
+> Suggested-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Most i2c controlled GPIO expanders could potentially be converted to
-using the regmap framework which unfortunately suffers from the same
-locking issue in its current form.
+Awesome, nice infrastructure.
+Will apply once tglx and Marc's comments are fixed.
 
-I'm already working on adding adapter depth dependent subclasses for
-i2c regmaps - maybe I'll be able to submit it for 4.9 next week.
-
-Using regmap would allow us to drop the separate mutexes in each gpio
-driver and instead use the regmap-internal locking.
-
-Best regards,
-Bartosz Golaszewski
+Yours,
+Linus Walleij
