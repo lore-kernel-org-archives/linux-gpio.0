@@ -1,55 +1,90 @@
-From: Eric Anholt <eric@anholt.net>
-Subject: Re: [PATCH v4 1/7] pinctrl: bcm2835: add pull defines to dt bindings
-Date: Mon, 19 Sep 2016 11:07:17 +0100
-Message-ID: <87zin49p9m.fsf@eliezer.anholt.net>
-References: <1474274603-24215-1-git-send-email-kraxel@redhat.com> <1474274603-24215-2-git-send-email-kraxel@redhat.com>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH v2 0/4] gpio: fix an incorrect lockdep warning
+Date: Mon, 19 Sep 2016 10:01:49 +0200
+Message-ID: <2f7d572c-59e0-f584-9748-48a1a45a1a50@axentia.se>
+References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
+ <20160916172621.GA1426@katana>
+ <deaa654a-9afc-eae6-6bc8-75f2c3960970@axentia.se>
+ <20160916175842.GD1426@katana>
+ <587cdb60-d7fe-3ab2-b635-02c5072e102e@axentia.se>
+ <CAMpxmJUX8wszxhkoOyuqPeC8xgBjLXFRSWDSa0cOrJ92dUYX1g@mail.gmail.com>
+ <CAMpxmJX3_ec44Z0UVTNqSDjmNq+Oe3sk+szLE-Nj7X4pztbywQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anholt.net ([50.246.234.109]:59924 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754175AbcISKHh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 19 Sep 2016 06:07:37 -0400
-In-Reply-To: <1474274603-24215-2-git-send-email-kraxel@redhat.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMpxmJX3_ec44Z0UVTNqSDjmNq+Oe3sk+szLE-Nj7X4pztbywQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-rpi-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: swarren@wwwdotorg.org, bcm-kernel-feedback-list@broadcom.com, Gerd Hoffmann <kraxel@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+On 2016-09-18 21:45, Bartosz Golaszewski wrote:
+> 2016-09-18 21:43 GMT+02:00 Bartosz Golaszewski <bgolaszewski@baylibre.com>:
+>> 2016-09-18 10:52 GMT+02:00 Peter Rosin <peda@axentia.se>:
+>>> On 2016-09-16 19:58, Wolfram Sang wrote:
+>>>>
+>>>> Same here. And if it prevents us from false positive lockdep reports, I
+>>>> am all for fixing it.
+>>>
+>>> Except it doesn't, when I think some more about it...
+>>>
+>>> If you have two gpio-expanders on the same depth but on different i2c
+>>> branches you still end up with a splat if one is used to control a mux
+>>> to reach the other.
+>>>
+>>> The only way to solve it for good, that I see, is to have every instance
+>>> of the gpio-expander mutex in its own class. That might lead to many
+>>> lockdep classes but then again, how many gpio expanders could there be
+>>> in a system? A dozen or two seems extreme, so maybe that is the correct
+>>> approach anyway?
+>>
+>> Wouldn't it be enough to have a separate class for every base (as in:
+>> not having any parent adapters) i2c adapter?
+>>
+> 
+> Eeek -ESENTTOOEARLY
+> 
+> Of course not - since we could have two branches deeper on the tree
+> with the same problem.
+> 
+> Nevermind my last e-mail.
 
-Gerd Hoffmann <kraxel@redhat.com> writes:
+Right, but you have a point, we can avoid some lockdep classes if
+we work at it.
 
-> Also delete (unused) private enum from driver.
-> The pull defines can be used instead if needed.
->
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+We could recognize that no gpio-expander can be involved with
+muxing for a gpio-expander sitting on a root i2c adapter. That
+much is trivially obvious.
 
-Acked-by: Eric Anholt <eric@anholt.net>
+That means that we could treat all gpio-expanders sitting
+directly on a root i2c-adapter as we always have, just like
+v1 (and v2, implicitly) do, but instead of putting all other
+gpio-exanders in one lockdep class (as in v1) or in one lockdep
+class per depth (as in v2), we put all other gpio-mutexes in
+a lockdep class of their own.
 
-gpio maintainers, could I pull this through my dt tree?  Or does this
-need to be split in two?
+Then we do not get any extra lockdep classes unless there are
+i2c muxes, which is better.
 
+But only i2c-mux-gpio can cause the recursion.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+I think the theoretical minimal number of lockdep classes is to
+create a new lockdep class for every i2c-mux-gpio instance.
+gpio-expanders needing a mutex could walk up the adapter tree
+looking for a i2c-mux-gpio and getting the lockdep class from
+there. If the root i2c adapter is reached, use some default
+lockdep class.
 
------BEGIN PGP SIGNATURE-----
+That would consolidate muxes from different gpio-expander
+drivers into the one lockdep class. I don't know if that is
+a big no-no? I guess that can be handled too with more code,
+but it is starting to get messy...
 
-iQIcBAEBCgAGBQJX37jWAAoJELXWKTbR/J7oMFoP/RRjqf5C3FaEUez87TjcJhdy
-HBtSa9Or6AyhBVqNnecg0n7sj/TCFlPIO501c9CyfGBZMfuNKL5NFB0L/8L+EW5/
-jjwZEY7QmSUdnuyaayV50PTRwMamaIRICpGnLWg5mMO8y8K5QLOlxN/0uu4dtd93
-hxtdInYag6OnLpngBnTqcyutjEf1QvHrsAWYNlql5rUk0QgWqpHiI175MszK1k5N
-j1HdG5l3tmng2VFsghKmUeJ6RgvD9tDPWUkdZN9okcHhJp6ghE2NRH4yo0xx15a/
-m4hB2hmNy9HiOTs8oxWOiqMYU6xvMmDiZYMdoBiwa8fz/AAZwnzrN2ynzQp5/cK1
-bo8QQ3HKUBB2pMzTkkEUXGEOteQYZEj9qq6JEgV2I0V0kIFAdKUW7wAhkoXtwW0F
-Wv72/SFLAbcTpWB30cdxvuS+XwvUdETSf60HeQj32ufi8KBvqpGpQB6StjnzdZct
-Y9SK0/mK/mR1IL8RbjrxSxWgzNGLsb3uOVAnmyEm4Qy0Y9WUpiHQa1VxA+ejnJ0T
-t4X1nQBSHNtOaHmtHqjWHLNs5+2lJncAwzVPyw/9j10iwz7MATqD7aXrIiR/A3Z0
-tf2Te55tpkTstMBTAaXwBDbAOi0eMEMqHyNaH/hRfvLT1asW8cO4MJx3XxAqhsFs
-DGW0h8OTifB5yfkmH58Q
-=YwHe
------END PGP SIGNATURE-----
---=-=-=--
+Or, do what the i2c-mux code is doing and use an rt_mutex instead
+of an ordinary mutex. That way you are very sure to not get any
+lockdep splat ... at all. Ok, sorry, that was not a serious
+suggestion, but it would be a tad bit simpler to implement...
+
+Cheers,
+Peter
