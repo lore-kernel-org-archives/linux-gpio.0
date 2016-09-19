@@ -1,92 +1,75 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: [PATCH 00/19] ARM: imx legacy: move peripheral initializations to .init_late
-Date: Mon, 19 Sep 2016 04:36:28 +0300
-Message-ID: <1474248988-10626-1-git-send-email-vz@mleia.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mleia.com ([178.79.152.223]:43086 "EHLO mail.mleia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932720AbcISBgv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 18 Sep 2016 21:36:51 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Keerthy <j-keerthy@ti.com>
+Subject: [PATCH v8 0/5] mfd: tps65218: Clean ups
+Date: Mon, 19 Sep 2016 13:09:01 +0530
+Message-ID: <1474270746-11568-1-git-send-email-j-keerthy@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-input-owner@vger.kernel.org>
+Sender: linux-input-owner@vger.kernel.org
+To: lee.jones@linaro.org
+Cc: j-keerthy@ti.com, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, robh+dt@kernel.org, linux-kernel@vger.kernel.org, t-kristo@ti.com, tony@atomide.com, dmitry.torokhov@gmail.com, linus.walleij@linaro.org, broonie@kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The series moves registrations and initializations of all peripherals
-which are GPIO line consumers for all legacy (prior to DT) i.MX powered
-boards from .init_machine to .init_late init level. This is needed to
-proactively prevent boot time issues on the legacy boards due to the
-deprioritized init level of the GPIO controller driver (set lower than
-IOMUX controller driver init level), which is shared among all i.MX
-SoCs. The problem was reported and discussed on
+The series cleans up mainly the regulator driver and implements
+the device tree parsing using the regulator framework. Removes
+all the redundant compatibles for the individual regulators.
+Adds platform_device_id table for the gpio and power button modules.
 
-  https://lkml.org/lkml/2016/9/13/810
+One of the patch removes redundant read wrapper and makes
+use of regmap_read wherever necessary.
 
-The changes are based on v4.8.0-rc1, please let me know if the series
-should be rebased or squashed. Some of the changes are quite simple,
-e.g. a one line change for qong board, and some of them are more
-sophisticated, thus to simplify review process and potential creation
-of revert commits the changes are split into separate patches one per
-board.
+The series is checked for all the regulator registrations on
+am437x-sk-evm.
 
-Uwe suggested to add necessary error checks for all gpio_request()
-calls, which are missing on kzm, mx27-3ds, mx31lilly, mx31lite,
-mx31moboard, mx35-3ds and pca100 targets, this is out of the scope
-of this change, which is intended to move some registration and
-initialization calls only from one place to another. Adding error
-checks can be done later on, however for example -EPROBE_DEFER errors
-won't be handled as expected, because .init_machine and .init_late
-callbacks are one-shot.
+Changes in v8:
 
-Only two legacy targets are tested, i.MX31 kzm qemu machine and
-changes for i.MX31 powered Logic PD mx31lite board. The rest of
-the legacy boards are compilation tested only, probably some of
-the proposed changes are excessive or may be insufficient.
+Rebased to latest next branch.
 
-Vladimir Zapolskiy (19):
-  ARM: imx legacy: kzm: move peripheral initialization to .init_late
-  ARM: imx legacy: mx31lite: move peripheral initialization to .init_late
-  ARM: imx legacy: mx31ads: move peripheral initialization to .init_late
-  ARM: imx legacy: mx31lilly: move peripheral initialization to .init_late
-  ARM: imx legacy: pcm037: move peripheral initialization to .init_late
-  ARM: imx legacy: mx31-3ds: move peripheral initialization to .init_late
-  ARM: imx legacy: qong: move peripheral initialization to .init_late
-  ARM: imx legacy: armadillo5x0: move peripheral initialization to .init_late
-  ARM: imx legacy: mx31moboard: move peripheral initialization to .init_late
-  ARM: imx legacy: vpr200: move peripheral initialization to .init_late
-  ARM: imx legacy: imx27-visstrim-m10: move peripheral initialization to .init_late
-  ARM: imx legacy: mx27-3ds: move peripheral initialization to .init_late
-  ARM: imx legacy: mx35-3ds: move peripheral initialization to .init_late
-  ARM: imx legacy: apf9328: move peripheral initialization to .init_late
-  ARM: imx legacy: scb9328: move peripheral initialization to .init_late
-  ARM: imx legacy: pcm043: move peripheral initialization to .init_late
-  ARM: imx legacy: mx21ads: move peripheral initialization to .init_late
-  ARM: imx legacy: mx27ads: move peripheral initialization to .init_late
-  ARM: imx legacy: pca100: move peripheral initialization to .init_late
+Changes in v7:
 
- arch/arm/mach-imx/mach-apf9328.c            |  6 ++-
- arch/arm/mach-imx/mach-armadillo5x0.c       | 39 ++++++++++-------
- arch/arm/mach-imx/mach-imx27_visstrim_m10.c | 24 +++++++---
- arch/arm/mach-imx/mach-kzm_arm11_01.c       |  9 +++-
- arch/arm/mach-imx/mach-mx21ads.c            | 13 ++++--
- arch/arm/mach-imx/mach-mx27_3ds.c           | 30 ++++++++-----
- arch/arm/mach-imx/mach-mx27ads.c            | 13 ++++--
- arch/arm/mach-imx/mach-mx31_3ds.c           | 39 ++++++++++-------
- arch/arm/mach-imx/mach-mx31ads.c            | 18 ++++----
- arch/arm/mach-imx/mach-mx31lilly.c          | 50 +++++++++++++++------
- arch/arm/mach-imx/mach-mx31lite.c           | 68 ++++++++++++++++++++---------
- arch/arm/mach-imx/mach-mx31moboard.c        | 23 ++++++----
- arch/arm/mach-imx/mach-mx35_3ds.c           | 15 ++++---
- arch/arm/mach-imx/mach-pca100.c             | 26 ++++++-----
- arch/arm/mach-imx/mach-pcm037.c             | 67 ++++++++++++++--------------
- arch/arm/mach-imx/mach-pcm043.c             | 10 ++++-
- arch/arm/mach-imx/mach-qong.c               |  2 +-
- arch/arm/mach-imx/mach-scb9328.c            |  7 ++-
- arch/arm/mach-imx/mach-vpr200.c             | 29 +++++++-----
- arch/arm/mach-imx/mx31lilly-db.c            | 20 ---------
- arch/arm/mach-imx/mx31lite-db.c             | 33 --------------
- 21 files changed, 312 insertions(+), 229 deletions(-)
+Rebasing to latest next branch. GPIO patch of this series
+pushed to linux-next by Linus. Hence posting the remaining
+patches with respective Acks from the domain Maintainers.
+
+Changes in v6:
+
+Rebased regulator/mfd clean up patches against linux-next +
+https://lkml.org/lkml/2016/6/24/122 series.
+
+Changes in v5:
+
+Rebased regulator clean up patch against linux-next.
+
+Changes in v4:
+
+For gpio-tps65218 reatined the compatible table.
+Fixed missing ';' in the power button patch.
+Fixed comments on the Documentation patch.
+Split the Device Tree patches to a separate series.
+
+Changes in v3:
+
+Missed making corresponding changes in the power button and gpio
+drivers. Added couple of patches to fix them to use mfd_cell way
+of parsing.
+
+ 
+
+Keerthy (5):
+  mfd: tps65218: Remove redundant read wrapper
+  Documentation: regulator: tps65218: Update examples
+  input: tps65218-pwrbutton: Add platform_device_id table
+  mfd: tps65218: Use mfd_add_devices instead of of_platform_populate
+  regulator: tps65218: Remove all the compatibles
+
+ .../devicetree/bindings/regulator/tps65218.txt     |  87 +++++++++---
+ drivers/gpio/gpio-tps65218.c                       |   3 +-
+ drivers/input/misc/tps65218-pwrbutton.c            |   8 ++
+ drivers/mfd/tps65218.c                             |  34 ++---
+ drivers/regulator/tps65218-regulator.c             | 153 ++++++++-------------
+ include/linux/mfd/tps65218.h                       |   3 +-
+ 6 files changed, 157 insertions(+), 131 deletions(-)
 
 -- 
-2.8.1
+1.9.1
 
