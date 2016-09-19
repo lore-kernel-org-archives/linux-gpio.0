@@ -1,55 +1,55 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 0/4] gpio: fix an incorrect lockdep warning
-Date: Mon, 19 Sep 2016 11:03:58 +0200
-Message-ID: <20160919090358.GU5016@twins.programming.kicks-ass.net>
-References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
- <20160916172621.GA1426@katana>
- <deaa654a-9afc-eae6-6bc8-75f2c3960970@axentia.se>
- <20160916175842.GD1426@katana>
- <587cdb60-d7fe-3ab2-b635-02c5072e102e@axentia.se>
- <CAMpxmJUX8wszxhkoOyuqPeC8xgBjLXFRSWDSa0cOrJ92dUYX1g@mail.gmail.com>
- <CAMpxmJX3_ec44Z0UVTNqSDjmNq+Oe3sk+szLE-Nj7X4pztbywQ@mail.gmail.com>
- <2f7d572c-59e0-f584-9748-48a1a45a1a50@axentia.se>
- <20160919081413.GR5016@twins.programming.kicks-ass.net>
- <88940f9a-79bf-6c88-8e1d-f76f32dda04a@axentia.se>
+From: Eric Anholt <eric@anholt.net>
+Subject: Re: [PATCH v4 1/7] pinctrl: bcm2835: add pull defines to dt bindings
+Date: Mon, 19 Sep 2016 11:07:17 +0100
+Message-ID: <87zin49p9m.fsf@eliezer.anholt.net>
+References: <1474274603-24215-1-git-send-email-kraxel@redhat.com> <1474274603-24215-2-git-send-email-kraxel@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <88940f9a-79bf-6c88-8e1d-f76f32dda04a@axentia.se>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Ingo Molnar <mingo@redhat.com>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from anholt.net ([50.246.234.109]:59924 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754175AbcISKHh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 19 Sep 2016 06:07:37 -0400
+In-Reply-To: <1474274603-24215-2-git-send-email-kraxel@redhat.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-rpi-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: swarren@wwwdotorg.org, bcm-kernel-feedback-list@broadcom.com, Gerd Hoffmann <kraxel@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-On Mon, Sep 19, 2016 at 10:48:44AM +0200, Peter Rosin wrote:
-> On 2016-09-19 10:14, Peter Zijlstra wrote:
-> > On Mon, Sep 19, 2016 at 10:01:49AM +0200, Peter Rosin wrote:
-> >> Or, do what the i2c-mux code is doing and use an rt_mutex instead
-> >> of an ordinary mutex. That way you are very sure to not get any
-> >> lockdep splat ... at all. Ok, sorry, that was not a serious
-> >> suggestion, but it would be a tad bit simpler to implement...
-> > 
-> > So I find it weird that people use rt_mutex as a locking primitive,
-> > since its only that one lock that then does PI and all the other locks
-> > that are related still create inversions.
-> 
-> So, someone took the bait :-)
-> 
-> Yes, I too find it weird, and would like to get rid of it. It's just
-> odd. It's been some years since the start though, waaay before me
-> entering kernel space.
-> 
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=194684e596af4b
-> 
-> 
-> But it's hard to argue with the numbers given in the discussion:
-> 
-> http://linux-i2c.vger.kernel.narkive.com/nokldJcc/patch-1-1-i2c-prevent-priority-inversion-on-top-of-bus-lock
-> 
-> Has anything happened to the regular mutex implementation that might
-> have changed the picture? *crosses fingers*
+--=-=-=
+Content-Type: text/plain
 
-Use the -RT kernel and all locks will end up as rt_mutex. Avoiding
-inversion on one specific lock, while there are then a gazillion other
-than can equally create inversion doesn't make sense to me.
+Gerd Hoffmann <kraxel@redhat.com> writes:
+
+> Also delete (unused) private enum from driver.
+> The pull defines can be used instead if needed.
+>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+
+Acked-by: Eric Anholt <eric@anholt.net>
+
+gpio maintainers, could I pull this through my dt tree?  Or does this
+need to be split in two?
+
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCgAGBQJX37jWAAoJELXWKTbR/J7oMFoP/RRjqf5C3FaEUez87TjcJhdy
+HBtSa9Or6AyhBVqNnecg0n7sj/TCFlPIO501c9CyfGBZMfuNKL5NFB0L/8L+EW5/
+jjwZEY7QmSUdnuyaayV50PTRwMamaIRICpGnLWg5mMO8y8K5QLOlxN/0uu4dtd93
+hxtdInYag6OnLpngBnTqcyutjEf1QvHrsAWYNlql5rUk0QgWqpHiI175MszK1k5N
+j1HdG5l3tmng2VFsghKmUeJ6RgvD9tDPWUkdZN9okcHhJp6ghE2NRH4yo0xx15a/
+m4hB2hmNy9HiOTs8oxWOiqMYU6xvMmDiZYMdoBiwa8fz/AAZwnzrN2ynzQp5/cK1
+bo8QQ3HKUBB2pMzTkkEUXGEOteQYZEj9qq6JEgV2I0V0kIFAdKUW7wAhkoXtwW0F
+Wv72/SFLAbcTpWB30cdxvuS+XwvUdETSf60HeQj32ufi8KBvqpGpQB6StjnzdZct
+Y9SK0/mK/mR1IL8RbjrxSxWgzNGLsb3uOVAnmyEm4Qy0Y9WUpiHQa1VxA+ejnJ0T
+t4X1nQBSHNtOaHmtHqjWHLNs5+2lJncAwzVPyw/9j10iwz7MATqD7aXrIiR/A3Z0
+tf2Te55tpkTstMBTAaXwBDbAOi0eMEMqHyNaH/hRfvLT1asW8cO4MJx3XxAqhsFs
+DGW0h8OTifB5yfkmH58Q
+=YwHe
+-----END PGP SIGNATURE-----
+--=-=-=--
