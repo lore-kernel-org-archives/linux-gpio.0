@@ -1,57 +1,262 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: nomadik: don't default-flag IRQs as falling
-Date: Mon, 19 Sep 2016 10:22:10 +0200
-Message-ID: <1474273330-15789-1-git-send-email-linus.walleij@linaro.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2 1/3] gpiolib: Make it possible to exclude GPIOs from
+ IRQ domain
+Date: Mon, 19 Sep 2016 11:16:41 +0300
+Message-ID: <20160919081641.GA1811@lahna.fi.intel.com>
+References: <20160916105243.93933-1-mika.westerberg@linux.intel.com>
+ <20160916105243.93933-2-mika.westerberg@linux.intel.com>
+ <20160917141318.675f9bca@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160917141318.675f9bca@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Phidias Chiang <phidias.chiang@canonical.com>, Anisse Astier <anisse@astier.eu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-There is no point in adding any default trigger for these
-GPIO interrupts: the device tree should contain all trigger
-information and the platforms using the driver boots
-exclusively from device tree.
+On Sat, Sep 17, 2016 at 02:13:18PM +0100, Marc Zyngier wrote:
+> On Fri, 16 Sep 2016 13:52:41 +0300
+> Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
+> 
+> Hi Mika,
+> 
+> > When using GPIO irqchip helpers to setup irqchip for a gpiolib based
+> > driver, it is not possible to select which GPIOs to add to the IRQ domain.
+> > Instead it just adds all GPIOs which is not always desired. For example
+> > there might be GPIOs that for some reason cannot generated normal
+> > interrupts at all.
+> > 
+> > To support this we add a new function gpiochip_irqchip_exclude_irq() that
+> > can be used to exclude selected GPIOs from being added to the IRQ domain of
+> > the gpiochip in question.
+> > 
+> > Suggested-by: Linus Walleij <linus.walleij@linaro.org>
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > ---
+> > Thomas, instead of adding flag to struct gpio_chip, I decided to provide an
+> > API function that drivers can call. It allocates irq_valid_mask on the fly.
+> > 
+> > Let me know if you prefer a flag instead.
+> > 
+> >  Documentation/gpio/driver.txt |  5 +++
+> >  drivers/gpio/gpiolib.c        | 72 +++++++++++++++++++++++++++++++++++++++++--
+> >  include/linux/gpio/driver.h   |  5 +++
+> >  3 files changed, 79 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/gpio/driver.txt b/Documentation/gpio/driver.txt
+> > index 6cb35a78eff4..d12b2ca6fa8e 100644
+> > --- a/Documentation/gpio/driver.txt
+> > +++ b/Documentation/gpio/driver.txt
+> > @@ -256,6 +256,11 @@ associated irqdomain and resource allocation callbacks, the gpiolib has
+> >  some helpers that can be enabled by selecting the GPIOLIB_IRQCHIP Kconfig
+> >  symbol:
+> >  
+> > +* gpiochip_irqchip_exclude_irq(): excludes given GPIO from IRQ domain
+> > +  created for the gpiochip. This is useful if the GPIO for some reason
+> > +  cannot be used as IRQ at all. Note this must be called before
+> > +  gpiochip_irqchip_add().
+> > +
+> >  * gpiochip_irqchip_add(): adds an irqchip to a gpiochip. It will pass
+> >    the struct gpio_chip* for the chip to all IRQ callbacks, so the callbacks
+> >    need to embed the gpio_chip in its state container and obtain a pointer
+> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > index 53ff25ac66d8..31e18dde0ff7 100644
+> > --- a/drivers/gpio/gpiolib.c
+> > +++ b/drivers/gpio/gpiolib.c
+> > @@ -1402,6 +1402,58 @@ static struct gpio_chip *find_chip_by_name(const char *name)
+> >   */
+> >  
+> >  /**
+> > + * gpiochip_irqchip_exclude_irq() - Exclude a GPIO from IRQ domain of gpiochip
+> > + * @gpiochip: the gpiochip whose IRQ to exclude
+> > + * @offset: GPIO number to exclude
+> > + *
+> > + * Normally all GPIOs in a gpiochip are added to the IRQ domain created for
+> > + * that chip. Calling this function allows driver to exclude certain GPIOs
+> > + * if for instance the GPIO simply cannot generate interrupts.
+> > + *
+> > + * This must be called before gpiochip_irqchip_add().
+> > + *
+> > + * Return: %0 in case of success, negative errno in case of error.
+> > + */
+> > +int gpiochip_irqchip_exclude_irq(struct gpio_chip *gpiochip,
+> > +				 unsigned int offset)
+> > +{
+> > +	if (WARN_ON_ONCE(gpiochip->irqdomain))
+> > +		return -EINVAL;
+> > +
+> > +	if (offset >= gpiochip->ngpio)
+> > +		return -EINVAL;
+> > +
+> > +	if (!gpiochip->irq_valid_mask) {
+> 
+> There is a fundamental flaw here, which is the lack of any mutual
+> exclusion if you get two simultaneous calls to this function (yes, this
+> is unlikely, which means it will happen much earlier than you
+> think... ;-).
 
-Also the boot log is nagging me to fix this:
+I thought about this but came to conclusion that it is not possible to
+get two simultaneus calls from the same gpio_chip. Or at least I cannot
+figure out how that can happen (perhaps I'm missing something). However,
+to be on the safe side I think it is better to use a flag instead here
+:)
 
-[    0.771057] ------------[ cut here ]------------
-[    0.775695] WARNING: CPU: 0 PID: 1 at
-   ../drivers/gpio/gpiolib.c:1622 _gpiochip_irqchip_add+0x138/0x160
-[    0.785034] /soc/gpio@8012e000: Ignoring 2 default trigger
-(...)
-[    0.942962] gpio 8012e000.gpio: at address e08f8000
-(etc ad nauseam)
+> tglx's solution of adding a flag to your gpiochip gives you that mutual
+> exclusion (because the irqdomain doesn't exist yet). The remaining
+> question is whether or not flagging the invalid interrupts after the
+> irqdomain creation is early enough for you or not. I can't see why not,
+> but I know nothing about your HW.
 
-Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/nomadik/pinctrl-nomadik.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Since gpiochip_irqchip_add() creates both the irqdomain and mapping for
+each IRQ, we either need to exclude the invalid IRQs before that
+function is called or dispose the mapping in
+gpiochip_irqchip_exclude_irq() which can become complex.
 
-diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-index 205fb399268a..d318ca055489 100644
---- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-@@ -1177,7 +1177,7 @@ static int nmk_gpio_probe(struct platform_device *dev)
- 				   irqchip,
- 				   0,
- 				   handle_edge_irq,
--				   IRQ_TYPE_EDGE_FALLING);
-+				   IRQ_TYPE_NONE);
- 	if (ret) {
- 		dev_err(&dev->dev, "could not add irqchip\n");
- 		gpiochip_remove(&nmk_chip->chip);
--- 
-2.7.4
+How about following (along the lines what Thomas suggested)?
+
+	1. Add flag 'irq_need_valid_mask' to struct gpio_chip
+	2. Make gpiochip_add_data() allocate the mask if the above flag is set
+	3. Let drivers manipulate that flag directly using set/clear_bit().
+
+> > +		unsigned long *mask;
+> > +		int i;
+> > +
+> > +		mask = kcalloc(BITS_TO_LONGS(gpiochip->ngpio), sizeof(long),
+> > +			       GFP_KERNEL);
+> > +		if (!mask)
+> > +			return -ENOMEM;
+> > +
+> > +		/* Assume by default all GPIOs are valid */
+> > +		for (i = 0; i < gpiochip->ngpio; i++)
+> > +			set_bit(i, mask);
+> > +
+> > +		gpiochip->irq_valid_mask = mask;
+> > +	}
+> > +
+> > +	clear_bit(offset, gpiochip->irq_valid_mask);
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(gpiochip_irqchip_exclude_irq);
+> > +
+> > +static bool gpiochip_irqchip_irq_valid(const struct gpio_chip *gpiochip,
+> > +				       unsigned int offset)
+> > +{
+> > +	/* No mask means all valid */
+> > +	if (!gpiochip->irq_valid_mask)
+> 
+> Could deserves a likely() annotation...
+
+OK, I'll add it.
+
+> > +		return true;
+> > +	return test_bit(offset, gpiochip->irq_valid_mask);
+> > +}
+> > +
+> > +/**
+> >   * gpiochip_set_chained_irqchip() - sets a chained irqchip to a gpiochip
+> >   * @gpiochip: the gpiochip to set the irqchip chain to
+> >   * @irqchip: the irqchip to chain to the gpiochip
+> > @@ -1442,9 +1494,12 @@ void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
+> >  	}
+> >  
+> >  	/* Set the parent IRQ for all affected IRQs */
+> > -	for (offset = 0; offset < gpiochip->ngpio; offset++)
+> > +	for (offset = 0; offset < gpiochip->ngpio; offset++) {
+> > +		if (!gpiochip_irqchip_irq_valid(gpiochip, offset))
+> > +			continue;
+> >  		irq_set_parent(irq_find_mapping(gpiochip->irqdomain, offset),
+> >  			       parent_irq);
+> > +	}
+> >  }
+> >  EXPORT_SYMBOL_GPL(gpiochip_set_chained_irqchip);
+> >  
+> > @@ -1551,9 +1606,12 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
+> >  
+> >  	/* Remove all IRQ mappings and delete the domain */
+> >  	if (gpiochip->irqdomain) {
+> > -		for (offset = 0; offset < gpiochip->ngpio; offset++)
+> > +		for (offset = 0; offset < gpiochip->ngpio; offset++) {
+> > +			if (!gpiochip_irqchip_irq_valid(gpiochip, offset))
+> > +				continue;
+> >  			irq_dispose_mapping(
+> >  				irq_find_mapping(gpiochip->irqdomain, offset));
+> > +		}
+> >  		irq_domain_remove(gpiochip->irqdomain);
+> >  	}
+> >  
+> > @@ -1562,6 +1620,9 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
+> >  		gpiochip->irqchip->irq_release_resources = NULL;
+> >  		gpiochip->irqchip = NULL;
+> >  	}
+> > +
+> > +	kfree(gpiochip->irq_valid_mask);
+> > +	gpiochip->irq_valid_mask = NULL;
+> >  }
+> >  
+> >  /**
+> > @@ -1597,6 +1658,7 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+> >  			  struct lock_class_key *lock_key)
+> >  {
+> >  	struct device_node *of_node;
+> > +	bool irq_base_set = false;
+> >  	unsigned int offset;
+> >  	unsigned irq_base = 0;
+> >  
+> > @@ -1646,13 +1708,17 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+> >  	 * necessary to allocate descriptors for all IRQs.
+> >  	 */
+> >  	for (offset = 0; offset < gpiochip->ngpio; offset++) {
+> > +		if (!gpiochip_irqchip_irq_valid(gpiochip, offset))
+> > +			continue;
+> >  		irq_base = irq_create_mapping(gpiochip->irqdomain, offset);
+> > -		if (offset == 0)
+> > +		if (!irq_base_set) {
+> >  			/*
+> >  			 * Store the base into the gpiochip to be used when
+> >  			 * unmapping the irqs.
+> >  			 */
+> >  			gpiochip->irq_base = irq_base;
+> > +			irq_base_set = true;
+> > +		}
+> >  	}
+> >  
+> >  	acpi_gpiochip_request_interrupts(gpiochip);
+> > diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+> > index 50882e09289b..c8a4f5511b37 100644
+> > --- a/include/linux/gpio/driver.h
+> > +++ b/include/linux/gpio/driver.h
+> > @@ -112,6 +112,8 @@ enum single_ended_mode {
+> >   *	initialization, provided by GPIO driver
+> >   * @irq_parent: GPIO IRQ chip parent/bank linux irq number,
+> >   *	provided by GPIO driver
+> > + * @irq_valid_mask: If not %NULL holds bitmask of GPIOs which are valid to
+> > + *	be included in IRQ domain of the chip
+> >   * @lock_key: per GPIO IRQ chip lockdep class
+> >   *
+> >   * A gpio_chip can help platforms abstract various sources of GPIOs so
+> > @@ -190,6 +192,7 @@ struct gpio_chip {
+> >  	irq_flow_handler_t	irq_handler;
+> >  	unsigned int		irq_default_type;
+> >  	int			irq_parent;
+> > +	unsigned long		*irq_valid_mask;
+> >  	struct lock_class_key	*lock_key;
+> >  #endif
+> >  
+> > @@ -260,6 +263,8 @@ int bgpio_init(struct gpio_chip *gc, struct device *dev,
+> >  
+> >  #ifdef CONFIG_GPIOLIB_IRQCHIP
+> >  
+> > +int gpiochip_irqchip_exclude_irq(struct gpio_chip *gpiochip,
+> > +				 unsigned int offset);
+> >  void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
+> >  		struct irq_chip *irqchip,
+> >  		int parent_irq,
+> 
+> 
+> Thanks,
+> 
+> 	M.
+> -- 
+> Jazz is not dead. It just smells funny.
