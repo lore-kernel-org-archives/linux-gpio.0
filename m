@@ -1,77 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: tc3589x: add .get_direction() and small cleanup
-Date: Mon, 19 Sep 2016 10:10:12 +0200
-Message-ID: <1474272612-11987-1-git-send-email-linus.walleij@linaro.org>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2 0/4] gpio: fix an incorrect lockdep warning
+Date: Mon, 19 Sep 2016 10:14:13 +0200
+Message-ID: <20160919081413.GR5016@twins.programming.kicks-ass.net>
+References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
+ <20160916172621.GA1426@katana>
+ <deaa654a-9afc-eae6-6bc8-75f2c3960970@axentia.se>
+ <20160916175842.GD1426@katana>
+ <587cdb60-d7fe-3ab2-b635-02c5072e102e@axentia.se>
+ <CAMpxmJUX8wszxhkoOyuqPeC8xgBjLXFRSWDSa0cOrJ92dUYX1g@mail.gmail.com>
+ <CAMpxmJX3_ec44Z0UVTNqSDjmNq+Oe3sk+szLE-Nj7X4pztbywQ@mail.gmail.com>
+ <2f7d572c-59e0-f584-9748-48a1a45a1a50@axentia.se>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:36463 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760546AbcISIKT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Sep 2016 04:10:19 -0400
-Received: by mail-lf0-f45.google.com with SMTP id g62so100081427lfe.3
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Sep 2016 01:10:18 -0700 (PDT)
+Received: from bombadil.infradead.org ([198.137.202.9]:55513 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751914AbcISIOV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Sep 2016 04:14:21 -0400
+Content-Disposition: inline
+In-Reply-To: <2f7d572c-59e0-f584-9748-48a1a45a1a50@axentia.se>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Ingo Molnar <mingo@redhat.com>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-This adds a .get_direction() callback to the TC3589x and
-renames the function for setting single-ended mode to be
-more to the point.
+On Mon, Sep 19, 2016 at 10:01:49AM +0200, Peter Rosin wrote:
+> Or, do what the i2c-mux code is doing and use an rt_mutex instead
+> of an ordinary mutex. That way you are very sure to not get any
+> lockdep splat ... at all. Ok, sorry, that was not a serious
+> suggestion, but it would be a tad bit simpler to implement...
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-tc3589x.c | 29 +++++++++++++++++++++++------
- 1 file changed, 23 insertions(+), 6 deletions(-)
+So I find it weird that people use rt_mutex as a locking primitive,
+since its only that one lock that then does PI and all the other locks
+that are related still create inversions.
 
-diff --git a/drivers/gpio/gpio-tc3589x.c b/drivers/gpio/gpio-tc3589x.c
-index 5baa45768ec5..537a4335ddec 100644
---- a/drivers/gpio/gpio-tc3589x.c
-+++ b/drivers/gpio/gpio-tc3589x.c
-@@ -84,9 +84,25 @@ static int tc3589x_gpio_direction_input(struct gpio_chip *chip,
- 	return tc3589x_set_bits(tc3589x, reg, BIT(pos), 0);
- }
- 
--static int tc3589x_gpio_single_ended(struct gpio_chip *chip,
--				     unsigned offset,
--				     enum single_ended_mode mode)
-+static int tc3589x_gpio_get_direction(struct gpio_chip *chip,
-+				      unsigned offset)
-+{
-+	struct tc3589x_gpio *tc3589x_gpio = gpiochip_get_data(chip);
-+	struct tc3589x *tc3589x = tc3589x_gpio->tc3589x;
-+	u8 reg = TC3589x_GPIODIR0 + offset / 8;
-+	unsigned pos = offset % 8;
-+	int ret;
-+
-+	ret = tc3589x_reg_read(tc3589x, reg);
-+	if (ret < 0)
-+		return ret;
-+
-+	return !!(ret & BIT(pos));
-+}
-+
-+static int tc3589x_gpio_set_single_ended(struct gpio_chip *chip,
-+					 unsigned offset,
-+					 enum single_ended_mode mode)
- {
- 	struct tc3589x_gpio *tc3589x_gpio = gpiochip_get_data(chip);
- 	struct tc3589x *tc3589x = tc3589x_gpio->tc3589x;
-@@ -127,11 +143,12 @@ static int tc3589x_gpio_single_ended(struct gpio_chip *chip,
- static const struct gpio_chip template_chip = {
- 	.label			= "tc3589x",
- 	.owner			= THIS_MODULE,
--	.direction_input	= tc3589x_gpio_direction_input,
- 	.get			= tc3589x_gpio_get,
--	.direction_output	= tc3589x_gpio_direction_output,
- 	.set			= tc3589x_gpio_set,
--	.set_single_ended	= tc3589x_gpio_single_ended,
-+	.direction_output	= tc3589x_gpio_direction_output,
-+	.direction_input	= tc3589x_gpio_direction_input,
-+	.get_direction		= tc3589x_gpio_get_direction,
-+	.set_single_ended	= tc3589x_gpio_set_single_ended,
- 	.can_sleep		= true,
- };
- 
--- 
-2.7.4
-
+In any case, since people have started doing this, adding lockdep
+support for rt_mutex is on the todo _somewhere_, so don't expect that to
+avoid splats forever.
