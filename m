@@ -1,48 +1,72 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 0/4] gpio: fix an incorrect lockdep warning
-Date: Tue, 20 Sep 2016 13:30:58 +0200
-Message-ID: <CAMuHMdX6otYLuYm9x4BNm-U3gHn5Y_JwBUm5qagWLOU0ucRmcQ@mail.gmail.com>
-References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
- <20160916172621.GA1426@katana> <deaa654a-9afc-eae6-6bc8-75f2c3960970@axentia.se>
- <20160916175842.GD1426@katana> <587cdb60-d7fe-3ab2-b635-02c5072e102e@axentia.se>
- <CAMpxmJUX8wszxhkoOyuqPeC8xgBjLXFRSWDSa0cOrJ92dUYX1g@mail.gmail.com>
- <CAMpxmJX3_ec44Z0UVTNqSDjmNq+Oe3sk+szLE-Nj7X4pztbywQ@mail.gmail.com>
- <2f7d572c-59e0-f584-9748-48a1a45a1a50@axentia.se> <20160919081413.GR5016@twins.programming.kicks-ass.net>
- <88940f9a-79bf-6c88-8e1d-f76f32dda04a@axentia.se> <20160919090358.GU5016@twins.programming.kicks-ass.net>
- <e4b4c894-4913-b00f-0a9d-243258f2699b@axentia.se> <CAMpxmJVNbsZewcui_WL0aZi3e4Q52=qHxGkm=w5EAr49YAqyaw@mail.gmail.com>
- <6e174c17-584f-580d-083a-94dab2f588bd@axentia.se>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6e174c17-584f-580d-083a-94dab2f588bd@axentia.se>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Peter Zijlstra <peterz@infradead.org>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Ingo Molnar <mingo@redhat.com>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH v3 0/3] gpio / pinctrl: cherryview: Fix missing events from EC
+Date: Tue, 20 Sep 2016 15:15:20 +0300
+Message-ID: <20160920121523.170293-1-mika.westerberg@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga05.intel.com ([192.55.52.43]:38686 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753243AbcITMP2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 20 Sep 2016 08:15:28 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Phidias Chiang <phidias.chiang@canonical.com>, Anisse Astier <anisse@astier.eu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 20, 2016 at 12:48 PM, Peter Rosin <peda@axentia.se> wrote:
-> On 2016-09-20 12:07, Bartosz Golaszewski wrote:
->> I feel like it's just wrong to set an arbitrary limit on the number of
->> i2c branches - and this is what the result of this approach would be.
->
-> What arbitrary limit would that be? The number of lockdep classes
-> can't be *that* limited? Or?
->
-> I mean one lockdep class per root adapter and one subclass within that
-> class per mux level doesn't sound too bad. How many root adapters do
-> we need to design for?
+Hi,
 
-'git grep -c i2c@ -- "*dts*"' told me exynos7 has 12 i2c interfaces.
-And as long as I have gpios (pcf8574?), I can add more using i2c-gpio.
-Hence the upper limit is infinity.
+Up until now systems having Intel Cherryview/Braswell might lose GPEs
+(General Purpose Events) from EC (Embedded Controller) because the pinctrl
+driver masks all interrupt sources at probe time. I tried to fix this
+already in bcb48cca23ec ("pinctrl: cherryview: Do not mask all interrupts
+in probe") but it resulted that the irq core masked all the interrupts
+because now we pass handle_bad_irq() as default handler for the irqchip.
 
-Gr{oetje,eeting}s,
+After reading again the hardware spec, I think I finally understand the
+problem correctly. In summary for southwest and north communities only the
+first 8 (or 16) wires can be used to generate interrupts. Rest are reserved
+for GPEs.
 
-                        Geert
+We fix this by excluding these only GPE capable wires from the IRQ domain
+of the gpiochip.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+This first follows what LinusW suggested and adds irq_valid_mask for each
+gpiochip and then converts pinctrl-cherryview to use it.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Previous version of the patches and the discussion around this issue can be
+found here:
+
+  v2: http://www.spinics.net/lists/linux-gpio/msg16760.html
+  v1: https://lkml.org/lkml/2015/5/22/111
+
+Changes from v2:
+  - Add irq_need_valid_mask flag that if set will make gpiochip_add_data()
+    allocate irq_valid_mask for the chip.
+  - Drop gpiochip_irqchip_exclude_irq() in favor of directly using
+    set_/clear_bit() in drivers.
+  - Use likely() annotation in gpiochip_irqchip_irq_valid().
+  - Changed ordering of last two patches because there is no dependency
+    anymore.
+
+Changes from v1:
+  - Only allocate irq_valid_mask when needed
+  - Provide gpiochip_irqchip_exclude_irq() helper which allows drivers to
+    select which GPIOs to exclude.
+  - Use ->nrirqs in chv_gpio_irq_handler()
+  - Added patch to convert the driver to use devm_gpiochip_add_data() so
+    we can just return if gpiochip_irqchip_exclude_irq() fails (and also
+    this simplifies the driver).
+
+Mika Westerberg (3):
+  gpiolib: Make it possible to exclude GPIOs from IRQ domain
+  pinctrl: cherryview: Do not add all southwest and north GPIOs to IRQ domain
+  pinctrl: cherryview: Convert to use devm_gpiochip_add_data()
+
+ Documentation/gpio/driver.txt              |  6 +++
+ drivers/gpio/gpiolib.c                     | 66 ++++++++++++++++++++++++++++--
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 55 ++++++++++++++++---------
+ include/linux/gpio/driver.h                |  6 +++
+ 4 files changed, 111 insertions(+), 22 deletions(-)
+
+-- 
+2.9.3
+
