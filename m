@@ -1,49 +1,49 @@
 From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 0/4] gpio: fix an incorrect lockdep warning
-Date: Tue, 20 Sep 2016 17:33:29 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1609201725550.6905@nanos>
-References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com> <20160916172621.GA1426@katana> <deaa654a-9afc-eae6-6bc8-75f2c3960970@axentia.se> <20160916175842.GD1426@katana> <587cdb60-d7fe-3ab2-b635-02c5072e102e@axentia.se>
- <CAMpxmJUX8wszxhkoOyuqPeC8xgBjLXFRSWDSa0cOrJ92dUYX1g@mail.gmail.com> <CAMpxmJX3_ec44Z0UVTNqSDjmNq+Oe3sk+szLE-Nj7X4pztbywQ@mail.gmail.com> <2f7d572c-59e0-f584-9748-48a1a45a1a50@axentia.se> <20160919081413.GR5016@twins.programming.kicks-ass.net>
- <88940f9a-79bf-6c88-8e1d-f76f32dda04a@axentia.se> <20160919090358.GU5016@twins.programming.kicks-ass.net> <e4b4c894-4913-b00f-0a9d-243258f2699b@axentia.se>
+Subject: Re: [PATCH v5 2/9] drivers: irqchip: Add STM32 external interrupts
+ support
+Date: Tue, 20 Sep 2016 17:36:02 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1609201735370.6905@nanos>
+References: <1473432124-6784-1-git-send-email-alexandre.torgue@st.com>
+ <1473432124-6784-3-git-send-email-alexandre.torgue@st.com>
+ <alpine.DEB.2.20.1609131713490.6233@nanos>
+ <6941f61d-0b33-4108-0135-b11887cd0488@st.com>
+ <alpine.DEB.2.20.1609141103420.6233@nanos>
+ <facd1c7c-d696-eae1-02e4-5a0c9285add0@st.com>
+ <alpine.DEB.2.20.1609141532510.6233@nanos>
+ <f64e4f9d-d811-2c6e-7c5a-d4ab06716e2c@st.com>
+ <39c4ceee-7e05-ebfd-2ea0-3c4e1c4ea619@st.com>
+ <alpine.DEB.2.20.1609201150160.6905@nanos>
+ <053a37f4-aa10-46ea-f477-8ae55bb5773f@st.com>
+ <alpine.DEB.2.20.1609201439440.6905@nanos>
+ <c2c8ad5f-e679-8522-808f-e940b8c6954d@st.com>
+ <alpine.DEB.2.20.1609201600490.6905@nanos>
+ <2095bf33-2940-3294-afd6-a28a48762569@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <e4b4c894-4913-b00f-0a9d-243258f2699b@axentia.se>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>
-Cc: Peter Zijlstra <peterz@infradead.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Ingo Molnar <mingo@redhat.com>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <2095bf33-2940-3294-afd6-a28a48762569@st.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Jason Cooper <jason@lakedaemon.net>, arnd@arndb.de, Marc Zyngier <marc.zyngier@arm.com>, bruherrera@gmail.com, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, lee.jones@linaro.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 20 Sep 2016, Peter Rosin wrote:
-> On 2016-09-19 11:03, Peter Zijlstra wrote:
-> >
-> > Use the -RT kernel and all locks will end up as rt_mutex. Avoiding
-> > inversion on one specific lock, while there are then a gazillion other
-> > than can equally create inversion doesn't make sense to me.
+On Tue, 20 Sep 2016, Alexandre Torgue wrote:
+> so if you agree I will resend only patches concerning stm32 exti driver
+> [1],[2],[3],[4]
 
-That's true, but the locking of the i2c stuff is pretty much self contained
-and the results of using an rtmutex speak for themself.
+Ok.
+ 
+> Thanks for your time.
 
-One of the issues is that i2c needs to use threaded interrupt handlers and
-blocking out the handler thread with a preempted user space task is hurting
-performance badly.
-
-I don't think that using a rtmutex there is wrong. It cures at least a very
-clear priority inversion issue versus the threaded interrupt handler.
-
-Forcing all i2c users off to RT is not really an option. RT has other
-drawbacks vs. throughput which you don't want to impose on everything which
-happens to use i2c.
-
-> 2a will cause a lockdep splat if i2c0:mux_lock is in the same
-> lockdep class & subclass as i2c1:mux_lock. So, lockdep needs
-> separate lockdep classes depending on the i2c root adapter
-> (subclasses are needed to handle deeper trees, so they are off
-> limits). Great fun. How do I go about creating a new lockdep
-> class for every i2c root adapter instance?
-
-lockdep_set_class() .....
-
-Thanks,
+Welcome,
 
 	tglx
