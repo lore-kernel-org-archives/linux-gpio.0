@@ -1,42 +1,79 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 00/19] ARM: imx legacy: move peripheral initializations
- to .init_late
-Date: Tue, 20 Sep 2016 22:43:51 +0800
-Message-ID: <20160920144351.GH3744@tiger>
-References: <1474248988-10626-1-git-send-email-vz@mleia.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH v5 2/9] drivers: irqchip: Add STM32 external interrupts
+ support
+Date: Tue, 20 Sep 2016 17:28:53 +0200
+Message-ID: <2095bf33-2940-3294-afd6-a28a48762569@st.com>
+References: <1473432124-6784-1-git-send-email-alexandre.torgue@st.com>
+ <1473432124-6784-3-git-send-email-alexandre.torgue@st.com>
+ <alpine.DEB.2.20.1609131713490.6233@nanos>
+ <6941f61d-0b33-4108-0135-b11887cd0488@st.com>
+ <alpine.DEB.2.20.1609141103420.6233@nanos>
+ <facd1c7c-d696-eae1-02e4-5a0c9285add0@st.com>
+ <alpine.DEB.2.20.1609141532510.6233@nanos>
+ <f64e4f9d-d811-2c6e-7c5a-d4ab06716e2c@st.com>
+ <39c4ceee-7e05-ebfd-2ea0-3c4e1c4ea619@st.com>
+ <alpine.DEB.2.20.1609201150160.6905@nanos>
+ <053a37f4-aa10-46ea-f477-8ae55bb5773f@st.com>
+ <alpine.DEB.2.20.1609201439440.6905@nanos>
+ <c2c8ad5f-e679-8522-808f-e940b8c6954d@st.com>
+ <alpine.DEB.2.20.1609201600490.6905@nanos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1474248988-10626-1-git-send-email-vz@mleia.com>
+In-Reply-To: <alpine.DEB.2.20.1609201600490.6905@nanos>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linus.walleij@linaro.org>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Jason Cooper <jason@lakedaemon.net>, arnd@arndb.de, Marc Zyngier <marc.zyngier@arm.com>, bruherrera@gmail.com, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, lee.jones@linaro.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Sep 19, 2016 at 04:36:28AM +0300, Vladimir Zapolskiy wrote:
-> Vladimir Zapolskiy (19):
->   ARM: imx legacy: kzm: move peripheral initialization to .init_late
->   ARM: imx legacy: mx31lite: move peripheral initialization to .init_late
->   ARM: imx legacy: mx31ads: move peripheral initialization to .init_late
->   ARM: imx legacy: mx31lilly: move peripheral initialization to .init_late
->   ARM: imx legacy: pcm037: move peripheral initialization to .init_late
->   ARM: imx legacy: mx31-3ds: move peripheral initialization to .init_late
->   ARM: imx legacy: qong: move peripheral initialization to .init_late
->   ARM: imx legacy: armadillo5x0: move peripheral initialization to .init_late
->   ARM: imx legacy: mx31moboard: move peripheral initialization to .init_late
->   ARM: imx legacy: vpr200: move peripheral initialization to .init_late
->   ARM: imx legacy: imx27-visstrim-m10: move peripheral initialization to .init_late
->   ARM: imx legacy: mx27-3ds: move peripheral initialization to .init_late
->   ARM: imx legacy: mx35-3ds: move peripheral initialization to .init_late
->   ARM: imx legacy: apf9328: move peripheral initialization to .init_late
->   ARM: imx legacy: scb9328: move peripheral initialization to .init_late
->   ARM: imx legacy: pcm043: move peripheral initialization to .init_late
->   ARM: imx legacy: mx21ads: move peripheral initialization to .init_late
->   ARM: imx legacy: mx27ads: move peripheral initialization to .init_late
->   ARM: imx legacy: pca100: move peripheral initialization to .init_late
+Thomas,
 
-Applied all, except patch #14 (apf9328) and #15 (scb9328), which are
-removed during this development cycle.
+On 09/20/2016 04:02 PM, Thomas Gleixner wrote:
+> On Tue, 20 Sep 2016, Alexandre Torgue wrote:
+>> On 09/20/2016 02:44 PM, Thomas Gleixner wrote:
+>>> Free will be called when a interrupt in the child domain is torn down,
+>>> i.e. when irq_domain_free_irqs() is called. And it will be called for both
+>>> domains like the alloc callback is invoked on both domains via
+>>> irq_domain_alloc_irqs().
+>>
+>> Thanks Thomas for this clarification (I'm sure now that we need .free
+>> callbacks).
+>> irq_domain_free_irqs() is called in 2 scenario:
+>> 1- when issue occurs in irq_create_fwspec_mapping()
+>> 2- when irq_dispose_mapping() is called
+>>
+>> Case 2 is the one I tested some times ago. In this case, I need to mask
+>> interrupts in .free callback of EXTI (parent) domain to avoid spurious
+>> interrupts.
+>
+> And why would irq_dispose_mapping() be called on an unmasked, i.e. active,
+> interrupt? The masking is just papering over that.
 
-Shawn
+Ok. So my test was wrong and irq_dispose_mapping() has to be called when 
+irq is masked (for example just  after free_irq()). For sure in this 
+case the mask inside exti free callback has no sens (catch :))
+
+I will change .free callback by:
+
+static void stm32_exti_free(struct irq_domain *d, unsigned int virq,
+			    unsigned int nr_irqs)
+{
+	struct irq_data *data = irq_domain_get_irq_data(d, virq);
+	irq_domain_reset_irq_data(data);
+}
+
+
+so if you agree I will resend only patches concerning stm32 exti driver 
+[1],[2],[3],[4]
+
+Thanks for your time.
+
+alex
+
+
+>
+> Thanks,
+>
+> 	tglx
+>
