@@ -1,45 +1,66 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 0/4] gpio: fix an incorrect lockdep warning
-Date: Tue, 20 Sep 2016 14:32:25 +0200
-Message-ID: <CAMpxmJXkHaziKA1XtgQp0965RKUUCDTtLPm__=BdfbstQdc+kQ@mail.gmail.com>
-References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
- <20160916172621.GA1426@katana> <deaa654a-9afc-eae6-6bc8-75f2c3960970@axentia.se>
- <20160916175842.GD1426@katana> <587cdb60-d7fe-3ab2-b635-02c5072e102e@axentia.se>
- <CAMpxmJUX8wszxhkoOyuqPeC8xgBjLXFRSWDSa0cOrJ92dUYX1g@mail.gmail.com>
- <CAMpxmJX3_ec44Z0UVTNqSDjmNq+Oe3sk+szLE-Nj7X4pztbywQ@mail.gmail.com>
- <2f7d572c-59e0-f584-9748-48a1a45a1a50@axentia.se> <20160919081413.GR5016@twins.programming.kicks-ass.net>
- <88940f9a-79bf-6c88-8e1d-f76f32dda04a@axentia.se> <20160919090358.GU5016@twins.programming.kicks-ass.net>
- <e4b4c894-4913-b00f-0a9d-243258f2699b@axentia.se> <CAMpxmJVNbsZewcui_WL0aZi3e4Q52=qHxGkm=w5EAr49YAqyaw@mail.gmail.com>
- <6e174c17-584f-580d-083a-94dab2f588bd@axentia.se> <CAMuHMdX6otYLuYm9x4BNm-U3gHn5Y_JwBUm5qagWLOU0ucRmcQ@mail.gmail.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH v5 2/9] drivers: irqchip: Add STM32 external interrupts
+ support
+Date: Tue, 20 Sep 2016 14:40:17 +0200
+Message-ID: <053a37f4-aa10-46ea-f477-8ae55bb5773f@st.com>
+References: <1473432124-6784-1-git-send-email-alexandre.torgue@st.com>
+ <1473432124-6784-3-git-send-email-alexandre.torgue@st.com>
+ <alpine.DEB.2.20.1609131713490.6233@nanos>
+ <6941f61d-0b33-4108-0135-b11887cd0488@st.com>
+ <alpine.DEB.2.20.1609141103420.6233@nanos>
+ <facd1c7c-d696-eae1-02e4-5a0c9285add0@st.com>
+ <alpine.DEB.2.20.1609141532510.6233@nanos>
+ <f64e4f9d-d811-2c6e-7c5a-d4ab06716e2c@st.com>
+ <39c4ceee-7e05-ebfd-2ea0-3c4e1c4ea619@st.com>
+ <alpine.DEB.2.20.1609201150160.6905@nanos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdX6otYLuYm9x4BNm-U3gHn5Y_JwBUm5qagWLOU0ucRmcQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Peter Rosin <peda@axentia.se>, Peter Zijlstra <peterz@infradead.org>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Ingo Molnar <mingo@redhat.com>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9471 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751124AbcITMlK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 20 Sep 2016 08:41:10 -0400
+In-Reply-To: <alpine.DEB.2.20.1609201150160.6905@nanos>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Jason Cooper <jason@lakedaemon.net>, arnd@arndb.de, Marc Zyngier <marc.zyngier@arm.com>, bruherrera@gmail.com, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, lee.jones@linaro.org, linux-arm-kernel@lists.infradead.org
 
-2016-09-20 13:30 GMT+02:00 Geert Uytterhoeven <geert@linux-m68k.org>:
-> On Tue, Sep 20, 2016 at 12:48 PM, Peter Rosin <peda@axentia.se> wrote:
->> On 2016-09-20 12:07, Bartosz Golaszewski wrote:
->>> I feel like it's just wrong to set an arbitrary limit on the number of
->>> i2c branches - and this is what the result of this approach would be.
->>
->> What arbitrary limit would that be? The number of lockdep classes
->> can't be *that* limited? Or?
->>
->> I mean one lockdep class per root adapter and one subclass within that
->> class per mux level doesn't sound too bad. How many root adapters do
->> we need to design for?
+Thomas,
+
+On 09/20/2016 11:51 AM, Thomas Gleixner wrote:
+> On Tue, 20 Sep 2016, Alexandre Torgue wrote:
+>>> On 09/14/2016 03:34 PM, Thomas Gleixner wrote:
+>>>> Well, you just used some function in some context which is not
+>>>> relevant to
+>>>> the normal operation. So adding that mask() is just paranoia for no
+>>>> value.
+>>>
+>> A gentle reminder ping...
+>> If ".free" callback is not relevant then I 'll remove it from exti domain.
+
+Sorry for discussing about the same thing again (and again) but I just 
+want to be sure before sending a new version. As you know I have 2 
+domains: EXTI domain (parent) and stm32-pinctrl-bank domain (child one).
+
+There does it make sens to have ".free" callbacks defined in both domain 
+(actually if I define one for the child domain I have to define also 
+".free" callback for parent domain (EXTI) as it is hierarchical) ?
+If ".free" have no chance to be called then I will send a new version by 
+removing .free callbacks (in both domain).
+
+Regards
+Alex
+
 >
-> 'git grep -c i2c@ -- "*dts*"' told me exynos7 has 12 i2c interfaces.
-> And as long as I have gpios (pcf8574?), I can add more using i2c-gpio.
-> Hence the upper limit is infinity.
+> I was not talking about the .free callback in general. I was talking about
+> the masking. But yes, if the thing is otherwise a NOOP, then you can spare
+> it completely.
+>
+> Thanks,
+>
+> 	tglx
 >
 
-Agreed. If you add to that dynamic i2c adapters like hid-cp2112 or
-greybus-i2c then it makes infinity plus some more.
-
-Best regards,
-Bartosz Golaszewski
