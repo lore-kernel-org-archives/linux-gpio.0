@@ -1,94 +1,114 @@
-From: Nava kishore Manne <nava.manne@xilinx.com>
-Subject: [PATCH] gpio: Added zynq specific check for special pins on bank zero
-Date: Tue, 20 Sep 2016 14:02:04 +0530
-Message-ID: <1474360324-8168-1-git-send-email-navam@xilinx.com>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH v2 0/4] gpio: fix an incorrect lockdep warning
+Date: Tue, 20 Sep 2016 10:48:33 +0200
+Message-ID: <e4b4c894-4913-b00f-0a9d-243258f2699b@axentia.se>
+References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
+ <20160916172621.GA1426@katana>
+ <deaa654a-9afc-eae6-6bc8-75f2c3960970@axentia.se>
+ <20160916175842.GD1426@katana>
+ <587cdb60-d7fe-3ab2-b635-02c5072e102e@axentia.se>
+ <CAMpxmJUX8wszxhkoOyuqPeC8xgBjLXFRSWDSa0cOrJ92dUYX1g@mail.gmail.com>
+ <CAMpxmJX3_ec44Z0UVTNqSDjmNq+Oe3sk+szLE-Nj7X4pztbywQ@mail.gmail.com>
+ <2f7d572c-59e0-f584-9748-48a1a45a1a50@axentia.se>
+ <20160919081413.GR5016@twins.programming.kicks-ass.net>
+ <88940f9a-79bf-6c88-8e1d-f76f32dda04a@axentia.se>
+ <20160919090358.GU5016@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, michal.simek@xilinx.com, soren.brinkmann@xilinx.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Nava kishore Manne <nava.manne@xilinx.com>, Nava kishore Manne <navam@xilinx.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-db5eur01on0094.outbound.protection.outlook.com ([104.47.2.94]:62080
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752132AbcITJVq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 20 Sep 2016 05:21:46 -0400
+In-Reply-To: <20160919090358.GU5016@twins.programming.kicks-ass.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Ingo Molnar <mingo@redhat.com>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-From: Nava kishore Manne <nava.manne@xilinx.com>
+On 2016-09-19 11:03, Peter Zijlstra wrote:
+> On Mon, Sep 19, 2016 at 10:48:44AM +0200, Peter Rosin wrote:
+>> On 2016-09-19 10:14, Peter Zijlstra wrote:
+>>> On Mon, Sep 19, 2016 at 10:01:49AM +0200, Peter Rosin wrote:
+>>>> Or, do what the i2c-mux code is doing and use an rt_mutex instead
+>>>> of an ordinary mutex. That way you are very sure to not get any
+>>>> lockdep splat ... at all. Ok, sorry, that was not a serious
+>>>> suggestion, but it would be a tad bit simpler to implement...
+>>>
+>>> So I find it weird that people use rt_mutex as a locking primitive,
+>>> since its only that one lock that then does PI and all the other locks
+>>> that are related still create inversions.
+>>
+>> So, someone took the bait :-)
+>>
+>> Yes, I too find it weird, and would like to get rid of it. It's just
+>> odd. It's been some years since the start though, waaay before me
+>> entering kernel space.
+>>
+>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=194684e596af4b
+>>
+>>
+>> But it's hard to argue with the numbers given in the discussion:
+>>
+>> http://linux-i2c.vger.kernel.narkive.com/nokldJcc/patch-1-1-i2c-prevent-priority-inversion-on-top-of-bus-lock
+>>
+>> Has anything happened to the regular mutex implementation that might
+>> have changed the picture? *crosses fingers*
+> 
+> Use the -RT kernel and all locks will end up as rt_mutex. Avoiding
+> inversion on one specific lock, while there are then a gazillion other
+> than can equally create inversion doesn't make sense to me.
 
-This patch adds zynq specific check for bank 0 pins 7 and 8
-are special and cannot be used as inputs
+So, are we willing to risk a regression and ask any victims of that
+fallout to switch to the -RT kernel? -RT is still not completely
+mainline, right? Is the part with the mutex->rt_mutex conversion
+in mainline? In other words, is it just a config option that we
+can ask victims to use, or will they have to defer to patches?
 
-Signed-off-by: Nava kishore Manne <navam@xilinx.com>
----
- drivers/gpio/gpio-zynq.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+I guess the relatively freshly introduced rt_mutex "mux_lock" in
+include/linux/i2c.h can be safely converted to an ordinary mutex since
+the only reason I went with rt_mutex was that "bus_lock" was an
+rt_mutex and they are grabbed in similar circumstances. I can certainly
+send a patch. However, the i2c muxing suffers from the issue we were
+originally discussing, potentially causing false positive lockdep
+reports when you build complex hierarchies with additional
+dependencies between branches coming from client devices in the
+hierarchy (such as i2c-muxes controlled by i2c-gpio-expanders).
 
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index e72794e..eae9d24 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -96,6 +96,10 @@
- /* GPIO upper 16 bit mask */
- #define ZYNQ_GPIO_UPPER_MASK 0xFFFF0000
- 
-+/* For GPIO quirks */
-+#define ZYNQ_GPIO	BIT(0)
-+#define ZYNQMP_GPIO	BIT(1)
-+
- /**
-  * struct zynq_gpio - gpio device private data structure
-  * @chip:	instance of the gpio_chip
-@@ -122,6 +126,7 @@ struct zynq_gpio {
- */
- struct zynq_platform_data {
- 	const char *label;
-+	u32 quirks;
- 	u16 ngpio;
- 	int max_bank;
- 	int bank_min[ZYNQMP_GPIO_MAX_BANK];
-@@ -238,13 +243,19 @@ static void zynq_gpio_set_value(struct gpio_chip *chip, unsigned int pin,
- static int zynq_gpio_dir_in(struct gpio_chip *chip, unsigned int pin)
- {
- 	u32 reg;
-+	bool is_zynq_gpio;
- 	unsigned int bank_num, bank_pin_num;
- 	struct zynq_gpio *gpio = gpiochip_get_data(chip);
- 
-+	is_zynq_gpio = gpio->p_data->quirks & ZYNQ_GPIO;
- 	zynq_gpio_get_bank_pin(pin, &bank_num, &bank_pin_num, gpio);
- 
--	/* bank 0 pins 7 and 8 are special and cannot be used as inputs */
--	if (bank_num == 0 && (bank_pin_num == 7 || bank_pin_num == 8))
-+	/*
-+	 * On zynq bank 0 pins 7 and 8 are special and cannot be used
-+	 * as inputs.
-+	 */
-+	if (is_zynq_gpio && bank_num == 0 &&
-+		(bank_pin_num == 7 || bank_pin_num == 8))
- 		return -EINVAL;
- 
- 	/* clear the bit in direction mode reg to set the pin as input */
-@@ -609,6 +620,7 @@ static const struct dev_pm_ops zynq_gpio_dev_pm_ops = {
- 
- static const struct zynq_platform_data zynqmp_gpio_def = {
- 	.label = "zynqmp_gpio",
-+	.quirks = ZYNQMP_GPIO,
- 	.ngpio = ZYNQMP_GPIO_NR_GPIOS,
- 	.max_bank = ZYNQMP_GPIO_MAX_BANK,
- 	.bank_min[0] = ZYNQ_GPIO_BANK0_PIN_MIN(MP),
-@@ -627,6 +639,7 @@ static const struct zynq_platform_data zynqmp_gpio_def = {
- 
- static const struct zynq_platform_data zynq_gpio_def = {
- 	.label = "zynq_gpio",
-+	.quirks = ZYNQ_GPIO,
- 	.ngpio = ZYNQ_GPIO_NR_GPIOS,
- 	.max_bank = ZYNQ_GPIO_MAX_BANK,
- 	.bank_min[0] = ZYNQ_GPIO_BANK0_PIN_MIN(),
--- 
-2.1.2
+One pretty simple problematic case is:
+
+  .---.          .----.
+  |   |          |    |-- i2c2
+  |   |-- i2c0 --|mux0|          .----.
+  | l |          |    |-- i2c3 --|gpio|
+  | i |          '----'          '----'
+  | n |             .--------------'
+  | u |          .----.          .----.
+  | x |          |    |-- i2c4 --|dev0|
+  |   |-- i2c1 --|mux1|          '----'
+  |   |          |    |-- i2c5
+  '---'          '----'
+
+Accesses to dev0 will:
+
+1. lock i2c1:mux_lock (depth 0)
+2. switch mux1 to i2c4 using gpio
+ a lock i2c0:mux_lock (depth 0)
+ b switch mux0 to i2c3 using whatever
+ c access gpio
+ d unlock i2c0:mux_lock 
+3. access dev0
+4. unlock i2c1:mux_lock
+
+2a will cause a lockdep splat if i2c0:mux_lock is in the same
+lockdep class & subclass as i2c1:mux_lock. So, lockdep needs
+separate lockdep classes depending on the i2c root adapter
+(subclasses are needed to handle deeper trees, so they are off
+limits). Great fun. How do I go about creating a new lockdep
+class for every i2c root adapter instance?
+
+Cheers,
+Peter
+
