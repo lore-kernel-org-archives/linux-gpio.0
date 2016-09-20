@@ -1,67 +1,94 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [GIT PULL] ARM: mvebu: drivers for v4.9 (#1)
-Date: Tue, 20 Sep 2016 09:09:29 +0200
-Message-ID: <87wpi76o9i.fsf@free-electrons.com>
-References: <87a8fabikx.fsf@free-electrons.com> <4134529.ol6KhRYAQp@wuerfel>
+From: Nava kishore Manne <nava.manne@xilinx.com>
+Subject: [PATCH] gpio: Added zynq specific check for special pins on bank zero
+Date: Tue, 20 Sep 2016 14:02:04 +0530
+Message-ID: <1474360324-8168-1-git-send-email-navam@xilinx.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:56043 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752132AbcITHJc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Sep 2016 03:09:32 -0400
-In-Reply-To: <4134529.ol6KhRYAQp@wuerfel> (Arnd Bergmann's message of "Tue, 20
-        Sep 2016 00:16:41 +0200")
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, michal.simek@xilinx.com, soren.brinkmann@xilinx.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Nava kishore Manne <nava.manne@xilinx.com>, Nava kishore Manne <navam@xilinx.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Olof Johansson <olof@lixom.net>, arm@kernel.org, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
 
-Hi Arnd,
+From: Nava kishore Manne <nava.manne@xilinx.com>
+
+This patch adds zynq specific check for bank 0 pins 7 and 8
+are special and cannot be used as inputs
+
+Signed-off-by: Nava kishore Manne <navam@xilinx.com>
+---
+ drivers/gpio/gpio-zynq.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+index e72794e..eae9d24 100644
+--- a/drivers/gpio/gpio-zynq.c
++++ b/drivers/gpio/gpio-zynq.c
+@@ -96,6 +96,10 @@
+ /* GPIO upper 16 bit mask */
+ #define ZYNQ_GPIO_UPPER_MASK 0xFFFF0000
  
- On mar., sept. 20 2016, Arnd Bergmann <arnd@arndb.de> wrote:
-
-> On Wednesday, September 14, 2016 5:35:10 PM CEST Gregory CLEMENT wrote:
->> mvebu drivers for 4.9 (part 1)
->> 
->> - Add pinctrl and clk support for the Orion5x SoC mv88f5181 variant
->> 
->> ----------------------------------------------------------------
->> Jamie Lentin (2):
->>       clk: mvebu: Add clk support for the orion5x SoC mv88f5181
->>       pinctrl: mvebu: orion5x: Generalise mv88f5181l support for 88f5181
->> 
->>  .../devicetree/bindings/clock/mvebu-core-clock.txt |  1 +
->>  .../bindings/pinctrl/marvell,orion-pinctrl.txt     |  4 +-
->>  drivers/clk/mvebu/orion.c                          | 70 ++++++++++++++++++++++
->>  drivers/pinctrl/mvebu/pinctrl-orion.c              | 23 +++----
->>  4 files changed, 86 insertions(+), 12 deletions(-)
->
-> I see this touches pinctrl and clk drivers, but none of the maintainers are
-> on Cc for this pull request, nor have they provided an Ack for the patches
-> according to your git log.
->
-> Why did you not send the driver changes to them?
-
-My bad sorry. The changes only touch data (adding new varaiant of the
-orion5x), are very trivial and won't cause any merge
-conflict. Furthermore there is depency with the other pacthes in the
-mvebu branches and we already did this in the past to avoid dependecy
-between subsystem. _But_ I should have asked the acked-by from the
-drivers maintainers, it was the way we wolved it in the past and I
-forgot it.
-
->
-> Not pulled for now, until this is resolved, sorry.
-
-If the drivers maintainer for pinctrl and clk give their acked-by do you
-agree to take it for 4.9?
-
-Thanks,
-
-Gregory
++/* For GPIO quirks */
++#define ZYNQ_GPIO	BIT(0)
++#define ZYNQMP_GPIO	BIT(1)
++
+ /**
+  * struct zynq_gpio - gpio device private data structure
+  * @chip:	instance of the gpio_chip
+@@ -122,6 +126,7 @@ struct zynq_gpio {
+ */
+ struct zynq_platform_data {
+ 	const char *label;
++	u32 quirks;
+ 	u16 ngpio;
+ 	int max_bank;
+ 	int bank_min[ZYNQMP_GPIO_MAX_BANK];
+@@ -238,13 +243,19 @@ static void zynq_gpio_set_value(struct gpio_chip *chip, unsigned int pin,
+ static int zynq_gpio_dir_in(struct gpio_chip *chip, unsigned int pin)
+ {
+ 	u32 reg;
++	bool is_zynq_gpio;
+ 	unsigned int bank_num, bank_pin_num;
+ 	struct zynq_gpio *gpio = gpiochip_get_data(chip);
+ 
++	is_zynq_gpio = gpio->p_data->quirks & ZYNQ_GPIO;
+ 	zynq_gpio_get_bank_pin(pin, &bank_num, &bank_pin_num, gpio);
+ 
+-	/* bank 0 pins 7 and 8 are special and cannot be used as inputs */
+-	if (bank_num == 0 && (bank_pin_num == 7 || bank_pin_num == 8))
++	/*
++	 * On zynq bank 0 pins 7 and 8 are special and cannot be used
++	 * as inputs.
++	 */
++	if (is_zynq_gpio && bank_num == 0 &&
++		(bank_pin_num == 7 || bank_pin_num == 8))
+ 		return -EINVAL;
+ 
+ 	/* clear the bit in direction mode reg to set the pin as input */
+@@ -609,6 +620,7 @@ static const struct dev_pm_ops zynq_gpio_dev_pm_ops = {
+ 
+ static const struct zynq_platform_data zynqmp_gpio_def = {
+ 	.label = "zynqmp_gpio",
++	.quirks = ZYNQMP_GPIO,
+ 	.ngpio = ZYNQMP_GPIO_NR_GPIOS,
+ 	.max_bank = ZYNQMP_GPIO_MAX_BANK,
+ 	.bank_min[0] = ZYNQ_GPIO_BANK0_PIN_MIN(MP),
+@@ -627,6 +639,7 @@ static const struct zynq_platform_data zynqmp_gpio_def = {
+ 
+ static const struct zynq_platform_data zynq_gpio_def = {
+ 	.label = "zynq_gpio",
++	.quirks = ZYNQ_GPIO,
+ 	.ngpio = ZYNQ_GPIO_NR_GPIOS,
+ 	.max_bank = ZYNQ_GPIO_MAX_BANK,
+ 	.bank_min[0] = ZYNQ_GPIO_BANK0_PIN_MIN(),
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+2.1.2
