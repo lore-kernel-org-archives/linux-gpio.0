@@ -1,43 +1,39 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v6 2/4] drivers: irqchip: Add STM32 external interrupts
- support
-Date: Tue, 20 Sep 2016 22:16:52 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1609202214460.5476@nanos>
-References: <1474387259-18926-1-git-send-email-alexandre.torgue@st.com> <1474387259-18926-3-git-send-email-alexandre.torgue@st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [GIT PULL] ARM: mvebu: drivers for v4.9 (#1)
+Date: Tue, 20 Sep 2016 23:51:40 +0200
+Message-ID: <CACRpkdZCt9n6c6FKEPgX85yhgWGfcNY1HoyEFXFY-5s1eCQByA@mail.gmail.com>
+References: <87a8fabikx.fsf@free-electrons.com> <4134529.ol6KhRYAQp@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from Galois.linutronix.de ([146.0.238.70]:60469 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752158AbcITUTZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Sep 2016 16:19:25 -0400
-In-Reply-To: <1474387259-18926-3-git-send-email-alexandre.torgue@st.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <4134529.ol6KhRYAQp@wuerfel>
+Sender: linux-clk-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, Olof Johansson <olof@lixom.net>, "arm@kernel.org" <arm@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre TORGUE <alexandre.torgue@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com, lee.jones@linaro.org
 
-Alexandre,
+On Tue, Sep 20, 2016 at 12:16 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wednesday, September 14, 2016 5:35:10 PM CEST Gregory CLEMENT wrote:
+>> mvebu drivers for 4.9 (part 1)
+>>
+>> - Add pinctrl and clk support for the Orion5x SoC mv88f5181 variant
+>>
+>> ----------------------------------------------------------------
+>> Jamie Lentin (2):
+>>       clk: mvebu: Add clk support for the orion5x SoC mv88f5181
+>>       pinctrl: mvebu: orion5x: Generalise mv88f5181l support for 88f5181
+>>
+>>  .../devicetree/bindings/clock/mvebu-core-clock.txt |  1 +
+>>  .../bindings/pinctrl/marvell,orion-pinctrl.txt     |  4 +-
+>>  drivers/clk/mvebu/orion.c                          | 70 ++++++++++++++++++++++
+>>  drivers/pinctrl/mvebu/pinctrl-orion.c              | 23 +++----
+>>  4 files changed, 86 insertions(+), 12 deletions(-)
+>
+> I see this touches pinctrl and clk drivers, but none of the maintainers are
+> on Cc for this pull request, nor have they provided an Ack for the patches
+> according to your git log.
 
-On Tue, 20 Sep 2016, Alexandre TORGUE wrote:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-> The STM32 external interrupt controller consists of edge detectors that
-> generate interrupts requests or wake-up events.
-> 
-> Each line can be independently configured as interrupt or wake-up source,
-> and triggers either on rising, falling or both edges. Each line can also
-> be masked independently.
-> 
-> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
-
-That all looks very reasonable now. The only remaining question is your SOB
-chain. Who is the author of these patches? You or Maxime? If it's Maxime,
-then the changelog misses a From: tag. If it's you then Maximes SOB is
-bogus.
-
-Thanks,
-
-	tglx
-
-
+Yours,
+Linus Walleij
