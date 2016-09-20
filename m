@@ -1,89 +1,40 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 Subject: Re: [PATCH v5 2/9] drivers: irqchip: Add STM32 external interrupts
  support
-Date: Tue, 20 Sep 2016 15:33:49 +0200
-Message-ID: <c2c8ad5f-e679-8522-808f-e940b8c6954d@st.com>
-References: <1473432124-6784-1-git-send-email-alexandre.torgue@st.com>
- <1473432124-6784-3-git-send-email-alexandre.torgue@st.com>
- <alpine.DEB.2.20.1609131713490.6233@nanos>
- <6941f61d-0b33-4108-0135-b11887cd0488@st.com>
- <alpine.DEB.2.20.1609141103420.6233@nanos>
- <facd1c7c-d696-eae1-02e4-5a0c9285add0@st.com>
- <alpine.DEB.2.20.1609141532510.6233@nanos>
- <f64e4f9d-d811-2c6e-7c5a-d4ab06716e2c@st.com>
- <39c4ceee-7e05-ebfd-2ea0-3c4e1c4ea619@st.com>
- <alpine.DEB.2.20.1609201150160.6905@nanos>
- <053a37f4-aa10-46ea-f477-8ae55bb5773f@st.com>
- <alpine.DEB.2.20.1609201439440.6905@nanos>
+Date: Tue, 20 Sep 2016 16:02:03 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1609201600490.6905@nanos>
+References: <1473432124-6784-1-git-send-email-alexandre.torgue@st.com> <1473432124-6784-3-git-send-email-alexandre.torgue@st.com> <alpine.DEB.2.20.1609131713490.6233@nanos> <6941f61d-0b33-4108-0135-b11887cd0488@st.com> <alpine.DEB.2.20.1609141103420.6233@nanos>
+ <facd1c7c-d696-eae1-02e4-5a0c9285add0@st.com> <alpine.DEB.2.20.1609141532510.6233@nanos> <f64e4f9d-d811-2c6e-7c5a-d4ab06716e2c@st.com> <39c4ceee-7e05-ebfd-2ea0-3c4e1c4ea619@st.com> <alpine.DEB.2.20.1609201150160.6905@nanos> <053a37f4-aa10-46ea-f477-8ae55bb5773f@st.com>
+ <alpine.DEB.2.20.1609201439440.6905@nanos> <c2c8ad5f-e679-8522-808f-e940b8c6954d@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:20795 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754012AbcITNed (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 20 Sep 2016 09:34:33 -0400
-In-Reply-To: <alpine.DEB.2.20.1609201439440.6905@nanos>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c2c8ad5f-e679-8522-808f-e940b8c6954d@st.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Torgue <alexandre.torgue@st.com>
 Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, Jason Cooper <jason@lakedaemon.net>, arnd@arndb.de, Marc Zyngier <marc.zyngier@arm.com>, bruherrera@gmail.com, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, lee.jones@linaro.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-gpio@vger.kernel.org
 
-Thomas,
+On Tue, 20 Sep 2016, Alexandre Torgue wrote:
+> On 09/20/2016 02:44 PM, Thomas Gleixner wrote:
+> > Free will be called when a interrupt in the child domain is torn down,
+> > i.e. when irq_domain_free_irqs() is called. And it will be called for both
+> > domains like the alloc callback is invoked on both domains via
+> > irq_domain_alloc_irqs().
+> 
+> Thanks Thomas for this clarification (I'm sure now that we need .free
+> callbacks).
+> irq_domain_free_irqs() is called in 2 scenario:
+> 1- when issue occurs in irq_create_fwspec_mapping()
+> 2- when irq_dispose_mapping() is called
+> 
+> Case 2 is the one I tested some times ago. In this case, I need to mask
+> interrupts in .free callback of EXTI (parent) domain to avoid spurious
+> interrupts.
 
-On 09/20/2016 02:44 PM, Thomas Gleixner wrote:
-> On Tue, 20 Sep 2016, Alexandre Torgue wrote:
->
->> Thomas,
->>
->> On 09/20/2016 11:51 AM, Thomas Gleixner wrote:
->>> On Tue, 20 Sep 2016, Alexandre Torgue wrote:
->>>>> On 09/14/2016 03:34 PM, Thomas Gleixner wrote:
->>>>>> Well, you just used some function in some context which is not
->>>>>> relevant to
->>>>>> the normal operation. So adding that mask() is just paranoia for no
->>>>>> value.
->>>>>
->>>> A gentle reminder ping...
->>>> If ".free" callback is not relevant then I 'll remove it from exti domain.
->>
->> Sorry for discussing about the same thing again (and again) but I just want to
->> be sure before sending a new version. As you know I have 2 domains: EXTI
->> domain (parent) and stm32-pinctrl-bank domain (child one).
->>
->> There does it make sens to have ".free" callbacks defined in both domain
->> (actually if I define one for the child domain I have to define also ".free"
->> callback for parent domain (EXTI) as it is hierarchical) ?
->> If ".free" have no chance to be called then I will send a new version by
->> removing .free callbacks (in both domain).
->
-> Free will be called when a interrupt in the child domain is torn down,
-> i.e. when irq_domain_free_irqs() is called. And it will be called for both
-> domains like the alloc callback is invoked on both domains via
-> irq_domain_alloc_irqs().
+And why would irq_dispose_mapping() be called on an unmasked, i.e. active,
+interrupt? The masking is just papering over that.
 
-Thanks Thomas for this clarification (I'm sure now that we need .free 
-callbacks).
-irq_domain_free_irqs() is called in 2 scenario:
-1- when issue occurs in irq_create_fwspec_mapping()
-2- when irq_dispose_mapping() is called
+Thanks,
 
-Case 2 is the one I tested some times ago. In this case, I need to mask 
-interrupts in .free callback of EXTI (parent) domain to avoid spurious 
-interrupts.
-
-Regards
-
-Alex
-
-
->
-> Thanks,
->
-> 	tglx
->
->
->
->
-
+	tglx
