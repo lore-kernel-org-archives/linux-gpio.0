@@ -1,15 +1,11 @@
 From: Nilesh Bacchewar <nilesh.bacchewar@intel.com>
-Subject: [PATCH] pinctrl: intel: Configure GPIO chip IRQ as wakeup interrupts
-Date: Wed, 21 Sep 2016 16:03:22 -0700
-Message-ID: <1474499002-76446-1-git-send-email-nilesh.bacchewar@intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:6617 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753111AbcIUXB7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 21 Sep 2016 19:01:59 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH v2] pinctrl: intel: Configure GPIO chip IRQ as wakeup interrupts
+Date: Wed, 21 Sep 2016 16:35:23 -0700
+Message-ID: <1474500923-84047-1-git-send-email-nilesh.bacchewar@intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
 On some Intel BXT platform, wake-up from suspend-to-idle on pressing
 power-button is not working. Its noticed that gpio-keys driver marking the
@@ -22,14 +18,17 @@ Intel pintctrl/GPIO driver need to mark GPIO chip/controller IRQ (first
 level IRQ) as wake capable iff GPIO pin's IRQ (second level IRQ) is marked
 as wake cable.
 
+Changes in v2:
+ - Add missing irq initialisation.
+
 Signed-off-by: Nilesh Bacchewar <nilesh.bacchewar@intel.com>
 Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-intel.c | 32 ++++----------------------------
- 1 file changed, 4 insertions(+), 28 deletions(-)
+ drivers/pinctrl/intel/pinctrl-intel.c | 33 +++++----------------------------
+ 1 file changed, 5 insertions(+), 28 deletions(-)
 
 diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 257cab1..ad19592 100644
+index 257cab1..63387a4 100644
 --- a/drivers/pinctrl/intel/pinctrl-intel.c
 +++ b/drivers/pinctrl/intel/pinctrl-intel.c
 @@ -86,6 +86,7 @@ struct intel_pinctrl_context {
@@ -89,6 +88,13 @@ index 257cab1..ad19592 100644
  
  	dev_dbg(pctrl->dev, "%sable wake for pin %u\n", on ? "en" : "dis", pin);
  	return 0;
+@@ -905,6 +881,7 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
+ 	pctrl->chip.label = dev_name(pctrl->dev);
+ 	pctrl->chip.parent = pctrl->dev;
+ 	pctrl->chip.base = -1;
++	pctrl->irq = irq;
+ 
+ 	ret = gpiochip_add_data(&pctrl->chip, pctrl);
+ 	if (ret) {
 -- 
 1.9.1
-
