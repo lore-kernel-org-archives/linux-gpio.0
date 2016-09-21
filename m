@@ -1,61 +1,54 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
+From: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
 Subject: Re: [PATCH v6 2/4] drivers: irqchip: Add STM32 external interrupts
  support
-Date: Wed, 21 Sep 2016 09:45:09 +0200
-Message-ID: <f7875786-9b5e-075a-59c8-cd32fb1c4583@st.com>
-References: <1474387259-18926-1-git-send-email-alexandre.torgue@st.com>
- <1474387259-18926-3-git-send-email-alexandre.torgue@st.com>
- <alpine.DEB.2.20.1609202214460.5476@nanos>
+Date: Wed, 21 Sep 2016 09:50:11 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1609210949150.5573@nanos>
+References: <1474387259-18926-1-git-send-email-alexandre.torgue@st.com> <1474387259-18926-3-git-send-email-alexandre.torgue@st.com> <alpine.DEB.2.20.1609202214460.5476@nanos> <f7875786-9b5e-075a-59c8-cd32fb1c4583@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:52322 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753039AbcIUHp6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 21 Sep 2016 03:45:58 -0400
-In-Reply-To: <alpine.DEB.2.20.1609202214460.5476@nanos>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <f7875786-9b5e-075a-59c8-cd32fb1c4583-qxv4g6HH51o@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Torgue <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
+Cc: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, bruherrera-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com, lee.jones@linaro.org
 
-Hi Thomas,
+On Wed, 21 Sep 2016, Alexandre Torgue wrote:
 
-On 09/20/2016 10:16 PM, Thomas Gleixner wrote:
-> Alexandre,
->
-> On Tue, 20 Sep 2016, Alexandre TORGUE wrote:
->
->> The STM32 external interrupt controller consists of edge detectors that
->> generate interrupts requests or wake-up events.
->>
->> Each line can be independently configured as interrupt or wake-up source,
->> and triggers either on rising, falling or both edges. Each line can also
->> be masked independently.
->>
->> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
->> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
->
-> That all looks very reasonable now. The only remaining question is your SOB
-> chain. Who is the author of these patches? You or Maxime? If it's Maxime,
-> then the changelog misses a From: tag. If it's you then Maximes SOB is
-> bogus.
+> Hi Thomas,
+> 
+> On 09/20/2016 10:16 PM, Thomas Gleixner wrote:
+> > Alexandre,
+> > 
+> > On Tue, 20 Sep 2016, Alexandre TORGUE wrote:
+> > 
+> > > The STM32 external interrupt controller consists of edge detectors that
+> > > generate interrupts requests or wake-up events.
+> > > 
+> > > Each line can be independently configured as interrupt or wake-up source,
+> > > and triggers either on rising, falling or both edges. Each line can also
+> > > be masked independently.
+> > > 
+> > > Signed-off-by: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> > > Signed-off-by: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
+> > 
+> > That all looks very reasonable now. The only remaining question is your SOB
+> > chain. Who is the author of these patches? You or Maxime? If it's Maxime,
+> > then the changelog misses a From: tag. If it's you then Maximes SOB is
+> > bogus.
+> 
+> Actually Maxime wrote the main part of this driver and sent version 1 and 2 of
+> the series. After Linus W. reviews, rework was required to use hierarchical
+> domain. According to Maxime, I coded the rework (adaptation to hierarchical
+> domain) and sent other version of the series.
 
-Actually Maxime wrote the main part of this driver and sent version 1 
-and 2 of the series. After Linus W. reviews, rework was required to use 
-hierarchical domain. According to Maxime, I coded the rework (adaptation 
-to hierarchical domain) and sent other version of the series.
+So I replace Maximes SOB with Originally-by: Does that apply to all four
+patches?
 
-Regards
+Thanks,
 
-Alex
-
->
-> Thanks,
->
-> 	tglx
->
->
-
+	tglx
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
