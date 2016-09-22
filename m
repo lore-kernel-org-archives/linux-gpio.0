@@ -1,100 +1,87 @@
-From: Nilesh Bacchewar <nilesh.bacchewar@intel.com>
-Subject: [PATCH v2] pinctrl: intel: Configure GPIO chip IRQ as wakeup interrupts
-Date: Wed, 21 Sep 2016 16:35:23 -0700
-Message-ID: <1474500923-84047-1-git-send-email-nilesh.bacchewar@intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: Requesting as a GPIO a pin already used through pinctrl
+Date: Thu, 22 Sep 2016 13:48:52 +0300
+Message-ID: <20160922104852.GO8719@lukather>
+References: <20160916135808.GA17518@lukather>
+ <CACRpkdbZ-TCNmmt4NyL2cQ2W3dE42uFGjQtxRyMxrf2ZUA_9Rg@mail.gmail.com>
+ <20160921195128.GG8719@lukather>
+ <20160921203435.GA14965@sysresccd>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="VRppCkiwz5ce4F2G"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:54253 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933276AbcIVKsz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Sep 2016 06:48:55 -0400
+Content-Disposition: inline
+In-Reply-To: <20160921203435.GA14965@sysresccd>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Michael Welling <mwelling@ieee.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>
 
-On some Intel BXT platform, wake-up from suspend-to-idle on pressing
-power-button is not working. Its noticed that gpio-keys driver marking the
-second level IRQ/power-button as wake capable but Intel pintctrl
-driver is missing to mark GPIO chip/controller IRQ which first level IRQ
-as wake cable if its GPIO pin IRQ is wakeble. So, though the first level
-IRQ gets generated on power-button press, since it is not marked as
-wake capable resume/wake-up flow is not happening.
-Intel pintctrl/GPIO driver need to mark GPIO chip/controller IRQ (first
-level IRQ) as wake capable iff GPIO pin's IRQ (second level IRQ) is marked
-as wake cable.
 
-Changes in v2:
- - Add missing irq initialisation.
+--VRppCkiwz5ce4F2G
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Nilesh Bacchewar <nilesh.bacchewar@intel.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-intel.c | 33 +++++----------------------------
- 1 file changed, 5 insertions(+), 28 deletions(-)
+On Wed, Sep 21, 2016 at 03:34:35PM -0500, Michael Welling wrote:
+> On Wed, Sep 21, 2016 at 10:51:28PM +0300, Maxime Ripard wrote:
+> > Hi Linus,
+> >=20
+> > Thanks for your reply.
+> >=20
+> > On Sun, Sep 18, 2016 at 01:30:24PM +0200, Linus Walleij wrote:
+> > > On Fri, Sep 16, 2016 at 3:58 PM, Maxime Ripard
+> > > <maxime.ripard@free-electrons.com> wrote:
+> > >=20
+> > > > However, things are getting weird when you have that requested pin
+> > > > assigned to one device, and you try to export the GPIO on that pin
+> > > > (through sysfs for example,
+> > >=20
+> > > DON'T use sysfs. Use the new chardev ABI which is by the way enabled
+> > > by default.
+> > >=20
+> > > (But you will face the same issue there I guess.)
+> >=20
+> > Yeah, well, we could re-do the discussion on ksummit-discuss :)
+>=20
+> Are you guys trolling me?
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 257cab1..63387a4 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -86,6 +86,7 @@ struct intel_pinctrl_context {
-  * @communities: All communities in this pin controller
-  * @ncommunities: Number of communities in this pin controller
-  * @context: Configuration saved over system sleep
-+ * @irq: pinctrl/GPIO chip irq number
-  */
- struct intel_pinctrl {
- 	struct device *dev;
-@@ -97,6 +98,7 @@ struct intel_pinctrl {
- 	struct intel_community *communities;
- 	size_t ncommunities;
- 	struct intel_pinctrl_context context;
-+	int irq;
- };
- 
- #define pin_to_padno(c, p)	((p) - (c)->pin_base)
-@@ -793,38 +795,12 @@ static int intel_gpio_irq_wake(struct irq_data *d, unsigned int on)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
--	const struct intel_community *community;
- 	unsigned pin = irqd_to_hwirq(d);
--	unsigned padno, gpp, gpp_offset;
--	unsigned long flags;
--	u32 gpe_en;
--
--	community = intel_get_community(pctrl, pin);
--	if (!community)
--		return -EINVAL;
--
--	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 
--	padno = pin_to_padno(community, pin);
--	gpp = padno / community->gpp_size;
--	gpp_offset = padno % community->gpp_size;
--
--	/* Clear the existing wake status */
--	writel(BIT(gpp_offset), community->regs + GPI_GPE_STS + gpp * 4);
--
--	/*
--	 * The controller will generate wake when GPE of the corresponding
--	 * pad is enabled and it is not routed to SCI (GPIROUTSCI is not
--	 * set).
--	 */
--	gpe_en = readl(community->regs + GPI_GPE_EN + gpp * 4);
- 	if (on)
--		gpe_en |= BIT(gpp_offset);
-+		enable_irq_wake(pctrl->irq);
- 	else
--		gpe_en &= ~BIT(gpp_offset);
--	writel(gpe_en, community->regs + GPI_GPE_EN + gpp * 4);
--
--	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-+		disable_irq_wake(pctrl->irq);
- 
- 	dev_dbg(pctrl->dev, "%sable wake for pin %u\n", on ? "en" : "dis", pin);
- 	return 0;
-@@ -905,6 +881,7 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
- 	pctrl->chip.label = dev_name(pctrl->dev);
- 	pctrl->chip.parent = pctrl->dev;
- 	pctrl->chip.base = -1;
-+	pctrl->irq = irq;
- 
- 	ret = gpiochip_add_data(&pctrl->chip, pctrl);
- 	if (ret) {
--- 
-1.9.1
+No, the point I was trying to make is that not every system and
+product kernel out there has been switched to a 4.8+ kernel, for
+exactly the reasons that are discussed right now on ksummit-discuss.
+
+I don't really get how that is trolling.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--VRppCkiwz5ce4F2G
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX47cUAAoJEBx+YmzsjxAgppUQAKozCBsChiGK/kPsl5Jn3/7z
+9ivWUXMWRZcsIQdInW+VD0jLsDWxaeclpdJ5W8L1KA4STdzARW4lhJs6IOkoPZbe
+6iYeWG9d0vSRo8UQP73izViD4Ru0SiYOcO3sYJ0Ce7kcmbychpiJmM9MsGTXUW4u
+pwFLriGB0SrBFYyfxZ9OS8FAxbJHNujDyuo4+OLkGMKe/rTNGqmNyxEa1bfRsypa
+RcNX0S1fD2VLjN6EKS/A+pxWBe7GaxszUht2CbNK16T2ve9wvNFwLK3oAMKKAWrJ
+pQbpw7ZLM4XenJ8ZGsxPz0hCqsnokX/0PCT+plVa4jisC9E6KHnTEY25f50Dde2T
+t1NzjYqD8OTX7MXK2mlJ0UxliZG3Uf4FbU8JGTOl++jE0WvWnzWNT6WMpke3aWr/
+lhrEQ4FDKlnagkwF/72EtBLiTX4kQYgrI+PI8gi+rk6MFig9Uj2Rn9QtIgdbW23Y
+DQ9p2KQFdpagl/L97Rmx8HJ+BOkN0jhBHQLy2hofD4x5t2fLrpCzBioAyy8wfkOO
+tsIprywNiPRa0CUuhqE+Ka/WLZZAgEylSva+IKBOG1eLxzmY1zpET/7IUuCgE/1O
+ahbTxbtYdWrJSkna0Yd5S1EcCpyRmfGxtgQNrLYTzxkbc4aGavw1HK6B1b+yxAug
+jG7thqHlvaLuB2IJODSn
+=0y7y
+-----END PGP SIGNATURE-----
+
+--VRppCkiwz5ce4F2G--
