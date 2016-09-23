@@ -1,51 +1,75 @@
-From: Jacob Chen <jacob-chen@iotwrt.com>
-Subject: [PATCH] pinctrl: rockchip: don't disable clk when irq mask is already set
-Date: Sat, 24 Sep 2016 02:26:37 +0800
-Message-ID: <1474655197-26919-1-git-send-email-jacob-chen@iotwrt.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH] ARM: omap2: fix missing include
+Date: Fri, 23 Sep 2016 15:15:56 -0400
+Message-ID: <20160923191556.GN8825@windriver.com>
+References: <1474634412-7050-1-git-send-email-linus.walleij@linaro.org>
+ <20160923141313.y7xp2yyv74nk2v3a@atomide.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:33896 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933869AbcIWS1S (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Sep 2016 14:27:18 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:33184 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758394AbcIWTQC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 23 Sep 2016 15:16:02 -0400
+Content-Disposition: inline
+In-Reply-To: <20160923141313.y7xp2yyv74nk2v3a@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, Jacob Chen <jacob2.chen@rock-chips.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
-From: Jacob Chen <jacob2.chen@rock-chips.com>
+[Re: [PATCH] ARM: omap2: fix missing include] On 23/09/2016 (Fri 07:13) Tony Lindgren wrote:
 
-In some drivers, disable_irq() call don't be symmetric with enable_irq()
-, disable_irq() will be called before call free_irq().
+> * Linus Walleij <linus.walleij@linaro.org> [160923 05:40]:
+> > commit d47529b2e9fe
+> > "gpio: don't include module.h in shared driver header"
+> > removed <linux/module.h> from the <linux/gpio/driver.h> header.
+> > 
+> > It seems arch/arm/mach-omap2/board-rx51-peripherals.c
+> > is using __initdata_or_module from <linux/module.h> through
+> > <linux/gpio.h> to <linux/gpio/driver.h>, so break this dependency
+> > so that we get a clean compile.
+> > 
+> > Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+> > Cc: Tony Lindgren <tony@atomide.com>
+> > Fixes: d47529b2e9fe ("gpio: don't include module.h in shared driver header")
+> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> > ---
+> > Tony: please ACK this if it's OK so I can merge it in front of
+> > the offending patch.
+> 
+> This file is gone in Linux next but if you need it:
+> 
+> Acked-by: Tony Lindgren <tony@atomide.com>
+> 
+> Sorry the removal got postponed from v4.8 to v4.9. Note that
+> it will produce a trivial merge conflict.
 
-But both disable_irq() and free_irq() will call rockchip_irq_gc_mask_set_bit,
- and clk_disable() will be called more times than clk_enable(), which will
-cause bugs.
+Ah, that explains it.  Linus, I'd come across this a few months ago, and
+sent Tony a different fix for it:
 
-I think we can correct that by checking of mask.If mask is already set, do nothing.
+https://patchwork.kernel.org/patch/9238801/
 
-Change-Id: If19912c7658253e15531c04db6c70fdbffd5960a
-Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
----
- drivers/pinctrl/pinctrl-rockchip.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index c6c04ac..9a8804a 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -2334,8 +2334,12 @@ static void rockchip_irq_gc_mask_clr_bit(struct irq_data *d)
- void rockchip_irq_gc_mask_set_bit(struct irq_data *d)
- {
- 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct irq_chip_type *ct = irq_data_get_chip_type(d);
- 	struct rockchip_pin_bank *bank = gc->private;
-
-+	if (*ct->mask_cache & d->mask)
-+		return;
-+
- 	irq_gc_mask_set_bit(d);
- 	clk_disable(bank->clk);
- }
+Paul.
 --
-2.7.4
 
+> 
+> > ---
+> >  arch/arm/mach-omap2/board-rx51-peripherals.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/arch/arm/mach-omap2/board-rx51-peripherals.c b/arch/arm/mach-omap2/board-rx51-peripherals.c
+> > index a5ab712c1a59..6d3af43ae3e4 100644
+> > --- a/arch/arm/mach-omap2/board-rx51-peripherals.c
+> > +++ b/arch/arm/mach-omap2/board-rx51-peripherals.c
+> > @@ -29,6 +29,7 @@
+> >  #include <linux/power/isp1704_charger.h>
+> >  #include <linux/platform_data/spi-omap2-mcspi.h>
+> >  #include <linux/platform_data/mtd-onenand-omap2.h>
+> > +#include <linux/module.h>
+> >  
+> >  #include <plat/dmtimer.h>
+> >  
+> > -- 
+> > 2.7.4
+> > 
