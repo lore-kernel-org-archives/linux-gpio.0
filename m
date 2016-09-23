@@ -1,84 +1,159 @@
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
 Subject: Re: Requesting as a GPIO a pin already used through pinctrl
-Date: Sat, 24 Sep 2016 00:05:49 +0300
-Message-ID: <20160923210549.GY8719@lukather>
+Date: Sat, 24 Sep 2016 00:34:19 +0300
+Message-ID: <20160923213419.GZ8719@lukather>
 References: <20160916135808.GA17518@lukather>
  <CACRpkdbZ-TCNmmt4NyL2cQ2W3dE42uFGjQtxRyMxrf2ZUA_9Rg@mail.gmail.com>
  <20160921195128.GG8719@lukather>
  <CACRpkdY_YVhHuMwx=mwPVyHNpLveg7Gikc0uznUhsKBCYJwzzw@mail.gmail.com>
+ <e1220fe5-f52e-60a3-2070-edb3da382035@mentor.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="V3GHqwm1rrtpHsCJ"
+        protocol="application/pgp-signature"; boundary="yTfYsguFsV8cp5cf"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:40685 "EHLO
+Received: from down.free-electrons.com ([37.187.137.238]:41050 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753235AbcIWVFw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Sep 2016 17:05:52 -0400
+        with ESMTP id S1758767AbcIWVeX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Sep 2016 17:34:23 -0400
 Content-Disposition: inline
-In-Reply-To: <CACRpkdY_YVhHuMwx=mwPVyHNpLveg7Gikc0uznUhsKBCYJwzzw@mail.gmail.com>
+In-Reply-To: <e1220fe5-f52e-60a3-2070-edb3da382035@mentor.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Rob Herring <robh+dt@kernel.org>
 
 
---V3GHqwm1rrtpHsCJ
+--yTfYsguFsV8cp5cf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 23, 2016 at 03:22:53PM +0200, Linus Walleij wrote:
-> > However, it does have an unexpected side-effect. On our DT, for the
-> > GPIOs, we also set up a pinctrl node (which seem to be along the lines
-> > of the doc recommandations, section "Drivers needing both pin control
-> > and GPIOs").
+On Fri, Sep 23, 2016 at 06:24:04PM +0300, Vladimir Zapolskiy wrote:
+> On 09/23/2016 04:22 PM, Linus Walleij wrote:
+> >On Wed, Sep 21, 2016 at 9:51 PM, Maxime Ripard
+> ><maxime.ripard@free-electrons.com> wrote:
+> >>On Sun, Sep 18, 2016 at 01:30:24PM +0200, Linus Walleij wrote:
 > >
-> > However, when pinctrl_select_default is called by the core, which in
-> > turns ends up calling pinmux_enable_setting, which builds the owner
-> > name using the dev_name. However, when we call gpiod_request, it ends
-> > up in pinmux_request_gpio, which build the owner string using the
-> > pinctrl device name and the pin number.
+> >>>>I have the feeling that the core should prevent that, making sure that
+> >>>>the gpiod_request returns EBUSY in such a case, but I'm not really
+> >>>>sure whether it's the case or not, and if it is, where that check is
+> >>>>happening.
+> >>>
+> >>>- Did you try specifying .strict for the pinmux?
+> >>>
+> >>>- Did you read Documentation/pinctrl.txt, section titled
+> >>>  "GPIO mode pitfalls"?
+> >>
+> >>Sigh. Sorry for that, I should learn to read the documentation. This
+> >>is obviously the right thing to do.
 > >
-> > This results in a mismatch of owners, and the gpiod_request fails,
-> > while the device really is the same.
+> >Guessed so.
+> >
+> >>However, it does have an unexpected side-effect. On our DT, for the
+> >>GPIOs, we also set up a pinctrl node (which seem to be along the lines
+> >>of the doc recommandations, section "Drivers needing both pin control
+> >>and GPIOs").
+> >>
+> >>However, when pinctrl_select_default is called by the core, which in
+> >>turns ends up calling pinmux_enable_setting, which builds the owner
+> >>name using the dev_name. However, when we call gpiod_request, it ends
+> >>up in pinmux_request_gpio, which build the owner string using the
+> >>pinctrl device name and the pin number.
+> >>
+> >>This results in a mismatch of owners, and the gpiod_request fails,
+> >>while the device really is the same.
+> >
+> >Yeah, needing both GPIO and pinctrl on the same pin kind of
+> >implies that the subsystems are poking at the same hardware and
+> >that is !=3Dstrict.
 >=20
-> Yeah, needing both GPIO and pinctrl on the same pin kind of
-> implies that the subsystems are poking at the same hardware and
-> that is !=3Dstrict.
-
-My understanding was that GPIO and pinctrl were pretty much
-orthogonal, a pinctrl property would set up the muxing, and mark the
-pin as in use, while the GPIO property would just say what we use the
-pin for. In a way, that was similar to what any other controller would
-behave. You would mark the pins as exclusive, mux them, and leave the
-controller deal with its pin.
-
-Anyway, I'll remove those properties from our DTs, and add the .strict
-flag.
-
-> I have had some half-finished thoughts here, for example to add
-> more callbacks from GPIO to pinctrl for things like open drain
-> and biasing, so that GPIO would be a "pure" front-end with a pinctrl
-> back-end. It ends up duplicating a lot of stuff from pinctrl in GPIO,
-> but since people will inevitably want to do things like biasing
-> from the GPIO chardev I might have to bite the bullet and do it
-> that way.
+> recently I worked on GPIO to pinctrl connection for i.MX SoCs, so
+> let me share some details until I forget them while time goes by.
 >=20
-> Other ideas welcome.
+> IMHO i.MX* IOMUX controllers are type A strict pinctrl controllers
+> described in Documentation/pinctrl.txt, however practically it won't
+> be possible to convert them to the strict type due to the countless
+> runtime issues on boards when DTBs are not updated at the same time,
+> in other words backward compatibility with the preexisting firmware
+> is hardly reachable,
 
-If we don't have access to the calling device structure, I'm not sure
-how we could fix that properly.
+I'm not sure marking an optional, generic, property (pinctrl-0) as
+exclusive with an often mandatory, if not optional, usually
+binding-specific property (*-gpio) would be considered an ABI
+breakage, even more so if it was wrong the whole time, and it prevents
+us from fixing an actual bug.
 
-On your more mid-term view of things and where the chardev interface
-should be going, I definitely second at least having things like
-biasing, strength, and all the configuration really, exposed. There's
-a lot of people that actually want to enable biasing and we don't
-really have a good solution for that.
+Rob? Any opinion on that one?
 
-One way would be to use the DT overlays, but that seems more of a hack
-than anything else.
+> however for any next added i.MX pinctrl drivers (and probably many
+> other pinctrl drivers) I would suggest to set the type to strict, at
+> least it might be nice to
+>=20
+> a) more precisely describe what is the strict pinctrl controller
+>    beast,
+> b) ask every pinctrl driver submitter for clear confirmation that
+>    their controller is strict or non-strict.
+>=20
+> This should allow to avoid some degree of pain in the future, when
+> it accidentally happens that users (e.g. fossilized in DTBs) of
+> a strict pinctrl controller abuse the freedom given exclusively
+> for non-strict controllers.
+>=20
+> Next are some issues I've observed, due to our specifics we have to
+> control pad muxing in runtime between GPIO and functional modes.
+> This may imply not only the change of mux setting but as well pin
+> config changes, hence limiting the discussion to pin descriptions
+> in OF there should be two or more pinctrl tuples (mux function,
+> pin config) for the same pin. Usually on practice this case is
+> resolved by providing pinctrl-[0-9]+ properties, but this works
+> well only if there is no pad ownership transfer, otherwise one of
+> two independent users of the same pad resourse will fail to be
+> registered during boot time due to a conflict for the resourse.
+> When a device is unbound in runtime, a pad resourse is released
+> and it can be captured by another device (repeat the procedure to
+> restore the original state), and when one of the rivals is active
+> another shall not get a chance to grab the pads. I didn't manage
+> to find a good description of this possibility in DTS though,
+> the best one we came across is adding a pinctrl-* property pointing
+> to GPIO mux/config settings of wanted GPIOs right into the
+> correspondent GPIO controller device node and set it as non-default
+> to avoid boot time conflict. When turn for GPIOs begins in runtime
+> the mux and config values for a pinctrl hardware are taken from
+> that phandle (by an overly hackish in-kernel pinctrl API extension,
+> which accounts that non-"default" pinctrl-names values).
+>=20
+> And here are some conclusions, as I can see often potentially
+> dangling pads for GPIOs are described in a hog group (owned by
+> pinctrl), for strict controllers there is a conflict between
+> the pinctrl and an end-point GPIO user, probably it might be better
+> to neutralize this conflict by moving pad groups with GPIO
+> functioning pads into exclusive usage (including formal runtime
+> ownership) by GPIO controller drivers and their backends in
+> pinctrl subsystem. There should be an anchor in DTS, which says
+> that a pad is functioning as a GPIO, it is given if a pad
+> belongs to a "gpio-controller" device node. Alternatively hog
+> groups may be reviewed, all non-GPIO pads placed there are wiped
+> out or moved to more appropriate groups and hog group ownership
+> is transferred to the class of GPIO controllers, but this is
+> a more questionable path.
 
-Thanks!
+Basing that on whether the pinctrl controller has gpio-controller is a
+pretty good idea.
+
+I think the only we would need then is some kind of callback in the
+pintrl driver to query for whether a particular configuration is a
+gpio, and we can have some neat handover without reducing the
+strictness of the whole driver, and without basing it on the owner
+string.
+
+Something like "if the configuration is a gpio, and my pinctrl driver
+is also a gpio controller, and that gpiod_request is being called on
+that pin, hand over the reference"
+
+We'd probably need some additional check on the refcount too (for
+example only the first gpiod_request gets the handover, and the next
+one are rejected.
+
 Maxime
 
 --=20
@@ -86,25 +161,25 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---V3GHqwm1rrtpHsCJ
+--yTfYsguFsV8cp5cf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJX5ZktAAoJEBx+YmzsjxAgN1sQAIXsCSfoo64S8eHFY1QYcfIF
-0sRJR0Eul58K4kJMvFIDrvvGbz5FyJMKl7/ekd7tx62QyswXGTx71FHamresulqJ
-NGDczSHbO5yrN8REBZGUEXfHWq4o7tEsymNrNmZ4lYSIJrWo+Vf4LMCeQMpTeOtX
-1+hGa0Np8goI7smxEHFy2k3CDiYw4dcNcMiHMcAMOj374ad204Ae8j3PXNvYP9VU
-ZGr+pXfgZUMzbaF0z/bUXHXrioGFb7AZ/BpgHpF6DSvMX2SV1QWe41n1qp9jpBFO
-QsZFt92SJDrGUkXLjvRhKIyNpJi9e7GOoewnm3D7C3fTKeIRNb7zTXMCg4XizuUr
-28j6q462WdEoXWgfZ2XzU1AVmHu0kW7dLlol8FGztWEsKOfICi42TqEpMQ9X9HVg
-kY9c0vd6L0n4EdVrREtGfvQtfcBzEwHq7pNbEMh+aF5xHKDF/EQPU2mwfyItbktY
-Ff5H81GeK7GJdTSqTva5j85cdNzZEsqDkGjSSVE9L1W/nMsG5soAMqHqZwkJKchk
-QE3KFegKmc2+boL/SeGvyDQBBZYsI64iXq/8ZgcTyOCSo7IwDgqcyZtB5X7kNjOr
-dKuGTN1xX5BfO5u5VcBFOJyqbwdsQ5MVqe/N2qiIviPqEuywT0lekHvdPxV6Dn8M
-gbUSob1a1hAWl/KctkXG
-=c2uc
+iQIcBAEBAgAGBQJX5Z/bAAoJEBx+YmzsjxAg46MP/2/MbUKyrTjbvLdLnI5t/2Di
+1OQo2g30gWPDX1g8O7340dBmRBCLg7u1tm6PpioGmBGKsJvXsAbettd78eJNEeMw
+Snr8DPXLugDHAElskmydSw4F8Re9BV9yoYogHhOfACYF/jFEeV5xLf4Y5ZOPqsuF
+wai151UzpKGNbE1+znH1+brpPjFxmonOCb8CyOSF3GWP6cGsUcEFRoUtbK+8EKNZ
+2wb3Ojxbuw6UIETwCQZqmvsglofcrfRfdeguhnrASOeXpQwXN8sfmri4xGfLXph2
+3u5E6g2XvkOnIqq2IYakKLVRmQWyYV+Z+fjZQ1qIjxt1tT9ig2TE7peWaLwm3n8R
+s/1X6dRqQlaaMU/a/oiTHb6M8fOiemncMSjIGZRijKOqyAQow+YzATifzgUH+Y5m
+TIe2HnDMJWswVgOaOYcWukblFf3KMW7iYlCYxu+1b4uDj6TynpuOR6xnvpCZxNex
+VxRYv1pt5i1m4IxErjsjXCkfdDwboUBflv9GqYAzd2Gc1kpmJ9Km7pIRVbJODY3N
+5abQAzEQKr0xHijtBblMhE1CpcHd4znnoOzkMSCIZo40FMhUyph80Pelcp21sieA
+0Tj4eJ3kUkq6q+ov0s6j+1IaNYOT5t5BarxmJ8kU9DUbdFGXl/fMhWctDhAI3zB4
+cQvErKZue/z/QbnBgYX9
+=V61c
 -----END PGP SIGNATURE-----
 
---V3GHqwm1rrtpHsCJ--
+--yTfYsguFsV8cp5cf--
