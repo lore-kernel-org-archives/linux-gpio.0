@@ -1,37 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 4/4] gpio: pca953x: fix an incorrect lockdep warning
-Date: Fri, 23 Sep 2016 10:10:57 +0200
-Message-ID: <CACRpkdbYgetpYntO6KsVLh1n_7DU+1AD3AwVVkmV5ud5A6Q31g@mail.gmail.com>
-References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
- <1474041765-17818-5-git-send-email-bgolaszewski@baylibre.com> <20160921054521.GB1484@katana>
+Subject: Re: [PATCH v4 1/7] pinctrl: bcm2835: add pull defines to dt bindings
+Date: Fri, 23 Sep 2016 10:53:34 +0200
+Message-ID: <CACRpkdZ9NmFGtGcT_KfoLLUqoLic7i9_ao7cw8JgSnq2o0VvnQ@mail.gmail.com>
+References: <1474274603-24215-1-git-send-email-kraxel@redhat.com>
+ <1474274603-24215-2-git-send-email-kraxel@redhat.com> <87zin49p9m.fsf@eliezer.anholt.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:34606 "EHLO
-        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758566AbcIWIK6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Sep 2016 04:10:58 -0400
-Received: by mail-oi0-f45.google.com with SMTP id a62so126484674oib.1
-        for <linux-gpio@vger.kernel.org>; Fri, 23 Sep 2016 01:10:58 -0700 (PDT)
-In-Reply-To: <20160921054521.GB1484@katana>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:36652 "EHLO
+        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754016AbcIWIyF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Sep 2016 04:54:05 -0400
+Received: by mail-oi0-f42.google.com with SMTP id t83so127120041oie.3
+        for <linux-gpio@vger.kernel.org>; Fri, 23 Sep 2016 01:53:35 -0700 (PDT)
+In-Reply-To: <87zin49p9m.fsf@eliezer.anholt.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Peter Rosin <peda@axentia.se>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: Gerd Hoffmann <kraxel@redhat.com>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Warren <swarren@wwwdotorg.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Lee Jones <lee@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-On Wed, Sep 21, 2016 at 7:45 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
-
->> In order to get rid of the warning, retrieve the adapter nesting depth
->> and use it as lockdep subclass for chip->i2c_lock.
->>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Sep 19, 2016 at 12:07 PM, Eric Anholt <eric@anholt.net> wrote:
+> Gerd Hoffmann <kraxel@redhat.com> writes:
 >
-> Linus, we'd like that in 4.9. Can I get your ack for the gpio part?
+>> Also delete (unused) private enum from driver.
+>> The pull defines can be used instead if needed.
+>>
+>> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+>
+> Acked-by: Eric Anholt <eric@anholt.net>
+>
+> gpio maintainers, could I pull this through my dt tree?  Or does this
+> need to be split in two?
+
+You can take it. The bcm2835 driver is not seeing any conflicting
+changes in this merge window.
 
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Sorry for not attending quick enough, I was down in the
-block layer.
 
 Yours,
 Linus Walleij
