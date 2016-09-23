@@ -1,42 +1,63 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpio: Added zynq specific check for special pins on
- bank zero
-Date: Fri, 23 Sep 2016 15:27:10 +0200
-Message-ID: <CACRpkdZOMo+8bmrXg3Tn7qDFqs-MbdU2ztYDZQGhaVuuG1cvVA@mail.gmail.com>
-References: <1474630018-9986-1-git-send-email-navam@xilinx.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] ARM: omap2: fix missing include
+Date: Fri, 23 Sep 2016 07:13:13 -0700
+Message-ID: <20160923141313.y7xp2yyv74nk2v3a@atomide.com>
+References: <1474634412-7050-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:33164 "EHLO
-        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751710AbcIWN1M (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Sep 2016 09:27:12 -0400
-Received: by mail-oi0-f51.google.com with SMTP id r126so133935435oib.0
-        for <linux-gpio@vger.kernel.org>; Fri, 23 Sep 2016 06:27:11 -0700 (PDT)
-In-Reply-To: <1474630018-9986-1-git-send-email-navam@xilinx.com>
+Received: from muru.com ([72.249.23.125]:42985 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1760389AbcIWONa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 23 Sep 2016 10:13:30 -0400
+Content-Disposition: inline
+In-Reply-To: <1474634412-7050-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Nava kishore Manne <nava.manne@xilinx.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nava kishore Manne <navam@xilinx.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-On Fri, Sep 23, 2016 at 1:26 PM, Nava kishore Manne
-<nava.manne@xilinx.com> wrote:
-
-> From: Nava kishore Manne <nava.manne@xilinx.com>
->
-> This patch adds zynq specific check for bank 0 pins 7 and 8
-> are special and cannot be used as inputs
->
-> Signed-off-by: Nava kishore Manne <navam@xilinx.com>
-> Reported-by: Jonas Karlsson <Jonas.d.karlsson@gmail.com>
-> Acked-by: S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>
-> Acked-by: Michal Simek <michal.simek@xilinx.com>
+* Linus Walleij <linus.walleij@linaro.org> [160923 05:40]:
+> commit d47529b2e9fe
+> "gpio: don't include module.h in shared driver header"
+> removed <linux/module.h> from the <linux/gpio/driver.h> header.
+> 
+> It seems arch/arm/mach-omap2/board-rx51-peripherals.c
+> is using __initdata_or_module from <linux/module.h> through
+> <linux/gpio.h> to <linux/gpio/driver.h>, so break this dependency
+> so that we get a clean compile.
+> 
+> Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Fixes: d47529b2e9fe ("gpio: don't include module.h in shared driver header")
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
-> Changes for v3:
->                 -Fixed some minor comments.
+> Tony: please ACK this if it's OK so I can merge it in front of
+> the offending patch.
 
-Patch applied.
+This file is gone in Linux next but if you need it:
 
-Yours,
-Linus Walleij
+Acked-by: Tony Lindgren <tony@atomide.com>
+
+Sorry the removal got postponed from v4.8 to v4.9. Note that
+it will produce a trivial merge conflict.
+
+> ---
+>  arch/arm/mach-omap2/board-rx51-peripherals.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/mach-omap2/board-rx51-peripherals.c b/arch/arm/mach-omap2/board-rx51-peripherals.c
+> index a5ab712c1a59..6d3af43ae3e4 100644
+> --- a/arch/arm/mach-omap2/board-rx51-peripherals.c
+> +++ b/arch/arm/mach-omap2/board-rx51-peripherals.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/power/isp1704_charger.h>
+>  #include <linux/platform_data/spi-omap2-mcspi.h>
+>  #include <linux/platform_data/mtd-onenand-omap2.h>
+> +#include <linux/module.h>
+>  
+>  #include <plat/dmtimer.h>
+>  
+> -- 
+> 2.7.4
+> 
