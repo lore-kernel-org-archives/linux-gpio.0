@@ -1,94 +1,51 @@
-From: Nava kishore Manne <nava.manne@xilinx.com>
-Subject: [PATCH v3] gpio: Added zynq specific check for special pins on bank zero
-Date: Fri, 23 Sep 2016 16:56:58 +0530
-Message-ID: <1474630018-9986-1-git-send-email-navam@xilinx.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] ARM: omap2: fix missing include
+Date: Fri, 23 Sep 2016 14:40:12 +0200
+Message-ID: <1474634412-7050-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-by2nam01on0054.outbound.protection.outlook.com ([104.47.34.54]:60736
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755175AbcIWL1S (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 23 Sep 2016 07:27:18 -0400
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:34225 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933869AbcIWMkV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Sep 2016 08:40:21 -0400
+Received: by mail-lf0-f49.google.com with SMTP id y6so91921011lff.1
+        for <linux-gpio@vger.kernel.org>; Fri, 23 Sep 2016 05:40:21 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, michal.simek@xilinx.com, soren.brinkmann@xilinx.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Nava kishore Manne <nava.manne@xilinx.com>, Nava kishore Manne <navam@xilinx.com>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Tony Lindgren <tony@atomide.com>
 
-From: Nava kishore Manne <nava.manne@xilinx.com>
+commit d47529b2e9fe
+"gpio: don't include module.h in shared driver header"
+removed <linux/module.h> from the <linux/gpio/driver.h> header.
 
-This patch adds zynq specific check for bank 0 pins 7 and 8
-are special and cannot be used as inputs
+It seems arch/arm/mach-omap2/board-rx51-peripherals.c
+is using __initdata_or_module from <linux/module.h> through
+<linux/gpio.h> to <linux/gpio/driver.h>, so break this dependency
+so that we get a clean compile.
 
-Signed-off-by: Nava kishore Manne <navam@xilinx.com>
-Reported-by: Jonas Karlsson <Jonas.d.karlsson@gmail.com>
-Acked-by: S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>
-Acked-by: Michal Simek <michal.simek@xilinx.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Fixes: d47529b2e9fe ("gpio: don't include module.h in shared driver header")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Changes for v3:
-		-Fixed some minor comments.
-Changes for v2:
-                -Removed un-used quirks for zynqmp.
+Tony: please ACK this if it's OK so I can merge it in front of
+the offending patch.
+---
+ arch/arm/mach-omap2/board-rx51-peripherals.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/gpio/gpio-zynq.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index e72794e..6b4d10d 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -96,6 +96,9 @@
- /* GPIO upper 16 bit mask */
- #define ZYNQ_GPIO_UPPER_MASK 0xFFFF0000
-=20
-+/* For GPIO quirks */
-+#define ZYNQ_GPIO_QUIRK_FOO	BIT(0)
-+
- /**
-  * struct zynq_gpio - gpio device private data structure
-  * @chip:	instance of the gpio_chip
-@@ -122,6 +125,7 @@ struct zynq_gpio {
- */
- struct zynq_platform_data {
- 	const char *label;
-+	u32 quirks;
- 	u16 ngpio;
- 	int max_bank;
- 	int bank_min[ZYNQMP_GPIO_MAX_BANK];
-@@ -238,13 +242,19 @@ static void zynq_gpio_set_value(struct gpio_chip *c=
-hip, unsigned int pin,
- static int zynq_gpio_dir_in(struct gpio_chip *chip, unsigned int pin)
- {
- 	u32 reg;
-+	bool is_zynq_gpio;
- 	unsigned int bank_num, bank_pin_num;
- 	struct zynq_gpio *gpio =3D gpiochip_get_data(chip);
-=20
-+	is_zynq_gpio =3D gpio->p_data->quirks & ZYNQ_GPIO_QUIRK_FOO;
- 	zynq_gpio_get_bank_pin(pin, &bank_num, &bank_pin_num, gpio);
-=20
--	/* bank 0 pins 7 and 8 are special and cannot be used as inputs */
--	if (bank_num =3D=3D 0 && (bank_pin_num =3D=3D 7 || bank_pin_num =3D=3D =
-8))
-+	/*
-+	 * On zynq bank 0 pins 7 and 8 are special and cannot be used
-+	 * as inputs.
-+	 */
-+	if (is_zynq_gpio && bank_num =3D=3D 0 &&
-+		(bank_pin_num =3D=3D 7 || bank_pin_num =3D=3D 8))
- 		return -EINVAL;
-=20
- 	/* clear the bit in direction mode reg to set the pin as input */
-@@ -627,6 +637,7 @@ static const struct zynq_platform_data zynqmp_gpio_de=
-f =3D {
-=20
- static const struct zynq_platform_data zynq_gpio_def =3D {
- 	.label =3D "zynq_gpio",
-+	.quirks =3D ZYNQ_GPIO_QUIRK_FOO,
- 	.ngpio =3D ZYNQ_GPIO_NR_GPIOS,
- 	.max_bank =3D ZYNQ_GPIO_MAX_BANK,
- 	.bank_min[0] =3D ZYNQ_GPIO_BANK0_PIN_MIN(),
---=20
-2.1.2
+diff --git a/arch/arm/mach-omap2/board-rx51-peripherals.c b/arch/arm/mach-omap2/board-rx51-peripherals.c
+index a5ab712c1a59..6d3af43ae3e4 100644
+--- a/arch/arm/mach-omap2/board-rx51-peripherals.c
++++ b/arch/arm/mach-omap2/board-rx51-peripherals.c
+@@ -29,6 +29,7 @@
+ #include <linux/power/isp1704_charger.h>
+ #include <linux/platform_data/spi-omap2-mcspi.h>
+ #include <linux/platform_data/mtd-onenand-omap2.h>
++#include <linux/module.h>
+ 
+ #include <plat/dmtimer.h>
+ 
+-- 
+2.7.4
 
