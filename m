@@ -1,32 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 3/3] pinctrl: cherryview: Convert to use devm_gpiochip_add_data()
-Date: Fri, 23 Sep 2016 15:00:11 +0200
-Message-ID: <CACRpkdaCrfgUNb_=S2HK0_hQg57gWSqf3U8aRf_6C-EqcK6EpQ@mail.gmail.com>
-References: <20160920121523.170293-1-mika.westerberg@linux.intel.com> <20160920121523.170293-4-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH -next] gpio: loongson1: remove redundant return value
+ check of platform_get_resource()
+Date: Fri, 23 Sep 2016 15:10:38 +0200
+Message-ID: <CACRpkdZJ-=-gRy4+ERwxmwZrGgjbAVdE-itt6yZQd0U3QK0Nnw@mail.gmail.com>
+References: <1474470459-2124-1-git-send-email-weiyj.lk@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:33588 "EHLO
-        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757964AbcIWNAM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Sep 2016 09:00:12 -0400
-Received: by mail-oi0-f41.google.com with SMTP id r126so133073804oib.0
-        for <linux-gpio@vger.kernel.org>; Fri, 23 Sep 2016 06:00:12 -0700 (PDT)
-In-Reply-To: <20160920121523.170293-4-mika.westerberg@linux.intel.com>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:33052 "EHLO
+        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754016AbcIWNKk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Sep 2016 09:10:40 -0400
+Received: by mail-oi0-f42.google.com with SMTP id r126so133412111oib.0
+        for <linux-gpio@vger.kernel.org>; Fri, 23 Sep 2016 06:10:39 -0700 (PDT)
+In-Reply-To: <1474470459-2124-1-git-send-email-weiyj.lk@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Phidias Chiang <phidias.chiang@canonical.com>, Anisse Astier <anisse@astier.eu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: Keguang Zhang <keguang.zhang@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>, Linux MIPS <linux-mips@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Sep 20, 2016 at 2:15 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+On Wed, Sep 21, 2016 at 5:07 PM, Wei Yongjun <weiyj.lk@gmail.com> wrote:
 
-> This simplifies the error handling and allows us to drop the whole
-> chv_pinctrl_remove() function.
+> From: Wei Yongjun <weiyongjun1@huawei.com>
 >
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Remove unneeded error handling on the result of a call
+> to platform_get_resource() when the value is passed to
+> devm_ioremap_resource().
+>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Patch applied!
+Patch applied.
 
 Yours,
 Linus Walleij
