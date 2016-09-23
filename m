@@ -1,74 +1,37 @@
-From: Michael Welling <mwelling@ieee.org>
-Subject: Re: Requesting as a GPIO a pin already used through pinctrl
-Date: Thu, 22 Sep 2016 10:46:06 -0500
-Message-ID: <20160922154606.GA23980@deathstar>
-References: <20160916135808.GA17518@lukather>
- <CACRpkdbZ-TCNmmt4NyL2cQ2W3dE42uFGjQtxRyMxrf2ZUA_9Rg@mail.gmail.com>
- <20160921195128.GG8719@lukather>
- <20160921203435.GA14965@sysresccd>
- <20160922104852.GO8719@lukather>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 4/4] gpio: pca953x: fix an incorrect lockdep warning
+Date: Fri, 23 Sep 2016 10:10:57 +0200
+Message-ID: <CACRpkdbYgetpYntO6KsVLh1n_7DU+1AD3AwVVkmV5ud5A6Q31g@mail.gmail.com>
+References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
+ <1474041765-17818-5-git-send-email-bgolaszewski@baylibre.com> <20160921054521.GB1484@katana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:35981 "EHLO
-        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753636AbcIVPqR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Sep 2016 11:46:17 -0400
-Received: by mail-oi0-f46.google.com with SMTP id t83so102229377oie.3
-        for <linux-gpio@vger.kernel.org>; Thu, 22 Sep 2016 08:46:15 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20160922104852.GO8719@lukather>
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:34606 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758566AbcIWIK6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Sep 2016 04:10:58 -0400
+Received: by mail-oi0-f45.google.com with SMTP id a62so126484674oib.1
+        for <linux-gpio@vger.kernel.org>; Fri, 23 Sep 2016 01:10:58 -0700 (PDT)
+In-Reply-To: <20160921054521.GB1484@katana>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Peter Rosin <peda@axentia.se>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, Sep 22, 2016 at 01:48:52PM +0300, Maxime Ripard wrote:
-> On Wed, Sep 21, 2016 at 03:34:35PM -0500, Michael Welling wrote:
-> > On Wed, Sep 21, 2016 at 10:51:28PM +0300, Maxime Ripard wrote:
-> > > Hi Linus,
-> > > 
-> > > Thanks for your reply.
-> > > 
-> > > On Sun, Sep 18, 2016 at 01:30:24PM +0200, Linus Walleij wrote:
-> > > > On Fri, Sep 16, 2016 at 3:58 PM, Maxime Ripard
-> > > > <maxime.ripard@free-electrons.com> wrote:
-> > > > 
-> > > > > However, things are getting weird when you have that requested pin
-> > > > > assigned to one device, and you try to export the GPIO on that pin
-> > > > > (through sysfs for example,
-> > > > 
-> > > > DON'T use sysfs. Use the new chardev ABI which is by the way enabled
-> > > > by default.
-> > > > 
-> > > > (But you will face the same issue there I guess.)
-> > > 
-> > > Yeah, well, we could re-do the discussion on ksummit-discuss :)
-> > 
-> > Are you guys trolling me?
-> 
-> No, the point I was trying to make is that not every system and
-> product kernel out there has been switched to a 4.8+ kernel, for
-> exactly the reasons that are discussed right now on ksummit-discuss.
-> 
+On Wed, Sep 21, 2016 at 7:45 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
 
-Ah thanks for explaining. I read through the latest posts and assume you are
-talking about the lengthy backporting discussion.
+>> In order to get rid of the warning, retrieve the adapter nesting depth
+>> and use it as lockdep subclass for chip->i2c_lock.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Linus, we'd like that in 4.9. Can I get your ack for the gpio part?
 
-> I don't really get how that is trolling.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Nevermind that. I thought you were referring to my one and only post to that list.
+Sorry for not attending quick enough, I was down in the
+block layer.
 
-https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2015-July/001879.html
-
-Sorry for the noise.
-
-> 
-> Maxime
-> 
-> -- 
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
-
-
+Yours,
+Linus Walleij
