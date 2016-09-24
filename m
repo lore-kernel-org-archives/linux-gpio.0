@@ -1,74 +1,60 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH] gpio: pca953x: variable 'id' was used twice
-Date: Sat, 24 Sep 2016 11:11:00 +0200
-Message-ID: <20160924091100.15686-1-wsa@the-dreams.de>
+Subject: Re: [PATCH v2 4/4] gpio: pca953x: fix an incorrect lockdep warning
+Date: Sat, 24 Sep 2016 11:15:06 +0200
+Message-ID: <20160924091506.GE1434@katana>
+References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
+ <1474041765-17818-5-git-send-email-bgolaszewski@baylibre.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="+SfteS7bOf3dGlBC"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:58889 "EHLO pokefinder.org"
+Received: from sauhun.de ([89.238.76.85]:58907 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758767AbcIXJLQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 24 Sep 2016 05:11:16 -0400
+        id S1753639AbcIXJPb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 24 Sep 2016 05:15:31 -0400
+Content-Disposition: inline
+In-Reply-To: <1474041765-17818-5-git-send-email-bgolaszewski@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Wolfram Sang <wsa@the-dreams.de>
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Peter Rosin <peda@axentia.se>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-sparse  rightfully said:
 
-drivers/gpio/gpio-pca953x.c:771:45: warning: symbol 'id' shadows an earlier one
-drivers/gpio/gpio-pca953x.c:742:36: originally declared here
+--+SfteS7bOf3dGlBC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-So, name them explicitly 'i2c_id' and 'acpi_id' to avoid any confusion.
+>  drivers/gpio/gpio-pca953x.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
----
+FYI, my code checkers found this in this driver:
 
-Compile tested only. Found while doing review of another patch touching this
-driver.
+    SMATCH
+drivers/gpio/gpio-pca953x.c:562 pca953x_irq_pending() error: buffer overflow 'cur_stat' 5 <= 8191
+drivers/gpio/gpio-pca953x.c:573 pca953x_irq_pending() warn: buffer overflow 'old_stat' 5 <= 8191
 
- drivers/gpio/gpio-pca953x.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Didn't check further. I fixed a sparse warning, though.
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 892dc043f40b25..018f39cc19c875 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -739,7 +739,7 @@ out:
- static const struct of_device_id pca953x_dt_ids[];
- 
- static int pca953x_probe(struct i2c_client *client,
--				   const struct i2c_device_id *id)
-+				   const struct i2c_device_id *i2c_id)
- {
- 	struct pca953x_platform_data *pdata;
- 	struct pca953x_chip *chip;
-@@ -765,21 +765,21 @@ static int pca953x_probe(struct i2c_client *client,
- 
- 	chip->client = client;
- 
--	if (id) {
--		chip->driver_data = id->driver_data;
-+	if (i2c_id) {
-+		chip->driver_data = i2c_id->driver_data;
- 	} else {
--		const struct acpi_device_id *id;
-+		const struct acpi_device_id *acpi_id;
- 		const struct of_device_id *match;
- 
- 		match = of_match_device(pca953x_dt_ids, &client->dev);
- 		if (match) {
- 			chip->driver_data = (int)(uintptr_t)match->data;
- 		} else {
--			id = acpi_match_device(pca953x_acpi_ids, &client->dev);
--			if (!id)
-+			acpi_id = acpi_match_device(pca953x_acpi_ids, &client->dev);
-+			if (!acpi_id)
- 				return -ENODEV;
- 
--			chip->driver_data = id->driver_data;
-+			chip->driver_data = acpi_id->driver_data;
- 		}
- 	}
- 
--- 
-2.9.3
 
+--+SfteS7bOf3dGlBC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX5kQaAAoJEBQN5MwUoCm2GtYQAKlSeAV3yzVUxyTZn1GekdJo
+pq7bG6Vn02rMHh5glCrXZDkfkjjlfI9XN8DxRM+CDDSWCtEkg9LZ25QAtNgmnAur
+yQ77urdIU6WtRNdjJoO6tWVdPH8/tgr6GUNxARq7vNORIeqIUvIzEZbqN+ScJRXh
+jpKfuQDdRa1rzUKI71WF2KEMQa0sgHsTltjS+ENDncSfJS/uYVZUfw3JOEXLGJJw
+6jX/s8tlDRAVE2rHnX5C2qYO+E8vm4Y17Rm5lRNO40GEijELWSJGoqXm/HElqcfE
+L+lGjk0pYOs02PNdt17Z7pLn4Zop+7lvmK+TCfhn2BWpp6c2yCP2HnuOHVsWx9l7
+lPUEdTxeTEtbTW/TFtQbyEEs8kuMOE83u3vlL16pV+crcGxkp4Ty6MVl75f4Uoi3
+w5E5Z6/pKxvsHs1uJwgFrN6NcvCP8x0eJCT0Nc+f2nVit2GfjL8znbEWMZX5dlIi
+k3PMgNVpDLVcfMos3nHkLjZTv88tlVL9J2RWuvan8cdxuxFiKpLLM7PHufittBc0
+2WetEzCYA3A5prDAk13ytJdaj+AiMOxy6GN2yMxBUN7/Rp44iSXlko3P2emc0421
+V/Nc0TWvw/jB2dG23GqoUnE9dR5pBSMt1Bgcbd3kT/BbQfiJaGqu77o4ZZuMBm1+
+5X6EzpN862LiZeEPwJv1
+=ey61
+-----END PGP SIGNATURE-----
+
+--+SfteS7bOf3dGlBC--
