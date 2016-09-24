@@ -1,60 +1,81 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v2 4/4] gpio: pca953x: fix an incorrect lockdep warning
-Date: Sat, 24 Sep 2016 11:15:06 +0200
-Message-ID: <20160924091506.GE1434@katana>
-References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
- <1474041765-17818-5-git-send-email-bgolaszewski@baylibre.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Subject: Re: [PATCH] pinctrl: rockchip: don't disable clk when irq mask is
+ already set
+Date: Sat, 24 Sep 2016 18:24:11 +0800
+Message-ID: <fb4ec747-fde3-142b-1963-be3b9cfab260@rock-chips.com>
+References: <1474655197-26919-1-git-send-email-jacob-chen@iotwrt.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="+SfteS7bOf3dGlBC"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:58907 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753639AbcIXJPb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 24 Sep 2016 05:15:31 -0400
-Content-Disposition: inline
-In-Reply-To: <1474041765-17818-5-git-send-email-bgolaszewski@baylibre.com>
+Received: from lucky1.263xmail.com ([211.157.147.131]:58211 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750757AbcIXKYV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 24 Sep 2016 06:24:21 -0400
+In-Reply-To: <1474655197-26919-1-git-send-email-jacob-chen@iotwrt.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Peter Rosin <peda@axentia.se>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Jacob Chen <jacob-chen@iotwrt.com>, linux-kernel@vger.kernel.org
+Cc: shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org, linus.walleij@linaro.org, Jacob Chen <jacob2.chen@rock-chips.com>, heiko@sntech.de, linux-gpio@vger.kernel.org
+
+On 2016/9/24 2:26, Jacob Chen wrote:
+> From: Jacob Chen <jacob2.chen@rock-chips.com>
+>
+> In some drivers, disable_irq() call don't be symmetric with enable_irq()
+> , disable_irq() will be called before call free_irq().
+
+Which upstream drivers you refer to?
+
+Shouldn't it be the unbalanced call for these drivers?
+
+>
+> But both disable_irq() and free_irq() will call rockchip_irq_gc_mask_set_bit,
+>  and clk_disable() will be called more times than clk_enable(), which will
+> cause bugs.
+>
+> I think we can correct that by checking of mask.If mask is already set, do nothing.
+>
+
+Looks like a little hacky to me.
+
+> Change-Id: If19912c7658253e15531c04db6c70fdbffd5960a
+
+remove this.
+
+> Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
+> ---
+>  drivers/pinctrl/pinctrl-rockchip.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+> index c6c04ac..9a8804a 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -2334,8 +2334,12 @@ static void rockchip_irq_gc_mask_clr_bit(struct irq_data *d)
+>  void rockchip_irq_gc_mask_set_bit(struct irq_data *d)
+>  {
+>  	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+> +	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+>  	struct rockchip_pin_bank *bank = gc->private;
+>
+> +	if (*ct->mask_cache & d->mask)
+> +		return;
+> +
+>  	irq_gc_mask_set_bit(d);
+>  	clk_disable(bank->clk);
+>  }
+> --
+> 2.7.4
+>
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+>
 
 
---+SfteS7bOf3dGlBC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+-- 
+Best Regards
+Shawn Lin
 
->  drivers/gpio/gpio-pca953x.c | 2 ++
->  1 file changed, 2 insertions(+)
-
-FYI, my code checkers found this in this driver:
-
-    SMATCH
-drivers/gpio/gpio-pca953x.c:562 pca953x_irq_pending() error: buffer overflow 'cur_stat' 5 <= 8191
-drivers/gpio/gpio-pca953x.c:573 pca953x_irq_pending() warn: buffer overflow 'old_stat' 5 <= 8191
-
-Didn't check further. I fixed a sparse warning, though.
-
-
---+SfteS7bOf3dGlBC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX5kQaAAoJEBQN5MwUoCm2GtYQAKlSeAV3yzVUxyTZn1GekdJo
-pq7bG6Vn02rMHh5glCrXZDkfkjjlfI9XN8DxRM+CDDSWCtEkg9LZ25QAtNgmnAur
-yQ77urdIU6WtRNdjJoO6tWVdPH8/tgr6GUNxARq7vNORIeqIUvIzEZbqN+ScJRXh
-jpKfuQDdRa1rzUKI71WF2KEMQa0sgHsTltjS+ENDncSfJS/uYVZUfw3JOEXLGJJw
-6jX/s8tlDRAVE2rHnX5C2qYO+E8vm4Y17Rm5lRNO40GEijELWSJGoqXm/HElqcfE
-L+lGjk0pYOs02PNdt17Z7pLn4Zop+7lvmK+TCfhn2BWpp6c2yCP2HnuOHVsWx9l7
-lPUEdTxeTEtbTW/TFtQbyEEs8kuMOE83u3vlL16pV+crcGxkp4Ty6MVl75f4Uoi3
-w5E5Z6/pKxvsHs1uJwgFrN6NcvCP8x0eJCT0Nc+f2nVit2GfjL8znbEWMZX5dlIi
-k3PMgNVpDLVcfMos3nHkLjZTv88tlVL9J2RWuvan8cdxuxFiKpLLM7PHufittBc0
-2WetEzCYA3A5prDAk13ytJdaj+AiMOxy6GN2yMxBUN7/Rp44iSXlko3P2emc0421
-V/Nc0TWvw/jB2dG23GqoUnE9dR5pBSMt1Bgcbd3kT/BbQfiJaGqu77o4ZZuMBm1+
-5X6EzpN862LiZeEPwJv1
-=ey61
------END PGP SIGNATURE-----
-
---+SfteS7bOf3dGlBC--
