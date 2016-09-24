@@ -1,81 +1,53 @@
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Subject: Re: [PATCH] pinctrl: rockchip: don't disable clk when irq mask is
- already set
-Date: Sat, 24 Sep 2016 18:24:11 +0800
-Message-ID: <fb4ec747-fde3-142b-1963-be3b9cfab260@rock-chips.com>
-References: <1474655197-26919-1-git-send-email-jacob-chen@iotwrt.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 4/4] gpio: pca953x: fix an incorrect lockdep warning
+Date: Sat, 24 Sep 2016 16:26:08 +0200
+Message-ID: <CAMuHMdUa_0xnOQRWNBz1rTpJk1kd+E9=37H=Zkbs7vAHJYjaog@mail.gmail.com>
+References: <1474041765-17818-1-git-send-email-bgolaszewski@baylibre.com>
+ <1474041765-17818-5-git-send-email-bgolaszewski@baylibre.com> <20160924091506.GE1434@katana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.131]:58211 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750757AbcIXKYV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 24 Sep 2016 06:24:21 -0400
-In-Reply-To: <1474655197-26919-1-git-send-email-jacob-chen@iotwrt.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160924091506.GE1434@katana>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Peter Rosin <peda@axentia.se>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jacob Chen <jacob-chen@iotwrt.com>, linux-kernel@vger.kernel.org
-Cc: shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org, linus.walleij@linaro.org, Jacob Chen <jacob2.chen@rock-chips.com>, heiko@sntech.de, linux-gpio@vger.kernel.org
 
-On 2016/9/24 2:26, Jacob Chen wrote:
-> From: Jacob Chen <jacob2.chen@rock-chips.com>
+On Sat, Sep 24, 2016 at 11:15 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
+>>  drivers/gpio/gpio-pca953x.c | 2 ++
+>>  1 file changed, 2 insertions(+)
 >
-> In some drivers, disable_irq() call don't be symmetric with enable_irq()
-> , disable_irq() will be called before call free_irq().
-
-Which upstream drivers you refer to?
-
-Shouldn't it be the unbalanced call for these drivers?
-
+> FYI, my code checkers found this in this driver:
 >
-> But both disable_irq() and free_irq() will call rockchip_irq_gc_mask_set_bit,
->  and clk_disable() will be called more times than clk_enable(), which will
-> cause bugs.
+>     SMATCH
+> drivers/gpio/gpio-pca953x.c:562 pca953x_irq_pending() error: buffer overflow 'cur_stat' 5 <= 8191
+> drivers/gpio/gpio-pca953x.c:573 pca953x_irq_pending() warn: buffer overflow 'old_stat' 5 <= 8191
 >
-> I think we can correct that by checking of mask.If mask is already set, do nothing.
->
+> Didn't check further. I fixed a sparse warning, though.
 
-Looks like a little hacky to me.
+I guess those lines are
 
-> Change-Id: If19912c7658253e15531c04db6c70fdbffd5960a
+        memcpy(old_stat, chip->irq_stat, NBANK(chip));
 
-remove this.
+and
 
-> Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
-> ---
->  drivers/pinctrl/pinctrl-rockchip.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-> index c6c04ac..9a8804a 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -2334,8 +2334,12 @@ static void rockchip_irq_gc_mask_clr_bit(struct irq_data *d)
->  void rockchip_irq_gc_mask_set_bit(struct irq_data *d)
->  {
->  	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-> +	struct irq_chip_type *ct = irq_data_get_chip_type(d);
->  	struct rockchip_pin_bank *bank = gc->private;
->
-> +	if (*ct->mask_cache & d->mask)
-> +		return;
-> +
->  	irq_gc_mask_set_bit(d);
->  	clk_disable(bank->clk);
->  }
-> --
-> 2.7.4
->
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
->
+        memcpy(chip->irq_stat, cur_stat, NBANK(chip));
 
+?
 
--- 
-Best Regards
-Shawn Lin
+#define NBANK(chip) DIV_ROUND_UP(chip->gpio_chip.ngpio, BANK_SZ)
 
+ngpio is u16, BANK_SZ is 8, so smatch assumes someone may set
+ngpio to 65535. Which someone could do through driver_data.
+But none of the predefined entries in pca953x_dt_ids[] does.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
