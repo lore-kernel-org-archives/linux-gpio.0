@@ -1,84 +1,101 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/5] tools/gpio: add gpio basic opereations
-Date: Mon, 26 Sep 2016 12:37:13 -0700
-Message-ID: <CACRpkdb5AYtXgLXU6M+EbjVoJn1TsvpHPgRyPjxZC=hX9HErAQ@mail.gmail.com>
-References: <20160831094548.12574-1-bamvor.zhangjian@linaro.org> <20160831094548.12574-2-bamvor.zhangjian@linaro.org>
+From: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: rockchip: don't disable clk when irq mask is
+ already set
+Date: Tue, 27 Sep 2016 00:35:18 +0200
+Message-ID: <3592219.tUs91je5kA@phil>
+References: <1474655197-26919-1-git-send-email-jacob-chen@iotwrt.com>
+ <fb4ec747-fde3-142b-1963-be3b9cfab260@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:36259 "EHLO
-        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934954AbcIZThO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Sep 2016 15:37:14 -0400
-Received: by mail-oi0-f43.google.com with SMTP id t83so219796494oie.3
-        for <linux-gpio@vger.kernel.org>; Mon, 26 Sep 2016 12:37:14 -0700 (PDT)
-In-Reply-To: <20160831094548.12574-2-bamvor.zhangjian@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <fb4ec747-fde3-142b-1963-be3b9cfab260-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Shawn Lin <shawn.lin-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jacob Chen <jacob2.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jacob Chen <jacob-chen-fyOeoxGR3m/QT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Bamvor Zhang Jian <bamvor.zhangjian@linaro.org>, Michael Welling <mwelling@ieee.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>
 
-On Wed, Aug 31, 2016 at 2:45 AM,  <bamvor.zhangjian@linaro.org> wrote:
+Am Samstag, 24. September 2016, 18:24:11 CEST schrieb Shawn Lin:
+> On 2016/9/24 2:26, Jacob Chen wrote:
+> > From: Jacob Chen <jacob2.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+> > 
+> > In some drivers, disable_irq() call don't be symmetric with enable_irq()
+> > , disable_irq() will be called before call free_irq().
+> 
+> Which upstream drivers you refer to?
+> 
+> Shouldn't it be the unbalanced call for these drivers?
+> 
+> > But both disable_irq() and free_irq() will call
+> > rockchip_irq_gc_mask_set_bit,> 
+> >  and clk_disable() will be called more times than clk_enable(), which will
+> > 
+> > cause bugs.
+> > 
+> > I think we can correct that by checking of mask.If mask is already set, do
+> > nothing.
+> Looks like a little hacky to me.
 
-> +int gpio_request(const char *device_name, unsigned int *lines,
-> +                unsigned int nlines, unsigned int flag,
-> +                struct gpiohandle_data *data, const char *consumer_label)
+that may be true, but on first glance I tend to agree with Jacob.
+Look for example at (a driver using disable_irq I picked at random) drivertc/
+rtcrs/-tps6586x.c .
 
-Could it be named
-gpiotools_request_linehandle()?
+In its probe function it does devm_request_irq directly followed by 
+disable_irq on its alarm interrupt. The interrupt only gets enabled again if 
+the rtc alarm gets enabled. So you can easily run into the disable + free case 
+there as well. Similar probably in a lot of other drivers.
 
-Or the name is maybe a bit long.
 
-It's nice if we have a name that tells all the function is doing.
+Heiko
 
-> +int gpio_set_values(const int fd, struct gpiohandle_data *data)
-
-Pls rename
-gpiotools_set_values()
-
-> +int gpio_get_values(const int fd, struct gpiohandle_data *data)
-
-Pls rename
-gpiotools_get_values()
-
-> +int gpio_release(const int fd)
-
-Pls rename
-gpiotools_release_linehandle()
-
-> +int gpio_gets(const char *device_name, unsigned int *lines, unsigned int nlines,
-> +             unsigned int flag, struct gpiohandle_data *data)
-> +int gpio_sets(const char *device_name, unsigned int *lines, unsigned int nlines,
-> +             unsigned int flag, struct gpiohandle_data *data)
-> +int gpio_get(const char *device_name, unsigned int line, unsigned int flag)
-> +int gpio_set(const char *device_name, unsigned int line, unsigned int flag,
-> +            unsigned int value)
-> +int gpio_set_flag(const char *device_name, unsigned int line, unsigned int flag)
-
-Prefix all gpiotools_*
-
-> +/*
-> + * Request the lines for gpio with device_name. Could set the default value
-> + * in request.
-> + * device_name:    the name of gpiochip in "/dev", such as gpiochip0.
-> + * lines:         the array of which line should be requested.
-> + * nline:          the total number of line
-> + * flag:           input, output and so on. Reference "linux/gpio.h" for the
-> + *                 meaning for flag.
-> + * data:          default value when flag is GPIOHANDLE_REQUEST_OUTPUT.
-> + * consumer_label: the name of consumer, such as "sysfs", "powerkey".
-> + *
-> + * Return value:   On success return the fd of specific gpiochip. It could be
-> + *                 release by gpio_release.
-> + *                On failure return the errno.
-> + */
-> +int gpio_request(const char *device_name, unsigned int *lines,
-> +                unsigned int nlines, unsigned int flag,
-> +                struct gpiohandle_data *data, const char *consumer_label);
-
-For all of those, convert to kerneldoc (Documentation/kernel-doc-nano-HOWTO)
-and move the kerneldoc above the actual implementation, keep the
-header file spartan.
-
-Yours,
-Linus Walleij
+> 
+> > Change-Id: If19912c7658253e15531c04db6c70fdbffd5960a
+> 
+> remove this.
+> 
+> > Signed-off-by: Jacob Chen <jacob2.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+> > ---
+> > 
+> >  drivers/pinctrl/pinctrl-rockchip.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/pinctrl/pinctrl-rockchip.c
+> > b/drivers/pinctrl/pinctrl-rockchip.c index c6c04ac..9a8804a 100644
+> > --- a/drivers/pinctrl/pinctrl-rockchip.c
+> > +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> > @@ -2334,8 +2334,12 @@ static void rockchip_irq_gc_mask_clr_bit(struct
+> > irq_data *d)> 
+> >  void rockchip_irq_gc_mask_set_bit(struct irq_data *d)
+> >  {
+> >  
+> >  	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+> > 
+> > +	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+> > 
+> >  	struct rockchip_pin_bank *bank = gc->private;
+> > 
+> > +	if (*ct->mask_cache & d->mask)
+> > +		return;
+> > +
+> > 
+> >  	irq_gc_mask_set_bit(d);
+> >  	clk_disable(bank->clk);
+> >  
+> >  }
+> > 
+> > --
+> > 2.7.4
+> > 
+> > 
+> > _______________________________________________
+> > Linux-rockchip mailing list
+> > Linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> > http://lists.infradead.org/mailman/listinfo/linux-rockchip
