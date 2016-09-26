@@ -1,69 +1,43 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] gpio: max77620: Remove unused fields from struct max77620_gpio
-Date: Sun, 25 Sep 2016 20:44:04 +0800
-Message-ID: <1474807444-6841-1-git-send-email-axel.lin@ingics.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f67.google.com ([209.85.220.67]:34004 "EHLO
-        mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966135AbcIYMoP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 25 Sep 2016 08:44:15 -0400
-Received: by mail-pa0-f67.google.com with SMTP id hm5so313283pac.1
-        for <linux-gpio@vger.kernel.org>; Sun, 25 Sep 2016 05:44:15 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Stephen Boyd <stephen.boyd@linaro.org>
+Subject: Re: [PATCH] pinctrl: qcom: fix masking of pinmux functions
+Date: Sun, 25 Sep 2016 23:36:08 -0700
+Message-ID: <CAJOFmgx3Y01DZvUU=wF68HLWRrUoiHAcOYtVjw6LsqvE3+Ds8w@mail.gmail.com>
+References: <1473673015-33124-1-git-send-email-john@phrozen.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1473673015-33124-1-git-send-email-john@phrozen.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: John Crispin <john@phrozen.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Venkat Reddy Talla <vreddytalla@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
 
-Current code does not use gpio_irq/irq_base/gpio_base fields from
-struct max77620_gpio, so remove them.
+On Mon, Sep 12, 2016 at 2:36 AM, John Crispin <john@phrozen.org> wrote:
+> The following commit introduced a regression by not properly masking the
+> calculated value.
+>
+> commit 47a01ee9a6c39fe1 ("pinctrl: qcom: Clear all function selection bits")
+>
+> Signed-off-by: John Crispin <john@phrozen.org>
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/gpio/gpio-max77620.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+Now I'm confused how it ever worked.... but agreed, the code looks wrong.
 
-diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
-index b46b436..df03586 100644
---- a/drivers/gpio/gpio-max77620.c
-+++ b/drivers/gpio/gpio-max77620.c
-@@ -21,9 +21,6 @@ struct max77620_gpio {
- 	struct gpio_chip	gpio_chip;
- 	struct regmap		*rmap;
- 	struct device		*dev;
--	int			gpio_irq;
--	int			irq_base;
--	int			gpio_base;
- };
- 
- static const struct regmap_irq max77620_gpio_irqs[] = {
-@@ -254,7 +251,6 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 
- 	mgpio->rmap = chip->rmap;
- 	mgpio->dev = &pdev->dev;
--	mgpio->gpio_irq = gpio_irq;
- 
- 	mgpio->gpio_chip.label = pdev->name;
- 	mgpio->gpio_chip.parent = &pdev->dev;
-@@ -268,7 +264,6 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 	mgpio->gpio_chip.ngpio = MAX77620_GPIO_NR;
- 	mgpio->gpio_chip.can_sleep = 1;
- 	mgpio->gpio_chip.base = -1;
--	mgpio->irq_base = -1;
- #ifdef CONFIG_OF_GPIO
- 	mgpio->gpio_chip.of_node = pdev->dev.parent->of_node;
- #endif
-@@ -281,9 +276,8 @@ static int max77620_gpio_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	mgpio->gpio_base = mgpio->gpio_chip.base;
--	ret = devm_regmap_add_irq_chip(&pdev->dev, chip->rmap, mgpio->gpio_irq,
--				       IRQF_ONESHOT, mgpio->irq_base,
-+	ret = devm_regmap_add_irq_chip(&pdev->dev, chip->rmap, gpio_irq,
-+				       IRQF_ONESHOT, -1,
- 				       &max77620_gpio_irq_chip,
- 				       &chip->gpio_irq_data);
- 	if (ret < 0) {
--- 
-2.7.4
+Reviewed-by: Stephen Boyd <stephen.boyd@linaro.org>
 
+> ---
+>  drivers/pinctrl/qcom/pinctrl-msm.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index 51c42d7..775c883 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -156,7 +156,7 @@ static int msm_pinmux_set_mux(struct pinctrl_dev *pctldev,
+>         spin_lock_irqsave(&pctrl->lock, flags);
+>
+>         val = readl(pctrl->regs + g->ctl_reg);
+> -       val &= mask;
+> +       val &= ~mask;
+>         val |= i << g->mux_bit;
+>         writel(val, pctrl->regs + g->ctl_reg);
+>
