@@ -1,43 +1,28 @@
-From: Stephen Boyd <stephen.boyd@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: fix masking of pinmux functions
-Date: Sun, 25 Sep 2016 23:36:08 -0700
-Message-ID: <CAJOFmgx3Y01DZvUU=wF68HLWRrUoiHAcOYtVjw6LsqvE3+Ds8w@mail.gmail.com>
-References: <1473673015-33124-1-git-send-email-john@phrozen.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1473673015-33124-1-git-send-email-john@phrozen.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: John Crispin <john@phrozen.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH] gpio: pca953x: add a comment explaining the need for a lockdep subclass
+Date: Mon, 26 Sep 2016 11:54:14 +0200
+Message-ID: <1474883655-15824-1-git-send-email-bgolaszewski@baylibre.com>
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Wolfram Sang <wsa@the-dreams.de>, Peter Rosin <peda@axentia.se>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Sep 12, 2016 at 2:36 AM, John Crispin <john@phrozen.org> wrote:
-> The following commit introduced a regression by not properly masking the
-> calculated value.
->
-> commit 47a01ee9a6c39fe1 ("pinctrl: qcom: Clear all function selection bits")
->
-> Signed-off-by: John Crispin <john@phrozen.org>
+Since there's an rc8 I thought I'd send a follow-up patch to the
+series addressing the lockdep false positive in pca953x.
 
-Now I'm confused how it ever worked.... but agreed, the code looks wrong.
+The reason for setting the subclass in the probe function is not
+explained in the code nor is it obvious at first glance. This patch
+adds a comment explaining the problem.
 
-Reviewed-by: Stephen Boyd <stephen.boyd@linaro.org>
+Rebased on top of current i2c/for-next.
 
-> ---
->  drivers/pinctrl/qcom/pinctrl-msm.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index 51c42d7..775c883 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -156,7 +156,7 @@ static int msm_pinmux_set_mux(struct pinctrl_dev *pctldev,
->         spin_lock_irqsave(&pctrl->lock, flags);
->
->         val = readl(pctrl->regs + g->ctl_reg);
-> -       val &= mask;
-> +       val &= ~mask;
->         val |= i << g->mux_bit;
->         writel(val, pctrl->regs + g->ctl_reg);
->
+Bartosz Golaszewski (1):
+  gpio: pca953x: add a comment explaining the need for a lockdep
+    subclass
+
+ drivers/gpio/gpio-pca953x.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+-- 
+2.7.4
