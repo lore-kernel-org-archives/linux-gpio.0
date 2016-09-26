@@ -1,69 +1,42 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: fix masking of pinmux functions
-Date: Mon, 26 Sep 2016 08:52:09 -0700
-Message-ID: <20160926155209.GC7509@tuxbot>
-References: <1473673015-33124-1-git-send-email-john@phrozen.org>
- <CAJOFmgx3Y01DZvUU=wF68HLWRrUoiHAcOYtVjw6LsqvE3+Ds8w@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 3/5] gpio/mockup: add virtual gpio device
+Date: Mon, 26 Sep 2016 11:48:35 -0700
+Message-ID: <CACRpkdaemve87TAt+=1yrunaLUtbFFcMQjoXoYPH7LRvkj5A-w@mail.gmail.com>
+References: <20160831094548.12574-1-bamvor.zhangjian@linaro.org> <20160831094548.12574-4-bamvor.zhangjian@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:34986 "EHLO
-        mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941324AbcIZPwN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Sep 2016 11:52:13 -0400
-Received: by mail-pa0-f43.google.com with SMTP id oz2so64269067pac.2
-        for <linux-gpio@vger.kernel.org>; Mon, 26 Sep 2016 08:52:13 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CAJOFmgx3Y01DZvUU=wF68HLWRrUoiHAcOYtVjw6LsqvE3+Ds8w@mail.gmail.com>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:36146 "EHLO
+        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1161228AbcIZSsg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Sep 2016 14:48:36 -0400
+Received: by mail-oi0-f54.google.com with SMTP id t83so218214138oie.3
+        for <linux-gpio@vger.kernel.org>; Mon, 26 Sep 2016 11:48:36 -0700 (PDT)
+In-Reply-To: <20160831094548.12574-4-bamvor.zhangjian@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Boyd <stephen.boyd@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: John Crispin <john@phrozen.org>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Bamvor Zhang Jian <bamvor.zhangjian@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Kamlakant Patel <kamlakant.patel@broadcom.com>
 
-On Sun 25 Sep 23:36 PDT 2016, Stephen Boyd wrote:
+On Wed, Aug 31, 2016 at 2:45 AM,  <bamvor.zhangjian@linaro.org> wrote:
 
-> On Mon, Sep 12, 2016 at 2:36 AM, John Crispin <john@phrozen.org> wrote:
-> > The following commit introduced a regression by not properly masking the
-> > calculated value.
-> >
-> > commit 47a01ee9a6c39fe1 ("pinctrl: qcom: Clear all function selection bits")
+> From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+>
+> This patch add basic structure of a virtual gpio device(gpio-mockup)
+> for testing gpio subsystem. The tester could manipulate such device
+> through userspace(sysfs or char device) and check the result from
+> debugfs.
+>
+> Currently, it support one or more gpiochip(determined by module
+> parameters with base,ngpio pair). One could test the overlap of
+> different gpiochip and test the direction and/or output values of
+> these chips.
+>
+> Signed-off-by: Kamlakant Patel <kamlakant.patel@broadcom.com>
+> Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 
-Please use the format: Fixes: %h (\"%s\")
+This patch applied. It's a very simple, straight-forward driver that does
+exactly what we want.
 
-> >
-> > Signed-off-by: John Crispin <john@phrozen.org>
-> 
-> Now I'm confused how it ever worked.... but agreed, the code looks wrong.
-
-I agree, we should have seen some issues based on this, I presume we
-where "lucky".
-
-> 
-> Reviewed-by: Stephen Boyd <stephen.boyd@linaro.org>
-> 
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-@Linus, the corrected patch appeared in v4.8-rc1, would you mind
-including this in a pull for v4.8?
-
-Regards,
-Bjorn
-
-> > ---
-> >  drivers/pinctrl/qcom/pinctrl-msm.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> > index 51c42d7..775c883 100644
-> > --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> > +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> > @@ -156,7 +156,7 @@ static int msm_pinmux_set_mux(struct pinctrl_dev *pctldev,
-> >         spin_lock_irqsave(&pctrl->lock, flags);
-> >
-> >         val = readl(pctrl->regs + g->ctl_reg);
-> > -       val &= mask;
-> > +       val &= ~mask;
-> >         val |= i << g->mux_bit;
-> >         writel(val, pctrl->regs + g->ctl_reg);
-> >
+Yours,
+Linus Walleij
