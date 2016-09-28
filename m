@@ -1,190 +1,147 @@
-From: Tan Jui Nee <jui.nee.tan@intel.com>
-Subject: [PATCH v7 4/6] mfd: move enum lpc_chipsets into lpc_ich.h
-Date: Wed, 28 Sep 2016 17:52:21 +0800
-Message-ID: <1475056343-31907-5-git-send-email-jui.nee.tan@intel.com>
-References: <1475056343-31907-1-git-send-email-jui.nee.tan@intel.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH] pinctrl: freescale: avoid overwriting pin config when
+ freeing GPIO
+Date: Wed, 28 Sep 2016 15:07:46 +0300
+Message-ID: <1a113c0f-4ee3-e61a-8927-b5e8b558822c@mentor.com>
+References: <20160927002650.4316-1-stefan@agner.ch>
+ <17317e62-d9bf-4ab3-35b5-f2f9a4dcbedd@mentor.com>
+ <960b299c947424598ec26bfcb36fd96b@agner.ch>
+ <e72b95e2-353a-d058-4321-dfbdaac2ba1b@mentor.com>
+ <671a23a9ccdbdd6594ad89bf496c1490@agner.ch>
+ <20160928020052.GB2551@vireshk-i7>
+ <effa1a4d020a1ec6ea43fd5d4f12b89c@agner.ch>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:27984 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752215AbcI1Jxq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 28 Sep 2016 05:53:46 -0400
-In-Reply-To: <1475056343-31907-1-git-send-email-jui.nee.tan@intel.com>
+Received: from relay1.mentorg.com ([192.94.38.131]:51574 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753235AbcI1MHy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Sep 2016 08:07:54 -0400
+In-Reply-To: <effa1a4d020a1ec6ea43fd5d4f12b89c@agner.ch>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jui.nee.tan@intel.com, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
+To: Stefan Agner <stefan@agner.ch>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linus.walleij@linaro.org, shawnguo@kernel.org, aalonso@freescale.com, b38343@freescale.com, ldewangan@nvidia.com, van.freenix@gmail.com, p.zabel@pengutronix.de, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Move the enum's definition into a standalone header file which can be used
-wherever its definition is needed.
 
-Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
----
- drivers/mfd/lpc_ich-core.c  | 71 ---------------------------------------------
- include/linux/mfd/lpc_ich.h | 71 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 71 insertions(+), 71 deletions(-)
 
-diff --git a/drivers/mfd/lpc_ich-core.c b/drivers/mfd/lpc_ich-core.c
-index bd3aa45..05ed985 100644
---- a/drivers/mfd/lpc_ich-core.c
-+++ b/drivers/mfd/lpc_ich-core.c
-@@ -147,77 +147,6 @@ static struct mfd_cell lpc_ich_gpio_cell = {
- 	.ignore_resource_conflicts = true,
- };
- 
--/* chipset related info */
--enum lpc_chipsets {
--	LPC_ICH = 0,	/* ICH */
--	LPC_ICH0,	/* ICH0 */
--	LPC_ICH2,	/* ICH2 */
--	LPC_ICH2M,	/* ICH2-M */
--	LPC_ICH3,	/* ICH3-S */
--	LPC_ICH3M,	/* ICH3-M */
--	LPC_ICH4,	/* ICH4 */
--	LPC_ICH4M,	/* ICH4-M */
--	LPC_CICH,	/* C-ICH */
--	LPC_ICH5,	/* ICH5 & ICH5R */
--	LPC_6300ESB,	/* 6300ESB */
--	LPC_ICH6,	/* ICH6 & ICH6R */
--	LPC_ICH6M,	/* ICH6-M */
--	LPC_ICH6W,	/* ICH6W & ICH6RW */
--	LPC_631XESB,	/* 631xESB/632xESB */
--	LPC_ICH7,	/* ICH7 & ICH7R */
--	LPC_ICH7DH,	/* ICH7DH */
--	LPC_ICH7M,	/* ICH7-M & ICH7-U */
--	LPC_ICH7MDH,	/* ICH7-M DH */
--	LPC_NM10,	/* NM10 */
--	LPC_ICH8,	/* ICH8 & ICH8R */
--	LPC_ICH8DH,	/* ICH8DH */
--	LPC_ICH8DO,	/* ICH8DO */
--	LPC_ICH8M,	/* ICH8M */
--	LPC_ICH8ME,	/* ICH8M-E */
--	LPC_ICH9,	/* ICH9 */
--	LPC_ICH9R,	/* ICH9R */
--	LPC_ICH9DH,	/* ICH9DH */
--	LPC_ICH9DO,	/* ICH9DO */
--	LPC_ICH9M,	/* ICH9M */
--	LPC_ICH9ME,	/* ICH9M-E */
--	LPC_ICH10,	/* ICH10 */
--	LPC_ICH10R,	/* ICH10R */
--	LPC_ICH10D,	/* ICH10D */
--	LPC_ICH10DO,	/* ICH10DO */
--	LPC_PCH,	/* PCH Desktop Full Featured */
--	LPC_PCHM,	/* PCH Mobile Full Featured */
--	LPC_P55,	/* P55 */
--	LPC_PM55,	/* PM55 */
--	LPC_H55,	/* H55 */
--	LPC_QM57,	/* QM57 */
--	LPC_H57,	/* H57 */
--	LPC_HM55,	/* HM55 */
--	LPC_Q57,	/* Q57 */
--	LPC_HM57,	/* HM57 */
--	LPC_PCHMSFF,	/* PCH Mobile SFF Full Featured */
--	LPC_QS57,	/* QS57 */
--	LPC_3400,	/* 3400 */
--	LPC_3420,	/* 3420 */
--	LPC_3450,	/* 3450 */
--	LPC_EP80579,	/* EP80579 */
--	LPC_CPT,	/* Cougar Point */
--	LPC_CPTD,	/* Cougar Point Desktop */
--	LPC_CPTM,	/* Cougar Point Mobile */
--	LPC_PBG,	/* Patsburg */
--	LPC_DH89XXCC,	/* DH89xxCC */
--	LPC_PPT,	/* Panther Point */
--	LPC_LPT,	/* Lynx Point */
--	LPC_LPT_LP,	/* Lynx Point-LP */
--	LPC_WBG,	/* Wellsburg */
--	LPC_AVN,	/* Avoton SoC */
--	LPC_BAYTRAIL,   /* Bay Trail SoC */
--	LPC_COLETO,	/* Coleto Creek */
--	LPC_WPT_LP,	/* Wildcat Point-LP */
--	LPC_BRASWELL,	/* Braswell SoC */
--	LPC_LEWISBURG,	/* Lewisburg */
--	LPC_9S,		/* 9 Series */
--};
+On 09/28/2016 06:38 AM, Stefan Agner wrote:
+> On 2016-09-27 19:00, Viresh Kumar wrote:
+>> On 27-09-16, 12:34, Stefan Agner wrote:
+>>> Added Viresh Kumar to the discussion, he implemented the I2C recovery
+>>> functions.
+>>>
+>>> Yes, reordering the pinctrl/gpio_free calls would fix the problem too.
+>>>
+>>> However, I guess there is no explicit rule to that ("request/free GPIOs
+>>> only when they are muxed as GPIO"), so I think of it that the issue is
+>>> actually in the pinctrl driver.
+>>>
+>>> On top of that it is not entirely trivial to reorder the calls the way
+>>> i2c_generic_gpio_recovery and i2c_generic_recovery are set up right now.
+>>
+>> AFAICT, these routines don't touch the muxing part at all. Perhaps it is done
+>> internally by the GPIO calls. Can you please elaborate the exact change you are
+>> hinting towards here ?
+>
+> The i.MX I2C driver touches the pinctrl in its prepare/unprepare
+> callbacks.
+>
+> So, on a i.MX or Vybrid, the call chain looks like this:
+>
+> i2c_generic_gpio_recovery
+>     -> i2c_get_gpios_for_recovery
+>        -> gpio_request_one
+>     -> i2c_generic_recovery
+>        -> prepare_recovery (i2c_imx_prepare_recovery)
+>           -> pinctrl_select_state [gpio]
+>        -> unprepare_recovery (i2c_imx_unprepare_recovery)
+>           -> pinctrl_select_state [default]
+>     -> i2c_put_gpios_for_recovery
+>        -> gpio_free
+
+I would expect that the change below improves the situation, but I didn't
+perform any tests and here the core change is governed by the accepted
+i.MX i2c bus driver specific changes, thus conceptually it may be incorrect:
+
+diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+index da3a02ef4a31..3a4f59c3c3e6 100644
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@ -697,9 +697,6 @@ static int i2c_generic_recovery(struct i2c_adapter *adap)
+  	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
+  	int i = 0, val = 1, ret = 0;
+  
+-	if (bri->prepare_recovery)
+-		bri->prepare_recovery(adap);
 -
- static struct lpc_ich_info lpc_chipset_info[] = {
- 	[LPC_ICH] = {
- 		.name = "ICH",
-diff --git a/include/linux/mfd/lpc_ich.h b/include/linux/mfd/lpc_ich.h
-index 2b300b4..42307ee 100644
---- a/include/linux/mfd/lpc_ich.h
-+++ b/include/linux/mfd/lpc_ich.h
-@@ -43,4 +43,75 @@ struct lpc_ich_info {
- 	u8 use_gpio;
- };
- 
-+/* chipset related info */
-+enum lpc_chipsets {
-+	LPC_ICH = 0,	/* ICH */
-+	LPC_ICH0,	/* ICH0 */
-+	LPC_ICH2,	/* ICH2 */
-+	LPC_ICH2M,	/* ICH2-M */
-+	LPC_ICH3,	/* ICH3-S */
-+	LPC_ICH3M,	/* ICH3-M */
-+	LPC_ICH4,	/* ICH4 */
-+	LPC_ICH4M,	/* ICH4-M */
-+	LPC_CICH,	/* C-ICH */
-+	LPC_ICH5,	/* ICH5 & ICH5R */
-+	LPC_6300ESB,	/* 6300ESB */
-+	LPC_ICH6,	/* ICH6 & ICH6R */
-+	LPC_ICH6M,	/* ICH6-M */
-+	LPC_ICH6W,	/* ICH6W & ICH6RW */
-+	LPC_631XESB,	/* 631xESB/632xESB */
-+	LPC_ICH7,	/* ICH7 & ICH7R */
-+	LPC_ICH7DH,	/* ICH7DH */
-+	LPC_ICH7M,	/* ICH7-M & ICH7-U */
-+	LPC_ICH7MDH,	/* ICH7-M DH */
-+	LPC_NM10,	/* NM10 */
-+	LPC_ICH8,	/* ICH8 & ICH8R */
-+	LPC_ICH8DH,	/* ICH8DH */
-+	LPC_ICH8DO,	/* ICH8DO */
-+	LPC_ICH8M,	/* ICH8M */
-+	LPC_ICH8ME,	/* ICH8M-E */
-+	LPC_ICH9,	/* ICH9 */
-+	LPC_ICH9R,	/* ICH9R */
-+	LPC_ICH9DH,	/* ICH9DH */
-+	LPC_ICH9DO,	/* ICH9DO */
-+	LPC_ICH9M,	/* ICH9M */
-+	LPC_ICH9ME,	/* ICH9M-E */
-+	LPC_ICH10,	/* ICH10 */
-+	LPC_ICH10R,	/* ICH10R */
-+	LPC_ICH10D,	/* ICH10D */
-+	LPC_ICH10DO,	/* ICH10DO */
-+	LPC_PCH,	/* PCH Desktop Full Featured */
-+	LPC_PCHM,	/* PCH Mobile Full Featured */
-+	LPC_P55,	/* P55 */
-+	LPC_PM55,	/* PM55 */
-+	LPC_H55,	/* H55 */
-+	LPC_QM57,	/* QM57 */
-+	LPC_H57,	/* H57 */
-+	LPC_HM55,	/* HM55 */
-+	LPC_Q57,	/* Q57 */
-+	LPC_HM57,	/* HM57 */
-+	LPC_PCHMSFF,	/* PCH Mobile SFF Full Featured */
-+	LPC_QS57,	/* QS57 */
-+	LPC_3400,	/* 3400 */
-+	LPC_3420,	/* 3420 */
-+	LPC_3450,	/* 3450 */
-+	LPC_EP80579,	/* EP80579 */
-+	LPC_CPT,	/* Cougar Point */
-+	LPC_CPTD,	/* Cougar Point Desktop */
-+	LPC_CPTM,	/* Cougar Point Mobile */
-+	LPC_PBG,	/* Patsburg */
-+	LPC_DH89XXCC,	/* DH89xxCC */
-+	LPC_PPT,	/* Panther Point */
-+	LPC_LPT,	/* Lynx Point */
-+	LPC_LPT_LP,	/* Lynx Point-LP */
-+	LPC_WBG,	/* Wellsburg */
-+	LPC_AVN,	/* Avoton SoC */
-+	LPC_BAYTRAIL,   /* Bay Trail SoC */
-+	LPC_COLETO,	/* Coleto Creek */
-+	LPC_WPT_LP,	/* Wildcat Point-LP */
-+	LPC_BRASWELL,	/* Braswell SoC */
-+	LPC_LEWISBURG,	/* Lewisburg */
-+	LPC_9S,		/* 9 Series */
-+};
+  	bri->set_scl(adap, val);
+  	ndelay(RECOVERY_NDELAY);
+  
+@@ -725,22 +722,34 @@ static int i2c_generic_recovery(struct i2c_adapter *adap)
+  		ndelay(RECOVERY_NDELAY);
+  	}
+  
+-	if (bri->unprepare_recovery)
+-		bri->unprepare_recovery(adap);
+-
+  	return ret;
+  }
+  
+  int i2c_generic_scl_recovery(struct i2c_adapter *adap)
+  {
+-	return i2c_generic_recovery(adap);
++	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
++	int ret;
 +
- #endif
--- 
-1.9.1
++	if (bri->prepare_recovery)
++		bri->prepare_recovery(adap);
++
++	ret = i2c_generic_recovery(adap);
++
++	if (bri->unprepare_recovery)
++		bri->unprepare_recovery(adap);
++
++	return ret;
+  }
+  EXPORT_SYMBOL_GPL(i2c_generic_scl_recovery);
+  
+  int i2c_generic_gpio_recovery(struct i2c_adapter *adap)
+  {
++	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
+  	int ret;
+  
++	if (bri->prepare_recovery)
++		bri->prepare_recovery(adap);
++
+  	ret = i2c_get_gpios_for_recovery(adap);
+  	if (ret)
+  		return ret;
+@@ -748,6 +757,9 @@ int i2c_generic_gpio_recovery(struct i2c_adapter *adap)
+  	ret = i2c_generic_recovery(adap);
+  	i2c_put_gpios_for_recovery(adap);
+  
++	if (bri->unprepare_recovery)
++		bri->unprepare_recovery(adap);
++
+  	return ret;
+  }
+  EXPORT_SYMBOL_GPL(i2c_generic_gpio_recovery);
 
+
+Alternatively you may consider to add contents of i2c_get_gpios_for_recovery()
+into i2c_imx_prepare_recovery(), contents of i2c_put_gpios_for_recovery() into
+i2c_imx_unprepare_recovery() in the i.MX I2C bus driver and change the recovery
+callback .recover_bus to i2c_generic_scl_recovery().
+
+>
+> And for the pinctrl/GPIO driver of Vybrid this is actually a problem
+> because gpio_free disables the output driver of the pad, and when that
+> happens after the (I2C) default pinctrl state gets selected the pad is
+> no longer active.
+>
+
+--
+With best wishes,
+Vladimir
