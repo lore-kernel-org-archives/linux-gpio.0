@@ -1,82 +1,38 @@
 From: Tan Jui Nee <jui.nee.tan@intel.com>
-Subject: [PATCH v7 0/6] pinctrl/broxton: enable platform device in the absent of ACPI enumeration
-Date: Wed, 28 Sep 2016 17:52:17 +0800
-Message-ID: <1475056343-31907-1-git-send-email-jui.nee.tan@intel.com>
+Subject: [PATCH v7 1/6] x86/platform/p2sb: New Primary to Sideband bridge support driver for Intel SOC's
+Date: Wed, 28 Sep 2016 17:52:18 +0800
+Message-ID: <1475056343-31907-2-git-send-email-jui.nee.tan@intel.com>
+References: <1475056343-31907-1-git-send-email-jui.nee.tan@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:22859 "EHLO mga07.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:61699 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752096AbcI1JxS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 28 Sep 2016 05:53:18 -0400
+        id S1752096AbcI1Jxe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 28 Sep 2016 05:53:34 -0400
+In-Reply-To: <1475056343-31907-1-git-send-email-jui.nee.tan@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jui.nee.tan@intel.com, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
 
-Hi,
-The patches are to cater the need for non-ACPI system whereby
-a platform device has to be created in order to bind with
-Apollo Lake Pinctrl GPIO platform driver.
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-The MMIO BAR is accessed over the Primary to Sideband bridge
-(P2SB). Since the BIOS prevents the P2SB device from being
-enumerated by the PCI subsystem, so we need to hide/unhide P2SB
-to lookup the P2SB BAR and pass the PCI BAR address to the gpio
-platform driver.
+There is already one and at least one more user coming which
+require an access to Primary to Sideband bridge (P2SB) in order
+to get IO or MMIO bar hidden by BIOS.
+Create a driver to access P2SB for x86 devices.
 
-All these three patches have dependencies on each other.
-
+Signed-off-by: Yong, Jonathan <jonathan.yong@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 Changes in V7:
 	- EXPORT_SYMBOL_GPL() and MODULE_LICENSE("GPL v2") are used for new file
 	  p2sb.c.
-	- Split Kconfig option CONFIG_X86_INTEL_IVI to separate patch (suggested by
-	  Lee).
-	- Split new platform enabling into a separate patch.
-	- Move lpc_chipsets enum's definition into a standalone header file which
-	  can be used wherever its definition is needed.
-	- Add author information and rewrite description of source file 
-	  lpc_ich-apl.c and lpc_ich_apl.h.
-	- Sort the header files by alphabetical order in lpc_ich-apl.c.
-	- Rename header file lpc_ich-apl.h to lpc_ich_apl.h (suggested by Lee).
-	- Remove unneeded pdata_size and platform_data from mfd_cell.
-	  Also, remove unneeded apl_pinctrl_pdata.
-	- Since variable apl_p2sb is only used once, hence switch it out for the
-	  PCI_DEVFN macro (suggested by Lee).
-	- Define APL_GPIO_COMMUNITY_MAX as total Apollo Lake GPIO communities
-	  supported.
-	- Set resources in mfd_cell for each GPIO community.
-	- Call p2sb_bar() function once instead of four times inside the for loop.
-	  And make p2sb_bar() function just to fill in the base address into a
-	  scratch "struct resource" and have the loop do the additions to base/end.
-	- Remove entire apl_pinctrl_pdata.name memory allocation since it is no
-	  longer needed.
-	- Return ret at the end of lpc_ich_add_gpio() function.
 
 Changes in V6:
-	- Rename CONFIG_X86_INTEL_APL to CONFIG_X86_INTEL_IVI so that it
-	  relates to the actual product, as suggested by Mika.
-	- Rework Makefile according Andy's comments.
-	- Rename lpc_ich_misc() to lpc_ich_add_gpio() so that the name should not
-	  be so generic, as suggested by Andy.
-	- Call lpc_ich_add_gpio() via priv->chipset.
-	- lpc_ich_add_gpio() function will be moved from 
-	  .../include/linux/mfd/lpc_ich.h to
-	  .../drivers/mfd/lpc_ich-apl.h
-	  as this is a part of internal driver interface as suggested by Andy.
-	- Move enum lpc_chipsets from 
-	  .../drivers/mfd/lpc_ich-core.c to
-	  .../include/linux/mfd/lpc_ich.h
-	  as lpc_chipsets is also accessed by lpc_ich_add_gpio().
-	- Check if kasprintf return value for all 4 gpio controllers before
-	  proceed to add platform device by using mfd_add_devices().
+	- No change
 
 Changes in V5:
-	- Split lpc-ich driver into two parts (lpc_ich-core and lpc_ich-apl).
-	  The file lpc_ich-apl.c introduces gpio platform driver in MFD.
-	- Rename Kconfig option CONFIG_X86_INTEL_NON_ACPI to CONFIG_X86_INTEL_APL
-	  so that it reflects actual product as suggested by Mika.
-	- The patch: 
-	  [PATCH] pinctrl/broxton: enable platform device in the absent of ACPI enumeration
-	  is removed in V5 patch-set as the patch is already applied in Linus' pinctrl tree.
+	- No change
 
 Changes in V4:
 	- Move Kconfig option CONFIG_X86_INTEL_NON_ACPI from
@@ -84,55 +40,181 @@ Changes in V4:
 	  to
 	  [PATCH 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake GPIO pinctrl in non-ACPI system
 	  since the config is used in latter patch.
-	- Select CONFIG_P2SB when CONFIG_LPC_ICH is enabled.
-	- Remove #ifdef CONFIG_X86_INTEL_NON_ACPI and use
-	  #if defined(CONFIG_X86_INTEL_NON_ACPI) when lpc_ich_misc is called
-	  as suggested by Lee Jones.
-	- Use single dimensional array instead of 2D array for apl_gpio_io_res
-	  structure and use DEFINE_RES_IRQ for its IRQ resource.
 
 Changes in V3:
-	- Simplify register addresses calculation and use DEFINE_RES_MEM_NAMED
-	  defines for apl_gpio_io_res structure
-	- Define magic number for P2SB PCI ID
-	- Replace switch-case with if-else since currently we have only one
-	  use case
-	- Only call mfd_add_devices() once for all gpio communities
+	- No change
 
 Changes in V2:
 	- Add new config option CONFIG_X86_INTEL_NON_ACPI and "select PINCTRL"
 	  to fix kbuildbot error
 
-Andy Shevchenko (1):
-  x86/platform/p2sb: New Primary to Sideband bridge support driver for
-    Intel SOC's
-
-Tan Jui Nee (5):
-  mfd: lpc_ich: Rename lpc-ich driver
-  x86/intel-ivi: Add Intel In-Vehicle Infotainment (IVI) systems used in
-    cars support
-  mfd: move enum lpc_chipsets into lpc_ich.h
-  mfd: lpc_ich: Add Device IDs for Intel Apollo Lake PCH
-  mfd: lpc_ich: Add support for Intel Apollo Lake GPIO pinctrl in
-    non-ACPI system
-
- arch/x86/Kconfig                          |  12 +++
- arch/x86/include/asm/p2sb.h               |  27 +++++++
- arch/x86/platform/intel/Makefile          |   1 +
- arch/x86/platform/intel/p2sb.c            |  98 ++++++++++++++++++++++++
- drivers/mfd/Kconfig                       |   3 +-
- drivers/mfd/Makefile                      |   4 +
- drivers/mfd/lpc_ich-apl.c                 | 120 ++++++++++++++++++++++++++++++
- drivers/mfd/{lpc_ich.c => lpc_ich-core.c} |  82 +++-----------------
- drivers/mfd/lpc_ich_apl.h                 |  29 ++++++++
- include/linux/mfd/lpc_ich.h               |  72 ++++++++++++++++++
- 10 files changed, 376 insertions(+), 72 deletions(-)
+ arch/x86/Kconfig                 |  4 ++
+ arch/x86/include/asm/p2sb.h      | 27 +++++++++++
+ arch/x86/platform/intel/Makefile |  1 +
+ arch/x86/platform/intel/p2sb.c   | 98 ++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 130 insertions(+)
  create mode 100644 arch/x86/include/asm/p2sb.h
  create mode 100644 arch/x86/platform/intel/p2sb.c
- create mode 100644 drivers/mfd/lpc_ich-apl.c
- rename drivers/mfd/{lpc_ich.c => lpc_ich-core.c} (94%)
- create mode 100644 drivers/mfd/lpc_ich_apl.h
 
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 2a1f0ce..edc0313 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -602,6 +602,10 @@ config IOSF_MBI_DEBUG
+ 
+ 	  If you don't require the option or are in doubt, say N.
+ 
++config P2SB
++	tristate
++	depends on PCI
++
+ config X86_RDC321X
+ 	bool "RDC R-321x SoC"
+ 	depends on X86_32
+diff --git a/arch/x86/include/asm/p2sb.h b/arch/x86/include/asm/p2sb.h
+new file mode 100644
+index 0000000..686e07b
+--- /dev/null
++++ b/arch/x86/include/asm/p2sb.h
+@@ -0,0 +1,27 @@
++/*
++ * Primary to Sideband bridge (P2SB) access support
++ */
++
++#ifndef P2SB_SYMS_H
++#define P2SB_SYMS_H
++
++#include <linux/ioport.h>
++#include <linux/pci.h>
++
++#if IS_ENABLED(CONFIG_P2SB)
++
++int p2sb_bar(struct pci_dev *pdev, unsigned int devfn,
++	struct resource *res);
++
++#else /* CONFIG_P2SB is not set */
++
++static inline
++int p2sb_bar(struct pci_dev *pdev, unsigned int devfn,
++	struct resource *res)
++{
++	return -ENODEV;
++}
++
++#endif /* CONFIG_P2SB */
++
++#endif /* P2SB_SYMS_H */
+diff --git a/arch/x86/platform/intel/Makefile b/arch/x86/platform/intel/Makefile
+index b878032..dbf9f10 100644
+--- a/arch/x86/platform/intel/Makefile
++++ b/arch/x86/platform/intel/Makefile
+@@ -1 +1,2 @@
+ obj-$(CONFIG_IOSF_MBI)			+= iosf_mbi.o
++obj-$(CONFIG_P2SB)			+= p2sb.o
+diff --git a/arch/x86/platform/intel/p2sb.c b/arch/x86/platform/intel/p2sb.c
+new file mode 100644
+index 0000000..b1d784c
+--- /dev/null
++++ b/arch/x86/platform/intel/p2sb.c
+@@ -0,0 +1,98 @@
++/*
++ * Primary to Sideband bridge (P2SB) driver
++ *
++ * Copyright (c) 2016, Intel Corporation.
++ *
++ * Authors: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
++ *			Jonathan Yong <jonathan.yong@intel.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ */
++
++#include <linux/ioport.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++#include <linux/spinlock.h>
++
++#include <asm/p2sb.h>
++
++#define SBREG_BAR	0x10
++#define SBREG_HIDE	0xe1
++
++static DEFINE_SPINLOCK(p2sb_spinlock);
++
++/*
++ * p2sb_bar - Get Primary to Sideband bridge (P2SB) BAR
++ * @pdev:	PCI device to get PCI bus to communicate with
++ * @devfn:	PCI device and function to communicate with
++ * @res:	resources to be filled in
++ *
++ * The BIOS prevents the P2SB device from being enumerated by the PCI
++ * subsystem, so we need to unhide and hide it back to lookup the P2SB BAR.
++ *
++ * Locking is handled by spinlock - cannot sleep.
++ *
++ * Return:
++ * 0 on success or appropriate errno value on error.
++ */
++int p2sb_bar(struct pci_dev *pdev, unsigned int devfn,
++	struct resource *res)
++{
++	u32 base_addr;
++	u64 base64_addr;
++	unsigned long flags;
++
++	if (!res)
++		return -EINVAL;
++
++	spin_lock(&p2sb_spinlock);
++
++	/* Unhide the P2SB device */
++	pci_bus_write_config_byte(pdev->bus, devfn, SBREG_HIDE, 0x00);
++
++	/* Check if device present */
++	pci_bus_read_config_dword(pdev->bus, devfn, 0, &base_addr);
++	if (base_addr == 0xffffffff || base_addr == 0x00000000) {
++		spin_unlock(&p2sb_spinlock);
++		dev_warn(&pdev->dev, "P2SB device access disabled by BIOS?\n");
++		return -ENODEV;
++	}
++
++	/* Get IO or MMIO BAR */
++	pci_bus_read_config_dword(pdev->bus, devfn, SBREG_BAR, &base_addr);
++	if ((base_addr & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO) {
++		flags = IORESOURCE_IO;
++		base64_addr = base_addr & PCI_BASE_ADDRESS_IO_MASK;
++	} else {
++		flags = IORESOURCE_MEM;
++		base64_addr = base_addr & PCI_BASE_ADDRESS_MEM_MASK;
++		if (base_addr & PCI_BASE_ADDRESS_MEM_TYPE_64) {
++			flags |= IORESOURCE_MEM_64;
++			pci_bus_read_config_dword(pdev->bus, devfn,
++				SBREG_BAR + 4, &base_addr);
++			base64_addr |= (u64)base_addr << 32;
++		}
++	}
++
++	/* Hide the P2SB device */
++	pci_bus_write_config_byte(pdev->bus, devfn, SBREG_HIDE, 0x01);
++
++	spin_unlock(&p2sb_spinlock);
++
++	/* User provides prefilled resources */
++	res->start = (resource_size_t)base64_addr;
++	res->flags = flags;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(p2sb_bar);
++
++MODULE_LICENSE("GPL v2");
 -- 
 1.9.1
 
