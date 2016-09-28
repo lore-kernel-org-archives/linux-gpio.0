@@ -1,50 +1,70 @@
 From: Tan Jui Nee <jui.nee.tan@intel.com>
-Subject: [PATCH v7 3/6] x86/intel-ivi: Add Intel In-Vehicle Infotainment (IVI) systems used in cars support
-Date: Wed, 28 Sep 2016 17:52:20 +0800
-Message-ID: <1475056343-31907-4-git-send-email-jui.nee.tan@intel.com>
+Subject: [PATCH v7 5/6] mfd: lpc_ich: Add Device IDs for Intel Apollo Lake PCH
+Date: Wed, 28 Sep 2016 17:52:22 +0800
+Message-ID: <1475056343-31907-6-git-send-email-jui.nee.tan@intel.com>
 References: <1475056343-31907-1-git-send-email-jui.nee.tan@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:35742 "EHLO mga02.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:27984 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752783AbcI1Jxm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 28 Sep 2016 05:53:42 -0400
+        id S1752917AbcI1Jxy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 28 Sep 2016 05:53:54 -0400
 In-Reply-To: <1475056343-31907-1-git-send-email-jui.nee.tan@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jui.nee.tan@intel.com, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
 
-Add support for non ACPI system, such as system that uses Advanced Boot
-Loader (ABL) whereby a platform device has to be created in order to bind
-with PINCTRL/GPIO.
-
-At the moment, Intel Apollo Lake SoC requires P2SB driver to hide and
-unhide P2SB to lookup P2SB BAR and pass the PCI BAR address to GPIO.
+Adding Intel codename Apollo Lake platform device IDs for PCH.
 
 Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
 ---
- arch/x86/Kconfig | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/mfd/lpc_ich-core.c  | 6 ++++++
+ include/linux/mfd/lpc_ich.h | 1 +
+ 2 files changed, 7 insertions(+)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index edc0313..ce5a048 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -511,6 +511,14 @@ config X86_INTEL_CE
- 	  This option compiles in support for the CE4100 SOC for settop
- 	  boxes and media devices.
+diff --git a/drivers/mfd/lpc_ich-core.c b/drivers/mfd/lpc_ich-core.c
+index 05ed985..589155c 100644
+--- a/drivers/mfd/lpc_ich-core.c
++++ b/drivers/mfd/lpc_ich-core.c
+@@ -56,6 +56,7 @@
+  *	document number TBD : Wildcat Point-LP
+  *	document number TBD : 9 Series
+  *	document number TBD : Lewisburg
++ *	document number TBD : Apollo Lake
+  */
  
-+config X86_INTEL_IVI
-+	bool "Intel In-Vehicle Infotainment (IVI) systems used in cars"
-+	---help---
-+	  Select this option to enable MMIO BAR access over the P2SB for
-+	  non-ACPI Intel Apollo Lake SoC platforms. This driver uses the P2SB
-+	  hide/unhide mechanism cooperatively to pass the PCI BAR address to
-+	  the platform driver, currently GPIO.
-+
- config X86_INTEL_MID
- 	bool "Intel MID platform support"
- 	depends on X86_EXTENDED_PLATFORM
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+@@ -460,6 +461,10 @@ static struct lpc_ich_info lpc_chipset_info[] = {
+ 		.name = "9 Series",
+ 		.iTCO_version = 2,
+ 	},
++	[LPC_APL]  = {
++		.name = "Apollo Lake SoC",
++		.iTCO_version = 5,
++	},
+ };
+ 
+ /*
+@@ -608,6 +613,7 @@ static const struct pci_device_id lpc_ich_ids[] = {
+ 	{ PCI_VDEVICE(INTEL, 0x3b14), LPC_3420},
+ 	{ PCI_VDEVICE(INTEL, 0x3b16), LPC_3450},
+ 	{ PCI_VDEVICE(INTEL, 0x5031), LPC_EP80579},
++	{ PCI_VDEVICE(INTEL, 0x5ae8), LPC_APL},
+ 	{ PCI_VDEVICE(INTEL, 0x8c40), LPC_LPT},
+ 	{ PCI_VDEVICE(INTEL, 0x8c41), LPC_LPT},
+ 	{ PCI_VDEVICE(INTEL, 0x8c42), LPC_LPT},
+diff --git a/include/linux/mfd/lpc_ich.h b/include/linux/mfd/lpc_ich.h
+index 42307ee..397008c 100644
+--- a/include/linux/mfd/lpc_ich.h
++++ b/include/linux/mfd/lpc_ich.h
+@@ -112,6 +112,7 @@ enum lpc_chipsets {
+ 	LPC_BRASWELL,	/* Braswell SoC */
+ 	LPC_LEWISBURG,	/* Lewisburg */
+ 	LPC_9S,		/* 9 Series */
++	LPC_APL,	/* Apollo Lake SoC */
+ };
+ 
+ #endif
 -- 
 1.9.1
 
