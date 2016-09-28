@@ -1,44 +1,76 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH v2] pinctrl: Add SX150X GPIO Extender Pinctrl Driver
-Date: Tue, 27 Sep 2016 18:18:20 +0200
-Message-ID: <83197184-4138-5b21-13e8-3b64787abe46@axentia.se>
-References: <1474991325-1754-1-git-send-email-narmstrong@baylibre.com>
+From: Patrice Chotard <patrice.chotard@st.com>
+Subject: Re: [PATCH] gpio: stmpe: forbid unused lines to be mapped as IRQs
+Date: Wed, 28 Sep 2016 09:22:06 +0200
+Message-ID: <7e46342e-09c6-b3ff-5979-a960a7f590d0@st.com>
+References: <1475017624-29686-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-db5eur01on0107.outbound.protection.outlook.com ([104.47.2.107]:53561
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752209AbcI1FBc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 28 Sep 2016 01:01:32 -0400
-In-Reply-To: <1474991325-1754-1-git-send-email-narmstrong@baylibre.com>
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:52946 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750785AbcI1HWP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 28 Sep 2016 03:22:15 -0400
+In-Reply-To: <1475017624-29686-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>, linus.walleij@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Wei.Chen@csr.com, stigge@antcom.de, vladimir_zapolskiy@mentor.com
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On 2016-09-27 17:48, Neil Armstrong wrote:
-> Since the I2C sx150x GPIO expander driver uses platform_data to manage
-> the pins configurations, rewrite the driver as a pinctrl driver using
-> pinconf to get/set pin configurations from DT or debugfs.
+Hi Linus
+
+On 09/28/2016 01:07 AM, Linus Walleij wrote:
+> Exploit the new mechanism for masking off disallowed IRQs
+> added by Mika Westerberg to properly manage the STMPE
+> "norequest mask" to disallow also mapping said lines as
+> IRQs.
 > 
-> The pinctrl driver is functionnally equivalent as the gpio-only driver
-> and can use DT for pinconf. The platform_data confirmation is dropped.
+> Cc: Patrice Chotard <patrice.chotard@st.com>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/gpio/gpio-stmpe.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
-> This patchset removed the gpio-only driver and selects the Pinctrl driver
-> config instead. This patchset also migrates the gpio dt-bindings to pinctrl
-> and add the pinctrl optional properties.
+> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+> index b51c5be55c3a..432b2ee173c7 100644
+> --- a/drivers/gpio/gpio-stmpe.c
+> +++ b/drivers/gpio/gpio-stmpe.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/of.h>
+>  #include <linux/mfd/stmpe.h>
+>  #include <linux/seq_file.h>
+> +#include <linux/bitops.h>
+>  
+>  /*
+>   * These registers are modified under the irq bus lock and cached to avoid
+> @@ -449,6 +450,8 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
+>  
+>  	of_property_read_u32(np, "st,norequest-mask",
+>  			&stmpe_gpio->norequest_mask);
+> +	if (stmpe_gpio->norequest_mask)
+> +		stmpe_gpio->chip.irq_need_valid_mask = true;
+>  
+>  	if (irq < 0)
+>  		dev_info(&pdev->dev,
+> @@ -473,6 +476,14 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
+>  			dev_err(&pdev->dev, "unable to get irq: %d\n", ret);
+>  			goto out_disable;
+>  		}
+> +		if (stmpe_gpio->norequest_mask) {
+> +			int i;
+> +
+> +			/* Forbid unused lines to be mapped as IRQs */
+> +			for (i = 0; i < sizeof(u32); i++)
+> +				if (stmpe_gpio->norequest_mask & BIT(i))
+> +					clear_bit(i, stmpe_gpio->chip.irq_valid_mask);
+> +		}
+>  		ret =  gpiochip_irqchip_add(&stmpe_gpio->chip,
+>  					    &stmpe_gpio_irq_chip,
+>  					    0,
 > 
-> The driver was tested with a SX1509 device on a BeagleBone black with
-> interrupt support and on an X86_64 machine over an I2C to USB converter.
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Works here for sx1502 (without interrupts) on a custom arm board (SAMA5D3).
+Reviewed-by: Patrice Chotard <patrice.chotard@st.com>
 
-Tested-by: Peter Rosin <peda@axentia.se>
-
-Cheers,
-Peter
-
+Thanks
