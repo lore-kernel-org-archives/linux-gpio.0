@@ -1,147 +1,369 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: [PATCH] pinctrl: freescale: avoid overwriting pin config when
- freeing GPIO
-Date: Wed, 28 Sep 2016 15:07:46 +0300
-Message-ID: <1a113c0f-4ee3-e61a-8927-b5e8b558822c@mentor.com>
-References: <20160927002650.4316-1-stefan@agner.ch>
- <17317e62-d9bf-4ab3-35b5-f2f9a4dcbedd@mentor.com>
- <960b299c947424598ec26bfcb36fd96b@agner.ch>
- <e72b95e2-353a-d058-4321-dfbdaac2ba1b@mentor.com>
- <671a23a9ccdbdd6594ad89bf496c1490@agner.ch>
- <20160928020052.GB2551@vireshk-i7>
- <effa1a4d020a1ec6ea43fd5d4f12b89c@agner.ch>
+From: Michael Welling <mwelling@ieee.org>
+Subject: Re: [PATCH v3 1/5] tools/gpio: add gpio basic opereations
+Date: Wed, 28 Sep 2016 14:16:42 -0500
+Message-ID: <20160928191642.hqfkmfafy7l3ss2b@qwertyuiop>
+References: <20160831094548.12574-1-bamvor.zhangjian@linaro.org>
+ <20160831094548.12574-2-bamvor.zhangjian@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:51574 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753235AbcI1MHy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Sep 2016 08:07:54 -0400
-In-Reply-To: <effa1a4d020a1ec6ea43fd5d4f12b89c@agner.ch>
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:36307 "EHLO
+        mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932287AbcI1TQ5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Sep 2016 15:16:57 -0400
+Received: by mail-pa0-f67.google.com with SMTP id cd13so574953pac.3
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Sep 2016 12:16:56 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20160831094548.12574-2-bamvor.zhangjian@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linus.walleij@linaro.org, shawnguo@kernel.org, aalonso@freescale.com, b38343@freescale.com, ldewangan@nvidia.com, van.freenix@gmail.com, p.zabel@pengutronix.de, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: bamvor.zhangjian@linaro.org
+Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, broonie@kernel.org
 
+On Wed, Aug 31, 2016 at 11:45:44AM +0200, bamvor.zhangjian@linaro.org wrote:
+> From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+> 
+> Add basic gpio operations. User could get/set gpio value and/or flag for
+> specific gpio chardev.
+> 
+> Reference the "tools/testing/selftest/gpio/gpio-mockup-chardev.c" for
+> how to use it.
+> 
+> Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+> ---
+>  tools/gpio/gpio-utils.c | 163 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  tools/gpio/gpio-utils.h | 121 +++++++++++++++++++++++++++++++++++
+>  2 files changed, 284 insertions(+)
+> 
+> diff --git a/tools/gpio/gpio-utils.c b/tools/gpio/gpio-utils.c
+> index 8208718..3c0a35c 100644
+> --- a/tools/gpio/gpio-utils.c
+> +++ b/tools/gpio/gpio-utils.c
+> @@ -2,10 +2,173 @@
+>   * GPIO tools - helpers library for the GPIO tools
+>   *
+>   * Copyright (C) 2015 Linus Walleij
+> + * Copyright (C) 2016 Bamvor Jian Zhang
+>   *
+>   * This program is free software; you can redistribute it and/or modify it
+>   * under the terms of the GNU General Public License version 2 as published by
+>   * the Free Software Foundation.
+>   */
+>  
+> +#include <unistd.h>
+> +#include <stdlib.h>
+> +#include <stdio.h>
+> +#include <errno.h>
+> +#include <string.h>
+> +#include <fcntl.h>
+> +#include <getopt.h>
+> +#include <sys/ioctl.h>
+> +#include <linux/gpio.h>
+>  #include "gpio-utils.h"
+> +
+> +#define COMSUMER "gpio-utils"
+> +
+> +int gpio_request(const char *device_name, unsigned int *lines,
+> +		 unsigned int nlines, unsigned int flag,
+> +		 struct gpiohandle_data *data, const char *consumer_label)
+> +{
+> +	struct gpiohandle_request req;
+> +	char *chrdev_name;
+> +	int fd;
+> +	int i;
+> +	int ret;
+> +
+> +	ret = asprintf(&chrdev_name, "/dev/%s", device_name);
+> +	if (ret < 0)
+> +		return -ENOMEM;
+> +
+> +	fd = open(chrdev_name, 0);
+> +	if (fd == -1) {
+> +		ret = -errno;
+> +		fprintf(stderr, "Failed to open %s\n", chrdev_name);
+> +		goto exit_close_error;
+> +	}
+> +
+> +	for (i = 0; i < nlines; i++)
+> +		req.lineoffsets[i] = lines[i];
+> +
+> +	req.flags = flag;
+> +	strcpy(req.consumer_label, consumer_label);
+> +	req.lines = nlines;
+> +	if (flag & GPIOHANDLE_REQUEST_OUTPUT)
+> +		memcpy(req.default_values, data, sizeof(req.default_values));
+> +
+> +	ret = ioctl(fd, GPIO_GET_LINEHANDLE_IOCTL, &req);
+> +	if (ret == -1) {
+> +		ret = -errno;
+> +		fprintf(stderr, "Failed to issue GET LINEHANDLE IOCTL (%d)\n",
+> +			ret);
+> +		goto exit_close_error;
+> +	}
+> +
+> +exit_close_error:
+> +	if (close(fd) == -1)
+> +		perror("Failed to close GPIO character device file");
+> +	free(chrdev_name);
+> +	return ret < 0 ? ret : req.fd;
+> +}
+> +
+> +int gpio_set_values(const int fd, struct gpiohandle_data *data)
+> +{
+> +	int ret;
+> +
+> +	ret = ioctl(fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, data);
+> +	if (ret == -1) {
+> +		ret = -errno;
+> +		fprintf(stderr, "Failed to issue %s (%d)\n",
+> +			"GPIOHANDLE_SET_LINE_VALUES_IOCTL", ret);
+> +		goto exit_close_error;
 
+This goto is unnecessary because there is no code to be skipped.
 
-On 09/28/2016 06:38 AM, Stefan Agner wrote:
-> On 2016-09-27 19:00, Viresh Kumar wrote:
->> On 27-09-16, 12:34, Stefan Agner wrote:
->>> Added Viresh Kumar to the discussion, he implemented the I2C recovery
->>> functions.
->>>
->>> Yes, reordering the pinctrl/gpio_free calls would fix the problem too.
->>>
->>> However, I guess there is no explicit rule to that ("request/free GPIOs
->>> only when they are muxed as GPIO"), so I think of it that the issue is
->>> actually in the pinctrl driver.
->>>
->>> On top of that it is not entirely trivial to reorder the calls the way
->>> i2c_generic_gpio_recovery and i2c_generic_recovery are set up right now.
->>
->> AFAICT, these routines don't touch the muxing part at all. Perhaps it is done
->> internally by the GPIO calls. Can you please elaborate the exact change you are
->> hinting towards here ?
->
-> The i.MX I2C driver touches the pinctrl in its prepare/unprepare
-> callbacks.
->
-> So, on a i.MX or Vybrid, the call chain looks like this:
->
-> i2c_generic_gpio_recovery
->     -> i2c_get_gpios_for_recovery
->        -> gpio_request_one
->     -> i2c_generic_recovery
->        -> prepare_recovery (i2c_imx_prepare_recovery)
->           -> pinctrl_select_state [gpio]
->        -> unprepare_recovery (i2c_imx_unprepare_recovery)
->           -> pinctrl_select_state [default]
->     -> i2c_put_gpios_for_recovery
->        -> gpio_free
+> +	}
+> +
+> +exit_close_error:
+> +	return ret;
+> +}
+> +
+> +int gpio_get_values(const int fd, struct gpiohandle_data *data)
+> +{
+> +	int ret;
+> +
+> +	ret = ioctl(fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, data);
+> +	if (ret == -1) {
+> +		ret = -errno;
+> +		fprintf(stderr, "Failed to issue %s (%d)\n",
+> +			"GPIOHANDLE_GET_LINE_VALUES_IOCTL", ret);
+> +		goto exit_close_error;
 
-I would expect that the change below improves the situation, but I didn't
-perform any tests and here the core change is governed by the accepted
-i.MX i2c bus driver specific changes, thus conceptually it may be incorrect:
+Same here.
 
-diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
-index da3a02ef4a31..3a4f59c3c3e6 100644
---- a/drivers/i2c/i2c-core.c
-+++ b/drivers/i2c/i2c-core.c
-@@ -697,9 +697,6 @@ static int i2c_generic_recovery(struct i2c_adapter *adap)
-  	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
-  	int i = 0, val = 1, ret = 0;
-  
--	if (bri->prepare_recovery)
--		bri->prepare_recovery(adap);
--
-  	bri->set_scl(adap, val);
-  	ndelay(RECOVERY_NDELAY);
-  
-@@ -725,22 +722,34 @@ static int i2c_generic_recovery(struct i2c_adapter *adap)
-  		ndelay(RECOVERY_NDELAY);
-  	}
-  
--	if (bri->unprepare_recovery)
--		bri->unprepare_recovery(adap);
--
-  	return ret;
-  }
-  
-  int i2c_generic_scl_recovery(struct i2c_adapter *adap)
-  {
--	return i2c_generic_recovery(adap);
-+	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
-+	int ret;
-+
-+	if (bri->prepare_recovery)
-+		bri->prepare_recovery(adap);
-+
-+	ret = i2c_generic_recovery(adap);
-+
-+	if (bri->unprepare_recovery)
-+		bri->unprepare_recovery(adap);
-+
-+	return ret;
-  }
-  EXPORT_SYMBOL_GPL(i2c_generic_scl_recovery);
-  
-  int i2c_generic_gpio_recovery(struct i2c_adapter *adap)
-  {
-+	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
-  	int ret;
-  
-+	if (bri->prepare_recovery)
-+		bri->prepare_recovery(adap);
-+
-  	ret = i2c_get_gpios_for_recovery(adap);
-  	if (ret)
-  		return ret;
-@@ -748,6 +757,9 @@ int i2c_generic_gpio_recovery(struct i2c_adapter *adap)
-  	ret = i2c_generic_recovery(adap);
-  	i2c_put_gpios_for_recovery(adap);
-  
-+	if (bri->unprepare_recovery)
-+		bri->unprepare_recovery(adap);
-+
-  	return ret;
-  }
-  EXPORT_SYMBOL_GPL(i2c_generic_gpio_recovery);
+> +	}
+> +
+> +exit_close_error:
+> +	return ret;
+> +}
+> +
+> +int gpio_release(const int fd)
+> +{
+> +	int ret;
+> +
+> +	ret = close(fd);
+> +	if (ret < -1)
+> +		perror("Failed to close GPIO LINEHANDLE device file");
+> +
+> +	return ret;
+> +}
+> +
+> +int gpio_gets(const char *device_name, unsigned int *lines, unsigned int nlines,
+> +	      unsigned int flag, struct gpiohandle_data *data)
+> +{
+> +	int fd;
+> +	int ret;
+> +
+> +	ret = gpio_request(device_name, lines, nlines, flag, data, COMSUMER);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	fd = ret;
+> +	ret = gpio_get_values(fd, data);
 
+The error checking is missing here.
 
-Alternatively you may consider to add contents of i2c_get_gpios_for_recovery()
-into i2c_imx_prepare_recovery(), contents of i2c_put_gpios_for_recovery() into
-i2c_imx_unprepare_recovery() in the i.MX I2C bus driver and change the recovery
-callback .recover_bus to i2c_generic_scl_recovery().
+> +	ret = gpio_release(fd);
 
->
-> And for the pinctrl/GPIO driver of Vybrid this is actually a problem
-> because gpio_free disables the output driver of the pad, and when that
-> happens after the (I2C) default pinctrl state gets selected the pad is
-> no longer active.
->
+Shouldn't we leave it up the user how they want the deal with the file handle?
+There is more system call overhead if we open and close the GPIO device for
+each access.
 
---
-With best wishes,
-Vladimir
+> +	return ret;
+> +}
+> +
+> +int gpio_sets(const char *device_name, unsigned int *lines, unsigned int nlines,
+> +	      unsigned int flag, struct gpiohandle_data *data)
+> +{
+> +	int ret;
+> +
+> +	ret = gpio_request(device_name, lines, nlines, flag, data, COMSUMER);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = gpio_release(ret);
+> +	return ret;
+> +}
+> +
+> +int gpio_get(const char *device_name, unsigned int line, unsigned int flag)
+> +{
+> +	struct gpiohandle_data data;
+> +	unsigned int lines[] = {line};
+
+Is the lines variable really needed?
+
+> +
+> +	gpio_gets(device_name, lines, 1, flag, &data);
+> +	return data.values[0];
+> +}
+> +
+> +int gpio_set(const char *device_name, unsigned int line, unsigned int flag,
+> +	     unsigned int value)
+> +{
+> +	struct gpiohandle_data data;
+> +	unsigned int lines[] = {line};
+> +
+> +	data.values[0] = value;
+> +	return gpio_sets(device_name, lines, 1, flag, &data);
+> +}
+> +
+> +int gpio_set_flag(const char *device_name, unsigned int line, unsigned int flag)
+> +{
+> +	struct gpiohandle_data data;
+> +	unsigned int lines[] = {line};
+> +	int ret;
+> +
+> +	ret = gpio_request(device_name, lines, 1, flag, &data, COMSUMER);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = gpio_release(ret);
+> +	return ret;
+> +}
+> +
+> diff --git a/tools/gpio/gpio-utils.h b/tools/gpio/gpio-utils.h
+> index 5f57133..fcf87b6 100644
+> --- a/tools/gpio/gpio-utils.h
+> +++ b/tools/gpio/gpio-utils.h
+> @@ -24,4 +24,125 @@ static inline int check_prefix(const char *str, const char *prefix)
+>  		strncmp(str, prefix, strlen(prefix)) == 0;
+>  }
+>  
+> +/* Basic operation of gpio */
+> +/*
+> + * Request the lines for gpio with device_name. Could set the default value
+> + * in request.
+> + * device_name:    the name of gpiochip in "/dev", such as gpiochip0.
+> + * lines:	   the array of which line should be requested.
+> + * nline:          the total number of line
+> + * flag:           input, output and so on. Reference "linux/gpio.h" for the
+> + *                 meaning for flag.
+> + * data:	   default value when flag is GPIOHANDLE_REQUEST_OUTPUT.
+> + * consumer_label: the name of consumer, such as "sysfs", "powerkey".
+> + *
+> + * Return value:   On success return the fd of specific gpiochip. It could be
+> + *                 release by gpio_release.
+> + *		   On failure return the errno.
+> + */
+> +int gpio_request(const char *device_name, unsigned int *lines,
+> +		 unsigned int nlines, unsigned int flag,
+> +		 struct gpiohandle_data *data, const char *consumer_label);
+> +/*
+> + * Set the value of gpio for fd
+> + * fd:             the fd returned by gpio_request
+> + * data:	   the value want to set
+> + *
+> + * Return value:   On success return 0
+> + *		   On failure return the errno.
+> + */
+> +int gpio_set_values(const int fd, struct gpiohandle_data *data);
+> +
+> +/*
+> + * Get the value of gpio for fd
+> + * fd:             the fd returned by gpio_request
+> + * data:	   the valud get from gpiochip.
+> + *
+> + * Return value:   On success return 0
+> + *		   On failure return the errno.
+> + */
+> +int gpio_get_values(const int fd, struct gpiohandle_data *data);
+> +
+> +/*
+> + * release the fd for gpiochip
+> + */
+> +int gpio_release(const int fd);
+> +
+> +/* Easy operation for one time get/set */
+> +/*
+> + * Get one pin value from line of device_name. Could change the flag if
+> + * necessary.
+> + * device_name: the name of gpiochip in "/dev", such as gpiochip0.
+> + * line:        number of line, such as 2.
+> + * flag:        input, output and so on. Reference "linux/gpio.h" for the
+> + *              meaning for flag. Set to 0 if do not want to update the
+> + *              flag. It is the recommandation value.
+> + *
+> + * Return value:   On success return the value get from gpiochip.
+> + *		   On failure return the errno.
+> + */
+> +int gpio_get(const char *device_name, unsigned int line, unsigned int flag);
+> +
+> +/*
+> + * Get pins value from line of device_name. Could change the flag if
+> + * necessary.
+> + * device_name: the name of gpiochip in "/dev", such as gpiochip0.
+> + * lines:	   the array of which line should be requested.
+> + * nline:          the total number of line
+> + * flag:           input, output and so on. Reference "linux/gpio.h" for the
+> + *                 meaning for flag.
+> + * data:	   the valud get from gpiochip.
+> + *
+> + * Return value:   On success return 0
+> + *		   On failure return the errno.
+> + */
+> +int gpio_gets(const char *device_name, unsigned int *lines, unsigned int nlines,
+> +	      unsigned int flag, struct gpiohandle_data *data);
+> +
+> +/*
+> + * Set one pin value from line of device_name. Could change the flag if
+> + * necessary.
+> + * device_name: the name of gpiochip in "/dev", such as gpiochip0.
+> + * line:        number of line, such as 2.
+> + * flag:        input, output and so on. Reference "linux/gpio.h" for the
+> + *              meaning for flag. Set to 0 if do not want to update the
+> + *              flag. It is the recommandation value.
+> + * value:	the value want to set the gpio line.
+> + *
+> + * Return value:   On success return 0
+> + *		   On failure return the errno.
+> + */
+> +int gpio_set(const char *device_name, unsigned int line, unsigned int flag,
+> +	     unsigned int value);
+> +
+> +/*
+> + * Set pins value from line of device_name. Could change the flag if
+> + * necessary.
+> + * device_name: the name of gpiochip in "/dev", such as gpiochip0.
+> + * lines:	   the array of which line should be requested.
+> + * nline:          the total number of line
+> + * flag:           input, output and so on. Reference "linux/gpio.h" for the
+> + *                 meaning for flag.
+> + * data:	   the value want to set
+> + *
+> + * Return value:   On success return 0
+> + *		   On failure return the errno.
+> + */
+> +int gpio_sets(const char *device_name, unsigned int *lines, unsigned int nlines,
+> +	      unsigned int flag, struct gpiohandle_data *data);
+> +
+> +/*
+> + * set the flag for device_name. Mainly for changing the direction of gpio
+> + *
+> + * device_name: the name of gpiochip in "/dev", such as gpiochip0.
+> + * line:        number of line, such as 2.
+> + * flag:        input, output and so on. Reference "linux/gpio.h" for the
+> + *              meaning for flag.
+> + *
+> + * Return value:   On success return 0
+> + *		   On failure return the errno.
+> + */
+> +int gpio_set_flag(const char *device_name, unsigned int line,
+> +		  unsigned int flag);
+> +
+>  #endif /* _GPIO_UTILS_H_ */
+> -- 
+> 1.8.4.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
