@@ -1,120 +1,95 @@
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Subject: Re: [PATCH] pinctrl: rockchip: don't disable clk when irq mask is
- already set
-Date: Thu, 29 Sep 2016 15:29:45 +0800
-Message-ID: <4414bb4f-d159-504e-5ba2-36807b2421ed@rock-chips.com>
-References: <1474655197-26919-1-git-send-email-jacob-chen@iotwrt.com>
- <fb4ec747-fde3-142b-1963-be3b9cfab260@rock-chips.com>
- <3592219.tUs91je5kA@phil>
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: Re: [PATCH 5/8] pinctrl: aspeed: Enable capture of off-SCU pinmux
+ state
+Date: Thu, 29 Sep 2016 17:24:59 +0930
+Message-ID: <1475135699.24463.21.camel@aj.id.au>
+References: <cover.115463f791b69859c5ce9dafd61a5755ea039f4b.1474986045.git-series.andrew@aj.id.au>
+         <a266046d34009e6e92c4c76699c550c2ba44bd5c.1474986045.git-series.andrew@aj.id.au>
+         <CACPK8Xc7y3GtcJCVYYs-JKTqBZvqVeZaz5MUk=UX151SX1xEFw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.130]:48845 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753693AbcI2Hah (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Sep 2016 03:30:37 -0400
-In-Reply-To: <3592219.tUs91je5kA@phil>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-Vy7UROloIyw7sybRF/wJ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACPK8Xc7y3GtcJCVYYs-JKTqBZvqVeZaz5MUk=UX151SX1xEFw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joel Stanley <joel@jms.id.au>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, OpenBMC Maillist <openbmc@lists.ozlabs.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: shawn.lin@rock-chips.com, linux-gpio@vger.kernel.org, Jacob Chen <jacob2.chen@rock-chips.com>, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Jacob Chen <jacob-chen@iotwrt.com>
-
-在 2016/9/27 6:35, Heiko Stuebner 写道:
-> Am Samstag, 24. September 2016, 18:24:11 CEST schrieb Shawn Lin:
->> On 2016/9/24 2:26, Jacob Chen wrote:
->>> From: Jacob Chen <jacob2.chen@rock-chips.com>
->>>
->>> In some drivers, disable_irq() call don't be symmetric with enable_irq()
->>> , disable_irq() will be called before call free_irq().
->>
->> Which upstream drivers you refer to?
->>
->> Shouldn't it be the unbalanced call for these drivers?
->>
->>> But both disable_irq() and free_irq() will call
->>> rockchip_irq_gc_mask_set_bit,>
->>>  and clk_disable() will be called more times than clk_enable(), which will
->>>
->>> cause bugs.
->>>
->>> I think we can correct that by checking of mask.If mask is already set, do
->>> nothing.
->> Looks like a little hacky to me.
->
-> that may be true, but on first glance I tend to agree with Jacob.
-> Look for example at (a driver using disable_irq I picked at random) drivertc/
-> rtcrs/-tps6586x.c .
-
-yep, I took a quick look at the files you pointed to, and it seems
-there should be the problems for what this patch to deal with. Probably
-I didn't see this error since the drivers we was using happened to
-handle it properly but maybe not for other drivers. I am okay if this
-could solve problems for Jacob.
-
->
-> In its probe function it does devm_request_irq directly followed by
-> disable_irq on its alarm interrupt. The interrupt only gets enabled again if
-> the rtc alarm gets enabled. So you can easily run into the disable + free case
-> there as well. Similar probably in a lot of other drivers.
->
->
-> Heiko
->
->>
->>> Change-Id: If19912c7658253e15531c04db6c70fdbffd5960a
->>
->> remove this.
->>
->>> Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
->>> ---
->>>
->>>  drivers/pinctrl/pinctrl-rockchip.c | 4 ++++
->>>  1 file changed, 4 insertions(+)
->>>
->>> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
->>> b/drivers/pinctrl/pinctrl-rockchip.c index c6c04ac..9a8804a 100644
->>> --- a/drivers/pinctrl/pinctrl-rockchip.c
->>> +++ b/drivers/pinctrl/pinctrl-rockchip.c
->>> @@ -2334,8 +2334,12 @@ static void rockchip_irq_gc_mask_clr_bit(struct
->>> irq_data *d)>
->>>  void rockchip_irq_gc_mask_set_bit(struct irq_data *d)
->>>  {
->>>
->>>  	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
->>>
->>> +	struct irq_chip_type *ct = irq_data_get_chip_type(d);
->>>
->>>  	struct rockchip_pin_bank *bank = gc->private;
->>>
->>> +	if (*ct->mask_cache & d->mask)
->>> +		return;
->>> +
->>>
->>>  	irq_gc_mask_set_bit(d);
->>>  	clk_disable(bank->clk);
->>>
->>>  }
->>>
->>> --
->>> 2.7.4
->>>
->>>
->>> _______________________________________________
->>> Linux-rockchip mailing list
->>> Linux-rockchip@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-rockchip
->
->
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
->
 
 
--- 
-Best Regards
-Shawn Lin
+--=-Vy7UROloIyw7sybRF/wJ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, 2016-09-29 at 16:15 +0930, Joel Stanley wrote:
+> On Wed, Sep 28, 2016 at 12:20 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+> >=20
+> > The System Control Unit IP in the Aspeed SoCs is typically where the
+> > pinmux configuration is found.
+> >=20
+> > But not always.
+> >=20
+> > On the AST2400 and AST2500 a number of pins depend on state in one of
+> > the SIO, LPC or GFX IP blocks, so add support to at least capture what
+> > that state is. The pinctrl engine for the Aspeed SoCs doesn't try to
+> > inspect or modify the state of the off-SCU IP blocks. Instead, it logs
+> > the state requirement with the expectation that the platform
+> > designer/maintainer arranges for the appropriate configuration to be
+> > applied through the associated drivers.
+> This is unfortunate.
+>=20
+> This patch kicks the can down the road, but doesn't solve the problem
+> for a user who wants to configure some functionality that depends on
+> the non-SCU bits. Because of this I'm not sure if we want to put it in
+> the tree.
+
+I agree that there's not much functionality from a user's perspective,
+but the "kicking the can down the road" assessment might be a little
+harsh. Given the lack of user functionality it becomes more difficult
+to argue for the patch's inclusion given the additional complexity, but
+it does mean that the g4/g5 drivers can completely specify their
+dependencies and not have the aspeed pinctrl core do the wrong thing
+when it encounters the non-SCU IP offsets. It gets us half-way to
+having the pinctrl driver actually configure the state (knowing what it
+needs to configure), which I feel is more than a kick-the-can-down-the-
+road boondoggle.
+
+>=20
+> However, I'm not sure what a proper solution would look like.
+
+So if we accept that a proper solution includes specifying the off-SCU
+dependencies, the remaining question is how do we tastefully apply the
+desired state on register-spaces the pinctrl driver doesn't own.
+
+>  Perhaps
+> Linus can point out another SoC that has a similar problem?
+
+Or failing that, an approach that is acceptable...
+
+Cheers,
+
+Andrew
+--=-Vy7UROloIyw7sybRF/wJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCgAGBQJX7MjTAAoJEJ0dnzgO5LT5xSIQAIgZqQDmsguxEVfI8v/zVJHA
+UdIlOiLW8wUP5LToIF0JHqT0XgMDp6PlBVb7FCCbn10AknoQOG/1ogZpNoZebVX7
+tuD5tldeSi+lLelpbvTrwue4m9gvRu8FwjnNJv44dIXBMFhm/Zs4enYnh9KaNeZv
+gdqf0+ClCo6yLAm7TSK16Nc16BRct3YqSqaUrvytqT5PzGaycogJNRx8bc7o/Tx/
+D14gH1arZOSzumvQRrpvq/URkRUsZDE9JH3sovDttbd/Mb9BqiXhd+kkRZcqeUsf
+gUP8kuEHArfyAE7i4zZcsG9W8RHY2DGHLShOyXg7VuDRNPtgJYSkEHhypCzC0tnR
+6zurYRu2bEZVnUgDspw6ACdfJVypkqIAfLIJUVf3u0rb2PLTkoDOcNAVJCyNC7LS
+vIFrrZftonNpORwYoNmrzthL5CjLPLVw7T/XZMZrupxDmOV2QgCOOTrcxosqlxF4
+K/od1reRhhfiCkDdjDLHSdNF5MRNb2snh99pu18G2ng6vDD7WOPnmFz25RljwQWi
+zJC8XAv/ZJ2HaIqGq95b7v1Xp6uza2hMX3yPqEW1N6IFqifCLqWky/Ac9O3lmAM1
++Lgoz3YD+M2JSStBuqTQBHtsiHEAERMD032hFIE6dKzpkaITZaZT2VxwK04deUdx
+bKAxH1NxY59RcrkKAfpk
+=vVsy
+-----END PGP SIGNATURE-----
+
+--=-Vy7UROloIyw7sybRF/wJ--
