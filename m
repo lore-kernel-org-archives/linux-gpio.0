@@ -1,211 +1,92 @@
-From: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
-Subject: Re: [PATCH 5/8] pinctrl: aspeed: Enable capture of off-SCU pinmux state
-Date: Thu, 29 Sep 2016 16:15:13 +0930
-Message-ID: <CACPK8Xc7y3GtcJCVYYs-JKTqBZvqVeZaz5MUk=UX151SX1xEFw@mail.gmail.com>
-References: <cover.115463f791b69859c5ce9dafd61a5755ea039f4b.1474986045.git-series.andrew@aj.id.au>
- <a266046d34009e6e92c4c76699c550c2ba44bd5c.1474986045.git-series.andrew@aj.id.au>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] pinctrl: freescale: avoid overwriting pin config when
+ freeing GPIO
+Date: Thu, 29 Sep 2016 12:16:05 +0530
+Message-ID: <20160929064605.GB14138@vireshk-i7>
+References: <20160927002650.4316-1-stefan@agner.ch>
+ <17317e62-d9bf-4ab3-35b5-f2f9a4dcbedd@mentor.com>
+ <960b299c947424598ec26bfcb36fd96b@agner.ch>
+ <e72b95e2-353a-d058-4321-dfbdaac2ba1b@mentor.com>
+ <671a23a9ccdbdd6594ad89bf496c1490@agner.ch>
+ <20160928020052.GB2551@vireshk-i7>
+ <effa1a4d020a1ec6ea43fd5d4f12b89c@agner.ch>
+ <1a113c0f-4ee3-e61a-8927-b5e8b558822c@mentor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <a266046d34009e6e92c4c76699c550c2ba44bd5c.1474986045.git-series.andrew-zrmu5oMJ5Fs@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, OpenBMC Maillist <openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1a113c0f-4ee3-e61a-8927-b5e8b558822c@mentor.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Stefan Agner <stefan@agner.ch>, linus.walleij@linaro.org, shawnguo@kernel.org, aalonso@freescale.com, b38343@freescale.com, ldewangan@nvidia.com, van.freenix@gmail.com, p.zabel@pengutronix.de, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Sep 28, 2016 at 12:20 AM, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org> wrote:
-> The System Control Unit IP in the Aspeed SoCs is typically where the
-> pinmux configuration is found.
->
-> But not always.
->
-> On the AST2400 and AST2500 a number of pins depend on state in one of
-> the SIO, LPC or GFX IP blocks, so add support to at least capture what
-> that state is. The pinctrl engine for the Aspeed SoCs doesn't try to
-> inspect or modify the state of the off-SCU IP blocks. Instead, it logs
-> the state requirement with the expectation that the platform
-> designer/maintainer arranges for the appropriate configuration to be
-> applied through the associated drivers.
-
-This is unfortunate.
-
-This patch kicks the can down the road, but doesn't solve the problem
-for a user who wants to configure some functionality that depends on
-the non-SCU bits. Because of this I'm not sure if we want to put it in
-the tree.
-
-However, I'm not sure what a proper solution would look like. Perhaps
-Linus can point out another SoC that has a similar problem?
-
-Cheers,
-
-Joel
-
->
-> The IP block of interest is encoded in the reg member of struct
-> aspeed_sig_desc. For compatibility with the existing code, the SCU is
-> defined to have an IP value of 0.
->
-> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-> ---
->  drivers/pinctrl/aspeed/pinctrl-aspeed.c | 53 +++++++++++++++++++++++---
->  drivers/pinctrl/aspeed/pinctrl-aspeed.h | 16 +++++++-
->  2 files changed, 61 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-> index 49aeba912531..21ef195d586f 100644
-> --- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-> @@ -14,6 +14,8 @@
->  #include "../core.h"
->  #include "pinctrl-aspeed.h"
->
-> +const char *const aspeed_pinmux_ips[] = { "SCU", "SIO", "GFX", "LPC" };
-> +
->  int aspeed_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
->  {
->         struct aspeed_pinctrl_data *pdata = pinctrl_dev_get_drvdata(pctldev);
-> @@ -78,7 +80,9 @@ int aspeed_pinmux_get_fn_groups(struct pinctrl_dev *pctldev,
->  static inline void aspeed_sig_desc_print_val(
->                 const struct aspeed_sig_desc *desc, bool enable, u32 rv)
->  {
-> -       pr_debug("SCU%x[0x%08x]=0x%x, got 0x%x from 0x%08x\n", desc->reg,
-> +       pr_debug("Want %s%lX[0x%08X]=0x%X, got 0x%X from 0x%08X\n",
-> +                       aspeed_pinmux_ips[SIG_DESC_IP_FROM_REG(desc->reg)],
-> +                       SIG_DESC_OFFSET_FROM_REG(desc->reg),
->                         desc->mask, enable ? desc->enable : desc->disable,
->                         (rv & desc->mask) >> __ffs(desc->mask), rv);
+On 28-09-16, 15:07, Vladimir Zapolskiy wrote:
+> I would expect that the change below improves the situation, but I didn't
+> perform any tests and here the core change is governed by the accepted
+> i.MX i2c bus driver specific changes, thus conceptually it may be incorrect:
+> 
+> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+> index da3a02ef4a31..3a4f59c3c3e6 100644
+> --- a/drivers/i2c/i2c-core.c
+> +++ b/drivers/i2c/i2c-core.c
+> @@ -697,9 +697,6 @@ static int i2c_generic_recovery(struct i2c_adapter *adap)
+>  	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
+>  	int i = 0, val = 1, ret = 0;
+> -	if (bri->prepare_recovery)
+> -		bri->prepare_recovery(adap);
+> -
+>  	bri->set_scl(adap, val);
+>  	ndelay(RECOVERY_NDELAY);
+> @@ -725,22 +722,34 @@ static int i2c_generic_recovery(struct i2c_adapter *adap)
+>  		ndelay(RECOVERY_NDELAY);
+>  	}
+> -	if (bri->unprepare_recovery)
+> -		bri->unprepare_recovery(adap);
+> -
+>  	return ret;
 >  }
-> @@ -105,6 +109,8 @@ static bool aspeed_sig_desc_eval(const struct aspeed_sig_desc *desc,
->         unsigned int raw;
->         u32 want;
->
-> +       WARN_ON(SIG_DESC_IP_FROM_REG(desc->reg) != ASPEED_IP_SCU);
+>  int i2c_generic_scl_recovery(struct i2c_adapter *adap)
+>  {
+> -	return i2c_generic_recovery(adap);
+> +	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
+> +	int ret;
 > +
->         if (regmap_read(map, desc->reg, &raw) < 0)
->                 return false;
->
-> @@ -142,9 +148,19 @@ static bool aspeed_sig_expr_eval(const struct aspeed_sig_expr *expr,
->
->         for (i = 0; i < expr->ndescs; i++) {
->                 const struct aspeed_sig_desc *desc = &expr->descs[i];
-> +               size_t ip = SIG_DESC_IP_FROM_REG(desc->reg);
+> +	if (bri->prepare_recovery)
+> +		bri->prepare_recovery(adap);
 > +
-> +               if (ip == ASPEED_IP_SCU) {
-> +                       if (!aspeed_sig_desc_eval(desc, enabled, map))
-> +                               return false;
-> +               } else {
-> +                       size_t offset = SIG_DESC_OFFSET_FROM_REG(desc->reg);
-> +                       const char *ip_name = aspeed_pinmux_ips[ip];
+> +	ret = i2c_generic_recovery(adap);
 > +
-> +                       pr_debug("Ignoring configuration of field %s%X[0x%08X]\n",
-> +                                ip_name, offset, desc->mask);
-> +               }
->
-> -               if (!aspeed_sig_desc_eval(desc, enabled, map))
-> -                       return false;
->         }
->
->         return true;
-> @@ -170,7 +186,14 @@ static bool aspeed_sig_expr_set(const struct aspeed_sig_expr *expr,
->         for (i = 0; i < expr->ndescs; i++) {
->                 bool ret;
->                 const struct aspeed_sig_desc *desc = &expr->descs[i];
+> +	if (bri->unprepare_recovery)
+> +		bri->unprepare_recovery(adap);
 > +
-> +               size_t offset = SIG_DESC_OFFSET_FROM_REG(desc->reg);
-> +               size_t ip = SIG_DESC_IP_FROM_REG(desc->reg);
-> +               bool is_scu = (ip == ASPEED_IP_SCU);
-> +               const char *ip_name = aspeed_pinmux_ips[ip];
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(i2c_generic_scl_recovery);
+>  int i2c_generic_gpio_recovery(struct i2c_adapter *adap)
+>  {
+> +	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
+>  	int ret;
+> +	if (bri->prepare_recovery)
+> +		bri->prepare_recovery(adap);
 > +
->                 u32 pattern = enable ? desc->enable : desc->disable;
-> +               u32 val = (pattern << __ffs(desc->mask));
->
->                 /*
->                  * Strap registers are configured in hardware or by early-boot
-> @@ -179,11 +202,27 @@ static bool aspeed_sig_expr_set(const struct aspeed_sig_expr *expr,
->                  * deconfigured and is the reason we re-evaluate after writing
->                  * all descriptor bits.
->                  */
-> -               if (desc->reg == HW_STRAP1 || desc->reg == HW_STRAP2)
-> +               if (is_scu && (offset == HW_STRAP1 || offset == HW_STRAP2))
->                         continue;
->
-> -               ret = regmap_update_bits(map, desc->reg, desc->mask,
-> -                               pattern << __ffs(desc->mask)) == 0;
-> +               /*
-> +                * Sometimes we need help from IP outside the SCU to activate a
-> +                * mux request. Report that we need its cooperation.
-> +                */
-> +               if (enable && !is_scu) {
-> +                       pr_debug("Pinmux request for %s requires cooperation of %s IP: Need (%s%X[0x%08X] = 0x%08X\n",
-> +                               expr->function, ip_name, ip_name, offset,
-> +                               desc->mask, val);
-> +               }
+>  	ret = i2c_get_gpios_for_recovery(adap);
+>  	if (ret)
+>  		return ret;
+> @@ -748,6 +757,9 @@ int i2c_generic_gpio_recovery(struct i2c_adapter *adap)
+>  	ret = i2c_generic_recovery(adap);
+>  	i2c_put_gpios_for_recovery(adap);
+> +	if (bri->unprepare_recovery)
+> +		bri->unprepare_recovery(adap);
 > +
-> +               /* And only read/write SCU registers */
-> +               if (!is_scu) {
-> +                       pr_debug("Skipping configuration of field %s%X[0x%08X]\n",
-> +                                       ip_name, offset, desc->mask);
-> +                       continue;
-> +               }
-> +
-> +               ret = regmap_update_bits(map, desc->reg, desc->mask, val) == 0;
->
->                 if (!ret)
->                         return ret;
-> @@ -343,6 +382,8 @@ int aspeed_pinmux_set_mux(struct pinctrl_dev *pctldev, unsigned int function,
->                 const struct aspeed_sig_expr **funcs;
->                 const struct aspeed_sig_expr ***prios;
->
-> +               pr_debug("Muxing pin %d for %s\n", pin, pfunc->name);
-> +
->                 if (!pdesc)
->                         return -EINVAL;
->
-> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.h b/drivers/pinctrl/aspeed/pinctrl-aspeed.h
-> index 3e72ef8c54bf..4384407d77fb 100644
-> --- a/drivers/pinctrl/aspeed/pinctrl-aspeed.h
-> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.h
-> @@ -232,6 +232,15 @@
->   * group.
->   */
->
-> +#define ASPEED_IP_SCU  0
-> +#define ASPEED_IP_SIO  1
-> +#define ASPEED_IP_GFX  2
-> +#define ASPEED_IP_LPC  3
-> +
-> +#define SIG_DESC_TO_REG(ip, offset)    (((ip) << 24) | (offset))
-> +#define SIG_DESC_IP_FROM_REG(reg)      (((reg) >> 24) & GENMASK(7, 0))
-> +#define SIG_DESC_OFFSET_FROM_REG(reg)  ((reg) & GENMASK(11, 0))
-> +
->  /*
->   * The "Multi-function Pins Mapping and Control" table in the SoC datasheet
->   * references registers by the device/offset mnemonic. The register macros
-> @@ -261,7 +270,10 @@
->    * A signal descriptor, which describes the register, bits and the
->    * enable/disable values that should be compared or written.
->    *
-> -  * @reg: The register offset from base in bytes
-> +  * @reg: Split into three fields:
-> +  *       31:24: IP selector
-> +  *       23:12: Reserved
-> +  *       11:0: Register offset
->    * @mask: The mask to apply to the register. The lowest set bit of the mask is
->    *        used to derive the shift value.
->    * @enable: The value that enables the function. Value should be in the LSBs,
-> @@ -270,7 +282,7 @@
->    *           LSBs, not at the position of the mask.
->    */
->  struct aspeed_sig_desc {
-> -       unsigned int reg;
-> +       u32 reg;
->         u32 mask;
->         u32 enable;
->         u32 disable;
-> --
-> git-series 0.8.10
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(i2c_generic_gpio_recovery);
+
+That looks to like a hack made just to make things work on one platform.
+
+I would rather wait for an answer to my query first, which I asked in a separate
+email.
+ 
+-- 
+viresh
