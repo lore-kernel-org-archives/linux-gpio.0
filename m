@@ -1,92 +1,120 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] pinctrl: freescale: avoid overwriting pin config when
- freeing GPIO
-Date: Thu, 29 Sep 2016 12:16:05 +0530
-Message-ID: <20160929064605.GB14138@vireshk-i7>
-References: <20160927002650.4316-1-stefan@agner.ch>
- <17317e62-d9bf-4ab3-35b5-f2f9a4dcbedd@mentor.com>
- <960b299c947424598ec26bfcb36fd96b@agner.ch>
- <e72b95e2-353a-d058-4321-dfbdaac2ba1b@mentor.com>
- <671a23a9ccdbdd6594ad89bf496c1490@agner.ch>
- <20160928020052.GB2551@vireshk-i7>
- <effa1a4d020a1ec6ea43fd5d4f12b89c@agner.ch>
- <1a113c0f-4ee3-e61a-8927-b5e8b558822c@mentor.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Subject: Re: [PATCH] pinctrl: rockchip: don't disable clk when irq mask is
+ already set
+Date: Thu, 29 Sep 2016 15:29:45 +0800
+Message-ID: <4414bb4f-d159-504e-5ba2-36807b2421ed@rock-chips.com>
+References: <1474655197-26919-1-git-send-email-jacob-chen@iotwrt.com>
+ <fb4ec747-fde3-142b-1963-be3b9cfab260@rock-chips.com>
+ <3592219.tUs91je5kA@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1a113c0f-4ee3-e61a-8927-b5e8b558822c@mentor.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: Stefan Agner <stefan@agner.ch>, linus.walleij@linaro.org, shawnguo@kernel.org, aalonso@freescale.com, b38343@freescale.com, ldewangan@nvidia.com, van.freenix@gmail.com, p.zabel@pengutronix.de, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.130]:48845 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753693AbcI2Hah (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Sep 2016 03:30:37 -0400
+In-Reply-To: <3592219.tUs91je5kA@phil>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: shawn.lin@rock-chips.com, linux-gpio@vger.kernel.org, Jacob Chen <jacob2.chen@rock-chips.com>, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, Jacob Chen <jacob-chen@iotwrt.com>
 
-On 28-09-16, 15:07, Vladimir Zapolskiy wrote:
-> I would expect that the change below improves the situation, but I didn't
-> perform any tests and here the core change is governed by the accepted
-> i.MX i2c bus driver specific changes, thus conceptually it may be incorrect:
-> 
-> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
-> index da3a02ef4a31..3a4f59c3c3e6 100644
-> --- a/drivers/i2c/i2c-core.c
-> +++ b/drivers/i2c/i2c-core.c
-> @@ -697,9 +697,6 @@ static int i2c_generic_recovery(struct i2c_adapter *adap)
->  	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
->  	int i = 0, val = 1, ret = 0;
-> -	if (bri->prepare_recovery)
-> -		bri->prepare_recovery(adap);
-> -
->  	bri->set_scl(adap, val);
->  	ndelay(RECOVERY_NDELAY);
-> @@ -725,22 +722,34 @@ static int i2c_generic_recovery(struct i2c_adapter *adap)
->  		ndelay(RECOVERY_NDELAY);
->  	}
-> -	if (bri->unprepare_recovery)
-> -		bri->unprepare_recovery(adap);
-> -
->  	return ret;
->  }
->  int i2c_generic_scl_recovery(struct i2c_adapter *adap)
->  {
-> -	return i2c_generic_recovery(adap);
-> +	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
-> +	int ret;
-> +
-> +	if (bri->prepare_recovery)
-> +		bri->prepare_recovery(adap);
-> +
-> +	ret = i2c_generic_recovery(adap);
-> +
-> +	if (bri->unprepare_recovery)
-> +		bri->unprepare_recovery(adap);
-> +
-> +	return ret;
->  }
->  EXPORT_SYMBOL_GPL(i2c_generic_scl_recovery);
->  int i2c_generic_gpio_recovery(struct i2c_adapter *adap)
->  {
-> +	struct i2c_bus_recovery_info *bri = adap->bus_recovery_info;
->  	int ret;
-> +	if (bri->prepare_recovery)
-> +		bri->prepare_recovery(adap);
-> +
->  	ret = i2c_get_gpios_for_recovery(adap);
->  	if (ret)
->  		return ret;
-> @@ -748,6 +757,9 @@ int i2c_generic_gpio_recovery(struct i2c_adapter *adap)
->  	ret = i2c_generic_recovery(adap);
->  	i2c_put_gpios_for_recovery(adap);
-> +	if (bri->unprepare_recovery)
-> +		bri->unprepare_recovery(adap);
-> +
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(i2c_generic_gpio_recovery);
+在 2016/9/27 6:35, Heiko Stuebner 写道:
+> Am Samstag, 24. September 2016, 18:24:11 CEST schrieb Shawn Lin:
+>> On 2016/9/24 2:26, Jacob Chen wrote:
+>>> From: Jacob Chen <jacob2.chen@rock-chips.com>
+>>>
+>>> In some drivers, disable_irq() call don't be symmetric with enable_irq()
+>>> , disable_irq() will be called before call free_irq().
+>>
+>> Which upstream drivers you refer to?
+>>
+>> Shouldn't it be the unbalanced call for these drivers?
+>>
+>>> But both disable_irq() and free_irq() will call
+>>> rockchip_irq_gc_mask_set_bit,>
+>>>  and clk_disable() will be called more times than clk_enable(), which will
+>>>
+>>> cause bugs.
+>>>
+>>> I think we can correct that by checking of mask.If mask is already set, do
+>>> nothing.
+>> Looks like a little hacky to me.
+>
+> that may be true, but on first glance I tend to agree with Jacob.
+> Look for example at (a driver using disable_irq I picked at random) drivertc/
+> rtcrs/-tps6586x.c .
 
-That looks to like a hack made just to make things work on one platform.
+yep, I took a quick look at the files you pointed to, and it seems
+there should be the problems for what this patch to deal with. Probably
+I didn't see this error since the drivers we was using happened to
+handle it properly but maybe not for other drivers. I am okay if this
+could solve problems for Jacob.
 
-I would rather wait for an answer to my query first, which I asked in a separate
-email.
- 
+>
+> In its probe function it does devm_request_irq directly followed by
+> disable_irq on its alarm interrupt. The interrupt only gets enabled again if
+> the rtc alarm gets enabled. So you can easily run into the disable + free case
+> there as well. Similar probably in a lot of other drivers.
+>
+>
+> Heiko
+>
+>>
+>>> Change-Id: If19912c7658253e15531c04db6c70fdbffd5960a
+>>
+>> remove this.
+>>
+>>> Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
+>>> ---
+>>>
+>>>  drivers/pinctrl/pinctrl-rockchip.c | 4 ++++
+>>>  1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
+>>> b/drivers/pinctrl/pinctrl-rockchip.c index c6c04ac..9a8804a 100644
+>>> --- a/drivers/pinctrl/pinctrl-rockchip.c
+>>> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+>>> @@ -2334,8 +2334,12 @@ static void rockchip_irq_gc_mask_clr_bit(struct
+>>> irq_data *d)>
+>>>  void rockchip_irq_gc_mask_set_bit(struct irq_data *d)
+>>>  {
+>>>
+>>>  	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+>>>
+>>> +	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+>>>
+>>>  	struct rockchip_pin_bank *bank = gc->private;
+>>>
+>>> +	if (*ct->mask_cache & d->mask)
+>>> +		return;
+>>> +
+>>>
+>>>  	irq_gc_mask_set_bit(d);
+>>>  	clk_disable(bank->clk);
+>>>
+>>>  }
+>>>
+>>> --
+>>> 2.7.4
+>>>
+>>>
+>>> _______________________________________________
+>>> Linux-rockchip mailing list
+>>> Linux-rockchip@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+>
+>
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+>
+
+
 -- 
-viresh
+Best Regards
+Shawn Lin
+
