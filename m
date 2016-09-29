@@ -1,70 +1,31 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] gpio: pca953x: add a comment explaining the need for a
- lockdep subclass
-Date: Thu, 29 Sep 2016 08:06:38 +0200
-Message-ID: <20160929060638.GB1524@katana>
-References: <1474883655-15824-1-git-send-email-bgolaszewski@baylibre.com>
- <1474883655-15824-2-git-send-email-bgolaszewski@baylibre.com>
- <20160926100030.GA5606@katana>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] gpio: stmpe: forbid unused lines to be mapped as IRQs
+Date: Thu, 29 Sep 2016 09:40:55 +0300
+Message-ID: <20160929064055.GF1218@lahna.fi.intel.com>
+References: <1475017624-29686-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="6sX45UoQRIJXqkqR"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:49897 "EHLO pokefinder.org"
+Received: from mga05.intel.com ([192.55.52.43]:7178 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754233AbcI2GHH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 29 Sep 2016 02:07:07 -0400
+        id S1751038AbcI2GlA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 29 Sep 2016 02:41:00 -0400
 Content-Disposition: inline
-In-Reply-To: <20160926100030.GA5606@katana>
+In-Reply-To: <1475017624-29686-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Peter Rosin <peda@axentia.se>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Patrice Chotard <patrice.chotard@st.com>
 
+On Tue, Sep 27, 2016 at 04:07:04PM -0700, Linus Walleij wrote:
+> Exploit the new mechanism for masking off disallowed IRQs
+> added by Mika Westerberg to properly manage the STMPE
+> "norequest mask" to disallow also mapping said lines as
+> IRQs.
+> 
+> Cc: Patrice Chotard <patrice.chotard@st.com>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
 
---6sX45UoQRIJXqkqR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Good to see it being useful outside of pinctrl-cherryview.c :-)
 
-On Mon, Sep 26, 2016 at 12:00:30PM +0200, Wolfram Sang wrote:
-> On Mon, Sep 26, 2016 at 11:54:15AM +0200, Bartosz Golaszewski wrote:
-> > This is a follow-up to commit 559b46990e76 ("gpio: pca953x: fix an
-> > incorrect lockdep warning"). The reason for calling
-> > lockdep_set_subclass() in pca953x_probe() is not explained in
-> > the code.
-> >=20
-> > Add a comment describing the problem, partial solution and required
-> > future extensions.
-> >=20
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->=20
-> Acked-by: Wolfram Sang <wsa@the-dreams.de>
->=20
-> Linus, because of dependencies, I should probably pick it up?
-
-Linus, ping!
-
-
---6sX45UoQRIJXqkqR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX7K9uAAoJEBQN5MwUoCm2dlMP/3g/JaQgkdYNTx6ZdZa+odkW
-xcMex32LwA+SDGpXsWTULWcxcrPmTRl+21GbJys+DlPoM01HD1BDD8SgBqVAitIP
-63pVi+Ux7iX/2aZgvWXjlKrPdt2xJDlo64pZaUeE0PiZX1Sjm/IsO0HX3ZLh2cg7
-pICEQ8879RNDsSmga4hDE5rrsQAfX2Weq8m91X4wPSI42pz85RxOgsHX+tCw6EFn
-YCXSLYtMjaTs4JI0d/dH7PD/Xnlw8p74aO9RUjqa03ooOwZcAis2lNsTutyVvxf9
-SSjISVrZNQo1ZVNbf7A7Lzbg9+kQNIXxIR66zIpZELLVOH8gvqmi1Z1nq84SI7X8
-NtfLrFH8HRcBvREQRh2VROUIfJNl+fZUO1oMBjqXKpRh+MYZmVze9GakcBuRKbja
-Cwk4hF2G7fF3sen65E9bTcnm7GRzn25unySWMXO9nkJ2BelyQFJTWJEuVnmSOvv9
-Hfj3qDy5e679iMT/2hj4E9mh8ioCHBAaG6JcQvVn7AxXQpuKD/UFlLS2x48TnRnx
-0nO3WIfcsofOvVn9W8RYAiSPpMbIsqDYOYLARjc2oTNf8i5TXhpJXdGW2bfqycB/
-hsUqkK/PuIwmIOTYulwLGi6e+gHObtDKGR6H+iV0//3uz02+5bulW0lrlv/mRenV
-1eoheioHXUD1Ie66dAjJ
-=Ds3x
------END PGP SIGNATURE-----
-
---6sX45UoQRIJXqkqR--
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
