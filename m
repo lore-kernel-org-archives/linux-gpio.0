@@ -1,204 +1,45 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v7 4/6] mfd: move enum lpc_chipsets into lpc_ich.h
-Date: Fri, 30 Sep 2016 01:32:43 +0100
-Message-ID: <20160930003243.GE13971@dell>
-References: <1475056343-31907-1-git-send-email-jui.nee.tan@intel.com>
- <1475056343-31907-5-git-send-email-jui.nee.tan@intel.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] pinctrl: freescale: avoid overwriting pin config when
+ freeing GPIO
+Date: Fri, 30 Sep 2016 07:42:08 +0530
+Message-ID: <20160930021208.GC14138@vireshk-i7>
+References: <20160927002650.4316-1-stefan@agner.ch>
+ <17317e62-d9bf-4ab3-35b5-f2f9a4dcbedd@mentor.com>
+ <960b299c947424598ec26bfcb36fd96b@agner.ch>
+ <e72b95e2-353a-d058-4321-dfbdaac2ba1b@mentor.com>
+ <671a23a9ccdbdd6594ad89bf496c1490@agner.ch>
+ <20160928020052.GB2551@vireshk-i7>
+ <effa1a4d020a1ec6ea43fd5d4f12b89c@agner.ch>
+ <20160928041451.GC2551@vireshk-i7>
+ <1478f2c1989ab735b0f86d2fe579f94f@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:35713 "EHLO
-        mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755130AbcI3Aac (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Sep 2016 20:30:32 -0400
-Received: by mail-pa0-f43.google.com with SMTP id oz2so32520445pac.2
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Sep 2016 17:30:31 -0700 (PDT)
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:34684 "EHLO
+        mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935235AbcI3CMN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Sep 2016 22:12:13 -0400
+Received: by mail-pa0-f53.google.com with SMTP id dw4so19585502pac.1
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Sep 2016 19:12:13 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1475056343-31907-5-git-send-email-jui.nee.tan@intel.com>
+In-Reply-To: <1478f2c1989ab735b0f86d2fe579f94f@agner.ch>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tan Jui Nee <jui.nee.tan@intel.com>
-Cc: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
+To: linus.walleij@linaro.org, Stefan Agner <stefan@agner.ch>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, shawnguo@kernel.org, aalonso@freescale.com, b38343@freescale.com, ldewangan@nvidia.com, van.freenix@gmail.com, p.zabel@pengutronix.de, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 28 Sep 2016, Tan Jui Nee wrote:
-
-> Move the enum's definition into a standalone header file which can be used
-> wherever its definition is needed.
+On 29-09-16, 09:33, Stefan Agner wrote:
+> You need to differentiate between Vybrid and i.MX:
 > 
-> Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
-> ---
->  drivers/mfd/lpc_ich-core.c  | 71 ---------------------------------------------
->  include/linux/mfd/lpc_ich.h | 71 +++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 71 insertions(+), 71 deletions(-)
+> Vybrid muxes a pin to GPIO on gpio_request_one (via .gpio_request_enable
+> callback)
+> i.MX does not mux a pin as GPIO on its own, but needs to be muxed
+> explicitly. That has been always the case...
+> 
+> I don't know what behavior is right, it is just "different"...
 
-Did you use -M when creating this patch?
-
-> diff --git a/drivers/mfd/lpc_ich-core.c b/drivers/mfd/lpc_ich-core.c
-> index bd3aa45..05ed985 100644
-> --- a/drivers/mfd/lpc_ich-core.c
-> +++ b/drivers/mfd/lpc_ich-core.c
-> @@ -147,77 +147,6 @@ static struct mfd_cell lpc_ich_gpio_cell = {
->  	.ignore_resource_conflicts = true,
->  };
->  
-> -/* chipset related info */
-> -enum lpc_chipsets {
-> -	LPC_ICH = 0,	/* ICH */
-> -	LPC_ICH0,	/* ICH0 */
-> -	LPC_ICH2,	/* ICH2 */
-> -	LPC_ICH2M,	/* ICH2-M */
-> -	LPC_ICH3,	/* ICH3-S */
-> -	LPC_ICH3M,	/* ICH3-M */
-> -	LPC_ICH4,	/* ICH4 */
-> -	LPC_ICH4M,	/* ICH4-M */
-> -	LPC_CICH,	/* C-ICH */
-> -	LPC_ICH5,	/* ICH5 & ICH5R */
-> -	LPC_6300ESB,	/* 6300ESB */
-> -	LPC_ICH6,	/* ICH6 & ICH6R */
-> -	LPC_ICH6M,	/* ICH6-M */
-> -	LPC_ICH6W,	/* ICH6W & ICH6RW */
-> -	LPC_631XESB,	/* 631xESB/632xESB */
-> -	LPC_ICH7,	/* ICH7 & ICH7R */
-> -	LPC_ICH7DH,	/* ICH7DH */
-> -	LPC_ICH7M,	/* ICH7-M & ICH7-U */
-> -	LPC_ICH7MDH,	/* ICH7-M DH */
-> -	LPC_NM10,	/* NM10 */
-> -	LPC_ICH8,	/* ICH8 & ICH8R */
-> -	LPC_ICH8DH,	/* ICH8DH */
-> -	LPC_ICH8DO,	/* ICH8DO */
-> -	LPC_ICH8M,	/* ICH8M */
-> -	LPC_ICH8ME,	/* ICH8M-E */
-> -	LPC_ICH9,	/* ICH9 */
-> -	LPC_ICH9R,	/* ICH9R */
-> -	LPC_ICH9DH,	/* ICH9DH */
-> -	LPC_ICH9DO,	/* ICH9DO */
-> -	LPC_ICH9M,	/* ICH9M */
-> -	LPC_ICH9ME,	/* ICH9M-E */
-> -	LPC_ICH10,	/* ICH10 */
-> -	LPC_ICH10R,	/* ICH10R */
-> -	LPC_ICH10D,	/* ICH10D */
-> -	LPC_ICH10DO,	/* ICH10DO */
-> -	LPC_PCH,	/* PCH Desktop Full Featured */
-> -	LPC_PCHM,	/* PCH Mobile Full Featured */
-> -	LPC_P55,	/* P55 */
-> -	LPC_PM55,	/* PM55 */
-> -	LPC_H55,	/* H55 */
-> -	LPC_QM57,	/* QM57 */
-> -	LPC_H57,	/* H57 */
-> -	LPC_HM55,	/* HM55 */
-> -	LPC_Q57,	/* Q57 */
-> -	LPC_HM57,	/* HM57 */
-> -	LPC_PCHMSFF,	/* PCH Mobile SFF Full Featured */
-> -	LPC_QS57,	/* QS57 */
-> -	LPC_3400,	/* 3400 */
-> -	LPC_3420,	/* 3420 */
-> -	LPC_3450,	/* 3450 */
-> -	LPC_EP80579,	/* EP80579 */
-> -	LPC_CPT,	/* Cougar Point */
-> -	LPC_CPTD,	/* Cougar Point Desktop */
-> -	LPC_CPTM,	/* Cougar Point Mobile */
-> -	LPC_PBG,	/* Patsburg */
-> -	LPC_DH89XXCC,	/* DH89xxCC */
-> -	LPC_PPT,	/* Panther Point */
-> -	LPC_LPT,	/* Lynx Point */
-> -	LPC_LPT_LP,	/* Lynx Point-LP */
-> -	LPC_WBG,	/* Wellsburg */
-> -	LPC_AVN,	/* Avoton SoC */
-> -	LPC_BAYTRAIL,   /* Bay Trail SoC */
-> -	LPC_COLETO,	/* Coleto Creek */
-> -	LPC_WPT_LP,	/* Wildcat Point-LP */
-> -	LPC_BRASWELL,	/* Braswell SoC */
-> -	LPC_LEWISBURG,	/* Lewisburg */
-> -	LPC_9S,		/* 9 Series */
-> -};
-> -
->  static struct lpc_ich_info lpc_chipset_info[] = {
->  	[LPC_ICH] = {
->  		.name = "ICH",
-> diff --git a/include/linux/mfd/lpc_ich.h b/include/linux/mfd/lpc_ich.h
-> index 2b300b4..42307ee 100644
-> --- a/include/linux/mfd/lpc_ich.h
-> +++ b/include/linux/mfd/lpc_ich.h
-> @@ -43,4 +43,75 @@ struct lpc_ich_info {
->  	u8 use_gpio;
->  };
->  
-> +/* chipset related info */
-> +enum lpc_chipsets {
-> +	LPC_ICH = 0,	/* ICH */
-> +	LPC_ICH0,	/* ICH0 */
-> +	LPC_ICH2,	/* ICH2 */
-> +	LPC_ICH2M,	/* ICH2-M */
-> +	LPC_ICH3,	/* ICH3-S */
-> +	LPC_ICH3M,	/* ICH3-M */
-> +	LPC_ICH4,	/* ICH4 */
-> +	LPC_ICH4M,	/* ICH4-M */
-> +	LPC_CICH,	/* C-ICH */
-> +	LPC_ICH5,	/* ICH5 & ICH5R */
-> +	LPC_6300ESB,	/* 6300ESB */
-> +	LPC_ICH6,	/* ICH6 & ICH6R */
-> +	LPC_ICH6M,	/* ICH6-M */
-> +	LPC_ICH6W,	/* ICH6W & ICH6RW */
-> +	LPC_631XESB,	/* 631xESB/632xESB */
-> +	LPC_ICH7,	/* ICH7 & ICH7R */
-> +	LPC_ICH7DH,	/* ICH7DH */
-> +	LPC_ICH7M,	/* ICH7-M & ICH7-U */
-> +	LPC_ICH7MDH,	/* ICH7-M DH */
-> +	LPC_NM10,	/* NM10 */
-> +	LPC_ICH8,	/* ICH8 & ICH8R */
-> +	LPC_ICH8DH,	/* ICH8DH */
-> +	LPC_ICH8DO,	/* ICH8DO */
-> +	LPC_ICH8M,	/* ICH8M */
-> +	LPC_ICH8ME,	/* ICH8M-E */
-> +	LPC_ICH9,	/* ICH9 */
-> +	LPC_ICH9R,	/* ICH9R */
-> +	LPC_ICH9DH,	/* ICH9DH */
-> +	LPC_ICH9DO,	/* ICH9DO */
-> +	LPC_ICH9M,	/* ICH9M */
-> +	LPC_ICH9ME,	/* ICH9M-E */
-> +	LPC_ICH10,	/* ICH10 */
-> +	LPC_ICH10R,	/* ICH10R */
-> +	LPC_ICH10D,	/* ICH10D */
-> +	LPC_ICH10DO,	/* ICH10DO */
-> +	LPC_PCH,	/* PCH Desktop Full Featured */
-> +	LPC_PCHM,	/* PCH Mobile Full Featured */
-> +	LPC_P55,	/* P55 */
-> +	LPC_PM55,	/* PM55 */
-> +	LPC_H55,	/* H55 */
-> +	LPC_QM57,	/* QM57 */
-> +	LPC_H57,	/* H57 */
-> +	LPC_HM55,	/* HM55 */
-> +	LPC_Q57,	/* Q57 */
-> +	LPC_HM57,	/* HM57 */
-> +	LPC_PCHMSFF,	/* PCH Mobile SFF Full Featured */
-> +	LPC_QS57,	/* QS57 */
-> +	LPC_3400,	/* 3400 */
-> +	LPC_3420,	/* 3420 */
-> +	LPC_3450,	/* 3450 */
-> +	LPC_EP80579,	/* EP80579 */
-> +	LPC_CPT,	/* Cougar Point */
-> +	LPC_CPTD,	/* Cougar Point Desktop */
-> +	LPC_CPTM,	/* Cougar Point Mobile */
-> +	LPC_PBG,	/* Patsburg */
-> +	LPC_DH89XXCC,	/* DH89xxCC */
-> +	LPC_PPT,	/* Panther Point */
-> +	LPC_LPT,	/* Lynx Point */
-> +	LPC_LPT_LP,	/* Lynx Point-LP */
-> +	LPC_WBG,	/* Wellsburg */
-> +	LPC_AVN,	/* Avoton SoC */
-> +	LPC_BAYTRAIL,   /* Bay Trail SoC */
-> +	LPC_COLETO,	/* Coleto Creek */
-> +	LPC_WPT_LP,	/* Wildcat Point-LP */
-> +	LPC_BRASWELL,	/* Braswell SoC */
-> +	LPC_LEWISBURG,	/* Lewisburg */
-> +	LPC_9S,		/* 9 Series */
-> +};
-> +
->  #endif
+Hmm, I think What Vybrid and Tegra have done is better, but it would be better
+to get inputs from Linus, which you already asked for :)
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+viresh
