@@ -1,56 +1,52 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] pinctrl: freescale: avoid overwriting pin config when
- freeing GPIO
-Date: Fri, 30 Sep 2016 07:52:40 +0530
-Message-ID: <20160930022240.GE14138@vireshk-i7>
-References: <20160927002650.4316-1-stefan@agner.ch>
- <17317e62-d9bf-4ab3-35b5-f2f9a4dcbedd@mentor.com>
- <960b299c947424598ec26bfcb36fd96b@agner.ch>
- <e72b95e2-353a-d058-4321-dfbdaac2ba1b@mentor.com>
- <671a23a9ccdbdd6594ad89bf496c1490@agner.ch>
- <20160928020052.GB2551@vireshk-i7>
- <effa1a4d020a1ec6ea43fd5d4f12b89c@agner.ch>
- <1a113c0f-4ee3-e61a-8927-b5e8b558822c@mentor.com>
- <20160929064605.GB14138@vireshk-i7>
- <77b229dc-3fce-b953-b53b-a94a1fb0e109@mentor.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:32963 "EHLO
-        mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750850AbcI3CWo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Sep 2016 22:22:44 -0400
-Received: by mail-pa0-f50.google.com with SMTP id cd13so30128190pac.0
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Sep 2016 19:22:44 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <77b229dc-3fce-b953-b53b-a94a1fb0e109@mentor.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Johannes Thumshirn <jthumshirn@suse.de>
+Subject: [PATCH 2/3] pinctrl: berlin: Don't leak memory if krealloc() fails
+Date: Fri, 30 Sep 2016 14:13:56 +0200
+Message-ID: <1475237636-15109-1-git-send-email-jthumshirn@suse.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: Stefan Agner <stefan@agner.ch>, shawnguo@kernel.org, aalonso@freescale.com, b38343@freescale.com, ldewangan@nvidia.com, van.freenix@gmail.com, p.zabel@pengutronix.de, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 29-09-16, 15:16, Vladimir Zapolskiy wrote:
-> If you look at the top I agree that this solution may be only one platform
-> specific, but it fixes the broken driver of i.MX I2C bus controller.
+We're directly assigning krealoc()'s return value to pctrl->functions instead
+of using a temporary value to handle error checking. This leaks memory in case
+krealloc() failes. While we're at it, implement error handling for failed
+allocations at all.
 
-Yeah, I saw that..
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+---
+ drivers/pinctrl/berlin/berlin.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-> Why do you get an impression that it looks like a hack?
-
-Because we have to reorder things to make it work on a platform. This may break
-things on other platforms and we don't know about it yet.
-
-> Why pinctrl_select_state() is not done in gpio_request_one()? Because
-> the first function gets pin mux/config setting and the second does not.
-> How do you intend to get pin mux/config setting in gpio_request_one()?
-
-Lets see what Linus has to say on this..
-
-> Anyway I don't see any problems in pinctrl or gpio subsystems, the bugs
-> must be addressed and fixed in i2c.
-
-I think it can be a gpio driver specific thing as well and not really subsystem
-level one.
-
+diff --git a/drivers/pinctrl/berlin/berlin.c b/drivers/pinctrl/berlin/berlin.c
+index 8f0dc02..76281c8 100644
+--- a/drivers/pinctrl/berlin/berlin.c
++++ b/drivers/pinctrl/berlin/berlin.c
+@@ -208,6 +208,7 @@ static int berlin_pinctrl_build_state(struct platform_device *pdev)
+ 	struct berlin_pinctrl *pctrl = platform_get_drvdata(pdev);
+ 	struct berlin_desc_group const *desc_group;
+ 	struct berlin_desc_function const *desc_function;
++	struct berlin_pinctrl_function *functions;
+ 	int i, max_functions = 0;
+ 
+ 	pctrl->nfunctions = 0;
+@@ -236,9 +237,14 @@ static int berlin_pinctrl_build_state(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	pctrl->functions = krealloc(pctrl->functions,
+-				    pctrl->nfunctions * sizeof(*pctrl->functions),
+-				    GFP_KERNEL);
++	functions = krealloc(pctrl->functions,
++			     pctrl->nfunctions * sizeof(*pctrl->functions),
++			     GFP_KERNEL);
++	if (!functions) {
++		kfree(pctrl->functions);
++		return -ENOMEM;
++	}
++	pctrl->functions = functions;
+ 
+ 	/* map functions to theirs groups */
+ 	for (i = 0; i < pctrl->desc->ngroups; i++) {
 -- 
-viresh
+1.8.5.6
