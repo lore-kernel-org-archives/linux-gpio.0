@@ -1,60 +1,43 @@
-From: Stephen Boyd <stephen.boyd@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH] pinctrl: qcom: fix masking of pinmux functions
-Date: Mon, 3 Oct 2016 13:53:55 -0700
-Message-ID: <CAJOFmgzfEoxOPnfaZOBtt6TVKcuKqFR5_O3nP5pNHHuL_+5eeQ@mail.gmail.com>
+Date: Tue, 4 Oct 2016 00:38:02 +0200
+Message-ID: <CACRpkdbOQpyeagfz0J8jfFNCeLcsqpUnN-Yx8NeJPLVjEM=KkQ@mail.gmail.com>
 References: <1473673015-33124-1-git-send-email-john@phrozen.org>
  <CAJOFmgx3Y01DZvUU=wF68HLWRrUoiHAcOYtVjw6LsqvE3+Ds8w@mail.gmail.com>
  <20160926155209.GC7509@tuxbot> <CACRpkdZgZiuLnbVK9bS9myYD7R4WirXo20XwmSMQtLPvDpN9SA@mail.gmail.com>
+ <33879b14-5114-d994-335c-b2e7e8d8dd4d@phrozen.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f46.google.com ([209.85.214.46]:35611 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752362AbcJCUyR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Oct 2016 16:54:17 -0400
-Received: by mail-it0-f46.google.com with SMTP id r192so127088345ita.0
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Oct 2016 13:54:16 -0700 (PDT)
-In-Reply-To: <CACRpkdZgZiuLnbVK9bS9myYD7R4WirXo20XwmSMQtLPvDpN9SA@mail.gmail.com>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:35632 "EHLO
+        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751400AbcJCWiE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Oct 2016 18:38:04 -0400
+Received: by mail-oi0-f44.google.com with SMTP id d132so14889453oib.2
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Oct 2016 15:38:04 -0700 (PDT)
+In-Reply-To: <33879b14-5114-d994-335c-b2e7e8d8dd4d@phrozen.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, John Crispin <john@phrozen.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: John Crispin <john@phrozen.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <stephen.boyd@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Mon, Oct 3, 2016 at 6:31 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Sep 26, 2016 at 5:52 PM, Bjorn Andersson
-> <bjorn.andersson@linaro.org> wrote:
->> On Sun 25 Sep 23:36 PDT 2016, Stephen Boyd wrote:
->>
->>> On Mon, Sep 12, 2016 at 2:36 AM, John Crispin <john@phrozen.org> wrote:
->>> > The following commit introduced a regression by not properly masking the
->>> > calculated value.
->>> >
->>> > commit 47a01ee9a6c39fe1 ("pinctrl: qcom: Clear all function selection bits")
->>
->> Please use the format: Fixes: %h (\"%s\")
->>
->>> >
->>> > Signed-off-by: John Crispin <john@phrozen.org>
->>>
->>> Now I'm confused how it ever worked.... but agreed, the code looks wrong.
->>
->> I agree, we should have seen some issues based on this, I presume we
->> where "lucky".
->>
->>>
->>> Reviewed-by: Stephen Boyd <stephen.boyd@linaro.org>
->>>
->>
->> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>
->> @Linus, the corrected patch appeared in v4.8-rc1, would you mind
->> including this in a pull for v4.8?
->
-> I would have, had I been more attentive. And you even told me in person to
-> look at this :/ sorry.
->
-> Now I have the problem that I don't have the original patch in my inbox
-> at all: it might have been sent to some qcom-specific mailing list?
+On Mon, Oct 3, 2016 at 4:24 PM, John Crispin <john@phrozen.org> wrote:
+> On 03/10/2016 15:31, Linus Walleij wrote:
 
-It hit my (linaro) spam for some reason. Must be a problem between the
-sending side and how google mail classifies spam.
+>> Now I have the problem that I don't have the original patch in my inbox
+>> at all: it might have been sent to some qcom-specific mailing list?
+>>
+>> John: can you include the ACKs and resend with me on the To: line?
+>>
+>> Yours,
+>> Linus Walleij
+>>
+>
+> Sure, is there a patchwork where i can export it with all the Acks ?
+
+Nevermind, I found the patch in my spam folder and applied it!
+
+Thanks!
+
+Yours,
+Linus Walleij
