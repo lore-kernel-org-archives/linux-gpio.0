@@ -1,23 +1,43 @@
-From: "FDF" <jkyomuhangi@advisors.uap-group.com>
-Subject: Hello::
-Date: Thu, 29 Sep 2016 11:16:43 -0400
-Message-ID: <20160930151737.4B64165FAFE41@ke.uapkenya.com>
-Reply-To: charity@e-cb.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: make memory-mapped drivers depend on HAS_IOMEM
+Date: Mon,  3 Oct 2016 09:49:03 +0200
+Message-ID: <1475480943-3985-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ke.uapkenya.com ([196.43.246.10]:39963 "EHLO ke.uapkenya.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751677AbcI3X1U (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 30 Sep 2016 19:27:20 -0400
-Content-Description: Mail message body
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:35539 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750839AbcJCHtK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Oct 2016 03:49:10 -0400
+Received: by mail-lf0-f53.google.com with SMTP id l131so147662612lfl.2
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Oct 2016 00:49:09 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Recipients <jkyomuhangi@advisors.uap-group.com>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-Congrats!you have been selected for a donation by FDF,
-Email( fferan452@gmail.com ) for more details.
-REPLY FOR MORE DETAILS.
-Regards
-Olivier Xavier.
+This one is pretty obvious: on UM Linux compilation of things
+like allmodconfig and allyesconfig will fail due to the
+absence of IO memory. Simply make these drivers depend on
+HAS_IOMEM, it has been implicitly assumed all the time, so
+just make it explicit.
+
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 59ba58b8ac13..6cb816b3aab5 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -74,6 +74,7 @@ config GPIO_MAX730X
+ 	tristate
+ 
+ menu "Memory mapped GPIO drivers"
++	depends on HAS_IOMEM
+ 
+ config GPIO_74XX_MMIO
+ 	tristate "GPIO driver for 74xx-ICs with MMIO access"
+-- 
+2.7.4
+
