@@ -1,63 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: add missing static inline
-Date: Mon,  3 Oct 2016 11:38:41 +0200
-Message-ID: <1475487521-3342-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:35883 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753117AbcJCJiq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Oct 2016 05:38:46 -0400
-Received: by mail-lf0-f50.google.com with SMTP id b75so17161784lfg.3
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Oct 2016 02:38:45 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: [PATCH 6/9] dt-bindings: pinctrl: Deprecate sunxi pinctrl bindings
+Date: Mon,  3 Oct 2016 12:21:04 +0200
+Message-ID: <fad5a977d8ecdd43b37d7028b1bc32d8667b65a2.1475489558.git-series.maxime.ripard@free-electrons.com>
+References: <cover.26c6f76b361d146fb079d744251f020ef6d2db7d.1475489558.git-series.maxime.ripard@free-electrons.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.26c6f76b361d146fb079d744251f020ef6d2db7d.1475489558.git-series.maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+In-Reply-To: <cover.26c6f76b361d146fb079d744251f020ef6d2db7d.1475489558.git-series.maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+References: <cover.26c6f76b361d146fb079d744251f020ef6d2db7d.1475489558.git-series.maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
 
-of_get_named_gpiod_flags() was missing a static inline version
-when compiling without OF_GPIO. Add this.
+The generic pin configuration and multiplexing should be preferred now,
+even though we still support the old one.
 
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 ---
- drivers/gpio/gpiolib.h | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt | 5 +++++
+ 1 file changed, 5 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index ba1e383079a3..7599796d32e1 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -92,6 +92,8 @@ struct gpio_desc *of_find_gpio(struct device *dev,
- 			       const char *con_id,
- 			       unsigned int idx,
- 			       enum gpio_lookup_flags *flags);
-+struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
-+		   const char *list_name, int index, enum of_gpio_flags *flags);
- int of_gpiochip_add(struct gpio_chip *gc);
- void of_gpiochip_remove(struct gpio_chip *gc);
- #else
-@@ -102,6 +104,11 @@ static inline struct gpio_desc *of_find_gpio(struct device *dev,
- {
- 	return ERR_PTR(-ENOENT);
- }
-+static inline struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
-+		   const char *list_name, int index, enum of_gpio_flags *flags)
-+{
-+	return ERR_PTR(-ENOENT);
-+}
- static inline int of_gpiochip_add(struct gpio_chip *gc) { return 0; }
- static inline void of_gpiochip_remove(struct gpio_chip *gc) { }
- #endif /* CONFIG_OF_GPIO */
-@@ -160,9 +167,6 @@ static inline bool acpi_can_fallback_to_crs(struct acpi_device *adev,
- }
- #endif
+diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+index 69617220c5d6..e8b7cf64fdf1 100644
+--- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+@@ -36,6 +36,11 @@ pins it needs, and how they should be configured, with regard to muxer
+ configuration, drive strength and pullups. If one of these options is
+ not set, its actual value will be unspecified.
  
--struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
--		   const char *list_name, int index, enum of_gpio_flags *flags);
--
- struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip, u16 hwnum);
- void gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 				   unsigned int array_size,
++This driver supports the generic pin multiplexing and configuration
++bindings.
++
++*** Deprecated pin configuration and multiplexing binding
++
+ Required subnode-properties:
+ 
+ - allwinner,pins: List of strings containing the pin name.
 -- 
-2.7.4
-
+git-series 0.8.10
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
