@@ -1,41 +1,60 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 7/8] pinctrl: aspeed-g4: Add mux configuration for all
- pins
-Date: Mon, 3 Oct 2016 14:08:33 -0500
-Message-ID: <20161003190833.GA3065@rob-hp-laptop>
-References: <cover.115463f791b69859c5ce9dafd61a5755ea039f4b.1474986045.git-series.andrew@aj.id.au>
- <e0d8fa6cd444972e6f048f98da98f0439e6ca39b.1474986045.git-series.andrew@aj.id.au>
+From: Stephen Boyd <stephen.boyd@linaro.org>
+Subject: Re: [PATCH] pinctrl: qcom: fix masking of pinmux functions
+Date: Mon, 3 Oct 2016 13:53:55 -0700
+Message-ID: <CAJOFmgzfEoxOPnfaZOBtt6TVKcuKqFR5_O3nP5pNHHuL_+5eeQ@mail.gmail.com>
+References: <1473673015-33124-1-git-send-email-john@phrozen.org>
+ <CAJOFmgx3Y01DZvUU=wF68HLWRrUoiHAcOYtVjw6LsqvE3+Ds8w@mail.gmail.com>
+ <20160926155209.GC7509@tuxbot> <CACRpkdZgZiuLnbVK9bS9myYD7R4WirXo20XwmSMQtLPvDpN9SA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <e0d8fa6cd444972e6f048f98da98f0439e6ca39b.1474986045.git-series.andrew-zrmu5oMJ5Fs@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Timothy Pearson <tpearson-z0qzliK6Om0mgXJStvpl+vpXobYPEAuW@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f46.google.com ([209.85.214.46]:35611 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752362AbcJCUyR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Oct 2016 16:54:17 -0400
+Received: by mail-it0-f46.google.com with SMTP id r192so127088345ita.0
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Oct 2016 13:54:16 -0700 (PDT)
+In-Reply-To: <CACRpkdZgZiuLnbVK9bS9myYD7R4WirXo20XwmSMQtLPvDpN9SA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, John Crispin <john@phrozen.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, Sep 28, 2016 at 12:20:19AM +0930, Andrew Jeffery wrote:
-> The patch introducing the g4 pinctrl driver implemented a smattering of
-> pins to flesh out the implementation of the core and provide bare-bones
-> support for some OpenPOWER platforms. Now, update the bindings document
-> to reflect the complete functionality and implement the necessary pin
-> configuration tables in the driver.
+On Mon, Oct 3, 2016 at 6:31 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Sep 26, 2016 at 5:52 PM, Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
+>> On Sun 25 Sep 23:36 PDT 2016, Stephen Boyd wrote:
+>>
+>>> On Mon, Sep 12, 2016 at 2:36 AM, John Crispin <john@phrozen.org> wrote:
+>>> > The following commit introduced a regression by not properly masking the
+>>> > calculated value.
+>>> >
+>>> > commit 47a01ee9a6c39fe1 ("pinctrl: qcom: Clear all function selection bits")
+>>
+>> Please use the format: Fixes: %h (\"%s\")
+>>
+>>> >
+>>> > Signed-off-by: John Crispin <john@phrozen.org>
+>>>
+>>> Now I'm confused how it ever worked.... but agreed, the code looks wrong.
+>>
+>> I agree, we should have seen some issues based on this, I presume we
+>> where "lucky".
+>>
+>>>
+>>> Reviewed-by: Stephen Boyd <stephen.boyd@linaro.org>
+>>>
+>>
+>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>
+>> @Linus, the corrected patch appeared in v4.8-rc1, would you mind
+>> including this in a pull for v4.8?
+>
+> I would have, had I been more attentive. And you even told me in person to
+> look at this :/ sorry.
+>
+> Now I have the problem that I don't have the original patch in my inbox
+> at all: it might have been sent to some qcom-specific mailing list?
 
-We prefer bindings to be complete if possible where as drivers can be 
-expanded over time.
-
-> 
-> Cc: Timothy Pearson <tpearson-z0qzliK6Om0mgXJStvpl+vpXobYPEAuW@public.gmane.org>
-> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-> ---
->  Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt |   19 +-
-
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-
->  drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c                   | 1094 ++++++-
->  2 files changed, 1093 insertions(+), 20 deletions(-)
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+It hit my (linaro) spam for some reason. Must be a problem between the
+sending side and how google mail classifies spam.
