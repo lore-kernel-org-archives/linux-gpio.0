@@ -1,121 +1,41 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 5/9] pinctrl: sunxi: Support generic binding
-Date: Mon,  3 Oct 2016 12:21:03 +0200
-Message-ID: <1b45160fb37e2dcabd855d2192fc403a1c4db324.1475489558.git-series.maxime.ripard@free-electrons.com>
-References: <cover.26c6f76b361d146fb079d744251f020ef6d2db7d.1475489558.git-series.maxime.ripard@free-electrons.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 2/3] gpio: acpi: separation of concerns
+Date: Mon, 3 Oct 2016 13:24:46 +0300
+Message-ID: <20161003102446.GA1218@lahna.fi.intel.com>
+References: <1475485360-15127-1-git-send-email-linus.walleij@linaro.org>
+ <1475485360-15127-2-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:35399 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752800AbcJCKVQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Oct 2016 06:21:16 -0400
-In-Reply-To: <cover.26c6f76b361d146fb079d744251f020ef6d2db7d.1475489558.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.26c6f76b361d146fb079d744251f020ef6d2db7d.1475489558.git-series.maxime.ripard@free-electrons.com>
-References: <cover.26c6f76b361d146fb079d744251f020ef6d2db7d.1475489558.git-series.maxime.ripard@free-electrons.com>
+Received: from mga14.intel.com ([192.55.52.115]:5639 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752043AbcJCKYv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 3 Oct 2016 06:24:51 -0400
+Content-Disposition: inline
+In-Reply-To: <1475485360-15127-2-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
 
-Our bindings are mostly irrelevant now that we have generic pinctrl
-bindings that cover exactly the same uses cases.
+On Mon, Oct 03, 2016 at 11:02:39AM +0200, Linus Walleij wrote:
+> The generic GPIO library directly implement code for acpi_find_gpio()
+> which is only used with CONFIG_ACPI. This was probably done because
+> OF did the same thing, but I removed that so remove this too.
 
-Add support for the new ones, and obviously keep our old binding support in
-order to keep the ABI stable.
+Yes, it was originally copied from the DT implementation.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 48 ++++++++++++++++++++++++++--
- 1 file changed, 46 insertions(+), 2 deletions(-)
+> Rename the internal acpi_find_gpio() in gpiolib-acpi.c to
+> acpi_populate_gpio_lookup() which seems to be more appropriate anyway
+> so as to avoid a namespace clash with the same function.
+> 
+> Make the stub return -ENOENT rather than -ENOSYS (as that is for
+> syscalls!).
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index cec977fcf98c..b52af7f1418a 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -150,18 +150,33 @@ static int sunxi_pctrl_get_group_pins(struct pinctrl_dev *pctldev,
- 
- static bool sunxi_pctrl_has_bias_prop(struct device_node *node)
- {
--	return of_find_property(node, "allwinner,pull", NULL);
-+	return of_find_property(node, "bias-pull-up", NULL) ||
-+		of_find_property(node, "bias-pull-down", NULL) ||
-+		of_find_property(node, "bias-disable", NULL) ||
-+		of_find_property(node, "allwinner,pull", NULL);
- }
- 
- static bool sunxi_pctrl_has_drive_prop(struct device_node *node)
- {
--	return of_find_property(node, "allwinner,drive", NULL);
-+	return of_find_property(node, "drive-strength", NULL) ||
-+		of_find_property(node, "allwinner,drive", NULL);
- }
- 
- static int sunxi_pctrl_parse_bias_prop(struct device_node *node)
- {
- 	u32 val;
- 
-+	/* Try the new style binding */
-+	if (of_find_property(node, "bias-pull-up", NULL))
-+		return PIN_CONFIG_BIAS_PULL_UP;
-+
-+	if (of_find_property(node, "bias-pull-down", NULL))
-+		return PIN_CONFIG_BIAS_PULL_DOWN;
-+
-+	if (of_find_property(node, "bias-disable", NULL))
-+		return PIN_CONFIG_BIAS_DISABLE;
-+
-+	/* And fall back to the old binding */
- 	if (of_property_read_u32(node, "allwinner,pull", &val))
- 		return -EINVAL;
- 
-@@ -181,6 +196,21 @@ static int sunxi_pctrl_parse_drive_prop(struct device_node *node)
- {
- 	u32 val;
- 
-+	/* Try the new style binding */
-+	if (!of_property_read_u32(node, "drive-strength", &val)) {
-+		/* We can't go below 10mA ... */
-+		if (val < 10)
-+			return -EINVAL;
-+
-+		/* ... and only up to 40 mA ... */
-+		if (val > 40)
-+			val = 40;
-+
-+		/* by steps of 10 mA */
-+		return rounddown(val, 10);
-+	}
-+
-+	/* And then fall back to the old binding */
- 	if (of_property_read_u32(node, "allwinner,drive", &val))
- 		return -EINVAL;
- 
-@@ -192,6 +222,12 @@ static const char *sunxi_pctrl_parse_function_prop(struct device_node *node)
- 	const char *function;
- 	int ret;
- 
-+	/* Try the generic binding */
-+	ret = of_property_read_string(node, "function", &function);
-+	if (!ret)
-+		return function;
-+
-+	/* And fall back to our legacy one */
- 	ret = of_property_read_string(node, "allwinner,function", &function);
- 	if (!ret)
- 		return function;
-@@ -204,6 +240,14 @@ static const char *sunxi_pctrl_find_pins_prop(struct device_node *node,
- {
- 	int count;
- 
-+	/* Try the generic binding */
-+	count = of_property_count_strings(node, "pins");
-+	if (count > 0) {
-+		*npins = count;
-+		return "pins";
-+	}
-+
-+	/* And fall back to our legacy one */
- 	count = of_property_count_strings(node, "allwinner,pins");
- 	if (count > 0) {
- 		*npins = count;
--- 
-git-series 0.8.10
+-ENXIO?
+
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+
+Regardless of that,
+
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
