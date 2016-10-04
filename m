@@ -1,24 +1,56 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 9/9] ARM: sunxi: Convert pinctrl nodes to generic bindings
-Date: Tue, 4 Oct 2016 10:37:44 +0800
-Message-ID: <CAGb2v679KsTWEDWhqNEEXf50xOJzdDPhMH2VsJ2tBC4OqbNLAg@mail.gmail.com>
-References: <cover.26c6f76b361d146fb079d744251f020ef6d2db7d.1475489558.git-series.maxime.ripard@free-electrons.com>
- <1f67fc945364c4347108d5c82e50de3d2abe4e8d.1475489558.git-series.maxime.ripard@free-electrons.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: baytrail: Fix lockdep
+Date: Tue, 4 Oct 2016 11:18:50 +0300
+Message-ID: <20161004081850.GH1765@lahna.fi.intel.com>
+References: <1475506615-31963-1-git-send-email-ville.syrjala@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1f67fc945364c4347108d5c82e50de3d2abe4e8d.1475489558.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1475506615-31963-1-git-send-email-ville.syrjala@linux.intel.com>
+Sender: stable-owner@vger.kernel.org
+To: ville.syrjala@linux.intel.com
+Cc: linux-gpio@vger.kernel.org, Cristina Ciocan <cristina.ciocan@intel.com>, Linus Walleij <linus.walleij@linaro.org>, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 3, 2016 at 6:21 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Now that we can handle the generic pinctrl bindings, convert our DT to it.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+On Mon, Oct 03, 2016 at 05:56:55PM +0300, ville.syrjala@linux.intel.com wrote:
+> From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> 
+> Initialize the spinlock before using it.
+> 
+> INFO: trying to register non-static key.
+> the code is fine but needs lockdep annotation.
+> turning off the locking correctness validator.
+> CPU: 2 PID: 1 Comm: swapper/0 Not tainted 4.8.0-dwc-bisect #4
+> Hardware name: Intel Corp. VALLEYVIEW C0 PLATFORM/BYT-T FFD8, BIOS BLAKFF81.X64.0088.R10.1403240443 FFD8_X64_R_2014_13_1_00 03/24/2014
+>  0000000000000000 ffff8800788ff770 ffffffff8133d597 0000000000000000
+>  0000000000000000 ffff8800788ff7e0 ffffffff810cfb9e 0000000000000002
+>  ffff8800788ff7d0 ffffffff8205b600 0000000000000002 ffff8800788ff7f0
+> Call Trace:
+>  [<ffffffff8133d597>] dump_stack+0x67/0x90
+>  [<ffffffff810cfb9e>] register_lock_class+0x52e/0x540
+>  [<ffffffff810d2081>] __lock_acquire+0x81/0x16b0
+>  [<ffffffff810cede1>] ? save_trace+0x41/0xd0
+>  [<ffffffff810d33b2>] ? __lock_acquire+0x13b2/0x16b0
+>  [<ffffffff810cf05a>] ? __lock_is_held+0x4a/0x70
+>  [<ffffffff810d3b1a>] lock_acquire+0xba/0x220
+>  [<ffffffff8136f1fe>] ? byt_gpio_get_direction+0x3e/0x80
+>  [<ffffffff81631567>] _raw_spin_lock_irqsave+0x47/0x60
+>  [<ffffffff8136f1fe>] ? byt_gpio_get_direction+0x3e/0x80
+>  [<ffffffff8136f1fe>] byt_gpio_get_direction+0x3e/0x80
+>  [<ffffffff813740a9>] gpiochip_add_data+0x319/0x7d0
+>  [<ffffffff81631723>] ? _raw_spin_unlock_irqrestore+0x43/0x70
+>  [<ffffffff8136fe3b>] byt_pinctrl_probe+0x2fb/0x620
+>  [<ffffffff8142fb0c>] platform_drv_probe+0x3c/0xa0
+> ...
+> 
+> Based on the diff it looks like the problem was introduced in
+> commit 71e6ca61e826 ("pinctrl: baytrail: Register pin control handling")
+> but I wasn't able to verify that empirically as the parent commit
+> just oopsed when I tried to boot it.
+> 
+> Cc: Cristina Ciocan <cristina.ciocan@intel.com>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Same comment as the last 2 patches.
-
-ChenYu
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
