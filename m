@@ -1,115 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 1/1] USB: serial: cp210x: Adding GPIO support for CP2105
-Date: Tue, 4 Oct 2016 14:13:26 +0200
-Message-ID: <CACRpkdbQzigYvx61S__+=qW1+NWxDyxUyg-Tm0=8Sj42xy6EWg@mail.gmail.com>
-References: <b77f588156e346037d7efda72f9ed1dc460b810a.1474670298.git.martyn.welch@collabora.co.uk>
+Subject: Re: [PATCH] gpio: pca953x: add a comment explaining the need for a
+ lockdep subclass
+Date: Tue, 4 Oct 2016 14:17:45 +0200
+Message-ID: <CACRpkdbAF5sOf6FJTqT5i9xLm_3ykc3YNu71s5aobHpzKKGo+w@mail.gmail.com>
+References: <1474883655-15824-1-git-send-email-bgolaszewski@baylibre.com>
+ <1474883655-15824-2-git-send-email-bgolaszewski@baylibre.com> <20160926100030.GA5606@katana>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:36546 "EHLO
-        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752242AbcJDMN1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Oct 2016 08:13:27 -0400
-Received: by mail-oi0-f44.google.com with SMTP id m72so61773986oik.3
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Oct 2016 05:13:27 -0700 (PDT)
-In-Reply-To: <b77f588156e346037d7efda72f9ed1dc460b810a.1474670298.git.martyn.welch@collabora.co.uk>
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:32814 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751549AbcJDMRq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Oct 2016 08:17:46 -0400
+Received: by mail-oi0-f45.google.com with SMTP id r126so232215431oib.0
+        for <linux-gpio@vger.kernel.org>; Tue, 04 Oct 2016 05:17:46 -0700 (PDT)
+In-Reply-To: <20160926100030.GA5606@katana>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Martyn Welch <martyn.welch@collabora.co.uk>
-Cc: Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Karl Palsson <karlp@tweak.net.au>, Konstantin Shkolnyy <Konstantin.Shkolnyy@silabs.com>, Peter Senna Tschudin <peter.senna@collabora.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Peter Rosin <peda@axentia.se>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Sat, Sep 24, 2016 at 12:50 AM, Martyn Welch
-<martyn.welch@collabora.co.uk> wrote:
+On Mon, Sep 26, 2016 at 12:00 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> On Mon, Sep 26, 2016 at 11:54:15AM +0200, Bartosz Golaszewski wrote:
+>> This is a follow-up to commit 559b46990e76 ("gpio: pca953x: fix an
+>> incorrect lockdep warning"). The reason for calling
+>> lockdep_set_subclass() in pca953x_probe() is not explained in
+>> the code.
+>>
+>> Add a comment describing the problem, partial solution and required
+>> future extensions.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Acked-by: Wolfram Sang <wsa@the-dreams.de>
+>
+> Linus, because of dependencies, I should probably pick it up?
 
-> This patch adds support for the GPIO found on the CP2105.
+Yes Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-
-> This device supports either push-pull or open-drain modes, it doesn't
-> provide an explicit input mode, though the state of the GPIO can be read
-> when used in open-drain mode. Like with pin use, the mode is configured in
-> the one-time programable PROM and can't be changed at runtime.
-
-I see.
-
-So implement .direction_input() and .direction_output()
-anyways.
-
-Return failure on .direction_input() if it is in push-pull mode.
-
-Return success on all .direction_output() calls.
-
-Then implement .set_single_ended() and return success for open drain
-if the is in open drain, success for push-pull if the line is in push-pull
-mode, and failure in all other cases. Simple, but correct.
-
-Add some comments to these functions so it is clear what is going on.
-
-(...)
-> +#ifdef CONFIG_GPIOLIB
-> +static int cp210x_gpio_request(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +       struct cp210x_serial_private *priv =
-> +                       container_of(gc, struct cp210x_serial_private, gc);
-
-Just:
-
-struct cp210x_serial_private *priv = gpiochip_get_data(gc);
-
-> +static int cp210x_gpio_direction_get(struct gpio_chip *gc, unsigned int gpio)
-> +{
-> +       return 0;
-> +}
-
-Aha no explicit input mode...
-
-> +static int cp210x_gpio_get(struct gpio_chip *gc, unsigned int gpio)
-> +{
-> +       struct cp210x_serial_private *priv =
-> +                       container_of(gc, struct cp210x_serial_private, gc);
-
-gpiochip_get_data
-
-> +       struct usb_serial *serial = priv->serial;
-> +       int result;
-> +       u8 buf;
-> +
-> +       result = cp210x_read_vendor_block(serial, REQTYPE_INTERFACE_TO_HOST,
-> +                                         CP210X_READ_LATCH, &buf, sizeof(buf));
-> +       if (result < 0)
-> +               return 0;
-
-No just return the error code. We handle this nowadays.
-
-> +
-> +       return (buf >> gpio) & 0x1;
-
-Do it like this:
-
-return !!(buf & BIT(gpio));
-
-> +static void cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
-> +{
-> +       struct cp210x_serial_private *priv =
-> +                       container_of(gc, struct cp210x_serial_private, gc);
-
-gpiochip_get_data()
-
-(...)
-+       result = gpiochip_add(&priv->gc);
-
-Use devm_gpiochip_add_data(&serial->interface->dev, &priv->gc, gc);
-
-And you get the pointer you need.
-
-+void cp210x_shared_gpio_remove(struct usb_serial *serial)
-+{
-+       struct cp210x_serial_private *priv = usb_get_serial_data(serial);
-+
-+       if (priv->gc.label)
-+               gpiochip_remove(&priv->gc);
-+}
-
-Should not be needed with the devm_* call above doing garbage collection.
+Sorry was travelling.
 
 Yours,
 Linus Walleij
