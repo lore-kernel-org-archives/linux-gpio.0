@@ -1,15 +1,12 @@
 From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: [PATCH 2/3] pinctrl: sunxi: Fix PIN_CONFIG_BIAS_PULL_{DOWN,UP}
- argument
-Date: Tue,  4 Oct 2016 09:51:11 +0800
-Message-ID: <20161004015112.20833-3-wens@csie.org>
-References: <20161004015112.20833-1-wens@csie.org>
+Subject: [PATCH 0/3] pinctrl: sunxi: Support generic pinconf functions
+Date: Tue,  4 Oct 2016 09:51:09 +0800
+Message-ID: <20161004015112.20833-1-wens@csie.org>
 Reply-To: wens-jdAy2FN1RRM@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-sunxi+bncBCMILY6JWQBBBFEWZS7QKGQEIM7MAHQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20161004015112.20833-1-wens-jdAy2FN1RRM@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Archive: <https://groups.google.com/group/linux-sunxi
@@ -20,31 +17,41 @@ To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxim
 Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-According to pinconf-generic.h, the argument for
-PIN_CONFIG_BIAS_PULL_{DOWN,UP} is non-zero if the bias is enabled
-with a pull up/down resistor, zero if it is directly connected
-to VDD or ground.
+Hi everyone,
 
-Since Allwinner hardware uses a weak pull resistor internally,
-the argument should be 1.
+This series fixes up generic pinconf support for the sunxi pinctrl driver
+library. The driver was doing some bits wrong, like a) storing the pinconf
+config value in its struct, and not actually reading the hardware to get
+the current config, and b) not using the right arguments for the bias
+parameters.
 
-Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch 1 makes the driver read out pinconf settings from the hardware, and
+returns the correct value for unsupported features and disable features.
+With this in place it also declares itself as generic pinconf compatible,
+which enables us to read the config through the debugfs pinconf interface.
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 609843c9a65c..236272a2339d 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -234,7 +234,7 @@ static int sunxi_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
- 				pull = PIN_CONFIG_BIAS_PULL_UP;
- 			else if (val == 2)
- 				pull = PIN_CONFIG_BIAS_PULL_DOWN;
--			pinconfig[j++] = pinconf_to_config_packed(pull, 0);
-+			pinconfig[j++] = pinconf_to_config_packed(pull, 1);
- 		}
- 
- 		(*map)[i].data.configs.configs = pinconfig;
+Patch 2 fixes the pin bias parameter arguments.
+
+Patch 3 makes the sunxi_pconf_group_set callback use the helper function
+introduced in patch 1. 
+
+The patches will likely conflict with Maxime's generic pinctrl bindings
+series. Lets figure something out.
+
+
+Regards
+ChenYu
+
+
+Chen-Yu Tsai (3):
+  pinctrl: sunxi: Add support for fetching pinconf settings from
+    hardware
+  pinctrl: sunxi: Fix PIN_CONFIG_BIAS_PULL_{DOWN,UP} argument
+  pinctrl: sunxi: Make sunxi_pconf_group_set use sunxi_pconf_reg helper
+
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 152 ++++++++++++++++++++++++++--------
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h |   1 -
+ 2 files changed, 118 insertions(+), 35 deletions(-)
+
 -- 
 2.9.3
