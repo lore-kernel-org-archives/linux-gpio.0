@@ -1,179 +1,143 @@
-From: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: [RFC 04/10] pinctrl: meson: allow gpio to request irq
-Date: Tue,  4 Oct 2016 17:08:22 +0200
-Message-ID: <1475593708-10526-5-git-send-email-jbrunet@baylibre.com>
-References: <1475593708-10526-1-git-send-email-jbrunet@baylibre.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1475593708-10526-1-git-send-email-jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Cc: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: Re: [PATCH 1/3] pinctrl: sunxi: Add support for
+ fetching pinconf settings from hardware
+Date: Tue, 4 Oct 2016 23:49:27 +0800
+Message-ID: <CAGb2v65BAx9EHhuyM-85F2vD+tXeiakLs8CQYuQOBVsVn=+BTw@mail.gmail.com>
+References: <20161004015112.20833-1-wens@csie.org> <20161004015112.20833-2-wens@csie.org>
+ <20161004080245.GK5228@lukather>
+Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBCMILY6JWQBBBIE7Z67QKGQE6O3PWIY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20161004080245.GK5228@lukather>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Add the ability for gpio to request irq from the gpio interrupt controller
-if present. We have to specificaly that the parent interrupt controller is
-the gpio interrupt controller because gpio on meson SoCs can't generate
-interrupt directly on the GIC.
+On Tue, Oct 4, 2016 at 4:02 PM, Maxime Ripard
+<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+> On Tue, Oct 04, 2016 at 09:51:10AM +0800, Chen-Yu Tsai wrote:
+>> The sunxi pinctrl driver only caches whatever pinconf setting was last
+>> set on a given pingroup. This is not particularly helpful, nor is it
+>> correct.
+>>
+>> Fix this by actually reading the hardware registers and returning
+>> the correct results or error codes. Also filter out unsupported
+>> pinconf settings. Since this driver has a peculiar setup of 1 pin
+>> per group, we can support both pin and pingroup pinconf setting
+>> read back with the same code. The sunxi_pconf_reg helper and code
+>> structure is inspired by pinctrl-msm.
+>>
+>> With this done we can also claim to support generic pinconf, by
+>> setting .is_generic = true in pinconf_ops.
+>>
+>> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+>> ---
+>>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 85 +++++++++++++++++++++++++++++++++--
+>>  1 file changed, 82 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>> index 54455af566ec..609843c9a65c 100644
+>> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>> @@ -10,6 +10,7 @@
+>>   * warranty of any kind, whether express or implied.
+>>   */
+>>
+>> +#include <dt-bindings/pinctrl/sun4i-a10.h>
+>>  #include <linux/io.h>
+>>  #include <linux/clk.h>
+>>  #include <linux/gpio/driver.h>
+>> @@ -269,15 +270,91 @@ static const struct pinctrl_ops sunxi_pctrl_ops = {
+>>       .get_group_pins         = sunxi_pctrl_get_group_pins,
+>>  };
+>>
+>> +static int sunxi_pconf_reg(unsigned pin, enum pin_config_param param,
+>> +                        u32 *offset, u32 *shift, u32 *mask)
+>> +{
+>> +     switch (param) {
+>> +     case PIN_CONFIG_DRIVE_STRENGTH:
+>> +             *offset = sunxi_dlevel_reg(pin);
+>> +             *shift = sunxi_dlevel_offset(pin);
+>> +             *mask = DLEVEL_PINS_MASK;
+>> +             break;
+>> +
+>> +     case PIN_CONFIG_BIAS_PULL_UP:
+>> +     case PIN_CONFIG_BIAS_PULL_DOWN:
+>> +     case PIN_CONFIG_BIAS_DISABLE:
+>> +             *offset = sunxi_pull_reg(pin);
+>> +             *shift = sunxi_pull_offset(pin);
+>> +             *mask = PULL_PINS_MASK;
+>> +             break;
+>> +
+>> +     default:
+>> +             return -ENOTSUPP;
+>> +     }
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static int sunxi_pconf_get(struct pinctrl_dev *pctldev, unsigned pin,
+>> +                        unsigned long *config)
+>> +{
+>> +     struct sunxi_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
+>> +     enum pin_config_param param = pinconf_to_config_param(*config);
+>> +     u32 offset, shift, mask, val;
+>> +     u16 arg;
+>> +     int ret;
+>> +
+>> +     pin -= pctl->desc->pin_base;
+>> +
+>> +     ret = sunxi_pconf_reg(pin, param, &offset, &shift, &mask);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     val = (readl(pctl->membase + offset) >> shift) & mask;
+>> +
+>> +     switch (pinconf_to_config_param(*config)) {
+>> +     case PIN_CONFIG_DRIVE_STRENGTH:
+>> +             arg = (val + 1) * 10;
+>> +             break;
+>> +
+>> +     case PIN_CONFIG_BIAS_PULL_UP:
+>> +             if (val != SUN4I_PINCTRL_PULL_UP)
+>> +                     return -EINVAL;
+>> +             arg = 1; /* hardware is weak pull-up */
+>> +             break;
+>> +
+>> +     case PIN_CONFIG_BIAS_PULL_DOWN:
+>> +             if (val != SUN4I_PINCTRL_PULL_DOWN)
+>> +                     return -EINVAL;
+>> +             arg = 1; /* hardware is weak pull-down */
+>> +             break;
+>> +
+>> +     case PIN_CONFIG_BIAS_DISABLE:
+>> +             if (val != SUN4I_PINCTRL_NO_PULL)
+>> +                     return -EINVAL;
+>> +             arg = 0;
+>> +             break;
+>> +
+>> +     default:
+>> +             /* sunxi_pconf_reg should catch anything unsupported */
+>> +             WARN_ON(1);
+>> +             return -ENOTSUPP;
+>
+> This should be EINVAL. The operation is supported, but one of the
+> argument is not valid.
 
-Signed-off-by: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
----
- drivers/pinctrl/Kconfig               |  2 +
- drivers/pinctrl/meson/pinctrl-meson.c | 83 ++++++++++++++++++++++++++++++++++-
- drivers/pinctrl/meson/pinctrl-meson.h |  1 +
- 3 files changed, 85 insertions(+), 1 deletion(-)
+According to include/linux/pinctrl/pinconf.h
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 0e75d94972ba..d5bfbfcddab0 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -126,7 +126,9 @@ config PINCTRL_MESON
- 	select PINCONF
- 	select GENERIC_PINCONF
- 	select GPIOLIB
-+	select IRQ_DOMAIN
- 	select OF_GPIO
-+	select OF_IRQ
- 	select REGMAP_MMIO
- 
- config PINCTRL_OXNAS
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 57122eda155a..f9be3ff5e11d 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -50,6 +50,7 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_irq.h>
- #include <linux/pinctrl/pinconf-generic.h>
- #include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinctrl.h>
-@@ -481,6 +482,58 @@ static void meson_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
- 			   value ? BIT(bit) : 0);
- }
- 
-+static int meson_gpio_to_hwirq(struct meson_bank *bank, unsigned int offset)
-+{
-+	unsigned int hwirq;
-+
-+	if (bank->irq_first < 0)
-+		/* this bank cannot generate irqs */
-+		return -1;
-+
-+	hwirq = offset - bank->first + bank->irq_first;
-+
-+	if (hwirq > bank->irq_last)
-+		/* this pin cannot generate irqs */
-+		return -1;
-+
-+	return hwirq;
-+}
-+
-+static int meson_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct meson_pinctrl *pc = gpiochip_get_data(chip);
-+	struct meson_bank *bank;
-+	struct irq_fwspec fwspec;
-+	unsigned int hwirq;
-+	int ret;
-+
-+	ret = meson_get_bank(pc, offset, &bank);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * The interrupt controller might be missing, in such case we can't
-+	 * provide an interrupt for a pin
-+	 */
-+	if (is_fwnode_irqchip(pc->fwnode)) {
-+		dev_info(pc->dev, "interrupt controller not found\n");
-+		return 0;
-+	}
-+
-+	hwirq = meson_gpio_to_hwirq(bank, offset);
-+	if (hwirq < 0) {
-+		dev_dbg(pc->dev, "no interrupt for pin %u\n", offset);
-+		return 0;
-+	}
-+
-+	fwspec.fwnode = pc->fwnode;
-+	fwspec.param_count = 2;
-+	fwspec.param[0] = hwirq;
-+	fwspec.param[1] = IRQ_TYPE_NONE;
-+
-+	return irq_create_fwspec_mapping(&fwspec);
-+}
-+
- static int meson_gpio_get(struct gpio_chip *chip, unsigned gpio)
- {
- 	struct meson_pinctrl *pc = gpiochip_get_data(chip);
-@@ -539,6 +592,7 @@ static int meson_gpiolib_register(struct meson_pinctrl *pc)
- 	pc->chip.direction_output = meson_gpio_direction_output;
- 	pc->chip.get = meson_gpio_get;
- 	pc->chip.set = meson_gpio_set;
-+	pc->chip.to_irq = meson_gpio_to_irq;
- 	pc->chip.base = pc->data->pin_base;
- 	pc->chip.ngpio = pc->data->num_pins;
- 	pc->chip.can_sleep = false;
-@@ -598,6 +652,33 @@ static struct regmap *meson_map_resource(struct meson_pinctrl *pc,
- 	return devm_regmap_init_mmio(pc->dev, base, &meson_regmap_config);
- }
- 
-+static int meson_pinctrl_get_irq_gpio_intc(struct meson_pinctrl *pc,
-+					   struct device_node *node)
-+{
-+	struct device_node *np;
-+
-+	/*
-+	 * Make sure gpio don't request IRQ directly to the GIC
-+	 * TODO: Find a better way to make sure we have a compatible
-+	 *       Interrupt controller here
-+	 */
-+	if (!of_get_property(node, "interrupt-parent", NULL)) {
-+		dev_dbg(pc->dev, "interrupt controller not found\n");
-+		pc->fwnode = NULL;
-+		return 0;
-+	}
-+
-+	np = of_irq_find_parent(node);
-+	if (!np) {
-+		dev_err(pc->dev, "irq parent not found\n");
-+		return -EINVAL;
-+	}
-+
-+	pc->fwnode = of_node_to_fwnode(np);
-+
-+	return 0;
-+}
-+
- static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
- 				  struct device_node *node)
- {
-@@ -643,7 +724,7 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
- 		return PTR_ERR(pc->reg_gpio);
- 	}
- 
--	return 0;
-+	return meson_pinctrl_get_irq_gpio_intc(pc, gpio_np);
- }
- 
- static int meson_pinctrl_probe(struct platform_device *pdev)
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
-index 785705996e60..4bcc4900b3eb 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.h
-+++ b/drivers/pinctrl/meson/pinctrl-meson.h
-@@ -122,6 +122,7 @@ struct meson_pinctrl {
- 	struct regmap *reg_gpio;
- 	struct gpio_chip chip;
- 	struct device_node *of_node;
-+	struct fwnode_handle *fwnode;
- };
- 
- #define PIN(x, b)	(b + x)
--- 
-2.7.4
+ * @pin_config_get: get the config of a certain pin, if the requested config
+ *      is not available on this controller this should return -ENOTSUPP
+ *      and if it is available but disabled it should return -EINVAL
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+So I think it is correct to return -ENOTSUPP here.
+
+ChenYu
