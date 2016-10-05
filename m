@@ -1,17 +1,17 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control bulk changes for v4.9
-Date: Wed, 5 Oct 2016 13:21:26 +0200
-Message-ID: <CACRpkdaZXD7HdBwGGwY9JUJSm7HKnK=S5NcZCThk=10EcbCggw@mail.gmail.com>
+Subject: [GIT PULL] GPIO bulk changes for the v4.9 cycle
+Date: Wed, 5 Oct 2016 14:27:17 +0200
+Message-ID: <CACRpkdYtH0=WKRArxOWxm86GDyEZk3Zgc+t27rhxK2_7u9U=QA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:36017 "EHLO
-        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750774AbcJELV1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Oct 2016 07:21:27 -0400
-Received: by mail-oi0-f49.google.com with SMTP id m72so96354265oik.3
-        for <linux-gpio@vger.kernel.org>; Wed, 05 Oct 2016 04:21:27 -0700 (PDT)
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:35143 "EHLO
+        mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752174AbcJEM1S (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Oct 2016 08:27:18 -0400
+Received: by mail-oi0-f50.google.com with SMTP id d132so67007800oib.2
+        for <linux-gpio@vger.kernel.org>; Wed, 05 Oct 2016 05:27:18 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Torvalds <torvalds@linux-foundation.org>
@@ -19,323 +19,393 @@ Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@v
 
 Hi Linus,
 
-this is the bulk of pin control changes for the v4.9 cycle.
-Most of the details are in the signed tag as usual.
+here are the GPIO changes for v4.9. Most of the details are
+in the signed tag but note the following about merge mechanics:
 
-Mergewise, I have pulled an immutable branch from GPIO
-in here so that the Cherryview driver can support masking off
-BIOS-used IRQs properly.
+- I created an immutable branch from this tree to the pin control tree
+  to get the new mechanism for disabling mapping of BIOS-grabbed
+  IRQ lines over to that tree. So it has already come in through the
+  pin control tree, and the SHA1 checksums should be the same
+  and resolve nicely in the merge.
 
-We touch the file drivers/base/pinctrl.c but Greg has said that
-that file is "mine" so I just merge the change in here.
+- Lee sent me two immutable branches from the MFD tree for these
+  types of drivers that add a MFD nexus and some GPIO driver.
+  He puts a lot of effort into doing this to make things smooth in
+  the merge window, the only sideffect is that you will see the MFD
+  (and related) commits in this shortlog as well.
 
-All changes have been tested in -next for some time.
+- I sent an immutable branch the other way around to MFD to get
+  the HTC EGPIO driver littering that subsystem over here to GPIO.
+
+- I fixed a header inclusion in arch/arm/mach-omap2/* as Paul G
+  was removing the <linux/module.h> include from the GPIO top
+  include file. However the file was deleted from the OMAP tree so
+  there will be a trivial conflict (delete it) there.
+
+- I have quite a few patches in the pca953x driver, and at the same
+  time some lockdep issue was being fixed in the i2c subsystem
+  affecting this driver, so Wolfram had to patch it from their end.
+  It should be another trivial conflict that was solved in -next.
 
 Please pull it in!
 
 Yours,
 Linus Walleij
 
-The following changes since commit 9395452b4aab7bc2475ef8935b4a4fb99d778d70=
+
+The following changes since commit 694d0d0bb2030d2e36df73e2d23d5770511dbc8d=
 :
 
-  Linux 4.8-rc6 (2016-09-11 20:02:25 -0700)
+  Linux 4.8-rc2 (2016-08-14 19:11:36 -0700)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.9-1
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.9-1
 
-for you to fetch changes up to 6bcf3f63394b9c4f133e4499349d786d7f531473:
+for you to fetch changes up to e0852940662362a641c059610755169e3852b873:
 
-  pinctrl: qcom: fix masking of pinmux functions (2016-10-04 00:36:20 +0200=
-)
+  gpio: add missing static inline (2016-10-03 23:38:11 +0200)
 
 ----------------------------------------------------------------
-General improvements:
+This is the bulk of GPIO changes for the v4.9 series:
 
-- Nicer debugfs output with one pin/config pair per line.
+Subsystem improvements:
 
-- Continued efforts to strictify module vs bool.
+- Do away with the last users of the obsolete Kconfig options
+  ARCH_REQUIRE_GPIOLIB and ARCH_WANT_OPTIONAL_GPIOLIB (the latter
+  always sounded like an item on a wishlist to Santa Claus to
+  me). We can now select GPIOLIB and be done with it, for all
+  archs. After some struggle it even work on UM. Not that it has
+  GPIO, but if it wants to, it can select the library.
 
-- Constification and similar from Coccinelle engineers.
+- Continued efforts to make drivers properly either tristate or
+  bool.
 
-- Return error from pinctrl_bind_pins()
+- Introduce a warning for drivers assigning default triggers to
+  their irqchip lines when probed from device tree, so we find and
+  fix these ambigous drivers. It is agreed that in the OF config
+  path, the device tree defines trigger characteristics.
 
-- Pulling in the ability to selectively disable mapping of
-  unusable IRQs from the GPIO subsystem.
+- The same warning, mutatis mutandis, for ACPI-probed GPIO
+  irqchips.
+
+- We introduce the ability to mark certain IRQ lines as "unusable"
+  as they can be taken by BIOS/firmware, unrouted in silicon and
+  generally nasty if you use them, and such things. This is
+  put to good use in the STMPE driver and also in the Cherryview
+  pin control driver.
+
+- A new "mockup" virtual GPIO device that can be used for testing.
+  The plan is to add unit tests under tools/* for exercising this
+  device and verify that the kernel code paths are working as they
+  should.
+
+- Make memory-mapped I/O-drivers depend on HAS_IOMEM. This was
+  implicit all the time, but when people started building UM
+  with allyesconfig or allmodconfig it exploded in their face.
+
+- Move some stray bits of device tree and ACPI HW description
+  callbacks down into their respective implementation silo. These
+  were causing issues when compiling on !HAS_IOMEM as well, so
+  now eventually UM compiles the GPIOLIB library if it wants to.
 
 New drivers:
 
-- New driver for the Aspeed pin controller family: AST2400 (G4)
-  and AST2500 (G5) are supported. These are used by OpenBMC
-  on the IBM Witherspoon platform.
+- New driver for the Aspeed GPIO front-end companion to the
+  pin controller merged through the pin control tree.
 
-- New subdriver for the Allwinner sunxi GR8.
+- New driver for the LP873x PMIC GPIO portions.
+
+- New driver for Technologic Systems' I2C FPGA GPIO such as
+  TS4900, TS-7970, TS-7990 and TS-4100.
+
+- New driver for the Broadcom BCM63xx series including BCM6338
+  and BCM6345.
+
+- New driver for the Intel WhiskeyCove PMIC GPIO.
+
+- New driver for the Allwinner AXP209 PMIC GPIO portions.
+
+- New driver for Diamond Systems 48 line GPIO-MM, another of
+  these port-mapped I/O expansion cards.
+
+- Support the STMicroelectronics STMPE1600 variant in the STMPE
+  driver.
 
 Driver improvements:
 
-- Drop default IRQ trigger types assigned during IRQ mapping on
-  AT91 and Nomadik. This error was identified by improvements in
-  the IRQ core by Marc Zyngier.
+- The STMPE driver now supports rising/falling edge detection
+  properly for IRQs.
 
-- Active high/low types on the GPIO IRQs for the ST pin
-  controller.
+- The PCA954x will now fetch and enable its VCC regulator properly.
 
-- IRQ support on GPIOs on the STM32 pin controller.
+- Major rework of the PCA953x driver with the goal of eventually
+  switching it over to use regmap and thus modernize it even more.
 
-- Renesas Super-H/ARM sh-pfc: continued massive developments.
+- Switch the IOP driver to use the generic MMIO GPIO library.
 
-- Misc MXC improvements.
-
-- SPDIF on the Allwiner A31 SoC
-
-- IR remote and SPI NOR flash, NAND flash, I2C pins on the
-  AMLogic SoC.
-
-- PWM pins on the Meson.
-
-- Do not map unusable IRQs (taken by BIOS) on the Intel Cherryview.
-
-- Add GPIO IRQ wakeup support to the Intel driver so we can wake up
-  from button pushes.
-
-Deprecation:
-
-- Deleted the obsolete STiH415/6 SoC support.
+- Move the ages old HTC EGPIO (extended GPIO) GPIO expander driver
+  over to this subsystem from MFD, achieveing some separation of
+  concerns.
 
 ----------------------------------------------------------------
-Agrawal, Nitesh-kumar (2):
-      pinctrl/amd: Configure GPIO register using BIOS settings
-      pinctrl/amd: switch to using a bool for level
+Alexander Shiyan (1):
+      gpio: iop: Use generic GPIO MMIO functions for driver
 
-Alexandre TORGUE (3):
-      pinctrl: Add IRQ related DT properties of STM32 pinctrl
-      pinctrl: Add IRQ support to STM32 gpios
-      pinctrl: Fix "st,syscfg" definition for STM32 pinctrl
+Amitesh Singh (2):
+      gpio: fix documentation for gpiod_unexport
+      gpio: f7188x: use gpiochip_get_data instead of container_of
 
-Andrew Jeffery (4):
-      pinctrl: dt-bindings: Add documentation for Aspeed pin controllers
-      pinctrl: Add core support for Aspeed SoCs
-      pinctrl: Add pinctrl-aspeed-g4 driver
-      pinctrl: Add pinctrl-aspeed-g5 driver
+Andrew F. Davis (2):
+      gpio: dt-bindings: remove ti,tps65086-gpio binding
+      dt-bindings: GPIO: Add TPIC2810 binding
 
-Arnd Bergmann (2):
-      pinctrl: aspeed: fix regmap error handling
-      pinctrl: stm32: add IRQ_DOMAIN_HIERARCHY dependency
+Andrew Jeffery (1):
+      gpio: dt-bindings: Add documentation for Aspeed GPIO controllers
 
-Beniamino Galvani (1):
-      pinctrl: meson: get rid of unneeded domain structures
+Arnd Bergmann (1):
+      gpio: pca954x: fix undefined error code from remove
 
-Daniel Gl=C3=B6ckner (1):
-      pinctrl: zynq: fix typo in sdio1_3_grp pin list
+Bamvor Jian Zhang (2):
+      gpio/mockup: add virtual gpio device
+      gpio: MAINTAINERS: Add an entry for GPIO mockup driver
 
-Deepak (1):
-      driver: base: pinctrl: return error from pinctrl_bind_pins()
+Bartosz Golaszewski (5):
+      gpio: pca953x: code shrink
+      gpio: pca953x: refactor pca953x_write_regs()
+      gpio: pca953x: refactor pca953x_read_regs()
+      gpio: pca953x: remove an unused variable
+      gpio: pca953x: coding style fixes
 
-Geert Uytterhoeven (1):
-      pinctrl: sh-pfc: r8a7795: Correct header from R-Car Gen3 to R8A7795
+Baruch Siach (1):
+      gpio: mrvl: dt-binding: remove orion-gpio description
 
-Jerome Brunet (3):
-      pinctrl: amlogic: gxbb: add spi nor pins
-      pinctrl: amlogic: gxbb: add nand pins
-      pinctrl: amlogic: gxbb: add i2c pins
+Bin Gao (2):
+      gpio: Add Intel WhiskeyCove PMIC GPIO driver
+      gpio: wcove-gpio: add get_direction method
 
-John Crispin (1):
-      pinctrl: qcom: fix masking of pinmux functions
+Christian Lamparter (1):
+      gpio: mmio: add brcm,bcm6345 support
 
-Julia Lawall (6):
-      pinctrl: nomadik: use of_property_read_bool
-      pinctrl: ns2: constify pinctrl_ops and pinmux_ops structures
-      pinctrl: nsp: constify pinctrl_ops and pinmux_ops structures
-      pinctrl: bcm281xx: constify pinctrl_ops and pinmux_ops structures
-      pinctrl: stm32: constify gpio_chip structures
-      pinctrl: mediatek: constify gpio_chip structures
+Colin Ian King (1):
+      gpio: pca953x: initialize ret to zero to avoid returning garbage
 
-LABBE Corentin (1):
-      pinctrl: palmas: fix a possible NULL dereference
+Joel Stanley (1):
+      gpio: Add Aspeed driver
 
-Laurent Pinchart (1):
-      pinctrl: sh-pfc: r8a7795: Add DU support
+Julia Lawall (1):
+      gpio: constify gpio_chip structures
 
-Linus Walleij (7):
-      Merge tag 'sh-pfc-for-v4.9-tag1' of
-git://git.kernel.org/.../geert/renesas-drivers into devel
-      Merge tag 'sh-pfc-for-v4.9-tag2' of
-git://git.kernel.org/.../geert/renesas-drivers into devel
-      Merge tag 'sh-pfc-for-v4.9-tag3' of
-git://git.kernel.org/.../geert/renesas-drivers into devel
-      pinctrl: nomadik: don't default-flag IRQs as falling
-      Merge branch 'gpio-irq-validmask' into devel
-      Merge tag 'v4.8-rc6' into devel
-      Merge branch 'fixes' into devel
+Keerthy (3):
+      mfd: lp873x: Add lp873x PMIC support
+      gpio: lp873x: Add support for General Purpose Outputs
+      regulator: lp873x: Change the MFD config option as per latest naming
+
+Linus Walleij (22):
+      arm64: do away with ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB
+      blackfin: do away with ARCH_REQUIRE_GPIOLIB
+      ARM: do away with final ARCH_REQUIRE_GPIOLIB
+      gpio: delete ARCH_[WANTS_OPTIONAL|REQUIRE]_GPIOLIB
+      Merge tag 'ib-mfd-gpio-v4.9' of git://git.kernel.org/.../lee/mfd
+into devel
+      Merge tag 'v4.8-rc2' into devel
+      Merge tag 'ib-mfd-gpio-regulator-v4.9' of
+git://git.kernel.org/.../lee/mfd into devel
+      gpio: aspeed: add MODULE_LICENSE()
+      Revert "gpio: pca953x: initialize ret to zero to avoid returning garb=
+age"
+      gpio: tc3589x: add .get_direction() and small cleanup
+      gpio: tc3589x: fix up complaints on unsigned
+      ARM: omap2: fix missing include
+      Merge branch 'gpio-irq-validmask' of /home/linus/linux-pinctrl into d=
+evel
+      mfd/gpio: Move HTC GPIO driver to GPIO subsystem
+      Merge branch 'ib-move-htc-egpio' into devel
+      gpio: stmpe: forbid unused lines to be mapped as IRQs
+      gpio: stmpe: use BIT() macro
+      gpio: make memory-mapped drivers depend on HAS_IOMEM
+      gpio: OF: separation of concerns
+      gpio: acpi: separation of concerns
+      gpio: OF: localize some gpiochip init functions
+      gpio: add missing static inline
+
+Lucile Quirion (2):
+      gpio: add bindings for Technologic I2C-FPGA gpio controller
+      gpio: add Technologic I2C-FPGA gpio support
 
 Marc Zyngier (1):
-      pinctrl/at91: Don't provide a default trigger type
+      gpio/gpiolib: Forbid irqchip default trigger if probed over DT
 
-Marcus Cooper (1):
-      pinctrl: sun6i: add SPDIF to pin description.
+Masahiro Yamada (1):
+      gpio: refactor gpiochip_find() slightly
 
-Martin Blumenstingl (3):
-      pinctrl: amlogic: gxbb: add the IR remote input pin
-      pinctrl: meson-gxbb: add the pins for the SDIO/sd_emmc_a controller
-      pinctrl: meson-gxbb: add the missing SDIO interrupt pin
+Maxime Ripard (2):
+      gpio: Add AXP209 GPIO driver
+      gpio: axp209: Implement get_direction
 
-Mika Westerberg (3):
+Mika Westerberg (2):
+      gpiolib: Forbid irqchip default trigger for ACPI enumerated devices
       gpiolib: Make it possible to exclude GPIOs from IRQ domain
-      pinctrl: cherryview: Do not add all southwest and north GPIOs to
-IRQ domain
-      pinctrl: cherryview: Convert to use devm_gpiochip_add_data()
 
-Milo Kim (1):
-      pinctrl: sunxi: Remove unsupported PWM channel pinmux in H3
+Nava kishore Manne (1):
+      gpio: Added zynq specific check for special pins on bank zero
 
-Myl=C3=A8ne Josserand (1):
-      pinctrl: sunxi: Add GR8 controller support
+Patrice Chotard (10):
+      mfd: stmpe: Add STMPE_IDX_SYS_CTRL/2 enum
+      mfd: stmpe: Add reset support for all STMPE variant
+      gpio: stmpe: Fix edge and rising/falling edge detection
+      gpio: stmpe: Write int status register only when needed
+      mfd: stmpe: Use generic bit mask name
+      mfd: stmpe: Rework registers access
+      gpio: stmpe: Rework registers access
+      Documentation: dt: Add stmpe1600 compatible string to STMPE MFD
+      mfd: Add STMPE1600 support
+      gpio: stmpe: Add STMPE1600 support
 
-Neil Armstrong (1):
-      pinctrl: meson-gxbb: add pins for PWM
+Paul Gortmaker (12):
+      gpio: msic: drop unused MODULE_ tags from non-modular code
+      gpio: mxc: drop unused MODULE_ tags from non-modular code
+      gpio: spear-spics: drop unused MODULE_ tags from non-modular code
+      gpio: vf610: drop unused MODULE_ tags from non-modular code
+      gpio: palmas: fix implicit assumption module.h is present
+      gpio: sx150x: fix implicit assumption module.h is present
+      gpio: ts4800: fix implicit assumption module.h is present
+      gpio: altera: fix implicit assumption module.h is present
+      gpio: ath79: fix implicit assumption module.h is present
+      gpio: loongson1: fix implicit assumption module.h is present
+      gpio: wcove: fix implicit assumption module.h is present
+      gpio: don't include module.h in shared driver header
 
-Niklas S=C3=B6derlund (1):
-      pinctrl: sh-pfc: Return pinconf with arguments in packed format
+Phil Reid (1):
+      gpio: pca954x: Add vcc regulator and enable it
 
-Nilesh Bacchewar (1):
-      pinctrl: intel: Configure GPIO chip IRQ as wakeup interrupts
+Simon Horman (1):
+      gpio: rcar: Add r8a7796 (R-Car M3-W) support
 
-Patrice Chotard (1):
-      pinctrl: st: Use second parameter to gpio specifier
+Vladimir Zapolskiy (1):
+      gpio: lpc32xx: remove unused platform data file
 
-Paul Gortmaker (6):
-      pinctrl: mediatek: make mtk-common explicitly non-modular
-      pinctrl: nomadik: make abx500 explicitly non-modular
-      pinctrl: nomadik: make core support explicitly non-modular
-      pinctrl: rockchip: make it explicitly non-modular
-      pinctrl: sirf: make atlas7 explicitly non-modular
-      pinctrl: sirf: make core support explicitly non-modular
+Wei Yongjun (5):
+      gpio: lp873x: Use devm_gpiochip_add_data() for gpio registration
+      gpio: aspeed: fix return value check in aspeed_gpio_probe()
+      gpio: tps65218: use devm_gpiochip_add_data() for gpio registration
+      gpio: loongson1: remove redundant return value check
+      gpio: aspeed: remove redundant return value check
 
-Peter Griffin (2):
-      pinctrl: st: Remove STiH415/6 SoC pinctrl driver support.
-      pinctrl: st: Remove obsolete platforms from pinctrl-st dt doc
+William Breathitt Gray (1):
+      gpio: Add GPIO support for the Diamond Systems GPIO-MM
 
-Sergei Shtylyov (9):
-      pinctrl: sh-pfc: Fix overly long lines
-      pinctrl: sh-pfc: Add R8A7792 PFC support
-      pinctrl: sh-pfc: r8a7792: Add EtherAVB pin groups
-      pinctrl: sh-pfc: r8a7792: Add SDHI pin groups
-      pinctrl: sh-pfc: r8a7792: Add CAN pin groups
-      pinctrl: sh-pfc: r8a7792: Add VIN pin groups
-      pinctrl: sh-pfc: r8a7792: Add DU pin groups
-      pinctrl: sh-pfc: r8a7792: Add QSPI pin groups
-      pinctrl: sh-pfc: r8a7792: Add MSIOF pin groups
+=C3=81lvaro Fern=C3=A1ndez Rojas (1):
+      gpio: dt-bindings: add brcm,bcm6345-gpio bindings
 
-Simon Horman (4):
-      pinctrl: sh-pfc: r8a7796: Add voltage switch operations for SDHI
-      pinctrl: sh-pfc: Add PORT_GP_24 helper macro
-      pinctrl: sh-pfc: r8a7791: Implement voltage switching for SDHI
-      pinctrl: sh-pfc: r8a7794: Implement voltage switching for SDHI
-
-Stephen Boyd (1):
-      pinctrl: qcom: Add generic ssbi and spmi GPIO/MPP bindings
-
-Sylwester Nawrocki (1):
-      pinctrl: samsung: Remove an always false dev->of_node test
-
-Takeshi Kihara (3):
-      pinctrl: sh-pfc: Initial R8A7796 PFC support
-      pinctrl: sh-pfc: r8a7796: Add SCIF pins, groups and functions
-      pinctrl: sh-pfc: r8a7796: Add SDHI pins, groups and functions
-
-Ulrich Hecht (1):
-      pinctrl: sh-pfc: r8a7795: Add bias pinconf support
-
-Vincent Stehl=C3=A9 (1):
-      pinctrl: intel: merrifield: fix dup size in probe
-
-Vladimir Zapolskiy (4):
-      pinctrl: imx: output one pin/config pair per line in pinconf-groups
-      pinctrl: imx: accept gpio request/free from pinctrl
-      gpio: mxc: shift gpio_mxc_init() to subsys_initcall level
-      gpio: mxc: add generic gpio request/free callbacks to pinctrl
-
-perr perr (1):
-      pinctrl: exynos: remove duplicate calls in irq handler
-
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |    1 +
- .../devicetree/bindings/pinctrl/pinctrl-aspeed.txt |   65 +
- .../devicetree/bindings/pinctrl/pinctrl-st.txt     |   39 +-
- .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt |    5 +-
- .../devicetree/bindings/pinctrl/qcom,pmic-mpp.txt  |    5 +-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    2 +
- .../bindings/pinctrl/st,stm32-pinctrl.txt          |    5 +
- Documentation/gpio/driver.txt                      |    6 +
- drivers/base/pinctrl.c                             |   12 +-
- drivers/gpio/gpio-mxc.c                            |    7 +-
- drivers/gpio/gpiolib.c                             |   66 +-
- drivers/pinctrl/Kconfig                            |    1 +
- drivers/pinctrl/Makefile                           |    1 +
- drivers/pinctrl/aspeed/Kconfig                     |   24 +
- drivers/pinctrl/aspeed/Makefile                    |    6 +
- drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c         | 1231 +++++++++
- drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c         |  808 ++++++
- drivers/pinctrl/aspeed/pinctrl-aspeed.c            |  498 ++++
- drivers/pinctrl/aspeed/pinctrl-aspeed.h            |  569 ++++
- drivers/pinctrl/bcm/pinctrl-bcm281xx.c             |    4 +-
- drivers/pinctrl/bcm/pinctrl-ns2-mux.c              |    4 +-
- drivers/pinctrl/bcm/pinctrl-nsp-mux.c              |    4 +-
- drivers/pinctrl/freescale/pinctrl-imx.c            |    6 +-
- drivers/pinctrl/intel/pinctrl-cherryview.c         |   55 +-
- drivers/pinctrl/intel/pinctrl-intel.c              |   33 +-
- drivers/pinctrl/intel/pinctrl-merrifield.c         |    2 +-
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c      |    7 +-
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c         |  199 +-
- drivers/pinctrl/meson/pinctrl-meson.c              |  222 +-
- drivers/pinctrl/meson/pinctrl-meson.h              |   52 +-
- drivers/pinctrl/meson/pinctrl-meson8.c             |   24 +-
- drivers/pinctrl/meson/pinctrl-meson8b.c            |   24 +-
- drivers/pinctrl/nomadik/pinctrl-abx500.c           |    8 +-
- drivers/pinctrl/nomadik/pinctrl-nomadik.c          |   13 +-
- drivers/pinctrl/pinctrl-amd.c                      |   14 +
- drivers/pinctrl/pinctrl-at91.c                     |    2 +-
- drivers/pinctrl/pinctrl-palmas.c                   |    4 +-
- drivers/pinctrl/pinctrl-rockchip.c                 |    7 +-
- drivers/pinctrl/pinctrl-st.c                       |   93 +-
- drivers/pinctrl/pinctrl-zynq.c                     |    2 +-
- drivers/pinctrl/qcom/pinctrl-msm.c                 |    2 +-
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           |    1 +
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c            |    1 +
- drivers/pinctrl/samsung/pinctrl-exynos.c           |    6 +-
- drivers/pinctrl/samsung/pinctrl-samsung.c          |   10 +-
- drivers/pinctrl/sh-pfc/Kconfig                     |   10 +
- drivers/pinctrl/sh-pfc/Makefile                    |    2 +
- drivers/pinctrl/sh-pfc/core.c                      |   12 +
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c               |   29 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c               | 2739 ++++++++++++++++=
-++++
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c               |   28 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c               |  356 ++-
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c               | 2671 ++++++++++++++++=
+ .../devicetree/bindings/gpio/brcm,bcm6345-gpio.txt |  46 ++
+ .../devicetree/bindings/gpio/gpio-aspeed.txt       |  36 ++
+ .../devicetree/bindings/gpio/gpio-axp209.txt       |  30 ++
+ .../devicetree/bindings/gpio/gpio-tpic2810.txt     |  16 +
+ .../devicetree/bindings/gpio/gpio-tps65086.txt     |  16 -
+ .../devicetree/bindings/gpio/gpio-ts4900.txt       |  30 ++
+ .../devicetree/bindings/gpio/mrvl-gpio.txt         |  23 -
+ .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |   1 +
+ Documentation/devicetree/bindings/mfd/stmpe.txt    |   2 +-
+ Documentation/gpio/board.txt                       |   6 +-
+ Documentation/gpio/driver.txt                      |   6 +
+ Documentation/gpio/gpio-legacy.txt                 |  16 +-
+ Documentation/kernel-parameters.txt                |   4 +
+ MAINTAINERS                                        |  13 +
+ arch/arm/mach-omap2/board-rx51-peripherals.c       |   1 +
+ arch/arm/mach-pxa/hx4700.c                         |   2 +-
+ arch/arm/mach-pxa/magician.c                       |   2 +-
+ arch/arm/mach-sa1100/h3xxx.c                       |   2 +-
+ arch/arm64/Kconfig                                 |   1 -
+ arch/arm64/Kconfig.platforms                       |  12 +-
+ arch/blackfin/Kconfig                              |   2 +-
+ drivers/gpio/Kconfig                               | 102 ++++-
+ drivers/gpio/Makefile                              |   8 +
+ drivers/gpio/gpio-altera.c                         |   1 +
+ drivers/gpio/gpio-arizona.c                        |   2 +-
+ drivers/gpio/gpio-aspeed.c                         | 455 +++++++++++++++++=
 +++
- drivers/pinctrl/sh-pfc/pinctrl.c                   |    8 +-
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |  113 +-
- drivers/pinctrl/sirf/pinctrl-atlas7.c              |    5 +-
- drivers/pinctrl/sirf/pinctrl-sirf.c                |   12 +-
- drivers/pinctrl/stm32/Kconfig                      |    5 +-
- drivers/pinctrl/stm32/pinctrl-stm32.c              |  165 +-
- drivers/pinctrl/sunxi/Kconfig                      |    4 +
- drivers/pinctrl/sunxi/Makefile                     |    1 +
- drivers/pinctrl/sunxi/pinctrl-gr8.c                |  541 ++++
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c          |   12 +-
- drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c           |    1 -
- include/linux/gpio/driver.h                        |    6 +
- 65 files changed, 10354 insertions(+), 516 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-aspee=
-d.txt
- create mode 100644 drivers/pinctrl/aspeed/Kconfig
- create mode 100644 drivers/pinctrl/aspeed/Makefile
- create mode 100644 drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
- create mode 100644 drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
- create mode 100644 drivers/pinctrl/aspeed/pinctrl-aspeed.c
- create mode 100644 drivers/pinctrl/aspeed/pinctrl-aspeed.h
- create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a7792.c
- create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a7796.c
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-gr8.c
+ drivers/gpio/gpio-ath79.c                          |   1 +
+ drivers/gpio/gpio-axp209.c                         | 192 +++++++++
+ drivers/gpio/gpio-bcm-kona.c                       |   2 +-
+ drivers/gpio/gpio-da9052.c                         |   2 +-
+ drivers/gpio/gpio-da9055.c                         |   2 +-
+ drivers/gpio/gpio-f7188x.c                         |   3 +-
+ drivers/gpio/gpio-gpio-mm.c                        | 267 ++++++++++++
+ drivers/{mfd/htc-egpio.c =3D> gpio/gpio-htc-egpio.c} |   2 +-
+ drivers/gpio/gpio-iop.c                            | 115 +----
+ drivers/gpio/gpio-it87.c                           |   2 +-
+ drivers/gpio/gpio-loongson1.c                      |   6 +-
+ drivers/gpio/gpio-lp873x.c                         | 183 ++++++++
+ drivers/gpio/gpio-lpc18xx.c                        |   2 +-
+ drivers/gpio/gpio-lpc32xx.c                        |  15 +-
+ drivers/gpio/gpio-mmio.c                           |   4 +
+ drivers/gpio/gpio-mockup.c                         | 214 ++++++++++
+ drivers/gpio/gpio-msic.c                           |   6 -
+ drivers/gpio/gpio-mxc.c                            |  10 +-
+ drivers/gpio/gpio-palmas.c                         |   1 -
+ drivers/gpio/gpio-pca953x.c                        | 328 +++++++-------
+ drivers/gpio/gpio-pisosr.c                         |   2 +-
+ drivers/gpio/gpio-rcar.c                           |   4 +
+ drivers/gpio/gpio-sch.c                            |   2 +-
+ drivers/gpio/gpio-spear-spics.c                    |   7 +-
+ drivers/gpio/gpio-stmpe.c                          | 204 ++++++---
+ drivers/gpio/gpio-sx150x.c                         |   2 -
+ drivers/gpio/gpio-tc3589x.c                        |  47 ++-
+ drivers/gpio/gpio-tpic2810.c                       |   2 +-
+ drivers/gpio/gpio-tps65086.c                       |   2 +-
+ drivers/gpio/gpio-tps65218.c                       |  15 +-
+ drivers/gpio/gpio-tps65912.c                       |   2 +-
+ drivers/gpio/gpio-ts4800.c                         |   1 +
+ drivers/gpio/gpio-ts4900.c                         | 190 +++++++++
+ drivers/gpio/gpio-twl4030.c                        |   2 +-
+ drivers/gpio/gpio-vf610.c                          |   7 +-
+ drivers/gpio/gpio-wcove.c                          | 470 +++++++++++++++++=
+++++
+ drivers/gpio/gpio-wm831x.c                         |   2 +-
+ drivers/gpio/gpio-wm8350.c                         |   2 +-
+ drivers/gpio/gpio-wm8994.c                         |   2 +-
+ drivers/gpio/gpio-zynq.c                           |  15 +-
+ drivers/gpio/gpiolib-acpi.c                        |  57 ++-
+ drivers/gpio/gpiolib-of.c                          |  39 ++
+ drivers/gpio/gpiolib-sysfs.c                       |   4 +-
+ drivers/gpio/gpiolib.c                             | 180 ++++----
+ drivers/gpio/gpiolib.h                             |  45 +-
+ drivers/mfd/Kconfig                                |  22 +-
+ drivers/mfd/Makefile                               |   3 +-
+ drivers/mfd/lp873x.c                               |  99 +++++
+ drivers/mfd/stmpe-i2c.c                            |   2 +
+ drivers/mfd/stmpe.c                                | 161 +++++--
+ drivers/mfd/stmpe.h                                |  85 +++-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c              |   1 -
+ drivers/regulator/Kconfig                          |   2 +-
+ include/linux/gpio/driver.h                        |   8 +-
+ include/linux/mfd/lp873x.h                         | 269 ++++++++++++
+ include/linux/mfd/stmpe.h                          |  21 +
+ include/linux/of_gpio.h                            |   5 -
+ .../htc-egpio.h =3D> platform_data/gpio-htc-egpio.h} |   0
+ include/linux/platform_data/gpio-lpc32xx.h         |  50 ---
+ 85 files changed, 3534 insertions(+), 691 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/brcm,bcm6345-gpi=
+o.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-aspeed.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-axp209.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tpic2810.tx=
+t
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65086.tx=
+t
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-ts4900.txt
+ create mode 100644 drivers/gpio/gpio-aspeed.c
+ create mode 100644 drivers/gpio/gpio-axp209.c
+ create mode 100644 drivers/gpio/gpio-gpio-mm.c
+ rename drivers/{mfd/htc-egpio.c =3D> gpio/gpio-htc-egpio.c} (99%)
+ create mode 100644 drivers/gpio/gpio-lp873x.c
+ create mode 100644 drivers/gpio/gpio-mockup.c
+ create mode 100644 drivers/gpio/gpio-ts4900.c
+ create mode 100644 drivers/gpio/gpio-wcove.c
+ create mode 100644 drivers/mfd/lp873x.c
+ create mode 100644 include/linux/mfd/lp873x.h
+ rename include/linux/{mfd/htc-egpio.h =3D> platform_data/gpio-htc-egpio.h}=
+ (100%)
+ delete mode 100644 include/linux/platform_data/gpio-lpc32xx.h
