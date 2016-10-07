@@ -1,48 +1,56 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] pinctrl: intel: Configure GPIO chip IRQ as wakeup interrupts
-Date: Fri, 7 Oct 2016 20:59:07 +0300
-Message-ID: <CAHp75Veb7YwQNGugij_QGLi7rW6ohD52eRnX-aj4-nO=stxnjA@mail.gmail.com>
+From: "Bacchewar, Nilesh" <nilesh.bacchewar@intel.com>
+Subject: RE: [PATCH] pinctrl: intel: Configure GPIO chip IRQ as wakeup
+ interrupts
+Date: Fri, 7 Oct 2016 18:17:36 +0000
+Message-ID: <EDC3C55F9AA4D042AD86F2BFE2FD250C017A8102@FMSMSX102.amr.corp.intel.com>
 References: <1474499002-76446-1-git-send-email-nilesh.bacchewar@intel.com>
+ <CAHp75Veb7YwQNGugij_QGLi7rW6ohD52eRnX-aj4-nO=stxnjA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:33179 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753624AbcJGR7J (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Oct 2016 13:59:09 -0400
-In-Reply-To: <1474499002-76446-1-git-send-email-nilesh.bacchewar@intel.com>
+Received: from mga07.intel.com ([134.134.136.100]:44604 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751121AbcJGSRi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 7 Oct 2016 14:17:38 -0400
+In-Reply-To: <CAHp75Veb7YwQNGugij_QGLi7rW6ohD52eRnX-aj4-nO=stxnjA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Nilesh Bacchewar <nilesh.bacchewar@intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Sep 22, 2016 at 2:03 AM, Nilesh Bacchewar
-<nilesh.bacchewar@intel.com> wrote:
-> On some Intel BXT platform, wake-up from suspend-to-idle on pressing
-> power-button is not working. Its noticed that gpio-keys driver marking the
-> second level IRQ/power-button as wake capable but Intel pintctrl
-> driver is missing to mark GPIO chip/controller IRQ which first level IRQ
-> as wake cable if its GPIO pin IRQ is wakeble. So, though the first level
-> IRQ gets generated on power-button press, since it is not marked as
-> wake capable resume/wake-up flow is not happening.
-> Intel pintctrl/GPIO driver need to mark GPIO chip/controller IRQ (first
-> level IRQ) as wake capable iff GPIO pin's IRQ (second level IRQ) is marked
-> as wake cable.
-
->         if (on)
-> -               gpe_en |= BIT(gpp_offset);
-> +               enable_irq_wake(pctrl->irq);
->         else
-> -               gpe_en &= ~BIT(gpp_offset);
-> -       writel(gpe_en, community->regs + GPI_GPE_EN + gpp * 4);
-> -
-> -       raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-> +               disable_irq_wake(pctrl->irq);
-
-Shouldn't be refcounting here or I missed something?
-What I think of is 2+ GPIO lines marked as wake capable IRQ sources
-and one of them is disabled earlier by some reason.
-
--- 
-With Best Regards,
-Andy Shevchenko
+SGVyZSwgSXRzIG1hcmtpbmcgIEdQSU8gY29udHJvbGxlciBJUlEgbGluZSBhcyB3YWtlIGNhcGFi
+bGUgbm90IEdQSU8gbGluZXMuDQoNClJlZ2FyZHMsDQpOaWxlc2gNCg0KLS0tLS1PcmlnaW5hbCBN
+ZXNzYWdlLS0tLS0NCkZyb206IEFuZHkgU2hldmNoZW5rbyBbbWFpbHRvOmFuZHkuc2hldmNoZW5r
+b0BnbWFpbC5jb21dIA0KU2VudDogRnJpZGF5LCBPY3RvYmVyIDcsIDIwMTYgMTA6NTkgQU0NClRv
+OiBCYWNjaGV3YXIsIE5pbGVzaCA8bmlsZXNoLmJhY2NoZXdhckBpbnRlbC5jb20+DQpDYzogTWlr
+YSBXZXN0ZXJiZXJnIDxtaWthLndlc3RlcmJlcmdAbGludXguaW50ZWwuY29tPjsgS3JvZ2VydXMs
+IEhlaWtraSA8aGVpa2tpLmtyb2dlcnVzQGxpbnV4LmludGVsLmNvbT47IExpbnVzIFdhbGxlaWog
+PGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz47IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnOyBs
+aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQpTdWJqZWN0OiBSZTogW1BBVENIXSBwaW5jdHJs
+OiBpbnRlbDogQ29uZmlndXJlIEdQSU8gY2hpcCBJUlEgYXMgd2FrZXVwIGludGVycnVwdHMNCg0K
+T24gVGh1LCBTZXAgMjIsIDIwMTYgYXQgMjowMyBBTSwgTmlsZXNoIEJhY2NoZXdhciA8bmlsZXNo
+LmJhY2NoZXdhckBpbnRlbC5jb20+IHdyb3RlOg0KPiBPbiBzb21lIEludGVsIEJYVCBwbGF0Zm9y
+bSwgd2FrZS11cCBmcm9tIHN1c3BlbmQtdG8taWRsZSBvbiBwcmVzc2luZyANCj4gcG93ZXItYnV0
+dG9uIGlzIG5vdCB3b3JraW5nLiBJdHMgbm90aWNlZCB0aGF0IGdwaW8ta2V5cyBkcml2ZXIgbWFy
+a2luZyANCj4gdGhlIHNlY29uZCBsZXZlbCBJUlEvcG93ZXItYnV0dG9uIGFzIHdha2UgY2FwYWJs
+ZSBidXQgSW50ZWwgcGludGN0cmwgDQo+IGRyaXZlciBpcyBtaXNzaW5nIHRvIG1hcmsgR1BJTyBj
+aGlwL2NvbnRyb2xsZXIgSVJRIHdoaWNoIGZpcnN0IGxldmVsIA0KPiBJUlEgYXMgd2FrZSBjYWJs
+ZSBpZiBpdHMgR1BJTyBwaW4gSVJRIGlzIHdha2VibGUuIFNvLCB0aG91Z2ggdGhlIGZpcnN0IA0K
+PiBsZXZlbCBJUlEgZ2V0cyBnZW5lcmF0ZWQgb24gcG93ZXItYnV0dG9uIHByZXNzLCBzaW5jZSBp
+dCBpcyBub3QgbWFya2VkIA0KPiBhcyB3YWtlIGNhcGFibGUgcmVzdW1lL3dha2UtdXAgZmxvdyBp
+cyBub3QgaGFwcGVuaW5nLg0KPiBJbnRlbCBwaW50Y3RybC9HUElPIGRyaXZlciBuZWVkIHRvIG1h
+cmsgR1BJTyBjaGlwL2NvbnRyb2xsZXIgSVJRIA0KPiAoZmlyc3QgbGV2ZWwgSVJRKSBhcyB3YWtl
+IGNhcGFibGUgaWZmIEdQSU8gcGluJ3MgSVJRIChzZWNvbmQgbGV2ZWwgDQo+IElSUSkgaXMgbWFy
+a2VkIGFzIHdha2UgY2FibGUuDQoNCj4gICAgICAgICBpZiAob24pDQo+IC0gICAgICAgICAgICAg
+ICBncGVfZW4gfD0gQklUKGdwcF9vZmZzZXQpOw0KPiArICAgICAgICAgICAgICAgZW5hYmxlX2ly
+cV93YWtlKHBjdHJsLT5pcnEpOw0KPiAgICAgICAgIGVsc2UNCj4gLSAgICAgICAgICAgICAgIGdw
+ZV9lbiAmPSB+QklUKGdwcF9vZmZzZXQpOw0KPiAtICAgICAgIHdyaXRlbChncGVfZW4sIGNvbW11
+bml0eS0+cmVncyArIEdQSV9HUEVfRU4gKyBncHAgKiA0KTsNCj4gLQ0KPiAtICAgICAgIHJhd19z
+cGluX3VubG9ja19pcnFyZXN0b3JlKCZwY3RybC0+bG9jaywgZmxhZ3MpOw0KPiArICAgICAgICAg
+ICAgICAgZGlzYWJsZV9pcnFfd2FrZShwY3RybC0+aXJxKTsNCg0KU2hvdWxkbid0IGJlIHJlZmNv
+dW50aW5nIGhlcmUgb3IgSSBtaXNzZWQgc29tZXRoaW5nPw0KV2hhdCBJIHRoaW5rIG9mIGlzIDIr
+IEdQSU8gbGluZXMgbWFya2VkIGFzIHdha2UgY2FwYWJsZSBJUlEgc291cmNlcyBhbmQgb25lIG9m
+IHRoZW0gaXMgZGlzYWJsZWQgZWFybGllciBieSBzb21lIHJlYXNvbi4NCg0KLS0NCldpdGggQmVz
+dCBSZWdhcmRzLA0KQW5keSBTaGV2Y2hlbmtvDQo=
