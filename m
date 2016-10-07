@@ -1,56 +1,104 @@
-From: "Bacchewar, Nilesh" <nilesh.bacchewar@intel.com>
-Subject: RE: [PATCH] pinctrl: intel: Configure GPIO chip IRQ as wakeup
- interrupts
-Date: Fri, 7 Oct 2016 18:17:36 +0000
-Message-ID: <EDC3C55F9AA4D042AD86F2BFE2FD250C017A8102@FMSMSX102.amr.corp.intel.com>
-References: <1474499002-76446-1-git-send-email-nilesh.bacchewar@intel.com>
- <CAHp75Veb7YwQNGugij_QGLi7rW6ohD52eRnX-aj4-nO=stxnjA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Subject: Re: [PATCH 0/6] Introduce Juniper CBC FPGA
+Date: Fri, 7 Oct 2016 21:53:29 +0300
+Message-ID: <DD6D31CF-54E9-4A14-A9DD-C447D10006C9@konsulko.com>
+References: <1475853614-22409-1-git-send-email-pantelis.antoniou@konsulko.com> <20161007153944.GA13519@kroah.com>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:44604 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751121AbcJGSRi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 7 Oct 2016 14:17:38 -0400
-In-Reply-To: <CAHp75Veb7YwQNGugij_QGLi7rW6ohD52eRnX-aj4-nO=stxnjA@mail.gmail.com>
-Content-Language: en-US
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:36070 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750975AbcJGSxg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Oct 2016 14:53:36 -0400
+Received: by mail-wm0-f47.google.com with SMTP id k125so48662131wma.1
+        for <linux-gpio@vger.kernel.org>; Fri, 07 Oct 2016 11:53:35 -0700 (PDT)
+In-Reply-To: <20161007153944.GA13519@kroah.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, devel@driverdev.osuosl.org, devicetree <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "<linux-kernel@vger.kernel.org>" <linux-kernel@vger.kernel.org>, JawaharBalaji Thirumalaisamy <jawaharb@juniper.net>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Debjit Ghosh <dghosh@juniper.net>, Mohammad Kamil <mkamil@juniper.net>, Georgi Vlaev <gvlaev@juniper.net>, Frank Rowand <frowand.list@gmail.com>, Guenter Roeck <linux@roeck-us.net>
 
-SGVyZSwgSXRzIG1hcmtpbmcgIEdQSU8gY29udHJvbGxlciBJUlEgbGluZSBhcyB3YWtlIGNhcGFi
-bGUgbm90IEdQSU8gbGluZXMuDQoNClJlZ2FyZHMsDQpOaWxlc2gNCg0KLS0tLS1PcmlnaW5hbCBN
-ZXNzYWdlLS0tLS0NCkZyb206IEFuZHkgU2hldmNoZW5rbyBbbWFpbHRvOmFuZHkuc2hldmNoZW5r
-b0BnbWFpbC5jb21dIA0KU2VudDogRnJpZGF5LCBPY3RvYmVyIDcsIDIwMTYgMTA6NTkgQU0NClRv
-OiBCYWNjaGV3YXIsIE5pbGVzaCA8bmlsZXNoLmJhY2NoZXdhckBpbnRlbC5jb20+DQpDYzogTWlr
-YSBXZXN0ZXJiZXJnIDxtaWthLndlc3RlcmJlcmdAbGludXguaW50ZWwuY29tPjsgS3JvZ2VydXMs
-IEhlaWtraSA8aGVpa2tpLmtyb2dlcnVzQGxpbnV4LmludGVsLmNvbT47IExpbnVzIFdhbGxlaWog
-PGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz47IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnOyBs
-aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQpTdWJqZWN0OiBSZTogW1BBVENIXSBwaW5jdHJs
-OiBpbnRlbDogQ29uZmlndXJlIEdQSU8gY2hpcCBJUlEgYXMgd2FrZXVwIGludGVycnVwdHMNCg0K
-T24gVGh1LCBTZXAgMjIsIDIwMTYgYXQgMjowMyBBTSwgTmlsZXNoIEJhY2NoZXdhciA8bmlsZXNo
-LmJhY2NoZXdhckBpbnRlbC5jb20+IHdyb3RlOg0KPiBPbiBzb21lIEludGVsIEJYVCBwbGF0Zm9y
-bSwgd2FrZS11cCBmcm9tIHN1c3BlbmQtdG8taWRsZSBvbiBwcmVzc2luZyANCj4gcG93ZXItYnV0
-dG9uIGlzIG5vdCB3b3JraW5nLiBJdHMgbm90aWNlZCB0aGF0IGdwaW8ta2V5cyBkcml2ZXIgbWFy
-a2luZyANCj4gdGhlIHNlY29uZCBsZXZlbCBJUlEvcG93ZXItYnV0dG9uIGFzIHdha2UgY2FwYWJs
-ZSBidXQgSW50ZWwgcGludGN0cmwgDQo+IGRyaXZlciBpcyBtaXNzaW5nIHRvIG1hcmsgR1BJTyBj
-aGlwL2NvbnRyb2xsZXIgSVJRIHdoaWNoIGZpcnN0IGxldmVsIA0KPiBJUlEgYXMgd2FrZSBjYWJs
-ZSBpZiBpdHMgR1BJTyBwaW4gSVJRIGlzIHdha2VibGUuIFNvLCB0aG91Z2ggdGhlIGZpcnN0IA0K
-PiBsZXZlbCBJUlEgZ2V0cyBnZW5lcmF0ZWQgb24gcG93ZXItYnV0dG9uIHByZXNzLCBzaW5jZSBp
-dCBpcyBub3QgbWFya2VkIA0KPiBhcyB3YWtlIGNhcGFibGUgcmVzdW1lL3dha2UtdXAgZmxvdyBp
-cyBub3QgaGFwcGVuaW5nLg0KPiBJbnRlbCBwaW50Y3RybC9HUElPIGRyaXZlciBuZWVkIHRvIG1h
-cmsgR1BJTyBjaGlwL2NvbnRyb2xsZXIgSVJRIA0KPiAoZmlyc3QgbGV2ZWwgSVJRKSBhcyB3YWtl
-IGNhcGFibGUgaWZmIEdQSU8gcGluJ3MgSVJRIChzZWNvbmQgbGV2ZWwgDQo+IElSUSkgaXMgbWFy
-a2VkIGFzIHdha2UgY2FibGUuDQoNCj4gICAgICAgICBpZiAob24pDQo+IC0gICAgICAgICAgICAg
-ICBncGVfZW4gfD0gQklUKGdwcF9vZmZzZXQpOw0KPiArICAgICAgICAgICAgICAgZW5hYmxlX2ly
-cV93YWtlKHBjdHJsLT5pcnEpOw0KPiAgICAgICAgIGVsc2UNCj4gLSAgICAgICAgICAgICAgIGdw
-ZV9lbiAmPSB+QklUKGdwcF9vZmZzZXQpOw0KPiAtICAgICAgIHdyaXRlbChncGVfZW4sIGNvbW11
-bml0eS0+cmVncyArIEdQSV9HUEVfRU4gKyBncHAgKiA0KTsNCj4gLQ0KPiAtICAgICAgIHJhd19z
-cGluX3VubG9ja19pcnFyZXN0b3JlKCZwY3RybC0+bG9jaywgZmxhZ3MpOw0KPiArICAgICAgICAg
-ICAgICAgZGlzYWJsZV9pcnFfd2FrZShwY3RybC0+aXJxKTsNCg0KU2hvdWxkbid0IGJlIHJlZmNv
-dW50aW5nIGhlcmUgb3IgSSBtaXNzZWQgc29tZXRoaW5nPw0KV2hhdCBJIHRoaW5rIG9mIGlzIDIr
-IEdQSU8gbGluZXMgbWFya2VkIGFzIHdha2UgY2FwYWJsZSBJUlEgc291cmNlcyBhbmQgb25lIG9m
-IHRoZW0gaXMgZGlzYWJsZWQgZWFybGllciBieSBzb21lIHJlYXNvbi4NCg0KLS0NCldpdGggQmVz
-dCBSZWdhcmRzLA0KQW5keSBTaGV2Y2hlbmtvDQo=
+Hi Greg,
+
+> On Oct 7, 2016, at 18:39 , Greg Kroah-Hartman =
+<gregkh@linuxfoundation.org> wrote:
+>=20
+> On Fri, Oct 07, 2016 at 06:20:08PM +0300, Pantelis Antoniou wrote:
+>> Add Juniper's PTX1K CBC FPGA driver. Those FPGAs
+>> are present in Juniper's PTX series of routers.
+>>=20
+>> The MFD driver provices a gpio device and a special
+>> driver for Juniper's board infrastucture.
+>> The FPGA infrastucture driver is providing an interface
+>> for user-space handling of the FPGA in those platforms.
+>>=20
+>> There are full device tree binding documents for the
+>> master mfd driver and for the slave driver.
+>>=20
+>> This patchset is against mainline as of today: v4.8-9431-g3477d16
+>> and is dependent on the "Juniper prerequisites" and
+>> "Juniper infrastructure" patchsets sent earlier.
+>>=20
+>> Georgi Vlaev (5):
+>>  mfd: Add support for the PTX1K CBC FPGA
+>>  gpio: Add support for PTX1K CBC FPGA spare GPIOs
+>>  gpio: gpio-cbc: Document bindings of CBC FPGA GPIO block
+>>  gpio: cbc-presence: Add CBC presence detect as GPIO driver
+>>  gpio: gpio-cbc-presense: Document bindings of CBC FPGA presence
+>>=20
+>> Tom Kavanagh (1):
+>>  staging: jnx: CBD-FPGA infrastructure
+>>=20
+>> .../bindings/gpio/jnx,gpio-cbc-presense.txt        |  31 +
+>> .../devicetree/bindings/gpio/jnx,gpio-cbc.txt      |  30 +
+>> drivers/gpio/Kconfig                               |  23 +
+>> drivers/gpio/Makefile                              |   2 +
+>> drivers/gpio/gpio-cbc-presence.c                   | 460 ++++++++++
+>> drivers/gpio/gpio-cbc.c                            | 236 +++++
+>> drivers/mfd/Kconfig                                |  16 +
+>> drivers/mfd/Makefile                               |   1 +
+>> drivers/mfd/cbc-core.c                             | 971 =
++++++++++++++++++++++
+>> drivers/staging/jnx/Kconfig                        |  34 +
+>> drivers/staging/jnx/Makefile                       |   5 +
+>> drivers/staging/jnx/jnx-cbc-ptx1k.c                | 242 +++++
+>> drivers/staging/jnx/jnx-cbd-fpga-common.c          | 332 +++++++
+>> drivers/staging/jnx/jnx-cbd-fpga-common.h          |  27 +
+>> drivers/staging/jnx/jnx-cbd-fpga-core.c            | 540 ++++++++++++
+>> drivers/staging/jnx/jnx-cbd-fpga-core.h            |  68 ++
+>> drivers/staging/jnx/jnx-cbd-fpga-platdata.h        |  51 ++
+>> drivers/staging/jnx/jnx-cbd-fpga-ptx1k.c           | 134 +++
+>> drivers/staging/jnx/jnx-cbd-fpga-ptx21k.c          | 143 +++
+>> drivers/staging/jnx/jnx-cbd-fpga-ptx3k.c           | 111 +++
+>> drivers/staging/jnx/jnx-cbd-fpga-ptx5k.c           | 107 +++
+>> include/linux/mfd/cbc-core.h                       | 181 ++++
+>> 22 files changed, 3745 insertions(+)
+>=20
+> Please don't mix driver submissions like this.  Staging stuff needs to
+> go to the staging maintainer, gpio to that one, mfd to that one, and =
+so
+> on.
+>=20
+> there's almost nothing anyone can do with this series as-is, sorry.
+>=20
+> please split it up.
+>=20
+
+Now I=E2=80=99m confused, this is a typical MFD submission:
+
+https://lwn.net/Articles/587032/
+
+Looks like it=E2=80=99s normal for a single patchset against multiple =
+subsystems.
+
+Do we have a definitive form for this?
+
+> thanks,
+>=20
+> greg k-h
+
+Regards
+
+=E2=80=94 Pantelis
+
