@@ -1,41 +1,48 @@
-From: Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 00/10] Introduce Juniper PTXPMB CPLD driver
-Date: Fri, 7 Oct 2016 19:17:08 -0700
-Message-ID: <57F85724.4000706@gmail.com>
-References: <1475853451-22121-1-git-send-email-pantelis.antoniou@konsulko.com>
- <57F8324C.2040804@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 3/3] dt-bindings: oxnas: Update Pinctrl and GPIO for
+ OX820 Support
+Date: Sat, 8 Oct 2016 20:29:24 -0500
+Message-ID: <20161009012924.GU18158@rob-hp-laptop>
+References: <20161004134148.23028-1-narmstrong@baylibre.com>
+ <20161004134148.23028-4-narmstrong@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <57F8324C.2040804-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>, Debjit Ghosh <dghosh-3r7Miqu9kMnR7s880joybQ@public.gmane.org>, Georgi Vlaev <gvlaev-3r7Miqu9kMnR7s880joybQ@public.gmane.org>, Guenter Roeck <groeck-3r7Miqu9kMnR7s880joybQ@public.gmane.org>, JawaharBalaji Thirumalaisamy <jawaharb-3r7Miqu9kMnR7s880joybQ@public.gmane.org>, Rajat Jain <rajatjain-3r7Miqu9kMnR7s880joybQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20161004134148.23028-4-narmstrong@baylibre.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: gnurou@gmail.com, devicetree@vger.kernel.org, linux-oxnas@lists.tuxfamily.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 10/07/16 16:39, Frank Rowand wrote:
-> On 10/07/16 08:17, Pantelis Antoniou wrote:
->> Add Juniper's PTXPMB FPGA CPLD driver. Those FPGAs
->> are present in Juniper's PTX series of routers.
->>
->> The MFD driver provices watchdog/i2c/gpio/mtd devices.
->>
->> There are full device tree binding documents for the
->> master mfd driver and for all slave drivers.
->>
->> This patchset is against mainline as of today: v4.8-9431-g3477d16
->> and is dependent on the "Juniper prerequisites" and
->> "Juniper infrastructure" patchsets sent earlier.
+On Tue, Oct 04, 2016 at 03:41:48PM +0200, Neil Armstrong wrote:
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio_oxnas.txt       | 2 +-
+>  Documentation/devicetree/bindings/pinctrl/oxnas,pinctrl.txt | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> Pointers to the patchsets please.
-> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt b/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
+> index 928ed4f..9665147 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio_oxnas.txt
+> @@ -3,7 +3,7 @@
+>  Please refer to gpio.txt for generic information regarding GPIO bindings.
+>  
+>  Required properties:
+> - - compatible: "oxsemi,ox810se-gpio"
+> + - compatible: "oxsemi,ox810se-gpio" or "oxsemi,ox820-gpio"
 
-Nevermind.  Found them.
+It is preferred to have one per line, but it's fine unless you respin 
+the series.
 
--Frank
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Rob Herring <robh@kernel.org>
