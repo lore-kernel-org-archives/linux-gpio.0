@@ -1,46 +1,33 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] pinctrl: intel: Configure GPIO chip IRQ as wakeup interrupts
-Date: Sun, 9 Oct 2016 20:06:16 +0300
-Message-ID: <CAHp75VfZ2KCJYYiwXrWx1r1LVEtaVp8_fxxUosH8B_9C3H_2ng@mail.gmail.com>
-References: <1474499002-76446-1-git-send-email-nilesh.bacchewar@intel.com>
- <CAHp75Veb7YwQNGugij_QGLi7rW6ohD52eRnX-aj4-nO=stxnjA@mail.gmail.com>
- <EDC3C55F9AA4D042AD86F2BFE2FD250C017A8102@FMSMSX102.amr.corp.intel.com>
- <CAHp75VcjwCR1W9+9wactFeGS4wEkLdU+PxbzvHXbwKK9NiBTmg@mail.gmail.com> <20161009145959.GX30800@lahna.fi.intel.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 8/8] pinctrl: aspeed-g5: Add mux configuration for all
+ pins
+Date: Sun, 9 Oct 2016 19:53:39 -0500
+Message-ID: <20161010005339.GA29854@rob-hp-laptop>
+References: <cover.115463f791b69859c5ce9dafd61a5755ea039f4b.1474986045.git-series.andrew@aj.id.au>
+ <a17175fdeaf1656afa307a180a4ab4953d4ad19c.1474986045.git-series.andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:33225 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751967AbcJIRRl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 9 Oct 2016 13:17:41 -0400
-In-Reply-To: <20161009145959.GX30800@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <a17175fdeaf1656afa307a180a4ab4953d4ad19c.1474986045.git-series.andrew@aj.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, openbmc@lists.ozlabs.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: "Bacchewar, Nilesh" <nilesh.bacchewar@intel.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sun, Oct 9, 2016 at 5:59 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Fri, Oct 07, 2016 at 10:40:42PM +0300, Andy Shevchenko wrote:
->> On Fri, Oct 7, 2016 at 9:17 PM, Bacchewar, Nilesh
->> <nilesh.bacchewar@intel.com> wrote:
->> > Here, Its marking  GPIO controller IRQ line as wake capable not GPIO lines.
->>
->> AFAIU this is called per (GPIO) pin which is IRQ enabled.
->>
->> Imagine a case when you have more than one such pin.
->>
->> 1. Set IRQ wake for pin 1
->> 2. Set IRQ wake for pin 2 (assume that is pin under the question)
->> 3. Unset IRQ wake for pin 1 (for some reason)
->> 4. Global pinctrl IRQ wake is unset. Resulting same issue as before.
->>
->> What did I miss above?
->
-> enable/disable_irq_wake() include reference count.
+On Wed, Sep 28, 2016 at 12:20:20AM +0930, Andrew Jeffery wrote:
+> The patch introducing the g5 pinctrl driver implemented a smattering of
+> pins to flesh out the implementation of the core and provide bare-bones
+> support for some OpenPOWER platforms and the AST2500 evaluation board.
+> Now, update the bindings document to reflect the complete functionality
+> and implement the necessary pin configuration tables in the driver.
+> 
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt |   17 +-
 
-Good to know. Thanks!
+Acked-by: Rob Herring <robh@kernel.org>
 
--- 
-With Best Regards,
-Andy Shevchenko
+>  drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c                   | 1476 ++++++-
+>  drivers/pinctrl/aspeed/pinctrl-aspeed.h                      |    1 +-
+>  3 files changed, 1487 insertions(+), 7 deletions(-)
