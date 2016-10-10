@@ -1,38 +1,34 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] gpio: merrifield: set default handler to be handle_bad_irq()
-Date: Mon, 10 Oct 2016 12:07:53 +0300
-Message-ID: <20161010090753.39450-1-andriy.shevchenko@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v6 1/1] USB: serial: cp210x: Adding GPIO support for CP2105
+Date: Mon, 10 Oct 2016 11:24:48 +0200
+Message-ID: <CACRpkdakQ144xCwk278f8afhBkZ-KyHTZeTrx+QqwjiLVeTHcQ@mail.gmail.com>
+References: <b77f588156e346037d7efda72f9ed1dc460b810a.1474670298.git.martyn.welch@collabora.co.uk>
+ <CACRpkdbQzigYvx61S__+=qW1+NWxDyxUyg-Tm0=8Sj42xy6EWg@mail.gmail.com> <20161007153126.GA355@hermes.home>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:44954 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751586AbcJJJH5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 10 Oct 2016 05:07:57 -0400
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:36081 "EHLO
+        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751033AbcJJJZe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Oct 2016 05:25:34 -0400
+Received: by mail-oi0-f46.google.com with SMTP id m72so120849580oik.3
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Oct 2016 02:24:49 -0700 (PDT)
+In-Reply-To: <20161007153126.GA355@hermes.home>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Martyn Welch <martyn.welch@collabora.co.uk>
+Cc: Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Karl Palsson <karlp@tweak.net.au>, Konstantin Shkolnyy <Konstantin.Shkolnyy@silabs.com>, Peter Senna Tschudin <peter.senna@collabora.com>
 
-We switch the default handler to be handle_bad_irq() instead of
-handle_simple_irq() (which was not correct anyway).
+On Fri, Oct 7, 2016 at 5:31 PM, Martyn Welch
+<martyn.welch@collabora.co.uk> wrote:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-merrifield.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> WRT this driver, I think I need to keep set_single_ended, but change .direction_input
+> to always return a failure and have .direction_output always return success to
+> avoid pins being driven in unexpected ways. Does that sould acceptable?
 
-diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-merrifield.c
-index 45b5127..82cdcdc 100644
---- a/drivers/gpio/gpio-merrifield.c
-+++ b/drivers/gpio/gpio-merrifield.c
-@@ -411,7 +411,7 @@ static int mrfld_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id
- 	}
- 
- 	retval = gpiochip_irqchip_add(&priv->chip, &mrfld_irqchip, irq_base,
--				      handle_simple_irq, IRQ_TYPE_NONE);
-+				      handle_bad_irq, IRQ_TYPE_NONE);
- 	if (retval) {
- 		dev_err(&pdev->dev, "could not connect irqchip to gpiochip\n");
- 		return retval;
--- 
-2.9.3
+I'm pretty sure it's OK, I just want you to consider and think these things
+over. Your conclusion is as good as mine. I suspect I will just ACK your
+patch when you have it working.
 
+Yours,
+Linus Walleij
