@@ -1,73 +1,64 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 10/10] mtd: ngpmb_nvram: Add bindings for Juniper's ngpmb
- NVRAM
-Date: Mon, 10 Oct 2016 13:18:46 -0500
-Message-ID: <20161010181846.GA32705@rob-hp-laptop>
-References: <1475853451-22121-1-git-send-email-pantelis.antoniou@konsulko.com>
- <1475853451-22121-11-git-send-email-pantelis.antoniou@konsulko.com>
+From: Thor Thayer <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
+Subject: Re: [PATCHv2 5/8] ARM: socfpga: dts: Add SPI Master1 for Arria10 SR
+ chip
+Date: Mon, 10 Oct 2016 14:10:34 -0500
+Message-ID: <9ed01d54-4c7e-1bfa-7f29-8feb309b9b50@opensource.altera.com>
+References: <1464889948-28793-1-git-send-email-tthayer@opensource.altera.com>
+ <1464889948-28793-6-git-send-email-tthayer@opensource.altera.com>
+Reply-To: <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1475853451-22121-11-git-send-email-pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>
+In-Reply-To: <1464889948-28793-6-git-send-email-tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>, Debjit Ghosh <dghosh-3r7Miqu9kMnR7s880joybQ@public.gmane.org>, Georgi Vlaev <gvlaev-3r7Miqu9kMnR7s880joybQ@public.gmane.org>, Guenter Roeck <groeck-3r7Miqu9kMnR7s880joybQ@public.gmane.org>, JawaharBalaji Thirumalaisamy <jawaharb-3r7Miqu9kMnR7s880joybQ@public.gmane.org>, Rajat Jain <rajatjain-3r7Miqu9kMnR7s880joybQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.orglinux
+To: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, dinguyen-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Oct 07, 2016 at 06:17:31PM +0300, Pantelis Antoniou wrote:
-> From: Georgi Vlaev <gvlaev-3r7Miqu9kMnR7s880joybQ@public.gmane.org>
-> 
-> Add device tree binging document for the ngpmb NVRAM device.
-> 
-> Signed-off-by: Georgi Vlaev <gvlaev-3r7Miqu9kMnR7s880joybQ@public.gmane.org>
-> [Ported from Juniper kernel]
-> Signed-off-by: Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>
+Hi Dihn,
+
+On 06/02/2016 12:52 PM, tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org wrote:
+> From: Thor Thayer <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
+>
+> Add the Altera Arria10 SPI Master Node in preparation for
+> the A10SR MFD node.
+>
+> Signed-off-by: Thor Thayer <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
 > ---
->  .../devicetree/bindings/mtd/ngpmb-nvram.txt        | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/ngpmb-nvram.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mtd/ngpmb-nvram.txt b/Documentation/devicetree/bindings/mtd/ngpmb-nvram.txt
-> new file mode 100644
-> index 0000000..297ad0e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/ngpmb-nvram.txt
-
-mtd is really flash. sram/ or nvmem/ are probably better choices.
-
-> @@ -0,0 +1,22 @@
-> +Non Volatile RAM device on a Juniper NG PMB FPGA
+> v2:  No change
+> ---
+>  arch/arm/boot/dts/socfpga_arria10.dtsi |   15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/socfpga_arria10.dtsi b/arch/arm/boot/dts/socfpga_arria10.dtsi
+> index 17e81dc..e7b6c4a 100644
+> --- a/arch/arm/boot/dts/socfpga_arria10.dtsi
+> +++ b/arch/arm/boot/dts/socfpga_arria10.dtsi
+> @@ -567,6 +567,21 @@
+>  			status = "disabled";
+>  		};
+>
+> +		spi1: spi@ffda5000 {
+> +			compatible = "snps,dw-apb-ssi";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0xffda5000 0x100>;
+> +			interrupts = <0 102 4>;
+> +			num-chipselect = <4>;
+> +			bus-num = <0>;
+> +			/*32bit_access;*/
+> +			tx-dma-channel = <&pdma 16>;
+> +			rx-dma-channel = <&pdma 17>;
+> +			clocks = <&spi_m_clk>;
+> +			status = "disabled";
+> +		};
 > +
-> +These devices are found in the PTX series of Juniper routers.
-> +
-> +Required properties:
-> +- compatible : must be "jnx,ngpmb-nvram"
-
-Compatible with mmio-sram?
-
-> +
-> +Optional properties:
-> +- reg : memory address for the RAM, note that this is not
-> +required since usually the device is a subdevice of the SAM MFD
-> +driver which fills in the register fields.
-> +
-> +For the rest of the properties, see mtd-physmap.txt.
-> +
-> +The device tree may optionally contain sub-nodes describing partitions of the
-> +address space. See partition.txt for more detail.
-
-sram or nvmem style partitioning is probably more appropriate.
-
-> +
-> +Example:
-> +
-> +ngpmb_nvram {
-> +	compatible = "jnx,ngpmb-nvram";
-> +};
-> -- 
-> 1.9.1
-> 
+>  		sdr: sdr@ffc25000 {
+>  			compatible = "syscon";
+>  			reg = <0xffcfb100 0x80>;
+>
+I lost track of this patch. Any comments on this patch?
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
