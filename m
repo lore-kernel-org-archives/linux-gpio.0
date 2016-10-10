@@ -1,19 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/8] pinctrl: aspeed: "Not enabled" is a significant mux state
-Date: Mon, 10 Oct 2016 09:55:02 +0200
-Message-ID: <CACRpkdY3m3cMohOApQOR_xae4Hxfdrnqp3BpizYVgQ-YTTVppg@mail.gmail.com>
+Subject: Re: [PATCH 2/8] pinctrl: aspeed-g5: Fix names of GPID2 pins
+Date: Mon, 10 Oct 2016 09:56:16 +0200
+Message-ID: <CACRpkdadqMmooefJ8v0nADQ_zgifF8M2ULeiihvhK2Hqur6LEA@mail.gmail.com>
 References: <cover.115463f791b69859c5ce9dafd61a5755ea039f4b.1474986045.git-series.andrew@aj.id.au>
- <a2fce70d4285ec2321a64a4f7145ea8a90d988b3.1474986045.git-series.andrew@aj.id.au>
+ <69eda17c16684f4212a9f3e64d9587abfcc7ae74.1474986045.git-series.andrew@aj.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:34517 "EHLO
-        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752236AbcJJHzD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Oct 2016 03:55:03 -0400
-Received: by mail-oi0-f44.google.com with SMTP id t73so3970971oie.1
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Oct 2016 00:55:03 -0700 (PDT)
-In-Reply-To: <a2fce70d4285ec2321a64a4f7145ea8a90d988b3.1474986045.git-series.andrew@aj.id.au>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:34866 "EHLO
+        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752374AbcJJH4R (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Oct 2016 03:56:17 -0400
+Received: by mail-oi0-f41.google.com with SMTP id d132so119033620oib.2
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Oct 2016 00:56:17 -0700 (PDT)
+In-Reply-To: <69eda17c16684f4212a9f3e64d9587abfcc7ae74.1474986045.git-series.andrew@aj.id.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Andrew Jeffery <andrew@aj.id.au>
@@ -21,52 +21,11 @@ Cc: Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>, Rob Herr
 
 On Tue, Sep 27, 2016 at 4:50 PM, Andrew Jeffery <andrew@aj.id.au> wrote:
 
-> Consider a scenario with one pin P that has two signals A and B, where A
-> is defined to be higher priority than B: That is, if the mux IP is in a
-> state that would consider both A and B to be active on P, then A will be
-> the active signal.
+> Fixes simple typos in the initial commit. There is no behavioural
+> change.
 >
-> To instead configure B as the active signal we must configure the mux so
-> that A is inactive. The mux state for signals can be described by
-> logical operations on one or more bits from one or more registers (a
-> "signal expression"), which in some cases leads to aliased mux states for
-> a particular signal. Further, signals described by multi-bit bitfields
-> often do not only need to record the states that would make them active
-> (the "enable" expressions), but also the states that makes them inactive
-> (the "disable" expressions). All of this combined leads to four possible
-> states for a signal:
->
->          1. A signal is active with respect to an "enable" expression
->          2. A signal is not active with respect to an "enable" expression
->          3. A signal is inactive with respect to a "disable" expression
->          4. A signal is not inactive with respect to a "disable" expression
->
-> In the case of P, if we are looking to activate B without explicitly
-> having configured A it's enough to consider A inactive if all of A's
-> "enable" signal expressions evaluate to "not active". If any evaluate to
-> "active" then the corresponding "disable" states must be applied so it
-> becomes inactive.
->
-> For example, on the AST2400 the pins composing GPIO bank H provide
-> signals ROMD8 through ROMD15 (high priority) and those for UART6 (low
-> priority). The mux states for ROMD8 through ROMD15 are aliased, i.e.
-> there are two mux states that result in the respective signals being
-> configured:
->
->          A. SCU90[6]=1
->          B. Strap[4,1:0]=100
->
-> Further, the second mux state is a 3-bit bitfield that explicitly
-> defines the enabled state but the disabled state is implicit, i.e. if
-> Strap[4,1:0] is not exactly "100" then ROMD8 through ROMD15 are not
-> considered active. This requires the mux function evaluation logic to
-> use approach 2. above, however the existing code was using approach 3.
-> The problem was brought to light on the Palmetto machines where the
-> strap register value is 0x120ce416, and prevented GPIO requests in bank
-> H from succeeding despite the hardware being in a position to allow
-> them.
->
-> Fixes: 318398c09a8d ("pinctrl: Add core pinctrl support for Aspeed SoCs")
+> Fixes: 56e57cb6c07f (pinctrl: Add pinctrl-aspeed-g5 driver)
+> Reported-by: Xo Wang <xow@google.com>
 > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 
 Patch applied for fixes.
