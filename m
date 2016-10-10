@@ -1,66 +1,38 @@
-From: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 10/10] net: mdio-sam: Add device tree documentation for
- SAM MDIO
-Date: Mon, 10 Oct 2016 01:50:07 -0700
-Message-ID: <1b764238-1094-dcbc-1176-fdc845781c31@gmail.com>
-References: <1475853518-22264-1-git-send-email-pantelis.antoniou@konsulko.com>
- <1475853518-22264-11-git-send-email-pantelis.antoniou@konsulko.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1475853518-22264-11-git-send-email-pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>, Debjit Ghosh <dghosh-3r7Miqu9kMnR7s880joybQ@public.gmane.org>, Georgi Vlaev <gvlaev-3r7Miqu9kMnR7s880joybQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Maryam Seraj <mseraj-3r7Miqu9kMnR7s880joybQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] gpio: merrifield: set default handler to be handle_bad_irq()
+Date: Mon, 10 Oct 2016 12:07:53 +0300
+Message-ID: <20161010090753.39450-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:44954 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751586AbcJJJH5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 10 Oct 2016 05:07:57 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
+We switch the default handler to be handle_bad_irq() instead of
+handle_simple_irq() (which was not correct anyway).
 
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-merrifield.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 10/07/2016 08:18 AM, Pantelis Antoniou wrote:
-> From: Georgi Vlaev <gvlaev-3r7Miqu9kMnR7s880joybQ@public.gmane.org>
-> 
-> Add device tree bindings document for the SAM MDIO block
-> present in Juniper's SAM FPGA.
-> 
-> Signed-off-by: Georgi Vlaev <gvlaev-3r7Miqu9kMnR7s880joybQ@public.gmane.org>
-> [Ported from Juniper kernel]
-> Signed-off-by: Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>
-> ---
->  Documentation/devicetree/bindings/net/mdio-sam.txt | 48 ++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/mdio-sam.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/net/mdio-sam.txt b/Documentation/devicetree/bindings/net/mdio-sam.txt
-> new file mode 100644
-> index 0000000..7d354e0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/mdio-sam.txt
-> @@ -0,0 +1,48 @@
-> +Juniper SAM FPGA MFD MDIO bus properties.
-> +
-> +Required properties:
-> +- compatible : "jnx,mdio-sam"
-> +- reg : The start offset of the MDIO bus range
-> +- #address-cells = <1>;
-> +- #size-cells = <0>;
-> +
-> +Optional properties:
-> +
-> +Required properties for child nodes:
-> +- #address-cells = <1>;
-> +- #size-cells = <0>;
-> +- reg : The MDIO bus offset within the MDIO range.
-
-I would just refer to Documentation/devicetree/bindings/net/phy.txt for
-the child node properties.
-
-Other than that:
-
-Reviewed-by: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-merrifield.c
+index 45b5127..82cdcdc 100644
+--- a/drivers/gpio/gpio-merrifield.c
++++ b/drivers/gpio/gpio-merrifield.c
+@@ -411,7 +411,7 @@ static int mrfld_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id
+ 	}
+ 
+ 	retval = gpiochip_irqchip_add(&priv->chip, &mrfld_irqchip, irq_base,
+-				      handle_simple_irq, IRQ_TYPE_NONE);
++				      handle_bad_irq, IRQ_TYPE_NONE);
+ 	if (retval) {
+ 		dev_err(&pdev->dev, "could not connect irqchip to gpiochip\n");
+ 		return retval;
 -- 
-Florian
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.9.3
+
