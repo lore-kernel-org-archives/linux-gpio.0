@@ -1,47 +1,37 @@
-From: Dinh Nguyen <dinguyen@opensource.altera.com>
-Subject: Re: [PATCHv2 5/8] ARM: socfpga: dts: Add SPI Master1 for Arria10 SR
- chip
-Date: Mon, 10 Oct 2016 16:54:39 -0500
-Message-ID: <alpine.DEB.2.02.1610101653260.23008@linux-builds1>
-References: <1464889948-28793-1-git-send-email-tthayer@opensource.altera.com> <1464889948-28793-6-git-send-email-tthayer@opensource.altera.com> <9ed01d54-4c7e-1bfa-7f29-8feb309b9b50@opensource.altera.com>
+From: Dinh Nguyen <dinguyen-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
+Subject: Re: [PATCHv2 8/8] ARM: socfpga: dts: Add LED framework to A10-SR
+ GPIO
+Date: Mon, 10 Oct 2016 17:02:17 -0500
+Message-ID: <alpine.DEB.2.02.1610101701460.23008@linux-builds1>
+References: <1464889948-28793-1-git-send-email-tthayer@opensource.altera.com> <1464889948-28793-9-git-send-email-tthayer@opensource.altera.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="US-ASCII"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-sn1nam01on0064.outbound.protection.outlook.com ([104.47.32.64]:6329
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752352AbcJJXaE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 10 Oct 2016 19:30:04 -0400
-In-Reply-To: <9ed01d54-4c7e-1bfa-7f29-8feb309b9b50@opensource.altera.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1464889948-28793-9-git-send-email-tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thor Thayer <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
+Cc: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thor Thayer <tthayer@opensource.altera.com>
-Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-On Mon, 10 Oct 2016, Thor Thayer wrote:
+On Thu, 2 Jun 2016, tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org wrote:
 
-> Hi Dihn,
+> From: Thor Thayer <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
 > 
-> On 06/02/2016 12:52 PM, tthayer@opensource.altera.com wrote:
-> > From: Thor Thayer <tthayer@opensource.altera.com>
-> > 
-> > Add the Altera Arria10 SPI Master Node in preparation for
-> > the A10SR MFD node.
-> > 
-> > Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
-> > ---
-> > v2:  No change
-> > ---
-> >  arch/arm/boot/dts/socfpga_arria10.dtsi |   15 +++++++++++++++
-> >  1 file changed, 15 insertions(+)
-> > 
-> > 
-> I lost track of this patch. Any comments on this patch?
+> Add the LED framework to the Arria10 System Resource chip GPIO hooks.
 > 
-
-Sorry about that, I missed it too.
+> Signed-off-by: Thor Thayer <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
+> ---
+> v2  No change
+> ---
+>  arch/arm/boot/dts/socfpga_arria10_socdk.dtsi |   24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>
 
 Applied.
-
+ 
 BR,
 Dinh
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
