@@ -1,132 +1,108 @@
-From: <Mario.Limonciello@dell.com>
-Subject: RE: [PATCH] pinctrl: intel: Only restore pins that are used by the
- driver
-Date: Mon, 10 Oct 2016 14:37:19 +0000
-Message-ID: <0e3bf0b8c82d4c3ca6d753abfd1063bf@ausx13mpc124.AMER.DELL.COM>
-References: <CAFv23Q=_wSqhBE9ni9YmtxyEKFSENLYZ512Ent9iyWd7hv3gYg@mail.gmail.com>
- <20161010133931.88055-1-mika.westerberg@linux.intel.com>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH 10/10] net: mdio-sam: Add device tree documentation for
+ SAM MDIO
+Date: Mon, 10 Oct 2016 16:53:09 +0200
+Message-ID: <aad9e8eb-2c15-3c83-067a-e76e0bc73e44@axentia.se>
+References: <1475853518-22264-1-git-send-email-pantelis.antoniou@konsulko.com>
+ <1475853518-22264-11-git-send-email-pantelis.antoniou@konsulko.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from esa8.dell-outbound.iphmx.com ([68.232.149.218]:40359 "EHLO
-        esa8.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752119AbcJJOqx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 10 Oct 2016 10:46:53 -0400
-In-Reply-To: <20161010133931.88055-1-mika.westerberg@linux.intel.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+In-Reply-To: <1475853518-22264-11-git-send-email-pantelis.antoniou@konsulko.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Lee Jones <lee.jones@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, linux-watchdog@vger.kernel.org, Georgi Vlaev <gvlaev@juniper.net>, Wolfram Sang <wsa@the-dreams.de>, Maryam Seraj <mseraj@juniper.net>, David Woodhouse <dwmw2@infradead.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, Rob Herring <robh+dt@kernel.org>, linux-mtd@lists.infradead.org, Debjit Ghosh <dghosh@juniper.net>, netdev@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, Frank Rowand <frowand.list@gmail.com>, Guenter Roeck <linux@roeck-us.net>, linux-i2c@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: mika.westerberg@linux.intel.com, linus.walleij@linaro.org
-Cc: heikki.krogerus@linux.intel.com, acelan.kao@canonical.com, linux.cj@gmail.com, Jared.Dominguez@dell.com, linux-gpio@vger.kernel.org
 
-> Dell XPS 13 (and maybe some others) uses a GPIO (CPU_GP_1) during
-> suspend
-> to explicitly disable USB touchscreen interrupt. This is done to prevent
-> situation where the lid is closed the touchscreen is left functional.
->=20
-> The pinctrl driver (wrongly) assumes it owns all pins which are owned by
-> host and not locked down. It is perfectly fine for BIOS to use those pins
-> as it is also considered as host in this context.
->=20
-> What happens is that when the lid of Dell XPS 13 is closed, the BIOS
-> configures CPU_GP_1 low disabling the touchscreen interrupt. During
-> resume
-> we restore all host owned pins to the known state which includes CPU_GP_1
-> and this overwrites what the BIOS has programmed there causing the
-> touchscreen to fail as no interrupts are reaching the CPU anymore.
->=20
-> Fix this by restoring only those pins we know are explicitly requested by
-> the kernel one way or other.
->=20
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D176361
-> Reported-by: AceLan Kao <acelan.kao@canonical.com>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+On 2016-10-07 17:18, Pantelis Antoniou wrote:
+> From: Georgi Vlaev <gvlaev@juniper.net>
+> 
+> Add device tree bindings document for the SAM MDIO block
+> present in Juniper's SAM FPGA.
+> 
+> Signed-off-by: Georgi Vlaev <gvlaev@juniper.net>
+> [Ported from Juniper kernel]
+> Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
 > ---
-> AceLan,
->=20
-> Can you try this one as well? It should do prevent the driver from messin=
-g
-> the pins used by the BIOS.
->=20
->  drivers/pinctrl/intel/pinctrl-intel.c | 25 +++++++++++++++++++++++--
->  1 file changed, 23 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/inte=
-l/pinctrl-
-> intel.c
-> index 257cab129692..2b5b20bf7d99 100644
-> --- a/drivers/pinctrl/intel/pinctrl-intel.c
-> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-> @@ -19,6 +19,7 @@
->  #include <linux/pinctrl/pinconf.h>
->  #include <linux/pinctrl/pinconf-generic.h>
->=20
-> +#include "../core.h"
->  #include "pinctrl-intel.h"
->=20
->  /* Offset from regs */
-> @@ -1079,6 +1080,26 @@ int intel_pinctrl_remove(struct platform_device
-> *pdev)
->  EXPORT_SYMBOL_GPL(intel_pinctrl_remove);
->=20
->  #ifdef CONFIG_PM_SLEEP
-> +static bool intel_pinctrl_should_save(struct intel_pinctrl *pctrl, unsig=
-ned
-> pin)
-> +{
-> +	const struct pin_desc *pd =3D pin_desc_get(pctrl->pctldev, pin);
+>  Documentation/devicetree/bindings/net/mdio-sam.txt | 48 ++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/mdio-sam.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/net/mdio-sam.txt b/Documentation/devicetree/bindings/net/mdio-sam.txt
+> new file mode 100644
+> index 0000000..7d354e0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/mdio-sam.txt
+> @@ -0,0 +1,48 @@
+> +Juniper SAM FPGA MFD MDIO bus properties.
 > +
-> +	if (!pd || !intel_pad_usable(pctrl, pin))
-> +		return false;
+> +Required properties:
+> +- compatible : "jnx,mdio-sam"
+> +- reg : The start offset of the MDIO bus range
+> +- #address-cells = <1>;
+> +- #size-cells = <0>;
 > +
-> +	/*
-> +	 * Only restore the pin if it is actually in use by the kernel (or
-> +	 * by userspace). It is possible that some pins are used by the
-> +	 * BIOS during resume and those are not always locked down so
-> leave
-> +	 * them alone.
-> +	 */
-> +	if (pd->mux_owner || pd->gpio_owner ||
-> +	    gpiochip_line_is_irq(&pctrl->chip, pin))
-> +		return true;
+> +Optional properties:
 > +
-> +	return false;
-> +}
+> +Required properties for child nodes:
+> +- #address-cells = <1>;
+> +- #size-cells = <0>;
+> +- reg : The MDIO bus offset within the MDIO range.
 > +
->  int intel_pinctrl_suspend(struct device *dev)
->  {
->  	struct platform_device *pdev =3D to_platform_device(dev);
-> @@ -1092,7 +1113,7 @@ int intel_pinctrl_suspend(struct device *dev)
->  		const struct pinctrl_pin_desc *desc =3D &pctrl->soc->pins[i];
->  		u32 val;
->=20
-> -		if (!intel_pad_usable(pctrl, desc->number))
-> +		if (!intel_pinctrl_should_save(pctrl, desc->number))
->  			continue;
->=20
->  		val =3D readl(intel_get_padcfg(pctrl, desc->number,
-> PADCFG0));
-> @@ -1153,7 +1174,7 @@ int intel_pinctrl_resume(struct device *dev)
->  		void __iomem *padcfg;
->  		u32 val;
->=20
-> -		if (!intel_pad_usable(pctrl, desc->number))
-> +		if (!intel_pinctrl_should_save(pctrl, desc->number))
->  			continue;
->=20
->  		padcfg =3D intel_get_padcfg(pctrl, desc->number, PADCFG0);
-> --
-> 2.9.3
+> +
+> +Example :
+> +
+> +	sam@10 {
+> +		compatible = "jnx,sam";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		mdio-sam@10 {
 
-Mika,
+This should be mdio-sam@40000, OR ...
 
-After positive comments in this working properly and is accepted, would you=
-=20
-consider submitting back to @stable as well?  It affects all kernel version=
-s=20
-that carry intel pinctrl (IIRC back to 4.1?)
+> +			compatible = "jnx,mdio-sam";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0x40000>;
 
-Thanks,
+... this should be reg = <0x10>. AFAIK.
 
+Cheers,
+Peter
+
+> +
+> +			mdio0: mdio-sam@0 {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +				reg = <0x0>;
+> +			};
+> +
+> +			mdio1: mdio-sam@4000 {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +				reg = <0x4000>;
+> +			};
+> +
+> +			mdio2: mdio-sam@8000 {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +				reg = <0x8000>;
+> +			};
+> +		};
+> +	};
+> 
+
+
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
