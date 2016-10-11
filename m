@@ -1,73 +1,136 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH] regulator/overview.txt: Use ".." for ranges, instead of "->"
-Date: Tue, 11 Oct 2016 09:32:54 +0200
-Message-ID: <20161011073254.GA19702@amd>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH 06/10] i2c: i2c-mux-ptxpmb-cpld: Add device tree bindings
+Date: Tue, 11 Oct 2016 09:36:55 +0200
+Message-ID: <8a2c459d-0ead-86f1-8633-eb483fe33281@axentia.se>
+References: <1475853451-22121-1-git-send-email-pantelis.antoniou@konsulko.com>
+ <1475853451-22121-7-git-send-email-pantelis.antoniou@konsulko.com>
+ <20161010174517.GA18097@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39299 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751288AbcJKHc5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Oct 2016 03:32:57 -0400
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+In-Reply-To: <20161010174517.GA18097@rob-hp-laptop>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: Rob Herring <robh@kernel.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Georgi Vlaev <gvlaev@juniper.net>, linux-watchdog@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Guenter Roeck <groeck@juniper.net>, linux-kernel@vger.kernel.org, JawaharBalaji Thirumalaisamy <jawaharb@juniper.net>, linux-gpio@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, linux-mtd@lists.infradead.org, Debjit Ghosh <dghosh@juniper.net>, Rajat Jain <rajatjain@juniper.net>, Brian Norris <computersforpeace@gmail.com>, Lee Jones <lee.jones@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Guenter Roeck <linux@roeck-us.net>, linux-i2c@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, corbet@lwn.net, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@osdl.org>, lgirdwood@gmail.com, broonie@kernel.org
+
+On 2016-10-10 19:45, Rob Herring wrote:
+> On Fri, Oct 07, 2016 at 06:17:27PM +0300, Pantelis Antoniou wrote:
+>> From: Georgi Vlaev <gvlaev@juniper.net>
+>>
+>> Add binding document for the i2c driver of PTXPMB CPLD.
+>>
+>> Signed-off-by: Georgi Vlaev <gvlaev@juniper.net>
+>> [Ported from Juniper kernel]
+>> Signed-off-by: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+>> ---
+>>  .../bindings/i2c/jnx,i2c-mux-ptxpmb-cpld.txt       | 50 ++++++++++++++++++++++
+>>  1 file changed, 50 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/i2c/jnx,i2c-mux-ptxpmb-cpld.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/i2c/jnx,i2c-mux-ptxpmb-cpld.txt b/Documentation/devicetree/bindings/i2c/jnx,i2c-mux-ptxpmb-cpld.txt
+>> new file mode 100644
+>> index 0000000..3b201f7
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/i2c/jnx,i2c-mux-ptxpmb-cpld.txt
+>> @@ -0,0 +1,50 @@
+>> +* Juniper PTXPMB CPLD I2C Mux
+>> +
+>> +I2C mux on the PTXPMB CPLD on Juniper series of routers.
+>> +
+>> +Required properties:
+>> +
+>> +  - compatible: Must contain one of the following.
+>> +    "jnx,i2c-mux-ptxpmb-cpld", "jnx,i2c-mux-ngpmb-bcpld"
+>> +  - num-enable: Number of muxes to enable.
+> 
+> No. Use status property.
+
+Reading the code, I understand this mux to be like a combination of
+i2c switches (like pca9548) where the slave i2c busses can be
+enabled individually using an "enable" bitmask in one register, and
+"regular" i2c muxes (like pca9547) where you can only select one
+slave i2c bus at a time using an enumeration.
+
+num-enable would be the number of switches and num-channels would be
+the number of muxes per switch channel. Or the other way around? This
+is a real problem. The bindings are too tightly coupled to the way
+Linux currently handles i2c switches (i.e. not very well, you can only
+select one slave bus on an i2c switch, thus reducing the more
+flexible switch hardware to a regular mux). The bindings should not
+describe what the driver does, they should describe the hardware.
+
+Basically, you need to describe the i2c topology of the hardware in
+the bindings, because I'm just guessing all this, and I shouldn't
+have to.
+
+Cheers,
+Peter
+
+>> +
+>> +  The following required properties are defined externally:
+>> +
+>> +  - Standard I2C mux properties. See i2c-mux.txt in this directory.
+>> +  - I2C child bus nodes. See i2c-mux.txt in this directory.
+>> +
+>> +Optional Properties:
+>> +
+>> +  - num-channels: Number of channels. If not present the default is 8.
+> 
+> What's a channel?
+> 
+>> +  - base-bus-num: Base bus number. If not present it is 0.
+> 
+> No. Linuxism and why do you care?
+> 
+>> +  - use-force: Use the force method of the controller.
+>> +
+>> +
+>> +Example:
+>> +
+>> +cpld-i2c-mux {
+> 
+> mux {
+> 
+>> +	compatible = "jnx,i2c-mux-ptxpmb-cpld";
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +
+>> +	i2c-parent = <&i2c1>;
+>> +
+>> +	num-enable = <1>;
+>> +
+>> +	i2c@0 {
+>> +		reg = <0>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		/* PMB devices are accessed through FPC */
+>> +
+>> +		temp-sensor@1a { /* FPC */
+>> +			compatible = "maxim,max6697";
+>> +			reg = <0x1a>;
+>> +			smbus-timeout-disable;
+>> +			resistance-cancellation;
+>> +			alert-mask = <0xff>;
+>> +			over-temperature-mask = <0xff>;
+>> +		};
+>> +	};
+>> +};
+>> -- 
+>> 1.9.1
+>>
 
 
---VS++wcV0S1rZb1Fb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Using "->" to indicate range is not too common, switch to ".."
-
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-
---- a/Documentation/power/regulator/overview.txt
-+++ b/Documentation/power/regulator/overview.txt
-@@ -90,7 +90,7 @@ Some terms used in this document:-
-                    operating parameters and is specified in the regulator
-                    datasheet. i.e.
-=20
--                     - voltage output is in the range 800mV -> 3500mV.
-+                     - voltage output is in the range 800mV .. 3500mV.
-                      - regulator current output limit is 20mA @ 5V but is
-                        10mA @ 10V.
-=20
-@@ -99,8 +99,8 @@ Some terms used in this document:-
-                    power domain to a particular power range. i.e.
-=20
-                      - Domain-1 voltage is 3300mV
--                     - Domain-2 voltage is 1400mV -> 1600mV
--                     - Domain-3 current limit is 0mA -> 20mA.
-+                     - Domain-2 voltage is 1400mV .. 1600mV
-+                     - Domain-3 current limit is 0mA .. 20mA.
-=20
-                    Consumer Level: This is defined by consumer drivers
-                    dynamically setting voltage or current limit levels.
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---VS++wcV0S1rZb1Fb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlf8laYACgkQMOfwapXb+vKchgCfesNDxFvv8GcmNJH8/u5bw8Qa
-t0gAoIdCl3q64vzS9ihx3LATEWHuaMBA
-=KCG8
------END PGP SIGNATURE-----
-
---VS++wcV0S1rZb1Fb--
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
