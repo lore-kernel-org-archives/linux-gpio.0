@@ -1,122 +1,48 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 5/9] pinctrl: sunxi: Support generic binding
-Date: Tue, 11 Oct 2016 17:46:03 +0200
-Message-ID: <1b0c33c875ca715c65eea2f4689ccf44233ea64b.1476200742.git-series.maxime.ripard@free-electrons.com>
-References: <cover.7edc6c25be8a5e2efdda6a82e102dbf7ece6aa64.1476200742.git-series.maxime.ripard@free-electrons.com>
+From: Leo Li <pku.leo@gmail.com>
+Subject: pca953x interrupt missing
+Date: Tue, 11 Oct 2016 17:54:57 -0500
+Message-ID: <CADRPPNQ3J3xT6zTTztRBuM0TRN54V=WB4bCwmSavKvTo_gC-oQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:39669 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752666AbcJKPqa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Oct 2016 11:46:30 -0400
-In-Reply-To: <cover.7edc6c25be8a5e2efdda6a82e102dbf7ece6aa64.1476200742.git-series.maxime.ripard@free-electrons.com>
-In-Reply-To: <cover.7edc6c25be8a5e2efdda6a82e102dbf7ece6aa64.1476200742.git-series.maxime.ripard@free-electrons.com>
-References: <cover.7edc6c25be8a5e2efdda6a82e102dbf7ece6aa64.1476200742.git-series.maxime.ripard@free-electrons.com>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:36462 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752789AbcJKWzr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Oct 2016 18:55:47 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Marc Zyngier <maz@misterjones.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>
 
-Our bindings are mostly irrelevant now that we have generic pinctrl
-bindings that cover exactly the same uses cases.
+Hi Marc,
 
-Add support for the new ones, and obviously keep our old binding support in
-order to keep the ABI stable.
+You added the edge interrupt support to the pca953x driver with commit
+(89ea8bbe9c). But recently I'm getting interrupt missing problem when
+using the pca9555 as an interrupt controller.  After some research of
+the PCA9555 data sheet, it seems to me that the hardware is not
+capable of catching all edge changes without missing interrupt except
+for the PCAL9555a variant with the latching support.  Quoted from the
+pca9555 data sheet:
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 48 ++++++++++++++++++++++++++--
- 1 file changed, 46 insertions(+), 2 deletions(-)
+"The open-drain interrupt output is activated when one of the port
+pins changes state and
+the pin is configured as an input. The interrupt is deactivated when
+the input returns to its
+previous state or the Input Port register is read."
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 2ee8d48ed5d3..71b78566e871 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -150,18 +150,33 @@ static int sunxi_pctrl_get_group_pins(struct pinctrl_dev *pctldev,
- 
- static bool sunxi_pctrl_has_bias_prop(struct device_node *node)
- {
--	return of_find_property(node, "allwinner,pull", NULL);
-+	return of_find_property(node, "bias-pull-up", NULL) ||
-+		of_find_property(node, "bias-pull-down", NULL) ||
-+		of_find_property(node, "bias-disable", NULL) ||
-+		of_find_property(node, "allwinner,pull", NULL);
- }
- 
- static bool sunxi_pctrl_has_drive_prop(struct device_node *node)
- {
--	return of_find_property(node, "allwinner,drive", NULL);
-+	return of_find_property(node, "drive-strength", NULL) ||
-+		of_find_property(node, "allwinner,drive", NULL);
- }
- 
- static int sunxi_pctrl_parse_bias_prop(struct device_node *node)
- {
- 	u32 val;
- 
-+	/* Try the new style binding */
-+	if (of_find_property(node, "bias-pull-up", NULL))
-+		return PIN_CONFIG_BIAS_PULL_UP;
-+
-+	if (of_find_property(node, "bias-pull-down", NULL))
-+		return PIN_CONFIG_BIAS_PULL_DOWN;
-+
-+	if (of_find_property(node, "bias-disable", NULL))
-+		return PIN_CONFIG_BIAS_DISABLE;
-+
-+	/* And fall back to the old binding */
- 	if (of_property_read_u32(node, "allwinner,pull", &val))
- 		return -EINVAL;
- 
-@@ -181,6 +196,21 @@ static int sunxi_pctrl_parse_drive_prop(struct device_node *node)
- {
- 	u32 val;
- 
-+	/* Try the new style binding */
-+	if (!of_property_read_u32(node, "drive-strength", &val)) {
-+		/* We can't go below 10mA ... */
-+		if (val < 10)
-+			return -EINVAL;
-+
-+		/* ... and only up to 40 mA ... */
-+		if (val > 40)
-+			val = 40;
-+
-+		/* by steps of 10 mA */
-+		return rounddown(val, 10);
-+	}
-+
-+	/* And then fall back to the old binding */
- 	if (of_property_read_u32(node, "allwinner,drive", &val))
- 		return -EINVAL;
- 
-@@ -192,6 +222,12 @@ static const char *sunxi_pctrl_parse_function_prop(struct device_node *node)
- 	const char *function;
- 	int ret;
- 
-+	/* Try the generic binding */
-+	ret = of_property_read_string(node, "function", &function);
-+	if (!ret)
-+		return function;
-+
-+	/* And fall back to our legacy one */
- 	ret = of_property_read_string(node, "allwinner,function", &function);
- 	if (!ret)
- 		return function;
-@@ -204,6 +240,14 @@ static const char *sunxi_pctrl_find_pins_prop(struct device_node *node,
- {
- 	int count;
- 
-+	/* Try the generic binding */
-+	count = of_property_count_strings(node, "pins");
-+	if (count > 0) {
-+		*npins = count;
-+		return "pins";
-+	}
-+
-+	/* And fall back to our legacy one */
- 	count = of_property_count_strings(node, "allwinner,pins");
- 	if (count > 0) {
- 		*npins = count;
--- 
-git-series 0.8.10
+There is no latch register to record which pin has just changed.  So
+if one of the input pin changes two times quickly before the read of
+the Input Port register which is even more likely to happen as the
+interrupt handling is delayed to work queue, we can not figure out
+which pin has just changed by reading the Input Port register and
+invoke the correct interrupt service routine.  However, I think it
+would be possible to support level-sensitive interrupt input, as we
+can get the current level through the Input Port register and figure
+out which interrupt service routine to invoke.
+
+I think we should remove the support for edge based interrupts for the
+chips without the latching capability and add level based interrupt
+support.  I'd like to have your thought on this.
+
+Regards,
+Leo
