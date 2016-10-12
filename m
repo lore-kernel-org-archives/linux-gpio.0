@@ -1,69 +1,143 @@
-From: AceLan Kao <acelan.kao@canonical.com>
-Subject: Re: [PATCH] pinctrl: intel: Only restore pins that are used by the driver
-Date: Wed, 12 Oct 2016 09:35:57 +0800
-Message-ID: <CAFv23Qkv_rUnwgr3=CTgN=GEpP=JpfW9NNMnypwNEtcVaV=ZrQ@mail.gmail.com>
-References: <CAFv23Q=_wSqhBE9ni9YmtxyEKFSENLYZ512Ent9iyWd7hv3gYg@mail.gmail.com>
- <20161010133931.88055-1-mika.westerberg@linux.intel.com> <0e3bf0b8c82d4c3ca6d753abfd1063bf@ausx13mpc124.AMER.DELL.COM>
- <20161010145346.GI30800@lahna.fi.intel.com> <CAFv23Qn+dDRyGutHBh0FfXRBZCmfTf_B0bQy-E-bb+4Nx+Xx2Q@mail.gmail.com>
- <CAFv23QkWFkzGsUFEN5GW+47qQgNAtqSnXZeU_phos=J7czrKgQ@mail.gmail.com> <20161011092728.GE2774@lahna.fi.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Tan Jui Nee <jui.nee.tan@intel.com>
+Subject: [PATCH v8 0/6] inctrl/broxton: enable platform device in the absent of ACPI enumeration
+Date: Wed, 12 Oct 2016 14:51:00 +0800
+Message-ID: <1476255066-22653-1-git-send-email-jui.nee.tan@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f172.google.com ([209.85.220.172]:33898 "EHLO
-        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752089AbcJLBg6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Oct 2016 21:36:58 -0400
-Received: by mail-qk0-f172.google.com with SMTP id f128so12604073qkb.1
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Oct 2016 18:35:58 -0700 (PDT)
-In-Reply-To: <20161011092728.GE2774@lahna.fi.intel.com>
+Received: from mga07.intel.com ([134.134.136.100]:9143 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753309AbcJLGwT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 12 Oct 2016 02:52:19 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Mario.Limonciello@dell.com, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Calvin Johnson <linux.cj@gmail.com>, Jared.Dominguez@dell.com, linux-gpio@vger.kernel.org
+To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jui.nee.tan@intel.com, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
 
-Cool, the fix works for me.
+Hi,
+The patches are to cater the need for non-ACPI system whereby
+a platform device has to be created in order to bind with
+Apollo Lake Pinctrl GPIO platform driver.
 
-I really hope these fixes could be in stable kernel from 4.1+,
-but if you have any concerns or troubles in doing that, please let me know,
-I'll submit those patches to ubuntu 4.4 and 4.8 kernels.
-Thanks.
+The MMIO BAR is accessed over the Primary to Sideband bridge
+(P2SB). Since the BIOS prevents the P2SB device from being
+enumerated by the PCI subsystem, so we need to hide/unhide P2SB
+to lookup the P2SB BAR and pass the PCI BAR address to the gpio
+platform driver.
 
-2016-10-11 17:27 GMT+08:00 Mika Westerberg <mika.westerberg@linux.intel.com>:
-> On Tue, Oct 11, 2016 at 10:38:27AM +0800, AceLan Kao wrote:
->> Hi Mika,
->>
->> BTW, I failed to compile the kernel 4.4 with the patch.
->>
->> The patch uses gpiochip_line_is_irq() function which has been
->> introduced since 4.6-rc1, so we need to cherry pick this commit, too.
->>    6cee382 gpio/pinctrl: sunxi: stop poking around in private vars
->>
->> But the above commit uses gpiodev data member in struct gpio_chip
->> which is introduced from this commit, and it's a big commit that can't
->> be cherry-picked clearly.
->>    ff2b135 gpio: make the gpiochip a real device
->>
->> Will you provide other patch that can apply on top of old stable kernels?
->
-> Hmm,
->
-> So 6cee382 ("gpio/pinctrl: sunxi: stop poking around in private vars")
-> needs the following patch.
->
-> I can backport 6cee382 with the below patch and send both patches to
-> stable@ after this gets merged to mainline but not sure if that's the
-> correct process to follow.
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index db007a3e2af7..6240dd40e8be 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1524,7 +1524,7 @@ bool gpiochip_line_is_irq(struct gpio_chip *chip, unsigned int offset)
->         if (offset >= chip->ngpio)
->                 return false;
->
-> -       return test_bit(FLAG_USED_AS_IRQ, &chip->gpiodev->descs[offset].flags);
-> +       return test_bit(FLAG_USED_AS_IRQ, &chip->desc[offset].flags);
->  }
->  EXPORT_SYMBOL_GPL(gpiochip_line_is_irq);
->
+All these three patches have dependencies on each other.
+
+Changes in V8:
+	- Update new file name with lpc_ich_core.c at description of source file.
+	- Rename source file lpc_ich-apl.c to lpc_ich_apl.c (suggested by Mika).
+	- Rework Makefile with new source file name lpc_ich_apl.c.
+
+Changes in V7:
+	- EXPORT_SYMBOL_GPL() and MODULE_LICENSE("GPL v2") are used for new file
+	  p2sb.c.
+	- Split Kconfig option CONFIG_X86_INTEL_IVI to separate patch (suggested by
+	  Lee).
+	- Split new platform enabling into a separate patch.
+	- Move lpc_chipsets enum's definition into a standalone header file which
+	  can be used wherever its definition is needed.
+	- Add author information and rewrite description of source file 
+	  lpc_ich-apl.c and lpc_ich_apl.h.
+	- Sort the header files by alphabetical order in lpc_ich-apl.c.
+	- Rename header file lpc_ich-apl.h to lpc_ich_apl.h (suggested by Lee).
+	- Remove unneeded pdata_size and platform_data from mfd_cell.
+	  Also, remove unneeded apl_pinctrl_pdata.
+	- Since variable apl_p2sb is only used once, hence switch it out for the
+	  PCI_DEVFN macro (suggested by Lee).
+	- Define APL_GPIO_COMMUNITY_MAX as total Apollo Lake GPIO communities
+	  supported.
+	- Set resources in mfd_cell for each GPIO community.
+	- Call p2sb_bar() function once instead of four times inside the for loop.
+	  And make p2sb_bar() function just to fill in the base address into a
+	  scratch "struct resource" and have the loop do the additions to base/end.
+	- Remove entire apl_pinctrl_pdata.name memory allocation since it is no
+	  longer needed.
+	- Return ret at the end of lpc_ich_add_gpio() function.
+
+Changes in V6:
+	- Rename CONFIG_X86_INTEL_APL to CONFIG_X86_INTEL_IVI so that it
+	  relates to the actual product, as suggested by Mika.
+	- Rework Makefile according Andy's comments.
+	- Rename lpc_ich_misc() to lpc_ich_add_gpio() so that the name should not
+	  be so generic, as suggested by Andy.
+	- Call lpc_ich_add_gpio() via priv->chipset.
+	- lpc_ich_add_gpio() function will be moved from 
+	  .../include/linux/mfd/lpc_ich.h to
+	  .../drivers/mfd/lpc_ich-apl.h
+	  as this is a part of internal driver interface as suggested by Andy.
+	- Move enum lpc_chipsets from 
+	  .../drivers/mfd/lpc_ich-core.c to
+	  .../include/linux/mfd/lpc_ich.h
+	  as lpc_chipsets is also accessed by lpc_ich_add_gpio().
+	- Check if kasprintf return value for all 4 gpio controllers before
+	  proceed to add platform device by using mfd_add_devices().
+
+Changes in V5:
+	- Split lpc-ich driver into two parts (lpc_ich-core and lpc_ich-apl).
+	  The file lpc_ich-apl.c introduces gpio platform driver in MFD.
+	- Rename Kconfig option CONFIG_X86_INTEL_NON_ACPI to CONFIG_X86_INTEL_APL
+	  so that it reflects actual product as suggested by Mika.
+	- The patch: 
+	  [PATCH] pinctrl/broxton: enable platform device in the absent of ACPI enumeration
+	  is removed in V5 patch-set as the patch is already applied in Linus' pinctrl tree.
+
+Changes in V4:
+	- Move Kconfig option CONFIG_X86_INTEL_NON_ACPI from
+	  [PATCH 2/3] x86/platform/p2sb: New Primary to Sideband bridge support driver for Intel SOC's
+	  to
+	  [PATCH 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake GPIO pinctrl in non-ACPI system
+	  since the config is used in latter patch.
+	- Select CONFIG_P2SB when CONFIG_LPC_ICH is enabled.
+	- Remove #ifdef CONFIG_X86_INTEL_NON_ACPI and use
+	  #if defined(CONFIG_X86_INTEL_NON_ACPI) when lpc_ich_misc is called
+	  as suggested by Lee Jones.
+	- Use single dimensional array instead of 2D array for apl_gpio_io_res
+	  structure and use DEFINE_RES_IRQ for its IRQ resource.
+
+Changes in V3:
+	- Simplify register addresses calculation and use DEFINE_RES_MEM_NAMED
+	  defines for apl_gpio_io_res structure
+	- Define magic number for P2SB PCI ID
+	- Replace switch-case with if-else since currently we have only one
+	  use case
+	- Only call mfd_add_devices() once for all gpio communities
+
+Changes in V2:
+	- Add new config option CONFIG_X86_INTEL_NON_ACPI and "select PINCTRL"
+	  to fix kbuildbot error
+
+Andy Shevchenko (1):
+  x86/platform/p2sb: New Primary to Sideband bridge support driver for
+    Intel SOC's
+
+Tan Jui Nee (5):
+  mfd: lpc_ich: Rename lpc-ich driver
+  x86/intel-ivi: Add Intel In-Vehicle Infotainment (IVI) systems used in
+    cars support
+  mfd: move enum lpc_chipsets into lpc_ich.h
+  mfd: lpc_ich: Add Device IDs for Intel Apollo Lake PCH
+  mfd: lpc_ich: Add support for Intel Apollo Lake GPIO pinctrl in
+    non-ACPI system
+
+ arch/x86/Kconfig                          |  12 +++
+ arch/x86/include/asm/p2sb.h               |  27 +++++++
+ arch/x86/platform/intel/Makefile          |   1 +
+ arch/x86/platform/intel/p2sb.c            |  98 ++++++++++++++++++++++++
+ drivers/mfd/Kconfig                       |   2 +
+ drivers/mfd/Makefile                      |   5 ++
+ drivers/mfd/lpc_ich_apl.c                 | 120 ++++++++++++++++++++++++++++++
+ drivers/mfd/lpc_ich_apl.h                 |  29 ++++++++
+ drivers/mfd/{lpc_ich.c => lpc_ich_core.c} |  84 +++------------------
+ include/linux/mfd/lpc_ich.h               |  72 ++++++++++++++++++
+ 10 files changed, 378 insertions(+), 72 deletions(-)
+ create mode 100644 arch/x86/include/asm/p2sb.h
+ create mode 100644 arch/x86/platform/intel/p2sb.c
+ create mode 100644 drivers/mfd/lpc_ich_apl.c
+ create mode 100644 drivers/mfd/lpc_ich_apl.h
+ rename drivers/mfd/{lpc_ich.c => lpc_ich_core.c} (93%)
+
+-- 
+1.9.1
+
