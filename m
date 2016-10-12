@@ -1,60 +1,43 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] gpio: pca953x: add a comment explaining the need for a
- lockdep subclass
-Date: Wed, 12 Oct 2016 09:00:14 +0200
-Message-ID: <20161012070014.GA1442@tetsubishi>
-References: <1474883655-15824-1-git-send-email-bgolaszewski@baylibre.com>
- <1474883655-15824-2-git-send-email-bgolaszewski@baylibre.com>
+From: Patrice Chotard <patrice.chotard@st.com>
+Subject: Re: [patch] gpio: stmpe: || vs && typo
+Date: Wed, 12 Oct 2016 09:10:03 +0200
+Message-ID: <72f9aaa3-4efb-2173-ba6c-96d961898ab0@st.com>
+References: <20161012062520.GY12841@mwanda>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1474883655-15824-2-git-send-email-bgolaszewski@baylibre.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Peter Rosin <peda@axentia.se>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <20161012062520.GY12841@mwanda>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+Hi Dan
 
---bg08WKrSYDhXBjb5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10/12/2016 08:25 AM, Dan Carpenter wrote:
+> && was obviously intended here.
+> 
+> Fixes: 6936e1f88d23 ('gpio: stmpe: Write int status register only when needed')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+> index e7d422a..5b00427 100644
+> --- a/drivers/gpio/gpio-stmpe.c
+> +++ b/drivers/gpio/gpio-stmpe.c
+> @@ -409,7 +409,7 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
+>  		 * 801/1801/1600, bits are cleared when read.
+>  		 * Edge detect register is not present on 801/1600/1801
+>  		 */
+> -		if (stmpe->partnum != STMPE801 || stmpe->partnum != STMPE1600 ||
+> +		if (stmpe->partnum != STMPE801 && stmpe->partnum != STMPE1600 &&
+>  		    stmpe->partnum != STMPE1801) {
+>  			stmpe_reg_write(stmpe, statmsbreg + i, status[i]);
+>  			stmpe_reg_write(stmpe,
+> 
 
-On Mon, Sep 26, 2016 at 11:54:15AM +0200, Bartosz Golaszewski wrote:
-> This is a follow-up to commit 559b46990e76 ("gpio: pca953x: fix an
-> incorrect lockdep warning"). The reason for calling
-> lockdep_set_subclass() in pca953x_probe() is not explained in
-> the code.
->=20
-> Add a comment describing the problem, partial solution and required
-> future extensions.
->=20
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Well spotted ;-)
 
-Applied to for-current, thanks!
+Acked-by: Patrice Chotard <patrice.chotard@st.com>
 
-
---bg08WKrSYDhXBjb5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX/d99AAoJEBQN5MwUoCm2Z8wP/ibdzah58Y5v1xUo1zhuqjJv
-MR+VyDVNQspaNHZFU5i6eDkKB0Gey1UHr6NRDOrnR27pqdGHHZWUoM0oWK700HIV
-irTh3QJB88xHd9DASpo30iIBJxNm3yYBMS4YYGAKHVLAdZdR776fVfI5q6pDHhKI
-OvJfboBoGHwDHR4JZDmP8AzaNeUjAljsl3Z00SaEV79IhYKgsWTXPqHcs8DzkMEA
-CjdewofG7+TByrt4OQKncznUDCRVXt6d4jJ7Vd30Ru3jmpsaDdCMwZ5+6mIm0569
-c7CE8klSPr6LfO0E1/Jn72ViTqJwxpxNwHIxlNnGuwtWJNo9bPCxjChQ4WZHkU5+
-qLkNrDfkxi4R077W5H1aA/0NbFDU8+7RSjG8OEY1+Ac6x5hOf5gFBlm7GfFviSZk
-Wc7l1ktzctP66VZRgXZVAfcm+K1lijpNfV6SC2b5J2M4yqBG5sAang93Nq+jdlMG
-smZt82LbuOnDoceLPxl1/VNBuXaVoLa6McvYTqCnxgf4wxKkmpa1GR87b7deNrFa
-We3ziIrH9sbpj5nRXTstoxSgtio9oZn+nxY/e/WuuSXkyBm/RqJDjObWnRETBIcm
-ZmcW1wsGw43TQb9Hw4kK1OKVrdzkpWK+132SXM8tk4dIU92T7hUjKKjtzMFzCDDy
-nWDXnqs+09CTzsc2E1QJ
-=Qubp
------END PGP SIGNATURE-----
-
---bg08WKrSYDhXBjb5--
+Thanks
