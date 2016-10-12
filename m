@@ -1,31 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [patch] gpio: stmpe: || vs && typo
-Date: Wed, 12 Oct 2016 10:43:02 +0200
-Message-ID: <CACRpkdbxemFszSPUceuMvpqcyzuuDCTYSA5uvA=sgyp==hw8oA@mail.gmail.com>
-References: <20161012062520.GY12841@mwanda>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [bug report] pinctrl: berlin: Don't leak memory if krealloc()
+ fails
+Date: Wed, 12 Oct 2016 11:45:27 +0300
+Message-ID: <20161012084526.GG5630@mwanda>
+References: <20161012081422.GA27222@mwanda>
+ <20161012083002.c4tsiuis4suna77h@linux-x5ow.site>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f177.google.com ([209.85.220.177]:36322 "EHLO
-        mail-qk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932346AbcJLInE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Oct 2016 04:43:04 -0400
-Received: by mail-qk0-f177.google.com with SMTP id o68so65533862qkf.3
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Oct 2016 01:43:03 -0700 (PDT)
-In-Reply-To: <20161012062520.GY12841@mwanda>
+Received: from aserp1040.oracle.com ([141.146.126.69]:41350 "EHLO
+        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932207AbcJLIpq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Oct 2016 04:45:46 -0400
+Content-Disposition: inline
+In-Reply-To: <20161012083002.c4tsiuis4suna77h@linux-x5ow.site>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Patrice Chotard <patrice.chotard@st.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: linux-gpio@vger.kernel.org
 
-On Wed, Oct 12, 2016 at 8:25 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Wed, Oct 12, 2016 at 10:30:02AM +0200, Johannes Thumshirn wrote:
+> Oh I see. Damn, missed the devm_kzalloc(). But shouldn't we avoid krealloc()
+> on devm_kzalloc() in general? krealloc() calls kfree() if the reallocation
+> succeeded and this will break the devres tracking, wouldn't it?
 
-> && was obviously intended here.
->
-> Fixes: 6936e1f88d23 ('gpio: stmpe: Write int status register only when needed')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Good point.  I will update my test to check for that.
 
-Patch applied with Patrice's ACK.
+regards,
+dan carpenter
 
-Yours,
-Linus Walleij
