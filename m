@@ -1,33 +1,72 @@
-From: Jon Masters <jcm@jonmasters.org>
-Subject: Re: [PATCH] pinctrl: intel: add blacklist list for XPS machines
-Date: Wed, 12 Oct 2016 12:31:53 -0400
-Message-ID: <0a0ad82d-dfef-95da-7b8e-6b045a151270@jonmasters.org>
-References: <1475647025-25617-1-git-send-email-acelan.kao@canonical.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH] gpio / ACPI: fix returned error from acpi_dev_gpio_irq_get()
+Date: Wed, 12 Oct 2016 18:40:30 +0200
+Message-ID: <1476290430-19542-1-git-send-email-benjamin.tissoires@redhat.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:41856 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:37114 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755628AbcJLQdK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 12 Oct 2016 12:33:10 -0400
-In-Reply-To: <1475647025-25617-1-git-send-email-acelan.kao@canonical.com>
+        id S933140AbcJLQkf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 12 Oct 2016 12:40:35 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: AceLan Kao <acelan.kao@canonical.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Mario.Limonciello@dell.com
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@intel.com>
+Cc: David Arcari <darcari@redhat.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/05/2016 01:57 AM, AceLan Kao wrote:
+From: David Arcari <darcari@redhat.com>
 
-> The touchscreen on some Dell machines stop working after
-> closing and opening the lid after this driver is introduced.
-> So, I add a dmi list to black out those machines that doesn't
-> work well with this driver.
+acpi_dev_gpio_irq_get() currently ignores the error returned
+by acpi_get_gpiod_by_index() and overwrites it with -ENOENT.
 
-Woot! This fixes the problems I've been having with the touchscreen on
-my 2016 SKL XPS 13 :) Thanks to Mario for the head's up!
+Problem is this error can be -EPROBE_DEFER, which just blows
+up some drivers when the module ordering is not correct.
 
-Jon.
+Cc: stable@vger.kernel.org
+Signed-off-by: David Arcari <darcari@redhat.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+---
 
+Hi David,
+
+I am planning on sending this to the list, any last minute comments?
+
+Cheers,
+Benjamin
+
+ drivers/gpio/gpiolib-acpi.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 9e48e69..f963a12 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -613,14 +613,17 @@ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
+ {
+ 	int idx, i;
+ 	unsigned int irq_flags;
++	int ret = -ENOENT;
+ 
+ 	for (i = 0, idx = 0; idx <= index; i++) {
+ 		struct acpi_gpio_info info;
+ 		struct gpio_desc *desc;
+ 
+ 		desc = acpi_get_gpiod_by_index(adev, NULL, i, &info);
+-		if (IS_ERR(desc))
++		if (IS_ERR(desc)) {
++			ret = PTR_ERR(desc);
+ 			break;
++		}
+ 		if (info.gpioint && idx++ == index) {
+ 			int irq = gpiod_to_irq(desc);
+ 
+@@ -639,7 +642,7 @@ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
+ 		}
+ 
+ 	}
+-	return -ENOENT;
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(acpi_dev_gpio_irq_get);
+ 
 -- 
-Computer Architect
+2.7.4
+
