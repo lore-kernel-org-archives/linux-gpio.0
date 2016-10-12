@@ -1,31 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [bug report] pinctrl: berlin: Don't leak memory if krealloc()
- fails
-Date: Wed, 12 Oct 2016 11:45:27 +0300
-Message-ID: <20161012084526.GG5630@mwanda>
-References: <20161012081422.GA27222@mwanda>
- <20161012083002.c4tsiuis4suna77h@linux-x5ow.site>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: mockup: add sysfs dependency
+Date: Wed, 12 Oct 2016 10:47:33 +0200
+Message-ID: <CACRpkdbQ1QXVbxL7T+7pX7MSN2TJAcL3ow+gUSy6tN_QjFXaTQ@mail.gmail.com>
+References: <20161010124259.1556137-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:41350 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932207AbcJLIpq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Oct 2016 04:45:46 -0400
-Content-Disposition: inline
-In-Reply-To: <20161012083002.c4tsiuis4suna77h@linux-x5ow.site>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161010124259.1556137-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Kamlakant Patel <kamlakant.patel@broadcom.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: linux-gpio@vger.kernel.org
 
-On Wed, Oct 12, 2016 at 10:30:02AM +0200, Johannes Thumshirn wrote:
-> Oh I see. Damn, missed the devm_kzalloc(). But shouldn't we avoid krealloc()
-> on devm_kzalloc() in general? krealloc() calls kfree() if the reallocation
-> succeeded and this will break the devres tracking, wouldn't it?
+On Mon, Oct 10, 2016 at 2:42 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-Good point.  I will update my test to check for that.
+> Building the gpio-mockup driver without SYSFS results in a harmless Kconfig
+> warning:
+>
+> warning: (GPIO_MOCKUP) selects GPIO_SYSFS which has unmet direct dependencies (GPIOLIB && SYSFS)
+>
+> We can easily avoid that warning by adding a dependency on SYSFS.
+>
+> Fixes: 0f98dd1b27d2 ("gpio/mockup: add virtual gpio device")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-regards,
-dan carpenter
+Patch applied.
 
+Yours,
+Linus Walleij
