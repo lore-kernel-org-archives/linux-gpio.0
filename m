@@ -1,31 +1,66 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] gpio: stmpe: || vs && typo
-Date: Wed, 12 Oct 2016 09:25:20 +0300
-Message-ID: <20161012062520.GY12841@mwanda>
+Subject: [bug report] pinctrl: berlin: Don't leak memory if krealloc() fails
+Date: Wed, 12 Oct 2016 11:14:22 +0300
+Message-ID: <20161012081422.GA27222@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-janitors-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:51703 "EHLO
+        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753966AbcJLIPs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Oct 2016 04:15:48 -0400
 Content-Disposition: inline
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Patrice Chotard <patrice.chotard@st.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: jthumshirn@suse.de
+Cc: linux-gpio@vger.kernel.org
 
-&& was obviously intended here.
+Hello Johannes Thumshirn,
 
-Fixes: 6936e1f88d23 ('gpio: stmpe: Write int status register only when needed')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The patch e1547af8c059: "pinctrl: berlin: Don't leak memory if
+krealloc() fails" from Sep 30, 2016, leads to the following static
+checker warning:
 
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index e7d422a..5b00427 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -409,7 +409,7 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
- 		 * 801/1801/1600, bits are cleared when read.
- 		 * Edge detect register is not present on 801/1600/1801
- 		 */
--		if (stmpe->partnum != STMPE801 || stmpe->partnum != STMPE1600 ||
-+		if (stmpe->partnum != STMPE801 && stmpe->partnum != STMPE1600 &&
- 		    stmpe->partnum != STMPE1801) {
- 			stmpe_reg_write(stmpe, statmsbreg + i, status[i]);
- 			stmpe_reg_write(stmpe,
+	drivers/pinctrl/berlin/berlin.c:244 berlin_pinctrl_build_state()
+	warn: passing devm_ allocated variable to kfree. 'pctrl->functions'
+
+drivers/pinctrl/berlin/berlin.c
+   221  
+   222          /* we will reallocate later */
+   223          pctrl->functions = devm_kzalloc(&pdev->dev,
+   224                                          max_functions * sizeof(*pctrl->functions),
+   225                                          GFP_KERNEL);
+   226          if (!pctrl->functions)
+   227                  return -ENOMEM;
+   228  
+   229          /* register all functions */
+   230          for (i = 0; i < pctrl->desc->ngroups; i++) {
+   231                  desc_group = pctrl->desc->groups + i;
+   232                  desc_function = desc_group->functions;
+   233  
+   234                  while (desc_function->name) {
+   235                          berlin_pinctrl_add_function(pctrl, desc_function->name);
+   236                          desc_function++;
+   237                  }
+   238          }
+   239  
+   240          functions = krealloc(pctrl->functions,
+   241                               pctrl->nfunctions * sizeof(*pctrl->functions),
+   242                               GFP_KERNEL);
+   243          if (!functions) {
+   244                  kfree(pctrl->functions);
+
+This will lead to a double free.
+
+   245                  return -ENOMEM;
+   246          }
+   247          pctrl->functions = functions;
+
+I'm really concerned about this generally.  It's like we can't tell if
+pctrl->functions is a managed allocation or not, and I can't immediately
+see where it is freed when it's unmanaged.
+
+   248  
+
+regards,
+dan carpenter
