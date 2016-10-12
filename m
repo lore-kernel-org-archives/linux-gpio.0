@@ -1,193 +1,60 @@
-From: Tan Jui Nee <jui.nee.tan@intel.com>
-Subject: [PATCH v8 4/6] mfd: move enum lpc_chipsets into lpc_ich.h
-Date: Wed, 12 Oct 2016 14:51:04 +0800
-Message-ID: <1476255066-22653-5-git-send-email-jui.nee.tan@intel.com>
-References: <1476255066-22653-1-git-send-email-jui.nee.tan@intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:9143 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754053AbcJLGwg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 12 Oct 2016 02:52:36 -0400
-In-Reply-To: <1476255066-22653-1-git-send-email-jui.nee.tan@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] gpio: pca953x: add a comment explaining the need for a
+ lockdep subclass
+Date: Wed, 12 Oct 2016 09:00:14 +0200
+Message-ID: <20161012070014.GA1442@tetsubishi>
+References: <1474883655-15824-1-git-send-email-bgolaszewski@baylibre.com>
+ <1474883655-15824-2-git-send-email-bgolaszewski@baylibre.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1474883655-15824-2-git-send-email-bgolaszewski@baylibre.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vignesh R <vigneshr@ti.com>, Yong Li <yong.b.li@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Peter Rosin <peda@axentia.se>, linux-i2c <linux-i2c@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jui.nee.tan@intel.com, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
 
-Move the enum's definition into a standalone header file which can be used
-wherever its definition is needed.
 
-Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
----
-Changes in V8:
-	- No change
+--bg08WKrSYDhXBjb5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/mfd/lpc_ich_core.c  | 71 ---------------------------------------------
- include/linux/mfd/lpc_ich.h | 71 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 71 insertions(+), 71 deletions(-)
+On Mon, Sep 26, 2016 at 11:54:15AM +0200, Bartosz Golaszewski wrote:
+> This is a follow-up to commit 559b46990e76 ("gpio: pca953x: fix an
+> incorrect lockdep warning"). The reason for calling
+> lockdep_set_subclass() in pca953x_probe() is not explained in
+> the code.
+>=20
+> Add a comment describing the problem, partial solution and required
+> future extensions.
+>=20
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-diff --git a/drivers/mfd/lpc_ich_core.c b/drivers/mfd/lpc_ich_core.c
-index 01d8d9e..bfba832 100644
---- a/drivers/mfd/lpc_ich_core.c
-+++ b/drivers/mfd/lpc_ich_core.c
-@@ -147,77 +147,6 @@ struct lpc_ich_priv {
- 	.ignore_resource_conflicts = true,
- };
- 
--/* chipset related info */
--enum lpc_chipsets {
--	LPC_ICH = 0,	/* ICH */
--	LPC_ICH0,	/* ICH0 */
--	LPC_ICH2,	/* ICH2 */
--	LPC_ICH2M,	/* ICH2-M */
--	LPC_ICH3,	/* ICH3-S */
--	LPC_ICH3M,	/* ICH3-M */
--	LPC_ICH4,	/* ICH4 */
--	LPC_ICH4M,	/* ICH4-M */
--	LPC_CICH,	/* C-ICH */
--	LPC_ICH5,	/* ICH5 & ICH5R */
--	LPC_6300ESB,	/* 6300ESB */
--	LPC_ICH6,	/* ICH6 & ICH6R */
--	LPC_ICH6M,	/* ICH6-M */
--	LPC_ICH6W,	/* ICH6W & ICH6RW */
--	LPC_631XESB,	/* 631xESB/632xESB */
--	LPC_ICH7,	/* ICH7 & ICH7R */
--	LPC_ICH7DH,	/* ICH7DH */
--	LPC_ICH7M,	/* ICH7-M & ICH7-U */
--	LPC_ICH7MDH,	/* ICH7-M DH */
--	LPC_NM10,	/* NM10 */
--	LPC_ICH8,	/* ICH8 & ICH8R */
--	LPC_ICH8DH,	/* ICH8DH */
--	LPC_ICH8DO,	/* ICH8DO */
--	LPC_ICH8M,	/* ICH8M */
--	LPC_ICH8ME,	/* ICH8M-E */
--	LPC_ICH9,	/* ICH9 */
--	LPC_ICH9R,	/* ICH9R */
--	LPC_ICH9DH,	/* ICH9DH */
--	LPC_ICH9DO,	/* ICH9DO */
--	LPC_ICH9M,	/* ICH9M */
--	LPC_ICH9ME,	/* ICH9M-E */
--	LPC_ICH10,	/* ICH10 */
--	LPC_ICH10R,	/* ICH10R */
--	LPC_ICH10D,	/* ICH10D */
--	LPC_ICH10DO,	/* ICH10DO */
--	LPC_PCH,	/* PCH Desktop Full Featured */
--	LPC_PCHM,	/* PCH Mobile Full Featured */
--	LPC_P55,	/* P55 */
--	LPC_PM55,	/* PM55 */
--	LPC_H55,	/* H55 */
--	LPC_QM57,	/* QM57 */
--	LPC_H57,	/* H57 */
--	LPC_HM55,	/* HM55 */
--	LPC_Q57,	/* Q57 */
--	LPC_HM57,	/* HM57 */
--	LPC_PCHMSFF,	/* PCH Mobile SFF Full Featured */
--	LPC_QS57,	/* QS57 */
--	LPC_3400,	/* 3400 */
--	LPC_3420,	/* 3420 */
--	LPC_3450,	/* 3450 */
--	LPC_EP80579,	/* EP80579 */
--	LPC_CPT,	/* Cougar Point */
--	LPC_CPTD,	/* Cougar Point Desktop */
--	LPC_CPTM,	/* Cougar Point Mobile */
--	LPC_PBG,	/* Patsburg */
--	LPC_DH89XXCC,	/* DH89xxCC */
--	LPC_PPT,	/* Panther Point */
--	LPC_LPT,	/* Lynx Point */
--	LPC_LPT_LP,	/* Lynx Point-LP */
--	LPC_WBG,	/* Wellsburg */
--	LPC_AVN,	/* Avoton SoC */
--	LPC_BAYTRAIL,   /* Bay Trail SoC */
--	LPC_COLETO,	/* Coleto Creek */
--	LPC_WPT_LP,	/* Wildcat Point-LP */
--	LPC_BRASWELL,	/* Braswell SoC */
--	LPC_LEWISBURG,	/* Lewisburg */
--	LPC_9S,		/* 9 Series */
--};
--
- static struct lpc_ich_info lpc_chipset_info[] = {
- 	[LPC_ICH] = {
- 		.name = "ICH",
-diff --git a/include/linux/mfd/lpc_ich.h b/include/linux/mfd/lpc_ich.h
-index 2b300b4..42307ee 100644
---- a/include/linux/mfd/lpc_ich.h
-+++ b/include/linux/mfd/lpc_ich.h
-@@ -43,4 +43,75 @@ struct lpc_ich_info {
- 	u8 use_gpio;
- };
- 
-+/* chipset related info */
-+enum lpc_chipsets {
-+	LPC_ICH = 0,	/* ICH */
-+	LPC_ICH0,	/* ICH0 */
-+	LPC_ICH2,	/* ICH2 */
-+	LPC_ICH2M,	/* ICH2-M */
-+	LPC_ICH3,	/* ICH3-S */
-+	LPC_ICH3M,	/* ICH3-M */
-+	LPC_ICH4,	/* ICH4 */
-+	LPC_ICH4M,	/* ICH4-M */
-+	LPC_CICH,	/* C-ICH */
-+	LPC_ICH5,	/* ICH5 & ICH5R */
-+	LPC_6300ESB,	/* 6300ESB */
-+	LPC_ICH6,	/* ICH6 & ICH6R */
-+	LPC_ICH6M,	/* ICH6-M */
-+	LPC_ICH6W,	/* ICH6W & ICH6RW */
-+	LPC_631XESB,	/* 631xESB/632xESB */
-+	LPC_ICH7,	/* ICH7 & ICH7R */
-+	LPC_ICH7DH,	/* ICH7DH */
-+	LPC_ICH7M,	/* ICH7-M & ICH7-U */
-+	LPC_ICH7MDH,	/* ICH7-M DH */
-+	LPC_NM10,	/* NM10 */
-+	LPC_ICH8,	/* ICH8 & ICH8R */
-+	LPC_ICH8DH,	/* ICH8DH */
-+	LPC_ICH8DO,	/* ICH8DO */
-+	LPC_ICH8M,	/* ICH8M */
-+	LPC_ICH8ME,	/* ICH8M-E */
-+	LPC_ICH9,	/* ICH9 */
-+	LPC_ICH9R,	/* ICH9R */
-+	LPC_ICH9DH,	/* ICH9DH */
-+	LPC_ICH9DO,	/* ICH9DO */
-+	LPC_ICH9M,	/* ICH9M */
-+	LPC_ICH9ME,	/* ICH9M-E */
-+	LPC_ICH10,	/* ICH10 */
-+	LPC_ICH10R,	/* ICH10R */
-+	LPC_ICH10D,	/* ICH10D */
-+	LPC_ICH10DO,	/* ICH10DO */
-+	LPC_PCH,	/* PCH Desktop Full Featured */
-+	LPC_PCHM,	/* PCH Mobile Full Featured */
-+	LPC_P55,	/* P55 */
-+	LPC_PM55,	/* PM55 */
-+	LPC_H55,	/* H55 */
-+	LPC_QM57,	/* QM57 */
-+	LPC_H57,	/* H57 */
-+	LPC_HM55,	/* HM55 */
-+	LPC_Q57,	/* Q57 */
-+	LPC_HM57,	/* HM57 */
-+	LPC_PCHMSFF,	/* PCH Mobile SFF Full Featured */
-+	LPC_QS57,	/* QS57 */
-+	LPC_3400,	/* 3400 */
-+	LPC_3420,	/* 3420 */
-+	LPC_3450,	/* 3450 */
-+	LPC_EP80579,	/* EP80579 */
-+	LPC_CPT,	/* Cougar Point */
-+	LPC_CPTD,	/* Cougar Point Desktop */
-+	LPC_CPTM,	/* Cougar Point Mobile */
-+	LPC_PBG,	/* Patsburg */
-+	LPC_DH89XXCC,	/* DH89xxCC */
-+	LPC_PPT,	/* Panther Point */
-+	LPC_LPT,	/* Lynx Point */
-+	LPC_LPT_LP,	/* Lynx Point-LP */
-+	LPC_WBG,	/* Wellsburg */
-+	LPC_AVN,	/* Avoton SoC */
-+	LPC_BAYTRAIL,   /* Bay Trail SoC */
-+	LPC_COLETO,	/* Coleto Creek */
-+	LPC_WPT_LP,	/* Wildcat Point-LP */
-+	LPC_BRASWELL,	/* Braswell SoC */
-+	LPC_LEWISBURG,	/* Lewisburg */
-+	LPC_9S,		/* 9 Series */
-+};
-+
- #endif
--- 
-1.9.1
+Applied to for-current, thanks!
 
+
+--bg08WKrSYDhXBjb5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX/d99AAoJEBQN5MwUoCm2Z8wP/ibdzah58Y5v1xUo1zhuqjJv
+MR+VyDVNQspaNHZFU5i6eDkKB0Gey1UHr6NRDOrnR27pqdGHHZWUoM0oWK700HIV
+irTh3QJB88xHd9DASpo30iIBJxNm3yYBMS4YYGAKHVLAdZdR776fVfI5q6pDHhKI
+OvJfboBoGHwDHR4JZDmP8AzaNeUjAljsl3Z00SaEV79IhYKgsWTXPqHcs8DzkMEA
+CjdewofG7+TByrt4OQKncznUDCRVXt6d4jJ7Vd30Ru3jmpsaDdCMwZ5+6mIm0569
+c7CE8klSPr6LfO0E1/Jn72ViTqJwxpxNwHIxlNnGuwtWJNo9bPCxjChQ4WZHkU5+
+qLkNrDfkxi4R077W5H1aA/0NbFDU8+7RSjG8OEY1+Ac6x5hOf5gFBlm7GfFviSZk
+Wc7l1ktzctP66VZRgXZVAfcm+K1lijpNfV6SC2b5J2M4yqBG5sAang93Nq+jdlMG
+smZt82LbuOnDoceLPxl1/VNBuXaVoLa6McvYTqCnxgf4wxKkmpa1GR87b7deNrFa
+We3ziIrH9sbpj5nRXTstoxSgtio9oZn+nxY/e/WuuSXkyBm/RqJDjObWnRETBIcm
+ZmcW1wsGw43TQb9Hw4kK1OKVrdzkpWK+132SXM8tk4dIU92T7hUjKKjtzMFzCDDy
+nWDXnqs+09CTzsc2E1QJ
+=Qubp
+-----END PGP SIGNATURE-----
+
+--bg08WKrSYDhXBjb5--
