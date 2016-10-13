@@ -1,34 +1,355 @@
-From: Mika Westerberg <mika.westerberg@intel.com>
-Subject: Re: [PATCH] gpio / ACPI: fix returned error from
- acpi_dev_gpio_irq_get()
-Date: Thu, 13 Oct 2016 10:10:31 +0300
-Message-ID: <20161013071031.GD2774@lahna.fi.intel.com>
-References: <1476290430-19542-1-git-send-email-benjamin.tissoires@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7796: Add DRIF support
+Date: Thu, 13 Oct 2016 10:29:14 +0100
+Message-ID: <1476350954-51002-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:49839 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752019AbcJMHLg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 13 Oct 2016 03:11:36 -0400
-Content-Disposition: inline
-In-Reply-To: <1476290430-19542-1-git-send-email-benjamin.tissoires@redhat.com>
+Received: from relmlor3.renesas.com ([210.160.252.173]:23619 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751799AbcJMJhg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 13 Oct 2016 05:37:36 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, David Arcari <darcari@redhat.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, chris.paterson2@renesas.com, Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-On Wed, Oct 12, 2016 at 06:40:30PM +0200, Benjamin Tissoires wrote:
-> From: David Arcari <darcari@redhat.com>
-> 
-> acpi_dev_gpio_irq_get() currently ignores the error returned
-> by acpi_get_gpiod_by_index() and overwrites it with -ENOENT.
-> 
-> Problem is this error can be -EPROBE_DEFER, which just blows
-> up some drivers when the module ordering is not correct.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: David Arcari <darcari@redhat.com>
-> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+This patch adds DRIF[0-3] pinmux support for r8a7796 SoC.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+Hi Geert, All,
+
+   This patch is based on renesas-drivers repo (tag:renesas-drivers-2016-10-04-v4.8)
+
+Thanks,
+Ramesh
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 291 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 291 insertions(+)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index 607adf7..f3984ef 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -1490,6 +1490,221 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	PINMUX_GPIO_GP_ALL(),
+ };
+ 
++/* - DRIF0 --------------------------------------------------------------- */
++static const unsigned int drif0_ctrl_a_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
++};
++static const unsigned int drif0_ctrl_a_mux[] = {
++	RIF0_CLK_A_MARK, RIF0_SYNC_A_MARK,
++};
++static const unsigned int drif0_data0_a_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 10),
++};
++static const unsigned int drif0_data0_a_mux[] = {
++	RIF0_D0_A_MARK,
++};
++static const unsigned int drif0_data1_a_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(6, 7),
++};
++static const unsigned int drif0_data1_a_mux[] = {
++	RIF0_D1_A_MARK,
++};
++static const unsigned int drif0_ctrl_b_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 4),
++};
++static const unsigned int drif0_ctrl_b_mux[] = {
++	RIF0_CLK_B_MARK, RIF0_SYNC_B_MARK,
++};
++static const unsigned int drif0_data0_b_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(5, 1),
++};
++static const unsigned int drif0_data0_b_mux[] = {
++	RIF0_D0_B_MARK,
++};
++static const unsigned int drif0_data1_b_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(5, 2),
++};
++static const unsigned int drif0_data1_b_mux[] = {
++	RIF0_D1_B_MARK,
++};
++static const unsigned int drif0_ctrl_c_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 15),
++};
++static const unsigned int drif0_ctrl_c_mux[] = {
++	RIF0_CLK_C_MARK, RIF0_SYNC_C_MARK,
++};
++static const unsigned int drif0_data0_c_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(5, 13),
++};
++static const unsigned int drif0_data0_c_mux[] = {
++	RIF0_D0_C_MARK,
++};
++static const unsigned int drif0_data1_c_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(5, 14),
++};
++static const unsigned int drif0_data1_c_mux[] = {
++	RIF0_D1_C_MARK,
++};
++/* - DRIF1 --------------------------------------------------------------- */
++static const unsigned int drif1_ctrl_a_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 18),
++};
++static const unsigned int drif1_ctrl_a_mux[] = {
++	RIF1_CLK_A_MARK, RIF1_SYNC_A_MARK,
++};
++static const unsigned int drif1_data0_a_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 19),
++};
++static const unsigned int drif1_data0_a_mux[] = {
++	RIF1_D0_A_MARK,
++};
++static const unsigned int drif1_data1_a_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(6, 20),
++};
++static const unsigned int drif1_data1_a_mux[] = {
++	RIF1_D1_A_MARK,
++};
++static const unsigned int drif1_ctrl_b_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(5, 9), RCAR_GP_PIN(5, 3),
++};
++static const unsigned int drif1_ctrl_b_mux[] = {
++	RIF1_CLK_B_MARK, RIF1_SYNC_B_MARK,
++};
++static const unsigned int drif1_data0_b_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(5, 7),
++};
++static const unsigned int drif1_data0_b_mux[] = {
++	RIF1_D0_B_MARK,
++};
++static const unsigned int drif1_data1_b_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(5, 8),
++};
++static const unsigned int drif1_data1_b_mux[] = {
++	RIF1_D1_B_MARK,
++};
++static const unsigned int drif1_ctrl_c_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(5, 5), RCAR_GP_PIN(5, 11),
++};
++static const unsigned int drif1_ctrl_c_mux[] = {
++	RIF1_CLK_C_MARK, RIF1_SYNC_C_MARK,
++};
++static const unsigned int drif1_data0_c_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(5, 6),
++};
++static const unsigned int drif1_data0_c_mux[] = {
++	RIF1_D0_C_MARK,
++};
++static const unsigned int drif1_data1_c_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(5, 10),
++};
++static const unsigned int drif1_data1_c_mux[] = {
++	RIF1_D1_C_MARK,
++};
++/* - DRIF2 --------------------------------------------------------------- */
++static const unsigned int drif2_ctrl_a_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
++};
++static const unsigned int drif2_ctrl_a_mux[] = {
++	RIF2_CLK_A_MARK, RIF2_SYNC_A_MARK,
++};
++static const unsigned int drif2_data0_a_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 7),
++};
++static const unsigned int drif2_data0_a_mux[] = {
++	RIF2_D0_A_MARK,
++};
++static const unsigned int drif2_data1_a_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(6, 10),
++};
++static const unsigned int drif2_data1_a_mux[] = {
++	RIF2_D1_A_MARK,
++};
++static const unsigned int drif2_ctrl_b_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(6, 26), RCAR_GP_PIN(6, 27),
++};
++static const unsigned int drif2_ctrl_b_mux[] = {
++	RIF2_CLK_B_MARK, RIF2_SYNC_B_MARK,
++};
++static const unsigned int drif2_data0_b_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 30),
++};
++static const unsigned int drif2_data0_b_mux[] = {
++	RIF2_D0_B_MARK,
++};
++static const unsigned int drif2_data1_b_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(6, 31),
++};
++static const unsigned int drif2_data1_b_mux[] = {
++	RIF2_D1_B_MARK,
++};
++/* - DRIF3 --------------------------------------------------------------- */
++static const unsigned int drif3_ctrl_a_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 18),
++};
++static const unsigned int drif3_ctrl_a_mux[] = {
++	RIF3_CLK_A_MARK, RIF3_SYNC_A_MARK,
++};
++static const unsigned int drif3_data0_a_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 19),
++};
++static const unsigned int drif3_data0_a_mux[] = {
++	RIF3_D0_A_MARK,
++};
++static const unsigned int drif3_data1_a_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(6, 20),
++};
++static const unsigned int drif3_data1_a_mux[] = {
++	RIF3_D1_A_MARK,
++};
++static const unsigned int drif3_ctrl_b_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
++};
++static const unsigned int drif3_ctrl_b_mux[] = {
++	RIF3_CLK_B_MARK, RIF3_SYNC_B_MARK,
++};
++static const unsigned int drif3_data0_b_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 28),
++};
++static const unsigned int drif3_data0_b_mux[] = {
++	RIF3_D0_B_MARK,
++};
++static const unsigned int drif3_data1_b_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(6, 29),
++};
++static const unsigned int drif3_data1_b_mux[] = {
++	RIF3_D1_B_MARK,
++};
++
+ /* - HSCIF0 ----------------------------------------------------------------- */
+ static const unsigned int hscif0_data_pins[] = {
+ 	/* RX, TX */
+@@ -2148,6 +2363,36 @@ static const unsigned int sdhi3_ds_mux[] = {
+ };
+ 
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(drif0_ctrl_a),
++	SH_PFC_PIN_GROUP(drif0_data0_a),
++	SH_PFC_PIN_GROUP(drif0_data1_a),
++	SH_PFC_PIN_GROUP(drif0_ctrl_b),
++	SH_PFC_PIN_GROUP(drif0_data0_b),
++	SH_PFC_PIN_GROUP(drif0_data1_b),
++	SH_PFC_PIN_GROUP(drif0_ctrl_c),
++	SH_PFC_PIN_GROUP(drif0_data0_c),
++	SH_PFC_PIN_GROUP(drif0_data1_c),
++	SH_PFC_PIN_GROUP(drif1_ctrl_a),
++	SH_PFC_PIN_GROUP(drif1_data0_a),
++	SH_PFC_PIN_GROUP(drif1_data1_a),
++	SH_PFC_PIN_GROUP(drif1_ctrl_b),
++	SH_PFC_PIN_GROUP(drif1_data0_b),
++	SH_PFC_PIN_GROUP(drif1_data1_b),
++	SH_PFC_PIN_GROUP(drif1_ctrl_c),
++	SH_PFC_PIN_GROUP(drif1_data0_c),
++	SH_PFC_PIN_GROUP(drif1_data1_c),
++	SH_PFC_PIN_GROUP(drif2_ctrl_a),
++	SH_PFC_PIN_GROUP(drif2_data0_a),
++	SH_PFC_PIN_GROUP(drif2_data1_a),
++	SH_PFC_PIN_GROUP(drif2_ctrl_b),
++	SH_PFC_PIN_GROUP(drif2_data0_b),
++	SH_PFC_PIN_GROUP(drif2_data1_b),
++	SH_PFC_PIN_GROUP(drif3_ctrl_a),
++	SH_PFC_PIN_GROUP(drif3_data0_a),
++	SH_PFC_PIN_GROUP(drif3_data1_a),
++	SH_PFC_PIN_GROUP(drif3_ctrl_b),
++	SH_PFC_PIN_GROUP(drif3_data0_b),
++	SH_PFC_PIN_GROUP(drif3_data1_b),
+ 	SH_PFC_PIN_GROUP(hscif0_data),
+ 	SH_PFC_PIN_GROUP(hscif0_clk),
+ 	SH_PFC_PIN_GROUP(hscif0_ctrl),
+@@ -2237,6 +2482,48 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(sdhi3_ds),
+ };
+ 
++static const char * const drif0_groups[] = {
++	"drif0_ctrl_a",
++	"drif0_data0_a",
++	"drif0_data1_a",
++	"drif0_ctrl_b",
++	"drif0_data0_b",
++	"drif0_data1_b",
++	"drif0_ctrl_c",
++	"drif0_data0_c",
++	"drif0_data1_c",
++};
++
++static const char * const drif1_groups[] = {
++	"drif1_ctrl_a",
++	"drif1_data0_a",
++	"drif1_data1_a",
++	"drif1_ctrl_b",
++	"drif1_data0_b",
++	"drif1_data1_b",
++	"drif1_ctrl_c",
++	"drif1_data0_c",
++	"drif1_data1_c",
++};
++
++static const char * const drif2_groups[] = {
++	"drif2_ctrl_a",
++	"drif2_data0_a",
++	"drif2_data1_a",
++	"drif2_ctrl_b",
++	"drif2_data0_b",
++	"drif2_data1_b",
++};
++
++static const char * const drif3_groups[] = {
++	"drif3_ctrl_a",
++	"drif3_data0_a",
++	"drif3_data1_a",
++	"drif3_ctrl_b",
++	"drif3_data0_b",
++	"drif3_data1_b",
++};
++
+ static const char * const hscif0_groups[] = {
+ 	"hscif0_data",
+ 	"hscif0_clk",
+@@ -2382,6 +2669,10 @@ static const char * const sdhi3_groups[] = {
+ };
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(drif0),
++	SH_PFC_FUNCTION(drif1),
++	SH_PFC_FUNCTION(drif2),
++	SH_PFC_FUNCTION(drif3),
+ 	SH_PFC_FUNCTION(hscif0),
+ 	SH_PFC_FUNCTION(hscif1),
+ 	SH_PFC_FUNCTION(hscif2),
+-- 
+1.9.1
+
