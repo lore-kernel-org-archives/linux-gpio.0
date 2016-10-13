@@ -1,355 +1,71 @@
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7796: Add DRIF support
-Date: Thu, 13 Oct 2016 10:29:14 +0100
-Message-ID: <1476350954-51002-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+From: Johannes Thumshirn <jthumshirn@suse.de>
+Subject: Re: [bug report] pinctrl: berlin: Don't leak memory if krealloc()
+ fails
+Date: Thu, 13 Oct 2016 15:09:33 +0200
+Message-ID: <20161013130933.pl2stxjcawgcufbx@linux-x5ow.site>
+References: <20161012081422.GA27222@mwanda>
+ <20161012083002.c4tsiuis4suna77h@linux-x5ow.site>
+ <20161012084526.GG5630@mwanda>
+ <20161012094436.3k7abjx64wlyjnyc@linux-x5ow.site>
+ <20161012111924.GJ5630@mwanda>
+ <20161012123616.ff7kiwbsyrnvhwff@linux-x5ow.site>
+ <20161012125846.GK5630@mwanda>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:23619 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751799AbcJMJhg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 13 Oct 2016 05:37:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39377 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754692AbcJMNKF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 13 Oct 2016 09:10:05 -0400
+Content-Disposition: inline
+In-Reply-To: <20161012125846.GK5630@mwanda>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, chris.paterson2@renesas.com, Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-This patch adds DRIF[0-3] pinmux support for r8a7796 SoC.
+On Wed, Oct 12, 2016 at 08:06:40PM +0300, Dan Carpenter wrote:
+> On Wed, Oct 12, 2016 at 02:36:16PM +0200, Johannes Thumshirn wrote:
+> 
+> > +void berlin_pinctrl_free_funcgroups(struct berlin_pinctrl *pctrl)
+> > +{
+> > +	struct berlin_desc_group const *desc_group;
+> > +	struct berlin_desc_function const *desc_function;
+> > +	int i;
+> > +
+> > +	for (i = 0; i < pctrl->desc->ngroups; i++) {
+> > +		desc_group = pctrl->desc->groups + i;
+> > +		desc_function = desc_group->functions;
+> > +
+> > +		while (desc_function->name) {
+> > +			struct berlin_pinctrl_function
+> > +				*function = pctrl->functions;
+> > +
+> > +			kfree(function->groups);
+> 
+> It looks like, we're just freeing pctrl->functions->groups over and
+> over.
+> 
+> Not taking advantage of managed allocations has made this stuff so much
+> more complicated.  I'd be tempted almost to just delete the krealloc()
+> and waste a little RAM...  (I have no idea how much RAM I'm talking
+> about here so maybe this is a bad idea).
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-Hi Geert, All,
+Hmm yes. But I think it's best to just drop the patch from
+linux-pinctrl/for-next (and the sunxi one as well as it's suffering from the
+same pain). Let's get it back to the less broken state it has been in.
 
-   This patch is based on renesas-drivers repo (tag:renesas-drivers-2016-10-04-v4.8)
+@Linus are you ok with dropping these patches from your queue or shall I send
+you reverts?
 
-Thanks,
-Ramesh
----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 291 +++++++++++++++++++++++++++++++++++
- 1 file changed, 291 insertions(+)
+Byte,
+	Johannes
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 607adf7..f3984ef 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -1490,6 +1490,221 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	PINMUX_GPIO_GP_ALL(),
- };
- 
-+/* - DRIF0 --------------------------------------------------------------- */
-+static const unsigned int drif0_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
-+};
-+static const unsigned int drif0_ctrl_a_mux[] = {
-+	RIF0_CLK_A_MARK, RIF0_SYNC_A_MARK,
-+};
-+static const unsigned int drif0_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 10),
-+};
-+static const unsigned int drif0_data0_a_mux[] = {
-+	RIF0_D0_A_MARK,
-+};
-+static const unsigned int drif0_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 7),
-+};
-+static const unsigned int drif0_data1_a_mux[] = {
-+	RIF0_D1_A_MARK,
-+};
-+static const unsigned int drif0_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 4),
-+};
-+static const unsigned int drif0_ctrl_b_mux[] = {
-+	RIF0_CLK_B_MARK, RIF0_SYNC_B_MARK,
-+};
-+static const unsigned int drif0_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(5, 1),
-+};
-+static const unsigned int drif0_data0_b_mux[] = {
-+	RIF0_D0_B_MARK,
-+};
-+static const unsigned int drif0_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(5, 2),
-+};
-+static const unsigned int drif0_data1_b_mux[] = {
-+	RIF0_D1_B_MARK,
-+};
-+static const unsigned int drif0_ctrl_c_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 15),
-+};
-+static const unsigned int drif0_ctrl_c_mux[] = {
-+	RIF0_CLK_C_MARK, RIF0_SYNC_C_MARK,
-+};
-+static const unsigned int drif0_data0_c_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(5, 13),
-+};
-+static const unsigned int drif0_data0_c_mux[] = {
-+	RIF0_D0_C_MARK,
-+};
-+static const unsigned int drif0_data1_c_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(5, 14),
-+};
-+static const unsigned int drif0_data1_c_mux[] = {
-+	RIF0_D1_C_MARK,
-+};
-+/* - DRIF1 --------------------------------------------------------------- */
-+static const unsigned int drif1_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 18),
-+};
-+static const unsigned int drif1_ctrl_a_mux[] = {
-+	RIF1_CLK_A_MARK, RIF1_SYNC_A_MARK,
-+};
-+static const unsigned int drif1_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 19),
-+};
-+static const unsigned int drif1_data0_a_mux[] = {
-+	RIF1_D0_A_MARK,
-+};
-+static const unsigned int drif1_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 20),
-+};
-+static const unsigned int drif1_data1_a_mux[] = {
-+	RIF1_D1_A_MARK,
-+};
-+static const unsigned int drif1_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(5, 9), RCAR_GP_PIN(5, 3),
-+};
-+static const unsigned int drif1_ctrl_b_mux[] = {
-+	RIF1_CLK_B_MARK, RIF1_SYNC_B_MARK,
-+};
-+static const unsigned int drif1_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(5, 7),
-+};
-+static const unsigned int drif1_data0_b_mux[] = {
-+	RIF1_D0_B_MARK,
-+};
-+static const unsigned int drif1_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(5, 8),
-+};
-+static const unsigned int drif1_data1_b_mux[] = {
-+	RIF1_D1_B_MARK,
-+};
-+static const unsigned int drif1_ctrl_c_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(5, 5), RCAR_GP_PIN(5, 11),
-+};
-+static const unsigned int drif1_ctrl_c_mux[] = {
-+	RIF1_CLK_C_MARK, RIF1_SYNC_C_MARK,
-+};
-+static const unsigned int drif1_data0_c_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(5, 6),
-+};
-+static const unsigned int drif1_data0_c_mux[] = {
-+	RIF1_D0_C_MARK,
-+};
-+static const unsigned int drif1_data1_c_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(5, 10),
-+};
-+static const unsigned int drif1_data1_c_mux[] = {
-+	RIF1_D1_C_MARK,
-+};
-+/* - DRIF2 --------------------------------------------------------------- */
-+static const unsigned int drif2_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
-+};
-+static const unsigned int drif2_ctrl_a_mux[] = {
-+	RIF2_CLK_A_MARK, RIF2_SYNC_A_MARK,
-+};
-+static const unsigned int drif2_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 7),
-+};
-+static const unsigned int drif2_data0_a_mux[] = {
-+	RIF2_D0_A_MARK,
-+};
-+static const unsigned int drif2_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 10),
-+};
-+static const unsigned int drif2_data1_a_mux[] = {
-+	RIF2_D1_A_MARK,
-+};
-+static const unsigned int drif2_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 26), RCAR_GP_PIN(6, 27),
-+};
-+static const unsigned int drif2_ctrl_b_mux[] = {
-+	RIF2_CLK_B_MARK, RIF2_SYNC_B_MARK,
-+};
-+static const unsigned int drif2_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 30),
-+};
-+static const unsigned int drif2_data0_b_mux[] = {
-+	RIF2_D0_B_MARK,
-+};
-+static const unsigned int drif2_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 31),
-+};
-+static const unsigned int drif2_data1_b_mux[] = {
-+	RIF2_D1_B_MARK,
-+};
-+/* - DRIF3 --------------------------------------------------------------- */
-+static const unsigned int drif3_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 18),
-+};
-+static const unsigned int drif3_ctrl_a_mux[] = {
-+	RIF3_CLK_A_MARK, RIF3_SYNC_A_MARK,
-+};
-+static const unsigned int drif3_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 19),
-+};
-+static const unsigned int drif3_data0_a_mux[] = {
-+	RIF3_D0_A_MARK,
-+};
-+static const unsigned int drif3_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 20),
-+};
-+static const unsigned int drif3_data1_a_mux[] = {
-+	RIF3_D1_A_MARK,
-+};
-+static const unsigned int drif3_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
-+};
-+static const unsigned int drif3_ctrl_b_mux[] = {
-+	RIF3_CLK_B_MARK, RIF3_SYNC_B_MARK,
-+};
-+static const unsigned int drif3_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 28),
-+};
-+static const unsigned int drif3_data0_b_mux[] = {
-+	RIF3_D0_B_MARK,
-+};
-+static const unsigned int drif3_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 29),
-+};
-+static const unsigned int drif3_data1_b_mux[] = {
-+	RIF3_D1_B_MARK,
-+};
-+
- /* - HSCIF0 ----------------------------------------------------------------- */
- static const unsigned int hscif0_data_pins[] = {
- 	/* RX, TX */
-@@ -2148,6 +2363,36 @@ static const unsigned int sdhi3_ds_mux[] = {
- };
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(drif0_ctrl_a),
-+	SH_PFC_PIN_GROUP(drif0_data0_a),
-+	SH_PFC_PIN_GROUP(drif0_data1_a),
-+	SH_PFC_PIN_GROUP(drif0_ctrl_b),
-+	SH_PFC_PIN_GROUP(drif0_data0_b),
-+	SH_PFC_PIN_GROUP(drif0_data1_b),
-+	SH_PFC_PIN_GROUP(drif0_ctrl_c),
-+	SH_PFC_PIN_GROUP(drif0_data0_c),
-+	SH_PFC_PIN_GROUP(drif0_data1_c),
-+	SH_PFC_PIN_GROUP(drif1_ctrl_a),
-+	SH_PFC_PIN_GROUP(drif1_data0_a),
-+	SH_PFC_PIN_GROUP(drif1_data1_a),
-+	SH_PFC_PIN_GROUP(drif1_ctrl_b),
-+	SH_PFC_PIN_GROUP(drif1_data0_b),
-+	SH_PFC_PIN_GROUP(drif1_data1_b),
-+	SH_PFC_PIN_GROUP(drif1_ctrl_c),
-+	SH_PFC_PIN_GROUP(drif1_data0_c),
-+	SH_PFC_PIN_GROUP(drif1_data1_c),
-+	SH_PFC_PIN_GROUP(drif2_ctrl_a),
-+	SH_PFC_PIN_GROUP(drif2_data0_a),
-+	SH_PFC_PIN_GROUP(drif2_data1_a),
-+	SH_PFC_PIN_GROUP(drif2_ctrl_b),
-+	SH_PFC_PIN_GROUP(drif2_data0_b),
-+	SH_PFC_PIN_GROUP(drif2_data1_b),
-+	SH_PFC_PIN_GROUP(drif3_ctrl_a),
-+	SH_PFC_PIN_GROUP(drif3_data0_a),
-+	SH_PFC_PIN_GROUP(drif3_data1_a),
-+	SH_PFC_PIN_GROUP(drif3_ctrl_b),
-+	SH_PFC_PIN_GROUP(drif3_data0_b),
-+	SH_PFC_PIN_GROUP(drif3_data1_b),
- 	SH_PFC_PIN_GROUP(hscif0_data),
- 	SH_PFC_PIN_GROUP(hscif0_clk),
- 	SH_PFC_PIN_GROUP(hscif0_ctrl),
-@@ -2237,6 +2482,48 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(sdhi3_ds),
- };
- 
-+static const char * const drif0_groups[] = {
-+	"drif0_ctrl_a",
-+	"drif0_data0_a",
-+	"drif0_data1_a",
-+	"drif0_ctrl_b",
-+	"drif0_data0_b",
-+	"drif0_data1_b",
-+	"drif0_ctrl_c",
-+	"drif0_data0_c",
-+	"drif0_data1_c",
-+};
-+
-+static const char * const drif1_groups[] = {
-+	"drif1_ctrl_a",
-+	"drif1_data0_a",
-+	"drif1_data1_a",
-+	"drif1_ctrl_b",
-+	"drif1_data0_b",
-+	"drif1_data1_b",
-+	"drif1_ctrl_c",
-+	"drif1_data0_c",
-+	"drif1_data1_c",
-+};
-+
-+static const char * const drif2_groups[] = {
-+	"drif2_ctrl_a",
-+	"drif2_data0_a",
-+	"drif2_data1_a",
-+	"drif2_ctrl_b",
-+	"drif2_data0_b",
-+	"drif2_data1_b",
-+};
-+
-+static const char * const drif3_groups[] = {
-+	"drif3_ctrl_a",
-+	"drif3_data0_a",
-+	"drif3_data1_a",
-+	"drif3_ctrl_b",
-+	"drif3_data0_b",
-+	"drif3_data1_b",
-+};
-+
- static const char * const hscif0_groups[] = {
- 	"hscif0_data",
- 	"hscif0_clk",
-@@ -2382,6 +2669,10 @@ static const char * const sdhi3_groups[] = {
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(drif0),
-+	SH_PFC_FUNCTION(drif1),
-+	SH_PFC_FUNCTION(drif2),
-+	SH_PFC_FUNCTION(drif3),
- 	SH_PFC_FUNCTION(hscif0),
- 	SH_PFC_FUNCTION(hscif1),
- 	SH_PFC_FUNCTION(hscif2),
 -- 
-1.9.1
-
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
