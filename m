@@ -1,71 +1,64 @@
-From: Johannes Thumshirn <jthumshirn@suse.de>
-Subject: Re: [bug report] pinctrl: berlin: Don't leak memory if krealloc()
- fails
-Date: Thu, 13 Oct 2016 15:09:33 +0200
-Message-ID: <20161013130933.pl2stxjcawgcufbx@linux-x5ow.site>
-References: <20161012081422.GA27222@mwanda>
- <20161012083002.c4tsiuis4suna77h@linux-x5ow.site>
- <20161012084526.GG5630@mwanda>
- <20161012094436.3k7abjx64wlyjnyc@linux-x5ow.site>
- <20161012111924.GJ5630@mwanda>
- <20161012123616.ff7kiwbsyrnvhwff@linux-x5ow.site>
- <20161012125846.GK5630@mwanda>
+From: <jjtrama@house.state.tx.us>
+Subject: 56749519 linux-gpio
+Date: Thu, 13 Oct 2016 15:43:51 -0000
+Message-ID: <147637343198.6378.4456254107748741829@hinet.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: application/zip; name="EMAIL_79394483023_linux-gpio.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:39377 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754692AbcJMNKF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 13 Oct 2016 09:10:05 -0400
-Content-Disposition: inline
-In-Reply-To: <20161012125846.GK5630@mwanda>
+Received: from 111-250-107-86.dynamic.hinet.net ([111.250.107.86]:36315 "HELO
+        hinet.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S1752352AbcJMPoN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 13 Oct 2016 11:44:13 -0400
+Content-Disposition: attachment
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
 
-On Wed, Oct 12, 2016 at 08:06:40PM +0300, Dan Carpenter wrote:
-> On Wed, Oct 12, 2016 at 02:36:16PM +0200, Johannes Thumshirn wrote:
-> 
-> > +void berlin_pinctrl_free_funcgroups(struct berlin_pinctrl *pctrl)
-> > +{
-> > +	struct berlin_desc_group const *desc_group;
-> > +	struct berlin_desc_function const *desc_function;
-> > +	int i;
-> > +
-> > +	for (i = 0; i < pctrl->desc->ngroups; i++) {
-> > +		desc_group = pctrl->desc->groups + i;
-> > +		desc_function = desc_group->functions;
-> > +
-> > +		while (desc_function->name) {
-> > +			struct berlin_pinctrl_function
-> > +				*function = pctrl->functions;
-> > +
-> > +			kfree(function->groups);
-> 
-> It looks like, we're just freeing pctrl->functions->groups over and
-> over.
-> 
-> Not taking advantage of managed allocations has made this stuff so much
-> more complicated.  I'd be tempted almost to just delete the krealloc()
-> and waste a little RAM...  (I have no idea how much RAM I'm talking
-> about here so maybe this is a bad idea).
-
-Hmm yes. But I think it's best to just drop the patch from
-linux-pinctrl/for-next (and the sunxi one as well as it's suffering from the
-same pain). Let's get it back to the less broken state it has been in.
-
-@Linus are you ok with dropping these patches from your queue or shall I send
-you reverts?
-
-Byte,
-	Johannes
-
--- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+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
+oSXSAVBLBQYAAAAAAQABAF8AAADjCQAAAAA=
