@@ -1,89 +1,115 @@
-From: Bamvor Jian Zhang <bamvor.zhangjian@huawei.com>
-Subject: [PATCH v4 0/3] Add gpio test framework
-Date: Fri, 14 Oct 2016 10:48:24 +0800
-Message-ID: <1476413307-1397-1-git-send-email-bamvor.zhangjian@huawei.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCHv2 1/8] dt-bindings: mfd: Add Altera Arria10 System
+ Resource Chip bindings
+Date: Fri, 14 Oct 2016 11:36:51 +0100
+Message-ID: <20161014103651.GC3304@dell>
+References: <1464889948-28793-1-git-send-email-tthayer@opensource.altera.com>
+ <1464889948-28793-2-git-send-email-tthayer@opensource.altera.com>
+ <20160610144748.GG1537@dell>
+ <282f05ff-05d8-2f93-88bb-84808812e603@opensource.altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:18980 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753779AbcJNCqR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Oct 2016 22:46:17 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <282f05ff-05d8-2f93-88bb-84808812e603-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thor Thayer <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, dinguyen-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, broonie@kernel.org, mwelling@ieee.org, shuahkh@osg.samsung.com
 
-These series of patches try to add support for testing of gpio
-subsystem based on the proposal from Linus Walleij. The first three
-version is here[1][2][3].
+On Mon, 10 Oct 2016, Thor Thayer wrote:
 
-The basic idea is implement a virtual gpio device(gpio-mockup) base
-on gpiolib. Tester could test the gpiolib by manipulating gpio-mockup
-device through chardev(default) or sysfs and check the result from
-debugfs. Reference the following figure:
+> Hi Lee,
+> 
+> On 06/10/2016 09:47 AM, Lee Jones wrote:
+> > On Thu, 02 Jun 2016, tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org wrote:
+> > 
+> > > From: Thor Thayer <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
+> > > 
+> > > The Altera Arria10 Devkit System Resource chip is a Multi-Function
+> > > Device with a GPIO expander.
+> > > 
+> > > This patch adds documentation for the Altera A10-SR DT bindings.
+> > > 
+> > > Signed-off-by: Thor Thayer <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
+> > > ---
+> > > v2  Addition of IRQ controller bindings.
+> > >     Removal of hw_mon sub-device.
+> > > ---
+> > >  .../devicetree/bindings/mfd/altera-a10sr.txt       |   46 ++++++++++++++++++++
+> > >  1 file changed, 46 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/mfd/altera-a10sr.txt
+> > 
+> > Applied, thanks.
+> 
+> For some reason, I'm not seeing this in the 4.8 tree with the other mfd
+> additions. Do I need to submit it to a different tree?
 
-   sysfs/chardev      debugfs
-     |                   |
-  gpiolib----------------/
-     |
- gpio-mockup
+No, it looks like this one was dropped for some reason.
 
-In order to avoid conflict with other gpio exist in the system,
-only dynamic allocation is tested by default. User could pass -f to
-do full test.
+Reapplying now.
 
-The test script could also test other (real) gpio device, such as
-pl061 in my qemu:
-./gpio-mockup.sh -m 9030000.pl061
-
-Originally, there are 5 patches. 2 of them are merged by Linus:
-a6a1cf3 gpio: MAINTAINERS: Add an entry for GPIO mockup driver
-0f98dd1 gpio/mockup: add virtual gpio device
-
-There series only include the others:
-tools/gpio: add gpio basic opereations
-tools/gpio: re-work gpio hammer with gpio operations
-selftest/gpio: add gpio test case
-
-[1] http://comments.gmane.org/gmane.linux.kernel.gpio/11883
-[2] http://www.spinics.net/lists/linux-gpio/msg11700.html
-[2] http://www.spinics.net/lists/linux-gpio/msg16255.html
-
-Changes since v3:
-1.  Rename the api in gpio-utils.[ch] with gpiotools.
-2.  Update in kernel document according to the
-    "Documentation/kernel-docs.txt", and move it to implementation.
-3.  Remove useless label of goto according to the suggestion from
-    Michael Welling.
-
-Changes since v2:
-1.  Switch to chardev.
-2.  Add basic gpio operation for chardev.
-
-Changes since v1:
-1.  Change value of gpio to boolean.
-2.  Only test dynamic allocation by default.
-
-Bamvor Jian Zhang (3):
-  tools/gpio: add gpio basic opereations
-  tools/gpio: re-work gpio hammer with gpio operations
-  selftest/gpio: add gpio test case
-
- tools/gpio/gpio-hammer.c                           |  67 ++---
- tools/gpio/gpio-utils.c                            | 257 ++++++++++++++++
- tools/gpio/gpio-utils.h                            |  16 +
- tools/testing/selftests/Makefile                   |   1 +
- tools/testing/selftests/gpio/Makefile              |  23 ++
- tools/testing/selftests/gpio/gpio-mockup-chardev.c | 324 +++++++++++++++++++++
- tools/testing/selftests/gpio/gpio-mockup-sysfs.sh  | 134 +++++++++
- tools/testing/selftests/gpio/gpio-mockup.sh        | 200 +++++++++++++
- 8 files changed, 972 insertions(+), 50 deletions(-)
- create mode 100644 tools/testing/selftests/gpio/Makefile
- create mode 100644 tools/testing/selftests/gpio/gpio-mockup-chardev.c
- create mode 100755 tools/testing/selftests/gpio/gpio-mockup-sysfs.sh
- create mode 100755 tools/testing/selftests/gpio/gpio-mockup.sh
+> > > diff --git a/Documentation/devicetree/bindings/mfd/altera-a10sr.txt b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
+> > > new file mode 100644
+> > > index 0000000..ea151f2
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
+> > > @@ -0,0 +1,46 @@
+> > > +* Altera Arria10 Development Kit System Resource Chip
+> > > +
+> > > +Required parent device properties:
+> > > +- compatible		: "altr,a10sr"
+> > > +- spi-max-frequency	: Maximum SPI frequency.
+> > > +- reg			: The SPI Chip Select address for the Arria10
+> > > +			  System Resource chip
+> > > +- interrupt-parent	: The parent interrupt controller.
+> > > +- interrupts		: The interrupt line the device is connected to.
+> > > +- interrupt-controller	: Marks the device node as an interrupt controller.
+> > > +- #interrupt-cells	: The number of cells to describe an IRQ, should be 2.
+> > > +			    The first cell is the IRQ number.
+> > > +			    The second cell is the flags, encoded as trigger
+> > > +			    masks from ../interrupt-controller/interrupts.txt.
+> > > +
+> > > +The A10SR consists of these sub-devices:
+> > > +
+> > > +Device                   Description
+> > > +------                   ----------
+> > > +a10sr_gpio               GPIO Controller
+> > > +
+> > > +Arria10 GPIO
+> > > +Required Properties:
+> > > +- compatible        : Should be "altr,a10sr-gpio"
+> > > +- gpio-controller   : Marks the device node as a GPIO Controller.
+> > > +- #gpio-cells       : Should be two.  The first cell is the pin number and
+> > > +                      the second cell is used to specify flags.
+> > > +                      See ../gpio/gpio.txt for more information.
+> > > +
+> > > +Example:
+> > > +
+> > > +        resource-manager@0 {
+> > > +		compatible = "altr,a10sr";
+> > > +		reg = <0>;
+> > > +		spi-max-frequency = <100000>;
+> > > +		interrupt-parent = <&portb>;
+> > > +		interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
+> > > +		interrupt-controller;
+> > > +		#interrupt-cells = <2>;
+> > > +
+> > > +		a10sr_gpio: gpio-controller {
+> > > +			compatible = "altr,a10sr-gpio";
+> > > +			gpio-controller;
+> > > +			#gpio-cells = <2>;
+> > > +		};
+> > > +	};
+> > 
 
 -- 
-1.8.4.5
-
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
