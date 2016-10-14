@@ -1,115 +1,42 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCHv2 1/8] dt-bindings: mfd: Add Altera Arria10 System
- Resource Chip bindings
-Date: Fri, 14 Oct 2016 11:36:51 +0100
-Message-ID: <20161014103651.GC3304@dell>
-References: <1464889948-28793-1-git-send-email-tthayer@opensource.altera.com>
- <1464889948-28793-2-git-send-email-tthayer@opensource.altera.com>
- <20160610144748.GG1537@dell>
- <282f05ff-05d8-2f93-88bb-84808812e603@opensource.altera.com>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: [PATCH] gpio: ts4900: Add hardware dependencies
+Date: Fri, 14 Oct 2016 14:24:09 +0200
+Message-ID: <20161014142409.411f6948@endymion>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <282f05ff-05d8-2f93-88bb-84808812e603-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thor Thayer <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, dinguyen-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx2.suse.de ([195.135.220.15]:51715 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754351AbcJNMYc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 14 Oct 2016 08:24:32 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Lucile Quirion <lucile.quirion@savoirfairelinux.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Mon, 10 Oct 2016, Thor Thayer wrote:
+All the boards supported by the gpio-ts4900 driver are i.MX6 boards,
+so only offer the driver for building on this platform, unless
+build-testing.
 
-> Hi Lee,
-> 
-> On 06/10/2016 09:47 AM, Lee Jones wrote:
-> > On Thu, 02 Jun 2016, tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org wrote:
-> > 
-> > > From: Thor Thayer <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
-> > > 
-> > > The Altera Arria10 Devkit System Resource chip is a Multi-Function
-> > > Device with a GPIO expander.
-> > > 
-> > > This patch adds documentation for the Altera A10-SR DT bindings.
-> > > 
-> > > Signed-off-by: Thor Thayer <tthayer-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
-> > > ---
-> > > v2  Addition of IRQ controller bindings.
-> > >     Removal of hw_mon sub-device.
-> > > ---
-> > >  .../devicetree/bindings/mfd/altera-a10sr.txt       |   46 ++++++++++++++++++++
-> > >  1 file changed, 46 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-> > 
-> > Applied, thanks.
-> 
-> For some reason, I'm not seeing this in the 4.8 tree with the other mfd
-> additions. Do I need to submit it to a different tree?
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Cc: Lucile Quirion <lucile.quirion@savoirfairelinux.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-No, it looks like this one was dropped for some reason.
+--- linux-4.9-rc0.orig/drivers/gpio/Kconfig	2016-10-13 11:39:40.453107279 +0200
++++ linux-4.9-rc0/drivers/gpio/Kconfig	2016-10-14 14:12:02.568268351 +0200
+@@ -802,6 +802,7 @@ config GPIO_TPIC2810
+ 
+ config GPIO_TS4900
+ 	tristate "Technologic Systems FPGA I2C GPIO"
++	depends on SOC_IMX6 || COMPILE_TEST
+ 	select REGMAP_I2C
+ 	help
+ 	  Say yes here to enabled the GPIO driver for Technologic's FPGA core.
 
-Reapplying now.
-
-> > > diff --git a/Documentation/devicetree/bindings/mfd/altera-a10sr.txt b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-> > > new file mode 100644
-> > > index 0000000..ea151f2
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/mfd/altera-a10sr.txt
-> > > @@ -0,0 +1,46 @@
-> > > +* Altera Arria10 Development Kit System Resource Chip
-> > > +
-> > > +Required parent device properties:
-> > > +- compatible		: "altr,a10sr"
-> > > +- spi-max-frequency	: Maximum SPI frequency.
-> > > +- reg			: The SPI Chip Select address for the Arria10
-> > > +			  System Resource chip
-> > > +- interrupt-parent	: The parent interrupt controller.
-> > > +- interrupts		: The interrupt line the device is connected to.
-> > > +- interrupt-controller	: Marks the device node as an interrupt controller.
-> > > +- #interrupt-cells	: The number of cells to describe an IRQ, should be 2.
-> > > +			    The first cell is the IRQ number.
-> > > +			    The second cell is the flags, encoded as trigger
-> > > +			    masks from ../interrupt-controller/interrupts.txt.
-> > > +
-> > > +The A10SR consists of these sub-devices:
-> > > +
-> > > +Device                   Description
-> > > +------                   ----------
-> > > +a10sr_gpio               GPIO Controller
-> > > +
-> > > +Arria10 GPIO
-> > > +Required Properties:
-> > > +- compatible        : Should be "altr,a10sr-gpio"
-> > > +- gpio-controller   : Marks the device node as a GPIO Controller.
-> > > +- #gpio-cells       : Should be two.  The first cell is the pin number and
-> > > +                      the second cell is used to specify flags.
-> > > +                      See ../gpio/gpio.txt for more information.
-> > > +
-> > > +Example:
-> > > +
-> > > +        resource-manager@0 {
-> > > +		compatible = "altr,a10sr";
-> > > +		reg = <0>;
-> > > +		spi-max-frequency = <100000>;
-> > > +		interrupt-parent = <&portb>;
-> > > +		interrupts = <5 IRQ_TYPE_LEVEL_LOW>;
-> > > +		interrupt-controller;
-> > > +		#interrupt-cells = <2>;
-> > > +
-> > > +		a10sr_gpio: gpio-controller {
-> > > +			compatible = "altr,a10sr-gpio";
-> > > +			gpio-controller;
-> > > +			#gpio-cells = <2>;
-> > > +		};
-> > > +	};
-> > 
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Jean Delvare
+SUSE L3 Support
