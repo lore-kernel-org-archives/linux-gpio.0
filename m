@@ -1,64 +1,138 @@
-From: <jjtrama@house.state.tx.us>
-Subject: 56749519 linux-gpio
-Date: Thu, 13 Oct 2016 15:43:51 -0000
-Message-ID: <147637343198.6378.4456254107748741829@hinet.net>
+From: Bamvor Jian Zhang <bamvor.zhangjian@huawei.com>
+Subject: [PATCH v4 2/3] tools/gpio: re-work gpio hammer with gpio operations
+Date: Fri, 14 Oct 2016 10:48:26 +0800
+Message-ID: <1476413307-1397-3-git-send-email-bamvor.zhangjian@huawei.com>
+References: <1476413307-1397-1-git-send-email-bamvor.zhangjian@huawei.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="EMAIL_79394483023_linux-gpio.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 111-250-107-86.dynamic.hinet.net ([111.250.107.86]:36315 "HELO
-        hinet.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-        id S1752352AbcJMPoN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 13 Oct 2016 11:44:13 -0400
-Content-Disposition: attachment
+Received: from szxga02-in.huawei.com ([119.145.14.65]:18620 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753767AbcJNCpe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Oct 2016 22:45:34 -0400
+In-Reply-To: <1476413307-1397-1-git-send-email-bamvor.zhangjian@huawei.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, broonie@kernel.org, mwelling@ieee.org, shuahkh@osg.samsung.com
 
-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
-oSXSAVBLBQYAAAAAAQABAF8AAADjCQAAAAA=
+From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+
+Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+---
+ tools/gpio/gpio-hammer.c | 67 ++++++++++++------------------------------------
+ 1 file changed, 17 insertions(+), 50 deletions(-)
+
+diff --git a/tools/gpio/gpio-hammer.c b/tools/gpio/gpio-hammer.c
+index 37b3f14..f1eab58 100644
+--- a/tools/gpio/gpio-hammer.c
++++ b/tools/gpio/gpio-hammer.c
+@@ -23,54 +23,31 @@
+ #include <getopt.h>
+ #include <sys/ioctl.h>
+ #include <linux/gpio.h>
++#include "gpio-utils.h"
+ 
+ int hammer_device(const char *device_name, unsigned int *lines, int nlines,
+ 		  unsigned int loops)
+ {
+-	struct gpiohandle_request req;
+ 	struct gpiohandle_data data;
+-	char *chrdev_name;
+ 	char swirr[] = "-\\|/";
+ 	int fd;
+ 	int ret;
+ 	int i, j;
+ 	unsigned int iteration = 0;
+ 
+-	ret = asprintf(&chrdev_name, "/dev/%s", device_name);
++	memset(&data.values, 0, sizeof(data.values));
++	ret = gpiotools_request_linehandle(device_name, lines, nlines,
++					   GPIOHANDLE_REQUEST_OUTPUT, &data,
++					   "gpio-hammler");
+ 	if (ret < 0)
+-		return -ENOMEM;
++		goto exit_error;
++	else
++		fd = ret;
+ 
+-	fd = open(chrdev_name, 0);
+-	if (fd == -1) {
+-		ret = -errno;
+-		fprintf(stderr, "Failed to open %s\n", chrdev_name);
+-		goto exit_close_error;
+-	}
+-
+-	/* Request lines as output */
+-	for (i = 0; i < nlines; i++)
+-		req.lineoffsets[i] = lines[i];
+-	req.flags = GPIOHANDLE_REQUEST_OUTPUT; /* Request as output */
+-	strcpy(req.consumer_label, "gpio-hammer");
+-	req.lines = nlines;
+-	ret = ioctl(fd, GPIO_GET_LINEHANDLE_IOCTL, &req);
+-	if (ret == -1) {
+-		ret = -errno;
+-		fprintf(stderr, "Failed to issue GET LINEHANDLE "
+-			"IOCTL (%d)\n",
+-			ret);
++	ret = gpiotools_get_values(fd, &data);
++	if (ret < 0)
+ 		goto exit_close_error;
+-	}
+ 
+-	/* Read initial states */
+-	ret = ioctl(req.fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &data);
+-	if (ret == -1) {
+-		ret = -errno;
+-		fprintf(stderr, "Failed to issue GPIOHANDLE GET LINE "
+-			"VALUES IOCTL (%d)\n",
+-			ret);
+-		goto exit_close_error;
+-	}
+ 	fprintf(stdout, "Hammer lines [");
+ 	for (i = 0; i < nlines; i++) {
+ 		fprintf(stdout, "%d", lines[i]);
+@@ -92,23 +69,14 @@ int hammer_device(const char *device_name, unsigned int *lines, int nlines,
+ 		for (i = 0; i < nlines; i++)
+ 			data.values[i] = !data.values[i];
+ 
+-		ret = ioctl(req.fd, GPIOHANDLE_SET_LINE_VALUES_IOCTL, &data);
+-		if (ret == -1) {
+-			ret = -errno;
+-			fprintf(stderr, "Failed to issue GPIOHANDLE SET LINE "
+-				"VALUES IOCTL (%d)\n",
+-				ret);
++		ret = gpiotools_set_values(fd, &data);
++		if (ret < 0)
+ 			goto exit_close_error;
+-		}
++
+ 		/* Re-read values to get status */
+-		ret = ioctl(req.fd, GPIOHANDLE_GET_LINE_VALUES_IOCTL, &data);
+-		if (ret == -1) {
+-			ret = -errno;
+-			fprintf(stderr, "Failed to issue GPIOHANDLE GET LINE "
+-				"VALUES IOCTL (%d)\n",
+-				ret);
++		ret = gpiotools_get_values(fd, &data);
++		if (ret < 0)
+ 			goto exit_close_error;
+-		}
+ 
+ 		fprintf(stdout, "[%c] ", swirr[j]);
+ 		j++;
+@@ -132,9 +100,8 @@ int hammer_device(const char *device_name, unsigned int *lines, int nlines,
+ 	ret = 0;
+ 
+ exit_close_error:
+-	if (close(fd) == -1)
+-		perror("Failed to close GPIO character device file");
+-	free(chrdev_name);
++	gpiotools_release_linehandle(fd);
++exit_error:
+ 	return ret;
+ }
+ 
+-- 
+1.8.4.5
+
