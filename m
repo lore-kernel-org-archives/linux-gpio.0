@@ -1,61 +1,116 @@
-From: <mmxdi@sok.fi>
-Subject: 85759639276160 linux-gpio
-Date: Mon, 17 Oct 2016 07:55:09 -0000
-Message-ID: <147669090959.13763.3465109702712958168@75-148-179-170-houston.hfc.comcastbusiness.net>
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: Re: [balbi-usb:testing/next 57/84] drivers/usb/dwc3/dwc3-st.c:328:2: error: implicit declaration of function 'pinctrl_pm_select_sleep_state'
+Date: Mon, 17 Oct 2016 14:50:39 +0300
+Message-ID: <87funvry7k.fsf@linux.intel.com>
+References: <201610171915.7Qg5kFu7%fengguang.wu@intel.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="EMAIL_2773228005505_linux-gpio.zip"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 75-148-179-170-Houston.hfc.comcastbusiness.net ([75.148.179.170]:52877
-        "HELO 75-148-179-170-houston.hfc.comcastbusiness.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-        id S1757636AbcJQHzW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 17 Oct 2016 03:55:22 -0400
-Content-Disposition: attachment
+Received: from mga14.intel.com ([192.55.52.115]:58360 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932550AbcJQLwQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 17 Oct 2016 07:52:16 -0400
+In-Reply-To: <201610171915.7Qg5kFu7%fengguang.wu@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
+To: kbuild test robot <fengguang.wu@intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: kbuild-all@01.org, linux-usb@vger.kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
 
-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
-AAEAMwAAAB4JAAAAAA==
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+
+Hi,
+
+kbuild test robot <fengguang.wu@intel.com> writes:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git tes=
+ting/next
+> head:   4281ef86fae986e0a9bb553fb311fe6d8e039118
+> commit: 040f47e7330045feaa8c06bf2900db2eb2038e80 [57/84] usb: dwc3: Kconf=
+ig: allow all glues to build if COMPILE_TEST
+> config: blackfin-allmodconfig (attached as .config)
+> compiler: bfin-uclinux-gcc (GCC) 6.2.0
+> reproduce:
+>         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.g=
+it/plain/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         git checkout 040f47e7330045feaa8c06bf2900db2eb2038e80
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=3Dblackfin=20
+>
+> All errors (new ones prefixed by >>):
+>
+>    drivers/usb/dwc3/dwc3-st.c: In function 'st_dwc3_suspend':
+>>> drivers/usb/dwc3/dwc3-st.c:328:2: error: implicit declaration of functi=
+on 'pinctrl_pm_select_sleep_state' [-Werror=3Dimplicit-function-declaration]
+>      pinctrl_pm_select_sleep_state(dev);
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    drivers/usb/dwc3/dwc3-st.c: In function 'st_dwc3_resume':
+>>> drivers/usb/dwc3/dwc3-st.c:338:2: error: implicit declaration of functi=
+on 'pinctrl_pm_select_default_state' [-Werror=3Dimplicit-function-declarati=
+on]
+>      pinctrl_pm_select_default_state(dev);
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    cc1: some warnings being treated as errors
+
+looks like a bug in <linux/pinctrl/consumer.h>. Something along the
+lines of below should be enough:
+
+diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consu=
+mer.h
+index d7e5d608faa7..c8aa03aa1c42 100644
+=2D-- a/include/linux/pinctrl/consumer.h
++++ b/include/linux/pinctrl/consumer.h
+@@ -44,7 +44,9 @@ extern void devm_pinctrl_put(struct pinctrl *p);
+ extern int pinctrl_pm_select_default_state(struct device *dev);
+ extern int pinctrl_pm_select_sleep_state(struct device *dev);
+ extern int pinctrl_pm_select_idle_state(struct device *dev);
+=2D#else
++#endif
++
++#else /* !CONFIG_PINCTRL */
+ static inline int pinctrl_pm_select_default_state(struct device *dev)
+ {
+        return 0;
+@@ -57,9 +59,6 @@ static inline int pinctrl_pm_select_idle_state(struct dev=
+ice *dev)
+ {
+        return 0;
+ }
+=2D#endif
+=2D
+=2D#else /* !CONFIG_PINCTRL */
+=20
+ static inline int pinctrl_request_gpio(unsigned gpio)
+ {
+
+
+Linus, do you want me to send this as a proper patch? It's pretty clear
+that currently we can have build regressions with these helpers. Was it
+a conscious choice to not provide stubs or just a slip?
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYBLsPAAoJEMy+uJnhGpkGtWIQAIZOyLR2nyDW3/wqgLZGVb4J
+hVSY4Da7KJqW69eROGDJvxe/jh9hzJaYx/nRJdgw3NUhOAWH/cvALvwlslAcOR5J
+3FwxXyLCqTCinSoh2ZC2WzX6uqi/GlZWAuuFUGTw59Jz0TZMw3e1YDUDH97CVULD
+jT0T28miFXcbt58a5ljsDKMD4e5AM/0gTtWcDh4IBP9nDG9SEgH74D9GxVHjVBIk
+M7f7WVPTXpnm/DD7F9IMpZfh5ebGuksPqQU3QUA8zvk3rhR38y/J+4JDycEQNReF
+N5uPsg4z/UIKmLnN0Vxx2Xkd87q4j7s+mo4SZgZm6n0EOlMSKhFk96XUxL4gqWSE
++b4zfcb6HGDGVvJWNSRWFj74tKW4caZmE0pez3cbYZPQ0xVpYyrFJJJvLEp3Oqfo
+IRmaut/1XHUC4XtLGbY7S8+uxdG9eBLSTvfRTfjlduMOVbkkQXkbWeEUBo3qt6y+
+p259to5wnz/KLisdw0f4CugBmzgAJT4hNrdnwz5xs3H/B33ulhoh10vMf8p0y+gZ
+331pnARj8n1GleVR042jBs3qwasi4B5+aNX6DlRREE22jn17ECOjBJjrXNxaLN5w
+9WPpHXZ0oK7L61hrd9sSmX7jvy8UOWwyGPmESi6iixcI4bSep9kbWGZzNLu2g26P
+Q6xlHt812RDTtQM4vsiV
+=x8OS
+-----END PGP SIGNATURE-----
+--=-=-=--
