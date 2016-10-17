@@ -1,116 +1,51 @@
-From: Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: Re: [balbi-usb:testing/next 57/84] drivers/usb/dwc3/dwc3-st.c:328:2: error: implicit declaration of function 'pinctrl_pm_select_sleep_state'
-Date: Mon, 17 Oct 2016 14:50:39 +0300
-Message-ID: <87funvry7k.fsf@linux.intel.com>
-References: <201610171915.7Qg5kFu7%fengguang.wu@intel.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:58360 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932550AbcJQLwQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 17 Oct 2016 07:52:16 -0400
-In-Reply-To: <201610171915.7Qg5kFu7%fengguang.wu@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andrey Smirnov <andrew.smirnov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 00/13] Revamp Semtech SX150x driver
+Date: Mon, 17 Oct 2016 07:26:55 -0700
+Message-ID: <1476714428-11264-1-git-send-email-andrew.smirnov@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cphealy-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Andrey Smirnov <andrew.smirnov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: kbuild test robot <fengguang.wu@intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: kbuild-all@01.org, linux-usb@vger.kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
+I am working with a hardware design utilizing SX1506 GPIO expander
+(actually it uses 1503, but they seem to be the same from SW's point
+of view) and following are the pathches I had to make in order to be
+able to succesfully use part's driver from upstream kernel.
 
-Hi,
+I am pretty certain I did not do any of the DT bindings in a proper
+way, so I am more than happy to change all of that, or, due to the
+fact I don't use any of those bindings in my usecase, drop them
+alltogether.
 
-kbuild test robot <fengguang.wu@intel.com> writes:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git tes=
-ting/next
-> head:   4281ef86fae986e0a9bb553fb311fe6d8e039118
-> commit: 040f47e7330045feaa8c06bf2900db2eb2038e80 [57/84] usb: dwc3: Kconf=
-ig: allow all glues to build if COMPILE_TEST
-> config: blackfin-allmodconfig (attached as .config)
-> compiler: bfin-uclinux-gcc (GCC) 6.2.0
-> reproduce:
->         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.g=
-it/plain/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         git checkout 040f47e7330045feaa8c06bf2900db2eb2038e80
->         # save the attached .config to linux build tree
->         make.cross ARCH=3Dblackfin=20
->
-> All errors (new ones prefixed by >>):
->
->    drivers/usb/dwc3/dwc3-st.c: In function 'st_dwc3_suspend':
->>> drivers/usb/dwc3/dwc3-st.c:328:2: error: implicit declaration of functi=
-on 'pinctrl_pm_select_sleep_state' [-Werror=3Dimplicit-function-declaration]
->      pinctrl_pm_select_sleep_state(dev);
->      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    drivers/usb/dwc3/dwc3-st.c: In function 'st_dwc3_resume':
->>> drivers/usb/dwc3/dwc3-st.c:338:2: error: implicit declaration of functi=
-on 'pinctrl_pm_select_default_state' [-Werror=3Dimplicit-function-declarati=
-on]
->      pinctrl_pm_select_default_state(dev);
->      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    cc1: some warnings being treated as errors
+Thank you,
+Andrey Smirnov
 
-looks like a bug in <linux/pinctrl/consumer.h>. Something along the
-lines of below should be enough:
+Andrey Smirnov (13):
+  gpio-sx150x: Remove 'gpio_base' from pdata
+  gpio-sx150x: Remove 'irq_summary' parameter
+  gpio-sx150x: Remove 'irq_base' parameter
+  gpio-sx150x: Replace 'io_polarity' with DT binding
+  bindings: gpio-sx150x: Document "semtech,io-polarity" binding
+  gpio-sx150x: Replace "io_pull*_ena" with DT bindings
+  bindings: gpio-sx150x: Document "semtech,io-pull*" bindings
+  gpio-sx150x: Replace 'reset_during_probe" with DT binding
+  bindings: gpio-sx150x: Document "semtech,reset-during-probe" bindings
+  gpio-sx150x: Replace 'oscio_is_gpio' with DT binding
+  bindings: gpio-sx150x: Document "semtech,oscio-is-gpo" binding
+  gpio-sx150x: Remove struct sx150x_platform_data
+  gpio-sx150x: Pass device type in DT match table
 
-diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consu=
-mer.h
-index d7e5d608faa7..c8aa03aa1c42 100644
-=2D-- a/include/linux/pinctrl/consumer.h
-+++ b/include/linux/pinctrl/consumer.h
-@@ -44,7 +44,9 @@ extern void devm_pinctrl_put(struct pinctrl *p);
- extern int pinctrl_pm_select_default_state(struct device *dev);
- extern int pinctrl_pm_select_sleep_state(struct device *dev);
- extern int pinctrl_pm_select_idle_state(struct device *dev);
-=2D#else
-+#endif
-+
-+#else /* !CONFIG_PINCTRL */
- static inline int pinctrl_pm_select_default_state(struct device *dev)
- {
-        return 0;
-@@ -57,9 +59,6 @@ static inline int pinctrl_pm_select_idle_state(struct dev=
-ice *dev)
- {
-        return 0;
- }
-=2D#endif
-=2D
-=2D#else /* !CONFIG_PINCTRL */
-=20
- static inline int pinctrl_request_gpio(unsigned gpio)
- {
+ .../devicetree/bindings/gpio/gpio-sx150x.txt       |  29 ++++
+ drivers/gpio/gpio-sx150x.c                         | 184 +++++++++------------
+ 2 files changed, 105 insertions(+), 108 deletions(-)
 
+-- 
+2.5.5
 
-Linus, do you want me to send this as a proper patch? It's pretty clear
-that currently we can have build regressions with these helpers. Was it
-a conscious choice to not provide stubs or just a slip?
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYBLsPAAoJEMy+uJnhGpkGtWIQAIZOyLR2nyDW3/wqgLZGVb4J
-hVSY4Da7KJqW69eROGDJvxe/jh9hzJaYx/nRJdgw3NUhOAWH/cvALvwlslAcOR5J
-3FwxXyLCqTCinSoh2ZC2WzX6uqi/GlZWAuuFUGTw59Jz0TZMw3e1YDUDH97CVULD
-jT0T28miFXcbt58a5ljsDKMD4e5AM/0gTtWcDh4IBP9nDG9SEgH74D9GxVHjVBIk
-M7f7WVPTXpnm/DD7F9IMpZfh5ebGuksPqQU3QUA8zvk3rhR38y/J+4JDycEQNReF
-N5uPsg4z/UIKmLnN0Vxx2Xkd87q4j7s+mo4SZgZm6n0EOlMSKhFk96XUxL4gqWSE
-+b4zfcb6HGDGVvJWNSRWFj74tKW4caZmE0pez3cbYZPQ0xVpYyrFJJJvLEp3Oqfo
-IRmaut/1XHUC4XtLGbY7S8+uxdG9eBLSTvfRTfjlduMOVbkkQXkbWeEUBo3qt6y+
-p259to5wnz/KLisdw0f4CugBmzgAJT4hNrdnwz5xs3H/B33ulhoh10vMf8p0y+gZ
-331pnARj8n1GleVR042jBs3qwasi4B5+aNX6DlRREE22jn17ECOjBJjrXNxaLN5w
-9WPpHXZ0oK7L61hrd9sSmX7jvy8UOWwyGPmESi6iixcI4bSep9kbWGZzNLu2g26P
-Q6xlHt812RDTtQM4vsiV
-=x8OS
------END PGP SIGNATURE-----
---=-=-=--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
