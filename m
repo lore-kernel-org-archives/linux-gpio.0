@@ -1,68 +1,46 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [RESEND PATCH v8 4/5] mfd: tps65218: Use mfd_add_devices instead of of_platform_populate
-Date: Mon, 17 Oct 2016 21:29:37 +0530
-Message-ID: <1476719978-16332-5-git-send-email-j-keerthy@ti.com>
-References: <1476719978-16332-1-git-send-email-j-keerthy@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Marek Vasut <marex@denx.de>
+Subject: [PATCH] gpio: pca953x: Add MAX7318 compatible
+Date: Mon, 17 Oct 2016 18:36:49 +0200
+Message-ID: <20161017163649.12113-1-marex@denx.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:44560 "EHLO
-        devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935416AbcJQQAM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2016 12:00:12 -0400
-In-Reply-To: <1476719978-16332-1-git-send-email-j-keerthy@ti.com>
+Received: from mail-out.m-online.net ([212.18.0.9]:43559 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755100AbcJQQhB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2016 12:37:01 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: lee.jones@linaro.org
-Cc: devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, robh+dt@kernel.org, linux-kernel@vger.kernel.org, t-kristo@ti.com, tony@atomide.com, dmitry.torokhov@gmail.com, linus.walleij@linaro.org, broonie@kernel.org, j-keerthy@ti.com
+To: linux-gpio@vger.kernel.org
+Cc: Marek Vasut <marex@denx.de>, Linus Walleij <linus.walleij@linaro.org>
 
-mfd_add_devices enables parsing device tree nodes without compatibles
-for regulators and gpio modules. Replace of_platform_populate with
-mfd_add_devices. mfd_cell currently is populated with regulators,
-gpio and powerbutton.
+Add compatible string for the MAX7318 part. This is a two bank,
+16 lines, I2C GPIO expander with interrupt line.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/mfd/tps65218.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mfd/tps65218.c b/drivers/mfd/tps65218.c
-index 9bca1b1..13834a0 100644
---- a/drivers/mfd/tps65218.c
-+++ b/drivers/mfd/tps65218.c
-@@ -33,6 +33,18 @@
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index e422568..601c455 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -74,6 +74,7 @@ static const struct i2c_device_id pca953x_id[] = {
+ 	{ "max7312", 16 | PCA953X_TYPE | PCA_INT, },
+ 	{ "max7313", 16 | PCA953X_TYPE | PCA_INT, },
+ 	{ "max7315", 8  | PCA953X_TYPE | PCA_INT, },
++	{ "max7318", 16 | PCA953X_TYPE | PCA_INT, },
+ 	{ "pca6107", 8  | PCA953X_TYPE | PCA_INT, },
+ 	{ "tca6408", 8  | PCA953X_TYPE | PCA_INT, },
+ 	{ "tca6416", 16 | PCA953X_TYPE | PCA_INT, },
+@@ -907,6 +908,7 @@ static const struct of_device_id pca953x_dt_ids[] = {
+ 	{ .compatible = "maxim,max7312", .data = OF_953X(16, PCA_INT), },
+ 	{ .compatible = "maxim,max7313", .data = OF_953X(16, PCA_INT), },
+ 	{ .compatible = "maxim,max7315", .data = OF_953X( 8, PCA_INT), },
++	{ .compatible = "maxim,max7318", .data = OF_953X(16, PCA_INT), },
  
- #define TPS65218_PASSWORD_REGS_UNLOCK   0x7D
- 
-+static const struct mfd_cell tps65218_cells[] = {
-+	{
-+		.name = "tps65218-pwrbutton",
-+		.of_compatible = "ti,tps65218-pwrbutton",
-+	},
-+	{
-+		.name = "tps65218-gpio",
-+		.of_compatible = "ti,tps65218-gpio",
-+	},
-+	{ .name = "tps65218-regulator", },
-+};
-+
- /**
-  * tps65218_reg_write: Write a single tps65218 register.
-  *
-@@ -245,8 +257,10 @@ static int tps65218_probe(struct i2c_client *client,
- 
- 	tps->rev = chipid & TPS65218_CHIPID_REV_MASK;
- 
--	ret = of_platform_populate(client->dev.of_node, NULL, NULL,
--				   &client->dev);
-+	ret = mfd_add_devices(tps->dev, PLATFORM_DEVID_AUTO, tps65218_cells,
-+			      ARRAY_SIZE(tps65218_cells), NULL, 0,
-+			      regmap_irq_get_domain(tps->irq_data));
-+
- 	if (ret < 0)
- 		goto err_irq;
- 
+ 	{ .compatible = "ti,pca6107", .data = OF_953X( 8, PCA_INT), },
+ 	{ .compatible = "ti,pca9536", .data = OF_953X( 4, 0), },
 -- 
-1.9.1
+2.9.3
 
