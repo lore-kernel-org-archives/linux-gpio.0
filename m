@@ -1,87 +1,137 @@
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: [PATCH 06/13] gpio-sx150x: Replace "io_pull*_ena" with DT bindings
-Date: Mon, 17 Oct 2016 07:27:01 -0700
-Message-ID: <1476714428-11264-7-git-send-email-andrew.smirnov@gmail.com>
-References: <1476714428-11264-1-git-send-email-andrew.smirnov@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1476714428-11264-1-git-send-email-andrew.smirnov@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, cphealy@gmail.com, Andrey Smirnov <andrew.smirnov@gmail.com>
+From: Keerthy <j-keerthy@ti.com>
+Subject: [RESEND PATCH v8 1/5] mfd: tps65218: Remove redundant read wrapper
+Date: Mon, 17 Oct 2016 21:29:34 +0530
+Message-ID: <1476719978-16332-2-git-send-email-j-keerthy@ti.com>
+References: <1476719978-16332-1-git-send-email-j-keerthy@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1476719978-16332-1-git-send-email-j-keerthy@ti.com>
+Sender: linux-input-owner@vger.kernel.org
+To: lee.jones@linaro.org
+Cc: devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, robh+dt@kernel.org, linux-kernel@vger.kernel.org, t-kristo@ti.com, tony@atomide.com, dmitry.torokhov@gmail.com, linus.walleij@linaro.org, broonie@kernel.org, j-keerthy@ti.com
 List-Id: linux-gpio@vger.kernel.org
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- drivers/gpio/gpio-sx150x.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+Currently read directly calls the repmap read function. Hence
+remove the redundant wrapper and use regmap read wherever
+needed.
 
-diff --git a/drivers/gpio/gpio-sx150x.c b/drivers/gpio/gpio-sx150x.c
-index 9b62133..b751ff9 100644
---- a/drivers/gpio/gpio-sx150x.c
-+++ b/drivers/gpio/gpio-sx150x.c
-@@ -90,24 +90,12 @@ struct sx150x_device_data {
-  *                instead of as an oscillator, increasing the size of the
-  *                GP(I)O pool created by this expander by one.  The
-  *                output-only GPO pin will be added at the end of the block.
-- * @io_pullup_ena: A bit-mask which enables or disables the pull-up resistor
-- *                 for each IO line in the expander.  Setting the bit at
-- *                 position n will enable the pull-up for the IO at
-- *                 the corresponding offset.  For chips with fewer than
-- *                 16 IO pins, high-end bits are ignored.
-- * @io_pulldn_ena: A bit-mask which enables-or disables the pull-down
-- *                 resistor for each IO line in the expander. Setting the
-- *                 bit at position n will enable the pull-down for the IO at
-- *                 the corresponding offset.  For chips with fewer than
-- *                 16 IO pins, high-end bits are ignored.
-  * @reset_during_probe: If set to true, the driver will trigger a full
-  *                      reset of the chip at the beginning of the probe
-  *                      in order to place it in a known state.
-  */
- struct sx150x_platform_data {
- 	bool     oscio_is_gpo;
--	u16      io_pullup_ena;
--	u16      io_pulldn_ena;
- 	bool     reset_during_probe;
- };
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/gpio/gpio-tps65218.c           |  3 ++-
+ drivers/mfd/tps65218.c                 | 18 ++----------------
+ drivers/regulator/tps65218-regulator.c |  5 +++--
+ include/linux/mfd/tps65218.h           |  2 --
+ 4 files changed, 7 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/gpio/gpio-tps65218.c b/drivers/gpio/gpio-tps65218.c
+index 03e0dfb..a4ba570 100644
+--- a/drivers/gpio/gpio-tps65218.c
++++ b/drivers/gpio/gpio-tps65218.c
+@@ -16,6 +16,7 @@
+ #include <linux/errno.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
+ #include <linux/mfd/tps65218.h>
  
-@@ -614,6 +602,8 @@ static int sx150x_reset(struct sx150x_chip *chip)
- static int sx150x_init_hw(struct sx150x_chip *chip,
- 			struct sx150x_platform_data *pdata)
- {
-+	u32 io_pulldown = 0;
-+	u32 io_pullup   = 0;
- 	int err = 0;
+ struct tps65218_gpio {
+@@ -30,7 +31,7 @@ static int tps65218_gpio_get(struct gpio_chip *gc, unsigned offset)
+ 	unsigned int val;
+ 	int ret;
  
- 	if (pdata->reset_during_probe) {
-@@ -622,6 +612,14 @@ static int sx150x_init_hw(struct sx150x_chip *chip,
- 			return err;
+-	ret = tps65218_reg_read(tps65218, TPS65218_REG_ENABLE2, &val);
++	ret = regmap_read(tps65218->regmap, TPS65218_REG_ENABLE2, &val);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/mfd/tps65218.c b/drivers/mfd/tps65218.c
+index ba610ad..9bca1b1 100644
+--- a/drivers/mfd/tps65218.c
++++ b/drivers/mfd/tps65218.c
+@@ -34,20 +34,6 @@
+ #define TPS65218_PASSWORD_REGS_UNLOCK   0x7D
+ 
+ /**
+- * tps65218_reg_read: Read a single tps65218 register.
+- *
+- * @tps: Device to read from.
+- * @reg: Register to read.
+- * @val: Contians the value
+- */
+-int tps65218_reg_read(struct tps65218 *tps, unsigned int reg,
+-			unsigned int *val)
+-{
+-	return regmap_read(tps->regmap, reg, val);
+-}
+-EXPORT_SYMBOL_GPL(tps65218_reg_read);
+-
+-/**
+  * tps65218_reg_write: Write a single tps65218 register.
+  *
+  * @tps65218: Device to write to.
+@@ -93,7 +79,7 @@ static int tps65218_update_bits(struct tps65218 *tps, unsigned int reg,
+ 	int ret;
+ 	unsigned int data;
+ 
+-	ret = tps65218_reg_read(tps, reg, &data);
++	ret = regmap_read(tps->regmap, reg, &data);
+ 	if (ret) {
+ 		dev_err(tps->dev, "Read from reg 0x%x failed\n", reg);
+ 		return ret;
+@@ -251,7 +237,7 @@ static int tps65218_probe(struct i2c_client *client,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = tps65218_reg_read(tps, TPS65218_REG_CHIPID, &chipid);
++	ret = regmap_read(tps->regmap, TPS65218_REG_CHIPID, &chipid);
+ 	if (ret) {
+ 		dev_err(tps->dev, "Failed to read chipid: %d\n", ret);
+ 		return ret;
+diff --git a/drivers/regulator/tps65218-regulator.c b/drivers/regulator/tps65218-regulator.c
+index eb0f5b1..ae16caf 100644
+--- a/drivers/regulator/tps65218-regulator.c
++++ b/drivers/regulator/tps65218-regulator.c
+@@ -22,6 +22,7 @@
+ #include <linux/err.h>
+ #include <linux/platform_device.h>
+ #include <linux/of_device.h>
++#include <linux/regmap.h>
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/machine.h>
+@@ -272,7 +273,7 @@ static int tps65218_pmic_get_current_limit(struct regulator_dev *dev)
+ 	unsigned int index;
+ 	struct tps65218 *tps = rdev_get_drvdata(dev);
+ 
+-	retval = tps65218_reg_read(tps, dev->desc->csel_reg, &index);
++	retval = regmap_read(tps->regmap, dev->desc->csel_reg, &index);
+ 	if (retval < 0)
+ 		return retval;
+ 
+@@ -383,7 +384,7 @@ static int tps65218_regulator_probe(struct platform_device *pdev)
+ 		return PTR_ERR(rdev);
  	}
  
-+	of_property_read_u32(chip->client->dev.of_node,
-+			     "semtech,io-pullup",
-+			     &io_pullup);
-+
-+	of_property_read_u32(chip->client->dev.of_node,
-+			     "semtech,io-pulldown",
-+			     &io_pulldown);
-+
- 	if (chip->dev_cfg->model == SX150X_789)
- 		err = sx150x_i2c_write(chip->client,
- 				chip->dev_cfg->pri.x789.reg_misc,
-@@ -638,12 +636,12 @@ static int sx150x_init_hw(struct sx150x_chip *chip,
- 		return err;
+-	ret = tps65218_reg_read(tps, regulators[id].bypass_reg, &val);
++	ret = regmap_read(tps->regmap, regulators[id].bypass_reg, &val);
+ 	if (ret)
+ 		return ret;
  
- 	err = sx150x_init_io(chip, chip->dev_cfg->reg_pullup,
--			pdata->io_pullup_ena);
-+			     io_pullup);
- 	if (err < 0)
- 		return err;
+diff --git a/include/linux/mfd/tps65218.h b/include/linux/mfd/tps65218.h
+index d1db952..51bef53 100644
+--- a/include/linux/mfd/tps65218.h
++++ b/include/linux/mfd/tps65218.h
+@@ -284,8 +284,6 @@ struct tps65218 {
+ 	struct regmap *regmap;
+ };
  
- 	err = sx150x_init_io(chip, chip->dev_cfg->reg_pulldn,
--			pdata->io_pulldn_ena);
-+			     io_pulldown);
- 	if (err < 0)
- 		return err;
- 
+-int tps65218_reg_read(struct tps65218 *tps, unsigned int reg,
+-					unsigned int *val);
+ int tps65218_reg_write(struct tps65218 *tps, unsigned int reg,
+ 			unsigned int val, unsigned int level);
+ int tps65218_set_bits(struct tps65218 *tps, unsigned int reg,
 -- 
-2.5.5
+1.9.1
+
