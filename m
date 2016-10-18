@@ -1,94 +1,22 @@
-From: Sylvain Lemieux <slemieux.tyco@gmail.com>
-Subject: Re: [BUG] LPC32xx gpio driver broken by commit 762c2e46 in 4.9-rc1
-Date: Tue, 18 Oct 2016 14:19:11 -0400
-Message-ID: <1476814751.24094.6.camel@localhost>
-References: <1476807799.10214.25.camel@localhost>
-         <6e71451a-9392-92cf-c7f5-a5bcbf9d4dd1@mleia.com>
+From: Miss Yaya Kamal <missyayalkamal1992@gmail.com>
+Subject: Greetings
+Date: Tue, 18 Oct 2016 19:14:14 +0000 (UTC)
+Message-ID: <2066482955.5585968.1476818054571@mail.yahoo.com>
+References: <2066482955.5585968.1476818054571.ref@mail.yahoo.com>
+Reply-To: Miss Yaya Kamal <yayakamal17@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:34044 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964942AbcJRSTO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2016 14:19:14 -0400
-Received: by mail-it0-f66.google.com with SMTP id e203so320580itc.1
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Oct 2016 11:19:14 -0700 (PDT)
-In-Reply-To: <6e71451a-9392-92cf-c7f5-a5bcbf9d4dd1@mleia.com>
+Received: from nm14-vm8.bullet.mail.ir2.yahoo.com ([212.82.96.196]:37346 "EHLO
+        nm14-vm8.bullet.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751492AbcJRTUP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 18 Oct 2016 15:20:15 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, slemieux@tycoint.com
 
-Hi Vladimir,
-
-On Tue, 2016-10-18 at 21:06 +0300, Vladimir Zapolskiy wrote:
-> Hi Sylvain,
-> 
-> On 18.10.2016 19:23, Sylvain Lemieux wrote:
-> > Vladimir, Linus, Alexandre,
-> > 
-> > the current LPC32xx GPIO driver is broken by commit 762c2e46
-> > (gpio: of: remove of_gpiochip_and_xlate() and struct gg_data).
-> 
-> I do confirm, as well I've noticed that the driver is broken on v4.9, 
-> however I didn't find time to bisect the problematic commit, thank
-> you to pinning it out.
-> 
-> > A call to "of_get_named_gpio" to retrieve the GPIO will
-> > always return -EINVAL, except for the first GPIO bank.
-> > 
-> > Prior to this commit, the driver was working properly
-> > because of the side-effect of the match function called by
-> > "gpiochip_find" inside "of_get_named_gpiod_flags" function.
-> > 
-> > I think, the proper long-term solution is to replace the
-> > LPC32xx GPIO driver; an initial version was previously
-> > submitted, by Vladimir Zapolskiy, to the mailing list:
-> > http://www.spinics.net/lists/linux-gpio/msg09746.html
-> 
-> I still cherish a hope for submitting v2 for v4.10, the difference
-> from v1 is expected to be relatively big (e.g. there will be 5
-> banks instead of 6, on hardware level banks P0 and P1 are on the
-> single controller, there will be other lesser differences also).
-> 
-I will be available to test the new driver, once submitted
-on the mailing list.
-
-> > Is there any short-term solution that can be done with
-> > the existing driver to keep the LPC32xx platform working
-> > properly in the 4.9 mainline kernel?
-> 
-> Unfortunately I didn't spend enough time to fix the problem,
-> but in two words the root cause is that from the OF description
-> there is only one on-SoC GPIO controller, but the GPIO controller
-> driver registers multiple gpiochips (6 in this particular case),
-> consumers specify a bank as a value in the first cell.
-> The referenced commit simplifies the matter by assuming that
-> a number of gpiochips for consumers is the same as the number
-> of registered GPIO controllers from OF description.
-> 
-> I don't think that the problem is specific only to the legacy
-> LPC32xx GPIO controller driver, but at the moment I don't have
-> any more examples to share. Probably another 3-cell GPIO
-> controller driver gpio-etraxfs.c is also broken, a good enough
-> implicit indicator for potentially broken drivers might be if
-> you see gpiochip_add_data() call inside a loop:
-> * gpio-sch311x.c
-> * gpio-ml-ioh.c
-> * gpio-etraxfs.c
-> * gpio-htc-egpio.c
-> * gpio-davinci.c
-> * gpio-lpc32xx.c
-> 
-As a temporary solution, locally I reverted the following
-commits to be able to have a working platform on 4.9-rc1:
-* "gpio: of: factor out common code to a new helper function"
-  (99468c1af913bb5662c223b68e783b4bf9200184)
-* "gpio: of: remove of_gpiochip_and_xlate() and struct gg_data"
-  (762c2e46c0591d207289105c8718e4adf29b2b34)
-
-
-Regards,
-Sylvain
-
+Greetings! 
+My name is Miss Yaya Kamal i was very happy when i saw your profile today during my research and it really attract me alot i believe you are the one i have been searching for to share my love and my good interest with,How is your health? i hope all is well with you. I believe we can move from here ,by knowing each other too well, But you have to understand that distance;age and color does not matter what matters is the true love and understanding,in my next e-mail to you i shall include my photo, i will be waiting for your mail reply for further introduction. 
+Bye my love.
+Miss Yaya Kamal.
