@@ -1,60 +1,47 @@
-From: Patrice Chotard <patrice.chotard@st.com>
-Subject: Re: drivers/gpio/gpio-stmpe.c:412: bad if test ?
-Date: Tue, 18 Oct 2016 15:12:40 +0200
-Message-ID: <cc26a7ff-4592-6a22-b478-576837a194ba@st.com>
-References: <VI1PR08MB1022FEB07B283A740340D49C9CD00@VI1PR08MB1022.eurprd08.prod.outlook.com>
- <CACRpkdaZfhtUN3dspGne8QkkTKsrWsk9CQU1yR_HRRAHu4TtoQ@mail.gmail.com>
+From: Johannes Thumshirn <jthumshirn@suse.de>
+Subject: Re: [bug report] pinctrl: berlin: Don't leak memory if krealloc()
+ fails
+Date: Tue, 18 Oct 2016 16:12:29 +0200
+Message-ID: <20161018141228.54j7hbmfsyvzyduy@linux-x5ow.site>
+References: <20161012081422.GA27222@mwanda>
+ <20161012083002.c4tsiuis4suna77h@linux-x5ow.site>
+ <20161012084526.GG5630@mwanda>
+ <20161012094436.3k7abjx64wlyjnyc@linux-x5ow.site>
+ <20161012111924.GJ5630@mwanda>
+ <20161012123616.ff7kiwbsyrnvhwff@linux-x5ow.site>
+ <20161012125846.GK5630@mwanda>
+ <20161013130933.pl2stxjcawgcufbx@linux-x5ow.site>
+ <CACRpkdZEbzeibDP2D3uA2HL9L10fiQcV6rr-kp+ORmnpRkBozw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:47090 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1760287AbcJRNMr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 18 Oct 2016 09:12:47 -0400
-In-Reply-To: <CACRpkdaZfhtUN3dspGne8QkkTKsrWsk9CQU1yR_HRRAHu4TtoQ@mail.gmail.com>
+Received: from mx2.suse.de ([195.135.220.15]:50659 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1759934AbcJROMd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 18 Oct 2016 10:12:33 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZEbzeibDP2D3uA2HL9L10fiQcV6rr-kp+ORmnpRkBozw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, David Binderman <dcb314@hotmail.com>
-Cc: "gnurou@gmail.com" <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi David
-
-This issue has been already fixed by Dan Carpenter few days ago
-
-see : https://patchwork.ozlabs.org/patch/681055/
-
-Thanks
-
-
-On 10/18/2016 02:32 PM, Linus Walleij wrote:
-> I think this need to be discussed with Patrice.
+On Tue, Oct 18, 2016 at 02:34:23PM +0200, Linus Walleij wrote:
+> On Thu, Oct 13, 2016 at 3:09 PM, Johannes Thumshirn <jthumshirn@suse.de> wrote:
 > 
-> Sorry for top-posting.
+> > @Linus are you ok with dropping these patches from your queue or shall I send
+> > you reverts?
 > 
-> Yours,
-> Linus Walleij
-> 
-> On Mon, Oct 17, 2016 at 1:21 PM, David Binderman <dcb314@hotmail.com> wrote:
->> Hello there,
->>
->> drivers/gpio/gpio-stmpe.c:412:34: warning: logical â€˜orâ€™ of collectively exhaustive tests is always true [-Wlogical-op]
->>
->> Source code is
->>
->>         if (stmpe->partnum != STMPE801 || stmpe->partnum != STMPE1600 ||
->>             stmpe->partnum != STMPE1801) {
->>
->> Maybe better code
->>
->>         if (stmpe->partnum != STMPE801 && stmpe->partnum != STMPE1600 &&
->>             stmpe->partnum != STMPE1801) {
->>
->> Regards
->>
->> David Binderman
->>
->>
->>
->>
+> Dropping them, rebasing my for-next test branch on v4.9-rc1 anyway.
+
+Thanks,
+	Johannes
+
+-- 
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
