@@ -1,58 +1,27 @@
-From: Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH] pinctrl: iproc: Fix iProc and NSP GPIO support
-Date: Mon, 17 Oct 2016 18:41:41 -0700
-Message-ID: <1476754901-3447-1-git-send-email-ray.jui@broadcom.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f178.google.com ([209.85.192.178]:36211 "EHLO
-        mail-pf0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934237AbcJRBl5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Oct 2016 21:41:57 -0400
-Received: by mail-pf0-f178.google.com with SMTP id e6so85518341pfk.3
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Oct 2016 18:41:57 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: Re: [PATCH v2 6/9] dt-bindings: pinctrl: Deprecate sunxi pinctrl bindings
+Date: Tue, 18 Oct 2016 15:37:08 +0800
+Message-ID: <CAGb2v64ZbXC+xm+GWQdnmZGO-g7744-wPnq3PeDu9WH3t0YxrQ@mail.gmail.com>
+References: <cover.7edc6c25be8a5e2efdda6a82e102dbf7ece6aa64.1476200742.git-series.maxime.ripard@free-electrons.com>
+ <ee6d214a14ed31689c5f70fc6ee5736c3d26737b.1476200742.git-series.maxime.ripard@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <ee6d214a14ed31689c5f70fc6ee5736c3d26737b.1476200742.git-series.maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, Ray Jui <ray.jui@broadcom.com>
 
-Since commit 44a7185c2ae6 ("of/platform: Add common method to populate
-default bus"), ARM64 platform devices are populated at the
-arch_initcall_sync level; as a result, the platform_driver_probe calls
-in both the iProc and NSP GPIO drivers fail with -ENODEV since by that
-time the platform device was not yet registered.
+On Tue, Oct 11, 2016 at 11:46 PM, Maxime Ripard
+<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+> The generic pin configuration and multiplexing should be preferred now,
+> even though we still support the old one.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 
-Replace platform_driver_probe with platform_driver_register, that allow
-the device to be register later
-
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
----
- drivers/pinctrl/bcm/pinctrl-iproc-gpio.c | 2 +-
- drivers/pinctrl/bcm/pinctrl-nsp-gpio.c   | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
-index 7f77007..5d1e505c3 100644
---- a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
-+++ b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
-@@ -844,6 +844,6 @@ static struct platform_driver iproc_gpio_driver = {
- 
- static int __init iproc_gpio_init(void)
- {
--	return platform_driver_probe(&iproc_gpio_driver, iproc_gpio_probe);
-+	return platform_driver_register(&iproc_gpio_driver);
- }
- arch_initcall_sync(iproc_gpio_init);
-diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
-index 35783db..c8deb8b 100644
---- a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
-+++ b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
-@@ -741,6 +741,6 @@ static struct platform_driver nsp_gpio_driver = {
- 
- static int __init nsp_gpio_init(void)
- {
--	return platform_driver_probe(&nsp_gpio_driver, nsp_gpio_probe);
-+	return platform_driver_register(&nsp_gpio_driver);
- }
- arch_initcall_sync(nsp_gpio_init);
--- 
-2.1.4
-
+Acked-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
