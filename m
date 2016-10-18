@@ -1,54 +1,51 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 2/2] gpio: ts4800: Fix module autoload
-Date: Tue, 18 Oct 2016 17:44:02 -0300
-Message-ID: <1476823442-31104-2-git-send-email-javier@osg.samsung.com>
-References: <1476823442-31104-1-git-send-email-javier@osg.samsung.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: [PATCH] pinctrl: imx: reset group index on probe
+Date: Tue, 18 Oct 2016 14:09:15 -0700
+Message-ID: <20161018210915.31614-1-stefan@agner.ch>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:43129
-        "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965068AbcJRUoR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2016 16:44:17 -0400
-In-Reply-To: <1476823442-31104-1-git-send-email-javier@osg.samsung.com>
+Received: from mail.kmu-office.ch ([178.209.48.109]:47062 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933332AbcJRVJl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2016 17:09:41 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+To: linus.walleij@linaro.org
+Cc: shawnguo@kernel.org, vladimir_zapolskiy@mentor.com, mpa@pengutronix.de, aalonso@freescale.com, b38343@freescale.com, ldewangan@nvidia.com, van.freenix@gmail.com, p.zabel@pengutronix.de, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 
-If the driver is built as a module, autoload won't work because the module
-alias information is not filled. So user-space can't match the registered
-device with the corresponding module.
+Group index is incremented on every new group parsed. Since the
+field is part of struct imx_pinctrl_soc_info, which is typically
+a global variable passed by the individual pinctrl-imx.c based
+driver, it does not get cleared automatically when re-probing the
+driver. This lead imx_pinctrl_parse_functions passing a group
+pointer which is outside of the allocated group space on second
+probe and onwards. Typically this ended up in a NULL pointer
+dereference when accessing the name field like this:
+Unable to handle kernel NULL pointer dereference at virtual address 00000000
+...
+PC is at strcmp+0x18/0x44
+LR is at imx_dt_node_to_map+0xc4/0x290
 
-Export the module alias information using the MODULE_DEVICE_TABLE() macro.
+Avoid this by setting group_index to 0 on probe.
 
-Before this patch:
+This has been observed when using DEBUG_TEST_DRIVER_REMOVE.
 
-$ modinfo drivers/gpio/gpio-ts4800.ko | grep alias
-$
-
-After this patch:
-
-$ modinfo drivers/gpio/gpio-ts4800.ko | grep alias
-alias:          of:N*T*Ctechnologic,ts4800-gpioC*
-alias:          of:N*T*Ctechnologic,ts4800-gpio
-
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
-
- drivers/gpio/gpio-ts4800.c | 1 +
+ drivers/pinctrl/freescale/pinctrl-imx.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpio-ts4800.c b/drivers/gpio/gpio-ts4800.c
-index 99256115bea5..c2a80b4cbf32 100644
---- a/drivers/gpio/gpio-ts4800.c
-+++ b/drivers/gpio/gpio-ts4800.c
-@@ -66,6 +66,7 @@ static const struct of_device_id ts4800_gpio_of_match[] = {
- 	{ .compatible = "technologic,ts4800-gpio", },
- 	{},
- };
-+MODULE_DEVICE_TABLE(of, ts4800_gpio_of_match);
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 4761320..79c4e14 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -687,6 +687,7 @@ static int imx_pinctrl_probe_dt(struct platform_device *pdev,
+ 	if (!info->functions)
+ 		return -ENOMEM;
  
- static struct platform_driver ts4800_gpio_driver = {
- 	.driver = {
++	info->group_index = 0;
+ 	if (flat_funcs) {
+ 		info->ngroups = of_get_child_count(np);
+ 	} else {
 -- 
-2.7.4
+2.10.0
 
