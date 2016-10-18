@@ -1,35 +1,27 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: intel: add blacklist list for XPS machines
-Date: Tue, 18 Oct 2016 14:43:25 +0200
-Message-ID: <CACRpkdb5qT2E+pm72g55hZYEmQQGPtNi-2UOQFY48X+Ecw=MUw@mail.gmail.com>
-References: <1475647025-25617-1-git-send-email-acelan.kao@canonical.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 6/9] dt-bindings: pinctrl: Deprecate sunxi pinctrl
+ bindings
+Date: Tue, 18 Oct 2016 07:43:49 -0500
+Message-ID: <20161018124349.qxsrpx3yjy62bqhp@rob-hp-laptop>
+References: <cover.7edc6c25be8a5e2efdda6a82e102dbf7ece6aa64.1476200742.git-series.maxime.ripard@free-electrons.com>
+ <ee6d214a14ed31689c5f70fc6ee5736c3d26737b.1476200742.git-series.maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f176.google.com ([209.85.220.176]:35917 "EHLO
-        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759140AbcJRMn0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2016 08:43:26 -0400
-Received: by mail-qk0-f176.google.com with SMTP id o68so335853361qkf.3
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Oct 2016 05:43:26 -0700 (PDT)
-In-Reply-To: <1475647025-25617-1-git-send-email-acelan.kao@canonical.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <ee6d214a14ed31689c5f70fc6ee5736c3d26737b.1476200742.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: AceLan Kao <acelan.kao@canonical.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Oct 5, 2016 at 7:57 AM, AceLan Kao <acelan.kao@canonical.com> wrote:
+On Tue, Oct 11, 2016 at 05:46:04PM +0200, Maxime Ripard wrote:
+> The generic pin configuration and multiplexing should be preferred now,
+> even though we still support the old one.
+> 
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+), 0 deletions(-)
 
-> The touchscreen on some Dell machines stop working after
-> closing and opening the lid after this driver is introduced.
-> So, I add a dmi list to black out those machines that doesn't
-> work well with this driver.
->
-> Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
-
-Is this patch still needed after Mika's thorough fix?
-
-I guess not?
-
-Yours,
-Linus Walleij
+Acked-by: Rob Herring <robh@kernel.org>
