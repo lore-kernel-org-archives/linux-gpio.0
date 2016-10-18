@@ -1,22 +1,54 @@
-From: Miss Yaya Kamal <missyayalkamal1992@gmail.com>
-Subject: Greetings
-Date: Tue, 18 Oct 2016 19:14:14 +0000 (UTC)
-Message-ID: <2066482955.5585968.1476818054571@mail.yahoo.com>
-References: <2066482955.5585968.1476818054571.ref@mail.yahoo.com>
-Reply-To: Miss Yaya Kamal <yayakamal17@yahoo.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 1/2] gpio: ath79: Fix module autoload
+Date: Tue, 18 Oct 2016 17:44:01 -0300
+Message-ID: <1476823442-31104-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from nm14-vm8.bullet.mail.ir2.yahoo.com ([212.82.96.196]:37346 "EHLO
-        nm14-vm8.bullet.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751492AbcJRTUP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 18 Oct 2016 15:20:15 -0400
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:43125
+        "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964886AbcJRUoP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Oct 2016 16:44:15 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-gpio@vger.kernel.org, Alban Bedel <albeu@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-Greetings! 
-My name is Miss Yaya Kamal i was very happy when i saw your profile today during my research and it really attract me alot i believe you are the one i have been searching for to share my love and my good interest with,How is your health? i hope all is well with you. I believe we can move from here ,by knowing each other too well, But you have to understand that distance;age and color does not matter what matters is the true love and understanding,in my next e-mail to you i shall include my photo, i will be waiting for your mail reply for further introduction. 
-Bye my love.
-Miss Yaya Kamal.
+If the driver is built as a module, autoload won't work because the module
+alias information is not filled. So user-space can't match the registered
+device with the corresponding module.
+
+Export the module alias information using the MODULE_DEVICE_TABLE() macro.
+
+Before this patch:
+
+$ modinfo drivers/gpio/gpio-ath79.ko | grep alias
+$
+
+After this patch:
+
+$ modinfo drivers/gpio/gpio-ath79.ko | grep alias
+alias:          of:N*T*Cqca,ar9340-gpioC*
+alias:          of:N*T*Cqca,ar9340-gpio
+alias:          of:N*T*Cqca,ar7100-gpioC*
+alias:          of:N*T*Cqca,ar7100-gpio
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+---
+
+ drivers/gpio/gpio-ath79.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
+index 9457e2022bf6..dc37dbe4b46d 100644
+--- a/drivers/gpio/gpio-ath79.c
++++ b/drivers/gpio/gpio-ath79.c
+@@ -219,6 +219,7 @@ static const struct of_device_id ath79_gpio_of_match[] = {
+ 	{ .compatible = "qca,ar9340-gpio" },
+ 	{},
+ };
++MODULE_DEVICE_TABLE(of, ath79_gpio_of_match);
+ 
+ static int ath79_gpio_probe(struct platform_device *pdev)
+ {
+-- 
+2.7.4
+
