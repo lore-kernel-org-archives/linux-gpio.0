@@ -1,169 +1,106 @@
-From: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: [RESEND PATCH v2 4/9] pinctrl: meson: allow gpio to request irq
-Date: Wed, 19 Oct 2016 17:37:44 +0200
-Message-ID: <1476891464-11564-1-git-send-email-jbrunet@baylibre.com>
-References: <1476890480-8884-5-git-send-email-jbrunet@baylibre.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1476890480-8884-5-git-send-email-jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Subject: [PATCH v2 03/10] gpio-sx150x: Remove 'irq_base' parameter
+Date: Wed, 19 Oct 2016 07:03:59 -0700
+Message-ID: <1476885846-16469-4-git-send-email-andrew.smirnov@gmail.com>
+References: <1476885846-16469-1-git-send-email-andrew.smirnov@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:35823 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941464AbcJSOWO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2016 10:22:14 -0400
+In-Reply-To: <1476885846-16469-1-git-send-email-andrew.smirnov@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, cphealy@gmail.com, Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Add the ability for gpio to request irq from the gpio interrupt controller
-if present. We have to specificaly that the parent interrupt controller is
-the gpio interrupt controller because gpio on meson SoCs can't generate
-interrupt directly on the GIC.
+Remove 'irq_base' parameter and call 'gpiochip_irqchip_add' with '0' as
+irq base to automatically assign it.
 
-Signed-off-by: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
+ drivers/gpio/gpio-sx150x.c | 21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
 
-I messed up in v2 and actually sent the v1 again. Here is the actual v2
-with the fix. Again, sorry for the inconvenience.
-
- drivers/pinctrl/Kconfig               |  2 +
- drivers/pinctrl/meson/pinctrl-meson.c | 69 +++++++++++++++++++++++++++++++++++
- drivers/pinctrl/meson/pinctrl-meson.h |  1 +
- 3 files changed, 72 insertions(+)
-
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 0e75d94972ba..d5bfbfcddab0 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -126,7 +126,9 @@ config PINCTRL_MESON
- 	select PINCONF
- 	select GENERIC_PINCONF
- 	select GPIOLIB
-+	select IRQ_DOMAIN
- 	select OF_GPIO
-+	select OF_IRQ
- 	select REGMAP_MMIO
- 
- config PINCTRL_OXNAS
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 57122eda155a..e3f5241f337f 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -50,6 +50,7 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_irq.h>
- #include <linux/pinctrl/pinconf-generic.h>
- #include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinctrl.h>
-@@ -481,6 +482,58 @@ static void meson_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
- 			   value ? BIT(bit) : 0);
- }
- 
-+static int meson_gpio_to_hwirq(struct meson_bank *bank, unsigned int offset)
-+{
-+	unsigned int hwirq;
-+
-+	if (bank->irq_first < 0)
-+		/* this bank cannot generate irqs */
-+		return -1;
-+
-+	hwirq = offset - bank->first + bank->irq_first;
-+
-+	if (hwirq > bank->irq_last)
-+		/* this pin cannot generate irqs */
-+		return -1;
-+
-+	return hwirq;
-+}
-+
-+static int meson_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct meson_pinctrl *pc = gpiochip_get_data(chip);
-+	struct meson_bank *bank;
-+	struct irq_fwspec fwspec;
-+	unsigned int hwirq;
-+	int ret;
-+
-+	ret = meson_get_bank(pc, offset, &bank);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * The interrupt controller might be missing, in such case we can't
-+	 * provide an interrupt for a pin
-+	 */
-+	if (is_fwnode_irqchip(pc->fwnode)) {
-+		dev_info(pc->dev, "interrupt controller not found\n");
-+		return 0;
-+	}
-+
-+	hwirq = meson_gpio_to_hwirq(bank, offset);
-+	if (hwirq < 0) {
-+		dev_dbg(pc->dev, "no interrupt for pin %u\n", offset);
-+		return 0;
-+	}
-+
-+	fwspec.fwnode = pc->fwnode;
-+	fwspec.param_count = 2;
-+	fwspec.param[0] = hwirq;
-+	fwspec.param[1] = IRQ_TYPE_NONE;
-+
-+	return irq_create_fwspec_mapping(&fwspec);
-+}
-+
- static int meson_gpio_get(struct gpio_chip *chip, unsigned gpio)
- {
- 	struct meson_pinctrl *pc = gpiochip_get_data(chip);
-@@ -539,6 +592,7 @@ static int meson_gpiolib_register(struct meson_pinctrl *pc)
- 	pc->chip.direction_output = meson_gpio_direction_output;
- 	pc->chip.get = meson_gpio_get;
- 	pc->chip.set = meson_gpio_set;
-+	pc->chip.to_irq = meson_gpio_to_irq;
- 	pc->chip.base = pc->data->pin_base;
- 	pc->chip.ngpio = pc->data->num_pins;
- 	pc->chip.can_sleep = false;
-@@ -598,6 +652,19 @@ static struct regmap *meson_map_resource(struct meson_pinctrl *pc,
- 	return devm_regmap_init_mmio(pc->dev, base, &meson_regmap_config);
- }
- 
-+static void meson_pinctrl_get_irq_gpio_intc(struct meson_pinctrl *pc,
-+					    struct device_node *node)
-+{
-+	struct device_node *np = of_irq_find_parent(node);
-+
-+	if (!np || !of_device_is_compatible(np, pc->data->irq_compat)) {
-+		dev_info(pc->dev, "gpio interrupt disabled\n");
-+		pc->fwnode = NULL;
-+	} else {
-+		pc->fwnode = of_node_to_fwnode(np);
-+	}
-+}
-+
- static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
- 				  struct device_node *node)
- {
-@@ -643,6 +710,8 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
- 		return PTR_ERR(pc->reg_gpio);
- 	}
- 
-+	meson_pinctrl_get_irq_gpio_intc(pc, gpio_np);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
-index b90d69e366df..2e6c83adbd1f 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.h
-+++ b/drivers/pinctrl/meson/pinctrl-meson.h
-@@ -123,6 +123,7 @@ struct meson_pinctrl {
- 	struct regmap *reg_gpio;
- 	struct gpio_chip chip;
- 	struct device_node *of_node;
-+	struct fwnode_handle *fwnode;
+diff --git a/drivers/gpio/gpio-sx150x.c b/drivers/gpio/gpio-sx150x.c
+index e80c115..e01afd8 100644
+--- a/drivers/gpio/gpio-sx150x.c
++++ b/drivers/gpio/gpio-sx150x.c
+@@ -105,10 +105,6 @@ struct sx150x_device_data {
+  *               the polarity of that IO line, while clearing it results
+  *               in normal polarity. For chips with fewer than 16 IO pins,
+  *               high-end bits are ignored.
+- * @irq_base: The first 'virtual IRQ' line at which our block of GPIO-based
+- *            IRQ lines will appear.  Similarly to gpio_base, the expander
+- *            will create a block of irqs beginning at this number.
+- *            This value is ignored if irq_summary is < 0.
+  * @reset_during_probe: If set to true, the driver will trigger a full
+  *                      reset of the chip at the beginning of the probe
+  *                      in order to place it in a known state.
+@@ -118,7 +114,6 @@ struct sx150x_platform_data {
+ 	u16      io_pullup_ena;
+ 	u16      io_pulldn_ena;
+ 	u16      io_polarity;
+-	unsigned irq_base;
+ 	bool     reset_during_probe;
  };
  
- #define PIN(x, b)	(b + x)
+@@ -126,7 +121,6 @@ struct sx150x_chip {
+ 	struct gpio_chip                 gpio_chip;
+ 	struct i2c_client               *client;
+ 	const struct sx150x_device_data *dev_cfg;
+-	int                              irq_base;
+ 	int				 irq_update;
+ 	u32                              irq_sense;
+ 	u32				 irq_masked;
+@@ -590,7 +584,6 @@ static void sx150x_init_chip(struct sx150x_chip *chip,
+ 	chip->irq_chip.irq_set_type        = sx150x_irq_set_type;
+ 	chip->irq_chip.irq_bus_lock        = sx150x_irq_bus_lock;
+ 	chip->irq_chip.irq_bus_sync_unlock = sx150x_irq_bus_sync_unlock;
+-	chip->irq_base                     = -1;
+ 	chip->irq_masked                   = ~0;
+ 	chip->irq_sense                    = 0;
+ 	chip->dev_masked                   = ~0;
+@@ -689,16 +682,13 @@ static int sx150x_init_hw(struct sx150x_chip *chip,
+ 	return err;
+ }
+ 
+-static int sx150x_install_irq_chip(struct sx150x_chip *chip,
+-				   int irq_base)
++static int sx150x_install_irq_chip(struct sx150x_chip *chip)
+ {
+ 	int err;
+ 
+-	chip->irq_base    = irq_base;
+-
+ 	/* Add gpio chip to irq subsystem */
+ 	err = gpiochip_irqchip_add(&chip->gpio_chip,
+-		&chip->irq_chip, chip->irq_base,
++		&chip->irq_chip, 0,
+ 		handle_edge_irq, IRQ_TYPE_EDGE_BOTH);
+ 	if (err) {
+ 		dev_err(&chip->client->dev,
+@@ -710,10 +700,6 @@ static int sx150x_install_irq_chip(struct sx150x_chip *chip,
+ 			chip->client->irq, NULL, sx150x_irq_thread_fn,
+ 			IRQF_ONESHOT | IRQF_SHARED | IRQF_TRIGGER_FALLING,
+ 			chip->irq_chip.name, chip);
+-	if (err < 0) {
+-		chip->irq_base    = -1;
+-	}
+-
+ 	return err;
+ }
+ 
+@@ -748,8 +734,7 @@ static int sx150x_probe(struct i2c_client *client,
+ 		return rc;
+ 
+ 	if (client->irq) {
+-		rc = sx150x_install_irq_chip(chip,
+-					pdata->irq_base);
++		rc = sx150x_install_irq_chip(chip);
+ 		if (rc < 0)
+ 			return rc;
+ 	}
 -- 
-2.7.4
+2.5.5
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
