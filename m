@@ -1,15 +1,12 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH] Revert "gpio/mvebu: convert to use
- irq_domain_add_simple()"
-Date: Wed, 19 Oct 2016 09:09:10 +0200
-Message-ID: <871szcerxl.fsf@free-electrons.com>
-References: <1476831396-24359-1-git-send-email-jgunthorpe@obsidianresearch.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH 0/9] irqchip: meson: add support for the gpio interrupt
+ controller
+Date: Wed, 19 Oct 2016 12:08:20 +0200
+Message-ID: <1476871709-8359-1-git-send-email-jbrunet@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1476831396-24359-1-git-send-email-jgunthorpe@obsidianresearch.com>
- (Jason Gunthorpe's message of "Tue, 18 Oct 2016 16:56:36 -0600")
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,71 +16,74 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Russell King <linux@armlinux.org.uk>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Jerome Brunet <jbrunet@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Jason,
- 
- On mer., oct. 19 2016, Jason Gunthorpe <jgunthorpe@obsidianresearch.com> wrote:
-
-> This reverts commit ce931f571b6dcf8534e8740e8cd16565cf362536.
->
-> The only difference betwen _simple and _legacy is that _simple
-> calls irq_alloc_descs, however mvebu_gpio_probe already called
-> irq_alloc_descs a few lines above.
-
-And what about removing the irq_alloc_descs ?
-
-Going back to use the _legacy version seems wrong for me.
-
-Gregory
-
->
-> This fixes these kernel error messages from the double call
-> to irq_alloc_descs:
->
->  irq: Cannot allocate irq_descs @ IRQ34, assuming pre-allocated
->  irq: Cannot allocate irq_descs @ IRQ66, assuming pre-allocated
->
-> Cc: Rob Herring <rob.herring@calxeda.com>
-> Cc: Grant Likely <grant.likely@secretlab.ca>
-> Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Fixes: ce931f571b6d ("gpio/mvebu: convert to use irq_domain_add_simple()")
-> Signed-off-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-> ---
->  drivers/gpio/gpio-mvebu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-> index cd5dc27320a2..2e0c8d8b7792 100644
-> --- a/drivers/gpio/gpio-mvebu.c
-> +++ b/drivers/gpio/gpio-mvebu.c
-> @@ -807,8 +807,8 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
->  			       IRQ_NOREQUEST, IRQ_LEVEL | IRQ_NOPROBE);
->  
->  	/* Setup irq domain on top of the generic chip. */
-> -	mvchip->domain = irq_domain_add_simple(np, mvchip->chip.ngpio,
-> -					       mvchip->irqbase,
-> +	mvchip->domain = irq_domain_add_legacy(np, mvchip->chip.ngpio,
-> +					       mvchip->irqbase, 0,
->  					       &irq_domain_simple_ops,
->  					       mvchip);
->  	if (!mvchip->domain) {
-> -- 
-> 2.1.4
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+VGhpcyBwYXRjaCBzZXJpZXMgYWRkcyBzdXBwb3J0IGZvciB0aGUgR1BJTyBpbnRlcnJ1cHQgY29u
+dHJvbGxlciBmb3VuZApvbiBBbWxvZ2ljJ3MgbWVzb24gU29DIGZhbWlsaWVzLgoKVW5saWtlIHdo
+YXQgdGhlIG5hbWUgc3VnZ2VzdHMsIHRoaXMgY29udHJvbGxlciBpcyBub3QgcGFydCBvZiB0aGUg
+U29DIEdQSU8Kc3Vic3lzdGVtLiBJdCdzIGFuIGluZGVwZWRlbnQgY29udHJvbGxlciB3aGljaCBj
+YW4gd2F0Y2ggYWxtb3N0IGFsbCBwYWQgb2YKdGhlIFNvQyBhbmQgZ2VuZXJhdGUgYW5kIGludGVy
+cnVwdCBmcm9tIGl0LiBTb21lIHBpbnMsIHdoaWNoIGFyZSBub3QgcGFydApvZiB0aGUgcHVibGlj
+IGRhdGFzaGVldCwgZG9uJ3Qgc2VlbSB0byBoYXZlIHRoaXMgY2FwYWJpbGl0eSB0aG91Z2guCgpI
+YXJkd2FyZSB3aXNlLCB0aGUgY29udHJvbGxlciBpcyBhIDI1NiB0byA4IG11bHRpcGxleGVyLiBJ
+dCBjYW4gdGFrZSB1cAp0byAyNTYgaW5wdXQgcGFkcyBhbmQgcm91dGUgdGhlbSB0byBhbnkgb2Yg
+OCBHSUMncyBpbnRlcnJ1cHRzLiBUaGVyZSBpcwphbHNvIGEgZmlsdGVyIGJsb2NrIGluIHRoZSBt
+aWRkbGUgdG8gc2VsZWN0IHRoZSBhcHByb3ByaWF0ZSBlZGdlIG9yIGxldmVsLgoKVGhlIG51bWJl
+ciBvZiBpbnRlcnJ1cHQgZGVjbGFyZWQgYnkgdGhlIGlycWNoaXAgaXMgbG93ZXJlZCBmcm9tIDI1
+NiB0byB0aGUKYWN0dWFsIG51bWJlciBvZiBzaWduYWwgcm91dGVkIHRvIHRoZSBjb250cm9sbGVy
+IG9uIGVhY2ggU29DIGZhbWlseS4gQXMgd2UKaGF2ZSBhY2Nlc3MgdG8gb25seSA4IEdJQ+KAmXMg
+aW50ZXJydXB0cywgdGhlc2UgYXJlIGFsbG9jYXRlZCB3aGVuIGFuCmludGVycnVwdCBpcyByZXF1
+ZXN0ZWQgZnJvbSB0aGUgY29udHJvbGxlciwgb24gYSBmaXJzdCBjb21lLCBmaXJzdCBzZXJ2ZWQK
+YmFzaXMuCgpUaGlzIHNlcmllcyBoYXMgYmVlbiB0ZXN0ZWQgb24gQW1sb2dpYyBTOTA1LVAyMDAg
+Ym9hcmQgd2l0aCB0aGUgZnJvbnQKcGFuZWwgcG93ZXIgYnV0dG9uLiBEaXJlY3RseSBwYXNzaW5n
+IGFuIElSUSBvciB1c2luZyBncGlvX3RvX2lycSBib3RoIHdvcmsKd2l0aCB0aGlzIGRyaXZlci4K
+ClRoaXMgd29yayBpcyBkZXJpdmVkIGZyb20gdGhlIHByZXZpb3VzIHdvcmsgb2YgQ2FybG8gQ2Fp
+b25lIFsxXS4KCkNoYW5nZXMgc2luY2UgUkZDIDogWzJdCiAqIFJlbW92ZSBpbnRlcnJ1cHQgcHJv
+cGVydHkgaW4gZGV2aWNlIHRyZWU6IHRoZSBjb250cm9sbGVyIGNhbm5vdCBnZW5lcmF0ZQogICBp
+bnRlcnJ1cHRzIG9uIGl0cyBvd24gYW5kIGlzIG1lcmVseSByb3V0aW5nIHRoZSBpbnRlcnJ1cHQg
+dG8gdGhlIEdJQywKICAgdGhlcmVmb3JlIGl0IHNob3VsZCBub3QgdXNlIHRoZSBpbnRlcnJ1cHQg
+cHJvcGVydHkuIFRoaXMgZGF0YSBpcyBub3cKICAgc3RvcmVkIGRpcmVjdGx5IGluIHRoZSBkcml2
+ZXIsIHNhbWUgYXMgdGhlIHBpbmN0cmwgZGF0YS4KCiAqIEltcHJvdmUgY29tcGF0aWJpbGl0eSBj
+aGVja2luZyBvZiBtZXNvbiBwaW5jdHJsIG9uIGl0cyBpbnRlcnJ1cHQgcGFyZW50CiAgIHRvIGFj
+dGl2YXRlIGdwaW9fdG9faXJxIGNhbGxiYWNrCgogKiBEcm9wIElSUV9CT1RIIGhhY2suIE5lZWQg
+bW9yZSB3b3JrIHRvIGhhdmUgYW4gYWNjZXB0YWJsZSBzb2x1dGlvbiBmb3IKICAgdGhpcwoKWzFd
+IDogaHR0cDovL2xrbWwua2VybmVsLm9yZy9yLzE0NDg5ODcwNjItMzEyMjUtMS1naXQtc2VuZC1l
+bWFpbC1jYXJsb0BjYWlvbmUub3JnClsyXSA6IGh0dHA6Ly9sa21sLmtlcm5lbC5vcmcvci8xNDc1
+NTkzNzA4LTEwNTI2LTEtZ2l0LXNlbmQtZW1haWwtamJydW5ldEBiYXlsaWJyZS5jb20KCkplcm9t
+ZSBCcnVuZXQgKDkpOgogIGlycWNoaXA6IG1lc29uOiBhZGQgc3VwcG9ydCBmb3IgZ3BpbyBpbnRl
+cnJ1cHQgY29udHJvbGxlcgogIGR0LWJpbmRpbmdzOiBpbnRlcnJ1cHQtY29udHJvbGxlcjogYWRk
+IERUIGJpbmRpbmcgZm9yIG1lc29uIEdQSU8KICAgIGludGVycnVwdCBjb250cm9sbGVyCiAgcGlu
+Y3RybDogbWVzb246IHVwZGF0ZSBwaW5jdHJsIGRhdGEgd2l0aCBncGlvIGlycSBkYXRhCiAgcGlu
+Y3RybDogbWVzb246IGFsbG93IGdwaW8gdG8gcmVxdWVzdCBpcnEKICBkdC1iaW5kaW5nczogcGlu
+Y3RybDogbWVzb246IHVwZGF0ZSBncGlvIGR0LWJpbmRpbmdzCiAgQVJNNjQ6IG1lc29uOiBlbmFi
+bGUgTUVTT05fSVJRX0dQSU8gaW4gS2NvbmZpZwogIEFSTTogbWVzb246IGVuYWJsZSBNRVNPTl9J
+UlFfR1BJTyBpbiBLY29uZmlnIGZvciBtZXNvbjgKICBBUk02NDogZHRzOiBhbWxvZ2ljOiBlbmFi
+bGUgZ3BpbyBpbnRlcnJ1cHQgY29udHJvbGxlciBvbiBneGJiCiAgQVJNOiBkdHM6IGFtbG9naWM6
+IGVuYWJsZSBncGlvIGludGVycnVwdCBjb250cm9sbGVyIG9uIG1lc29uOAoKIC4uLi9hbWxvZ2lj
+LG1lc29uLWdwaW8taW50Yy50eHQgICAgICAgICAgICAgICAgICAgIHwgIDMxICsrCiAuLi4vZGV2
+aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL21lc29uLHBpbmN0cmwudHh0ICB8ICAgNCArCiBhcmNo
+L2FybS9ib290L2R0cy9tZXNvbjguZHRzaSAgICAgICAgICAgICAgICAgICAgICB8ICAxMSArCiBh
+cmNoL2FybS9ib290L2R0cy9tZXNvbjhiLmR0c2kgICAgICAgICAgICAgICAgICAgICB8ICAxMSAr
+CiBhcmNoL2FybS9tYWNoLW1lc29uL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICB8ICAg
+MiArCiBhcmNoL2FybTY0L0tjb25maWcucGxhdGZvcm1zICAgICAgICAgICAgICAgICAgICAgICB8
+ICAgMSArCiBhcmNoL2FybTY0L2Jvb3QvZHRzL2FtbG9naWMvbWVzb24tZ3hiYi5kdHNpICAgICAg
+ICB8ICAgOSArCiBkcml2ZXJzL2lycWNoaXAvS2NvbmZpZyAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICB8ICAgOSArCiBkcml2ZXJzL2lycWNoaXAvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAg
+ICAgICAgICB8ICAgMSArCiBkcml2ZXJzL2lycWNoaXAvaXJxLW1lc29uLWdwaW8uYyAgICAgICAg
+ICAgICAgICAgICB8IDQyMyArKysrKysrKysrKysrKysrKysrKysKIGRyaXZlcnMvcGluY3RybC9L
+Y29uZmlnICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAyICsKIGRyaXZlcnMvcGluY3Ry
+bC9tZXNvbi9waW5jdHJsLW1lc29uLWd4YmIuYyAgICAgICAgIHwgIDI0ICstCiBkcml2ZXJzL3Bp
+bmN0cmwvbWVzb24vcGluY3RybC1tZXNvbi5jICAgICAgICAgICAgICB8ICA3NyArKystCiBkcml2
+ZXJzL3BpbmN0cmwvbWVzb24vcGluY3RybC1tZXNvbi5oICAgICAgICAgICAgICB8ICAxNyArLQog
+ZHJpdmVycy9waW5jdHJsL21lc29uL3BpbmN0cmwtbWVzb244LmMgICAgICAgICAgICAgfCAgMjIg
+Ky0KIGRyaXZlcnMvcGluY3RybC9tZXNvbi9waW5jdHJsLW1lc29uOGIuYyAgICAgICAgICAgIHwg
+IDM0ICstCiAxNiBmaWxlcyBjaGFuZ2VkLCA2NDEgaW5zZXJ0aW9ucygrKSwgMzcgZGVsZXRpb25z
+KC0pCiBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
+L2ludGVycnVwdC1jb250cm9sbGVyL2FtbG9naWMsbWVzb24tZ3Bpby1pbnRjLnR4dAogY3JlYXRl
+IG1vZGUgMTAwNjQ0IGRyaXZlcnMvaXJxY2hpcC9pcnEtbWVzb24tZ3Bpby5jCgotLSAKMi43LjQK
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1h
+cm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
+cmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0t
+a2VybmVsCg==
