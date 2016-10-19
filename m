@@ -1,92 +1,102 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v2 4/9] pinctrl: sunxi: Deal with configless pins
-Date: Wed, 19 Oct 2016 14:16:14 +0200
-Message-ID: <20161019121614.3crr76qyexhamjiy@lukather>
-References: <cover.7edc6c25be8a5e2efdda6a82e102dbf7ece6aa64.1476200742.git-series.maxime.ripard@free-electrons.com>
- <d707c657502b87a7f8e70c7b44492bc95939f9f6.1476200742.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v64gBi71W=+Tu2vz94xFDtuRNHUyVWK3ken8CSOWvK5t0g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6832654095309314143=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAGb2v64gBi71W=+Tu2vz94xFDtuRNHUyVWK3ken8CSOWvK5t0g@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Subject: [PATCH v2 02/10] gpio-sx150x: Remove 'irq_summary' parameter
+Date: Wed, 19 Oct 2016 07:03:58 -0700
+Message-ID: <1476885846-16469-3-git-send-email-andrew.smirnov@gmail.com>
+References: <1476885846-16469-1-git-send-email-andrew.smirnov@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1476885846-16469-1-git-send-email-andrew.smirnov@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, cphealy@gmail.com, Andrey Smirnov <andrew.smirnov@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
+Information conveyed by 'irq_summary' paramter can be obtained from
+struct i2c_client's irq field. Remove any uses of the former and replace
+it with the latter.
 
---===============6832654095309314143==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2556onq4pmzpow7e"
-Content-Disposition: inline
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+---
+ drivers/gpio/gpio-sx150x.c | 19 +++----------------
+ 1 file changed, 3 insertions(+), 16 deletions(-)
 
-
---2556onq4pmzpow7e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Oct 18, 2016 at 03:47:03PM +0800, Chen-Yu Tsai wrote:
-> > @@ -342,6 +365,8 @@ static void sunxi_pctrl_dt_free_map(struct pinctrl_=
-dev *pctldev,
-> >                                     struct pinctrl_map *map,
-> >                                     unsigned num_maps)
-> >  {
-> > +       unsigned long *pinconfig;
->=20
-> This looks out of place and context?
-
-Yeah, sorry, it's just a leftover from the previous version. This has
-been removed.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---2556onq4pmzpow7e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYB2QJAAoJEBx+YmzsjxAgtyIP/iY0W6eJa/97OCT7TR7+qtKZ
-CM3dR7WswN60XWi2bhkb4Z5evpKPHJ3C5JupSD9qVPKdEicl1M1gEIm2TMUy+R/I
-SkX9di5s6EvZH7J+y6EhaURd2DkS/kP/O3nsl4020fOUau7xoY7cwTRHdE0EIqmL
-195jTr7a7LBHFruJbkqYVEHKV04PN6OxTHr8fR05Xl+egy9H9cOW+I+v+jNtT/tc
-qFGjUj9KvWK70RTCmLKd4dz7Rd+q4EjcbRQZTOYHJLZFYSZXCenpwrD8vXNOtfl9
-sTfC5WTJwPgGwMBjnt9Og5IOVnVaJBQ87IC4arsSPlr2lAK0vjTjQcnVLsj98GzG
-c7+egysx56WJVBUw0wrGIwDSFAa7u6a3Iw33X8c+2WlKMNf51Sv3vSyLSWwoxYC5
-O6qsg+BEVTBEhfV80SxAyKP9aCnBROxyEGkfzfQLiEzRGmfaHKzD61Kqmw57uzqU
-RtMddLF3eVgHd/PKyDb+nCkgtUyXEabFAeXGPleMVNHSNDkLx2BYAa6OsuY58KAk
-X96mFN8/TQ8Y6qDIhKdEX9aTJJoDTL8jEsHWj8woWsedHCLBVROkzlwtq1Qnwvl6
-GZhZm+UpVULfr1tY2+wzaN+cm1pCYa/seGzbjImuz9cuqOm5NAb1/1RNbwQJGX4p
-2ROPyAiINGCDdnuZsgLV
-=Rt36
------END PGP SIGNATURE-----
-
---2556onq4pmzpow7e--
-
-
---===============6832654095309314143==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============6832654095309314143==--
+diff --git a/drivers/gpio/gpio-sx150x.c b/drivers/gpio/gpio-sx150x.c
+index f9d6bec..e80c115 100644
+--- a/drivers/gpio/gpio-sx150x.c
++++ b/drivers/gpio/gpio-sx150x.c
+@@ -105,12 +105,6 @@ struct sx150x_device_data {
+  *               the polarity of that IO line, while clearing it results
+  *               in normal polarity. For chips with fewer than 16 IO pins,
+  *               high-end bits are ignored.
+- * @irq_summary: The 'summary IRQ' line to which the GPIO expander's INT line
+- *               is connected, via which it reports interrupt events
+- *               across all GPIO lines.  This must be a real,
+- *               pre-existing IRQ line.
+- *               Setting this value < 0 disables the irq_chip functionality
+- *               of the driver.
+  * @irq_base: The first 'virtual IRQ' line at which our block of GPIO-based
+  *            IRQ lines will appear.  Similarly to gpio_base, the expander
+  *            will create a block of irqs beginning at this number.
+@@ -124,7 +118,6 @@ struct sx150x_platform_data {
+ 	u16      io_pullup_ena;
+ 	u16      io_pulldn_ena;
+ 	u16      io_polarity;
+-	int      irq_summary;
+ 	unsigned irq_base;
+ 	bool     reset_during_probe;
+ };
+@@ -133,7 +126,6 @@ struct sx150x_chip {
+ 	struct gpio_chip                 gpio_chip;
+ 	struct i2c_client               *client;
+ 	const struct sx150x_device_data *dev_cfg;
+-	int                              irq_summary;
+ 	int                              irq_base;
+ 	int				 irq_update;
+ 	u32                              irq_sense;
+@@ -598,7 +590,6 @@ static void sx150x_init_chip(struct sx150x_chip *chip,
+ 	chip->irq_chip.irq_set_type        = sx150x_irq_set_type;
+ 	chip->irq_chip.irq_bus_lock        = sx150x_irq_bus_lock;
+ 	chip->irq_chip.irq_bus_sync_unlock = sx150x_irq_bus_sync_unlock;
+-	chip->irq_summary                  = -1;
+ 	chip->irq_base                     = -1;
+ 	chip->irq_masked                   = ~0;
+ 	chip->irq_sense                    = 0;
+@@ -699,12 +690,10 @@ static int sx150x_init_hw(struct sx150x_chip *chip,
+ }
+ 
+ static int sx150x_install_irq_chip(struct sx150x_chip *chip,
+-				int irq_summary,
+-				int irq_base)
++				   int irq_base)
+ {
+ 	int err;
+ 
+-	chip->irq_summary = irq_summary;
+ 	chip->irq_base    = irq_base;
+ 
+ 	/* Add gpio chip to irq subsystem */
+@@ -718,11 +707,10 @@ static int sx150x_install_irq_chip(struct sx150x_chip *chip,
+ 	}
+ 
+ 	err = devm_request_threaded_irq(&chip->client->dev,
+-			irq_summary, NULL, sx150x_irq_thread_fn,
++			chip->client->irq, NULL, sx150x_irq_thread_fn,
+ 			IRQF_ONESHOT | IRQF_SHARED | IRQF_TRIGGER_FALLING,
+ 			chip->irq_chip.name, chip);
+ 	if (err < 0) {
+-		chip->irq_summary = -1;
+ 		chip->irq_base    = -1;
+ 	}
+ 
+@@ -759,9 +747,8 @@ static int sx150x_probe(struct i2c_client *client,
+ 	if (rc)
+ 		return rc;
+ 
+-	if (pdata->irq_summary >= 0) {
++	if (client->irq) {
+ 		rc = sx150x_install_irq_chip(chip,
+-					pdata->irq_summary,
+ 					pdata->irq_base);
+ 		if (rc < 0)
+ 			return rc;
+-- 
+2.5.5
