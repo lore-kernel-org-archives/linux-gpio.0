@@ -1,86 +1,69 @@
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: [PATCH v2 07/10] gpio-sx150x: Replace 'oscio_is_gpio' with DT binding
-Date: Wed, 19 Oct 2016 07:04:03 -0700
-Message-ID: <1476885846-16469-8-git-send-email-andrew.smirnov@gmail.com>
-References: <1476885846-16469-1-git-send-email-andrew.smirnov@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:32843 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941785AbcJSOVj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Oct 2016 10:21:39 -0400
-In-Reply-To: <1476885846-16469-1-git-send-email-andrew.smirnov@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for the v4.9 series
+Date: Wed, 19 Oct 2016 15:16:06 +0200
+Message-ID: <CACRpkdbHAOh=5W0_ppoKmqWtAooi-52xBb8J+NUaif4iwyGjHQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, cphealy@gmail.com, Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- drivers/gpio/gpio-sx150x.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+Hi Linus,
 
-diff --git a/drivers/gpio/gpio-sx150x.c b/drivers/gpio/gpio-sx150x.c
-index a63f6ea..044ff3d 100644
---- a/drivers/gpio/gpio-sx150x.c
-+++ b/drivers/gpio/gpio-sx150x.c
-@@ -92,7 +92,6 @@ struct sx150x_device_data {
-  *                output-only GPO pin will be added at the end of the block.
-  */
- struct sx150x_platform_data {
--	bool     oscio_is_gpo;
- };
- 
- struct sx150x_chip {
-@@ -553,8 +552,6 @@ static void sx150x_init_chip(struct sx150x_chip *chip,
- 	chip->gpio_chip.of_node          = client->dev.of_node;
- 	chip->gpio_chip.of_gpio_n_cells  = 2;
- #endif
--	if (pdata->oscio_is_gpo)
--		++chip->gpio_chip.ngpio;
- 
- 	chip->irq_chip.name                = client->name;
- 	chip->irq_chip.irq_mask            = sx150x_irq_mask;
-@@ -670,10 +667,6 @@ static int sx150x_init_hw(struct sx150x_chip *chip,
- 			return err;
- 	}
- 
--
--	if (pdata->oscio_is_gpo)
--		sx150x_set_oscio(chip, 0);
--
- 	return err;
- }
- 
-@@ -706,6 +699,7 @@ static int sx150x_probe(struct i2c_client *client,
- 	struct sx150x_platform_data *pdata;
- 	struct sx150x_chip *chip;
- 	int rc;
-+	bool oscio_is_gpo;
- 
- 	pdata = dev_get_platdata(&client->dev);
- 	if (!pdata)
-@@ -719,11 +713,21 @@ static int sx150x_probe(struct i2c_client *client,
- 	if (!chip)
- 		return -ENOMEM;
- 
-+	oscio_is_gpo = of_property_read_bool(client->dev.of_node,
-+					     "semtech,oscio-is-gpo");
-+
- 	sx150x_init_chip(chip, client, id->driver_data, pdata);
-+
-+	if (oscio_is_gpo)
-+		chip->gpio_chip.ngpio++;
-+
- 	rc = sx150x_init_hw(chip, pdata);
- 	if (rc < 0)
- 		return rc;
- 
-+	if (oscio_is_gpo)
-+		sx150x_set_oscio(chip, 0);
-+
- 	rc = devm_gpiochip_add_data(&client->dev, &chip->gpio_chip, chip);
- 	if (rc)
- 		return rc;
--- 
-2.5.5
+here are some pin control fixes. Details in the signed tag.
+Two of them tagged for stable even.
 
+Please pull them in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit 1001354ca34179f3db924eb66672442a173147dc=
+:
+
+  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.9-2
+
+for you to fetch changes up to c538b9436751a0be2e1246b48353bc23156bdbcc:
+
+  pinctrl: intel: Only restore pins that are used by the driver
+(2016-10-18 14:38:16 +0200)
+
+----------------------------------------------------------------
+Pin control fixes for v4.9 first round:
+
+- A bunch of barnsjukdomar/kinderkrankheiten/maladie infantile
+  in the Aspeed driver. (Why doesn't English have a word for this?)
+
+- Fix a lockdep bug on the Intel BayTrail.
+
+- Fix a few special laptop issues on the Intel pin controller
+  solving suspend issues.
+
+----------------------------------------------------------------
+Andrew Jeffery (4):
+      pinctrl: aspeed: "Not enabled" is a significant mux state
+      pinctrl: aspeed-g5: Fix names of GPID2 pins
+      pinctrl: aspeed-g5: Fix GPIOE1 typo
+      pinctrl: aspeed-g5: Fix pin association of SPI1 function
+
+Mika Westerberg (1):
+      pinctrl: intel: Only restore pins that are used by the driver
+
+Ville Syrj=C3=A4l=C3=A4 (1):
+      pinctrl: baytrail: Fix lockdep
+
+ .../devicetree/bindings/pinctrl/pinctrl-aspeed.txt |   4 +-
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c         | 100 +++++++++++++++++=
+----
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c            |  12 +--
+ drivers/pinctrl/intel/pinctrl-baytrail.c           |   3 +-
+ drivers/pinctrl/intel/pinctrl-intel.c              |  25 +++++-
+ 5 files changed, 120 insertions(+), 24 deletions(-)
