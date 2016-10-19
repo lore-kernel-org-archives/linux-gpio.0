@@ -1,13 +1,14 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH 7/9] ARM: meson: enable MESON_IRQ_GPIO in Kconfig for meson8
-Date: Wed, 19 Oct 2016 12:08:27 +0200
-Message-ID: <1476871709-8359-8-git-send-email-jbrunet@baylibre.com>
-References: <1476871709-8359-1-git-send-email-jbrunet@baylibre.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v2 4/9] pinctrl: sunxi: Deal with configless pins
+Date: Wed, 19 Oct 2016 14:16:14 +0200
+Message-ID: <20161019121614.3crr76qyexhamjiy@lukather>
+References: <cover.7edc6c25be8a5e2efdda6a82e102dbf7ece6aa64.1476200742.git-series.maxime.ripard@free-electrons.com>
+ <d707c657502b87a7f8e70c7b44492bc95939f9f6.1476200742.git-series.maxime.ripard@free-electrons.com>
+ <CAGb2v64gBi71W=+Tu2vz94xFDtuRNHUyVWK3ken8CSOWvK5t0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============6832654095309314143=="
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1476871709-8359-1-git-send-email-jbrunet@baylibre.com>
+In-Reply-To: <CAGb2v64gBi71W=+Tu2vz94xFDtuRNHUyVWK3ken8CSOWvK5t0g@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,34 +18,75 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Russell King <linux@armlinux.org.uk>
-Cc: devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-amlogic@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, Jerome Brunet <jbrunet@baylibre.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Add select MESON_IRQ_GPIO in Kconfig for Amlogic's meson8 and meson8b SoC
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- arch/arm/mach-meson/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+--===============6832654095309314143==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2556onq4pmzpow7e"
+Content-Disposition: inline
 
-diff --git a/arch/arm/mach-meson/Kconfig b/arch/arm/mach-meson/Kconfig
-index b6e3acc63e14..63157295cd9d 100644
---- a/arch/arm/mach-meson/Kconfig
-+++ b/arch/arm/mach-meson/Kconfig
-@@ -21,11 +21,13 @@ config MACH_MESON8
- 	bool "Amlogic Meson8 SoCs support"
- 	default ARCH_MESON
- 	select MESON6_TIMER
-+	select MESON_IRQ_GPIO
- 
- config MACH_MESON8B
- 	bool "Amlogic Meson8b SoCs support"
- 	default ARCH_MESON
- 	select MESON6_TIMER
- 	select COMMON_CLK_MESON8B
-+	select MESON_IRQ_GPIO
- 
- endif
--- 
-2.7.4
+
+--2556onq4pmzpow7e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Oct 18, 2016 at 03:47:03PM +0800, Chen-Yu Tsai wrote:
+> > @@ -342,6 +365,8 @@ static void sunxi_pctrl_dt_free_map(struct pinctrl_=
+dev *pctldev,
+> >                                     struct pinctrl_map *map,
+> >                                     unsigned num_maps)
+> >  {
+> > +       unsigned long *pinconfig;
+>=20
+> This looks out of place and context?
+
+Yeah, sorry, it's just a leftover from the previous version. This has
+been removed.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--2556onq4pmzpow7e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYB2QJAAoJEBx+YmzsjxAgtyIP/iY0W6eJa/97OCT7TR7+qtKZ
+CM3dR7WswN60XWi2bhkb4Z5evpKPHJ3C5JupSD9qVPKdEicl1M1gEIm2TMUy+R/I
+SkX9di5s6EvZH7J+y6EhaURd2DkS/kP/O3nsl4020fOUau7xoY7cwTRHdE0EIqmL
+195jTr7a7LBHFruJbkqYVEHKV04PN6OxTHr8fR05Xl+egy9H9cOW+I+v+jNtT/tc
+qFGjUj9KvWK70RTCmLKd4dz7Rd+q4EjcbRQZTOYHJLZFYSZXCenpwrD8vXNOtfl9
+sTfC5WTJwPgGwMBjnt9Og5IOVnVaJBQ87IC4arsSPlr2lAK0vjTjQcnVLsj98GzG
+c7+egysx56WJVBUw0wrGIwDSFAa7u6a3Iw33X8c+2WlKMNf51Sv3vSyLSWwoxYC5
+O6qsg+BEVTBEhfV80SxAyKP9aCnBROxyEGkfzfQLiEzRGmfaHKzD61Kqmw57uzqU
+RtMddLF3eVgHd/PKyDb+nCkgtUyXEabFAeXGPleMVNHSNDkLx2BYAa6OsuY58KAk
+X96mFN8/TQ8Y6qDIhKdEX9aTJJoDTL8jEsHWj8woWsedHCLBVROkzlwtq1Qnwvl6
+GZhZm+UpVULfr1tY2+wzaN+cm1pCYa/seGzbjImuz9cuqOm5NAb1/1RNbwQJGX4p
+2ROPyAiINGCDdnuZsgLV
+=Rt36
+-----END PGP SIGNATURE-----
+
+--2556onq4pmzpow7e--
+
+
+--===============6832654095309314143==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============6832654095309314143==--
