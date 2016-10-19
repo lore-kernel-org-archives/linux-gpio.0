@@ -1,69 +1,47 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for the v4.9 series
-Date: Wed, 19 Oct 2016 15:16:06 +0200
-Message-ID: <CACRpkdbHAOh=5W0_ppoKmqWtAooi-52xBb8J+NUaif4iwyGjHQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Subject: [PATCH v2 06/10] gpio-sx150x: Replace 'reset_during_probe" with DT binding
+Date: Wed, 19 Oct 2016 07:04:02 -0700
+Message-ID: <1476885846-16469-7-git-send-email-andrew.smirnov@gmail.com>
+References: <1476885846-16469-1-git-send-email-andrew.smirnov@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1476885846-16469-1-git-send-email-andrew.smirnov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, cphealy@gmail.com, Andrey Smirnov <andrew.smirnov@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+---
+ drivers/gpio/gpio-sx150x.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-here are some pin control fixes. Details in the signed tag.
-Two of them tagged for stable even.
-
-Please pull them in!
-
-Yours,
-Linus Walleij
-
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc=
-:
-
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.9-2
-
-for you to fetch changes up to c538b9436751a0be2e1246b48353bc23156bdbcc:
-
-  pinctrl: intel: Only restore pins that are used by the driver
-(2016-10-18 14:38:16 +0200)
-
-----------------------------------------------------------------
-Pin control fixes for v4.9 first round:
-
-- A bunch of barnsjukdomar/kinderkrankheiten/maladie infantile
-  in the Aspeed driver. (Why doesn't English have a word for this?)
-
-- Fix a lockdep bug on the Intel BayTrail.
-
-- Fix a few special laptop issues on the Intel pin controller
-  solving suspend issues.
-
-----------------------------------------------------------------
-Andrew Jeffery (4):
-      pinctrl: aspeed: "Not enabled" is a significant mux state
-      pinctrl: aspeed-g5: Fix names of GPID2 pins
-      pinctrl: aspeed-g5: Fix GPIOE1 typo
-      pinctrl: aspeed-g5: Fix pin association of SPI1 function
-
-Mika Westerberg (1):
-      pinctrl: intel: Only restore pins that are used by the driver
-
-Ville Syrj=C3=A4l=C3=A4 (1):
-      pinctrl: baytrail: Fix lockdep
-
- .../devicetree/bindings/pinctrl/pinctrl-aspeed.txt |   4 +-
- drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c         | 100 +++++++++++++++++=
-----
- drivers/pinctrl/aspeed/pinctrl-aspeed.c            |  12 +--
- drivers/pinctrl/intel/pinctrl-baytrail.c           |   3 +-
- drivers/pinctrl/intel/pinctrl-intel.c              |  25 +++++-
- 5 files changed, 120 insertions(+), 24 deletions(-)
+diff --git a/drivers/gpio/gpio-sx150x.c b/drivers/gpio/gpio-sx150x.c
+index b751ff9..a63f6ea 100644
+--- a/drivers/gpio/gpio-sx150x.c
++++ b/drivers/gpio/gpio-sx150x.c
+@@ -90,13 +90,9 @@ struct sx150x_device_data {
+  *                instead of as an oscillator, increasing the size of the
+  *                GP(I)O pool created by this expander by one.  The
+  *                output-only GPO pin will be added at the end of the block.
+- * @reset_during_probe: If set to true, the driver will trigger a full
+- *                      reset of the chip at the beginning of the probe
+- *                      in order to place it in a known state.
+  */
+ struct sx150x_platform_data {
+ 	bool     oscio_is_gpo;
+-	bool     reset_during_probe;
+ };
+ 
+ struct sx150x_chip {
+@@ -606,7 +602,8 @@ static int sx150x_init_hw(struct sx150x_chip *chip,
+ 	u32 io_pullup   = 0;
+ 	int err = 0;
+ 
+-	if (pdata->reset_during_probe) {
++	if (of_property_read_bool(chip->client->dev.of_node,
++				  "semtech,reset-during-probe")) {
+ 		err = sx150x_reset(chip);
+ 		if (err < 0)
+ 			return err;
+-- 
+2.5.5
