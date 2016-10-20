@@ -1,88 +1,150 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v2 4/9] pinctrl: sunxi: Deal with configless pins
-Date: Thu, 20 Oct 2016 15:46:30 +0200
-Message-ID: <20161020134630.xzkqvm7rokqiecg6@lukather>
-References: <cover.7edc6c25be8a5e2efdda6a82e102dbf7ece6aa64.1476200742.git-series.maxime.ripard@free-electrons.com>
- <d707c657502b87a7f8e70c7b44492bc95939f9f6.1476200742.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v64gBi71W=+Tu2vz94xFDtuRNHUyVWK3ken8CSOWvK5t0g@mail.gmail.com>
- <20161019121614.3crr76qyexhamjiy@lukather>
- <CACRpkdY3+OnQ6Oo_nx+BrWebeTa=kYhHWSzirk1MxfWWJ--0Sg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="b4egem5rihojcdpj"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from up.free-electrons.com ([163.172.77.33]:56073 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934388AbcJTNqm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Oct 2016 09:46:42 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdY3+OnQ6Oo_nx+BrWebeTa=kYhHWSzirk1MxfWWJ--0Sg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: [PATCH v3 0/6] pinctrl: sunxi: Generic bindings rework
+Date: Thu, 20 Oct 2016 15:49:01 +0200
+Message-ID: <cover.f893b02a9f816dad8fad3986672b05c4b211e2b1.1476971126.git-series.maxime.ripard@free-electrons.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
+Hi,
 
---b4egem5rihojcdpj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch set reworks the Allwinner pinctrl driver to support the generic
+pin configuration and multiplexing bindings.
 
-Hi Linus,
+In the process, we also covered some lasting issues that were found: we
+were ignoring the case where no pull-up was set, and while our binding was
+saying that the allwinner,drive and allwinner,pull properties were
+optional, the code was not able to deal with the case where they were not
+present.
 
-On Thu, Oct 20, 2016 at 02:52:54PM +0200, Linus Walleij wrote:
-> On Wed, Oct 19, 2016 at 2:16 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > On Tue, Oct 18, 2016 at 03:47:03PM +0800, Chen-Yu Tsai wrote:
-> >> > @@ -342,6 +365,8 @@ static void sunxi_pctrl_dt_free_map(struct pinct=
-rl_dev *pctldev,
-> >> >                                     struct pinctrl_map *map,
-> >> >                                     unsigned num_maps)
-> >> >  {
-> >> > +       unsigned long *pinconfig;
-> >>
-> >> This looks out of place and context?
-> >
-> > Yeah, sorry, it's just a leftover from the previous version. This has
-> > been removed.
->=20
-> Do you mean you will send a v3 of this series?
+Changes from v2:
+  - Added Rob, Linus and Chen-Yu's acked-by
+  - Removed unused variable
+  - Dropped the patches already applied by Linus
 
-Yes, I was waiting for your input to do that, but I guess you're ok
-with it :)
+Changes from v1:
+  - Realloced the pinctrl_map array
+  - Detailed the generic properties we support
+  - Directly return the parsing functions return code
+  - Called kfree on the pinconfig directly
+  - Added Chen-Yu Acked-by
+  - Changed the patch 2 commit log as suggested
 
-> OK stopping to apply then.
->
-> But I have already applied patches 1, 2 and 3 so just resend the rest :)
+Maxime Ripard (6):
+  pinctrl: sunxi: Deal with configless pins
+  pinctrl: sunxi: Support generic binding
+  dt-bindings: pinctrl: Deprecate sunxi pinctrl bindings
+  ARM: sunxi: Remove useless allwinner,drive property
+  ARM: sunxi: Remove useless allwinner,pull property
+  ARM: sunxi: Convert pinctrl nodes to generic bindings
 
-Ack, I'll send it in a moment.
+ Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt |  16 ++++-
+ arch/arm/boot/dts/ntc-gr8-evb.dts                                     |  24 ++----
+ arch/arm/boot/dts/ntc-gr8.dtsi                                        | 104 +++++++++------------------
+ arch/arm/boot/dts/sun4i-a10-a1000.dts                                 |  12 +--
+ arch/arm/boot/dts/sun4i-a10-ba10-tvbox.dts                            |   2 +-
+ arch/arm/boot/dts/sun4i-a10-chuwi-v7-cw0825.dts                       |  14 +---
+ arch/arm/boot/dts/sun4i-a10-cubieboard.dts                            |  14 +---
+ arch/arm/boot/dts/sun4i-a10-dserve-dsrv9703c.dts                      |  38 +++-------
+ arch/arm/boot/dts/sun4i-a10-gemei-g9.dts                              |   6 +--
+ arch/arm/boot/dts/sun4i-a10-hackberry.dts                             |  12 +--
+ arch/arm/boot/dts/sun4i-a10-hyundai-a7hd.dts                          |  16 +---
+ arch/arm/boot/dts/sun4i-a10-inet1.dts                                 |  26 ++-----
+ arch/arm/boot/dts/sun4i-a10-inet97fv2.dts                             |  14 +---
+ arch/arm/boot/dts/sun4i-a10-inet9f-rev03.dts                          |  29 +++-----
+ arch/arm/boot/dts/sun4i-a10-jesurun-q5.dts                            |  12 +--
+ arch/arm/boot/dts/sun4i-a10-marsboard.dts                             |  13 +--
+ arch/arm/boot/dts/sun4i-a10-mini-xplus.dts                            |   2 +-
+ arch/arm/boot/dts/sun4i-a10-mk802.dts                                 |  18 +----
+ arch/arm/boot/dts/sun4i-a10-olinuxino-lime.dts                        |  27 ++-----
+ arch/arm/boot/dts/sun4i-a10-pcduino.dts                               |  19 +----
+ arch/arm/boot/dts/sun4i-a10-pcduino2.dts                              |   6 +--
+ arch/arm/boot/dts/sun4i-a10-pov-protab2-ips9.dts                      |  32 +++-----
+ arch/arm/boot/dts/sun4i-a10.dtsi                                      | 169 +++++++++++++++-----------------------------
+ arch/arm/boot/dts/sun5i-a10s-auxtek-t003.dts                          |  18 ++---
+ arch/arm/boot/dts/sun5i-a10s-auxtek-t004.dts                          |  29 +++-----
+ arch/arm/boot/dts/sun5i-a10s-mk802.dts                                |  19 +----
+ arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts                      |  36 +++------
+ arch/arm/boot/dts/sun5i-a10s-r7-tv-dongle.dts                         |  20 ++---
+ arch/arm/boot/dts/sun5i-a10s-wobo-i5.dts                              |  21 +----
+ arch/arm/boot/dts/sun5i-a10s.dtsi                                     |  61 ++++++----------
+ arch/arm/boot/dts/sun5i-a13-empire-electronix-d709.dts                |  23 ++----
+ arch/arm/boot/dts/sun5i-a13-hsg-h702.dts                              |  22 ++----
+ arch/arm/boot/dts/sun5i-a13-olinuxino-micro.dts                       |  40 ++++------
+ arch/arm/boot/dts/sun5i-a13-olinuxino.dts                             |  36 +++------
+ arch/arm/boot/dts/sun5i-a13-utoo-p66.dts                              |  17 +---
+ arch/arm/boot/dts/sun5i-a13.dtsi                                      |  24 ++----
+ arch/arm/boot/dts/sun5i-r8-chip.dts                                   |  12 +--
+ arch/arm/boot/dts/sun5i-reference-design-tablet.dtsi                  |  33 +++------
+ arch/arm/boot/dts/sun5i.dtsi                                          |  57 +++++----------
+ arch/arm/boot/dts/sun6i-a31-app4-evb1.dts                             |   6 +--
+ arch/arm/boot/dts/sun6i-a31-colombus.dts                              |  22 ++----
+ arch/arm/boot/dts/sun6i-a31-hummingbird.dts                           |  23 ++----
+ arch/arm/boot/dts/sun6i-a31-i7.dts                                    |  19 +----
+ arch/arm/boot/dts/sun6i-a31-m9.dts                                    |  19 +----
+ arch/arm/boot/dts/sun6i-a31-mele-a1000g-quad.dts                      |  19 +----
+ arch/arm/boot/dts/sun6i-a31.dtsi                                      | 136 ++++++++++++++---------------------
+ arch/arm/boot/dts/sun6i-a31s-primo81.dts                              |  20 ++---
+ arch/arm/boot/dts/sun6i-a31s-sina31s.dts                              |  13 +--
+ arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts                      |  29 +++-----
+ arch/arm/boot/dts/sun6i-a31s-yones-toptech-bs1078-v2.dts              |   9 +--
+ arch/arm/boot/dts/sun6i-reference-design-tablet.dtsi                  |  14 +---
+ arch/arm/boot/dts/sun7i-a20-bananapi-m1-plus.dts                      |  27 ++-----
+ arch/arm/boot/dts/sun7i-a20-bananapi.dts                              |  26 ++-----
+ arch/arm/boot/dts/sun7i-a20-bananapro.dts                             |  37 +++-------
+ arch/arm/boot/dts/sun7i-a20-cubieboard2.dts                           |  13 +--
+ arch/arm/boot/dts/sun7i-a20-cubietruck.dts                            |  38 +++-------
+ arch/arm/boot/dts/sun7i-a20-hummingbird.dts                           |  24 ++----
+ arch/arm/boot/dts/sun7i-a20-i12-tvbox.dts                             |  26 ++-----
+ arch/arm/boot/dts/sun7i-a20-itead-ibox.dts                            |   7 +--
+ arch/arm/boot/dts/sun7i-a20-lamobo-r1.dts                             |  30 +++-----
+ arch/arm/boot/dts/sun7i-a20-m3.dts                                    |   6 +--
+ arch/arm/boot/dts/sun7i-a20-mk808c.dts                                |  12 +--
+ arch/arm/boot/dts/sun7i-a20-olimex-som-evb.dts                        |  32 +++-----
+ arch/arm/boot/dts/sun7i-a20-olinuxino-lime.dts                        |  27 ++-----
+ arch/arm/boot/dts/sun7i-a20-olinuxino-lime2-emmc.dts                  |   6 +--
+ arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts                       |  33 +++------
+ arch/arm/boot/dts/sun7i-a20-olinuxino-micro.dts                       |  28 +++----
+ arch/arm/boot/dts/sun7i-a20-orangepi-mini.dts                         |  45 ++++--------
+ arch/arm/boot/dts/sun7i-a20-orangepi.dts                              |  38 +++-------
+ arch/arm/boot/dts/sun7i-a20-pcduino3-nano.dts                         |  25 ++----
+ arch/arm/boot/dts/sun7i-a20-pcduino3.dts                              |  21 +----
+ arch/arm/boot/dts/sun7i-a20-wexler-tab7200.dts                        |  25 ++----
+ arch/arm/boot/dts/sun7i-a20-wits-pro-a20-dkt.dts                      |  13 +--
+ arch/arm/boot/dts/sun7i-a20.dtsi                                      | 277 ++++++++++++++++++++++++++----------------------------------------------
+ arch/arm/boot/dts/sun8i-a23-a33.dtsi                                  |  95 ++++++++++---------------
+ arch/arm/boot/dts/sun8i-a23-evb.dts                                   |   7 +--
+ arch/arm/boot/dts/sun8i-a23-polaroid-mid2407pxe03.dts                 |   8 +--
+ arch/arm/boot/dts/sun8i-a23-polaroid-mid2809pxe04.dts                 |   8 +--
+ arch/arm/boot/dts/sun8i-a33-inet-d978-rev2.dts                        |   9 +--
+ arch/arm/boot/dts/sun8i-a33-olinuxino.dts                             |  18 +----
+ arch/arm/boot/dts/sun8i-a33-sinlinx-sina33.dts                        |  11 +--
+ arch/arm/boot/dts/sun8i-a33.dtsi                                      |   6 +--
+ arch/arm/boot/dts/sun8i-a83t.dtsi                                     |  21 +----
+ arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts                       |  18 +----
+ arch/arm/boot/dts/sun8i-h3-nanopi-neo.dts                             |  12 +--
+ arch/arm/boot/dts/sun8i-h3-orangepi-2.dts                             |  26 ++-----
+ arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts                          |  18 +----
+ arch/arm/boot/dts/sun8i-h3-orangepi-one.dts                           |  18 +----
+ arch/arm/boot/dts/sun8i-h3-orangepi-pc-plus.dts                       |   4 +-
+ arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts                            |  18 +----
+ arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts                          |  10 +--
+ arch/arm/boot/dts/sun8i-h3.dtsi                                       |  92 +++++++++---------------
+ arch/arm/boot/dts/sun8i-q8-common.dtsi                                |   9 +--
+ arch/arm/boot/dts/sun8i-r16-parrot.dts                                |  36 +++------
+ arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi                  |  26 ++-----
+ arch/arm/boot/dts/sun9i-a80-cubieboard4.dts                           |  15 +---
+ arch/arm/boot/dts/sun9i-a80-optimus.dts                               |  33 +++------
+ arch/arm/boot/dts/sun9i-a80.dtsi                                      |  54 +++++---------
+ arch/arm/boot/dts/sunxi-common-regulators.dtsi                        |  24 ++----
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c                                 |  99 +++++++++++++++++++++-----
+ 100 files changed, 1176 insertions(+), 1757 deletions(-)
 
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---b4egem5rihojcdpj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYCMqxAAoJEBx+YmzsjxAgHUQQAKo6VQf+kpksR9WudHhP6u4/
-5bwnqTcGNQer9tir3Mk/35gxpaRPcWAmPYpxIoJEZlckM4hBudO/vIAUEJZVoOZM
-wS5ugQlbFehBY+mT/Wo4xv886CvjYbi3rFHCyA1wpsLUp6w4QsALsOe/FQEhUWEe
-mpNuD6fEFTj88TTfcASAr+gku1uhHNKzK9+uR+flabNrlWBA4rogBNJMkvjoh+v4
-T5mc/3/aaEgTv3sa2QRa+MNjobuo1cOlG/nfsfpKI5abhQEsRXTsatUx3AcFhVlq
-GAqQK8pZwpUrL8tJzJZs/NEmidl+su46OvGvGSb1aG2Q/7fk7Y+F8tVq5cU8gQCN
-iKwi/+eE5W5HtHAWfedoxfGMNcnksdj4mLQiqptV9n/7wIkdxVtuIj27ICBu6qbn
-KYN3gx4wkajARq7IQvlgL5ztOj9cFNBLA1qOwdCcg1Vd70PJnZUu9EgLPOf27mzq
-f73xFUCZ89x8YogGlB3w6+XGJN3gaKgUUvUw8yVqMrzsVVJxMlusUWjxeCgDYro+
-9dOTckXT9YBXD1vAOpuNs8bbbt4cJ6JRV67NvyGc3AS+SwUAMYdme7Xg5vdoFnsg
-b0w/mPQ1fDLk0sGSIFoAGjBV0yAGjqm2BsLN1asZixO3yogWnzR7AtJa64nW+ohU
-JUXmlqfWb6++GoVLzFuo
-=4AFk
------END PGP SIGNATURE-----
-
---b4egem5rihojcdpj--
+-- 
+git-series 0.8.10
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
