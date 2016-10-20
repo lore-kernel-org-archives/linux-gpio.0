@@ -1,34 +1,56 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 9/9] ARM: sunxi: Convert pinctrl nodes to generic bindings
-Date: Thu, 20 Oct 2016 15:01:01 +0200
-Message-ID: <CACRpkda9-GJ2Sit9JNJ5Ocjgyno4VhPv6EJKrz8DaHM_6wsXcw@mail.gmail.com>
-References: <cover.7edc6c25be8a5e2efdda6a82e102dbf7ece6aa64.1476200742.git-series.maxime.ripard@free-electrons.com>
- <e32d044d2d967f24f12d83eea50e7f14f2ae1073.1476200742.git-series.maxime.ripard@free-electrons.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] pinctrl: sunxi: Add support for interrupt debouncing
+Date: Thu, 20 Oct 2016 15:04:46 +0200
+Message-ID: <CACRpkdaoEH7OixJDkjuZ0qqYVURLvXwn8b41-OvqjZGJ=neh+Q@mail.gmail.com>
+References: <cover.ed6c19bdf01ae70096f3d96af4805f59ef16f94a.1476868462.git-series.maxime.ripard@free-electrons.com>
+ <fa022cca9917917ace4af7d5e852c9348ec5b553.1476868462.git-series.maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <e32d044d2d967f24f12d83eea50e7f14f2ae1073.1476200742.git-series.maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:35596 "EHLO
+        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935363AbcJTNEr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Oct 2016 09:04:47 -0400
+Received: by mail-qk0-f181.google.com with SMTP id z190so92677238qkc.2
+        for <linux-gpio@vger.kernel.org>; Thu, 20 Oct 2016 06:04:47 -0700 (PDT)
+In-Reply-To: <fa022cca9917917ace4af7d5e852c9348ec5b553.1476868462.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
 
-On Tue, Oct 11, 2016 at 5:46 PM, Maxime Ripard
-<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+On Wed, Oct 19, 2016 at 11:15 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
 
-> Now that we can handle the generic pinctrl bindings, convert our DT to it.
+> The pin controller found in the Allwinner SoCs has support for interrupts
+> debouncing.
 >
-> Signed-off-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> However, this is not done per-pin, preventing us from using the generic
+> pinconf binding for that,
 
-Awesome work.
+How typical.
 
-Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> but per irq bank, which, depending on the SoC,
+> ranges from one to five.
+>
+> Introduce a device-wide property to deal with this using a nanosecond
+> resolution.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+(...)
+> +Note: For backward compatibility reasons, the hosc and losc clocks are
+> +only required if you need to use the optional
+> +allwinner,debounce-time-ns property. Any new device tree should set them.
+> +
+> +Optional properties:
+> +  - allwinner,debounce-time-ns: Array of debouncing periods in
+> +    nanoseconds. One period per irq bank found in the controller
 
-Please merge this through the ARM SoC tree.
+Do you really *need* to specify this with nanosecond resolution?
+
+Else I would suggest to use microsecond resolution and just use
+the generic binding (input-debounce) but on the device node instead
+of the specific handler.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
