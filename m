@@ -1,44 +1,44 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v2 6/9] ARM64: meson: enable MESON_IRQ_GPIO in Kconfig
-Date: Thu, 20 Oct 2016 17:34:21 +0100
-Message-ID: <c480f84f-ffc8-69fd-1dad-30cd2eb3360b@arm.com>
-References: <1476890480-8884-1-git-send-email-jbrunet@baylibre.com>
- <1476890480-8884-7-git-send-email-jbrunet@baylibre.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 00/10] Revamp Semtech SX150x driver
+Date: Thu, 20 Oct 2016 21:08:56 +0200
+Message-ID: <CACRpkdbW=fdDn2uOchNHRYvhorGseNDyV_Kx11oeCTS+X9XHcQ@mail.gmail.com>
+References: <1476885846-16469-1-git-send-email-andrew.smirnov@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1476890480-8884-7-git-send-email-jbrunet@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
-Cc: linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1476885846-16469-1-git-send-email-andrew.smirnov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrey Smirnov <andrew.smirnov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chris Healy <cphealy-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 19/10/16 16:21, Jerome Brunet wrote:
-> Add select MESON_IRQ_GPIO in Kconfig for Amlogic's meson SoC family
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  arch/arm64/Kconfig.platforms | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index cfbdf02ef566..846479d4492d 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -95,6 +95,7 @@ config ARCH_MESON
->  	select PINCTRL_MESON
->  	select COMMON_CLK_AMLOGIC
->  	select COMMON_CLK_GXBB
-> +	select MESON_GPIO_IRQ
+On Wed, Oct 19, 2016 at 4:03 PM, Andrey Smirnov
+<andrew.smirnov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-MESON_IRQ_GPIO?
+> Hello everyone,
+>
+> This is the second version of the patchset originally submitted here:
+>
+> http://www.spinics.net/lists/devicetree/msg146176.html
 
->  	help
->  	  This enables support for the Amlogic S905 SoCs.
->  
-> 
+I'm sorry about your efforts, and sorry for not having had time to
+comment earlier, but this driver will be removed and replaced by
+a pin control driver by Neil Armstrong:
+http://marc.info/?l=linux-gpio&m=147499137422454&w=2
 
+As you can see it arrived some weeks before.
 
--- 
-Jazz is not dead. It just smells funny...
+Can you please review Neils patch and make sure it satisfies
+your usecases?
+
+The reason we have to make a pin control driver are things you
+can see by the quirky things for line driving or biasing etc
+that you have to add if it stays in GPIO: pin control is made
+to handle this kind of stuff in a generic way.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
