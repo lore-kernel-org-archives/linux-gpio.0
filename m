@@ -1,49 +1,88 @@
-From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Subject: Re: [PATCH 00/10] Introduce Juniper PTXPMB CPLD driver
-Date: Thu, 20 Oct 2016 16:43:41 +0300
-Message-ID: <E368DA67-BAD4-462C-9323-548E55A2E7D2@konsulko.com>
-References: <1475853451-22121-1-git-send-email-pantelis.antoniou@konsulko.com> <CACRpkdYkgondu3NuReFg=FZ29Xzi0zncpku0+++_OSsPnUs+Ew@mail.gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYkgondu3NuReFg=FZ29Xzi0zncpku0+++_OSsPnUs+Ew@mail.gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Frank Rowand <frowand.list@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>, Peter Rosin <peda@axentia.se>, Debjit Ghosh <dghosh@juniper.net>, Georgi Vlaev <gvlaev@juniper.net>, Guenter Roeck <groeck@juniper.net>, JawaharBalaji Thirumalaisamy <jawaharb@juniper.net>, Rajat Jain <rajatjain@juniper.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vg>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v2 4/9] pinctrl: sunxi: Deal with configless pins
+Date: Thu, 20 Oct 2016 15:46:30 +0200
+Message-ID: <20161020134630.xzkqvm7rokqiecg6@lukather>
+References: <cover.7edc6c25be8a5e2efdda6a82e102dbf7ece6aa64.1476200742.git-series.maxime.ripard@free-electrons.com>
+ <d707c657502b87a7f8e70c7b44492bc95939f9f6.1476200742.git-series.maxime.ripard@free-electrons.com>
+ <CAGb2v64gBi71W=+Tu2vz94xFDtuRNHUyVWK3ken8CSOWvK5t0g@mail.gmail.com>
+ <20161019121614.3crr76qyexhamjiy@lukather>
+ <CACRpkdY3+OnQ6Oo_nx+BrWebeTa=kYhHWSzirk1MxfWWJ--0Sg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="b4egem5rihojcdpj"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from up.free-electrons.com ([163.172.77.33]:56073 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934388AbcJTNqm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Oct 2016 09:46:42 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdY3+OnQ6Oo_nx+BrWebeTa=kYhHWSzirk1MxfWWJ--0Sg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>
+
+
+--b4egem5rihojcdpj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Linus,
 
-> On Oct 20, 2016, at 16:42 , Linus Walleij <linus.walleij@linaro.org> =
-wrote:
+On Thu, Oct 20, 2016 at 02:52:54PM +0200, Linus Walleij wrote:
+> On Wed, Oct 19, 2016 at 2:16 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > On Tue, Oct 18, 2016 at 03:47:03PM +0800, Chen-Yu Tsai wrote:
+> >> > @@ -342,6 +365,8 @@ static void sunxi_pctrl_dt_free_map(struct pinct=
+rl_dev *pctldev,
+> >> >                                     struct pinctrl_map *map,
+> >> >                                     unsigned num_maps)
+> >> >  {
+> >> > +       unsigned long *pinconfig;
+> >>
+> >> This looks out of place and context?
+> >
+> > Yeah, sorry, it's just a leftover from the previous version. This has
+> > been removed.
 >=20
-> On Fri, Oct 7, 2016 at 5:17 PM, Pantelis Antoniou
-> <pantelis.antoniou@konsulko.com> wrote:
->=20
->> Add Juniper's PTXPMB FPGA CPLD driver. Those FPGAs
->> are present in Juniper's PTX series of routers.
->>=20
->> The MFD driver provices watchdog/i2c/gpio/mtd devices.
->=20
-> Since it's quite a bunch of patches to quite a bunch of controllers
-> I think it's best if you get the MFD parts ready and merged through
-> Lee first for v4.10, then we can add the subdrivers on top, maybe
-> in v4.11, or on top of an immutable branch from Lee once he is
-> happy with the core if the MFD core is finished quickly.
->=20
+> Do you mean you will send a v3 of this series?
 
-Will do.
+Yes, I was waiting for your input to do that, but I guess you're ok
+with it :)
 
-> I will review all the GPIO stuff though so you can revise these
-> patches too :)
->=20
+> OK stopping to apply then.
+>
+> But I have already applied patches 1, 2 and 3 so just resend the rest :)
 
-Goodie :)
+Ack, I'll send it in a moment.
 
-> Yours,
-> Linus Walleij
+Thanks!
+Maxime
 
-Regards
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-=E2=80=94 Pantelis
+--b4egem5rihojcdpj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYCMqxAAoJEBx+YmzsjxAgHUQQAKo6VQf+kpksR9WudHhP6u4/
+5bwnqTcGNQer9tir3Mk/35gxpaRPcWAmPYpxIoJEZlckM4hBudO/vIAUEJZVoOZM
+wS5ugQlbFehBY+mT/Wo4xv886CvjYbi3rFHCyA1wpsLUp6w4QsALsOe/FQEhUWEe
+mpNuD6fEFTj88TTfcASAr+gku1uhHNKzK9+uR+flabNrlWBA4rogBNJMkvjoh+v4
+T5mc/3/aaEgTv3sa2QRa+MNjobuo1cOlG/nfsfpKI5abhQEsRXTsatUx3AcFhVlq
+GAqQK8pZwpUrL8tJzJZs/NEmidl+su46OvGvGSb1aG2Q/7fk7Y+F8tVq5cU8gQCN
+iKwi/+eE5W5HtHAWfedoxfGMNcnksdj4mLQiqptV9n/7wIkdxVtuIj27ICBu6qbn
+KYN3gx4wkajARq7IQvlgL5ztOj9cFNBLA1qOwdCcg1Vd70PJnZUu9EgLPOf27mzq
+f73xFUCZ89x8YogGlB3w6+XGJN3gaKgUUvUw8yVqMrzsVVJxMlusUWjxeCgDYro+
+9dOTckXT9YBXD1vAOpuNs8bbbt4cJ6JRV67NvyGc3AS+SwUAMYdme7Xg5vdoFnsg
+b0w/mPQ1fDLk0sGSIFoAGjBV0yAGjqm2BsLN1asZixO3yogWnzR7AtJa64nW+ohU
+JUXmlqfWb6++GoVLzFuo
+=4AFk
+-----END PGP SIGNATURE-----
+
+--b4egem5rihojcdpj--
