@@ -1,33 +1,33 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 6/8] pinctrl: aspeed-g4: Capture SuperIO pinmux dependency
-Date: Thu, 20 Oct 2016 13:53:49 +0200
-Message-ID: <CACRpkdYLDesENtq2cQBrWQeL6NH+mO_N5Z=e9=gsoZSCE85Jag@mail.gmail.com>
-References: <cover.115463f791b69859c5ce9dafd61a5755ea039f4b.1474986045.git-series.andrew@aj.id.au>
- <b5f67ba76018314d08e240f95951751896687d37.1474986045.git-series.andrew@aj.id.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v8 6/6] mfd: lpc_ich: Add support for Intel Apollo Lake
+ GPIO pinctrl in non-ACPI system
+Date: Thu, 20 Oct 2016 13:57:02 +0200
+Message-ID: <CACRpkdZNMqb34_53PyRDHm9BkJXUzWBPX29w7SE7kHB_7SvZXA@mail.gmail.com>
+References: <1476255066-22653-1-git-send-email-jui.nee.tan@intel.com> <1476255066-22653-7-git-send-email-jui.nee.tan@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <b5f67ba76018314d08e240f95951751896687d37.1474986045.git-series.andrew-zrmu5oMJ5Fs@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-Cc: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f171.google.com ([209.85.220.171]:35272 "EHLO
+        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754652AbcJTL5I (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Oct 2016 07:57:08 -0400
+Received: by mail-qk0-f171.google.com with SMTP id z190so89094979qkc.2
+        for <linux-gpio@vger.kernel.org>; Thu, 20 Oct 2016 04:57:08 -0700 (PDT)
+In-Reply-To: <1476255066-22653-7-git-send-email-jui.nee.tan@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tan Jui Nee <jui.nee.tan@intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, "ptyser@xes-inc.com" <ptyser@xes-inc.com>, Lee Jones <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, jonathan.yong@intel.com, ong.hock.yu@intel.com, Tony Luck <tony.luck@intel.com>, wan.ahmad.zainie.wan.mohamad@intel.com
 
-On Tue, Sep 27, 2016 at 4:50 PM, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org> wrote:
+On Wed, Oct 12, 2016 at 8:51 AM, Tan Jui Nee <jui.nee.tan@intel.com> wrote:
 
-> Two LPC-related signals in the AST2400 depend on state in the SuperIO IP
-> block. Use the recently added infrastructure to capture this
-> relationship.
+> This driver uses the P2SB hide/unhide mechanism cooperatively
+> to pass the PCI BAR address to the gpio platform driver.
 >
-> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+> Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
 
-Patch applied for v4.10.
-(Tell me if I'm applying patches in wrong order or something, and
-I hope this doesn't clash with the fixes.)
+Looks like a pure MFD patch so even if it mentions GPIO/pinctrl I
+leave this to Lee.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
