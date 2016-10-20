@@ -1,37 +1,26 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 0/3] pinctrl: sunxi: Support generic pinconf functions
-Date: Thu, 20 Oct 2016 15:13:29 +0200
-Message-ID: <CACRpkdZHTQqnsuHcm3+iYQJc2picLu95W2OKeMiXFq+XNzDV3g@mail.gmail.com>
-References: <20161004015112.20833-1-wens@csie.org>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] pinctrl: oxnas: Move OX810SE specific function and
+ structure as separate
+Date: Thu, 20 Oct 2016 15:21:21 +0200
+Message-ID: <CACRpkdZu-7kGioT50QbWhn_Tr2mLzNguw=a6XRudPdbj9TP_ZA@mail.gmail.com>
+References: <20161004134148.23028-1-narmstrong@baylibre.com> <20161004134148.23028-2-narmstrong@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARB6UFUPAAKGQEA5ZSYGQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20161004015112.20833-1-wens-jdAy2FN1RRM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161004134148.23028-2-narmstrong@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-oxnas@lists.tuxfamily.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 4, 2016 at 3:51 AM, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org> wrote:
+On Tue, Oct 4, 2016 at 3:41 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
 
-> This series fixes up generic pinconf support for the sunxi pinctrl driver
-> library. The driver was doing some bits wrong, like a) storing the pinconf
-> config value in its struct, and not actually reading the hardware to get
-> the current config, and b) not using the right arguments for the bias
-> parameters.
+> Add refactoring to move ox810se specific functions into specific ops structures
+> an add support for the dt match data to get soc specific structures.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Looks OK to me, Maxime are you OK with me applying this, or
-are we waiting for a new iteration of this patch set?
-
-I have started to apply Maxime's generic binding rework, will it
-clash with these?
+Patch applied.
 
 Yours,
 Linus Walleij
