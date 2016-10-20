@@ -1,34 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/1] gpio: merrifield: set default handler to be handle_bad_irq()
-Date: Thu, 20 Oct 2016 14:13:25 +0200
-Message-ID: <CACRpkdaiTQNezg+yMoc1mF8xg0aFzUiaw5Ag6eJD2ieQWy-F_A@mail.gmail.com>
-References: <20161010090753.39450-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] gpio / ACPI: fix returned error from acpi_dev_gpio_irq_get()
+Date: Thu, 20 Oct 2016 14:15:44 +0200
+Message-ID: <CACRpkdb-DsuKaPk5riRJ8zEy-TDvTrhDH4Vi3L1kZwBMnC4bPQ@mail.gmail.com>
+References: <1476290430-19542-1-git-send-email-benjamin.tissoires@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f176.google.com ([209.85.220.176]:34552 "EHLO
-        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750785AbcJTMN1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Oct 2016 08:13:27 -0400
-Received: by mail-qk0-f176.google.com with SMTP id f128so86729059qkb.1
-        for <linux-gpio@vger.kernel.org>; Thu, 20 Oct 2016 05:13:27 -0700 (PDT)
-In-Reply-To: <20161010090753.39450-1-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1476290430-19542-1-git-send-email-benjamin.tissoires@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@intel.com>, David Arcari <darcari@redhat.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Oct 10, 2016 at 11:07 AM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Wed, Oct 12, 2016 at 6:40 PM, Benjamin Tissoires
+<benjamin.tissoires@redhat.com> wrote:
 
-> We switch the default handler to be handle_bad_irq() instead of
-> handle_simple_irq() (which was not correct anyway).
+> From: David Arcari <darcari@redhat.com>
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> acpi_dev_gpio_irq_get() currently ignores the error returned
+> by acpi_get_gpiod_by_index() and overwrites it with -ENOENT.
+>
+> Problem is this error can be -EPROBE_DEFER, which just blows
+> up some drivers when the module ordering is not correct.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: David Arcari <darcari@redhat.com>
+> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-Yeah the right handler is set up in .set_type(), nice.
-
-Patch applied.
+Patch applied for fixes with Mika's ACK.
 
 Yours,
 Linus Walleij
