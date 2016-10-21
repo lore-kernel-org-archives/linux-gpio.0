@@ -1,157 +1,147 @@
-From: Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH 2/2] gpio: mxs: fix duplicate level interrupts
-Date: Fri, 21 Oct 2016 19:38:23 +0200
-Message-ID: <2710ce0d-fa4c-523f-1580-948d26a44c50@denx.de>
-References: <20161021131138.10467-1-s.hauer@pengutronix.de>
- <20161021131138.10467-3-s.hauer@pengutronix.de>
+From: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC PATCH 09/13] net: phy: Add Meson GXL Internal PHY driver
+Date: Fri, 21 Oct 2016 13:56:30 -0700
+Message-ID: <0ea5a7a8-3913-0e6a-6ff2-9f34015ea071@gmail.com>
+References: <1477060838-14164-1-git-send-email-narmstrong@baylibre.com>
+ <1477060838-14164-10-git-send-email-narmstrong@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.9]:45391 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932749AbcJUSKQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2016 14:10:16 -0400
-In-Reply-To: <20161021131138.10467-3-s.hauer@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1477060838-14164-10-git-send-email-narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sascha Hauer <s.hauer@pengutronix.de>, linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Shawn Guo <shawnguo@kernel.org>
 
-On 10/21/2016 03:11 PM, Sascha Hauer wrote:
-> According to the reference manual level interrupts can't be acked
-> using the IRQSTAT registers. The effect is that when a level interrupt
-> triggers the following ack is a no-op and the same interrupt triggers
-> again right after it has been unmasked after running the interrupt
-> handler.
+On 10/21/2016 07:40 AM, Neil Armstrong wrote:
+> Add driver for the Internal RMII PHY found in the Amlogic Meson GXL SoCs.
 > 
-> The reference manual says:
+> This PHY seems to only implement some standard registers and need some
+> workarounds to provide autoneg values from vendor registers.
 > 
-> Status bits for pins configured as level sensitive interrupts cannot be
-> cleared unless either the actual pin is in the non-interrupting state, or
-> the pin has been disabled as an interrupt source by clearing its bit in
-> HW_PINCTRL_PIN2IRQ.
+> Some magic values are currently used to configure the PHY, and this a
+> temporary setup until clarification about these registers names and
+> registers fields are provided by Amlogic.
 > 
-> To work around the duplicated interrupts we can use the PIN2IRQ
-> rather than the IRQEN registers to mask the interrupts. This
-> probably does not work for the edge interrupts, so we have to split up
-> the irq chip into two chip types, one for the level interrupts and
-> one for the edge interrupts. We now make use of two different enable
-> registers, so we have to take care to always enable the right one,
-> especially during switching of the interrupt type. An easy way
-> to accomplish this is to use the IRQCHIP_SET_TYPE_MASKED which
-> makes sure that set_irq_type is called with masked interrupts. With this
-> the flow to change the irq type is like:
-> 
-> - core masks interrupt (using the current chip type)
-> - mxs_gpio_set_irq_type() changes chip type if necessary
-> - mxs_gpio_set_irq_type() unconditionally sets the enable bit in the
->   now unused enable register
-> - core eventually unmasks the interrupt (using the new chip type)
-> 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-
-Reviewed-by: Marek Vasut <marex@denx.de>
-
-Thanks for the detailed explanation, that was really needed.
-
+> Signed-off-by: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
 > ---
->  drivers/gpio/gpio-mxs.c | 38 +++++++++++++++++++++++++++++---------
->  1 file changed, 29 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-mxs.c b/drivers/gpio/gpio-mxs.c
-> index 1cf579f..62061f7 100644
-> --- a/drivers/gpio/gpio-mxs.c
-> +++ b/drivers/gpio/gpio-mxs.c
-> @@ -87,10 +87,15 @@ static int mxs_gpio_set_irq_type(struct irq_data *d, unsigned int type)
->  	u32 val;
->  	u32 pin_mask = 1 << d->hwirq;
->  	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-> +	struct irq_chip_type *ct = irq_data_get_chip_type(d);
->  	struct mxs_gpio_port *port = gc->private;
->  	void __iomem *pin_addr;
->  	int edge;
->  
-> +	if (!(ct->type & type))
-> +		if (irq_setup_alt_chip(d, type))
-> +			return -EINVAL;
 > +
->  	port->both_edges &= ~pin_mask;
->  	switch (type) {
->  	case IRQ_TYPE_EDGE_BOTH:
-> @@ -119,10 +124,13 @@ static int mxs_gpio_set_irq_type(struct irq_data *d, unsigned int type)
->  
->  	/* set level or edge */
->  	pin_addr = port->base + PINCTRL_IRQLEV(port);
-> -	if (edge & GPIO_INT_LEV_MASK)
-> +	if (edge & GPIO_INT_LEV_MASK) {
->  		writel(pin_mask, pin_addr + MXS_SET);
-> -	else
-> +		writel(pin_mask, port->base + PINCTRL_IRQEN(port) + MXS_SET);
+> +static int meson_gxl_config_init(struct phy_device *phydev)
+> +{
+> +	int val;
+> +	u32 features;
+> +
+> +	meson_gxl_phy_config(phydev);
+> +
+> +	features = SUPPORTED_MII;
+
+This does not really belong in the PHY driver, and this is statically
+assigned, I would just drop this.
+
+> +
+> +	/* Do we support autonegotiation? */
+> +	val = phy_read(phydev, MII_BMSR);
+> +	if (val < 0)
+> +		return val;
+> +
+> +	if (val & BMSR_ANEGCAPABLE)
+> +		features |= SUPPORTED_Autoneg;
+> +	if (val & BMSR_100FULL)
+> +		features |= SUPPORTED_100baseT_Full;
+> +	if (val & BMSR_100HALF)
+> +		features |= SUPPORTED_100baseT_Half;
+> +	if (val & BMSR_10FULL)
+> +		features |= SUPPORTED_10baseT_Full;
+> +	if (val & BMSR_10HALF)
+> +		features |= SUPPORTED_10baseT_Half;
+> +
+> +	phydev->supported = features;
+> +	phydev->advertising = features;
+
+This is redundant with what PHYLIB will determine for the PHY.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int meson_gxl_phy_read_status(struct phy_device *phydev)
+> +{
+> +	int err;
+> +
+> +	/* Update the link, but return if there was an error */
+> +	err = genphy_update_link(phydev);
+> +	if (err)
+> +		return err;
+> +
+> +	phydev->lp_advertising = 0;
+> +	phydev->pause = 0;
+> +	phydev->asym_pause = 0;
+> +
+> +	if (phydev->autoneg == AUTONEG_ENABLE) {
+> +		unsigned int speed;
+> +		int reg = phy_read(phydev, GXL_REG_ANEG);
+
+Is all of this really necessary? This should all be reflected in the
+standard BMSR register, is not this the case here that we have to read
+this non-standard register?
+
+You use genphy_config_aneg(), so surely, the standard auto-negotiation
+part works somehow?
+
+> +
+> +		if (reg < 0)
+> +			return reg;
+> +
+> +		speed = reg & REG_ANEG_SPEED_MASK;
+> +
+> +		if (reg & REG_ANEG_FDUPLEX)
+> +			phydev->duplex = DUPLEX_FULL;
+> +		else
+> +			phydev->duplex = DUPLEX_HALF;
+> +
+> +		if ((reg & REG_ANEG_SPEED_MASK) == REG_ANEG_SPEED10)
+> +			phydev->speed = SPEED_10;
+> +		else if ((reg & REG_ANEG_SPEED_MASK) == REG_ANEG_SPEED100)
+> +			phydev->speed = SPEED_100;
 > +	} else {
->  		writel(pin_mask, pin_addr + MXS_CLR);
-> +		writel(pin_mask, port->base + PINCTRL_PIN2IRQ(port) + MXS_SET);
-> +	}
->  
->  	/* set polarity */
->  	pin_addr = port->base + PINCTRL_IRQPOL(port);
-> @@ -202,22 +210,37 @@ static int __init mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
->  	struct irq_chip_generic *gc;
->  	struct irq_chip_type *ct;
->  
-> -	gc = irq_alloc_generic_chip("gpio-mxs", 1, irq_base,
-> +	gc = irq_alloc_generic_chip("gpio-mxs", 2, irq_base,
->  				    port->base, handle_level_irq);
->  	if (!gc)
->  		return -ENOMEM;
->  
->  	gc->private = port;
->  
-> -	ct = gc->chip_types;
-> +	ct = &gc->chip_types[0];
-> +	ct->type = IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW;
-> +	ct->chip.irq_ack = irq_gc_ack_set_bit;
-> +	ct->chip.irq_mask = irq_gc_mask_disable_reg;
-> +	ct->chip.irq_unmask = irq_gc_unmask_enable_reg;
-> +	ct->chip.irq_set_type = mxs_gpio_set_irq_type;
-> +	ct->chip.irq_set_wake = mxs_gpio_set_wake_irq;
-> +	ct->chip.flags = IRQCHIP_SET_TYPE_MASKED;
-> +	ct->regs.ack = PINCTRL_IRQSTAT(port) + MXS_CLR;
-> +	ct->regs.enable = PINCTRL_PIN2IRQ(port) + MXS_SET;
-> +	ct->regs.disable = PINCTRL_PIN2IRQ(port) + MXS_CLR;
+> +		int bmcr = phy_read(phydev, MII_BMCR);
 > +
-> +	ct = &gc->chip_types[1];
-> +	ct->type = IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING;
->  	ct->chip.irq_ack = irq_gc_ack_set_bit;
->  	ct->chip.irq_mask = irq_gc_mask_disable_reg;
->  	ct->chip.irq_unmask = irq_gc_unmask_enable_reg;
->  	ct->chip.irq_set_type = mxs_gpio_set_irq_type;
->  	ct->chip.irq_set_wake = mxs_gpio_set_wake_irq;
-> +	ct->chip.flags = IRQCHIP_SET_TYPE_MASKED;
->  	ct->regs.ack = PINCTRL_IRQSTAT(port) + MXS_CLR;
->  	ct->regs.enable = PINCTRL_IRQEN(port) + MXS_SET;
->  	ct->regs.disable = PINCTRL_IRQEN(port) + MXS_CLR;
-> +	ct->handler = handle_level_irq;
->  
->  	irq_setup_generic_chip(gc, IRQ_MSK(32), IRQ_GC_INIT_NESTED_LOCK,
->  			       IRQ_NOREQUEST, 0);
-> @@ -298,11 +321,8 @@ static int mxs_gpio_probe(struct platform_device *pdev)
->  	}
->  	port->base = base;
->  
-> -	/*
-> -	 * select the pin interrupt functionality but initially
-> -	 * disable the interrupts
-> -	 */
-> -	writel(~0U, port->base + PINCTRL_PIN2IRQ(port));
-> +	/* initially disable the interrupts */
-> +	writel(0, port->base + PINCTRL_PIN2IRQ(port));
->  	writel(0, port->base + PINCTRL_IRQEN(port));
->  
->  	/* clear address has to be used to clear IRQSTAT bits */
-> 
+> +		if (bmcr < 0)
+> +			return bmcr;
+> +
+> +		if (bmcr & BMCR_FULLDPLX)
+> +			phydev->duplex = DUPLEX_FULL;
+> +		else
+> +			phydev->duplex = DUPLEX_HALF;
+> +
+> +		if (bmcr & BMCR_SPEED1000)
+> +			phydev->speed = SPEED_1000;
+> +		else if (bmcr & BMCR_SPEED100)
+> +			phydev->speed = SPEED_100;
+> +		else
+> +			phydev->speed = SPEED_10;
+> +	}
 
+> +
+> +	return 0;
+> +}
+> +
+> +static struct phy_driver meson_gxl_phy = {
+> +	.phy_id		= 0x01814400,
+> +	.name		= "Meson GXL Internal PHY",
+> +	.phy_id_mask	= 0x0fffffff,
 
+Usually the last 4 bits are 0, since that's where the revision part is
+located.
+
+> +	.features	= 0,
+
+You should set PHY_GBIT_FEATURES and set .flags to PHY_IS_INTERNAL since
+this is an internal PHY?
 -- 
-Best regards,
-Marek Vasut
+Florian
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
