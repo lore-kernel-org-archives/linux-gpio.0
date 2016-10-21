@@ -1,291 +1,177 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v2 1/9] irqchip: meson: add support for gpio interrupt
- controller
-Date: Fri, 21 Oct 2016 11:28:32 +0100
-Message-ID: <54f2ddee-e5ca-7c3d-7321-7390611975fd@arm.com>
-References: <1476890480-8884-1-git-send-email-jbrunet@baylibre.com>
- <1476890480-8884-2-git-send-email-jbrunet@baylibre.com>
- <ec297647-1ab7-7e6b-5945-be8360f92421@arm.com>
- <1477039751.15560.88.camel@baylibre.com>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v3 5/6] ARM: sunxi: Remove useless allwinner,pull property
+Date: Fri, 21 Oct 2016 12:40:08 +0200
+Message-ID: <20161021104008.lsonnfjcpjlxgsff@lukather>
+References: <cover.f893b02a9f816dad8fad3986672b05c4b211e2b1.1476971126.git-series.maxime.ripard@free-electrons.com>
+ <42e249454ccf6b14e9ec266cb8d42a24f6d71d7b.1476971126.git-series.maxime.ripard@free-electrons.com>
+ <20161020173848.be9cf97854f8933b3ce90d55@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:39836 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751583AbcJUK2h (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 21 Oct 2016 06:28:37 -0400
-In-Reply-To: <1477039751.15560.88.camel@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xa2m3bvryotdr2ou"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20161020173848.be9cf97854f8933b3ce90d55-GANU6spQydw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jean-Francois Moine <moinejf-GANU6spQydw@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>
-Cc: linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Russell King <linux@armlinux.org.uk>, Mark Rutland <Mark.Rutland@arm.com>
-
-On 21/10/16 09:49, Jerome Brunet wrote:
-> On Thu, 2016-10-20 at 17:33 +0100, Marc Zyngier wrote:
->> Jerome,
->>
->> On 19/10/16 16:21, Jerome Brunet wrote:
->>>
->>> Add support for the interrupt gpio controller found on Amlogic's
->>> meson
->>> SoC family.
->>>
->>> Unlike what the IP name suggest, it is not directly linked to the
->>> gpio
->>> subsystem. It is actually an independent IP that is able to spy on
->>> the
->>> SoC pad. For that purpose, it can mux and filter (edge or level and
->>> polarity) any single SoC pad to one of the 8 GIC's interrupts it
->>> owns.
->>>
->>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->>> ---
->>>  drivers/irqchip/Kconfig          |   9 +
->>>  drivers/irqchip/Makefile         |   1 +
->>>  drivers/irqchip/irq-meson-gpio.c | 423
->>> +++++++++++++++++++++++++++++++++++++++
->>>  3 files changed, 433 insertions(+)
->>>  create mode 100644 drivers/irqchip/irq-meson-gpio.c
->>>
->>> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
->>> index 82b0b5daf3f5..168837263e80 100644
->>> --- a/drivers/irqchip/Kconfig
->>> +++ b/drivers/irqchip/Kconfig
->>> @@ -279,3 +279,12 @@ config EZNPS_GIC
->>>  config STM32_EXTI
->>>  	bool
->>>  	select IRQ_DOMAIN
->>> +
->>> +config MESON_GPIO_IRQ
->>> +       bool "Meson GPIO Interrupt Multiplexer"
->>> +       depends on ARCH_MESON || COMPILE_TEST
->>> +       select IRQ_DOMAIN
->>> +       select IRQ_DOMAIN_HIERARCHY
->>> +       help
->>> +         Support Meson SoC Family GPIO Interrupt Multiplexer
->>> +
->>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
->>> index e4dbfc85abdb..33f913d037d0 100644
->>> --- a/drivers/irqchip/Makefile
->>> +++ b/drivers/irqchip/Makefile
->>> @@ -74,3 +74,4 @@ obj-$(CONFIG_LS_SCFG_MSI)		+= irq-
->>> ls-scfg-msi.o
->>>  obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
->>>  obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o
->>>  obj-$(CONFIG_STM32_EXTI) 		+= irq-stm32-exti.o
->>> +obj-$(CONFIG_MESON_GPIO_IRQ)		+= irq-meson-gpio.o
->>> diff --git a/drivers/irqchip/irq-meson-gpio.c
->>> b/drivers/irqchip/irq-meson-gpio.c
->>> new file mode 100644
->>> index 000000000000..869b4df8c483
->>> --- /dev/null
->>> +++ b/drivers/irqchip/irq-meson-gpio.c
->>> @@ -0,0 +1,423 @@
->>> +/*
->>> + * Copyright (c) 2015 Endless Mobile, Inc.
->>> + * Author: Carlo Caione <carlo@endlessm.com>
->>> + * Copyright (c) 2016 BayLibre, SAS.
->>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
->>> + *
->>> + * This program is free software; you can redistribute it and/or
->>> modify
->>> + * it under the terms of version 2 of the GNU General Public
->>> License as
->>> + * published by the Free Software Foundation.
->>> + *
->>> + * This program is distributed in the hope that it will be useful,
->>> but
->>> + * WITHOUT ANY WARRANTY; without even the implied warranty of
->>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->>> GNU
->>> + * General Public License for more details.
->>> + *
->>> + * You should have received a copy of the GNU General Public
->>> License
->>> + * along with this program; if not, see <http://www.gnu.org/licens
->>> es/>.
->>> + * The full GNU General Public License is included in this
->>> distribution
->>> + * in the file called COPYING.
->>> + */
->>> +
->>> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->>> +
->>> +#include <linux/io.h>
->>> +#include <linux/module.h>
->>> +#include <linux/irq.h>
->>> +#include <linux/irqdomain.h>
->>> +#include <linux/irqchip.h>
->>> +#include <linux/of.h>
->>> +#include <linux/of_address.h>
->>> +
->>> +#define IRQ_FREE (-1)
->>> +
->>> +#define REG_EDGE_POL	0x00
->>> +#define REG_PIN_03_SEL	0x04
->>> +#define REG_PIN_47_SEL	0x08
->>> +#define REG_FILTER_SEL	0x0c
->>> +
->>> +#define REG_EDGE_POL_MASK(x)	(BIT(x) | BIT(16 + (x)))
->>> +#define REG_EDGE_POL_EDGE(x)	BIT(x)
->>> +#define REG_EDGE_POL_LOW(x)	BIT(16 + (x))
->>> +#define REG_PIN_SEL_SHIFT(x)	(((x) % 4) * 8)
->>> +#define REG_FILTER_SEL_SHIFT(x)	((x) * 4)
->>> +
->>> +struct meson_gpio_irq_params {
->>> +	unsigned int nhwirq;
->>> +	irq_hw_number_t *source;
->>> +	int nsource;
->>> +};
->>> +
->>> +struct meson_gpio_irq_domain {
->>
->> The name of that structure is utterly confusing, as it doesn't
->> contain
->> anything related to an IRQ domain. Can you please clarify its usage?
-> 
-> This structure is holding the data of the controller. The name is
-> indeed misleading, I will change this. What about
-> 'meson_gpio_irq_pdata' or 'meson_gpio_irq_controller' ?
-> 
->>
->>>
->>> +	void __iomem *base;
->>> +	int *map;
->>> +	const struct meson_gpio_irq_params *params;
->>> +};
->>> +
->>> +struct meson_gpio_irq_chip_data {
->>> +	void __iomem *base;
->>> +	int index;
->>> +};
->>> +
->>> +static irq_hw_number_t meson_parent_hwirqs[] = {
->>> +	64, 65, 66, 67, 68, 69, 70, 71,
->>> +};
->>
->> If that a guarantee that these numbers will always represent the
->> parent interrupt?
-> 
-> At the moment, the 3 supported SoC use these parent interrupts, but we
-> have absolutely no idea (or guarantee) that is will remain the same, or
-> even contiguous, in the upcoming SoC (like the GXM or GXL)
-> 
-> I reckon, it is likely that manufacturer will keep on using these
-> parent irqs for a while but I would prefer not make an assumption about
-> it in the driver.
-> 
-> If a SoC get a different set of interrupts I would have added a new
-> table like this and passed it to the appropriate params :
-> 
-> static irq_hw_number_t meson_new_parent_hwirqs[] = {
-> 	143, 144, 150, 151, 152, 173, 178, 179,
-> };
-> 
->> It feels a bit odd not to get that information directly from
->> the device tree, in the form of a device specific property. Something
->> like:
->>
->> 	upstream-interrupts = <64 65 66 ... >;
->>
-> 
-> I wondered about putting this information in DT or in the driver for a
-> while. Maybe DT would be a more suitable place holder for these data
-> (parent irq and number of provided hwirq) but I was under the
-> understanding that we should now put these information in the driver
-> and use the compatible property to get the appropriate parameters.
-> 
-> I'd love to get the view of the DT guys on this.
-> 
-> Also, since we already need to put some information about the pin the
-> pinctrl driver (to get the appropriate mux value of each pad), I
-> thought It would make sense to have the same approach here.
-> 
-> If there is some kind of policy saying this should be in DT, I'd be
-> happy to make the change.
-> 
->> or even as a base/range:
->>
->> 	upstream-interrupts = <64 8>;
-> 
-> I would prefer to avoid using ranges as we have no guarantee the
-> manufacturer will keep the parent irqs contiguous in the future.
-> 
->>
->> Also, how does it work if you have more than a single device like
->> this?
->> This driver seems a do a great deal of dynamic allocation, and yet
->> its
->> core resource is completely static... Please pick a side! ;-)
-> 
-> I don't think we could have more than one instance per device and I
-> certainly did not have this case in mind while writing the code. If it
-> was the case someday, I guess having two compatibles would do the trick
-> :)
-
-This has nothing to do with compatible strings. Your current approach of
-defining a static list of interrupts and then dynamically allocating
-things that point directly to it feels wrong. just define a second
-instance of this IP to be convinced of it.
-
-So either you support something that is fully dynamic (supporting
-multiple instances at every level), or you only support *one*, and
-everything becomes mostly static.
-
-> 
->>
->>>
->>> +
->>> +static const struct meson_gpio_irq_params meson8_params = {
->>> +	.nhwirq  = 134,
->>> +	.source  = meson_parent_hwirqs,
->>> +	.nsource = ARRAY_SIZE(meson_parent_hwirqs),
->>
->> I find it utterly confusing that you are calling source something
->> that is an output for this controller. 
-> 
-> I had the call sequence (GIC->GPIO_IRQ->handler) in mind while writing
-> it. I see your point and it is indeed confusing, I'll find something
-> better
-
-It infinitely better to describe the signal path rather than the call
-stack (which is actually GIC->GPIO_IRQ->GIC->handler).
-
-[...]
 
 
->>>
->>> +
->>> +		cd = kzalloc(sizeof(*cd), GFP_KERNEL);
->>> +		if (!cd)
->>> +			return -ENOMEM;
->>> +
->>> +		cd->base = domain_data->base;
->>> +		cd->index = index;
->>
->> So what is the exact purpose of this structure? The base address is
->> essentially a global, or could be directly derived from the domain.
->> The
->> index is only used in set_type, and is the index of the pin connected
->> to
->> the GIC. It looks to me like you could have:
->>
->> 		irq_hw_number_t *out_line =
->> &meson_parent_hwirqs[index];
-> 
-> meson_parent_hwirq is only declared this way to avoid writing the
-> parent irqs 3 times (in each SoC params). 
-> Using it this way would make it global and imply it is the same
-> whatever the SoC. This something I can't guarantee and I would prefer
-> to avoid that.
+--xa2m3bvryotdr2ou
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Well, let's face it: It is global (see my earlier rant). And if you
-device to support multiple instances, you can attach the parent array at
-the irq domain level, and still perform that same index calculation.
+Hi,
 
-Thanks,
+On Thu, Oct 20, 2016 at 05:38:48PM +0200, Jean-Francois Moine wrote:
+> On Thu, 20 Oct 2016 15:49:06 +0200
+> Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+>=20
+> > The allwinner,pull property set to NO_PULL was really considered our
+> > default (and wasn't even changing the default value in the code).
+> >=20
+> > Remove these properties to make it obvious that we do not set anything =
+in
+> > such a case.
+> >=20
+> > Signed-off-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> > Acked-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+> > Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> > ---
+> >  arch/arm/boot/dts/ntc-gr8-evb.dts                     |  4 +-
+> >  arch/arm/boot/dts/ntc-gr8.dtsi                        | 14 +-----
+> >  arch/arm/boot/dts/sun4i-a10-a1000.dts                 |  2 +-
+> >  arch/arm/boot/dts/sun4i-a10-cubieboard.dts            |  1 +-
+> >  arch/arm/boot/dts/sun4i-a10-dserve-dsrv9703c.dts      |  4 +-
+> >  arch/arm/boot/dts/sun4i-a10-gemei-g9.dts              |  1 +-
+> >  arch/arm/boot/dts/sun4i-a10-hackberry.dts             |  2 +-
+> >  arch/arm/boot/dts/sun4i-a10-inet1.dts                 |  2 +-
+> >  arch/arm/boot/dts/sun4i-a10-jesurun-q5.dts            |  2 +-
+> >  arch/arm/boot/dts/sun4i-a10-marsboard.dts             |  1 +-
+> >  arch/arm/boot/dts/sun4i-a10-mk802.dts                 |  3 +-
+> >  arch/arm/boot/dts/sun4i-a10-olinuxino-lime.dts        |  2 +-
+> >  arch/arm/boot/dts/sun4i-a10-pcduino.dts               |  2 +-
+> >  arch/arm/boot/dts/sun4i-a10-pcduino2.dts              |  1 +-
+> >  arch/arm/boot/dts/sun4i-a10-pov-protab2-ips9.dts      |  3 +-
+> >  arch/arm/boot/dts/sun4i-a10.dtsi                      | 24 +--------
+> >  arch/arm/boot/dts/sun5i-a10s-auxtek-t003.dts          |  1 +-
+> >  arch/arm/boot/dts/sun5i-a10s-auxtek-t004.dts          |  2 +-
+> >  arch/arm/boot/dts/sun5i-a10s-mk802.dts                |  2 +-
+> >  arch/arm/boot/dts/sun5i-a10s-olinuxino-micro.dts      |  2 +-
+> >  arch/arm/boot/dts/sun5i-a10s-r7-tv-dongle.dts         |  2 +-
+> >  arch/arm/boot/dts/sun5i-a10s-wobo-i5.dts              |  2 +-
+> >  arch/arm/boot/dts/sun5i-a10s.dtsi                     |  7 +--
+> >  arch/arm/boot/dts/sun5i-a13-hsg-h702.dts              |  1 +-
+> >  arch/arm/boot/dts/sun5i-a13-olinuxino-micro.dts       |  3 +-
+> >  arch/arm/boot/dts/sun5i-a13-olinuxino.dts             |  2 +-
+> >  arch/arm/boot/dts/sun5i-a13-utoo-p66.dts              |  1 +-
+> >  arch/arm/boot/dts/sun5i-a13.dtsi                      |  3 +-
+> >  arch/arm/boot/dts/sun5i-r8-chip.dts                   |  2 +-
+> >  arch/arm/boot/dts/sun5i-reference-design-tablet.dtsi  |  2 +-
+> >  arch/arm/boot/dts/sun5i.dtsi                          |  7 +--
+> >  arch/arm/boot/dts/sun6i-a31-app4-evb1.dts             |  1 +-
+> >  arch/arm/boot/dts/sun6i-a31-colombus.dts              |  1 +-
+> >  arch/arm/boot/dts/sun6i-a31-hummingbird.dts           |  2 +-
+> >  arch/arm/boot/dts/sun6i-a31-i7.dts                    |  2 +-
+> >  arch/arm/boot/dts/sun6i-a31-m9.dts                    |  2 +-
+> >  arch/arm/boot/dts/sun6i-a31-mele-a1000g-quad.dts      |  2 +-
+> >  arch/arm/boot/dts/sun6i-a31.dtsi                      | 13 +----
+> >  arch/arm/boot/dts/sun6i-a31s-primo81.dts              |  1 +-
+> >  arch/arm/boot/dts/sun6i-a31s-sina31s.dts              |  1 +-
+> >  arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts      |  3 +-
+> >  arch/arm/boot/dts/sun7i-a20-bananapi-m1-plus.dts      |  3 +-
+> >  arch/arm/boot/dts/sun7i-a20-bananapi.dts              |  2 +-
+> >  arch/arm/boot/dts/sun7i-a20-bananapro.dts             |  5 +--
+> >  arch/arm/boot/dts/sun7i-a20-cubieboard2.dts           |  1 +-
+> >  arch/arm/boot/dts/sun7i-a20-cubietruck.dts            |  6 +--
+> >  arch/arm/boot/dts/sun7i-a20-hummingbird.dts           |  4 +-
+> >  arch/arm/boot/dts/sun7i-a20-i12-tvbox.dts             |  4 +-
+> >  arch/arm/boot/dts/sun7i-a20-itead-ibox.dts            |  1 +-
+> >  arch/arm/boot/dts/sun7i-a20-lamobo-r1.dts             |  2 +-
+> >  arch/arm/boot/dts/sun7i-a20-m3.dts                    |  1 +-
+> >  arch/arm/boot/dts/sun7i-a20-mk808c.dts                |  2 +-
+> >  arch/arm/boot/dts/sun7i-a20-olimex-som-evb.dts        |  4 +-
+> >  arch/arm/boot/dts/sun7i-a20-olinuxino-lime.dts        |  2 +-
+> >  arch/arm/boot/dts/sun7i-a20-olinuxino-lime2-emmc.dts  |  1 +-
+> >  arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts       |  3 +-
+> >  arch/arm/boot/dts/sun7i-a20-olinuxino-micro.dts       |  1 +-
+> >  arch/arm/boot/dts/sun7i-a20-orangepi-mini.dts         |  4 +-
+> >  arch/arm/boot/dts/sun7i-a20-orangepi.dts              |  4 +-
+> >  arch/arm/boot/dts/sun7i-a20-pcduino3-nano.dts         |  3 +-
+> >  arch/arm/boot/dts/sun7i-a20-pcduino3.dts              |  2 +-
+> >  arch/arm/boot/dts/sun7i-a20-wexler-tab7200.dts        |  3 +-
+> >  arch/arm/boot/dts/sun7i-a20-wits-pro-a20-dkt.dts      |  1 +-
+> >  arch/arm/boot/dts/sun7i-a20.dtsi                      | 37 +----------=
+--
+> >  arch/arm/boot/dts/sun8i-a23-a33.dtsi                  | 10 +---
+> >  arch/arm/boot/dts/sun8i-a23-polaroid-mid2407pxe03.dts |  1 +-
+> >  arch/arm/boot/dts/sun8i-a23-polaroid-mid2809pxe04.dts |  1 +-
+> >  arch/arm/boot/dts/sun8i-a33-inet-d978-rev2.dts        |  1 +-
+> >  arch/arm/boot/dts/sun8i-a33-olinuxino.dts             |  3 +-
+> >  arch/arm/boot/dts/sun8i-a33.dtsi                      |  1 +-
+> >  arch/arm/boot/dts/sun8i-a83t.dtsi                     |  3 +-
+> >  arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts       |  3 +-
+> >  arch/arm/boot/dts/sun8i-h3-nanopi-neo.dts             |  2 +-
+> >  arch/arm/boot/dts/sun8i-h3-orangepi-2.dts             |  4 +-
+> >  arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts          |  3 +-
+> >  arch/arm/boot/dts/sun8i-h3-orangepi-one.dts           |  3 +-
+> >  arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts            |  3 +-
+> >  arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts          |  1 +-
+> >  arch/arm/boot/dts/sun8i-h3.dtsi                       | 12 +----
+> >  arch/arm/boot/dts/sun8i-r16-parrot.dts                |  3 +-
+> >  arch/arm/boot/dts/sun8i-reference-design-tablet.dtsi  |  2 +-
+> >  arch/arm/boot/dts/sun9i-a80-cubieboard4.dts           |  1 +-
+> >  arch/arm/boot/dts/sun9i-a80-optimus.dts               |  4 +-
+> >  arch/arm/boot/dts/sun9i-a80.dtsi                      |  6 +--
+> >  arch/arm/boot/dts/sunxi-common-regulators.dtsi        |  4 +-
+> >  85 files changed, 0 insertions(+), 302 deletions(-)
+> 	[snip]
+>=20
+> Is it really usefull to change all these files while in a previous
+> patch you were writing:
+> > The generic pin configuration and multiplexing should be preferred now,
+> > even though we still support the old one.
+> ?
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+I assume you wanted to comment on the sixth patch.
+
+Yes, it's useful, because that way we avoid using a deprecated
+binding, that we would have to mix the newer binding which would be
+completely inconsistent, and that way we use the generic binding that
+everyone uses everywhere.
+
+The backward compatibility is just here to avoid breaking the ABI.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--xa2m3bvryotdr2ou
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYCfCEAAoJEBx+YmzsjxAgX2sP/Ay0BIp6WdMtQZx6ixpWIb53
+DUctkZpseuemdzJeaR0LzTzRYs25hzkDZoBbvzX1vxIi1mqVoCX99anHN9fhNQki
+iCcaFFj+bXM8psHErZjTs0Fj7z9U8SM1yYXysQXpMgcyH/dAvHS9WlE60127YXMS
+BE2oCo0iyb0ngKiJ3INx3twfuEVWLAmxBntnWLANDSUvhN4S2/8jUYGEhwvrPsmG
+0iyOM4E07SWn/TDZwUtvlPUcAEzjhMv7Qxz4GMV0FQ/apBVLjXao5EuUXqk63LVu
+ftDtHYT5iuyJ4RmuvpPrnHe1INdySkNuHgHkeKP1MFXcY1WKXQc+Y86f/IfQj/l+
+0M3Bx2OPkUTlE+3caH+5PsbGDgdklL1fi4gOsyfyR/7I+MSg15dlDUrC1Zi4PYBa
+xAL2De8O5V5JsjdwLvSwvcrpVqDfouKG8x8h6qsj8mEAxUl+R+HN5Bb/1RCjQ8Kb
+0cfk+DS+xFVqOxbMAIupL1ltIb+JjK1oRUyXWs1k0siwR2dBpXguHgA59fl1iSf1
+knFJW7aTjJ9ZKLYayAZ5J+pIsyIYjehQn6WI37UjIEU3f1Xg1G4hA/Trh7HfoRDH
+ONelzgKcXkStZMn3czpS22L8gveKPDoxTQO0JX6s4QYXXhkkXGliS74OwO9tyzwq
+qRlGi7ta3Q/3dHXs/g8y
+=pILu
+-----END PGP SIGNATURE-----
+
+--xa2m3bvryotdr2ou--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
