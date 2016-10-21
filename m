@@ -1,51 +1,87 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 06/10] gpio: gpio-i2cs: Document bindings of I2CS FPGA
- GPIO block
-Date: Fri, 21 Oct 2016 10:59:25 +0200
-Message-ID: <CACRpkdZ=mWYJpBV_WmxYcAwA5TdHM4qv9k17Jb6TnoOL4YAPHA@mail.gmail.com>
-References: <1475853669-22480-1-git-send-email-pantelis.antoniou@konsulko.com> <1475853669-22480-7-git-send-email-pantelis.antoniou@konsulko.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH 4/9] pinctrl: meson: allow gpio to request irq
+Date: Fri, 21 Oct 2016 11:06:38 +0200
+Message-ID: <1477040798.15560.96.camel@baylibre.com>
+References: <1476871709-8359-1-git-send-email-jbrunet@baylibre.com>
+         <1476871709-8359-5-git-send-email-jbrunet@baylibre.com>
+         <CACRpkdaCZPS45t3eTcjJExOu=YT_YkjNkdpg09jQqvLQOJH=Qw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1475853669-22480-7-git-send-email-pantelis.antoniou@konsulko.com>
+In-Reply-To: <CACRpkdaCZPS45t3eTcjJExOu=YT_YkjNkdpg09jQqvLQOJH=Qw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Frank Rowand <frowand.list@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Jean Delvare <jdelvare@suse.com>, Peter Rosin <peda@axentia.se>, Avirup Banerjee <abanerjee@juniper.net>, Georgi Vlaev <gvlaev@juniper.net>, Guenter Roeck <linux@roeck-us.net>, JawaharBalaji Thirumalaisamy <jawaharb@juniper.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.o>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Russell King <linux@armlinux.org.uk>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Oct 7, 2016 at 5:21 PM, Pantelis Antoniou
-<pantelis.antoniou@konsulko.com> wrote:
+On Thu, 2016-10-20 at 21:21 +0200, Linus Walleij wrote:
+> On Wed, Oct 19, 2016 at 12:08 PM, Jerome Brunet <jbrunet@baylibre.com
+> > wrote:
+> 
+> > 
+> > Add the ability for gpio to request irq from the gpio interrupt
+> > controller
+> > if present. We have to specificaly that the parent interrupt
+> > controller is
+> > the gpio interrupt controller because gpio on meson SoCs can't
+> > generate
+> > interrupt directly on the GIC.
+> > 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> (...)
+> > 
+> > +       select IRQ_DOMAIN
+> >         select OF_GPIO
+> > +       select OF_IRQ
+> (...)
+> > 
+> > +static int meson_gpio_to_hwirq(struct meson_bank *bank, unsigned
+> > int offset)
+> > +{
+> > +       unsigned int hwirq;
+> > +
+> > +       if (bank->irq_first < 0)
+> > +               /* this bank cannot generate irqs */
+> > +               return -1;
+> > +
+> > +       hwirq = offset - bank->first + bank->irq_first;
+> > +
+> > +       if (hwirq > bank->irq_last)
+> > +               /* this pin cannot generate irqs */
+> > +               return -1;
+> > +
+> > +       return hwirq;
+> > +}
+> 
+> This is reimplementing irqdomain.
+> 
+> > 
+> > +static int meson_gpio_to_irq(struct gpio_chip *chip, unsigned int
+> > offset)
+> > +{
+> (...)
+> > 
+> > +       hwirq = meson_gpio_to_hwirq(bank, offset);
+> > +       if (hwirq < 0) {
+> > +               dev_dbg(pc->dev, "no interrupt for pin %u\n",
+> > offset);
+> > +               return 0;
+> > +       }
+> 
+> Isn't this usecase (also as described in the cover letter) a textbook
+> example of when you should be using hierarchical irqdomain?
+> 
+> Please check with Marc et al on hierarchical irqdomains.
 
-> +This is virtual gpio driver, that maps each bit of the I2CS FPGA to
-> +a gpio. It's used as a compatibility replacement for FRUs that use
-> +I2CS FPGA to report presence, control and report power status in
-> +the Juniper's driver infra that uses gpios. Compatible with any I2CS.
+Linus,
+Do you mean I should create a new hierarchical irqdomains in each of
+the two pinctrl instances we have in these SoC, these domains being
+stacked on the one I just added for controller in irqchip ?
 
-What does "virtual" mean?
+I did not understand this is what you meant when I asked you the
+question at ELCE.
 
-I regularly NACK patches that try to shoehorn stuff into
-GPIO not because they are actually GPIO hardware drivers or
-general purpose at all, but because it is convenient. Don't do this.
-
-> +- i2c-gpio-map: Map of "I2CS register" and "direction". The registers
-> +       are 8 bit wide, each bit of the register is mapped to either
-> +       input or output depending on the bits of the "direction". If
-> +       the bit in the direction is 1, then that bit from the I2CS
-> +       register is mapped to gpio input, otherwise to gpio output.
-
-Does this mean that the hardware is synthesized so that some lines
-are hardwired as input and some hardwired as output?
-
-That again does not sound like "general purpose" at all.
-
-I think this happens in other hardware and should be a generic
-binding like
-
-gpio-lines-input-only = <0>, <4>;
-gpio-lines-output-only = <7>, <8>;
-
-And no bitmasking, use the local offset, parse and construct the
-mask.
-
-Yours,
-Linus Walleij
+> 
+> Yours,
+> Linus Walleij
