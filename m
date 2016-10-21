@@ -1,60 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [balbi-usb:testing/next 57/84] drivers/usb/dwc3/dwc3-st.c:328:2:
- error: implicit declaration of function 'pinctrl_pm_select_sleep_state'
-Date: Fri, 21 Oct 2016 14:15:55 +0200
-Message-ID: <CACRpkda5isWVt2H9AvwjER24oBOdvS8M_yqaA5jxUi-aebdxLg@mail.gmail.com>
-References: <201610171915.7Qg5kFu7%fengguang.wu@intel.com> <87funvry7k.fsf@linux.intel.com>
+Subject: Re: [PATCH] gpio: pca953x: Add MAX7318 compatible
+Date: Fri, 21 Oct 2016 14:18:31 +0200
+Message-ID: <CACRpkdZqMRpfMPRi9zghbZ27VG2=uVLTqa0pfyjRb30ycQjELg@mail.gmail.com>
+References: <20161017163649.12113-1-marex@denx.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f173.google.com ([209.85.220.173]:36698 "EHLO
-        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753916AbcJUMP4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2016 08:15:56 -0400
-Received: by mail-qk0-f173.google.com with SMTP id o68so148866671qkf.3
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2016 05:15:56 -0700 (PDT)
-In-Reply-To: <87funvry7k.fsf@linux.intel.com>
+Received: from mail-qk0-f182.google.com ([209.85.220.182]:36463 "EHLO
+        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755196AbcJUMSc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2016 08:18:32 -0400
+Received: by mail-qk0-f182.google.com with SMTP id o68so148997370qkf.3
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2016 05:18:32 -0700 (PDT)
+In-Reply-To: <20161017163649.12113-1-marex@denx.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Felipe Balbi <felipe.balbi@linux.intel.com>
-Cc: kbuild test robot <fengguang.wu@intel.com>, "kbuild-all@01.org" <kbuild-all@01.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Marek Vasut <marex@denx.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Oct 17, 2016 at 1:50 PM, Felipe Balbi
-<felipe.balbi@linux.intel.com> wrote:
+On Mon, Oct 17, 2016 at 6:36 PM, Marek Vasut <marex@denx.de> wrote:
 
-> kbuild test robot <fengguang.wu@intel.com> writes:
->> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git testing/next
->> head:   4281ef86fae986e0a9bb553fb311fe6d8e039118
->> commit: 040f47e7330045feaa8c06bf2900db2eb2038e80 [57/84] usb: dwc3: Kconfig: allow all glues to build if COMPILE_TEST
->> config: blackfin-allmodconfig (attached as .config)
->> compiler: bfin-uclinux-gcc (GCC) 6.2.0
->> reproduce:
->>         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
->>         chmod +x ~/bin/make.cross
->>         git checkout 040f47e7330045feaa8c06bf2900db2eb2038e80
->>         # save the attached .config to linux build tree
->>         make.cross ARCH=blackfin
->>
->> All errors (new ones prefixed by >>):
->>
->>    drivers/usb/dwc3/dwc3-st.c: In function 'st_dwc3_suspend':
->>>> drivers/usb/dwc3/dwc3-st.c:328:2: error: implicit declaration of function 'pinctrl_pm_select_sleep_state' [-Werror=implicit-function-declaration]
->>      pinctrl_pm_select_sleep_state(dev);
->>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>    drivers/usb/dwc3/dwc3-st.c: In function 'st_dwc3_resume':
->>>> drivers/usb/dwc3/dwc3-st.c:338:2: error: implicit declaration of function 'pinctrl_pm_select_default_state' [-Werror=implicit-function-declaration]
->>      pinctrl_pm_select_default_state(dev);
->>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>    cc1: some warnings being treated as errors
+> Add compatible string for the MAX7318 part. This is a two bank,
+> 16 lines, I2C GPIO expander with interrupt line.
 >
-> looks like a bug in <linux/pinctrl/consumer.h>. Something along the
-> lines of below should be enough:
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
 
-I don't think so, that include file looks pretty solid.
-
-I think the actual problem is that dwc3-st.c doesn't
-#include <linux/pinctrl/consumer.h> even if it is using the
-functions from it.
+Patch applied!
 
 Yours,
 Linus Walleij
