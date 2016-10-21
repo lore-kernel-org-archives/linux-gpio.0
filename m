@@ -1,56 +1,46 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 2/2] gpio: ts4800: Fix module autoload
-Date: Fri, 21 Oct 2016 10:32:14 -0300
-Message-ID: <cca95b94-82fc-ff40-76af-bfce8db9bfb4@osg.samsung.com>
-References: <1476823442-31104-1-git-send-email-javier@osg.samsung.com>
- <1476823442-31104-2-git-send-email-javier@osg.samsung.com>
- <CACRpkdZcopStg7B8si97gLzCvE1y4_VYXFjOsbw=gt+hX6pdfQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [RFC PATCH 04/13] ARM64: dts: meson-gxl: Add clock nodes
+Date: Fri, 21 Oct 2016 16:40:29 +0200
+Message-ID: <1477060838-14164-5-git-send-email-narmstrong@baylibre.com>
+References: <1477060838-14164-1-git-send-email-narmstrong@baylibre.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZcopStg7B8si97gLzCvE1y4_VYXFjOsbw=gt+hX6pdfQ@mail.gmail.com>
+In-Reply-To: <1477060838-14164-1-git-send-email-narmstrong@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: khilman@baylibre.com, carlo@caione.org, linus.walleij@linaro.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Linus,
+Add clock node for Amlogic Meson GXL.
+The GXBB compatible is retained since the GXBB clock tree is used for now.
 
-On 10/21/2016 09:55 AM, Linus Walleij wrote:
-> On Tue, Oct 18, 2016 at 10:44 PM, Javier Martinez Canillas
-> <javier@osg.samsung.com> wrote:
-> 
->> If the driver is built as a module, autoload won't work because the module
->> alias information is not filled. So user-space can't match the registered
->> device with the corresponding module.
->>
->> Export the module alias information using the MODULE_DEVICE_TABLE() macro.
->>
->> Before this patch:
->>
->> $ modinfo drivers/gpio/gpio-ts4800.ko | grep alias
->> $
->>
->> After this patch:
->>
->> $ modinfo drivers/gpio/gpio-ts4800.ko | grep alias
->> alias:          of:N*T*Ctechnologic,ts4800-gpioC*
->> alias:          of:N*T*Ctechnologic,ts4800-gpio
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> Patch applied for fixes.
->
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Thanks, I guess this also applies to Patch 1/2?
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index ce7f550..33d0506 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -42,6 +42,7 @@
+  */
  
-> Yours,
-> Linus Walleij
-> 
-
-Best regards,
+ #include "meson-gx.dtsi"
++#include <dt-bindings/clock/gxbb-clkc.h>
+ #include <dt-bindings/gpio/meson-gxl-gpio.h>
+ 
+ / {
+@@ -214,3 +215,11 @@
+ 		};
+ 	};
+ };
++
++&hiubus {
++	clkc: clock-controller@0 {
++		compatible = "amlogic,gxl-clkc", "amlogic,gxbb-clkc";
++		#clock-cells = <1>;
++		reg = <0x0 0x0 0x0 0x3db>;
++	};
++};
 -- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+1.9.1
