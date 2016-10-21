@@ -1,40 +1,22 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: ts4800: Fix module autoload
-Date: Fri, 21 Oct 2016 14:55:41 +0200
-Message-ID: <CACRpkdZcopStg7B8si97gLzCvE1y4_VYXFjOsbw=gt+hX6pdfQ@mail.gmail.com>
-References: <1476823442-31104-1-git-send-email-javier@osg.samsung.com> <1476823442-31104-2-git-send-email-javier@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: gpio: mxs: fix duplicate level interrupts
+Date: Fri, 21 Oct 2016 15:11:36 +0200
+Message-ID: <20161021131138.10467-1-s.hauer@pengutronix.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1476823442-31104-2-git-send-email-javier@osg.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Shawn Guo <shawnguo@kernel.org>, Marek Vasut <marex@denx.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 18, 2016 at 10:44 PM, Javier Martinez Canillas
-<javier@osg.samsung.com> wrote:
+We observed that each level interrupt triggers two interrupts. This
+is because the driver erroneously uses the IRQSTAT register to 
+acknowledge level interrupts which according to the reference manual
+is not possible. Patch 2/2 fixes that, look for its commit message
+for a detailed description what happens and how it is fixed.
 
-> If the driver is built as a module, autoload won't work because the module
-> alias information is not filled. So user-space can't match the registered
-> device with the corresponding module.
->
-> Export the module alias information using the MODULE_DEVICE_TABLE() macro.
->
-> Before this patch:
->
-> $ modinfo drivers/gpio/gpio-ts4800.ko | grep alias
-> $
->
-> After this patch:
->
-> $ modinfo drivers/gpio/gpio-ts4800.ko | grep alias
-> alias:          of:N*T*Ctechnologic,ts4800-gpioC*
-> alias:          of:N*T*Ctechnologic,ts4800-gpio
->
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Sascha
 
-Patch applied for fixes.
-
-Yours,
-Linus Walleij
+----------------------------------------------------------------
+Sascha Hauer (2):
+      gpio: mxs: use enable/disable regs to (un)mask irqs
+      gpio: mxs: fix duplicate level interrupts
