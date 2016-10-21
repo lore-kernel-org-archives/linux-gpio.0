@@ -1,33 +1,63 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [RFC PATCH 08/13] dwmac-meson8b: add support for phy selection
-Date: Fri, 21 Oct 2016 18:08:07 +0200
-Message-ID: <20161021160807.GT16974@lunn.ch>
-References: <1477060838-14164-1-git-send-email-narmstrong@baylibre.com>
- <1477060838-14164-9-git-send-email-narmstrong@baylibre.com>
- <20161021155408.GR16974@lunn.ch>
- <dc810494-6ece-c4ae-d412-ed9af3fac9c2@baylibre.com>
+From: Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH 1/2] gpio: mxs: use enable/disable regs to (un)mask irqs
+Date: Fri, 21 Oct 2016 19:36:49 +0200
+Message-ID: <05028208-b4c5-7a5e-6983-5e8b353bfdc1@denx.de>
+References: <20161021131138.10467-1-s.hauer@pengutronix.de>
+ <20161021131138.10467-2-s.hauer@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <netdev-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <dc810494-6ece-c4ae-d412-ed9af3fac9c2@baylibre.com>
-Sender: netdev-owner@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: khilman@baylibre.com, carlo@caione.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-out.m-online.net ([212.18.0.10]:42829 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932749AbcJUSKL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2016 14:10:11 -0400
+In-Reply-To: <20161021131138.10467-2-s.hauer@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sascha Hauer <s.hauer@pengutronix.de>, linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Shawn Guo <shawnguo@kernel.org>
 
-Hi Neil
+On 10/21/2016 03:11 PM, Sascha Hauer wrote:
+> The mxs gpio controller does not only have a mask register to mask
+> interrupts, but also enable/disable registers. Use the enable/disable
+> registers rather than the mask register. This does not have any
+> advantage for now, but makes the next patch simpler.
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-> Yes this would be a good idea if we were able to scan the internal
-> and external PHYs at the same time, but with our limited knowledge
-> the values we write in the register seems to switch a mux for the
-> whole RMII and MDIO signals to either interface.
+Reviewed-by: Marek Vasut <marex@denx.de>
 
-Ah, O.K. So you need something like:
+Thanks
 
-drivers/net/phy/mdio-mux-mmioreg.c
+> ---
+>  drivers/gpio/gpio-mxs.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-mxs.c b/drivers/gpio/gpio-mxs.c
+> index b9daa0b..1cf579f 100644
+> --- a/drivers/gpio/gpio-mxs.c
+> +++ b/drivers/gpio/gpio-mxs.c
+> @@ -211,12 +211,13 @@ static int __init mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
+>  
+>  	ct = gc->chip_types;
+>  	ct->chip.irq_ack = irq_gc_ack_set_bit;
+> -	ct->chip.irq_mask = irq_gc_mask_clr_bit;
+> -	ct->chip.irq_unmask = irq_gc_mask_set_bit;
+> +	ct->chip.irq_mask = irq_gc_mask_disable_reg;
+> +	ct->chip.irq_unmask = irq_gc_unmask_enable_reg;
+>  	ct->chip.irq_set_type = mxs_gpio_set_irq_type;
+>  	ct->chip.irq_set_wake = mxs_gpio_set_wake_irq;
+>  	ct->regs.ack = PINCTRL_IRQSTAT(port) + MXS_CLR;
+> -	ct->regs.mask = PINCTRL_IRQEN(port);
+> +	ct->regs.enable = PINCTRL_IRQEN(port) + MXS_SET;
+> +	ct->regs.disable = PINCTRL_IRQEN(port) + MXS_CLR;
+>  
+>  	irq_setup_generic_chip(gc, IRQ_MSK(32), IRQ_GC_INIT_NESTED_LOCK,
+>  			       IRQ_NOREQUEST, 0);
+> 
 
-This seems to be limited to a single byte for the mux register, so you
-might need to make some extensions.
 
-      Andrew
+-- 
+Best regards,
+Marek Vasut
