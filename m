@@ -1,78 +1,60 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 3/3] selftest/gpio: add gpio test case
-Date: Fri, 21 Oct 2016 13:54:42 +0200
-Message-ID: <CACRpkdbOnEs464MLoZDQ_eZ-O_stuyQJhy-L98ZzaKzcrn8FKg@mail.gmail.com>
-References: <1476413307-1397-1-git-send-email-bamvor.zhangjian@huawei.com> <1476413307-1397-4-git-send-email-bamvor.zhangjian@huawei.com>
+Subject: Re: [balbi-usb:testing/next 57/84] drivers/usb/dwc3/dwc3-st.c:328:2:
+ error: implicit declaration of function 'pinctrl_pm_select_sleep_state'
+Date: Fri, 21 Oct 2016 14:15:55 +0200
+Message-ID: <CACRpkda5isWVt2H9AvwjER24oBOdvS8M_yqaA5jxUi-aebdxLg@mail.gmail.com>
+References: <201610171915.7Qg5kFu7%fengguang.wu@intel.com> <87funvry7k.fsf@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:34633 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752880AbcJULyn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2016 07:54:43 -0400
-Received: by mail-qt0-f171.google.com with SMTP id q7so83024733qtq.1
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2016 04:54:43 -0700 (PDT)
-In-Reply-To: <1476413307-1397-4-git-send-email-bamvor.zhangjian@huawei.com>
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:36698 "EHLO
+        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753916AbcJUMP4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Oct 2016 08:15:56 -0400
+Received: by mail-qk0-f173.google.com with SMTP id o68so148866671qkf.3
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Oct 2016 05:15:56 -0700 (PDT)
+In-Reply-To: <87funvry7k.fsf@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bamvor Jian Zhang <bamvor.zhangjian@huawei.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Michael Welling <mwelling@ieee.org>, shuahkh@osg.samsung.com
+To: Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc: kbuild test robot <fengguang.wu@intel.com>, "kbuild-all@01.org" <kbuild-all@01.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Oct 14, 2016 at 4:48 AM, Bamvor Jian Zhang
-<bamvor.zhangjian@huawei.com> wrote:
+On Mon, Oct 17, 2016 at 1:50 PM, Felipe Balbi
+<felipe.balbi@linux.intel.com> wrote:
 
-> From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+> kbuild test robot <fengguang.wu@intel.com> writes:
+>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git testing/next
+>> head:   4281ef86fae986e0a9bb553fb311fe6d8e039118
+>> commit: 040f47e7330045feaa8c06bf2900db2eb2038e80 [57/84] usb: dwc3: Kconfig: allow all glues to build if COMPILE_TEST
+>> config: blackfin-allmodconfig (attached as .config)
+>> compiler: bfin-uclinux-gcc (GCC) 6.2.0
+>> reproduce:
+>>         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
+>>         chmod +x ~/bin/make.cross
+>>         git checkout 040f47e7330045feaa8c06bf2900db2eb2038e80
+>>         # save the attached .config to linux build tree
+>>         make.cross ARCH=blackfin
+>>
+>> All errors (new ones prefixed by >>):
+>>
+>>    drivers/usb/dwc3/dwc3-st.c: In function 'st_dwc3_suspend':
+>>>> drivers/usb/dwc3/dwc3-st.c:328:2: error: implicit declaration of function 'pinctrl_pm_select_sleep_state' [-Werror=implicit-function-declaration]
+>>      pinctrl_pm_select_sleep_state(dev);
+>>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>    drivers/usb/dwc3/dwc3-st.c: In function 'st_dwc3_resume':
+>>>> drivers/usb/dwc3/dwc3-st.c:338:2: error: implicit declaration of function 'pinctrl_pm_select_default_state' [-Werror=implicit-function-declaration]
+>>      pinctrl_pm_select_default_state(dev);
+>>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>    cc1: some warnings being treated as errors
 >
-> This test script try to do whitebox testing for gpio subsystem(
-> based on gpiolib). It manipulate gpio device through chardev or
-> sysfs and check the result from debugfs. This script test
-> gpio-mockup through chardev by default.
->
-> In details, it test the following things:
-> 1.  Add single, multi gpiochip to do overlap check.
-> 2.  Test direction and output value for valid pin.
-> 3.  Test dynamic allocation of gpio base.
->
-> Run "tools/testing/selftests/gpio/gpio-mockup.sh -h" to know how to
-> use it.
->
-> Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+> looks like a bug in <linux/pinctrl/consumer.h>. Something along the
+> lines of below should be enough:
 
-I like the overall idea with this, but some comments:
+I don't think so, that include file looks pretty solid.
 
-> +CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
-
-Is this really what people are doing?
-
-Isn't -I/usr/include the right way to express this?
-
-> +LDLIBS += -lmount -I/usr/include/libmount
-> +
-> +$(BINARIES): ../../../gpio/gpio-utils.o ../../../../usr/include/linux/gpio.h
-> +
-> +../../../gpio/gpio-utils.o:
-> +       make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
-
-Ah, that is clever. I hope I can get an ACK from Shuah if this is
-how we're supposed to handle cross dependencies of common
-helper code in the kernel.
-
-It looks a bit spaghetti, unfortunately.
-
-> +../../../../usr/include/linux/gpio.h:
-> +       make -C ../../../.. headers_install
-
-Don't do this please, you would have to be root and it's very
-fragile. How does tests in general resolve dependencies on
-kernel headers? Please look around a bit and check what
-they do. I think they just expect them to be installed.
-
-I like the tests overall, but I'm a bit suspicious about the
-sysfs tests. Maybe these should atleast print something
-about the sysfs ABI being deprecated.
-
-Anyways I merged the first two patches so now we only have to
-figure out this final patch!
+I think the actual problem is that dwc3-st.c doesn't
+#include <linux/pinctrl/consumer.h> even if it is using the
+functions from it.
 
 Yours,
 Linus Walleij
