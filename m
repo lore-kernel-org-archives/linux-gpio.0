@@ -1,47 +1,31 @@
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH] gpio: mcp23s08: Add option to configure pullups.
-Date: Fri, 21 Oct 2016 17:00:35 +0200
-Message-ID: <1477062035-30825-1-git-send-email-enric.balletbo@collabora.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [RFC PATCH 08/13] dwmac-meson8b: add support for phy selection
+Date: Fri, 21 Oct 2016 17:46:34 +0200
+Message-ID: <20161021154634.GQ16974@lunn.ch>
+References: <1477060838-14164-1-git-send-email-narmstrong@baylibre.com>
+ <1477060838-14164-9-git-send-email-narmstrong@baylibre.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1477060838-14164-9-git-send-email-narmstrong@baylibre.com>
+Sender: netdev-owner@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: khilman@baylibre.com, carlo@caione.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Default is without pullups, but if property is specified in DT and the bit
-is set, set a pullup on GPIO-n.
+On Fri, Oct 21, 2016 at 04:40:33PM +0200, Neil Armstrong wrote:
+> The Meson GXL dwmac Glue Layer also provides switching between an external PHY
+> and an internal RMII 10/100 PHY.
+> Add a way to setup the correct PHY switching from a device tree attribute.
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
- Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt | 1 +
- drivers/gpio/gpio-mcp23s08.c                             | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Hi Neil
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-index c934106..40306b1 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-@@ -57,6 +57,7 @@ Optional device specific properties:
-         On devices with only one interrupt output this property is useless.
- - microchip,irq-active-high: Sets the INTPOL flag in the IOCON register. This
-         configures the IRQ output polarity as active high.
-+- microchip,pullups : If n-th bit is set, set a pullup on GPIO-n.
- 
- Example I2C (with interrupt):
- gpiom1: gpio@20 {
-diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-index 99d37b5..0cedf82 100644
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@ -766,7 +766,8 @@ static int mcp230xx_probe(struct i2c_client *client,
- 	if (match) {
- 		pdata = &local_pdata;
- 		pdata->base = -1;
--		pdata->chip[0].pullups = 0;
-+		of_property_read_u32(client->dev.of_node, "microchip,pullups",
-+				     &pdata->chip[0].pullups);
- 		pdata->irq_controller =	of_property_read_bool(
- 					client->dev.of_node,
- 					"interrupt-controller");
--- 
-2.1.0
+Can this be made automatic?
+
+The internal PHY appears to be on address 8. Can there also be an
+external PHY on address 8? Could you follow the phy-handle link to the
+phy node, check the address, and if it is 8, configure for an internal
+PHY?
+
+	Andrew
