@@ -1,48 +1,49 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: ath79: Fix module autoload
-Date: Mon, 24 Oct 2016 00:23:48 +0200
-Message-ID: <CACRpkda6rb3bsWEFLSAEu=kwZxO3qSTAiq8NtYB6L7LAm1pUiA@mail.gmail.com>
-References: <1476823442-31104-1-git-send-email-javier@osg.samsung.com>
+Subject: Re: [PATCH] Revert "gpio/mvebu: convert to use irq_domain_add_simple()"
+Date: Mon, 24 Oct 2016 01:11:23 +0200
+Message-ID: <CACRpkdatYim3=tKeO-E1GazB7RV9XPdE-EBQs+FW+DrryATzRA@mail.gmail.com>
+References: <1476831396-24359-1-git-send-email-jgunthorpe@obsidianresearch.com>
+ <871szcerxl.fsf@free-electrons.com> <20161019210341.GA3746@obsidianresearch.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:33222 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751752AbcJWWXt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Oct 2016 18:23:49 -0400
-Received: by mail-qt0-f182.google.com with SMTP id s49so117841709qta.0
-        for <linux-gpio@vger.kernel.org>; Sun, 23 Oct 2016 15:23:48 -0700 (PDT)
-In-Reply-To: <1476823442-31104-1-git-send-email-javier@osg.samsung.com>
+Received: from mail-qk0-f170.google.com ([209.85.220.170]:34918 "EHLO
+        mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753636AbcJWXLZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Oct 2016 19:11:25 -0400
+Received: by mail-qk0-f170.google.com with SMTP id z190so214319594qkc.2
+        for <linux-gpio@vger.kernel.org>; Sun, 23 Oct 2016 16:11:24 -0700 (PDT)
+In-Reply-To: <20161019210341.GA3746@obsidianresearch.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alban Bedel <albeu@free.fr>, Alexandre Courbot <gnurou@gmail.com>
+To: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Grant Likely <grant.likely@secretlab.ca>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-On Tue, Oct 18, 2016 at 10:44 PM, Javier Martinez Canillas
-<javier@osg.samsung.com> wrote:
+On Wed, Oct 19, 2016 at 11:03 PM, Jason Gunthorpe
+<jgunthorpe@obsidianresearch.com> wrote:
 
-> If the driver is built as a module, autoload won't work because the module
-> alias information is not filled. So user-space can't match the registered
-> device with the corresponding module.
+> From 7566f05ac445b652ba7607cc1899fed10fea1c76 Mon Sep 17 00:00:00 2001
+> From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+> Date: Wed, 19 Oct 2016 14:57:45 -0600
+> Subject: [PATCH] gpio/mvebu: Use irq_domain_add_linear
 >
-> Export the module alias information using the MODULE_DEVICE_TABLE() macro.
+> This fixes the irq allocation in this driver to not print:
+>  irq: Cannot allocate irq_descs @ IRQ34, assuming pre-allocated
+>  irq: Cannot allocate irq_descs @ IRQ66, assuming pre-allocated
 >
-> Before this patch:
+> Which happens because the driver already called irq_alloc_descs()
+> and so the change to use irq_domain_add_simple resulted in calling
+> irq_alloc_descs() twice.
 >
-> $ modinfo drivers/gpio/gpio-ath79.ko | grep alias
-> $
+> Modernize the irq allocation in this driver to use the
+> irq_domain_add_linear flow directly and eliminate the use of
+> irq_domain_add_simple/legacy
 >
-> After this patch:
->
-> $ modinfo drivers/gpio/gpio-ath79.ko | grep alias
-> alias:          of:N*T*Cqca,ar9340-gpioC*
-> alias:          of:N*T*Cqca,ar9340-gpio
-> alias:          of:N*T*Cqca,ar7100-gpioC*
-> alias:          of:N*T*Cqca,ar7100-gpio
->
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Fixes: ce931f571b6d ("gpio/mvebu: convert to use irq_domain_add_simple()")
+> Signed-off-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
 
-Patch applied with Alban's ACK.
+So can I just apply this?
+Gregory?
 
 Yours,
 Linus Walleij
