@@ -1,77 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 5/8] pinctrl: aspeed: Enable capture of off-SCU pinmux state
-Date: Mon, 24 Oct 2016 00:20:59 +0200
-Message-ID: <CACRpkdazJzE=Oa-0-FEYTvUk=-kPLojHY3afZKX5cpmzrUZHGQ@mail.gmail.com>
-References: <cover.115463f791b69859c5ce9dafd61a5755ea039f4b.1474986045.git-series.andrew@aj.id.au>
- <a266046d34009e6e92c4c76699c550c2ba44bd5c.1474986045.git-series.andrew@aj.id.au>
- <CACPK8Xc7y3GtcJCVYYs-JKTqBZvqVeZaz5MUk=UX151SX1xEFw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio: ath79: Fix module autoload
+Date: Mon, 24 Oct 2016 00:23:48 +0200
+Message-ID: <CACRpkda6rb3bsWEFLSAEu=kwZxO3qSTAiq8NtYB6L7LAm1pUiA@mail.gmail.com>
+References: <1476823442-31104-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACPK8Xc7y3GtcJCVYYs-JKTqBZvqVeZaz5MUk=UX151SX1xEFw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joel Stanley <joel@jms.id.au>
-Cc: Andrew Jeffery <andrew@aj.id.au>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f182.google.com ([209.85.216.182]:33222 "EHLO
+        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751752AbcJWWXt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Oct 2016 18:23:49 -0400
+Received: by mail-qt0-f182.google.com with SMTP id s49so117841709qta.0
+        for <linux-gpio@vger.kernel.org>; Sun, 23 Oct 2016 15:23:48 -0700 (PDT)
+In-Reply-To: <1476823442-31104-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alban Bedel <albeu@free.fr>, Alexandre Courbot <gnurou@gmail.com>
 
-On Thu, Sep 29, 2016 at 8:45 AM, Joel Stanley <joel@jms.id.au> wrote:
-> On Wed, Sep 28, 2016 at 12:20 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+On Tue, Oct 18, 2016 at 10:44 PM, Javier Martinez Canillas
+<javier@osg.samsung.com> wrote:
 
->> On the AST2400 and AST2500 a number of pins depend on state in one of
->> the SIO, LPC or GFX IP blocks, so add support to at least capture what
->> that state is. The pinctrl engine for the Aspeed SoCs doesn't try to
->> inspect or modify the state of the off-SCU IP blocks. Instead, it logs
->> the state requirement with the expectation that the platform
->> designer/maintainer arranges for the appropriate configuration to be
->> applied through the associated drivers.
-(...)
+> If the driver is built as a module, autoload won't work because the module
+> alias information is not filled. So user-space can't match the registered
+> device with the corresponding module.
 >
-> This is unfortunate.
+> Export the module alias information using the MODULE_DEVICE_TABLE() macro.
 >
-> This patch kicks the can down the road, but doesn't solve the problem
-> for a user who wants to configure some functionality that depends on
-> the non-SCU bits. Because of this I'm not sure if we want to put it in
-> the tree.
+> Before this patch:
 >
-> However, I'm not sure what a proper solution would look like. Perhaps
-> Linus can point out another SoC that has a similar problem?
+> $ modinfo drivers/gpio/gpio-ath79.ko | grep alias
+> $
+>
+> After this patch:
+>
+> $ modinfo drivers/gpio/gpio-ath79.ko | grep alias
+> alias:          of:N*T*Cqca,ar9340-gpioC*
+> alias:          of:N*T*Cqca,ar9340-gpio
+> alias:          of:N*T*Cqca,ar7100-gpioC*
+> alias:          of:N*T*Cqca,ar7100-gpio
+>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-If I could only understand it.
-
-Don't you actually want to go and read a few registers on another
-IO range?
-
-What we generally do when pin control is spread out in a system is try
-to consolidate it, meaning expose the necessary registers on the remote
-end using syscon (drivers/mfd/syscon) so that we can easily get a handle
-on these registers withe regmap MMIO.
-
-Since regmap handles atomic access to the registers, that way we
-protect from disasters and keep the state in the hardware.
-
-I don't know if this is helpful. For a normal peripheral you may not want
-to put a regmap over all its registers but you prefer to ioremap it, and then
-we get the spaghetti of accessor functions to peek and poke into another
-peripherals I/O space, and that is undesireable.
-
-Maybe this is completely not understanding what you want to do, so
-sorry, please elaborate. I am afraid the two of you are the only people on
-the planet who actually understand what is going on here.
-
-Also the hardware engineer who wrote the Aspeed pin controller, I would
-like to read this persons design specification, I am pretty sure it is very
-interesting.
-
->> -  * @reg: The register offset from base in bytes
->> +  * @reg: Split into three fields:
->> +  *       31:24: IP selector
->> +  *       23:12: Reserved
->> +  *       11:0: Register offset
-
-That seems like unnecessary shoehorning. Is it reflecting the register layout
-of the hardware or are you trying to save bits? For the latter, let it
-go and instead
-have one member for offset and one member for selector.
+Patch applied with Alban's ACK.
 
 Yours,
 Linus Walleij
