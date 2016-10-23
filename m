@@ -1,18 +1,18 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] pinctrl: stm32: remove dependency with interrupt controller
-Date: Mon, 24 Oct 2016 01:55:23 +0200
-Message-ID: <CACRpkdZVDod=FVnNa1+Kqre8QdrmPwM8mM2YcioSgJDR5AT=Ng@mail.gmail.com>
-References: <1476970012-7838-1-git-send-email-alexandre.torgue@st.com> <1476970012-7838-2-git-send-email-alexandre.torgue@st.com>
+Subject: Re: [PATCH 2/2] pinctrl: stm32: move gpio irqs binding to optional
+Date: Mon, 24 Oct 2016 01:56:25 +0200
+Message-ID: <CACRpkdYne7Kjk_Bw-j6E6SPvx4z7G_5AzfHwYJi70F=DvguAxw@mail.gmail.com>
+References: <1476970012-7838-1-git-send-email-alexandre.torgue@st.com> <1476970012-7838-3-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:33657 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754955AbcJWXzY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Oct 2016 19:55:24 -0400
-Received: by mail-qt0-f182.google.com with SMTP id s49so118517618qta.0
-        for <linux-gpio@vger.kernel.org>; Sun, 23 Oct 2016 16:55:24 -0700 (PDT)
-In-Reply-To: <1476970012-7838-2-git-send-email-alexandre.torgue@st.com>
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:35173 "EHLO
+        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756195AbcJWX40 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Oct 2016 19:56:26 -0400
+Received: by mail-qk0-f173.google.com with SMTP id z190so215000503qkc.2
+        for <linux-gpio@vger.kernel.org>; Sun, 23 Oct 2016 16:56:26 -0700 (PDT)
+In-Reply-To: <1476970012-7838-3-git-send-email-alexandre.torgue@st.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Alexandre TORGUE <alexandre.torgue@st.com>
@@ -21,8 +21,9 @@ Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Patrice Chotard <patrice.chotar
 On Thu, Oct 20, 2016 at 3:26 PM, Alexandre TORGUE
 <alexandre.torgue@st.com> wrote:
 
-> This patch allows to probe stm32 pinctrl driver even if no interrupt
-> controller is defined to manage gpio irqs.
+> stm32 pinctrl driver could be probed even if no interrupt controller
+> is defined to manage gpio irqs. Entries related to gpio irq management
+> are moved to optional.
 >
 > Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
 
