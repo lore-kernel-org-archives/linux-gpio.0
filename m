@@ -1,62 +1,43 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7796: Fix GPSR definitions for SDHI2/3
-Date: Mon, 24 Oct 2016 10:22:41 +0200
-Message-ID: <1477297361-28197-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Simon Horman <horms@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v11 1/1] USB: serial: cp210x: Adding GPIO support for
+ CP2105
+Date: Mon, 24 Oct 2016 11:56:21 +0200
+Message-ID: <20161024095621.GA12024@localhost>
+References: <77ba058a2f5c71c60e8148fadc3f2f4e8d92bc45.1476972764.git.martyn.welch@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <77ba058a2f5c71c60e8148fadc3f2f4e8d92bc45.1476972764.git.martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Karl Palsson <karlp-PhA6lrgffZtPR4JQBCEnsQ@public.gmane.org>, Konstantin Shkolnyy <Konstantin.Shkolnyy-S6d6foEdJf7QT0dZR+AlfA@public.gmane.org>, Peter Senna Tschudin <peter.senna-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Fix off-by-one (row and/or register) errors in links to Peripheral
-Function Select Register bitfields from GPIO/Peripheral Function Select
-Register 4 macros for SDHI2 and SDHI3 pins.
+On Thu, Oct 20, 2016 at 03:13:54PM +0100, Martyn Welch wrote:
+> This patch adds support for the GPIO found on the CP2105. Unlike the GPIO
+> provided by some of the other devices supported by the cp210x driver, the
+> GPIO on the CP2015 is muxed on pins otherwise used for serial control
+> lines. The GPIO have been configured in 2 separate banks as the choice to
+> configure the pins for GPIO is made separately for pins shared with each
+> of the 2 serial ports this device provides, though the choice is made for
+> all pins associated with that port in one go. The choice of whether to use
+> the pins for GPIO or serial is made by adding configuration to a one-time
+> programable PROM in the chip and can not be changed at runtime. The device
+> defaults to GPIO.
+> 
+> This device supports either push-pull or open-drain modes, it doesn't
+> provide an explicit input mode, though the state of the GPIO can be read
+> when used in open-drain mode. Like with pin use, the mode is configured in
+> the one-time programable PROM and can't be changed at runtime.
+> 
+> Signed-off-by: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 
-Based on rev. 0.52E of the R-Car Gen3 User's Manual.
+Nice work! Now applied. 
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Untested. Thanks for testing!
-
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index dd23198492b547e3..57ddd394f8c5e7b8 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -122,22 +122,22 @@
- #define GPSR3_0		F_(SD0_CLK,		IP7_19_16)
- 
- /* GPSR4 */
--#define GPSR4_17	F_(SD3_DS,		IP11_11_8)
--#define GPSR4_16	F_(SD3_DAT7,		IP10_7_4)
--#define GPSR4_15	F_(SD3_DAT6,		IP10_3_0)
--#define GPSR4_14	F_(SD3_DAT5,		IP9_31_28)
--#define GPSR4_13	F_(SD3_DAT4,		IP9_27_24)
-+#define GPSR4_17	F_(SD3_DS,		IP11_7_4)
-+#define GPSR4_16	F_(SD3_DAT7,		IP11_3_0)
-+#define GPSR4_15	F_(SD3_DAT6,		IP10_31_28)
-+#define GPSR4_14	F_(SD3_DAT5,		IP10_27_24)
-+#define GPSR4_13	F_(SD3_DAT4,		IP10_23_20)
- #define GPSR4_12	F_(SD3_DAT3,		IP10_19_16)
- #define GPSR4_11	F_(SD3_DAT2,		IP10_15_12)
- #define GPSR4_10	F_(SD3_DAT1,		IP10_11_8)
- #define GPSR4_9		F_(SD3_DAT0,		IP10_7_4)
- #define GPSR4_8		F_(SD3_CMD,		IP10_3_0)
- #define GPSR4_7		F_(SD3_CLK,		IP9_31_28)
--#define GPSR4_6		F_(SD2_DS,		IP9_23_20)
--#define GPSR4_5		F_(SD2_DAT3,		IP9_19_16)
--#define GPSR4_4		F_(SD2_DAT2,		IP9_15_12)
--#define GPSR4_3		F_(SD2_DAT1,		IP9_11_8)
--#define GPSR4_2		F_(SD2_DAT0,		IP9_7_4)
-+#define GPSR4_6		F_(SD2_DS,		IP9_27_24)
-+#define GPSR4_5		F_(SD2_DAT3,		IP9_23_20)
-+#define GPSR4_4		F_(SD2_DAT2,		IP9_19_16)
-+#define GPSR4_3		F_(SD2_DAT1,		IP9_15_12)
-+#define GPSR4_2		F_(SD2_DAT0,		IP9_11_8)
- #define GPSR4_1		F_(SD2_CMD,		IP9_7_4)
- #define GPSR4_0		F_(SD2_CLK,		IP9_3_0)
- 
--- 
-1.9.1
+Thanks,
+Johan
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
