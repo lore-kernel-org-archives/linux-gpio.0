@@ -1,77 +1,53 @@
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: Re: [PATCH v3] pinctrl: Add SX150X GPIO Extender Pinctrl Driver
-Date: Sun, 23 Oct 2016 21:51:09 -0700
-Message-ID: <CAHQ1cqGLQ=DdhXg1ebkgBbLN8P2P8BEDrGGTx9_r+6=Wy3uUWA@mail.gmail.com>
-References: <1477040998-2016-1-git-send-email-narmstrong@baylibre.com>
- <CAHQ1cqESoRdeHyvP=m=8F_VwiaYL+wbjFoNa6KvWBGfijhcRjg@mail.gmail.com> <CACRpkdbwqFRtFN1gx1G7BuFe44mvPyCSeoQ5g9_FR11j_ZO4ug@mail.gmail.com>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: Re: [PATCH] gpio: mcp23s08: Add option to configure pullups.
+Date: Mon, 24 Oct 2016 08:13:54 +0200
+Message-ID: <11644726.TmP4uu3h4l@ws-stein>
+References: <1477062035-30825-1-git-send-email-enric.balletbo@collabora.com> <CACRpkdY15Hv_ydHyOXRM6G0ewVTHkVa1w3Z89AdvSDR=eyi7sQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbwqFRtFN1gx1G7BuFe44mvPyCSeoQ5g9_FR11j_ZO4ug@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Peter Rosin <peda@axentia.se>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Roland Stigge <stigge@antcom.de>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from webbox1416.server-home.net ([77.236.96.61]:51570 "EHLO
+        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1757038AbcJXGOB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 24 Oct 2016 02:14:01 -0400
+In-Reply-To: <CACRpkdY15Hv_ydHyOXRM6G0ewVTHkVa1w3Z89AdvSDR=eyi7sQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
 
-On Sun, Oct 23, 2016 at 3:47 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Sun, Oct 23, 2016 at 4:50 AM, Andrey Smirnov
-> <andrew.smirnov@gmail.com> wrote:
->> On Fri, Oct 21, 2016 at 2:09 AM, Neil Armstrong <narmstrong@baylibre.com> wrote:
->>> Since the I2C sx150x GPIO expander driver uses platform_data to manage
->>> the pins configurations, rewrite the driver as a pinctrl driver using
->>> pinconf to get/set pin configurations from DT or debugfs.
->>>
->>> The pinctrl driver is functionnally equivalent as the gpio-only driver
->>> and can use DT for pinconf. The platform_data confirmation is dropped.
->>>
->>> This patchset removed the gpio-only driver and selects the Pinctrl driver
->>> config instead. This patchset also migrates the gpio dt-bindings to pinctrl
->>> and add the pinctrl optional properties.
->>>
->>> The driver was tested with a SX1509 device on a BeagleBone black with
->>> interrupt support and on an X86_64 machine over an I2C to USB converter.
->>>
->>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> (...)
->
->>> +               ret = gpiochip_irqchip_add(&pctl->gpio,
->>> +                                          &pctl->irq_chip, 0,
->>> +                                          handle_edge_irq, IRQ_TYPE_EDGE_BOTH);
->>
->> Adding irqchip with IRQ_TYPE_EDGE_BOTH triggers a WARN in
->> drivers/gpio/gpiolib.c:1671, on a custom Vybrid board that I have with
->> the chip, so maybe it should be replaced with IRQ_TYPE_NONE? That's
->> what I did for my testing and with that change
->
-> I fixed this up when applying. It is corect, it should always be IRQ_TYPE_NONE
-> unless it is a very old driver using boardfiles. The proper type is set up
-> when the driver using it requests the IRQ.
->
-> Some drivers also need to set the default handler to handle_bad_irq
-> and then also set that up in the irqchip .set_type() callback, especially
-> those hardwares that have an ACK register for edge IRQs so that a second
-> edge irq can come in when handling a first edge IRQ. Level IRQs don't
-> have this problem for obvious reasons, so we need to select between
-> handle_edge_irq() or handle_level_irq() on these hardwares.
->
-> Could you or Neil or both check if this applies to sx150x?
+On Monday 24 October 2016 02:53:31, Linus Walleij wrote:
+> On Fri, Oct 21, 2016 at 5:00 PM, Enric Balletbo i Serra
+> 
+> <enric.balletbo@collabora.com> wrote:
+> > Default is without pullups, but if property is specified in DT and the bit
+> > is set, set a pullup on GPIO-n.
+> > 
+> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> 
+> I don't generally like this.
+> 
+> In device tree it is the consumer that specifies how the line is used,
+> not the producer (gpiochip).
+> 
+> We currently only specify polarity, open drain and open source
+> for consumers though.
+> 
+> And the entire pin control system came into being *exactly* because
+> Grant didn't like me adding these things to the GPIO drivers.
+> 
+> So how many other things does the MCP support? Drive strength?
+> Schmitt trigger? Is there a datasheet?
 
-These chips only support edge triggered interrupts, so I doesn't seem
-to me that it does. However, trying to answer that question lead me to
-read IRQ related code of the driver, some of which didn't make as much
-sense as I'd like it to. It may be due to my ignorance of how some of
-the irqchip internals work, but I'll mention it anyway just in case.
+Some unsupported features (AFAIK):
+* Input polarity (IPOL register)
+* open-drain interrupt pin
+* pullup on pins (proposed patch)
 
-It seem strange to me that the driver uses "handle_edge_irq", given
-how none of the individual interrupts seem to require any ACKing,
-since it is all handled in sx150x_irq_thread_fn(), line 533. More so,
-I had trouble finding who/where sets .irq_ack() callback, which AFAIU
-is mandatory for handle_edge_irq().
+Datasheet is here: http://ww1.microchip.com/downloads/en/DeviceDoc/21919e.pdf
 
-Unfortunately sx150x HW setup that I have doesn't permit to do any
-testing of IRQ functionality (the chip is mostly used as GPO), so I
-wasn't able to experiment with any of the code in question and shed
-any light on my confusion. Apologies if it is just a false alarm.
+Best regards,
+Alexander
 
-Thanks,
-Andrey Smirnov
