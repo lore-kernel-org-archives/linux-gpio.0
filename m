@@ -1,44 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: mcp23s08: Add option to configure pullups.
-Date: Mon, 24 Oct 2016 02:53:31 +0200
-Message-ID: <CACRpkdY15Hv_ydHyOXRM6G0ewVTHkVa1w3Z89AdvSDR=eyi7sQ@mail.gmail.com>
-References: <1477062035-30825-1-git-send-email-enric.balletbo@collabora.com>
+Subject: Re: [PATCH 1/2] gpio: mxs: use enable/disable regs to (un)mask irqs
+Date: Mon, 24 Oct 2016 02:56:39 +0200
+Message-ID: <CACRpkdYkKPMvVcvxzvAsMvaNUADc0e0GOMEFokzgPips=003Bg@mail.gmail.com>
+References: <20161021131138.10467-1-s.hauer@pengutronix.de> <20161021131138.10467-2-s.hauer@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f175.google.com ([209.85.220.175]:36298 "EHLO
-        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756803AbcJXAxc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 23 Oct 2016 20:53:32 -0400
-Received: by mail-qk0-f175.google.com with SMTP id o68so216665408qkf.3
-        for <linux-gpio@vger.kernel.org>; Sun, 23 Oct 2016 17:53:32 -0700 (PDT)
-In-Reply-To: <1477062035-30825-1-git-send-email-enric.balletbo@collabora.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161021131138.10467-2-s.hauer@pengutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Marek Vasut <marex@denx.de>
 List-Id: linux-gpio@vger.kernel.org
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
 
-On Fri, Oct 21, 2016 at 5:00 PM, Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
+On Fri, Oct 21, 2016 at 3:11 PM, Sascha Hauer <s.hauer@pengutronix.de> wrote:
 
-> Default is without pullups, but if property is specified in DT and the bit
-> is set, set a pullup on GPIO-n.
+> The mxs gpio controller does not only have a mask register to mask
+> interrupts, but also enable/disable registers. Use the enable/disable
+> registers rather than the mask register. This does not have any
+> advantage for now, but makes the next patch simpler.
 >
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-I don't generally like this.
-
-In device tree it is the consumer that specifies how the line is used,
-not the producer (gpiochip).
-
-We currently only specify polarity, open drain and open source
-for consumers though.
-
-And the entire pin control system came into being *exactly* because
-Grant didn't like me adding these things to the GPIO drivers.
-
-So how many other things does the MCP support? Drive strength?
-Schmitt trigger? Is there a datasheet?
+Patch applied with Marek's review tag.
 
 Yours,
 Linus Walleij
