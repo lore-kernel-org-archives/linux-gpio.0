@@ -1,43 +1,68 @@
-From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v11 1/1] USB: serial: cp210x: Adding GPIO support for
- CP2105
-Date: Mon, 24 Oct 2016 11:56:21 +0200
-Message-ID: <20161024095621.GA12024@localhost>
-References: <77ba058a2f5c71c60e8148fadc3f2f4e8d92bc45.1476972764.git.martyn.welch@collabora.co.uk>
+From: Deepak Das <deepak_das@mentor.com>
+Subject: [PATCH] gpio: mxc: Shift generic request/free after gpiochip
+ registration
+Date: Mon, 24 Oct 2016 16:01:23 +0530
+Message-ID: <580DE2FB.4090009@mentor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <77ba058a2f5c71c60e8148fadc3f2f4e8d92bc45.1476972764.git.martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Cc: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Karl Palsson <karlp-PhA6lrgffZtPR4JQBCEnsQ@public.gmane.org>, Konstantin Shkolnyy <Konstantin.Shkolnyy-S6d6foEdJf7QT0dZR+AlfA@public.gmane.org>, Peter Senna Tschudin <peter.senna-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relay1.mentorg.com ([192.94.38.131]:48640 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751606AbcJXKbe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Oct 2016 06:31:34 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, shawnguo@kernel.org
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, vzapolsk <Vladimir_Zapolskiy@mentor.com>, kernel@pengutronix.de, fabio.estevam@nxp.com, p.zabel@pengutronix.de
 
-On Thu, Oct 20, 2016 at 03:13:54PM +0100, Martyn Welch wrote:
-> This patch adds support for the GPIO found on the CP2105. Unlike the GPIO
-> provided by some of the other devices supported by the cp210x driver, the
-> GPIO on the CP2015 is muxed on pins otherwise used for serial control
-> lines. The GPIO have been configured in 2 separate banks as the choice to
-> configure the pins for GPIO is made separately for pins shared with each
-> of the 2 serial ports this device provides, though the choice is made for
-> all pins associated with that port in one go. The choice of whether to use
-> the pins for GPIO or serial is made by adding configuration to a one-time
-> programable PROM in the chip and can not be changed at runtime. The device
-> defaults to GPIO.
-> 
-> This device supports either push-pull or open-drain modes, it doesn't
-> provide an explicit input mode, though the state of the GPIO can be read
-> when used in open-drain mode. Like with pin use, the mode is configured in
-> the one-time programable PROM and can't be changed at runtime.
-> 
-> Signed-off-by: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+generic gpio request/free should be added after gpiocip registration
+to validate mapping of gpiochip with pinctrl subsystem.
 
-Nice work! Now applied. 
+gpiochip->pin_ranges list contains the information used by pinctrl
+subsystem to configure corresponding pins for gpio usage.
+This list will be empty if gpiochip fails to map with
+pinctrl subsystem for any reason.
+For Ex.:-
+generic gpio request/free should not be used if IOMUX pin controller
+device node is disabled in device tree.
 
-Thanks,
-Johan
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This commit checks above list and skips adding generic gpio request/free
+if list is found empty.
+
+Signed-off-by: Deepak Das <deepak_das@mentor.com>
+Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+---
+  drivers/gpio/gpio-mxc.c | 10 +++++-----
+  1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index c1a1e00..9f79a9f 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -458,11 +458,6 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+         if (err)
+                 goto out_bgio;
+
+-       if (of_property_read_bool(np, "gpio-ranges")) {
+-               port->gc.request = gpiochip_generic_request;
+-               port->gc.free = gpiochip_generic_free;
+-       }
+-
+         port->gc.to_irq = mxc_gpio_to_irq;
+         port->gc.base = (pdev->id < 0) ? of_alias_get_id(np, "gpio") * 32 :
+                                              pdev->id * 32;
+@@ -471,6 +466,11 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+         if (err)
+                 goto out_bgio;
+
++       if (!list_empty(&port->gc.pin_ranges)) {
++               port->gc.request = gpiochip_generic_request;
++               port->gc.free = gpiochip_generic_free;
++       }
++
+         irq_base = irq_alloc_descs(-1, 0, 32, numa_node_id());
+         if (irq_base < 0) {
+                 err = irq_base;
+-- 
+1.9.1
