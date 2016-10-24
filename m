@@ -1,92 +1,106 @@
-From: Sylvain Lemieux <slemieux.tyco@gmail.com>
-Subject: Re: [RFC PATCH] gpio: of: fix GPIO drivers with multiple gpio_chip
- for a single node
-Date: Mon, 24 Oct 2016 12:58:14 -0400
-Message-ID: <1477328294.27514.6.camel@localhost>
-References: <1477295033-6008-1-git-send-email-yamada.masahiro@socionext.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for v4.9
+Date: Mon, 24 Oct 2016 21:17:03 +0200
+Message-ID: <CACRpkdZX2DKxUS5fxhuaPQktGSq66ERE03M=n_Bm6HwicYvDeg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1477295033-6008-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Vladimir Zapolskiy <vz@mleia.com>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, Axel Haslam <ahaslam@baylibre.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier@osg.samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Masahiro,
+Hi Linus,
 
-On Mon, 2016-10-24 at 16:43 +0900, Masahiro Yamada wrote:
-> Sylvain Lemieux reports the LPC32xx GPIO driver is broken since
-> commit 762c2e46c059 ("gpio: of: remove of_gpiochip_and_xlate() and
-> struct gg_data").  Probably, gpio-etraxfs.c and gpio-davinci.c are
-> broken as well.
-> 
-> Those drivers register multiple gpio_chip that are associated to a
-> single OF node, and their own .of_xlate() checks if the passed
-> gpio_chip is valid.
-> 
-> Now, the problem is of_find_gpiochip_by_node() returns the first
-> gpio_chip found to match the given node.  So, .of_xlate() fails,
-> except for the first GPIO bank.
-> 
-> Reverting the commit could be a solution, but I do not want to go
-> back to the mess of struct gg_data.  Another solution here is to
-> take the match by a node pointer and the success of .of_xlate().
-> It is a bit clumsy to call .of_xlate twice; for gpio_chip matching
-> and for really getting the gpio_desc index.  Perhaps, the long-term
-> goal might be to convert drivers to single chip registration, but
-> this commit will solve the problem until then.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Reported-by: <slemieux.tyco@gmail.com>
-> ---
-> 
->  drivers/gpio/gpiolib-of.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index ecad3f0..f996596 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -26,14 +26,18 @@
->  
->  #include "gpiolib.h"
->  
-> -static int of_gpiochip_match_node(struct gpio_chip *chip, void *data)
-> +static int of_gpiochip_match_node_and_xlate(struct gpio_chip *chip, void *data)
->  {
-> -	return chip->gpiodev->dev.of_node == data;
-> +	struct of_phandle_args *gpiospec = data;
-> +
-> +	return chip->gpiodev->dev.of_node == gpiospec->np &&
-> +					!chip->of_xlate(chip, gpiospec, NULL);
+here is a set of patches for the v4.9 series. A bunch of stuff
+hardening the GPIO userspace ABI is targeted for stable, and
+stands out as especially important.
 
-for the patch to work, the second compare of the return statement
-should be updated:
-	return chip->gpiodev->dev.of_node == gpiospec->np && 
-	       chip->of_xlate(chip, gpiospec, NULL) >= 0;
+Apart from that is is just regular first-pull-after mergwindow fixes
+with some targeted for stable and some fixing the v4.9 HEAD.
 
-the patch, with this return statement, is fixing the issue;
-can you submit an updated version of your patch?
+Details are in the signed tag.
 
->  }
->  
-> -static struct gpio_chip *of_find_gpiochip_by_node(struct device_node *np)
-> +static struct gpio_chip *of_find_gpiochip_by_xlate(
-> +					struct of_phandle_args *gpiospec)
->  {
-> -	return gpiochip_find(np, of_gpiochip_match_node);
-> +	return gpiochip_find(gpiospec, of_gpiochip_match_node_and_xlate);
->  }
->  
->  static struct gpio_desc *of_xlate_and_get_gpiod_flags(struct gpio_chip *chip,
-> @@ -79,7 +83,7 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
->  		return ERR_PTR(ret);
->  	}
->  
-> -	chip = of_find_gpiochip_by_node(gpiospec.np);
-> +	chip = of_find_gpiochip_by_xlate(&gpiospec);
->  	if (!chip) {
->  		desc = ERR_PTR(-EPROBE_DEFER);
->  		goto out;
+Please pull it in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+
+  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.9-2
+
+for you to fetch changes up to d71cf15b865bdd45925f7b094d169aaabd705145:
+
+  gpio: mpc8xxx: Correct irq handler function (2016-10-24 02:20:40 +0200)
+
+----------------------------------------------------------------
+Here is a set of GPIO fixes for the v4.9 kernel series:
+
+- Fix up off-by one and line offset validation, info leak to
+  userspace, and reject invalid flags. Those are especially
+  valuable hardening patches from Lars-Peter Clausen, all tagged
+  for stable.
+
+- Fix module autoload for TS4800 and ATH79.
+
+- Correct the IRQ handler for MPC8xxx to use handle_level_irq()
+  as it (A) reacts to edges not levels and (B) even implements
+  .irq_ack(). We were missing IRQs here.
+
+- Fix the error path for acpi_dev_gpio_irq_get()
+
+- Fix a memory leak in the MXS driver.
+
+- Fix an annoying typo in the STMPE driver.
+
+- Put a dependency on sysfs to the mockup driver.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      gpio: mockup: add sysfs dependency
+
+Arvind Yadav (1):
+      gpio: mxs: Unmap region obtained by of_iomap
+
+Dan Carpenter (1):
+      gpio: stmpe: || vs && typo
+
+David Arcari (1):
+      gpio / ACPI: fix returned error from acpi_dev_gpio_irq_get()
+
+Javier Martinez Canillas (2):
+      gpio: ts4800: Fix module autoload
+      gpio: ath79: Fix module autoload
+
+Lars-Peter Clausen (8):
+      gpio: GPIO_GET_CHIPINFO_IOCTL: Fix line offset validation
+      gpio: GPIO_GET_CHIPINFO_IOCTL: Fix information leak
+      gpio: GPIO_GET_LINEHANDLE_IOCTL: Validate line offset
+      gpio: GPIOHANDLE_GET_LINE_VALUES_IOCTL: Fix information leak
+      gpio: GPIO_GET_LINEEVENT_IOCTL: Validate line offset
+      gpio: GPIOHANDLE_GET_LINE_VALUES_IOCTL: Fix information leak
+      gpio: GPIO_GET_LINEHANDLE_IOCTL: Reject invalid line flags
+      gpio: GPIO_GET_LINEEVENT_IOCTL: Reject invalid line and event flags
+
+Liu Gang (1):
+      gpio: mpc8xxx: Correct irq handler function
+
+Pavel Machek (1):
+      gpio/board.txt: point to gpiod_set_value
+
+ Documentation/gpio/board.txt | 11 +++++++----
+ drivers/gpio/Kconfig         |  2 +-
+ drivers/gpio/gpio-ath79.c    |  1 +
+ drivers/gpio/gpio-mpc8xxx.c  |  2 +-
+ drivers/gpio/gpio-mxs.c      |  8 ++++++--
+ drivers/gpio/gpio-stmpe.c    |  2 +-
+ drivers/gpio/gpio-ts4800.c   |  1 +
+ drivers/gpio/gpiolib-acpi.c  |  7 +++++--
+ drivers/gpio/gpiolib.c       | 42 +++++++++++++++++++++++++++++++++++++++++-
+ 9 files changed, 64 insertions(+), 12 deletions(-)
