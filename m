@@ -1,43 +1,77 @@
-From: Gang Liu <gang.liu@nxp.com>
-Subject: RE: [PATCH] gpio: mpc8xxx: Correct irq handler function
-Date: Mon, 24 Oct 2016 03:46:47 +0000
-Message-ID: <HE1PR0401MB241247DDF05D79E061EAEC2982A90@HE1PR0401MB2412.eurprd04.prod.outlook.com>
-References: <1477035088-20587-1-git-send-email-Gang.Liu@nxp.com>
- <CACRpkdbRdfybOPX6WNjH9R90Z1vJE9L0dRDg8HTSvF4kAapdbg@mail.gmail.com>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Subject: Re: [PATCH v3] pinctrl: Add SX150X GPIO Extender Pinctrl Driver
+Date: Sun, 23 Oct 2016 21:51:09 -0700
+Message-ID: <CAHQ1cqGLQ=DdhXg1ebkgBbLN8P2P8BEDrGGTx9_r+6=Wy3uUWA@mail.gmail.com>
+References: <1477040998-2016-1-git-send-email-narmstrong@baylibre.com>
+ <CAHQ1cqESoRdeHyvP=m=8F_VwiaYL+wbjFoNa6KvWBGfijhcRjg@mail.gmail.com> <CACRpkdbwqFRtFN1gx1G7BuFe44mvPyCSeoQ5g9_FR11j_ZO4ug@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-db5eur01on0063.outbound.protection.outlook.com ([104.47.2.63]:2654
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751602AbcJXEBl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 24 Oct 2016 00:01:41 -0400
-In-Reply-To: <CACRpkdbRdfybOPX6WNjH9R90Z1vJE9L0dRDg8HTSvF4kAapdbg@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbwqFRtFN1gx1G7BuFe44mvPyCSeoQ5g9_FR11j_ZO4ug@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mingkai Hu <mingkai.hu@nxp.com>, Leo Li <leoyang.li@nxp.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Peter Rosin <peda@axentia.se>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Roland Stigge <stigge@antcom.de>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+List-Id: linux-gpio@vger.kernel.org
 
-IA0KPiBPbiBGcmksIE9jdCAyMSwgMjAxNiBhdCA5OjMxIEFNLCBMaXUgR2FuZyA8R2FuZy5MaXVA
-bnhwLmNvbT4gd3JvdGU6DQo+IA0KPiA+IEZyb20gdGhlIGJlZ2lubmluZyBvZiB0aGUgZ3Bpby1t
-cGM4eHh4LmMsIHRoZSAiaGFuZGxlX2xldmVsX2lycSINCj4gPiBoYXMgYmVpbmcgdXNlZCB0byBo
-YW5kbGUgR1BJTyBpbnRlcnJ1cHRzIGluIHRoZSBQb3dlclBDL0xheWVyc2NhcGUNCj4gPiBwbGF0
-Zm9ybXMuIEJ1dCBhY3R1YWxseSwgYWxtb3N0IGFsbCBQb3dlclBDL0xheWVyc2NhcGUgcGxhdGZv
-cm1zDQo+ID4gYXNzZXJ0IGFuIGludGVycnVwdCByZXF1ZXN0IHVwb24gZWl0aGVyIGEgaGlnaC10
-by1sb3cgY2hhbmdlIG9yIGFueQ0KPiA+IGNoYW5nZSBvbiB0aGUgc3RhdGUgb2YgdGhlIHNpZ25h
-bC4NCj4gPg0KPiA+IFNvIHRoZSAiaGFuZGxlX2xldmVsX2lycSIgaXMgbm90IHJlYXNvbmFibGUg
-Zm9yIFBvd2VyUEMvTGF5ZXJzY2FwZQ0KPiA+IEdQSU8gaW50ZXJydXB0LCBpdCBzaG91bGQgYmUg
-ImhhbmRsZV9lZGdlX2lycSIuIE90aGVyd2lzZSB0aGUgc3lzdGVtDQo+ID4gbWF5IGxvc3Qgc29t
-ZSBpbnRlcnJ1cHRzIGZyb20gdGhlIFBJTidzIHN0YXRlIGNoYW5nZXMuDQo+ID4NCj4gPiBTaWdu
-ZWQtb2ZmLWJ5OiBMaXUgR2FuZyA8R2FuZy5MaXVAbnhwLmNvbT4NCj4gDQo+IFllcyBhbmQgZXNw
-ZWNpYWxseSBzbyBzaW5jZSB0aGlzIGlycWNoaXAgaW1wbGVtZW50cyAuaXJxX2FjaygpIGFuZCB1
-bmxlc3MgeW91DQo+IHVzZSB0aGUgZWRnZSBoYW5kbGVyIGl0IHdpbGwgbmV2ZXIgYmUgY2FsbGVk
-Lg0KPiANCj4gUGF0Y2ggYXBwbGllZCBmb3IgZml4ZXMsIHRlbGwgbWUgaWYgaXQgYWxzbyBuZWVk
-cyB0byBnbyBpbnRvIHN0YWJsZS4NCj4gDQpbTGl1IEdhbmddIHllcywgcGxlYXNlIGFsc28gcHV0
-IGl0IGludG8gc3RhYmxlLiBUaGFua3MhDQoNCj4gSWYgeW91IHdhbnQgdG8gbG9vayBjbG9zZXIg
-YXQgdGhpcyBkcml2ZXIsIEkgdGhpbmsgaXQgaXMgcG9zc2libGUgdG8gc2ltcGxpZnkgaXQgcXVp
-dGUgYQ0KPiBiaXQgYnkgdXNpbmcgR1BJT0xJQl9JUlFDSElQIGxpa2UgYSBmZXcgb3RoZXIgZHJp
-dmVycywgZm9yIGV4YW1wbGUgZ3Bpby1wbDA2MS5jLg0KPiBQYXRjaGVzIGFjY2VwdGVkIDopDQo+
-IA0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0K
+On Sun, Oct 23, 2016 at 3:47 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Sun, Oct 23, 2016 at 4:50 AM, Andrey Smirnov
+> <andrew.smirnov@gmail.com> wrote:
+>> On Fri, Oct 21, 2016 at 2:09 AM, Neil Armstrong <narmstrong@baylibre.com> wrote:
+>>> Since the I2C sx150x GPIO expander driver uses platform_data to manage
+>>> the pins configurations, rewrite the driver as a pinctrl driver using
+>>> pinconf to get/set pin configurations from DT or debugfs.
+>>>
+>>> The pinctrl driver is functionnally equivalent as the gpio-only driver
+>>> and can use DT for pinconf. The platform_data confirmation is dropped.
+>>>
+>>> This patchset removed the gpio-only driver and selects the Pinctrl driver
+>>> config instead. This patchset also migrates the gpio dt-bindings to pinctrl
+>>> and add the pinctrl optional properties.
+>>>
+>>> The driver was tested with a SX1509 device on a BeagleBone black with
+>>> interrupt support and on an X86_64 machine over an I2C to USB converter.
+>>>
+>>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> (...)
+>
+>>> +               ret = gpiochip_irqchip_add(&pctl->gpio,
+>>> +                                          &pctl->irq_chip, 0,
+>>> +                                          handle_edge_irq, IRQ_TYPE_EDGE_BOTH);
+>>
+>> Adding irqchip with IRQ_TYPE_EDGE_BOTH triggers a WARN in
+>> drivers/gpio/gpiolib.c:1671, on a custom Vybrid board that I have with
+>> the chip, so maybe it should be replaced with IRQ_TYPE_NONE? That's
+>> what I did for my testing and with that change
+>
+> I fixed this up when applying. It is corect, it should always be IRQ_TYPE_NONE
+> unless it is a very old driver using boardfiles. The proper type is set up
+> when the driver using it requests the IRQ.
+>
+> Some drivers also need to set the default handler to handle_bad_irq
+> and then also set that up in the irqchip .set_type() callback, especially
+> those hardwares that have an ACK register for edge IRQs so that a second
+> edge irq can come in when handling a first edge IRQ. Level IRQs don't
+> have this problem for obvious reasons, so we need to select between
+> handle_edge_irq() or handle_level_irq() on these hardwares.
+>
+> Could you or Neil or both check if this applies to sx150x?
+
+These chips only support edge triggered interrupts, so I doesn't seem
+to me that it does. However, trying to answer that question lead me to
+read IRQ related code of the driver, some of which didn't make as much
+sense as I'd like it to. It may be due to my ignorance of how some of
+the irqchip internals work, but I'll mention it anyway just in case.
+
+It seem strange to me that the driver uses "handle_edge_irq", given
+how none of the individual interrupts seem to require any ACKing,
+since it is all handled in sx150x_irq_thread_fn(), line 533. More so,
+I had trouble finding who/where sets .irq_ack() callback, which AFAIU
+is mandatory for handle_edge_irq().
+
+Unfortunately sx150x HW setup that I have doesn't permit to do any
+testing of IRQ functionality (the chip is mostly used as GPO), so I
+wasn't able to experiment with any of the code in question and shed
+any light on my confusion. Apologies if it is just a false alarm.
+
+Thanks,
+Andrey Smirnov
