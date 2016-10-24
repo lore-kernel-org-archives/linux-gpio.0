@@ -1,106 +1,82 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for v4.9
-Date: Mon, 24 Oct 2016 21:17:03 +0200
-Message-ID: <CACRpkdZX2DKxUS5fxhuaPQktGSq66ERE03M=n_Bm6HwicYvDeg@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v3 3/6] dt-bindings: pinctrl: Deprecate sunxi pinctrl
+ bindings
+Date: Mon, 24 Oct 2016 21:49:17 +0200
+Message-ID: <20161024194917.g5oezqc4uacsyt24@lukather>
+References: <cover.f893b02a9f816dad8fad3986672b05c4b211e2b1.1476971126.git-series.maxime.ripard@free-electrons.com>
+ <6aec73cd3b9d3dbf1085d042ec6c23f385a300de.1476971126.git-series.maxime.ripard@free-electrons.com>
+ <CACRpkdb7zs7Nhs3i1o=WUt787vJCuePre3Tj3wLu++qwpO0atQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier@osg.samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="24z5hglkfpgu6hib"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdb7zs7Nhs3i1o=WUt787vJCuePre3Tj3wLu++qwpO0atQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
+
+
+--24z5hglkfpgu6hib
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Linus,
 
-here is a set of patches for the v4.9 series. A bunch of stuff
-hardening the GPIO userspace ABI is targeted for stable, and
-stands out as especially important.
+On Mon, Oct 24, 2016 at 02:03:59AM +0200, Linus Walleij wrote:
+> On Thu, Oct 20, 2016 at 3:49 PM, Maxime Ripard
+> <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+>=20
+> > The generic pin configuration and multiplexing should be preferred now,
+> > even though we still support the old one.
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> > Acked-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+> > Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+>=20
+> Patch applied.
 
-Apart from that is is just regular first-pull-after mergwindow fixes
-with some targeted for stable and some fixing the v4.9 HEAD.
+Thanks a lot.
 
-Details are in the signed tag.
+However, it looks like the first patch from this serie is missing from
+your tree, is there a reason for that?
 
-Please pull it in!
+Also, in order to preserve bisectability, could you create an
+immutable branch for those sunxi patches so that I can merge the DT
+bits?
 
-Yours,
-Linus Walleij
+Thanks,
+Maxime
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+--24z5hglkfpgu6hib
+Content-Type: application/pgp-signature; name="signature.asc"
 
-are available in the git repository at:
+-----BEGIN PGP SIGNATURE-----
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.9-2
+iQIcBAEBCAAGBQJYDmW0AAoJEBx+YmzsjxAgv24P/1ErGBnx2cRtwfc5xIbVhdph
+WwmJuq0N5P/pwFGBF1xrZ0n0qkIAfyZ0BVl/gnrAVg6ieBJ3Sp99/FVLuJ4HIV7P
+DcGuSgUVhjtQINc5SHFqu/kmn4rpPlid7uu336Hi76COc/aaeHZDHU1guvN33NvW
+MGCVESuNbd6ANx9CNPIw1RAHfE2DCdxp6NraApJvoEHeAtv40ttqrphb5yYUWNXn
+p4CPcaFziPblIB7Kli04jD7u9mNMcdg60IN/4zNXj91ni2vtbjy3/aacngrMBP9N
+p6+hdYJkzReZVZX2d32m6e32HWQ4TnRrNbWgCP83b0yLDkxwUhyl4R5zpwhdTy9M
+YAFLM6y85wuUJXk5LYjpun3azBHL6V+r86NbPTTs8Mj53LLfnA7QWJxZVtNEdbBs
+MJG3MT0V9kAjZ+3CPOvm36DvTiLuUcG04W1J2g4AUX+aCHClEYjYs6jvl8UeF0JS
+qJmgLfwRCPzQheS3IghL1nRVZXQhbmb5GsCYGFIHR1umFkVjJSXNxyr1Fx7azz/H
+yKAWVJpbK0J31LQGewQ5iHYV1Ge6sOMFa1sFtNczxvuJ8VOFCtyRqgr1bi/ijvy+
+rF1jsR9zoxoO79lPM0nHkWpKx3RE2guNJJ81G1hlRMsttQlKQMxa5NETrKkNeZLJ
+p/7JEfdB6xpwKjxWc4Km
+=M4hJ
+-----END PGP SIGNATURE-----
 
-for you to fetch changes up to d71cf15b865bdd45925f7b094d169aaabd705145:
-
-  gpio: mpc8xxx: Correct irq handler function (2016-10-24 02:20:40 +0200)
-
-----------------------------------------------------------------
-Here is a set of GPIO fixes for the v4.9 kernel series:
-
-- Fix up off-by one and line offset validation, info leak to
-  userspace, and reject invalid flags. Those are especially
-  valuable hardening patches from Lars-Peter Clausen, all tagged
-  for stable.
-
-- Fix module autoload for TS4800 and ATH79.
-
-- Correct the IRQ handler for MPC8xxx to use handle_level_irq()
-  as it (A) reacts to edges not levels and (B) even implements
-  .irq_ack(). We were missing IRQs here.
-
-- Fix the error path for acpi_dev_gpio_irq_get()
-
-- Fix a memory leak in the MXS driver.
-
-- Fix an annoying typo in the STMPE driver.
-
-- Put a dependency on sysfs to the mockup driver.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      gpio: mockup: add sysfs dependency
-
-Arvind Yadav (1):
-      gpio: mxs: Unmap region obtained by of_iomap
-
-Dan Carpenter (1):
-      gpio: stmpe: || vs && typo
-
-David Arcari (1):
-      gpio / ACPI: fix returned error from acpi_dev_gpio_irq_get()
-
-Javier Martinez Canillas (2):
-      gpio: ts4800: Fix module autoload
-      gpio: ath79: Fix module autoload
-
-Lars-Peter Clausen (8):
-      gpio: GPIO_GET_CHIPINFO_IOCTL: Fix line offset validation
-      gpio: GPIO_GET_CHIPINFO_IOCTL: Fix information leak
-      gpio: GPIO_GET_LINEHANDLE_IOCTL: Validate line offset
-      gpio: GPIOHANDLE_GET_LINE_VALUES_IOCTL: Fix information leak
-      gpio: GPIO_GET_LINEEVENT_IOCTL: Validate line offset
-      gpio: GPIOHANDLE_GET_LINE_VALUES_IOCTL: Fix information leak
-      gpio: GPIO_GET_LINEHANDLE_IOCTL: Reject invalid line flags
-      gpio: GPIO_GET_LINEEVENT_IOCTL: Reject invalid line and event flags
-
-Liu Gang (1):
-      gpio: mpc8xxx: Correct irq handler function
-
-Pavel Machek (1):
-      gpio/board.txt: point to gpiod_set_value
-
- Documentation/gpio/board.txt | 11 +++++++----
- drivers/gpio/Kconfig         |  2 +-
- drivers/gpio/gpio-ath79.c    |  1 +
- drivers/gpio/gpio-mpc8xxx.c  |  2 +-
- drivers/gpio/gpio-mxs.c      |  8 ++++++--
- drivers/gpio/gpio-stmpe.c    |  2 +-
- drivers/gpio/gpio-ts4800.c   |  1 +
- drivers/gpio/gpiolib-acpi.c  |  7 +++++--
- drivers/gpio/gpiolib.c       | 42 +++++++++++++++++++++++++++++++++++++++++-
- 9 files changed, 64 insertions(+), 12 deletions(-)
+--24z5hglkfpgu6hib--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
