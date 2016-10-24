@@ -1,114 +1,60 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [RFC PATCH] gpio: of: fix GPIO drivers with multiple gpio_chip
- for a single node
-Date: Tue, 25 Oct 2016 01:07:13 +0300
-Message-ID: <cf3a1a54-659b-9629-e119-c9bcdd1ed636@mleia.com>
-References: <1477295033-6008-1-git-send-email-yamada.masahiro@socionext.com>
+From: Thor Thayer <tthayer@opensource.altera.com>
+Subject: Re: [PATCHv2 4/8] gpio: altera-a10sr: Add A10 System Resource Chip
+ GPIO support.
+Date: Mon, 24 Oct 2016 17:29:33 -0500
+Message-ID: <4a5e17f2-de45-1b2d-5b80-28e9d21a9ab2@opensource.altera.com>
+References: <1464889948-28793-1-git-send-email-tthayer@opensource.altera.com>
+ <1464889948-28793-5-git-send-email-tthayer@opensource.altera.com>
+ <CACRpkdZJVbyBgnt1x5uMr3yKm5RYYrkKETeDga30+eEpw6dU+w@mail.gmail.com>
+Reply-To: <tthayer@opensource.altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mleia.com ([178.79.152.223]:37157 "EHLO mail.mleia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750813AbcJXWHP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 24 Oct 2016 18:07:15 -0400
-In-Reply-To: <1477295033-6008-1-git-send-email-yamada.masahiro@socionext.com>
+Received: from mail-dm3nam03on0046.outbound.protection.outlook.com ([104.47.41.46]:31975
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754899AbcJXWhw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 24 Oct 2016 18:37:52 -0400
+In-Reply-To: <CACRpkdZJVbyBgnt1x5uMr3yKm5RYYrkKETeDga30+eEpw6dU+w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>, linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: mika.westerberg@linux.intel.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Masahiro,
+Hi Linus,
 
-On 24.10.2016 10:43, Masahiro Yamada wrote:
-> Sylvain Lemieux reports the LPC32xx GPIO driver is broken since
-> commit 762c2e46c059 ("gpio: of: remove of_gpiochip_and_xlate() and
-> struct gg_data").  Probably, gpio-etraxfs.c and gpio-davinci.c are
-> broken as well.
-> 
-> Those drivers register multiple gpio_chip that are associated to a
-> single OF node, and their own .of_xlate() checks if the passed
-> gpio_chip is valid.
-> 
-> Now, the problem is of_find_gpiochip_by_node() returns the first
-> gpio_chip found to match the given node.  So, .of_xlate() fails,
-> except for the first GPIO bank.
-> 
-> Reverting the commit could be a solution, but I do not want to go
-> back to the mess of struct gg_data.  Another solution here is to
-> take the match by a node pointer and the success of .of_xlate().
-> It is a bit clumsy to call .of_xlate twice; for gpio_chip matching
-> and for really getting the gpio_desc index.  Perhaps, the long-term
-> goal might be to convert drivers to single chip registration, but
-> this commit will solve the problem until then.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Reported-by: <slemieux.tyco@gmail.com>
+On 10/21/2016 04:08 AM, Linus Walleij wrote:
+> On Thu, Jun 2, 2016 at 7:52 PM,  <tthayer@opensource.altera.com> wrote:
+>
+>> From: Thor Thayer <tthayer@opensource.altera.com>
+>>
+>> Add the GPIO functionality for the Altera Arria10 MAX5 System Resource
+>> Chip. The A10 MAX5 has 12 bits of GPIO assigned to switches, buttons,
+>> and LEDs as a GPIO extender on the SPI bus.
+>>
+>> Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
+>> Acked-by: Linus Walleij <linus.walleij@linaro.org>i
+>> ---
+>> v2      Change Altera to Intel in copyright header
+>
+> Patch applied!
+>
+> Hey it just worked despite being months old.
+>
+> Let's see if it builds fine & all.
+>
 
-Fixes: 762c2e46c059 ("gpio: of: remove of_gpiochip_and_xlate() and struct gg_data")
+Thanks! Yes, it builds properly but to get past a NULL pointer kernel 
+panic, I had to revert the recent devprop_gpiochip_set_names() change 
+(9427ecbe). Once I did that it worked perfectly.
 
-> ---
-> 
->  drivers/gpio/gpiolib-of.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index ecad3f0..f996596 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -26,14 +26,18 @@
->  
->  #include "gpiolib.h"
->  
-> -static int of_gpiochip_match_node(struct gpio_chip *chip, void *data)
-> +static int of_gpiochip_match_node_and_xlate(struct gpio_chip *chip, void *data)
->  {
-> -	return chip->gpiodev->dev.of_node == data;
-> +	struct of_phandle_args *gpiospec = data;
-> +
-> +	return chip->gpiodev->dev.of_node == gpiospec->np &&
-> +					!chip->of_xlate(chip, gpiospec, NULL);
+I'll investigate further and update you.
 
-That's an awful but hopefully safe hack to support 3-4 broken GPIO
-drivers, however it should work with a correction given by Sylvain.
+I apologize for missing this patch earlier. Thank you for your patience.
 
-Here I would recommend to expand the statement, so it will be easier
-to simplify it in future:
+Thor
 
-  if (chip->gpiodev->dev.of_node != gpiospec->np)
-          return 0;
-
-  if (chip->of_xlate(chip, gpiospec, NULL) < 0)
-          return 0;
-
-  return 1;
-
-As far as I can say it should work correctly with of_gpio_simple_xlate(),
-brcmstb_gpio_of_xlate(), lpc32xx_of_xlate(), davinci_gpio_of_xlate(),
-pxa_gpio_of_xlate() and etraxfs_gpio_of_xlate() flavours.
-
->  }
->  
-> -static struct gpio_chip *of_find_gpiochip_by_node(struct device_node *np)
-> +static struct gpio_chip *of_find_gpiochip_by_xlate(
-> +					struct of_phandle_args *gpiospec)
->  {
-> -	return gpiochip_find(np, of_gpiochip_match_node);
-> +	return gpiochip_find(gpiospec, of_gpiochip_match_node_and_xlate);
->  }
->  
->  static struct gpio_desc *of_xlate_and_get_gpiod_flags(struct gpio_chip *chip,
-> @@ -79,7 +83,7 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
->  		return ERR_PTR(ret);
->  	}
->  
-> -	chip = of_find_gpiochip_by_node(gpiospec.np);
-> +	chip = of_find_gpiochip_by_xlate(&gpiospec);
->  	if (!chip) {
->  		desc = ERR_PTR(-EPROBE_DEFER);
->  		goto out;
-> 
-
---
-With best wishes,
-Vladimir
+> Yours,
+> Linus Walleij
+>
