@@ -1,59 +1,69 @@
-From: Wei Yongjun <weiyj.lk@gmail.com>
-Subject: [PATCH -next] gpio: altera-a10sr: Drop unnecessary gpiochip_remove
-Date: Mon, 24 Oct 2016 14:49:13 +0000
-Message-ID: <1477320553-4676-1-git-send-email-weiyj.lk@gmail.com>
+From: Deepak Das <deepak_das@mentor.com>
+Subject: [PATCH] gpio: mxc: Shift generic request/free after gpiochip
+ registration
+Date: Mon, 24 Oct 2016 21:48:31 +0530
+Message-ID: <580E3457.7030809@mentor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:33885 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753513AbcJXOtb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Oct 2016 10:49:31 -0400
-Received: by mail-pf0-f196.google.com with SMTP id 128so16818281pfz.1
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Oct 2016 07:49:30 -0700 (PDT)
+Received: from relay1.mentorg.com ([192.94.38.131]:36701 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938725AbcJXQSl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Oct 2016 12:18:41 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thor Thayer <tthayer@opensource.altera.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, shawnguo@kernel.org
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, vzapolsk <Vladimir_Zapolskiy@mentor.com>, fabio.estevam@nxp.com, kernel@pengutronix.de, p.zabel@pengutronix.de
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
 
-It's not necessary to unregister gpio_chip which registered
-with devm_gpiochip_add_data().
-Also get rid of useless altr_a10sr_gpio_remove().
+generic gpio request/free should be added after gpiocip registration
+to validate mapping of gpiochip with pinctrl subsystem.
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+gpiochip->pin_ranges list contains the information used by pinctrl
+subsystem to configure corresponding pins for gpio usage.
+This list will be empty if gpiochip fails to map with
+pinctrl subsystem for any reason.
+For Ex.:-
+generic gpio request/free should not be used if IOMUX pin controller
+device node is disabled in device tree.
+
+This commit checks above list and skips adding generic gpio request/free
+if list is found empty.
+
+Signed-off-by: Deepak Das <deepak_das@mentor.com>
+Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 ---
- drivers/gpio/gpio-altera-a10sr.c | 10 ----------
- 1 file changed, 10 deletions(-)
+ drivers/gpio/gpio-mxc.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpio/gpio-altera-a10sr.c b/drivers/gpio/gpio-altera-a10sr.c
-index 8274f98..9e1a138 100644
---- a/drivers/gpio/gpio-altera-a10sr.c
-+++ b/drivers/gpio/gpio-altera-a10sr.c
-@@ -110,15 +110,6 @@ static int altr_a10sr_gpio_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int altr_a10sr_gpio_remove(struct platform_device *pdev)
--{
--	struct altr_a10sr_gpio *gpio = platform_get_drvdata(pdev);
--
--	gpiochip_remove(&gpio->gp);
--
--	return 0;
--}
--
- static const struct of_device_id altr_a10sr_gpio_of_match[] = {
- 	{ .compatible = "altr,a10sr-gpio" },
- 	{ },
-@@ -127,7 +118,6 @@ MODULE_DEVICE_TABLE(of, altr_a10sr_gpio_of_match);
- 
- static struct platform_driver altr_a10sr_gpio_driver = {
- 	.probe = altr_a10sr_gpio_probe,
--	.remove = altr_a10sr_gpio_remove,
- 	.driver = {
- 		.name	= "altr_a10sr_gpio",
- 		.of_match_table = of_match_ptr(altr_a10sr_gpio_of_match),
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index c1a1e00..9f79a9f 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -458,11 +458,6 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+        if (err)
+                goto out_bgio;
 
+-       if (of_property_read_bool(np, "gpio-ranges")) {
+-               port->gc.request = gpiochip_generic_request;
+-               port->gc.free = gpiochip_generic_free;
+-       }
+-
+        port->gc.to_irq = mxc_gpio_to_irq;
+        port->gc.base = (pdev->id < 0) ? of_alias_get_id(np, "gpio") * 32 :
+                                             pdev->id * 32;
+@@ -471,6 +466,11 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+        if (err)
+                goto out_bgio;
+
++       if (!list_empty(&port->gc.pin_ranges)) {
++               port->gc.request = gpiochip_generic_request;
++               port->gc.free = gpiochip_generic_free;
++       }
++
+        irq_base = irq_alloc_descs(-1, 0, 32, numa_node_id());
+        if (irq_base < 0) {
+                err = irq_base;
+-- 
+1.9.1
