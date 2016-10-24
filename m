@@ -1,53 +1,76 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: Re: [PATCH] gpio: mcp23s08: Add option to configure pullups.
-Date: Mon, 24 Oct 2016 08:13:54 +0200
-Message-ID: <11644726.TmP4uu3h4l@ws-stein>
-References: <1477062035-30825-1-git-send-email-enric.balletbo@collabora.com> <CACRpkdY15Hv_ydHyOXRM6G0ewVTHkVa1w3Z89AdvSDR=eyi7sQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:51570 "EHLO
-        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1757038AbcJXGOB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 24 Oct 2016 02:14:01 -0400
-In-Reply-To: <CACRpkdY15Hv_ydHyOXRM6G0ewVTHkVa1w3Z89AdvSDR=eyi7sQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [RFC PATCH] gpio: of: fix GPIO drivers with multiple gpio_chip for a single node
+Date: Mon, 24 Oct 2016 16:43:53 +0900
+Message-ID: <1477295033-6008-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Vladimir Zapolskiy <vz@mleia.com>, Alexandre Courbot <gnurou@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
 
-On Monday 24 October 2016 02:53:31, Linus Walleij wrote:
-> On Fri, Oct 21, 2016 at 5:00 PM, Enric Balletbo i Serra
-> 
-> <enric.balletbo@collabora.com> wrote:
-> > Default is without pullups, but if property is specified in DT and the bit
-> > is set, set a pullup on GPIO-n.
-> > 
-> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> 
-> I don't generally like this.
-> 
-> In device tree it is the consumer that specifies how the line is used,
-> not the producer (gpiochip).
-> 
-> We currently only specify polarity, open drain and open source
-> for consumers though.
-> 
-> And the entire pin control system came into being *exactly* because
-> Grant didn't like me adding these things to the GPIO drivers.
-> 
-> So how many other things does the MCP support? Drive strength?
-> Schmitt trigger? Is there a datasheet?
+Sylvain Lemieux reports the LPC32xx GPIO driver is broken since
+commit 762c2e46c059 ("gpio: of: remove of_gpiochip_and_xlate() and
+struct gg_data").  Probably, gpio-etraxfs.c and gpio-davinci.c are
+broken as well.
 
-Some unsupported features (AFAIK):
-* Input polarity (IPOL register)
-* open-drain interrupt pin
-* pullup on pins (proposed patch)
+Those drivers register multiple gpio_chip that are associated to a
+single OF node, and their own .of_xlate() checks if the passed
+gpio_chip is valid.
 
-Datasheet is here: http://ww1.microchip.com/downloads/en/DeviceDoc/21919e.pdf
+Now, the problem is of_find_gpiochip_by_node() returns the first
+gpio_chip found to match the given node.  So, .of_xlate() fails,
+except for the first GPIO bank.
 
-Best regards,
-Alexander
+Reverting the commit could be a solution, but I do not want to go
+back to the mess of struct gg_data.  Another solution here is to
+take the match by a node pointer and the success of .of_xlate().
+It is a bit clumsy to call .of_xlate twice; for gpio_chip matching
+and for really getting the gpio_desc index.  Perhaps, the long-term
+goal might be to convert drivers to single chip registration, but
+this commit will solve the problem until then.
 
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reported-by: <slemieux.tyco@gmail.com>
+---
+
+ drivers/gpio/gpiolib-of.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index ecad3f0..f996596 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -26,14 +26,18 @@
+ 
+ #include "gpiolib.h"
+ 
+-static int of_gpiochip_match_node(struct gpio_chip *chip, void *data)
++static int of_gpiochip_match_node_and_xlate(struct gpio_chip *chip, void *data)
+ {
+-	return chip->gpiodev->dev.of_node == data;
++	struct of_phandle_args *gpiospec = data;
++
++	return chip->gpiodev->dev.of_node == gpiospec->np &&
++					!chip->of_xlate(chip, gpiospec, NULL);
+ }
+ 
+-static struct gpio_chip *of_find_gpiochip_by_node(struct device_node *np)
++static struct gpio_chip *of_find_gpiochip_by_xlate(
++					struct of_phandle_args *gpiospec)
+ {
+-	return gpiochip_find(np, of_gpiochip_match_node);
++	return gpiochip_find(gpiospec, of_gpiochip_match_node_and_xlate);
+ }
+ 
+ static struct gpio_desc *of_xlate_and_get_gpiod_flags(struct gpio_chip *chip,
+@@ -79,7 +83,7 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
+ 		return ERR_PTR(ret);
+ 	}
+ 
+-	chip = of_find_gpiochip_by_node(gpiospec.np);
++	chip = of_find_gpiochip_by_xlate(&gpiospec);
+ 	if (!chip) {
+ 		desc = ERR_PTR(-EPROBE_DEFER);
+ 		goto out;
+-- 
+1.9.1
