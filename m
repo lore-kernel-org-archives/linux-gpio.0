@@ -1,61 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: GPIO_GET_LINE{HANDLE,EVENT}_IOCTL: Fix file
- descriptor leak
-Date: Tue, 25 Oct 2016 14:01:02 +0200
-Message-ID: <CACRpkdZNOsOBOOvUeudxDGxDqhbeXr6-yj=RjrLVvQfbdOY9Hw@mail.gmail.com>
-References: <1477310355-16878-1-git-send-email-lars@metafoo.de>
+Subject: Re: [PATCH] gpio: mxc: Shift generic request/free after gpiochip registration
+Date: Tue, 25 Oct 2016 14:05:05 +0200
+Message-ID: <CACRpkdZf92ott5F8ZO7=b9btJkw5V89MpJjgKCiJn3vH+RtZ-A@mail.gmail.com>
+References: <580E3457.7030809@mentor.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f169.google.com ([209.85.220.169]:33585 "EHLO
+Received: from mail-qk0-f169.google.com ([209.85.220.169]:37739 "EHLO
         mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933859AbcJYMBD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Oct 2016 08:01:03 -0400
-Received: by mail-qk0-f169.google.com with SMTP id n189so258203738qke.0
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Oct 2016 05:01:03 -0700 (PDT)
-In-Reply-To: <1477310355-16878-1-git-send-email-lars@metafoo.de>
+        with ESMTP id S1756438AbcJYMFG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Oct 2016 08:05:06 -0400
+Received: by mail-qk0-f169.google.com with SMTP id w69so18260325qka.4
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Oct 2016 05:05:06 -0700 (PDT)
+In-Reply-To: <580E3457.7030809@mentor.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Deepak Das <deepak_das@mentor.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, vzapolsk <Vladimir_Zapolskiy@mentor.com>, Fabio Estevam <fabio.estevam@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>
 
-On Mon, Oct 24, 2016 at 1:59 PM, Lars-Peter Clausen <lars@metafoo.de> wrote:
+On Mon, Oct 24, 2016 at 6:18 PM, Deepak Das <deepak_das@mentor.com> wrote:
 
-> When allocating a new line handle or event a file is allocated that it is
-> associated to. The file is attached to a file descriptor of the current
-> process and the file descriptor is returned to userspace using
-> copy_to_user(). If this copy operation fails the line handle or event
-> allocation is aborted, all acquired resources are freed and an error is
-> returned.
+> generic gpio request/free should be added after gpiocip registration
+> to validate mapping of gpiochip with pinctrl subsystem.
 >
-> But the file struct is not freed and left attached to the userspace
-> application and even though the file descriptor number was not copied it is
-> trivial to guess. If a userspace application performs a IOCTL on such a
-> left over file descriptor it will trigger a use-after-free and if the file
-> descriptor is closed (latest when the application exits) a double-free is
-> triggered.
+> gpiochip->pin_ranges list contains the information used by pinctrl
+> subsystem to configure corresponding pins for gpio usage.
+> This list will be empty if gpiochip fails to map with
+> pinctrl subsystem for any reason.
+> For Ex.:-
+> generic gpio request/free should not be used if IOMUX pin controller
+> device node is disabled in device tree.
 >
-> anon_inode_getfd() performs 3 tasks, allocate a file struct, allocate a
-> file descriptor for the current process and install the file struct in the
-> file descriptor. As soon as the file struct is installed in the file
-> descriptor it is accessible by userspace (even if the IOCTL itself hasn't
-> completed yet), this means uninstalling the fd on the error path is not an
-> option, since userspace might already got a reference to the file.
+> This commit checks above list and skips adding generic gpio request/free
+> if list is found empty.
 >
-> Instead anon_inode_getfd() needs to be broken into its individual steps.
-> The allocation of the file struct and file descriptor is done first, then
-> the copy_to_user() is executed and only if it succeeds the file is
-> installed.
->
-> Since the file struct is reference counted it can not be just freed, but
-> its reference needs to be dropped, which will also call the release()
-> callback, which will free the state attached to the file. So in this case
-> the normal error cleanup path should not be taken.
->
-> Fixes: d932cd49182f ("gpio: free handles in fringe cases")
-> Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+> Signed-off-by: Deepak Das <deepak_das@mentor.com>
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-Patch applied for fixes and tagged for stable.
+Could you:
+
+- Rebase on my fixes or devel branch in the GPIO tree. This doesn't
+  seem to apply cleany on any of my branches, have you tested
+  v4.9-rc2?
+
+- Indicate if this is a regression that need to go into fixes/stable or
+  not?
 
 Yours,
 Linus Walleij
