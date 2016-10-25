@@ -1,70 +1,48 @@
-From: Deepak Das <deepak_das@mentor.com>
-Subject: [PATCH v2] gpio: mxc: Shift generic request/free after gpiochip registration
-Date: Tue, 25 Oct 2016 23:32:47 +0530
-Message-ID: <1477418567-28347-1-git-send-email-deepak_das@mentor.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 4/9] pinctrl: meson: allow gpio to request irq
+Date: Tue, 25 Oct 2016 20:10:00 +0200
+Message-ID: <CACRpkdba_iaOK61KiQGvJZYuz7-PiBgtN4vxv__tJLsZ8ZVL=w@mail.gmail.com>
+References: <1476871709-8359-1-git-send-email-jbrunet@baylibre.com>
+ <1476871709-8359-5-git-send-email-jbrunet@baylibre.com> <CACRpkdaCZPS45t3eTcjJExOu=YT_YkjNkdpg09jQqvLQOJH=Qw@mail.gmail.com>
+ <1477040798.15560.96.camel@baylibre.com> <CACRpkdYUVXny57AC9rKX3VRAyooEk_2XLvqe9jOuT3rOaE75rg@mail.gmail.com>
+ <ec7c6cc5-cf9a-9c75-4b07-e337064c7d6e@arm.com> <1477400900.2482.51.camel@baylibre.com>
+ <dee26f0b-e175-f8a0-2b73-08e8e324841c@arm.com> <1477405332.2482.87.camel@baylibre.com>
+ <bbc268c8-35c3-206a-46b1-62cebef174b2@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:46367 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754536AbcJYSEq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Oct 2016 14:04:46 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <bbc268c8-35c3-206a-46b1-62cebef174b2@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Russell King <linux@armlinux.org.uk>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, shawnguo@kernel.org
-Cc: linux-gpio@vger.kernel.org, fabio.estevam@nxp.com, kernel@pengutronix.de, p.zabel@pengutronix.de, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-generic gpio request/free should be added after gpiocip registration
-to validate mapping of gpiochip with pinctrl subsystem.
+On Tue, Oct 25, 2016 at 4:47 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> On 25/10/16 15:22, Jerome Brunet wrote:
 
-gpiochip->pin_ranges list contains the information used by pinctrl
-subsystem to configure corresponding pins for gpio usage.
-This list will be empty if gpiochip fails to map with
-pinctrl subsystem for any reason.
-For Ex.:-
-generic gpio request/free should not be used if IOMUX pin controller
-device node is disabled in device tree.
+>> There is a few problems to guarantee that gpio == hwirq.
+>> 1. We have 2 instances of pinctrl, to guarantee that the linux gpio
+>> number == hwirq, we would have to guarantee the order in which they are
+>> probed. At least this my understanding
+>
+> Maybe I wasn't clear enough, and my use of gpio is probably wrong. So
+> Linux has a gpio number, which is obviously an abstract number (just
+> like the Linux irq number). But the pad number, in the context of given
+> SoC, is constant. So we have:
+>
+>         pad->gpio
+>         hwirq->irq
+>
+> Why can't you have pad == hwirq, always? This is already what you have
+> in the irqchip driver. This would simplify a lot of things.
 
-This commit checks above list and skips adding generic gpio request/free
-if list is found empty.
+My thought as well.
 
-Signed-off-by: Deepak Das <deepak_das@mentor.com>
-Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
----
-Changes from v1 to v2:
-* Rebased on top of lwalleij/gpio/fixes.
+We usually refer to the local numberspace on the GPIO controller
+as "offsets", so line offsets 0...31 on a gpiochip with 31 lines.
 
- drivers/gpio/gpio-mxc.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+The ngpio in struct gpio_chip is the number of lines on that controller,
+and should nominally map 1:1 to hwirq sources.
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index c1a1e00..9f79a9f 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -458,11 +458,6 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 	if (err)
- 		goto out_bgio;
- 
--	if (of_property_read_bool(np, "gpio-ranges")) {
--		port->gc.request = gpiochip_generic_request;
--		port->gc.free = gpiochip_generic_free;
--	}
--
- 	port->gc.to_irq = mxc_gpio_to_irq;
- 	port->gc.base = (pdev->id < 0) ? of_alias_get_id(np, "gpio") * 32 :
- 					     pdev->id * 32;
-@@ -471,6 +466,11 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 	if (err)
- 		goto out_bgio;
- 
-+	if (!list_empty(&port->gc.pin_ranges)) {
-+		port->gc.request = gpiochip_generic_request;
-+		port->gc.free = gpiochip_generic_free;
-+	}
-+
- 	irq_base = irq_alloc_descs(-1, 0, 32, numa_node_id());
- 	if (irq_base < 0) {
- 		err = irq_base;
--- 
-1.9.1
-
+Yours,
+Linus Walleij
