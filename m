@@ -1,50 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: mxc: Shift generic request/free after gpiochip registration
-Date: Tue, 25 Oct 2016 14:05:05 +0200
-Message-ID: <CACRpkdZf92ott5F8ZO7=b9btJkw5V89MpJjgKCiJn3vH+RtZ-A@mail.gmail.com>
-References: <580E3457.7030809@mentor.com>
+Subject: Re: [PATCH v3 3/6] dt-bindings: pinctrl: Deprecate sunxi pinctrl bindings
+Date: Tue, 25 Oct 2016 14:07:27 +0200
+Message-ID: <CACRpkdYGYPhPZQmgeLA-K-RQKZMLy1qHY6P7LS6SKsFC=d=MHg@mail.gmail.com>
+References: <cover.f893b02a9f816dad8fad3986672b05c4b211e2b1.1476971126.git-series.maxime.ripard@free-electrons.com>
+ <6aec73cd3b9d3dbf1085d042ec6c23f385a300de.1476971126.git-series.maxime.ripard@free-electrons.com>
+ <CACRpkdb7zs7Nhs3i1o=WUt787vJCuePre3Tj3wLu++qwpO0atQ@mail.gmail.com> <20161024194917.g5oezqc4uacsyt24@lukather>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f169.google.com ([209.85.220.169]:37739 "EHLO
-        mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756438AbcJYMFG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Oct 2016 08:05:06 -0400
-Received: by mail-qk0-f169.google.com with SMTP id w69so18260325qka.4
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Oct 2016 05:05:06 -0700 (PDT)
-In-Reply-To: <580E3457.7030809@mentor.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161024194917.g5oezqc4uacsyt24@lukather>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Deepak Das <deepak_das@mentor.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, vzapolsk <Vladimir_Zapolskiy@mentor.com>, Fabio Estevam <fabio.estevam@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>
 
-On Mon, Oct 24, 2016 at 6:18 PM, Deepak Das <deepak_das@mentor.com> wrote:
+On Mon, Oct 24, 2016 at 9:49 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
 
-> generic gpio request/free should be added after gpiocip registration
-> to validate mapping of gpiochip with pinctrl subsystem.
->
-> gpiochip->pin_ranges list contains the information used by pinctrl
-> subsystem to configure corresponding pins for gpio usage.
-> This list will be empty if gpiochip fails to map with
-> pinctrl subsystem for any reason.
-> For Ex.:-
-> generic gpio request/free should not be used if IOMUX pin controller
-> device node is disabled in device tree.
->
-> This commit checks above list and skips adding generic gpio request/free
-> if list is found empty.
->
-> Signed-off-by: Deepak Das <deepak_das@mentor.com>
-> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> However, it looks like the first patch from this serie is missing from
+> your tree, is there a reason for that?
 
-Could you:
+No can you point it out?
 
-- Rebase on my fixes or devel branch in the GPIO tree. This doesn't
-  seem to apply cleany on any of my branches, have you tested
-  v4.9-rc2?
+> Also, in order to preserve bisectability, could you create an
+> immutable branch for those sunxi patches so that I can merge the DT
+> bits?
 
-- Indicate if this is a regression that need to go into fixes/stable or
-  not?
+It's too late because they are already in the devel branch
+and mixed up with merged of *other* immutable stuff.
+
+However I think it is plain wrong to try to keep any bisectability
+between the kernel at large and arch/*/boot/dts/*, because
+the DTS stuff is supposed to at some point be maintained outside
+of the kernel and for all OSes, they simply shouldn't be sync:ed.
 
 Yours,
 Linus Walleij
