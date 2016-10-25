@@ -1,58 +1,113 @@
-From: Deepak Das <deepak_das@mentor.com>
-Subject: Re: [PATCH] gpio: mxc: Shift generic request/free after gpiochip
- registration
-Date: Tue, 25 Oct 2016 17:50:50 +0530
-Message-ID: <580F4E22.8020805@mentor.com>
-References: <580EE62D.4090704@mentor.com>
- <CACRpkdYbMxk_NoJpJS5bU-zOL=aXDAxrhT2LjLSj+CaPaBE7jw@mail.gmail.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH 4/9] pinctrl: meson: allow gpio to request irq
+Date: Tue, 25 Oct 2016 15:08:20 +0200
+Message-ID: <1477400900.2482.51.camel@baylibre.com>
+References: <1476871709-8359-1-git-send-email-jbrunet@baylibre.com>
+         <1476871709-8359-5-git-send-email-jbrunet@baylibre.com>
+         <CACRpkdaCZPS45t3eTcjJExOu=YT_YkjNkdpg09jQqvLQOJH=Qw@mail.gmail.com>
+         <1477040798.15560.96.camel@baylibre.com>
+         <CACRpkdYUVXny57AC9rKX3VRAyooEk_2XLvqe9jOuT3rOaE75rg@mail.gmail.com>
+         <ec7c6cc5-cf9a-9c75-4b07-e337064c7d6e@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:45373 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751594AbcJYMVB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Oct 2016 08:21:01 -0400
-In-Reply-To: <CACRpkdYbMxk_NoJpJS5bU-zOL=aXDAxrhT2LjLSj+CaPaBE7jw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <ec7c6cc5-cf9a-9c75-4b07-e337064c7d6e@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Russell King <linux@armlinux.org.uk>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Vladimir Zapolskiy <Vladimir_Zapolskiy@mentor.com>, Fabio Estevam <fabio.estevam@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-
-
-On Tuesday 25 October 2016 05:41 PM, Linus Walleij wrote:
-> On Tue, Oct 25, 2016 at 6:57 AM, Deepak Das <deepak_das@mentor.com> wrote:
+On Tue, 2016-10-25 at 11:38 +0100, Marc Zyngier wrote:
+> > 
+> On 25/10/16 10:14, Linus Walleij wrote:
+> > 
+> > On Fri, Oct 21, 2016 at 11:06 AM, Jerome Brunet <jbrunet@baylibre.c
+> > om> wrote:
+> > 
+> > > 
+> > > > 
+> > > > Isn't this usecase (also as described in the cover letter) a
+> > > > textbook
+> > > > example of when you should be using hierarchical irqdomain?
+> > > > 
+> > > > Please check with Marc et al on hierarchical irqdomains.
+> > > 
+> > > Linus,
+> > > Do you mean I should create a new hierarchical irqdomains in each
+> > > of
+> > > the two pinctrl instances we have in these SoC, these domains
+> > > being
+> > > stacked on the one I just added for controller in irqchip ?
+> > > 
+> > > I did not understand this is what you meant when I asked you the
+> > > question at ELCE.
+> > 
+> > Honestly, I do not understand when and where to properly use
+> > hierarchical irqdomain, even after Marc's talk at ELC-E.
 > 
->> generic gpio request/free should be added after gpiocip registration
->> to validate mapping of gpiochip with pinctrl subsystem.
->>
->> gpiochip->pin_ranges list contains the information used by pinctrl
->> subsystem to configure corresponding pins for gpio usage.
->> This list will be empty if gpiochip fails to map with
->> pinctrl subsystem for any reason.
->> For Ex.:-
->> generic gpio request/free should not be used if IOMUX pin controller
->> device node is disabled in device tree.
->>
->> This commit checks above list and skips adding generic gpio request/free
->> if list is found empty.
->>
->> Signed-off-by: Deepak Das <deepak_das@mentor.com>
->> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> I probably didn't do that good a job explaining it then. Let's try
+> again. You want to use hierarchical domains when you want to describe
+> an
+> interrupt whose path traverses multiple controllers without ever
+> being
+> multiplexed with other signals. As long as you have this 1:1
+> relationship between controllers, you can use them.
 > 
-> Third time I find this in my inbox and it still doesn't apply.
+
+Linus, Marc,
+
+The calculation is question here is meant to get the appropriate hwirq
+number from a particular gpio (and deal with the gpios that can't
+provide an irq at all). 
+
+If I look at other gpio drivers, many are doing exactly this kind of
+calculation before calling 'irq_create_mapping' in the to_irq callback.
+For example:
+- pinctrl/nomadik/pinctrl-abx500.c
+- pinctrl/samsung/pinctrl-exynos5440.c
+
+Some can afford to create all the mappings in the probe and just call
+'irq_find_mapping' (gpio/gpio_tegra.c) but this would not work here. We
+have only 8 upstream irqs for 130+ pins, so only 8 mappings possible at
+a time. 
+
+My understanding is that irqdomain provide a way to map hwirq to linux
+virq (and back), not map gpio number to hwirq, right?
+
+Even if I implement an another irqdomain at the gpio level, I would
+still have to perform this kind of calculation, one way or the other.
+
+> > Which is problematic since quite a few GPIO drivers now
+> > need to use them.
+> > 
+> > I will review his slides, in the meantime I would say: whatever
+> > Marc ACKs is fine with me. I trust this guy 100%. So I guess I
+> > could ask that he ACK the entire chain of patches
+> > from GIC->specialchip->GPIO.
+
+Actually this discussion go me thinking about another issue we have
+with this hardware.
+We are looking for a way to implement support for IRQ_TYPE_EDGE_BOTH
+(needed for things like gpio-keys or mmc card detect). 
+The controller can do each edge but not both at the same time.
+I'm thinking that implementing another irqdomain at the gpio level
+would allow to properly check the pad level in the EOI callback then
+set the next expected edge type accordingly (using
+'irq_chip_set_type_parent')
+
+Would it be acceptable ?
+
+It looks a few other drivers deal with IRQ_TYPE_EDGE_BOTH in a similar
+way (gpio/gpio-omap.c, gpio/gpio-dwapb.c)
+
+> Man, I don't even trust myself... ;-)
 > 
-> Yours,
-> Linus Walleij
-
-Hi Linus,
-
-Sorry for the trouble. Three patches were sent by mistake. I am rebasing this patch on top of your gpio fixes branch.
-This might not be required for stable branch since the original patch 
-4c806c9 "gpio: mxc: add generic gpio request/free callbacks to pinctrl" was included in v4.9 so this cane be added in
-v4.9 fixes.
-
-with warm regards,
-Deepak Das
+> Thanks,
 > 
+> 	M.
+
+Thx
+Regards
+
+Jerome
