@@ -1,32 +1,50 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: Please pick commit d71cf15b865b to stable
-Date: Tue, 25 Oct 2016 11:39:19 +0200
-Message-ID: <20161025093919.GA21075@kroah.com>
-References: <CACRpkdY9Y=7QCdu-sNG=S32RzGtHK7yF9CbdNi7gwRR2xJ1xUA@mail.gmail.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: Re: [PATCH] pinctrl: imx: reset group index on probe
+Date: Tue, 25 Oct 2016 13:31:24 +0300
+Message-ID: <cadbd535-4685-d5a8-3661-1d6263e6e317@mleia.com>
+References: <20161018210915.31614-1-stefan@agner.ch>
+ <0c13caa8-4966-8cba-3d8b-93166fe2156d@mleia.com>
+ <CACRpkdYcndxqMjTd=z8BpnAh-9AQc46Xg8FzewL423vazigquQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:39617 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1757232AbcJYJjR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 25 Oct 2016 05:39:17 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdY9Y=7QCdu-sNG=S32RzGtHK7yF9CbdNi7gwRR2xJ1xUA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYcndxqMjTd=z8BpnAh-9AQc46Xg8FzewL423vazigquQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: stable <stable@vger.kernel.org>, Liu Gang <Gang.Liu@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Stefan Agner <stefan@agner.ch>, Shawn Guo <shawnguo@kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Markus Pargmann <mpa@pengutronix.de>, Adrian Alonso <aalonso@freescale.com>, Robin Gong <b38343@freescale.com>, Laxman Dewangan <ldewangan@nvidia.com>, Peng Fan <van.freenix@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 25, 2016 at 11:19:45AM +0200, Linus Walleij wrote:
-> Hi stable maintainers,
+Hi Linus, Stefan,
+
+On 25.10.2016 12:11, Linus Walleij wrote:
+> On Wed, Oct 19, 2016 at 12:40 AM, Vladimir Zapolskiy <vz@mleia.com> wrote:
 > 
-> commit d71cf15b865bdd45925f7b094d169aaabd705145
-> ("gpio: mpc8xxx: Correct irq handler function")
-> should be picked to the stable kernel.
+>> I've recently developed a pinctrl driver for the last remaining
+>> i.MX31 platform from the SoC series (not published yet), it does
+>> not fit well under any of the 3 existing drivers, and instead
+>> of adding 1.5K lines of code with half of them almost copy-pasted
+>> from the rest drivers I started to work on generalization of the
+>> i.MX/Vybrid pinctrl/pinmux drivers.
+> 
+> That is a noble task.
+> 
+>> This task is large and I'm not sure when I complete and share
+>> the results, but your change conflicts with one of the changes
+>> in my backlog... Let me share it with you right now, because it
+>> deals with info->group_index from another point of view and it
+>> (unlikely) may have an impact on Vybrid platform, which I can not
+>> test.
+> 
+> I have to merge this patch to fix an upstream regression
+> (I guess? No response from mantainers) so I guee you'll have
+> to rebase your series onto whatever release candidate has it.
+> 
+> Shouldn't be too hard I guess.
+> 
 
-Any hint as to how far back it should go?
+correct, thank you for merging Stefan's fix.
 
-thanks,
-
-greg k-h
+--
+With best wishes,
+Vladimir
