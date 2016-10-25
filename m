@@ -1,35 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: gpiolib-devprop: Check chip->parent pointer before dereferencing
-Date: Tue, 25 Oct 2016 20:24:04 +0200
-Message-ID: <CACRpkdZdHRY0Zc9F+HYdZG+fHS-YgyPhAgXvOjK=UxKEHtUOfg@mail.gmail.com>
-References: <1477413083-9159-1-git-send-email-tthayer@opensource.altera.com>
+From: Thor Thayer <tthayer@opensource.altera.com>
+Subject: Re: Problems viewing Linux-GPIO Mailing List
+Date: Tue, 25 Oct 2016 13:43:51 -0500
+Message-ID: <37df33c4-4d33-2c6e-b568-4607a38401ba@opensource.altera.com>
+References: <5a43133d-3a50-ddef-8fee-930fcf24d34d@opensource.altera.com>
+ <CACRpkdZHpdTe+D97uLQBva3DWdvvQWrQcpfj5o+SZwvtW-AJzA@mail.gmail.com>
+Reply-To: <tthayer@opensource.altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:40803 "EHLO
-        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753519AbcJYSYF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Oct 2016 14:24:05 -0400
-Received: by mail-qt0-f178.google.com with SMTP id p53so6519093qtp.7
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Oct 2016 11:24:05 -0700 (PDT)
-In-Reply-To: <1477413083-9159-1-git-send-email-tthayer@opensource.altera.com>
+Received: from mail-by2nam03on0085.outbound.protection.outlook.com ([104.47.42.85]:12800
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932312AbcJYShk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 25 Oct 2016 14:37:40 -0400
+In-Reply-To: <CACRpkdZHpdTe+D97uLQBva3DWdvvQWrQcpfj5o+SZwvtW-AJzA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thor Thayer <tthayer@opensource.altera.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Oct 25, 2016 at 6:31 PM,  <tthayer@opensource.altera.com> wrote:
 
-> From: Thor Thayer <tthayer@opensource.altera.com>
+
+On 10/25/2016 01:22 PM, Linus Walleij wrote:
+> On Tue, Oct 25, 2016 at 4:24 PM, Thor Thayer
+> <tthayer@opensource.altera.com> wrote:
 >
-> Confirm the chip->parent is valid before dereferencing because
-> the parent parameter is optional.
+>> I'm not able to view the Linux Mailing List in the links of
+>> http://dir.gmane.org/gmane.linux.kernel.gpio
+>>
+>> I'm getting a "Page Not Found" message when I click on any of the viewing
+>> options (ie. "On the web, using frames and threads").
 >
-> Signed-off-by: Thor Thayer <tthayer@opensource.altera.com>
+> GMane is dead.
+>
+> This is the official archive:
+> http://marc.info/?l=linux-gpio
+>
+> Yours,
+> Linus Walleij
+>
+Ahh. That explains it.
 
-I wish it wasn't. Not much to do about though.
+I was following the Archive link at 
+http://vger.kernel.org/vger-lists.html#linux-gpio
 
-Patch applied.
-
-Yours,
-Linus Walleij
+Thanks!
