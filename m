@@ -1,84 +1,40 @@
-From: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Subject: Re: [PATCH 4/9] pinctrl: meson: allow gpio to request irq
-Date: Tue, 25 Oct 2016 12:39:02 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1610251137420.4990@nanos>
-References: <1476871709-8359-1-git-send-email-jbrunet@baylibre.com> <1476871709-8359-5-git-send-email-jbrunet@baylibre.com> <CACRpkdaCZPS45t3eTcjJExOu=YT_YkjNkdpg09jQqvLQOJH=Qw@mail.gmail.com> <1477040798.15560.96.camel@baylibre.com>
- <CACRpkdYUVXny57AC9rKX3VRAyooEk_2XLvqe9jOuT3rOaE75rg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Please pick commit d71cf15b865b to stable
+Date: Tue, 25 Oct 2016 13:48:47 +0200
+Message-ID: <CACRpkdZFbzFc4QsemEXQegt05MZYVx=27cX2c6WdLvNtp7-Ayg@mail.gmail.com>
+References: <CACRpkdY9Y=7QCdu-sNG=S32RzGtHK7yF9CbdNi7gwRR2xJ1xUA@mail.gmail.com>
+ <20161025093919.GA21075@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdYUVXny57AC9rKX3VRAyooEk_2XLvqe9jOuT3rOaE75rg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f175.google.com ([209.85.220.175]:35986 "EHLO
+        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752711AbcJYLst (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Oct 2016 07:48:49 -0400
+Received: by mail-qk0-f175.google.com with SMTP id o68so258224222qkf.3
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Oct 2016 04:48:48 -0700 (PDT)
+In-Reply-To: <20161025093919.GA21075@kroah.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: stable <stable@vger.kernel.org>, Liu Gang <Gang.Liu@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, 25 Oct 2016, Linus Walleij wrote:
-> On Fri, Oct 21, 2016 at 11:06 AM, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> wrote:
-> 
-> >> Isn't this usecase (also as described in the cover letter) a textbook
-> >> example of when you should be using hierarchical irqdomain?
-> >>
-> >> Please check with Marc et al on hierarchical irqdomains.
-> >
-> > Linus,
-> > Do you mean I should create a new hierarchical irqdomains in each of
-> > the two pinctrl instances we have in these SoC, these domains being
-> > stacked on the one I just added for controller in irqchip ?
-> >
-> > I did not understand this is what you meant when I asked you the
-> > question at ELCE.
-> 
-> Honestly, I do not understand when and where to properly use
-> hierarchical irqdomain, even after Marc's talk at ELC-E.
+On Tue, Oct 25, 2016 at 11:39 AM, Greg KH <greg@kroah.com> wrote:
+> On Tue, Oct 25, 2016 at 11:19:45AM +0200, Linus Walleij wrote:
+>> Hi stable maintainers,
+>>
+>> commit d71cf15b865bdd45925f7b094d169aaabd705145
+>> ("gpio: mpc8xxx: Correct irq handler function")
+>> should be picked to the stable kernel.
+>
+> Any hint as to how far back it should go?
 
-Hierarchical irqdomains are used when you have several levels of interrupt
-hardware to deliver an interrupt.
+To the dawn of time, as long as it applies.
 
-For example on x86 we have:
+The bug was there when the driver was moved into
+the gpiolib subsystem in
+commit c68308dd50c3827a4ce77a1d70e0eb2d2521cafd
+"gpio: move mpc8xxx/512x gpio driver to drivers/gpio"
 
- device --- [IOAPIC] -- [VECTOR]
-
-and we can have this expanded to
-
- device --- [IOAPIC] -- [IRQ Remapping] -- [VECTOR]
-
-and we have more things hanging off the VECTOR domain
-
- device --- [IOAPIC] ---
-                       |--- [VECTOR]
- device --- [PCIMSI] ---
-
-So with irq remapping this might look like this:
-
- device --- [IOAPIC] ---
-                       |-----------------------
- device --- [PCIMSI] ---                      |
-                                              |---[VECTOR]
- device --- [IOAPIC] ---                      |
-                       |--[IRQ Remapping]------
- device --- [PCIMSI] ---                      
-
-The important part is that this hierarchy deals with a single Linux virq
-and all parts of the hierarchy are required for setup and possibly for
-mask/ack/eoi.
-
-This is different from a demultiplex interrupt
-
- device --- [DEMUX] --- [GIC]
-
-where the demultiplex interrupt is a different virq than the device
-virq. The demux interrupt chip can have a parent relation ship, which can
-be required to propagate information, e.g. wake on a device behind the
-demux must keep the gic as a wake irq as well. But it's not hierarchical in
-the sense of our hierarchical irq domains.
-
-Hope that helps.
-
-Thanks,
-
-	tglx
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
