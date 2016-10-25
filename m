@@ -1,90 +1,58 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH V1] mfd: pv88080: Expand driver for GPIO function support.
-Date: Tue, 25 Oct 2016 07:40:40 +0100
-Message-ID: <20161025064040.GE8574@dell>
-References: <20161025014148.7DF655FA17@krsrvapps-01.diasemi.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH v3] pinctrl: Add SX150X GPIO Extender Pinctrl Driver
+Date: Tue, 25 Oct 2016 08:57:08 +0200
+Message-ID: <580F0244.7070701@baylibre.com>
+References: <1477040998-2016-1-git-send-email-narmstrong@baylibre.com> <CAHQ1cqESoRdeHyvP=m=8F_VwiaYL+wbjFoNa6KvWBGfijhcRjg@mail.gmail.com> <CACRpkdbwqFRtFN1gx1G7BuFe44mvPyCSeoQ5g9_FR11j_ZO4ug@mail.gmail.com> <CAHQ1cqGLQ=DdhXg1ebkgBbLN8P2P8BEDrGGTx9_r+6=Wy3uUWA@mail.gmail.com> <CACRpkdY7vLU4yVP7M-O4rGt_L5cqL57ApmMQJ4aRGgzh3Nat6Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161025014148.7DF655FA17@krsrvapps-01.diasemi.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eric Jeong <eric.jeong.opensource@diasemi.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, DEVICETREE <devicetree@vger.kernel.org>, LINUX-GPIO <linux-gpio@vger.kernel.org>, LINUX-KERNEL <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Support Opensource <support.opensource@diasemi.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:37341 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753157AbcJYG5L (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Oct 2016 02:57:11 -0400
+Received: by mail-wm0-f41.google.com with SMTP id c78so5369899wme.0
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Oct 2016 23:57:10 -0700 (PDT)
+In-Reply-To: <CACRpkdY7vLU4yVP7M-O4rGt_L5cqL57ApmMQJ4aRGgzh3Nat6Q@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Peter Rosin <peda@axentia.se>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Roland Stigge <stigge@antcom.de>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-On Tue, 25 Oct 2016, Eric Jeong wrote:
+Hi Linus,
+
+Le 24/10/2016 16:39, Linus Walleij a écrit :
+> On Mon, Oct 24, 2016 at 6:51 AM, Andrey Smirnov
+> <andrew.smirnov@gmail.com> wrote:
+> 
+>> It seem strange to me that the driver uses "handle_edge_irq", given
+>> how none of the individual interrupts seem to require any ACKing,
+>> since it is all handled in sx150x_irq_thread_fn(), line 533. More so,
+>> I had trouble finding who/where sets .irq_ack() callback, which AFAIU
+>> is mandatory for handle_edge_irq().
+> 
+> Yes that looks strange.
+> 
+> Neil have you tested IRQs with this code?
+
+To be frank, I took the IRQ code from the GPIO driver verbatim, and only tested
+a simple use case on beagle bone black.
+The interrupt code is very complex and sincerely I was not able to understand
+clearly how it worked.
+
+The IRQ_TYPE_EDGE_BOTH did work for me since the BBB irq controller dealt with it.
+
+I will dig in the datasheet and run more uses cases next week, but since the
+code hasn't changed since the GPIO driver, so this is a nice to have !
 
 > 
-> From: Eric Jeong <eric.jeong.opensource@diasemi.com>
+> If there is trouble, please follow up with a fix for the edge handler.
+> Maybe it should just be handle_simple_irq().
 > 
-> This patch adds support for the PV88080 PMIC.
+> Yours,
+> Linus Walleij
 > 
-> This pathch is done as part of the existing PV88080 regulator driver
-> by expanding the driver for GPIO function support.
-> 
-> The MFD core driver provides communication through the I2C interface.
-> and contains the following components:
-> 
->     - Regulators
->     - Configurable GPIOs
-> 
-> Kconfig and Makefile are updated to reflect support for PV88080 PMIC.
-> 
-> Signed-off-by: Eric Jeong <eric.jeong.opensource@diasemi.com>
-> 
-> ---
-> This patch applies against linux-next and next-20161024
-> 
-> Hi,
-> 
-> This change is made as a single patch. Because, to ensure that
-> kernel builds and runs properly after this patch.
-> 
-> The regulator device driver for PV88080 IC is submitted to Linux kernel.
-> And now, GPIO function is required. In order to add GPIO driver,
-> MFD driver is also required.
-> 
-> Changes
->  - Add MFD driver.
->  - Add GPIO driver.
->  - Update regulator driver to reflect the support.
->  - Delete pv88080-regulator.h file.
->  - Move binding document to mfd directory.
->  
-> Regards,
-> Eric Jeong, Dialog Semiconductor Ltd.
-> 
-> 
->  Documentation/devicetree/bindings/mfd/pv88080.txt  |   63 +++++
->  .../devicetree/bindings/regulator/pv88080.txt      |   62 -----
->  drivers/gpio/Kconfig                               |   11 +
->  drivers/gpio/Makefile                              |    1 +
->  drivers/gpio/gpio-pv88080.c                        |  195 ++++++++++++++
->  drivers/mfd/Kconfig                                |   12 +
->  drivers/mfd/Makefile                               |    2 +
->  drivers/mfd/pv88080-core.c                         |  270 ++++++++++++++++++++
->  drivers/mfd/pv88080-i2c.c                          |   99 +++++++
->  drivers/regulator/Kconfig                          |    5 +-
->  drivers/regulator/pv88080-regulator.c              |  202 ++++++---------
->  drivers/regulator/pv88080-regulator.h              |  118 ---------
->  include/linux/mfd/pv88080.h                        |  236 +++++++++++++++++
->  13 files changed, 970 insertions(+), 306 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mfd/pv88080.txt
->  delete mode 100644 Documentation/devicetree/bindings/regulator/pv88080.txt
->  create mode 100644 drivers/gpio/gpio-pv88080.c
->  create mode 100644 drivers/mfd/pv88080-core.c
->  create mode 100644 drivers/mfd/pv88080-i2c.c
->  delete mode 100644 drivers/regulator/pv88080-regulator.h
->  create mode 100644 include/linux/mfd/pv88080.h
 
-You're going to need to split this patch up as much as possible.
+Andrey, can we talk over irc somehow ? I'm idling as narmstrong on freenode.
 
-No one is going to want to review a 1200 line patch.
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Neil
