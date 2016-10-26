@@ -1,64 +1,46 @@
-From: Enric Balletbo Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] gpio: mcp23s08: Add option to configure pullups.
-Date: Wed, 26 Oct 2016 11:59:14 +0200
-Message-ID: <CAFqH_53SSctH9Ms-0Zm5fhEgMtkWq_SP9VChY-QYV-qDLLj_WA@mail.gmail.com>
-References: <1477062035-30825-1-git-send-email-enric.balletbo@collabora.com>
- <CACRpkdY15Hv_ydHyOXRM6G0ewVTHkVa1w3Z89AdvSDR=eyi7sQ@mail.gmail.com> <11644726.TmP4uu3h4l@ws-stein>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] gpio: mxc: Shift generic request/free after gpiochip registration
+Date: Wed, 26 Oct 2016 13:29:50 +0200
+Message-ID: <CACRpkdZ355k9JytLjeth1T-Ub6dPA=_01HF6xSW_FcOtAkrABQ@mail.gmail.com>
+References: <1477418567-28347-1-git-send-email-deepak_das@mentor.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <11644726.TmP4uu3h4l@ws-stein>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexander Stein <alexander.stein-93q1YBGzJSMe9JSWTWOYM3xStJ4P+DSV@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f172.google.com ([209.85.220.172]:39280 "EHLO
+        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754623AbcJZLaN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Oct 2016 07:30:13 -0400
+Received: by mail-qk0-f172.google.com with SMTP id i34so3482411qkh.6
+        for <linux-gpio@vger.kernel.org>; Wed, 26 Oct 2016 04:29:51 -0700 (PDT)
+In-Reply-To: <1477418567-28347-1-git-send-email-deepak_das@mentor.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Deepak Das <deepak_das@mentor.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-Hi Linus,
+On Tue, Oct 25, 2016 at 8:02 PM, Deepak Das <deepak_das@mentor.com> wrote:
 
-2016-10-24 8:13 GMT+02:00 Alexander Stein
-<alexander.stein-93q1YBGzJSMe9JSWTWOYM3xStJ4P+DSV@public.gmane.org>:
-> On Monday 24 October 2016 02:53:31, Linus Walleij wrote:
->> On Fri, Oct 21, 2016 at 5:00 PM, Enric Balletbo i Serra
->>
->> <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
->> > Default is without pullups, but if property is specified in DT and the bit
->> > is set, set a pullup on GPIO-n.
->> >
->> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->>
->> I don't generally like this.
->>
+> generic gpio request/free should be added after gpiocip registration
+> to validate mapping of gpiochip with pinctrl subsystem.
+>
+> gpiochip->pin_ranges list contains the information used by pinctrl
+> subsystem to configure corresponding pins for gpio usage.
+> This list will be empty if gpiochip fails to map with
+> pinctrl subsystem for any reason.
+> For Ex.:-
+> generic gpio request/free should not be used if IOMUX pin controller
+> device node is disabled in device tree.
+>
+> This commit checks above list and skips adding generic gpio request/free
+> if list is found empty.
+>
+> Signed-off-by: Deepak Das <deepak_das@mentor.com>
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> ---
+> Changes from v1 to v2:
+> * Rebased on top of lwalleij/gpio/fixes.
 
-I tried to use the same approach as used in gpio-twl4030.c because is
-what I knew before. Maybe you can point me to a better approach?
+Patch applied.
 
->> In device tree it is the consumer that specifies how the line is used,
->> not the producer (gpiochip).
->>
->> We currently only specify polarity, open drain and open source
->> for consumers though.
->>
->> And the entire pin control system came into being *exactly* because
->> Grant didn't like me adding these things to the GPIO drivers.
->>
->> So how many other things does the MCP support? Drive strength?
->> Schmitt trigger? Is there a datasheet?
->
-> Some unsupported features (AFAIK):
-> * Input polarity (IPOL register)
-> * open-drain interrupt pin
-> * pullup on pins (proposed patch)
->
-> Datasheet is here: http://ww1.microchip.com/downloads/en/DeviceDoc/21919e.pdf
->
-> Best regards,
-> Alexander
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
