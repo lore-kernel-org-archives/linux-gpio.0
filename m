@@ -1,56 +1,63 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [GIT PULL] Immutable branch between MFD, GPIO, Input and Regulator
- due for the v4.10 merge window
-Date: Wed, 26 Oct 2016 10:34:38 +0100
-Message-ID: <20161026093438.GO8574@dell>
-References: <1474270746-11568-1-git-send-email-j-keerthy@ti.com>
+From: Enric Balletbo Serra <eballetbo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] gpio: mcp23s08: Add option to configure pullups.
+Date: Wed, 26 Oct 2016 11:59:14 +0200
+Message-ID: <CAFqH_53SSctH9Ms-0Zm5fhEgMtkWq_SP9VChY-QYV-qDLLj_WA@mail.gmail.com>
+References: <1477062035-30825-1-git-send-email-enric.balletbo@collabora.com>
+ <CACRpkdY15Hv_ydHyOXRM6G0ewVTHkVa1w3Z89AdvSDR=eyi7sQ@mail.gmail.com> <11644726.TmP4uu3h4l@ws-stein>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1474270746-11568-1-git-send-email-j-keerthy-l0cyMroinI0@public.gmane.org>
+In-Reply-To: <11644726.TmP4uu3h4l@ws-stein>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, t-kristo-l0cyMroinI0@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+To: Alexander Stein <alexander.stein-93q1YBGzJSMe9JSWTWOYM3xStJ4P+DSV@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+Hi Linus,
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+2016-10-24 8:13 GMT+02:00 Alexander Stein
+<alexander.stein-93q1YBGzJSMe9JSWTWOYM3xStJ4P+DSV@public.gmane.org>:
+> On Monday 24 October 2016 02:53:31, Linus Walleij wrote:
+>> On Fri, Oct 21, 2016 at 5:00 PM, Enric Balletbo i Serra
+>>
+>> <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
+>> > Default is without pullups, but if property is specified in DT and the bit
+>> > is set, set a pullup on GPIO-n.
+>> >
+>> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>>
+>> I don't generally like this.
+>>
 
-are available in the git repository at:
+I tried to use the same approach as used in gpio-twl4030.c because is
+what I knew before. Maybe you can point me to a better approach?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-gpio-input-regulator-v4.10
-
-for you to fetch changes up to 2dc4940360d4c0c38aa9275532c7c0d7542f6258:
-
-  regulator: tps65218: Remove all the compatibles (2016-10-26 10:30:39 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD, GPIO, Input and Regulator due for the v4.10 merge window
-
-----------------------------------------------------------------
-Keerthy (5):
-      mfd: tps65218: Remove redundant read wrapper
-      Documentation: regulator: tps65218: Update examples
-      input: tps65218-pwrbutton: Add platform_device_id table
-      mfd: tps65218: Use mfd_add_devices instead of of_platform_populate
-      regulator: tps65218: Remove all the compatibles
-
- .../devicetree/bindings/regulator/tps65218.txt     |  87 +++++++++---
- drivers/gpio/gpio-tps65218.c                       |   3 +-
- drivers/input/misc/tps65218-pwrbutton.c            |   8 ++
- drivers/mfd/tps65218.c                             |  34 ++---
- drivers/regulator/tps65218-regulator.c             | 153 ++++++++-------------
- include/linux/mfd/tps65218.h                       |   3 +-
- 6 files changed, 157 insertions(+), 131 deletions(-)
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>> In device tree it is the consumer that specifies how the line is used,
+>> not the producer (gpiochip).
+>>
+>> We currently only specify polarity, open drain and open source
+>> for consumers though.
+>>
+>> And the entire pin control system came into being *exactly* because
+>> Grant didn't like me adding these things to the GPIO drivers.
+>>
+>> So how many other things does the MCP support? Drive strength?
+>> Schmitt trigger? Is there a datasheet?
+>
+> Some unsupported features (AFAIK):
+> * Input polarity (IPOL register)
+> * open-drain interrupt pin
+> * pullup on pins (proposed patch)
+>
+> Datasheet is here: http://ww1.microchip.com/downloads/en/DeviceDoc/21919e.pdf
+>
+> Best regards,
+> Alexander
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
