@@ -1,59 +1,48 @@
-From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Subject: [PATCH] pinctrl: zynq: Add a 8 bit wide nand option
-Date: Wed, 26 Oct 2016 12:04:54 -0600
-Message-ID: <20161026180454.GC24717@obsidianresearch.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 5/5] gpio: davinci: Add a separate compatible for k2g
+Date: Wed, 26 Oct 2016 16:08:51 -0500
+Message-ID: <20161026210851.jt2xoo2ap6zijowg@rob-hp-laptop>
+References: <1476855239-32730-1-git-send-email-j-keerthy@ti.com>
+ <1476855239-32730-6-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from quartz.orcorp.ca ([184.70.90.242]:49371 "EHLO quartz.orcorp.ca"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932993AbcJZSE7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 26 Oct 2016 14:04:59 -0400
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1476855239-32730-6-git-send-email-j-keerthy-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lokeshvutla-l0cyMroinI0@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rogerq-l0cyMroinI0@public.gmane.org, grygorii.strashko-l0cyMroinI0@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michal Simek <michal.simek@xilinx.com>, =?unknown-8bit?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org
 
-The hardware supports a 16 and 8 bit wide NAND bus, let users pick
-either.
+On Wed, Oct 19, 2016 at 11:03:59AM +0530, Keerthy wrote:
+> In the case of k2g the clocks are handled differently as when compared
+> with other keystones. Hence adding a separate compatible and match tables
+> accordingly.
+> 
+> Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+> ---
+>  .../devicetree/bindings/gpio/gpio-davinci.txt      |  2 +-
+>  drivers/gpio/gpio-davinci.c                        | 45 ++++++++++++++++++++--
+>  2 files changed, 42 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+> index 5079ba7..a76abd2 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+> @@ -1,7 +1,7 @@
+>  Davinci/Keystone GPIO controller bindings
+>  
+>  Required Properties:
+> -- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio"
+> +- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio", "ti,k2g-gpio"
 
-Signed-off-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
----
- drivers/pinctrl/pinctrl-zynq.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Is this "one of" or all? Seems line the former in which case please 
+reformat to one per line.
 
-diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
-index 7afdbede6823..798bcf875052 100644
---- a/drivers/pinctrl/pinctrl-zynq.c
-+++ b/drivers/pinctrl/pinctrl-zynq.c
-@@ -247,6 +247,8 @@ static const unsigned int smc0_nor_addr25_pins[] = {1};
- static const unsigned int smc0_nand_pins[] = {0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
- 					      12, 13, 14, 16, 17, 18, 19, 20,
- 					      21, 22, 23};
-+static const unsigned int smc0_nand8_pins[] = {0, 2, 3,  4,  5,  6,  7,
-+					       8, 9, 10, 11, 12, 13, 14};
- /* Note: CAN MIO clock inputs are modeled in the clock framework */
- static const unsigned int can0_0_pins[] = {10, 11};
- static const unsigned int can0_1_pins[] = {14, 15};
-@@ -445,6 +447,7 @@ static const struct zynq_pctrl_group zynq_pctrl_groups[] = {
- 	DEFINE_ZYNQ_PINCTRL_GRP(smc0_nor_cs1),
- 	DEFINE_ZYNQ_PINCTRL_GRP(smc0_nor_addr25),
- 	DEFINE_ZYNQ_PINCTRL_GRP(smc0_nand),
-+	DEFINE_ZYNQ_PINCTRL_GRP(smc0_nand8),
- 	DEFINE_ZYNQ_PINCTRL_GRP(can0_0),
- 	DEFINE_ZYNQ_PINCTRL_GRP(can0_1),
- 	DEFINE_ZYNQ_PINCTRL_GRP(can0_2),
-@@ -709,7 +712,8 @@ static const char * const sdio1_wp_groups[] = {"gpio0_0_grp",
- static const char * const smc0_nor_groups[] = {"smc0_nor_grp"};
- static const char * const smc0_nor_cs1_groups[] = {"smc0_nor_cs1_grp"};
- static const char * const smc0_nor_addr25_groups[] = {"smc0_nor_addr25_grp"};
--static const char * const smc0_nand_groups[] = {"smc0_nand_grp"};
-+static const char * const smc0_nand_groups[] = {"smc0_nand_grp",
-+		"smc0_nand8_grp"};
- static const char * const can0_groups[] = {"can0_0_grp", "can0_1_grp",
- 		"can0_2_grp", "can0_3_grp", "can0_4_grp", "can0_5_grp",
- 		"can0_6_grp", "can0_7_grp", "can0_8_grp", "can0_9_grp",
--- 
-2.1.4
-
+>  
+>  - reg: Physical base address of the controller and the size of memory mapped
+>         registers.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
