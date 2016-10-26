@@ -1,61 +1,59 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v8 5/6] mfd: lpc_ich: Add Device IDs for Intel Apollo
- Lake PCH
-Date: Wed, 26 Oct 2016 17:18:22 +0100
-Message-ID: <20161026161821.GL13127@dell>
-References: <1476255066-22653-1-git-send-email-jui.nee.tan@intel.com>
- <1476255066-22653-6-git-send-email-jui.nee.tan@intel.com>
- <20161026130604.GD12618@dell>
- <20161026130631.GE12618@dell>
- <1477494008.5295.10.camel@linux.intel.com>
+From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Subject: [PATCH] pinctrl: zynq: Add a 8 bit wide nand option
+Date: Wed, 26 Oct 2016 12:04:54 -0600
+Message-ID: <20161026180454.GC24717@obsidianresearch.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:35981 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755589AbcJZQPy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Oct 2016 12:15:54 -0400
-Received: by mail-wm0-f45.google.com with SMTP id b80so232763322wme.1
-        for <linux-gpio@vger.kernel.org>; Wed, 26 Oct 2016 09:15:53 -0700 (PDT)
+Received: from quartz.orcorp.ca ([184.70.90.242]:49371 "EHLO quartz.orcorp.ca"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932993AbcJZSE7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 26 Oct 2016 14:04:59 -0400
 Content-Disposition: inline
-In-Reply-To: <1477494008.5295.10.camel@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Tan Jui Nee <jui.nee.tan@intel.com>, mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michal Simek <michal.simek@xilinx.com>, =?unknown-8bit?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org
 
-On Wed, 26 Oct 2016, Andy Shevchenko wrote:
+The hardware supports a 16 and 8 bit wide NAND bus, let users pick
+either.
 
-> On Wed, 2016-10-26 at 14:06 +0100, Lee Jones wrote:
-> > On Wed, 26 Oct 2016, Lee Jones wrote:
-> > 
-> > > On Wed, 12 Oct 2016, Tan Jui Nee wrote:
-> > > 
-> > > > Adding Intel codename Apollo Lake platform device IDs for PCH.
-> > > > 
-> > > > Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
-> > > > ---
-> > > > Changes in V8:
-> > > > 	- No change
-> > > > 
-> > > >  drivers/mfd/lpc_ich_core.c  | 6 ++++++
-> > > >  include/linux/mfd/lpc_ich.h | 1 +
-> > > >  2 files changed, 7 insertions(+)
-> > > 
-> > > For my own reference:
-> > >   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> > 
-> > I should really be clear.
-> > 
-> > Please add my Ack when resubmitting this patch-set.
-> 
-> ...to this very patch only. Right?
+Signed-off-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+---
+ drivers/pinctrl/pinctrl-zynq.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Right.
-
+diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
+index 7afdbede6823..798bcf875052 100644
+--- a/drivers/pinctrl/pinctrl-zynq.c
++++ b/drivers/pinctrl/pinctrl-zynq.c
+@@ -247,6 +247,8 @@ static const unsigned int smc0_nor_addr25_pins[] = {1};
+ static const unsigned int smc0_nand_pins[] = {0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+ 					      12, 13, 14, 16, 17, 18, 19, 20,
+ 					      21, 22, 23};
++static const unsigned int smc0_nand8_pins[] = {0, 2, 3,  4,  5,  6,  7,
++					       8, 9, 10, 11, 12, 13, 14};
+ /* Note: CAN MIO clock inputs are modeled in the clock framework */
+ static const unsigned int can0_0_pins[] = {10, 11};
+ static const unsigned int can0_1_pins[] = {14, 15};
+@@ -445,6 +447,7 @@ static const struct zynq_pctrl_group zynq_pctrl_groups[] = {
+ 	DEFINE_ZYNQ_PINCTRL_GRP(smc0_nor_cs1),
+ 	DEFINE_ZYNQ_PINCTRL_GRP(smc0_nor_addr25),
+ 	DEFINE_ZYNQ_PINCTRL_GRP(smc0_nand),
++	DEFINE_ZYNQ_PINCTRL_GRP(smc0_nand8),
+ 	DEFINE_ZYNQ_PINCTRL_GRP(can0_0),
+ 	DEFINE_ZYNQ_PINCTRL_GRP(can0_1),
+ 	DEFINE_ZYNQ_PINCTRL_GRP(can0_2),
+@@ -709,7 +712,8 @@ static const char * const sdio1_wp_groups[] = {"gpio0_0_grp",
+ static const char * const smc0_nor_groups[] = {"smc0_nor_grp"};
+ static const char * const smc0_nor_cs1_groups[] = {"smc0_nor_cs1_grp"};
+ static const char * const smc0_nor_addr25_groups[] = {"smc0_nor_addr25_grp"};
+-static const char * const smc0_nand_groups[] = {"smc0_nand_grp"};
++static const char * const smc0_nand_groups[] = {"smc0_nand_grp",
++		"smc0_nand8_grp"};
+ static const char * const can0_groups[] = {"can0_0_grp", "can0_1_grp",
+ 		"can0_2_grp", "can0_3_grp", "can0_4_grp", "can0_5_grp",
+ 		"can0_6_grp", "can0_7_grp", "can0_8_grp", "can0_9_grp",
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.1.4
+
