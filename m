@@ -1,46 +1,68 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: mxc: Shift generic request/free after gpiochip registration
-Date: Wed, 26 Oct 2016 13:29:50 +0200
-Message-ID: <CACRpkdZ355k9JytLjeth1T-Ub6dPA=_01HF6xSW_FcOtAkrABQ@mail.gmail.com>
-References: <1477418567-28347-1-git-send-email-deepak_das@mentor.com>
+Subject: Re: [PATCH v10 1/1] USB: serial: cp210x: Adding GPIO support for CP2105
+Date: Wed, 26 Oct 2016 13:50:14 +0200
+Message-ID: <CACRpkdYiWMPXeQs3h=gEic+Zh6bhPvtgTvmDpeMA3o07bvRZaQ@mail.gmail.com>
+References: <33cb529dad5c28a135e9e21460582c3cc4e6d4b5.1476950450.git.martyn.welch@collabora.co.uk>
+ <CACRpkdab5d71TgrTD-4U95R6MvWdFcaqRcGpPS0D8sExKi=b3g@mail.gmail.com> <20161026090944.GI12024@localhost>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f172.google.com ([209.85.220.172]:39280 "EHLO
-        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754623AbcJZLaN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Oct 2016 07:30:13 -0400
-Received: by mail-qk0-f172.google.com with SMTP id i34so3482411qkh.6
-        for <linux-gpio@vger.kernel.org>; Wed, 26 Oct 2016 04:29:51 -0700 (PDT)
-In-Reply-To: <1477418567-28347-1-git-send-email-deepak_das@mentor.com>
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:39233 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754814AbcJZLuQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Oct 2016 07:50:16 -0400
+Received: by mail-qt0-f180.google.com with SMTP id g49so2679160qtc.6
+        for <linux-gpio@vger.kernel.org>; Wed, 26 Oct 2016 04:50:15 -0700 (PDT)
+In-Reply-To: <20161026090944.GI12024@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Deepak Das <deepak_das@mentor.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Martyn Welch <martyn.welch@collabora.co.uk>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Karl Palsson <karlp@tweak.net.au>, Konstantin Shkolnyy <Konstantin.Shkolnyy@silabs.com>, Peter Senna Tschudin <peter.senna@collabora.com>
 
-On Tue, Oct 25, 2016 at 8:02 PM, Deepak Das <deepak_das@mentor.com> wrote:
+On Wed, Oct 26, 2016 at 11:09 AM, Johan Hovold <johan@kernel.org> wrote:
+> On Tue, Oct 25, 2016 at 11:34:40AM +0200, Linus Walleij wrote:
 
-> generic gpio request/free should be added after gpiocip registration
-> to validate mapping of gpiochip with pinctrl subsystem.
+>> I was thinking on either reusing the .names field of the
+>> struct gpiochip to name the lines for the userspace
+>> chardev. With the sideeffect of the names getting reflected
+>> also to sysfs if using that.
 >
-> gpiochip->pin_ranges list contains the information used by pinctrl
-> subsystem to configure corresponding pins for gpio usage.
-> This list will be empty if gpiochip fails to map with
-> pinctrl subsystem for any reason.
-> For Ex.:-
-> generic gpio request/free should not be used if IOMUX pin controller
-> device node is disabled in device tree.
->
-> This commit checks above list and skips adding generic gpio request/free
-> if list is found empty.
->
-> Signed-off-by: Deepak Das <deepak_das@mentor.com>
-> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> ---
-> Changes from v1 to v2:
-> * Rebased on top of lwalleij/gpio/fixes.
+> Simply reusing .names would cause problems since the old sysfs name
+> space is flat, so you would be unable to use more than one pluggable
+> expander (unless also encoding the topology in the name).
 
-Patch applied.
+Hm it seems we should actually #ifdef that field for sysfs then,
+it has no applicability outside the legacy sysfs.
+
+> Providing default names from the driver could perhaps be useful at
+> times. For this particular chip the names would still be GPIO_0, GPIO_1
+> and GPIO_2 (possibly with a suffix depending on which of the two
+> controllers they hang off of) however, which may not be much better than
+> using chip->base + offset. I'd assume this to be the common case.
+
+The chardev names are pertaining to a certain device like
+"gpiochip1" already so the names only need to be unique
+per-instance.
+
+If we made them globally unique we could just use the .names
+in gpiochip anyways, but that seems ugly.
+
+What about suppling
+
+gpiochip_set_names(struct gpio_chip *gc,
+                               char **names);
+
+As the size of the array is implicit from ngpios and the function
+would be kernel-internal anyways.
+
+> Device-tree overlays is what I see a real use for where different
+> overlays can be applied based on topology data to describe what is
+> actually connected to a pin in a specific setup. And that seems like
+> something that could be useful for normal (static) DT systems as well
+> (e.g. describe what's actually connected to those Beaglebone pins).
+
+Yeah these overlays ... discussed that a lot recently.
+It fits the Beaglebone indeed.
 
 Yours,
 Linus Walleij
