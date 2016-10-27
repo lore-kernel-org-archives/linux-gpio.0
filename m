@@ -1,28 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/2] Few pinctrl-single clean-ups
-Date: Thu, 27 Oct 2016 10:16:12 +0200
-Message-ID: <CACRpkdYDfyd_+uLfMD+Zd6SzYbHMCtuF4fsa=CQwftTWXuPGjA@mail.gmail.com>
-References: <20161025160900.2724-1-tony@atomide.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [RFC PATCH 0/5] add support for DMO embedded controller
+Date: Thu, 27 Oct 2016 17:01:51 +0200
+Message-ID: <20161027150151.GA19519@kroah.com>
+References: <cover.42dd8126f6e33b5130d9afa4596d88a106c54188.1477564996.git-series.zahari.doychev@linux.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:36532 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935162AbcJ0PHP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Oct 2016 11:07:15 -0400
-Received: by mail-qt0-f182.google.com with SMTP id 12so26099940qtm.3
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Oct 2016 08:07:15 -0700 (PDT)
-In-Reply-To: <20161025160900.2724-1-tony@atomide.com>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60232 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935350AbcJ0POP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Oct 2016 11:14:15 -0400
+Content-Disposition: inline
+In-Reply-To: <cover.42dd8126f6e33b5130d9afa4596d88a106c54188.1477564996.git-series.zahari.doychev@linux.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
+To: Zahari Doychev <zahari.doychev@linux.com>
+Cc: linux-kernel@vger.kernel.org, lee.jones@linaro.org, wsa@the-dreams.de, linus.walleij@linaro.org, wim@iguana.be, linux@roeck-us.net, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, gnurou@gmail.com, linux-watchdog@vger.kernel.org
 
-On Tue, Oct 25, 2016 at 6:08 PM, Tony Lindgren <tony@atomide.com> wrote:
+On Thu, Oct 27, 2016 at 12:47:11PM +0200, Zahari Doychev wrote:
+> This patch series adds support for the Data Modul Embedded Controller(dmec)
+> which is implemented within an on board FPGA found on Data Modul embedded
+> CPU modules.
+> 
+> The dmec is connected to the host through the LPC bus and its registers are
+> mapped into the host I/O space. The controller supports two addressing modes:
+> linear and indexed.
+> 
+> The driver adds support for the following functionality:
+> 
+> - i2c
+> - gpio
+> - watchdog
+> - running time meter (rtm)
 
-> In preparation for some more generic pinctrl changes, here are two clean-up
-> patches for pinctrl-single.
+Why do you want these in staging?  I need a TODO file listing what needs
+to be done to the code to get it out of staging, and for someone to
+agree to work toward that goal.
 
-Can you respin the first patch so I can merge these two?
+Please resend the series with that information.
 
-Linus
+thanks,
+
+greg k-h
