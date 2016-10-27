@@ -1,75 +1,87 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2 3/4] regulator: pv88080: Update Regulator driver for
- MFD support
-Date: Thu, 27 Oct 2016 12:03:37 +0100
-Message-ID: <20161027110337.GJ25322@sirena.org.uk>
-References: <cover.1477530195.git.eric.jeong@diasemi.com>
- <711afefe3e65c166111473024bf9b54f3d4cc8b6.1477530195.git.eric.jeong@diasemi.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/4] pinctrl: Introduce generic #pinctrl-cells and pinctrl_parse_index_with_args
+Date: Thu, 27 Oct 2016 09:56:26 +0200
+Message-ID: <CACRpkdYWB4aa2XvW-yT39cKqy3XChSwCiFRy1mVWhbhse63=3A@mail.gmail.com>
+References: <20161025164538.453-1-tony@atomide.com> <20161025164538.453-2-tony@atomide.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GvznHscUikHnwW2p"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41764 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966035AbcJ0OLY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Oct 2016 10:11:24 -0400
-Content-Disposition: inline
-In-Reply-To: <711afefe3e65c166111473024bf9b54f3d4cc8b6.1477530195.git.eric.jeong@diasemi.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161025164538.453-2-tony@atomide.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Mark Rutland <mark.rutland@arm.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Eric Jeong <eric.jeong.opensource@diasemi.com>
-Cc: LINUX-KERNEL <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, DEVICETREE <devicetree@vger.kernel.org>, LINUX-GPIO <linux-gpio@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Support Opensource <support.opensource@diasemi.com>
 
+On Tue, Oct 25, 2016 at 6:45 PM, Tony Lindgren <tony@atomide.com> wrote:
 
---GvznHscUikHnwW2p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I need some DT person to take a look at this binding and ACK it.
 
-On Thu, Oct 27, 2016 at 10:03:14AM +0900, Eric Jeong wrote:
+> +For pin controller hardware with a large number of identical registers naming
+> +each bit both can be unmaintainable. Further there can be a large number of similar
+> +pinctrl hardware using the same registers for different purposes depending on the
+> +packaging. For cases like this, the pinctrl driver may use pinctrl-pin-array helper
+> +binding using a hardware based index and a number of configuration values:
 
->  config REGULATOR_PV88080
-> -	tristate "Powerventure Semiconductor PV88080 regulator"
-> -	depends on I2C
-> -	select REGMAP_I2C
-> +	bool "Powerventure Semiconductor PV88080 regulator"
-> +	depends on MFD_PV88080
+Maybe we can reword it a bit so that it is clear that this is an
+either-or approach
+for the pin controller, either they use the pins/groups/functions scheme
+or they use this scheme.
 
-Forcing the driver to be built in looks like a regression, why would we
-want to do that?
+> +pincontroller {
+> +       ... /* Standard DT properties for the device itself elided */
+> +       #pinctrl-cells = <2>;
+> +
+> +       state_0_node_a {
+> +               pinctrl-pin-array = <
+> +                       0 A_DELAY_PS(0) G_DELAY_PS(120)
+> +                       4 A_DELAY_PS(0) G_DELAY_PS(360)
+> +                       ...
+> +               >;
+> +       };
+> +       ...
+> +};
 
-> +	irq = platform_get_irq_byname(pdev, "regulator-irq");
-> +	if (irq < 0) {
-> +		dev_err(&pdev->dev, "Failed to get IRQ.\n");
-> +		return irq;
->  	}
+Looks all right to me. Sad to add to the binding mess, but on the other
+hand, in the overall picture this nicely consolidates and structure
+pinctrl-single.
 
-What's the _byname() adding here given that the name is so generic?  It
-feels like if the name ever becomes important then this particular name
-is going to be a problem.
+> +The index for pinctrl-pin-array must relate to the hardware for the pinctrl
+> +registers, and must not be a virtual index of pin instances. The reason for
+> +this is to avoid mapping of the index in the dts files and the pin controller
+> +driver as it can change.
 
-> -module_i2c_driver(pv88080_regulator_driver);
-> +static int __init pv88080_regulator_init(void)
+OK
+
+> And we want to avoid another case of interrupt
+> +numbering with pinctrl numbering.
+
+Maybe this file is not a good place for making technical arguments,
+more describing what we agreed on, so cut that sentence IMO.
+
+> +/*
+> + * For pinctrl binding, typically #pinctrl-cells is for the pin controller
+> + * device, so either parent or grandparent. See pinctrl-bindings.txt.
+> + */
+> +static int pinctrl_find_cells_size(const struct device_node *np,
+> +                                  const char *cells_name)
 > +{
-> +	return platform_driver_register(&pv88080_regulator_driver);
+> +       int cells_size, error;
+> +
+> +       error = of_property_read_u32(np->parent, cells_name, &cells_size);
+> +       if (error) {
+> +               error = of_property_read_u32(np->parent->parent,
+> +                                            cells_name, &cells_size);
+> +               if (error)
+> +                       return -ENOENT;
+> +       }
+> +
+> +       return cells_size;
 > +}
-> +subsys_initcall(pv88080_regulator_init);
 
-Why are you converting this to subsys_initcall()?  This looks like
-another regression.
+Can't we just hardcode this to "#pinctrl-cells" and skip the cells_name
+parameter? We can parametrize it the day we need it instead.
 
---GvznHscUikHnwW2p
-Content-Type: application/pgp-signature; name="signature.asc"
+The rest of the helpers look nice and clean.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJYEd8IAAoJECTWi3JdVIfQGFwH/0jfun16dBlNGmSdpd984XFb
-utH1FhCk/e3yCTiOBtDP+W3zyKEByEKaDWejsuhmKIpwpBPL8QfOgMqdzpExghey
-CURflgekA44Ml9SzxMwZA5c7WYuM0kfeN7eBP2J61dYJjPgrstXx8bUiZBBRqRIq
-G3At81wj0aQMuXYC64Y1QqQvU+zjdzim37Vanl04Z2kKLl046xubPePmxgoejiy1
-V4z6J3SLAYSq4JnXv58fLfHwmiNwOjESyfib2FfrpmrXds/4x44jGG3oqu7rzS3J
-AYNnuH6KC6rJYuUW0m7XY6leCAWyBJXZy4YJQM+aFUt+qGcCzVF0GL8znxI81Ec=
-=o0id
------END PGP SIGNATURE-----
-
---GvznHscUikHnwW2p--
+Yours,
+Linus Walleij
