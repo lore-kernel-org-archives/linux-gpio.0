@@ -1,50 +1,84 @@
-From: Zahari Doychev <zahari.doychev@linux.com>
-Subject: Re: [RFC PATCH 0/5] add support for DMO embedded controller
-Date: Thu, 27 Oct 2016 17:54:29 +0200
-Message-ID: <20161027155429.GD3701@mail>
-References: <cover.42dd8126f6e33b5130d9afa4596d88a106c54188.1477564996.git-series.zahari.doychev@linux.com>
- <20161027150151.GA19519@kroah.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161027150151.GA19519@kroah.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Zahari Doychev <zahari.doychev@linux.com>, linux-kernel@vger.kernel.org, lee.jones@linaro.org, wsa@the-dreams.de, linus.walleij@linaro.org, wim@iguana.be, linux@roeck-us.net, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, gnurou@gmail.com, linux-watchdog@vger.kernel.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] pinctrl: intel: merrifield: Add pin config group handlers
+Date: Thu, 27 Oct 2016 19:10:15 +0300
+Message-ID: <20161027161015.138390-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga05.intel.com ([192.55.52.43]:17046 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755706AbcJ0QKT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 27 Oct 2016 12:10:19 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Thu, Oct 27, 2016 at 05:01:51PM +0200, Greg KH wrote:
-> On Thu, Oct 27, 2016 at 12:47:11PM +0200, Zahari Doychev wrote:
-> > This patch series adds support for the Data Modul Embedded Controller(dmec)
-> > which is implemented within an on board FPGA found on Data Modul embedded
-> > CPU modules.
-> > 
-> > The dmec is connected to the host through the LPC bus and its registers are
-> > mapped into the host I/O space. The controller supports two addressing modes:
-> > linear and indexed.
-> > 
-> > The driver adds support for the following functionality:
-> > 
-> > - i2c
-> > - gpio
-> > - watchdog
-> > - running time meter (rtm)
-> 
-> Why do you want these in staging?  I need a TODO file listing what needs
-> to be done to the code to get it out of staging, and for someone to
-> agree to work toward that goal.
+Pin config get() and set() handlers for pin groups were previously not
+implemented by this driver. The pin_config_group_set() is particularly useful
+for applying a common config setting to all pins in a specified group with a
+single call, without the caller needing to reference each individual pin by
+name.
 
-Actually there is no reason to have them in staging. I was not sure what was
-the right way to go. I just wanted to get some feedback. The drivers have been
-through a lot of testing so next time I will resend the patches putting
-each driver in its subsystem.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-merrifield.c | 41 ++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-Regards Zahari
+diff --git a/drivers/pinctrl/intel/pinctrl-merrifield.c b/drivers/pinctrl/intel/pinctrl-merrifield.c
+index 7826c7f..b218961 100644
+--- a/drivers/pinctrl/intel/pinctrl-merrifield.c
++++ b/drivers/pinctrl/intel/pinctrl-merrifield.c
+@@ -814,10 +814,51 @@ static int mrfld_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	return 0;
+ }
+ 
++static int mrfld_config_group_get(struct pinctrl_dev *pctldev,
++				  unsigned int group, unsigned long *config)
++{
++	const unsigned int *pins;
++	unsigned int npins;
++	int ret;
++
++	ret = mrfld_get_group_pins(pctldev, group, &pins, &npins);
++	if (ret)
++		return ret;
++
++	ret = mrfld_config_get(pctldev, pins[0], config);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static int mrfld_config_group_set(struct pinctrl_dev *pctldev,
++				  unsigned int group, unsigned long *configs,
++				  unsigned int num_configs)
++{
++	const unsigned int *pins;
++	unsigned int npins;
++	int i, ret;
++
++	ret = mrfld_get_group_pins(pctldev, group, &pins, &npins);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < npins; i++) {
++		ret = mrfld_config_set(pctldev, pins[i], configs, num_configs);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
+ static const struct pinconf_ops mrfld_pinconf_ops = {
+ 	.is_generic = true,
+ 	.pin_config_get = mrfld_config_get,
+ 	.pin_config_set = mrfld_config_set,
++	.pin_config_group_get = mrfld_config_group_get,
++	.pin_config_group_set = mrfld_config_group_set,
+ };
+ 
+ static const struct pinctrl_desc mrfld_pinctrl_desc = {
+-- 
+2.9.3
 
-> 
-> Please resend the series with that information.
-> 
-> thanks,
-> 
-> greg k-h
