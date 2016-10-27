@@ -1,59 +1,103 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: mcp23s08: Add option to configure pullups.
-Date: Thu, 27 Oct 2016 14:22:14 +0200
-Message-ID: <CACRpkda9N7xQE0=dXrgPZUuBzTo39OPUWGPYS6nith-E29NprQ@mail.gmail.com>
-References: <1477062035-30825-1-git-send-email-enric.balletbo@collabora.com>
- <CACRpkdY15Hv_ydHyOXRM6G0ewVTHkVa1w3Z89AdvSDR=eyi7sQ@mail.gmail.com>
- <11644726.TmP4uu3h4l@ws-stein> <CAFqH_53SSctH9Ms-0Zm5fhEgMtkWq_SP9VChY-QYV-qDLLj_WA@mail.gmail.com>
+From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 1/4] pinctrl: Introduce generic #pinctrl-cells and
+ pinctrl_parse_index_with_args
+Date: Thu, 27 Oct 2016 07:11:20 -0700
+Message-ID: <20161027141120.jqvul6q7iz5fjsmb@atomide.com>
+References: <20161025164538.453-1-tony@atomide.com>
+ <20161025164538.453-2-tony@atomide.com>
+ <CACRpkdYWB4aa2XvW-yT39cKqy3XChSwCiFRy1mVWhbhse63=3A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFqH_53SSctH9Ms-0Zm5fhEgMtkWq_SP9VChY-QYV-qDLLj_WA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Enric Balletbo Serra <eballetbo@gmail.com>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>, Enric Balletbo i Serra <enric.balletbo@collabora.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYWB4aa2XvW-yT39cKqy3XChSwCiFRy1mVWhbhse63=3A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 26, 2016 at 11:59 AM, Enric Balletbo Serra
-<eballetbo@gmail.com> wrote:
-> 2016-10-24 8:13 GMT+02:00 Alexander Stein
-> <alexander.stein@systec-electronic.com>:
->> On Monday 24 October 2016 02:53:31, Linus Walleij wrote:
->>> On Fri, Oct 21, 2016 at 5:00 PM, Enric Balletbo i Serra
->>>
->>> <enric.balletbo@collabora.com> wrote:
->>> > Default is without pullups, but if property is specified in DT and the bit
->>> > is set, set a pullup on GPIO-n.
->>> >
->>> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>>
->>> I don't generally like this.
->>>
->
-> I tried to use the same approach as used in gpio-twl4030.c because is
-> what I knew before. Maybe you can point me to a better approach?
+* Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> [161027 00:57]:
+> On Tue, Oct 25, 2016 at 6:45 PM, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org> wrote:
+> 
+> I need some DT person to take a look at this binding and ACK it.
+> 
+> > +For pin controller hardware with a large number of identical registers naming
+> > +each bit both can be unmaintainable. Further there can be a large number of similar
+> > +pinctrl hardware using the same registers for different purposes depending on the
+> > +packaging. For cases like this, the pinctrl driver may use pinctrl-pin-array helper
+> > +binding using a hardware based index and a number of configuration values:
+> 
+> Maybe we can reword it a bit so that it is clear that this is an
+> either-or approach
+> for the pin controller, either they use the pins/groups/functions scheme
+> or they use this scheme.
 
-Move the whole driver to a pin control variant:
-Documentation/pinctrl.txt
+Sure, this is just an optional helper.
 
-We just did this with the sx150x, see
-commit 9e80f9064e73f9f82679884ddf8b03ac3606cf4a
-"pinctrl: Add SX150X GPIO Extender Pinctrl Driver"
-in linux-next.
+> > +pincontroller {
+> > +       ... /* Standard DT properties for the device itself elided */
+> > +       #pinctrl-cells = <2>;
+> > +
+> > +       state_0_node_a {
+> > +               pinctrl-pin-array = <
+> > +                       0 A_DELAY_PS(0) G_DELAY_PS(120)
+> > +                       4 A_DELAY_PS(0) G_DELAY_PS(360)
+> > +                       ...
+> > +               >;
+> > +       };
+> > +       ...
+> > +};
+> 
+> Looks all right to me. Sad to add to the binding mess, but on the other
+> hand, in the overall picture this nicely consolidates and structure
+> pinctrl-single.
+> 
+> > +The index for pinctrl-pin-array must relate to the hardware for the pinctrl
+> > +registers, and must not be a virtual index of pin instances. The reason for
+> > +this is to avoid mapping of the index in the dts files and the pin controller
+> > +driver as it can change.
+> 
+> OK
+> 
+> > And we want to avoid another case of interrupt
+> > +numbering with pinctrl numbering.
+> 
+> Maybe this file is not a good place for making technical arguments,
+> more describing what we agreed on, so cut that sentence IMO.
 
-However that is a heavy operation. And a lot of upfront work.
+Sure :)
 
-If it is really *JUST* this one extra parameter, it's not a super-big
-deal, but I do not like to create a plethora of custom attributes
-to hack around stuff we already have generic solutions for.
+> > +/*
+> > + * For pinctrl binding, typically #pinctrl-cells is for the pin controller
+> > + * device, so either parent or grandparent. See pinctrl-bindings.txt.
+> > + */
+> > +static int pinctrl_find_cells_size(const struct device_node *np,
+> > +                                  const char *cells_name)
+> > +{
+> > +       int cells_size, error;
+> > +
+> > +       error = of_property_read_u32(np->parent, cells_name, &cells_size);
+> > +       if (error) {
+> > +               error = of_property_read_u32(np->parent->parent,
+> > +                                            cells_name, &cells_size);
+> > +               if (error)
+> > +                       return -ENOENT;
+> > +       }
+> > +
+> > +       return cells_size;
+> > +}
+> 
+> Can't we just hardcode this to "#pinctrl-cells" and skip the cells_name
+> parameter? We can parametrize it the day we need it instead.
 
-And if it makes sense for clients to specify the pullup, it should
-definately be done on the consumer side rather than on the
-producer side as these approaches do. For that approach see
-commit 69d301fdd19635a39cb2b78e53fdd625b7a27924
-"gpio: add DT bindings for existing consumer flags"
-commit c663e5f56737757db4d0b317c510ab505f93cecb
-"gpio: support native single-ended hardware drivers"
+Sure we can do that.
 
-Yours,
-Linus Walleij
+> The rest of the helpers look nice and clean.
+
+OK cool thanks,
+
+Tony
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
