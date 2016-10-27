@@ -1,74 +1,42 @@
-From: Roger Quadros <rogerq@ti.com>
-Subject: Re: [PATCH 2/5] drivers: gpio: Add support for multiple IPs
-Date: Thu, 27 Oct 2016 10:53:37 +0300
-Message-ID: <98447580-cbc4-152e-f2cb-7c4756545479@ti.com>
-References: <1476855239-32730-1-git-send-email-j-keerthy@ti.com>
- <1476855239-32730-3-git-send-email-j-keerthy@ti.com>
- <CACRpkdbsgM-yiWpiA5G35jQR8v3FO=Me+4rhe6TzE0qsWOJ8Ew@mail.gmail.com>
- <c5c95d86-2c89-3819-725c-ee0b86c37ec0@ti.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2 2/4] mfd: pv88080: MFD core support
+Date: Thu, 27 Oct 2016 22:11:23 +0200
+Message-ID: <CACRpkdZ1jrvbEdxZTUoBgrabdyaY2eFcmp2cxQbLTR-QK7yN4g@mail.gmail.com>
+References: <cover.1477530195.git.eric.jeong@diasemi.com> <6dcaf788e4ebffd5c753e5fc5ae67668f74f7c32.1477530195.git.eric.jeong@diasemi.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([198.47.19.12]:39884 "EHLO arroyo.ext.ti.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934322AbcJ0RV2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 27 Oct 2016 13:21:28 -0400
-In-Reply-To: <c5c95d86-2c89-3819-725c-ee0b86c37ec0@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <6dcaf788e4ebffd5c753e5fc5ae67668f74f7c32.1477530195.git.eric.jeong-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Eric Jeong <eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: LINUX-KERNEL <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, DEVICETREE <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LINUX-GPIO <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Support Opensource <support.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Lokesh Vutla <lokeshvutla@ti.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>
 
-Keerthy,
+On Thu, Oct 27, 2016 at 3:03 AM, Eric Jeong
+<eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org> wrote:
 
-On 27/10/16 06:42, Keerthy wrote:
-> 
-> 
-> On Sunday 23 October 2016 04:02 PM, Linus Walleij wrote:
->> On Wed, Oct 19, 2016 at 7:33 AM, Keerthy <j-keerthy@ti.com> wrote:
->>
->>> From: Lokesh Vutla <lokeshvutla@ti.com>
->>>
->>> Update GPIO driver to support Multiple GPIO IPs.
->>>
->>> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
->>> Signed-off-by: Keerthy <j-keerthy@ti.com>
->>
->> This commit message is not at all describing what the patch is doing.
->>
->> What it does is bumping the GPIO pin offset in the Linux global
->> GPIO number space with 32 for each new controller.
->>
->>> +       static int bank_base;
->>>
->>>         pdata = davinci_gpio_get_pdata(pdev);
->>>         if (!pdata) {
->>> @@ -226,7 +227,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
->>>                 chips[i].chip.direction_output = davinci_direction_out;
->>>                 chips[i].chip.set = davinci_gpio_set;
->>>
->>> -               chips[i].chip.base = base;
->>> +               chips[i].chip.base = bank_base;
->>> +               bank_base += 32;
->>
->> Why can you not rewrite the driver to pass -1 as base and
->> get a dynamic allocation of GPIO numbers instead? Then
->> you won't have this hairy problem.
-> 
-> Ok i will try that.
-> 
-> In case of k2g. There are 2 big GPIO modules GPIO0 and GPIO1.
-> GPIO0 comprises of 144 GPIOs
-> and GPIO1 has about 68 GPIOs. Wanted feedback from you on how this is being modeled.
-> 
-> I am creating a controller for every 32 GPIOs under the big module each containing a gpio_chip. Each 32 GPIOs chip has 2 banks of 16 GPIOs each.
-> Each 16 GPIO bank has an interrupt.
-> 
-> Is this modeling fine or do you think creating one chip with 144 pins and another with 68 pins is a better way?
+> From: Eric Jeong <eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
+>
+> This patch adds supports for PV88080 MFD core device.
+>
+> It provides communication through the I2C interface.
+> It contains the following components:
+>     - Regulators
+>     - Configurable GPIOs
+>
+> Kconfig and Makefile are updated to reflect support for PV88080 PMIC.
+>
+> Signed-off-by: Eric Jeong <eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
+(...)
+>  drivers/mfd/pv88080-i2c.c   |   99 ++++++++++++++++
 
-If GPIO0 has 144 GPIOs, why don't we model it as a gpiochip with 144 GPIOs?
-What is the benefit of partitioning it into gpiochips of 32 GPIOs each?
+This looks like a pure I2C driver.
 
-cheers,
--roger
+Why is it not in drivers/i2c/busses/i2c-pv88080.c?
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
