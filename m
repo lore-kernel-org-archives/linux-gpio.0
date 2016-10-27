@@ -1,73 +1,65 @@
-From: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 2/5] drivers: gpio: Add support for multiple IPs
-Date: Thu, 27 Oct 2016 09:12:20 +0530
-Message-ID: <c5c95d86-2c89-3819-725c-ee0b86c37ec0@ti.com>
-References: <1476855239-32730-1-git-send-email-j-keerthy@ti.com>
- <1476855239-32730-3-git-send-email-j-keerthy@ti.com>
- <CACRpkdbsgM-yiWpiA5G35jQR8v3FO=Me+4rhe6TzE0qsWOJ8Ew@mail.gmail.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH] Revert "gpio/mvebu: convert to use irq_domain_add_simple()"
+Date: Thu, 27 Oct 2016 09:30:32 +0200
+Message-ID: <87twbyb65j.fsf@free-electrons.com>
+References: <1476831396-24359-1-git-send-email-jgunthorpe@obsidianresearch.com>
+        <871szcerxl.fsf@free-electrons.com>
+        <20161019210341.GA3746@obsidianresearch.com>
+        <CACRpkdatYim3=tKeO-E1GazB7RV9XPdE-EBQs+FW+DrryATzRA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdbsgM-yiWpiA5G35jQR8v3FO=Me+4rhe6TzE0qsWOJ8Ew-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from up.free-electrons.com ([163.172.77.33]:58868 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752696AbcJ0Haf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Oct 2016 03:30:35 -0400
+In-Reply-To: <CACRpkdatYim3=tKeO-E1GazB7RV9XPdE-EBQs+FW+DrryATzRA@mail.gmail.com>
+        (Linus Walleij's message of "Mon, 24 Oct 2016 01:11:23 +0200")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Grant Likely <grant.likely@secretlab.ca>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
+Hi Linus,
+ 
+ On lun., oct. 24 2016, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-
-On Sunday 23 October 2016 04:02 PM, Linus Walleij wrote:
-> On Wed, Oct 19, 2016 at 7:33 AM, Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org> wrote:
+> On Wed, Oct 19, 2016 at 11:03 PM, Jason Gunthorpe
+> <jgunthorpe@obsidianresearch.com> wrote:
 >
->> From: Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>
+>> From 7566f05ac445b652ba7607cc1899fed10fea1c76 Mon Sep 17 00:00:00 2001
+>> From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+>> Date: Wed, 19 Oct 2016 14:57:45 -0600
+>> Subject: [PATCH] gpio/mvebu: Use irq_domain_add_linear
 >>
->> Update GPIO driver to support Multiple GPIO IPs.
+>> This fixes the irq allocation in this driver to not print:
+>>  irq: Cannot allocate irq_descs @ IRQ34, assuming pre-allocated
+>>  irq: Cannot allocate irq_descs @ IRQ66, assuming pre-allocated
 >>
->> Signed-off-by: Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>
->> Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
->
-> This commit message is not at all describing what the patch is doing.
->
-> What it does is bumping the GPIO pin offset in the Linux global
-> GPIO number space with 32 for each new controller.
->
->> +       static int bank_base;
+>> Which happens because the driver already called irq_alloc_descs()
+>> and so the change to use irq_domain_add_simple resulted in calling
+>> irq_alloc_descs() twice.
 >>
->>         pdata = davinci_gpio_get_pdata(pdev);
->>         if (!pdata) {
->> @@ -226,7 +227,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
->>                 chips[i].chip.direction_output = davinci_direction_out;
->>                 chips[i].chip.set = davinci_gpio_set;
+>> Modernize the irq allocation in this driver to use the
+>> irq_domain_add_linear flow directly and eliminate the use of
+>> irq_domain_add_simple/legacy
 >>
->> -               chips[i].chip.base = base;
->> +               chips[i].chip.base = bank_base;
->> +               bank_base += 32;
+>> Fixes: ce931f571b6d ("gpio/mvebu: convert to use irq_domain_add_simple()")
+>> Signed-off-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
 >
-> Why can you not rewrite the driver to pass -1 as base and
-> get a dynamic allocation of GPIO numbers instead? Then
-> you won't have this hairy problem.
+> So can I just apply this?
+> Gregory?
 
-Ok i will try that.
+For me it's OK.
 
-In case of k2g. There are 2 big GPIO modules GPIO0 and GPIO1.
-GPIO0 comprises of 144 GPIOs
-and GPIO1 has about 68 GPIOs. Wanted feedback from you on how this is 
-being modeled.
-
-I am creating a controller for every 32 GPIOs under the big module each 
-containing a gpio_chip. Each 32 GPIOs chip has 2 banks of 16 GPIOs each.
-Each 16 GPIO bank has an interrupt.
-
-Is this modeling fine or do you think creating one chip with 144 pins 
-and another with 68 pins is a better way?
-
+Gregory
 
 >
 > Yours,
 > Linus Walleij
->
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
