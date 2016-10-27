@@ -1,42 +1,40 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V2 2/4] mfd: pv88080: MFD core support
-Date: Thu, 27 Oct 2016 22:11:23 +0200
-Message-ID: <CACRpkdZ1jrvbEdxZTUoBgrabdyaY2eFcmp2cxQbLTR-QK7yN4g@mail.gmail.com>
-References: <cover.1477530195.git.eric.jeong@diasemi.com> <6dcaf788e4ebffd5c753e5fc5ae67668f74f7c32.1477530195.git.eric.jeong@diasemi.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/2] Few pinctrl-single clean-ups
+Date: Thu, 27 Oct 2016 22:15:07 +0200
+Message-ID: <CACRpkdZ36CDU3OWRYKFbhoa5y5pLyESQ-PFiBvKVTg4=156OFw@mail.gmail.com>
+References: <20161025160900.2724-1-tony@atomide.com> <CACRpkdYDfyd_+uLfMD+Zd6SzYbHMCtuF4fsa=CQwftTWXuPGjA@mail.gmail.com>
+ <20161027150045.q3cx6mvdadi7wshi@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <6dcaf788e4ebffd5c753e5fc5ae67668f74f7c32.1477530195.git.eric.jeong-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Eric Jeong <eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: LINUX-KERNEL <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, DEVICETREE <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LINUX-GPIO <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Support Opensource <support.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f178.google.com ([209.85.216.178]:36850 "EHLO
+        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936660AbcJ0UPI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Oct 2016 16:15:08 -0400
+Received: by mail-qt0-f178.google.com with SMTP id 12so32173478qtm.3
+        for <linux-gpio@vger.kernel.org>; Thu, 27 Oct 2016 13:15:08 -0700 (PDT)
+In-Reply-To: <20161027150045.q3cx6mvdadi7wshi@atomide.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 
-On Thu, Oct 27, 2016 at 3:03 AM, Eric Jeong
-<eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org> wrote:
+On Thu, Oct 27, 2016 at 5:00 PM, Tony Lindgren <tony@atomide.com> wrote:
+> * Linus Walleij <linus.walleij@linaro.org> [161027 01:17]:
+>> On Tue, Oct 25, 2016 at 6:08 PM, Tony Lindgren <tony@atomide.com> wrote:
+>>
+>> > In preparation for some more generic pinctrl changes, here are two clean-up
+>> > patches for pinctrl-single.
+>>
+>> Can you respin the first patch so I can merge these two?
+>
+> OK posted as a reply that to it that should apply with
+> git-am --scissors. Let me know if you want me to repost the whole
+> thread.
 
-> From: Eric Jeong <eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
->
-> This patch adds supports for PV88080 MFD core device.
->
-> It provides communication through the I2C interface.
-> It contains the following components:
->     - Regulators
->     - Configurable GPIOs
->
-> Kconfig and Makefile are updated to reflect support for PV88080 PMIC.
->
-> Signed-off-by: Eric Jeong <eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
-(...)
->  drivers/mfd/pv88080-i2c.c   |   99 ++++++++++++++++
+I don't see the replies :O
 
-This looks like a pure I2C driver.
-
-Why is it not in drivers/i2c/busses/i2c-pv88080.c?
+I wonder what happened :/
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
