@@ -1,82 +1,64 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 2/4] pinctrl: single: Use generic parser and
- #pinctrl-cells for pinctrl-single,pins
-Date: Fri, 28 Oct 2016 09:55:47 -0700
-Message-ID: <20161028165547.7pigv2bh6eydtg5m@atomide.com>
-References: <20161025164538.453-1-tony@atomide.com>
- <20161025164538.453-3-tony@atomide.com>
- <20161026141628.x42rbn5o2ekdoluk@atomide.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: pinctrl: mediatek: build failure if CONFIG_IRQ_DOMAIN is not set
+Date: Fri, 28 Oct 2016 19:20:33 +0200
+Message-ID: <1477675233.2167.11.camel@tiscali.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161026141628.x42rbn5o2ekdoluk@atomide.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [161026 07:17]:
-> * Tony Lindgren <tony@atomide.com> [161025 09:51]:
-> > We can now use generic parser. To support the legacy binding without
-> > #pinctrl-cells, add pcs_quirk_missing_pinctrl_cells() and warn about
-> > missing #pinctrl-cells.
-> ...
-> 
-> > +/**
-> > + * pcs_quirk_missing_pinctrl_cells - handle legacy binding
-> > + * @pcs: pinctrl driver instance
-> > + * @np: device tree node
-> > + * @cells: number of cells
-> > + *
-> > + * Handle legacy binding with no #pinctrl-cells. This should be
-> > + * always two pinctrl-single,bit-per-mux and one for others.
-> > + * At some point we may want to consider removing this.
-> > + */
-> > +static int pcs_quirk_missing_pinctrl_cells(struct pcs_device *pcs,
-> > +					   struct device_node *np,
-> > +					   int cells)
-> > +{
-> > +	struct property *p;
-> > +	const char *name = "#pinctrl-cells";
-> > +	int error;
-> > +	u32 val;
-> > +
-> > +	error = of_property_read_u32(np, name, &val);
-> > +	if (!error)
-> > +		return 0;
-> > +
-> > +	dev_warn(pcs->dev, "please update dts to use %s = <%i>\n",
-> > +		 name, cells);
-> > +
-> > +	p = devm_kzalloc(pcs->dev, sizeof(*p), GFP_KERNEL);
-> > +	if (!p)
-> > +		return -ENOMEM;
-> > +
-> > +	p->length = sizeof(__be32);
-> > +	p->value = devm_kzalloc(pcs->dev, sizeof(__be32), GFP_KERNEL);
-> > +	if (!p->value)
-> > +		return -ENOMEM;
-> > +	*(__be32 *)p->value = cpu_to_be32(cells);
-> > +
-> > +	p->name = devm_kstrdup(pcs->dev, name, GFP_KERNEL);
-> > +	if (!p->name)
-> > +		return -ENOMEM;
-> > +
-> > +	pcs->missing_nr_pinctrl_cells = p;
-> > +
-> > +	return of_add_property(np, pcs->missing_nr_pinctrl_cells);
-> > +}
-> 
-> Looking at some make randconfig results, looks like we don't have
-> of_add_property() and of_remove_property() exported. Is there some
-> reason not to export them?
+Hi,
 
-I'll only do of_add_property() and of_remove_property() if we have
-IS_BUILTIN(CONFIG_PINCTRL_SINGLE). I bet I'm the only one using it
-as a loadable module right now :) Then we can remove those if we
-decide to export of_add_property() and of_remove_property().
+0) A rather spartan build, on x86_64, which did include
+drivers/pinctrl/mediatek/pinctrl-mtk-common.o failed like this:
 
-Regards,
+drivers/pinctrl/mediatek/pinctrl-mtk-common.c: In function ‘mtk_gpio_to_irq’:
+drivers/pinctrl/mediatek/pinctrl-mtk-common.c:838:8: error: implicit declaration of function ‘irq_find_mapping’ [-Werror=implicit-function-declaration]
+  irq = irq_find_mapping(pctl->domain, pin->eint.eintnum);
+        ^~~~~~~~~~~~~~~~
+drivers/pinctrl/mediatek/pinctrl-mtk-common.c: In function ‘mtk_pctrl_init’:
+drivers/pinctrl/mediatek/pinctrl-mtk-common.c:1474:17: error: implicit declaration of function ‘irq_domain_add_linear’ [-Werror=implicit-function-declaration]
+  pctl->domain = irq_domain_add_linear(np,
+                 ^~~~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/mediatek/pinctrl-mtk-common.c:1475:27: error: ‘irq_domain_simple_ops’ undeclared (first use in this function)
+   pctl->devdata->ap_num, &irq_domain_simple_ops, NULL);
+                           ^~~~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/mediatek/pinctrl-mtk-common.c:1475:27: note: each undeclared identifier is reported only once for each function it appears in
+drivers/pinctrl/mediatek/pinctrl-mtk-common.c:1484:14: error: implicit declaration of function ‘irq_create_mapping’ [-Werror=implicit-function-declaration]
+   int virq = irq_create_mapping(pctl->domain, i);
+              ^~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[3]: *** [drivers/pinctrl/mediatek/pinctrl-mtk-common.o] Error 1
+make[2]: *** [drivers/pinctrl/mediatek] Error 2
+make[1]: *** [drivers/pinctrl] Error 2
+make: *** [drivers] Error 2
 
-Tony
+1) That build had CONFIG_COMPILE_TEST set (obviously) but
+CONFIG_IRQ_DOMAIN not set.
+
+2) This quick hack fixes that for me:
+
+diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+index 419ea4d5964d..066087156dcc 100644
+--- a/drivers/pinctrl/mediatek/Kconfig
++++ b/drivers/pinctrl/mediatek/Kconfig
+@@ -7,6 +7,7 @@ config PINCTRL_MTK
+        select GENERIC_PINCONF
+        select GPIOLIB
+        select OF_GPIO
++       select IRQ_DOMAIN
+ 
+ # For ARMv7 SoCs
+ config PINCTRL_MT2701
+
+3) Would you like me to submit a proper (but lightly tested) patch or
+do you prefer to fix this yourself?
+
+Thanks,
+
+
+Paul Bolle
