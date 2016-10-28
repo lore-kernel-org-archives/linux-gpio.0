@@ -1,32 +1,151 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: single: Drop pointless macro
-Date: Fri, 28 Oct 2016 13:54:29 +0200
-Message-ID: <CACRpkdbpoVZ7Ln44tGyZEVP_zp9A9KVn=BZpjr8UuXCRhhMWAw@mail.gmail.com>
-References: <20161025160900.2724-1-tony@atomide.com> <20161025160900.2724-3-tony@atomide.com>
+Subject: Re: [PATCH V2 4/4] gpio: pv88080: Add GPIO function support
+Date: Fri, 28 Oct 2016 14:10:47 +0200
+Message-ID: <CACRpkdYW_LnT9zLQp=r8xE1o=_hfwGEhOu_w2bp+hRZNN29WLA@mail.gmail.com>
+References: <cover.1477530195.git.eric.jeong@diasemi.com> <0ef1d730ec55eaaf736fb1606ea73d7af27c1021.1477530195.git.eric.jeong@diasemi.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f171.google.com ([209.85.220.171]:36446 "EHLO
-        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754887AbcJ1Lya (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Oct 2016 07:54:30 -0400
-Received: by mail-qk0-f171.google.com with SMTP id o68so83070810qkf.3
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Oct 2016 04:54:30 -0700 (PDT)
-In-Reply-To: <20161025160900.2724-3-tony@atomide.com>
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:34787 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753468AbcJ1MKs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Oct 2016 08:10:48 -0400
+Received: by mail-qt0-f177.google.com with SMTP id q7so42418231qtq.1
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Oct 2016 05:10:48 -0700 (PDT)
+In-Reply-To: <0ef1d730ec55eaaf736fb1606ea73d7af27c1021.1477530195.git.eric.jeong@diasemi.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
+To: Eric Jeong <eric.jeong.opensource@diasemi.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, LINUX-GPIO <linux-gpio@vger.kernel.org>, LINUX-KERNEL <linux-kernel@vger.kernel.org>, DEVICETREE <devicetree@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Support Opensource <support.opensource@diasemi.com>
 
-On Tue, Oct 25, 2016 at 6:09 PM, Tony Lindgren <tony@atomide.com> wrote:
+On Thu, Oct 27, 2016 at 3:03 AM, Eric Jeong
+<eric.jeong.opensource@diasemi.com> wrote:
 
-> This is left over from initial experiments with more properties.
-> It's only used in one place, so let's just get rid of it to make
-> the code more readable.
+> From: Eric Jeong <eric.jeong.opensource@diasemi.com>
 >
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> This patch adds support for PV88080 PMIC GPIOs.
+> PV88080 has two configurable GPIOs.
+>
+> Kconfig and Makefile are updated to reflect support
+> for PV88080 PMIC GPIO.
+>
+> Signed-off-by: Eric Jeong <eric.jeong.opensource@diasemi.com>
+(...)
 
-Patch applied.
+> +static int pv88080_gpio_direction_input(struct gpio_chip *gc,
+> +                               unsigned int offset)
+> +{
+> +       struct pv88080_gpio *priv = gpiochip_get_data(gc);
+> +       struct pv88080 *chip = priv->chip;
+> +       int ret;
+> +
+> +       /* Set the initial value */
+> +       ret = regmap_update_bits(chip->regmap, priv->gpio_base_reg + offset,
+> +                                       PV88080_GPIO_OUTPUT_MASK, 0);
+> +       if (ret)
+> +               return ret;
+
+So you set the initial value when we change the pin to *input*...
+
+> +
+> +       return regmap_update_bits(chip->regmap, priv->gpio_base_reg + offset,
+> +                               PV88080_GPIO_DIRECTION_MASK, 0);
+> +}
+> +
+> +static int pv88080_gpio_direction_output(struct gpio_chip *gc,
+> +                               unsigned int offset, int value)
+> +{
+> +       struct pv88080_gpio *priv = gpiochip_get_data(gc);
+> +       struct pv88080 *chip = priv->chip;
+> +       int ret;
+> +
+> +       ret = regmap_update_bits(chip->regmap, priv->gpio_base_reg + offset,
+> +                       PV88080_GPIO_DIRECTION_MASK,
+> +                       PV88080_GPIO_DIRECTION_MASK);
+
+But do nothing when we change the pin to *output*?
+
+It seems like you switched the two function implementations or
+something?
+
+> +static int pv88080_gpio_get(struct gpio_chip *gc, unsigned int offset)
+> +{
+> +       struct pv88080_gpio *priv = gpiochip_get_data(gc);
+> +       struct pv88080 *chip = priv->chip;
+> +       unsigned int reg = 0, direction;
+> +       int ret;
+> +
+> +       ret = regmap_read(chip->regmap, priv->gpio_base_reg + offset, &reg);
+> +       if (ret)
+> +               return ret;
+> +
+> +       direction = (reg & PV88080_GPIO_DIRECTION_MASK);
+> +       if (direction == PV88080_PORT_DIRECTION_OUTPUT) {
+> +               if (reg & PV88080_GPIO_OUTPUT_EN)
+> +                       return 1;
+> +               ret = 0;
+> +       } else {
+> +               ret = regmap_read(chip->regmap, priv->input_reg, &reg);
+> +               if (ret < 0)
+> +                       return ret;
+> +               ret = (reg & (PV88080_GPIO_INPUT_MASK << offset)) >> offset;
+
+Isn't this what you want to do?
+
+#include <linux/bitops.h>
+
+ret = !!(reg & BIT(offset));
+
+The mask is 0x01. No point in making things more complicated than they are.
+
+
+> +static void pv88080_gpio_set(struct gpio_chip *gc, unsigned int offset,
+> +                               int value)
+> +{
+> +       struct pv88080_gpio *priv = gpiochip_get_data(gc);
+> +       struct pv88080 *chip = priv->chip;
+> +
+> +       if (value)
+> +               regmap_update_bits(chip->regmap, priv->gpio_base_reg + offset,
+> +                               PV88080_GPIO_OUTPUT_MASK,
+> +                               PV88080_GPIO_OUTPUT_EN);
+> +       else
+> +               regmap_update_bits(chip->regmap, priv->gpio_base_reg + offset,
+> +                               PV88080_GPIO_OUTPUT_MASK,
+> +                               PV88080_GPIO_OUTPUT_DIS);
+> +}
+
+Looks good, output is more complicated.
+
+> +static const struct gpio_chip template_gpio = {
+> +       .label = "pv88080-gpio",
+> +       .owner = THIS_MODULE,
+> +       .get_direction = pv88080_gpio_get_direction,
+> +       .direction_input = pv88080_gpio_direction_input,
+> +       .direction_output = pv88080_gpio_direction_output,
+> +       .get = pv88080_gpio_get,
+> +       .set = pv88080_gpio_set,
+> +       .base = -1,
+> +       .ngpio = DEFAULT_PIN_NUMBER,
+> +};
+
+Why even have a #define for DEFAULT_PIN_NUMBER?
+Just hardcode it here.
+
+> +       priv->chip = chip;
+> +       priv->gpio_chip = template_gpio;
+> +       priv->gpio_chip.parent = chip->dev;
+
+I slightly prefer that you fill in the priv->gpio_chip with code (one
+assignment per line) rather than
+assigning a template like here, but it's your pick.
+
+> +       if (pdata && pdata->gpio_base)
+> +               priv->gpio_chip.base = pdata->gpio_base;
+
+Give me any good reason to support this. Please just drop
+this platform data. Use -1 like in the template and get
+dynamic assignment of GPIO numbers.
 
 Yours,
 Linus Walleij
