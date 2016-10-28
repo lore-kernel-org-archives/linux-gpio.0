@@ -1,54 +1,45 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] pinctrl: max77620: add OF dependency
-Date: Fri, 28 Oct 2016 10:19:05 +0200
-Message-ID: <20161028081923.3238580-1-arnd@arndb.de>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH] pinctrl: generic: Parse pinmux init nodes if node status is okay
+Date: Fri, 28 Oct 2016 16:54:21 +0530
+Message-ID: <1477653861-11921-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:52549 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759198AbcJ1ITm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Oct 2016 04:19:42 -0400
+Received: from nat-hk.nvidia.com ([203.18.50.4]:14252 "EHLO
+        hkmmgate102.nvidia.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752497AbcJ1LkK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Oct 2016 07:40:10 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee.jones@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 
-Drivers using pinconf_generic_params tables cannot be built with
-CONFIG_OF disabled:
+During pinmux registration, pinmux table is parsed from DT
+for making the pinmux table configuration of pins.
 
-drivers/pinctrl/pinctrl-max77620.c:53:44: error: array type has incomplete element type ‘struct pinconf_generic_params’
-drivers/pinctrl/pinctrl-max77620.c:55:3: error: field name not in record or union initializer
-drivers/pinctrl/pinctrl-max77620.c:55:3: note: (near initialization for ‘max77620_cfg_params’)
-drivers/pinctrl/pinctrl-max77620.c:56:3: error: field name not in record or union initializer
+Parse the only those node whose status is not disabled.
+This will help on reusing the pin configuration table across
+platform and disabling the node by status property if that node
+is not needed on given platform.
 
-This adds a dependency for max77620 to disallow that configuration.
-
-Alternatively, we could rework the pinctrl infrastructure to make the
-configuration valid for compile-testing.
-
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Lee Jones <lee.jones@linaro.org>
-Fixes: 453943dc8f45 ("mfd: Enable compile testing for max77620 and max77686")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/pinctrl/Kconfig | 2 +-
+ drivers/pinctrl/pinconf-generic.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 801fa8bb05e1..3eea73937ce8 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -223,7 +223,7 @@ config PINCTRL_COH901
+diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
+index 5020ae5..ce3335a 100644
+--- a/drivers/pinctrl/pinconf-generic.c
++++ b/drivers/pinctrl/pinconf-generic.c
+@@ -381,7 +381,7 @@ int pinconf_generic_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	if (ret < 0)
+ 		goto exit;
  
- config PINCTRL_MAX77620
- 	tristate "MAX77620/MAX20024 Pincontrol support"
--	depends on MFD_MAX77620
-+	depends on MFD_MAX77620 && OF
- 	select PINMUX
- 	select GENERIC_PINCONF
- 	help
+-	for_each_child_of_node(np_config, np) {
++	for_each_available_child_of_node(np_config, np) {
+ 		ret = pinconf_generic_dt_subnode_to_map(pctldev, np, map,
+ 					&reserved_maps, num_maps, type);
+ 		if (ret < 0)
 -- 
-2.9.0
+2.1.4
 
