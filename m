@@ -1,125 +1,54 @@
-From: Wenyou Yang <wenyou.yang@atmel.com>
-Subject: [PATCH] pinctrl: at91: add support for OUTPUT config
-Date: Fri, 28 Oct 2016 15:54:10 +0800
-Message-ID: <1477641251-30468-1-git-send-email-wenyou.yang@atmel.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] pinctrl: max77620: add OF dependency
+Date: Fri, 28 Oct 2016 10:19:05 +0200
+Message-ID: <20161028081923.3238580-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: Wenyou Yang <wenyou.yang@microchip.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Wenyou Yang <wenyou.yang@atmel.com>, linux-gpio@vger.kernel.org, Boris BREZILLON <b.brezillon@overkiz.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.130]:52549 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759198AbcJ1ITm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Oct 2016 04:19:42 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee.jones@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Boris BREZILLON <b.brezillon@overkiz.com>
+Drivers using pinconf_generic_params tables cannot be built with
+CONFIG_OF disabled:
 
-Add support for pin output control through the pinctrl config:
- - support enabling/disabling output on a given pin
- - support output level setting (high or low)
+drivers/pinctrl/pinctrl-max77620.c:53:44: error: array type has incomplete element type ‘struct pinconf_generic_params’
+drivers/pinctrl/pinctrl-max77620.c:55:3: error: field name not in record or union initializer
+drivers/pinctrl/pinctrl-max77620.c:55:3: note: (near initialization for ‘max77620_cfg_params’)
+drivers/pinctrl/pinctrl-max77620.c:56:3: error: field name not in record or union initializer
 
-Signed-off-by: Boris BREZILLON <b.brezillon@overkiz.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+This adds a dependency for max77620 to disallow that configuration.
+
+Alternatively, we could rework the pinctrl infrastructure to make the
+configuration valid for compile-testing.
+
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>
+Fixes: 453943dc8f45 ("mfd: Enable compile testing for max77620 and max77686")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
+ drivers/pinctrl/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- .../bindings/pinctrl/atmel,at91-pinctrl.txt         |  2 ++
- drivers/pinctrl/pinctrl-at91.c                      | 21 +++++++++++++++++++++
- include/dt-bindings/pinctrl/at91.h                  |  2 ++
- 3 files changed, 25 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
-index b7a93e8..9a8a45d 100644
---- a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
-@@ -98,6 +98,8 @@ DRIVE_STRENGTH (3 << 5): indicate the drive strength of the pin using the
- 				01 - Low
- 				10 - Medium
- 				11 - High
-+OUTPUT		(1 << 7): indicate this pin need to be configured as an output.
-+OUTPUT_VAL	(1 << 8): output val (1 = high, 0 = low)
- DEBOUNCE	(1 << 16): indicate this pin needs debounce.
- DEBOUNCE_VAL	(0x3fff << 17): debounce value.
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 801fa8bb05e1..3eea73937ce8 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -223,7 +223,7 @@ config PINCTRL_COH901
  
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index 9f09041..569bc28 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -56,6 +56,9 @@ static int gpio_banks;
- #define DRIVE_STRENGTH_SHIFT	5
- #define DRIVE_STRENGTH_MASK		0x3
- #define DRIVE_STRENGTH   (DRIVE_STRENGTH_MASK << DRIVE_STRENGTH_SHIFT)
-+#define OUTPUT		(1 << 7)
-+#define OUTPUT_VAL_SHIFT	8
-+#define OUTPUT_VAL	(0x1 << OUTPUT_VAL_SHIFT)
- #define DEBOUNCE	(1 << 16)
- #define DEBOUNCE_VAL_SHIFT	17
- #define DEBOUNCE_VAL	(0x3fff << DEBOUNCE_VAL_SHIFT)
-@@ -375,6 +378,19 @@ static void at91_mux_set_pullup(void __iomem *pio, unsigned mask, bool on)
- 	writel_relaxed(mask, pio + (on ? PIO_PUER : PIO_PUDR));
- }
- 
-+static bool at91_mux_get_output(void __iomem *pio, unsigned int pin, bool *val)
-+{
-+	*val = (readl_relaxed(pio + PIO_ODSR) >> pin) & 0x1;
-+	return (readl_relaxed(pio + PIO_OSR) >> pin) & 0x1;
-+}
-+
-+static void at91_mux_set_output(void __iomem *pio, unsigned int mask,
-+				bool is_on, bool val)
-+{
-+	writel_relaxed(mask, pio + (val ? PIO_SODR : PIO_CODR));
-+	writel_relaxed(mask, pio + (is_on ? PIO_OER : PIO_ODR));
-+}
-+
- static unsigned at91_mux_get_multidrive(void __iomem *pio, unsigned pin)
- {
- 	return (readl_relaxed(pio + PIO_MDSR) >> pin) & 0x1;
-@@ -848,6 +864,7 @@ static int at91_pinconf_get(struct pinctrl_dev *pctldev,
- 	void __iomem *pio;
- 	unsigned pin;
- 	int div;
-+	bool out;
- 
- 	*config = 0;
- 	dev_dbg(info->dev, "%s:%d, pin_id=%d", __func__, __LINE__, pin_id);
-@@ -875,6 +892,8 @@ static int at91_pinconf_get(struct pinctrl_dev *pctldev,
- 	if (info->ops->get_drivestrength)
- 		*config |= (info->ops->get_drivestrength(pio, pin)
- 				<< DRIVE_STRENGTH_SHIFT);
-+	if (at91_mux_get_output(pio, pin, &out))
-+		*config |= OUTPUT | (out << OUTPUT_VAL_SHIFT);
- 
- 	return 0;
- }
-@@ -907,6 +926,8 @@ static int at91_pinconf_set(struct pinctrl_dev *pctldev,
- 		if (config & PULL_UP && config & PULL_DOWN)
- 			return -EINVAL;
- 
-+		at91_mux_set_output(pio, mask, config & OUTPUT,
-+				    (config & OUTPUT_VAL) >> OUTPUT_VAL_SHIFT);
- 		at91_mux_set_pullup(pio, mask, config & PULL_UP);
- 		at91_mux_set_multidrive(pio, mask, config & MULTI_DRIVE);
- 		if (info->ops->set_deglitch)
-diff --git a/include/dt-bindings/pinctrl/at91.h b/include/dt-bindings/pinctrl/at91.h
-index bbca3d0..2732d6c 100644
---- a/include/dt-bindings/pinctrl/at91.h
-+++ b/include/dt-bindings/pinctrl/at91.h
-@@ -15,6 +15,8 @@
- #define AT91_PINCTRL_DEGLITCH		(1 << 2)
- #define AT91_PINCTRL_PULL_DOWN		(1 << 3)
- #define AT91_PINCTRL_DIS_SCHMIT		(1 << 4)
-+#define AT91_PINCTRL_OUTPUT		(1 << 7)
-+#define AT91_PINCTRL_OUTPUT_VAL(x)	((x & 0x1) << 8)
- #define AT91_PINCTRL_DEBOUNCE		(1 << 16)
- #define AT91_PINCTRL_DEBOUNCE_VAL(x)	(x << 17)
- 
+ config PINCTRL_MAX77620
+ 	tristate "MAX77620/MAX20024 Pincontrol support"
+-	depends on MFD_MAX77620
++	depends on MFD_MAX77620 && OF
+ 	select PINMUX
+ 	select GENERIC_PINCONF
+ 	help
 -- 
-2.7.4
+2.9.0
+
