@@ -1,64 +1,56 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: pinctrl: mediatek: build failure if CONFIG_IRQ_DOMAIN is not set
-Date: Fri, 28 Oct 2016 19:20:33 +0200
-Message-ID: <1477675233.2167.11.camel@tiscali.nl>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V2] pinctrl: qcom: Add msm8994 pinctrl driver
+Date: Sat, 29 Oct 2016 10:27:00 +0200
+Message-ID: <CACRpkda9fcUjtEuezEa-DdU_Q_OcE-kArRpY7RGp+aTFWWf=rA@mail.gmail.com>
+References: <20161026233228.15219-1-michael.scott@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161026233228.15219-1-michael.scott@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Michael Scott <michael.scott@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Joonwoo Park <joonwoop@codeaurora.org>, Jeremy McNicoll <jeremymc@redhat.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+On Thu, Oct 27, 2016 at 1:32 AM, Michael Scott <michael.scott@linaro.org> w=
+rote:
 
-0) A rather spartan build, on x86_64, which did include
-drivers/pinctrl/mediatek/pinctrl-mtk-common.o failed like this:
+> Initial pinctrl driver for QCOM msm8994 platforms.
+>
+> In order to continue the initial board support for QCOM msm8994/msm8992
+> presented in patches from Jeremy McNicoll <jeremymc@redhat.com>, let's pu=
+t
+> a proper pinctrl driver in place.
+>
+> Currently, the DT for these platforms uses the msm8x74 pinctrl driver to =
+enable
+> basic UART.  Beyond the first few pins the rest are different enough to j=
+ustify
+> it's own driver.
+>
+> Note: This driver is also be used by QCOM's msm8992 platform as it's TLM =
+block
+> is the same.
+>
+> - Initial formatting and style was taken from the msm8x74 pinctrl driver =
+added
+>   by Bj=C3=B6rn Andersson <bjorn.andersson@linaro.org>
+> - Data was then adjusted per QCOM MSM8994 documentation for Top Level Mul=
+tiplexing
+> - Bindings documentation was based on qcom,msm8996-pinctrl.txt by
+>   Joonwoo Park <joonwoop@codeaurora.org> and then modified for msm8994 co=
+ntent
+>
+> Signed-off-by: Michael Scott <michael.scott@linaro.org>
+> ---
+>
+> V1 -> V2: fixed missing FUNCTION(nav_pps) and removed 3 odd newlines betw=
+een blsp_i2c4_groups and cci_timer0_groups
 
-drivers/pinctrl/mediatek/pinctrl-mtk-common.c: In function ‘mtk_gpio_to_irq’:
-drivers/pinctrl/mediatek/pinctrl-mtk-common.c:838:8: error: implicit declaration of function ‘irq_find_mapping’ [-Werror=implicit-function-declaration]
-  irq = irq_find_mapping(pctl->domain, pin->eint.eintnum);
-        ^~~~~~~~~~~~~~~~
-drivers/pinctrl/mediatek/pinctrl-mtk-common.c: In function ‘mtk_pctrl_init’:
-drivers/pinctrl/mediatek/pinctrl-mtk-common.c:1474:17: error: implicit declaration of function ‘irq_domain_add_linear’ [-Werror=implicit-function-declaration]
-  pctl->domain = irq_domain_add_linear(np,
-                 ^~~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/mediatek/pinctrl-mtk-common.c:1475:27: error: ‘irq_domain_simple_ops’ undeclared (first use in this function)
-   pctl->devdata->ap_num, &irq_domain_simple_ops, NULL);
-                           ^~~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/mediatek/pinctrl-mtk-common.c:1475:27: note: each undeclared identifier is reported only once for each function it appears in
-drivers/pinctrl/mediatek/pinctrl-mtk-common.c:1484:14: error: implicit declaration of function ‘irq_create_mapping’ [-Werror=implicit-function-declaration]
-   int virq = irq_create_mapping(pctl->domain, i);
-              ^~~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
-make[3]: *** [drivers/pinctrl/mediatek/pinctrl-mtk-common.o] Error 1
-make[2]: *** [drivers/pinctrl/mediatek] Error 2
-make[1]: *** [drivers/pinctrl] Error 2
-make: *** [drivers] Error 2
+Looks fine to me, just like the other Qcom drivers.
 
-1) That build had CONFIG_COMPILE_TEST set (obviously) but
-CONFIG_IRQ_DOMAIN not set.
+I just want Bj=C3=B6rn Andersson's ACK before merging, Bj=C3=B6rn?
 
-2) This quick hack fixes that for me:
-
-diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index 419ea4d5964d..066087156dcc 100644
---- a/drivers/pinctrl/mediatek/Kconfig
-+++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -7,6 +7,7 @@ config PINCTRL_MTK
-        select GENERIC_PINCONF
-        select GPIOLIB
-        select OF_GPIO
-+       select IRQ_DOMAIN
- 
- # For ARMv7 SoCs
- config PINCTRL_MT2701
-
-3) Would you like me to submit a proper (but lightly tested) patch or
-do you prefer to fix this yourself?
-
-Thanks,
-
-
-Paul Bolle
+Yours,
+Linus Walleij
