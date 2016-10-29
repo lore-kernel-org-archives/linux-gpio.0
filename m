@@ -1,31 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: generic: Parse pinmux init nodes if node status
- is okay
-Date: Sat, 29 Oct 2016 10:32:29 +0200
-Message-ID: <CACRpkdaP2a+YPEAhn-GtSnfCHkJdzRmv7a1DM34LiXqs2iNWAQ@mail.gmail.com>
-References: <1477653861-11921-1-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH v1 1/1] pinctrl: intel: merrifield: Add pin config group handlers
+Date: Sat, 29 Oct 2016 10:34:19 +0200
+Message-ID: <CACRpkdatvanaiSK6GrHT7jaBcDA4g_rBH+JWLpuMO++AYUfc1A@mail.gmail.com>
+References: <20161027161015.138390-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1477653861-11921-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:36128 "EHLO
+        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756860AbcJ2IeU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 29 Oct 2016 04:34:20 -0400
+Received: by mail-qk0-f173.google.com with SMTP id o68so113148619qkf.3
+        for <linux-gpio@vger.kernel.org>; Sat, 29 Oct 2016 01:34:20 -0700 (PDT)
+In-Reply-To: <20161027161015.138390-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Oct 28, 2016 at 1:24 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+On Thu, Oct 27, 2016 at 6:10 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-> During pinmux registration, pinmux table is parsed from DT
-> for making the pinmux table configuration of pins.
+> Pin config get() and set() handlers for pin groups were previously not
+> implemented by this driver. The pin_config_group_set() is particularly useful
+> for applying a common config setting to all pins in a specified group with a
+> single call, without the caller needing to reference each individual pin by
+> name.
 >
-> Parse the only those node whose status is not disabled.
-> This will help on reusing the pin configuration table across
-> platform and disabling the node by status property if that node
-> is not needed on given platform.
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Makes perfect sense. Patch applied.
+Patch applied.
 
 Yours,
 Linus Walleij
