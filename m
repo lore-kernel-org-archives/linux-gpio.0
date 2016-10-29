@@ -1,56 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2] pinctrl: qcom: Add msm8994 pinctrl driver
-Date: Sat, 29 Oct 2016 10:27:00 +0200
-Message-ID: <CACRpkda9fcUjtEuezEa-DdU_Q_OcE-kArRpY7RGp+aTFWWf=rA@mail.gmail.com>
-References: <20161026233228.15219-1-michael.scott@linaro.org>
+Subject: Re: [PATCH] pinctrl: max77620: add OF dependency
+Date: Sat, 29 Oct 2016 10:30:49 +0200
+Message-ID: <CACRpkdYKvbsfKx9=bN1BvCnWC_vTNzkm=5+pR0N7q5MscjiSHw@mail.gmail.com>
+References: <20161028081923.3238580-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161026233228.15219-1-michael.scott@linaro.org>
+In-Reply-To: <20161028081923.3238580-1-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Scott <michael.scott@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Joonwoo Park <joonwoop@codeaurora.org>, Jeremy McNicoll <jeremymc@redhat.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Oct 27, 2016 at 1:32 AM, Michael Scott <michael.scott@linaro.org> w=
-rote:
+On Fri, Oct 28, 2016 at 10:19 AM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-> Initial pinctrl driver for QCOM msm8994 platforms.
+> Drivers using pinconf_generic_params tables cannot be built with
+> CONFIG_OF disabled:
 >
-> In order to continue the initial board support for QCOM msm8994/msm8992
-> presented in patches from Jeremy McNicoll <jeremymc@redhat.com>, let's pu=
-t
-> a proper pinctrl driver in place.
+> drivers/pinctrl/pinctrl-max77620.c:53:44: error: array type has incomplet=
+e element type =E2=80=98struct pinconf_generic_params=E2=80=99
+> drivers/pinctrl/pinctrl-max77620.c:55:3: error: field name not in record =
+or union initializer
+> drivers/pinctrl/pinctrl-max77620.c:55:3: note: (near initialization for =
+=E2=80=98max77620_cfg_params=E2=80=99)
+> drivers/pinctrl/pinctrl-max77620.c:56:3: error: field name not in record =
+or union initializer
 >
-> Currently, the DT for these platforms uses the msm8x74 pinctrl driver to =
-enable
-> basic UART.  Beyond the first few pins the rest are different enough to j=
-ustify
-> it's own driver.
+> This adds a dependency for max77620 to disallow that configuration.
 >
-> Note: This driver is also be used by QCOM's msm8992 platform as it's TLM =
-block
-> is the same.
+> Alternatively, we could rework the pinctrl infrastructure to make the
+> configuration valid for compile-testing.
 >
-> - Initial formatting and style was taken from the msm8x74 pinctrl driver =
-added
->   by Bj=C3=B6rn Andersson <bjorn.andersson@linaro.org>
-> - Data was then adjusted per QCOM MSM8994 documentation for Top Level Mul=
-tiplexing
-> - Bindings documentation was based on qcom,msm8996-pinctrl.txt by
->   Joonwoo Park <joonwoop@codeaurora.org> and then modified for msm8994 co=
-ntent
->
-> Signed-off-by: Michael Scott <michael.scott@linaro.org>
-> ---
->
-> V1 -> V2: fixed missing FUNCTION(nav_pps) and removed 3 odd newlines betw=
-een blsp_i2c4_groups and cci_timer0_groups
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Fixes: 453943dc8f45 ("mfd: Enable compile testing for max77620 and max776=
+86")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Looks fine to me, just like the other Qcom drivers.
-
-I just want Bj=C3=B6rn Andersson's ACK before merging, Bj=C3=B6rn?
+Patch applied.
 
 Yours,
 Linus Walleij
