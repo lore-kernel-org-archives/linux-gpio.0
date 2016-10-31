@@ -1,59 +1,121 @@
-From: Martyn Welch <martyn.welch@collabora.co.uk>
-Subject: Re: [PATCH v10 1/1] USB: serial: cp210x: Adding GPIO support for
- CP2105
-Date: Mon, 31 Oct 2016 10:17:44 +0000
-Message-ID: <20161031101744.GA11986@hermes.home>
-References: <33cb529dad5c28a135e9e21460582c3cc4e6d4b5.1476950450.git.martyn.welch@collabora.co.uk>
- <CACRpkdab5d71TgrTD-4U95R6MvWdFcaqRcGpPS0D8sExKi=b3g@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC PATCH 3/5] gpio-dmec: gpio support for dmec
+Date: Mon, 31 Oct 2016 13:26:19 +0100
+Message-ID: <CACRpkdYZUnBh6KjM-7oDvnFXoZEsEXb-5pNx-cDeoniGjfBWdg@mail.gmail.com>
+References: <cover.42dd8126f6e33b5130d9afa4596d88a106c54188.1477564996.git-series.zahari.doychev@linux.com>
+ <fe8ac70204de48edd8a3da8a783b10810f3d4ca1.1477564996.git-series.zahari.doychev@linux.com>
+ <CACRpkdZ+v0HGUCQsTAdeK0+ymi+wQsz8M51kRxCGN7Nwjwny1w@mail.gmail.com> <20161031085044.GC9050@riot.zaxnet.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48977 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752340AbcJaKRv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Oct 2016 06:17:51 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdab5d71TgrTD-4U95R6MvWdFcaqRcGpPS0D8sExKi=b3g@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161031085044.GC9050-S5msFFqROX52XvNHrDenQA@public.gmane.org>
+Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Zahari Doychev <zahari.doychev-vYTEC60ixJUAvxtiuMwx3w@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Karl Palsson <karlp@tweak.net.au>, Konstantin Shkolnyy <Konstantin.Shkolnyy@silabs.com>, Peter Senna Tschudin <peter.senna@collabora.com>
 
-On Tue, Oct 25, 2016 at 11:34:40AM +0200, Linus Walleij wrote:
-> Good work on this patch, nice that it got merged.
-> 
-> I was just thinking that as an add-on, you may want to name
-> the gpio lines so they have meaningful names in userspace
-> when you use this with the chardev (I have reasons to believe
-> these GPIOs will be used from userspace, tell me if that
-> is wrong).
-> 
+On Mon, Oct 31, 2016 at 9:50 AM, Zahari Doychev
+<zahari.doychev-vYTEC60ixJUAvxtiuMwx3w@public.gmane.org> wrote:
+> On Sat, Oct 29, 2016 at 11:05:29AM +0200, Linus Walleij wrote:
 
-Yeah, they are.
+>> > +static int dmec_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+>> > +{
+>> > +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>> > +       struct dmec_gpio_priv *priv = container_of(gc, struct dmec_gpio_priv,
+>> > +                                                  gpio_chip);
+>> > +       struct regmap *regmap = priv->regmap;
+>> > +       unsigned int offset, mask, val;
+>> > +
+>> > +       offset = DMEC_GPIO_IRQTYPE_OFFSET(priv) + (d->hwirq >> 2);
+>> > +       mask = ((d->hwirq & 3) << 1);
+>> > +
+>> > +       regmap_read(regmap, offset, &val);
+>> > +
+>> > +       val &= ~(3 << mask);
+>> > +       switch (type & IRQ_TYPE_SENSE_MASK) {
+>> > +       case IRQ_TYPE_LEVEL_LOW:
+>> > +               break;
+>> > +       case IRQ_TYPE_EDGE_RISING:
+>> > +               val |= (1 << mask);
+>> > +               break;
+>> > +       case IRQ_TYPE_EDGE_FALLING:
+>> > +               val |= (2 << mask);
+>> > +               break;
+>> > +       case IRQ_TYPE_EDGE_BOTH:
+>> > +               val |= (3 << mask);
+>> > +               break;
+>> > +       default:
+>> > +               return -EINVAL;
+>> > +       }
+>> > +
+>> > +       regmap_write(regmap, offset, val);
+>> > +
+>> > +       return 0;
+>> > +}
+>>
+>> This chip uses handle_simple_irq() which is fine if the chip really has no
+>> edge detector ACK register.
+>>
+>> What some chips have is a special register to clearing (ACK:ing) the edge
+>> IRQ which makes it possible for a new IRQ to be handled as soon as
+>> that has happened, and those need to use handle_edge_irq() for edge IRQs
+>> and handle_level_irq() for level IRQs, with the side effect that the edge
+>> IRQ path will additionally call the .irq_ack() callback on the irqchip
+>> when handle_edge_irq() is used. In this case we set handle_bad_irq()
+>> as default handler and set up the right handler i .set_type().
+>>
+>> Look at drivers/gpio/gpio-pl061.c for an example.
+>>
+>> If you DON'T have a special edge ACK register, keep it like this.
+>
+> What is the difference between this special edge ACK register and the normal
+> interrupt ACK register?
 
-> We currently support naming lines for devicetree and
-> ACPI (in -next).
-> 
+With level interrupts there is seldom use of any ACK register.
+They will by definition just hold the line low until the clients stop
+asserting their IRQs.
 
-I'm not sure this would be a good fit for the current use case I've been
-working on, as I understand there might be an arbitary number of devices
-plugged in. The same chip may also get used in more than one way (in the
-current use case, the Vendor/Product IDs actually get get to determine the
-use case.
+With edge triggered interrupts, you can have a transient event so
+that you need an ACK register to tell the hardware that you have
+seen and acknowledged this IRQ, so it can go ahead and fire a
+second IRQ on the same line while you are still processing the
+first one.
 
-Originally I did name the GPIO as either SCI or ECI, in the case of the
-CP2105, being able to distinguish between the two banks can be helpful
-during debug (but isn't essential and didn't actually seem to help when
-trying to programatically parse though the available banks of GPIO in user
-space to find the ones that were interesting). However this doesn't
-translate so well to the other chips in the CP210x family as the GPIO is
-implemented differently for the majority of those (they don't mux pins from
-the serial ports).
+> I think I do not have such dedicated register
+> but I will have to check this again.
 
-I have seen such chips actually used inside of units, so being able to name
-the GPIO would be quite useful there, though that naming would need to only
-be applied to specific devices and not to other devices plugged in
-externally.
+Read the documentation for the register(s) and see what the
+use case is.
 
-Martyn
+>> > +static int dmec_gpio_probe(struct platform_device *pdev)
+>> > +{
+>> > +       struct device *dev = &pdev->dev;
+>> > +       struct dmec_gpio_platform_data *pdata = dev_get_platdata(&pdev->dev);
+>> > +       struct dmec_gpio_priv *priv;
+>> > +       struct gpio_chip *gpio_chip;
+>> > +       struct irq_chip *irq_chip;
+>> > +       int ret = 0;
+>> > +
+>> > +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>> > +       if (!priv)
+>> > +               return -ENOMEM;
+>> > +
+>> > +       priv->regmap = dmec_get_regmap(pdev->dev.parent);
+>>
+>> Do you really need a special accessor function to get the regmap like this?
+>> If you just use syscon you get these kind of helpers for free. I don't know
+>> if you can use syscon though, just a suggestion.
+>
+> The I/O memory is mapped in the mfd driver. The addresing mode is also set
+> there which should be the same for all child devices. So in this way I have
+> dependcy between the mfd and the rest of the drivers. I am not sure that I
+> can use syscon as the driver is getting its resources from acpi.
 
+OK.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
