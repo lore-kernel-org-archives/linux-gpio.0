@@ -1,36 +1,50 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [RFC PATCH 01/13] pinctrl: meson: Add GXL pinctrl definitions
-Date: Sun, 30 Oct 2016 15:41:26 -0500
-Message-ID: <20161030204126.adj4bo7arpxxqtpf@rob-hp-laptop>
-References: <1477060838-14164-1-git-send-email-narmstrong@baylibre.com>
- <1477060838-14164-2-git-send-email-narmstrong@baylibre.com>
+Subject: Re: [PATCH 4/4] ARM: dts: Add #pinctrl-cells for pinctrl-single
+ instances
+Date: Sun, 30 Oct 2016 22:06:13 -0500
+Message-ID: <20161031030613.avo2qvv7aj5wr62o@rob-hp-laptop>
+References: <20161025164538.453-1-tony@atomide.com>
+ <20161025164538.453-5-tony@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <netdev-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1477060838-14164-2-git-send-email-narmstrong@baylibre.com>
-Sender: netdev-owner@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: khilman@baylibre.com, carlo@caione.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+In-Reply-To: <20161025164538.453-5-tony@atomide.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jon Hunter <jonathanh@nvidia.com>, Mark Rutland <mark.rutland@arm.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Oct 21, 2016 at 04:40:26PM +0200, Neil Armstrong wrote:
-> Add support for the Amlogic Meson GXL SoC, this is a partially complete
-> definition only based on the Amlogic Vendor tree.
+On Tue, Oct 25, 2016 at 09:45:38AM -0700, Tony Lindgren wrote:
+> Drivers using pinctrl-single,pins have #pinctrl-cells = <1>, while
+> pinctrl-single,bits need #pinctrl-cells = <2>.
 > 
-> This definition differs a lot from the GXBB and needs a separate entry.
+> Note that this patch can be optionally applied separately from the
+> driver changes as the driver supports also the legacy binding without
+> #pinctrl-cells.
 > 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
 > ---
->  .../devicetree/bindings/pinctrl/meson,pinctrl.txt  |   2 +
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-single.txt | 3 +++
+>  arch/arm/boot/dts/am33xx.dtsi                                | 2 ++
+>  arch/arm/boot/dts/am3517.dtsi                                | 1 +
+>  arch/arm/boot/dts/am4372.dtsi                                | 1 +
+>  arch/arm/boot/dts/da850.dtsi                                 | 1 +
+>  arch/arm/boot/dts/dm814x.dtsi                                | 1 +
+>  arch/arm/boot/dts/dm816x.dtsi                                | 2 ++
+>  arch/arm/boot/dts/dra7.dtsi                                  | 1 +
+>  arch/arm/boot/dts/hi3620.dtsi                                | 2 ++
+>  arch/arm/boot/dts/keystone-k2g.dtsi                          | 1 +
+>  arch/arm/boot/dts/keystone-k2l.dtsi                          | 1 +
+>  arch/arm/boot/dts/omap2420.dtsi                              | 2 ++
+>  arch/arm/boot/dts/omap2430.dtsi                              | 2 ++
+>  arch/arm/boot/dts/omap3.dtsi                                 | 2 ++
+>  arch/arm/boot/dts/omap34xx.dtsi                              | 1 +
+>  arch/arm/boot/dts/omap36xx.dtsi                              | 1 +
+>  arch/arm/boot/dts/omap4.dtsi                                 | 2 ++
+>  arch/arm/boot/dts/omap5.dtsi                                 | 2 ++
+>  arch/arm/boot/dts/pxa3xx.dtsi                                | 1 +
+>  arch/arm64/boot/dts/hisilicon/hi6220.dtsi                    | 3 +++
+>  20 files changed, 32 insertions(+)
 
 Acked-by: Rob Herring <robh@kernel.org>
-
->  drivers/pinctrl/meson/Makefile                     |   3 +-
->  drivers/pinctrl/meson/pinctrl-meson-gxl.c          | 589 +++++++++++++++++++++
->  drivers/pinctrl/meson/pinctrl-meson.c              |   8 +
->  drivers/pinctrl/meson/pinctrl-meson.h              |   2 +
->  include/dt-bindings/gpio/meson-gxl-gpio.h          | 131 +++++
->  6 files changed, 734 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/pinctrl/meson/pinctrl-meson-gxl.c
->  create mode 100644 include/dt-bindings/gpio/meson-gxl-gpio.h
