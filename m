@@ -1,50 +1,51 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 4/4] ARM: dts: Add #pinctrl-cells for pinctrl-single
- instances
-Date: Sun, 30 Oct 2016 22:06:13 -0500
-Message-ID: <20161031030613.avo2qvv7aj5wr62o@rob-hp-laptop>
-References: <20161025164538.453-1-tony@atomide.com>
- <20161025164538.453-5-tony@atomide.com>
+Subject: Re: [PATCH V2] pinctrl: qcom: Add msm8994 pinctrl driver
+Date: Sun, 30 Oct 2016 23:40:48 -0500
+Message-ID: <20161031044048.avyndpys2aggrjb4@rob-hp-laptop>
+References: <20161026233228.15219-1-michael.scott@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20161025164538.453-5-tony@atomide.com>
+In-Reply-To: <20161026233228.15219-1-michael.scott@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jon Hunter <jonathanh@nvidia.com>, Mark Rutland <mark.rutland@arm.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+To: Michael Scott <michael.scott@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Joonwoo Park <joonwoop@codeaurora.org>, Jeremy McNicoll <jeremymc@redhat.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 25, 2016 at 09:45:38AM -0700, Tony Lindgren wrote:
-> Drivers using pinctrl-single,pins have #pinctrl-cells = <1>, while
-> pinctrl-single,bits need #pinctrl-cells = <2>.
+On Wed, Oct 26, 2016 at 04:32:28PM -0700, Michael Scott wrote:
+> Initial pinctrl driver for QCOM msm8994 platforms.
 > 
-> Note that this patch can be optionally applied separately from the
-> driver changes as the driver supports also the legacy binding without
-> #pinctrl-cells.
+> In order to continue the initial board support for QCOM msm8994/msm8992
+> presented in patches from Jeremy McNicoll <jeremymc@redhat.com>, let's put
+> a proper pinctrl driver in place.
 > 
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Currently, the DT for these platforms uses the msm8x74 pinctrl driver to enable
+> basic UART.  Beyond the first few pins the rest are different enough to justify
+> it's own driver.
+> 
+> Note: This driver is also be used by QCOM's msm8992 platform as it's TLM block
+> is the same.
+> 
+> - Initial formatting and style was taken from the msm8x74 pinctrl driver added
+>   by Björn Andersson <bjorn.andersson@linaro.org>
+> - Data was then adjusted per QCOM MSM8994 documentation for Top Level Multiplexing
+> - Bindings documentation was based on qcom,msm8996-pinctrl.txt by
+>   Joonwoo Park <joonwoop@codeaurora.org> and then modified for msm8994 content
+> 
+> Signed-off-by: Michael Scott <michael.scott@linaro.org>
 > ---
->  Documentation/devicetree/bindings/pinctrl/pinctrl-single.txt | 3 +++
->  arch/arm/boot/dts/am33xx.dtsi                                | 2 ++
->  arch/arm/boot/dts/am3517.dtsi                                | 1 +
->  arch/arm/boot/dts/am4372.dtsi                                | 1 +
->  arch/arm/boot/dts/da850.dtsi                                 | 1 +
->  arch/arm/boot/dts/dm814x.dtsi                                | 1 +
->  arch/arm/boot/dts/dm816x.dtsi                                | 2 ++
->  arch/arm/boot/dts/dra7.dtsi                                  | 1 +
->  arch/arm/boot/dts/hi3620.dtsi                                | 2 ++
->  arch/arm/boot/dts/keystone-k2g.dtsi                          | 1 +
->  arch/arm/boot/dts/keystone-k2l.dtsi                          | 1 +
->  arch/arm/boot/dts/omap2420.dtsi                              | 2 ++
->  arch/arm/boot/dts/omap2430.dtsi                              | 2 ++
->  arch/arm/boot/dts/omap3.dtsi                                 | 2 ++
->  arch/arm/boot/dts/omap34xx.dtsi                              | 1 +
->  arch/arm/boot/dts/omap36xx.dtsi                              | 1 +
->  arch/arm/boot/dts/omap4.dtsi                                 | 2 ++
->  arch/arm/boot/dts/omap5.dtsi                                 | 2 ++
->  arch/arm/boot/dts/pxa3xx.dtsi                                | 1 +
->  arch/arm64/boot/dts/hisilicon/hi6220.dtsi                    | 3 +++
->  20 files changed, 32 insertions(+)
+> 
+> V1 -> V2: fixed missing FUNCTION(nav_pps) and removed 3 odd newlines between blsp_i2c4_groups and cci_timer0_groups
+> 
+>  .../bindings/pinctrl/qcom,msm8994-pinctrl.txt      |  175 +++
 
 Acked-by: Rob Herring <robh@kernel.org>
+
+>  drivers/pinctrl/qcom/Kconfig                       |    9 +
+>  drivers/pinctrl/qcom/Makefile                      |    1 +
+>  drivers/pinctrl/qcom/pinctrl-msm8994.c             | 1400 ++++++++++++++++++++
+>  4 files changed, 1585 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt
+>  create mode 100644 drivers/pinctrl/qcom/pinctrl-msm8994.c
