@@ -1,1686 +1,820 @@
-From: Michael Scott <michael.scott-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH V4] pinctrl: qcom: Add msm8994 pinctrl driver
-Date: Mon, 31 Oct 2016 09:00:09 -0700
-Message-ID: <20161031160009.20472-1-michael.scott@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH] pinctrl: meson: Add GXL pinctrl definitions
+Date: Mon, 31 Oct 2016 17:32:11 +0100
+Message-ID: <1477931531-27120-1-git-send-email-narmstrong@baylibre.com>
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Andy Gross <andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joonwoo Park <joonwoop-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jeremy McNicoll <jeremymc-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Michael Scott <michael.scott-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org
+Cc: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Initial pinctrl driver for QCOM msm8994 platforms.
+Add support for the Amlogic Meson GXL SoC, this is a partially complete
+definition only based on the Amlogic Vendor tree.
 
-In order to continue the initial board support for QCOM msm8994/msm8992
-presented in patches from Jeremy McNicoll <jeremymc-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, let's put
-a proper pinctrl driver in place.
+This definition differs a lot from the GXBB and needs a separate entry.
 
-Currently, the DT for these platforms uses the msm8x74 pinctrl driver to
-enable basic UART.  Beyond the first few pins the rest are different
-enough to justify it's own driver.
-
-Note: This driver is also be used by QCOM's msm8992 platform as it's TLM
-block is the same.
-
-- Initial formatting and style was taken from the msm8x74 pinctrl driver
-  added by Björn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-- Data was then adjusted per QCOM MSM8994 documentation for Top Level
-  Multiplexing
-- Bindings documentation was based on qcom,msm8996-pinctrl.txt by
-  Joonwoo Park <joonwoop-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> and then modified for msm8994
-  content
-
-Signed-off-by: Michael Scott <michael.scott-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Tested-by: Jeremy McNicoll <jeremymc-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Acked-by: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
 ---
-V4:
-added compatible string to Documentation
-fixed checkpatch word wrapping warnings in patch description
+ .../devicetree/bindings/pinctrl/meson,pinctrl.txt  |   2 +
+ drivers/pinctrl/meson/Makefile                     |   3 +-
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c          | 589 +++++++++++++++++++++
+ drivers/pinctrl/meson/pinctrl-meson.c              |   8 +
+ drivers/pinctrl/meson/pinctrl-meson.h              |   2 +
+ include/dt-bindings/gpio/meson-gxl-gpio.h          | 131 +++++
+ 6 files changed, 734 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/pinctrl/meson/pinctrl-meson-gxl.c
+ create mode 100644 include/dt-bindings/gpio/meson-gxl-gpio.h
 
-V3:
-added compatible string for msm8992 for clarity
-added Tested-by and ACKs
+Original RFC patchset at : [1]
 
-V2:
-fixed missing FUNCTION(nav_pps)
-removed 3 odd newlines between blsp_i2c4_groups and cci_timer0_groups
+[1] http://lkml.kernel.org/r/1477060838-14164-1-git-send-email-narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org
 
- .../bindings/pinctrl/qcom,msm8994-pinctrl.txt      |  177 +++
- drivers/pinctrl/qcom/Kconfig                       |    9 +
- drivers/pinctrl/qcom/Makefile                      |    1 +
- drivers/pinctrl/qcom/pinctrl-msm8994.c             | 1401 ++++++++++++++++++++
- 4 files changed, 1588 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt
- create mode 100644 drivers/pinctrl/qcom/pinctrl-msm8994.c
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt
-new file mode 100644
-index 0000000..183d8d8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt
-@@ -0,0 +1,177 @@
-+Qualcomm MSM8994 TLMM block
-+
-+This binding describes the Top Level Mode Multiplexer block found in the
-+MSM8994 platform.
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Should contain one of:
-+		    "qcom,msm8992-pinctrl",
-+		    "qcom,msm8994-pinctrl".
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: the base address and size of the TLMM register space.
-+
-+- interrupts:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: should specify the TLMM summary IRQ.
-+
-+- interrupt-controller:
-+	Usage: required
-+	Value type: <none>
-+	Definition: identifies this node as an interrupt controller
-+
-+- #interrupt-cells:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: must be 2. Specifying the pin number and flags, as defined
-+		    in <dt-bindings/interrupt-controller/irq.h>
-+
-+- gpio-controller:
-+	Usage: required
-+	Value type: <none>
-+	Definition: identifies this node as a gpio controller
-+
-+- #gpio-cells:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: must be 2. Specifying the pin number and flags, as defined
-+		    in <dt-bindings/gpio/gpio.h>
-+
-+Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
-+a general description of GPIO and interrupt bindings.
-+
-+Please refer to pinctrl-bindings.txt in this directory for details of the
-+common pinctrl bindings used by client devices, including the meaning of the
-+phrase "pin configuration node".
-+
-+The pin configuration nodes act as a container for an arbitrary number of
-+subnodes. Each of these subnodes represents some desired configuration for a
-+pin, a group, or a list of pins or groups. This configuration can include the
-+mux function to select on those pin(s)/group(s), and various pin configuration
-+parameters, such as pull-up, drive strength, etc.
-+
-+
-+PIN CONFIGURATION NODES:
-+
-+The name of each subnode is not important; all subnodes should be enumerated
-+and processed purely based on their content.
-+
-+Each subnode only affects those parameters that are explicitly listed. In
-+other words, a subnode that lists a mux function but no pin configuration
-+parameters implies no information about any pin configuration parameters.
-+Similarly, a pin subnode that describes a pullup parameter implies no
-+information about e.g. the mux function.
-+
-+
-+The following generic properties as defined in pinctrl-bindings.txt are valid
-+to specify in a pin configuration subnode:
-+
-+- pins:
-+	Usage: required
-+	Value type: <string-array>
-+	Definition: List of gpio pins affected by the properties specified in
-+		    this subnode.
-+
-+		    Valid pins are:
-+		      gpio0-gpio145
-+		        Supports mux, bias and drive-strength
-+
-+		      sdc1_clk, sdc1_cmd, sdc1_data sdc1_rclk, sdc2_clk,
-+		      sdc2_cmd, sdc2_data
-+		        Supports bias and drive-strength
-+
-+- function:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Specify the alternative function to be configured for the
-+		    specified pins. Functions are only valid for gpio pins.
-+		    Valid values are:
-+
-+		    audio_ref_clk,  blsp_i2c1, blsp_i2c2, blsp_i2c3, blsp_i2c4, blsp_i2c5,
-+		    blsp_i2c6, blsp_i2c7, blsp_i2c8, blsp_i2c9, blsp_i2c10, blsp_i2c11,
-+		    blsp_i2c12, blsp_spi1, blsp_spi1_cs1, blsp_spi1_cs2, blsp_spi1_cs3,
-+		    blsp_spi2, blsp_spi2_cs1, blsp_spi2_cs2, blsp_spi2_cs3, blsp_spi3,
-+		    blsp_spi4, blsp_spi5, blsp_spi6, blsp_spi7, blsp_spi8, blsp_spi9,
-+		    blsp_spi10, blsp_spi10_cs1, blsp_spi10_cs2, blsp_spi10_cs3, blsp_spi11,
-+		    blsp_spi12, blsp_uart1, blsp_uart2, blsp_uart3, blsp_uart4, blsp_uart5,
-+		    blsp_uart6, blsp_uart7, blsp_uart8, blsp_uart9, blsp_uart10, blsp_uart11,
-+		    blsp_uart12, blsp_uim1, blsp_uim2, blsp_uim3, blsp_uim4, blsp_uim5,
-+		    blsp_uim6, blsp_uim7, blsp_uim8, blsp_uim9, blsp_uim10, blsp_uim11,
-+		    blsp_uim12, blsp11_i2c_scl_b, blsp11_i2c_sda_b, blsp11_uart_rx_b,
-+		    blsp11_uart_tx_b, cam_mclk0, cam_mclk1, cam_mclk2, cam_mclk3,
-+		    cci_async_in0, cci_async_in1, cci_async_in2, cci_i2c0, cci_i2c1,
-+		    cci_timer0, cci_timer1, cci_timer2, cci_timer3, cci_timer4, gcc_gp_clk1,
-+		    gcc_gp_clk2, gcc_gp_clk3, gp_mn, gp_pdm0, gp_pdm1, gp_pdm2, gp0_clk,
-+		    gp1_clk, gps_tx, grfc, gsm_tx, hdmi_cec, hdmi_ddc, hdmi_hpd, mdp_vsync,
-+		    mss_lte, nav_pps, nav_tsync, qdss_cti_trig_in_a, qdss_cti_trig_in_b,
-+		    qdss_cti_trig_in_c, qdss_cti_trig_in_d, qdss_cti_trig_out_a,
-+		    qdss_cti_trig_out_b, qdss_cti_trig_out_c, qdss_cti_trig_out_d,
-+		    qdss_traceclk_a, qdss_traceclk_b, qdss_tracectl_a, qdss_tracectl_b,
-+		    qdss_tracedata_a, qdss_tracedata_b, qua_mi2s, pci_e0, pci_e1, pri_mi2s,
-+		    rffe1, rffe2, rffe3, rffe4, rffe5, rffe6, rffe7, sdc4, sec_mi2s, slimbus,
-+		    spkr_mi2s, ter_mi2s, tsif1, tsif2, uim_batt_alarm, uim1, uim2, uim3, uim4,
-+		    gpio
-+
-+- bias-disable:
-+	Usage: optional
-+	Value type: <none>
-+	Definition: The specified pins should be configued as no pull.
-+
-+- bias-pull-down:
-+	Usage: optional
-+	Value type: <none>
-+	Definition: The specified pins should be configued as pull down.
-+
-+- bias-pull-up:
-+	Usage: optional
-+	Value type: <none>
-+	Definition: The specified pins should be configued as pull up.
-+
-+- output-high:
-+	Usage: optional
-+	Value type: <none>
-+	Definition: The specified pins are configured in output mode, driven
-+		    high.
-+		    Not valid for sdc pins.
-+
-+- output-low:
-+	Usage: optional
-+	Value type: <none>
-+	Definition: The specified pins are configured in output mode, driven
-+		    low.
-+		    Not valid for sdc pins.
-+
-+- drive-strength:
-+	Usage: optional
-+	Value type: <u32>
-+	Definition: Selects the drive strength for the specified pins, in mA.
-+		    Valid values are: 2, 4, 6, 8, 10, 12, 14 and 16
-+
-+Example:
-+
-+	msmgpio: pinctrl@fd510000 {
-+		compatible = "qcom,msm8994-pinctrl";
-+		reg = <0xfd510000 0x4000>;
-+		interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		blsp1_uart2_default: blsp1_uart2_default {
-+			pinmux {
-+				pins = "gpio4", "gpio5";
-+				function = "blsp_uart2";
-+			};
-+			pinconf {
-+				pins = "gpio4", "gpio5";
-+				drive-strength = <16>;
-+				bias-disable;
-+			};
-+		};
-+	};
-diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-index 93ef268..3ebdc01 100644
---- a/drivers/pinctrl/qcom/Kconfig
-+++ b/drivers/pinctrl/qcom/Kconfig
-@@ -79,6 +79,15 @@ config PINCTRL_MSM8916
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
- 	  Qualcomm TLMM block found on the Qualcomm 8916 platform.
+diff --git a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
+index fe7fe0b..2392557 100644
+--- a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
+@@ -7,6 +7,8 @@ Required properties for the root node:
+ 		      "amlogic,meson8b-aobus-pinctrl"
+ 		      "amlogic,meson-gxbb-periphs-pinctrl"
+ 		      "amlogic,meson-gxbb-aobus-pinctrl"
++		      "amlogic,meson-gxl-periphs-pinctrl"
++		      "amlogic,meson-gxl-aobus-pinctrl"
+  - reg: address and size of registers controlling irq functionality
  
-+config PINCTRL_MSM8994
-+	tristate "Qualcomm 8994 pin controller driver"
-+	depends on GPIOLIB && OF
-+	select PINCTRL_MSM
-+	help
-+	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-+	  Qualcomm TLMM block found in the Qualcomm 8994 platform. The
-+	  Qualcomm 8992 platform is also supported by this driver.
-+
- config PINCTRL_MSM8996
- 	tristate "Qualcomm MSM8996 pin controller driver"
- 	depends on GPIOLIB && OF
-diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
-index 8319e11..ab47764 100644
---- a/drivers/pinctrl/qcom/Makefile
-+++ b/drivers/pinctrl/qcom/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_PINCTRL_MSM8660)	+= pinctrl-msm8660.o
- obj-$(CONFIG_PINCTRL_MSM8960)	+= pinctrl-msm8960.o
- obj-$(CONFIG_PINCTRL_MSM8X74)	+= pinctrl-msm8x74.o
- obj-$(CONFIG_PINCTRL_MSM8916)	+= pinctrl-msm8916.o
-+obj-$(CONFIG_PINCTRL_MSM8994)   += pinctrl-msm8994.o
- obj-$(CONFIG_PINCTRL_MSM8996)   += pinctrl-msm8996.o
- obj-$(CONFIG_PINCTRL_QDF2XXX)	+= pinctrl-qdf2xxx.o
- obj-$(CONFIG_PINCTRL_MDM9615)	+= pinctrl-mdm9615.o
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm8994.c b/drivers/pinctrl/qcom/pinctrl-msm8994.c
+ === GPIO sub-nodes ===
+diff --git a/drivers/pinctrl/meson/Makefile b/drivers/pinctrl/meson/Makefile
+index 24434f1..27c5b51 100644
+--- a/drivers/pinctrl/meson/Makefile
++++ b/drivers/pinctrl/meson/Makefile
+@@ -1,2 +1,3 @@
+-obj-y	+= pinctrl-meson8.o pinctrl-meson8b.o pinctrl-meson-gxbb.o
++obj-y	+= pinctrl-meson8.o pinctrl-meson8b.o
++obj-y	+= pinctrl-meson-gxbb.o pinctrl-meson-gxl.o
+ obj-y	+= pinctrl-meson.o
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
 new file mode 100644
-index 0000000..74568fc
+index 0000000..25694f7
 --- /dev/null
-+++ b/drivers/pinctrl/qcom/pinctrl-msm8994.c
-@@ -0,0 +1,1401 @@
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+@@ -0,0 +1,589 @@
 +/*
-+ * Copyright (c) 2016, The Linux Foundation. All rights reserved.
++ * Pin controller and GPIO driver for Amlogic Meson GXL.
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
++ * Copyright (C) 2016 Endless Mobile, Inc.
++ * Author: Carlo Caione <carlo-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>
 + *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
 + */
 +
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pinctrl/pinctrl.h>
++#include <dt-bindings/gpio/meson-gxl-gpio.h>
++#include "pinctrl-meson.h"
 +
-+#include "pinctrl-msm.h"
++#define EE_OFF	10
 +
-+#define FUNCTION(fname)					\
-+	[MSM_MUX_##fname] = {				\
-+		.name = #fname,				\
-+		.groups = fname##_groups,		\
-+		.ngroups = ARRAY_SIZE(fname##_groups),	\
-+	}
++static const struct pinctrl_pin_desc meson_gxl_periphs_pins[] = {
++	MESON_PIN(GPIOZ_0, EE_OFF),
++	MESON_PIN(GPIOZ_1, EE_OFF),
++	MESON_PIN(GPIOZ_2, EE_OFF),
++	MESON_PIN(GPIOZ_3, EE_OFF),
++	MESON_PIN(GPIOZ_4, EE_OFF),
++	MESON_PIN(GPIOZ_5, EE_OFF),
++	MESON_PIN(GPIOZ_6, EE_OFF),
++	MESON_PIN(GPIOZ_7, EE_OFF),
++	MESON_PIN(GPIOZ_8, EE_OFF),
++	MESON_PIN(GPIOZ_9, EE_OFF),
++	MESON_PIN(GPIOZ_10, EE_OFF),
++	MESON_PIN(GPIOZ_11, EE_OFF),
++	MESON_PIN(GPIOZ_12, EE_OFF),
++	MESON_PIN(GPIOZ_13, EE_OFF),
++	MESON_PIN(GPIOZ_14, EE_OFF),
++	MESON_PIN(GPIOZ_15, EE_OFF),
 +
-+#define PINGROUP(id, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11)	\
-+	{						\
-+		.name = "gpio" #id,			\
-+		.pins = gpio##id##_pins,		\
-+		.npins = ARRAY_SIZE(gpio##id##_pins),	\
-+		.funcs = (int[]){			\
-+			MSM_MUX_gpio,			\
-+			MSM_MUX_##f1,			\
-+			MSM_MUX_##f2,			\
-+			MSM_MUX_##f3,			\
-+			MSM_MUX_##f4,			\
-+			MSM_MUX_##f5,			\
-+			MSM_MUX_##f6,			\
-+			MSM_MUX_##f7,			\
-+			MSM_MUX_##f8,			\
-+			MSM_MUX_##f9,			\
-+			MSM_MUX_##f10,			\
-+			MSM_MUX_##f11			\
-+		},					\
-+		.nfuncs = 12,				\
-+		.ctl_reg = 0x1000 + 0x10 * id,		\
-+		.io_reg = 0x1004 + 0x10 * id,		\
-+		.intr_cfg_reg = 0x1008 + 0x10 * id,	\
-+		.intr_status_reg = 0x100c + 0x10 * id,	\
-+		.intr_target_reg = 0x1008 + 0x10 * id,	\
-+		.mux_bit = 2,				\
-+		.pull_bit = 0,				\
-+		.drv_bit = 6,				\
-+		.oe_bit = 9,				\
-+		.in_bit = 0,				\
-+		.out_bit = 1,				\
-+		.intr_enable_bit = 0,			\
-+		.intr_status_bit = 0,			\
-+		.intr_target_bit = 5,			\
-+		.intr_target_kpss_val = 4,		\
-+		.intr_raw_status_bit = 4,		\
-+		.intr_polarity_bit = 1,			\
-+		.intr_detection_bit = 2,		\
-+		.intr_detection_width = 2,		\
-+	}
++	MESON_PIN(GPIOH_0, EE_OFF),
++	MESON_PIN(GPIOH_1, EE_OFF),
++	MESON_PIN(GPIOH_2, EE_OFF),
++	MESON_PIN(GPIOH_3, EE_OFF),
++	MESON_PIN(GPIOH_4, EE_OFF),
++	MESON_PIN(GPIOH_5, EE_OFF),
++	MESON_PIN(GPIOH_6, EE_OFF),
++	MESON_PIN(GPIOH_7, EE_OFF),
++	MESON_PIN(GPIOH_8, EE_OFF),
++	MESON_PIN(GPIOH_9, EE_OFF),
 +
-+#define SDC_PINGROUP(pg_name, ctl, pull, drv)		\
-+	{						\
-+		.name = #pg_name,			\
-+		.pins = pg_name##_pins,			\
-+		.npins = ARRAY_SIZE(pg_name##_pins),	\
-+		.ctl_reg = ctl,				\
-+		.io_reg = 0,				\
-+		.intr_cfg_reg = 0,			\
-+		.intr_status_reg = 0,			\
-+		.intr_target_reg = 0,			\
-+		.mux_bit = -1,				\
-+		.pull_bit = pull,			\
-+		.drv_bit = drv,				\
-+		.oe_bit = -1,				\
-+		.in_bit = -1,				\
-+		.out_bit = -1,				\
-+		.intr_enable_bit = -1,			\
-+		.intr_status_bit = -1,			\
-+		.intr_target_bit = -1,			\
-+		.intr_target_kpss_val = -1,		\
-+		.intr_raw_status_bit = -1,		\
-+		.intr_polarity_bit = -1,		\
-+		.intr_detection_bit = -1,		\
-+		.intr_detection_width = -1,		\
-+	}
-+static const struct pinctrl_pin_desc msm8994_pins[] = {
-+	PINCTRL_PIN(0, "GPIO_0"),
-+	PINCTRL_PIN(1, "GPIO_1"),
-+	PINCTRL_PIN(2, "GPIO_2"),
-+	PINCTRL_PIN(3, "GPIO_3"),
-+	PINCTRL_PIN(4, "GPIO_4"),
-+	PINCTRL_PIN(5, "GPIO_5"),
-+	PINCTRL_PIN(6, "GPIO_6"),
-+	PINCTRL_PIN(7, "GPIO_7"),
-+	PINCTRL_PIN(8, "GPIO_8"),
-+	PINCTRL_PIN(9, "GPIO_9"),
-+	PINCTRL_PIN(10, "GPIO_10"),
-+	PINCTRL_PIN(11, "GPIO_11"),
-+	PINCTRL_PIN(12, "GPIO_12"),
-+	PINCTRL_PIN(13, "GPIO_13"),
-+	PINCTRL_PIN(14, "GPIO_14"),
-+	PINCTRL_PIN(15, "GPIO_15"),
-+	PINCTRL_PIN(16, "GPIO_16"),
-+	PINCTRL_PIN(17, "GPIO_17"),
-+	PINCTRL_PIN(18, "GPIO_18"),
-+	PINCTRL_PIN(19, "GPIO_19"),
-+	PINCTRL_PIN(20, "GPIO_20"),
-+	PINCTRL_PIN(21, "GPIO_21"),
-+	PINCTRL_PIN(22, "GPIO_22"),
-+	PINCTRL_PIN(23, "GPIO_23"),
-+	PINCTRL_PIN(24, "GPIO_24"),
-+	PINCTRL_PIN(25, "GPIO_25"),
-+	PINCTRL_PIN(26, "GPIO_26"),
-+	PINCTRL_PIN(27, "GPIO_27"),
-+	PINCTRL_PIN(28, "GPIO_28"),
-+	PINCTRL_PIN(29, "GPIO_29"),
-+	PINCTRL_PIN(30, "GPIO_30"),
-+	PINCTRL_PIN(31, "GPIO_31"),
-+	PINCTRL_PIN(32, "GPIO_32"),
-+	PINCTRL_PIN(33, "GPIO_33"),
-+	PINCTRL_PIN(34, "GPIO_34"),
-+	PINCTRL_PIN(35, "GPIO_35"),
-+	PINCTRL_PIN(36, "GPIO_36"),
-+	PINCTRL_PIN(37, "GPIO_37"),
-+	PINCTRL_PIN(38, "GPIO_38"),
-+	PINCTRL_PIN(39, "GPIO_39"),
-+	PINCTRL_PIN(40, "GPIO_40"),
-+	PINCTRL_PIN(41, "GPIO_41"),
-+	PINCTRL_PIN(42, "GPIO_42"),
-+	PINCTRL_PIN(43, "GPIO_43"),
-+	PINCTRL_PIN(44, "GPIO_44"),
-+	PINCTRL_PIN(45, "GPIO_45"),
-+	PINCTRL_PIN(46, "GPIO_46"),
-+	PINCTRL_PIN(47, "GPIO_47"),
-+	PINCTRL_PIN(48, "GPIO_48"),
-+	PINCTRL_PIN(49, "GPIO_49"),
-+	PINCTRL_PIN(50, "GPIO_50"),
-+	PINCTRL_PIN(51, "GPIO_51"),
-+	PINCTRL_PIN(52, "GPIO_52"),
-+	PINCTRL_PIN(53, "GPIO_53"),
-+	PINCTRL_PIN(54, "GPIO_54"),
-+	PINCTRL_PIN(55, "GPIO_55"),
-+	PINCTRL_PIN(56, "GPIO_56"),
-+	PINCTRL_PIN(57, "GPIO_57"),
-+	PINCTRL_PIN(58, "GPIO_58"),
-+	PINCTRL_PIN(59, "GPIO_59"),
-+	PINCTRL_PIN(60, "GPIO_60"),
-+	PINCTRL_PIN(61, "GPIO_61"),
-+	PINCTRL_PIN(62, "GPIO_62"),
-+	PINCTRL_PIN(63, "GPIO_63"),
-+	PINCTRL_PIN(64, "GPIO_64"),
-+	PINCTRL_PIN(65, "GPIO_65"),
-+	PINCTRL_PIN(66, "GPIO_66"),
-+	PINCTRL_PIN(67, "GPIO_67"),
-+	PINCTRL_PIN(68, "GPIO_68"),
-+	PINCTRL_PIN(69, "GPIO_69"),
-+	PINCTRL_PIN(70, "GPIO_70"),
-+	PINCTRL_PIN(71, "GPIO_71"),
-+	PINCTRL_PIN(72, "GPIO_72"),
-+	PINCTRL_PIN(73, "GPIO_73"),
-+	PINCTRL_PIN(74, "GPIO_74"),
-+	PINCTRL_PIN(75, "GPIO_75"),
-+	PINCTRL_PIN(76, "GPIO_76"),
-+	PINCTRL_PIN(77, "GPIO_77"),
-+	PINCTRL_PIN(78, "GPIO_78"),
-+	PINCTRL_PIN(79, "GPIO_79"),
-+	PINCTRL_PIN(80, "GPIO_80"),
-+	PINCTRL_PIN(81, "GPIO_81"),
-+	PINCTRL_PIN(82, "GPIO_82"),
-+	PINCTRL_PIN(83, "GPIO_83"),
-+	PINCTRL_PIN(84, "GPIO_84"),
-+	PINCTRL_PIN(85, "GPIO_85"),
-+	PINCTRL_PIN(86, "GPIO_86"),
-+	PINCTRL_PIN(87, "GPIO_87"),
-+	PINCTRL_PIN(88, "GPIO_88"),
-+	PINCTRL_PIN(89, "GPIO_89"),
-+	PINCTRL_PIN(90, "GPIO_90"),
-+	PINCTRL_PIN(91, "GPIO_91"),
-+	PINCTRL_PIN(92, "GPIO_92"),
-+	PINCTRL_PIN(93, "GPIO_93"),
-+	PINCTRL_PIN(94, "GPIO_94"),
-+	PINCTRL_PIN(95, "GPIO_95"),
-+	PINCTRL_PIN(96, "GPIO_96"),
-+	PINCTRL_PIN(97, "GPIO_97"),
-+	PINCTRL_PIN(98, "GPIO_98"),
-+	PINCTRL_PIN(99, "GPIO_99"),
-+	PINCTRL_PIN(100, "GPIO_100"),
-+	PINCTRL_PIN(101, "GPIO_101"),
-+	PINCTRL_PIN(102, "GPIO_102"),
-+	PINCTRL_PIN(103, "GPIO_103"),
-+	PINCTRL_PIN(104, "GPIO_104"),
-+	PINCTRL_PIN(105, "GPIO_105"),
-+	PINCTRL_PIN(106, "GPIO_106"),
-+	PINCTRL_PIN(107, "GPIO_107"),
-+	PINCTRL_PIN(108, "GPIO_108"),
-+	PINCTRL_PIN(109, "GPIO_109"),
-+	PINCTRL_PIN(110, "GPIO_110"),
-+	PINCTRL_PIN(111, "GPIO_111"),
-+	PINCTRL_PIN(112, "GPIO_112"),
-+	PINCTRL_PIN(113, "GPIO_113"),
-+	PINCTRL_PIN(114, "GPIO_114"),
-+	PINCTRL_PIN(115, "GPIO_115"),
-+	PINCTRL_PIN(116, "GPIO_116"),
-+	PINCTRL_PIN(117, "GPIO_117"),
-+	PINCTRL_PIN(118, "GPIO_118"),
-+	PINCTRL_PIN(119, "GPIO_119"),
-+	PINCTRL_PIN(120, "GPIO_120"),
-+	PINCTRL_PIN(121, "GPIO_121"),
-+	PINCTRL_PIN(122, "GPIO_122"),
-+	PINCTRL_PIN(123, "GPIO_123"),
-+	PINCTRL_PIN(124, "GPIO_124"),
-+	PINCTRL_PIN(125, "GPIO_125"),
-+	PINCTRL_PIN(126, "GPIO_126"),
-+	PINCTRL_PIN(127, "GPIO_127"),
-+	PINCTRL_PIN(128, "GPIO_128"),
-+	PINCTRL_PIN(129, "GPIO_129"),
-+	PINCTRL_PIN(130, "GPIO_130"),
-+	PINCTRL_PIN(131, "GPIO_131"),
-+	PINCTRL_PIN(132, "GPIO_132"),
-+	PINCTRL_PIN(133, "GPIO_133"),
-+	PINCTRL_PIN(134, "GPIO_134"),
-+	PINCTRL_PIN(135, "GPIO_135"),
-+	PINCTRL_PIN(136, "GPIO_136"),
-+	PINCTRL_PIN(137, "GPIO_137"),
-+	PINCTRL_PIN(138, "GPIO_138"),
-+	PINCTRL_PIN(139, "GPIO_139"),
-+	PINCTRL_PIN(140, "GPIO_140"),
-+	PINCTRL_PIN(141, "GPIO_141"),
-+	PINCTRL_PIN(142, "GPIO_142"),
-+	PINCTRL_PIN(143, "GPIO_143"),
-+	PINCTRL_PIN(144, "GPIO_144"),
-+	PINCTRL_PIN(145, "GPIO_145"),
-+	PINCTRL_PIN(146, "SDC1_RCLK"),
-+	PINCTRL_PIN(147, "SDC1_CLK"),
-+	PINCTRL_PIN(148, "SDC1_CMD"),
-+	PINCTRL_PIN(149, "SDC1_DATA"),
-+	PINCTRL_PIN(150, "SDC2_CLK"),
-+	PINCTRL_PIN(151, "SDC2_CMD"),
-+	PINCTRL_PIN(152, "SDC2_DATA"),
-+	PINCTRL_PIN(153, "SDC3_CLK"),
-+	PINCTRL_PIN(154, "SDC3_CMD"),
-+	PINCTRL_PIN(155, "SDC3_DATA"),
++	MESON_PIN(BOOT_0, EE_OFF),
++	MESON_PIN(BOOT_1, EE_OFF),
++	MESON_PIN(BOOT_2, EE_OFF),
++	MESON_PIN(BOOT_3, EE_OFF),
++	MESON_PIN(BOOT_4, EE_OFF),
++	MESON_PIN(BOOT_5, EE_OFF),
++	MESON_PIN(BOOT_6, EE_OFF),
++	MESON_PIN(BOOT_7, EE_OFF),
++	MESON_PIN(BOOT_8, EE_OFF),
++	MESON_PIN(BOOT_9, EE_OFF),
++	MESON_PIN(BOOT_10, EE_OFF),
++	MESON_PIN(BOOT_11, EE_OFF),
++	MESON_PIN(BOOT_12, EE_OFF),
++	MESON_PIN(BOOT_13, EE_OFF),
++	MESON_PIN(BOOT_14, EE_OFF),
++	MESON_PIN(BOOT_15, EE_OFF),
++
++	MESON_PIN(CARD_0, EE_OFF),
++	MESON_PIN(CARD_1, EE_OFF),
++	MESON_PIN(CARD_2, EE_OFF),
++	MESON_PIN(CARD_3, EE_OFF),
++	MESON_PIN(CARD_4, EE_OFF),
++	MESON_PIN(CARD_5, EE_OFF),
++	MESON_PIN(CARD_6, EE_OFF),
++
++	MESON_PIN(GPIODV_0, EE_OFF),
++	MESON_PIN(GPIODV_1, EE_OFF),
++	MESON_PIN(GPIODV_2, EE_OFF),
++	MESON_PIN(GPIODV_3, EE_OFF),
++	MESON_PIN(GPIODV_4, EE_OFF),
++	MESON_PIN(GPIODV_5, EE_OFF),
++	MESON_PIN(GPIODV_6, EE_OFF),
++	MESON_PIN(GPIODV_7, EE_OFF),
++	MESON_PIN(GPIODV_8, EE_OFF),
++	MESON_PIN(GPIODV_9, EE_OFF),
++	MESON_PIN(GPIODV_10, EE_OFF),
++	MESON_PIN(GPIODV_11, EE_OFF),
++	MESON_PIN(GPIODV_12, EE_OFF),
++	MESON_PIN(GPIODV_13, EE_OFF),
++	MESON_PIN(GPIODV_14, EE_OFF),
++	MESON_PIN(GPIODV_15, EE_OFF),
++	MESON_PIN(GPIODV_16, EE_OFF),
++	MESON_PIN(GPIODV_17, EE_OFF),
++	MESON_PIN(GPIODV_19, EE_OFF),
++	MESON_PIN(GPIODV_20, EE_OFF),
++	MESON_PIN(GPIODV_21, EE_OFF),
++	MESON_PIN(GPIODV_22, EE_OFF),
++	MESON_PIN(GPIODV_23, EE_OFF),
++	MESON_PIN(GPIODV_24, EE_OFF),
++	MESON_PIN(GPIODV_25, EE_OFF),
++	MESON_PIN(GPIODV_26, EE_OFF),
++	MESON_PIN(GPIODV_27, EE_OFF),
++	MESON_PIN(GPIODV_28, EE_OFF),
++	MESON_PIN(GPIODV_29, EE_OFF),
++
++	MESON_PIN(GPIOX_0, EE_OFF),
++	MESON_PIN(GPIOX_1, EE_OFF),
++	MESON_PIN(GPIOX_2, EE_OFF),
++	MESON_PIN(GPIOX_3, EE_OFF),
++	MESON_PIN(GPIOX_4, EE_OFF),
++	MESON_PIN(GPIOX_5, EE_OFF),
++	MESON_PIN(GPIOX_6, EE_OFF),
++	MESON_PIN(GPIOX_7, EE_OFF),
++	MESON_PIN(GPIOX_8, EE_OFF),
++	MESON_PIN(GPIOX_9, EE_OFF),
++	MESON_PIN(GPIOX_10, EE_OFF),
++	MESON_PIN(GPIOX_11, EE_OFF),
++	MESON_PIN(GPIOX_12, EE_OFF),
++	MESON_PIN(GPIOX_13, EE_OFF),
++	MESON_PIN(GPIOX_14, EE_OFF),
++	MESON_PIN(GPIOX_15, EE_OFF),
++	MESON_PIN(GPIOX_16, EE_OFF),
++	MESON_PIN(GPIOX_17, EE_OFF),
++	MESON_PIN(GPIOX_18, EE_OFF),
++
++	MESON_PIN(GPIOCLK_0, EE_OFF),
++	MESON_PIN(GPIOCLK_1, EE_OFF),
++
++	MESON_PIN(GPIO_TEST_N, EE_OFF),
 +};
 +
-+#define DECLARE_MSM_GPIO_PINS(pin) \
-+	static const unsigned int gpio##pin##_pins[] = { pin }
-+DECLARE_MSM_GPIO_PINS(0);
-+DECLARE_MSM_GPIO_PINS(1);
-+DECLARE_MSM_GPIO_PINS(2);
-+DECLARE_MSM_GPIO_PINS(3);
-+DECLARE_MSM_GPIO_PINS(4);
-+DECLARE_MSM_GPIO_PINS(5);
-+DECLARE_MSM_GPIO_PINS(6);
-+DECLARE_MSM_GPIO_PINS(7);
-+DECLARE_MSM_GPIO_PINS(8);
-+DECLARE_MSM_GPIO_PINS(9);
-+DECLARE_MSM_GPIO_PINS(10);
-+DECLARE_MSM_GPIO_PINS(11);
-+DECLARE_MSM_GPIO_PINS(12);
-+DECLARE_MSM_GPIO_PINS(13);
-+DECLARE_MSM_GPIO_PINS(14);
-+DECLARE_MSM_GPIO_PINS(15);
-+DECLARE_MSM_GPIO_PINS(16);
-+DECLARE_MSM_GPIO_PINS(17);
-+DECLARE_MSM_GPIO_PINS(18);
-+DECLARE_MSM_GPIO_PINS(19);
-+DECLARE_MSM_GPIO_PINS(20);
-+DECLARE_MSM_GPIO_PINS(21);
-+DECLARE_MSM_GPIO_PINS(22);
-+DECLARE_MSM_GPIO_PINS(23);
-+DECLARE_MSM_GPIO_PINS(24);
-+DECLARE_MSM_GPIO_PINS(25);
-+DECLARE_MSM_GPIO_PINS(26);
-+DECLARE_MSM_GPIO_PINS(27);
-+DECLARE_MSM_GPIO_PINS(28);
-+DECLARE_MSM_GPIO_PINS(29);
-+DECLARE_MSM_GPIO_PINS(30);
-+DECLARE_MSM_GPIO_PINS(31);
-+DECLARE_MSM_GPIO_PINS(32);
-+DECLARE_MSM_GPIO_PINS(33);
-+DECLARE_MSM_GPIO_PINS(34);
-+DECLARE_MSM_GPIO_PINS(35);
-+DECLARE_MSM_GPIO_PINS(36);
-+DECLARE_MSM_GPIO_PINS(37);
-+DECLARE_MSM_GPIO_PINS(38);
-+DECLARE_MSM_GPIO_PINS(39);
-+DECLARE_MSM_GPIO_PINS(40);
-+DECLARE_MSM_GPIO_PINS(41);
-+DECLARE_MSM_GPIO_PINS(42);
-+DECLARE_MSM_GPIO_PINS(43);
-+DECLARE_MSM_GPIO_PINS(44);
-+DECLARE_MSM_GPIO_PINS(45);
-+DECLARE_MSM_GPIO_PINS(46);
-+DECLARE_MSM_GPIO_PINS(47);
-+DECLARE_MSM_GPIO_PINS(48);
-+DECLARE_MSM_GPIO_PINS(49);
-+DECLARE_MSM_GPIO_PINS(50);
-+DECLARE_MSM_GPIO_PINS(51);
-+DECLARE_MSM_GPIO_PINS(52);
-+DECLARE_MSM_GPIO_PINS(53);
-+DECLARE_MSM_GPIO_PINS(54);
-+DECLARE_MSM_GPIO_PINS(55);
-+DECLARE_MSM_GPIO_PINS(56);
-+DECLARE_MSM_GPIO_PINS(57);
-+DECLARE_MSM_GPIO_PINS(58);
-+DECLARE_MSM_GPIO_PINS(59);
-+DECLARE_MSM_GPIO_PINS(60);
-+DECLARE_MSM_GPIO_PINS(61);
-+DECLARE_MSM_GPIO_PINS(62);
-+DECLARE_MSM_GPIO_PINS(63);
-+DECLARE_MSM_GPIO_PINS(64);
-+DECLARE_MSM_GPIO_PINS(65);
-+DECLARE_MSM_GPIO_PINS(66);
-+DECLARE_MSM_GPIO_PINS(67);
-+DECLARE_MSM_GPIO_PINS(68);
-+DECLARE_MSM_GPIO_PINS(69);
-+DECLARE_MSM_GPIO_PINS(70);
-+DECLARE_MSM_GPIO_PINS(71);
-+DECLARE_MSM_GPIO_PINS(72);
-+DECLARE_MSM_GPIO_PINS(73);
-+DECLARE_MSM_GPIO_PINS(74);
-+DECLARE_MSM_GPIO_PINS(75);
-+DECLARE_MSM_GPIO_PINS(76);
-+DECLARE_MSM_GPIO_PINS(77);
-+DECLARE_MSM_GPIO_PINS(78);
-+DECLARE_MSM_GPIO_PINS(79);
-+DECLARE_MSM_GPIO_PINS(80);
-+DECLARE_MSM_GPIO_PINS(81);
-+DECLARE_MSM_GPIO_PINS(82);
-+DECLARE_MSM_GPIO_PINS(83);
-+DECLARE_MSM_GPIO_PINS(84);
-+DECLARE_MSM_GPIO_PINS(85);
-+DECLARE_MSM_GPIO_PINS(86);
-+DECLARE_MSM_GPIO_PINS(87);
-+DECLARE_MSM_GPIO_PINS(88);
-+DECLARE_MSM_GPIO_PINS(89);
-+DECLARE_MSM_GPIO_PINS(90);
-+DECLARE_MSM_GPIO_PINS(91);
-+DECLARE_MSM_GPIO_PINS(92);
-+DECLARE_MSM_GPIO_PINS(93);
-+DECLARE_MSM_GPIO_PINS(94);
-+DECLARE_MSM_GPIO_PINS(95);
-+DECLARE_MSM_GPIO_PINS(96);
-+DECLARE_MSM_GPIO_PINS(97);
-+DECLARE_MSM_GPIO_PINS(98);
-+DECLARE_MSM_GPIO_PINS(99);
-+DECLARE_MSM_GPIO_PINS(100);
-+DECLARE_MSM_GPIO_PINS(101);
-+DECLARE_MSM_GPIO_PINS(102);
-+DECLARE_MSM_GPIO_PINS(103);
-+DECLARE_MSM_GPIO_PINS(104);
-+DECLARE_MSM_GPIO_PINS(105);
-+DECLARE_MSM_GPIO_PINS(106);
-+DECLARE_MSM_GPIO_PINS(107);
-+DECLARE_MSM_GPIO_PINS(108);
-+DECLARE_MSM_GPIO_PINS(109);
-+DECLARE_MSM_GPIO_PINS(110);
-+DECLARE_MSM_GPIO_PINS(111);
-+DECLARE_MSM_GPIO_PINS(112);
-+DECLARE_MSM_GPIO_PINS(113);
-+DECLARE_MSM_GPIO_PINS(114);
-+DECLARE_MSM_GPIO_PINS(115);
-+DECLARE_MSM_GPIO_PINS(116);
-+DECLARE_MSM_GPIO_PINS(117);
-+DECLARE_MSM_GPIO_PINS(118);
-+DECLARE_MSM_GPIO_PINS(119);
-+DECLARE_MSM_GPIO_PINS(120);
-+DECLARE_MSM_GPIO_PINS(121);
-+DECLARE_MSM_GPIO_PINS(122);
-+DECLARE_MSM_GPIO_PINS(123);
-+DECLARE_MSM_GPIO_PINS(124);
-+DECLARE_MSM_GPIO_PINS(125);
-+DECLARE_MSM_GPIO_PINS(126);
-+DECLARE_MSM_GPIO_PINS(127);
-+DECLARE_MSM_GPIO_PINS(128);
-+DECLARE_MSM_GPIO_PINS(129);
-+DECLARE_MSM_GPIO_PINS(130);
-+DECLARE_MSM_GPIO_PINS(131);
-+DECLARE_MSM_GPIO_PINS(132);
-+DECLARE_MSM_GPIO_PINS(133);
-+DECLARE_MSM_GPIO_PINS(134);
-+DECLARE_MSM_GPIO_PINS(135);
-+DECLARE_MSM_GPIO_PINS(136);
-+DECLARE_MSM_GPIO_PINS(137);
-+DECLARE_MSM_GPIO_PINS(138);
-+DECLARE_MSM_GPIO_PINS(139);
-+DECLARE_MSM_GPIO_PINS(140);
-+DECLARE_MSM_GPIO_PINS(141);
-+DECLARE_MSM_GPIO_PINS(142);
-+DECLARE_MSM_GPIO_PINS(143);
-+DECLARE_MSM_GPIO_PINS(144);
-+DECLARE_MSM_GPIO_PINS(145);
++static const unsigned int emmc_nand_d07_pins[] = {
++	PIN(BOOT_0, EE_OFF), PIN(BOOT_1, EE_OFF), PIN(BOOT_2, EE_OFF),
++	PIN(BOOT_3, EE_OFF), PIN(BOOT_4, EE_OFF), PIN(BOOT_5, EE_OFF),
++	PIN(BOOT_6, EE_OFF), PIN(BOOT_7, EE_OFF),
++};
++static const unsigned int emmc_clk_pins[] = { PIN(BOOT_8, EE_OFF) };
++static const unsigned int emmc_cmd_pins[] = { PIN(BOOT_10, EE_OFF) };
++static const unsigned int emmc_ds_pins[] = { PIN(BOOT_15, EE_OFF) };
 +
-+static const unsigned int sdc1_rclk_pins[] = { 146 };
-+static const unsigned int sdc1_clk_pins[] = { 147 };
-+static const unsigned int sdc1_cmd_pins[] = { 148 };
-+static const unsigned int sdc1_data_pins[] = { 149 };
-+static const unsigned int sdc2_clk_pins[] = { 150 };
-+static const unsigned int sdc2_cmd_pins[] = { 151 };
-+static const unsigned int sdc2_data_pins[] = { 152 };
-+static const unsigned int sdc3_clk_pins[] = { 153 };
-+static const unsigned int sdc3_cmd_pins[] = { 154 };
-+static const unsigned int sdc3_data_pins[] = { 155 };
++static const unsigned int sdcard_d0_pins[] = { PIN(CARD_1, EE_OFF) };
++static const unsigned int sdcard_d1_pins[] = { PIN(CARD_0, EE_OFF) };
++static const unsigned int sdcard_d2_pins[] = { PIN(CARD_5, EE_OFF) };
++static const unsigned int sdcard_d3_pins[] = { PIN(CARD_4, EE_OFF) };
++static const unsigned int sdcard_cmd_pins[] = { PIN(CARD_3, EE_OFF) };
++static const unsigned int sdcard_clk_pins[] = { PIN(CARD_2, EE_OFF) };
 +
-+enum msm8994_functions {
-+	MSM_MUX_audio_ref_clk,
-+	MSM_MUX_blsp_i2c1,
-+	MSM_MUX_blsp_i2c2,
-+	MSM_MUX_blsp_i2c3,
-+	MSM_MUX_blsp_i2c4,
-+	MSM_MUX_blsp_i2c5,
-+	MSM_MUX_blsp_i2c6,
-+	MSM_MUX_blsp_i2c7,
-+	MSM_MUX_blsp_i2c8,
-+	MSM_MUX_blsp_i2c9,
-+	MSM_MUX_blsp_i2c10,
-+	MSM_MUX_blsp_i2c11,
-+	MSM_MUX_blsp_i2c12,
-+	MSM_MUX_blsp_spi1,
-+	MSM_MUX_blsp_spi1_cs1,
-+	MSM_MUX_blsp_spi1_cs2,
-+	MSM_MUX_blsp_spi1_cs3,
-+	MSM_MUX_blsp_spi2,
-+	MSM_MUX_blsp_spi2_cs1,
-+	MSM_MUX_blsp_spi2_cs2,
-+	MSM_MUX_blsp_spi2_cs3,
-+	MSM_MUX_blsp_spi3,
-+	MSM_MUX_blsp_spi4,
-+	MSM_MUX_blsp_spi5,
-+	MSM_MUX_blsp_spi6,
-+	MSM_MUX_blsp_spi7,
-+	MSM_MUX_blsp_spi8,
-+	MSM_MUX_blsp_spi9,
-+	MSM_MUX_blsp_spi10,
-+	MSM_MUX_blsp_spi10_cs1,
-+	MSM_MUX_blsp_spi10_cs2,
-+	MSM_MUX_blsp_spi10_cs3,
-+	MSM_MUX_blsp_spi11,
-+	MSM_MUX_blsp_spi12,
-+	MSM_MUX_blsp_uart1,
-+	MSM_MUX_blsp_uart2,
-+	MSM_MUX_blsp_uart3,
-+	MSM_MUX_blsp_uart4,
-+	MSM_MUX_blsp_uart5,
-+	MSM_MUX_blsp_uart6,
-+	MSM_MUX_blsp_uart7,
-+	MSM_MUX_blsp_uart8,
-+	MSM_MUX_blsp_uart9,
-+	MSM_MUX_blsp_uart10,
-+	MSM_MUX_blsp_uart11,
-+	MSM_MUX_blsp_uart12,
-+	MSM_MUX_blsp_uim1,
-+	MSM_MUX_blsp_uim2,
-+	MSM_MUX_blsp_uim3,
-+	MSM_MUX_blsp_uim4,
-+	MSM_MUX_blsp_uim5,
-+	MSM_MUX_blsp_uim6,
-+	MSM_MUX_blsp_uim7,
-+	MSM_MUX_blsp_uim8,
-+	MSM_MUX_blsp_uim9,
-+	MSM_MUX_blsp_uim10,
-+	MSM_MUX_blsp_uim11,
-+	MSM_MUX_blsp_uim12,
-+	MSM_MUX_blsp11_i2c_scl_b,
-+	MSM_MUX_blsp11_i2c_sda_b,
-+	MSM_MUX_blsp11_uart_rx_b,
-+	MSM_MUX_blsp11_uart_tx_b,
-+	MSM_MUX_cam_mclk0,
-+	MSM_MUX_cam_mclk1,
-+	MSM_MUX_cam_mclk2,
-+	MSM_MUX_cam_mclk3,
-+	MSM_MUX_cci_async_in0,
-+	MSM_MUX_cci_async_in1,
-+	MSM_MUX_cci_async_in2,
-+	MSM_MUX_cci_i2c0,
-+	MSM_MUX_cci_i2c1,
-+	MSM_MUX_cci_timer0,
-+	MSM_MUX_cci_timer1,
-+	MSM_MUX_cci_timer2,
-+	MSM_MUX_cci_timer3,
-+	MSM_MUX_cci_timer4,
-+	MSM_MUX_gcc_gp_clk1,
-+	MSM_MUX_gcc_gp_clk2,
-+	MSM_MUX_gcc_gp_clk3,
-+	MSM_MUX_gp_mn,
-+	MSM_MUX_gp_pdm0,
-+	MSM_MUX_gp_pdm1,
-+	MSM_MUX_gp_pdm2,
-+	MSM_MUX_gp0_clk,
-+	MSM_MUX_gp1_clk,
-+	MSM_MUX_gps_tx,
-+	MSM_MUX_grfc,
-+	MSM_MUX_gsm_tx,
-+	MSM_MUX_hdmi_cec,
-+	MSM_MUX_hdmi_ddc,
-+	MSM_MUX_hdmi_hpd,
-+	MSM_MUX_mdp_vsync,
-+	MSM_MUX_mss_lte,
-+	MSM_MUX_nav_pps,
-+	MSM_MUX_nav_tsync,
-+	MSM_MUX_qdss_cti_trig_in_a,
-+	MSM_MUX_qdss_cti_trig_in_b,
-+	MSM_MUX_qdss_cti_trig_in_c,
-+	MSM_MUX_qdss_cti_trig_in_d,
-+	MSM_MUX_qdss_cti_trig_out_a,
-+	MSM_MUX_qdss_cti_trig_out_b,
-+	MSM_MUX_qdss_cti_trig_out_c,
-+	MSM_MUX_qdss_cti_trig_out_d,
-+	MSM_MUX_qdss_traceclk_a,
-+	MSM_MUX_qdss_traceclk_b,
-+	MSM_MUX_qdss_tracectl_a,
-+	MSM_MUX_qdss_tracectl_b,
-+	MSM_MUX_qdss_tracedata_a,
-+	MSM_MUX_qdss_tracedata_b,
-+	MSM_MUX_qua_mi2s,
-+	MSM_MUX_pci_e0,
-+	MSM_MUX_pci_e1,
-+	MSM_MUX_pri_mi2s,
-+	MSM_MUX_rffe1,
-+	MSM_MUX_rffe2,
-+	MSM_MUX_rffe3,
-+	MSM_MUX_rffe4,
-+	MSM_MUX_rffe5,
-+	MSM_MUX_rffe6,
-+	MSM_MUX_rffe7,
-+	MSM_MUX_sdc4,
-+	MSM_MUX_sec_mi2s,
-+	MSM_MUX_slimbus,
-+	MSM_MUX_spkr_mi2s,
-+	MSM_MUX_ter_mi2s,
-+	MSM_MUX_tsif1,
-+	MSM_MUX_tsif2,
-+	MSM_MUX_uim1,
-+	MSM_MUX_uim2,
-+	MSM_MUX_uim3,
-+	MSM_MUX_uim4,
-+	MSM_MUX_uim_batt_alarm,
-+	MSM_MUX_gpio,
-+	MSM_MUX_NA,
++static const unsigned int sdio_d0_pins[] = { PIN(GPIOX_0, EE_OFF) };
++static const unsigned int sdio_d1_pins[] = { PIN(GPIOX_1, EE_OFF) };
++static const unsigned int sdio_d2_pins[] = { PIN(GPIOX_2, EE_OFF) };
++static const unsigned int sdio_d3_pins[] = { PIN(GPIOX_3, EE_OFF) };
++static const unsigned int sdio_cmd_pins[] = { PIN(GPIOX_4, EE_OFF) };
++static const unsigned int sdio_clk_pins[] = { PIN(GPIOX_5, EE_OFF) };
++static const unsigned int sdio_irq_pins[] = { PIN(GPIOX_7, EE_OFF) };
++
++static const unsigned int nand_ce0_pins[]	= { PIN(BOOT_8, EE_OFF) };
++static const unsigned int nand_ce1_pins[]	= { PIN(BOOT_9, EE_OFF) };
++static const unsigned int nand_rb0_pins[]	= { PIN(BOOT_10, EE_OFF) };
++static const unsigned int nand_ale_pins[]	= { PIN(BOOT_11, EE_OFF) };
++static const unsigned int nand_cle_pins[]	= { PIN(BOOT_12, EE_OFF) };
++static const unsigned int nand_wen_clk_pins[]	= { PIN(BOOT_13, EE_OFF) };
++static const unsigned int nand_ren_wr_pins[]	= { PIN(BOOT_14, EE_OFF) };
++static const unsigned int nand_dqs_pins[]	= { PIN(BOOT_15, EE_OFF) };
++
++static const unsigned int uart_tx_a_pins[]	= { PIN(GPIOX_12, EE_OFF) };
++static const unsigned int uart_rx_a_pins[]	= { PIN(GPIOX_13, EE_OFF) };
++static const unsigned int uart_cts_a_pins[]	= { PIN(GPIOX_14, EE_OFF) };
++static const unsigned int uart_rts_a_pins[]	= { PIN(GPIOX_15, EE_OFF) };
++
++static const unsigned int uart_tx_b_pins[]	= { PIN(GPIODV_24, EE_OFF) };
++static const unsigned int uart_rx_b_pins[]	= { PIN(GPIODV_25, EE_OFF) };
++
++static const unsigned int uart_tx_c_pins[]	= { PIN(GPIOX_8, EE_OFF) };
++static const unsigned int uart_rx_c_pins[]	= { PIN(GPIOX_9, EE_OFF) };
++
++static const unsigned int i2c_sck_a_pins[]	= { PIN(GPIODV_25, EE_OFF) };
++static const unsigned int i2c_sda_a_pins[]	= { PIN(GPIODV_24, EE_OFF) };
++
++static const unsigned int i2c_sck_b_pins[]	= { PIN(GPIODV_27, EE_OFF) };
++static const unsigned int i2c_sda_b_pins[]	= { PIN(GPIODV_26, EE_OFF) };
++
++static const unsigned int i2c_sck_c_pins[]	= { PIN(GPIODV_29, EE_OFF) };
++static const unsigned int i2c_sda_c_pins[]	= { PIN(GPIODV_28, EE_OFF) };
++
++static const unsigned int eth_mdio_pins[]	= { PIN(GPIOZ_0, EE_OFF) };
++static const unsigned int eth_mdc_pins[]	= { PIN(GPIOZ_1, EE_OFF) };
++static const unsigned int eth_clk_rx_clk_pins[]	= { PIN(GPIOZ_2, EE_OFF) };
++static const unsigned int eth_rx_dv_pins[]	= { PIN(GPIOZ_3, EE_OFF) };
++static const unsigned int eth_rxd0_pins[]	= { PIN(GPIOZ_4, EE_OFF) };
++static const unsigned int eth_rxd1_pins[]	= { PIN(GPIOZ_5, EE_OFF) };
++static const unsigned int eth_rxd2_pins[]	= { PIN(GPIOZ_6, EE_OFF) };
++static const unsigned int eth_rxd3_pins[]	= { PIN(GPIOZ_7, EE_OFF) };
++static const unsigned int eth_rgmii_tx_clk_pins[] = { PIN(GPIOZ_8, EE_OFF) };
++static const unsigned int eth_tx_en_pins[]	= { PIN(GPIOZ_9, EE_OFF) };
++static const unsigned int eth_txd0_pins[]	= { PIN(GPIOZ_10, EE_OFF) };
++static const unsigned int eth_txd1_pins[]	= { PIN(GPIOZ_11, EE_OFF) };
++static const unsigned int eth_txd2_pins[]	= { PIN(GPIOZ_12, EE_OFF) };
++static const unsigned int eth_txd3_pins[]	= { PIN(GPIOZ_13, EE_OFF) };
++
++static const unsigned int pwm_e_pins[]		= { PIN(GPIOX_16, EE_OFF) };
++
++static const struct pinctrl_pin_desc meson_gxl_aobus_pins[] = {
++	MESON_PIN(GPIOAO_0, 0),
++	MESON_PIN(GPIOAO_1, 0),
++	MESON_PIN(GPIOAO_2, 0),
++	MESON_PIN(GPIOAO_3, 0),
++	MESON_PIN(GPIOAO_4, 0),
++	MESON_PIN(GPIOAO_5, 0),
++	MESON_PIN(GPIOAO_6, 0),
++	MESON_PIN(GPIOAO_7, 0),
++	MESON_PIN(GPIOAO_8, 0),
++	MESON_PIN(GPIOAO_9, 0),
 +};
 +
-+static const char * const gpio_groups[] = {
-+	"gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6", "gpio7",
-+	"gpio8", "gpio9", "gpio10", "gpio11", "gpio12", "gpio13", "gpio14",
-+	"gpio15", "gpio16", "gpio17", "gpio18", "gpio19", "gpio20", "gpio21",
-+	"gpio22", "gpio23", "gpio24", "gpio25", "gpio26", "gpio27", "gpio28",
-+	"gpio29", "gpio30", "gpio31", "gpio32", "gpio33", "gpio34", "gpio35",
-+	"gpio36", "gpio37", "gpio38", "gpio39", "gpio40", "gpio41", "gpio42",
-+	"gpio43", "gpio44", "gpio45", "gpio46", "gpio47", "gpio48", "gpio49",
-+	"gpio50", "gpio51", "gpio52", "gpio53", "gpio54", "gpio55", "gpio56",
-+	"gpio57", "gpio58", "gpio59", "gpio60", "gpio61", "gpio62", "gpio63",
-+	"gpio64", "gpio65", "gpio66", "gpio67", "gpio68", "gpio69", "gpio70",
-+	"gpio71", "gpio72", "gpio73", "gpio74", "gpio75", "gpio76", "gpio77",
-+	"gpio78", "gpio79", "gpio80", "gpio81", "gpio82", "gpio83", "gpio84",
-+	"gpio85", "gpio86", "gpio87", "gpio88", "gpio89", "gpio90", "gpio91",
-+	"gpio92", "gpio93", "gpio94", "gpio95", "gpio96", "gpio97", "gpio98",
-+	"gpio99", "gpio100", "gpio101", "gpio102", "gpio103", "gpio104",
-+	"gpio105", "gpio106", "gpio107", "gpio108", "gpio109", "gpio110",
-+	"gpio111", "gpio112", "gpio113", "gpio114", "gpio115", "gpio116",
-+	"gpio117", "gpio118", "gpio119", "gpio120", "gpio121", "gpio122",
-+	"gpio123", "gpio124", "gpio125", "gpio126", "gpio127", "gpio128",
-+	"gpio129", "gpio130", "gpio131", "gpio132", "gpio133", "gpio134",
-+	"gpio135", "gpio136", "gpio137", "gpio138", "gpio139", "gpio140",
-+	"gpio141", "gpio142", "gpio143", "gpio144", "gpio145",
++static const unsigned int uart_tx_ao_a_pins[]	= { PIN(GPIOAO_0, 0) };
++static const unsigned int uart_rx_ao_a_pins[]	= { PIN(GPIOAO_1, 0) };
++static const unsigned int uart_cts_ao_a_pins[]	= { PIN(GPIOAO_2, 0) };
++static const unsigned int uart_rts_ao_a_pins[]	= { PIN(GPIOAO_3, 0) };
++static const unsigned int uart_tx_ao_b_pins[]	= { PIN(GPIOAO_0, 0) };
++static const unsigned int uart_rx_ao_b_pins[]	= { PIN(GPIOAO_1, 0),
++						    PIN(GPIOAO_5, 0) };
++static const unsigned int uart_cts_ao_b_pins[]	= { PIN(GPIOAO_2, 0) };
++static const unsigned int uart_rts_ao_b_pins[]	= { PIN(GPIOAO_3, 0) };
++
++static const unsigned int remote_input_ao_pins[] = {PIN(GPIOAO_7, 0) };
++
++static struct meson_pmx_group meson_gxl_periphs_groups[] = {
++	GPIO_GROUP(GPIOZ_0, EE_OFF),
++	GPIO_GROUP(GPIOZ_1, EE_OFF),
++	GPIO_GROUP(GPIOZ_2, EE_OFF),
++	GPIO_GROUP(GPIOZ_3, EE_OFF),
++	GPIO_GROUP(GPIOZ_4, EE_OFF),
++	GPIO_GROUP(GPIOZ_5, EE_OFF),
++	GPIO_GROUP(GPIOZ_6, EE_OFF),
++	GPIO_GROUP(GPIOZ_7, EE_OFF),
++	GPIO_GROUP(GPIOZ_8, EE_OFF),
++	GPIO_GROUP(GPIOZ_9, EE_OFF),
++	GPIO_GROUP(GPIOZ_10, EE_OFF),
++	GPIO_GROUP(GPIOZ_11, EE_OFF),
++	GPIO_GROUP(GPIOZ_12, EE_OFF),
++	GPIO_GROUP(GPIOZ_13, EE_OFF),
++	GPIO_GROUP(GPIOZ_14, EE_OFF),
++	GPIO_GROUP(GPIOZ_15, EE_OFF),
++
++	GPIO_GROUP(GPIOH_0, EE_OFF),
++	GPIO_GROUP(GPIOH_1, EE_OFF),
++	GPIO_GROUP(GPIOH_2, EE_OFF),
++	GPIO_GROUP(GPIOH_3, EE_OFF),
++	GPIO_GROUP(GPIOH_4, EE_OFF),
++	GPIO_GROUP(GPIOH_5, EE_OFF),
++	GPIO_GROUP(GPIOH_6, EE_OFF),
++	GPIO_GROUP(GPIOH_7, EE_OFF),
++	GPIO_GROUP(GPIOH_8, EE_OFF),
++	GPIO_GROUP(GPIOH_9, EE_OFF),
++
++	GPIO_GROUP(BOOT_0, EE_OFF),
++	GPIO_GROUP(BOOT_1, EE_OFF),
++	GPIO_GROUP(BOOT_2, EE_OFF),
++	GPIO_GROUP(BOOT_3, EE_OFF),
++	GPIO_GROUP(BOOT_4, EE_OFF),
++	GPIO_GROUP(BOOT_5, EE_OFF),
++	GPIO_GROUP(BOOT_6, EE_OFF),
++	GPIO_GROUP(BOOT_7, EE_OFF),
++	GPIO_GROUP(BOOT_8, EE_OFF),
++	GPIO_GROUP(BOOT_9, EE_OFF),
++	GPIO_GROUP(BOOT_10, EE_OFF),
++	GPIO_GROUP(BOOT_11, EE_OFF),
++	GPIO_GROUP(BOOT_12, EE_OFF),
++	GPIO_GROUP(BOOT_13, EE_OFF),
++	GPIO_GROUP(BOOT_14, EE_OFF),
++	GPIO_GROUP(BOOT_15, EE_OFF),
++
++	GPIO_GROUP(CARD_0, EE_OFF),
++	GPIO_GROUP(CARD_1, EE_OFF),
++	GPIO_GROUP(CARD_2, EE_OFF),
++	GPIO_GROUP(CARD_3, EE_OFF),
++	GPIO_GROUP(CARD_4, EE_OFF),
++	GPIO_GROUP(CARD_5, EE_OFF),
++	GPIO_GROUP(CARD_6, EE_OFF),
++
++	GPIO_GROUP(GPIODV_0, EE_OFF),
++	GPIO_GROUP(GPIODV_1, EE_OFF),
++	GPIO_GROUP(GPIODV_2, EE_OFF),
++	GPIO_GROUP(GPIODV_3, EE_OFF),
++	GPIO_GROUP(GPIODV_4, EE_OFF),
++	GPIO_GROUP(GPIODV_5, EE_OFF),
++	GPIO_GROUP(GPIODV_6, EE_OFF),
++	GPIO_GROUP(GPIODV_7, EE_OFF),
++	GPIO_GROUP(GPIODV_8, EE_OFF),
++	GPIO_GROUP(GPIODV_9, EE_OFF),
++	GPIO_GROUP(GPIODV_10, EE_OFF),
++	GPIO_GROUP(GPIODV_11, EE_OFF),
++	GPIO_GROUP(GPIODV_12, EE_OFF),
++	GPIO_GROUP(GPIODV_13, EE_OFF),
++	GPIO_GROUP(GPIODV_14, EE_OFF),
++	GPIO_GROUP(GPIODV_15, EE_OFF),
++	GPIO_GROUP(GPIODV_16, EE_OFF),
++	GPIO_GROUP(GPIODV_17, EE_OFF),
++	GPIO_GROUP(GPIODV_19, EE_OFF),
++	GPIO_GROUP(GPIODV_20, EE_OFF),
++	GPIO_GROUP(GPIODV_21, EE_OFF),
++	GPIO_GROUP(GPIODV_22, EE_OFF),
++	GPIO_GROUP(GPIODV_23, EE_OFF),
++	GPIO_GROUP(GPIODV_24, EE_OFF),
++	GPIO_GROUP(GPIODV_25, EE_OFF),
++	GPIO_GROUP(GPIODV_26, EE_OFF),
++	GPIO_GROUP(GPIODV_27, EE_OFF),
++	GPIO_GROUP(GPIODV_28, EE_OFF),
++	GPIO_GROUP(GPIODV_29, EE_OFF),
++
++	GPIO_GROUP(GPIOX_0, EE_OFF),
++	GPIO_GROUP(GPIOX_1, EE_OFF),
++	GPIO_GROUP(GPIOX_2, EE_OFF),
++	GPIO_GROUP(GPIOX_3, EE_OFF),
++	GPIO_GROUP(GPIOX_4, EE_OFF),
++	GPIO_GROUP(GPIOX_5, EE_OFF),
++	GPIO_GROUP(GPIOX_6, EE_OFF),
++	GPIO_GROUP(GPIOX_7, EE_OFF),
++	GPIO_GROUP(GPIOX_8, EE_OFF),
++	GPIO_GROUP(GPIOX_9, EE_OFF),
++	GPIO_GROUP(GPIOX_10, EE_OFF),
++	GPIO_GROUP(GPIOX_11, EE_OFF),
++	GPIO_GROUP(GPIOX_12, EE_OFF),
++	GPIO_GROUP(GPIOX_13, EE_OFF),
++	GPIO_GROUP(GPIOX_14, EE_OFF),
++	GPIO_GROUP(GPIOX_15, EE_OFF),
++	GPIO_GROUP(GPIOX_16, EE_OFF),
++	GPIO_GROUP(GPIOX_17, EE_OFF),
++	GPIO_GROUP(GPIOX_18, EE_OFF),
++
++	GPIO_GROUP(GPIOCLK_0, EE_OFF),
++	GPIO_GROUP(GPIOCLK_1, EE_OFF),
++
++	GPIO_GROUP(GPIO_TEST_N, EE_OFF),
++
++	/* Bank X */
++	GROUP(sdio_d0,		5,	31),
++	GROUP(sdio_d1,		5,	30),
++	GROUP(sdio_d2,		5,	29),
++	GROUP(sdio_d3,		5,	28),
++	GROUP(sdio_cmd,		5,	27),
++	GROUP(sdio_clk,		5,	26),
++	GROUP(sdio_irq,		5,	24),
++	GROUP(uart_tx_a,	5,	19),
++	GROUP(uart_rx_a,	5,	18),
++	GROUP(uart_cts_a,	5,	17),
++	GROUP(uart_rts_a,	5,	16),
++	GROUP(uart_tx_c,	5,	13),
++	GROUP(uart_rx_c,	5,	12),
++	GROUP(pwm_e,		5,	15),
++
++	/* Bank Z */
++	GROUP(eth_mdio,		4,	22),
++	GROUP(eth_mdc,		4,	23),
++	GROUP(eth_clk_rx_clk,	4,	21),
++	GROUP(eth_rx_dv,	4,	20),
++	GROUP(eth_rxd0,		4,	19),
++	GROUP(eth_rxd1,		4,	18),
++	GROUP(eth_rxd2,		4,	17),
++	GROUP(eth_rxd3,		4,	16),
++	GROUP(eth_rgmii_tx_clk,	4,	15),
++	GROUP(eth_tx_en,	4,	14),
++	GROUP(eth_txd0,		4,	13),
++	GROUP(eth_txd1,		4,	12),
++	GROUP(eth_txd2,		4,	11),
++	GROUP(eth_txd3,		4,	10),
++
++	/* Bank DV */
++	GROUP(uart_tx_b,	2,	16),
++	GROUP(uart_rx_b,	2,	15),
++	GROUP(i2c_sck_a,	1,	15),
++	GROUP(i2c_sda_a,	1,	14),
++	GROUP(i2c_sck_b,	1,	13),
++	GROUP(i2c_sda_b,	1,	12),
++	GROUP(i2c_sck_c,	1,	11),
++	GROUP(i2c_sda_c,	1,	10),
++
++	/* Bank BOOT */
++	GROUP(emmc_nand_d07,	7,	31),
++	GROUP(emmc_clk,		7,	30),
++	GROUP(emmc_cmd,		7,	29),
++	GROUP(emmc_ds,		7,	28),
++	GROUP(nand_ce0,		7,	7),
++	GROUP(nand_ce1,		7,	6),
++	GROUP(nand_rb0,		7,	5),
++	GROUP(nand_ale,		7,	4),
++	GROUP(nand_cle,		7,	3),
++	GROUP(nand_wen_clk,	7,	2),
++	GROUP(nand_ren_wr,	7,	1),
++	GROUP(nand_dqs,		7,	0),
++
++	/* Bank CARD */
++	GROUP(sdcard_d1,	6,	5),
++	GROUP(sdcard_d0,	6,	4),
++	GROUP(sdcard_d3,	6,	1),
++	GROUP(sdcard_d2,	6,	0),
++	GROUP(sdcard_cmd,	6,	2),
++	GROUP(sdcard_clk,	6,	3),
 +};
 +
-+static const char * const blsp_spi1_groups[] = {
-+	"gpio0", "gpio1", "gpio2", "gpio3"
-+};
-+static const char * const blsp_uart1_groups[] = {
-+	"gpio0", "gpio1", "gpio2", "gpio3"
-+};
-+static const char * const blsp_uim1_groups[] = {
-+	"gpio0", "gpio1"
-+};
-+static const char * const blsp_i2c1_groups[] = {
-+	"gpio2", "gpio3"
-+};
-+static const char * const blsp_spi2_groups[] = {
-+	"gpio4", "gpio5", "gpio6", "gpio7"
-+};
-+static const char * const blsp_uart2_groups[] = {
-+	"gpio4", "gpio5", "gpio6", "gpio7"
-+};
-+static const char * const blsp_uim2_groups[] = {
-+	"gpio4", "gpio5"
-+};
-+static const char * const qdss_cti_trig_out_b_groups[] = {
-+	"gpio4",
-+};
-+static const char * const qdss_cti_trig_in_b_groups[] = {
-+	"gpio5",
-+};
-+static const char * const blsp_i2c2_groups[] = {
-+	"gpio6", "gpio7"
-+};
-+static const char * const blsp_spi3_groups[] = {
-+	"gpio8", "gpio9", "gpio10", "gpio11"
-+};
-+static const char * const blsp_uart3_groups[] = {
-+	"gpio8", "gpio9", "gpio10", "gpio11"
-+};
-+static const char * const blsp_uim3_groups[] = {
-+	"gpio8", "gpio9"
-+};
-+static const char * const blsp_spi1_cs1_groups[] = {
-+	"gpio8"
-+};
-+static const char * const blsp_spi1_cs2_groups[] = {
-+	"gpio9", "gpio11"
-+};
-+static const char * const mdp_vsync_groups[] = {
-+	"gpio10", "gpio11", "gpio12"
-+};
-+static const char * const blsp_i2c3_groups[] = {
-+	"gpio10", "gpio11"
-+};
-+static const char * const blsp_spi1_cs3_groups[] = {
-+	"gpio10"
-+};
-+static const char * const qdss_tracedata_b_groups[] = {
-+	"gpio13", "gpio14", "gpio15", "gpio16", "gpio17", "gpio18",
-+	"gpio19", "gpio21", "gpio22", "gpio23", "gpio25", "gpio26",
-+	"gpio57", "gpio58", "gpio92", "gpio93",
-+};
-+static const char * const cam_mclk0_groups[] = {
-+	"gpio13"
-+};
-+static const char * const cam_mclk1_groups[] = {
-+	"gpio14"
-+};
-+static const char * const cam_mclk2_groups[] = {
-+	"gpio15"
-+};
-+static const char * const cam_mclk3_groups[] = {
-+	"gpio16"
-+};
-+static const char * const cci_i2c0_groups[] = {
-+	"gpio17", "gpio18"
-+};
-+static const char * const blsp_spi4_groups[] = {
-+	"gpio17", "gpio18", "gpio19", "gpio20"
-+};
-+static const char * const blsp_uart4_groups[] = {
-+	"gpio17", "gpio18", "gpio19", "gpio20"
-+};
-+static const char * const blsp_uim4_groups[] = {
-+	"gpio17", "gpio18"
-+};
-+static const char * const cci_i2c1_groups[] = {
-+	"gpio19", "gpio20"
-+};
-+static const char * const blsp_i2c4_groups[] = {
-+	"gpio19", "gpio20"
-+};
-+static const char * const cci_timer0_groups[] = {
-+	"gpio21"
-+};
-+static const char * const blsp_spi5_groups[] = {
-+	"gpio21", "gpio22", "gpio23", "gpio24"
-+};
-+static const char * const blsp_uart5_groups[] = {
-+	"gpio21", "gpio22", "gpio23", "gpio24"
-+};
-+static const char * const blsp_uim5_groups[] = {
-+	"gpio21", "gpio22"
-+};
-+static const char * const cci_timer1_groups[] = {
-+	"gpio22"
-+};
-+static const char * const cci_timer2_groups[] = {
-+	"gpio23"
-+};
-+static const char * const blsp_i2c5_groups[] = {
-+	"gpio23", "gpio24"
-+};
-+static const char * const cci_timer3_groups[] = {
-+	"gpio24"
-+};
-+static const char * const cci_async_in1_groups[] = {
-+	"gpio24"
-+};
-+static const char * const cci_timer4_groups[] = {
-+	"gpio25"
-+};
-+static const char * const cci_async_in2_groups[] = {
-+	"gpio25"
-+};
-+static const char * const blsp_spi6_groups[] = {
-+	"gpio25", "gpio26", "gpio27", "gpio28"
-+};
-+static const char * const blsp_uart6_groups[] = {
-+	"gpio25", "gpio26", "gpio27", "gpio28"
-+};
-+static const char * const blsp_uim6_groups[] = {
-+	"gpio25", "gpio26"
-+};
-+static const char * const cci_async_in0_groups[] = {
-+	"gpio26"
-+};
-+static const char * const gp0_clk_groups[] = {
-+	"gpio26"
-+};
-+static const char * const gp1_clk_groups[] = {
-+	"gpio27", "gpio57", "gpio78"
-+};
-+static const char * const blsp_i2c6_groups[] = {
-+	"gpio27", "gpio28"
-+};
-+static const char * const qdss_tracectl_a_groups[] = {
-+	"gpio27",
-+};
-+static const char * const qdss_traceclk_a_groups[] = {
-+	"gpio28",
-+};
-+static const char * const gp_mn_groups[] = {
-+	"gpio29"
-+};
-+static const char * const hdmi_cec_groups[] = {
-+	"gpio31"
-+};
-+static const char * const hdmi_ddc_groups[] = {
-+	"gpio32", "gpio33"
-+};
-+static const char * const hdmi_hpd_groups[] = {
-+	"gpio34"
-+};
-+static const char * const uim3_groups[] = {
-+	"gpio35", "gpio36", "gpio37", "gpio38"
-+};
-+static const char * const pci_e1_groups[] = {
-+	"gpio35", "gpio36",
-+};
-+static const char * const blsp_spi7_groups[] = {
-+	"gpio41", "gpio42", "gpio43", "gpio44"
-+};
-+static const char * const blsp_uart7_groups[] = {
-+	"gpio41", "gpio42", "gpio43", "gpio44"
-+};
-+static const char * const blsp_uim7_groups[] = {
-+	"gpio41", "gpio42"
-+};
-+static const char * const qdss_cti_trig_out_c_groups[] = {
-+	"gpio41",
-+};
-+static const char * const qdss_cti_trig_in_c_groups[] = {
-+	"gpio42",
-+};
-+static const char * const blsp_i2c7_groups[] = {
-+	"gpio43", "gpio44"
-+};
-+static const char * const blsp_spi8_groups[] = {
-+	"gpio45", "gpio46", "gpio47", "gpio48"
-+};
-+static const char * const blsp_uart8_groups[] = {
-+	"gpio45", "gpio46", "gpio47", "gpio48"
-+};
-+static const char * const blsp_uim8_groups[] = {
-+	"gpio45", "gpio46"
-+};
-+static const char * const blsp_i2c8_groups[] = {
-+	"gpio47", "gpio48"
-+};
-+static const char * const blsp_spi10_cs1_groups[] = {
-+	"gpio47", "gpio67"
-+};
-+static const char * const blsp_spi10_cs2_groups[] = {
-+	"gpio48", "gpio68"
-+};
-+static const char * const uim2_groups[] = {
-+	"gpio49", "gpio50", "gpio51", "gpio52"
-+};
-+static const char * const blsp_spi9_groups[] = {
-+	"gpio49", "gpio50", "gpio51", "gpio52"
-+};
-+static const char * const blsp_uart9_groups[] = {
-+	"gpio49", "gpio50", "gpio51", "gpio52"
-+};
-+static const char * const blsp_uim9_groups[] = {
-+	"gpio49", "gpio50"
-+};
-+static const char * const blsp_i2c9_groups[] = {
-+	"gpio51", "gpio52"
-+};
-+static const char * const pci_e0_groups[] = {
-+	"gpio53", "gpio54",
-+};
-+static const char * const uim4_groups[] = {
-+	"gpio53", "gpio54", "gpio55", "gpio56"
-+};
-+static const char * const blsp_spi10_groups[] = {
-+	"gpio53", "gpio54", "gpio55", "gpio56"
-+};
-+static const char * const blsp_uart10_groups[] = {
-+	"gpio53", "gpio54", "gpio55", "gpio56"
-+};
-+static const char * const blsp_uim10_groups[] = {
-+	"gpio53", "gpio54"
-+};
-+static const char * const qdss_tracedata_a_groups[] = {
-+	"gpio53", "gpio54", "gpio63", "gpio64", "gpio65",
-+	"gpio66", "gpio67", "gpio74", "gpio75", "gpio76",
-+	"gpio77", "gpio85", "gpio86", "gpio87", "gpio89",
-+	"gpio90"
-+};
-+static const char * const gp_pdm0_groups[] = {
-+	"gpio54", "gpio95"
-+};
-+static const char * const blsp_i2c10_groups[] = {
-+	"gpio55", "gpio56"
-+};
-+static const char * const qdss_cti_trig_in_a_groups[] = {
-+	"gpio55",
-+};
-+static const char * const qdss_cti_trig_out_a_groups[] = {
-+	"gpio56",
-+};
-+static const char * const qua_mi2s_groups[] = {
-+	"gpio57", "gpio58", "gpio59", "gpio60", "gpio61", "gpio62", "gpio63",
-+};
-+static const char * const gcc_gp_clk1_groups[] = {
-+	"gpio57", "gpio78"
-+};
-+static const char * const gcc_gp_clk2_groups[] = {
-+	"gpio58", "gpio81"
-+};
-+static const char * const gcc_gp_clk3_groups[] = {
-+	"gpio59", "gpio82"
-+};
-+static const char * const blsp_spi2_cs1_groups[] = {
-+	"gpio62"
-+};
-+static const char * const blsp_spi2_cs2_groups[] = {
-+	"gpio63"
-+};
-+static const char * const gp_pdm2_groups[] = {
-+	"gpio63", "gpio79"
-+};
-+static const char * const pri_mi2s_groups[] = {
-+	"gpio64", "gpio65", "gpio66", "gpio67", "gpio68"
-+};
-+static const char * const blsp_spi2_cs3_groups[] = {
-+	"gpio66"
-+};
-+static const char * const spkr_mi2s_groups[] = {
-+	"gpio69", "gpio70", "gpio71", "gpio72"
-+};
-+static const char * const audio_ref_clk_groups[] = {
-+	"gpio69"
-+};
-+static const char * const slimbus_groups[] = {
-+	"gpio70", "gpio71"
-+};
-+static const char * const ter_mi2s_groups[] = {
-+	"gpio73", "gpio74", "gpio75", "gpio76", "gpio77"
-+};
-+static const char * const gp_pdm1_groups[] = {
-+	"gpio74", "gpio86"
-+};
-+static const char * const sec_mi2s_groups[] = {
-+	"gpio78", "gpio79", "gpio80", "gpio81", "gpio82"
-+};
-+static const char * const blsp_spi11_groups[] = {
-+	"gpio81", "gpio82", "gpio83", "gpio84"
-+};
-+static const char * const blsp_uart11_groups[] = {
-+	"gpio81", "gpio82", "gpio83", "gpio84"
-+};
-+static const char * const blsp_uim11_groups[] = {
-+	"gpio81", "gpio82"
-+};
-+static const char * const blsp_i2c11_groups[] = {
-+	"gpio83", "gpio84"
-+};
-+static const char * const blsp_uart12_groups[] = {
-+	"gpio85", "gpio86", "gpio87", "gpio88"
-+};
-+static const char * const blsp_uim12_groups[] = {
-+	"gpio85", "gpio86"
-+};
-+static const char * const blsp_i2c12_groups[] = {
-+	"gpio87", "gpio88"
-+};
-+static const char * const blsp_spi12_groups[] = {
-+	"gpio85", "gpio86", "gpio87", "gpio88"
-+};
-+static const char * const tsif1_groups[] = {
-+	"gpio89", "gpio90", "gpio91", "gpio110", "gpio111"
-+};
-+static const char * const blsp_spi10_cs3_groups[] = {
-+	"gpio90"
-+};
-+static const char * const sdc4_groups[] = {
-+	"gpio91", "gpio92", "gpio93", "gpio94", "gpio95", "gpio96"
-+};
-+static const char * const qdss_traceclk_b_groups[] = {
-+	"gpio91",
-+};
-+static const char * const tsif2_groups[] = {
-+	"gpio92", "gpio93", "gpio94", "gpio95", "gpio96"
-+};
-+static const char * const qdss_tracectl_b_groups[] = {
-+	"gpio94",
-+};
-+static const char * const qdss_cti_trig_out_d_groups[] = {
-+	"gpio95",
-+};
-+static const char * const qdss_cti_trig_in_d_groups[] = {
-+	"gpio96",
-+};
-+static const char * const uim1_groups[] = {
-+	"gpio97", "gpio98", "gpio99", "gpio100"
-+};
-+static const char * const uim_batt_alarm_groups[] = {
-+	"gpio101"
-+};
-+static const char * const blsp11_uart_tx_b_groups[] = {
-+	"gpio111"
-+};
-+static const char * const blsp11_uart_rx_b_groups[] = {
-+	"gpio112"
-+};
-+static const char * const blsp11_i2c_sda_b_groups[] = {
-+	"gpio113"
-+};
-+static const char * const blsp11_i2c_scl_b_groups[] = {
-+	"gpio114"
-+};
-+static const char * const grfc_groups[] = {
-+	"gpio115", "gpio116", "gpio117", "gpio118", "gpio119", "gpio120",
-+	"gpio121", "gpio122", "gpio123", "gpio124", "gpio125", "gpio126",
-+	"gpio127", "gpio128", "gpio129", "gpio133"
-+};
-+static const char * const rffe6_groups[] = {
-+	"gpio115", "gpio116"
-+};
-+static const char * const rffe7_groups[] = {
-+	"gpio117", "gpio118"
-+};
-+static const char * const gsm_tx_groups[] = {
-+	"gpio126", "gpio131", "gpio132", "gpio133"
-+};
-+static const char * const nav_tsync_groups[] = {
-+	"gpio127"
-+};
-+static const char * const nav_pps_groups[] = {
-+	"gpio127"
-+};
-+static const char * const gps_tx_groups[] = {
-+	"gpio130"
-+};
-+static const char * const mss_lte_groups[] = {
-+	"gpio134", "gpio135"
-+};
-+static const char * const rffe1_groups[] = {
-+	"gpio136", "gpio137"
-+};
-+static const char * const rffe2_groups[] = {
-+	"gpio138", "gpio139"
-+};
-+static const char * const rffe3_groups[] = {
-+	"gpio140", "gpio141"
-+};
-+static const char * const rffe4_groups[] = {
-+	"gpio142", "gpio143"
-+};
-+static const char * const rffe5_groups[] = {
-+	"gpio144", "gpio145"
++static struct meson_pmx_group meson_gxl_aobus_groups[] = {
++	GPIO_GROUP(GPIOAO_0, 0),
++	GPIO_GROUP(GPIOAO_1, 0),
++	GPIO_GROUP(GPIOAO_2, 0),
++	GPIO_GROUP(GPIOAO_3, 0),
++	GPIO_GROUP(GPIOAO_4, 0),
++	GPIO_GROUP(GPIOAO_5, 0),
++	GPIO_GROUP(GPIOAO_6, 0),
++	GPIO_GROUP(GPIOAO_7, 0),
++	GPIO_GROUP(GPIOAO_8, 0),
++	GPIO_GROUP(GPIOAO_9, 0),
++
++	/* bank AO */
++	GROUP(uart_tx_ao_b,	0,	26),
++	GROUP(uart_rx_ao_b,	0,	25),
++	GROUP(uart_tx_ao_a,	0,	12),
++	GROUP(uart_rx_ao_a,	0,	11),
++	GROUP(uart_cts_ao_a,	0,	10),
++	GROUP(uart_rts_ao_a,	0,	9),
++	GROUP(uart_cts_ao_b,	0,	8),
++	GROUP(uart_rts_ao_b,	0,	7),
++	GROUP(remote_input_ao,	0,	0),
 +};
 +
-+static const struct msm_function msm8994_functions[] = {
-+	FUNCTION(audio_ref_clk),
-+	FUNCTION(blsp_i2c1),
-+	FUNCTION(blsp_i2c2),
-+	FUNCTION(blsp_i2c3),
-+	FUNCTION(blsp_i2c4),
-+	FUNCTION(blsp_i2c5),
-+	FUNCTION(blsp_i2c6),
-+	FUNCTION(blsp_i2c7),
-+	FUNCTION(blsp_i2c8),
-+	FUNCTION(blsp_i2c9),
-+	FUNCTION(blsp_i2c10),
-+	FUNCTION(blsp_i2c11),
-+	FUNCTION(blsp_i2c12),
-+	FUNCTION(blsp_spi1),
-+	FUNCTION(blsp_spi1_cs1),
-+	FUNCTION(blsp_spi1_cs2),
-+	FUNCTION(blsp_spi1_cs3),
-+	FUNCTION(blsp_spi2),
-+	FUNCTION(blsp_spi2_cs1),
-+	FUNCTION(blsp_spi2_cs2),
-+	FUNCTION(blsp_spi2_cs3),
-+	FUNCTION(blsp_spi3),
-+	FUNCTION(blsp_spi4),
-+	FUNCTION(blsp_spi5),
-+	FUNCTION(blsp_spi6),
-+	FUNCTION(blsp_spi7),
-+	FUNCTION(blsp_spi8),
-+	FUNCTION(blsp_spi9),
-+	FUNCTION(blsp_spi10),
-+	FUNCTION(blsp_spi10_cs1),
-+	FUNCTION(blsp_spi10_cs2),
-+	FUNCTION(blsp_spi10_cs3),
-+	FUNCTION(blsp_spi11),
-+	FUNCTION(blsp_spi12),
-+	FUNCTION(blsp_uart1),
-+	FUNCTION(blsp_uart2),
-+	FUNCTION(blsp_uart3),
-+	FUNCTION(blsp_uart4),
-+	FUNCTION(blsp_uart5),
-+	FUNCTION(blsp_uart6),
-+	FUNCTION(blsp_uart7),
-+	FUNCTION(blsp_uart8),
-+	FUNCTION(blsp_uart9),
-+	FUNCTION(blsp_uart10),
-+	FUNCTION(blsp_uart11),
-+	FUNCTION(blsp_uart12),
-+	FUNCTION(blsp_uim1),
-+	FUNCTION(blsp_uim2),
-+	FUNCTION(blsp_uim3),
-+	FUNCTION(blsp_uim4),
-+	FUNCTION(blsp_uim5),
-+	FUNCTION(blsp_uim6),
-+	FUNCTION(blsp_uim7),
-+	FUNCTION(blsp_uim8),
-+	FUNCTION(blsp_uim9),
-+	FUNCTION(blsp_uim10),
-+	FUNCTION(blsp_uim11),
-+	FUNCTION(blsp_uim12),
-+	FUNCTION(blsp11_i2c_scl_b),
-+	FUNCTION(blsp11_i2c_sda_b),
-+	FUNCTION(blsp11_uart_rx_b),
-+	FUNCTION(blsp11_uart_tx_b),
-+	FUNCTION(cam_mclk0),
-+	FUNCTION(cam_mclk1),
-+	FUNCTION(cam_mclk2),
-+	FUNCTION(cam_mclk3),
-+	FUNCTION(cci_async_in0),
-+	FUNCTION(cci_async_in1),
-+	FUNCTION(cci_async_in2),
-+	FUNCTION(cci_i2c0),
-+	FUNCTION(cci_i2c1),
-+	FUNCTION(cci_timer0),
-+	FUNCTION(cci_timer1),
-+	FUNCTION(cci_timer2),
-+	FUNCTION(cci_timer3),
-+	FUNCTION(cci_timer4),
-+	FUNCTION(gcc_gp_clk1),
-+	FUNCTION(gcc_gp_clk2),
-+	FUNCTION(gcc_gp_clk3),
-+	FUNCTION(gp_mn),
-+	FUNCTION(gp_pdm0),
-+	FUNCTION(gp_pdm1),
-+	FUNCTION(gp_pdm2),
-+	FUNCTION(gp0_clk),
-+	FUNCTION(gp1_clk),
-+	FUNCTION(gps_tx),
-+	FUNCTION(grfc),
-+	FUNCTION(gsm_tx),
-+	FUNCTION(hdmi_cec),
-+	FUNCTION(hdmi_ddc),
-+	FUNCTION(hdmi_hpd),
-+	FUNCTION(mdp_vsync),
-+	FUNCTION(mss_lte),
-+	FUNCTION(nav_pps),
-+	FUNCTION(nav_tsync),
-+	FUNCTION(qdss_cti_trig_in_a),
-+	FUNCTION(qdss_cti_trig_in_b),
-+	FUNCTION(qdss_cti_trig_in_c),
-+	FUNCTION(qdss_cti_trig_in_d),
-+	FUNCTION(qdss_cti_trig_out_a),
-+	FUNCTION(qdss_cti_trig_out_b),
-+	FUNCTION(qdss_cti_trig_out_c),
-+	FUNCTION(qdss_cti_trig_out_d),
-+	FUNCTION(qdss_traceclk_a),
-+	FUNCTION(qdss_traceclk_b),
-+	FUNCTION(qdss_tracectl_a),
-+	FUNCTION(qdss_tracectl_b),
-+	FUNCTION(qdss_tracedata_a),
-+	FUNCTION(qdss_tracedata_b),
-+	FUNCTION(qua_mi2s),
-+	FUNCTION(pci_e0),
-+	FUNCTION(pci_e1),
-+	FUNCTION(pri_mi2s),
-+	FUNCTION(rffe1),
-+	FUNCTION(rffe2),
-+	FUNCTION(rffe3),
-+	FUNCTION(rffe4),
-+	FUNCTION(rffe5),
-+	FUNCTION(rffe6),
-+	FUNCTION(rffe7),
-+	FUNCTION(sdc4),
-+	FUNCTION(sec_mi2s),
-+	FUNCTION(slimbus),
-+	FUNCTION(spkr_mi2s),
-+	FUNCTION(ter_mi2s),
-+	FUNCTION(tsif1),
-+	FUNCTION(tsif2),
-+	FUNCTION(uim_batt_alarm),
-+	FUNCTION(uim1),
-+	FUNCTION(uim2),
-+	FUNCTION(uim3),
-+	FUNCTION(uim4),
-+	FUNCTION(gpio),
++static const char * const gpio_periphs_groups[] = {
++	"GPIOZ_0", "GPIOZ_1", "GPIOZ_2", "GPIOZ_3", "GPIOZ_4",
++	"GPIOZ_5", "GPIOZ_6", "GPIOZ_7", "GPIOZ_8", "GPIOZ_9",
++	"GPIOZ_10", "GPIOZ_11", "GPIOZ_12", "GPIOZ_13", "GPIOZ_14",
++	"GPIOZ_15",
++
++	"GPIOH_0", "GPIOH_1", "GPIOH_2", "GPIOH_3", "GPIOH_4",
++	"GPIOH_5", "GPIOH_6", "GPIOH_7", "GPIOH_8", "GPIOH_9",
++
++	"BOOT_0", "BOOT_1", "BOOT_2", "BOOT_3", "BOOT_4",
++	"BOOT_5", "BOOT_6", "BOOT_7", "BOOT_8", "BOOT_9",
++	"BOOT_10", "BOOT_11", "BOOT_12", "BOOT_13", "BOOT_14",
++	"BOOT_15",
++
++	"CARD_0", "CARD_1", "CARD_2", "CARD_3", "CARD_4",
++	"CARD_5", "CARD_6",
++
++	"GPIODV_0", "GPIODV_1", "GPIODV_2", "GPIODV_3", "GPIODV_4",
++	"GPIODV_5", "GPIODV_6", "GPIODV_7", "GPIODV_8", "GPIODV_9",
++	"GPIODV_10", "GPIODV_11", "GPIODV_12", "GPIODV_13", "GPIODV_14",
++	"GPIODV_15", "GPIODV_16", "GPIODV_17", "GPIODV_18", "GPIODV_19",
++	"GPIODV_20", "GPIODV_21", "GPIODV_22", "GPIODV_23", "GPIODV_24",
++	"GPIODV_25", "GPIODV_26", "GPIODV_27", "GPIODV_28", "GPIODV_29",
++
++	"GPIOX_0", "GPIOX_1", "GPIOX_2", "GPIOX_3", "GPIOX_4",
++	"GPIOX_5", "GPIOX_6", "GPIOX_7", "GPIOX_8", "GPIOX_9",
++	"GPIOX_10", "GPIOX_11", "GPIOX_12", "GPIOX_13", "GPIOX_14",
++	"GPIOX_15", "GPIOX_16", "GPIOX_17", "GPIOX_18",
++
++	"GPIO_TEST_N",
 +};
 +
-+static const struct msm_pingroup msm8994_groups[] = {
-+	PINGROUP(0,   blsp_spi1, blsp_uart1, blsp_uim1, NA, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(1,   blsp_spi1, blsp_uart1, blsp_uim1, NA, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(2,   blsp_spi1, blsp_uart1, blsp_i2c1, NA, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(3,   blsp_spi1, blsp_uart1, blsp_i2c1, NA, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(4,   blsp_spi2, blsp_uart2, blsp_uim2, qdss_cti_trig_out_b,
-+		 NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(5,   blsp_spi2, blsp_uart2, blsp_uim2, qdss_cti_trig_in_b, NA,
-+		 NA, NA, NA, NA, NA, NA),
-+	PINGROUP(6,   blsp_spi2, blsp_uart2, blsp_i2c2, NA, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(7,   blsp_spi2, blsp_uart2, blsp_i2c2, NA, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(8,   blsp_spi3, blsp_uart3, blsp_uim3, blsp_spi1_cs1, NA, NA,
-+		 NA, NA, NA, NA, NA),
-+	PINGROUP(9,   blsp_spi3, blsp_uart3, blsp_uim3, blsp_spi1_cs2, NA, NA,
-+		 NA, NA, NA, NA, NA),
-+	PINGROUP(10,  mdp_vsync, blsp_spi3, blsp_uart3, blsp_i2c3,
-+		 blsp_spi1_cs3, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(11,  mdp_vsync, blsp_spi3, blsp_uart3, blsp_i2c3,
-+		 blsp_spi1_cs2, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(12,  mdp_vsync, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(13,  cam_mclk0, NA, NA, qdss_tracedata_b, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(14,  cam_mclk1, NA, NA, qdss_tracedata_b, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(15,  cam_mclk2, NA, qdss_tracedata_b, NA, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(16,  cam_mclk3, NA, qdss_tracedata_b, NA, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(17,  cci_i2c0, blsp_spi4, blsp_uart4, blsp_uim4, NA,
-+		 qdss_tracedata_b, NA, NA, NA, NA, NA),
-+	PINGROUP(18,  cci_i2c0, blsp_spi4, blsp_uart4, blsp_uim4, NA,
-+		 qdss_tracedata_b, NA, NA, NA, NA, NA),
-+	PINGROUP(19,  cci_i2c1, blsp_spi4, blsp_uart4, blsp_i2c4, NA,
-+		 qdss_tracedata_b, NA, NA, NA, NA, NA),
-+	PINGROUP(20,  cci_i2c1, blsp_spi4, blsp_uart4, blsp_i2c4, NA, NA, NA,
-+		 NA, NA, NA, NA),
-+	PINGROUP(21,  cci_timer0, blsp_spi5, blsp_uart5, blsp_uim5, NA,
-+		 qdss_tracedata_b, NA, NA, NA, NA, NA),
-+	PINGROUP(22,  cci_timer1, blsp_spi5, blsp_uart5, blsp_uim5, NA,
-+		 qdss_tracedata_b, NA, NA, NA, NA, NA),
-+	PINGROUP(23,  cci_timer2, blsp_spi5, blsp_uart5, blsp_i2c5, NA, NA,
-+		 qdss_tracedata_b, NA, NA, NA, NA),
-+	PINGROUP(24,  cci_timer3, cci_async_in1, blsp_spi5, blsp_uart5,
-+		 blsp_i2c5, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(25,  cci_timer4, cci_async_in2, blsp_spi6, blsp_uart6,
-+		 blsp_uim6, NA, NA, qdss_tracedata_b, NA, NA, NA),
-+	PINGROUP(26,  cci_async_in0, blsp_spi6, blsp_uart6, blsp_uim6, gp0_clk,
-+		 NA, qdss_tracedata_b, NA, NA, NA, NA),
-+	PINGROUP(27,  blsp_spi6, blsp_uart6, blsp_i2c6, gp1_clk,
-+		 qdss_tracectl_a, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(28,  blsp_spi6, blsp_uart6, blsp_i2c6, qdss_traceclk_a, NA,
-+		 NA, NA, NA, NA, NA, NA),
-+	PINGROUP(29,  gp_mn, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(30,  NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(31,  hdmi_cec, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(32,  hdmi_ddc, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(33,  hdmi_ddc, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(34,  hdmi_hpd, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(35,  uim3, pci_e1, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(36,  uim3, pci_e1, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(37,  uim3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(38,  uim3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(39,  NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(40,  NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(41,  blsp_spi7, blsp_uart7, blsp_uim7, qdss_cti_trig_out_c,
-+		 NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(42,  blsp_spi7, blsp_uart7, blsp_uim7, qdss_cti_trig_in_c, NA,
-+		 NA, NA, NA, NA, NA, NA),
-+	PINGROUP(43,  blsp_spi7, blsp_uart7, blsp_i2c7, NA, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(44,  blsp_spi7, blsp_uart7, blsp_i2c7, NA, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(45,  blsp_spi8, blsp_uart8, blsp_uim8, NA, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(46,  blsp_spi8, blsp_uart8, blsp_uim8, NA, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(47,  blsp_spi8, blsp_uart8, blsp_i2c8, blsp_spi10_cs1, NA, NA,
-+		 NA, NA, NA, NA, NA),
-+	PINGROUP(48,  blsp_spi8, blsp_uart8, blsp_i2c8, blsp_spi10_cs2, NA, NA,
-+		 NA, NA, NA, NA, NA),
-+	PINGROUP(49,  uim2, blsp_spi9, blsp_uart9, blsp_uim9, NA, NA, NA, NA,
-+		 NA, NA, NA),
-+	PINGROUP(50,  uim2, blsp_spi9, blsp_uart9, blsp_uim9, NA, NA, NA, NA,
-+		 NA, NA, NA),
-+	PINGROUP(51,  uim2, blsp_spi9, blsp_uart9, blsp_i2c9, NA, NA, NA, NA,
-+		 NA, NA, NA),
-+	PINGROUP(52,  uim2, blsp_spi9, blsp_uart9, blsp_i2c9, NA, NA, NA, NA,
-+		 NA, NA, NA),
-+	PINGROUP(53,  uim4, pci_e0, blsp_spi10, blsp_uart10, blsp_uim10, NA,
-+		 NA, NA, NA, qdss_tracedata_a, NA),
-+	PINGROUP(54,  uim4, pci_e0, blsp_spi10, blsp_uart10, blsp_uim10,
-+		 gp_pdm0, NA, NA, NA, NA, qdss_tracedata_a),
-+	PINGROUP(55,  uim4, blsp_spi10, blsp_uart10, blsp_i2c10, NA, NA, NA,
-+		 NA, NA, qdss_cti_trig_in_a, NA),
-+	PINGROUP(56,  uim4, blsp_spi10, blsp_uart10, blsp_i2c10, NA, NA, NA,
-+		 NA, qdss_cti_trig_out_a, NA, NA),
-+	PINGROUP(57,  qua_mi2s, gcc_gp_clk1, NA, NA, NA, NA, qdss_tracedata_b,
-+		 NA, NA, NA, NA),
-+	PINGROUP(58,  qua_mi2s, gcc_gp_clk2, NA, NA, NA, NA, qdss_tracedata_b,
-+		 NA, NA, NA, NA),
-+	PINGROUP(59,  qua_mi2s, gcc_gp_clk3, NA, NA, NA, NA, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(60,  qua_mi2s, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(61,  qua_mi2s, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(62,  qua_mi2s, blsp_spi2_cs1, NA, NA, NA, NA, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(63,  qua_mi2s, blsp_spi2_cs2, gp_pdm2, NA, NA, NA, NA, NA,
-+		 qdss_tracedata_a, NA, NA),
-+	PINGROUP(64,  pri_mi2s, NA, NA, NA, NA, NA, qdss_tracedata_a, NA, NA,
-+		 NA, NA),
-+	PINGROUP(65,  pri_mi2s, NA, NA, NA, NA, NA, qdss_tracedata_a, NA, NA,
-+		 NA, NA),
-+	PINGROUP(66,  pri_mi2s, blsp_spi2_cs3, NA, NA, NA, NA, NA,
-+		 qdss_tracedata_a, NA, NA, NA),
-+	PINGROUP(67,  pri_mi2s, blsp_spi10_cs1, NA, NA, NA, NA, NA,
-+		 qdss_tracedata_a, NA, NA, NA),
-+	PINGROUP(68,  pri_mi2s, blsp_spi10_cs2, NA, NA, NA, NA, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(69,  spkr_mi2s, audio_ref_clk, NA, NA, NA, NA, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(70,  slimbus, spkr_mi2s, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(71,  slimbus, spkr_mi2s, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(72,  spkr_mi2s, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(73,  ter_mi2s, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(74,  ter_mi2s, gp_pdm1, NA, NA, NA, NA, NA, qdss_tracedata_a,
-+		 NA, NA, NA),
-+	PINGROUP(75,  ter_mi2s, NA, NA, NA, NA, qdss_tracedata_a, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(76,  ter_mi2s, NA, NA, NA, NA, qdss_tracedata_a, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(77,  ter_mi2s, NA, NA, NA, NA, qdss_tracedata_a, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(78,  sec_mi2s, gcc_gp_clk1, NA, NA, NA, NA, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(79,  sec_mi2s, gp_pdm2, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(80,  sec_mi2s, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(81,  sec_mi2s, blsp_spi11, blsp_uart11, blsp_uim11,
-+		 gcc_gp_clk2, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(82,  sec_mi2s, blsp_spi11, blsp_uart11, blsp_uim11,
-+		 gcc_gp_clk3, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(83,  blsp_spi11, blsp_uart11, blsp_i2c11, NA, NA, NA, NA, NA,
-+		 NA, NA, NA),
-+	PINGROUP(84,  blsp_spi11, blsp_uart11, blsp_i2c11, NA, NA, NA, NA, NA,
-+		 NA, NA, NA),
-+	PINGROUP(85,  blsp_spi12, blsp_uart12, blsp_uim12, NA, NA,
-+		 qdss_tracedata_a, NA, NA, NA, NA, NA),
-+	PINGROUP(86,  blsp_spi12, blsp_uart12, blsp_uim12, gp_pdm1, NA,
-+		 qdss_tracedata_a, NA, NA, NA, NA, NA),
-+	PINGROUP(87,  blsp_spi12, blsp_uart12, blsp_i2c12, NA,
-+		 qdss_tracedata_a, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(88,  blsp_spi12, blsp_uart12, blsp_i2c12, NA, NA, NA, NA, NA,
-+		 NA, NA, NA),
-+	PINGROUP(89,  tsif1, NA, qdss_tracedata_a, NA, NA, NA, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(90,  tsif1, blsp_spi10_cs3, qdss_tracedata_a, NA, NA, NA, NA,
-+		 NA, NA, NA, NA),
-+	PINGROUP(91,  tsif1, sdc4, NA, NA, NA, NA, qdss_traceclk_b, NA, NA, NA,
-+		 NA),
-+	PINGROUP(92,  tsif2, sdc4, NA, NA, qdss_tracedata_b, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(93,  tsif2, sdc4, NA, NA, NA, NA, qdss_tracedata_b, NA, NA,
-+		 NA, NA),
-+	PINGROUP(94,  tsif2, sdc4, NA, NA, NA, NA, qdss_tracectl_b, NA, NA, NA,
-+		 NA),
-+	PINGROUP(95,  tsif2, sdc4, gp_pdm0, NA, NA, NA, qdss_cti_trig_out_d,
-+		 NA, NA, NA, NA),
-+	PINGROUP(96,  tsif2, sdc4, qdss_cti_trig_in_d, NA, NA, NA, NA, NA, NA,
-+		 NA, NA),
-+	PINGROUP(97,  uim1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(98,  uim1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(99,  uim1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(100, uim1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(101, uim_batt_alarm, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(102, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(103, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(104, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(105, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(106, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(107, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(108, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(109, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(110, tsif1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(111, tsif1, blsp11_uart_tx_b, NA, NA, NA, NA, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(112, blsp11_uart_rx_b, NA, NA, NA, NA, NA, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(113, blsp11_i2c_sda_b, NA, NA, NA, NA, NA, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(114, blsp11_i2c_scl_b, NA, NA, NA, NA, NA, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(115, grfc, rffe6, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(116, grfc, rffe6, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(117, grfc, rffe7, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(118, grfc, rffe7, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(119, grfc, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(120, grfc, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(121, grfc, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(122, grfc, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(123, grfc, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(124, grfc, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(125, grfc, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(126, grfc, gsm_tx, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(127, grfc, nav_tsync, nav_pps, NA, NA, NA, NA, NA, NA, NA,
-+		 NA),
-+	PINGROUP(128, NA, grfc, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(129, grfc, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(130, gps_tx, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(131, gsm_tx, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(132, gsm_tx, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(133, gsm_tx, grfc, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(134, mss_lte, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(135, mss_lte, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(136, rffe1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(137, rffe1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(138, rffe2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(139, rffe2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(140, rffe3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(141, rffe3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(142, rffe4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(143, rffe4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(144, rffe5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(145, rffe5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	SDC_PINGROUP(sdc1_rclk, 0x2044, 15, 0),
-+	SDC_PINGROUP(sdc1_clk, 0x2044, 13, 6),
-+	SDC_PINGROUP(sdc1_cmd, 0x2044, 11, 3),
-+	SDC_PINGROUP(sdc1_data, 0x2044, 9, 0),
-+	SDC_PINGROUP(sdc2_clk, 0x2048, 14, 6),
-+	SDC_PINGROUP(sdc2_cmd, 0x2048, 11, 3),
-+	SDC_PINGROUP(sdc2_data, 0x2048, 9, 0),
-+	SDC_PINGROUP(sdc3_clk, 0x206c, 14, 6),
-+	SDC_PINGROUP(sdc3_cmd, 0x206c, 11, 3),
-+	SDC_PINGROUP(sdc3_data, 0x206c, 9, 0),
++static const char * const emmc_groups[] = {
++	"emmc_nand_d07", "emmc_clk", "emmc_cmd", "emmc_ds",
 +};
 +
-+#define NUM_GPIO_PINGROUPS 146
-+
-+static const struct msm_pinctrl_soc_data msm8994_pinctrl = {
-+	.pins = msm8994_pins,
-+	.npins = ARRAY_SIZE(msm8994_pins),
-+	.functions = msm8994_functions,
-+	.nfunctions = ARRAY_SIZE(msm8994_functions),
-+	.groups = msm8994_groups,
-+	.ngroups = ARRAY_SIZE(msm8994_groups),
-+	.ngpios = NUM_GPIO_PINGROUPS,
++static const char * const sdcard_groups[] = {
++	"sdcard_d0", "sdcard_d1", "sdcard_d2", "sdcard_d3",
++	"sdcard_cmd", "sdcard_clk",
 +};
 +
-+static int msm8994_pinctrl_probe(struct platform_device *pdev)
-+{
-+	return msm_pinctrl_probe(pdev, &msm8994_pinctrl);
-+}
-+
-+static const struct of_device_id msm8994_pinctrl_of_match[] = {
-+	{ .compatible = "qcom,msm8992-pinctrl", },
-+	{ .compatible = "qcom,msm8994-pinctrl", },
-+	{ },
++static const char * const sdio_groups[] = {
++	"sdio_d0", "sdio_d1", "sdio_d2", "sdio_d3",
++	"sdio_cmd", "sdio_clk", "sdio_irq",
 +};
 +
-+static struct platform_driver msm8994_pinctrl_driver = {
-+	.driver = {
-+		.name = "msm8994-pinctrl",
-+		.of_match_table = msm8994_pinctrl_of_match,
++static const char * const nand_groups[] = {
++	"nand_ce0", "nand_ce1", "nand_rb0", "nand_ale", "nand_cle",
++	"nand_wen_clk", "nand_ren_wr", "nand_dqs",
++};
++
++static const char * const uart_a_groups[] = {
++	"uart_tx_a", "uart_rx_a", "uart_cts_a", "uart_rts_a",
++};
++
++static const char * const uart_b_groups[] = {
++	"uart_tx_b", "uart_rx_b",
++};
++
++static const char * const uart_c_groups[] = {
++	"uart_tx_c", "uart_rx_c",
++};
++
++static const char * const i2c_a_groups[] = {
++	"i2c_sck_a", "i2c_sda_a",
++};
++
++static const char * const i2c_b_groups[] = {
++	"i2c_sck_b", "i2c_sda_b",
++};
++
++static const char * const i2c_c_groups[] = {
++	"i2c_sck_c", "i2c_sda_c",
++};
++
++static const char * const eth_groups[] = {
++	"eth_mdio", "eth_mdc", "eth_clk_rx_clk", "eth_rx_dv",
++	"eth_rxd0", "eth_rxd1", "eth_rxd2", "eth_rxd3",
++	"eth_rgmii_tx_clk", "eth_tx_en",
++	"eth_txd0", "eth_txd1", "eth_txd2", "eth_txd3",
++};
++
++static const char * const pwm_e_groups[] = {
++	"pwm_e",
++};
++
++static const char * const gpio_aobus_groups[] = {
++	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
++	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
++};
++
++static const char * const uart_ao_groups[] = {
++	"uart_tx_ao_a", "uart_rx_ao_a", "uart_cts_ao_a", "uart_rts_ao_a",
++};
++
++static const char * const uart_ao_b_groups[] = {
++	"uart_tx_ao_b", "uart_rx_ao_b", "uart_cts_ao_b", "uart_rts_ao_b",
++};
++
++static const char * const remote_input_ao_groups[] = {
++	"remote_input_ao",
++};
++
++static struct meson_pmx_func meson_gxl_periphs_functions[] = {
++	FUNCTION(gpio_periphs),
++	FUNCTION(emmc),
++	FUNCTION(sdcard),
++	FUNCTION(sdio),
++	FUNCTION(nand),
++	FUNCTION(uart_a),
++	FUNCTION(uart_b),
++	FUNCTION(uart_c),
++	FUNCTION(i2c_a),
++	FUNCTION(i2c_b),
++	FUNCTION(i2c_c),
++	FUNCTION(eth),
++	FUNCTION(pwm_e),
++};
++
++static struct meson_pmx_func meson_gxl_aobus_functions[] = {
++	FUNCTION(gpio_aobus),
++	FUNCTION(uart_ao),
++	FUNCTION(uart_ao_b),
++	FUNCTION(remote_input_ao),
++};
++
++static struct meson_bank meson_gxl_periphs_banks[] = {
++	/*   name    first                      last                    pullen  pull    dir     out     in  */
++	BANK("X",    PIN(GPIOX_0, EE_OFF),	PIN(GPIOX_18, EE_OFF),  4,  0,  4,  0,  12, 0,  13, 0,  14, 0),
++	BANK("DV",   PIN(GPIODV_0, EE_OFF),	PIN(GPIODV_29, EE_OFF), 0,  0,  0,  0,  0,  0,  1,  0,  2,  0),
++	BANK("H",    PIN(GPIOH_0, EE_OFF),	PIN(GPIOH_9, EE_OFF),   1, 20,  1, 20,  3, 20,  4, 20,  5, 20),
++	BANK("Z",    PIN(GPIOZ_0, EE_OFF),	PIN(GPIOZ_15, EE_OFF),  3,  0,  3,  0,  9,  0,  10, 0, 11,  0),
++	BANK("CARD", PIN(CARD_0, EE_OFF),	PIN(CARD_6, EE_OFF),    2, 20,  2, 20,  6, 20,  7, 20,  8, 20),
++	BANK("BOOT", PIN(BOOT_0, EE_OFF),	PIN(BOOT_15, EE_OFF),   2,  0,  2,  0,  6,  0,  7,  0,  8,  0),
++	BANK("CLK",  PIN(GPIOCLK_0, EE_OFF),	PIN(GPIOCLK_1, EE_OFF), 3, 28,  3, 28,  9, 28, 10, 28, 11, 28),
++};
++
++static struct meson_bank meson_gxl_aobus_banks[] = {
++	/*   name    first              last              pullen  pull    dir     out     in  */
++	BANK("AO",   PIN(GPIOAO_0, 0),  PIN(GPIOAO_9, 0), 0,  0,  0, 16,  0,  0,  0, 16,  1,  0),
++};
++
++struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data = {
++	.name		= "periphs-banks",
++	.pin_base	= 10,
++	.pins		= meson_gxl_periphs_pins,
++	.groups		= meson_gxl_periphs_groups,
++	.funcs		= meson_gxl_periphs_functions,
++	.banks		= meson_gxl_periphs_banks,
++	.num_pins	= ARRAY_SIZE(meson_gxl_periphs_pins),
++	.num_groups	= ARRAY_SIZE(meson_gxl_periphs_groups),
++	.num_funcs	= ARRAY_SIZE(meson_gxl_periphs_functions),
++	.num_banks	= ARRAY_SIZE(meson_gxl_periphs_banks),
++};
++
++struct meson_pinctrl_data meson_gxl_aobus_pinctrl_data = {
++	.name		= "aobus-banks",
++	.pin_base	= 0,
++	.pins		= meson_gxl_aobus_pins,
++	.groups		= meson_gxl_aobus_groups,
++	.funcs		= meson_gxl_aobus_functions,
++	.banks		= meson_gxl_aobus_banks,
++	.num_pins	= ARRAY_SIZE(meson_gxl_aobus_pins),
++	.num_groups	= ARRAY_SIZE(meson_gxl_aobus_groups),
++	.num_funcs	= ARRAY_SIZE(meson_gxl_aobus_functions),
++	.num_banks	= ARRAY_SIZE(meson_gxl_aobus_banks),
++};
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+index 57122ed..a579126 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.c
++++ b/drivers/pinctrl/meson/pinctrl-meson.c
+@@ -524,6 +524,14 @@ static int meson_gpio_get(struct gpio_chip *chip, unsigned gpio)
+ 		.compatible = "amlogic,meson-gxbb-aobus-pinctrl",
+ 		.data = &meson_gxbb_aobus_pinctrl_data,
+ 	},
++	{
++		.compatible = "amlogic,meson-gxl-periphs-pinctrl",
++		.data = &meson_gxl_periphs_pinctrl_data,
 +	},
-+	.probe = msm8994_pinctrl_probe,
-+	.remove = msm_pinctrl_remove,
-+};
++	{
++		.compatible = "amlogic,meson-gxl-aobus-pinctrl",
++		.data = &meson_gxl_aobus_pinctrl_data,
++	},
+ 	{ },
+ };
+ 
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
+index 98b5080..1aa871d 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.h
++++ b/drivers/pinctrl/meson/pinctrl-meson.h
+@@ -169,3 +169,5 @@ struct meson_pinctrl {
+ extern struct meson_pinctrl_data meson8b_aobus_pinctrl_data;
+ extern struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data;
+ extern struct meson_pinctrl_data meson_gxbb_aobus_pinctrl_data;
++extern struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data;
++extern struct meson_pinctrl_data meson_gxl_aobus_pinctrl_data;
+diff --git a/include/dt-bindings/gpio/meson-gxl-gpio.h b/include/dt-bindings/gpio/meson-gxl-gpio.h
+new file mode 100644
+index 0000000..684d0d7
+--- /dev/null
++++ b/include/dt-bindings/gpio/meson-gxl-gpio.h
+@@ -0,0 +1,131 @@
++/*
++ * GPIO definitions for Amlogic Meson GXL SoCs
++ *
++ * Copyright (C) 2016 Endless Mobile, Inc.
++ * Author: Carlo Caione <carlo-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program. If not, see <http://www.gnu.org/licenses/>.
++ */
 +
-+static int __init msm8994_pinctrl_init(void)
-+{
-+	return platform_driver_register(&msm8994_pinctrl_driver);
-+}
-+arch_initcall(msm8994_pinctrl_init);
++#ifndef _DT_BINDINGS_MESON_GXL_GPIO_H
++#define _DT_BINDINGS_MESON_GXL_GPIO_H
 +
-+static void __exit msm8994_pinctrl_exit(void)
-+{
-+	platform_driver_unregister(&msm8994_pinctrl_driver);
-+}
-+module_exit(msm8994_pinctrl_exit);
++#define	GPIOAO_0	0
++#define	GPIOAO_1	1
++#define	GPIOAO_2	2
++#define	GPIOAO_3	3
++#define	GPIOAO_4	4
++#define	GPIOAO_5	5
++#define	GPIOAO_6	6
++#define	GPIOAO_7	7
++#define	GPIOAO_8	8
++#define	GPIOAO_9	9
 +
-+MODULE_DESCRIPTION("Qualcomm MSM8994 pinctrl driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DEVICE_TABLE(of, msm8994_pinctrl_of_match);
++#define	GPIOZ_0		0
++#define	GPIOZ_1		1
++#define	GPIOZ_2		2
++#define	GPIOZ_3		3
++#define	GPIOZ_4		4
++#define	GPIOZ_5		5
++#define	GPIOZ_6		6
++#define	GPIOZ_7		7
++#define	GPIOZ_8		8
++#define	GPIOZ_9		9
++#define	GPIOZ_10	10
++#define	GPIOZ_11	11
++#define	GPIOZ_12	12
++#define	GPIOZ_13	13
++#define	GPIOZ_14	14
++#define	GPIOZ_15	15
++#define	GPIOH_0		16
++#define	GPIOH_1		17
++#define	GPIOH_2		18
++#define	GPIOH_3		19
++#define	GPIOH_4		20
++#define	GPIOH_5		21
++#define	GPIOH_6		22
++#define	GPIOH_7		23
++#define	GPIOH_8		24
++#define	GPIOH_9		25
++#define	BOOT_0		26
++#define	BOOT_1		27
++#define	BOOT_2		28
++#define	BOOT_3		29
++#define	BOOT_4		30
++#define	BOOT_5		31
++#define	BOOT_6		32
++#define	BOOT_7		33
++#define	BOOT_8		34
++#define	BOOT_9		35
++#define	BOOT_10		36
++#define	BOOT_11		37
++#define	BOOT_12		38
++#define	BOOT_13		39
++#define	BOOT_14		40
++#define	BOOT_15		41
++#define	CARD_0		42
++#define	CARD_1		43
++#define	CARD_2		44
++#define	CARD_3		45
++#define	CARD_4		46
++#define	CARD_5		47
++#define	CARD_6		48
++#define	GPIODV_0	49
++#define	GPIODV_1	50
++#define	GPIODV_2	51
++#define	GPIODV_3	52
++#define	GPIODV_4	53
++#define	GPIODV_5	54
++#define	GPIODV_6	55
++#define	GPIODV_7	56
++#define	GPIODV_8	57
++#define	GPIODV_9	58
++#define	GPIODV_10	59
++#define	GPIODV_11	60
++#define	GPIODV_12	61
++#define	GPIODV_13	62
++#define	GPIODV_14	63
++#define	GPIODV_15	64
++#define	GPIODV_16	65
++#define	GPIODV_17	66
++#define	GPIODV_18	67
++#define	GPIODV_19	68
++#define	GPIODV_20	69
++#define	GPIODV_21	70
++#define	GPIODV_22	71
++#define	GPIODV_23	72
++#define	GPIODV_24	73
++#define	GPIODV_25	74
++#define	GPIODV_26	75
++#define	GPIODV_27	76
++#define	GPIODV_28	77
++#define	GPIODV_29	78
++#define	GPIOX_0		79
++#define	GPIOX_1		80
++#define	GPIOX_2		81
++#define	GPIOX_3		82
++#define	GPIOX_4		83
++#define	GPIOX_5		84
++#define	GPIOX_6		85
++#define	GPIOX_7		86
++#define	GPIOX_8		87
++#define	GPIOX_9		88
++#define	GPIOX_10	89
++#define	GPIOX_11	90
++#define	GPIOX_12	91
++#define	GPIOX_13	92
++#define	GPIOX_14	93
++#define	GPIOX_15	94
++#define	GPIOX_16	95
++#define	GPIOX_17	96
++#define	GPIOX_18	97
++#define	GPIOCLK_0	98
++#define	GPIOCLK_1	99
++#define	GPIO_TEST_N	100
++
++#endif
 -- 
-2.9.3
+1.9.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
