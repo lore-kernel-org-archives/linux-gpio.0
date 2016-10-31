@@ -1,78 +1,104 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 2/3] pinctrl: cherryview: Prevent possible interrupt storm on resume
-Date: Mon, 31 Oct 2016 16:57:33 +0200
-Message-ID: <20161031145734.193016-2-mika.westerberg@linux.intel.com>
-References: <20161031145734.193016-1-mika.westerberg@linux.intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161031145734.193016-1-mika.westerberg@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Christian Steiner <christian.steiner@outlook.de>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 2/5] drivers: gpio: Add support for multiple IPs
+Date: Mon, 31 Oct 2016 09:58:42 -0500
+Message-ID: <94b12df1-d982-aff7-b86e-453c85db9655@ti.com>
+References: <1476855239-32730-1-git-send-email-j-keerthy@ti.com>
+ <1476855239-32730-3-git-send-email-j-keerthy@ti.com>
+ <CACRpkdbsgM-yiWpiA5G35jQR8v3FO=Me+4rhe6TzE0qsWOJ8Ew@mail.gmail.com>
+ <c5c95d86-2c89-3819-725c-ee0b86c37ec0@ti.com>
+ <98447580-cbc4-152e-f2cb-7c4756545479@ti.com>
+ <c047fb27-a8bb-c10d-2b16-a3e6bf45d88f@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <c047fb27-a8bb-c10d-2b16-a3e6bf45d88f-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-When the system is suspended to S3 the BIOS might re-initialize certain
-GPIO pins back to their original state or it may re-program interrupt mask
-of others. For example Acer TravelMate B116-M had BIOS bug where certain
-GPIO pin (MF_ISH_GPIO_5) was programmed to trigger on high level, and the
-pin state was high once the BIOS gave control to the OS on resume.
 
-This triggers lots of messages like:
 
- irq 117, desc: ffff88017a61e600, depth: 1, count: 0, unhandled: 0
- ->handle_irq():  ffffffff8109b613, handle_bad_irq+0x0/0x1e0
- ->irq_data.chip(): ffffffffa0020180, chv_pinctrl_exit+0x2d84/0x12 [pinctrl_cherryview]
- ->action():           (null)
-    IRQ_NOPROBE set
+On 10/27/2016 03:07 AM, Keerthy wrote:
+> 
+> 
+> On Thursday 27 October 2016 01:23 PM, Roger Quadros wrote:
+>> Keerthy,
+>>
+>> On 27/10/16 06:42, Keerthy wrote:
+>>>
+>>>
+>>> On Sunday 23 October 2016 04:02 PM, Linus Walleij wrote:
+>>>> On Wed, Oct 19, 2016 at 7:33 AM, Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org> wrote:
+>>>>
+>>>>> From: Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>
+>>>>>
+>>>>> Update GPIO driver to support Multiple GPIO IPs.
+>>>>>
+>>>>> Signed-off-by: Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>
+>>>>> Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+>>>>
+>>>> This commit message is not at all describing what the patch is doing.
+>>>>
+>>>> What it does is bumping the GPIO pin offset in the Linux global
+>>>> GPIO number space with 32 for each new controller.
+>>>>
+>>>>> +       static int bank_base;
+>>>>>
+>>>>>         pdata = davinci_gpio_get_pdata(pdev);
+>>>>>         if (!pdata) {
+>>>>> @@ -226,7 +227,8 @@ static int davinci_gpio_probe(struct
+>>>>> platform_device *pdev)
+>>>>>                 chips[i].chip.direction_output =
+>>>>> davinci_direction_out;
+>>>>>                 chips[i].chip.set = davinci_gpio_set;
+>>>>>
+>>>>> -               chips[i].chip.base = base;
+>>>>> +               chips[i].chip.base = bank_base;
+>>>>> +               bank_base += 32;
+>>>>
+>>>> Why can you not rewrite the driver to pass -1 as base and
+>>>> get a dynamic allocation of GPIO numbers instead? Then
+>>>> you won't have this hairy problem.
+>>>
+>>> Ok i will try that.
+>>>
+>>> In case of k2g. There are 2 big GPIO modules GPIO0 and GPIO1.
+>>> GPIO0 comprises of 144 GPIOs
+>>> and GPIO1 has about 68 GPIOs. Wanted feedback from you on how this is
+>>> being modeled.
+>>>
+>>> I am creating a controller for every 32 GPIOs under the big module
+>>> each containing a gpio_chip. Each 32 GPIOs chip has 2 banks of 16
+>>> GPIOs each.
+>>> Each 16 GPIO bank has an interrupt.
+>>>
+>>> Is this modeling fine or do you think creating one chip with 144 pins
+>>> and another with 68 pins is a better way?
+>>
+>> If GPIO0 has 144 GPIOs, why don't we model it as a gpiochip with 144
+>> GPIOs?
+>> What is the benefit of partitioning it into gpiochips of 32 GPIOs each?
+> 
+> 144 GPIOs where in 16 GPIOs form a bank. So about 9 banks with one
+> interrupt each. So split it into gpiochips with 32 GPIOs each handling 2
+> Interrupts.
+> 
+> Grygorii,
+> 
+> Any strong reason that you recollect of so as to why this modeling was
+> chosen?
+> 
 
-We reset the mask back to known state in chv_pinctrl_resume() but that is
-called only after device interrupts have already been enabled.
+I think, there was a restriction on max number of GPIOs supported by one gpiochip
+(32) at time when this driver was introduced an updated for Keystone.
+But, seems, this might work now since GPIO core was transformed to use gpio descriptors.
 
-Now, this particular issue was fixed by upgrading the BIOS to the latest
-(v1.23) but not everybody upgrades their BIOSes so we fix it up in the
-driver as well.
+regards,
+-grygorii
 
-Prevent the possible interrupt storm by moving suspend and resume hooks to
-be called at _noirq time instead. Since device interrupts are still
-disabled we can restore the mask back to known state before interrupt storm
-happens.
-
-Reported-by: Christian Steiner <christian.steiner@outlook.de>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index 097d835b3a50..c43b1e9a06af 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1652,7 +1652,7 @@ static int chv_pinctrl_probe(struct platform_device *pdev)
- }
- 
- #ifdef CONFIG_PM_SLEEP
--static int chv_pinctrl_suspend(struct device *dev)
-+static int chv_pinctrl_suspend_noirq(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct chv_pinctrl *pctrl = platform_get_drvdata(pdev);
-@@ -1686,7 +1686,7 @@ static int chv_pinctrl_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int chv_pinctrl_resume(struct device *dev)
-+static int chv_pinctrl_resume_noirq(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct chv_pinctrl *pctrl = platform_get_drvdata(pdev);
-@@ -1746,7 +1746,8 @@ static int chv_pinctrl_resume(struct device *dev)
- #endif
- 
- static const struct dev_pm_ops chv_pinctrl_pm_ops = {
--	SET_LATE_SYSTEM_SLEEP_PM_OPS(chv_pinctrl_suspend, chv_pinctrl_resume)
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(chv_pinctrl_suspend_noirq,
-+				      chv_pinctrl_resume_noirq)
- };
- 
- static const struct acpi_device_id chv_pinctrl_acpi_match[] = {
--- 
-2.9.3
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
