@@ -1,111 +1,32 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH] gpio: htc-egpio: Make it explicitly non-modular
-Date: Mon, 31 Oct 2016 14:27:07 -0400
-Message-ID: <20161031182707.14034-1-paul.gortmaker@windriver.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH] pinctrl: meson: Add GXL pinctrl definitions
+Date: Mon, 31 Oct 2016 12:29:34 -0600
+Message-ID: <m237jc2wz5.fsf@baylibre.com>
+References: <1477931531-27120-1-git-send-email-narmstrong@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Kevin O'Connor <kevin@koconnor.net>, linux-gpio@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f49.google.com ([209.85.214.49]:37588 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S944726AbcJaS3i (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Oct 2016 14:29:38 -0400
+Received: by mail-it0-f49.google.com with SMTP id u205so64804151itc.0
+        for <linux-gpio@vger.kernel.org>; Mon, 31 Oct 2016 11:29:37 -0700 (PDT)
+In-Reply-To: <1477931531-27120-1-git-send-email-narmstrong@baylibre.com> (Neil
+        Armstrong's message of "Mon, 31 Oct 2016 17:32:11 +0100")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: linus.walleij@linaro.org, carlo@caione.org, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+Neil Armstrong <narmstrong@baylibre.com> writes:
 
-drivers/gpio/Kconfig:config HTC_EGPIO
-drivers/gpio/Kconfig:   bool "HTC EGPIO support"
+> Add support for the Amlogic Meson GXL SoC, this is a partially complete
+> definition only based on the Amlogic Vendor tree.
+>
+> This definition differs a lot from the GXBB and needs a separate entry.
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-...meaning that it currently is not being built as a module by anyone.
-
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
-
-We explicitly disallow a driver unbind, since that doesn't have a
-sensible use case anyway, and it allows us to drop the ".remove"
-code for non-modular drivers.
-
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
-
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Kevin O'Connor <kevin@koconnor.net>
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
-
-[we had all these fixed for gpio, but then this file recently moved from
- the mfd subsystem over here to gpio....]
-
- drivers/gpio/gpio-htc-egpio.c | 32 ++------------------------------
- 1 file changed, 2 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/gpio/gpio-htc-egpio.c b/drivers/gpio/gpio-htc-egpio.c
-index 0b4df6051097..5ab895b41819 100644
---- a/drivers/gpio/gpio-htc-egpio.c
-+++ b/drivers/gpio/gpio-htc-egpio.c
-@@ -17,7 +17,7 @@
- #include <linux/platform_data/gpio-htc-egpio.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- 
- struct egpio_chip {
- 	int              reg_start;
-@@ -367,24 +367,6 @@ static int __init egpio_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--static int __exit egpio_remove(struct platform_device *pdev)
--{
--	struct egpio_info *ei = platform_get_drvdata(pdev);
--	unsigned int      irq, irq_end;
--
--	if (ei->chained_irq) {
--		irq_end = ei->irq_start + ei->nirqs;
--		for (irq = ei->irq_start; irq < irq_end; irq++) {
--			irq_set_chip_and_handler(irq, NULL, NULL);
--			irq_set_status_flags(irq, IRQ_NOREQUEST | IRQ_NOPROBE);
--		}
--		irq_set_chained_handler(ei->chained_irq, NULL);
--		device_init_wakeup(&pdev->dev, 0);
--	}
--
--	return 0;
--}
--
- #ifdef CONFIG_PM
- static int egpio_suspend(struct platform_device *pdev, pm_message_t state)
- {
-@@ -416,8 +398,8 @@ static int egpio_resume(struct platform_device *pdev)
- static struct platform_driver egpio_driver = {
- 	.driver = {
- 		.name = "htc-egpio",
-+		.suppress_bind_attrs = true,
- 	},
--	.remove       = __exit_p(egpio_remove),
- 	.suspend      = egpio_suspend,
- 	.resume       = egpio_resume,
- };
-@@ -426,15 +408,5 @@ static int __init egpio_init(void)
- {
- 	return platform_driver_probe(&egpio_driver, egpio_probe);
- }
--
--static void __exit egpio_exit(void)
--{
--	platform_driver_unregister(&egpio_driver);
--}
--
- /* start early for dependencies */
- subsys_initcall(egpio_init);
--module_exit(egpio_exit)
--
--MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Kevin O'Connor <kevin@koconnor.net>");
--- 
-2.10.0
+Acked-by: Kevin Hilman <khilman@baylibre.com>
