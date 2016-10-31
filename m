@@ -1,36 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: at91: add support for OUTPUT config
-Date: Mon, 31 Oct 2016 09:17:15 +0100
-Message-ID: <CACRpkdZrx8dSwWo9EBghsY4B=sNDJtGDqkUshCeJ=r-r_b-DiA@mail.gmail.com>
-References: <1477641251-30468-1-git-send-email-wenyou.yang@atmel.com>
+Subject: Re: [PATCH -next] ACPI / gpio: add missing fwnode_handle_put() in acpi_gpiochip_scan_gpios()
+Date: Mon, 31 Oct 2016 09:20:32 +0100
+Message-ID: <CACRpkdYgtyW=BQpowEhmBPDS=7YVPyNJ8EAMFjwErjs-J1fOnQ@mail.gmail.com>
+References: <1477757517-26498-1-git-send-email-weiyj.lk@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:33391 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1762096AbcJaIRR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Oct 2016 04:17:17 -0400
-Received: by mail-qt0-f182.google.com with SMTP id p16so69352673qta.0
-        for <linux-gpio@vger.kernel.org>; Mon, 31 Oct 2016 01:17:16 -0700 (PDT)
-In-Reply-To: <1477641251-30468-1-git-send-email-wenyou.yang@atmel.com>
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:34451 "EHLO
+        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1762083AbcJaIUe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Oct 2016 04:20:34 -0400
+Received: by mail-qk0-f173.google.com with SMTP id q130so33503181qke.1
+        for <linux-gpio@vger.kernel.org>; Mon, 31 Oct 2016 01:20:33 -0700 (PDT)
+In-Reply-To: <1477757517-26498-1-git-send-email-weiyj.lk@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wenyou Yang <wenyou.yang@atmel.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wenyou Yang <wenyou.yang@microchip.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Boris BREZILLON <b.brezillon@overkiz.com>
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Oct 28, 2016 at 9:54 AM, Wenyou Yang <wenyou.yang@atmel.com> wrote:
+On Sat, Oct 29, 2016 at 6:11 PM, Wei Yongjun <weiyj.lk@gmail.com> wrote:
 
-> From: Boris BREZILLON <b.brezillon@overkiz.com>
+> From: Wei Yongjun <weiyongjun1@huawei.com>
 >
-> Add support for pin output control through the pinctrl config:
->  - support enabling/disabling output on a given pin
->  - support output level setting (high or low)
+> fwnode_handle_put() should be used when terminating
+> device_for_each_child_node() iteration with break or
+> return to prevent stale device node references from
+> being left behind.
 >
-> Signed-off-by: Boris BREZILLON <b.brezillon@overkiz.com>
-> Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-> Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+> This is detected by Coccinelle semantic patch.
+>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Patch applied.
+OK patch applied.
 
 Yours,
 Linus Walleij
