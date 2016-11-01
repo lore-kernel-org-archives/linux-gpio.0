@@ -1,53 +1,43 @@
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: [PATCH 01/14] pinctrl-sx150x: Rely on of_modalias_node for OF matching
-Date: Tue,  1 Nov 2016 08:57:35 -0700
-Message-ID: <1478015868-10309-2-git-send-email-andrew.smirnov@gmail.com>
-References: <1478015868-10309-1-git-send-email-andrew.smirnov@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1478015868-10309-1-git-send-email-andrew.smirnov@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, narmstrong@baylibre.com, linux-kernel@vger.kernel.org, cphealy@gmail.com, Andrey Smirnov <andrew.smirnov@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: mxc: fix build error introduced by pin_ranges
+Date: Tue, 1 Nov 2016 23:53:01 +0100
+Message-ID: <CACRpkdbOCKi5qLfW2rWpy76UkbWap1G6KyxLvMthF=PwhP7=bg@mail.gmail.com>
+References: <1477983808-14358-1-git-send-email-deepak_das@mentor.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f173.google.com ([209.85.216.173]:36338 "EHLO
+        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751827AbcKAWxD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Nov 2016 18:53:03 -0400
+Received: by mail-qt0-f173.google.com with SMTP id w33so62047976qtc.3
+        for <linux-gpio@vger.kernel.org>; Tue, 01 Nov 2016 15:53:02 -0700 (PDT)
+In-Reply-To: <1477983808-14358-1-git-send-email-deepak_das@mentor.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Deepak Das <deepak_das@mentor.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, Vladimir Zapolskiy <Vladimir_Zapolskiy@mentor.com>
 
-None of the OF match table entries contain any compatiblity strings that
-could not be matched against using i2c_device_id table above and
-of_modalias_node. Besides that entries in OF match table do not cary
-proper device variant information which is need by the drive. Those two
-facts combined, IMHO, make a compelling case for removal of that code
-altogether.
+On Tue, Nov 1, 2016 at 8:03 AM, Deepak Das <deepak_das@mentor.com> wrote:
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- drivers/pinctrl/pinctrl-sx150x.c | 9 ---------
- 1 file changed, 9 deletions(-)
+> 'commit 964a7e51240df ("gpio: mxc: Shift
+> generic request/free after gpiochip registration")'
+> introduced a build error because pin_ranges now moved to
+> struct gpio_device.
+>
+> This commit fixes this build error by dereferencing gpio_device
+> inside struct gpio_chip for pin_ranges.
+>
+> Signed-off-by: Deepak Das <deepak_das@mentor.com>
 
-diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
-index d2d4211..41b9e6a 100644
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -861,14 +861,6 @@ static const struct i2c_device_id sx150x_id[] = {
- 	{}
- };
- 
--static const struct of_device_id sx150x_of_match[] = {
--	{ .compatible = "semtech,sx1508q" },
--	{ .compatible = "semtech,sx1509q" },
--	{ .compatible = "semtech,sx1506q" },
--	{ .compatible = "semtech,sx1502q" },
--	{},
--};
--
- static int sx150x_init_io(struct sx150x_pinctrl *pctl, u8 base, u16 cfg)
- {
- 	int err = 0;
-@@ -1049,7 +1041,6 @@ static int sx150x_probe(struct i2c_client *client,
- static struct i2c_driver sx150x_driver = {
- 	.driver = {
- 		.name = "sx150x-pinctrl",
--		.of_match_table = of_match_ptr(sx150x_of_match),
- 	},
- 	.probe    = sx150x_probe,
- 	.id_table = sx150x_id,
--- 
-2.5.5
+NAK and I backed out the patch causing this.
+
+> +#include "gpiolib.h"
+
+Nothing should dereference the gpiolib internals, that is pretty clear
+from the way it is split out of the public headers.
+
+We need to go back to the first patch and look things over,
+
+Yours,
+Linus Walleij
