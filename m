@@ -1,59 +1,79 @@
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: [PATCH 12/14] pinctrl-sx150x: Use handle_bad_irq instead of handle_edge_irq
-Date: Tue,  1 Nov 2016 08:57:46 -0700
-Message-ID: <1478015868-10309-13-git-send-email-andrew.smirnov@gmail.com>
+Subject: [PATCH 05/14] pinctrl-sx150x: Move some code out of sx150x_init_hw
+Date: Tue,  1 Nov 2016 08:57:39 -0700
+Message-ID: <1478015868-10309-6-git-send-email-andrew.smirnov@gmail.com>
 References: <1478015868-10309-1-git-send-email-andrew.smirnov@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35575 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751975AbcKAP6O (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Nov 2016 11:58:14 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1478015868-10309-1-git-send-email-andrew.smirnov@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: linus.walleij@linaro.org, narmstrong@baylibre.com, linux-kernel@vger.kernel.org, cphealy@gmail.com, Andrey Smirnov <andrew.smirnov@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
-Althought the function passed as a "handler" during GPIO chip
-instantiation is not going to ever be called, specifying handle_edge_irq
-there makes for a rather confusing read, both because no "ack" callback
-in specified for irqchip and because there's no acking action is
-necessary.
-
-Specify handle_bad_irq instead a make a note of the situation. This
-commit should be a no-op behaviour wise.
+Move the code configuring explicit IRQ acking into a standalone function
+to declutter sx150x_init_hw a bit and make that code somewhat less
+repetitious.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/pinctrl/pinctrl-sx150x.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-sx150x.c | 38 ++++++++++++++++++++++++++------------
+ 1 file changed, 26 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
-index 741981d..31ed7e3 100644
+index a38c8fc..4283504 100644
 --- a/drivers/pinctrl/pinctrl-sx150x.c
 +++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -1063,9 +1063,20 @@ static int sx150x_probe(struct i2c_client *client,
- 		pctl->irq.masked = ~0;
- 		pctl->irq.sense = 0;
+@@ -914,6 +914,31 @@ static int sx150x_reset(struct sx150x_pinctrl *pctl)
+ 	return err;
+ }
  
-+		/*
-+		 * Because sx150x_irq_threaded_fn invokes all of the
-+		 * nested interrrupt handlers via handle_nested_irq,
-+		 * any "handler" passed to gpiochip_irqchip_add()
-+		 * below is going to be ignored, so the choice of the
-+		 * function does not matter that much.
-+		 *
-+		 * We set it to handle_bad_irq to avoid confusion,
-+		 * plus it will be instantly noticeable if it is ever
-+		 * called (should not happen)
-+		 */
- 		ret = gpiochip_irqchip_add(&pctl->gpio,
- 					   &pctl->irq_chip, 0,
--					   handle_edge_irq, IRQ_TYPE_NONE);
-+					   handle_bad_irq, IRQ_TYPE_NONE);
- 		if (ret) {
- 			dev_err(dev, "could not connect irqchip to gpiochip\n");
- 			return ret;
++static int sx150x_init_misc(struct sx150x_pinctrl *pctl)
++{
++	u8 reg, value;
++
++	switch (pctl->data->model) {
++	case SX150X_789:
++		reg   = pctl->data->pri.x789.reg_misc;
++		value = SX150X_789_REG_MISC_AUTOCLEAR_OFF;
++		break;
++	case SX150X_456:
++		reg   = pctl->data->pri.x456.reg_advance;
++		value = 0x00;
++		break;
++	case SX150X_123:
++		reg   = pctl->data->pri.x123.reg_advance;
++		value = 0x00;
++		break;
++	default:
++		WARN(1, "Unknown chip model %d\n", pctl->data->model);
++		return -EINVAL;
++	}
++
++	return sx150x_i2c_write(pctl->client, reg, value);
++}
++
+ static int sx150x_init_hw(struct sx150x_pinctrl *pctl)
+ {
+ 	int err;
+@@ -925,18 +950,7 @@ static int sx150x_init_hw(struct sx150x_pinctrl *pctl)
+ 			return err;
+ 	}
+ 
+-	if (pctl->data->model == SX150X_789)
+-		err = sx150x_i2c_write(pctl->client,
+-				pctl->data->pri.x789.reg_misc,
+-				SX150X_789_REG_MISC_AUTOCLEAR_OFF);
+-	else if (pctl->data->model == SX150X_456)
+-		err = sx150x_i2c_write(pctl->client,
+-				pctl->data->pri.x456.reg_advance,
+-				0x00);
+-	else
+-		err = sx150x_i2c_write(pctl->client,
+-				pctl->data->pri.x123.reg_advance,
+-				0x00);
++	err = sx150x_init_misc(pctl);
+ 	if (err < 0)
+ 		return err;
+ 
 -- 
 2.5.5
-
