@@ -1,54 +1,52 @@
-From: Deepak Das <deepak_das@mentor.com>
-Subject: [PATCH] gpio: mxc: fix build error introduced by pin_ranges
-Date: Tue, 1 Nov 2016 12:33:28 +0530
-Message-ID: <1477983808-14358-1-git-send-email-deepak_das@mentor.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Subject: [PATCH 00/14] pinctrl-sx150x: Various bug-fixes and code simplifications
+Date: Tue,  1 Nov 2016 08:57:34 -0700
+Message-ID: <1478015868-10309-1-git-send-email-andrew.smirnov@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:44847 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1165569AbcKAHEe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Nov 2016 03:04:34 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:33941 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750824AbcKAP6F (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Nov 2016 11:58:05 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, shawnguo@kernel.org
-Cc: linux-gpio@vger.kernel.org, fabio.estevam@nxp.com, kernel@pengutronix.de, p.zabel@pengutronix.de, Vladimir_Zapolskiy@mentor.com
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, narmstrong@baylibre.com, linux-kernel@vger.kernel.org, cphealy@gmail.com, Andrey Smirnov <andrew.smirnov@gmail.com>
 
-'commit 964a7e51240df ("gpio: mxc: Shift
-generic request/free after gpiochip registration")'
-introduced a build error because pin_ranges now moved to
-struct gpio_device.
+Linus, Neil:
 
-This commit fixes this build error by dereferencing gpio_device
-inside struct gpio_chip for pin_ranges.
+I've had some help and got my hardware setup modified to enable IRQ
+functionality testing, so ended up looking at the code of SX150x more
+resulting in some code improvements (hopefully) and bugfixes.
 
-Signed-off-by: Deepak Das <deepak_das@mentor.com>
----
- drivers/gpio/gpio-mxc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+There are many small changes each of which is probably better
+described by corresponding commit's message, however the most
+porminenet changes of the whole patchset are the switch to regmap API
+(patches ## 7,8) and reduction of locking (patch # 9)
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 9f79a9f..3128dad 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -36,6 +36,8 @@
- #include <linux/of_device.h>
- #include <linux/bug.h>
- 
-+#include "gpiolib.h"
-+
- enum mxc_gpio_hwtype {
- 	IMX1_GPIO,	/* runs on i.mx1 */
- 	IMX21_GPIO,	/* runs on i.mx21 and i.mx27 */
-@@ -466,7 +468,7 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 	if (err)
- 		goto out_bgio;
- 
--	if (!list_empty(&port->gc.pin_ranges)) {
-+	if (!list_empty(&port->gc.gpiodev->pin_ranges)) {
- 		port->gc.request = gpiochip_generic_request;
- 		port->gc.free = gpiochip_generic_free;
- 	}
+Please let me know what you think.
+
+Thanks,
+Andrey
+
+Andrey Smirnov (14):
+  pinctrl-sx150x: Rely on of_modalias_node for OF matching
+  pinctrl-sx150x: Add SX1503 specific data
+  pinctrl-sx150x: Replace magic number in sx150x_init_hw
+  pinctrl-sx150x: Fix incorrect constant in sx150x_init_hw
+  pinctrl-sx150x: Move some code out of sx150x_init_hw
+  pinctrl-sx150x: Improve sx150x_init_misc for SX1504/5/6
+  pinctrl-sx150x: Convert driver to use regmap API
+  pinctrl-sx150x: Replace sx150x_*_cfg by means of regmap API
+  pinctrl-sx150x: Remove excessive locking
+  pinctrl-sx150x: Improve oscio GPIO functions
+  pinctrl-sx150x: Simplify interrupt handler
+  pinctrl-sx150x: Use handle_bad_irq instead of handle_edge_irq
+  pinctrl-sx150x: Remove magic numbers from sx150x_irq_set_type
+  pinctrl-sx150x: Remove magic numbers from sx150x_reset
+
+ drivers/pinctrl/pinctrl-sx150x.c | 753 +++++++++++++++++++++------------------
+ 1 file changed, 416 insertions(+), 337 deletions(-)
+
 -- 
-1.9.1
+2.5.5
 
