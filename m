@@ -1,70 +1,59 @@
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: [PATCH 13/14] pinctrl-sx150x: Remove magic numbers from sx150x_irq_set_type
-Date: Tue,  1 Nov 2016 08:57:47 -0700
-Message-ID: <1478015868-10309-14-git-send-email-andrew.smirnov@gmail.com>
+Subject: [PATCH 12/14] pinctrl-sx150x: Use handle_bad_irq instead of handle_edge_irq
+Date: Tue,  1 Nov 2016 08:57:46 -0700
+Message-ID: <1478015868-10309-13-git-send-email-andrew.smirnov@gmail.com>
 References: <1478015868-10309-1-git-send-email-andrew.smirnov@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35575 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751975AbcKAP6O (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Nov 2016 11:58:14 -0400
 In-Reply-To: <1478015868-10309-1-git-send-email-andrew.smirnov@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: linus.walleij@linaro.org, narmstrong@baylibre.com, linux-kernel@vger.kernel.org, cphealy@gmail.com, Andrey Smirnov <andrew.smirnov@gmail.com>
-List-Id: linux-gpio@vger.kernel.org
+
+Althought the function passed as a "handler" during GPIO chip
+instantiation is not going to ever be called, specifying handle_edge_irq
+there makes for a rather confusing read, both because no "ack" callback
+in specified for irqchip and because there's no acking action is
+necessary.
+
+Specify handle_bad_irq instead a make a note of the situation. This
+commit should be a no-op behaviour wise.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/pinctrl/pinctrl-sx150x.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinctrl-sx150x.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
-index 31ed7e3..13afcb9 100644
+index 741981d..31ed7e3 100644
 --- a/drivers/pinctrl/pinctrl-sx150x.c
 +++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -46,6 +46,8 @@ enum {
- enum {
- 	SX150X_789_REG_MISC_AUTOCLEAR_OFF = 1 << 0,
- 	SX150X_MAX_REGISTER = 0xad,
-+	SX150X_IRQ_TYPE_EDGE_RISING = 0x1,
-+	SX150X_IRQ_TYPE_EDGE_FALLING = 0x2,
- };
+@@ -1063,9 +1063,20 @@ static int sx150x_probe(struct i2c_client *client,
+ 		pctl->irq.masked = ~0;
+ 		pctl->irq.sense = 0;
  
- struct sx150x_123_pri {
-@@ -440,6 +442,21 @@ static void sx150x_irq_unmask(struct irq_data *d)
- 	pctl->irq.masked &= ~BIT(n);
- }
- 
-+static void sx150x_irq_set_sense(struct sx150x_pinctrl *pctl,
-+				 unsigned int line, unsigned int sense)
-+{
-+	/*
-+	 * Every interrupt line is represented by two bits shifted
-+	 * proportionally to the line number
-+	 */
-+	const unsigned int n = line * 2;
-+	const unsigned int mask = ~((SX150X_IRQ_TYPE_EDGE_RISING |
-+				     SX150X_IRQ_TYPE_EDGE_FALLING) << n);
-+
-+	pctl->irq.sense &= mask;
-+	pctl->irq.sense |= sense << n;
-+}
-+
- static int sx150x_irq_set_type(struct irq_data *d, unsigned int flow_type)
- {
- 	struct sx150x_pinctrl *pctl =
-@@ -452,12 +469,11 @@ static int sx150x_irq_set_type(struct irq_data *d, unsigned int flow_type)
- 	n = d->hwirq;
- 
- 	if (flow_type & IRQ_TYPE_EDGE_RISING)
--		val |= 0x1;
-+		val |= SX150X_IRQ_TYPE_EDGE_RISING;
- 	if (flow_type & IRQ_TYPE_EDGE_FALLING)
--		val |= 0x2;
-+		val |= SX150X_IRQ_TYPE_EDGE_FALLING;
- 
--	pctl->irq.sense &= ~(3UL << (n * 2));
--	pctl->irq.sense |= val << (n * 2);
-+	sx150x_irq_set_sense(pctl, n, val);
- 	return 0;
- }
- 
++		/*
++		 * Because sx150x_irq_threaded_fn invokes all of the
++		 * nested interrrupt handlers via handle_nested_irq,
++		 * any "handler" passed to gpiochip_irqchip_add()
++		 * below is going to be ignored, so the choice of the
++		 * function does not matter that much.
++		 *
++		 * We set it to handle_bad_irq to avoid confusion,
++		 * plus it will be instantly noticeable if it is ever
++		 * called (should not happen)
++		 */
+ 		ret = gpiochip_irqchip_add(&pctl->gpio,
+ 					   &pctl->irq_chip, 0,
+-					   handle_edge_irq, IRQ_TYPE_NONE);
++					   handle_bad_irq, IRQ_TYPE_NONE);
+ 		if (ret) {
+ 			dev_err(dev, "could not connect irqchip to gpiochip\n");
+ 			return ret;
 -- 
 2.5.5
+
