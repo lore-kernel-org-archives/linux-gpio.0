@@ -1,93 +1,68 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH] pinctrl: sunxi: make bool drivers explicitly non-modular
-Date: Wed, 2 Nov 2016 14:41:35 +0100
-Message-ID: <20161102134135.yznnlq2givbizziw@lukather>
-References: <20161030000030.9394-1-paul.gortmaker@windriver.com>
+From: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Subject: [PATCH v2 0/6] pinctrl: aspeed: Fixes for g5, implement remaining pins
+Date: Thu,  3 Nov 2016 01:07:55 +1030
+Message-ID: <1478097481-14895-1-git-send-email-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="eewes25i6go2okyw"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from up.free-electrons.com ([163.172.77.33]:39283 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752586AbcKBNli (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Nov 2016 09:41:38 -0400
-Content-Disposition: inline
-In-Reply-To: <20161030000030.9394-1-paul.gortmaker@windriver.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-kernel@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Patrice Chotard <patrice.chotard@st.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Fabian Frederick <fabf@skynet.be>, Maxime Coquelin <maxime.coquelin@st.com>, Vishnu Patekar <vishnupatekar0510@gmail.com>, Mylene Josserand <mylene.josserand@free-electrons.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
+Hi all,
 
---eewes25i6go2okyw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is v2 of the series implementing the remainder of the pinmux tables for
+the AST2400 and AST2500 SoCs. v1 of the series can be found here:
 
-On Sat, Oct 29, 2016 at 08:00:30PM -0400, Paul Gortmaker wrote:
-> None of the Kconfigs for any of these drivers are tristate,
-> meaning that they currently are not being built as a module by anyone.
->=20
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the drivers there is no doubt they are builtin-only.  All
-> drivers get essentially the same change, so they are handled in batch.
->=20
-> Changes are (1) use builtin_platform_driver, (2) use init.h header
-> (3) delete module_exit related code, (4) delete MODULE_DEVICE_TABLE,
-> and (5) delete MODULE_LICENCE/MODULE_AUTHOR and associated tags.
->=20
-> Since module_platform_driver() uses the same init level priority as
-> builtin_platform_driver() the init ordering remains unchanged with
-> this commit.
->=20
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->=20
-> We do delete the MODULE_LICENSE etc. tags since all that information
-> is already contained at the top of each file in the comments.
->=20
-> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Patrice Chotard <patrice.chotard@st.com>
-> Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
-> Cc: Fabian Frederick <fabf@skynet.be>
-> Cc: Maxime Coquelin <maxime.coquelin@st.com>
-> Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> Cc: Mylene Josserand <mylene.josserand@free-electrons.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+https://lkml.org/lkml/2016/9/27/309
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+The first patch, "pinctrl-aspeed-g5: Never set SCU90[6]", is another fix that
+should be applied for 4.9. Please let me know if I should send such patches
+separately, as the series otherwise targets 4.10.
 
-Thanks,
-Maxime
+v2 is based on 4.9-rc2 as requested in feedback on v1.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Cheers,
 
---eewes25i6go2okyw
-Content-Type: application/pgp-signature; name="signature.asc"
+Andrew
 
------BEGIN PGP SIGNATURE-----
+Significant changes since v1:
 
-iQIcBAEBCAAGBQJYGe0PAAoJEBx+YmzsjxAgy3QQAJ3Mij93Y8twIb4kocbEnULO
-UI5aiQBm1Jhx7ttjRz8gseRic6ZOHop71cEMmdkkChcZE3cyaDwI2HZeztUzGwfH
-wJ3xwtYx+y/sb0d2wpvINfvCKqgLGiRMD6SSs1an2Jexl1dkPz7ff4iHPUlWjQ4d
-bAI5r6qmuC0uMFXcMyPr1Mc/H0sPSP3TqOXqin6FJI0PbVH3bUxVKk+4c/18JV5e
-qzmNzPeo9GKHa0DhEE8vDv9AWh6Fx+75k0rJtKKPJqIhQy6Z35lN1r1Zi2wykCnn
-ifW+uIOSHm1JlbdaaoCfu/GXLBOqxFcWH+ytu5PIbcNi8bA3HF9hNoc1kRoNxwD6
-iYOQtNxgpLoHmPg4fQ07gn4uYd/9LXL6aOAb6fjyDWcwyijInQRyQShzG5wZA5tm
-s3Xzn3ULWTuVYflsvgjdJogsla13i+fb6IUneepnNnghSaxsGgW8IQM7Ub9dZIrO
-8vMER6yZQuhRhj5A09F6YgMDWuO+Xeav5v9zBu5E03Uivoz9cVd0c5TQEnOPdsqI
-u+JilYQERdm2goExsnc9+XQ0j+1mrbLu1WwJfVMT8jXQA1ttuLPicmJCK8bQpbww
-Gq4ta8SNbr90Bd+QnpGnPCEGtMlYd+CKiFejbbdCIWrjRO0DeVOhkeuJVgyJADkO
-MbJu/8mRKFe+bk9dJVZB
-=5Tin
------END PGP SIGNATURE-----
+* Fixes from v1 have been applied, so have been dropped for v2
+* A new fix has appeared, "pinctrl-aspeed-g5: Never set SCU90[6]", as noted
+  above
+* New bindings documents for the SoC Display and LPC Host Controllers, driven
+  by the patch "pinctrl: aspeed: Read and write bits in LPCHC and GFX
+  controllers"
+* The v1 patch "pinctrl: aspeed: Enable capture of off-SCU pinmux state" has
+  been significantly reworked and is now titled "pinctrl: aspeed: Read and
+  write bits in LPCHC and GFX controllers"
 
---eewes25i6go2okyw--
+Andrew Jeffery (6):
+  pinctrl-aspeed-g5: Never set SCU90[6]
+  mfd: dt: Add bindings for the Aspeed SoC Display Controller (GFX)
+  mfd: dt: Add bindings for the Aspeed LPC Host Controller (LPCHC)
+  pinctrl: aspeed: Read and write bits in LPCHC and GFX controllers
+  pinctrl: aspeed-g4: Add mux configuration for all pins
+  pinctrl: aspeed-g5: Add mux configuration for all pins
+
+ .../devicetree/bindings/mfd/aspeed-gfx.txt         |   17 +
+ .../devicetree/bindings/mfd/aspeed-lpchc.txt       |   17 +
+ .../devicetree/bindings/pinctrl/pinctrl-aspeed.txt |   86 +-
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c         | 1115 +++++++++++++-
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c         | 1514 +++++++++++++++++++-
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c            |   66 +-
+ drivers/pinctrl/aspeed/pinctrl-aspeed.h            |   33 +-
+ 7 files changed, 2760 insertions(+), 88 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/aspeed-gfx.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt
+
+-- 
+2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
