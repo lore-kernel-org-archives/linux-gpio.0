@@ -1,48 +1,58 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH v2 3/6] mfd: dt: Add bindings for the Aspeed LPC Host Controller (LPCHC)
-Date: Thu,  3 Nov 2016 01:07:58 +1030
-Message-ID: <1478097481-14895-4-git-send-email-andrew@aj.id.au>
-References: <1478097481-14895-1-git-send-email-andrew@aj.id.au>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH V4] pinctrl: qcom: Add msm8994 pinctrl driver
+Date: Wed, 2 Nov 2016 11:36:07 -0700
+Message-ID: <20161102183607.GJ16026@codeaurora.org>
+References: <20161031160009.20472-1-michael.scott@linaro.org>
+ <20161101235344.GX16026@codeaurora.org>
+ <e0bdce76-dcab-36c9-bf39-6c79b1cb2820@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1478097481-14895-1-git-send-email-andrew@aj.id.au>
+Content-Disposition: inline
+In-Reply-To: <e0bdce76-dcab-36c9-bf39-6c79b1cb2820@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>
+To: Michael Scott <michael.scott@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Joonwoo Park <joonwoop@codeaurora.org>, Jeremy McNicoll <jeremymc@redhat.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The Aspeed LPC Host Controller is presented as a syscon device to
-arbitrate access by LPC and pinmux drivers. LPC pinmux configuration on
-fifth generation SoCs depends on bits in both the System Control Unit
-and the LPC Host Controller.
+On 11/01, Michael Scott wrote:
+> 
+> On 11/01/2016 04:53 PM, Stephen Boyd wrote:
+> >On 10/31, Michael Scott wrote:
+> >>+
+> >>+static const struct msm_pingroup msm8994_groups[] = {
+> >>+	PINGROUP(0,   blsp_spi1, blsp_uart1, blsp_uim1, NA, NA, NA, NA, NA, NA,
+> >>+		 NA, NA),
+> >I see an hdmi_rcv group here after blsp_uim1. Please add it for
+> >this gpio.
+> 
+> Hi Stephen,
+> 
+> Thank you for reviewing the data-- this is really tedious stuff.
+> 
+> I'd like to make sure that we're both using tech data for msm8994.
+> I don't see the hdmi_rcv function at all in my docs.
+> 
+> >
+> >>+	PINGROUP(1,   blsp_spi1, blsp_uart1, blsp_uim1, NA, NA, NA, NA, NA, NA,
+> >>+		 NA, NA),
+> >>+	PINGROUP(2,   blsp_spi1, blsp_uart1, blsp_i2c1, NA, NA, NA, NA, NA, NA,
+> >>+		 NA, NA),
+> >>+	PINGROUP(3,   blsp_spi1, blsp_uart1, blsp_i2c1, NA, NA, NA, NA, NA, NA,
+> >>+		 NA, NA),
+> >>+	PINGROUP(4,   blsp_spi2, blsp_uart2, blsp_uim2, qdss_cti_trig_out_b,
+> >>+		 NA, NA, NA, NA, NA, NA, NA),
+> >>+	PINGROUP(5,   blsp_spi2, blsp_uart2, blsp_uim2, qdss_cti_trig_in_b, NA,
+> >The qdss_cti_* is in function 5 for both of these, not function
+> >4.
+> These are indeed wrong, but my docs both show as function 7.
 
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
----
- Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt
+Ok. I think your document is for 8994v1, which never got
+commercialized. I certainly see that this function assignment
+changed between v1 and v2 from 7 to 5.
 
-diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt b/Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt
-new file mode 100644
-index 000000000000..792651488c3d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt
-@@ -0,0 +1,17 @@
-+* Device tree bindings for the Aspeed LPC Host Controller (LPCHC)
-+
-+The LPCHC registers configure LPC behaviour between the BMC and the host
-+system. The LPCHC also participates in pinmux requests on g5 SoCs and is
-+therefore considered a syscon device.
-+
-+Required properties:
-+- compatible:		"aspeed,ast2500-lpchc", "syscon"
-+- reg:			contains offset/length value of the LPCHC memory
-+			region.
-+
-+Example:
-+
-+lpchc: lpchc@1e7890a0 {
-+	compatible = "aspeed,ast2500-lpchc", "syscon";
-+	reg = <0x1e7890a0 0xc4>;
-+};
+Now that my eyes are bleeding I'm going to do something else.
+
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
