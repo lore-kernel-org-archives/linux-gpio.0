@@ -1,148 +1,78 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 1/1] gpio: lib: Add gpio_is_enabled() to get pin mode
-Date: Wed, 2 Nov 2016 17:47:17 +0530
-Message-ID: <1478089037-26441-1-git-send-email-ldewangan@nvidia.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 00/14] pinctrl-sx150x: Various bug-fixes and code
+ simplifications
+Date: Wed, 2 Nov 2016 14:33:42 +0100
+Message-ID: <f0cdd71c-3036-56f8-74a4-ebf20cde75b4@baylibre.com>
+References: <1478015868-10309-1-git-send-email-andrew.smirnov@gmail.com>
+ <9bc0e603-b861-85d8-914f-bd4b6e8a8020@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from nat-hk.nvidia.com ([203.18.50.4]:4270 "EHLO
-        hkmmgate102.nvidia.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752100AbcKBMdx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Nov 2016 08:33:53 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <9bc0e603-b861-85d8-914f-bd4b6e8a8020@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrey Smirnov <andrew.smirnov@gmail.com>, linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, cphealy@gmail.com
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, arnd@arndb.de
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 
-Many of devices/SoCs supports the GPIO and special IO function
-from their pins. On such cases, there is always configuration
-bits to select the mode of pin as GPIO or as the special IO mode.
-The functional modes are selected by pinmux option.
+On 11/02/2016 12:01 PM, Neil Armstrong wrote:
+> On 11/01/2016 04:57 PM, Andrey Smirnov wrote:
+>> Linus, Neil:
+>>
+>> I've had some help and got my hardware setup modified to enable IRQ
+>> functionality testing, so ended up looking at the code of SX150x more
+>> resulting in some code improvements (hopefully) and bugfixes.
+>>
+>> There are many small changes each of which is probably better
+>> described by corresponding commit's message, however the most
+>> porminenet changes of the whole patchset are the switch to regmap API
+>> (patches ## 7,8) and reduction of locking (patch # 9)
+>>
+>> Please let me know what you think.
+>>
+>> Thanks,
+>> Andrey
+>>
+>> Andrey Smirnov (14):
+>>   pinctrl-sx150x: Rely on of_modalias_node for OF matching
+>>   pinctrl-sx150x: Add SX1503 specific data
+>>   pinctrl-sx150x: Replace magic number in sx150x_init_hw
+>>   pinctrl-sx150x: Fix incorrect constant in sx150x_init_hw
+>>   pinctrl-sx150x: Move some code out of sx150x_init_hw
+>>   pinctrl-sx150x: Improve sx150x_init_misc for SX1504/5/6
+>>   pinctrl-sx150x: Convert driver to use regmap API
+>>   pinctrl-sx150x: Replace sx150x_*_cfg by means of regmap API
+>>   pinctrl-sx150x: Remove excessive locking
+>>   pinctrl-sx150x: Improve oscio GPIO functions
+>>   pinctrl-sx150x: Simplify interrupt handler
+>>   pinctrl-sx150x: Use handle_bad_irq instead of handle_edge_irq
+>>   pinctrl-sx150x: Remove magic numbers from sx150x_irq_set_type
+>>   pinctrl-sx150x: Remove magic numbers from sx150x_reset
+>>
+>>  drivers/pinctrl/pinctrl-sx150x.c | 753 +++++++++++++++++++++------------------
+>>  1 file changed, 416 insertions(+), 337 deletions(-)
+>>
+> 
+> Hi Andrey,
+> 
+> This is good, you went faster than me !
+> 
+> Small point, could you add Kconfig dependency on REGMAP ?
+> 
+> I will try out this patchset and hopefully get you a Tested-by in the next few days.
+> 
+> Neil
+> 
 
-When device booted and reach to kernel, it is not possible to get
-the current configuration of pin whether it is in GPIO mode or
-in special IO mode without configurations.
+Great, Successfully worked on 4.9-rc2 on my BeagleBone black installation with a SX1509.
+I got some rising and falling interrupts using gpio-event-mon.
 
-Add APIs to return the current mode of pins without requesting it
-as GPIO to find out the current mode.
-This helps on dumping the pin configuration from debug/test utility
-to get the current mode GPIO or functional mode.
+Small NIT: please add the sx1503 entry in the Kconfig desc and in the pinctrl-sx150x.txt bindings.
 
-The typical utility looks as:
-pin_dump(pin)
-{
-	if(gpio_is_enabled(pin)) {
-		dump direction using get_direction()
-	} else {
-		dump pinmux option and its configurations.
-	}
-}
+Tested-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
- drivers/gpio/gpiolib.c        | 22 ++++++++++++++++++++++
- include/asm-generic/gpio.h    |  4 ++++
- include/linux/gpio/consumer.h |  8 ++++++++
- include/linux/gpio/driver.h   |  5 +++++
- 4 files changed, 39 insertions(+)
+With the Kconfig and bindings changes :
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 93ed0e0..4cba61d 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2356,6 +2356,28 @@ int gpiod_is_active_low(const struct gpio_desc *desc)
- }
- EXPORT_SYMBOL_GPL(gpiod_is_active_low);
- 
-+/**
-+ * gpiod_is_enabled - Finds whether pin is in GPIO mode or in functional mode.
-+ * @desc: the gpio descriptor to check.
-+ *
-+ * Returns 1 if the GPIO mode is enabled of pin, 0 if it is in functional mode
-+ * or negative error if any failure.
-+ */
-+int gpiod_is_enabled(const struct gpio_desc *desc)
-+{
-+	struct gpio_chip *chip;
-+
-+	VALIDATE_DESC(desc);
-+	chip = desc->gdev->chip;
-+	if (!chip->is_enabled) {
-+		gpiod_dbg(desc, "%s: missing is_enabled() ops\n", __func__);
-+		return -ENOTSUPP;
-+	}
-+
-+	return chip->is_enabled(chip, gpio_chip_hwgpio(desc));
-+}
-+EXPORT_SYMBOL_GPL(gpiod_is_enabled);
-+
- /* I/O calls are only valid after configuration completed; the relevant
-  * "is this a valid GPIO" error checks should already have been done.
-  *
-diff --git a/include/asm-generic/gpio.h b/include/asm-generic/gpio.h
-index 8ca627d..90d15cb 100644
---- a/include/asm-generic/gpio.h
-+++ b/include/asm-generic/gpio.h
-@@ -89,6 +89,10 @@ static inline void gpio_set_value_cansleep(unsigned gpio, int value)
- 	return gpiod_set_raw_value_cansleep(gpio_to_desc(gpio), value);
- }
- 
-+static inline int gpio_is_enabled(unsigned gpio)
-+{
-+	return gpiod_is_enabled(gpio_to_desc(gpio));
-+}
- 
- /* A platform's <asm/gpio.h> code may want to inline the I/O calls when
-  * the GPIO is constant and refers to some always-present controller,
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index fb0fde6..9f9e1d3 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -124,6 +124,7 @@ int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
- 
- int gpiod_is_active_low(const struct gpio_desc *desc);
- int gpiod_cansleep(const struct gpio_desc *desc);
-+int gpiod_is_enabled(const struct gpio_desc *desc);
- 
- int gpiod_to_irq(const struct gpio_desc *desc);
- 
-@@ -389,6 +390,13 @@ static inline int gpiod_cansleep(const struct gpio_desc *desc)
- 	return 0;
- }
- 
-+static inline int gpiod_is_enabled(const struct gpio_desc *desc)
-+{
-+	/* GPIO can never have been requested */
-+	WARN_ON(1);
-+	return 0;
-+}
-+
- static inline int gpiod_to_irq(const struct gpio_desc *desc)
- {
- 	/* GPIO can never have been requested */
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 2dfcf25..7b67b06 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -60,6 +60,9 @@ enum single_ended_mode {
-  *	with LINE_MODE_OPEN_SOURCE as mode argument.
-  * @to_irq: optional hook supporting non-static gpio_to_irq() mappings;
-  *	implementation may not sleep
-+ * @is_enabled: optional hook for finding whether pin is in GPIO mode or in
-+ *	functional mode. returns value for pin mode "offset", 0 for functional,
-+ *	1 for GPIO mode or negative error.
-  * @dbg_show: optional routine to show contents in debugfs; default code
-  *	will be used when this is omitted, but custom code can show extra
-  *	state (such as pullup/pulldown configuration).
-@@ -159,6 +162,8 @@ struct gpio_chip {
- 
- 	int			(*to_irq)(struct gpio_chip *chip,
- 						unsigned offset);
-+	int			(*is_enabled)(struct gpio_chip *chip,
-+						unsigned offset);
- 
- 	void			(*dbg_show)(struct seq_file *s,
- 						struct gpio_chip *chip);
--- 
-2.1.4
-
+Thanks,
+Neil
