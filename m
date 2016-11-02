@@ -1,78 +1,93 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 00/14] pinctrl-sx150x: Various bug-fixes and code
- simplifications
-Date: Wed, 2 Nov 2016 14:33:42 +0100
-Message-ID: <f0cdd71c-3036-56f8-74a4-ebf20cde75b4@baylibre.com>
-References: <1478015868-10309-1-git-send-email-andrew.smirnov@gmail.com>
- <9bc0e603-b861-85d8-914f-bd4b6e8a8020@baylibre.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH] pinctrl: sunxi: make bool drivers explicitly non-modular
+Date: Wed, 2 Nov 2016 14:41:35 +0100
+Message-ID: <20161102134135.yznnlq2givbizziw@lukather>
+References: <20161030000030.9394-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9bc0e603-b861-85d8-914f-bd4b6e8a8020@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrey Smirnov <andrew.smirnov@gmail.com>, linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, cphealy@gmail.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="eewes25i6go2okyw"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from up.free-electrons.com ([163.172.77.33]:39283 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752586AbcKBNli (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Nov 2016 09:41:38 -0400
+Content-Disposition: inline
+In-Reply-To: <20161030000030.9394-1-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-kernel@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Patrice Chotard <patrice.chotard@st.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Fabian Frederick <fabf@skynet.be>, Maxime Coquelin <maxime.coquelin@st.com>, Vishnu Patekar <vishnupatekar0510@gmail.com>, Mylene Josserand <mylene.josserand@free-electrons.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 11/02/2016 12:01 PM, Neil Armstrong wrote:
-> On 11/01/2016 04:57 PM, Andrey Smirnov wrote:
->> Linus, Neil:
->>
->> I've had some help and got my hardware setup modified to enable IRQ
->> functionality testing, so ended up looking at the code of SX150x more
->> resulting in some code improvements (hopefully) and bugfixes.
->>
->> There are many small changes each of which is probably better
->> described by corresponding commit's message, however the most
->> porminenet changes of the whole patchset are the switch to regmap API
->> (patches ## 7,8) and reduction of locking (patch # 9)
->>
->> Please let me know what you think.
->>
->> Thanks,
->> Andrey
->>
->> Andrey Smirnov (14):
->>   pinctrl-sx150x: Rely on of_modalias_node for OF matching
->>   pinctrl-sx150x: Add SX1503 specific data
->>   pinctrl-sx150x: Replace magic number in sx150x_init_hw
->>   pinctrl-sx150x: Fix incorrect constant in sx150x_init_hw
->>   pinctrl-sx150x: Move some code out of sx150x_init_hw
->>   pinctrl-sx150x: Improve sx150x_init_misc for SX1504/5/6
->>   pinctrl-sx150x: Convert driver to use regmap API
->>   pinctrl-sx150x: Replace sx150x_*_cfg by means of regmap API
->>   pinctrl-sx150x: Remove excessive locking
->>   pinctrl-sx150x: Improve oscio GPIO functions
->>   pinctrl-sx150x: Simplify interrupt handler
->>   pinctrl-sx150x: Use handle_bad_irq instead of handle_edge_irq
->>   pinctrl-sx150x: Remove magic numbers from sx150x_irq_set_type
->>   pinctrl-sx150x: Remove magic numbers from sx150x_reset
->>
->>  drivers/pinctrl/pinctrl-sx150x.c | 753 +++++++++++++++++++++------------------
->>  1 file changed, 416 insertions(+), 337 deletions(-)
->>
-> 
-> Hi Andrey,
-> 
-> This is good, you went faster than me !
-> 
-> Small point, could you add Kconfig dependency on REGMAP ?
-> 
-> I will try out this patchset and hopefully get you a Tested-by in the next few days.
-> 
-> Neil
-> 
 
-Great, Successfully worked on 4.9-rc2 on my BeagleBone black installation with a SX1509.
-I got some rising and falling interrupts using gpio-event-mon.
+--eewes25i6go2okyw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Small NIT: please add the sx1503 entry in the Kconfig desc and in the pinctrl-sx150x.txt bindings.
+On Sat, Oct 29, 2016 at 08:00:30PM -0400, Paul Gortmaker wrote:
+> None of the Kconfigs for any of these drivers are tristate,
+> meaning that they currently are not being built as a module by anyone.
+>=20
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the drivers there is no doubt they are builtin-only.  All
+> drivers get essentially the same change, so they are handled in batch.
+>=20
+> Changes are (1) use builtin_platform_driver, (2) use init.h header
+> (3) delete module_exit related code, (4) delete MODULE_DEVICE_TABLE,
+> and (5) delete MODULE_LICENCE/MODULE_AUTHOR and associated tags.
+>=20
+> Since module_platform_driver() uses the same init level priority as
+> builtin_platform_driver() the init ordering remains unchanged with
+> this commit.
+>=20
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+>=20
+> We do delete the MODULE_LICENSE etc. tags since all that information
+> is already contained at the top of each file in the comments.
+>=20
+> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Patrice Chotard <patrice.chotard@st.com>
+> Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
+> Cc: Fabian Frederick <fabf@skynet.be>
+> Cc: Maxime Coquelin <maxime.coquelin@st.com>
+> Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> Cc: Mylene Josserand <mylene.josserand@free-electrons.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-Tested-by: Neil Armstrong <narmstrong@baylibre.com>
-
-With the Kconfig and bindings changes :
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
 Thanks,
-Neil
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--eewes25i6go2okyw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYGe0PAAoJEBx+YmzsjxAgy3QQAJ3Mij93Y8twIb4kocbEnULO
+UI5aiQBm1Jhx7ttjRz8gseRic6ZOHop71cEMmdkkChcZE3cyaDwI2HZeztUzGwfH
+wJ3xwtYx+y/sb0d2wpvINfvCKqgLGiRMD6SSs1an2Jexl1dkPz7ff4iHPUlWjQ4d
+bAI5r6qmuC0uMFXcMyPr1Mc/H0sPSP3TqOXqin6FJI0PbVH3bUxVKk+4c/18JV5e
+qzmNzPeo9GKHa0DhEE8vDv9AWh6Fx+75k0rJtKKPJqIhQy6Z35lN1r1Zi2wykCnn
+ifW+uIOSHm1JlbdaaoCfu/GXLBOqxFcWH+ytu5PIbcNi8bA3HF9hNoc1kRoNxwD6
+iYOQtNxgpLoHmPg4fQ07gn4uYd/9LXL6aOAb6fjyDWcwyijInQRyQShzG5wZA5tm
+s3Xzn3ULWTuVYflsvgjdJogsla13i+fb6IUneepnNnghSaxsGgW8IQM7Ub9dZIrO
+8vMER6yZQuhRhj5A09F6YgMDWuO+Xeav5v9zBu5E03Uivoz9cVd0c5TQEnOPdsqI
+u+JilYQERdm2goExsnc9+XQ0j+1mrbLu1WwJfVMT8jXQA1ttuLPicmJCK8bQpbww
+Gq4ta8SNbr90Bd+QnpGnPCEGtMlYd+CKiFejbbdCIWrjRO0DeVOhkeuJVgyJADkO
+MbJu/8mRKFe+bk9dJVZB
+=5Tin
+-----END PGP SIGNATURE-----
+
+--eewes25i6go2okyw--
