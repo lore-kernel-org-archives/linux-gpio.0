@@ -1,86 +1,82 @@
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH 1/2] pinctrl: sunxi: Add support for interrupt debouncing
-Date: Wed, 2 Nov 2016 20:51:06 +0100
-Message-ID: <20161102195106.eazrl5oevykltvzd@lukather>
-References: <cover.ed6c19bdf01ae70096f3d96af4805f59ef16f94a.1476868462.git-series.maxime.ripard@free-electrons.com>
- <fa022cca9917917ace4af7d5e852c9348ec5b553.1476868462.git-series.maxime.ripard@free-electrons.com>
- <CACRpkdaoEH7OixJDkjuZ0qqYVURLvXwn8b41-OvqjZGJ=neh+Q@mail.gmail.com>
- <20161020135625.vro5cxkf3rxevwyn@lukather>
+Subject: Re: Requesting as a GPIO a pin already used through pinctrl
+Date: Wed, 2 Nov 2016 22:31:42 +0100
+Message-ID: <20161102213142.ajano4g4oizusv74@lukather>
+References: <20160916135808.GA17518@lukather>
+ <CACRpkdbZ-TCNmmt4NyL2cQ2W3dE42uFGjQtxRyMxrf2ZUA_9Rg@mail.gmail.com>
+ <20160921195128.GG8719@lukather>
+ <CACRpkdY_YVhHuMwx=mwPVyHNpLveg7Gikc0uznUhsKBCYJwzzw@mail.gmail.com>
+ <20160923210549.GY8719@lukather>
+ <20161026154928.hu6rjalw7syrvbvg@lukather>
+ <CACRpkda=_TD5S7N52CSYrmKvkY5WLU4Qi47_a=K+8Ud+kmphqg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mclz7kicg5bjph7n"
+        protocol="application/pgp-signature"; boundary="sggayqvgig4knulw"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from up.free-electrons.com ([163.172.77.33]:47410 "EHLO
+Received: from up.free-electrons.com ([163.172.77.33]:49230 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753174AbcKBTvK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Nov 2016 15:51:10 -0400
+        with ESMTP id S1751214AbcKBVbq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Nov 2016 17:31:46 -0400
 Content-Disposition: inline
-In-Reply-To: <20161020135625.vro5cxkf3rxevwyn@lukather>
+In-Reply-To: <CACRpkda=_TD5S7N52CSYrmKvkY5WLU4Qi47_a=K+8Ud+kmphqg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
 
 
---mclz7kicg5bjph7n
+--sggayqvgig4knulw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Linus,
 
-On Thu, Oct 20, 2016 at 03:56:25PM +0200, Maxime Ripard wrote:
-> Hi Linus,
+On Thu, Oct 27, 2016 at 02:12:45PM +0200, Linus Walleij wrote:
+> On Wed, Oct 26, 2016 at 5:49 PM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
 >=20
-> On Thu, Oct 20, 2016 at 03:04:46PM +0200, Linus Walleij wrote:
-> > On Wed, Oct 19, 2016 at 11:15 AM, Maxime Ripard
-> > <maxime.ripard@free-electrons.com> wrote:
-> >=20
-> > > The pin controller found in the Allwinner SoCs has support for interr=
-upts
-> > > debouncing.
-> > >
-> > > However, this is not done per-pin, preventing us from using the gener=
-ic
-> > > pinconf binding for that,
-> >=20
-> > How typical.
-> >=20
-> > > but per irq bank, which, depending on the SoC,
-> > > ranges from one to five.
-> > >
-> > > Introduce a device-wide property to deal with this using a nanosecond
-> > > resolution.
-> > >
-> > > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> > (...)
-> > > +Note: For backward compatibility reasons, the hosc and losc clocks a=
-re
-> > > +only required if you need to use the optional
-> > > +allwinner,debounce-time-ns property. Any new device tree should set =
-them.
-> > > +
-> > > +Optional properties:
-> > > +  - allwinner,debounce-time-ns: Array of debouncing periods in
-> > > +    nanoseconds. One period per irq bank found in the controller
-> >=20
-> > Do you really *need* to specify this with nanosecond resolution?
-> >
-> > Else I would suggest to use microsecond resolution and just use
-> > the generic binding (input-debounce) but on the device node instead
-> > of the specific handler.
+> > In order not to break the DT, we looked at the code of pin_request
+> > (which is the one using the strict flag), and went to the conclusion
+> > that it needs to be amended to check the owner based on the device
+> > structure pointer.
+> (...)
+> > Which means that in order to avoid removing one property from a DT to
+> > fix an actual bug that can cause real stability issues to Linux, we
+> > end up reworking the gpiolib API and fixing all the users.
 >=20
-> Theorically, the debouncing clock can be set at 24MHz, which means a
-> 42ns resolution.
+> DT backward compatibility is for one case: when devices are shipped
+> with a DT burnt into ROM/flash. Is that happening?
+>
+> If Allwinner or their subvendors are not shipping devcie trees - i.e. if
+> this a community-only effort and you're just building and booting the
+> DT+kernel on all these devices, by all means break the ABI if it
+> makes sense. Noone is going to complain.
 >=20
-> I've seen that the other bindings usually use microseconds, but in our
-> case, we can really go lower than that.
->=20
-> I don't really know if it makes sense though.
+> Then we can discuss backward compatibility the day Allwinner start
+> shipping device trees, not now.
 
-Any comments on this?
+As far as I know, no one is shipping DTs in a read-only
+storage. Allwinner ships a different binary format (FEX), or a widely
+incompatible DT in their newer SoCs in their BSPs, so it doesn't
+really matter anyway.
 
-Thanks,
+The only product that I know of that is running only a mainline-ish
+kernel is the CHIP, which I happen to work on, and we just have an
+upgradable debian package holding the DT.
+
+And we'll *have* to update it anyway, since between the time where we
+ship a feature, and the time it gets upstreamed, the DT binding is
+very likely to have changed anyway because of the reviews.
+
+Some other products have a mainline-ish options too, but are in a
+similar situation, since their DT have bindings of an earlier version
+of patches.
+
+So no, I really don't think the DT ABI matters here, or at least
+compared to the bug we face and the changes that we would need to make
+in order to fix it. But Mark will probably disagree.
+
 Maxime
 
 --=20
@@ -88,24 +84,24 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---mclz7kicg5bjph7n
+--sggayqvgig4knulw
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBCAAGBQJYGkOlAAoJEBx+YmzsjxAgkNsP/ia2AJYwOZTQgMrjlwqE65+a
-186mWIuVAbzC56aCmx+2Y3sgoFOx+FiGaVsAZkJy/yUvtkdYvl1B9a14ZSJcTT2y
-LstAi38MpAAYGbZ64iRI5dmJShtJEErZ50Y9PVBwkEh4rcoItt2/bUUyuP2O81sx
-h5jU49yhviB5r2ocnGq7ZDdjNbsqc7zt1nUhy1SWuKn+fkOUiAnbt5lQgiVsWHbg
-t3aoQtbZqqY5o/ArBx2qkMs26R0IuX+D0n+QwcIeGwwN65XIaW1S04vQkj4mru0r
-O+QSP9aJrMjsqnY0EI+vwNCvfhR4cS+dULVJ4oOc2kVoSe0TnFDmoeBBWNOojlfy
-vAaCCF6LER2oH0So27sKi5VA6q9TvIPGwWViO2vjWxXSRqjUpiQmKkNJc3NDjEt5
-ll9aZEP9tHYgJKDM2RkwQNqTMS27ondq3olUkDAoB0WWmnPBPGgahmgWsIvFOZDH
-nqMbWppEE9glxxBLDC3pLIJaajjDICQ0IPx2kGfHxCCh9E21xoHTnzR3Yf40ulxz
-Ja/wSYvSkaBDlVgJ9tUt7kcJavoM5vEzyja4ru4aioCOqpuj3lZKM6d6Fo5dE6P6
-c5pBfa3QS27yzoYkoRYDG786U0Ah79KiXKf4H4tTg0ZUFsSGtgvvLy9pOGqMCsBk
-X036YLI2Ha9JEwgIKABh
-=7Ega
+iQIcBAEBCAAGBQJYGls6AAoJEBx+YmzsjxAg5GEP/RulMtoZkmiQbvOgHDbxNKC2
+Oq7XM59xV5TTtWi2h+8bLMdzSXglGa8naE0LUM/qJyxM232UOkq1QVwzlExwKhKr
+RdJE52UpLmh2EoXQrWKXDEtD1JCpb9CWX9drJfqLyd3Kdg0XrkibsUEZwfwgQhfd
+Q31nmDZpW8F9KjWdnysugNDx1zB00nOld32mrwI2YPy+PfSn9WIPFUWMfA7xbEm1
+EHJr9RIcSKqrcnKqHH6p/VdLp5i5JKRq6rBuX3QWVZkvWk2++ZDGSd9+TqWUtNBv
+liEUeZh3+GEefYHMAUbRgEUWZ9Vf3NYt6jqfPmkdr/49vRZCv6qicKVE18M1zmZp
+2BxKxMSp0IXj9o4c2t0ke0Jac98hTMT+E9l7N8PX5+kvCK+ZksPOd6oMTzlX/vCl
+l7yScGXJvMzSzUxOQ3VKE8uTnqQd24ddBQeqKCXsl9XQqAbmva514ljeQgieW1Z0
+NX4NadVuYKSX4NCsQFNVFTozcC3SJamkAasmmGXcJIwnkO6oQRiU8WphdGOB+B49
+Rbams1UaXBsZnY7RDAuRBaPNIAMJSbn8xjF7fXIwnbMpZ4qUhm3i5vmsbKMe0DEk
+uPbPFZnt3Ba0zd6pASjvSwKJsFpXHSBDbaR6D+JMvJyL5+oDrsMWbpK5yOePOJqB
+pwMffakFOt+eMhaQH2pd
+=gXne
 -----END PGP SIGNATURE-----
 
---mclz7kicg5bjph7n--
+--sggayqvgig4knulw--
