@@ -1,438 +1,56 @@
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Use lookup function for bias data
-Date: Thu,  3 Nov 2016 16:34:21 +0100
-Message-ID: <20161103153421.15527-3-niklas.soderlund+renesas@ragnatech.se>
-References: <20161103153421.15527-1-niklas.soderlund+renesas@ragnatech.se>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 2/6] pinctrl: rockchip: add support for rk1108
+Date: Thu, 03 Nov 2016 16:55:45 +0100
+Message-ID: <3450255.c5nv6dGt3I@diego>
+References: <1478175975-11779-1-git-send-email-andy.yan@rock-chips.com> <1478176470-11956-1-git-send-email-andy.yan@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:45923 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754253AbcKCPez (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Nov 2016 11:34:55 -0400
-In-Reply-To: <20161103153421.15527-1-niklas.soderlund+renesas@ragnatech.se>
+Received: from gloria.sntech.de ([95.129.55.99]:47704 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754769AbcKCP4K (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 3 Nov 2016 11:56:10 -0400
+In-Reply-To: <1478176470-11956-1-git-send-email-andy.yan@rock-chips.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Andy Yan <andy.yan@rock-chips.com>
+Cc: david.wu@rock-chips.com, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-There is a bug in the r8a7795 bias code where a WARN() is trigged
-anytime a pin from PUEN0/PUD0is accessed.
+Am Donnerstag, 3. November 2016, 20:34:30 schrieb Andy Yan:
+> Add basic support for rk1108 soc
+> 
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
- # cat /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins
+nice when support for a new soc is that easy in a driver :-)
 
- WARNING: CPU: 2 PID: 2391 at drivers/pinctrl/sh-pfc/pfc-r8a7795.c:5364 r8a7795_pinmux_get_bias+0xbc/0xc8
- [..]
- Call trace:
- [<ffff0000083c442c>] r8a7795_pinmux_get_bias+0xbc/0xc8
- [<ffff0000083c37f4>] sh_pfc_pinconf_get+0x194/0x270
- [<ffff0000083b0768>] pin_config_get_for_pin+0x20/0x30
- [<ffff0000083b11e8>] pinconf_generic_dump_one+0x168/0x188
- [<ffff0000083b144c>] pinconf_generic_dump_pins+0x5c/0x98
- [<ffff0000083b0628>] pinconf_pins_show+0xc8/0x128
- [<ffff0000081fe3bc>] seq_read+0x16c/0x420
- [<ffff00000831a110>] full_proxy_read+0x58/0x88
- [<ffff0000081d7ad4>] __vfs_read+0x1c/0xf8
- [<ffff0000081d8874>] vfs_read+0x84/0x148
- [<ffff0000081d9d64>] SyS_read+0x44/0xa0
- [<ffff000008082f4c>] __sys_trace_return+0x0/0x4
+There are two small issues below and with those fixed
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-This is due to the WARN() check if the reg field of the pullups struct
-is zero, and this should be 0 for pins controlled by the PUEN0/PUD0
-registers. Change the layout of the pullups struct to embed the pin
-number inside the struct and loop over it to fetch the correct
-information or WARN() if no pin is found.
+> ---
+> 
+>  drivers/pinctrl/pinctrl-rockchip.c | 27 ++++++++++++++++++++++++++-
+>  1 file changed, 26 insertions(+), 1 deletion(-)
 
-Fixes: 560655247b627ac7 ("pinctrl: sh-pfc: r8a7795: Add bias pinconf support")
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 350 ++++++++++++++++++-----------------
- 1 file changed, 180 insertions(+), 170 deletions(-)
+missing devicetree binding update for the new compatible
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 2e8cc2a..69e1f31 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -5189,171 +5189,187 @@ static int r8a7795_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *poc
- #define PU6	0x18
- 
- static const struct {
-+	u16 pin;
- 	u16 reg : 11;
- 	u16 bit : 5;
- } pullups[] = {
--	[RCAR_GP_PIN(2, 11)] = { PU0, 31 },	/* AVB_PHY_INT */
--	[RCAR_GP_PIN(2, 10)] = { PU0, 30 },	/* AVB_MAGIC */
--	[RCAR_GP_PIN(2,  9)] = { PU0, 29 },	/* AVB_MDC */
--
--	[RCAR_GP_PIN(1, 19)] = { PU1, 31 },	/* A19 */
--	[RCAR_GP_PIN(1, 18)] = { PU1, 30 },	/* A18 */
--	[RCAR_GP_PIN(1, 17)] = { PU1, 29 },	/* A17 */
--	[RCAR_GP_PIN(1, 16)] = { PU1, 28 },	/* A16 */
--	[RCAR_GP_PIN(1, 15)] = { PU1, 27 },	/* A15 */
--	[RCAR_GP_PIN(1, 14)] = { PU1, 26 },	/* A14 */
--	[RCAR_GP_PIN(1, 13)] = { PU1, 25 },	/* A13 */
--	[RCAR_GP_PIN(1, 12)] = { PU1, 24 },	/* A12 */
--	[RCAR_GP_PIN(1, 11)] = { PU1, 23 },	/* A11 */
--	[RCAR_GP_PIN(1, 10)] = { PU1, 22 },	/* A10 */
--	[RCAR_GP_PIN(1,  9)] = { PU1, 21 },	/* A9 */
--	[RCAR_GP_PIN(1,  8)] = { PU1, 20 },	/* A8 */
--	[RCAR_GP_PIN(1,  7)] = { PU1, 19 },	/* A7 */
--	[RCAR_GP_PIN(1,  6)] = { PU1, 18 },	/* A6 */
--	[RCAR_GP_PIN(1,  5)] = { PU1, 17 },	/* A5 */
--	[RCAR_GP_PIN(1,  4)] = { PU1, 16 },	/* A4 */
--	[RCAR_GP_PIN(1,  3)] = { PU1, 15 },	/* A3 */
--	[RCAR_GP_PIN(1,  2)] = { PU1, 14 },	/* A2 */
--	[RCAR_GP_PIN(1,  1)] = { PU1, 13 },	/* A1 */
--	[RCAR_GP_PIN(1,  0)] = { PU1, 12 },	/* A0 */
--	[RCAR_GP_PIN(2,  8)] = { PU1, 11 },	/* PWM2_A */
--	[RCAR_GP_PIN(2,  7)] = { PU1, 10 },	/* PWM1_A */
--	[RCAR_GP_PIN(2,  6)] = { PU1,  9 },	/* PWM0 */
--	[RCAR_GP_PIN(2,  5)] = { PU1,  8 },	/* IRQ5 */
--	[RCAR_GP_PIN(2,  4)] = { PU1,  7 },	/* IRQ4 */
--	[RCAR_GP_PIN(2,  3)] = { PU1,  6 },	/* IRQ3 */
--	[RCAR_GP_PIN(2,  2)] = { PU1,  5 },	/* IRQ2 */
--	[RCAR_GP_PIN(2,  1)] = { PU1,  4 },	/* IRQ1 */
--	[RCAR_GP_PIN(2,  0)] = { PU1,  3 },	/* IRQ0 */
--	[RCAR_GP_PIN(2, 14)] = { PU1,  2 },	/* AVB_AVTP_CAPTURE_A */
--	[RCAR_GP_PIN(2, 13)] = { PU1,  1 },	/* AVB_AVTP_MATCH_A */
--	[RCAR_GP_PIN(2, 12)] = { PU1,  0 },	/* AVB_LINK */
--
--	[RCAR_GP_PIN(7,  3)] = { PU2, 29 },	/* HDMI1_CEC */
--	[RCAR_GP_PIN(7,  2)] = { PU2, 28 },	/* HDMI0_CEC */
--	[RCAR_GP_PIN(7,  1)] = { PU2, 27 },	/* AVS2 */
--	[RCAR_GP_PIN(7,  0)] = { PU2, 26 },	/* AVS1 */
--	[RCAR_GP_PIN(0, 15)] = { PU2, 25 },	/* D15 */
--	[RCAR_GP_PIN(0, 14)] = { PU2, 24 },	/* D14 */
--	[RCAR_GP_PIN(0, 13)] = { PU2, 23 },	/* D13 */
--	[RCAR_GP_PIN(0, 12)] = { PU2, 22 },	/* D12 */
--	[RCAR_GP_PIN(0, 11)] = { PU2, 21 },	/* D11 */
--	[RCAR_GP_PIN(0, 10)] = { PU2, 20 },	/* D10 */
--	[RCAR_GP_PIN(0,  9)] = { PU2, 19 },	/* D9 */
--	[RCAR_GP_PIN(0,  8)] = { PU2, 18 },	/* D8 */
--	[RCAR_GP_PIN(0,  7)] = { PU2, 17 },	/* D7 */
--	[RCAR_GP_PIN(0,  6)] = { PU2, 16 },	/* D6 */
--	[RCAR_GP_PIN(0,  5)] = { PU2, 15 },	/* D5 */
--	[RCAR_GP_PIN(0,  4)] = { PU2, 14 },	/* D4 */
--	[RCAR_GP_PIN(0,  3)] = { PU2, 13 },	/* D3 */
--	[RCAR_GP_PIN(0,  2)] = { PU2, 12 },	/* D2 */
--	[RCAR_GP_PIN(0,  1)] = { PU2, 11 },	/* D1 */
--	[RCAR_GP_PIN(0,  0)] = { PU2, 10 },	/* D0 */
--	[RCAR_GP_PIN(1, 27)] = { PU2,  8 },	/* EX_WAIT0_A */
--	[RCAR_GP_PIN(1, 26)] = { PU2,  7 },	/* WE1_N */
--	[RCAR_GP_PIN(1, 25)] = { PU2,  6 },	/* WE0_N */
--	[RCAR_GP_PIN(1, 24)] = { PU2,  5 },	/* RD_WR_N */
--	[RCAR_GP_PIN(1, 23)] = { PU2,  4 },	/* RD_N */
--	[RCAR_GP_PIN(1, 22)] = { PU2,  3 },	/* BS_N */
--	[RCAR_GP_PIN(1, 21)] = { PU2,  2 },	/* CS1_N_A26 */
--	[RCAR_GP_PIN(1, 20)] = { PU2,  1 },	/* CS0_N */
--
--	[RCAR_GP_PIN(4,  9)] = { PU3, 31 },	/* SD3_DAT0 */
--	[RCAR_GP_PIN(4,  8)] = { PU3, 30 },	/* SD3_CMD */
--	[RCAR_GP_PIN(4,  7)] = { PU3, 29 },	/* SD3_CLK */
--	[RCAR_GP_PIN(4,  6)] = { PU3, 28 },	/* SD2_DS */
--	[RCAR_GP_PIN(4,  5)] = { PU3, 27 },	/* SD2_DAT3 */
--	[RCAR_GP_PIN(4,  4)] = { PU3, 26 },	/* SD2_DAT2 */
--	[RCAR_GP_PIN(4,  3)] = { PU3, 25 },	/* SD2_DAT1 */
--	[RCAR_GP_PIN(4,  2)] = { PU3, 24 },	/* SD2_DAT0 */
--	[RCAR_GP_PIN(4,  1)] = { PU3, 23 },	/* SD2_CMD */
--	[RCAR_GP_PIN(4,  0)] = { PU3, 22 },	/* SD2_CLK */
--	[RCAR_GP_PIN(3, 11)] = { PU3, 21 },	/* SD1_DAT3 */
--	[RCAR_GP_PIN(3, 10)] = { PU3, 20 },	/* SD1_DAT2 */
--	[RCAR_GP_PIN(3,  9)] = { PU3, 19 },	/* SD1_DAT1 */
--	[RCAR_GP_PIN(3,  8)] = { PU3, 18 },	/* SD1_DAT0 */
--	[RCAR_GP_PIN(3,  7)] = { PU3, 17 },	/* SD1_CMD */
--	[RCAR_GP_PIN(3,  6)] = { PU3, 16 },	/* SD1_CLK */
--	[RCAR_GP_PIN(3,  5)] = { PU3, 15 },	/* SD0_DAT3 */
--	[RCAR_GP_PIN(3,  4)] = { PU3, 14 },	/* SD0_DAT2 */
--	[RCAR_GP_PIN(3,  3)] = { PU3, 13 },	/* SD0_DAT1 */
--	[RCAR_GP_PIN(3,  2)] = { PU3, 12 },	/* SD0_DAT0 */
--	[RCAR_GP_PIN(3,  1)] = { PU3, 11 },	/* SD0_CMD */
--	[RCAR_GP_PIN(3,  0)] = { PU3, 10 },	/* SD0_CLK */
--
--	[RCAR_GP_PIN(5, 19)] = { PU4, 31 },	/* MSIOF0_SS1 */
--	[RCAR_GP_PIN(5, 18)] = { PU4, 30 },	/* MSIOF0_SYNC */
--	[RCAR_GP_PIN(5, 17)] = { PU4, 29 },	/* MSIOF0_SCK */
--	[RCAR_GP_PIN(5, 16)] = { PU4, 28 },	/* HRTS0_N */
--	[RCAR_GP_PIN(5, 15)] = { PU4, 27 },	/* HCTS0_N */
--	[RCAR_GP_PIN(5, 14)] = { PU4, 26 },	/* HTX0 */
--	[RCAR_GP_PIN(5, 13)] = { PU4, 25 },	/* HRX0 */
--	[RCAR_GP_PIN(5, 12)] = { PU4, 24 },	/* HSCK0 */
--	[RCAR_GP_PIN(5, 11)] = { PU4, 23 },	/* RX2_A */
--	[RCAR_GP_PIN(5, 10)] = { PU4, 22 },	/* TX2_A */
--	[RCAR_GP_PIN(5,  9)] = { PU4, 21 },	/* SCK2 */
--	[RCAR_GP_PIN(5,  8)] = { PU4, 20 },	/* RTS1_N_TANS */
--	[RCAR_GP_PIN(5,  7)] = { PU4, 19 },	/* CTS1_N */
--	[RCAR_GP_PIN(5,  6)] = { PU4, 18 },	/* TX1_A */
--	[RCAR_GP_PIN(5,  5)] = { PU4, 17 },	/* RX1_A */
--	[RCAR_GP_PIN(5,  4)] = { PU4, 16 },	/* RTS0_N_TANS */
--	[RCAR_GP_PIN(5,  3)] = { PU4, 15 },	/* CTS0_N */
--	[RCAR_GP_PIN(5,  2)] = { PU4, 14 },	/* TX0 */
--	[RCAR_GP_PIN(5,  1)] = { PU4, 13 },	/* RX0 */
--	[RCAR_GP_PIN(5,  0)] = { PU4, 12 },	/* SCK0 */
--	[RCAR_GP_PIN(3, 15)] = { PU4, 11 },	/* SD1_WP */
--	[RCAR_GP_PIN(3, 14)] = { PU4, 10 },	/* SD1_CD */
--	[RCAR_GP_PIN(3, 13)] = { PU4,  9 },	/* SD0_WP */
--	[RCAR_GP_PIN(3, 12)] = { PU4,  8 },	/* SD0_CD */
--	[RCAR_GP_PIN(4, 17)] = { PU4,  7 },	/* SD3_DS */
--	[RCAR_GP_PIN(4, 16)] = { PU4,  6 },	/* SD3_DAT7 */
--	[RCAR_GP_PIN(4, 15)] = { PU4,  5 },	/* SD3_DAT6 */
--	[RCAR_GP_PIN(4, 14)] = { PU4,  4 },	/* SD3_DAT5 */
--	[RCAR_GP_PIN(4, 13)] = { PU4,  3 },	/* SD3_DAT4 */
--	[RCAR_GP_PIN(4, 12)] = { PU4,  2 },	/* SD3_DAT3 */
--	[RCAR_GP_PIN(4, 11)] = { PU4,  1 },	/* SD3_DAT2 */
--	[RCAR_GP_PIN(4, 10)] = { PU4,  0 },	/* SD3_DAT1 */
--
--	[RCAR_GP_PIN(6, 24)] = { PU5, 31 },	/* USB0_PWEN */
--	[RCAR_GP_PIN(6, 23)] = { PU5, 30 },	/* AUDIO_CLKB_B */
--	[RCAR_GP_PIN(6, 22)] = { PU5, 29 },	/* AUDIO_CLKA_A */
--	[RCAR_GP_PIN(6, 21)] = { PU5, 28 },	/* SSI_SDATA9_A */
--	[RCAR_GP_PIN(6, 20)] = { PU5, 27 },	/* SSI_SDATA8 */
--	[RCAR_GP_PIN(6, 19)] = { PU5, 26 },	/* SSI_SDATA7 */
--	[RCAR_GP_PIN(6, 18)] = { PU5, 25 },	/* SSI_WS78 */
--	[RCAR_GP_PIN(6, 17)] = { PU5, 24 },	/* SSI_SCK78 */
--	[RCAR_GP_PIN(6, 16)] = { PU5, 23 },	/* SSI_SDATA6 */
--	[RCAR_GP_PIN(6, 15)] = { PU5, 22 },	/* SSI_WS6 */
--	[RCAR_GP_PIN(6, 14)] = { PU5, 21 },	/* SSI_SCK6 */
--	[RCAR_GP_PIN(6, 13)] = { PU5, 20 },	/* SSI_SDATA5 */
--	[RCAR_GP_PIN(6, 12)] = { PU5, 19 },	/* SSI_WS5 */
--	[RCAR_GP_PIN(6, 11)] = { PU5, 18 },	/* SSI_SCK5 */
--	[RCAR_GP_PIN(6, 10)] = { PU5, 17 },	/* SSI_SDATA4 */
--	[RCAR_GP_PIN(6,  9)] = { PU5, 16 },	/* SSI_WS4 */
--	[RCAR_GP_PIN(6,  8)] = { PU5, 15 },	/* SSI_SCK4 */
--	[RCAR_GP_PIN(6,  7)] = { PU5, 14 },	/* SSI_SDATA3 */
--	[RCAR_GP_PIN(6,  6)] = { PU5, 13 },	/* SSI_WS34 */
--	[RCAR_GP_PIN(6,  5)] = { PU5, 12 },	/* SSI_SCK34 */
--	[RCAR_GP_PIN(6,  4)] = { PU5, 11 },	/* SSI_SDATA2_A */
--	[RCAR_GP_PIN(6,  3)] = { PU5, 10 },	/* SSI_SDATA1_A */
--	[RCAR_GP_PIN(6,  2)] = { PU5,  9 },	/* SSI_SDATA0 */
--	[RCAR_GP_PIN(6,  1)] = { PU5,  8 },	/* SSI_WS01239 */
--	[RCAR_GP_PIN(6,  0)] = { PU5,  7 },	/* SSI_SCK01239 */
--	[RCAR_GP_PIN(5, 25)] = { PU5,  5 },	/* MLB_DAT */
--	[RCAR_GP_PIN(5, 24)] = { PU5,  4 },	/* MLB_SIG */
--	[RCAR_GP_PIN(5, 23)] = { PU5,  3 },	/* MLB_CLK */
--	[RCAR_GP_PIN(5, 22)] = { PU5,  2 },	/* MSIOF0_RXD */
--	[RCAR_GP_PIN(5, 21)] = { PU5,  1 },	/* MSIOF0_SS2 */
--	[RCAR_GP_PIN(5, 20)] = { PU5,  0 },	/* MSIOF0_TXD */
--
--	[RCAR_GP_PIN(6, 31)] = { PU6,  6 },	/* USB31_OVC */
--	[RCAR_GP_PIN(6, 30)] = { PU6,  5 },	/* USB31_PWEN */
--	[RCAR_GP_PIN(6, 29)] = { PU6,  4 },	/* USB30_OVC */
--	[RCAR_GP_PIN(6, 28)] = { PU6,  3 },	/* USB30_PWEN */
--	[RCAR_GP_PIN(6, 27)] = { PU6,  2 },	/* USB1_OVC */
--	[RCAR_GP_PIN(6, 26)] = { PU6,  1 },	/* USB1_PWEN */
--	[RCAR_GP_PIN(6, 25)] = { PU6,  0 },	/* USB0_OVC */
--};
-+	{ RCAR_GP_PIN(2, 11), PU0, 31 },	/* AVB_PHY_INT */
-+	{ RCAR_GP_PIN(2, 10), PU0, 30 },	/* AVB_MAGIC */
-+	{ RCAR_GP_PIN(2,  9), PU0, 29 },	/* AVB_MDC */
-+
-+	{ RCAR_GP_PIN(1, 19), PU1, 31 },	/* A19 */
-+	{ RCAR_GP_PIN(1, 18), PU1, 30 },	/* A18 */
-+	{ RCAR_GP_PIN(1, 17), PU1, 29 },	/* A17 */
-+	{ RCAR_GP_PIN(1, 16), PU1, 28 },	/* A16 */
-+	{ RCAR_GP_PIN(1, 15), PU1, 27 },	/* A15 */
-+	{ RCAR_GP_PIN(1, 14), PU1, 26 },	/* A14 */
-+	{ RCAR_GP_PIN(1, 13), PU1, 25 },	/* A13 */
-+	{ RCAR_GP_PIN(1, 12), PU1, 24 },	/* A12 */
-+	{ RCAR_GP_PIN(1, 11), PU1, 23 },	/* A11 */
-+	{ RCAR_GP_PIN(1, 10), PU1, 22 },	/* A10 */
-+	{ RCAR_GP_PIN(1,  9), PU1, 21 },	/* A9 */
-+	{ RCAR_GP_PIN(1,  8), PU1, 20 },	/* A8 */
-+	{ RCAR_GP_PIN(1,  7), PU1, 19 },	/* A7 */
-+	{ RCAR_GP_PIN(1,  6), PU1, 18 },	/* A6 */
-+	{ RCAR_GP_PIN(1,  5), PU1, 17 },	/* A5 */
-+	{ RCAR_GP_PIN(1,  4), PU1, 16 },	/* A4 */
-+	{ RCAR_GP_PIN(1,  3), PU1, 15 },	/* A3 */
-+	{ RCAR_GP_PIN(1,  2), PU1, 14 },	/* A2 */
-+	{ RCAR_GP_PIN(1,  1), PU1, 13 },	/* A1 */
-+	{ RCAR_GP_PIN(1,  0), PU1, 12 },	/* A0 */
-+	{ RCAR_GP_PIN(2,  8), PU1, 11 },	/* PWM2_A */
-+	{ RCAR_GP_PIN(2,  7), PU1, 10 },	/* PWM1_A */
-+	{ RCAR_GP_PIN(2,  6), PU1,  9 },	/* PWM0 */
-+	{ RCAR_GP_PIN(2,  5), PU1,  8 },	/* IRQ5 */
-+	{ RCAR_GP_PIN(2,  4), PU1,  7 },	/* IRQ4 */
-+	{ RCAR_GP_PIN(2,  3), PU1,  6 },	/* IRQ3 */
-+	{ RCAR_GP_PIN(2,  2), PU1,  5 },	/* IRQ2 */
-+	{ RCAR_GP_PIN(2,  1), PU1,  4 },	/* IRQ1 */
-+	{ RCAR_GP_PIN(2,  0), PU1,  3 },	/* IRQ0 */
-+	{ RCAR_GP_PIN(2, 14), PU1,  2 },	/* AVB_AVTP_CAPTURE_A */
-+	{ RCAR_GP_PIN(2, 13), PU1,  1 },	/* AVB_AVTP_MATCH_A */
-+	{ RCAR_GP_PIN(2, 12), PU1,  0 },	/* AVB_LINK */
-+
-+	{ RCAR_GP_PIN(7,  3), PU2, 29 },	/* HDMI1_CEC */
-+	{ RCAR_GP_PIN(7,  2), PU2, 28 },	/* HDMI0_CEC */
-+	{ RCAR_GP_PIN(7,  1), PU2, 27 },	/* AVS2 */
-+	{ RCAR_GP_PIN(7,  0), PU2, 26 },	/* AVS1 */
-+	{ RCAR_GP_PIN(0, 15), PU2, 25 },	/* D15 */
-+	{ RCAR_GP_PIN(0, 14), PU2, 24 },	/* D14 */
-+	{ RCAR_GP_PIN(0, 13), PU2, 23 },	/* D13 */
-+	{ RCAR_GP_PIN(0, 12), PU2, 22 },	/* D12 */
-+	{ RCAR_GP_PIN(0, 11), PU2, 21 },	/* D11 */
-+	{ RCAR_GP_PIN(0, 10), PU2, 20 },	/* D10 */
-+	{ RCAR_GP_PIN(0,  9), PU2, 19 },	/* D9 */
-+	{ RCAR_GP_PIN(0,  8), PU2, 18 },	/* D8 */
-+	{ RCAR_GP_PIN(0,  7), PU2, 17 },	/* D7 */
-+	{ RCAR_GP_PIN(0,  6), PU2, 16 },	/* D6 */
-+	{ RCAR_GP_PIN(0,  5), PU2, 15 },	/* D5 */
-+	{ RCAR_GP_PIN(0,  4), PU2, 14 },	/* D4 */
-+	{ RCAR_GP_PIN(0,  3), PU2, 13 },	/* D3 */
-+	{ RCAR_GP_PIN(0,  2), PU2, 12 },	/* D2 */
-+	{ RCAR_GP_PIN(0,  1), PU2, 11 },	/* D1 */
-+	{ RCAR_GP_PIN(0,  0), PU2, 10 },	/* D0 */
-+	{ RCAR_GP_PIN(1, 27), PU2,  8 },	/* EX_WAIT0_A */
-+	{ RCAR_GP_PIN(1, 26), PU2,  7 },	/* WE1_N */
-+	{ RCAR_GP_PIN(1, 25), PU2,  6 },	/* WE0_N */
-+	{ RCAR_GP_PIN(1, 24), PU2,  5 },	/* RD_WR_N */
-+	{ RCAR_GP_PIN(1, 23), PU2,  4 },	/* RD_N */
-+	{ RCAR_GP_PIN(1, 22), PU2,  3 },	/* BS_N */
-+	{ RCAR_GP_PIN(1, 21), PU2,  2 },	/* CS1_N_A26 */
-+	{ RCAR_GP_PIN(1, 20), PU2,  1 },	/* CS0_N */
-+
-+	{ RCAR_GP_PIN(4,  9), PU3, 31 },	/* SD3_DAT0 */
-+	{ RCAR_GP_PIN(4,  8), PU3, 30 },	/* SD3_CMD */
-+	{ RCAR_GP_PIN(4,  7), PU3, 29 },	/* SD3_CLK */
-+	{ RCAR_GP_PIN(4,  6), PU3, 28 },	/* SD2_DS */
-+	{ RCAR_GP_PIN(4,  5), PU3, 27 },	/* SD2_DAT3 */
-+	{ RCAR_GP_PIN(4,  4), PU3, 26 },	/* SD2_DAT2 */
-+	{ RCAR_GP_PIN(4,  3), PU3, 25 },	/* SD2_DAT1 */
-+	{ RCAR_GP_PIN(4,  2), PU3, 24 },	/* SD2_DAT0 */
-+	{ RCAR_GP_PIN(4,  1), PU3, 23 },	/* SD2_CMD */
-+	{ RCAR_GP_PIN(4,  0), PU3, 22 },	/* SD2_CLK */
-+	{ RCAR_GP_PIN(3, 11), PU3, 21 },	/* SD1_DAT3 */
-+	{ RCAR_GP_PIN(3, 10), PU3, 20 },	/* SD1_DAT2 */
-+	{ RCAR_GP_PIN(3,  9), PU3, 19 },	/* SD1_DAT1 */
-+	{ RCAR_GP_PIN(3,  8), PU3, 18 },	/* SD1_DAT0 */
-+	{ RCAR_GP_PIN(3,  7), PU3, 17 },	/* SD1_CMD */
-+	{ RCAR_GP_PIN(3,  6), PU3, 16 },	/* SD1_CLK */
-+	{ RCAR_GP_PIN(3,  5), PU3, 15 },	/* SD0_DAT3 */
-+	{ RCAR_GP_PIN(3,  4), PU3, 14 },	/* SD0_DAT2 */
-+	{ RCAR_GP_PIN(3,  3), PU3, 13 },	/* SD0_DAT1 */
-+	{ RCAR_GP_PIN(3,  2), PU3, 12 },	/* SD0_DAT0 */
-+	{ RCAR_GP_PIN(3,  1), PU3, 11 },	/* SD0_CMD */
-+	{ RCAR_GP_PIN(3,  0), PU3, 10 },	/* SD0_CLK */
-+
-+	{ RCAR_GP_PIN(5, 19), PU4, 31 },	/* MSIOF0_SS1 */
-+	{ RCAR_GP_PIN(5, 18), PU4, 30 },	/* MSIOF0_SYNC */
-+	{ RCAR_GP_PIN(5, 17), PU4, 29 },	/* MSIOF0_SCK */
-+	{ RCAR_GP_PIN(5, 16), PU4, 28 },	/* HRTS0_N */
-+	{ RCAR_GP_PIN(5, 15), PU4, 27 },	/* HCTS0_N */
-+	{ RCAR_GP_PIN(5, 14), PU4, 26 },	/* HTX0 */
-+	{ RCAR_GP_PIN(5, 13), PU4, 25 },	/* HRX0 */
-+	{ RCAR_GP_PIN(5, 12), PU4, 24 },	/* HSCK0 */
-+	{ RCAR_GP_PIN(5, 11), PU4, 23 },	/* RX2_A */
-+	{ RCAR_GP_PIN(5, 10), PU4, 22 },	/* TX2_A */
-+	{ RCAR_GP_PIN(5,  9), PU4, 21 },	/* SCK2 */
-+	{ RCAR_GP_PIN(5,  8), PU4, 20 },	/* RTS1_N_TANS */
-+	{ RCAR_GP_PIN(5,  7), PU4, 19 },	/* CTS1_N */
-+	{ RCAR_GP_PIN(5,  6), PU4, 18 },	/* TX1_A */
-+	{ RCAR_GP_PIN(5,  5), PU4, 17 },	/* RX1_A */
-+	{ RCAR_GP_PIN(5,  4), PU4, 16 },	/* RTS0_N_TANS */
-+	{ RCAR_GP_PIN(5,  3), PU4, 15 },	/* CTS0_N */
-+	{ RCAR_GP_PIN(5,  2), PU4, 14 },	/* TX0 */
-+	{ RCAR_GP_PIN(5,  1), PU4, 13 },	/* RX0 */
-+	{ RCAR_GP_PIN(5,  0), PU4, 12 },	/* SCK0 */
-+	{ RCAR_GP_PIN(3, 15), PU4, 11 },	/* SD1_WP */
-+	{ RCAR_GP_PIN(3, 14), PU4, 10 },	/* SD1_CD */
-+	{ RCAR_GP_PIN(3, 13), PU4,  9 },	/* SD0_WP */
-+	{ RCAR_GP_PIN(3, 12), PU4,  8 },	/* SD0_CD */
-+	{ RCAR_GP_PIN(4, 17), PU4,  7 },	/* SD3_DS */
-+	{ RCAR_GP_PIN(4, 16), PU4,  6 },	/* SD3_DAT7 */
-+	{ RCAR_GP_PIN(4, 15), PU4,  5 },	/* SD3_DAT6 */
-+	{ RCAR_GP_PIN(4, 14), PU4,  4 },	/* SD3_DAT5 */
-+	{ RCAR_GP_PIN(4, 13), PU4,  3 },	/* SD3_DAT4 */
-+	{ RCAR_GP_PIN(4, 12), PU4,  2 },	/* SD3_DAT3 */
-+	{ RCAR_GP_PIN(4, 11), PU4,  1 },	/* SD3_DAT2 */
-+	{ RCAR_GP_PIN(4, 10), PU4,  0 },	/* SD3_DAT1 */
-+
-+	{ RCAR_GP_PIN(6, 24), PU5, 31 },	/* USB0_PWEN */
-+	{ RCAR_GP_PIN(6, 23), PU5, 30 },	/* AUDIO_CLKB_B */
-+	{ RCAR_GP_PIN(6, 22), PU5, 29 },	/* AUDIO_CLKA_A */
-+	{ RCAR_GP_PIN(6, 21), PU5, 28 },	/* SSI_SDATA9_A */
-+	{ RCAR_GP_PIN(6, 20), PU5, 27 },	/* SSI_SDATA8 */
-+	{ RCAR_GP_PIN(6, 19), PU5, 26 },	/* SSI_SDATA7 */
-+	{ RCAR_GP_PIN(6, 18), PU5, 25 },	/* SSI_WS78 */
-+	{ RCAR_GP_PIN(6, 17), PU5, 24 },	/* SSI_SCK78 */
-+	{ RCAR_GP_PIN(6, 16), PU5, 23 },	/* SSI_SDATA6 */
-+	{ RCAR_GP_PIN(6, 15), PU5, 22 },	/* SSI_WS6 */
-+	{ RCAR_GP_PIN(6, 14), PU5, 21 },	/* SSI_SCK6 */
-+	{ RCAR_GP_PIN(6, 13), PU5, 20 },	/* SSI_SDATA5 */
-+	{ RCAR_GP_PIN(6, 12), PU5, 19 },	/* SSI_WS5 */
-+	{ RCAR_GP_PIN(6, 11), PU5, 18 },	/* SSI_SCK5 */
-+	{ RCAR_GP_PIN(6, 10), PU5, 17 },	/* SSI_SDATA4 */
-+	{ RCAR_GP_PIN(6,  9), PU5, 16 },	/* SSI_WS4 */
-+	{ RCAR_GP_PIN(6,  8), PU5, 15 },	/* SSI_SCK4 */
-+	{ RCAR_GP_PIN(6,  7), PU5, 14 },	/* SSI_SDATA3 */
-+	{ RCAR_GP_PIN(6,  6), PU5, 13 },	/* SSI_WS34 */
-+	{ RCAR_GP_PIN(6,  5), PU5, 12 },	/* SSI_SCK34 */
-+	{ RCAR_GP_PIN(6,  4), PU5, 11 },	/* SSI_SDATA2_A */
-+	{ RCAR_GP_PIN(6,  3), PU5, 10 },	/* SSI_SDATA1_A */
-+	{ RCAR_GP_PIN(6,  2), PU5,  9 },	/* SSI_SDATA0 */
-+	{ RCAR_GP_PIN(6,  1), PU5,  8 },	/* SSI_WS01239 */
-+	{ RCAR_GP_PIN(6,  0), PU5,  7 },	/* SSI_SCK01239 */
-+	{ RCAR_GP_PIN(5, 25), PU5,  5 },	/* MLB_DAT */
-+	{ RCAR_GP_PIN(5, 24), PU5,  4 },	/* MLB_SIG */
-+	{ RCAR_GP_PIN(5, 23), PU5,  3 },	/* MLB_CLK */
-+	{ RCAR_GP_PIN(5, 22), PU5,  2 },	/* MSIOF0_RXD */
-+	{ RCAR_GP_PIN(5, 21), PU5,  1 },	/* MSIOF0_SS2 */
-+	{ RCAR_GP_PIN(5, 20), PU5,  0 },	/* MSIOF0_TXD */
-+
-+	{ RCAR_GP_PIN(6, 31), PU6,  6 },	/* USB31_OVC */
-+	{ RCAR_GP_PIN(6, 30), PU6,  5 },	/* USB31_PWEN */
-+	{ RCAR_GP_PIN(6, 29), PU6,  4 },	/* USB30_OVC */
-+	{ RCAR_GP_PIN(6, 28), PU6,  3 },	/* USB30_PWEN */
-+	{ RCAR_GP_PIN(6, 27), PU6,  2 },	/* USB1_OVC */
-+	{ RCAR_GP_PIN(6, 26), PU6,  1 },	/* USB1_PWEN */
-+	{ RCAR_GP_PIN(6, 25), PU6,  0 },	/* USB0_OVC */
-+};
-+
-+static int r8a7795_pin_to_bias_data(unsigned int pin, u32 *reg, u32 *bit)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(pullups); i++) {
-+		if (pullups[i].pin == pin) {
-+			*reg = pullups[i].reg;
-+			*bit = BIT(pullups[i].bit);
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
- 
- static unsigned int r8a7795_pinmux_get_bias(struct sh_pfc *pfc,
- 					    unsigned int pin)
-@@ -5361,12 +5377,9 @@ static unsigned int r8a7795_pinmux_get_bias(struct sh_pfc *pfc,
- 	u32 reg;
- 	u32 bit;
- 
--	if (WARN_ON_ONCE(!pullups[pin].reg))
-+	if (WARN_ON_ONCE(r8a7795_pin_to_bias_data(pin, &reg, &bit)))
- 		return PIN_CONFIG_BIAS_DISABLE;
- 
--	reg = pullups[pin].reg;
--	bit = BIT(pullups[pin].bit);
--
- 	if (sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit) {
- 		if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
- 			return PIN_CONFIG_BIAS_PULL_UP;
-@@ -5383,12 +5396,9 @@ static void r8a7795_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
- 	u32 reg;
- 	u32 bit;
- 
--	if (WARN_ON_ONCE(!pullups[pin].reg))
-+	if (WARN_ON_ONCE(r8a7795_pin_to_bias_data(pin, &reg, &bit)))
- 		return;
- 
--	reg = pullups[pin].reg;
--	bit = BIT(pullups[pin].bit);
--
- 	enable = sh_pfc_read_reg(pfc, PUEN + reg, 32) & ~bit;
- 	if (bias != PIN_CONFIG_BIAS_DISABLE)
- 		enable |= bit;
--- 
-2.10.2
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
+> b/drivers/pinctrl/pinctrl-rockchip.c index 49bf7dc..9f324b1 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
 
+[...]
+
+> +static struct rockchip_pin_ctrl rk1108_pin_ctrl = {
+> +	.pin_banks		= rk1108_pin_banks,
+> +	.nr_banks		= ARRAY_SIZE(rk1108_pin_banks),
+> +	.label			= "RK1108-GPIO",
+> +	.type			= RK1108,
+> +	.grf_mux_offset		= 0x10,
+> +	.pmu_mux_offset		= 0x0,
+> +	.pull_calc_reg          = rk3288_calc_pull_reg_and_bit,
+
+this last line has spaces instead of tabs between .pull_calc_reg and the "="
+
+
+Heiko
