@@ -1,47 +1,72 @@
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: Re: [PATCH 00/14] pinctrl-sx150x: Various bug-fixes and code simplifications
-Date: Thu, 3 Nov 2016 15:22:37 -0700
-Message-ID: <CAHQ1cqEVGz85YDPr+yeSyZWjN7tfL8MW7NczA7fQsb-nZdHXcw@mail.gmail.com>
-References: <1478015868-10309-1-git-send-email-andrew.smirnov@gmail.com>
- <9bc0e603-b861-85d8-914f-bd4b6e8a8020@baylibre.com> <f0cdd71c-3036-56f8-74a4-ebf20cde75b4@baylibre.com>
+From: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
+Subject: Re: [PATCH v2 1/6] pinctrl-aspeed-g5: Never set SCU90[6]
+Date: Fri, 4 Nov 2016 09:29:32 +1030
+Message-ID: <CACPK8Xcbv5VjE9deETV6zC4cPSfeBSgP96QYqV_ebAgtB9Jwtw@mail.gmail.com>
+References: <1478097481-14895-1-git-send-email-andrew@aj.id.au> <1478097481-14895-2-git-send-email-andrew@aj.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f0cdd71c-3036-56f8-74a4-ebf20cde75b4@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Chris Healy <cphealy@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1478097481-14895-2-git-send-email-andrew-zrmu5oMJ5Fs@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
->>
->> Hi Andrey,
->>
->> This is good, you went faster than me !
->>
->> Small point, could you add Kconfig dependency on REGMAP ?
-
-Good catch! Will fix in v2 of the set.
-
->>
->> I will try out this patchset and hopefully get you a Tested-by in the next few days.
->>
->> Neil
->>
+On Thu, Nov 3, 2016 at 1:07 AM, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org> wrote:
+> If a pin depending on bit 6 in SCU90 is requested for GPIO, the export
+> will succeed but changes to the GPIO's value will not be accepted by the
+> hardware. This is because the pinmux driver has misconfigured the SCU by
+> writing 1 to the reserved bit.
 >
-> Great, Successfully worked on 4.9-rc2 on my BeagleBone black installation with a SX1509.
-> I got some rising and falling interrupts using gpio-event-mon.
+> The description of SCU90[6] from the datasheet is 'Reserved, must keep
+> at value =E2=80=9D0=E2=80=9D'. The fix is to switch pinmux from the bit-f=
+lipping macro
+> to explicitly configuring the .enable and .disable values to zero.
 >
-> Small NIT: please add the sx1503 entry in the Kconfig desc and in the pinctrl-sx150x.txt bindings.
+> The patch has been tested on an AST2500 EVB.
 >
+> Fixes: 56e57cb6c07f (pinctrl: Add pinctrl-aspeed-g5 driver)
+> Reported-by: Uma Yadlapati <yadlapat-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
 
-Oops, completely forgot I about that, thanks for noticing! Will add in v2.
+Reviewed-by: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
 
-> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+And tested-by.
+
+> This patch should be applied for 4.9.
+
+In the future I think we should send fixes separately from the rest of
+the series, so it's clear to Linus where we expect patches to end up.
+
+Perhaps Linus can share his preference with us?
+
+Cheers,
+
+Joel
+
+
+>  drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> With the Kconfig and bindings changes :
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c b/drivers/pinctrl=
+/aspeed/pinctrl-aspeed-g5.c
+> index c8c72e8259d3..87b46390b695 100644
+> --- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
+> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
+> @@ -26,7 +26,7 @@
 >
-
-Thank you!
-
-Andrey Smirnov
+>  #define ASPEED_G5_NR_PINS 228
+>
+> -#define COND1          SIG_DESC_BIT(SCU90, 6, 0)
+> +#define COND1          { SCU90, BIT(6), 0, 0 }
+>  #define COND2          { SCU94, GENMASK(1, 0), 0, 0 }
+>
+>  #define B14 0
+> --
+> 2.7.4
+>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
