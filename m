@@ -1,56 +1,90 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 2/6] pinctrl: rockchip: add support for rk1108
-Date: Thu, 03 Nov 2016 16:55:45 +0100
-Message-ID: <3450255.c5nv6dGt3I@diego>
-References: <1478175975-11779-1-git-send-email-andy.yan@rock-chips.com> <1478176470-11956-1-git-send-email-andy.yan@rock-chips.com>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 3/4] pinctrl: sh-pfc: r8a7795: Add group for AVB MDIO and MII pins
+Date: Thu,  3 Nov 2016 17:15:29 +0100
+Message-ID: <20161103161530.11763-4-niklas.soderlund+renesas@ragnatech.se>
+References: <20161103161530.11763-1-niklas.soderlund+renesas@ragnatech.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:47704 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754769AbcKCP4K (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 3 Nov 2016 11:56:10 -0400
-In-Reply-To: <1478176470-11956-1-git-send-email-andy.yan@rock-chips.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20161103161530.11763-1-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Yan <andy.yan@rock-chips.com>
-Cc: david.wu@rock-chips.com, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Am Donnerstag, 3. November 2016, 20:34:30 schrieb Andy Yan:
-> Add basic support for rk1108 soc
-> 
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Group the AVB pins into similar groups found in other sh-pfc drivers.
+The pins can not be muxed between functions other then AVB but their
+drive strength can be controlled.
 
-nice when support for a new soc is that easy in a driver :-)
+The group avb_mdc containing ADV_MDC and ADV_MDIO are on other SoCs
+called avb_mdio. In pfc-r8a7795 the avb_mdc group already existed and
+is in use in DT. Therefore add the ADV_MDIO pin to the existing group
+instead of renaming it.
 
-There are two small issues below and with those fixed
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
 
-> ---
-> 
->  drivers/pinctrl/pinctrl-rockchip.c | 27 ++++++++++++++++++++++++++-
->  1 file changed, 26 insertions(+), 1 deletion(-)
-
-missing devicetree binding update for the new compatible
-
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
-> b/drivers/pinctrl/pinctrl-rockchip.c index 49bf7dc..9f324b1 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-
-[...]
-
-> +static struct rockchip_pin_ctrl rk1108_pin_ctrl = {
-> +	.pin_banks		= rk1108_pin_banks,
-> +	.nr_banks		= ARRAY_SIZE(rk1108_pin_banks),
-> +	.label			= "RK1108-GPIO",
-> +	.type			= RK1108,
-> +	.grf_mux_offset		= 0x10,
-> +	.pmu_mux_offset		= 0x0,
-> +	.pull_calc_reg          = rk3288_calc_pull_reg_and_bit,
-
-this last line has spaces instead of tabs between .pull_calc_reg and the "="
-
-
-Heiko
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 1bccf41..c503f97 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -1647,11 +1647,33 @@ static const unsigned int avb_phy_int_mux[] = {
+ 	AVB_PHY_INT_MARK,
+ };
+ static const unsigned int avb_mdc_pins[] = {
+-	/* AVB_MDC */
+-	RCAR_GP_PIN(2, 9),
++	/* AVB_MDC, AVB_MDIO */
++	RCAR_GP_PIN(2, 9), PIN_NUMBER('A', 9),
+ };
+ static const unsigned int avb_mdc_mux[] = {
+-	AVB_MDC_MARK,
++	AVB_MDC_MARK, AVB_MDIO_MARK,
++};
++static const unsigned int avb_mii_pins[] = {
++	/*
++	 * AVB_TX_CTL, AVB_TXC, AVB_TD0,
++	 * AVB_TD1, AVB_TD2, AVB_TD3,
++	 * AVB_RX_CTL, AVB_RXC, AVB_RD0,
++	 * AVB_RD1, AVB_RD2, AVB_RD3,
++	 * AVB_TXREFCLK
++	 */
++	PIN_NUMBER('A', 8), PIN_NUMBER('A', 19), PIN_NUMBER('A', 18),
++	PIN_NUMBER('B', 18), PIN_NUMBER('A', 17), PIN_NUMBER('B', 17),
++	PIN_NUMBER('A', 16), PIN_NUMBER('B', 19), PIN_NUMBER('A', 13),
++	PIN_NUMBER('B', 13), PIN_NUMBER('A', 14), PIN_NUMBER('B', 14),
++	PIN_NUMBER('A', 12),
++
++};
++static const unsigned int avb_mii_mux[] = {
++	AVB_TX_CTL_MARK, AVB_TXC_MARK, AVB_TD0_MARK,
++	AVB_TD1_MARK, AVB_TD2_MARK, AVB_TD3_MARK,
++	AVB_RX_CTL_MARK, AVB_RXC_MARK, AVB_RD0_MARK,
++	AVB_RD1_MARK, AVB_RD2_MARK, AVB_RD3_MARK,
++	AVB_TXREFCLK_MARK,
+ };
+ static const unsigned int avb_avtp_pps_pins[] = {
+ 	/* AVB_AVTP_PPS */
+@@ -3719,6 +3741,7 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(avb_magic),
+ 	SH_PFC_PIN_GROUP(avb_phy_int),
+ 	SH_PFC_PIN_GROUP(avb_mdc),
++	SH_PFC_PIN_GROUP(avb_mii),
+ 	SH_PFC_PIN_GROUP(avb_avtp_pps),
+ 	SH_PFC_PIN_GROUP(avb_avtp_match_a),
+ 	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
+@@ -4023,6 +4046,7 @@ static const char * const avb_groups[] = {
+ 	"avb_magic",
+ 	"avb_phy_int",
+ 	"avb_mdc",
++	"avb_mii",
+ 	"avb_avtp_pps",
+ 	"avb_avtp_match_a",
+ 	"avb_avtp_capture_a",
+-- 
+2.10.2
