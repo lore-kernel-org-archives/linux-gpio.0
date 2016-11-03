@@ -1,494 +1,283 @@
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Use lookup function for
- bias data
-Date: Thu, 3 Nov 2016 20:26:27 +0100
-Message-ID: <20161103192627.GB12876@bigcity.dyn.berto.se>
-References: <20161103153421.15527-1-niklas.soderlund+renesas@ragnatech.se>
- <20161103153421.15527-3-niklas.soderlund+renesas@ragnatech.se>
- <2675389.IrWB4HU6aN@avalon>
+From: kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH 1/4] pinctrl: Introduce generic #pinctrl-cells and
+ pinctrl_parse_index_with_args
+Date: Fri, 4 Nov 2016 04:28:43 +0800
+Message-ID: <201611040433.0L1Ep2Pg%fengguang.wu@intel.com>
+References: <20161103163550.27330-2-tony@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:32932 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752054AbcKCT0c (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Nov 2016 15:26:32 -0400
-Received: by mail-lf0-f42.google.com with SMTP id c13so47673646lfg.0
-        for <linux-gpio@vger.kernel.org>; Thu, 03 Nov 2016 12:26:30 -0700 (PDT)
+Content-Type: multipart/mixed; boundary="nFreZHaLTZJo0R7j"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <2675389.IrWB4HU6aN@avalon>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <20161103163550.27330-2-tony@atomide.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: kbuild-all@01.org, Linus Walleij <linus.walleij@linaro.org>, Jon Hunter <jonathanh@nvidia.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi Laurent,
 
-On 2016-11-03 19:10:06 +0200, Laurent Pinchart wrote:
-> Hi Niklas,
-> 
-> Thank you for thr patch.
+--nFreZHaLTZJo0R7j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks for your feedback.
+Hi Tony,
 
-> 
-> On Thursday 03 Nov 2016 16:34:21 Niklas Söderlund wrote:
-> > There is a bug in the r8a7795 bias code where a WARN() is trigged
-> > anytime a pin from PUEN0/PUD0is accessed.
-> > 
-> >  # cat /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins
-> > 
-> >  WARNING: CPU: 2 PID: 2391 at drivers/pinctrl/sh-pfc/pfc-r8a7795.c:5364
-> > r8a7795_pinmux_get_bias+0xbc/0xc8 [..]
-> >  Call trace:
-> >  [<ffff0000083c442c>] r8a7795_pinmux_get_bias+0xbc/0xc8
-> >  [<ffff0000083c37f4>] sh_pfc_pinconf_get+0x194/0x270
-> >  [<ffff0000083b0768>] pin_config_get_for_pin+0x20/0x30
-> >  [<ffff0000083b11e8>] pinconf_generic_dump_one+0x168/0x188
-> >  [<ffff0000083b144c>] pinconf_generic_dump_pins+0x5c/0x98
-> >  [<ffff0000083b0628>] pinconf_pins_show+0xc8/0x128
-> >  [<ffff0000081fe3bc>] seq_read+0x16c/0x420
-> >  [<ffff00000831a110>] full_proxy_read+0x58/0x88
-> >  [<ffff0000081d7ad4>] __vfs_read+0x1c/0xf8
-> >  [<ffff0000081d8874>] vfs_read+0x84/0x148
-> >  [<ffff0000081d9d64>] SyS_read+0x44/0xa0
-> >  [<ffff000008082f4c>] __sys_trace_return+0x0/0x4
-> > 
-> > This is due to the WARN() check if the reg field of the pullups struct
-> > is zero, and this should be 0 for pins controlled by the PUEN0/PUD0
-> > registers. Change the layout of the pullups struct to embed the pin
-> > number inside the struct and loop over it to fetch the correct
-> > information or WARN() if no pin is found.
-> 
-> This lowers the memory consumption at the cost of increased CPU usage. Given 
-> that the get/set bias functions are not part of a critical path I'm fine with 
-> that. We could possibly optimize the implementation by using a dichotomic 
-> search, but I don't think that's needed at the moment.
-> 
-> I can foresee the r8a7795_pin_to_bias_data() function being used for other 
-> Gen3 SoCs. Could you move it to the core, and move the WARN_ON_ONCE() from the 
-> caller to the function ? It would be great if you could also convert r8a7778 
-> to use this new method.
+[auto build test WARNING on pinctrl/for-next]
+[also build test WARNING on v4.9-rc3 next-20161028]
+[cannot apply to robh/for-next]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+[Suggest to use git(>=2.9.0) format-patch --base=<commit> (or --base=auto for convenience) to record what (public, well-known) commit your patch series was built on]
+[Check https://git-scm.com/docs/git-format-patch for more information]
 
-Yes, I will move the function and convert r8a7778 and include those 
-patches in my v3.
+url:    https://github.com/0day-ci/linux/commits/Tony-Lindgren/Generic-pinctrl-cells-and-and-pinctrl_parse_index_with_args/20161104-004449
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
+config: mips-generic_defconfig (attached as .config)
+compiler: mipsel-linux-gnu-gcc (Debian 6.1.1-9) 6.1.1 20160705
+reproduce:
+        wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        make.cross ARCH=mips 
 
-> 
-> > Fixes: 560655247b627ac7 ("pinctrl: sh-pfc: r8a7795: Add bias pinconf
-> > support") Signed-off-by: Niklas Söderlund
-> > <niklas.soderlund+renesas@ragnatech.se>
-> > ---
-> >  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 350 ++++++++++++++++---------------
-> >  1 file changed, 180 insertions(+), 170 deletions(-)
-> > 
-> > diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> > b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c index 2e8cc2a..69e1f31 100644
-> > --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> > +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> > @@ -5189,171 +5189,187 @@ static int r8a7795_pin_to_pocctrl(struct sh_pfc
-> > *pfc, unsigned int pin, u32 *poc #define PU6	0x18
-> > 
-> >  static const struct {
-> > +	u16 pin;
-> >  	u16 reg : 11;
-> >  	u16 bit : 5;
-> >  } pullups[] = {
-> > -	[RCAR_GP_PIN(2, 11)] = { PU0, 31 },	/* AVB_PHY_INT */
-> > -	[RCAR_GP_PIN(2, 10)] = { PU0, 30 },	/* AVB_MAGIC */
-> > -	[RCAR_GP_PIN(2,  9)] = { PU0, 29 },	/* AVB_MDC */
-> > -
-> > -	[RCAR_GP_PIN(1, 19)] = { PU1, 31 },	/* A19 */
-> > -	[RCAR_GP_PIN(1, 18)] = { PU1, 30 },	/* A18 */
-> > -	[RCAR_GP_PIN(1, 17)] = { PU1, 29 },	/* A17 */
-> > -	[RCAR_GP_PIN(1, 16)] = { PU1, 28 },	/* A16 */
-> > -	[RCAR_GP_PIN(1, 15)] = { PU1, 27 },	/* A15 */
-> > -	[RCAR_GP_PIN(1, 14)] = { PU1, 26 },	/* A14 */
-> > -	[RCAR_GP_PIN(1, 13)] = { PU1, 25 },	/* A13 */
-> > -	[RCAR_GP_PIN(1, 12)] = { PU1, 24 },	/* A12 */
-> > -	[RCAR_GP_PIN(1, 11)] = { PU1, 23 },	/* A11 */
-> > -	[RCAR_GP_PIN(1, 10)] = { PU1, 22 },	/* A10 */
-> > -	[RCAR_GP_PIN(1,  9)] = { PU1, 21 },	/* A9 */
-> > -	[RCAR_GP_PIN(1,  8)] = { PU1, 20 },	/* A8 */
-> > -	[RCAR_GP_PIN(1,  7)] = { PU1, 19 },	/* A7 */
-> > -	[RCAR_GP_PIN(1,  6)] = { PU1, 18 },	/* A6 */
-> > -	[RCAR_GP_PIN(1,  5)] = { PU1, 17 },	/* A5 */
-> > -	[RCAR_GP_PIN(1,  4)] = { PU1, 16 },	/* A4 */
-> > -	[RCAR_GP_PIN(1,  3)] = { PU1, 15 },	/* A3 */
-> > -	[RCAR_GP_PIN(1,  2)] = { PU1, 14 },	/* A2 */
-> > -	[RCAR_GP_PIN(1,  1)] = { PU1, 13 },	/* A1 */
-> > -	[RCAR_GP_PIN(1,  0)] = { PU1, 12 },	/* A0 */
-> > -	[RCAR_GP_PIN(2,  8)] = { PU1, 11 },	/* PWM2_A */
-> > -	[RCAR_GP_PIN(2,  7)] = { PU1, 10 },	/* PWM1_A */
-> > -	[RCAR_GP_PIN(2,  6)] = { PU1,  9 },	/* PWM0 */
-> > -	[RCAR_GP_PIN(2,  5)] = { PU1,  8 },	/* IRQ5 */
-> > -	[RCAR_GP_PIN(2,  4)] = { PU1,  7 },	/* IRQ4 */
-> > -	[RCAR_GP_PIN(2,  3)] = { PU1,  6 },	/* IRQ3 */
-> > -	[RCAR_GP_PIN(2,  2)] = { PU1,  5 },	/* IRQ2 */
-> > -	[RCAR_GP_PIN(2,  1)] = { PU1,  4 },	/* IRQ1 */
-> > -	[RCAR_GP_PIN(2,  0)] = { PU1,  3 },	/* IRQ0 */
-> > -	[RCAR_GP_PIN(2, 14)] = { PU1,  2 },	/* AVB_AVTP_CAPTURE_A */
-> > -	[RCAR_GP_PIN(2, 13)] = { PU1,  1 },	/* AVB_AVTP_MATCH_A */
-> > -	[RCAR_GP_PIN(2, 12)] = { PU1,  0 },	/* AVB_LINK */
-> > -
-> > -	[RCAR_GP_PIN(7,  3)] = { PU2, 29 },	/* HDMI1_CEC */
-> > -	[RCAR_GP_PIN(7,  2)] = { PU2, 28 },	/* HDMI0_CEC */
-> > -	[RCAR_GP_PIN(7,  1)] = { PU2, 27 },	/* AVS2 */
-> > -	[RCAR_GP_PIN(7,  0)] = { PU2, 26 },	/* AVS1 */
-> > -	[RCAR_GP_PIN(0, 15)] = { PU2, 25 },	/* D15 */
-> > -	[RCAR_GP_PIN(0, 14)] = { PU2, 24 },	/* D14 */
-> > -	[RCAR_GP_PIN(0, 13)] = { PU2, 23 },	/* D13 */
-> > -	[RCAR_GP_PIN(0, 12)] = { PU2, 22 },	/* D12 */
-> > -	[RCAR_GP_PIN(0, 11)] = { PU2, 21 },	/* D11 */
-> > -	[RCAR_GP_PIN(0, 10)] = { PU2, 20 },	/* D10 */
-> > -	[RCAR_GP_PIN(0,  9)] = { PU2, 19 },	/* D9 */
-> > -	[RCAR_GP_PIN(0,  8)] = { PU2, 18 },	/* D8 */
-> > -	[RCAR_GP_PIN(0,  7)] = { PU2, 17 },	/* D7 */
-> > -	[RCAR_GP_PIN(0,  6)] = { PU2, 16 },	/* D6 */
-> > -	[RCAR_GP_PIN(0,  5)] = { PU2, 15 },	/* D5 */
-> > -	[RCAR_GP_PIN(0,  4)] = { PU2, 14 },	/* D4 */
-> > -	[RCAR_GP_PIN(0,  3)] = { PU2, 13 },	/* D3 */
-> > -	[RCAR_GP_PIN(0,  2)] = { PU2, 12 },	/* D2 */
-> > -	[RCAR_GP_PIN(0,  1)] = { PU2, 11 },	/* D1 */
-> > -	[RCAR_GP_PIN(0,  0)] = { PU2, 10 },	/* D0 */
-> > -	[RCAR_GP_PIN(1, 27)] = { PU2,  8 },	/* EX_WAIT0_A */
-> > -	[RCAR_GP_PIN(1, 26)] = { PU2,  7 },	/* WE1_N */
-> > -	[RCAR_GP_PIN(1, 25)] = { PU2,  6 },	/* WE0_N */
-> > -	[RCAR_GP_PIN(1, 24)] = { PU2,  5 },	/* RD_WR_N */
-> > -	[RCAR_GP_PIN(1, 23)] = { PU2,  4 },	/* RD_N */
-> > -	[RCAR_GP_PIN(1, 22)] = { PU2,  3 },	/* BS_N */
-> > -	[RCAR_GP_PIN(1, 21)] = { PU2,  2 },	/* CS1_N_A26 */
-> > -	[RCAR_GP_PIN(1, 20)] = { PU2,  1 },	/* CS0_N */
-> > -
-> > -	[RCAR_GP_PIN(4,  9)] = { PU3, 31 },	/* SD3_DAT0 */
-> > -	[RCAR_GP_PIN(4,  8)] = { PU3, 30 },	/* SD3_CMD */
-> > -	[RCAR_GP_PIN(4,  7)] = { PU3, 29 },	/* SD3_CLK */
-> > -	[RCAR_GP_PIN(4,  6)] = { PU3, 28 },	/* SD2_DS */
-> > -	[RCAR_GP_PIN(4,  5)] = { PU3, 27 },	/* SD2_DAT3 */
-> > -	[RCAR_GP_PIN(4,  4)] = { PU3, 26 },	/* SD2_DAT2 */
-> > -	[RCAR_GP_PIN(4,  3)] = { PU3, 25 },	/* SD2_DAT1 */
-> > -	[RCAR_GP_PIN(4,  2)] = { PU3, 24 },	/* SD2_DAT0 */
-> > -	[RCAR_GP_PIN(4,  1)] = { PU3, 23 },	/* SD2_CMD */
-> > -	[RCAR_GP_PIN(4,  0)] = { PU3, 22 },	/* SD2_CLK */
-> > -	[RCAR_GP_PIN(3, 11)] = { PU3, 21 },	/* SD1_DAT3 */
-> > -	[RCAR_GP_PIN(3, 10)] = { PU3, 20 },	/* SD1_DAT2 */
-> > -	[RCAR_GP_PIN(3,  9)] = { PU3, 19 },	/* SD1_DAT1 */
-> > -	[RCAR_GP_PIN(3,  8)] = { PU3, 18 },	/* SD1_DAT0 */
-> > -	[RCAR_GP_PIN(3,  7)] = { PU3, 17 },	/* SD1_CMD */
-> > -	[RCAR_GP_PIN(3,  6)] = { PU3, 16 },	/* SD1_CLK */
-> > -	[RCAR_GP_PIN(3,  5)] = { PU3, 15 },	/* SD0_DAT3 */
-> > -	[RCAR_GP_PIN(3,  4)] = { PU3, 14 },	/* SD0_DAT2 */
-> > -	[RCAR_GP_PIN(3,  3)] = { PU3, 13 },	/* SD0_DAT1 */
-> > -	[RCAR_GP_PIN(3,  2)] = { PU3, 12 },	/* SD0_DAT0 */
-> > -	[RCAR_GP_PIN(3,  1)] = { PU3, 11 },	/* SD0_CMD */
-> > -	[RCAR_GP_PIN(3,  0)] = { PU3, 10 },	/* SD0_CLK */
-> > -
-> > -	[RCAR_GP_PIN(5, 19)] = { PU4, 31 },	/* MSIOF0_SS1 */
-> > -	[RCAR_GP_PIN(5, 18)] = { PU4, 30 },	/* MSIOF0_SYNC */
-> > -	[RCAR_GP_PIN(5, 17)] = { PU4, 29 },	/* MSIOF0_SCK */
-> > -	[RCAR_GP_PIN(5, 16)] = { PU4, 28 },	/* HRTS0_N */
-> > -	[RCAR_GP_PIN(5, 15)] = { PU4, 27 },	/* HCTS0_N */
-> > -	[RCAR_GP_PIN(5, 14)] = { PU4, 26 },	/* HTX0 */
-> > -	[RCAR_GP_PIN(5, 13)] = { PU4, 25 },	/* HRX0 */
-> > -	[RCAR_GP_PIN(5, 12)] = { PU4, 24 },	/* HSCK0 */
-> > -	[RCAR_GP_PIN(5, 11)] = { PU4, 23 },	/* RX2_A */
-> > -	[RCAR_GP_PIN(5, 10)] = { PU4, 22 },	/* TX2_A */
-> > -	[RCAR_GP_PIN(5,  9)] = { PU4, 21 },	/* SCK2 */
-> > -	[RCAR_GP_PIN(5,  8)] = { PU4, 20 },	/* RTS1_N_TANS */
-> > -	[RCAR_GP_PIN(5,  7)] = { PU4, 19 },	/* CTS1_N */
-> > -	[RCAR_GP_PIN(5,  6)] = { PU4, 18 },	/* TX1_A */
-> > -	[RCAR_GP_PIN(5,  5)] = { PU4, 17 },	/* RX1_A */
-> > -	[RCAR_GP_PIN(5,  4)] = { PU4, 16 },	/* RTS0_N_TANS */
-> > -	[RCAR_GP_PIN(5,  3)] = { PU4, 15 },	/* CTS0_N */
-> > -	[RCAR_GP_PIN(5,  2)] = { PU4, 14 },	/* TX0 */
-> > -	[RCAR_GP_PIN(5,  1)] = { PU4, 13 },	/* RX0 */
-> > -	[RCAR_GP_PIN(5,  0)] = { PU4, 12 },	/* SCK0 */
-> > -	[RCAR_GP_PIN(3, 15)] = { PU4, 11 },	/* SD1_WP */
-> > -	[RCAR_GP_PIN(3, 14)] = { PU4, 10 },	/* SD1_CD */
-> > -	[RCAR_GP_PIN(3, 13)] = { PU4,  9 },	/* SD0_WP */
-> > -	[RCAR_GP_PIN(3, 12)] = { PU4,  8 },	/* SD0_CD */
-> > -	[RCAR_GP_PIN(4, 17)] = { PU4,  7 },	/* SD3_DS */
-> > -	[RCAR_GP_PIN(4, 16)] = { PU4,  6 },	/* SD3_DAT7 */
-> > -	[RCAR_GP_PIN(4, 15)] = { PU4,  5 },	/* SD3_DAT6 */
-> > -	[RCAR_GP_PIN(4, 14)] = { PU4,  4 },	/* SD3_DAT5 */
-> > -	[RCAR_GP_PIN(4, 13)] = { PU4,  3 },	/* SD3_DAT4 */
-> > -	[RCAR_GP_PIN(4, 12)] = { PU4,  2 },	/* SD3_DAT3 */
-> > -	[RCAR_GP_PIN(4, 11)] = { PU4,  1 },	/* SD3_DAT2 */
-> > -	[RCAR_GP_PIN(4, 10)] = { PU4,  0 },	/* SD3_DAT1 */
-> > -
-> > -	[RCAR_GP_PIN(6, 24)] = { PU5, 31 },	/* USB0_PWEN */
-> > -	[RCAR_GP_PIN(6, 23)] = { PU5, 30 },	/* AUDIO_CLKB_B */
-> > -	[RCAR_GP_PIN(6, 22)] = { PU5, 29 },	/* AUDIO_CLKA_A */
-> > -	[RCAR_GP_PIN(6, 21)] = { PU5, 28 },	/* SSI_SDATA9_A */
-> > -	[RCAR_GP_PIN(6, 20)] = { PU5, 27 },	/* SSI_SDATA8 */
-> > -	[RCAR_GP_PIN(6, 19)] = { PU5, 26 },	/* SSI_SDATA7 */
-> > -	[RCAR_GP_PIN(6, 18)] = { PU5, 25 },	/* SSI_WS78 */
-> > -	[RCAR_GP_PIN(6, 17)] = { PU5, 24 },	/* SSI_SCK78 */
-> > -	[RCAR_GP_PIN(6, 16)] = { PU5, 23 },	/* SSI_SDATA6 */
-> > -	[RCAR_GP_PIN(6, 15)] = { PU5, 22 },	/* SSI_WS6 */
-> > -	[RCAR_GP_PIN(6, 14)] = { PU5, 21 },	/* SSI_SCK6 */
-> > -	[RCAR_GP_PIN(6, 13)] = { PU5, 20 },	/* SSI_SDATA5 */
-> > -	[RCAR_GP_PIN(6, 12)] = { PU5, 19 },	/* SSI_WS5 */
-> > -	[RCAR_GP_PIN(6, 11)] = { PU5, 18 },	/* SSI_SCK5 */
-> > -	[RCAR_GP_PIN(6, 10)] = { PU5, 17 },	/* SSI_SDATA4 */
-> > -	[RCAR_GP_PIN(6,  9)] = { PU5, 16 },	/* SSI_WS4 */
-> > -	[RCAR_GP_PIN(6,  8)] = { PU5, 15 },	/* SSI_SCK4 */
-> > -	[RCAR_GP_PIN(6,  7)] = { PU5, 14 },	/* SSI_SDATA3 */
-> > -	[RCAR_GP_PIN(6,  6)] = { PU5, 13 },	/* SSI_WS34 */
-> > -	[RCAR_GP_PIN(6,  5)] = { PU5, 12 },	/* SSI_SCK34 */
-> > -	[RCAR_GP_PIN(6,  4)] = { PU5, 11 },	/* SSI_SDATA2_A */
-> > -	[RCAR_GP_PIN(6,  3)] = { PU5, 10 },	/* SSI_SDATA1_A */
-> > -	[RCAR_GP_PIN(6,  2)] = { PU5,  9 },	/* SSI_SDATA0 */
-> > -	[RCAR_GP_PIN(6,  1)] = { PU5,  8 },	/* SSI_WS01239 */
-> > -	[RCAR_GP_PIN(6,  0)] = { PU5,  7 },	/* SSI_SCK01239 */
-> > -	[RCAR_GP_PIN(5, 25)] = { PU5,  5 },	/* MLB_DAT */
-> > -	[RCAR_GP_PIN(5, 24)] = { PU5,  4 },	/* MLB_SIG */
-> > -	[RCAR_GP_PIN(5, 23)] = { PU5,  3 },	/* MLB_CLK */
-> > -	[RCAR_GP_PIN(5, 22)] = { PU5,  2 },	/* MSIOF0_RXD */
-> > -	[RCAR_GP_PIN(5, 21)] = { PU5,  1 },	/* MSIOF0_SS2 */
-> > -	[RCAR_GP_PIN(5, 20)] = { PU5,  0 },	/* MSIOF0_TXD */
-> > -
-> > -	[RCAR_GP_PIN(6, 31)] = { PU6,  6 },	/* USB31_OVC */
-> > -	[RCAR_GP_PIN(6, 30)] = { PU6,  5 },	/* USB31_PWEN */
-> > -	[RCAR_GP_PIN(6, 29)] = { PU6,  4 },	/* USB30_OVC */
-> > -	[RCAR_GP_PIN(6, 28)] = { PU6,  3 },	/* USB30_PWEN */
-> > -	[RCAR_GP_PIN(6, 27)] = { PU6,  2 },	/* USB1_OVC */
-> > -	[RCAR_GP_PIN(6, 26)] = { PU6,  1 },	/* USB1_PWEN */
-> > -	[RCAR_GP_PIN(6, 25)] = { PU6,  0 },	/* USB0_OVC */
-> > -};
-> > +	{ RCAR_GP_PIN(2, 11), PU0, 31 },	/* AVB_PHY_INT */
-> > +	{ RCAR_GP_PIN(2, 10), PU0, 30 },	/* AVB_MAGIC */
-> > +	{ RCAR_GP_PIN(2,  9), PU0, 29 },	/* AVB_MDC */
-> > +
-> > +	{ RCAR_GP_PIN(1, 19), PU1, 31 },	/* A19 */
-> > +	{ RCAR_GP_PIN(1, 18), PU1, 30 },	/* A18 */
-> > +	{ RCAR_GP_PIN(1, 17), PU1, 29 },	/* A17 */
-> > +	{ RCAR_GP_PIN(1, 16), PU1, 28 },	/* A16 */
-> > +	{ RCAR_GP_PIN(1, 15), PU1, 27 },	/* A15 */
-> > +	{ RCAR_GP_PIN(1, 14), PU1, 26 },	/* A14 */
-> > +	{ RCAR_GP_PIN(1, 13), PU1, 25 },	/* A13 */
-> > +	{ RCAR_GP_PIN(1, 12), PU1, 24 },	/* A12 */
-> > +	{ RCAR_GP_PIN(1, 11), PU1, 23 },	/* A11 */
-> > +	{ RCAR_GP_PIN(1, 10), PU1, 22 },	/* A10 */
-> > +	{ RCAR_GP_PIN(1,  9), PU1, 21 },	/* A9 */
-> > +	{ RCAR_GP_PIN(1,  8), PU1, 20 },	/* A8 */
-> > +	{ RCAR_GP_PIN(1,  7), PU1, 19 },	/* A7 */
-> > +	{ RCAR_GP_PIN(1,  6), PU1, 18 },	/* A6 */
-> > +	{ RCAR_GP_PIN(1,  5), PU1, 17 },	/* A5 */
-> > +	{ RCAR_GP_PIN(1,  4), PU1, 16 },	/* A4 */
-> > +	{ RCAR_GP_PIN(1,  3), PU1, 15 },	/* A3 */
-> > +	{ RCAR_GP_PIN(1,  2), PU1, 14 },	/* A2 */
-> > +	{ RCAR_GP_PIN(1,  1), PU1, 13 },	/* A1 */
-> > +	{ RCAR_GP_PIN(1,  0), PU1, 12 },	/* A0 */
-> > +	{ RCAR_GP_PIN(2,  8), PU1, 11 },	/* PWM2_A */
-> > +	{ RCAR_GP_PIN(2,  7), PU1, 10 },	/* PWM1_A */
-> > +	{ RCAR_GP_PIN(2,  6), PU1,  9 },	/* PWM0 */
-> > +	{ RCAR_GP_PIN(2,  5), PU1,  8 },	/* IRQ5 */
-> > +	{ RCAR_GP_PIN(2,  4), PU1,  7 },	/* IRQ4 */
-> > +	{ RCAR_GP_PIN(2,  3), PU1,  6 },	/* IRQ3 */
-> > +	{ RCAR_GP_PIN(2,  2), PU1,  5 },	/* IRQ2 */
-> > +	{ RCAR_GP_PIN(2,  1), PU1,  4 },	/* IRQ1 */
-> > +	{ RCAR_GP_PIN(2,  0), PU1,  3 },	/* IRQ0 */
-> > +	{ RCAR_GP_PIN(2, 14), PU1,  2 },	/* AVB_AVTP_CAPTURE_A */
-> > +	{ RCAR_GP_PIN(2, 13), PU1,  1 },	/* AVB_AVTP_MATCH_A */
-> > +	{ RCAR_GP_PIN(2, 12), PU1,  0 },	/* AVB_LINK */
-> > +
-> > +	{ RCAR_GP_PIN(7,  3), PU2, 29 },	/* HDMI1_CEC */
-> > +	{ RCAR_GP_PIN(7,  2), PU2, 28 },	/* HDMI0_CEC */
-> > +	{ RCAR_GP_PIN(7,  1), PU2, 27 },	/* AVS2 */
-> > +	{ RCAR_GP_PIN(7,  0), PU2, 26 },	/* AVS1 */
-> > +	{ RCAR_GP_PIN(0, 15), PU2, 25 },	/* D15 */
-> > +	{ RCAR_GP_PIN(0, 14), PU2, 24 },	/* D14 */
-> > +	{ RCAR_GP_PIN(0, 13), PU2, 23 },	/* D13 */
-> > +	{ RCAR_GP_PIN(0, 12), PU2, 22 },	/* D12 */
-> > +	{ RCAR_GP_PIN(0, 11), PU2, 21 },	/* D11 */
-> > +	{ RCAR_GP_PIN(0, 10), PU2, 20 },	/* D10 */
-> > +	{ RCAR_GP_PIN(0,  9), PU2, 19 },	/* D9 */
-> > +	{ RCAR_GP_PIN(0,  8), PU2, 18 },	/* D8 */
-> > +	{ RCAR_GP_PIN(0,  7), PU2, 17 },	/* D7 */
-> > +	{ RCAR_GP_PIN(0,  6), PU2, 16 },	/* D6 */
-> > +	{ RCAR_GP_PIN(0,  5), PU2, 15 },	/* D5 */
-> > +	{ RCAR_GP_PIN(0,  4), PU2, 14 },	/* D4 */
-> > +	{ RCAR_GP_PIN(0,  3), PU2, 13 },	/* D3 */
-> > +	{ RCAR_GP_PIN(0,  2), PU2, 12 },	/* D2 */
-> > +	{ RCAR_GP_PIN(0,  1), PU2, 11 },	/* D1 */
-> > +	{ RCAR_GP_PIN(0,  0), PU2, 10 },	/* D0 */
-> > +	{ RCAR_GP_PIN(1, 27), PU2,  8 },	/* EX_WAIT0_A */
-> > +	{ RCAR_GP_PIN(1, 26), PU2,  7 },	/* WE1_N */
-> > +	{ RCAR_GP_PIN(1, 25), PU2,  6 },	/* WE0_N */
-> > +	{ RCAR_GP_PIN(1, 24), PU2,  5 },	/* RD_WR_N */
-> > +	{ RCAR_GP_PIN(1, 23), PU2,  4 },	/* RD_N */
-> > +	{ RCAR_GP_PIN(1, 22), PU2,  3 },	/* BS_N */
-> > +	{ RCAR_GP_PIN(1, 21), PU2,  2 },	/* CS1_N_A26 */
-> > +	{ RCAR_GP_PIN(1, 20), PU2,  1 },	/* CS0_N */
-> > +
-> > +	{ RCAR_GP_PIN(4,  9), PU3, 31 },	/* SD3_DAT0 */
-> > +	{ RCAR_GP_PIN(4,  8), PU3, 30 },	/* SD3_CMD */
-> > +	{ RCAR_GP_PIN(4,  7), PU3, 29 },	/* SD3_CLK */
-> > +	{ RCAR_GP_PIN(4,  6), PU3, 28 },	/* SD2_DS */
-> > +	{ RCAR_GP_PIN(4,  5), PU3, 27 },	/* SD2_DAT3 */
-> > +	{ RCAR_GP_PIN(4,  4), PU3, 26 },	/* SD2_DAT2 */
-> > +	{ RCAR_GP_PIN(4,  3), PU3, 25 },	/* SD2_DAT1 */
-> > +	{ RCAR_GP_PIN(4,  2), PU3, 24 },	/* SD2_DAT0 */
-> > +	{ RCAR_GP_PIN(4,  1), PU3, 23 },	/* SD2_CMD */
-> > +	{ RCAR_GP_PIN(4,  0), PU3, 22 },	/* SD2_CLK */
-> > +	{ RCAR_GP_PIN(3, 11), PU3, 21 },	/* SD1_DAT3 */
-> > +	{ RCAR_GP_PIN(3, 10), PU3, 20 },	/* SD1_DAT2 */
-> > +	{ RCAR_GP_PIN(3,  9), PU3, 19 },	/* SD1_DAT1 */
-> > +	{ RCAR_GP_PIN(3,  8), PU3, 18 },	/* SD1_DAT0 */
-> > +	{ RCAR_GP_PIN(3,  7), PU3, 17 },	/* SD1_CMD */
-> > +	{ RCAR_GP_PIN(3,  6), PU3, 16 },	/* SD1_CLK */
-> > +	{ RCAR_GP_PIN(3,  5), PU3, 15 },	/* SD0_DAT3 */
-> > +	{ RCAR_GP_PIN(3,  4), PU3, 14 },	/* SD0_DAT2 */
-> > +	{ RCAR_GP_PIN(3,  3), PU3, 13 },	/* SD0_DAT1 */
-> > +	{ RCAR_GP_PIN(3,  2), PU3, 12 },	/* SD0_DAT0 */
-> > +	{ RCAR_GP_PIN(3,  1), PU3, 11 },	/* SD0_CMD */
-> > +	{ RCAR_GP_PIN(3,  0), PU3, 10 },	/* SD0_CLK */
-> > +
-> > +	{ RCAR_GP_PIN(5, 19), PU4, 31 },	/* MSIOF0_SS1 */
-> > +	{ RCAR_GP_PIN(5, 18), PU4, 30 },	/* MSIOF0_SYNC */
-> > +	{ RCAR_GP_PIN(5, 17), PU4, 29 },	/* MSIOF0_SCK */
-> > +	{ RCAR_GP_PIN(5, 16), PU4, 28 },	/* HRTS0_N */
-> > +	{ RCAR_GP_PIN(5, 15), PU4, 27 },	/* HCTS0_N */
-> > +	{ RCAR_GP_PIN(5, 14), PU4, 26 },	/* HTX0 */
-> > +	{ RCAR_GP_PIN(5, 13), PU4, 25 },	/* HRX0 */
-> > +	{ RCAR_GP_PIN(5, 12), PU4, 24 },	/* HSCK0 */
-> > +	{ RCAR_GP_PIN(5, 11), PU4, 23 },	/* RX2_A */
-> > +	{ RCAR_GP_PIN(5, 10), PU4, 22 },	/* TX2_A */
-> > +	{ RCAR_GP_PIN(5,  9), PU4, 21 },	/* SCK2 */
-> > +	{ RCAR_GP_PIN(5,  8), PU4, 20 },	/* RTS1_N_TANS */
-> > +	{ RCAR_GP_PIN(5,  7), PU4, 19 },	/* CTS1_N */
-> > +	{ RCAR_GP_PIN(5,  6), PU4, 18 },	/* TX1_A */
-> > +	{ RCAR_GP_PIN(5,  5), PU4, 17 },	/* RX1_A */
-> > +	{ RCAR_GP_PIN(5,  4), PU4, 16 },	/* RTS0_N_TANS */
-> > +	{ RCAR_GP_PIN(5,  3), PU4, 15 },	/* CTS0_N */
-> > +	{ RCAR_GP_PIN(5,  2), PU4, 14 },	/* TX0 */
-> > +	{ RCAR_GP_PIN(5,  1), PU4, 13 },	/* RX0 */
-> > +	{ RCAR_GP_PIN(5,  0), PU4, 12 },	/* SCK0 */
-> > +	{ RCAR_GP_PIN(3, 15), PU4, 11 },	/* SD1_WP */
-> > +	{ RCAR_GP_PIN(3, 14), PU4, 10 },	/* SD1_CD */
-> > +	{ RCAR_GP_PIN(3, 13), PU4,  9 },	/* SD0_WP */
-> > +	{ RCAR_GP_PIN(3, 12), PU4,  8 },	/* SD0_CD */
-> > +	{ RCAR_GP_PIN(4, 17), PU4,  7 },	/* SD3_DS */
-> > +	{ RCAR_GP_PIN(4, 16), PU4,  6 },	/* SD3_DAT7 */
-> > +	{ RCAR_GP_PIN(4, 15), PU4,  5 },	/* SD3_DAT6 */
-> > +	{ RCAR_GP_PIN(4, 14), PU4,  4 },	/* SD3_DAT5 */
-> > +	{ RCAR_GP_PIN(4, 13), PU4,  3 },	/* SD3_DAT4 */
-> > +	{ RCAR_GP_PIN(4, 12), PU4,  2 },	/* SD3_DAT3 */
-> > +	{ RCAR_GP_PIN(4, 11), PU4,  1 },	/* SD3_DAT2 */
-> > +	{ RCAR_GP_PIN(4, 10), PU4,  0 },	/* SD3_DAT1 */
-> > +
-> > +	{ RCAR_GP_PIN(6, 24), PU5, 31 },	/* USB0_PWEN */
-> > +	{ RCAR_GP_PIN(6, 23), PU5, 30 },	/* AUDIO_CLKB_B */
-> > +	{ RCAR_GP_PIN(6, 22), PU5, 29 },	/* AUDIO_CLKA_A */
-> > +	{ RCAR_GP_PIN(6, 21), PU5, 28 },	/* SSI_SDATA9_A */
-> > +	{ RCAR_GP_PIN(6, 20), PU5, 27 },	/* SSI_SDATA8 */
-> > +	{ RCAR_GP_PIN(6, 19), PU5, 26 },	/* SSI_SDATA7 */
-> > +	{ RCAR_GP_PIN(6, 18), PU5, 25 },	/* SSI_WS78 */
-> > +	{ RCAR_GP_PIN(6, 17), PU5, 24 },	/* SSI_SCK78 */
-> > +	{ RCAR_GP_PIN(6, 16), PU5, 23 },	/* SSI_SDATA6 */
-> > +	{ RCAR_GP_PIN(6, 15), PU5, 22 },	/* SSI_WS6 */
-> > +	{ RCAR_GP_PIN(6, 14), PU5, 21 },	/* SSI_SCK6 */
-> > +	{ RCAR_GP_PIN(6, 13), PU5, 20 },	/* SSI_SDATA5 */
-> > +	{ RCAR_GP_PIN(6, 12), PU5, 19 },	/* SSI_WS5 */
-> > +	{ RCAR_GP_PIN(6, 11), PU5, 18 },	/* SSI_SCK5 */
-> > +	{ RCAR_GP_PIN(6, 10), PU5, 17 },	/* SSI_SDATA4 */
-> > +	{ RCAR_GP_PIN(6,  9), PU5, 16 },	/* SSI_WS4 */
-> > +	{ RCAR_GP_PIN(6,  8), PU5, 15 },	/* SSI_SCK4 */
-> > +	{ RCAR_GP_PIN(6,  7), PU5, 14 },	/* SSI_SDATA3 */
-> > +	{ RCAR_GP_PIN(6,  6), PU5, 13 },	/* SSI_WS34 */
-> > +	{ RCAR_GP_PIN(6,  5), PU5, 12 },	/* SSI_SCK34 */
-> > +	{ RCAR_GP_PIN(6,  4), PU5, 11 },	/* SSI_SDATA2_A */
-> > +	{ RCAR_GP_PIN(6,  3), PU5, 10 },	/* SSI_SDATA1_A */
-> > +	{ RCAR_GP_PIN(6,  2), PU5,  9 },	/* SSI_SDATA0 */
-> > +	{ RCAR_GP_PIN(6,  1), PU5,  8 },	/* SSI_WS01239 */
-> > +	{ RCAR_GP_PIN(6,  0), PU5,  7 },	/* SSI_SCK01239 */
-> > +	{ RCAR_GP_PIN(5, 25), PU5,  5 },	/* MLB_DAT */
-> > +	{ RCAR_GP_PIN(5, 24), PU5,  4 },	/* MLB_SIG */
-> > +	{ RCAR_GP_PIN(5, 23), PU5,  3 },	/* MLB_CLK */
-> > +	{ RCAR_GP_PIN(5, 22), PU5,  2 },	/* MSIOF0_RXD */
-> > +	{ RCAR_GP_PIN(5, 21), PU5,  1 },	/* MSIOF0_SS2 */
-> > +	{ RCAR_GP_PIN(5, 20), PU5,  0 },	/* MSIOF0_TXD */
-> > +
-> > +	{ RCAR_GP_PIN(6, 31), PU6,  6 },	/* USB31_OVC */
-> > +	{ RCAR_GP_PIN(6, 30), PU6,  5 },	/* USB31_PWEN */
-> > +	{ RCAR_GP_PIN(6, 29), PU6,  4 },	/* USB30_OVC */
-> > +	{ RCAR_GP_PIN(6, 28), PU6,  3 },	/* USB30_PWEN */
-> > +	{ RCAR_GP_PIN(6, 27), PU6,  2 },	/* USB1_OVC */
-> > +	{ RCAR_GP_PIN(6, 26), PU6,  1 },	/* USB1_PWEN */
-> > +	{ RCAR_GP_PIN(6, 25), PU6,  0 },	/* USB0_OVC */
-> > +};
-> > +
-> > +static int r8a7795_pin_to_bias_data(unsigned int pin, u32 *reg, u32 *bit)
-> > +{
-> > +	unsigned int i;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(pullups); i++) {
-> > +		if (pullups[i].pin == pin) {
-> > +			*reg = pullups[i].reg;
-> > +			*bit = BIT(pullups[i].bit);
-> > +			return 0;
-> > +		}
-> > +	}
-> > +
-> > +	return -EINVAL;
-> > +}
-> > 
-> >  static unsigned int r8a7795_pinmux_get_bias(struct sh_pfc *pfc,
-> >  					    unsigned int pin)
-> > @@ -5361,12 +5377,9 @@ static unsigned int r8a7795_pinmux_get_bias(struct
-> > sh_pfc *pfc, u32 reg;
-> >  	u32 bit;
-> > 
-> > -	if (WARN_ON_ONCE(!pullups[pin].reg))
-> > +	if (WARN_ON_ONCE(r8a7795_pin_to_bias_data(pin, &reg, &bit)))
-> >  		return PIN_CONFIG_BIAS_DISABLE;
-> > 
-> > -	reg = pullups[pin].reg;
-> > -	bit = BIT(pullups[pin].bit);
-> > -
-> >  	if (sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit) {
-> >  		if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
-> >  			return PIN_CONFIG_BIAS_PULL_UP;
-> 
-> Slightly out of scope, but the following code
-> 
->         if (sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit) {
->                 if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
->                         return PIN_CONFIG_BIAS_PULL_UP;
->                 else
->                         return PIN_CONFIG_BIAS_PULL_DOWN;
->         } else
->                 return PIN_CONFIG_BIAS_DISABLE;
-> 
-> misses braces around the else. It could be written
-> 
->         if (!(sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit))
->                 return PIN_CONFIG_BIAS_DISABLE;
->         else if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
->                 return PIN_CONFIG_BIAS_PULL_UP;
->         else
->                 return PIN_CONFIG_BIAS_PULL_DOWN;
+All warnings (new ones prefixed by >>):
 
-I can include a patch fixing this up in my v3.
+   In file included from drivers/pinctrl/core.c:36:0:
+>> drivers/pinctrl/devicetree.h:29:14: warning: 'struct of_phandle_args' declared inside parameter list will not be visible outside of this definition or declaration
+          struct of_phandle_args *out_args);
+                 ^~~~~~~~~~~~~~~
 
-> 
-> > @@ -5383,12 +5396,9 @@ static void r8a7795_pinmux_set_bias(struct sh_pfc
-> > *pfc, unsigned int pin, u32 reg;
-> >  	u32 bit;
-> > 
-> > -	if (WARN_ON_ONCE(!pullups[pin].reg))
-> > +	if (WARN_ON_ONCE(r8a7795_pin_to_bias_data(pin, &reg, &bit)))
-> >  		return;
-> > 
-> > -	reg = pullups[pin].reg;
-> > -	bit = BIT(pullups[pin].bit);
-> > -
-> >  	enable = sh_pfc_read_reg(pfc, PUEN + reg, 32) & ~bit;
-> >  	if (bias != PIN_CONFIG_BIAS_DISABLE)
-> >  		enable |= bit;
-> 
+vim +29 drivers/pinctrl/devicetree.h
 
--- 
-Regards,
-Niklas Söderlund
+    13	 * more details.
+    14	 *
+    15	 * You should have received a copy of the GNU General Public License
+    16	 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    17	 */
+    18	
+    19	#ifdef CONFIG_OF
+    20	
+    21	void pinctrl_dt_free_maps(struct pinctrl *p);
+    22	int pinctrl_dt_to_map(struct pinctrl *p);
+    23	
+    24	int pinctrl_count_index_with_args(const struct device_node *np,
+    25					  const char *list_name);
+    26	
+    27	int pinctrl_parse_index_with_args(const struct device_node *np,
+    28					  const char *list_name, int index,
+  > 29					  struct of_phandle_args *out_args);
+    30	
+    31	#else
+    32	
+    33	static inline int pinctrl_dt_to_map(struct pinctrl *p)
+    34	{
+    35		return 0;
+    36	}
+    37	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+--nFreZHaLTZJo0R7j
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+6GY29GkuVciEH/s/GAcoTkSkAAA=
+
+--nFreZHaLTZJo0R7j--
