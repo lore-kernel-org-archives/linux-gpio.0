@@ -1,52 +1,70 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 01/14] pinctrl-sx150x: Rely on of_modalias_node for OF matching
-Date: Fri, 4 Nov 2016 13:28:55 +0100
-Message-ID: <CACRpkdaNRSM0JR7FJOBOstjaZXbMAV+xzNyT=UevNzVVwOO30A@mail.gmail.com>
-References: <1478015868-10309-1-git-send-email-andrew.smirnov@gmail.com> <1478015868-10309-2-git-send-email-andrew.smirnov@gmail.com>
+Subject: [GIT PULL] GPIO fixes for v4.9
+Date: Fri, 4 Nov 2016 14:00:21 +0100
+Message-ID: <CACRpkdb3oGFGq4xZentTvdS6BjP5CKBdJ7wQpZ4m+uE2nggnnQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f179.google.com ([209.85.220.179]:33932 "EHLO
-        mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932486AbcKDM24 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Nov 2016 08:28:56 -0400
-Received: by mail-qk0-f179.google.com with SMTP id q130so94740381qke.1
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Nov 2016 05:28:56 -0700 (PDT)
-In-Reply-To: <1478015868-10309-2-git-send-email-andrew.smirnov@gmail.com>
+Received: from mail-qk0-f176.google.com ([209.85.220.176]:36383 "EHLO
+        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934524AbcKDNAX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Nov 2016 09:00:23 -0400
+Received: by mail-qk0-f176.google.com with SMTP id o68so95585891qkf.3
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Nov 2016 06:00:22 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Neil Armstrong <narmstrong@baylibre.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chris Healy <cphealy@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
 
-On Tue, Nov 1, 2016 at 4:57 PM, Andrey Smirnov <andrew.smirnov@gmail.com> wrote:
+Hi Linus,
 
-> None of the OF match table entries contain any compatiblity strings that
-> could not be matched against using i2c_device_id table above and
-> of_modalias_node. Besides that entries in OF match table do not cary
-> proper device variant information which is need by the drive. Those two
-> facts combined, IMHO, make a compelling case for removal of that code
-> altogether.
->
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-(...)
-> -static const struct of_device_id sx150x_of_match[] = {
-> -       { .compatible = "semtech,sx1508q" },
-> -       { .compatible = "semtech,sx1509q" },
-> -       { .compatible = "semtech,sx1506q" },
-> -       { .compatible = "semtech,sx1502q" },
-> -       {},
-> -};
+here is a bunch of GPIO fixes for the v4.9 series.
 
-I'm a bit hesitant about this since we should ideally first match on the
-compatible string for any device. We have tried to alleviate the situation
-in I2C devices but it has been a bit so-so.
+The most prominent thing is the largeish file descriptor leak fix,
+and the regression fix for multiple-instance chips is pretty important
+too.
 
-It would be best if we make a separate patch after this tjat adds it
-back, set the variant data also in the .data of the match and
-use of_device_get_match_data().
-
-It's no strong preference: I will still apply this patch set because
-it is overall very very good.
+Please pull it in!
 
 Yours,
 Linus Walleij
+
+The following changes since commit a909d3e636995ba7c349e2ca5dbb528154d4ac30:
+
+  Linux 4.9-rc3 (2016-10-29 13:52:02 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.9-3
+
+for you to fetch changes up to 812d47889a8e418d7bea9bec383581a34c19183e:
+
+  gpio/mvebu: Use irq_domain_add_linear (2016-11-01 19:31:49 +0100)
+
+----------------------------------------------------------------
+Some GPIO fixes for the v4.9 series:
+
+- Fix a nasty file descriptor leak when getting line handles.
+
+- A fix for a cleanup that seemed innocent but created a problem
+  for drivers instantiating several gpiochips for one single
+  OF node.
+
+- Fix a unpredictable problem using irq_domain_simple() in the
+  mvebu driver by converting it to a lineas irqdomain.
+
+----------------------------------------------------------------
+Jason Gunthorpe (1):
+      gpio/mvebu: Use irq_domain_add_linear
+
+Lars-Peter Clausen (1):
+      gpio: GPIO_GET_LINE{HANDLE,EVENT}_IOCTL: Fix file descriptor leak
+
+Masahiro Yamada (1):
+      gpio: of: fix GPIO drivers with multiple gpio_chip for a single node
+
+ drivers/gpio/gpio-mvebu.c | 92 ++++++++++++++++++++++-------------------------
+ drivers/gpio/gpiolib-of.c | 14 +++++---
+ drivers/gpio/gpiolib.c    | 57 ++++++++++++++++++++++-------
+ 3 files changed, 97 insertions(+), 66 deletions(-)
