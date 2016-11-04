@@ -1,51 +1,154 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH 4/9] pinctrl: meson: allow gpio to request irq
-Date: Fri, 4 Nov 2016 15:40:53 +0100
-Message-ID: <CACRpkdbXFv8pnwbajTruUU66JhgfYy=3iG6dex=XpNNOEt7Pqw@mail.gmail.com>
+Date: Fri, 4 Nov 2016 16:03:00 +0100
+Message-ID: <CACRpkdZE4iCwQ4EFYFqqRs+wv7HvpR4FP=2xvYtxxpJrto_dpw@mail.gmail.com>
 References: <1476871709-8359-1-git-send-email-jbrunet@baylibre.com>
  <1476871709-8359-5-git-send-email-jbrunet@baylibre.com> <CACRpkdaCZPS45t3eTcjJExOu=YT_YkjNkdpg09jQqvLQOJH=Qw@mail.gmail.com>
  <1477040798.15560.96.camel@baylibre.com> <CACRpkdYUVXny57AC9rKX3VRAyooEk_2XLvqe9jOuT3rOaE75rg@mail.gmail.com>
  <ec7c6cc5-cf9a-9c75-4b07-e337064c7d6e@arm.com> <1477400900.2482.51.camel@baylibre.com>
  <dee26f0b-e175-f8a0-2b73-08e8e324841c@arm.com> <1477405332.2482.87.camel@baylibre.com>
- <bbc268c8-35c3-206a-46b1-62cebef174b2@arm.com> <1477409478.2482.113.camel@baylibre.com>
- <CACRpkdbGo4BJOdzkgBrE9jT-rKodd4zssCnOtOuGS+OqV-Uc6Q@mail.gmail.com>
- <1477491766.2482.159.camel@baylibre.com> <CACRpkdYqoU0foW1izcZapbgUm+NO4quz9AZZBmts4841BRcigA@mail.gmail.com>
- <7hk2cvrtxt.fsf@baylibre.com>
+ <bbc268c8-35c3-206a-46b1-62cebef174b2@arm.com> <CACRpkdba_iaOK61KiQGvJZYuz7-PiBgtN4vxv__tJLsZ8ZVL=w@mail.gmail.com>
+ <1477491816.2482.160.camel@baylibre.com> <CACRpkdZR8T8W5WMmEJVhPR0sUQyfPzgHpjhDiRsyXvybKDYJWQ@mail.gmail.com>
+ <1477564941.2482.240.camel@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7hk2cvrtxt.fsf@baylibre.com>
+In-Reply-To: <1477564941.2482.240.camel@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kevin Hilman <khilman@baylibre.com>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Marc Zyngier <marc.zyngier@arm.com>, Carlo Caione <carlo@caione.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Russell King <linux@armlinux.org.uk>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Russell King <linux@armlinux.org.uk>, Alexandre TORGUE <alexandre.torgue@st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 26, 2016 at 5:50 PM, Kevin Hilman <khilman@baylibre.com> wrote:
+On Thu, Oct 27, 2016 at 12:42 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
 
->> Yes they are all wrong. They should all be using irq_find_mapping().
+> Ressource issue : When you create an irq mapping, in case of hierarchic
+> domain, it calls the "alloc" function of the domain, which will
+> eventually call the "alloc" function of the parent domain ... until you
+> reach the "root" domain (here the gic).
+(...)
+> We are looking to create mapping "on-demand" to make the best use of
+> the little number of interrupts we have. To catch request of drivers,
+> like gpio-keys, which use gpio_to_irq, it looks the only viable place
+> is the to_irq callback (at the moment).
 >
-> So, dumb question from someone trying (but having a hard time) to follow
-> and understand the rationale...
+> Drivers using gpio_to_irq in their probe function expect that this will
+> give them the corresponding virq, so create the mapping if need be.
+
+OK what I need to know is the following:
+
+If this was not a gpio chip, just some random hierarchical irqchip
+or mux from drivers/irqchip, where would you make the translation?
+
+The answer to that question applies equally to any GPIO controller
+that also provides an irqchip. .to_irq() is not the place to do the
+translation.
+
+I looked around and for example irq-s3c24xx.c seems to do this
+in the irqdomain xlate() callback, which should only be called
+when the interrupt is resolved for a consumer.
+
+If that is the code that you partitioned over to drivers/irqchip,
+then maybe this is a sign that this code should not be there
+at all, but instead inside this gpiochip driver, or atleast accessible
+by it so that your gpiochip driver has direct access to the
+irqdomain it is using.
+
+> However, I now get why you don't want that, it seems we have 2 types of
+> platforms in the kernel right now:
 >
-> If it's wrong enough to completely reject, why are changes still being
-> merged that are doing it so wrong?  (e.g. like this one[1], just merged
-> for v4.9)
+> 1. The one creating the mapping in the to_irq callback. It might be
+> because they just copy/paste from another driver doing it, or they may
+> have a good reason for it (like I think we do)
+>
+> 2. the one which call gpio_to_irq in interrupt handlers. Honestly I did
+> not know that one could that, but they are in the mainline too, and
+> probably have a good reason for doing it.
 
-It's a bug.
+They are probably all bad or legacy. None of this works with a
+irqchip from DT like this:
 
-It's that problem that Wolfram brought up in a recent lecture
-about maintainer scaling: if noone but the subsystem maintainer
-reviews the code, things like this will happen.
+foo: gpio@0 {
+    #gpio-cells = <2>;
+    gpio-controller;
+    interrupt-cells = <2>;
+    interrupt-controller;
+}
 
-I need more review...
+bar: bar@1 {
+    interrupt-parent = <&foo>;
+    interrupt = <4>;
+};
 
-> [1] 0eb9f683336d pinctrl: Add IRQ support to STM32 gpios
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/drivers/pinctrl/stm32/pinctrl-stm32.c?id=0eb9f683336d7eb99a3b75987620417c574ffb57
+Here notice that bar is NOT doing gpios = <&foo 4>;
+which is what you would do to get a GPIO and then call
+.to_irq() on it. It just uses it as an interrupt controller.
 
-Alexandre, Maxime: can you please make a patch for the STM32
-driver that remove the semantic dependence for .to_irq() to be called
-before an interrupt can be used? It should be possible to use
-the irqs directly from the irqchip.
+This MUST work, or you cannot put interrupt-controller;
+as a keyword on the gpiochip.
+
+> irq_find_mapping looks safe in interrupt handler, I does not seem to
+> sleep (please correct me if I'm wrong).
+> irq_create_mapping definitely isn't, because of the irq_domain mutex.
+
+Yep.
+
+> We probably got into this situation because it wasn't clear enough
+> whether to_irq was fast or slow (at least it took me a few mails to
+> understand this ...)
+
+I don't know either. It's just supposed to be a quick helper
+to find the corresponding interrupt for a GPIO, it is not supposed
+to have semantic side-effects.
+
+> The two platform groups are most likely exclusive so nobody is sleeping
+> in irq, everybody is happy. As a maintainer, I understand that you
+> can't allow a dangerous situation like this to continue.
+
+It's a mess allright. I need everyone's help to fix the mess.
+
+> To fix the situation we could add a few things in the gpio subsys:
+> - Make it clear that to_irq is fast (like you just did)
+
+Sure patches accepted.
+
+> - add a new callback (to_irq_slow ? provide_irq ? something else) which
+> would be allowed to sleep and create mappings.
+> - in gpio_to_irq function keeps calling to_irq like it does but also
+> call to_irq_slow only if we are not in an interrupt context and a
+> mapping could not be found. We could maybe use "in_interrupt()" for
+> this ?
+
+None of them should be allowed to create mappings because of the
+explanation above: gpiochips and irqchips need to be
+orthogonal.
+
+> This way, we could keep the existing drivers working as they are (even
+> if they are wrong) and slowly fix things up.
+
+It doesn't seem to help with anything.
+
+Instead go back to what I described above: if it was just
+two irqchips: forget the fact that one of them is a GPIO chip
+for a while, just two irqchips.
+
+How does one irqchip map to another one?
+
+That is what needs to happen, solely using the irqchip
+infrastructure, NOT using .to_irq().
+
+> Sorry, it was kind of long explanation but I hope things are more clear
+> now.
+
+I think I understand... famous last words.
+
+>> I just misunderstand it as the global GPIO number, that is
+>> not OK.
+>
+> Ok. Just to be clear, you are ok with the function
+> "meson_gpio_to_hwirq" which just does this translation, right ?
+
+That seems all right, the problem is relying on gpio_to_irq()
+being called for the interrupts to work.
 
 Yours,
 Linus Walleij
