@@ -1,33 +1,82 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: zynq: Add a 8 bit wide nand option
-Date: Fri, 4 Nov 2016 15:19:46 +0100
-Message-ID: <CACRpkdbk_yoco4km1q0ZvK+piNziXyeJeDxOMyzikUOHJRy6EQ@mail.gmail.com>
-References: <20161026180454.GC24717@obsidianresearch.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/5] drivers: gpio: Add support for multiple IPs
+Date: Fri, 4 Nov 2016 15:28:42 +0100
+Message-ID: <CACRpkdZmuc__QL6b7Jvb8xL5Bm+PD2X60NtiugrnH7iAO=-tLQ@mail.gmail.com>
+References: <1476855239-32730-1-git-send-email-j-keerthy@ti.com>
+ <1476855239-32730-3-git-send-email-j-keerthy@ti.com> <CACRpkdbsgM-yiWpiA5G35jQR8v3FO=Me+4rhe6TzE0qsWOJ8Ew@mail.gmail.com>
+ <c5c95d86-2c89-3819-725c-ee0b86c37ec0@ti.com> <98447580-cbc4-152e-f2cb-7c4756545479@ti.com>
+ <c047fb27-a8bb-c10d-2b16-a3e6bf45d88f@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f175.google.com ([209.85.220.175]:33361 "EHLO
-        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754076AbcKDOTr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Nov 2016 10:19:47 -0400
-Received: by mail-qk0-f175.google.com with SMTP id x190so97068522qkb.0
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Nov 2016 07:19:47 -0700 (PDT)
-In-Reply-To: <20161026180454.GC24717@obsidianresearch.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <c047fb27-a8bb-c10d-2b16-a3e6bf45d88f-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+Cc: Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-Cc: Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Oct 26, 2016 at 8:04 PM, Jason Gunthorpe
-<jgunthorpe@obsidianresearch.com> wrote:
+On Thu, Oct 27, 2016 at 10:07 AM, Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org> wrote:
+> On Thursday 27 October 2016 01:23 PM, Roger Quadros wrote:
+>> On 27/10/16 06:42, Keerthy wrote:
+>>> On Sunday 23 October 2016 04:02 PM, Linus Walleij wrote:
+>>>> On Wed, Oct 19, 2016 at 7:33 AM, Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org> wrote:
+>>>>> From: Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>
 
-> The hardware supports a 16 and 8 bit wide NAND bus, let users pick
-> either.
+>>> In case of k2g. There are 2 big GPIO modules GPIO0 and GPIO1.
+>>> GPIO0 comprises of 144 GPIOs
+>>> and GPIO1 has about 68 GPIOs. Wanted feedback from you on how this is
+>>> being modeled.
+>>>
+>>> I am creating a controller for every 32 GPIOs under the big module each
+>>> containing a gpio_chip. Each 32 GPIOs chip has 2 banks of 16 GPIOs each.
+>>> Each 16 GPIO bank has an interrupt.
+>>>
+>>> Is this modeling fine or do you think creating one chip with 144 pins and
+>>> another with 68 pins is a better way?
+>>
+>>
+>> If GPIO0 has 144 GPIOs, why don't we model it as a gpiochip with 144
+>> GPIOs?
+>> What is the benefit of partitioning it into gpiochips of 32 GPIOs each?
 >
-> Signed-off-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+> 144 GPIOs where in 16 GPIOs form a bank. So about 9 banks with one interrupt
+> each. So split it into gpiochips with 32 GPIOs each handling 2 Interrupts.
 
-Patch applied with S=C3=B6ren's ACK.
+I'm a bit confused.
+
+This sounds like you should either have one gpio_chip per interrupt
+(if that fits with how the device tree looks) or one big gpio_chip for
+all the lines.
+
+The DT model sort of mandates how the interrupts should be mapped
+at this point, and as far as I can tell from the binding the example looks
+like so:
+
+gpio: gpio@1e26000 {
+        compatible = "ti,dm6441-gpio";
+        gpio-controller;
+        #gpio-cells = <2>;
+        reg = <0x226000 0x1000>;
+        interrupt-parent = <&intc>;
+        interrupts = <42 IRQ_TYPE_EDGE_BOTH 43 IRQ_TYPE_EDGE_BOTH
+                44 IRQ_TYPE_EDGE_BOTH 45 IRQ_TYPE_EDGE_BOTH
+                46 IRQ_TYPE_EDGE_BOTH 47 IRQ_TYPE_EDGE_BOTH
+                48 IRQ_TYPE_EDGE_BOTH 49 IRQ_TYPE_EDGE_BOTH
+                50 IRQ_TYPE_EDGE_BOTH>;
+        ti,ngpio = <144>;
+        ti,davinci-gpio-unbanked = <0>;
+        interrupt-controller;
+        #interrupt-cells = <2>;
+};
+
+So I don't see any reason to split this up in subchips internally in
+Linux?
+
+It looks like the irqdomain will be a bit tricksy though.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
