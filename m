@@ -1,69 +1,66 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] gpio: lib: Add gpio_is_enabled() to get pin mode
-Date: Fri, 4 Nov 2016 23:20:24 +0100
-Message-ID: <CACRpkdYjWiy-PyBhN8gRa5TM5ARXrCZ-KqBXYm-bVeXFY11MQw@mail.gmail.com>
-References: <1478089037-26441-1-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH 2/2] pinctrl: tegra: Add driver to configure voltage and
+ power of io pads
+Date: Fri, 4 Nov 2016 23:24:46 +0100
+Message-ID: <CACRpkdb4DQLzQWHxuZi=TDaeigNzVJV8TN1jsQfOHKF7yPLrUg@mail.gmail.com>
+References: <1478077742-25437-1-git-send-email-ldewangan@nvidia.com> <1478077742-25437-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f176.google.com ([209.85.216.176]:36614 "EHLO
-        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751157AbcKDWU0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Nov 2016 18:20:26 -0400
-Received: by mail-qt0-f176.google.com with SMTP id w33so56856115qtc.3
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Nov 2016 15:20:25 -0700 (PDT)
-In-Reply-To: <1478089037-26441-1-git-send-email-ldewangan@nvidia.com>
+Received: from mail-qk0-f179.google.com ([209.85.220.179]:33294 "EHLO
+        mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754402AbcKDWYr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Nov 2016 18:24:47 -0400
+Received: by mail-qk0-f179.google.com with SMTP id x190so113558725qkb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Nov 2016 15:24:47 -0700 (PDT)
+In-Reply-To: <1478077742-25437-3-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Nov 2, 2016 at 1:17 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+On Wed, Nov 2, 2016 at 10:09 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-> Many of devices/SoCs supports the GPIO and special IO function
-> from their pins. On such cases, there is always configuration
-> bits to select the mode of pin as GPIO or as the special IO mode.
-> The functional modes are selected by pinmux option.
+> NVIDIA Tegra124 and later SoCs support the multi-voltage level and
+> low power state of some of its IO pads. The IO pads can work in
+> the voltage of the 1.8V and 3.3V of IO power rail sources. When IO
+> interface are not used then IO pads can be configure in low power
+> state to reduce the power from that IO pads.
 >
-> When device booted and reach to kernel, it is not possible to get
-> the current configuration of pin whether it is in GPIO mode or
-> in special IO mode without configurations.
+> On Tegra124, the IO power rail source is auto detected by SoC and hence
+> it is only require to configure in low power mode if IO pads are not
+> used.
 >
-> Add APIs to return the current mode of pins without requesting it
-> as GPIO to find out the current mode.
-> This helps on dumping the pin configuration from debug/test utility
-> to get the current mode GPIO or functional mode.
+> On T210 onwards, the auto-detection is removed from SoC and hence SW
+> must configure the PMC register explicitly to set proper voltage in
+> IO pads based on IO rail power source voltage.
 >
-> The typical utility looks as:
-> pin_dump(pin)
-> {
->         if(gpio_is_enabled(pin)) {
->                 dump direction using get_direction()
->         } else {
->                 dump pinmux option and its configurations.
->         }
-> }
+> This driver adds the IO pad driver to configure the power state and
+> IO pad voltage based on the usage and power tree via pincontrol
+> framework. The configuration can be static and dynamic.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
-Yeah but since pinctrl and pinmux has its own debugfs files why is this
-necessary? I understand it is convenient but only for debugging
-right? They the inconvenience of using pinctrls debugfs files should
-be bearable.
+Looking for an ACK from Stephen &| Thierry.
 
-Also it is possible for any GPIO chip to implement its own
-debug print if they like, check what we do in
-->dbg_show in drivers/pinctrl/nomadik/pinctrl-nomadik.c
-for example.
+> ---
+> On top of the branch from Thierry's T186 work
+>         https://github.com/thierryreding/linux/tree/tegra186
 
-If the use is for debug prints, keep it driver-local.
+But it's an orthogonal patch right?
 
-(...)
-> +static inline int gpio_is_enabled(unsigned gpio)
-> +{
-> +       return gpiod_is_enabled(gpio_to_desc(gpio));
-> +}
+The build robot seems to have problems with it so pls fix these.
 
-NAK why would be encourage the non-descriptor interface by
-adding to it? Better only offer this to the descriptor users.
+> +static const struct pinconf_generic_params tegra_io_pads_cfg_params[] = {
+> +       {
+> +               .property = "nvidia,power-source-voltage",
+> +               .param = TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE,
+> +       },
+> +};
+
+Why can you not use the standard power-source binding
+from Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+instead of inventing this nvidia,* variant?
 
 Yours,
 Linus Walleij
