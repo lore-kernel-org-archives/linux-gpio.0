@@ -1,36 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/4] pinctrl: single: Use generic parser and
- #pinctrl-cells for pinctrl-single,pins
-Date: Fri, 4 Nov 2016 22:41:26 +0100
-Message-ID: <CACRpkdY4X8MEUWU4_zuzqT9Vg7d8i236dostABEWFPcK76_w5A@mail.gmail.com>
-References: <20161025164538.453-1-tony@atomide.com> <20161025164538.453-3-tony@atomide.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/4] pinctrl: Introduce generic #pinctrl-cells and pinctrl_parse_index_with_args
+Date: Fri, 4 Nov 2016 22:50:39 +0100
+Message-ID: <CACRpkdaCF4Jc7QY+L44obce=V_W4xgVbPXfuiE7bXJs7ud9q9A@mail.gmail.com>
+References: <20161103163550.27330-1-tony@atomide.com> <20161103163550.27330-2-tony@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161025164538.453-3-tony@atomide.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161103163550.27330-2-tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 25, 2016 at 6:45 PM, Tony Lindgren <tony@atomide.com> wrote:
+On Thu, Nov 3, 2016 at 5:35 PM, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org> wrote:
 
-> We can now use generic parser. To support the legacy binding without
-> #pinctrl-cells, add pcs_quirk_missing_pinctrl_cells() and warn about
-> missing #pinctrl-cells.
+> Introduce #pinctrl-cells helper binding and generic helper functions
+> pinctrl_count_index_with_args() and pinctrl_parse_index_with_args().
 >
-> Let's also update the documentation for struct pcs_soc_data while at it
-> as that seems to be out of date.
->
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
 
-Patch applied.
+Ooops applied this v2 version instead of the v1.
 
-> Looking at some make randconfig results, looks like we don't have
-> of_add_property() and of_remove_property() exported. Is there some
-> reason not to export them?
+* kbuild test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org> [161103 13:29]:
+>    In file included from drivers/pinctrl/core.c:36:0:
+> >> drivers/pinctrl/devicetree.h:29:14: warning: 'struct of_phandle_args' declared inside parameter list will not be visible outside of this
+definition or declaratio
 
-If there is too much fuzz from the builders we need to think of something.
+> Hmm maybe we should just include of.h in core.c?
+
+Nah. I just did this:
+
+diff --git a/drivers/pinctrl/devicetree.h b/drivers/pinctrl/devicetree.h
+index 7f0a5c4e15ad..c2d1a5505850 100644
+--- a/drivers/pinctrl/devicetree.h
++++ b/drivers/pinctrl/devicetree.h
+@@ -16,6 +16,8 @@
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+
++struct of_phandle_args;
++
+ #ifdef CONFIG_OF
+
+Let's see if it works!
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
