@@ -1,59 +1,62 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V5] pinctrl: qcom: Add msm8994 pinctrl driver
-Date: Fri, 4 Nov 2016 23:58:15 +0100
-Message-ID: <CACRpkdZ4EyicXz0rR6cm6xvRmsk4r5=jxyZ4Nn6rmgHt2QL0aA@mail.gmail.com>
-References: <20161103211526.6095-1-michael.scott@linaro.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/5] drivers: gpio: Add support for multiple IPs
+Date: Sat, 5 Nov 2016 09:23:05 +0100
+Message-ID: <CACRpkdac_UgM=xeXkSZ+rOvZvutt40USjCoEt5-SoFkqspuExw@mail.gmail.com>
+References: <1476855239-32730-1-git-send-email-j-keerthy@ti.com>
+ <1476855239-32730-3-git-send-email-j-keerthy@ti.com> <CACRpkdbsgM-yiWpiA5G35jQR8v3FO=Me+4rhe6TzE0qsWOJ8Ew@mail.gmail.com>
+ <c5c95d86-2c89-3819-725c-ee0b86c37ec0@ti.com> <98447580-cbc4-152e-f2cb-7c4756545479@ti.com>
+ <c047fb27-a8bb-c10d-2b16-a3e6bf45d88f@ti.com> <CACRpkdZmuc__QL6b7Jvb8xL5Bm+PD2X60NtiugrnH7iAO=-tLQ@mail.gmail.com>
+ <b92f729b-5897-c29a-31ec-97510776d85d@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f176.google.com ([209.85.220.176]:34812 "EHLO
-        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754117AbcKDW6Q (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Nov 2016 18:58:16 -0400
-Received: by mail-qk0-f176.google.com with SMTP id q130so116102863qke.1
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Nov 2016 15:58:16 -0700 (PDT)
-In-Reply-To: <20161103211526.6095-1-michael.scott@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <b92f729b-5897-c29a-31ec-97510776d85d-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Cc: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Scott <michael.scott@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Joonwoo Park <joonwoop@codeaurora.org>, Jeremy McNicoll <jeremymc@redhat.com>, Stephen Boyd <sboyd@codeaurora.org>
 
-On Thu, Nov 3, 2016 at 10:15 PM, Michael Scott <michael.scott@linaro.org> w=
-rote:
+On Fri, Nov 4, 2016 at 8:59 PM, Grygorii Strashko
+<grygorii.strashko-l0cyMroinI0@public.gmane.org> wrote:
+> On 11/04/2016 09:28 AM, Linus Walleij wrote:
 
-> Initial pinctrl driver for QCOM msm8994 platforms.
+>> The DT model sort of mandates how the interrupts should be mapped
+>> at this point, and as far as I can tell from the binding the example looks
+>> like so:
+>>
+>> gpio: gpio@1e26000 {
+>>         compatible = "ti,dm6441-gpio";
+>>         gpio-controller;
+>>         #gpio-cells = <2>;
+>>         reg = <0x226000 0x1000>;
+>>         interrupt-parent = <&intc>;
+>>         interrupts = <42 IRQ_TYPE_EDGE_BOTH 43 IRQ_TYPE_EDGE_BOTH
+>>                 44 IRQ_TYPE_EDGE_BOTH 45 IRQ_TYPE_EDGE_BOTH
+>>                 46 IRQ_TYPE_EDGE_BOTH 47 IRQ_TYPE_EDGE_BOTH
+>>                 48 IRQ_TYPE_EDGE_BOTH 49 IRQ_TYPE_EDGE_BOTH
+>>                 50 IRQ_TYPE_EDGE_BOTH>;
+>>         ti,ngpio = <144>;
+>>         ti,davinci-gpio-unbanked = <0>;
+>>         interrupt-controller;
+>>         #interrupt-cells = <2>;
+>> };
 >
-> In order to continue the initial board support for QCOM msm8994/msm8992
-> presented in patches from Jeremy McNicoll <jeremymc@redhat.com>, let's pu=
-t
-> a proper pinctrl driver in place.
->
-> Currently, the DT for these platforms uses the msm8x74 pinctrl driver to
-> enable basic UART.  Beyond the first few pins the rest are different enou=
-gh
-> to justify it's own driver.
->
-> Note: This driver is also used by QCOM's msm8992 platform as it's TLM blo=
-ck
-> is the same.
->
-> - Initial formatting and style was taken from the msm8x74 pinctrl driver
->   added by Bj=C3=B6rn Andersson <bjorn.andersson@linaro.org>
-> - Data was then adjusted per QCOM MSM8994v2 documentation for Top Level
->   Multiplexing
-> - Bindings documentation was based on qcom,msm8996-pinctrl.txt by
->   Joonwoo Park <joonwoop@codeaurora.org> and then modified for msm8994
->   content
->
-> Signed-off-by: Michael Scott <michael.scott@linaro.org>
-> Tested-by: Jeremy McNicoll <jeremymc@redhat.com>
-> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
-> V5:
+> Above, DT bindings models Davinci GPIO IP as monolithic GPIO controller
+> with N gpio pins, but internally separate GPIO chips are created for each
+> banksX&Y register set (32 pins, 2 banked irq -or- 32 direct irqs).
 
-This v5 version applied.
+Hm it would be good to get away from that and just have one big gpio
+chip.
+
+> Translation from linear GPIO numbering to the proper internal GPIO chip is done
+> using chip.of_xlate().
+
+Yeah :/ this could be made simpler with a single chip just spanning all
+the banks and the common registers I think.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
