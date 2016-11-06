@@ -1,48 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Requesting as a GPIO a pin already used through pinctrl
-Date: Sun, 6 Nov 2016 11:11:30 +0100
-Message-ID: <CACRpkdbwCMWum8Co91DnL0GgOvihud1M3HnPZTdRvKoj_RRWbA@mail.gmail.com>
-References: <20160916135808.GA17518@lukather> <CACRpkdbZ-TCNmmt4NyL2cQ2W3dE42uFGjQtxRyMxrf2ZUA_9Rg@mail.gmail.com>
- <20160921195128.GG8719@lukather> <CACRpkdY_YVhHuMwx=mwPVyHNpLveg7Gikc0uznUhsKBCYJwzzw@mail.gmail.com>
- <20160923210549.GY8719@lukather> <20161026154928.hu6rjalw7syrvbvg@lukather>
- <CACRpkda=_TD5S7N52CSYrmKvkY5WLU4Qi47_a=K+8Ud+kmphqg@mail.gmail.com> <20161102213142.ajano4g4oizusv74@lukather>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Peter Robinson <pbrobinson@gmail.com>
+Subject: [PATCH] gpio: zx: depend on ARCH_ZX
+Date: Sun,  6 Nov 2016 18:29:31 +0000
+Message-ID: <20161106182931.20381-1-pbrobinson@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:34477 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751530AbcKFKLc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 6 Nov 2016 05:11:32 -0500
-Received: by mail-qt0-f182.google.com with SMTP id n6so72302147qtd.1
-        for <linux-gpio@vger.kernel.org>; Sun, 06 Nov 2016 02:11:31 -0800 (PST)
-In-Reply-To: <20161102213142.ajano4g4oizusv74@lukather>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33673 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750859AbcKFS3i (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 6 Nov 2016 13:29:38 -0500
+Received: by mail-wm0-f68.google.com with SMTP id u144so12809900wmu.0
+        for <linux-gpio@vger.kernel.org>; Sun, 06 Nov 2016 10:29:38 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Cc: Peter Robinson <pbrobinson@gmail.com>
 
-On Wed, Nov 2, 2016 at 10:31 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
+Set GPIO_ZX to depend on ARCH_ZX as it's SOC specific.
 
-> So no, I really don't think the DT ABI matters here, or at least
-> compared to the bug we face and the changes that we would need to make
-> in order to fix it. But Mark will probably disagree.
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+---
+ drivers/gpio/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-In this case we have to think about that it is a community effort driving
-DT standardization for the community, the company Allwinner is not
-actively involved.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index d011cb8..2c458c8 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -524,6 +524,7 @@ config GPIO_ZYNQ
+ 
+ config GPIO_ZX
+ 	bool "ZTE ZX GPIO support"
++	depends on ARCH_ZX
+ 	select GPIOLIB_IRQCHIP
+ 	help
+ 	  Say yes here to support the GPIO device on ZTE ZX SoCs.
+-- 
+2.9.3
 
-I think etching DT bindings in stone is for companies shipping products.
-Those decisions will affect their internal company culture and therefore
-we exercise pressure on them as a standards body. It is a clear message
-that they need to work together to standardize and take responsibility for
-what they ship.
-
-For community efforts just wanting to have a nice and upstream-compliant
-structure on things, the requirements for ABI should be lower. Getting the
-community code to even run on the device is a hacker undertaking already
-in the first place, and the community is using their precious free time for
-this.
-
-Yours,
-Linus Walleij
