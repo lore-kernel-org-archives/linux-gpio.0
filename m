@@ -1,32 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: tegra186: Add support for T186 GPIO
-Date: Mon, 7 Nov 2016 08:53:37 +0100
-Message-ID: <CACRpkdZpPHLDGeBb8kb=LYmuT0PKPf_quK+OF2peaV+8dxr5vQ@mail.gmail.com>
-References: <1478083719-14836-1-git-send-email-smangipudi@nvidia.com>
+From: LABBE Corentin <clabbe.montjoie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [BUG] pinctrl: sunxi: sunxi-pinctrl fail to load with CONFIG_DEBUG_TEST_DRIVER_REMOVE
+Date: Mon, 7 Nov 2016 09:18:32 +0100
+Message-ID: <20161107081832.GA23580@Red>
+Reply-To: clabbe.montjoie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:33969 "EHLO
-        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750977AbcKGHxi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Nov 2016 02:53:38 -0500
-Received: by mail-qt0-f178.google.com with SMTP id n6so82517874qtd.1
-        for <linux-gpio@vger.kernel.org>; Sun, 06 Nov 2016 23:53:38 -0800 (PST)
-In-Reply-To: <1478083719-14836-1-git-send-email-smangipudi@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sunxi+bncBD7YLCN32UNBBW7RQDAQKGQEDKXZ5PA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Suresh Mangipudi <smangipudi@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 
-On Wed, Nov 2, 2016 at 11:48 AM, Suresh Mangipudi <smangipudi@nvidia.com> wrote:
+Hello
 
-> Add GPIO driver for T186 based platforms.
-> Adds support for MAIN and AON GPIO's from T186.
->
-> Signed-off-by: Suresh Mangipudi <smangipudi@nvidia.com>
+With CONFIG_DEBUG_TEST_DRIVER_REMOVE=y pinctrl-sunxi fail to load on the second try.
 
-Stephen/Thierry/Alexandre:
-Can I get your review on this Tegra thing?
+[    3.900061] sun8i-h3-pinctrl 1c20800.pinctrl: initialized sunXi PIO driver
+[    3.916251] gpio gpiochip1: GPIO integer space overlap, cannot add chip
+[    3.923016] gpiochip_add_data: GPIOs 0..223 (1c20800.pinctrl) failed to register
+[    3.931099] sun8i-h3-pinctrl: probe of 1c20800.pinctrl failed with error -16
+[    3.944709] sun8i-h3-r-pinctrl 1f02c00.pinctrl: initialized sunXi PIO driver
+[    3.960796] gpio gpiochip2: GPIO integer space overlap, cannot add chip
+[    3.967594] gpiochip_add_data: GPIOs 352..383 (1f02c00.pinctrl) failed to register
+[    3.975633] sun8i-h3-r-pinctrl: probe of 1f02c00.pinctrl failed with error -16
 
-Yours,
-Linus Walleij
+Without it, all subsequent drivers fail to load.
+Tested on Orange PI PC board.
+
+Regards
