@@ -1,58 +1,74 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] gpio: zx: depend on ARCH_ZX
-Date: Mon, 7 Nov 2016 11:31:49 +0900
-Message-ID: <CAK7LNAQrpjs4jKt_LM=g_bd3L7RDYF-4ZWo6Szv+ZcAwiSWbsg@mail.gmail.com>
-References: <20161106182931.20381-1-pbrobinson@gmail.com>
+From: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 2/5] drivers: gpio: Add support for multiple IPs
+Date: Mon, 7 Nov 2016 09:29:55 +0530
+Message-ID: <f8e5e82b-3611-0d7d-7545-5edf1db8d056@ti.com>
+References: <1476855239-32730-1-git-send-email-j-keerthy@ti.com>
+ <1476855239-32730-3-git-send-email-j-keerthy@ti.com>
+ <CACRpkdbsgM-yiWpiA5G35jQR8v3FO=Me+4rhe6TzE0qsWOJ8Ew@mail.gmail.com>
+ <c5c95d86-2c89-3819-725c-ee0b86c37ec0@ti.com>
+ <98447580-cbc4-152e-f2cb-7c4756545479@ti.com>
+ <c047fb27-a8bb-c10d-2b16-a3e6bf45d88f@ti.com>
+ <CACRpkdZmuc__QL6b7Jvb8xL5Bm+PD2X60NtiugrnH7iAO=-tLQ@mail.gmail.com>
+ <b92f729b-5897-c29a-31ec-97510776d85d@ti.com>
+ <CACRpkdac_UgM=xeXkSZ+rOvZvutt40USjCoEt5-SoFkqspuExw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:65485 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751492AbcKGCbz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 6 Nov 2016 21:31:55 -0500
-Received: from mail-yw0-f176.google.com (mail-yw0-f176.google.com [209.85.161.176]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id uA72Vo2m017369
-        for <linux-gpio@vger.kernel.org>; Mon, 7 Nov 2016 11:31:51 +0900
-Received: by mail-yw0-f176.google.com with SMTP id r204so124361448ywb.0
-        for <linux-gpio@vger.kernel.org>; Sun, 06 Nov 2016 18:31:51 -0800 (PST)
-In-Reply-To: <20161106182931.20381-1-pbrobinson@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdac_UgM=xeXkSZ+rOvZvutt40USjCoEt5-SoFkqspuExw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Cc: Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Robinson <pbrobinson@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-2016-11-07 3:29 GMT+09:00 Peter Robinson <pbrobinson@gmail.com>:
-> Set GPIO_ZX to depend on ARCH_ZX as it's SOC specific.
+
+
+On Saturday 05 November 2016 01:53 PM, Linus Walleij wrote:
+> On Fri, Nov 4, 2016 at 8:59 PM, Grygorii Strashko
+> <grygorii.strashko-l0cyMroinI0@public.gmane.org> wrote:
+>> On 11/04/2016 09:28 AM, Linus Walleij wrote:
 >
-> Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
-> ---
->  drivers/gpio/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>>> The DT model sort of mandates how the interrupts should be mapped
+>>> at this point, and as far as I can tell from the binding the example looks
+>>> like so:
+>>>
+>>> gpio: gpio@1e26000 {
+>>>         compatible = "ti,dm6441-gpio";
+>>>         gpio-controller;
+>>>         #gpio-cells = <2>;
+>>>         reg = <0x226000 0x1000>;
+>>>         interrupt-parent = <&intc>;
+>>>         interrupts = <42 IRQ_TYPE_EDGE_BOTH 43 IRQ_TYPE_EDGE_BOTH
+>>>                 44 IRQ_TYPE_EDGE_BOTH 45 IRQ_TYPE_EDGE_BOTH
+>>>                 46 IRQ_TYPE_EDGE_BOTH 47 IRQ_TYPE_EDGE_BOTH
+>>>                 48 IRQ_TYPE_EDGE_BOTH 49 IRQ_TYPE_EDGE_BOTH
+>>>                 50 IRQ_TYPE_EDGE_BOTH>;
+>>>         ti,ngpio = <144>;
+>>>         ti,davinci-gpio-unbanked = <0>;
+>>>         interrupt-controller;
+>>>         #interrupt-cells = <2>;
+>>> };
+>>
+>> Above, DT bindings models Davinci GPIO IP as monolithic GPIO controller
+>> with N gpio pins, but internally separate GPIO chips are created for each
+>> banksX&Y register set (32 pins, 2 banked irq -or- 32 direct irqs).
 >
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index d011cb8..2c458c8 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -524,6 +524,7 @@ config GPIO_ZYNQ
+> Hm it would be good to get away from that and just have one big gpio
+> chip.
 >
->  config GPIO_ZX
->         bool "ZTE ZX GPIO support"
-> +       depends on ARCH_ZX
->         select GPIOLIB_IRQCHIP
->         help
->           Say yes here to support the GPIO device on ZTE ZX SoCs.
+>> Translation from linear GPIO numbering to the proper internal GPIO chip is done
+>> using chip.of_xlate().
+>
+> Yeah :/ this could be made simpler with a single chip just spanning all
+> the banks and the common registers I think.
 
+Okay Linus. Thanks for the direction.
 
-
-Maybe
-
-      depends on ARCH_ZX || COMPILE_TEST
-
-to keep the COMPILE_TEST'ability?
-
-Likewise for the other two patches.
-
-
--- 
-Best Regards
-Masahiro Yamada
+>
+> Yours,
+> Linus Walleij
+>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
