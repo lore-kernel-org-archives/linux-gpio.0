@@ -1,7 +1,7 @@
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: [PATCH v2 12/15] pinctrl-sx150x: Simplify interrupt handler
-Date: Mon,  7 Nov 2016 08:53:20 -0800
-Message-ID: <1478537603-23653-13-git-send-email-andrew.smirnov@gmail.com>
+Subject: [PATCH v2 15/15] pinctrl-sx150x: Remove magic numbers from sx150x_reset
+Date: Mon,  7 Nov 2016 08:53:23 -0800
+Message-ID: <1478537603-23653-16-git-send-email-andrew.smirnov@gmail.com>
 References: <1478537603-23653-1-git-send-email-andrew.smirnov@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1478537603-23653-1-git-send-email-andrew.smirnov@gmail.com>
@@ -10,52 +10,41 @@ To: linux-gpio@vger.kernel.org
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, linus.walleij@linaro.org, narmstrong@baylibre.com, linux-kernel@vger.kernel.org, cphealy@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-Make use of for_each_set_bit macro and reduce boilerplate code.
-
 Tested-by: Neil Armstrong <narmstrong@baylibre.com>
 Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- drivers/pinctrl/pinctrl-sx150x.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ drivers/pinctrl/pinctrl-sx150x.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
-index f2ec072..78e15c9 100644
+index 56abe36..dc1341f 100644
 --- a/drivers/pinctrl/pinctrl-sx150x.c
 +++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -465,11 +465,9 @@ static int sx150x_irq_set_type(struct irq_data *d, unsigned int flow_type)
- static irqreturn_t sx150x_irq_thread_fn(int irq, void *dev_id)
- {
- 	struct sx150x_pinctrl *pctl = (struct sx150x_pinctrl *)dev_id;
--	unsigned int nhandled = 0;
--	unsigned int sub_irq;
--	unsigned int n;
--	s32 err;
-+	unsigned long n, status;
- 	unsigned int val;
-+	int err;
+@@ -49,6 +49,8 @@ enum {
+ 	SX150X_MAX_REGISTER = 0xad,
+ 	SX150X_IRQ_TYPE_EDGE_RISING = 0x1,
+ 	SX150X_IRQ_TYPE_EDGE_FALLING = 0x2,
++	SX150X_789_RESET_KEY1 = 0x12,
++	SX150X_789_RESET_KEY2 = 0x34,
+ };
  
- 	err = regmap_read(pctl->regmap, pctl->data->reg_irq_src, &val);
+ struct sx150x_123_pri {
+@@ -771,13 +773,13 @@ static int sx150x_reset(struct sx150x_pinctrl *pctl)
+ 
+ 	err = i2c_smbus_write_byte_data(pctl->client,
+ 					pctl->data->pri.x789.reg_reset,
+-					0x12);
++					SX150X_789_RESET_KEY1);
  	if (err < 0)
-@@ -479,15 +477,11 @@ static irqreturn_t sx150x_irq_thread_fn(int irq, void *dev_id)
- 	if (err < 0)
- 		return IRQ_NONE;
+ 		return err;
  
--	for (n = 0; n < pctl->data->ngpios; ++n) {
--		if (val & BIT(n)) {
--			sub_irq = irq_find_mapping(pctl->gpio.irqdomain, n);
--			handle_nested_irq(sub_irq);
--			++nhandled;
--		}
--	}
-+	status = val;
-+	for_each_set_bit(n, &status, pctl->data->ngpios)
-+		handle_nested_irq(irq_find_mapping(pctl->gpio.irqdomain, n));
- 
--	return (nhandled > 0 ? IRQ_HANDLED : IRQ_NONE);
-+	return IRQ_HANDLED;
+ 	err = i2c_smbus_write_byte_data(pctl->client,
+ 					pctl->data->pri.x789.reg_reset,
+-					0x34);
++					SX150X_789_RESET_KEY2);
+ 	return err;
  }
  
- static void sx150x_irq_bus_lock(struct irq_data *d)
 -- 
 2.5.5
