@@ -1,58 +1,67 @@
-From: Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: Re: [BUG] pinctrl: sunxi: sunxi-pinctrl fail to load with
- CONFIG_DEBUG_TEST_DRIVER_REMOVE
-Date: Mon, 7 Nov 2016 11:28:15 +0100
-Message-ID: <20161107102815.GA505@Red>
-References: <20161107081832.GA23580@Red>
- <CAGb2v65MHBUwWzcqwPYDtFNxgGnMECUMjHdZNOv6YPP4HVzwTw@mail.gmail.com>
- <20161107095612.ih5ns24m2qiwujy5@lukather>
- <20161107095953.GB20037@Red>
- <20161107101500.ostb5auj2fpxcqe6@lukather>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: Do not unconditionally support PIN_CONFIG_BIAS_DISABLE
+Date: Mon, 7 Nov 2016 11:33:00 +0100
+Message-ID: <CAMuHMdWgzpnMATuYn7ER=XQo0SvGZOidgonG-P4xnC_fGd+5hA@mail.gmail.com>
+References: <20161103153421.15527-1-niklas.soderlund+renesas@ragnatech.se> <20161103153421.15527-2-niklas.soderlund+renesas@ragnatech.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161107101500.ostb5auj2fpxcqe6@lukather>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33333 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752071AbcKGKda (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Nov 2016 05:33:30 -0500
+In-Reply-To: <20161103153421.15527-2-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Nov 07, 2016 at 11:15:00AM +0100, Maxime Ripard wrote:
-> On Mon, Nov 07, 2016 at 10:59:53AM +0100, Corentin Labbe wrote:
-> > On Mon, Nov 07, 2016 at 10:56:12AM +0100, Maxime Ripard wrote:
-> > > On Mon, Nov 07, 2016 at 05:48:43PM +0800, Chen-Yu Tsai wrote:
-> > > > Hi,
-> > > > 
-> > > > On Mon, Nov 7, 2016 at 4:18 PM, LABBE Corentin
-> > > > <clabbe.montjoie@gmail.com> wrote:
-> > > > > Hello
-> > > > >
-> > > > > With CONFIG_DEBUG_TEST_DRIVER_REMOVE=y pinctrl-sunxi fail to load on the second try.
-> > > > >
-> > > > > [    3.900061] sun8i-h3-pinctrl 1c20800.pinctrl: initialized sunXi PIO driver
-> > > > > [    3.916251] gpio gpiochip1: GPIO integer space overlap, cannot add chip
-> > > > > [    3.923016] gpiochip_add_data: GPIOs 0..223 (1c20800.pinctrl) failed to register
-> > > > > [    3.931099] sun8i-h3-pinctrl: probe of 1c20800.pinctrl failed with error -16
-> > > > > [    3.944709] sun8i-h3-r-pinctrl 1f02c00.pinctrl: initialized sunXi PIO driver
-> > > > > [    3.960796] gpio gpiochip2: GPIO integer space overlap, cannot add chip
-> > > > > [    3.967594] gpiochip_add_data: GPIOs 352..383 (1f02c00.pinctrl) failed to register
-> > > > > [    3.975633] sun8i-h3-r-pinctrl: probe of 1f02c00.pinctrl failed with error -16
-> > > > >
-> > > > > Without it, all subsequent drivers fail to load.
-> > > > > Tested on Orange PI PC board.
-> > > > 
-> > > > I don't think the pinctrl drivers were designed to be removed.
-> > > > And I thought the lack of a .remove callback in the driver blocks
-> > > > the core from removing the device? Maybe I remember wrong...
-> > > 
-> > > Using a builtin_platform_driver should be enough to prevent it to be
-> > > removed.
-> > > 
-> > 
-> > The problem is that it is already builtin_platform_driver()
-> 
-> Then there's no way it can be removed in the first place.
-> 
+On Thu, Nov 3, 2016 at 4:34 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Always stating PIN_CONFIG_BIAS_DISABLE is supported gives untrue output
+> when examining /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins if
+> the operation get_bias() are implemented but the pin are not handled by
 
-I will send a patch for fixing CONFIG_DEBUG_TEST_DRIVER_REMOVE
+is implemented
+is not handled
+
+> the get_bias() implementation. In that case the output will state that
+> "input bias disabled" indicating that this pin have bias control
+
+has
+
+> support.
+>
+> Make support for PIN_CONFIG_BIAS_DISABLE depend on that the pin either
+> support SH_PFC_PIN_CFG_PULL_UP or SH_PFC_PIN_CFG_PULL_DOWN. This also
+
+supports
+
+> solves the issue where SoC specific implementations print error messages
+> if there particular implementation of {set,get}_bias() is called with a
+
+their
+
+> pin it do not know about.
+
+does
+
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
