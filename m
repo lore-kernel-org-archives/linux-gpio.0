@@ -1,57 +1,61 @@
 From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: [PATCH v2 00/15] pinctrl-sx150x: Various bug-fixes and code simplifications
-Date: Mon,  7 Nov 2016 08:53:08 -0800
-Message-ID: <1478537603-23653-1-git-send-email-andrew.smirnov@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35377 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752174AbcKGQyC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Nov 2016 11:54:02 -0500
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH v2 12/15] pinctrl-sx150x: Simplify interrupt handler
+Date: Mon,  7 Nov 2016 08:53:20 -0800
+Message-ID: <1478537603-23653-13-git-send-email-andrew.smirnov@gmail.com>
+References: <1478537603-23653-1-git-send-email-andrew.smirnov@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1478537603-23653-1-git-send-email-andrew.smirnov@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, linus.walleij@linaro.org, narmstrong@baylibre.com, linux-kernel@vger.kernel.org, cphealy@gmail.com
+List-Id: linux-gpio@vger.kernel.org
 
-Linus, Neil:
+Make use of for_each_set_bit macro and reduce boilerplate code.
 
-Here's the second version of sx150x patches, it's all pretty much the
-same code with the following differences:
+Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+---
+ drivers/pinctrl/pinctrl-sx150x.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-     - Commit removing OF tree match tables changed to code properly
-       matching aginst OF data
-     - Added REGMAP dependency in Kconfig
-     - Documented "semtech,sx1503q" compatibility string
-
-I also added Neil's Tested-bys and Acked-bys to the patches that
-didn't change since v1.
-
-Let me know if I missed someting.
-
-Thank you,
-Andrey Smirnov
-
-Andrey Smirnov (15):
-  pinctrl-sx150x: Improve OF device matching code
-  pinctrl-sx150x: Add SX1503 specific data
-  bindings: pinctrl-sx150x: Document SX1503 compatibility string
-  pinctrl-sx150x: Replace magic number in sx150x_init_hw
-  pinctrl-sx150x: Fix incorrect constant in sx150x_init_hw
-  pinctrl-sx150x: Move some code out of sx150x_init_hw
-  pinctrl-sx150x: Improve sx150x_init_misc for SX1504/5/6
-  pinctrl-sx150x: Convert driver to use regmap API
-  pinctrl-sx150x: Replace sx150x_*_cfg by means of regmap API
-  pinctrl-sx150x: Remove excessive locking
-  pinctrl-sx150x: Improve oscio GPIO functions
-  pinctrl-sx150x: Simplify interrupt handler
-  pinctrl-sx150x: Use handle_bad_irq instead of handle_edge_irq
-  pinctrl-sx150x: Remove magic numbers from sx150x_irq_set_type
-  pinctrl-sx150x: Remove magic numbers from sx150x_reset
-
- .../devicetree/bindings/pinctrl/pinctrl-sx150x.txt |   3 +-
- drivers/pinctrl/Kconfig                            |   1 +
- drivers/pinctrl/pinctrl-sx150x.c                   | 766 ++++++++++++---------
- 3 files changed, 433 insertions(+), 337 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
+index f2ec072..78e15c9 100644
+--- a/drivers/pinctrl/pinctrl-sx150x.c
++++ b/drivers/pinctrl/pinctrl-sx150x.c
+@@ -465,11 +465,9 @@ static int sx150x_irq_set_type(struct irq_data *d, unsigned int flow_type)
+ static irqreturn_t sx150x_irq_thread_fn(int irq, void *dev_id)
+ {
+ 	struct sx150x_pinctrl *pctl = (struct sx150x_pinctrl *)dev_id;
+-	unsigned int nhandled = 0;
+-	unsigned int sub_irq;
+-	unsigned int n;
+-	s32 err;
++	unsigned long n, status;
+ 	unsigned int val;
++	int err;
+ 
+ 	err = regmap_read(pctl->regmap, pctl->data->reg_irq_src, &val);
+ 	if (err < 0)
+@@ -479,15 +477,11 @@ static irqreturn_t sx150x_irq_thread_fn(int irq, void *dev_id)
+ 	if (err < 0)
+ 		return IRQ_NONE;
+ 
+-	for (n = 0; n < pctl->data->ngpios; ++n) {
+-		if (val & BIT(n)) {
+-			sub_irq = irq_find_mapping(pctl->gpio.irqdomain, n);
+-			handle_nested_irq(sub_irq);
+-			++nhandled;
+-		}
+-	}
++	status = val;
++	for_each_set_bit(n, &status, pctl->data->ngpios)
++		handle_nested_irq(irq_find_mapping(pctl->gpio.irqdomain, n));
+ 
+-	return (nhandled > 0 ? IRQ_HANDLED : IRQ_NONE);
++	return IRQ_HANDLED;
+ }
+ 
+ static void sx150x_irq_bus_lock(struct irq_data *d)
 -- 
 2.5.5
-
