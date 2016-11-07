@@ -1,73 +1,84 @@
-From: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 2/5] drivers: gpio: Add support for multiple IPs
-Date: Mon, 7 Nov 2016 09:29:55 +0530
-Message-ID: <f8e5e82b-3611-0d7d-7545-5edf1db8d056@ti.com>
-References: <1476855239-32730-1-git-send-email-j-keerthy@ti.com>
- <1476855239-32730-3-git-send-email-j-keerthy@ti.com>
- <CACRpkdbsgM-yiWpiA5G35jQR8v3FO=Me+4rhe6TzE0qsWOJ8Ew@mail.gmail.com>
- <c5c95d86-2c89-3819-725c-ee0b86c37ec0@ti.com>
- <98447580-cbc4-152e-f2cb-7c4756545479@ti.com>
- <c047fb27-a8bb-c10d-2b16-a3e6bf45d88f@ti.com>
- <CACRpkdZmuc__QL6b7Jvb8xL5Bm+PD2X60NtiugrnH7iAO=-tLQ@mail.gmail.com>
- <b92f729b-5897-c29a-31ec-97510776d85d@ti.com>
- <CACRpkdac_UgM=xeXkSZ+rOvZvutt40USjCoEt5-SoFkqspuExw@mail.gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/2] pinctrl: tegra: Add driver to configure voltage and
+ power of io pads
+Date: Mon, 7 Nov 2016 11:11:21 +0530
+Message-ID: <58201401.8050805@nvidia.com>
+References: <1478077742-25437-1-git-send-email-ldewangan@nvidia.com> <1478077742-25437-3-git-send-email-ldewangan@nvidia.com> <CACRpkdb4DQLzQWHxuZi=TDaeigNzVJV8TN1jsQfOHKF7yPLrUg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdac_UgM=xeXkSZ+rOvZvutt40USjCoEt5-SoFkqspuExw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <CACRpkdb4DQLzQWHxuZi=TDaeigNzVJV8TN1jsQfOHKF7yPLrUg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Cc: Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
 
-
-On Saturday 05 November 2016 01:53 PM, Linus Walleij wrote:
-> On Fri, Nov 4, 2016 at 8:59 PM, Grygorii Strashko
-> <grygorii.strashko-l0cyMroinI0@public.gmane.org> wrote:
->> On 11/04/2016 09:28 AM, Linus Walleij wrote:
+On Saturday 05 November 2016 03:54 AM, Linus Walleij wrote:
+> On Wed, Nov 2, 2016 at 10:09 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 >
->>> The DT model sort of mandates how the interrupts should be mapped
->>> at this point, and as far as I can tell from the binding the example looks
->>> like so:
->>>
->>> gpio: gpio@1e26000 {
->>>         compatible = "ti,dm6441-gpio";
->>>         gpio-controller;
->>>         #gpio-cells = <2>;
->>>         reg = <0x226000 0x1000>;
->>>         interrupt-parent = <&intc>;
->>>         interrupts = <42 IRQ_TYPE_EDGE_BOTH 43 IRQ_TYPE_EDGE_BOTH
->>>                 44 IRQ_TYPE_EDGE_BOTH 45 IRQ_TYPE_EDGE_BOTH
->>>                 46 IRQ_TYPE_EDGE_BOTH 47 IRQ_TYPE_EDGE_BOTH
->>>                 48 IRQ_TYPE_EDGE_BOTH 49 IRQ_TYPE_EDGE_BOTH
->>>                 50 IRQ_TYPE_EDGE_BOTH>;
->>>         ti,ngpio = <144>;
->>>         ti,davinci-gpio-unbanked = <0>;
->>>         interrupt-controller;
->>>         #interrupt-cells = <2>;
->>> };
+>> NVIDIA Tegra124 and later SoCs support the multi-voltage level and
+>> low power state of some of its IO pads. The IO pads can work in
+>> the voltage of the 1.8V and 3.3V of IO power rail sources. When IO
+>> interface are not used then IO pads can be configure in low power
+>> state to reduce the power from that IO pads.
 >>
->> Above, DT bindings models Davinci GPIO IP as monolithic GPIO controller
->> with N gpio pins, but internally separate GPIO chips are created for each
->> banksX&Y register set (32 pins, 2 banked irq -or- 32 direct irqs).
->
-> Hm it would be good to get away from that and just have one big gpio
-> chip.
->
->> Translation from linear GPIO numbering to the proper internal GPIO chip is done
->> using chip.of_xlate().
->
-> Yeah :/ this could be made simpler with a single chip just spanning all
-> the banks and the common registers I think.
+>> On Tegra124, the IO power rail source is auto detected by SoC and hence
+>> it is only require to configure in low power mode if IO pads are not
+>> used.
+>>
+>> On T210 onwards, the auto-detection is removed from SoC and hence SW
+>> must configure the PMC register explicitly to set proper voltage in
+>> IO pads based on IO rail power source voltage.
+>>
+>> This driver adds the IO pad driver to configure the power state and
+>> IO pad voltage based on the usage and power tree via pincontrol
+>> framework. The configuration can be static and dynamic.
+>>
+>> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Looking for an ACK from Stephen &| Thierry.
 
-Okay Linus. Thanks for the direction.
+This driver depends on some new APIs from tegra pmc driver. The new APIs 
+are integrated in Thierry's branch and he wanted to push the changes to 
+linux-next/main path if there is any client driver for this.
+
+This series is the client driver for tegra PMC.
+
+So if you are fine, then you can ACK and Thierry can take this in his 
+branch.
+
+Or I will leave to you/Thierry to propose if some other idea for 
+discussion/acceptance.
 
 >
-> Yours,
-> Linus Walleij
+>> ---
+>> On top of the branch from Thierry's T186 work
+>>          https://github.com/thierryreding/linux/tree/tegra186
+> But it's an orthogonal patch right?
 >
+> The build robot seems to have problems with it so pls fix these.
+The driver built in pinctrl branch and so this is expected. The APIs are 
+in the above branch.
+
+>
+>> +static const struct pinconf_generic_params tegra_io_pads_cfg_params[] = {
+>> +       {
+>> +               .property = "nvidia,power-source-voltage",
+>> +               .param = TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE,
+>> +       },
+>> +};
+> Why can you not use the standard power-source binding
+> from Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> instead of inventing this nvidia,* variant?
+
+Per binding doc,
+power-source            - select between different power supplies
+
+So actually it selects the different source of power supply.
+In my case, I will have same supply but voltage of that supply get changed.
+So here property is for the power-supply-voltage.
+
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
