@@ -1,65 +1,54 @@
-From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 1/4] pinctrl: Introduce generic #pinctrl-cells and
- pinctrl_parse_index_with_args
-Date: Mon, 7 Nov 2016 08:26:13 -0700
-Message-ID: <20161107152613.GA2428@atomide.com>
-References: <20161103163550.27330-1-tony@atomide.com>
- <20161103163550.27330-2-tony@atomide.com>
- <CACRpkdaCF4Jc7QY+L44obce=V_W4xgVbPXfuiE7bXJs7ud9q9A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaCF4Jc7QY+L44obce=V_W4xgVbPXfuiE7bXJs7ud9q9A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.10
+Date: Mon,  7 Nov 2016 16:35:32 +0100
+Message-ID: <1478532932-5713-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-* Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> [161104 14:50]:
-> On Thu, Nov 3, 2016 at 5:35 PM, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org> wrote:
-> 
-> > Introduce #pinctrl-cells helper binding and generic helper functions
-> > pinctrl_count_index_with_args() and pinctrl_parse_index_with_args().
-> >
-> > Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> > Signed-off-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-> 
-> Ooops applied this v2 version instead of the v1.
+	Hi Linus,
 
-No problem, only the pinctrl-single patches needed
-reposting.
+The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
 
-> * kbuild test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org> [161103 13:29]:
-> >    In file included from drivers/pinctrl/core.c:36:0:
-> > >> drivers/pinctrl/devicetree.h:29:14: warning: 'struct of_phandle_args' declared inside parameter list will not be visible outside of this
-> definition or declaratio
-> 
-> > Hmm maybe we should just include of.h in core.c?
-> 
-> Nah. I just did this:
-> 
-> diff --git a/drivers/pinctrl/devicetree.h b/drivers/pinctrl/devicetree.h
-> index 7f0a5c4e15ad..c2d1a5505850 100644
-> --- a/drivers/pinctrl/devicetree.h
-> +++ b/drivers/pinctrl/devicetree.h
-> @@ -16,6 +16,8 @@
->   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
->   */
-> 
-> +struct of_phandle_args;
-> +
->  #ifdef CONFIG_OF
-> 
-> Let's see if it works!
+  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
 
-OK so do we know now? It seems there was one more email
-about it but it may have been without it.
+are available in the git repository at:
 
-Thanks,
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.10-tag1
 
-Tony
+for you to fetch changes up to 0f866a9679215838328e1c0ed1892224672bb396:
+
+  pinctrl: sh-pfc: r8a7796: Fix GPSR definitions for SDHI2/3 (2016-11-07 10:39:11 +0100)
+
+----------------------------------------------------------------
+pinctrl: sh-pfc: Updates for v4.10
+
+  - I2C and DRIF pin groups for R-Car M3-W,
+  - Bug fixes for SDHI2/3 on R-Car M3-W.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      pinctrl: sh-pfc: r8a7796: Fix GPSR definitions for SDHI2/3
+
+Ramesh Shanmugasundaram (1):
+      pinctrl: sh-pfc: r8a7796: Add DRIF support
+
+Ulrich Hecht (1):
+      pinctrl: sh-pfc: r8a7796: Add I2C pin support
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 388 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 378 insertions(+), 10 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
