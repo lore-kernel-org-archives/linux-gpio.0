@@ -1,54 +1,57 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.10
-Date: Mon,  7 Nov 2016 16:35:32 +0100
-Message-ID: <1478532932-5713-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Subject: [PATCH v2 00/15] pinctrl-sx150x: Various bug-fixes and code simplifications
+Date: Mon,  7 Nov 2016 08:53:08 -0800
+Message-ID: <1478537603-23653-1-git-send-email-andrew.smirnov@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:35377 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752174AbcKGQyC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Nov 2016 11:54:02 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, linus.walleij@linaro.org, narmstrong@baylibre.com, linux-kernel@vger.kernel.org, cphealy@gmail.com
 
-	Hi Linus,
+Linus, Neil:
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+Here's the second version of sx150x patches, it's all pretty much the
+same code with the following differences:
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+     - Commit removing OF tree match tables changed to code properly
+       matching aginst OF data
+     - Added REGMAP dependency in Kconfig
+     - Documented "semtech,sx1503q" compatibility string
 
-are available in the git repository at:
+I also added Neil's Tested-bys and Acked-bys to the patches that
+didn't change since v1.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.10-tag1
+Let me know if I missed someting.
 
-for you to fetch changes up to 0f866a9679215838328e1c0ed1892224672bb396:
+Thank you,
+Andrey Smirnov
 
-  pinctrl: sh-pfc: r8a7796: Fix GPSR definitions for SDHI2/3 (2016-11-07 10:39:11 +0100)
+Andrey Smirnov (15):
+  pinctrl-sx150x: Improve OF device matching code
+  pinctrl-sx150x: Add SX1503 specific data
+  bindings: pinctrl-sx150x: Document SX1503 compatibility string
+  pinctrl-sx150x: Replace magic number in sx150x_init_hw
+  pinctrl-sx150x: Fix incorrect constant in sx150x_init_hw
+  pinctrl-sx150x: Move some code out of sx150x_init_hw
+  pinctrl-sx150x: Improve sx150x_init_misc for SX1504/5/6
+  pinctrl-sx150x: Convert driver to use regmap API
+  pinctrl-sx150x: Replace sx150x_*_cfg by means of regmap API
+  pinctrl-sx150x: Remove excessive locking
+  pinctrl-sx150x: Improve oscio GPIO functions
+  pinctrl-sx150x: Simplify interrupt handler
+  pinctrl-sx150x: Use handle_bad_irq instead of handle_edge_irq
+  pinctrl-sx150x: Remove magic numbers from sx150x_irq_set_type
+  pinctrl-sx150x: Remove magic numbers from sx150x_reset
 
-----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v4.10
+ .../devicetree/bindings/pinctrl/pinctrl-sx150x.txt |   3 +-
+ drivers/pinctrl/Kconfig                            |   1 +
+ drivers/pinctrl/pinctrl-sx150x.c                   | 766 ++++++++++++---------
+ 3 files changed, 433 insertions(+), 337 deletions(-)
 
-  - I2C and DRIF pin groups for R-Car M3-W,
-  - Bug fixes for SDHI2/3 on R-Car M3-W.
+-- 
+2.5.5
 
-Thanks for pulling!
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      pinctrl: sh-pfc: r8a7796: Fix GPSR definitions for SDHI2/3
-
-Ramesh Shanmugasundaram (1):
-      pinctrl: sh-pfc: r8a7796: Add DRIF support
-
-Ulrich Hecht (1):
-      pinctrl: sh-pfc: r8a7796: Add I2C pin support
-
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 388 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 378 insertions(+), 10 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
