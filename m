@@ -1,37 +1,30 @@
-From: LABBE Corentin <clabbe.montjoie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [BUG] pinctrl: sunxi: sunxi-pinctrl fail to load with CONFIG_DEBUG_TEST_DRIVER_REMOVE
-Date: Mon, 7 Nov 2016 09:18:32 +0100
-Message-ID: <20161107081832.GA23580@Red>
-Reply-To: clabbe.montjoie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: em: depnd on ARCH_SHMOBILE
+Date: Mon, 7 Nov 2016 10:01:59 +0100
+Message-ID: <CACRpkdYC_fSPeJqaCK5ccH8b+4kb1kC8ateXojuYc2RzvW1qVA@mail.gmail.com>
+References: <20161106185322.28372-1-pbrobinson@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBD7YLCN32UNBBW7RQDAQKGQEDKXZ5PA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:35616 "EHLO
+        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750981AbcKGJCA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Nov 2016 04:02:00 -0500
+Received: by mail-qk0-f181.google.com with SMTP id n204so157622339qke.2
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Nov 2016 01:02:00 -0800 (PST)
+In-Reply-To: <20161106185322.28372-1-pbrobinson@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Peter Robinson <pbrobinson@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hello
+On Sun, Nov 6, 2016 at 7:53 PM, Peter Robinson <pbrobinson@gmail.com> wrote:
 
-With CONFIG_DEBUG_TEST_DRIVER_REMOVE=y pinctrl-sunxi fail to load on the second try.
+> The GPIO_EM is part of the Renesas SoCs so depend on the arch.
+>
+> Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
 
-[    3.900061] sun8i-h3-pinctrl 1c20800.pinctrl: initialized sunXi PIO driver
-[    3.916251] gpio gpiochip1: GPIO integer space overlap, cannot add chip
-[    3.923016] gpiochip_add_data: GPIOs 0..223 (1c20800.pinctrl) failed to register
-[    3.931099] sun8i-h3-pinctrl: probe of 1c20800.pinctrl failed with error -16
-[    3.944709] sun8i-h3-r-pinctrl 1f02c00.pinctrl: initialized sunXi PIO driver
-[    3.960796] gpio gpiochip2: GPIO integer space overlap, cannot add chip
-[    3.967594] gpiochip_add_data: GPIOs 352..383 (1f02c00.pinctrl) failed to register
-[    3.975633] sun8i-h3-r-pinctrl: probe of 1f02c00.pinctrl failed with error -16
+What about also enabling COMPILE_TEST?
 
-Without it, all subsequent drivers fail to load.
-Tested on Orange PI PC board.
-
-Regards
+Yours,
+Linus Walleij
