@@ -1,64 +1,49 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 2/2] pinctrl: tegra: Add driver to configure voltage and
- power of io pads
-Date: Tue, 8 Nov 2016 21:18:54 +0530
-Message-ID: <5821F3E6.6020401@nvidia.com>
-References: <1478077742-25437-1-git-send-email-ldewangan@nvidia.com> <1478077742-25437-3-git-send-email-ldewangan@nvidia.com> <CACRpkdb4DQLzQWHxuZi=TDaeigNzVJV8TN1jsQfOHKF7yPLrUg@mail.gmail.com> <58201401.8050805@nvidia.com> <CACRpkdZo+527t4O9gX0U2VOaAYj7fnt7X0wynByBdYN5=2mDsA@mail.gmail.com> <5821A6D3.7010000@nvidia.com> <CACRpkdYO9ZCTGVdnyhVZ4DNLsHq+d-1_xuws2be8yab+MsyyVw@mail.gmail.com> <5821D49E.2070308@nvidia.com> <CACRpkdZWc1jC2QzYq4ffT6YbhfbsEBbKtajMXuexA8MvJEPPEw@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V2 3/4] regulator: pv88080: Update Regulator driver for
+ MFD support
+Date: Tue, 8 Nov 2016 16:37:21 +0000
+Message-ID: <20161108163721.4qwuhwrdferbluxg@sirena.org.uk>
+References: <cover.1477530195.git.eric.jeong@diasemi.com>
+ <711afefe3e65c166111473024bf9b54f3d4cc8b6.1477530195.git.eric.jeong@diasemi.com>
+ <20161027110337.GJ25322@sirena.org.uk>
+ <8FA4409277D6E54680546B8811D85410029DFAA2EA@NB-EX-MBX01.diasemi.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:8633 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751157AbcKHQFJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2016 11:05:09 -0500
-In-Reply-To: <CACRpkdZWc1jC2QzYq4ffT6YbhfbsEBbKtajMXuexA8MvJEPPEw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6t75qqul3cb56xah"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <8FA4409277D6E54680546B8811D85410029DFAA2EA@NB-EX-MBX01.diasemi.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Hyeung Dong Jeong <eric.jeong.opensource@diasemi.com>
+Cc: LINUX-KERNEL <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, DEVICETREE <devicetree@vger.kernel.org>, LINUX-GPIO <linux-gpio@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Support Opensource <Support.Opensource@diasemi.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
 
-On Tuesday 08 November 2016 09:16 PM, Linus Walleij wrote:
-> On Tue, Nov 8, 2016 at 2:35 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
->
->> There is two types of configuration in given platform, the IO voltage does
->> not get change (fixed in given platform) and in some of cases, get change
->> dynamically like SDIO3.0 where the voltage switches to 3.3V and 1.8V.
->>
->> Yes, it can be integrated with the regulator handle and then it can call the
->> required configurations through notifier and regulator_get_voltage().
->> But I think it is too much complex for the static configurations. This
->> mandate also to populate the regulator handle and all power tree.
->>
->> The simple way for static configuration (case where voltage does not get
->> change), just take the power tree IO voltage from DT and configure the IO
->> pad control register.
->>
->> For dynamic case, there is some sequence need to be followed based on
->> voltage direction change (towards lower or towards higher) for the voltage
->> change and the IO pad voltage configuration and it is simple to do it from
->> client driver.
-> The devicetree should describe the platform.
->
-> Adding this custom attribute does not describe the platform very
-> well since the dependency to the corresponding regulator is hidden.
->
-> The point of device tree is not as much to make things simple as
-> to describe the world properly.
->
-> So to me it is simple: use regulators and phandles.
->
-> It might require a bit of upfront coding but the result will look
-> much nicer.
+--6t75qqul3cb56xah
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Oops, I asked same clarification when replying the Thierry's comment.
+On Tue, Nov 08, 2016 at 05:59:41AM +0000, Eric Hyeung Dong Jeong wrote:
 
-Got answer now.. only via regulator support.
+> Thank you for the comments.
+> There was an internal request to release driver based on Kernel 3.18 for GPIO and MFD support.
+> After that, the code has been kept. I will send a patch again after changes.
 
+Please don't submit code for ancient kernels upstream, we can't merge
+anything that isn't for current kernels.
 
-I am going to support the IO pad voltage control with regulator only.
-No custom attribute for this.
-However, for support for low-power will be same as this patch.
+--6t75qqul3cb56xah
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEcBAABCAAGBQJYIf88AAoJECTWi3JdVIfQRQUH/i+bnzIDbjl0iqdG+sNK7WKO
+okR/BhBvOGbUtzyZ9coHpQwXG/hGp5x3Ug0qXV4wLpjaLZ3AJgwJmvreZOKOfVPX
+6V31HNJFSvO2PKAKK/mATurVMnVsiGjw3jZVh9WAwsdSW3UPEHP1LV0cttoroDMC
+sOroLkSVU3YvTXAI0pveJJwF1wJE0kwlZ0Y706nwZIJSYTIwGwRGKJgoHYy+cXSK
+vLLCAeihEbI97V2J/x5wPn23yTMU+DSFSM/jkq9D1eV/VZ1NedV40vFVTYIMM1m4
+DdTYndSm7PnIlrTyIJUchES7XsWCYFy5tZxO4xrH7Kf505AHhO0zxYsr2DqSKjI=
+=CBiF
+-----END PGP SIGNATURE-----
+
+--6t75qqul3cb56xah--
