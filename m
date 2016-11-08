@@ -1,64 +1,34 @@
-From: Eric Hyeung Dong Jeong <eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH V2 1/4] Documentation: pv88080: Move binding document
-Date: Tue, 8 Nov 2016 06:21:11 +0000
-Message-ID: <8FA4409277D6E54680546B8811D85410029DFAA347@NB-EX-MBX01.diasemi.com>
-References: <cover.1477530195.git.eric.jeong@diasemi.com>
- <4e0bd042e35f13c06511ca9b3f790b5ceaf34451.1477530195.git.eric.jeong@diasemi.com>
- <20161031044403.a34ylc6tpbp2pg7h@rob-hp-laptop>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/1] gpio: pca953x: Fix corruption of other gpios in set_multiple.
+Date: Tue, 8 Nov 2016 09:30:59 +0100
+Message-ID: <CACRpkdb=wWnH2z0pSHRY2JKArKKk1-7jgGorVbDnvt3cT+acYQ@mail.gmail.com>
+References: <1478584845-75666-1-git-send-email-preid@electromag.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161031044403.a34ylc6tpbp2pg7h@rob-hp-laptop>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Eric Hyeung Dong Jeong <eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
-Cc: DEVICETREE <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LINUX-KERNEL <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, LINUX-GPIO <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Support Opensource <Support.Opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f171.google.com ([209.85.220.171]:35182 "EHLO
+        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750957AbcKHIbB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2016 03:31:01 -0500
+Received: by mail-qk0-f171.google.com with SMTP id n204so197612025qke.2
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Nov 2016 00:31:00 -0800 (PST)
+In-Reply-To: <1478584845-75666-1-git-send-email-preid@electromag.com.au>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Phil Reid <preid@electromag.com.au>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Yong Li <yong.b.li@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Monday, October 31, 2016 1:44 PM, Rob Herring wrote:
+On Tue, Nov 8, 2016 at 7:00 AM, Phil Reid <preid@electromag.com.au> wrote:
 
-> On Thu, Oct 27, 2016 at 10:03:14AM +0900, Eric Jeong wrote:
-> >
-> > From: Eric Jeong <eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
-> >
-> > The change is to move pv88080 binding document from the regulator
-> > directory to mfd binding directory for PV88080 PMIC MFD support.
-> >
-> >
-> > Signed-off-by: Eric Jeong <eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
-> >
-> > ---
-> > This patch applies against linux-next and next-20161026
-> >
-> > Hi,
-> >
-> > Change since PATCH V1
-> >  - Patch separated from PATCH V1
-> >
-> > Regards,
-> > Eric Jeong, Dialog Semiconductor Ltd.
-> >
-> >
-> >  Documentation/devicetree/bindings/mfd/pv88080.txt  |   63
-> ++++++++++++++++++++
-> >  .../devicetree/bindings/regulator/pv88080.txt      |   62 -------------------
-> >  2 files changed, 63 insertions(+), 62 deletions(-)  create mode
-> > 100644 Documentation/devicetree/bindings/mfd/pv88080.txt
-> >  delete mode 100644
-> > Documentation/devicetree/bindings/regulator/pv88080.txt
-> 
-> Please resend using git-format-patch -M option.
-> 
-> Rob
+> gpiod_set_array_value_complex does not clear the bits field.
+> Therefore when the drivers set_multiple funciton is called bits outside
+> the mask are undefined and can be either set or not. So bank_val needs
+> to be masked with bank_mask before or with the reg_val cache.
+>
+> Signed-off-by: Phil Reid <preid@electromag.com.au>
 
-Thank you for the comments.
-Maybe the document will be updated additionally.
-I will send patch again.
+Patch applied for fixes. Should it also be tagged for stable?
+Is there a commit this fixes that we can set as Fixes:?
 
-Regards
-Eric
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
