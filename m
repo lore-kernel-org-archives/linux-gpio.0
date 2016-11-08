@@ -1,25 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] pinctrl: st: st_pctl_dt_parse_groups simplify expression
-Date: Tue, 8 Nov 2016 11:27:41 +0100
-Message-ID: <CACRpkdaDV4FjOtUoSwCAmbOnQqn8NZZ_nD2tpRoVoSPVePtKyw@mail.gmail.com>
-References: <20161105143515.4668-1-xypron.glpk@gmx.de>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/4] pinctrl: Introduce generic #pinctrl-cells and pinctrl_parse_index_with_args
+Date: Tue, 8 Nov 2016 11:32:10 +0100
+Message-ID: <CACRpkdbdfM8qtMSE1O-VEsnOHGbVuMDhOFtELvqoYuE1JJ=GRg@mail.gmail.com>
+References: <20161103163550.27330-1-tony@atomide.com> <20161103163550.27330-2-tony@atomide.com>
+ <CACRpkdaCF4Jc7QY+L44obce=V_W4xgVbPXfuiE7bXJs7ud9q9A@mail.gmail.com> <20161107152613.GA2428@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161105143515.4668-1-xypron.glpk@gmx.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Heinrich Schuchardt <xypron.glpk@gmx.de>
-Cc: Patrice Chotard <patrice.chotard@st.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/STI ARCHITECTURE" <kernel@stlinux.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161107152613.GA2428-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Nov 5, 2016 at 3:35 PM, Heinrich Schuchardt <xypron.glpk@gmx.de> wrote:
+On Mon, Nov 7, 2016 at 4:26 PM, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org> wrote:
+> * Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> [161104 14:50]:
 
-> for_each_property_of_node(pins, pp) checks that pp is not NULL.
-> So there is no need to check it inside the loop.
+>> +struct of_phandle_args;
+>> +
+>>  #ifdef CONFIG_OF
+>>
+>> Let's see if it works!
 >
-> Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+> OK so do we know now? It seems there was one more email
+> about it but it may have been without it.
 
-Patch applied with Patrice's ACK.
+I haven't seen anything, I think it JustWorks(TM).
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
