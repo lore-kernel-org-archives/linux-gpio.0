@@ -1,39 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.10
-Date: Tue, 8 Nov 2016 10:32:16 +0100
-Message-ID: <CACRpkda51fVyjRMT4vNBc=y1j7NiOnFWnKQed3jd9HMkcrXiOg@mail.gmail.com>
-References: <1478532932-5713-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH v3 1/5] pinctrl: samsung: Add the support the multiple
+ IORESOURCE_MEM for one pin-bank
+Date: Tue, 8 Nov 2016 10:34:25 +0100
+Message-ID: <CACRpkdZ3JmvbEkLK77V9x44WZ0tfmJWLv5CW7QkTM5-aw6M-4g@mail.gmail.com>
+References: <1478155149-28527-1-git-send-email-cw00.choi@samsung.com> <1478155149-28527-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f180.google.com ([209.85.220.180]:36026 "EHLO
-        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752558AbcKHJcR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2016 04:32:17 -0500
-Received: by mail-qk0-f180.google.com with SMTP id n21so98507932qka.3
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Nov 2016 01:32:17 -0800 (PST)
-In-Reply-To: <1478532932-5713-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1478155149-28527-2-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>, sw0312.kim@samsung.com, Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Jonghwa Lee <jonghwa3.lee@samsung.com>, beomho.seo@samsung.com, jaewon02.kim@samsung.com, human.hwang@
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-On Mon, Nov 7, 2016 at 4:35 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Thu, Nov 3, 2016 at 7:39 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
 
->         Hi Linus,
+> This patch supports the multiple IORESOURCE_MEM resources for one pin-bank.
+> In the pre-existing Exynos series, the registers of the gpio bank are included
+> in the one memory map. But, some gpio bank need to support the one more memory
+> map (IORESOURCE_MEM) because the registers of gpio bank are separated into
+> the different memory map.
 >
-> The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+> For example,
+> The both ALIVE and IMEM domain have the different memory base address.
+> The GFP[1-5] of exynos5433 are composed as following:
+> - ALIVE domain : WEINT_* registers
+> - IMEM domain  : CON/DAT/PUD/DRV/CONPDN/PUDPDN register
 >
->   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.10-tag1
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-gpio@vger.kernel.org
+> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Pulled to my devel branch.
-
-Thanks!
+Patch applied with Krzysztof's review tag.
 
 Yours,
 Linus Walleij
