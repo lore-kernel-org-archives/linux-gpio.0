@@ -1,50 +1,54 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 09/15] pinctrl-sx150x: Replace sx150x_*_cfg by means of
- regmap API
-Date: Tue, 8 Nov 2016 09:43:46 +0100
-Message-ID: <CACRpkdZ4T-8pW56KqxBwukviJ4Pn6PFtquwOOTUKAGbsJ9jsKw@mail.gmail.com>
-References: <1478537603-23653-1-git-send-email-andrew.smirnov@gmail.com> <1478537603-23653-10-git-send-email-andrew.smirnov@gmail.com>
+From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Subject: [PATCH 1/2] gpio: xilinx: dt-binding: Add clock node
+Date: Tue, 8 Nov 2016 10:43:09 +0530
+Message-ID: <1478581990-28276-1-git-send-email-shubhrajyoti.datta@xilinx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f182.google.com ([209.85.220.182]:34622 "EHLO
-        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753004AbcKHInw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2016 03:43:52 -0500
-Received: by mail-qk0-f182.google.com with SMTP id q130so208389185qke.1
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Nov 2016 00:43:52 -0800 (PST)
-In-Reply-To: <1478537603-23653-10-git-send-email-andrew.smirnov@gmail.com>
+Received: from mail-dm3nam03on0067.outbound.protection.outlook.com ([104.47.41.67]:24138
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753076AbcKHIoQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 8 Nov 2016 03:44:16 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Neil Armstrong <narmstrong@baylibre.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chris Healy <cphealy@gmail.com>
+To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Cc: soren.brinkmann@xilinx.com, michal.simek@xilinx.com, Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 
-On Mon, Nov 7, 2016 at 5:53 PM, Andrey Smirnov <andrew.smirnov@gmail.com> wrote:
+Add the clock node to the dt binding.
 
-> The difference between 8 and 16 pin GPIO expanders can be accomodated by
-> the means of regmap API without resorting to usaing driver-specific
-> read/write accessors. This change, IMHO, brings the following benefits:
->
->         - Replaces driver's idiosyncratic way of dealing with
->           mult-register fields with regmap API, which, hopefuly,
->           makes the code a bit easier for a new reader to understand
->
->         - Removes various multi-read for-loop register read logic
->           from various places in the code and puts it in a signle
->           place
->
->         - Removes ad-hoc IRQ register caching code in
->           sx150x_irq_bus_sync_unlock, since that functionality is
->           provided by regmap
->
-> Besided aforementioned benefits this change also implements necessary
-> RegSense byte swap necessary for SX1503 and SX1506 variants of the chip.
->
-> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+---
+ .../devicetree/bindings/gpio/gpio-xilinx.txt       |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
-Patch applied!
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-xilinx.txt b/Documentation/devicetree/bindings/gpio/gpio-xilinx.txt
+index 63bf4be..0821b9d 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-xilinx.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-xilinx.txt
+@@ -11,6 +11,7 @@ Required properties:
+ - #gpio-cells : Should be two. The first cell is the pin number and the
+   second cell is used to specify optional parameters (currently unused).
+ - gpio-controller : Marks the device node as a GPIO controller.
++- clocks: Input clock specifier. Refer to common clock bindings.
+ 
+ Optional properties:
+ - interrupts : Interrupt mapping for GPIO IRQ.
+@@ -25,12 +26,14 @@ Optional properties:
+ - xlnx,dout-default-2 : as above but the second channel
+ - xlnx,gpio2-width : as above but for the second channel
+ - xlnx,tri-default-2 : as above but for the second channel
++- clock-names: Input clock name
+ 
+ 
+ Example:
+ gpio: gpio@40000000 {
+ 	#gpio-cells = <2>;
+ 	compatible = "xlnx,xps-gpio-1.00.a";
++	clocks = <&clkc 15>;
+ 	gpio-controller ;
+ 	interrupt-parent = <&microblaze_0_intc>;
+ 	interrupts = < 6 2 >;
+-- 
+1.7.1
 
-Yours,
-Linus Walleij
