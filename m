@@ -1,47 +1,43 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCH 1/1] gpio: pca953x: Move memcpy into mutex lock for set
- multiple function.
-Date: Tue, 8 Nov 2016 17:03:37 +0800
-Message-ID: <3e07dfe0-6ff1-9eb6-0693-7195b657712c@electromag.com.au>
-References: <1478582291-57976-1-git-send-email-preid@electromag.com.au>
- <CACRpkdYTYrMGjqvbJZhsWfpNWW5e82+FhZnseKLfQSM20ZT7Nw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: sx150x: fix up headers
+Date: Tue,  8 Nov 2016 10:27:17 +0100
+Message-ID: <1478597237-4441-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anchovy2.45ru.net.au ([203.30.46.146]:51258 "EHLO
-        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753160AbcKHJDn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2016 04:03:43 -0500
-In-Reply-To: <CACRpkdYTYrMGjqvbJZhsWfpNWW5e82+FhZnseKLfQSM20ZT7Nw@mail.gmail.com>
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:34803 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932256AbcKHJ1X (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2016 04:27:23 -0500
+Received: by mail-lf0-f50.google.com with SMTP id o141so62315760lff.1
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Nov 2016 01:27:23 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Ben Dooks <ben.dooks@codethink.co.uk>, Yong Li <yong.b.li@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andrey Smirnov <andrew.smirnov@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>
 
-On 8/11/2016 16:32, Linus Walleij wrote:
-> On Tue, Nov 8, 2016 at 6:18 AM, Phil Reid <preid@electromag.com.au> wrote:
->
->> Need to ensure that reg_output is not updated while setting multiple
->> bits. This makes the mutex locking behaviour for the set_multiple call
->> consistent with that of the set_value call.
->>
->> Signed-off-by: Phil Reid <preid@electromag.com.au>
->
-> Patch applied for fixes.
->
-> Stable? Fixes:?
->
-> Yours,
-> Linus Walleij
->
->
-It looks like it was broken in my original implementation of the set_multiple call.
-fixes commit: b4818afeacbd81821f89a89951471cffcb6a65e0
+Include <linux/gpio/driver.h> rather than <linux/gpio.h>
+Drop <linux/pinctrl/machine.h>.
 
-This one is pretty nasty, it should go into stable.
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/pinctrl-sx150x.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-
+diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
+index dc1341fdc73d..63778058eec7 100644
+--- a/drivers/pinctrl/pinctrl-sx150x.c
++++ b/drivers/pinctrl/pinctrl-sx150x.c
+@@ -27,8 +27,7 @@
+ #include <linux/slab.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+-#include <linux/gpio.h>
+-#include <linux/pinctrl/machine.h>
++#include <linux/gpio/driver.h>
+ #include <linux/pinctrl/pinconf.h>
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinmux.h>
 -- 
-Regards
-Phil Reid
+2.7.4
+
