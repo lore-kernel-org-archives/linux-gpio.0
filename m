@@ -1,83 +1,38 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] gpio: tegra186: Add support for T186 GPIO
-Date: Tue, 8 Nov 2016 09:49:27 -0700
-Message-ID: <08947785-2e7f-0117-2392-b6b1a774bbb8@wwwdotorg.org>
-References: <1478083719-14836-1-git-send-email-smangipudi@nvidia.com>
- <CACRpkdZpPHLDGeBb8kb=LYmuT0PKPf_quK+OF2peaV+8dxr5vQ@mail.gmail.com>
- <20161107132127.GE12559@ulmo.ba.sec>
- <CAOesGMgJUepmq2JTT7imKh74BsnGobcpBWFuNp94WnX1WtzEjA@mail.gmail.com>
- <20161108155548.GC2244@ulmo.ba.sec>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v9 1/6] x86/platform/p2sb: New Primary to Sideband bridge
+ support driver for Intel SOC's
+Date: Tue, 8 Nov 2016 17:55:20 +0100 (CET)
+Message-ID: <alpine.DEB.2.20.1611081753370.3501@nanos>
+References: <1478595443-6306-1-git-send-email-jui.nee.tan@intel.com> <1478595443-6306-2-git-send-email-jui.nee.tan@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:54276 "EHLO
-        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751243AbcKHQta (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2016 11:49:30 -0500
-In-Reply-To: <20161108155548.GC2244@ulmo.ba.sec>
+Received: from Galois.linutronix.de ([146.0.238.70]:55525 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932237AbcKHQ6D (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2016 11:58:03 -0500
+In-Reply-To: <1478595443-6306-2-git-send-email-jui.nee.tan@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Olof Johansson <olof@lixom.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Suresh Mangipudi <smangipudi@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Tan Jui Nee <jui.nee.tan@intel.com>
+Cc: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, mingo@redhat.com, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, jonathan.yong@intel.com, ong.hock.yu@intel.com, Tony Luck <tony.luck@intel.com>, wan.ahmad.zainie.wan.mohamad@intel.com, yunying.sun@intel.com, Darren Hart <dvhart@infradead.org>
 
-On 11/08/2016 08:55 AM, Thierry Reding wrote:
-> On Mon, Nov 07, 2016 at 05:42:33PM -0800, Olof Johansson wrote:
->> On Mon, Nov 7, 2016 at 5:21 AM, Thierry Reding <thierry.reding@gmail.com> wrote:
->>> On Mon, Nov 07, 2016 at 08:53:37AM +0100, Linus Walleij wrote:
->>>> On Wed, Nov 2, 2016 at 11:48 AM, Suresh Mangipudi <smangipudi@nvidia.com> wrote:
->>>>
->>>>> Add GPIO driver for T186 based platforms.
->>>>> Adds support for MAIN and AON GPIO's from T186.
->>>>>
->>>>> Signed-off-by: Suresh Mangipudi <smangipudi@nvidia.com>
->>>>
->>>> Stephen/Thierry/Alexandre:
->>>> Can I get your review on this Tegra thing?
->>>
->>> Can we hold off on this for a bit? I've got my own implementation of
->>> this in my Tegra186 tree because I thought nobody else was working on
->>> it. From a brief look they seem mostly similar but there are a couple
->>> of differences that I need to take a closer look at (and do some more
->>> intensive testing on).
->>
->> Be careful about discouraging other developers internally from
->> participating upstream, Thierry.
->
-> That was certainly not my intention. I do welcome any contributions,
-> internal or external.
->
->> Please don't become a bottleneck for your company's contributions.
->> Rewriting stuff on your own isn't a scalable model.
->
-> Like I said, I didn't rewrite this, I merely wrote the GPIO driver
-> because there wasn't one at the time and I wasn't aware of anyone else
-> working on one. Waiting for a GPIO driver to emerge would've prevented
-> me from making progress on other fronts.
+On Tue, 8 Nov 2016, Tan Jui Nee wrote:
+> There is already one and at least one more user coming which
+> require an access to Primary to Sideband bridge (P2SB) in order
+> to get IO or MMIO bar hidden by BIOS.
+> Create a driver to access P2SB for x86 devices.
+> 
+>  arch/x86/Kconfig                 |  4 ++
+>  arch/x86/include/asm/p2sb.h      | 27 +++++++++++
+>  arch/x86/platform/intel/Makefile |  1 +
+>  arch/x86/platform/intel/p2sb.c   | 98 ++++++++++++++++++++++++++++++++++++++++
 
-One issue here is that there are lots of patches destined for upstream 
-in your own personal tree, but they aren't actually upstream yet. I 
-think pushing more of your work into linux-next (and further upstream) 
-faster would help people out. linux-next and other "standard" repos 
-should be easily discoverable by anyway following any upstreaming 
-HOWTOs, but those HOWTOs aren't going to mention your personal trees, so 
-patches there effectively don't exist. Making the already extant work 
-more discoverable will help prevent people duplicating work.
+This really has nothing to do with architecture. It's a platform enablement
+driver and therefor should go into drivers/platform/x86
 
-Related to this, I've been waiting rather a while for the Tegra186 DT 
-binding patches I sent to be applied. I'd love to see them go in ASAP 
-even if there's no kernel driver behind them. The bindings have been 
-reviewed, ack'd, and they're in use in U-Boot already.
+Cc'ed Darren who is responsible for this.
 
-A thought on Tegra186: For a older supported SoCs, we obviously don't 
-want to push changes upstream that aren't too well baked. However, for a 
-new SoC that doesn't work yet, I'm tend to prioritize getting as much 
-early work upstream as fast as possible (to try and unblock people 
-working in other areas) over getting those patches perfect first. 
-Release early, release often will help unblock people and parallelize 
-work. Pipeline your own work rather than batching it all up to release 
-at once.
+Thanks,
 
-P.S. don't take this email too personally or anything; I'm not trying to 
-be complaining/critical or anything like that. It's just a few mild 
-thoughts.
+	tglx
