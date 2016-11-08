@@ -1,38 +1,112 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: [PATCH 1/1] gpio: pca953x: Fix corruption of other gpios in set_multiple.
-Date: Tue,  8 Nov 2016 14:00:45 +0800
-Message-ID: <1478584845-75666-1-git-send-email-preid@electromag.com.au>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 203-59-230-133.perm.iinet.net.au ([203.59.230.133]:59226 "EHLO
-        preid-centos7.electromag.com.au" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751062AbcKHGAx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2016 01:00:53 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Eric Hyeung Dong Jeong <eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH V2 4/4] gpio: pv88080: Add GPIO function support
+Date: Tue, 8 Nov 2016 06:15:45 +0000
+Message-ID: <8FA4409277D6E54680546B8811D85410029DFAA32E@NB-EX-MBX01.diasemi.com>
+References: <cover.1477530195.git.eric.jeong@diasemi.com>
+ <0ef1d730ec55eaaf736fb1606ea73d7af27c1021.1477530195.git.eric.jeong@diasemi.com>
+ <CACRpkdYW_LnT9zLQp=r8xE1o=_hfwGEhOu_w2bp+hRZNN29WLA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdYW_LnT9zLQp=r8xE1o=_hfwGEhOu_w2bp+hRZNN29WLA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Eric Hyeung Dong Jeong <eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, LINUX-GPIO <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LINUX-KERNEL <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DEVICETREE <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Support Opensource <Support.Opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: gnurou@gmail.com, preid@electromag.com.au, ben.dooks@codethink.co.uk, yong.b.li@intel.com, linux-gpio@vger.kernel.org
 
-gpiod_set_array_value_complex does not clear the bits field.
-Therefore when the drivers set_multiple funciton is called bits outside
-the mask are undefined and can be either set or not. So bank_val needs
-to be masked with bank_mask before or with the reg_val cache.
-
-Signed-off-by: Phil Reid <preid@electromag.com.au>
----
- drivers/gpio/gpio-pca953x.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index b0eb113..fe731f0 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -380,6 +380,7 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
- 		if (bank_mask) {
- 			bank_val = bits[bank / sizeof(*bits)] >>
- 				  ((bank % sizeof(*bits)) * 8);
-+			bank_val &= bank_mask;
- 			reg_val[bank] = (reg_val[bank] & ~bank_mask) | bank_val;
- 		}
- 	}
--- 
-1.8.3.1
-
+T24gRnJpZGF5LCBPY3RvYmVyIDI4LCAyMDE2IDk6MTEgUE0sIExpbnV4IFdhbGxlaWogd3JvdGU6
+DQoNCj4gT24gVGh1LCBPY3QgMjcsIDIwMTYgYXQgMzowMyBBTSwgRXJpYyBKZW9uZw0KPiA8ZXJp
+Yy5qZW9uZy5vcGVuc291cmNlQGRpYXNlbWkuY29tPiB3cm90ZToNCj4gDQo+ID4gRnJvbTogRXJp
+YyBKZW9uZyA8ZXJpYy5qZW9uZy5vcGVuc291cmNlQGRpYXNlbWkuY29tPg0KPiA+DQo+ID4gVGhp
+cyBwYXRjaCBhZGRzIHN1cHBvcnQgZm9yIFBWODgwODAgUE1JQyBHUElPcy4NCj4gPiBQVjg4MDgw
+IGhhcyB0d28gY29uZmlndXJhYmxlIEdQSU9zLg0KPiA+DQo+ID4gS2NvbmZpZyBhbmQgTWFrZWZp
+bGUgYXJlIHVwZGF0ZWQgdG8gcmVmbGVjdCBzdXBwb3J0IGZvciBQVjg4MDgwIFBNSUMNCj4gPiBH
+UElPLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogRXJpYyBKZW9uZyA8ZXJpYy5qZW9uZy5vcGVu
+c291cmNlQGRpYXNlbWkuY29tPg0KPiAoLi4uKQ0KPiANCj4gPiArc3RhdGljIGludCBwdjg4MDgw
+X2dwaW9fZGlyZWN0aW9uX2lucHV0KHN0cnVjdCBncGlvX2NoaXAgKmdjLA0KPiA+ICsgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgaW50IG9mZnNldCkgew0KPiA+ICsgICAg
+ICAgc3RydWN0IHB2ODgwODBfZ3BpbyAqcHJpdiA9IGdwaW9jaGlwX2dldF9kYXRhKGdjKTsNCj4g
+PiArICAgICAgIHN0cnVjdCBwdjg4MDgwICpjaGlwID0gcHJpdi0+Y2hpcDsNCj4gPiArICAgICAg
+IGludCByZXQ7DQo+ID4gKw0KPiA+ICsgICAgICAgLyogU2V0IHRoZSBpbml0aWFsIHZhbHVlICov
+DQo+ID4gKyAgICAgICByZXQgPSByZWdtYXBfdXBkYXRlX2JpdHMoY2hpcC0+cmVnbWFwLCBwcml2
+LT5ncGlvX2Jhc2VfcmVnICsgb2Zmc2V0LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBQVjg4MDgwX0dQSU9fT1VUUFVUX01BU0ssIDApOw0KPiA+ICsgICAgICAg
+aWYgKHJldCkNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4gDQo+IFNvIHlvdSBz
+ZXQgdGhlIGluaXRpYWwgdmFsdWUgd2hlbiB3ZSBjaGFuZ2UgdGhlIHBpbiB0byAqaW5wdXQqLi4u
+DQo+IA0KPiA+ICsNCj4gPiArICAgICAgIHJldHVybiByZWdtYXBfdXBkYXRlX2JpdHMoY2hpcC0+
+cmVnbWFwLCBwcml2LT5ncGlvX2Jhc2VfcmVnICsgb2Zmc2V0LA0KPiA+ICsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgUFY4ODA4MF9HUElPX0RJUkVDVElPTl9NQVNLLCAwKTsgfQ0KPiA+
+ICsNCj4gPiArc3RhdGljIGludCBwdjg4MDgwX2dwaW9fZGlyZWN0aW9uX291dHB1dChzdHJ1Y3Qg
+Z3Bpb19jaGlwICpnYywNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2ln
+bmVkIGludCBvZmZzZXQsIGludCB2YWx1ZSkgew0KPiA+ICsgICAgICAgc3RydWN0IHB2ODgwODBf
+Z3BpbyAqcHJpdiA9IGdwaW9jaGlwX2dldF9kYXRhKGdjKTsNCj4gPiArICAgICAgIHN0cnVjdCBw
+djg4MDgwICpjaGlwID0gcHJpdi0+Y2hpcDsNCj4gPiArICAgICAgIGludCByZXQ7DQo+ID4gKw0K
+PiA+ICsgICAgICAgcmV0ID0gcmVnbWFwX3VwZGF0ZV9iaXRzKGNoaXAtPnJlZ21hcCwgcHJpdi0+
+Z3Bpb19iYXNlX3JlZyArIG9mZnNldCwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBQVjg4
+MDgwX0dQSU9fRElSRUNUSU9OX01BU0ssDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgUFY4
+ODA4MF9HUElPX0RJUkVDVElPTl9NQVNLKTsNCj4gDQo+IEJ1dCBkbyBub3RoaW5nIHdoZW4gd2Ug
+Y2hhbmdlIHRoZSBwaW4gdG8gKm91dHB1dCo/DQo+IA0KPiBJdCBzZWVtcyBsaWtlIHlvdSBzd2l0
+Y2hlZCB0aGUgdHdvIGZ1bmN0aW9uIGltcGxlbWVudGF0aW9ucyBvciBzb21ldGhpbmc/DQo+IA0K
+PiA+ICtzdGF0aWMgaW50IHB2ODgwODBfZ3Bpb19nZXQoc3RydWN0IGdwaW9fY2hpcCAqZ2MsIHVu
+c2lnbmVkIGludA0KPiA+ICtvZmZzZXQpIHsNCj4gPiArICAgICAgIHN0cnVjdCBwdjg4MDgwX2dw
+aW8gKnByaXYgPSBncGlvY2hpcF9nZXRfZGF0YShnYyk7DQo+ID4gKyAgICAgICBzdHJ1Y3QgcHY4
+ODA4MCAqY2hpcCA9IHByaXYtPmNoaXA7DQo+ID4gKyAgICAgICB1bnNpZ25lZCBpbnQgcmVnID0g
+MCwgZGlyZWN0aW9uOw0KPiA+ICsgICAgICAgaW50IHJldDsNCj4gPiArDQo+ID4gKyAgICAgICBy
+ZXQgPSByZWdtYXBfcmVhZChjaGlwLT5yZWdtYXAsIHByaXYtPmdwaW9fYmFzZV9yZWcgKyBvZmZz
+ZXQsICZyZWcpOw0KPiA+ICsgICAgICAgaWYgKHJldCkNCj4gPiArICAgICAgICAgICAgICAgcmV0
+dXJuIHJldDsNCj4gPiArDQo+ID4gKyAgICAgICBkaXJlY3Rpb24gPSAocmVnICYgUFY4ODA4MF9H
+UElPX0RJUkVDVElPTl9NQVNLKTsNCj4gPiArICAgICAgIGlmIChkaXJlY3Rpb24gPT0gUFY4ODA4
+MF9QT1JUX0RJUkVDVElPTl9PVVRQVVQpIHsNCj4gPiArICAgICAgICAgICAgICAgaWYgKHJlZyAm
+IFBWODgwODBfR1BJT19PVVRQVVRfRU4pDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0
+dXJuIDE7DQo+ID4gKyAgICAgICAgICAgICAgIHJldCA9IDA7DQo+ID4gKyAgICAgICB9IGVsc2Ug
+ew0KPiA+ICsgICAgICAgICAgICAgICByZXQgPSByZWdtYXBfcmVhZChjaGlwLT5yZWdtYXAsIHBy
+aXYtPmlucHV0X3JlZywgJnJlZyk7DQo+ID4gKyAgICAgICAgICAgICAgIGlmIChyZXQgPCAwKQ0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiByZXQ7DQo+ID4gKyAgICAgICAgICAg
+ICAgIHJldCA9IChyZWcgJiAoUFY4ODA4MF9HUElPX0lOUFVUX01BU0sgPDwgb2Zmc2V0KSkgPj4N
+Cj4gPiArIG9mZnNldDsNCj4gDQo+IElzbid0IHRoaXMgd2hhdCB5b3Ugd2FudCB0byBkbz8NCj4g
+DQo+ICNpbmNsdWRlIDxsaW51eC9iaXRvcHMuaD4NCj4gDQo+IHJldCA9ICEhKHJlZyAmIEJJVChv
+ZmZzZXQpKTsNCj4gDQo+IFRoZSBtYXNrIGlzIDB4MDEuIE5vIHBvaW50IGluIG1ha2luZyB0aGlu
+Z3MgbW9yZSBjb21wbGljYXRlZCB0aGFuIHRoZXkgYXJlLg0KPiANCj4gDQo+ID4gK3N0YXRpYyB2
+b2lkIHB2ODgwODBfZ3Bpb19zZXQoc3RydWN0IGdwaW9fY2hpcCAqZ2MsIHVuc2lnbmVkIGludCBv
+ZmZzZXQsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpbnQgdmFsdWUpIHsN
+Cj4gPiArICAgICAgIHN0cnVjdCBwdjg4MDgwX2dwaW8gKnByaXYgPSBncGlvY2hpcF9nZXRfZGF0
+YShnYyk7DQo+ID4gKyAgICAgICBzdHJ1Y3QgcHY4ODA4MCAqY2hpcCA9IHByaXYtPmNoaXA7DQo+
+ID4gKw0KPiA+ICsgICAgICAgaWYgKHZhbHVlKQ0KPiA+ICsgICAgICAgICAgICAgICByZWdtYXBf
+dXBkYXRlX2JpdHMoY2hpcC0+cmVnbWFwLCBwcml2LT5ncGlvX2Jhc2VfcmVnICsgb2Zmc2V0LA0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgUFY4ODA4MF9HUElPX09VVFBVVF9N
+QVNLLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgUFY4ODA4MF9HUElPX09V
+VFBVVF9FTik7DQo+ID4gKyAgICAgICBlbHNlDQo+ID4gKyAgICAgICAgICAgICAgIHJlZ21hcF91
+cGRhdGVfYml0cyhjaGlwLT5yZWdtYXAsIHByaXYtPmdwaW9fYmFzZV9yZWcgKyBvZmZzZXQsDQo+
+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBQVjg4MDgwX0dQSU9fT1VUUFVUX01B
+U0ssDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBQVjg4MDgwX0dQSU9fT1VU
+UFVUX0RJUyk7IH0NCj4gDQo+IExvb2tzIGdvb2QsIG91dHB1dCBpcyBtb3JlIGNvbXBsaWNhdGVk
+Lg0KPiANCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBncGlvX2NoaXAgdGVtcGxhdGVfZ3BpbyA9
+IHsNCj4gPiArICAgICAgIC5sYWJlbCA9ICJwdjg4MDgwLWdwaW8iLA0KPiA+ICsgICAgICAgLm93
+bmVyID0gVEhJU19NT0RVTEUsDQo+ID4gKyAgICAgICAuZ2V0X2RpcmVjdGlvbiA9IHB2ODgwODBf
+Z3Bpb19nZXRfZGlyZWN0aW9uLA0KPiA+ICsgICAgICAgLmRpcmVjdGlvbl9pbnB1dCA9IHB2ODgw
+ODBfZ3Bpb19kaXJlY3Rpb25faW5wdXQsDQo+ID4gKyAgICAgICAuZGlyZWN0aW9uX291dHB1dCA9
+IHB2ODgwODBfZ3Bpb19kaXJlY3Rpb25fb3V0cHV0LA0KPiA+ICsgICAgICAgLmdldCA9IHB2ODgw
+ODBfZ3Bpb19nZXQsDQo+ID4gKyAgICAgICAuc2V0ID0gcHY4ODA4MF9ncGlvX3NldCwNCj4gPiAr
+ICAgICAgIC5iYXNlID0gLTEsDQo+ID4gKyAgICAgICAubmdwaW8gPSBERUZBVUxUX1BJTl9OVU1C
+RVIsDQo+ID4gK307DQo+IA0KPiBXaHkgZXZlbiBoYXZlIGEgI2RlZmluZSBmb3IgREVGQVVMVF9Q
+SU5fTlVNQkVSPw0KPiBKdXN0IGhhcmRjb2RlIGl0IGhlcmUuDQo+IA0KPiA+ICsgICAgICAgcHJp
+di0+Y2hpcCA9IGNoaXA7DQo+ID4gKyAgICAgICBwcml2LT5ncGlvX2NoaXAgPSB0ZW1wbGF0ZV9n
+cGlvOw0KPiA+ICsgICAgICAgcHJpdi0+Z3Bpb19jaGlwLnBhcmVudCA9IGNoaXAtPmRldjsNCj4g
+DQo+IEkgc2xpZ2h0bHkgcHJlZmVyIHRoYXQgeW91IGZpbGwgaW4gdGhlIHByaXYtPmdwaW9fY2hp
+cCB3aXRoIGNvZGUgKG9uZSBhc3NpZ25tZW50DQo+IHBlciBsaW5lKSByYXRoZXIgdGhhbiBhc3Np
+Z25pbmcgYSB0ZW1wbGF0ZSBsaWtlIGhlcmUsIGJ1dCBpdCdzIHlvdXIgcGljay4NCj4gDQo+ID4g
+KyAgICAgICBpZiAocGRhdGEgJiYgcGRhdGEtPmdwaW9fYmFzZSkNCj4gPiArICAgICAgICAgICAg
+ICAgcHJpdi0+Z3Bpb19jaGlwLmJhc2UgPSBwZGF0YS0+Z3Bpb19iYXNlOw0KPiANCj4gR2l2ZSBt
+ZSBhbnkgZ29vZCByZWFzb24gdG8gc3VwcG9ydCB0aGlzLiBQbGVhc2UganVzdCBkcm9wIHRoaXMg
+cGxhdGZvcm0gZGF0YS4NCj4gVXNlIC0xIGxpa2UgaW4gdGhlIHRlbXBsYXRlIGFuZCBnZXQgZHlu
+YW1pYyBhc3NpZ25tZW50IG9mIEdQSU8gbnVtYmVycy4NCj4gDQo+IFlvdXJzLA0KPiBMaW51cyBX
+YWxsZWlqDQoNClRoYW5rIHlvdSBmb3IgdGhlIGNvbW1lbnRzIGFuZCByZWNvbW1lbmRhdGlvbi4N
+Ckkgd2lsbCB0cnkgdG8gdXBkYXRlZCB0aGUgY29kZSBsaWtlIHlvdXIgcmVjb21tZW5kYXRpb24g
+YW5kIG1ha2UgaXQgc2ltcGxlLiAgVGhlbiwgSSB3aWxsIHNlbmQgcGF0Y2ggYWdhaW4uDQoNClJl
+Z2FyZHMNCkVyaWMNCg==
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
