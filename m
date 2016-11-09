@@ -1,92 +1,55 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCHv2 2/2] gpio: xilinx: Add clock support
-Date: Wed, 9 Nov 2016 09:18:52 -0800
-Message-ID: <20161109171852.GC14444@xsjsorenbubuntu>
-References: <1478668191-26322-1-git-send-email-shubhrajyoti.datta@xilinx.com>
- <1478668191-26322-2-git-send-email-shubhrajyoti.datta@xilinx.com>
- <20161109062734.GX14444@xsjsorenbubuntu>
- <CAKfKVtGxaWYEVPaU_G0Z7HJm4_ZAcTisZBj-BtSmAdL1+w+7xw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 2/6] mfd: dt: Add bindings for the Aspeed SoC Display
+ Controller (GFX)
+Date: Wed, 9 Nov 2016 12:26:30 -0600
+Message-ID: <20161109182630.tg3puvwurgx6iinw@rob-hp-laptop>
+References: <1478097481-14895-1-git-send-email-andrew@aj.id.au>
+ <1478097481-14895-3-git-send-email-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-dm3nam03on0066.outbound.protection.outlook.com ([104.47.41.66]:39970
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754593AbcKIRTB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 9 Nov 2016 12:19:01 -0500
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35762 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754855AbcKIS0c (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Nov 2016 13:26:32 -0500
 Content-Disposition: inline
-In-Reply-To: <CAKfKVtGxaWYEVPaU_G0Z7HJm4_ZAcTisZBj-BtSmAdL1+w+7xw@mail.gmail.com>
+In-Reply-To: <1478097481-14895-3-git-send-email-andrew@aj.id.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-Cc: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-On Wed, 2016-11-09 at 12:16:58 +0530, Shubhrajyoti Datta wrote:
-> On Wed, Nov 9, 2016 at 11:57 AM, Sören Brinkmann
-> <soren.brinkmann@xilinx.com> wrote:
-> > On Wed, 2016-11-09 at 10:39:51 +0530, Shubhrajyoti Datta wrote:
-> >> Add basic clock support for xilinx gpio.
-> >>
-> >> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> >> ---
-> >> v2 :
-> >> no change
-> >>
-> >>  drivers/gpio/gpio-xilinx.c |   22 ++++++++++++++++++++++
-> >>  1 files changed, 22 insertions(+), 0 deletions(-)
-> >>
-> >> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-> >> index 14b2a62..923cab8 100644
-> >> --- a/drivers/gpio/gpio-xilinx.c
-> >> +++ b/drivers/gpio/gpio-xilinx.c
-> >> @@ -13,6 +13,7 @@
-> >>   */
-> >>
-> >>  #include <linux/bitops.h>
-> >> +#include <linux/clk.h>
-> >>  #include <linux/init.h>
-> >>  #include <linux/errno.h>
-> >>  #include <linux/module.h>
-> >> @@ -45,6 +46,7 @@
-> >>   * @gpio_state: GPIO state shadow register
-> >>   * @gpio_dir: GPIO direction shadow register
-> >>   * @gpio_lock: Lock used for synchronization
-> >> + * @clk: Clock resource for this controller
-> >>   */
-> >>  struct xgpio_instance {
-> >>       struct of_mm_gpio_chip mmchip;
-> >> @@ -52,6 +54,7 @@ struct xgpio_instance {
-> >>       u32 gpio_state[2];
-> >>       u32 gpio_dir[2];
-> >>       spinlock_t gpio_lock[2];
-> >> +     struct clk *clk;
-> >>  };
-> >>
-> >>  static inline int xgpio_index(struct xgpio_instance *chip, int gpio)
-> >> @@ -282,6 +285,7 @@ static int xgpio_remove(struct platform_device *pdev)
-> >>       struct xgpio_instance *chip = platform_get_drvdata(pdev);
-> >>
-> >>       of_mm_gpiochip_remove(&chip->mmchip);
-> >> +     clk_disable_unprepare(chip->clk);
-> >>
-> >>       return 0;
-> >>  }
-> >> @@ -307,6 +311,23 @@ static int xgpio_probe(struct platform_device *pdev)
-> >>
-> >>       platform_set_drvdata(pdev, chip);
-> >>
-> >> +     /* Retrieve GPIO clock */
-> >> +     chip->clk = devm_clk_get(&pdev->dev, NULL);
-> >
-> > The driver should use the clock-name documented in the binding to do the
-> > clock lookup.
+On Thu, Nov 03, 2016 at 01:07:57AM +1030, Andrew Jeffery wrote:
+> The Aspeed SoC Display Controller is presented as a syscon device to
+> arbitrate access by display and pinmux drivers. Video pinmux
+> configuration on fifth generation SoCs depends on bits in both the
+> System Control Unit and the Display Controller.
 > 
-> My idea was to keep the clk name optional since there is only one clock.
-> Or do you think we should mandate the name if clk is provided.
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> ---
+>  Documentation/devicetree/bindings/mfd/aspeed-gfx.txt | 17 +++++++++++++++++
 
-I'd make 'clock-names' mandatory if 'clocks' is present. That way there
-won't be any trouble if this IP ever consumed additional clocks in the
-future.
+The register space can't be split to 2 nodes? 
 
-	Sören
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/aspeed-gfx.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/aspeed-gfx.txt b/Documentation/devicetree/bindings/mfd/aspeed-gfx.txt
+> new file mode 100644
+> index 000000000000..aea5370efd97
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/aspeed-gfx.txt
+> @@ -0,0 +1,17 @@
+> +* Device tree bindings for Aspeed SoC Display Controller (GFX)
+> +
+> +The Aspeed SoC Display Controller primarily does as its name suggests, but also
+> +participates in pinmux requests on the g5 SoCs. It is therefore considered a
+> +syscon device.
+> +
+> +Required properties:
+> +- compatible:		"aspeed,ast2500-gfx", "syscon"
+
+I think perhaps we should drop the syscon here and the driver should 
+just register as a syscon.
+
+Rob
