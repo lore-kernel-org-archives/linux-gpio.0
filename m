@@ -1,69 +1,65 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: GPIO IN LINUX KERENL 4.8
-Date: Wed, 9 Nov 2016 09:25:30 +0100
-Message-ID: <CACRpkdbqRmtXbQePWuGkfksS=act-01zwjcwmZtPrf5=gzC1+A@mail.gmail.com>
-References: <CAGyKHxLN+oV485upVkBp-fL2=4aO6Q_29jzSCFCdCsetj=FW-A@mail.gmail.com>
- <CAGyKHxK7+CGhd_P0An0Ja4iFSP=Rez9bdsLnzs122BCrw8ZiHQ@mail.gmail.com>
- <CAGyKHx+F_M3_nsC=GPn2fkrZg8CPedTPv4iZMQnAa9aSU3=Pmw@mail.gmail.com>
- <CAGyKHx+MWr17X7vAFo9y4fV+S+29o52+AqLAk4h9kPQ8r8D81Q@mail.gmail.com>
- <CAGyKHxLtsFwxK9C2BQp5BLH-5wNMvma2MA3ROKVna2u938Th+g@mail.gmail.com>
- <CAGyKHxKppFcC-QEv0LrvLdn+eyPW26yZyKm8sLk9KTcNMhyBXA@mail.gmail.com>
- <CAGyKHxJuHwy37aeOKmajjN66GdxCr1CTfp004mF5_PqG2mW6kw@mail.gmail.com>
- <CAGyKHx+2g4S=spaqQnB4AH+WMbqNBkyc5c-dm0txvFEFVY5Y6w@mail.gmail.com>
- <CAGyKHxJXQBC9qRa9h25GiBwuiEya1j73N4zNhGE0qb=YzVXzNg@mail.gmail.com>
- <CAGyKHxLTqTBMd42EVKGVp2VSQHk9nixvfApqqO7Z8AJw_A9wCw@mail.gmail.com>
- <CAGyKHxK6ng1wnWDdr=VxrbUyOZQT5hfvPLTHoZp8ZuQED85fqw@mail.gmail.com> <CAGyKHxL+Hf70c4+_oeO-4nVEH_iqSL5yn7MWdp1LGjZntNHzBg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v4 0/2] pinctrl: samsung: Add the support the multiple
+ IORESOURCE_MEM
+Date: Wed, 09 Nov 2016 17:40:09 +0900
+Message-ID: <1478680811-24835-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f181.google.com ([209.85.220.181]:35481 "EHLO
-        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751277AbcKIIZb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Nov 2016 03:25:31 -0500
-Received: by mail-qk0-f181.google.com with SMTP id n204so237085965qke.2
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Nov 2016 00:25:31 -0800 (PST)
-In-Reply-To: <CAGyKHxL+Hf70c4+_oeO-4nVEH_iqSL5yn7MWdp1LGjZntNHzBg@mail.gmail.com>
+Received: from mailout4.samsung.com ([203.254.224.34]:48651 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751577AbcKIIkR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Nov 2016 03:40:17 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rahul Mahajan <rahulcmahajan.84@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: tomasz.figa@gmail.com, krzk@kernel.org, s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org
+Cc: javier@osg.samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Tue, Nov 8, 2016 at 7:18 PM, Rahul Mahajan
-<rahulcmahajan.84@gmail.com> wrote:
+This patches support the multiple IORESOURCE_MEM resources for one pin-bank
+to support tye GPF of Samsung 64-bit Exynos5433 SoC. The exynos5433 device-tree
+patches were already merged.
 
-> 1) why we remove gpio system not uses /sys/class/gpio. ?
+Changes from v3:
+- Merged the Exynos5433, TM2/TM2E Device-tree patch.
+- Fix the build error of pinctrl-s3c64xx/s3c24xx.c driver.
+- Move the exynos5433 pinctrl compatible to patch2.
+- Add the reviewed-by tag of Krzysztof Kozlowski on patch1.
 
-Class devices are generally deprecated in favor of bus devices.
-(Source: Greg Kroah-Hartman.)
+Changes from v2:
+(https://lkml.org/lkml/2016/8/24/426)
+- Add new pctl_base and eint_base instead of virt_base on patch1.
+- Modify the documentation of pinctrl-samsung.txt on patch1.
+- Modify the cooling level for big.LITTLE cores.
+- Use the GIC_SPI definition on dtsi file.
+- Removes the unneeded 'regulator-always-on' property.
+- Fix the kbuild report of the compatible string for TM2/TM2E patches.
+- Two patches(exynos-mct, exynos5433-pmu) were merged.
+- Add the reviewed-by tag of Javier Martinez Canillas on patch3/4/5
+- Add the reviewed-by tag of Krzysztof Kozlowski on patch4/5
+- Add the acked-by tag of Rob Herring on patch5
+- Fix the minor issues.
 
-The new devices appear in /sys/bus/gpio/*
+Changes from v1:
+(https://lkml.org/lkml/2016/8/16/61)
+- Merge the cpufreq patch for exynos5433[3] on PM/cpufreq tree.
+- Add new patch to support the multiple IORESOURCE_MAP for samsung pinctrl driver.
+- Drop the SYSMMU Device-Tree node which will be posted by Marek Szyprowski.
+- Fix the code clean issue by Krzysztof Kozlowski and Rob Herring's comment.
+- Delete the unnecessary alias from exynos5433-tm2.dts.
+- Expand the range of cooling level of CPU device.
+- Update the binding method of 'Exynos5433 audio subsystem'
 
-> 2) if i want to use old kernel gpio driver with linux 4.8 driver. So how to
-> port because any impact with other system or api change.
+Chanwoo Choi (2):
+  pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank
+  pinctrl: samsung: Add GPF support for Exynos5433
 
-You should submit your drivers to the upstream Linux kernel
-so you do not face the situation of maintaining out-of-tree code.
-The changes made to the kernel for drivers recently are detailed
-in that talk. Further consult this document:
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/plain/Documentation/stable_api_nonsense.txt
+ .../bindings/pinctrl/samsung-pinctrl.txt           | 19 +++++++++
+ drivers/pinctrl/samsung/pinctrl-exynos.c           | 45 +++++++++++-----------
+ drivers/pinctrl/samsung/pinctrl-exynos.h           | 11 ++++++
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c          | 37 ++++++++----------
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c          | 40 ++++++++++---------
+ drivers/pinctrl/samsung/pinctrl-samsung.c          | 40 ++++++++++++-------
+ drivers/pinctrl/samsung/pinctrl-samsung.h          | 10 ++++-
+ 7 files changed, 124 insertions(+), 78 deletions(-)
 
-> 3) Old Approach is very easy just we give export through /sys  and how to
-> exoort from user space?
+-- 
+1.9.1
 
-The new ABI does not use exporting. It uses anonymous file handles,
-and GPIOs are marked for userspace use on-demand.
-
-It could be argued that the sysfs ABI is "easy" but is it really?
-If your script or program using a few exported GPIOs crashes,
-the exported GPIOs are never unexported and you have a leak
-that you need to work around with more scripts. And that is not
-"easy".
-
-> Hello Linus,
->
-> Can you please reply on my question?
-
-Take it easy, I have lots of stuff to do.
-
-Yours,
-Linus Walleij
