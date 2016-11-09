@@ -1,98 +1,92 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/4] mfd: palmas: Reset the POWERHOLD mux during power off
-Date: Wed, 9 Nov 2016 16:14:19 +0000
-Message-ID: <20161109161419.GJ13127@dell>
-References: <1477559414-12520-1-git-send-email-j-keerthy@ti.com>
- <1477559414-12520-3-git-send-email-j-keerthy@ti.com>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCHv2 2/2] gpio: xilinx: Add clock support
+Date: Wed, 9 Nov 2016 09:18:52 -0800
+Message-ID: <20161109171852.GC14444@xsjsorenbubuntu>
+References: <1478668191-26322-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+ <1478668191-26322-2-git-send-email-shubhrajyoti.datta@xilinx.com>
+ <20161109062734.GX14444@xsjsorenbubuntu>
+ <CAKfKVtGxaWYEVPaU_G0Z7HJm4_ZAcTisZBj-BtSmAdL1+w+7xw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-dm3nam03on0066.outbound.protection.outlook.com ([104.47.41.66]:39970
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754593AbcKIRTB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 9 Nov 2016 12:19:01 -0500
 Content-Disposition: inline
-In-Reply-To: <1477559414-12520-3-git-send-email-j-keerthy-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
-Cc: tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nm-l0cyMroinI0@public.gmane.org, t-kristo-l0cyMroinI0@public.gmane.org
+In-Reply-To: <CAKfKVtGxaWYEVPaU_G0Z7HJm4_ZAcTisZBj-BtSmAdL1+w+7xw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>
 
-On Thu, 27 Oct 2016, Keerthy wrote:
-
-> POWERHOLD signal has higher priority  over the DEV_ON bit.
-> So power off will not happen if the POWERHOLD is held high.
-> Hence reset the MUX to GPIO_7 mode to release the POWERHOLD
-> and the DEV_ON bit to take effect to power off the PMIC.
+On Wed, 2016-11-09 at 12:16:58 +0530, Shubhrajyoti Datta wrote:
+> On Wed, Nov 9, 2016 at 11:57 AM, Sören Brinkmann
+> <soren.brinkmann@xilinx.com> wrote:
+> > On Wed, 2016-11-09 at 10:39:51 +0530, Shubhrajyoti Datta wrote:
+> >> Add basic clock support for xilinx gpio.
+> >>
+> >> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> >> ---
+> >> v2 :
+> >> no change
+> >>
+> >>  drivers/gpio/gpio-xilinx.c |   22 ++++++++++++++++++++++
+> >>  1 files changed, 22 insertions(+), 0 deletions(-)
+> >>
+> >> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+> >> index 14b2a62..923cab8 100644
+> >> --- a/drivers/gpio/gpio-xilinx.c
+> >> +++ b/drivers/gpio/gpio-xilinx.c
+> >> @@ -13,6 +13,7 @@
+> >>   */
+> >>
+> >>  #include <linux/bitops.h>
+> >> +#include <linux/clk.h>
+> >>  #include <linux/init.h>
+> >>  #include <linux/errno.h>
+> >>  #include <linux/module.h>
+> >> @@ -45,6 +46,7 @@
+> >>   * @gpio_state: GPIO state shadow register
+> >>   * @gpio_dir: GPIO direction shadow register
+> >>   * @gpio_lock: Lock used for synchronization
+> >> + * @clk: Clock resource for this controller
+> >>   */
+> >>  struct xgpio_instance {
+> >>       struct of_mm_gpio_chip mmchip;
+> >> @@ -52,6 +54,7 @@ struct xgpio_instance {
+> >>       u32 gpio_state[2];
+> >>       u32 gpio_dir[2];
+> >>       spinlock_t gpio_lock[2];
+> >> +     struct clk *clk;
+> >>  };
+> >>
+> >>  static inline int xgpio_index(struct xgpio_instance *chip, int gpio)
+> >> @@ -282,6 +285,7 @@ static int xgpio_remove(struct platform_device *pdev)
+> >>       struct xgpio_instance *chip = platform_get_drvdata(pdev);
+> >>
+> >>       of_mm_gpiochip_remove(&chip->mmchip);
+> >> +     clk_disable_unprepare(chip->clk);
+> >>
+> >>       return 0;
+> >>  }
+> >> @@ -307,6 +311,23 @@ static int xgpio_probe(struct platform_device *pdev)
+> >>
+> >>       platform_set_drvdata(pdev, chip);
+> >>
+> >> +     /* Retrieve GPIO clock */
+> >> +     chip->clk = devm_clk_get(&pdev->dev, NULL);
+> >
+> > The driver should use the clock-name documented in the binding to do the
+> > clock lookup.
 > 
-> PMIC Power off happens in dire situations like thermal shutdown
-> so irrespective of the POWERHOLD setting go ahead and turn off
-> the powerhold.  Currently poweroff is broken on boards that have
-> powerhold enabled. This fixes poweroff on those boards.
-> 
-> Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
-> ---
->  drivers/mfd/palmas.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/mfd/palmas.c b/drivers/mfd/palmas.c
-> index 8f8bacb..8fbc5e0 100644
-> --- a/drivers/mfd/palmas.c
-> +++ b/drivers/mfd/palmas.c
-> @@ -430,10 +430,28 @@ static void palmas_power_off(void)
->  {
->  	unsigned int addr;
->  	int ret, slave;
-> +	struct device_node *node;
-> +	bool override_powerhold;
->  
->  	if (!palmas_dev)
+> My idea was to keep the clk name optional since there is only one clock.
+> Or do you think we should mandate the name if clk is provided.
 
-Can this happen?
+I'd make 'clock-names' mandatory if 'clocks' is present. That way there
+won't be any trouble if this IP ever consumed additional clocks in the
+future.
 
->  		return;
->  
-> +	node = palmas_dev->dev->of_node;
-
-Just do:
-
-struct device_node *np = palmas_dev->dev->of_node;
-
-> +	override_powerhold = of_property_read_bool(node,
-> +					"ti,palmas-override-powerhold");
-
-Break the line after the '=' instead.
-
-> +	if (override_powerhold) {
-
-if (of_property_read_bool(node,	"ti,palmas-override-powerhold"))
-
-Then remove 'override_powerhold'.
-
-> +		addr = PALMAS_BASE_TO_REG(PALMAS_PU_PD_OD_BASE,
-> +					  PALMAS_PRIMARY_SECONDARY_PAD2);
-> +		slave = PALMAS_BASE_TO_SLAVE(PALMAS_PU_PD_OD_BASE);
-> +
-> +		ret = regmap_update_bits(palmas_dev->regmap[slave], addr,
-> +					 PALMAS_PRIMARY_SECONDARY_PAD2_GPIO_7_MASK, 0);
-> +		if (ret)
-> +			pr_err("%s: Unable to write PALMAS_PRIMARY_SECONDARY_PAD2 %d\n",
-> +			       __func__, ret);
-
-Don't use __func__ in live code.
-
-And use dev_err();
-
-
-> +	}
-> +
->  	slave = PALMAS_BASE_TO_SLAVE(PALMAS_PMU_CONTROL_BASE);
->  	addr = PALMAS_BASE_TO_REG(PALMAS_PMU_CONTROL_BASE, PALMAS_DEV_CTRL);
->  
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	Sören
