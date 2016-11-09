@@ -1,87 +1,56 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Use lookup function for
- bias data
-Date: Wed, 9 Nov 2016 13:30:50 +0100
-Message-ID: <CAMuHMdUU5ju++2kTZpoJpBW=_-Ub4gReOTCitkct8sdRFkEovQ@mail.gmail.com>
-References: <20161103153421.15527-1-niklas.soderlund+renesas@ragnatech.se>
- <2675389.IrWB4HU6aN@avalon> <CAMuHMdUhR8Kh-8XLSwPXDYf7S+UVQiGSE4esmQtAfs0Qo-paog@mail.gmail.com>
- <1534860.cl1iMAJKMz@avalon>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V2 0/2] pinctrl: tegra: Add support for IO pad control
+Date: Wed, 9 Nov 2016 18:36:20 +0530
+Message-ID: <1478696782-11657-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1534860.cl1iMAJKMz@avalon>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, swarren@wwwdotorg.org, thierry.reding@gmail.com
+Cc: gnurou@gmail.com, yamada.masahiro@socionext.com, jonathanh@nvidia.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Laurent,
+NVIDIA Tegra124 and later SoCs support the multi-voltage level and
+low power state of some of its IO pads. The IO pads can work in
+the voltage of the 1.8V and 3.3V of IO power rail sources. When IO
+interface are not used then IO pads can be configure in low power
+state to reduce the power from that IO pads.
 
-On Wed, Nov 9, 2016 at 11:43 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Monday 07 Nov 2016 11:57:36 Geert Uytterhoeven wrote:
->> On Thu, Nov 3, 2016 at 6:10 PM, Laurent Pinchart wrote:
->> > On Thursday 03 Nov 2016 16:34:21 Niklas S=C3=B6derlund wrote:
->> >> There is a bug in the r8a7795 bias code where a WARN() is trigged
->> >> anytime a pin from PUEN0/PUD0is accessed.
->> >>  # cat /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins
->> >>
->> >>  WARNING: CPU: 2 PID: 2391 at drivers/pinctrl/sh-pfc/pfc-r8a7795.c:53=
-64
->> >>
->> >> r8a7795_pinmux_get_bias+0xbc/0xc8 [..]
->> >>
->> >>  Call trace:
->> >>  [<ffff0000083c442c>] r8a7795_pinmux_get_bias+0xbc/0xc8
->> >>  [<ffff0000083c37f4>] sh_pfc_pinconf_get+0x194/0x270
->> >>  [<ffff0000083b0768>] pin_config_get_for_pin+0x20/0x30
->> >>  [<ffff0000083b11e8>] pinconf_generic_dump_one+0x168/0x188
->> >>  [<ffff0000083b144c>] pinconf_generic_dump_pins+0x5c/0x98
->> >>  [<ffff0000083b0628>] pinconf_pins_show+0xc8/0x128
->> >>  [<ffff0000081fe3bc>] seq_read+0x16c/0x420
->> >>  [<ffff00000831a110>] full_proxy_read+0x58/0x88
->> >>  [<ffff0000081d7ad4>] __vfs_read+0x1c/0xf8
->> >>  [<ffff0000081d8874>] vfs_read+0x84/0x148
->> >>  [<ffff0000081d9d64>] SyS_read+0x44/0xa0
->> >>  [<ffff000008082f4c>] __sys_trace_return+0x0/0x4
->> >>
->> >> This is due to the WARN() check if the reg field of the pullups struc=
-t
->> >> is zero, and this should be 0 for pins controlled by the PUEN0/PUD0
->> >> registers. Change the layout of the pullups struct to embed the pin
->> >> number inside the struct and loop over it to fetch the correct
->> >> information or WARN() if no pin is found.
->> >
->> > This lowers the memory consumption at the cost of increased CPU usage.
->> > Given that the get/set bias functions are not part of a critical path =
-I'm
->> > fine with that. We could possibly optimize the implementation by using=
- a
->> > dichotomic search, but I don't think that's needed at the moment.
->>
->> Alternatively, we could steal one bit from the "reg" bitifield to
->> add a "present" bit, without increasing the table size:
->
-> That's an option too, but given how sparsely populated the table is at th=
-e
-> moment, I'd prefer lowering the memory consumption by moving the pin numb=
-er in
-> the table and removing unused entries. The increase in CPU time could be
-> further limited by using a dichotomic search if needed.
+This series add the support of configuration of IO pad via pinctrl
+framework. The io pad driver uses the tegra PMC interface.
 
-After discussing with Niklas, I agree.
+---
+This driver was sent earlier for review along with soc/tegra pmc
+changes. During review, decided to first conclude in soc/tegra pmc
+patches and then review this.
+    
+Thierry applied the pmc patches in the private tree
+        https://github.com/thierryreding/linux/tree/tegra186
+and he wanted to have the patches for user of the new APIs so that
+it can be pushed to mainline.
+    
+Sending the pinctrl driver. This needs Ack/reviewed from pinctrl subsystem
+i.e. Linus Welleij to apply in the Thierry's T186 branch along with
+PMC patches.
 
-Gr{oetje,eeting}s,
+---
+Changes from V1:
+- use the regulator framework to get the IO voltage instead of table from
+  DT. The regulator handle is provided from DT.
 
-                        Geert
+Laxman Dewangan (2):
+  pinctrl: tegra: Add DT binding for io pads control
+  pinctrl: tegra: Add driver to configure voltage and power of io pads
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+ .../bindings/pinctrl/nvidia,tegra-io-pad.txt       | 112 +++++++
+ drivers/pinctrl/tegra/Kconfig                      |  12 +
+ drivers/pinctrl/tegra/Makefile                     |   1 +
+ drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c       | 369 +++++++++++++++++++++
+ include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  21 ++
+ 5 files changed, 515 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pad.txt
+ create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+2.1.4
