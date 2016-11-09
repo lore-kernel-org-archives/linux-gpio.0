@@ -1,30 +1,31 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v2 2/2] ARM: sunxi: Add the missing clocks to the pinctrl nodes
-Date: Wed, 9 Nov 2016 09:30:13 +0800
-Message-ID: <CAGb2v67psWrGV+s0BtoexcCGNkAEe=FwdBGCWTRioiT61nC4qw@mail.gmail.com>
-References: <cover.61acad25a6fb233e39141b52acd217415281bd73.1478636546.git-series.maxime.ripard@free-electrons.com>
- <dbf6796cb2857e09072d57dc29152c153c2c8f61.1478636546.git-series.maxime.ripard@free-electrons.com>
+From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Subject: RE: [PATCH 1/2] gpio: xilinx: dt-binding: Add clock node
+Date: Wed, 9 Nov 2016 04:25:55 +0000
+Message-ID: <4EED9C67BE3EF440A606099F8E34C52826635513@XAP-PVEXMBX01.xlnx.xilinx.com>
+References: <1478581990-28276-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+ <20161108144846.GQ14444@xsjsorenbubuntu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:52678 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750724AbcKIBal (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Nov 2016 20:30:41 -0500
-In-Reply-To: <dbf6796cb2857e09072d57dc29152c153c2c8f61.1478636546.git-series.maxime.ripard@free-electrons.com>
+Received: from mail-sn1nam01on0066.outbound.protection.outlook.com ([104.47.32.66]:16256
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752354AbcKIE0K (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 8 Nov 2016 23:26:10 -0500
+In-Reply-To: <20161108144846.GQ14444@xsjsorenbubuntu>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+To: Soren Brinkmann <sorenb@xilinx.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "michal.simek@xilinx.com" <michal.simek@xilinx.com>
 
-On Wed, Nov 9, 2016 at 4:24 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The pin controllers also use the two oscillators for debouncing. Add them
-> to the DTs.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-
-You should also do the R_PIO block for the ones that have them too.
+DQpIaSBTb3JlbiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTw7Zy
+ZW4gQnJpbmttYW5uIFttYWlsdG86c29yZW4uYnJpbmttYW5uQHhpbGlueC5jb21dDQo+IFNlbnQ6
+IFR1ZXNkYXksIE5vdmVtYmVyIDA4LCAyMDE2IDg6MTkgUE0NCjxzbmlwPg0KDQo+ID4gKy0gY2xv
+Y2stbmFtZXM6IElucHV0IGNsb2NrIG5hbWUNCj4gDQo+IENsb2NrIG5hbWVzIGFyZSBkcml2ZXIg
+c3BlY2lmaWMgYW5kIG11c3QgYmUgZG9jdW1lbnRlZCBoZXJlLg0KDQoNCldpbGwgZG8gdGhhbmtz
+Lg0KDQo+IA0KPiA+DQo+ID4NCj4gPiAgRXhhbXBsZToNCj4gPiAgZ3BpbzogZ3Bpb0A0MDAwMDAw
+MCB7DQo+ID4gIAkjZ3Bpby1jZWxscyA9IDwyPjsNCj4gPiAgCWNvbXBhdGlibGUgPSAieGxueCx4
+cHMtZ3Bpby0xLjAwLmEiOw0KPiA+ICsJY2xvY2tzID0gPCZjbGtjIDE1PjsNCj4gDQo+IFdoZXJl
+IGFyZSB0aGUgY2xvY2stbmFtZXM/DQpXaWxsIGFkZC4gDQoNCj4gDQo+IAlTw7ZyZW4NCg==
