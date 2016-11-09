@@ -1,90 +1,115 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Use lookup function for bias data
-Date: Wed, 09 Nov 2016 12:43:02 +0200
-Message-ID: <1534860.cl1iMAJKMz@avalon>
-References: <20161103153421.15527-1-niklas.soderlund+renesas@ragnatech.se> <2675389.IrWB4HU6aN@avalon> <CAMuHMdUhR8Kh-8XLSwPXDYf7S+UVQiGSE4esmQtAfs0Qo-paog@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdUhR8Kh-8XLSwPXDYf7S+UVQiGSE4esmQtAfs0Qo-paog@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Niklas =?ISO-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH] pinctrl: intel: Configure pin as GPIO input when used directly through irqchip
+Date: Wed,  9 Nov 2016 13:22:31 +0200
+Message-ID: <20161109112231.122700-1-mika.westerberg@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga07.intel.com ([134.134.136.100]:29140 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752611AbcKILWf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 9 Nov 2016 06:22:35 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Hi Geert,
+If a pin is used directly through irqchip without requesting it first as
+GPIO, it might be in wrong mode (for example input buffer disabled). This
+means the user may never get any interrupts.
 
-On Monday 07 Nov 2016 11:57:36 Geert Uytterhoeven wrote:
-> On Thu, Nov 3, 2016 at 6:10 PM, Laurent Pinchart wrote:
-> > On Thursday 03 Nov 2016 16:34:21 Niklas S=F6derlund wrote:
-> >> There is a bug in the r8a7795 bias code where a WARN() is trigged
-> >> anytime a pin from PUEN0/PUD0is accessed.
-> >>=20
-> >>  # cat /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins
-> >> =20
-> >>  WARNING: CPU: 2 PID: 2391 at drivers/pinctrl/sh-pfc/pfc-r8a7795.c=
-:5364
-> >>=20
-> >> r8a7795_pinmux_get_bias+0xbc/0xc8 [..]
-> >>=20
-> >>  Call trace:
-> >>  [<ffff0000083c442c>] r8a7795_pinmux_get_bias+0xbc/0xc8
-> >>  [<ffff0000083c37f4>] sh_pfc_pinconf_get+0x194/0x270
-> >>  [<ffff0000083b0768>] pin_config_get_for_pin+0x20/0x30
-> >>  [<ffff0000083b11e8>] pinconf_generic_dump_one+0x168/0x188
-> >>  [<ffff0000083b144c>] pinconf_generic_dump_pins+0x5c/0x98
-> >>  [<ffff0000083b0628>] pinconf_pins_show+0xc8/0x128
-> >>  [<ffff0000081fe3bc>] seq_read+0x16c/0x420
-> >>  [<ffff00000831a110>] full_proxy_read+0x58/0x88
-> >>  [<ffff0000081d7ad4>] __vfs_read+0x1c/0xf8
-> >>  [<ffff0000081d8874>] vfs_read+0x84/0x148
-> >>  [<ffff0000081d9d64>] SyS_read+0x44/0xa0
-> >>  [<ffff000008082f4c>] __sys_trace_return+0x0/0x4
-> >>=20
-> >> This is due to the WARN() check if the reg field of the pullups st=
-ruct
-> >> is zero, and this should be 0 for pins controlled by the PUEN0/PUD=
-0
-> >> registers. Change the layout of the pullups struct to embed the pi=
-n
-> >> number inside the struct and loop over it to fetch the correct
-> >> information or WARN() if no pin is found.
-> >=20
-> > This lowers the memory consumption at the cost of increased CPU usa=
-ge.
-> > Given that the get/set bias functions are not part of a critical pa=
-th I'm
-> > fine with that. We could possibly optimize the implementation by us=
-ing a
-> > dichotomic search, but I don't think that's needed at the moment.
->=20
-> Alternatively, we could steal one bit from the "reg" bitifield to
-> add a "present" bit, without increasing the table size:
+Fix this by configuring the pin as GPIO input when its type is first set in
+irq_set_type().
 
-That's an option too, but given how sparsely populated the table is at =
-the=20
-moment, I'd prefer lowering the memory consumption by moving the pin nu=
-mber in=20
-the table and removing unused entries. The increase in CPU time could b=
-e=20
-further limited by using a dichotomic search if needed.
+Reported-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+Since we probably need to do this for cherryview and baytrail pinctrl
+drivers as well, I'm thinking is this something that the GPIO core could do
+automatically?
 
->         static const struct {
->                 u16 present : 1;
->                 u16 reg : 10;
->                 u16 bit : 5;
->          } pullups[] =3D {
->=20
-> While 10 bits is not sufficient in general (the PFC register block si=
-ze
-> is 0x50c), it's good enough to address the PUx registers. And if need=
-ed,
-> we can switch from register byte offsets to register indices, indexin=
-g the
-> 32-bit register file.
+ drivers/pinctrl/intel/pinctrl-intel.c | 46 +++++++++++++++++++++++------------
+ 1 file changed, 31 insertions(+), 15 deletions(-)
 
---=20
-Regards,
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 01443762e570..a1a5e2a77f9e 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -353,6 +353,23 @@ static int intel_pinmux_set_mux(struct pinctrl_dev *pctldev, unsigned function,
+ 	return 0;
+ }
+ 
++/* Called with pctrl->lock held */
++static void intel_gpio_set_gpio_mode(struct intel_pinctrl *pctrl,
++				     void __iomem *padcfg0)
++{
++	u32 value;
++
++	/* Put the pad into GPIO mode */
++	value = readl(padcfg0) & ~PADCFG0_PMODE_MASK;
++	/* Disable SCI/SMI/NMI generation */
++	value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
++	value &= ~(PADCFG0_GPIROUTSMI | PADCFG0_GPIROUTNMI);
++	/* Disable TX buffer and enable RX (this will be input) */
++	value &= ~PADCFG0_GPIORXDIS;
++	value |= PADCFG0_GPIOTXDIS;
++	writel(value, padcfg0);
++}
++
+ static int intel_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 				     struct pinctrl_gpio_range *range,
+ 				     unsigned pin)
+@@ -360,29 +377,26 @@ static int intel_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 	void __iomem *padcfg0;
+ 	unsigned long flags;
+-	u32 value;
++	int ret = 0;
+ 
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
+ 	if (!intel_pad_usable(pctrl, pin)) {
+-		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+-		return -EBUSY;
++		ret = -EBUSY;
++		goto out;
+ 	}
+ 
+ 	padcfg0 = intel_get_padcfg(pctrl, pin, PADCFG0);
+-	/* Put the pad into GPIO mode */
+-	value = readl(padcfg0) & ~PADCFG0_PMODE_MASK;
+-	/* Disable SCI/SMI/NMI generation */
+-	value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
+-	value &= ~(PADCFG0_GPIROUTSMI | PADCFG0_GPIROUTNMI);
+-	/* Disable TX buffer and enable RX (this will be input) */
+-	value &= ~PADCFG0_GPIORXDIS;
+-	value |= PADCFG0_GPIOTXDIS;
+-	writel(value, padcfg0);
++	if (!padcfg0) {
++		ret = -EINVAL;
++		goto out;
++	}
+ 
++	/* Set to GPIO input */
++	intel_gpio_set_gpio_mode(pctrl, padcfg0);
++out:
+ 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+-
+-	return 0;
++	return ret;
+ }
+ 
+ static int intel_gpio_set_direction(struct pinctrl_dev *pctldev,
+@@ -762,8 +776,10 @@ static int intel_gpio_irq_type(struct irq_data *d, unsigned type)
+ 
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
+-	value = readl(reg);
++	/* Make sure the pin is GPIO input */
++	intel_gpio_set_gpio_mode(pctrl, reg);
+ 
++	value = readl(reg);
+ 	value &= ~(PADCFG0_RXEVCFG_MASK | PADCFG0_RXINV);
+ 
+ 	if ((type & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH) {
+-- 
+2.9.3
 
-Laurent Pinchart
