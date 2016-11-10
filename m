@@ -1,324 +1,62 @@
-From: Keno Fischer <keno@juliacomputing.com>
-Subject: [PATCH] gpio: Guard devm_* functions behind CONFIG_GPIO_DEVRES not
- CONFIG_GPIOLIB
-Date: Wed, 9 Nov 2016 20:56:38 -0500
-Message-ID: <20161110015638.GA51357@juliacomputing.com>
+From: Joel Stanley <joel@jms.id.au>
+Subject: Re: [PATCH v2 2/6] mfd: dt: Add bindings for the Aspeed SoC Display
+ Controller (GFX)
+Date: Thu, 10 Nov 2016 13:49:05 +1030
+Message-ID: <CACPK8XeG2WnpNuHUf9VD+mZenWboq-4wei=LOkN4qVR72QbGXQ@mail.gmail.com>
+References: <1478097481-14895-1-git-send-email-andrew@aj.id.au>
+ <1478097481-14895-3-git-send-email-andrew@aj.id.au> <20161109182630.tg3puvwurgx6iinw@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f177.google.com ([209.85.216.177]:34293 "EHLO
-        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751674AbcKJB4m (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Nov 2016 20:56:42 -0500
-Received: by mail-qt0-f177.google.com with SMTP id n6so138585696qtd.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Nov 2016 17:56:41 -0800 (PST)
-Content-Disposition: inline
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35876 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753338AbcKJDT1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Nov 2016 22:19:27 -0500
+In-Reply-To: <20161109182630.tg3puvwurgx6iinw@rob-hp-laptop>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, jdike@addtoit.com, richard@nod.at, user-mode-linux-devel@lists.sourceforge.net
+To: Rob Herring <robh@kernel.org>, Andrew Jeffery <andrew@aj.id.au>
+Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-These functions are defined in devres.c, which only gets compiled with
-CONFIG_GPIO_DEVRES (in addition to CONFIG_GPIOLIB). However, in the
-header files, the difference between the declaration and the inline
-stub was only guarded by CONFIG_GPIOLIB, not CONFIG_GPIO_DEVRES,
-causing undefined symbol problems in modpost.
+On Thu, Nov 10, 2016 at 4:56 AM, Rob Herring <robh@kernel.org> wrote:
+> On Thu, Nov 03, 2016 at 01:07:57AM +1030, Andrew Jeffery wrote:
+>> The Aspeed SoC Display Controller is presented as a syscon device to
+>> arbitrate access by display and pinmux drivers. Video pinmux
+>> configuration on fifth generation SoCs depends on bits in both the
+>> System Control Unit and the Display Controller.
+>>
+>> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+>> ---
+>>  Documentation/devicetree/bindings/mfd/aspeed-gfx.txt | 17 +++++++++++++++++
+>
+> The register space can't be split to 2 nodes?
 
-Signed-off-by: Keno Fischer <keno@juliacomputing.com>
----
+Do you mean splitting the GFX IP and enable register into two nodes?
 
-I encountered this while trying to build uml in an attempt to debug some kernel
-behavior I don't understand. To be as close to my actual kernel as possible,
-I used the same .config, which of course tried to build a bunch of drivers.
-Arguably I should just not build those, but this seems correct nonetheless
-and allows the build to go through.
+We can't. Pinmux needs to check bit 6 and 7 in GFX064, which is in the
+middle the IP block:
 
- include/linux/gpio.h          |  28 +++---
- include/linux/gpio/consumer.h | 193 ++++++++++++++++++++++--------------------
- 2 files changed, 117 insertions(+), 104 deletions(-)
+GFX060: CRT Control Register I
+GFX064: CRT Control Register II
+GFX068: CRT Status Register
+GFX06C: CRT Misc Setting Register
 
-diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index d12b5d5..7a1b979 100644
---- a/include/linux/gpio.h
-+++ b/include/linux/gpio.h
-@@ -77,15 +77,6 @@ static inline int irq_to_gpio(unsigned int irq)
- 
- #endif /* ! CONFIG_ARCH_HAVE_CUSTOM_GPIO_H */
- 
--/* CONFIG_GPIOLIB: bindings for managed devices that want to request gpios */
--
--struct device;
--
--int devm_gpio_request(struct device *dev, unsigned gpio, const char *label);
--int devm_gpio_request_one(struct device *dev, unsigned gpio,
--			  unsigned long flags, const char *label);
--void devm_gpio_free(struct device *dev, unsigned int gpio);
--
- #else /* ! CONFIG_GPIOLIB */
- 
- #include <linux/kernel.h>
-@@ -253,6 +244,23 @@ gpiochip_remove_pin_ranges(struct gpio_chip *chip)
- 	WARN_ON(1);
- }
- 
-+#endif /* ! CONFIG_GPIOLIB */
-+
-+#ifdef CONFIG_GPIO_DEVRES
-+
-+/* CONFIG_GPIOLIB: bindings for managed devices that want to request gpios */
-+
-+struct device;
-+
-+int devm_gpio_request(struct device *dev, unsigned gpio, const char *label);
-+int devm_gpio_request_one(struct device *dev, unsigned gpio,
-+			  unsigned long flags, const char *label);
-+void devm_gpio_free(struct device *dev, unsigned int gpio);
-+
-+#else
-+
-+struct device;
-+
- static inline int devm_gpio_request(struct device *dev, unsigned gpio,
- 				    const char *label)
- {
-@@ -272,6 +280,6 @@ static inline void devm_gpio_free(struct device *dev, unsigned int gpio)
- 	WARN_ON(1);
- }
- 
--#endif /* ! CONFIG_GPIOLIB */
-+#endif
- 
- #endif /* __LINUX_GPIO_H */
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index fb0fde6..3e84311 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -70,28 +70,6 @@ struct gpio_descs *__must_check gpiod_get_array_optional(struct device *dev,
- void gpiod_put(struct gpio_desc *desc);
- void gpiod_put_array(struct gpio_descs *descs);
- 
--struct gpio_desc *__must_check devm_gpiod_get(struct device *dev,
--					      const char *con_id,
--					      enum gpiod_flags flags);
--struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
--						    const char *con_id,
--						    unsigned int idx,
--						    enum gpiod_flags flags);
--struct gpio_desc *__must_check devm_gpiod_get_optional(struct device *dev,
--						       const char *con_id,
--						       enum gpiod_flags flags);
--struct gpio_desc *__must_check
--devm_gpiod_get_index_optional(struct device *dev, const char *con_id,
--			      unsigned int index, enum gpiod_flags flags);
--struct gpio_descs *__must_check devm_gpiod_get_array(struct device *dev,
--						     const char *con_id,
--						     enum gpiod_flags flags);
--struct gpio_descs *__must_check
--devm_gpiod_get_array_optional(struct device *dev, const char *con_id,
--			      enum gpiod_flags flags);
--void devm_gpiod_put(struct device *dev, struct gpio_desc *desc);
--void devm_gpiod_put_array(struct device *dev, struct gpio_descs *descs);
--
- int gpiod_get_direction(struct gpio_desc *desc);
- int gpiod_direction_input(struct gpio_desc *desc);
- int gpiod_direction_output(struct gpio_desc *desc, int value);
-@@ -136,9 +114,7 @@ struct fwnode_handle;
- 
- struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 					 const char *propname);
--struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
--					    const char *con_id,
--					    struct fwnode_handle *child);
-+
- #else /* CONFIG_GPIOLIB */
- 
- static inline int gpiod_count(struct device *dev, const char *con_id)
-@@ -205,69 +181,6 @@ static inline void gpiod_put_array(struct gpio_descs *descs)
- 	WARN_ON(1);
- }
- 
--static inline struct gpio_desc *__must_check
--devm_gpiod_get(struct device *dev,
--		 const char *con_id,
--		 enum gpiod_flags flags)
--{
--	return ERR_PTR(-ENOSYS);
--}
--static inline
--struct gpio_desc *__must_check
--devm_gpiod_get_index(struct device *dev,
--		       const char *con_id,
--		       unsigned int idx,
--		       enum gpiod_flags flags)
--{
--	return ERR_PTR(-ENOSYS);
--}
--
--static inline struct gpio_desc *__must_check
--devm_gpiod_get_optional(struct device *dev, const char *con_id,
--			  enum gpiod_flags flags)
--{
--	return ERR_PTR(-ENOSYS);
--}
--
--static inline struct gpio_desc *__must_check
--devm_gpiod_get_index_optional(struct device *dev, const char *con_id,
--				unsigned int index, enum gpiod_flags flags)
--{
--	return ERR_PTR(-ENOSYS);
--}
--
--static inline struct gpio_descs *__must_check
--devm_gpiod_get_array(struct device *dev, const char *con_id,
--		     enum gpiod_flags flags)
--{
--	return ERR_PTR(-ENOSYS);
--}
--
--static inline struct gpio_descs *__must_check
--devm_gpiod_get_array_optional(struct device *dev, const char *con_id,
--			      enum gpiod_flags flags)
--{
--	return ERR_PTR(-ENOSYS);
--}
--
--static inline void devm_gpiod_put(struct device *dev, struct gpio_desc *desc)
--{
--	might_sleep();
--
--	/* GPIO can never have been requested */
--	WARN_ON(1);
--}
--
--static inline void devm_gpiod_put_array(struct device *dev,
--					struct gpio_descs *descs)
--{
--	might_sleep();
--
--	/* GPIO can never have been requested */
--	WARN_ON(1);
--}
--
--
- static inline int gpiod_get_direction(const struct gpio_desc *desc)
- {
- 	/* GPIO can never have been requested */
-@@ -417,12 +330,6 @@ static inline struct gpio_desc *fwnode_get_named_gpiod(
- 	return ERR_PTR(-ENOSYS);
- }
- 
--static inline struct gpio_desc *devm_get_gpiod_from_child(
--	struct device *dev, const char *con_id, struct fwnode_handle *child)
--{
--	return ERR_PTR(-ENOSYS);
--}
--
- #endif /* CONFIG_GPIOLIB */
- 
- #if IS_ENABLED(CONFIG_GPIOLIB) && IS_ENABLED(CONFIG_GPIO_SYSFS)
-@@ -452,4 +359,102 @@ static inline void gpiod_unexport(struct gpio_desc *desc)
- 
- #endif /* CONFIG_GPIOLIB && CONFIG_GPIO_SYSFS */
- 
-+#ifdef CONFIG_GPIO_DEVRES
-+	struct gpio_desc *__must_check devm_gpiod_get(struct device *dev,
-+						      const char *con_id,
-+						      enum gpiod_flags flags);
-+	struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
-+							    const char *con_id,
-+							    unsigned int idx,
-+							    enum gpiod_flags flags);
-+	struct gpio_desc *__must_check devm_gpiod_get_optional(struct device *dev,
-+							       const char *con_id,
-+							       enum gpiod_flags flags);
-+	struct gpio_desc *__must_check
-+	devm_gpiod_get_index_optional(struct device *dev, const char *con_id,
-+				      unsigned int index, enum gpiod_flags flags);
-+	struct gpio_descs *__must_check devm_gpiod_get_array(struct device *dev,
-+							     const char *con_id,
-+							     enum gpiod_flags flags);
-+	struct gpio_descs *__must_check
-+	devm_gpiod_get_array_optional(struct device *dev, const char *con_id,
-+				      enum gpiod_flags flags);
-+	void devm_gpiod_put(struct device *dev, struct gpio_desc *desc);
-+	void devm_gpiod_put_array(struct device *dev, struct gpio_descs *descs);
-+
-+	struct fwnode_handle;
-+	struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
-+						    const char *con_id,
-+						    struct fwnode_handle *child);
-+#else
-+	static inline struct gpio_desc *__must_check
-+	devm_gpiod_get(struct device *dev,
-+			 const char *con_id,
-+			 enum gpiod_flags flags)
-+	{
-+		return ERR_PTR(-ENOSYS);
-+	}
-+	static inline
-+	struct gpio_desc *__must_check
-+	devm_gpiod_get_index(struct device *dev,
-+			       const char *con_id,
-+			       unsigned int idx,
-+			       enum gpiod_flags flags)
-+	{
-+		return ERR_PTR(-ENOSYS);
-+	}
-+
-+	static inline struct gpio_desc *__must_check
-+	devm_gpiod_get_optional(struct device *dev, const char *con_id,
-+				  enum gpiod_flags flags)
-+	{
-+		return ERR_PTR(-ENOSYS);
-+	}
-+
-+	static inline struct gpio_desc *__must_check
-+	devm_gpiod_get_index_optional(struct device *dev, const char *con_id,
-+					unsigned int index, enum gpiod_flags flags)
-+	{
-+		return ERR_PTR(-ENOSYS);
-+	}
-+
-+	static inline struct gpio_descs *__must_check
-+	devm_gpiod_get_array(struct device *dev, const char *con_id,
-+			     enum gpiod_flags flags)
-+	{
-+		return ERR_PTR(-ENOSYS);
-+	}
-+
-+	static inline struct gpio_descs *__must_check
-+	devm_gpiod_get_array_optional(struct device *dev, const char *con_id,
-+				      enum gpiod_flags flags)
-+	{
-+		return ERR_PTR(-ENOSYS);
-+	}
-+
-+	static inline void devm_gpiod_put(struct device *dev, struct gpio_desc *desc)
-+	{
-+		might_sleep();
-+
-+		/* GPIO can never have been requested */
-+		WARN_ON(1);
-+	}
-+
-+	static inline void devm_gpiod_put_array(struct device *dev,
-+						struct gpio_descs *descs)
-+	{
-+		might_sleep();
-+
-+		/* GPIO can never have been requested */
-+		WARN_ON(1);
-+	}
-+
-+	struct fwnode_handle;
-+	static inline struct gpio_desc *devm_get_gpiod_from_child(
-+		struct device *dev, const char *con_id, struct fwnode_handle *child)
-+	{
-+		return ERR_PTR(-ENOSYS);
-+	}
-+#endif /* CONFIG_GPIO_DEVRES */
-+
- #endif
--- 
-2.9.3
+>> +The Aspeed SoC Display Controller primarily does as its name suggests, but also
+>> +participates in pinmux requests on the g5 SoCs. It is therefore considered a
+>> +syscon device.
+>> +
+>> +Required properties:
+>> +- compatible:                "aspeed,ast2500-gfx", "syscon"
+>
+> I think perhaps we should drop the syscon here and the driver should
+> just register as a syscon.
 
+We want the regmap to be present whenever the GFX driver or pinmux is
+loaded. If we register it in pinmux but chose to not build in that
+driver, we lack the regmap. Same for the case where a user builds in
+the GFX driver and not pinmux. I think this means we want the syscon
+compatible string, unless my understanding is wrong?
+
+Cheers,
+
+Joel
