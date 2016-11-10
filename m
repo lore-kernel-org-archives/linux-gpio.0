@@ -1,24 +1,23 @@
 From: Tan Jui Nee <jui.nee.tan@intel.com>
-Subject: [PATCH v10 4/6] mfd: move enum lpc_chipsets into lpc_ich.h
-Date: Thu, 10 Nov 2016 17:00:28 +0800
-Message-ID: <1478768430-13422-5-git-send-email-jui.nee.tan@intel.com>
+Subject: [PATCH v10 5/6] mfd: lpc_ich: Add Device IDs for Intel Apollo Lake PCH
+Date: Thu, 10 Nov 2016 17:00:29 +0800
+Message-ID: <1478768430-13422-6-git-send-email-jui.nee.tan@intel.com>
 References: <1478768430-13422-1-git-send-email-jui.nee.tan@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
 Received: from mga09.intel.com ([134.134.136.24]:26582 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932351AbcKJJBT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 10 Nov 2016 04:01:19 -0500
+        id S932354AbcKJJBU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 10 Nov 2016 04:01:20 -0500
 In-Reply-To: <1478768430-13422-1-git-send-email-jui.nee.tan@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, dvhart@infradead.org, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org
 Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, jui.nee.tan@intel.com, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com, yunying.sun@intel.com
 
-Move the enum's definition into a standalone header file which can be used
-wherever its definition is needed.
+Adding Intel codename Apollo Lake platform device IDs for PCH.
 
 Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
 Changes in V10:
 	- No change
@@ -29,171 +28,52 @@ Changes in V9:
 Changes in V8:
 	- No change
 
- drivers/mfd/lpc_ich_core.c  | 71 ---------------------------------------------
- include/linux/mfd/lpc_ich.h | 71 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 71 insertions(+), 71 deletions(-)
+ drivers/mfd/lpc_ich_core.c  | 6 ++++++
+ include/linux/mfd/lpc_ich.h | 1 +
+ 2 files changed, 7 insertions(+)
 
 diff --git a/drivers/mfd/lpc_ich_core.c b/drivers/mfd/lpc_ich_core.c
-index 7cbe037..920198a 100644
+index 920198a..3bb6334 100644
 --- a/drivers/mfd/lpc_ich_core.c
 +++ b/drivers/mfd/lpc_ich_core.c
-@@ -145,77 +145,6 @@ struct lpc_ich_priv {
- 	.ignore_resource_conflicts = true,
+@@ -54,6 +54,7 @@
+  *	document number TBD : Wildcat Point-LP
+  *	document number TBD : 9 Series
+  *	document number TBD : Lewisburg
++ *	document number TBD : Apollo Lake
+  */
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+@@ -458,6 +459,10 @@ struct lpc_ich_priv {
+ 		.name = "9 Series",
+ 		.iTCO_version = 2,
+ 	},
++	[LPC_APL]  = {
++		.name = "Apollo Lake SoC",
++		.iTCO_version = 5,
++	},
  };
  
--/* chipset related info */
--enum lpc_chipsets {
--	LPC_ICH = 0,	/* ICH */
--	LPC_ICH0,	/* ICH0 */
--	LPC_ICH2,	/* ICH2 */
--	LPC_ICH2M,	/* ICH2-M */
--	LPC_ICH3,	/* ICH3-S */
--	LPC_ICH3M,	/* ICH3-M */
--	LPC_ICH4,	/* ICH4 */
--	LPC_ICH4M,	/* ICH4-M */
--	LPC_CICH,	/* C-ICH */
--	LPC_ICH5,	/* ICH5 & ICH5R */
--	LPC_6300ESB,	/* 6300ESB */
--	LPC_ICH6,	/* ICH6 & ICH6R */
--	LPC_ICH6M,	/* ICH6-M */
--	LPC_ICH6W,	/* ICH6W & ICH6RW */
--	LPC_631XESB,	/* 631xESB/632xESB */
--	LPC_ICH7,	/* ICH7 & ICH7R */
--	LPC_ICH7DH,	/* ICH7DH */
--	LPC_ICH7M,	/* ICH7-M & ICH7-U */
--	LPC_ICH7MDH,	/* ICH7-M DH */
--	LPC_NM10,	/* NM10 */
--	LPC_ICH8,	/* ICH8 & ICH8R */
--	LPC_ICH8DH,	/* ICH8DH */
--	LPC_ICH8DO,	/* ICH8DO */
--	LPC_ICH8M,	/* ICH8M */
--	LPC_ICH8ME,	/* ICH8M-E */
--	LPC_ICH9,	/* ICH9 */
--	LPC_ICH9R,	/* ICH9R */
--	LPC_ICH9DH,	/* ICH9DH */
--	LPC_ICH9DO,	/* ICH9DO */
--	LPC_ICH9M,	/* ICH9M */
--	LPC_ICH9ME,	/* ICH9M-E */
--	LPC_ICH10,	/* ICH10 */
--	LPC_ICH10R,	/* ICH10R */
--	LPC_ICH10D,	/* ICH10D */
--	LPC_ICH10DO,	/* ICH10DO */
--	LPC_PCH,	/* PCH Desktop Full Featured */
--	LPC_PCHM,	/* PCH Mobile Full Featured */
--	LPC_P55,	/* P55 */
--	LPC_PM55,	/* PM55 */
--	LPC_H55,	/* H55 */
--	LPC_QM57,	/* QM57 */
--	LPC_H57,	/* H57 */
--	LPC_HM55,	/* HM55 */
--	LPC_Q57,	/* Q57 */
--	LPC_HM57,	/* HM57 */
--	LPC_PCHMSFF,	/* PCH Mobile SFF Full Featured */
--	LPC_QS57,	/* QS57 */
--	LPC_3400,	/* 3400 */
--	LPC_3420,	/* 3420 */
--	LPC_3450,	/* 3450 */
--	LPC_EP80579,	/* EP80579 */
--	LPC_CPT,	/* Cougar Point */
--	LPC_CPTD,	/* Cougar Point Desktop */
--	LPC_CPTM,	/* Cougar Point Mobile */
--	LPC_PBG,	/* Patsburg */
--	LPC_DH89XXCC,	/* DH89xxCC */
--	LPC_PPT,	/* Panther Point */
--	LPC_LPT,	/* Lynx Point */
--	LPC_LPT_LP,	/* Lynx Point-LP */
--	LPC_WBG,	/* Wellsburg */
--	LPC_AVN,	/* Avoton SoC */
--	LPC_BAYTRAIL,   /* Bay Trail SoC */
--	LPC_COLETO,	/* Coleto Creek */
--	LPC_WPT_LP,	/* Wildcat Point-LP */
--	LPC_BRASWELL,	/* Braswell SoC */
--	LPC_LEWISBURG,	/* Lewisburg */
--	LPC_9S,		/* 9 Series */
--};
--
- static struct lpc_ich_info lpc_chipset_info[] = {
- 	[LPC_ICH] = {
- 		.name = "ICH",
+ /*
+@@ -606,6 +611,7 @@ struct lpc_ich_priv {
+ 	{ PCI_VDEVICE(INTEL, 0x3b14), LPC_3420},
+ 	{ PCI_VDEVICE(INTEL, 0x3b16), LPC_3450},
+ 	{ PCI_VDEVICE(INTEL, 0x5031), LPC_EP80579},
++	{ PCI_VDEVICE(INTEL, 0x5ae8), LPC_APL},
+ 	{ PCI_VDEVICE(INTEL, 0x8c40), LPC_LPT},
+ 	{ PCI_VDEVICE(INTEL, 0x8c41), LPC_LPT},
+ 	{ PCI_VDEVICE(INTEL, 0x8c42), LPC_LPT},
 diff --git a/include/linux/mfd/lpc_ich.h b/include/linux/mfd/lpc_ich.h
-index 2b300b4..42307ee 100644
+index 42307ee..397008c 100644
 --- a/include/linux/mfd/lpc_ich.h
 +++ b/include/linux/mfd/lpc_ich.h
-@@ -43,4 +43,75 @@ struct lpc_ich_info {
- 	u8 use_gpio;
+@@ -112,6 +112,7 @@ enum lpc_chipsets {
+ 	LPC_BRASWELL,	/* Braswell SoC */
+ 	LPC_LEWISBURG,	/* Lewisburg */
+ 	LPC_9S,		/* 9 Series */
++	LPC_APL,	/* Apollo Lake SoC */
  };
  
-+/* chipset related info */
-+enum lpc_chipsets {
-+	LPC_ICH = 0,	/* ICH */
-+	LPC_ICH0,	/* ICH0 */
-+	LPC_ICH2,	/* ICH2 */
-+	LPC_ICH2M,	/* ICH2-M */
-+	LPC_ICH3,	/* ICH3-S */
-+	LPC_ICH3M,	/* ICH3-M */
-+	LPC_ICH4,	/* ICH4 */
-+	LPC_ICH4M,	/* ICH4-M */
-+	LPC_CICH,	/* C-ICH */
-+	LPC_ICH5,	/* ICH5 & ICH5R */
-+	LPC_6300ESB,	/* 6300ESB */
-+	LPC_ICH6,	/* ICH6 & ICH6R */
-+	LPC_ICH6M,	/* ICH6-M */
-+	LPC_ICH6W,	/* ICH6W & ICH6RW */
-+	LPC_631XESB,	/* 631xESB/632xESB */
-+	LPC_ICH7,	/* ICH7 & ICH7R */
-+	LPC_ICH7DH,	/* ICH7DH */
-+	LPC_ICH7M,	/* ICH7-M & ICH7-U */
-+	LPC_ICH7MDH,	/* ICH7-M DH */
-+	LPC_NM10,	/* NM10 */
-+	LPC_ICH8,	/* ICH8 & ICH8R */
-+	LPC_ICH8DH,	/* ICH8DH */
-+	LPC_ICH8DO,	/* ICH8DO */
-+	LPC_ICH8M,	/* ICH8M */
-+	LPC_ICH8ME,	/* ICH8M-E */
-+	LPC_ICH9,	/* ICH9 */
-+	LPC_ICH9R,	/* ICH9R */
-+	LPC_ICH9DH,	/* ICH9DH */
-+	LPC_ICH9DO,	/* ICH9DO */
-+	LPC_ICH9M,	/* ICH9M */
-+	LPC_ICH9ME,	/* ICH9M-E */
-+	LPC_ICH10,	/* ICH10 */
-+	LPC_ICH10R,	/* ICH10R */
-+	LPC_ICH10D,	/* ICH10D */
-+	LPC_ICH10DO,	/* ICH10DO */
-+	LPC_PCH,	/* PCH Desktop Full Featured */
-+	LPC_PCHM,	/* PCH Mobile Full Featured */
-+	LPC_P55,	/* P55 */
-+	LPC_PM55,	/* PM55 */
-+	LPC_H55,	/* H55 */
-+	LPC_QM57,	/* QM57 */
-+	LPC_H57,	/* H57 */
-+	LPC_HM55,	/* HM55 */
-+	LPC_Q57,	/* Q57 */
-+	LPC_HM57,	/* HM57 */
-+	LPC_PCHMSFF,	/* PCH Mobile SFF Full Featured */
-+	LPC_QS57,	/* QS57 */
-+	LPC_3400,	/* 3400 */
-+	LPC_3420,	/* 3420 */
-+	LPC_3450,	/* 3450 */
-+	LPC_EP80579,	/* EP80579 */
-+	LPC_CPT,	/* Cougar Point */
-+	LPC_CPTD,	/* Cougar Point Desktop */
-+	LPC_CPTM,	/* Cougar Point Mobile */
-+	LPC_PBG,	/* Patsburg */
-+	LPC_DH89XXCC,	/* DH89xxCC */
-+	LPC_PPT,	/* Panther Point */
-+	LPC_LPT,	/* Lynx Point */
-+	LPC_LPT_LP,	/* Lynx Point-LP */
-+	LPC_WBG,	/* Wellsburg */
-+	LPC_AVN,	/* Avoton SoC */
-+	LPC_BAYTRAIL,   /* Bay Trail SoC */
-+	LPC_COLETO,	/* Coleto Creek */
-+	LPC_WPT_LP,	/* Wildcat Point-LP */
-+	LPC_BRASWELL,	/* Braswell SoC */
-+	LPC_LEWISBURG,	/* Lewisburg */
-+	LPC_9S,		/* 9 Series */
-+};
-+
  #endif
 -- 
 1.9.1
