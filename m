@@ -1,87 +1,124 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v10 1/6] drivers/platform/x86/p2sb: New Primary to
- Sideband bridge support driver for Intel SOC's
-Date: Thu, 10 Nov 2016 18:07:16 +0200
-Message-ID: <1478794036.5295.130.camel@linux.intel.com>
+Subject: Re: [PATCH v10 6/6] mfd: lpc_ich: Add support for Intel Apollo Lake
+ GPIO pinctrl in non-ACPI system
+Date: Thu, 10 Nov 2016 18:19:22 +0200
+Message-ID: <1478794762.5295.134.camel@linux.intel.com>
 References: <1478768430-13422-1-git-send-email-jui.nee.tan@intel.com>
-         <1478768430-13422-2-git-send-email-jui.nee.tan@intel.com>
+         <1478768430-13422-7-git-send-email-jui.nee.tan@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:58815 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933663AbcKJQHZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 10 Nov 2016 11:07:25 -0500
-In-Reply-To: <1478768430-13422-2-git-send-email-jui.nee.tan@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1478768430-13422-7-git-send-email-jui.nee.tan@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Tan Jui Nee <jui.nee.tan@intel.com>, mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, tglx@linutronix.de, dvhart@infradead.org, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org
 Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com, yunying.sun@intel.com
+List-Id: linux-gpio@vger.kernel.org
 
 On Thu, 2016-11-10 at 17:00 +0800, Tan Jui Nee wrote:
-> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> There is already one and at least one more user coming which
-> require an access to Primary to Sideband bridge (P2SB) in order
-> to get IO or MMIO bar hidden by BIOS.
-> Create a driver to access P2SB for x86 devices.
-> 
-> Signed-off-by: Yong, Jonathan <jonathan.yong@intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> This driver uses the P2SB hide/unhide mechanism cooperatively
+> to pass the PCI BAR address to the gpio platform driver.
+
+@@ -161,6 +161,10 @@ obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+=
+> intel_quark_i2c_gpio.o
+>  obj-$(CONFIG_LPC_SCH)
+> 		+= lpc_sch.o
 
 
-> +int p2sb_bar(struct pci_dev *pdev, unsigned int devfn,
-> +	struct resource *res)
-> +{
-> +	u32 base_addr;
-> +	u64 base64_addr;
-> +	unsigned long flags;
+>  lpc_ich-objs		:= lpc_ich_core.o
+>  obj-$(CONFIG_LPC_ICH)		+= lpc_ich.o
+> +lpc_ich-objs		:= lpc_ich_core.o
+
+Once I pointed out on this.
+
+> @@ -0,0 +1,120 @@
+> +/*
+> + * Intel Apollo Lake In-Vehicle Infotainment (IVI) systems used in
+> cars support
+> + *
+> + * Copyright (C) 2016 Intel Corporation
+> + *
+> + * Author: Tan, Jui Nee <jui.nee.tan@intel.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
 > +
-> 
+> +#include <asm/p2sb.h>
+> +#include <linux/pci.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/lpc_ich.h>
+> +#include <linux/pinctrl/pinctrl.h>
 
-> +	if (!res)
-> +		return -EINVAL;
+Perhaps some order like
 
-I don't remember the details, one version was quite changed, so, I think
-these lines are not needed anymore.
+#include <linux/mfd/core.h>
+#include <linux/mfd/lpc_ich.h>
+#include <linux/pci.h>
+#include <linux/pinctrl/pinctrl.h>
 
-> +	/* Get IO or MMIO BAR */
-> +	pci_bus_read_config_dword(pdev->bus, devfn, SBREG_BAR,
-> &base_addr);
-> +	if ((base_addr & PCI_BASE_ADDRESS_SPACE) ==
-> PCI_BASE_ADDRESS_SPACE_IO) {
-> +		flags = IORESOURCE_IO;
-> +		base64_addr = base_addr & PCI_BASE_ADDRESS_IO_MASK;
-> +	} else {
-> +		flags = IORESOURCE_MEM;
-> +		base64_addr = base_addr & PCI_BASE_ADDRESS_MEM_MASK;
-> +		if (base_addr & PCI_BASE_ADDRESS_MEM_TYPE_64) {
-> +			flags |= IORESOURCE_MEM_64;
-> 
+#include <asm/p2sb.h>
 
-> +			pci_bus_read_config_dword(pdev->bus, devfn,
-> +				SBREG_BAR + 4, &base_addr);
+> +
+> +#include "lpc_ich_apl.h"
 
-Fix indentation.
 
-> +			base64_addr |= (u64)base_addr << 32;
-> +		}
+> +int lpc_ich_add_gpio(struct pci_dev *dev, enum lpc_chipsets chipset)
+> +{
+
+> +	unsigned int i;
+> +	int ret;
+> +	struct resource base;
+
+Reversed tree, please:
+
+	struct resource base;
+	unsigned int i;
+	int ret;
+
+> +
+> +	if (chipset != LPC_APL)
+> +		return -ENODEV;
+> +	/*
+> +	 * Apollo lake, has not 1, but 4 gpio controllers,
+> +	 * handle it a bit differently.
+> +	 */
+> +
+> +	ret = p2sb_bar(dev, PCI_DEVFN(PCI_IDSEL_P2SB, 0), &base);
+> +	if (ret)
+> +		goto warn_continue;
+> +
+> +	for (i = 0; i < APL_GPIO_COMMUNITY_MAX; i++) {
+> +		struct resource *res = &apl_gpio_io_res[i];
+> +
+> +		/* Fill MEM resource */
+> +		res->start += base.start;
+> +		res->end += base.start;
+> +		res->flags = base.flags;
+> +
+> +		res++;
 > +	}
 > +
-> +	/* Hide the P2SB device */
-> +	pci_bus_write_config_byte(pdev->bus, devfn, SBREG_HIDE,
-> 0x01);
+> +	ret = mfd_add_devices(&dev->dev, 0,
+> +		apl_gpio_devices, ARRAY_SIZE(apl_gpio_devices),
+> +			NULL, 0, NULL);
 > +
-> +	spin_unlock(&p2sb_spinlock);
+> 
+
+> +	if (ret)
+> +warn_continue:
+
+Better if you put label before if for sake of readability. I pointed
+once to this.
+
+> +		dev_warn(&dev->dev,
+> +			"Failed to add Apollo Lake GPIO: %d\n",
+> +				ret);
 > +
-
-> +	/* User provides prefilled resources */
-
-Not anymore as far I as I can see. You just return here the result.
-
-> +	res->start = (resource_size_t)base64_addr;
-> +	res->flags = flags;
+> +	return ret;
+> +}
 
 -- 
 Andy Shevchenko <andriy.shevchenko@linux.intel.com>
