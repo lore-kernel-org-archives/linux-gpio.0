@@ -1,99 +1,67 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.9
-Date: Thu, 10 Nov 2016 09:58:24 +0100
-Message-ID: <CACRpkdY43rPkqmgxoKydDzZOt30_YNxN7S__5a+xPo+UunwPyw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f170.google.com ([209.85.220.170]:34730 "EHLO
-        mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752528AbcKJI6Z (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Nov 2016 03:58:25 -0500
-Received: by mail-qk0-f170.google.com with SMTP id q130so287959566qke.1
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Nov 2016 00:58:25 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Tan Jui Nee <jui.nee.tan@intel.com>
+Subject: [PATCH v10 2/6] mfd: lpc_ich: Rename lpc-ich driver
+Date: Thu, 10 Nov 2016 17:00:26 +0800
+Message-ID: <1478768430-13422-3-git-send-email-jui.nee.tan@intel.com>
+References: <1478768430-13422-1-git-send-email-jui.nee.tan@intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1478768430-13422-1-git-send-email-jui.nee.tan@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, dvhart@infradead.org, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, jui.nee.tan@intel.com, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com, yunying.sun@intel.com
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre TORGUE <alexandre.torgue@st.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Patrice CHOTARD <patrice.chotard@st.com>, Andrew Jeffery <andrew@aj.id.au>, Ray Jui <ray.jui@broadcom.com>, Stefan Agner <stefan@agner.ch>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Linus,
+This patch follows the example of mfd/wm831x to rename the driver
+from "lpc_ich" to "lpc_ich_core".
 
-here is a set of pin control fixes for the v4.9 cycle.
+Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+Changes in V10:
+	- No change
 
-All is about drivers, no core business going on.
+Changes in V9:
+	- Remove the filename from the header of lpc_ich_core.c (suggested by Lee).
 
-Details are in the signed tag.
+Changes in V8:
+	- Update new file name with lpc_ich_core.c at description of source file.
+	- Rework Makefile with new source file name lpc_ich_apl.c.
 
-Please pull it in!
+Changes in V7:
+	- No change
 
-Yours,
-Linus Walleij
+Changes in V6:
+	- none, just a subject line and commit message change.
 
+ drivers/mfd/Makefile                      | 1 +
+ drivers/mfd/{lpc_ich.c => lpc_ich_core.c} | 2 --
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+ rename drivers/mfd/{lpc_ich.c => lpc_ich_core.c} (99%)
 
-The following changes since commit a909d3e636995ba7c349e2ca5dbb528154d4ac30:
-
-  Linux 4.9-rc3 (2016-10-29 13:52:02 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.9-3
-
-for you to fetch changes up to a33547cc764ca994d27a8fcc5fc61fbf4b2f7361:
-
-  pinctrl-aspeed-g5: Never set SCU90[6] (2016-11-07 10:31:33 +0100)
-
-----------------------------------------------------------------
-Pin control fixes for the v4.9 cycle:
-
-- Fix a host of runtime problems with the Intel
-  Cherryview driver: suspend/resume needs to be
-  marshalled properly, and strange effects from BIOS
-  interaction during suspend/resume need to be
-  dealt with.
-
-- A single bit was being set wrong in the Aspeed
-  driver.
-
-- Fix an iProc probe ordering fallout resulting from
-  v4.9 refactorings for bus population.
-
-- Do not specify a default trigger in the ST Micro
-  cascaded GPIO IRQ controller: the kernel will moan.
-
-- Make IRQs optional altogether on the STM32 driver,
-  it turns out not all systems have them or want them.
-
-- Fix a re-probe bug in the i.MX driver, it will
-  eventually crash if probed repeatedly, not good.
-
-----------------------------------------------------------------
-Alexandre TORGUE (2):
-      pinctrl: stm32: remove dependency with interrupt controller
-      pinctrl: stm32: move gpio irqs binding to optional
-
-Andrew Jeffery (1):
-      pinctrl-aspeed-g5: Never set SCU90[6]
-
-Mika Westerberg (2):
-      pinctrl: cherryview: Serialize register access in suspend/resume
-      pinctrl: cherryview: Prevent possible interrupt storm on resume
-
-Patrice Chotard (1):
-      pinctrl: st: don't specify default interrupt trigger
-
-Ray Jui (1):
-      pinctrl: iproc: Fix iProc and NSP GPIO support
-
-Stefan Agner (1):
-      pinctrl: imx: reset group index on probe
-
- .../devicetree/bindings/pinctrl/st,stm32-pinctrl.txt    | 10 +++++-----
- drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c              |  2 +-
- drivers/pinctrl/bcm/pinctrl-iproc-gpio.c                |  2 +-
- drivers/pinctrl/bcm/pinctrl-nsp-gpio.c                  |  2 +-
- drivers/pinctrl/freescale/pinctrl-imx.c                 |  1 +
- drivers/pinctrl/intel/pinctrl-cherryview.c              | 17 ++++++++++++++---
- drivers/pinctrl/pinctrl-st.c                            |  2 +-
- drivers/pinctrl/stm32/pinctrl-stm32.c                   |  8 +++++---
- 8 files changed, 29 insertions(+), 15 deletions(-)
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 9834e66..06a91ea 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -159,6 +159,7 @@ obj-$(CONFIG_PMIC_ADP5520)	+= adp5520.o
+ obj-$(CONFIG_MFD_KEMPLD)	+= kempld-core.o
+ obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+= intel_quark_i2c_gpio.o
+ obj-$(CONFIG_LPC_SCH)		+= lpc_sch.o
++lpc_ich-objs		:= lpc_ich_core.o
+ obj-$(CONFIG_LPC_ICH)		+= lpc_ich.o
+ obj-$(CONFIG_MFD_RDC321X)	+= rdc321x-southbridge.o
+ obj-$(CONFIG_MFD_JANZ_CMODIO)	+= janz-cmodio.o
+diff --git a/drivers/mfd/lpc_ich.c b/drivers/mfd/lpc_ich_core.c
+similarity index 99%
+rename from drivers/mfd/lpc_ich.c
+rename to drivers/mfd/lpc_ich_core.c
+index c8dee47..7cbe037 100644
+--- a/drivers/mfd/lpc_ich.c
++++ b/drivers/mfd/lpc_ich_core.c
+@@ -1,6 +1,4 @@
+ /*
+- *  lpc_ich.c - LPC interface for Intel ICH
+- *
+  *  LPC bridge function of the Intel ICH contains many other
+  *  functional units, such as Interrupt controllers, Timers,
+  *  Power Management, System Management, GPIO, RTC, and LPC
+-- 
+1.9.1
