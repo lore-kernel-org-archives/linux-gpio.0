@@ -1,88 +1,70 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: [PATCH v2] gpio: mxc: Shift generic request/free after gpiochip
- registration
-Date: Thu, 10 Nov 2016 14:35:38 +0200
-Message-ID: <d7e3c21a-48ec-e654-701a-7e6b5556f03a@mentor.com>
-References: <1477418567-28347-1-git-send-email-deepak_das@mentor.com>
- <CACRpkdYg2nKO5i7_5q0Hp3rvqmGiPCkueXxp7JnGTsJ-Mb1wAQ@mail.gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v10 2/6] mfd: lpc_ich: Rename lpc-ich driver
+Date: Thu, 10 Nov 2016 18:01:05 +0200
+Message-ID: <1478793665.5295.127.camel@linux.intel.com>
+References: <1478768430-13422-1-git-send-email-jui.nee.tan@intel.com>
+         <1478768430-13422-3-git-send-email-jui.nee.tan@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:59192 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932595AbcKJMfp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Nov 2016 07:35:45 -0500
-In-Reply-To: <CACRpkdYg2nKO5i7_5q0Hp3rvqmGiPCkueXxp7JnGTsJ-Mb1wAQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-Reply-To: <1478768430-13422-3-git-send-email-jui.nee.tan@intel.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Tan Jui Nee <jui.nee.tan@intel.com>, mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, tglx@linutronix.de, dvhart@infradead.org, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com, yunying.sun@intel.com
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Deepak Das <deepak_das@mentor.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>
 
-Hi Linus, Deepak,
+On Thu, 2016-11-10 at 17:00 +0800, Tan Jui Nee wrote:
+> This patch follows the example of mfd/wm831x to rename the driver
+> from "lpc_ich" to "lpc_ich_core".
+> 
+> Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
+> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+> Changes in V10:
+> 	- No change
+> 
+> Changes in V9:
+> 	- Remove the filename from the header of lpc_ich_core.c
+> (suggested by Lee).
+> 
+> Changes in V8:
+> 	- Update new file name with lpc_ich_core.c at description of
+> source file.
+> 	- Rework Makefile with new source file name lpc_ich_apl.c.
+> 
+> Changes in V7:
+> 	- No change
+> 
+> Changes in V6:
+> 	- none, just a subject line and commit message change.
+> 
+>  drivers/mfd/Makefile                      | 1 +
+>  drivers/mfd/{lpc_ich.c => lpc_ich_core.c} | 2 --
+>  2 files changed, 1 insertion(+), 2 deletions(-)
+>  rename drivers/mfd/{lpc_ich.c => lpc_ich_core.c} (99%)
+> 
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 9834e66..06a91ea 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -159,6 +159,7 @@ obj-$(CONFIG_PMIC_ADP5520)	+= adp5520.o
+>  obj-$(CONFIG_MFD_KEMPLD)	+= kempld-core.o
+>  obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+=
+> intel_quark_i2c_gpio.o
+>  obj-$(CONFIG_LPC_SCH)		+= lpc_sch.o
 
-On 11/02/2016 12:55 AM, Linus Walleij wrote:
-> On Tue, Oct 25, 2016 at 8:02 PM, Deepak Das <deepak_das@mentor.com> wrote:
->
->> generic gpio request/free should be added after gpiocip registration
->> to validate mapping of gpiochip with pinctrl subsystem.
->>
->> gpiochip->pin_ranges list contains the information used by pinctrl
->> subsystem to configure corresponding pins for gpio usage.
->> This list will be empty if gpiochip fails to map with
->> pinctrl subsystem for any reason.
->> For Ex.:-
->> generic gpio request/free should not be used if IOMUX pin controller
->> device node is disabled in device tree.
->>
->> This commit checks above list and skips adding generic gpio request/free
->> if list is found empty.
->>
->> Signed-off-by: Deepak Das <deepak_das@mentor.com>
->> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->
-> So we should not dereference gpiolib internals.
->
->> -       if (of_property_read_bool(np, "gpio-ranges")) {
->> -               port->gc.request = gpiochip_generic_request;
->> -               port->gc.free = gpiochip_generic_free;
->> -       }
->> -
->>         port->gc.to_irq = mxc_gpio_to_irq;
->>         port->gc.base = (pdev->id < 0) ? of_alias_get_id(np, "gpio") * 32 :
->>                                              pdev->id * 32;
->> @@ -471,6 +466,11 @@ static int mxc_gpio_probe(struct platform_device *pdev)
->>         if (err)
->>                 goto out_bgio;
->>
->> +       if (!list_empty(&port->gc.pin_ranges)) {
->> +               port->gc.request = gpiochip_generic_request;
->> +               port->gc.free = gpiochip_generic_free;
->> +       }
->
-> Can't you just check the "gpio-ranges" property later instead?
+> +lpc_ich-objs		:= lpc_ich_core.o
 
-The change was done for a kernel when of_gpiochip_add_pin_range() did not
-return an error code and the change is not applicable to the vanilla kernel.
+Put this line after...
 
-Potentially of_gpiochip_add_pin_range() may fail due to some other reason
-than a missing pinctrl device from the supplied phandle (e.g. -ENOMEM),
-but in that case gpiochip_add_data() will also fail and the late check
-for empty pin_ranges becomes redundant.
+>  obj-$(CONFIG_LPC_ICH)		+= lpc_ich.o
 
-Originally the change is needed exclusively to cover the case, when IOMUX
-device node is removed or disabled in a board DTB, while GPIOs still can
-be requested by other controller drivers. The disabled pinctrl device case
-(pinmux/pinctrl settings are done from a bootloader only) is inapplicable
-to any boards found in upstream, so I would propose *not* to include this
-change or any its derivative fix to the upstream.
+...this one. And you will easily see the issue in next patch.
 
-If somebody wants to support the scenario described above on a board not
-found in vanilla, the best option is to remove gpio-ranges proporty from
-the board DTS file along with disabling IOMUX, then the GPIO driver in
-its currently existing state can be successfully reused without any
-runtime issues.
+>  obj-$(CONFIG_MFD_RDC321X)	+= rdc321x-southbridge.o
+>  obj-$(CONFIG_MFD_JANZ_CMODIO)	+= janz-cmodio.o
 
---
-With best wishes,
-Vladimir
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
