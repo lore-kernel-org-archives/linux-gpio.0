@@ -1,62 +1,112 @@
-From: Joel Stanley <joel@jms.id.au>
-Subject: Re: [PATCH v2 2/6] mfd: dt: Add bindings for the Aspeed SoC Display
- Controller (GFX)
-Date: Thu, 10 Nov 2016 13:49:05 +1030
-Message-ID: <CACPK8XeG2WnpNuHUf9VD+mZenWboq-4wei=LOkN4qVR72QbGXQ@mail.gmail.com>
-References: <1478097481-14895-1-git-send-email-andrew@aj.id.au>
- <1478097481-14895-3-git-send-email-andrew@aj.id.au> <20161109182630.tg3puvwurgx6iinw@rob-hp-laptop>
+From: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 2/4] mfd: palmas: Reset the POWERHOLD mux during power off
+Date: Thu, 10 Nov 2016 09:48:51 +0530
+Message-ID: <7f78b9be-8f47-c4f6-7392-15d9b1441496@ti.com>
+References: <1477559414-12520-1-git-send-email-j-keerthy@ti.com>
+ <1477559414-12520-3-git-send-email-j-keerthy@ti.com>
+ <20161109161419.GJ13127@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35876 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753338AbcKJDT1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Nov 2016 22:19:27 -0500
-In-Reply-To: <20161109182630.tg3puvwurgx6iinw@rob-hp-laptop>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161109161419.GJ13127@dell>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nm-l0cyMroinI0@public.gmane.org, t-kristo-l0cyMroinI0@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Andrew Jeffery <andrew@aj.id.au>
-Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-On Thu, Nov 10, 2016 at 4:56 AM, Rob Herring <robh@kernel.org> wrote:
-> On Thu, Nov 03, 2016 at 01:07:57AM +1030, Andrew Jeffery wrote:
->> The Aspeed SoC Display Controller is presented as a syscon device to
->> arbitrate access by display and pinmux drivers. Video pinmux
->> configuration on fifth generation SoCs depends on bits in both the
->> System Control Unit and the Display Controller.
+
+
+On Wednesday 09 November 2016 09:44 PM, Lee Jones wrote:
+> On Thu, 27 Oct 2016, Keerthy wrote:
+>
+>> POWERHOLD signal has higher priority  over the DEV_ON bit.
+>> So power off will not happen if the POWERHOLD is held high.
+>> Hence reset the MUX to GPIO_7 mode to release the POWERHOLD
+>> and the DEV_ON bit to take effect to power off the PMIC.
 >>
->> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+>> PMIC Power off happens in dire situations like thermal shutdown
+>> so irrespective of the POWERHOLD setting go ahead and turn off
+>> the powerhold.  Currently poweroff is broken on boards that have
+>> powerhold enabled. This fixes poweroff on those boards.
+>>
+>> Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
 >> ---
->>  Documentation/devicetree/bindings/mfd/aspeed-gfx.txt | 17 +++++++++++++++++
+>>  drivers/mfd/palmas.c | 18 ++++++++++++++++++
+>>  1 file changed, 18 insertions(+)
+>>
+>> diff --git a/drivers/mfd/palmas.c b/drivers/mfd/palmas.c
+>> index 8f8bacb..8fbc5e0 100644
+>> --- a/drivers/mfd/palmas.c
+>> +++ b/drivers/mfd/palmas.c
+>> @@ -430,10 +430,28 @@ static void palmas_power_off(void)
+>>  {
+>>  	unsigned int addr;
+>>  	int ret, slave;
+>> +	struct device_node *node;
+>> +	bool override_powerhold;
+>>
+>>  	if (!palmas_dev)
 >
-> The register space can't be split to 2 nodes?
+> Can this happen?
 
-Do you mean splitting the GFX IP and enable register into two nodes?
+pm_power_off and palmas_dev are always assigned together. You are right 
+this is redundant and can be removed.
 
-We can't. Pinmux needs to check bit 6 and 7 in GFX064, which is in the
-middle the IP block:
+>
+>>  		return;
+>>
+>> +	node = palmas_dev->dev->of_node;
+>
+> Just do:
+>
+> struct device_node *np = palmas_dev->dev->of_node;
+>
+>> +	override_powerhold = of_property_read_bool(node,
+>> +					"ti,palmas-override-powerhold");
+>
+> Break the line after the '=' instead.
 
-GFX060: CRT Control Register I
-GFX064: CRT Control Register II
-GFX068: CRT Status Register
-GFX06C: CRT Misc Setting Register
+okay.
 
->> +The Aspeed SoC Display Controller primarily does as its name suggests, but also
->> +participates in pinmux requests on the g5 SoCs. It is therefore considered a
->> +syscon device.
+>
+>> +	if (override_powerhold) {
+>
+> if (of_property_read_bool(node,	"ti,palmas-override-powerhold"))
+>
+> Then remove 'override_powerhold'.
+
+Okay.
+
+>
+>> +		addr = PALMAS_BASE_TO_REG(PALMAS_PU_PD_OD_BASE,
+>> +					  PALMAS_PRIMARY_SECONDARY_PAD2);
+>> +		slave = PALMAS_BASE_TO_SLAVE(PALMAS_PU_PD_OD_BASE);
 >> +
->> +Required properties:
->> +- compatible:                "aspeed,ast2500-gfx", "syscon"
+>> +		ret = regmap_update_bits(palmas_dev->regmap[slave], addr,
+>> +					 PALMAS_PRIMARY_SECONDARY_PAD2_GPIO_7_MASK, 0);
+>> +		if (ret)
+>> +			pr_err("%s: Unable to write PALMAS_PRIMARY_SECONDARY_PAD2 %d\n",
+>> +			       __func__, ret);
 >
-> I think perhaps we should drop the syscon here and the driver should
-> just register as a syscon.
+> Don't use __func__ in live code.
 
-We want the regmap to be present whenever the GFX driver or pinmux is
-loaded. If we register it in pinmux but chose to not build in that
-driver, we lack the regmap. Same for the case where a user builds in
-the GFX driver and not pinmux. I think this means we want the syscon
-compatible string, unless my understanding is wrong?
+okay.
 
-Cheers,
+>
+> And use dev_err();
 
-Joel
+sure.
+
+>
+>
+>> +	}
+>> +
+>>  	slave = PALMAS_BASE_TO_SLAVE(PALMAS_PMU_CONTROL_BASE);
+>>  	addr = PALMAS_BASE_TO_REG(PALMAS_PMU_CONTROL_BASE, PALMAS_DEV_CTRL);
+>>
+>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
