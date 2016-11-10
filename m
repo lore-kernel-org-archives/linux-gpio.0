@@ -1,65 +1,51 @@
-From: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH v2 3/5] mfd: palmas: Reset the POWERHOLD mux during power off
-Date: Thu, 10 Nov 2016 10:39:18 +0530
-Message-ID: <1478754560-27923-4-git-send-email-j-keerthy@ti.com>
-References: <1478754560-27923-1-git-send-email-j-keerthy@ti.com>
+From: Shubhrajyoti Datta <shubhrajyoti.datta-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCHv3 1/2] gpio: xilinx: dt-binding: Add clock node
+Date: Thu, 10 Nov 2016 11:26:04 +0530
+Message-ID: <1478757365-3311-1-git-send-email-shubhrajyoti.datta@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1478754560-27923-1-git-send-email-j-keerthy-l0cyMroinI0@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nm-l0cyMroinI0@public.gmane.org, j-keerthy-l0cyMroinI0@public.gmane.org, t-kristo-l0cyMroinI0@public.gmane.org
+To: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org, michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org, shubhrajyoti.datta-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Shubhrajyoti Datta <shubhrajyoti.datta-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-POWERHOLD signal has higher priority  over the DEV_ON bit.
-So power off will not happen if the POWERHOLD is held high.
-Hence reset the MUX to GPIO_7 mode to release the POWERHOLD
-and the DEV_ON bit to take effect to power off the PMIC.
+Add the clock node to the dt binding.
 
-PMIC Power off happens in dire situations like thermal shutdown
-so irrespective of the POWERHOLD setting go ahead and turn off
-the powerhold.  Currently poweroff is broken on boards that have
-powerhold enabled. This fixes poweroff on those boards.
-
-Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
 ---
+v2: 
+Make clocks optional
+Add clock name
+v3:
+No change
 
-Changes in v2:
+ .../devicetree/bindings/gpio/gpio-xilinx.txt       |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-  * Changed pr_err to dev_err
-  * removed redundant boolean variable override-powerhold
-
- drivers/mfd/palmas.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/mfd/palmas.c b/drivers/mfd/palmas.c
-index ee9e9ea..da90124 100644
---- a/drivers/mfd/palmas.c
-+++ b/drivers/mfd/palmas.c
-@@ -430,6 +430,20 @@ static void palmas_power_off(void)
- {
- 	unsigned int addr;
- 	int ret, slave;
-+	struct device_node *np = palmas_dev->dev->of_node;
-+
-+	if (of_property_read_bool(np, "ti,palmas-override-powerhold")) {
-+		addr = PALMAS_BASE_TO_REG(PALMAS_PU_PD_OD_BASE,
-+					  PALMAS_PRIMARY_SECONDARY_PAD2);
-+		slave = PALMAS_BASE_TO_SLAVE(PALMAS_PU_PD_OD_BASE);
-+
-+		ret = regmap_update_bits(palmas_dev->regmap[slave], addr,
-+				PALMAS_PRIMARY_SECONDARY_PAD2_GPIO_7_MASK, 0);
-+		if (ret)
-+			dev_err(palmas_dev->dev,
-+				"Unable to write PRIMARY_SECONDARY_PAD2 %d\n",
-+				ret);
-+	}
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-xilinx.txt b/Documentation/devicetree/bindings/gpio/gpio-xilinx.txt
+index 63bf4be..1372007 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-xilinx.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-xilinx.txt
+@@ -25,12 +25,16 @@ Optional properties:
+ - xlnx,dout-default-2 : as above but the second channel
+ - xlnx,gpio2-width : as above but for the second channel
+ - xlnx,tri-default-2 : as above but for the second channel
++- clocks: Input clock specifier. Refer to common clock bindings.
++- clock-names: Input clock name, should be s_axi_aclk.
  
- 	slave = PALMAS_BASE_TO_SLAVE(PALMAS_PMU_CONTROL_BASE);
- 	addr = PALMAS_BASE_TO_REG(PALMAS_PMU_CONTROL_BASE, PALMAS_DEV_CTRL);
+ 
+ Example:
+ gpio: gpio@40000000 {
+ 	#gpio-cells = <2>;
+ 	compatible = "xlnx,xps-gpio-1.00.a";
++	clocks = <&clkc 15>;
++	clock-names = "s_axi_aclk";
+ 	gpio-controller ;
+ 	interrupt-parent = <&microblaze_0_intc>;
+ 	interrupts = < 6 2 >;
 -- 
-1.9.1
+1.7.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
