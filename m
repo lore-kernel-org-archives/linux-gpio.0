@@ -1,125 +1,68 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v10 6/6] mfd: lpc_ich: Add support for Intel Apollo Lake
- GPIO pinctrl in non-ACPI system
-Date: Thu, 10 Nov 2016 18:19:22 +0200
-Message-ID: <1478794762.5295.134.camel@linux.intel.com>
-References: <1478768430-13422-1-git-send-email-jui.nee.tan@intel.com>
-         <1478768430-13422-7-git-send-email-jui.nee.tan@intel.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 2/6] mfd: dt: Add bindings for the Aspeed SoC Display
+ Controller (GFX)
+Date: Thu, 10 Nov 2016 11:40:35 -0600
+Message-ID: <CAL_JsqLN5veD9QHMmEqX5mmX+iHM69O=o+KFauej1QdqEpyUhw@mail.gmail.com>
+References: <1478097481-14895-1-git-send-email-andrew@aj.id.au>
+ <1478097481-14895-3-git-send-email-andrew@aj.id.au> <20161109182630.tg3puvwurgx6iinw@rob-hp-laptop>
+ <CACPK8XeG2WnpNuHUf9VD+mZenWboq-4wei=LOkN4qVR72QbGXQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1478768430-13422-7-git-send-email-jui.nee.tan@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tan Jui Nee <jui.nee.tan@intel.com>, mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, tglx@linutronix.de, dvhart@infradead.org, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com, yunying.sun@intel.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:55114 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965117AbcKJRlB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 10 Nov 2016 12:41:01 -0500
+In-Reply-To: <CACPK8XeG2WnpNuHUf9VD+mZenWboq-4wei=LOkN4qVR72QbGXQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Joel Stanley <joel@jms.id.au>
+Cc: Andrew Jeffery <andrew@aj.id.au>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Thu, 2016-11-10 at 17:00 +0800, Tan Jui Nee wrote:
-> This driver uses the P2SB hide/unhide mechanism cooperatively
-> to pass the PCI BAR address to the gpio platform driver.
+On Wed, Nov 9, 2016 at 9:19 PM, Joel Stanley <joel@jms.id.au> wrote:
+> On Thu, Nov 10, 2016 at 4:56 AM, Rob Herring <robh@kernel.org> wrote:
+>> On Thu, Nov 03, 2016 at 01:07:57AM +1030, Andrew Jeffery wrote:
+>>> The Aspeed SoC Display Controller is presented as a syscon device to
+>>> arbitrate access by display and pinmux drivers. Video pinmux
+>>> configuration on fifth generation SoCs depends on bits in both the
+>>> System Control Unit and the Display Controller.
+>>>
+>>> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+>>> ---
+>>>  Documentation/devicetree/bindings/mfd/aspeed-gfx.txt | 17 +++++++++++++++++
+>>
+>> The register space can't be split to 2 nodes?
+>
+> Do you mean splitting the GFX IP and enable register into two nodes?
+>
+> We can't. Pinmux needs to check bit 6 and 7 in GFX064, which is in the
+> middle the IP block:
+>
+> GFX060: CRT Control Register I
+> GFX064: CRT Control Register II
+> GFX068: CRT Status Register
+> GFX06C: CRT Misc Setting Register
 
-@@ -161,6 +161,10 @@ obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+=
-> intel_quark_i2c_gpio.o
->  obj-$(CONFIG_LPC_SCH)
-> 		+= lpc_sch.o
+Okay.
 
+>>> +The Aspeed SoC Display Controller primarily does as its name suggests, but also
+>>> +participates in pinmux requests on the g5 SoCs. It is therefore considered a
+>>> +syscon device.
+>>> +
+>>> +Required properties:
+>>> +- compatible:                "aspeed,ast2500-gfx", "syscon"
+>>
+>> I think perhaps we should drop the syscon here and the driver should
+>> just register as a syscon.
+>
+> We want the regmap to be present whenever the GFX driver or pinmux is
+> loaded. If we register it in pinmux but chose to not build in that
+> driver, we lack the regmap. Same for the case where a user builds in
+> the GFX driver and not pinmux. I think this means we want the syscon
+> compatible string, unless my understanding is wrong?
 
->  lpc_ich-objs		:= lpc_ich_core.o
->  obj-$(CONFIG_LPC_ICH)		+= lpc_ich.o
-> +lpc_ich-objs		:= lpc_ich_core.o
+Right.
 
-Once I pointed out on this.
+Acked-by: Rob Herring <robh@kernel.org>
 
-> @@ -0,0 +1,120 @@
-> +/*
-> + * Intel Apollo Lake In-Vehicle Infotainment (IVI) systems used in
-> cars support
-> + *
-> + * Copyright (C) 2016 Intel Corporation
-> + *
-> + * Author: Tan, Jui Nee <jui.nee.tan@intel.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <asm/p2sb.h>
-> +#include <linux/pci.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mfd/lpc_ich.h>
-> +#include <linux/pinctrl/pinctrl.h>
-
-Perhaps some order like
-
-#include <linux/mfd/core.h>
-#include <linux/mfd/lpc_ich.h>
-#include <linux/pci.h>
-#include <linux/pinctrl/pinctrl.h>
-
-#include <asm/p2sb.h>
-
-> +
-> +#include "lpc_ich_apl.h"
-
-
-> +int lpc_ich_add_gpio(struct pci_dev *dev, enum lpc_chipsets chipset)
-> +{
-
-> +	unsigned int i;
-> +	int ret;
-> +	struct resource base;
-
-Reversed tree, please:
-
-	struct resource base;
-	unsigned int i;
-	int ret;
-
-> +
-> +	if (chipset != LPC_APL)
-> +		return -ENODEV;
-> +	/*
-> +	 * Apollo lake, has not 1, but 4 gpio controllers,
-> +	 * handle it a bit differently.
-> +	 */
-> +
-> +	ret = p2sb_bar(dev, PCI_DEVFN(PCI_IDSEL_P2SB, 0), &base);
-> +	if (ret)
-> +		goto warn_continue;
-> +
-> +	for (i = 0; i < APL_GPIO_COMMUNITY_MAX; i++) {
-> +		struct resource *res = &apl_gpio_io_res[i];
-> +
-> +		/* Fill MEM resource */
-> +		res->start += base.start;
-> +		res->end += base.start;
-> +		res->flags = base.flags;
-> +
-> +		res++;
-> +	}
-> +
-> +	ret = mfd_add_devices(&dev->dev, 0,
-> +		apl_gpio_devices, ARRAY_SIZE(apl_gpio_devices),
-> +			NULL, 0, NULL);
-> +
-> 
-
-> +	if (ret)
-> +warn_continue:
-
-Better if you put label before if for sake of readability. I pointed
-once to this.
-
-> +		dev_warn(&dev->dev,
-> +			"Failed to add Apollo Lake GPIO: %d\n",
-> +				ret);
-> +
-> +	return ret;
-> +}
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Rob
