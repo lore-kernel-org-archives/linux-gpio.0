@@ -1,59 +1,51 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: [PATCH v2 1/3] pinctrl: sunxi: Fix PIN_CONFIG_BIAS_PULL_{DOWN,UP}
- argument
-Date: Fri, 11 Nov 2016 10:44:53 +0800
-Message-ID: <20161111024455.16883-2-wens@csie.org>
-References: <20161111024455.16883-1-wens@csie.org>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: [PATCH v9 1/6] x86/platform/p2sb: New Primary to Sideband bridge
+ support driver for Intel SOC's
+Date: Thu, 10 Nov 2016 18:47:30 -0800
+Message-ID: <20161111024730.GC16057@f23x64.localdomain>
+References: <1478595443-6306-1-git-send-email-jui.nee.tan@intel.com>
+ <1478595443-6306-2-git-send-email-jui.nee.tan@intel.com>
+ <alpine.DEB.2.20.1611081753370.3501@nanos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBKPBSTAQKGQED42CDJA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20161111024455.16883-1-wens-jdAy2FN1RRM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([198.137.202.9]:35699 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965736AbcKKCpy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Nov 2016 21:45:54 -0500
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1611081753370.3501@nanos>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tan Jui Nee <jui.nee.tan@intel.com>, mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, mingo@redhat.com, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, jonathan.yong@intel.com, ong.hock.yu@intel.com, Tony Luck <tony.luck@intel.com>, wan.ahmad.zainie.wan.mohamad@intel.com, yunying.sun@intel.com
 
-According to pinconf-generic.h, the argument for
-PIN_CONFIG_BIAS_PULL_{DOWN,UP} is non-zero if the bias is enabled
-with a pull up/down resistor, zero if it is directly connected
-to VDD or ground.
+On Tue, Nov 08, 2016 at 05:55:20PM +0100, Thomas Gleixner wrote:
+> On Tue, 8 Nov 2016, Tan Jui Nee wrote:
+> > There is already one and at least one more user coming which
+> > require an access to Primary to Sideband bridge (P2SB) in order
+> > to get IO or MMIO bar hidden by BIOS.
+> > Create a driver to access P2SB for x86 devices.
+> > 
+> >  arch/x86/Kconfig                 |  4 ++
+> >  arch/x86/include/asm/p2sb.h      | 27 +++++++++++
+> >  arch/x86/platform/intel/Makefile |  1 +
+> >  arch/x86/platform/intel/p2sb.c   | 98 ++++++++++++++++++++++++++++++++++++++++
+> 
+> This really has nothing to do with architecture. It's a platform enablement
+> driver and therefor should go into drivers/platform/x86
+> 
+> Cc'ed Darren who is responsible for this.
 
-Since Allwinner hardware uses a weak pull resistor internally,
-the argument should be 1.
+Thanks Thomas,
 
-Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Tan Jui, I'll be on a short medical leave through Nov 28. In the meantime, Andy
+Shevchenko (on Cc) will be taking the lead on drivers/platform/x86 patches.
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index e199d95af8c0..e04edda8629d 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -291,12 +291,16 @@ static unsigned long *sunxi_pctrl_build_pin_config(struct device_node *node,
- 
- 	if (sunxi_pctrl_has_bias_prop(node)) {
- 		int pull = sunxi_pctrl_parse_bias_prop(node);
-+		int arg = 0;
- 		if (pull < 0) {
- 			ret = pull;
- 			goto err_free;
- 		}
- 
--		pinconfig[idx++] = pinconf_to_config_packed(pull, 0);
-+		if (pull != PIN_CONFIG_BIAS_DISABLE)
-+			arg = 1; /* hardware uses weak pull resistors */
-+
-+		pinconfig[idx++] = pinconf_to_config_packed(pull, arg);
- 	}
- 
- 
+Andy, please work with Tan Jui to update this change to apply to our tree.
+
+Thanks,
+
 -- 
-2.10.2
+Darren Hart
+Intel Open Source Technology Center
