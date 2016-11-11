@@ -1,74 +1,84 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 1/1] gpio: lib: Add gpio_is_enabled() to get pin mode
-Date: Fri, 11 Nov 2016 17:47:24 +0530
-Message-ID: <5825B6D4.1000600@nvidia.com>
-References: <1478089037-26441-1-git-send-email-ldewangan@nvidia.com> <CACRpkdYjWiy-PyBhN8gRa5TM5ARXrCZ-KqBXYm-bVeXFY11MQw@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v3 2/3] pinctrl: sunxi: Add support for
+ fetching pinconf settings from hardware
+Date: Fri, 11 Nov 2016 14:51:59 +0100
+Message-ID: <20161111135159.zqjqjjn7azg4gkzx@lukather>
+References: <20161111095036.11803-1-wens@csie.org>
+ <20161111095036.11803-3-wens@csie.org>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYjWiy-PyBhN8gRa5TM5ARXrCZ-KqBXYm-bVeXFY11MQw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="zmbf6zajye4tbzdn"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBAE2S7AQKGQEGUHRNIA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20161111095036.11803-3-wens-jdAy2FN1RRM@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
 
-On Saturday 05 November 2016 03:50 AM, Linus Walleij wrote:
-> On Wed, Nov 2, 2016 at 1:17 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
->
->> Many of devices/SoCs supports the GPIO and special IO function
->> from their pins. On such cases, there is always configuration
->> bits to select the mode of pin as GPIO or as the special IO mode.
->> The functional modes are selected by pinmux option.
->>
->> When device booted and reach to kernel, it is not possible to get
->> the current configuration of pin whether it is in GPIO mode or
->> in special IO mode without configurations.
->>
->> Add APIs to return the current mode of pins without requesting it
->> as GPIO to find out the current mode.
->> This helps on dumping the pin configuration from debug/test utility
->> to get the current mode GPIO or functional mode.
->>
->> The typical utility looks as:
->> pin_dump(pin)
->> {
->>          if(gpio_is_enabled(pin)) {
->>                  dump direction using get_direction()
->>          } else {
->>                  dump pinmux option and its configurations.
->>          }
->> }
-> Yeah but since pinctrl and pinmux has its own debugfs files why is this
-> necessary? I understand it is convenient but only for debugging
-> right? They the inconvenience of using pinctrls debugfs files should
-> be bearable.
+--zmbf6zajye4tbzdn
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 
-Yes, it is debugging and capturing all the info at single place. 
-Currently, gpio debugFs shows the gpio related stuff and the pinctrl on 
-pinconfig but there is not any dump which shows the complete pin mapping.
-The effort is to compile all the data in single place with proper 
-message to avoid any manual work for decoding multiple outputs.
+On Fri, Nov 11, 2016 at 05:50:35PM +0800, Chen-Yu Tsai wrote:
+> The sunxi pinctrl driver only caches whatever pinconf setting was last
+> set on a given pingroup. This is not particularly helpful, nor is it
+> correct.
+> 
+> Fix this by actually reading the hardware registers and returning
+> the correct results or error codes. Also filter out unsupported
+> pinconf settings. Since this driver has a peculiar setup of 1 pin
+> per group, we can support both pin and pingroup pinconf setting
+> read back with the same code. The sunxi_pconf_reg helper and code
+> structure is inspired by pinctrl-msm.
+> 
+> With this done we can also claim to support generic pinconf, by
+> setting .is_generic = true in pinconf_ops.
+> 
+> Also remove the cached config value. The behavior of this was never
+> correct, as it only cached 1 setting instead of all of them. Since
+> we can now read back settings directly from the hardware, it is no
+> longer required.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+> ---
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 86 +++++++++++++++++++++++++++++++++--
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 -
+>  2 files changed, 81 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> index e04edda8629d..ed71bff39869 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> @@ -438,15 +438,91 @@ static const struct pinctrl_ops sunxi_pctrl_ops = {
+>  	.get_group_pins		= sunxi_pctrl_get_group_pins,
+>  };
+>  
+> +static int sunxi_pconf_reg(unsigned pin, enum pin_config_param param,
 
+Sorry, this went unnoticed in your previous version, but checkpatch
+reports:
 
->
-> Also it is possible for any GPIO chip to implement its own
-> debug print if they like, check what we do in
-> ->dbg_show in drivers/pinctrl/nomadik/pinctrl-nomadik.c
-> for example.
->
-> If the use is for debug prints, keep it driver-local.
->
-> (...)
+WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
 
-This callback can print the stuff for GPIO related stuff as there is not 
-much info about the pinmux related configuration to gpio driver. For 
-GPIO or functional mode, it can only display gpio or functional mode.
+For this one and the next function.
 
-Is there something we can link from gpio driver to pinctrl driver like 
-pinctrl_debug_show()?
-Like in gpio_request(), we say that pinctrl_request(), similary on the 
-GPIO dbg_show(), we can say pinctrl_dbg_show() and get all the info for 
-prints.
-This will also serve the purpose.
+Once fixed,
+Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+
+Thanks!
+Maxime
+
+-- 
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+--zmbf6zajye4tbzdn--
