@@ -1,53 +1,130 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 1/5] pinctrl: core: Use delayed work for hogs
-Date: Fri, 11 Nov 2016 12:32:11 -0800
-Message-ID: <20161111203210.GJ7138@atomide.com>
-References: <20161025210221.9150-1-tony@atomide.com>
- <20161025210221.9150-2-tony@atomide.com>
- <CACRpkdaP3_6x0GMpy_+fSok5r+5CP6RvP6dmDCtz4ayAm-TuSQ@mail.gmail.com>
- <20161111202650.GI7138@atomide.com>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Subject: [PATCHv3 3/3] pinctrl: sh-pfc: r8a7795: Add group for QSPI0 and QSPI1 pins
+Date: Fri, 11 Nov 2016 21:33:41 +0100
+Message-ID: <20161111203341.3636-4-niklas.soderlund@ragnatech.se>
+References: <20161111203341.3636-1-niklas.soderlund@ragnatech.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:59422 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934523AbcKKUcP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 11 Nov 2016 15:32:15 -0500
-Content-Disposition: inline
-In-Reply-To: <20161111202650.GI7138@atomide.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20161111203341.3636-1-niklas.soderlund@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 
-* Tony Lindgren <tony@atomide.com> [161111 12:27]:
-> * Linus Walleij <linus.walleij@linaro.org> [161111 12:17]:
-> > On Tue, Oct 25, 2016 at 11:02 PM, Tony Lindgren <tony@atomide.com> wrote:
-> > 
-> > > Having the pin control framework call pin controller functions
-> > > before it's probe has finished is not nice as the pin controller
-> > > device driver does not yet have struct pinctrl_dev handle.
-> > >
-> > > Let's fix this issue by adding deferred work for hogs. This is
-> > > needed to be able to add pinctrl generic helper functions.
-> > >
-> > > Note that the pinctrl functions already take care of the necessary
-> > > locking.
-> > >
-> > > Signed-off-by: Tony Lindgren <tony@atomide.com>
-> > 
-> > I don't see why this is necessary?
-> 
-> It's needed because the pin controller driver has not yet
-> finished it's probe at this point. We end up calling functions
-> in the device driver where no struct pinctrl_dev is yet known
-> to the driver. Asking a device driver to do something before
-> it's probe is done does not quite follow the Linux driver model :)
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-To clarify, that's an issue with multiple instances of the same
-driver probing as there's no static pointer to driver specific
-data.
+Group the QSPI0 and QSPI1 pins into similar groups found in other sh-pfc
+drivers. The pins can not be muxed between functions other then QSPI
+but there drive strength can be controlled.
 
-Regards,
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 69 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
-Tony
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index bb16ff8..52eb595 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -3719,6 +3719,55 @@ static const unsigned int usb2_mux[] = {
+ 	USB2_PWEN_MARK, USB2_OVC_MARK,
+ };
+ 
++/* - QSPI0 ------------------------------------------------------------------ */
++static const unsigned int qspi0_ctrl_pins[] = {
++	/* QSPI0_SPCLK, QSPI0_SSL */
++	PIN_NUMBER('W', 3), PIN_NUMBER('Y', 3),
++};
++static const unsigned int qspi0_ctrl_mux[] = {
++	QSPI0_SPCLK_MARK, QSPI0_SSL_MARK,
++};
++static const unsigned int qspi0_data2_pins[] = {
++	/* QSPI0_MOSI_IO0, QSPI0_MISO_IO1 */
++	PIN_A_NUMBER('C', 5), PIN_A_NUMBER('B', 4),
++};
++static const unsigned int qspi0_data2_mux[] = {
++	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
++};
++static const unsigned int qspi0_data4_pins[] = {
++	/* QSPI0_MOSI_IO0, QSPI0_MISO_IO1, QSPI0_IO2, QSPI0_IO3 */
++	PIN_A_NUMBER('C', 5), PIN_A_NUMBER('B', 4),
++	PIN_NUMBER('Y', 6), PIN_A_NUMBER('B', 6),
++};
++static const unsigned int qspi0_data4_mux[] = {
++	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
++	QSPI0_IO2_MARK, QSPI0_IO3_MARK,
++};
++/* - QSPI1 ------------------------------------------------------------------ */
++static const unsigned int qspi1_ctrl_pins[] = {
++	/* QSPI1_SPCLK, QSPI1_SSL */
++	PIN_NUMBER('V', 3), PIN_NUMBER('V', 5),
++};
++static const unsigned int qspi1_ctrl_mux[] = {
++	QSPI1_SPCLK_MARK, QSPI1_SSL_MARK,
++};
++static const unsigned int qspi1_data2_pins[] = {
++	/* QSPI1_MOSI_IO0, QSPI1_MISO_IO1 */
++	PIN_A_NUMBER('C', 7), PIN_A_NUMBER('E', 5),
++};
++static const unsigned int qspi1_data2_mux[] = {
++	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
++};
++static const unsigned int qspi1_data4_pins[] = {
++	/* QSPI1_MOSI_IO0, QSPI1_MISO_IO1, QSPI1_IO2, QSPI1_IO3 */
++	PIN_A_NUMBER('C', 7), PIN_A_NUMBER('E', 5),
++	PIN_A_NUMBER('E', 4), PIN_A_NUMBER('C', 3),
++};
++static const unsigned int qspi1_data4_mux[] = {
++	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
++	QSPI1_IO2_MARK, QSPI1_IO3_MARK,
++};
++
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(audio_clk_a_a),
+ 	SH_PFC_PIN_GROUP(audio_clk_a_b),
+@@ -4019,6 +4068,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(usb0),
+ 	SH_PFC_PIN_GROUP(usb1),
+ 	SH_PFC_PIN_GROUP(usb2),
++	SH_PFC_PIN_GROUP(qspi0_ctrl),
++	SH_PFC_PIN_GROUP(qspi0_data2),
++	SH_PFC_PIN_GROUP(qspi0_data4),
++	SH_PFC_PIN_GROUP(qspi1_ctrl),
++	SH_PFC_PIN_GROUP(qspi1_data2),
++	SH_PFC_PIN_GROUP(qspi1_data4),
+ };
+ 
+ static const char * const audio_clk_groups[] = {
+@@ -4464,6 +4519,18 @@ static const char * const usb2_groups[] = {
+ 	"usb2",
+ };
+ 
++static const char * const qspi0_groups[] = {
++	"qspi0_ctrl",
++	"qspi0_data2",
++	"qspi0_data4",
++};
++
++static const char * const qspi1_groups[] = {
++	"qspi1_ctrl",
++	"qspi1_data2",
++	"qspi1_data4",
++};
++
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(audio_clk),
+ 	SH_PFC_FUNCTION(avb),
+@@ -4513,6 +4580,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(usb0),
+ 	SH_PFC_FUNCTION(usb1),
+ 	SH_PFC_FUNCTION(usb2),
++	SH_PFC_FUNCTION(qspi0),
++	SH_PFC_FUNCTION(qspi1),
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+-- 
+2.10.2
