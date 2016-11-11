@@ -1,142 +1,74 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: [PATCH v3 3/3] pinctrl: sunxi: Make sunxi_pconf_group_set
- use sunxi_pconf_reg helper
-Date: Fri, 11 Nov 2016 17:50:36 +0800
-Message-ID: <20161111095036.11803-4-wens@csie.org>
-References: <20161111095036.11803-1-wens@csie.org>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 1/1] gpio: lib: Add gpio_is_enabled() to get pin mode
+Date: Fri, 11 Nov 2016 17:47:24 +0530
+Message-ID: <5825B6D4.1000600@nvidia.com>
+References: <1478089037-26441-1-git-send-email-ldewangan@nvidia.com> <CACRpkdYjWiy-PyBhN8gRa5TM5ARXrCZ-KqBXYm-bVeXFY11MQw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCMILY6JWQBBB4FIS3AQKGQEHQMNUUA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20161111095036.11803-1-wens-jdAy2FN1RRM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYjWiy-PyBhN8gRa5TM5ARXrCZ-KqBXYm-bVeXFY11MQw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The sunxi_pconf_reg helper introduced in the last patch gives us the
-chance to rework sunxi_pconf_group_set to have it match the structure
-of sunxi_pconf_(group_)get and make it easier to understand.
 
-For each config to set, it:
+On Saturday 05 November 2016 03:50 AM, Linus Walleij wrote:
+> On Wed, Nov 2, 2016 at 1:17 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+>
+>> Many of devices/SoCs supports the GPIO and special IO function
+>> from their pins. On such cases, there is always configuration
+>> bits to select the mode of pin as GPIO or as the special IO mode.
+>> The functional modes are selected by pinmux option.
+>>
+>> When device booted and reach to kernel, it is not possible to get
+>> the current configuration of pin whether it is in GPIO mode or
+>> in special IO mode without configurations.
+>>
+>> Add APIs to return the current mode of pins without requesting it
+>> as GPIO to find out the current mode.
+>> This helps on dumping the pin configuration from debug/test utility
+>> to get the current mode GPIO or functional mode.
+>>
+>> The typical utility looks as:
+>> pin_dump(pin)
+>> {
+>>          if(gpio_is_enabled(pin)) {
+>>                  dump direction using get_direction()
+>>          } else {
+>>                  dump pinmux option and its configurations.
+>>          }
+>> }
+> Yeah but since pinctrl and pinmux has its own debugfs files why is this
+> necessary? I understand it is convenient but only for debugging
+> right? They the inconvenience of using pinctrls debugfs files should
+> be bearable.
 
-    1. checks if the parameter is supported.
-    2. checks if the argument is within limits.
-    3. converts argument to the register value.
-    4. writes to the register with spinlock held.
+Yes, it is debugging and capturing all the info at single place. 
+Currently, gpio debugFs shows the gpio related stuff and the pinctrl on 
+pinconfig but there is not any dump which shows the complete pin mapping.
+The effort is to compile all the data in single place with proper 
+message to avoid any manual work for decoding multiple outputs.
 
-As a result the function now blocks unsupported config parameters,
-instead of silently ignoring them.
 
-Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 64 +++++++++++++++++------------------
- 1 file changed, 32 insertions(+), 32 deletions(-)
+>
+> Also it is possible for any GPIO chip to implement its own
+> debug print if they like, check what we do in
+> ->dbg_show in drivers/pinctrl/nomadik/pinctrl-nomadik.c
+> for example.
+>
+> If the use is for debug prints, keep it driver-local.
+>
+> (...)
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index ed71bff39869..fa11a3100346 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -532,23 +532,27 @@ static int sunxi_pconf_group_set(struct pinctrl_dev *pctldev,
- {
- 	struct sunxi_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
- 	struct sunxi_pinctrl_group *g = &pctl->groups[group];
--	unsigned long flags;
- 	unsigned pin = g->pin - pctl->desc->pin_base;
--	u32 val, mask;
--	u16 strength;
--	u8 dlevel;
- 	int i;
- 
--	spin_lock_irqsave(&pctl->lock, flags);
--
- 	for (i = 0; i < num_configs; i++) {
--		switch (pinconf_to_config_param(configs[i])) {
-+		enum pin_config_param param;
-+		unsigned long flags;
-+		u32 offset, shift, mask, reg;
-+		u16 arg, val;
-+		int ret;
-+
-+		param = pinconf_to_config_param(configs[i]);
-+		arg = pinconf_to_config_argument(configs[i]);
-+
-+		ret = sunxi_pconf_reg(pin, param, &offset, &shift, &mask);
-+		if (ret < 0)
-+			return ret;
-+
-+		switch (param) {
- 		case PIN_CONFIG_DRIVE_STRENGTH:
--			strength = pinconf_to_config_argument(configs[i]);
--			if (strength > 40) {
--				spin_unlock_irqrestore(&pctl->lock, flags);
-+			if (arg < 10 || arg > 40)
- 				return -EINVAL;
--			}
- 			/*
- 			 * We convert from mA to what the register expects:
- 			 *   0: 10mA
-@@ -556,37 +560,33 @@ static int sunxi_pconf_group_set(struct pinctrl_dev *pctldev,
- 			 *   2: 30mA
- 			 *   3: 40mA
- 			 */
--			dlevel = strength / 10 - 1;
--			val = readl(pctl->membase + sunxi_dlevel_reg(pin));
--			mask = DLEVEL_PINS_MASK << sunxi_dlevel_offset(pin);
--			writel((val & ~mask)
--				| dlevel << sunxi_dlevel_offset(pin),
--				pctl->membase + sunxi_dlevel_reg(pin));
-+			val = arg / 10 - 1;
- 			break;
- 		case PIN_CONFIG_BIAS_DISABLE:
--			val = readl(pctl->membase + sunxi_pull_reg(pin));
--			mask = PULL_PINS_MASK << sunxi_pull_offset(pin);
--			writel((val & ~mask),
--			       pctl->membase + sunxi_pull_reg(pin));
-+			val = 0;
- 			break;
- 		case PIN_CONFIG_BIAS_PULL_UP:
--			val = readl(pctl->membase + sunxi_pull_reg(pin));
--			mask = PULL_PINS_MASK << sunxi_pull_offset(pin);
--			writel((val & ~mask) | 1 << sunxi_pull_offset(pin),
--				pctl->membase + sunxi_pull_reg(pin));
-+			if (arg == 0)
-+				return -EINVAL;
-+			val = 1;
- 			break;
- 		case PIN_CONFIG_BIAS_PULL_DOWN:
--			val = readl(pctl->membase + sunxi_pull_reg(pin));
--			mask = PULL_PINS_MASK << sunxi_pull_offset(pin);
--			writel((val & ~mask) | 2 << sunxi_pull_offset(pin),
--				pctl->membase + sunxi_pull_reg(pin));
-+			if (arg == 0)
-+				return -EINVAL;
-+			val = 2;
- 			break;
- 		default:
--			break;
-+			/* sunxi_pconf_reg should catch anything unsupported */
-+			WARN_ON(1);
-+			return -ENOTSUPP;
- 		}
--	} /* for each config */
- 
--	spin_unlock_irqrestore(&pctl->lock, flags);
-+		spin_lock_irqsave(&pctl->lock, flags);
-+		reg = readl(pctl->membase + offset);
-+		reg &= ~(mask << shift);
-+		writel(reg | val << shift, pctl->membase + offset);
-+		spin_unlock_irqrestore(&pctl->lock, flags);
-+	} /* for each config */
- 
- 	return 0;
- }
--- 
-2.10.2
+This callback can print the stuff for GPIO related stuff as there is not 
+much info about the pinmux related configuration to gpio driver. For 
+GPIO or functional mode, it can only display gpio or functional mode.
+
+Is there something we can link from gpio driver to pinctrl driver like 
+pinctrl_debug_show()?
+Like in gpio_request(), we say that pinctrl_request(), similary on the 
+GPIO dbg_show(), we can say pinctrl_dbg_show() and get all the info for 
+prints.
+This will also serve the purpose.
