@@ -1,15 +1,15 @@
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Subject: [PATCHv2 1/6] pinctrl: sh-pfc: Do not unconditionally support PIN_CONFIG_BIAS_DISABLE
-Date: Fri, 11 Nov 2016 21:30:16 +0100
-Message-ID: <20161111203021.3384-2-niklas.soderlund@ragnatech.se>
+Subject: [PATCHv2 3/6] pinctrl: sh-pfc: r8a7795: Simplify get bias logic
+Date: Fri, 11 Nov 2016 21:30:18 +0100
+Message-ID: <20161111203021.3384-4-niklas.soderlund@ragnatech.se>
 References: <20161111203021.3384-1-niklas.soderlund@ragnatech.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:58525 "EHLO
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:58538 "EHLO
         smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933880AbcKKUb0 (ORCPT
+        with ESMTP id S934975AbcKKUb0 (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Nov 2016 15:31:26 -0500
 In-Reply-To: <20161111203021.3384-1-niklas.soderlund@ragnatech.se>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -19,40 +19,38 @@ Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org,
 
 From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Always stating PIN_CONFIG_BIAS_DISABLE is supported gives untrue output
-when examining /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins if
-the operation get_bias() is implemented but the pin is not handled by
-the get_bias() implementation. In that case the output will state that
-"input bias disabled" indicating that this pin has bias control
-support.
+The last else statement is missing braces and there indentation level
+can be reduced.
 
-Make support for PIN_CONFIG_BIAS_DISABLE depend on that the pin either
-supports SH_PFC_PIN_CFG_PULL_UP or SH_PFC_PIN_CFG_PULL_DOWN. This also
-solves the issue where SoC specific implementations print error messages
-if their particular implementation of {set,get}_bias() is called with a
-pin it dose not know about.
-
+Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/pinctrl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
-index c577258..fcacfa7 100644
---- a/drivers/pinctrl/sh-pfc/pinctrl.c
-+++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-@@ -570,7 +570,8 @@ static bool sh_pfc_pinconf_validate(struct sh_pfc *pfc, unsigned int _pin,
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 2e8cc2a..6c58563 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -5367,13 +5367,12 @@ static unsigned int r8a7795_pinmux_get_bias(struct sh_pfc *pfc,
+ 	reg = pullups[pin].reg;
+ 	bit = BIT(pullups[pin].bit);
  
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		return true;
-+		return pin->configs &
-+			(SH_PFC_PIN_CFG_PULL_UP | SH_PFC_PIN_CFG_PULL_DOWN);
+-	if (sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit) {
+-		if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
+-			return PIN_CONFIG_BIAS_PULL_UP;
+-		else
+-			return PIN_CONFIG_BIAS_PULL_DOWN;
+-	} else
++	if (!(sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit))
+ 		return PIN_CONFIG_BIAS_DISABLE;
++	else if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
++		return PIN_CONFIG_BIAS_PULL_UP;
++	else
++		return PIN_CONFIG_BIAS_PULL_DOWN;
+ }
  
- 	case PIN_CONFIG_BIAS_PULL_UP:
- 		return pin->configs & SH_PFC_PIN_CFG_PULL_UP;
+ static void r8a7795_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
 -- 
 2.10.2
 
