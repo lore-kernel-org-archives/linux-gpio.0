@@ -1,84 +1,46 @@
 From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv3 2/2] gpio: xilinx: Add clock support
-Date: Thu, 10 Nov 2016 16:42:51 -0800
-Message-ID: <20161111004251.gfzlfsjdt3yi44qu@xsjsorenbubuntu>
+Subject: Re: [PATCHv3 1/2] gpio: xilinx: dt-binding: Add clock node
+Date: Thu, 10 Nov 2016 16:41:42 -0800
+Message-ID: <20161111004142.4canf5wavb4cj2s6@xsjsorenbubuntu>
 References: <1478757365-3311-1-git-send-email-shubhrajyoti.datta@xilinx.com>
- <1478757365-3311-2-git-send-email-shubhrajyoti.datta@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1478757365-3311-2-git-send-email-shubhrajyoti.datta-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1478757365-3311-1-git-send-email-shubhrajyoti.datta-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Shubhrajyoti Datta <shubhrajyoti.datta-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
 Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org, shubhrajyoti.datta-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 2016-11-10 at 11:26:05 +0530, Shubhrajyoti Datta wrote:
-> Add basic clock support for xilinx gpio.
+On Thu, 2016-11-10 at 11:26:04 +0530, Shubhrajyoti Datta wrote:
+> Add the clock node to the dt binding.
 > 
 > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
 > ---
-> v2 :
-> no change
-> v3:
+> v2: 
+> Make clocks optional
 > Add clock name
-> Remove some debug messages
+> v3:
+> No change
 > 
->  drivers/gpio/gpio-xilinx.c |   20 ++++++++++++++++++++
->  1 files changed, 20 insertions(+), 0 deletions(-)
+>  .../devicetree/bindings/gpio/gpio-xilinx.txt       |    4 ++++
+>  1 files changed, 4 insertions(+), 0 deletions(-)
 > 
-> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-> index 14b2a62..3385a0a 100644
-> --- a/drivers/gpio/gpio-xilinx.c
-> +++ b/drivers/gpio/gpio-xilinx.c
-> @@ -13,6 +13,7 @@
->   */
->  
->  #include <linux/bitops.h>
-> +#include <linux/clk.h>
->  #include <linux/init.h>
->  #include <linux/errno.h>
->  #include <linux/module.h>
-> @@ -45,6 +46,7 @@
->   * @gpio_state: GPIO state shadow register
->   * @gpio_dir: GPIO direction shadow register
->   * @gpio_lock: Lock used for synchronization
-> + * @clk: Clock resource for this controller
->   */
->  struct xgpio_instance {
->  	struct of_mm_gpio_chip mmchip;
-> @@ -52,6 +54,7 @@ struct xgpio_instance {
->  	u32 gpio_state[2];
->  	u32 gpio_dir[2];
->  	spinlock_t gpio_lock[2];
-> +	struct clk *clk;
->  };
->  
->  static inline int xgpio_index(struct xgpio_instance *chip, int gpio)
-> @@ -282,6 +285,7 @@ static int xgpio_remove(struct platform_device *pdev)
->  	struct xgpio_instance *chip = platform_get_drvdata(pdev);
->  
->  	of_mm_gpiochip_remove(&chip->mmchip);
-> +	clk_disable_unprepare(chip->clk);
->  
->  	return 0;
->  }
-> @@ -307,6 +311,21 @@ static int xgpio_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, chip);
->  
-> +	/* Retrieve GPIO clock */
-> +	chip->clk = devm_clk_get(&pdev->dev, "s_axi_aclk");
-> +	if (IS_ERR(chip->clk)) {
-> +		if (PTR_ERR(chip->clk) == -ENOENT)
-> +			chip->clk = NULL;
-> +		else
-> +			return PTR_ERR(chip->clk);
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xilinx.txt b/Documentation/devicetree/bindings/gpio/gpio-xilinx.txt
+> index 63bf4be..1372007 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-xilinx.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-xilinx.txt
+> @@ -25,12 +25,16 @@ Optional properties:
+>  - xlnx,dout-default-2 : as above but the second channel
+>  - xlnx,gpio2-width : as above but for the second channel
+>  - xlnx,tri-default-2 : as above but for the second channel
+> +- clocks: Input clock specifier. Refer to common clock bindings.
+> +- clock-names: Input clock name, should be s_axi_aclk.
 
-I personally would have kept the error message to give users a hint
-why/what failed.
+I don't know if there is a good way to tell that 'clock-names' is
+required when 'clocks' is specified. Probably just nice to have.
 Acked-by: Sören Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
 
 	Sören
