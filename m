@@ -1,86 +1,59 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: [PATCH v3 2/3] pinctrl: sunxi: Add support for
- fetching pinconf settings from hardware
-Date: Fri, 11 Nov 2016 21:57:05 +0800
-Message-ID: <CAGb2v669W-mVDxV112r99b-g6bniRJt-wV8pTRRLAbJ2ZRyMUw@mail.gmail.com>
-References: <20161111095036.11803-1-wens@csie.org> <20161111095036.11803-3-wens@csie.org>
- <20161111135159.zqjqjjn7azg4gkzx@lukather>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/5] pinctrl: core: Use delayed work for hogs
+Date: Fri, 11 Nov 2016 21:17:42 +0100
+Message-ID: <CACRpkdaP3_6x0GMpy_+fSok5r+5CP6RvP6dmDCtz4ayAm-TuSQ@mail.gmail.com>
+References: <20161025210221.9150-1-tony@atomide.com> <20161025210221.9150-2-tony@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBTM4S7AQKGQEG75U26A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20161111135159.zqjqjjn7azg4gkzx@lukather>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f176.google.com ([209.85.220.176]:34191 "EHLO
+        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756580AbcKKURo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Nov 2016 15:17:44 -0500
+Received: by mail-qk0-f176.google.com with SMTP id q130so32787150qke.1
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Nov 2016 12:17:43 -0800 (PST)
+In-Reply-To: <20161025210221.9150-2-tony@atomide.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 
-On Fri, Nov 11, 2016 at 9:51 PM, Maxime Ripard
-<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> On Fri, Nov 11, 2016 at 05:50:35PM +0800, Chen-Yu Tsai wrote:
->> The sunxi pinctrl driver only caches whatever pinconf setting was last
->> set on a given pingroup. This is not particularly helpful, nor is it
->> correct.
->>
->> Fix this by actually reading the hardware registers and returning
->> the correct results or error codes. Also filter out unsupported
->> pinconf settings. Since this driver has a peculiar setup of 1 pin
->> per group, we can support both pin and pingroup pinconf setting
->> read back with the same code. The sunxi_pconf_reg helper and code
->> structure is inspired by pinctrl-msm.
->>
->> With this done we can also claim to support generic pinconf, by
->> setting .is_generic = true in pinconf_ops.
->>
->> Also remove the cached config value. The behavior of this was never
->> correct, as it only cached 1 setting instead of all of them. Since
->> we can now read back settings directly from the hardware, it is no
->> longer required.
->>
->> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
->> ---
->>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 86 +++++++++++++++++++++++++++++++++--
->>  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 -
->>  2 files changed, 81 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> index e04edda8629d..ed71bff39869 100644
->> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
->> @@ -438,15 +438,91 @@ static const struct pinctrl_ops sunxi_pctrl_ops = {
->>       .get_group_pins         = sunxi_pctrl_get_group_pins,
->>  };
->>
->> +static int sunxi_pconf_reg(unsigned pin, enum pin_config_param param,
->
-> Sorry, this went unnoticed in your previous version, but checkpatch
-> reports:
->
-> WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
->
-> For this one and the next function.
+On Tue, Oct 25, 2016 at 11:02 PM, Tony Lindgren <tony@atomide.com> wrote:
 
-I know, but the function pointer definition in pinconf.h says
-'unsigned', not 'unsigned int'.
-
-Having a mismatch between the two is even more confusing...
-
-ChenYu
-
+> Having the pin control framework call pin controller functions
+> before it's probe has finished is not nice as the pin controller
+> device driver does not yet have struct pinctrl_dev handle.
 >
-> Once fixed,
-> Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> Let's fix this issue by adding deferred work for hogs. This is
+> needed to be able to add pinctrl generic helper functions.
 >
-> Thanks!
-> Maxime
+> Note that the pinctrl functions already take care of the necessary
+> locking.
 >
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+
+I don't see why this is necessary?
+
+The hogging was placed inside pinctrl_register() so that any hogs
+would be taken before it returns, so nothing else can take it
+before the controller itself has the first chance. This semantic
+needs to be preserved I think.
+
+> +       schedule_delayed_work(&pctldev->hog_work,
+> +                                     msecs_to_jiffies(100));
+
+If we arbitrarily delay, something else can go in and take the
+pins used by the hogs before the pinctrl core? That is what
+we want to avoid.
+
+Hm, 100ms seems arbitrarily chosen BTW. Can it be 1 ms?
+1 ns?
+
+I'm pretty sure that whatever it is that needs to happen before
+the hog work runs can race with this delayed work under
+some circumstances (such as slow external expanders
+on i2c). It should be impossible for that to happen
+and I don't think it is?
+
+Yours,
+Linus Walleij
