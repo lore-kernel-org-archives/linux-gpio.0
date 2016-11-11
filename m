@@ -1,8 +1,8 @@
 From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: [PATCH v3 1/3] pinctrl: sunxi: Fix PIN_CONFIG_BIAS_PULL_{DOWN,UP}
- argument
-Date: Fri, 11 Nov 2016 17:50:34 +0800
-Message-ID: <20161111095036.11803-2-wens@csie.org>
+Subject: [PATCH v3 3/3] pinctrl: sunxi: Make sunxi_pconf_group_set
+ use sunxi_pconf_reg helper
+Date: Fri, 11 Nov 2016 17:50:36 +0800
+Message-ID: <20161111095036.11803-4-wens@csie.org>
 References: <20161111095036.11803-1-wens@csie.org>
 Reply-To: wens-jdAy2FN1RRM@public.gmane.org
 Mime-Version: 1.0
@@ -20,41 +20,123 @@ To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxim
 Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-According to pinconf-generic.h, the argument for
-PIN_CONFIG_BIAS_PULL_{DOWN,UP} is non-zero if the bias is enabled
-with a pull up/down resistor, zero if it is directly connected
-to VDD or ground.
+The sunxi_pconf_reg helper introduced in the last patch gives us the
+chance to rework sunxi_pconf_group_set to have it match the structure
+of sunxi_pconf_(group_)get and make it easier to understand.
 
-Since Allwinner hardware uses a weak pull resistor internally,
-the argument should be 1.
+For each config to set, it:
+
+    1. checks if the parameter is supported.
+    2. checks if the argument is within limits.
+    3. converts argument to the register value.
+    4. writes to the register with spinlock held.
+
+As a result the function now blocks unsupported config parameters,
+instead of silently ignoring them.
 
 Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
 Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 ---
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 64 +++++++++++++++++------------------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
 
 diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index e199d95af8c0..e04edda8629d 100644
+index ed71bff39869..fa11a3100346 100644
 --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
 +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -291,12 +291,16 @@ static unsigned long *sunxi_pctrl_build_pin_config(struct device_node *node,
+@@ -532,23 +532,27 @@ static int sunxi_pconf_group_set(struct pinctrl_dev *pctldev,
+ {
+ 	struct sunxi_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
+ 	struct sunxi_pinctrl_group *g = &pctl->groups[group];
+-	unsigned long flags;
+ 	unsigned pin = g->pin - pctl->desc->pin_base;
+-	u32 val, mask;
+-	u16 strength;
+-	u8 dlevel;
+ 	int i;
  
- 	if (sunxi_pctrl_has_bias_prop(node)) {
- 		int pull = sunxi_pctrl_parse_bias_prop(node);
-+		int arg = 0;
- 		if (pull < 0) {
- 			ret = pull;
- 			goto err_free;
- 		}
- 
--		pinconfig[idx++] = pinconf_to_config_packed(pull, 0);
-+		if (pull != PIN_CONFIG_BIAS_DISABLE)
-+			arg = 1; /* hardware uses weak pull resistors */
+-	spin_lock_irqsave(&pctl->lock, flags);
+-
+ 	for (i = 0; i < num_configs; i++) {
+-		switch (pinconf_to_config_param(configs[i])) {
++		enum pin_config_param param;
++		unsigned long flags;
++		u32 offset, shift, mask, reg;
++		u16 arg, val;
++		int ret;
 +
-+		pinconfig[idx++] = pinconf_to_config_packed(pull, arg);
- 	}
++		param = pinconf_to_config_param(configs[i]);
++		arg = pinconf_to_config_argument(configs[i]);
++
++		ret = sunxi_pconf_reg(pin, param, &offset, &shift, &mask);
++		if (ret < 0)
++			return ret;
++
++		switch (param) {
+ 		case PIN_CONFIG_DRIVE_STRENGTH:
+-			strength = pinconf_to_config_argument(configs[i]);
+-			if (strength > 40) {
+-				spin_unlock_irqrestore(&pctl->lock, flags);
++			if (arg < 10 || arg > 40)
+ 				return -EINVAL;
+-			}
+ 			/*
+ 			 * We convert from mA to what the register expects:
+ 			 *   0: 10mA
+@@ -556,37 +560,33 @@ static int sunxi_pconf_group_set(struct pinctrl_dev *pctldev,
+ 			 *   2: 30mA
+ 			 *   3: 40mA
+ 			 */
+-			dlevel = strength / 10 - 1;
+-			val = readl(pctl->membase + sunxi_dlevel_reg(pin));
+-			mask = DLEVEL_PINS_MASK << sunxi_dlevel_offset(pin);
+-			writel((val & ~mask)
+-				| dlevel << sunxi_dlevel_offset(pin),
+-				pctl->membase + sunxi_dlevel_reg(pin));
++			val = arg / 10 - 1;
+ 			break;
+ 		case PIN_CONFIG_BIAS_DISABLE:
+-			val = readl(pctl->membase + sunxi_pull_reg(pin));
+-			mask = PULL_PINS_MASK << sunxi_pull_offset(pin);
+-			writel((val & ~mask),
+-			       pctl->membase + sunxi_pull_reg(pin));
++			val = 0;
+ 			break;
+ 		case PIN_CONFIG_BIAS_PULL_UP:
+-			val = readl(pctl->membase + sunxi_pull_reg(pin));
+-			mask = PULL_PINS_MASK << sunxi_pull_offset(pin);
+-			writel((val & ~mask) | 1 << sunxi_pull_offset(pin),
+-				pctl->membase + sunxi_pull_reg(pin));
++			if (arg == 0)
++				return -EINVAL;
++			val = 1;
+ 			break;
+ 		case PIN_CONFIG_BIAS_PULL_DOWN:
+-			val = readl(pctl->membase + sunxi_pull_reg(pin));
+-			mask = PULL_PINS_MASK << sunxi_pull_offset(pin);
+-			writel((val & ~mask) | 2 << sunxi_pull_offset(pin),
+-				pctl->membase + sunxi_pull_reg(pin));
++			if (arg == 0)
++				return -EINVAL;
++			val = 2;
+ 			break;
+ 		default:
+-			break;
++			/* sunxi_pconf_reg should catch anything unsupported */
++			WARN_ON(1);
++			return -ENOTSUPP;
+ 		}
+-	} /* for each config */
  
+-	spin_unlock_irqrestore(&pctl->lock, flags);
++		spin_lock_irqsave(&pctl->lock, flags);
++		reg = readl(pctl->membase + offset);
++		reg &= ~(mask << shift);
++		writel(reg | val << shift, pctl->membase + offset);
++		spin_unlock_irqrestore(&pctl->lock, flags);
++	} /* for each config */
  
+ 	return 0;
+ }
 -- 
 2.10.2
