@@ -1,57 +1,156 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH v2 0/3] pinctrl: sunxi: Support generic pinconf functions
-Date: Fri, 11 Nov 2016 10:44:52 +0800
-Message-ID: <20161111024455.16883-1-wens@csie.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:35178 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965535AbcKKCo6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 10 Nov 2016 21:44:58 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: [PATCH v2 3/3] pinctrl: sunxi: Make sunxi_pconf_group_set
+ use sunxi_pconf_reg helper
+Date: Fri, 11 Nov 2016 10:44:55 +0800
+Message-ID: <20161111024455.16883-4-wens@csie.org>
+References: <20161111024455.16883-1-wens@csie.org>
+Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBCMILY6JWQBBBKPBSTAQKGQED42CDJA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20161111024455.16883-1-wens-jdAy2FN1RRM@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 
-Hi everyone,
+The sunxi_pconf_reg helper introduced in the last patch gives us the
+chance to rework sunxi_pconf_group_set to have it match the structure
+of sunxi_pconf_(group_)get and make it easier to understand.
 
-This series fixes up generic pinconf support for the sunxi pinctrl driver
-library. The driver was doing some bits wrong, like a) storing the pinconf
-config value in its struct, and not actually reading the hardware to get
-the current config, and b) not using the right arguments for the bias
-parameters.
+For each config to set, it:
 
-Patch 1 fixes the pin bias parameter arguments.
+    1. checks if the parameter is supported.
+    2. checks if the argument is within limits.
+    3. converts argument to the register value.
+    4. writes to the register with spinlock held.
 
-Patch 2 makes the driver read out pinconf settings from the hardware, and
-returns the correct value for unsupported features and disable features.
-With this in place it also declares itself as generic pinconf compatible,
-which enables us to read the config through the debugfs pinconf interface.
+As a result the function now blocks unsupported config parameters,
+instead of silently ignoring them.
 
-Patch 3 makes the sunxi_pconf_group_set callback use the helper function
-introduced in patch 1. 
+Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+---
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 66 +++++++++++++++++------------------
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h |  1 -
+ 2 files changed, 32 insertions(+), 35 deletions(-)
 
-Changes since v1:
-
-  - Rebased onto the updated sunxi pinctrl driver with support for the
-    generic pinconf bindings
-
-  - Use separate value for what is written to the register in the pinconf
-    set function, as Maxime requested.
-
-Regards
-ChenYu
-
-
-Chen-Yu Tsai (3):
-  pinctrl: sunxi: Fix PIN_CONFIG_BIAS_PULL_{DOWN,UP} argument
-  pinctrl: sunxi: Add support for fetching pinconf settings from
-    hardware
-  pinctrl: sunxi: Make sunxi_pconf_group_set use sunxi_pconf_reg helper
-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 156 +++++++++++++++++++++++++---------
- drivers/pinctrl/sunxi/pinctrl-sunxi.h |   1 -
- 2 files changed, 118 insertions(+), 39 deletions(-)
-
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 3e9f7c675d36..fa11a3100346 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -532,23 +532,27 @@ static int sunxi_pconf_group_set(struct pinctrl_dev *pctldev,
+ {
+ 	struct sunxi_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
+ 	struct sunxi_pinctrl_group *g = &pctl->groups[group];
+-	unsigned long flags;
+ 	unsigned pin = g->pin - pctl->desc->pin_base;
+-	u32 val, mask;
+-	u16 strength;
+-	u8 dlevel;
+ 	int i;
+ 
+-	spin_lock_irqsave(&pctl->lock, flags);
+-
+ 	for (i = 0; i < num_configs; i++) {
+-		switch (pinconf_to_config_param(configs[i])) {
++		enum pin_config_param param;
++		unsigned long flags;
++		u32 offset, shift, mask, reg;
++		u16 arg, val;
++		int ret;
++
++		param = pinconf_to_config_param(configs[i]);
++		arg = pinconf_to_config_argument(configs[i]);
++
++		ret = sunxi_pconf_reg(pin, param, &offset, &shift, &mask);
++		if (ret < 0)
++			return ret;
++
++		switch (param) {
+ 		case PIN_CONFIG_DRIVE_STRENGTH:
+-			strength = pinconf_to_config_argument(configs[i]);
+-			if (strength > 40) {
+-				spin_unlock_irqrestore(&pctl->lock, flags);
++			if (arg < 10 || arg > 40)
+ 				return -EINVAL;
+-			}
+ 			/*
+ 			 * We convert from mA to what the register expects:
+ 			 *   0: 10mA
+@@ -556,39 +560,33 @@ static int sunxi_pconf_group_set(struct pinctrl_dev *pctldev,
+ 			 *   2: 30mA
+ 			 *   3: 40mA
+ 			 */
+-			dlevel = strength / 10 - 1;
+-			val = readl(pctl->membase + sunxi_dlevel_reg(pin));
+-			mask = DLEVEL_PINS_MASK << sunxi_dlevel_offset(pin);
+-			writel((val & ~mask)
+-				| dlevel << sunxi_dlevel_offset(pin),
+-				pctl->membase + sunxi_dlevel_reg(pin));
++			val = arg / 10 - 1;
+ 			break;
+ 		case PIN_CONFIG_BIAS_DISABLE:
+-			val = readl(pctl->membase + sunxi_pull_reg(pin));
+-			mask = PULL_PINS_MASK << sunxi_pull_offset(pin);
+-			writel((val & ~mask),
+-			       pctl->membase + sunxi_pull_reg(pin));
++			val = 0;
+ 			break;
+ 		case PIN_CONFIG_BIAS_PULL_UP:
+-			val = readl(pctl->membase + sunxi_pull_reg(pin));
+-			mask = PULL_PINS_MASK << sunxi_pull_offset(pin);
+-			writel((val & ~mask) | 1 << sunxi_pull_offset(pin),
+-				pctl->membase + sunxi_pull_reg(pin));
++			if (arg == 0)
++				return -EINVAL;
++			val = 1;
+ 			break;
+ 		case PIN_CONFIG_BIAS_PULL_DOWN:
+-			val = readl(pctl->membase + sunxi_pull_reg(pin));
+-			mask = PULL_PINS_MASK << sunxi_pull_offset(pin);
+-			writel((val & ~mask) | 2 << sunxi_pull_offset(pin),
+-				pctl->membase + sunxi_pull_reg(pin));
++			if (arg == 0)
++				return -EINVAL;
++			val = 2;
+ 			break;
+ 		default:
+-			break;
++			/* sunxi_pconf_reg should catch anything unsupported */
++			WARN_ON(1);
++			return -ENOTSUPP;
+ 		}
+-		/* cache the config value */
+-		g->config = configs[i];
+-	} /* for each config */
+ 
+-	spin_unlock_irqrestore(&pctl->lock, flags);
++		spin_lock_irqsave(&pctl->lock, flags);
++		reg = readl(pctl->membase + offset);
++		reg &= ~(mask << shift);
++		writel(reg | val << shift, pctl->membase + offset);
++		spin_unlock_irqrestore(&pctl->lock, flags);
++	} /* for each config */
+ 
+ 	return 0;
+ }
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+index 0afce1ab12d0..a7efb31d6523 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+@@ -109,7 +109,6 @@ struct sunxi_pinctrl_function {
+ 
+ struct sunxi_pinctrl_group {
+ 	const char	*name;
+-	unsigned long	config;
+ 	unsigned	pin;
+ };
+ 
 -- 
 2.10.2
-
