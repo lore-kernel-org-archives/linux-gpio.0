@@ -1,60 +1,71 @@
-From: Jacob Chen <jacob-chen@iotwrt.com>
-Subject: [PATCH 1/2] ARM: dts: rockchip: add the sdmmc pinctrl for rk1108
-Date: Sun, 13 Nov 2016 16:13:18 +0800
-Message-ID: <1479024799-29198-1-git-send-email-jacob-chen@iotwrt.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36218 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751665AbcKMINi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Nov 2016 03:13:38 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Jacob Chen <jacob-chen-fyOeoxGR3m/QT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/2] ARM: dts: rockchip: enable sdmmc for rk1108-evb
+Date: Sun, 13 Nov 2016 16:13:19 +0800
+Message-ID: <1479024799-29198-2-git-send-email-jacob-chen@iotwrt.com>
+References: <1479024799-29198-1-git-send-email-jacob-chen@iotwrt.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1479024799-29198-1-git-send-email-jacob-chen-fyOeoxGR3m/QT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jacob Chen <jacob2.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: heiko@sntech.de
-Cc: andy.yan@rock-chips.com, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jacob Chen <jacob2.chen@rock-chips.com>
 
-From: Jacob Chen <jacob2.chen@rock-chips.com>
+From: Jacob Chen <jacob2.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 
-Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
+This patch add sdmmc support for rk1108-evb, now I can load the rootfs
+from sdmmc.
+
+Signed-off-by: Jacob Chen <jacob2.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 ---
- arch/arm/boot/dts/rk1108.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ arch/arm/boot/dts/rk1108-evb.dts | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/arch/arm/boot/dts/rk1108.dtsi b/arch/arm/boot/dts/rk1108.dtsi
-index 9dccfea..6a06ad7 100644
---- a/arch/arm/boot/dts/rk1108.dtsi
-+++ b/arch/arm/boot/dts/rk1108.dtsi
-@@ -321,6 +321,31 @@
- 			input-enable;
- 		};
+diff --git a/arch/arm/boot/dts/rk1108-evb.dts b/arch/arm/boot/dts/rk1108-evb.dts
+index 3956cff..cea26e5 100644
+--- a/arch/arm/boot/dts/rk1108-evb.dts
++++ b/arch/arm/boot/dts/rk1108-evb.dts
+@@ -56,6 +56,18 @@
+ 	};
+ };
  
-+        sdmmc {
-+			sdmmc_clk: sdmmc-clk {
-+				rockchip,pins = <3 RK_PC4 RK_FUNC_1 &pcfg_pull_none_drv_4ma>;
-+			};
++&sdmmc {
++	bus-width = <4>;
++	cap-mmc-highspeed;
++	cap-sd-highspeed;
++	card-detect-delay = <200>;
++	disable-wp;
++	num-slots = <1>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdmmc_clk>, <&sdmmc_cmd>, <&sdmmc_cd>, <&sdmmc_bus4>;
++	status = "okay";
++};
 +
-+			sdmmc_cmd: sdmmc-cmd {
-+				rockchip,pins = <3 RK_PC5 RK_FUNC_1 &pcfg_pull_up_drv_4ma>;
-+			};
+ &uart0 {
+ 	status = "okay";
+ };
+@@ -67,3 +79,12 @@
+ &uart2 {
+ 	status = "okay";
+ };
 +
-+			sdmmc_cd: sdmmc-cd {
-+				rockchip,pins = <0 RK_PA1 RK_FUNC_1 &pcfg_pull_up_drv_4ma>;
-+			};
++&pinctrl {
 +
-+			sdmmc_bus1: sdmmc-bus1 {
-+				rockchip,pins = <3 RK_PC3 RK_FUNC_1 &pcfg_pull_up_drv_4ma>;
-+			};
-+
-+			sdmmc_bus4: sdmmc-bus4 {
-+				rockchip,pins = <3 RK_PC3 RK_FUNC_1 &pcfg_pull_up_drv_4ma>,
-+						<3 RK_PC2 RK_FUNC_1 &pcfg_pull_up_drv_4ma>,
-+						<3 RK_PC1 RK_FUNC_1 &pcfg_pull_up_drv_4ma>,
-+						<3 RK_PC0 RK_FUNC_1 &pcfg_pull_up_drv_4ma>;
-+			};
++	sdmmc {
++		sdmmc_pwr: sdmmc-pwr {
++			rockchip,pins = <3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_up_drv_4ma>;
 +		};
-+
- 		i2c1 {
- 			i2c1_xfer: i2c1-xfer {
- 				rockchip,pins = <2 RK_PD3 RK_FUNC_1 &pcfg_pull_up>,
++	};
++};
 -- 
 2.7.4
-
