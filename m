@@ -1,171 +1,60 @@
-From: Andy Yan <andy.yan@rock-chips.com>
-Subject: Re: [PATCH 2/6] pinctrl: rockchip: add support for rk1108
-Date: Sun, 13 Nov 2016 15:24:21 +0800
-Message-ID: <c1db8f07-53c4-c31f-fa83-78d1b8c42350@rock-chips.com>
-References: <1478175975-11779-1-git-send-email-andy.yan@rock-chips.com>
- <1478176470-11956-1-git-send-email-andy.yan@rock-chips.com>
- <CAFLEztRW8P4kiPZzVX2jM5UZMZun=TBBCij4B7j2TiesCuJYWA@mail.gmail.com>
- <2910206.ioRrj8ivkn@diego>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Jacob Chen <jacob-chen@iotwrt.com>
+Subject: [PATCH 1/2] ARM: dts: rockchip: add the sdmmc pinctrl for rk1108
+Date: Sun, 13 Nov 2016 16:13:18 +0800
+Message-ID: <1479024799-29198-1-git-send-email-jacob-chen@iotwrt.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.139]:49321 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751143AbcKMHYi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Nov 2016 02:24:38 -0500
-In-Reply-To: <2910206.ioRrj8ivkn@diego>
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36218 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751665AbcKMINi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Nov 2016 03:13:38 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>, =?UTF-8?B?6ZmI6LGq?= <jacobchen110@gmail.com>
-Cc: david.wu@rock-chips.com, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: heiko@sntech.de
+Cc: andy.yan@rock-chips.com, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jacob Chen <jacob2.chen@rock-chips.com>
 
-Hi Heiko, Jacob:
+From: Jacob Chen <jacob2.chen@rock-chips.com>
 
+Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
+---
+ arch/arm/boot/dts/rk1108.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-On 2016年11月13日 05:44, Heiko Stübner wrote:
-> Hi Jacob,
->
-> Am Sonntag, 13. November 2016, 01:41:21 schrieb 陈豪:
->> 2016-11-03 20:34 GMT+08:00 Andy Yan <andy.yan@rock-chips.com>:
->>> Add basic support for rk1108 soc
->>>
->>> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
->>> ---
->>>
->>>   drivers/pinctrl/pinctrl-rockchip.c | 27 ++++++++++++++++++++++++++-
->>>   1 file changed, 26 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
->>> b/drivers/pinctrl/pinctrl-rockchip.c index 49bf7dc..9f324b1 100644
->>> --- a/drivers/pinctrl/pinctrl-rockchip.c
->>> +++ b/drivers/pinctrl/pinctrl-rockchip.c
->>> @@ -59,6 +59,7 @@
->>>
->>>   #define GPIO_LS_SYNC           0x60
->>>   
->>>   enum rockchip_pinctrl_type {
->>>
->>> +       RK1108,
->>>
->>>          RK2928,
->>>          RK3066B,
->>>          RK3188,
->>>
->>> @@ -1123,6 +1124,7 @@ static int rockchip_get_pull(struct
->>> rockchip_pin_bank *bank, int pin_num)>
->>>                  return !(data & BIT(bit))
->>>                  
->>>                                  ? PIN_CONFIG_BIAS_PULL_PIN_DEFAULT
->>>                                  
->>>                                  : PIN_CONFIG_BIAS_DISABLE;
->>>
->>> +       case RK1108:
->>>          case RK3188:
->>>          case RK3288:
->>>
->>>          case RK3368:
->>> @@ -1169,6 +1171,7 @@ static int rockchip_set_pull(struct
->>> rockchip_pin_bank *bank,>
->>>                  spin_unlock_irqrestore(&bank->slock, flags);
->>>                  break;
->>>
->>> +       case RK1108:
->>>          case RK3188:
->>>          case RK3288:
->>>
->>>          case RK3368:
->>> @@ -1358,6 +1361,7 @@ static bool rockchip_pinconf_pull_valid(struct
->>> rockchip_pin_ctrl *ctrl,>
->>>                                          pull == PIN_CONFIG_BIAS_DISABLE);
->>>          
->>>          case RK3066B:
->>>                  return pull ? false : true;
->>>
->>> +       case RK1108:
->>>          case RK3188:
->>>          case RK3288:
->>>
->>>          case RK3368:
->>> @@ -1385,7 +1389,6 @@ static int rockchip_pinconf_set(struct pinctrl_dev
->>> *pctldev, unsigned int pin,>
->>>          for (i = 0; i < num_configs; i++) {
->>>          
->>>                  param = pinconf_to_config_param(configs[i]);
->>>                  arg = pinconf_to_config_argument(configs[i]);
->>>
->>> -
->>>
->>>                  switch (param) {
->>>                  
->>>                  case PIN_CONFIG_BIAS_DISABLE:
->>>                          rc =  rockchip_set_pull(bank, pin -
->>>                          bank->pin_base,
->>>
->>> @@ -2455,6 +2458,26 @@ static int rockchip_pinctrl_probe(struct
->>> platform_device *pdev)>
->>>          return 0;
->>>   
->>>   }
->>>
->>> +static struct rockchip_pin_bank rk1108_pin_banks[] = {
->>> +       PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", IOMUX_SOURCE_PMU,
->>> +                                            IOMUX_SOURCE_PMU,
->>> +                                            IOMUX_SOURCE_PMU,
->>> +                                            IOMUX_SOURCE_PMU),
->>> +       PIN_BANK_IOMUX_FLAGS(1, 32, "gpio1", 0, 0, 0, 0),
->>> +       PIN_BANK_IOMUX_FLAGS(2, 32, "gpio2", 0, 0, 0, 0),
->>> +       PIN_BANK_IOMUX_FLAGS(3, 32, "gpio3", 0, 0, 0, 0),
->>> +};
->>> +
->>> +static struct rockchip_pin_ctrl rk1108_pin_ctrl = {
->>> +       .pin_banks              = rk1108_pin_banks,
->>> +       .nr_banks               = ARRAY_SIZE(rk1108_pin_banks),
->>> +       .label                  = "RK1108-GPIO",
->>> +       .type                   = RK1108,
->>> +       .grf_mux_offset         = 0x10,
->>> +       .pmu_mux_offset         = 0x0,
->>> +       .pull_calc_reg          = rk3288_calc_pull_reg_and_bit,
->>> +};
->>> +com
->>>
->>>   static struct rockchip_pin_bank rk2928_pin_banks[] = {
->>>   
->>>          PIN_BANK(0, 32, "gpio0"),
->>>          PIN_BANK(1, 32, "gpio1"),
->>>
->>> @@ -2684,6 +2707,8 @@ static struct rockchip_pin_ctrl rk3399_pin_ctrl = {
->>>
->>>   };
->>>   
->>>   static const struct of_device_id rockchip_pinctrl_dt_match[] = {
->>>
->>> +       { .compatible = "rockchip,rk1108-pinctrl",
->>> +               .data = (void *)&rk1108_pin_ctrl },
->>>
->>>          { .compatible = "rockchip,rk2928-pinctrl",
->>>          
->>>                  .data = (void *)&rk2928_pin_ctrl },
->>>          
->>>          { .compatible = "rockchip,rk3036-pinctrl",
->>>
->>> --
->>> 2.7.4
->> rk3288_calc_pull_reg_and_bit can't be used directly in rk1108.
->> rk1108 have a different PULL_PMU_OFFSET and PULL_OFFSET.
-> yes, you're right, the offsets are different, so need a new function.
->
-> Andy, when at it, you might also want to include drive-strength functionality?
-> It is missing here but from looking at the TRM, it should be pretty easy to
-> add, as everything looks similar to what other rockchip socs do.
-
-     I had already found it, it will be fixed in next version.
-
-     Thank you!
->
-> Heiko
->
->
->
-
+diff --git a/arch/arm/boot/dts/rk1108.dtsi b/arch/arm/boot/dts/rk1108.dtsi
+index 9dccfea..6a06ad7 100644
+--- a/arch/arm/boot/dts/rk1108.dtsi
++++ b/arch/arm/boot/dts/rk1108.dtsi
+@@ -321,6 +321,31 @@
+ 			input-enable;
+ 		};
+ 
++        sdmmc {
++			sdmmc_clk: sdmmc-clk {
++				rockchip,pins = <3 RK_PC4 RK_FUNC_1 &pcfg_pull_none_drv_4ma>;
++			};
++
++			sdmmc_cmd: sdmmc-cmd {
++				rockchip,pins = <3 RK_PC5 RK_FUNC_1 &pcfg_pull_up_drv_4ma>;
++			};
++
++			sdmmc_cd: sdmmc-cd {
++				rockchip,pins = <0 RK_PA1 RK_FUNC_1 &pcfg_pull_up_drv_4ma>;
++			};
++
++			sdmmc_bus1: sdmmc-bus1 {
++				rockchip,pins = <3 RK_PC3 RK_FUNC_1 &pcfg_pull_up_drv_4ma>;
++			};
++
++			sdmmc_bus4: sdmmc-bus4 {
++				rockchip,pins = <3 RK_PC3 RK_FUNC_1 &pcfg_pull_up_drv_4ma>,
++						<3 RK_PC2 RK_FUNC_1 &pcfg_pull_up_drv_4ma>,
++						<3 RK_PC1 RK_FUNC_1 &pcfg_pull_up_drv_4ma>,
++						<3 RK_PC0 RK_FUNC_1 &pcfg_pull_up_drv_4ma>;
++			};
++		};
++
+ 		i2c1 {
+ 			i2c1_xfer: i2c1-xfer {
+ 				rockchip,pins = <2 RK_PD3 RK_FUNC_1 &pcfg_pull_up>,
+-- 
+2.7.4
 
