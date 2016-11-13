@@ -1,74 +1,90 @@
-From: =?UTF-8?B?6ZmI6LGq?= <jacobchen110-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: dts: rockchip: add the sdmmc pinctrl for rk1108
-Date: Sun, 13 Nov 2016 16:18:02 +0800
-Message-ID: <CAFLEztQNnjXeSf3qc=j3WVu4PWBoTs8-gB3oVXtVbauQaxst8Q@mail.gmail.com>
-References: <1479024799-29198-1-git-send-email-jacob-chen@iotwrt.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1479024799-29198-1-git-send-email-jacob-chen-fyOeoxGR3m/QT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jacob Chen <jacob2.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: clamp values on gpio[d]_direction_output()
+Date: Sun, 13 Nov 2016 23:02:44 +0100
+Message-ID: <1479074564-5466-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:35935 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964784AbcKMWCu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Nov 2016 17:02:50 -0500
+Received: by mail-lf0-f45.google.com with SMTP id t196so46282507lff.3
+        for <linux-gpio@vger.kernel.org>; Sun, 13 Nov 2016 14:02:49 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-2016-11-13 16:13 GMT+08:00 Jacob Chen <jacob-chen-fyOeoxGR3m/QT0dZR+AlfA@public.gmane.org>:
-> From: Jacob Chen <jacob2.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
->
-> Signed-off-by: Jacob Chen <jacob2.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-> ---
->  arch/arm/boot/dts/rk1108.dtsi | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/rk1108.dtsi b/arch/arm/boot/dts/rk1108.dtsi
-> index 9dccfea..6a06ad7 100644
-> --- a/arch/arm/boot/dts/rk1108.dtsi
-> +++ b/arch/arm/boot/dts/rk1108.dtsi
-> @@ -321,6 +321,31 @@
->                         input-enable;
->                 };
->
-> +        sdmmc {
-> +                       sdmmc_clk: sdmmc-clk {
-> +                               rockchip,pins = <3 RK_PC4 RK_FUNC_1 &pcfg_pull_none_drv_4ma>;
-> +                       };
-> +
-> +                       sdmmc_cmd: sdmmc-cmd {
-> +                               rockchip,pins = <3 RK_PC5 RK_FUNC_1 &pcfg_pull_up_drv_4ma>;
-> +                       };
-> +
-> +                       sdmmc_cd: sdmmc-cd {
-> +                               rockchip,pins = <0 RK_PA1 RK_FUNC_1 &pcfg_pull_up_drv_4ma>;
-> +                       };
-> +
-> +                       sdmmc_bus1: sdmmc-bus1 {
-> +                               rockchip,pins = <3 RK_PC3 RK_FUNC_1 &pcfg_pull_up_drv_4ma>;
-> +                       };
-> +
-> +                       sdmmc_bus4: sdmmc-bus4 {
-> +                               rockchip,pins = <3 RK_PC3 RK_FUNC_1 &pcfg_pull_up_drv_4ma>,
-> +                                               <3 RK_PC2 RK_FUNC_1 &pcfg_pull_up_drv_4ma>,
-> +                                               <3 RK_PC1 RK_FUNC_1 &pcfg_pull_up_drv_4ma>,
-> +                                               <3 RK_PC0 RK_FUNC_1 &pcfg_pull_up_drv_4ma>;
-> +                       };
-> +               };
-> +
->                 i2c1 {
->                         i2c1_xfer: i2c1-xfer {
->                                 rockchip,pins = <2 RK_PD3 RK_FUNC_1 &pcfg_pull_up>,
-> --
-> 2.7.4
->
+I saw weird values != [0,1] being passed down to drivers
+in their .set_direction_output() callbacks. Go over the
+gpiolib and make sure to hammer it to [0,1] before hitting
+the driver to avoid undesired side effects.
 
-Those patches are based on andy's patch set "Add basic support for
-support for Rockchip RK1108 SOC ", assuming he will include
-drive-strength functionality in pinctrl.
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpiolib.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 4575c2c5f293..26ce0743adae 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2150,6 +2150,7 @@ EXPORT_SYMBOL_GPL(gpiod_direction_input);
+ static int _gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+ {
+ 	struct gpio_chip *gc = desc->gdev->chip;
++	int val = !!value;
+ 	int ret;
+ 
+ 	/* GPIOs used for IRQs shall not be set as output */
+@@ -2169,7 +2170,7 @@ static int _gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+ 				goto set_output_value;
+ 		}
+ 		/* Emulate open drain by not actively driving the line high */
+-		if (value)
++		if (val)
+ 			return gpiod_direction_input(desc);
+ 	}
+ 	else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
+@@ -2180,7 +2181,7 @@ static int _gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+ 				goto set_output_value;
+ 		}
+ 		/* Emulate open source by not actively driving the line low */
+-		if (!value)
++		if (!val)
+ 			return gpiod_direction_input(desc);
+ 	} else {
+ 		/* Make sure to disable open drain/source hardware, if any */
+@@ -2198,10 +2199,10 @@ static int _gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+ 		return -EIO;
+ 	}
+ 
+-	ret = gc->direction_output(gc, gpio_chip_hwgpio(desc), value);
++	ret = gc->direction_output(gc, gpio_chip_hwgpio(desc), val);
+ 	if (!ret)
+ 		set_bit(FLAG_IS_OUT, &desc->flags);
+-	trace_gpio_value(desc_to_gpio(desc), 0, value);
++	trace_gpio_value(desc_to_gpio(desc), 0, val);
+ 	trace_gpio_direction(desc_to_gpio(desc), 0, ret);
+ 	return ret;
+ }
+@@ -2241,6 +2242,8 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
+ 	VALIDATE_DESC(desc);
+ 	if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+ 		value = !value;
++	else
++		value = !!value;
+ 	return _gpiod_direction_output_raw(desc, value);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_direction_output);
+@@ -3097,7 +3100,7 @@ static int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
+ 	/* Process flags */
+ 	if (dflags & GPIOD_FLAGS_BIT_DIR_OUT)
+ 		status = gpiod_direction_output(desc,
+-					      dflags & GPIOD_FLAGS_BIT_DIR_VAL);
++				!!(dflags & GPIOD_FLAGS_BIT_DIR_VAL));
+ 	else
+ 		status = gpiod_direction_input(desc);
+ 
+-- 
+2.7.4
+
