@@ -1,173 +1,74 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH v3 2/2] ARM: sunxi: Add the missing clocks to the pinctrl nodes
-Date: Mon, 14 Nov 2016 21:53:04 +0100
-Message-ID: <8ee1716a6e61159f91e523fda060d366dac279d4.1479156725.git-series.maxime.ripard@free-electrons.com>
-References: <cover.fa554eb1146d18ec75bf44863543fec4fa4fd3ae.1479156725.git-series.maxime.ripard@free-electrons.com>
+From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 1/5] pinctrl: core: Use delayed work for hogs
+Date: Mon, 14 Nov 2016 14:08:25 -0800
+Message-ID: <20161114220824.GC4082@atomide.com>
+References: <20161025210221.9150-1-tony@atomide.com>
+ <20161025210221.9150-2-tony@atomide.com>
+ <CACRpkdaP3_6x0GMpy_+fSok5r+5CP6RvP6dmDCtz4ayAm-TuSQ@mail.gmail.com>
+ <20161111202650.GI7138@atomide.com>
+ <20161114205243.GU7138@atomide.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.fa554eb1146d18ec75bf44863543fec4fa4fd3ae.1479156725.git-series.maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-In-Reply-To: <cover.fa554eb1146d18ec75bf44863543fec4fa4fd3ae.1479156725.git-series.maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-References: <cover.fa554eb1146d18ec75bf44863543fec4fa4fd3ae.1479156725.git-series.maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20161114205243.GU7138-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Haojian Zhuang <haojian.zhuang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The pin controllers also use the two oscillators for debouncing. Add them
-to the DTs.
+* Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org> [161114 12:54]:
+> * Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org> [161111 12:27]:
+> > * Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> [161111 12:17]:
+> > > On Tue, Oct 25, 2016 at 11:02 PM, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org> wrote:
+> > > > Signed-off-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+> > > 
+> > > I don't see why this is necessary?
+> > 
+> > It's needed because the pin controller driver has not yet
+> > finished it's probe at this point. We end up calling functions
+> > in the device driver where no struct pinctrl_dev is yet known
+> > to the driver. Asking a device driver to do something before
+> > it's probe is done does not quite follow the Linux driver model :)
+> > 
+> > > The hogging was placed inside pinctrl_register() so that any hogs
+> > > would be taken before it returns, so nothing else can take it
+> > > before the controller itself has the first chance. This semantic
+> > > needs to be preserved I think.
+> > > 
+> > > > +       schedule_delayed_work(&pctldev->hog_work,
+> > > > +                                     msecs_to_jiffies(100));
+> > > 
+> > > If we arbitrarily delay, something else can go in and take the
+> > > pins used by the hogs before the pinctrl core? That is what
+> > > we want to avoid.
+> > > 
+> > > Hm, 100ms seems arbitrarily chosen BTW. Can it be 1 ms?
+> > > 1 ns?
+> > 
+> > Yeah well seems like it should not matter but the race we need
+> > to remove somehow.
+> > 
+> > > I'm pretty sure that whatever it is that needs to happen before
+> > > the hog work runs can race with this delayed work under
+> > > some circumstances (such as slow external expanders
+> > > on i2c). It should be impossible for that to happen
+> > > and I don't think it is?
+> > 
+> > Yes it's totally possible even with delay set to 0.
+> > 
+> > Maybe we could add some trigger on the first consumer request
+> > and if that does not happen use the timer?
+> 
+> Below is what I came up with for removing the race for hogs. We
+> can do it by not registering the pctldev until in the deferred
+> work, does that seem OK to you?
 
-Signed-off-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Acked-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
----
- arch/arm/boot/dts/sun4i-a10.dtsi     | 3 ++-
- arch/arm/boot/dts/sun5i.dtsi         | 3 ++-
- arch/arm/boot/dts/sun6i-a31.dtsi     | 6 ++++--
- arch/arm/boot/dts/sun7i-a20.dtsi     | 3 ++-
- arch/arm/boot/dts/sun8i-a23-a33.dtsi | 6 ++++--
- arch/arm/boot/dts/sun8i-h3.dtsi      | 6 ++++--
- arch/arm/boot/dts/sun9i-a80.dtsi     | 6 ++++--
- 7 files changed, 22 insertions(+), 11 deletions(-)
+Oops, that does not yet work, will have to look into it more.
 
-diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
-index 7e7dfc2b43db..b14a4281058d 100644
---- a/arch/arm/boot/dts/sun4i-a10.dtsi
-+++ b/arch/arm/boot/dts/sun4i-a10.dtsi
-@@ -967,7 +967,8 @@
- 			compatible = "allwinner,sun4i-a10-pinctrl";
- 			reg = <0x01c20800 0x400>;
- 			interrupts = <28>;
--			clocks = <&apb0_gates 5>;
-+			clocks = <&apb0_gates 5>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index b4ccee8cfb02..b0fca4ef4dae 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -547,7 +547,8 @@
- 		pio: pinctrl@01c20800 {
- 			reg = <0x01c20800 0x400>;
- 			interrupts = <28>;
--			clocks = <&apb0_gates 5>;
-+			clocks = <&apb0_gates 5>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
-index 2e8bf93dcfb2..c941662383ee 100644
---- a/arch/arm/boot/dts/sun6i-a31.dtsi
-+++ b/arch/arm/boot/dts/sun6i-a31.dtsi
-@@ -471,7 +471,8 @@
- 				     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&ccu CLK_APB1_PIO>;
-+			clocks = <&ccu CLK_APB1_PIO>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-@@ -1051,7 +1052,8 @@
- 			reg = <0x01f02c00 0x400>;
- 			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&apb0_gates 0>;
-+			clocks = <&apb0_gates 0>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
- 			resets = <&apb0_rst 0>;
- 			gpio-controller;
- 			interrupt-controller;
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index 94cf5a1c7172..f7db067b0de0 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -1085,7 +1085,8 @@
- 			compatible = "allwinner,sun7i-a20-pinctrl";
- 			reg = <0x01c20800 0x400>;
- 			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&apb0_gates 5>;
-+			clocks = <&apb0_gates 5>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-index 300a1bd5a6ec..e4991a78ad73 100644
---- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-@@ -266,7 +266,8 @@
- 			/* compatible gets set in SoC specific dtsi file */
- 			reg = <0x01c20800 0x400>;
- 			/* interrupts get set in SoC specific dtsi file */
--			clocks = <&ccu CLK_BUS_PIO>;
-+			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-@@ -575,7 +576,8 @@
- 			compatible = "allwinner,sun8i-a23-r-pinctrl";
- 			reg = <0x01f02c00 0x400>;
- 			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&apb0_gates 0>;
-+			clocks = <&apb0_gates 0>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
- 			resets = <&apb0_rst 0>;
- 			gpio-controller;
- 			interrupt-controller;
-diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-index c38b028cac83..3c6596f06ebc 100644
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@ -321,7 +321,8 @@
- 			reg = <0x01c20800 0x400>;
- 			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&ccu CLK_BUS_PIO>;
-+			clocks = <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			#gpio-cells = <3>;
- 			interrupt-controller;
-@@ -614,7 +615,8 @@
- 			compatible = "allwinner,sun8i-h3-r-pinctrl";
- 			reg = <0x01f02c00 0x400>;
- 			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&apb0_gates 0>;
-+			clocks = <&apb0_gates 0>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
- 			resets = <&apb0_reset 0>;
- 			gpio-controller;
- 			#gpio-cells = <3>;
-diff --git a/arch/arm/boot/dts/sun9i-a80.dtsi b/arch/arm/boot/dts/sun9i-a80.dtsi
-index ab6a221027ef..979ad1aacfb1 100644
---- a/arch/arm/boot/dts/sun9i-a80.dtsi
-+++ b/arch/arm/boot/dts/sun9i-a80.dtsi
-@@ -678,7 +678,8 @@
- 				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&apb0_gates 5>;
-+			clocks = <&apb0_gates 5>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-@@ -902,7 +903,8 @@
- 			reg = <0x08002c00 0x400>;
- 			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&apbs_gates 0>;
-+			clocks = <&apbs_gates 0>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
- 			resets = <&apbs_rst 0>;
- 			gpio-controller;
- 			interrupt-controller;
--- 
-git-series 0.8.11
+Regards,
+
+Tony
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
