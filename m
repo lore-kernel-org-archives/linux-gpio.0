@@ -1,51 +1,178 @@
 From: Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v2 05/10] dt-bindings: add documentation for rk1108 pinctrl
-Date: Mon, 14 Nov 2016 20:09:53 +0800
-Message-ID: <1479125393-24355-1-git-send-email-andy.yan@rock-chips.com>
+Subject: [PATCH v2 06/10] pinctrl: rockchip: add support for rk1108
+Date: Mon, 14 Nov 2016 20:10:47 +0800
+Message-ID: <1479125447-24406-1-git-send-email-andy.yan@rock-chips.com>
 References: <1479124550-24037-1-git-send-email-andy.yan@rock-chips.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.135]:55302 "EHLO
+Received: from regular1.263xmail.com ([211.150.99.133]:57446 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751454AbcKNMKL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Nov 2016 07:10:11 -0500
+        with ESMTP id S932216AbcKNMLM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Nov 2016 07:11:12 -0500
 In-Reply-To: <1479124550-24037-1-git-send-email-andy.yan@rock-chips.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: heiko@sntech.de
-Cc: shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org, Andy Yan <andy.yan@rock-chips.com>
+Cc: shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Yan <andy.yan@rock-chips.com>
 
-This adds the dt-binding documentation for rk1108 pinctrl
+This add pinctrl support for Rockchip RK1108 Soc.
 
 Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
 ---
 
 Changes in v2:
-- add dt-binding documentation for pinctrl
+- add pull and drive-strength functionality
 
- Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinctrl-rockchip.c | 87 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 86 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-index c68b955..4722bc6 100644
---- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-@@ -19,10 +19,11 @@ The pins are grouped into up to 5 individual pin banks which need to be
- defined as gpio sub-nodes of the pinmux controller.
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 49bf7dc..fcc89fb 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -59,6 +59,7 @@
+ #define GPIO_LS_SYNC		0x60
  
- Required properties for iomux controller:
--  - compatible: one of "rockchip,rk2928-pinctrl", "rockchip,rk3066a-pinctrl"
--		       "rockchip,rk3066b-pinctrl", "rockchip,rk3188-pinctrl"
--		       "rockchip,rk3228-pinctrl", "rockchip,rk3288-pinctrl"
--		       "rockchip,rk3368-pinctrl", "rockchip,rk3399-pinctrl"
-+  - compatible: one of "rockchip,rk1108-pinctrl", "rockchip,rk2928-pinctrl"
-+		       "rockchip,rk3066a-pinctrl", "rockchip,rk3066b-pinctrl"
-+		       "rockchip,rk3188-pinctrl", "rockchip,rk3228-pinctrl"
-+		       "rockchip,rk3288-pinctrl", "rockchip,rk3368-pinctrl"
-+		       "rockchip,rk3399-pinctrl"
-   - rockchip,grf: phandle referencing a syscon providing the
- 	 "general register files"
+ enum rockchip_pinctrl_type {
++	RK1108,
+ 	RK2928,
+ 	RK3066B,
+ 	RK3188,
+@@ -624,6 +625,65 @@ static int rockchip_set_mux(struct rockchip_pin_bank *bank, int pin, int mux)
+ 	return ret;
+ }
  
++#define RK1108_PULL_PMU_OFFSET		0x10
++#define RK1108_PULL_OFFSET		0x110
++#define RK1108_PULL_PINS_PER_REG	8
++#define RK1108_PULL_BITS_PER_PIN	2
++#define RK1108_PULL_BANK_STRIDE		16
++
++static void rk1108_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
++					 int pin_num, struct regmap **regmap,
++					 int *reg, u8 *bit)
++{
++	struct rockchip_pinctrl *info = bank->drvdata;
++
++	/* The first 24 pins of the first bank are located in PMU */
++	if (bank->bank_num == 0) {
++		*regmap = info->regmap_pmu;
++		*reg = RK1108_PULL_PMU_OFFSET;
++	} else {
++		*reg = RK1108_PULL_OFFSET;
++		*regmap = info->regmap_base;
++		/* correct the offset, as we're starting with the 2nd bank */
++		*reg -= 0x10;
++		*reg += bank->bank_num * RK1108_PULL_BANK_STRIDE;
++	}
++
++	*reg += ((pin_num / RK1108_PULL_PINS_PER_REG) * 4);
++	*bit = (pin_num % RK1108_PULL_PINS_PER_REG);
++	*bit *= RK1108_PULL_BITS_PER_PIN;
++}
++
++#define RK1108_DRV_PMU_OFFSET           0x20
++#define RK1108_DRV_GRF_OFFSET           0x210
++#define RK1108_DRV_BITS_PER_PIN         2
++#define RK1108_DRV_PINS_PER_REG         8
++#define RK1108_DRV_BANK_STRIDE          16
++
++static void rk1108_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
++					int pin_num, struct regmap **regmap,
++					int *reg, u8 *bit)
++{
++	struct rockchip_pinctrl *info = bank->drvdata;
++
++	/* The first 24 pins of the first bank are located in PMU */
++	if (bank->bank_num == 0) {
++		*regmap = info->regmap_pmu;
++		*reg = RK1108_DRV_PMU_OFFSET;
++	} else {
++		*regmap = info->regmap_base;
++		*reg = RK1108_DRV_GRF_OFFSET;
++
++		/* correct the offset, as we're starting with the 2nd bank */
++		*reg -= 0x10;
++		*reg += bank->bank_num * RK1108_DRV_BANK_STRIDE;
++	}
++
++	*reg += ((pin_num / RK1108_DRV_PINS_PER_REG) * 4);
++	*bit = pin_num % RK1108_DRV_PINS_PER_REG;
++	*bit *= RK1108_DRV_BITS_PER_PIN;
++}
++
+ #define RK2928_PULL_OFFSET		0x118
+ #define RK2928_PULL_PINS_PER_REG	16
+ #define RK2928_PULL_BANK_STRIDE		8
+@@ -1123,6 +1183,7 @@ static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
+ 		return !(data & BIT(bit))
+ 				? PIN_CONFIG_BIAS_PULL_PIN_DEFAULT
+ 				: PIN_CONFIG_BIAS_DISABLE;
++	case RK1108:
+ 	case RK3188:
+ 	case RK3288:
+ 	case RK3368:
+@@ -1169,6 +1230,7 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
+ 
+ 		spin_unlock_irqrestore(&bank->slock, flags);
+ 		break;
++	case RK1108:
+ 	case RK3188:
+ 	case RK3288:
+ 	case RK3368:
+@@ -1358,6 +1420,7 @@ static bool rockchip_pinconf_pull_valid(struct rockchip_pin_ctrl *ctrl,
+ 					pull == PIN_CONFIG_BIAS_DISABLE);
+ 	case RK3066B:
+ 		return pull ? false : true;
++	case RK1108:
+ 	case RK3188:
+ 	case RK3288:
+ 	case RK3368:
+@@ -1385,7 +1448,6 @@ static int rockchip_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	for (i = 0; i < num_configs; i++) {
+ 		param = pinconf_to_config_param(configs[i]);
+ 		arg = pinconf_to_config_argument(configs[i]);
+-
+ 		switch (param) {
+ 		case PIN_CONFIG_BIAS_DISABLE:
+ 			rc =  rockchip_set_pull(bank, pin - bank->pin_base,
+@@ -2455,6 +2517,27 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static struct rockchip_pin_bank rk1108_pin_banks[] = {
++	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", IOMUX_SOURCE_PMU,
++					     IOMUX_SOURCE_PMU,
++					     IOMUX_SOURCE_PMU,
++					     IOMUX_SOURCE_PMU),
++	PIN_BANK_IOMUX_FLAGS(1, 32, "gpio1", 0, 0, 0, 0),
++	PIN_BANK_IOMUX_FLAGS(2, 32, "gpio2", 0, 0, 0, 0),
++	PIN_BANK_IOMUX_FLAGS(3, 32, "gpio3", 0, 0, 0, 0),
++};
++
++static struct rockchip_pin_ctrl rk1108_pin_ctrl = {
++	.pin_banks		= rk1108_pin_banks,
++	.nr_banks		= ARRAY_SIZE(rk1108_pin_banks),
++	.label			= "RK1108-GPIO",
++	.type			= RK1108,
++	.grf_mux_offset		= 0x10,
++	.pmu_mux_offset		= 0x0,
++	.pull_calc_reg		= rk1108_calc_pull_reg_and_bit,
++	.drv_calc_reg		= rk1108_calc_drv_reg_and_bit,
++};
++
+ static struct rockchip_pin_bank rk2928_pin_banks[] = {
+ 	PIN_BANK(0, 32, "gpio0"),
+ 	PIN_BANK(1, 32, "gpio1"),
+@@ -2684,6 +2767,8 @@ static struct rockchip_pin_ctrl rk3399_pin_ctrl = {
+ };
+ 
+ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
++	{ .compatible = "rockchip,rk1108-pinctrl",
++		.data = (void *)&rk1108_pin_ctrl },
+ 	{ .compatible = "rockchip,rk2928-pinctrl",
+ 		.data = (void *)&rk2928_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3036-pinctrl",
 -- 
 2.7.4
 
