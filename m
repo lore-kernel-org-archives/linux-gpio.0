@@ -1,36 +1,63 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: tc3589x: fix up .get_direction()
-Date: Mon, 14 Nov 2016 15:10:29 +0100
-Message-ID: <1479132629-24067-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, stable@vger.kernel.org
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: Re: [PATCH 1/2] pinctrl: bcm2835: Fix ints for GPIOs 28-31 & 46-53
+Date: Mon, 14 Nov 2016 16:32:45 +0100
+Message-ID: <427a3d44-16aa-258c-8722-48d9c7ffb593@i2se.com>
+References: <1479126206-20482-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1479126206-20482-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>, Eric Anholt <eric@anholt.net>, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The bit in the TC3589x direction register is 0 for input
-and 1 for output, but the gpiolib expects the reverse.
-Fix up the logic.
+Hi Linus,
 
-Cc: stable@vger.kernel.org
-Fixes: 14063d71e5e6 ("gpio: tc3589x: add .get_direction() and small cleanup")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-tc3589x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Am 14.11.2016 um 13:23 schrieb Linus Walleij:
+> From: Phil Elwell <phil@raspberrypi.org>
+>
+> Contrary to the documentation, the BCM2835 GPIO controller actually
+> has four interrupt lines - one each for the three IRQ groups and one
+> common. Confusingly, the GPIO interrupt groups don't correspond
+> directly with the GPIO control banks. Instead, GPIOs 0-27 generate IRQ
+> GPIO0, 28-45 IRQ GPIO1 and 46-53 IRQ GPIO2.
+>
+> Awkwardly, the GPIOs for IRQ GPIO1 straddle two 32-entry GPIO banks,
+> so split out a function to process the interrupts for a single GPIO
+> bank.
+>
+> Cc: Stefan Wahren <stefan.wahren@i2se.com>
+> Cc: Eric Anholt <eric@anholt.net>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> I want to apply this to cater for my GPIOLIB_IRQCHIP
+> refactorings.
+> ---
+>  drivers/pinctrl/bcm/pinctrl-bcm2835.c | 51 ++++++++++++++++++++++++++---------
+>  1 file changed, 39 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> index b2dd278f18b1..1d8fc104e26b 100644
+> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+>
+...
+> @@ -1076,6 +1102,7 @@ static struct platform_driver bcm2835_pinctrl_driver = {
+>  	.remove = bcm2835_pinctrl_remove,
+>  	.driver = {
+>  		.name = MODULE_NAME,
+> +		.owner = THIS_MODULE,
 
-diff --git a/drivers/gpio/gpio-tc3589x.c b/drivers/gpio/gpio-tc3589x.c
-index 65d380b2bad2..94ec262a99e0 100644
---- a/drivers/gpio/gpio-tc3589x.c
-+++ b/drivers/gpio/gpio-tc3589x.c
-@@ -97,7 +97,7 @@ static int tc3589x_gpio_get_direction(struct gpio_chip *chip,
- 	if (ret < 0)
- 		return ret;
- 
--	return !!(ret & BIT(pos));
-+	return !(ret & BIT(pos));
- }
- 
- static int tc3589x_gpio_set_single_ended(struct gpio_chip *chip,
--- 
-2.7.4
+this is unnecessary. Please remove it.
+
+Thanks for submitting these patches
+
+Stefan
+
+>  		.of_match_table = bcm2835_pinctrl_match,
+>  	},
+>  };
