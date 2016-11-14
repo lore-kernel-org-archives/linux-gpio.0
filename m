@@ -1,67 +1,38 @@
 From: Eric Anholt <eric@anholt.net>
-Subject: Re: [PATCH 1/2] pinctrl: bcm2835: Fix ints for GPIOs 28-31 & 46-53
-Date: Mon, 14 Nov 2016 10:24:03 -0800
-Message-ID: <877f85vs1o.fsf@eliezer.anholt.net>
-References: <1479126206-20482-1-git-send-email-linus.walleij@linaro.org> <427a3d44-16aa-258c-8722-48d9c7ffb593@i2se.com>
+Subject: Re: [PATCH 2/2] pinctrl: bcm2835: Return pins to inputs when freed
+Date: Mon, 14 Nov 2016 10:24:15 -0800
+Message-ID: <874m39vs1c.fsf@eliezer.anholt.net>
+References: <1479126214-20529-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; boundary="=-=-=";
         micalg=pgp-sha512; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <427a3d44-16aa-258c-8722-48d9c7ffb593@i2se.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Wahren <stefan.wahren@i2se.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>, Stephen Warren <swarren@wwwdotorg.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from anholt.net ([50.246.234.109]:57720 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933511AbcKNSYW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 14 Nov 2016 13:24:22 -0500
+In-Reply-To: <1479126214-20529-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>, Stefan Wahren <stefan.wahren@i2se.com>, Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>
 
 --=-=-=
 Content-Type: text/plain
 
-Stefan Wahren <stefan.wahren@i2se.com> writes:
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-> Hi Linus,
+> From: Phil Elwell <phil@raspberrypi.org>
 >
-> Am 14.11.2016 um 13:23 schrieb Linus Walleij:
->> From: Phil Elwell <phil@raspberrypi.org>
->>
->> Contrary to the documentation, the BCM2835 GPIO controller actually
->> has four interrupt lines - one each for the three IRQ groups and one
->> common. Confusingly, the GPIO interrupt groups don't correspond
->> directly with the GPIO control banks. Instead, GPIOs 0-27 generate IRQ
->> GPIO0, 28-45 IRQ GPIO1 and 46-53 IRQ GPIO2.
->>
->> Awkwardly, the GPIOs for IRQ GPIO1 straddle two 32-entry GPIO banks,
->> so split out a function to process the interrupts for a single GPIO
->> bank.
->>
->> Cc: Stefan Wahren <stefan.wahren@i2se.com>
->> Cc: Eric Anholt <eric@anholt.net>
->> Cc: Stephen Warren <swarren@wwwdotorg.org>
->> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->> I want to apply this to cater for my GPIOLIB_IRQCHIP
->> refactorings.
->> ---
->>  drivers/pinctrl/bcm/pinctrl-bcm2835.c | 51 ++++++++++++++++++++++++++---------
->>  1 file changed, 39 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
->> index b2dd278f18b1..1d8fc104e26b 100644
->> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
->> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
->>
-> ...
->> @@ -1076,6 +1102,7 @@ static struct platform_driver bcm2835_pinctrl_driver = {
->>  	.remove = bcm2835_pinctrl_remove,
->>  	.driver = {
->>  		.name = MODULE_NAME,
->> +		.owner = THIS_MODULE,
+> When dynamically unloading overlays, it is important that freed pins are
+> restored to being inputs to prevent functions from being enabled in
+> multiple places at once.
 >
-> this is unnecessary. Please remove it.
->
-> Thanks for submitting these patches
-
-With that dropped,
+> Cc: Stefan Wahren <stefan.wahren@i2se.com>
+> Cc: Eric Anholt <eric@anholt.net>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
 Acked-by: Eric Anholt <eric@anholt.net>
 
@@ -70,18 +41,18 @@ Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBCgAGBQJYKgFDAAoJELXWKTbR/J7oFmYQALI6hwQX4dtYwNwSy6n6iK1j
-883Xp+Olitmbu6WzIeYEW97Ezu/EJGfgVNXlmPqQs0vIQqEOu2FpWKOvFlXbnDeh
-JFXccFpvxpiq++QI6NnIrZqFEX2ValqwFkm/j2XNzOEUXzoYqjZOZL8Cr3xOnBAh
-U1bLPEDb4z7UEDOLabyeyEHnZwo1p1UCFz7E8PEHTdKDeQkOZVeU3+YfG6zlTFKi
-RdWz1fnN5sY4bKAOzV47YDBIgwWysvRUx9nrvuNajpADF1kvXV8X0+f/d7bYOwv9
-E4E/LcEAb4uBiUw3Pj/x2351BXR95Aw1+kL7bbylLyTkTPr5qRUZalAuT1xyWsHF
-gQk1LzifCPlY/dNuGnTGp1Ag1+vFXq3j3xKzfVxP1K0VRi3MzVdm/wGlDl+OsSKr
-Zh3XrjIHohUCuNfx4M8ATg+T1GE98afdW1qfgDSrFnEdUXQLqeTYm+qOXVAWp4vJ
-v5BJzKZdEsxECsyhx1UAemRwtXJspiYauBqLPBA/I7gtuKP1vwZbJeMO7gU8moP3
-zIJYXqh4CNZrlKkyrYURdnd+qpQgP7INuxIgNGDhJUBd6OyDdPHN6l6MwGxeusMt
-gVf1Kki17kk1drTk/HbTVgXFVevLZqNh3ZV8muskY8b0n6h8t7XQxfR6fpPUR692
-cMEihBhupi5kw4a8hWo0
-=NERs
+iQIcBAEBCgAGBQJYKgFPAAoJELXWKTbR/J7o1jQQAIw7R8744v2f92HqzOlRQy1v
+o2/o0TKjAzLNgY22I1SZejIt/IcE1qs9wWT+8JJpXERZoQdV2NH7O9J+l8Kx7JMU
+0hoddeY+CWa4z8u5otB4NZer7kK9wllOHl4z7sKnoOe2wgdVyO+8EV0AihcotU3q
+Ug0Q2KLveNn/621nlzuMaxox+dx9p4TEHSkG5N5+NExqP9vburtKOgTV+XCJWCwp
+tSa/q3MKkR3DczqsCO+RuUTKsfwljbus9Sz7cC2qciP023cANMY6IWo4KObNKN3j
+kl10qLMgAsvmGQmw4K8lh5lTGEjps+zYaJGJcNtftl6ZGKFv8seXZ+Fz0uF9PSr5
+XMLKzz1a+eBzcV8TQsnMW2rd82AiskPVEk4oElWpksllHEkmwzDRn/3DXZrIsE+Q
+qF459blXuyL5M5qBPHbDpjAqwNJAz5+MyIrHlExpz3X29rW50lrU6MwXTLAmkBAE
+LjYHceBASuYtW5k9An3N/0VlA24NvvmnFQuQYYvuPPqAzgdNz7K2TSl0PL5r/Iea
+3uykxxYX0lMhxi31mwfo8X3A2Kx8zB3IyxywY36FWG/VikH4g7wpcssbLZOTCR5Z
+N5ocnPAz9zhmpyW+lurvGqT3gfYMytiFacfRkMoliugqw65rCFZyFh1e+73TcDDY
+4IZfQkzZkndQptulnIGW
+=Bsu3
 -----END PGP SIGNATURE-----
 --=-=-=--
