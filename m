@@ -1,66 +1,34 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/2] pinctrl: bcm2835: Return pins to inputs when freed
-Date: Mon, 14 Nov 2016 13:23:34 +0100
-Message-ID: <1479126214-20529-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:34642 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933623AbcKNMXj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Nov 2016 07:23:39 -0500
-Received: by mail-lf0-f41.google.com with SMTP id o141so56888085lff.1
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Nov 2016 04:23:38 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geliang Tang <geliangtang@gmail.com>
+Subject: [PATCH] gpio: intel-mid: use builtin_pci_driver
+Date: Mon, 14 Nov 2016 20:52:25 +0800
+Message-ID: <1f356ef29486a21e77e00997bcc82b300d0512d6.1479127743.git.geliangtang@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Cohen <david.a.cohen@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Geliang Tang <geliangtang@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>, Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>, Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>
 
-From: Phil Elwell <phil@raspberrypi.org>
+Use builtin_pci_driver() helper to simplify the code.
 
-When dynamically unloading overlays, it is important that freed pins are
-restored to being inputs to prevent functions from being enabled in
-multiple places at once.
-
-Cc: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Eric Anholt <eric@anholt.net>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Geliang Tang <geliangtang@gmail.com>
 ---
-I want to apply this to cater for my GPIOLIB_IRQCHIP
-refactorings.
----
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/gpio/gpio-intel-mid.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index 1d8fc104e26b..2df59d9964a2 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -844,6 +844,16 @@ static const struct pinctrl_ops bcm2835_pctl_ops = {
- 	.dt_free_map = bcm2835_pctl_dt_free_map,
+diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
+index 164de64..a1e44c2 100644
+--- a/drivers/gpio/gpio-intel-mid.c
++++ b/drivers/gpio/gpio-intel-mid.c
+@@ -421,9 +421,4 @@ static struct pci_driver intel_gpio_driver = {
+ 	},
  };
  
-+static int bcm2835_pmx_free(struct pinctrl_dev *pctldev,
-+		unsigned offset)
-+{
-+	struct bcm2835_pinctrl *pc = pinctrl_dev_get_drvdata(pctldev);
-+
-+	/* disable by setting to GPIO_IN */
-+	bcm2835_pinctrl_fsel_set(pc, offset, BCM2835_FSEL_GPIO_IN);
-+	return 0;
-+}
-+
- static int bcm2835_pmx_get_functions_count(struct pinctrl_dev *pctldev)
- {
- 	return BCM2835_FSEL_COUNT;
-@@ -903,6 +913,7 @@ static int bcm2835_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
- }
- 
- static const struct pinmux_ops bcm2835_pmx_ops = {
-+	.free = bcm2835_pmx_free,
- 	.get_functions_count = bcm2835_pmx_get_functions_count,
- 	.get_function_name = bcm2835_pmx_get_function_name,
- 	.get_function_groups = bcm2835_pmx_get_function_groups,
+-static int __init intel_gpio_init(void)
+-{
+-	return pci_register_driver(&intel_gpio_driver);
+-}
+-
+-device_initcall(intel_gpio_init);
++builtin_pci_driver(intel_gpio_driver);
 -- 
-2.7.4
-
+2.9.3
