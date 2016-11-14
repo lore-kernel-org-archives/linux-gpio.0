@@ -1,65 +1,51 @@
 From: Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v2 00/10] Add basic support for Rockchip RK1108 SOC
-Date: Mon, 14 Nov 2016 19:55:50 +0800
-Message-ID: <1479124550-24037-1-git-send-email-andy.yan@rock-chips.com>
-Return-path: <linux-clk-owner@vger.kernel.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: heiko@sntech.de
-Cc: shawn.lin@rock-chips.com, linus.walleij@linaro.org, robh+dt@kernel.org, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, linux-gpio@vger.kernel.org, linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, ulf.hansson@linaro.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, mark.rutland@arm.com, Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v2 05/10] dt-bindings: add documentation for rk1108 pinctrl
+Date: Mon, 14 Nov 2016 20:09:53 +0800
+Message-ID: <1479125393-24355-1-git-send-email-andy.yan@rock-chips.com>
+References: <1479124550-24037-1-git-send-email-andy.yan@rock-chips.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.135]:55302 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751454AbcKNMKL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Nov 2016 07:10:11 -0500
+In-Reply-To: <1479124550-24037-1-git-send-email-andy.yan@rock-chips.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: heiko@sntech.de
+Cc: shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org, Andy Yan <andy.yan@rock-chips.com>
 
+This adds the dt-binding documentation for rk1108 pinctrl
 
-RK1108 is embedded with an ARM Cortex-A7 single core and a DSP core.
-It is designed for varies application scenario such as car DVR, sports
-DV, secure camera and UAV camera.
-This patch series add basic support for it, which can boot a board with
-initramfs into shell.
-More new feathers will come soon.
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+
+---
 
 Changes in v2:
-- split dt-binding header from clk driver
-- fix some CodingStyle issues
 - add dt-binding documentation for pinctrl
-- add pull and drive-strength functionality for pinctrl
-- fix timer and gic dt description
-- ordering devices by register address
-- move the board in the rockchip.txt to the block of Rockchip boards
 
-Andy Yan (6):
-  dt-bindings: add documentation for rk1108 pinctrl
-  pinctrl: rockchip: add support for rk1108
-  ARM: add low level debug uart for rk1108
-  ARM: dts: add basic support for Rockchip RK1108 SOC
-  ARM: rockchip: enable support for RK1108 SoC
-  ARM: dts: rockchip: add rockchip RK1108 Evaluation board
+ Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Shawn Lin (4):
-  dt-bindings: rockchip-dw-mshc: add RK1108 dw-mshc description
-  dt-bindings: add documentation for rk1108 cru
-  clk: rockchip: add dt-binding header for rk1108
-  clk: rockchip: add clock controller for rk1108
-
- Documentation/devicetree/bindings/arm/rockchip.txt |   5 +-
- .../bindings/clock/rockchip,rk1108-cru.txt         |  60 +++
- .../devicetree/bindings/mmc/rockchip-dw-mshc.txt   |   1 +
- .../bindings/pinctrl/rockchip,pinctrl.txt          |   9 +-
- arch/arm/Kconfig.debug                             |  30 ++
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/rk1108-evb.dts                   |  69 ++++
- arch/arm/boot/dts/rk1108.dtsi                      | 428 +++++++++++++++++++
- arch/arm/mach-rockchip/rockchip.c                  |   1 +
- drivers/clk/rockchip/Makefile                      |   1 +
- drivers/clk/rockchip/clk-rk1108.c                  | 451 +++++++++++++++++++++
- drivers/clk/rockchip/clk.h                         |  14 +
- drivers/pinctrl/pinctrl-rockchip.c                 |  87 +++-
- include/dt-bindings/clock/rk1108-cru.h             | 270 ++++++++++++
- 14 files changed, 1421 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk1108-cru.txt
- create mode 100644 arch/arm/boot/dts/rk1108-evb.dts
- create mode 100644 arch/arm/boot/dts/rk1108.dtsi
- create mode 100644 drivers/clk/rockchip/clk-rk1108.c
- create mode 100644 include/dt-bindings/clock/rk1108-cru.h
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
+index c68b955..4722bc6 100644
+--- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
+@@ -19,10 +19,11 @@ The pins are grouped into up to 5 individual pin banks which need to be
+ defined as gpio sub-nodes of the pinmux controller.
+ 
+ Required properties for iomux controller:
+-  - compatible: one of "rockchip,rk2928-pinctrl", "rockchip,rk3066a-pinctrl"
+-		       "rockchip,rk3066b-pinctrl", "rockchip,rk3188-pinctrl"
+-		       "rockchip,rk3228-pinctrl", "rockchip,rk3288-pinctrl"
+-		       "rockchip,rk3368-pinctrl", "rockchip,rk3399-pinctrl"
++  - compatible: one of "rockchip,rk1108-pinctrl", "rockchip,rk2928-pinctrl"
++		       "rockchip,rk3066a-pinctrl", "rockchip,rk3066b-pinctrl"
++		       "rockchip,rk3188-pinctrl", "rockchip,rk3228-pinctrl"
++		       "rockchip,rk3288-pinctrl", "rockchip,rk3368-pinctrl"
++		       "rockchip,rk3399-pinctrl"
+   - rockchip,grf: phandle referencing a syscon providing the
+ 	 "general register files"
+ 
 -- 
 2.7.4
 
