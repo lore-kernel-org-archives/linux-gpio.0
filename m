@@ -1,80 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: tag line labels used for interrupts
-Date: Mon, 14 Nov 2016 00:09:07 +0100
-Message-ID: <1479078547-20069-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:35695 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752814AbcKMXJM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Nov 2016 18:09:12 -0500
-Received: by mail-lf0-f47.google.com with SMTP id b14so46695720lfg.2
-        for <linux-gpio@vger.kernel.org>; Sun, 13 Nov 2016 15:09:12 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCHv3 3/6] pinctrl: sh-pfc: r8a7795: Simplify get bias logic
+Date: Mon, 14 Nov 2016 10:56:06 +0100
+Message-ID: <CAMuHMdXiSMcOZGrMHY5CG5B06rqrMoZvJc=fOTdhPH4HYF4O5g@mail.gmail.com>
+References: <20161112160429.12524-1-niklas.soderlund+renesas@ragnatech.se> <20161112160429.12524-4-niklas.soderlund+renesas@ragnatech.se>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20161112160429.12524-4-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
 
-When a GPIO line is marked as used for an interrupt, it is
-helpful to set the label to "interrupt" so we know what is
-going on when inspecting the lines.
+On Sat, Nov 12, 2016 at 5:04 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> The last else statement is missing braces and there indentation level
+> can be reduced.
+>
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-If a GPIO is already properly named by gpiod_get*() we don't
-need to do this. It only happens when a line is used from
-the irqchip side of a GPIO driver without communicating
-with the GPIO side, such as when gpiochip is used as interrupt
-provider in the device tree.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-If the line is still marked as used by "interrupt" when we
-unmark it as used by an interrupt, also remove this label
-from the descriptor.
+Gr{oetje,eeting}s,
 
-Also shape up the code around unmarking IRQ lines.
+                        Geert
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 26ce0743adae..865bca880bd7 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2688,6 +2688,15 @@ int gpiochip_lock_as_irq(struct gpio_chip *chip, unsigned int offset)
- 	}
- 
- 	set_bit(FLAG_USED_AS_IRQ, &desc->flags);
-+
-+	/*
-+	 * If the consumer has not set up a label (such as when the
-+	 * IRQ is referenced from .to_irq()) we set up a label here
-+	 * so it is clear this is used as an interrupt.
-+	 */
-+	if (!desc->label)
-+		desc_set_label(desc, "interrupt");
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(gpiochip_lock_as_irq);
-@@ -2702,10 +2711,17 @@ EXPORT_SYMBOL_GPL(gpiochip_lock_as_irq);
-  */
- void gpiochip_unlock_as_irq(struct gpio_chip *chip, unsigned int offset)
- {
--	if (offset >= chip->ngpio)
-+	struct gpio_desc *desc;
-+
-+	desc = gpiochip_get_desc(chip, offset);
-+	if (IS_ERR(desc))
- 		return;
- 
--	clear_bit(FLAG_USED_AS_IRQ, &chip->gpiodev->descs[offset].flags);
-+	clear_bit(FLAG_USED_AS_IRQ, &desc->flags);
-+
-+	/* If we only had this marking, erase it */
-+	if (desc->label && !strcmp(desc->label, "interrupt"))
-+		desc_set_label(desc, NULL);
- }
- EXPORT_SYMBOL_GPL(gpiochip_unlock_as_irq);
- 
--- 
-2.7.4
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
