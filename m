@@ -1,179 +1,161 @@
-From: Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v2 06/10] pinctrl: rockchip: add support for rk1108
-Date: Mon, 14 Nov 2016 20:10:47 +0800
-Message-ID: <1479125447-24406-1-git-send-email-andy.yan@rock-chips.com>
-References: <1479124550-24037-1-git-send-email-andy.yan@rock-chips.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.133]:57446 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932216AbcKNMLM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Nov 2016 07:11:12 -0500
-In-Reply-To: <1479124550-24037-1-git-send-email-andy.yan@rock-chips.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/2] pinctrl: bcm2835: Fix ints for GPIOs 28-31 & 46-53
+Date: Mon, 14 Nov 2016 13:23:26 +0100
+Message-ID: <1479126206-20482-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>, Stefan Wahren <stefan.wahren@i2se.com>, Eric Anholt <eric@anholt.net>, Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: heiko@sntech.de
-Cc: shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Yan <andy.yan@rock-chips.com>
 
-This add pinctrl support for Rockchip RK1108 Soc.
+From: Phil Elwell <phil@raspberrypi.org>
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Contrary to the documentation, the BCM2835 GPIO controller actually
+has four interrupt lines - one each for the three IRQ groups and one
+common. Confusingly, the GPIO interrupt groups don't correspond
+directly with the GPIO control banks. Instead, GPIOs 0-27 generate IRQ
+GPIO0, 28-45 IRQ GPIO1 and 46-53 IRQ GPIO2.
 
+Awkwardly, the GPIOs for IRQ GPIO1 straddle two 32-entry GPIO banks,
+so split out a function to process the interrupts for a single GPIO
+bank.
+
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Eric Anholt <eric@anholt.net>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
+I want to apply this to cater for my GPIOLIB_IRQCHIP
+refactorings.
+---
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 51 ++++++++++++++++++++++++++---------
+ 1 file changed, 39 insertions(+), 12 deletions(-)
 
-Changes in v2:
-- add pull and drive-strength functionality
-
- drivers/pinctrl/pinctrl-rockchip.c | 87 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 86 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 49bf7dc..fcc89fb 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -59,6 +59,7 @@
- #define GPIO_LS_SYNC		0x60
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index b2dd278f18b1..1d8fc104e26b 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -47,6 +47,7 @@
+ #define MODULE_NAME "pinctrl-bcm2835"
+ #define BCM2835_NUM_GPIOS 54
+ #define BCM2835_NUM_BANKS 2
++#define BCM2835_NUM_IRQS  3
  
- enum rockchip_pinctrl_type {
-+	RK1108,
- 	RK2928,
- 	RK3066B,
- 	RK3188,
-@@ -624,6 +625,65 @@ static int rockchip_set_mux(struct rockchip_pin_bank *bank, int pin, int mux)
- 	return ret;
- }
+ #define BCM2835_PIN_BITMAP_SZ \
+ 	DIV_ROUND_UP(BCM2835_NUM_GPIOS, sizeof(unsigned long) * 8)
+@@ -88,13 +89,13 @@ enum bcm2835_pinconf_pull {
  
-+#define RK1108_PULL_PMU_OFFSET		0x10
-+#define RK1108_PULL_OFFSET		0x110
-+#define RK1108_PULL_PINS_PER_REG	8
-+#define RK1108_PULL_BITS_PER_PIN	2
-+#define RK1108_PULL_BANK_STRIDE		16
-+
-+static void rk1108_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
-+					 int pin_num, struct regmap **regmap,
-+					 int *reg, u8 *bit)
-+{
-+	struct rockchip_pinctrl *info = bank->drvdata;
-+
-+	/* The first 24 pins of the first bank are located in PMU */
-+	if (bank->bank_num == 0) {
-+		*regmap = info->regmap_pmu;
-+		*reg = RK1108_PULL_PMU_OFFSET;
-+	} else {
-+		*reg = RK1108_PULL_OFFSET;
-+		*regmap = info->regmap_base;
-+		/* correct the offset, as we're starting with the 2nd bank */
-+		*reg -= 0x10;
-+		*reg += bank->bank_num * RK1108_PULL_BANK_STRIDE;
-+	}
-+
-+	*reg += ((pin_num / RK1108_PULL_PINS_PER_REG) * 4);
-+	*bit = (pin_num % RK1108_PULL_PINS_PER_REG);
-+	*bit *= RK1108_PULL_BITS_PER_PIN;
-+}
-+
-+#define RK1108_DRV_PMU_OFFSET           0x20
-+#define RK1108_DRV_GRF_OFFSET           0x210
-+#define RK1108_DRV_BITS_PER_PIN         2
-+#define RK1108_DRV_PINS_PER_REG         8
-+#define RK1108_DRV_BANK_STRIDE          16
-+
-+static void rk1108_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
-+					int pin_num, struct regmap **regmap,
-+					int *reg, u8 *bit)
-+{
-+	struct rockchip_pinctrl *info = bank->drvdata;
-+
-+	/* The first 24 pins of the first bank are located in PMU */
-+	if (bank->bank_num == 0) {
-+		*regmap = info->regmap_pmu;
-+		*reg = RK1108_DRV_PMU_OFFSET;
-+	} else {
-+		*regmap = info->regmap_base;
-+		*reg = RK1108_DRV_GRF_OFFSET;
-+
-+		/* correct the offset, as we're starting with the 2nd bank */
-+		*reg -= 0x10;
-+		*reg += bank->bank_num * RK1108_DRV_BANK_STRIDE;
-+	}
-+
-+	*reg += ((pin_num / RK1108_DRV_PINS_PER_REG) * 4);
-+	*bit = pin_num % RK1108_DRV_PINS_PER_REG;
-+	*bit *= RK1108_DRV_BITS_PER_PIN;
-+}
-+
- #define RK2928_PULL_OFFSET		0x118
- #define RK2928_PULL_PINS_PER_REG	16
- #define RK2928_PULL_BANK_STRIDE		8
-@@ -1123,6 +1183,7 @@ static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
- 		return !(data & BIT(bit))
- 				? PIN_CONFIG_BIAS_PULL_PIN_DEFAULT
- 				: PIN_CONFIG_BIAS_DISABLE;
-+	case RK1108:
- 	case RK3188:
- 	case RK3288:
- 	case RK3368:
-@@ -1169,6 +1230,7 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
- 
- 		spin_unlock_irqrestore(&bank->slock, flags);
- 		break;
-+	case RK1108:
- 	case RK3188:
- 	case RK3288:
- 	case RK3368:
-@@ -1358,6 +1420,7 @@ static bool rockchip_pinconf_pull_valid(struct rockchip_pin_ctrl *ctrl,
- 					pull == PIN_CONFIG_BIAS_DISABLE);
- 	case RK3066B:
- 		return pull ? false : true;
-+	case RK1108:
- 	case RK3188:
- 	case RK3288:
- 	case RK3368:
-@@ -1385,7 +1448,6 @@ static int rockchip_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 	for (i = 0; i < num_configs; i++) {
- 		param = pinconf_to_config_param(configs[i]);
- 		arg = pinconf_to_config_argument(configs[i]);
--
- 		switch (param) {
- 		case PIN_CONFIG_BIAS_DISABLE:
- 			rc =  rockchip_set_pull(bank, pin - bank->pin_base,
-@@ -2455,6 +2517,27 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static struct rockchip_pin_bank rk1108_pin_banks[] = {
-+	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", IOMUX_SOURCE_PMU,
-+					     IOMUX_SOURCE_PMU,
-+					     IOMUX_SOURCE_PMU,
-+					     IOMUX_SOURCE_PMU),
-+	PIN_BANK_IOMUX_FLAGS(1, 32, "gpio1", 0, 0, 0, 0),
-+	PIN_BANK_IOMUX_FLAGS(2, 32, "gpio2", 0, 0, 0, 0),
-+	PIN_BANK_IOMUX_FLAGS(3, 32, "gpio3", 0, 0, 0, 0),
-+};
-+
-+static struct rockchip_pin_ctrl rk1108_pin_ctrl = {
-+	.pin_banks		= rk1108_pin_banks,
-+	.nr_banks		= ARRAY_SIZE(rk1108_pin_banks),
-+	.label			= "RK1108-GPIO",
-+	.type			= RK1108,
-+	.grf_mux_offset		= 0x10,
-+	.pmu_mux_offset		= 0x0,
-+	.pull_calc_reg		= rk1108_calc_pull_reg_and_bit,
-+	.drv_calc_reg		= rk1108_calc_drv_reg_and_bit,
-+};
-+
- static struct rockchip_pin_bank rk2928_pin_banks[] = {
- 	PIN_BANK(0, 32, "gpio0"),
- 	PIN_BANK(1, 32, "gpio1"),
-@@ -2684,6 +2767,8 @@ static struct rockchip_pin_ctrl rk3399_pin_ctrl = {
+ struct bcm2835_gpio_irqdata {
+ 	struct bcm2835_pinctrl *pc;
+-	int bank;
++	int irqgroup;
  };
  
- static const struct of_device_id rockchip_pinctrl_dt_match[] = {
-+	{ .compatible = "rockchip,rk1108-pinctrl",
-+		.data = (void *)&rk1108_pin_ctrl },
- 	{ .compatible = "rockchip,rk2928-pinctrl",
- 		.data = (void *)&rk2928_pin_ctrl },
- 	{ .compatible = "rockchip,rk3036-pinctrl",
+ struct bcm2835_pinctrl {
+ 	struct device *dev;
+ 	void __iomem *base;
+-	int irq[BCM2835_NUM_BANKS];
++	int irq[BCM2835_NUM_IRQS];
+ 
+ 	/* note: locking assumes each bank will have its own unsigned long */
+ 	unsigned long enabled_irq_map[BCM2835_NUM_BANKS];
+@@ -105,7 +106,7 @@ struct bcm2835_pinctrl {
+ 	struct gpio_chip gpio_chip;
+ 	struct pinctrl_gpio_range gpio_range;
+ 
+-	struct bcm2835_gpio_irqdata irq_data[BCM2835_NUM_BANKS];
++	struct bcm2835_gpio_irqdata irq_data[BCM2835_NUM_IRQS];
+ 	spinlock_t irq_lock[BCM2835_NUM_BANKS];
+ };
+ 
+@@ -391,17 +392,16 @@ static struct gpio_chip bcm2835_gpio_chip = {
+ 	.can_sleep = false,
+ };
+ 
+-static irqreturn_t bcm2835_gpio_irq_handler(int irq, void *dev_id)
++static int bcm2835_gpio_irq_handle_bank(struct bcm2835_pinctrl *pc,
++					unsigned int bank, u32 mask)
+ {
+-	struct bcm2835_gpio_irqdata *irqdata = dev_id;
+-	struct bcm2835_pinctrl *pc = irqdata->pc;
+-	int bank = irqdata->bank;
+ 	unsigned long events;
+ 	unsigned offset;
+ 	unsigned gpio;
+ 	unsigned int type;
+ 
+ 	events = bcm2835_gpio_rd(pc, GPEDS0 + bank * 4);
++	events &= mask;
+ 	events &= pc->enabled_irq_map[bank];
+ 	for_each_set_bit(offset, &events, 32) {
+ 		gpio = (32 * bank) + offset;
+@@ -409,7 +409,30 @@ static irqreturn_t bcm2835_gpio_irq_handler(int irq, void *dev_id)
+ 
+ 		generic_handle_irq(irq_linear_revmap(pc->irq_domain, gpio));
+ 	}
+-	return events ? IRQ_HANDLED : IRQ_NONE;
++
++	return (events != 0);
++}
++
++static irqreturn_t bcm2835_gpio_irq_handler(int irq, void *dev_id)
++{
++	struct bcm2835_gpio_irqdata *irqdata = dev_id;
++	struct bcm2835_pinctrl *pc = irqdata->pc;
++	int handled = 0;
++
++	switch (irqdata->irqgroup) {
++	case 0: /* IRQ0 covers GPIOs 0-27 */
++		handled = bcm2835_gpio_irq_handle_bank(pc, 0, 0x0fffffff);
++		break;
++	case 1: /* IRQ1 covers GPIOs 28-45 */
++		handled = bcm2835_gpio_irq_handle_bank(pc, 0, 0xf0000000) |
++			  bcm2835_gpio_irq_handle_bank(pc, 1, 0x00003fff);
++		break;
++	case 2: /* IRQ2 covers GPIOs 46-53 */
++		handled = bcm2835_gpio_irq_handle_bank(pc, 1, 0x003fc000);
++		break;
++	}
++
++	return handled ? IRQ_HANDLED : IRQ_NONE;
+ }
+ 
+ static inline void __bcm2835_gpio_irq_config(struct bcm2835_pinctrl *pc,
+@@ -1000,8 +1023,6 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
+ 	for (i = 0; i < BCM2835_NUM_BANKS; i++) {
+ 		unsigned long events;
+ 		unsigned offset;
+-		int len;
+-		char *name;
+ 
+ 		/* clear event detection flags */
+ 		bcm2835_gpio_wr(pc, GPREN0 + i * 4, 0);
+@@ -1016,10 +1037,15 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
+ 		for_each_set_bit(offset, &events, 32)
+ 			bcm2835_gpio_wr(pc, GPEDS0 + i * 4, BIT(offset));
+ 
++		spin_lock_init(&pc->irq_lock[i]);
++	}
++
++	for (i = 0; i < BCM2835_NUM_IRQS; i++) {
++		int len;
++		char *name;
+ 		pc->irq[i] = irq_of_parse_and_map(np, i);
+ 		pc->irq_data[i].pc = pc;
+-		pc->irq_data[i].bank = i;
+-		spin_lock_init(&pc->irq_lock[i]);
++		pc->irq_data[i].irqgroup = i;
+ 
+ 		len = strlen(dev_name(pc->dev)) + 16;
+ 		name = devm_kzalloc(pc->dev, len, GFP_KERNEL);
+@@ -1076,6 +1102,7 @@ static struct platform_driver bcm2835_pinctrl_driver = {
+ 	.remove = bcm2835_pinctrl_remove,
+ 	.driver = {
+ 		.name = MODULE_NAME,
++		.owner = THIS_MODULE,
+ 		.of_match_table = bcm2835_pinctrl_match,
+ 	},
+ };
 -- 
 2.7.4
-
-
