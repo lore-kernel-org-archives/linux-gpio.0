@@ -1,42 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 2/3] pinctrl: sunxi: Add support for fetching pinconf
- settings from hardware
-Date: Tue, 15 Nov 2016 10:21:10 +0100
-Message-ID: <CACRpkdZXAZj5udrACxhaamhbUuHv0FM2=cqn8jsqPAznrW0+eg@mail.gmail.com>
-References: <20161111095036.11803-1-wens@csie.org> <20161111095036.11803-3-wens@csie.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 3/3] pinctrl: sunxi: Make
+ sunxi_pconf_group_set use sunxi_pconf_reg helper
+Date: Tue, 15 Nov 2016 10:22:22 +0100
+Message-ID: <CACRpkda3EF8GDVE=9cCy2z+4on3kXN13Zs0RKSNqWbQi44BcYQ@mail.gmail.com>
+References: <20161111095036.11803-1-wens@csie.org> <20161111095036.11803-4-wens@csie.org>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161111095036.11803-3-wens@csie.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBT5HVPAQKGQERWCJJXQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20161111095036.11803-4-wens-jdAy2FN1RRM@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 11, 2016 at 10:50 AM, Chen-Yu Tsai <wens@csie.org> wrote:
+On Fri, Nov 11, 2016 at 10:50 AM, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org> wrote:
 
-> The sunxi pinctrl driver only caches whatever pinconf setting was last
-> set on a given pingroup. This is not particularly helpful, nor is it
-> correct.
+> The sunxi_pconf_reg helper introduced in the last patch gives us the
+> chance to rework sunxi_pconf_group_set to have it match the structure
+> of sunxi_pconf_(group_)get and make it easier to understand.
 >
-> Fix this by actually reading the hardware registers and returning
-> the correct results or error codes. Also filter out unsupported
-> pinconf settings. Since this driver has a peculiar setup of 1 pin
-> per group, we can support both pin and pingroup pinconf setting
-> read back with the same code. The sunxi_pconf_reg helper and code
-> structure is inspired by pinctrl-msm.
+> For each config to set, it:
 >
-> With this done we can also claim to support generic pinconf, by
-> setting .is_generic = true in pinconf_ops.
+>     1. checks if the parameter is supported.
+>     2. checks if the argument is within limits.
+>     3. converts argument to the register value.
+>     4. writes to the register with spinlock held.
 >
-> Also remove the cached config value. The behavior of this was never
-> correct, as it only cached 1 setting instead of all of them. Since
-> we can now read back settings directly from the hardware, it is no
-> longer required.
+> As a result the function now blocks unsupported config parameters,
+> instead of silently ignoring them.
 >
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+> Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 
-Patch applied with Maxime's ACK.
+Patch applied.
 
 Yours,
 Linus Walleij
