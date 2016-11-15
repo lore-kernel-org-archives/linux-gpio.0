@@ -1,90 +1,114 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: wdt, gpio: move arch_initcall into subsys_initcall ?
-Date: Tue, 15 Nov 2016 13:10:32 +0200
-Message-ID: <afbf394e-e411-5c43-e2b0-667b3fbc2edf@mentor.com>
-References: <582AE18A.2060405@denx.de>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: intel: Configure pin as GPIO input when used
+ directly through irqchip
+Date: Tue, 15 Nov 2016 13:23:04 +0200
+Message-ID: <20161115112304.GE1446@lahna.fi.intel.com>
+References: <20161109112231.122700-1-mika.westerberg@linux.intel.com>
+ <CACRpkdZ_dXVGhSxrDbe579Y76SYpmSvFaF3dQyVguNkw9dq8_g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:52500 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750772AbcKOLKk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 06:10:40 -0500
-In-Reply-To: <582AE18A.2060405@denx.de>
+Received: from mga11.intel.com ([192.55.52.93]:45342 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752837AbcKOLXI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 15 Nov 2016 06:23:08 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZ_dXVGhSxrDbe579Y76SYpmSvFaF3dQyVguNkw9dq8_g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: hs@denx.de, linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Shawn Guo <shawnguo@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>, "Jonas Mark (ST-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hello Heiko,
+On Tue, Nov 15, 2016 at 09:40:27AM +0100, Linus Walleij wrote:
+> On Wed, Nov 9, 2016 at 12:22 PM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> 
+> > If a pin is used directly through irqchip without requesting it first as
+> > GPIO, it might be in wrong mode (for example input buffer disabled). This
+> > means the user may never get any interrupts.
+> >
+> > Fix this by configuring the pin as GPIO input when its type is first set in
+> > irq_set_type().
+> >
+> > Reported-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > ---
+> > Since we probably need to do this for cherryview and baytrail pinctrl
+> > drivers as well, I'm thinking is this something that the GPIO core could do
+> > automatically?
+> 
+> No it is a property of the irqchip core to set up the lines it needs
+> to use with hardware-specific code. It is a part of the contract that
+> the irqchip should always set up all the hardware it needs.
+> 
+> >From Documentation/gpio/driver.txt:
+> 
+> -----8<--------------------------8<--------------------------
+> It is legal for any IRQ consumer to request an IRQ from any irqchip no matter
+> if that is a combined GPIO+IRQ driver. The basic premise is that gpio_chip and
+> irq_chip are orthogonal, and offering their services independent of each
+> other.
+> 
+> gpiod_to_irq() is just a convenience function to figure out the IRQ for a
+> certain GPIO line and should not be relied upon to have been called before
+> the IRQ is used.
+> 
+> So always prepare the hardware and make it ready for action in respective
+> callbacks from the GPIO and irqchip APIs. Do not rely on gpiod_to_irq() having
+> been called first.
+> (...)
+> -----8<--------------------------8<--------------------------
 
-On 11/15/2016 12:20 PM, Heiko Schocher wrote:
-> Hello,
->
-> commit e188cbf7564f: "gpio: mxc: shift gpio_mxc_init() to subsys_initcall level"
-> moves the gpio initialization of the mxc gpio driver
-> from the arch_initcall level into subsys_initcall level.
->
-> This leads now on mxc boards, which use a gpio wdt driver
-> and the CONFIG_GPIO_WATCHDOG_ARCH_INITCALL option enabled,
-> to unwanted driver probe deferrals during kernel boot.
->
-> I see this currently on an imx6 based board (which has unfortunately
-> 3 WDT: imx6 internal (disabled), gpio wdt and da9063 WDT ...).
->
-> Also a side effect from above commit is, that the da9063 WDT driver
-> is now probed before the gpio WDT driver ... so /dev/watchdog now
-> does not point to the gpio_wdt, instead it points to the da9063 WDT.
->
-> So there are 2 solutions possible:
->
-> - add a CONFIG_GPIO_MCX_ARCH_INITCALL option
->   in drivers/gpio/gpio-mxc.c like for the gpio_wdt.c driver?
+OK, thanks for the detailed description.
 
-in my opinion this is overly heavy solution and it might be
-better to avoid it if possible.
+> And I agree you should check the other drivers for the same problem.
+> 
+> > +/* Called with pctrl->lock held */
+> > +static void intel_gpio_set_gpio_mode(struct intel_pinctrl *pctrl,
+> > +                                    void __iomem *padcfg0)
+> > +{
+> > +       u32 value;
+> > +
+> > +       /* Put the pad into GPIO mode */
+> > +       value = readl(padcfg0) & ~PADCFG0_PMODE_MASK;
+> > +       /* Disable SCI/SMI/NMI generation */
+> > +       value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
+> > +       value &= ~(PADCFG0_GPIROUTSMI | PADCFG0_GPIROUTNMI);
+> > +       /* Disable TX buffer and enable RX (this will be input) */
+> > +       value &= ~PADCFG0_GPIORXDIS;
+> > +       value |= PADCFG0_GPIOTXDIS;
+> > +       writel(value, padcfg0);
+> > +}
+> 
+> Looks good.
+> 
+> > @@ -762,8 +776,10 @@ static int intel_gpio_irq_type(struct irq_data *d, unsigned type)
+> >
+> >         raw_spin_lock_irqsave(&pctrl->lock, flags);
+> >
+> > -       value = readl(reg);
+> > +       /* Make sure the pin is GPIO input */
+> 
+> You already KNOW it is set as input, because you are implementing
+> .get_direction() in your gpiochip and the gpio descriptor thus contains
+> the (cached) direction setting.
+> 
+> When the GPIOLIB_IRQCHIP calles its request resources hook
+> it uses the gpiochip_lock_as_irq() call which verifies that the
+> line is indeed an input. Else it would deny it to be used as an IRQ.
 
-I would rather prefer to reconsider GPIO_WATCHDOG_ARCH_INITCALL
-usage in the watchdog driver.
+Actually it is not always input. The problem Jarkko reported happens
+because the pin is actually configured as output by the BIOS originally
+(or left untouched). The pin is wired to a pin header on Joule where the
+BIOS does not know in advance what will be connected to it.
 
-Moreover adding this proposed GPIO_MCX_ARCH_INITCALL to call
-the driver on arch level will result in deferring the GPIO driver.
+> > +       intel_gpio_set_gpio_mode(pctrl, reg);
+> >
+> > +       value = readl(reg);
+> >         value &= ~(PADCFG0_RXEVCFG_MASK | PADCFG0_RXINV);
+> 
+> Why is this setting done in .irq_set_type() rather than .irq_enable()
+> from the irqchip? I'd say implement .irq_enable() with just this call to
+> intel_gpio_set_gpio_mode() in it.
 
->   But how can we guarantee, that first the gpio driver and then
->   the gpio_wdt driver gets probed?
->
-> - move the arch_initcall in gpio_wdt.c into a subsys_initcall
->   (Tested this, and the probe dereferral messages are gone ...)
->
->   But this may results in problems on boards, which needs an early
->   trigger on an gpio wdt ...
-
-The level of "earliness" can not be defined in absolute time value
-in any case, why decreasing the init level of the watchdog driver
-to subsys level can cause problems? For that there should exist
-some kind of a dependency on IC or PCB hardware level, can you
-name it please?
-
-Also please note that more than a half of all GPIO drivers settle
-on subsys or later initcall level, this means that there is
-an expected GPIO watchdog driver deferral for all of them.
-
-I propose to send two patches for review:
-
-1. remove GPIO_WATCHDOG_ARCH_INITCALL option completely and decouple
-    module_platform_driver() into arch_initcall() and module_exit()
-    unconditionally.
-
-2. change arch_initcall() in the watchdog driver to subsys_initcall().
-    This change removes probe deferrals on boot, when the driver is
-    used with the most of the GPIO controllers.
-
-> Other ideas?
->
-> Thanks for all suggestions!
->
-
---
-With best wishes,
-Vladimir
+OK, I'll move it to .irq_enable() instead.
