@@ -1,57 +1,109 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCHv2 1/2] pinctrl: sh-pfc: r8a7796: Add drive strength support
-Date: Tue, 15 Nov 2016 13:54:00 +0100
-Message-ID: <CAMuHMdW0a+aYEE0Q5wASUjSca9z75R0iocz18pmq_xbDCqh6mw@mail.gmail.com>
-References: <20161112161002.13070-1-niklas.soderlund+renesas@ragnatech.se>
- <20161112161002.13070-2-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdUmw14iv7P+anCF6X9XBD7wFSKuDjCk-N_vqCUqOZYHmQ@mail.gmail.com> <20161115121810.GD27089@bigcity.dyn.berto.se>
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: wdt, gpio: move arch_initcall into subsys_initcall ?
+Date: Tue, 15 Nov 2016 05:46:53 -0800
+Message-ID: <ee9824b8-f09f-3817-8893-8121c9fb9eb1@roeck-us.net>
+References: <582AE18A.2060405@denx.de>
+ <afbf394e-e411-5c43-e2b0-667b3fbc2edf@mentor.com>
+ <e4472c2d-effa-9583-aded-8dcdfdd57ee6@mentor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20161115121810.GD27089@bigcity.dyn.berto.se>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <e4472c2d-effa-9583-aded-8dcdfdd57ee6-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>
+Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, hs-ynQEQJNshbs@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, "Jonas Mark (ST-FIR/ENG1)" <Mark.Jonas-V5te9oGctAVWk0Htik3J/w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Niklas,
-
-On Tue, Nov 15, 2016 at 1:18 PM, Niklas S=C3=B6derlund
-<niklas.soderlund@ragnatech.se> wrote:
->> > +       SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  7, DU_DOTCLKIN2, SH_PF=
-C_PIN_CFG_DRIVE_STRENGTH),
+On 11/15/2016 03:32 AM, Vladimir Zapolskiy wrote:
+> On 11/15/2016 01:10 PM, Vladimir Zapolskiy wrote:
+>> Hello Heiko,
 >>
->> DU_DOTCLKIN3 is pin AR8.
->
-> DU_DOTCLKIN2 is pin AR8, right?
-
-Yes. Silly typo on my part, and copied and pasted to bring more confusion :=
--(
-
->> > +               { PIN_A_NUMBER('R', 8),  24, 2 },       /* DU_DOTCLKIN=
-3 */
+>> On 11/15/2016 12:20 PM, Heiko Schocher wrote:
+>>> Hello,
+>>>
+>>> commit e188cbf7564f: "gpio: mxc: shift gpio_mxc_init() to subsys_initcall level"
+>>> moves the gpio initialization of the mxc gpio driver
+>>> from the arch_initcall level into subsys_initcall level.
+>>>
+>>> This leads now on mxc boards, which use a gpio wdt driver
+>>> and the CONFIG_GPIO_WATCHDOG_ARCH_INITCALL option enabled,
+>>> to unwanted driver probe deferrals during kernel boot.
+>>>
+>>> I see this currently on an imx6 based board (which has unfortunately
+>>> 3 WDT: imx6 internal (disabled), gpio wdt and da9063 WDT ...).
+>>>
+>>> Also a side effect from above commit is, that the da9063 WDT driver
+>>> is now probed before the gpio WDT driver ... so /dev/watchdog now
+>>> does not point to the gpio_wdt, instead it points to the da9063 WDT.
+>>>
+>>> So there are 2 solutions possible:
+>>>
+>>> - add a CONFIG_GPIO_MCX_ARCH_INITCALL option
+>>>   in drivers/gpio/gpio-mxc.c like for the gpio_wdt.c driver?
 >>
->> Probably this is a bug in the datasheet, as M3-W does not have DU_DOTCLK=
-IN3?
+>> in my opinion this is overly heavy solution and it might be
+>> better to avoid it if possible.
+>>
+>> I would rather prefer to reconsider GPIO_WATCHDOG_ARCH_INITCALL
+>> usage in the watchdog driver.
+>>
+>> Moreover adding this proposed GPIO_MCX_ARCH_INITCALL to call
+>> the driver on arch level will result in deferring the GPIO driver.
+>>
+>>>   But how can we guarantee, that first the gpio driver and then
+>>>   the gpio_wdt driver gets probed?
+>>>
+>>> - move the arch_initcall in gpio_wdt.c into a subsys_initcall
+>>>   (Tested this, and the probe dereferral messages are gone ...)
+>>>
+>>>   But this may results in problems on boards, which needs an early
+>>>   trigger on an gpio wdt ...
+>>
+>> The level of "earliness" can not be defined in absolute time value
+>> in any case, why decreasing the init level of the watchdog driver
+>> to subsys level can cause problems? For that there should exist
+>> some kind of a dependency on IC or PCB hardware level, can you
+>> name it please?
+>>
+>> Also please note that more than a half of all GPIO drivers settle
+>> on subsys or later initcall level, this means that there is
+>> an expected GPIO watchdog driver deferral for all of them.
 >
-> No bug in the datasheet only me who is confused by the naming of the
-> external leads and pins described above. Will fix this up and resend
-> after your feedback, sorry for the confusion and thanks for spotting it.
+> Please find two more late notes though.
+>
+>> I propose to send two patches for review:
+>>
+>> 1. remove GPIO_WATCHDOG_ARCH_INITCALL option completely and decouple
+>>    module_platform_driver() into arch_initcall() and module_exit()
+>>    unconditionally.
+>>
+>> 2. change arch_initcall() in the watchdog driver to subsys_initcall().
+>>    This change removes probe deferrals on boot, when the driver is
+>>    used with the most of the GPIO controllers.
+>
+> Alternatively commit 5e53c8ed813d ("watchdog: gpio_wdt: Add option for
+> early registration") can be reverted and then module_platform_driver()
+> is decoupled into subsys_initcall() and module_exit() as its replacement.
+>
+Sure, only the reason for that was that there are situations where
+subsys_initcall() was too late. Also, when using arch_initcall() only,
+we get deferrals again, which is apparently hated by many and a reason
+for all those "avoid probe deferrals" patches.
 
-The bit is labeled for H3 only in the PUEN register, but not in the
-PUD register.
+> And also please note that since quite many GPIO controller drivers
+> live on initcall levels after subsys_initcall(), the solution won't
+> let to avoid watchdog driver deferrals totally, this should be accepted.
+>
+... except for others it isn't, and we are back to square one.
 
-Gr{oetje,eeting}s,
+GPIO_WATCHDOG_ARCH_INITCALL was intended to be only used in situations
+where needed. Why is it used here in the first place if that is not
+the case ?
 
-                        Geert
+Guenter
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
