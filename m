@@ -1,381 +1,69 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 1/5] pinctrl: core: Use delayed work for hogs
-Date: Tue, 15 Nov 2016 09:08:38 -0800
-Message-ID: <20161115170838.GK4082@atomide.com>
-References: <20161025210221.9150-1-tony@atomide.com>
- <20161025210221.9150-2-tony@atomide.com>
- <CACRpkdaP3_6x0GMpy_+fSok5r+5CP6RvP6dmDCtz4ayAm-TuSQ@mail.gmail.com>
- <20161111202650.GI7138@atomide.com>
- <20161114205243.GU7138@atomide.com>
- <20161114220824.GC4082@atomide.com>
- <20161115004703.GG4082@atomide.com>
- <CACRpkdZ=pifhHrH_-466f2x3Ev4GKW0CCnTj1hL5Hfpdj5p-1A@mail.gmail.com>
- <20161115154124.GI4082@atomide.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v3 0/2] pinctrl: sunxi: Support the interrupt debouncing
+Date: Tue, 15 Nov 2016 18:50:16 +0100
+Message-ID: <20161115175016.yf4yrju235j5xs5d@lukather>
+References: <cover.fa554eb1146d18ec75bf44863543fec4fa4fd3ae.1479156725.git-series.maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7qdc5zonu7xyd7kn"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:60258 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750998AbcKORIo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 15 Nov 2016 12:08:44 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:50589 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933544AbcKORuS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 12:50:18 -0500
 Content-Disposition: inline
-In-Reply-To: <20161115154124.GI4082@atomide.com>
+In-Reply-To: <cover.fa554eb1146d18ec75bf44863543fec4fa4fd3ae.1479156725.git-series.maxime.ripard@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
 
-* Tony Lindgren <tony@atomide.com> [161115 07:42]:
-> * Linus Walleij <linus.walleij@linaro.org> [161114 22:53]:
-> > On Tue, Nov 15, 2016 at 1:47 AM, Tony Lindgren <tony@atomide.com> wrote:
-> > 
-> > > 8< --------------------------------
-> > > From tony Mon Sep 17 00:00:00 2001
-> > > From: Tony Lindgren <tony@atomide.com>
-> > > Date: Tue, 25 Oct 2016 08:33:35 -0700
-> > > Subject: [PATCH] pinctrl: core: Use delayed work for hogs
-> > >
-> > > Having the pin control framework call pin controller functions
-> > > before it's probe has finished is not nice as the pin controller
-> > > device driver does not yet have struct pinctrl_dev handle.
-> > >
-> > > Let's fix this issue by adding deferred work for late init. This is
-> > > needed to be able to add pinctrl generic helper functions that expect
-> > > to know struct pinctrl_dev handle. Note that we now need to call
-> > > create_pinctrl() directly as we don't want to add the pin controller
-> > > to the list of controllers until the hogs are claimed. We also need
-> > > to pass the pinctrl_dev to the device tree parser functions as they
-> > > otherwise won't find the right controller at this point.
-> > >
-> > > Signed-off-by: Tony Lindgren <tony@atomide.com>
-> > 
-> > This looks a lot better!
-> > 
-> > So if I understand correctly, we can guarantee that the delayed
-> > work will not execute until the device driver probe() has finished,
-> > and it *will* execute immediately after that?
-> > 
-> > So:
-> > - Device driver probes
-> > - Delayed work is called
-> > - Next initcall
-> > 
-> > I'm not 100% familiar with how delayed work works... :/
-> 
-> Yeah well the delayed work gets scheduled for next jiffy but may
-> be pre-empted as it runs in process context.
-> 
-> So in the worst case it could that we still may need to fix few
-> drivers to support -EPROBE_DEFER. I wonder if we should check for
-> hogs in probe already and only defer if hogs are defined?
 
-Below is a version using delayed_work only if pinctrl_dt_has_hogs().
+--7qdc5zonu7xyd7kn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Not sure if testing only for pinctrl-0 is enough there though?
+On Mon, Nov 14, 2016 at 09:53:02PM +0100, Maxime Ripard wrote:
+> Hi,
+>=20
+> The Allwinner pin controllers can setup a different debouncing period bas=
+ed
+> on two clocks and a prescaler.
+>=20
+> This debouncing is applied to the whole IRQ bank, which prevents us from
+> using the per-pin property that is usually used.
+>=20
+> Let me know what you think,
+> Maxime
 
-Regards,
+Applied the second patch.
 
-Tony
+Maxime
 
-8< --------------------------------
->From tony Mon Sep 17 00:00:00 2001
-From: Tony Lindgren <tony@atomide.com>
-Date: Tue, 25 Oct 2016 08:33:35 -0700
-Subject: [PATCH] pinctrl: core: Use delayed work for hogs
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-Having the pin control framework call pin controller functions
-before it's probe has finished is not nice as the pin controller
-device driver does not yet have struct pinctrl_dev handle.
+--7qdc5zonu7xyd7kn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Let's fix this issue by adding deferred work for late init. This is
-needed to be able to add pinctrl generic helper functions that expect
-to know struct pinctrl_dev handle. Note that we now need to call
-create_pinctrl() directly as we don't want to add the pin controller
-to the list of controllers until the hogs are claimed. We also need
-to pass the pinctrl_dev to the device tree parser functions as they
-otherwise won't find the right controller at this point.
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/pinctrl/core.c       | 90 ++++++++++++++++++++++++++++----------------
- drivers/pinctrl/core.h       |  2 +
- drivers/pinctrl/devicetree.c | 28 +++++++++++---
- drivers/pinctrl/devicetree.h | 12 +++++-
- 4 files changed, 93 insertions(+), 39 deletions(-)
+iQIcBAEBCAAGBQJYK0rYAAoJEBx+YmzsjxAgiaEP/jMNkM6VB1CnkCUw5/uk++h8
++CyA1sF6UUCnIFCMKPaiuf07vPeO0AT70KfPfy2a4K+KyeCHIGYevPz9XHRQVphK
+pK3n42rTGJ4j25cKzFZu6SjXxTJYju41OlDihTe46nHIJVBIAxpaoACaRdmvlaNd
+u7sWph7m7ODmYvk3lpJkDMYM2PiclrmKbVO4TQtQQ9qWu+dtCbgty1JVvRLEH6dL
+Z8IXBaxD4RGDWdSQFbiCMqOKbyWf14OJT2UkTD5FnXgR+jHhIYb2kAjHIqrTM1zS
+rMayRuhFHLZId1hbnlqukFVCRK0MFQeE2Qlf5EpUOzyImcNtOWEeeA6M+KKGpuKX
+OD6NeAji1Xk53O1EHEupy4Ahp0rowXQBN4T7XMxcjwOOd3uoseG9/M/Pz/loGtbU
+9UGq1kR8orwDg+PpTgVkwXpZ8HTRPb6tT7CMeamcgdI11Bw6sRAKPTSubMf1uBMj
+sBTOhuhjlnf6fHYPd6sYaWYRhSIbDCwZfHukBm8LtnaKVLUDdIFn0bMsRGU9SPbY
+bzvcrgvNi8j0YgEIlLLOvKUZ9E2aIF0BnhY+fEaDJwe6/ApsIeDhaczJUf6Mipmc
+4I7CdI7TiNxe5g3SwttIXHL4X/mfffdNL7hLtiwprQCmZOPcwPS7+UvHb2yxMBL6
+qzVhqbtqeDjmWh+H1Y46
+=LHkQ
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -720,7 +720,8 @@ static struct pinctrl_state *create_state(struct pinctrl *p,
- 	return state;
- }
- 
--static int add_setting(struct pinctrl *p, struct pinctrl_map const *map)
-+static int add_setting(struct pinctrl *p, struct pinctrl_dev *pctldev,
-+		       struct pinctrl_map const *map)
- {
- 	struct pinctrl_state *state;
- 	struct pinctrl_setting *setting;
-@@ -744,7 +745,11 @@ static int add_setting(struct pinctrl *p, struct pinctrl_map const *map)
- 
- 	setting->type = map->type;
- 
--	setting->pctldev = get_pinctrl_dev_from_devname(map->ctrl_dev_name);
-+	if (pctldev)
-+		setting->pctldev = pctldev;
-+	else
-+		setting->pctldev =
-+			get_pinctrl_dev_from_devname(map->ctrl_dev_name);
- 	if (setting->pctldev == NULL) {
- 		kfree(setting);
- 		/* Do not defer probing of hogs (circular loop) */
-@@ -800,7 +805,8 @@ static struct pinctrl *find_pinctrl(struct device *dev)
- 
- static void pinctrl_free(struct pinctrl *p, bool inlist);
- 
--static struct pinctrl *create_pinctrl(struct device *dev)
-+static struct pinctrl *create_pinctrl(struct device *dev,
-+				      struct pinctrl_dev *pctldev)
- {
- 	struct pinctrl *p;
- 	const char *devname;
-@@ -823,7 +829,7 @@ static struct pinctrl *create_pinctrl(struct device *dev)
- 	INIT_LIST_HEAD(&p->states);
- 	INIT_LIST_HEAD(&p->dt_maps);
- 
--	ret = pinctrl_dt_to_map(p);
-+	ret = pinctrl_dt_to_map(p, pctldev);
- 	if (ret < 0) {
- 		kfree(p);
- 		return ERR_PTR(ret);
-@@ -838,7 +844,7 @@ static struct pinctrl *create_pinctrl(struct device *dev)
- 		if (strcmp(map->dev_name, devname))
- 			continue;
- 
--		ret = add_setting(p, map);
-+		ret = add_setting(p, pctldev, map);
- 		/*
- 		 * At this point the adding of a setting may:
- 		 *
-@@ -899,7 +905,7 @@ struct pinctrl *pinctrl_get(struct device *dev)
- 		return p;
- 	}
- 
--	return create_pinctrl(dev);
-+	return create_pinctrl(dev, NULL);
- }
- EXPORT_SYMBOL_GPL(pinctrl_get);
- 
-@@ -1738,6 +1744,46 @@ static int pinctrl_check_ops(struct pinctrl_dev *pctldev)
- }
- 
- /**
-+ * pinctrl_late_init() - finish pin controller device registration
-+ * @work: work struct
-+ */
-+static void pinctrl_late_init(struct work_struct *work)
-+{
-+	struct pinctrl_dev *pctldev;
-+
-+	pctldev = container_of(work, struct pinctrl_dev, late_init.work);
-+
-+	pctldev->p = create_pinctrl(pctldev->dev, pctldev);
-+	if (!IS_ERR(pctldev->p)) {
-+		kref_get(&pctldev->p->users);
-+		pctldev->hog_default =
-+			pinctrl_lookup_state(pctldev->p, PINCTRL_STATE_DEFAULT);
-+		if (IS_ERR(pctldev->hog_default)) {
-+			dev_dbg(pctldev->dev,
-+				"failed to lookup the default state\n");
-+		} else {
-+			if (pinctrl_select_state(pctldev->p,
-+						 pctldev->hog_default))
-+				dev_err(pctldev->dev,
-+					"failed to select default state\n");
-+		}
-+
-+		pctldev->hog_sleep =
-+			pinctrl_lookup_state(pctldev->p,
-+					     PINCTRL_STATE_SLEEP);
-+		if (IS_ERR(pctldev->hog_sleep))
-+			dev_dbg(pctldev->dev,
-+				"failed to lookup the sleep state\n");
-+	}
-+
-+	mutex_lock(&pinctrldev_list_mutex);
-+	list_add_tail(&pctldev->node, &pinctrldev_list);
-+	mutex_unlock(&pinctrldev_list_mutex);
-+
-+	pinctrl_init_device_debugfs(pctldev);
-+}
-+
-+/**
-  * pinctrl_register() - register a pin controller device
-  * @pctldesc: descriptor for this pin controller
-  * @dev: parent device for this pin controller
-@@ -1766,6 +1812,7 @@ struct pinctrl_dev *pinctrl_register(struct pinctrl_desc *pctldesc,
- 	pctldev->driver_data = driver_data;
- 	INIT_RADIX_TREE(&pctldev->pin_desc_tree, GFP_KERNEL);
- 	INIT_LIST_HEAD(&pctldev->gpio_ranges);
-+	INIT_DELAYED_WORK(&pctldev->late_init, pinctrl_late_init);
- 	pctldev->dev = dev;
- 	mutex_init(&pctldev->mutex);
- 
-@@ -1800,32 +1847,10 @@ struct pinctrl_dev *pinctrl_register(struct pinctrl_desc *pctldesc,
- 		goto out_err;
- 	}
- 
--	mutex_lock(&pinctrldev_list_mutex);
--	list_add_tail(&pctldev->node, &pinctrldev_list);
--	mutex_unlock(&pinctrldev_list_mutex);
--
--	pctldev->p = pinctrl_get(pctldev->dev);
--
--	if (!IS_ERR(pctldev->p)) {
--		pctldev->hog_default =
--			pinctrl_lookup_state(pctldev->p, PINCTRL_STATE_DEFAULT);
--		if (IS_ERR(pctldev->hog_default)) {
--			dev_dbg(dev, "failed to lookup the default state\n");
--		} else {
--			if (pinctrl_select_state(pctldev->p,
--						pctldev->hog_default))
--				dev_err(dev,
--					"failed to select default state\n");
--		}
--
--		pctldev->hog_sleep =
--			pinctrl_lookup_state(pctldev->p,
--						    PINCTRL_STATE_SLEEP);
--		if (IS_ERR(pctldev->hog_sleep))
--			dev_dbg(dev, "failed to lookup the sleep state\n");
--	}
--
--	pinctrl_init_device_debugfs(pctldev);
-+	if (pinctrl_dt_has_hogs(pctldev))
-+		schedule_delayed_work(&pctldev->late_init, 0);
-+	else
-+		pinctrl_late_init(&pctldev->late_init.work);
- 
- 	return pctldev;
- 
-@@ -1848,6 +1873,7 @@ void pinctrl_unregister(struct pinctrl_dev *pctldev)
- 	if (pctldev == NULL)
- 		return;
- 
-+	cancel_delayed_work_sync(&pctldev->late_init);
- 	mutex_lock(&pctldev->mutex);
- 	pinctrl_remove_device_debugfs(pctldev);
- 	mutex_unlock(&pctldev->mutex);
-diff --git a/drivers/pinctrl/core.h b/drivers/pinctrl/core.h
---- a/drivers/pinctrl/core.h
-+++ b/drivers/pinctrl/core.h
-@@ -33,6 +33,7 @@ struct pinctrl_gpio_range;
-  * @p: result of pinctrl_get() for this device
-  * @hog_default: default state for pins hogged by this device
-  * @hog_sleep: sleep state for pins hogged by this device
-+ * @late_init: delayed work for pin controller to finish registration
-  * @mutex: mutex taken on each pin controller specific action
-  * @device_root: debugfs root for this device
-  */
-@@ -47,6 +48,7 @@ struct pinctrl_dev {
- 	struct pinctrl *p;
- 	struct pinctrl_state *hog_default;
- 	struct pinctrl_state *hog_sleep;
-+	struct delayed_work late_init;
- 	struct mutex mutex;
- #ifdef CONFIG_DEBUG_FS
- 	struct dentry *device_root;
-diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
---- a/drivers/pinctrl/devicetree.c
-+++ b/drivers/pinctrl/devicetree.c
-@@ -100,11 +100,12 @@ struct pinctrl_dev *of_pinctrl_get(struct device_node *np)
- 	return get_pinctrl_dev_from_of_node(np);
- }
- 
--static int dt_to_map_one_config(struct pinctrl *p, const char *statename,
-+static int dt_to_map_one_config(struct pinctrl *p,
-+				struct pinctrl_dev *pctldev,
-+				const char *statename,
- 				struct device_node *np_config)
- {
- 	struct device_node *np_pctldev;
--	struct pinctrl_dev *pctldev;
- 	const struct pinctrl_ops *ops;
- 	int ret;
- 	struct pinctrl_map *map;
-@@ -121,7 +122,8 @@ static int dt_to_map_one_config(struct pinctrl *p, const char *statename,
- 			/* OK let's just assume this will appear later then */
- 			return -EPROBE_DEFER;
- 		}
--		pctldev = get_pinctrl_dev_from_of_node(np_pctldev);
-+		if (!pctldev)
-+			pctldev = get_pinctrl_dev_from_of_node(np_pctldev);
- 		if (pctldev)
- 			break;
- 		/* Do not defer probing of hogs (circular loop) */
-@@ -166,7 +168,22 @@ static int dt_remember_dummy_state(struct pinctrl *p, const char *statename)
- 	return dt_remember_or_free_map(p, statename, NULL, map, 1);
- }
- 
--int pinctrl_dt_to_map(struct pinctrl *p)
-+bool pinctrl_dt_has_hogs(struct pinctrl_dev *pctldev)
-+{
-+	struct device_node *np;
-+	struct property *prop;
-+	int size;
-+
-+	np = pctldev->dev->of_node;
-+	if (!np)
-+		return false;
-+
-+	prop = of_find_property(np, "pinctrl-0", &size);
-+
-+	return prop ? true : false;
-+}
-+
-+int pinctrl_dt_to_map(struct pinctrl *p, struct pinctrl_dev *pctldev)
- {
- 	struct device_node *np = p->dev->of_node;
- 	int state, ret;
-@@ -233,7 +250,8 @@ int pinctrl_dt_to_map(struct pinctrl *p)
- 			}
- 
- 			/* Parse the node */
--			ret = dt_to_map_one_config(p, statename, np_config);
-+			ret = dt_to_map_one_config(p, pctldev, statename,
-+						   np_config);
- 			of_node_put(np_config);
- 			if (ret < 0)
- 				goto err;
-diff --git a/drivers/pinctrl/devicetree.h b/drivers/pinctrl/devicetree.h
---- a/drivers/pinctrl/devicetree.h
-+++ b/drivers/pinctrl/devicetree.h
-@@ -20,8 +20,10 @@ struct of_phandle_args;
- 
- #ifdef CONFIG_OF
- 
-+bool pinctrl_dt_has_hogs(struct pinctrl_dev *pctldev);
-+
- void pinctrl_dt_free_maps(struct pinctrl *p);
--int pinctrl_dt_to_map(struct pinctrl *p);
-+int pinctrl_dt_to_map(struct pinctrl *p, struct pinctrl_dev *pctldev);
- 
- int pinctrl_count_index_with_args(const struct device_node *np,
- 				  const char *list_name);
-@@ -32,7 +34,13 @@ int pinctrl_parse_index_with_args(const struct device_node *np,
- 
- #else
- 
--static inline int pinctrl_dt_to_map(struct pinctrl *p)
-+static inline bool pinctrl_dt_has_hogs(struct pinctrl_dev *pctldev)
-+{
-+	return false;
-+}
-+
-+static inline int pinctrl_dt_to_map(struct pinctrl *p,
-+				    struct pinctrl_dev *pctldev)
- {
- 	return 0;
- }
--- 
-2.10.2
+--7qdc5zonu7xyd7kn--
