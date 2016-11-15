@@ -1,42 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/2] pinctrl: sunxi: Add support for interrupt debouncing
-Date: Tue, 15 Nov 2016 10:23:30 +0100
-Message-ID: <CACRpkdYdfEYfmF34mW2kFYFfZtjDQuHSvyUkcZztgUqG9j=jAQ@mail.gmail.com>
-References: <cover.fa554eb1146d18ec75bf44863543fec4fa4fd3ae.1479156725.git-series.maxime.ripard@free-electrons.com>
- <d7c3760d37046a4b390b1a7b30bb94b8e1af31a7.1479156725.git-series.maxime.ripard@free-electrons.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCHv3 2/6] pinctrl: sh-pfc: Add helper to handle bias lookup table
+Date: Tue, 15 Nov 2016 10:32:49 +0100
+Message-ID: <CAMuHMdWepScfNoyzRGZdsUSE3eajJ9F72rScc8OGziKeM=ffYg@mail.gmail.com>
+References: <20161112160429.12524-1-niklas.soderlund+renesas@ragnatech.se> <20161112160429.12524-3-niklas.soderlund+renesas@ragnatech.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f175.google.com ([209.85.216.175]:35279 "EHLO
-        mail-qt0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941318AbcKOJXb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 04:23:31 -0500
-Received: by mail-qt0-f175.google.com with SMTP id c47so64667219qtc.2
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2016 01:23:31 -0800 (PST)
-In-Reply-To: <d7c3760d37046a4b390b1a7b30bb94b8e1af31a7.1479156725.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20161112160429.12524-3-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
 
-On Mon, Nov 14, 2016 at 9:53 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-
-> The pin controller found in the Allwinner SoCs has support for interrupts
-> debouncing.
+On Sat, Nov 12, 2016 at 5:04 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> On some SoC there are no simple mapping of pins to bias register bits
+> and a lookup table is needed. This logic is already implemented in some
+> SoC specific drivers that could benefit from a generic implementation.
 >
-> However, this is not done per-pin, preventing us from using the generic
-> pinconf binding for that, but per irq bank, which, depending on the SoC,
-> ranges from one to five.
+> Add helpers to deal with the lookup which later can be used by the SoC
+> specific drivers. The logic used to lookup are different from the one it
+> aims to replace, this is intentional. This new method reduces the memory
+> consumption at the cost of increased CPU usage and fix a bug where a
+> WARN() would incorrectly be triggered if the register offset is 0.
 >
-> Introduce a device-wide property to deal with this using a microsecond
-> resolution. We can re-use the per-pin input-debounce property for that, so
-> let's do it!
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-Patch applied.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Yours,
-Linus Walleij
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
