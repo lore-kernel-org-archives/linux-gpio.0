@@ -1,35 +1,52 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 2/2] pinctrl: samsung: Add GPF support for Exynos5433
-Date: Tue, 15 Nov 2016 09:43:09 +0100
-Message-ID: <CACRpkdbnUrcJk+78TiNi0eHQeFt0oLn_m_74NJCW9o+6LQS=3Q@mail.gmail.com>
-References: <1478680811-24835-1-git-send-email-cw00.choi@samsung.com> <1478680811-24835-3-git-send-email-cw00.choi@samsung.com>
+Subject: Re: [PATCH V2 2/2] pinctrl: tegra: Add driver to configure voltage
+ and power of io pads
+Date: Tue, 15 Nov 2016 09:59:11 +0100
+Message-ID: <CACRpkdb=mw46NNuqagzX9xas1FZuE37H3m8t3jRRfg7ThzN5vA@mail.gmail.com>
+References: <1478696782-11657-1-git-send-email-ldewangan@nvidia.com> <1478696782-11657-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1478680811-24835-3-git-send-email-cw00.choi@samsung.com>
+In-Reply-To: <1478696782-11657-3-git-send-email-ldewangan@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Joonyoung Shim <jy0922.shim@samsung.com>
+To: Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 9, 2016 at 9:40 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+On Wed, Nov 9, 2016 at 2:06 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-> This patch add the support of GPF[1-5] pin of Exynos5433 SoC. The GPFx need
-> to support the multiple memory map because the registers of GPFx are located
-> in the different domain.
+> NVIDIA Tegra124 and later SoCs support the multi-voltage level and
+> low power state of some of its IO pads. The IO pads can work in
+> the voltage of the 1.8V and 3.3V of IO voltage from IO power rail
+> sources. When IO interfaces are not used then IO pads can be
+> configure in low power state to reduce the power consumption from
+> that IO pads.
 >
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> On Tegra124, the voltage level of IO power rail source is auto
+> detected by hardware(SoC) and hence it is only require to configure
+> in low power mode if IO pads are not used.
+>
+> On T210 onwards, the auto-detection of voltage level from IO power
+> rail is removed from SoC and hence SW need to configure the PMC
+> register explicitly to set proper voltage in IO pads based on
+> IO rail power source voltage.
+>
+> This driver adds the IO pad driver to configure the power state and
+> IO pad voltage based on the usage and power tree via pincontrol
+> framework. The configuration can be static and dynamic.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>
+> ---
+> Changes from V1:
+> - Dropped the custom properties to set pad voltage and use regulator.
+> - Added support for regulator to get vottage in boot and configure IO
+>   pad voltage.
+> - Add support for callback to handle regulator notification and configure
+>   IO pad voltage based on voltage change.
 
-Patch applied.
+I'm waiting for maintainer review on this.
+Stephen/Thierry?
 
 Yours,
 Linus Walleij
