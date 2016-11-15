@@ -1,37 +1,39 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCHv3 5/6] pinctrl: sh-pfc: r8a7778: Use lookup function for
- bias data
-Date: Tue, 15 Nov 2016 10:38:27 +0100
-Message-ID: <CAMuHMdVrMuO5hSgSNvjG8m4A2jGd=JtvHHaRjY76zJZWsdZtqA@mail.gmail.com>
+Subject: Re: [PATCHv3 0/6] pinctrl: sh-pfc: Fixups for bias handling and
+ preparation for none GPIO pins
+Date: Tue, 15 Nov 2016 10:42:53 +0100
+Message-ID: <CAMuHMdU1jmUnwAY1pRXdEUuTW1gxf3AGvFm7LMg6Xhxc_NUZWw@mail.gmail.com>
 References: <20161112160429.12524-1-niklas.soderlund+renesas@ragnatech.se>
- <20161112160429.12524-6-niklas.soderlund+renesas@ragnatech.se> <3799953.2bFHkKiW66@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <3799953.2bFHkKiW66@avalon>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33952 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934210AbcKOJmz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 04:42:55 -0500
+In-Reply-To: <20161112160429.12524-1-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Sun, Nov 13, 2016 at 2:49 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Saturday 12 Nov 2016 17:04:28 Niklas S=C3=B6derlund wrote:
->> Change the data structure and use the generic sh_pfc_pin_to_bias_info()
->> function to get the register offset and bit information.
->>
->> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech=
-.se>
+On Sat, Nov 12, 2016 at 5:04 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> This series fixes two issues I encounter for bias handling in the PFC
+> while preparing my drive strength patch set.
 >
-> Except for the bias_info for which I trust your regexp skills,
+> I also attached a new patch 6/6 that adds the macro
+> SH_PFC_PIN_NAMED_CFG() and was previously part of the series 'pinctrl:
+> sh-pfc: r8a7795: Support none GPIO pins with configurable
+> drive-strength'.
+>
+> The reason I moved this patch to this series are both 6/6 and the new
+> bias helper function introduced in 2/6 are dependencies for other PFC
+> patch series I wish to send out. So to simplify the dependencies between
+> series this looked like the best option, if not please let me know.
 
-Approved by "git wshow".
-
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks, queuing up.
 
 Gr{oetje,eeting}s,
 
