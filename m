@@ -1,34 +1,58 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCHv3 1/2] gpio: xilinx: dt-binding: Add clock node
-Date: Mon, 14 Nov 2016 19:44:41 -0600
-Message-ID: <20161115014441.ne5ru2lhz3rz57b4@rob-hp-laptop>
-References: <1478757365-3311-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/5] pinctrl: core: Use delayed work for hogs
+Date: Tue, 15 Nov 2016 07:52:50 +0100
+Message-ID: <CACRpkdZ=pifhHrH_-466f2x3Ev4GKW0CCnTj1hL5Hfpdj5p-1A@mail.gmail.com>
+References: <20161025210221.9150-1-tony@atomide.com> <20161025210221.9150-2-tony@atomide.com>
+ <CACRpkdaP3_6x0GMpy_+fSok5r+5CP6RvP6dmDCtz4ayAm-TuSQ@mail.gmail.com>
+ <20161111202650.GI7138@atomide.com> <20161114205243.GU7138@atomide.com>
+ <20161114220824.GC4082@atomide.com> <20161115004703.GG4082@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:36094 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934871AbcKOBon (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Nov 2016 20:44:43 -0500
-Content-Disposition: inline
-In-Reply-To: <1478757365-3311-1-git-send-email-shubhrajyoti.datta@xilinx.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161115004703.GG4082-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Cc: Haojian Zhuang <haojian.zhuang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, soren.brinkmann@xilinx.com, michal.simek@xilinx.com, shubhrajyoti.datta@gmail.com
 
-On Thu, Nov 10, 2016 at 11:26:04AM +0530, Shubhrajyoti Datta wrote:
-> Add the clock node to the dt binding.
-> 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> ---
-> v2: 
-> Make clocks optional
-> Add clock name
-> v3:
-> No change
-> 
->  .../devicetree/bindings/gpio/gpio-xilinx.txt       |    4 ++++
->  1 files changed, 4 insertions(+), 0 deletions(-)
+On Tue, Nov 15, 2016 at 1:47 AM, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org> wrote:
 
-Acked-by: Rob Herring <robh@kernel.org>
+> 8< --------------------------------
+> From tony Mon Sep 17 00:00:00 2001
+> From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+> Date: Tue, 25 Oct 2016 08:33:35 -0700
+> Subject: [PATCH] pinctrl: core: Use delayed work for hogs
+>
+> Having the pin control framework call pin controller functions
+> before it's probe has finished is not nice as the pin controller
+> device driver does not yet have struct pinctrl_dev handle.
+>
+> Let's fix this issue by adding deferred work for late init. This is
+> needed to be able to add pinctrl generic helper functions that expect
+> to know struct pinctrl_dev handle. Note that we now need to call
+> create_pinctrl() directly as we don't want to add the pin controller
+> to the list of controllers until the hogs are claimed. We also need
+> to pass the pinctrl_dev to the device tree parser functions as they
+> otherwise won't find the right controller at this point.
+>
+> Signed-off-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+
+This looks a lot better!
+
+So if I understand correctly, we can guarantee that the delayed
+work will not execute until the device driver probe() has finished,
+and it *will* execute immediately after that?
+
+So:
+- Device driver probes
+- Delayed work is called
+- Next initcall
+
+I'm not 100% familiar with how delayed work works... :/
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
