@@ -1,69 +1,76 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v3 0/2] pinctrl: sunxi: Support the interrupt debouncing
-Date: Tue, 15 Nov 2016 18:50:16 +0100
-Message-ID: <20161115175016.yf4yrju235j5xs5d@lukather>
-References: <cover.fa554eb1146d18ec75bf44863543fec4fa4fd3ae.1479156725.git-series.maxime.ripard@free-electrons.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 1/2] pinctrl: tegra: Add DT binding for io pads control
+Date: Tue, 15 Nov 2016 18:48:44 +0000
+Message-ID: <4be6f5f3-6884-7e4e-049c-29a1f8ca1fcb@nvidia.com>
+References: <1478696782-11657-1-git-send-email-ldewangan@nvidia.com>
+ <1478696782-11657-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7qdc5zonu7xyd7kn"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:50589 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933544AbcKORuS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 12:50:18 -0500
-Content-Disposition: inline
-In-Reply-To: <cover.fa554eb1146d18ec75bf44863543fec4fa4fd3ae.1479156725.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1478696782-11657-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
 
 
---7qdc5zonu7xyd7kn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 09/11/16 13:06, Laxman Dewangan wrote:
+> NVIDIA Tegra124 and later SoCs support the multi-voltage level and
+> low power state of some of its IO pads. The IO pads can work in
+> the voltage of the 1.8V and 3.3V of IO voltage from IO power rail
+> sources. When IO interfaces are not used then IO pads can be
+> configure in low power state to reduce the power consumption from
+> that IO pads.
+> 
+> On Tegra124, the voltage level of IO power rail source is auto
+> detected by hardware(SoC) and hence it is only require to configure
+> in low power mode if IO pads are not used.
+> 
+> On T210 onwards, the auto-detection of voltage level from IO power
+> rail is removed from SoC and hence SW need to configure the PMC
+> register explicitly to set proper voltage in IO pads based on
+> IO rail power source voltage.
+> 
+> Add DT binding document for detailing the DT properties for
+> configuring IO pads voltage levels and its power state.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> ---
+> Changes from V1:
+>  The DT binding document is modified to explain the regulator handle
+>  for different IOs and how can it be passed from the DT.
+> ---
+>  .../bindings/pinctrl/nvidia,tegra-io-pad.txt       | 126 +++++++++++++++++++++
+>  1 file changed, 126 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pad.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pad.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pad.txt
+> new file mode 100644
+> index 0000000..6ca961f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pad.txt
+> @@ -0,0 +1,126 @@
+> +NVIDIA Tegra PMC IO pad controller
+> +
+> +NVIDIA Tegra124 and later SoCs support the multi-voltage level and
+> +low power state of some of its IO pads. When IO interface are not
+> +used then IO pads can be configure in low power state to reduce
+> +the power from that IO pads. The IO pads can work in the voltage
+> +of the 1.8V and 3.3V of IO voltage from power rail sources.
 
-On Mon, Nov 14, 2016 at 09:53:02PM +0100, Maxime Ripard wrote:
-> Hi,
->=20
-> The Allwinner pin controllers can setup a different debouncing period bas=
-ed
-> on two clocks and a prescaler.
->=20
-> This debouncing is applied to the whole IRQ bank, which prevents us from
-> using the per-pin property that is usually used.
->=20
-> Let me know what you think,
-> Maxime
+The last sentence is a bit unclear and does not sound correct. I am not
+sure if you are missing the word 'range' somewhere or if you are trying
+to say it must be either 1.8V or 3.3V. Looks like you have the same
+sentence on the changelog too.
 
-Applied the second patch.
+Cheers
+Jon
 
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---7qdc5zonu7xyd7kn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYK0rYAAoJEBx+YmzsjxAgiaEP/jMNkM6VB1CnkCUw5/uk++h8
-+CyA1sF6UUCnIFCMKPaiuf07vPeO0AT70KfPfy2a4K+KyeCHIGYevPz9XHRQVphK
-pK3n42rTGJ4j25cKzFZu6SjXxTJYju41OlDihTe46nHIJVBIAxpaoACaRdmvlaNd
-u7sWph7m7ODmYvk3lpJkDMYM2PiclrmKbVO4TQtQQ9qWu+dtCbgty1JVvRLEH6dL
-Z8IXBaxD4RGDWdSQFbiCMqOKbyWf14OJT2UkTD5FnXgR+jHhIYb2kAjHIqrTM1zS
-rMayRuhFHLZId1hbnlqukFVCRK0MFQeE2Qlf5EpUOzyImcNtOWEeeA6M+KKGpuKX
-OD6NeAji1Xk53O1EHEupy4Ahp0rowXQBN4T7XMxcjwOOd3uoseG9/M/Pz/loGtbU
-9UGq1kR8orwDg+PpTgVkwXpZ8HTRPb6tT7CMeamcgdI11Bw6sRAKPTSubMf1uBMj
-sBTOhuhjlnf6fHYPd6sYaWYRhSIbDCwZfHukBm8LtnaKVLUDdIFn0bMsRGU9SPbY
-bzvcrgvNi8j0YgEIlLLOvKUZ9E2aIF0BnhY+fEaDJwe6/ApsIeDhaczJUf6Mipmc
-4I7CdI7TiNxe5g3SwttIXHL4X/mfffdNL7hLtiwprQCmZOPcwPS7+UvHb2yxMBL6
-qzVhqbtqeDjmWh+H1Y46
-=LHkQ
------END PGP SIGNATURE-----
-
---7qdc5zonu7xyd7kn--
+-- 
+nvpublic
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
