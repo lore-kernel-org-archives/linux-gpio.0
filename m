@@ -1,43 +1,40 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 3/3] pinctrl: sunxi: Make
- sunxi_pconf_group_set use sunxi_pconf_reg helper
-Date: Tue, 15 Nov 2016 10:22:22 +0100
-Message-ID: <CACRpkda3EF8GDVE=9cCy2z+4on3kXN13Zs0RKSNqWbQi44BcYQ@mail.gmail.com>
-References: <20161111095036.11803-1-wens@csie.org> <20161111095036.11803-4-wens@csie.org>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 1/2] pinctrl: sunxi: Add support for interrupt debouncing
+Date: Tue, 15 Nov 2016 10:23:30 +0100
+Message-ID: <CACRpkdYdfEYfmF34mW2kFYFfZtjDQuHSvyUkcZztgUqG9j=jAQ@mail.gmail.com>
+References: <cover.fa554eb1146d18ec75bf44863543fec4fa4fd3ae.1479156725.git-series.maxime.ripard@free-electrons.com>
+ <d7c3760d37046a4b390b1a7b30bb94b8e1af31a7.1479156725.git-series.maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBT5HVPAQKGQERWCJJXQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20161111095036.11803-4-wens-jdAy2FN1RRM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f175.google.com ([209.85.216.175]:35279 "EHLO
+        mail-qt0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941318AbcKOJXb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 04:23:31 -0500
+Received: by mail-qt0-f175.google.com with SMTP id c47so64667219qtc.2
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2016 01:23:31 -0800 (PST)
+In-Reply-To: <d7c3760d37046a4b390b1a7b30bb94b8e1af31a7.1479156725.git-series.maxime.ripard@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>
 
-On Fri, Nov 11, 2016 at 10:50 AM, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org> wrote:
+On Mon, Nov 14, 2016 at 9:53 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
 
-> The sunxi_pconf_reg helper introduced in the last patch gives us the
-> chance to rework sunxi_pconf_group_set to have it match the structure
-> of sunxi_pconf_(group_)get and make it easier to understand.
+> The pin controller found in the Allwinner SoCs has support for interrupts
+> debouncing.
 >
-> For each config to set, it:
+> However, this is not done per-pin, preventing us from using the generic
+> pinconf binding for that, but per irq bank, which, depending on the SoC,
+> ranges from one to five.
 >
->     1. checks if the parameter is supported.
->     2. checks if the argument is within limits.
->     3. converts argument to the register value.
->     4. writes to the register with spinlock held.
+> Introduce a device-wide property to deal with this using a microsecond
+> resolution. We can re-use the per-pin input-debounce property for that, so
+> let's do it!
 >
-> As a result the function now blocks unsupported config parameters,
-> instead of silently ignoring them.
->
-> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-> Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Acked-by: Rob Herring <robh@kernel.org>
 
 Patch applied.
 
