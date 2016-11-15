@@ -1,48 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] gpio: lib: Add gpio_is_enabled() to get pin mode
-Date: Tue, 15 Nov 2016 10:03:39 +0100
-Message-ID: <CACRpkdacDcy_Y_5g8739DF+f3fRzzMQ_bkM1TQ+uTtPq1=VmFg@mail.gmail.com>
-References: <1478089037-26441-1-git-send-email-ldewangan@nvidia.com>
- <CACRpkdYjWiy-PyBhN8gRa5TM5ARXrCZ-KqBXYm-bVeXFY11MQw@mail.gmail.com> <5825B6D4.1000600@nvidia.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7796: Add DU support
+Date: Tue, 15 Nov 2016 10:05:32 +0100
+Message-ID: <CAMuHMdVXawxFBCf-2E0yb+rXm=zP7ZCQTMvt-PM6ixhfkDVmrg@mail.gmail.com>
+References: <20161111204003.4022-1-niklas.soderlund@ragnatech.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <5825B6D4.1000600@nvidia.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20161111204003.4022-1-niklas.soderlund@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 11, 2016 at 1:17 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
-
->> Yeah but since pinctrl and pinmux has its own debugfs files why is this
->> necessary? I understand it is convenient but only for debugging
->> right? They the inconvenience of using pinctrls debugfs files should
->> be bearable.
+On Fri, Nov 11, 2016 at 9:40 PM, Niklas S=C3=B6derlund
+<niklas.soderlund@ragnatech.se> wrote:
+> From: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
 >
-> Yes, it is debugging and capturing all the info at single place. Currently,
-> gpio debugFs shows the gpio related stuff and the pinctrl on pinconfig but
-> there is not any dump which shows the complete pin mapping.
-> The effort is to compile all the data in single place with proper message to
-> avoid any manual work for decoding multiple outputs.
+> Only the DU parallel RGB output signals are included, HDMI and TCON pins
+> will be added in separate groups. Based on a similar patch from Laurent
+> Pinchart for the r8a7795 PFC driver.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-I don't know if this is a good idea. I don't want to clutter the
-gpiolib ABI for no good reason.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-For certain this should only be available for drivers using pin
-control as a back-end for their GPIOs.
+Will queue...
 
-For that purpose we have (in <linux/pinctrl/consumer.h>:
+Gr{oetje,eeting}s,
 
-/* External interface to pin control */
-extern int pinctrl_request_gpio(unsigned gpio);
-extern void pinctrl_free_gpio(unsigned gpio);
-extern int pinctrl_gpio_direction_input(unsigned gpio);
-extern int pinctrl_gpio_direction_output(unsigned gpio);
+                        Geert
 
-It would be more natural to add a function pinctrl_is_gpio(unsigned gpio)
-to call back to the pin controller, then that can be called from
-the generic or driver-specific debug print callback.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Yours,
-Linus Walleij
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
