@@ -1,63 +1,90 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCHv2 2/2] pinctrl: sh-pfc: r8a7796: Add bias pinconf support
-Date: Tue, 15 Nov 2016 12:01:48 +0100
-Message-ID: <CAMuHMdUExh7_M8RwNbDRd_WicjZ2+eF9C6OGnEjRSdRD6ZS-9Q@mail.gmail.com>
-References: <20161112161002.13070-1-niklas.soderlund+renesas@ragnatech.se> <20161112161002.13070-3-niklas.soderlund+renesas@ragnatech.se>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: wdt, gpio: move arch_initcall into subsys_initcall ?
+Date: Tue, 15 Nov 2016 13:10:32 +0200
+Message-ID: <afbf394e-e411-5c43-e2b0-667b3fbc2edf@mentor.com>
+References: <582AE18A.2060405@denx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20161112161002.13070-3-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relay1.mentorg.com ([192.94.38.131]:52500 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750772AbcKOLKk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 06:10:40 -0500
+In-Reply-To: <582AE18A.2060405@denx.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: hs@denx.de, linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Shawn Guo <shawnguo@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>, "Jonas Mark (ST-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
 
-On Sat, Nov 12, 2016 at 5:10 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> Implements pull-up and pull-down. On this SoC there is no simple mapping
-> of GP pins to bias register bits, so we need a table.
+Hello Heiko,
+
+On 11/15/2016 12:20 PM, Heiko Schocher wrote:
+> Hello,
 >
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
-> ---
->  drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 355 +++++++++++++++++++++++++++++=
-++----
->  1 file changed, 316 insertions(+), 39 deletions(-)
+> commit e188cbf7564f: "gpio: mxc: shift gpio_mxc_init() to subsys_initcall level"
+> moves the gpio initialization of the mxc gpio driver
+> from the arch_initcall level into subsys_initcall level.
 >
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pf=
-c/pfc-r8a7796.c
-> index f06559c..676a4a6 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+> This leads now on mxc boards, which use a gpio wdt driver
+> and the CONFIG_GPIO_WATCHDOG_ARCH_INITCALL option enabled,
+> to unwanted driver probe deferrals during kernel boot.
+>
+> I see this currently on an imx6 based board (which has unfortunately
+> 3 WDT: imx6 internal (disabled), gpio wdt and da9063 WDT ...).
+>
+> Also a side effect from above commit is, that the da9063 WDT driver
+> is now probed before the gpio WDT driver ... so /dev/watchdog now
+> does not point to the gpio_wdt, instead it points to the da9063 WDT.
+>
+> So there are 2 solutions possible:
+>
+> - add a CONFIG_GPIO_MCX_ARCH_INITCALL option
+>   in drivers/gpio/gpio-mxc.c like for the gpio_wdt.c driver?
 
->  enum {
->         PINMUX_RESERVED =3D 0,
+in my opinion this is overly heavy solution and it might be
+better to avoid it if possible.
 
-> +       SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  7, DU_DOTCLKIN2, CFG_FLAG=
-S),
+I would rather prefer to reconsider GPIO_WATCHDOG_ARCH_INITCALL
+usage in the watchdog driver.
 
-DU_DOTCLKIN2 is AR8.
+Moreover adding this proposed GPIO_MCX_ARCH_INITCALL to call
+the driver on arch level will result in deferring the GPIO driver.
 
-> +static const struct sh_pfc_bias_info bias_info[] =3D {
+>   But how can we guarantee, that first the gpio driver and then
+>   the gpio_wdt driver gets probed?
+>
+> - move the arch_initcall in gpio_wdt.c into a subsys_initcall
+>   (Tested this, and the probe dereferral messages are gone ...)
+>
+>   But this may results in problems on boards, which needs an early
+>   trigger on an gpio wdt ...
 
-> +       { PIN_A_NUMBER('R', 7),  PU3,  0 },     /* DU_DOTCLKIN2 */
+The level of "earliness" can not be defined in absolute time value
+in any case, why decreasing the init level of the watchdog driver
+to subsys level can cause problems? For that there should exist
+some kind of a dependency on IC or PCB hardware level, can you
+name it please?
 
-PIN_A_NUMBER('R', 8)
+Also please note that more than a half of all GPIO drivers settle
+on subsys or later initcall level, this means that there is
+an expected GPIO watchdog driver deferral for all of them.
 
-If you fix the above:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I propose to send two patches for review:
 
-Gr{oetje,eeting}s,
+1. remove GPIO_WATCHDOG_ARCH_INITCALL option completely and decouple
+    module_platform_driver() into arch_initcall() and module_exit()
+    unconditionally.
 
-                        Geert
+2. change arch_initcall() in the watchdog driver to subsys_initcall().
+    This change removes probe deferrals on boot, when the driver is
+    used with the most of the GPIO controllers.
+
+> Other ideas?
+>
+> Thanks for all suggestions!
+>
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+With best wishes,
+Vladimir
