@@ -1,52 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2 2/2] pinctrl: tegra: Add driver to configure voltage
- and power of io pads
-Date: Tue, 15 Nov 2016 09:59:11 +0100
-Message-ID: <CACRpkdb=mw46NNuqagzX9xas1FZuE37H3m8t3jRRfg7ThzN5vA@mail.gmail.com>
-References: <1478696782-11657-1-git-send-email-ldewangan@nvidia.com> <1478696782-11657-3-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH 1/1] gpio: lib: Add gpio_is_enabled() to get pin mode
+Date: Tue, 15 Nov 2016 10:03:39 +0100
+Message-ID: <CACRpkdacDcy_Y_5g8739DF+f3fRzzMQ_bkM1TQ+uTtPq1=VmFg@mail.gmail.com>
+References: <1478089037-26441-1-git-send-email-ldewangan@nvidia.com>
+ <CACRpkdYjWiy-PyBhN8gRa5TM5ARXrCZ-KqBXYm-bVeXFY11MQw@mail.gmail.com> <5825B6D4.1000600@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1478696782-11657-3-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <5825B6D4.1000600@nvidia.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 9, 2016 at 2:06 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+On Fri, Nov 11, 2016 at 1:17 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-> NVIDIA Tegra124 and later SoCs support the multi-voltage level and
-> low power state of some of its IO pads. The IO pads can work in
-> the voltage of the 1.8V and 3.3V of IO voltage from IO power rail
-> sources. When IO interfaces are not used then IO pads can be
-> configure in low power state to reduce the power consumption from
-> that IO pads.
+>> Yeah but since pinctrl and pinmux has its own debugfs files why is this
+>> necessary? I understand it is convenient but only for debugging
+>> right? They the inconvenience of using pinctrls debugfs files should
+>> be bearable.
 >
-> On Tegra124, the voltage level of IO power rail source is auto
-> detected by hardware(SoC) and hence it is only require to configure
-> in low power mode if IO pads are not used.
->
-> On T210 onwards, the auto-detection of voltage level from IO power
-> rail is removed from SoC and hence SW need to configure the PMC
-> register explicitly to set proper voltage in IO pads based on
-> IO rail power source voltage.
->
-> This driver adds the IO pad driver to configure the power state and
-> IO pad voltage based on the usage and power tree via pincontrol
-> framework. The configuration can be static and dynamic.
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->
-> ---
-> Changes from V1:
-> - Dropped the custom properties to set pad voltage and use regulator.
-> - Added support for regulator to get vottage in boot and configure IO
->   pad voltage.
-> - Add support for callback to handle regulator notification and configure
->   IO pad voltage based on voltage change.
+> Yes, it is debugging and capturing all the info at single place. Currently,
+> gpio debugFs shows the gpio related stuff and the pinctrl on pinconfig but
+> there is not any dump which shows the complete pin mapping.
+> The effort is to compile all the data in single place with proper message to
+> avoid any manual work for decoding multiple outputs.
 
-I'm waiting for maintainer review on this.
-Stephen/Thierry?
+I don't know if this is a good idea. I don't want to clutter the
+gpiolib ABI for no good reason.
+
+For certain this should only be available for drivers using pin
+control as a back-end for their GPIOs.
+
+For that purpose we have (in <linux/pinctrl/consumer.h>:
+
+/* External interface to pin control */
+extern int pinctrl_request_gpio(unsigned gpio);
+extern void pinctrl_free_gpio(unsigned gpio);
+extern int pinctrl_gpio_direction_input(unsigned gpio);
+extern int pinctrl_gpio_direction_output(unsigned gpio);
+
+It would be more natural to add a function pinctrl_is_gpio(unsigned gpio)
+to call back to the pin controller, then that can be called from
+the generic or driver-specific debug print callback.
 
 Yours,
 Linus Walleij
