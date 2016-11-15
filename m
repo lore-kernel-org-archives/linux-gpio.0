@@ -1,50 +1,56 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: vt8500: make bool drivers explicitly non-modular
-Date: Tue, 15 Nov 2016 10:04:55 +0100
-Message-ID: <CACRpkdbr+TcyLZrX6ZFs+xYOb4MOcGLJ7UKeESuWE7EmATUiOQ@mail.gmail.com>
-References: <20161109154558.13106-1-paul.gortmaker@windriver.com>
+Subject: Re: [PATCH] gpio: Guard devm_* functions behind CONFIG_GPIO_DEVRES
+ not CONFIG_GPIOLIB
+Date: Tue, 15 Nov 2016 10:10:53 +0100
+Message-ID: <CACRpkdZ00bkzWOad520398gNELPhN3zqwMke6bwH+Cwb5FS8JQ@mail.gmail.com>
+References: <20161110015638.GA51357@juliacomputing.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161109154558.13106-1-paul.gortmaker@windriver.com>
+In-Reply-To: <20161110015638.GA51357@juliacomputing.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tony Prisk <linux@prisktech.co.nz>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Keno Fischer <keno@juliacomputing.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, jdike@addtoit.com, Richard Weinberger <richard@nod.at>, user-mode-linux-devel@lists.sourceforge.net
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 9, 2016 at 4:45 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
+On Thu, Nov 10, 2016 at 2:56 AM, Keno Fischer <keno@juliacomputing.com> wrote:
 
-> None of the Kconfigs for any of these drivers are tristate, meaning
-> that they currently are not being built as a module by anyone.
+> These functions are defined in devres.c, which only gets compiled with
+> CONFIG_GPIO_DEVRES (in addition to CONFIG_GPIOLIB). However, in the
+> header files, the difference between the declaration and the inline
+> stub was only guarded by CONFIG_GPIOLIB, not CONFIG_GPIO_DEVRES,
+> causing undefined symbol problems in modpost.
 >
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the drivers there is no doubt they are builtin-only.  All
-> drivers get the exact same change, so they are handled in batch.
+> Signed-off-by: Keno Fischer <keno@juliacomputing.com>
+> ---
 >
-> Changes are (1) use builtin_platform_driver, (2) use init.h header
-> (3) delete module_exit related code, (4) delete MODULE_DEVICE_TABLE,
-> (5) delete MODULE_LICENCE/MODULE_AUTHOR and associated tags and (6)
-> drop ".remove" code and prevent sysfs unbind attempts to call ".remove".
->
-> Once this is done, the shared remove function in wmt.[ch] is no longer
-> used and hence it is removed as well.
->
-> Since module_platform_driver() uses the same init level priority as
-> builtin_platform_driver() the init ordering remains unchanged with
-> this commit.
->
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->
-> We also delete the MODULE_LICENSE etc. tags since all that information
-> is already contained at the top of each file in the comments.
->
-> Cc: Tony Prisk <linux@prisktech.co.nz>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> I encountered this while trying to build uml in an attempt to debug some kernel
+> behavior I don't understand. To be as close to my actual kernel as possible,
+> I used the same .config, which of course tried to build a bunch of drivers.
+> Arguably I should just not build those, but this seems correct nonetheless
+> and allows the build to go through.
 
-Patch applied.
+Ha! Good point. But it's the wrong solution.
+
+The culprit is this:
+
+if GPIOLIB
+
+config GPIO_DEVRES
+        def_bool y
+        depends on HAS_IOMEM
+
+But devres has no dependency on HAS_IOMEM whatsoever.
+
+And certainly UML should have access to the devres variants
+of the calls.
+
+The proper patch is to remove the Kconfig option GPIO_DEVRES
+altogether, make it compulsory, and remove *all* ifdefs for
+CONFIG_GPIO_DEVRES and alter the Makefile so that it
+is compiled-in for CONFIG_GPIOLIB.
+
+Do you wanna take a stab at patching this or should I do it?
 
 Yours,
 Linus Walleij
