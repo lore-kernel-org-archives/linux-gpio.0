@@ -1,58 +1,107 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/5] pinctrl: core: Use delayed work for hogs
-Date: Tue, 15 Nov 2016 07:52:50 +0100
-Message-ID: <CACRpkdZ=pifhHrH_-466f2x3Ev4GKW0CCnTj1hL5Hfpdj5p-1A@mail.gmail.com>
-References: <20161025210221.9150-1-tony@atomide.com> <20161025210221.9150-2-tony@atomide.com>
- <CACRpkdaP3_6x0GMpy_+fSok5r+5CP6RvP6dmDCtz4ayAm-TuSQ@mail.gmail.com>
- <20161111202650.GI7138@atomide.com> <20161114205243.GU7138@atomide.com>
- <20161114220824.GC4082@atomide.com> <20161115004703.GG4082@atomide.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: intel: Configure pin as GPIO input when used
+ directly through irqchip
+Date: Tue, 15 Nov 2016 09:40:27 +0100
+Message-ID: <CACRpkdZ_dXVGhSxrDbe579Y76SYpmSvFaF3dQyVguNkw9dq8_g@mail.gmail.com>
+References: <20161109112231.122700-1-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161115004703.GG4082-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Cc: Haojian Zhuang <haojian.zhuang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f176.google.com ([209.85.220.176]:33514 "EHLO
+        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752242AbcKOIk2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 03:40:28 -0500
+Received: by mail-qk0-f176.google.com with SMTP id x190so127017315qkb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2016 00:40:28 -0800 (PST)
+In-Reply-To: <20161109112231.122700-1-mika.westerberg@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Nov 15, 2016 at 1:47 AM, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org> wrote:
+On Wed, Nov 9, 2016 at 12:22 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 
-> 8< --------------------------------
-> From tony Mon Sep 17 00:00:00 2001
-> From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-> Date: Tue, 25 Oct 2016 08:33:35 -0700
-> Subject: [PATCH] pinctrl: core: Use delayed work for hogs
+> If a pin is used directly through irqchip without requesting it first as
+> GPIO, it might be in wrong mode (for example input buffer disabled). This
+> means the user may never get any interrupts.
 >
-> Having the pin control framework call pin controller functions
-> before it's probe has finished is not nice as the pin controller
-> device driver does not yet have struct pinctrl_dev handle.
+> Fix this by configuring the pin as GPIO input when its type is first set in
+> irq_set_type().
 >
-> Let's fix this issue by adding deferred work for late init. This is
-> needed to be able to add pinctrl generic helper functions that expect
-> to know struct pinctrl_dev handle. Note that we now need to call
-> create_pinctrl() directly as we don't want to add the pin controller
-> to the list of controllers until the hogs are claimed. We also need
-> to pass the pinctrl_dev to the device tree parser functions as they
-> otherwise won't find the right controller at this point.
+> Reported-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+> Since we probably need to do this for cherryview and baytrail pinctrl
+> drivers as well, I'm thinking is this something that the GPIO core could do
+> automatically?
+
+No it is a property of the irqchip core to set up the lines it needs
+to use with hardware-specific code. It is a part of the contract that
+the irqchip should always set up all the hardware it needs.
+
+>From Documentation/gpio/driver.txt:
+
+-----8<--------------------------8<--------------------------
+It is legal for any IRQ consumer to request an IRQ from any irqchip no matter
+if that is a combined GPIO+IRQ driver. The basic premise is that gpio_chip and
+irq_chip are orthogonal, and offering their services independent of each
+other.
+
+gpiod_to_irq() is just a convenience function to figure out the IRQ for a
+certain GPIO line and should not be relied upon to have been called before
+the IRQ is used.
+
+So always prepare the hardware and make it ready for action in respective
+callbacks from the GPIO and irqchip APIs. Do not rely on gpiod_to_irq() having
+been called first.
+(...)
+-----8<--------------------------8<--------------------------
+
+And I agree you should check the other drivers for the same problem.
+
+> +/* Called with pctrl->lock held */
+> +static void intel_gpio_set_gpio_mode(struct intel_pinctrl *pctrl,
+> +                                    void __iomem *padcfg0)
+> +{
+> +       u32 value;
+> +
+> +       /* Put the pad into GPIO mode */
+> +       value = readl(padcfg0) & ~PADCFG0_PMODE_MASK;
+> +       /* Disable SCI/SMI/NMI generation */
+> +       value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
+> +       value &= ~(PADCFG0_GPIROUTSMI | PADCFG0_GPIROUTNMI);
+> +       /* Disable TX buffer and enable RX (this will be input) */
+> +       value &= ~PADCFG0_GPIORXDIS;
+> +       value |= PADCFG0_GPIOTXDIS;
+> +       writel(value, padcfg0);
+> +}
+
+Looks good.
+
+> @@ -762,8 +776,10 @@ static int intel_gpio_irq_type(struct irq_data *d, unsigned type)
 >
-> Signed-off-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+>         raw_spin_lock_irqsave(&pctrl->lock, flags);
+>
+> -       value = readl(reg);
+> +       /* Make sure the pin is GPIO input */
 
-This looks a lot better!
+You already KNOW it is set as input, because you are implementing
+.get_direction() in your gpiochip and the gpio descriptor thus contains
+the (cached) direction setting.
 
-So if I understand correctly, we can guarantee that the delayed
-work will not execute until the device driver probe() has finished,
-and it *will* execute immediately after that?
+When the GPIOLIB_IRQCHIP calles its request resources hook
+it uses the gpiochip_lock_as_irq() call which verifies that the
+line is indeed an input. Else it would deny it to be used as an IRQ.
 
-So:
-- Device driver probes
-- Delayed work is called
-- Next initcall
+> +       intel_gpio_set_gpio_mode(pctrl, reg);
+>
+> +       value = readl(reg);
+>         value &= ~(PADCFG0_RXEVCFG_MASK | PADCFG0_RXINV);
 
-I'm not 100% familiar with how delayed work works... :/
+Why is this setting done in .irq_set_type() rather than .irq_enable()
+from the irqchip? I'd say implement .irq_enable() with just this call to
+intel_gpio_set_gpio_mode() in it.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
