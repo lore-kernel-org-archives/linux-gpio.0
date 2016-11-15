@@ -1,56 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: Guard devm_* functions behind CONFIG_GPIO_DEVRES
- not CONFIG_GPIOLIB
-Date: Tue, 15 Nov 2016 10:10:53 +0100
-Message-ID: <CACRpkdZ00bkzWOad520398gNELPhN3zqwMke6bwH+Cwb5FS8JQ@mail.gmail.com>
-References: <20161110015638.GA51357@juliacomputing.com>
+Subject: Re: [PATCH v2] gpio: mxc: Shift generic request/free after gpiochip registration
+Date: Tue, 15 Nov 2016 10:13:07 +0100
+Message-ID: <CACRpkdatMwpQZd=0wQpv3LofDKKXEX5kASrRmxsaGD6ZVcHkLA@mail.gmail.com>
+References: <1477418567-28347-1-git-send-email-deepak_das@mentor.com>
+ <CACRpkdYg2nKO5i7_5q0Hp3rvqmGiPCkueXxp7JnGTsJ-Mb1wAQ@mail.gmail.com> <d7e3c21a-48ec-e654-701a-7e6b5556f03a@mentor.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161110015638.GA51357@juliacomputing.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Keno Fischer <keno@juliacomputing.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, jdike@addtoit.com, Richard Weinberger <richard@nod.at>, user-mode-linux-devel@lists.sourceforge.net
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:33739 "EHLO
+        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755479AbcKOJNJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 04:13:09 -0500
+Received: by mail-qk0-f181.google.com with SMTP id x190so127803423qkb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2016 01:13:08 -0800 (PST)
+In-Reply-To: <d7e3c21a-48ec-e654-701a-7e6b5556f03a@mentor.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Deepak Das <deepak_das@mentor.com>, Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>
 
-On Thu, Nov 10, 2016 at 2:56 AM, Keno Fischer <keno@juliacomputing.com> wrote:
+On Thu, Nov 10, 2016 at 1:35 PM, Vladimir Zapolskiy
+<vladimir_zapolskiy@mentor.com> wrote:
 
-> These functions are defined in devres.c, which only gets compiled with
-> CONFIG_GPIO_DEVRES (in addition to CONFIG_GPIOLIB). However, in the
-> header files, the difference between the declaration and the inline
-> stub was only guarded by CONFIG_GPIOLIB, not CONFIG_GPIO_DEVRES,
-> causing undefined symbol problems in modpost.
->
-> Signed-off-by: Keno Fischer <keno@juliacomputing.com>
-> ---
->
-> I encountered this while trying to build uml in an attempt to debug some kernel
-> behavior I don't understand. To be as close to my actual kernel as possible,
-> I used the same .config, which of course tried to build a bunch of drivers.
-> Arguably I should just not build those, but this seems correct nonetheless
-> and allows the build to go through.
+> Originally the change is needed exclusively to cover the case, when IOMUX
+> device node is removed or disabled in a board DTB, while GPIOs still can
+> be requested by other controller drivers. The disabled pinctrl device case
+> (pinmux/pinctrl settings are done from a bootloader only) is inapplicable
+> to any boards found in upstream, so I would propose *not* to include this
+> change or any its derivative fix to the upstream.
 
-Ha! Good point. But it's the wrong solution.
-
-The culprit is this:
-
-if GPIOLIB
-
-config GPIO_DEVRES
-        def_bool y
-        depends on HAS_IOMEM
-
-But devres has no dependency on HAS_IOMEM whatsoever.
-
-And certainly UML should have access to the devres variants
-of the calls.
-
-The proper patch is to remove the Kconfig option GPIO_DEVRES
-altogether, make it compulsory, and remove *all* ifdefs for
-CONFIG_GPIO_DEVRES and alter the Makefile so that it
-is compiled-in for CONFIG_GPIOLIB.
-
-Do you wanna take a stab at patching this or should I do it?
+I backed it out already. It didn't even compile.
 
 Yours,
 Linus Walleij
