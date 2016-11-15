@@ -1,97 +1,136 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: wdt, gpio: move arch_initcall into subsys_initcall ?
-Date: Tue, 15 Nov 2016 13:32:27 +0200
-Message-ID: <e4472c2d-effa-9583-aded-8dcdfdd57ee6@mentor.com>
-References: <582AE18A.2060405@denx.de>
- <afbf394e-e411-5c43-e2b0-667b3fbc2edf@mentor.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCHv2 1/2] pinctrl: sh-pfc: r8a7796: Add drive strength support
+Date: Tue, 15 Nov 2016 12:43:42 +0100
+Message-ID: <CAMuHMdUmw14iv7P+anCF6X9XBD7wFSKuDjCk-N_vqCUqOZYHmQ@mail.gmail.com>
+References: <20161112161002.13070-1-niklas.soderlund+renesas@ragnatech.se> <20161112161002.13070-2-niklas.soderlund+renesas@ragnatech.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:55303 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751455AbcKOLcd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 06:32:33 -0500
-In-Reply-To: <afbf394e-e411-5c43-e2b0-667b3fbc2edf@mentor.com>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36092 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753239AbcKOLnp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 06:43:45 -0500
+In-Reply-To: <20161112161002.13070-2-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: hs@denx.de, linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Shawn Guo <shawnguo@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@iguana.be>, "Jonas Mark (ST-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 11/15/2016 01:10 PM, Vladimir Zapolskiy wrote:
-> Hello Heiko,
->
-> On 11/15/2016 12:20 PM, Heiko Schocher wrote:
->> Hello,
->>
->> commit e188cbf7564f: "gpio: mxc: shift gpio_mxc_init() to subsys_initcall level"
->> moves the gpio initialization of the mxc gpio driver
->> from the arch_initcall level into subsys_initcall level.
->>
->> This leads now on mxc boards, which use a gpio wdt driver
->> and the CONFIG_GPIO_WATCHDOG_ARCH_INITCALL option enabled,
->> to unwanted driver probe deferrals during kernel boot.
->>
->> I see this currently on an imx6 based board (which has unfortunately
->> 3 WDT: imx6 internal (disabled), gpio wdt and da9063 WDT ...).
->>
->> Also a side effect from above commit is, that the da9063 WDT driver
->> is now probed before the gpio WDT driver ... so /dev/watchdog now
->> does not point to the gpio_wdt, instead it points to the da9063 WDT.
->>
->> So there are 2 solutions possible:
->>
->> - add a CONFIG_GPIO_MCX_ARCH_INITCALL option
->>   in drivers/gpio/gpio-mxc.c like for the gpio_wdt.c driver?
->
-> in my opinion this is overly heavy solution and it might be
-> better to avoid it if possible.
->
-> I would rather prefer to reconsider GPIO_WATCHDOG_ARCH_INITCALL
-> usage in the watchdog driver.
->
-> Moreover adding this proposed GPIO_MCX_ARCH_INITCALL to call
-> the driver on arch level will result in deferring the GPIO driver.
->
->>   But how can we guarantee, that first the gpio driver and then
->>   the gpio_wdt driver gets probed?
->>
->> - move the arch_initcall in gpio_wdt.c into a subsys_initcall
->>   (Tested this, and the probe dereferral messages are gone ...)
->>
->>   But this may results in problems on boards, which needs an early
->>   trigger on an gpio wdt ...
->
-> The level of "earliness" can not be defined in absolute time value
-> in any case, why decreasing the init level of the watchdog driver
-> to subsys level can cause problems? For that there should exist
-> some kind of a dependency on IC or PCB hardware level, can you
-> name it please?
->
-> Also please note that more than a half of all GPIO drivers settle
-> on subsys or later initcall level, this means that there is
-> an expected GPIO watchdog driver deferral for all of them.
+On Sat, Nov 12, 2016 at 5:10 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Define the drive strength registers for the R8A7796. Add pins which are
+> not part of a GPIO bank nor can be muxed between different functions but
+> which still allow for there drive-strength to be configured.
 
-Please find two more late notes though.
+their
 
-> I propose to send two patches for review:
 >
-> 1. remove GPIO_WATCHDOG_ARCH_INITCALL option completely and decouple
->    module_platform_driver() into arch_initcall() and module_exit()
->    unconditionally.
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 361 +++++++++++++++++++++++++++++=
+++++--
+>  1 file changed, 349 insertions(+), 12 deletions(-)
 >
-> 2. change arch_initcall() in the watchdog driver to subsys_initcall().
->    This change removes probe deferrals on boot, when the driver is
->    used with the most of the GPIO controllers.
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pf=
+c/pfc-r8a7796.c
+> index dc9b671..f06559c 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 
-Alternatively commit 5e53c8ed813d ("watchdog: gpio_wdt: Add option for
-early registration") can be reverted and then module_platform_driver()
-is decoupled into subsys_initcall() and module_exit() as its replacement.
+> +/*
+> + * These pins are not able to be muxed but have other properties
+> + * that can be set, such as drive-strength or pull-up/pull-down enable.
+> + */
+> +#define PINMUX_STATIC \
+> +       FM(QSPI0_SPCLK) FM(QSPI0_SSL) FM(QSPI0_MOSI_IO0) FM(QSPI0_MISO_IO=
+1) \
+> +       FM(QSPI0_IO2) FM(QSPI0_IO3) \
+> +       FM(QSPI1_SPCLK) FM(QSPI1_SSL) FM(QSPI1_MOSI_IO0) FM(QSPI1_MISO_IO=
+1) \
+> +       FM(QSPI1_IO2) FM(QSPI1_IO3) \
+> +       FM(RPC_INT) FM(RPC_WP) FM(RPC_RESET) \
+> +       FM(AVB_TX_CTL) FM(AVB_TXC) FM(AVB_TD0) FM(AVB_TD1) FM(AVB_TD2) FM=
+(AVB_TD3) \
+> +       FM(AVB_RX_CTL) FM(AVB_RXC) FM(AVB_RD0) FM(AVB_RD1) FM(AVB_RD2) FM=
+(AVB_RD3) \
+> +       FM(AVB_TXCREFCLK) FM(AVB_MDIO) \
+> +       FM(PRESETOUT) \
+> +       FM(DU_DOTCLKIN0) FM(DU_DOTCLKIN1) FM(DU_DOTCLKIN2) FM(DU_DOTCLKIN=
+3) \
 
-And also please note that since quite many GPIO controller drivers
-live on initcall levels after subsys_initcall(), the solution won't
-let to avoid watchdog driver deferrals totally, this should be accepted.
+M3-W does not have DU_DOTCLKIN3.
 
--- 
-With best wishes,
-Vladimir
+> +       FM(TMS) FM(TDO) FM(ASEBRK) FM(MLB_REF)
+
+> +/*
+> + * R8A7796 has 8 banks with 32 PGIOS in each =3D> 256 GPIOs.
+
+s/PGIOS/GPIOs/
+
+>  static const struct sh_pfc_pin pinmux_pins[] =3D {
+>         PINMUX_GPIO_GP_ALL(),
+> +
+> +       /*
+> +        * Pins not associated with a GPIO port.
+> +        *
+> +        * The pin positions are different between different r8a7796
+> +        * packages, all that is needed for the pfc driver is a unique
+> +        * number for each pin. To this end use the pin layout from
+> +        * R-Car M3SiP to calculate a unique number for each pin.
+> +        */
+
+> +       SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  7, DU_DOTCLKIN2, SH_PFC_P=
+IN_CFG_DRIVE_STRENGTH),
+
+DU_DOTCLKIN3 is pin AR8.
+
+> +       SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  8, DU_DOTCLKIN3, SH_PFC_P=
+IN_CFG_DRIVE_STRENGTH),
+
+M3-W does not have DU_DOTCLKIN3.
+
+
+> @@ -2631,6 +2718,255 @@ static const struct pinmux_cfg_reg pinmux_config_=
+regs[] =3D {
+>         { },
+>  };
+>
+> +static const struct pinmux_drive_reg pinmux_drive_regs[] =3D {
+
+> +       { PINMUX_DRIVE_REG("DRVCTRL12", 0xe6060330) {
+> +               { PIN_A_NUMBER('R', 7),  28, 2 },       /* DU_DOTCLKIN2 *=
+/
+
+DU_DOTCLKIN3 is pin AR8.
+
+> +               { PIN_A_NUMBER('R', 8),  24, 2 },       /* DU_DOTCLKIN3 *=
+/
+
+Probably this is a bug in the datasheet, as M3-W does not have DU_DOTCLKIN3=
+?
+
+> +               { PIN_A_NUMBER('D', 38), 20, 2 },       /* FSCLKST# */
+
+"FSCLKST" (without "#")
+
+> +               { RCAR_GP_PIN(5,  3),  0, 3 },  /* CTS0 */
+
+All RTS/CTS signals are active low, hence "#".
+But it seems there are many more inconsistencies w.r.t. this.
+Do we care?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
