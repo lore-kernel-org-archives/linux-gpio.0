@@ -1,30 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: intel-mid: use builtin_pci_driver
-Date: Tue, 15 Nov 2016 10:35:09 +0100
-Message-ID: <CACRpkdaKrkqnNkNNkR98kGp0jNHu3EOUAz0C9ZVenL9dcY0jdg@mail.gmail.com>
-References: <1f356ef29486a21e77e00997bcc82b300d0512d6.1479127743.git.geliangtang@gmail.com>
+Subject: Re: [PATCH v2 05/10] dt-bindings: add documentation for rk1108 pinctrl
+Date: Tue, 15 Nov 2016 10:36:36 +0100
+Message-ID: <CACRpkdYa5Gr7k2x2iPXFGUzhYQv5f3Ddc9ZoofjVDLr8AW-z0A@mail.gmail.com>
+References: <1479124550-24037-1-git-send-email-andy.yan@rock-chips.com> <1479125393-24355-1-git-send-email-andy.yan@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f175.google.com ([209.85.216.175]:35999 "EHLO
-        mail-qt0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753820AbcKOJfL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 04:35:11 -0500
-Received: by mail-qt0-f175.google.com with SMTP id w33so64764611qtc.3
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2016 01:35:10 -0800 (PST)
-In-Reply-To: <1f356ef29486a21e77e00997bcc82b300d0512d6.1479127743.git.geliangtang@gmail.com>
+Received: from mail-qk0-f175.google.com ([209.85.220.175]:33327 "EHLO
+        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941141AbcKOJgh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 04:36:37 -0500
+Received: by mail-qk0-f175.google.com with SMTP id x190so128370312qkb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2016 01:36:37 -0800 (PST)
+In-Reply-To: <1479125393-24355-1-git-send-email-andy.yan@rock-chips.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geliang Tang <geliangtang@gmail.com>
-Cc: David Cohen <david.a.cohen@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Andy Yan <andy.yan@rock-chips.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, shawn.lin@rock-chips.com, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Nov 14, 2016 at 1:52 PM, Geliang Tang <geliangtang@gmail.com> wrote:
+On Mon, Nov 14, 2016 at 1:09 PM, Andy Yan <andy.yan@rock-chips.com> wrote:
 
-> Use builtin_pci_driver() helper to simplify the code.
+> This adds the dt-binding documentation for rk1108 pinctrl
 >
-> Signed-off-by: Geliang Tang <geliangtang@gmail.com>
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
-Patch applied.
+Patch applied with Heiko's review tag.
 
 Yours,
 Linus Walleij
