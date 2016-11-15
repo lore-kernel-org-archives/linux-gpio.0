@@ -1,59 +1,64 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCHv2 2/2] pinctrl: sh-pfc: r8a7796: Add bias pinconf support
-Date: Tue, 15 Nov 2016 12:43:55 +0100
-Message-ID: <CAMuHMdVmjd1v+HxX+n7BRCm83BSBd2mUm8qHVNsK-UheRLFVoQ@mail.gmail.com>
-References: <20161112161002.13070-1-niklas.soderlund+renesas@ragnatech.se> <20161112161002.13070-3-niklas.soderlund+renesas@ragnatech.se>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 1/1] gpio: lib: Add gpio_is_enabled() to get pin mode
+Date: Tue, 15 Nov 2016 17:06:48 +0530
+Message-ID: <582AF350.1000007@nvidia.com>
+References: <1478089037-26441-1-git-send-email-ldewangan@nvidia.com> <CACRpkdYjWiy-PyBhN8gRa5TM5ARXrCZ-KqBXYm-bVeXFY11MQw@mail.gmail.com> <5825B6D4.1000600@nvidia.com> <CACRpkdacDcy_Y_5g8739DF+f3fRzzMQ_bkM1TQ+uTtPq1=VmFg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36268 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932164AbcKOLn5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 06:43:57 -0500
-In-Reply-To: <20161112161002.13070-3-niklas.soderlund+renesas@ragnatech.se>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4601 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751225AbcKOLxO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 06:53:14 -0500
+In-Reply-To: <CACRpkdacDcy_Y_5g8739DF+f3fRzzMQ_bkM1TQ+uTtPq1=VmFg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
 
-On Sat, Nov 12, 2016 at 5:10 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> Implements pull-up and pull-down. On this SoC there is no simple mapping
-> of GP pins to bias register bits, so we need a table.
+
+On Tuesday 15 November 2016 02:33 PM, Linus Walleij wrote:
+> On Fri, Nov 11, 2016 at 1:17 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 >
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
-> ---
->  drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 355 +++++++++++++++++++++++++++++=
-++----
->  1 file changed, 316 insertions(+), 39 deletions(-)
+>>> Yeah but since pinctrl and pinmux has its own debugfs files why is this
+>>> necessary? I understand it is convenient but only for debugging
+>>> right? They the inconvenience of using pinctrls debugfs files should
+>>> be bearable.
+>> Yes, it is debugging and capturing all the info at single place. Currently,
+>> gpio debugFs shows the gpio related stuff and the pinctrl on pinconfig but
+>> there is not any dump which shows the complete pin mapping.
+>> The effort is to compile all the data in single place with proper message to
+>> avoid any manual work for decoding multiple outputs.
+> I don't know if this is a good idea. I don't want to clutter the
+> gpiolib ABI for no good reason.
 >
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pf=
-c/pfc-r8a7796.c
-> index f06559c..676a4a6 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+> For certain this should only be available for drivers using pin
+> control as a back-end for their GPIOs.
+>
+> For that purpose we have (in <linux/pinctrl/consumer.h>:
+>
+> /* External interface to pin control */
+> extern int pinctrl_request_gpio(unsigned gpio);
+> extern void pinctrl_free_gpio(unsigned gpio);
+> extern int pinctrl_gpio_direction_input(unsigned gpio);
+> extern int pinctrl_gpio_direction_output(unsigned gpio);
+>
+> It would be more natural to add a function pinctrl_is_gpio(unsigned gpio)
+> to call back to the pin controller, then that can be called from
+> the generic or driver-specific debug print callback.
 
-> -       SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 38, FSCLKST#, SH_PFC_PIN_C=
-FG_DRIVE_STRENGTH),
+We have two type of IPs, GPIO mode is configured in the register which 
+is part of GPIO controller and in other IP, it is configured in register 
+which is in pincontroller registers.
 
-> +       SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 38, FSCLKST#, CFG_FLAGS),
+Your suggested API pinctrl_is_gpio() will definitely help on second case 
+and I will work on this once we will have the new IP driver in mainline. 
+This will be in coming T186 patches.
 
-> +       { PIN_A_NUMBER('D', 38), PU3,  2 },     /* FSCLKST# */
 
-"FSCLKST" (without "#")
+For T210 SoC, the configuration is done in gpio controller and we need 
+to have debug utility outside of driver and hence the requirements was.
 
-Gr{oetje,eeting}s,
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
