@@ -1,35 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: mxc: Shift generic request/free after gpiochip registration
-Date: Tue, 15 Nov 2016 10:13:07 +0100
-Message-ID: <CACRpkdatMwpQZd=0wQpv3LofDKKXEX5kASrRmxsaGD6ZVcHkLA@mail.gmail.com>
-References: <1477418567-28347-1-git-send-email-deepak_das@mentor.com>
- <CACRpkdYg2nKO5i7_5q0Hp3rvqmGiPCkueXxp7JnGTsJ-Mb1wAQ@mail.gmail.com> <d7e3c21a-48ec-e654-701a-7e6b5556f03a@mentor.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: sunxi: Free configs in pinctrl_map
+ only if it is a config map
+Date: Tue, 15 Nov 2016 10:15:01 +0100
+Message-ID: <CACRpkdYQo0ecvARoDzZ66pi+wuvaeGqHYZM4UkEgwhOuXnGm_w@mail.gmail.com>
+References: <20161111023510.14146-1-wens@csie.org>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f181.google.com ([209.85.220.181]:33739 "EHLO
-        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755479AbcKOJNJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Nov 2016 04:13:09 -0500
-Received: by mail-qk0-f181.google.com with SMTP id x190so127803423qkb.0
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Nov 2016 01:13:08 -0800 (PST)
-In-Reply-To: <d7e3c21a-48ec-e654-701a-7e6b5556f03a@mentor.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBFVEVPAQKGQEPWSZEAA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20161111023510.14146-1-wens-jdAy2FN1RRM@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: Deepak Das <deepak_das@mentor.com>, Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>
 
-On Thu, Nov 10, 2016 at 1:35 PM, Vladimir Zapolskiy
-<vladimir_zapolskiy@mentor.com> wrote:
+On Fri, Nov 11, 2016 at 3:35 AM, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org> wrote:
 
-> Originally the change is needed exclusively to cover the case, when IOMUX
-> device node is removed or disabled in a board DTB, while GPIOs still can
-> be requested by other controller drivers. The disabled pinctrl device case
-> (pinmux/pinctrl settings are done from a bootloader only) is inapplicable
-> to any boards found in upstream, so I would propose *not* to include this
-> change or any its derivative fix to the upstream.
+> In the recently refactored sunxi pinctrl library, we are only allocating
+> one set of pin configs for each pinmux setting node. When the pinctrl_map
+> structure is freed, the pin configs should also be freed. However the
+> code assumed the first map would contain the configs, which actually
+> never happens, as the mux function map gets added first.
+>
+> The proper way to do this is to look through all the maps and free the
+> first one whose type is actually PIN_MAP_TYPE_CONFIGS_GROUP.
+>
+> Also slightly expand the comment explaining this.
+>
+> Fixes: f233dbca6227 ("pinctrl: sunxi: Rework the pin config building code")
+> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
 
-I backed it out already. It didn't even compile.
+Patch applied with Maxime's ACK.
 
 Yours,
 Linus Walleij
