@@ -1,58 +1,63 @@
-From: Heiko Schocher <hs-ynQEQJNshbs@public.gmane.org>
-Subject: wdt, gpio: move arch_initcall into subsys_initcall ?
-Date: Tue, 15 Nov 2016 11:20:58 +0100
-Message-ID: <582AE18A.2060405@denx.de>
-Reply-To: hs-ynQEQJNshbs@public.gmane.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCHv2 2/2] pinctrl: sh-pfc: r8a7796: Add bias pinconf support
+Date: Tue, 15 Nov 2016 12:01:48 +0100
+Message-ID: <CAMuHMdUExh7_M8RwNbDRd_WicjZ2+eF9C6OGnEjRSdRD6ZS-9Q@mail.gmail.com>
+References: <20161112161002.13070-1-niklas.soderlund+renesas@ragnatech.se> <20161112161002.13070-3-niklas.soderlund+renesas@ragnatech.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, "Jonas Mark (ST-FIR/ENG1)" <Mark.Jonas-V5te9oGctAVWk0Htik3J/w@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20161112161002.13070-3-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello,
+On Sat, Nov 12, 2016 at 5:10 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Implements pull-up and pull-down. On this SoC there is no simple mapping
+> of GP pins to bias register bits, so we need a table.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 355 +++++++++++++++++++++++++++++=
+++----
+>  1 file changed, 316 insertions(+), 39 deletions(-)
+>
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pf=
+c/pfc-r8a7796.c
+> index f06559c..676a4a6 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 
-commit e188cbf7564f: "gpio: mxc: shift gpio_mxc_init() to subsys_initcall level"
-moves the gpio initialization of the mxc gpio driver
-from the arch_initcall level into subsys_initcall level.
+>  enum {
+>         PINMUX_RESERVED =3D 0,
 
-This leads now on mxc boards, which use a gpio wdt driver
-and the CONFIG_GPIO_WATCHDOG_ARCH_INITCALL option enabled,
-to unwanted driver probe deferrals during kernel boot.
+> +       SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('R'),  7, DU_DOTCLKIN2, CFG_FLAG=
+S),
 
-I see this currently on an imx6 based board (which has unfortunately
-3 WDT: imx6 internal (disabled), gpio wdt and da9063 WDT ...).
+DU_DOTCLKIN2 is AR8.
 
-Also a side effect from above commit is, that the da9063 WDT driver
-is now probed before the gpio WDT driver ... so /dev/watchdog now
-does not point to the gpio_wdt, instead it points to the da9063 WDT.
+> +static const struct sh_pfc_bias_info bias_info[] =3D {
 
-So there are 2 solutions possible:
+> +       { PIN_A_NUMBER('R', 7),  PU3,  0 },     /* DU_DOTCLKIN2 */
 
-- add a CONFIG_GPIO_MCX_ARCH_INITCALL option
-   in drivers/gpio/gpio-mxc.c like for the gpio_wdt.c driver?
+PIN_A_NUMBER('R', 8)
 
-   But how can we guarantee, that first the gpio driver and then
-   the gpio_wdt driver gets probed?
+If you fix the above:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-- move the arch_initcall in gpio_wdt.c into a subsys_initcall
-   (Tested this, and the probe dereferral messages are gone ...)
+Gr{oetje,eeting}s,
 
-   But this may results in problems on boards, which needs an early
-   trigger on an gpio wdt ...
+                        Geert
 
-Other ideas?
-
-Thanks for all suggestions!
-
-bye,
-Heiko
--- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 --
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
