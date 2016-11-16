@@ -1,74 +1,54 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 2/2] ARM: dts: rockchip: enable sdmmc for rk1108-evb
-Date: Wed, 16 Nov 2016 13:28:42 +0100
-Message-ID: <5071766.aON0S2k73p@phil>
-References: <1479024799-29198-1-git-send-email-jacob-chen@iotwrt.com> <1479024799-29198-2-git-send-email-jacob-chen@iotwrt.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [bug report] pinctrl: sunxi: Deal with configless pins
+Date: Wed, 16 Nov 2016 15:31:24 +0300
+Message-ID: <20161116123123.GA31631@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:58844 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752652AbcKPM3A (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 16 Nov 2016 07:29:00 -0500
-In-Reply-To: <1479024799-29198-2-git-send-email-jacob-chen@iotwrt.com>
+Received: from userp1040.oracle.com ([156.151.31.81]:27139 "EHLO
+        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752417AbcKPMbi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Nov 2016 07:31:38 -0500
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jacob Chen <jacob-chen@iotwrt.com>
-Cc: andy.yan@rock-chips.com, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jacob Chen <jacob2.chen@rock-chips.com>
+To: maxime.ripard@free-electrons.com
+Cc: linux-gpio@vger.kernel.org
 
-Am Sonntag, 13. November 2016, 16:13:19 CET schrieb Jacob Chen:
-> From: Jacob Chen <jacob2.chen@rock-chips.com>
-> 
-> This patch add sdmmc support for rk1108-evb, now I can load the rootfs
-> from sdmmc.
-> 
-> Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
-> ---
->  arch/arm/boot/dts/rk1108-evb.dts | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/rk1108-evb.dts
-> b/arch/arm/boot/dts/rk1108-evb.dts index 3956cff..cea26e5 100644
-> --- a/arch/arm/boot/dts/rk1108-evb.dts
-> +++ b/arch/arm/boot/dts/rk1108-evb.dts
-> @@ -56,6 +56,18 @@
->  	};
->  };
-> 
-> +&sdmmc {
-> +	bus-width = <4>;
-> +	cap-mmc-highspeed;
-> +	cap-sd-highspeed;
-> +	card-detect-delay = <200>;
-> +	disable-wp;
-> +	num-slots = <1>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sdmmc_clk>, <&sdmmc_cmd>, <&sdmmc_cd>, <&sdmmc_bus4>;
-> +	status = "okay";
-> +};
-> +
->  &uart0 {
->  	status = "okay";
->  };
-> @@ -67,3 +79,12 @@
->  &uart2 {
->  	status = "okay";
->  };
-> +
-> +&pinctrl {
-> +
-> +	sdmmc {
-> +		sdmmc_pwr: sdmmc-pwr {
-> +			rockchip,pins = <3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_up_drv_4ma>;
-> +		};
+Hello Maxime Ripard,
 
-the above is unsued, and in general please use a fixed regulator as vmmc, as 
-all other  Rockchip boards do already, so that the mmc core can handle it 
-itself.
+The patch e11dee2e98f8: "pinctrl: sunxi: Deal with configless pins"
+from Oct 20, 2016, leads to the following static checker warning:
 
+	drivers/pinctrl/sunxi/pinctrl-sunxi.c:397 sunxi_pctrl_dt_node_to_map()
+	warn: variable dereferenced before check 'map' (see line 323)
 
-Thanks
-Heiko
+drivers/pinctrl/sunxi/pinctrl-sunxi.c
+   394          *num_maps = i;
+   395  
+   396          /*
+   397           * We know have the number of maps we need, we can resize our
+   398           * map array
+   399           */
+   400          *map = krealloc(*map, i * sizeof(struct pinctrl_map), GFP_KERNEL);
+   401          if (!map)
 
+This should obviously be "if (*map) " here.
 
+   402                  return -ENOMEM;
+   403  
+   404          return 0;
+   405  
+   406  err_free_map:
+   407          kfree(map);
+
+I would send a patch, but I wasn't sure about this.  Should this be
+kfree(*map);?  I don't have my cross function DB built for ARM so I
+don't know how this is called...  Maybe set *map to NULL as well before
+returning?
+
+   408          return ret;
+   409  }
+
+regards,
+dan carpenter
