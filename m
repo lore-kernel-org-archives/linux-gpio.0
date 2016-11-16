@@ -1,38 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: Remove GPIO_DEVRES option
-Date: Wed, 16 Nov 2016 20:49:45 +0100
-Message-ID: <CACRpkdZQ+XnX7bYDbBpixzDE2Hnv68snp42XO-T=nFN+k6BQzw@mail.gmail.com>
-References: <20161115223902.GA8347@juliacomputing.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.10 (take two)
+Date: Wed, 16 Nov 2016 20:51:22 +0100
+Message-ID: <CACRpkda-ouCaeGyUBKrCR_Joa7ANUKqM0o1xWKiRaefE3cE92Q@mail.gmail.com>
+References: <1479289677-13490-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f171.google.com ([209.85.220.171]:33317 "EHLO
-        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752375AbcKPTtr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Nov 2016 14:49:47 -0500
-Received: by mail-qk0-f171.google.com with SMTP id x190so189748044qkb.0
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Nov 2016 11:49:47 -0800 (PST)
-In-Reply-To: <20161115223902.GA8347@juliacomputing.com>
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:35856 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751572AbcKPTvX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Nov 2016 14:51:23 -0500
+Received: by mail-qt0-f176.google.com with SMTP id w33so114755838qtc.3
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Nov 2016 11:51:23 -0800 (PST)
+In-Reply-To: <1479289677-13490-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Keno Fischer <keno@juliacomputing.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, jdike@addtoit.com, Richard Weinberger <richard@nod.at>, user-mode-linux-devel@lists.sourceforge.net, Shawn Guo <shawn.guo@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-On Tue, Nov 15, 2016 at 11:39 PM, Keno Fischer <keno@juliacomputing.com> wrote:
+On Wed, Nov 16, 2016 at 10:47 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> This option was added in 6a89a314ab107a12af08c71420c19a37a30fc2d3 to allow use
-> of the devm_gpio_* functions without CONFIG_GPIOLIB. However, only a few months
-> later in b69ac52449c658b7ac40034dc3c5f5f4a71a723d, CONFIG_GPIOLIB, was added
-> as a dependency, defeating the original purpose of this option. Instead of
-> that patch, the original commit could have just been reverted (and in fact
-> was partially so in 403c1d0be5ccbd750d25c59d8358843a81e52e3b). Further,
-> since this option has a dependency on HAS_IOMEM, even though it does not
-> require it, it causes build failures when !HAS_IOMEM (e.g. in a uml build).
-> Fix that by completely removing the option, in essence completing the
-> reversion of the original commit.
+>         Hi Linus,
+>
+> The following changes since commit 0f866a9679215838328e1c0ed1892224672bb396:
+>
+>   pinctrl: sh-pfc: r8a7796: Fix GPSR definitions for SDHI2/3 (2016-11-07 10:39:11 +0100)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.10-tag2
 
-I split up this terse commit message a bit and added your
-Signed-off-by and applied for fixes.
+Pulled into the pin control tree, thanks a lot!
 
 Yours,
 Linus Walleij
