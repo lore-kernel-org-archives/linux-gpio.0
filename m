@@ -1,45 +1,53 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 1/2] ARM: dts: rockchip: add the sdmmc pinctrl for rk1108
-Date: Wed, 16 Nov 2016 13:42:28 +0100
-Message-ID: <17426494.06vbuIDA0O@phil>
-References: <1479024799-29198-1-git-send-email-jacob-chen@iotwrt.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] pinctrl: sunxi: fix theoretical uninitialized variable access
+Date: Wed, 16 Nov 2016 15:18:18 +0100
+Message-ID: <20161116141841.2030776-1-arnd@arndb.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:58934 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752755AbcKPMmt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 16 Nov 2016 07:42:49 -0500
-In-Reply-To: <1479024799-29198-1-git-send-email-jacob-chen@iotwrt.com>
+Received: from mout.kundenserver.de ([212.227.17.13]:52246 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752810AbcKPOT0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Nov 2016 09:19:26 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jacob Chen <jacob-chen@iotwrt.com>
-Cc: andy.yan@rock-chips.com, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jacob Chen <jacob2.chen@rock-chips.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Am Sonntag, 13. November 2016, 16:13:18 CET schrieb Jacob Chen:
-> From: Jacob Chen <jacob2.chen@rock-chips.com>
-> 
-> Signed-off-by: Jacob Chen <jacob2.chen@rock-chips.com>
-> ---
->  arch/arm/boot/dts/rk1108.dtsi | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/rk1108.dtsi b/arch/arm/boot/dts/rk1108.dtsi
-> index 9dccfea..6a06ad7 100644
-> --- a/arch/arm/boot/dts/rk1108.dtsi
-> +++ b/arch/arm/boot/dts/rk1108.dtsi
-> @@ -321,6 +321,31 @@
->  			input-enable;
->  		};
-> 
-> +        sdmmc {
+gcc warns about a  way that it could use an uninitialized variable:
 
-I've fixed the intendation here (needed tabs instead of spaces) and moved the 
-block to its alphabetically correct position between i2c and uart nodes and 
-applied the result to my dts32 branch.
+drivers/pinctrl/sunxi/pinctrl-sunxi.c: In function 'sunxi_pinctrl_init':
+drivers/pinctrl/sunxi/pinctrl-sunxi.c:1191:8: error: 'best_div' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
+This cannot really happen except if 'freq' is UINT_MAX and 'clock' is
+zero, and both of these are forbidden. To shut up the warning anyway,
+this changes the logic to initialize the return code to the first
+divider value before looking at the others.
 
-Thanks
-Heiko
+Fixes: 7c926492d38a ("pinctrl: sunxi: Add support for interrupt debouncing")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 2339d4718b4d..6b7953da4228 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -1125,10 +1125,13 @@ static int sunxi_pinctrl_build_state(struct platform_device *pdev)
+ static int sunxi_pinctrl_get_debounce_div(struct clk *clk, int freq, int *diff)
+ {
+ 	unsigned long clock = clk_get_rate(clk);
+-	unsigned int best_diff = ~0, best_div;
++	unsigned int best_diff, best_div;
+ 	int i;
+ 
+-	for (i = 0; i < 8; i++) {
++	best_diff = abs(freq - clock);
++	best_div = 0;
++
++	for (i = 1; i < 8; i++) {
+ 		int cur_diff = abs(freq - (clock >> i));
+ 
+ 		if (cur_diff < best_diff) {
+-- 
+2.9.0
 
