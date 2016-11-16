@@ -1,53 +1,52 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] pinctrl: sunxi: fix theoretical uninitialized variable access
-Date: Wed, 16 Nov 2016 15:18:18 +0100
-Message-ID: <20161116141841.2030776-1-arnd@arndb.de>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:52246 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752810AbcKPOT0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Nov 2016 09:19:26 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [patch] pinctrl: single: Fix a couple error codes
+Date: Wed, 16 Nov 2016 06:49:02 -0800
+Message-ID: <20161116144901.GO4082@atomide.com>
+References: <20161116114151.GA31224@mwanda>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20161116114151.GA31224@mwanda>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-gcc warns about a  way that it could use an uninitialized variable:
+* Dan Carpenter <dan.carpenter@oracle.com> [161116 03:43]:
+> We should return -ENOMEM instead of success if pcs_add_function() fails.
 
-drivers/pinctrl/sunxi/pinctrl-sunxi.c: In function 'sunxi_pinctrl_init':
-drivers/pinctrl/sunxi/pinctrl-sunxi.c:1191:8: error: 'best_div' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+Looks good to me thanks:
 
-This cannot really happen except if 'freq' is UINT_MAX and 'clock' is
-zero, and both of these are forbidden. To shut up the warning anyway,
-this changes the logic to initialize the return code to the first
-divider value before looking at the others.
+Acked-by: Tony Lindgren <tony@atomide.com>
 
-Fixes: 7c926492d38a ("pinctrl: sunxi: Add support for interrupt debouncing")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 2339d4718b4d..6b7953da4228 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -1125,10 +1125,13 @@ static int sunxi_pinctrl_build_state(struct platform_device *pdev)
- static int sunxi_pinctrl_get_debounce_div(struct clk *clk, int freq, int *diff)
- {
- 	unsigned long clock = clk_get_rate(clk);
--	unsigned int best_diff = ~0, best_div;
-+	unsigned int best_diff, best_div;
- 	int i;
- 
--	for (i = 0; i < 8; i++) {
-+	best_diff = abs(freq - clock);
-+	best_div = 0;
-+
-+	for (i = 1; i < 8; i++) {
- 		int cur_diff = abs(freq - (clock >> i));
- 
- 		if (cur_diff < best_diff) {
--- 
-2.9.0
-
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+> index 2b196e5..a5a0392 100644
+> --- a/drivers/pinctrl/pinctrl-single.c
+> +++ b/drivers/pinctrl/pinctrl-single.c
+> @@ -1181,8 +1181,10 @@ static int pcs_parse_one_pinctrl_entry(struct pcs_device *pcs,
+>  
+>  	pgnames[0] = np->name;
+>  	function = pcs_add_function(pcs, np, np->name, vals, found, pgnames, 1);
+> -	if (!function)
+> +	if (!function) {
+> +		res = -ENOMEM;
+>  		goto free_pins;
+> +	}
+>  
+>  	res = pcs_add_pingroup(pcs, np, np->name, pins, found);
+>  	if (res < 0)
+> @@ -1313,8 +1315,10 @@ static int pcs_parse_bits_in_pinctrl_entry(struct pcs_device *pcs,
+>  
+>  	pgnames[0] = np->name;
+>  	function = pcs_add_function(pcs, np, np->name, vals, found, pgnames, 1);
+> -	if (!function)
+> +	if (!function) {
+> +		res = -ENOMEM;
+>  		goto free_pins;
+> +	}
+>  
+>  	res = pcs_add_pingroup(pcs, np, np->name, pins, found);
+>  	if (res < 0)
