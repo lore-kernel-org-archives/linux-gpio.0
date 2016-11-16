@@ -1,78 +1,102 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH] pinctrl: sunxi: fix theoretical uninitialized variable
- access
-Date: Wed, 16 Nov 2016 21:33:58 +0100
-Message-ID: <20161116203358.midi7vmaqirpywtt@lukather>
-References: <20161116141841.2030776-1-arnd@arndb.de>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: Re: [PATCH v4 3/3] selftest/gpio: add gpio test case
+Date: Wed, 16 Nov 2016 16:42:43 -0700
+Message-ID: <7e8cac40-ccf1-d4c3-5a08-09969b273b11@osg.samsung.com>
+References: <1476413307-1397-1-git-send-email-bamvor.zhangjian@huawei.com>
+ <1476413307-1397-4-git-send-email-bamvor.zhangjian@huawei.com>
+ <CACRpkdbOnEs464MLoZDQ_eZ-O_stuyQJhy-L98ZzaKzcrn8FKg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="giid35f4r2leuudf"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:53105 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752605AbcKPUeB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Nov 2016 15:34:01 -0500
-Content-Disposition: inline
-In-Reply-To: <20161116141841.2030776-1-arnd@arndb.de>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:47403
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753838AbcKPXmv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Nov 2016 18:42:51 -0500
+In-Reply-To: <CACRpkdbOnEs464MLoZDQ_eZ-O_stuyQJhy-L98ZzaKzcrn8FKg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Bamvor Jian Zhang <bamvor.zhangjian@huawei.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Michael Welling <mwelling@ieee.org>, Shuah Khan <shuahkh@osg.samsung.com>, Shuah Khan <shuah@kernel.org>
+
+On 10/21/2016 05:54 AM, Linus Walleij wrote:
+> On Fri, Oct 14, 2016 at 4:48 AM, Bamvor Jian Zhang
+> <bamvor.zhangjian@huawei.com> wrote:
+> 
+>> From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+>>
+>> This test script try to do whitebox testing for gpio subsystem(
+>> based on gpiolib). It manipulate gpio device through chardev or
+>> sysfs and check the result from debugfs. This script test
+>> gpio-mockup through chardev by default.
+>>
+>> In details, it test the following things:
+>> 1.  Add single, multi gpiochip to do overlap check.
+>> 2.  Test direction and output value for valid pin.
+>> 3.  Test dynamic allocation of gpio base.
+>>
+>> Run "tools/testing/selftests/gpio/gpio-mockup.sh -h" to know how to
+>> use it.
+>>
+>> Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+> 
+> I like the overall idea with this, but some comments:
+> 
+>> +CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
+> 
+> Is this really what people are doing?
+> 
+> Isn't -I/usr/include the right way to express this?
+> 
+>> +LDLIBS += -lmount -I/usr/include/libmount
+>> +
+>> +$(BINARIES): ../../../gpio/gpio-utils.o ../../../../usr/include/linux/gpio.h
+>> +
+>> +../../../gpio/gpio-utils.o:
+>> +       make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
+> 
+> Ah, that is clever. I hope I can get an ACK from Shuah if this is
+> how we're supposed to handle cross dependencies of common
+> helper code in the kernel.
+> 
+> It looks a bit spaghetti, unfortunately.
+
+Yeah it does. Let's get this in for now and we can try to improve
+it.
+
+Sorry for the delay, here is the ack
 
 
---giid35f4r2leuudf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> 
+>> +../../../../usr/include/linux/gpio.h:
+>> +       make -C ../../../.. headers_install
+> 
+> Don't do this please, you would have to be root and it's very
+> fragile. How does tests in general resolve dependencies on
+> kernel headers? Please look around a bit and check what
+> they do. I think they just expect them to be installed.
 
-Hi Arnd,
+Yeah - it is a good idea to have the user install the headers.
+It shouldn't be done in the script without use consent.
 
-On Wed, Nov 16, 2016 at 03:18:18PM +0100, Arnd Bergmann wrote:
-> gcc warns about a  way that it could use an uninitialized variable:
->=20
-> drivers/pinctrl/sunxi/pinctrl-sunxi.c: In function 'sunxi_pinctrl_init':
-> drivers/pinctrl/sunxi/pinctrl-sunxi.c:1191:8: error: 'best_div' may be us=
-ed uninitialized in this function [-Werror=3Dmaybe-uninitialized]
->=20
-> This cannot really happen except if 'freq' is UINT_MAX and 'clock' is
-> zero, and both of these are forbidden. To shut up the warning anyway,
-> this changes the logic to initialize the return code to the first
-> divider value before looking at the others.
->=20
-> Fixes: 7c926492d38a ("pinctrl: sunxi: Add support for interrupt debouncin=
-g")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> I like the tests overall, but I'm a bit suspicious about the
+> sysfs tests. Maybe these should atleast print something
+> about the sysfs ABI being deprecated.
 
-Thanks for that patch.
+Has this concern been addressed. Once the above are fixed.
 
-Just out of curiosity, which gcc gives those warnings? I have 6.2 and
-it didn't output anything..
+Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
 
-Maxime
+> 
+> Anyways I merged the first two patches so now we only have to
+> figure out this final patch!
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
 
---giid35f4r2leuudf
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+> 
+> Yours,
+> Linus Walleij
+> 
 
-iQIcBAEBCAAGBQJYLMKrAAoJEBx+YmzsjxAg8rIP/j0OQeJZoiy3WVwQZQt8ImTZ
-c3hd7KtvXyvhwK4hmhmJXN/MFG2cUuFxZ6N9ssqrpDC7hFPmktwK9GO0/pooI9LK
-31C8RpY92qEgLWBnVsATynnRrVOzuIVzqSLNbNhFTP6fTluQw6o7/vxH6aLzTlhw
-xU0JIFxAt73euQ1qi1Ml/vwo22ZGGhTPZqiDRQ0kQltlf5YdW3UyWztKdlh2pxEy
-qfWGPV8aUSUXSFgsXahNJPWEjgGgUfvd6rsudAC4HH2gbTGw0+nUJkGJfWeRS5Wq
-sf+BdgG+JZxPejZs2AiC1VUdzRhodySuIDPO69xTLnJA1kV4+wrnvgyMVvcyJytl
-zTLjKd/Iq/LXhRRbyL/VFNhd2flnSRcYiZ9A3fzecQjLjADkE5FI9MvQtsfE1kod
-FQuIiXorLkkiUmoHPCfubR57VGdYdSSV5luDEmtAVhD/WKT6Yh0fHwXUWN81TIJk
-epTaBujffyG7uTjvDexFKEtdnx+JoSrelPexrux2HzPzMdqpSfIVVoSk1BtedNw8
-Rls3sZ2vPnw285ngSS7pglgXT7at2yqFJQCWa9cWB71NLFsY/N2wu4TeBbL2WOuf
-IvFf8U5DeLOppiWY4kdFkHpMG3+QHV4/BSqv4J23BO2ygbFK/F58Dy5V8xV62Bhw
-CLRTEP4WCohd+pVqBP5K
-=2mRi
------END PGP SIGNATURE-----
-
---giid35f4r2leuudf--
