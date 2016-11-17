@@ -1,155 +1,62 @@
-From: Heiko Schocher <hs@denx.de>
-Subject: Re: wdt, gpio: move arch_initcall into subsys_initcall ?
-Date: Thu, 17 Nov 2016 08:08:00 +0100
-Message-ID: <582D5750.4000408@denx.de>
-References: <582AE18A.2060405@denx.de>
- <afbf394e-e411-5c43-e2b0-667b3fbc2edf@mentor.com>
- <e4472c2d-effa-9583-aded-8dcdfdd57ee6@mentor.com>
- <ee9824b8-f09f-3817-8893-8121c9fb9eb1@roeck-us.net>
-Reply-To: hs@denx.de
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: nomadik: split up and comments MC0 pins
+Date: Thu, 17 Nov 2016 09:47:03 +0100
+Message-ID: <1479372423-4065-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.9]:50627 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751194AbcKQHIK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2016 02:08:10 -0500
-In-Reply-To: <ee9824b8-f09f-3817-8893-8121c9fb9eb1@roeck-us.net>
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:38097 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751127AbcKQIrJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2016 03:47:09 -0500
+Received: by mail-wm0-f41.google.com with SMTP id f82so130531127wmf.1
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2016 00:47:08 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Shawn Guo <shawnguo@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Wim Van Sebroeck <wim@iguana.be>, "Jonas Mark (ST-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-Hello Guenter, Vladimir,
+When debugging it helps to see exactly which pin goes where,
+so make it very detailed.
 
-Sorry for the late response, but I was "on the road" ...
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
-Am 15.11.2016 um 14:46 schrieb Guenter Roeck:
-> On 11/15/2016 03:32 AM, Vladimir Zapolskiy wrote:
->> On 11/15/2016 01:10 PM, Vladimir Zapolskiy wrote:
->>> Hello Heiko,
->>>
->>> On 11/15/2016 12:20 PM, Heiko Schocher wrote:
->>>> Hello,
->>>>
->>>> commit e188cbf7564f: "gpio: mxc: shift gpio_mxc_init() to subsys_initcall level"
->>>> moves the gpio initialization of the mxc gpio driver
->>>> from the arch_initcall level into subsys_initcall level.
->>>>
->>>> This leads now on mxc boards, which use a gpio wdt driver
->>>> and the CONFIG_GPIO_WATCHDOG_ARCH_INITCALL option enabled,
->>>> to unwanted driver probe deferrals during kernel boot.
->>>>
->>>> I see this currently on an imx6 based board (which has unfortunately
->>>> 3 WDT: imx6 internal (disabled), gpio wdt and da9063 WDT ...).
->>>>
->>>> Also a side effect from above commit is, that the da9063 WDT driver
->>>> is now probed before the gpio WDT driver ... so /dev/watchdog now
->>>> does not point to the gpio_wdt, instead it points to the da9063 WDT.
->>>>
->>>> So there are 2 solutions possible:
->>>>
->>>> - add a CONFIG_GPIO_MCX_ARCH_INITCALL option
->>>>   in drivers/gpio/gpio-mxc.c like for the gpio_wdt.c driver?
->>>
->>> in my opinion this is overly heavy solution and it might be
->>> better to avoid it if possible.
->>>
->>> I would rather prefer to reconsider GPIO_WATCHDOG_ARCH_INITCALL
->>> usage in the watchdog driver.
->>>
->>> Moreover adding this proposed GPIO_MCX_ARCH_INITCALL to call
->>> the driver on arch level will result in deferring the GPIO driver.
->>>
->>>>   But how can we guarantee, that first the gpio driver and then
->>>>   the gpio_wdt driver gets probed?
->>>>
->>>> - move the arch_initcall in gpio_wdt.c into a subsys_initcall
->>>>   (Tested this, and the probe dereferral messages are gone ...)
->>>>
->>>>   But this may results in problems on boards, which needs an early
->>>>   trigger on an gpio wdt ...
->>>
->>> The level of "earliness" can not be defined in absolute time value
->>> in any case, why decreasing the init level of the watchdog driver
->>> to subsys level can cause problems? For that there should exist
->>> some kind of a dependency on IC or PCB hardware level, can you
->>> name it please?
-
-On the current problem, there is no dependency on PCB, but I know
-of watchdogs triggered through a gpio pin, which must triggered < 1 second
-and subsys_initcall is too late for this. I think, this was the reason
-for introducing the CONFIG_GPIO_WATCHDOG_ARCH_INITCALL option ...
-
->>> Also please note that more than a half of all GPIO drivers settle
->>> on subsys or later initcall level, this means that there is
->>> an expected GPIO watchdog driver deferral for all of them.
->>
->> Please find two more late notes though.
->>
->>> I propose to send two patches for review:
->>>
->>> 1. remove GPIO_WATCHDOG_ARCH_INITCALL option completely and decouple
->>>    module_platform_driver() into arch_initcall() and module_exit()
->>>    unconditionally.
->>>
->>> 2. change arch_initcall() in the watchdog driver to subsys_initcall().
->>>    This change removes probe deferrals on boot, when the driver is
->>>    used with the most of the GPIO controllers.
->>
->> Alternatively commit 5e53c8ed813d ("watchdog: gpio_wdt: Add option for
->> early registration") can be reverted and then module_platform_driver()
->> is decoupled into subsys_initcall() and module_exit() as its replacement.
->>
-> Sure, only the reason for that was that there are situations where
-> subsys_initcall() was too late. Also, when using arch_initcall() only,
-> we get deferrals again, which is apparently hated by many and a reason
-> for all those "avoid probe deferrals" patches.
-
-Exactly. And I wonder, if this boards, who need this early trigger,
-work with current kernel ? (Or this boards use a gpio driver, which is
-not in subsys_initcall level ...)
-
->> And also please note that since quite many GPIO controller drivers
->> live on initcall levels after subsys_initcall(), the solution won't
->> let to avoid watchdog driver deferrals totally, this should be accepted.
->>
-> ... except for others it isn't, and we are back to square one.
->
-> GPIO_WATCHDOG_ARCH_INITCALL was intended to be only used in situations
-> where needed. Why is it used here in the first place if that is not
-> the case ?
-
-Heh, good question ...
-
-"/dev/watchdog" is in systemd hard-coded, see:
-https://github.com/systemd/systemd/blob/dd8352659c9428b196706d04399eec106a8917ed/src/shared/watchdog.c#L86
-http://0pointer.de/blog/projects/watchdog.html
-https://www.freedesktop.org/software/systemd/man/systemd-system.conf.html
-
-We have 2 WDT driver enabled on the board (GPIO WDT and the DA9063 WDT).
-
-If both WDTs are in the subsys_initall level, first the da9063 wdt
-gets probed, and so "/dev/watchdog" points to the da9063 wdt, but
-we want to use the GPIO wdt as "/dev/watchdog" device.
-
-Now, why not simple disabling the da9063 wdt ?
-
-We could not disable the da9063 wdt functionallity, because we need
-for a clean reboot that the da9063_wdt_restart() is called in the
-restart sequence ... which is registered in the wdt driver:
-
-static const struct watchdog_ops da9063_watchdog_ops = {
-[...]
-         .restart = da9063_wdt_restart,
-};
-
-Is there a possbility to register this restart function may somewhere
-else? It seems, that this is not a WDT functionallity ...
-
-bye,
-Heiko
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c b/drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c
+index 8392083514fb..af4814479eb0 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c
+@@ -379,13 +379,24 @@ static const unsigned msp0txrx_a_1_pins[] = { DB8500_PIN_AC4, DB8500_PIN_AC3 };
+ static const unsigned msp0tfstck_a_1_pins[] = { DB8500_PIN_AF3, DB8500_PIN_AE3 };
+ static const unsigned msp0rfsrck_a_1_pins[] = { DB8500_PIN_AD3, DB8500_PIN_AD4 };
+ /* Basic pins of the MMC/SD card 0 interface */
+-static const unsigned mc0_a_1_pins[] = { DB8500_PIN_AC2, DB8500_PIN_AC1,
+-	DB8500_PIN_AB4, DB8500_PIN_AA3, DB8500_PIN_AA4, DB8500_PIN_AB2,
+-	DB8500_PIN_Y4, DB8500_PIN_Y2, DB8500_PIN_AA2, DB8500_PIN_AA1 };
++static const unsigned mc0_a_1_pins[] = { DB8500_PIN_AC2, /* MC0_CMDDIR */
++					 DB8500_PIN_AC1, /* MC0_DAT0DIR */
++					 DB8500_PIN_AB4, /* MC0_DAT2DIR */
++					 DB8500_PIN_AA3, /* MC0_FBCLK */
++					 DB8500_PIN_AA4, /* MC0_CLK */
++					 DB8500_PIN_AB2, /* MC0_CMD */
++					 DB8500_PIN_Y4,  /* MC0_DAT0 */
++					 DB8500_PIN_Y2,  /* MC0_DAT1 */
++					 DB8500_PIN_AA2, /* MC0_DAT2 */
++					 DB8500_PIN_AA1  /* MC0_DAT3 */
++};
+ /* Often only 4 bits are used, then these are not needed (only used for MMC) */
+-static const unsigned mc0_dat47_a_1_pins[] = { DB8500_PIN_W2, DB8500_PIN_W3,
+-	DB8500_PIN_V3, DB8500_PIN_V2};
+-static const unsigned mc0dat31dir_a_1_pins[] = { DB8500_PIN_AB3 };
++static const unsigned mc0_dat47_a_1_pins[] = { DB8500_PIN_W2, /* MC0_DAT4 */
++					       DB8500_PIN_W3, /* MC0_DAT5 */
++					       DB8500_PIN_V3, /* MC0_DAT6 */
++					       DB8500_PIN_V2  /* MC0_DAT7 */
++};
++static const unsigned mc0dat31dir_a_1_pins[] = { DB8500_PIN_AB3 }; /* MC0_DAT31DIR */
+ /* MSP1 can only be on these pins, but TXD and RXD can be flipped */
+ static const unsigned msp1txrx_a_1_pins[] = { DB8500_PIN_AF2, DB8500_PIN_AG2 };
+ static const unsigned msp1_a_1_pins[] = { DB8500_PIN_AE1, DB8500_PIN_AE2 };
 -- 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+2.7.4
+
