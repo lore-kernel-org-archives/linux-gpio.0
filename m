@@ -1,69 +1,103 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: GPIO IN LINUX KERENL 4.8
-Date: Thu, 17 Nov 2016 21:16:05 +0100
-Message-ID: <CACRpkdbpqWNYAiFvVu-utua4xH2_6tAk+mkE01-Fx5z6vh9uWg@mail.gmail.com>
-References: <CAGyKHxLN+oV485upVkBp-fL2=4aO6Q_29jzSCFCdCsetj=FW-A@mail.gmail.com>
- <CAGyKHxK7+CGhd_P0An0Ja4iFSP=Rez9bdsLnzs122BCrw8ZiHQ@mail.gmail.com>
- <CAGyKHx+F_M3_nsC=GPn2fkrZg8CPedTPv4iZMQnAa9aSU3=Pmw@mail.gmail.com>
- <CAGyKHx+MWr17X7vAFo9y4fV+S+29o52+AqLAk4h9kPQ8r8D81Q@mail.gmail.com>
- <CAGyKHxLtsFwxK9C2BQp5BLH-5wNMvma2MA3ROKVna2u938Th+g@mail.gmail.com>
- <CAGyKHxKppFcC-QEv0LrvLdn+eyPW26yZyKm8sLk9KTcNMhyBXA@mail.gmail.com>
- <CAGyKHxJuHwy37aeOKmajjN66GdxCr1CTfp004mF5_PqG2mW6kw@mail.gmail.com>
- <CAGyKHx+2g4S=spaqQnB4AH+WMbqNBkyc5c-dm0txvFEFVY5Y6w@mail.gmail.com>
- <CAGyKHxJXQBC9qRa9h25GiBwuiEya1j73N4zNhGE0qb=YzVXzNg@mail.gmail.com>
- <CAGyKHxLTqTBMd42EVKGVp2VSQHk9nixvfApqqO7Z8AJw_A9wCw@mail.gmail.com>
- <CAGyKHxK6ng1wnWDdr=VxrbUyOZQT5hfvPLTHoZp8ZuQED85fqw@mail.gmail.com>
- <CAGyKHxL+Hf70c4+_oeO-4nVEH_iqSL5yn7MWdp1LGjZntNHzBg@mail.gmail.com>
- <CACRpkdbqRmtXbQePWuGkfksS=act-01zwjcwmZtPrf5=gzC1+A@mail.gmail.com>
- <CAGyKHx+_gGt-Bn7S4oE21u1nY5QBpG0pSzg+oth3+QxYYdjMfA@mail.gmail.com>
- <CAGyKHxLge3XUO3f9DHZ+5YhnODrexXZ-voB2PGJg-QNOZ2+wdA@mail.gmail.com> <CAGyKHx+-+m+mDpmXW69RRnA2wWgqUcxDm2RvxXT2LEofkMB1VA@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [bug report] pinctrl: sunxi: Deal with configless pins
+Date: Thu, 17 Nov 2016 21:24:04 +0100
+Message-ID: <20161117202404.5fp5uk4zwmctpqpj@lukather>
+References: <20161116123123.GA31631@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="sge75attevsgepho"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f179.google.com ([209.85.220.179]:35064 "EHLO
-        mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751020AbcKQUQG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2016 15:16:06 -0500
-Received: by mail-qk0-f179.google.com with SMTP id n204so237300816qke.2
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2016 12:16:06 -0800 (PST)
-In-Reply-To: <CAGyKHx+-+m+mDpmXW69RRnA2wWgqUcxDm2RvxXT2LEofkMB1VA@mail.gmail.com>
+Received: from mail.free-electrons.com ([62.4.15.54]:50407 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750714AbcKQUYG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Nov 2016 15:24:06 -0500
+Content-Disposition: inline
+In-Reply-To: <20161116123123.GA31631@mwanda>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rahul Mahajan <rahulcmahajan.84@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-gpio@vger.kernel.org
 
-On Thu, Nov 17, 2016 at 12:01 PM, Rahul Mahajan
-<rahulcmahajan.84@gmail.com> wrote:
 
-> Can you please tell ,
-> 1) i need to change modify pin control for gpio then how to do that ?
+--sge75attevsgepho
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Like any other driver? I don't understand the question. You have
-to be more specific.
+Hi Dan,
 
-> 2) properly not understand relationship between gpio and pin control?
+On Wed, Nov 16, 2016 at 03:31:24PM +0300, Dan Carpenter wrote:
+> Hello Maxime Ripard,
+>=20
+> The patch e11dee2e98f8: "pinctrl: sunxi: Deal with configless pins"
+> from Oct 20, 2016, leads to the following static checker warning:
+>=20
+> 	drivers/pinctrl/sunxi/pinctrl-sunxi.c:397 sunxi_pctrl_dt_node_to_map()
+> 	warn: variable dereferenced before check 'map' (see line 323)
+>=20
+> drivers/pinctrl/sunxi/pinctrl-sunxi.c
+>    394          *num_maps =3D i;
+>    395 =20
+>    396          /*
+>    397           * We know have the number of maps we need, we can resize=
+ our
+>    398           * map array
+>    399           */
+>    400          *map =3D krealloc(*map, i * sizeof(struct pinctrl_map), G=
+FP_KERNEL);
+>    401          if (!map)
+>=20
+> This should obviously be "if (*map) " here.
 
-Read the documentation:
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/plain/Documentation/pinctrl.txt
+Erm, yes, totally.
 
-And I also have a few presentations:
-http://www.df.lth.se/~triad/papers/pincontrol.pdf
-http://www.df.lth.se/~triad/papers/Linaro_pinctrl_overview.pdf
+>=20
+>    402                  return -ENOMEM;
+>    403 =20
+>    404          return 0;
+>    405 =20
+>    406  err_free_map:
+>    407          kfree(map);
+>=20
+> I would send a patch, but I wasn't sure about this.  Should this be
+> kfree(*map);?
 
-> 3) how to do tge linux kernel interact with gpio?
+Yes, that one too.
 
-Read the documentation:
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/gpio
+> I don't have my cross function DB built for ARM so I
+> don't know how this is called...  Maybe set *map to NULL as well before
+> returning?
 
-Also presentations:
-http://www.df.lth.se/~triad/papers/pincontrol-gpio-update.pdf
-http://www.df.lth.se/~triad/papers/GPIO-for-Engineers-and-Makers.pdf
+And that would be even better yes :)
 
-> 4) how we application can access with named gpio.
+Will you send a patch?
 
-Use the character device.
-See the last presentation for an overview, but also read the examples:
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/tools/gpio
+Thanks,
+Maxime
 
-Yours,
-Linus Walleij
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--sge75attevsgepho
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYLhHfAAoJEBx+YmzsjxAgOA4QAIPKO+uZVL3X27g8WmC+Z/2o
+tSpxk/BqBH/pabu6S+HATedT7BjWm0jW92jSsK/ikdTDihExhYUVlpXf+vDmhR/B
+u4SxQs1ZWPu5Z+vpU7mrf8Ay3jgbvqu08jOkIrVOthg+euB5FshU0XOqOoxsN+YU
+f6LDu1fDbNB6wnbP1jmKYFA2dltjAg69xamqn3A5UUuYQVacEaQW6HeF0MYD1iYX
+X6bejbEj/SHd3BS5PriQ/QXX+H2CyT6rYwXdD4mpKJ3TnZhoIsschEj5iL3wBXK7
+Jj4WACKXesMItk/nmMPZJPo2Py8RS8MTBb1C8sw5K/CahxAv36oMUA22b5nUo0kl
+n9GTFVXidE3gGDBfrdEDzau2yJA5ce2oBL2pq0aWjwKLyTieRqLTyq8UMxjyGFtD
+UJfpabB6bvgaxuNf3ZnzDQOzmWIpnQ7urvakstlmqRZlVcIyEhu0YFvbyBdorY9i
+tq0biv3s2XNmQJxYzUX7xDCmAoXAdStM1bIt0Er7lhzSCpsLCqtWvkUHzl9i1IYY
+6QxQfQcCvRoBeIbx96lBjYaJV1fXv3b1whhenYQfe6PX9X52Bm1a6dU0ykplYEuB
+A3f1pmHtBZ2+R3ZjZjmDvXV3vJeO50y6yOlxBIidLL3OVXYN+sYu2ibTzj6lVN9v
+JTBJtlkuUrt7xK0h64FW
+=a0pr
+-----END PGP SIGNATURE-----
+
+--sge75attevsgepho--
