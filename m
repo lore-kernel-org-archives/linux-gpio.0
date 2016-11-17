@@ -1,104 +1,66 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: wdt, gpio: move arch_initcall into subsys_initcall ?
-Date: Thu, 17 Nov 2016 11:31:14 +0200
-Message-ID: <6231eccc-62f0-041f-1aed-59e85abcc6c6@mentor.com>
-References: <582AE18A.2060405@denx.de>
- <afbf394e-e411-5c43-e2b0-667b3fbc2edf@mentor.com>
- <e4472c2d-effa-9583-aded-8dcdfdd57ee6@mentor.com>
- <ee9824b8-f09f-3817-8893-8121c9fb9eb1@roeck-us.net>
- <582D5750.4000408@denx.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <582D5750.4000408@denx.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: hs@denx.de, Guenter Roeck <linux@roeck-us.net>
-Cc: linux-watchdog@vger.kernel.org, "Jonas Mark (ST-FIR/ENG1)" <Mark.Jonas@de.bosch.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, Shawn Guo <shawnguo@kernel.org>, linux-arm-kernel@lists.infradead.org
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC] pinctrl: sh-pfc: r8a7790: initialize TDSEL register
+Date: Thu, 17 Nov 2016 14:30:43 +0100
+Message-ID: <20161117133043.20771-1-wsa+renesas@sang-engineering.com>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org, Wolfram Sang <wsa+renesas@sang-engineering.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Heiko,
+Documentation says that some bits in TDSEL must be set (ch 5.3.39 in R-Car H2
+v0.91). However, the reset value of the register is 0, so software has to do
+it. Add this to the kernel driver to ensure this is really done independent of
+firmware versions.
 
-On 11/17/2016 09:08 AM, Heiko Schocher wrote:
-> Hello Guenter, Vladimir,
->
-> Sorry for the late response, but I was "on the road" ...
->
-> Am 15.11.2016 um 14:46 schrieb Guenter Roeck:
->> On 11/15/2016 03:32 AM, Vladimir Zapolskiy wrote:
->>> On 11/15/2016 01:10 PM, Vladimir Zapolskiy wrote:
->>>> Hello Heiko,
->>>>
->>>> On 11/15/2016 12:20 PM, Heiko Schocher wrote:
->>>>> Hello,
->>>>>
->>>>> commit e188cbf7564f: "gpio: mxc: shift gpio_mxc_init() to
->>>>> subsys_initcall level"
->>>>> moves the gpio initialization of the mxc gpio driver
->>>>> from the arch_initcall level into subsys_initcall level.
->>>>>
->>>>> This leads now on mxc boards, which use a gpio wdt driver
->>>>> and the CONFIG_GPIO_WATCHDOG_ARCH_INITCALL option enabled,
->>>>> to unwanted driver probe deferrals during kernel boot.
->>>>>
->>>>> I see this currently on an imx6 based board (which has unfortunately
->>>>> 3 WDT: imx6 internal (disabled), gpio wdt and da9063 WDT ...).
->>>>>
->>>>> Also a side effect from above commit is, that the da9063 WDT driver
->>>>> is now probed before the gpio WDT driver ... so /dev/watchdog now
->>>>> does not point to the gpio_wdt, instead it points to the da9063 WDT.
->>>>>
->>>>> So there are 2 solutions possible:
->>>>>
->>>>> - add a CONFIG_GPIO_MCX_ARCH_INITCALL option
->>>>>   in drivers/gpio/gpio-mxc.c like for the gpio_wdt.c driver?
->>>>
->>>> in my opinion this is overly heavy solution and it might be
->>>> better to avoid it if possible.
->>>>
->>>> I would rather prefer to reconsider GPIO_WATCHDOG_ARCH_INITCALL
->>>> usage in the watchdog driver.
->>>>
->>>> Moreover adding this proposed GPIO_MCX_ARCH_INITCALL to call
->>>> the driver on arch level will result in deferring the GPIO driver.
->>>>
->>>>>   But how can we guarantee, that first the gpio driver and then
->>>>>   the gpio_wdt driver gets probed?
->>>>>
->>>>> - move the arch_initcall in gpio_wdt.c into a subsys_initcall
->>>>>   (Tested this, and the probe dereferral messages are gone ...)
->>>>>
->>>>>   But this may results in problems on boards, which needs an early
->>>>>   trigger on an gpio wdt ...
->>>>
->>>> The level of "earliness" can not be defined in absolute time value
->>>> in any case, why decreasing the init level of the watchdog driver
->>>> to subsys level can cause problems? For that there should exist
->>>> some kind of a dependency on IC or PCB hardware level, can you
->>>> name it please?
->
-> On the current problem, there is no dependency on PCB, but I know
-> of watchdogs triggered through a gpio pin, which must triggered < 1 second
-> and subsys_initcall is too late for this. I think, this was the reason
+This is needed for some SD cards supporting SDR104 transfer mode. For
+me, TDSEL was not initialized by the firmware and I had problems with
+the card when re-inserting it.
 
-This is not a valid reason, nobody guarantees that arch_initcall()
-code is run in < 1 second time interval.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-> for introducing the CONFIG_GPIO_WATCHDOG_ARCH_INITCALL option ...
->
+* something like this is needed for all other Gen2 SoCs probably, but I can't
+  test it
+* I can also only verify the positive result for 'sd0tdsel'. For all other bits,
+  I follow the documentation. Dunno if we better only modify bits we really need?
+  Because of this, patch is still RFC. And values are hardcoded, but seems to be OK
+  with PFC at places, too?
+* Gen2 has no drive-strength capabilities to play around with, so it must be TDSEL
+  here
+* Simon: maybe a similar fix helps with the SDR issues you saw on Gose occasionally?
 
-Putting GPIO driver on arch_initcall() level results in deferring
-of the GPIO driver. Because you desire to avoid probe deferring, you
-should not consider putting GPIO driver on arch_initcall() level.
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---
-With best wishes,
-Vladimir
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+index b769c05480da68..f01ff6d7052fed 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+@@ -24,6 +24,7 @@
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ 
++#include "core.h"
+ #include "sh_pfc.h"
+ 
+ /*
+@@ -5704,7 +5705,16 @@ static int r8a7790_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *poc
+ 	return 31 - (pin & 0x1f);
+ }
+ 
++static int r8a7790_pinmux_soc_init(struct sh_pfc *pfc)
++{
++	/* Initialize TDSEL */
++	sh_pfc_write_reg(pfc, 0xe6060088, 32, 0x00155554);
++
++	return 0;
++}
++
+ static const struct sh_pfc_soc_operations r8a7790_pinmux_ops = {
++	.init = r8a7790_pinmux_soc_init,
+ 	.pin_to_pocctrl = r8a7790_pin_to_pocctrl,
+ };
+ 
+-- 
+2.10.2
