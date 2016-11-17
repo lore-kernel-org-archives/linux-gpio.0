@@ -1,84 +1,104 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH] pinctrl: sunxi: fix theoretical uninitialized variable
- access
-Date: Thu, 17 Nov 2016 10:28:16 +0100
-Message-ID: <20161117092816.m54gp4bxwhqjquca@lukather>
-References: <20161116141841.2030776-1-arnd@arndb.de>
- <20161116203358.midi7vmaqirpywtt@lukather>
- <CACRpkdYk25q9P5sErnfHcH49BT43vCCDihsZNEsf-6Gvpq+Pww@mail.gmail.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: wdt, gpio: move arch_initcall into subsys_initcall ?
+Date: Thu, 17 Nov 2016 11:31:14 +0200
+Message-ID: <6231eccc-62f0-041f-1aed-59e85abcc6c6@mentor.com>
+References: <582AE18A.2060405@denx.de>
+ <afbf394e-e411-5c43-e2b0-667b3fbc2edf@mentor.com>
+ <e4472c2d-effa-9583-aded-8dcdfdd57ee6@mentor.com>
+ <ee9824b8-f09f-3817-8893-8121c9fb9eb1@roeck-us.net>
+ <582D5750.4000408@denx.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2qldhmulz2wvm5xt"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYk25q9P5sErnfHcH49BT43vCCDihsZNEsf-6Gvpq+Pww@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Chen-Yu Tsai <wens@csie.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <582D5750.4000408@denx.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: hs@denx.de, Guenter Roeck <linux@roeck-us.net>
+Cc: linux-watchdog@vger.kernel.org, "Jonas Mark (ST-FIR/ENG1)" <Mark.Jonas@de.bosch.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, Shawn Guo <shawnguo@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
+Hello Heiko,
 
---2qldhmulz2wvm5xt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 11/17/2016 09:08 AM, Heiko Schocher wrote:
+> Hello Guenter, Vladimir,
+>
+> Sorry for the late response, but I was "on the road" ...
+>
+> Am 15.11.2016 um 14:46 schrieb Guenter Roeck:
+>> On 11/15/2016 03:32 AM, Vladimir Zapolskiy wrote:
+>>> On 11/15/2016 01:10 PM, Vladimir Zapolskiy wrote:
+>>>> Hello Heiko,
+>>>>
+>>>> On 11/15/2016 12:20 PM, Heiko Schocher wrote:
+>>>>> Hello,
+>>>>>
+>>>>> commit e188cbf7564f: "gpio: mxc: shift gpio_mxc_init() to
+>>>>> subsys_initcall level"
+>>>>> moves the gpio initialization of the mxc gpio driver
+>>>>> from the arch_initcall level into subsys_initcall level.
+>>>>>
+>>>>> This leads now on mxc boards, which use a gpio wdt driver
+>>>>> and the CONFIG_GPIO_WATCHDOG_ARCH_INITCALL option enabled,
+>>>>> to unwanted driver probe deferrals during kernel boot.
+>>>>>
+>>>>> I see this currently on an imx6 based board (which has unfortunately
+>>>>> 3 WDT: imx6 internal (disabled), gpio wdt and da9063 WDT ...).
+>>>>>
+>>>>> Also a side effect from above commit is, that the da9063 WDT driver
+>>>>> is now probed before the gpio WDT driver ... so /dev/watchdog now
+>>>>> does not point to the gpio_wdt, instead it points to the da9063 WDT.
+>>>>>
+>>>>> So there are 2 solutions possible:
+>>>>>
+>>>>> - add a CONFIG_GPIO_MCX_ARCH_INITCALL option
+>>>>>   in drivers/gpio/gpio-mxc.c like for the gpio_wdt.c driver?
+>>>>
+>>>> in my opinion this is overly heavy solution and it might be
+>>>> better to avoid it if possible.
+>>>>
+>>>> I would rather prefer to reconsider GPIO_WATCHDOG_ARCH_INITCALL
+>>>> usage in the watchdog driver.
+>>>>
+>>>> Moreover adding this proposed GPIO_MCX_ARCH_INITCALL to call
+>>>> the driver on arch level will result in deferring the GPIO driver.
+>>>>
+>>>>>   But how can we guarantee, that first the gpio driver and then
+>>>>>   the gpio_wdt driver gets probed?
+>>>>>
+>>>>> - move the arch_initcall in gpio_wdt.c into a subsys_initcall
+>>>>>   (Tested this, and the probe dereferral messages are gone ...)
+>>>>>
+>>>>>   But this may results in problems on boards, which needs an early
+>>>>>   trigger on an gpio wdt ...
+>>>>
+>>>> The level of "earliness" can not be defined in absolute time value
+>>>> in any case, why decreasing the init level of the watchdog driver
+>>>> to subsys level can cause problems? For that there should exist
+>>>> some kind of a dependency on IC or PCB hardware level, can you
+>>>> name it please?
+>
+> On the current problem, there is no dependency on PCB, but I know
+> of watchdogs triggered through a gpio pin, which must triggered < 1 second
+> and subsys_initcall is too late for this. I think, this was the reason
 
-On Thu, Nov 17, 2016 at 10:08:28AM +0100, Linus Walleij wrote:
-> On Wed, Nov 16, 2016 at 9:33 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->=20
-> > On Wed, Nov 16, 2016 at 03:18:18PM +0100, Arnd Bergmann wrote:
-> >> gcc warns about a  way that it could use an uninitialized variable:
-> >>
-> >> drivers/pinctrl/sunxi/pinctrl-sunxi.c: In function 'sunxi_pinctrl_init=
-':
-> >> drivers/pinctrl/sunxi/pinctrl-sunxi.c:1191:8: error: 'best_div' may be=
- used uninitialized in this function [-Werror=3Dmaybe-uninitialized]
-> >>
-> >> This cannot really happen except if 'freq' is UINT_MAX and 'clock' is
-> >> zero, and both of these are forbidden. To shut up the warning anyway,
-> >> this changes the logic to initialize the return code to the first
-> >> divider value before looking at the others.
-> >>
-> >> Fixes: 7c926492d38a ("pinctrl: sunxi: Add support for interrupt deboun=
-cing")
-> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >
-> > Thanks for that patch.
-> >
-> > Just out of curiosity, which gcc gives those warnings? I have 6.2 and
-> > it didn't output anything..
->=20
-> Context: Arnd re-enabled -Werror=3Dmaybe-uninitialized
-> in the kernel build and this kind of stuff started to appear so
-> it needs to be fixed up.
+This is not a valid reason, nobody guarantees that arch_initcall()
+code is run in < 1 second time interval.
 
-Ah, that makes sense. Thanks!
-Maxime
+> for introducing the CONFIG_GPIO_WATCHDOG_ARCH_INITCALL option ...
+>
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Putting GPIO driver on arch_initcall() level results in deferring
+of the GPIO driver. Because you desire to avoid probe deferring, you
+should not consider putting GPIO driver on arch_initcall() level.
 
---2qldhmulz2wvm5xt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYLXgwAAoJEBx+YmzsjxAgLBgP/A7xtp6jl3haTtyfTLY3bkvv
-CFWIFRsumrbH+CLdvCahKqB0tKifIca8DoC+rJrp02CqJouXXC6kWx94Uv1GjQRe
-reT043fB3V5EIyG0rWn2okzaO/1HQKlHfUAv+ByE4Gz6ubtlomk+4SR+NdswnjZD
-RxfpSTEHzpe0EjJv0IvO8qI4geQY0n+0c/3Mi2MNGr1ECEhsVdFMmfjVvFkxkR/l
-ygbiJH8q2yprBvhQwvRf5PT4oZ96UnNm0rUUVbJVkP/oHcyJyWSTKjtuLORIQAj5
-nKL9zFEu2K6V1FG8eFIX636Qdpf+e9ecQelggNN7bqRBxZ169YEwY9986ZPXv5WY
-H32ple6moIjmfZ8EWM2U6tQ++TUZJtIctQTVsNtQH8zmflOctvy+eGE9MSlNN9pq
-rt5U+KyGi29YvffD3Sya7V3xu/ygpS2i/8HhLkLFkJ6e0zdmXJ5gW8A3in+hrLJN
-DQ5oTfbbjaFHC37Tr5wPEeqBrRlRVGp6Ys+/kfEW/y2v+Ns167PyR77bFiS292B8
-qkck0Fb2HQuNUT8Wld85sqaeZQZLzXkGysTiZ77pzhx+JjmS8ZPU7KU8nVfYe6QI
-t6J6wuuXhE9OYZ5ag8c3Hn1mADDS2CBgziybl9uZNffPAdzOxDhLjVAw4TPHx58f
-UbfabMvrhnF8MGUf5ywn
-=hHNI
------END PGP SIGNATURE-----
-
---2qldhmulz2wvm5xt--
+--
+With best wishes,
+Vladimir
