@@ -1,36 +1,40 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v11 1/6] drivers/platform/x86/p2sb: New Primary to
- Sideband bridge support driver for Intel SOC's
-Date: Fri, 18 Nov 2016 13:21:42 +0200
-Message-ID: <1479468102.22212.16.camel@linux.intel.com>
-References: <1479446550-28677-1-git-send-email-jui.nee.tan@intel.com>
-         <1479446550-28677-2-git-send-email-jui.nee.tan@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [patch] pinctrl: sunxi: Testing the wrong variable
+Date: Fri, 18 Nov 2016 14:35:57 +0300
+Message-ID: <20161118113557.GA3281@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1479446550-28677-2-git-send-email-jui.nee.tan@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tan Jui Nee <jui.nee.tan@intel.com>, mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, tglx@linutronix.de, dvhart@infradead.org, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com, yunying.sun@intel.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, Rob Herring <robh@kernel.org>, Krzysztof Adamski <krzysztof.adamski@tieto.com>, Laxman Dewangan <ldewangan@nvidia.com>, Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 2016-11-18 at 13:22 +0800, Tan Jui Nee wrote:
-> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> There is already one and at least one more user coming which
-> require an access to Primary to Sideband bridge (P2SB) in order
-> to get IO or MMIO bar hidden by BIOS.
-> Create a driver to access P2SB for x86 devices.
-> 
-> Signed-off-by: Yong, Jonathan <jonathan.yong@intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> Changes in V11:
-> 	- No change
+Smatch complains that we dereference "map" before testing it for NULL
+which is true.  We should be testing "*map" instead.  Also on the error
+path, we should free *map and set it to NULL.
 
-Any particular reason you ignored my comments to v10 of this patch?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 2339d47..5b0acba 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -398,13 +398,14 @@ static int sunxi_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	 * map array
+ 	 */
+ 	*map = krealloc(*map, i * sizeof(struct pinctrl_map), GFP_KERNEL);
+-	if (!map)
++	if (!*map)
+ 		return -ENOMEM;
+ 
+ 	return 0;
+ 
+ err_free_map:
+-	kfree(map);
++	kfree(*map);
++	*map = NULL;
+ 	return ret;
+ }
+ 
