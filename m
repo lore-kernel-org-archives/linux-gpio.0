@@ -1,54 +1,64 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V3 3/4] regulator: pv88080: Update Regulator driver for
- MFD support
-Date: Fri, 18 Nov 2016 12:00:28 +0000
-Message-ID: <20161118120028.7wiqfnehnyubqarr@sirena.org.uk>
-References: <cover.1479429347.git.eric.jeong@diasemi.com>
- <7248b3cd414d462a97b80d9e5d044e592f85d973.1479429347.git.eric.jeong@diasemi.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [patch] pinctrl: sunxi: Testing the wrong variable
+Date: Fri, 18 Nov 2016 14:18:13 +0100
+Message-ID: <20161118131813.ec4yc4azojx5cv72@lukather>
+References: <20161118113557.GA3281@mwanda>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gx5lb34odtfvjdza"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="aukefk5eaag3qyvq"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:40646 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751713AbcKRNSZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2016 08:18:25 -0500
 Content-Disposition: inline
-In-Reply-To: <7248b3cd414d462a97b80d9e5d044e592f85d973.1479429347.git.eric.jeong-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Eric Jeong <eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
-Cc: LINUX-KERNEL <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, DEVICETREE <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LINUX-GPIO <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Support Opensource <support.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <20161118113557.GA3281@mwanda>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, Rob Herring <robh@kernel.org>, Krzysztof Adamski <krzysztof.adamski@tieto.com>, Laxman Dewangan <ldewangan@nvidia.com>, Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 
---gx5lb34odtfvjdza
+--aukefk5eaag3qyvq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 18, 2016 at 09:35:46AM +0900, Eric Jeong wrote:
+On Fri, Nov 18, 2016 at 02:35:57PM +0300, Dan Carpenter wrote:
+> Smatch complains that we dereference "map" before testing it for NULL
+> which is true.  We should be testing "*map" instead.  Also on the error
+> path, we should free *map and set it to NULL.
 >=20
-> From: Eric Jeong <eric.jeong.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org>
->=20
-> This change convert from using struct i2c_clinet=20
-> to using struct platform_device for MFD structure.
-> And, the declaration of of_device_id and regmap_config
-> are also move to MFD driver.
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
---gx5lb34odtfvjdza
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--aukefk5eaag3qyvq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEcBAABCAAGBQJYLu1bAAoJECTWi3JdVIfQV/kH/1yLcbafFa4WljwD8DegzykI
-jb8GgFDJJYQx/4GAEawteCOVhtMjWUEpiiRs/lEouse9D0lPAPB2MCP91b8EzSt7
-j3CflZXUDgWydV9sdpESHKJ2iqFN11W9mWvepskBwEYM3BOO5TE38qk79CZPoexj
-CLX6EdtdAvztu8/LX7om1eWbI2IBI7dcQYEEmd0Jb4mf0fosOU/+ob3DnOGwwJDb
-bKFFSnfHvb4biCrNty3DUWwZ3wvLQyzT1bx3GMXwX6oWGA6Kws7rvdHiHfj2P2fT
-SYVtGauShO9nvXGs4BJ0JQWEVBa3jUYAsKvJtMumD+imvnVlhV0Ffj2S5PS0dew=
-=2ehP
+iQIcBAEBCAAGBQJYLv+RAAoJEBx+YmzsjxAgxDYP/1C8t3kTnnSuh4/pDoZ92O6n
+QVZfTadRE7M0u2dGpDnPBBEQ39f2jorJ0trEEkkJdUd3bcAiWaEWJWjJktPenmiX
+szdwoSLE9u5h2X4oRAKixugsRu45YTeBMYobQPUI6GoxhG5MW/pvSsR18kMhR2q9
+0kIwvG0GWLVhya8Guc1MaaRk+Z4Th2G2S0TUPX+SH2AUovdR3NqlzuljsDxfHwGH
+wnwzrCvrNr5HQ3vtEFZSHNia9fJOCJM9cNGE6sBPUgiCQ2CE8bUdvxX1JZaDOQUU
+0qsWkXIpU5xmOoS3jY9mYGggChArzMlaNFcV7prM9ibzKZ1rPnrAl3iAkt5shHbk
+7djORNEvLYFrsG7AcfloI2r0qfSlkOVS0kc6yi6gvz2IJMSdXx25g1rjuCZPwoy1
+Qm5TyazcODB4wvX1HzV9E/cFoG1pr2S/80DbHJWmP4daeQHnNQ/PfwiCItiA09Bc
+1Si12SV1jG4davln3XRHnG0OcVpTvqkNfP0+lFvZkcCbHKhSTYahCvqxUJYGlJwD
+z6vzmsqtSge4dBcVhq4RQ3HgTDio7UljO8QBds3zehtj0XWDLzHrSk7tQmfKPzdE
+tGIl5W/MpeoZfsbzGhBnwnKICAI2wkf422708YKVTUovMXO30ilC0Z4ErTg2lRZ2
+rapoJqIM9hqzjr5bE4tH
+=YhV+
 -----END PGP SIGNATURE-----
 
---gx5lb34odtfvjdza--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--aukefk5eaag3qyvq--
