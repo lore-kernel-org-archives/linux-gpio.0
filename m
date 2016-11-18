@@ -1,68 +1,51 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 2/6] mfd: dt: Add bindings for the Aspeed SoC Display
- Controller (GFX)
-Date: Fri, 18 Nov 2016 18:47:15 +0000
-Message-ID: <20161118184715.GG19884@dell.home>
-References: <1478097481-14895-1-git-send-email-andrew@aj.id.au>
- <1478097481-14895-3-git-send-email-andrew@aj.id.au>
+From: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: mediatek: use builtin_platform_driver
+Date: Fri, 18 Nov 2016 15:53:20 -0800
+Message-ID: <1479513200.25135.0.camel@mussux00>
+References: <7746cfe83ca3e96ccdf503669db3ace0e3081b7f.1479455552.git.geliangtang@gmail.com>
+ <70fcc58b7e9219a9fbe3695df927041b8234dd08.1479457060.git.geliangtang@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:38738 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752646AbcKRSoT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2016 13:44:19 -0500
-Received: by mail-wm0-f48.google.com with SMTP id f82so55243417wmf.1
-        for <linux-gpio@vger.kernel.org>; Fri, 18 Nov 2016 10:44:18 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1478097481-14895-3-git-send-email-andrew@aj.id.au>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <70fcc58b7e9219a9fbe3695df927041b8234dd08.1479457060.git.geliangtang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Geliang Tang <geliangtang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>, arnd@arndb.de
-Cc: Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-On Thu, 03 Nov 2016, Andrew Jeffery wrote:
-
-> The Aspeed SoC Display Controller is presented as a syscon device to
-> arbitrate access by display and pinmux drivers. Video pinmux
-> configuration on fifth generation SoCs depends on bits in both the
-> System Control Unit and the Display Controller.
+On Fri, 2016-11-18 at 22:12 +0800, Geliang Tang wrote:
+> Use builtin_platform_driver() helper to simplify the code.
 > 
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> Signed-off-by: Geliang Tang <geliangtang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  Documentation/devicetree/bindings/mfd/aspeed-gfx.txt | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/aspeed-gfx.txt
+>  drivers/pinctrl/mediatek/pinctrl-mt6397.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt6397.c b/drivers/pinctrl/mediatek/pinctrl-mt6397.c
+> index 6eccb85..afcede7 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mt6397.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mt6397.c
+> @@ -64,8 +64,4 @@ static struct platform_driver mtk_pinctrl_driver = {
+>  	},
+>  };
+>  
+> -static int __init mtk_pinctrl_init(void)
+> -{
+> -	return platform_driver_register(&mtk_pinctrl_driver);
+> -}
+> -device_initcall(mtk_pinctrl_init);
+> +builtin_platform_driver(mtk_pinctrl_driver);
 
-Same here.
+Acked-by: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 
-> diff --git a/Documentation/devicetree/bindings/mfd/aspeed-gfx.txt b/Documentation/devicetree/bindings/mfd/aspeed-gfx.txt
-> new file mode 100644
-> index 000000000000..aea5370efd97
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/aspeed-gfx.txt
-> @@ -0,0 +1,17 @@
-> +* Device tree bindings for Aspeed SoC Display Controller (GFX)
-> +
-> +The Aspeed SoC Display Controller primarily does as its name suggests, but also
-> +participates in pinmux requests on the g5 SoCs. It is therefore considered a
-> +syscon device.
-> +
-> +Required properties:
-> +- compatible:		"aspeed,ast2500-gfx", "syscon"
-> +- reg:			contains offset/length value of the GFX memory
-> +			region.
-> +
-> +Example:
-> +
-> +gfx: display@1e6e6000 {
-> +	compatible = "aspeed,ast2500-gfx", "syscon";
-> +	reg = <0x1e6e6000 0x1000>;
-> +};
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks,
+Hongzhou
