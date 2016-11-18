@@ -1,313 +1,60 @@
-From: Tan Jui Nee <jui.nee.tan@intel.com>
-Subject: [PATCH v11 6/6] mfd: lpc_ich: Add support for Intel Apollo Lake GPIO pinctrl in non-ACPI system
-Date: Fri, 18 Nov 2016 13:22:30 +0800
-Message-ID: <1479446550-28677-7-git-send-email-jui.nee.tan@intel.com>
-References: <1479446550-28677-1-git-send-email-jui.nee.tan@intel.com>
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <1479446550-28677-1-git-send-email-jui.nee.tan@intel.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, dvhart@infradead.org, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, jui.nee.tan@intel.com, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com, yunying.sun@intel.com
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: GPIO IN LINUX KERENL 4.8
+Date: Fri, 18 Nov 2016 08:09:49 +0100
+Message-ID: <CACRpkdbLkLcR2uf8TKWogtmhLbDgLefGPvCqd7-XyA7c09grZQ@mail.gmail.com>
+References: <CAGyKHxLN+oV485upVkBp-fL2=4aO6Q_29jzSCFCdCsetj=FW-A@mail.gmail.com>
+ <CAGyKHxK7+CGhd_P0An0Ja4iFSP=Rez9bdsLnzs122BCrw8ZiHQ@mail.gmail.com>
+ <CAGyKHx+F_M3_nsC=GPn2fkrZg8CPedTPv4iZMQnAa9aSU3=Pmw@mail.gmail.com>
+ <CAGyKHx+MWr17X7vAFo9y4fV+S+29o52+AqLAk4h9kPQ8r8D81Q@mail.gmail.com>
+ <CAGyKHxLtsFwxK9C2BQp5BLH-5wNMvma2MA3ROKVna2u938Th+g@mail.gmail.com>
+ <CAGyKHxKppFcC-QEv0LrvLdn+eyPW26yZyKm8sLk9KTcNMhyBXA@mail.gmail.com>
+ <CAGyKHxJuHwy37aeOKmajjN66GdxCr1CTfp004mF5_PqG2mW6kw@mail.gmail.com>
+ <CAGyKHx+2g4S=spaqQnB4AH+WMbqNBkyc5c-dm0txvFEFVY5Y6w@mail.gmail.com>
+ <CAGyKHxJXQBC9qRa9h25GiBwuiEya1j73N4zNhGE0qb=YzVXzNg@mail.gmail.com>
+ <CAGyKHxLTqTBMd42EVKGVp2VSQHk9nixvfApqqO7Z8AJw_A9wCw@mail.gmail.com>
+ <CAGyKHxK6ng1wnWDdr=VxrbUyOZQT5hfvPLTHoZp8ZuQED85fqw@mail.gmail.com>
+ <CAGyKHxL+Hf70c4+_oeO-4nVEH_iqSL5yn7MWdp1LGjZntNHzBg@mail.gmail.com>
+ <CACRpkdbqRmtXbQePWuGkfksS=act-01zwjcwmZtPrf5=gzC1+A@mail.gmail.com>
+ <CAGyKHx+_gGt-Bn7S4oE21u1nY5QBpG0pSzg+oth3+QxYYdjMfA@mail.gmail.com>
+ <CAGyKHxLge3XUO3f9DHZ+5YhnODrexXZ-voB2PGJg-QNOZ2+wdA@mail.gmail.com>
+ <CAGyKHx+-+m+mDpmXW69RRnA2wWgqUcxDm2RvxXT2LEofkMB1VA@mail.gmail.com> <CACRpkdbpqWNYAiFvVu-utua4xH2_6tAk+mkE01-Fx5z6vh9uWg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f174.google.com ([209.85.216.174]:34931 "EHLO
+        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751243AbcKRHJv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2016 02:09:51 -0500
+Received: by mail-qt0-f174.google.com with SMTP id c47so151170523qtc.2
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Nov 2016 23:09:50 -0800 (PST)
+In-Reply-To: <CACRpkdbpqWNYAiFvVu-utua4xH2_6tAk+mkE01-Fx5z6vh9uWg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rahul Mahajan <rahulcmahajan.84@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-This driver uses the P2SB hide/unhide mechanism cooperatively
-to pass the PCI BAR address to the gpio platform driver.
+On Thu, Nov 17, 2016 at 9:16 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Nov 17, 2016 at 12:01 PM, Rahul Mahajan
+> <rahulcmahajan.84@gmail.com> wrote:
+>
+>> Can you please tell ,
+>> 1) i need to change modify pin control for gpio then how to do that ?
+>
+> Like any other driver? I don't understand the question. You have
+> to be more specific.
 
-Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
-Changes in V11:
-	- Remove duplicated object file lpc_ich-objs in Makefile.
-	- Put p2sb.h header file in separate section in lpc_ich-apl.c, as asm stuff
-	  is platform specific (suggested by Andy).
-	- Rearrange variable declarations in lpc_ich_add_gpio() function
-	  (suggested by Andy).
-	- Move warn_continue label before if/else statement for the sake of
-	  readability (suggested by Andy).
-	- Add comment to #endif in lpc_ich_apl.h file.
+I understand the question now, after private mail.
 
-Changes in V10:
-	- No change
+There are two clasess of pin control/GPIO interaction:
 
-Changes in V9:
-	- No change
+- Drivers where GPIO and pin control is orthogonal: there the
+  pin control settings in device tree or similar, that configure the
+  pin to be used as GPIO.
 
-Changes in V8:
-	- Rename source file lpc_ich-apl.c to lpc_ich_apl.c (suggested by Mika).
+- Drivers where GPIO and pin control interact, so the GPIO
+  driver calls back into the pin controller using GPIO ranges
+  and the pin controller driver has a set of special callbacks
+  to configure the line as GPIO.
 
-Changes in V7:
-	- Add author information and rewrite description of source file 
-	  lpc_ich-apl.c and lpc_ich_apl.h.
-	- Sort the header files by alphabetical order in lpc_ich-apl.c.
-	- Rename header file lpc_ich-apl.h to lpc_ich_apl.h (suggested by Lee).
-	- Remove unneeded pdata_size and platform_data from mfd_cell.
-	  Also, remove unneeded apl_pinctrl_pdata.
-	- Since variable apl_p2sb is only used once, hence switch it out for the
-	  PCI_DEVFN macro (suggested by Lee).
-	- Define APL_GPIO_COMMUNITY_MAX as total Apollo Lake GPIO communities
-	  supported.
-	- Set resources in mfd_cell for each GPIO community.
-	- Call p2sb_bar() function once instead of four times inside the for loop.
-	  And make p2sb_bar() function just to fill in the base address into a
-	  scratch "struct resource" and have the loop do the additions to base/end.
-	- Remove entire apl_pinctrl_pdata.name memory allocation since it is no
-	  longer needed.
-	- Return ret at the end of lpc_ich_add_gpio() function.
-
-Changes in V6:
-	- Rename CONFIG_X86_INTEL_APL to CONFIG_X86_INTEL_IVI so that it
-	  relates to the actual product, as suggested by Mika.
-	- Rework Makefile according Andy's comments.
-	- Rename lpc_ich_misc() to lpc_ich_add_gpio() so that the name should not
-	  be so generic, as suggested by Andy.
-	- Call lpc_ich_add_gpio() via priv->chipset.
-	- lpc_ich_add_gpio() function will be moved from 
-	  .../include/linux/mfd/lpc_ich.h to
-	  .../drivers/mfd/lpc_ich-apl.h
-	  as this is a part of internal driver interface as suggested by Andy.
-	- Move enum lpc_chipsets from 
-	  .../drivers/mfd/lpc_ich-core.c to
-	  .../include/linux/mfd/lpc_ich.h
-	  as lpc_chipsets is also accessed by lpc_ich_add_gpio().
-	- Check if kasprintf return value for all 4 gpio controllers before
-	  proceed to add platform device by using mfd_add_devices().
-
-Changes in V5:
-	- Split lpc-ich driver into two parts (lpc_ich-core and lpc_ich-apl).
-	  The file lpc_ich-apl.c introduces gpio platform driver in MFD.
-	- Rename Kconfig option CONFIG_X86_INTEL_NON_ACPI to CONFIG_X86_INTEL_APL
-	  so that it reflects actual product as suggested by Mika.
-
-Changes in V4:
-	- Move Kconfig option CONFIG_X86_INTEL_NON_ACPI from
-	  [PATCH 2/3] x86/platform/p2sb: New Primary to Sideband bridge support driver for Intel SOC's
-	  to
-	  [PATCH 3/3] mfd: lpc_ich: Add support for Intel Apollo Lake GPIO pinctrl in non-ACPI system
-	  since the config is used in latter patch.
-	- Select CONFIG_P2SB when CONFIG_LPC_ICH is enabled.
-	- Remove #ifdef CONFIG_X86_INTEL_NON_ACPI and use
-	  #if defined(CONFIG_X86_INTEL_NON_ACPI) when lpc_ich_misc is called
-	  as suggested by Lee Jones.
-	- Use single dimensional array instead of 2D array for apl_gpio_io_res
-	  structure and use DEFINE_RES_IRQ for its IRQ resource.
-
-Changes in V3:
-	- Simplify register addresses calculation and use DEFINE_RES_MEM_NAMED
-	  defines for apl_gpio_io_res structure
-	- Define magic number for P2SB PCI ID
-	- Replace switch-case with if-else since currently we have only one
-	  use case
-	- Only call mfd_add_devices() once for all gpio communities
-
-Changes in V2:
-	- Add new config option CONFIG_X86_INTEL_NON_ACPI and "select PINCTRL"
-	  to fix kbuildbot error
-
- drivers/mfd/Makefile       |   3 ++
- drivers/mfd/lpc_ich_apl.c  | 121 +++++++++++++++++++++++++++++++++++++++++++++
- drivers/mfd/lpc_ich_apl.h  |  28 +++++++++++
- drivers/mfd/lpc_ich_core.c |   5 ++
- 4 files changed, 157 insertions(+)
- create mode 100644 drivers/mfd/lpc_ich_apl.c
- create mode 100644 drivers/mfd/lpc_ich_apl.h
-
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 06a91ea..b7fb703 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -161,6 +161,9 @@ obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+= intel_quark_i2c_gpio.o
- obj-$(CONFIG_LPC_SCH)		+= lpc_sch.o
- lpc_ich-objs		:= lpc_ich_core.o
- obj-$(CONFIG_LPC_ICH)		+= lpc_ich.o
-+ifeq ($(CONFIG_X86_INTEL_IVI),y)
-+lpc_ich-objs += lpc_ich_apl.o
-+endif
- obj-$(CONFIG_MFD_RDC321X)	+= rdc321x-southbridge.o
- obj-$(CONFIG_MFD_JANZ_CMODIO)	+= janz-cmodio.o
- obj-$(CONFIG_MFD_JZ4740_ADC)	+= jz4740-adc.o
-diff --git a/drivers/mfd/lpc_ich_apl.c b/drivers/mfd/lpc_ich_apl.c
-new file mode 100644
-index 0000000..aef3c13
---- /dev/null
-+++ b/drivers/mfd/lpc_ich_apl.c
-@@ -0,0 +1,121 @@
-+/*
-+ * Intel Apollo Lake In-Vehicle Infotainment (IVI) systems used in cars support
-+ *
-+ * Copyright (C) 2016 Intel Corporation
-+ *
-+ * Author: Tan, Jui Nee <jui.nee.tan@intel.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/mfd/core.h>
-+#include <linux/mfd/lpc_ich.h>
-+#include <linux/pci.h>
-+#include <linux/pinctrl/pinctrl.h>
-+
-+#include <asm/p2sb.h>
-+
-+#include "lpc_ich_apl.h"
-+
-+/* Offset data for Apollo Lake GPIO communities */
-+#define APL_GPIO_SOUTHWEST_OFFSET	0xc00000
-+#define APL_GPIO_NORTHWEST_OFFSET	0xc40000
-+#define APL_GPIO_NORTH_OFFSET		0xc50000
-+#define APL_GPIO_WEST_OFFSET		0xc70000
-+
-+#define APL_GPIO_SOUTHWEST_NPIN		43
-+#define APL_GPIO_NORTHWEST_NPIN		77
-+#define APL_GPIO_NORTH_NPIN		78
-+#define APL_GPIO_WEST_NPIN		47
-+
-+#define APL_GPIO_COMMUNITY_MAX		4
-+
-+#define APL_GPIO_IRQ 14
-+
-+#define PCI_IDSEL_P2SB	0x0d
-+
-+static struct resource apl_gpio_io_res[] = {
-+	DEFINE_RES_MEM_NAMED(APL_GPIO_NORTH_OFFSET,
-+		APL_GPIO_NORTH_NPIN * SZ_8, "apl_pinctrl_n"),
-+	DEFINE_RES_MEM_NAMED(APL_GPIO_NORTHWEST_OFFSET,
-+		APL_GPIO_NORTHWEST_NPIN * SZ_8, "apl_pinctrl_nw"),
-+	DEFINE_RES_MEM_NAMED(APL_GPIO_WEST_OFFSET,
-+		APL_GPIO_WEST_NPIN * SZ_8, "apl_pinctrl_w"),
-+	DEFINE_RES_MEM_NAMED(APL_GPIO_SOUTHWEST_OFFSET,
-+		APL_GPIO_SOUTHWEST_NPIN * SZ_8, "apl_pinctrl_sw"),
-+	DEFINE_RES_IRQ(APL_GPIO_IRQ),
-+};
-+
-+static struct mfd_cell apl_gpio_devices[] = {
-+	{
-+		.name = "apl-pinctrl",
-+		.id = 0,
-+		.num_resources = ARRAY_SIZE(apl_gpio_io_res),
-+		.resources = &apl_gpio_io_res[0],
-+		.ignore_resource_conflicts = true,
-+	},
-+	{
-+		.name = "apl-pinctrl",
-+		.id = 1,
-+		.num_resources = ARRAY_SIZE(apl_gpio_io_res),
-+		.resources = &apl_gpio_io_res[1],
-+		.ignore_resource_conflicts = true,
-+	},
-+	{
-+		.name = "apl-pinctrl",
-+		.id = 2,
-+		.num_resources = ARRAY_SIZE(apl_gpio_io_res),
-+		.resources = &apl_gpio_io_res[2],
-+		.ignore_resource_conflicts = true,
-+	},
-+	{
-+		.name = "apl-pinctrl",
-+		.id = 3,
-+		.num_resources = ARRAY_SIZE(apl_gpio_io_res),
-+		.resources = &apl_gpio_io_res[3],
-+		.ignore_resource_conflicts = true,
-+	},
-+};
-+
-+int lpc_ich_add_gpio(struct pci_dev *dev, enum lpc_chipsets chipset)
-+{
-+	struct resource base;
-+	unsigned int i;
-+	int ret;
-+
-+	if (chipset != LPC_APL)
-+		return -ENODEV;
-+	/*
-+	 * Apollo lake has 4 gpio controllers,
-+	 * handle it a bit differently.
-+	 */
-+
-+	ret = p2sb_bar(dev, PCI_DEVFN(PCI_IDSEL_P2SB, 0), &base);
-+	if (ret)
-+		goto warn_continue;
-+
-+	for (i = 0; i < APL_GPIO_COMMUNITY_MAX; i++) {
-+		struct resource *res = &apl_gpio_io_res[i];
-+
-+		/* Fill MEM resource */
-+		res->start += base.start;
-+		res->end += base.start;
-+		res->flags = base.flags;
-+
-+		res++;
-+	}
-+
-+	ret = mfd_add_devices(&dev->dev, 0,
-+		apl_gpio_devices, ARRAY_SIZE(apl_gpio_devices),
-+			NULL, 0, NULL);
-+
-+warn_continue:
-+	if (ret)
-+		dev_warn(&dev->dev,
-+			"Failed to add Apollo Lake GPIO: %d\n",
-+				ret);
-+
-+	return ret;
-+}
-diff --git a/drivers/mfd/lpc_ich_apl.h b/drivers/mfd/lpc_ich_apl.h
-new file mode 100644
-index 0000000..6721621
---- /dev/null
-+++ b/drivers/mfd/lpc_ich_apl.h
-@@ -0,0 +1,28 @@
-+/*
-+ * Intel In-Vehicle Infotainment (IVI) systems used in cars support
-+ *
-+ * Copyright (C) 2016, Intel Corporation
-+ *
-+ * Author: Tan, Jui Nee <jui.nee.tan@intel.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __LPC_ICH_APL_H__
-+#define __LPC_ICH_APL_H__
-+
-+#include <linux/pci.h>
-+
-+#if IS_ENABLED(CONFIG_X86_INTEL_IVI)
-+int lpc_ich_add_gpio(struct pci_dev *dev, enum lpc_chipsets chipset);
-+#else /* CONFIG_X86_INTEL_IVI is not set */
-+static inline int lpc_ich_add_gpio(struct pci_dev *dev,
-+	enum lpc_chipsets chipset)
-+{
-+	return -ENODEV;
-+}
-+#endif /* CONFIG_X86_INTEL_IVI */
-+
-+#endif /* __LPC_ICH_APL_H__ */
-diff --git a/drivers/mfd/lpc_ich_core.c b/drivers/mfd/lpc_ich_core.c
-index 3bb6334..25c4d99 100644
---- a/drivers/mfd/lpc_ich_core.c
-+++ b/drivers/mfd/lpc_ich_core.c
-@@ -68,6 +68,8 @@
- #include <linux/mfd/lpc_ich.h>
- #include <linux/platform_data/itco_wdt.h>
- 
-+#include "lpc_ich_apl.h"
-+
- #define ACPIBASE		0x40
- #define ACPIBASE_GPE_OFF	0x28
- #define ACPIBASE_GPE_END	0x2f
-@@ -1030,6 +1032,9 @@ static int lpc_ich_probe(struct pci_dev *dev,
- 			cell_added = true;
- 	}
- 
-+	if (!lpc_ich_add_gpio(dev, priv->chipset))
-+		cell_added = true;
-+
- 	/*
- 	 * We only care if at least one or none of the cells registered
- 	 * successfully.
--- 
-1.9.1
+Yours,
+Linus Walleij
