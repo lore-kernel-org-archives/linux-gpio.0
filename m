@@ -1,103 +1,73 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH V3 1/4] Documentation: pv88080: Move binding document
-Date: Fri, 18 Nov 2016 09:38:42 -0600
-Message-ID: <20161118153842.bbcmfczxvrwamlqs@rob-hp-laptop>
-References: <cover.1479429347.git.eric.jeong@diasemi.com>
- <8d6dc516374bf2c1cf0841aa68a888bca33413a0.1479429347.git.eric.jeong@diasemi.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 3/6] mfd: dt: Add bindings for the Aspeed LPC Host
+ Controller (LPCHC)
+Date: Fri, 18 Nov 2016 18:44:37 +0000
+Message-ID: <20161118184437.GD19884@dell.home>
+References: <1478097481-14895-1-git-send-email-andrew@aj.id.au>
+ <1478097481-14895-4-git-send-email-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35355 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752236AbcKRPip (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Nov 2016 10:38:45 -0500
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <8d6dc516374bf2c1cf0841aa68a888bca33413a0.1479429347.git.eric.jeong@diasemi.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1478097481-14895-4-git-send-email-andrew-zrmu5oMJ5Fs@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Eric Jeong <eric.jeong.opensource@diasemi.com>
-Cc: DEVICETREE <devicetree@vger.kernel.org>, LINUX-KERNEL <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, LINUX-GPIO <linux-gpio@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Support Opensource <support.opensource@diasemi.com>
 
-On Fri, Nov 18, 2016 at 09:35:46AM +0900, Eric Jeong wrote:
+Arnd,
+
+Do you have a preference?
+
+> The Aspeed LPC Host Controller is presented as a syscon device to
+> arbitrate access by LPC and pinmux drivers. LPC pinmux configuration on
+> fifth generation SoCs depends on bits in both the System Control Unit
+> and the LPC Host Controller.
 > 
-> From: Eric Jeong <eric.jeong.opensource@diasemi.com>
-> 
-> The change is to move pv88080 binding document 
-> from the regulator directory to mfd binding directory
-> for PV88080 PMIC MFD support.
-> And, GPIO properties are added.
-> 
-> 
-> Signed-off-by: Eric Jeong <eric.jeong.opensource@diasemi.com>
-> 
+> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
 > ---
-> This patch applies against linux-next and next-20161117
+>  Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt | 17 +++++++++++++++++
+
+Create a new directory in bindings/mfd called 'syscon'.
+
+Or perhaps 'bindings/syscon'.
+
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt
 > 
-> Hi,
-> 
-> Change since PATCH V2
->  - Added property and description for gpio
-> 
-> Change since PATCH V1
->  - Patch separated from PATCH V1
-> 
-> Regards,
-> Eric Jeong, Dialog Semiconductor Ltd.
-> 
-> 
->  .../bindings/{regulator => mfd}/pv88080.txt        |   16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
->  rename Documentation/devicetree/bindings/{regulator => mfd}/pv88080.txt (79%)
-> 
-> diff --git a/Documentation/devicetree/bindings/regulator/pv88080.txt b/Documentation/devicetree/bindings/mfd/pv88080.txt
-> similarity index 79%
-> rename from Documentation/devicetree/bindings/regulator/pv88080.txt
-> rename to Documentation/devicetree/bindings/mfd/pv88080.txt
-> index e6e4b9c8..7e24f95 100644
-> --- a/Documentation/devicetree/bindings/regulator/pv88080.txt
-> +++ b/Documentation/devicetree/bindings/mfd/pv88080.txt
-> @@ -1,4 +1,4 @@
-> -* Powerventure Semiconductor PV88080 Voltage Regulator
-> +* Powerventure Semiconductor PV88080 PMIC
->  
->  Required properties:
->  - compatible: Must be one of the following, depending on the
-> @@ -16,8 +16,15 @@ Required properties:
->    standard binding for regulators; see regulator.txt.
->    BUCK1, BUCK2, BUCK3 and HVBUCK.
->  
-> +- gpio-controller: Marks the device node as a GPIO controller.
-> +- #gpio-cells: Should be 2. See gpio.txt in this directory
-> +  for a description of the cells format.
+> diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt b/Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt
+> new file mode 100644
+> index 000000000000..792651488c3d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt
+> @@ -0,0 +1,17 @@
+> +* Device tree bindings for the Aspeed LPC Host Controller (LPCHC)
 > +
->  Optional properties:
-> +- ngpios : Number of in-use slots of available slots for GPIO.
-> +  Maximum is 2.
->  - Any optional property defined in regulator.txt
-> +  and gpio.txt for more information.
->  
->  Example:
->  
-> @@ -27,6 +34,13 @@ Example:
->  		interrupt-parent = <&gpio>;
->  		interrupts = <24 24>;
->  
-> +		gpioex {
-
-gpio-controller {
-
-> +			compatible = "pvs,pv88080-gpio";
-
-Is this documented?
-
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			ngpios = <2>;
-> +		};
+> +The LPCHC registers configure LPC behaviour between the BMC and the host
+> +system. The LPCHC also participates in pinmux requests on g5 SoCs and is
+> +therefore considered a syscon device.
 > +
->  		regulators {
->  			BUCK1 {
->  				regulator-name = "buck1";
-> -- 
-> end-of-patch for PATCH V3
-> 
+> +Required properties:
+> +- compatible:		"aspeed,ast2500-lpchc", "syscon"
+> +- reg:			contains offset/length value of the LPCHC memory
+> +			region.
+
+Why not just use a single tab, then you don't have to linewrap?
+
+> +Example:
+> +
+> +lpchc: lpchc@1e7890a0 {
+> +	compatible = "aspeed,ast2500-lpchc", "syscon";
+> +	reg = <0x1e7890a0 0xc4>;
+> +};
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
