@@ -1,68 +1,90 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 2/2] pinctrl: tegra: Add driver to configure voltage
- and power of io pads
-Date: Mon, 21 Nov 2016 15:06:05 +0530
-Message-ID: <5832C005.3070104@nvidia.com>
-References: <1478696782-11657-1-git-send-email-ldewangan@nvidia.com> <1478696782-11657-3-git-send-email-ldewangan@nvidia.com> <b65cf9ea-208a-0704-7cc9-843bc18da508@nvidia.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v11 2/6] mfd: lpc_ich: Rename lpc-ich driver
+Date: Mon, 21 Nov 2016 10:13:02 +0000
+Message-ID: <20161121101302.GC32509@dell>
+References: <1479446550-28677-1-git-send-email-jui.nee.tan@intel.com>
+ <1479446550-28677-3-git-send-email-jui.nee.tan@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <b65cf9ea-208a-0704-7cc9-843bc18da508-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:34828 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751264AbcKUKKC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Nov 2016 05:10:02 -0500
+Received: by mail-wm0-f41.google.com with SMTP id a197so137234011wmd.0
+        for <linux-gpio@vger.kernel.org>; Mon, 21 Nov 2016 02:10:02 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1479446550-28677-3-git-send-email-jui.nee.tan@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tan Jui Nee <jui.nee.tan@intel.com>
+Cc: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.shevchenko@linux.intel.com, tglx@linutronix.de, dvhart@infradead.org, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, ptyser@xes-inc.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, jonathan.yong@intel.com, ong.hock.yu@intel.com, tony.luck@intel.com, wan.ahmad.zainie.wan.mohamad@intel.com, yunying.sun@intel.com
 
+On Fri, 18 Nov 2016, Tan Jui Nee wrote:
 
-Hi Jon,
-I will update the patch per your comment.
-Here is answer for some of the query.
+> This patch follows the example of mfd/wm831x to rename the driver
+> from "lpc_ich" to "lpc_ich_core".
+> 
+> Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
+> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+> Changes in V11:
+> 	- No change
+> 
+> Changes in V10:
+> 	- No change
+> 
+> Changes in V9:
+> 	- Remove the filename from the header of lpc_ich_core.c (suggested by Lee).
+> 
+> Changes in V8:
+> 	- Update new file name with lpc_ich_core.c at description of source file.
+> 	- Rework Makefile with new source file name lpc_ich_apl.c.
+> 
+> Changes in V7:
+> 	- No change
+> 
+> Changes in V6:
+> 	- none, just a subject line and commit message change.
+> 
+>  drivers/mfd/Makefile                      | 1 +
+>  drivers/mfd/{lpc_ich.c => lpc_ich_core.c} | 2 --
+>  2 files changed, 1 insertion(+), 2 deletions(-)
+>  rename drivers/mfd/{lpc_ich.c => lpc_ich_core.c} (99%)
 
-Thanks,
-Laxman
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 9834e66..06a91ea 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -159,6 +159,7 @@ obj-$(CONFIG_PMIC_ADP5520)	+= adp5520.o
+>  obj-$(CONFIG_MFD_KEMPLD)	+= kempld-core.o
+>  obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+= intel_quark_i2c_gpio.o
+>  obj-$(CONFIG_LPC_SCH)		+= lpc_sch.o
+> +lpc_ich-objs		:= lpc_ich_core.o
+>  obj-$(CONFIG_LPC_ICH)		+= lpc_ich.o
+>  obj-$(CONFIG_MFD_RDC321X)	+= rdc321x-southbridge.o
+>  obj-$(CONFIG_MFD_JANZ_CMODIO)	+= janz-cmodio.o
+> diff --git a/drivers/mfd/lpc_ich.c b/drivers/mfd/lpc_ich_core.c
+> similarity index 99%
+> rename from drivers/mfd/lpc_ich.c
+> rename to drivers/mfd/lpc_ich_core.c
+> index c8dee47..7cbe037 100644
+> --- a/drivers/mfd/lpc_ich.c
+> +++ b/drivers/mfd/lpc_ich_core.c
+> @@ -1,6 +1,4 @@
+>  /*
+> - *  lpc_ich.c - LPC interface for Intel ICH
+> - *
+>   *  LPC bridge function of the Intel ICH contains many other
+>   *  functional units, such as Interrupt controllers, Timers,
+>   *  Power Management, System Management, GPIO, RTC, and LPC
 
-On Tuesday 15 November 2016 08:37 PM, Jon Hunter wrote:
-> On 09/11/16 13:06, Laxman Dewangan wrote:
->> +/**
->> + * Macro for 1.8V, keep 200mV as tolerance for deciding that
->> + * IO pads should be set for 3.3V (high voltage) or 1.8V.
->> + */
->> +#define TEGRA_IO_PAD_1800000UV_UPPER_LIMIT 2000000
-> Is there a reference we could add for the source of this information?
-
-I had a discussion with the ASIC on this and as per them
-     1.8 V nominal is (1.62V, 1.98V)
-     3.3 V nominal is (2.97V,3.63V)
-
-I am working with them to update the TRM document but we can assume that 
-this information will be there in TRM.
-
->> +	const struct pinctrl_pin_desc *pins_desc;
->> +	int num_pins_desc;
->> +};
->> +
->> +struct tegra_io_pads_regulator_info {
->> +	struct device *dev;
->> +	const struct tegra_io_pads_cfg_info *pads_cfg;
->> +	struct regulator *regulator;
->> +	struct notifier_block regulator_nb;
->> +};
-> Is this struct necessary? Seems to be a lot of duplicated information
-> from the other structs. Why not add the regulator and regulator_nb to
-> the main struct? OK, not all io_pads have a regulator but you are only
-> saving one pointer.
-Yes, some of IO pads support multi-voltage.
-
-
->
-> +		if ((vdata->old_uV > TEGRA_IO_PAD_1800000UV_UPPER_LIMIT) &&
-> +		    (vdata->min_uV <= TEGRA_IO_PAD_1800000UV_UPPER_LIMIT))
-> +			break;
-> The data-sheet for Tegra210 only lists 1.8V or 3.3V as supported
-> options. Do we need to support a range? Or does the h/w support a range
-> of voltages? I am just wondering why we cannot check explicitly for 1.8V
-> or 3.3V and treat anything else as an error.
-
-Two voltage level, not range.
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
