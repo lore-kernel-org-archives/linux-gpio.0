@@ -1,21 +1,21 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v11 2/6] mfd: lpc_ich: Rename lpc-ich driver
-Date: Mon, 21 Nov 2016 10:13:02 +0000
-Message-ID: <20161121101302.GC32509@dell>
+Subject: Re: [PATCH v11 4/6] mfd: move enum lpc_chipsets into lpc_ich.h
+Date: Mon, 21 Nov 2016 10:13:37 +0000
+Message-ID: <20161121101337.GD32509@dell>
 References: <1479446550-28677-1-git-send-email-jui.nee.tan@intel.com>
- <1479446550-28677-3-git-send-email-jui.nee.tan@intel.com>
+ <1479446550-28677-5-git-send-email-jui.nee.tan@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:34828 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751264AbcKUKKC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Nov 2016 05:10:02 -0500
-Received: by mail-wm0-f41.google.com with SMTP id a197so137234011wmd.0
-        for <linux-gpio@vger.kernel.org>; Mon, 21 Nov 2016 02:10:02 -0800 (PST)
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:37573 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753387AbcKUKKi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Nov 2016 05:10:38 -0500
+Received: by mail-wm0-f50.google.com with SMTP id t79so134935613wmt.0
+        for <linux-gpio@vger.kernel.org>; Mon, 21 Nov 2016 02:10:37 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1479446550-28677-3-git-send-email-jui.nee.tan@intel.com>
+In-Reply-To: <1479446550-28677-5-git-send-email-jui.nee.tan@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Tan Jui Nee <jui.nee.tan@intel.com>
@@ -23,8 +23,8 @@ Cc: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, andriy.she
 
 On Fri, 18 Nov 2016, Tan Jui Nee wrote:
 
-> This patch follows the example of mfd/wm831x to rename the driver
-> from "lpc_ich" to "lpc_ich_core".
+> Move the enum's definition into a standalone header file which can be used
+> wherever its definition is needed.
 > 
 > Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
 > Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
@@ -36,52 +36,180 @@ On Fri, 18 Nov 2016, Tan Jui Nee wrote:
 > 	- No change
 > 
 > Changes in V9:
-> 	- Remove the filename from the header of lpc_ich_core.c (suggested by Lee).
-> 
-> Changes in V8:
-> 	- Update new file name with lpc_ich_core.c at description of source file.
-> 	- Rework Makefile with new source file name lpc_ich_apl.c.
-> 
-> Changes in V7:
 > 	- No change
 > 
-> Changes in V6:
-> 	- none, just a subject line and commit message change.
+> Changes in V8:
+> 	- No change
 > 
->  drivers/mfd/Makefile                      | 1 +
->  drivers/mfd/{lpc_ich.c => lpc_ich_core.c} | 2 --
->  2 files changed, 1 insertion(+), 2 deletions(-)
->  rename drivers/mfd/{lpc_ich.c => lpc_ich_core.c} (99%)
+>  drivers/mfd/lpc_ich_core.c  | 71 ---------------------------------------------
+>  include/linux/mfd/lpc_ich.h | 71 +++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 71 insertions(+), 71 deletions(-)
 
 For my own reference:
   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 9834e66..06a91ea 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -159,6 +159,7 @@ obj-$(CONFIG_PMIC_ADP5520)	+= adp5520.o
->  obj-$(CONFIG_MFD_KEMPLD)	+= kempld-core.o
->  obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+= intel_quark_i2c_gpio.o
->  obj-$(CONFIG_LPC_SCH)		+= lpc_sch.o
-> +lpc_ich-objs		:= lpc_ich_core.o
->  obj-$(CONFIG_LPC_ICH)		+= lpc_ich.o
->  obj-$(CONFIG_MFD_RDC321X)	+= rdc321x-southbridge.o
->  obj-$(CONFIG_MFD_JANZ_CMODIO)	+= janz-cmodio.o
-> diff --git a/drivers/mfd/lpc_ich.c b/drivers/mfd/lpc_ich_core.c
-> similarity index 99%
-> rename from drivers/mfd/lpc_ich.c
-> rename to drivers/mfd/lpc_ich_core.c
-> index c8dee47..7cbe037 100644
-> --- a/drivers/mfd/lpc_ich.c
+  
+> diff --git a/drivers/mfd/lpc_ich_core.c b/drivers/mfd/lpc_ich_core.c
+> index 7cbe037..920198a 100644
+> --- a/drivers/mfd/lpc_ich_core.c
 > +++ b/drivers/mfd/lpc_ich_core.c
-> @@ -1,6 +1,4 @@
->  /*
-> - *  lpc_ich.c - LPC interface for Intel ICH
-> - *
->   *  LPC bridge function of the Intel ICH contains many other
->   *  functional units, such as Interrupt controllers, Timers,
->   *  Power Management, System Management, GPIO, RTC, and LPC
+> @@ -145,77 +145,6 @@ struct lpc_ich_priv {
+>  	.ignore_resource_conflicts = true,
+>  };
+>  
+> -/* chipset related info */
+> -enum lpc_chipsets {
+> -	LPC_ICH = 0,	/* ICH */
+> -	LPC_ICH0,	/* ICH0 */
+> -	LPC_ICH2,	/* ICH2 */
+> -	LPC_ICH2M,	/* ICH2-M */
+> -	LPC_ICH3,	/* ICH3-S */
+> -	LPC_ICH3M,	/* ICH3-M */
+> -	LPC_ICH4,	/* ICH4 */
+> -	LPC_ICH4M,	/* ICH4-M */
+> -	LPC_CICH,	/* C-ICH */
+> -	LPC_ICH5,	/* ICH5 & ICH5R */
+> -	LPC_6300ESB,	/* 6300ESB */
+> -	LPC_ICH6,	/* ICH6 & ICH6R */
+> -	LPC_ICH6M,	/* ICH6-M */
+> -	LPC_ICH6W,	/* ICH6W & ICH6RW */
+> -	LPC_631XESB,	/* 631xESB/632xESB */
+> -	LPC_ICH7,	/* ICH7 & ICH7R */
+> -	LPC_ICH7DH,	/* ICH7DH */
+> -	LPC_ICH7M,	/* ICH7-M & ICH7-U */
+> -	LPC_ICH7MDH,	/* ICH7-M DH */
+> -	LPC_NM10,	/* NM10 */
+> -	LPC_ICH8,	/* ICH8 & ICH8R */
+> -	LPC_ICH8DH,	/* ICH8DH */
+> -	LPC_ICH8DO,	/* ICH8DO */
+> -	LPC_ICH8M,	/* ICH8M */
+> -	LPC_ICH8ME,	/* ICH8M-E */
+> -	LPC_ICH9,	/* ICH9 */
+> -	LPC_ICH9R,	/* ICH9R */
+> -	LPC_ICH9DH,	/* ICH9DH */
+> -	LPC_ICH9DO,	/* ICH9DO */
+> -	LPC_ICH9M,	/* ICH9M */
+> -	LPC_ICH9ME,	/* ICH9M-E */
+> -	LPC_ICH10,	/* ICH10 */
+> -	LPC_ICH10R,	/* ICH10R */
+> -	LPC_ICH10D,	/* ICH10D */
+> -	LPC_ICH10DO,	/* ICH10DO */
+> -	LPC_PCH,	/* PCH Desktop Full Featured */
+> -	LPC_PCHM,	/* PCH Mobile Full Featured */
+> -	LPC_P55,	/* P55 */
+> -	LPC_PM55,	/* PM55 */
+> -	LPC_H55,	/* H55 */
+> -	LPC_QM57,	/* QM57 */
+> -	LPC_H57,	/* H57 */
+> -	LPC_HM55,	/* HM55 */
+> -	LPC_Q57,	/* Q57 */
+> -	LPC_HM57,	/* HM57 */
+> -	LPC_PCHMSFF,	/* PCH Mobile SFF Full Featured */
+> -	LPC_QS57,	/* QS57 */
+> -	LPC_3400,	/* 3400 */
+> -	LPC_3420,	/* 3420 */
+> -	LPC_3450,	/* 3450 */
+> -	LPC_EP80579,	/* EP80579 */
+> -	LPC_CPT,	/* Cougar Point */
+> -	LPC_CPTD,	/* Cougar Point Desktop */
+> -	LPC_CPTM,	/* Cougar Point Mobile */
+> -	LPC_PBG,	/* Patsburg */
+> -	LPC_DH89XXCC,	/* DH89xxCC */
+> -	LPC_PPT,	/* Panther Point */
+> -	LPC_LPT,	/* Lynx Point */
+> -	LPC_LPT_LP,	/* Lynx Point-LP */
+> -	LPC_WBG,	/* Wellsburg */
+> -	LPC_AVN,	/* Avoton SoC */
+> -	LPC_BAYTRAIL,   /* Bay Trail SoC */
+> -	LPC_COLETO,	/* Coleto Creek */
+> -	LPC_WPT_LP,	/* Wildcat Point-LP */
+> -	LPC_BRASWELL,	/* Braswell SoC */
+> -	LPC_LEWISBURG,	/* Lewisburg */
+> -	LPC_9S,		/* 9 Series */
+> -};
+> -
+>  static struct lpc_ich_info lpc_chipset_info[] = {
+>  	[LPC_ICH] = {
+>  		.name = "ICH",
+> diff --git a/include/linux/mfd/lpc_ich.h b/include/linux/mfd/lpc_ich.h
+> index 2b300b4..42307ee 100644
+> --- a/include/linux/mfd/lpc_ich.h
+> +++ b/include/linux/mfd/lpc_ich.h
+> @@ -43,4 +43,75 @@ struct lpc_ich_info {
+>  	u8 use_gpio;
+>  };
+>  
+> +/* chipset related info */
+> +enum lpc_chipsets {
+> +	LPC_ICH = 0,	/* ICH */
+> +	LPC_ICH0,	/* ICH0 */
+> +	LPC_ICH2,	/* ICH2 */
+> +	LPC_ICH2M,	/* ICH2-M */
+> +	LPC_ICH3,	/* ICH3-S */
+> +	LPC_ICH3M,	/* ICH3-M */
+> +	LPC_ICH4,	/* ICH4 */
+> +	LPC_ICH4M,	/* ICH4-M */
+> +	LPC_CICH,	/* C-ICH */
+> +	LPC_ICH5,	/* ICH5 & ICH5R */
+> +	LPC_6300ESB,	/* 6300ESB */
+> +	LPC_ICH6,	/* ICH6 & ICH6R */
+> +	LPC_ICH6M,	/* ICH6-M */
+> +	LPC_ICH6W,	/* ICH6W & ICH6RW */
+> +	LPC_631XESB,	/* 631xESB/632xESB */
+> +	LPC_ICH7,	/* ICH7 & ICH7R */
+> +	LPC_ICH7DH,	/* ICH7DH */
+> +	LPC_ICH7M,	/* ICH7-M & ICH7-U */
+> +	LPC_ICH7MDH,	/* ICH7-M DH */
+> +	LPC_NM10,	/* NM10 */
+> +	LPC_ICH8,	/* ICH8 & ICH8R */
+> +	LPC_ICH8DH,	/* ICH8DH */
+> +	LPC_ICH8DO,	/* ICH8DO */
+> +	LPC_ICH8M,	/* ICH8M */
+> +	LPC_ICH8ME,	/* ICH8M-E */
+> +	LPC_ICH9,	/* ICH9 */
+> +	LPC_ICH9R,	/* ICH9R */
+> +	LPC_ICH9DH,	/* ICH9DH */
+> +	LPC_ICH9DO,	/* ICH9DO */
+> +	LPC_ICH9M,	/* ICH9M */
+> +	LPC_ICH9ME,	/* ICH9M-E */
+> +	LPC_ICH10,	/* ICH10 */
+> +	LPC_ICH10R,	/* ICH10R */
+> +	LPC_ICH10D,	/* ICH10D */
+> +	LPC_ICH10DO,	/* ICH10DO */
+> +	LPC_PCH,	/* PCH Desktop Full Featured */
+> +	LPC_PCHM,	/* PCH Mobile Full Featured */
+> +	LPC_P55,	/* P55 */
+> +	LPC_PM55,	/* PM55 */
+> +	LPC_H55,	/* H55 */
+> +	LPC_QM57,	/* QM57 */
+> +	LPC_H57,	/* H57 */
+> +	LPC_HM55,	/* HM55 */
+> +	LPC_Q57,	/* Q57 */
+> +	LPC_HM57,	/* HM57 */
+> +	LPC_PCHMSFF,	/* PCH Mobile SFF Full Featured */
+> +	LPC_QS57,	/* QS57 */
+> +	LPC_3400,	/* 3400 */
+> +	LPC_3420,	/* 3420 */
+> +	LPC_3450,	/* 3450 */
+> +	LPC_EP80579,	/* EP80579 */
+> +	LPC_CPT,	/* Cougar Point */
+> +	LPC_CPTD,	/* Cougar Point Desktop */
+> +	LPC_CPTM,	/* Cougar Point Mobile */
+> +	LPC_PBG,	/* Patsburg */
+> +	LPC_DH89XXCC,	/* DH89xxCC */
+> +	LPC_PPT,	/* Panther Point */
+> +	LPC_LPT,	/* Lynx Point */
+> +	LPC_LPT_LP,	/* Lynx Point-LP */
+> +	LPC_WBG,	/* Wellsburg */
+> +	LPC_AVN,	/* Avoton SoC */
+> +	LPC_BAYTRAIL,   /* Bay Trail SoC */
+> +	LPC_COLETO,	/* Coleto Creek */
+> +	LPC_WPT_LP,	/* Wildcat Point-LP */
+> +	LPC_BRASWELL,	/* Braswell SoC */
+> +	LPC_LEWISBURG,	/* Lewisburg */
+> +	LPC_9S,		/* 9 Series */
+> +};
+> +
+>  #endif
 
 -- 
 Lee Jones
