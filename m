@@ -1,127 +1,94 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH v2 3/6] mfd: dt: Add bindings for the Aspeed LPC Host
- Controller (LPCHC)
-Date: Tue, 22 Nov 2016 13:55:45 +1030
-Message-ID: <1479785145.2503.20.camel@aj.id.au>
-References: <1478097481-14895-1-git-send-email-andrew@aj.id.au>
-         <1478097481-14895-4-git-send-email-andrew@aj.id.au>
-         <20161118184437.GD19884@dell.home> <20161118184535.GE19884@dell.home>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 2/2] pinctrl: tegra: Add driver to configure voltage
+ and power of io pads
+Date: Tue, 22 Nov 2016 13:43:07 +0530
+Message-ID: <5833FE13.9030906@nvidia.com>
+References: <1478696782-11657-1-git-send-email-ldewangan@nvidia.com> <1478696782-11657-3-git-send-email-ldewangan@nvidia.com> <b65cf9ea-208a-0704-7cc9-843bc18da508@nvidia.com> <5832C005.3070104@nvidia.com> <89eaabf1-c830-3ae9-5f34-a7f6d79e0816@nvidia.com> <5832ED69.3090903@nvidia.com> <2d442ccc-c438-cf3a-24c4-032d6c906f26@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-A5RHOKktLU8UOxvLUddw"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:38762 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754614AbcKVDZx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 21 Nov 2016 22:25:53 -0500
-In-Reply-To: <20161118184535.GE19884@dell.home>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, arnd@arndb.de
-Cc: Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-
-
---=-A5RHOKktLU8UOxvLUddw
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, 2016-11-18 at 18:45 +0000, Lee Jones wrote:
-> [Sending Arnd this time!]
->=20
-> > Arnd,
-> >=20
-> > Do you have a preference?
-> >=20
-> > > The Aspeed LPC Host Controller is presented as a syscon device to
-> > > arbitrate access by LPC and pinmux drivers. LPC pinmux configuration =
-on
-> > > fifth generation SoCs depends on bits in both the System Control Unit
-> > > and the LPC Host Controller.
-> > >=20
-> > > > > > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> > > ---
-> > > =C2=A0Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt | 17 +++=
-++++++++++++++
-> >=20
-> > Create a new directory in bindings/mfd called 'syscon'.
-> >=20
-> > Or perhaps 'bindings/syscon'.
-> >=20
-
-Sounds good to me. I'll wait for Arnd's feedback.
-
-Note that this patch conflicts with some of the ideas I outlined in
-
-https://www.spinics.net/lists/arm-kernel/msg543233.html
-
-I sent it hoping to get some feedback on the approach to take for these
-LPC-related bits. Did you have any suggestions? The problems with
-hardware complexity are amplified by the fact that the datasheet is
-only available under NDA, but I will do what I can to clarify.
-
-> > > =C2=A01 file changed, 17 insertions(+)
-> > > =C2=A0create mode 100644 Documentation/devicetree/bindings/mfd/aspeed=
--lpchc.txt
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt b=
-/Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt
-> > > new file mode 100644
-> > > index 000000000000..792651488c3d
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt
-> > > @@ -0,0 +1,17 @@
-> > > +* Device tree bindings for the Aspeed LPC Host Controller (LPCHC)
-> > > +
-> > > +The LPCHC registers configure LPC behaviour between the BMC and the =
-host
-> > > +system. The LPCHC also participates in pinmux requests on g5 SoCs an=
-d is
-> > > +therefore considered a syscon device.
-> > > +
-> > > +Required properties:
-> > > > > > +- compatible:		"aspeed,ast2500-lpchc", "syscon"
-> > > > > > +- reg:			contains offset/length value of the LPCHC memory
-> > > +			region.
-> >=20
-> > Why not just use a single tab, then you don't have to linewrap?
-
-I'll clean that up.
-
-Cheers,
-
-Andrew
-
-> >=20
-> > > +Example:
-> > > +
-> > > > > > +lpchc: lpchc@1e7890a0 {
-> > > > > > +	compatible =3D "aspeed,ast2500-lpchc", "syscon";
-> > > > > > +	reg =3D <0x1e7890a0 0xc4>;
-> > > +};
->=20
->=20
---=-A5RHOKktLU8UOxvLUddw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <2d442ccc-c438-cf3a-24c4-032d6c906f26-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-gpio@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
 
-iQIcBAABCgAGBQJYM7q5AAoJEJ0dnzgO5LT5/AAQALId/kZGcu/TY+M/GaFcv8k3
-9E+qbnXS7QMLa7mpReY2dlZGVtOvkXt1FHQrnbZPGN/KOKlIbhRYkQAWUuXcnGyT
-Gnj3VjTReiLX4kSAv+UInD+cEH9kgL/mqWPV7t+++j9tCj+O4VGtQ5KetKpcC+It
-6t8X1BOZCuT312Fv6v9GwpETp8+Zx5z+DNjFBZVKAaAzb0f1e1pO5bIEdBpA2Pjv
-gZk9uk1XL7RiE0t/FW5z+WtSUeqpqD3mCO+vXHwccNMnHe20LVTJ4rPYTa8Zhh0o
-Wl19j5WxelfZ5yJaVb4KEKFH55DkVPPFnd/Rn9w0Rmvz+LMzMwLOFSjhX597huD0
-lKccG9Cdj0q2OK/QZAtRM72hkFnmPyR/qTcTq3YriGHqhk6cQW7u8K19qeXYVZ8Q
-dls9RQOWH7KgUoGPyJU3DVZvpudFdSoNzag2a9BVzk4PzSat3SOPA0z5Oho9SRqw
-PINTHEkfDZxFE75Zv/3vyOWnSVRrU+Cz2D2zWPhRMxGe/rDYrC9mz2MDD5lE8z9E
-77rweUAMiLJ9McBzE7XX4dW33GLS2ZIP1C2fIYtZ/NwFkSxsP6dSvopn/M8BNmVK
-eBjousDleqQ5PcH4IkkLyxNrV1rRY5F+Of0J0sgVoCcDXd0FjdZo48A74LTIgoYV
-hER6i7afh7C5hFQwXv3+
-=pak+
------END PGP SIGNATURE-----
+On Tuesday 22 November 2016 02:07 AM, Jon Hunter wrote:
+> On 21/11/16 12:49, Laxman Dewangan wrote:
+>> On Monday 21 November 2016 04:38 PM, Jon Hunter wrote:
+>>>> I had a discussion with the ASIC on this and as per them
+>>>>       1.8 V nominal is (1.62V, 1.98V)
+>>>>       3.3 V nominal is (2.97V,3.63V)
+>>>>
+>>>> I am working with them to update the TRM document but we can assume that
+>>>> this information will be there in TRM.
+>>> My feeling is that if all use-cases today are using either 1.8V or 3.3V,
+>>> then may be we should not worry about this and only support either 1.8V
+>>> or 3.3V. I would be more in favour of supporting other voltages if there
+>>> is a real need.
+>> Sometimes, the regulator will not return exact 1.8V or 3.3V due to the
+>> PMIC rail resolution. On such cases, it returns nearest voltage to 1.8V
+>> or 3.3V.
+>> That's why the PMIC resolution is considered through IO pad voltage
+>> tolerances.
+> Ok, gotcha. I can see that would be the case for when you call
+> regulator_get_voltage() (ie. in the probe), but what about the notifier?
+> I imagine that in the notifier, at least for the pre-change case, that
+> the voltage is the target and not the actual. So I am wondering if we
+> need to check for a range in the notifier?
 
---=-A5RHOKktLU8UOxvLUddw--
+I think I can use the fixed voltage 1.8V and 3.3V as the current PMIC 
+does not have this issue.
 
+If we come for some tolerance issue in future then we will review this part.
+This way it will be simple for now to go ahead with simple implementation.
+I am going to validate the IO rail voltage as 1800mV and 3300mV.
+
+
+>>>>>> +    const struct pinctrl_pin_desc *pins_desc;
+>>>>>> +    int num_pins_desc;
+>>>>>> +};
+>>>>>> +
+>>>>>> +struct tegra_io_pads_regulator_info {
+>>>>>> +    struct device *dev;
+>>>>>> +    const struct tegra_io_pads_cfg_info *pads_cfg;
+>>>>>> +    struct regulator *regulator;
+>>>>>> +    struct notifier_block regulator_nb;
+>>>>>> +};
+>>>>> Is this struct necessary? Seems to be a lot of duplicated information
+>>>>> from the other structs. Why not add the regulator and regulator_nb to
+>>>>> the main struct? OK, not all io_pads have a regulator but you are only
+>>>>> saving one pointer.
+>>>> Yes, some of IO pads support multi-voltage.
+>>> Yes, but I am saying why not put this information in the main struct and
+>>> not bother having yet another struct where half of the information is
+>>> duplicated.
+>> For regulator notifier callback, we will need the driver data. If I keep
+>> this in the main structure then I will not able to get proper structure
+>> until I make that as global.
+>>
+>> The notifier registration is
+>>                  ret = devm_regulator_register_notifier(regulator,
+>> &rinfo->regulator_nb);
+>>
+>>
+>> and from the pointer of rinfo->regulator_nb, I will get the rinfo as
+>>
+>>          rinfo = container_of(nb, struct tegra_io_pads_regulator_info,
+>>                                       regulator_nb);
+>>
+>> if I use this in main structure then I will not be able to get the
+>> driver data.
+> Ah yes, you have an array of regulators. Make sense. However, shame to
+> duplicate some of this data and also would be good to avoid allocating
+> so much memory in probe for these structs if only a few rails actually
+> have regulators ...
+>
+>    tiopi->rinfo = devm_kzalloc(dev, sizeof(*tiopi->rinfo) *
+> 				soc_data->num_pads_cfg, GFP_KERNEL);
+>
+Then allocate inside loop when supply found.
+This way we can optimise the size of allocation on cast of the multiple 
+memory allocation.
