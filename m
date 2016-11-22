@@ -1,142 +1,127 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 2/2] pinctrl: tegra: Add driver to configure voltage
- and power of io pads
-Date: Mon, 21 Nov 2016 21:01:29 +0000
-Message-ID: <29e19381-9250-3059-b083-49e8ab56ea7f@nvidia.com>
-References: <1478696782-11657-1-git-send-email-ldewangan@nvidia.com>
- <1478696782-11657-3-git-send-email-ldewangan@nvidia.com>
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: Re: [PATCH v2 3/6] mfd: dt: Add bindings for the Aspeed LPC Host
+ Controller (LPCHC)
+Date: Tue, 22 Nov 2016 13:55:45 +1030
+Message-ID: <1479785145.2503.20.camel@aj.id.au>
+References: <1478097481-14895-1-git-send-email-andrew@aj.id.au>
+         <1478097481-14895-4-git-send-email-andrew@aj.id.au>
+         <20161118184437.GD19884@dell.home> <20161118184535.GE19884@dell.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1478696782-11657-3-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-A5RHOKktLU8UOxvLUddw"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:38762 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754614AbcKVDZx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 21 Nov 2016 22:25:53 -0500
+In-Reply-To: <20161118184535.GE19884@dell.home>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, arnd@arndb.de
+Cc: Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
 
-On 09/11/16 13:06, Laxman Dewangan wrote:
-> NVIDIA Tegra124 and later SoCs support the multi-voltage level and
-> low power state of some of its IO pads. The IO pads can work in
-> the voltage of the 1.8V and 3.3V of IO voltage from IO power rail
-> sources. When IO interfaces are not used then IO pads can be
-> configure in low power state to reduce the power consumption from
-> that IO pads.
-> 
-> On Tegra124, the voltage level of IO power rail source is auto
-> detected by hardware(SoC) and hence it is only require to configure
-> in low power mode if IO pads are not used.
-> 
-> On T210 onwards, the auto-detection of voltage level from IO power
-> rail is removed from SoC and hence SW need to configure the PMC
-> register explicitly to set proper voltage in IO pads based on
-> IO rail power source voltage.
-> 
-> This driver adds the IO pad driver to configure the power state and
-> IO pad voltage based on the usage and power tree via pincontrol
-> framework. The configuration can be static and dynamic.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> ---
-> Changes from V1:
-> - Dropped the custom properties to set pad voltage and use regulator.
-> - Added support for regulator to get vottage in boot and configure IO
->   pad voltage.
-> - Add support for callback to handle regulator notification and configure
->   IO pad voltage based on voltage change.
-> ---
->  drivers/pinctrl/tegra/Kconfig                |  12 +
->  drivers/pinctrl/tegra/Makefile               |   1 +
->  drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c | 488 +++++++++++++++++++++++++++
->  3 files changed, 501 insertions(+)
->  create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c
+--=-A5RHOKktLU8UOxvLUddw
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-...
+On Fri, 2016-11-18 at 18:45 +0000, Lee Jones wrote:
+> [Sending Arnd this time!]
+>=20
+> > Arnd,
+> >=20
+> > Do you have a preference?
+> >=20
+> > > The Aspeed LPC Host Controller is presented as a syscon device to
+> > > arbitrate access by LPC and pinmux drivers. LPC pinmux configuration =
+on
+> > > fifth generation SoCs depends on bits in both the System Control Unit
+> > > and the LPC Host Controller.
+> > >=20
+> > > > > > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> > > ---
+> > > =C2=A0Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt | 17 +++=
+++++++++++++++
+> >=20
+> > Create a new directory in bindings/mfd called 'syscon'.
+> >=20
+> > Or perhaps 'bindings/syscon'.
+> >=20
 
-> +#define TEGRA124_PAD_INFO_TABLE(_entry_)			\
-> +	_entry_(0, "audio", AUDIO, true, NULL),			\
-> +	_entry_(1, "bb", BB, true, NULL),			\
-> +	_entry_(2, "cam", CAM, true, NULL),			\
-> +	_entry_(3, "comp", COMP, true, NULL),			\
-> +	_entry_(4, "csia", CSIA, true, NULL),			\
-> +	_entry_(5, "csib", CSIB, true, NULL),			\
-> +	_entry_(6, "csie", CSIE, true, NULL),			\
-> +	_entry_(7, "dsi", DSI, true, NULL),			\
-> +	_entry_(8, "dsib", DSIB, true, NULL),			\
-> +	_entry_(9, "dsic", DSIC, true, NULL),			\
-> +	_entry_(10, "dsid", DSID, true, NULL),			\
-> +	_entry_(11, "hdmi", HDMI, true, NULL),			\
-> +	_entry_(12, "hsic", HSIC, true, NULL),			\
-> +	_entry_(13, "hv", HV, true, NULL),			\
-> +	_entry_(14, "lvds", LVDS, true, NULL),			\
-> +	_entry_(15, "mipi-bias", MIPI_BIAS, true, NULL),	\
-> +	_entry_(16, "nand", NAND, true, NULL),			\
-> +	_entry_(17, "pex-bias", PEX_BIAS, true, NULL),		\
-> +	_entry_(18, "pex-clk1", PEX_CLK1, true, NULL),		\
-> +	_entry_(19, "pex-clk2", PEX_CLK2, true, NULL),		\
-> +	_entry_(20, "pex-ctrl", PEX_CNTRL, true, NULL),		\
-> +	_entry_(21, "sdmmc1", SDMMC1, true, NULL),		\
-> +	_entry_(22, "sdmmc3", SDMMC3, true, NULL),		\
-> +	_entry_(23, "sdmmc4", SDMMC4, true, NULL),		\
-> +	_entry_(24, "sys-ddc", SYS_DDC, true, NULL),		\
-> +	_entry_(25, "uart", UART, true, NULL),			\
-> +	_entry_(26, "usb0", USB0, true, NULL),			\
-> +	_entry_(27, "usb1", USB1, true, NULL),			\
-> +	_entry_(28, "usb2", USB2, true, NULL),			\
-> +	_entry_(29, "usb-bias", USB_BIAS, true, NULL)
-> +
-> +#define TEGRA210_PAD_INFO_TABLE(_entry_)			\
-> +	_entry_(0, "audio", AUDIO, true, "vddio-audio"),	\
-> +	_entry_(1, "audio-hv", AUDIO_HV, true, "vddio-audio-hv"), \
-> +	_entry_(2, "cam", CAM, true, "vddio-cam"),		\
-> +	_entry_(3, "csia", CSIA, true, NULL),			\
-> +	_entry_(4, "csib", CSIB, true, NULL),			\
-> +	_entry_(5, "csic", CSIC, true, NULL),			\
-> +	_entry_(6, "csid", CSID, true, NULL),			\
-> +	_entry_(7, "csie", CSIE, true, NULL),			\
-> +	_entry_(8, "csif", CSIF, true, NULL),			\
-> +	_entry_(9, "dbg", DBG, true, "vddio-dbg"),		\
-> +	_entry_(10, "debug-nonao", DEBUG_NONAO, true, NULL),	\
-> +	_entry_(11, "dmic", DMIC, true, "vddio-dmic"),		\
-> +	_entry_(12, "dp", DP, true, NULL),			\
-> +	_entry_(13, "dsi", DSI, true, NULL),			\
-> +	_entry_(14, "dsib", DSIB, true, NULL),			\
-> +	_entry_(15, "dsic", DSIC, true, NULL),			\
-> +	_entry_(16, "dsid", DSID, true, NULL),			\
-> +	_entry_(17, "emmc", SDMMC4, true, NULL),		\
-> +	_entry_(18, "emmc2", EMMC2, true, NULL),		\
-> +	_entry_(19, "gpio", GPIO, true, "vddio-gpio"),		\
-> +	_entry_(20, "hdmi", HDMI, true, NULL),			\
-> +	_entry_(21, "hsic", HSIC, true, NULL),			\
-> +	_entry_(22, "lvds", LVDS, true, NULL),			\
-> +	_entry_(23, "mipi-bias", MIPI_BIAS, true, NULL),	\
-> +	_entry_(24, "pex-bias", PEX_BIAS, true, NULL),		\
-> +	_entry_(25, "pex-clk1", PEX_CLK1, true, NULL),		\
-> +	_entry_(26, "pex-clk2", PEX_CLK2, true, NULL),		\
-> +	_entry_(27, "pex-ctrl", PEX_CNTRL, false, "vddio-pex-ctrl"), \
-> +	_entry_(28, "sdmmc1", SDMMC1, true, "vddio-sdmmc1"),	\
-> +	_entry_(29, "sdmmc3", SDMMC3, true, "vddio-sdmmc3"),	\
-> +	_entry_(30, "spi", SPI, true, "vddio-spi"),		\
-> +	_entry_(31, "spi-hv", SPI_HV, true, "vddio-spi-hv"),	\
-> +	_entry_(32, "uart", UART, true, "vddio-uart"),		\
-> +	_entry_(33, "usb0", USB0, true, NULL),			\
-> +	_entry_(34, "usb1", USB1, true, NULL),			\
-> +	_entry_(35, "usb2", USB2, true, NULL),			\
-> +	_entry_(36, "usb3", USB3, true, NULL),			\
-> +	_entry_(37, "usb-bias", USB_BIAS, true, NULL)
+Sounds good to me. I'll wait for Arnd's feedback.
 
-Can you also fix these checkpatch errors ...
+Note that this patch conflicts with some of the ideas I outlined in
 
-ERROR: Macros with complex values should be enclosed in parentheses
-#424: FILE: drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c:350:
+https://www.spinics.net/lists/arm-kernel/msg543233.html
 
-ERROR: Macros with complex values should be enclosed in parentheses
-#456: FILE: drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c:382:
+I sent it hoping to get some feedback on the approach to take for these
+LPC-related bits. Did you have any suggestions? The problems with
+hardware complexity are amplified by the fact that the datasheet is
+only available under NDA, but I will do what I can to clarify.
 
-Cheers
-Jon
+> > > =C2=A01 file changed, 17 insertions(+)
+> > > =C2=A0create mode 100644 Documentation/devicetree/bindings/mfd/aspeed=
+-lpchc.txt
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt b=
+/Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt
+> > > new file mode 100644
+> > > index 000000000000..792651488c3d
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/mfd/aspeed-lpchc.txt
+> > > @@ -0,0 +1,17 @@
+> > > +* Device tree bindings for the Aspeed LPC Host Controller (LPCHC)
+> > > +
+> > > +The LPCHC registers configure LPC behaviour between the BMC and the =
+host
+> > > +system. The LPCHC also participates in pinmux requests on g5 SoCs an=
+d is
+> > > +therefore considered a syscon device.
+> > > +
+> > > +Required properties:
+> > > > > > +- compatible:		"aspeed,ast2500-lpchc", "syscon"
+> > > > > > +- reg:			contains offset/length value of the LPCHC memory
+> > > +			region.
+> >=20
+> > Why not just use a single tab, then you don't have to linewrap?
 
--- 
-nvpublic
+I'll clean that up.
+
+Cheers,
+
+Andrew
+
+> >=20
+> > > +Example:
+> > > +
+> > > > > > +lpchc: lpchc@1e7890a0 {
+> > > > > > +	compatible =3D "aspeed,ast2500-lpchc", "syscon";
+> > > > > > +	reg =3D <0x1e7890a0 0xc4>;
+> > > +};
+>=20
+>=20
+--=-A5RHOKktLU8UOxvLUddw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCgAGBQJYM7q5AAoJEJ0dnzgO5LT5/AAQALId/kZGcu/TY+M/GaFcv8k3
+9E+qbnXS7QMLa7mpReY2dlZGVtOvkXt1FHQrnbZPGN/KOKlIbhRYkQAWUuXcnGyT
+Gnj3VjTReiLX4kSAv+UInD+cEH9kgL/mqWPV7t+++j9tCj+O4VGtQ5KetKpcC+It
+6t8X1BOZCuT312Fv6v9GwpETp8+Zx5z+DNjFBZVKAaAzb0f1e1pO5bIEdBpA2Pjv
+gZk9uk1XL7RiE0t/FW5z+WtSUeqpqD3mCO+vXHwccNMnHe20LVTJ4rPYTa8Zhh0o
+Wl19j5WxelfZ5yJaVb4KEKFH55DkVPPFnd/Rn9w0Rmvz+LMzMwLOFSjhX597huD0
+lKccG9Cdj0q2OK/QZAtRM72hkFnmPyR/qTcTq3YriGHqhk6cQW7u8K19qeXYVZ8Q
+dls9RQOWH7KgUoGPyJU3DVZvpudFdSoNzag2a9BVzk4PzSat3SOPA0z5Oho9SRqw
+PINTHEkfDZxFE75Zv/3vyOWnSVRrU+Cz2D2zWPhRMxGe/rDYrC9mz2MDD5lE8z9E
+77rweUAMiLJ9McBzE7XX4dW33GLS2ZIP1C2fIYtZ/NwFkSxsP6dSvopn/M8BNmVK
+eBjousDleqQ5PcH4IkkLyxNrV1rRY5F+Of0J0sgVoCcDXd0FjdZo48A74LTIgoYV
+hER6i7afh7C5hFQwXv3+
+=pak+
+-----END PGP SIGNATURE-----
+
+--=-A5RHOKktLU8UOxvLUddw--
+
