@@ -1,61 +1,58 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: stmpe: fix interrupt handling bug
-Date: Wed, 23 Nov 2016 23:21:17 +0100
-Message-ID: <1479939677-8617-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:36844 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933566AbcKWWVY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Nov 2016 17:21:24 -0500
-Received: by mail-lf0-f42.google.com with SMTP id t196so14765250lff.3
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Nov 2016 14:21:24 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH 3/3] ARM: dts: da850: Add node for pullup/pulldown pinconf
+Date: Wed, 23 Nov 2016 14:33:38 -0800
+Message-ID: <m260ndx1vh.fsf@baylibre.com>
+References: <1479871767-20160-1-git-send-email-david@lechnology.com>
+        <1479871767-20160-4-git-send-email-david@lechnology.com>
+        <8c3e6535-4b79-9731-f801-c13f007e48ab@ti.com>
+        <06bc8517-8c33-85a1-9d5a-29042c7281db@lechnology.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <06bc8517-8c33-85a1-9d5a-29042c7281db@lechnology.com> (David
+        Lechner's message of "Wed, 23 Nov 2016 10:24:06 -0600")
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Lechner <david@lechnology.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Axel Haslam <ahaslam@baylibre.com>, Alexandre Bailon <abailon@baylibre.com>, Bartosz =?utf-8?Q?Go=C5=82aszewski?= <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, stable@vger.kernel.org, Patrice Chotard <patrice.chotard@st.com>
 
-commit 43db289d00c6 ("gpio: stmpe: Rework registers access")
-reworked the STMPE register access so as to use
-[STMPE_IDX_*_LSB + i] to access the 8bit register for a
-certain bank, assuming the CSB and MSB will follow after
-the enumerator. For this to work the index needs to go from
-(size-1) to 0 not 0 to (size-1).
+David Lechner <david@lechnology.com> writes:
 
-However for the GPIO IRQ handler, the status registers we read
-register MSB + 3 bytes ahead for the 24 bit GPIOs and index
-registers from MSB upwards and run an index i over the
-registers UNLESS we are STMPE1600.
+> On 11/23/2016 05:12 AM, Sekhar Nori wrote:
+>> On Wednesday 23 November 2016 08:59 AM, David Lechner wrote:
+>>> This SoC has a separate pin controller for configuring pullup/pulldown
+>>> bias on groups of pins.
+>>>
+>>> Signed-off-by: David Lechner <david@lechnology.com>
+>>> ---
+>>>  arch/arm/boot/dts/da850.dtsi | 5 +++++
+>>>  1 file changed, 5 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+>>> index 8945815..1c0224c 100644
+>>> --- a/arch/arm/boot/dts/da850.dtsi
+>>> +++ b/arch/arm/boot/dts/da850.dtsi
+>>> @@ -210,6 +210,11 @@
+>>>  			};
+>>>
+>>>  		};
+>>> +		pinconf: pin-controller@22c00c {
+>>> +			compatible = "ti,da850-pupd";
+>>> +			reg = <0x22c00c 0x8>;
+>>> +			status = "disabled";
+>>> +		};
+>>
+>> Can you please place this below the i2c1 node. I am trying to keep the
+>> nodes sorted by unit address. I know thats broken in many places today,
+>> but lets add the new ones where they should eventually end up.
+>
+> I can do this, but it seems that the predominant sorting pattern here
+> is to keep subsystems together (e.g. all i2c are together, all uart
+> are together, etc.)
+>
+> Would a separate patch to sort everything by unit address to get this
+> cleaned up be acceptable?
 
-This is not working when we get to clearing the interrupt
-EDGE status register STMPE_IDX_GPEDR_[LCM]SB: it is indexed
-like all other registers [STMPE_IDX_*_LSB + i] but in this
-loop we index from 0 to get the right bank index for the
-calculations, and we need to just add i to the MSB.
+No thanks. That kind of thing is the needless churn that gets us flamed.
 
-Before this, interrupts on the STMPE2401 were broken, this
-patch fixes it so it works again.
-
-Cc: stable@vger.kernel.org
-Cc: Patrice Chotard <patrice.chotard@st.com>
-Fixes: 43db289d00c6 ("gpio: stmpe: Rework registers access")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-stmpe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index e7d422a6b90b..e2e1b16a42db 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -413,7 +413,7 @@ static irqreturn_t stmpe_gpio_irq(int irq, void *dev)
- 		    stmpe->partnum != STMPE1801) {
- 			stmpe_reg_write(stmpe, statmsbreg + i, status[i]);
- 			stmpe_reg_write(stmpe,
--					stmpe->regs[STMPE_IDX_GPEDR_LSB + i],
-+					stmpe->regs[STMPE_IDX_GPEDR_MSB] + i,
- 					status[i]);
- 		}
- 	}
--- 
-2.7.4
-
+Kevin
