@@ -1,24 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/2] pinctrl: sx150x: various spelling fixes and some
- white-space cleanup
-Date: Wed, 23 Nov 2016 14:46:34 +0100
-Message-ID: <CACRpkdbXmbzykgzYGH9_Yz-zM419pPKuTFUkLU9SuQyUq3CXRA@mail.gmail.com>
-References: <1479896331-16915-1-git-send-email-peda@axentia.se> <1479896331-16915-2-git-send-email-peda@axentia.se>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1479896331-16915-2-git-send-email-peda@axentia.se>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrey Smirnov <andrew.smirnov@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH RESEND 0/2] add support for AXP209 GPIOs functions
+Date: Wed, 23 Nov 2016 15:11:49 +0100
+Message-ID: <20161123141151.25315-1-quentin.schulz@free-electrons.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:34578 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935622AbcKWOMX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Nov 2016 09:12:23 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org, maxime.ripard@free-electrons.com
+Cc: Quentin Schulz <quentin.schulz@free-electrons.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, Nov 23, 2016 at 11:18 AM, Peter Rosin <peda@axentia.se> wrote:
+The AXP209 PMIC has three GPIOs. Two of them can be muxed in other modes
+(namely adc or regulator)[1] which cannot be used while the pin is in one
+of GPIO modes.
 
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+This adds the possibility to use all functions of the GPIOs present in
+the AXP209 PMIC thanks to the pinctrl subsystem.
 
-Patch applied.
+An upcoming ADC driver for the AXP209 PMIC will make use of this pinctrl to
+read ADC values of GPIO0 and GPIO1. At the moment, no driver is pinctrling
+these GPIOs.
 
-Yours,
-Linus Walleij
+This patch also corrects the register used to read GPIO input status.
+
+[1] see registers 90H, 92H and 93H at
+    http://dl.linux-sunxi.org/AXP/AXP209_Datasheet_v1.0en.pdf
+
+Quentin Schulz (2):
+  gpio: axp209: use correct register for GPIO input status
+  gpio: axp209: add pinctrl support
+
+ .../devicetree/bindings/gpio/gpio-axp209.txt       |  28 +-
+ drivers/gpio/gpio-axp209.c                         | 557 ++++++++++++++++++---
+ 2 files changed, 504 insertions(+), 81 deletions(-)
+
+-- 
+
+Adding Maxime Ripard (original driver author) and LKML to mail recipients.
+2.9.3
+
