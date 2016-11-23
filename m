@@ -1,63 +1,78 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 6/6] pinctrl: mt8173: set GPIO16 to usb iddig mode
-Date: Wed, 23 Nov 2016 19:32:48 +0100
-Message-ID: <42f5df18-2edd-08f2-a833-9c92ac85e87c@gmail.com>
-References: <1462868614-20602-1-git-send-email-chunfeng.yun@mediatek.com>
- <1462868614-20602-7-git-send-email-chunfeng.yun@mediatek.com>
- <CACRpkdaeD5mk7LXEWnE0=Xute8-JA-fa4tVt4fYhujEXeq2+9w@mail.gmail.com>
- <1462991546.11623.3.camel@mussux00> <1463017282.11651.82.camel@mhfsdcap03>
- <1463018942.1608.5.camel@mussux00> <1463021701.25171.5.camel@mussux00>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] gpio: Add Tegra186 support
+Date: Wed, 23 Nov 2016 20:44:23 +0100
+Message-ID: <20161123194423.GA26733@ulmo.ba.sec>
+References: <20161122173042.GA3239@ulmo.ba.sec>
+ <20161122175539.3897-1-thierry.reding@gmail.com>
+ <CACRpkdYs3WoBPCiuuuka_DQz5KP0Sxc_wT57Zd3c4MF+9xH1+Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1463021701.25171.5.camel@mussux00>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYs3WoBPCiuuuka_DQz5KP0Sxc_wT57Zd3c4MF+9xH1+Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hongzhou Yang <hongzhou.yang@mediatek.com>, chunfeng yun <chunfeng.yun@mediatek.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Maoguang Meng <maoguang.meng@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Pawel Moll <pawel.moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Sascha Hauer <s.hauer@pengutronix.de>, Biao Huang <biao.huang@mediatek.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-kernel@vger.kernel
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Suresh Mangipudi <smangipudi@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Hongzhou,
 
-On 12/05/16 04:55, Hongzhou Yang wrote:
-> On Wed, 2016-05-11 at 19:09 -0700, Hongzhou Yang wrote:
->> On Thu, 2016-05-12 at 09:41 +0800, chunfeng yun wrote:
->>> Hi,
->>>
->>> On Wed, 2016-05-11 at 11:32 -0700, Hongzhou Yang wrote:
->>>> On Wed, 2016-05-11 at 13:56 +0200, Linus Walleij wrote:
->>>>> On Tue, May 10, 2016 at 10:23 AM, Chunfeng Yun
->>>>> <chunfeng.yun@mediatek.com> wrote:
->>>>>
->>>>>> the default mode of GPIO16 pin is gpio, when set EINT16 to
->>>>>> IRQ_TYPE_LEVEL_HIGH, no interrupt is triggered, it can be
->>>>>> fixed when set its default mode as usb iddig.
->>>>>>
->>>>>> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
->>>>>
->>>>
->>>> Chunfeng, GPIO16 can be used as EINT16 mode, but the pinmux should be 0.
->>>> If you want to set its default mode to iddig, you should set it in dts.
->>>>
->>> I set it in DTS, but it didn't work, because when usb driver requested
->>> IRQ, pinmux was switched back to default mode set by
->>> MTK_EINT_FUNCTION().
->>>
->>
->> After confirmed, there are something wrong with data sheet and pinmux
->> table, and GPIO16 can only receive interrupt by mode 1. So
->>
->> Acked-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
->>
->
-> Linus,
->
-> We find there are some other pins still have the same problem, so please
-> hold on it. Sorry for so much noise.
->
+--2oS5YaxWCcQjTEyO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Did you made any progress on this? I didn't see any patch on the mailing 
-list.
+On Wed, Nov 23, 2016 at 02:30:45PM +0100, Linus Walleij wrote:
+> On Tue, Nov 22, 2016 at 6:55 PM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+>=20
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > Tegra186 has two GPIO controllers that are largely register compatible
+> > between one another but are completely different from the controller
+> > found on earlier generations.
+> >
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+>=20
+> I would prefer if you could try to convert this driver to use
+> CONFIG_GPIOLIB_IRQCHIP and install a chained interrupt
+> handler with gpiochip_irqchio_add() + gpiolib_set_chained_irqchip().
+> It would save us so much trouble and so much complicated
+> code to maintain for this custom irqdomain.
+>=20
+> I suggest you to look into the mechanisms mentioned in my
+> previous mail for how to poke holes in the single linear
+> irqdomain used by this mechanism.
+>=20
+> As it seems, you only have one parent interrupt with all
+> these IRQs cascading off it as far as I can tell.
 
-Regards,
-Matthias
+Like I said in other email, I don't think this will work because the
+GPIOLIB_IRQCHIP support seems to be limited to cases where a single
+parent interrupt is used. We could possibly live with a single IRQ
+handler and data, but we definitely need to request multiple IRQs if
+we want to be able to use all GPIOs as interrupts.
+
+Thierry
+
+--2oS5YaxWCcQjTEyO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJYNfGXAAoJEN0jrNd/PrOh2lUQAIYSZpgFwGqcRv39tbzBkpwq
+77+6eV+YkOvgaDf43xRNxLyh6hzwKPRtAitpS/GU1Bn+YQlyAVRwzS6qVioSSSN1
+ziuBUswQvOX0mI/vzfeP/HSD/SxKWfvPkvE0tMqYMpUZyZ1+Xagh+MncS6fDrJX/
+ERbrlzYjcI9GcztRQlyY/Pod+ZJVUTpYfn7DKmkkFed+MCgc65ifoWT6eEbM781t
+oY5km5d93lXQX8PyMz8BVfgDk9gFytfemi6XhnvJAHuq7JEURL/JOZNmghr2cm/w
+IZlmA4idzlR8NKo2pUnknVYY/32H5LfbvNlzHDV51J4VtZZPOXY2bCRwOOCQIvOd
+/ASMQVx7mQKG9TiJ/xxt+2SCW6Ua+2aXI9cozkwxpArY19ErRyklX+GxcsJB3K1T
+hlyURuaTs3GnCVaATdS25++1QuP9bpt2pexbVt3fsN70oAjv3p/AClsqeoIYJ8xy
+B7LW6Y+0Uh3PuxPAgMuu4w4BkNjtE+47xZTLyENQi5eOoVSVnilwSpIQYKGXx5bf
+a4MBcR8/4xCWFDqkvU2Kd21TKD9JQUOksCvT8L644SJ6wVd4nn8NXUHipXIOkiUR
+fbANil11qMCdtu7GC5Cen5dAMyZxvitjY2KBVezi3E3k/XO56ri5BFsjR+WTvdd9
+hPf9Ta/aziPmnAazCJKs
+=NgdS
+-----END PGP SIGNATURE-----
+
+--2oS5YaxWCcQjTEyO--
