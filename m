@@ -1,32 +1,24 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH 1/2] gpio: axp209: use correct register for GPIO input
- status
-Date: Wed, 23 Nov 2016 14:45:32 +0100
-Message-ID: <20161123144532.3089ebfd@free-electrons.com>
-References: <20161123132749.11666-1-quentin.schulz@free-electrons.com>
-        <20161123132749.11666-2-quentin.schulz@free-electrons.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/2] pinctrl: sx150x: various spelling fixes and some
+ white-space cleanup
+Date: Wed, 23 Nov 2016 14:46:34 +0100
+Message-ID: <CACRpkdbXmbzykgzYGH9_Yz-zM419pPKuTFUkLU9SuQyUq3CXRA@mail.gmail.com>
+References: <1479896331-16915-1-git-send-email-peda@axentia.se> <1479896331-16915-2-git-send-email-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161123132749.11666-2-quentin.schulz@free-electrons.com>
+In-Reply-To: <1479896331-16915-2-git-send-email-peda@axentia.se>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Rosin <peda@axentia.se>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrey Smirnov <andrew.smirnov@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello,
+On Wed, Nov 23, 2016 at 11:18 AM, Peter Rosin <peda@axentia.se> wrote:
 
-On Wed, 23 Nov 2016 14:27:48 +0100, Quentin Schulz wrote:
-> The GPIO input status was read from control register
-> (AXP20X_GPIO[210]_CTRL) instead of status register (AXP20X_GPIO20_SS).
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-This smells like a bug fix, so perhaps Cc: stable?
+Patch applied.
 
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Yours,
+Linus Walleij
