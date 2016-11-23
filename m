@@ -1,85 +1,88 @@
 From: Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH 0/2] pinctrl: sx150x: set multiple pins at once
-Date: Wed, 23 Nov 2016 10:39:21 +0100
-Message-ID: <859c1aa4-32bd-4d60-dfbf-4c8dfacd3dd6@axentia.se>
-References: <1479830762-1839-1-git-send-email-peda@axentia.se>
- <96d50f53-7497-932f-57e2-37fe6cfbafa5@baylibre.com>
+Subject: [PATCH v2 1/2] pinctrl: sx150x: various spelling fixes and some white-space cleanup
+Date: Wed, 23 Nov 2016 11:18:50 +0100
+Message-ID: <1479896331-16915-2-git-send-email-peda@axentia.se>
+References: <1479896331-16915-1-git-send-email-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <96d50f53-7497-932f-57e2-37fe6cfbafa5@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>, linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andrey Smirnov <andrew.smirnov@gmail.com>, linux-gpio@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-eopbgr50100.outbound.protection.outlook.com ([40.107.5.100]:29216
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934197AbcKWKTG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 23 Nov 2016 05:19:06 -0500
+In-Reply-To: <1479896331-16915-1-git-send-email-peda@axentia.se>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Peter Rosin <peda@axentia.se>, Linus Walleij <linus.walleij@linaro.org>, Andrey Smirnov <andrew.smirnov@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, linux-gpio@vger.kernel.org
 
-On 2016-11-23 10:20, Neil Armstrong wrote:
-> On 11/22/2016 05:06 PM, Peter Rosin wrote:
->> Hi!
->>
->> I have only tested this on an 8-bit sx1502, so I'm uncertain if
->> the there needs to be locking for this to work as intended for
->> the bigger chips with an oscio pin? Probably.
->>
->> So, I didn't add (or rather, removed) these lines at the end of
->> sx150x_gpio_set_multiple() and made the op optional instead.
->>
->> 	if (*mask & pctl->oscio_mask)
->> 		sx150x_gpio_oscio_set(pctl, *bits & pctl->oscio_mask);
->>
->> I mean, what happens if there are two users writing multiple pins
->> where one of the pins is the oscio pin, and this happens concurrently?
->> I get the feeling that there is nothing stopping interleaving in that
->> case, and you could end up with the desired values from user 1 for the
->> normal pins, and the desired value for the oscio pin from user 2.
->>
->> But for the easy case (no oscio) where the existing regmap locking
->> holds, this is a nice speedup and desired behaviour without a lot
->> of individual pin changes.
->>
->> Cheers,
->> Peter
->>
->> Peter Rosin (2):
->>   pinctrl: sx150x: various spelling fixes and some white-space cleanup
->>   pinctrl: sx150x: support setting multiple pins at once
->>
->>  drivers/pinctrl/pinctrl-sx150x.c | 50 ++++++++++++++++++++++++++++------------
->>  1 file changed, 35 insertions(+), 15 deletions(-)
->>
-> 
-> Hi Peter,
-> 
-> Thanks for the patch, yes the oscio has a clearly separate register part of the clock management,
-> but it could be handled by the set_multiple by masking the oscio bit and managing it separately.
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Peter Rosin <peda@axentia.se>
+---
+ drivers/pinctrl/pinctrl-sx150x.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-That would require locking. If process one wants pin 0 as 1 and oscio
-as 1, and process two wants pin 0 as 0 and oscio as 0, and both
-processes issue these commands simultaneously. The gpio chip is, to
-my understanding, required to make sure that both pin 0 and oscio are
-both 0 or both 1 at the end of this. Without locking, that would not
-hold:
+diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
+index 63778058eec7..ef4ef88e0ee9 100644
+--- a/drivers/pinctrl/pinctrl-sx150x.c
++++ b/drivers/pinctrl/pinctrl-sx150x.c
+@@ -384,7 +384,7 @@ static int sx150x_gpio_oscio_set(struct sx150x_pinctrl *pctl,
+ }
+ 
+ static void sx150x_gpio_set(struct gpio_chip *chip, unsigned int offset,
+-			       int value)
++			    int value)
+ {
+ 	struct sx150x_pinctrl *pctl = gpiochip_get_data(chip);
+ 
+@@ -396,7 +396,7 @@ static void sx150x_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ }
+ 
+ static int sx150x_gpio_direction_input(struct gpio_chip *chip,
+-				      unsigned int offset)
++				       unsigned int offset)
+ {
+ 	struct sx150x_pinctrl *pctl = gpiochip_get_data(chip);
+ 
+@@ -409,7 +409,7 @@ static int sx150x_gpio_direction_input(struct gpio_chip *chip,
+ }
+ 
+ static int sx150x_gpio_direction_output(struct gpio_chip *chip,
+-				       unsigned int offset, int value)
++					unsigned int offset, int value)
+ {
+ 	struct sx150x_pinctrl *pctl = gpiochip_get_data(chip);
+ 	int ret;
+@@ -880,7 +880,7 @@ static unsigned int sx150x_maybe_swizzle(struct sx150x_pinctrl *pctl,
+ 	 *	reg + 3 [ 3 3 2 2 1 1 0 0 ]
+ 	 *
+ 	 * SX1503 and SX1506 deviate from that data layout, instead storing
+-	 * thier contents as follows:
++	 * their contents as follows:
+ 	 *
+ 	 *	reg     [ f f e e d d c c ]
+ 	 *	reg + 1 [ 7 7 6 6 5 5 4 4 ]
+@@ -915,9 +915,8 @@ static unsigned int sx150x_maybe_swizzle(struct sx150x_pinctrl *pctl,
+  *
+  * This way the rest of the driver code, interfacing with the chip via
+  * regmap API, can work assuming that each GPIO pin is represented by
+- * a group of bits at an offset proportioan to GPIO number within a
++ * a group of bits at an offset proportional to GPIO number within a
+  * given register.
+- *
+  */
+ static int sx150x_regmap_reg_read(void *context, unsigned int reg,
+ 				  unsigned int *result)
+@@ -929,7 +928,7 @@ static int sx150x_regmap_reg_read(void *context, unsigned int reg,
+ 	unsigned int idx, val;
+ 
+ 	/*
+-	 * There are four potential cases coverd by this function:
++	 * There are four potential cases covered by this function:
+ 	 *
+ 	 * 1) 8-pin chip, single configuration bit register
+ 	 *
+-- 
+2.1.4
 
- process 1                               process 2
-   regmap update to data reg.
-                                           regmap update to data reg.
-                                           regmap update to oscio reg.
-   regmap update to oscio reg.
-
-Broken end result: pin 0 is 1 and oscio is 0.
-
-Each regmap access is locked, but individually. In this case we need
-locking to span two regmap accesses, which brings us to resurrect all
-the locking that Andrey removed, because we then need to lock *all*
-regmap accesses with an external lock to prevent other stuff from
-sneaking in between the above regmap access pairs. I did not want
-to add back all that locking, and had no need for it, so I left the
-exercise for someone else to complete.
-
-> Using a simple integer to store the oscio pin number (or -1 for 456 devices) would simplify the process.
-
-I'll send an update...
-
-Cheers,
-Peter
