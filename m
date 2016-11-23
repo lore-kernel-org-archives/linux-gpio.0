@@ -1,51 +1,86 @@
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH 1/2] pinctrl: sh-pfc: r8a7796: Add CAN support
-Date: Wed, 23 Nov 2016 08:39:54 +0000
-Message-ID: <HK2PR0601MB1329EC30B19E12920564F4EDB7B70@HK2PR0601MB1329.apcprd06.prod.outlook.com>
-References: <1479822543-4804-1-git-send-email-chris.paterson2@renesas.com>
- <1479822543-4804-2-git-send-email-chris.paterson2@renesas.com>
- <CAMuHMdX-KL9z7Bz=OSo-oD=VWqOGN-As-yfNcBCdPggHjNwNLg@mail.gmail.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 1/2] pinctrl: sx150x: various spelling fixes and some
+ white-space cleanup
+Date: Wed, 23 Nov 2016 10:13:19 +0100
+Message-ID: <5b11095c-e7f0-d675-67f3-4453bf16a2bd@baylibre.com>
+References: <1479830762-1839-1-git-send-email-peda@axentia.se>
+ <1479830762-1839-2-git-send-email-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdX-KL9z7Bz=OSo-oD=VWqOGN-As-yfNcBCdPggHjNwNLg@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1479830762-1839-2-git-send-email-peda@axentia.se>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andrey Smirnov <andrew.smirnov@gmail.com>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-SGVsbG8gR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgdGhlIHJldmlldy4NCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBnZWVydC51eXR0ZXJob2V2ZW5AZ21haWwuY29tDQo+
-IFttYWlsdG86Z2VlcnQudXl0dGVyaG9ldmVuQGdtYWlsLmNvbV0gT24gQmVoYWxmIE9mIEdlZXJ0
-IFV5dHRlcmhvZXZlbg0KPiBTZW50OiAyMyBOb3ZlbWJlciAyMDE2IDA4OjE0DQo+IFRvOiBDaHJp
-cyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPg0KPiBDYzogTGF1cmVudCBQ
-aW5jaGFydCA8bGF1cmVudC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPjsgR2VlcnQNCj4gVXl0
-dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT47IExpbnVzIFdhbGxlaWoNCj4gPGxp
-bnVzLndhbGxlaWpAbGluYXJvLm9yZz47IExpbnV4LVJlbmVzYXMgPGxpbnV4LXJlbmVzYXMtDQo+
-IHNvY0B2Z2VyLmtlcm5lbC5vcmc+OyBsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZzsgUmFtZXNo
-DQo+IFNoYW5tdWdhc3VuZGFyYW0gPHJhbWVzaC5zaGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMu
-Y29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDEvMl0gcGluY3RybDogc2gtcGZjOiByOGE3Nzk2
-OiBBZGQgQ0FOIHN1cHBvcnQNCj4gDQo+IEhpIENocmlzLA0KPiANCj4gT24gVHVlLCBOb3YgMjIs
-IDIwMTYgYXQgMjo0OSBQTSwgQ2hyaXMgUGF0ZXJzb24NCj4gPGNocmlzLnBhdGVyc29uMkByZW5l
-c2FzLmNvbT4gd3JvdGU6DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFtZXNoIFNoYW5tdWdhc3VuZGFy
-YW0NCj4gPiA8cmFtZXNoLnNoYW5tdWdhc3VuZGFyYW1AYnAucmVuZXNhcy5jb20+DQo+ID4gU2ln
-bmVkLW9mZi1ieTogQ2hyaXMgUGF0ZXJzb24gPGNocmlzLnBhdGVyc29uMkByZW5lc2FzLmNvbT4N
-Cj4gDQo+IFJldmlld2VkLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xp
-ZGVyLmJlPg0KPiANCj4gQlRXLCBhcyBhbGwgcGF0Y2hlcyBpbiB0aGlzIHNlcmllcyB3ZXJlIFNp
-Z25lZC1vZmYtYnkgUmFtZXNoIGZpcnN0LCBkb2VzIHRoYXQNCj4gbWVhbiBoZSdzIHRoZSBhdXRo
-b3IsIGFuZCB5b3Ugc2hvdWxkIGhhdmUgYWRkZWQgaGlzIEZyb206IGxpbmUsIHRvbz8NCg0KVGVj
-aG5pY2FsbHkgSSBhdXRob3JlZCB0aGVzZSBwYXRjaGVzLCBidXQgdGhleSBhcmUgZGlyZWN0IHBv
-cnRzIGZyb20gUmFtZXNoJ3MgcjhhNzc5NSBwYXRjaGVzIFsxXVsyXS4NCg0KWzFdIGE0ZDk3OTEg
-cGluY3RybDogc2gtcGZjOiByOGE3Nzk1OiBBZGQgQ0FOIHN1cHBvcnQNClsyXSA0NDEyYmI1IHBp
-bmN0cmw6IHNoLXBmYzogcjhhNzc5NTogQWRkIENBTiBGRCBzdXBwb3J0DQoNCkFwb2xvZ2llcyBm
-b3Igbm90IG1ha2luZyB0aGlzIGNsZWFyIGluIHRoZSBjb3ZlciBsZXR0ZXIuDQoNCktpbmQgcmVn
-YXJkcywgQ2hyaXMNCg0KPiANCj4gVGhhbmtzIQ0KPiANCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+
-IA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0
-dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBs
-aW51eC0NCj4gbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0
-ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20g
-dGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhp
-bmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVz
-IFRvcnZhbGRzDQo=
+On 11/22/2016 05:06 PM, Peter Rosin wrote:
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+> ---
+>  drivers/pinctrl/pinctrl-sx150x.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
+> index 63778058eec7..ef4ef88e0ee9 100644
+> --- a/drivers/pinctrl/pinctrl-sx150x.c
+> +++ b/drivers/pinctrl/pinctrl-sx150x.c
+> @@ -384,7 +384,7 @@ static int sx150x_gpio_oscio_set(struct sx150x_pinctrl *pctl,
+>  }
+>  
+>  static void sx150x_gpio_set(struct gpio_chip *chip, unsigned int offset,
+> -			       int value)
+> +			    int value)
+>  {
+>  	struct sx150x_pinctrl *pctl = gpiochip_get_data(chip);
+>  
+> @@ -396,7 +396,7 @@ static void sx150x_gpio_set(struct gpio_chip *chip, unsigned int offset,
+>  }
+>  
+>  static int sx150x_gpio_direction_input(struct gpio_chip *chip,
+> -				      unsigned int offset)
+> +				       unsigned int offset)
+>  {
+>  	struct sx150x_pinctrl *pctl = gpiochip_get_data(chip);
+>  
+> @@ -409,7 +409,7 @@ static int sx150x_gpio_direction_input(struct gpio_chip *chip,
+>  }
+>  
+>  static int sx150x_gpio_direction_output(struct gpio_chip *chip,
+> -				       unsigned int offset, int value)
+> +					unsigned int offset, int value)
+>  {
+>  	struct sx150x_pinctrl *pctl = gpiochip_get_data(chip);
+>  	int ret;
+> @@ -880,7 +880,7 @@ static unsigned int sx150x_maybe_swizzle(struct sx150x_pinctrl *pctl,
+>  	 *	reg + 3 [ 3 3 2 2 1 1 0 0 ]
+>  	 *
+>  	 * SX1503 and SX1506 deviate from that data layout, instead storing
+> -	 * thier contents as follows:
+> +	 * their contents as follows:
+>  	 *
+>  	 *	reg     [ f f e e d d c c ]
+>  	 *	reg + 1 [ 7 7 6 6 5 5 4 4 ]
+> @@ -915,9 +915,8 @@ static unsigned int sx150x_maybe_swizzle(struct sx150x_pinctrl *pctl,
+>   *
+>   * This way the rest of the driver code, interfacing with the chip via
+>   * regmap API, can work assuming that each GPIO pin is represented by
+> - * a group of bits at an offset proportioan to GPIO number within a
+> + * a group of bits at an offset proportional to GPIO number within a
+>   * given register.
+> - *
+>   */
+>  static int sx150x_regmap_reg_read(void *context, unsigned int reg,
+>  				  unsigned int *result)
+> @@ -929,7 +928,7 @@ static int sx150x_regmap_reg_read(void *context, unsigned int reg,
+>  	unsigned int idx, val;
+>  
+>  	/*
+> -	 * There are four potential cases coverd by this function:
+> +	 * There are four potential cases covered by this function:
+>  	 *
+>  	 * 1) 8-pin chip, single configuration bit register
+>  	 *
+> 
+
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
