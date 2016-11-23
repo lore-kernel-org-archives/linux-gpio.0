@@ -1,87 +1,37 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: [PATCH 1/2] pinctrl: sx150x: various spelling fixes and some white-space cleanup
-Date: Tue, 22 Nov 2016 17:06:01 +0100
-Message-ID: <1479830762-1839-2-git-send-email-peda@axentia.se>
-References: <1479830762-1839-1-git-send-email-peda@axentia.se>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: David Lechner <david@lechnology.com>
+Subject: [PATCH 0/3] TI DA850/OMAP-L138/AM18x pinconf
+Date: Tue, 22 Nov 2016 21:29:24 -0600
+Message-ID: <1479871767-20160-1-git-send-email-david@lechnology.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-db5eur01on0136.outbound.protection.outlook.com ([104.47.2.136]:45600
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933056AbcKVSkH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 22 Nov 2016 13:40:07 -0500
-In-Reply-To: <1479830762-1839-1-git-send-email-peda@axentia.se>
+Received: from vern.gendns.com ([206.190.152.46]:55254 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755705AbcKWDae (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 22 Nov 2016 22:30:34 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, Linus Walleij <linus.walleij@linaro.org>, Andrey Smirnov <andrew.smirnov@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>
+Cc: David Lechner <david@lechnology.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Axel Haslam <ahaslam@baylibre.com>, Alexandre Bailon <abailon@baylibre.com>, =?UTF-8?q?Bartosz=20Go=C5=82aszewski?= <bgolaszewski@baylibre.com>
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/pinctrl/pinctrl-sx150x.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+This series adds a new driver and DT bindings for TI DA850/OMAP-L138/AM18x
+pinconf (bias pullup/pulldown).
 
-diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
-index 63778058eec7..ef4ef88e0ee9 100644
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -384,7 +384,7 @@ static int sx150x_gpio_oscio_set(struct sx150x_pinctrl *pctl,
- }
- 
- static void sx150x_gpio_set(struct gpio_chip *chip, unsigned int offset,
--			       int value)
-+			    int value)
- {
- 	struct sx150x_pinctrl *pctl = gpiochip_get_data(chip);
- 
-@@ -396,7 +396,7 @@ static void sx150x_gpio_set(struct gpio_chip *chip, unsigned int offset,
- }
- 
- static int sx150x_gpio_direction_input(struct gpio_chip *chip,
--				      unsigned int offset)
-+				       unsigned int offset)
- {
- 	struct sx150x_pinctrl *pctl = gpiochip_get_data(chip);
- 
-@@ -409,7 +409,7 @@ static int sx150x_gpio_direction_input(struct gpio_chip *chip,
- }
- 
- static int sx150x_gpio_direction_output(struct gpio_chip *chip,
--				       unsigned int offset, int value)
-+					unsigned int offset, int value)
- {
- 	struct sx150x_pinctrl *pctl = gpiochip_get_data(chip);
- 	int ret;
-@@ -880,7 +880,7 @@ static unsigned int sx150x_maybe_swizzle(struct sx150x_pinctrl *pctl,
- 	 *	reg + 3 [ 3 3 2 2 1 1 0 0 ]
- 	 *
- 	 * SX1503 and SX1506 deviate from that data layout, instead storing
--	 * thier contents as follows:
-+	 * their contents as follows:
- 	 *
- 	 *	reg     [ f f e e d d c c ]
- 	 *	reg + 1 [ 7 7 6 6 5 5 4 4 ]
-@@ -915,9 +915,8 @@ static unsigned int sx150x_maybe_swizzle(struct sx150x_pinctrl *pctl,
-  *
-  * This way the rest of the driver code, interfacing with the chip via
-  * regmap API, can work assuming that each GPIO pin is represented by
-- * a group of bits at an offset proportioan to GPIO number within a
-+ * a group of bits at an offset proportional to GPIO number within a
-  * given register.
-- *
-  */
- static int sx150x_regmap_reg_read(void *context, unsigned int reg,
- 				  unsigned int *result)
-@@ -929,7 +928,7 @@ static int sx150x_regmap_reg_read(void *context, unsigned int reg,
- 	unsigned int idx, val;
- 
- 	/*
--	 * There are four potential cases coverd by this function:
-+	 * There are four potential cases covered by this function:
- 	 *
- 	 * 1) 8-pin chip, single configuration bit register
- 	 *
+The motivation for this series is LEGO MINDSTORMS EV3 support. It needs most,
+if not all, internal pullup/down resistors disabled in order to work correctly.
+
+David Lechner (3):
+  devicetree: bindings: pinctrl: Add binding for ti,da850-pupd
+  pinctrl: New driver for TI DA8XX/OMAP-L138/AM18XX pinconf
+  ARM: dts: da850: Add node for pullup/pulldown pinconf
+
+ .../devicetree/bindings/pinctrl/ti,da850-pupd.txt  |  55 ++++++
+ arch/arm/boot/dts/da850.dtsi                       |   5 +
+ drivers/pinctrl/Kconfig                            |   9 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-da850-pupd.c               | 210 +++++++++++++++++++++
+ 5 files changed, 280 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/ti,da850-pupd.txt
+ create mode 100644 drivers/pinctrl/pinctrl-da850-pupd.c
+
 -- 
-2.1.4
+2.7.4
 
