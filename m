@@ -1,35 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: em: depnd on ARCH_SHMOBILE
-Date: Thu, 24 Nov 2016 16:19:44 +0100
-Message-ID: <CACRpkdZBfZBiJm2XLo+vw8r8CO7EBv4=jARvpe_f4bfDHbhDBQ@mail.gmail.com>
-References: <20161120174836.1787-1-pbrobinson@gmail.com> <CAMuHMdWKcfOb6v0GQrcAadhPeM1d8M_EmNicZqpO0+2VfeoBog@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 0/2] OF phandle nexus support + GPIO nexus
+Date: Thu, 24 Nov 2016 16:27:05 +0100
+Message-ID: <CACRpkdZ4ceij+uvqFyfmgGwH9bGnJDn8jRr+0m8sCEYeexoz3g@mail.gmail.com>
+References: <20161124102529.20212-1-stephen.boyd@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdWKcfOb6v0GQrcAadhPeM1d8M_EmNicZqpO0+2VfeoBog@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Peter Robinson <pbrobinson@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161124102529.20212-1-stephen.boyd-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Boyd <stephen.boyd-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 24, 2016 at 10:38 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Sun, Nov 20, 2016 at 6:48 PM, Peter Robinson <pbrobinson@gmail.com> wrote:
->> The GPIO_EM is part of the Renesas SoCs so depend on the arch.
+On Thu, Nov 24, 2016 at 11:25 AM, Stephen Boyd <stephen.boyd-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
 
->>  config GPIO_EM
->>         tristate "Emma Mobile GPIO"
->> -       depends on ARM && OF_GPIO
->> +       depends on (ARCH_SHMOBILE || COMPILE_TEST) && OF_GPIO
+> This is one small chunk of work related to DT overlays for expansion
+> boards. It would be good to have a way to expose #<list>-cells types of
+> providers through a connector in a standard way. So we introduce a way
+> to make "nexus" nodes for these types of properties to remap the consumer
+> number space to the other side of the connector's number space. It's
+> basically a copy of the interrupt nexus implementation, but without
+> the address space matching design and interrupt-parent walking.
 >
-> For ARM SoCs, ARCH_SHMOBILE is being phased out in favor of ARCH_RENESAS.
-> Note that ARCH_SHMOBILE is also set for some SuperH SoCs.
+> The first patch implements a generic method to do this, and the second patch
+> adds a unit test for it. The third patch is more of an example than anything
+> else. It shows how we would modify frameworks to use the new API.
 >
-> However, ARCH_EMEV2 is even more suitable here.
+> Stephen Boyd (3):
+>   of: Support parsing phandle argument lists through a nexus node
+>   of: unittest: Add phandle remapping test
+>   gpio: Support gpio nexus dt bindings
 
-I fixed the patch in-tree to use ARCH_EMEV2 instead.
+Looks perfectly reasonable to me. But it's mainly for the DT people to review
+I guess.
 
-Thanks!
+I have no idea about the eventual merge path though, I guess it needs to
+go through the OF tree with my ACK.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
