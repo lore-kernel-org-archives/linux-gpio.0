@@ -1,28 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/2] pinctrl: sx150x: support setting multiple pins at once
-Date: Thu, 24 Nov 2016 15:08:25 +0100
-Message-ID: <CACRpkdavVJjBQCg-4ydrjp68VSgd9H+Xr2PkrPLGoqUhgBy8HQ@mail.gmail.com>
-References: <1479896331-16915-1-git-send-email-peda@axentia.se> <1479896331-16915-3-git-send-email-peda@axentia.se>
+Subject: Re: [PATCH V3 2/2] pinctrl: tegra: Add driver to configure voltage
+ and power of io pads
+Date: Thu, 24 Nov 2016 15:11:04 +0100
+Message-ID: <CACRpkdbp8_eR7PLoaX4AJbhcx_tYQjcS5U_hR3EU7b4dar3ckg@mail.gmail.com>
+References: <1479810013-29894-1-git-send-email-ldewangan@nvidia.com>
+ <1479810013-29894-3-git-send-email-ldewangan@nvidia.com> <CACRpkdZK34QfbSBJvshfZekk5TJBU5sZog-9uszLSmFPOGJgiw@mail.gmail.com>
+ <583580AD.60803@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1479896331-16915-3-git-send-email-peda@axentia.se>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrey Smirnov <andrew.smirnov@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f178.google.com ([209.85.216.178]:32961 "EHLO
+        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965062AbcKXOLf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 09:11:35 -0500
+Received: by mail-qt0-f178.google.com with SMTP id p16so41227138qta.0
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Nov 2016 06:11:05 -0800 (PST)
+In-Reply-To: <583580AD.60803@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>, Jon Hunter <jonathanh@nvidia.com>
 
-On Wed, Nov 23, 2016 at 11:18 AM, Peter Rosin <peda@axentia.se> wrote:
+On Wed, Nov 23, 2016 at 12:42 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-> If the chip does not have an oscio pin, all pins are configured in
-> the same regmap register making it trivial to update all pins at
-> once, so do that. If an oscio pin is present, there needs to be
-> more locking in place to handle all cases correctly, so this is
-> skipped.
+> Here, we need the regulator handle which can support the other regulator
+> APIs.
 >
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+> In some of platforms, we do not use some of the io-pins and on this case, we
+> do not connect the IO rail supply for these pins. So this is like a hardware
+> optional.
+>
+> If the IO pins are used then it need to have the proper regulator handle.
+> Missing regulator handle on DT will be like that IO pads are not used.
 
-Tired of waiting for ACKs. Looks good. Patch applied.
+OK I buy that argument, unless Mark (Brown) has comments.
 
 Yours,
 Linus Walleij
