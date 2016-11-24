@@ -1,40 +1,320 @@
-From: Peter Robinson <pbrobinson@gmail.com>
-Subject: Re: [PATCH v2] gpio: em: depnd on ARCH_SHMOBILE
-Date: Thu, 24 Nov 2016 15:59:09 +0000
-Message-ID: <CALeDE9ONU-d_jih6TxuT8_g-aKmKk+fvOmHHLExm2N3aX7Uxog@mail.gmail.com>
-References: <20161120174836.1787-1-pbrobinson@gmail.com> <CAMuHMdWKcfOb6v0GQrcAadhPeM1d8M_EmNicZqpO0+2VfeoBog@mail.gmail.com>
- <CACRpkdZBfZBiJm2XLo+vw8r8CO7EBv4=jARvpe_f4bfDHbhDBQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Subject: Re: [PATCH 1/3] of: Support parsing phandle argument lists through a nexus node
+Date: Thu, 24 Nov 2016 18:05:50 +0200
+Message-ID: <8E74008F-6953-4BDC-8A56-F433AE947D30@konsulko.com>
+References: <20161124102529.20212-1-stephen.boyd@linaro.org> <20161124102529.20212-2-stephen.boyd@linaro.org>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34782 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965905AbcKXP7M (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 10:59:12 -0500
-In-Reply-To: <CACRpkdZBfZBiJm2XLo+vw8r8CO7EBv4=jARvpe_f4bfDHbhDBQ@mail.gmail.com>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:35128 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752087AbcKXQFz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 11:05:55 -0500
+Received: by mail-wm0-f43.google.com with SMTP id a197so119105543wmd.0
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Nov 2016 08:05:54 -0800 (PST)
+In-Reply-To: <20161124102529.20212-2-stephen.boyd@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-kernel @ vger . kernel . org" <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>
 
-On Thu, Nov 24, 2016 at 3:19 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Nov 24, 2016 at 10:38 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Sun, Nov 20, 2016 at 6:48 PM, Peter Robinson <pbrobinson@gmail.com> wrote:
->>> The GPIO_EM is part of the Renesas SoCs so depend on the arch.
->
->>>  config GPIO_EM
->>>         tristate "Emma Mobile GPIO"
->>> -       depends on ARM && OF_GPIO
->>> +       depends on (ARCH_SHMOBILE || COMPILE_TEST) && OF_GPIO
->>
->> For ARM SoCs, ARCH_SHMOBILE is being phased out in favor of ARCH_RENESAS.
->> Note that ARCH_SHMOBILE is also set for some SuperH SoCs.
->>
->> However, ARCH_EMEV2 is even more suitable here.
->
-> I fixed the patch in-tree to use ARCH_EMEV2 instead.
+Hi Stephen,
 
-Awesome, thanks, I was going to do a follow up patch.
+> On Nov 24, 2016, at 12:25 , Stephen Boyd <stephen.boyd@linaro.org> =
+wrote:
+>=20
+> Platforms like 96boards have a standardized connector/expansion
+> slot that exposes signals like GPIOs to expansion boards in an
+> SoC agnostic way. We'd like the DT overlays for the expansion
+> boards to be written once without knowledge of the SoC on the
+> other side of the connector. This avoids the unscalable
+> combinatorial explosion of a different DT overlay for each
+> expansion board and SoC pair.
+>=20
+> We need a way to describe the GPIOs routed through the connector
+> in an SoC agnostic way. Let's introduce nexus property parsing
+> into the OF core to do this. This is largely based on the
+> interrupt nexus support we already have. This allows us to remap
+> a phandle list in a consumer node (e.g. reset-gpios) through a
+> connector in a generic way (e.g. via gpio-map). Do this in a
+> generic routine so that we can remap any sort of variable length
+> phandle list.
+>=20
+> Taking GPIOs as an example, the connector would be a GPIO nexus,
+> supporting the remapping of a GPIO specifier space to multiple
+> GPIO providers on the SoC. DT would look as shown below, where
+> 'soc_gpio1' and 'soc_gpio2' are inside the SoC, 'connector' is an
+> expansion port where boards can be plugged in, and
+> 'expansion_device' is a device on the expansion board.
+>=20
+> 	soc {
+> 		soc_gpio1: gpio-controller1 {
+> 			#gpio-cells =3D <2>;
+> 		};
+>=20
+> 		soc_gpio2: gpio-controller2 {
+> 			#gpio-cells =3D <2>;
+> 		};
+> 	};
+>=20
+> 	connector: connector {
+> 		#gpio-cells =3D <2>;
+> 		gpio-map =3D <0 GPIO_ACTIVE_LOW &soc_gpio1 1 =
+GPIO_ACTIVE_LOW>,
+> 			   <1 GPIO_ACTIVE_LOW &soc_gpio2 4 =
+GPIO_ACTIVE_LOW>,
+> 			   <2 GPIO_ACTIVE_LOW &soc_gpio1 3 =
+GPIO_ACTIVE_LOW>,
+> 			   <3 GPIO_ACTIVE_LOW &soc_gpio2 2 =
+GPIO_ACTIVE_LOW>;
+> 		gpio-map-mask =3D <0xf 0x1>;
+> 	};
+>=20
+> 	expansion_device {
+> 		reset-gpios =3D <&connector 2 GPIO_ACTIVE_LOW>;
+> 	};
+>=20
+> The GPIO core would use of_parse_phandle_with_args_map() instead
+> of of_parse_phandle_with_args() and arrive at the same type of
+> result, a phandle and argument list. The difference is that the
+> phandle and arguments will be remapped through the nexus node to
+> the underlying SoC GPIO controller node. In the example above,
+> we would remap 'reset-gpios' from <&connector 2 GPIO_ACTIVE_LOW>
+> to <&soc_gpio1 3 GPIO_ACTIVE_LOW>.
+>=20
 
-Peter
+Very good. My only point would be to elaborate a little bit on the
+documentation part about how there might be different #list-cells values
+pointed at, and how the lookup is performed in steps.
+
+> Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> ---
+> drivers/of/base.c  | 146 =
++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> include/linux/of.h |  14 +++++
+> 2 files changed, 160 insertions(+)
+>=20
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index d687e6de24a0..693b73f33675 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -1772,6 +1772,152 @@ int of_parse_phandle_with_args(const struct =
+device_node *np, const char *list_na
+> EXPORT_SYMBOL(of_parse_phandle_with_args);
+>=20
+> /**
+> + * of_parse_phandle_with_args_map() - Find a node pointed by phandle =
+in a list and remap it
+> + * @np:		pointer to a device tree node containing a list
+> + * @list_name:	property name that contains a list
+> + * @cells_name:	property name that specifies phandles' arguments =
+count
+> + * @index:	index of a phandle to parse out
+> + * @out_args:	optional pointer to output arguments structure =
+(will be filled)
+> + *
+> + * This function is useful to parse lists of phandles and their =
+arguments.
+> + * Returns 0 on success and fills out_args, on error returns =
+appropriate
+> + * errno value.
+> + *
+> + * Caller is responsible to call of_node_put() on the returned =
+out_args->np
+> + * pointer.
+> + *
+> + * Example:
+> + *
+> + * phandle1: node1 {
+> + *	#list-cells =3D <2>;
+> + * }
+> + *
+> + * phandle2: node2 {
+> + *	#list-cells =3D <1>;
+> + * }
+> + *
+> + * phandle3: node3 {
+> + * 	#list-cells =3D <1>;
+> + * 	list-map =3D <0 &phandle2 3>,
+> + * 		   <1 &phandle2 2>,
+> + * 		   <2 &phandle1 5 1>;
+> + *	list-map-mask =3D <0x3>;
+> + * };
+> + *
+> + * node4 {
+> + *	list =3D <&phandle1 1 2 &phandle3 0>;
+> + * }
+> + *
+> + * To get a device_node of the `node2' node you may call this:
+> + * of_parse_phandle_with_args(node4, "list", "#list-cells", =
+"list-map",
+> + * 			      "list-map-mask", 1, &args);
+> + */
+> +int of_parse_phandle_with_args_map(const struct device_node *np,
+> +				   const char *list_name,
+> +				   const char *cells_name,
+> +				   const char *map_name,
+> +				   const char *mask_name,
+> +				   int index, struct of_phandle_args =
+*out_args)
+> +{
+> +	struct device_node *cur, *new =3D NULL;
+> +	const __be32 *map, *mask, *tmp;
+> +	const __be32 dummy_mask[] =3D { [0 ... MAX_PHANDLE_ARGS] =3D ~0 =
+};
+> +	__be32 initial_match_array[MAX_PHANDLE_ARGS];
+> +	const __be32 *match_array =3D initial_match_array;
+> +	int i, ret, map_len, match;
+> +	u32 list_size, new_size;
+> +
+> +	if (index < 0)
+> +		return -EINVAL;
+> +
+> +	ret =3D __of_parse_phandle_with_args(np, list_name, cells_name, =
+0, index,
+> +					   out_args);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Get the #<list>-cells property */
+> +	cur =3D out_args->np;
+> +	ret =3D of_property_read_u32(cur, cells_name, &list_size);
+> +	if (ret < 0)
+> +		goto fail;
+> +
+> +	/* Precalculate the match array - this simplifies match loop */
+> +	for (i =3D 0; i < list_size; i++)
+> +		initial_match_array[i] =3D =
+cpu_to_be32(out_args->args[i]);
+> +
+> +	while (cur) {
+> +		/* Get the <list>-map property */
+> +		map =3D of_get_property(cur, map_name, &map_len);
+> +		if (!map)
+> +			return 0;
+> +		map_len /=3D sizeof(u32);
+> +
+> +		/* Get the <list>-map-mask property (optional) */
+> +		mask =3D of_get_property(cur, mask_name, NULL);
+> +		if (!mask)
+> +			mask =3D dummy_mask;
+> +
+> +		/* Iterate through <list>-map property */
+> +		match =3D 0;
+> +		while (map_len > (list_size + 1) && !match) {
+> +			/* Compare specifiers */
+> +			match =3D 1;
+> +			for (i =3D 0; i < list_size; i++, map_len--)
+> +				match &=3D !((match_array[i] ^ *map++) & =
+mask[i]);
+> +
+> +			of_node_put(new);
+> +			new =3D =
+of_find_node_by_phandle(be32_to_cpup(map));
+> +			map++;
+> +			map_len--;
+> +
+> +			/* Check if not found */
+> +			if (!new)
+> +				goto fail;
+> +
+> +			if (!of_device_is_available(new))
+> +				match =3D 0;
+> +
+> +			tmp =3D of_get_property(new, cells_name, NULL);
+> +			if (!tmp)
+> +				goto fail;
+> +
+> +			new_size =3D be32_to_cpu(*tmp);
+> +
+> +			/* Check for malformed properties */
+> +			if (WARN_ON(new_size > MAX_PHANDLE_ARGS))
+> +				goto fail;
+> +			if (map_len < new_size)
+> +				goto fail;
+> +
+> +			/* Move forward by new node's #<list>-cells =
+amount */
+> +			map +=3D new_size;
+> +			map_len -=3D new_size;
+> +		}
+> +		if (!match)
+> +			goto fail;
+> +
+> +		/*
+> +		 * Successfully parsed a <list>-map translation; copy =
+new
+> +		 * specifier into the out_args structure.
+> +		 */
+> +		match_array =3D map - new_size;
+> +		for (i =3D 0; i < new_size; i++)
+> +			out_args->args[i] =3D be32_to_cpup(map - =
+new_size + i);
+> +		out_args->args_count =3D list_size =3D new_size;
+> +		/* Iterate again with new provider */
+> +		out_args->np =3D new;
+> +		of_node_put(cur);
+> +		cur =3D new;
+> +	}
+> +fail:
+> +	of_node_put(cur);
+> +	of_node_put(new);
+> +
+> +	return -EINVAL;
+> +}
+> +EXPORT_SYMBOL(of_parse_phandle_with_args_map);
+> +
+> +/**
+>  * of_parse_phandle_with_fixed_args() - Find a node pointed by phandle =
+in a list
+>  * @np:		pointer to a device tree node containing a list
+>  * @list_name:	property name that contains a list
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index d3a9c2e69001..65ff306403a2 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -344,6 +344,9 @@ extern struct device_node *of_parse_phandle(const =
+struct device_node *np,
+> extern int of_parse_phandle_with_args(const struct device_node *np,
+> 	const char *list_name, const char *cells_name, int index,
+> 	struct of_phandle_args *out_args);
+> +extern int of_parse_phandle_with_args_map(const struct device_node =
+*np,
+> +	const char *list_name, const char *cells_name, const char =
+*map_name,
+> +	const char *mask_name, int index, struct of_phandle_args =
+*out_args);
+> extern int of_parse_phandle_with_fixed_args(const struct device_node =
+*np,
+> 	const char *list_name, int cells_count, int index,
+> 	struct of_phandle_args *out_args);
+> @@ -738,6 +741,17 @@ static inline int =
+of_parse_phandle_with_args(const struct device_node *np,
+> 	return -ENOSYS;
+> }
+>=20
+> +static inline int of_parse_phandle_with_args_map(const struct =
+device_node *np,
+> +						 const char *list_name,
+> +						 const char *cells_name,
+> +						 const char *map_name,
+> +						 const char *mask_name,
+> +						 int index,
+> +						 struct of_phandle_args =
+*out_args)
+> +{
+> +	return -ENOSYS;
+> +}
+> +
+> static inline int of_parse_phandle_with_fixed_args(const struct =
+device_node *np,
+> 	const char *list_name, int cells_count, int index,
+> 	struct of_phandle_args *out_args)
+> --=20
+> 2.10.0.297.gf6727b0
+>=20
+
