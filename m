@@ -1,57 +1,44 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2] gpio: em: depnd on ARCH_SHMOBILE
-Date: Thu, 24 Nov 2016 10:38:48 +0100
-Message-ID: <CAMuHMdWKcfOb6v0GQrcAadhPeM1d8M_EmNicZqpO0+2VfeoBog@mail.gmail.com>
-References: <20161120174836.1787-1-pbrobinson@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Stephen Boyd <stephen.boyd@linaro.org>
+Subject: [PATCH 0/2] OF phandle nexus support + GPIO nexus
+Date: Thu, 24 Nov 2016 02:25:26 -0800
+Message-ID: <20161124102529.20212-1-stephen.boyd@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wj0-f196.google.com ([209.85.210.196]:32879 "EHLO
-        mail-wj0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934194AbcKXJiu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 04:38:50 -0500
-In-Reply-To: <20161120174836.1787-1-pbrobinson@gmail.com>
+Received: from mail-pg0-f46.google.com ([74.125.83.46]:35249 "EHLO
+        mail-pg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756944AbcKXKZc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 05:25:32 -0500
+Received: by mail-pg0-f46.google.com with SMTP id p66so17352290pga.2
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Nov 2016 02:25:32 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Robinson <pbrobinson@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+To: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>
 
-CC linux-renesas-soc
+This is one small chunk of work related to DT overlays for expansion
+boards. It would be good to have a way to expose #<list>-cells types of
+providers through a connector in a standard way. So we introduce a way
+to make "nexus" nodes for these types of properties to remap the consumer
+number space to the other side of the connector's number space. It's
+basically a copy of the interrupt nexus implementation, but without
+the address space matching design and interrupt-parent walking.
 
-On Sun, Nov 20, 2016 at 6:48 PM, Peter Robinson <pbrobinson@gmail.com> wrote:
-> The GPIO_EM is part of the Renesas SoCs so depend on the arch.
->
-> Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
-> ---
->  drivers/gpio/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> v1->v2:
->         - Add COMPILE_TEST
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index d011cb8..a09e237 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -171,7 +171,7 @@ config GPIO_DWAPB
->
->  config GPIO_EM
->         tristate "Emma Mobile GPIO"
-> -       depends on ARM && OF_GPIO
-> +       depends on (ARCH_SHMOBILE || COMPILE_TEST) && OF_GPIO
+The first patch implements a generic method to do this, and the second patch
+adds a unit test for it. The third patch is more of an example than anything
+else. It shows how we would modify frameworks to use the new API.
 
-For ARM SoCs, ARCH_SHMOBILE is being phased out in favor of ARCH_RENESAS.
-Note that ARCH_SHMOBILE is also set for some SuperH SoCs.
+Stephen Boyd (3):
+  of: Support parsing phandle argument lists through a nexus node
+  of: unittest: Add phandle remapping test
+  gpio: Support gpio nexus dt bindings
 
-However, ARCH_EMEV2 is even more suitable here.
+ drivers/gpio/gpiolib-of.c                   |   5 +-
+ drivers/of/base.c                           | 146 ++++++++++++++++++++++++++++
+ drivers/of/unittest-data/testcases.dts      |  11 +++
+ drivers/of/unittest-data/tests-phandle.dtsi |  24 +++++
+ drivers/of/unittest.c                       | 124 +++++++++++++++++++++++
+ include/linux/of.h                          |  14 +++
+ 6 files changed, 322 insertions(+), 2 deletions(-)
 
-Gr{oetje,eeting}s,
+-- 
+2.10.0.297.gf6727b0
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
