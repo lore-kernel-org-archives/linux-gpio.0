@@ -1,609 +1,734 @@
-From: kbuild test robot <fengguang.wu@intel.com>
-Subject: [gpio:thread-irq-simpler 36/36] drivers/gpio/gpio-adnp.c:482:52:
- warning: passing argument 3 of 'gpiochip_set_nested_irqchip' makes integer
- from pointer without a cast
-Date: Fri, 25 Nov 2016 00:08:12 +0800
-Message-ID: <201611250008.80XYrD5n%fengguang.wu@intel.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH RESEND 2/2] gpio: axp209: add pinctrl support
+Date: Fri, 25 Nov 2016 00:08:58 +0800
+Message-ID: <CAGb2v64TfspS0_DR3vEyjtfN-6tRnoT89Q-Gx5ctzDim5vW_fA@mail.gmail.com>
+References: <20161123141151.25315-1-quentin.schulz@free-electrons.com> <20161123141151.25315-3-quentin.schulz@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="sm4nu43k4a2Rpi4c"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:64652 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757143AbcKXQIp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 24 Nov 2016 11:08:45 -0500
-Content-Disposition: inline
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:38474 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751008AbcKXQKW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 11:10:22 -0500
+In-Reply-To: <20161123141151.25315-3-quentin.schulz@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: kbuild-all@01.org, linux-gpio@vger.kernel.org
+To: Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
+On Wed, Nov 23, 2016 at 10:11 PM, Quentin Schulz
+<quentin.schulz@free-electrons.com> wrote:
+> The GPIOs present in the AXP209 PMIC have multiple functions. They
+> typically allow a pin to be used as GPIO input or output and can also be
+> used as ADC or regulator for example.[1]
+>
+> This adds the possibility to use all functions of the GPIOs present in
+> the AXP209 PMIC thanks to pinctrl subsystem.
+>
+> [1] see registers 90H, 92H and 93H at
+>     http://dl.linux-sunxi.org/AXP/AXP209_Datasheet_v1.0en.pdf
+>
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio-axp209.txt       |  28 +-
+>  drivers/gpio/gpio-axp209.c                         | 551 ++++++++++++++++++---
+>  2 files changed, 503 insertions(+), 76 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-axp209.txt b/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
+> index a661130..a5bfe87 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-axp209.txt
+> @@ -1,4 +1,4 @@
+> -AXP209 GPIO controller
+> +AXP209 GPIO & pinctrl controller
+>
+>  This driver follows the usual GPIO bindings found in
+>  Documentation/devicetree/bindings/gpio/gpio.txt
+> @@ -28,3 +28,29 @@ axp209: pmic@34 {
+>                 #gpio-cells = <2>;
+>         };
+>  };
+> +
+> +The GPIOs can be muxed to other functions and therefore, must be a subnode of
+> +axp_gpio.
+> +
+> +Example:
+> +
+> +&axp_gpio {
+> +       gpio0_adc: gpio0_adc {
+> +               pin = "GPIO0";
+> +               function = "adc";
+> +       };
+> +};
+> +
+> +&example_node {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&gpio0_adc>;
+> +};
+> +
+> +GPIOs and their functions
+> +-------------------------
+> +
+> +GPIO   |       Functions
+> +------------------------
+> +GPIO0  |       gpio_in, gpio_out, ldo, adc
+> +GPIO1  |       gpio_in, gpio_out, ldo, adc
+> +GPIO2  |       gpio_in, gpio_out
+> diff --git a/drivers/gpio/gpio-axp209.c b/drivers/gpio/gpio-axp209.c
+> index 4a346b7..0a64cfc 100644
+> --- a/drivers/gpio/gpio-axp209.c
+> +++ b/drivers/gpio/gpio-axp209.c
+> @@ -1,7 +1,8 @@
+>  /*
+> - * AXP20x GPIO driver
+> + * AXP20x Pin control driver
+>   *
+>   * Copyright (C) 2016 Maxime Ripard <maxime.ripard@free-electrons.com>
+> + * Copyright (C) 2016 Quentin Schulz <quentin.schulz@free-electrons.com>
+>   *
+>   * This program is free software; you can redistribute it and/or modify it
+>   * under  the terms of the GNU General  Public License as published by the
+> @@ -21,52 +22,103 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+>  #include <linux/slab.h>
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <linux/pinctrl/pinmux.h>
+> +#include <linux/pinctrl/pinconf-generic.h>
+>
+>  #define AXP20X_GPIO_FUNCTIONS          0x7
+>  #define AXP20X_GPIO_FUNCTION_OUT_LOW   0
+>  #define AXP20X_GPIO_FUNCTION_OUT_HIGH  1
+>  #define AXP20X_GPIO_FUNCTION_INPUT     2
+>
+> -struct axp20x_gpio {
+> -       struct gpio_chip        chip;
+> -       struct regmap           *regmap;
+> -};
+> +#define AXP20X_PINCTRL_PIN(_pin_num, _pin, _regs)              \
+> +       {                                                       \
+> +               .number = _pin_num,                             \
+> +               .name = _pin,                                   \
+> +               .drv_data = _regs,                              \
+> +       }
+>
+> -static int axp20x_gpio_get_reg(unsigned offset)
+> -{
+> -       switch (offset) {
+> -       case 0:
+> -               return AXP20X_GPIO0_CTRL;
+> -       case 1:
+> -               return AXP20X_GPIO1_CTRL;
+> -       case 2:
+> -               return AXP20X_GPIO2_CTRL;
+> +#define AXP20X_PIN(_pin, ...)                                  \
+> +       {                                                       \
+> +               .pin = _pin,                                    \
+> +               .functions = (struct axp20x_desc_function[]) {  \
+> +                             __VA_ARGS__, { } },               \
+>         }
+>
+> -       return -EINVAL;
+> -}
+> +#define AXP20X_FUNCTION(_val, _name)                           \
+> +       {                                                       \
+> +               .name = _name,                                  \
+> +               .muxval = _val,                                 \
+> +       }
+>
+> -static int axp20x_gpio_input(struct gpio_chip *chip, unsigned offset)
+> -{
+> -       struct axp20x_gpio *gpio = gpiochip_get_data(chip);
+> -       int reg;
+> +struct axp20x_desc_function {
+> +       const char      *name;
+> +       u8              muxval;
+> +};
+>
+> -       reg = axp20x_gpio_get_reg(offset);
+> -       if (reg < 0)
+> -               return reg;
+> +struct axp20x_desc_pin {
+> +       struct pinctrl_pin_desc         pin;
+> +       struct axp20x_desc_function     *functions;
+> +};
+>
+> -       return regmap_update_bits(gpio->regmap, reg,
+> -                                 AXP20X_GPIO_FUNCTIONS,
+> -                                 AXP20X_GPIO_FUNCTION_INPUT);
+> -}
+> +struct axp20x_pinctrl_desc {
+> +       const struct axp20x_desc_pin    *pins;
+> +       int                             npins;
+> +       unsigned int                    pin_base;
 
---sm4nu43k4a2Rpi4c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+You do not need pin_base.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git thread-irq-simpler
-head:   415500f47fb6a4c6402b9a3622ff10b8cb3b1c84
-commit: 415500f47fb6a4c6402b9a3622ff10b8cb3b1c84 [36/36] gpio: set explicit nesting on drivers
-config: i386-randconfig-x019-201647 (attached as .config)
-compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
-reproduce:
-        git checkout 415500f47fb6a4c6402b9a3622ff10b8cb3b1c84
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+> +};
+> +
+> +struct axp20x_pinctrl_function {
+> +       const char      *name;
+> +       const char      **groups;
+> +       unsigned int    ngroups;
+> +};
+> +
+> +struct axp20x_pinctrl_group {
+> +       const char      *name;
+> +       unsigned long   config;
+> +       unsigned int    pin;
+> +};
+> +
+> +struct axp20x_pctl {
+> +       struct pinctrl_dev                      *pctl_dev;
+> +       struct device                           *dev;
+> +       struct gpio_chip                        chip;
+> +       struct regmap                           *regmap;
+> +       const struct axp20x_pinctrl_desc        *desc;
+> +       struct axp20x_pinctrl_group             *groups;
+> +       unsigned int                            ngroups;
+> +       struct axp20x_pinctrl_function          *functions;
+> +       unsigned int                            nfunctions;
+> +};
+> +
+> +static const struct axp20x_desc_pin axp209_pins[] = {
+> +       AXP20X_PIN(AXP20X_PINCTRL_PIN(0, "GPIO0", (void *)AXP20X_GPIO0_CTRL),
+> +                  AXP20X_FUNCTION(0x0, "gpio_out"),
+> +                  AXP20X_FUNCTION(0x2, "gpio_in"),
+> +                  AXP20X_FUNCTION(0x3, "ldo"),
+> +                  AXP20X_FUNCTION(0x4, "adc")),
+> +       AXP20X_PIN(AXP20X_PINCTRL_PIN(1, "GPIO1", (void *)AXP20X_GPIO1_CTRL),
+> +                  AXP20X_FUNCTION(0x0, "gpio_out"),
+> +                  AXP20X_FUNCTION(0x2, "gpio_in"),
+> +                  AXP20X_FUNCTION(0x3, "ldo"),
+> +                  AXP20X_FUNCTION(0x4, "adc")),
+> +       AXP20X_PIN(AXP20X_PINCTRL_PIN(2, "GPIO2", (void *)AXP20X_GPIO2_CTRL),
+> +                  AXP20X_FUNCTION(0x0, "gpio_out"),
+> +                  AXP20X_FUNCTION(0x2, "gpio_in")),
+> +};
+> +
+> +static const struct axp20x_pinctrl_desc axp20x_pinctrl_data = {
+> +       .pins   = axp209_pins,
+> +       .npins  = ARRAY_SIZE(axp209_pins),
+> +};
+>
+>  static int axp20x_gpio_get(struct gpio_chip *chip, unsigned offset)
+>  {
+> -       struct axp20x_gpio *gpio = gpiochip_get_data(chip);
+> +       struct axp20x_pctl *pctl = gpiochip_get_data(chip);
+>         unsigned int val;
+>         int ret;
+>
+> -       ret = regmap_read(gpio->regmap, AXP20X_GPIO20_SS, &val);
+> +       ret = regmap_read(pctl->regmap, AXP20X_GPIO20_SS, &val);
+>         if (ret)
+>                 return ret;
+>
+> @@ -75,15 +127,12 @@ static int axp20x_gpio_get(struct gpio_chip *chip, unsigned offset)
+>
+>  static int axp20x_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+>  {
+> -       struct axp20x_gpio *gpio = gpiochip_get_data(chip);
+> +       struct axp20x_pctl *pctl = gpiochip_get_data(chip);
+> +       int pin_reg = (int)pctl->desc->pins[offset].pin.drv_data;
+>         unsigned int val;
+> -       int reg, ret;
+> -
+> -       reg = axp20x_gpio_get_reg(offset);
+> -       if (reg < 0)
+> -               return reg;
+> +       int ret;
+>
+> -       ret = regmap_read(gpio->regmap, reg, &val);
+> +       ret = regmap_read(pctl->regmap, pin_reg, &val);
+>         if (ret)
+>                 return ret;
+>
+> @@ -102,33 +151,335 @@ static int axp20x_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+>         return val & 2;
+>  }
+>
+> -static int axp20x_gpio_output(struct gpio_chip *chip, unsigned offset,
+> +static void axp20x_gpio_set(struct gpio_chip *chip, unsigned int offset,
+> +                           int value)
+> +{
+> +       struct axp20x_pctl *pctl = gpiochip_get_data(chip);
+> +       int pin_reg = (int)pctl->desc->pins[offset].pin.drv_data;
+> +
+> +       regmap_update_bits(pctl->regmap, pin_reg,
+> +                          AXP20X_GPIO_FUNCTIONS,
+> +                          value ? AXP20X_GPIO_FUNCTION_OUT_HIGH
+> +                                : AXP20X_GPIO_FUNCTION_OUT_LOW);
+> +}
+> +
+> +static int axp20x_gpio_input(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       return pinctrl_gpio_direction_input(chip->base + offset);
+> +}
+> +
+> +static int axp20x_gpio_output(struct gpio_chip *chip, unsigned int offset,
+>                               int value)
+>  {
+> -       struct axp20x_gpio *gpio = gpiochip_get_data(chip);
+> -       int reg;
+> +       chip->set(chip, offset, value);
+>
+> -       reg = axp20x_gpio_get_reg(offset);
+> -       if (reg < 0)
+> -               return reg;
+> +       return 0;
+> +}
+>
+> -       return regmap_update_bits(gpio->regmap, reg,
+> -                                 AXP20X_GPIO_FUNCTIONS,
+> -                                 value ? AXP20X_GPIO_FUNCTION_OUT_HIGH
+> -                                 : AXP20X_GPIO_FUNCTION_OUT_LOW);
+> +static int axp20x_pmx_set(struct pinctrl_dev *pctldev, unsigned int offset,
+> +                         u8 config)
+> +{
+> +       struct axp20x_pctl *pctl = pinctrl_dev_get_drvdata(pctldev);
+> +       int pin_reg = (int)pctl->desc->pins[offset].pin.drv_data;
+> +
+> +       return regmap_update_bits(pctl->regmap, pin_reg, AXP20X_GPIO_FUNCTIONS,
+> +                                 config);
+>  }
+>
+> -static void axp20x_gpio_set(struct gpio_chip *chip, unsigned offset,
+> -                           int value)
+> +static int axp20x_pmx_func_cnt(struct pinctrl_dev *pctldev)
+> +{
+> +       struct axp20x_pctl *pctl = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +       return pctl->nfunctions;
+> +}
+> +
+> +static const char *axp20x_pmx_func_name(struct pinctrl_dev *pctldev,
+> +                                       unsigned int selector)
+> +{
+> +       struct axp20x_pctl *pctl = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +       return pctl->functions[selector].name;
+> +}
+> +
+> +static int axp20x_pmx_func_groups(struct pinctrl_dev *pctldev,
+> +                                 unsigned int selector,
+> +                                 const char * const **groups,
+> +                                 unsigned int *num_groups)
+> +{
+> +       struct axp20x_pctl *pctl = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +       *groups = pctl->functions[selector].groups;
+> +       *num_groups = pctl->functions[selector].ngroups;
+> +
+> +       return 0;
+> +}
+> +
+> +static struct axp20x_desc_function *
+> +axp20x_pinctrl_desc_find_func_by_name(struct axp20x_pctl *pctl,
+> +                                     const char *group, const char *func)
+> +{
+> +       const struct axp20x_desc_pin *pin;
+> +       struct axp20x_desc_function *desc_func;
+> +       int i;
+> +
+> +       for (i = 0; i < pctl->desc->npins; i++) {
+> +               pin = &pctl->desc->pins[i];
+> +
+> +               if (!strcmp(pin->pin.name, group)) {
+> +                       desc_func = pin->functions;
+> +
+> +                       while (desc_func->name) {
+> +                               if (!strcmp(desc_func->name, func))
+> +                                       return desc_func;
+> +                               desc_func++;
+> +                       }
+> +
+> +                       /*
+> +                        * Pins are uniquely named. Groups are named after one
+> +                        * pin name. If one pin matches group name but its
+> +                        * function cannot be found, no other pin will match
+> +                        * group name.
+> +                        */
+> +                       return NULL;
+> +               }
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+> +static int axp20x_pmx_set_mux(struct pinctrl_dev *pctldev,
+> +                             unsigned int function, unsigned int group)
+> +{
+> +       struct axp20x_pctl *pctl = pinctrl_dev_get_drvdata(pctldev);
+> +       struct axp20x_pinctrl_group *g = pctl->groups + group;
+> +       struct axp20x_pinctrl_function *func = pctl->functions + function;
+> +       struct axp20x_desc_function *desc_func =
+> +               axp20x_pinctrl_desc_find_func_by_name(pctl, g->name,
+> +                                                     func->name);
+> +       if (!desc_func)
+> +               return -EINVAL;
+> +
+> +       return axp20x_pmx_set(pctldev, g->pin, desc_func->muxval);
+> +}
+> +
+> +static struct axp20x_desc_function *
+> +axp20x_pctl_desc_find_func_by_pin(struct axp20x_pctl *pctl, unsigned int offset,
+> +                                 const char *func)
+> +{
+> +       const struct axp20x_desc_pin *pin;
+> +       struct axp20x_desc_function *desc_func;
+> +       int i;
+> +
+> +       for (i = 0; i < pctl->desc->npins; i++) {
+> +               pin = &pctl->desc->pins[i];
+> +
+> +               if (pin->pin.number == offset) {
+> +                       desc_func = pin->functions;
+> +
+> +                       while (desc_func->name) {
+> +                               if (!strcmp(desc_func->name, func))
+> +                                       return desc_func;
+> +
+> +                               desc_func++;
+> +                       }
+> +               }
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+> +static int axp20x_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
+> +                                        struct pinctrl_gpio_range *range,
+> +                                        unsigned int offset, bool input)
+> +{
+> +       struct axp20x_pctl *pctl = pinctrl_dev_get_drvdata(pctldev);
+> +       struct axp20x_desc_function *desc_func;
+> +       const char *func;
+> +
+> +       if (input)
+> +               func = "gpio_in";
+> +       else
+> +               func = "gpio_out";
+> +
+> +       desc_func = axp20x_pctl_desc_find_func_by_pin(pctl, offset, func);
+> +       if (!desc_func)
+> +               return -EINVAL;
+> +
+> +       return axp20x_pmx_set(pctldev, offset, desc_func->muxval);
+> +}
+> +
+> +static const struct pinmux_ops axp20x_pmx_ops = {
+> +       .get_functions_count    = axp20x_pmx_func_cnt,
+> +       .get_function_name      = axp20x_pmx_func_name,
+> +       .get_function_groups    = axp20x_pmx_func_groups,
+> +       .set_mux                = axp20x_pmx_set_mux,
+> +       .gpio_set_direction     = axp20x_pmx_gpio_set_direction,
+> +       .strict                 = true,
+> +};
+> +
+> +static int axp20x_groups_cnt(struct pinctrl_dev *pctldev)
+> +{
+> +       struct axp20x_pctl *pctl = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +       return pctl->ngroups;
+> +}
+> +
+> +static int axp20x_group_pins(struct pinctrl_dev *pctldev, unsigned int selector,
+> +                            const unsigned int **pins, unsigned int *num_pins)
+> +{
+> +       struct axp20x_pctl *pctl = pinctrl_dev_get_drvdata(pctldev);
+> +       struct axp20x_pinctrl_group *g = pctl->groups + selector;
+> +
+> +       *pins = (unsigned int *)&g->pin;
+> +       *num_pins = 1;
+> +
+> +       return 0;
+> +}
+> +
+> +static const char *axp20x_group_name(struct pinctrl_dev *pctldev,
+> +                                    unsigned int selector)
+> +{
+> +       struct axp20x_pctl *pctl = pinctrl_dev_get_drvdata(pctldev);
+> +
+> +       return pctl->groups[selector].name;
+> +}
+> +
+> +static const struct pinctrl_ops axp20x_pctrl_ops = {
+> +       .dt_node_to_map         = pinconf_generic_dt_node_to_map_group,
+> +       .dt_free_map            = pinconf_generic_dt_free_map,
+> +       .get_groups_count       = axp20x_groups_cnt,
+> +       .get_group_name         = axp20x_group_name,
+> +       .get_group_pins         = axp20x_group_pins,
+> +};
+> +
+> +static struct axp20x_pinctrl_function *
+> +axp20x_pinctrl_function_by_name(struct axp20x_pctl *pctl, const char *name)
+> +{
+> +       struct axp20x_pinctrl_function *func = pctl->functions;
+> +
+> +       while (func->name) {
+> +               if (!strcmp(func->name, name))
+> +                       return func;
+> +               func++;
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+> +static int axp20x_pinctrl_add_function(struct axp20x_pctl *pctl,
+> +                                      const char *name)
+>  {
+> -       axp20x_gpio_output(chip, offset, value);
+> +       struct axp20x_pinctrl_function *func = pctl->functions;
+> +
+> +       while (func->name) {
+> +               if (!strcmp(func->name, name)) {
+> +                       func->ngroups++;
+> +                       return -EEXIST;
+> +               }
+> +
+> +               func++;
+> +       }
+> +
+> +       func->name = name;
+> +       func->ngroups = 1;
+> +
+> +       pctl->nfunctions++;
+> +
+> +       return 0;
+>  }
+>
+> -static int axp20x_gpio_probe(struct platform_device *pdev)
+> +static int axp20x_attach_group_function(struct platform_device *pdev,
+> +                                       const struct axp20x_desc_pin *pin)
+> +{
+> +       struct axp20x_pctl *pctl = platform_get_drvdata(pdev);
+> +       struct axp20x_desc_function *desc_func = pin->functions;
+> +       struct axp20x_pinctrl_function *func;
+> +       const char **func_grp;
+> +
+> +       while (desc_func->name) {
+> +               func = axp20x_pinctrl_function_by_name(pctl, desc_func->name);
+> +               if (!func)
+> +                       return -EINVAL;
+> +
+> +               if (!func->groups) {
+> +                       func->groups = devm_kzalloc(&pdev->dev,
+> +                                                   func->ngroups * sizeof(const char *),
+> +                                                   GFP_KERNEL);
+> +                       if (!func->groups)
+> +                               return -ENOMEM;
+> +               }
+> +
+> +               func_grp = func->groups;
+> +               while (*func_grp)
+> +                       func_grp++;
+> +
+> +               *func_grp = pin->pin.name;
+> +               desc_func++;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int axp20x_build_state(struct platform_device *pdev)
+> +{
+> +       struct axp20x_pctl *pctl = platform_get_drvdata(pdev);
+> +       unsigned int npins = pctl->desc->npins;
+> +       const struct axp20x_desc_pin *pin;
+> +       struct axp20x_desc_function *func;
+> +       int i, ret;
+> +
+> +       pctl->ngroups = npins;
+> +       pctl->groups = devm_kzalloc(&pdev->dev,
+> +                                   pctl->ngroups * sizeof(*pctl->groups),
+> +                                   GFP_KERNEL);
+> +       if (!pctl->groups)
+> +               return -ENOMEM;
+> +
+> +       for (i = 0; i < npins; i++) {
+> +               pctl->groups[i].name = pctl->desc->pins[i].pin.name;
+> +               pctl->groups[i].pin = pctl->desc->pins[i].pin.number;
+> +       }
+> +
+> +       /* We assume 4 functions per pin should be enough as a default max */
+> +       pctl->functions = devm_kzalloc(&pdev->dev,
+> +                                      npins * 4 * sizeof(*pctl->functions),
+> +                                      GFP_KERNEL);
+> +       if (!pctl->functions)
+> +               return -ENOMEM;
+> +
+> +       /* Create a list of uniquely named functions */
+> +       for (i = 0; i < npins; i++) {
+> +               pin = &pctl->desc->pins[i];
+> +               func = pin->functions;
+> +
+> +               while (func->name) {
+> +                       axp20x_pinctrl_add_function(pctl, func->name);
+> +                       func++;
+> +               }
+> +       }
+> +
+> +       pctl->functions = krealloc(pctl->functions,
+> +                                  pctl->nfunctions * sizeof(*pctl->functions),
+> +                                  GFP_KERNEL);
+> +
+> +       for (i = 0; i < npins; i++) {
+> +               pin = &pctl->desc->pins[i];
+> +               ret = axp20x_attach_group_function(pdev, pin);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int axp20x_pctl_probe(struct platform_device *pdev)
+>  {
+>         struct axp20x_dev *axp20x = dev_get_drvdata(pdev->dev.parent);
+> -       struct axp20x_gpio *gpio;
+> -       int ret;
+> +       const struct axp20x_desc_pin *pin;
+> +       struct axp20x_pctl *pctl;
+> +       struct pinctrl_desc *pctrl_desc;
+> +       struct pinctrl_pin_desc *pins;
+> +       int ret, i;
+>
+>         if (!of_device_is_available(pdev->dev.of_node))
+>                 return -ENODEV;
+> @@ -138,51 +489,101 @@ static int axp20x_gpio_probe(struct platform_device *pdev)
+>                 return -EINVAL;
+>         }
+>
+> -       gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
+> -       if (!gpio)
+> +       pctl = devm_kzalloc(&pdev->dev, sizeof(*pctl), GFP_KERNEL);
+> +       if (!pctl)
+> +               return -ENOMEM;
+> +
+> +       pctl->chip.base                 = -1;
+> +       pctl->chip.can_sleep            = true;
+> +       pctl->chip.request              = gpiochip_generic_request;
+> +       pctl->chip.free                 = gpiochip_generic_free;
+> +       pctl->chip.parent               = &pdev->dev;
+> +       pctl->chip.label                = dev_name(&pdev->dev);
+> +       pctl->chip.owner                = THIS_MODULE;
+> +       pctl->chip.get                  = axp20x_gpio_get;
+> +       pctl->chip.get_direction        = axp20x_gpio_get_direction;
+> +       pctl->chip.set                  = axp20x_gpio_set;
+> +       pctl->chip.direction_input      = axp20x_gpio_input;
+> +       pctl->chip.direction_output     = axp20x_gpio_output;
+> +       pctl->chip.ngpio                = 3;
+> +       pctl->chip.can_sleep            = true;
+> +
+> +       pctl->regmap = axp20x->regmap;
+> +
+> +       pctl->desc = &axp20x_pinctrl_data;
+> +       pctl->dev = &pdev->dev;
+> +
+> +       platform_set_drvdata(pdev, pctl);
+> +
+> +       ret = axp20x_build_state(pdev);
+> +       if (ret)
+> +               return ret;
+> +
+> +       pins = devm_kzalloc(&pdev->dev, pctl->desc->npins * sizeof(*pins),
+> +                           GFP_KERNEL);
+> +       if (!pins)
+>                 return -ENOMEM;
+>
+> -       gpio->chip.base                 = -1;
+> -       gpio->chip.can_sleep            = true;
+> -       gpio->chip.parent               = &pdev->dev;
+> -       gpio->chip.label                = dev_name(&pdev->dev);
+> -       gpio->chip.owner                = THIS_MODULE;
+> -       gpio->chip.get                  = axp20x_gpio_get;
+> -       gpio->chip.get_direction        = axp20x_gpio_get_direction;
+> -       gpio->chip.set                  = axp20x_gpio_set;
+> -       gpio->chip.direction_input      = axp20x_gpio_input;
+> -       gpio->chip.direction_output     = axp20x_gpio_output;
+> -       gpio->chip.ngpio                = 3;
+> -
+> -       gpio->regmap = axp20x->regmap;
+> -
+> -       ret = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
+> +       for (i = 0; i < pctl->desc->npins; i++)
+> +               pins[i] = pctl->desc->pins[i].pin;
+> +
+> +       pctrl_desc = devm_kzalloc(&pdev->dev, sizeof(*pctrl_desc), GFP_KERNEL);
+> +       if (!pctrl_desc)
+> +               return -ENOMEM;
+> +
+> +       pctrl_desc->name = dev_name(&pdev->dev);
+> +       pctrl_desc->owner = THIS_MODULE;
+> +       pctrl_desc->pins = pins;
+> +       pctrl_desc->npins = pctl->desc->npins;
+> +       pctrl_desc->pctlops = &axp20x_pctrl_ops;
+> +       pctrl_desc->pmxops = &axp20x_pmx_ops;
+> +
+> +       pctl->pctl_dev = devm_pinctrl_register(&pdev->dev, pctrl_desc, pctl);
+> +       if (IS_ERR(pctl->pctl_dev)) {
+> +               dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
+> +               return PTR_ERR(pctl->pctl_dev);
+> +       }
+> +
+> +       ret = devm_gpiochip_add_data(&pdev->dev, &pctl->chip, pctl);
+>         if (ret) {
+>                 dev_err(&pdev->dev, "Failed to register GPIO chip\n");
+>                 return ret;
+>         }
+>
+> +       for (i = 0; i < pctl->desc->npins; i++) {
+> +               pin = pctl->desc->pins + i;
+> +
+> +               ret = gpiochip_add_pin_range(&pctl->chip, dev_name(&pdev->dev),
+> +                                            pin->pin.number, pin->pin.number,
+> +                                            1);
 
-All warnings (new ones prefixed by >>):
+The pins, unlike in sunxi, are sequential and contiguous. There's no need for
+the loop. Just add them in one go.
 
-   drivers/gpio/gpio-adnp.c: In function 'adnp_irq_setup':
->> drivers/gpio/gpio-adnp.c:482:52: warning: passing argument 3 of 'gpiochip_set_nested_irqchip' makes integer from pointer without a cast [-Wint-conversion]
-     gpiochip_set_nested_irqchip(chip, &adnp_irq_chip, adnp_irq);
-                                                       ^~~~~~~~
-   In file included from drivers/gpio/gpio-adnp.c:9:0:
-   include/linux/gpio/driver.h:273:6: note: expected 'int' but argument is of type 'irqreturn_t (*)(int,  void *) {aka enum irqreturn (*)(int,  void *)}'
-    void gpiochip_set_nested_irqchip(struct gpio_chip *gpiochip,
-         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +               if (ret) {
+> +                       dev_err(&pdev->dev, "failed to add pin range\n");
+> +                       return ret;
+> +               }
+> +       }
+> +
+>         dev_info(&pdev->dev, "AXP209 GPIO driver loaded\n");
+>
+>         return 0;
+>  }
+>
+> -static const struct of_device_id axp20x_gpio_match[] = {
+> +static const struct of_device_id axp20x_pctl_match[] = {
+>         { .compatible = "x-powers,axp209-gpio" },
+>         { }
+>  };
+> -MODULE_DEVICE_TABLE(of, axp20x_gpio_match);
+> +MODULE_DEVICE_TABLE(of, axp20x_pctl_match);
+>
+> -static struct platform_driver axp20x_gpio_driver = {
+> -       .probe          = axp20x_gpio_probe,
+> +static struct platform_driver axp20x_pctl_driver = {
+> +       .probe          = axp20x_pctl_probe,
+>         .driver = {
+>                 .name           = "axp20x-gpio",
+> -               .of_match_table = axp20x_gpio_match,
+> +               .of_match_table = axp20x_pctl_match,
+>         },
+>  };
+>
+> -module_platform_driver(axp20x_gpio_driver);
+> +module_platform_driver(axp20x_pctl_driver);
+>
+>  MODULE_AUTHOR("Maxime Ripard <maxime.ripard@free-electrons.com>");
+> +MODULE_AUTHOR("Quentin Schulz <quentin.schulz@free-electrons.com>");
+>  MODULE_DESCRIPTION("AXP20x PMIC GPIO driver");
+>  MODULE_LICENSE("GPL");
+> --
+> 2.9.3
+>
 
-vim +/gpiochip_set_nested_irqchip +482 drivers/gpio/gpio-adnp.c
+Apart from the minor comments above, and Thomas' earlier comments,
+this patch looks good to me.
 
-   466			dev_err(chip->parent, "can't request IRQ#%d: %d\n",
-   467				adnp->client->irq, err);
-   468			return err;
-   469		}
-   470	
-   471		err = gpiochip_irqchip_add_nested(chip,
-   472						  &adnp_irq_chip,
-   473						  0,
-   474						  handle_simple_irq,
-   475						  IRQ_TYPE_NONE);
-   476		if (err) {
-   477			dev_err(chip->parent,
-   478				"could not connect irqchip to gpiochip\n");
-   479			return err;
-   480		}
-   481	
- > 482		gpiochip_set_nested_irqchip(chip, &adnp_irq_chip, adnp_irq);
-   483	
-   484		return 0;
-   485	}
-   486	
-   487	static int adnp_i2c_probe(struct i2c_client *client,
-   488					    const struct i2c_device_id *id)
-   489	{
-   490		struct device_node *np = client->dev.of_node;
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
---sm4nu43k4a2Rpi4c
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-
---sm4nu43k4a2Rpi4c--
+ChenYu
