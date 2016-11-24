@@ -1,68 +1,46 @@
-From: Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [PATCH 3/3] ARM: dts: da850: Add node for pullup/pulldown pinconf
-Date: Thu, 24 Nov 2016 11:24:47 +0530
-Message-ID: <263cdd6d-ed04-647e-a4e9-4e3e094e54d9@ti.com>
-References: <1479871767-20160-1-git-send-email-david@lechnology.com>
- <1479871767-20160-4-git-send-email-david@lechnology.com>
- <8c3e6535-4b79-9731-f801-c13f007e48ab@ti.com>
- <06bc8517-8c33-85a1-9d5a-29042c7281db@lechnology.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] gpio: tegra186: Add support for T186 GPIO
+Date: Thu, 24 Nov 2016 12:06:16 +0530
+Message-ID: <58368A60.2010702@nvidia.com>
+References: <1478083719-14836-1-git-send-email-smangipudi@nvidia.com> <0e3e89a8-a2f1-68c2-0586-58902fb91587@wwwdotorg.org> <20161122173042.GA3239@ulmo.ba.sec> <CACRpkdbfkv7Yt3cOah_BGcgnqVtxvzWOqm2+HH_rkrpnJt0nFA@mail.gmail.com> <20161123194036.GA25876@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:54346 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751066AbcKXF4O (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 00:56:14 -0500
-In-Reply-To: <06bc8517-8c33-85a1-9d5a-29042c7281db@lechnology.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161123194036.GA25876-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: David Lechner <david@lechnology.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Axel Haslam <ahaslam@baylibre.com>, Alexandre Bailon <abailon@baylibre.com>, =?UTF-8?Q?Bartosz_Go=c5=82aszewski?= <bgolaszewski@baylibre.com>
 
-On Wednesday 23 November 2016 09:54 PM, David Lechner wrote:
-> On 11/23/2016 05:12 AM, Sekhar Nori wrote:
->> On Wednesday 23 November 2016 08:59 AM, David Lechner wrote:
->>> This SoC has a separate pin controller for configuring pullup/pulldown
->>> bias on groups of pins.
->>>
->>> Signed-off-by: David Lechner <david@lechnology.com>
->>> ---
->>>  arch/arm/boot/dts/da850.dtsi | 5 +++++
->>>  1 file changed, 5 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
->>> index 8945815..1c0224c 100644
->>> --- a/arch/arm/boot/dts/da850.dtsi
->>> +++ b/arch/arm/boot/dts/da850.dtsi
->>> @@ -210,6 +210,11 @@
->>>              };
->>>
->>>          };
->>> +        pinconf: pin-controller@22c00c {
->>> +            compatible = "ti,da850-pupd";
->>> +            reg = <0x22c00c 0x8>;
->>> +            status = "disabled";
->>> +        };
+
+On Thursday 24 November 2016 01:10 AM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+>
+> On Wed, Nov 23, 2016 at 02:25:51PM +0100, Linus Walleij wrote:
 >>
->> Can you please place this below the i2c1 node. I am trying to keep the
->> nodes sorted by unit address. I know thats broken in many places today,
->> but lets add the new ones where they should eventually end up.
-> 
-> I can do this, but it seems that the predominant sorting pattern here is
-> to keep subsystems together (e.g. all i2c are together, all uart are
-> together, etc.)
+>> This is already possible and several drivers are doing this.
+>>
+>> Everything, all kernel users and all character device users, end up
+>> calling gpiod_request().
+> It looks like I stumbled across the only case where this isn't true.
+> What I was seeing, and which ultimately led me to implement the compact
+> numberspace is that gpiochip_add_data() calls ->get_direction() directly
+> without first going through ->request(). We'd have to guard that one
+> case as well in order for this to work.
+>
+In T186, we have 8 pins per PORT and for some of ports, all pins are not 
+available. Like Port A has 7 pins valid (0 to 6) and port E have 8 pins 
+(0 to 7). The great part is that each port has valid pins start from 0.
 
-Yeah, but that quickly gives away as there are many singleton devices
-and everyone tries to add theirs at the end of the list resulting in
-merge conflicts.
+So just having the number of valid pins for each port as part of SOC 
+data will help to find out whether GPIO exist or not.
 
-> Would a separate patch to sort everything by unit address to get this
-> cleaned up be acceptable?
+        int port = GPIO_PORT(offset);
+         int pin = GPIO_PIN(offset);
 
-Agree with Kevin that it would be churn. If done, it should be last
-thing that gets done in a merge window. I would not attempt it in
-relatively busy merge windows like this one.
+       if (pin >= tgi->soc->port[port].valid_pins)
+                 return false;
 
-Thanks,
-Sekhar
+Similar logic can be used for APIs which can get called without 
+gpio_request().
