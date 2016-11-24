@@ -1,42 +1,67 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] gpio: tegra186: Add support for T186 GPIO
-Date: Fri, 25 Nov 2016 00:24:50 +0100
-Message-ID: <CACRpkdZV-ZtuceTGNhWCvgPMHdmKxiUR2V2Cw_JjbzXa16Mexg@mail.gmail.com>
-References: <1478083719-14836-1-git-send-email-smangipudi@nvidia.com>
- <0e3e89a8-a2f1-68c2-0586-58902fb91587@wwwdotorg.org> <20161122173042.GA3239@ulmo.ba.sec>
- <CACRpkdbfkv7Yt3cOah_BGcgnqVtxvzWOqm2+HH_rkrpnJt0nFA@mail.gmail.com>
- <20161123194036.GA25876@ulmo.ba.sec> <CACRpkdYEpenBbb9u=VPzu4eZOQutk4qP6h5T84=AKi73AJCQHw@mail.gmail.com>
- <20161124163231.GD26657@ulmo.ba.sec>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Getting at gpio- and pinctrl-devices as a consumer
+Date: Fri, 25 Nov 2016 00:29:40 +0100
+Message-ID: <CACRpkdb0cdvxgnuOBNfdY+idVcTXMwzKRYfCsFpiRx2qaVrt=w@mail.gmail.com>
+References: <1479908035-18284-1-git-send-email-peda@axentia.se>
+ <20161124151420.GF4271@katana> <46be889f-a558-0174-f638-c685b23c8ed9@axentia.se>
+ <20161124195230.GA1666@katana> <b481ed92-c9d2-b4da-b484-6d8bec6038f0@axentia.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161124163231.GD26657-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f178.google.com ([209.85.216.178]:32777 "EHLO
+        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751264AbcKXX3l (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 18:29:41 -0500
+Received: by mail-qt0-f178.google.com with SMTP id p16so51829111qta.0
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Nov 2016 15:29:41 -0800 (PST)
+In-Reply-To: <b481ed92-c9d2-b4da-b484-6d8bec6038f0@axentia.se>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Peter Rosin <peda@axentia.se>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa-dev@sang-engineering.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Peter Korsgaard <peter.korsgaard@barco.com>, Wolfram Sang <wsa@the-dreams.de>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Mostly it seems we are in understanding here, looking forward
-to the patches...
+On Thu, Nov 24, 2016 at 10:35 PM, Peter Rosin <peda@axentia.se> wrote:
 
-On Thu, Nov 24, 2016 at 5:32 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Thu, Nov 24, 2016 at 04:08:08PM +0100, Linus Walleij wrote:
-
->> I don't understand. Userspace should have no concern about the
->> numberspace. Lines can be named from DT or ACPI so you can
->> look up line chip+offset from the names.
+> The background is that the gpio- and pinctrl-based i2c-mux drivers
+> need to know if the device that is used to control the mux of the
+> i2c-bus is also sitting on that very same i2c-bus. If it is, the
+> locking has to be different and a bit more relaxed. This relaxed
+> mode cannot be used always, as that would change the mux behavior
+> in an unacceptable way for stuff expecting the (traditional)
+> stricter locking. See Documentation/i2c/i2c-topology for more
+> details if you need it.
 >
-> Userspace would have to know about the numberspace if it wants to use
-> the character device, right?
+> To check this, the i2c mux drivers dig out the device connected to
+> each gpio-pin (or pinctrl-state) and walks up the device tree to see
+> if the root i2c adapter that is muxed is in the loop.
+>
+> When I wrote this code, I could not find a clean way to go from a
+> struct gpio_desc * to the relevant device, short of doing
+>
+>         #include "../../gpio/gpiolib.h"
+>
+>         gpio_dev = &gpio_desc->gdev->dev;
+>
+> And similarly for pinctrl:
+>
+>         #include "../../pinctrl/core.h"
+>
+>         struct pinctrl_setting *setting;
+>         pinctrl_dev = setting->pctldev->dev;
+>
+> I'm not very proud of that, and wonder if there is a better way
+> to get at the needed struct device? If not, then perhaps there
+> should be?
 
-No it shouldn't really. Adding gpio-line-names = "foo", "bar" etc
-and following a reasonable naming policy (such as using the
-rail names on the schematic, which is usually helpful) the
-GPIO can easily be looked up from its name.
+Surely if I can be convinced that we need helpers for this
+in GPIO and/or pin control we can add them.
 
-The chardev tries to overcome the hardships in finding the
-GPIO you want this way.
+They just need to be named something reasonable and
+be generally useful for other situations of similar nature.
+
+struct device *gpiod_get_backing_device(struct gpio_desc *d);
+
+Is simple but is it really what you want?
 
 Yours,
 Linus Walleij
