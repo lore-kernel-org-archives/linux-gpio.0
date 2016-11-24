@@ -1,66 +1,31 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH] gpiolib: Forbid irqchip default trigger for ACPI
- enumerated devices
-Date: Thu, 24 Nov 2016 14:45:55 +0100
-Message-ID: <CAJZ5v0hV2ce-CJYoVhrKEK13m7_Duy3KsKGeUErznAHFZ2KgMA@mail.gmail.com>
-References: <20160912112951.76598-1-mika.westerberg@linux.intel.com>
- <3728863.ohrj1SkIMB@vostro.rjw.lan> <20161124075925.GD1476@lahna.fi.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] devicetree: bindings: pinctrl: Add binding for ti,da850-pupd
+Date: Thu, 24 Nov 2016 15:04:08 +0100
+Message-ID: <CACRpkdYaSrYf1v9WYvZBiY_8wQ1Yu6LMJGR_8ftsec+dMngd+Q@mail.gmail.com>
+References: <1479871767-20160-1-git-send-email-david@lechnology.com> <1479871767-20160-2-git-send-email-david@lechnology.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20161124075925.GD1476@lahna.fi.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, linux-gpio@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:33448 "EHLO
+        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965197AbcKXOEJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 09:04:09 -0500
+Received: by mail-qk0-f181.google.com with SMTP id x190so50357508qkb.0
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Nov 2016 06:04:09 -0800 (PST)
+In-Reply-To: <1479871767-20160-2-git-send-email-david@lechnology.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: David Lechner <david@lechnology.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Axel Haslam <ahaslam@baylibre.com>, Alexandre Bailon <abailon@baylibre.com>, =?UTF-8?Q?Bartosz_Go=C5=82aszewski?= <bgolaszewski@baylibre.com>
 
-On Thu, Nov 24, 2016 at 8:59 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Thu, Nov 24, 2016 at 02:33:55AM +0100, Rafael J. Wysocki wrote:
->> On Monday, September 12, 2016 02:29:51 PM Mika Westerberg wrote:
->> > Follow DT and forbid default trigger if the GPIO irqchip device is
->> > enumerated from ACPI. Triggering for these devices will be configured
->> > automatically from ACPI interrupt resources provided by the BIOS.
->> >
->> > Suggested-by: Linus Walleij <linus.walleij@linaro.org>
->> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
->> > ---
->> > This is on top of Marc's patch here:
->> >
->> >   https://lkml.org/lkml/2016/9/7/121
->> >
->> >  drivers/gpio/gpiolib.c | 7 ++++++-
->> >  1 file changed, 6 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
->> > index 5707b5d12b28..0efb67f387ea 100644
->> > --- a/drivers/gpio/gpiolib.c
->> > +++ b/drivers/gpio/gpiolib.c
->> > @@ -1618,13 +1618,18 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
->> >             of_node = gpiochip->of_node;
->> >  #endif
->> >     /*
->> > -    * Specifying a default trigger is a terrible idea if DT is
->> > +    * Specifying a default trigger is a terrible idea if DT or ACPI is
->> >      * used to configure the interrupts, as you may end-up with
->> >      * conflicting triggers. Tell the user, and reset to NONE.
->> >      */
->> >     if (WARN(of_node && type != IRQ_TYPE_NONE,
->> >              "%s: Ignoring %d default trigger\n", of_node->full_name, type))
->> >             type = IRQ_TYPE_NONE;
->> > +   if (has_acpi_companion(gpiochip->parent) && type != IRQ_TYPE_NONE) {
->> > +           acpi_handle_warn(ACPI_HANDLE(gpiochip->parent),
->> > +                            "Ignoring %d default trigger\n", type);
->> > +           type = IRQ_TYPE_NONE;
->> > +   }
->> >
->> >     gpiochip->irqchip = irqchip;
->> >     gpiochip->irq_handler = handler;
->> >
->>
->> Has this gone anywhere already?
+On Wed, Nov 23, 2016 at 4:29 AM, David Lechner <david@lechnology.com> wrote:
+
+> Device-tree bindings for TI DA8XX/OMAP-L138/AM18XX pullup/pulldown
+> pinconf controller.
 >
-> Yes, it should be in the mainline kernel with commit id
-> 0a1e005374910180c30247386992565b05109eac.
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-OK, thanks!
+Looks good to me.
+
+Yours,
+Linus Walleij
