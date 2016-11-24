@@ -1,120 +1,63 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] gpio: Add Tegra186 support
-Date: Thu, 24 Nov 2016 16:08:41 +0100
-Message-ID: <20161124150841.GC26657@ulmo.ba.sec>
-References: <20161122173042.GA3239@ulmo.ba.sec>
- <20161122175539.3897-1-thierry.reding@gmail.com>
- <58368E84.6040104@nvidia.com>
- <20161124144411.GA26657@ulmo.ba.sec>
- <5836FCCF.1030109@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] RFC: pinctrl: bcm2835: switch to GPIOLIB_IRQCHIP
+Date: Thu, 24 Nov 2016 16:16:13 +0100
+Message-ID: <CACRpkdZ39UbUzKebVzRuAg8hxgLiGNzzUMebMVT+mcAOnHRW+w@mail.gmail.com>
+References: <1479145925-3578-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xo44VMWPx7vlQ2+2"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5836FCCF.1030109@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Suresh Mangipudi <smangipudi@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f181.google.com ([209.85.216.181]:33425 "EHLO
+        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966088AbcKXPQP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 10:16:15 -0500
+Received: by mail-qt0-f181.google.com with SMTP id p16so42720082qta.0
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Nov 2016 07:16:14 -0800 (PST)
+In-Reply-To: <1479145925-3578-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Eric Anholt <eric@anholt.net>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Stefan Wahren <stefan.wahren@i2se.com>
 
+On Mon, Nov 14, 2016 at 6:52 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
---xo44VMWPx7vlQ2+2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> It should be possible to use the GPIOLIB_IRQCHIP helper
+> library with the BCM2835 driver since it is a pretty straight
+> forward cascaded irqchip.
+>
+> The only difference from other drivers is that the BCM2835
+> has several banks for a single gpiochip, and each bank has
+> a separate IRQ line. Instead of creating one gpiochip per
+> bank, a single gpiochip covers all banks GPIO lines. This
+> makes it necessary to resolve the bank ID in the IRQ
+> handler.
+>
+> The GPIOLIB_IRQCHIP allows several IRQs to be cascaded off
+> the same gpiochip by calling gpiochip_set_chained_irqchip()
+> repeatedly, but we have been a bit short on examples
+> for how this should be handled in practice, so this is intended
+> as an example of how this can be achieved.
+>
+> The old code did not model the chip as a chained interrupt
+> handler, but this patch also rectifies that situation.
+>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Stefan Wahren <stefan.wahren@i2se.com>
+> Cc: Eric Anholt <eric@anholt.net>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v2->v3:
+> - Rebase on top of the two new patches from the vendor tree.
+> ChangeLog v1->v2:
+> - Forgot to convert the driver to chained IRQ handler. Now fixed.
+>
+> Rpi folks: I have no clue if this works or not, but would be happy
+> if you could test it to see if IRQs fire as expected and provide
+> some feedback.
 
-On Thu, Nov 24, 2016 at 08:14:31PM +0530, Laxman Dewangan wrote:
->=20
-> On Thursday 24 November 2016 08:14 PM, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Thu, Nov 24, 2016 at 12:23:56PM +0530, Laxman Dewangan wrote:
-> > > On Tuesday 22 November 2016 11:25 PM, Thierry Reding wrote:
-> > > > +static inline struct tegra_gpio *to_tegra_gpio(struct gpio_chip *c=
-hip)
-> > > > +{
-> > > > +	return container_of(chip, struct tegra_gpio, gpio);
-> > > > +}
-> > > You dont need this as gpiochip_get_data(chip); can provide the requir=
-ed
-> > > driver specific data.
-> > It's common practice to embed the struct gpio_chip within a driver-
-> > specific structure, and it's equally common to use a container_of() to
-> > get at the embedding structure.
->=20
-> I am saying that you dont need this new APIs, GPIO framework already supp=
-ort
-> this via the call gpiochip_get_data(chip); which you provided when adding
-> gpiochip().
+Any testers?
 
-Okay, it looks like this is the standard way to do this within the GPIO
-subsystem. I can switch to that.
+I'm getting tempted to just apply it to get test coverage, at the
+cost of having to revert it if it just explodes...
 
-> > > > +	gpio->gpio.parent =3D &pdev->dev;
-> > > > +
-> > > > +	gpio->gpio.get_direction =3D tegra186_gpio_get_direction;
-> > > > +	gpio->gpio.direction_input =3D tegra186_gpio_direction_input;
-> > > > +	gpio->gpio.direction_output =3D tegra186_gpio_direction_output;
-> > > > +	gpio->gpio.get =3D tegra186_gpio_get,
-> > > > +	gpio->gpio.set =3D tegra186_gpio_set;
-> > > > +	gpio->gpio.to_irq =3D tegra186_gpio_to_irq;
-> > > > +
-> > > > +	gpio->gpio.base =3D -1;
-> > > > +
-> > > > +	for (i =3D 0; i < gpio->soc->num_ports; i++)
-> > > > +		gpio->gpio.ngpio +=3D gpio->soc->ports[i].pins;
-> > > > +
-> > > Our DT binding does not say this. We assume that we have 8 gpios per =
-port.
-> > > so this will not work at all.
-> > This has nothing to do with the device tree binding. What the device
-> > tree binding defines is the indices to use to obtain a given GPIO within
-> > a given port. What numbering the driver uses internally is completely up
-> > to the driver implementation.
-> >=20
-> > Oh, and the above works just fine.
->=20
->=20
-> Nop, it will not work. The reason is:
-> include/dt-binding/gpio/tegra186-gpio.h
->=20
->=20
-> #define TEGRA_MAIN_GPIO(port, offset) \
->         ((TEGRA_MAIN_GPIO_PORT_##port * 8) + offset)
->=20
->=20
-> so in your DTS file, if you use this macro for the gpio number then you w=
-ill
-> have pin per port as 8.
-> And so your total GPIO is 23 *8 (Port CC) but in source code ngpio is very
-> less.
-
-Yes, within the source code, ngpio will be the exact number of pins that
-the GPIO controller physically exposes. But that still works fine, feel
-free to test the driver if you don't believe me. The translation from
-one numberspace to the other is done in tegra186_gpio_of_xlate().
-
-Thierry
-
---xo44VMWPx7vlQ2+2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJYNwJ5AAoJEN0jrNd/PrOhxOoP/jyZw5khvTMUKpiUwwp68X6I
-2nEXSq9DbMMZ4yfAK1lhgcGvyxsOidlNFeH0nNMw3ozCi++gaLNTaB2q3fgLvpm2
-hd7Wt/Juc693E3Gzj13dNyOCL1kxxW0G6spwcOSV1Vtc/CitslHA0/IITyp04ohY
-VFaC4fqpxVi0tSpYuiqnsL4TSBVHoObJUfrpG35+Wnd8FEdjAahcGvaib5hdhNIH
-K1g9UY7+v31Z5lxueU0ciS1CxLBT38SnrMetrK1fPJefubi1fhCc1XLsyFYmXUmr
-aoVC/OmqiIZsGRFQWnO+W74Ig/TvrSv17Bf5lQyq6EhkxxztPkhNH5ZfekM8bgaE
-7QtG4xHulWUBOpcfYvvqM55dI0g/PQQKqmkF2QzoZUo609nsmaEvpRcbNBsgeT27
-RW6VniVzE+pAc+ZC14tQIIil2WBK/I29n98aTkUReEQUVt4zugpCWEg6BE7735Yo
-pttUpgXoOXQC7D7nhIp7mUC1BwwpkeZqJl8luhHo/82HKU/XLwosdyopewyYcybi
-rBasJtPJEr770xQyFRmfOzmLGJkzrWyfyXFChWkl8YgKOW2aY3QYxhaJa4Djlym/
-vS4S8k8OKG60uo4TlIbsPvalFXAOBUYKAbEeLTjIfNPmiJxtMxMjlzSqbSFIhsMw
-QdBBaWrUCwomm9FZ2ypU
-=+cyD
------END PGP SIGNATURE-----
-
---xo44VMWPx7vlQ2+2--
+Yours,
+Linus Walleij
