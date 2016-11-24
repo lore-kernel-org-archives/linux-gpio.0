@@ -1,54 +1,66 @@
-From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Subject: Re: [PATCH 0/2] OF phandle nexus support + GPIO nexus
-Date: Thu, 24 Nov 2016 14:47:03 +0200
-Message-ID: <59A46F04-80D5-4B9A-911D-C866C9B6755E@konsulko.com>
-References: <20161124102529.20212-1-stephen.boyd@linaro.org>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20161124102529.20212-1-stephen.boyd@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Frank Rowand <frowand.list@gmail.com>, linux-arm-kernel@lists.infradead.org
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH] gpiolib: Forbid irqchip default trigger for ACPI
+ enumerated devices
+Date: Thu, 24 Nov 2016 14:45:55 +0100
+Message-ID: <CAJZ5v0hV2ce-CJYoVhrKEK13m7_Duy3KsKGeUErznAHFZ2KgMA@mail.gmail.com>
+References: <20160912112951.76598-1-mika.westerberg@linux.intel.com>
+ <3728863.ohrj1SkIMB@vostro.rjw.lan> <20161124075925.GD1476@lahna.fi.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20161124075925.GD1476@lahna.fi.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgU3RlcGhlbiwKCj4gT24gTm92IDI0LCAyMDE2LCBhdCAxMjoyNSAsIFN0ZXBoZW4gQm95ZCA8
-c3RlcGhlbi5ib3lkQGxpbmFyby5vcmc+IHdyb3RlOgo+IAo+IFRoaXMgaXMgb25lIHNtYWxsIGNo
-dW5rIG9mIHdvcmsgcmVsYXRlZCB0byBEVCBvdmVybGF5cyBmb3IgZXhwYW5zaW9uCj4gYm9hcmRz
-LiBJdCB3b3VsZCBiZSBnb29kIHRvIGhhdmUgYSB3YXkgdG8gZXhwb3NlICM8bGlzdD4tY2VsbHMg
-dHlwZXMgb2YKPiBwcm92aWRlcnMgdGhyb3VnaCBhIGNvbm5lY3RvciBpbiBhIHN0YW5kYXJkIHdh
-eS4gU28gd2UgaW50cm9kdWNlIGEgd2F5Cj4gdG8gbWFrZSAibmV4dXMiIG5vZGVzIGZvciB0aGVz
-ZSB0eXBlcyBvZiBwcm9wZXJ0aWVzIHRvIHJlbWFwIHRoZSBjb25zdW1lcgo+IG51bWJlciBzcGFj
-ZSB0byB0aGUgb3RoZXIgc2lkZSBvZiB0aGUgY29ubmVjdG9yJ3MgbnVtYmVyIHNwYWNlLiBJdCdz
-Cj4gYmFzaWNhbGx5IGEgY29weSBvZiB0aGUgaW50ZXJydXB0IG5leHVzIGltcGxlbWVudGF0aW9u
-LCBidXQgd2l0aG91dAo+IHRoZSBhZGRyZXNzIHNwYWNlIG1hdGNoaW5nIGRlc2lnbiBhbmQgaW50
-ZXJydXB0LXBhcmVudCB3YWxraW5nLgo+IAo+IFRoZSBmaXJzdCBwYXRjaCBpbXBsZW1lbnRzIGEg
-Z2VuZXJpYyBtZXRob2QgdG8gZG8gdGhpcywgYW5kIHRoZSBzZWNvbmQgcGF0Y2gKPiBhZGRzIGEg
-dW5pdCB0ZXN0IGZvciBpdC4gVGhlIHRoaXJkIHBhdGNoIGlzIG1vcmUgb2YgYW4gZXhhbXBsZSB0
-aGFuIGFueXRoaW5nCj4gZWxzZS4gSXQgc2hvd3MgaG93IHdlIHdvdWxkIG1vZGlmeSBmcmFtZXdv
-cmtzIHRvIHVzZSB0aGUgbmV3IEFQSS4KPiAKCkV4Y2VsbGVudC4gSXQgd2FzIGFib3V0IHRpbWUg
-dGhpcyBoYXBwZW5lZC4KCj4gU3RlcGhlbiBCb3lkICgzKToKPiAgb2Y6IFN1cHBvcnQgcGFyc2lu
-ZyBwaGFuZGxlIGFyZ3VtZW50IGxpc3RzIHRocm91Z2ggYSBuZXh1cyBub2RlCj4gIG9mOiB1bml0
-dGVzdDogQWRkIHBoYW5kbGUgcmVtYXBwaW5nIHRlc3QKPiAgZ3BpbzogU3VwcG9ydCBncGlvIG5l
-eHVzIGR0IGJpbmRpbmdzCj4gCj4gZHJpdmVycy9ncGlvL2dwaW9saWItb2YuYyAgICAgICAgICAg
-ICAgICAgICB8ICAgNSArLQo+IGRyaXZlcnMvb2YvYmFzZS5jICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgfCAxNDYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+IGRyaXZlcnMvb2YvdW5p
-dHRlc3QtZGF0YS90ZXN0Y2FzZXMuZHRzICAgICAgfCAgMTEgKysrCj4gZHJpdmVycy9vZi91bml0
-dGVzdC1kYXRhL3Rlc3RzLXBoYW5kbGUuZHRzaSB8ICAyNCArKysrKwo+IGRyaXZlcnMvb2YvdW5p
-dHRlc3QuYyAgICAgICAgICAgICAgICAgICAgICAgfCAxMjQgKysrKysrKysrKysrKysrKysrKysr
-KysKPiBpbmNsdWRlL2xpbnV4L29mLmggICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDE0ICsr
-Kwo+IDYgZmlsZXMgY2hhbmdlZCwgMzIyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4g
-Cj4gLS0gCj4gMi4xMC4wLjI5Ny5nZjY3MjdiMAo+IAoKQ29tbWVudHMgaW5saW5l4oCmCgpSZWdh
-cmRzCgrigJQgUGFudGVsaXMKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVs
-QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On Thu, Nov 24, 2016 at 8:59 AM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Thu, Nov 24, 2016 at 02:33:55AM +0100, Rafael J. Wysocki wrote:
+>> On Monday, September 12, 2016 02:29:51 PM Mika Westerberg wrote:
+>> > Follow DT and forbid default trigger if the GPIO irqchip device is
+>> > enumerated from ACPI. Triggering for these devices will be configured
+>> > automatically from ACPI interrupt resources provided by the BIOS.
+>> >
+>> > Suggested-by: Linus Walleij <linus.walleij@linaro.org>
+>> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>> > ---
+>> > This is on top of Marc's patch here:
+>> >
+>> >   https://lkml.org/lkml/2016/9/7/121
+>> >
+>> >  drivers/gpio/gpiolib.c | 7 ++++++-
+>> >  1 file changed, 6 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>> > index 5707b5d12b28..0efb67f387ea 100644
+>> > --- a/drivers/gpio/gpiolib.c
+>> > +++ b/drivers/gpio/gpiolib.c
+>> > @@ -1618,13 +1618,18 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+>> >             of_node = gpiochip->of_node;
+>> >  #endif
+>> >     /*
+>> > -    * Specifying a default trigger is a terrible idea if DT is
+>> > +    * Specifying a default trigger is a terrible idea if DT or ACPI is
+>> >      * used to configure the interrupts, as you may end-up with
+>> >      * conflicting triggers. Tell the user, and reset to NONE.
+>> >      */
+>> >     if (WARN(of_node && type != IRQ_TYPE_NONE,
+>> >              "%s: Ignoring %d default trigger\n", of_node->full_name, type))
+>> >             type = IRQ_TYPE_NONE;
+>> > +   if (has_acpi_companion(gpiochip->parent) && type != IRQ_TYPE_NONE) {
+>> > +           acpi_handle_warn(ACPI_HANDLE(gpiochip->parent),
+>> > +                            "Ignoring %d default trigger\n", type);
+>> > +           type = IRQ_TYPE_NONE;
+>> > +   }
+>> >
+>> >     gpiochip->irqchip = irqchip;
+>> >     gpiochip->irq_handler = handler;
+>> >
+>>
+>> Has this gone anywhere already?
+>
+> Yes, it should be in the mainline kernel with commit id
+> 0a1e005374910180c30247386992565b05109eac.
+
+OK, thanks!
