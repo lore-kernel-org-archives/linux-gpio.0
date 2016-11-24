@@ -1,74 +1,54 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/2] gpio: set explicit nesting on drivers
-Date: Thu, 24 Nov 2016 13:39:01 +0100
-Message-ID: <1479991141-24202-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:33410 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938647AbcKXMjJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 07:39:09 -0500
-Received: by mail-lf0-f52.google.com with SMTP id c13so27736752lfg.0
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Nov 2016 04:39:08 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+Subject: Re: [PATCH 0/2] OF phandle nexus support + GPIO nexus
+Date: Thu, 24 Nov 2016 14:47:03 +0200
+Message-ID: <59A46F04-80D5-4B9A-911D-C866C9B6755E@konsulko.com>
+References: <20161124102529.20212-1-stephen.boyd@linaro.org>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20161124102529.20212-1-stephen.boyd@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Frank Rowand <frowand.list@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Bin Gao <bin.gao@linux.intel.com>
 
-The ADNP, CrystalCove and WhiskeyCove are all nested GPIO
-irqchips, but were avoiding to connect the parent IRQ to
-the gpiochip. This works, but is kind of sloppy as the
-child IRQs are not marked as having the parent IRQ as
-parent.
-
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>
-Cc: Bin Gao <bin.gao@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-adnp.c        | 2 ++
- drivers/gpio/gpio-crystalcove.c | 2 ++
- drivers/gpio/gpio-wcove.c       | 2 ++
- 3 files changed, 6 insertions(+)
-
-diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
-index 7a5c0a93e1ff..36b12f5a95b3 100644
---- a/drivers/gpio/gpio-adnp.c
-+++ b/drivers/gpio/gpio-adnp.c
-@@ -479,6 +479,8 @@ static int adnp_irq_setup(struct adnp *adnp)
- 		return err;
- 	}
- 
-+	gpiochip_set_nested_irqchip(chip, &adnp_irq_chip, adnp_irq);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpio/gpio-crystalcove.c b/drivers/gpio/gpio-crystalcove.c
-index d0022d655a09..2197368cc899 100644
---- a/drivers/gpio/gpio-crystalcove.c
-+++ b/drivers/gpio/gpio-crystalcove.c
-@@ -362,6 +362,8 @@ static int crystalcove_gpio_probe(struct platform_device *pdev)
- 		return retval;
- 	}
- 
-+	gpiochip_set_nested_irqchip(&cg->chip, &crystalcove_irqchip, irq);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpio/gpio-wcove.c b/drivers/gpio/gpio-wcove.c
-index 88f29601f8de..34baee5b1dd6 100644
---- a/drivers/gpio/gpio-wcove.c
-+++ b/drivers/gpio/gpio-wcove.c
-@@ -446,6 +446,8 @@ static int wcove_gpio_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	gpiochip_set_nested_irqchip(&wg->chip, &wcove_irqchip, virq);
-+
- 	return 0;
- }
- 
--- 
-2.7.4
-
+SGkgU3RlcGhlbiwKCj4gT24gTm92IDI0LCAyMDE2LCBhdCAxMjoyNSAsIFN0ZXBoZW4gQm95ZCA8
+c3RlcGhlbi5ib3lkQGxpbmFyby5vcmc+IHdyb3RlOgo+IAo+IFRoaXMgaXMgb25lIHNtYWxsIGNo
+dW5rIG9mIHdvcmsgcmVsYXRlZCB0byBEVCBvdmVybGF5cyBmb3IgZXhwYW5zaW9uCj4gYm9hcmRz
+LiBJdCB3b3VsZCBiZSBnb29kIHRvIGhhdmUgYSB3YXkgdG8gZXhwb3NlICM8bGlzdD4tY2VsbHMg
+dHlwZXMgb2YKPiBwcm92aWRlcnMgdGhyb3VnaCBhIGNvbm5lY3RvciBpbiBhIHN0YW5kYXJkIHdh
+eS4gU28gd2UgaW50cm9kdWNlIGEgd2F5Cj4gdG8gbWFrZSAibmV4dXMiIG5vZGVzIGZvciB0aGVz
+ZSB0eXBlcyBvZiBwcm9wZXJ0aWVzIHRvIHJlbWFwIHRoZSBjb25zdW1lcgo+IG51bWJlciBzcGFj
+ZSB0byB0aGUgb3RoZXIgc2lkZSBvZiB0aGUgY29ubmVjdG9yJ3MgbnVtYmVyIHNwYWNlLiBJdCdz
+Cj4gYmFzaWNhbGx5IGEgY29weSBvZiB0aGUgaW50ZXJydXB0IG5leHVzIGltcGxlbWVudGF0aW9u
+LCBidXQgd2l0aG91dAo+IHRoZSBhZGRyZXNzIHNwYWNlIG1hdGNoaW5nIGRlc2lnbiBhbmQgaW50
+ZXJydXB0LXBhcmVudCB3YWxraW5nLgo+IAo+IFRoZSBmaXJzdCBwYXRjaCBpbXBsZW1lbnRzIGEg
+Z2VuZXJpYyBtZXRob2QgdG8gZG8gdGhpcywgYW5kIHRoZSBzZWNvbmQgcGF0Y2gKPiBhZGRzIGEg
+dW5pdCB0ZXN0IGZvciBpdC4gVGhlIHRoaXJkIHBhdGNoIGlzIG1vcmUgb2YgYW4gZXhhbXBsZSB0
+aGFuIGFueXRoaW5nCj4gZWxzZS4gSXQgc2hvd3MgaG93IHdlIHdvdWxkIG1vZGlmeSBmcmFtZXdv
+cmtzIHRvIHVzZSB0aGUgbmV3IEFQSS4KPiAKCkV4Y2VsbGVudC4gSXQgd2FzIGFib3V0IHRpbWUg
+dGhpcyBoYXBwZW5lZC4KCj4gU3RlcGhlbiBCb3lkICgzKToKPiAgb2Y6IFN1cHBvcnQgcGFyc2lu
+ZyBwaGFuZGxlIGFyZ3VtZW50IGxpc3RzIHRocm91Z2ggYSBuZXh1cyBub2RlCj4gIG9mOiB1bml0
+dGVzdDogQWRkIHBoYW5kbGUgcmVtYXBwaW5nIHRlc3QKPiAgZ3BpbzogU3VwcG9ydCBncGlvIG5l
+eHVzIGR0IGJpbmRpbmdzCj4gCj4gZHJpdmVycy9ncGlvL2dwaW9saWItb2YuYyAgICAgICAgICAg
+ICAgICAgICB8ICAgNSArLQo+IGRyaXZlcnMvb2YvYmFzZS5jICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgfCAxNDYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+IGRyaXZlcnMvb2YvdW5p
+dHRlc3QtZGF0YS90ZXN0Y2FzZXMuZHRzICAgICAgfCAgMTEgKysrCj4gZHJpdmVycy9vZi91bml0
+dGVzdC1kYXRhL3Rlc3RzLXBoYW5kbGUuZHRzaSB8ICAyNCArKysrKwo+IGRyaXZlcnMvb2YvdW5p
+dHRlc3QuYyAgICAgICAgICAgICAgICAgICAgICAgfCAxMjQgKysrKysrKysrKysrKysrKysrKysr
+KysKPiBpbmNsdWRlL2xpbnV4L29mLmggICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDE0ICsr
+Kwo+IDYgZmlsZXMgY2hhbmdlZCwgMzIyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4g
+Cj4gLS0gCj4gMi4xMC4wLjI5Ny5nZjY3MjdiMAo+IAoKQ29tbWVudHMgaW5saW5l4oCmCgpSZWdh
+cmRzCgrigJQgUGFudGVsaXMKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVs
+QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
