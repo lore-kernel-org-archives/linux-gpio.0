@@ -1,66 +1,69 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] gpiolib: Forbid irqchip default trigger for ACPI enumerated devices
-Date: Thu, 24 Nov 2016 02:33:55 +0100
-Message-ID: <3728863.ohrj1SkIMB@vostro.rjw.lan>
-References: <20160912112951.76598-1-mika.westerberg@linux.intel.com>
+From: Keerthy <j-keerthy@ti.com>
+Subject: Re: [PATCH v2 4/5] arm: dts: am57xx-beagle-x15-common: Add overide
+ powerhold property
+Date: Thu, 24 Nov 2016 09:15:01 +0530
+Message-ID: <07fe0118-d3c0-2d47-0642-ae90624c0ed0@ti.com>
+References: <1478754560-27923-1-git-send-email-j-keerthy@ti.com>
+ <1478754560-27923-5-git-send-email-j-keerthy@ti.com>
+ <20161115000849.GD4082@atomide.com>
+ <6ac3b28e-4891-83bc-a2f7-c903541acc18@ti.com>
+ <20161123083327.GM10134@dell.home>
+ <3a05871c-0512-8a84-4ac3-889c661c8638@ti.com>
+ <20161123160841.GG4082@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:63763 "EHLO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934630AbcKXB0J (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 23 Nov 2016 20:26:09 -0500
-In-Reply-To: <20160912112951.76598-1-mika.westerberg@linux.intel.com>
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:51749 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752485AbcKXDrb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Nov 2016 22:47:31 -0500
+In-Reply-To: <20161123160841.GG4082@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Lee Jones <lee.jones@linaro.org>, robh+dt@kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, nm@ti.com, t-kristo@ti.com
 
-On Monday, September 12, 2016 02:29:51 PM Mika Westerberg wrote:
-> Follow DT and forbid default trigger if the GPIO irqchip device is
-> enumerated from ACPI. Triggering for these devices will be configured
-> automatically from ACPI interrupt resources provided by the BIOS.
-> 
-> Suggested-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
-> This is on top of Marc's patch here:
-> 
->   https://lkml.org/lkml/2016/9/7/121
-> 
->  drivers/gpio/gpiolib.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 5707b5d12b28..0efb67f387ea 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1618,13 +1618,18 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
->  		of_node = gpiochip->of_node;
->  #endif
->  	/*
-> -	 * Specifying a default trigger is a terrible idea if DT is
-> +	 * Specifying a default trigger is a terrible idea if DT or ACPI is
->  	 * used to configure the interrupts, as you may end-up with
->  	 * conflicting triggers. Tell the user, and reset to NONE.
->  	 */
->  	if (WARN(of_node && type != IRQ_TYPE_NONE,
->  		 "%s: Ignoring %d default trigger\n", of_node->full_name, type))
->  		type = IRQ_TYPE_NONE;
-> +	if (has_acpi_companion(gpiochip->parent) && type != IRQ_TYPE_NONE) {
-> +		acpi_handle_warn(ACPI_HANDLE(gpiochip->parent),
-> +				 "Ignoring %d default trigger\n", type);
-> +		type = IRQ_TYPE_NONE;
-> +	}
->  
->  	gpiochip->irqchip = irqchip;
->  	gpiochip->irq_handler = handler;
-> 
 
-Has this gone anywhere already?
 
-Thanks,
-Rafael
+On Wednesday 23 November 2016 09:38 PM, Tony Lindgren wrote:
+> * Keerthy <j-keerthy@ti.com> [161123 00:33]:
+>> On Wednesday 23 November 2016 02:03 PM, Lee Jones wrote:
+>>> On Wed, 23 Nov 2016, Keerthy wrote:
+>>>> On Tuesday 15 November 2016 05:38 AM, Tony Lindgren wrote:
+>>>>> * Keerthy <j-keerthy@ti.com> [161109 21:10]:
+>>>>>> The PMICs have POWERHOLD set by default which prevents PMIC shutdown
+>>>>>> even on DEV_CTRL On bit set to 0 as the Powerhold has higher priority.
+>>>>>> So to enable pmic power off this property lets one over ride the default
+>>>>>> value and enable pmic power off.
+>>>>>
+>>>>> This should not cause merge conflicts so probably best to merge along
+>>>>> with the driver changes:
+>>>>>
+>>>>> Acked-by: Tony Lindgren <tony@atomide.com>
+>>>>>
+>>>>> If you guys want me to pick up this separately let me know.
+>>>>
+>>>> Hi Lee Jones,
+>>>>
+>>>> Are you planning to pull DT and Documentation patches as well?
+>>>
+>>> No need.  They can be safely applied to their own subsystems.
+>>
+>> Okay. Thanks for the response.
+>>
+>> Tony,
+>>
+>> Hope you can pull the DT patches.
+>
+> Applying both into omap-for-v4.10/dt thanks. Please send dts changes
+> seprately next time if there are no dependencies. This leaves out
+> the second guessing who should apply what.
 
+Sure Tony.
+
+>
+> Regards,
+>
+> Tony
+>
