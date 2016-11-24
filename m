@@ -1,78 +1,61 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: Re: [PATCH v3] RFC: pinctrl: bcm2835: switch to GPIOLIB_IRQCHIP
-Date: Thu, 24 Nov 2016 19:50:30 +0100 (CET)
-Message-ID: <2017856859.25225.e58aee3b-9fc2-4b39-a030-c2409c5b92fc.open-xchange@email.1und1.de>
-References: <1479145925-3578-1-git-send-email-linus.walleij@linaro.org>
- <CACRpkdZ39UbUzKebVzRuAg8hxgLiGNzzUMebMVT+mcAOnHRW+w@mail.gmail.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH] pinctrl: imx: fix imx_pinctrl_desc initialization
+Date: Thu, 24 Nov 2016 22:17:55 +0200
+Message-ID: <fac988ce-f5be-e50c-8436-c122175f03da@mentor.com>
+References: <20161124181151.29419-1-gary.bisson@boundarydevices.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:65494 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941157AbcKXSvS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 13:51:18 -0500
-In-Reply-To: <CACRpkdZ39UbUzKebVzRuAg8hxgLiGNzzUMebMVT+mcAOnHRW+w@mail.gmail.com>
+Received: from relay1.mentorg.com ([192.94.38.131]:63529 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757276AbcKXUSJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 15:18:09 -0500
+In-Reply-To: <20161124181151.29419-1-gary.bisson@boundarydevices.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org, Eric Anholt <eric@anholt.net>
+To: Gary Bisson <gary.bisson@boundarydevices.com>, shawnguo@kernel.org
+Cc: linus.walleij@linaro.org, van.freenix@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Gary,
 
-> Linus Walleij <linus.walleij@linaro.org> hat am 24. November 2016 um 16:16
-> geschrieben:
-> 
-> 
-> On Mon, Nov 14, 2016 at 6:52 PM, Linus Walleij <linus.walleij@linaro.org>
-> wrote:
-> 
-> > It should be possible to use the GPIOLIB_IRQCHIP helper
-> > library with the BCM2835 driver since it is a pretty straight
-> > forward cascaded irqchip.
-> >
-> > The only difference from other drivers is that the BCM2835
-> > has several banks for a single gpiochip, and each bank has
-> > a separate IRQ line. Instead of creating one gpiochip per
-> > bank, a single gpiochip covers all banks GPIO lines. This
-> > makes it necessary to resolve the bank ID in the IRQ
-> > handler.
-> >
-> > The GPIOLIB_IRQCHIP allows several IRQs to be cascaded off
-> > the same gpiochip by calling gpiochip_set_chained_irqchip()
-> > repeatedly, but we have been a bit short on examples
-> > for how this should be handled in practice, so this is intended
-> > as an example of how this can be achieved.
-> >
-> > The old code did not model the chip as a chained interrupt
-> > handler, but this patch also rectifies that situation.
-> >
-> > Cc: Stephen Warren <swarren@wwwdotorg.org>
-> > Cc: Stefan Wahren <stefan.wahren@i2se.com>
-> > Cc: Eric Anholt <eric@anholt.net>
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> > ---
-> > ChangeLog v2->v3:
-> > - Rebase on top of the two new patches from the vendor tree.
-> > ChangeLog v1->v2:
-> > - Forgot to convert the driver to chained IRQ handler. Now fixed.
-> >
-> > Rpi folks: I have no clue if this works or not, but would be happy
-> > if you could test it to see if IRQs fire as expected and provide
-> > some feedback.
-> 
-> Any testers?
-> 
-> I'm getting tempted to just apply it to get test coverage, at the
-> cost of having to revert it if it just explodes...
+On 11/24/2016 08:11 PM, Gary Bisson wrote:
+> Was introduced by:
+> 6e408ed pinctrl: imx: fix initialization of imx_pinctrl_desc
+>
+> Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
+> ---
+>  drivers/pinctrl/freescale/pinctrl-imx.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+> index 79c4e14..5ef7e87 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
+> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+> @@ -778,10 +778,10 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+>  	imx_pinctrl_desc->name = dev_name(&pdev->dev);
+>  	imx_pinctrl_desc->pins = info->pins;
+>  	imx_pinctrl_desc->npins = info->npins;
+> -	imx_pinctrl_desc->pctlops = &imx_pctrl_ops,
+> -	imx_pinctrl_desc->pmxops = &imx_pmx_ops,
+> -	imx_pinctrl_desc->confops = &imx_pinconf_ops,
+> -	imx_pinctrl_desc->owner = THIS_MODULE,
+> +	imx_pinctrl_desc->pctlops = &imx_pctrl_ops;
+> +	imx_pinctrl_desc->pmxops = &imx_pmx_ops;
+> +	imx_pinctrl_desc->confops = &imx_pinconf_ops;
+> +	imx_pinctrl_desc->owner = THIS_MODULE;
+>
+>  	ret = imx_pinctrl_probe_dt(pdev, info);
+>  	if (ret) {
+>
 
-i made a simple boot + reboot test on my RPI 1 Model B without any issues.
-Unfortunately i don't have any additional hardware with a GPIO interrupt.
+excellent catch, my compiler does not report the issue.
 
-In the case this is sufficient you can have my:
+Subject and commit message are not quite informative, but
+the change is trivial, so please feel free to add my
 
-Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
+Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-> 
-> Yours,
-> Linus Walleij
+--
+With best wishes,
+Vladimir
