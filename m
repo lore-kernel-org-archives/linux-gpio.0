@@ -1,37 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] pinctrl: New driver for TI DA8XX/OMAP-L138/AM18XX
- pinconf
-Date: Thu, 24 Nov 2016 15:05:43 +0100
-Message-ID: <CACRpkdYzJFdbEPON_TGDpzhNmA=e5O4XkhfYiWhgYj4p94=nHQ@mail.gmail.com>
-References: <1479871767-20160-1-git-send-email-david@lechnology.com>
- <1479871767-20160-3-git-send-email-david@lechnology.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: sx150x: support setting multiple pins at once
+Date: Thu, 24 Nov 2016 15:08:25 +0100
+Message-ID: <CACRpkdavVJjBQCg-4ydrjp68VSgd9H+Xr2PkrPLGoqUhgBy8HQ@mail.gmail.com>
+References: <1479896331-16915-1-git-send-email-peda@axentia.se> <1479896331-16915-3-git-send-email-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1479871767-20160-3-git-send-email-david@lechnology.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: David Lechner <david@lechnology.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Axel Haslam <ahaslam@baylibre.com>, Kevin Hilman <khilman@kernel.org>, Sekhar Nori <nsekhar@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Bailon <abailon@baylibre.com>, =?UTF-8?Q?Bartosz_Go=C5=82aszewski?= <bgolaszewski@baylibre.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1479896331-16915-3-git-send-email-peda@axentia.se>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Rosin <peda@axentia.se>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrey Smirnov <andrew.smirnov@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 23, 2016 at 4:29 AM, David Lechner <david@lechnology.com> wrote:
+On Wed, Nov 23, 2016 at 11:18 AM, Peter Rosin <peda@axentia.se> wrote:
 
-> This adds a new driver for pinconf on TI DA8XX/OMAP-L138/AM18XX. These
-> SoCs have a separate controller for controlling pullup/pulldown groups.
+> If the chip does not have an oscio pin, all pins are configured in
+> the same regmap register making it trivial to update all pins at
+> once, so do that. If an oscio pin is present, there needs to be
+> more locking in place to handle all cases correctly, so this is
+> skipped.
 >
-> Signed-off-by: David Lechner <david@lechnology.com>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-Nice and clean driver, resend with the minor fixes pointed out
-by Sekhar and I'll merge it.
+Tired of waiting for ACKs. Looks good. Patch applied.
 
 Yours,
 Linus Walleij
