@@ -1,104 +1,63 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH] gpio: Add Tegra186 support
-Date: Thu, 24 Nov 2016 12:23:56 +0530
-Message-ID: <58368E84.6040104@nvidia.com>
-References: <20161122173042.GA3239@ulmo.ba.sec> <20161122175539.3897-1-thierry.reding@gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] gpiolib: Forbid irqchip default trigger for ACPI
+ enumerated devices
+Date: Thu, 24 Nov 2016 09:59:25 +0200
+Message-ID: <20161124075925.GD1476@lahna.fi.intel.com>
+References: <20160912112951.76598-1-mika.westerberg@linux.intel.com>
+ <3728863.ohrj1SkIMB@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:10466 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751097AbcKXHNQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 02:13:16 -0500
-In-Reply-To: <20161122175539.3897-1-thierry.reding@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <3728863.ohrj1SkIMB@vostro.rjw.lan>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Suresh Mangipudi <smangipudi@nvidia.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
 
+On Thu, Nov 24, 2016 at 02:33:55AM +0100, Rafael J. Wysocki wrote:
+> On Monday, September 12, 2016 02:29:51 PM Mika Westerberg wrote:
+> > Follow DT and forbid default trigger if the GPIO irqchip device is
+> > enumerated from ACPI. Triggering for these devices will be configured
+> > automatically from ACPI interrupt resources provided by the BIOS.
+> > 
+> > Suggested-by: Linus Walleij <linus.walleij@linaro.org>
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > ---
+> > This is on top of Marc's patch here:
+> > 
+> >   https://lkml.org/lkml/2016/9/7/121
+> > 
+> >  drivers/gpio/gpiolib.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > index 5707b5d12b28..0efb67f387ea 100644
+> > --- a/drivers/gpio/gpiolib.c
+> > +++ b/drivers/gpio/gpiolib.c
+> > @@ -1618,13 +1618,18 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+> >  		of_node = gpiochip->of_node;
+> >  #endif
+> >  	/*
+> > -	 * Specifying a default trigger is a terrible idea if DT is
+> > +	 * Specifying a default trigger is a terrible idea if DT or ACPI is
+> >  	 * used to configure the interrupts, as you may end-up with
+> >  	 * conflicting triggers. Tell the user, and reset to NONE.
+> >  	 */
+> >  	if (WARN(of_node && type != IRQ_TYPE_NONE,
+> >  		 "%s: Ignoring %d default trigger\n", of_node->full_name, type))
+> >  		type = IRQ_TYPE_NONE;
+> > +	if (has_acpi_companion(gpiochip->parent) && type != IRQ_TYPE_NONE) {
+> > +		acpi_handle_warn(ACPI_HANDLE(gpiochip->parent),
+> > +				 "Ignoring %d default trigger\n", type);
+> > +		type = IRQ_TYPE_NONE;
+> > +	}
+> >  
+> >  	gpiochip->irqchip = irqchip;
+> >  	gpiochip->irq_handler = handler;
+> > 
+> 
+> Has this gone anywhere already?
 
-On Tuesday 22 November 2016 11:25 PM, Thierry Reding wrote:
-> +static inline struct tegra_gpio *to_tegra_gpio(struct gpio_chip *chip)
-> +{
-> +	return container_of(chip, struct tegra_gpio, gpio);
-> +}
-
-You dont need this as gpiochip_get_data(chip); can provide the required 
-driver specific data.
-
-> +
-> +static const struct tegra_gpio_port *
-> +tegra186_gpio_get_port(struct tegra_gpio *gpio, unsigned int *pin)
-> +{
-> +	unsigned int start = 0, i;
-> +
-> +	for (i = 0; i < gpio->soc->num_ports; i++) {
-> +		const struct tegra_gpio_port *port = &gpio->soc->ports[i];
-> +
-> +		if (*pin >= start && *pin < start + port->pins) {
-> +			*pin -= start;
-> +			return port;
-> +		}
-> +
-> +		start += port->pins;
-> +	}
-> +
-Why not get the port from pins and then calculate with fixed offset.
-We will not need the loop if we know the port number.
-
->
-> +
-> +static int tegra186_gpio_direction_output(struct gpio_chip *chip,
-> +					  unsigned int offset, int level)
-> +{
-> +	struct tegra_gpio *gpio = to_tegra_gpio(chip);
-> +	void __iomem *base;
-> +	u32 value;
-> +
-> +	/* configure output level first */
-> +	chip->set(chip, offset, level);
-We can directly call the apis instead of function pointer at this point.
->
-> +
-> +static struct lock_class_key tegra186_gpio_lock_class;
-We will have two instance of the driver (normal and AON) and so this 
-will be shared between them.
-Do we really support multiple instance with same variable?
-
-
-> +
-> +	gpio->gpio.label = "tegra186-gpio";
-Two instance will have same name. Better to say tegra186-gpio and 
-tegra186-gpio-aon.
-
-
-> +	gpio->gpio.parent = &pdev->dev;
-> +
-> +	gpio->gpio.get_direction = tegra186_gpio_get_direction;
-> +	gpio->gpio.direction_input = tegra186_gpio_direction_input;
-> +	gpio->gpio.direction_output = tegra186_gpio_direction_output;
-> +	gpio->gpio.get = tegra186_gpio_get,
-> +	gpio->gpio.set = tegra186_gpio_set;
-> +	gpio->gpio.to_irq = tegra186_gpio_to_irq;
-> +
-> +	gpio->gpio.base = -1;
-> +
-> +	for (i = 0; i < gpio->soc->num_ports; i++)
-> +		gpio->gpio.ngpio += gpio->soc->ports[i].pins;
-> +
-
-Our DT binding does not say this. We assume that we have 8 gpios per 
-port. so this will not work at all.
-
-
-
->
-> +
-> +static const struct tegra_gpio_port tegra186_main_ports[] = {
-> +	[TEGRA_MAIN_GPIO_PORT_A]  = { 0x2000, 7 },
-Use C99 style initialization which is like
-    .offset =
-    .pins =
->
-
+Yes, it should be in the mainline kernel with commit id
+0a1e005374910180c30247386992565b05109eac.
