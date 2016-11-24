@@ -1,56 +1,66 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 1/5] Documentation: pinctrl: palmas: Add
- ti,palmas-powerhold-override property definition
-Date: Thu, 24 Nov 2016 08:45:44 +0000
-Message-ID: <20161124084544.GS10134@dell.home>
-References: <1478754560-27923-1-git-send-email-j-keerthy@ti.com>
- <1478754560-27923-2-git-send-email-j-keerthy@ti.com>
- <20161115014352.5d3qwoonlo63mp5p@rob-hp-laptop>
- <23bf98ee-bcdc-e100-54ce-6f4b1e13ffcf@ti.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V4 0/2] pinctrl: tegra: Add support for IO pad control
+Date: Thu, 24 Nov 2016 14:08:52 +0530
+Message-ID: <1479976734-30498-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:37624 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756739AbcKXImn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 03:42:43 -0500
-Received: by mail-wm0-f50.google.com with SMTP id t79so51736177wmt.0
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Nov 2016 00:42:43 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <23bf98ee-bcdc-e100-54ce-6f4b1e13ffcf@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org
+Cc: yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: Rob Herring <robh@kernel.org>, tony@atomide.com, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, nm@ti.com, t-kristo@ti.com
 
-On Thu, 24 Nov 2016, Keerthy wrote:
+NVIDIA Tegra124 and later SoCs support the multi-voltage level and 
+low power state of some of its IO pads. The IO pads can work in
+the voltage of the 1.8V and 3.3V of IO power rail sources. When IO
+interface are not used then IO pads can be configure in low power
+state to reduce the power from that IO pads.
 
-> 
-> 
-> On Tuesday 15 November 2016 07:13 AM, Rob Herring wrote:
-> > On Thu, Nov 10, 2016 at 10:39:16AM +0530, Keerthy wrote:
-> > > GPIO7 is configured in POWERHOLD mode which has higher priority
-> > > over DEV_ON bit and keeps the PMIC supplies on even after the DEV_ON
-> > > bit is turned off. This property enables driver to over ride the
-> > > POWERHOLD value to GPIO7 so as to turn off the PMIC in power off
-> > > scenarios.
-> > > 
-> > > Signed-off-by: Keerthy <j-keerthy@ti.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/pinctrl/pinctrl-palmas.txt | 9 +++++++++
-> > >  1 file changed, 9 insertions(+)
-> > 
-> > Acked-by: Rob Herring <robh@kernel.org>
-> 
-> Tony,
-> 
-> Are you planning to pick this one as well?
+This series add the support of configuration of IO pad via pinctrl
+framework. The io pad driver uses the tegra PMC interface.
 
-This should be taken by LinusW.
+---
+This driver was sent earlier for review along with soc/tegra pmc 
+changes. During review, decided to first conclude in soc/tegra pmc 
+patches and then review this.
+    
+Thierry applied the pmc patches in the private tree
+        https://github.com/thierryreding/linux/tree/tegra186
+and he wanted to have the patches for user of the new APIs so that
+it can be pushed to mainline.
+    
+Sending the pinctrl driver. This needs Ack/reviewed from pinctrl subsystem
+i.e. Linus Welleij to apply in the Thierry's T186 branch along with
+PMC patches.
+
+---
+Changes from V1: 
+- use the regulator framework to get the IO voltage instead of table from
+  DT. The regulator handle is provided from DT. 
+
+Changes from V2: 
+- Nit fixes and variable/allocation optimisation as per review comment from
+  V2.
+
+Changes from V3:
+ Use devm_regulator_get() instead of devm_regulator_get_optional().
+
+Laxman Dewangan (2):
+  pinctrl: tegra: Add DT binding for io pads control
+  pinctrl: tegra: Add driver to configure voltage and power of io pads
+
+ .../bindings/pinctrl/nvidia,tegra-io-pad.txt       | 126 +++++
+ drivers/pinctrl/tegra/Kconfig                      |  12 +
+ drivers/pinctrl/tegra/Makefile                     |   1 +
+ drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c       | 530 +++++++++++++++++++++
+ 4 files changed, 669 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pad.txt
+ create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
