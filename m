@@ -1,51 +1,61 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: [PATCH 2/2] gpio: arizona: Tidy up probe error path
-Date: Fri, 25 Nov 2016 13:48:30 +0000
-Message-ID: <1480081710-27305-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-References: <1480081710-27305-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: sx150x: use new nested IRQ infrastructure
+Date: Fri, 25 Nov 2016 15:17:42 +0100
+Message-ID: <1480083462-29591-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:38850 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753881AbcKYNsH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 25 Nov 2016 08:48:07 -0500
-In-Reply-To: <1480081710-27305-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-There is some unnecessary complexity in the error path which now things
-are converted to devm is actually very simple. This patch simplifies
-things.
+Use the new gpiochip_irqchip_add_nested() and
+gpiochip_set_nested_irqchip() calls to properly created
+a nested irqchip and mark all child irqs properly with
+their parent IRQ.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-arizona.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/pinctrl/pinctrl-sx150x.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-arizona.c b/drivers/gpio/gpio-arizona.c
-index ed41537..1f91557 100644
---- a/drivers/gpio/gpio-arizona.c
-+++ b/drivers/gpio/gpio-arizona.c
-@@ -137,13 +137,10 @@ static int arizona_gpio_probe(struct platform_device *pdev)
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Could not register gpiochip, %d\n",
- 			ret);
--		goto err;
-+		return ret;
+diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
+index 1a1c8b51a992..36cb0f1ed538 100644
+--- a/drivers/pinctrl/pinctrl-sx150x.c
++++ b/drivers/pinctrl/pinctrl-sx150x.c
+@@ -1219,9 +1219,9 @@ static int sx150x_probe(struct i2c_client *client,
+ 		 * plus it will be instantly noticeable if it is ever
+ 		 * called (should not happen)
+ 		 */
+-		ret = gpiochip_irqchip_add(&pctl->gpio,
+-					   &pctl->irq_chip, 0,
+-					   handle_bad_irq, IRQ_TYPE_NONE);
++		ret = gpiochip_irqchip_add_nested(&pctl->gpio,
++					&pctl->irq_chip, 0,
++					handle_bad_irq, IRQ_TYPE_NONE);
+ 		if (ret) {
+ 			dev_err(dev, "could not connect irqchip to gpiochip\n");
+ 			return ret;
+@@ -1234,6 +1234,10 @@ static int sx150x_probe(struct i2c_client *client,
+ 						pctl->irq_chip.name, pctl);
+ 		if (ret < 0)
+ 			return ret;
++
++		gpiochip_set_nested_irqchip(&pctl->gpio,
++					    &pctl->irq_chip,
++					    client-irq);
  	}
  
--	return ret;
--
--err:
--	return ret;
-+	return 0;
- }
- 
- static struct platform_driver arizona_gpio_driver = {
+ 	/* Pinctrl_desc */
 -- 
-2.1.4
-
+2.7.4
