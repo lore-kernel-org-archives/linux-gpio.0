@@ -1,29 +1,32 @@
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 2/2] gpio: set explicit nesting on drivers
-Date: Fri, 25 Nov 2016 16:35:30 +0200
-Message-ID: <20161125143530.GP1476@lahna.fi.intel.com>
-References: <1479991141-24202-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/1] pinctrl: intel: set default handler to be
+ handle_bad_irq()
+Date: Fri, 25 Nov 2016 16:37:40 +0200
+Message-ID: <20161125143740.GQ1476@lahna.fi.intel.com>
+References: <20161125113116.28193-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:6904 "EHLO mga14.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:12496 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754291AbcKYOgd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 25 Nov 2016 09:36:33 -0500
+        id S1754870AbcKYOho (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 25 Nov 2016 09:37:44 -0500
 Content-Disposition: inline
-In-Reply-To: <1479991141-24202-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <20161125113116.28193-1-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Bin Gao <bin.gao@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Thu, Nov 24, 2016 at 01:39:01PM +0100, Linus Walleij wrote:
-> The ADNP, CrystalCove and WhiskeyCove are all nested GPIO
-> irqchips, but were avoiding to connect the parent IRQ to
-> the gpiochip. This works, but is kind of sloppy as the
-> child IRQs are not marked as having the parent IRQ as
-> parent.
+On Fri, Nov 25, 2016 at 01:31:16PM +0200, Andy Shevchenko wrote:
+> We switch the default handler to be handle_bad_irq() instead of
+> handle_simple_irq() (which was not correct anyway).
 > 
 > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+I wonder if it makes sense to have this split into two patches instead?
+
+In any case,
+
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
