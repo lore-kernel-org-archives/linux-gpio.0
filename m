@@ -1,62 +1,59 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: Getting at gpio- and pinctrl-devices as a consumer
-Date: Thu, 24 Nov 2016 22:35:32 +0100
-Message-ID: <b481ed92-c9d2-b4da-b484-6d8bec6038f0@axentia.se>
-References: <1479908035-18284-1-git-send-email-peda@axentia.se>
- <20161124151420.GF4271@katana>
- <46be889f-a558-0174-f638-c685b23c8ed9@axentia.se>
- <20161124195230.GA1666@katana>
+From: Peng Fan <van.freenix@gmail.com>
+Subject: Re: [PATCH] pinctrl: imx: fix imx_pinctrl_desc initialization
+Date: Fri, 25 Nov 2016 09:16:41 +0800
+Message-ID: <20161125011639.GA29245@linux-u7w5.ap.freescale.net>
+References: <20161124181151.29419-1-gary.bisson@boundarydevices.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20161124195230.GA1666@katana>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Wolfram Sang <wsa-dev@sang-engineering.com>, linux-kernel@vger.kernel.org, Peter Korsgaard <peter.korsgaard@barco.com>, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35463 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750708AbcKYBRE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Nov 2016 20:17:04 -0500
+Content-Disposition: inline
+In-Reply-To: <20161124181151.29419-1-gary.bisson@boundarydevices.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Gary Bisson <gary.bisson@boundarydevices.com>
+Cc: hawnguo@kernel.org, linus.walleij@linaro.org, vladimir_zapolskiy@mentor.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2016-11-24 20:52, Wolfram Sang wrote:
->> Yes, I never liked that include, but I don't know how to get
->> from struct gpio_desc * to the relevant struct device *
->> without it...
+Hi Gary,
+
+On Thu, Nov 24, 2016 at 07:11:51PM +0100, Gary Bisson wrote:
+>Was introduced by:
+>6e408ed pinctrl: imx: fix initialization of imx_pinctrl_desc
+>
+>Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
+>---
+> drivers/pinctrl/freescale/pinctrl-imx.c | 8 ++++----
+> 1 file changed, 4 insertions(+), 4 deletions(-)
+>
+>diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+>index 79c4e14..5ef7e87 100644
+>--- a/drivers/pinctrl/freescale/pinctrl-imx.c
+>+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+>@@ -778,10 +778,10 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+> 	imx_pinctrl_desc->name = dev_name(&pdev->dev);
+> 	imx_pinctrl_desc->pins = info->pins;
+> 	imx_pinctrl_desc->npins = info->npins;
+>-	imx_pinctrl_desc->pctlops = &imx_pctrl_ops,
+>-	imx_pinctrl_desc->pmxops = &imx_pmx_ops,
+>-	imx_pinctrl_desc->confops = &imx_pinconf_ops,
+>-	imx_pinctrl_desc->owner = THIS_MODULE,
+>+	imx_pinctrl_desc->pctlops = &imx_pctrl_ops;
+>+	imx_pinctrl_desc->pmxops = &imx_pmx_ops;
+>+	imx_pinctrl_desc->confops = &imx_pinconf_ops;
+>+	imx_pinctrl_desc->owner = THIS_MODULE;
+
+Thanks for the fix.
+
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+
 > 
-> Looks to me like we should ask the GPIO maintainers if they are willing
-> to export this value? I am probably not as good as you in explaining the
-> details why, though...
+> 	ret = imx_pinctrl_probe_dt(pdev, info);
+> 	if (ret) {
+>-- 
+>2.9.3
+>
 
-Right. Adding Linus, Alexandre and the gpio list.
-
-The background is that the gpio- and pinctrl-based i2c-mux drivers
-need to know if the device that is used to control the mux of the
-i2c-bus is also sitting on that very same i2c-bus. If it is, the
-locking has to be different and a bit more relaxed. This relaxed
-mode cannot be used always, as that would change the mux behavior
-in an unacceptable way for stuff expecting the (traditional)
-stricter locking. See Documentation/i2c/i2c-topology for more
-details if you need it.
-
-To check this, the i2c mux drivers dig out the device connected to
-each gpio-pin (or pinctrl-state) and walks up the device tree to see
-if the root i2c adapter that is muxed is in the loop.
-
-When I wrote this code, I could not find a clean way to go from a
-struct gpio_desc * to the relevant device, short of doing
-
-	#include "../../gpio/gpiolib.h"
-
-	gpio_dev = &gpio_desc->gdev->dev;
-
-And similarly for pinctrl:
-
-	#include "../../pinctrl/core.h"
-
-	struct pinctrl_setting *setting;
-	pinctrl_dev = setting->pctldev->dev;
-
-I'm not very proud of that, and wonder if there is a better way
-to get at the needed struct device? If not, then perhaps there
-should be?
-
-Cheers,
-Peter
+-- 
