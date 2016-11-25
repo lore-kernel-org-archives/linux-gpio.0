@@ -1,39 +1,99 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 5/5] gpio: pl061: delete platform data handling
-Date: Fri, 25 Nov 2016 11:09:24 +0100
-Message-ID: <1480068564-9447-5-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 4/5] gpio: pl061: move platform data into driver
+Date: Fri, 25 Nov 2016 11:09:23 +0100
+Message-ID: <1480068564-9447-4-git-send-email-linus.walleij@linaro.org>
 References: <1480068564-9447-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:34335 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752993AbcKYKJ5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Nov 2016 05:09:57 -0500
-Received: by mail-lf0-f49.google.com with SMTP id o141so46857110lff.1
-        for <linux-gpio@vger.kernel.org>; Fri, 25 Nov 2016 02:09:56 -0800 (PST)
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:34307 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752993AbcKYKJy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Nov 2016 05:09:54 -0500
+Received: by mail-lf0-f52.google.com with SMTP id o141so46855743lff.1
+        for <linux-gpio@vger.kernel.org>; Fri, 25 Nov 2016 02:09:53 -0800 (PST)
 In-Reply-To: <1480068564-9447-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Baruch Siach <baruch@tkos.co.il>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, arm@vger.kernel.org, Russell King <linux@armlinux.org.uk>
 
-Platform data is a remnant of board files and all boards using
-the PL061 have been migrated to use device tree or ACPI instead.
-The custom mechanism to set line by default as inputs/outputs has
-been superceded by the GPIO-internal hogging mechanism.
+No boardfile defines any PL061 platform data anymore: the
+Integrator IM/PD-1 includes the file but is not making use
+of the struct. Let's delete the include and all references,
+then move the platform data into the driver for later
+consolidation into the driver state container.
 
+The only resource defined by the IM/PD-1 is the IRQ which
+is passed through the AMBA PrimeCell bus abstraction
+struct amba_device.
+
+Cc: arm@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Russell King <linux@armlinux.org.uk>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-pl061.c | 41 +++--------------------------------------
- 1 file changed, 3 insertions(+), 38 deletions(-)
+ARM SoC folks/Russell: I don't think this is any controversial
+move, please ACK this if you're OK with it.
+---
+ arch/arm/mach-integrator/impd1.c |  1 -
+ drivers/gpio/gpio-pl061.c        | 14 +++++++++++++-
+ include/linux/amba/pl061.h       | 16 ----------------
+ 3 files changed, 13 insertions(+), 18 deletions(-)
+ delete mode 100644 include/linux/amba/pl061.h
 
+diff --git a/arch/arm/mach-integrator/impd1.c b/arch/arm/mach-integrator/impd1.c
+index ed9a01484030..a109f6482413 100644
+--- a/arch/arm/mach-integrator/impd1.c
++++ b/arch/arm/mach-integrator/impd1.c
+@@ -21,7 +21,6 @@
+ #include <linux/amba/bus.h>
+ #include <linux/amba/clcd.h>
+ #include <linux/amba/mmci.h>
+-#include <linux/amba/pl061.h>
+ #include <linux/io.h>
+ #include <linux/platform_data/clk-integrator.h>
+ #include <linux/slab.h>
 diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index cbcc631181e0..0a6bfd2b06e5 100644
+index 47f397236417..cbcc631181e0 100644
 --- a/drivers/gpio/gpio-pl061.c
 +++ b/drivers/gpio/gpio-pl061.c
-@@ -38,19 +38,6 @@
+@@ -23,7 +23,6 @@
+ #include <linux/gpio.h>
+ #include <linux/device.h>
+ #include <linux/amba/bus.h>
+-#include <linux/amba/pl061.h>
+ #include <linux/slab.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/pm.h>
+@@ -39,6 +38,19 @@
  
  #define PL061_GPIO_NR	8
  
++struct pl061_platform_data {
++	/* number of the first GPIO */
++	unsigned	gpio_base;
++
++	/* number of the first IRQ.
++	 * If the IRQ functionality in not desired this must be set to 0.
++	 */
++	unsigned	irq_base;
++
++	u8		directions;	/* startup directions, 1: out, 0: in */
++	u8		values;		/* startup values */
++};
++
+ #ifdef CONFIG_PM
+ struct pl061_context_save_regs {
+ 	u8 gpio_data;
+diff --git a/include/linux/amba/pl061.h b/include/linux/amba/pl061.h
+deleted file mode 100644
+index fb83c0453489..000000000000
+--- a/include/linux/amba/pl061.h
++++ /dev/null
+@@ -1,16 +0,0 @@
+-#include <linux/types.h>
+-
+-/* platform data for the PL061 GPIO driver */
+-
 -struct pl061_platform_data {
 -	/* number of the first GPIO */
 -	unsigned	gpio_base;
@@ -46,72 +106,6 @@ index cbcc631181e0..0a6bfd2b06e5 100644
 -	u8		directions;	/* startup directions, 1: out, 0: in */
 -	u8		values;		/* startup values */
 -};
--
- #ifdef CONFIG_PM
- struct pl061_context_save_regs {
- 	u8 gpio_data;
-@@ -306,26 +293,13 @@ static struct irq_chip pl061_irqchip = {
- static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- {
- 	struct device *dev = &adev->dev;
--	struct pl061_platform_data *pdata = dev_get_platdata(dev);
- 	struct pl061 *pl061;
--	int ret, irq, i, irq_base;
-+	int ret, irq;
- 
- 	pl061 = devm_kzalloc(dev, sizeof(*pl061), GFP_KERNEL);
- 	if (pl061 == NULL)
- 		return -ENOMEM;
- 
--	if (pdata) {
--		pl061->gc.base = pdata->gpio_base;
--		irq_base = pdata->irq_base;
--		if (irq_base <= 0) {
--			dev_err(&adev->dev, "invalid IRQ base in pdata\n");
--			return -ENODEV;
--		}
--	} else {
--		pl061->gc.base = -1;
--		irq_base = 0;
--	}
--
- 	pl061->base = devm_ioremap_resource(dev, &adev->res);
- 	if (IS_ERR(pl061->base))
- 		return PTR_ERR(pl061->base);
-@@ -336,6 +310,7 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- 		pl061->gc.free = gpiochip_generic_free;
- 	}
- 
-+	pl061->gc.base = -1;
- 	pl061->gc.get_direction = pl061_get_direction;
- 	pl061->gc.direction_input = pl061_direction_input;
- 	pl061->gc.direction_output = pl061_direction_output;
-@@ -362,7 +337,7 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- 	pl061->parent_irq = irq;
- 
- 	ret = gpiochip_irqchip_add(&pl061->gc, &pl061_irqchip,
--				   irq_base, handle_bad_irq,
-+				   0, handle_bad_irq,
- 				   IRQ_TYPE_NONE);
- 	if (ret) {
- 		dev_info(&adev->dev, "could not add irqchip\n");
-@@ -371,16 +346,6 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- 	gpiochip_set_chained_irqchip(&pl061->gc, &pl061_irqchip,
- 				     irq, pl061_irq_handler);
- 
--	for (i = 0; i < PL061_GPIO_NR; i++) {
--		if (pdata) {
--			if (pdata->directions & (BIT(i)))
--				pl061_direction_output(&pl061->gc, i,
--						pdata->values & (BIT(i)));
--			else
--				pl061_direction_input(&pl061->gc, i);
--		}
--	}
--
- 	amba_set_drvdata(adev, pl061);
- 	dev_info(&adev->dev, "PL061 GPIO chip @%pa registered\n",
- 		 &adev->res.start);
 -- 
 2.7.4
 
