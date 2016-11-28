@@ -1,89 +1,134 @@
-From: Michael Zoran <mzoran-O+n0w2l5AFbk1uMJSBkQmQ@public.gmane.org>
+From: Michael Zoran <mzoran@crowfest.net>
 Subject: Re: [PATCH v3] RFC: pinctrl: bcm2835: switch to GPIOLIB_IRQCHIP
-Date: Mon, 28 Nov 2016 14:08:04 -0800
-Message-ID: <1480370884.1939.1.camel@crowfest.net>
+Date: Mon, 28 Nov 2016 14:22:22 -0800
+Message-ID: <1480371742.1939.3.camel@crowfest.net>
 References: <1479145925-3578-1-git-send-email-linus.walleij@linaro.org>
- <CACRpkdZ39UbUzKebVzRuAg8hxgLiGNzzUMebMVT+mcAOnHRW+w@mail.gmail.com>
- <2017856859.25225.e58aee3b-9fc2-4b39-a030-c2409c5b92fc.open-xchange@email.1und1.de>
- <87zikjz7cy.fsf@eliezer.anholt.net>
+         <CACRpkdZ39UbUzKebVzRuAg8hxgLiGNzzUMebMVT+mcAOnHRW+w@mail.gmail.com>
+         <2017856859.25225.e58aee3b-9fc2-4b39-a030-c2409c5b92fc.open-xchange@email.1und1.de>
+         <87zikjz7cy.fsf@eliezer.anholt.net> <1480370884.1939.1.camel@crowfest.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <87zikjz7cy.fsf-omZaPlIz5HhaEpDpdNBo/KxOck334EZe@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rpi-kernel>,
- <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rpi-kernel/>
-List-Post: <mailto:linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel>,
- <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "linux-rpi-kernel" <linux-rpi-kernel-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rpi-kernel <linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from gw.crowfest.net ([52.42.241.221]:49662 "EHLO gw.crowfest.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753632AbcK1WWX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 28 Nov 2016 17:22:23 -0500
+In-Reply-To: <1480370884.1939.1.camel@crowfest.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Lee Jones <lee@kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>
 
-T24gTW9uLCAyMDE2LTExLTI4IGF0IDEyOjE4IC0wODAwLCBFcmljIEFuaG9sdCB3cm90ZToKPiBT
-dGVmYW4gV2FocmVuIDxzdGVmYW4ud2FocmVuQGkyc2UuY29tPiB3cml0ZXM6Cj4gCj4gPiBIaSBM
-aW51cywKPiA+IAo+ID4gPiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+
-IGhhdCBhbSAyNC4gTm92ZW1iZXIgMjAxNgo+ID4gPiB1bSAxNjoxNgo+ID4gPiBnZXNjaHJpZWJl
-bjoKPiA+ID4gCj4gPiA+IAo+ID4gPiBPbiBNb24sIE5vdiAxNCwgMjAxNiBhdCA2OjUyIFBNLCBM
-aW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbgo+ID4gPiBhcm8ub3JnPgo+ID4gPiB3cm90
-ZToKPiA+ID4gCj4gPiA+ID4gSXQgc2hvdWxkIGJlIHBvc3NpYmxlIHRvIHVzZSB0aGUgR1BJT0xJ
-Ql9JUlFDSElQIGhlbHBlcgo+ID4gPiA+IGxpYnJhcnkgd2l0aCB0aGUgQkNNMjgzNSBkcml2ZXIg
-c2luY2UgaXQgaXMgYSBwcmV0dHkgc3RyYWlnaHQKPiA+ID4gPiBmb3J3YXJkIGNhc2NhZGVkIGly
-cWNoaXAuCj4gPiA+ID4gCj4gPiA+ID4gVGhlIG9ubHkgZGlmZmVyZW5jZSBmcm9tIG90aGVyIGRy
-aXZlcnMgaXMgdGhhdCB0aGUgQkNNMjgzNQo+ID4gPiA+IGhhcyBzZXZlcmFsIGJhbmtzIGZvciBh
-IHNpbmdsZSBncGlvY2hpcCwgYW5kIGVhY2ggYmFuayBoYXMKPiA+ID4gPiBhIHNlcGFyYXRlIElS
-USBsaW5lLiBJbnN0ZWFkIG9mIGNyZWF0aW5nIG9uZSBncGlvY2hpcCBwZXIKPiA+ID4gPiBiYW5r
-LCBhIHNpbmdsZSBncGlvY2hpcCBjb3ZlcnMgYWxsIGJhbmtzIEdQSU8gbGluZXMuIFRoaXMKPiA+
-ID4gPiBtYWtlcyBpdCBuZWNlc3NhcnkgdG8gcmVzb2x2ZSB0aGUgYmFuayBJRCBpbiB0aGUgSVJR
-Cj4gPiA+ID4gaGFuZGxlci4KPiA+ID4gPiAKPiA+ID4gPiBUaGUgR1BJT0xJQl9JUlFDSElQIGFs
-bG93cyBzZXZlcmFsIElSUXMgdG8gYmUgY2FzY2FkZWQgb2ZmCj4gPiA+ID4gdGhlIHNhbWUgZ3Bp
-b2NoaXAgYnkgY2FsbGluZyBncGlvY2hpcF9zZXRfY2hhaW5lZF9pcnFjaGlwKCkKPiA+ID4gPiBy
-ZXBlYXRlZGx5LCBidXQgd2UgaGF2ZSBiZWVuIGEgYml0IHNob3J0IG9uIGV4YW1wbGVzCj4gPiA+
-ID4gZm9yIGhvdyB0aGlzIHNob3VsZCBiZSBoYW5kbGVkIGluIHByYWN0aWNlLCBzbyB0aGlzIGlz
-IGludGVuZGVkCj4gPiA+ID4gYXMgYW4gZXhhbXBsZSBvZiBob3cgdGhpcyBjYW4gYmUgYWNoaWV2
-ZWQuCj4gPiA+ID4gCj4gPiA+ID4gVGhlIG9sZCBjb2RlIGRpZCBub3QgbW9kZWwgdGhlIGNoaXAg
-YXMgYSBjaGFpbmVkIGludGVycnVwdAo+ID4gPiA+IGhhbmRsZXIsIGJ1dCB0aGlzIHBhdGNoIGFs
-c28gcmVjdGlmaWVzIHRoYXQgc2l0dWF0aW9uLgo+ID4gPiA+IAo+ID4gPiA+IENjOiBTdGVwaGVu
-IFdhcnJlbiA8c3dhcnJlbkB3d3dkb3Rvcmcub3JnPgo+ID4gPiA+IENjOiBTdGVmYW4gV2FocmVu
-IDxzdGVmYW4ud2FocmVuQGkyc2UuY29tPgo+ID4gPiA+IENjOiBFcmljIEFuaG9sdCA8ZXJpY0Bh
-bmhvbHQubmV0Pgo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IExpbnVzIFdhbGxlaWogPGxpbnVzLndh
-bGxlaWpAbGluYXJvLm9yZz4KPiA+ID4gPiAtLS0KPiA+ID4gPiBDaGFuZ2VMb2cgdjItPnYzOgo+
-ID4gPiA+IC0gUmViYXNlIG9uIHRvcCBvZiB0aGUgdHdvIG5ldyBwYXRjaGVzIGZyb20gdGhlIHZl
-bmRvciB0cmVlLgo+ID4gPiA+IENoYW5nZUxvZyB2MS0+djI6Cj4gPiA+ID4gLSBGb3Jnb3QgdG8g
-Y29udmVydCB0aGUgZHJpdmVyIHRvIGNoYWluZWQgSVJRIGhhbmRsZXIuIE5vdwo+ID4gPiA+IGZp
-eGVkLgo+ID4gPiA+IAo+ID4gPiA+IFJwaSBmb2xrczogSSBoYXZlIG5vIGNsdWUgaWYgdGhpcyB3
-b3JrcyBvciBub3QsIGJ1dCB3b3VsZCBiZQo+ID4gPiA+IGhhcHB5Cj4gPiA+ID4gaWYgeW91IGNv
-dWxkIHRlc3QgaXQgdG8gc2VlIGlmIElSUXMgZmlyZSBhcyBleHBlY3RlZCBhbmQKPiA+ID4gPiBw
-cm92aWRlCj4gPiA+ID4gc29tZSBmZWVkYmFjay4KPiA+ID4gCj4gPiA+IEFueSB0ZXN0ZXJzPwo+
-ID4gPiAKPiA+ID4gSSdtIGdldHRpbmcgdGVtcHRlZCB0byBqdXN0IGFwcGx5IGl0IHRvIGdldCB0
-ZXN0IGNvdmVyYWdlLCBhdCB0aGUKPiA+ID4gY29zdCBvZiBoYXZpbmcgdG8gcmV2ZXJ0IGl0IGlm
-IGl0IGp1c3QgZXhwbG9kZXMuLi4KPiA+IAo+ID4gaSBtYWRlIGEgc2ltcGxlIGJvb3QgKyByZWJv
-b3QgdGVzdCBvbiBteSBSUEkgMSBNb2RlbCBCIHdpdGhvdXQgYW55Cj4gPiBpc3N1ZXMuCj4gPiBV
-bmZvcnR1bmF0ZWx5IGkgZG9uJ3QgaGF2ZSBhbnkgYWRkaXRpb25hbCBoYXJkd2FyZSB3aXRoIGEg
-R1BJTwo+ID4gaW50ZXJydXB0Lgo+ID4gCj4gPiBJbiB0aGUgY2FzZSB0aGlzIGlzIHN1ZmZpY2ll
-bnQgeW91IGNhbiBoYXZlIG15Ogo+ID4gCj4gPiBUZXN0ZWQtYnk6IFN0ZWZhbiBXYWhyZW4gPHN0
-ZWZhbi53YWhyZW5AaTJzZS5jb20+Cj4gCj4gR2l2ZW4gdGhhdCB0aGlzIGlzIG1vc3RseSBhYm91
-dCBjaGFuZ2luZyBob3cgSVJRcyBhcmUgaGFuZGxlZCwgaXQKPiB3b3VsZAo+IGJlIHJlYWxseSBu
-aWNlIHRvIGFjdHVhbGx5IHRlc3QgdGhhdC7CoMKgSSd2ZSBmb3J3YXJkZWQgdGhlIHBhdGNoIG9u
-IHRvCj4gUGhpbCBpbiB0aGUgaG9wZXMgaGUgY2FuIHRlc3QgaXQuwqDCoEFsdGVybmF0aXZlbHks
-IHdlIGNvdWxkIG1ha2UgSERNSQo+IHVzZQo+IHRoZSBHUElPIGxpbmUgYXMgYW4gaW50ZXJydXB0
-IGFuZCB0dXJuIG9mZiBIUEQgcG9sbGluZyBhbmQgc2VlIGlmCj4gdGhhdAo+IHdvcmtzIGJlZm9y
-ZSBhbmQgYWZ0ZXIuCj4gCgoKSSBtaWdodCBiZSBhYmxlIHRvIGhlbHAuICBPdmVyIHRoZSB5ZWFy
-cyBJJ3ZlIGJ1aWx0IGxpdHRsZSBicmVha291dApib2FyZHMgb2YgYSBVU0IgUElDMzIgZnJvbSBN
-aWNyb2NoaXAgdGhhdCBoYXMgYSBHUElPIGhlYWRlciBqdXN0IGxpa2UKdGhlIFJQSS4gIEkgY2Fu
-IGhvb2sgdXAgYSB0ZXN0IG9uIGEgYnJlYWRib2FyZCB0aGF0IGNvbm5lY3RzIHRoZSBQSUMzMgp0
-byBib3RoIHRoZSBVU0IgcG9ydCBhbmQgdGhlIEdQSU8gaGVhZGVyIG9mIGEgUlBJIDIgb3IgUlBJ
-IDMuICBUaGF0IHdheQpJIGNhbiBkbyBzb21lIGxvb3BiYWNrIHRlc3RzLgoKVGhlIG9ubHkgdGhp
-bmcgaXMgSSBubyBub3RoaW5nIGFib3V0IHRoZSBHUElPIEFQSSBvZiBMaW51eCwgc28gaXQgd291
-bGQKdGFrZSBzb21lIGxlYXJuaW5nIG9uIG15IHBhcnQuCgpJdCB3b3VsZCBwb3NzaWJseSB0YWtl
-IG1lIGEgZmV3IGRheXMgb3IgdG8gdGhlIGVuZCBvZiB0aGUgd2VlayB0byB0ZXN0CmV2ZXJ5dGhp
-bmcgd2VsbCwgc2luY2UgbGlrZSBJIHNhaWQgSSB3b3VsZCBuZWVkIHRvIHNldHVwIGEgdGVzdCBh
-bmQKd3JpdGUgc29tZSB0ZXN0IGNvZGUuIAoKSSBjYW4ndCBoZWxwIGlmIHlvdSBuZWVkIHRvIGdl
-dCB0aGlzIGluIHNvb25lciwgc3VjaCBhcyBmb3IgNC4xMC4KCgoKCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LXJwaS1rZXJuZWwgbWFpbGluZyBs
-aXN0CmxpbnV4LXJwaS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5m
-cmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LXJwaS1rZXJuZWwK
+On Mon, 2016-11-28 at 14:08 -0800, Michael Zoran wrote:
+> On Mon, 2016-11-28 at 12:18 -0800, Eric Anholt wrote:
+> > Stefan Wahren <stefan.wahren@i2se.com> writes:
+> > 
+> > > Hi Linus,
+> > > 
+> > > > Linus Walleij <linus.walleij@linaro.org> hat am 24. November
+> > > > 2016
+> > > > um 16:16
+> > > > geschrieben:
+> > > > 
+> > > > 
+> > > > On Mon, Nov 14, 2016 at 6:52 PM, Linus Walleij <linus.walleij@l
+> > > > in
+> > > > aro.org>
+> > > > wrote:
+> > > > 
+> > > > > It should be possible to use the GPIOLIB_IRQCHIP helper
+> > > > > library with the BCM2835 driver since it is a pretty straight
+> > > > > forward cascaded irqchip.
+> > > > > 
+> > > > > The only difference from other drivers is that the BCM2835
+> > > > > has several banks for a single gpiochip, and each bank has
+> > > > > a separate IRQ line. Instead of creating one gpiochip per
+> > > > > bank, a single gpiochip covers all banks GPIO lines. This
+> > > > > makes it necessary to resolve the bank ID in the IRQ
+> > > > > handler.
+> > > > > 
+> > > > > The GPIOLIB_IRQCHIP allows several IRQs to be cascaded off
+> > > > > the same gpiochip by calling gpiochip_set_chained_irqchip()
+> > > > > repeatedly, but we have been a bit short on examples
+> > > > > for how this should be handled in practice, so this is
+> > > > > intended
+> > > > > as an example of how this can be achieved.
+> > > > > 
+> > > > > The old code did not model the chip as a chained interrupt
+> > > > > handler, but this patch also rectifies that situation.
+> > > > > 
+> > > > > Cc: Stephen Warren <swarren@wwwdotorg.org>
+> > > > > Cc: Stefan Wahren <stefan.wahren@i2se.com>
+> > > > > Cc: Eric Anholt <eric@anholt.net>
+> > > > > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> > > > > ---
+> > > > > ChangeLog v2->v3:
+> > > > > - Rebase on top of the two new patches from the vendor tree.
+> > > > > ChangeLog v1->v2:
+> > > > > - Forgot to convert the driver to chained IRQ handler. Now
+> > > > > fixed.
+> > > > > 
+> > > > > Rpi folks: I have no clue if this works or not, but would be
+> > > > > happy
+> > > > > if you could test it to see if IRQs fire as expected and
+> > > > > provide
+> > > > > some feedback.
+> > > > 
+> > > > Any testers?
+> > > > 
+> > > > I'm getting tempted to just apply it to get test coverage, at
+> > > > the
+> > > > cost of having to revert it if it just explodes...
+> > > 
+> > > i made a simple boot + reboot test on my RPI 1 Model B without
+> > > any
+> > > issues.
+> > > Unfortunately i don't have any additional hardware with a GPIO
+> > > interrupt.
+> > > 
+> > > In the case this is sufficient you can have my:
+> > > 
+> > > Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
+> > 
+> > Given that this is mostly about changing how IRQs are handled, it
+> > would
+> > be really nice to actually test that.  I've forwarded the patch on
+> > to
+> > Phil in the hopes he can test it.  Alternatively, we could make
+> > HDMI
+> > use
+> > the GPIO line as an interrupt and turn off HPD polling and see if
+> > that
+> > works before and after.
+> > 
+> 
+> 
+> I might be able to help.  Over the years I've built little breakout
+> boards of a USB PIC32 from Microchip that has a GPIO header just like
+> the RPI.  I can hook up a test on a breadboard that connects the
+> PIC32
+> to both the USB port and the GPIO header of a RPI 2 or RPI 3.  That
+> way
+> I can do some loopback tests.
+> 
+> The only thing is I no nothing about the GPIO API of Linux, so it
+> would
+> take some learning on my part.
+> 
+> It would possibly take me a few days or to the end of the week to
+> test
+> everything well, since like I said I would need to setup a test and
+> write some test code. 
+> 
+> I can't help if you need to get this in sooner, such as for 4.10.
+> 
+
+Or another possibility would be to simply hook two RPI s to each other
+through the GPIO header.  I have pre-made wires with connectors to do
+it, but again I would need to learn about the GPIO system of Linux so
+it would take me a few days.
+
+Let me know if I can help or if the deadline is very short.
+
+
