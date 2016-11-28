@@ -1,91 +1,42 @@
-From: "Shah, Nehal-bakulchandra" <Nehal-Bakulchandra.shah@amd.com>
-Subject: Re: [PATCH] pinctrl: amd: Add support for additional GPIO
-Date: Mon, 28 Nov 2016 15:27:25 +0530
-Message-ID: <f6229daa-ef50-17f6-7e1b-f923d30d2dce@amd.com>
-References: <MWHPR12MB1357C965EBE3F1161823C223A0B90@MWHPR12MB1357.namprd12.prod.outlook.com>
- <CACRpkdbab3iEwLOucpAz38AJZaEgpO6mrZrLev+YSYuO7Ox_JA@mail.gmail.com>
- <469f529e-818b-392f-9ddb-b02e87e50ca9@amd.com>
- <CACRpkdbY-2iB9oxHfFOJBmJQq-zmOR1YEg0dy5zdx++tg-acGw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: David Lechner <david@lechnology.com>
+Subject: [PATCH v2 0/3] TI DA850/OMAP-L138/AM18x pinconf
+Date: Mon, 28 Nov 2016 10:40:23 -0600
+Message-ID: <1480351226-3332-1-git-send-email-david@lechnology.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-dm3nam03on0071.outbound.protection.outlook.com ([104.47.41.71]:59446
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932626AbcK1Ob0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 28 Nov 2016 09:31:26 -0500
-In-Reply-To: <CACRpkdbY-2iB9oxHfFOJBmJQq-zmOR1YEg0dy5zdx++tg-acGw@mail.gmail.com>
+Received: from vern.gendns.com ([206.190.152.46]:42937 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932532AbcK1Qkl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 28 Nov 2016 11:40:41 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>
+Cc: David Lechner <david@lechnology.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Axel Haslam <ahaslam@baylibre.com>, Alexandre Bailon <abailon@baylibre.com>, =?UTF-8?q?Bartosz=20Go=C5=82aszewski?= <bgolaszewski@baylibre.com>
 
+This series adds a new driver and DT bindings for TI DA850/OMAP-L138/AM18x
+pinconf (bias pullup/pulldown).
 
+The motivation for this series is LEGO MINDSTORMS EV3 support. It needs most,
+if not all, internal pullup/down resistors disabled in order to work correctly.
 
-On 11/22/2016 4:14 PM, Linus Walleij wrote:
-> On Tue, Nov 22, 2016 at 11:19 AM, Shah, Nehal-bakulchandra
-> <Nehal-Bakulchandra.shah@amd.com> wrote:
-> 
->> I understood that chained irq and devm_irq can't be used together. Surely,
->> I will rework on the patch.
-> 
-> OK! :)
-> 
-> We have a case where devm_request_threaded_irq() is used like this,
-> that is called *nested* irqs, when an interrupt-handling thread is called
-> from within another interrupt-handling thread.
-> 
-> But since this handler is not threaded, but rather a hardirq, it is not
-> a viable option.
-> 
->> The reason behind using devm_irq is that in our
->> upcoming platform bios may report two gpio controllers. Both will have same IRQs.
->> In my understanding if I use chained irq handler, it will not be clear interrupt
->> is due to which gpio controller.It may lead to serve irq twice.
-> 
-> This is a shared IRQ line.
-> 
-> How stressful that it is shared between two cascaded irqchips!
-> 
-> Shared IRQs should nominally be handled by the leafs of the interrupt
-> handlers returning IRQ_HANDLED and the ones that did not
-> trigger an IRQ returning IRQ_NONE.
-> 
-> With a chained handler the assumption is that the flow handler
-> is not really returning anything, just dispatching down to the
-> consumer (device etc) to return IRQ_HANDLED if it was
-> their IRQ.
-> 
-> If you want to "bail out" of the chained handler (in your
-> case what you pass to gpiochip_set_chained_irqchip())
-> just check if the IRQ status register happens to be zero,
-> and in that case return; before even calling
-> chained_irq_enter().
-> 
-> I do not know if there is a way to mark a line as shared
-> in a chained flow handler!
-> 
-> The current assumption is that gpiochip_set_chained_irqchip()
-> is called for one or many *different* IRQs. That will work.
-> But if it is called twice for the *same* IRQ, we might need
-> some special work inside gpiochip_set_chained_irqchip()
-> to make this work properly with shared IRQs...
-> 
->> Please let me know if anything is incorrect in my understanding or if there is
->> a better way to handle this situation.
-> 
-> I think reading a bit in kernel/irq/chip.c to see what is really
-> happening with chained IRQs help a lot. If there are unclarities,
-> it needs to be discussed with the IRQchip maintainers
-> (Marc & Thomas).
-> 
-> Yours,
-> Linus Walleij
-> 
-Hi Linus,
+v2 changes:
+* s/DA8XX/DA850/ in the commit messages
+* Fix `get_get` typo in pinctrl-da850-pupd.c
+* Moved pin-controller@22c00c device node in da850.dtsi
 
-Thanks for your valuable input. Currently due to some limitations in IP we are restricting number of GPIO controller to 1. Hence Bios also will report 1 GPIO controller. So now to make it simple i will submit patch for Addtional GPIO Bank and adding IRQCHIP_SKIP_SET_WAKE flag. I will submit that patch in separate mail. Now regarding the another GPIO controller once limitation and behavior will be cleared i will make a separate patch.
+David Lechner (3):
+  devicetree: bindings: pinctrl: Add binding for ti,da850-pupd
+  pinctrl: New driver for TI DA850/OMAP-L138/AM18XX pinconf
+  ARM: dts: da850: Add node for pullup/pulldown pinconf
 
-Regards
-Nehal Shah
+ .../devicetree/bindings/pinctrl/ti,da850-pupd.txt  |  55 ++++++
+ arch/arm/boot/dts/da850.dtsi                       |   5 +
+ drivers/pinctrl/Kconfig                            |   9 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-da850-pupd.c               | 210 +++++++++++++++++++++
+ 5 files changed, 280 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/ti,da850-pupd.txt
+ create mode 100644 drivers/pinctrl/pinctrl-da850-pupd.c
+
+-- 
+2.7.4
+
