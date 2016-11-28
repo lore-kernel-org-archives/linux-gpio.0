@@ -1,56 +1,25 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH v3] Documentation: pinctrl: palmas: Add ti,palmas-powerhold-override property definition
-Date: Mon, 28 Nov 2016 09:31:58 +0530
-Message-ID: <1480305718-5127-1-git-send-email-j-keerthy@ti.com>
+From: BMW <INFO@nbrc.ac.in>
+Subject: BMW PROMO
+Date: Mon, 28 Nov 2016 07:20:43 +0200
+Message-ID: <201611280444.uAS4dsg7026681__22080.0439747565$1480311700$gmane$org@mx1.nbrc.ac.in>
+Reply-To: tonyrichy26@usa.com
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:22568 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752570AbcK1ECQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Nov 2016 23:02:16 -0500
+Received: from webmail.nbrc.ac.in ([14.139.62.5]:44558 "EHLO mx1.nbrc.ac.in"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751623AbcK1Fla (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 28 Nov 2016 00:41:30 -0500
+Content-Description: Mail message body
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: j-keerthy@ti.com, t-kristo@ti.com, robh+dt@kernel.org, tony@atomide.com, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Recipients <INFO@nbrc.ac.in>
 
-GPIO7 is configured in POWERHOLD mode which has higher priority
-over DEV_ON bit and keeps the PMIC supplies on even after the DEV_ON
-bit is turned off. This property enables driver to over ride the
-POWERHOLD value to GPIO7 so as to turn off the PMIC in power off
-scenarios.
-
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
-
-Remaining patches of the series are already queued.
-
-Changes in v3: Added Rob's Ack.
-
- Documentation/devicetree/bindings/pinctrl/pinctrl-palmas.txt | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-palmas.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-palmas.txt
-index caf297b..c28d4eb8 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-palmas.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-palmas.txt
-@@ -35,6 +35,15 @@ Optional properties:
- - ti,palmas-enable-dvfs2: Enable DVFS2. Configure pins for DVFS2 mode.
- 	Selection primary or secondary function associated to GPADC_START
- 	and SYSEN2 pin/pad for DVFS2 interface
-+- ti,palmas-override-powerhold: This is applicable for PMICs for which
-+	GPIO7 is configured in POWERHOLD mode which has higher priority
-+	over DEV_ON bit and keeps the PMIC supplies on even after the DEV_ON
-+	bit is turned off. This property enables driver to over ride the
-+	POWERHOLD value to GPIO7 so as to turn off the PMIC in power off
-+	scenarios. So for GPIO7 if ti,palmas-override-powerhold is set
-+	then the GPIO_7 field should never be muxed to anything else.
-+	It should be set to POWERHOLD by default and only in case of
-+	power off scenarios the driver will over ride the mux value.
- 
- This binding uses the following generic properties as defined in
- pinctrl-bindings.txt:
--- 
-1.9.1
-
+Congratulations,
+Dear Mr. /Mrs. you are lucky to have been chosen in the BMW 2016 lottery draw.
+That was just concluded in an E lottery online machine draw and the  email with lotto number BMW216021653096 and ticket draw number 5000342. Has won $150,000(ONE HUNDRED AND FIFTHY THOUSAND DOLLARS)
+VERIFY TO CLAIM YOUR PRIZE .EMAIL THE PROMOTIONAL HEAD MANAGER ON (tonyrichy26@usa.com) FOR YOUR CLAIMS.
+THANKS.
+tony richmond
+(promotional head)
