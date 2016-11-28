@@ -1,32 +1,89 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/3] devicetree: bindings: pinctrl: Add binding for
- ti,da850-pupd
-Date: Mon, 28 Nov 2016 15:54:34 -0600
-Message-ID: <20161128215434.2fxp7zjszj2sq3an@rob-hp-laptop>
-References: <1479871767-20160-1-git-send-email-david@lechnology.com>
- <1479871767-20160-2-git-send-email-david@lechnology.com>
+From: Michael Zoran <mzoran-O+n0w2l5AFbk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: [PATCH v3] RFC: pinctrl: bcm2835: switch to GPIOLIB_IRQCHIP
+Date: Mon, 28 Nov 2016 14:08:04 -0800
+Message-ID: <1480370884.1939.1.camel@crowfest.net>
+References: <1479145925-3578-1-git-send-email-linus.walleij@linaro.org>
+ <CACRpkdZ39UbUzKebVzRuAg8hxgLiGNzzUMebMVT+mcAOnHRW+w@mail.gmail.com>
+ <2017856859.25225.e58aee3b-9fc2-4b39-a030-c2409c5b92fc.open-xchange@email.1und1.de>
+ <87zikjz7cy.fsf@eliezer.anholt.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:35147 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751660AbcK1Vyg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Nov 2016 16:54:36 -0500
-Content-Disposition: inline
-In-Reply-To: <1479871767-20160-2-git-send-email-david@lechnology.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <87zikjz7cy.fsf-omZaPlIz5HhaEpDpdNBo/KxOck334EZe@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rpi-kernel>,
+ <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rpi-kernel/>
+List-Post: <mailto:linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel>,
+ <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "linux-rpi-kernel" <linux-rpi-kernel-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rpi-kernel <linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: David Lechner <david@lechnology.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Axel Haslam <ahaslam@baylibre.com>, Alexandre Bailon <abailon@baylibre.com>, Bartosz =?utf-8?Q?Go=C5=82aszewski?= <bgolaszewski@baylibre.com>
 
-On Tue, Nov 22, 2016 at 09:29:25PM -0600, David Lechner wrote:
-> Device-tree bindings for TI DA8XX/OMAP-L138/AM18XX pullup/pulldown
-> pinconf controller.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
->  .../devicetree/bindings/pinctrl/ti,da850-pupd.txt  | 55 ++++++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/ti,da850-pupd.txt
-
-Acked-by: Rob Herring <robh@kernel.org>
+T24gTW9uLCAyMDE2LTExLTI4IGF0IDEyOjE4IC0wODAwLCBFcmljIEFuaG9sdCB3cm90ZToKPiBT
+dGVmYW4gV2FocmVuIDxzdGVmYW4ud2FocmVuQGkyc2UuY29tPiB3cml0ZXM6Cj4gCj4gPiBIaSBM
+aW51cywKPiA+IAo+ID4gPiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+
+IGhhdCBhbSAyNC4gTm92ZW1iZXIgMjAxNgo+ID4gPiB1bSAxNjoxNgo+ID4gPiBnZXNjaHJpZWJl
+bjoKPiA+ID4gCj4gPiA+IAo+ID4gPiBPbiBNb24sIE5vdiAxNCwgMjAxNiBhdCA2OjUyIFBNLCBM
+aW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbgo+ID4gPiBhcm8ub3JnPgo+ID4gPiB3cm90
+ZToKPiA+ID4gCj4gPiA+ID4gSXQgc2hvdWxkIGJlIHBvc3NpYmxlIHRvIHVzZSB0aGUgR1BJT0xJ
+Ql9JUlFDSElQIGhlbHBlcgo+ID4gPiA+IGxpYnJhcnkgd2l0aCB0aGUgQkNNMjgzNSBkcml2ZXIg
+c2luY2UgaXQgaXMgYSBwcmV0dHkgc3RyYWlnaHQKPiA+ID4gPiBmb3J3YXJkIGNhc2NhZGVkIGly
+cWNoaXAuCj4gPiA+ID4gCj4gPiA+ID4gVGhlIG9ubHkgZGlmZmVyZW5jZSBmcm9tIG90aGVyIGRy
+aXZlcnMgaXMgdGhhdCB0aGUgQkNNMjgzNQo+ID4gPiA+IGhhcyBzZXZlcmFsIGJhbmtzIGZvciBh
+IHNpbmdsZSBncGlvY2hpcCwgYW5kIGVhY2ggYmFuayBoYXMKPiA+ID4gPiBhIHNlcGFyYXRlIElS
+USBsaW5lLiBJbnN0ZWFkIG9mIGNyZWF0aW5nIG9uZSBncGlvY2hpcCBwZXIKPiA+ID4gPiBiYW5r
+LCBhIHNpbmdsZSBncGlvY2hpcCBjb3ZlcnMgYWxsIGJhbmtzIEdQSU8gbGluZXMuIFRoaXMKPiA+
+ID4gPiBtYWtlcyBpdCBuZWNlc3NhcnkgdG8gcmVzb2x2ZSB0aGUgYmFuayBJRCBpbiB0aGUgSVJR
+Cj4gPiA+ID4gaGFuZGxlci4KPiA+ID4gPiAKPiA+ID4gPiBUaGUgR1BJT0xJQl9JUlFDSElQIGFs
+bG93cyBzZXZlcmFsIElSUXMgdG8gYmUgY2FzY2FkZWQgb2ZmCj4gPiA+ID4gdGhlIHNhbWUgZ3Bp
+b2NoaXAgYnkgY2FsbGluZyBncGlvY2hpcF9zZXRfY2hhaW5lZF9pcnFjaGlwKCkKPiA+ID4gPiBy
+ZXBlYXRlZGx5LCBidXQgd2UgaGF2ZSBiZWVuIGEgYml0IHNob3J0IG9uIGV4YW1wbGVzCj4gPiA+
+ID4gZm9yIGhvdyB0aGlzIHNob3VsZCBiZSBoYW5kbGVkIGluIHByYWN0aWNlLCBzbyB0aGlzIGlz
+IGludGVuZGVkCj4gPiA+ID4gYXMgYW4gZXhhbXBsZSBvZiBob3cgdGhpcyBjYW4gYmUgYWNoaWV2
+ZWQuCj4gPiA+ID4gCj4gPiA+ID4gVGhlIG9sZCBjb2RlIGRpZCBub3QgbW9kZWwgdGhlIGNoaXAg
+YXMgYSBjaGFpbmVkIGludGVycnVwdAo+ID4gPiA+IGhhbmRsZXIsIGJ1dCB0aGlzIHBhdGNoIGFs
+c28gcmVjdGlmaWVzIHRoYXQgc2l0dWF0aW9uLgo+ID4gPiA+IAo+ID4gPiA+IENjOiBTdGVwaGVu
+IFdhcnJlbiA8c3dhcnJlbkB3d3dkb3Rvcmcub3JnPgo+ID4gPiA+IENjOiBTdGVmYW4gV2FocmVu
+IDxzdGVmYW4ud2FocmVuQGkyc2UuY29tPgo+ID4gPiA+IENjOiBFcmljIEFuaG9sdCA8ZXJpY0Bh
+bmhvbHQubmV0Pgo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IExpbnVzIFdhbGxlaWogPGxpbnVzLndh
+bGxlaWpAbGluYXJvLm9yZz4KPiA+ID4gPiAtLS0KPiA+ID4gPiBDaGFuZ2VMb2cgdjItPnYzOgo+
+ID4gPiA+IC0gUmViYXNlIG9uIHRvcCBvZiB0aGUgdHdvIG5ldyBwYXRjaGVzIGZyb20gdGhlIHZl
+bmRvciB0cmVlLgo+ID4gPiA+IENoYW5nZUxvZyB2MS0+djI6Cj4gPiA+ID4gLSBGb3Jnb3QgdG8g
+Y29udmVydCB0aGUgZHJpdmVyIHRvIGNoYWluZWQgSVJRIGhhbmRsZXIuIE5vdwo+ID4gPiA+IGZp
+eGVkLgo+ID4gPiA+IAo+ID4gPiA+IFJwaSBmb2xrczogSSBoYXZlIG5vIGNsdWUgaWYgdGhpcyB3
+b3JrcyBvciBub3QsIGJ1dCB3b3VsZCBiZQo+ID4gPiA+IGhhcHB5Cj4gPiA+ID4gaWYgeW91IGNv
+dWxkIHRlc3QgaXQgdG8gc2VlIGlmIElSUXMgZmlyZSBhcyBleHBlY3RlZCBhbmQKPiA+ID4gPiBw
+cm92aWRlCj4gPiA+ID4gc29tZSBmZWVkYmFjay4KPiA+ID4gCj4gPiA+IEFueSB0ZXN0ZXJzPwo+
+ID4gPiAKPiA+ID4gSSdtIGdldHRpbmcgdGVtcHRlZCB0byBqdXN0IGFwcGx5IGl0IHRvIGdldCB0
+ZXN0IGNvdmVyYWdlLCBhdCB0aGUKPiA+ID4gY29zdCBvZiBoYXZpbmcgdG8gcmV2ZXJ0IGl0IGlm
+IGl0IGp1c3QgZXhwbG9kZXMuLi4KPiA+IAo+ID4gaSBtYWRlIGEgc2ltcGxlIGJvb3QgKyByZWJv
+b3QgdGVzdCBvbiBteSBSUEkgMSBNb2RlbCBCIHdpdGhvdXQgYW55Cj4gPiBpc3N1ZXMuCj4gPiBV
+bmZvcnR1bmF0ZWx5IGkgZG9uJ3QgaGF2ZSBhbnkgYWRkaXRpb25hbCBoYXJkd2FyZSB3aXRoIGEg
+R1BJTwo+ID4gaW50ZXJydXB0Lgo+ID4gCj4gPiBJbiB0aGUgY2FzZSB0aGlzIGlzIHN1ZmZpY2ll
+bnQgeW91IGNhbiBoYXZlIG15Ogo+ID4gCj4gPiBUZXN0ZWQtYnk6IFN0ZWZhbiBXYWhyZW4gPHN0
+ZWZhbi53YWhyZW5AaTJzZS5jb20+Cj4gCj4gR2l2ZW4gdGhhdCB0aGlzIGlzIG1vc3RseSBhYm91
+dCBjaGFuZ2luZyBob3cgSVJRcyBhcmUgaGFuZGxlZCwgaXQKPiB3b3VsZAo+IGJlIHJlYWxseSBu
+aWNlIHRvIGFjdHVhbGx5IHRlc3QgdGhhdC7CoMKgSSd2ZSBmb3J3YXJkZWQgdGhlIHBhdGNoIG9u
+IHRvCj4gUGhpbCBpbiB0aGUgaG9wZXMgaGUgY2FuIHRlc3QgaXQuwqDCoEFsdGVybmF0aXZlbHks
+IHdlIGNvdWxkIG1ha2UgSERNSQo+IHVzZQo+IHRoZSBHUElPIGxpbmUgYXMgYW4gaW50ZXJydXB0
+IGFuZCB0dXJuIG9mZiBIUEQgcG9sbGluZyBhbmQgc2VlIGlmCj4gdGhhdAo+IHdvcmtzIGJlZm9y
+ZSBhbmQgYWZ0ZXIuCj4gCgoKSSBtaWdodCBiZSBhYmxlIHRvIGhlbHAuICBPdmVyIHRoZSB5ZWFy
+cyBJJ3ZlIGJ1aWx0IGxpdHRsZSBicmVha291dApib2FyZHMgb2YgYSBVU0IgUElDMzIgZnJvbSBN
+aWNyb2NoaXAgdGhhdCBoYXMgYSBHUElPIGhlYWRlciBqdXN0IGxpa2UKdGhlIFJQSS4gIEkgY2Fu
+IGhvb2sgdXAgYSB0ZXN0IG9uIGEgYnJlYWRib2FyZCB0aGF0IGNvbm5lY3RzIHRoZSBQSUMzMgp0
+byBib3RoIHRoZSBVU0IgcG9ydCBhbmQgdGhlIEdQSU8gaGVhZGVyIG9mIGEgUlBJIDIgb3IgUlBJ
+IDMuICBUaGF0IHdheQpJIGNhbiBkbyBzb21lIGxvb3BiYWNrIHRlc3RzLgoKVGhlIG9ubHkgdGhp
+bmcgaXMgSSBubyBub3RoaW5nIGFib3V0IHRoZSBHUElPIEFQSSBvZiBMaW51eCwgc28gaXQgd291
+bGQKdGFrZSBzb21lIGxlYXJuaW5nIG9uIG15IHBhcnQuCgpJdCB3b3VsZCBwb3NzaWJseSB0YWtl
+IG1lIGEgZmV3IGRheXMgb3IgdG8gdGhlIGVuZCBvZiB0aGUgd2VlayB0byB0ZXN0CmV2ZXJ5dGhp
+bmcgd2VsbCwgc2luY2UgbGlrZSBJIHNhaWQgSSB3b3VsZCBuZWVkIHRvIHNldHVwIGEgdGVzdCBh
+bmQKd3JpdGUgc29tZSB0ZXN0IGNvZGUuIAoKSSBjYW4ndCBoZWxwIGlmIHlvdSBuZWVkIHRvIGdl
+dCB0aGlzIGluIHNvb25lciwgc3VjaCBhcyBmb3IgNC4xMC4KCgoKCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LXJwaS1rZXJuZWwgbWFpbGluZyBs
+aXN0CmxpbnV4LXJwaS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5m
+cmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LXJwaS1rZXJuZWwK
