@@ -1,38 +1,91 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V4 2/2] pinctrl: tegra: Add driver to configure voltage
- and power of io pads
-Date: Mon, 28 Nov 2016 14:52:07 +0530
-Message-ID: <583BF73F.7010407@nvidia.com>
-References: <1479976734-30498-1-git-send-email-ldewangan@nvidia.com> <1479976734-30498-3-git-send-email-ldewangan@nvidia.com> <20161125095744.GB11512@ulmo.ba.sec> <583828D5.5060507@nvidia.com> <da7b815c-149c-6baf-6691-a038d3fe54bf@nvidia.com> <583879A8.7020401@nvidia.com> <4d255a3e-0816-498c-a280-6d29ca880e13@nvidia.com>
+From: "Shah, Nehal-bakulchandra" <Nehal-Bakulchandra.shah@amd.com>
+Subject: Re: [PATCH] pinctrl: amd: Add support for additional GPIO
+Date: Mon, 28 Nov 2016 15:27:25 +0530
+Message-ID: <f6229daa-ef50-17f6-7e1b-f923d30d2dce@amd.com>
+References: <MWHPR12MB1357C965EBE3F1161823C223A0B90@MWHPR12MB1357.namprd12.prod.outlook.com>
+ <CACRpkdbab3iEwLOucpAz38AJZaEgpO6mrZrLev+YSYuO7Ox_JA@mail.gmail.com>
+ <469f529e-818b-392f-9ddb-b02e87e50ca9@amd.com>
+ <CACRpkdbY-2iB9oxHfFOJBmJQq-zmOR1YEg0dy5zdx++tg-acGw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4d255a3e-0816-498c-a280-6d29ca880e13-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-dm3nam03on0071.outbound.protection.outlook.com ([104.47.41.71]:59446
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932626AbcK1Ob0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 28 Nov 2016 09:31:26 -0500
+In-Reply-To: <CACRpkdbY-2iB9oxHfFOJBmJQq-zmOR1YEg0dy5zdx++tg-acGw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
 
 
-On Monday 28 November 2016 02:56 PM, Jon Hunter wrote:
-> On 25/11/16 17:49, Laxman Dewangan wrote:
->>
->> In the above dpaux driver,  you used the pinctrl framework and its core
->> functionality for the device tree interfacing and client interfacing.
->>
->> The same thing I am saying here, we should not avoid the pinctrl
->> framework. The client driver will use the pinctrl framework for the IO
->> pad configurations, not direct PMC APIs.
-> Exactly, so why are you saying that by moving the code into the PMC
-> driver this will "need lots of DT processing for getting information
-> from DT"? By moving the code, we are not suggesting we don't use the
-> pinctrl framework, we are just suggesting we move the code. That's all.
->
->
-OK, got it. My understanding  from suggestion was that to implement 
-everything without using the pinctrl framework.
 
-I dont see much issue to just move this to  drivers/soc/tegra folder
-I hope rest of stuff will be same, registering it as subdev of the pmc 
-and this io pad driver will be the platform driver.
+On 11/22/2016 4:14 PM, Linus Walleij wrote:
+> On Tue, Nov 22, 2016 at 11:19 AM, Shah, Nehal-bakulchandra
+> <Nehal-Bakulchandra.shah@amd.com> wrote:
+> 
+>> I understood that chained irq and devm_irq can't be used together. Surely,
+>> I will rework on the patch.
+> 
+> OK! :)
+> 
+> We have a case where devm_request_threaded_irq() is used like this,
+> that is called *nested* irqs, when an interrupt-handling thread is called
+> from within another interrupt-handling thread.
+> 
+> But since this handler is not threaded, but rather a hardirq, it is not
+> a viable option.
+> 
+>> The reason behind using devm_irq is that in our
+>> upcoming platform bios may report two gpio controllers. Both will have same IRQs.
+>> In my understanding if I use chained irq handler, it will not be clear interrupt
+>> is due to which gpio controller.It may lead to serve irq twice.
+> 
+> This is a shared IRQ line.
+> 
+> How stressful that it is shared between two cascaded irqchips!
+> 
+> Shared IRQs should nominally be handled by the leafs of the interrupt
+> handlers returning IRQ_HANDLED and the ones that did not
+> trigger an IRQ returning IRQ_NONE.
+> 
+> With a chained handler the assumption is that the flow handler
+> is not really returning anything, just dispatching down to the
+> consumer (device etc) to return IRQ_HANDLED if it was
+> their IRQ.
+> 
+> If you want to "bail out" of the chained handler (in your
+> case what you pass to gpiochip_set_chained_irqchip())
+> just check if the IRQ status register happens to be zero,
+> and in that case return; before even calling
+> chained_irq_enter().
+> 
+> I do not know if there is a way to mark a line as shared
+> in a chained flow handler!
+> 
+> The current assumption is that gpiochip_set_chained_irqchip()
+> is called for one or many *different* IRQs. That will work.
+> But if it is called twice for the *same* IRQ, we might need
+> some special work inside gpiochip_set_chained_irqchip()
+> to make this work properly with shared IRQs...
+> 
+>> Please let me know if anything is incorrect in my understanding or if there is
+>> a better way to handle this situation.
+> 
+> I think reading a bit in kernel/irq/chip.c to see what is really
+> happening with chained IRQs help a lot. If there are unclarities,
+> it needs to be discussed with the IRQchip maintainers
+> (Marc & Thomas).
+> 
+> Yours,
+> Linus Walleij
+> 
+Hi Linus,
+
+Thanks for your valuable input. Currently due to some limitations in IP we are restricting number of GPIO controller to 1. Hence Bios also will report 1 GPIO controller. So now to make it simple i will submit patch for Addtional GPIO Bank and adding IRQCHIP_SKIP_SET_WAKE flag. I will submit that patch in separate mail. Now regarding the another GPIO controller once limitation and behavior will be cleared i will make a separate patch.
+
+Regards
+Nehal Shah
