@@ -1,19 +1,55 @@
-From: Mrs Julie Leach <info@nbrc.ac.in>
-Subject: Xmas Offer
-Date: Sun, 27 Nov 2016 12:48:56 +0200
-Message-ID: <201611271012.uARA6q3i017012@mx1.nbrc.ac.in>
-Reply-To: julieleach913@gmail.com
+From: Keerthy <j-keerthy@ti.com>
+Subject: Re: [PATCH v2 1/5] Documentation: pinctrl: palmas: Add
+ ti,palmas-powerhold-override property definition
+Date: Mon, 28 Nov 2016 09:21:41 +0530
+Message-ID: <60b58c15-0106-d402-ab63-409800b2c116@ti.com>
+References: <1478754560-27923-1-git-send-email-j-keerthy@ti.com>
+ <1478754560-27923-2-git-send-email-j-keerthy@ti.com>
+ <20161115014352.5d3qwoonlo63mp5p@rob-hp-laptop>
+ <23bf98ee-bcdc-e100-54ce-6f4b1e13ffcf@ti.com>
+ <20161124084544.GS10134@dell.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.nbrc.ac.in ([14.139.62.4]:56210 "EHLO mx1.nbrc.ac.in"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753643AbcK0KvZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 27 Nov 2016 05:51:25 -0500
-Content-Description: Mail message body
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:22314 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751311AbcK1Dvx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Nov 2016 22:51:53 -0500
+In-Reply-To: <20161124084544.GS10134@dell.home>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Recipients <info@nbrc.ac.in>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, tony@atomide.com, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, nm@ti.com, t-kristo@ti.com
 
-You are a recipient to Mrs Julie Leach Donation of $3 million USD. Contact ( julieleach93@gmail.com ) for claims.
+
+
+On Thursday 24 November 2016 02:15 PM, Lee Jones wrote:
+> On Thu, 24 Nov 2016, Keerthy wrote:
+>
+>>
+>>
+>> On Tuesday 15 November 2016 07:13 AM, Rob Herring wrote:
+>>> On Thu, Nov 10, 2016 at 10:39:16AM +0530, Keerthy wrote:
+>>>> GPIO7 is configured in POWERHOLD mode which has higher priority
+>>>> over DEV_ON bit and keeps the PMIC supplies on even after the DEV_ON
+>>>> bit is turned off. This property enables driver to over ride the
+>>>> POWERHOLD value to GPIO7 so as to turn off the PMIC in power off
+>>>> scenarios.
+>>>>
+>>>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>>>> ---
+>>>>  Documentation/devicetree/bindings/pinctrl/pinctrl-palmas.txt | 9 +++++++++
+>>>>  1 file changed, 9 insertions(+)
+>>>
+>>> Acked-by: Rob Herring <robh@kernel.org>
+>>
+>> Tony,
+>>
+>> Are you planning to pick this one as well?
+>
+> This should be taken by LinusW.
+
+Okay. I will post this separately.
+
+>
