@@ -1,19 +1,45 @@
-From: Lopez Omar <olopez@artba.org>
-Subject: Donation
-Date: Tue, 29 Nov 2016 20:54:07 +0100
-Message-ID: <38a944a7-307e-4695-8802-e4be21ddfbc4@artbavs04.artba.org>
-Reply-To: g_mackenzie@rogers.com
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
+Date: Tue, 29 Nov 2016 22:39:35 +0100
+Message-ID: <CAMuHMdUcxJ6fiahvG+Ydha_Tp5RkppSemb=1qkGRwpb4ACGoZw@mail.gmail.com>
+References: <1480410716-25993-1-git-send-email-jacopo@jmondi.org> <4558124.JutbKSQ7ug@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from artbavs04.artba.org ([50.241.138.188]:7684 "EHLO
-        artbavs04.artba.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753933AbcK2U6i (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Nov 2016 15:58:38 -0500
-Content-Description: Mail message body
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <4558124.JutbKSQ7ug@avalon>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
 
-Hello, My name is Gloria C. Mackenzie, i have a Monetary Donation to make for less privilege and yourself and your organization, am writing you with a friend's email, please contact me on g_mackenzie@rogers.com
+Hi Laurent,
+
+On Tue, Nov 29, 2016 at 8:30 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Tuesday 29 Nov 2016 10:11:56 Jacopo Mondi wrote:
+>> Add pin configuration support for Gyro-ADC, named ADI on r8a7791 SoC.
+>>
+>> The Gyro-ADC supports three different configurations:
+>> a single ADC (adi and adi_b groups), 2 ADCs selectable through a single
+>> channel select signal (adi_chsel1 and adi_chsel1_b groups),
+>
+> I've only briefly looked up at the datasheet, but is that a supported mode ?
+> It seems that mode 1 uses 4 channels and mode 2 and 3 use 8 channels.
+
+I think you can always connect less ADCs than there are channels.
+If you connect e.g. only one, you don't need any CHS signals.
+If you connect e.g. two, you can use only one CHS signal.
+
+AFAICS, you still have to use an external demux to create individual chip
+selects from the single CS signal and (up to 3) CHS signals.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
