@@ -1,124 +1,181 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: Re: [PATCH v3] RFC: pinctrl: bcm2835: switch to GPIOLIB_IRQCHIP
-Date: Tue, 29 Nov 2016 20:20:56 +0100 (CET)
-Message-ID: <882495650.143642.63209ba1-8fb4-4a13-9ee0-f746a192f4c7.open-xchange@email.1und1.de>
-References: <1479145925-3578-1-git-send-email-linus.walleij@linaro.org>
- <CACRpkdZ39UbUzKebVzRuAg8hxgLiGNzzUMebMVT+mcAOnHRW+w@mail.gmail.com>
- <2017856859.25225.e58aee3b-9fc2-4b39-a030-c2409c5b92fc.open-xchange@email.1und1.de>
- <87zikjz7cy.fsf@eliezer.anholt.net> <1480370884.1939.1.camel@crowfest.net>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
+Date: Tue, 29 Nov 2016 21:30:56 +0200
+Message-ID: <4558124.JutbKSQ7ug@avalon>
+References: <1480410716-25993-1-git-send-email-jacopo@jmondi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:56255 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755402AbcK2TVn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Nov 2016 14:21:43 -0500
-In-Reply-To: <1480370884.1939.1.camel@crowfest.net>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1480410716-25993-1-git-send-email-jacopo@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Jacopo Mondi <jacopo@jmondi.org>
+Cc: geert+renesas@glider.be, magnus.damm@gmail.com, linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Zoran <mzoran@crowfest.net>
-Cc: Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Eric Anholt <eric@anholt.net>
 
-Hi Michael,
+Hi Jacopo,
 
-> Michael Zoran <mzoran@crowfest.net> hat am 28. November 2016 um 23:08
-> geschrieben:
-> 
-> 
-> On Mon, 2016-11-28 at 12:18 -0800, Eric Anholt wrote:
-> > Stefan Wahren <stefan.wahren@i2se.com> writes:
-> > 
-> > > Hi Linus,
-> > > 
-> > > > Linus Walleij <linus.walleij@linaro.org> hat am 24. November 2016
-> > > > um 16:16
-> > > > geschrieben:
-> > > > 
-> > > > 
-> > > > On Mon, Nov 14, 2016 at 6:52 PM, Linus Walleij <linus.walleij@lin
-> > > > aro.org>
-> > > > wrote:
-> > > > 
-> > > > > It should be possible to use the GPIOLIB_IRQCHIP helper
-> > > > > library with the BCM2835 driver since it is a pretty straight
-> > > > > forward cascaded irqchip.
-> > > > > 
-> > > > > The only difference from other drivers is that the BCM2835
-> > > > > has several banks for a single gpiochip, and each bank has
-> > > > > a separate IRQ line. Instead of creating one gpiochip per
-> > > > > bank, a single gpiochip covers all banks GPIO lines. This
-> > > > > makes it necessary to resolve the bank ID in the IRQ
-> > > > > handler.
-> > > > > 
-> > > > > The GPIOLIB_IRQCHIP allows several IRQs to be cascaded off
-> > > > > the same gpiochip by calling gpiochip_set_chained_irqchip()
-> > > > > repeatedly, but we have been a bit short on examples
-> > > > > for how this should be handled in practice, so this is intended
-> > > > > as an example of how this can be achieved.
-> > > > > 
-> > > > > The old code did not model the chip as a chained interrupt
-> > > > > handler, but this patch also rectifies that situation.
-> > > > > 
-> > > > > Cc: Stephen Warren <swarren@wwwdotorg.org>
-> > > > > Cc: Stefan Wahren <stefan.wahren@i2se.com>
-> > > > > Cc: Eric Anholt <eric@anholt.net>
-> > > > > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> > > > > ---
-> > > > > ChangeLog v2->v3:
-> > > > > - Rebase on top of the two new patches from the vendor tree.
-> > > > > ChangeLog v1->v2:
-> > > > > - Forgot to convert the driver to chained IRQ handler. Now
-> > > > > fixed.
-> > > > > 
-> > > > > Rpi folks: I have no clue if this works or not, but would be
-> > > > > happy
-> > > > > if you could test it to see if IRQs fire as expected and
-> > > > > provide
-> > > > > some feedback.
-> > > > 
-> > > > Any testers?
-> > > > 
-> > > > I'm getting tempted to just apply it to get test coverage, at the
-> > > > cost of having to revert it if it just explodes...
-> > > 
-> > > i made a simple boot + reboot test on my RPI 1 Model B without any
-> > > issues.
-> > > Unfortunately i don't have any additional hardware with a GPIO
-> > > interrupt.
-> > > 
-> > > In the case this is sufficient you can have my:
-> > > 
-> > > Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
-> > 
-> > Given that this is mostly about changing how IRQs are handled, it
-> > would
-> > be really nice to actually test that.  I've forwarded the patch on to
-> > Phil in the hopes he can test it.  Alternatively, we could make HDMI
-> > use
-> > the GPIO line as an interrupt and turn off HPD polling and see if
-> > that
-> > works before and after.
-> > 
-> 
-> 
-> I might be able to help.  Over the years I've built little breakout
-> boards of a USB PIC32 from Microchip that has a GPIO header just like
-> the RPI.  I can hook up a test on a breadboard that connects the PIC32
-> to both the USB port and the GPIO header of a RPI 2 or RPI 3.  That way
-> I can do some loopback tests.
-> 
-> The only thing is I no nothing about the GPIO API of Linux, so it would
-> take some learning on my part.
-> 
-> It would possibly take me a few days or to the end of the week to test
-> everything well, since like I said I would need to setup a test and
-> write some test code. 
-> 
-> I can't help if you need to get this in sooner, such as for 4.10.
-> 
+Thank you for the patch.
 
-it's too late for 4.10. So there's no need to hurry.
+On Tuesday 29 Nov 2016 10:11:56 Jacopo Mondi wrote:
+> Add pin configuration support for Gyro-ADC, named ADI on r8a7791 SoC.
+> 
+> The Gyro-ADC supports three different configurations:
+> a single ADC (adi and adi_b groups), 2 ADCs selectable through a single
+> channel select signal (adi_chsel1 and adi_chsel1_b groups),
 
-Thanks
-Stefan
+I've only briefly looked up at the datasheet, but is that a supported mode ? 
+It seems that mode 1 uses 4 channels and mode 2 and 3 use 8 channels.
+
+> up to 4 ADCs
+> through 2 channel select signals (adi_chsel2 and adi_chsel2_b groups)
+> and up to 8 ADCs through 3 channel select signals (adi_chsel3 and
+> adi_chsel3_b groups)
+> 
+> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+> ---
+> 
+> Compiled only, not tested with an actual ADC.
+> 
+> For reference only, these are the changes introduced by Geert's private
+> review of first sketch of this patch:
+>     * separate ADI chsel in 3 overlapping groups:
+>       the user can now select how many pins to assign to channel selection
+>       function.
+> 
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 86 +++++++++++++++++++++++++++++++++
+>  1 file changed, 86 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c index 7ca37c3..3898747 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> @@ -1691,6 +1691,72 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+>  	PINMUX_GPIO_GP_ALL(),
+>  };
+> 
+> +/* - ADI --------------------------------------------------------------- */
+> +static const unsigned int adi_pins[] = {
+> +	/* ADIDATA, ADICS, CLK*/
+
+Missing space before */. Same comment in other places below.
+
+> +	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25), RCAR_GP_PIN(6, 26),
+> +};
+> +static const unsigned int adi_mux[] = {
+> +	/* ADIDATA, ADICS, CLK*/
+> +	ADIDATA_MARK, ADICS_SAMP_MARK, ADICLK_MARK,
+> +};
+> +static const unsigned int adi_chsel1_pins[] = {
+> +	/* CHS 0 */
+> +	RCAR_GP_PIN(6, 27),
+> +};
+> +static const unsigned int adi_chsel1_mux[] = {
+> +	/* CHS 0 */
+> +	ADICHS0_MARK, ADICHS1_MARK, ADICHS2_MARK,
+
+One pin, three mux ?
+
+> +};
+> +static const unsigned int adi_chsel2_pins[] = {
+> +	/* CHS 0, 1 */
+> +	RCAR_GP_PIN(6, 27), RCAR_GP_PIN(6, 28),
+> +};
+> +static const unsigned int adi_chsel2_mux[] = {
+> +	/* CHS 0, 1 */
+> +	ADICHS0_MARK, ADICHS1_MARK, ADICHS2_MARK,
+
+Two pins, three mux ?
+
+> +};
+> +static const unsigned int adi_chsel3_pins[] = {
+> +	/* CHS 0, 1, 2 */
+> +	RCAR_GP_PIN(6, 27), RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
+> +};
+> +static const unsigned int adi_chsel3_mux[] = {
+> +	/* CHS 0, 1, 2 */
+> +	ADICHS0_MARK, ADICHS1_MARK, ADICHS2_MARK,
+> +};
+> +static const unsigned int adi_b_pins[] = {
+> +	/* ADIDATA B, ADICS B, CLK B */
+> +	RCAR_GP_PIN(5, 25), RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 27),
+> +};
+> +static const unsigned int adi_b_mux[] = {
+> +	/* ADIDATA B, ADICS B, CLK B */
+> +	ADIDATA_B_MARK, ADICS_SAMP_B_MARK, ADICLK_B_MARK,
+> +};
+> +static const unsigned int adi_chsel1_b_pins[] = {
+> +	/* CHS B 0 */
+> +	RCAR_GP_PIN(5, 28),
+> +};
+> +static const unsigned int adi_chsel1_b_mux[] = {
+> +	/* CHS B 0 */
+> +	ADICHS0_B_MARK,
+> +};
+> +static const unsigned int adi_chsel2_b_pins[] = {
+> +	/* CHS B 0, 1 */
+> +	RCAR_GP_PIN(5, 28), RCAR_GP_PIN(5, 29),
+> +};
+> +static const unsigned int adi_chsel2_b_mux[] = {
+> +	/* CHS B 0, 1 */
+> +	ADICHS0_B_MARK, ADICHS1_B_MARK,
+> +};
+> +static const unsigned int adi_chsel3_b_pins[] = {
+> +	/* CHS B 0, 1, 2 */
+> +	RCAR_GP_PIN(5, 28), RCAR_GP_PIN(5, 29), RCAR_GP_PIN(5, 30),
+> +};
+> +static const unsigned int adi_chsel3_b_mux[] = {
+> +	/* CHS B 0, 1, 2 */
+> +	ADICHS0_B_MARK, ADICHS1_B_MARK, ADICHS2_B_MARK,
+> +};
+> +
+>  /* - Audio Clock ------------------------------------------------------- */
+>  static const unsigned int audio_clk_a_pins[] = {
+>  	/* CLK */
+> @@ -4343,6 +4409,14 @@ static const unsigned int vin2_clk_mux[] = {
+>  };
+> 
+>  static const struct sh_pfc_pin_group pinmux_groups[] = {
+> +	SH_PFC_PIN_GROUP(adi),
+> +	SH_PFC_PIN_GROUP(adi_chsel1),
+> +	SH_PFC_PIN_GROUP(adi_chsel2),
+> +	SH_PFC_PIN_GROUP(adi_chsel3),
+> +	SH_PFC_PIN_GROUP(adi_b),
+> +	SH_PFC_PIN_GROUP(adi_chsel1_b),
+> +	SH_PFC_PIN_GROUP(adi_chsel2_b),
+> +	SH_PFC_PIN_GROUP(adi_chsel3_b),
+>  	SH_PFC_PIN_GROUP(audio_clk_a),
+>  	SH_PFC_PIN_GROUP(audio_clk_b),
+>  	SH_PFC_PIN_GROUP(audio_clk_b_b),
+> @@ -4687,6 +4761,17 @@ static const struct sh_pfc_pin_group pinmux_groups[]
+> = { SH_PFC_PIN_GROUP(vin2_clk),
+>  };
+> 
+> +static const char * const adi_groups[] = {
+> +	"adi",
+> +	"adi_chsel1",
+> +	"adi_chsel2",
+> +	"adi_chsel3",
+> +	"adi_b",
+> +	"adi_chsel1_b",
+> +	"adi_chsel2_b",
+> +	"adi_chsel3_b",
+> +};
+> +
+>  static const char * const audio_clk_groups[] = {
+>  	"audio_clk_a",
+>  	"audio_clk_b",
+> @@ -5192,6 +5277,7 @@ static const char * const vin2_groups[] = {
+>  };
+> 
+>  static const struct sh_pfc_function pinmux_functions[] = {
+> +	SH_PFC_FUNCTION(adi),
+>  	SH_PFC_FUNCTION(audio_clk),
+>  	SH_PFC_FUNCTION(avb),
+>  	SH_PFC_FUNCTION(can0),
+
+-- 
+Regards,
+
+Laurent Pinchart
