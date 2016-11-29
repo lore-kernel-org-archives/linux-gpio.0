@@ -1,45 +1,162 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Support none GPIO pins bias setting
-Date: Tue, 29 Nov 2016 10:45:13 +0100
-Message-ID: <CAMuHMdVk6S6yUJOmuNV_euUFPVqA9SiUMo6udk9q49wY7hbgyA@mail.gmail.com>
-References: <20161117152631.26426-1-niklas.soderlund+renesas@ragnatech.se>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20161117152631.26426-1-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+From: Jacopo Mondi <jacopo@jmondi.org>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
+Date: Tue, 29 Nov 2016 10:11:56 +0100
+Message-ID: <1480410716-25993-1-git-send-email-jacopo@jmondi.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from 11.mo1.mail-out.ovh.net ([188.165.48.29]:54407 "EHLO
+        11.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757101AbcK2K2i (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Nov 2016 05:28:38 -0500
+Received: from player691.ha.ovh.net (b9.ovh.net [213.186.33.59])
+        by mo1.mail-out.ovh.net (Postfix) with ESMTP id D6C071F679
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Nov 2016 10:12:14 +0100 (CET)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: geert+renesas@glider.be, magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jacopo Mondi <jacopo@jmondi.org>
 
-On Thu, Nov 17, 2016 at 4:26 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> There are pins on the r8a7795 which are not part of a GPIO bank nor
-> can be muxed between different functions. They do however allow for the
-> bias to be configured. Add those pins to the list of pins and
-> to the bias configuration array.
->
-> The pins can now be referred to in DT by function names and their bias
-> setting set.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+Add pin configuration support for Gyro-ADC, named ADI on r8a7791 SoC.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The Gyro-ADC supports three different configurations:
+a single ADC (adi and adi_b groups), 2 ADCs selectable through a single
+channel select signal (adi_chsel1 and adi_chsel1_b groups), up to 4 ADCs
+through 2 channel select signals (adi_chsel2 and adi_chsel2_b groups)
+and up to 8 ADCs through 3 channel select signals (adi_chsel3 and
+adi_chsel3_b groups)
 
-Will queue in sh-pfc-for-v4.11.
+Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+---
 
-Gr{oetje,eeting}s,
+Compiled only, not tested with an actual ADC.
 
-                        Geert
+For reference only, these are the changes introduced by Geert's private
+review of first sketch of this patch:
+    * separate ADI chsel in 3 overlapping groups:
+      the user can now select how many pins to assign to channel selection
+      function.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 86 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index 7ca37c3..3898747 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -1691,6 +1691,72 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	PINMUX_GPIO_GP_ALL(),
+ };
+ 
++/* - ADI -------------------------------------------------------------------- */
++static const unsigned int adi_pins[] = {
++	/* ADIDATA, ADICS, CLK*/
++	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25), RCAR_GP_PIN(6, 26),
++};
++static const unsigned int adi_mux[] = {
++	/* ADIDATA, ADICS, CLK*/
++	ADIDATA_MARK, ADICS_SAMP_MARK, ADICLK_MARK,
++};
++static const unsigned int adi_chsel1_pins[] = {
++	/* CHS 0 */
++	RCAR_GP_PIN(6, 27),
++};
++static const unsigned int adi_chsel1_mux[] = {
++	/* CHS 0 */
++	ADICHS0_MARK, ADICHS1_MARK, ADICHS2_MARK,
++};
++static const unsigned int adi_chsel2_pins[] = {
++	/* CHS 0, 1 */
++	RCAR_GP_PIN(6, 27), RCAR_GP_PIN(6, 28),
++};
++static const unsigned int adi_chsel2_mux[] = {
++	/* CHS 0, 1 */
++	ADICHS0_MARK, ADICHS1_MARK, ADICHS2_MARK,
++};
++static const unsigned int adi_chsel3_pins[] = {
++	/* CHS 0, 1, 2 */
++	RCAR_GP_PIN(6, 27), RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
++};
++static const unsigned int adi_chsel3_mux[] = {
++	/* CHS 0, 1, 2 */
++	ADICHS0_MARK, ADICHS1_MARK, ADICHS2_MARK,
++};
++static const unsigned int adi_b_pins[] = {
++	/* ADIDATA B, ADICS B, CLK B */
++	RCAR_GP_PIN(5, 25), RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 27),
++};
++static const unsigned int adi_b_mux[] = {
++	/* ADIDATA B, ADICS B, CLK B */
++	ADIDATA_B_MARK, ADICS_SAMP_B_MARK, ADICLK_B_MARK,
++};
++static const unsigned int adi_chsel1_b_pins[] = {
++	/* CHS B 0 */
++	RCAR_GP_PIN(5, 28),
++};
++static const unsigned int adi_chsel1_b_mux[] = {
++	/* CHS B 0 */
++	ADICHS0_B_MARK,
++};
++static const unsigned int adi_chsel2_b_pins[] = {
++	/* CHS B 0, 1 */
++	RCAR_GP_PIN(5, 28), RCAR_GP_PIN(5, 29),
++};
++static const unsigned int adi_chsel2_b_mux[] = {
++	/* CHS B 0, 1 */
++	ADICHS0_B_MARK, ADICHS1_B_MARK,
++};
++static const unsigned int adi_chsel3_b_pins[] = {
++	/* CHS B 0, 1, 2 */
++	RCAR_GP_PIN(5, 28), RCAR_GP_PIN(5, 29), RCAR_GP_PIN(5, 30),
++};
++static const unsigned int adi_chsel3_b_mux[] = {
++	/* CHS B 0, 1, 2 */
++	ADICHS0_B_MARK, ADICHS1_B_MARK, ADICHS2_B_MARK,
++};
++
+ /* - Audio Clock ------------------------------------------------------------ */
+ static const unsigned int audio_clk_a_pins[] = {
+ 	/* CLK */
+@@ -4343,6 +4409,14 @@ static const unsigned int vin2_clk_mux[] = {
+ };
+ 
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(adi),
++	SH_PFC_PIN_GROUP(adi_chsel1),
++	SH_PFC_PIN_GROUP(adi_chsel2),
++	SH_PFC_PIN_GROUP(adi_chsel3),
++	SH_PFC_PIN_GROUP(adi_b),
++	SH_PFC_PIN_GROUP(adi_chsel1_b),
++	SH_PFC_PIN_GROUP(adi_chsel2_b),
++	SH_PFC_PIN_GROUP(adi_chsel3_b),
+ 	SH_PFC_PIN_GROUP(audio_clk_a),
+ 	SH_PFC_PIN_GROUP(audio_clk_b),
+ 	SH_PFC_PIN_GROUP(audio_clk_b_b),
+@@ -4687,6 +4761,17 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(vin2_clk),
+ };
+ 
++static const char * const adi_groups[] = {
++	"adi",
++	"adi_chsel1",
++	"adi_chsel2",
++	"adi_chsel3",
++	"adi_b",
++	"adi_chsel1_b",
++	"adi_chsel2_b",
++	"adi_chsel3_b",
++};
++
+ static const char * const audio_clk_groups[] = {
+ 	"audio_clk_a",
+ 	"audio_clk_b",
+@@ -5192,6 +5277,7 @@ static const char * const vin2_groups[] = {
+ };
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(adi),
+ 	SH_PFC_FUNCTION(audio_clk),
+ 	SH_PFC_FUNCTION(avb),
+ 	SH_PFC_FUNCTION(can0),
+-- 
+2.7.4
+
