@@ -1,45 +1,76 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
-Date: Tue, 29 Nov 2016 22:39:35 +0100
-Message-ID: <CAMuHMdUcxJ6fiahvG+Ydha_Tp5RkppSemb=1qkGRwpb4ACGoZw@mail.gmail.com>
-References: <1480410716-25993-1-git-send-email-jacopo@jmondi.org> <4558124.JutbKSQ7ug@avalon>
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: Re: [PATCH RESEND 2/2] gpio: axp209: add pinctrl support
+Date: Tue, 29 Nov 2016 23:13:08 +0100
+Message-ID: <f46c89f2-478b-93b8-5a66-12d1307d4514@free-electrons.com>
+References: <20161123141151.25315-1-quentin.schulz@free-electrons.com>
+ <20161123141151.25315-3-quentin.schulz@free-electrons.com>
+ <CACRpkdb8cej=AMs2kO1Vks-WYeae+CtAW2YOCc+Pz3E49mcrDQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <4558124.JutbKSQ7ug@avalon>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdb8cej=AMs2kO1Vks-WYeae+CtAW2YOCc+Pz3E49mcrDQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Laurent,
+Hi Linus,
 
-On Tue, Nov 29, 2016 at 8:30 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Tuesday 29 Nov 2016 10:11:56 Jacopo Mondi wrote:
->> Add pin configuration support for Gyro-ADC, named ADI on r8a7791 SoC.
+On 24/11/2016 15:17, Linus Walleij wrote:
+> On Wed, Nov 23, 2016 at 3:11 PM, Quentin Schulz
+> <quentin.schulz@free-electrons.com> wrote:
+> 
+>> The GPIOs present in the AXP209 PMIC have multiple functions. They
+>> typically allow a pin to be used as GPIO input or output and can also be
+>> used as ADC or regulator for example.[1]
 >>
->> The Gyro-ADC supports three different configurations:
->> a single ADC (adi and adi_b groups), 2 ADCs selectable through a single
->> channel select signal (adi_chsel1 and adi_chsel1_b groups),
->
-> I've only briefly looked up at the datasheet, but is that a supported mode ?
-> It seems that mode 1 uses 4 channels and mode 2 and 3 use 8 channels.
+>> This adds the possibility to use all functions of the GPIOs present in
+>> the AXP209 PMIC thanks to pinctrl subsystem.
+>>
+>> [1] see registers 90H, 92H and 93H at
+>>     http://dl.linux-sunxi.org/AXP/AXP209_Datasheet_v1.0en.pdf
+>>
+>> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> 
+> I need Maxime's review on this patch.
+> 
+>>  .../devicetree/bindings/gpio/gpio-axp209.txt       |  28 +-
+> 
+> Also move the bindings to pinctrl/pinctrl-axp209.txt
+> 
+>>  drivers/gpio/gpio-axp209.c                         | 551 ++++++++++++++++++---
+> 
+> Combined drivers should be in drivers/pinctrl/*.
+> 
+> Make a separate patch moving the driver to
+> drivers/pinctrl/pinctrl-axp209.c (remember -M to git format-patch)
+> augment Kconfig and Makefile in both subsystems and make
+> these patches on top of that.
+> 
 
-I think you can always connect less ADCs than there are channels.
-If you connect e.g. only one, you don't need any CHS signals.
-If you connect e.g. two, you can use only one CHS signal.
+So basically:
 
-AFAICS, you still have to use an external demux to create individual chip
-selects from the single CS signal and (up to 3) CHS signals.
+ - first patch for adding pinctrl to the existing driver
+ - second patch for moving the driver and binding from gpio to pinctrl
+subsystem
+ - third patch for both removing Kconfig entry and Makefile rule from
+gpio subsystem, and adding a Kconfig entry and a Makefile rule in
+pinctrl subsystem
 
-Gr{oetje,eeting}s,
+Is that what you want?
 
-                        Geert
+Thanks,
+Quentin
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> I will deal with cross-merging the result between the GPIO
+> and pin control trees.
+> 
+> Yours,
+> Linus Walleij
+> 
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Quentin Schulz, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
