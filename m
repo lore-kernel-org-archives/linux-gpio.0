@@ -1,35 +1,172 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: simplify adding threaded interrupts
-Date: Wed, 30 Nov 2016 22:22:24 +0100
-Message-ID: <CACRpkda0HRDOHB0NJZu1UirOBxj7EW2uPTg2KehxqY9jG0Y8sQ@mail.gmail.com>
-References: <1479991133-24153-1-git-send-email-linus.walleij@linaro.org> <1777087.OkzDx8qNW5@ws-stein>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH 1/3] of: Support parsing phandle argument lists through a
+ nexus node
+Date: Wed, 30 Nov 2016 17:30:47 -0600
+Message-ID: <CAL_JsqKZ_Ohcdi0n6XU+5=3o6OwC=r_5Cv1=gx7mytUUVd2dzA@mail.gmail.com>
+References: <20161124102529.20212-1-stephen.boyd@linaro.org> <20161124102529.20212-2-stephen.boyd@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f181.google.com ([209.85.220.181]:35516 "EHLO
-        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757806AbcK3V35 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2016 16:29:57 -0500
-Received: by mail-qk0-f181.google.com with SMTP id n204so224451678qke.2
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2016 13:29:57 -0800 (PST)
-In-Reply-To: <1777087.OkzDx8qNW5@ws-stein>
+Received: from mail.kernel.org ([198.145.29.136]:52842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751601AbcK3XbM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 30 Nov 2016 18:31:12 -0500
+In-Reply-To: <20161124102529.20212-2-stephen.boyd@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Lars Poeschel <poeschel@lemonage.de>, Octavian Purdila <octavian.purdila@intel.com>, Daniel Baluta <daniel.baluta@intel.com>, Bin Gao <bin.gao@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Semen Protsenko <semen.protsenko@globallogic.com>, Phil Reid <preid@electromag.com.au>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Patrice Chotard <patrice.chotard@st.com>
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Frank Rowand <frowand.list@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>
 
-On Wed, Nov 30, 2016 at 3:20 PM, Alexander Stein
-<alexander.stein@systec-electronic.com> wrote:
+On Thu, Nov 24, 2016 at 4:25 AM, Stephen Boyd <stephen.boyd@linaro.org> wrote:
+> Platforms like 96boards have a standardized connector/expansion
+> slot that exposes signals like GPIOs to expansion boards in an
+> SoC agnostic way. We'd like the DT overlays for the expansion
+> boards to be written once without knowledge of the SoC on the
+> other side of the connector. This avoids the unscalable
+> combinatorial explosion of a different DT overlay for each
+> expansion board and SoC pair.
+>
+> We need a way to describe the GPIOs routed through the connector
+> in an SoC agnostic way. Let's introduce nexus property parsing
+> into the OF core to do this. This is largely based on the
+> interrupt nexus support we already have. This allows us to remap
+> a phandle list in a consumer node (e.g. reset-gpios) through a
+> connector in a generic way (e.g. via gpio-map). Do this in a
+> generic routine so that we can remap any sort of variable length
+> phandle list.
+>
+> Taking GPIOs as an example, the connector would be a GPIO nexus,
+> supporting the remapping of a GPIO specifier space to multiple
+> GPIO providers on the SoC. DT would look as shown below, where
+> 'soc_gpio1' and 'soc_gpio2' are inside the SoC, 'connector' is an
+> expansion port where boards can be plugged in, and
+> 'expansion_device' is a device on the expansion board.
+>
+>         soc {
+>                 soc_gpio1: gpio-controller1 {
+>                         #gpio-cells = <2>;
+>                 };
+>
+>                 soc_gpio2: gpio-controller2 {
+>                         #gpio-cells = <2>;
+>                 };
+>         };
+>
+>         connector: connector {
+>                 #gpio-cells = <2>;
+>                 gpio-map = <0 GPIO_ACTIVE_LOW &soc_gpio1 1 GPIO_ACTIVE_LOW>,
+>                            <1 GPIO_ACTIVE_LOW &soc_gpio2 4 GPIO_ACTIVE_LOW>,
+>                            <2 GPIO_ACTIVE_LOW &soc_gpio1 3 GPIO_ACTIVE_LOW>,
+>                            <3 GPIO_ACTIVE_LOW &soc_gpio2 2 GPIO_ACTIVE_LOW>;
+>                 gpio-map-mask = <0xf 0x1>;
 
-> I've tested this on a board using both gpio-mcp23s08.c and gpio-pca953x.c and
-> coulnd't detect any change/regression in dmesg. Is this to be expected?
-> If so
-> Tested-by: Alexander Stein <alexander.stein@systec-electronic.com>
+I think the common case is something more like this:
 
-Yes ideally it just works, thanks :)
+                 gpio-map = <0 0 &soc_gpio1 1 0>,
+                            <1 0 &soc_gpio2 4 0>,
+                            <2 0 &soc_gpio1 3 0>,
+                            <3 0 &soc_gpio2 2 0>;
+                 gpio-map-mask = <0xf 0>;
 
-The fix is for threaded IRQs the corner case when an interrupt has
-to be resent. Unless parent is set up, this cannot be done.
+where we want to pass the 2nd cell of the consumer (e.g. reset-gpios)
+thru. So here the GPIO_ACTIVE_LOW flag below needs to pass thru to
+&soc_gpio1. Otherwise, the gpio-map is has to enumerate every possible
+combination or it will be specific to the daughterboard's usage.
 
-Yours,
-Linus Walleij
+Also, GPIO cells are pretty well standardized, but some cases may need
+a translation function which I guess would be part of a connector
+driver. I don't think that affects the binding nor needs to be solved
+now, but just want to raise that possibility.
+
+>         };
+>
+>         expansion_device {
+>                 reset-gpios = <&connector 2 GPIO_ACTIVE_LOW>;
+>         };
+>
+> The GPIO core would use of_parse_phandle_with_args_map() instead
+> of of_parse_phandle_with_args() and arrive at the same type of
+> result, a phandle and argument list. The difference is that the
+> phandle and arguments will be remapped through the nexus node to
+> the underlying SoC GPIO controller node. In the example above,
+> we would remap 'reset-gpios' from <&connector 2 GPIO_ACTIVE_LOW>
+> to <&soc_gpio1 3 GPIO_ACTIVE_LOW>.
+
+GPIOs also are interrupts frequently, so we need to make sure
+interrupt translation works too. It's a bit tricky as interrupt-map
+depends on #address-cells and #interrupt-cells. I think we just set
+the #address-cells to 0 on the connector node and it will be fine. We
+may need the same pass thru of flags though.
+
+>
+> Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> ---
+>  drivers/of/base.c  | 146 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/of.h |  14 +++++
+>  2 files changed, 160 insertions(+)
+>
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index d687e6de24a0..693b73f33675 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -1772,6 +1772,152 @@ int of_parse_phandle_with_args(const struct device_node *np, const char *list_na
+>  EXPORT_SYMBOL(of_parse_phandle_with_args);
+>
+>  /**
+> + * of_parse_phandle_with_args_map() - Find a node pointed by phandle in a list and remap it
+> + * @np:                pointer to a device tree node containing a list
+> + * @list_name: property name that contains a list
+> + * @cells_name:        property name that specifies phandles' arguments count
+> + * @index:     index of a phandle to parse out
+> + * @out_args:  optional pointer to output arguments structure (will be filled)
+> + *
+> + * This function is useful to parse lists of phandles and their arguments.
+> + * Returns 0 on success and fills out_args, on error returns appropriate
+> + * errno value.
+> + *
+> + * Caller is responsible to call of_node_put() on the returned out_args->np
+> + * pointer.
+> + *
+> + * Example:
+> + *
+> + * phandle1: node1 {
+> + *     #list-cells = <2>;
+> + * }
+> + *
+> + * phandle2: node2 {
+> + *     #list-cells = <1>;
+> + * }
+> + *
+> + * phandle3: node3 {
+> + *     #list-cells = <1>;
+> + *     list-map = <0 &phandle2 3>,
+> + *                <1 &phandle2 2>,
+> + *                <2 &phandle1 5 1>;
+> + *     list-map-mask = <0x3>;
+> + * };
+> + *
+> + * node4 {
+> + *     list = <&phandle1 1 2 &phandle3 0>;
+> + * }
+> + *
+> + * To get a device_node of the `node2' node you may call this:
+> + * of_parse_phandle_with_args(node4, "list", "#list-cells", "list-map",
+> + *                           "list-map-mask", 1, &args);
+> + */
+> +int of_parse_phandle_with_args_map(const struct device_node *np,
+> +                                  const char *list_name,
+> +                                  const char *cells_name,
+> +                                  const char *map_name,
+> +                                  const char *mask_name,
+
+Perhaps these 3 could be just a single base name (e.g. "gpio")?
+Doesn't really buy much other than enforce we don't mix 'gpios' and
+'gpio'. That could never happen. ;)
+
+> +                                  int index, struct of_phandle_args *out_args)
+> +{
+
+Rob
