@@ -1,71 +1,46 @@
 From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH] gpio: chardev: Return error for seek operations
-Date: Wed, 30 Nov 2016 13:05:21 +0100
-Message-ID: <1480507521-17766-1-git-send-email-lars@metafoo.de>
+Subject: Re: [PATCH] gpio: chardev: Return error for seek operations
+Date: Wed, 30 Nov 2016 13:13:50 +0100
+Message-ID: <27bad702-d02b-e9bf-f14f-b978c3e24a7c@metafoo.de>
+References: <1480507521-17766-1-git-send-email-lars@metafoo.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www381.your-server.de ([78.46.137.84]:47806 "EHLO
+Received: from www381.your-server.de ([78.46.137.84]:48319 "EHLO
         www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752376AbcK3MFu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2016 07:05:50 -0500
+        with ESMTP id S1755114AbcK3MN4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2016 07:13:56 -0500
+In-Reply-To: <1480507521-17766-1-git-send-email-lars@metafoo.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-The GPIO chardev is used for management tasks (allocating line and event
-handles) and does neither support read() nor write() operations. Hence it
-does not make much sense to allow seek operations.
+On 11/30/2016 01:05 PM, Lars-Peter Clausen wrote:
+> ...
+> noop_llseek() is primarily meant for
+> devices that can not support seek, but where there might be a user that
+> depends on the seek() operation succeeding. For newly added devices that
+> can not support seek operations it is recommended to use no_llseek(), which
+> will return an error. For more information see commit 6038f373a3dc
+> ("llseek: automatically add .llseek fop").
+> ...
 
-Currently the chardev uses noop_llseek() for its seek implementation. This
-function does not move the pointer and simply returns the current position
-(always 0 for the GPIO chardev). noop_llseek() is primarily meant for
-devices that can not support seek, but where there might be a user that
-depends on the seek() operation succeeding. For newly added devices that
-can not support seek operations it is recommended to use no_llseek(), which
-will return an error. For more information see commit 6038f373a3dc
-("llseek: automatically add .llseek fop").
+Arnd, on this subject. As far as I can see FMODE_SEEK is only set if the
+file was created using sys_open() or a equivalent operation. Files that are
+created using other system calls (e.g. like pipe(), eventfd()) or IOCTLs
+(like for the GPIO line and event handles) do not have FMODE_SEEK set. If
+FMODE_SEEK is not set vfs_seek() will ignore the fops llseek() callback and
+always use no_llseek(). Many of these files that don't have FMODE_SEEK set
+still use noop_llseek(). Partially introduced by your commit, partially
+spread by copy and paste.
 
-Unfortunately this was overlooked when the GPIO chardev ABI was introduced.
-But it is highly unlikely that since then userspace applications have
-appeared that rely on being able to perform non-failing seek operations on
-a GPIO chardev file descriptor. So it should be safe to change from
-noop_llseel() to no_seek(). Also use nonseekable_open() in the chardev
-open() callback to clear the FMODE_SEEK, FMODE_PREAD and FMODE_PWRITE flags
-from the file. Neither of these should be set on a file that does not
-support seek operations.
+Since the llseek field is ignored for those, what is your recommendation
+here? Drop the llseek initialization or change it to no_llseek? And if it is
+the later what is the reason that it should not be removed even if the field
+is never used?
 
-Fixes: 3c702e9987e2 ("gpio: add a userspace chardev ABI for GPIOs")
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
----
-Ideally this gets added to stable as well to get a consistent ABI
-throughout.
----
- drivers/gpio/gpiolib.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 71a2dac..f1615f5 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -986,7 +986,8 @@ static int gpio_chrdev_open(struct inode *inode, struct file *filp)
- 		return -ENODEV;
- 	get_device(&gdev->dev);
- 	filp->private_data = gdev;
--	return 0;
-+
-+	return nonseekable_open(inode, filp);
- }
- 
- /**
-@@ -1011,7 +1012,7 @@ static const struct file_operations gpio_fileops = {
- 	.release = gpio_chrdev_release,
- 	.open = gpio_chrdev_open,
- 	.owner = THIS_MODULE,
--	.llseek = noop_llseek,
-+	.llseek = no_llseek,
- 	.unlocked_ioctl = gpio_ioctl,
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl = gpio_ioctl_compat,
--- 
-2.1.4
+Thanks,
+- Lars
 
