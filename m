@@ -1,39 +1,63 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/3] ARM: dts: da850: Add node for pullup/pulldown pinconf
-Date: Wed, 30 Nov 2016 14:01:48 +0100
-Message-ID: <CACRpkdZOxZRRUGkso_b0hLta4OWkeAgX2khcJxFc8EETFKiiXw@mail.gmail.com>
-References: <1480351226-3332-1-git-send-email-david@lechnology.com> <1480351226-3332-4-git-send-email-david@lechnology.com>
+Subject: Re: [PATCH] pinctrl: amd: Add support for additional GPIO
+Date: Wed, 30 Nov 2016 14:10:28 +0100
+Message-ID: <CACRpkdZrP3BUXZJXunCbWdPuo5qamejFWoz3eA0cEm_kXFPnwg@mail.gmail.com>
+References: <MWHPR12MB1357C965EBE3F1161823C223A0B90@MWHPR12MB1357.namprd12.prod.outlook.com>
+ <CACRpkdbab3iEwLOucpAz38AJZaEgpO6mrZrLev+YSYuO7Ox_JA@mail.gmail.com>
+ <469f529e-818b-392f-9ddb-b02e87e50ca9@amd.com> <CACRpkdbY-2iB9oxHfFOJBmJQq-zmOR1YEg0dy5zdx++tg-acGw@mail.gmail.com>
+ <2c12372c-fd6a-8320-2607-5e58ed54d069@amd.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f170.google.com ([209.85.220.170]:35910 "EHLO
-        mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933545AbcK3NBt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2016 08:01:49 -0500
-Received: by mail-qk0-f170.google.com with SMTP id n21so208195322qka.3
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2016 05:01:49 -0800 (PST)
-In-Reply-To: <1480351226-3332-4-git-send-email-david@lechnology.com>
+Received: from mail-qk0-f169.google.com ([209.85.220.169]:35658 "EHLO
+        mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752557AbcK3NKa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2016 08:10:30 -0500
+Received: by mail-qk0-f169.google.com with SMTP id n204so208466126qke.2
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2016 05:10:30 -0800 (PST)
+In-Reply-To: <2c12372c-fd6a-8320-2607-5e58ed54d069@amd.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Lechner <david@lechnology.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Axel Haslam <ahaslam@baylibre.com>, Alexandre Bailon <abailon@baylibre.com>, =?UTF-8?Q?Bartosz_Go=C5=82aszewski?= <bgolaszewski@baylibre.com>
+To: "Shah, Nehal-bakulchandra" <Nehal-Bakulchandra.shah@amd.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
 
-On Mon, Nov 28, 2016 at 5:40 PM, David Lechner <david@lechnology.com> wrote:
+On Tue, Nov 29, 2016 at 7:32 AM, Shah, Nehal-bakulchandra
+<Nehal-Bakulchandra.shah@amd.com> wrote:
 
-> This SoC has a separate pin controller for configuring pullup/pulldown
-> bias on groups of pins.
+> This patch provides support for additional GPIO devices and also provides IRQ sharing for AMD's GPIO devices and set
+> IRQCHIP_SKIP_SET_WAKE flag.
 >
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
+> Reviewed-by: S-k, Shyam-sundar <Shyam-sundar.S-k@amd.com>
+> Signed-off-by: Nehal Shah <Nehal-bakulchandra.Shah@amd.com>
+
+(...)
+>         struct amd_gpio *gpio_dev;
+> +       struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
+> +
+> +       ret = kstrtoint(acpi_device_uid(adev), 2, &hwnum);
+
+I guess this is the unique hardware instance number?
+
+>         gpio_dev = devm_kzalloc(&pdev->dev,
+>                                 sizeof(struct amd_gpio), GFP_KERNEL);
+> @@ -763,16 +771,17 @@ static int amd_gpio_probe(struct platform_device *pdev)
+>         gpio_dev->gc.set                        = amd_gpio_set_value;
+>         gpio_dev->gc.set_debounce       = amd_gpio_set_debounce;
+>         gpio_dev->gc.dbg_show           = amd_gpio_dbg_show;
+> +       gpio_dev->gc.base               = gpio_dev->gc.ngpio * hwnum;
 >
-> v2 changes:
-> * Moved pin-controller@22c00c device node after gpio@226000 (there seem to be
->   more nodes in proper order here compared to the i2c@228000 node suggested by
->   Sekhar)
+> -       gpio_dev->gc.base                       = 0;
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Please don't do this. Instead set .base to -1 so you get dynamic assignment
+of GPIO numbers.
 
-Take this through the ARM SoC tree.
+Suggestion: maybe you could augment gc.label to reflect instance number
+instead?
+
+That way the stuff from "lsgpio" (tools/gpio/lsgpio.c) will look nice and
+identifiable.
+
+Apart from that it looks good.
 
 Yours,
 Linus Walleij
