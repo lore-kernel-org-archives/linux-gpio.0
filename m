@@ -1,63 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: amd: Add support for additional GPIO
-Date: Wed, 30 Nov 2016 14:10:28 +0100
-Message-ID: <CACRpkdZrP3BUXZJXunCbWdPuo5qamejFWoz3eA0cEm_kXFPnwg@mail.gmail.com>
-References: <MWHPR12MB1357C965EBE3F1161823C223A0B90@MWHPR12MB1357.namprd12.prod.outlook.com>
- <CACRpkdbab3iEwLOucpAz38AJZaEgpO6mrZrLev+YSYuO7Ox_JA@mail.gmail.com>
- <469f529e-818b-392f-9ddb-b02e87e50ca9@amd.com> <CACRpkdbY-2iB9oxHfFOJBmJQq-zmOR1YEg0dy5zdx++tg-acGw@mail.gmail.com>
- <2c12372c-fd6a-8320-2607-5e58ed54d069@amd.com>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: [RFC] pinctrl: imx: use radix trees for groups and functions
+Date: Wed, 30 Nov 2016 11:19:53 -0200
+Message-ID: <CAOMZO5D7z2w2xXWHYp7Qzz8evT-6xM=mL4pswzG-G2M_R0DvqA@mail.gmail.com>
+References: <20161124233824.17424-1-gary.bisson@boundarydevices.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f169.google.com ([209.85.220.169]:35658 "EHLO
-        mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752557AbcK3NKa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2016 08:10:30 -0500
-Received: by mail-qk0-f169.google.com with SMTP id n204so208466126qke.2
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2016 05:10:30 -0800 (PST)
-In-Reply-To: <2c12372c-fd6a-8320-2607-5e58ed54d069@amd.com>
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:35050 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757069AbcK3NTz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2016 08:19:55 -0500
+In-Reply-To: <20161124233824.17424-1-gary.bisson@boundarydevices.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Shah, Nehal-bakulchandra" <Nehal-Bakulchandra.shah@amd.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
+To: Gary Bisson <gary.bisson@boundarydevices.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Peng Fan <van.freenix@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-On Tue, Nov 29, 2016 at 7:32 AM, Shah, Nehal-bakulchandra
-<Nehal-Bakulchandra.shah@amd.com> wrote:
+Hi Gary,
 
-> This patch provides support for additional GPIO devices and also provides IRQ sharing for AMD's GPIO devices and set
-> IRQCHIP_SKIP_SET_WAKE flag.
+On Thu, Nov 24, 2016 at 9:38 PM, Gary Bisson
+<gary.bisson@boundarydevices.com> wrote:
+> This change is inspired from the pinctrl-single architecture.
 >
-> Reviewed-by: S-k, Shyam-sundar <Shyam-sundar.S-k@amd.com>
-> Signed-off-by: Nehal Shah <Nehal-bakulchandra.Shah@amd.com>
+> The problem with current implementation is that it isn't possible
+> to add/remove functions and/or groups dynamically. The radix tree
+> offers an easy way to do so. The intent is to offer a follow-up
+> patch later that will enable the use of pinctrl nodes in dt-overlays.
 
-(...)
->         struct amd_gpio *gpio_dev;
-> +       struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
-> +
-> +       ret = kstrtoint(acpi_device_uid(adev), 2, &hwnum);
+Maybe you could re-post it including the follow-up patch that allows
+the usage  of pinctrl nodes in dt-overlays?
 
-I guess this is the unique hardware instance number?
+This way we can have a better picture of the final result.
 
->         gpio_dev = devm_kzalloc(&pdev->dev,
->                                 sizeof(struct amd_gpio), GFP_KERNEL);
-> @@ -763,16 +771,17 @@ static int amd_gpio_probe(struct platform_device *pdev)
->         gpio_dev->gc.set                        = amd_gpio_set_value;
->         gpio_dev->gc.set_debounce       = amd_gpio_set_debounce;
->         gpio_dev->gc.dbg_show           = amd_gpio_dbg_show;
-> +       gpio_dev->gc.base               = gpio_dev->gc.ngpio * hwnum;
->
-> -       gpio_dev->gc.base                       = 0;
-
-Please don't do this. Instead set .base to -1 so you get dynamic assignment
-of GPIO numbers.
-
-Suggestion: maybe you could augment gc.label to reflect instance number
-instead?
-
-That way the stuff from "lsgpio" (tools/gpio/lsgpio.c) will look nice and
-identifiable.
-
-Apart from that it looks good.
-
-Yours,
-Linus Walleij
+Thanks
