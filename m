@@ -1,76 +1,72 @@
-From: Quentin Schulz <quentin.schulz@free-electrons.com>
-Subject: Re: [PATCH RESEND 2/2] gpio: axp209: add pinctrl support
-Date: Tue, 29 Nov 2016 23:13:08 +0100
-Message-ID: <f46c89f2-478b-93b8-5a66-12d1307d4514@free-electrons.com>
-References: <20161123141151.25315-1-quentin.schulz@free-electrons.com>
- <20161123141151.25315-3-quentin.schulz@free-electrons.com>
- <CACRpkdb8cej=AMs2kO1Vks-WYeae+CtAW2YOCc+Pz3E49mcrDQ@mail.gmail.com>
+From: Eric Anholt <eric@anholt.net>
+Subject: Re: [PATCH v3] RFC: pinctrl: bcm2835: switch to GPIOLIB_IRQCHIP
+Date: Tue, 29 Nov 2016 16:22:28 -0800
+Message-ID: <87twapddff.fsf@eliezer.anholt.net>
+References: <1479145925-3578-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdb8cej=AMs2kO1Vks-WYeae+CtAW2YOCc+Pz3E49mcrDQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from anholt.net ([50.246.234.109]:48220 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751566AbcK3AWj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 29 Nov 2016 19:22:39 -0500
+In-Reply-To: <1479145925-3578-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org
+Cc: linux-rpi-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Stefan Wahren <stefan.wahren@i2se.com>
 
-Hi Linus,
+--=-=-=
+Content-Type: text/plain
 
-On 24/11/2016 15:17, Linus Walleij wrote:
-> On Wed, Nov 23, 2016 at 3:11 PM, Quentin Schulz
-> <quentin.schulz@free-electrons.com> wrote:
-> 
->> The GPIOs present in the AXP209 PMIC have multiple functions. They
->> typically allow a pin to be used as GPIO input or output and can also be
->> used as ADC or regulator for example.[1]
->>
->> This adds the possibility to use all functions of the GPIOs present in
->> the AXP209 PMIC thanks to pinctrl subsystem.
->>
->> [1] see registers 90H, 92H and 93H at
->>     http://dl.linux-sunxi.org/AXP/AXP209_Datasheet_v1.0en.pdf
->>
->> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> 
-> I need Maxime's review on this patch.
-> 
->>  .../devicetree/bindings/gpio/gpio-axp209.txt       |  28 +-
-> 
-> Also move the bindings to pinctrl/pinctrl-axp209.txt
-> 
->>  drivers/gpio/gpio-axp209.c                         | 551 ++++++++++++++++++---
-> 
-> Combined drivers should be in drivers/pinctrl/*.
-> 
-> Make a separate patch moving the driver to
-> drivers/pinctrl/pinctrl-axp209.c (remember -M to git format-patch)
-> augment Kconfig and Makefile in both subsystems and make
-> these patches on top of that.
-> 
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-So basically:
+> It should be possible to use the GPIOLIB_IRQCHIP helper
+> library with the BCM2835 driver since it is a pretty straight
+> forward cascaded irqchip.
+>
+> The only difference from other drivers is that the BCM2835
+> has several banks for a single gpiochip, and each bank has
+> a separate IRQ line. Instead of creating one gpiochip per
+> bank, a single gpiochip covers all banks GPIO lines. This
+> makes it necessary to resolve the bank ID in the IRQ
+> handler.
+>
+> The GPIOLIB_IRQCHIP allows several IRQs to be cascaded off
+> the same gpiochip by calling gpiochip_set_chained_irqchip()
+> repeatedly, but we have been a bit short on examples
+> for how this should be handled in practice, so this is intended
+> as an example of how this can be achieved.
+>
+> The old code did not model the chip as a chained interrupt
+> handler, but this patch also rectifies that situation.
 
- - first patch for adding pinctrl to the existing driver
- - second patch for moving the driver and binding from gpio to pinctrl
-subsystem
- - third patch for both removing Kconfig entry and Makefile rule from
-gpio subsystem, and adding a Kconfig entry and a Makefile rule in
-pinctrl subsystem
+I went ahead and put together a little bit of test code for HDMI to
+collect hotplug interrupts.  By registering the GPIO IRQ from the
+driver, I'm seeing my line in /proc/interrupts and its count increments
+when I plug/unplug.  Given that, feel free to apply:
 
-Is that what you want?
+Tested-by: Eric Anholt <eric@anholt.net>
+Acked-by: Eric Anholt <eric@anholt.net>
 
-Thanks,
-Quentin
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> I will deal with cross-merging the result between the GPIO
-> and pin control trees.
-> 
-> Yours,
-> Linus Walleij
-> 
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Quentin Schulz, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlg+G8UACgkQtdYpNtH8
+nuh2ORAAqJ322yt0Z6hPWXnvkd7UWqCovhkLvCpv/hkdV2hOO+suwtqOZCYqTQ6g
+rEiIELJ8fNM0PLoDyBs1+nlkOWbZ4oKJ3zSzVR06fZN/gOfjhly5lqgt+xmcVPSU
+rpiW910XblF1+KnWAyEw524PZwHMBktvHFYKVpgAafYZK1m0rkQmkWprRlUS7OnR
+ud+rdTTnN09wLGL2dk7B/M6mmhHFY+xwGwUhFiO6UVgDiF84n8Do+nWMVghkIikD
+R0pmp0Mzp/AxNw6KIMdbOXeT/2I4K0pHbm+WD7VgcMVVT0rZvJzjJ4ujsZMFQBXc
+5jifIRi4PiZz+0w1Q47ncOOAHBiRlLGtzoIKxu7RW2dlgZwhO1w/VadQWyTVL0kv
+T9NLc7LMxd74h4zZLrlD6QavfzgF+FX94Qo0AHKMxYEbeDo1hv+en78n0uokCt5w
+V0fVwkF+GNqT/dA6+BbjvbVJcaFnfoJbFe45EsE2lx2VDPOledaKlHWNcTrbnpXw
+0ibs8P3P01biFp0gw/MKDzq22bxMyYjD8yqRw6mPr4WqckbXGWDP5DsvZTIGpHku
+/oL0bXqRFunruLgEmpE4F9X8/EWUfahNfURzhaqNahvvR0YBCESty3bgefI/MsgA
+Sx4+5e6FFR2/8hTSn3URoXUR0bPy2uTSsbheu0mX25mw/WFWzOI=
+=Ps73
+-----END PGP SIGNATURE-----
+--=-=-=--
