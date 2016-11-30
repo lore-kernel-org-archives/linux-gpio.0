@@ -1,35 +1,57 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [RFC] pinctrl: imx: use radix trees for groups and functions
-Date: Wed, 30 Nov 2016 11:19:53 -0200
-Message-ID: <CAOMZO5D7z2w2xXWHYp7Qzz8evT-6xM=mL4pswzG-G2M_R0DvqA@mail.gmail.com>
-References: <20161124233824.17424-1-gary.bisson@boundarydevices.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
+Date: Wed, 30 Nov 2016 14:49:14 +0100
+Message-ID: <CAMuHMdUhhZ5V15RBpALFCm-gs4zZufHG-H56ud+zYMOQv5cmUA@mail.gmail.com>
+References: <1480410716-25993-1-git-send-email-jacopo@jmondi.org>
+ <4558124.JutbKSQ7ug@avalon> <CAMuHMdUcxJ6fiahvG+Ydha_Tp5RkppSemb=1qkGRwpb4ACGoZw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:35050 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757069AbcK3NTz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2016 08:19:55 -0500
-In-Reply-To: <20161124233824.17424-1-gary.bisson@boundarydevices.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdUcxJ6fiahvG+Ydha_Tp5RkppSemb=1qkGRwpb4ACGoZw@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Gary Bisson <gary.bisson@boundarydevices.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Peng Fan <van.freenix@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-Hi Gary,
-
-On Thu, Nov 24, 2016 at 9:38 PM, Gary Bisson
-<gary.bisson@boundarydevices.com> wrote:
-> This change is inspired from the pinctrl-single architecture.
+On Tue, Nov 29, 2016 at 10:39 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, Nov 29, 2016 at 8:30 PM, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+>> On Tuesday 29 Nov 2016 10:11:56 Jacopo Mondi wrote:
+>>> Add pin configuration support for Gyro-ADC, named ADI on r8a7791 SoC.
+>>>
+>>> The Gyro-ADC supports three different configurations:
+>>> a single ADC (adi and adi_b groups), 2 ADCs selectable through a single
+>>> channel select signal (adi_chsel1 and adi_chsel1_b groups),
+>>
+>> I've only briefly looked up at the datasheet, but is that a supported mode ?
+>> It seems that mode 1 uses 4 channels and mode 2 and 3 use 8 channels.
 >
-> The problem with current implementation is that it isn't possible
-> to add/remove functions and/or groups dynamically. The radix tree
-> offers an easy way to do so. The intent is to offer a follow-up
-> patch later that will enable the use of pinctrl nodes in dt-overlays.
+> I think you can always connect less ADCs than there are channels.
+> If you connect e.g. only one, you don't need any CHS signals.
+> If you connect e.g. two, you can use only one CHS signal.
+>
+> AFAICS, you still have to use an external demux to create individual chip
+> selects from the single CS signal and (up to 3) CHS signals.
 
-Maybe you could re-post it including the follow-up patch that allows
-the usage  of pinctrl nodes in dt-overlays?
+Upon closer look, the demux is intended to be at the analog side, but that
+doesn't matter much.
 
-This way we can have a better picture of the final result.
+When using an MB88101A, the (4ch) demux is part of the ADC chip, which
+has 4 analog inputs and 2 channel select inputs.
+The other supported ADCs (ADCS7476/ADC121, AD7476, MAX1162) are
+really single-channel ADCs, and thus require an external demux.
 
-Thanks
+But nobody says you have to use/populate all channels.
+The Gyro-ADC will still scan all 4 or 8 channels, though.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
