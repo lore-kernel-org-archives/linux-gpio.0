@@ -1,41 +1,56 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCHv3 0/2] pinctrl: sh-pfc: r8a7796: Add drive strength and
- bias support
-Date: Wed, 30 Nov 2016 08:58:48 +0100
-Message-ID: <CAMuHMdU3BHaHCa1xAQV=-WQfOCnL8XjNKKXB+0SidM8sK-OhNA@mail.gmail.com>
-References: <20161117150920.18748-1-niklas.soderlund+renesas@ragnatech.se>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20161117150920.18748-1-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 1/2] gpio: htc-egpio: add .get_direction() support
+Date: Wed, 30 Nov 2016 10:09:15 +0100
+Message-ID: <1480496955-5727-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:34755 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757523AbcK3JJW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2016 04:09:22 -0500
+Received: by mail-lf0-f44.google.com with SMTP id o141so141525604lff.1
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2016 01:09:21 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-On Thu, Nov 17, 2016 at 4:09 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> These patches add drive strength and bias support for both GPIO and none
-> GPIO pins to r8a7796. Similar to the none GPIO pins for r8a7795 the
-> system to derive unique pin numbers are the R-Car M3SiP pin layout.
->
-> Tested on M3-W and the series depends on the series '[PATCHv3 0/6]
-> pinctrl: sh-pfc: Fixups for bias handling and preparation for none GPIO
-> pins'.
+This makes is possible to read out the current direction of a
+GPIO line on the HTC CPLD GPIO expander.
 
-Thanks, queued in sh-pfc-for-v4.11.
+Suggested-by: Russell King <linux@arm.linux.org.uk>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-htc-egpio.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/gpio/gpio-htc-egpio.c b/drivers/gpio/gpio-htc-egpio.c
+index 5ab895b41819..27af52850927 100644
+--- a/drivers/gpio/gpio-htc-egpio.c
++++ b/drivers/gpio/gpio-htc-egpio.c
+@@ -225,6 +225,15 @@ static int egpio_direction_output(struct gpio_chip *chip,
+ 	}
+ }
+ 
++static int egpio_get_direction(struct gpio_chip *chip, unsigned offset)
++{
++	struct egpio_chip *egpio;
++
++	egpio = gpiochip_get_data(chip);
++
++	return !test_bit(offset, &egpio->is_out);
++}
++
+ static void egpio_write_cache(struct egpio_info *ei)
+ {
+ 	int               i;
+@@ -327,6 +336,7 @@ static int __init egpio_probe(struct platform_device *pdev)
+ 		chip->set             = egpio_set;
+ 		chip->direction_input = egpio_direction_input;
+ 		chip->direction_output = egpio_direction_output;
++		chip->get_direction   = egpio_get_direction;
+ 		chip->base            = pdata->chip[i].gpio_base;
+ 		chip->ngpio           = pdata->chip[i].num_gpios;
+ 
+-- 
+2.7.4
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
