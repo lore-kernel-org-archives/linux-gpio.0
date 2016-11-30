@@ -1,52 +1,71 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/2] gpio: htc-egpio: read output value from cache
-Date: Wed, 30 Nov 2016 10:09:28 +0100
-Message-ID: <1480496968-5829-1-git-send-email-linus.walleij@linaro.org>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH] gpio: chardev: Return error for seek operations
+Date: Wed, 30 Nov 2016 13:05:21 +0100
+Message-ID: <1480507521-17766-1-git-send-email-lars@metafoo.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:35151 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757264AbcK3JJd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2016 04:09:33 -0500
-Received: by mail-lf0-f41.google.com with SMTP id b14so141524315lfg.2
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2016 01:09:32 -0800 (PST)
+Received: from www381.your-server.de ([78.46.137.84]:47806 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752376AbcK3MFu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2016 07:05:50 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
 
-When the hardware is in output mode, reading the value from the
-hardware is not giving the correct value back. Instead read the
-value from the cache so we get the right value.
+The GPIO chardev is used for management tasks (allocating line and event
+handles) and does neither support read() nor write() operations. Hence it
+does not make much sense to allow seek operations.
 
-Suggested-by: Russell King <linux@arm.linux.org.uk>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Currently the chardev uses noop_llseek() for its seek implementation. This
+function does not move the pointer and simply returns the current position
+(always 0 for the GPIO chardev). noop_llseek() is primarily meant for
+devices that can not support seek, but where there might be a user that
+depends on the seek() operation succeeding. For newly added devices that
+can not support seek operations it is recommended to use no_llseek(), which
+will return an error. For more information see commit 6038f373a3dc
+("llseek: automatically add .llseek fop").
+
+Unfortunately this was overlooked when the GPIO chardev ABI was introduced.
+But it is highly unlikely that since then userspace applications have
+appeared that rely on being able to perform non-failing seek operations on
+a GPIO chardev file descriptor. So it should be safe to change from
+noop_llseel() to no_seek(). Also use nonseekable_open() in the chardev
+open() callback to clear the FMODE_SEEK, FMODE_PREAD and FMODE_PWRITE flags
+from the file. Neither of these should be set on a file that does not
+support seek operations.
+
+Fixes: 3c702e9987e2 ("gpio: add a userspace chardev ABI for GPIOs")
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
 ---
- drivers/gpio/gpio-htc-egpio.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Ideally this gets added to stable as well to get a consistent ABI
+throughout.
+---
+ drivers/gpio/gpiolib.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-htc-egpio.c b/drivers/gpio/gpio-htc-egpio.c
-index 27af52850927..271356effb2e 100644
---- a/drivers/gpio/gpio-htc-egpio.c
-+++ b/drivers/gpio/gpio-htc-egpio.c
-@@ -160,10 +160,14 @@ static int egpio_get(struct gpio_chip *chip, unsigned offset)
- 	bit   = egpio_bit(ei, offset);
- 	reg   = egpio->reg_start + egpio_pos(ei, offset);
- 
--	value = egpio_readw(ei, reg);
--	pr_debug("readw(%p + %x) = %x\n",
--			ei->base_addr, reg << ei->bus_shift, value);
--	return !!(value & bit);
-+	if (test_bit(offset, &egpio->is_out)) {
-+		return !!(egpio->cached_values & (1 << offset));
-+	} else {
-+		value = egpio_readw(ei, reg);
-+		pr_debug("readw(%p + %x) = %x\n",
-+			 ei->base_addr, reg << ei->bus_shift, value);
-+		return !!(value & bit);
-+	}
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 71a2dac..f1615f5 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -986,7 +986,8 @@ static int gpio_chrdev_open(struct inode *inode, struct file *filp)
+ 		return -ENODEV;
+ 	get_device(&gdev->dev);
+ 	filp->private_data = gdev;
+-	return 0;
++
++	return nonseekable_open(inode, filp);
  }
  
- static int egpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ /**
+@@ -1011,7 +1012,7 @@ static const struct file_operations gpio_fileops = {
+ 	.release = gpio_chrdev_release,
+ 	.open = gpio_chrdev_open,
+ 	.owner = THIS_MODULE,
+-	.llseek = noop_llseek,
++	.llseek = no_llseek,
+ 	.unlocked_ioctl = gpio_ioctl,
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl = gpio_ioctl_compat,
 -- 
-2.7.4
+2.1.4
 
