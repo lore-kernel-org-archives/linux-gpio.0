@@ -1,18 +1,18 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/3] pinctrl: New driver for TI DA850/OMAP-L138/AM18XX pinconf
-Date: Wed, 30 Nov 2016 14:00:54 +0100
-Message-ID: <CACRpkdYbBsUSN8f6-bmN-qkGciJOKVDn44P-e5FZaLWXm3azFg@mail.gmail.com>
-References: <1480351226-3332-1-git-send-email-david@lechnology.com> <1480351226-3332-3-git-send-email-david@lechnology.com>
+Subject: Re: [PATCH v2 3/3] ARM: dts: da850: Add node for pullup/pulldown pinconf
+Date: Wed, 30 Nov 2016 14:01:48 +0100
+Message-ID: <CACRpkdZOxZRRUGkso_b0hLta4OWkeAgX2khcJxFc8EETFKiiXw@mail.gmail.com>
+References: <1480351226-3332-1-git-send-email-david@lechnology.com> <1480351226-3332-4-git-send-email-david@lechnology.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f171.google.com ([209.85.220.171]:34864 "EHLO
-        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756592AbcK3NA4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2016 08:00:56 -0500
-Received: by mail-qk0-f171.google.com with SMTP id n204so208184218qke.2
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2016 05:00:55 -0800 (PST)
-In-Reply-To: <1480351226-3332-3-git-send-email-david@lechnology.com>
+Received: from mail-qk0-f170.google.com ([209.85.220.170]:35910 "EHLO
+        mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933545AbcK3NBt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Nov 2016 08:01:49 -0500
+Received: by mail-qk0-f170.google.com with SMTP id n21so208195322qka.3
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Nov 2016 05:01:49 -0800 (PST)
+In-Reply-To: <1480351226-3332-4-git-send-email-david@lechnology.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: David Lechner <david@lechnology.com>
@@ -20,13 +20,20 @@ Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekha
 
 On Mon, Nov 28, 2016 at 5:40 PM, David Lechner <david@lechnology.com> wrote:
 
-> This adds a new driver for pinconf on TI DA850/OMAP-L138/AM18XX. These
-> SoCs have a separate controller for controlling pullup/pulldown groups.
+> This SoC has a separate pin controller for configuring pullup/pulldown
+> bias on groups of pins.
 >
 > Signed-off-by: David Lechner <david@lechnology.com>
-> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+> ---
+>
+> v2 changes:
+> * Moved pin-controller@22c00c device node after gpio@226000 (there seem to be
+>   more nodes in proper order here compared to the i2c@228000 node suggested by
+>   Sekhar)
 
-Patch applied.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Take this through the ARM SoC tree.
 
 Yours,
 Linus Walleij
