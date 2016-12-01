@@ -1,57 +1,136 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
-Date: Thu, 1 Dec 2016 09:47:22 +0100
-Message-ID: <CAMuHMdWdcOLr+gQdeG1CHCQ8n4M2939eXA5rxQynjARpG6zmYA@mail.gmail.com>
-References: <1480410716-25993-1-git-send-email-jacopo@jmondi.org>
+From: David Howells <dhowells@redhat.com>
+Subject: [PATCH 08/39] Annotate hardware config module parameters in
+ drivers/gpio/
+Date: Thu, 01 Dec 2016 12:30:40 +0000
+Message-ID: <148059543997.31612.610019846448617763.stgit@warthog.procyon.org.uk>
+References: <148059537897.31612.9461043954611464597.stgit@warthog.procyon.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wj0-f196.google.com ([209.85.210.196]:36278 "EHLO
-        mail-wj0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751606AbcLAIrm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Dec 2016 03:47:42 -0500
-In-Reply-To: <1480410716-25993-1-git-send-email-jacopo@jmondi.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <148059537897.31612.9461043954611464597.stgit@warthog.procyon.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Alexandre Courbot <gnurou@gmail.com>, minyard@acm.org, gnomes@lxorguk.ukuu.org.uk, Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, dhowells@redhat.com, linux-gpio@vger.kernel.org, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jacopo Mondi <jacopo@jmondi.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Jacopo,
+When the kernel is running in secure boot mode, we lock down the kernel to
+prevent userspace from modifying the running kernel image.  Whilst this
+includes prohibiting access to things like /dev/mem, it must also prevent
+access by means of configuring driver modules in such a way as to cause a
+device to access or modify the kernel image.
 
-On Tue, Nov 29, 2016 at 10:11 AM, Jacopo Mondi <jacopo@jmondi.org> wrote:
-> Add pin configuration support for Gyro-ADC, named ADI on r8a7791 SoC.
->
-> The Gyro-ADC supports three different configurations:
-> a single ADC (adi and adi_b groups), 2 ADCs selectable through a single
-> channel select signal (adi_chsel1 and adi_chsel1_b groups), up to 4 ADCs
-> through 2 channel select signals (adi_chsel2 and adi_chsel2_b groups)
-> and up to 8 ADCs through 3 channel select signals (adi_chsel3 and
-> adi_chsel3_b groups)
->
-> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+To this end, annotate module_param* statements that refer to hardware
+configuration and indicate for future reference what type of parameter they
+specify.  The parameter parser in the core sees this information and can
+skip such parameters with an error message if the kernel is locked down.
+The module initialisation then runs as normal, but just sees whatever the
+default values for those parameters is.
 
-> +static const char * const adi_groups[] = {
-> +       "adi",
+Note that we do still need to do the module initialisation because some
+drivers have viable defaults set in case parameters aren't specified and
+some drivers support automatic configuration (e.g. PNP or PCI) in addition
+to manually coded parameters.
 
-As the group names below have a suffix ("_chselX"), I think it would be
-good to have a suffix in this group name, too.
-Usually we have splits like "data" and "ctrl", but in this case, the group
-covers both data and control signals.
-"adi_common"? "adi_base"? "adi_spi" (but it's only SPI in mode 2/3)?
+This patch annotates drivers in drivers/gpio/.
 
-I'm out of inspiration...
+Suggested-by: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: William Breathitt Gray <vilhelm.gray@gmail.com>
+cc: Linus Walleij <linus.walleij@linaro.org>
+cc: Alexandre Courbot <gnurou@gmail.com>
+cc: linux-gpio@vger.kernel.org
+---
 
-> +       "adi_chsel1",
-> +       "adi_chsel2",
-> +       "adi_chsel3",
+ drivers/gpio/gpio-104-dio-48e.c |    4 ++--
+ drivers/gpio/gpio-104-idi-48.c  |    4 ++--
+ drivers/gpio/gpio-104-idio-16.c |    4 ++--
+ drivers/gpio/gpio-gpio-mm.c     |    2 +-
+ drivers/gpio/gpio-ws16c48.c     |    4 ++--
+ 5 files changed, 9 insertions(+), 9 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
+index fcf776971ca9..1c334eed5821 100644
+--- a/drivers/gpio/gpio-104-dio-48e.c
++++ b/drivers/gpio/gpio-104-dio-48e.c
+@@ -33,11 +33,11 @@
+ 
+ static unsigned int base[MAX_NUM_DIO48E];
+ static unsigned int num_dio48e;
+-module_param_array(base, uint, &num_dio48e, 0);
++module_param_hw_array(base, uint, ioport, &num_dio48e, 0);
+ MODULE_PARM_DESC(base, "ACCES 104-DIO-48E base addresses");
+ 
+ static unsigned int irq[MAX_NUM_DIO48E];
+-module_param_array(irq, uint, NULL, 0);
++module_param_hw_array(irq, uint, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "ACCES 104-DIO-48E interrupt line numbers");
+ 
+ /**
+diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
+index 2d2763ea1a68..6639920b3299 100644
+--- a/drivers/gpio/gpio-104-idi-48.c
++++ b/drivers/gpio/gpio-104-idi-48.c
+@@ -33,11 +33,11 @@
+ 
+ static unsigned int base[MAX_NUM_IDI_48];
+ static unsigned int num_idi_48;
+-module_param_array(base, uint, &num_idi_48, 0);
++module_param_hw_array(base, uint, ioport, &num_idi_48, 0);
+ MODULE_PARM_DESC(base, "ACCES 104-IDI-48 base addresses");
+ 
+ static unsigned int irq[MAX_NUM_IDI_48];
+-module_param_array(irq, uint, NULL, 0);
++module_param_hw_array(irq, uint, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "ACCES 104-IDI-48 interrupt line numbers");
+ 
+ /**
+diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+index 6787b8fcf0d8..6d7024ac2689 100644
+--- a/drivers/gpio/gpio-104-idio-16.c
++++ b/drivers/gpio/gpio-104-idio-16.c
+@@ -33,11 +33,11 @@
+ 
+ static unsigned int base[MAX_NUM_IDIO_16];
+ static unsigned int num_idio_16;
+-module_param_array(base, uint, &num_idio_16, 0);
++module_param_hw_array(base, uint, ioport, &num_idio_16, 0);
+ MODULE_PARM_DESC(base, "ACCES 104-IDIO-16 base addresses");
+ 
+ static unsigned int irq[MAX_NUM_IDIO_16];
+-module_param_array(irq, uint, NULL, 0);
++module_param_hw_array(irq, uint, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "ACCES 104-IDIO-16 interrupt line numbers");
+ 
+ /**
+diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
+index 1e7def9449ce..4ac2179b96ad 100644
+--- a/drivers/gpio/gpio-gpio-mm.c
++++ b/drivers/gpio/gpio-gpio-mm.c
+@@ -31,7 +31,7 @@
+ 
+ static unsigned int base[MAX_NUM_GPIOMM];
+ static unsigned int num_gpiomm;
+-module_param_array(base, uint, &num_gpiomm, 0);
++module_param_hw_array(base, uint, ioport, &num_gpiomm, 0);
+ MODULE_PARM_DESC(base, "Diamond Systems GPIO-MM base addresses");
+ 
+ /**
+diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
+index eaa71d440ccf..c84d600a8bb0 100644
+--- a/drivers/gpio/gpio-ws16c48.c
++++ b/drivers/gpio/gpio-ws16c48.c
+@@ -30,11 +30,11 @@
+ 
+ static unsigned int base[MAX_NUM_WS16C48];
+ static unsigned int num_ws16c48;
+-module_param_array(base, uint, &num_ws16c48, 0);
++module_param_hw_array(base, uint, ioport, &num_ws16c48, 0);
+ MODULE_PARM_DESC(base, "WinSystems WS16C48 base addresses");
+ 
+ static unsigned int irq[MAX_NUM_WS16C48];
+-module_param_array(irq, uint, NULL, 0);
++module_param_hw_array(irq, uint, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "WinSystems WS16C48 interrupt line numbers");
+ 
+ /**
