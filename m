@@ -1,34 +1,48 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7793: Implement voltage switching for SDHI
-Date: Thu, 1 Dec 2016 14:38:20 +0100
-Message-ID: <CAMuHMdUFSLhftdPOgNDxQ1f8X88ebvxefzbg_tNcC6CM=8Z_9g@mail.gmail.com>
-References: <1480598467-14197-1-git-send-email-horms+renesas@verge.net.au>
+From: Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH v2 3/3] ARM: dts: da850: Add node for pullup/pulldown
+ pinconf
+Date: Thu, 1 Dec 2016 19:33:59 +0530
+Message-ID: <39ef42d3-3a34-70ff-25eb-86006d6841ee@ti.com>
+References: <1480351226-3332-1-git-send-email-david@lechnology.com>
+ <1480351226-3332-4-git-send-email-david@lechnology.com>
+ <CACRpkdZOxZRRUGkso_b0hLta4OWkeAgX2khcJxFc8EETFKiiXw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1480598467-14197-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdZOxZRRUGkso_b0hLta4OWkeAgX2khcJxFc8EETFKiiXw@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, David Lechner <david@lechnology.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Axel Haslam <ahaslam@baylibre.com>, Kevin Hilman <khilman@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Bailon <abailon@baylibre.com>, =?UTF-8?Q?Bartosz_Go=c5=82aszewski?= <bgolaszewski@baylibre.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Dec 1, 2016 at 2:21 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
-> Voltage switching is the same as on the r8a7791.
->
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+On Wednesday 30 November 2016 06:31 PM, Linus Walleij wrote:
+> On Mon, Nov 28, 2016 at 5:40 PM, David Lechner <david@lechnology.com> wrote:
+> 
+>> This SoC has a separate pin controller for configuring pullup/pulldown
+>> bias on groups of pins.
+>>
+>> Signed-off-by: David Lechner <david@lechnology.com>
+>> ---
+>>
+>> v2 changes:
+>> * Moved pin-controller@22c00c device node after gpio@226000 (there seem to be
+>>   more nodes in proper order here compared to the i2c@228000 node suggested by
+>>   Sekhar)
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Take this through the ARM SoC tree.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks Linus! Applied to v4.10/dt
 
-Will queue in sh-pfc-for-v4.11.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Sekhar
