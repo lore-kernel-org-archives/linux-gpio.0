@@ -1,48 +1,68 @@
-From: Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [PATCH v2 3/3] ARM: dts: da850: Add node for pullup/pulldown
- pinconf
-Date: Thu, 1 Dec 2016 19:33:59 +0530
-Message-ID: <39ef42d3-3a34-70ff-25eb-86006d6841ee@ti.com>
-References: <1480351226-3332-1-git-send-email-david@lechnology.com>
- <1480351226-3332-4-git-send-email-david@lechnology.com>
- <CACRpkdZOxZRRUGkso_b0hLta4OWkeAgX2khcJxFc8EETFKiiXw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdZOxZRRUGkso_b0hLta4OWkeAgX2khcJxFc8EETFKiiXw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, David Lechner <david@lechnology.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Axel Haslam <ahaslam@baylibre.com>, Kevin Hilman <khilman@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Bailon <abailon@baylibre.com>, =?UTF-8?Q?Bartosz_Go=c5=82aszewski?= <bgolaszewski@baylibre.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] gpio: merrifield: Add support for hardware debouncer
+Date: Thu,  1 Dec 2016 17:45:51 +0200
+Message-ID: <20161201154551.179948-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga06.intel.com ([134.134.136.31]:44862 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756341AbcLAPrZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 1 Dec 2016 10:47:25 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Wednesday 30 November 2016 06:31 PM, Linus Walleij wrote:
-> On Mon, Nov 28, 2016 at 5:40 PM, David Lechner <david@lechnology.com> wrote:
-> 
->> This SoC has a separate pin controller for configuring pullup/pulldown
->> bias on groups of pins.
->>
->> Signed-off-by: David Lechner <david@lechnology.com>
->> ---
->>
->> v2 changes:
->> * Moved pin-controller@22c00c device node after gpio@226000 (there seem to be
->>   more nodes in proper order here compared to the i2c@228000 node suggested by
->>   Sekhar)
-> 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> Take this through the ARM SoC tree.
+By default all pins are configured to use a glitch filter. Writing 1 to the
+certain bit of the specific register might be useful in case someone needs to
+bypass the glitch filter completely for a given GPIO pin.
 
-Thanks Linus! Applied to v4.10/dt
+This patch adds support for that in the Intel Merrifield GPIO driver.
 
-Thanks,
-Sekhar
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-merrifield.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-merrifield.c
+index 82cdcdc..d7cbbc0 100644
+--- a/drivers/gpio/gpio-merrifield.c
++++ b/drivers/gpio/gpio-merrifield.c
+@@ -161,6 +161,27 @@ static int mrfld_gpio_direction_output(struct gpio_chip *chip,
+ 	return 0;
+ }
+ 
++static int mrfld_gpio_set_debounce(struct gpio_chip *chip, unsigned int offset,
++				   unsigned int debounce)
++{
++	struct mrfld_gpio *priv = gpiochip_get_data(chip);
++	void __iomem *gfbr = gpio_reg(chip, offset, GFBR);
++	unsigned long flags;
++	u32 value;
++
++	raw_spin_lock_irqsave(&priv->lock, flags);
++
++	if (debounce)
++		value = readl(gfbr) & ~BIT(offset % 32);
++	else
++		value = readl(gfbr) | BIT(offset % 32);
++	writel(value, gfbr);
++
++	raw_spin_unlock_irqrestore(&priv->lock, flags);
++
++	return 0;
++}
++
+ static void mrfld_irq_ack(struct irq_data *d)
+ {
+ 	struct mrfld_gpio *priv = irq_data_get_irq_chip_data(d);
+@@ -384,6 +405,7 @@ static int mrfld_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id
+ 	priv->chip.direction_output = mrfld_gpio_direction_output;
+ 	priv->chip.get = mrfld_gpio_get;
+ 	priv->chip.set = mrfld_gpio_set;
++	priv->chip.set_debounce = mrfld_gpio_set_debounce;
+ 	priv->chip.base = gpio_base;
+ 	priv->chip.ngpio = MRFLD_NGPIO;
+ 	priv->chip.can_sleep = false;
+-- 
+2.10.2
+
