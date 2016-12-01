@@ -1,172 +1,89 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH 1/3] of: Support parsing phandle argument lists through a
- nexus node
-Date: Wed, 30 Nov 2016 17:30:47 -0600
-Message-ID: <CAL_JsqKZ_Ohcdi0n6XU+5=3o6OwC=r_5Cv1=gx7mytUUVd2dzA@mail.gmail.com>
-References: <20161124102529.20212-1-stephen.boyd@linaro.org> <20161124102529.20212-2-stephen.boyd@linaro.org>
+From: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 6/6] pinctrl: mt8173: set GPIO16 to usb iddig mode
+Date: Wed, 30 Nov 2016 16:43:50 -0800
+Message-ID: <1480553030.29122.7.camel@mussux00>
+References: <1462868614-20602-1-git-send-email-chunfeng.yun@mediatek.com>
+ <1462868614-20602-7-git-send-email-chunfeng.yun@mediatek.com>
+ <CACRpkdaeD5mk7LXEWnE0=Xute8-JA-fa4tVt4fYhujEXeq2+9w@mail.gmail.com>
+ <1462991546.11623.3.camel@mussux00> <1463017282.11651.82.camel@mhfsdcap03>
+ <1463018942.1608.5.camel@mussux00> <1463021701.25171.5.camel@mussux00>
+ <42f5df18-2edd-08f2-a833-9c92ac85e87c@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:52842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751601AbcK3XbM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 30 Nov 2016 18:31:12 -0500
-In-Reply-To: <20161124102529.20212-2-stephen.boyd@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <42f5df18-2edd-08f2-a833-9c92ac85e87c-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, chunfeng yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Felipe Balbi <felipe.balbi-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "moderated list:ARM/Mediatek SoC
+ support" <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>, Greg Kroah-Hartman <gregkh>
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Frank Rowand <frowand.list@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>
 
-On Thu, Nov 24, 2016 at 4:25 AM, Stephen Boyd <stephen.boyd@linaro.org> wrote:
-> Platforms like 96boards have a standardized connector/expansion
-> slot that exposes signals like GPIOs to expansion boards in an
-> SoC agnostic way. We'd like the DT overlays for the expansion
-> boards to be written once without knowledge of the SoC on the
-> other side of the connector. This avoids the unscalable
-> combinatorial explosion of a different DT overlay for each
-> expansion board and SoC pair.
->
-> We need a way to describe the GPIOs routed through the connector
-> in an SoC agnostic way. Let's introduce nexus property parsing
-> into the OF core to do this. This is largely based on the
-> interrupt nexus support we already have. This allows us to remap
-> a phandle list in a consumer node (e.g. reset-gpios) through a
-> connector in a generic way (e.g. via gpio-map). Do this in a
-> generic routine so that we can remap any sort of variable length
-> phandle list.
->
-> Taking GPIOs as an example, the connector would be a GPIO nexus,
-> supporting the remapping of a GPIO specifier space to multiple
-> GPIO providers on the SoC. DT would look as shown below, where
-> 'soc_gpio1' and 'soc_gpio2' are inside the SoC, 'connector' is an
-> expansion port where boards can be plugged in, and
-> 'expansion_device' is a device on the expansion board.
->
->         soc {
->                 soc_gpio1: gpio-controller1 {
->                         #gpio-cells = <2>;
->                 };
->
->                 soc_gpio2: gpio-controller2 {
->                         #gpio-cells = <2>;
->                 };
->         };
->
->         connector: connector {
->                 #gpio-cells = <2>;
->                 gpio-map = <0 GPIO_ACTIVE_LOW &soc_gpio1 1 GPIO_ACTIVE_LOW>,
->                            <1 GPIO_ACTIVE_LOW &soc_gpio2 4 GPIO_ACTIVE_LOW>,
->                            <2 GPIO_ACTIVE_LOW &soc_gpio1 3 GPIO_ACTIVE_LOW>,
->                            <3 GPIO_ACTIVE_LOW &soc_gpio2 2 GPIO_ACTIVE_LOW>;
->                 gpio-map-mask = <0xf 0x1>;
+On Wed, 2016-11-23 at 19:32 +0100, Matthias Brugger wrote:
+> Hi Hongzhou,
+> 
+> On 12/05/16 04:55, Hongzhou Yang wrote:
+> > On Wed, 2016-05-11 at 19:09 -0700, Hongzhou Yang wrote:
+> >> On Thu, 2016-05-12 at 09:41 +0800, chunfeng yun wrote:
+> >>> Hi,
+> >>>
+> >>> On Wed, 2016-05-11 at 11:32 -0700, Hongzhou Yang wrote:
+> >>>> On Wed, 2016-05-11 at 13:56 +0200, Linus Walleij wrote:
+> >>>>> On Tue, May 10, 2016 at 10:23 AM, Chunfeng Yun
+> >>>>> <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
+> >>>>>
+> >>>>>> the default mode of GPIO16 pin is gpio, when set EINT16 to
+> >>>>>> IRQ_TYPE_LEVEL_HIGH, no interrupt is triggered, it can be
+> >>>>>> fixed when set its default mode as usb iddig.
+> >>>>>>
+> >>>>>> Signed-off-by: Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> >>>>>
+> >>>>
+> >>>> Chunfeng, GPIO16 can be used as EINT16 mode, but the pinmux should be 0.
+> >>>> If you want to set its default mode to iddig, you should set it in dts.
+> >>>>
+> >>> I set it in DTS, but it didn't work, because when usb driver requested
+> >>> IRQ, pinmux was switched back to default mode set by
+> >>> MTK_EINT_FUNCTION().
+> >>>
+> >>
+> >> After confirmed, there are something wrong with data sheet and pinmux
+> >> table, and GPIO16 can only receive interrupt by mode 1. So
+> >>
+> >> Acked-by: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> >>
+> >
+> > Linus,
+> >
+> > We find there are some other pins still have the same problem, so please
+> > hold on it. Sorry for so much noise.
+> >
+> 
+> Did you made any progress on this? I didn't see any patch on the mailing 
+> list.
+> 
+> Regards,
+> Matthias
 
-I think the common case is something more like this:
+Hi Matthias,
 
-                 gpio-map = <0 0 &soc_gpio1 1 0>,
-                            <1 0 &soc_gpio2 4 0>,
-                            <2 0 &soc_gpio1 3 0>,
-                            <3 0 &soc_gpio2 2 0>;
-                 gpio-map-mask = <0xf 0>;
+Sorry for the late reply.
 
-where we want to pass the 2nd cell of the consumer (e.g. reset-gpios)
-thru. So here the GPIO_ACTIVE_LOW flag below needs to pass thru to
-&soc_gpio1. Otherwise, the gpio-map is has to enumerate every possible
-combination or it will be specific to the daughterboard's usage.
+I have double confirmed with HW designer, other special EINTs are
+built-in and they are using internal signal, they are not triggered 
+by GPIO, only GPIO16 should set to mode 1.
 
-Also, GPIO cells are pretty well standardized, but some cases may need
-a translation function which I guess would be part of a connector
-driver. I don't think that affects the binding nor needs to be solved
-now, but just want to raise that possibility.
+And, Chunfeng already re-sent this patch.
 
->         };
->
->         expansion_device {
->                 reset-gpios = <&connector 2 GPIO_ACTIVE_LOW>;
->         };
->
-> The GPIO core would use of_parse_phandle_with_args_map() instead
-> of of_parse_phandle_with_args() and arrive at the same type of
-> result, a phandle and argument list. The difference is that the
-> phandle and arguments will be remapped through the nexus node to
-> the underlying SoC GPIO controller node. In the example above,
-> we would remap 'reset-gpios' from <&connector 2 GPIO_ACTIVE_LOW>
-> to <&soc_gpio1 3 GPIO_ACTIVE_LOW>.
+Thank you very much.
 
-GPIOs also are interrupts frequently, so we need to make sure
-interrupt translation works too. It's a bit tricky as interrupt-map
-depends on #address-cells and #interrupt-cells. I think we just set
-the #address-cells to 0 on the connector node and it will be fine. We
-may need the same pass thru of flags though.
-
->
-> Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> ---
->  drivers/of/base.c  | 146 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/of.h |  14 +++++
->  2 files changed, 160 insertions(+)
->
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index d687e6de24a0..693b73f33675 100644
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -1772,6 +1772,152 @@ int of_parse_phandle_with_args(const struct device_node *np, const char *list_na
->  EXPORT_SYMBOL(of_parse_phandle_with_args);
->
->  /**
-> + * of_parse_phandle_with_args_map() - Find a node pointed by phandle in a list and remap it
-> + * @np:                pointer to a device tree node containing a list
-> + * @list_name: property name that contains a list
-> + * @cells_name:        property name that specifies phandles' arguments count
-> + * @index:     index of a phandle to parse out
-> + * @out_args:  optional pointer to output arguments structure (will be filled)
-> + *
-> + * This function is useful to parse lists of phandles and their arguments.
-> + * Returns 0 on success and fills out_args, on error returns appropriate
-> + * errno value.
-> + *
-> + * Caller is responsible to call of_node_put() on the returned out_args->np
-> + * pointer.
-> + *
-> + * Example:
-> + *
-> + * phandle1: node1 {
-> + *     #list-cells = <2>;
-> + * }
-> + *
-> + * phandle2: node2 {
-> + *     #list-cells = <1>;
-> + * }
-> + *
-> + * phandle3: node3 {
-> + *     #list-cells = <1>;
-> + *     list-map = <0 &phandle2 3>,
-> + *                <1 &phandle2 2>,
-> + *                <2 &phandle1 5 1>;
-> + *     list-map-mask = <0x3>;
-> + * };
-> + *
-> + * node4 {
-> + *     list = <&phandle1 1 2 &phandle3 0>;
-> + * }
-> + *
-> + * To get a device_node of the `node2' node you may call this:
-> + * of_parse_phandle_with_args(node4, "list", "#list-cells", "list-map",
-> + *                           "list-map-mask", 1, &args);
-> + */
-> +int of_parse_phandle_with_args_map(const struct device_node *np,
-> +                                  const char *list_name,
-> +                                  const char *cells_name,
-> +                                  const char *map_name,
-> +                                  const char *mask_name,
-
-Perhaps these 3 could be just a single base name (e.g. "gpio")?
-Doesn't really buy much other than enforce we don't mix 'gpios' and
-'gpio'. That could never happen. ;)
-
-> +                                  int index, struct of_phandle_args *out_args)
-> +{
-
-Rob
+Yours,
+Hongzhou
