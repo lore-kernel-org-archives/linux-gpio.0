@@ -1,58 +1,82 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] gpio: merrifield: Implement gpio_get_direction callback
-Date: Thu,  1 Dec 2016 18:09:33 +0200
-Message-ID: <20161201160933.39406-1-andriy.shevchenko@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:27404 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755513AbcLAQJh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 1 Dec 2016 11:09:37 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: "jacopo@jmondi.org" <jacopo@jmondi.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
+Date: Thu, 1 Dec 2016 17:40:35 +0100
+Message-ID: <1abd7e30-f70b-1774-f51c-3e08a98f6e78@jmondi.org>
+References: <1480410716-25993-1-git-send-email-jacopo@jmondi.org>
+ <4558124.JutbKSQ7ug@avalon>
+ <CAMuHMdUcxJ6fiahvG+Ydha_Tp5RkppSemb=1qkGRwpb4ACGoZw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdUcxJ6fiahvG+Ydha_Tp5RkppSemb=1qkGRwpb4ACGoZw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Implement gpio_get_direction() callback for Intel Merrifield GPIO.
+Hi Laurent, Geert,
+    thanks for review
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-merrifield.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+On 29/11/2016 22:39, Geert Uytterhoeven wrote:
+> Hi Laurent,
+>
+> On Tue, Nov 29, 2016 at 8:30 PM, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+>> On Tuesday 29 Nov 2016 10:11:56 Jacopo Mondi wrote:
+>>> Add pin configuration support for Gyro-ADC, named ADI on r8a7791 SoC.
+>>>
+>>> The Gyro-ADC supports three different configurations:
+>>> a single ADC (adi and adi_b groups), 2 ADCs selectable through a single
+>>> channel select signal (adi_chsel1 and adi_chsel1_b groups),
+>>
+>> I've only briefly looked up at the datasheet, but is that a supported mode ?
+>> It seems that mode 1 uses 4 channels and mode 2 and 3 use 8 channels.
+>
+> I think you can always connect less ADCs than there are channels.
+> If you connect e.g. only one, you don't need any CHS signals.
+> If you connect e.g. two, you can use only one CHS signal.
+>
+> AFAICS, you still have to use an external demux to create individual chip
+> selects from the single CS signal and (up to 3) CHS signals.
 
-diff --git a/drivers/gpio/gpio-merrifield.c b/drivers/gpio/gpio-merrifield.c
-index d7cbbc0..69e0f4a 100644
---- a/drivers/gpio/gpio-merrifield.c
-+++ b/drivers/gpio/gpio-merrifield.c
-@@ -11,6 +11,7 @@
- 
- #include <linux/bitops.h>
- #include <linux/gpio/driver.h>
-+#include <linux/gpio.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-@@ -161,6 +162,13 @@ static int mrfld_gpio_direction_output(struct gpio_chip *chip,
- 	return 0;
- }
- 
-+static int mrfld_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
-+{
-+	void __iomem *gpdr = gpio_reg(chip, offset, GPDR);
-+
-+	return (readl(gpdr) & BIT(offset % 32)) ? GPIOF_DIR_OUT : GPIOF_DIR_IN;
-+}
-+
- static int mrfld_gpio_set_debounce(struct gpio_chip *chip, unsigned int offset,
- 				   unsigned int debounce)
- {
-@@ -405,6 +413,7 @@ static int mrfld_gpio_probe(struct pci_dev *pdev, const struct pci_device_id *id
- 	priv->chip.direction_output = mrfld_gpio_direction_output;
- 	priv->chip.get = mrfld_gpio_get;
- 	priv->chip.set = mrfld_gpio_set;
-+	priv->chip.get_direction = mrfld_gpio_get_direction;
- 	priv->chip.set_debounce = mrfld_gpio_set_debounce;
- 	priv->chip.base = gpio_base;
- 	priv->chip.ngpio = MRFLD_NGPIO;
--- 
-2.10.2
+Actually Laurent's right and I have mis-interpreted the CHS signal purpose.
 
+The CHS signal are not intended to select an external ADC where to 
+sample from among the several connected ones, but instead to select 
+which line to drive to a single ADC.
+
+Quoting the processor manual, ADI supports three different ADC models 
+through 3 different "modes"
+- mode1: MB88101A
+- mode2: ADCS7476/ADC121 and AD7476
+- mode3: MAX1162
+and cycles through channels moving the CHS[0:1] lines in mode1, and 
+CHS[0:2] lines in mode2 and mode3.
+
+Actually, being the MB88101A a 4-channel ADC, the CHS[0:1] lines could 
+be connected to the ADC itself and used to cycle between its 4 input pins.
+In mode2 and mode3 an external DEMUX is probably required, as the 
+supported ADCs for these modes are single-channel ones.
+
+For pin configuration purposes anyway, it's enough to know that we 
+cannot split CHS signals in three separate groups, but in 2 only (one 
+for mode1 and one for mode2 and 3).
+
+Will send v2 shortly.
+Thanks
+    j
+
+
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+>
