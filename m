@@ -1,34 +1,142 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 1/5] gpio: pl061: use local state for parent IRQ storage
-Date: Thu, 1 Dec 2016 13:48:08 +0000
-Message-ID: <be5a081a-24d7-ff50-d8c5-01e02e64a5dc@arm.com>
-References: <1480068564-9447-1-git-send-email-linus.walleij@linaro.org>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH 08/39] Annotate hardware config module parameters in
+ drivers/gpio/
+Date: Thu, 1 Dec 2016 08:49:31 -0500
+Message-ID: <20161201134921.GA30135@sophia>
+References: <148059537897.31612.9461043954611464597.stgit@warthog.procyon.org.uk>
+ <148059543997.31612.610019846448617763.stgit@warthog.procyon.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:44436 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756577AbcLANsL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 1 Dec 2016 08:48:11 -0500
-In-Reply-To: <1480068564-9447-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-security-module-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <148059543997.31612.610019846448617763.stgit@warthog.procyon.org.uk>
+Sender: owner-linux-security-module@vger.kernel.org
+To: David Howells <dhowells@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, minyard@acm.org, gnomes@lxorguk.ukuu.org.uk, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org, Baruch Siach <baruch@tkos.co.il>, Sudeep Holla <sudeep.holla@arm.com>, Haojian Zhuang <haojian.zhuang@gmail.com>
 
-
-
-On 25/11/16 10:09, Linus Walleij wrote:
-> The driver is poking around in the struct gpio_chip internals,
-> which is a no-no. Use a variable in the local state container.
+On Thu, Dec 01, 2016 at 12:30:40PM +0000, David Howells wrote:
+>When the kernel is running in secure boot mode, we lock down the kernel to
+>prevent userspace from modifying the running kernel image.  Whilst this
+>includes prohibiting access to things like /dev/mem, it must also prevent
+>access by means of configuring driver modules in such a way as to cause a
+>device to access or modify the kernel image.
 >
+>To this end, annotate module_param* statements that refer to hardware
+>configuration and indicate for future reference what type of parameter they
+>specify.  The parameter parser in the core sees this information and can
+>skip such parameters with an error message if the kernel is locked down.
+>The module initialisation then runs as normal, but just sees whatever the
+>default values for those parameters is.
+>
+>Note that we do still need to do the module initialisation because some
+>drivers have viable defaults set in case parameters aren't specified and
+>some drivers support automatic configuration (e.g. PNP or PCI) in addition
+>to manually coded parameters.
+>
+>This patch annotates drivers in drivers/gpio/.
+>
+>Suggested-by: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+>Signed-off-by: David Howells <dhowells@redhat.com>
+>cc: William Breathitt Gray <vilhelm.gray@gmail.com>
+>cc: Linus Walleij <linus.walleij@linaro.org>
+>cc: Alexandre Courbot <gnurou@gmail.com>
+>cc: linux-gpio@vger.kernel.org
 
-The entire series looks good to me. I also gave it a spin on my Juno. So,
+Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-Tested-by: Sudeep Holla <sudeep.holla@arm.com>
-
--- 
-Regards,
-Sudeep
+>---
+>
+> drivers/gpio/gpio-104-dio-48e.c |    4 ++--
+> drivers/gpio/gpio-104-idi-48.c  |    4 ++--
+> drivers/gpio/gpio-104-idio-16.c |    4 ++--
+> drivers/gpio/gpio-gpio-mm.c     |    2 +-
+> drivers/gpio/gpio-ws16c48.c     |    4 ++--
+> 5 files changed, 9 insertions(+), 9 deletions(-)
+>
+>diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
+>index fcf776971ca9..1c334eed5821 100644
+>--- a/drivers/gpio/gpio-104-dio-48e.c
+>+++ b/drivers/gpio/gpio-104-dio-48e.c
+>@@ -33,11 +33,11 @@
+> 
+> static unsigned int base[MAX_NUM_DIO48E];
+> static unsigned int num_dio48e;
+>-module_param_array(base, uint, &num_dio48e, 0);
+>+module_param_hw_array(base, uint, ioport, &num_dio48e, 0);
+> MODULE_PARM_DESC(base, "ACCES 104-DIO-48E base addresses");
+> 
+> static unsigned int irq[MAX_NUM_DIO48E];
+>-module_param_array(irq, uint, NULL, 0);
+>+module_param_hw_array(irq, uint, irq, NULL, 0);
+> MODULE_PARM_DESC(irq, "ACCES 104-DIO-48E interrupt line numbers");
+> 
+> /**
+>diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
+>index 2d2763ea1a68..6639920b3299 100644
+>--- a/drivers/gpio/gpio-104-idi-48.c
+>+++ b/drivers/gpio/gpio-104-idi-48.c
+>@@ -33,11 +33,11 @@
+> 
+> static unsigned int base[MAX_NUM_IDI_48];
+> static unsigned int num_idi_48;
+>-module_param_array(base, uint, &num_idi_48, 0);
+>+module_param_hw_array(base, uint, ioport, &num_idi_48, 0);
+> MODULE_PARM_DESC(base, "ACCES 104-IDI-48 base addresses");
+> 
+> static unsigned int irq[MAX_NUM_IDI_48];
+>-module_param_array(irq, uint, NULL, 0);
+>+module_param_hw_array(irq, uint, irq, NULL, 0);
+> MODULE_PARM_DESC(irq, "ACCES 104-IDI-48 interrupt line numbers");
+> 
+> /**
+>diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+>index 6787b8fcf0d8..6d7024ac2689 100644
+>--- a/drivers/gpio/gpio-104-idio-16.c
+>+++ b/drivers/gpio/gpio-104-idio-16.c
+>@@ -33,11 +33,11 @@
+> 
+> static unsigned int base[MAX_NUM_IDIO_16];
+> static unsigned int num_idio_16;
+>-module_param_array(base, uint, &num_idio_16, 0);
+>+module_param_hw_array(base, uint, ioport, &num_idio_16, 0);
+> MODULE_PARM_DESC(base, "ACCES 104-IDIO-16 base addresses");
+> 
+> static unsigned int irq[MAX_NUM_IDIO_16];
+>-module_param_array(irq, uint, NULL, 0);
+>+module_param_hw_array(irq, uint, irq, NULL, 0);
+> MODULE_PARM_DESC(irq, "ACCES 104-IDIO-16 interrupt line numbers");
+> 
+> /**
+>diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
+>index 1e7def9449ce..4ac2179b96ad 100644
+>--- a/drivers/gpio/gpio-gpio-mm.c
+>+++ b/drivers/gpio/gpio-gpio-mm.c
+>@@ -31,7 +31,7 @@
+> 
+> static unsigned int base[MAX_NUM_GPIOMM];
+> static unsigned int num_gpiomm;
+>-module_param_array(base, uint, &num_gpiomm, 0);
+>+module_param_hw_array(base, uint, ioport, &num_gpiomm, 0);
+> MODULE_PARM_DESC(base, "Diamond Systems GPIO-MM base addresses");
+> 
+> /**
+>diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
+>index eaa71d440ccf..c84d600a8bb0 100644
+>--- a/drivers/gpio/gpio-ws16c48.c
+>+++ b/drivers/gpio/gpio-ws16c48.c
+>@@ -30,11 +30,11 @@
+> 
+> static unsigned int base[MAX_NUM_WS16C48];
+> static unsigned int num_ws16c48;
+>-module_param_array(base, uint, &num_ws16c48, 0);
+>+module_param_hw_array(base, uint, ioport, &num_ws16c48, 0);
+> MODULE_PARM_DESC(base, "WinSystems WS16C48 base addresses");
+> 
+> static unsigned int irq[MAX_NUM_WS16C48];
+>-module_param_array(irq, uint, NULL, 0);
+>+module_param_hw_array(irq, uint, irq, NULL, 0);
+> MODULE_PARM_DESC(irq, "WinSystems WS16C48 interrupt line numbers");
+> 
+> /**
+>
