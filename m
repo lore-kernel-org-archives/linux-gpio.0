@@ -1,31 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] pinctrl: sx150x: handle missing 'advanced' reg in
- sx1504 and sx1505
-Date: Fri, 2 Dec 2016 14:02:34 +0100
-Message-ID: <CACRpkdbsSLKK+McCUm+O+gDozPzVzF5pjUL9iRFexk1vGuUMUA@mail.gmail.com>
-References: <1480675876-19540-1-git-send-email-peda@axentia.se> <1480675876-19540-4-git-send-email-peda@axentia.se>
+Subject: Re: [PATCH 0/3] pinctrl: sx150x fixes for the 4-pin chips
+Date: Fri, 2 Dec 2016 14:04:34 +0100
+Message-ID: <CACRpkdZ0uqw9x6q6x2AJsJ6iVh+QOa-0TYuou6xWk-nUYi8pPA@mail.gmail.com>
+References: <1480675876-19540-1-git-send-email-peda@axentia.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1480675876-19540-4-git-send-email-peda@axentia.se>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f170.google.com ([209.85.220.170]:35789 "EHLO
+        mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758941AbcLBNE6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Dec 2016 08:04:58 -0500
+Received: by mail-qk0-f170.google.com with SMTP id n204so277807582qke.2
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Dec 2016 05:04:35 -0800 (PST)
+In-Reply-To: <1480675876-19540-1-git-send-email-peda@axentia.se>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Peter Rosin <peda@axentia.se>
 Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-gpio@vger.kernel.org
 
 On Fri, Dec 2, 2016 at 11:51 AM, Peter Rosin <peda@axentia.se> wrote:
 
-> This fixes a problem where sx150x_regmap_reg_width() returns 8 for the
-> data register (reg 0) for sx1504 where it should return 4, and return
-> a correct 8 for sx1505 but for the wrong reason (both chips lack the
-> 'advanced' register). This is not a real problem, since nothing depends
-> on the function returning 4 or 8, and certainly not if it is returning
-> 8 for the wrong reason. But fix this to avoid nasty surprises down the
-> line.
->
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+> I found some more issues when reading the sx150x code.
 
-Patch applied.
+Thanks, I applied all for v4.10.
+
+> Only the first patch actually fixes a problem. I didn't want to add a
+> Fixes tag, since I don't know if commits on the pinctrl devel branch
+> are considered stable? Or if you perhaps want to squash this patch with
+> the patch it fixes?
+
+Nah I just applied them.
+
+This kernel cycle moves the driver and rewrites it and everything
+and a bit of fuzz should be expected so last minute changes
+should be regarded as business as usual.
+
+I'm just happy about all the people that paid so much attention
+to this driver in the v4.10 cycle :D
 
 Yours,
 Linus Walleij
