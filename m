@@ -1,54 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: chardev: Return error for seek operations
-Date: Fri, 2 Dec 2016 13:37:10 +0100
-Message-ID: <CACRpkdZYrrCKFJp5kHSWeJNo7HCxqZcfZ331Rzepo2DQj6tF2A@mail.gmail.com>
-References: <1480507521-17766-1-git-send-email-lars@metafoo.de>
+Subject: Re: [RESEND PATCH] pinctrl: mt8173: set GPIO16 to usb iddig mode
+Date: Fri, 2 Dec 2016 13:40:46 +0100
+Message-ID: <CACRpkdbUebNHcHyQ+Pi_yfyLBB021HznPfoUv2SU0uh1_3RocA@mail.gmail.com>
+References: <1480472491-4644-1-git-send-email-chunfeng.yun@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f176.google.com ([209.85.220.176]:34973 "EHLO
-        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752008AbcLBMhL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Dec 2016 07:37:11 -0500
-Received: by mail-qk0-f176.google.com with SMTP id n204so277099749qke.2
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Dec 2016 04:37:11 -0800 (PST)
-In-Reply-To: <1480507521-17766-1-git-send-email-lars@metafoo.de>
+Received: from mail-qk0-f169.google.com ([209.85.220.169]:34866 "EHLO
+        mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751786AbcLBMkr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Dec 2016 07:40:47 -0500
+Received: by mail-qk0-f169.google.com with SMTP id n204so277190119qke.2
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Dec 2016 04:40:47 -0800 (PST)
+In-Reply-To: <1480472491-4644-1-git-send-email-chunfeng.yun@mediatek.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Biao Huang <biao.huang@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Nov 30, 2016 at 1:05 PM, Lars-Peter Clausen <lars@metafoo.de> wrote:
+On Wed, Nov 30, 2016 at 3:21 AM, Chunfeng Yun <chunfeng.yun@mediatek.com> wrote:
 
-> The GPIO chardev is used for management tasks (allocating line and event
-> handles) and does neither support read() nor write() operations. Hence it
-> does not make much sense to allow seek operations.
+> the default mode of GPIO16 pin is gpio, when set EINT16 to
+> IRQ_TYPE_LEVEL_HIGH, no interrupt is triggered, it can be
+> fixed when set its default mode as usb iddig.
 >
-> Currently the chardev uses noop_llseek() for its seek implementation. This
-> function does not move the pointer and simply returns the current position
-> (always 0 for the GPIO chardev). noop_llseek() is primarily meant for
-> devices that can not support seek, but where there might be a user that
-> depends on the seek() operation succeeding. For newly added devices that
-> can not support seek operations it is recommended to use no_llseek(), which
-> will return an error. For more information see commit 6038f373a3dc
-> ("llseek: automatically add .llseek fop").
->
-> Unfortunately this was overlooked when the GPIO chardev ABI was introduced.
-> But it is highly unlikely that since then userspace applications have
-> appeared that rely on being able to perform non-failing seek operations on
-> a GPIO chardev file descriptor. So it should be safe to change from
-> noop_llseel() to no_seek(). Also use nonseekable_open() in the chardev
-> open() callback to clear the FMODE_SEEK, FMODE_PREAD and FMODE_PWRITE flags
-> from the file. Neither of these should be set on a file that does not
-> support seek operations.
->
-> Fixes: 3c702e9987e2 ("gpio: add a userspace chardev ABI for GPIOs")
-> Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-> ---
-> Ideally this gets added to stable as well to get a consistent ABI
-> throughout.
+> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 
-Thanks Lars-Peter, I applied this and tagged it for stable.
+Patch applied with Hongzhou's ACK!
 
 Yours,
 Linus Walleij
