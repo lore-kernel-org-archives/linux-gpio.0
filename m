@@ -1,33 +1,25 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/1] gpio: merrifield: Add support for hardware debouncer
-Date: Fri, 2 Dec 2016 13:56:36 +0100
-Message-ID: <CACRpkdZV=s6tqmOcLkrBrv=YzwsKovSauxxV87DLZ6QqGUEerw@mail.gmail.com>
-References: <20161201154551.179948-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 1/3] pinctrl: sx150x: access the correct bits in the 4-bit
+ regs of sx150[147]
+Date: Fri, 2 Dec 2016 14:00:24 +0100
+Message-ID: <CACRpkdaPzrvez2a-8N_GgrX6LgebNvz-Eb8yc6tUcrX7+CrMQA@mail.gmail.com>
+References: <1480675876-19540-1-git-send-email-peda@axentia.se> <1480675876-19540-2-git-send-email-peda@axentia.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f178.google.com ([209.85.220.178]:35283 "EHLO
-        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751608AbcLBM4h (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Dec 2016 07:56:37 -0500
-Received: by mail-qk0-f178.google.com with SMTP id n204so277589085qke.2
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Dec 2016 04:56:37 -0800 (PST)
-In-Reply-To: <20161201154551.179948-1-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1480675876-19540-2-git-send-email-peda@axentia.se>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Rosin <peda@axentia.se>
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Dec 1, 2016 at 4:45 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Fri, Dec 2, 2016 at 11:51 AM, Peter Rosin <peda@axentia.se> wrote:
 
-> By default all pins are configured to use a glitch filter. Writing 1 to the
-> certain bit of the specific register might be useful in case someone needs to
-> bypass the glitch filter completely for a given GPIO pin.
+> The code assumes 8-bit or 16-bit width registers, but three of the
+> chips (sx1501/sx1504/sx1507) are 4-bit. So, try to handle 4-bit chips as
+> well, they leave the high part of each register unused.
 >
-> This patch adds support for that in the Intel Merrifield GPIO driver.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
 Patch applied.
 
