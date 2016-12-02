@@ -1,82 +1,33 @@
-From: Nathan Sullivan <nathan.sullivan@ni.com>
-Subject: [PATCH] gpio: mmio: add support for NI 169445 NAND GPIO
-Date: Fri, 2 Dec 2016 09:37:02 -0600
-Message-ID: <1480693022-22110-1-git-send-email-nathan.sullivan@ni.com>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH 0/3] pinctrl: sx150x fixes for the 4-pin chips
+Date: Fri, 2 Dec 2016 11:56:51 +0100
+Message-ID: <0b6e22ca-44af-1ad1-1b9d-f69d7c8cc74d@axentia.se>
+References: <1480675876-19540-1-git-send-email-peda@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Nathan Sullivan <nathan.sullivan@ni.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-db5eur01on0098.outbound.protection.outlook.com ([104.47.2.98]:46370
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751510AbcLBQ3j (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 2 Dec 2016 11:29:39 -0500
+In-Reply-To: <1480675876-19540-1-git-send-email-peda@axentia.se>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The GPIO-based NAND controller on National Instruments 169445 hardware
-exposes a set of simple lines for the control signals.
+On 2016-12-02 11:51, Peter Rosin wrote:
+> Anyway, at your discretion, this could be added to patch #1:
+> 
+> Fixes: 4f5ac8cf0a11 ("pinctrl: sx150x: add support for sx1501, sx1504, sx1505, sx1507")
 
-Signed-off-by: Nathan Sullivan <nathan.sullivan@ni.com>
----
-"devicetree: add vendor prefix for National Instruments" added the ni vendor prefix.
+I'm apparently bad at copying, this should be:
+Fixes: 4f5ac8cf0a11 ("pinctrl: sx150x: add support for sx1501, sx1504, sx1505 and sx1507")
 
-This patch is needed for "MIPS: NI 169445 board support", so that GPIO NAND can work.
+Since I obviously typed this manually, I can note that I did check that
+the shortened hash is correct.
 
- .../bindings/gpio/ni,169445-nand-gpio.txt          | 36 ++++++++++++++++++++++
- drivers/gpio/gpio-mmio.c                           |  1 +
- 2 files changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
-
-diff --git a/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt b/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
-new file mode 100644
-index 0000000..ca2c14f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
-@@ -0,0 +1,36 @@
-+Bindings for the National Instruments 169445 GPIO NAND controller
-+
-+The 169445 GPIO NAND controller has two memory mapped GPIO registers, one
-+for input (the ready signal) and one for output (control signals).  It is
-+intended to be used with the GPIO NAND driver.
-+
-+Required properties:
-+	- compatible: should be "ni,169445-nand-gpio"
-+	- reg-names: must contain
-+		"dat" - data register
-+	- reg: address + size pairs describing the GPIO register sets;
-+		order must correspond with the order of entries in reg-names
-+	- #gpio-cells: must be set to 2. The first cell is the pin number and
-+			the second cell is used to specify the gpio polarity:
-+			0 = active high
-+			1 = active low
-+	- gpio-controller: Marks the device node as a gpio controller.
-+
-+Examples:
-+	gpio1: nand-gpio-out@1f300010 {
-+		compatible = "ni,169445-nand-gpio";
-+		reg = <0x1f300010 0x4>;
-+		reg-names = "dat";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		ngpios = <5>;
-+	};
-+
-+	gpio2: nand-gpio-in@1f300014 {
-+		compatible = "ni,169445-nand-gpio";
-+		reg = <0x1f300014 0x4>;
-+		reg-names = "dat";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		ngpios = <1>;
-+	};
-diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
-index d7d03ad..f7da40e 100644
---- a/drivers/gpio/gpio-mmio.c
-+++ b/drivers/gpio/gpio-mmio.c
-@@ -575,6 +575,7 @@ static void __iomem *bgpio_map(struct platform_device *pdev,
- static const struct of_device_id bgpio_of_match[] = {
- 	{ .compatible = "brcm,bcm6345-gpio" },
- 	{ .compatible = "wd,mbl-gpio" },
-+	{ .compatible = "ni,169445-nand-gpio" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, bgpio_of_match);
--- 
-2.1.4
+Cheers,
+Peter
