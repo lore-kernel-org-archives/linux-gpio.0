@@ -1,82 +1,82 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/5] pinctrl: core: Use delayed work for hogs
-Date: Fri, 2 Dec 2016 14:08:30 +0100
-Message-ID: <CACRpkdZUtqEUQbz7YqtLnYWdOmW4g4q4ikRuqfCwzf5kMR5JDg@mail.gmail.com>
-References: <20161025210221.9150-1-tony@atomide.com> <20161025210221.9150-2-tony@atomide.com>
- <CACRpkdaP3_6x0GMpy_+fSok5r+5CP6RvP6dmDCtz4ayAm-TuSQ@mail.gmail.com>
- <20161111202650.GI7138@atomide.com> <20161114205243.GU7138@atomide.com>
- <20161114220824.GC4082@atomide.com> <20161115004703.GG4082@atomide.com>
- <CACRpkdZ=pifhHrH_-466f2x3Ev4GKW0CCnTj1hL5Hfpdj5p-1A@mail.gmail.com>
- <20161115154124.GI4082@atomide.com> <20161115170838.GK4082@atomide.com>
+From: Nathan Sullivan <nathan.sullivan@ni.com>
+Subject: [PATCH] gpio: mmio: add support for NI 169445 NAND GPIO
+Date: Fri, 2 Dec 2016 09:37:02 -0600
+Message-ID: <1480693022-22110-1-git-send-email-nathan.sullivan@ni.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161115170838.GK4082@atomide.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
+To: linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Nathan Sullivan <nathan.sullivan@ni.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Nov 15, 2016 at 6:08 PM, Tony Lindgren <tony@atomide.com> wrote:
-> * Tony Lindgren <tony@atomide.com> [161115 07:42]:
->> * Linus Walleij <linus.walleij@linaro.org> [161114 22:53]:
->> > On Tue, Nov 15, 2016 at 1:47 AM, Tony Lindgren <tony@atomide.com> wrote:
->> >
->> > > 8< --------------------------------
->> > > From tony Mon Sep 17 00:00:00 2001
->> > > From: Tony Lindgren <tony@atomide.com>
->> > > Date: Tue, 25 Oct 2016 08:33:35 -0700
->> > > Subject: [PATCH] pinctrl: core: Use delayed work for hogs
->> > >
->> > > Having the pin control framework call pin controller functions
->> > > before it's probe has finished is not nice as the pin controller
->> > > device driver does not yet have struct pinctrl_dev handle.
->> > >
->> > > Let's fix this issue by adding deferred work for late init. This is
->> > > needed to be able to add pinctrl generic helper functions that expect
->> > > to know struct pinctrl_dev handle. Note that we now need to call
->> > > create_pinctrl() directly as we don't want to add the pin controller
->> > > to the list of controllers until the hogs are claimed. We also need
->> > > to pass the pinctrl_dev to the device tree parser functions as they
->> > > otherwise won't find the right controller at this point.
->> > >
->> > > Signed-off-by: Tony Lindgren <tony@atomide.com>
->> >
->> > This looks a lot better!
->> >
->> > So if I understand correctly, we can guarantee that the delayed
->> > work will not execute until the device driver probe() has finished,
->> > and it *will* execute immediately after that?
->> >
->> > So:
->> > - Device driver probes
->> > - Delayed work is called
->> > - Next initcall
->> >
->> > I'm not 100% familiar with how delayed work works... :/
->>
->> Yeah well the delayed work gets scheduled for next jiffy but may
->> be pre-empted as it runs in process context.
->>
->> So in the worst case it could that we still may need to fix few
->> drivers to support -EPROBE_DEFER. I wonder if we should check for
->> hogs in probe already and only defer if hogs are defined?
->
-> Below is a version using delayed_work only if pinctrl_dt_has_hogs().
->
-> Not sure if testing only for pinctrl-0 is enough there though?
+The GPIO-based NAND controller on National Instruments 169445 hardware
+exposes a set of simple lines for the control signals.
 
-Sorry for the lack of attention to this patch set on my part. :(
+Signed-off-by: Nathan Sullivan <nathan.sullivan@ni.com>
+---
+"devicetree: add vendor prefix for National Instruments" added the ni vendor prefix.
 
-Do you think you could resend these last 5 patches after the
-release of v4.10-rc1 so we merge it early for the next cycle
-and people get a chance to test and see if it works well for
-everyone?
+This patch is needed for "MIPS: NI 169445 board support", so that GPIO NAND can work.
 
-I'm worried about adding it to the tree this late in the kernel
-cycle...
+ .../bindings/gpio/ni,169445-nand-gpio.txt          | 36 ++++++++++++++++++++++
+ drivers/gpio/gpio-mmio.c                           |  1 +
+ 2 files changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
 
-However I like the look of the series overall a lot.
-
-Yours,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt b/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
+new file mode 100644
+index 0000000..ca2c14f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
+@@ -0,0 +1,36 @@
++Bindings for the National Instruments 169445 GPIO NAND controller
++
++The 169445 GPIO NAND controller has two memory mapped GPIO registers, one
++for input (the ready signal) and one for output (control signals).  It is
++intended to be used with the GPIO NAND driver.
++
++Required properties:
++	- compatible: should be "ni,169445-nand-gpio"
++	- reg-names: must contain
++		"dat" - data register
++	- reg: address + size pairs describing the GPIO register sets;
++		order must correspond with the order of entries in reg-names
++	- #gpio-cells: must be set to 2. The first cell is the pin number and
++			the second cell is used to specify the gpio polarity:
++			0 = active high
++			1 = active low
++	- gpio-controller: Marks the device node as a gpio controller.
++
++Examples:
++	gpio1: nand-gpio-out@1f300010 {
++		compatible = "ni,169445-nand-gpio";
++		reg = <0x1f300010 0x4>;
++		reg-names = "dat";
++		gpio-controller;
++		#gpio-cells = <2>;
++		ngpios = <5>;
++	};
++
++	gpio2: nand-gpio-in@1f300014 {
++		compatible = "ni,169445-nand-gpio";
++		reg = <0x1f300014 0x4>;
++		reg-names = "dat";
++		gpio-controller;
++		#gpio-cells = <2>;
++		ngpios = <1>;
++	};
+diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+index d7d03ad..f7da40e 100644
+--- a/drivers/gpio/gpio-mmio.c
++++ b/drivers/gpio/gpio-mmio.c
+@@ -575,6 +575,7 @@ static void __iomem *bgpio_map(struct platform_device *pdev,
+ static const struct of_device_id bgpio_of_match[] = {
+ 	{ .compatible = "brcm,bcm6345-gpio" },
+ 	{ .compatible = "wd,mbl-gpio" },
++	{ .compatible = "ni,169445-nand-gpio" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, bgpio_of_match);
+-- 
+2.1.4
