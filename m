@@ -1,165 +1,211 @@
-From: Jacopo Mondi <jacopo@jmondi.org>
-Subject: [PATCH v3] pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
-Date: Thu,  1 Dec 2016 23:14:12 +0100
-Message-ID: <1480630452-10958-1-git-send-email-jacopo@jmondi.org>
-References: <1480410716-25993-1-git-send-email-jacopo@jmondi.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 7.mo69.mail-out.ovh.net ([46.105.50.32]:49402 "EHLO
-        7.mo69.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932298AbcLAWYV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Dec 2016 17:24:21 -0500
-Received: from player699.ha.ovh.net (b9.ovh.net [213.186.33.59])
-        by mo69.mail-out.ovh.net (Postfix) with ESMTP id 77FE69DEE
-        for <linux-gpio@vger.kernel.org>; Thu,  1 Dec 2016 23:14:30 +0100 (CET)
-In-Reply-To: <1480410716-25993-1-git-send-email-jacopo@jmondi.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Stephen Boyd <stephen.boyd@linaro.org>
+Subject: Re: [PATCH 1/3] of: Support parsing phandle argument lists through a
+ nexus node
+Date: Thu, 01 Dec 2016 17:10:35 -0800
+Message-ID: <148064103554.28553.15907898720032999966@sboyd-linaro>
+References: <20161124102529.20212-1-stephen.boyd@linaro.org>
+ <20161124102529.20212-2-stephen.boyd@linaro.org>
+ <CAL_JsqKZ_Ohcdi0n6XU+5=3o6OwC=r_5Cv1=gx7mytUUVd2dzA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAL_JsqKZ_Ohcdi0n6XU+5=3o6OwC=r_5Cv1=gx7mytUUVd2dzA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh+dt@kernel.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Frank Rowand <frowand.list@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: geert+renesas@glider.be, magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jacopo Mondi <jacopo@jmondi.org>
 
-Add pin configuration support for Gyro-ADC, named ADI on r8a7791 SoC.
+Quoting Rob Herring (2016-11-30 15:30:47)
+> On Thu, Nov 24, 2016 at 4:25 AM, Stephen Boyd <stephen.boyd@linaro.org> wrote:
+> > Platforms like 96boards have a standardized connector/expansion
+> > slot that exposes signals like GPIOs to expansion boards in an
+> > SoC agnostic way. We'd like the DT overlays for the expansion
+> > boards to be written once without knowledge of the SoC on the
+> > other side of the connector. This avoids the unscalable
+> > combinatorial explosion of a different DT overlay for each
+> > expansion board and SoC pair.
+> >
+> > We need a way to describe the GPIOs routed through the connector
+> > in an SoC agnostic way. Let's introduce nexus property parsing
+> > into the OF core to do this. This is largely based on the
+> > interrupt nexus support we already have. This allows us to remap
+> > a phandle list in a consumer node (e.g. reset-gpios) through a
+> > connector in a generic way (e.g. via gpio-map). Do this in a
+> > generic routine so that we can remap any sort of variable length
+> > phandle list.
+> >
+> > Taking GPIOs as an example, the connector would be a GPIO nexus,
+> > supporting the remapping of a GPIO specifier space to multiple
+> > GPIO providers on the SoC. DT would look as shown below, where
+> > 'soc_gpio1' and 'soc_gpio2' are inside the SoC, 'connector' is an
+> > expansion port where boards can be plugged in, and
+> > 'expansion_device' is a device on the expansion board.
+> >
+> >         soc {
+> >                 soc_gpio1: gpio-controller1 {
+> >                         #gpio-cells = <2>;
+> >                 };
+> >
+> >                 soc_gpio2: gpio-controller2 {
+> >                         #gpio-cells = <2>;
+> >                 };
+> >         };
+> >
+> >         connector: connector {
+> >                 #gpio-cells = <2>;
+> >                 gpio-map = <0 GPIO_ACTIVE_LOW &soc_gpio1 1 GPIO_ACTIVE_LOW>,
+> >                            <1 GPIO_ACTIVE_LOW &soc_gpio2 4 GPIO_ACTIVE_LOW>,
+> >                            <2 GPIO_ACTIVE_LOW &soc_gpio1 3 GPIO_ACTIVE_LOW>,
+> >                            <3 GPIO_ACTIVE_LOW &soc_gpio2 2 GPIO_ACTIVE_LOW>;
+> >                 gpio-map-mask = <0xf 0x1>;
+> 
+> I think the common case is something more like this:
+> 
+>                  gpio-map = <0 0 &soc_gpio1 1 0>,
+>                             <1 0 &soc_gpio2 4 0>,
+>                             <2 0 &soc_gpio1 3 0>,
+>                             <3 0 &soc_gpio2 2 0>;
+>                  gpio-map-mask = <0xf 0>;
+> 
+> where we want to pass the 2nd cell of the consumer (e.g. reset-gpios)
+> thru. So here the GPIO_ACTIVE_LOW flag below needs to pass thru to
+> &soc_gpio1. Otherwise, the gpio-map is has to enumerate every possible
+> combination or it will be specific to the daughterboard's usage.
+> 
+> Also, GPIO cells are pretty well standardized, but some cases may need
+> a translation function which I guess would be part of a connector
+> driver. I don't think that affects the binding nor needs to be solved
+> now, but just want to raise that possibility.
 
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
----
-Compiled only, not tested with an actual ADC.
+Right. I think that translation function could be done with DT though.
+For example, we could remap an ACTIVE_LOW flag to an ACTIVE_HIGH flag,
+by matching the GPIO on active low and changing it to active high during
+the remap. That seems like something we can solve now if it ever happens
+by keeping the remapping scheme that interrupts does. Of course, if it
+becomes more complicated this breaks down, but then we can always have
+the connector driver do the more complicated stuff.
 
-For reference only, these are the changes introduced by Geert's private
-review of first sketch of this patch:
-    * separate ADI chsel in 3 overlapping groups:
-      the user can now select how many pins to assign to channel selection
-      function.
+If we want to support pass through, perhaps we should introduce yet
+another property to indicate which cells and maybe even which bits in
+those cells should be passed through from one side to the other. That
+way we can support a compressed scheme without requiring all the
+combinations of gpios and flags to be listed out.
 
-v1 -> v2:
-    * let the user freely select the single CHS line to use.
-      This requires the configuration to match the ADI mode in use, but
-      allows users to select CHS1 or CHS2 lines alone, and dedicate other
-      pins to other functions.
+For example, gpio-map-pass-thru = <0x0 0xff> would mean that we should
+pass through the second cell values that are the lower 8 bits. Map
+matching would still be done with the map-mask property, but this
+property would indicate which part of the specifier to mask out of the
+other side when copying it over.
 
-v2 -> v3:
-    * Update commit message which I forgot to do in v2 :/
+> 
+> >         };
+> >
+> >         expansion_device {
+> >                 reset-gpios = <&connector 2 GPIO_ACTIVE_LOW>;
+> >         };
+> >
+> > The GPIO core would use of_parse_phandle_with_args_map() instead
+> > of of_parse_phandle_with_args() and arrive at the same type of
+> > result, a phandle and argument list. The difference is that the
+> > phandle and arguments will be remapped through the nexus node to
+> > the underlying SoC GPIO controller node. In the example above,
+> > we would remap 'reset-gpios' from <&connector 2 GPIO_ACTIVE_LOW>
+> > to <&soc_gpio1 3 GPIO_ACTIVE_LOW>.
+> 
+> GPIOs also are interrupts frequently, so we need to make sure
+> interrupt translation works too. It's a bit tricky as interrupt-map
+> depends on #address-cells and #interrupt-cells. I think we just set
+> the #address-cells to 0 on the connector node and it will be fine. We
+> may need the same pass thru of flags though.
 
----
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 86 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
+Right I think that should work but I haven't tested it so far.
+Unfortunately, interrupt mapping doesn't have pass through support, so
+we may want to add the same pass through mask property there and update
+the interrupt mapping code too? I was trying to figure out how to make
+the interrupt code and this function the same, but the whole
+interrupt-parent scan made it feel unwieldy to the point where I gave
+up.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 7ca37c3..75c9882 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -1691,6 +1691,72 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	PINMUX_GPIO_GP_ALL(),
- };
- 
-+/* - ADI -------------------------------------------------------------------- */
-+static const unsigned int adi_common_pins[] = {
-+	/* ADIDATA, ADICS/SAMP, ADICLK */
-+	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25), RCAR_GP_PIN(6, 26),
-+};
-+static const unsigned int adi_common_mux[] = {
-+	/* ADIDATA, ADICS/SAMP, ADICLK */
-+	ADIDATA_MARK, ADICS_SAMP_MARK, ADICLK_MARK,
-+};
-+static const unsigned int adi_chsel0_pins[] = {
-+	/* ADICHS 0 */
-+	RCAR_GP_PIN(6, 27),
-+};
-+static const unsigned int adi_chsel0_mux[] = {
-+	/* ADICHS 0 */
-+	ADICHS0_MARK,
-+};
-+static const unsigned int adi_chsel1_pins[] = {
-+	/* ADICHS 1 */
-+	RCAR_GP_PIN(6, 28),
-+};
-+static const unsigned int adi_chsel1_mux[] = {
-+	/* ADICHS 1 */
-+	ADICHS1_MARK,
-+};
-+static const unsigned int adi_chsel2_pins[] = {
-+	/* ADICHS 2 */
-+	RCAR_GP_PIN(6, 29),
-+};
-+static const unsigned int adi_chsel2_mux[] = {
-+	/* ADICHS 2 */
-+	ADICHS2_MARK,
-+};
-+static const unsigned int adi_common_b_pins[] = {
-+	/* ADIDATA B, ADICS/SAMP B, ADICLK B */
-+	RCAR_GP_PIN(5, 25), RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 27),
-+};
-+static const unsigned int adi_common_b_mux[] = {
-+	/* ADIDATA B, ADICS/SAMP B, ADICLK B */
-+	ADIDATA_B_MARK, ADICS_SAMP_B_MARK, ADICLK_B_MARK,
-+};
-+static const unsigned int adi_chsel0_b_pins[] = {
-+	/* ADICHS B 0 */
-+	RCAR_GP_PIN(5, 28),
-+};
-+static const unsigned int adi_chsel0_b_mux[] = {
-+	/* ADICHS B 0 */
-+	ADICHS0_B_MARK,
-+};
-+static const unsigned int adi_chsel1_b_pins[] = {
-+	/* ADICHS B 1 */
-+	RCAR_GP_PIN(5, 29),
-+};
-+static const unsigned int adi_chsel1_b_mux[] = {
-+	/* ADICHS B 1 */
-+	ADICHS1_B_MARK,
-+};
-+static const unsigned int adi_chsel2_b_pins[] = {
-+	/* ADICHS B 2 */
-+	RCAR_GP_PIN(5, 30),
-+};
-+static const unsigned int adi_chsel2_b_mux[] = {
-+	/* ADICHS B 2 */
-+	ADICHS2_B_MARK,
-+};
-+
- /* - Audio Clock ------------------------------------------------------------ */
- static const unsigned int audio_clk_a_pins[] = {
- 	/* CLK */
-@@ -4343,6 +4409,14 @@ static const unsigned int vin2_clk_mux[] = {
- };
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(adi_common),
-+	SH_PFC_PIN_GROUP(adi_chsel0),
-+	SH_PFC_PIN_GROUP(adi_chsel1),
-+	SH_PFC_PIN_GROUP(adi_chsel2),
-+	SH_PFC_PIN_GROUP(adi_common_b),
-+	SH_PFC_PIN_GROUP(adi_chsel0_b),
-+	SH_PFC_PIN_GROUP(adi_chsel1_b),
-+	SH_PFC_PIN_GROUP(adi_chsel2_b),
- 	SH_PFC_PIN_GROUP(audio_clk_a),
- 	SH_PFC_PIN_GROUP(audio_clk_b),
- 	SH_PFC_PIN_GROUP(audio_clk_b_b),
-@@ -4687,6 +4761,17 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(vin2_clk),
- };
- 
-+static const char * const adi_groups[] = {
-+	"adi_common",
-+	"adi_chsel0",
-+	"adi_chsel1",
-+	"adi_chsel2",
-+	"adi_common_b",
-+	"adi_chsel0_b",
-+	"adi_chsel1_b",
-+	"adi_chsel2_b",
-+};
-+
- static const char * const audio_clk_groups[] = {
- 	"audio_clk_a",
- 	"audio_clk_b",
-@@ -5192,6 +5277,7 @@ static const char * const vin2_groups[] = {
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(adi),
- 	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(can0),
--- 
-2.7.4
+> 
+> >
+> > Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Mark Brown <broonie@kernel.org>
+> > Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> > ---
+> >  drivers/of/base.c  | 146 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/of.h |  14 +++++
+> >  2 files changed, 160 insertions(+)
+> >
+> > diff --git a/drivers/of/base.c b/drivers/of/base.c
+> > index d687e6de24a0..693b73f33675 100644
+> > --- a/drivers/of/base.c
+> > +++ b/drivers/of/base.c
+> > @@ -1772,6 +1772,152 @@ int of_parse_phandle_with_args(const struct device_node *np, const char *list_na
+> >  EXPORT_SYMBOL(of_parse_phandle_with_args);
+> >
+> >  /**
+> > + * of_parse_phandle_with_args_map() - Find a node pointed by phandle in a list and remap it
+> > + * @np:                pointer to a device tree node containing a list
+> > + * @list_name: property name that contains a list
+> > + * @cells_name:        property name that specifies phandles' arguments count
+> > + * @index:     index of a phandle to parse out
+> > + * @out_args:  optional pointer to output arguments structure (will be filled)
+> > + *
+> > + * This function is useful to parse lists of phandles and their arguments.
+> > + * Returns 0 on success and fills out_args, on error returns appropriate
+> > + * errno value.
+> > + *
+> > + * Caller is responsible to call of_node_put() on the returned out_args->np
+> > + * pointer.
+> > + *
+> > + * Example:
+> > + *
+> > + * phandle1: node1 {
+> > + *     #list-cells = <2>;
+> > + * }
+> > + *
+> > + * phandle2: node2 {
+> > + *     #list-cells = <1>;
+> > + * }
+> > + *
+> > + * phandle3: node3 {
+> > + *     #list-cells = <1>;
+> > + *     list-map = <0 &phandle2 3>,
+> > + *                <1 &phandle2 2>,
+> > + *                <2 &phandle1 5 1>;
+> > + *     list-map-mask = <0x3>;
+> > + * };
+> > + *
+> > + * node4 {
+> > + *     list = <&phandle1 1 2 &phandle3 0>;
+> > + * }
+> > + *
+> > + * To get a device_node of the `node2' node you may call this:
+> > + * of_parse_phandle_with_args(node4, "list", "#list-cells", "list-map",
+> > + *                           "list-map-mask", 1, &args);
+> > + */
+> > +int of_parse_phandle_with_args_map(const struct device_node *np,
+> > +                                  const char *list_name,
+> > +                                  const char *cells_name,
+> > +                                  const char *map_name,
+> > +                                  const char *mask_name,
+> 
+> Perhaps these 3 could be just a single base name (e.g. "gpio")?
+> Doesn't really buy much other than enforce we don't mix 'gpios' and
+> 'gpio'. That could never happen. ;)
+> 
 
+I thought about that. I was worried that we wanted to support this API
+being called in atomic context, but that seems like it can't possibly be
+the case. So I'll have to allocate a string for each of those and free
+them on exit. Should be ok.
