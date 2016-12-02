@@ -1,58 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: amd: Add support for additional GPIO
-Date: Fri, 2 Dec 2016 13:46:42 +0100
-Message-ID: <CACRpkdZPk=gRcHLUbbUwtpriZKT-LGC+UfyEOyo1OGm+dNwZ0w@mail.gmail.com>
-References: <MWHPR12MB1357C965EBE3F1161823C223A0B90@MWHPR12MB1357.namprd12.prod.outlook.com>
- <CACRpkdbab3iEwLOucpAz38AJZaEgpO6mrZrLev+YSYuO7Ox_JA@mail.gmail.com>
- <469f529e-818b-392f-9ddb-b02e87e50ca9@amd.com> <CACRpkdbY-2iB9oxHfFOJBmJQq-zmOR1YEg0dy5zdx++tg-acGw@mail.gmail.com>
- <2c12372c-fd6a-8320-2607-5e58ed54d069@amd.com> <CACRpkdZrP3BUXZJXunCbWdPuo5qamejFWoz3eA0cEm_kXFPnwg@mail.gmail.com>
- <4e82b02a-6f9c-1130-1020-32a6f86a5f01@amd.com>
+Subject: Re: [PATCH 08/39] Annotate hardware config module parameters in drivers/gpio/
+Date: Fri, 2 Dec 2016 13:55:16 +0100
+Message-ID: <CACRpkdZR=4w93OwL3KTZev+3ukPM1d9J+J=qkCxRKpBqcAqy9w@mail.gmail.com>
+References: <148059537897.31612.9461043954611464597.stgit@warthog.procyon.org.uk>
+ <148059543997.31612.610019846448617763.stgit@warthog.procyon.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f169.google.com ([209.85.216.169]:36097 "EHLO
-        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759560AbcLBMqp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Dec 2016 07:46:45 -0500
-Received: by mail-qt0-f169.google.com with SMTP id w33so250033560qtc.3
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Dec 2016 04:46:43 -0800 (PST)
-In-Reply-To: <4e82b02a-6f9c-1130-1020-32a6f86a5f01@amd.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <148059543997.31612.610019846448617763.stgit@warthog.procyon.org.uk>
+Sender: owner-linux-security-module@vger.kernel.org
+To: David Howells <dhowells@redhat.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, minyard@acm.org, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, William Breathitt Gray <vilhelm.gray@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Shah, Nehal-bakulchandra" <Nehal-Bakulchandra.shah@amd.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
 
-On Thu, Dec 1, 2016 at 9:13 AM, Shah, Nehal-bakulchandra
-<Nehal-Bakulchandra.shah@amd.com> wrote:
+On Thu, Dec 1, 2016 at 1:30 PM, David Howells <dhowells@redhat.com> wrote:
 
-> This patch adds support for new Bank and add IRQCHIP_SKIP_SET_WAKE flag.
+> When the kernel is running in secure boot mode, we lock down the kernel to
+> prevent userspace from modifying the running kernel image.  Whilst this
+> includes prohibiting access to things like /dev/mem, it must also prevent
+> access by means of configuring driver modules in such a way as to cause a
+> device to access or modify the kernel image.
 >
-> Reviewed-by: S-k, Shyam-sundar <Shyam-sundar.S-k@amd.com>
-> Signed-off-by: Nehal Shah <Nehal-bakulchandra.Shah@amd.com>
-
-(...)
->  static int amd_gpio_probe(struct platform_device *pdev)
->  {
-> +       int hwnum;
->         int ret = 0;
->         int irq_base;
->         struct resource *res;
->         struct amd_gpio *gpio_dev;
-> +       struct acpi_device *adev = ACPI_COMPANION(&pdev->dev);
-> +
-> +       ret = kstrtoint(acpi_device_uid(adev), 2, &hwnum);
+> To this end, annotate module_param* statements that refer to hardware
+> configuration and indicate for future reference what type of parameter they
+> specify.  The parameter parser in the core sees this information and can
+> skip such parameters with an error message if the kernel is locked down.
+> The module initialisation then runs as normal, but just sees whatever the
+> default values for those parameters is.
 >
->         gpio_dev = devm_kzalloc(&pdev->dev,
->                                 sizeof(struct amd_gpio), GFP_KERNEL);
-> @@ -763,16 +771,17 @@ static int amd_gpio_probe(struct platform_device *pdev)
->         gpio_dev->gc.set                        = amd_gpio_set_value;
->         gpio_dev->gc.set_debounce       = amd_gpio_set_debounce;
->         gpio_dev->gc.dbg_show           = amd_gpio_dbg_show;
-> +       gpio_dev->gc.base               = -1;
+> Note that we do still need to do the module initialisation because some
+> drivers have viable defaults set in case parameters aren't specified and
+> some drivers support automatic configuration (e.g. PNP or PCI) in addition
+> to manually coded parameters.
+>
+> This patch annotates drivers in drivers/gpio/.
+>
+> Suggested-by: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: William Breathitt Gray <vilhelm.gray@gmail.com>
+> cc: Linus Walleij <linus.walleij@linaro.org>
+> cc: Alexandre Courbot <gnurou@gmail.com>
+> cc: linux-gpio@vger.kernel.org
 
-Good!
-
-But now hwnum is an unused variable.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
