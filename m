@@ -1,39 +1,42 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH] pinctrl: pinctrl-sx150x.c: Fix typo in a previous patch
-Date: Sun,  4 Dec 2016 23:01:08 +0100
-Message-ID: <1480888868-23331-1-git-send-email-andrew@lunn.ch>
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Subject: [v2, PATCH] pinctrl: mt8173: set GPIO16 to usb iddig mode
+Date: Mon, 5 Dec 2016 09:38:52 +0800
+Message-ID: <1480901933-6971-1-git-send-email-chunfeng.yun@mediatek.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vps0.lunn.ch ([178.209.37.122]:39849 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750979AbcLDWBi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 4 Dec 2016 17:01:38 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:9379 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751070AbcLEBje (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 4 Dec 2016 20:39:34 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+To: --to=Linus Walleij <linus.walleij@linaro.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Biao Huang <biao.huang@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, Chunfeng Yun <chunfeng.yun@mediatek.com>
 
-Fix typo of chip-irq to chip->irq.
+the default mode of GPIO16 pin is gpio, when set EINT16 to
+IRQ_TYPE_LEVEL_HIGH, no interrupt is triggered, it can be
+fixed when set its default mode as usb iddig.
 
-Fixes: abbb5af1166f ("pinctrl: sx150x: use new nested IRQ infrastructure")
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-y# Please enter the commit message for your changes. Lines starting
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Acked-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
 ---
- drivers/pinctrl/pinctrl-sx150x.c | 2 +-
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt8173.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
-index b81275dbb4a8..29fb7403d24e 100644
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -1239,7 +1239,7 @@ static int sx150x_probe(struct i2c_client *client,
- 
- 		gpiochip_set_nested_irqchip(&pctl->gpio,
- 					    &pctl->irq_chip,
--					    client-irq);
-+					    client->irq);
- 	}
- 
- 	/* Pinctrl_desc */
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-mt8173.h b/drivers/pinctrl/mediatek/pinctrl-mtk-mt8173.h
+index 13e5b68..9b018fd 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-mt8173.h
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-mt8173.h
+@@ -201,7 +201,7 @@
+ 	MTK_PIN(
+ 		PINCTRL_PIN(16, "IDDIG"),
+ 		NULL, "mt8173",
+-		MTK_EINT_FUNCTION(0, 16),
++		MTK_EINT_FUNCTION(1, 16),
+ 		MTK_FUNCTION(0, "GPIO16"),
+ 		MTK_FUNCTION(1, "IDDIG"),
+ 		MTK_FUNCTION(2, "CMFLASH"),
 -- 
-2.10.2
+1.7.9.5
 
