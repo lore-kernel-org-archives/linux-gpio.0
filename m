@@ -1,303 +1,183 @@
-From: Eric Jeong <eric.jeong.opensource@diasemi.com>
-Subject: [RESEND PATCH V3 4/4] gpio: pv88080: Add GPIO function support
-Date: Tue, 6 Dec 2016 14:33:13 +0900
-Message-ID: <3e5d9f938494bf7420577ca2f55fd243705d9415.1481002393.git.eric.jeong@diasemi.com>
-References: <cover.1481002393.git.eric.jeong@diasemi.com>
+From: "Shah, Nehal-bakulchandra" <Nehal-Bakulchandra.shah@amd.com>
+Subject: [PATCH] pinctrl: amd: Add support for additional GPIO
+Date: Tue, 6 Dec 2016 12:17:48 +0530
+Message-ID: <9079528e-238e-040c-082e-e9c7f5afb76d@amd.com>
+References: <MWHPR12MB1357C965EBE3F1161823C223A0B90@MWHPR12MB1357.namprd12.prod.outlook.com>
+ <CACRpkdbab3iEwLOucpAz38AJZaEgpO6mrZrLev+YSYuO7Ox_JA@mail.gmail.com>
+ <469f529e-818b-392f-9ddb-b02e87e50ca9@amd.com>
+ <CACRpkdbY-2iB9oxHfFOJBmJQq-zmOR1YEg0dy5zdx++tg-acGw@mail.gmail.com>
+ <2c12372c-fd6a-8320-2607-5e58ed54d069@amd.com>
+ <CACRpkdZrP3BUXZJXunCbWdPuo5qamejFWoz3eA0cEm_kXFPnwg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1481002393.git.eric.jeong@diasemi.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, LINUX-GPIO <linux-gpio@vger.kernel.org>, LINUX-KERNEL <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: DEVICETREE <devicetree@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Support Opensource <support.opensource@diasemi.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-sn1nam01on0067.outbound.protection.outlook.com ([104.47.32.67]:60032
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751058AbcLFHDc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 6 Dec 2016 02:03:32 -0500
+In-Reply-To: <CACRpkdZrP3BUXZJXunCbWdPuo5qamejFWoz3eA0cEm_kXFPnwg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>
 
+This patch adds support for new Bank and adds IRQCHIP_SKIP_SET_WAKE flag.
 
-From: Eric Jeong <eric.jeong.opensource@diasemi.com>
-
-This patch adds support for PV88080 PMIC GPIOs.
-PV88080 has two configurable GPIOs.
-
-Kconfig and Makefile are updated to reflect support
-for PV88080 PMIC GPIO. 
-
-Signed-off-by: Eric Jeong <eric.jeong.opensource@diasemi.com>
-
+Reviewed-by: S-k, Shyam-sundar <Shyam-sundar.S-k@amd.com>
+Signed-off-by: Nehal Shah <Nehal-bakulchandra.Shah@amd.com>
 ---
-This patch applies against linux-next and next-20161117
+ drivers/pinctrl/pinctrl-amd.c | 25 +++++++++++++++----------
+ drivers/pinctrl/pinctrl-amd.h |  8 +++++---
+ 2 files changed, 20 insertions(+), 13 deletions(-)
 
-Hi,
-
-Change since PATCH V2
- - Add the set_single_ended function
- - Add property reading function
- - Simplify and clarfy the funcion of gpio_chip
-
-Change since PATCH V1
- - Patch separated from PATCH V1
-
-Regards,
-Eric Jeong, Dialog Semiconductor Ltd.
-
-
- drivers/gpio/Kconfig        |   11 +++
- drivers/gpio/Makefile       |    1 +
- drivers/gpio/gpio-pv88080.c |  213 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 225 insertions(+)
- create mode 100644 drivers/gpio/gpio-pv88080.c
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index a9a1c8a..cb11686 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -949,6 +949,17 @@ config GPIO_PALMAS
- 	  Select this option to enable GPIO driver for the TI PALMAS
- 	  series chip family.
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index aea310a..1899b90 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -186,7 +186,7 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+ 	char *output_value;
+ 	char *output_enable;
  
-+config GPIO_PV88080
-+	tristate "Powerventure Semiconductor PV88080 GPIO"
-+	depends on MFD_PV88080
-+	help
-+	  Support for GPIO pins on PV88080 PMIC.
-+
-+	  Say yes here to enable the GPIO driver for the PV88080 chip.
-+
-+	  The Powerventure PMIC chip has 2 GPIO pins that can be
-+	  controlled by this driver.
-+
- config GPIO_RC5T583
- 	bool "RICOH RC5T583 GPIO"
- 	depends on MFD_RC5T583
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 8043a95..2a2311e 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -92,6 +92,7 @@ obj-$(CONFIG_GPIO_PCF857X)	+= gpio-pcf857x.o
- obj-$(CONFIG_GPIO_PCH)		+= gpio-pch.o
- obj-$(CONFIG_GPIO_PISOSR)	+= gpio-pisosr.o
- obj-$(CONFIG_GPIO_PL061)	+= gpio-pl061.o
-+obj-$(CONFIG_GPIO_PV88080)	+= gpio-pv88080.o
- obj-$(CONFIG_GPIO_PXA)		+= gpio-pxa.o
- obj-$(CONFIG_GPIO_RC5T583)	+= gpio-rc5t583.o
- obj-$(CONFIG_GPIO_RDC321X)	+= gpio-rdc321x.o
-diff --git a/drivers/gpio/gpio-pv88080.c b/drivers/gpio/gpio-pv88080.c
-new file mode 100644
-index 0000000..6f4734f
---- /dev/null
-+++ b/drivers/gpio/gpio-pv88080.c
-@@ -0,0 +1,213 @@
-+/*
-+ * gpio-pv88080.c - GPIO device driver for PV88080
-+ * Copyright (C) 2016  Powerventure Semiconductor Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; either version 2
-+ * of the License, or (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/bitops.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include <linux/mfd/pv88080.h>
-+
-+#define PV88080_PORT_DIRECTION_INPUT	0
-+#define PV88080_PORT_DIRECTION_OUTPUT	1
-+
-+struct pv88080_gpio {
-+	struct pv88080 *chip;
-+	struct gpio_chip gpio_chip;
-+	unsigned int input_reg;
-+	unsigned int output_reg;
-+	unsigned int gpio_base_reg;
-+};
-+
-+static int pv88080_gpio_get_direction(struct gpio_chip *gc,
-+				unsigned int offset)
-+{
-+	struct pv88080_gpio *priv = gpiochip_get_data(gc);
-+	struct pv88080 *chip = priv->chip;
-+	unsigned int value;
-+	int ret;
-+
-+	ret = regmap_read(chip->regmap, priv->gpio_base_reg + offset, &value);
-+	if (ret)
-+		return ret;
-+
-+	value = !(value & PV88080_GPIO_DIRECTION_MASK);
-+
-+	return value;
-+}
-+
-+static int pv88080_gpio_direction_input(struct gpio_chip *gc,
-+				unsigned int offset)
-+{
-+	struct pv88080_gpio *priv = gpiochip_get_data(gc);
-+	struct pv88080 *chip = priv->chip;
-+
-+	return regmap_update_bits(chip->regmap, priv->gpio_base_reg + offset,
-+			PV88080_GPIO_DIRECTION_MASK, 0);
-+}
-+
-+static int pv88080_gpio_direction_output(struct gpio_chip *gc,
-+				unsigned int offset, int value)
-+{
-+	struct pv88080_gpio *priv = gpiochip_get_data(gc);
-+	struct pv88080 *chip = priv->chip;
-+
-+	return regmap_update_bits(chip->regmap, priv->gpio_base_reg + offset,
-+			PV88080_GPIO_DIRECTION_MASK, 1);
-+}
-+
-+static int pv88080_gpio_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct pv88080_gpio *priv = gpiochip_get_data(gc);
-+	struct pv88080 *chip = priv->chip;
-+	unsigned int reg, value;
-+	int ret;
-+
-+	ret = regmap_read(chip->regmap, priv->gpio_base_reg + offset, &value);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (value & PV88080_GPIO_DIRECTION_MASK)
-+		reg = priv->output_reg;
-+	else
-+		reg = priv->input_reg;
-+
-+	ret = regmap_read(chip->regmap, reg, &value);
-+	if (ret < 0)
-+		return ret;
-+
-+	value = !!(value & BIT(offset));
-+
-+	return value;
-+}
-+
-+static void pv88080_gpio_set(struct gpio_chip *gc, unsigned int offset,
-+				int value)
-+{
-+	struct pv88080_gpio *priv = gpiochip_get_data(gc);
-+	struct pv88080 *chip = priv->chip;
-+	int ret;
-+
-+	ret = regmap_update_bits(chip->regmap, priv->output_reg,
-+			BIT(offset), (value << offset));
-+	if (ret < 0)
-+		dev_err(chip->dev, "Failed to update gpio\n");
-+}
-+
-+static int pv88080_set_single_ended(struct gpio_chip *gc,
-+				unsigned int offset,
-+				enum single_ended_mode mode)
-+{
-+	struct pv88080_gpio *priv = gpiochip_get_data(gc);
-+	struct pv88080 *chip = priv->chip;
-+	int ret;
-+
-+	switch (mode) {
-+	case LINE_MODE_OPEN_DRAIN:
-+		ret = regmap_update_bits(chip->regmap,
-+					priv->gpio_base_reg + offset,
-+					PV88080_GPIO_SINGLE_ENDED_MASK, 0);
-+		break;
-+	case LINE_MODE_PUSH_PULL:
-+		ret = regmap_update_bits(chip->regmap,
-+					priv->gpio_base_reg + offset,
-+					PV88080_GPIO_SINGLE_ENDED_MASK, 1 << 1);
-+		break;
-+	default:
-+		ret = -ENOTSUPP;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct gpio_chip template_gpio = {
-+	.label = "pv88080-gpio",
-+	.owner = THIS_MODULE,
-+	.get_direction = pv88080_gpio_get_direction,
-+	.direction_input = pv88080_gpio_direction_input,
-+	.direction_output = pv88080_gpio_direction_output,
-+	.get = pv88080_gpio_get,
-+	.set = pv88080_gpio_set,
-+	.set_single_ended = pv88080_set_single_ended,
-+	.base = -1,
-+	.ngpio = 2,
-+};
-+
-+static const struct of_device_id pv88080_gpio_of_match[] = {
-+	{ .compatible = "pvs,pv88080-gpio", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, pv88080_gpio_of_match);
-+
-+static int pv88080_gpio_probe(struct platform_device *pdev)
-+{
-+	struct pv88080 *chip = dev_get_drvdata(pdev->dev.parent);
-+	struct pv88080_gpio *priv;
-+	struct device_node *np = pdev->dev.of_node;
-+	u32 ngpios;
-+	int ret;
-+
-+	priv = devm_kzalloc(&pdev->dev,
-+			sizeof(struct pv88080_gpio), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->chip = chip;
-+	priv->gpio_chip = template_gpio;
-+	priv->gpio_chip.parent = &pdev->dev;
-+
-+	switch (chip->type) {
-+	case TYPE_PV88080_AA:
-+		priv->input_reg = PV88080AA_REG_GPIO_INPUT;
-+		priv->output_reg = PV88080AA_REG_GPIO_OUTPUT;
-+		priv->gpio_base_reg = PV88080AA_REG_GPIO_GPIO0;
-+		break;
-+	case TYPE_PV88080_BA:
-+		priv->input_reg = PV88080BA_REG_GPIO_INPUT;
-+		priv->output_reg = PV88080BA_REG_GPIO_OUTPUT;
-+		priv->gpio_base_reg = PV88080BA_REG_GPIO_GPIO0;
-+		break;
-+	}
-+
-+	if (!of_property_read_u32(np, "ngpios", &ngpios))
-+		priv->gpio_chip.ngpio = ngpios;
-+
-+	ret = devm_gpiochip_add_data(&pdev->dev, &priv->gpio_chip, priv);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Unable to register gpiochip\n");
-+		return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver pv88080_gpio_driver = {
-+	.driver = {
-+		.name = "pv88080-gpio",
-+		.of_match_table = of_match_ptr(pv88080_gpio_of_match),
-+	},
-+	.probe = pv88080_gpio_probe,
-+};
-+module_platform_driver(pv88080_gpio_driver);
-+
-+MODULE_AUTHOR("Eric Jeong <eric.jeong.opensource@diasemi.com>");
-+MODULE_DESCRIPTION("GPIO device driver for Powerventure PV88080");
-+MODULE_LICENSE("GPL");
-+
+-	for (bank = 0; bank < AMD_GPIO_TOTAL_BANKS; bank++) {
++	for (bank = 0; bank < gpio_dev->hwbank_num; bank++) {
+ 		seq_printf(s, "GPIO bank%d\t", bank);
+ 
+ 		switch (bank) {
+@@ -202,8 +202,11 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+ 			i = 128;
+ 			pin_num = AMD_GPIO_PINS_BANK2 + i;
+ 			break;
++		case 3:
++			i = 192;
++			pin_num = AMD_GPIO_PINS_BANK3 + i;
++			break;
+ 		}
+-
+ 		for (; i < pin_num; i++) {
+ 			seq_printf(s, "pin%d\t", i);
+ 			spin_lock_irqsave(&gpio_dev->lock, flags);
+@@ -213,7 +216,7 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+ 			if (pin_reg & BIT(INTERRUPT_ENABLE_OFF)) {
+ 				interrupt_enable = "interrupt is enabled|";
+ 
+-				if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF))
++		if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF))
+ 				&& !(pin_reg & BIT(ACTIVE_LEVEL_OFF+1)))
+ 					active_level = "Active low|";
+ 				else if (pin_reg & BIT(ACTIVE_LEVEL_OFF)
+@@ -244,17 +247,17 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+ 				interrupt_mask =
+ 					"interrupt is masked|";
+ 
+-			if (pin_reg & BIT(WAKE_CNTRL_OFF))
++			if (pin_reg & BIT(WAKE_CNTRL_OFF_S0I3))
+ 				wake_cntrl0 = "enable wakeup in S0i3 state|";
+ 			else
+ 				wake_cntrl0 = "disable wakeup in S0i3 state|";
+ 
+-			if (pin_reg & BIT(WAKE_CNTRL_OFF))
++			if (pin_reg & BIT(WAKE_CNTRL_OFF_S3))
+ 				wake_cntrl1 = "enable wakeup in S3 state|";
+ 			else
+ 				wake_cntrl1 = "disable wakeup in S3 state|";
+ 
+-			if (pin_reg & BIT(WAKE_CNTRL_OFF))
++			if (pin_reg & BIT(WAKE_CNTRL_OFF_S4))
+ 				wake_cntrl2 = "enable wakeup in S4/S5 state|";
+ 			else
+ 				wake_cntrl2 = "disable wakeup in S4/S5 state|";
+@@ -479,6 +482,7 @@ static void amd_irq_ack(struct irq_data *d)
+ 	.irq_unmask   = amd_gpio_irq_unmask,
+ 	.irq_eoi      = amd_gpio_irq_eoi,
+ 	.irq_set_type = amd_gpio_irq_set_type,
++	.flags        = IRQCHIP_SKIP_SET_WAKE,
+ };
+ 
+ static void amd_gpio_irq_handler(struct irq_desc *desc)
+@@ -764,15 +768,16 @@ static int amd_gpio_probe(struct platform_device *pdev)
+ 	gpio_dev->gc.set_debounce	= amd_gpio_set_debounce;
+ 	gpio_dev->gc.dbg_show		= amd_gpio_dbg_show;
+ 
+-	gpio_dev->gc.base			= 0;
++	gpio_dev->gc.base		= -1;
+ 	gpio_dev->gc.label			= pdev->name;
+ 	gpio_dev->gc.owner			= THIS_MODULE;
+ 	gpio_dev->gc.parent			= &pdev->dev;
+-	gpio_dev->gc.ngpio			= TOTAL_NUMBER_OF_PINS;
++	gpio_dev->gc.ngpio			= resource_size(res) / 4;
+ #if defined(CONFIG_OF_GPIO)
+ 	gpio_dev->gc.of_node			= pdev->dev.of_node;
+ #endif
+ 
++	gpio_dev->hwbank_num = gpio_dev->gc.ngpio / 64;
+ 	gpio_dev->groups = kerncz_groups;
+ 	gpio_dev->ngroups = ARRAY_SIZE(kerncz_groups);
+ 
+@@ -789,7 +794,7 @@ static int amd_gpio_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	ret = gpiochip_add_pin_range(&gpio_dev->gc, dev_name(&pdev->dev),
+-				0, 0, TOTAL_NUMBER_OF_PINS);
++				0, 0, gpio_dev->gc.ngpio);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to add pin range\n");
+ 		goto out2;
+@@ -810,7 +815,6 @@ static int amd_gpio_probe(struct platform_device *pdev)
+ 				 &amd_gpio_irqchip,
+ 				 irq_base,
+ 				 amd_gpio_irq_handler);
+-
+ 	platform_set_drvdata(pdev, gpio_dev);
+ 
+ 	dev_dbg(&pdev->dev, "amd gpio driver loaded\n");
+@@ -829,6 +833,7 @@ static int amd_gpio_remove(struct platform_device *pdev)
+ 	gpio_dev = platform_get_drvdata(pdev);
+ 
+ 	gpiochip_remove(&gpio_dev->gc);
++	pinctrl_unregister(gpio_dev->pctrl);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/pinctrl/pinctrl-amd.h b/drivers/pinctrl/pinctrl-amd.h
+index 7bfea47..c03f778 100644
+--- a/drivers/pinctrl/pinctrl-amd.h
++++ b/drivers/pinctrl/pinctrl-amd.h
+@@ -13,13 +13,12 @@
+ #ifndef _PINCTRL_AMD_H
+ #define _PINCTRL_AMD_H
+ 
+-#define TOTAL_NUMBER_OF_PINS	192
+ #define AMD_GPIO_PINS_PER_BANK  64
+-#define AMD_GPIO_TOTAL_BANKS    3
+ 
+ #define AMD_GPIO_PINS_BANK0     63
+ #define AMD_GPIO_PINS_BANK1     64
+ #define AMD_GPIO_PINS_BANK2     56
++#define AMD_GPIO_PINS_BANK3     32
+ 
+ #define WAKE_INT_MASTER_REG 0xfc
+ #define EOI_MASK (1 << 29)
+@@ -35,7 +34,9 @@
+ #define ACTIVE_LEVEL_OFF		9
+ #define INTERRUPT_ENABLE_OFF		11
+ #define INTERRUPT_MASK_OFF		12
+-#define WAKE_CNTRL_OFF			13
++#define WAKE_CNTRL_OFF_S0I3             13
++#define WAKE_CNTRL_OFF_S3               14
++#define WAKE_CNTRL_OFF_S4               15
+ #define PIN_STS_OFF			16
+ #define DRV_STRENGTH_SEL_OFF		17
+ #define PULL_UP_SEL_OFF			19
+@@ -93,6 +94,7 @@ struct amd_gpio {
+ 	u32 ngroups;
+ 	struct pinctrl_dev *pctrl;
+ 	struct gpio_chip        gc;
++	unsigned int            hwbank_num;
+ 	struct resource         *res;
+ 	struct platform_device  *pdev;
+ };
 -- 
-end-of-patch for RESEND PATCH V3
+1.9.1
+
