@@ -1,77 +1,70 @@
-From: Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH V1] pinctrl:pxa:pinctrl-pxa2xx:- No need of devm functions
-Date: Thu, 8 Dec 2016 15:25:20 +0000
-Message-ID: <ef260e14-c785-cac6-b8c1-d3c5cfeb44fc@arm.com>
-References: <1481207730-6332-1-git-send-email-arvind.yadav.cs@gmail.com>
- <28f80351-a89d-06b4-bd8e-d4a1810ee3c5@arm.com>
+From: Shyam Sundar S K <ssundark@amd.com>
+Subject: [PATCH] pinctrl/amd: Set the level based on ACPI tables
+Date: Thu, 8 Dec 2016 17:31:14 +0530
+Message-ID: <61a2d2f5-2d84-af87-deda-adba064b1dba@amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:35090 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752414AbcLHPZc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 8 Dec 2016 10:25:32 -0500
-In-Reply-To: <28f80351-a89d-06b4-bd8e-d4a1810ee3c5@arm.com>
+Received: from mail-by2nam03on0068.outbound.protection.outlook.com ([104.47.42.68]:9655
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753785AbcLHPgp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 8 Dec 2016 10:36:45 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>, daniel@zonque.org, haojian.zhuang@gmail.com, robert.jarzmik@free.fr, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, "Agrawal, Nitesh-kumar" <Nitesh-kumar.Agrawal@amd.com>, "Sen, Pankaj" <Pankaj.Sen@amd.com>, "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>
 
-On 08/12/16 15:20, Robin Murphy wrote:
-> On 08/12/16 14:35, Arvind Yadav wrote:
->> In functions pxa2xx_build_functions, the memory allocated for
->> 'functions' is live within the function only. After the
->> allocation it is immediately freed with devm_kfree. There is
->> no need to allocate memory for 'functions' with devm function
->> so replace devm_kcalloc  with kcalloc and devm_kfree with kfree.
->>
->> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
->> ---
->>  drivers/pinctrl/pxa/pinctrl-pxa2xx.c | 8 +++++---
->>  1 file changed, 5 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
->> index 866aa3c..47b8e3a 100644
->> --- a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
->> +++ b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
->> @@ -277,7 +277,7 @@ static int pxa2xx_build_functions(struct pxa_pinctrl *pctl)
->>  	 * alternate function, 6 * npins is an absolute high limit of the number
->>  	 * of functions.
->>  	 */
->> -	functions = devm_kcalloc(pctl->dev, pctl->npins * 6,
->> +	functions = kcalloc(pctl->npins * 6,
->>  				 sizeof(*functions), GFP_KERNEL);
-> 
-> AFAICS, this is allocating a mere 72 bytes. Why not just declare
-> 
-> 	struct pxa_pinctrl_function functions[6] = {0};
-> 
-> locally and save *all* the bother?
+In the function amd_gpio_irq_set_type, read the values from
+the ACPI table to set the level and drop the settings passed
+by the client.
 
-Bah, ignore me, that was an incredible comprehension failure.
+Reviewed-by: Pankaj Sen <Pankaj.Sen@amd.com>
+Reviewed-by: Nitesh Kumar Agrawal <Nitesh-kumar.Agrawal@amd.com>
+Reviewed-by: Shah, Nehal-bakulchandra <Nehal-bakulchandra.Shah@amd.com>
+Signed-off-by: Shyam-sundar S-k <Shyam-sundar.S-k@amd.com>
+---
+ drivers/pinctrl/pinctrl-amd.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
-Sorry for the noise.
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index aea310a..c9a1469 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -382,26 +382,21 @@ static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ {
+ 	int ret = 0;
+ 	u32 pin_reg;
+-	unsigned long flags;
+-	bool level_trig;
+-	u32 active_level;
++	unsigned long flags, irq_flags;
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
 
-Robin.
+ 	spin_lock_irqsave(&gpio_dev->lock, flags);
+ 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
 
->>  	if (!functions)
->>  		return -ENOMEM;
->> @@ -289,10 +289,12 @@ static int pxa2xx_build_functions(struct pxa_pinctrl *pctl)
->>  	pctl->functions = devm_kmemdup(pctl->dev, functions,
->>  				       pctl->nfuncs * sizeof(*functions),
->>  				       GFP_KERNEL);
->> -	if (!pctl->functions)
->> +	if (!pctl->functions) {
->> +		kfree(functions);
->>  		return -ENOMEM;
->> +	}
->>  
->> -	devm_kfree(pctl->dev, functions);
->> +	kfree(functions);
->>  	return 0;
->>  }
->>  
->>
-> 
+-	/*
+-	 * When level_trig is set EDGE and active_level is set HIGH in BIOS
+-	 * default settings, ignore incoming settings from client and use
+-	 * BIOS settings to configure GPIO register.
++	/* Ignore the settings coming from the client and
++	 * read the values from the ACPI tables
++	 * while setting the trigger type
+ 	 */
+-	level_trig = !(pin_reg & (LEVEL_TRIGGER << LEVEL_TRIG_OFF));
+-	active_level = pin_reg & (ACTIVE_LEVEL_MASK << ACTIVE_LEVEL_OFF);
 
+-	if(level_trig &&
+-	   ((active_level >> ACTIVE_LEVEL_OFF) == ACTIVE_HIGH))
+-		type = IRQ_TYPE_EDGE_FALLING;
++	irq_flags = irq_get_trigger_type(d->irq);
++	if (irq_flags != IRQ_TYPE_NONE)
++		type = irq_flags;
+
+ 	switch (type & IRQ_TYPE_SENSE_MASK) {
+ 	case IRQ_TYPE_EDGE_RISING:
+-- 
+2.7.4
