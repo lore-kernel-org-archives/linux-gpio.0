@@ -1,53 +1,33 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/2] gpio: rcar: Fine-grained Runtime PM support
-Date: Fri, 9 Dec 2016 11:26:21 +0100
-Message-ID: <CAMuHMdV8k4v4MZGGwxEv3oRhogwPQM-8SvA4muVcABuYQjYXxg@mail.gmail.com>
-References: <20161208173228.16835-1-niklas.soderlund+renesas@ragnatech.se> <20161208173228.16835-3-niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH 1/2] gpio: rcar: set IRQ chip parent_device
+Date: Fri, 9 Dec 2016 11:43:24 +0100
+Message-ID: <CAMuHMdWo+D4Fqc-jb_ioWVQ5TRBXPQiqgmhe--o4BtM4tzVeyA@mail.gmail.com>
+References: <20161208173228.16835-1-niklas.soderlund+renesas@ragnatech.se> <20161208173228.16835-2-niklas.soderlund+renesas@ragnatech.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36550 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932960AbcLIK0W (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Dec 2016 05:26:22 -0500
-In-Reply-To: <20161208173228.16835-3-niklas.soderlund+renesas@ragnatech.se>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33752 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752228AbcLIKn0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Dec 2016 05:43:26 -0500
+In-Reply-To: <20161208173228.16835-2-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>
-
-Hi Niklas,
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
 On Thu, Dec 8, 2016 at 6:32 PM, Niklas S=C3=B6derlund
 <niklas.soderlund+renesas@ragnatech.se> wrote:
-> From: Geert Uytterhoeven <geert+renesas@glider.be>
+> This enables Runtime PM handling for interrupts.
 >
-> Currently gpio modules are runtime-resumed at probe time. This means the
-> gpio module will be active all the time (except during system suspend,
-> if not configured as a wake-up source).
+> By setting the parent_device in struct irq_chip genirq will call the
+> pm_runtime_get/put APIs when an IRQ is requested/freed.
 >
-> While an R-Car Gen2 gpio module retains pins configured for output at
-> the requested level while put in standby mode, gpio register cannot be
-> accessed while suspended.  Unfortunately pm_runtime_get_sync() cannot be
-> called from all contexts where gpio register access is needed. Hence
-> move the Runtime PM handling from probe/remove time to gpio request/free
-> time, which is probably the best we can do.
->
-> On r8a7791/koelsch, gpio modules 0, 1, 3, and 4 are now suspended during
-> normal use (gpio2 is used for LEDs and regulators, gpio5 for keys, gpio6
-> for SD-Card CD & WP, gpio7 for keys and regulators).
-
-FWIW, gpio module 3 is no longer suspended, as gpio3 is used by HDMI since
-commit 83a0731b39f3bc24 ("ARM: shmobile: koelsch: Add DU HDMI output suppor=
-t").
-
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> [Niklas: s/gpio_to_priv(chip)/gpiochip_get_data(chip)/]
 > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
 se>
 
-Thanks for fixing and resurrecting!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
