@@ -1,183 +1,84 @@
-From: Mukesh Kaushik <mukesh.k4@samsung.com>
-Subject: [PATCH] gpio/gpiolib.c:Fixing style issues in gpiolib.c
-Date: Fri, 09 Dec 2016 09:38:47 +0530
-Message-ID: <1481256527-25776-1-git-send-email-mukesh.k4@samsung.com>
+From: "Tan, Jui Nee" <jui.nee.tan@intel.com>
+Subject: RE: [PATCH v10 1/6] drivers/platform/x86/p2sb: New Primary to
+ Sideband bridge support driver for Intel SOC's
+Date: Fri, 9 Dec 2016 07:50:48 +0000
+Message-ID: <0158A29DB680F54A88142ED28D55B1D008329343@PGSMSX107.gar.corp.intel.com>
+References: <1478768430-13422-1-git-send-email-jui.nee.tan@intel.com>
+         <1478768430-13422-2-git-send-email-jui.nee.tan@intel.com>
+ <1478794036.5295.130.camel@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:42021 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932170AbcLIELP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Dec 2016 23:11:15 -0500
+Received: from mga03.intel.com ([134.134.136.65]:47183 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752861AbcLIHuy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 9 Dec 2016 02:50:54 -0500
+In-Reply-To: <1478794036.5295.130.camel@linux.intel.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Mukesh Kaushik <mukesh.k4@samsung.com>, linux-kernel@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>, "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "dvhart@infradead.org" <dvhart@infradead.org>, "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, "ptyser@xes-inc.com" <ptyser@xes-inc.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Yong, Jonathan" <jonathan.yong@intel.com>, "Yu, Ong Hock" <ong.hock.yu@intel.com>, Luck, Tony
 
-Fixing the following checkpatch.pl error:
-
-ERROR: else should follow close brace '}'
-#2248: FILE: drivers/gpio/gpiolib.c:2248:
-+       }
-+       else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
-
-ERROR: space prohibited after that open parenthesis '('
-#2018: FILE: drivers/gpio/gpiolib.c:2018:
-+       if ( !desc->gdev->chip ) { \
-
-ERROR: space prohibited before that close parenthesis ')'
-#2018: FILE: drivers/gpio/gpiolib.c:2018:
-+       if ( !desc->gdev->chip ) { \
-
-and following warnings :
-
-WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
-
-WARNING: else is not generally useful after a break or return
-#160: FILE: drivers/gpio/gpiolib.c:160:
-+                       break;
-+               else
-
-Signed-off-by: Mukesh Kaushik <mukesh.k4@samsung.com>
----
- drivers/gpio/gpiolib.c |   34 ++++++++++++++++------------------
- 1 file changed, 16 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 868128a..80c5304 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -85,7 +85,7 @@ static inline void desc_set_label(struct gpio_desc *d, const char *label)
- /**
-  * Convert a GPIO number to its descriptor
-  */
--struct gpio_desc *gpio_to_desc(unsigned gpio)
-+struct gpio_desc *gpio_to_desc(unsigned int gpio)
- {
- 	struct gpio_device *gdev;
- 	unsigned long flags;
-@@ -157,9 +157,8 @@ static int gpiochip_find_base(int ngpio)
- 		/* found a free space? */
- 		if (gdev->base + gdev->ngpio <= base)
- 			break;
--		else
--			/* nope, check the space right before the chip */
--			base = gdev->base - ngpio;
-+		/* nope, check the space right before the chip */
-+		base = gdev->base - ngpio;
- 	}
- 
- 	if (gpio_is_valid(base)) {
-@@ -182,7 +181,7 @@ static int gpiochip_find_base(int ngpio)
- int gpiod_get_direction(struct gpio_desc *desc)
- {
- 	struct gpio_chip	*chip;
--	unsigned		offset;
-+	unsigned int		offset;
- 	int			status = -EINVAL;
- 
- 	chip = gpiod_to_chip(desc);
-@@ -1104,7 +1103,7 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
- {
- 	unsigned long	flags;
- 	int		status = 0;
--	unsigned	i;
-+	unsigned int	i;
- 	int		base = chip->base;
- 	struct gpio_device *gdev;
- 
-@@ -1311,7 +1310,7 @@ void gpiochip_remove(struct gpio_chip *chip)
- 	struct gpio_device *gdev = chip->gpiodev;
- 	struct gpio_desc *desc;
- 	unsigned long	flags;
--	unsigned	i;
-+	unsigned int	i;
- 	bool		requested = false;
- 
- 	/* FIXME: should the legacy sysfs handling be moved to gpio_device? */
-@@ -1640,7 +1639,7 @@ static void gpiochip_irq_relres(struct irq_data *d)
- 	module_put(chip->gpiodev->owner);
- }
- 
--static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
-+static int gpiochip_to_irq(struct gpio_chip *chip, unsigned int offset)
- {
- 	return irq_find_mapping(chip->irqdomain, offset);
- }
-@@ -1717,7 +1716,7 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
- 	struct device_node *of_node;
- 	bool irq_base_set = false;
- 	unsigned int offset;
--	unsigned irq_base = 0;
-+	unsigned int irq_base = 0;
- 
- 	if (!gpiochip || !irqchip)
- 		return -EINVAL;
-@@ -1815,7 +1814,7 @@ static inline void gpiochip_irqchip_free_valid_mask(struct gpio_chip *gpiochip)
-  * @chip: the gpiochip owning the GPIO
-  * @offset: the offset of the GPIO to request for GPIO function
-  */
--int gpiochip_generic_request(struct gpio_chip *chip, unsigned offset)
-+int gpiochip_generic_request(struct gpio_chip *chip, unsigned int offset)
- {
- 	return pinctrl_request_gpio(chip->gpiodev->base + offset);
- }
-@@ -1826,7 +1825,7 @@ int gpiochip_generic_request(struct gpio_chip *chip, unsigned offset)
-  * @chip: the gpiochip to request the gpio function for
-  * @offset: the offset of the GPIO to free from GPIO function
-  */
--void gpiochip_generic_free(struct gpio_chip *chip, unsigned offset)
-+void gpiochip_generic_free(struct gpio_chip *chip, unsigned int offset)
- {
- 	pinctrl_free_gpio(chip->gpiodev->base + offset);
- }
-@@ -2015,7 +2014,7 @@ static int __gpiod_request(struct gpio_desc *desc, const char *label)
- 		pr_warn("%s: invalid GPIO (no device)\n", __func__); \
- 		return -EINVAL; \
- 	} \
--	if ( !desc->gdev->chip ) { \
-+	if (!desc->gdev->chip) { \
- 		dev_warn(&desc->gdev->dev, \
- 			 "%s: backing chip is gone\n", __func__); \
- 		return 0; \
-@@ -2117,7 +2116,7 @@ void gpiod_free(struct gpio_desc *desc)
-  * help with diagnostics, and knowing that the signal is used as a GPIO
-  * can help avoid accidentally multiplexing it to another controller.
-  */
--const char *gpiochip_is_requested(struct gpio_chip *chip, unsigned offset)
-+const char *gpiochip_is_requested(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct gpio_desc *desc;
- 
-@@ -2244,8 +2243,7 @@ static int _gpiod_direction_output_raw(struct gpio_desc *desc, int value)
- 		/* Emulate open drain by not actively driving the line high */
- 		if (value)
- 			return gpiod_direction_input(desc);
--	}
--	else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
-+	} else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
- 		if (gc->set_single_ended) {
- 			ret = gc->set_single_ended(gc, gpio_chip_hwgpio(desc),
- 						   LINE_MODE_OPEN_SOURCE);
-@@ -2326,7 +2324,7 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
-  * returns -ENOTSUPP if the controller does not support setting
-  * debounce.
-  */
--int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
-+int gpiod_set_debounce(struct gpio_desc *desc, unsigned int debounce)
- {
- 	struct gpio_chip	*chip;
- 
-@@ -3517,9 +3515,9 @@ static int __init gpiolib_dev_init(void)
- 
- static void gpiolib_dbg_show(struct seq_file *s, struct gpio_device *gdev)
- {
--	unsigned		i;
-+	unsigned int		i;
- 	struct gpio_chip	*chip = gdev->chip;
--	unsigned		gpio = gdev->base;
-+	unsigned int		gpio = gdev->base;
- 	struct gpio_desc	*gdesc = &gdev->descs[0];
- 	int			is_out;
- 	int			is_irq;
--- 
-1.7.9.5
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbGludXgtZ3Bpby1vd25l
+ckB2Z2VyLmtlcm5lbC5vcmcgW21haWx0bzpsaW51eC1ncGlvLQ0KPiBvd25lckB2Z2VyLmtlcm5l
+bC5vcmddIE9uIEJlaGFsZiBPZiBBbmR5IFNoZXZjaGVua28NCj4gU2VudDogRnJpZGF5LCBOb3Zl
+bWJlciAxMSwgMjAxNiAxMjowNyBBTQ0KPiBUbzogVGFuLCBKdWkgTmVlIDxqdWkubmVlLnRhbkBp
+bnRlbC5jb20+OyBtaWthLndlc3RlcmJlcmdAbGludXguaW50ZWwuY29tOw0KPiBoZWlra2kua3Jv
+Z2VydXNAbGludXguaW50ZWwuY29tOyB0Z2x4QGxpbnV0cm9uaXguZGU7IGR2aGFydEBpbmZyYWRl
+YWQub3JnOw0KPiBtaW5nb0ByZWRoYXQuY29tOyBocGFAenl0b3IuY29tOyB4ODZAa2VybmVsLm9y
+ZzsgcHR5c2VyQHhlcy1pbmMuY29tOw0KPiBsZWUuam9uZXNAbGluYXJvLm9yZzsgbGludXMud2Fs
+bGVpakBsaW5hcm8ub3JnDQo+IENjOiBsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZzsgcGxhdGZv
+cm0tZHJpdmVyLXg4NkB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmc7IFlvbmcsIEpvbmF0aGFuIDxqb25hdGhhbi55b25nQGludGVsLmNvbT47DQo+IFl1LCBP
+bmcgSG9jayA8b25nLmhvY2sueXVAaW50ZWwuY29tPjsgTHVjaywgVG9ueSA8dG9ueS5sdWNrQGlu
+dGVsLmNvbT47DQo+IFdhbiBNb2hhbWFkLCBXYW4gQWhtYWQgWmFpbmllIDx3YW4uYWhtYWQuemFp
+bmllLndhbi5tb2hhbWFkQGludGVsLmNvbT47DQo+IFN1biwgWXVueWluZyA8eXVueWluZy5zdW5A
+aW50ZWwuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYxMCAxLzZdIGRyaXZlcnMvcGxhdGZv
+cm0veDg2L3Ayc2I6IE5ldyBQcmltYXJ5IHRvDQo+IFNpZGViYW5kIGJyaWRnZSBzdXBwb3J0IGRy
+aXZlciBmb3IgSW50ZWwgU09DJ3MNCj4gDQo+IE9uIFRodSwgMjAxNi0xMS0xMCBhdCAxNzowMCAr
+MDgwMCwgVGFuIEp1aSBOZWUgd3JvdGU6DQo+ID4gRnJvbTogQW5keSBTaGV2Y2hlbmtvIDxhbmRy
+aXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb20+DQo+ID4NCj4gPiBUaGVyZSBpcyBhbHJlYWR5
+IG9uZSBhbmQgYXQgbGVhc3Qgb25lIG1vcmUgdXNlciBjb21pbmcgd2hpY2ggcmVxdWlyZQ0KPiA+
+IGFuIGFjY2VzcyB0byBQcmltYXJ5IHRvIFNpZGViYW5kIGJyaWRnZSAoUDJTQikgaW4gb3JkZXIg
+dG8gZ2V0IElPIG9yDQo+ID4gTU1JTyBiYXIgaGlkZGVuIGJ5IEJJT1MuDQo+ID4gQ3JlYXRlIGEg
+ZHJpdmVyIHRvIGFjY2VzcyBQMlNCIGZvciB4ODYgZGV2aWNlcy4NCj4gPg0KPiA+IFNpZ25lZC1v
+ZmYtYnk6IFlvbmcsIEpvbmF0aGFuIDxqb25hdGhhbi55b25nQGludGVsLmNvbT4NCj4gPiBTaWdu
+ZWQtb2ZmLWJ5OiBBbmR5IFNoZXZjaGVua28gPGFuZHJpeS5zaGV2Y2hlbmtvQGxpbnV4LmludGVs
+LmNvbT4NCj4gDQo+IA0KPiA+ICtpbnQgcDJzYl9iYXIoc3RydWN0IHBjaV9kZXYgKnBkZXYsIHVu
+c2lnbmVkIGludCBkZXZmbiwNCj4gPiArCXN0cnVjdCByZXNvdXJjZSAqcmVzKQ0KPiA+ICt7DQo+
+ID4gKwl1MzIgYmFzZV9hZGRyOw0KPiA+ICsJdTY0IGJhc2U2NF9hZGRyOw0KPiA+ICsJdW5zaWdu
+ZWQgbG9uZyBmbGFnczsNCj4gPiArDQo+ID4NCj4gDQo+ID4gKwlpZiAoIXJlcykNCj4gPiArCQly
+ZXR1cm4gLUVJTlZBTDsNCj4gDQo+IEkgZG9uJ3QgcmVtZW1iZXIgdGhlIGRldGFpbHMsIG9uZSB2
+ZXJzaW9uIHdhcyBxdWl0ZSBjaGFuZ2VkLCBzbywgSSB0aGluaw0KPiB0aGVzZSBsaW5lcyBhcmUg
+bm90IG5lZWRlZCBhbnltb3JlLg0KPiANCk5vdGVkLCB0aGVzZSBsaW5lcyB3aWxsIGJlIHJlbW92
+ZWQgaW4gbmV4dCBwYXRjaCB2ZXJzaW9uICh2MTIpLg0KPiA+ICsJLyogR2V0IElPIG9yIE1NSU8g
+QkFSICovDQo+ID4gKwlwY2lfYnVzX3JlYWRfY29uZmlnX2R3b3JkKHBkZXYtPmJ1cywgZGV2Zm4s
+IFNCUkVHX0JBUiwNCj4gPiAmYmFzZV9hZGRyKTsNCj4gPiArCWlmICgoYmFzZV9hZGRyICYgUENJ
+X0JBU0VfQUREUkVTU19TUEFDRSkgPT0NCj4gPiBQQ0lfQkFTRV9BRERSRVNTX1NQQUNFX0lPKSB7
+DQo+ID4gKwkJZmxhZ3MgPSBJT1JFU09VUkNFX0lPOw0KPiA+ICsJCWJhc2U2NF9hZGRyID0gYmFz
+ZV9hZGRyICYgUENJX0JBU0VfQUREUkVTU19JT19NQVNLOw0KPiA+ICsJfSBlbHNlIHsNCj4gPiAr
+CQlmbGFncyA9IElPUkVTT1VSQ0VfTUVNOw0KPiA+ICsJCWJhc2U2NF9hZGRyID0gYmFzZV9hZGRy
+ICYgUENJX0JBU0VfQUREUkVTU19NRU1fTUFTSzsNCj4gPiArCQlpZiAoYmFzZV9hZGRyICYgUENJ
+X0JBU0VfQUREUkVTU19NRU1fVFlQRV82NCkgew0KPiA+ICsJCQlmbGFncyB8PSBJT1JFU09VUkNF
+X01FTV82NDsNCj4gPg0KPiANCj4gPiArCQkJcGNpX2J1c19yZWFkX2NvbmZpZ19kd29yZChwZGV2
+LT5idXMsIGRldmZuLA0KPiA+ICsJCQkJU0JSRUdfQkFSICsgNCwgJmJhc2VfYWRkcik7DQo+IA0K
+PiBGaXggaW5kZW50YXRpb24uDQo+IA0KVGhhbmtzIGZvciBwb2ludGluZyB0aGF0IG91dC4gSSB3
+aWxsIGZpeCB0aGF0IGluIG5leHQgcGF0Y2ggdmVyc2lvbiAodjEyKS4gDQo+ID4gKwkJCWJhc2U2
+NF9hZGRyIHw9ICh1NjQpYmFzZV9hZGRyIDw8IDMyOw0KPiA+ICsJCX0NCj4gPiArCX0NCj4gPiAr
+DQo+ID4gKwkvKiBIaWRlIHRoZSBQMlNCIGRldmljZSAqLw0KPiA+ICsJcGNpX2J1c193cml0ZV9j
+b25maWdfYnl0ZShwZGV2LT5idXMsIGRldmZuLCBTQlJFR19ISURFLA0KPiA+IDB4MDEpOw0KPiA+
+ICsNCj4gPiArCXNwaW5fdW5sb2NrKCZwMnNiX3NwaW5sb2NrKTsNCj4gPiArDQo+IA0KPiA+ICsJ
+LyogVXNlciBwcm92aWRlcyBwcmVmaWxsZWQgcmVzb3VyY2VzICovDQo+IA0KPiBOb3QgYW55bW9y
+ZSBhcyBmYXIgSSBhcyBJIGNhbiBzZWUuIFlvdSBqdXN0IHJldHVybiBoZXJlIHRoZSByZXN1bHQu
+DQo+IA0KQ3VycmVudCB2ZXJzaW9uIGlzIHJldHVybmluZyBzdGF0dXMgb2YgcDJzYl9iYXIgZnVu
+Y3Rpb24sIGkuZS4sIDAgb24gc3VjY2VzcyBvciBhcHByb3ByaWF0ZSBlcnJubyB2YWx1ZSBvbiBl
+cnJvci4gUGVyaGFwcyB5b3UgY291bGQgc2hhcmUgdGhlIHJlYXNvbiBvZiByZXR1cm4gdGhlIHJl
+c3VsdCBpbnN0ZWFkIG9mIHN0YXR1cy4gDQo+ID4gKwlyZXMtPnN0YXJ0ID0gKHJlc291cmNlX3Np
+emVfdCliYXNlNjRfYWRkcjsNCj4gPiArCXJlcy0+ZmxhZ3MgPSBmbGFnczsNCj4gDQo+IC0tDQo+
+IEFuZHkgU2hldmNoZW5rbyA8YW5kcml5LnNoZXZjaGVua29AbGludXguaW50ZWwuY29tPg0KPiBJ
+bnRlbCBGaW5sYW5kIE95DQo+IC0tDQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBz
+ZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1ncGlvIiBpbg0KPiB0aGUgYm9keSBvZiBh
+IG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZyBNb3JlIG1ham9yZG9tbyBpbmZv
+IGF0DQo+IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA0K
