@@ -1,44 +1,107 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 1/2] gpio: rcar: set IRQ chip parent_device
-Date: Fri, 9 Dec 2016 11:43:24 +0100
-Message-ID: <CAMuHMdWo+D4Fqc-jb_ioWVQ5TRBXPQiqgmhe--o4BtM4tzVeyA@mail.gmail.com>
-References: <20161208173228.16835-1-niklas.soderlund+renesas@ragnatech.se> <20161208173228.16835-2-niklas.soderlund+renesas@ragnatech.se>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 10/11] Document: dt: binding: imx: update doc for imx6sll
+Date: Fri, 9 Dec 2016 12:12:01 -0600
+Message-ID: <20161209181201.ewcqeqslyf3je7kq@rob-hp-laptop>
+References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
+ <1480660774-25055-11-git-send-email-ping.bai@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:33752 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752228AbcLIKn0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Dec 2016 05:43:26 -0500
-In-Reply-To: <20161208173228.16835-2-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1480660774-25055-11-git-send-email-ping.bai-3arQi8VN3Tc@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bai Ping <ping.bai-3arQi8VN3Tc@public.gmane.org>
+Cc: shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, fabio.estevam-3arQi8VN3Tc@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-On Thu, Dec 8, 2016 at 6:32 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> This enables Runtime PM handling for interrupts.
->
-> By setting the parent_device in struct irq_chip genirq will call the
-> pm_runtime_get/put APIs when an IRQ is requested/freed.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+On Fri, Dec 02, 2016 at 02:39:33PM +0800, Bai Ping wrote:
+> Add necessary document update for i.MX6SLL support.
+> 
+> Signed-off-by: Bai Ping <ping.bai-3arQi8VN3Tc@public.gmane.org>
+> ---
+>  .../devicetree/bindings/clock/imx6sll-clock.txt    | 13 ++++++++
+>  .../bindings/pinctrl/fsl,imx6sll-pinctrl.txt       | 37 ++++++++++++++++++++++
+>  2 files changed, 50 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> new file mode 100644
+> index 0000000..4f52efa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> @@ -0,0 +1,13 @@
+> +* Clock bindings for Freescale i.MX6 UltraLite
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I thought UltraLite was MX6UL?
 
-Gr{oetje,eeting}s,
+> +
+> +Required properties:
+> +- compatible: Should be "fsl,imx6sll-ccm"
+> +- reg: Address and length of the register set
+> +- #clock-cells: Should be <1>
+> +- clocks: list of clock specifiers, must contain an entry for each required
+> +  entry in clock-names
+> +- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ipp_di1"
+> +
+> +The clock consumer should specify the desired clock by having the clock
+> +ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6sll-clock.h
+> +for the full list of i.MX6 SLL clock IDs.
+> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
+> new file mode 100644
+> index 0000000..096e471
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
+> @@ -0,0 +1,37 @@
+> +* Freescale i.MX6 UltraLite IOMUX Controller
 
-                        Geert
+ditto
 
+> +
+> +Please refer to fsl,imx-pinctrl.txt in this directory for common binding part
+> +and usage.
+> +
+> +Required properties:
+> +- compatible: "fsl,imx6sll-iomuxc"
+> +- fsl,pins: each entry consists of 6 integers and represents the mux and config
+> +  setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
+> +  input_val> are specified using a PIN_FUNC_ID macro, which can be found in
+> +  imx6ul-pinfunc.h under device tree source folder.  The last integer CONFIG is
+> +  the pad setting value like pull-up on this pin.  Please refer to i.MX6SLL
+> +  Reference Manual for detailed CONFIG settings.
+> +
+> +CONFIG bits definition:
+> +PAD_CTL_LVE			(1 << 22)
+> +PAD_CTL_HYS                     (1 << 16)
+> +PAD_CTL_PUS_100K_DOWN           (0 << 14)
+> +PAD_CTL_PUS_47K_UP              (1 << 14)
+> +PAD_CTL_PUS_100K_UP             (2 << 14)
+> +PAD_CTL_PUS_22K_UP              (3 << 14)
+> +PAD_CTL_PUE                     (1 << 13)
+> +PAD_CTL_PKE                     (1 << 12)
+> +PAD_CTL_ODE                     (1 << 11)
+> +PAD_CTL_SPEED_LOW               (0 << 6)
+> +PAD_CTL_SPEED_MED               (1 << 6)
+> +PAD_CTL_SPEED_HIGH              (3 << 6)
+> +PAD_CTL_DSE_DISABLE             (0 << 3)
+> +PAD_CTL_DSE_260ohm              (1 << 3)
+> +PAD_CTL_DSE_130ohm              (2 << 3)
+> +PAD_CTL_DSE_87ohm               (3 << 3)
+> +PAD_CTL_DSE_65ohm               (4 << 3)
+> +PAD_CTL_DSE_52ohm               (5 << 3)
+> +PAD_CTL_DSE_43ohm               (6 << 3)
+> +PAD_CTL_DSE_37ohm               (7 << 3)
+> +PAD_CTL_SRE_FAST                (1 << 0)
+> +PAD_CTL_SRE_SLOW                (0 << 0)
+> -- 
+> 1.9.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
