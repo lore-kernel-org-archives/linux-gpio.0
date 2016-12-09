@@ -1,74 +1,183 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 2/2] gpio: rcar: Fine-grained Runtime PM support
-Date: Fri, 09 Dec 2016 01:21:27 +0200
-Message-ID: <2561777.Aed1u6m3Fd@avalon>
-References: <20161208173228.16835-1-niklas.soderlund+renesas@ragnatech.se> <1984659.qgJsdhyW2B@avalon> <20161208231551.GL21834@bigcity.dyn.berto.se>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20161208231551.GL21834@bigcity.dyn.berto.se>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Mukesh Kaushik <mukesh.k4@samsung.com>
+Subject: [PATCH] gpio/gpiolib.c:Fixing style issues in gpiolib.c
+Date: Fri, 09 Dec 2016 09:38:47 +0530
+Message-ID: <1481256527-25776-1-git-send-email-mukesh.k4@samsung.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:42021 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932170AbcLIELP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Dec 2016 23:11:15 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Mukesh Kaushik <mukesh.k4@samsung.com>, linux-kernel@vger.kernel.org
 
-Hi Niklas,
+Fixing the following checkpatch.pl error:
 
-On Friday 09 Dec 2016 00:15:51 Niklas S=F6derlund wrote:
-> On 2016-12-08 23:40:42 +0200, Laurent Pinchart wrote:
-> > On Thursday 08 Dec 2016 18:32:28 Niklas S=F6derlund wrote:
-> >> From: Geert Uytterhoeven <geert+renesas@glider.be>
-> >>=20
-> >> Currently gpio modules are runtime-resumed at probe time. This mea=
-ns the
-> >> gpio module will be active all the time (except during system susp=
-end,
-> >> if not configured as a wake-up source).
-> >>=20
-> >> While an R-Car Gen2 gpio module retains pins configured for output=
- at
-> >> the requested level while put in standby mode, gpio register canno=
-t be
-> >> accessed while suspended.  Unfortunately pm_runtime_get_sync() can=
-not be
-> >> called from all contexts where gpio register access is needed. Hen=
-ce
-> >> move the Runtime PM handling from probe/remove time to gpio reques=
-t/free
-> >> time, which is probably the best we can do.
-> >>=20
-> >> On r8a7791/koelsch, gpio modules 0, 1, 3, and 4 are now suspended =
-during
-> >> normal use (gpio2 is used for LEDs and regulators, gpio5 for keys,=
- gpio6
-> >> for SD-Card CD & WP, gpio7 for keys and regulators).
-> >>=20
-> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> [Niklas: s/gpio_to_priv(chip)/gpiochip_get_data(chip)/]
-> >=20
-> > Just curious, what's the rationale for this ?
->=20
-> This was changed for the whole driver after the original patch was
-> applied (at the time of change the patch was not yet reverted), see [=
-1].
-> I needed to update this when I resurrected the patch, maybe I could h=
-ave
-> been more clever and reverted the revert patch but this felt cleaner,=
- if
-> it's better to do it the other way around and revert a revert please =
-let
-> me know so I can do so in the future.
+ERROR: else should follow close brace '}'
+#2248: FILE: drivers/gpio/gpiolib.c:2248:
++       }
++       else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
 
-No, this is fine. I'm a bit dubious about [1] given that it consumes mo=
-re CPU=20
-cycles without any benefit as far as I can see. Maybe I can't see far e=
-nough=20
-though, Linus Walleij could prove me wrong :-)
+ERROR: space prohibited after that open parenthesis '('
+#2018: FILE: drivers/gpio/gpiolib.c:2018:
++       if ( !desc->gdev->chip ) { \
 
-> [1] c7b6f457cb53bcee ("gpio: rcar: use gpiochip data pointer").
+ERROR: space prohibited before that close parenthesis ')'
+#2018: FILE: drivers/gpio/gpiolib.c:2018:
++       if ( !desc->gdev->chip ) { \
 
---=20
-Regards,
+and following warnings :
 
-Laurent Pinchart
+WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+
+WARNING: else is not generally useful after a break or return
+#160: FILE: drivers/gpio/gpiolib.c:160:
++                       break;
++               else
+
+Signed-off-by: Mukesh Kaushik <mukesh.k4@samsung.com>
+---
+ drivers/gpio/gpiolib.c |   34 ++++++++++++++++------------------
+ 1 file changed, 16 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 868128a..80c5304 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -85,7 +85,7 @@ static inline void desc_set_label(struct gpio_desc *d, const char *label)
+ /**
+  * Convert a GPIO number to its descriptor
+  */
+-struct gpio_desc *gpio_to_desc(unsigned gpio)
++struct gpio_desc *gpio_to_desc(unsigned int gpio)
+ {
+ 	struct gpio_device *gdev;
+ 	unsigned long flags;
+@@ -157,9 +157,8 @@ static int gpiochip_find_base(int ngpio)
+ 		/* found a free space? */
+ 		if (gdev->base + gdev->ngpio <= base)
+ 			break;
+-		else
+-			/* nope, check the space right before the chip */
+-			base = gdev->base - ngpio;
++		/* nope, check the space right before the chip */
++		base = gdev->base - ngpio;
+ 	}
+ 
+ 	if (gpio_is_valid(base)) {
+@@ -182,7 +181,7 @@ static int gpiochip_find_base(int ngpio)
+ int gpiod_get_direction(struct gpio_desc *desc)
+ {
+ 	struct gpio_chip	*chip;
+-	unsigned		offset;
++	unsigned int		offset;
+ 	int			status = -EINVAL;
+ 
+ 	chip = gpiod_to_chip(desc);
+@@ -1104,7 +1103,7 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
+ {
+ 	unsigned long	flags;
+ 	int		status = 0;
+-	unsigned	i;
++	unsigned int	i;
+ 	int		base = chip->base;
+ 	struct gpio_device *gdev;
+ 
+@@ -1311,7 +1310,7 @@ void gpiochip_remove(struct gpio_chip *chip)
+ 	struct gpio_device *gdev = chip->gpiodev;
+ 	struct gpio_desc *desc;
+ 	unsigned long	flags;
+-	unsigned	i;
++	unsigned int	i;
+ 	bool		requested = false;
+ 
+ 	/* FIXME: should the legacy sysfs handling be moved to gpio_device? */
+@@ -1640,7 +1639,7 @@ static void gpiochip_irq_relres(struct irq_data *d)
+ 	module_put(chip->gpiodev->owner);
+ }
+ 
+-static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
++static int gpiochip_to_irq(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	return irq_find_mapping(chip->irqdomain, offset);
+ }
+@@ -1717,7 +1716,7 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+ 	struct device_node *of_node;
+ 	bool irq_base_set = false;
+ 	unsigned int offset;
+-	unsigned irq_base = 0;
++	unsigned int irq_base = 0;
+ 
+ 	if (!gpiochip || !irqchip)
+ 		return -EINVAL;
+@@ -1815,7 +1814,7 @@ static inline void gpiochip_irqchip_free_valid_mask(struct gpio_chip *gpiochip)
+  * @chip: the gpiochip owning the GPIO
+  * @offset: the offset of the GPIO to request for GPIO function
+  */
+-int gpiochip_generic_request(struct gpio_chip *chip, unsigned offset)
++int gpiochip_generic_request(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	return pinctrl_request_gpio(chip->gpiodev->base + offset);
+ }
+@@ -1826,7 +1825,7 @@ int gpiochip_generic_request(struct gpio_chip *chip, unsigned offset)
+  * @chip: the gpiochip to request the gpio function for
+  * @offset: the offset of the GPIO to free from GPIO function
+  */
+-void gpiochip_generic_free(struct gpio_chip *chip, unsigned offset)
++void gpiochip_generic_free(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	pinctrl_free_gpio(chip->gpiodev->base + offset);
+ }
+@@ -2015,7 +2014,7 @@ static int __gpiod_request(struct gpio_desc *desc, const char *label)
+ 		pr_warn("%s: invalid GPIO (no device)\n", __func__); \
+ 		return -EINVAL; \
+ 	} \
+-	if ( !desc->gdev->chip ) { \
++	if (!desc->gdev->chip) { \
+ 		dev_warn(&desc->gdev->dev, \
+ 			 "%s: backing chip is gone\n", __func__); \
+ 		return 0; \
+@@ -2117,7 +2116,7 @@ void gpiod_free(struct gpio_desc *desc)
+  * help with diagnostics, and knowing that the signal is used as a GPIO
+  * can help avoid accidentally multiplexing it to another controller.
+  */
+-const char *gpiochip_is_requested(struct gpio_chip *chip, unsigned offset)
++const char *gpiochip_is_requested(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	struct gpio_desc *desc;
+ 
+@@ -2244,8 +2243,7 @@ static int _gpiod_direction_output_raw(struct gpio_desc *desc, int value)
+ 		/* Emulate open drain by not actively driving the line high */
+ 		if (value)
+ 			return gpiod_direction_input(desc);
+-	}
+-	else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
++	} else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
+ 		if (gc->set_single_ended) {
+ 			ret = gc->set_single_ended(gc, gpio_chip_hwgpio(desc),
+ 						   LINE_MODE_OPEN_SOURCE);
+@@ -2326,7 +2324,7 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
+  * returns -ENOTSUPP if the controller does not support setting
+  * debounce.
+  */
+-int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
++int gpiod_set_debounce(struct gpio_desc *desc, unsigned int debounce)
+ {
+ 	struct gpio_chip	*chip;
+ 
+@@ -3517,9 +3515,9 @@ static int __init gpiolib_dev_init(void)
+ 
+ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_device *gdev)
+ {
+-	unsigned		i;
++	unsigned int		i;
+ 	struct gpio_chip	*chip = gdev->chip;
+-	unsigned		gpio = gdev->base;
++	unsigned int		gpio = gdev->base;
+ 	struct gpio_desc	*gdesc = &gdev->descs[0];
+ 	int			is_out;
+ 	int			is_irq;
+-- 
+1.7.9.5
+
