@@ -1,106 +1,84 @@
 From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 10/11] Document: dt: binding: imx: update doc for imx6sll
-Date: Fri, 9 Dec 2016 12:12:01 -0600
-Message-ID: <20161209181201.ewcqeqslyf3je7kq@rob-hp-laptop>
-References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
- <1480660774-25055-11-git-send-email-ping.bai@nxp.com>
+Subject: Re: [PATCH] gpio: mmio: add support for NI 169445 NAND GPIO
+Date: Fri, 9 Dec 2016 15:06:55 -0600
+Message-ID: <20161209210655.6kba4irujd7urb47@rob-hp-laptop>
+References: <1480693022-22110-1-git-send-email-nathan.sullivan@ni.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1480660774-25055-11-git-send-email-ping.bai-3arQi8VN3Tc@public.gmane.org>
+In-Reply-To: <1480693022-22110-1-git-send-email-nathan.sullivan-acOepvfBmUk@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bai Ping <ping.bai-3arQi8VN3Tc@public.gmane.org>
-Cc: shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, fabio.estevam-3arQi8VN3Tc@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Nathan Sullivan <nathan.sullivan-acOepvfBmUk@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Dec 02, 2016 at 02:39:33PM +0800, Bai Ping wrote:
-> Add necessary document update for i.MX6SLL support.
+On Fri, Dec 02, 2016 at 09:37:02AM -0600, Nathan Sullivan wrote:
+> The GPIO-based NAND controller on National Instruments 169445 hardware
+> exposes a set of simple lines for the control signals.
 > 
-> Signed-off-by: Bai Ping <ping.bai-3arQi8VN3Tc@public.gmane.org>
+> Signed-off-by: Nathan Sullivan <nathan.sullivan-acOepvfBmUk@public.gmane.org>
 > ---
->  .../devicetree/bindings/clock/imx6sll-clock.txt    | 13 ++++++++
->  .../bindings/pinctrl/fsl,imx6sll-pinctrl.txt       | 37 ++++++++++++++++++++++
->  2 files changed, 50 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imx6sll-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
+> "devicetree: add vendor prefix for National Instruments" added the ni vendor prefix.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> This patch is needed for "MIPS: NI 169445 board support", so that GPIO NAND can work.
+> 
+>  .../bindings/gpio/ni,169445-nand-gpio.txt          | 36 ++++++++++++++++++++++
+>  drivers/gpio/gpio-mmio.c                           |  1 +
+>  2 files changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt b/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
 > new file mode 100644
-> index 0000000..4f52efa
+> index 0000000..ca2c14f
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> @@ -0,0 +1,13 @@
-> +* Clock bindings for Freescale i.MX6 UltraLite
-
-I thought UltraLite was MX6UL?
-
+> +++ b/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
+> @@ -0,0 +1,36 @@
+> +Bindings for the National Instruments 169445 GPIO NAND controller
+> +
+> +The 169445 GPIO NAND controller has two memory mapped GPIO registers, one
+> +for input (the ready signal) and one for output (control signals).  It is
+> +intended to be used with the GPIO NAND driver.
 > +
 > +Required properties:
-> +- compatible: Should be "fsl,imx6sll-ccm"
-> +- reg: Address and length of the register set
-> +- #clock-cells: Should be <1>
-> +- clocks: list of clock specifiers, must contain an entry for each required
-> +  entry in clock-names
-> +- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ipp_di1"
+> +	- compatible: should be "ni,169445-nand-gpio"
+> +	- reg-names: must contain
+> +		"dat" - data register
+
+-names with a single entry is pointless.
+
+> +	- reg: address + size pairs describing the GPIO register sets;
+> +		order must correspond with the order of entries in reg-names
+> +	- #gpio-cells: must be set to 2. The first cell is the pin number and
+> +			the second cell is used to specify the gpio polarity:
+> +			0 = active high
+> +			1 = active low
+> +	- gpio-controller: Marks the device node as a gpio controller.
 > +
-> +The clock consumer should specify the desired clock by having the clock
-> +ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6sll-clock.h
-> +for the full list of i.MX6 SLL clock IDs.
-> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
-> new file mode 100644
-> index 0000000..096e471
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx6sll-pinctrl.txt
-> @@ -0,0 +1,37 @@
-> +* Freescale i.MX6 UltraLite IOMUX Controller
+> +Examples:
+> +	gpio1: nand-gpio-out@1f300010 {
+
+gpio-controller@...
+
+> +		compatible = "ni,169445-nand-gpio";
+> +		reg = <0x1f300010 0x4>;
+> +		reg-names = "dat";
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		ngpios = <5>;
+> +	};
+> +
+> +	gpio2: nand-gpio-in@1f300014 {
 
 ditto
 
-> +
-> +Please refer to fsl,imx-pinctrl.txt in this directory for common binding part
-> +and usage.
-> +
-> +Required properties:
-> +- compatible: "fsl,imx6sll-iomuxc"
-> +- fsl,pins: each entry consists of 6 integers and represents the mux and config
-> +  setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
-> +  input_val> are specified using a PIN_FUNC_ID macro, which can be found in
-> +  imx6ul-pinfunc.h under device tree source folder.  The last integer CONFIG is
-> +  the pad setting value like pull-up on this pin.  Please refer to i.MX6SLL
-> +  Reference Manual for detailed CONFIG settings.
-> +
-> +CONFIG bits definition:
-> +PAD_CTL_LVE			(1 << 22)
-> +PAD_CTL_HYS                     (1 << 16)
-> +PAD_CTL_PUS_100K_DOWN           (0 << 14)
-> +PAD_CTL_PUS_47K_UP              (1 << 14)
-> +PAD_CTL_PUS_100K_UP             (2 << 14)
-> +PAD_CTL_PUS_22K_UP              (3 << 14)
-> +PAD_CTL_PUE                     (1 << 13)
-> +PAD_CTL_PKE                     (1 << 12)
-> +PAD_CTL_ODE                     (1 << 11)
-> +PAD_CTL_SPEED_LOW               (0 << 6)
-> +PAD_CTL_SPEED_MED               (1 << 6)
-> +PAD_CTL_SPEED_HIGH              (3 << 6)
-> +PAD_CTL_DSE_DISABLE             (0 << 3)
-> +PAD_CTL_DSE_260ohm              (1 << 3)
-> +PAD_CTL_DSE_130ohm              (2 << 3)
-> +PAD_CTL_DSE_87ohm               (3 << 3)
-> +PAD_CTL_DSE_65ohm               (4 << 3)
-> +PAD_CTL_DSE_52ohm               (5 << 3)
-> +PAD_CTL_DSE_43ohm               (6 << 3)
-> +PAD_CTL_DSE_37ohm               (7 << 3)
-> +PAD_CTL_SRE_FAST                (1 << 0)
-> +PAD_CTL_SRE_SLOW                (0 << 0)
-> -- 
-> 1.9.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> +		compatible = "ni,169445-nand-gpio";
+> +		reg = <0x1f300014 0x4>;
+> +		reg-names = "dat";
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		ngpios = <1>;
+> +	};
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
