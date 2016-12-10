@@ -1,85 +1,40 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] gpio: mmio: add support for NI 169445 NAND GPIO
-Date: Fri, 9 Dec 2016 15:06:55 -0600
-Message-ID: <20161209210655.6kba4irujd7urb47@rob-hp-laptop>
-References: <1480693022-22110-1-git-send-email-nathan.sullivan@ni.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH V1] pinctrl:pxa:pinctrl-pxa2xx:- No need of devm functions
+Date: Sat, 10 Dec 2016 10:19:07 +0100
+Message-ID: <87eg1g16r8.fsf@belgarion.home>
+References: <1481207730-6332-1-git-send-email-arvind.yadav.cs@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1480693022-22110-1-git-send-email-nathan.sullivan-acOepvfBmUk@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nathan Sullivan <nathan.sullivan-acOepvfBmUk@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:42389 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751388AbcLJJTR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 10 Dec 2016 04:19:17 -0500
+In-Reply-To: <1481207730-6332-1-git-send-email-arvind.yadav.cs@gmail.com>
+        (Arvind Yadav's message of "Thu, 8 Dec 2016 20:05:30 +0530")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: daniel@zonque.org, haojian.zhuang@gmail.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Dec 02, 2016 at 09:37:02AM -0600, Nathan Sullivan wrote:
-> The GPIO-based NAND controller on National Instruments 169445 hardware
-> exposes a set of simple lines for the control signals.
-> 
-> Signed-off-by: Nathan Sullivan <nathan.sullivan-acOepvfBmUk@public.gmane.org>
-> ---
-> "devicetree: add vendor prefix for National Instruments" added the ni vendor prefix.
-> 
-> This patch is needed for "MIPS: NI 169445 board support", so that GPIO NAND can work.
-> 
->  .../bindings/gpio/ni,169445-nand-gpio.txt          | 36 ++++++++++++++++++++++
->  drivers/gpio/gpio-mmio.c                           |  1 +
->  2 files changed, 37 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt b/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
-> new file mode 100644
-> index 0000000..ca2c14f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
-> @@ -0,0 +1,36 @@
-> +Bindings for the National Instruments 169445 GPIO NAND controller
-> +
-> +The 169445 GPIO NAND controller has two memory mapped GPIO registers, one
-> +for input (the ready signal) and one for output (control signals).  It is
-> +intended to be used with the GPIO NAND driver.
-> +
-> +Required properties:
-> +	- compatible: should be "ni,169445-nand-gpio"
-> +	- reg-names: must contain
-> +		"dat" - data register
+Arvind Yadav <arvind.yadav.cs@gmail.com> writes:
 
--names with a single entry is pointless.
+Hi Arvind,
 
-> +	- reg: address + size pairs describing the GPIO register sets;
-> +		order must correspond with the order of entries in reg-names
-> +	- #gpio-cells: must be set to 2. The first cell is the pin number and
-> +			the second cell is used to specify the gpio polarity:
-> +			0 = active high
-> +			1 = active low
-> +	- gpio-controller: Marks the device node as a gpio controller.
-> +
-> +Examples:
-> +	gpio1: nand-gpio-out@1f300010 {
+> In functions pxa2xx_build_functions, the memory allocated for
+> 'functions' is live within the function only. After the
+> allocation it is immediately freed with devm_kfree. There is
+> no need to allocate memory for 'functions' with devm function
+> so replace devm_kcalloc  with kcalloc and devm_kfree with kfree.
 
-gpio-controller@...
+That's not very true : the "need" is to spare the "manual" kfree you're adding
+in your patch for one, and make it consistent with pxa2xx_build_groups() and
+pxa2xx_build_state() for two.
 
-> +		compatible = "ni,169445-nand-gpio";
-> +		reg = <0x1f300010 0x4>;
-> +		reg-names = "dat";
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		ngpios = <5>;
-> +	};
-> +
-> +	gpio2: nand-gpio-in@1f300014 {
+Therefore I'm not very thrilled by this patch and unless it fixes a defect in
+the driver I'd rather not have it in.
 
-ditto
+Cheers.
 
-> +		compatible = "ni,169445-nand-gpio";
-> +		reg = <0x1f300014 0x4>;
-> +		reg-names = "dat";
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		ngpios = <1>;
-> +	};
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Robert
