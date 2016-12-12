@@ -1,16 +1,17 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO bulk changes for v4.10
-Date: Mon, 12 Dec 2016 10:53:30 +0100
-Message-ID: <CACRpkdaWXkm+FFmuoaMZqGKOui+=bnXswPEcHt+r=ME4_h1M3A@mail.gmail.com>
+Subject: [GIT PULL] pin control bulk changes for the v4.10 cycle
+Date: Mon, 12 Dec 2016 11:40:27 +0100
+Message-ID: <CACRpkdbhN5kt2nje7=oDwbFtcfX-RqytYbfJJyvrOsMMyFQy8w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f180.google.com ([209.85.220.180]:33567 "EHLO
-        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750712AbcLLJxb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Dec 2016 04:53:31 -0500
-Received: by mail-qk0-f180.google.com with SMTP id x190so77594317qkb.0
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Dec 2016 01:53:31 -0800 (PST)
+Received: from mail-qt0-f182.google.com ([209.85.216.182]:33325 "EHLO
+        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754135AbcLLKk3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Dec 2016 05:40:29 -0500
+Received: by mail-qt0-f182.google.com with SMTP id p16so71715232qta.0
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Dec 2016 02:40:28 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Torvalds <torvalds@linux-foundation.org>
@@ -18,113 +19,157 @@ Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vge
 
 Hi Linus,
 
-here is the bulk of the GPIO changes for the v4.10 series.
+here are the bulk of pin control changes for the v4.10 kernel.
 
-I had some screwups in linux-next last week but ironed it out,
-but in case you wonder why there are two relatively young
-immutable branches (pl061 and thread-irq-simpler) merged in
-dec 7 it's because of fixing that mess. It has since been tested
-in linux-next.
+I have pulled two immutable branches from GPIO into this
+request because of dependencies identified by the build servers,
+and as mentioned in the GPIO pull request. So a bunch of patches
+appear here again, but with the same hashes, subjects "gpio:".
 
-The two immutable branches have cross dependencies to pin
-control so they will appear in that pull request as well.
+Apart from that it is business as usual, details in the signed tag.
 
-Please pull it in! Technical details are in the signed tag.
+Please pull it in!
 
 Yours,
 Linus Walleij
 
 
-The following changes since commit 07d9a380680d1c0eb51ef87ff2eab5c994949e69:
+The following changes since commit 07d9a380680d1c0eb51ef87ff2eab5c994949e69=
+:
 
   Linux 4.9-rc2 (2016-10-23 17:10:14 -0700)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.10-1
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.10-1
 
-for you to fetch changes up to acf1fcf77247efa01d7213f53082451f6c9c8f3b:
+for you to fetch changes up to f821444508743a3e56320d0cb2b8c4603637660c:
 
-  Merge branch 'thread-irq-simpler' into devel (2016-12-07 15:24:12 +0100)
+  pinctrl: sx150x: use new nested IRQ infrastructure (2016-12-07 16:02:55 +=
+0100)
 
 ----------------------------------------------------------------
-Bulk GPIO changes for the v4.10 kernel cycle:
+Bulk pin control changes for the v4.10 kernel cycle:
 
-Core changes:
-
-- Simplify threaded interrupt handling: instead of passing
-  numbed parameters to gpiochip_irqchip_add_chained() we
-  create a new call: gpiochip_irqchip_add_nested() so the two
-  types are clearly semantically different. Also make sure
-  that all nested chips call gpiochip_set_nested_irqchip()
-  which is necessary for IRQ resend to work properly if
-  it happens.
-
-- Return error on seek operations for the chardev.
-
-- Clamp values set as part of gpio[d]_direction_output() so
-  that anything != 0 will be send down to the driver as "1"
-  not the value passed in.
-
-- ACPI can now support naming of GPIO lines, hogs and holes
-  in the GPIO lists.
+No core changes this time. Mainly gradual improvement and
+feature growth in the drivers.
 
 New drivers:
 
-- The SX150x driver was deemed unfit for the GPIO subsystem
-  and was moved over to a combined GPIO+pinctrl driver in the
-  pinctrl subsystem.
+- New driver for TI DA850/OMAP-L138/AM18XX pinconf
 
-New features:
+- The SX150x was moved over from the GPIO subsystem and
+  reimagined as a pin control driver with GPIO support
+  in a joint effort by three independent users of this
+  hardware. The result was amazingly good!
 
-- Various cleanups to various drivers.
+- New subdriver for the Oxnas OX820
+
+Improvements:
+
+- The sunxi driver now supports the generic pin control
+  bindings rather than the sunxi-specific. Add debouncing
+  support to the driver.
+
+- Simplifications in pinctrl-single adding a generic parser.
+
+- Two downstream fixes and move the Raspberry Pi BCM2835 over
+  to use the generic GPIOLIB_IRQCHIP.
 
 ----------------------------------------------------------------
-Andy Shevchenko (3):
-      gpio: merrifield: set default handler to be handle_bad_irq()
-      gpio: merrifield: Add support for hardware debouncer
-      gpio: merrifield: Implement gpio_get_direction callback
+Andrey Smirnov (15):
+      pinctrl-sx150x: Improve OF device matching code
+      pinctrl-sx150x: Add SX1503 specific data
+      bindings: pinctrl-sx150x: Document SX1503 compatibility string
+      pinctrl-sx150x: Replace magic number in sx150x_init_hw
+      pinctrl-sx150x: Fix incorrect constant in sx150x_init_hw
+      pinctrl-sx150x: Move some code out of sx150x_init_hw
+      pinctrl-sx150x: Improve sx150x_init_misc for SX1504/5/6
+      pinctrl-sx150x: Convert driver to use regmap API
+      pinctrl-sx150x: Replace sx150x_*_cfg by means of regmap API
+      pinctrl-sx150x: Remove excessive locking
+      pinctrl-sx150x: Improve oscio GPIO functions
+      pinctrl-sx150x: Simplify interrupt handler
+      pinctrl-sx150x: Use handle_bad_irq instead of handle_edge_irq
+      pinctrl-sx150x: Remove magic numbers from sx150x_irq_set_type
+      pinctrl-sx150x: Remove magic numbers from sx150x_reset
 
-Anthony Best (1):
-      gpio: fix struct gpio_chip comment
+Andy Shevchenko (2):
+      pinctrl: intel: merrifield: Add pin config group handlers
+      pinctrl: intel: set default handler to be handle_bad_irq()
 
-Arnd Bergmann (1):
-      ACPI / gpio: avoid warning for gpio hogging code
+Andy Yan (2):
+      dt-bindings: add documentation for rk1108 pinctrl
+      pinctrl: rockchip: add support for rk1108
 
-Axel Haslam (1):
-      gpio: davinci: Use unique labels for each gpio chip
+Arnd Bergmann (2):
+      pinctrl: max77620: add OF dependency
+      pinctrl: sunxi: fix theoretical uninitialized variable access
 
-Axel Lin (1):
-      gpio: max77620: Remove unused fields from struct max77620_gpio
+Axel Haslam (2):
+      pinctrl: single: check for any error when getting rows
+      pinctrl: single: search for the bits property when parsing bits
 
-Bamvor Jian Zhang (2):
-      tools/gpio: add gpio basic opereations
-      tools/gpio: re-work gpio hammer with gpio operations
+Boris Brezillon (1):
+      pinctrl: at91: add support for OUTPUT config
 
-Charles Keepax (2):
-      gpio: arizona: Remove pointless set of platform drvdata
-      gpio: arizona: Tidy up probe error path
+Chanwoo Choi (2):
+      pinctrl: samsung: Add the support the multiple IORESOURCE_MEM
+for one pin-bank
+      pinctrl: samsung: Add GPF support for Exynos5433
 
-Geliang Tang (4):
-      gpio: intel-mid: use builtin_pci_driver
-      gpio: etraxfs: use builtin_platform_driver
-      gpio: mb86s7x: use builtin_platform_driver
-      gpio: vf610: use builtin_platform_driver
+Chen-Yu Tsai (4):
+      pinctrl: sunxi: Free configs in pinctrl_map only if it is a config ma=
+p
+      pinctrl: sunxi: Fix PIN_CONFIG_BIAS_PULL_{DOWN,UP} argument
+      pinctrl: sunxi: Add support for fetching pinconf settings from hardwa=
+re
+      pinctrl: sunxi: Make sunxi_pconf_group_set use sunxi_pconf_reg helper
 
-Jean Delvare (1):
-      gpio: ts4900: Add hardware dependencies
+Chunfeng Yun (1):
+      pinctrl: mt8173: set GPIO16 to usb iddig mode
 
-Lars-Peter Clausen (1):
-      gpio: chardev: Return error for seek operations
+Dan Carpenter (2):
+      pinctrl: single: Fix a couple error codes
+      pinctrl: sunxi: Testing the wrong variable
 
-Linus Walleij (15):
-      Merge branch 'ib-sx150x' of /home/linus/linux-pinctrl into devel
-      gpio: htc-egpio: add .get_direction() support
-      gpio: htc-egpio: read output value from cache
-      gpio: clamp values on gpio[d]_direction_output()
-      gpio: tag line labels used for interrupts
-      gpio: stmpe: fix interrupt handling bug
+David Lechner (2):
+      devicetree: bindings: pinctrl: Add binding for ti,da850-pupd
+      pinctrl: New driver for TI DA850/OMAP-L138/AM18XX pinconf
+
+Gary Bisson (1):
+      pinctrl: imx: fix imx_pinctrl_desc initialization
+
+Geert Uytterhoeven (1):
+      pinctrl: sh-pfc: r8a7796: Fix GPSR definitions for SDHI2/3
+
+Geliang Tang (2):
+      pinctrl: stm32: use builtin_platform_driver
+      pinctrl: mediatek: use builtin_platform_driver
+
+Heinrich Schuchardt (2):
+      pinctrl: st: st_pinconf_dbg_show wrong format string
+      pinctrl: st: st_pctl_dt_parse_groups simplify expression
+
+Jason Gunthorpe (1):
+      pinctrl: zynq: Add a 8 bit wide nand option
+
+Keerthy (1):
+      Documentation: pinctrl: palmas: Add ti,palmas-powerhold-override
+property definition
+
+Laxman Dewangan (1):
+      pinctrl: generic: Parse pinmux init nodes if node status is okay
+
+Linus Walleij (16):
+      Merge branch 'ib-sx150x' into devel
+      pinctrl: sx150x: fix up headers
+      Merge tag 'sh-pfc-for-v4.10-tag1' of
+git://git.kernel.org/.../geert/renesas-drivers into devel
+      Merge tag 'sh-pfc-for-v4.10-tag2' of
+git://git.kernel.org/.../geert/renesas-drivers into devel
+      pinctrl: nomadik: split up and comments MC0 pins
       gpio: simplify adding threaded interrupts
       gpio: set explicit nesting on drivers
       gpio: pl061: use local state for parent IRQ storage
@@ -132,98 +177,205 @@ Linus Walleij (15):
       gpio: pl061: rename variable from chip to pl061
       gpio: pl061: move platform data into driver
       gpio: pl061: delete platform data handling
-      Merge branch 'pl061' into devel
-      Merge branch 'thread-irq-simpler' into devel
+      pinctrl: bcm2835: switch to GPIOLIB_IRQCHIP
+      Merge branch 'pl061' of /home/linus/linux-gpio into devel
+      Merge branch 'thread-irq-simpler' of /home/linus/linux-gpio into deve=
+l
+      pinctrl: sx150x: use new nested IRQ infrastructure
 
-Marek Vasut (1):
-      gpio: pca953x: Add MAX7318 compatible
+Maxime Ripard (7):
+      pinctrl: sunxi: Rework the pin config building code
+      pinctrl: sunxi: Use macros from bindings header file for DT parsing
+      pinctrl: sunxi: Handle bias disable
+      pinctrl: sunxi: Support generic binding
+      pinctrl: sunxi: Deprecate sunxi pinctrl bindings
+      pinctrl: sunxi: Deal with configless pins
+      pinctrl: sunxi: Add support for interrupt debouncing
 
-Mika Westerberg (4):
-      ACPI / gpio: Allow holes in list of GPIOs for a device
-      ACPI / gpio: Add hogging support
-      gpio: Rework of_gpiochip_set_names() to use device property accessors
-      ACPI / gpio: Add support for naming GPIOs
+Michael Scott (1):
+      pinctrl: qcom: Add msm8994 pinctrl driver
 
-Neil Armstrong (1):
+Mika Westerberg (1):
+      pinctrl: cherryview: Drop ctrlX prefix from the pin debugfs output
+
+Neil Armstrong (5):
+      pinctrl: oxnas: Move OX810SE specific function and structure as separ=
+ate
+      pinctrl: oxnas: Add support for OX820
+      dt-bindings: oxnas: Update Pinctrl and GPIO for OX820 Support
       pinctrl: Add SX150X GPIO Extender Pinctrl Driver
+      pinctrl: meson: Add GXL pinctrl definitions
 
-Paul Gortmaker (1):
-      gpio: htc-egpio: Make it explicitly non-modular
+Niklas S=C3=B6derlund (10):
+      pinctrl: sh-pfc: r8a7796: Add DU support
+      pinctrl: sh-pfc: Do not unconditionally support PIN_CONFIG_BIAS_DISAB=
+LE
+      pinctrl: sh-pfc: Add helper to handle bias lookup table
+      pinctrl: sh-pfc: r8a7795: Simplify get bias logic
+      pinctrl: sh-pfc: r8a7795: Use lookup function for bias data
+      pinctrl: sh-pfc: r8a7778: Use lookup function for bias data
+      pinctrl: sh-pfc: Support named pins with custom configuration
+      pinctrl: sh-pfc: r8a7795: Support none GPIO pins with
+configurable drive-strength
+      pinctrl: sh-pfc: r8a7795: Add group for AVB MDIO and MII pins
+      pinctrl: sh-pfc: r8a7795: Add group for QSPI0 and QSPI1 pins
 
-Peter Robinson (3):
-      gpio: x86: update config dependencies for x86 specific hardware
-      gpio: zx: depend on ARCH_ZX
-      gpio: em: depnd on ARCH_SHMOBILE
+Paul Gortmaker (2):
+      pinctrl: sunxi: make bool drivers explicitly non-modular
+      pinctrl: vt8500: make bool drivers explicitly non-modular
 
-Quentin Schulz (1):
-      gpio: axp209: use correct register for GPIO input status
+Peter Rosin (8):
+      pinctrl: sx150x: various spelling fixes and some white-space cleanup
+      pinctrl: sx150x: support setting multiple pins at once
+      pinctrl: sx150x: use correct registers for reg_sense (sx1502 and sx15=
+08)
+      pinctrl: sx150x: sort chips by part number
+      pinctrl: sx150x: add support for sx1501, sx1504, sx1505 and sx1507
+      pinctrl: sx150x: access the correct bits in the 4-bit regs of sx150[1=
+47]
+      pinctrl: sx150x: rename 'reg_advance' to 'reg_advanced'
+      pinctrl: sx150x: handle missing 'advanced' reg in sx1504 and sx1505
 
-Sascha Hauer (2):
-      gpio: mxs: use enable/disable regs to (un)mask irqs
-      gpio: mxs: fix duplicate level interrupts
+Phil Elwell (2):
+      pinctrl: bcm2835: Fix ints for GPIOs 28-31 & 46-53
+      pinctrl: bcm2835: Return pins to inputs when freed
 
-Thor Thayer (2):
-      gpio: altera-a10sr: Add A10 System Resource Chip GPIO support.
-      gpio: gpiolib-devprop: Check chip->parent pointer before dereferencing
+Ramesh Shanmugasundaram (1):
+      pinctrl: sh-pfc: r8a7796: Add DRIF support
 
-Venkat Reddy Talla (1):
-      gpio: max77620: add compatible string to device id list
+Stefan Wahren (1):
+      pinctrl: bcm2835: reduce GPPUD set-up time
 
-Wei Yongjun (4):
-      gpio: altera-a10sr: Drop unnecessary gpiochip_remove
-      ACPI / gpio: add missing fwnode_handle_put() in acpi_gpiochip_scan_gpios()
-      ACPI / gpio: make acpi_gpiochip_parse_own_gpio static
-      gpio: of: add missing of_node_put() in of_gpiochip_scan_gpios()
+Takeshi Kihara (1):
+      pinctrl: sh-pfc: r8a7796: Add EtherAVB pins, groups and functions
 
- Documentation/acpi/gpio-properties.txt             |   62 ++
+Tony Lindgren (5):
+      pinctrl: single: Drop custom names
+      pinctrl: single: Drop pointless macro
+      pinctrl: Introduce generic #pinctrl-cells and
+pinctrl_parse_index_with_args
+      pinctrl: single: Use generic parser and #pinctrl-cells for
+pinctrl-single,pins
+      pinctrl: single: Use generic parser and #pinctrl-cells for
+pinctrl-single,bits
+
+Ulrich Hecht (1):
+      pinctrl: sh-pfc: r8a7796: Add I2C pin support
+
  .../devicetree/bindings/gpio/gpio-sx150x.txt       |   41 -
- .../devicetree/bindings/pinctrl/pinctrl-sx150x.txt |   69 ++
+ .../devicetree/bindings/gpio/gpio_oxnas.txt        |    2 +-
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   30 +
+ .../bindings/pinctrl/atmel,at91-pinctrl.txt        |    2 +
+ .../devicetree/bindings/pinctrl/meson,pinctrl.txt  |    2 +
+ .../devicetree/bindings/pinctrl/oxnas,pinctrl.txt  |    2 +-
+ .../bindings/pinctrl/pinctrl-bindings.txt          |   44 +-
+ .../devicetree/bindings/pinctrl/pinctrl-palmas.txt |    9 +
+ .../devicetree/bindings/pinctrl/pinctrl-sx150x.txt |   74 ++
+ .../bindings/pinctrl/qcom,msm8994-pinctrl.txt      |  177 +++
+ .../bindings/pinctrl/rockchip,pinctrl.txt          |    9 +-
+ .../bindings/pinctrl/samsung-pinctrl.txt           |   19 +
+ .../devicetree/bindings/pinctrl/ti,da850-pupd.txt  |   55 +
  Documentation/gpio/driver.txt                      |   62 +-
  arch/arm/mach-integrator/impd1.c                   |    1 -
- drivers/gpio/Kconfig                               |   38 +-
- drivers/gpio/Makefile                              |    3 +-
+ drivers/gpio/Kconfig                               |   13 +-
+ drivers/gpio/Makefile                              |    1 -
  drivers/gpio/gpio-adnp.c                           |   12 +-
- drivers/gpio/gpio-altera-a10sr.c                   |  130 +++
- drivers/gpio/gpio-arizona.c                        |    9 +-
- drivers/gpio/gpio-axp209.c                         |    8 +-
  drivers/gpio/gpio-crystalcove.c                    |    6 +-
- drivers/gpio/gpio-davinci.c                        |    7 +-
  drivers/gpio/gpio-dln2.c                           |    1 -
- drivers/gpio/gpio-etraxfs.c                        |    7 +-
- drivers/gpio/gpio-htc-egpio.c                      |   54 +-
- drivers/gpio/gpio-intel-mid.c                      |    7 +-
  drivers/gpio/gpio-max732x.c                        |   17 +-
- drivers/gpio/gpio-max77620.c                       |   11 +-
- drivers/gpio/gpio-mb86s7x.c                        |    6 +-
  drivers/gpio/gpio-mcp23s08.c                       |   17 +-
- drivers/gpio/gpio-merrifield.c                     |   33 +-
- drivers/gpio/gpio-mxs.c                            |   45 +-
- drivers/gpio/gpio-pca953x.c                        |   18 +-
+ drivers/gpio/gpio-pca953x.c                        |   16 +-
  drivers/gpio/gpio-pcf857x.c                        |   11 +-
- drivers/gpio/gpio-pl061.c                          |  208 ++--
- drivers/gpio/gpio-stmpe.c                          |   19 +-
- drivers/gpio/gpio-sx150x.c                         |  792 ---------------
+ drivers/gpio/gpio-pl061.c                          |  208 ++-
+ drivers/gpio/gpio-stmpe.c                          |   17 +-
+ drivers/gpio/gpio-sx150x.c                         |  792 -----------
  drivers/gpio/gpio-tc3589x.c                        |   17 +-
- drivers/gpio/gpio-vf610.c                          |    6 +-
  drivers/gpio/gpio-wcove.c                          |    6 +-
- drivers/gpio/gpiolib-acpi.c                        |  107 +-
- drivers/gpio/gpiolib-devprop.c                     |   67 ++
- drivers/gpio/gpiolib-of.c                          |   51 +-
- drivers/gpio/gpiolib.c                             |  107 +-
- drivers/gpio/gpiolib.h                             |    2 +
- drivers/pinctrl/Kconfig                            |   14 +
- drivers/pinctrl/Makefile                           |    1 +
- drivers/pinctrl/pinctrl-sx150x.c                   | 1062 ++++++++++++++++++++
+ drivers/gpio/gpiolib.c                             |   69 +-
+ drivers/pinctrl/Kconfig                            |   26 +-
+ drivers/pinctrl/Makefile                           |    2 +
+ drivers/pinctrl/bcm/Kconfig                        |    1 +
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c              |  165 ++-
+ drivers/pinctrl/devicetree.c                       |  144 ++
+ drivers/pinctrl/devicetree.h                       |   23 +
+ drivers/pinctrl/freescale/pinctrl-imx.c            |    8 +-
+ drivers/pinctrl/intel/pinctrl-baytrail.c           |    2 +-
+ drivers/pinctrl/intel/pinctrl-cherryview.c         |    2 +-
+ drivers/pinctrl/intel/pinctrl-intel.c              |    2 +-
+ drivers/pinctrl/intel/pinctrl-merrifield.c         |   41 +
+ drivers/pinctrl/mediatek/pinctrl-mt6397.c          |    6 +-
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt8173.h      |    2 +-
+ drivers/pinctrl/meson/Makefile                     |    3 +-
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c          |  589 +++++++++
+ drivers/pinctrl/meson/pinctrl-meson.c              |    8 +
+ drivers/pinctrl/meson/pinctrl-meson.h              |    2 +
+ drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c   |   23 +-
+ drivers/pinctrl/pinconf-generic.c                  |    2 +-
+ drivers/pinctrl/pinctrl-at91.c                     |   21 +
+ drivers/pinctrl/pinctrl-da850-pupd.c               |  210 +++
+ drivers/pinctrl/pinctrl-oxnas.c                    |  605 +++++++--
+ drivers/pinctrl/pinctrl-rockchip.c                 |   86 ++
+ drivers/pinctrl/pinctrl-single.c                   |  217 +--
+ drivers/pinctrl/pinctrl-st.c                       |    4 +-
+ drivers/pinctrl/pinctrl-sx150x.c                   | 1275 ++++++++++++++++=
+++
+ drivers/pinctrl/pinctrl-zynq.c                     |    6 +-
+ drivers/pinctrl/qcom/Kconfig                       |    9 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-msm8994.c             | 1379 ++++++++++++++++=
+++++
+ drivers/pinctrl/samsung/pinctrl-exynos.c           |   45 +-
+ drivers/pinctrl/samsung/pinctrl-exynos.h           |   11 +
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c          |   37 +-
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c          |   40 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |   40 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |   10 +-
+ drivers/pinctrl/sh-pfc/core.c                      |   15 +
+ drivers/pinctrl/sh-pfc/core.h                      |    4 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c               |  342 ++---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               |  616 ++++++---
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c               |  576 +++++++-
+ drivers/pinctrl/sh-pfc/pinctrl.c                   |    3 +-
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |   14 +
+ drivers/pinctrl/stm32/pinctrl-stm32f429.c          |    6 +-
+ drivers/pinctrl/sunxi/pinctrl-gr8.c                |    9 +-
+ drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c          |    9 +-
+ drivers/pinctrl/sunxi/pinctrl-sun5i-a10s.c         |    9 +-
+ drivers/pinctrl/sunxi/pinctrl-sun5i-a13.c          |    9 +-
+ drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c        |   10 +-
+ drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c          |    9 +-
+ drivers/pinctrl/sunxi/pinctrl-sun6i-a31s.c         |    9 +-
+ drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c          |    9 +-
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c        |   11 +-
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c          |   10 +-
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c          |    9 +-
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c         |    9 +-
+ drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c          |    9 +-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c              |  506 +++++--
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h              |    8 +-
+ drivers/pinctrl/vt8500/pinctrl-vt8500.c            |   17 +-
+ drivers/pinctrl/vt8500/pinctrl-wm8505.c            |   17 +-
+ drivers/pinctrl/vt8500/pinctrl-wm8650.c            |   17 +-
+ drivers/pinctrl/vt8500/pinctrl-wm8750.c            |   17 +-
+ drivers/pinctrl/vt8500/pinctrl-wm8850.c            |   17 +-
+ drivers/pinctrl/vt8500/pinctrl-wmt.c               |   10 -
+ drivers/pinctrl/vt8500/pinctrl-wmt.h               |    1 -
+ include/dt-bindings/gpio/meson-gxl-gpio.h          |  131 ++
+ include/dt-bindings/pinctrl/at91.h                 |    2 +
  include/linux/amba/pl061.h                         |   16 -
- include/linux/gpio/driver.h                        |   34 +-
- tools/gpio/gpio-hammer.c                           |   67 +-
- tools/gpio/gpio-utils.c                            |  256 +++++
- tools/gpio/gpio-utils.h                            |   16 +
- 44 files changed, 2228 insertions(+), 1295 deletions(-)
+ include/linux/gpio/driver.h                        |   32 +-
+ 100 files changed, 7214 insertions(+), 2053 deletions(-)
  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-sx150x.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-sx150x.txt
- create mode 100644 drivers/gpio/gpio-altera-a10sr.c
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-sx150=
+x.txt
+ create mode 100644
+Documentation/devicetree/bindings/pinctrl/qcom,msm8994-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/ti,da850-pupd=
+.txt
  delete mode 100644 drivers/gpio/gpio-sx150x.c
- create mode 100644 drivers/gpio/gpiolib-devprop.c
+ create mode 100644 drivers/pinctrl/meson/pinctrl-meson-gxl.c
+ create mode 100644 drivers/pinctrl/pinctrl-da850-pupd.c
  create mode 100644 drivers/pinctrl/pinctrl-sx150x.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-msm8994.c
+ create mode 100644 include/dt-bindings/gpio/meson-gxl-gpio.h
  delete mode 100644 include/linux/amba/pl061.h
