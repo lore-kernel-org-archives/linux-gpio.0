@@ -1,28 +1,61 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/2] devicetree: power: add bindings for GPIO-driven
- power switches
-Date: Tue, 13 Dec 2016 13:27:12 -0600
-Message-ID: <20161213192712.gbaw4t4awayybnta@rob-hp-laptop>
-References: <1481494905-18037-1-git-send-email-bgolaszewski@baylibre.com>
- <1481494905-18037-2-git-send-email-bgolaszewski@baylibre.com>
+From: Andreas Klinger <ak@it-klinger.de>
+Subject: [PATCH] pinctrl: fix DT bindings for marvell,kirkwood-pinctrl
+Date: Wed, 14 Dec 2016 00:08:27 +0100
+Message-ID: <20161213230827.GA5286@andreas>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.133]:57788 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752466AbcLMXIn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Dec 2016 18:08:43 -0500
 Content-Disposition: inline
-In-Reply-To: <1481494905-18037-2-git-send-email-bgolaszewski@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, Patrick Titiano <ptitiano@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: devicetree@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Klinger <ak@it-klinger.de>
 
-On Sun, Dec 11, 2016 at 11:21:44PM +0100, Bartosz Golaszewski wrote:
-> Some boards are equipped with simple, GPIO-driven power load switches.
-> An example of such ICs is the TI tps229* series.
+On Marvell mv88f6180 mpp pins range from 0 to 19 as well as from 35 to 44.
+This is already fixed in commit: 9573e7923007961799beff38bc5c5a7635634eef
 
-How is this different than a GPIO regulator? The input and output 
-voltages just happen to be the same. I could be convinced this is 
-different enough to have a different compatible, but it somewhat seems 
-you want to use this for IIO, so you are creating a different binding 
-for that usecase.
+This is the documentation change for above commit.
 
-Rob
+Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+---
+ .../bindings/pinctrl/marvell,kirkwood-pinctrl.txt    | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,kirkwood-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/marvell,kirkwood-pinctrl.txt
+index 730444a9a4de..6c0ea155b708 100644
+--- a/Documentation/devicetree/bindings/pinctrl/marvell,kirkwood-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/marvell,kirkwood-pinctrl.txt
+@@ -44,16 +44,16 @@ mpp16         16       gpio, sdio(d2), uart0(cts), uart1(rxd), mii(crs)
+ mpp17         17       gpio, sdio(d3)
+ mpp18         18       gpo, nand(io0)
+ mpp19         19       gpo, nand(io1)
+-mpp20         20       gpio, mii(rxerr)
+-mpp21         21       gpio, audio(spdifi)
+-mpp22         22       gpio, audio(spdifo)
+-mpp23         23       gpio, audio(rmclk)
+-mpp24         24       gpio, audio(bclk)
+-mpp25         25       gpio, audio(sdo)
+-mpp26         26       gpio, audio(lrclk)
+-mpp27         27       gpio, audio(mclk)
+-mpp28         28       gpio, audio(sdi)
+-mpp29         29       gpio, audio(extclk)
++mpp35         35       gpio, mii(rxerr)
++mpp36         36       gpio, audio(spdifi)
++mpp37         37       gpio, audio(spdifo)
++mpp38         38       gpio, audio(rmclk)
++mpp39         39       gpio, audio(bclk)
++mpp40         40       gpio, audio(sdo)
++mpp41         41       gpio, audio(lrclk)
++mpp42         42       gpio, audio(mclk)
++mpp43         43       gpio, audio(sdi)
++mpp44         44       gpio, audio(extclk)
+ 
+ * Marvell Kirkwood 88f6190
+ 
+-- 
+2.1.4
+
