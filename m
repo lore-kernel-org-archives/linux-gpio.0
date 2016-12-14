@@ -1,67 +1,28 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 03/11] driver: clk: imx: Add clock driver for imx6sll
-Date: Tue, 13 Dec 2016 15:28:35 -0800
-Message-ID: <20161213232835.GR5423@codeaurora.org>
-References: <1480660774-25055-1-git-send-email-ping.bai@nxp.com>
- <1480660774-25055-4-git-send-email-ping.bai@nxp.com>
- <20161208225257.GP5423@codeaurora.org>
- <AM3PR04MB5302BE33BE1F2C9913FF61587980@AM3PR04MB530.eurprd04.prod.outlook.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH linux v1 4/4] arm: dts: Add dt-binding to support seven segment display on zaius
+Date: Wed, 14 Dec 2016 10:00:46 +0100
+Message-ID: <10697525.O7CkPN6Gfl@wuerfel>
+References: <1481702104-8617-1-git-send-email-jaghu@google.com> <1481702104-8617-5-git-send-email-jaghu@google.com> <3917905.e4iOqADnVQ@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:51550 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750850AbcLMX2i (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Dec 2016 18:28:38 -0500
-Content-Disposition: inline
-In-Reply-To: <AM3PR04MB5302BE33BE1F2C9913FF61587980@AM3PR04MB530.eurprd04.prod.outlook.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <3917905.e4iOqADnVQ@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Jaghathiswari Rankappagounder Natarajan <jaghu@google.com>, openbmc@lists.ozlabs.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, gregkh@linuxfoundation.org, joel@jms.id.au, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linus.walleij@linaro.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jacky Bai <ping.bai@nxp.com>
-Cc: "shawnguo@kernel.org" <shawnguo@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "tglx@linutronix.de" <tglx@linutronix.de>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com" <jacky.baip@gmai>
 
-On 12/12, Jacky Bai wrote:
-> > On 12/02, Bai Ping wrote:
-> > > diff --git a/drivers/clk/imx/clk-imx6sll.c
-> > > b/drivers/clk/imx/clk-imx6sll.c new file mode 100644 index
-> > > 0000000..c5219e1
-> > > --- /dev/null
-> > > +++ b/drivers/clk/imx/clk-imx6sll.c
-> > > +0x20, 16, 1, pll7_bypass_sels, ARRAY_SIZE(pll7_bypass_sels),
-> > > +CLK_SET_RATE_PARENT);
-> > > +
-> > > +	/* Do not bypass PLLs initially */
-> > > +	clk_set_parent(clks[IMX6SLL_PLL1_BYPASS], clks[IMX6SLL_CLK_PLL1]);
-> > > +	clk_set_parent(clks[IMX6SLL_PLL2_BYPASS], clks[IMX6SLL_CLK_PLL2]);
-> > > +	clk_set_parent(clks[IMX6SLL_PLL3_BYPASS], clks[IMX6SLL_CLK_PLL3]);
-> > > +	clk_set_parent(clks[IMX6SLL_PLL4_BYPASS], clks[IMX6SLL_CLK_PLL4]);
-> > > +	clk_set_parent(clks[IMX6SLL_PLL5_BYPASS], clks[IMX6SLL_CLK_PLL5]);
-> > > +	clk_set_parent(clks[IMX6SLL_PLL6_BYPASS], clks[IMX6SLL_CLK_PLL6]);
-> > > +	clk_set_parent(clks[IMX6SLL_PLL7_BYPASS], clks[IMX6SLL_CLK_PLL7]);
-> > 
-> > Can we just put raw register writes here instead? I'd prefer we didn't use clk
-> > consumer APIs to do things to the clk tree from the providers. The problem
-> > there being that:
-> > 
-> >  1) We're trying to move away from using consumer APIs in  provider drivers.
-> > It's ok if they're used during probe, but  inside clk_ops is not preferred.
-> > 
-> >  2) Even if you have a clk pointer, it may be "orphaned" at the  time of
-> > registration and so calling the APIs here works now but  eventually we may
-> > want to return an EPROBE_DEFER error in that  case and this may block that
-> > effort.
-> > 
-> > I suppose if this is the only clk driver on this machine then this last point isn't a
-> > concern and things are probably ok here.
-> > 
+On Wednesday, December 14, 2016 9:55:47 AM CET Arnd Bergmann wrote:
+> According to your introductory mail, the interface is assumed to be
+> a 74HC164. Should we use that ID in the compatible string?
 > 
-> Using raw register writing has an issue.  The register is modified, but it seems the clock 'parent-child' relationship can 
-> not match the register setting. The register setting is not bypass the pll, but in debug 'clk_summary', the
-> pll is bypassed.  
+> We can always add other strings later if we want to support multiple
+> wire formats.
 
-So program the register settings before registering the clocks
-with the framework?
+Actually, looking up 74hc164, that seems to be a gpio expander,
+so maybe a more flexible way to do the same is to put a driver
+for the expander into drivers/gpio/ and have the main driver
+access the outputs of that using the gpiolib interface.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+	Arnd
