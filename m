@@ -1,42 +1,79 @@
-From: Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
 Subject: Re: [PATCH linux v1 4/4] arm: dts: Add dt-binding to support seven
  segment display on zaius
-Date: Wed, 14 Dec 2016 11:06:35 +0000
-Message-ID: <20161214110635.GB14217@n2100.armlinux.org.uk>
+Date: Wed, 14 Dec 2016 11:40:51 +0000
+Message-ID: <20161214114051.GC14217@n2100.armlinux.org.uk>
 References: <1481702104-8617-1-git-send-email-jaghu@google.com>
  <1481702104-8617-5-git-send-email-jaghu@google.com>
  <3917905.e4iOqADnVQ@wuerfel>
  <10697525.O7CkPN6Gfl@wuerfel>
+ <20161214110635.GB14217@n2100.armlinux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:51796 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754583AbcLNLlG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 14 Dec 2016 06:41:06 -0500
 Content-Disposition: inline
-In-Reply-To: <10697525.O7CkPN6Gfl@wuerfel>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jaghathiswari Rankappagounder Natarajan <jaghu-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+In-Reply-To: <20161214110635.GB14217@n2100.armlinux.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: mark.rutland@arm.com, Jaghathiswari Rankappagounder Natarajan <jaghu@google.com>, devicetree@vger.kernel.org, gregkh@linuxfoundation.org, openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, robh+dt@kernel.org, joel@jms.id.au, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, Dec 14, 2016 at 10:00:46AM +0100, Arnd Bergmann wrote:
-> On Wednesday, December 14, 2016 9:55:47 AM CET Arnd Bergmann wrote:
-> > According to your introductory mail, the interface is assumed to be
-> > a 74HC164. Should we use that ID in the compatible string?
+On Wed, Dec 14, 2016 at 11:06:35AM +0000, Russell King - ARM Linux wrote:
+> On Wed, Dec 14, 2016 at 10:00:46AM +0100, Arnd Bergmann wrote:
+> > On Wednesday, December 14, 2016 9:55:47 AM CET Arnd Bergmann wrote:
+> > > According to your introductory mail, the interface is assumed to be
+> > > a 74HC164. Should we use that ID in the compatible string?
+> > > 
+> > > We can always add other strings later if we want to support multiple
+> > > wire formats.
 > > 
-> > We can always add other strings later if we want to support multiple
-> > wire formats.
+> > Actually, looking up 74hc164, that seems to be a gpio expander,
+> > so maybe a more flexible way to do the same is to put a driver
+> > for the expander into drivers/gpio/ and have the main driver
+> > access the outputs of that using the gpiolib interface.
 > 
-> Actually, looking up 74hc164, that seems to be a gpio expander,
-> so maybe a more flexible way to do the same is to put a driver
-> for the expander into drivers/gpio/ and have the main driver
-> access the outputs of that using the gpiolib interface.
+> There already is - drivers/gpio/gpio-74x164.c
 
-There already is - drivers/gpio/gpio-74x164.c
+Looking at this more, it's a SPI driver, presumably because the first
+case where it appeared was on a SPI bus.
+
+However, it's not a SPI device as such, it's a piece of standard,
+general purpose logic that's been around for many years, pre-dating
+the SPI bus.
+
+Now, as for DT, we have this "DT represents the hardware, not the
+implementation" edict, which now brings up an interesting problem.
+
+If we want to use this driver in its existing form, we need to:
+
+- declare in DT a spi-gpio driver to provide a SPI bus on the GPIO
+  pins connected to the 74HC164.
+- attach the 74HC164 to the SPI bus.
+
+The problem with that is it's not representative of the hardware -
+what we're saying is that we want to reuse our existing implementation
+and make DT conform to the implementation.  At that point, we might as
+well scrap our "DT is implementation independent" edict above.
+
+What if, tomorrow, we end up with 74HC164 connected to via a different
+method?
+
+I think a much more sensible approach would be to turn the GPIO side
+of the 74x164 driver into a library, which can be re-used by multiple
+bus-specific drivers - one for SPI which allows it to be used in its
+current form, one for our platform bus which takes the GPIO lines for
+the data, clock and clear signals.
+
+I also don't see why they shouldn't use the same compatible - they're
+the same _device_ at the end of the day, just wired up differently.
+It makes the binding documentation a little fun wrt what are required
+and optional properties, but nothing that shouldn't be too difficult.
 
 -- 
 RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
 FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
 according to speedtest.net.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
