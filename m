@@ -1,54 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH linux v1 4/4] arm: dts: Add dt-binding to support seven
- segment display on zaius
-Date: Fri, 16 Dec 2016 00:07:36 +0100
-Message-ID: <CACRpkdaqKDJstfypP0EL9e=TA-atiJmK9zwrBHfLmEVV8SLuAQ@mail.gmail.com>
-References: <1481702104-8617-1-git-send-email-jaghu@google.com>
- <1481702104-8617-5-git-send-email-jaghu@google.com> <3917905.e4iOqADnVQ@wuerfel>
- <10697525.O7CkPN6Gfl@wuerfel> <20161214110635.GB14217@n2100.armlinux.org.uk> <20161214114051.GC14217@n2100.armlinux.org.uk>
+Subject: Re: [PATCH 2/2] gpio: rcar: Fine-grained Runtime PM support
+Date: Fri, 16 Dec 2016 00:12:29 +0100
+Message-ID: <CACRpkdYie5oUwO+m+yj83V9CdtPAcP09Eo2-o5kvMLJQPqcufA@mail.gmail.com>
+References: <20161208173228.16835-1-niklas.soderlund+renesas@ragnatech.se>
+ <1984659.qgJsdhyW2B@avalon> <20161208231551.GL21834@bigcity.dyn.berto.se> <2561777.Aed1u6m3Fd@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f178.google.com ([209.85.220.178]:32973 "EHLO
-        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753936AbcLOXHi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Dec 2016 18:07:38 -0500
-Received: by mail-qk0-f178.google.com with SMTP id t184so19904370qkd.0
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Dec 2016 15:07:37 -0800 (PST)
-In-Reply-To: <20161214114051.GC14217@n2100.armlinux.org.uk>
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:35548 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932771AbcLOXMb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Dec 2016 18:12:31 -0500
+Received: by mail-qt0-f180.google.com with SMTP id c47so72189283qtc.2
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Dec 2016 15:12:30 -0800 (PST)
+In-Reply-To: <2561777.Aed1u6m3Fd@avalon>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>, Jaghathiswari Rankappagounder Natarajan <jaghu@google.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Wed, Dec 14, 2016 at 12:40 PM, Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
+On Fri, Dec 9, 2016 at 12:21 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Friday 09 Dec 2016 00:15:51 Niklas S=C3=B6derlund wrote:
 
-> Looking at this more, it's a SPI driver, presumably because the first
-> case where it appeared was on a SPI bus.
+>> This was changed for the whole driver after the original patch was
+>> applied (at the time of change the patch was not yet reverted), see [1].
+>> I needed to update this when I resurrected the patch, maybe I could have
+>> been more clever and reverted the revert patch but this felt cleaner, if
+>> it's better to do it the other way around and revert a revert please let
+>> me know so I can do so in the future.
 >
-> However, it's not a SPI device as such, it's a piece of standard,
-> general purpose logic that's been around for many years, pre-dating
-> the SPI bus.
+> No, this is fine. I'm a bit dubious about [1] given that it consumes more=
+ CPU
+> cycles without any benefit as far as I can see. Maybe I can't see far eno=
+ugh
+> though, Linus Walleij could prove me wrong :-)
 
-Indeed.
+This was changed mainly for maintainability and code readability.
+Lots of subsystems have the option to carry around a data poiner
+and/or allocate an extra memory chunk for state containers.
 
-> I think a much more sensible approach would be to turn the GPIO side
-> of the 74x164 driver into a library, which can be re-used by multiple
-> bus-specific drivers - one for SPI which allows it to be used in its
-> current form, one for our platform bus which takes the GPIO lines for
-> the data, clock and clear signals.
->
-> I also don't see why they shouldn't use the same compatible - they're
-> the same _device_ at the end of the day, just wired up differently.
-> It makes the binding documentation a little fun wrt what are required
-> and optional properties, but nothing that shouldn't be too difficult.
-
-I agree on both accounts.
-
-Sorry for not seeing this in the first place, I was well aware that this
-is a standard component and may be connected in a myriad of ways,
-so I should have known better :(
+I am relaxed on it, if someone very much want to use container_of()
+because of $REASON I am not really bothered.
 
 Yours,
 Linus Walleij
