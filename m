@@ -1,71 +1,54 @@
-From: Ian Pilcher <arequipeno@gmail.com>
-Subject: How to ensure other module/driver is initialized?
-Date: Thu, 15 Dec 2016 13:50:55 -0600
-Message-ID: <180b9075-7db0-1708-50f4-622333de2049@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH linux v1 4/4] arm: dts: Add dt-binding to support seven
+ segment display on zaius
+Date: Fri, 16 Dec 2016 00:07:36 +0100
+Message-ID: <CACRpkdaqKDJstfypP0EL9e=TA-atiJmK9zwrBHfLmEVV8SLuAQ@mail.gmail.com>
+References: <1481702104-8617-1-git-send-email-jaghu@google.com>
+ <1481702104-8617-5-git-send-email-jaghu@google.com> <3917905.e4iOqADnVQ@wuerfel>
+ <10697525.O7CkPN6Gfl@wuerfel> <20161214110635.GB14217@n2100.armlinux.org.uk> <20161214114051.GC14217@n2100.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:32959 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752131AbcLOTu5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Dec 2016 14:50:57 -0500
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:32973 "EHLO
+        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753936AbcLOXHi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Dec 2016 18:07:38 -0500
+Received: by mail-qk0-f178.google.com with SMTP id t184so19904370qkd.0
+        for <linux-gpio@vger.kernel.org>; Thu, 15 Dec 2016 15:07:37 -0800 (PST)
+In-Reply-To: <20161214114051.GC14217@n2100.armlinux.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>, Jaghathiswari Rankappagounder Natarajan <jaghu@google.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-I maintain an out-of-tree kernel module that enables the front-panel
-LEDs on the Thecus N5550 NAS.
+On Wed, Dec 14, 2016 at 12:40 PM, Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
 
-   https://github.com/ipilcher/n5550/blob/master/modules/n5550_board.c
+> Looking at this more, it's a SPI driver, presumably because the first
+> case where it appeared was on a SPI bus.
+>
+> However, it's not a SPI device as such, it's a piece of standard,
+> general purpose logic that's been around for many years, pre-dating
+> the SPI bus.
 
-The drive activity LEDs are connected to GPIO pins on the ICH10R, so
-the gpio_ich driver must be loaded and initialized before my module is
-loaded.  Unfortunately, the "and initialized" part is giving me trouble
-after a recent CentOS kernel update.
+Indeed.
 
-My modprobe configuration includes:
+> I think a much more sensible approach would be to turn the GPIO side
+> of the 74x164 driver into a library, which can be re-used by multiple
+> bus-specific drivers - one for SPI which allows it to be used in its
+> current form, one for our platform bus which takes the GPIO lines for
+> the data, clock and clear signals.
+>
+> I also don't see why they shouldn't use the same compatible - they're
+> the same _device_ at the end of the day, just wired up differently.
+> It makes the binding documentation a little fun wrt what are required
+> and optional properties, but nothing that shouldn't be too difficult.
 
-   install n5550_board /sbin/modprobe gpio_ich; /sbin/modprobe i2c_i801;
-       /sbin/modprobe --ignore-install n5550_board
+I agree on both accounts.
 
-But although the gpio_ich module does get loaded, it apparently hasn't
-finished initializing when my module is loaded.  The result looks like
-this:
+Sorry for not seeing this in the first place, I was well aware that this
+is a standard component and may be connected in a myriad of ways,
+so I should have known better :(
 
-  [    2.049217] leds-pca953x 0-0064: setting platform data
-  [    2.051756] leds-gpio leds-gpio: pins are not configured from the 
-driver
-  [    2.051886] ------------[ cut here ]------------
-  [    2.052004] WARNING: at drivers/gpio/gpiolib.c:176 
-gpio_to_desc+0x94/0xd0()
-  [    2.052120] invalid GPIO 195
-  [    2.052273] Modules linked in: leds_gpio(+) leds_pca9532(+) 
-dm_mirror dm_region_hash dm_log dm_mod it87 hwmon_vid n5550_board(OE) 
-i2c_i801 gpio_ich i2c_core
-  ...
-  [    2.055171] Call Trace:
-  ...
-  [    2.060439] ---[ end trace d53e8e3ea852c413 ]---
-  [    2.060589] gpiod_request: invalid GPIO
-  [    2.060767] leds-pca953x 0-0062: setting platform data
-  [    2.062718] leds-gpio: probe of leds-gpio failed with error -22
-  [    2.066156] leds-pca953x 0-0062: gpios 16...31
-  ...
-  [    2.265708] gpio_ich: GPIO from 195 to 255 on gpio_ich
-
-You can see that gpio_ich does appear on the "Modules linked in" line,
-but it hasn't finished initializing until more that 1/10th of a
-second after my module tries to use its GPIOs (indirectly through
-leds_gpio).
-
-I can work around this by adding a sleep to my modprobe configuration,
-but that feels hacky and fragile.
-
-What is the "right" way to do this?
-
--- 
-========================================================================
-Ian Pilcher                                         arequipeno@gmail.com
--------- "I grew up before Mark Zuckerberg invented friendship" --------
-========================================================================
+Yours,
+Linus Walleij
