@@ -1,239 +1,77 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: [PATCH 1/1 RFC] gpio: Pass GPIO label down to gpiod_request when using get_gpiod_from_child
-Date: Thu, 15 Dec 2016 09:53:21 +0100
-Message-ID: <20161215085321.20337-1-alexander.stein@systec-electronic.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-Sender: linux-leds-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Pavel Machek <pavel@ucw.cz>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 1/2] devicetree: power: add bindings for GPIO-driven power switches
+Date: Thu, 15 Dec 2016 11:57:18 +0100
+Message-ID: <CAMpxmJVwgHGrywDFnE9dNfB9UL89hLyiRO2He7uyiRgBpEfjkg@mail.gmail.com>
+References: <1481494905-18037-1-git-send-email-bgolaszewski@baylibre.com>
+ <1481494905-18037-2-git-send-email-bgolaszewski@baylibre.com>
+ <20161213192712.gbaw4t4awayybnta@rob-hp-laptop> <CAMpxmJWw3wCE4ch8TVik+2b3BC8Lvxbi13HGd9GxruSRLu95Mg@mail.gmail.com>
+ <54679B04-3A57-4F0E-8EE6-BB37785F8E10@jic23.retrosnub.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54679B04-3A57-4F0E-8EE6-BB37785F8E10@jic23.retrosnub.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+Cc: Rob Herring <robh@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org, linux-devicetree <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>, Patrick Titiano <ptitiano@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio <linux-gpio@vger.kernel.org>, Sebastian Reichel <sre@kernel.org>, linux-pm <linux-pm@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Currently all users of fwnode_get_named_gpiod() have no way to specify a
-label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
-With this change a proper label is used.
-Also adjust all users so they can pass a label, properly retrieved from
-device tree properties.
+2016-12-14 18:36 GMT+01:00 Jonathan Cameron <jic23@jic23.retrosnub.co.uk>:
+>
+>
+> On 14 December 2016 16:58:21 GMT+00:00, Bartosz Golaszewski
+> <bgolaszewski@baylibre.com> wrote:
+>>2016-12-13 20:27 GMT+01:00 Rob Herring <robh@kernel.org>:
+>>> On Sun, Dec 11, 2016 at 11:21:44PM +0100, Bartosz Golaszewski wrote:
+>>>> Some boards are equipped with simple, GPIO-driven power load
+>>switches.
+>>>> An example of such ICs is the TI tps229* series.
+>>>
+>>> How is this different than a GPIO regulator? The input and output
+>>> voltages just happen to be the same. I could be convinced this is
+>>> different enough to have a different compatible, but it somewhat
+>>seems
+>>> you want to use this for IIO, so you are creating a different binding
+>>> for that usecase.
+>>>
+>>
+>>It's more of a fixed regulator I suppose. Do you mean adding a new
+>>compatible to the fixed-regulator binding (e.g. "gpio-power-switch" or
+>>"simple-power-switch") and then providing an iio driver for toggling
+>>the switch?
+>
+> I am rather torn on whether the IIO interface makes any sense beyond that of
+> convenience.
+>
 
-Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
----
-This patchset addresses the problem described in
-https://www.spinics.net/lists/linux-leds/msg07233.html
+The question is: will the iio maintainers be ok with adding support
+for interfaces different than iio (I guess so since Lars already
+mentioned wanting to support the GPIO chardev)? If so, I'm ok with not
+using the iio framework in the kernel.
 
-I can only verify leds-gpio usage, but changes to gpio_keys_polled and
-amba-clcd-nomadik seem pretty straight forward.
+> A bridge to a regulator in general might make sense to cover the case of a
+> reg effectively
+> acting as a DAC at the edge of the known hardware.
+>
+> Lars' point about perhaps adding support for the new gpio userspace stuff to
+> libiio would in
+> this case also be rather papering over the issue.
+> There is known hardware there so we should describe it!
+>
+> I think we should be considering this as the general case of the Linux
+> controlled power supply.
+> How do we want to represent that?
+> Ultimately does a general regulator userspace interface make sense?
+>
+> Classic case of people cutting our hardware in half and making boundaries
+> beyond which lie dragons.
+>
+> I would love to see the general case covered.
+>
 
-If this is the right thing to do, I need to know who I shall CC for
-patch approval.
+It seems as if this is already covered by the userspace-consumer
+regulator driver, but it doesn't speak device tree yet. I guess we
+could reuse it by merging the proposed gpio-power-switch binding and
+extending it to parse DT.
 
- drivers/gpio/devres.c                     |  6 ++++--
- drivers/gpio/gpiolib.c                    |  6 ++++--
- drivers/input/keyboard/gpio_keys_polled.c | 11 ++++++-----
- drivers/leds/leds-gpio.c                  | 13 +++++++------
- drivers/video/fbdev/amba-clcd-nomadik.c   |  9 +++++----
- include/linux/gpio/consumer.h             | 12 ++++++++----
- 6 files changed, 34 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
-index b760cbb..892aa1b 100644
---- a/drivers/gpio/devres.c
-+++ b/drivers/gpio/devres.c
-@@ -127,13 +127,15 @@ EXPORT_SYMBOL(devm_gpiod_get_index);
-  * @dev:	GPIO consumer
-  * @con_id:	function within the GPIO consumer
-  * @child:	firmware node (child of @dev)
-+ * @label:	label for GPIO
-  *
-  * GPIO descriptors returned from this function are automatically disposed on
-  * driver detach.
-  */
- struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
- 					    const char *con_id,
--					    struct fwnode_handle *child)
-+					    struct fwnode_handle *child,
-+					    const char *label)
- {
- 	static const char * const suffixes[] = { "gpios", "gpio" };
- 	char prop_name[32]; /* 32 is max size of property name */
-@@ -154,7 +156,7 @@ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
- 			snprintf(prop_name, sizeof(prop_name), "%s",
- 							       suffixes[i]);
- 
--		desc = fwnode_get_named_gpiod(child, prop_name);
-+		desc = fwnode_get_named_gpiod(child, prop_name, label);
- 		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
- 			break;
- 	}
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 868128a..b56a5ae 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3246,6 +3246,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
-  * fwnode_get_named_gpiod - obtain a GPIO from firmware node
-  * @fwnode:	handle of the firmware node
-  * @propname:	name of the firmware property representing the GPIO
-+ * @label:	label for GPIO
-  *
-  * This function can be used for drivers that get their configuration
-  * from firmware.
-@@ -3257,7 +3258,8 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
-  * In case of error an ERR_PTR() is returned.
-  */
- struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
--					 const char *propname)
-+					 const char *propname,
-+					 const char *label)
- {
- 	struct gpio_desc *desc = ERR_PTR(-ENODEV);
- 	bool active_low = false;
-@@ -3287,7 +3289,7 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 	if (IS_ERR(desc))
- 		return desc;
- 
--	ret = gpiod_request(desc, NULL);
-+	ret = gpiod_request(desc, label);
- 	if (ret)
- 		return ERR_PTR(ret);
- 
-diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
-index 62bdb1d..01087c7 100644
---- a/drivers/input/keyboard/gpio_keys_polled.c
-+++ b/drivers/input/keyboard/gpio_keys_polled.c
-@@ -167,7 +167,12 @@ static struct gpio_keys_platform_data *gpio_keys_polled_get_devtree_pdata(struct
- 	device_for_each_child_node(dev, child) {
- 		struct gpio_desc *desc;
- 
--		desc = devm_get_gpiod_from_child(dev, NULL, child);
-+		button = &pdata->buttons[pdata->nbuttons++];
-+
-+		fwnode_property_read_string(child, "label", &button->desc);
-+
-+		desc = devm_get_gpiod_from_child(dev, NULL, child,
-+						 button->desc);
- 		if (IS_ERR(desc)) {
- 			error = PTR_ERR(desc);
- 			if (error != -EPROBE_DEFER)
-@@ -177,8 +182,6 @@ static struct gpio_keys_platform_data *gpio_keys_polled_get_devtree_pdata(struct
- 			fwnode_handle_put(child);
- 			return ERR_PTR(error);
- 		}
--
--		button = &pdata->buttons[pdata->nbuttons++];
- 		button->gpiod = desc;
- 
- 		if (fwnode_property_read_u32(child, "linux,code", &button->code)) {
-@@ -188,8 +191,6 @@ static struct gpio_keys_platform_data *gpio_keys_polled_get_devtree_pdata(struct
- 			return ERR_PTR(-EINVAL);
- 		}
- 
--		fwnode_property_read_string(child, "label", &button->desc);
--
- 		if (fwnode_property_read_u32(child, "linux,input-type",
- 					     &button->type))
- 			button->type = EV_KEY;
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index d400dca..7557788 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -174,12 +174,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 		const char *state = NULL;
- 		struct device_node *np = to_of_node(child);
- 
--		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child);
--		if (IS_ERR(led.gpiod)) {
--			fwnode_handle_put(child);
--			return ERR_CAST(led.gpiod);
--		}
--
- 		ret = fwnode_property_read_string(child, "label", &led.name);
- 		if (ret && IS_ENABLED(CONFIG_OF) && np)
- 			led.name = np->name;
-@@ -188,6 +182,13 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 			return ERR_PTR(-EINVAL);
- 		}
- 
-+		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child,
-+						      led.name);
-+		if (IS_ERR(led.gpiod)) {
-+			fwnode_handle_put(child);
-+			return ERR_CAST(led.gpiod);
-+		}
-+
- 		fwnode_property_read_string(child, "linux,default-trigger",
- 					    &led.default_trigger);
- 
-diff --git a/drivers/video/fbdev/amba-clcd-nomadik.c b/drivers/video/fbdev/amba-clcd-nomadik.c
-index 0c06fca..22e963e 100644
---- a/drivers/video/fbdev/amba-clcd-nomadik.c
-+++ b/drivers/video/fbdev/amba-clcd-nomadik.c
-@@ -184,7 +184,8 @@ static void tpg110_init(struct device *dev, struct device_node *np,
- {
- 	dev_info(dev, "TPG110 display init\n");
- 
--	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode);
-+	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode,
-+					   "grestb");
- 	if (IS_ERR(grestb)) {
- 		dev_err(dev, "no GRESTB GPIO\n");
- 		return;
-@@ -192,19 +193,19 @@ static void tpg110_init(struct device *dev, struct device_node *np,
- 	/* This asserts the GRESTB signal, putting the display into reset */
- 	gpiod_direction_output(grestb, 1);
- 
--	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode);
-+	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode, "scen");
- 	if (IS_ERR(scen)) {
- 		dev_err(dev, "no SCEN GPIO\n");
- 		return;
- 	}
- 	gpiod_direction_output(scen, 0);
--	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode);
-+	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, "scl");
- 	if (IS_ERR(scl)) {
- 		dev_err(dev, "no SCL GPIO\n");
- 		return;
- 	}
- 	gpiod_direction_output(scl, 0);
--	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode);
-+	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, "sda");
- 	if (IS_ERR(sda)) {
- 		dev_err(dev, "no SDA GPIO\n");
- 		return;
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index fb0fde6..82b4014 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -135,10 +135,12 @@ int desc_to_gpio(const struct gpio_desc *desc);
- struct fwnode_handle;
- 
- struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
--					 const char *propname);
-+					 const char *propname,
-+					 const char *label);
- struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
- 					    const char *con_id,
--					    struct fwnode_handle *child);
-+					    struct fwnode_handle *child,
-+					    const char *label);
- #else /* CONFIG_GPIOLIB */
- 
- static inline int gpiod_count(struct device *dev, const char *con_id)
-@@ -412,13 +414,15 @@ static inline int desc_to_gpio(const struct gpio_desc *desc)
- struct fwnode_handle;
- 
- static inline struct gpio_desc *fwnode_get_named_gpiod(
--	struct fwnode_handle *fwnode, const char *propname)
-+	struct fwnode_handle *fwnode, const char *propname,
-+	const char *label)
- {
- 	return ERR_PTR(-ENOSYS);
- }
- 
- static inline struct gpio_desc *devm_get_gpiod_from_child(
--	struct device *dev, const char *con_id, struct fwnode_handle *child)
-+	struct device *dev, const char *con_id, struct fwnode_handle *child,
-+	const char *label)
- {
- 	return ERR_PTR(-ENOSYS);
- }
--- 
-2.10.2
+Best regards,
+Bartosz Golaszewski
