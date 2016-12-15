@@ -1,46 +1,71 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] devicetree: power: add bindings for GPIO-driven power switches
-Date: Thu, 15 Dec 2016 09:05:23 -0600
-Message-ID: <CAL_JsqLwS51MhOJQb-Lmo=osHiYKcAcCJaxKJFdSvZBpafz7Gw@mail.gmail.com>
-References: <1481494905-18037-1-git-send-email-bgolaszewski@baylibre.com>
- <1481494905-18037-2-git-send-email-bgolaszewski@baylibre.com>
- <20161213192712.gbaw4t4awayybnta@rob-hp-laptop> <CAMpxmJWw3wCE4ch8TVik+2b3BC8Lvxbi13HGd9GxruSRLu95Mg@mail.gmail.com>
+From: Ian Pilcher <arequipeno@gmail.com>
+Subject: How to ensure other module/driver is initialized?
+Date: Thu, 15 Dec 2016 13:50:55 -0600
+Message-ID: <180b9075-7db0-1708-50f4-622333de2049@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMpxmJWw3wCE4ch8TVik+2b3BC8Lvxbi13HGd9GxruSRLu95Mg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Cc: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Patrick Titiano <ptitiano-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-pm <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:32959 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752131AbcLOTu5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Dec 2016 14:50:57 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Wed, Dec 14, 2016 at 10:58 AM, Bartosz Golaszewski
-<bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> wrote:
-> 2016-12-13 20:27 GMT+01:00 Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
->> On Sun, Dec 11, 2016 at 11:21:44PM +0100, Bartosz Golaszewski wrote:
->>> Some boards are equipped with simple, GPIO-driven power load switches.
->>> An example of such ICs is the TI tps229* series.
->>
->> How is this different than a GPIO regulator? The input and output
->> voltages just happen to be the same. I could be convinced this is
->> different enough to have a different compatible, but it somewhat seems
->> you want to use this for IIO, so you are creating a different binding
->> for that usecase.
->>
->
-> It's more of a fixed regulator I suppose. Do you mean adding a new
-> compatible to the fixed-regulator binding (e.g. "gpio-power-switch" or
-> "simple-power-switch") and then providing an iio driver for toggling
-> the switch?
+I maintain an out-of-tree kernel module that enables the front-panel
+LEDs on the Thecus N5550 NAS.
 
-Yes, at least the first part. I view the switch as just a more
-specific subtype of a fixed-regulator. Whether an IIO driver is a
-separate discussion which is happening.
+   https://github.com/ipilcher/n5550/blob/master/modules/n5550_board.c
 
-Rob
+The drive activity LEDs are connected to GPIO pins on the ICH10R, so
+the gpio_ich driver must be loaded and initialized before my module is
+loaded.  Unfortunately, the "and initialized" part is giving me trouble
+after a recent CentOS kernel update.
 
-P.S. I really don't like compatibles with "simple".
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+My modprobe configuration includes:
+
+   install n5550_board /sbin/modprobe gpio_ich; /sbin/modprobe i2c_i801;
+       /sbin/modprobe --ignore-install n5550_board
+
+But although the gpio_ich module does get loaded, it apparently hasn't
+finished initializing when my module is loaded.  The result looks like
+this:
+
+  [    2.049217] leds-pca953x 0-0064: setting platform data
+  [    2.051756] leds-gpio leds-gpio: pins are not configured from the 
+driver
+  [    2.051886] ------------[ cut here ]------------
+  [    2.052004] WARNING: at drivers/gpio/gpiolib.c:176 
+gpio_to_desc+0x94/0xd0()
+  [    2.052120] invalid GPIO 195
+  [    2.052273] Modules linked in: leds_gpio(+) leds_pca9532(+) 
+dm_mirror dm_region_hash dm_log dm_mod it87 hwmon_vid n5550_board(OE) 
+i2c_i801 gpio_ich i2c_core
+  ...
+  [    2.055171] Call Trace:
+  ...
+  [    2.060439] ---[ end trace d53e8e3ea852c413 ]---
+  [    2.060589] gpiod_request: invalid GPIO
+  [    2.060767] leds-pca953x 0-0062: setting platform data
+  [    2.062718] leds-gpio: probe of leds-gpio failed with error -22
+  [    2.066156] leds-pca953x 0-0062: gpios 16...31
+  ...
+  [    2.265708] gpio_ich: GPIO from 195 to 255 on gpio_ich
+
+You can see that gpio_ich does appear on the "Modules linked in" line,
+but it hasn't finished initializing until more that 1/10th of a
+second after my module tries to use its GPIOs (indirectly through
+leds_gpio).
+
+I can work around this by adding a sleep to my modprobe configuration,
+but that feels hacky and fragile.
+
+What is the "right" way to do this?
+
+-- 
+========================================================================
+Ian Pilcher                                         arequipeno@gmail.com
+-------- "I grew up before Mark Zuckerberg invented friendship" --------
+========================================================================
