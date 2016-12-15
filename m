@@ -1,119 +1,239 @@
-From: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-Subject: Re: [PATCH v3 1/4] pinctrl: aspeed: Read and write bits in LPC and
- GFX controllers
-Date: Thu, 15 Dec 2016 10:30:43 +1030
-Message-ID: <1481760043.3112.60.camel@aj.id.au>
-References: <20161206031152.3004-1-andrew@aj.id.au>
-         <20161206031152.3004-2-andrew@aj.id.au>
-         <20161212162712.u2uypxkqhh6cinsp@rob-hp-laptop>
-         <1481609543.3112.34.camel@aj.id.au>
-         <CAL_JsqJvhxDSVqpAFCberferxCjvLPRTFXcgTafaPf1DwOa2Xw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-vaNGXmR19JSZRtUNO7V3"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL_JsqJvhxDSVqpAFCberferxCjvLPRTFXcgTafaPf1DwOa2Xw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: [PATCH 1/1 RFC] gpio: Pass GPIO label down to gpiod_request when using get_gpiod_from_child
+Date: Thu, 15 Dec 2016 09:53:21 +0100
+Message-ID: <20161215085321.20337-1-alexander.stein@systec-electronic.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+Sender: linux-leds-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Pavel Machek <pavel@ucw.cz>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+Currently all users of fwnode_get_named_gpiod() have no way to specify a
+label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
+With this change a proper label is used.
+Also adjust all users so they can pass a label, properly retrieved from
+device tree properties.
 
---=-vaNGXmR19JSZRtUNO7V3
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+---
+This patchset addresses the problem described in
+https://www.spinics.net/lists/linux-leds/msg07233.html
 
-On Wed, 2016-12-14 at 10:46 -0600, Rob Herring wrote:
-> >> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "aspeed,g5-pinctr=
-l";
-> >>
-> >> There's no register range for pinctrl?
-> >
-> > This may be a mistake on my part; when I wrote this I had no experience
-> > with writing devicetree bindings (and still don't have a lot).
-> >
-> > The SCU does have register regions for pinctrl but on reflection I feel
-> > neither the mfd nor syscon bindings describe how children's resources
-> > should be treated in general. The example in the mfd bindings is for
-> > hardware that is register-bit-led,compatible, whose bindings use the
-> > 'offset' property rather than 'reg', which still describes where, but
-> > not using the reg property. Given my uncertainty with reg in an mfd
-> > child, I wrote the pinctrl/pinmux driver using offsets from the base of
-> > the SCU's syscon rather than describing the exact region(s) of the
-> > syscon that should be used.
-> >
-> > The issue you raise here occurred to me when writing the LPC Host
-> > Controller bindings, but there I wasn't convinced using the ranges
-> > property to give offsets was the right thing to do either.
-> >
-> > Regardless, whilst there are two dedicated regions of pinmux registers,
-> > the mux state also depends on bits in SCU registers outside of these
-> > regions. Assuming we define an appropriate ranges property for the SCU
-> > syscon the pinctrl reg property would look like:
-> >
-> >=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0x2c 0x1>, <0x3c 0x1>, <0x48 0x1>, <0x=
-70 0x1>, <0x7c 0x1>, <0x80 0x18>, <0xa0 0x10>, <0xd0 0x1>;
-> >
-> > This is the list of registers affecting the mux taken from the pinctrl-
-> > aspeed.h.
->=20
-> With other registers in the holes, right?=20
+I can only verify leds-gpio usage, but changes to gpio_keys_polled and
+amba-clcd-nomadik seem pretty straight forward.
 
-Yes.
+If this is the right thing to do, I need to know who I shall CC for
+patch approval.
 
-> If it is sparse like that,
-> then yes you probably just want to have reg in the parent for the
-> whole block.
+ drivers/gpio/devres.c                     |  6 ++++--
+ drivers/gpio/gpiolib.c                    |  6 ++++--
+ drivers/input/keyboard/gpio_keys_polled.c | 11 ++++++-----
+ drivers/leds/leds-gpio.c                  | 13 +++++++------
+ drivers/video/fbdev/amba-clcd-nomadik.c   |  9 +++++----
+ include/linux/gpio/consumer.h             | 12 ++++++++----
+ 6 files changed, 34 insertions(+), 23 deletions(-)
 
-Alright, we will leave it as-is.
-
->=20
-> > What action do you recommend here? The pinctrl dts patches for the
-> > Aspeed SoCs are yet to be applied, so changing the bindings to require
-> > a reg property can't break any existing in-tree users as there are
-> > none. The pinctrl driver can be patched to respect the reg property
-> > after the fact, though actually using the region descriptions might be
-> > interesting.
-> >
-> >>
-> >> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 aspeed,external-nodes =3D <&gfx,=
- &lpchc>;
-> >
-> > Did you have feedback on this approach? I queried you about it in the
-> > previous revision, but never received a reply:
->=20
-> It seems okay. At least, I don't have a better suggestion.
-
-Thanks.
-
-Andrew
---=-vaNGXmR19JSZRtUNO7V3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCgAGBQJYUd0rAAoJEJ0dnzgO5LT5sYMP/Ah3bgthVkeJdw21tTdy6V07
-v3Fdj6C7nIzom4CqbdvbwC7snwUuuxi5cjSWpsEjEY6Zblsg4Bn06C+KMSggD2Yb
-N+8xGFVRVmgBqaXtpIv9mEL1BF15yYJMf2QVpOac2rRt2mYKZicuR7A6ErrSD87w
-uDlwrTv3rAnDezqT5hIFLsHagOM4IDrgLa4jTvZDk8RLaqGC40gyvVNVSBhd2SEj
-pTWtRhJUcKm84LwyJG8rJiptamx+ykK5gA3do0ZenvoQisaMpqJRM8cKdUzpkxeA
-VMIY/We4j6cjOjDOf8j/sc5i4weIZ5DhklbkYUaQs7GgbJUeIViMfagjZmLLMig5
-fCKulaN7/bEvJ+A0R8kQU05dS8DKSZn+EApuymdoEAwmtM385pjAyXitQPPW0wR4
-6FuiSeT+lPxhnX0PUH18TIVzac/nEuxKaKbhtFy0qbt8gWg4GoSak1Cw7lBmuTTJ
-nbVuvKocA3oPePMLvsaWIs5sFnE24Q2rcE17XKL6cWpVPriyML5H6PWf/L1V9bON
-dWnIqYODU1rzJSCM5n+tunOiiOCyG3KGnesXz3RSlIY2N+ghCBHJjk/pDeGD52fW
-LKjNiyFGE5eWC7EQd3W+7onFXBdrNCnpSsvbNL3+gnvNfeuq1soIFDZP49PG6N1Q
-xXzdmFBs7AHhlwoeX6kt
-=UzIO
------END PGP SIGNATURE-----
-
---=-vaNGXmR19JSZRtUNO7V3--
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
+index b760cbb..892aa1b 100644
+--- a/drivers/gpio/devres.c
++++ b/drivers/gpio/devres.c
+@@ -127,13 +127,15 @@ EXPORT_SYMBOL(devm_gpiod_get_index);
+  * @dev:	GPIO consumer
+  * @con_id:	function within the GPIO consumer
+  * @child:	firmware node (child of @dev)
++ * @label:	label for GPIO
+  *
+  * GPIO descriptors returned from this function are automatically disposed on
+  * driver detach.
+  */
+ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+ 					    const char *con_id,
+-					    struct fwnode_handle *child)
++					    struct fwnode_handle *child,
++					    const char *label)
+ {
+ 	static const char * const suffixes[] = { "gpios", "gpio" };
+ 	char prop_name[32]; /* 32 is max size of property name */
+@@ -154,7 +156,7 @@ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+ 			snprintf(prop_name, sizeof(prop_name), "%s",
+ 							       suffixes[i]);
+ 
+-		desc = fwnode_get_named_gpiod(child, prop_name);
++		desc = fwnode_get_named_gpiod(child, prop_name, label);
+ 		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
+ 			break;
+ 	}
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 868128a..b56a5ae 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3246,6 +3246,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
+  * fwnode_get_named_gpiod - obtain a GPIO from firmware node
+  * @fwnode:	handle of the firmware node
+  * @propname:	name of the firmware property representing the GPIO
++ * @label:	label for GPIO
+  *
+  * This function can be used for drivers that get their configuration
+  * from firmware.
+@@ -3257,7 +3258,8 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
+  * In case of error an ERR_PTR() is returned.
+  */
+ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+-					 const char *propname)
++					 const char *propname,
++					 const char *label)
+ {
+ 	struct gpio_desc *desc = ERR_PTR(-ENODEV);
+ 	bool active_low = false;
+@@ -3287,7 +3289,7 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+ 	if (IS_ERR(desc))
+ 		return desc;
+ 
+-	ret = gpiod_request(desc, NULL);
++	ret = gpiod_request(desc, label);
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
+index 62bdb1d..01087c7 100644
+--- a/drivers/input/keyboard/gpio_keys_polled.c
++++ b/drivers/input/keyboard/gpio_keys_polled.c
+@@ -167,7 +167,12 @@ static struct gpio_keys_platform_data *gpio_keys_polled_get_devtree_pdata(struct
+ 	device_for_each_child_node(dev, child) {
+ 		struct gpio_desc *desc;
+ 
+-		desc = devm_get_gpiod_from_child(dev, NULL, child);
++		button = &pdata->buttons[pdata->nbuttons++];
++
++		fwnode_property_read_string(child, "label", &button->desc);
++
++		desc = devm_get_gpiod_from_child(dev, NULL, child,
++						 button->desc);
+ 		if (IS_ERR(desc)) {
+ 			error = PTR_ERR(desc);
+ 			if (error != -EPROBE_DEFER)
+@@ -177,8 +182,6 @@ static struct gpio_keys_platform_data *gpio_keys_polled_get_devtree_pdata(struct
+ 			fwnode_handle_put(child);
+ 			return ERR_PTR(error);
+ 		}
+-
+-		button = &pdata->buttons[pdata->nbuttons++];
+ 		button->gpiod = desc;
+ 
+ 		if (fwnode_property_read_u32(child, "linux,code", &button->code)) {
+@@ -188,8 +191,6 @@ static struct gpio_keys_platform_data *gpio_keys_polled_get_devtree_pdata(struct
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 
+-		fwnode_property_read_string(child, "label", &button->desc);
+-
+ 		if (fwnode_property_read_u32(child, "linux,input-type",
+ 					     &button->type))
+ 			button->type = EV_KEY;
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index d400dca..7557788 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -174,12 +174,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 		const char *state = NULL;
+ 		struct device_node *np = to_of_node(child);
+ 
+-		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child);
+-		if (IS_ERR(led.gpiod)) {
+-			fwnode_handle_put(child);
+-			return ERR_CAST(led.gpiod);
+-		}
+-
+ 		ret = fwnode_property_read_string(child, "label", &led.name);
+ 		if (ret && IS_ENABLED(CONFIG_OF) && np)
+ 			led.name = np->name;
+@@ -188,6 +182,13 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 
++		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child,
++						      led.name);
++		if (IS_ERR(led.gpiod)) {
++			fwnode_handle_put(child);
++			return ERR_CAST(led.gpiod);
++		}
++
+ 		fwnode_property_read_string(child, "linux,default-trigger",
+ 					    &led.default_trigger);
+ 
+diff --git a/drivers/video/fbdev/amba-clcd-nomadik.c b/drivers/video/fbdev/amba-clcd-nomadik.c
+index 0c06fca..22e963e 100644
+--- a/drivers/video/fbdev/amba-clcd-nomadik.c
++++ b/drivers/video/fbdev/amba-clcd-nomadik.c
+@@ -184,7 +184,8 @@ static void tpg110_init(struct device *dev, struct device_node *np,
+ {
+ 	dev_info(dev, "TPG110 display init\n");
+ 
+-	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode);
++	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode,
++					   "grestb");
+ 	if (IS_ERR(grestb)) {
+ 		dev_err(dev, "no GRESTB GPIO\n");
+ 		return;
+@@ -192,19 +193,19 @@ static void tpg110_init(struct device *dev, struct device_node *np,
+ 	/* This asserts the GRESTB signal, putting the display into reset */
+ 	gpiod_direction_output(grestb, 1);
+ 
+-	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode);
++	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode, "scen");
+ 	if (IS_ERR(scen)) {
+ 		dev_err(dev, "no SCEN GPIO\n");
+ 		return;
+ 	}
+ 	gpiod_direction_output(scen, 0);
+-	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode);
++	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, "scl");
+ 	if (IS_ERR(scl)) {
+ 		dev_err(dev, "no SCL GPIO\n");
+ 		return;
+ 	}
+ 	gpiod_direction_output(scl, 0);
+-	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode);
++	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, "sda");
+ 	if (IS_ERR(sda)) {
+ 		dev_err(dev, "no SDA GPIO\n");
+ 		return;
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index fb0fde6..82b4014 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -135,10 +135,12 @@ int desc_to_gpio(const struct gpio_desc *desc);
+ struct fwnode_handle;
+ 
+ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+-					 const char *propname);
++					 const char *propname,
++					 const char *label);
+ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+ 					    const char *con_id,
+-					    struct fwnode_handle *child);
++					    struct fwnode_handle *child,
++					    const char *label);
+ #else /* CONFIG_GPIOLIB */
+ 
+ static inline int gpiod_count(struct device *dev, const char *con_id)
+@@ -412,13 +414,15 @@ static inline int desc_to_gpio(const struct gpio_desc *desc)
+ struct fwnode_handle;
+ 
+ static inline struct gpio_desc *fwnode_get_named_gpiod(
+-	struct fwnode_handle *fwnode, const char *propname)
++	struct fwnode_handle *fwnode, const char *propname,
++	const char *label)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+ 
+ static inline struct gpio_desc *devm_get_gpiod_from_child(
+-	struct device *dev, const char *con_id, struct fwnode_handle *child)
++	struct device *dev, const char *con_id, struct fwnode_handle *child,
++	const char *label)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+-- 
+2.10.2
