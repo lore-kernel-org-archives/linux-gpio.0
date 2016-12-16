@@ -1,48 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: rcar: Fine-grained Runtime PM support
-Date: Fri, 16 Dec 2016 00:12:29 +0100
-Message-ID: <CACRpkdYie5oUwO+m+yj83V9CdtPAcP09Eo2-o5kvMLJQPqcufA@mail.gmail.com>
-References: <20161208173228.16835-1-niklas.soderlund+renesas@ragnatech.se>
- <1984659.qgJsdhyW2B@avalon> <20161208231551.GL21834@bigcity.dyn.berto.se> <2561777.Aed1u6m3Fd@avalon>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f180.google.com ([209.85.216.180]:35548 "EHLO
-        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932771AbcLOXMb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Dec 2016 18:12:31 -0500
-Received: by mail-qt0-f180.google.com with SMTP id c47so72189283qtc.2
-        for <linux-gpio@vger.kernel.org>; Thu, 15 Dec 2016 15:12:30 -0800 (PST)
-In-Reply-To: <2561777.Aed1u6m3Fd@avalon>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] gpio: mxs: remove __init annotation
+Date: Fri, 16 Dec 2016 10:08:14 +0100
+Message-ID: <20161216090825.2299257-1-arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Marek Vasut <marex@denx.de>, Sascha Hauer <s.hauer@pengutronix.de>, Gregory Fong <gregory.0xf0@gmail.com>, Arvind Yadav <arvind.yadav.cs@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Fri, Dec 9, 2016 at 12:21 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Friday 09 Dec 2016 00:15:51 Niklas S=C3=B6derlund wrote:
+Building with an old toolchain, I ran into this warning:
 
->> This was changed for the whole driver after the original patch was
->> applied (at the time of change the patch was not yet reverted), see [1].
->> I needed to update this when I resurrected the patch, maybe I could have
->> been more clever and reverted the revert patch but this felt cleaner, if
->> it's better to do it the other way around and revert a revert please let
->> me know so I can do so in the future.
->
-> No, this is fine. I'm a bit dubious about [1] given that it consumes more=
- CPU
-> cycles without any benefit as far as I can see. Maybe I can't see far eno=
-ugh
-> though, Linus Walleij could prove me wrong :-)
+WARNING: vmlinux.o(.text+0x63eef0): Section mismatch in reference from the function mxs_gpio_probe() to the function .init.text:mxs_gpio_init_gc()
 
-This was changed mainly for maintainability and code readability.
-Lots of subsystems have the option to carry around a data poiner
-and/or allocate an extra memory chunk for state containers.
+Clearly the annotation is wrong, since the function is called from the
+non-init probe, so let's remove it.
 
-I am relaxed on it, if someone very much want to use container_of()
-because of $REASON I am not really bothered.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpio/gpio-mxs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/gpio/gpio-mxs.c b/drivers/gpio/gpio-mxs.c
+index 1e8fde8cb803..2292742eac8f 100644
+--- a/drivers/gpio/gpio-mxs.c
++++ b/drivers/gpio/gpio-mxs.c
+@@ -205,7 +205,7 @@ static int mxs_gpio_set_wake_irq(struct irq_data *d, unsigned int enable)
+ 	return 0;
+ }
+ 
+-static int __init mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
++static int mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
+ {
+ 	struct irq_chip_generic *gc;
+ 	struct irq_chip_type *ct;
+-- 
+2.9.0
