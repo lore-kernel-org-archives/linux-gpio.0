@@ -1,35 +1,73 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [RFC] Question about freeing of resource in
- 'atlas7_pinmux_probe()', in file 'drivers/pinctrl/sirf/pinctrl-atlas7.c'
-Date: Tue, 20 Dec 2016 06:44:04 +0100
-Message-ID: <24932cf3-0fe2-c71f-231c-c2f05c96a3c9@wanadoo.fr>
-References: <612eedc5-0f28-7a38-abad-4b9573208875@wanadoo.fr>
- <7123e174-cc22-4a76-337c-661ee87994df@mentor.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:37232 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751303AbcLTFoL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Dec 2016 00:44:11 -0500
-In-Reply-To: <7123e174-cc22-4a76-337c-661ee87994df@mentor.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: [PATCH v4 0/5] pinctrl: aspeed: Implement remaining pins
+Date: Tue, 20 Dec 2016 18:05:46 +1030
+Message-ID: <20161220073551.28522-1-andrew@aj.id.au>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>, Joel Stanley <joel@jms.id.au>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, linus.walleij@linaro.org, baohua@kernel.org
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Le 19/12/2016 à 14:54, Vladimir Zapolskiy a écrit :
-> Functionally it looks good, I have two comments though.
-> 1) you don't need to revert 151b8c5ba1eb, the commit is a proper fix
->     per se but incomplete, please add your change on top of it,
->
-> 2) minimizing the lines of code by removing duplicates is always good,
->     so here a better and complete fix will be like the following one:
->
-Hi,
+Hi Linus,
 
-thanks for the feedback and comments.
-Patch submitted.
+This is v4 of the series implementing the remainder of the pinmux tables for
+the AST2400 and AST2500 SoCs. v3 of the series can be found here:
 
-CJ
+    https://lkml.org/lkml/2016/12/5/847
+
+Cheers,
+
+Andrew
+
+Changes since v3:
+
+* Add a patch fixing the AST2400 SCU compatible strings in the Aspeed pinctrl
+  bindings. They are mentioned to define the expectations on the pinctrl node's
+  parent and also in the examples to illustrate the relationship.
+
+* Rework the g5 example bindings in patch 2/5 to reflect the LPC/LHC
+  bindings[1][2], and fix the SCU compatible string.
+
+[1] https://lkml.org/lkml/2016/12/20/63
+[2] https://lkml.org/lkml/2016/12/20/62
+
+Significant changes since v2:
+
+* The fix for touching bit SCU90[6] has been applied, so the patch has been
+  dropped.
+* The MFD devicetree bindings patches have been split out into their own
+  series: https://lkml.org/lkml/2016/12/5/835
+* Rework the "Read and write bits in LPC and GFX controllers" patch so that the
+  changes are backwards compatible with existing devicetrees. This will lead to
+  limited functionality, but no more limited than what systems with those
+  devicetrees already experience.
+* A fix for the kerneldoc return value descriptions
+
+Significant changes since v1:
+
+* Fixes from v1 have been applied, so have been dropped for v2
+* A new fix has appeared, "pinctrl-aspeed-g5: Never set SCU90[6]", as noted
+  above
+* New bindings documents for the SoC Display and LPC Host Controllers, driven
+  by the patch "pinctrl: aspeed: Read and write bits in LPCHC and GFX
+  controllers"
+* The v1 patch "pinctrl: aspeed: Enable capture of off-SCU pinmux state" has
+  been significantly reworked and is now titled "pinctrl: aspeed: Read and
+  write bits in LPCHC and GFX controllers"
+
+Andrew Jeffery (5):
+  pinctrl: aspeed: dt: Fix compatibles for the System Control Unit
+  pinctrl: aspeed: Read and write bits in LPC and GFX controllers
+  pinctrl: aspeed-g4: Add mux configuration for all pins
+  pinctrl: aspeed-g5: Add mux configuration for all pins
+  pinctrl: aspeed: Fix kerneldoc return descriptions
+
+ .../devicetree/bindings/pinctrl/pinctrl-aspeed.txt |  127 +-
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c         | 1115 +++++++++++++-
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c         | 1524 +++++++++++++++++++-
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c            |  165 ++-
+ drivers/pinctrl/aspeed/pinctrl-aspeed.h            |   33 +-
+ 5 files changed, 2835 insertions(+), 129 deletions(-)
+
+-- 
+2.9.3
