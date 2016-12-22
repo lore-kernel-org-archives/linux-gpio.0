@@ -1,35 +1,31 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] gpio: of: Add support for multiple GPIOs in a single
- GPIO hog
-Date: Thu, 22 Dec 2016 14:36:10 -0600
-Message-ID: <20161222203610.dhmpg5oegthgpabu@rob-hp-laptop>
-References: <1482171694-18237-1-git-send-email-geert@linux-m68k.org>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 1/5] pinctrl: aspeed: dt: Fix compatibles for the
+ System Control Unit
+Date: Thu, 22 Dec 2016 15:01:47 -0600
+Message-ID: <20161222210147.2k7ipcodonlh26gq@rob-hp-laptop>
+References: <20161220073551.28522-1-andrew@aj.id.au>
+ <20161220073551.28522-2-andrew@aj.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34034 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752585AbcLVUgN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Dec 2016 15:36:13 -0500
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1482171694-18237-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <20161220073551.28522-2-andrew-zrmu5oMJ5Fs@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-On Mon, Dec 19, 2016 at 07:21:34PM +0100, Geert Uytterhoeven wrote:
-> When listing multiple GPIOs in the "gpios" property of a GPIO hog, only
-> the first GPIO is affected.  The user is left clueless about the
-> disfunctioning of the other GPIOs specified.
+On Tue, Dec 20, 2016 at 06:05:47PM +1030, Andrew Jeffery wrote:
+> Reference the SoC-specific compatible string in the examples as
+> required.
 > 
-> Fix this by adding and documenting support for specifying multiple
-> GPIOs in a single GPIO hog.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
 > ---
->  Documentation/devicetree/bindings/gpio/gpio.txt |  8 +++----
->  drivers/gpio/gpiolib-of.c                       | 31 ++++++++++++++++---------
->  2 files changed, 24 insertions(+), 15 deletions(-)
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
 
-Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
