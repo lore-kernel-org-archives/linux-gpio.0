@@ -1,68 +1,161 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH] mtd: nand: fix implicit module.h usage in xway_nand.c
-Date: Thu, 22 Dec 2016 10:01:44 +0100
-Message-ID: <20161222100144.2ea9f7fe@bbrezillon>
-References: <20161220211800.4701-1-paul.gortmaker@windriver.com>
-        <63347d92-15b6-917c-b9f7-d239faaacdeb@hauke-m.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: [PATCH 1/6] pinctrl: dt-bindings: Add documentation for Armada 37xx pin controllers
+Date: Thu, 22 Dec 2016 18:24:56 +0100
+Message-ID: <20161222172501.16121-2-gregory.clement@free-electrons.com>
+References: <20161222172501.16121-1-gregory.clement@free-electrons.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:45151 "EHLO
+Received: from mail.free-electrons.com ([62.4.15.54]:52145 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750796AbcLVJBr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Dec 2016 04:01:47 -0500
-In-Reply-To: <63347d92-15b6-917c-b9f7-d239faaacdeb@hauke-m.de>
+        with ESMTP id S941108AbcLVRZR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Dec 2016 12:25:17 -0500
+In-Reply-To: <20161222172501.16121-1-gregory.clement@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Omri Itach <omrii@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Terry Zhou <bjzhou@marvell.com>
 
-+Brian
+Document the device tree binding for the pin controllers found on the
+Armada 37xx SoCs.
 
-On Wed, 21 Dec 2016 16:19:00 +0100
-Hauke Mehrtens <hauke@hauke-m.de> wrote:
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ .../pinctrl/marvell,armada-37xx-pinctrl.txt        | 127 +++++++++++++++++++++
+ 1 file changed, 127 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
 
-> On 12/20/2016 10:18 PM, Paul Gortmaker wrote:
-> > In commit d47529b2e9fe0ec2eb1f072afad8849f52e385c4 ("gpio: don't
-> > include module.h in shared driver header") we fixed a bunch of
-> > implicit includes and then did what the shortlog says -- remove
-> > module.h from a gpio header.
-> > 
-> > In parallel, commit 024366750c2e04fdcda8bca685194ef0196b35fe
-> > ("mtd: nand: xway: convert to normal platform driver") added new
-> > modular function calls to a file that now became relying on the
-> > above module.h presence in the gpio header, since it did not
-> > explicitly include module.h header for them as part of the change.
-> > 
-> > The problem only appears when the two dev streams are merged.
-> > 
-> > Since the file is tristate, the fix is obvious -- it needs an
-> > explicit include of module.h header.  
-> 
-> Hi Paul,
-> 
-> the xway nand driver does not build as a module, so I made it bool, this
-> patch:
-> http://lists.infradead.org/pipermail/linux-mtd/2016-December/070800.html
-> And then made it use the non module versions here:
-> http://lists.infradead.org/pipermail/linux-mtd/2016-December/070801.html
-> 
-> In the beginning I also came up with the same patch as you, but the mtd
-> people suggested to do it differently. I hope my two patches are on
-> their way into Linus tree.
-
-Yep. Just waiting for Linus to release 4.10-rc1 to rebase my nand/next
-branch and start applying new patches. It should be queued for 4.11 and
-backported to all previous release (thanks to the Cc-stable + Fixes
-tags).
-
-I didn't plan to take these fixes in one of the 4.10-rc fixes PR, since
-this bug is here for several releases, and no-one complained before.
-Let me know if you think otherwise, I'll add my ack and ask Brian to
-take it in the MTD tree.
-
-Regards,
-
-Boris
+diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
+new file mode 100644
+index 000000000000..53a30a09d3fe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
+@@ -0,0 +1,127 @@
++* Marvell Armada 37xx SoC pinctrl
++
++Refer to pinctrl-bindings.txt in this directory for details of the
++common pinctrl bindings used by client devices, including the meaning
++of the phrase "pin configuration node".
++
++Each Armada 37xx SoC come with two pin controller one for the south
++bridge and the other for the north bridge.
++
++Required properties for pinctrl driver:
++- compatible:	"marvell,armada3710-sb-pinctrl" for the south bridge
++		"marvell,armada3710-nb-pinctrl" for the north bridge
++- reg: The first set of register are for pinctrl/gpio and the second
++  set for the interrupt controller
++- interrupts: list of the interrupt use by the gpio
++
++Available groups and functions for the North bridge:
++
++group: jtag
++ - pins 20-24
++ - functions jtag, gpio
++
++group sdio0
++ - pins 8-10
++ - functions sdio, gpio
++
++group emmc_nb
++ - pins 27-35
++ - functions emmc, gpio
++
++group pwm0
++ - pin 11 (GPIO1-11)
++ - functions pwm, gpio
++
++group pwm1
++ - pin 12
++ - functions pwm, gpio
++
++group pwm2
++ - pin 13
++ - functions pwm, gpio
++
++group pwm3
++ - pin 14
++ - functions pwm, gpio
++
++group pmic1
++ - pin 17
++ - functions pmic, gpio
++
++group pmic0
++ - pin 16
++ - functions pmic, gpio
++
++group i2c2
++ - pins 2-3
++ - functions i2c, gpio
++
++group i2c1
++ - pins 0-1
++ - functions i2c, gpio
++
++group spi_cs1
++ - pin 17
++ - functions spi, gpio
++
++group spi_cs2
++ - pin 18
++ - functions spi, gpio
++
++group spi_cs3
++ - pin 19
++ - functions spi, gpio
++
++group onewire
++ - pin 4
++ - functions onewire, gpio
++
++group uart1
++ - pins 25-26
++ - functions uart, gpio
++
++group spi_quad
++ - pins 15-16
++ - functions spi, gpio
++
++group uart_2
++ - pins 9-10
++ - functions uart, gpio
++
++Available groups and functions for the South bridge:
++
++group usb32_drvvbus0
++ - pin 36
++ - functions drvbus, gpio
++
++group usb2_drvvbus1
++ - pin 37
++ - functions drvbus, gpio
++
++group sdio_sb
++ - pins 60-64
++ - functions sdio, gpio
++
++group rgmii
++ - pins 42-55
++ - functions mii, gpio
++
++group pcie1
++ - pins 39-40
++ - functions pcie, gpio
++
++group ptp
++ - pins 56-58
++ - functions ptp, gpio
++
++group ptp_clk
++ - pin 57
++ - functions ptp, mii
++
++group ptp_trig
++ - pin 58
++ - functions ptp, mii
++
++group mii_col
++ - pin 59
++ - functions mii, mii_err
+-- 
+2.11.0
 
