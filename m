@@ -1,347 +1,274 @@
-From: kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH] mtd: nand: fix implicit module.h usage in xway_nand.c
-Date: Thu, 22 Dec 2016 07:27:23 +0800
-Message-ID: <201612220745.BJjbs3bC%fengguang.wu@intel.com>
-References: <20161220211800.4701-1-paul.gortmaker@windriver.com>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 3/5] pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
+Date: Thu, 22 Dec 2016 17:13:26 +1300
+Message-ID: <20161222041328.3303-4-chris.packham@alliedtelesis.co.nz>
+References: <20161222041328.3303-1-chris.packham@alliedtelesis.co.nz>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="Nq2Wo0NMKNjxTN9z"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161220211800.4701-1-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Hauke Mehrtens <hauke@hauke-m.de>, Boris Brezillon <boris.brezillon@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20161222041328.3303-1-chris.packham@alliedtelesis.co.nz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>, devicetree@vger.kernel.org, Chris Packham <chris.packham@alliedtelesis.co.nz>, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
 
+From: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>
 
---Nq2Wo0NMKNjxTN9z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This pinctrl driver supports the 98DX3236, 98DX3336 and 98DX4251 SoCs
+from Marvell.
 
-Hi Paul,
-
-[auto build test ERROR on mtd/master]
-[also build test ERROR on v4.9 next-20161221]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Paul-Gortmaker/mtd-nand-fix-implicit-module-h-usage-in-xway_nand-c/20161221-115714
-base:   git://git.infradead.org/linux-mtd.git master
-config: mips-xway_defconfig (attached as .config)
-compiler: mips-linux-gnu-gcc (Debian 6.1.1-9) 6.1.1 20160705
-reproduce:
-        wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        make.cross ARCH=mips 
-
-All errors (new ones prefixed by >>):
-
-   arch/mips/built-in.o: In function `vpe_run':
->> (.text+0x148f0): undefined reference to `physical_memsize'
-   arch/mips/built-in.o: In function `vpe_run':
-   (.text+0x148f4): undefined reference to `physical_memsize'
-
+Signed-off-by: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ .../pinctrl/marvell,armada-98dx3236-pinctrl.txt    |  46 +++++++
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c          | 145 +++++++++++++++++++++
+ 2 files changed, 191 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
 
---Nq2Wo0NMKNjxTN9z
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-H4sICPwKW1gAAy5jb25maWcAlFxbc9s4sn6fX6HK7MNu1ez4GidztvwAgqCEEUnQACjJfmE5
-tiZRjS8pS57d/PvTDV4EkACleUks9Id7o29o8Oeffp6Q993r8/1u83D/9PRj8nX9sn67360f
-J39sntb/mcRikgs9YTHXvwI43by8/+/kefN9O7n89bdfT//99nA+ma/fXtZPE/r68sfm6zvU
-3ry+/PTzT1TkCZ9WGS/U9Y+foODnSXb/8G3zsp5s10/rhwb288QCVlOWM8npZLOdvLzuALjr
-AUhKZyy79QKI/OQv17PzjyHKp9+8lOjgcCKaXX5arUK0q4sAzTRMRURS7acTOqtiRpUmmos8
-jPmd3N2FqTyHwbtDb8gpyTW/gT3pKqREkZHBpELkUyXyi/PDmKvLMKbgMCc64yIMWfE0KaYk
-vHAZLFuAXHdBA6PMGQWInDOeq3D9hbw8C+xbvioqpaPz89Nxsp/Tigy6V4WXJknK87mXpKa8
-4sW5f0oN0c/0DfHzCDGwUopHt5pVVM54zkYRRGYsPdCGGG/jIEAtoZcxQMq1Tpkq5WgrLNdC
-+RmngUR8Gmwk51VgEIZr9Orit9Bpr+mXQTqfS6H5vJLRx8B+ULLgZVYJqpnIKyX84ihPs2qV
-yioSRMYjiGIEYU5YQSR0KB150K6DoJW+LVi1WpJbW4AggWTkDsfHAhV9dRIQ566Ic2RUFesq
-B/6wq0ERI+r24+mns3NPxYLyvYBrylZydX56WhWz2ypZ7ovlUrGsFfGVKnieCjq3+yISNm9G
-VMVTMT2vysAG9WGuDGxAbT+zJePTmd4PoyVQkAKRJMCJMUvNUrULBRovrkTGdZVIkrGqEDzX
-TO4RkRAapIg1N8oWUHI5t0qUpG5JrYhwztVC3SroPx1MPs5IReJYVrq6uoy4jykMTpVFIaRW
-VVlIETG17wVbgD2kYsYkHMI9IWcwK6RmBCUnTNya8q0yC8qITG+rQsJ85zY1b6fSVw40KLNy
-UXGBY8T+PNOgRYkioGJ5zEnuDqWbnQNw+56VU1bpNGrBni4MThWwh1bzS5g9F1BMKOvtTXoG
-TAGbX6kZT/T1x9qIgoH6DSicAda7OK/kWWCGLf18uNZO9XGyVXtfPCzr99It48U5sFI1ZzJn
-qVvtAGQGkgv0AauWRNOZOQedcdmYobsf39d769M0s69fENgkxe9YdTmP7C3cE86u5pFfg3eQ
-q0sX0gASISkD7lpVIAeZkDEc0bMze3a4joVkCYPBu/NuhUBcZgVykUsFXq+SohwW1uzh4OuD
-oCuVFYNCR/waqaIyr5y3N6sDBjYzK1PN9UwyEoPNORxIUpAk6RUvQIekgsS2EOsRKrvDPk2L
-bHAAkUwKVcA/PMD9KHIUSgIFlqA2tQR0xKkUjZvS2yzJV9zH1xWXN9UiTGJ82BZKrd6MiOJx
-c7hPhwTgXHX92Xs6ZqBCMpaFdgSaOLsKHKxMkT3FyO4kJRoaA8FGotSSQU25WwCrFwOTAxzE
-qH0wF6Y0alSor7ipalerdQwH3SNju3q3s6YBVG/YI88TYRrxsWwBdmBVaNMRTFhdX1qSUWQg
-XoPeFBgG6pCWQ4sI2K6KSmWPb64yDzhmCYFTUWWo2jKem8avL09/u7LGlDKSm/PrHVMiBci2
-JfF7DDTzm7J3hRB+g/wuKv023x2chTQNGJU8Tlkt+LQkdA7n27f0tqSBH2ADBBjTQeay3qdz
-h/MLJhM4EiDj40qDUSRKNHWcNZ/dVed+LxMol589I4Tys9PTXhtnAd8Im//o9/EM6SpEgi6C
-1c5Oz31GobM6RKLKm91Zx+fuGhp17cCZ1Nw+YqBPWFYM7eS2fCFSWEIi/SGTBuWlzdmK+dmC
-SqJmRlf53SVG8cSFXQwBRkRSXF2O2EqlYpXoqw2Q3KQowABDy1FHAxXA0sQBhEcAxnIQ6ZjH
-WQy+OcPjmHm7bAFAq9hKQ4MjQR+7MRRqtTY7XCEqOejY3NNB6y6B1ItZ0a6ndfw0HFs8u2xI
-M7IVRDrL6a0WnsrFVKNGqFK2YKl1UEG8tf1ypa8/nDxtvpw8vz6+P623J/8oc/RRJAP5ptjJ
-rw8mLPihrYvacSmkxcA4uVhzqAPTM/2pehTGqpuagOQTTvb9+96u4zkcFZYv4NDgKMA3ur7o
-xgfqXCkj9Dnosw8fXEUAZZVmysd0sIwkXYC4AU3h1LMJFSm1GBH6M6E0LsH1h3++vL6s/9VN
-HaW5IxgXvKCDAvyfascTK4Tiqyq7KVnpVxb1hEFFCnlbEY1BNp99OiN5nDpCAk4ZOJ1+p7aM
-XUVotgO2b7J9/7L9sd2tn/fb0ZqvuLvGARy6t0hSM7H0U8Bvs9YGS2KREZ7b3IqDb4oRYc9j
-XwG2ISp9WgohxkIHvTI0Vo0hYnxhJUo042OiyXCohk0tZ7lHNg3AYam9kj4xE+gex7Wja1ZT
-b57Xb1vfgqKMr0Ciw4rZJ/YO9SMXMaf27EEsAgV1dcjzBXJSpn7LwJB9ShNsTDjGykxadm4W
-6OwTfb/9c7KDwU/uXx4n2939bju5f3h4fX/ZbV6+9maB1iehRpHXS971bGwql4yr5bdEYPvM
-6u+x/si7ipEDKYMDAVC/ZtNEzTHioAb8LWk5UZ7tADVZAc0ePfwEiQX74fWgemDTI1bxYLEh
-GE2aonjKhBNaaDs29pd/e9txwHGtTWX/uqCUBZciPw9YevP6D69UxOpJ46icfbLLjd8DHq9F
-78RwnvF+3Yv+oahtGto3++lUirLwx+mhBp0b1x+5UwsZ4HoQwSao4m+l7hhFuenKj7lViQKB
-AkYShVPr1+wSg3WeVYvSOVRdGE0lY0u24W+SQcO1pHH0DHhB0zvuC08BJQKKFVGBkvQuI07B
-6q5HF73fl84q00oUcKgwpgGi0djeQmbglvg8rD4aQyGO9qq1VitQwR6FuYKzpvog4FbKCvTG
-aq62TIHCsvjqs2VZgBhnAIVlhQzUlOkMTlY1kMj11nmims0QGopnmnMoVreZNeq2pOo1tS+P
-FBjZcPpgwBidCzdaRWATGZbRfGFNvB/hrH/jCbLtJEtfmXZQpFveOYxgZS1fIZwF4dOcpInF
-iEas2wVGcZmCvdQokpGlUk0MYm8zcJ9hROIFh9E27TiuHG6nsZoSn1WLsfybksu5tRkYJCBS
-cpsNoIjFYMj3TFvjSva1sSlE52JRu7296GGxfvvj9e35/uVhPWF/rV9AsRFQcRRVG6hqO9xq
-Ne8VDIuspnY+rF/GpGU0tFncyIWuIhm4HkyJz3XBRh2mT4XfyMP64I4whoY8OEU5GFGB9oyo
-Lwh4n6R/oDTLjL1UgYXME07D99agmROe+sMIZs9EjXCM1Hl9peBt8HeMl8IkAteQ5UhV058J
-98DBhtOB6oCi3RC640CuaT2xyDXmTVvz/tVHXSqZ9hKcw21KTC9GJM6E6EfR8KYEfms+LUXp
-MS8x8GLCNbV126st2RTkVB7XDmEzUYyU9nA09fULuJpHfQPeb0HPnF4SYH70aIBr8MA1fpWn
-iSZgUMHOO/da9ZBoPWhYRM0o6PueCnOJfsXlYgaxkiEC1qtMid81H6KVliLM07hr4Np2IbTe
-/AJWcA/lsX/7YVYRN6tZMIrH0BKaIi5TsOSRgzFGIgd7ZS7bkGJEgKPZTeNsBcek4yz3DLUN
-zPyGpSIYNA1F5VOB8Q1YmCWRsaMbTMBeVCyBqXCUo0kycpDNIBbNVSJ1pGUdR6Bi8e8v99v1
-4+TPWtR/f3v9Y/NU+ytdWwhrbp3Gr3oNsBFWlV89mnF1Fzvm+PbvQPE2EtW2LRyMajdBWetS
-oN5AJ/pkippLJwwk+UJYNabMkR6sXJP9USgRN8c2kDNTtwPeThccCXiZLZL79VxDRikgeyLY
-8oV4BoMFJo6rOVpTXqvbuX9Io5gkjkHTWOWRCriPe3ooMLI37DWbSq79gVVEteE7I//kgCWL
-+7fdBi9xJ/rH9/V2720aLWvsYzCd0Bp39o5QIfM9xs+mfHUAIVRyqI2MT8khjCaSH8BkhPoR
-LV3FQu0Rzm6BMx9zNQ8r+AzcqVWlymh8DGCfw0BVtfp8dWC0JbRnbpjH+03j7EBDmGJ1oKsU
-OPrQPqny0F7PCbhsoyvMEu5fXww5Xn0+0L7FxcEekNuzGzTYW3saPAH18G2NMeE3i7W5qB3v
-XAg73teUxqBesC8ntNfQaHIzEnT11Wxp2NdI1aaD6w+P6/tH0Afrfaw6NxPHzCAjJMFwquOO
-Lh2VYkMfo3nrLiVGbQKVbWI/4olG+51HqETv28nrd5Qq28k/YT9+mRQ0o5z8MmGgiX+ZmH80
-/dd+S2bLOi+BWrZg/0cTXFW9QslR7FcpmxLq5HYBleFdAih+vx8AtTPFg7SwQ4RUWFR03ZoL
-60E83sEqXQbSOYDIxSJIAxc8TMP7eb8tInSRlgY1lPdQ9u11u5s8vL7s3l6f4GRMHt82fzkH
-JMtKdyFpKFlPgkUVuw636Yb9b/3wvrv/8rQ2OdwT48/urC4inieZRnOvZwTuCf18LCgCrWNH
-amqoopIXemgRijIQhayrZVwFLhahk/61Yqf94STVUYwuFl28/hfWELz1+6/rZ3DWW8533PRs
-sEIYo6mrZl1VIHQ0/vi07idWBaPrZuXqxJIWhx5/kTKfRZYzJwNOY5o2GjztjPL17r+vb3+C
-VWrNpTML6Jw5i12XgKoiPucDVZkTbEFV2cd21FUiMxOP8UdTGSZj+eKc3JkSL+o4HSXKLW0t
-mUoCbzDHh+Po+EVo3rFqEJXvtVugg4unXjmtm0YbBNEzDw0EVSQU6/Vb5P7Ir9mZgo8Rp2gj
-sKwMJIsbTKXLvOdJWPMxA3OXzp6HPVNnzDxTWbU48/a7p/uSY9VtDrwp5txtFAdbxr7ROpBE
-lP4+kUgC3h/SWCDvnderFMwVMHTDlyMjM6BDdNNIhulHIEZy1c85CIKPbjZibKTFwAHVtMDg
-wNRr5nfEiPsecXRkWkbubWBHWTKll0L4tUeHmsFfBxDqMOQ2Sv0ZSR1kAUZCwK9rIblfG3d0
-jB/jiRhHpQfGumC531zoELcswM0dgqdgoAl+YD4xPbhwNPZL4/3uR76QVmu7Dja/JcjeJHvk
-tvnrDw/vXzYPH9yOs/hjyE/nxcKf/wRsjmkdGMrDVzZBIVJo6DklSvHE7zi3DWG2Pga8QCNk
-hT9iDNAuYmjXrwuDmQB7hO/cRZLHU7YHDa2H17c16mkwrnZgQgSeve072Wt4zxjhL3z7E76q
-HkLDaSBDbCq8C5Dg5ucmHnn9bJWaG936DvrZataCV+HNtVGYAO1T4w4Ir+kTd11s8sjVioND
-JgnZmwOg4abAwDSOSAs4trRwlqWjKKoDFFCfKThrwWUjGcljcmhFEtO8v4XZxfnFofpc0mB9
-YIkIXN0qEMlzsCoPaGR3/+AsH9EWCT3IcFAhW8vZwGSkQ90y/WHEIZapza5RybFqTLPnWias
-jL+1Bc/u+cvmZf04abLhbC/CrjxyjGwUTr2PdPrb3b99Xe/C3WgipyB0TcqEKv0v2LwVDkjo
-YQXPSMfg2uFTDyJWAdXpA8+CRusQetzKN2j05sw9+dE1gm7fECmmhxbhb401T3rS/gD6GD1i
-4YU5g0fj8SFbL8lyFA/o47Egc1fH8+YgdWoMS4tMqUP7AihRaAUeaxE8ms/3u4dvoxJA05l5
-GIAvKg9PpsZHRXIslKal6tkvI2DQ+ngzFZp4i8pzfCsbUCH+CuEgeqgCpvP+nQrHCJ49ujV7
-Rlst/K6uB4rWwtFYtghnm/nwRwnBGsuoP3zvgwb8cQ8Ur3X/1n7MWFocIy4b9NGMMRIm8KLB
-zZ8efarS85Bh4cGyfKp96dU+rElMfx5BZIQeYMXjmbsOG2Hu/HiLeXKEt9GhxTI/fj+Luf47
-0uymFIGPOXjAR2uUBs5IeoTB04IpSL9j0egGHI3FjHBfhrAPa4Lu45tnvgqiNA98BMBXQYZy
-pT3oWv8djQbT6Fhs6PE8LyoVip0V1WKYos2L/zvC/U4w1iGJiVhcuj7b3l2qSbbpH5eFKQ65
-BughExnwIJE46E6y3xnVvr5yogd97WcOAF50Xoa9JkBpjIdAzNWChLSCjZHFMNLhBWodCGUD
-ognEPLulrTFo1mA4jYasbvOwRVcjc+I7Q+3g8mnKgq03dlDAwXSg46vVGn8jq4DfYBiMA/hl
-6FEO4k1JxaIRGDQVtDTwCIVEkowDQUpQqF4C0X6p2deRTbHS1j1+PRdPNI1PMxgjXsQH323U
-wEVK8oaXRrJETUzdfsdsqn0+PT9z7sj3pdV0If3rY2GyECYGvvDK8DR1gq/wMyTj/LdERJPU
-71KtAp8RSkkRuM7G7+gExChjDGf40SdpcCnr/IfmBvLmff2+3rx8PWnSN3oJcg2+otGNX0Y2
-9Fng9WVHTwJXwC2gkIHvRLUAY+6MD0IG3my0dJWMD1Il4+1rdhO+LjOAKOiuGfr00AhjNRpN
-V+buWbOgoVM3IsOXumYlbw4uNp2JeVDVG8TNgbWiIh65W0REcnMUaJytZuMLXvDxWWDyxsDi
-oE/32+3mj83Dff+TK7nRL+ZZR9giMwhNeR6z8GUxYsztb8D0aCDJcpQcMrK6HtQifKfdAoIX
-PPUIUjE+hpEQRdfASJYBQoy5EcokNTfKBjHaBqEBq7tmI54I596MBpI9QR0Sk4fpJYuC5Qu1
-5KHBLGrzP2hQm2h0MCUjK9JAxrMaOdBmNDHzDxgR6QUssKpvyMKonCpfwra0P5MiE/PI0s4m
-XxXOjY4yn+MwQQ/zRCSwJRJfEKrbyn2zFN04L03wMdLv3o9zYBPIVo3D7ebSTHbr7c6jxcBX
-7T027UyMTJKYiy7L6P7hz/VuIu8fN6+YNb57fXh9cgJ7JKSuKQm9Zo39fm/kV+EETMuVDFls
-STWngU/kaXCDM08CckPHvBtZOtk0S45P9937SppM0YDwp5ykPBoQ68Vpa72s14/bye518mU9
-Wb9gePQRs9ImGaEGYGW/NSXo5prYk3lcal4anu57XHIo9Vu7yZyPiI3fAl9TIdwvsigrMIgT
-MBIS/3aky5G0kVjpKvzRF2PXskX/FqtbnFvzgqNB9J/JNMej5dp4/dfmYT2JuwTD/ecUNg9N
-8UT0c8zK+slaHcXb9+AUVybF6sPJ9svm5eTb6+770/tXK4MAhqezIvHdn8Gu5jFJ69c3reEq
-67YTLjOTeG1eKlvPGpf7L0V1fXRgnnteazQgtgI3v4M672y7Rk3GWzuvBFRO1LvkaM9YiuIF
-0/7bFEU36yIqp006bMCDMAC2kAH3rgbgZymaZsB2zcQi8GVM/CTbLYx4wZXwd9h9dKAosVse
-egaNz1Kar+1EZZIEEoofDS85Ii+SNFM6qqZcRfjlGr8CMx8xiTO/cLqhIgOnlwe+eingEAVe
-dGXafc2iY7N0gTcqQIX5mW8kYg67jzERY+e52w9OgSSSrtRplshPwybNKpVbzC6tL4HNC1L9
-dv+yfTIG5CS9/+Hm/EJTUTqHfer1O/gcVqIDwi1E4EGKTOJgc0olsV+4qSxYySyUCDzaR2Lw
-a1ZI7F4XACfW1slgTSXJTqTIThIwx79NHr5tvnvSp3EjE97fqN8Z+PDmFWZg8+G8dB8ucWpC
-Y2j9mafvvVdQFgrfnUUEbLklj/WsOnO3sUc9H6Ve9kfQo/s/WuUbhN+O9yAvfLmi7eR5bzKm
-7Ny3TDzw6eeWHB65Ieca7I6V97uZ7T5koD4HJx8poFh8pmVL/n/Gnm25cVzHX/HTVnfV6T2x
-HSf2bu0DTdE2O7pFlG05Lyp34p52TTrJcZKaOX+/ACnZokRQZ6rSkxAgxQtIAiAu61yG7WpA
-TfRxkdAwNletp4IqtPnbG1ptVxSp+RtNovtHODnbFJoAay8KXAdUiLV2PYajM1Hy7B1iiiuX
-cGK0NZIVOgvKuzG/NTZ3+zjoHZHKRD9Pkxh6xcoNutPSSGnIct9Uh+dn8M6UqsPzz2/oK7HX
-JjWAXV1EjW1vfyvik4mbSUUwyh+LkPJT1SeUykcT+nRToW8k6coHhR8fWJ/0IxxiexaC4/uf
-35KXbxyJqcPU2QNM+NJlI4awGJ2/BedtEqjL4WR3mRnXKGS1OSH56vmKKmtCEkM3E4iYhdJL
-jE28gIhUX6Mh4foxEn3+oTUFspq+CZNB587X5cBaJfS4TW+luktijGvVgweLRh+cGoWzhZsR
-PGPgP0rS5KWRkGXDX/xYuGExCkzPFBYxoy5DjdCO9n0GrKSSk6ueEUe5W+epeYxYtEehN0KY
-4iHyX+b/I3R7G/w+/H49/Zs6LkwFknhT6T3Y1nOXeiTIG273ieV6DEzkOpY5EXoOoBheFeM9
-NRuoImA7QXhoGkG9U2Y78EG55XsIf8dNpx34OzL6jktBuwHtLme7IEIpSCiZO/yRdouKMNJ5
-FYxFOwFX8QXPTVRFjvqVl7XLdztehyH+4VagVEjogagUUhLmOaDSdKCTdnpfcglTRmlkqgYD
-xmc37vieNco6IhTxNQIHGdJzItZoYcthtduXbO7execp6oGrws2M1XDqquIBhq5M73IebNxf
-wDAwSBWlyN0HZP2Jlb+HfSPMlGdN9RRsbNsEw6Ud3x9d0iywdCBJK4xnOQ43VyNibMFkNCnK
-ICVirAXrKNrhLnFC0xXwYARjqfNxJNx9KuZyEWm1gxMqYh4map1hjouMFvRXKWYnINpH4r6d
-DN2CeIrPIivCixbPJfgmsALpuDRl7gGSFDVqHwDGiVWkyIS/f769vZ4+mktlIEBntsrVhs7G
-vLhpvsSfy4vi2i0X8fnt8KozzSZM4+Hv/ftAvrx/nD5/65hQ77/2J2BJP1Coxw4O0G988ATU
-dXzDX5sdzlE8cU9Kg+rwvul8mKGJy36gM+L8PJ5+/wVfHTy9/vXy/LqvbcxrzZ58+Tg8DyLJ
-tcbGcIg1THG5cBRv4Jjpll4aWqGzMgXk+9OT6zMk/uvb6RVFIRCM1Mf+49Bwvh184YmKvraV
-ldi/c3OXpeQrNx3zItTBU0ggW6xr7VpLT1FvEh1pJ7C9RIMuQSh8G6lkkQuJ1qsKQHQKbDaS
-MRlgYNbMqRWFCpe7VlcPdFy/C6Fgmc+9wXzzvvbvIj6iPW7KxdnZWA+j6r/OmzD4AiT85z8G
-H/u3wz8GPPgGe6YRKeB8e1hj46vMlLqJvAYnikA4t0pEW6qbJwKk1WBCDtHjht9R9UwoCDVK
-mCyXlG2KRlAc3wExiL+bHPL6LLAvFl0VWMnO4tsoC96HIfW/PUiKqf8EJZRzRThjGpws9VIr
-zNZWB4W2NoqGUB6PBqqVsDo2o2exiuV8bPD9SNd9SPO4GHlw5mLkAVZUOd6WBfyndzD9pVVK
-5ZZCKLQxKwh2pUbwrgcjg0AYMOP+7jHJb70dQAQqQ1WNMLv2IUQb7wiizTryrFSQ5qUcuY91
-83301ATC8WDggwSRvgvhAvo3IsQ5sWT6hI7Floo/fMYxwU78OP6pSPNxH8LIvz0xe0l675nP
-9UKtuJdec0nIGOYLrcyBrdWKivFwNvS0v1jnyJGaqDGeM414LTDAGN8DvHA2JDIumEHkhL2N
-ge6iyZhPYWsTWfAQ6R6uBckxVYTnO/ch6zuJAj6eTf72EC/2ZXbr5v/N7a/IdH0I3ga3w5ln
-tHRAHcMYRD0nSBpNr67cqlXTvuf2TVRgFpPlhD6FUSkdidgFtc8hIRIt1qoVpsrwokKIwXA8
-ux58WRxPhy38fHVJGAuZCbSCcLddAcs4US69B3Bp1XurHeelCp9zuV+SOKD4DS1HuoW9+zUL
-5YPHfIowSoi1ix2lgGYczWCdsE1BQaCWIvKDwNeQ5UqogPQiR0MfsqMI1FEzM/iFGGu+dvcK
-ysuNnnCdE4HowYbSTsQhpZyB+6VlYGtoBm1HLnLgky3BBEeQGY8/PjGhrvrr+PH4a8BOj7+O
-H4fHj8/Toft+Cf1Cc4ZWkKCNiIMkK8fcTnu1AcmZOOLyXbpKnKHaGu2xgKW5sJ4EqiJ8UMsW
-rT3gaGApbKoW+XA8LHoqhZjH0o5o2M5UewGhJTgrc2dWyWajOvmkc9ZYZIdPjILpcDgk9VMp
-LrPzRbTZZmbPWsbRJNH1gNKshGubWA8KLA+JlJJ56D5tEUAEogIINYm03Wndt3WWZJR1HmeB
-iLn9NM64K/B0o8V5lrCgRbDza/cNN+cRGqwQ8iFw8W7RjyKaXC6TeEw2RlyTOo41GRkIKlKW
-h5cB40RZ442pKa3qmNSuTrLlKxEqmdiSti4qczdpnMHuoZ/B7jW4gDeLnk4Ds2P1i9y9QTSj
-cmIFbo+KxmcC+2TSN9g6dCZHaNaqTOMuHwpHhM5kHQdEqoNGeyJah8IKowZiY2/fxUOV0OYy
-R7qkjHWW0hgOTnS3LttE72ipYJblmxoRPPGmWPYMZWV1aJW2mOduBf3Abw2C4rcFmftMQ9wH
-lly6dcpQvnHbY8qCqgIA4iPXVz3TIqejSWGt8PfIVaVKSSzyZuTSRjsglG2EnSEi2kQB9RiN
-TAor58R7wB3hvKzudj1XUwR9YHFiDSgKi+uSEmwRRrLSAJ14oWrbATv6JHlmU9Kdmk4JUw0D
-grbdDOKdephOr4u2uYD7o0lnG8Z8NP1OvOMBsBhdA7RnX0S7zLYwg7+HV8SKLQQL4x6WKGbA
-4ERWm1WR+95W0/F01NNJ+DVL4iQSTmKdjmdWPkRWTKe3M8rzY3TXP93xRgbS0lqbbFuCcpav
-KyZ30mYhVwnFSFXxLkW8bIX6XTGd+tnZ/Z1A292F7GGGjajfbBTk+jGlNbsPSe7jPqQDDxQi
-Lsl6VOSYcw/XmC09sjiqe85uqaPX2Nf2sqXoKJ8L686cgpRM6HERlCfuMy2bDm9mfR+LURHn
-pMkssKY/u7m67qHxDL1rMmdjikVwwVvpxhReEm2+31FTiHt3kzK0834rPhtdjV2ptq1atkOM
-VDNKaSXVcEaAFj2LqCJlTZ6K+GzoJl2RSk7qzaCZ2ZCoqIHXfeeOyvXBa3UmjzAIfP/Mr2N7
-U6fpLgLqpNi3JWFuwTF4VUycndKVn6nZiV2cpCAMWAOoyspgq4dR3idEeLC6lVys1rl1rpmS
-nlp2DVnyFO5XRkW8bGlmHO0laiXn1qGc8/FkOnQ9nTfqbeyDHP4ss5Uk4rghFBifhFOpEBoN
-b+VDL8dbYIIgi30xJfoowyB77ms2CNwLDgyAM/NIutqFspE3XW2hpH4Z1Wzbj7Png9OCDFBQ
-cEWjrtYZ28KR+ZwRmj6DsMYk6oXHcLGJFUUS+C1Pc2hgB1xHq09mWFIOYJSeUbFI2xC71Qhw
-AQELzGiEfHo1LkgwTBa+Qvng01sfvNIokAhcggBOdy8AYdtXPUiBrbqe+uE3t214TYCyEHru
-rDdRnoawbu4axn4aDSXb1UJ8r8qHV8MhJ3sTFjkJq0QRGq75cS9Yc85+DORPSYxYJwFj9Efu
-vdUrpoSE411EA3OQOgsi8q7IGBw2kndWpXGg5UIpQcKr42gJu2mU4b++OQZpZjabRC49UJpa
-0T7hT0x4Qoa5Qngg0BLUJW0htBsMF0ujNKUq6BAKti8hFCfiEsYFsbTRQ7unWFbmxImv3Goa
-Fa74pem1mhuHR5NFotltBHGWuw9VBN6xLaW/RXCKsaaJ1BMIz/IQ7kA3C3SBu7WOCIeL93ZK
-SAYIhx9Km4lgma7cvNDWMJiNvy6q+sjw6C6YDnjfOIVXnuc+gE4oac5uNGq6dTdBDc2uA1pr
-Bx2gWp9EgDJle+lgIm3CYyzNpIqc8UyajV40Mi6gAHGVnNOM2dvCgp0FJhewacvVBDTzITTL
-cwL/YRews6WW0F7Tg+0RHZ+/dJNEfEXv6vfDYfDxq8ZyXO5b6o0vKvDNw3VFqcBiyfHvUl4T
-voYI5K08bzY0yDblUsLmJHbHagdYxHFKQeJNN8OHfHn7/CAt9GScrhth+fSfGLjVDrSlSxcL
-zDgaurNCGhR8rURL9U5dpd3u7yKChg1SxDAJVBvp7EP6jAm2j5h79Oe+ZbNc1U8wHxoRx8Gg
-fE92fgSx6YPPHVFRzBx3PJKsmndiN09YZj3A1WVwxNwRRt5nlPCuF4Xkmi0MvUpErJ0zolkL
-P04stjmViKvGwaggqBR1X0BntEpF0YOUJ1u2Ze579oK1jnsnCr2e3E8/Z5Sif0XmRKSJBjX6
-SRFjF7ofZAyKjoFG5dLQCMmarxQwV87gHVU/pK0OMaUsuB1eu9e3IvRxcQWCVk6tsMHS9DQX
-gopz2sAC7ir3kV4DNRAY/MjXInDUOipALogoY/WWg4MnrjA9iCmG4YmYF2cnGGlzbDB4NLya
-eeBr/b++wWdJzrIdKuD75iAowrF3DWWE3k9UphrTZTamdKZZJLuvIfq4W+1PT9r+Xv4zGXTt
-fEXmzn3ddYPSqE3iXLJIOJ0g+K/9af+IUS4vLiu1GJNbAuPGpVPBfE8zEGdzW5llDBh1sZt5
-h/6B3BYbm+mAsjyNk4eEep8ol8p9SuhQ3KVyxzeBS6iVTxxK7lo+VZVn8Om4f+5az1Rd1z5z
-vGkOUgGmo8mVsxC+lGYCRA4R1J7+lv6vgblAVtXV/SYSN9ZP7m9ZrnVNQJyVax1m4toFzTDr
-byQqlJG7d6LIgX0kThtrGIpQqzYnxR3oy+pUPppOCXVxA03GS9JIoIkXJYVLUq5Q0A2x8k6t
-GeP49eUb1gRsTRLaCMth01e1AIzxmNR9N1G8Q8IVaCsibQw7WV6jsEEZ7Va/K2fqdQPs+u9X
-AMV5TKg6zhjDG6luKeNtgwTX+s3Yj1KZYn3P2RIn4D9A7UOTi+KmIN5iKxR0PutrptLHpKoX
-E05jHzhLCQtbA4YtU4Zp3zfgL1Fg5vNALiVPQsLkFQ5wlGJjwtFZppGEGyMOQmfcrtW2ytTd
-lDrOhTouM1wylDtqNp7duDlBlqYh6kjd1djWF+Mo5/CTumgYjvG24y+sWbhrZQc1UsWIu/Yv
-Fjs2R2o9mKjUYejcgJm4MmfvJxBUo/17FUS6TsjpCK2g3Xc0RbvXHcGF8fIxL9Mkmu8pAOGV
-oR0JDwQmwMRoViQKKQ4hUEb4/wVhqA4ISOKKEOARnnCgrZhQ+gE8LRjla30Bk5EeEAWfdMmg
-CYiQJykP5QI90gmbc0AyRwIJftjF91FaLu9dTpdYllZR/ioC6ZAD/FAiM4LRgXuuMxZRAev1
-SEJxMyqI4y8leKuVciSWTZVrz6Rpd3th2R8YA27/8Xp6b9Qy0DwdPD6/Pv7pbC5Py+FkOi05
-xirptFypqMyz2gDVFjGVya2hq9o/PekU6HB16w+//3cj36mMeZ6F9X5Njy+NzLnvFl60Lhoq
-bKgHv9mMJIZXqxp0axQNDB/AXMryCtq9hmsI8LTL0KlnrxCqgBg1zw/b1Hp+rGRADBBnxV3A
-8u5IyF2um+k42JnHPxMM4/f+7e3wNNAtOHSEuoHb68I8NNLf8ByIZihbKlK1Btfx6bzRRgxm
-1h5sExpFjjUxECDStesVwkwREHM7RIkGbIrpxB3LU4M9B4uGPxTdeV8EZrYPf7/Btmh4B+A5
-2IG0ptlYq9MfnOfUQ4SZBeCyiEg1Ri1GHKJGKg/4eDTsjghPyJ5+AwUNCR7D9IsVt2PCocgg
-8PF4SnhdmZ5LlShH0Cjo2+tJsxE9XYx4Ohqrq2mnibWae+pu3Z3W2pSSbdwytYHC3iY0Wwau
-1sB+uS/X1ZbyS0Gngoi54l9uMbRWkFg2UHUZbdN5xogT2B9Ulrwzlvus2WLyq6fXPzwBq1Sy
-yM/N0Mvsxag4fy9OxVP5kYKtHw7kiuKRH4mFMrodXg3LLRGiSt6Mr66EmtMI0TINeBtcASv7
-YwBatqciLtmo8836fPn2Y/8Op/15PTBqg50encuUe4cFLbuy2cMu6W0ccNyN20SSng4fx9+H
-18+PwfIV6OTltf1uVRFbmokqdWO5TDaOOVL4+JsoJedaxDYnwuvL8fF9oI7PR2AfBvP9459v
-z3s7RgfUc7QGQjHrNDc/ve6fHl9/D97fDo8YFH7AojmzQqNy+7nf3AKfzx/Hn58vjzoCqMes
-aBF47K0XgXmYLRehKCg57YK1CjkRxxNxAja7moxIfl+jhLFbJEagKHZxokAkZkTGIESK+BCN
-aL1fWcmbayDhFMOEOA+/HINHKcndji1hyktJ3GMIo0JD4Ke/s/ih5FFCmukDzp2I0pCImoYj
-zG/Gs1snWDygsENFPYW6G5liXnpKx4oojkvYhueKlqjOCGtFROhdYJi+CXETs3kxueoGxbFr
-5xGR8EtDd4pT8f8AnKPr83g8KcpcwUFN02qeqpvJbOin1pziWPVUk4yd3i+ZfEhi5m1+G03H
-Q5qSM7Fch6SLszY30De8S9O/PO3ffuEp1Xmr3iwZhle+yARVgQ6MvkzX6v+GN417LOsqyxlP
-B1/YJwav569pHYPnaydzlkZenPa/D4Mfnz9/oi6kGyiLSJiCwm6oXzngxHGN8owJ3ddpztxS
-b7J2BPZbycAlj65kFxXJnEBHw5sV4eIO5cBP0s3NX6H0rBNwnNraJol4OkVY5120AUtWXJah
-zPNQlCIGKmm8WyC8mk27sMrSbZXpt6YVU+WKBxakhRbHMM0csyhty4uv+jk+2uEZb8fXz3c9
-/NdOhHhook4jn6LNjrL4EQ3exQzO8jKScUKEotEDz+FqX8lchJLQktRY81DTl8pLKg6ZtsoS
-gSrzTC6XOq77nKRBsyLuUwlhWz3Dc7ZwEwRGxfJrDHX9m9sCzk4qDAeiFLjyPgTRh5AU69Hw
-apV6kaRKh8ObohdnfDPy4ixgKeBrXhx8PcG73NvpvlGt+xBUCEKxFyObshu4MG69SAAzIffh
-/u8++OJaV+KLTgBE7XtGWERoQ8RMG7bRlBbQdfOoa8AdJ7n4n4GeArho2FIAJ/l2eHl6HwBT
-qUOQ/AAm+hKna/B7/+/6aN8/v+sMHJiN4/D0v1oF12xpdXh+02Grf7+eDoPjy89Xe9NXeK3D
-yRQatVT7HKiBlcEcvZx1IxigmdEbvMZbZEJQzG8TT6pgRDz2NdHgd0YfFDWWCoKMsHRooxF8
-RhPt+zpK1YqII9lEZCFbE5FJm2h3LIv6sfgu1dFhYZ6JfEdNbBHD3MxvRh5D2TXryv64b+Tv
-/R86GnqXg9CnRMCnnoXR1uUegpEpzZLq+npzB8Rjn76httxl7liBRjaNY4k2Rq1vyeX+6Y/D
-xz+Dz/3zN7gEDhiJ8TA4Hf71eTwdzLVpUC7B9Zq5b1p3KbZuTALaXRx57HjPKCaVaSSVEgEq
-Vej7Fs/4W/u59bxgreAlNj3oh01nNZtfIOqLSN7QttQAHbn9TvXhGqzzNW1orcRGEb4w+haQ
-ycRDZ6FYJjmZjExjeG6PejPx3S2/cUumBk1r6OhVCWijOX3r5oEsBRWER89RmgLrA6sbEmaC
-eiT0QICCgB3cyHlGSi+6o8mWZTCjNAb52mV4GaVjEClM9VNgeDAPoaIoQaS6Q4Qd1KaJQjzo
-eSOihujJwLRrMFsi8/eZr1ii7sTOSfvpr3+/Hx/3zyadS9cYSd//q8abT5ykhu3jQm7a2908
-Psw9TgtLFiw9TgVAApr5pc/qEF+gqQ9sCf1ARMjkIuoYctbDBLFCG1OfB64Zcx4y1bJDq0vL
-TlYGPcloNOk4UnQ9ba8ycgexviBMPAjkE5qGBowPR9fqakqkYUWcMB9PZmNPtzU39eP5+PLn
-l+FXTTPZcj6obEE/8WVhoFCJCDSEUmadOuQLiqP5SsZLHXz13Gh+Ov7xh0ViTYmnPd+1IKRt
-QTrzXkOTWJBsiIXYSk3hRloJluVzQXBTFupZY9CPylO3NaeFRDwSWji12KoFZz2tx7cPvJLf
-Bx9mbi8Lc8kw/qj1JIMvuAQf+xNc61875HiebDhKlaRSydujYhH1gGrhpYyMjcVBcldyLkPK
-81bCv7Gct7Il1PqqnJfmCfqiwoIivSOdrQURc6QSM3HOIjZfLxrKgotKB/3EFpJwYWbrwntx
-UbFuZHb2G+v0ZXM8QS9cJwdW02+ebgVeBW6/e1eKkf9v7FiWG8dxv+Ka007VzkzspLuTQx9o
-ibLV1iuUFCe5qNJuTeLqSZzyo3b675cgRb0I0Dk5IUCKDxAEARDY7HeH3d/HyfLXe73/427y
-fKoPRyT6c8EgjvAgbFMKyj9cZwgPzW5mOH1LIJV7UFx/mZK18k8zxKopOc3Tz9M7kPMBZNbD
-e11vXgZLpbuuVZW2GvHtx363/YFVoBXY8tpXLfz4y4xw2W4SbTQ5P2Y3eNifiHpM5y8SfGss
-5JmSLRiEG8a/mxKn/kLwsVuaqQK57Iy7Qk9v1lVNIz8Ic+xdn6eSu4Fb0KrMDO9pHcrz9+2b
-croZBQ/0VGG+O+2Jt9qi8fSTU3hNZFTRdqAsJLyQlk0DXnwGIS5KwjfSYBQxTo+87WRBqNZZ
-GM1TwqU/jeOS1JqL+nV3rCGsPDY9uaQ9UOzElYC453bt99fD83jOc4n4n/zX4Vi/TtK3CSRd
-+r2z9I3i07emwHznoT0oE/ALpFIf5MqbDgVlisICwfFUEvwe4mtSglkqiNOAyvFNpGq/izkp
-L2ZrzNEzFLdNwKUeiUIAXTBWJOLrtIfYJIfMysE7HYjwM/5o21aj3lZuFL34oN3nEEjHFxWM
-FcsvuBJHw+dcRETEYo0QZd6U8rjRGDHPibXR8CyUfFNOExFDR+FI0lBJHxwYRUzEA27gQHso
-HPJRKKucwx9FtwFukig4QFST8Fo+P30/qL0zcLYxrl7Ec3pwD8zuWTW7TmJwb8Q5+gBLitL4
-2CEexwrseIDh/GLz+I5uSrnkkLbbofpMT0C9l/L+69PbBhRCb9ujFP4RO5QgInsXyzLxwRgc
-2YwOOXvliSlSwpwFqW+ofNDU6z0IRVHYdzBFhQNLoVxkO2LyiFZ1VZOwBDGQtPl7ZUexp6/B
-FiQURUqDepLxzSpCxSVhlw7YFQUTPMw5ZDIn4N9o0D0NWgQ52dN54fhcEkaOqsGMrikhWZqH
-9/JigKdDhkM0GMgspkznHySyooD0XgFcy7XtsZ34oC96GMP7/eGJJx7Ueyqs3TxJizAY+GD6
-ugg7WzREJWwefIXZVVrgbZkSocUVxCNS2bKySIOcpJgAsnATsCYjWoU4xXlPm5eRNT23coFr
-sMq88hfk2IKdgGyEME9vPn++oHpR+gHWAz/N/wpY8Ze8nxLtxrnEoVq9k3VJsi0swtRc8VCf
-fuwmfw8+Z1hsm46m47pQtCIiSiognF1FZNXJwGIRp0lIqTAVljx2I1+gD4chjXjQU6Iox8bu
-X5XSfBBICwqcG05j3EMilUFYi3LBi2iueoz2VP9Y09neQ3J9odYBiwd9SgVLFpzmEMx3wAIa
-tnSCVIgjitU5ejOnQXatlhlr5tgtjClpTJAXVvlahAXXyc37c9XBJaySuxZnOxotL+UxJR6Q
-r1rL20JQ0rDRcu6VYqTAGeBAQCAwNEgmir1N1UiPlKZAg6NHTDmmYQKuZ3aLopwTgnDTLbhb
-wSthbKf2UTKwGYTD98p9eB4+4vugjxSwu7QUo2F0CoJ0QRCSJy9fKCHltyXLl4MN35To80wx
-5sHjsgHYDwX30DxbBg3e88dZ8y4EbajBUEGYcGkNwwSnG0oj2lZQVOlGISmmxYgeiXwkHQJG
-VV0nHtFhXynnBPBRIFe+xeXxnPs+Ghi1Ww/BFiqYtloy1ejXy96h5RDS4jCRW/QMUIUyuzO+
-WfihHzsYZEbDbpP7Kyf0Mw0Vro9mYMMn5vYhvyPFBortmqdcxLmTOMTZIMcvKR7PllQlL6Ra
-8zKyTuoz+myjxhX1Q9FGuTERfP1te9hdX3+6+WP6W+/rEgECVChZ4+oS9/kdIH35ENIX3Mg0
-QLomvDBGSPhddoT0oc99oOPXxNvtERLuWzxC+kjHCSv7CAlnWiOkj0zBZyIc9hAJ1yYNkG4u
-P9DSzUcW+IbQ+QyRrj7Qp2si2RQgycsF0H6FW08HzUwp76AxFk0ELPeIEIr9vtD1DQY9MwaD
-Jh+DcX5OaMIxGPRaGwx6axkMegHb+Tg/mOn50Uzp4azS8Loi8kwZMC6FABjiPcsTijgvDYbH
-pUBDpJBqUZKCl4LQXBskkcoz+tzHHkQYRWc+t2D8LIrghGuawQg98NchdHMGJykJo8xg+s4N
-qijFamRzGuCURWCbAlf1/q3+Z/LytIEYgt19XEfnCcVtELFF3nM8V7Xe99u340/1svvHa314
-tl3DdTyLqrlPGDFKXl2AB0gZXaUMbY/Yq95NENKCNrV9TlmDjVu55RSnFRi71/ftP/Uf8JJs
-snmpNz8Pqq8bXb7HjNP6MXWYBJgcyxOIRFatmUh64YEG2jONEZd5AelzUG8YKZ3GupGv04tZ
-F9inECFEVo0hD2E+tFMwXzXLiBhKZVIqV7+HeJ5GhPgHE56uEzR2iB50/+azlJ/kItdjsB+b
-yxsq3DpB8xDDSzxMGB+h6FlLk+jBbk6lhajWnK3gKjP27jBUw8BsJEVNcdtXObaFrS+HXoOv
-F/9Oh+MDdQ5vYwc0b9/9+vvp+VnT/HCyVNykcdbAUccBkUVRShgooJkslZw1IfP6qWbS+Tc5
-W0TsragE/1tWYMKqCiDWjE4FpWTIYhmIowNgflpVZU7pnzTWHU59GqitjCqro2vC9PLKdaOz
-bfe6BKrTIErXCAX2wa6RLSXzsrWesOqTaLf5eXrXPGH59PY89ClTwQJkK4VcGkKBqIHVEqxG
-BcvxGV7fut8IZ+DNU4EmB9e1D+DVHYtK3qm0NLB5ASuLO7KRO9d35vgE+JjPDcEW1Y1qa6qR
-l2Cb1Y1WATq44jyjtoFxBxh9T/u5gctDu00n/zk0vhGH/05eT8f631r+UR83f/755+82IxeF
-5MUFvycCbzY0Ivs1DmAypu6zjazXGklu2HSdMSIUtcZVlhUH3xCSsI35hNBuyQZguhwfYUUK
-R2MeyXk/0xfw2GEQw4ZHAXi/4uNUH5VbQeXxpcPYAFEoscHx0ZXmeK5uUQ/ATNyWcxhEcngN
-VPahkBMv0TSOJ7jPIblBZNOk8Eri5FBLJ4hgkzr8L4DhWCCfAZ2dY9WAZH1uDKqZHgqwYrlg
-UdSykNl01Ai5kgDlt7mDxzQb47Y53wXtt6kxtcVRnrugDSQk4WbhKi6EihH+TYsZKLIWB9w4
-EDs/8R6KFIsLo46joEy0JKOmoudaMoQuBMuWOI6RUgMFHTegRezYS8ukkKKelwp/hAL2LbVG
-gKkIJx9heE1F3UrPRCVrwObu5PZucqyV1ZR9elPiclEfjiPajlY+4SugXPjVY8ycTJZpuIJi
-Mg7CnRfyMkXD1a6Rh2DlRtMacRqumePnq5bl0eNa8nu/JBIwKAQQ3BMQmaOM4igKbyURC8Kr
-TSGo6w7u76jg87CgIocreFkS3h8KKpYsX6pQyo6xMuLi6MdMnRD0Ztc0sHIQCJjpKy/N8Kuc
-HmHmGL7xEHF8gb4pSvHUvcxwmso9CrGScd7N4izipNCqXNFWC3/gPA3/4+Qn1IVIbuSqnOcs
-kXytSkoivaHCwG6jENO2uSN3W96LId8phwt0ZJV+/a2nuzaYIEWL0CcDCCb64CcPfG1kUZSB
-WPvzenPab4+/sMs2PdmNBVTSHc+V75ncY4S8gFlLLSCq6lcLt2RCHvNSmgXyBOrUghn4sYyY
-bONtOEIf2PHHQPSurY+lbojM6z40hsKCmeUCt5nUXF+9/a/3426ygYe5u/3kpf7nvd53eheN
-LIeyYFkvtPCgeGaXy1t/lwShV2ijzqOVB0lLhIXfQuxKwF4sfCi0UUWysDBlGYrY6o+srpM9
-WWXZbOCQ3zSW465BDdjHmWMD5Z6PenprqE7xa09XU471BqjobIOVH+ZKOaQEd6SVRTCdXccl
-5o7SYADnsfoFhVinMvVLNwZGwduSlxypq34I218zqPMorCyWnHDyb1DGvEp7TJ6OL7UUbjZP
-x/rHhL9tYAeB9+L/tseXCTscdputAvlPx6c+lzKdJx71m2l2g72l5JJsdpGl0cP08gJXsje4
-Ob8NsVBWLZ0tWZiEkF5E+5yrRwHw4PiAdXvunCqPcApowZQTRdMV/HxrwJHAVTMtKbn7du/+
-uDw91gLxFF0+HV7o6cCTnxpeJKH9+MmmI2c6eodl1vO3z1KGxrogvMuZe1EA4wxCMb3wQ1xa
-MhRJSnNm/j9Ai7FP5IY3YHftUNIqjyoqjJdhu7E/JV5u9jAI03KHMfuEG9o6jMuZs418ybDU
-rR1UfgEhDwn4NHWul8TAjXOGYS3E9MbZwjobfUIT1vb9ZfD8sz2zsZOAJeU8xAQhAxfeFTK8
-ucqV7CYleLoYRaHz9PRYXjipBRCcK+gTGrgGHFhHk8UyluyROU+XnEU5c1OJYeVuFk4kXGjh
-IqPehLaHmHM2i3U6XpTW6LWvDwcdwcueQStboMW0CY+6Bnx95aRTykOsAy+Rd1dPbz92r5Pk
-9Pq93k8WOhg1PgB4TFt5mUiwiO5mkGKuomCWllCjIIrJ27tDwxj+Wq9Dsdr8FhYFFxweGMnb
-gL191LUX7s7n2HGLmDdi64eQBaEiHuOBGO84+NbYjPC7ahkGSfXl5hOutughhvGi4J41SL2E
-9f4Ir+WkeHVQL+AP2+e3p+Np35hlR4qmeZhA6h9bHaLtAdvv+6f9r8l+dzpu3/oZcOZhITg8
-AB4lgjd3tw6OTIR5kwT5J8siHHiB9YJTe2EVpqBLAxNWL1b3AI6CwrR/C/GkPCkJZ0gv3pRi
-f15ln/c9YFiU1eD6I+WH4YLKAreuq0GJQo/PH6izuIeCZVpsEJhYSx5jf39OmAYlFPd/icK5
-U1jy8H6y0g8LveTgJMsKswa4xlElyCCmx3TkMW08bsHtuhdW4fEKLb9/hOLx/9X99WerTD0q
-y2zckH2+sgqZiLGyYlnGcwsA1ga73bn3bZB1Q5cS4+7GVs0fw6x3j+5BoseYoQDl7Yvhp0R5
-b8DwqlOlKxkX2XsPyv1+F0DzKwYo/m1PF5ZEjYP+aIManfDwob7wCbrxfSIrmbhV+d0wMgrn
-wTBWcw4atijE5j6HB4fp4FlL+95VwtQlEKumtcQj3dXqbpBFC+IalCwKH9nYMPJ/VyY7zwAG
-AQA=
-
---Nq2Wo0NMKNjxTN9z--
+diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
+new file mode 100644
+index 000000000000..34c1e380adaa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
+@@ -0,0 +1,46 @@
++* Marvell 98dx3236 pinctrl driver for mpp
++
++Please refer to marvell,mvebu-pinctrl.txt in this directory for common binding
++part and usage
++
++Required properties:
++- compatible: "marvell,98dx3236-pinctrl"
++- reg: register specifier of MPP registers
++
++This driver supports all 98dx3236, 98dx3336 and 98dx4251 variants
++
++name          pins     functions
++================================================================================
++mpp0          0        gpio, spi0(mosi), dev(ad8)
++mpp1          1        gpio, spi0(miso), dev(ad9)
++mpp2          2        gpio, spi0(sck), dev(ad10)
++mpp3          3        gpio, spi0(cs0), dev(ad11)
++mpp4          4        gpio, spi0(cs1), smi(mdc), dev(cs0)
++mpp5          5        gpio, pex(rsto), dev(bootcs)
++mpp6          6        gpio, dev(a2)
++mpp7          7        gpio, dev(ale0)
++mpp8          8        gpio, dev(ale1)
++mpp9          9        gpio, dev(ready0)
++mpp10         10       gpio, dev(ad12)
++mpp11         11       gpio, uart1(rxd), uart0(cts), dev(ad13)
++mpp12         12       gpio, uart1(txd), uart0(rts), dev(ad14)
++mpp13         13       gpio, intr(out), dev(ad15)
++mpp14         14       gpio, i2c0(sck)
++mpp15         15       gpio, i2c0(sda)
++mpp16         16       gpio, dev(oe)
++mpp17         17       gpio, dev(clk)
++mpp18         18       gpio, uart1(txd)
++mpp19         19       gpio, uart1(rxd), dev(rb)
++mpp20         20       gpio, dev(we)
++mpp21         21       gpio, dev(ad0)
++mpp22         22       gpio, dev(ad1)
++mpp23         23       gpio, dev(ad2)
++mpp24         24       gpio, dev(ad3)
++mpp25         25       gpio, dev(ad4)
++mpp26         26       gpio, dev(ad5)
++mpp27         27       gpio, dev(ad6)
++mpp28         28       gpio, dev(ad7)
++mpp29         29       gpio, dev(a0)
++mpp30         30       gpio, dev(a1)
++mpp31         31       gpio, slv_smi(mdc), smi(mdc), dev(we1)
++mpp32         32       gpio, slv_smi(mdio), smi(mdio), dev(cs1)
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+index e4ea71a9d985..2586903c59f0 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+@@ -49,6 +49,10 @@ enum armada_xp_variant {
+ 	V_MV78460	= BIT(2),
+ 	V_MV78230_PLUS	= (V_MV78230 | V_MV78260 | V_MV78460),
+ 	V_MV78260_PLUS	= (V_MV78260 | V_MV78460),
++	V_98DX3236	= BIT(3),
++	V_98DX3336	= BIT(4),
++	V_98DX4251	= BIT(5),
++	V_98DX3236_PLUS	= (V_98DX3236 | V_98DX3336 | V_98DX4251),
+ };
+ 
+ static struct mvebu_mpp_mode armada_xp_mpp_modes[] = {
+@@ -360,6 +364,124 @@ static struct mvebu_mpp_mode armada_xp_mpp_modes[] = {
+ 		 MPP_VAR_FUNCTION(0x1, "dev", "ad31",       V_MV78260_PLUS)),
+ };
+ 
++static struct mvebu_mpp_mode mv98dx3236_mpp_modes[] = {
++	MPP_MODE(0,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "spi0", "mosi",       V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad8",         V_98DX3236_PLUS)),
++	MPP_MODE(1,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "spi0", "miso",       V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad9",         V_98DX3236_PLUS)),
++	MPP_MODE(2,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "spi0", "csk",        V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad10",        V_98DX3236_PLUS)),
++	MPP_MODE(3,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "spi0", "cs0",        V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad11",        V_98DX3236_PLUS)),
++	MPP_MODE(4,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "spi0", "cs1",        V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x3, "smi", "mdc",         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "cs0",         V_98DX3236_PLUS)),
++	MPP_MODE(5,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "pex", "rsto",        V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "bootcs0",     V_98DX3236_PLUS)),
++	MPP_MODE(6,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "a2",          V_98DX3236_PLUS)),
++	MPP_MODE(7,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ale0",        V_98DX3236_PLUS)),
++	MPP_MODE(8,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ale1",        V_98DX3236_PLUS)),
++	MPP_MODE(9,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ready0",      V_98DX3236_PLUS)),
++	MPP_MODE(10,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad12",        V_98DX3236_PLUS)),
++	MPP_MODE(11,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "uart1", "rxd",       V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x3, "uart0", "cts",       V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad13",        V_98DX3236_PLUS)),
++	MPP_MODE(12,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "uart1", "txd",       V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x3, "uart0", "rts",       V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad14",        V_98DX3236_PLUS)),
++	MPP_MODE(13,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "intr", "out",        V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad15",        V_98DX3236_PLUS)),
++	MPP_MODE(14,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "i2c0", "sck",        V_98DX3236_PLUS)),
++	MPP_MODE(15,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "i2c0", "sda",        V_98DX3236_PLUS)),
++	MPP_MODE(16,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "oe",          V_98DX3236_PLUS)),
++	MPP_MODE(17,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "clkout",      V_98DX3236_PLUS)),
++	MPP_MODE(18,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x3, "uart1", "txd",       V_98DX3236_PLUS)),
++	MPP_MODE(19,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x3, "uart1", "rxd",       V_98DX3236_PLUS)),
++	MPP_MODE(20,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "we0",         V_98DX3236_PLUS)),
++	MPP_MODE(21,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad0",         V_98DX3236_PLUS)),
++	MPP_MODE(22,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad1",         V_98DX3236_PLUS)),
++	MPP_MODE(23,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad2",         V_98DX3236_PLUS)),
++	MPP_MODE(24,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad3",         V_98DX3236_PLUS)),
++	MPP_MODE(25,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad4",         V_98DX3236_PLUS)),
++	MPP_MODE(26,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad5",         V_98DX3236_PLUS)),
++	MPP_MODE(27,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad6",         V_98DX3236_PLUS)),
++	MPP_MODE(28,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad7",         V_98DX3236_PLUS)),
++	MPP_MODE(29,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "a0",          V_98DX3236_PLUS)),
++	MPP_MODE(30,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "a1",          V_98DX3236_PLUS)),
++	MPP_MODE(31,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "slv_smi", "mdc",     V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x3, "smi", "mdc",         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "we1",         V_98DX3236_PLUS)),
++	MPP_MODE(32,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "slv_smi", "mdio",    V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x3, "smi", "mdio",        V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "cs1",         V_98DX3236_PLUS)),
++};
++
+ static struct mvebu_pinctrl_soc_info armada_xp_pinctrl_info;
+ 
+ static const struct of_device_id armada_xp_pinctrl_of_match[] = {
+@@ -375,6 +497,10 @@ static const struct of_device_id armada_xp_pinctrl_of_match[] = {
+ 		.compatible = "marvell,mv78460-pinctrl",
+ 		.data       = (void *) V_MV78460,
+ 	},
++	{
++		.compatible = "marvell,98dx3236-pinctrl",
++		.data       = (void *) V_98DX3236,
++	},
+ 	{ },
+ };
+ 
+@@ -407,6 +533,14 @@ static struct pinctrl_gpio_range mv78460_mpp_gpio_ranges[] = {
+ 	MPP_GPIO_RANGE(2,  64, 64,  3),
+ };
+ 
++static struct mvebu_mpp_ctrl mv98dx3236_mpp_controls[] = {
++	MPP_FUNC_CTRL(0, 32, NULL, armada_xp_mpp_ctrl),
++};
++
++static struct pinctrl_gpio_range mv98dx3236_mpp_gpio_ranges[] = {
++	MPP_GPIO_RANGE(0,   0,  0, 32),
++};
++
+ static int armada_xp_pinctrl_suspend(struct platform_device *pdev,
+ 				     pm_message_t state)
+ {
+@@ -488,6 +622,17 @@ static int armada_xp_pinctrl_probe(struct platform_device *pdev)
+ 		soc->gpioranges = mv78460_mpp_gpio_ranges;
+ 		soc->ngpioranges = ARRAY_SIZE(mv78460_mpp_gpio_ranges);
+ 		break;
++	case V_98DX3236:
++	case V_98DX3336:
++	case V_98DX4251:
++		/* fall-through */
++		soc->controls = mv98dx3236_mpp_controls;
++		soc->ncontrols = ARRAY_SIZE(mv98dx3236_mpp_controls);
++		soc->modes = mv98dx3236_mpp_modes;
++		soc->nmodes = mv98dx3236_mpp_controls[0].npins;
++		soc->gpioranges = mv98dx3236_mpp_gpio_ranges;
++		soc->ngpioranges = ARRAY_SIZE(mv98dx3236_mpp_gpio_ranges);
++		break;
+ 	}
+ 
+ 	nregs = DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);
+-- 
+2.11.0.24.ge6920cf
