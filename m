@@ -1,32 +1,43 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 3/5] pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
-Date: Thu, 22 Dec 2016 16:48:35 -0600
-Message-ID: <20161222224835.xoillysatrjvdspr@rob-hp-laptop>
-References: <20161222041328.3303-1-chris.packham@alliedtelesis.co.nz>
- <20161222041328.3303-4-chris.packham@alliedtelesis.co.nz>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] pinctrl: single: fix spelling mistakes on "Ivalid"
+Date: Fri, 23 Dec 2016 00:47:14 +0000
+Message-ID: <20161223004714.7491-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161222041328.3303-4-chris.packham@alliedtelesis.co.nz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: linux-arm-kernel@lists.infradead.org, Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from youngberry.canonical.com ([91.189.89.112]:44797 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S940018AbcLWAsC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Dec 2016 19:48:02 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-On Thu, Dec 22, 2016 at 05:13:26PM +1300, Chris Packham wrote:
-> From: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>
-> 
-> This pinctrl driver supports the 98DX3236, 98DX3336 and 98DX4251 SoCs
-> from Marvell.
-> 
-> Signed-off-by: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
->  .../pinctrl/marvell,armada-98dx3236-pinctrl.txt    |  46 +++++++
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Trivial fixe to spelling mistake "Ivalid" to "Invalid" in
+dev_err  error message.
 
->  drivers/pinctrl/mvebu/pinctrl-armada-xp.c          | 145 +++++++++++++++++++++
->  2 files changed, 191 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/pinctrl-single.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+index a5a0392..25edadf 100644
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -1134,7 +1134,7 @@ static int pcs_parse_one_pinctrl_entry(struct pcs_device *pcs,
+ 
+ 	rows = pinctrl_count_index_with_args(np, name);
+ 	if (rows <= 0) {
+-		dev_err(pcs->dev, "Ivalid number of rows: %d\n", rows);
++		dev_err(pcs->dev, "Invalid number of rows: %d\n", rows);
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.10.2
+
