@@ -1,55 +1,91 @@
-From: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Subject: [PATCH 2/2] arm64: allwinner: Kconfig: add essential
- pinctrl driver for H5
-Date: Fri, 23 Dec 2016 20:50:01 +0800
-Message-ID: <20161223125001.1176-2-icenowy@aosc.xyz>
-References: <20161223125001.1176-1-icenowy@aosc.xyz>
-Reply-To: icenowy-ymACFijhrKM@public.gmane.org
+From: Anand Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH 0/9] Runtime PM for Exynos pin controller driver
+Date: Sat, 24 Dec 2016 15:40:36 +0530
+Message-ID: <CANAwSgRQuoriU923XT1B_0CVX2rzOR+8j2YHLMYRUu3gGySEBw@mail.gmail.com>
+References: <CGME20161223122513epcas1p394d93d72d2d32c8910aafd1f6cc6b5e2@epcas1p3.samsung.com>
+ <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCZLPFN5Q4OBBZF36TBAKGQE5TKGQLY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20161223125001.1176-1-icenowy-ymACFijhrKM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-H5 SoC has two pin controllers, one (in user manual called "CPUx") needs
-a slightly advanced driver, and the other (called "CPUs") is just equal
-to the on in H3, and the H3 driver can be just reused.
+Hi Marek
 
-Select the two necessary pinctrl drivers when building kernel for
-Allwinner SoCs.
+On 23 December 2016 at 17:54, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> Hello,
+>
+> This patchset is a next step to add support for audio power domain on
+> Exynos5 SoCs.
+>
+> Audio power domain on Exynos5 SoCs contains following hardware modules:
+> 1. clock controller
+> 2. pin controller
+> 3. PL330 DMA controller
+> 4. I2S audio controller
+>
+> Till now it was assumed that pin controller is located in the "always on"
+> power domain and lacked runtime power management. This patch finally
+> removes such assumption and adds runtime pm support and awareness to this
+> driver. To achieve this, some changes in the Exynos platform support code
+> were needed, like moving pad retention control to the pin controller driver.
+> Some cleanup to the pin controller driver has been also done while changing
+> the code. This new feature requires some additional information in the
+> device tree, what is handled by patches 1,2 and 9.
+>
+> Please note that patches are ordered in such a way that the changes can be
+> bisected, so the properties are added to dts before the code requiring them.
+>
+> The other patches related to enabling full support for audio power domain
+> can be found here:
+> 1. PL330 ADMA controller non-irqsafe runtime PM:
+>    https://www.spinics.net/lists/arm-kernel/msg550008.html
+> 2. Runtime PM for clock controllers (Exynos Audio subsystem will be added
+>    in v4 soon): https://www.spinics.net/lists/arm-kernel/msg538122.html
+>
+> Patches are based on linux-next from 2016.12.22.
+>
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+>
+>
+> Patch summary:
+>
+> Marek Szyprowski (9):
+>   ARM: dts: exynos: Add PMU syscon to pinctrl nodes
+>   ARM: dts: exynos: Add pinctrl sleep state for 542x i2s module
+>   pinctrl: samsung: Remove dead code
+>   pinctrl: samsung: Use generic of_device_get_match_data helper
+>   pinctrl: samsung: Move retention control from mach-exynos to the
+>     pinctrl driver
+>   pinctrl: samsung: Replace syscore ops with standard platform device
+>     pm_ops
+>   pinctrl: samsung: Add property to mark pad state as suitable for power
+>     down
+>   pinctrl: samsung: Add runtime PM support
+>   ARM: dts: exynos: Add audio power domain support to Exynos542x SoCs
+>
+>  .../bindings/pinctrl/samsung-pinctrl.txt           |  12 ++
+>  arch/arm/boot/dts/exynos3250.dtsi                  |   2 +
+>  arch/arm/boot/dts/exynos4210.dtsi                  |   3 +
+>  arch/arm/boot/dts/exynos4x12.dtsi                  |   3 +
+>  arch/arm/boot/dts/exynos5250.dtsi                  |   4 +
+>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |  11 ++
+>  arch/arm/boot/dts/exynos5420.dtsi                  |  18 ++-
+>  arch/arm/mach-exynos/suspend.c                     |  64 ---------
+>  drivers/pinctrl/samsung/pinctrl-exynos.c           | 148 +++++++++++++++++++++
+>  drivers/pinctrl/samsung/pinctrl-samsung.c          | 126 ++++++++----------
+>  drivers/pinctrl/samsung/pinctrl-samsung.h          |  15 +++
+>  11 files changed, 271 insertions(+), 135 deletions(-)
+>
 
-Also add H5 in the option's description.
-
-Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
----
- arch/arm64/Kconfig.platforms | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 715ef1256838..e11523d204b5 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -5,8 +5,11 @@ config ARCH_SUNXI
- 	select GENERIC_IRQ_CHIP
- 	select PINCTRL
- 	select PINCTRL_SUN50I_A64
-+	select PINCTRL_SUN50I_H5
-+	select PINCTRL_SUN8I_H3_R
- 	help
--	  This enables support for Allwinner sunxi based SoCs like the A64.
-+	  This enables support for Allwinner sunxi based SoCs like the A64
-+	  and H5.
- 
- config ARCH_ALPINE
- 	bool "Annapurna Labs Alpine platform"
--- 
-2.11.0
+Is their core configuration missing to enable audio through HDMI on
+Odroid Boards.
+I could not get the sound working on Odroid XU4.
+.
+-Best Regards
+Anand Moon
