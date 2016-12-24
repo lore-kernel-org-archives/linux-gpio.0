@@ -1,91 +1,69 @@
-From: Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH 0/9] Runtime PM for Exynos pin controller driver
-Date: Sat, 24 Dec 2016 15:40:36 +0530
-Message-ID: <CANAwSgRQuoriU923XT1B_0CVX2rzOR+8j2YHLMYRUu3gGySEBw@mail.gmail.com>
-References: <CGME20161223122513epcas1p394d93d72d2d32c8910aafd1f6cc6b5e2@epcas1p3.samsung.com>
- <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: Re: [PATCH] mtd: nand: fix implicit module.h usage in xway_nand.c
+Date: Sat, 24 Dec 2016 18:18:10 +0100
+Message-ID: <70e80343-d871-93ac-cffc-ec0ad7386145@hauke-m.de>
+References: <20161220211800.4701-1-paul.gortmaker@windriver.com>
+ <63347d92-15b6-917c-b9f7-d239faaacdeb@hauke-m.de>
+ <20161222100144.2ea9f7fe@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161222100144.2ea9f7fe@bbrezillon>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Marek
 
-On 23 December 2016 at 17:54, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> Hello,
->
-> This patchset is a next step to add support for audio power domain on
-> Exynos5 SoCs.
->
-> Audio power domain on Exynos5 SoCs contains following hardware modules:
-> 1. clock controller
-> 2. pin controller
-> 3. PL330 DMA controller
-> 4. I2S audio controller
->
-> Till now it was assumed that pin controller is located in the "always on"
-> power domain and lacked runtime power management. This patch finally
-> removes such assumption and adds runtime pm support and awareness to this
-> driver. To achieve this, some changes in the Exynos platform support code
-> were needed, like moving pad retention control to the pin controller driver.
-> Some cleanup to the pin controller driver has been also done while changing
-> the code. This new feature requires some additional information in the
-> device tree, what is handled by patches 1,2 and 9.
->
-> Please note that patches are ordered in such a way that the changes can be
-> bisected, so the properties are added to dts before the code requiring them.
->
-> The other patches related to enabling full support for audio power domain
-> can be found here:
-> 1. PL330 ADMA controller non-irqsafe runtime PM:
->    https://www.spinics.net/lists/arm-kernel/msg550008.html
-> 2. Runtime PM for clock controllers (Exynos Audio subsystem will be added
->    in v4 soon): https://www.spinics.net/lists/arm-kernel/msg538122.html
->
-> Patches are based on linux-next from 2016.12.22.
->
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
->
->
-> Patch summary:
->
-> Marek Szyprowski (9):
->   ARM: dts: exynos: Add PMU syscon to pinctrl nodes
->   ARM: dts: exynos: Add pinctrl sleep state for 542x i2s module
->   pinctrl: samsung: Remove dead code
->   pinctrl: samsung: Use generic of_device_get_match_data helper
->   pinctrl: samsung: Move retention control from mach-exynos to the
->     pinctrl driver
->   pinctrl: samsung: Replace syscore ops with standard platform device
->     pm_ops
->   pinctrl: samsung: Add property to mark pad state as suitable for power
->     down
->   pinctrl: samsung: Add runtime PM support
->   ARM: dts: exynos: Add audio power domain support to Exynos542x SoCs
->
->  .../bindings/pinctrl/samsung-pinctrl.txt           |  12 ++
->  arch/arm/boot/dts/exynos3250.dtsi                  |   2 +
->  arch/arm/boot/dts/exynos4210.dtsi                  |   3 +
->  arch/arm/boot/dts/exynos4x12.dtsi                  |   3 +
->  arch/arm/boot/dts/exynos5250.dtsi                  |   4 +
->  arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |  11 ++
->  arch/arm/boot/dts/exynos5420.dtsi                  |  18 ++-
->  arch/arm/mach-exynos/suspend.c                     |  64 ---------
->  drivers/pinctrl/samsung/pinctrl-exynos.c           | 148 +++++++++++++++++++++
->  drivers/pinctrl/samsung/pinctrl-samsung.c          | 126 ++++++++----------
->  drivers/pinctrl/samsung/pinctrl-samsung.h          |  15 +++
->  11 files changed, 271 insertions(+), 135 deletions(-)
->
 
-Is their core configuration missing to enable audio through HDMI on
-Odroid Boards.
-I could not get the sound working on Odroid XU4.
-.
--Best Regards
-Anand Moon
+On 12/22/2016 10:01 AM, Boris Brezillon wrote:
+> +Brian
+> 
+> On Wed, 21 Dec 2016 16:19:00 +0100
+> Hauke Mehrtens <hauke@hauke-m.de> wrote:
+> 
+>> On 12/20/2016 10:18 PM, Paul Gortmaker wrote:
+>>> In commit d47529b2e9fe0ec2eb1f072afad8849f52e385c4 ("gpio: don't
+>>> include module.h in shared driver header") we fixed a bunch of
+>>> implicit includes and then did what the shortlog says -- remove
+>>> module.h from a gpio header.
+>>>
+>>> In parallel, commit 024366750c2e04fdcda8bca685194ef0196b35fe
+>>> ("mtd: nand: xway: convert to normal platform driver") added new
+>>> modular function calls to a file that now became relying on the
+>>> above module.h presence in the gpio header, since it did not
+>>> explicitly include module.h header for them as part of the change.
+>>>
+>>> The problem only appears when the two dev streams are merged.
+>>>
+>>> Since the file is tristate, the fix is obvious -- it needs an
+>>> explicit include of module.h header.  
+>>
+>> Hi Paul,
+>>
+>> the xway nand driver does not build as a module, so I made it bool, this
+>> patch:
+>> http://lists.infradead.org/pipermail/linux-mtd/2016-December/070800.html
+>> And then made it use the non module versions here:
+>> http://lists.infradead.org/pipermail/linux-mtd/2016-December/070801.html
+>>
+>> In the beginning I also came up with the same patch as you, but the mtd
+>> people suggested to do it differently. I hope my two patches are on
+>> their way into Linus tree.
+> 
+> Yep. Just waiting for Linus to release 4.10-rc1 to rebase my nand/next
+> branch and start applying new patches. It should be queued for 4.11 and
+> backported to all previous release (thanks to the Cc-stable + Fixes
+> tags).
+> 
+> I didn't plan to take these fixes in one of the 4.10-rc fixes PR, since
+> this bug is here for several releases, and no-one complained before.
+> Let me know if you think otherwise, I'll add my ack and ask Brian to
+> take it in the MTD tree.
+
+The difference is that the NAND driver built when build in kernel till
+4.9 because the module.h header file was included indirectly. This broke
+by the combination of the two commits mentioned by Paul.
+
+Hauke
