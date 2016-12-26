@@ -1,55 +1,95 @@
-From: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Subject: [PATCH v2 2/2] arm64: allwinner: Kconfig: add essential
- pinctrl driver for H5
-Date: Mon, 26 Dec 2016 17:31:27 +0800
-Message-ID: <20161226093127.5525-2-icenowy@aosc.xyz>
-References: <20161226093127.5525-1-icenowy@aosc.xyz>
-Reply-To: icenowy-ymACFijhrKM@public.gmane.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 4/9] pinctrl: samsung: Use generic
+ of_device_get_match_data helper
+Date: Mon, 26 Dec 2016 11:41:42 +0200
+Message-ID: <20161226094142.hajrgye5632mgoup@kozik-lap>
+References: <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20161223122527epcas1p441f0ee34c5738645163ef40c94591183@epcas1p4.samsung.com>
+ <1482495889-6201-5-git-send-email-m.szyprowski@samsung.com>
+ <20161225125607.a66kwtweizran4qw@kozik-lap>
+ <CA+Ln22FfYkxJAOtpfr1UUai6vZej09NSZa6cz2cuO2aHN8Trmw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCZLPFN5Q4OBBPWHQPBQKGQEN77UT3Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20161226093127.5525-1-icenowy-ymACFijhrKM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33965 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751618AbcLZJmG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Dec 2016 04:42:06 -0500
+Content-Disposition: inline
+In-Reply-To: <CA+Ln22FfYkxJAOtpfr1UUai6vZej09NSZa6cz2cuO2aHN8Trmw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-H5 SoC has two pin controllers, one (in user manual called "CPUx") needs
-a slightly advanced driver, and the other (called "CPUs") is just equal
-to the on in H3, and the H3 driver can be just reused.
+On Mon, Dec 26, 2016 at 02:44:26PM +0900, Tomasz Figa wrote:
+> 2016-12-25 21:56 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+> > On Fri, Dec 23, 2016 at 01:24:44PM +0100, Marek Szyprowski wrote:
+> >> Replace custom code with generic helper.
+> >>
+> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >> ---
+> >>  drivers/pinctrl/samsung/pinctrl-samsung.c | 9 ++++-----
+> >>  1 file changed, 4 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> >> index 4d9262051ff1..a6c2ea74e0f3 100644
+> >> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> >> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> >> @@ -27,6 +27,7 @@
+> >>  #include <linux/err.h>
+> >>  #include <linux/gpio.h>
+> >>  #include <linux/irqdomain.h>
+> >> +#include <linux/of_device.h>
+> >>  #include <linux/spinlock.h>
+> >>  #include <linux/syscore_ops.h>
+> >>
+> >> @@ -967,15 +968,13 @@ static int samsung_gpiolib_unregister(struct platform_device *pdev,
+> >>       return 0;
+> >>  }
+> >>
+> >> -static const struct of_device_id samsung_pinctrl_dt_match[];
+> >> -
+> >>  /* retrieve the soc specific data */
+> >>  static const struct samsung_pin_ctrl *
+> >>  samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
+> >>                            struct platform_device *pdev)
+> >>  {
+> >>       int id;
+> >> -     const struct of_device_id *match;
+> >> +     const struct samsung_pin_ctrl *match_data;
+> >>       struct device_node *node = pdev->dev.of_node;
+> >>       struct device_node *np;
+> >>       const struct samsung_pin_bank_data *bdata;
+> >> @@ -990,8 +989,8 @@ static int samsung_gpiolib_unregister(struct platform_device *pdev,
+> >>               dev_err(&pdev->dev, "failed to get alias id\n");
+> >>               return ERR_PTR(-ENOENT);
+> >>       }
+> >> -     match = of_match_node(samsung_pinctrl_dt_match, node);
+> >> -     ctrl = (struct samsung_pin_ctrl *)match->data + id;
+> >> +     match_data = of_device_get_match_data(&pdev->dev);
+> >> +     ctrl = match_data + id;
+> >
+> > Either you need a check for match_data != NULL or just remove match_data
+> > and:
+> >         ctrl = of_device_get_match_data();
+> >         ctrl += id;
+> >
+> > Actually match_data can be removed even with the check for non-NULL...
+> 
+> I don't think this function can ever return NULL if the match array
+> contains a non-NULL value for each compatible string and the driver
+> can be probed only by DT.
 
-Select the two necessary pinctrl drivers when building kernel for
-Allwinner SoCs.
+Practically it cannot (or it should not) but defensive coding is a good
+practice...
 
-Also add H5 in the option's description.
+> But you still need to cast the match data pointer to the correct type
+> and using a variable for it IMHO makes the code cleaner.
 
-Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
----
- arch/arm64/Kconfig.platforms | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+What do you mean by casting through variable? match_data and ctrl are
+the same type so there is no change by intermediate variable. It just
+obfuscates the code.
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 715ef1256838..e11523d204b5 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -5,8 +5,11 @@ config ARCH_SUNXI
- 	select GENERIC_IRQ_CHIP
- 	select PINCTRL
- 	select PINCTRL_SUN50I_A64
-+	select PINCTRL_SUN50I_H5
-+	select PINCTRL_SUN8I_H3_R
- 	help
--	  This enables support for Allwinner sunxi based SoCs like the A64.
-+	  This enables support for Allwinner sunxi based SoCs like the A64
-+	  and H5.
- 
- config ARCH_ALPINE
- 	bool "Annapurna Labs Alpine platform"
--- 
-2.11.0
+BR,
+Krzysztof
