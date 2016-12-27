@@ -1,13 +1,17 @@
-From: Bai Ping <ping.bai@nxp.com>
-Subject: [PATCH v2 11/12] ARM: imx: correct i.mx6sll dram io low power mode
-Date: Tue, 27 Dec 2016 17:47:49 +0800
-Message-ID: <1482832070-22668-12-git-send-email-ping.bai@nxp.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 5/9] pinctrl: samsung: Move retention control from
+ mach-exynos to the pinctrl driver
+Date: Tue, 27 Dec 2016 11:12:26 +0100
+Message-ID: <5d09e29f-5796-cce6-75d5-ed5a0145092f@samsung.com>
+References: <CGME20161223122531epcas1p4b8fad6664dad3408acb7a1b9f140884a@epcas1p4.samsung.com>
+ <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com>
+ <1482495889-6201-6-git-send-email-m.szyprowski@samsung.com>
+ <CA+Ln22HQPHF_Vj0kS834SH=4=hcNOpe_vL8P3fbS-jFhQLVyXA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+In-reply-to: <CA+Ln22HQPHF_Vj0kS834SH=4=hcNOpe_vL8P3fbS-jFhQLVyXA@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,120 +21,111 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: shawnguo@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org
-Cc: devicetree@vger.kernel.org, kernel@pengutronix.de, daniel.lezcano@linaro.org, linux-gpio@vger.kernel.org, p.zabel@pengutronix.de, jacky.baip@gmail.com, fabio.estevam@nxp.com, tglx@linutronix.de, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-i.MX6SLL has different DRAM IO offset, and it has no
-CAS/RAS/ODT/RESET pin now, correct the DRAM IO offset.
+Hi Tomasz,
 
-To better support all different i.MX6 SoCs and different
-DRAM types, introduce a new column to store the low power
-settings for DRAM IO, then suspend asm code no need to check
-SoC or DRAM type, just get the DRAM IO's low power
-settings from OCRAM pm_info and set to each DRAM IO.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Bai Ping <ping.bai@nxp.com>
----
- arch/arm/mach-imx/pm-imx6.c      | 17 ++++++++++++++++-
- arch/arm/mach-imx/suspend-imx6.S | 29 +++++++----------------------
- 2 files changed, 23 insertions(+), 23 deletions(-)
+On 2016-12-26 06:55, Tomasz Figa wrote:
+> 2016-12-23 21:24 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+>> Pad retention control after suspend/resume cycle should be done from pin
+>> controller driver instead of PMU (power management unit) driver to avoid
+>> possible ordering and logical dependencies. Till now it worked fine only
+>> because PMU driver registered its sys_ops after pin controller.
+>>
+>> This patch moves pad retention control from PMU driver to Exynos pin
+>> controller driver. This is a preparation for adding new features to Exynos
+>> pin controller driver, like runtime power management and suspending
+>> individual pin controllers, which might be a part of some power domain.
+>>
+> It looks like this change will essentially break the compatibility
+> with DTBs that don't have the pmu syscon specified in pin controller
+> nodes.
+>
+> On the other hand, moving this code to where it actually belongs
+> really makes sense, so maybe we could just avoid the need of having
+> this property, by looking up the PMU manually, by hardcoded string or
+> so, if the proper property is not present?
 
-diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-index 2ed4316..5fb78a9 100644
---- a/arch/arm/mach-imx/pm-imx6.c
-+++ b/arch/arm/mach-imx/pm-imx6.c
-@@ -230,7 +230,7 @@ struct imx6_cpu_pm_info {
- 	struct imx6_pm_base gpc_base;
- 	struct imx6_pm_base l2_base;
- 	u32 mmdc_io_num; /* Number of MMDC IOs which need saved/restored. */
--	u32 mmdc_io_val[MX6_MAX_MMDC_IO_NUM][2]; /* To save offset and value */
-+	u32 mmdc_io_val[MX6_MAX_MMDC_IO_NUM][3]; /* To save offset,value and low power setting */
- } __aligned(8);
- 
- void imx6_set_int_mem_clk_lpm(bool enable)
-@@ -570,6 +570,21 @@ static int __init imx6q_suspend_init(const struct imx6_pm_socdata *socdata)
- 		pm_info->mmdc_io_val[i][1] =
- 			readl_relaxed(pm_info->iomuxc_base.vbase +
- 			mmdc_offset_array[i]);
-+		pm_info->mmdc_io_val[i][2] = 0;
-+
-+	}
-+
-+	/* i.MX6SLL has no DRAM RESET pin */
-+	if (cpu_is_imx6sll()) {
-+		pm_info->mmdc_io_val[pm_info->mmdc_io_num - 2][2] = 0x1000;
-+		pm_info->mmdc_io_val[pm_info->mmdc_io_num - 1][2] = 0x1000;
-+	} else {
-+		if (pm_info->ddr_type == IMX_DDR_TYPE_LPDDR2) {
-+			 /* for LPDDR2, CKE0/1 and RESET pin need special setting */
-+			pm_info->mmdc_io_val[pm_info->mmdc_io_num - 3][2] = 0x1000;
-+			pm_info->mmdc_io_val[pm_info->mmdc_io_num - 2][2] = 0x1000;
-+			pm_info->mmdc_io_val[pm_info->mmdc_io_num - 1][2] = 0x80000;
-+		}
- 	}
- 
- 	imx6_suspend_in_ocram_fn = fncpy(
-diff --git a/arch/arm/mach-imx/suspend-imx6.S b/arch/arm/mach-imx/suspend-imx6.S
-index 76ee2ce..c9a26f4 100644
---- a/arch/arm/mach-imx/suspend-imx6.S
-+++ b/arch/arm/mach-imx/suspend-imx6.S
-@@ -104,7 +104,7 @@
- 	add	r7, r7, r0
- 1:
- 	ldr	r8, [r7], #0x4
--	ldr	r9, [r7], #0x4
-+	ldr	r9, [r7], #0x8
- 	str	r9, [r11, r8]
- 	subs	r6, r6, #0x1
- 	bne	1b
-@@ -179,7 +179,6 @@ ENTRY(imx6_suspend)
- 	ldr	r11, [r0, #PM_INFO_MX6Q_IOMUXC_V_OFFSET]
- 	ldr	r6, [r11, #0x0]
- 
--	/* use r11 to store the IO address */
- 	ldr	r11, [r0, #PM_INFO_MX6Q_SRC_V_OFFSET]
- 	/* store physical resume addr and pm_info address. */
- 	str	r9, [r11, #MX6Q_SRC_GPR1]
-@@ -207,32 +206,18 @@ poll_dvfs_set:
- 	ands	r7, r7, #(1 << 25)
- 	beq	poll_dvfs_set
- 
-+	/* use r11 to store the IO address */
- 	ldr	r11, [r0, #PM_INFO_MX6Q_IOMUXC_V_OFFSET]
--	ldr	r6, =0x0
--	ldr	r7, [r0, #PM_INFO_MMDC_IO_NUM_OFFSET]
-+	ldr	r6, [r0, #PM_INFO_MMDC_IO_NUM_OFFSET]
- 	ldr	r8, =PM_INFO_MMDC_IO_VAL_OFFSET
- 	add	r8, r8, r0
--	/* LPDDR2's last 3 IOs need special setting */
--	cmp	r3, #IMX_DDR_TYPE_LPDDR2
--	subeq	r7, r7, #0x3
- set_mmdc_io_lpm:
--	ldr	r9, [r8], #0x8
--	str	r6, [r11, r9]
--	subs	r7, r7, #0x1
-+	ldr	r7, [r8], #0x8
-+	ldr	r9, [r8], #0x4
-+	str	r9, [r11, r7]
-+	subs	r6, r6, #0x1
- 	bne	set_mmdc_io_lpm
- 
--	cmp 	r3, #IMX_DDR_TYPE_LPDDR2
--	bne	set_mmdc_io_lpm_done
--	ldr	r6, =0x1000
--	ldr	r9, [r8], #0x8
--	str	r6, [r11, r9]
--	ldr	r9, [r8], #0x8
--	str	r6, [r11, r9]
--	ldr	r6, =0x80000
--	ldr	r9, [r8]
--	str	r6, [r11, r9]
--set_mmdc_io_lpm_done:
--
- 	/*
- 	 * mask all GPC interrupts before
- 	 * enabling the RBC counters to
+Well, once again the topic of mythical device tree compatibility appearch.
+
+There are imho following possibilities:
+
+1. https://patchwork.kernel.org/patch/9477963/ ("Explicitly mark Samsung
+    Exynos SoC bindings as unstable"), simply apply this approach and ignore
+    users, who don't update their device tree blobs (are there any??).
+
+2. Switch to syscon_regmap_lookup_by_compatible() lookup and hardcode PMU
+    compatible id for all Exynos SoCs in the pin control driver. Then maybe,
+    while unifying the code, switch other Exynos drivers to this approach
+    and remove PMU phandles from device tree to make the code a bit more
+    consistent across drivers and easier to understand.
+
+3. Mixed approach, which combines drawbacks of both approaches. Additional
+    dead code for handling mythical compatibility and harder to understand
+    relations between the drivers.
+
+
+> [...]
+>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>> index 1baf19eecabf..b7bd2e12a269 100644
+>> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>> @@ -43,6 +43,10 @@ Required Properties:
+>>                  };
+>>          };
+>>
+>> +- samsung,pmu-syscon: Phandle to the PMU system controller, to let driver
+>> +  to control pad retention after system suspend/resume cycle (only for Exynos
+>> +  SoC series).
+>> +
+> Ah, here it is. I think adding relevant binding documentation at the
+> beginning of the series would make it much easier for reviewers to
+> understand the change.
+
+I already pointed that patches are ordered to make the changes 
+bisectable, what
+usually means that new properties are added first, before being required 
+by the
+drivers.
+
+>
+>>   - Pin banks as child nodes: Pin banks of the controller are represented by child
+>>     nodes of the controller node. Bank name is taken from name of the node. Each
+>>     bank node must contain following properties:
+> [...]
+>
+>> +static void exynos_retention_audio_off(struct samsung_pinctrl_drv_data *drvdata)
+>> +{
+>> +       if (!IS_ERR(pmu_regs))
+> nit: Negated conditions make the code more difficult to read. Also it
+> would be consistent with exynos_retention_off() to just bail out if
+> (IS_ERR(pmu_regs)).
+>
+>> +               regmap_write(pmu_regs, S5P_PAD_RET_MAUDIO_OPTION,
+>> +                            EXYNOS_WAKEUP_FROM_LOWPWR);
+>> +}
+> [...]
+>
+>> @@ -1139,15 +1146,15 @@ static void samsung_pinctrl_suspend_dev(
+>>
+>>          if (drvdata->suspend)
+>>                  drvdata->suspend(drvdata);
+>> +       if (drvdata->retention_on)
+>> +               drvdata->retention_on(drvdata);
+>> +
+> nit: Unnecessary blank line.
+>
+> Best regards,
+> Tomasz
+>
+>
+>
+
+Best regards
 -- 
-1.9.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
