@@ -1,32 +1,30 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC v2 2/3] pinctrl: imx: use radix trees for groups and functions
-Date: Tue, 27 Dec 2016 23:07:35 +0100
-Message-ID: <CACRpkda26Dzh9c-hkPzY=ikYSwAED2xZGi3N4CVuzMB=1YL+iQ@mail.gmail.com>
-References: <20161124233824.17424-1-gary.bisson@boundarydevices.com>
- <20161202163520.22927-1-gary.bisson@boundarydevices.com> <20161202163520.22927-3-gary.bisson@boundarydevices.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 1/5] pinctrl: aspeed: dt: Fix compatibles for the
+ System Control Unit
+Date: Tue, 27 Dec 2016 23:14:33 +0100
+Message-ID: <CACRpkdZdymbYG4sV8rwAn6p-4_Vdc_wXZTW+4zH3BmUE-ErACg@mail.gmail.com>
+References: <20161220073551.28522-1-andrew@aj.id.au> <20161220073551.28522-2-andrew@aj.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161202163520.22927-3-gary.bisson@boundarydevices.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gary Bisson <gary.bisson@boundarydevices.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161220073551.28522-2-andrew-zrmu5oMJ5Fs@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Dec 2, 2016 at 5:35 PM, Gary Bisson
-<gary.bisson@boundarydevices.com> wrote:
+On Tue, Dec 20, 2016 at 8:35 AM, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org> wrote:
 
-> This change is inspired from the pinctrl-single architecture.
+> Reference the SoC-specific compatible string in the examples as
+> required.
 >
-> The problem with current implementation is that it isn't possible
-> to add/remove functions and/or groups dynamically. The radix tree
-> offers an easy way to do so. The intent is to offer a follow-up
-> patch later that will enable the use of pinctrl nodes in dt-overlays.
->
-> Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
+> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
 
-This patch doesn't apply on v4.10-rc1 so please rebase it
-on the mainline and resend as v3, include Fabio's review tag.
+Patch applied with the ACKs.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
