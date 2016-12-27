@@ -1,37 +1,117 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [RFC v2 2/3] pinctrl: imx: use radix trees for groups and functions
-Date: Tue, 27 Dec 2016 11:11:40 -0200
-Message-ID: <CAOMZO5C863F4YptxGem+3WFteZ=RgYnqr3D9QDKBqu16qPm7NQ@mail.gmail.com>
-References: <20161124233824.17424-1-gary.bisson@boundarydevices.com>
- <20161202163520.22927-1-gary.bisson@boundarydevices.com> <20161202163520.22927-3-gary.bisson@boundarydevices.com>
- <CACRpkdYvE1mGKi1uyEK0U9hvm5kgpjM9ZUAp3wL3f+LxO-0MHw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 7/9] pinctrl: samsung: Add property to mark pad state as
+ suitable for power down
+Date: Tue, 27 Dec 2016 17:33:31 +0200
+Message-ID: <20161227153331.jbh7ei6oh3obmnri@kozik-lap>
+References: <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20161223122538epcas5p29515ceff21963ab035b3b32878830ce2@epcas5p2.samsung.com>
+ <1482495889-6201-8-git-send-email-m.szyprowski@samsung.com>
+ <20161225191914.5bzl6fso36ozuum6@kozik-lap>
+ <bd48fe32-5296-fc23-dbb8-d212292d76cd@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYvE1mGKi1uyEK0U9hvm5kgpjM9ZUAp3wL3f+LxO-0MHw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Gary Bisson <gary.bisson@boundarydevices.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <bd48fe32-5296-fc23-dbb8-d212292d76cd@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Dec 27, 2016 at 11:05 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Fri, Dec 2, 2016 at 5:35 PM, Gary Bisson
-> <gary.bisson@boundarydevices.com> wrote:
->
->> This change is inspired from the pinctrl-single architecture.
->>
->> The problem with current implementation is that it isn't possible
->> to add/remove functions and/or groups dynamically. The radix tree
->> offers an easy way to do so. The intent is to offer a follow-up
->> patch later that will enable the use of pinctrl nodes in dt-overlays.
->>
->> Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
->
-> I would like some ACK from the i.MX pinctrl maintainers.
->
-> Fabio, do you have the context you need to ack/nack this?
+On Tue, Dec 27, 2016 at 11:30:57AM +0100, Marek Szyprowski wrote:
+> Hi Krzysztof,
+> 
+> 
+> On 2016-12-25 20:19, Krzysztof Kozlowski wrote:
+> > On Fri, Dec 23, 2016 at 01:24:47PM +0100, Marek Szyprowski wrote:
+> > > Add support for special property "samsung,off-state", which indicates a special
+> > > state suitable for device's "sleep" state. Its pin values/properties should
+> > > match the configuration in power down mode. It indicates that pin controller
+> > > can notify runtime power management subsystem, that it is ready for runtime
+> > > suspend if its all pins are configured for such state. This in turn might
+> > > allow to turn respective power domain off to reduce power consumption.
+> > > 
+> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > ---
+> > >   Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt | 8 ++++++++
+> > >   drivers/pinctrl/samsung/pinctrl-samsung.c                     | 4 ++++
+> > >   drivers/pinctrl/samsung/pinctrl-samsung.h                     | 1 +
+> > >   3 files changed, 13 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> > > index b7bd2e12a269..354eea0e7798 100644
+> > > --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> > > +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> > > @@ -105,6 +105,7 @@ Required Properties:
+> > >     - samsung,pin-drv: Drive strength configuration.
+> > >     - samsung,pin-pud-pdn: Pull up/down configuration in power down mode.
+> > >     - samsung,pin-drv-pdn: Drive strength configuration in power down mode.
+> > > +  - samsung,off-state: Mark this configuration as suitable for bank power off.
+> > >     The values specified by these config properties should be derived from the
+> > >     hardware manual and these values are programmed as-is into the pin
+> > > @@ -113,6 +114,13 @@ Required Properties:
+> > >     Note: A child should include atleast a pin function selection property or
+> > >     pin configuration property (one or more) or both.
+> > > +  Note: Special property "samsung,off-state" indicates that this state can
+> > > +  be used for device's "sleep" pins state. Its pin values/properties should
+> > > +  match the configuration in power down mode.
+> > Why power down values cannot be used for sleep state? Why you need
+> > separate pin control state? If pins values should match power down
+> > configuration, then they could just be added to default state, couldn't
+> > they?
+> 
+> Separate sleep state is needed because of the pin control bindings and
+> design.
+> 
+> A separate sleep state is required to let pin control client driver (in this
+> case
+> Exynos I2S driver) let to choose when it is okay to switch pads into sleep
+> state and I see no other way to achieve this.
 
-Looks good:
+Maybe the pinctrl API should be extended for this? Doing this in DTS
+just for purpose of passing information between drivers (consumer and
+provider) looks odd.
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Anyway, you are proposing a new binding so please Cc devicetree mailing
+list and device tree maintainers.
+
+> > In the patch 2/9, existing configuration:
+> > 716         i2s0_bus: i2s0-bus {
+> > (...)
+> > 719                 samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+> > 720                 samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+> > 721                 samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
+> > 722         };
+> > 
+> > additional configuration:
+> > +       i2s0_bus_slp: i2s0-bus-slp {
+> > +               samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+> > +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+> > +               samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
+> > +               samsung,pin-con-pdn = <EXYNOS_PIN_PDN_INPUT>;
+> > +               samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_NONE>;
+> > +               samsung,off-state;
+> > +       };
+> 
+> I agree that it would be possible to get rid of "samsung,off-state" property
+> and
+> just detect off state when func/pud pair matches power down func/pud.
+> 
+> > > It indicates that pin control
+> > > +  can notify runtime power management subsystem, that it is ready for runtime
+> > > +  suspend if its all pins are configured for such state. This in turn might
+> > > +  allow to turn respective power domain off to reduce power consumption.
+> > What do you mean by "notifying RPM subsystem"? Either this is
+> > description of hardware in certain mode (sleep state) or this is not
+> > device tree property.
+> 
+> Maybe I wrote the description with a view too limited to the kernel
+> operation
+> perspective, but if we remove the need to mark state as off, the above
+> description
+> will not be needed.
+
+But still it wouldn't be describing any hardware property, would it?
+
+Best regards,
+Krzysztof
