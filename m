@@ -1,101 +1,42 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 0/9] Runtime PM for Exynos pin controller driver
-Date: Tue, 27 Dec 2016 09:29:07 +0100
-Message-ID: <29869e29-8294-528e-fb95-e355a3844071@samsung.com>
-References: <CGME20161223122513epcas1p394d93d72d2d32c8910aafd1f6cc6b5e2@epcas1p3.samsung.com>
- <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com>
- <CANAwSgRQuoriU923XT1B_0CVX2rzOR+8j2YHLMYRUu3gGySEBw@mail.gmail.com>
+From: Bai Ping <ping.bai@nxp.com>
+Subject: [PATCH v2 02/12] driver: clocksource: add gpt timer for imx6sll
+Date: Tue, 27 Dec 2016 17:47:40 +0800
+Message-ID: <1482832070-22668-3-git-send-email-ping.bai@nxp.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-reply-to: <CANAwSgRQuoriU923XT1B_0CVX2rzOR+8j2YHLMYRUu3gGySEBw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: shawnguo@kernel.org, mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org
+Cc: devicetree@vger.kernel.org, kernel@pengutronix.de, daniel.lezcano@linaro.org, linux-gpio@vger.kernel.org, p.zabel@pengutronix.de, jacky.baip@gmail.com, fabio.estevam@nxp.com, tglx@linutronix.de, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Anand,
+Add gpt timer support for i.MX6SLL.
 
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
+---
+ drivers/clocksource/timer-imx-gpt.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 2016-12-24 11:10, Anand Moon wrote:
-> Hi Marek
->
-> On 23 December 2016 at 17:54, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->> Hello,
->>
->> This patchset is a next step to add support for audio power domain on
->> Exynos5 SoCs.
->>
->> Audio power domain on Exynos5 SoCs contains following hardware modules:
->> 1. clock controller
->> 2. pin controller
->> 3. PL330 DMA controller
->> 4. I2S audio controller
->>
->> Till now it was assumed that pin controller is located in the "always on"
->> power domain and lacked runtime power management. This patch finally
->> removes such assumption and adds runtime pm support and awareness to this
->> driver. To achieve this, some changes in the Exynos platform support code
->> were needed, like moving pad retention control to the pin controller driver.
->> Some cleanup to the pin controller driver has been also done while changing
->> the code. This new feature requires some additional information in the
->> device tree, what is handled by patches 1,2 and 9.
->>
->> Please note that patches are ordered in such a way that the changes can be
->> bisected, so the properties are added to dts before the code requiring them.
->>
->> The other patches related to enabling full support for audio power domain
->> can be found here:
->> 1. PL330 ADMA controller non-irqsafe runtime PM:
->>     https://www.spinics.net/lists/arm-kernel/msg550008.html
->> 2. Runtime PM for clock controllers (Exynos Audio subsystem will be added
->>     in v4 soon): https://www.spinics.net/lists/arm-kernel/msg538122.html
->>
->> Patches are based on linux-next from 2016.12.22.
->>
->> Best regards
->> Marek Szyprowski
->> Samsung R&D Institute Poland
->>
->>
->> Patch summary:
->>
->> Marek Szyprowski (9):
->>    ARM: dts: exynos: Add PMU syscon to pinctrl nodes
->>    ARM: dts: exynos: Add pinctrl sleep state for 542x i2s module
->>    pinctrl: samsung: Remove dead code
->>    pinctrl: samsung: Use generic of_device_get_match_data helper
->>    pinctrl: samsung: Move retention control from mach-exynos to the
->>      pinctrl driver
->>    pinctrl: samsung: Replace syscore ops with standard platform device
->>      pm_ops
->>    pinctrl: samsung: Add property to mark pad state as suitable for power
->>      down
->>    pinctrl: samsung: Add runtime PM support
->>    ARM: dts: exynos: Add audio power domain support to Exynos542x SoCs
->>
->>   .../bindings/pinctrl/samsung-pinctrl.txt           |  12 ++
->>   arch/arm/boot/dts/exynos3250.dtsi                  |   2 +
->>   arch/arm/boot/dts/exynos4210.dtsi                  |   3 +
->>   arch/arm/boot/dts/exynos4x12.dtsi                  |   3 +
->>   arch/arm/boot/dts/exynos5250.dtsi                  |   4 +
->>   arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |  11 ++
->>   arch/arm/boot/dts/exynos5420.dtsi                  |  18 ++-
->>   arch/arm/mach-exynos/suspend.c                     |  64 ---------
->>   drivers/pinctrl/samsung/pinctrl-exynos.c           | 148 +++++++++++++++++++++
->>   drivers/pinctrl/samsung/pinctrl-samsung.c          | 126 ++++++++----------
->>   drivers/pinctrl/samsung/pinctrl-samsung.h          |  15 +++
->>   11 files changed, 271 insertions(+), 135 deletions(-)
->>
-> Is their core configuration missing to enable audio through HDMI on
-> Odroid Boards.
-> I could not get the sound working on Odroid XU4.
-
-Audio support for HDMI on Exynos requires some additional code. We will take
-a look at this too.
-
-Best regards
+diff --git a/drivers/clocksource/timer-imx-gpt.c b/drivers/clocksource/timer-imx-gpt.c
+index f595460..f71822d 100644
+--- a/drivers/clocksource/timer-imx-gpt.c
++++ b/drivers/clocksource/timer-imx-gpt.c
+@@ -556,4 +556,5 @@ static int __init imx6dl_timer_init_dt(struct device_node *np)
+ CLOCKSOURCE_OF_DECLARE(imx6q_timer, "fsl,imx6q-gpt", imx31_timer_init_dt);
+ CLOCKSOURCE_OF_DECLARE(imx6dl_timer, "fsl,imx6dl-gpt", imx6dl_timer_init_dt);
+ CLOCKSOURCE_OF_DECLARE(imx6sl_timer, "fsl,imx6sl-gpt", imx6dl_timer_init_dt);
++CLOCKSOURCE_OF_DECLARE(imx6sll_timer, "fsl,imx6sll-gpt", imx6dl_timer_init_dt);
+ CLOCKSOURCE_OF_DECLARE(imx6sx_timer, "fsl,imx6sx-gpt", imx6dl_timer_init_dt);
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+1.9.1
