@@ -1,33 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio/gpiolib.c:Fixing style issues in gpiolib.c
-Date: Wed, 28 Dec 2016 13:38:18 +0100
-Message-ID: <CACRpkdYxJNf+Jb4pFJh=pJkD=hG_eZ+OLYJ02zj75akqsxjZJg@mail.gmail.com>
-References: <1481256527-25776-1-git-send-email-mukesh.k4@samsung.com>
+Subject: Re: [PATCH] pinctrl: meson: fix gpio request disabling other modes
+Date: Wed, 28 Dec 2016 13:41:12 +0100
+Message-ID: <CACRpkda=LtBe_Msmy4V5dBSkQ698A2DyaDmPqHGnEMdGHvXXEg@mail.gmail.com>
+References: <20161206140817.11708-1-narmstrong@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f169.google.com ([209.85.216.169]:36718 "EHLO
-        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751370AbcL1MiT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Dec 2016 07:38:19 -0500
-Received: by mail-qt0-f169.google.com with SMTP id k15so109430238qtg.3
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Dec 2016 04:38:19 -0800 (PST)
-In-Reply-To: <1481256527-25776-1-git-send-email-mukesh.k4@samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161206140817.11708-1-narmstrong@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Beniamino Galvani <b.galvani@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Mukesh Kaushik <mukesh.k4@samsung.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Dec 9, 2016 at 5:08 AM, Mukesh Kaushik <mukesh.k4@samsung.com> wrote:
+On Tue, Dec 6, 2016 at 3:08 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
 
-> Fixing the following checkpatch.pl error:
+> The pinctrl_gpio_request is called with the "full" gpio number, already
+> containing the base, then meson_pmx_request_gpio is then called with the
+> final pin number.
+> Remove the base addition when calling meson_pmx_disable_other_groups.
+>
+> Fixes: 6ac730951104 ("pinctrl: add driver for Amlogic Meson SoCs")
+> CC: Beniamino Galvani <b.galvani@gmail.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-This does not apply to v4.10+
-
-If you want it considered, rebase and resend.
-
-Sorry for constant rebase, but purelyt syntactic changes are
-second/third priority.
+Patch applied for fixes. Sorry for the delay, merge window appeared inbetween.
 
 Yours,
 Linus Walleij
