@@ -1,29 +1,45 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: meson: fix gpio request disabling other modes
-Date: Wed, 28 Dec 2016 13:41:12 +0100
-Message-ID: <CACRpkda=LtBe_Msmy4V5dBSkQ698A2DyaDmPqHGnEMdGHvXXEg@mail.gmail.com>
-References: <20161206140817.11708-1-narmstrong@baylibre.com>
+Subject: Re: [PATCH 2/2] iio: misc: add support for GPIO power switches
+Date: Wed, 28 Dec 2016 13:50:17 +0100
+Message-ID: <CACRpkdZ7JrNfCKPuuCmkZd_7+NV0QLUN8ZMukFA0TcqS9SYXcQ@mail.gmail.com>
+References: <1481494905-18037-1-git-send-email-bgolaszewski@baylibre.com> <1481494905-18037-3-git-send-email-bgolaszewski@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161206140817.11708-1-narmstrong@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Beniamino Galvani <b.galvani@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:36354 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751395AbcL1MuS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Dec 2016 07:50:18 -0500
+Received: by mail-qt0-f180.google.com with SMTP id k15so109640419qtg.3
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Dec 2016 04:50:18 -0800 (PST)
+In-Reply-To: <1481494905-18037-3-git-send-email-bgolaszewski@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>, Patrick Titiano <ptitiano@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sebastian Reichel <sre@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Mark Brown <broonie@kernel.org>Liam Girdwood <l>
 
-On Tue, Dec 6, 2016 at 3:08 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Sun, Dec 11, 2016 at 11:21 PM, Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
 
-> The pinctrl_gpio_request is called with the "full" gpio number, already
-> containing the base, then meson_pmx_request_gpio is then called with the
-> final pin number.
-> Remove the base addition when calling meson_pmx_disable_other_groups.
+> Some power-measuring ADCs work together with power load switches which
+> allow to power-cycle measured devices.
 >
-> Fixes: 6ac730951104 ("pinctrl: add driver for Amlogic Meson SoCs")
-> CC: Beniamino Galvani <b.galvani@gmail.com>
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> An example use case would be measuring the power consumption of a
+> development board during boot using a power monitor such as TI INA226
+> and power-cycling the board remotely using a TPS229* power switch.
+>
+> Add an iio driver for simple GPIO power switches and expose a sysfs
+> attribute allowing to toggle their state.
+>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Patch applied for fixes. Sorry for the delay, merge window appeared inbetween.
+I don't get this, isn't this doing the same as
+drivers/power/reset/gpio-poweroff.c
+?
+
+With the only difference that the latter uses the standard syscall
+from pm_power_off to reboot the system instead of some random
+sysfs file.
 
 Yours,
 Linus Walleij
