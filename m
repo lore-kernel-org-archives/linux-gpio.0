@@ -1,77 +1,120 @@
-From: Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH 2/2] iio: misc: add support for GPIO power switches
-Date: Thu, 29 Dec 2016 17:29:20 +0100
-Message-ID: <20161229162919.j2ej2cyeuoqnxykf@earth>
-References: <1481494905-18037-1-git-send-email-bgolaszewski@baylibre.com>
- <1481494905-18037-3-git-send-email-bgolaszewski@baylibre.com>
- <CACRpkdZ7JrNfCKPuuCmkZd_7+NV0QLUN8ZMukFA0TcqS9SYXcQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lb4vfyzhy2tybpcz"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZ7JrNfCKPuuCmkZd_7+NV0QLUN8ZMukFA0TcqS9SYXcQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>, Patrick Titiano <ptitiano@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Lia
+From: Steve Longerbeam <slongerbeam@gmail.com>
+Subject: [PATCH 00/20] i.MX Media Driver
+Date: Thu, 29 Dec 2016 14:27:15 -0800
+Message-ID: <1483050455-10683-1-git-send-email-steve_longerbeam@mentor.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, linus.walleij@linaro.org, gnurou@gmail.com, mchehab@kernel.org, gregkh@linuxfoundation.org, p.zabel@pengutronix.de
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, Steve Longerbeam <steve_longerbeam@mentor.com>
 List-Id: linux-gpio@vger.kernel.org
 
+This is a media driver for video capture on i.MX.
 
---lb4vfyzhy2tybpcz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Refer to Documentation/media/v4l-drivers/imx.rst for example capture
+pipelines on SabreSD, SabreAuto, and SabreLite reference platforms.
 
-Hi Linux,
+This patchset includes the OF graph layout as proposed by Philipp Zabel,
+with only minor changes which are enumerated in the patch header.
 
-On Wed, Dec 28, 2016 at 01:50:17PM +0100, Linus Walleij wrote:
-> On Sun, Dec 11, 2016 at 11:21 PM, Bartosz Golaszewski
-> <bgolaszewski@baylibre.com> wrote:
->=20
-> > Some power-measuring ADCs work together with power load switches which
-> > allow to power-cycle measured devices.
-> >
-> > An example use case would be measuring the power consumption of a
-> > development board during boot using a power monitor such as TI INA226
-> > and power-cycling the board remotely using a TPS229* power switch.
-> >
-> > Add an iio driver for simple GPIO power switches and expose a sysfs
-> > attribute allowing to toggle their state.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->=20
-> I don't get this, isn't this doing the same as
-> drivers/power/reset/gpio-poweroff.c
-> ?
->=20
-> With the only difference that the latter uses the standard syscall
-> from pm_power_off to reboot the system instead of some random
-> sysfs file.
 
-As far as I understand it, the TPS229 is used by Barzosz to poweroff
-a remote system. The gpio-poweroff driver is used to poweroff the
-local system.
 
--- Sebastian
+Philipp Zabel (2):
+  ARM: dts: imx6qdl: Add mipi_ipu1/2 multiplexers, mipi_csi, and their
+    connections
+  media: imx: Add video switch subdev driver
 
---lb4vfyzhy2tybpcz
-Content-Type: application/pgp-signature; name="signature.asc"
+Steve Longerbeam (18):
+  ARM: dts: imx6qdl: Add compatible, clocks, irqs to MIPI CSI-2 node
+  ARM: dts: imx6qdl: add media device
+  ARM: dts: imx6-sabrelite: add OV5642 and OV5640 camera sensors
+  ARM: dts: imx6-sabresd: add OV5642 and OV5640 camera sensors
+  ARM: dts: imx6-sabreauto: create i2cmux for i2c3
+  ARM: dts: imx6-sabreauto: add reset-gpios property for max7310_b
+  ARM: dts: imx6-sabreauto: add pinctrl for gpt input capture
+  ARM: dts: imx6-sabreauto: add the ADV7180 video decoder
+  gpio: pca953x: Add optional reset gpio control
+  media: Add i.MX media core driver
+  media: imx: Add CSI subdev driver
+  media: imx: Add SMFC subdev driver
+  media: imx: Add IC subdev drivers
+  media: imx: Add Camera Interface subdev driver
+  media: imx: Add MIPI CSI-2 Receiver subdev driver
+  media: imx: Add MIPI CSI-2 OV5640 sensor subdev driver
+  media: imx: Add Parallel OV5642 sensor subdev driver
+  ARM: imx_v6_v7_defconfig: Enable staging video4linux drivers
 
------BEGIN PGP SIGNATURE-----
+ .../devicetree/bindings/gpio/gpio-pca953x.txt      |    4 +
+ Documentation/devicetree/bindings/media/imx.txt    |  205 +
+ Documentation/media/v4l-drivers/imx.rst            |  429 ++
+ arch/arm/boot/dts/imx6dl-sabrelite.dts             |    5 +
+ arch/arm/boot/dts/imx6dl-sabresd.dts               |    5 +
+ arch/arm/boot/dts/imx6dl.dtsi                      |  183 +
+ arch/arm/boot/dts/imx6q-sabrelite.dts              |    6 +
+ arch/arm/boot/dts/imx6q-sabresd.dts                |    5 +
+ arch/arm/boot/dts/imx6q.dtsi                       |  123 +
+ arch/arm/boot/dts/imx6qdl-sabreauto.dtsi           |  142 +-
+ arch/arm/boot/dts/imx6qdl-sabrelite.dtsi           |  122 +-
+ arch/arm/boot/dts/imx6qdl-sabresd.dtsi             |  114 +-
+ arch/arm/boot/dts/imx6qdl.dtsi                     |   25 +-
+ arch/arm/configs/imx_v6_v7_defconfig               |   10 +-
+ drivers/gpio/gpio-pca953x.c                        |   17 +
+ drivers/staging/media/Kconfig                      |    2 +
+ drivers/staging/media/Makefile                     |    1 +
+ drivers/staging/media/imx/Kconfig                  |   36 +
+ drivers/staging/media/imx/Makefile                 |   16 +
+ drivers/staging/media/imx/TODO                     |   18 +
+ drivers/staging/media/imx/imx-camif.c              | 1011 +++++
+ drivers/staging/media/imx/imx-csi.c                |  638 +++
+ drivers/staging/media/imx/imx-ic-common.c          |  113 +
+ drivers/staging/media/imx/imx-ic-pp.c              |  636 +++
+ drivers/staging/media/imx/imx-ic-prpenc.c          | 1037 +++++
+ drivers/staging/media/imx/imx-ic-prpvf.c           | 1181 ++++++
+ drivers/staging/media/imx/imx-ic.h                 |   36 +
+ drivers/staging/media/imx/imx-media-common.c       |  981 +++++
+ drivers/staging/media/imx/imx-media-dev.c          |  479 +++
+ drivers/staging/media/imx/imx-media-fim.c          |  508 +++
+ drivers/staging/media/imx/imx-media-internal-sd.c  |  456 ++
+ drivers/staging/media/imx/imx-media-of.c           |  291 ++
+ drivers/staging/media/imx/imx-media-of.h           |   25 +
+ drivers/staging/media/imx/imx-media.h              |  290 ++
+ drivers/staging/media/imx/imx-mipi-csi2.c          |  509 +++
+ drivers/staging/media/imx/imx-smfc.c               |  739 ++++
+ drivers/staging/media/imx/imx-video-switch.c       |  349 ++
+ drivers/staging/media/imx/ov5640-mipi.c            | 2349 +++++++++++
+ drivers/staging/media/imx/ov5642.c                 | 4364 ++++++++++++++++++++
+ include/media/imx.h                                |   15 +
+ include/uapi/Kbuild                                |    1 +
+ include/uapi/linux/v4l2-controls.h                 |    4 +
+ include/uapi/media/Kbuild                          |    2 +
+ include/uapi/media/imx.h                           |   30 +
+ 44 files changed, 17484 insertions(+), 28 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/imx.txt
+ create mode 100644 Documentation/media/v4l-drivers/imx.rst
+ create mode 100644 drivers/staging/media/imx/Kconfig
+ create mode 100644 drivers/staging/media/imx/Makefile
+ create mode 100644 drivers/staging/media/imx/TODO
+ create mode 100644 drivers/staging/media/imx/imx-camif.c
+ create mode 100644 drivers/staging/media/imx/imx-csi.c
+ create mode 100644 drivers/staging/media/imx/imx-ic-common.c
+ create mode 100644 drivers/staging/media/imx/imx-ic-pp.c
+ create mode 100644 drivers/staging/media/imx/imx-ic-prpenc.c
+ create mode 100644 drivers/staging/media/imx/imx-ic-prpvf.c
+ create mode 100644 drivers/staging/media/imx/imx-ic.h
+ create mode 100644 drivers/staging/media/imx/imx-media-common.c
+ create mode 100644 drivers/staging/media/imx/imx-media-dev.c
+ create mode 100644 drivers/staging/media/imx/imx-media-fim.c
+ create mode 100644 drivers/staging/media/imx/imx-media-internal-sd.c
+ create mode 100644 drivers/staging/media/imx/imx-media-of.c
+ create mode 100644 drivers/staging/media/imx/imx-media-of.h
+ create mode 100644 drivers/staging/media/imx/imx-media.h
+ create mode 100644 drivers/staging/media/imx/imx-mipi-csi2.c
+ create mode 100644 drivers/staging/media/imx/imx-smfc.c
+ create mode 100644 drivers/staging/media/imx/imx-video-switch.c
+ create mode 100644 drivers/staging/media/imx/ov5640-mipi.c
+ create mode 100644 drivers/staging/media/imx/ov5642.c
+ create mode 100644 include/media/imx.h
+ create mode 100644 include/uapi/media/Kbuild
+ create mode 100644 include/uapi/media/imx.h
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlhlOd8ACgkQ2O7X88g7
-+poLnA/+PczlGKFDmT/RhKMoBhYGAKqa02N/XFLAqeAHHijUHnkynyQuJCy4Z+du
-zN83tRGzpGNGNivQrQ7+50ClROqR6Qg/IJUueK/ma8kR3UM8xzW7hylyfxo978Iu
-sjquC1lgS2J7FCBUoP3x+W7XC/ScGwit6ANpso/43BaSAghSNKs7ypI0bQvOzURS
-eKgiFBXkVU1NIUbcXI91hZB/gBsrCI6DGj48eW1+WKrFze+NwW6VenuXs3OrqruU
-mtiZmlxBtlhjIczwhxTN/TyGbRIXaKewj2fs45uDOM15SMVmA7sd9H/kzfkO3vLt
-w7YDNkbnKuKS4ptB9dVeOsFHruTJKWJloQmxhyAX8RQq/MU39xTxxpJVJpyZXxVj
-+GP9c+T++OVhKJHkL3JZ03EcFpFlZshNS9KzpUqAokZ6YTZ0sKJs9YfMxrXEz694
-xTifMSKbhELgCevzFldXGDoknJa8JmJuZ3LxxpJq/caLDxa9KjIG2V5ykVw6me4E
-8nvRZnLVSgYFCgC1wJblnkgFa40XGSWMieuaz1ucb2+CynIQtbwD0j6XgVTeUdQM
-qN93281DJT0dmQ0n/dtDcZcGu32qhXx9WSPmZJpptuV9cusMZsUklUaP3nKhNVYO
-YVaV7x3ohxPYmiarJfVRCA+kXnXUSHnMD6jCRoqmGSB7TRNaq6c=
-=eV4Y
------END PGP SIGNATURE-----
-
---lb4vfyzhy2tybpcz--
+-- 
+2.7.4
