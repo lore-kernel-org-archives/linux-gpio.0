@@ -1,133 +1,62 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 7/9] pinctrl: samsung: Add property to mark pad state as
- suitable for power down
-Date: Fri, 30 Dec 2016 12:55:27 +0100
-Message-ID: <bad5ef6a-6132-2029-8581-2e8b27f7a2bd@samsung.com>
-References: <1482495889-6201-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20161223122538epcas5p29515ceff21963ab035b3b32878830ce2@epcas5p2.samsung.com>
- <1482495889-6201-8-git-send-email-m.szyprowski@samsung.com>
- <20161225191914.5bzl6fso36ozuum6@kozik-lap>
- <bd48fe32-5296-fc23-dbb8-d212292d76cd@samsung.com>
- <20161227153331.jbh7ei6oh3obmnri@kozik-lap>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] drivers: pinctrl: add driver for
+ Allwinner H5 SoC
+Date: Fri, 30 Dec 2016 13:55:44 +0100
+Message-ID: <CACRpkdYQhfid3VRcaj=7as_+Zg=pX3Svp9FJ_W_Ft8nVuoZqKQ@mail.gmail.com>
+References: <20161223125001.1176-1-icenowy@aosc.xyz> <1280f095-ab03-93f8-14d2-99d13ba1ce55@arm.com>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-reply-to: <20161227153331.jbh7ei6oh3obmnri@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBUNSTHBQKGQEH4GR6UY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <1280f095-ab03-93f8-14d2-99d13ba1ce55-5wv7dgnIgG8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara-5wv7dgnIgG8@public.gmane.org>, ext Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Cc: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Krzysztof,
+On Mon, Dec 26, 2016 at 3:33 PM, Andr=C3=A9 Przywara <andre.przywara-AbSShOkvfpQ@public.gmane.org=
+m> wrote:
 
-On 2016-12-27 16:33, Krzysztof Kozlowski wrote:
-> On Tue, Dec 27, 2016 at 11:30:57AM +0100, Marek Szyprowski wrote:
->> On 2016-12-25 20:19, Krzysztof Kozlowski wrote:
->>> On Fri, Dec 23, 2016 at 01:24:47PM +0100, Marek Szyprowski wrote:
->>>> Add support for special property "samsung,off-state", which indicates a special
->>>> state suitable for device's "sleep" state. Its pin values/properties should
->>>> match the configuration in power down mode. It indicates that pin controller
->>>> can notify runtime power management subsystem, that it is ready for runtime
->>>> suspend if its all pins are configured for such state. This in turn might
->>>> allow to turn respective power domain off to reduce power consumption.
->>>>
->>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>> ---
->>>>    Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt | 8 ++++++++
->>>>    drivers/pinctrl/samsung/pinctrl-samsung.c                     | 4 ++++
->>>>    drivers/pinctrl/samsung/pinctrl-samsung.h                     | 1 +
->>>>    3 files changed, 13 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
->>>> index b7bd2e12a269..354eea0e7798 100644
->>>> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
->>>> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
->>>> @@ -105,6 +105,7 @@ Required Properties:
->>>>      - samsung,pin-drv: Drive strength configuration.
->>>>      - samsung,pin-pud-pdn: Pull up/down configuration in power down mode.
->>>>      - samsung,pin-drv-pdn: Drive strength configuration in power down mode.
->>>> +  - samsung,off-state: Mark this configuration as suitable for bank power off.
->>>>      The values specified by these config properties should be derived from the
->>>>      hardware manual and these values are programmed as-is into the pin
->>>> @@ -113,6 +114,13 @@ Required Properties:
->>>>      Note: A child should include atleast a pin function selection property or
->>>>      pin configuration property (one or more) or both.
->>>> +  Note: Special property "samsung,off-state" indicates that this state can
->>>> +  be used for device's "sleep" pins state. Its pin values/properties should
->>>> +  match the configuration in power down mode.
->>> Why power down values cannot be used for sleep state? Why you need
->>> separate pin control state? If pins values should match power down
->>> configuration, then they could just be added to default state, couldn't
->>> they?
->> Separate sleep state is needed because of the pin control bindings and
->> design.
->>
->> A separate sleep state is required to let pin control client driver (in this
->> case
->> Exynos I2S driver) let to choose when it is okay to switch pads into sleep
->> state and I see no other way to achieve this.
-> Maybe the pinctrl API should be extended for this? Doing this in DTS
-> just for purpose of passing information between drivers (consumer and
-> provider) looks odd.
+> So while this patch technically looks correct, I was wondering if we
+> should really explore the possibility of making the whole of sunxi
+> pinctrl DT controlled.
+> I brought this up a while ago, but people weren't overly enthusiastic
+> about it, though their argument weren't really convincing to me[1].
+>
+> So:
+> As this "driver" here is basically a table linking GPIO bit settings
+> (the actual mux value) to names and every pin we care about needs to be
+> enumerated in the DT anyway, why not just add something like:
+> allwinner,pinmux =3D <4>;
+> to each pin(group) in the DT and get rid of this "driver" file here
+> entirely?
 
-Well, I don't know if it is odd or not, but that's how it is used now 
-and I see
-no reason to reinvent wheel. Please check it yourself:
-$ git grep \"sleep\" arch/arm/boot/dts | wc -l
-101
+I'm open to that if you can use pinctrl-single which is in the kernel
+for this purpose only, and is used with both OMAPs and HiSilicon.
 
-> Anyway, you are proposing a new binding so please Cc devicetree mailing
-> list and device tree maintainers.
+It recently was improved and will be improved more in this cycle,
+see for example:
+commit 42124bc598f64f84b3335d5a058304207695b84f
+pinctrl: Introduce generic #pinctrl-cells and pinctrl_parse_index_with_args
 
-I'm just using the generic pinctrl bindings, but it might make some sense to
-add a note to Exynos i2s driver that a sleep pin control state is needed if
-one wants to get power domain to be turned off.
+> (...) Also I guess the common sunxi
+> pinctrl driver code needs some significant rework.
 
->>> In the patch 2/9, existing configuration:
->>> 716         i2s0_bus: i2s0-bus {
->>> (...)
->>> 719                 samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
->>> 720                 samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
->>> 721                 samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
->>> 722         };
->>>
->>> additional configuration:
->>> +       i2s0_bus_slp: i2s0-bus-slp {
->>> +               samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
->>> +               samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
->>> +               samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
->>> +               samsung,pin-con-pdn = <EXYNOS_PIN_PDN_INPUT>;
->>> +               samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_NONE>;
->>> +               samsung,off-state;
->>> +       };
->> I agree that it would be possible to get rid of "samsung,off-state" property
->> and
->> just detect off state when func/pud pair matches power down func/pud.
->>
->>>> It indicates that pin control
->>>> +  can notify runtime power management subsystem, that it is ready for runtime
->>>> +  suspend if its all pins are configured for such state. This in turn might
->>>> +  allow to turn respective power domain off to reduce power consumption.
->>> What do you mean by "notifying RPM subsystem"? Either this is
->>> description of hardware in certain mode (sleep state) or this is not
->>> device tree property.
->> Maybe I wrote the description with a view too limited to the kernel
->> operation
->> perspective, but if we remove the need to mark state as off, the above
->> description
->> will not be needed.
-> But still it wouldn't be describing any hardware property, would it?
+I would guess is just needs replacing with pinctrl-single in that case.
 
-Well, it somehow describes the hardware, because the pin state when it 
-is allowed
-to turn off the power domain is board specific. I should move that part 
-to the
-Odroid dts, because there might be a board which require other pin 
-values in power
-down mode.
+Yours,
+Linus Walleij
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
