@@ -1,29 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/5] pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
-Date: Fri, 30 Dec 2016 10:03:36 +0100
-Message-ID: <CACRpkdY75CfP82zr_a4+tn0S=GHRDnM=DPr_2zRf_XYsLEo6+w@mail.gmail.com>
-References: <20161222041328.3303-1-chris.packham@alliedtelesis.co.nz> <20161222041328.3303-4-chris.packham@alliedtelesis.co.nz>
+Subject: Re: [PATCH] pinctrl: simplify check for pin request conflicts
+Date: Fri, 30 Dec 2016 10:12:05 +0100
+Message-ID: <CACRpkdadwC4RAKGpifwWQtw=_cJFatuotf2Oth6f=dhVMPet3g@mail.gmail.com>
+References: <20161225005928.4417-1-vz@mleia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161222041328.3303-4-chris.packham@alliedtelesis.co.nz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:34299 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752210AbcL3JMG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2016 04:12:06 -0500
+Received: by mail-qt0-f169.google.com with SMTP id d45so168743872qta.1
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2016 01:12:06 -0800 (PST)
+In-Reply-To: <20161225005928.4417-1-vz@mleia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Sonic Zhang <sonic.zhang@analog.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Dec 22, 2016 at 5:13 AM, Chris Packham
-<chris.packham@alliedtelesis.co.nz> wrote:
+On Sun, Dec 25, 2016 at 1:59 AM, Vladimir Zapolskiy <vz@mleia.com> wrote:
 
-> From: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>
+> This is a non-functional change, which deletes code duplication in two
+> of four if-if branches by reordering the checks. Functional identity
+> of the code change can be shown by running through the whole truth table
+> of boolean arguments.
 >
-> This pinctrl driver supports the 98DX3236, 98DX3336 and 98DX4251 SoCs
-> from Marvell.
->
-> Signed-off-by: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
 
-Looks good to me, Sebastian and/or Thomas P can you ACK this patch?
+Patch applied.
 
 Yours,
 Linus Walleij
