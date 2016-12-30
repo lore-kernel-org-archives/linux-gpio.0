@@ -1,64 +1,60 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 10/20] gpio: pca953x: Add optional reset gpio control
-Date: Fri, 30 Dec 2016 14:17:38 +0100
-Message-ID: <CACRpkdZG2j4_LwP8KUVBTOtXma75YvYtC6CW1QqYwOm-MOZgHg@mail.gmail.com>
-References: <1483050455-10683-1-git-send-email-steve_longerbeam@mentor.com> <1483050455-10683-11-git-send-email-steve_longerbeam@mentor.com>
+Subject: Re: [RFC v2 2/3] pinctrl: imx: use radix trees for groups and functions
+Date: Fri, 30 Dec 2016 14:21:08 +0100
+Message-ID: <CACRpkdYwX-qete=2vYi4a8t707H+YnNZOyNHb06pDcuyZn3pmQ@mail.gmail.com>
+References: <20161124233824.17424-1-gary.bisson@boundarydevices.com>
+ <20161202163520.22927-1-gary.bisson@boundarydevices.com> <20161202163520.22927-3-gary.bisson@boundarydevices.com>
+ <CACRpkda26Dzh9c-hkPzY=ikYSwAED2xZGi3N4CVuzMB=1YL+iQ@mail.gmail.com> <CAAMH-yutJN3wLYze9Ao120LcCcE7F7JbpZyeghg-vB9pyFObkw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1483050455-10683-11-git-send-email-steve_longerbeam@mentor.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Steve Longerbeam <slongerbeam@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Alexandre Courbot <gnurou@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Philipp Zabel <p.zabel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:34677 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753845AbcL3NVJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2016 08:21:09 -0500
+Received: by mail-qt0-f176.google.com with SMTP id d45so172396050qta.1
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2016 05:21:09 -0800 (PST)
+In-Reply-To: <CAAMH-yutJN3wLYze9Ao120LcCcE7F7JbpZyeghg-vB9pyFObkw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Gary Bisson <gary.bisson@boundarydevices.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-On Thu, Dec 29, 2016 at 11:27 PM, Steve Longerbeam
-<slongerbeam@gmail.com> wrote:
-
-> Add optional reset-gpios pin control. If present, de-assert the
-> specified reset gpio pin to bring the chip out of reset.
+n Thu, Dec 29, 2016 at 10:44 AM, Gary Bisson
+<gary.bisson@boundarydevices.com> wrote:
+> On Tue, Dec 27, 2016 at 11:07 PM, Linus Walleij
+> <linus.walleij@linaro.org> wrote:
+>>
+>> On Fri, Dec 2, 2016 at 5:35 PM, Gary Bisson
+>> <gary.bisson@boundarydevices.com> wrote:
+>>
+>> > This change is inspired from the pinctrl-single architecture.
+>> >
+>> > The problem with current implementation is that it isn't possible
+>> > to add/remove functions and/or groups dynamically. The radix tree
+>> > offers an easy way to do so. The intent is to offer a follow-up
+>> > patch later that will enable the use of pinctrl nodes in dt-overlays.
+>> >
+>> > Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
+>>
+>> This patch doesn't apply on v4.10-rc1 so please rebase it
+>> on the mainline and resend as v3, include Fabio's review tag.
 >
-> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
+> Actually it applies if the first patch of this v2 series is also applied first.
+> https://patchwork.kernel.org/patch/9458883/
+> https://patchwork.kernel.org/patch/9458889/
 
-This seems like a separate patch from the other 19 patches so please send it
-separately so I can handle logistics easier in the future.
+Heh if it is part of a patch series then send it as part of the series
+and don't confuse me ;)
 
+> The 3rd patch of the series can be discarded though since it was just
+> an example to show the benefit of the first two.
+>
+> I guess someone needs to also ack/review the first one. Because
+> switching to radix tree keeping the const qualifier of the driver
+> structure isn't really useful.
 
-> @@ -133,6 +134,7 @@ struct pca953x_chip {
->         const char *const *names;
->         unsigned long driver_data;
->         struct regulator *regulator;
-> +       struct gpio_desc *reset_gpio;
-
-Why do you even keep this around in the device state container?
-
-As you only use it in the probe() function, use a local variable.
-
-The descriptor will be free():ed by the devm infrastructure anyways.
-
-> +               /* see if we need to de-assert a reset pin */
-> +               chip->reset_gpio = devm_gpiod_get_optional(&client->dev,
-> +                                                          "reset",
-> +                                                          GPIOD_OUT_LOW);
-> +               if (IS_ERR(chip->reset_gpio)) {
-> +                       dev_err(&client->dev, "request for reset pin failed\n");
-> +                       return PTR_ERR(chip->reset_gpio);
-> +               }
-
-Nice.
-
-> +               if (chip->reset_gpio) {
-> +                       /* bring chip out of reset */
-> +                       dev_info(&client->dev, "releasing reset\n");
-> +                       gpiod_set_value(chip->reset_gpio, 0);
-> +               }
-
-Is this really needed given that you set it low in the
-devm_gpiod_get_optional()?
+Sure, Fabio?
 
 Yours,
 Linus Walleij
