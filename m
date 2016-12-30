@@ -1,38 +1,61 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCHv2 0/5] Add generic pinctrl helpers for managing groups and function
-Date: Fri, 30 Dec 2016 15:39:29 +0100
-Message-ID: <CACRpkda9Lv-WF+fLysoEbqBPuMtPBwo_xQT7y0_CHVjC+cAL2Q@mail.gmail.com>
-References: <20161227172003.6517-1-tony@atomide.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH 1/2] devicetree: power: add bindings for GPIO-driven power
+ switches
+Date: Fri, 30 Dec 2016 15:03:06 +0000
+Message-ID: <5bbedbb7-2391-c927-deab-75fd9fffe7f6@kernel.org>
+References: <1481494905-18037-1-git-send-email-bgolaszewski@baylibre.com>
+ <1481494905-18037-2-git-send-email-bgolaszewski@baylibre.com>
+ <20161213192712.gbaw4t4awayybnta@rob-hp-laptop>
+ <CAMpxmJWw3wCE4ch8TVik+2b3BC8Lvxbi13HGd9GxruSRLu95Mg@mail.gmail.com>
+ <CAL_JsqLwS51MhOJQb-Lmo=osHiYKcAcCJaxKJFdSvZBpafz7Gw@mail.gmail.com>
+ <CAMuHMdWfAwPE2N-_0WhW5+EEK3bqWoo9HpQZTgLzRRutCg++qg@mail.gmail.com>
+ <505b7c02-e7dd-b0a5-8009-dca9101b0dd4@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161227172003.6517-1-tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Gary Bisson <gary.bisson-Q5RJGjKts06CY9SHAMCTRUEOCMrvLtNR@public.gmane.org>
-Cc: Haojian Zhuang <haojian.zhuang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:51575 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754467AbcL3PDS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2016 10:03:18 -0500
+In-Reply-To: <505b7c02-e7dd-b0a5-8009-dca9101b0dd4@metafoo.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lars-Peter Clausen <lars@metafoo.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh@kernel.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Hartmut Knaack <knaack.h@gmx.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Mark Rutland <mark.rutland@arm.com>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, linux-devicetree <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>, Patrick Titiano <ptitiano@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio <linux-gpio@vger.kernel.org>, Sebastian Reichel <sre@kernel.org>, linux-pm <linux-pm@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
 
-On Tue, Dec 27, 2016 at 6:19 PM, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org> wrote:
+On 23/12/16 11:40, Lars-Peter Clausen wrote:
+> On 12/23/2016 10:07 AM, Geert Uytterhoeven wrote:
+>> BTW, I'm not an IIO expert, but from my limited knowledge, it looks like "O"
+>> support in IIO is limited to DACs?
+> 
+> Depends on what you categorize as DACs. There are also
+> potentiometer/rheostat drivers. They are kind of like DACs but the unit you
+> control are ohm, rather than current or voltage.
+Though they are still in staging there are also things like function generators.
 
-> Here are some changes to add generic helpers for managing pinctrl groups and
-> functions.
+I've been mulling doing a driver for the st-powerstep01 parts as well which
+is a smart stepper motor controller.  At that level we'd need to start describing
+the connected stepper motors in DT :) Whole chunk of API to define to do that
+though - might well take longer than writing the driver.
 
-I applied it, screwed around with it and pushed to the build servers to see
-if it survived.
+So in practice yeah - dac like things, but then on the input side they are almost
+all really ADCs with some funny analog stuff on the front end ;)
 
-I really like the look of this and I hope lots of driver start to use it.
+Arguably switches are 1 bit DACs ;)
 
-Gary, I just applied your radix patches for i.MX, can you look if you can
-use the GENERIC_PINCTRL_GROUPS and GENERIC_PINMUX_FUCNTIONS
-that Tony invented and that I just merged to my devel branch in the
-pinctrl tree?
+The distinction here is whether 'what is passing through' the device is knowable.
+So regulators and your power switch are well described.  A relay less so unless
+we know what load it is switching...
 
-It seems the i.MX could just reuse this right off and slim down quite a bit
-but the devil is in the details.
++ it's IIO.  We are open to almost anything as long as we aren't stepping on
+any toes!
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Jonathan
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
