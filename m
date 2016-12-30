@@ -1,42 +1,144 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/5] pinctrl: core: Use delayed work for hogs
-Date: Fri, 30 Dec 2016 14:46:30 +0100
-Message-ID: <CACRpkdYoo1zZoqgUw8RNf7J1_NyHyFqzoD8YFicxPK11gK74+A@mail.gmail.com>
-References: <20161227172003.6517-1-tony@atomide.com> <20161227172003.6517-2-tony@atomide.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] pinctrl: stricten up generic group code
+Date: Fri, 30 Dec 2016 15:07:04 +0100
+Message-ID: <20161230140704.13875-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f171.google.com ([209.85.220.171]:33395 "EHLO
-        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753974AbcL3Nqb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2016 08:46:31 -0500
-Received: by mail-qk0-f171.google.com with SMTP id t184so297575083qkd.0
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2016 05:46:30 -0800 (PST)
-In-Reply-To: <20161227172003.6517-2-tony@atomide.com>
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:33611 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751854AbcL3OHJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2016 09:07:09 -0500
+Received: by mail-lf0-f43.google.com with SMTP id c13so237640327lfg.0
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2016 06:07:08 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>
 
-On Tue, Dec 27, 2016 at 6:19 PM, Tony Lindgren <tony@atomide.com> wrote:
+Rename the symbol PINCTRL_GENERIC to PINCTRL_GENERIC_GROUPS since
+it all pertains to groups. Replace everywhere.
 
-> Having the pin control framework call pin controller functions
-> before it's probe has finished is not nice as the pin controller
-> device driver does not yet have struct pinctrl_dev handle.
-> Let's fix this issue by adding deferred work for late init. This is
-> needed to be able to add pinctrl generic helper functions that expect
-> to know struct pinctrl_dev handle. Note that we now need to call
-> create_pinctrl() directly as we don't want to add the pin controller
-> to the list of controllers until the hogs are claimed. We also need
-> to pass the pinctrl_dev to the device tree parser functions as they
-> otherwise won't find the right controller at this point.
->
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+ifdef out the radix tree and the struct when not using the
+generic groups.
 
-Patch applied.
+Cc: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/Kconfig |  2 +-
+ drivers/pinctrl/core.c  |  6 ++++--
+ drivers/pinctrl/core.h  | 32 +++++++++++++++++---------------
+ 3 files changed, 22 insertions(+), 18 deletions(-)
 
-I felt the code path needed some extra comments so I sent those
-as a separate patch.
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index b986998409d1..add257f80d76 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -8,7 +8,7 @@ config PINCTRL
+ menu "Pin controllers"
+ 	depends on PINCTRL
+ 
+-config GENERIC_PINCTRL
++config GENERIC_PINCTRL_GROUPS
+ 	bool
+ 
+ config PINMUX
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 7b7d706f869c..736149d3a33d 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -540,7 +540,7 @@ void pinctrl_remove_gpio_range(struct pinctrl_dev *pctldev,
+ }
+ EXPORT_SYMBOL_GPL(pinctrl_remove_gpio_range);
+ 
+-#ifdef CONFIG_GENERIC_PINCTRL
++#ifdef CONFIG_GENERIC_PINCTRL_GROUPS
+ 
+ /**
+  * pinctrl_generic_get_group_count() - returns the number of pin groups
+@@ -714,7 +714,7 @@ static void pinctrl_generic_free_groups(struct pinctrl_dev *pctldev)
+ static inline void pinctrl_generic_free_groups(struct pinctrl_dev *pctldev)
+ {
+ }
+-#endif /* CONFIG_GENERIC_PINCTRL */
++#endif /* CONFIG_GENERIC_PINCTRL_GROUPS */
+ 
+ /**
+  * pinctrl_get_group_selector() - returns the group selector for a group
+@@ -1993,7 +1993,9 @@ struct pinctrl_dev *pinctrl_register(struct pinctrl_desc *pctldesc,
+ 	pctldev->desc = pctldesc;
+ 	pctldev->driver_data = driver_data;
+ 	INIT_RADIX_TREE(&pctldev->pin_desc_tree, GFP_KERNEL);
++#ifdef CONFIG_GENERIC_PINCTRL_GROUPS
+ 	INIT_RADIX_TREE(&pctldev->pin_group_tree, GFP_KERNEL);
++#endif
+ 	INIT_LIST_HEAD(&pctldev->gpio_ranges);
+ 	INIT_DELAYED_WORK(&pctldev->late_init, pinctrl_late_init);
+ 	pctldev->dev = dev;
+diff --git a/drivers/pinctrl/core.h b/drivers/pinctrl/core.h
+index af98b6313902..b04c59bf9701 100644
+--- a/drivers/pinctrl/core.h
++++ b/drivers/pinctrl/core.h
+@@ -43,8 +43,10 @@ struct pinctrl_dev {
+ 	struct list_head node;
+ 	struct pinctrl_desc *desc;
+ 	struct radix_tree_root pin_desc_tree;
++#ifdef CONFIG_GENERIC_PINCTRL_GROUPS
+ 	struct radix_tree_root pin_group_tree;
+ 	unsigned int num_groups;
++#endif
+ 	struct list_head gpio_ranges;
+ 	struct device *dev;
+ 	struct module *owner;
+@@ -166,6 +168,20 @@ struct pin_desc {
+ };
+ 
+ /**
++ * struct pinctrl_maps - a list item containing part of the mapping table
++ * @node: mapping table list node
++ * @maps: array of mapping table entries
++ * @num_maps: the number of entries in @maps
++ */
++struct pinctrl_maps {
++	struct list_head node;
++	struct pinctrl_map const *maps;
++	unsigned num_maps;
++};
++
++#ifdef CONFIG_GENERIC_PINCTRL_GROUPS
++
++/**
+  * struct group_desc - generic pin group descriptor
+  * @name: name of the pin group
+  * @pins: array of pins that belong to the group
+@@ -179,20 +195,6 @@ struct group_desc {
+ 	void *data;
+ };
+ 
+-/**
+- * struct pinctrl_maps - a list item containing part of the mapping table
+- * @node: mapping table list node
+- * @maps: array of mapping table entries
+- * @num_maps: the number of entries in @maps
+- */
+-struct pinctrl_maps {
+-	struct list_head node;
+-	struct pinctrl_map const *maps;
+-	unsigned num_maps;
+-};
+-
+-#ifdef CONFIG_GENERIC_PINCTRL
+-
+ int pinctrl_generic_get_group_count(struct pinctrl_dev *pctldev);
+ 
+ const char *pinctrl_generic_get_group_name(struct pinctrl_dev *pctldev,
+@@ -218,7 +220,7 @@ pinctrl_generic_remove_last_group(struct pinctrl_dev *pctldev)
+ 	return pinctrl_generic_remove_group(pctldev, pctldev->num_groups - 1);
+ }
+ 
+-#endif	/* CONFIG_GENERIC_PINCTRL */
++#endif	/* CONFIG_GENERIC_PINCTRL_GROUPS */
+ 
+ struct pinctrl_dev *get_pinctrl_dev_from_devname(const char *dev_name);
+ struct pinctrl_dev *get_pinctrl_dev_from_of_node(struct device_node *np);
+-- 
+2.9.3
 
-Yours,
-Linus Walleij
