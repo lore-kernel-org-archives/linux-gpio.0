@@ -1,31 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: update my email address
-Date: Fri, 30 Dec 2016 09:18:40 +0100
-Message-ID: <CACRpkdY6Lb069YGyxSDNvGy5_g6FpRViOyhVRPsmruRk1UtqEQ@mail.gmail.com>
-References: <1482260275-61517-1-git-send-email-john@phrozen.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] gpio: of: Add support for multiple GPIOs in a single GPIO hog
+Date: Fri, 30 Dec 2016 09:28:01 +0100
+Message-ID: <CACRpkdYf-KBzSL6qNWdou9zfh2m553GFVV=LB269P6qu_HHrLQ@mail.gmail.com>
+References: <1482171694-18237-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f178.google.com ([209.85.220.178]:33670 "EHLO
-        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752066AbcL3ISm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2016 03:18:42 -0500
-Received: by mail-qk0-f178.google.com with SMTP id t184so292050212qkd.0
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2016 00:18:41 -0800 (PST)
-In-Reply-To: <1482260275-61517-1-git-send-email-john@phrozen.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1482171694-18237-1-git-send-email-geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: John Crispin <john@phrozen.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Dec 20, 2016 at 7:57 PM, John Crispin <john@phrozen.org> wrote:
+On Mon, Dec 19, 2016 at 7:21 PM, Geert Uytterhoeven
+<geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org> wrote:
 
-> This patch updates my email address as I no longer have access to the old
-> one.
+> When listing multiple GPIOs in the "gpios" property of a GPIO hog, only
+> the first GPIO is affected.  The user is left clueless about the
+> disfunctioning of the other GPIOs specified.
 >
-> Signed-off-by: John Crispin <john@phrozen.org>
+> Fix this by adding and documenting support for specifying multiple
+> GPIOs in a single GPIO hog.
+>
+> Signed-off-by: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
 
-Patch applied.
+Makes a lot of sense.
+
+Patch applied!
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
