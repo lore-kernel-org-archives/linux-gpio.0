@@ -1,34 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: stm32: activate strict mux mode
-Date: Fri, 30 Dec 2016 09:07:30 +0100
-Message-ID: <CACRpkdaNTk27t40K=q95Pqk0gv_dt2N3MF6_FsAu7vdb9uHnig@mail.gmail.com>
-References: <1481725456-1030-1-git-send-email-gabriel.fernandez@st.com>
+Subject: Re: [PATCH] gpio: Move freeing of GPIO hogs before numbing of the device
+Date: Fri, 30 Dec 2016 09:12:08 +0100
+Message-ID: <CACRpkdb+i0nLXQeNWavw7LYch1vVcpnsKFXdKk1c=OiL5OUx_Q@mail.gmail.com>
+References: <1482168563-4562-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f174.google.com ([209.85.216.174]:35858 "EHLO
-        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751127AbcL3IHb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Dec 2016 03:07:31 -0500
-Received: by mail-qt0-f174.google.com with SMTP id k15so150828312qtg.3
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Dec 2016 00:07:31 -0800 (PST)
-In-Reply-To: <1481725456-1030-1-git-send-email-gabriel.fernandez@st.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1482168563-4562-1-git-send-email-geert@linux-m68k.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Patrice Chotard <patrice.chotard@st.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Dec 14, 2016 at 3:24 PM,  <gabriel.fernandez@st.com> wrote:
+On Mon, Dec 19, 2016 at 6:29 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> When removing a gpiochip that uses GPIO hogging (e.g. by unloading the
+> chip's DT overlay), a warning is printed:
 >
-> This activates strict mode muxing for the STM32 pin controllers,
-> as these do not allow GPIO and functions to use the same pin
-> simultaneously.
+>     gpio gpiochip8: REMOVING GPIOCHIP WITH GPIOS STILL REQUESTED
 >
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> This happens because gpiochip_free_hogs() is called after the gdev->chip
+> pointer is reset to NULL. Hence __gpiod_free() cannot determine the
+> chip in use, and cannot clear flags nor call the optional chip-specific
+> .free() callback.
+>
+> Move the call to gpiochip_free_hogs() up to fix this.
+>
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Patch applied with Patrice's ACK.
+Patch applied to fixes and tagged for stable.
 
 Yours,
 Linus Walleij
