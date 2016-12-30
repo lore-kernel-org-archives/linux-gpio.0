@@ -1,41 +1,57 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V1] pinctrl:pxa:pinctrl-pxa2xx:- No need of devm functions
-Date: Fri, 30 Dec 2016 14:02:56 +0100
-Message-ID: <CACRpkdYaBmoik8W81h=2RH0_Q2MJPjSRTtgKb3tkwwAsKbFVAg@mail.gmail.com>
-References: <1481207730-6332-1-git-send-email-arvind.yadav.cs@gmail.com>
- <CACRpkdY8mwHD1yyHZSHsDsJNPjrgLTfEok38FNons6oabn5ZPw@mail.gmail.com> <87o9zvw69a.fsf@belgarion.home>
+Subject: Re: [PATCH 2/2] iio: misc: add support for GPIO power switches
+Date: Fri, 30 Dec 2016 14:05:48 +0100
+Message-ID: <CACRpkdbjbtFwwQCdR3krWG0P4UMhWySTTkzqZFBZ6EGXPS=k8g@mail.gmail.com>
+References: <1481494905-18037-1-git-send-email-bgolaszewski@baylibre.com>
+ <1481494905-18037-3-git-send-email-bgolaszewski@baylibre.com>
+ <CACRpkdZ7JrNfCKPuuCmkZd_7+NV0QLUN8ZMukFA0TcqS9SYXcQ@mail.gmail.com> <20161229162919.j2ej2cyeuoqnxykf@earth>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87o9zvw69a.fsf@belgarion.home>
+In-Reply-To: <20161229162919.j2ej2cyeuoqnxykf@earth>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>, Patrick Titiano <ptitiano@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Lia
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Dec 29, 2016 at 8:20 AM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
-> Linus Walleij <linus.walleij@linaro.org> writes:
->
->> On Thu, Dec 8, 2016 at 3:35 PM, Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
+n Thu, Dec 29, 2016 at 5:29 PM, Sebastian Reichel <sre@kernel.org> wrote:
+> On Wed, Dec 28, 2016 at 01:50:17PM +0100, Linus Walleij wrote:
+>> On Sun, Dec 11, 2016 at 11:21 PM, Bartosz Golaszewski
+>> <bgolaszewski@baylibre.com> wrote:
 >>
->>> In functions pxa2xx_build_functions, the memory allocated for
->>> 'functions' is live within the function only. After the
->>> allocation it is immediately freed with devm_kfree. There is
->>> no need to allocate memory for 'functions' with devm function
->>> so replace devm_kcalloc  with kcalloc and devm_kfree with kfree.
->>>
->>> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+>> > Some power-measuring ADCs work together with power load switches which
+>> > allow to power-cycle measured devices.
+>> >
+>> > An example use case would be measuring the power consumption of a
+>> > development board during boot using a power monitor such as TI INA226
+>> > and power-cycling the board remotely using a TPS229* power switch.
+>> >
+>> > Add an iio driver for simple GPIO power switches and expose a sysfs
+>> > attribute allowing to toggle their state.
+>> >
+>> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >>
->> I want the maintainer Robert Jarzmik to review this before I do anything
+>> I don't get this, isn't this doing the same as
+>> drivers/power/reset/gpio-poweroff.c
+>> ?
+>>
+>> With the only difference that the latter uses the standard syscall
+>> from pm_power_off to reboot the system instead of some random
+>> sysfs file.
 >
-> Hi Linus,
->
-> I did review, on December the 10th. I wasn't very enthusiastic about the patch,
-> if you check back my reply.
+> As far as I understand it, the TPS229 is used by Barzosz to poweroff
+> a remote system. The gpio-poweroff driver is used to poweroff the
+> local system.
 
-Sorry I missed it (mail overload as usual).
+Thanks yeah I understood this from the context of later patches.
 
-OK dropping this.
+Well if such a property is used it should be the property of the remote
+system per se, and the remote system should then also be desribed in
+DT, not half-described by dangling references at random nodes.
+
+So this needs to be re-architected to either describe the remote system
+in DT and handle it in the kernel, or handle it all from userspace if it
+is a one-off non-product thing.
 
 Yours,
 Linus Walleij
