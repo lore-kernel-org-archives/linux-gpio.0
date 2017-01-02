@@ -1,21 +1,39 @@
-From: "Dr. David White" <"wd."@eagle.ocn.ne.jp>
-Subject: Urgent Please;;
-Date: Tue, 3 Jan 2017 02:34:38 +0900 (JST)
-Message-ID: <603429211.116392312.1483378478267.JavaMail.root__30997.1044575379$1483379661$gmane$org@eagle.ocn.ne.jp>
-Reply-To: "Dr. David White" <david_white34@mynet.com>
+From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 2/2] pinctrl: Introduce TI IOdelay configuration driver
+Date: Mon, 2 Jan 2017 10:04:25 -0800
+Message-ID: <20170102180424.GE9325@atomide.com>
+References: <20161230183732.5595-3-tony@atomide.com>
+ <201701010645.EBjk2p8Y%fengguang.wu@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-2022-JP
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mbkd0234.ocn.ad.jp ([153.149.233.35]:39732 "EHLO
-        mbkd0234.ocn.ad.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932719AbdABRwU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Jan 2017 12:52:20 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <201701010645.EBjk2p8Y%fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kbuild test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: kbuild-all-JC7UmRfGjtg@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Gary Bisson <gary.bisson-Q5RJGjKts06CY9SHAMCTRUEOCMrvLtNR@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Dear,
-With due respect to your person and much sincerity of purpose. I have a business proposal which I will like to handle with you and $14.5 Million USD is involve. But be rest assured that everything is legal and risk free as I have concluded all the arrangements and the legal papers that will back the transaction up. Kindly indicate your interest as to enable me tell you more detail of the proposal. Waiting for your urgent response.
+Hi,
 
-Yours Faithfully,
-Dr. David White
+* kbuild test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org> [161231 14:53]:
+> Hi Nishanth,
+> 
+> [auto build test ERROR on pinctrl/for-next]
+> [also build test ERROR on v4.10-rc1 next-20161224]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+This patch is against pinctrl/devel as noted in the cover
+letter. Next does not yet have the dependencies.
+
+I did note another build error with COMPILE_TEST
+though if DEBUG_FS is not selected, will send a fix for
+that.
+
+Regards,
+
+Tony
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
