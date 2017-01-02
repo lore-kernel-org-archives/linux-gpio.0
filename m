@@ -1,39 +1,53 @@
-From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 2/2] pinctrl: Introduce TI IOdelay configuration driver
-Date: Mon, 2 Jan 2017 10:04:25 -0800
-Message-ID: <20170102180424.GE9325@atomide.com>
-References: <20161230183732.5595-3-tony@atomide.com>
- <201701010645.EBjk2p8Y%fengguang.wu@intel.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] pinctrl: qcom: msm8660: rename some SDC1->SDC4
+Date: Mon, 2 Jan 2017 10:19:55 -0800
+Message-ID: <20170102181955.GB23061@minitux>
+References: <20170102084228.7890-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <201701010645.EBjk2p8Y%fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: kbuild test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: kbuild-all-JC7UmRfGjtg@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Gary Bisson <gary.bisson-Q5RJGjKts06CY9SHAMCTRUEOCMrvLtNR@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>
+In-Reply-To: <20170102084228.7890-1-linus.walleij@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+On Mon 02 Jan 00:42 PST 2017, Linus Walleij wrote:
 
-* kbuild test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org> [161231 14:53]:
-> Hi Nishanth,
+> These four pins are for SDC4, not SDC1. They are grouped for
+> SDC4 later in the file so this must be a typo.
 > 
-> [auto build test ERROR on pinctrl/for-next]
-> [also build test ERROR on v4.10-rc1 next-20161224]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> Cc: Björn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-This patch is against pinctrl/devel as noted in the cover
-letter. Next does not yet have the dependencies.
-
-I did note another build error with COMPILE_TEST
-though if DEBUG_FS is not selected, will send a fix for
-that.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 Regards,
+Bjorn
 
-Tony
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> ---
+>  drivers/pinctrl/qcom/pinctrl-msm8660.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm8660.c b/drivers/pinctrl/qcom/pinctrl-msm8660.c
+> index 5591d093bf78..bb71dd1e6279 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm8660.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm8660.c
+> @@ -193,9 +193,9 @@ static const struct pinctrl_pin_desc msm8660_pins[] = {
+>  	PINCTRL_PIN(171, "GPIO_171"),
+>  	PINCTRL_PIN(172, "GPIO_172"),
+>  
+> -	PINCTRL_PIN(173, "SDC1_CLK"),
+> -	PINCTRL_PIN(174, "SDC1_CMD"),
+> -	PINCTRL_PIN(175, "SDC1_DATA"),
+> +	PINCTRL_PIN(173, "SDC4_CLK"),
+> +	PINCTRL_PIN(174, "SDC4_CMD"),
+> +	PINCTRL_PIN(175, "SDC4_DATA"),
+>  	PINCTRL_PIN(176, "SDC3_CLK"),
+>  	PINCTRL_PIN(177, "SDC3_CMD"),
+>  	PINCTRL_PIN(178, "SDC3_DATA"),
+> -- 
+> 2.9.3
+> 
