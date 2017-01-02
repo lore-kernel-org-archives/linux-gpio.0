@@ -1,93 +1,80 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] pinctrl: intel: Set pin direction properly
-Date: Mon,  2 Jan 2017 14:07:22 +0200
-Message-ID: <20170102120722.178343-1-andriy.shevchenko@linux.intel.com>
+From: Gary Bisson <gary.bisson@boundarydevices.com>
+Subject: Re: [PATCHv2 0/5] Add generic pinctrl helpers for managing groups
+ and function
+Date: Mon, 2 Jan 2017 17:14:13 +0100
+Message-ID: <20170102161413.uuqzjtqndwx4cytc@t450s.lan>
+References: <20161227172003.6517-1-tony@atomide.com>
+ <CACRpkda9Lv-WF+fLysoEbqBPuMtPBwo_xQT7y0_CHVjC+cAL2Q@mail.gmail.com>
+ <CAAMH-ysDwyLst+EYtNNmO0qgAq4e=7ESxGYynDM1GOyDqXx3OQ@mail.gmail.com>
+ <20161230155957.GB3940@atomide.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:46622 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932557AbdABMH4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 2 Jan 2017 07:07:56 -0500
+Received: from mail-wj0-f177.google.com ([209.85.210.177]:34564 "EHLO
+        mail-wj0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756378AbdABQOV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Jan 2017 11:14:21 -0500
+Received: by mail-wj0-f177.google.com with SMTP id sd9so242584450wjb.1
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Jan 2017 08:14:21 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20161230155957.GB3940@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 
-There are two bits in the PADCFG0 register to configure direction, one per
-TX/RX buffers.
+Hi Linus, Tony,
 
-For now we wrongly assume that the GPIO is always requested before it is being
-used, which is not true when the GPIO is used through irqchip. In this case the
-GPIO is never requested and we never enable RX buffer for it.
+On Fri, Dec 30, 2016 at 07:59:57AM -0800, Tony Lindgren wrote:
+> * Gary Bisson <gary.bisson@boundarydevices.com> [161230 07:43]:
+> > Hi Linus,
+> > 
+> > On Fri, Dec 30, 2016 at 3:39 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > > On Tue, Dec 27, 2016 at 6:19 PM, Tony Lindgren <tony@atomide.com> wrote:
+> > >
+> > >> Here are some changes to add generic helpers for managing pinctrl groups and
+> > >> functions.
+> > >
+> > > I applied it, screwed around with it and pushed to the build servers to see
+> > > if it survived.
+> > >
+> > > I really like the look of this and I hope lots of driver start to use it.
+> > >
+> > > Gary, I just applied your radix patches for i.MX, can you look if you can
+> > > use the GENERIC_PINCTRL_GROUPS and GENERIC_PINMUX_FUCNTIONS
+> > > that Tony invented and that I just merged to my devel branch in the
+> > > pinctrl tree?
+> > 
+> > Yes I will have a look. It does sound like a good idea. I'll share my
+> > findings beginning of next week.
 
-Fix this by setting both bits accordingly.
+So I've had a look and indeed I can use some of it. Here is what my
+series looks like:
+ drivers/pinctrl/freescale/Kconfig       |   3 +-
+ drivers/pinctrl/freescale/pinctrl-imx.c | 273
++++++++++-----------------------
+ drivers/pinctrl/freescale/pinctrl-imx.h |  33 +---
+ 3 files changed, 80 insertions(+), 229 deletions(-)
 
-Reported-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-intel.c | 30 +++++++++++++++++++-----------
- 1 file changed, 19 insertions(+), 11 deletions(-)
+Mainly I've used the generic functions in pinctrl_ops and pinmux_ops and
+switched to the generic group/function_desc structures instead of the
+imx-specific one that didn't bring anything else.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 1e139672f1af..6df35dcb29ae 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -353,6 +353,21 @@ static int intel_pinmux_set_mux(struct pinctrl_dev *pctldev, unsigned function,
- 	return 0;
- }
- 
-+static void __intel_gpio_set_direction(void __iomem *padcfg0, bool input)
-+{
-+	u32 value;
-+
-+	value = readl(padcfg0);
-+	if (input) {
-+		value &= ~PADCFG0_GPIORXDIS;
-+		value |= PADCFG0_GPIOTXDIS;
-+	} else {
-+		value &= ~PADCFG0_GPIOTXDIS;
-+		value |= PADCFG0_GPIORXDIS;
-+	}
-+	writel(value, padcfg0);
-+}
-+
- static int intel_gpio_request_enable(struct pinctrl_dev *pctldev,
- 				     struct pinctrl_gpio_range *range,
- 				     unsigned pin)
-@@ -375,11 +390,11 @@ static int intel_gpio_request_enable(struct pinctrl_dev *pctldev,
- 	/* Disable SCI/SMI/NMI generation */
- 	value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
- 	value &= ~(PADCFG0_GPIROUTSMI | PADCFG0_GPIROUTNMI);
--	/* Disable TX buffer and enable RX (this will be input) */
--	value &= ~PADCFG0_GPIORXDIS;
--	value |= PADCFG0_GPIOTXDIS;
- 	writel(value, padcfg0);
- 
-+	/* Disable TX buffer and enable RX (this will be input) */
-+	__intel_gpio_set_direction(padcfg0, true);
-+
- 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
- 
- 	return 0;
-@@ -392,18 +407,11 @@ static int intel_gpio_set_direction(struct pinctrl_dev *pctldev,
- 	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 	void __iomem *padcfg0;
- 	unsigned long flags;
--	u32 value;
- 
- 	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 
- 	padcfg0 = intel_get_padcfg(pctrl, pin, PADCFG0);
--
--	value = readl(padcfg0);
--	if (input)
--		value |= PADCFG0_GPIOTXDIS;
--	else
--		value &= ~PADCFG0_GPIOTXDIS;
--	writel(value, padcfg0);
-+	__intel_gpio_set_direction(padcfg0, input);
- 
- 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
- 
--- 
-2.11.0
+However I couldn't use the 'add' functions to add elements since the
+parsing is done at probe time in its own way. So I've keep the
+radix_insert functions. This could be modified though, it just requires
+to modify the driver even more which I didn't feel like doing right now.
 
+> OK great. Note that we may be able to come up also with a generic
+> iterator function for the node_to_map functions so maybe see if
+> you come up with some ideas for that while experimenting :)
+
+I haven't had time to think about a generic node_to_map yet, but I
+hopefully will have some time in a near future to think about it. Right
+now it doesn't look obvious.
+
+Also, I have some comments about your patches (already applied) which I
+will send as a reply to the original patches.
+
+Regards,
+Gary
