@@ -1,43 +1,21 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [3/5] pinctrl: core: Add generic pinctrl functions for managing
- groups
-Date: Mon, 2 Jan 2017 09:08:50 -0800
-Message-ID: <20170102170850.GC9325@atomide.com>
-References: <20161227172003.6517-4-tony@atomide.com>
- <20170102162103.xp5ekyyc6dwpeh4j@t450s.lan>
+From: "Dr. David White" <"wd."@eagle.ocn.ne.jp>
+Subject: Urgent Please;;
+Date: Tue, 3 Jan 2017 02:34:38 +0900 (JST)
+Message-ID: <603429211.116392312.1483378478267.JavaMail.root__30997.1044575379$1483379661$gmane$org@eagle.ocn.ne.jp>
+Reply-To: "Dr. David White" <david_white34@mynet.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170102162103.xp5ekyyc6dwpeh4j@t450s.lan>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gary Bisson <gary.bisson@boundarydevices.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Content-Type: text/plain; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mbkd0234.ocn.ad.jp ([153.149.233.35]:39732 "EHLO
+        mbkd0234.ocn.ad.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932719AbdABRwU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Jan 2017 12:52:20 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-* Gary Bisson <gary.bisson@boundarydevices.com> [170102 08:21]:
-> Hi Tony,
-> 
-> On Tue, Dec 27, 2016 at 09:20:01AM -0800, Tony Lindgren wrote:
-> > We can add generic helpers for function handling for cases where the pin
-> > controller driver does not need to use static arrays.
-> > 
-> > Signed-off-by: Tony Lindgren <tony@atomide.com>
-> 
-> Shouldn't the patch title be:
-> pinctrl: core: Add generic pinmux functions for managing functions
-> 
-> It looks like a copy/paste issue since both patches have the same title:
-> 824bef17d16c pinctrl: core: Add generic pinctrl functions for managing
-> groups
-> d70a0fb14682 pinctrl: core: Add generic pinctrl functions for managing
-> groups
+Dear,
+With due respect to your person and much sincerity of purpose. I have a business proposal which I will like to handle with you and $14.5 Million USD is involve. But be rest assured that everything is legal and risk free as I have concluded all the arrangements and the legal papers that will back the transaction up. Kindly indicate your interest as to enable me tell you more detail of the proposal. Waiting for your urgent response.
 
-Oops, oh well.. At least the description is correct.
-
-> That's actually my only remark, I had another comment about freeing the
-> trees but it is actually done in the unregister so everything is good.
-
-OK cool.
-
-Tony
+Yours Faithfully,
+Dr. David White
