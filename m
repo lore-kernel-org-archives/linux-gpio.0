@@ -1,35 +1,62 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 04/12] driver: clk: imx: Add clock driver for imx6sll
-Date: Tue, 3 Jan 2017 11:49:09 -0600
-Message-ID: <20170103174909.3a5qtds4fpmgzhxs@rob-hp-laptop>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-5-git-send-email-ping.bai@nxp.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1482832070-22668-5-git-send-email-ping.bai-3arQi8VN3Tc@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bai Ping <ping.bai-3arQi8VN3Tc@public.gmane.org>
-Cc: shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, fabio.estevam-3arQi8VN3Tc@public.gmane.org, daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, jacky.baip-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/3] gpiolib: Update documentation of struct acpi_gpio_info
+Date: Tue,  3 Jan 2017 19:01:18 +0200
+Message-ID: <20170103170119.35950-2-andriy.shevchenko@linux.intel.com>
+References: <20170103170119.35950-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:29421 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753143AbdACRCp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 3 Jan 2017 12:02:45 -0500
+In-Reply-To: <20170103170119.35950-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Christophe RICARD <christophe.ricard@gmail.com>
 
-On Tue, Dec 27, 2016 at 05:47:42PM +0800, Bai Ping wrote:
-> Add clk driver support for imx6sll.
-> 
-> Signed-off-by: Bai Ping <ping.bai-3arQi8VN3Tc@public.gmane.org>
-> ---
->  drivers/clk/imx/Makefile                  |   1 +
->  drivers/clk/imx/clk-imx6sll.c             | 369 ++++++++++++++++++++++++++++++
+It seems the code had been changed, but description left untouched.
 
->  include/dt-bindings/clock/imx6sll-clock.h | 204 +++++++++++++++++
+Update description of the struct acpi_gpio_info and relative comments
+accordingly.
 
-This should be part of the binding doc patch.
+Fixes: commit 52044723cd27 ("ACPI / gpio: Add irq_type when a GPIO is used as an interrupt")
+Cc: Christophe RICARD <christophe.ricard@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 5 ++---
+ drivers/gpio/gpiolib.h      | 3 ++-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
->  3 files changed, 574 insertions(+)
->  create mode 100644 drivers/clk/imx/clk-imx6sll.c
->  create mode 100644 include/dt-bindings/clock/imx6sll-clock.h
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index a3faefa44f68..9b37a3692b3f 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -416,9 +416,8 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
+ 			agpio->connection_type == ACPI_RESOURCE_GPIO_TYPE_INT;
+ 
+ 		/*
+-		 * ActiveLow is only specified for GpioInt resource. If
+-		 * GpioIo is used then the only way to set the flag is
+-		 * to use _DSD "gpios" property.
++		 * Polarity and triggering are only specified for GpioInt
++		 * resource.
+ 		 * Note: we expect here:
+ 		 * - ACPI_ACTIVE_LOW == GPIO_ACTIVE_LOW
+ 		 * - ACPI_ACTIVE_HIGH == GPIO_ACTIVE_HIGH
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index d10eaf520860..2495b7ee1b42 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -76,7 +76,8 @@ struct gpio_device {
+ /**
+  * struct acpi_gpio_info - ACPI GPIO specific information
+  * @gpioint: if %true this GPIO is of type GpioInt otherwise type is GpioIo
+- * @active_low: in case of @gpioint, the pin is active low
++ * @polarity: interrupt polarity as provided by ACPI
++ * @triggering: triggering type as provided by ACPI
+  */
+ struct acpi_gpio_info {
+ 	bool gpioint;
+-- 
+2.11.0
+
