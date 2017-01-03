@@ -1,65 +1,94 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/3] gpiolib: Switch to for_each_set_bit()
-Date: Tue,  3 Jan 2017 19:01:17 +0200
-Message-ID: <20170103170119.35950-1-andriy.shevchenko@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:14427 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1759459AbdACREz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 3 Jan 2017 12:04:55 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 03/12] Document: dt: binding: imx: update clock doc
+ for imx6sll
+Date: Tue, 3 Jan 2017 11:48:25 -0600
+Message-ID: <20170103174825.sbw5pjvejjm46mbm@rob-hp-laptop>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-4-git-send-email-ping.bai@nxp.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1482832070-22668-4-git-send-email-ping.bai@nxp.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Bai Ping <ping.bai@nxp.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, p.zabel@pengutronix.de, mturquette@baylibre.com, daniel.lezcano@linaro.org, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, kernel@pengutronix.de, jacky.baip@gmail.com, fabio.estevam@nxp.com, tglx@linutronix.de, shawnguo@kernel.org, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-The macro for_each_set_bit() effectively looks up to the next set bit in array
-of bits.
+On Tue, Dec 27, 2016 at 05:47:41PM +0800, Bai Ping wrote:
+> Add clock binding doc uppdate for imx6sll.
 
-Instead of open coding that switch to for_each_set_bit() in
-gpio_chip_set_multiple().
+s/uppdate/update/
 
-While here, make gpio_chip_set_multiple() non-destructive against its
-parameters. We are safe since all callers, i.e.
-gpiod_set_array_value_complex(), handle that already.
+> 
+> Signed-off-by: Bai Ping <ping.bai@nxp.com>
+> ---
+>  .../devicetree/bindings/clock/imx6sll-clock.txt    | 37 ++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> new file mode 100644
+> index 0000000..3a46787
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> @@ -0,0 +1,37 @@
+> +* Clock bindings for Freescale i.MX6 SLL
+> +
+> +Required properties:
+> +- compatible: Should be "fsl,imx6sll-ccm"
+> +- reg: Address and length of the register set
+> +- #clock-cells: Should be <1>
+> +- clocks: list of clock specifiers, must contain an entry for each required
+> +  entry in clock-names
+> +- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ipp_di1"
+> +
+> +The clock consumer should specify the desired clock by having the clock
+> +ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6sll-clock.h
+> +for the full list of i.MX6 SLL clock IDs.
+> +
+> +Examples:
+> +
+> +#include <dt-bindings/clock/imx6sll-clock.h>
+> +
+> +clks: ccm@020c4000 {
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+Drop leading 0s.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index f4c26c7826cd..7f51c9bf5533 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1,3 +1,4 @@
-+#include <linux/bitops.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/interrupt.h>
-@@ -2570,18 +2571,11 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
- 	if (chip->set_multiple) {
- 		chip->set_multiple(chip, mask, bits);
- 	} else {
--		int i;
--		for (i = 0; i < chip->ngpio; i++) {
--			if (mask[BIT_WORD(i)] == 0) {
--				/* no more set bits in this mask word;
--				 * skip ahead to the next word */
--				i = (BIT_WORD(i) + 1) * BITS_PER_LONG - 1;
--				continue;
--			}
--			/* set outputs if the corresponding mask bit is set */
--			if (__test_and_clear_bit(i, mask))
--				chip->set(chip, i, test_bit(i, bits));
--		}
-+		unsigned int i;
-+
-+		/* set outputs if the corresponding mask bit is set */
-+		for_each_set_bit(i, mask, chip->ngpio)
-+			chip->set(chip, i, test_bit(i, bits));
- 	}
- }
- 
--- 
-2.11.0
+> +		compatible = "fsl,imx6sll-ccm";
+> +		reg = <0x020c4000 0x4000>;
+> +		interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
+> +		#clock-cells = <1>;
+> +		clocks = <&ckil>, <&osc>, <&ipp_di0>, <&ipp_di1>;
+> +		clock-names = "ckil", "osc", "ipp_di0", "ipp_di1";
+> +};
+> +
+> +uart1: serial@02020000 {
 
+ditto.
+
+> +		compatible = "fsl,imx6sl-uart", "fsl,imx6q-uart", "fsl,imx21-uart";
+> +		reg = <0x02020000 0x4000>;
+> +		interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&clks IMX6SLL_CLK_UART1_IPG>,
+> +			 <&clks IMX6SLL_CLK_UART1_SERIAL>;
+> +		clock-names = "ipg", "per";
+> +		status = "disabled";
+> +};
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
