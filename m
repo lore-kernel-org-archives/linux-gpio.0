@@ -1,73 +1,57 @@
-From: "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>
-Subject: RE: [PATCH] pinctrl: amd: fix compilation warning
-Date: Tue, 3 Jan 2017 08:37:38 +0000
-Message-ID: <MWHPR12MB13571FD8C404270F47F5D9FBA06E0@MWHPR12MB1357.namprd12.prod.outlook.com>
-References: <20170103082119.11958-1-linus.walleij@linaro.org>
+From: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+Subject: [PATCH 0/5] add support for Allwinner V3s SoC
+Date: Tue,  3 Jan 2017 23:16:24 +0800
+Message-ID: <20170103151629.19447-1-icenowy@aosc.xyz>
+Reply-To: icenowy-ymACFijhrKM@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-co1nam03on0066.outbound.protection.outlook.com ([104.47.40.66]:34112
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932930AbdACIhm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 3 Jan 2017 03:37:42 -0500
-In-Reply-To: <20170103082119.11958-1-linus.walleij@linaro.org>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBCZLPFN5Q4OBBBEBV7BQKGQE7ROXTAI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>
 
-Thanks Linus for fixing this.
+Allwinner produced a single-core Cortex-A7 SoC, V3s, with integrated 64MiB DDR2
+DRAM, and in LQFP package. With such a package, it has been easier for hackers
+to DIY a board (no BGA needed, and no DRAM wiring needed).
 
-Nehal
+Add support for this SoC, as well as one board with it (Lichee Pi Zero).
 
------Original Message-----
-From: Linus Walleij [mailto:linus.walleij@linaro.org]=20
-Sent: Tuesday, January 3, 2017 1:51 PM
-To: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org; Linus Walleij <linus.walleij@linaro.org>; S=
--k, Shyam-sundar <Shyam-sundar.S-k@amd.com>; Shah, Nehal-bakulchandra <Neha=
-l-bakulchandra.Shah@amd.com>
-Subject: [PATCH] pinctrl: amd: fix compilation warning
+Icenowy Zheng (5):
+  arm: sunxi: add support for V3s SoC
+  clk: sunxi-ng: add support for V3s CCU
+  pinctrl: sunxi: add driver for V3s SoC
+  ARM: dts: sunxi: add dtsi file for V3s SoC
+  ARM: dts: sunxi: add support for Lichee Pi Zero board
 
-3bfd44306c65 ("pinctrl: amd: Add support for additional GPIO") created the =
-following warning:
+ Documentation/arm/sunxi/README                |   4 +
+ arch/arm/boot/dts/Makefile                    |   3 +-
+ arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts |  73 ++++
+ arch/arm/boot/dts/sun8i-v3s.dtsi              | 257 +++++++++++
+ arch/arm/mach-sunxi/sunxi.c                   |   1 +
+ drivers/clk/sunxi-ng/Kconfig                  |  11 +
+ drivers/clk/sunxi-ng/Makefile                 |   1 +
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c          | 590 ++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.h          |  63 +++
+ drivers/pinctrl/sunxi/Kconfig                 |   4 +
+ drivers/pinctrl/sunxi/Makefile                |   1 +
+ drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c     | 321 ++++++++++++++
+ include/dt-bindings/clock/sun8i-v3s-ccu.h     | 107 +++++
+ include/dt-bindings/reset/sun8i-v3s-ccu.h     |  78 ++++
+ 14 files changed, 1513 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/sun8i-v3s-licheepi-zero.dts
+ create mode 100644 arch/arm/boot/dts/sun8i-v3s.dtsi
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-v3s.h
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
+ create mode 100644 include/dt-bindings/clock/sun8i-v3s-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun8i-v3s-ccu.h
 
-drivers/pinctrl/pinctrl-amd.c: In function 'amd_gpio_dbg_show':
-drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uniniti=
-alized in this function [-Wmaybe-uninitialized]
-   for (; i < pin_num; i++) {
-   ^
-drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialize=
-d in this function [-Wmaybe-uninitialized]
-  unsigned int bank, i, pin_num;
-                     ^
-Fix this by adding a guarding default case for illegal bank numbers.
-
-Cc: S-k Shyam-sundar <Shyam-sundar.S-k@amd.com>
-Cc: Nehal Shah <Nehal-bakulchandra.Shah@amd.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/pinctrl-amd.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c =
-index 47b17100410e..c2203699f1ab 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -206,6 +206,9 @@ static void amd_gpio_dbg_show(struct seq_file *s, struc=
-t gpio_chip *gc)
- 			i =3D 192;
- 			pin_num =3D AMD_GPIO_PINS_BANK3 + i;
- 			break;
-+		default:
-+			/* Illegal bank number, ignore */
-+			continue;
- 		}
- 		for (; i < pin_num; i++) {
- 			seq_printf(s, "pin%d\t", i);
---
-2.9.3
-
+-- 
+2.11.0
