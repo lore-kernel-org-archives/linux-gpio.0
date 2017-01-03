@@ -1,62 +1,46 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/3] gpiolib: Update documentation of struct acpi_gpio_info
-Date: Tue,  3 Jan 2017 19:01:18 +0200
-Message-ID: <20170103170119.35950-2-andriy.shevchenko@linux.intel.com>
-References: <20170103170119.35950-1-andriy.shevchenko@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:29421 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753143AbdACRCp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 3 Jan 2017 12:02:45 -0500
-In-Reply-To: <20170103170119.35950-1-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Steve Longerbeam <steve_longerbeam-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 00/20] i.MX Media Driver
+Date: Tue, 3 Jan 2017 12:50:35 -0800
+Message-ID: <183d9b6e-c195-128b-e74b-9103a3402dab@mentor.com>
+References: <1483050455-10683-1-git-send-email-steve_longerbeam@mentor.com>
+ <CAOMZO5DM4aRwzCWkRoZLmbCxn155YL+CUR_gJyDh+FjzSKD3PQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAOMZO5DM4aRwzCWkRoZLmbCxn155YL+CUR_gJyDh+FjzSKD3PQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Steve Longerbeam <slongerbeam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Cc: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Fabio Estevam <fabio.estevam-3arQi8VN3Tc@public.gmane.org>, "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-media <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Christophe RICARD <christophe.ricard@gmail.com>
 
-It seems the code had been changed, but description left untouched.
+Hi Fabio,
 
-Update description of the struct acpi_gpio_info and relative comments
-accordingly.
 
-Fixes: commit 52044723cd27 ("ACPI / gpio: Add irq_type when a GPIO is used as an interrupt")
-Cc: Christophe RICARD <christophe.ricard@gmail.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib-acpi.c | 5 ++---
- drivers/gpio/gpiolib.h      | 3 ++-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+On 01/02/2017 01:09 PM, Fabio Estevam wrote:
+> Hi Steve,
+>
+> On Thu, Dec 29, 2016 at 8:27 PM, Steve Longerbeam <slongerbeam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> This is a media driver for video capture on i.MX.
+>>
+>> Refer to Documentation/media/v4l-drivers/imx.rst for example capture
+>> pipelines on SabreSD, SabreAuto, and SabreLite reference platforms.
+>>
+>> This patchset includes the OF graph layout as proposed by Philipp Zabel,
+>> with only minor changes which are enumerated in the patch header.
+> Patches 13, 14 and 19 miss your Signed-off-by tag.
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index a3faefa44f68..9b37a3692b3f 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -416,9 +416,8 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
- 			agpio->connection_type == ACPI_RESOURCE_GPIO_TYPE_INT;
- 
- 		/*
--		 * ActiveLow is only specified for GpioInt resource. If
--		 * GpioIo is used then the only way to set the flag is
--		 * to use _DSD "gpios" property.
-+		 * Polarity and triggering are only specified for GpioInt
-+		 * resource.
- 		 * Note: we expect here:
- 		 * - ACPI_ACTIVE_LOW == GPIO_ACTIVE_LOW
- 		 * - ACPI_ACTIVE_HIGH == GPIO_ACTIVE_HIGH
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index d10eaf520860..2495b7ee1b42 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -76,7 +76,8 @@ struct gpio_device {
- /**
-  * struct acpi_gpio_info - ACPI GPIO specific information
-  * @gpioint: if %true this GPIO is of type GpioInt otherwise type is GpioIo
-- * @active_low: in case of @gpioint, the pin is active low
-+ * @polarity: interrupt polarity as provided by ACPI
-+ * @triggering: triggering type as provided by ACPI
-  */
- struct acpi_gpio_info {
- 	bool gpioint;
--- 
-2.11.0
+thanks for catching. I've added them to version 2.
 
+Steve
+
+>
+> Tested the whole series on a mx6qsabresd:
+>
+> Tested-by: Fabio Estevam <fabio.estevam-3arQi8VN3Tc@public.gmane.org>
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
