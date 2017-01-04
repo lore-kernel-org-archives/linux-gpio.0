@@ -1,124 +1,99 @@
-From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
-Subject: Re: [PATCH v2 9/9] ARM: sunxi: Convert pinctrl nodes to generic
- bindings
-Date: Wed, 4 Jan 2017 02:16:23 +0000
-Message-ID: <58723369-50ad-1792-9be1-c277eb719044@arm.com>
-References: <cover.7edc6c25be8a5e2efdda6a82e102dbf7ece6aa64.1476200742.git-series.maxime.ripard@free-electrons.com>
- <e32d044d2d967f24f12d83eea50e7f14f2ae1073.1476200742.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v67_4iriM2WS33hUWzNZY8R2WvGjqzntGBPGmNkr1Ryr_w@mail.gmail.com>
+From: Keerthy <j-keerthy@ti.com>
+Subject: [PATCH 2/2] gpio: davinci: Remove gpio2regs function to accommodate multi instances
+Date: Wed, 4 Jan 2017 13:56:29 +0530
+Message-ID: <1483518389-6200-2-git-send-email-j-keerthy@ti.com>
+References: <1483518389-6200-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGb2v67_4iriM2WS33hUWzNZY8R2WvGjqzntGBPGmNkr1Ryr_w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: devicetree <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:15657 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934851AbdADI2z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Jan 2017 03:28:55 -0500
+In-Reply-To: <1483518389-6200-1-git-send-email-j-keerthy@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-kernel@vger.kernel.org, j-keerthy@ti.com, linux-gpio@vger.kernel.org, gnurou@gmail.com, t-kristo@ti.com
 
-On 18/10/16 08:43, Chen-Yu Tsai wrote:
+gpio2regs is written making an assumption that driver supports only
+one instance of gpio controller. Removing this and adding a generic
+array so as to support multiple instances of gpio controllers.
 
-Hi Maxime, Chen-Yu,
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+ drivers/gpio/gpio-davinci.c | 30 +++++++-----------------------
+ 1 file changed, 7 insertions(+), 23 deletions(-)
 
-I just stumbled over this patch in Maxime's -next tree and think I
-missed it before. I guess it's a bit late, but I just wanted to express
-my concerns and write out the issues with the current DT approach:
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 163f81e..26b874a 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -43,25 +43,7 @@ struct davinci_gpio_regs {
+ #define MAX_LABEL_SIZE 20
+ 
+ static void __iomem *gpio_base;
+-
+-static struct davinci_gpio_regs __iomem *gpio2regs(unsigned gpio)
+-{
+-	void __iomem *ptr;
+-
+-	if (gpio < 32 * 1)
+-		ptr = gpio_base + 0x10;
+-	else if (gpio < 32 * 2)
+-		ptr = gpio_base + 0x38;
+-	else if (gpio < 32 * 3)
+-		ptr = gpio_base + 0x60;
+-	else if (gpio < 32 * 4)
+-		ptr = gpio_base + 0x88;
+-	else if (gpio < 32 * 5)
+-		ptr = gpio_base + 0xb0;
+-	else
+-		ptr = NULL;
+-	return ptr;
+-}
++static unsigned int offset_array[5] = {0x10, 0x38, 0x60, 0x88, 0xb0};
+ 
+ static inline struct davinci_gpio_regs __iomem *irq2regs(struct irq_data *d)
+ {
+@@ -262,7 +244,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ #endif
+ 		spin_lock_init(&chips[i].lock);
+ 
+-		regs = gpio2regs(base);
++		regs = gpio_base + offset_array[i];
+ 		if (!regs)
+ 			return -ENXIO;
+ 		chips[i].regs = regs;
+@@ -417,7 +399,9 @@ static int gpio_irq_type_unbanked(struct irq_data *data, unsigned trigger)
+ davinci_gpio_irq_map(struct irq_domain *d, unsigned int irq,
+ 		     irq_hw_number_t hw)
+ {
+-	struct davinci_gpio_regs __iomem *g = gpio2regs(hw);
++	struct davinci_gpio_controller *chips =
++				(struct davinci_gpio_controller *)d->host_data;
++	struct davinci_gpio_regs __iomem *g = chips[hw / 32].regs;
+ 
+ 	irq_set_chip_and_handler_name(irq, &gpio_irqchip, handle_simple_irq,
+ 				"davinci_gpio");
+@@ -554,7 +538,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 		irq_chip->irq_set_type = gpio_irq_type_unbanked;
+ 
+ 		/* default trigger: both edges */
+-		g = gpio2regs(0);
++		g = chips[0].regs;
+ 		writel_relaxed(~0, &g->set_falling);
+ 		writel_relaxed(~0, &g->set_rising);
+ 
+@@ -574,7 +558,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 	 */
+ 	for (gpio = 0, bank = 0; gpio < ngpio; bank++, bank_irq++, gpio += 16) {
+ 		/* disabled by default, enabled only as needed */
+-		g = gpio2regs(gpio);
++		g = chips[bank / 2].regs;
+ 		writel_relaxed(~0, &g->clr_falling);
+ 		writel_relaxed(~0, &g->clr_rising);
+ 
+-- 
+1.9.1
 
-> On Tue, Oct 11, 2016 at 11:46 PM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
->> Now that we can handle the generic pinctrl bindings, convert our DT to it.
-
-Do we really want to do this? This makes the new DTs incompatible to
-older kernels, for no good reasons. Or are there any? Does this "lock
-muxed pins" functionality (users cannot export GPIOs which are used by a
-driver) rely on the new binding?
-
-Anyway ...
-I understand that in sunxi world a kernel is always accompanied by a
-matching .dtb, but we should really get away from this, as this doesn't
-scale and more importantly creates big headaches in arm64 world:
-
-1) Scaling: Providing a board .dtb together with a kernel puts the
-burden of board support to each distribution, which means that _every_
-distribution needs to ship matching DTs for _every_ board. There are a
-lot of Allwinner boards (around 100 these days?), I am not sure every
-distribution seriously wants to put every .dtb into some bootloader
-accessible directory. Also this kind of defeats the original DT idea,
-where the .dtb is provided by firmware and a generic kernel just works
-with whatever it gets presented.
-Either distributions will not support certain boards because of this or
-there is a lot of maintenance churn in distros.
-Yes, arm(32) has lived with this for years, but that doesn't mean we
-need to keep it this way.
-
-2) Firmware DT: We start to see more and more Allwinner boards with SPI
-flash now, which is supposed to hold some firmware bits. This gives the
-ultimate opportunity to store the DT in there as well. BUT this relies
-on there being _one_ DT (to rule them all). I don't see issues with
-older DTs not having full functionality on newer kernels (this would be
-a reason for a firmware update), but there should at any given time _one
-best_ DT which is a candidate for being burned into the flash.
-Otherwise people are stuck with a certain kernel version (range).
-As an example in this case: Kernel 4.9 is LTS and will probably be
-elected by Debian to be _the_ kernel for the next release and supported
-over several years. But it relies on an old style DT (allwinner,pins
-properties), newer pinctrl DT nodes will be rejected by the driver.
-But for new features (upcoming HDMI support for H3, for instance) to be
-usable a newer DT is required, even if an old kernel will ignore those
-features. So if the flash provides a new DT, we cannot boot stable
-Debian, whereas if the flash provides a legacy DT, we cannot use new
-features in newer kernels.
-Not changing the DT in a way that breaks forward compatibility can be
-done, for instance we just drop this patch here. For new SoCs (like A64
-or H5, where there are no backward compatibility issues) we can happily
-use the new bindings in the official DTs, but for anything already
-supported by older kernels we just stick which what we have. We have to
-keep the old support code in anyway.
-Yes, providing both forward and backward compatibility is not going to
-be a walk in the park, but is inevitable if we want to get those board
-out of the toy area. Other platform can cope with this.
-
-3) On EFI setups the generation(!) of the DT is actually done in EFI
-firmware (very much like in the original PowerPC OF setup). It is
-expected that the generation relies on a static DT scaffold, but
-firmware is free to add or remove nodes. Providing different DTs for
-each kernel is hard to integrate into this approach.
-
-4) Generic boot images: On the x86 side everybody expects this just to
-work: You put in a generic USB stick with one (or two) generic kernels
-and it just boots, without this installation having to know each
-supported machine beforehand. It even works with machines newer than the
-distro. While the last is hard work, it can be done, but only if the DT
-is provided by firmware, which requires there to be one best DT for each
-board.
-
-5) arm64: Distributions providing support for arm64 machines generally
-do not seem to provide DTs, because most platform do not require them
-to. It is not clear that every distribution will do so for the sake or
-supporting Allwinner boards.
-
-6) Other OSes (or U-Boot) are affected by this as well. Eventually this
-will lead them to create their own DTs (and their own bindings?), which
-makes this situation really a mess. We can hardly request them to stick
-with the Linux bindings if we break them regularly.
-
-7) Dynamic DT alteration (by firmware/U-Boot and using overlays, for
-instance), will be much easier if the DT is originally stored in the
-firmware and snippets are stored there as well. This is for instance a
-use case for the (optional) WiFi module on the Pine64.
-
-8) Those patches also create a lot of potential merge conflicts, since
-they touch almost every sunxi DT file. They are trivial to solve,
-probably, but still tend to create a lot of work and cause nuisance for
-other people (as proven with the A64 CCU driver in this cycle).
-
-So can I ask that we start taking this seriously and stop doing things
-which prevent Allwinner boards from being supported properly?
-Which would first involve dropping this very patch?
-Having done breakage in the past (with "allwinner,sun7i-a20-mmc", for
-instance) is no excuse for doing it again. And especially I want to
-avoid this habit creeping into the arm64 world (thinking about the H5
-here, which may be impacted by this very patch, for instance).
-
-Cheers,
-Andre.
