@@ -1,116 +1,78 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 2/2] pinctrl: Introduce TI IOdelay configuration driver
-Date: Wed, 4 Jan 2017 07:32:42 -0600
-Message-ID: <20170104133242.f4fis3hopegkwiab@rob-hp-laptop>
-References: <20161230183732.5595-1-tony@atomide.com>
- <20161230183732.5595-3-tony@atomide.com>
- <20170102221228.GH9325@atomide.com>
+Subject: Re: [PATCH 1/3] dt-bindings: gpio: Add binding documentation for
+ gpio-thunderx
+Date: Wed, 4 Jan 2017 08:33:50 -0600
+Message-ID: <20170104143350.7clanzqrxg4pchr6@rob-hp-laptop>
+References: <1483491334-167095-1-git-send-email-ddaney.cavm@gmail.com>
+ <1483491334-167095-2-git-send-email-ddaney.cavm@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:35130 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758158AbdADNco (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Jan 2017 08:32:44 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170102221228.GH9325@atomide.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1483491334-167095-2-git-send-email-ddaney.cavm@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Daney <ddaney.cavm@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Gary Bisson <gary.bisson@boundarydevices.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Mark Rutland <mark.rutland@arm.com>, Nishanth Menon <nm@ti.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, Lokesh Vutla <lokeshvutla@ti.com>
 
-On Mon, Jan 02, 2017 at 02:12:28PM -0800, Tony Lindgren wrote:
-> * Tony Lindgren <tony@atomide.com> [161230 10:38]:
-> > +static struct pinctrl_ops ti_iodelay_pinctrl_ops = {
-> > +	.get_groups_count = pinctrl_generic_get_group_count,
-> > +	.get_group_name = pinctrl_generic_get_group_name,
-> > +	.get_group_pins = pinctrl_generic_get_group_pins,
-> > +	.pin_dbg_show = ti_iodelay_pin_dbg_show,
-> > +	.dt_node_to_map = ti_iodelay_dt_node_to_map,
-> > +};
-> > +
-> > +static struct pinconf_ops ti_iodelay_pinctrl_pinconf_ops = {
-> > +	.pin_config_group_get = ti_iodelay_pinconf_group_get,
-> > +	.pin_config_group_set = ti_iodelay_pinconf_group_set,
-> > +#ifdef CONFIG_DEBUG_FS
-> > +	.pin_config_group_dbg_show = ti_iodelay_pinconf_group_dbg_show,
-> > +#endif
+On Tue, Jan 03, 2017 at 04:55:32PM -0800, David Daney wrote:
+> From: David Daney <david.daney@cavium.com>
 > 
-> I noticed that .pin_dbg_show above needs ifdef CONFIG_DEBUGFS.
-> Updated patch below.
-> 
-> Regards,
-> 
-> Tony
-> 
-> 8< --------------------
-> From tony Mon Sep 17 00:00:00 2001
-> From: Nishanth Menon <nm@ti.com>
-> Date: Tue, 27 Dec 2016 08:03:43 -0800
-> Subject: [PATCH] pinctrl: Introduce TI IOdelay configuration driver
-> 
-> SoC family such as DRA7 family of processors have, in addition
-> to the regular muxing of pins (as done by pinctrl-single), a separate
-> hardware module called IODelay which is also expected to be configured.
-> The "IODelay" module has it's own register space that is independent
-> of the control module and the padconf register area.
-> 
-> With recent changes to the pinctrl framework, we can now support
-> this hardware with a reasonably minimal driver by using #pinctrl-cells,
-> GENERIC_PINCTRL_GROUPS and GENERIC_PINMUX_FUNCTIONS.
-> 
-> It is advocated strongly in TI's official documentation considering
-> the existing design of the DRA7 family of processors during mux or
-> IODelay reconfiguration, there is a potential for a significant glitch
-> which may cause functional impairment to certain hardware. It is
-> hence recommended to do as little of muxing as absolutely necessary
-> without I/O isolation (which can only be done in initial stages of
-> bootloader).
-> 
-> NOTE: with the system wide I/O isolation scheme present in DRA7 SoC
-> family, it is not reasonable to do stop all I/O operations for every
-> such pad configuration scheme. So, we will let it glitch when used in
-> this mode.
-> 
-> Even with the above limitation, certain functionality such as MMC has
-> mandatory need for IODelay reconfiguration requirements, depending on
-> speed of transfer. In these cases, with careful examination of usecase
-> involved, the expected glitch can be controlled such that it does not
-> impact functionality.
-> 
-> In short, IODelay module support as a padconf driver being introduced
-> here is not expected to do SoC wide I/O Isolation and is meant for
-> a limited subset of IODelay configuration requirements that need to
-> be dynamic and whose glitchy behavior will not cause functionality
-> failure for that interface.
-> 
-> IMPORTANT NOTE: we take the approach of keeping LOCK_BITs cleared
-> to 0x0 at all times, even when configuring Manual IO Timing Modes.
-> This is done by eliminating the LOCK_BIT=1 setting from Step
-> of the Manual IO timing Mode configuration procedure. This option
-> leaves the CFG_* registers unprotected from unintended writes to the
-> CTRL_CORE_PAD_* registers while Manual IO Timing Modes are configured.
-> 
-> This approach is taken to allow for a generic driver to exist in kernel
-> world that has to be used carefully in required usecases.
-> 
-> Signed-off-by: Nishanth Menon <nm@ti.com>
-> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-> [tony@atomide.com: updated to use generic pinctrl functions, added
->  binding documentation, updated comments]
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: David Daney <david.daney@cavium.com>
 > ---
->  .../devicetree/bindings/pinctrl/ti,iodelay.txt     |  47 +
+>  .../devicetree/bindings/gpio/gpio-thunderx.txt     | 33 ++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-thunderx.txt b/Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
+> new file mode 100644
+> index 0000000..ba3cdae
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
+> @@ -0,0 +1,33 @@
+> +Cavium ThunderX/OCTEON-TX GPIO controller bindings
+> +
+> +Required Properties:
+> +- reg: The controller bus address.
+> +- gpio-controller: Marks the device node as a GPIO controller.
+> +- #gpio-cells: Must be 2.
+> +  - First cell is the GPIO pin number relative to the controller.
+> +  - Second cell is standard of_gpio_flags:
+> +     1 - Active Low.
+> +     2 - Single Ended.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Just reference where these are defined.
 
->  drivers/pinctrl/Kconfig                            |   1 +
->  drivers/pinctrl/Makefile                           |   1 +
->  drivers/pinctrl/ti/Kconfig                         |  10 +
->  drivers/pinctrl/ti/Makefile                        |   1 +
->  drivers/pinctrl/ti/pinctrl-ti-iodelay.c            | 947 +++++++++++++++++++++
->  6 files changed, 1007 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/ti,iodelay.txt
->  create mode 100644 drivers/pinctrl/ti/Kconfig
->  create mode 100644 drivers/pinctrl/ti/Makefile
->  create mode 100644 drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+> +
+> +Optional Properties:
+> +- compatible: "cavium,thunder-8890-gpio", unused as PCI driver binding is used.
+> +- interrupt-controller: Marks the device node as an interrupt controller.
+> +- #interrupt-cells: Must be present and have value of 2 if
+> +                    "interrupt-controller" is present.
+> +  - First cell is the GPIO pin number relative to the controller.
+> +  - Second cell is triggering flags, one of:
+> +    1 - Edge Rising
+> +    2 - Edge Falling
+> +    4 - Level High
+> +    8 - Level Low
+
+Just reference interrupt-controller/interrupts.txt or the header 
+defining these.
+
+> +
+> +Example:
+> +
+> +gpio_6_0: gpio0@6,0 {
+
+gpio@6,0
+
+> +	compatible = "cavium,thunder-8890-gpio";
+> +	reg = <0x3000 0 0 0 0>; /*  DEVFN = 0x30 (6:0) */
+> +	gpio-controller;
+> +	#gpio-cells = <2>;
+> +	interrupt-controller;
+> +	#interrupt-cells = <2>;
+> +};
+> -- 
+> 1.8.3.1
+> 
