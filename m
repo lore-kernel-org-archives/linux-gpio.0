@@ -1,33 +1,48 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v1 1/3] gpiolib: Switch to for_each_set_bit()
-Date: Wed, 4 Jan 2017 14:58:39 +0200
-Message-ID: <20170104125839.GU3353@lahna.fi.intel.com>
-References: <20170103170119.35950-1-andriy.shevchenko@linux.intel.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] gpio: pca953x: Add optional reset gpio control
+Date: Wed, 4 Jan 2017 07:22:31 -0600
+Message-ID: <20170104132231.jlhqwngaeza7duoo@rob-hp-laptop>
+References: <1483391271-17304-1-git-send-email-steve_longerbeam@mentor.com>
+ <1483391271-17304-2-git-send-email-steve_longerbeam@mentor.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:5812 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753919AbdADNHe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 4 Jan 2017 08:07:34 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170103170119.35950-1-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1483391271-17304-2-git-send-email-steve_longerbeam@mentor.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Steve Longerbeam <slongerbeam@gmail.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Longerbeam <steve_longerbeam@mentor.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On Tue, Jan 03, 2017 at 07:01:17PM +0200, Andy Shevchenko wrote:
-> The macro for_each_set_bit() effectively looks up to the next set bit in array
-> of bits.
+On Mon, Jan 02, 2017 at 01:07:51PM -0800, Steve Longerbeam wrote:
+> Add optional reset-gpios pin control. If present, de-assert the
+> specified reset gpio pin to bring the chip out of reset.
 > 
-> Instead of open coding that switch to for_each_set_bit() in
-> gpio_chip_set_multiple().
+> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio-pca953x.txt |  4 ++++
+>  drivers/gpio/gpio-pca953x.c                             | 11 +++++++++++
+>  2 files changed, 15 insertions(+)
 > 
-> While here, make gpio_chip_set_multiple() non-destructive against its
-> parameters. We are safe since all callers, i.e.
-> gpiod_set_array_value_complex(), handle that already.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> index 08dd15f..da54f4c 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> @@ -29,6 +29,10 @@ Required properties:
+>  	onsemi,pca9654
+>  	exar,xra1202
+>  
+> +Optional properties:
+> + - reset-gpios: GPIO specification for the RESET input
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Need to specify active high or low.
+
+> +
+> +
+>  Example:
+>  
+>  
