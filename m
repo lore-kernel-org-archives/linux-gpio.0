@@ -1,56 +1,74 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH 1/2] gpio: davinci: Remove redundant members davinci_gpio_controller stuct
-Date: Wed, 4 Jan 2017 13:56:28 +0530
-Message-ID: <1483518389-6200-1-git-send-email-j-keerthy@ti.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] gpio: pca953x: Add optional reset gpio control
+Date: Wed, 4 Jan 2017 12:20:40 +0200
+Message-ID: <7bfce806-7670-0bf3-bdf2-00aaf68b5b11@mentor.com>
+References: <1483391271-17304-1-git-send-email-steve_longerbeam@mentor.com>
+ <1483391271-17304-2-git-send-email-steve_longerbeam@mentor.com>
+ <CAHp75VeCKPy4B51P_N9Bp03zPUbRodKzitc-n16ZRKJWcEF4fA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:15654 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964919AbdADI24 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Jan 2017 03:28:56 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAHp75VeCKPy4B51P_N9Bp03zPUbRodKzitc-n16ZRKJWcEF4fA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Steve Longerbeam <slongerbeam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Steve Longerbeam <steve_longerbeam-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-kernel@vger.kernel.org, j-keerthy@ti.com, linux-gpio@vger.kernel.org, gnurou@gmail.com, t-kristo@ti.com
 
-davinci_gpio_controller struct has set_data, in_data, clr_data
-members that are assigned and never used.
+On 01/04/2017 01:37 AM, Andy Shevchenko wrote:
+> On Mon, Jan 2, 2017 at 11:07 PM, Steve Longerbeam <slongerbeam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> Add optional reset-gpios pin control. If present, de-assert the
+>> specified reset gpio pin to bring the chip out of reset.
+> 
+>> --- a/drivers/gpio/gpio-pca953x.c
+>> +++ b/drivers/gpio/gpio-pca953x.c
+>> @@ -22,6 +22,7 @@
+>>  #include <linux/of_platform.h>
+>>  #include <linux/acpi.h>
+>>  #include <linux/regulator/consumer.h>
+> 
+>> +#include <linux/gpio/consumer.h>
+> 
+> Please, try to put it somehow alphabetically ordered (yes, I see it's
+> not in general, but try to squeeze it into longest part which is
+> ordered).
+> 
+>>
+>>  #define PCA953X_INPUT          0
+>>  #define PCA953X_OUTPUT         1
+>> @@ -754,8 +755,18 @@ static int pca953x_probe(struct i2c_client *client,
+>>                 invert = pdata->invert;
+>>                 chip->names = pdata->names;
+>>         } else {
+>> +               struct gpio_desc *reset_gpio;
+>> +
+>>                 chip->gpio_start = -1;
+>>                 irq_base = 0;
+>> +
+>> +               /* see if we need to de-assert a reset pin */
+> 
+> see -> See
+> 
+>> +               reset_gpio = devm_gpiod_get_optional(&client->dev, "reset",
+>> +                                                    GPIOD_OUT_LOW);
+> 
+> Shouldn't be _optional_exclusive?
+> See this recent discussion https://patchwork.ozlabs.org/patch/706002/
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
- drivers/gpio/gpio-davinci.c                | 3 ---
- include/linux/platform_data/gpio-davinci.h | 3 ---
- 2 files changed, 6 deletions(-)
+There is no devm_gpiod_get_optional_exclusive(), probably you confuse
+the function with devm_reset_control_get_optional_exclusive().
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 9191056..163f81e 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -266,9 +266,6 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 		if (!regs)
- 			return -ENXIO;
- 		chips[i].regs = regs;
--		chips[i].set_data = &regs->set_data;
--		chips[i].clr_data = &regs->clr_data;
--		chips[i].in_data = &regs->in_data;
- 
- 		gpiochip_add_data(&chips[i].chip, &chips[i]);
- 	}
-diff --git a/include/linux/platform_data/gpio-davinci.h b/include/linux/platform_data/gpio-davinci.h
-index 6ace3fd..44ca530 100644
---- a/include/linux/platform_data/gpio-davinci.h
-+++ b/include/linux/platform_data/gpio-davinci.h
-@@ -33,9 +33,6 @@ struct davinci_gpio_controller {
- 	/* Serialize access to GPIO registers */
- 	spinlock_t		lock;
- 	void __iomem		*regs;
--	void __iomem		*set_data;
--	void __iomem		*clr_data;
--	void __iomem		*in_data;
- 	int			gpio_unbanked;
- 	unsigned		gpio_irq;
- };
--- 
-1.9.1
+>> +               if (IS_ERR(reset_gpio)) {
+>> +                       dev_err(&client->dev, "request for reset pin failed\n");
+>> +                       return PTR_ERR(reset_gpio);
+>> +               }
+>>         }
+> 
 
+--
+With best wishes,
+Vladimir
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
