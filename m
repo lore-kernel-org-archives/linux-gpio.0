@@ -1,78 +1,111 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: gpio: Add binding documentation for
- gpio-thunderx
-Date: Wed, 4 Jan 2017 08:33:50 -0600
-Message-ID: <20170104143350.7clanzqrxg4pchr6@rob-hp-laptop>
-References: <1483491334-167095-1-git-send-email-ddaney.cavm@gmail.com>
- <1483491334-167095-2-git-send-email-ddaney.cavm@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1483491334-167095-2-git-send-email-ddaney.cavm@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Daney <ddaney.cavm@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH 5/6] pinctrl: intel: Add support for 1k additional pull-down
+Date: Wed,  4 Jan 2017 18:31:08 +0300
+Message-ID: <20170104153109.28663-6-mika.westerberg@linux.intel.com>
+References: <20170104153109.28663-1-mika.westerberg@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga06.intel.com ([134.134.136.31]:17730 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1031265AbdADPbQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 4 Jan 2017 10:31:16 -0500
+In-Reply-To: <20170104153109.28663-1-mika.westerberg@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, "David E . Box" <david.e.box@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Tue, Jan 03, 2017 at 04:55:32PM -0800, David Daney wrote:
-> From: David Daney <david.daney@cavium.com>
-> 
-> Signed-off-by: David Daney <david.daney@cavium.com>
-> ---
->  .../devicetree/bindings/gpio/gpio-thunderx.txt     | 33 ++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-thunderx.txt b/Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
-> new file mode 100644
-> index 0000000..ba3cdae
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
-> @@ -0,0 +1,33 @@
-> +Cavium ThunderX/OCTEON-TX GPIO controller bindings
-> +
-> +Required Properties:
-> +- reg: The controller bus address.
-> +- gpio-controller: Marks the device node as a GPIO controller.
-> +- #gpio-cells: Must be 2.
-> +  - First cell is the GPIO pin number relative to the controller.
-> +  - Second cell is standard of_gpio_flags:
-> +     1 - Active Low.
-> +     2 - Single Ended.
+The next generation Intel GPIO hardware supports additional 1k pull-down
+per-pad. Add support for this to the Intel core pinctrl driver.
 
-Just reference where these are defined.
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-intel.c | 18 +++++++++++++++++-
+ drivers/pinctrl/intel/pinctrl-intel.h |  1 +
+ 2 files changed, 18 insertions(+), 1 deletion(-)
 
-> +
-> +Optional Properties:
-> +- compatible: "cavium,thunder-8890-gpio", unused as PCI driver binding is used.
-> +- interrupt-controller: Marks the device node as an interrupt controller.
-> +- #interrupt-cells: Must be present and have value of 2 if
-> +                    "interrupt-controller" is present.
-> +  - First cell is the GPIO pin number relative to the controller.
-> +  - Second cell is triggering flags, one of:
-> +    1 - Edge Rising
-> +    2 - Edge Falling
-> +    4 - Level High
-> +    8 - Level Low
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index e051cd8775ce..21fb7aa4d415 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -450,12 +450,14 @@ static int intel_config_get(struct pinctrl_dev *pctldev, unsigned pin,
+ {
+ 	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 	enum pin_config_param param = pinconf_to_config_param(*config);
++	const struct intel_community *community;
+ 	u32 value, term;
+ 	u16 arg = 0;
+ 
+ 	if (!intel_pad_owned_by_host(pctrl, pin))
+ 		return -ENOTSUPP;
+ 
++	community = intel_get_community(pctrl, pin);
+ 	value = readl(intel_get_padcfg(pctrl, pin, PADCFG1));
+ 	term = (value & PADCFG1_TERM_MASK) >> PADCFG1_TERM_SHIFT;
+ 
+@@ -491,6 +493,11 @@ static int intel_config_get(struct pinctrl_dev *pctldev, unsigned pin,
+ 			return -EINVAL;
+ 
+ 		switch (term) {
++		case PADCFG1_TERM_1K:
++			if (!(community->features & FEATURE_1K_PULLDOWN))
++				return -EINVAL;
++			arg = 1000;
++			break;
+ 		case PADCFG1_TERM_5K:
+ 			arg = 5000;
+ 			break;
+@@ -532,6 +539,7 @@ static int intel_config_set_pull(struct intel_pinctrl *pctrl, unsigned pin,
+ {
+ 	unsigned param = pinconf_to_config_param(config);
+ 	unsigned arg = pinconf_to_config_argument(config);
++	const struct intel_community *community;
+ 	void __iomem *padcfg1;
+ 	unsigned long flags;
+ 	int ret = 0;
+@@ -539,6 +547,7 @@ static int intel_config_set_pull(struct intel_pinctrl *pctrl, unsigned pin,
+ 
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
++	community = intel_get_community(pctrl, pin);
+ 	padcfg1 = intel_get_padcfg(pctrl, pin, PADCFG1);
+ 	value = readl(padcfg1);
+ 
+@@ -581,6 +590,11 @@ static int intel_config_set_pull(struct intel_pinctrl *pctrl, unsigned pin,
+ 		case 5000:
+ 			value |= PADCFG1_TERM_5K << PADCFG1_TERM_SHIFT;
+ 			break;
++		case 1000:
++			if (!(community->features & FEATURE_1K_PULLDOWN))
++				return -EINVAL;
++			value |= PADCFG1_TERM_1K << PADCFG1_TERM_SHIFT;
++			break;
+ 		default:
+ 			ret = -EINVAL;
+ 		}
+@@ -1118,8 +1132,10 @@ int intel_pinctrl_probe(struct platform_device *pdev,
+ 			u32 rev;
+ 
+ 			rev = (readl(regs + REVID) & REVID_MASK) >> REVID_SHIFT;
+-			if (rev >= 0x94)
++			if (rev >= 0x94) {
+ 				community->features |= FEATURE_DEBOUNCE;
++				community->features |= FEATURE_1K_PULLDOWN;
++			}
+ 		}
+ 
+ 		/* Read offset of the pad configuration registers */
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
+index 248e6844426f..55f66f0cd61e 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.h
++++ b/drivers/pinctrl/intel/pinctrl-intel.h
+@@ -81,6 +81,7 @@ struct intel_community {
+ 
+ /* Additional features supported by the hardware */
+ #define FEATURE_DEBOUNCE	BIT(0)
++#define FEATURE_1K_PULLDOWN	BIT(1)
+ 
+ #define PIN_GROUP(n, p, m)			\
+ 	{					\
+-- 
+2.11.0
 
-Just reference interrupt-controller/interrupts.txt or the header 
-defining these.
-
-> +
-> +Example:
-> +
-> +gpio_6_0: gpio0@6,0 {
-
-gpio@6,0
-
-> +	compatible = "cavium,thunder-8890-gpio";
-> +	reg = <0x3000 0 0 0 0>; /*  DEVFN = 0x30 (6:0) */
-> +	gpio-controller;
-> +	#gpio-cells = <2>;
-> +	interrupt-controller;
-> +	#interrupt-cells = <2>;
-> +};
-> -- 
-> 1.8.3.1
-> 
