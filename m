@@ -1,52 +1,79 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v6 3/3] serial: 8250_pci: remove exar code
-Date: Thu, 5 Jan 2017 16:37:06 +0200
-Message-ID: <CAHp75Vft_6_yM7Khjmnv1WYzSZ0rb_UJP-SVay5e3uK1_3YBRA@mail.gmail.com>
-References: <1483611602-5560-1-git-send-email-sudipm.mukherjee@gmail.com>
- <1483611602-5560-4-git-send-email-sudipm.mukherjee@gmail.com> <CAHp75Vdcniuuv3xV_o89i5_MpV_OGfbwE0yyDsRAFYjaxwOUDA@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v2 9/9] ARM: sunxi: Convert pinctrl nodes to generic
+ bindings
+Date: Thu, 5 Jan 2017 16:35:56 +0100
+Message-ID: <20170105153556.pzec5jjuz7pmvsmn@lukather>
+References: <cover.7edc6c25be8a5e2efdda6a82e102dbf7ece6aa64.1476200742.git-series.maxime.ripard@free-electrons.com>
+ <e32d044d2d967f24f12d83eea50e7f14f2ae1073.1476200742.git-series.maxime.ripard@free-electrons.com>
+ <CAGb2v67_4iriM2WS33hUWzNZY8R2WvGjqzntGBPGmNkr1Ryr_w@mail.gmail.com>
+ <58723369-50ad-1792-9be1-c277eb719044@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="skclcjjttxdh2jz4"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:34758 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753617AbdAEOhH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Jan 2017 09:37:07 -0500
-In-Reply-To: <CAHp75Vdcniuuv3xV_o89i5_MpV_OGfbwE0yyDsRAFYjaxwOUDA@mail.gmail.com>
+Received: from mail.free-electrons.com ([62.4.15.54]:33264 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935333AbdAEPf7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Jan 2017 10:35:59 -0500
+Content-Disposition: inline
+In-Reply-To: <58723369-50ad-1792-9be1-c277eb719044@arm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Przywara <andre.przywara@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, devicetree <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Jan 5, 2017 at 4:35 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Thu, Jan 5, 2017 at 12:20 PM, Sudip Mukherjee
-> <sudipm.mukherjee@gmail.com> wrote:
->> Remove the exar specific codes from 8250_pci and blacklist those chips
->> so that the exar serial binds to the devices.
->
-> exar -> Exar ?
->
->> +#define PCI_DEVICE_ID_COMMTECH_4222PCI335 0x0004
->> +#define PCI_DEVICE_ID_COMMTECH_4224PCI335 0x0002
->> +#define PCI_DEVICE_ID_COMMTECH_2324PCI335 0x000a
->> +#define PCI_DEVICE_ID_COMMTECH_2328PCI335 0x000b
->
-> This is not related to the patch. Create a separate one.
->
->> @@ -3734,6 +3538,8 @@ enum pci_board_num_t {
->>         { PCI_VDEVICE(INTEL, 0x228c), },
->>         { PCI_VDEVICE(INTEL, 0x9ce3), },
->>         { PCI_VDEVICE(INTEL, 0x9ce4), },
->
-> + empty line
->
->> +       /* Exar devices */
->> +       { PCI_VDEVICE(EXAR, PCI_ANY_ID), },
->>  };
 
-Ah, one more. Set default for your new driver to be SERIAL_8250.
-Otherwise users will lost it, right?
+--skclcjjttxdh2jz4
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-With Best Regards,
-Andy Shevchenko
+On Wed, Jan 04, 2017 at 02:16:23AM +0000, Andr=E9 Przywara wrote:
+> So can I ask that we start taking this seriously and stop doing things
+> which prevent Allwinner boards from being supported properly?
+> Which would first involve dropping this very patch?
+
+The driver still supports the old binding.
+
+> Having done breakage in the past (with "allwinner,sun7i-a20-mmc", for
+> instance) is no excuse for doing it again.
+
+I'm not sure which breakage we introduced with a new compatible: the
+old compatible is working just like it used to, and the new one is
+working like we need it to.
+
+> And especially I want to avoid this habit creeping into the arm64
+> world (thinking about the H5 here, which may be impacted by this
+> very patch, for instance).
+
+And again, if you looked at the entire serie, you would have seen that
+I took this into account.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--skclcjjttxdh2jz4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYbmfMAAoJEBx+YmzsjxAgeMsP+wXSVtzU3aRzeFVcgnM1+tCF
+G7KDxWSCDWBsUD4iwbloZQVl3AsY45I2dEskZkISsVLEc7OGs0wmluxlpqfRAuPC
+pjlmNEP9InfKcJgZ89ql2Ffc66VOE+WX83JRGa3Ld1ZQLfpYrTAt7V2yb01jUDre
+w/c+Y/YGn4lABevLCxBaKUFQX5u54d6XIDoajwcKNmVm4oPLswjxm+4vrywh1tXh
+pXa7dVRgvkRd4+562Ikg27OyCp9jZE06F8OmKgVvDIvp8xh36TmWrFYD1Gw3isXN
+2hEn5xTxXRcwl1kOGsihV2bXdB5a6kRar12H69d23jN1pe4pye+snF/3l06M2jws
+EeYrj0FH56e8KO15CItAzRaKdjkuzT4ipxw/pUwZlJB8pRvEaNUkdCJ996rwP2eb
+BPdrJ2VBNGSncwfVEdvHXoPTwLwxixLqGuUJ853Vh1Erow4tjqlLizjS6UOOyCtV
+QCABAr2EtP7dZQ4oWwvzJSanPI0Cjhyl5o+FkCNwQQUQHEHBOpafywNnNXt1onkl
+s+fxTKglTGKRwgxvX6Utn1tIr8hjvkAu5rdm3SFDnCi0IQggDTBO9tchn/I8p7dI
+qZ+JTo/K0TK0uUiEl2alhUhWngau+ei3zgYllyqTZ4t8ssJdEKUF7j8n2jN4J9Tz
+bKIg2gKoufWF5T4CcbTU
+=7mbC
+-----END PGP SIGNATURE-----
+
+--skclcjjttxdh2jz4--
