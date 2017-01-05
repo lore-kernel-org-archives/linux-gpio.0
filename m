@@ -1,43 +1,67 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: core: Fix panic when pinctrl devices with hogs
- are unregistered
-Date: Thu, 5 Jan 2017 17:15:34 +0100
-Message-ID: <CACRpkdbAv8UiqWBH5mUNpOzBeAee4ZbdF=M_AvOPz5imbv26uA@mail.gmail.com>
-References: <1483631575-14422-1-git-send-email-jonathanh@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v4.10
+Date: Thu, 5 Jan 2017 17:18:45 +0100
+Message-ID: <CACRpkdYR=HjWPqdVt1FDO3kr4KW-rLZ6kJ_VT1CwJZB1xrMXOg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1483631575-14422-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f175.google.com ([209.85.220.175]:34606 "EHLO
+        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753647AbdAEQSq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Jan 2017 11:18:46 -0500
+Received: by mail-qk0-f175.google.com with SMTP id a20so48321830qkc.1
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Jan 2017 08:18:46 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Jan 5, 2017 at 4:52 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+Hi Linus,
 
-> Commit df61b366af26 ('pinctrl: core: Use delayed work for hogs')
-> deferred part of the registration for pinctrl devices if the pinctrl
-> device has hogs. This introduced a window where if the pinctrl device
-> with hogs was sucessfully registered, but then unregistered again
-> (which could be caused by parent device being probe deferred) before
-> the delayed work has chanced to run, then this will cause a kernel
-> panic to occur because:
->
-> 1. The 'pctldev->p' has not yet been initialised and when unregistering
->    the pinctrl device we only check to see if it is an error value, but
->    now it could also be NULL.
-> 2. The pinctrl device may not have been added to the 'pinctrldev_list'
->    list and we don't check to see if it was added before removing.
->
-> Fix up the above by checking to see if the 'pctldev->p' pointer is an
-> error value or NULL before putting the pinctrl device and verifying
-> that the pinctrl device is present in 'pinctrldev_list' before removing.
->
-> Fixes: df61b366af26 ('pinctrl: core: Use delayed work for hogs')
->
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+three small pin control fixes for the v4.10 series. Very little
+to say about them, just driver fixes.
 
-Oops. Patch applied.
+Please pull them in!
 
 Yours,
 Linus Walleij
+
+The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
+
+  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.10-2
+
+for you to fetch changes up to 1259feddd0f83649d5c48d730c140b4f7f3fa288:
+
+  pinctrl: samsung: Fix the width of PINCFG_TYPE_DRV bitfields for
+Exynos5433 (2016-12-30 14:27:42 +0100)
+
+----------------------------------------------------------------
+Pin control fixes for the v4.10 series:
+
+- One fix to the AMD pinctrl ACPI glue.
+
+- Fix requests on the Meson driver.
+
+- Fix bitfield widths on Samsungs Exynos 5433.
+
+----------------------------------------------------------------
+Chanwoo Choi (1):
+      pinctrl: samsung: Fix the width of PINCFG_TYPE_DRV bitfields for
+Exynos5433
+
+Neil Armstrong (1):
+      pinctrl: meson: fix gpio request disabling other modes
+
+Shyam Sundar S K (1):
+      pinctrl/amd: Set the level based on ACPI tables
+
+ drivers/pinctrl/meson/pinctrl-meson.c    |  2 +-
+ drivers/pinctrl/pinctrl-amd.c            | 19 +++----
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 91 ++++++++++++++++++--------------
+ drivers/pinctrl/samsung/pinctrl-exynos.h | 31 +++++++++++
+ 4 files changed, 90 insertions(+), 53 deletions(-)
