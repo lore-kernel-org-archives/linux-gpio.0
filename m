@@ -1,356 +1,110 @@
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Subject: Re: [PATCHv2 0/5] Support for Marvell switches with integrated CPUs
-Date: Thu, 5 Jan 2017 20:02:06 +0000
-Message-ID: <c79e5aa519d14c7d9fdecb187a95d1c1@svr-chch-ex1.atlnz.lc>
-References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
- <CAPv3WKcT8MxX+g12C1o81MmQJWRt7Rpd-hgBh8rTpLOS3vdtqA@mail.gmail.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH 1/2] gpio: simplify adding threaded interrupts
+Date: Thu, 5 Jan 2017 14:36:11 -0600
+Message-ID: <789f8247-41cc-76a1-6fc8-a1caf45963bc@ti.com>
+References: <1479991133-24153-1-git-send-email-linus.walleij@linaro.org>
+ <1777087.OkzDx8qNW5@ws-stein>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Marcin Wojtas <mw@semihalf.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Juri Lelli <juri.lelli@arm.com>, Russell King <linux@armlinux.org.uk>, Thierry Reding <treding@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, Kalyan Kinthada <Kalyan.Kinthada@alliedtelesis>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:35274 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032921AbdAEUhC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Jan 2017 15:37:02 -0500
+In-Reply-To: <1777087.OkzDx8qNW5@ws-stein>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexander Stein <alexander.stein@systec-electronic.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Lars Poeschel <poeschel@lemonage.de>, Octavian Purdila <octavian.purdila@intel.com>, Daniel Baluta <daniel.baluta@intel.com>, Bin Gao <bin.gao@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Ajay Thomas <ajay.thomas.david.rajamanickam@intel.com>, Semen Protsenko <semen.protsenko@globallogic.com>, Phil Reid <preid@electromag.com.au>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Patrice Chotard <patrice.chotard@st.com>
 
-On 06/01/17 03:09, Marcin Wojtas wrote:=0A=
-> Hi Chris,=0A=
->=0A=
-> Thanks a lot for your work and v2. Can you please add changelog=0A=
-> between patchset versions in your cover letter?=0A=
-=0A=
-Will do for v3. I did actually include a changelog in the individual =0A=
-patches but I can collate that here.=0A=
-=0A=
-clk: mvebu: support for 98DX3236 SoC=0A=
-- Update devicetree binding documentation for new compatible string=0A=
-arm: mvebu: support for SMP on 98DX3336 SoC=0A=
-- Document new enable-method value=0A=
-- Correct some references from 98DX4521 to 98DX3236=0A=
-pinctrl: mvebu: pinctrl driver for 98DX3236 SoC=0A=
-- include sdio support for the 98DX4251=0A=
-arm: mvebu: Add device tree for 98DX3236 SoCs=0A=
-- Update devicetree binding documentation to reflect that 98DX3336 and=0A=
-   984251 are supersets of 98DX3236.=0A=
-- disable crypto block=0A=
-- disable sdio for 98DX3236, enable for 98DX4251=0A=
-arm: mvebu: Add device tree for db-dxbc2 and db-xc3-24g4xg boards=0A=
-- None=0A=
-=0A=
-Here's the interdiff=0A=
-=0A=
-diff --git a/Documentation/devicetree/bindings/arm/cpus.txt =0A=
-b/Documentation/devicetree/bindings/arm/cpus.txt=0A=
-index a1bcfeed5f24..3c2fd72d0bf9 100644=0A=
---- a/Documentation/devicetree/bindings/arm/cpus.txt=0A=
-+++ b/Documentation/devicetree/bindings/arm/cpus.txt=0A=
-@@ -202,6 +202,7 @@ nodes to be present and contain the properties =0A=
-described below.=0A=
-                             "marvell,armada-380-smp"=0A=
-                             "marvell,armada-390-smp"=0A=
-                             "marvell,armada-xp-smp"=0A=
-+                           "marvell,98dx3236-smp"=0A=
-                             "mediatek,mt6589-smp"=0A=
-                             "mediatek,mt81xx-tz-smp"=0A=
-                             "qcom,gcc-msm8660"=0A=
-diff --git a/Documentation/devicetree/bindings/arm/marvell/98dx3236.txt =0A=
-b/Documentation/devicetree/bindings/arm/marvell/98dx3236.txt=0A=
-index e7dc9b2dd90b..64e8c73fc5ab 100644=0A=
---- a/Documentation/devicetree/bindings/arm/marvell/98dx3236.txt=0A=
-+++ b/Documentation/devicetree/bindings/arm/marvell/98dx3236.txt=0A=
-@@ -6,5 +6,18 @@ shall have the following property:=0A=
-=0A=
-  Required root node property:=0A=
-=0A=
--compatible: one of "marvell,armadaxp-98dx3236", "marvell,armadaxp-98dx3336=
-"=0A=
--            or "marvell,armadaxp-98dx4251"=0A=
-+compatible: must contain "marvell,armadaxp-98dx3236"=0A=
-+=0A=
-+In addition, boards using the Marvell 98DX3336 SoC shall have the=0A=
-+following property:=0A=
-+=0A=
-+Required root node property:=0A=
-+=0A=
-+compatible: must contain "marvell,armadaxp-98dx3336"=0A=
-+=0A=
-+In addition, boards using the Marvell 98DX4251 SoC shall have the=0A=
-+following property:=0A=
-+=0A=
-+Required root node property:=0A=
-+=0A=
-+compatible: must contain "marvell,armadaxp-98dx4251"=0A=
-diff --git a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt =
-=0A=
-b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt=0A=
-index 99c214660bdc..7f28506eaee7 100644=0A=
---- a/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt=0A=
-+++ b/Documentation/devicetree/bindings/clock/mvebu-cpu-clock.txt=0A=
-@@ -3,6 +3,7 @@ Device Tree Clock bindings for cpu clock of Marvell EBU =0A=
-platforms=0A=
-  Required properties:=0A=
-  - compatible : shall be one of the following:=0A=
-         "marvell,armada-xp-cpu-clock" - cpu clocks for Armada XP=0A=
-+       "marvell,mv98dx3236-cpu-clock" - cpu clocks for 98DX3236 SoC=0A=
-  - reg : Address and length of the clock complex register set, followed=0A=
-          by address and length of the PMU DFS registers=0A=
-  - #clock-cells : should be set to 1.=0A=
-diff --git =0A=
-a/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl=
-.txt =0A=
-b/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl=
-.txt=0A=
-index 34c1e380adaa..d4e6ecdfc853 100644=0A=
---- =0A=
-a/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl=
-.txt=0A=
-+++ =0A=
-b/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl=
-.txt=0A=
-@@ -4,7 +4,7 @@ Please refer to marvell,mvebu-pinctrl.txt in this =0A=
-directory for common binding=0A=
-  part and usage=0A=
-=0A=
-  Required properties:=0A=
--- compatible: "marvell,98dx3236-pinctrl"=0A=
-+- compatible: "marvell,98dx3236-pinctrl" or "marvell,98dx4251-pinctrl"=0A=
-  - reg: register specifier of MPP registers=0A=
-=0A=
-  This driver supports all 98dx3236, 98dx3336 and 98dx4251 variants=0A=
-@@ -16,12 +16,12 @@ mpp1          1        gpio, spi0(miso), dev(ad9)=0A=
-  mpp2          2        gpio, spi0(sck), dev(ad10)=0A=
-  mpp3          3        gpio, spi0(cs0), dev(ad11)=0A=
-  mpp4          4        gpio, spi0(cs1), smi(mdc), dev(cs0)=0A=
--mpp5          5        gpio, pex(rsto), dev(bootcs)=0A=
--mpp6          6        gpio, dev(a2)=0A=
--mpp7          7        gpio, dev(ale0)=0A=
--mpp8          8        gpio, dev(ale1)=0A=
--mpp9          9        gpio, dev(ready0)=0A=
--mpp10         10       gpio, dev(ad12)=0A=
-+mpp5          5        gpio, pex(rsto), sd0(cmd), dev(bootcs)=0A=
-+mpp6          6        gpio, sd0(clk), dev(a2)=0A=
-+mpp7          7        gpio, sd0(d0), dev(ale0)=0A=
-+mpp8          8        gpio, sd0(d1), dev(ale1)=0A=
-+mpp9          9        gpio, sd0(d2), dev(ready0)=0A=
-+mpp10         10       gpio, sd0(d3), dev(ad12)=0A=
-  mpp11         11       gpio, uart1(rxd), uart0(cts), dev(ad13)=0A=
-  mpp12         12       gpio, uart1(txd), uart0(rts), dev(ad14)=0A=
-  mpp13         13       gpio, intr(out), dev(ad15)=0A=
-diff --git a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi =0A=
-b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi=0A=
-index bac53f8b44af..61bd3acc5cfe 100644=0A=
---- a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi=0A=
-+++ b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi=0A=
-@@ -138,6 +138,10 @@=0A=
-                                 status =3D "disabled";=0A=
-                         };=0A=
-=0A=
-+                       crypto@90000 {=0A=
-+                               status =3D "disabled";=0A=
-+                       };=0A=
-+=0A=
-                         xor@f0900 {=0A=
-                                 status =3D "disabled";=0A=
-                         };=0A=
-@@ -229,3 +233,15 @@=0A=
-                 marvell,function =3D "spi0";=0A=
-         };=0A=
-  };=0A=
-+=0A=
-+&sdio {=0A=
-+       status =3D "disabled";=0A=
-+};=0A=
-+=0A=
-+&crypto_sram0 {=0A=
-+       status =3D "disabled";=0A=
-+};=0A=
-+=0A=
-+&crypto_sram1 {=0A=
-+       status =3D "disabled";=0A=
-+};=0A=
-diff --git a/arch/arm/boot/dts/armada-xp-98dx4251.dtsi =0A=
-b/arch/arm/boot/dts/armada-xp-98dx4251.dtsi=0A=
-index 5d1da8513fae..5f7edc23d5ae 100644=0A=
---- a/arch/arm/boot/dts/armada-xp-98dx4251.dtsi=0A=
-+++ b/arch/arm/boot/dts/armada-xp-98dx4251.dtsi=0A=
-@@ -76,3 +76,17 @@=0A=
-                 };=0A=
-         };=0A=
-  };=0A=
-+=0A=
-+&sdio {=0A=
-+       status =3D "okay";=0A=
-+};=0A=
-+=0A=
-+&pinctrl {=0A=
-+       compatible =3D "marvell,98dx4251-pinctrl";=0A=
-+=0A=
-+       sdio_pins: sdio-pins {=0A=
-+               marvell,pins =3D "mpp5", "mpp6", "mpp7",=0A=
-+                              "mpp8", "mpp9", "mpp10";=0A=
-+               marvell,function =3D "sd0";=0A=
-+       };=0A=
-+};=0A=
-diff --git a/arch/arm/mach-mvebu/pmsu-98dx3236.c =0A=
-b/arch/arm/mach-mvebu/pmsu-98dx3236.c=0A=
-index fadc81d0c051..87ca42ef40c7 100644=0A=
---- a/arch/arm/mach-mvebu/pmsu-98dx3236.c=0A=
-+++ b/arch/arm/mach-mvebu/pmsu-98dx3236.c=0A=
-@@ -1,5 +1,5 @@=0A=
-  /**=0A=
-- * CPU resume support for 98DX4521 internal CPU (a.k.a. MSYS).=0A=
-+ * CPU resume support for 98DX3236 internal CPU (a.k.a. MSYS).=0A=
-   */=0A=
-=0A=
-  #define pr_fmt(fmt) "mv98dx3236-resume: " fmt=0A=
-@@ -38,7 +38,7 @@ static int __init mv98dx3236_resume_init(void)=0A=
-         if (!np)=0A=
-                 return 0;=0A=
-=0A=
--       pr_info("Initializing 98DX4521 Resume\n");=0A=
-+       pr_info("Initializing 98DX3236 Resume\n");=0A=
-=0A=
-         if (of_address_to_resource(np, 0, &res)) {=0A=
-                 pr_err("unable to get resource\n");=0A=
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c =0A=
-b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c=0A=
-index 2586903c59f0..554eeae8cd21 100644=0A=
---- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c=0A=
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c=0A=
-@@ -389,21 +389,27 @@ static struct mvebu_mpp_mode =0A=
-mv98dx3236_mpp_modes[] =3D {=0A=
-         MPP_MODE(5,=0A=
-                  MPP_VAR_FUNCTION(0x0, "gpio", NULL, =0A=
-V_98DX3236_PLUS),=0A=
-                  MPP_VAR_FUNCTION(0x1, "pex", "rsto", =0A=
-V_98DX3236_PLUS),=0A=
-+                MPP_VAR_FUNCTION(0x2, "sd0", "cmd",         V_98DX4251),=
-=0A=
-                  MPP_VAR_FUNCTION(0x4, "dev", "bootcs0", =0A=
-V_98DX3236_PLUS)),=0A=
-         MPP_MODE(6,=0A=
-                  MPP_VAR_FUNCTION(0x0, "gpo", NULL, =0A=
-V_98DX3236_PLUS),=0A=
-+                MPP_VAR_FUNCTION(0x2, "sd0", "clk",         V_98DX4251),=
-=0A=
-                  MPP_VAR_FUNCTION(0x4, "dev", "a2", =0A=
-V_98DX3236_PLUS)),=0A=
-         MPP_MODE(7,=0A=
-                  MPP_VAR_FUNCTION(0x0, "gpio", NULL, =0A=
-V_98DX3236_PLUS),=0A=
-+                MPP_VAR_FUNCTION(0x2, "sd0", "d0",          V_98DX4251),=
-=0A=
-                  MPP_VAR_FUNCTION(0x4, "dev", "ale0", =0A=
-V_98DX3236_PLUS)),=0A=
-         MPP_MODE(8,=0A=
-                  MPP_VAR_FUNCTION(0x0, "gpio", NULL, =0A=
-V_98DX3236_PLUS),=0A=
-+                MPP_VAR_FUNCTION(0x2, "sd0", "d1",          V_98DX4251),=
-=0A=
-                  MPP_VAR_FUNCTION(0x4, "dev", "ale1", =0A=
-V_98DX3236_PLUS)),=0A=
-         MPP_MODE(9,=0A=
-                  MPP_VAR_FUNCTION(0x0, "gpio", NULL, =0A=
-V_98DX3236_PLUS),=0A=
-+                MPP_VAR_FUNCTION(0x2, "sd0", "d2",          V_98DX4251),=
-=0A=
-                  MPP_VAR_FUNCTION(0x4, "dev", "ready0", =0A=
-V_98DX3236_PLUS)),=0A=
-         MPP_MODE(10,=0A=
-                  MPP_VAR_FUNCTION(0x0, "gpio", NULL, =0A=
-V_98DX3236_PLUS),=0A=
-+                MPP_VAR_FUNCTION(0x2, "sd0", "d3",          V_98DX4251),=
-=0A=
-                  MPP_VAR_FUNCTION(0x4, "dev", "ad12", =0A=
-V_98DX3236_PLUS)),=0A=
-         MPP_MODE(11,=0A=
-                  MPP_VAR_FUNCTION(0x0, "gpio", NULL, =0A=
-V_98DX3236_PLUS),=0A=
-@@ -501,6 +507,10 @@ static const struct of_device_id =0A=
-armada_xp_pinctrl_of_match[] =3D {=0A=
-                 .compatible =3D "marvell,98dx3236-pinctrl",=0A=
-                 .data       =3D (void *) V_98DX3236,=0A=
-         },=0A=
-+       {=0A=
-+               .compatible =3D "marvell,98dx4251-pinctrl",=0A=
-+               .data       =3D (void *) V_98DX4251,=0A=
-+       },=0A=
-         { },=0A=
-  };=0A=
-=0A=
-=0A=
-=0A=
->=0A=
-> Best regards,=0A=
-> Marcin=0A=
->=0A=
-> 2017-01-05 4:36 GMT+01:00 Chris Packham <chris.packham@alliedtelesis.co.n=
-z>:=0A=
->> The 98DX3236, 98DX3336 and 98DX4251 are a set of switch ASICs with=0A=
->> integrated CPUs. They CPU block is common within these product lines and=
-=0A=
->> (as far as I can tell/have been told) is based on the Armada XP. There=
-=0A=
->> are a few differences due to the fact they have to squeeze the CPU into=
-=0A=
->> the same package as the switch.=0A=
->>=0A=
->> Chris Packham (4):=0A=
->>   clk: mvebu: support for 98DX3236 SoC=0A=
->>   arm: mvebu: support for SMP on 98DX3336 SoC=0A=
->>   arm: mvebu: Add device tree for 98DX3236 SoCs=0A=
->>   arm: mvebu: Add device tree for db-dxbc2 and db-xc3-24g4xg boards=0A=
->>=0A=
->> Kalyan Kinthada (1):=0A=
->>   pinctrl: mvebu: pinctrl driver for 98DX3236 SoC=0A=
->>=0A=
->>  Documentation/devicetree/bindings/arm/cpus.txt     |   1 +=0A=
->>  .../bindings/arm/marvell/98dx3236-resume-ctrl.txt  |  18 ++=0A=
->>  .../devicetree/bindings/arm/marvell/98dx3236.txt   |  23 ++=0A=
->>  .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |   1 +=0A=
->>  .../pinctrl/marvell,armada-98dx3236-pinctrl.txt    |  46 ++++=0A=
->>  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 247 ++++++++++++++=
-+++++++=0A=
->>  arch/arm/boot/dts/armada-xp-98dx3336.dtsi          |  78 +++++++=0A=
->>  arch/arm/boot/dts/armada-xp-98dx4251.dtsi          |  92 ++++++++=0A=
->>  arch/arm/boot/dts/db-dxbc2.dts                     | 159 +++++++++++++=
-=0A=
->>  arch/arm/boot/dts/db-xc3-24g4xg.dts                | 155 +++++++++++++=
-=0A=
->>  arch/arm/mach-mvebu/Makefile                       |   1 +=0A=
->>  arch/arm/mach-mvebu/common.h                       |   1 +=0A=
->>  arch/arm/mach-mvebu/platsmp.c                      |  43 ++++=0A=
->>  arch/arm/mach-mvebu/pmsu-98dx3236.c                |  69 ++++++=0A=
->>  drivers/clk/mvebu/Makefile                         |   2 +-=0A=
->>  drivers/clk/mvebu/armada-xp.c                      |  42 ++++=0A=
->>  drivers/clk/mvebu/clk-cpu.c                        |  33 ++-=0A=
->>  drivers/clk/mvebu/mv98dx3236-corediv.c             | 207 ++++++++++++++=
-+++=0A=
->>  drivers/pinctrl/mvebu/pinctrl-armada-xp.c          | 155 +++++++++++++=
-=0A=
->>  19 files changed, 1369 insertions(+), 4 deletions(-)=0A=
->>  create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx32=
-36-resume-ctrl.txt=0A=
->>  create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx32=
-36.txt=0A=
->>  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,ar=
-mada-98dx3236-pinctrl.txt=0A=
->>  create mode 100644 arch/arm/boot/dts/armada-xp-98dx3236.dtsi=0A=
->>  create mode 100644 arch/arm/boot/dts/armada-xp-98dx3336.dtsi=0A=
->>  create mode 100644 arch/arm/boot/dts/armada-xp-98dx4251.dtsi=0A=
->>  create mode 100644 arch/arm/boot/dts/db-dxbc2.dts=0A=
->>  create mode 100644 arch/arm/boot/dts/db-xc3-24g4xg.dts=0A=
->>  create mode 100644 arch/arm/mach-mvebu/pmsu-98dx3236.c=0A=
->>  create mode 100644 drivers/clk/mvebu/mv98dx3236-corediv.c=0A=
->>=0A=
->> --=0A=
->> 2.11.0.24.ge6920cf=0A=
->>=0A=
->>=0A=
->> _______________________________________________=0A=
->> linux-arm-kernel mailing list=0A=
->> linux-arm-kernel@lists.infradead.org=0A=
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel=0A=
->=0A=
-=0A=
+
+
+On 11/30/2016 08:20 AM, Alexander Stein wrote:
+> Am Donnerstag, 24. November 2016, 13:38:53 schrieb Linus Walleij:
+>> This tries to simplify the use of CONFIG_GPIOLIB_IRQCHIP when
+>> using threaded interrupts: add a new call
+>> gpiochip_irqchip_add_nested() to indicate that we're dealing
+>> with a nested rather than a chained irqchip, then create a
+>> separate gpiochip_set_nested_irqchip() to mirror
+>> the gpiochip_set_chained_irqchip() call to connect the
+>> parent and child interrupts.
+>>
+>> In the nested case gpiochip_set_nested_irqchip() does nothing
+>> more than call irq_set_parent() on each valid child interrupt,
+>> which has little semantic effect in the kernel, but this is
+>> probably still formally correct.
+>>
+>> Update all drivers using nested interrupts to use
+>> gpiochip_irqchip_add_nested() so we can now see clearly
+>> which these users are.
+>>
+>> The DLN2 driver can drop its specific hack with
+>> .irq_not_threaded as we now recognize whether a chip is
+>> threaded or not from its use of gpiochip_irqchip_add_nested()
+>> signature rather than from inspecting .can_sleep.
+>>
+>> We rename the .irq_parent to .irq_chained_parent since this
+>> parent IRQ is only really kept around for the chained
+>> interrupt handlers.
+> 
+> I've tested this on a board using both gpio-mcp23s08.c and gpio-pca953x.c and 
+> coulnd't detect any change/regression in dmesg. Is this to be expected?
+> If so
+> Tested-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> 
+
+commit d245b3f9bd36f02fd641cba9931d8b4c77126e74
+Author: Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu Nov 24 10:57:25 2016 +0100
+
+    gpio: simplify adding threaded interrupts
+
+causes below back-trace during boot on TI dra72-evm-revc with 
+CONFIG_LOCKDEP=y. 
+Looks like wrapper need to be added the same way as for _gpiochip_irqchip_add.
+
+    0.494325] SCSI subsystem initialized
+[    0.494741] libata version 3.00 loaded.
+[    0.521864] gpiochip_find_base: found new base at 494
+[    0.521891] gpio gpiochip9: (pcf8575): added GPIO chardev (254:9)
+[    0.522464] gpiochip_setup_dev: registered GPIOs 494 to 509 on device: gpiochip9 (pcf8575)
+[    0.522594] ------------[ cut here ]------------
+[    0.522613] WARNING: CPU: 0 PID: 1 at kernel/locking/lockdep.c:3124 gpiochip_irq_map+0x40/0xa4
+[    0.522619] DEBUG_LOCKS_WARN_ON(!key)
+[    0.522623] Modules linked in:
+[    0.522639] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.10.0-rc2-00327-gcca402b #122
+[    0.522645] Hardware name: Generic DRA72X (Flattened Device Tree)
+[    0.522663] [<c011013c>] (unwind_backtrace) from [<c010c300>] (show_stack+0x10/0x14)
+[    0.522674] [<c010c300>] (show_stack) from [<c04a0038>] (dump_stack+0xac/0xe0)
+[    0.522687] [<c04a0038>] (dump_stack) from [<c0137024>] (__warn+0xd8/0x104)
+[    0.522701] [<c0137024>] (__warn) from [<c0137084>] (warn_slowpath_fmt+0x34/0x44)
+[    0.522713] [<c0137084>] (warn_slowpath_fmt) from [<c04dd76c>] (gpiochip_irq_map+0x40/0xa4)
+[    0.522726] [<c04dd76c>] (gpiochip_irq_map) from [<c01acc68>] (irq_domain_associate+0x70/0x1c0)
+[    0.522738] [<c01acc68>] (irq_domain_associate) from [<c01ad534>] (irq_create_mapping+0x64/0xcc)
+[    0.522748] [<c01ad534>] (irq_create_mapping) from [<c04dd580>] (_gpiochip_irqchip_add+0xd8/0x1a8)
+[    0.522760] [<c04dd580>] (_gpiochip_irqchip_add) from [<c04e59c8>] (pcf857x_probe+0x260/0x38c)
+[    0.522771] [<c04e59c8>] (pcf857x_probe) from [<c06341c0>] (i2c_device_probe+0x200/0x25c)
+[    0.522784] [<c06341c0>] (i2c_device_probe) from [<c055d2b4>] (driver_probe_device+0x200/0x2d4)
+[    0.522797] [<c055d2b4>] (driver_probe_device) from [<c055b7dc>] (bus_for_each_drv+0x64/0x98)
+[    0.522809] [<c055b7dc>] (bus_for_each_drv) from [<c055cfd0>] (__device_attach+0xb0/0x118)
+[    0.522821] [<c055cfd0>] (__device_attach) from [<c055c5f8>] (bus_probe_device+0x88/0x90)
+[    0.522832] [<c055c5f8>] (bus_probe_device) from [<c055a964>] (device_add+0x3e4/0x59c)
+[    0.522844] [<c055a964>] (device_add) from [<c063675c>] (i2c_new_device+0x144/0x1a4)
+[    0.522854] [<c063675c>] (i2c_new_device) from [<c0636d90>] (i2c_register_adapter+0x278/0x5a4)
+[    0.522865] [<c0636d90>] (i2c_register_adapter) from [<c0638f34>] (omap_i2c_probe+0x4bc/0x6a0)
+[    0.522875] [<c0638f34>] (omap_i2c_probe) from [<c055f258>] (platform_drv_probe+0x4c/0xb0)
+[    0.522887] [<c055f258>] (platform_drv_probe) from [<c055d2b4>] (driver_probe_device+0x200/0x2d4)
+[    0.522899] [<c055d2b4>] (driver_probe_device) from [<c055d448>] (__driver_attach+0xc0/0xc4)
+[    0.522911] [<c055d448>] (__driver_attach) from [<c055b730>] (bus_for_each_dev+0x6c/0xa0)
+[    0.522922] [<c055b730>] (bus_for_each_dev) from [<c055c894>] (bus_add_driver+0x18c/0x214)
+[    0.522932] [<c055c894>] (bus_add_driver) from [<c055e280>] (driver_register+0x78/0xf8)
+[    0.522942] [<c055e280>] (driver_register) from [<c010188c>] (do_one_initcall+0x3c/0x174)
+[    0.522955] [<c010188c>] (do_one_initcall) from [<c0b00eb0>] (kernel_init_freeable+0x208/0x2d4)
+[    0.522966] [<c0b00eb0>] (kernel_init_freeable) from [<c07ec560>] (kernel_init+0x8/0x114)
+[    0.522978] [<c07ec560>] (kernel_init) from [<c01078f0>] (ret_from_fork+0x14/0x24)
+[    0.522989] ---[ end trace 11f50039c91e23f5 ]---
+
+ 
+regards,
+-grygorii
