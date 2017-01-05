@@ -1,79 +1,70 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v2 9/9] ARM: sunxi: Convert pinctrl nodes to generic
- bindings
-Date: Thu, 5 Jan 2017 16:35:56 +0100
-Message-ID: <20170105153556.pzec5jjuz7pmvsmn@lukather>
-References: <cover.7edc6c25be8a5e2efdda6a82e102dbf7ece6aa64.1476200742.git-series.maxime.ripard@free-electrons.com>
- <e32d044d2d967f24f12d83eea50e7f14f2ae1073.1476200742.git-series.maxime.ripard@free-electrons.com>
- <CAGb2v67_4iriM2WS33hUWzNZY8R2WvGjqzntGBPGmNkr1Ryr_w@mail.gmail.com>
- <58723369-50ad-1792-9be1-c277eb719044@arm.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] pinctrl: core: Fix panic when pinctrl devices with hogs are unregistered
+Date: Thu, 5 Jan 2017 15:52:55 +0000
+Message-ID: <1483631575-14422-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="skclcjjttxdh2jz4"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:33264 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935333AbdAEPf7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Jan 2017 10:35:59 -0500
-Content-Disposition: inline
-In-Reply-To: <58723369-50ad-1792-9be1-c277eb719044@arm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: =?iso-8859-1?Q?Andr=E9?= Przywara <andre.przywara@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, devicetree <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
+Commit df61b366af26 ('pinctrl: core: Use delayed work for hogs')
+deferred part of the registration for pinctrl devices if the pinctrl
+device has hogs. This introduced a window where if the pinctrl device
+with hogs was sucessfully registered, but then unregistered again
+(which could be caused by parent device being probe deferred) before
+the delayed work has chanced to run, then this will cause a kernel
+panic to occur because:
 
---skclcjjttxdh2jz4
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+1. The 'pctldev->p' has not yet been initialised and when unregistering
+   the pinctrl device we only check to see if it is an error value, but
+   now it could also be NULL.
+2. The pinctrl device may not have been added to the 'pinctrldev_list'
+   list and we don't check to see if it was added before removing.
 
-On Wed, Jan 04, 2017 at 02:16:23AM +0000, Andr=E9 Przywara wrote:
-> So can I ask that we start taking this seriously and stop doing things
-> which prevent Allwinner boards from being supported properly?
-> Which would first involve dropping this very patch?
+Fix up the above by checking to see if the 'pctldev->p' pointer is an
+error value or NULL before putting the pinctrl device and verifying
+that the pinctrl device is present in 'pinctrldev_list' before removing.
 
-The driver still supports the old binding.
+Fixes: df61b366af26 ('pinctrl: core: Use delayed work for hogs')
 
-> Having done breakage in the past (with "allwinner,sun7i-a20-mmc", for
-> instance) is no excuse for doing it again.
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pinctrl/core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-I'm not sure which breakage we introduced with a new compatible: the
-old compatible is working just like it used to, and the new one is
-working like we need it to.
-
-> And especially I want to avoid this habit creeping into the arm64
-> world (thinking about the H5 here, which may be impacted by this
-> very patch, for instance).
-
-And again, if you looked at the entire serie, you would have seen that
-I took this into account.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---skclcjjttxdh2jz4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYbmfMAAoJEBx+YmzsjxAgeMsP+wXSVtzU3aRzeFVcgnM1+tCF
-G7KDxWSCDWBsUD4iwbloZQVl3AsY45I2dEskZkISsVLEc7OGs0wmluxlpqfRAuPC
-pjlmNEP9InfKcJgZ89ql2Ffc66VOE+WX83JRGa3Ld1ZQLfpYrTAt7V2yb01jUDre
-w/c+Y/YGn4lABevLCxBaKUFQX5u54d6XIDoajwcKNmVm4oPLswjxm+4vrywh1tXh
-pXa7dVRgvkRd4+562Ikg27OyCp9jZE06F8OmKgVvDIvp8xh36TmWrFYD1Gw3isXN
-2hEn5xTxXRcwl1kOGsihV2bXdB5a6kRar12H69d23jN1pe4pye+snF/3l06M2jws
-EeYrj0FH56e8KO15CItAzRaKdjkuzT4ipxw/pUwZlJB8pRvEaNUkdCJ996rwP2eb
-BPdrJ2VBNGSncwfVEdvHXoPTwLwxixLqGuUJ853Vh1Erow4tjqlLizjS6UOOyCtV
-QCABAr2EtP7dZQ4oWwvzJSanPI0Cjhyl5o+FkCNwQQUQHEHBOpafywNnNXt1onkl
-s+fxTKglTGKRwgxvX6Utn1tIr8hjvkAu5rdm3SFDnCi0IQggDTBO9tchn/I8p7dI
-qZ+JTo/K0TK0uUiEl2alhUhWngau+ei3zgYllyqTZ4t8ssJdEKUF7j8n2jN4J9Tz
-bKIg2gKoufWF5T4CcbTU
-=7mbC
------END PGP SIGNATURE-----
-
---skclcjjttxdh2jz4--
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index d311d73..9f305ac 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -2064,6 +2064,8 @@ struct pinctrl_dev *pinctrl_register(struct pinctrl_desc *pctldesc,
+ void pinctrl_unregister(struct pinctrl_dev *pctldev)
+ {
+ 	struct pinctrl_gpio_range *range, *n;
++	struct pinctrl_dev *p, *p1;
++
+ 	if (pctldev == NULL)
+ 		return;
+ 
+@@ -2072,13 +2074,15 @@ void pinctrl_unregister(struct pinctrl_dev *pctldev)
+ 	pinctrl_remove_device_debugfs(pctldev);
+ 	mutex_unlock(&pctldev->mutex);
+ 
+-	if (!IS_ERR(pctldev->p))
++	if (!IS_ERR_OR_NULL(pctldev->p))
+ 		pinctrl_put(pctldev->p);
+ 
+ 	mutex_lock(&pinctrldev_list_mutex);
+ 	mutex_lock(&pctldev->mutex);
+ 	/* TODO: check that no pinmuxes are still active? */
+-	list_del(&pctldev->node);
++	list_for_each_entry_safe(p, p1, &pinctrldev_list, node)
++		if (p == pctldev)
++			list_del(&p->node);
+ 	pinmux_generic_free_functions(pctldev);
+ 	pinctrl_generic_free_groups(pctldev);
+ 	/* Destroy descriptor tree */
+-- 
+1.9.1
