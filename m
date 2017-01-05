@@ -1,37 +1,43 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH] tools: gpio add .gitignore for generated files
-Date: Thu,  5 Jan 2017 14:32:36 -0700
-Message-ID: <20170105213236.15562-5-shuahkh@osg.samsung.com>
-References: <20170105213236.15562-1-shuahkh@osg.samsung.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:44826
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S966672AbdAEVlM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Jan 2017 16:41:12 -0500
-In-Reply-To: <20170105213236.15562-1-shuahkh@osg.samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH 3/6] clk: sunxi-ng: Add H5 clocks
+Date: Thu, 5 Jan 2017 23:04:40 +0100
+Message-ID: <20170105220440.x5gfw3z7axlrxwxh@lukather>
+References: <20161226162518.5367-1-icenowy@aosc.xyz>
+ <20161226162518.5367-4-icenowy@aosc.xyz>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wa43b3sxhjdpx6uo"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBB6MFXPBQKGQEXF7OVLQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20161226162518.5367-4-icenowy-ymACFijhrKM@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Add .gitignore for generated files.
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
----
- tools/gpio/.gitignore | 4 ++++
- 1 file changed, 4 insertions(+)
- create mode 100644 tools/gpio/.gitignore
+--wa43b3sxhjdpx6uo
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 
-diff --git a/tools/gpio/.gitignore b/tools/gpio/.gitignore
-new file mode 100644
-index 0000000..767ad24
---- /dev/null
-+++ b/tools/gpio/.gitignore
-@@ -0,0 +1,4 @@
-+gpio-event-mon
-+gpio-hammer
-+lsgpio
-+include
+On Tue, Dec 27, 2016 at 12:25:15AM +0800, Icenowy Zheng wrote:
+> Add the H5 CCU clocks set based on the H3 one.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+
+Is there any difference with H3's?
+
+Maxime
+
 -- 
-2.7.4
-
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+--wa43b3sxhjdpx6uo--
