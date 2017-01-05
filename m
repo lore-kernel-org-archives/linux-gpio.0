@@ -1,54 +1,44 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 6/6] pinctrl: intel: Add Intel Gemini Lake pin controller
- support
-Date: Thu, 5 Jan 2017 12:06:52 +0200
-Message-ID: <20170105100652.GZ3353@lahna.fi.intel.com>
-References: <20170104153109.28663-1-mika.westerberg@linux.intel.com>
- <20170104153109.28663-7-mika.westerberg@linux.intel.com>
- <CAHp75Ve2svxG1OBDvjmF_GHeD_19gp7+sWF17T_2Ls7J+WWHtg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAHp75Ve2svxG1OBDvjmF_GHeD_19gp7+sWF17T_2Ls7J+WWHtg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "David E . Box" <david.e.box@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH v6 0/3] add gpio support to exar
+Date: Thu,  5 Jan 2017 10:19:59 +0000
+Message-ID: <1483611602-5560-1-git-send-email-sudipm.mukherjee@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36133 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753717AbdAEKUm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Jan 2017 05:20:42 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, gnomes@lxorguk.ukuu.org.uk
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
-On Thu, Jan 05, 2017 at 01:18:19AM +0200, Andy Shevchenko wrote:
-> On Wed, Jan 4, 2017 at 5:31 PM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> > This driver adds pinctrl/GPIO support for Intel Gemini Lake SoC. The
-> > GPIO controller is based on the next generation GPIO hardware but still
-> > compatible with the one supported by the Intel core pinctrl/GPIO driver.
-> >
-> > Signed-off-by: David E. Box <david.e.box@linux.intel.com>
-> 
-> SoB but no Author line. Perhaps elaborate what this credit for?
+Exar XR17V352/354/358 chips have 16 multi-purpose inputs/outputs which
+can be controlled using gpio interface.
 
-David did couple of changes to the driver when it was being developed.
+v5 was sent in January, 2016 and after reviews it was suggested to
+split the exar code out of 8250_pci and make its own driver.
 
-I can also put something like this in the changelog if that's better:
+For reference it is at https://patchwork.kernel.org/patch/8058311/
 
-  This patch includes material from David E. Box.
+regards
+sudip
 
-> 
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> 
-> 
-> > +/*
-> > + * Intel Gemini Lake SoC pinctrl/GPIO driver
-> > + *
-> > + * Copyright (C) 2017 Intel Corporation
-> > + * Author: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > + */
-> 
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+Sudip Mukherjee (3):
+  gpio: exar: add gpio for exar cards
+  serial: exar: split out the exar code from 8250_pci
+  serial: 8250_pci: remove exar code
+
+ drivers/gpio/Kconfig                |   7 +
+ drivers/gpio/Makefile               |   1 +
+ drivers/gpio/gpio-exar.c            | 264 ++++++++++++++
+ drivers/tty/serial/8250/8250_exar.c | 706 ++++++++++++++++++++++++++++++++++++
+ drivers/tty/serial/8250/8250_pci.c  | 309 +---------------
+ drivers/tty/serial/8250/Kconfig     |   4 +
+ drivers/tty/serial/8250/Makefile    |   1 +
+ 7 files changed, 989 insertions(+), 303 deletions(-)
+ create mode 100644 drivers/gpio/gpio-exar.c
+ create mode 100644 drivers/tty/serial/8250/8250_exar.c
+
+-- 
+1.9.1
+
