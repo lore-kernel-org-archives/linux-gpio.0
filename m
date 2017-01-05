@@ -1,77 +1,42 @@
-From: Marcin Wojtas <mw@semihalf.com>
-Subject: Re: [PATCHv2 0/5] Support for Marvell switches with integrated CPUs
-Date: Thu, 5 Jan 2017 15:09:24 +0100
-Message-ID: <CAPv3WKcT8MxX+g12C1o81MmQJWRt7Rpd-hgBh8rTpLOS3vdtqA@mail.gmail.com>
-References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v6 3/3] serial: 8250_pci: remove exar code
+Date: Thu, 5 Jan 2017 16:35:58 +0200
+Message-ID: <CAHp75Vdcniuuv3xV_o89i5_MpV_OGfbwE0yyDsRAFYjaxwOUDA@mail.gmail.com>
+References: <1483611602-5560-1-git-send-email-sudipm.mukherjee@gmail.com> <1483611602-5560-4-git-send-email-sudipm.mukherjee@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
-Sender: linux-clk-owner@vger.kernel.org
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-clk@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Juri Lelli <juri.lelli@arm.com>, Russell King <linux@armlinux.org.uk>, Thierry Reding <treding@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>, Rob Herring <robh+dt@kern>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1483611602-5560-4-git-send-email-sudipm.mukherjee@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Chris,
+On Thu, Jan 5, 2017 at 12:20 PM, Sudip Mukherjee
+<sudipm.mukherjee@gmail.com> wrote:
+> Remove the exar specific codes from 8250_pci and blacklist those chips
+> so that the exar serial binds to the devices.
 
-Thanks a lot for your work and v2. Can you please add changelog
-between patchset versions in your cover letter?
+exar -> Exar ?
 
-Best regards,
-Marcin
+> +#define PCI_DEVICE_ID_COMMTECH_4222PCI335 0x0004
+> +#define PCI_DEVICE_ID_COMMTECH_4224PCI335 0x0002
+> +#define PCI_DEVICE_ID_COMMTECH_2324PCI335 0x000a
+> +#define PCI_DEVICE_ID_COMMTECH_2328PCI335 0x000b
 
-2017-01-05 4:36 GMT+01:00 Chris Packham <chris.packham@alliedtelesis.co.nz>:
-> The 98DX3236, 98DX3336 and 98DX4251 are a set of switch ASICs with
-> integrated CPUs. They CPU block is common within these product lines and
-> (as far as I can tell/have been told) is based on the Armada XP. There
-> are a few differences due to the fact they have to squeeze the CPU into
-> the same package as the switch.
->
-> Chris Packham (4):
->   clk: mvebu: support for 98DX3236 SoC
->   arm: mvebu: support for SMP on 98DX3336 SoC
->   arm: mvebu: Add device tree for 98DX3236 SoCs
->   arm: mvebu: Add device tree for db-dxbc2 and db-xc3-24g4xg boards
->
-> Kalyan Kinthada (1):
->   pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
->
->  Documentation/devicetree/bindings/arm/cpus.txt     |   1 +
->  .../bindings/arm/marvell/98dx3236-resume-ctrl.txt  |  18 ++
->  .../devicetree/bindings/arm/marvell/98dx3236.txt   |  23 ++
->  .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |   1 +
->  .../pinctrl/marvell,armada-98dx3236-pinctrl.txt    |  46 ++++
->  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 247 +++++++++++++++++++++
->  arch/arm/boot/dts/armada-xp-98dx3336.dtsi          |  78 +++++++
->  arch/arm/boot/dts/armada-xp-98dx4251.dtsi          |  92 ++++++++
->  arch/arm/boot/dts/db-dxbc2.dts                     | 159 +++++++++++++
->  arch/arm/boot/dts/db-xc3-24g4xg.dts                | 155 +++++++++++++
->  arch/arm/mach-mvebu/Makefile                       |   1 +
->  arch/arm/mach-mvebu/common.h                       |   1 +
->  arch/arm/mach-mvebu/platsmp.c                      |  43 ++++
->  arch/arm/mach-mvebu/pmsu-98dx3236.c                |  69 ++++++
->  drivers/clk/mvebu/Makefile                         |   2 +-
->  drivers/clk/mvebu/armada-xp.c                      |  42 ++++
->  drivers/clk/mvebu/clk-cpu.c                        |  33 ++-
->  drivers/clk/mvebu/mv98dx3236-corediv.c             | 207 +++++++++++++++++
->  drivers/pinctrl/mvebu/pinctrl-armada-xp.c          | 155 +++++++++++++
->  19 files changed, 1369 insertions(+), 4 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236-resume-ctrl.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
->  create mode 100644 arch/arm/boot/dts/armada-xp-98dx3236.dtsi
->  create mode 100644 arch/arm/boot/dts/armada-xp-98dx3336.dtsi
->  create mode 100644 arch/arm/boot/dts/armada-xp-98dx4251.dtsi
->  create mode 100644 arch/arm/boot/dts/db-dxbc2.dts
->  create mode 100644 arch/arm/boot/dts/db-xc3-24g4xg.dts
->  create mode 100644 arch/arm/mach-mvebu/pmsu-98dx3236.c
->  create mode 100644 drivers/clk/mvebu/mv98dx3236-corediv.c
->
-> --
-> 2.11.0.24.ge6920cf
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+This is not related to the patch. Create a separate one.
+
+> @@ -3734,6 +3538,8 @@ enum pci_board_num_t {
+>         { PCI_VDEVICE(INTEL, 0x228c), },
+>         { PCI_VDEVICE(INTEL, 0x9ce3), },
+>         { PCI_VDEVICE(INTEL, 0x9ce4), },
+
++ empty line
+
+> +       /* Exar devices */
+> +       { PCI_VDEVICE(EXAR, PCI_ANY_ID), },
+>  };
+
+-- 
+With Best Regards,
+Andy Shevchenko
