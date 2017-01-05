@@ -1,52 +1,77 @@
 From: Marcin Wojtas <mw@semihalf.com>
 Subject: Re: [PATCHv2 0/5] Support for Marvell switches with integrated CPUs
-Date: Thu, 5 Jan 2017 15:07:02 +0100
-Message-ID: <CAPv3WKdsiGis6gG0SmLT1mg+LYA8i5p4u9KJiYJxng8jrLsj+w@mail.gmail.com>
+Date: Thu, 5 Jan 2017 15:09:24 +0100
+Message-ID: <CAPv3WKcT8MxX+g12C1o81MmQJWRt7Rpd-hgBh8rTpLOS3vdtqA@mail.gmail.com>
 References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
- <6c6795d3-06ab-a4f0-78ad-5ecc78c1aa2f@gmail.com> <185147a37cab4d7eaea5f79d86cc9451@svr-chch-ex1.atlnz.lc>
- <20170105130945.GA18033@lunn.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f50.google.com ([209.85.214.50]:38843 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S969362AbdAEOHD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Jan 2017 09:07:03 -0500
-Received: by mail-it0-f50.google.com with SMTP id x2so346410080itf.1
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Jan 2017 06:07:03 -0800 (PST)
-In-Reply-To: <20170105130945.GA18033@lunn.ch>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
+Sender: linux-clk-owner@vger.kernel.org
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-clk@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Juri Lelli <juri.lelli@arm.com>, Russell King <linux@armlinux.org.uk>, Thierry Reding <treding@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>, Rob Herring <robh+dt@kern>
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Chris Packham <Chris.Packham@alliedtelesis.co.nz>, Mark Rutland <mark.rutland@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Juri Lelli <juri.lelli@arm.com>, Russell King <linux@armlinux.org.uk>, Thierry Reding <treding@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, Kalyan Kinthada <Kalyan.Kinthada@alliedtelesis.co.nz>, Rob Herring <robh+dt@kernel.org>, Gregory Clement <gre>
 
-Hi Andrew,
+Hi Chris,
 
-2017-01-05 14:09 GMT+01:00 Andrew Lunn <andrew@lunn.ch>:
->> I'd love to see a switchdev driver but it's a huge task (and no I'm not
->> committing to writing it). As it stands Marvell ship a switch SDK
->> largely executes in userspace with a small kernel module providing some
->> linkage to the underlying hardware.
->
-> Is there any similarity to the mv88e6xxx family?
-
-Prestera switches (they are sold as standalone devices and with
-integrated CPU's, like ones submitted) are as far from mv88e6xxx as
-possible. There are various mix of 1/2.5/10/40G ports, depending on
-model.
-
->
-> If it was similar registers, just a different access mechanising, we
-> could probably extend the mv88e6xxx to support MMIO as well as MDIO.
->
-
-The difference is huge, nothing existing in the mainline can fit. The
-driver, that exposes resources to the userspace SDK (called CPSS, it's
-huge and complex piece of code) is existing in Marvell internal
-branches (kernel v4.4 is the latest one), but I doubt such solution
-(despite it's really small) is upstreamable. I believe it can be
-shipped to the customers along with the SDK as a kernel module. Having
-the CPU's support in the mainline is IMO sufficient.
+Thanks a lot for your work and v2. Can you please add changelog
+between patchset versions in your cover letter?
 
 Best regards,
 Marcin
+
+2017-01-05 4:36 GMT+01:00 Chris Packham <chris.packham@alliedtelesis.co.nz>:
+> The 98DX3236, 98DX3336 and 98DX4251 are a set of switch ASICs with
+> integrated CPUs. They CPU block is common within these product lines and
+> (as far as I can tell/have been told) is based on the Armada XP. There
+> are a few differences due to the fact they have to squeeze the CPU into
+> the same package as the switch.
+>
+> Chris Packham (4):
+>   clk: mvebu: support for 98DX3236 SoC
+>   arm: mvebu: support for SMP on 98DX3336 SoC
+>   arm: mvebu: Add device tree for 98DX3236 SoCs
+>   arm: mvebu: Add device tree for db-dxbc2 and db-xc3-24g4xg boards
+>
+> Kalyan Kinthada (1):
+>   pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
+>
+>  Documentation/devicetree/bindings/arm/cpus.txt     |   1 +
+>  .../bindings/arm/marvell/98dx3236-resume-ctrl.txt  |  18 ++
+>  .../devicetree/bindings/arm/marvell/98dx3236.txt   |  23 ++
+>  .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |   1 +
+>  .../pinctrl/marvell,armada-98dx3236-pinctrl.txt    |  46 ++++
+>  arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 247 +++++++++++++++++++++
+>  arch/arm/boot/dts/armada-xp-98dx3336.dtsi          |  78 +++++++
+>  arch/arm/boot/dts/armada-xp-98dx4251.dtsi          |  92 ++++++++
+>  arch/arm/boot/dts/db-dxbc2.dts                     | 159 +++++++++++++
+>  arch/arm/boot/dts/db-xc3-24g4xg.dts                | 155 +++++++++++++
+>  arch/arm/mach-mvebu/Makefile                       |   1 +
+>  arch/arm/mach-mvebu/common.h                       |   1 +
+>  arch/arm/mach-mvebu/platsmp.c                      |  43 ++++
+>  arch/arm/mach-mvebu/pmsu-98dx3236.c                |  69 ++++++
+>  drivers/clk/mvebu/Makefile                         |   2 +-
+>  drivers/clk/mvebu/armada-xp.c                      |  42 ++++
+>  drivers/clk/mvebu/clk-cpu.c                        |  33 ++-
+>  drivers/clk/mvebu/mv98dx3236-corediv.c             | 207 +++++++++++++++++
+>  drivers/pinctrl/mvebu/pinctrl-armada-xp.c          | 155 +++++++++++++
+>  19 files changed, 1369 insertions(+), 4 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236-resume-ctrl.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
+>  create mode 100644 arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+>  create mode 100644 arch/arm/boot/dts/armada-xp-98dx3336.dtsi
+>  create mode 100644 arch/arm/boot/dts/armada-xp-98dx4251.dtsi
+>  create mode 100644 arch/arm/boot/dts/db-dxbc2.dts
+>  create mode 100644 arch/arm/boot/dts/db-xc3-24g4xg.dts
+>  create mode 100644 arch/arm/mach-mvebu/pmsu-98dx3236.c
+>  create mode 100644 drivers/clk/mvebu/mv98dx3236-corediv.c
+>
+> --
+> 2.11.0.24.ge6920cf
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
