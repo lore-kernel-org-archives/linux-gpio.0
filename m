@@ -1,67 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.10
-Date: Thu, 5 Jan 2017 17:18:45 +0100
-Message-ID: <CACRpkdYR=HjWPqdVt1FDO3kr4KW-rLZ6kJ_VT1CwJZB1xrMXOg@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 2/2] pinctrl: Introduce TI IOdelay configuration driver
+Date: Thu, 5 Jan 2017 10:50:21 -0800
+Message-ID: <20170105185020.GQ4310@atomide.com>
+References: <20161230183732.5595-1-tony@atomide.com>
+ <20161230183732.5595-3-tony@atomide.com>
+ <20170102221228.GH9325@atomide.com>
+ <41e171e7-4812-51fa-980c-197f7db7b5ef@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f175.google.com ([209.85.220.175]:34606 "EHLO
-        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753647AbdAEQSq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Jan 2017 11:18:46 -0500
-Received: by mail-qk0-f175.google.com with SMTP id a20so48321830qkc.1
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Jan 2017 08:18:46 -0800 (PST)
+Received: from muru.com ([72.249.23.125]:54940 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1759805AbdAESuZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 5 Jan 2017 13:50:25 -0500
+Content-Disposition: inline
+In-Reply-To: <41e171e7-4812-51fa-980c-197f7db7b5ef@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Nishanth Menon <nm@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Gary Bisson <gary.bisson@boundarydevices.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, Lokesh Vutla <lokeshvutla@ti.com>
 
-Hi Linus,
+* Nishanth Menon <nm@ti.com> [170104 09:58]:
+> On 01/02/2017 04:12 PM, Tony Lindgren wrote:
+> [...]
+> 
+> I got the following warnings with kernel-doc:
+> > $ ./scripts/kernel-doc drivers/pinctrl/ti/pinctrl-ti-iodelay.c>/dev/null
+> > drivers/pinctrl/ti/pinctrl-ti-iodelay.c:132: warning: Excess struct/union/enum/typedef member 'name' description in 'ti_iodelay_pingroup'
+> > drivers/pinctrl/ti/pinctrl-ti-iodelay.c:132: warning: Excess struct/union/enum/typedef member 'map' description in 'ti_iodelay_pingroup'
+> > drivers/pinctrl/ti/pinctrl-ti-iodelay.c:159: warning: Excess struct/union/enum/typedef member 'names' description in 'ti_iodelay_device'
+> > drivers/pinctrl/ti/pinctrl-ti-iodelay.c:211: warning: No description found for parameter 'cfg'
+> > drivers/pinctrl/ti/pinctrl-ti-iodelay.c:211: warning: Excess function parameter 'val' description in 'ti_iodelay_pinconf_set'
+> > drivers/pinctrl/ti/pinctrl-ti-iodelay.c:418: warning: Cannot understand  *
+> >  on line 418 - I thought it was a doc line
+> 
+> Marking them below
 
-three small pin control fixes for the v4.10 series. Very little
-to say about them, just driver fixes.
+OK thanks will repost v3 shortly.
 
-Please pull them in!
+Regards,
 
-Yours,
-Linus Walleij
-
-The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
-
-  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.10-2
-
-for you to fetch changes up to 1259feddd0f83649d5c48d730c140b4f7f3fa288:
-
-  pinctrl: samsung: Fix the width of PINCFG_TYPE_DRV bitfields for
-Exynos5433 (2016-12-30 14:27:42 +0100)
-
-----------------------------------------------------------------
-Pin control fixes for the v4.10 series:
-
-- One fix to the AMD pinctrl ACPI glue.
-
-- Fix requests on the Meson driver.
-
-- Fix bitfield widths on Samsungs Exynos 5433.
-
-----------------------------------------------------------------
-Chanwoo Choi (1):
-      pinctrl: samsung: Fix the width of PINCFG_TYPE_DRV bitfields for
-Exynos5433
-
-Neil Armstrong (1):
-      pinctrl: meson: fix gpio request disabling other modes
-
-Shyam Sundar S K (1):
-      pinctrl/amd: Set the level based on ACPI tables
-
- drivers/pinctrl/meson/pinctrl-meson.c    |  2 +-
- drivers/pinctrl/pinctrl-amd.c            | 19 +++----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 91 ++++++++++++++++++--------------
- drivers/pinctrl/samsung/pinctrl-exynos.h | 31 +++++++++++
- 4 files changed, 90 insertions(+), 53 deletions(-)
+Tony
