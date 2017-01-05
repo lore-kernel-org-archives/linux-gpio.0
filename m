@@ -1,48 +1,37 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] pinctrl: core: Fix panic when pinctrl devices with hogs
- are unregistered
-Date: Thu, 5 Jan 2017 11:27:48 -0800
-Message-ID: <20170105192748.GS4310@atomide.com>
-References: <1483631575-14422-1-git-send-email-jonathanh@nvidia.com>
- <CACRpkdbAv8UiqWBH5mUNpOzBeAee4ZbdF=M_AvOPz5imbv26uA@mail.gmail.com>
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Subject: Re: [PATCHv2 0/5] Support for Marvell switches with integrated CPUs
+Date: Thu, 5 Jan 2017 19:46:43 +0000
+Message-ID: <059c78eaa7dd40c9a46cb08616bae2eb@svr-chch-ex1.atlnz.lc>
+References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
+ <6c6795d3-06ab-a4f0-78ad-5ecc78c1aa2f@gmail.com>
+ <185147a37cab4d7eaea5f79d86cc9451@svr-chch-ex1.atlnz.lc>
+ <20170105130945.GA18033@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbAv8UiqWBH5mUNpOzBeAee4ZbdF=M_AvOPz5imbv26uA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:43502 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936444AbdAETqy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Jan 2017 14:46:54 -0500
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, Geert Uytterhoeven <geert+renesas@glider.be>, Arnd Bergmann <arnd@arndb.de>, Thierry Reding <treding@nvidia.com>, Sudeep Holla <sudeep.holla@arm.com>, Juri Lelli <juri.lelli@arm.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Laxman
 
-* Linus Walleij <linus.walleij@linaro.org> [170105 08:16]:
-> On Thu, Jan 5, 2017 at 4:52 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
-> 
-> > Commit df61b366af26 ('pinctrl: core: Use delayed work for hogs')
-> > deferred part of the registration for pinctrl devices if the pinctrl
-> > device has hogs. This introduced a window where if the pinctrl device
-> > with hogs was sucessfully registered, but then unregistered again
-> > (which could be caused by parent device being probe deferred) before
-> > the delayed work has chanced to run, then this will cause a kernel
-> > panic to occur because:
-> >
-> > 1. The 'pctldev->p' has not yet been initialised and when unregistering
-> >    the pinctrl device we only check to see if it is an error value, but
-> >    now it could also be NULL.
-> > 2. The pinctrl device may not have been added to the 'pinctrldev_list'
-> >    list and we don't check to see if it was added before removing.
-> >
-> > Fix up the above by checking to see if the 'pctldev->p' pointer is an
-> > error value or NULL before putting the pinctrl device and verifying
-> > that the pinctrl device is present in 'pinctrldev_list' before removing.
-> >
-> > Fixes: df61b366af26 ('pinctrl: core: Use delayed work for hogs')
-> >
-> > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> 
-> Oops. Patch applied.
-
-OK, did not see that with my testing of hogs with omap4-duovero-parlor.
-Thanks for fixing that.
-
-Tony
+On 06/01/17 02:10, Andrew Lunn wrote:=0A=
+>> I'd love to see a switchdev driver but it's a huge task (and no I'm not=
+=0A=
+>> committing to writing it). As it stands Marvell ship a switch SDK=0A=
+>> largely executes in userspace with a small kernel module providing some=
+=0A=
+>> linkage to the underlying hardware.=0A=
+>=0A=
+> Is there any similarity to the mv88e6xxx family?=0A=
+>=0A=
+> If it was similar registers, just a different access mechanising, we=0A=
+> could probably extend the mv88e6xxx to support MMIO as well as MDIO.=0A=
+=0A=
+No the prestera family of devices are considerably more powerful (and =0A=
+complex) than the linkstreet devices.=0A=
