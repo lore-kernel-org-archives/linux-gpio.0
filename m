@@ -1,641 +1,685 @@
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCHv2 0/5] Support for Marvell switches with integrated CPUs
-Date: Fri,  6 Jan 2017 17:14:57 +1300
-Message-ID: <20170106041517.9589-1-chris.packham@alliedtelesis.co.nz>
-References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
+From: "Robert R. Howell" <rhowell@uwyo.edu>
+Subject: PROBLEM: Baytrail tablet touchscreen fails after pinctrl commit
+ [3ae02c14d964499da76b5ef4d8912710902e64f8]
+Date: Fri, 6 Jan 2017 02:30:20 -0700
+Message-ID: <6306d18a-d5d3-3e89-5f41-2a45d3de1398@uwyo.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-clk@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Juri Lelli <juri.lelli@arm.com>, Russell King <linux@armlinux.org.uk>, Thierry Reding <treding@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>, Rob Herring <robh+dt@kernel.org>, Chris Brand <chris.brand@broadcom.com>, Gregory Clement <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-gpio@vger.kernel.org, netdev@vger.kernel.org, Stephen Boyd <sboyd@c>
+Return-path: <linux-input-owner@vger.kernel.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org, "Robert R. Howell" <rhowell@uwyo.edu>
 List-Id: linux-gpio@vger.kernel.org
 
-The 98DX3236, 98DX3336 and 98DX4251 are a set of switch ASICs with
-integrated CPUs. They CPU block is common within these product lines and
-(as far as I can tell/have been told) is based on the Armada XP. There
-are a few differences due to the fact they have to squeeze the CPU into
-the same package as the switch.
+[1.]  Baytrail tablet touchscreen fails after pinctrl commit 
+[3ae02c14d964499da76b5ef4d8912710902e64f8]
 
-Chris Packham (4):
-  clk: mvebu: support for 98DX3236 SoC
-    Changes in v2:
-    - Update devicetree binding documentation for new compatible string
-    Changes in v3:
-    - Add 98dx3236 support to mvebu/clk-corediv.c rather than creating a
-      new driver.
-    - Document mv98dx3236-corediv-clock binding
-  arm: mvebu: support for SMP on 98DX3336 SoC
-    Changes in v2:
-    - Document new enable-method value
-    - Correct some references from 98DX4521 to 98DX3236
-    Changes in v3:
-    - Simplify mv98dx3236_resume_init by using of_io_request_and_map()
-  arm: mvebu: Add device tree for 98DX3236 SoCs
-    Changes in v2:
-    - Update devicetree binding documentation to reflect that 98DX3336 and
-      984251 are supersets of 98DX3236.
-    - disable crypto block
-    - disable sdio for 98DX3236, enable for 98DX4251
-    Changes in v3:
-    - fix typo 4521 -> 4251
-    - document prestera bindings
-    - rework corediv-clock binding
-    - add label to packet processor node
-    - add new compativle string for DFX server
-  arm: mvebu: Add device tree for db-dxbc2 and db-xc3-24g4xg boards
-    Changes in v2/v3:
-    - none
+[2.]  Beginning with kernel 4.10-rc1 (and continuing with 4.10-rc2) the 
+touchscreen on two Baytrail devices, an ASUS T100TA and a Toshiba Encore 
+8, no longer works.  They did work properly up though at least 4.9.0. As 
+indicated in the DMESG output appended below, the ATML1000 touchscreen 
+controller fails to reset and initialize properly on boot. The reset 
+command issued through i2c_hid appears to time out after its 5 second 
+wait for completion.  (There are similar problems with an i2c 
+orientation sensor.)  Using git bisect I've found that the problem 
+begins with commit [3ae02c14d964499da76b5ef4d8912710902e64f8]
+pinctrl: intel: set default handler to be handle_bad_irq()
 
-Kalyan Kinthada (1):
-  pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
-    Changes in v2:
-    - include sdio support for the 98DX4251
-    Changes in v3:
-    - None
+I've appended the git bisect log output at the end.  Reverting that 
+single commit (tested with 4.10-rc2) fixes the problem.
 
+[3.] Keywords:  pintctrl  intel  i2c_hid  baytrail
 
- Documentation/devicetree/bindings/arm/cpus.txt     |   1 +
- .../bindings/arm/marvell/98dx3236-resume-ctrl.txt  |  18 ++
- .../devicetree/bindings/arm/marvell/98dx3236.txt   |  23 ++
- .../bindings/clock/mvebu-corediv-clock.txt         |   1 +
- .../devicetree/bindings/clock/mvebu-cpu-clock.txt  |   1 +
- .../devicetree/bindings/net/marvell,prestera.txt   |  50 ++++
- .../pinctrl/marvell,armada-98dx3236-pinctrl.txt    |  46 ++++
- arch/arm/boot/dts/armada-xp-98dx3236.dtsi          | 254 +++++++++++++++++++++
- arch/arm/boot/dts/armada-xp-98dx3336.dtsi          |  76 ++++++
- arch/arm/boot/dts/armada-xp-98dx4251.dtsi          |  90 ++++++++
- arch/arm/boot/dts/db-dxbc2.dts                     | 159 +++++++++++++
- arch/arm/boot/dts/db-xc3-24g4xg.dts                | 155 +++++++++++++
- arch/arm/mach-mvebu/Makefile                       |   1 +
- arch/arm/mach-mvebu/common.h                       |   1 +
- arch/arm/mach-mvebu/platsmp.c                      |  43 ++++
- arch/arm/mach-mvebu/pmsu-98dx3236.c                |  52 +++++
- drivers/clk/mvebu/armada-xp.c                      |  42 ++++
- drivers/clk/mvebu/clk-corediv.c                    |  23 ++
- drivers/clk/mvebu/clk-cpu.c                        |  31 ++-
- drivers/pinctrl/mvebu/pinctrl-armada-xp.c          | 155 +++++++++++++
- 20 files changed, 1220 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236-resume-ctrl.txt
- create mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx3236.txt
- create mode 100644 Documentation/devicetree/bindings/net/marvell,prestera.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
- create mode 100644 arch/arm/boot/dts/armada-xp-98dx3236.dtsi
- create mode 100644 arch/arm/boot/dts/armada-xp-98dx3336.dtsi
- create mode 100644 arch/arm/boot/dts/armada-xp-98dx4251.dtsi
- create mode 100644 arch/arm/boot/dts/db-dxbc2.dts
- create mode 100644 arch/arm/boot/dts/db-xc3-24g4xg.dts
- create mode 100644 arch/arm/mach-mvebu/pmsu-98dx3236.c
+[4.] Kernel version (from /proc/version):
 
-Interdiff to v2:
+[5.] DMESG (with i2c_hid.debug=1) reports:
 
-diff --git
-a/Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt
-b/Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt
-index 520562a7dc2a..c7b4e3a6b2c6 100644
---- a/Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/mvebu-corediv-clock.txt
-@@ -7,6 +7,7 @@ Required properties:
- - compatible : must be "marvell,armada-370-corediv-clock",
-                       "marvell,armada-375-corediv-clock",
-                       "marvell,armada-380-corediv-clock",
-+                       "marvell,mv98dx3236-corediv-clock",
- 
- - reg : must be the register address of Core Divider control register
- - #clock-cells : from common clock binding; shall be set to 1
-diff --git a/Documentation/devicetree/bindings/net/marvell,prestera.txt
-b/Documentation/devicetree/bindings/net/marvell,prestera.txt
-new file mode 100644
-index 000000000000..5fbab29718e8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/marvell,prestera.txt
-@@ -0,0 +1,50 @@
-+Marvell Prestera Switch Chip bindings
-+-------------------------------------
-+
-+Required properties:
-+- compatible: one of the following
-+       "marvell,prestera-98dx3236",
-+       "marvell,prestera-98dx3336",
-+       "marvell,prestera-98dx4251",
-+- reg: address and length of the register set for the device.
-+- interrupts: interrupt for the device
-+
-+Optional properties:
-+- dfx: phandle reference to the "DFX Server" node
-+
-+Example:
-+
-+switch {
-+       compatible = "simple-bus";
-+       #address-cells = <1>;
-+       #size-cells = <1>;
-+       ranges = <0 MBUS_ID(0x03, 0x00) 0 0x100000>;
-+
-+       packet-processor@0 {
-+               compatible = "marvell,prestera-98dx3236";
-+               reg = <0 0x4000000>;
-+               interrupts = <33>, <34>, <35>;
-+               dfx = <&dfx>;
-+       };
-+};
-+
-+DFX Server bindings
-+-------------------
-+
-+Required properties:
-+- compatible: must be "marvell,dfx-server"
-+- reg: address and length of the register set for the device.
-+
-+Example:
-+
-+dfx-registers {
-+       compatible = "simple-bus";
-+       #address-cells = <1>;
-+       #size-cells = <1>;
-+       ranges = <0 MBUS_ID(0x08, 0x00) 0 0x100000>;
-+
-+       dfx: dfx@0 {
-+               compatible = "marvell,dfx-server";
-+               reg = <0 0x100000>;
-+       };
-+};
-diff --git a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
-b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
-index 61bd3acc5cfe..4b7b2fe3b682 100644
---- a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
-+++ b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
-@@ -126,12 +126,7 @@
-                        };
- 
-                        corediv-clock@18740 {
--                               compatible =
-                                "marvell,mv98dx3236-corediv-clock";
--                               reg = <0xf8268 0xc>;
--                               base = <&dfx>;
--                               #clock-cells = <1>;
--                               clocks = <&mainpll>;
--                               clock-output-names = "nand";
-+                               status = "disabled";
-                        };
- 
-                        xor@60900 {
-@@ -194,6 +189,10 @@
-                                #interrupt-cells = <2>;
-                                interrupts = <87>;
-                        };
-+
-+                       nand: nand@d0000 {
-+                               clocks = <&dfx_coredivclk 0>;
-+                       };
-                };
- 
-                dfx-registers {
-@@ -202,8 +201,16 @@
-                        #size-cells = <1>;
-                        ranges = <0 MBUS_ID(0x08, 0x00) 0 0x100000>;
- 
-+                        dfx_coredivclk: corediv-clock@f8268 {
-+                                compatible =
-"marvell,mv98dx3236-corediv-clock";
-+                                reg = <0xf8268 0xc>;
-+                                #clock-cells = <1>;
-+                                clocks = <&mainpll>;
-+                                clock-output-names = "nand";
-+                        };
-+
-                        dfx: dfx@0 {
--                               compatible = "simple-bus";
-+                               compatible = "marvell,dfx-server";
-                                reg = <0 0x100000>;
-                        };
-                };
-@@ -214,7 +221,7 @@
-                        #size-cells = <1>;
-                        ranges = <0 MBUS_ID(0x03, 0x00) 0 0x100000>;
- 
--                       packet-processor@0 {
-+                       pp0: packet-processor@0 {
-                                compatible =
-"marvell,prestera-98dx3236";
-                                reg = <0 0x4000000>;
-                                interrupts = <33>, <34>, <35>;
-diff --git a/arch/arm/boot/dts/armada-xp-98dx3336.dtsi
-b/arch/arm/boot/dts/armada-xp-98dx3336.dtsi
-index 9c9aa565fd82..a9b0f47f8df9 100644
---- a/arch/arm/boot/dts/armada-xp-98dx3336.dtsi
-+++ b/arch/arm/boot/dts/armada-xp-98dx3336.dtsi
-@@ -68,11 +68,9 @@
-                                reg = <0x20980 0x10>;
-                        };
-                };
--
--               switch {
--                       packet-processor@0 {
--                               compatible =
-                                "marvell,prestera-98dx3336";
--                       };
--               };
-        };
- };
-+
-+&pp0 {
-+       compatible = "marvell,prestera-98dx3336";
-+};
-diff --git a/arch/arm/boot/dts/armada-xp-98dx4251.dtsi
-b/arch/arm/boot/dts/armada-xp-98dx4251.dtsi
-index 5f7edc23d5ae..446e6e65ec59 100644
---- a/arch/arm/boot/dts/armada-xp-98dx4251.dtsi
-+++ b/arch/arm/boot/dts/armada-xp-98dx4251.dtsi
-@@ -68,12 +68,6 @@
-                                reg = <0x20980 0x10>;
-                        };
-                };
--
--               switch {
--                       packet-processor@0 {
--                               compatible =
-                                "marvell,prestera-98dx4521";
--                       };
--               };
-        };
- };
- 
-@@ -90,3 +84,7 @@
-                marvell,function = "sd0";
-        };
- };
-+
-+&pp0 {
-+       compatible = "marvell,prestera-98dx4251";
-+};
-diff --git a/arch/arm/mach-mvebu/pmsu-98dx3236.c
-b/arch/arm/mach-mvebu/pmsu-98dx3236.c
-index 87ca42ef40c7..1052674dd439 100644
---- a/arch/arm/mach-mvebu/pmsu-98dx3236.c
-+++ b/arch/arm/mach-mvebu/pmsu-98dx3236.c
-@@ -31,39 +31,22 @@ void mv98dx3236_resume_set_cpu_boot_addr(int hw_cpu,
-void *boot_addr)
- static int __init mv98dx3236_resume_init(void)
- {
-        struct device_node *np;
--       struct resource res;
--       int ret = 0;
-+       void __iomem *base;
- 
-        np = of_find_matching_node(NULL, of_mv98dx3236_resume_table);
-        if (!np)
-                return 0;
- 
--       pr_info("Initializing 98DX3236 Resume\n");
--
--       if (of_address_to_resource(np, 0, &res)) {
--               pr_err("unable to get resource\n");
--               ret = -ENOENT;
--               goto out;
--       }
--
--       if (!request_mem_region(res.start, resource_size(&res),
--                               np->full_name)) {
--               pr_err("unable to request region\n");
--               ret = -EBUSY;
--               goto out;
--       }
--
--       mv98dx3236_resume_base = ioremap(res.start,
-        resource_size(&res));
--       if (!mv98dx3236_resume_base) {
-+       base = of_io_request_and_map(np, 0, of_node_full_name(np));
-+       if (IS_ERR(base)) {
-                pr_err("unable to map registers\n");
--               release_mem_region(res.start, resource_size(&res));
--               ret = -ENOMEM;
--               goto out;
-+               of_node_put(np);
-+               return PTR_ERR(mv98dx3236_resume_base);
-        }
- 
--out:
-+       mv98dx3236_resume_base = base;
-        of_node_put(np);
--       return ret;
-+       return 0;
- }
- 
- early_initcall(mv98dx3236_resume_init);
-diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
-index 6a3681e3d6db..d9ae97fb43c4 100644
---- a/drivers/clk/mvebu/Makefile
-+++ b/drivers/clk/mvebu/Makefile
-@@ -9,7 +9,7 @@ obj-$(CONFIG_ARMADA_39X_CLK)    += armada-39x.o
- obj-$(CONFIG_ARMADA_37XX_CLK)  += armada-37xx-xtal.o
- obj-$(CONFIG_ARMADA_37XX_CLK)  += armada-37xx-tbg.o
- obj-$(CONFIG_ARMADA_37XX_CLK)  += armada-37xx-periph.o
--obj-$(CONFIG_ARMADA_XP_CLK)    += armada-xp.o mv98dx3236-corediv.o
-+obj-$(CONFIG_ARMADA_XP_CLK)    += armada-xp.o
- obj-$(CONFIG_ARMADA_AP806_SYSCON) += ap806-system-controller.o
- obj-$(CONFIG_ARMADA_CP110_SYSCON) += cp110-system-controller.o
- obj-$(CONFIG_DOVE_CLK)         += dove.o dove-divider.o
-diff --git a/drivers/clk/mvebu/clk-corediv.c
-b/drivers/clk/mvebu/clk-corediv.c
-index d1e5863d3375..8491979f4096 100644
---- a/drivers/clk/mvebu/clk-corediv.c
-+++ b/drivers/clk/mvebu/clk-corediv.c
-@@ -71,6 +71,10 @@ static const struct clk_corediv_desc
-mvebu_corediv_desc[] = {
-        { .mask = 0x3f, .offset = 8, .fieldbit = 1 }, /* NAND clock */
- };
- 
-+static const struct clk_corediv_desc mv98dx3236_corediv_desc[] = {
-+       { .mask = 0x0f, .offset = 6, .fieldbit = 26 }, /* NAND clock */
-+};
-+
- #define to_corediv_clk(p) container_of(p, struct clk_corediv, hw)
- 
- static int clk_corediv_is_enabled(struct clk_hw *hwclk)
-@@ -232,6 +236,18 @@ static const struct clk_corediv_soc_desc
-armada375_corediv_soc = {
-        .ratio_offset = 0x4,
- };
- 
-+static const struct clk_corediv_soc_desc mv98dx3236_corediv_soc = {
-+       .descs = mv98dx3236_corediv_desc,
-+       .ndescs = ARRAY_SIZE(mv98dx3236_corediv_desc),
-+       .ops = {
-+               .recalc_rate = clk_corediv_recalc_rate,
-+               .round_rate = clk_corediv_round_rate,
-+               .set_rate = clk_corediv_set_rate,
-+       },
-+       .ratio_reload = BIT(10),
-+       .ratio_offset = 0x8,
-+};
-+
- static void __init
- mvebu_corediv_clk_init(struct device_node *node,
-                       const struct clk_corediv_soc_desc *soc_desc)
-@@ -313,3 +329,10 @@ static void __init
-armada380_corediv_clk_init(struct device_node *node)
- }
- CLK_OF_DECLARE(armada380_corediv_clk,
-"marvell,armada-380-corediv-clock",
-               armada380_corediv_clk_init);
-+
-+static void __init mv98dx3236_corediv_clk_init(struct device_node
-*node)
-+{
-+       return mvebu_corediv_clk_init(node, &mv98dx3236_corediv_soc);
-+}
-+CLK_OF_DECLARE(mv98dx3236_corediv_clk,
-"marvell,mv98dx3236-corediv-clock",
-+              mv98dx3236_corediv_clk_init);
-diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
-index 29f295e7a36b..3b8f0e14fa01 100644
---- a/drivers/clk/mvebu/clk-cpu.c
-+++ b/drivers/clk/mvebu/clk-cpu.c
-@@ -254,7 +254,7 @@ static void __init of_cpu_clk_setup(struct
-device_node *node)
- }
- 
- CLK_OF_DECLARE(armada_xp_cpu_clock, "marvell,armada-xp-cpu-clock",
--                                       of_cpu_clk_setup);
-+                                        of_cpu_clk_setup);
- 
- /* Define the clock and operations for the mv98dx3236 - it cannot
- * perform
-  * any operations.
-diff --git a/drivers/clk/mvebu/mv98dx3236-corediv.c
-b/drivers/clk/mvebu/mv98dx3236-corediv.c
-deleted file mode 100644
-index 3060764a8e5d..000000000000
---- a/drivers/clk/mvebu/mv98dx3236-corediv.c
-+++ /dev/null
-@@ -1,207 +0,0 @@
--/*
-- * MV98DX3236 Core divider clock
-- *
-- * Copyright (C) 2015 Allied Telesis Labs
-- *
-- * Based on armada-xp-corediv.c
-- * Copyright (C) 2015 Marvell
-- *
-- * John Thompson <john.thompson@alliedtelesis.co.nz>
-- *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-- */
--#include <linux/kernel.h>
--#include <linux/clk-provider.h>
--#include <linux/of_address.h>
--#include <linux/slab.h>
--#include <linux/delay.h>
--#include "common.h"
--
--#define CORE_CLK_DIV_RATIO_MASK                0xff
--
--#define CLK_DIV_RATIO_NAND_MASK 0x0f
--#define CLK_DIV_RATIO_NAND_OFFSET 6
--#define CLK_DIV_RATIO_NAND_FORCE_RELOAD_BIT 26
--
--#define RATIO_RELOAD_BIT BIT(10)
--#define RATIO_REG_OFFSET 0x08
--
--/*
-- * This structure represents one core divider clock for the clock
-- * framework, and is dynamically allocated for each core divider clock
-- * existing in the current SoC.
-- */
--struct clk_corediv {
--       struct clk_hw hw;
--       void __iomem *reg;
--       spinlock_t lock;
--};
--
--static struct clk_onecell_data clk_data;
--
--
--#define to_corediv_clk(p) container_of(p, struct clk_corediv, hw)
--
--static int mv98dx3236_corediv_is_enabled(struct clk_hw *hwclk)
--{
--       /* Core divider is always active */
--       return 1;
--}
--
--static int mv98dx3236_corediv_enable(struct clk_hw *hwclk)
--{
--       /* always succeeds */
--       return 0;
--}
--
--static void mv98dx3236_corediv_disable(struct clk_hw *hwclk)
--{
--       /* can't be disabled so is left alone */
--}
--
--static unsigned long mv98dx3236_corediv_recalc_rate(struct clk_hw
-*hwclk,
--                                        unsigned long parent_rate)
--{
--       struct clk_corediv *corediv = to_corediv_clk(hwclk);
--       u32 reg, div;
--
--       reg = readl(corediv->reg + RATIO_REG_OFFSET);
--       div = (reg >> CLK_DIV_RATIO_NAND_OFFSET) &
-        CLK_DIV_RATIO_NAND_MASK;
--       return parent_rate / div;
--}
--
--static long mv98dx3236_corediv_round_rate(struct clk_hw *hwclk,
--                              unsigned long rate, unsigned long
-                               *parent_rate)
--{
--       /* Valid ratio are 1:4, 1:5, 1:6 and 1:8 */
--       u32 div;
--
--       div = *parent_rate / rate;
--       if (div < 4)
--               div = 4;
--       else if (div > 6)
--               div = 8;
--
--       return *parent_rate / div;
--}
--
--static int mv98dx3236_corediv_set_rate(struct clk_hw *hwclk, unsigned
-long rate,
--                           unsigned long parent_rate)
--{
--       struct clk_corediv *corediv = to_corediv_clk(hwclk);
--       unsigned long flags = 0;
--       u32 reg, div;
--
--       div = parent_rate / rate;
--
--       spin_lock_irqsave(&corediv->lock, flags);
--
--       /* Write new divider to the divider ratio register */
--       reg = readl(corediv->reg + RATIO_REG_OFFSET);
--       reg &= ~(CLK_DIV_RATIO_NAND_MASK << CLK_DIV_RATIO_NAND_OFFSET);
--       reg |= (div & CLK_DIV_RATIO_NAND_MASK) <<
-        CLK_DIV_RATIO_NAND_OFFSET;
--       writel(reg, corediv->reg + RATIO_REG_OFFSET);
--
--       /* Set reload-force for this clock */
--       reg = readl(corediv->reg) |
-        BIT(CLK_DIV_RATIO_NAND_FORCE_RELOAD_BIT);
--       writel(reg, corediv->reg);
--
--       /* Now trigger the clock update */
--       reg = readl(corediv->reg + RATIO_REG_OFFSET) | RATIO_RELOAD_BIT;
--       writel(reg, corediv->reg + RATIO_REG_OFFSET);
--
--       /*
--        * Wait for clocks to settle down, and then clear all the
--        * ratios request and the reload request.
--        */
--       udelay(1000);
--       reg &= ~(CORE_CLK_DIV_RATIO_MASK | RATIO_RELOAD_BIT);
--       writel(reg, corediv->reg + RATIO_REG_OFFSET);
--       udelay(1000);
--
--       spin_unlock_irqrestore(&corediv->lock, flags);
--
--       return 0;
--}
--
--static const struct clk_ops ops = {
--       .enable = mv98dx3236_corediv_enable,
--       .disable = mv98dx3236_corediv_disable,
--       .is_enabled = mv98dx3236_corediv_is_enabled,
--       .recalc_rate = mv98dx3236_corediv_recalc_rate,
--       .round_rate = mv98dx3236_corediv_round_rate,
--       .set_rate = mv98dx3236_corediv_set_rate,
--};
--
--static void __init mv98dx3236_corediv_clk_init(struct device_node
-*node)
--{
--       struct clk_init_data init;
--       struct clk_corediv *corediv;
--       struct clk **clks;
--       void __iomem *base;
--       const __be32 *off;
--       const char *parent_name;
--       const char *clk_name;
--       int len;
--       struct device_node *dfx_node;
--
--       dfx_node = of_parse_phandle(node, "base", 0);
--       if (WARN_ON(!dfx_node))
--               return;
--
--       off = of_get_property(node, "reg", &len);
--       if (WARN_ON(!off))
--               return;
--
--       base = of_iomap(dfx_node, 0);
--       if (WARN_ON(!base))
--               return;
--
--       of_node_put(dfx_node);
--
--       parent_name = of_clk_get_parent_name(node, 0);
--
--       clk_data.clk_num = 1;
--
--       /* clks holds the clock array */
--       clks = kcalloc(clk_data.clk_num, sizeof(struct clk *),
--                               GFP_KERNEL);
--       if (WARN_ON(!clks))
--               goto err_unmap;
--       /* corediv holds the clock specific array */
--       corediv = kcalloc(clk_data.clk_num, sizeof(struct clk_corediv),
--                               GFP_KERNEL);
--       if (WARN_ON(!corediv))
--               goto err_free_clks;
--
--       spin_lock_init(&corediv->lock);
--
--       of_property_read_string_index(node, "clock-output-names",
--                                         0, &clk_name);
--
--       init.num_parents = 1;
--       init.parent_names = &parent_name;
--       init.name = clk_name;
--       init.ops = &ops;
--       init.flags = 0;
--
--       corediv[0].reg = (void *)((int)base + be32_to_cpu(*off));
--       corediv[0].hw.init = &init;
--
--       clks[0] = clk_register(NULL, &corediv[0].hw);
--       WARN_ON(IS_ERR(clks[0]));
--
--       clk_data.clks = clks;
--       of_clk_add_provider(node, of_clk_src_onecell_get, &clk_data);
--       return;
--
--err_free_clks:
--       kfree(clks);
--err_unmap:
--       iounmap(base);
--}
--
--CLK_OF_DECLARE(mv98dx3236_corediv_clk,
-"marvell,mv98dx3236-corediv-clock",
--              mv98dx3236_corediv_clk_init);
+> [    5.405974] usb usb2: SerialNumber: 0000:00:14.0
+> [    5.406347] hub 2-0:1.0: USB hub found
+> [    5.406368] hub 2-0:1.0: 1 port detected
+> [    5.415338] i2c_hid i2c-ATML1000:00: Fetching the HID descriptor
+> [    5.415344] i2c_hid i2c-ATML1000:00: __i2c_hid_command: cmd=00 00
+> [    5.416698] i2c_hid i2c-ATML1000:00: HID Descriptor: 1e 00 00 01 b5 00 1e 00 d3 00 14 00 e7 00 14 00 fb 00 fd 00 eb 03 0d 8c 34 10 00 00 00 00
+> [    5.417892] i2c_hid i2c-ATML1000:00: entering i2c_hid_parse
+> [    5.417897] i2c_hid i2c-ATML1000:00: i2c_hid_hwreset
+> [    5.417900] i2c_hid i2c-ATML1000:00: i2c_hid_set_power
+> [    5.417904] i2c_hid i2c-ATML1000:00: __i2c_hid_command: cmd=fb 00 00 08
+> [    5.418070] i2c_hid i2c-ATML1000:00: resetting...
+> [    5.418074] i2c_hid i2c-ATML1000:00: __i2c_hid_command: cmd=fb 00 00 01
+> [    5.418226] i2c_hid i2c-ATML1000:00: __i2c_hid_command: waiting...
+> [    5.420833] i915: unknown parameter 'force_backlight_pmic' ignored
+> [    5.426475] [drm] Memory usable by graphics device = 2048M
+> [    5.426482] checking generic (80000000 410000) vs hw (80000000 10000000)
+.....
+
+> [    6.470102] PM: Image not found (code -22)
+> [    6.470105] PM: Hibernation image not present or could not be loaded.
+> [    6.553411] EXT4-fs (mmcblk2p6): mounted filesystem with ordered data mode. Opts: (null)
+> [   10.901482] i2c_hid i2c-ATML1000:00: __i2c_hid_command: finished.
+> [   10.901487] i2c_hid i2c-ATML1000:00: failed to reset device.
+> [   10.901609] i2c_hid i2c-ATML1000:00: i2c_hid_set_power
+> [   10.901613] i2c_hid i2c-ATML1000:00: __i2c_hid_command: cmd=fb 00 01 08
+> [   11.932593] i2c_hid i2c-ATML1000:00: i2c_hid_hwreset
+> [   11.932607] i2c_hid i2c-ATML1000:00: i2c_hid_set_power
+> [   11.932619] i2c_hid i2c-ATML1000:00: __i2c_hid_command: cmd=fb 00 00 08
+> [   11.933743] i2c_hid i2c-ATML1000:00: resetting...
+> [   11.933760] i2c_hid i2c-ATML1000:00: __i2c_hid_command: cmd=fb 00 00 01
+> [   11.934074] i2c_hid i2c-ATML1000:00: __i2c_hid_command: waiting...
+> [   17.071667] i2c_hid i2c-ATML1000:00: __i2c_hid_command: finished.
+> [   17.071681] i2c_hid i2c-ATML1000:00: failed to reset device.
+> [   17.071702] i2c_hid i2c-ATML1000:00: i2c_hid_set_power
+> [   17.071714] i2c_hid i2c-ATML1000:00: __i2c_hid_command: cmd=fb 00 01 08
+> [   18.102817] i2c_hid i2c-ATML1000:00: i2c_hid_hwreset
+> [   18.102830] i2c_hid i2c-ATML1000:00: i2c_hid_set_power
+> [   18.102842] i2c_hid i2c-ATML1000:00: __i2c_hid_command: cmd=fb 00 00 08
+> [   18.103733] i2c_hid i2c-ATML1000:00: resetting...
+> [   18.103747] i2c_hid i2c-ATML1000:00: __i2c_hid_command: cmd=fb 00 00 01
+> [   18.104250] i2c_hid i2c-ATML1000:00: __i2c_hid_command: waiting...
+> [   23.239624] i2c_hid i2c-ATML1000:00: __i2c_hid_command: finished.
+> [   23.239638] i2c_hid i2c-ATML1000:00: failed to reset device.
+> [   23.239659] i2c_hid i2c-ATML1000:00: i2c_hid_set_power
+> [   23.239671] i2c_hid i2c-ATML1000:00: __i2c_hid_command: cmd=fb 00 01 08
+> [   24.264558] i2c_hid i2c-ATML1000:00: i2c_hid_hwreset
+> [   24.264572] i2c_hid i2c-ATML1000:00: i2c_hid_set_power
+> [   24.264584] i2c_hid i2c-ATML1000:00: __i2c_hid_command: cmd=fb 00 00 08
+> [   24.265552] i2c_hid i2c-ATML1000:00: resetting...
+> [   24.265567] i2c_hid i2c-ATML1000:00: __i2c_hid_command: cmd=fb 00 00 01
+> [   24.266208] i2c_hid i2c-ATML1000:00: __i2c_hid_command: waiting...
+> [   29.404892] i2c_hid i2c-ATML1000:00: __i2c_hid_command: finished.
+> [   29.404906] i2c_hid i2c-ATML1000:00: failed to reset device.
+> [   29.404927] i2c_hid i2c-ATML1000:00: i2c_hid_set_power
+> [   29.404939] i2c_hid i2c-ATML1000:00: __i2c_hid_command: cmd=fb 00 01 08
+> [   30.430662] i2c_hid i2c-ATML1000:00: can't add hid device: -61
+> [   30.449313] i2c_hid: probe of i2c-ATML1000:00 failed with error -61
+> [   30.527802] systemd-journald[107]: Received SIGTERM from PID 1 (systemd).
+> [   30.580851] systemd: 15 output lines suppressed due to ratelimiting
 
 
--- 
-2.11.0.24.ge6920cf
+[6.] Script:  none needed -- problem occurs on boot
+
+[7.] Environment
+
+[7.1.] Software (add the output of the ver_linux script here)
+	I wasn't sure if this should be run on the machine used to build the 
+new kernel, or on the target machine.  Here are both:
+
+-------From the build machine:-----------------------------
+If some fields are empty or look unusual you may have an old version.
+Compare to the current minimal requirements in Documentation/Changes.
+
+Linux vanguard.uwyo.edu 4.8.0-rrh-g750-1 #1 SMP PREEMPT Tue Oct 4 
+08:03:16 MDT 2016 x86_64 x86_64 x86_64 GNU/Linux
+
+GNU C                   4.8
+GNU Make                4.0
+Binutils                13.2
+Util-linux              2.25.1
+Mount                   2.25.1
+Linux C Library         2.19
+Dynamic linker (ldd)    2.19
+readlink: missing operand
+Try 'readlink --help' for more information.
+Procps                  3.3.9
+Kbd                     2.0.2
+Console-tools           2.0.2
+Sh-utils                8.23
+Udev                    210
+Modules Loaded          ablk_helper ac aesni_intel aes_x86_64 af_packet 
+alx asus_nb_wmi asus_wmi battery bluetooth bnep btbcm btintel btrtl 
+btusb button cdrom cfg80211 coretemp crc32c_intel crc32_pclmul cryptd 
+dm_mod drm drm_kms_helper efivarfs fat fb_sys_fops fuse gf128mul 
+glue_helper i2c_algo_bit i2c_i801 i2c_smbus i915 intel_powerclamp 
+ip6table_filter ip6table_mangle ip6table_raw ip6_tables ip6t_REJECT 
+iptable_filter iptable_raw ip_tables ipt_REJECT irqbypass 
+iTCO_vendor_support iTCO_wdt joydev kvm kvm_intel lpc_ich lrw mdio media 
+mei mei_me mxm_wmi nf_conntrack nf_conntrack_broadcast nf_conntrack_ipv4 
+nf_conntrack_ipv6 nf_conntrack_netbios_ns nf_defrag_ipv4 nf_defrag_ipv6 
+nf_reject_ipv4 nf_reject_ipv6 nls_iso8859_1 pcspkr rfkill rtc_cmos 
+serio_raw sg shpchp snd snd_hda_codec snd_hda_codec_generic 
+snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_core snd_hda_intel 
+snd_hwdep snd_pcm snd_seq snd_seq_device snd_timer soundcore sr_mod 
+syscopyarea sysfillrect sysimgblt thermal tpm tpm_tis tpm_tis_core uhid 
+usblp usb_storage uvcvideo vfat video videobuf2_core videobuf2_memops 
+videobuf2_v4l2 videobuf2_vmalloc videodev wl wmi x86_pkg_temp_thermal 
+xhci_hcd xhci_pci x_tables xt_conntrack xt_CT xt_limit xt_tcpudp
+
+---------------From the target (Baytrail tablet) machine-------------
+
+If some fields are empty or look unusual you may have an old version.
+Compare to the current minimal requirements in Documentation/Changes.
+
+Linux elsie 4.9.0-rc2-rrh-bisect-a11+ #1 SMP PREEMPT Thu Jan 5 23:13:17 
+MST 2017 x86_64 x86_64 x86_64 GNU/Linux
+
+GNU C               	4.8
+GNU Make            	4.0
+Binutils            	42.2
+Util-linux          	2.28
+Mount               	2.28
+Linux C Library     	2.22
+Dynamic linker (ldd)	2.22
+Procps              	3.3.9
+Kbd                 	2.0.3
+Console-tools       	2.0.3
+Sh-utils            	8.25
+Udev                	228
+Modules Loaded      	8250_dw ablk_helper ac ac97_bus acpi_pad 
+aesni_intel aes_x86_64 af_packet ak8975 asus_nb_wmi asus_wmi battery 
+brcmfmac brcmutil button cfg80211 coretemp crc32c_intel crc32_pclmul 
+cryptd dm_mod dm_multipath drm drm_kms_helper efivarfs fb_sys_fops fuse 
+gf128mul glue_helper gpio_keys i2c_algo_bit i2c_hid i2c_mux i915 
+industrialio industrialio_triggered_buffer intel_powerclamp inv_mpu6050 
+inv_mpu6050_i2c ip6table_filter ip6table_mangle ip6table_raw ip6_tables 
+ip6t_REJECT iptable_filter iptable_raw ip_tables ipt_REJECT irqbypass 
+iTCO_vendor_support iTCO_wdt joydev kfifo_buf kvm kvm_intel lpc_ich lrw 
+mmc_block mmc_core nf_conntrack nf_conntrack_broadcast nf_conntrack_ipv4 
+nf_conntrack_ipv6 nf_conntrack_netbios_ns nf_defrag_ipv4 nf_defrag_ipv6 
+nf_reject_ipv4 nf_reject_ipv6 pcspkr rfkill rtc_cmos sdhci sdhci_acpi sg 
+snd snd_pcm snd_soc_core snd_soc_rl6231 snd_soc_rt5640 snd_soc_sst_acpi 
+snd_soc_sst_baytrail_pcm snd_soc_sst_byt_rt5640_mach snd_soc_sst_dsp 
+snd_soc_sst_firmware snd_soc_sst_ipc snd_soc_sst_match snd_timer 
+soc_button_array soundcore syscopyarea sysfillrect sysimgblt thermal tpm 
+tpm_tis tpm_tis_core usb_storage video wmi xhci_hcd xhci_pci x_tables 
+xt_conntrack xt_CT xt_limit xt_tcpudp
+
+
+[7.2.] Processor information (from /proc/cpuinfo):
+
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 55
+model name	: Intel(R) Atom(TM) CPU  Z3740  @ 1.33GHz
+stepping	: 3
+microcode	: 0x31e
+cpu MHz		: 533.151
+cache size	: 1024 KB
+physical id	: 0
+siblings	: 4
+core id		: 0
+cpu cores	: 4
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 11
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov 
+pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx 
+rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology 
+nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx 
+est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 movbe popcnt 
+tsc_deadline_timer aes rdrand lahf_lm 3dnowprefetch epb tpr_shadow vnmi 
+flexpriority ept vpid tsc_adjust smep erms dtherm ida arat
+bugs		:
+bogomips	: 2666.00
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 36 bits physical, 48 bits virtual
+power management:
+
+processor	: 1
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 55
+model name	: Intel(R) Atom(TM) CPU  Z3740  @ 1.33GHz
+stepping	: 3
+microcode	: 0x31e
+cpu MHz		: 533.151
+cache size	: 1024 KB
+physical id	: 0
+siblings	: 4
+core id		: 1
+cpu cores	: 4
+apicid		: 2
+initial apicid	: 2
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 11
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov 
+pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx 
+rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology 
+nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx 
+est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 movbe popcnt 
+tsc_deadline_timer aes rdrand lahf_lm 3dnowprefetch epb tpr_shadow vnmi 
+flexpriority ept vpid tsc_adjust smep erms dtherm ida arat
+bugs		:
+bogomips	: 2677.60
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 36 bits physical, 48 bits virtual
+power management:
+
+processor	: 2
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 55
+model name	: Intel(R) Atom(TM) CPU  Z3740  @ 1.33GHz
+stepping	: 3
+microcode	: 0x31e
+cpu MHz		: 540.148
+cache size	: 1024 KB
+physical id	: 0
+siblings	: 4
+core id		: 2
+cpu cores	: 4
+apicid		: 4
+initial apicid	: 4
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 11
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov 
+pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx 
+rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology 
+nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx 
+est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 movbe popcnt 
+tsc_deadline_timer aes rdrand lahf_lm 3dnowprefetch epb tpr_shadow vnmi 
+flexpriority ept vpid tsc_adjust smep erms dtherm ida arat
+bugs		:
+bogomips	: 2677.76
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 36 bits physical, 48 bits virtual
+power management:
+
+processor	: 3
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 55
+model name	: Intel(R) Atom(TM) CPU  Z3740  @ 1.33GHz
+stepping	: 3
+microcode	: 0x31e
+cpu MHz		: 533.151
+cache size	: 1024 KB
+physical id	: 0
+siblings	: 4
+core id		: 3
+cpu cores	: 4
+apicid		: 6
+initial apicid	: 6
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 11
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov 
+pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx 
+rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology 
+nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx 
+est tm2 ssse3 cx16 xtpr pdcm sse4_1 sse4_2 movbe popcnt 
+tsc_deadline_timer aes rdrand lahf_lm 3dnowprefetch epb tpr_shadow vnmi 
+flexpriority ept vpid tsc_adjust smep erms dtherm ida arat
+bugs		:
+bogomips	: 2677.84
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 36 bits physical, 48 bits virtual
+power management:
+
+
+[7.3.] Module information (from /proc/modules):
+
+af_packet 36864 8 - Live 0x0000000000000000
+xt_limit 16384 0 - Live 0x0000000000000000
+ip6t_REJECT 16384 3 - Live 0x0000000000000000
+nf_reject_ipv6 16384 1 ip6t_REJECT, Live 0x0000000000000000
+xt_tcpudp 16384 1 - Live 0x0000000000000000
+nf_conntrack_ipv6 16384 2 - Live 0x0000000000000000
+nf_defrag_ipv6 32768 1 nf_conntrack_ipv6, Live 0x0000000000000000
+ip6table_raw 16384 1 - Live 0x0000000000000000
+ipt_REJECT 16384 3 - Live 0x0000000000000000
+nf_reject_ipv4 16384 1 ipt_REJECT, Live 0x0000000000000000
+iptable_raw 16384 1 - Live 0x0000000000000000
+xt_CT 16384 4 - Live 0x0000000000000000
+iptable_filter 16384 1 - Live 0x0000000000000000
+ip6table_mangle 16384 0 - Live 0x0000000000000000
+nf_conntrack_netbios_ns 16384 0 - Live 0x0000000000000000
+nf_conntrack_broadcast 16384 1 nf_conntrack_netbios_ns, Live 
+0x0000000000000000
+nf_conntrack_ipv4 16384 2 - Live 0x0000000000000000
+nf_defrag_ipv4 16384 1 nf_conntrack_ipv4, Live 0x0000000000000000
+ip_tables 24576 2 iptable_raw,iptable_filter, Live 0x0000000000000000
+xt_conntrack 16384 4 - Live 0x0000000000000000
+nf_conntrack 98304 6 
+nf_conntrack_ipv6,xt_CT,nf_conntrack_netbios_ns,nf_conntrack_broadcast,nf_conntrack_ipv4,xt_conntrack, 
+Live 0x0000000000000000
+ip6table_filter 16384 1 - Live 0x0000000000000000
+ip6_tables 24576 3 ip6table_raw,ip6table_mangle,ip6table_filter, Live 
+0x0000000000000000
+x_tables 32768 13 
+xt_limit,ip6t_REJECT,xt_tcpudp,ip6table_raw,ipt_REJECT,iptable_raw,xt_CT,iptable_filter,ip6table_mangle,ip_tables,xt_conntrack,ip6table_filter,ip6_tables, 
+Live 0x0000000000000000
+intel_powerclamp 16384 0 - Live 0x0000000000000000
+coretemp 16384 0 - Live 0x0000000000000000
+kvm_intel 176128 0 - Live 0x0000000000000000
+kvm 491520 1 kvm_intel, Live 0x0000000000000000
+brcmfmac 212992 0 - Live 0x0000000000000000
+brcmutil 16384 1 brcmfmac, Live 0x0000000000000000
+snd_soc_sst_baytrail_pcm 24576 2 - Live 0x0000000000000000
+cfg80211 458752 1 brcmfmac, Live 0x0000000000000000
+fuse 81920 4 - Live 0x0000000000000000
+snd_soc_sst_byt_rt5640_mach 16384 2 - Live 0x0000000000000000
+snd_soc_sst_dsp 24576 1 snd_soc_sst_baytrail_pcm, Live 0x0000000000000000
+snd_soc_sst_ipc 16384 1 snd_soc_sst_baytrail_pcm, Live 0x0000000000000000
+snd_soc_rt5640 110592 2 snd_soc_sst_byt_rt5640_mach, Live 0x0000000000000000
+snd_soc_sst_firmware 24576 1 snd_soc_sst_baytrail_pcm, Live 
+0x0000000000000000
+snd_soc_rl6231 16384 1 snd_soc_rt5640, Live 0x0000000000000000
+irqbypass 16384 1 kvm, Live 0x0000000000000000
+snd_soc_core 163840 3 
+snd_soc_sst_baytrail_pcm,snd_soc_sst_byt_rt5640_mach,snd_soc_rt5640, 
+Live 0x0000000000000000
+joydev 20480 0 - Live 0x0000000000000000
+crc32_pclmul 16384 0 - Live 0x0000000000000000
+crc32c_intel 24576 0 - Live 0x0000000000000000
+aesni_intel 167936 0 - Live 0x0000000000000000
+iTCO_wdt 16384 0 - Live 0x0000000000000000
+iTCO_vendor_support 16384 1 iTCO_wdt, Live 0x0000000000000000
+aes_x86_64 20480 1 aesni_intel, Live 0x0000000000000000
+glue_helper 16384 1 aesni_intel, Live 0x0000000000000000
+asus_nb_wmi 28672 0 - Live 0x0000000000000000
+lrw 16384 1 aesni_intel, Live 0x0000000000000000
+snd_pcm 102400 3 snd_soc_sst_baytrail_pcm,snd_soc_rt5640,snd_soc_core, 
+Live 0x0000000000000000
+asus_wmi 28672 1 asus_nb_wmi, Live 0x0000000000000000
+gf128mul 16384 1 lrw, Live 0x0000000000000000
+gpio_keys 16384 0 - Live 0x0000000000000000
+ablk_helper 16384 1 aesni_intel, Live 0x0000000000000000
+cryptd 20480 2 aesni_intel,ablk_helper, Live 0x0000000000000000
+rfkill 24576 6 cfg80211,asus_wmi, Live 0x0000000000000000
+ak8975 20480 0 - Live 0x0000000000000000
+pcspkr 16384 0 - Live 0x0000000000000000
+snd_timer 32768 1 snd_pcm, Live 0x0000000000000000
+lpc_ich 24576 0 - Live 0x0000000000000000
+inv_mpu6050_i2c 16384 0 - Live 0x0000000000000000
+snd 69632 7 snd_soc_core,snd_pcm,snd_timer, Live 0x0000000000000000
+inv_mpu6050 20480 2 inv_mpu6050_i2c, Live 0x0000000000000000
+thermal 20480 0 - Live 0x0000000000000000
+industrialio_triggered_buffer 16384 2 ak8975,inv_mpu6050, Live 
+0x0000000000000000
+kfifo_buf 16384 1 industrialio_triggered_buffer, Live 0x0000000000000000
+industrialio 57344 4 
+ak8975,inv_mpu6050,industrialio_triggered_buffer,kfifo_buf, Live 
+0x0000000000000000
+wmi 16384 1 asus_wmi, Live 0x0000000000000000
+i2c_mux 16384 1 inv_mpu6050_i2c, Live 0x0000000000000000
+rtc_cmos 20480 0 - Live 0x0000000000000000
+soundcore 16384 1 snd, Live 0x0000000000000000
+ac97_bus 16384 1 snd_soc_core, Live 0x0000000000000000
+battery 16384 0 - Live 0x0000000000000000
+tpm_tis 16384 0 - Live 0x0000000000000000
+soc_button_array 16384 0 - Live 0x0000000000000000
+acpi_pad 16384 0 - Live 0x0000000000000000
+tpm_tis_core 20480 1 tpm_tis, Live 0x0000000000000000
+ac 16384 0 - Live 0x0000000000000000
+snd_soc_sst_acpi 16384 0 - Live 0x0000000000000000
+8250_dw 16384 0 - Live 0x0000000000000000
+tpm 40960 2 tpm_tis,tpm_tis_core, Live 0x0000000000000000
+snd_soc_sst_match 16384 1 snd_soc_sst_acpi, Live 0x0000000000000000
+mmc_block 36864 5 - Live 0x0000000000000000
+i915 1077248 2 - Live 0x0000000000000000
+i2c_algo_bit 16384 1 i915, Live 0x0000000000000000
+drm_kms_helper 131072 1 i915, Live 0x0000000000000000
+syscopyarea 16384 1 drm_kms_helper, Live 0x0000000000000000
+sysfillrect 16384 1 drm_kms_helper, Live 0x0000000000000000
+xhci_pci 16384 0 - Live 0x0000000000000000
+sysimgblt 16384 1 drm_kms_helper, Live 0x0000000000000000
+fb_sys_fops 16384 1 drm_kms_helper, Live 0x0000000000000000
+xhci_hcd 167936 1 xhci_pci, Live 0x0000000000000000
+drm 303104 4 i915,drm_kms_helper, Live 0x0000000000000000
+video 40960 2 asus_wmi,i915, Live 0x0000000000000000
+i2c_hid 20480 0 - Live 0x0000000000000000
+button 16384 1 i915, Live 0x0000000000000000
+sdhci_acpi 16384 0 - Live 0x0000000000000000
+sdhci 40960 1 sdhci_acpi, Live 0x0000000000000000
+mmc_core 122880 4 brcmfmac,mmc_block,sdhci_acpi,sdhci, Live 
+0x0000000000000000
+sg 36864 0 - Live 0x0000000000000000
+dm_multipath 24576 0 - Live 0x0000000000000000
+dm_mod 102400 1 dm_multipath, Live 0x0000000000000000
+efivarfs 16384 1 - Live 0x0000000000000000
+
+[7.4.] Loaded driver and hardware information (/proc/ioports, /proc/iomem)
+---------/proc/ioports-----------------
+0000-0000 : PCI Bus 0000:00
+   0000-0000 : dma1
+   0000-0000 : pic1
+   0000-0000 : timer0
+   0000-0000 : timer1
+   0000-0000 : keyboard
+   0000-0000 : keyboard
+0000-0000 : PCI Bus 0000:00
+   0000-0000 : rtc0
+0000-0000 : PCI Bus 0000:00
+   0000-0000 : dma page reg
+   0000-0000 : pic2
+   0000-0000 : dma2
+   0000-0000 : fpu
+   0000-0000 : pnp 00:02
+   0000-0000 : serial
+   0000-0000 : pnp 00:01
+     0000-0000 : iTCO_wdt.2.auto
+       0000-0000 : iTCO_wdt
+     0000-0000 : iTCO_wdt.2.auto
+       0000-0000 : iTCO_wdt
+   0000-0000 : pnp 00:01
+   0000-0000 : pnp 00:01
+   0000-0000 : pnp 00:01
+0000-0000 : PCI conf1
+0000-0000 : PCI Bus 0000:00
+   0000-0000 : 0000:00:02.0
+   0000-0000 : pnp 00:01
+
+---------/proc/iomem-----------------
+00000000-00000000 : reserved
+00000000-00000000 : System RAM
+00000000-00000000 : ACPI Non-volatile Storage
+00000000-00000000 : System RAM
+00000000-00000000 : reserved
+00000000-00000000 : PCI Bus 0000:00
+00000000-00000000 : PCI Bus 0000:00
+00000000-00000000 : PCI Bus 0000:00
+   00000000-00000000 : System ROM
+00000000-00000000 : System RAM
+   00000000-00000000 : Kernel code
+   00000000-00000000 : Kernel data
+   00000000-00000000 : Kernel bss
+00000000-00000000 : reserved
+   00000000-00000000 : 80860F28:00
+00000000-00000000 : System RAM
+00000000-00000000 : reserved
+00000000-00000000 : ACPI Tables
+00000000-00000000 : ACPI Non-volatile Storage
+00000000-00000000 : reserved
+00000000-00000000 : reserved
+00000000-00000000 : System RAM
+00000000-00000000 : reserved
+00000000-00000000 : System RAM
+00000000-00000000 : reserved
+00000000-00000000 : System RAM
+00000000-00000000 : ACPI Non-volatile Storage
+00000000-00000000 : System RAM
+00000000-00000000 : RAM buffer
+00000000-00000000 : reserved
+   00000000-00000000 : PCI Bus 0000:00
+     00000000-00000000 : Graphics Stolen Memory
+00000000-00000000 : MSFT0101:00
+00000000-00000000 : PCI Bus 0000:00
+   00000000-00000000 : 0000:00:02.0
+   00000000-00000000 : 0000:00:02.0
+   00000000-00000000 : 0000:00:1a.0
+   00000000-00000000 : 0000:00:1a.0
+   00000000-00000000 : 0000:00:14.0
+     00000000-00000000 : xhci-hcd
+00000000-00000000 : 80860F28:00
+00000000-00000000 : INT33BB:00
+   00000000-00000000 : INT33BB:00
+00000000-00000000 : 80860F14:01
+   00000000-00000000 : 80860F14:01
+00000000-00000000 : INTL9C60:01
+   00000000-00000000 : INTL9C60:01
+00000000-00000000 : 80860F41:00
+   00000000-00000000 : 80860F41:00
+00000000-00000000 : 80860F41:01
+   00000000-00000000 : 80860F41:01
+00000000-00000000 : 80860F41:02
+   00000000-00000000 : 80860F41:02
+00000000-00000000 : 80860F41:03
+   00000000-00000000 : 80860F41:03
+00000000-00000000 : 80860F41:04
+   00000000-00000000 : 80860F41:04
+00000000-00000000 : 80860F41:05
+   00000000-00000000 : 80860F41:05
+00000000-00000000 : 80860F41:06
+   00000000-00000000 : 80860F41:06
+00000000-00000000 : INTL9C60:00
+   00000000-00000000 : INTL9C60:00
+00000000-00000000 : 80860F0A:00
+   00000000-00000000 : serial
+00000000-00000000 : 80860F14:00
+   00000000-00000000 : 80860F14:00
+00000000-00000000 : 80860F28:00
+00000000-00000000 : PCI Bus 0000:00
+00000000-00000000 : INT33BD:00
+00000000-00000000 : reserved
+00000000-00000000 : IOAPIC 0
+00000000-00000000 : HPET 0
+   00000000-00000000 : PNP0103:00
+00000000-00000000 : reserved
+00000000-00000000 : iTCO_wdt.2.auto
+   00000000-00000000 : iTCO_wdt
+00000000-00000000 : INT33FC:00
+   00000000-00000000 : INT33FC:00
+00000000-00000000 : INT33FC:01
+   00000000-00000000 : INT33FC:01
+00000000-00000000 : INT33FC:02
+   00000000-00000000 : INT33FC:02
+00000000-00000000 : PCI Bus 0000:00
+00000000-00000000 : Local APIC
+00000000-00000000 : INT0800:00
+   00000000-00000000 : reserved
+
+[7.5.] PCI information ('lspci -vvv' as root)
+
+00:00.0 Host bridge: Intel Corporation Atom Processor Z36xxx/Z37xxx 
+Series SoC Transaction Register (rev 09)
+	Subsystem: ASUSTeK Computer Inc. Device 14ed
+	Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- 
+Stepping- SERR- FastB2B- DisINTx-
+	Status: Cap- 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- 
+<MAbort- >SERR- <PERR- INTx-
+	Latency: 0
+	Kernel driver in use: iosf_mbi_pci
+
+00:02.0 VGA compatible controller: Intel Corporation Atom Processor 
+Z36xxx/Z37xxx Series Graphics & Display (rev 09) (prog-if 00 [VGA 
+controller])
+	Subsystem: ASUSTeK Computer Inc. Device 14ed
+	Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- 
+Stepping- SERR- FastB2B- DisINTx+
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- 
+<MAbort- >SERR- <PERR- INTx-
+	Latency: 0
+	Interrupt: pin A routed to IRQ 308
+	Region 0: Memory at 90000000 (32-bit, non-prefetchable) [size=4M]
+	Region 2: Memory at 80000000 (32-bit, prefetchable) [size=256M]
+	Region 4: I/O ports at 1000 [size=8]
+	[virtual] Expansion ROM at 000c0000 [disabled] [size=128K]
+	Capabilities: [d0] Power Management version 2
+		Flags: PMEClk- DSI+ D1- D2- AuxCurrent=0mA PME(D0-,D1-,D2-,D3hot-,D3cold-)
+		Status: D0 NoSoftRst- PME-Enable- DSel=0 DScale=0 PME-
+	Capabilities: [90] MSI: Enable+ Count=1/1 Maskable- 64bit-
+		Address: fee0200c  Data: 41c3
+	Capabilities: [b0] Vendor Specific Information: Len=07 <?>
+	Kernel driver in use: i915
+	Kernel modules: i915
+
+00:14.0 USB controller: Intel Corporation Atom Processor Z36xxx/Z37xxx, 
+Celeron N2000 Series USB xHCI (rev 09) (prog-if 30 [XHCI])
+	Subsystem: ASUSTeK Computer Inc. Device 14ed
+	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- 
+Stepping- SERR- FastB2B- DisINTx+
+	Status: Cap+ 66MHz- UDF- FastB2B+ ParErr- DEVSEL=medium >TAbort- 
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+	Latency: 0
+	Interrupt: pin A routed to IRQ 306
+	Region 0: Memory at 90800000 (64-bit, non-prefetchable) [size=64K]
+	Capabilities: [70] Power Management version 2
+		Flags: PMEClk- DSI- D1- D2- AuxCurrent=375mA 
+PME(D0-,D1-,D2-,D3hot+,D3cold+)
+		Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
+	Capabilities: [80] MSI: Enable+ Count=1/8 Maskable- 64bit+
+		Address: 00000000fee0c00c  Data: 41a3
+	Kernel driver in use: xhci_hcd
+	Kernel modules: xhci_pci
+
+00:1a.0 Encryption controller: Intel Corporation Atom Processor 
+Z36xxx/Z37xxx Series Trusted Execution Engine (rev 09)
+	Subsystem: ASUSTeK Computer Inc. Device 14ed
+	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- 
+Stepping- SERR+ FastB2B- DisINTx-
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- 
+<MAbort- >SERR- <PERR- INTx-
+	Latency: 0
+	Interrupt: pin A routed to IRQ 255
+	Region 0: Memory at 90700000 (32-bit, non-prefetchable) [size=1M]
+	Region 1: Memory at 90600000 (32-bit, non-prefetchable) [size=1M]
+	Capabilities: [80] Power Management version 3
+		Flags: PMEClk- DSI- D1- D2- AuxCurrent=0mA PME(D0+,D1-,D2-,D3hot+,D3cold-)
+		Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
+	Capabilities: [a0] MSI: Enable- Count=1/1 Maskable- 64bit-
+		Address: 00000000  Data: 0000
+
+00:1f.0 ISA bridge: Intel Corporation Atom Processor Z36xxx/Z37xxx 
+Series Power Control Unit (rev 09)
+	Subsystem: ASUSTeK Computer Inc. Device 14ed
+	Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- 
+Stepping- SERR+ FastB2B- DisINTx-
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=medium >TAbort- 
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+	Latency: 0
+	Capabilities: [e0] Vendor Specific Information: Len=0c <?>
+	Kernel driver in use: lpc_ich
+	Kernel modules: lpc_ich
+
+
+[7.6.] SCSI information (from /proc/scsi/scsi)
+
+No output from cat /proc/proc/scsi
+
+[8.] Other information that might be relevant to the problem
+        Output of git bisect log
+> git bisect start
+> # good: [69973b830859bc6529a7a0468ba0d80ee5117826] Linux 4.9
+> git bisect good 69973b830859bc6529a7a0468ba0d80ee5117826
+> # bad: [7ce7d89f48834cefece7804d38fc5d85382edf77] Linux 4.10-rc1
+> git bisect bad 7ce7d89f48834cefece7804d38fc5d85382edf77
+> # bad: [72cca7baf4fba777b8ab770b902cf2e08941773f] Merge tag 'staging-4.10-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging
+> git bisect bad 72cca7baf4fba777b8ab770b902cf2e08941773f
+> # bad: [b8d2798f32785398fcd1c48ea80c0c6c5ab88537] Merge tag 'clk-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
+> git bisect bad b8d2798f32785398fcd1c48ea80c0c6c5ab88537
+> # good: [ea3349a03519dcd4f32d949cd80ab995623dc5ac] mlx4: xdp: Reserve headroom for receiving packet when XDP prog is active
+> git bisect good ea3349a03519dcd4f32d949cd80ab995623dc5ac
+> # good: [e34bac726d27056081d0250c0e173e4b155aa340] Merge branch 'akpm' (patches from Andrew)
+> git bisect good e34bac726d27056081d0250c0e173e4b155aa340
+> # bad: [96955c9682051e70f06103f0d96e26d2f35f4910] Merge tag 'regmap-v4.10' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap
+> git bisect bad 96955c9682051e70f06103f0d96e26d2f35f4910
+> # good: [2fc9254d0c473e26a668d8efc75dd71146a07852] Merge branch 'silvio' into docs-next
+> git bisect good 2fc9254d0c473e26a668d8efc75dd71146a07852
+> # bad: [c9d26f1aab007a7083f509b4be263bc904ddb0d3] pinctrl: sx150x: rename 'reg_advance' to 'reg_advanced'
+> git bisect bad c9d26f1aab007a7083f509b4be263bc904ddb0d3
+> # good: [fdcf83552ab1051f3a0b71a7d5c2e242f97b4157] pinctrl: st: st_pinconf_dbg_show wrong format string
+> git bisect good fdcf83552ab1051f3a0b71a7d5c2e242f97b4157
+> # good: [d278dae88428d61623590269e5d782264f2ac2f8] Merge tag 'sh-pfc-for-v4.10-tag2' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into devel
+> git bisect good d278dae88428d61623590269e5d782264f2ac2f8
+> # good: [1663682cf090b94bd8531a0b9be812e10477143f] pinctrl: sx150x: use correct registers for reg_sense (sx1502 and sx1508)
+> git bisect good 1663682cf090b94bd8531a0b9be812e10477143f
+> # bad: [342030c7a29a97bb95151e787a6a347cd031b304] devicetree: bindings: pinctrl: Add binding for ti,da850-pupd
+> git bisect bad 342030c7a29a97bb95151e787a6a347cd031b304
+> # good: [4f5ac8cf0a1121144432fd0175fac9ec31f58cd0] pinctrl: sx150x: add support for sx1501, sx1504, sx1505 and sx1507
+> git bisect good 4f5ac8cf0a1121144432fd0175fac9ec31f58cd0
+> # bad: [0ea66f76ba17a4b229caaadd77de694111b21769] Documentation: pinctrl: palmas: Add ti,palmas-powerhold-override property definition
+> git bisect bad 0ea66f76ba17a4b229caaadd77de694111b21769
+
+
