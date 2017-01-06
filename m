@@ -1,37 +1,41 @@
-From: David Lechner <david@lechnology.com>
-Subject: [PATCH] pinctrl: da850-pupd: Add to module device table
-Date: Thu,  5 Jan 2017 17:43:41 -0600
-Message-ID: <1483659821-32296-1-git-send-email-david@lechnology.com>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH] pinctrl: imx7d-pinctrl: Fix a typo
+Date: Thu,  5 Jan 2017 22:55:43 -0200
+Message-ID: <1483664143-26648-1-git-send-email-festevam@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vern.gendns.com ([206.190.152.46]:52185 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753381AbdAFAhZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 5 Jan 2017 19:37:25 -0500
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:33345 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753975AbdAFBED (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Jan 2017 20:04:03 -0500
+Received: by mail-yw0-f194.google.com with SMTP id k6so1044240ywk.0
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Jan 2017 17:04:02 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: David Lechner <david@lechnology.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: robh+dt@kernel.org, linux-gpio@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>
 
-This adds the pintrol-da850-pupd driver to the module device table so that
-udev will automatically bind the driver to the device.
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-Signed-off-by: David Lechner <david@lechnology.com>
+Fix a typo in "Peripherals".
+
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
 ---
- drivers/pinctrl/pinctrl-da850-pupd.c | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-da850-pupd.c b/drivers/pinctrl/pinctrl-da850-pupd.c
-index b36a90a..921729b 100644
---- a/drivers/pinctrl/pinctrl-da850-pupd.c
-+++ b/drivers/pinctrl/pinctrl-da850-pupd.c
-@@ -194,6 +194,7 @@ static const struct of_device_id da850_pupd_of_match[] = {
- 	{ .compatible = "ti,da850-pupd" },
- 	{ }
+diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
+index 457b2c6..8c5d27c 100644
+--- a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
+@@ -19,7 +19,7 @@ iomuxc: iomuxc@30330000 {
+ 	reg = <0x30330000 0x10000>;
  };
-+MODULE_DEVICE_TABLE(of, da850_pupd_of_match);
  
- static struct platform_driver da850_pupd_driver = {
- 	.driver	= {
+-Pheriparials using pads from iomuxc-lpsr support low state retention power
++Peripherals using pads from iomuxc-lpsr support low state retention power
+ state, under LPSR mode GPIO's state of pads are retain.
+ 
+ Please refer to fsl,imx-pinctrl.txt in this directory for common binding part
 -- 
 2.7.4
 
