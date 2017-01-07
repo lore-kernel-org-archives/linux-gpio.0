@@ -1,91 +1,49 @@
-From: David Daney <ddaney-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 1/3] dt-bindings: gpio: Add binding documentation for
- gpio-thunderx
-Date: Fri, 6 Jan 2017 15:26:15 -0800
-Message-ID: <ed639d10-53d2-198b-c61a-1e0362bafc8b@caviumnetworks.com>
-References: <1483491334-167095-1-git-send-email-ddaney.cavm@gmail.com>
- <1483491334-167095-2-git-send-email-ddaney.cavm@gmail.com>
- <20170104143350.7clanzqrxg4pchr6@rob-hp-laptop>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [patch] pinctrl/amd: white space cleanups in amd_gpio_dbg_show()
+Date: Sat, 7 Jan 2017 09:32:15 +0300
+Message-ID: <20170107063214.GE26959@elgon.mountain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170104143350.7clanzqrxg4pchr6@rob-hp-laptop>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:21478 "EHLO
+        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935346AbdAGGc0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Jan 2017 01:32:26 -0500
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Shah@elgon.mountain, Nehal-bakulchandra <Nehal-Bakulchandra.shah@amd.com>, Ken Xue <Ken.Xue@amd.com>
+Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 01/04/2017 06:33 AM, Rob Herring wrote:
-> On Tue, Jan 03, 2017 at 04:55:32PM -0800, David Daney wrote:
->> From: David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
->>
->> Signed-off-by: David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
->> ---
->>  .../devicetree/bindings/gpio/gpio-thunderx.txt     | 33 ++++++++++++++++++++++
->>  1 file changed, 33 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/gpio-thunderx.txt b/Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
->> new file mode 100644
->> index 0000000..ba3cdae
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
->> @@ -0,0 +1,33 @@
->> +Cavium ThunderX/OCTEON-TX GPIO controller bindings
->> +
->> +Required Properties:
->> +- reg: The controller bus address.
->> +- gpio-controller: Marks the device node as a GPIO controller.
->> +- #gpio-cells: Must be 2.
->> +  - First cell is the GPIO pin number relative to the controller.
->> +  - Second cell is standard of_gpio_flags:
->> +     1 - Active Low.
->> +     2 - Single Ended.
->
-> Just reference where these are defined.
+We accidentally deleted two tabs from the first line, but even with that
+fixed the conditions were not really kernel style.  Put the && at the
+end of the line so we can align the condition clauses.  Also add spaces
+around the "+" operator.
 
-Thanks for the review.  This and the two changes below have been 
-addressed in v2 of the patch set.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-David.
-
->
->> +
->> +Optional Properties:
->> +- compatible: "cavium,thunder-8890-gpio", unused as PCI driver binding is used.
->> +- interrupt-controller: Marks the device node as an interrupt controller.
->> +- #interrupt-cells: Must be present and have value of 2 if
->> +                    "interrupt-controller" is present.
->> +  - First cell is the GPIO pin number relative to the controller.
->> +  - Second cell is triggering flags, one of:
->> +    1 - Edge Rising
->> +    2 - Edge Falling
->> +    4 - Level High
->> +    8 - Level Low
->
-> Just reference interrupt-controller/interrupts.txt or the header
-> defining these.
->
->> +
->> +Example:
->> +
->> +gpio_6_0: gpio0@6,0 {
->
-> gpio@6,0
->
->> +	compatible = "cavium,thunder-8890-gpio";
->> +	reg = <0x3000 0 0 0 0>; /*  DEVFN = 0x30 (6:0) */
->> +	gpio-controller;
->> +	#gpio-cells = <2>;
->> +	interrupt-controller;
->> +	#interrupt-cells = <2>;
->> +};
->> --
->> 1.8.3.1
->>
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 7b95c1886f7b..249aa5e83419 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -216,14 +216,14 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
+ 			if (pin_reg & BIT(INTERRUPT_ENABLE_OFF)) {
+ 				interrupt_enable = "interrupt is enabled|";
+ 
+-		if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF))
+-				&& !(pin_reg & BIT(ACTIVE_LEVEL_OFF+1)))
++				if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF)) &&
++				    !(pin_reg & BIT(ACTIVE_LEVEL_OFF + 1)))
+ 					active_level = "Active low|";
+-				else if (pin_reg & BIT(ACTIVE_LEVEL_OFF)
+-				&& !(pin_reg & BIT(ACTIVE_LEVEL_OFF+1)))
++				else if (pin_reg & BIT(ACTIVE_LEVEL_OFF) &&
++					 !(pin_reg & BIT(ACTIVE_LEVEL_OFF + 1)))
+ 					active_level = "Active high|";
+-				else if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF))
+-					&& pin_reg & BIT(ACTIVE_LEVEL_OFF+1))
++				else if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF)) &&
++					 pin_reg & BIT(ACTIVE_LEVEL_OFF + 1))
+ 					active_level = "Active on both|";
+ 				else
+ 					active_level = "Unknow Active level|";
