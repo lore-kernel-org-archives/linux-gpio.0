@@ -1,49 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] pinctrl/amd: white space cleanups in amd_gpio_dbg_show()
-Date: Sat, 7 Jan 2017 09:32:15 +0300
-Message-ID: <20170107063214.GE26959@elgon.mountain>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: PROBLEM: Baytrail tablet touchscreen fails after pinctrl commit
+ [3ae02c14d964499da76b5ef4d8912710902e64f8]
+Date: Sat, 07 Jan 2017 20:14:01 +0200
+Message-ID: <1483812841.26691.7.camel@linux.intel.com>
+References: <6306d18a-d5d3-3e89-5f41-2a45d3de1398@uwyo.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:21478 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935346AbdAGGc0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Jan 2017 01:32:26 -0500
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <6306d18a-d5d3-3e89-5f41-2a45d3de1398@uwyo.edu>
+Sender: linux-input-owner@vger.kernel.org
+To: "Robert R. Howell" <rhowell@uwyo.edu>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Shah@elgon.mountain, Nehal-bakulchandra <Nehal-Bakulchandra.shah@amd.com>, Ken Xue <Ken.Xue@amd.com>
-Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We accidentally deleted two tabs from the first line, but even with that
-fixed the conditions were not really kernel style.  Put the && at the
-end of the line so we can align the condition clauses.  Also add spaces
-around the "+" operator.
+On Fri, 2017-01-06 at 02:30 -0700, Robert R. Howell wrote:
+> [1.]  Baytrail tablet touchscreen fails after pinctrl commit 
+> [3ae02c14d964499da76b5ef4d8912710902e64f8]
+> 
+> [2.]  Beginning with kernel 4.10-rc1 (and continuing with 4.10-rc2)
+> the 
+> touchscreen on two Baytrail devices, an ASUS T100TA and a Toshiba
+> Encore 
+> 8, no longer works.  They did work properly up though at least 4.9.0.
+> As 
+> indicated in the DMESG output appended below, the ATML1000
+> touchscreen 
+> controller fails to reset and initialize properly on boot. The reset 
+> command issued through i2c_hid appears to time out after its 5 second 
+> wait for completion.  (There are similar problems with an i2c 
+> orientation sensor.)  Using git bisect I've found that the problem 
+> begins with commit [3ae02c14d964499da76b5ef4d8912710902e64f8]
+> pinctrl: intel: set default handler to be handle_bad_irq()
+> 
+> I've appended the git bisect log output at the end.  Reverting that 
+> single commit (tested with 4.10-rc2) fixes the problem.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thanks for the report. For me it looks like that commit actually
+discovers other problems we have in the code somewhere.
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 7b95c1886f7b..249aa5e83419 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -216,14 +216,14 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
- 			if (pin_reg & BIT(INTERRUPT_ENABLE_OFF)) {
- 				interrupt_enable = "interrupt is enabled|";
- 
--		if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF))
--				&& !(pin_reg & BIT(ACTIVE_LEVEL_OFF+1)))
-+				if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF)) &&
-+				    !(pin_reg & BIT(ACTIVE_LEVEL_OFF + 1)))
- 					active_level = "Active low|";
--				else if (pin_reg & BIT(ACTIVE_LEVEL_OFF)
--				&& !(pin_reg & BIT(ACTIVE_LEVEL_OFF+1)))
-+				else if (pin_reg & BIT(ACTIVE_LEVEL_OFF) &&
-+					 !(pin_reg & BIT(ACTIVE_LEVEL_OFF + 1)))
- 					active_level = "Active high|";
--				else if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF))
--					&& pin_reg & BIT(ACTIVE_LEVEL_OFF+1))
-+				else if (!(pin_reg & BIT(ACTIVE_LEVEL_OFF)) &&
-+					 pin_reg & BIT(ACTIVE_LEVEL_OFF + 1))
- 					active_level = "Active on both|";
- 				else
- 					active_level = "Unknow Active level|";
+Yeah, I confirm the issue on T100TA. I will investigate this next week.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
