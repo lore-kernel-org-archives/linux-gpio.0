@@ -1,88 +1,285 @@
-From: Clemens Gruber <clemens.gruber@pqgruber.com>
-Subject: Re: pca953x: lockdep warning since 4.10
-Date: Sun, 8 Jan 2017 21:42:22 +0100
-Message-ID: <20170108204222.GA27518@archie.localdomain>
-References: <20170107205410.GA11574@archie.localdomain>
- <CAMpxmJUpMBum0iRZTR-GJW0h8OYVkb9CN6vQFQrX94ktkGyhwA@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 1/3] pinctrl: sunxi: Add pinctrl variants
+Date: Sun,  8 Jan 2017 22:31:15 +0100
+Message-ID: <e664022c7ea8177305c5c62676bd64f949caf7ab.1483911013.git-series.maxime.ripard@free-electrons.com>
+References: <cover.53580d3fc31eec98682d3d81f17be89610d397ee.1483911013.git-series.maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.pqgruber.com ([178.189.19.235]:21976 "EHLO
-        mail.pqgruber.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934677AbdAHUm0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Jan 2017 15:42:26 -0500
-Content-Disposition: inline
-In-Reply-To: <CAMpxmJUpMBum0iRZTR-GJW0h8OYVkb9CN6vQFQrX94ktkGyhwA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <cover.53580d3fc31eec98682d3d81f17be89610d397ee.1483911013.git-series.maxime.ripard@free-electrons.com>
+In-Reply-To: <cover.53580d3fc31eec98682d3d81f17be89610d397ee.1483911013.git-series.maxime.ripard@free-electrons.com>
+References: <cover.53580d3fc31eec98682d3d81f17be89610d397ee.1483911013.git-series.maxime.ripard@free-electrons.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Icenowy Zheng <icenowy@aosc.xyz>
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: linux-gpio <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, LKML <linux-kernel@vger.kernel.org>
 
-On Sun, Jan 08, 2017 at 07:13:31PM +0100, Bartosz Golaszewski wrote:
-> 2017-01-07 21:54 GMT+01:00 Clemens Gruber <clemens.gruber@pqgruber.com>:
-> > Hi,
-> >
-> > I observed the following lockdep warning when booting an i.MX6Q board
-> > with several PCAL9555A gpio expanders connected over I2C. They are
-> > connected to 3 separate busses, there is no i2c-mux in use.
-> >
-> > This warning appears with the latest mainline Linux kernel 4.10-rc2:
-> >
-> > [    0.671336] WARNING: CPU: 1 PID: 1 at kernel/locking/lockdep.c:3124 gpiochip_irq_map+0x44/0xa4
-> > [    0.671347] DEBUG_LOCKS_WARN_ON(!key)
-> > [    0.671359] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.10.0-rc2-00292-g7d08ba50fe02 #634
-> > [    0.671372] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-> > [    0.671403] [<8010ec90>] (unwind_backtrace) from [<8010bcf8>] (show_stack+0x10/0x14)
-> > [    0.671427] [<8010bcf8>] (show_stack) from [<803bb6cc>] (dump_stack+0x98/0xc4)
-> > [    0.671450] [<803bb6cc>] (dump_stack) from [<80128288>] (__warn+0xe0/0xfc)
-> > [    0.671467] [<80128288>] (__warn) from [<801282e8>] (warn_slowpath_fmt+0x44/0x68)
-> > [    0.671484] [<801282e8>] (warn_slowpath_fmt) from [<803ee848>] (gpiochip_irq_map+0x44/0xa4)
-> > [    0.671504] [<803ee848>] (gpiochip_irq_map) from [<80191178>] (irq_domain_associate+0x74/0x1d4)
-> > [    0.671523] [<80191178>] (irq_domain_associate) from [<801918e8>] (irq_create_mapping+0x64/0xc8)
-> > [    0.671541] [<801918e8>] (irq_create_mapping) from [<803ef9d4>] (_gpiochip_irqchip_add+0xdc/0x1a4)
-> > [    0.671562] [<803ef9d4>] (_gpiochip_irqchip_add) from [<803f54c0>] (pca953x_probe+0x45c/0x614)
-> > [    0.671585] [<803f54c0>] (pca953x_probe) from [<804e22bc>] (i2c_device_probe+0x14c/0x1e0)
-> > [    0.671608] [<804e22bc>] (i2c_device_probe) from [<8043e368>] (really_probe+0x1c8/0x260)
-> > [    0.671625] [<8043e368>] (really_probe) from [<8043cf74>] (bus_for_each_drv+0x74/0xb8)
-> > [    0.671642] [<8043cf74>] (bus_for_each_drv) from [<8043e6dc>] (__device_attach+0xc0/0x104)
-> > [    0.671658] [<8043e6dc>] (__device_attach) from [<8043d1c0>] (bus_probe_device+0x88/0x90)
-> > [    0.671675] [<8043d1c0>] (bus_probe_device) from [<8043b80c>] (device_add+0x410/0x598)
-> > [    0.671692] [<8043b80c>] (device_add) from [<804e1364>] (i2c_new_device+0x164/0x1c0)
-> > [    0.671707] [<804e1364>] (i2c_new_device) from [<804e1830>] (i2c_register_adapter+0x280/0x58c)
-> > [    0.671727] [<804e1830>] (i2c_register_adapter) from [<804e6178>] (i2c_imx_probe+0x33c/0x568)
-> > [    0.671747] [<804e6178>] (i2c_imx_probe) from [<8043f848>] (platform_drv_probe+0x34/0x6c)
-> > [    0.671764] [<8043f848>] (platform_drv_probe) from [<8043e368>] (really_probe+0x1c8/0x260)
-> > [    0.671779] [<8043e368>] (really_probe) from [<8043e4cc>] (__driver_attach+0xcc/0xd0)
-> > [    0.671796] [<8043e4cc>] (__driver_attach) from [<8043ca34>] (bus_for_each_dev+0x7c/0xc0)
-> > [    0.671812] [<8043ca34>] (bus_for_each_dev) from [<8043d3d8>] (bus_add_driver+0x108/0x208)
-> > [    0.671830] [<8043d3d8>] (bus_add_driver) from [<8043ee28>] (driver_register+0x78/0xf4)
-> > [    0.671851] [<8043ee28>] (driver_register) from [<80900e20>] (do_one_initcall+0xc4/0x184)
-> > [    0.671868] [<80900e20>] (do_one_initcall) from [<8090103c>] (kernel_init_freeable+0x15c/0x1ec)
-> > [    0.671886] [<8090103c>] (kernel_init_freeable) from [<806e4c8c>] (kernel_init+0x8/0x10c)
-> > [    0.671905] [<806e4c8c>] (kernel_init) from [<801079d0>] (ret_from_fork+0x14/0x24)
-> > [    0.671922] ---[ end trace f719aac79da5d26a ]---
-> >
-> > Is this a false positive?
-> >
-> > Regards,
-> > Clemens
-> 
-> Hi Clemens,
-> 
-> can you revert commit 559b46990e76 ("gpio: pca953x: fix an incorrect
-> lockdep warning") and check if you still get the warnings?
-> 
-> Thanks,
-> Bartosz Golaszewski
+Some SoCs are either supposed to be pin compatible (A10 and A20 for
+example), or are just repackaged versions of the same die (A10s, A13, GR8).
 
-Hi Bartosz,
+In those case, having a full blown pinctrl driver just introduces
+duplication in both data size and maintainance effort.
 
-reverting that commit, which added the lockdep_set_subclass call, had no
-effect.
+Add a variant option to both pins and functions to be able to limit the
+pins and functions described only to a subset of the SoC we support with a
+given driver.
 
-However, I ran git bisect and found out that reverting commit
-d245b3f9bd36 ("gpio: simplify adding threaded interrupts") makes the
-warning disappear.
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 77 ++++++++++++++++++++--------
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h | 26 ++++++++-
+ 2 files changed, 81 insertions(+), 22 deletions(-)
 
-Regards,
-Clemens
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 0eb51e33cb1b..a69f7588e078 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -1041,21 +1041,35 @@ static int sunxi_pinctrl_build_state(struct platform_device *pdev)
+ 	struct sunxi_pinctrl *pctl = platform_get_drvdata(pdev);
+ 	int i;
+ 
+-	pctl->ngroups = pctl->desc->npins;
++	/*
++	 * Allocate groups
++	 *
++	 * We assume that the number of groups is the number of pins
++	 * given in the data array.
+ 
+-	/* Allocate groups */
++	 * This will not always be true, since some pins might not be
++	 * available in the current variant, but fortunately for us,
++	 * this means that the number of pins is the maximum group
++	 * number we will ever see.
++	 */
+ 	pctl->groups = devm_kzalloc(&pdev->dev,
+-				    pctl->ngroups * sizeof(*pctl->groups),
++				    pctl->desc->npins * sizeof(*pctl->groups),
+ 				    GFP_KERNEL);
+ 	if (!pctl->groups)
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < pctl->desc->npins; i++) {
+ 		const struct sunxi_desc_pin *pin = pctl->desc->pins + i;
+-		struct sunxi_pinctrl_group *group = pctl->groups + i;
++		struct sunxi_pinctrl_group *group = pctl->groups + pctl->ngroups;
++
++		if (pin->variant && !(pctl->variant & pin->variant))
++			continue;
+ 
+ 		group->name = pin->pin.name;
+ 		group->pin = pin->pin.number;
++
++		/* And now we count the actual number of pins / groups */
++		pctl->ngroups++;
+ 	}
+ 
+ 	/*
+@@ -1063,17 +1077,23 @@ static int sunxi_pinctrl_build_state(struct platform_device *pdev)
+ 	 * we'll reallocate that later anyway
+ 	 */
+ 	pctl->functions = devm_kzalloc(&pdev->dev,
+-				pctl->desc->npins * sizeof(*pctl->functions),
+-				GFP_KERNEL);
++				       pctl->ngroups * sizeof(*pctl->functions),
++				       GFP_KERNEL);
+ 	if (!pctl->functions)
+ 		return -ENOMEM;
+ 
+ 	/* Count functions and their associated groups */
+ 	for (i = 0; i < pctl->desc->npins; i++) {
+ 		const struct sunxi_desc_pin *pin = pctl->desc->pins + i;
+-		struct sunxi_desc_function *func = pin->functions;
++		struct sunxi_desc_function *func;
++
++		if (pin->variant && !(pctl->variant & pin->variant))
++			continue;
++
++		for (func = pin->functions; func->name; func++) {
++			if (func->variant && !(pctl->variant & func->variant))
++				continue;
+ 
+-		while (func->name) {
+ 			/* Create interrupt mapping while we're at it */
+ 			if (!strcmp(func->name, "irq")) {
+ 				int irqnum = func->irqnum + func->irqbank * IRQ_PER_BANK;
+@@ -1081,22 +1101,32 @@ static int sunxi_pinctrl_build_state(struct platform_device *pdev)
+ 			}
+ 
+ 			sunxi_pinctrl_add_function(pctl, func->name);
+-			func++;
+ 		}
+ 	}
+ 
++	/* And now allocated and fill the array for real */
+ 	pctl->functions = krealloc(pctl->functions,
+-				pctl->nfunctions * sizeof(*pctl->functions),
+-				GFP_KERNEL);
++				   pctl->nfunctions * sizeof(*pctl->functions),
++				   GFP_KERNEL);
++	if (!pctl->functions) {
++		kfree(pctl->functions);
++		return -ENOMEM;
++	}
+ 
+ 	for (i = 0; i < pctl->desc->npins; i++) {
+ 		const struct sunxi_desc_pin *pin = pctl->desc->pins + i;
+-		struct sunxi_desc_function *func = pin->functions;
++		struct sunxi_desc_function *func;
+ 
+-		while (func->name) {
++		if (pin->variant && !(pctl->variant & pin->variant))
++			continue;
++
++		for (func = pin->functions; func->name; func++) {
+ 			struct sunxi_pinctrl_function *func_item;
+ 			const char **func_grp;
+ 
++			if (func->variant && !(pctl->variant & func->variant))
++				continue;
++
+ 			func_item = sunxi_pinctrl_find_function_by_name(pctl,
+ 									func->name);
+ 			if (!func_item)
+@@ -1116,7 +1146,6 @@ static int sunxi_pinctrl_build_state(struct platform_device *pdev)
+ 				func_grp++;
+ 
+ 			*func_grp = pin->pin.name;
+-			func++;
+ 		}
+ 	}
+ 
+@@ -1208,15 +1237,16 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
+ 	return 0;
+ }
+ 
+-int sunxi_pinctrl_init(struct platform_device *pdev,
+-		       const struct sunxi_pinctrl_desc *desc)
++int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
++				    const struct sunxi_pinctrl_desc *desc,
++				    unsigned long variant)
+ {
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct pinctrl_desc *pctrl_desc;
+ 	struct pinctrl_pin_desc *pins;
+ 	struct sunxi_pinctrl *pctl;
+ 	struct resource *res;
+-	int i, ret, last_pin;
++	int i, ret, last_pin, pin_idx;
+ 	struct clk *clk;
+ 
+ 	pctl = devm_kzalloc(&pdev->dev, sizeof(*pctl), GFP_KERNEL);
+@@ -1233,6 +1263,7 @@ int sunxi_pinctrl_init(struct platform_device *pdev,
+ 
+ 	pctl->dev = &pdev->dev;
+ 	pctl->desc = desc;
++	pctl->variant = variant;
+ 
+ 	pctl->irq_array = devm_kcalloc(&pdev->dev,
+ 				       IRQ_PER_BANK * pctl->desc->irq_banks,
+@@ -1253,8 +1284,14 @@ int sunxi_pinctrl_init(struct platform_device *pdev,
+ 	if (!pins)
+ 		return -ENOMEM;
+ 
+-	for (i = 0; i < pctl->desc->npins; i++)
+-		pins[i] = pctl->desc->pins[i].pin;
++	for (i = 0, pin_idx = 0; i < pctl->desc->npins; i++) {
++		const struct sunxi_desc_pin *pin = pctl->desc->pins + i;
++
++		if (pin->variant && !(pctl->variant & pin->variant))
++			continue;
++
++		pins[pin_idx++] = pin->pin;
++	}
+ 
+ 	pctrl_desc = devm_kzalloc(&pdev->dev,
+ 				  sizeof(*pctrl_desc),
+@@ -1265,7 +1302,7 @@ int sunxi_pinctrl_init(struct platform_device *pdev,
+ 	pctrl_desc->name = dev_name(&pdev->dev);
+ 	pctrl_desc->owner = THIS_MODULE;
+ 	pctrl_desc->pins = pins;
+-	pctrl_desc->npins = pctl->desc->npins;
++	pctrl_desc->npins = pctl->ngroups;
+ 	pctrl_desc->confops = &sunxi_pconf_ops;
+ 	pctrl_desc->pctlops = &sunxi_pctrl_ops;
+ 	pctrl_desc->pmxops =  &sunxi_pmx_ops;
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+index f78a44a03189..539a3dd2d868 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+@@ -83,6 +83,7 @@
+ #define SUN4I_FUNC_IRQ		6
+ 
+ struct sunxi_desc_function {
++	unsigned long	variant;
+ 	const char	*name;
+ 	u8		muxval;
+ 	u8		irqbank;
+@@ -91,6 +92,7 @@ struct sunxi_desc_function {
+ 
+ struct sunxi_desc_pin {
+ 	struct pinctrl_pin_desc		pin;
++	unsigned long			variant;
+ 	struct sunxi_desc_function	*functions;
+ };
+ 
+@@ -128,6 +130,7 @@ struct sunxi_pinctrl {
+ 	unsigned			*irq_array;
+ 	spinlock_t			lock;
+ 	struct pinctrl_dev		*pctl_dev;
++	unsigned long			variant;
+ };
+ 
+ #define SUNXI_PIN(_pin, ...)					\
+@@ -137,12 +140,27 @@ struct sunxi_pinctrl {
+ 			__VA_ARGS__, { } },			\
+ 	}
+ 
++#define SUNXI_PIN_VARIANT(_pin, _variant, ...)			\
++	{							\
++		.pin = _pin,					\
++		.variant = _variant,				\
++		.functions = (struct sunxi_desc_function[]){	\
++			__VA_ARGS__, { } },			\
++	}
++
+ #define SUNXI_FUNCTION(_val, _name)				\
+ 	{							\
+ 		.name = _name,					\
+ 		.muxval = _val,					\
+ 	}
+ 
++#define SUNXI_FUNCTION_VARIANT(_val, _name, _variant)		\
++	{							\
++		.name = _name,					\
++		.muxval = _val,					\
++		.variant = _variant,				\
++	}
++
+ #define SUNXI_FUNCTION_IRQ(_val, _irq)				\
+ 	{							\
+ 		.name = "irq",					\
+@@ -290,7 +308,11 @@ static inline u32 sunxi_irq_status_offset(u16 irq)
+ 	return irq_num * IRQ_STATUS_IRQ_BITS;
+ }
+ 
+-int sunxi_pinctrl_init(struct platform_device *pdev,
+-		       const struct sunxi_pinctrl_desc *desc);
++int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
++				    const struct sunxi_pinctrl_desc *desc,
++				    unsigned long variant);
++
++#define sunxi_pinctrl_init(_dev, _desc) \
++	sunxi_pinctrl_init_with_variant(_dev, _desc, 0)
+ 
+ #endif /* __PINCTRL_SUNXI_H */
+-- 
+git-series 0.8.11
