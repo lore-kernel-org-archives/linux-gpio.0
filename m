@@ -1,40 +1,45 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/6] drivers: pinctrl: add driver for
- Allwinner H5 SoC
-Date: Mon, 9 Jan 2017 15:47:35 +0100
-Message-ID: <CACRpkdbZkJcPDquhspVcp6R01h-oJ13_YiShiQC7i=d2bZBfSA@mail.gmail.com>
-References: <20161226162518.5367-1-icenowy@aosc.xyz> <20161226162518.5367-2-icenowy@aosc.xyz>
- <20170105220823.5ai4yvcblmzmaey2@lukather>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/1 RFC] gpio: Pass GPIO label down to gpiod_request when
+ using get_gpiod_from_child
+Date: Mon, 9 Jan 2017 15:53:06 +0100
+Message-ID: <CACRpkdb1gyXH0+O6P5scVD5_go07fbc3ydp61rG=7CypdXvJ2A@mail.gmail.com>
+References: <20161215085321.20337-1-alexander.stein@systec-electronic.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBCGFZ3BQKGQE7ZGV55I-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170105220823.5ai4yvcblmzmaey2@lukather>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <20161215085321.20337-1-alexander.stein@systec-electronic.com>
+Sender: linux-leds-owner@vger.kernel.org
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Pavel Machek <pavel@ucw.cz>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jan 5, 2017 at 11:08 PM, Maxime Ripard
-<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> On Tue, Dec 27, 2016 at 12:25:13AM +0800, Icenowy Zheng wrote:
+On Thu, Dec 15, 2016 at 9:53 AM, Alexander Stein
+<alexander.stein@systec-electronic.com> wrote:
 
->> +builtin_platform_driver(sun50i_h5_pinctrl_driver);
+> Currently all users of fwnode_get_named_gpiod() have no way to specify a
+> label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
+> With this change a proper label is used.
+> Also adjust all users so they can pass a label, properly retrieved from
+> device tree properties.
 >
-> This also looks very much like the H3. I'll post a patchset during the
-> weekend to avoid duplicating those drivers. This was initially done
-> for the sun5i, but it very much applies here.
+> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> ---
+> This patchset addresses the problem described in
+> https://www.spinics.net/lists/linux-leds/msg07233.html
+>
+> I can only verify leds-gpio usage, but changes to gpio_keys_polled and
+> amba-clcd-nomadik seem pretty straight forward.
 
-I have applied Maxime's patch set from today.
+I I like this, I have been annoyed by this too. Thank you for
+looking into this.
 
-Icenowy, please investigate the direction taken by Maxime
-here for future revisions if needed.
+> If this is the right thing to do, I need to know who I shall CC for
+> patch approval.
+
+I can simply test and merge the CLCD patch myself.
+
+Ideally I'd like Dmitry Torokhov to ACK the input patch
+and Jacek to ACK the LEDs patch and I will merge it.
 
 Yours,
 Linus Walleij
