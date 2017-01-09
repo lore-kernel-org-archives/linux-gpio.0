@@ -1,121 +1,72 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: Re: [PATCH v8 2/3] serial: exar: split out the exar code from 8250_pci
-Date: Mon, 09 Jan 2017 22:25:27 +0000
-Message-ID: <58740DD7.9070009@gmail.com>
-References: <1483914727-6076-1-git-send-email-sudipm.mukherjee@gmail.com> <1483914727-6076-2-git-send-email-sudipm.mukherjee@gmail.com> <CAHp75VficfU+BTgW_Mm_UTC8oDKJA0yxrUz_PBY=w4jT2LFbMA@mail.gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 0/3] Renesas RZ PFC and GPIO driver
+Date: Tue, 10 Jan 2017 00:49:30 +0200
+Message-ID: <1923903.Gi7z59W6W3@avalon>
+References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org> <11976735.hueksWqZOA@avalon> <SG2PR06MB1165EE67EA2969815758A3038A640@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36550 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750897AbdAIWZa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jan 2017 17:25:30 -0500
-In-Reply-To: <CAHp75VficfU+BTgW_Mm_UTC8oDKJA0yxrUz_PBY=w4jT2LFbMA@mail.gmail.com>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37647 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753301AbdAIWtV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jan 2017 17:49:21 -0500
+In-Reply-To: <SG2PR06MB1165EE67EA2969815758A3038A640@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jiri Slaby <jslaby@suse.com>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, "magnus.damm@gmail.com" <magnus.damm@gmail.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Monday 09 January 2017 12:14 AM, Andy Shevchenko wrote:
-> On Mon, Jan 9, 2017 at 12:32 AM, Sudip Mukherjee
-> <sudipm.mukherjee@gmail.com> wrote:
->> From: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
->>
->> Add the serial driver for the Exar chips. And also register the
->> platform device for the gpio provided by the Exar chips.
->
-> GPIO ?
->
-<snip>
->
->> +       /*
->> +        * Setup Multipurpose Input/Output pins.
->> +        */
->> +       if (idx == 0)
->> +               setup_gpio(p);
->
-> So, my question is can we do this in GPIO driver?
+Hi Chris,
 
-No, I am using the pci card made by RTD, and they use the GPIO pins to
-configure the hardware. And its based on the default values that is set
-here.
+On Monday 09 Jan 2017 21:08:49 Chris Brandt wrote:
+> On Monday, January 09, 2017, Laurent Pinchart wrote:
+> > Pin control on the Renesas RZ chips is performed per pin instead of per
+> > function (but unfortunately with the various bits of configuration split
+> > across a bunch of registers, otherwise we could have used pinctrl-single).
+> 
+> I will say this...'spoilier alert'...you're not going to see this particular
+> PFC HW much anymore in the RZA series.
+> 
+> It will still be a 'per pin control' like the existing RZ/A1, but the bits
+> will not be spread out over a bunch of registers. So something like
+> pinctrl-single should work.
 
->
-> Can we register it beforehand if needed?
+Both the existing RZ/A model and the pinctrl model are in my opinion 
+improvements over the RZ/G and R-Car models. I don't care much about whether 
+pinctrl-single can be used, but we really need hardware architectures that 
+don't require those huge data tables.
 
+> No idea about the future of RZG series.
 
-The GPIO are only present in these chips and is only needed if this
-particular setup executes. I am not sure what you mean by 'beforehand'.
+I'll cross my fingers.
 
->
->> +
-<snip>
->> +
->> +static int
->> +exar_pci_probe(struct pci_dev *pcidev, const struct pci_device_id *ent)
->> +{
->
->> +       int rc;
->
-> Make it last in the definition block. I think I mentioned this earlier.
+> > This gives us an opportunity to move away from the sh-pfc awful (but more
+> > or less needed for the R-Car family) architecture and implement something
+> > much, much cleaner without all those obscure data tables and macros, with
+> > per-pin configuration. Shouldn't we rejoice and embrace that opportunity ?
+> 
+> Honestly, that driver structure confuses the heck out of me. I guess you
+> have to understand the restrictions of the R-Car PFC HW to really
+> appreciate it.
 
-I made it alphabetical based on the first character. I thought thats
-what you meant.
+No, you can't appreciate it, no matter what :-)
 
->
->> +       struct exar8250_board *board;
->> +       struct uart_8250_port uart;
->> +       struct exar8250 *priv;
->> +       unsigned int nr_ports, i, bar = 0, maxnr;
->> +
->> +       board = (struct exar8250_board *)ent->driver_data;
->> +
->> +       rc = pcim_enable_device(pcidev);
->> +       if (rc)
->> +               return rc;
->> +
->
->> +       if (!pcim_iomap(pcidev, bar, 0) && !pcim_iomap_table(pcidev))
->> +               return -ENOMEM;
->
-> You ignored my comment, we may never finish the review in such case :-(
->
-> Asking again: do you really need this part? I know why I did so and
-> put it to 8250_pci, but let's focus on your code.
+> Of course I like the idea of a simple PFC for Renesas SoCs, of course the
+> existing RZ/A1 would be (hopefully) the worst case scenario.
+> 
+> I assume to make a one-size-fits-all per-pin driver, instead of filling out
+> structures and enums, you'd have to have callback functions that basically
+> you pass "set pin X to function #3"...which basically brings you back to
+> what the core of the pinctrl system does now any (if I understand it
+> correctly).
 
-I checked your review of v7 and you have not mentioned about this one.
-:(
+It's more complex than that. Both the pin-based and group-based models have 
+their pros and cons, and the pinctrl API is some kind of mix that allows both 
+options.
 
-It was kept from 8250_pci.c. will remove.
+-- 
+Regards,
 
->
->> +
->> +       maxnr = (pci_resource_len(pcidev, bar) - board->first_offset) >>
->> +               (board->reg_shift + 3);
-<snip>
->> +static const struct exar8250_board pbn_exar_XR17C158 = {
->> +       .num_ports      = 8,
->> +       .base_baud      = 921600,
->> +       .uart_offset    = 0x200,
->> +       .setup          = pci_xr17c154_setup,
->> +};
->> +
->
-> Port number is easily to get from device ID, I already said this.
-> nr = subvendor == PCI_VENDOR_ID_IBM ? 1 : device & 0x0f;
->
-> Yes, it means ->setup() hook will allocate memory for lines (declare
-> them as int *line and use devm_kcalloc).
+Laurent Pinchart
 
-Sorry, I don't understand here. why in ->setup() hook?
-I can just change in the probe() as:
-nr_ports = board->num_ports ? board->num_ports : device & 0x0f;
-and then devm_kzalloc() will work the same way in probe.
-
-But is it worth to reduce few lines at the cost of readability? The way
-the boards are defined now, anyone can see and understand which device
-is having what configuration.
-
-regards
-sudip
