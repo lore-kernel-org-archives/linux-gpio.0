@@ -1,73 +1,96 @@
-From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 1/2] drivers: pinctrl: add driver for
- Allwinner H5 SoC
-Date: Mon, 9 Jan 2017 00:16:00 +0000
-Message-ID: <38fe3491-457a-f0c5-54fb-9defdcd45045@arm.com>
-References: <20161223125001.1176-1-icenowy@aosc.xyz>
- <1280f095-ab03-93f8-14d2-99d13ba1ce55@arm.com>
- <CACRpkdYQhfid3VRcaj=7as_+Zg=pX3Svp9FJ_W_Ft8nVuoZqKQ@mail.gmail.com>
- <20170105224210.wfinfucbpkkd44om@lukather>
-Reply-To: andre.przywara-5wv7dgnIgG8@public.gmane.org
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v8 1/3] gpio: exar: add gpio for exar cards
+Date: Mon, 9 Jan 2017 02:30:28 +0200
+Message-ID: <CAHp75VegVQBFfdRHykvLTSc5LfoKxQ40c2O84efxoQy3xDXCAA@mail.gmail.com>
+References: <1483914727-6076-1-git-send-email-sudipm.mukherjee@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBDNZNK75ZIKRBS5MZPBQKGQEYUQSE2Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170105224210.wfinfucbpkkd44om@lukather>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: ext Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:34629 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757192AbdAIAaa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Jan 2017 19:30:30 -0500
+In-Reply-To: <1483914727-6076-1-git-send-email-sudipm.mukherjee@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
 
-On 05/01/17 22:42, Maxime Ripard wrote:
-> On Fri, Dec 30, 2016 at 01:55:44PM +0100, Linus Walleij wrote:
->> On Mon, Dec 26, 2016 at 3:33 PM, Andr=C3=A9 Przywara <andre.przywara@arm=
-.com> wrote:
->>
->>> So while this patch technically looks correct, I was wondering if we
->>> should really explore the possibility of making the whole of sunxi
->>> pinctrl DT controlled.
->>> I brought this up a while ago, but people weren't overly enthusiastic
->>> about it, though their argument weren't really convincing to me[1].
->>>
->>> So:
->>> As this "driver" here is basically a table linking GPIO bit settings
->>> (the actual mux value) to names and every pin we care about needs to be
->>> enumerated in the DT anyway, why not just add something like:
->>> allwinner,pinmux =3D <4>;
->>> to each pin(group) in the DT and get rid of this "driver" file here
->>> entirely?
->>
->> I'm open to that if you can use pinctrl-single which is in the kernel
->> for this purpose only, and is used with both OMAPs and HiSilicon.
->=20
-> I'm not open to that, and I'm getting tired of discussing it over and
-> over again. Andre, if you want to be convinced again, please read the
-> last discussion we had on this topic.
+On Mon, Jan 9, 2017 at 12:32 AM, Sudip Mukherjee
+<sudipm.mukherjee@gmail.com> wrote:
+> From: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+>
+> Exar XR17V352/354/358 chips have 16 multi-purpose inputs/outputs which
+> can be controlled using gpio interface.
+>
+> Add the gpio specific code.W
 
-As I said: It didn't convince me back then. And frankly we didn't really
-discuss it back then, I just refrained from entering a discussion
-against _two_ maintainers at this time, since my capacity on this kind
-of email threads is really very limited - especially for something that
-is a hobby to me.
+Few comments since it will be v9.
 
-It isn't the highest priority on my list, but I am still planning on
-sketching something, so that we can discuss about actual code.
-As it seems like your new patches bring some relief to the immediate
-copy&paste pain (though the actual DT aspect still remains), I will shut
-up - for now ;-)
+> +#define DRIVER_NAME "gpio_exar"
+> +
+> +static LIST_HEAD(exar_list);
+> +static DEFINE_MUTEX(exar_list_mtx);
 
-Cheers,
-Andre.
+> +DEFINE_IDA(ida_index);
 
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+Should be static?
+
+> +
+> +struct exar_gpio_chip {
+> +       struct gpio_chip gpio_chip;
+> +       struct pci_dev *pcidev;
+> +       struct mutex lock;
+> +       struct list_head list;
+> +       int index;
+> +       void __iomem *regs;
+> +       char name[16];
+
+Since you are using %d + 7 characters 16 wouldn't be enough.
+
+> +};
+
+
+> +static int exar_get_direction(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       int val;
+> +
+> +       if (offset < 8)
+> +               val = exar_get(chip, EXAR_OFFSET_MPIOSEL_LO) >> offset;
+> +       else
+> +               val = exar_get(chip, EXAR_OFFSET_MPIOSEL_HI) >>
+> +                              (offset - 8);
+
+By the way, does it support up to 16 pins only?
+
+You might consider something like this instead
+
+addr = offset / 8 ? HI : LO;
+
+op(addr) >> (offset % 8);
+
+Similar for the rest of functions.
+
+> +static int gpio_exar_probe(struct platform_device *pdev)
+> +{
+> +       struct pci_dev *dev = platform_get_drvdata(pdev);
+> +       struct exar_gpio_chip *exar_gpio;
+> +       void __iomem *p;
+
+> +       int index = 1;
+
+Redundant assignment
+
+> +       int ret;
+> +
+> +       if (dev->vendor != PCI_VENDOR_ID_EXAR)
+> +               return -ENODEV;
+> +
+> +       p = pci_ioremap_bar(dev, 0);
+
+I would make it clear by using pcim_iomap(dev, 0, 0);
+And put a comment that explains why we are using managed function here.
+
+-- 
+With Best Regards,
+Andy Shevchenko
