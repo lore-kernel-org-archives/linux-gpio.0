@@ -1,53 +1,66 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for v4.10
-Date: Mon, 9 Jan 2017 14:33:08 +0100
-Message-ID: <CACRpkdYZ4JjH2K25izeX-3H2rzTK3x3QS9NxDyyeHBOYADX9CQ@mail.gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 3/3] gpiolib: Convert fwnode_get_named_gpiod() to
+ configure GPIO
+Date: Mon, 09 Jan 2017 15:49:32 +0200
+Message-ID: <1483969772.26691.33.camel@linux.intel.com>
+References: <20170103170119.35950-1-andriy.shevchenko@linux.intel.com>
+         <20170103170119.35950-3-andriy.shevchenko@linux.intel.com>
+         <20170104125209.GT3353@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:19165 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S942234AbdAINw4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 9 Jan 2017 08:52:56 -0500
+In-Reply-To: <20170104125209.GT3353@lahna.fi.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Wed, 2017-01-04 at 14:52 +0200, Mika Westerberg wrote:
+> On Tue, Jan 03, 2017 at 07:01:19PM +0200, Andy Shevchenko wrote:
+> > Make fwnode_get_named_gpiod() consistent with the rest of
+> > gpiod_get() like API,
+> > i.e. configure GPIO pin immediately after request.
+> > 
+> > Besides obvious clean up it will help to configure pins based on
+> > firmware
+> > provided resources.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> >  drivers/gpio/devres.c                     |  9 +++++++--
+> >  drivers/gpio/gpiolib.c                    | 20 ++++++++++++++++----
+> >  drivers/input/keyboard/gpio_keys.c        |  9 +--------
+> >  drivers/input/keyboard/gpio_keys_polled.c | 11 ++---------
+> >  drivers/leds/leds-gpio.c                  |  2 +-
+> >  drivers/video/fbdev/amba-clcd-nomadik.c   | 15 +++++----------
+> >  include/linux/gpio/consumer.h             | 19 +++++++++++++------
+> >  7 files changed, 45 insertions(+), 40 deletions(-)
+> > 
+> > diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
+> > index 54da61112752..3da9c39fed04 100644
+> > --- a/drivers/gpio/devres.c
+> > +++ b/drivers/gpio/devres.c
+> > @@ -129,13 +129,18 @@ EXPORT_SYMBOL(devm_gpiod_get_index);
+> >   * @dev:	GPIO consumer
+> >   * @con_id:	function within the GPIO consumer
+> >   * @child:	firmware node (child of @dev)
+> > + * @flags:	GPIO initialization flags
+> 
+> Please call this 'dflags' as it is called elsewhere as well.
 
-two small fixes is all I collected for GPIO so far.
+Elsewhere in this file it's called 'flags'. I would stick with that
+(btw, my internal first version used to have 'dflags').
 
-Please pull them in!
+> 
+> Otherwise looks reasonable to me.
+> 
+> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Yours,
-Linus Walleij
-
-The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
-
-  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.10-2
-
-for you to fetch changes up to 5018ada69a04c8ac21d74bd682fceb8e42dc0f96:
-
-  gpio: Move freeing of GPIO hogs before numbing of the device
-(2016-12-30 09:11:21 +0100)
-
-----------------------------------------------------------------
-GPIO fixes for the v4.10 series:
-
-- Move free:ing of GPIO hogs to after free:ing the device
-  to get rid of a warning state.
-
-- A small comile warning fix.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      gpio: mxs: remove __init annotation
-
-Geert Uytterhoeven (1):
-      gpio: Move freeing of GPIO hogs before numbing of the device
-
- drivers/gpio/gpio-mxs.c | 2 +-
- drivers/gpio/gpiolib.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
