@@ -1,57 +1,44 @@
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH 0/3] pinctrl: sh-pfc: r7s72100: Add IO mode selection
-Date: Mon,  9 Jan 2017 20:32:23 +0100
-Message-ID: <1483990346-26998-1-git-send-email-jacopo+renesas@jmondi.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:36808 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1763361AbdAITch (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jan 2017 14:32:37 -0500
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH 1/3] pinctrl: sh-pfc: r7s72100: Enable DIO mode
+Date: Mon,  9 Jan 2017 20:32:24 +0100
+Message-ID: <1483990346-26998-2-git-send-email-jacopo+renesas@jmondi.org>
+References: <1483990346-26998-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1483990346-26998-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, chris.brandt@renesas.com, linus.walleij@linaro.org
 Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-Hello,
-   sending this RFC series out as a follow up of
-"[PATCH 0/3] Renesas RZ PFC and GPIO driver" patch series.
+When selecting alternative function for one pin, set the PIPCn.PIPCnm
+bit to 1 to enable direct IO mode control (the alternative function
+decides the pin direction) and disable input buffer and bidirection
+control functionalities (PIBCn.PIBCnm = 0 and PBDCn.PDBCnm = 0) intially
+enabled when configuring the pin in PORT mode
 
-This RFC patches extend the RZ series PFC driver to support selection of pins
-IO mode.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ drivers/pinctrl/sh-pfc/pfc-r7s72100.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-[1/3] extends the existing register settings to set all configured peripherals
-groups in direct I/O mode, with input buffer and bi-direction control disabled.
-As I have not been able to extensively test the functionalities enabled by
-the original driver version, I cannot tell if this is a proper bug-fix, but
-according to HW manual, there are few use cases for non-direct IO mode and none
-of them is currently part of PFC enabled groups.
-
-As reported by [2/3] commit message, the original driver did not allowed
-selection of IO mode though PIPC, PIBC, PBDC and PM registers.
-While this has not apparently been an issue for the peripherals enabled by the
-above mentioned patch series, the ability to select a different IO mode is
-required for some peripherals, according to v3.14 Renesas' BSP
-(https://github.com/renesas-rz/linux-3.14/)
-Unfortunately, extending the existing PFC driver to allow this, results in a
-un-desired multiplication of possible function selector marks.
-
-The last patch enables LVDS, which is a use case for selection of a non-direct
-I/O mode.
-Chris, as you have plans to work on LVDS enablement for Renesas' BSP, if you
-have any time to test this settings and provide some feedback I would really
-appreciate that :)
-
-Thanks
-   j
-
-Jacopo Mondi (3):
-  pinctrl: sh-pfc: r7s72100: Enable DIO mode
-  pinctrl: sh-pfc: r7s72100: IO mode selection
-  pinctrl: sh-pfc: r7s72100: Add LVDS pin group
-
- drivers/pinctrl/sh-pfc/pfc-r7s72100.c | 137 +++++++++++++++++++++++++++++-----
- 1 file changed, 118 insertions(+), 19 deletions(-)
-
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r7s72100.c b/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
+index 72e1dff..8c0ae13 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
+@@ -58,9 +58,12 @@ enum {
+ 	PINMUX_DATA(name##_DATA, name##_PMC_0,		\
+ 		    name##_PIBC_1, name##_PBDC_1)
+ 
+-#define _P_FN(n, fn, pfcae, pfce, pfc)					\
++#define _P_FN(n, fn, pfcae, pfce, pfc)			\
+ 	PINMUX_DATA(n##_MARK_FN##fn, n##_PMC_1,		\
+-		    n##_PFCAE_##pfcae, n##_PFCE_##pfce, n##_PFC_##pfc)
++		    n##_PFCAE_##pfcae,			\
++		    n##_PFCE_##pfce,			\
++		    n##_PFC_##pfc,			\
++		    n##_PIPC_1, n##_PIBC_0, n##_PBDC_0)
+ 
+ #define _P_MARK_FN1(bank, pin, name, sfx, cfg) _P_FN(name, 1, 0, 0, 0)
+ #define _P_MARK_FN2(bank, pin, name, sfx, cfg) _P_FN(name, 2, 0, 0, 1)
 -- 
 2.7.4
-
