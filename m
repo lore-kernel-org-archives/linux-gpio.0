@@ -1,36 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] pinctrl: sunxi: Remove old sun5i pinctrl drivers
-Date: Mon, 9 Jan 2017 15:45:26 +0100
-Message-ID: <CACRpkdbqFstBpYB0TsYQ-JinBaxjbEGOiK40t-KJ0WB7ynXZ2w@mail.gmail.com>
-References: <cover.53580d3fc31eec98682d3d81f17be89610d397ee.1483911013.git-series.maxime.ripard@free-electrons.com>
- <c0bbab85a23bf441669f80634d1534536a4b7666.1483911013.git-series.maxime.ripard@free-electrons.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/6] drivers: pinctrl: add driver for
+ Allwinner H5 SoC
+Date: Mon, 9 Jan 2017 15:47:35 +0100
+Message-ID: <CACRpkdbZkJcPDquhspVcp6R01h-oJ13_YiShiQC7i=d2bZBfSA@mail.gmail.com>
+References: <20161226162518.5367-1-icenowy@aosc.xyz> <20161226162518.5367-2-icenowy@aosc.xyz>
+ <20170105220823.5ai4yvcblmzmaey2@lukather>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <c0bbab85a23bf441669f80634d1534536a4b7666.1483911013.git-series.maxime.ripard@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Icenowy Zheng <icenowy@aosc.xyz>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBCGFZ3BQKGQE7ZGV55I-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20170105220823.5ai4yvcblmzmaey2@lukather>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Jan 8, 2017 at 10:31 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
+On Thu, Jan 5, 2017 at 11:08 PM, Maxime Ripard
+<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+> On Tue, Dec 27, 2016 at 12:25:13AM +0800, Icenowy Zheng wrote:
 
-> Now that we have a common pinctrl driver for all the sun5i SoCs, we can
-> remove the old, separate drivers.
+>> +builtin_platform_driver(sun50i_h5_pinctrl_driver);
 >
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> This also looks very much like the H3. I'll post a patchset during the
+> weekend to avoid duplicating those drivers. This was initially done
+> for the sun5i, but it very much applies here.
 
-Patch applied.
+I have applied Maxime's patch set from today.
+
+Icenowy, please investigate the direction taken by Maxime
+here for future revisions if needed.
 
 Yours,
 Linus Walleij
