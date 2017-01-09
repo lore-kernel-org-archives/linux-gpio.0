@@ -1,55 +1,64 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH 0/3] Renesas RZ PFC and GPIO driver
-Date: Mon, 9 Jan 2017 21:08:49 +0000
-Message-ID: <SG2PR06MB1165EE67EA2969815758A3038A640@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
- <11976735.hueksWqZOA@avalon>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: Re: [PATCH v7 1/3] gpio: exar: add gpio for exar cards
+Date: Mon, 09 Jan 2017 21:18:20 +0000
+Message-ID: <5873FE1C.8060407@gmail.com>
+References: <1483833469-11422-1-git-send-email-sudipm.mukherjee@gmail.com> <1483833469-11422-2-git-send-email-sudipm.mukherjee@gmail.com> <CACRpkdaBJteocVSUazhz0zYtXeBKSVekEkxGfpDNAoqN04A77Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <11976735.hueksWqZOA@avalon>
-Content-Language: en-US
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: "magnus.damm@gmail.com" <magnus.damm@gmail.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34012 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754743AbdAIVS2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jan 2017 16:18:28 -0500
+In-Reply-To: <CACRpkdaBJteocVSUazhz0zYtXeBKSVekEkxGfpDNAoqN04A77Q@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Monday, January 09, 2017, Laurent Pinchart wrote:
-> Pin control on the Renesas RZ chips is performed per pin instead of per
-> function (but unfortunately with the various bits of configuration split
-> across a bunch of registers, otherwise we could have used pinctrl-single)=
-.
+On Monday 09 January 2017 10:35 AM, Linus Walleij wrote:
+> On Sun, Jan 8, 2017 at 12:57 AM, Sudip Mukherjee
+> <sudipm.mukherjee@gmail.com> wrote:
+>
+>> Exar XR17V352/354/358 chips have 16 multi-purpose inputs/outputs which
+>> can be controlled using gpio interface.
+>>
+>> Add the gpio specific code.
+>>
+>> Signed-off-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+>
+> Will I be able to merge this independently to the GPIO trees
+> once we are done with review? (Looks like so...)
 
-I will say this...'spoilier alert'...you're not going to see this particula=
-r
-PFC HW much anymore in the RZA series.
+Yes, there should not be any dependency on the tty.
 
-It will still be a 'per pin control' like the existing RZ/A1, but the bits
-will not be spread out over a bunch of registers. So something like
-pinctrl-single should work.
+>
+>> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>
+> Is this really useful?
 
-No idea about the future of RZG series.
+no, initially I used pr_*, but then that was converted to dev_*.
 
+>
+>> +#include <linux/device.h>
+>> +#include <linux/gpio.h>
+>
+> No use:
+> #include <linux/gpio/driver.h>
+> ONLY
+>
+>> +static LIST_HEAD(exar_list);
+>> +static DEFINE_MUTEX(exar_list_mtx);
+>> +DEFINE_IDA(ida_index);
+>
+> What is this? A local list? I can understand the IDA index but in
+> general, follow the state container pattern instead:
+> Documentation/driver-model/design-patterns.txt
 
-> This gives us an opportunity to move away from the sh-pfc awful (but more
-> or less needed for the R-Car family) architecture and implement something
-> much, much cleaner without all those obscure data tables and macros, with
-> per-pin configuration. Shouldn't we rejoice and embrace that opportunity =
-?
+The local list is not doing anything now, after I have moved to using 
+ida. But I will need the ida_index here to have the device number incase 
+of multiple devices.
 
-Honestly, that driver structure confuses the heck out of me. I guess you ha=
-ve
-to understand the restrictions of the R-Car PFC HW to really appreciate it.
-
-Of course I like the idea of a simple PFC for Renesas SoCs, of course the
-existing RZ/A1 would be (hopefully) the worst case scenario.
-
-I assume to make a one-size-fits-all per-pin driver, instead of filling out
-structures and enums, you'd have to have callback functions that basically =
-you
-pass "set pin X to function #3"...which basically brings you back to what t=
-he
-core of the pinctrl system does now any (if I understand it correctly).
-
-Chris
+regards
+sudip
