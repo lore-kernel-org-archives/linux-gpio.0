@@ -1,50 +1,215 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v2 02/12] driver: clocksource: add gpt timer for imx6sll
-Date: Mon, 9 Jan 2017 11:30:04 +0100
-Message-ID: <20170109103004.GA30688@mai>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-3-git-send-email-ping.bai@nxp.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v7 1/3] gpio: exar: add gpio for exar cards
+Date: Mon, 9 Jan 2017 11:35:51 +0100
+Message-ID: <CACRpkdaBJteocVSUazhz0zYtXeBKSVekEkxGfpDNAoqN04A77Q@mail.gmail.com>
+References: <1483833469-11422-1-git-send-email-sudipm.mukherjee@gmail.com> <1483833469-11422-2-git-send-email-sudipm.mukherjee@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1482832070-22668-3-git-send-email-ping.bai@nxp.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Bai Ping <ping.bai@nxp.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@codeaurora.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, kernel@pengutronix.de, jacky.baip@gmail.com, fabio.estevam@nxp.com, tglx@linutronix.de, shawnguo@kernel.org, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1483833469-11422-2-git-send-email-sudipm.mukherjee@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-T24gVHVlLCBEZWMgMjcsIDIwMTYgYXQgMDU6NDc6NDBQTSArMDgwMCwgQmFpIFBpbmcgd3JvdGU6
-Cj4gQWRkIGdwdCB0aW1lciBzdXBwb3J0IGZvciBpLk1YNlNMTC4KPiAKPiBTaWduZWQtb2ZmLWJ5
-OiBCYWkgUGluZyA8cGluZy5iYWlAbnhwLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9jbG9ja3NvdXJj
-ZS90aW1lci1pbXgtZ3B0LmMgfCAxICsKPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCsp
-Cj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xvY2tzb3VyY2UvdGltZXItaW14LWdwdC5jIGIv
-ZHJpdmVycy9jbG9ja3NvdXJjZS90aW1lci1pbXgtZ3B0LmMKPiBpbmRleCBmNTk1NDYwLi5mNzE4
-MjJkIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvY2xvY2tzb3VyY2UvdGltZXItaW14LWdwdC5jCj4g
-KysrIGIvZHJpdmVycy9jbG9ja3NvdXJjZS90aW1lci1pbXgtZ3B0LmMKPiBAQCAtNTU2LDQgKzU1
-Niw1IEBAIHN0YXRpYyBpbnQgX19pbml0IGlteDZkbF90aW1lcl9pbml0X2R0KHN0cnVjdCBkZXZp
-Y2Vfbm9kZSAqbnApCj4gIENMT0NLU09VUkNFX09GX0RFQ0xBUkUoaW14NnFfdGltZXIsICJmc2ws
-aW14NnEtZ3B0IiwgaW14MzFfdGltZXJfaW5pdF9kdCk7Cj4gIENMT0NLU09VUkNFX09GX0RFQ0xB
-UkUoaW14NmRsX3RpbWVyLCAiZnNsLGlteDZkbC1ncHQiLCBpbXg2ZGxfdGltZXJfaW5pdF9kdCk7
-Cj4gIENMT0NLU09VUkNFX09GX0RFQ0xBUkUoaW14NnNsX3RpbWVyLCAiZnNsLGlteDZzbC1ncHQi
-LCBpbXg2ZGxfdGltZXJfaW5pdF9kdCk7Cj4gK0NMT0NLU09VUkNFX09GX0RFQ0xBUkUoaW14NnNs
-bF90aW1lciwgImZzbCxpbXg2c2xsLWdwdCIsIGlteDZkbF90aW1lcl9pbml0X2R0KTsKPiAgQ0xP
-Q0tTT1VSQ0VfT0ZfREVDTEFSRShpbXg2c3hfdGltZXIsICJmc2wsaW14NnN4LWdwdCIsIGlteDZk
-bF90aW1lcl9pbml0X2R0KTsKCkFja2VkLWJ5OiBEYW5pZWwgTGV6Y2FubyA8ZGFuaWVsLmxlemNh
-bm9AbGluYXJvLm9yZz4KCi0tIAoKIDxodHRwOi8vd3d3LmxpbmFyby5vcmcvPiBMaW5hcm8ub3Jn
-IOKUgiBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MKCkZvbGxvdyBMaW5hcm86ICA8
-aHR0cDovL3d3dy5mYWNlYm9vay5jb20vcGFnZXMvTGluYXJvPiBGYWNlYm9vayB8CjxodHRwOi8v
-dHdpdHRlci5jb20vIyEvbGluYXJvb3JnPiBUd2l0dGVyIHwKPGh0dHA6Ly93d3cubGluYXJvLm9y
-Zy9saW5hcm8tYmxvZy8+IEJsb2cKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJu
-ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+On Sun, Jan 8, 2017 at 12:57 AM, Sudip Mukherjee
+<sudipm.mukherjee@gmail.com> wrote:
+
+> Exar XR17V352/354/358 chips have 16 multi-purpose inputs/outputs which
+> can be controlled using gpio interface.
+>
+> Add the gpio specific code.
+>
+> Signed-off-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+
+Will I be able to merge this independently to the GPIO trees
+once we are done with review? (Looks like so...)
+
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+
+Is this really useful?
+
+> +#include <linux/device.h>
+> +#include <linux/gpio.h>
+
+No use:
+#include <linux/gpio/driver.h>
+ONLY
+
+> +static LIST_HEAD(exar_list);
+> +static DEFINE_MUTEX(exar_list_mtx);
+> +DEFINE_IDA(ida_index);
+
+What is this? A local list? I can understand the IDA index but in
+general, follow the state container pattern instead:
+Documentation/driver-model/design-patterns.txt
+
+> +#define to_exar_chip(n) container_of(n, struct exar_gpio_chip, gpio_chip)
+
+Don't do this, use
+gpiochip_get_data()
+
+> +static inline unsigned int read_exar_reg(struct exar_gpio_chip *chip,
+> +                                        int offset)
+> +{
+> +       dev_dbg(chip->gpio_chip.parent, "regs=%p offset=%x\n",
+> +               chip->regs, offset);
+> +
+> +       return readb(chip->regs + offset);
+> +}
+> +
+> +static inline void write_exar_reg(struct exar_gpio_chip *chip, int offset,
+> +                                 int value)
+> +{
+> +       dev_dbg(chip->gpio_chip.parent,
+> +               "regs=%p value=%x offset=%x\n", chip->regs, value,
+> +               offset);
+> +       writeb(value, chip->regs + offset);
+> +}
+
+
+I don't see why these need their own accessor functions, just inline
+the readb()/writeb() calls.
+
+> +static void exar_update(struct gpio_chip *chip, unsigned int reg, int val,
+> +                       unsigned int offset)
+> +{
+> +       struct exar_gpio_chip *exar_gpio = to_exar_chip(chip);
+
+So just:
+
+struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+
+> +       int temp;
+> +
+> +       mutex_lock(&exar_gpio->lock);
+> +       temp = read_exar_reg(exar_gpio, reg);
+> +       temp &= ~(1 << offset);
+> +       temp |= val << offset;
+
+Use:
+#include <linux/bitops.h>
+
+temp &= BIT(offset);
+if (val)
+  temp |= BIT(offset);
+
+> +static int exar_get(struct gpio_chip *chip, unsigned int reg)
+> +{
+> +       struct exar_gpio_chip *exar_gpio = to_exar_chip(chip);
+> +       int value;
+> +
+> +       mutex_lock(&exar_gpio->lock);
+> +       value = read_exar_reg(exar_gpio, reg);
+> +       mutex_unlock(&exar_gpio->lock);
+> +
+> +       return value;
+
+Please use:
+
+return !!value;
+
+To clamp to bool.
+
+> +static int exar_get_direction(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       int val;
+> +
+> +       if (offset < 8)
+> +               val = exar_get(chip, EXAR_OFFSET_MPIOSEL_LO) >> offset;
+> +       else
+> +               val = exar_get(chip, EXAR_OFFSET_MPIOSEL_HI) >>
+> +                              (offset - 8);
+> +
+> +       return val & 0x01;
+
+Just
+
+return !!val;
+
+or something.
+
+> +static int exar_get_value(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       int val;
+> +
+> +       if (offset < 8)
+> +               val = exar_get(chip, EXAR_OFFSET_MPIOLVL_LO) >> offset;
+> +       else
+> +               val = exar_get(chip, EXAR_OFFSET_MPIOLVL_HI) >>
+> +                              (offset - 8);
+> +       return val & 0x01;
+> +}
+
+Dito.
+
+> +static int gpio_exar_probe(struct platform_device *pdev)
+> +{
+> +       struct pci_dev *dev = platform_get_drvdata(pdev);
+> +       struct exar_gpio_chip *exar_gpio;
+> +       void __iomem *p;
+> +       int index = 1;
+> +       int ret;
+> +
+> +       if (dev->vendor != PCI_VENDOR_ID_EXAR)
+> +               return -ENODEV;
+> +
+> +       p = pci_ioremap_bar(dev, 0);
+> +       if (!p)
+> +               return -ENOMEM;
+> +
+> +       exar_gpio = devm_kzalloc(&dev->dev, sizeof(*exar_gpio), GFP_KERNEL);
+> +       if (!exar_gpio)
+> +               return -ENOMEM;
+> +
+> +       mutex_init(&exar_gpio->lock);
+> +       INIT_LIST_HEAD(&exar_gpio->list);
+> +
+> +       index = ida_simple_get(&ida_index, 0, 0, GFP_KERNEL);
+> +       mutex_lock(&exar_list_mtx);
+
+This looks overkill.
+
+> +       sprintf(exar_gpio->name, "exar_gpio%d", index);
+> +       exar_gpio->gpio_chip.label = exar_gpio->name;
+> +       exar_gpio->gpio_chip.parent = &dev->dev;
+> +       exar_gpio->gpio_chip.direction_output = exar_direction_output;
+> +       exar_gpio->gpio_chip.direction_input = exar_direction_input;
+> +       exar_gpio->gpio_chip.get_direction = exar_get_direction;
+> +       exar_gpio->gpio_chip.get = exar_get_value;
+> +       exar_gpio->gpio_chip.set = exar_set_value;
+> +       exar_gpio->gpio_chip.base = -1;
+> +       exar_gpio->gpio_chip.ngpio = 16;
+> +       exar_gpio->regs = p;
+> +       exar_gpio->index = index;
+> +       exar_gpio->pcidev = dev;
+> +
+> +       ret = gpiochip_add(&exar_gpio->gpio_chip);
+
+Use devm_gpiochip_add_data(dev, &exar_gpio->gpio_chip, exar_gpio)
+
+So you can later use gpiochip_get_data()
+
+> +static int gpio_exar_remove(struct platform_device *pdev)
+> +{
+> +       struct exar_gpio_chip *exar_gpio, *exar_temp;
+> +       struct pci_dev *pcidev;
+> +       int index;
+> +
+> +       pcidev = platform_get_drvdata(pdev);
+> +
+> +       mutex_lock(&exar_list_mtx);
+> +       list_for_each_entry_safe(exar_gpio, exar_temp, &exar_list, list) {
+> +               if (exar_gpio->pcidev == pcidev) {
+> +                       list_del(&exar_gpio->list);
+> +                       break;
+> +               }
+> +       }
+> +       mutex_unlock(&exar_list_mtx);
+
+Looks convoluted.
+
+Set the platform_drvdata to exar_gpio instead and just free it.
+
+Yours,
+Linus Wallleij
