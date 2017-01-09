@@ -1,81 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: Introduce TI IOdelay configuration driver
-Date: Mon, 9 Jan 2017 19:46:23 +0100
-Message-ID: <CACRpkdYCmrWyyKNkaqeUxtLV8HrmjgcXrULVvLbFhmt64wsVyQ@mail.gmail.com>
-References: <20170105185414.27247-1-tony@atomide.com> <20170105185414.27247-3-tony@atomide.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: Add dra7 iodelay configuration and use it for MMC
+Date: Mon, 9 Jan 2017 19:47:13 +0100
+Message-ID: <CACRpkdZz8NXaZVFBL+iA6LkjF2L+y-K1dtt9xQTgXR83ba+2yw@mail.gmail.com>
+References: <20161230183732.5595-1-tony@atomide.com> <20161230183732.5595-3-tony@atomide.com>
+ <20161230184914.GC3940@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f169.google.com ([209.85.216.169]:33777 "EHLO
-        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940460AbdAISqZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Jan 2017 13:46:25 -0500
-Received: by mail-qt0-f169.google.com with SMTP id v23so144286921qtb.0
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Jan 2017 10:46:24 -0800 (PST)
-In-Reply-To: <20170105185414.27247-3-tony@atomide.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161230184914.GC3940-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Cc: Gary Bisson <gary.bisson-Q5RJGjKts06CY9SHAMCTRUEOCMrvLtNR@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Gary Bisson <gary.bisson@boundarydevices.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Mark Rutland <mark.rutland@arm.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Lokesh Vutla <lokeshvutla@ti.com>
 
-On Thu, Jan 5, 2017 at 7:54 PM, Tony Lindgren <tony@atomide.com> wrote:
+On Fri, Dec 30, 2016 at 7:49 PM, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org> wrote:
 
-> From: Nishanth Menon <nm@ti.com>
+> Add dra7 iodelay configuration and use it for MMC.
 >
-> SoC family such as DRA7 family of processors have, in addition
-> to the regular muxing of pins (as done by pinctrl-single), a separate
-> hardware module called IODelay which is also expected to be configured.
-> The "IODelay" module has it's own register space that is independent
-> of the control module and the padconf register area.
->
-> With recent changes to the pinctrl framework, we can now support
-> this hardware with a reasonably minimal driver by using #pinctrl-cells,
-> GENERIC_PINCTRL_GROUPS and GENERIC_PINMUX_FUNCTIONS.
->
-> It is advocated strongly in TI's official documentation considering
-> the existing design of the DRA7 family of processors during mux or
-> IODelay reconfiguration, there is a potential for a significant glitch
-> which may cause functional impairment to certain hardware. It is
-> hence recommended to do as little of muxing as absolutely necessary
-> without I/O isolation (which can only be done in initial stages of
-> bootloader).
->
-> NOTE: with the system wide I/O isolation scheme present in DRA7 SoC
-> family, it is not reasonable to do stop all I/O operations for every
-> such pad configuration scheme. So, we will let it glitch when used in
-> this mode.
->
-> Even with the above limitation, certain functionality such as MMC has
-> mandatory need for IODelay reconfiguration requirements, depending on
-> speed of transfer. In these cases, with careful examination of usecase
-> involved, the expected glitch can be controlled such that it does not
-> impact functionality.
->
-> In short, IODelay module support as a padconf driver being introduced
-> here is not expected to do SoC wide I/O Isolation and is meant for
-> a limited subset of IODelay configuration requirements that need to
-> be dynamic and whose glitchy behavior will not cause functionality
-> failure for that interface.
->
-> IMPORTANT NOTE: we take the approach of keeping LOCK_BITs cleared
-> to 0x0 at all times, even when configuring Manual IO Timing Modes.
-> This is done by eliminating the LOCK_BIT=1 setting from Step
-> of the Manual IO timing Mode configuration procedure. This option
-> leaves the CFG_* registers unprotected from unintended writes to the
-> CTRL_CORE_PAD_* registers while Manual IO Timing Modes are configured.
->
-> This approach is taken to allow for a generic driver to exist in kernel
-> world that has to be used carefully in required usecases.
->
-> Signed-off-by: Nishanth Menon <nm@ti.com>
-> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-> [tony@atomide.com: updated to use generic pinctrl functions, added
->  binding documentation, updated comments]
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
 
-Oh what a hardware mess. But very nicely isolated now.
-Patch applied!
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+Pls take this through the OMAP tree to ARM SoC.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
