@@ -1,59 +1,53 @@
-From: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Subject: Re: Re: [PATCH 3/6] clk: sunxi-ng: Add H5 clocks
-Date: Mon, 09 Jan 2017 21:13:12 +0800
-Message-ID: <20170109161500.Ep9GCmIb@smtp2p.mail.yandex.net>
-Reply-To: icenowy-ymACFijhrKM@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for v4.10
+Date: Mon, 9 Jan 2017 14:33:08 +0100
+Message-ID: <CACRpkdYZ4JjH2K25izeX-3H2rzTK3x3QS9NxDyyeHBOYADX9CQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBCZLPFN5Q4OBBXUZZ3BQKGQED53IJ3Y-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+Hi Linus,
 
-2017=E5=B9=B41=E6=9C=889=E6=97=A5 =E4=B8=8B=E5=8D=887:01=E4=BA=8E Maxime Ri=
-pard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Fri, Jan 06, 2017 at 06:48:31AM +0800, Icenowy Zheng wrote:=20
-> >=20
-> > 2017=E5=B9=B41=E6=9C=886=E6=97=A5 06:04=E4=BA=8E Maxime Ripard <maxime.=
-ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>=E5=86=99=E9=81=93=EF=BC=9A=20
-> > >=20
-> > > On Tue, Dec 27, 2016 at 12:25:15AM +0800, Icenowy Zheng wrote:=20
-> > > > Add the H5 CCU clocks set based on the H3 one.=20
-> > > >=20
-> > > > Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>=20
-> > >=20
-> > > Is there any difference with H3's?=20
-> >=20
-> > One more Transport Stream controller, so one more bus gate and bus=20
-> > reset for it.=20
->
-> There's no need to duplicate more than 1000 lines of code just for=20
-> that then. Just add a new compatible and reuse the clocks already=20
-> defined.=20
+two small fixes is all I collected for GPIO so far.
 
-How can I do this? Add them in ccu-sun8i-h3.c ?
+Please pull them in!
 
->
-> Maxime=20
->
-> --=20
-> Maxime Ripard, Free Electrons=20
-> Embedded Linux and Kernel engineering=20
-> http://free-electrons.com=20
+Yours,
+Linus Walleij
 
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
+
+  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.10-2
+
+for you to fetch changes up to 5018ada69a04c8ac21d74bd682fceb8e42dc0f96:
+
+  gpio: Move freeing of GPIO hogs before numbing of the device
+(2016-12-30 09:11:21 +0100)
+
+----------------------------------------------------------------
+GPIO fixes for the v4.10 series:
+
+- Move free:ing of GPIO hogs to after free:ing the device
+  to get rid of a warning state.
+
+- A small comile warning fix.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      gpio: mxs: remove __init annotation
+
+Geert Uytterhoeven (1):
+      gpio: Move freeing of GPIO hogs before numbing of the device
+
+ drivers/gpio/gpio-mxs.c | 2 +-
+ drivers/gpio/gpiolib.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
