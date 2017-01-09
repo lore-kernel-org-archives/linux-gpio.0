@@ -1,570 +1,73 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v8 2/3] serial: exar: split out the exar code from 8250_pci
-Date: Mon, 9 Jan 2017 02:14:29 +0200
-Message-ID: <CAHp75VficfU+BTgW_Mm_UTC8oDKJA0yxrUz_PBY=w4jT2LFbMA@mail.gmail.com>
-References: <1483914727-6076-1-git-send-email-sudipm.mukherjee@gmail.com> <1483914727-6076-2-git-send-email-sudipm.mukherjee@gmail.com>
+From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 1/2] drivers: pinctrl: add driver for
+ Allwinner H5 SoC
+Date: Mon, 9 Jan 2017 00:16:00 +0000
+Message-ID: <38fe3491-457a-f0c5-54fb-9defdcd45045@arm.com>
+References: <20161223125001.1176-1-icenowy@aosc.xyz>
+ <1280f095-ab03-93f8-14d2-99d13ba1ce55@arm.com>
+ <CACRpkdYQhfid3VRcaj=7as_+Zg=pX3Svp9FJ_W_Ft8nVuoZqKQ@mail.gmail.com>
+ <20170105224210.wfinfucbpkkd44om@lukather>
+Reply-To: andre.przywara-5wv7dgnIgG8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1483914727-6076-2-git-send-email-sudipm.mukherjee@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-sunxi+bncBDNZNK75ZIKRBS5MZPBQKGQEYUQSE2Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20170105224210.wfinfucbpkkd44om@lukather>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: ext Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 9, 2017 at 12:32 AM, Sudip Mukherjee
-<sudipm.mukherjee@gmail.com> wrote:
-> From: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
->
-> Add the serial driver for the Exar chips. And also register the
-> platform device for the gpio provided by the Exar chips.
-
-GPIO ?
-
-> Andy,
-> I hope its ok this time. All your comments taken into account. :)
-> I could not think of any other way to reduce the number of boards.
-
-Almost but not entirely. Hope v9 will be in a really good shape.
-Please wait also for my comment regarding patch 1 (basically style
-ones since it will be v9)/
-
-> +#undef DEBUG
-> +
-
-> +#include <asm/byteorder.h>
-
-What I meant previously is a grouping like following
-
-<linux/*>
-
-<asm/*>
-
-"*"
-
-Each group is sorted, except special cases like 8250_pci.h here.
-
-> +#define PCI_DEVICE_ID_COMMTECH_4224PCIE        0x0020
-> +#define PCI_DEVICE_ID_COMMTECH_4228PCIE        0x0021
-> +#define PCI_DEVICE_ID_COMMTECH_4222PCIE        0x0022
-> +#define PCI_DEVICE_ID_EXAR_XR17V4358   0x4358
-> +#define PCI_DEVICE_ID_EXAR_XR17V8358   0x8358
-
-> +#define PCI_NUM_BAR_RESOURCES  6
-
-Hmm... Do you use it somewhere? If no, remove, otherwise remove and
-replace by generic definition.
-
-> +
-> +struct exar8250;
-> +
-> +struct exar8250_board {
-> +       unsigned int num_ports;
-> +       unsigned int base_baud;
-
-> +       unsigned int uart_offset; /* the space between channels */
-> +       /*
-> +        * reg_shift:  describes how the UART registers are mapped
-> +        * to PCI memory by the card.
-> +        */
-
-Those comments are good candidates to be a kernel doc description
-above the struct definition.
-
-> +       unsigned int reg_shift;
-> +       unsigned int first_offset;
-> +       bool has_slave;
-> +       int     (*setup)(struct exar8250 *, struct pci_dev *,
-> +                        const struct exar8250_board *,
-> +                        struct uart_8250_port *, int);
-> +       void    (*exit)(struct pci_dev *dev);
-> +};
-> +
-> +struct exar8250 {
-> +       unsigned int            nr;
-> +       struct exar8250_board   *board;
-> +       int                     line[0];
-> +};
-> +
-> +static int default_setup(struct exar8250 *priv, struct pci_dev *pcidev,
-
-I would use pci_dev, but it is matter of taste.
-
-> +                        const struct exar8250_board *board,
-> +                        struct uart_8250_port *port, int idx)
-> +{
-> +       unsigned int offset = board->first_offset, bar = 0;
-> +
-> +       offset += idx * board->uart_offset;
-> +
-> +       port->port.iotype = UPIO_MEM;
-> +       port->port.iobase = 0;
-> +       port->port.mapbase = pci_resource_start(pcidev, bar) + offset;
-> +       port->port.membase = pcim_iomap_table(pcidev)[bar] + offset;
-> +       port->port.regshift = board->reg_shift;
-> +
-> +       return 0;
-> +}
-> +
-> +static int
-> +pci_xr17c154_setup(struct exar8250 *priv, struct pci_dev *pcidev,
-> +                  const struct exar8250_board *board,
-> +                  struct uart_8250_port *port, int idx)
-> +{
-> +       port->port.flags |= UPF_EXAR_EFR;
-> +       return default_setup(priv, pcidev, board, port, idx);
-> +}
-> +
-> +static void setup_gpio(u8 __iomem *p)
-> +{
-> +       writeb(0x00, p + UART_EXAR_MPIOINT_7_0);
-> +       writeb(0x00, p + UART_EXAR_MPIOLVL_7_0);
-> +       writeb(0x00, p + UART_EXAR_MPIO3T_7_0);
-> +       writeb(0x00, p + UART_EXAR_MPIOINV_7_0);
-> +       writeb(0x00, p + UART_EXAR_MPIOSEL_7_0);
-> +       writeb(0x00, p + UART_EXAR_MPIOOD_7_0);
-> +       writeb(0x00, p + UART_EXAR_MPIOINT_15_8);
-> +       writeb(0x00, p + UART_EXAR_MPIOLVL_15_8);
-> +       writeb(0x00, p + UART_EXAR_MPIO3T_15_8);
-> +       writeb(0x00, p + UART_EXAR_MPIOINV_15_8);
-> +       writeb(0x00, p + UART_EXAR_MPIOSEL_15_8);
-> +       writeb(0x00, p + UART_EXAR_MPIOOD_15_8);
-> +}
-> +
-> +static void *
-> +xr17v35x_register_gpio(struct pci_dev *pcidev)
-> +{
-> +       struct platform_device *pdev;
-> +
-> +       pdev = platform_device_alloc("gpio_exar", PLATFORM_DEVID_AUTO);
-> +       if (!pdev)
-> +               return NULL;
-> +
-> +       platform_set_drvdata(pdev, pcidev);
-> +       if (platform_device_add(pdev) < 0) {
-> +               platform_device_put(pdev);
-> +               return NULL;
-> +       }
-> +
-
-> +       return (void *)pdev;
-
-No need to explicit cast.
-
-> +}
-> +
-> +static int
-> +pci_xr17v35x_setup(struct exar8250 *priv, struct pci_dev *pcidev,
-> +                  const struct exar8250_board *board,
-> +                  struct uart_8250_port *port, int idx)
-> +{
-> +       u8 __iomem *p;
-> +       int ret;
-> +
-> +       p = pci_ioremap_bar(pcidev, 0);
-> +       if (!p)
-> +               return -ENOMEM;
-> +
-> +       port->port.flags |= UPF_EXAR_EFR;
-> +
-> +       /*
-> +        * Setup the uart clock for the devices on expansion slot to
-> +        * half the clock speed of the main chip (which is 125MHz)
-> +        */
-> +       if (board->has_slave && idx >= 8)
-> +               port->port.uartclk = (7812500 * 16 / 2);
-> +
-
-> +       /*
-> +        * Setup Multipurpose Input/Output pins.
-> +        */
-> +       if (idx == 0)
-> +               setup_gpio(p);
-
-So, my question is can we do this in GPIO driver?
-
-Can we register it beforehand if needed?
-
-> +
-> +       writeb(0x00, p + UART_EXAR_8XMODE);
-> +       writeb(UART_FCTR_EXAR_TRGD, p + UART_EXAR_FCTR);
-> +       writeb(128, p + UART_EXAR_TXTRG);
-> +       writeb(128, p + UART_EXAR_RXTRG);
-> +       iounmap(p);
-> +
-> +       ret = default_setup(priv, pcidev, board, port, idx);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (idx == 0)
-> +               port->port.private_data =
-> +                       xr17v35x_register_gpio(pcidev);
-> +
-> +       return 0;
-> +}
-> +
-> +static void pci_xr17v35x_exit(struct pci_dev *dev)
-
-Be consistent pci_dev or pcidev. Check all your patches all occurrences.
-
-> +{
-> +       struct exar8250 *priv = pci_get_drvdata(dev);
-> +       struct uart_8250_port *port = serial8250_get_port(priv->line[0]);
-> +       struct platform_device *pdev = port->port.private_data;
-> +
-> +       if (pdev) {
-> +               platform_device_unregister(pdev);
-> +               port->port.private_data = NULL;
-> +       }
-
-Would
-
-if (!pdev)
- return;
-
-be more suitable here?
-
-> +}
-> +
-> +static int
-> +exar_pci_probe(struct pci_dev *pcidev, const struct pci_device_id *ent)
-> +{
-
-> +       int rc;
-
-Make it last in the definition block. I think I mentioned this earlier.
-
-> +       struct exar8250_board *board;
-> +       struct uart_8250_port uart;
-> +       struct exar8250 *priv;
-> +       unsigned int nr_ports, i, bar = 0, maxnr;
-> +
-> +       board = (struct exar8250_board *)ent->driver_data;
-> +
-> +       rc = pcim_enable_device(pcidev);
-> +       if (rc)
-> +               return rc;
-> +
-
-> +       if (!pcim_iomap(pcidev, bar, 0) && !pcim_iomap_table(pcidev))
-> +               return -ENOMEM;
-
-You ignored my comment, we may never finish the review in such case :-(
-
-Asking again: do you really need this part? I know why I did so and
-put it to 8250_pci, but let's focus on your code.
-
-> +
-> +       maxnr = (pci_resource_len(pcidev, bar) - board->first_offset) >>
-> +               (board->reg_shift + 3);
-> +
-> +       nr_ports = board->num_ports;
-> +
-> +       priv = devm_kzalloc(&pcidev->dev, sizeof(*priv) +
-> +                           sizeof(unsigned int) * nr_ports,
-> +                           GFP_KERNEL);
-> +       if (!priv)
-> +               return -ENOMEM;
-> +
-> +       priv->board = board;
-> +
-> +       memset(&uart, 0, sizeof(uart));
-> +       uart.port.flags = UPF_SKIP_TEST | UPF_BOOT_AUTOCONF | UPF_SHARE_IRQ;
-> +       uart.port.uartclk = board->base_baud * 16;
-> +       uart.port.irq = pcidev->irq;
-> +       uart.port.dev = &pcidev->dev;
-> +
-> +       for (i = 0; i < nr_ports && i < maxnr; i++) {
-
-> +               if (board->setup(priv, pcidev, board, &uart, i))
-> +                       break;
-
-Shouldn't you inform user that something went wrong? Or is it okay?
-
-> +
-> +               dev_dbg(&pcidev->dev, "Setup PCI port: port %lx, irq %d, type %d\n",
-> +                       uart.port.iobase, uart.port.irq, uart.port.iotype);
-> +
-> +               priv->line[i] = serial8250_register_8250_port(&uart);
-> +               if (priv->line[i] < 0) {
-> +                       dev_err(&pcidev->dev,
-> +                               "Couldn't register serial port %lx, irq %d, type %d, error %d\n",
-> +                               uart.port.iobase, uart.port.irq,
-> +                               uart.port.iotype, priv->line[i]);
-> +                       break;
-> +               }
-> +       }
-> +       priv->nr = i;
-> +       pci_set_drvdata(pcidev, priv);
-> +       return 0;
-> +}
-> +
-> +static void exar_pci_remove(struct pci_dev *pcidev)
-> +{
-
-> +       int i;
-
-Move it after next line and perhaps make unsigned int i;
-
-> +       struct exar8250 *priv = pci_get_drvdata(pcidev);
-
-> +
-> +       for (i = 0; i < priv->nr; i++)
-> +               serial8250_unregister_port(priv->line[i]);
-> +
-> +       if (priv->board->exit)
-> +               priv->board->exit(pcidev);
-> +}
-> +
-> +#ifdef CONFIG_PM_SLEEP
-> +static int exar_suspend(struct device *dev)
-> +{
-> +       struct pci_dev *pdev = to_pci_dev(dev);
-
-pci_dev or pcidev.
-
-> +       struct exar8250 *priv = pci_get_drvdata(pdev);
-> +       unsigned int i;
-> +
-> +       for (i = 0; i < priv->nr; i++)
-> +               if (priv->line[i] >= 0)
-> +                       serial8250_suspend_port(priv->line[i]);
-> +
-
-> +       /*
-> +        * Ensure that every init quirk is properly torn down
-> +        */
-
-One line?
-
-> +       if (priv->board->exit)
-> +               priv->board->exit(pdev);
-> +
-> +       return 0;
-> +}
-> +
-> +static int exar_resume(struct device *dev)
-> +{
-> +       struct pci_dev *pdev = to_pci_dev(dev);
-> +       struct exar8250 *priv = pci_get_drvdata(pdev);
-> +       unsigned int i;
-> +
-
-> +       if (priv) {
-
-Would be the case that priv == NULL here?
-
-> +               for (i = 0; i < priv->nr; i++)
-> +                       if (priv->line[i] >= 0)
-> +                               serial8250_resume_port(priv->line[i]);
-> +       }
-> +
-> +       return 0;
-> +}
-> +#endif
-> +
-> +static SIMPLE_DEV_PM_OPS(exar_pci_pm, exar_suspend, exar_resume);
-> +
-
-Now see how we can reduce more.
-
-> +static const struct exar8250_board pbn_b0_2_1843200_200 = {
-> +       .num_ports      = 2,
-> +       .base_baud      = 1843200,
-> +       .uart_offset    = 0x200,
-> +       .setup          = pci_xr17c154_setup
-> +};
-> +
-> +static const struct exar8250_board pbn_b0_4_1843200_200 = {
-> +       .num_ports      = 4,
-> +       .base_baud      = 1843200,
-> +       .uart_offset    = 0x200,
-> +       .setup          = pci_xr17c154_setup
-> +};
-> +
-> +static const struct exar8250_board pbn_b0_8_1843200_200 = {
-> +       .num_ports      = 8,
-> +       .base_baud      = 1843200,
-> +       .uart_offset    = 0x200,
-> +       .setup          = pci_xr17c154_setup,
-> +};
-> +
-> +static const struct exar8250_board pbn_exar_ibm_saturn = {
-> +       .num_ports      = 1,
-> +       .base_baud      = 921600,
-> +       .uart_offset    = 0x200,
-> +       .setup          = pci_xr17c154_setup,
-> +};
-> +
-> +static const struct exar8250_board pbn_exar_XR17C152 = {
-> +       .num_ports      = 2,
-> +       .base_baud      = 921600,
-> +       .uart_offset    = 0x200,
-> +       .setup          = pci_xr17c154_setup,
-> +};
-> +
-> +static const struct exar8250_board pbn_exar_XR17C154 = {
-> +       .num_ports      = 4,
-> +       .base_baud      = 921600,
-> +       .uart_offset    = 0x200,
-> +       .setup          = pci_xr17c154_setup,
-> +};
-> +
-> +static const struct exar8250_board pbn_exar_XR17C158 = {
-> +       .num_ports      = 8,
-> +       .base_baud      = 921600,
-> +       .uart_offset    = 0x200,
-> +       .setup          = pci_xr17c154_setup,
-> +};
-> +
-
-Port number is easily to get from device ID, I already said this.
-nr = subvendor == PCI_VENDOR_ID_IBM ? 1 : device & 0x0f;
-
-Yes, it means ->setup() hook will allocate memory for lines (declare
-them as int *line and use devm_kcalloc).
-
-And if you think smarter about returning value, you may not even need
-to move registration code into it!
-
-Moreover all above have same setup function and uart_offset. Use it.
-
-> +static const struct exar8250_board pbn_exar_XR17V352 = {
-> +       .num_ports      = 2,
-> +       .base_baud      = 7812500,
-> +       .uart_offset    = 0x400,
-> +       .setup          = pci_xr17v35x_setup,
-> +       .exit           = pci_xr17v35x_exit,
-> +};
-> +
-> +static const struct exar8250_board pbn_exar_XR17V354 = {
-> +       .num_ports      = 4,
-> +       .base_baud      = 7812500,
-> +       .uart_offset    = 0x400,
-> +       .setup          = pci_xr17v35x_setup,
-> +       .exit           = pci_xr17v35x_exit,
-> +};
-> +
-> +static const struct exar8250_board pbn_exar_XR17V358 = {
-> +       .num_ports      = 8,
-> +       .base_baud      = 7812500,
-> +       .uart_offset    = 0x400,
-> +       .setup          = pci_xr17v35x_setup,
-> +       .exit           = pci_xr17v35x_exit,
-> +};
-> +
-> +static const struct exar8250_board pbn_exar_XR17V4358 = {
-> +       .num_ports      = 12,
-> +       .base_baud      = 7812500,
-> +       .uart_offset    = 0x400,
-> +       .has_slave      = true,
-> +       .setup          = pci_xr17v35x_setup,
-> +       .exit           = pci_xr17v35x_exit,
-> +};
-> +
-> +static const struct exar8250_board pbn_exar_XR17V8358 = {
-> +       .num_ports      = 16,
-> +       .base_baud      = 7812500,
-> +       .uart_offset    = 0x400,
-> +       .has_slave      = true,
-> +       .setup          = pci_xr17v35x_setup,
-> +       .exit           = pci_xr17v35x_exit,
-
-Offset  + baud rate are same.
-
-So, offset is not needed in the struct at all.
-
-Does it make sense to you?
-
-> +};
-
-Below looks much better!
-
-> +#define CONNECT_DEVICE(devid, sdevid, board) { PCI_DEVICE_SUB(\
-
-Please do use separate line for PCI_DEVICE_SUB
-
-> +                       PCI_VENDOR_ID_EXAR,\
-> +                       PCI_DEVICE_ID_EXAR_##devid,\
-> +                       PCI_SUBVENDOR_ID_CONNECT_TECH,\
-> +                       PCI_SUBDEVICE_ID_CONNECT_TECH_PCI_##sdevid),\
-> +                       0, 0, (kernel_ulong_t)&board }
-
-...also for }
-
-And shift this line to show that is related to top level
-
-> +
-> +#define EXAR_DEVICE(vend, devid, bd) { PCI_VDEVICE(vend,\
-> +               PCI_DEVICE_ID_##devid), (kernel_ulong_t)&bd }
-
-Same comments.
-
-> +
-> +static struct pci_device_id exar_pci_tbl[] = {
-> +       CONNECT_DEVICE(XR17C152, UART_2_232, pbn_b0_2_1843200_200),
-> +       CONNECT_DEVICE(XR17C154, UART_4_232, pbn_b0_4_1843200_200),
-> +       CONNECT_DEVICE(XR17C158, UART_8_232, pbn_b0_8_1843200_200),
-> +       CONNECT_DEVICE(XR17C152, UART_1_1, pbn_b0_2_1843200_200),
-> +       CONNECT_DEVICE(XR17C154, UART_2_2, pbn_b0_4_1843200_200),
-> +       CONNECT_DEVICE(XR17C158, UART_4_4, pbn_b0_8_1843200_200),
-> +       CONNECT_DEVICE(XR17C152, UART_2, pbn_b0_2_1843200_200),
-> +       CONNECT_DEVICE(XR17C154, UART_4, pbn_b0_4_1843200_200),
-> +       CONNECT_DEVICE(XR17C158, UART_8, pbn_b0_8_1843200_200),
-> +       CONNECT_DEVICE(XR17C152, UART_2_485, pbn_b0_2_1843200_200),
-> +       CONNECT_DEVICE(XR17C154, UART_4_485, pbn_b0_4_1843200_200),
-> +       CONNECT_DEVICE(XR17C158, UART_8_485, pbn_b0_8_1843200_200),
-
-> +       {       PCI_DEVICE_SUB(PCI_VENDOR_ID_EXAR,
-> +               PCI_DEVICE_ID_EXAR_XR17C152,
-> +               PCI_VENDOR_ID_IBM,
-> +               PCI_SUBDEVICE_ID_IBM_SATURN_SERIAL_ONE_PORT), 0, 0,
-> +               (kernel_ulong_t)&pbn_exar_ibm_saturn },
-
-Ditto.
-
-> +       /*
-> +        * Exar Corp. XR17C15[248] Dual/Quad/Octal UART
-> +        */
-
-One line?
-
-> +       EXAR_DEVICE(EXAR, EXAR_XR17C152, pbn_exar_XR17C152),
-> +       EXAR_DEVICE(EXAR, EXAR_XR17C154, pbn_exar_XR17C154),
-> +       EXAR_DEVICE(EXAR, EXAR_XR17C158, pbn_exar_XR17C158),
-
-> +       /*
-> +        * Exar Corp. XR17V[48]35[248] Dual/Quad/Octal/Hexa PCIe UARTs
-> +        */
-
-Ditto.
-
-> +       EXAR_DEVICE(EXAR, EXAR_XR17V352, pbn_exar_XR17V352),
-> +       EXAR_DEVICE(EXAR, EXAR_XR17V354, pbn_exar_XR17V354),
-> +       EXAR_DEVICE(EXAR, EXAR_XR17V358, pbn_exar_XR17V358),
-> +       EXAR_DEVICE(EXAR, EXAR_XR17V4358, pbn_exar_XR17V4358),
-> +       EXAR_DEVICE(EXAR, EXAR_XR17V8358, pbn_exar_XR17V8358),
-> +       EXAR_DEVICE(COMMTECH, COMMTECH_4222PCIE, pbn_exar_XR17V352),
-> +       EXAR_DEVICE(COMMTECH, COMMTECH_4224PCIE, pbn_exar_XR17V354),
-> +       EXAR_DEVICE(COMMTECH, COMMTECH_4228PCIE, pbn_exar_XR17V358),
-> +       { 0, }
-> +};
-
-> +MODULE_DEVICE_TABLE(pci, exar_pci_tbl);
-Move this to the next line after actual structure.
-
-> --- a/drivers/tty/serial/8250/Kconfig
-> +++ b/drivers/tty/serial/8250/Kconfig
-
-> +config SERIAL_8250_EXAR
-> +        tristate "8250/16550 PCI device support"
-> +        depends on SERIAL_8250_PCI
-
-> +       default SERIAL_8250
-
-Looks like this line has indentation issue. Moreover I told you to do
-this in patch 3, not here. Otherwise you will have drivers overlap.
-
--- 
-With Best Regards,
-Andy Shevchenko
+On 05/01/17 22:42, Maxime Ripard wrote:
+> On Fri, Dec 30, 2016 at 01:55:44PM +0100, Linus Walleij wrote:
+>> On Mon, Dec 26, 2016 at 3:33 PM, Andr=C3=A9 Przywara <andre.przywara@arm=
+.com> wrote:
+>>
+>>> So while this patch technically looks correct, I was wondering if we
+>>> should really explore the possibility of making the whole of sunxi
+>>> pinctrl DT controlled.
+>>> I brought this up a while ago, but people weren't overly enthusiastic
+>>> about it, though their argument weren't really convincing to me[1].
+>>>
+>>> So:
+>>> As this "driver" here is basically a table linking GPIO bit settings
+>>> (the actual mux value) to names and every pin we care about needs to be
+>>> enumerated in the DT anyway, why not just add something like:
+>>> allwinner,pinmux =3D <4>;
+>>> to each pin(group) in the DT and get rid of this "driver" file here
+>>> entirely?
+>>
+>> I'm open to that if you can use pinctrl-single which is in the kernel
+>> for this purpose only, and is used with both OMAPs and HiSilicon.
+>=20
+> I'm not open to that, and I'm getting tired of discussing it over and
+> over again. Andre, if you want to be convinced again, please read the
+> last discussion we had on this topic.
+
+As I said: It didn't convince me back then. And frankly we didn't really
+discuss it back then, I just refrained from entering a discussion
+against _two_ maintainers at this time, since my capacity on this kind
+of email threads is really very limited - especially for something that
+is a hobby to me.
+
+It isn't the highest priority on my list, but I am still planning on
+sketching something, so that we can discuss about actual code.
+As it seems like your new patches bring some relief to the immediate
+copy&paste pain (though the actual DT aspect still remains), I will shut
+up - for now ;-)
+
+Cheers,
+Andre.
+
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
