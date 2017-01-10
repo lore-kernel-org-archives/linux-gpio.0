@@ -1,96 +1,75 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2] gpio: pca953x: Add optional reset gpio control
-Date: Tue, 10 Jan 2017 22:01:18 +0200
-Message-ID: <CAHp75VfDfOV6L+xZAp1X1NRS_m+zSggfFCCw=GhkAsk0g=puLQ@mail.gmail.com>
-References: <1484076591-20834-1-git-send-email-steve_longerbeam@mentor.com> <1484076591-20834-2-git-send-email-steve_longerbeam@mentor.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1484076591-20834-2-git-send-email-steve_longerbeam@mentor.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Steve Longerbeam <slongerbeam@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Steve Longerbeam <steve_longerbeam@mentor.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/2] pinctrl: baytrail: Do not add all GPIOs to IRQ domain
+Date: Tue, 10 Jan 2017 22:11:38 +0200
+Message-ID: <20170110201139.129737-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:39212 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965314AbdAJULo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 10 Jan 2017 15:11:44 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, "Robert R . Howell" <rhowell@uwyo.edu>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Tue, Jan 10, 2017 at 9:29 PM, Steve Longerbeam <slongerbeam@gmail.com> wrote:
-> Add optional reset-gpios pin control. If present, de-assert the
-> specified reset gpio pin to bring the chip out of reset.
->
-> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
+It turns out that for some GPIO pins interrupts are bypassing standard
+chain.
 
+Now the reason why some events such as touchscreen communication on ASuS
+T100TA does not work if we mask all the interrupts is that in order to
+generate either interrupts or GPEs the INTMASK register must have that
+particular interrupt unmasked. In case of GPEs the CPU does not trigger
+normal interrupt (and thus the GPIO driver does not see it) but instead
+it causes SCI (System Control Interrupt) to be triggered with the GPE in
+question set.
 
-> --
->
-> v2:
-> - Specify that reset signal to PCA953x chip is active low, in
->   binding doc.
-> - reorder includes in gpio-pca953x.c.
-> - remove dev_err() on devm_gpiod_get_optional() error return.
+To make this all work as expected we add those GPIOs to the IRQ
+domain that can actually generate interrupts and skip others.
 
-This should go after delimiter.
+Fixes: 3ae02c14d964 ("pinctrl: intel: set default handler to be handle_bad_irq()")
+Reported-by: Robert R. Howell <rhowell@uwyo.edu>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-FWIW:
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
-> ---
->  Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 4 ++++
->  drivers/gpio/gpio-pca953x.c                             | 9 +++++++++
->  2 files changed, 13 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-> index 08dd15f..e639357 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-> @@ -29,6 +29,10 @@ Required properties:
->         onsemi,pca9654
->         exar,xra1202
->
-> +Optional properties:
-> + - reset-gpios: GPIO specification for the RESET input. This is an
-> +               active low signal to the PCA953x.
-> +
->  Example:
->
->
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index d5d72d8..d44232a 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -14,6 +14,7 @@
->  #include <linux/module.h>
->  #include <linux/init.h>
->  #include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/interrupt.h>
->  #include <linux/i2c.h>
->  #include <linux/platform_data/pca953x.h>
-> @@ -754,8 +755,16 @@ static int pca953x_probe(struct i2c_client *client,
->                 invert = pdata->invert;
->                 chip->names = pdata->names;
->         } else {
-> +               struct gpio_desc *reset_gpio;
-> +
->                 chip->gpio_start = -1;
->                 irq_base = 0;
-> +
-> +               /* See if we need to de-assert a reset pin */
-> +               reset_gpio = devm_gpiod_get_optional(&client->dev, "reset",
-> +                                                    GPIOD_OUT_LOW);
-> +               if (IS_ERR(reset_gpio))
-> +                       return PTR_ERR(reset_gpio);
->         }
->
->         chip->client = client;
-> --
-> 2.7.4
->
-
-
-
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index 67e92699b84e..c123488266ce 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -1623,6 +1623,8 @@ static void byt_gpio_irq_handler(struct irq_desc *desc)
+ 
+ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
+ {
++	struct gpio_chip *gc = &vg->chip;
++	struct device *dev = &vg->pdev->dev;
+ 	void __iomem *reg;
+ 	u32 base, value;
+ 	int i;
+@@ -1644,10 +1646,12 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
+ 		}
+ 
+ 		value = readl(reg);
+-		if ((value & BYT_PIN_MUX) == byt_get_gpio_mux(vg, i) &&
+-		    !(value & BYT_DIRECT_IRQ_EN)) {
++		if (value & BYT_DIRECT_IRQ_EN) {
++			clear_bit(i, gc->irq_valid_mask);
++			dev_dbg(dev, "excluding GPIO %d from IRQ domain\n", i);
++		} else if ((value & BYT_PIN_MUX) == byt_get_gpio_mux(vg, i)) {
+ 			byt_gpio_clear_triggering(vg, i);
+-			dev_dbg(&vg->pdev->dev, "disabling GPIO %d\n", i);
++			dev_dbg(dev, "disabling GPIO %d\n", i);
+ 		}
+ 	}
+ 
+@@ -1686,6 +1690,7 @@ static int byt_gpio_probe(struct byt_gpio *vg)
+ 	gc->can_sleep	= false;
+ 	gc->parent	= &vg->pdev->dev;
+ 	gc->ngpio	= vg->soc_data->npins;
++	gc->irq_need_valid_mask	= true;
+ 
+ #ifdef CONFIG_PM_SLEEP
+ 	vg->saved_context = devm_kcalloc(&vg->pdev->dev, gc->ngpio,
 -- 
-With Best Regards,
-Andy Shevchenko
+2.11.0
+
