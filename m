@@ -1,44 +1,59 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 3/3] arm: dts: r7s72100: Add peripherals nodes
-Date: Tue, 10 Jan 2017 21:58:19 +0200
-Message-ID: <2351875.0S8UmoVGa8@avalon>
-References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org> <1483990318-26927-4-git-send-email-jacopo+renesas@jmondi.org> <CAMuHMdVWVsHqdOTxeiD6zXaVJqdHPLvry9EjjPc9XvF8QsXkDw@mail.gmail.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH 1/1 RFC] gpio: Pass GPIO label down to gpiod_request when
+ using get_gpiod_from_child
+Date: Tue, 10 Jan 2017 20:57:28 +0100
+Message-ID: <276e7387-2c87-3bd4-8992-57a928e33dfc@gmail.com>
+References: <20161215085321.20337-1-alexander.stein@systec-electronic.com>
+ <CACRpkdb1gyXH0+O6P5scVD5_go07fbc3ydp61rG=7CypdXvJ2A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdVWVsHqdOTxeiD6zXaVJqdHPLvry9EjjPc9XvF8QsXkDw@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Chris Brandt <chris.brandt@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36424 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938057AbdAJT6O (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Jan 2017 14:58:14 -0500
+In-Reply-To: <CACRpkdb1gyXH0+O6P5scVD5_go07fbc3ydp61rG=7CypdXvJ2A@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Pavel Machek <pavel@ucw.cz>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Hi Geert,
+Hi Linus,
 
-On Tuesday 10 Jan 2017 16:07:01 Geert Uytterhoeven wrote:
-> On Mon, Jan 9, 2017 at 8:31 PM, Jacopo Mondi wrote:
-> > From: Magnus Damm <damm@opensource.se>
-> > 
-> > This is a squash of several commits, adding peripherals groups
-> > configuration to r7s72100 device tree, and enabling some of them on
-> > Genmai evaluation board
-> > 
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+On 01/09/2017 03:53 PM, Linus Walleij wrote:
+> On Thu, Dec 15, 2016 at 9:53 AM, Alexander Stein
+> <alexander.stein@systec-electronic.com> wrote:
 > 
-> Thanks for the rework!
+>> Currently all users of fwnode_get_named_gpiod() have no way to specify a
+>> label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
+>> With this change a proper label is used.
+>> Also adjust all users so they can pass a label, properly retrieved from
+>> device tree properties.
+>>
+>> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+>> ---
+>> This patchset addresses the problem described in
+>> https://www.spinics.net/lists/linux-leds/msg07233.html
+>>
+>> I can only verify leds-gpio usage, but changes to gpio_keys_polled and
+>> amba-clcd-nomadik seem pretty straight forward.
 > 
-> >  arch/arm/boot/dts/r7s72100-genmai.dts |  51 ++++++++++++
-> >  arch/arm/boot/dts/r7s72100.dtsi       | 151 +++++++++++++++++++++++++++++
->
-> This path should be split in multiple parts:
->   - Add the pfc node to r7s72100.dtsi,
->   - Add the gpio nodes to r7s72100.dtsi,
->   - 4 patches for r7s72100-genmai.dts, adding support for LEDs, SCIF,
->     Ethernet, and SPI.
+> I I like this, I have been annoyed by this too. Thank you for
+> looking into this.
+> 
+>> If this is the right thing to do, I need to know who I shall CC for
+>> patch approval.
+> 
+> I can simply test and merge the CLCD patch myself.
+> 
+> Ideally I'd like Dmitry Torokhov to ACK the input patch
+> and Jacek to ACK the LEDs patch and I will merge it.
 
-I can agree about the .dtsi/.dts split, but isn't this going a bit overboard ?
+For leds-gpio driver:
+
+Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
 -- 
-Regards,
-
-Laurent Pinchart
+Best regards,
+Jacek Anaszewski
