@@ -1,129 +1,112 @@
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v2 2/6] pinctrl: intel: Convert to use devm_gpiochip_add_data()
-Date: Tue, 10 Jan 2017 17:31:57 +0300
-Message-ID: <20170110143201.53539-3-mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 5/6] pinctrl: intel: Add support for 1k additional pull-down
+Date: Tue, 10 Jan 2017 17:32:00 +0300
+Message-ID: <20170110143201.53539-6-mika.westerberg@linux.intel.com>
 References: <20170110143201.53539-1-mika.westerberg@linux.intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:54738 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933519AbdAJOcn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 10 Jan 2017 09:32:43 -0500
 In-Reply-To: <20170110143201.53539-1-mika.westerberg@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, "David E . Box" <david.e.box@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
 
-This simplifies error handling and allows us to drop intel_pinctrl_remove()
-completely.
+The next generation Intel GPIO hardware supports additional 1k pull-down
+per-pad. Add support for this to the Intel core pinctrl driver.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/pinctrl/intel/pinctrl-broxton.c      |  1 -
- drivers/pinctrl/intel/pinctrl-intel.c        | 23 ++++-------------------
- drivers/pinctrl/intel/pinctrl-intel.h        |  2 --
- drivers/pinctrl/intel/pinctrl-sunrisepoint.c |  1 -
- 4 files changed, 4 insertions(+), 23 deletions(-)
+ drivers/pinctrl/intel/pinctrl-intel.c | 18 +++++++++++++++++-
+ drivers/pinctrl/intel/pinctrl-intel.h |  1 +
+ 2 files changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-broxton.c b/drivers/pinctrl/intel/pinctrl-broxton.c
-index 901b356b09d7..8ec2b6a77745 100644
---- a/drivers/pinctrl/intel/pinctrl-broxton.c
-+++ b/drivers/pinctrl/intel/pinctrl-broxton.c
-@@ -1058,7 +1058,6 @@ static const struct dev_pm_ops bxt_pinctrl_pm_ops = {
- 
- static struct platform_driver bxt_pinctrl_driver = {
- 	.probe = bxt_pinctrl_probe,
--	.remove = intel_pinctrl_remove,
- 	.driver = {
- 		.name = "broxton-pinctrl",
- 		.acpi_match_table = bxt_pinctrl_acpi_match,
 diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 1e139672f1af..447405809340 100644
+index 2d8722fa701d..f6fcfd061b74 100644
 --- a/drivers/pinctrl/intel/pinctrl-intel.c
 +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -884,7 +884,7 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
- 	pctrl->chip.base = -1;
- 	pctrl->irq = irq;
- 
--	ret = gpiochip_add_data(&pctrl->chip, pctrl);
-+	ret = devm_gpiochip_add_data(pctrl->dev, &pctrl->chip, pctrl);
- 	if (ret) {
- 		dev_err(pctrl->dev, "failed to register gpiochip\n");
- 		return ret;
-@@ -894,7 +894,7 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
- 				     0, 0, pctrl->soc->npins);
- 	if (ret) {
- 		dev_err(pctrl->dev, "failed to add GPIO pin range\n");
--		goto fail;
-+		return ret;
- 	}
- 
- 	/*
-@@ -907,24 +907,19 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
- 			       dev_name(pctrl->dev), pctrl);
- 	if (ret) {
- 		dev_err(pctrl->dev, "failed to request interrupt\n");
--		goto fail;
-+		return ret;
- 	}
- 
- 	ret = gpiochip_irqchip_add(&pctrl->chip, &intel_gpio_irqchip, 0,
- 				   handle_bad_irq, IRQ_TYPE_NONE);
- 	if (ret) {
- 		dev_err(pctrl->dev, "failed to add irqchip\n");
--		goto fail;
-+		return ret;
- 	}
- 
- 	gpiochip_set_chained_irqchip(&pctrl->chip, &intel_gpio_irqchip, irq,
- 				     NULL);
- 	return 0;
--
--fail:
--	gpiochip_remove(&pctrl->chip);
--
--	return ret;
- }
- 
- static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
-@@ -1046,16 +1041,6 @@ int intel_pinctrl_probe(struct platform_device *pdev,
- }
- EXPORT_SYMBOL_GPL(intel_pinctrl_probe);
- 
--int intel_pinctrl_remove(struct platform_device *pdev)
--{
--	struct intel_pinctrl *pctrl = platform_get_drvdata(pdev);
--
--	gpiochip_remove(&pctrl->chip);
--
--	return 0;
--}
--EXPORT_SYMBOL_GPL(intel_pinctrl_remove);
--
- #ifdef CONFIG_PM_SLEEP
- static bool intel_pinctrl_should_save(struct intel_pinctrl *pctrl, unsigned pin)
+@@ -450,12 +450,14 @@ static int intel_config_get(struct pinctrl_dev *pctldev, unsigned pin,
  {
+ 	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 	enum pin_config_param param = pinconf_to_config_param(*config);
++	const struct intel_community *community;
+ 	u32 value, term;
+ 	u16 arg = 0;
+ 
+ 	if (!intel_pad_owned_by_host(pctrl, pin))
+ 		return -ENOTSUPP;
+ 
++	community = intel_get_community(pctrl, pin);
+ 	value = readl(intel_get_padcfg(pctrl, pin, PADCFG1));
+ 	term = (value & PADCFG1_TERM_MASK) >> PADCFG1_TERM_SHIFT;
+ 
+@@ -491,6 +493,11 @@ static int intel_config_get(struct pinctrl_dev *pctldev, unsigned pin,
+ 			return -EINVAL;
+ 
+ 		switch (term) {
++		case PADCFG1_TERM_1K:
++			if (!(community->features & PINCTRL_FEATURE_1K_PD))
++				return -EINVAL;
++			arg = 1000;
++			break;
+ 		case PADCFG1_TERM_5K:
+ 			arg = 5000;
+ 			break;
+@@ -532,6 +539,7 @@ static int intel_config_set_pull(struct intel_pinctrl *pctrl, unsigned pin,
+ {
+ 	unsigned param = pinconf_to_config_param(config);
+ 	unsigned arg = pinconf_to_config_argument(config);
++	const struct intel_community *community;
+ 	void __iomem *padcfg1;
+ 	unsigned long flags;
+ 	int ret = 0;
+@@ -539,6 +547,7 @@ static int intel_config_set_pull(struct intel_pinctrl *pctrl, unsigned pin,
+ 
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
++	community = intel_get_community(pctrl, pin);
+ 	padcfg1 = intel_get_padcfg(pctrl, pin, PADCFG1);
+ 	value = readl(padcfg1);
+ 
+@@ -581,6 +590,11 @@ static int intel_config_set_pull(struct intel_pinctrl *pctrl, unsigned pin,
+ 		case 5000:
+ 			value |= PADCFG1_TERM_5K << PADCFG1_TERM_SHIFT;
+ 			break;
++		case 1000:
++			if (!(community->features & PINCTRL_FEATURE_1K_PD))
++				return -EINVAL;
++			value |= PADCFG1_TERM_1K << PADCFG1_TERM_SHIFT;
++			break;
+ 		default:
+ 			ret = -EINVAL;
+ 		}
+@@ -1118,8 +1132,10 @@ int intel_pinctrl_probe(struct platform_device *pdev,
+ 			u32 rev;
+ 
+ 			rev = (readl(regs + REVID) & REVID_MASK) >> REVID_SHIFT;
+-			if (rev >= 0x94)
++			if (rev >= 0x94) {
+ 				community->features |= PINCTRL_FEATURE_DEBOUNCE;
++				community->features |= PINCTRL_FEATURE_1K_PD;
++			}
+ 		}
+ 
+ 		/* Read offset of the pad configuration registers */
 diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
-index b60215793017..c22c44485c5d 100644
+index 1ff5abf309e3..fe9521f345b5 100644
 --- a/drivers/pinctrl/intel/pinctrl-intel.h
 +++ b/drivers/pinctrl/intel/pinctrl-intel.h
-@@ -121,8 +121,6 @@ struct intel_pinctrl_soc_data {
+@@ -81,6 +81,7 @@ struct intel_community {
  
- int intel_pinctrl_probe(struct platform_device *pdev,
- 			const struct intel_pinctrl_soc_data *soc_data);
--int intel_pinctrl_remove(struct platform_device *pdev);
--
- #ifdef CONFIG_PM_SLEEP
- int intel_pinctrl_suspend(struct device *dev);
- int intel_pinctrl_resume(struct device *dev);
-diff --git a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
-index c725a5313b4e..9877526c0807 100644
---- a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
-+++ b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
-@@ -574,7 +574,6 @@ static const struct dev_pm_ops spt_pinctrl_pm_ops = {
+ /* Additional features supported by the hardware */
+ #define PINCTRL_FEATURE_DEBOUNCE	BIT(0)
++#define PINCTRL_FEATURE_1K_PD		BIT(1)
  
- static struct platform_driver spt_pinctrl_driver = {
- 	.probe = spt_pinctrl_probe,
--	.remove = intel_pinctrl_remove,
- 	.driver = {
- 		.name = "sunrisepoint-pinctrl",
- 		.acpi_match_table = spt_pinctrl_acpi_match,
+ #define PIN_GROUP(n, p, m)			\
+ 	{					\
 -- 
 2.11.0
+
