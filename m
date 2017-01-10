@@ -1,32 +1,65 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 0/3] pc104: Mask PC/104 Kconfig options
-Date: Tue, 10 Jan 2017 13:50:28 -0500
-Message-ID: <cover.1484073324.git.vilhelm.gray@gmail.com>
+Subject: [PATCH 2/3] gpio: pc104: Mask PC/104 drivers via PC104 Kconfig option
+Date: Tue, 10 Jan 2017 13:51:06 -0500
+Message-ID: <d45bf9e0428c7885e37f157f9fe222f82594b87c.1484073325.git.vilhelm.gray@gmail.com>
+References: <cover.1484073324.git.vilhelm.gray@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1484073324.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: gregkh@linuxfoundation.org
 Cc: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-PC/104 form factor devices serve a specific niche of embedded system
-users. Since PC/104 devices and hardware are typically used by just a
-subset of Linux users, it would be appropriate to filter PC/104 related
-Kconfig options for those uninterested.
+PC/104 drivers should be hidden on machines which do not support PC/104
+devices. This patch adds the PC104 Kconfig option as a dependency for
+the relevant PC/104 device driver Kconfig options.
 
-This patchset introduces the PC104 Kconfig option, and uses it to mask
-PC/104 specific device drivers and options, so that only those users
-interested in PC/104 related Kconfig options are exposed to them.
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+ drivers/gpio/Kconfig | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-William Breathitt Gray (3):
-  pc104: Introduce the PC104 Kconfig option
-  gpio: pc104: Mask PC/104 drivers via PC104 Kconfig option
-  iio: pc104: Mask PC/104 drivers via the PC104 Kconfig option
-
- drivers/gpio/Kconfig        | 8 ++++----
- drivers/iio/adc/Kconfig     | 2 +-
- drivers/iio/counter/Kconfig | 2 +-
- init/Kconfig                | 7 +++++++
- 4 files changed, 13 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index d5d36549ecc1..ad7084d98c60 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -539,7 +539,7 @@ menu "Port-mapped I/O GPIO drivers"
+ 
+ config GPIO_104_DIO_48E
+ 	tristate "ACCES 104-DIO-48E GPIO support"
+-	depends on ISA_BUS_API
++	depends on PC104 && ISA_BUS_API
+ 	select GPIOLIB_IRQCHIP
+ 	help
+ 	  Enables GPIO support for the ACCES 104-DIO-48E series (104-DIO-48E,
+@@ -549,7 +549,7 @@ config GPIO_104_DIO_48E
+ 
+ config GPIO_104_IDIO_16
+ 	tristate "ACCES 104-IDIO-16 GPIO support"
+-	depends on ISA_BUS_API
++	depends on PC104 && ISA_BUS_API
+ 	select GPIOLIB_IRQCHIP
+ 	help
+ 	  Enables GPIO support for the ACCES 104-IDIO-16 family (104-IDIO-16,
+@@ -560,7 +560,7 @@ config GPIO_104_IDIO_16
+ 
+ config GPIO_104_IDI_48
+ 	tristate "ACCES 104-IDI-48 GPIO support"
+-	depends on ISA_BUS_API
++	depends on PC104 && ISA_BUS_API
+ 	select GPIOLIB_IRQCHIP
+ 	help
+ 	  Enables GPIO support for the ACCES 104-IDI-48 family (104-IDI-48A,
+@@ -580,7 +580,7 @@ config GPIO_F7188X
+ 
+ config GPIO_GPIO_MM
+ 	tristate "Diamond Systems GPIO-MM GPIO support"
+-	depends on ISA_BUS_API
++	depends on PC104 && ISA_BUS_API
+ 	help
+ 	  Enables GPIO support for the Diamond Systems GPIO-MM and GPIO-MM-12.
+ 
 -- 
 2.11.0
