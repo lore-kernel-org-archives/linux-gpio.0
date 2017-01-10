@@ -1,77 +1,113 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 3/3] arm: dts: r7s72100: Add peripherals nodes
-Date: Tue, 10 Jan 2017 16:07:01 +0100
-Message-ID: <CAMuHMdVWVsHqdOTxeiD6zXaVJqdHPLvry9EjjPc9XvF8QsXkDw@mail.gmail.com>
-References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org> <1483990318-26927-4-git-send-email-jacopo+renesas@jmondi.org>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 1/5] pinctrl: core: Use delayed work for hogs
+Date: Tue, 10 Jan 2017 07:30:46 -0800
+Message-ID: <20170110153045.GS2630@atomide.com>
+References: <20161227172003.6517-1-tony@atomide.com>
+ <20161227172003.6517-2-tony@atomide.com>
+ <CAMuHMdVLbNXx23-wgLHcvktyHxWf6t75ggU3rM5A-DhtU9hn5w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36080 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754704AbdAJPHD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Jan 2017 10:07:03 -0500
-In-Reply-To: <1483990318-26927-4-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVLbNXx23-wgLHcvktyHxWf6t75ggU3rM5A-DhtU9hn5w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Chris Brandt <chris.brandt@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Jacopo,
+* Geert Uytterhoeven <geert@linux-m68k.org> [170110 06:09]:
+> Hi Tony,
+> 
+> On Tue, Dec 27, 2016 at 6:19 PM, Tony Lindgren <tony@atomide.com> wrote:
+> > Having the pin control framework call pin controller functions
+> > before it's probe has finished is not nice as the pin controller
+> > device driver does not yet have struct pinctrl_dev handle.
+> >
+> > Let's fix this issue by adding deferred work for late init. This is
+> > needed to be able to add pinctrl generic helper functions that expect
+> > to know struct pinctrl_dev handle. Note that we now need to call
+> > create_pinctrl() directly as we don't want to add the pin controller
+> > to the list of controllers until the hogs are claimed. We also need
+> > to pass the pinctrl_dev to the device tree parser functions as they
+> > otherwise won't find the right controller at this point.
+> >
+> > Signed-off-by: Tony Lindgren <tony@atomide.com>
+> 
+> I believe this patch causes a regression on r8a7740/armadillo, where the
+> pin controller is also a GPIO controller, and lcd0 needs a hog
+> (cfr. arch/arm/boot/dts/r8a7740-armadillo800eva.dts):
+> 
+> -GPIO line 176 (lcd0) hogged as output/high
+> -sh-pfc e6050000.pfc: r8a7740_pfc handling gpio 0 -> 211
+> +gpiochip_add_data: GPIOs 0..211 (r8a7740_pfc) failed to register
+> +sh-pfc e6050000.pfc: failed to init GPIO chip, ignoring...
+>  sh-pfc e6050000.pfc: r8a7740_pfc support registered
+> 
+> Hence all drivers using GPIOs fail to initialize because their GPIOs never
+> become available.
+> 
+> Adding debug prints to the failure paths shows that the call to
+> of_pinctrl_get() in of_gpiochip_add_pin_range() fails with -EPROBE_DEFER.
+> Adding a debug print to the top of gpiochip_add_data() makes the problem go
+> away, presumably because it introduces a delay that allows the delayed work
+> to kick in...
 
-On Mon, Jan 9, 2017 at 8:31 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> From: Magnus Damm <damm@opensource.se>
->
-> This is a squash of several commits, adding peripherals groups
-> configuration to r7s72100 device tree, and enabling some of them on
-> Genmai evaluation board
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+OK. What if we added also an optional pinctrl function that the pin
+controller driver could call to initialize hogs? Then the pin controller
+driver could call it during or after probe as needed. That is after
+there's a valid struct pinctrl_dev handle.
 
-Thanks for the rework!
+> Jon's fix ("pinctrl: core: Fix panic when pinctrl devices with hogs are
+> unregistered") doesn't help, as it affects unregistration only.
+> 
+> > --- a/drivers/pinctrl/core.c
+> > +++ b/drivers/pinctrl/core.c
+> 
+> > @@ -1800,32 +1847,10 @@ struct pinctrl_dev *pinctrl_register(struct pinctrl_desc *pctldesc,
+> >                 goto out_err;
+> >         }
+> >
+> > -       mutex_lock(&pinctrldev_list_mutex);
+> > -       list_add_tail(&pctldev->node, &pinctrldev_list);
+> > -       mutex_unlock(&pinctrldev_list_mutex);
+> > -
+> > -       pctldev->p = pinctrl_get(pctldev->dev);
+> > -
+> > -       if (!IS_ERR(pctldev->p)) {
+> > -               pctldev->hog_default =
+> > -                       pinctrl_lookup_state(pctldev->p, PINCTRL_STATE_DEFAULT);
+> > -               if (IS_ERR(pctldev->hog_default)) {
+> > -                       dev_dbg(dev, "failed to lookup the default state\n");
+> > -               } else {
+> > -                       if (pinctrl_select_state(pctldev->p,
+> > -                                               pctldev->hog_default))
+> > -                               dev_err(dev,
+> > -                                       "failed to select default state\n");
+> > -               }
+> > -
+> > -               pctldev->hog_sleep =
+> > -                       pinctrl_lookup_state(pctldev->p,
+> > -                                                   PINCTRL_STATE_SLEEP);
+> > -               if (IS_ERR(pctldev->hog_sleep))
+> > -                       dev_dbg(dev, "failed to lookup the sleep state\n");
+> > -       }
+> > -
+> > -       pinctrl_init_device_debugfs(pctldev);
+> > +       if (pinctrl_dt_has_hogs(pctldev))
+> 
+> Changing the above line to "if (0 && pinctrl_dt_has_hogs(pctldev))"
+> fixes the issue for me.
+> 
+> > +               schedule_delayed_work(&pctldev->late_init, 0);
+> > +       else
+> > +               pinctrl_late_init(&pctldev->late_init.work);
+> >
+> >         return pctldev;
 
->  arch/arm/boot/dts/r7s72100-genmai.dts |  51 ++++++++++++
->  arch/arm/boot/dts/r7s72100.dtsi       | 151 ++++++++++++++++++++++++++++++++++
+We could also pass some flag if should always call pinctrl_late_init()
+directly. But that does not remove the problem of struct pinctrl_dev handle
+being uninitialized when the pin controller driver functionas are called.
 
-This path should be split in multiple parts:
-  - Add the pfc node to r7s72100.dtsi,
-  - Add the gpio nodes to r7s72100.dtsi,
-  - 4 patches for r7s72100-genmai.dts, adding support for LEDs, SCIF,
-    Ethernet, and SPI.
+Regards,
 
-> --- a/arch/arm/boot/dts/r7s72100.dtsi
-> +++ b/arch/arm/boot/dts/r7s72100.dtsi
-> @@ -20,6 +20,19 @@
->         #size-cells = <1>;
->
->         aliases {
-> +               gpio0 = &port0;
-> +               gpio1 = &port1;
-> +               gpio2 = &port2;
-> +               gpio3 = &port3;
-> +               gpio4 = &port4;
-> +               gpio5 = &port5;
-> +               gpio6 = &port6;
-> +               gpio7 = &port7;
-> +               gpio8 = &port8;
-> +               gpio9 = &port9;
-> +               gpio10 = &port10;
-> +               gpio11 = &port11;
-> +               gpio12 = &jtagport0;
-
-Please remove this hunk.
-GPIO aliases are deprecated, and I don't think the driver uses them.
-
->                 i2c0 = &i2c0;
->                 i2c1 = &i2c1;
->                 i2c2 = &i2c2;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Tony
