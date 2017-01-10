@@ -1,54 +1,60 @@
-From: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 3/3] iio: pc104: Mask PC/104 drivers via the PC104 Kconfig option
-Date: Tue, 10 Jan 2017 13:51:29 -0500
-Message-ID: <512f7f9909c9ff6964b34e0302eeb404e703f033.1484073325.git.vilhelm.gray@gmail.com>
-References: <cover.1484073324.git.vilhelm.gray@gmail.com>
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1484073324.git.vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
-Cc: jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Steve Longerbeam <slongerbeam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] gpio: pca953x: Add optional reset gpio control
+Date: Tue, 10 Jan 2017 10:57:18 -0800
+Message-ID: <70691549-5354-beab-bd87-889e2a627ce6@gmail.com>
+References: <1483391271-17304-1-git-send-email-steve_longerbeam@mentor.com>
+ <1483391271-17304-2-git-send-email-steve_longerbeam@mentor.com>
+ <CAHp75VeCKPy4B51P_N9Bp03zPUbRodKzitc-n16ZRKJWcEF4fA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAHp75VeCKPy4B51P_N9Bp03zPUbRodKzitc-n16ZRKJWcEF4fA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Steve Longerbeam <steve_longerbeam-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-PC/104 drivers should be hidden on machines which do not support PC/104
-devices. This patch adds the PC104 Kconfig option as a dependency for
-the relevant PC/104 device driver Kconfig options.
 
-Cc: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>
-Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Cc: Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>
-Signed-off-by: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/iio/adc/Kconfig     | 2 +-
- drivers/iio/counter/Kconfig | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 9c8b558ba19e..dc897b443a17 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -465,7 +465,7 @@ config STM32_ADC
- 
- config STX104
- 	tristate "Apex Embedded Systems STX104 driver"
--	depends on X86 && ISA_BUS_API
-+	depends on PC104 && X86 && ISA_BUS_API
- 	select GPIOLIB
- 	help
- 	  Say yes here to build support for the Apex Embedded Systems STX104
-diff --git a/drivers/iio/counter/Kconfig b/drivers/iio/counter/Kconfig
-index 44627f6e4861..b37e5fc03149 100644
---- a/drivers/iio/counter/Kconfig
-+++ b/drivers/iio/counter/Kconfig
-@@ -7,7 +7,7 @@ menu "Counters"
- 
- config 104_QUAD_8
- 	tristate "ACCES 104-QUAD-8 driver"
--	depends on X86 && ISA_BUS_API
-+	depends on PC104 && X86 && ISA_BUS_API
- 	help
- 	  Say yes here to build support for the ACCES 104-QUAD-8 quadrature
- 	  encoder counter/interface device family (104-QUAD-8, 104-QUAD-4).
--- 
-2.11.0
+On 01/03/2017 03:37 PM, Andy Shevchenko wrote:
+> On Mon, Jan 2, 2017 at 11:07 PM, Steve Longerbeam <slongerbeam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> Add optional reset-gpios pin control. If present, de-assert the
+>> specified reset gpio pin to bring the chip out of reset.
+>> --- a/drivers/gpio/gpio-pca953x.c
+>> +++ b/drivers/gpio/gpio-pca953x.c
+>> @@ -22,6 +22,7 @@
+>>   #include <linux/of_platform.h>
+>>   #include <linux/acpi.h>
+>>   #include <linux/regulator/consumer.h>
+>> +#include <linux/gpio/consumer.h>
+> Please, try to put it somehow alphabetically ordered (yes, I see it's
+> not in general, but try to squeeze it into longest part which is
+> ordered).
+
+done.
+
+>
+>>   #define PCA953X_INPUT          0
+>>   #define PCA953X_OUTPUT         1
+>> @@ -754,8 +755,18 @@ static int pca953x_probe(struct i2c_client *client,
+>>                  invert = pdata->invert;
+>>                  chip->names = pdata->names;
+>>          } else {
+>> +               struct gpio_desc *reset_gpio;
+>> +
+>>                  chip->gpio_start = -1;
+>>                  irq_base = 0;
+>> +
+>> +               /* see if we need to de-assert a reset pin */
+> see -> See
+
+done.
+
+
+Steve
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
