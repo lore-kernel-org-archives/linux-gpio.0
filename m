@@ -1,7 +1,7 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 2/3] gpio: pc104: Mask PC/104 drivers via PC104 Kconfig option
-Date: Tue, 10 Jan 2017 13:51:06 -0500
-Message-ID: <d45bf9e0428c7885e37f157f9fe222f82594b87c.1484073325.git.vilhelm.gray@gmail.com>
+Subject: [PATCH 1/3] pc104: Introduce the PC104 Kconfig option
+Date: Tue, 10 Jan 2017 13:50:54 -0500
+Message-ID: <17b3b34d44b8914496aa8256eb6e9c43ee6925ca.1484073325.git.vilhelm.gray@gmail.com>
 References: <cover.1484073324.git.vilhelm.gray@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1484073324.git.vilhelm.gray@gmail.com>
@@ -10,56 +10,34 @@ To: gregkh@linuxfoundation.org
 Cc: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-PC/104 drivers should be hidden on machines which do not support PC/104
-devices. This patch adds the PC104 Kconfig option as a dependency for
-the relevant PC/104 device driver Kconfig options.
+PC/104 form factor devices serve a specific niche of embedded system
+users; most Linux users will not have PC/104 form factor devices. This
+patch introduces the PC104 Kconfig option, which should be used to
+filter PC/104 specific device drivers and options, so that only those
+users interested in PC/104 related options are exposed to them.
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/gpio/Kconfig | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ init/Kconfig | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index d5d36549ecc1..ad7084d98c60 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -539,7 +539,7 @@ menu "Port-mapped I/O GPIO drivers"
- 
- config GPIO_104_DIO_48E
- 	tristate "ACCES 104-DIO-48E GPIO support"
--	depends on ISA_BUS_API
-+	depends on PC104 && ISA_BUS_API
- 	select GPIOLIB_IRQCHIP
+diff --git a/init/Kconfig b/init/Kconfig
+index 223b734abccd..12841d75a04d 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1716,6 +1716,13 @@ config PERF_USE_VMALLOC
  	help
- 	  Enables GPIO support for the ACCES 104-DIO-48E series (104-DIO-48E,
-@@ -549,7 +549,7 @@ config GPIO_104_DIO_48E
+ 	  See tools/perf/design.txt for details
  
- config GPIO_104_IDIO_16
- 	tristate "ACCES 104-IDIO-16 GPIO support"
--	depends on ISA_BUS_API
-+	depends on PC104 && ISA_BUS_API
- 	select GPIOLIB_IRQCHIP
- 	help
- 	  Enables GPIO support for the ACCES 104-IDIO-16 family (104-IDIO-16,
-@@ -560,7 +560,7 @@ config GPIO_104_IDIO_16
++config PC104
++	bool "PC/104 support"
++	help
++	  Expose PC/104 form factor device drivers and options available for
++	  selection and configuration. Enable this option if your target
++	  machine has a PC/104 bus.
++
+ menu "Kernel Performance Events And Counters"
  
- config GPIO_104_IDI_48
- 	tristate "ACCES 104-IDI-48 GPIO support"
--	depends on ISA_BUS_API
-+	depends on PC104 && ISA_BUS_API
- 	select GPIOLIB_IRQCHIP
- 	help
- 	  Enables GPIO support for the ACCES 104-IDI-48 family (104-IDI-48A,
-@@ -580,7 +580,7 @@ config GPIO_F7188X
- 
- config GPIO_GPIO_MM
- 	tristate "Diamond Systems GPIO-MM GPIO support"
--	depends on ISA_BUS_API
-+	depends on PC104 && ISA_BUS_API
- 	help
- 	  Enables GPIO support for the Diamond Systems GPIO-MM and GPIO-MM-12.
- 
+ config PERF_EVENTS
 -- 
 2.11.0
