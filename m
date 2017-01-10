@@ -1,99 +1,71 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/2] pinctrl: baytrail: Do not add all GPIOs to IRQ
- domain
-Date: Tue, 10 Jan 2017 22:16:42 +0200
-Message-ID: <1484079402.2133.46.camel@linux.intel.com>
-References: <20170110201139.129737-1-andriy.shevchenko@linux.intel.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH 3/3] iio: pc104: Mask PC/104 drivers via the PC104 Kconfig
+ option
+Date: Tue, 10 Jan 2017 21:13:02 +0000
+Message-ID: <4236ccf5-1480-ea3c-fee6-35ea252e3756@kernel.org>
+References: <cover.1484073324.git.vilhelm.gray@gmail.com>
+ <512f7f9909c9ff6964b34e0302eeb404e703f033.1484073325.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:8081 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1763673AbdAJUQq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 10 Jan 2017 15:16:46 -0500
-In-Reply-To: <20170110201139.129737-1-andriy.shevchenko@linux.intel.com>
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:57908 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751207AbdAJVNG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Jan 2017 16:13:06 -0500
+In-Reply-To: <512f7f9909c9ff6964b34e0302eeb404e703f033.1484073325.git.vilhelm.gray@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, "Robert R . Howell" <rhowell@uwyo.edu>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>, gregkh@linuxfoundation.org
+Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, gnurou@gmail.com
 
-On Tue, 2017-01-10 at 22:11 +0200, Andy Shevchenko wrote:
-> It turns out that for some GPIO pins interrupts are bypassing standard
-> chain.
+On 10/01/17 18:51, William Breathitt Gray wrote:
+> PC/104 drivers should be hidden on machines which do not support PC/104
+> devices. This patch adds the PC104 Kconfig option as a dependency for
+> the relevant PC/104 device driver Kconfig options.
 > 
-> Now the reason why some events such as touchscreen communication on
-> ASuS
-> T100TA does not work if we mask all the interrupts is that in order to
-> generate either interrupts or GPEs the INTMASK register must have that
-> particular interrupt unmasked. In case of GPEs the CPU does not
-> trigger
-> normal interrupt (and thus the GPIO driver does not see it) but
-> instead
-> it causes SCI (System Control Interrupt) to be triggered with the GPE
-> in
-> question set.
-> 
-> To make this all work as expected we add those GPIOs to the IRQ
-> domain that can actually generate interrupts and skip others.
-> 
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Hartmut Knaack <knaack.h@gmx.de>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Acked-by: Jonathan Cameron <jic23@kernel.org>
 
-Suggested-by: Mika.
+Now the question is how to merge this one.  Let me know if you
+want me to take this one via IIO after the first patch is in.
+If you want to take it another route I'm fine with that.
 
-Mika, please check if I wrote description clearly.
-
-> Fixes: 3ae02c14d964 ("pinctrl: intel: set default handler to be
-> handle_bad_irq()")
-> Reported-by: Robert R. Howell <rhowell@uwyo.edu>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Jonathan
 > ---
->  drivers/pinctrl/intel/pinctrl-baytrail.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
+>  drivers/iio/adc/Kconfig     | 2 +-
+>  drivers/iio/counter/Kconfig | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c
-> b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> index 67e92699b84e..c123488266ce 100644
-> --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-> +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> @@ -1623,6 +1623,8 @@ static void byt_gpio_irq_handler(struct irq_desc
-> *desc)
->  
->  static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
->  {
-> +	struct gpio_chip *gc = &vg->chip;
-> +	struct device *dev = &vg->pdev->dev;
->  	void __iomem *reg;
->  	u32 base, value;
->  	int i;
-> @@ -1644,10 +1646,12 @@ static void byt_gpio_irq_init_hw(struct
-> byt_gpio *vg)
->  		}
->  
->  		value = readl(reg);
-> -		if ((value & BYT_PIN_MUX) == byt_get_gpio_mux(vg, i)
-> &&
-> -		    !(value & BYT_DIRECT_IRQ_EN)) {
-> +		if (value & BYT_DIRECT_IRQ_EN) {
-> +			clear_bit(i, gc->irq_valid_mask);
-> +			dev_dbg(dev, "excluding GPIO %d from IRQ
-> domain\n", i);
-> +		} else if ((value & BYT_PIN_MUX) ==
-> byt_get_gpio_mux(vg, i)) {
->  			byt_gpio_clear_triggering(vg, i);
-> -			dev_dbg(&vg->pdev->dev, "disabling GPIO
-> %d\n", i);
-> +			dev_dbg(dev, "disabling GPIO %d\n", i);
->  		}
->  	}
->  
-> @@ -1686,6 +1690,7 @@ static int byt_gpio_probe(struct byt_gpio *vg)
->  	gc->can_sleep	= false;
->  	gc->parent	= &vg->pdev->dev;
->  	gc->ngpio	= vg->soc_data->npins;
-> +	gc->irq_need_valid_mask	= true;
->  
->  #ifdef CONFIG_PM_SLEEP
->  	vg->saved_context = devm_kcalloc(&vg->pdev->dev, gc->ngpio,
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index 9c8b558ba19e..dc897b443a17 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -465,7 +465,7 @@ config STM32_ADC
+>  
+>  config STX104
+>  	tristate "Apex Embedded Systems STX104 driver"
+> -	depends on X86 && ISA_BUS_API
+> +	depends on PC104 && X86 && ISA_BUS_API
+>  	select GPIOLIB
+>  	help
+>  	  Say yes here to build support for the Apex Embedded Systems STX104
+> diff --git a/drivers/iio/counter/Kconfig b/drivers/iio/counter/Kconfig
+> index 44627f6e4861..b37e5fc03149 100644
+> --- a/drivers/iio/counter/Kconfig
+> +++ b/drivers/iio/counter/Kconfig
+> @@ -7,7 +7,7 @@ menu "Counters"
+>  
+>  config 104_QUAD_8
+>  	tristate "ACCES 104-QUAD-8 driver"
+> -	depends on X86 && ISA_BUS_API
+> +	depends on PC104 && X86 && ISA_BUS_API
+>  	help
+>  	  Say yes here to build support for the ACCES 104-QUAD-8 quadrature
+>  	  encoder counter/interface device family (104-QUAD-8, 104-QUAD-4).
+> 
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
