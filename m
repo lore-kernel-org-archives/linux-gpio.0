@@ -1,71 +1,59 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 3/3] iio: pc104: Mask PC/104 drivers via the PC104 Kconfig
- option
-Date: Tue, 10 Jan 2017 21:13:02 +0000
-Message-ID: <4236ccf5-1480-ea3c-fee6-35ea252e3756@kernel.org>
-References: <cover.1484073324.git.vilhelm.gray@gmail.com>
- <512f7f9909c9ff6964b34e0302eeb404e703f033.1484073325.git.vilhelm.gray@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 3/3] arm: dts: r7s72100: Add peripherals nodes
+Date: Tue, 10 Jan 2017 22:13:32 +0100
+Message-ID: <CAMuHMdWy5qqhJig+6uUTBSAsK8Vdu_exN5e_Ar3fC6JVMAsj2Q@mail.gmail.com>
+References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1483990318-26927-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVWVsHqdOTxeiD6zXaVJqdHPLvry9EjjPc9XvF8QsXkDw@mail.gmail.com> <2351875.0S8UmoVGa8@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from saturn.retrosnub.co.uk ([178.18.118.26]:57908 "EHLO
-        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751207AbdAJVNG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Jan 2017 16:13:06 -0500
-In-Reply-To: <512f7f9909c9ff6964b34e0302eeb404e703f033.1484073325.git.vilhelm.gray@gmail.com>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36824 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752324AbdAJVNd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Jan 2017 16:13:33 -0500
+In-Reply-To: <2351875.0S8UmoVGa8@avalon>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>, gregkh@linuxfoundation.org
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, gnurou@gmail.com
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Chris Brandt <chris.brandt@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Simon Horman <horms@verge.net.au>
 
-On 10/01/17 18:51, William Breathitt Gray wrote:
-> PC/104 drivers should be hidden on machines which do not support PC/104
-> devices. This patch adds the PC104 Kconfig option as a dependency for
-> the relevant PC/104 device driver Kconfig options.
-> 
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Hartmut Knaack <knaack.h@gmx.de>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-Acked-by: Jonathan Cameron <jic23@kernel.org>
+Hi Laurent,
 
-Now the question is how to merge this one.  Let me know if you
-want me to take this one via IIO after the first patch is in.
-If you want to take it another route I'm fine with that.
+On Tue, Jan 10, 2017 at 8:58 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Tuesday 10 Jan 2017 16:07:01 Geert Uytterhoeven wrote:
+>> On Mon, Jan 9, 2017 at 8:31 PM, Jacopo Mondi wrote:
+>> > From: Magnus Damm <damm@opensource.se>
+>> >
+>> > This is a squash of several commits, adding peripherals groups
+>> > configuration to r7s72100 device tree, and enabling some of them on
+>> > Genmai evaluation board
+>> >
+>> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>>
+>> Thanks for the rework!
+>>
+>> >  arch/arm/boot/dts/r7s72100-genmai.dts |  51 ++++++++++++
+>> >  arch/arm/boot/dts/r7s72100.dtsi       | 151 +++++++++++++++++++++++++++++
+>>
+>> This path should be split in multiple parts:
+>>   - Add the pfc node to r7s72100.dtsi,
+>>   - Add the gpio nodes to r7s72100.dtsi,
+>>   - 4 patches for r7s72100-genmai.dts, adding support for LEDs, SCIF,
+>>     Ethernet, and SPI.
+>
+> I can agree about the .dtsi/.dts split, but isn't this going a bit overboard ?
 
-Jonathan
-> ---
->  drivers/iio/adc/Kconfig     | 2 +-
->  drivers/iio/counter/Kconfig | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 9c8b558ba19e..dc897b443a17 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -465,7 +465,7 @@ config STM32_ADC
->  
->  config STX104
->  	tristate "Apex Embedded Systems STX104 driver"
-> -	depends on X86 && ISA_BUS_API
-> +	depends on PC104 && X86 && ISA_BUS_API
->  	select GPIOLIB
->  	help
->  	  Say yes here to build support for the Apex Embedded Systems STX104
-> diff --git a/drivers/iio/counter/Kconfig b/drivers/iio/counter/Kconfig
-> index 44627f6e4861..b37e5fc03149 100644
-> --- a/drivers/iio/counter/Kconfig
-> +++ b/drivers/iio/counter/Kconfig
-> @@ -7,7 +7,7 @@ menu "Counters"
->  
->  config 104_QUAD_8
->  	tristate "ACCES 104-QUAD-8 driver"
-> -	depends on X86 && ISA_BUS_API
-> +	depends on PC104 && X86 && ISA_BUS_API
->  	help
->  	  Say yes here to build support for the ACCES 104-QUAD-8 quadrature
->  	  encoder counter/interface device family (104-QUAD-8, 104-QUAD-4).
-> 
+Let's find out what Simon's opinion is...
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
