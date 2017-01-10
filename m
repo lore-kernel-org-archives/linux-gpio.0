@@ -1,109 +1,57 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] pinctrl: baytrail: Rectify debounce support
-Date: Tue, 10 Jan 2017 16:03:19 +0200
-Message-ID: <20170110140319.26185-1-andriy.shevchenko@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:63766 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752086AbdAJODX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 10 Jan 2017 09:03:23 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: Re: [PATCH] tools: gpio add .gitignore for generated files
+Date: Tue, 10 Jan 2017 07:07:51 -0700
+Message-ID: <56151fe1-67f6-37f7-08c7-db61c664adb3@osg.samsung.com>
+References: <20170105213236.15562-1-shuahkh@osg.samsung.com>
+ <20170105213236.15562-5-shuahkh@osg.samsung.com>
+ <CACRpkdbeT8PgxW+VCGwrznOTQV=2Dw8CcJUqZAcKdB2a96tJXA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbeT8PgxW+VCGwrznOTQV=2Dw8CcJUqZAcKdB2a96tJXA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Shuah Khan <shuahkh@osg.samsung.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>
 
-The commit 658b476c742f ("pinctrl: baytrail: Add debounce configuration")
-implements debounce for Baytrail pin control, but seems wasn't tested properly.
+On 01/10/2017 02:29 AM, Linus Walleij wrote:
+> On Thu, Jan 5, 2017 at 10:32 PM, Shuah Khan <shuahkh@osg.samsung.com> wrote:
+> 
+>> Add .gitignore for generated files.
+>>
+>> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+>> ---
+>>  tools/gpio/.gitignore | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>  create mode 100644 tools/gpio/.gitignore
+>>
+>> diff --git a/tools/gpio/.gitignore b/tools/gpio/.gitignore
+>> new file mode 100644
+>> index 0000000..767ad24
+>> --- /dev/null
+>> +++ b/tools/gpio/.gitignore
+>> @@ -0,0 +1,4 @@
+>> +gpio-event-mon
+>> +gpio-hammer
+>> +lsgpio
+>> +include
+> 
+> I understand the first three.
+> 
+> But "include"?
+> How did you produce that?
+> 
+> Yours,
+> Linus Walleij
+> 
 
-Rectify implementation here.
+I saw this after building selftests. gpio selftests Makefile installs
+headres. "make kselftest" should reproduce the problem. This following
+does an header install from tools/testing/selftests/gpio/Makefile
 
-Fixes: 658b476c742f ("pinctrl: baytrail: Add debounce configuration")
-Cc: Cristina Ciocan <cristina.ciocan@intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-baytrail.c | 28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
+../../../../usr/include/linux/gpio.h:
+        make -C ../../../.. headers_install INSTALL_HDR_PATH=$(shell pwd)/../../../../usr/
 
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 71bbeb9321ba..079015385fd8 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -1092,6 +1092,7 @@ static int byt_pin_config_get(struct pinctrl_dev *pctl_dev, unsigned int offset,
- 	enum pin_config_param param = pinconf_to_config_param(*config);
- 	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
- 	void __iomem *val_reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
-+	void __iomem *db_reg = byt_gpio_reg(vg, offset, BYT_DEBOUNCE_REG);
- 	unsigned long flags;
- 	u32 conf, pull, val, debounce;
- 	u16 arg = 0;
-@@ -1128,7 +1129,7 @@ static int byt_pin_config_get(struct pinctrl_dev *pctl_dev, unsigned int offset,
- 			return -EINVAL;
- 
- 		raw_spin_lock_irqsave(&vg->lock, flags);
--		debounce = readl(byt_gpio_reg(vg, offset, BYT_DEBOUNCE_REG));
-+		debounce = readl(db_reg);
- 		raw_spin_unlock_irqrestore(&vg->lock, flags);
- 
- 		switch (debounce & BYT_DEBOUNCE_PULSE_MASK) {
-@@ -1176,6 +1177,7 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
- 	unsigned int param, arg;
- 	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
- 	void __iomem *val_reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
-+	void __iomem *db_reg = byt_gpio_reg(vg, offset, BYT_DEBOUNCE_REG);
- 	unsigned long flags;
- 	u32 conf, val, debounce;
- 	int i, ret = 0;
-@@ -1238,36 +1240,40 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
- 
- 			break;
- 		case PIN_CONFIG_INPUT_DEBOUNCE:
--			debounce = readl(byt_gpio_reg(vg, offset,
--						      BYT_DEBOUNCE_REG));
--			conf &= ~BYT_DEBOUNCE_PULSE_MASK;
-+			debounce = readl(db_reg);
-+			debounce &= ~BYT_DEBOUNCE_PULSE_MASK;
- 
- 			switch (arg) {
-+			case 0:
-+				conf &= BYT_DEBOUNCE_EN;
-+				break;
- 			case 375:
--				conf |= BYT_DEBOUNCE_PULSE_375US;
-+				debounce |= BYT_DEBOUNCE_PULSE_375US;
- 				break;
- 			case 750:
--				conf |= BYT_DEBOUNCE_PULSE_750US;
-+				debounce |= BYT_DEBOUNCE_PULSE_750US;
- 				break;
- 			case 1500:
--				conf |= BYT_DEBOUNCE_PULSE_1500US;
-+				debounce |= BYT_DEBOUNCE_PULSE_1500US;
- 				break;
- 			case 3000:
--				conf |= BYT_DEBOUNCE_PULSE_3MS;
-+				debounce |= BYT_DEBOUNCE_PULSE_3MS;
- 				break;
- 			case 6000:
--				conf |= BYT_DEBOUNCE_PULSE_6MS;
-+				debounce |= BYT_DEBOUNCE_PULSE_6MS;
- 				break;
- 			case 12000:
--				conf |= BYT_DEBOUNCE_PULSE_12MS;
-+				debounce |= BYT_DEBOUNCE_PULSE_12MS;
- 				break;
- 			case 24000:
--				conf |= BYT_DEBOUNCE_PULSE_24MS;
-+				debounce |= BYT_DEBOUNCE_PULSE_24MS;
- 				break;
- 			default:
- 				ret = -EINVAL;
- 			}
- 
-+			if (!ret)
-+				writel(debounce, db_reg);
- 			break;
- 		default:
- 			ret = -ENOTSUPP;
--- 
-2.11.0
-
+thanks,
+-- Shuah
