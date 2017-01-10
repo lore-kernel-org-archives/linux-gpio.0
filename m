@@ -1,54 +1,42 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: gpio: Add binding documentation for gpio-thunderx
-Date: Tue, 10 Jan 2017 09:42:59 +0100
-Message-ID: <CACRpkdZRLk1ZfUexM_y_RPKuRzcsSmWBo9e9VhvFNEFXF4xF-A@mail.gmail.com>
-References: <1483744980-25898-1-git-send-email-ddaney.cavm@gmail.com>
- <1483744980-25898-2-git-send-email-ddaney.cavm@gmail.com> <CACRpkdZ0xkhUC7_0A4uHxpGaU7BHgNp8TNuDPuPN9h6dDsQx4g@mail.gmail.com>
- <a1b6c9da-5b19-c9a7-3774-0bc0e9dcdeb6@caviumnetworks.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] tools: gpio add .gitignore for generated files
+Date: Tue, 10 Jan 2017 10:29:08 +0100
+Message-ID: <CACRpkdbeT8PgxW+VCGwrznOTQV=2Dw8CcJUqZAcKdB2a96tJXA@mail.gmail.com>
+References: <20170105213236.15562-1-shuahkh@osg.samsung.com> <20170105213236.15562-5-shuahkh@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <a1b6c9da-5b19-c9a7-3774-0bc0e9dcdeb6-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: David Daney <ddaney-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org>
-Cc: David Daney <ddaney.cavm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170105213236.15562-5-shuahkh@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 9, 2017 at 8:44 PM, David Daney <ddaney-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org> wrote:
-> On 01/09/2017 11:36 AM, Linus Walleij wrote:
+On Thu, Jan 5, 2017 at 10:32 PM, Shuah Khan <shuahkh@osg.samsung.com> wrote:
 
->>> +Optional Properties:
->>> +- compatible: "cavium,thunder-8890-gpio", unused as PCI driver binding
->>> is used.
->>> +- interrupt-controller: Marks the device node as an interrupt
->>> controller.
->>> +- #interrupt-cells: Must be present and have value of 2 if
->>> +                    "interrupt-controller" is present.
->>> +  - First cell is the GPIO pin number relative to the controller.
->>> +  - Second cell is triggering flags as defined in interrupts.txt.
->>
->>
->> AFAICT this device has an optional list of interrupts as well?
->> One per pin even?
+> Add .gitignore for generated files.
 >
-> I'm not sure I understand your question.
+> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+> ---
+>  tools/gpio/.gitignore | 4 ++++
+>  1 file changed, 4 insertions(+)
+>  create mode 100644 tools/gpio/.gitignore
 >
-> The GPIO hardware supports an interrupt on each pin.  The underlying
-> interrupt mechanism is via PCI MSI-X, which are fully discoverable by the
-> driver, so lack of device tree binding for the these underlying MSI-X is
-> fully appropriate.
+> diff --git a/tools/gpio/.gitignore b/tools/gpio/.gitignore
+> new file mode 100644
+> index 0000000..767ad24
+> --- /dev/null
+> +++ b/tools/gpio/.gitignore
+> @@ -0,0 +1,4 @@
+> +gpio-event-mon
+> +gpio-hammer
+> +lsgpio
+> +include
 
-Sorry I guess I'm just ignorant about how PCI works, that has never
-been my strongest subject admittedly.
+I understand the first three.
 
-So what you're saying is that PCI devices do not need specifying
-interrupts not interrupt parents in the device tree?
-
-That's fine then.
+But "include"?
+How did you produce that?
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
