@@ -1,104 +1,54 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: Re: [PATCH v8 2/3] serial: exar: split out the exar code from 8250_pci
-Date: Tue, 10 Jan 2017 08:03:17 +0000
-Message-ID: <58749545.2040106@gmail.com>
-References: <1483914727-6076-1-git-send-email-sudipm.mukherjee@gmail.com> <1483914727-6076-2-git-send-email-sudipm.mukherjee@gmail.com> <CAHp75VficfU+BTgW_Mm_UTC8oDKJA0yxrUz_PBY=w4jT2LFbMA@mail.gmail.com> <58740DD7.9070009@gmail.com> <CAHp75VfKvpzX2s6f-kz_XYwKE5L48WiyaDq3Vc24VZ=ZSEy7jQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: gpio: Add binding documentation for gpio-thunderx
+Date: Tue, 10 Jan 2017 09:42:59 +0100
+Message-ID: <CACRpkdZRLk1ZfUexM_y_RPKuRzcsSmWBo9e9VhvFNEFXF4xF-A@mail.gmail.com>
+References: <1483744980-25898-1-git-send-email-ddaney.cavm@gmail.com>
+ <1483744980-25898-2-git-send-email-ddaney.cavm@gmail.com> <CACRpkdZ0xkhUC7_0A4uHxpGaU7BHgNp8TNuDPuPN9h6dDsQx4g@mail.gmail.com>
+ <a1b6c9da-5b19-c9a7-3774-0bc0e9dcdeb6@caviumnetworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VfKvpzX2s6f-kz_XYwKE5L48WiyaDq3Vc24VZ=ZSEy7jQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jiri Slaby <jslaby@suse.com>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <a1b6c9da-5b19-c9a7-3774-0bc0e9dcdeb6-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Daney <ddaney-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org>
+Cc: David Daney <ddaney.cavm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Monday 09 January 2017 11:13 PM, Andy Shevchenko wrote:
-> On Tue, Jan 10, 2017 at 12:25 AM, Sudip Mukherjee
-> <sudipm.mukherjee@gmail.com> wrote:
->> On Monday 09 January 2017 12:14 AM, Andy Shevchenko wrote:
->>>
->>>> +       /*
->>>> +        * Setup Multipurpose Input/Output pins.
->>>> +        */
->>>> +       if (idx == 0)
->>>> +               setup_gpio(p);
->>>
->>>
->>> So, my question is can we do this in GPIO driver?
+On Mon, Jan 9, 2017 at 8:44 PM, David Daney <ddaney-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org> wrote:
+> On 01/09/2017 11:36 AM, Linus Walleij wrote:
+
+>>> +Optional Properties:
+>>> +- compatible: "cavium,thunder-8890-gpio", unused as PCI driver binding
+>>> is used.
+>>> +- interrupt-controller: Marks the device node as an interrupt
+>>> controller.
+>>> +- #interrupt-cells: Must be present and have value of 2 if
+>>> +                    "interrupt-controller" is present.
+>>> +  - First cell is the GPIO pin number relative to the controller.
+>>> +  - Second cell is triggering flags as defined in interrupts.txt.
 >>
 >>
->> No, I am using the pci card made by RTD, and they use the GPIO pins to
->> configure the hardware. And its based on the default values that is set
->> here.
+>> AFAICT this device has an optional list of interrupts as well?
+>> One per pin even?
 >
-> Can you elaborate a bit.
+> I'm not sure I understand your question.
 >
-> I case you have GPIO:
-> 1. map registers
-> 2. do some GPIO configuration
-> 3. do some other configuration
-> 4. umap registers
-> 5. register GPIO
-> 6. register serial
->
-> Correct?
->
-> My question is, would it work if
->
-> 1. register GPIO
+> The GPIO hardware supports an interrupt on each pin.  The underlying
+> interrupt mechanism is via PCI MSI-X, which are fully discoverable by the
+> driver, so lack of device tree binding for the these underlying MSI-X is
+> fully appropriate.
 
-then the platform device is created and the gpio driver will start but
-the gpio register might not be written yet.
+Sorry I guess I'm just ignorant about how PCI works, that has never
+been my strongest subject admittedly.
 
-> 2. write GPIO related register (perhaps in GPIO driver)
+So what you're saying is that PCI devices do not need specifying
+interrupts not interrupt parents in the device tree?
 
-If we write the GPIO related registers in the GPIO driver and if the
-gpio driver is not enabled, then the gpio configuration registers will
-not be written and initialized and few boards will break.
+That's fine then.
 
-> 3. map registers
-
-did you mean pci_ioremap_bar() ?
-write to GPIO related register involves writing to the address that we
-obtained using pci_ioremap_bar().
-
-> 4. write some other configuration
-> 5. unmap registers
-> 6. register serial
->
-> ?
->
->>
-<snip>
->
->>>> +       if (!pcim_iomap(pcidev, bar, 0) && !pcim_iomap_table(pcidev))
->>>> +               return -ENOMEM;
->>>
->>> You ignored my comment, we may never finish the review in such case :-(
->>>
->>> Asking again: do you really need this part? I know why I did so and
->>> put it to 8250_pci, but let's focus on your code.
->
->> I checked your review of v7 and you have not mentioned about this one.
->> :(
->
-> I'm sorry, but this is not true. Please, pay attention to all comments.
->
-> Below is the cite from here:
-> https://www.spinics.net/lists/kernel/msg2416487.html
-> ---vvv
->
->> +       if (!pcim_iomap(dev, bar, 0) && !pcim_iomap_table(dev))
->> +               return -ENOMEM;
->
-> Do you need to check this per port? In probe you would know this.
->
-> ---^^^
-
-well, and I removed this to the probe so that it is checked only once
-and not per port (like you mentioned). I thought that is what you
-meant. :)
-
-regards
-sudip
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
