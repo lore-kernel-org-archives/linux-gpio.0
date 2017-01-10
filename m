@@ -1,64 +1,109 @@
-From: Roger Quadros <rogerq@ti.com>
-Subject: gpio: pcf857x: lockdep warning on v4.10-rc3
-Date: Tue, 10 Jan 2017 14:18:41 +0200
-Message-ID: <48bef841-5267-fcdb-2398-095f6f7ae51e@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tony Lindgren <tony@atomide.com>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-omap <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] pinctrl: baytrail: Rectify debounce support
+Date: Tue, 10 Jan 2017 16:03:19 +0200
+Message-ID: <20170110140319.26185-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:63766 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752086AbdAJODX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 10 Jan 2017 09:03:23 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>
 
-Hi Linus,
+The commit 658b476c742f ("pinctrl: baytrail: Add debounce configuration")
+implements debounce for Baytrail pin control, but seems wasn't tested properly.
 
-I see the following lockdep warning on v4.10-rc3 on TI's dra7-evm.
+Rectify implementation here.
 
-reverting (d245b3f9bd3 "gpio: simplify adding threaded interrupts") seems to fix it.
+Fixes: 658b476c742f ("pinctrl: baytrail: Add debounce configuration")
+Cc: Cristina Ciocan <cristina.ciocan@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
 
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index 71bbeb9321ba..079015385fd8 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -1092,6 +1092,7 @@ static int byt_pin_config_get(struct pinctrl_dev *pctl_dev, unsigned int offset,
+ 	enum pin_config_param param = pinconf_to_config_param(*config);
+ 	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
+ 	void __iomem *val_reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
++	void __iomem *db_reg = byt_gpio_reg(vg, offset, BYT_DEBOUNCE_REG);
+ 	unsigned long flags;
+ 	u32 conf, pull, val, debounce;
+ 	u16 arg = 0;
+@@ -1128,7 +1129,7 @@ static int byt_pin_config_get(struct pinctrl_dev *pctl_dev, unsigned int offset,
+ 			return -EINVAL;
+ 
+ 		raw_spin_lock_irqsave(&vg->lock, flags);
+-		debounce = readl(byt_gpio_reg(vg, offset, BYT_DEBOUNCE_REG));
++		debounce = readl(db_reg);
+ 		raw_spin_unlock_irqrestore(&vg->lock, flags);
+ 
+ 		switch (debounce & BYT_DEBOUNCE_PULSE_MASK) {
+@@ -1176,6 +1177,7 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
+ 	unsigned int param, arg;
+ 	void __iomem *conf_reg = byt_gpio_reg(vg, offset, BYT_CONF0_REG);
+ 	void __iomem *val_reg = byt_gpio_reg(vg, offset, BYT_VAL_REG);
++	void __iomem *db_reg = byt_gpio_reg(vg, offset, BYT_DEBOUNCE_REG);
+ 	unsigned long flags;
+ 	u32 conf, val, debounce;
+ 	int i, ret = 0;
+@@ -1238,36 +1240,40 @@ static int byt_pin_config_set(struct pinctrl_dev *pctl_dev,
+ 
+ 			break;
+ 		case PIN_CONFIG_INPUT_DEBOUNCE:
+-			debounce = readl(byt_gpio_reg(vg, offset,
+-						      BYT_DEBOUNCE_REG));
+-			conf &= ~BYT_DEBOUNCE_PULSE_MASK;
++			debounce = readl(db_reg);
++			debounce &= ~BYT_DEBOUNCE_PULSE_MASK;
+ 
+ 			switch (arg) {
++			case 0:
++				conf &= BYT_DEBOUNCE_EN;
++				break;
+ 			case 375:
+-				conf |= BYT_DEBOUNCE_PULSE_375US;
++				debounce |= BYT_DEBOUNCE_PULSE_375US;
+ 				break;
+ 			case 750:
+-				conf |= BYT_DEBOUNCE_PULSE_750US;
++				debounce |= BYT_DEBOUNCE_PULSE_750US;
+ 				break;
+ 			case 1500:
+-				conf |= BYT_DEBOUNCE_PULSE_1500US;
++				debounce |= BYT_DEBOUNCE_PULSE_1500US;
+ 				break;
+ 			case 3000:
+-				conf |= BYT_DEBOUNCE_PULSE_3MS;
++				debounce |= BYT_DEBOUNCE_PULSE_3MS;
+ 				break;
+ 			case 6000:
+-				conf |= BYT_DEBOUNCE_PULSE_6MS;
++				debounce |= BYT_DEBOUNCE_PULSE_6MS;
+ 				break;
+ 			case 12000:
+-				conf |= BYT_DEBOUNCE_PULSE_12MS;
++				debounce |= BYT_DEBOUNCE_PULSE_12MS;
+ 				break;
+ 			case 24000:
+-				conf |= BYT_DEBOUNCE_PULSE_24MS;
++				debounce |= BYT_DEBOUNCE_PULSE_24MS;
+ 				break;
+ 			default:
+ 				ret = -EINVAL;
+ 			}
+ 
++			if (!ret)
++				writel(debounce, db_reg);
+ 			break;
+ 		default:
+ 			ret = -ENOTSUPP;
+-- 
+2.11.0
 
-[    2.358337] ------------[ cut here ]------------
-[    2.363194] WARNING: CPU: 1 PID: 76 at kernel/locking/lockdep.c:3124 gpiochip_irq_map+0x40/0xa4
-[    2.372350] DEBUG_LOCKS_WARN_ON(!key)
-[    2.372354] Modules linked in:
-[    2.379407] CPU: 1 PID: 76 Comm: kworker/1:1 Not tainted 4.10.0-rc3 #1075
-[    2.386527] Hardware name: Generic DRA74X (Flattened Device Tree)
-[    2.392920] Workqueue: events deferred_probe_work_func
-[    2.398323] [<c011013c>] (unwind_backtrace) from [<c010c300>] (show_stack+0x10/0x14)
-[    2.406445] [<c010c300>] (show_stack) from [<c04a0018>] (dump_stack+0xac/0xe0)
-[    2.414030] [<c04a0018>] (dump_stack) from [<c013700c>] (__warn+0xd8/0x104)
-[    2.421344] [<c013700c>] (__warn) from [<c013706c>] (warn_slowpath_fmt+0x34/0x44)
-[    2.429203] [<c013706c>] (warn_slowpath_fmt) from [<c04dd8a4>] (gpiochip_irq_map+0x40/0xa4)
-[    2.437969] [<c04dd8a4>] (gpiochip_irq_map) from [<c01acc50>] (irq_domain_associate+0x70/0x1c0)
-[    2.447102] [<c01acc50>] (irq_domain_associate) from [<c01ad51c>] (irq_create_mapping+0x64/0xcc)
-[    2.456313] [<c01ad51c>] (irq_create_mapping) from [<c04dd6b8>] (_gpiochip_irqchip_add+0xd8/0x1a8)
-[    2.465725] [<c04dd6b8>] (_gpiochip_irqchip_add) from [<c04e5b00>] (pcf857x_probe+0x260/0x38c)
-[    2.474754] [<c04e5b00>] (pcf857x_probe) from [<c0633d30>] (i2c_device_probe+0x200/0x25c)
-[    2.483332] [<c0633d30>] (i2c_device_probe) from [<c055d3ec>] (driver_probe_device+0x200/0x2d4)
-[    2.492456] [<c055d3ec>] (driver_probe_device) from [<c055b914>] (bus_for_each_drv+0x64/0x98)
-[    2.501396] [<c055b914>] (bus_for_each_drv) from [<c055d108>] (__device_attach+0xb0/0x118)
-[    2.510062] [<c055d108>] (__device_attach) from [<c055c730>] (bus_probe_device+0x88/0x90)
-[    2.518639] [<c055c730>] (bus_probe_device) from [<c055aa9c>] (device_add+0x3e4/0x59c)
-[    2.526938] [<c055aa9c>] (device_add) from [<c06362cc>] (i2c_new_device+0x144/0x1a4)
-[    2.535064] [<c06362cc>] (i2c_new_device) from [<c0636900>] (i2c_register_adapter+0x278/0x5a4)
-[    2.544101] [<c0636900>] (i2c_register_adapter) from [<c0638aa4>] (omap_i2c_probe+0x4bc/0x6a0)
-[    2.553141] [<c0638aa4>] (omap_i2c_probe) from [<c055f390>] (platform_drv_probe+0x4c/0xb0)
-[    2.561808] [<c055f390>] (platform_drv_probe) from [<c055d3ec>] (driver_probe_device+0x200/0x2d4)
-[    2.571120] [<c055d3ec>] (driver_probe_device) from [<c055b914>] (bus_for_each_drv+0x64/0x98)
-[    2.580065] [<c055b914>] (bus_for_each_drv) from [<c055d108>] (__device_attach+0xb0/0x118)
-[    2.588732] [<c055d108>] (__device_attach) from [<c055c730>] (bus_probe_device+0x88/0x90)
-[    2.597320] [<c055c730>] (bus_probe_device) from [<c055cc10>] (deferred_probe_work_func+0x6c/0x9c)
-[    2.606719] [<c055cc10>] (deferred_probe_work_func) from [<c0154dfc>] (process_one_work+0x1fc/0x76c)
-[    2.616298] [<c0154dfc>] (process_one_work) from [<c0155598>] (worker_thread+0x22c/0x540)
-[    2.624885] [<c0155598>] (worker_thread) from [<c015b918>] (kthread+0xf8/0x138)
-[    2.632547] [<c015b918>] (kthread) from [<c01078f0>] (ret_from_fork+0x14/0x24)
-[    2.640162] ---[ end trace a0ca4c6c0c9a9ee8 ]---
-[    2.646111] pcf857x 0-0020: probed
-[    2.650052] gpiochip_find_base: found new base at 478
-[    2.655386] gpio gpiochip10: (pcf8575): added GPIO chardev (254:10)
-[    2.662262] gpiochip_setup_dev: registered GPIOs 478 to 493 on device: gpiochip10 (pcf8575)
-[    2.672058] pcf857x 0-0021: probed
-
-cheers,
--roger
