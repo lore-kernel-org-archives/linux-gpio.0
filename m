@@ -1,64 +1,60 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH 0/3] Renesas RZ PFC and GPIO driver
-Date: Wed, 11 Jan 2017 20:17:30 +0000
-Message-ID: <SG2PR06MB1165A22C577C408E37C7FDB78A660@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
- <7332833.bE664ByKOm@avalon> <10eda4a0-55de-4716-b92f-17dcf599af34@jmondi.org>
- <1928005.z8ulDpGmNF@avalon> <3347aca7-5984-44dc-6b23-9eb1fa4712f5@jmondi.org>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCHv3 3/5] pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
+Date: Wed, 11 Jan 2017 21:55:48 +0100
+Message-ID: <95cb4240-e77b-5eaa-1920-4d9e26028038@gmail.com>
+References: <20170105033641.6212-1-chris.packham@alliedtelesis.co.nz>
+ <20170106041517.9589-1-chris.packham@alliedtelesis.co.nz>
+ <20170106041517.9589-4-chris.packham@alliedtelesis.co.nz>
+ <CACRpkdaC+USN7YhZo49LAL9sorMxbTfhQbT5NrAu5D=Q1DHnnA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:46426 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751741AbdAKURf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 11 Jan 2017 15:17:35 -0500
-In-Reply-To: <3347aca7-5984-44dc-6b23-9eb1fa4712f5@jmondi.org>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdaC+USN7YhZo49LAL9sorMxbTfhQbT5NrAu5D=Q1DHnnA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Chris Packham <chris.packham@alliedtelesis.co.nz>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>, Rob Herring <robh+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: jacopo mondi <jacopo@jmondi.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, "magnus.damm@gmail.com" <magnus.damm@gmail.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Jacopo and Laurent,
+On 01/11/2017 03:44 PM, Linus Walleij wrote:
+> On Fri, Jan 6, 2017 at 5:15 AM, Chris Packham
+> <chris.packham@alliedtelesis.co.nz> wrote:
+>
+>> From: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>
+>>
+>> This pinctrl driver supports the 98DX3236, 98DX3336 and 98DX4251 SoCs
+>> from Marvell.
+>>
+>> Signed-off-by: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>
+>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+>
+> I am waiting for an ACK or comment from the maintainers on
+> this patch. Sebastian?
 
-On Wednesday, January 11, 2017, jacopo mondi wrote:
-> A big difference from what pinctrl-single does and what the table-based
-> approach does is that it creates groups, pins and functions at run-time,
-> parsing the dts...
+Sorry for the ignorance.
 
-See, this makes me think that this will chew up even more system memory.
+I don't have the patch to reply to inline, but:
 
-The thing about the RZ/A1 series is that it has internal RAM and we use
-that along with XIP_KERNEL in order to build systems that do not require
-external RAM.
-So in the end, even if we can get sh-pfc to functionally work for RZ/A1,
-it would be pretty sad if the device driver that uses the most system
-memory is one that is really only used at boot time just to change some
-pin configurations.
+- In the driver MPP_MODE2, spi0 there is a typo "csk" instead of "sck".
+- MPP_MODE5 binding "dev","bootcs" and driver "dev","bootcs0" differ.
+- MPP_MODE6 binding "gpio" and driver "gpo" differ.
+- MPP_MODE17 binding "dev","clk" and driver "dev","clkout" differ.
+- MPP_MODE19 binding mentiones "dev","rb" but driver does not.
+- MPP_MODE20 binding "gpio" and driver "gpo" differ.
+- MPP_MODE20 binding "dev","we" and driver "dev","we0" differ.
+- MPP_MODE21 through MPP_MODE30 binding "gpio" and driver "gpo" differ.
+- remove spaces before "0,     0" in mv98dx3236_mpp_gpio_ranges.
 
+Most of it is cosmetic stuff, so if you fix it feel free to add my
 
-> As a final note: maybe we need to decide what to do with this series,
-> people is spending time reviewing it, and I've just sent v2 out. If we
-> want to go in a different direction, we should stop here :)
+Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-Personally, for the RZ/A series, I don't see the sh-pfc driver as a long
-term solution. If people need something in the kernel today to general
-testing, that's one thing. But if someone starts laying out a board
-with any differences from the Renesas reference design, they might be
-in for a rude awaking when trying to put together a BSP for their board.
-
-
-If people really want this sh-pcf based driver upstreamed, I will try
-to do some testing on my boards to make sure it at least does what it
-is supposed to do. (wait for V3 patch set???)
-
-Even so, I still plan on mocking up a new driver with the ideas from
-this discussion (create a renesas-pfc.c) as a long term solution for
-the RZ/A series. Whether that new driver architecture is worth upstreaming
-or not, I guess we'll have to wait and see.
-
-Cheers
-
-Chris
+Sebastian
