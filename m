@@ -1,56 +1,66 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH v2] gpio: provide lockdep keys for nested/unnested
- irqchips
-Date: Wed, 11 Jan 2017 11:59:47 -0600
-Message-ID: <b63d16dc-d226-36a7-70db-ab78172a999d@ti.com>
-References: <20170111154311.11260-1-linus.walleij@linaro.org>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 1/5] pinctrl: core: Use delayed work for hogs
+Date: Wed, 11 Jan 2017 10:31:06 -0800
+Message-ID: <20170111183106.GY2630@atomide.com>
+References: <20161227172003.6517-1-tony@atomide.com>
+ <20161227172003.6517-2-tony@atomide.com>
+ <CAMuHMdVLbNXx23-wgLHcvktyHxWf6t75ggU3rM5A-DhtU9hn5w@mail.gmail.com>
+ <20170110153045.GS2630@atomide.com>
+ <20170110191908.GV2630@atomide.com>
+ <CACRpkdaJmEcqMST30NRdtcLpEg5LhiAxOYsNDDUvYEYFjUBiHA@mail.gmail.com>
+ <20170111162808.GW2630@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:13008 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935474AbdAKR7y (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 12:59:54 -0500
-In-Reply-To: <20170111154311.11260-1-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170111162808.GW2630@atomide.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Clemens Gruber <clemens.gruber@pqgruber.com>, Roger Quadros <rogerq@ti.com>
 
+* Tony Lindgren <tony@atomide.com> [170111 08:29]:
+> * Linus Walleij <linus.walleij@linaro.org> [170111 07:34]:
+> > On Tue, Jan 10, 2017 at 8:19 PM, Tony Lindgren <tony@atomide.com> wrote:
+> > 
+> > > Below is an experimental fix to intorduce pinctrl_start() that I've
+> > > tested with pinctrl-single. Then we should probably make all pin controller
+> > > drivers call pinctrl_start() to properly fix the issue of struct pinctrl_dev
+> > > handle not being initialized before driver functions are called.
+> > 
+> > Hm I guess that could work, but can we keep pinctrl_register() with the old
+> > semantics and add a separate pinctrl_register_and_defer()
+> > for those who just wanna start it later by a separate call?
+> > 
+> > Then we don't need any special flags.
+> 
+> OK I'll take a look.
+> 
+> > > Or do you guys have any better ideas?
+> > 
+> > Not really. So you mean revert the previous patch and apply something
+> > like this instead?
+> 
+> Let me first take a look to see if we can fix it by making drivers using
+> GENERIC_PINCTRL_GROUPS or GENERIC_PINMUX_FUNCTIONS register with
+> pinctrl_register_and_defer(). I'll post a patch for that today.
 
+Yeah we can fix this by reverting the late_init parts of the earlier
+attempt and introducing a new pinctrl_register_and_init() for controllers
+to use:
 
-On 01/11/2017 09:43 AM, Linus Walleij wrote:
-> The helper function for adding a GPIO chip compiles in a lockdep
-> key for debugging, the same key is needed for nested chips as
-> well.
->
-> The macro construction is unreadable, replace this with two
-> static inlines instead.
->
-> The _gpiochip_irqchip_add prefixed function is not helpful,
-> rename it with gpiochip_irqchip_add_key() that tell us what the
-> function is actually doing.
->
-> Fixes: d245b3f9bd36 ("gpio: simplify adding threaded interrupts")
-> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> Cc: Clemens Gruber <clemens.gruber@pqgruber.com>
-> Cc: Roger Quadros <rogerq@ti.com>
-> Reported-by: Clemens Gruber <clemens.gruber@pqgruber.com>
-> Reported-by: Roger Quadros <rogerq@ti.com>
-> Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Write code that actually compiles on LOCKDEP too, now I've
->   had it with confusing _underscores.
-> ---
->  drivers/gpio/gpiolib.c      | 18 ++++++------
->  include/linux/gpio/driver.h | 70 ++++++++++++++++++++++++++++++++-------------
->  2 files changed, 59 insertions(+), 29 deletions(-)
->
+extern int pinctrl_register_and_init(struct pinctrl_desc *pctldesc,
+				     struct device *dev, void *driver_data,
+				     struct pinctrl_dev **pctldev);
 
-Tested-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> Then maybe for v4.12 we can attempt to move all pin controller drivers
+> to using it so we can fix the problem for good.
 
-regards,
--grygorii
+And that will also make converting existing drivers to use it later on
+trivial.
+
+Will post a patch shortly after some more testing.
+
+Regards,
+
+Tony
