@@ -1,73 +1,51 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: Re: [PATCH] tools: gpio add .gitignore for generated files
-Date: Wed, 11 Jan 2017 09:02:26 -0700
-Message-ID: <d01c9c75-d8af-0c88-9538-cdeed1f01097@osg.samsung.com>
-References: <20170105213236.15562-1-shuahkh@osg.samsung.com>
- <20170105213236.15562-5-shuahkh@osg.samsung.com>
- <CACRpkdbeT8PgxW+VCGwrznOTQV=2Dw8CcJUqZAcKdB2a96tJXA@mail.gmail.com>
- <56151fe1-67f6-37f7-08c7-db61c664adb3@osg.samsung.com>
- <CACRpkda=FdZ+G2rxMAk+WntHSdmm4=L9m=-0goTdAVJ2NnqHpg@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 1/5] pinctrl: core: Use delayed work for hogs
+Date: Wed, 11 Jan 2017 08:28:08 -0800
+Message-ID: <20170111162808.GW2630@atomide.com>
+References: <20161227172003.6517-1-tony@atomide.com>
+ <20161227172003.6517-2-tony@atomide.com>
+ <CAMuHMdVLbNXx23-wgLHcvktyHxWf6t75ggU3rM5A-DhtU9hn5w@mail.gmail.com>
+ <20170110153045.GS2630@atomide.com>
+ <20170110191908.GV2630@atomide.com>
+ <CACRpkdaJmEcqMST30NRdtcLpEg5LhiAxOYsNDDUvYEYFjUBiHA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda=FdZ+G2rxMAk+WntHSdmm4=L9m=-0goTdAVJ2NnqHpg@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaJmEcqMST30NRdtcLpEg5LhiAxOYsNDDUvYEYFjUBiHA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Shuah Khan <shuahkh@osg.samsung.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 01/11/2017 08:19 AM, Linus Walleij wrote:
-> On Tue, Jan 10, 2017 at 3:07 PM, Shuah Khan <shuahkh@osg.samsung.com> wrote:
->> On 01/10/2017 02:29 AM, Linus Walleij wrote:
->>> On Thu, Jan 5, 2017 at 10:32 PM, Shuah Khan <shuahkh@osg.samsung.com> wrote:
->>>
->>>> Add .gitignore for generated files.
->>>>
->>>> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
->>>> ---
->>>>  tools/gpio/.gitignore | 4 ++++
->>>>  1 file changed, 4 insertions(+)
->>>>  create mode 100644 tools/gpio/.gitignore
->>>>
->>>> diff --git a/tools/gpio/.gitignore b/tools/gpio/.gitignore
->>>> new file mode 100644
->>>> index 0000000..767ad24
->>>> --- /dev/null
->>>> +++ b/tools/gpio/.gitignore
->>>> @@ -0,0 +1,4 @@
->>>> +gpio-event-mon
->>>> +gpio-hammer
->>>> +lsgpio
->>>> +include
->>>
->>> I understand the first three.
->>>
->>> But "include"?
->>> How did you produce that?
->>>
->>> Yours,
->>> Linus Walleij
->>>
->>
->> I saw this after building selftests. gpio selftests Makefile installs
->> headres. "make kselftest" should reproduce the problem. This following
->> does an header install from tools/testing/selftests/gpio/Makefile
->>
->> ../../../../usr/include/linux/gpio.h:
->>         make -C ../../../.. headers_install INSTALL_HDR_PATH=$(shell pwd)/../../../../usr/
+* Linus Walleij <linus.walleij@linaro.org> [170111 07:34]:
+> On Tue, Jan 10, 2017 at 8:19 PM, Tony Lindgren <tony@atomide.com> wrote:
 > 
-> That seems like a bug.
+> > Below is an experimental fix to intorduce pinctrl_start() that I've
+> > tested with pinctrl-single. Then we should probably make all pin controller
+> > drivers call pinctrl_start() to properly fix the issue of struct pinctrl_dev
+> > handle not being initialized before driver functions are called.
 > 
-> I applied the patch removing the ignore line for include,
-> I think we should see this until we figured out what we do wrong.
+> Hm I guess that could work, but can we keep pinctrl_register() with the old
+> semantics and add a separate pinctrl_register_and_defer()
+> for those who just wanna start it later by a separate call?
 > 
-> Yours,
-> Linus Walleij
-> 
+> Then we don't need any special flags.
 
+OK I'll take a look.
 
-Sounds good.
+> > Or do you guys have any better ideas?
+> 
+> Not really. So you mean revert the previous patch and apply something
+> like this instead?
 
-thanks,
--- Shuah
+Let me first take a look to see if we can fix it by making drivers using
+GENERIC_PINCTRL_GROUPS or GENERIC_PINMUX_FUNCTIONS register with
+pinctrl_register_and_defer(). I'll post a patch for that today.
+
+Then maybe for v4.12 we can attempt to move all pin controller drivers
+to using it so we can fix the problem for good.
+
+Regards,
+
+Tony
