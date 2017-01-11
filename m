@@ -1,182 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2] gpio: provide lockdep keys for nested/unnested irqchips
-Date: Wed, 11 Jan 2017 16:43:11 +0100
-Message-ID: <20170111154311.11260-1-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:33611 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938191AbdAKPnS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 10:43:18 -0500
-Received: by mail-lf0-f49.google.com with SMTP id k86so139485890lfi.0
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2017 07:43:17 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: Re: [PATCH 3/3] iio: pc104: Mask PC/104 drivers via the PC104 Kconfig option
+Date: Wed, 11 Jan 2017 16:45:26 +0100
+Message-ID: <CACRpkdaXRHJXjujQDi2NhXpg+yYzDBmfoq+e9tiTkNNAyECs=w@mail.gmail.com>
+References: <cover.1484073324.git.vilhelm.gray@gmail.com> <512f7f9909c9ff6964b34e0302eeb404e703f033.1484073325.git.vilhelm.gray@gmail.com>
+ <4236ccf5-1480-ea3c-fee6-35ea252e3756@kernel.org> <20170110214535.GA21354@sophia>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170110214535.GA21354@sophia>
+Sender: linux-kernel-owner@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Clemens Gruber <clemens.gruber@pqgruber.com>, Roger Quadros <rogerq@ti.com>
 
-The helper function for adding a GPIO chip compiles in a lockdep
-key for debugging, the same key is needed for nested chips as
-well.
+On Tue, Jan 10, 2017 at 10:45 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
+> On Tue, Jan 10, 2017 at 09:13:02PM +0000, Jonathan Cameron wrote:
+>>On 10/01/17 18:51, William Breathitt Gray wrote:
+>>> PC/104 drivers should be hidden on machines which do not support PC/104
+>>> devices. This patch adds the PC104 Kconfig option as a dependency for
+>>> the relevant PC/104 device driver Kconfig options.
+>>>
+>>> Cc: Jonathan Cameron <jic23@kernel.org>
+>>> Cc: Hartmut Knaack <knaack.h@gmx.de>
+>>> Cc: Lars-Peter Clausen <lars@metafoo.de>
+>>> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+>>> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+>>Acked-by: Jonathan Cameron <jic23@kernel.org>
+>>
+>>Now the question is how to merge this one.  Let me know if you
+>>want me to take this one via IIO after the first patch is in.
+>>If you want to take it another route I'm fine with that.
+>>
+>>Jonathan
+>
+> This is such a simple patchset that I envision Greg K-H picking up all
+> three patches via driver-core; however, I'm pretty indifferent about the
+> ultimate path in the end. I'll leave it up to Greg K-H to decide.
 
-The macro construction is unreadable, replace this with two
-static inlines instead.
+As long as Greg merges the first patch we can merge the two
+others orthogonally I think.
 
-The _gpiochip_irqchip_add prefixed function is not helpful,
-rename it with gpiochip_irqchip_add_key() that tell us what the
-function is actually doing.
+It's just Kconfig symbols, not things that break compile.
 
-Fixes: d245b3f9bd36 ("gpio: simplify adding threaded interrupts")
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Clemens Gruber <clemens.gruber@pqgruber.com>
-Cc: Roger Quadros <rogerq@ti.com>
-Reported-by: Clemens Gruber <clemens.gruber@pqgruber.com>
-Reported-by: Roger Quadros <rogerq@ti.com>
-Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Write code that actually compiles on LOCKDEP too, now I've
-  had it with confusing _underscores.
----
- drivers/gpio/gpiolib.c      | 18 ++++++------
- include/linux/gpio/driver.h | 70 ++++++++++++++++++++++++++++++++-------------
- 2 files changed, 59 insertions(+), 29 deletions(-)
+(But I bet someone will come with automated warnings about
+unused symbols in the kernel...)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 86bf3b84ada5..a07ae9e37930 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1723,7 +1723,7 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
- }
- 
- /**
-- * _gpiochip_irqchip_add() - adds an irqchip to a gpiochip
-+ * gpiochip_irqchip_add_key() - adds an irqchip to a gpiochip
-  * @gpiochip: the gpiochip to add the irqchip to
-  * @irqchip: the irqchip to add to the gpiochip
-  * @first_irq: if not dynamically assigned, the base (first) IRQ to
-@@ -1749,13 +1749,13 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
-  * the pins on the gpiochip can generate a unique IRQ. Everything else
-  * need to be open coded.
-  */
--int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
--			  struct irq_chip *irqchip,
--			  unsigned int first_irq,
--			  irq_flow_handler_t handler,
--			  unsigned int type,
--			  bool nested,
--			  struct lock_class_key *lock_key)
-+int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
-+			     struct irq_chip *irqchip,
-+			     unsigned int first_irq,
-+			     irq_flow_handler_t handler,
-+			     unsigned int type,
-+			     bool nested,
-+			     struct lock_class_key *lock_key)
- {
- 	struct device_node *of_node;
- 	bool irq_base_set = false;
-@@ -1840,7 +1840,7 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(_gpiochip_irqchip_add);
-+EXPORT_SYMBOL_GPL(gpiochip_irqchip_add_key);
- 
- #else /* CONFIG_GPIOLIB_IRQCHIP */
- 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index c2748accea71..e973faba69dc 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -274,37 +274,67 @@ void gpiochip_set_nested_irqchip(struct gpio_chip *gpiochip,
- 		struct irq_chip *irqchip,
- 		int parent_irq);
- 
--int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
-+int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
-+			     struct irq_chip *irqchip,
-+			     unsigned int first_irq,
-+			     irq_flow_handler_t handler,
-+			     unsigned int type,
-+			     bool nested,
-+			     struct lock_class_key *lock_key);
-+
-+#ifdef CONFIG_LOCKDEP
-+
-+/*
-+ * Lockdep requires that each irqchip instance be created with a
-+ * unique key so as to avoid unnecessary warnings. This upfront
-+ * boilerplate static inlines provides such a key for each
-+ * unique instance.
-+ */
-+static inline int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
-+				       struct irq_chip *irqchip,
-+				       unsigned int first_irq,
-+				       irq_flow_handler_t handler,
-+				       unsigned int type)
-+{
-+	static struct lock_class_key key;
-+
-+	return gpiochip_irqchip_add_key(gpiochip, irqchip, first_irq,
-+					handler, type, false, &key);
-+}
-+
-+static inline int gpiochip_irqchip_add_nested(struct gpio_chip *gpiochip,
- 			  struct irq_chip *irqchip,
- 			  unsigned int first_irq,
- 			  irq_flow_handler_t handler,
--			  unsigned int type,
--			  bool nested,
--			  struct lock_class_key *lock_key);
-+			  unsigned int type)
-+{
-+
-+	static struct lock_class_key key;
-+
-+	return gpiochip_irqchip_add_key(gpiochip, irqchip, first_irq,
-+					handler, type, true, &key);
-+}
-+#else
-+static inline int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
-+				       struct irq_chip *irqchip,
-+				       unsigned int first_irq,
-+				       irq_flow_handler_t handler,
-+				       unsigned int type)
-+{
-+	return gpiochip_irqchip_add_key(gpiochip, irqchip, first_irq,
-+					handler, type, false, NULL);
-+}
- 
--/* FIXME: I assume threaded IRQchips do not have the lockdep problem */
- static inline int gpiochip_irqchip_add_nested(struct gpio_chip *gpiochip,
- 			  struct irq_chip *irqchip,
- 			  unsigned int first_irq,
- 			  irq_flow_handler_t handler,
- 			  unsigned int type)
- {
--	return _gpiochip_irqchip_add(gpiochip, irqchip, first_irq,
--				     handler, type, true, NULL);
-+	return gpiochip_irqchip_add_key(gpiochip, irqchip, first_irq,
-+					handler, type, true, NULL);
- }
--
--#ifdef CONFIG_LOCKDEP
--#define gpiochip_irqchip_add(...)				\
--(								\
--	({							\
--		static struct lock_class_key _key;		\
--		_gpiochip_irqchip_add(__VA_ARGS__, false, &_key); \
--	})							\
--)
--#else
--#define gpiochip_irqchip_add(...)				\
--	_gpiochip_irqchip_add(__VA_ARGS__, false, NULL)
--#endif
-+#endif /* CONFIG_LOCKDEP */
- 
- #endif /* CONFIG_GPIOLIB_IRQCHIP */
- 
--- 
-2.9.3
-
+Yours,
+Linus Walleij
