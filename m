@@ -1,50 +1,47 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] iio: pc104: Mask PC/104 drivers via the PC104 Kconfig option
-Date: Wed, 11 Jan 2017 16:45:26 +0100
-Message-ID: <CACRpkdaXRHJXjujQDi2NhXpg+yYzDBmfoq+e9tiTkNNAyECs=w@mail.gmail.com>
-References: <cover.1484073324.git.vilhelm.gray@gmail.com> <512f7f9909c9ff6964b34e0302eeb404e703f033.1484073325.git.vilhelm.gray@gmail.com>
- <4236ccf5-1480-ea3c-fee6-35ea252e3756@kernel.org> <20170110214535.GA21354@sophia>
+Subject: Re: [PATCH] gpio: mvebu: fix warning when building on 64-bit
+Date: Wed, 11 Jan 2017 16:47:46 +0100
+Message-ID: <CACRpkdZ_LciV5a5Sj+YfGtfws2hvdSjscx0tu4=1RNYTXWU4gw@mail.gmail.com>
+References: <E1cR5IG-0008Gw-HV@rmk-PC.armlinux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170110214535.GA21354@sophia>
-Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:34477 "EHLO
+        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935658AbdAKPrx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 10:47:53 -0500
+Received: by mail-qk0-f178.google.com with SMTP id a20so213500870qkc.1
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2017 07:47:48 -0800 (PST)
+In-Reply-To: <E1cR5IG-0008Gw-HV@rmk-PC.armlinux.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Jan 10, 2017 at 10:45 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
-> On Tue, Jan 10, 2017 at 09:13:02PM +0000, Jonathan Cameron wrote:
->>On 10/01/17 18:51, William Breathitt Gray wrote:
->>> PC/104 drivers should be hidden on machines which do not support PC/104
->>> devices. This patch adds the PC104 Kconfig option as a dependency for
->>> the relevant PC/104 device driver Kconfig options.
->>>
->>> Cc: Jonathan Cameron <jic23@kernel.org>
->>> Cc: Hartmut Knaack <knaack.h@gmx.de>
->>> Cc: Lars-Peter Clausen <lars@metafoo.de>
->>> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
->>> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
->>Acked-by: Jonathan Cameron <jic23@kernel.org>
->>
->>Now the question is how to merge this one.  Let me know if you
->>want me to take this one via IIO after the first patch is in.
->>If you want to take it another route I'm fine with that.
->>
->>Jonathan
+On Tue, Jan 10, 2017 at 11:53 PM, Russell King
+<rmk+kernel@armlinux.org.uk> wrote:
+
+> Casting a pointer to an int is not portable, and provokes a compiler
+> warning.  Cast to unsigned long instead to avoid the warning.
 >
-> This is such a simple patchset that I envision Greg K-H picking up all
-> three patches via driver-core; however, I'm pretty indifferent about the
-> ultimate path in the end. I'll leave it up to Greg K-H to decide.
+> drivers/gpio/gpio-mvebu.c: In function 'mvebu_gpio_probe':
+> drivers/gpio/gpio-mvebu.c:662:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+>    soc_variant = (int) match->data;
+>                  ^
+>
+> This will be needed when building gpio-mvebu for Armada 7k/8k ARM64
+> SoCs.
+>
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> ---
+> Linus,
+>
+> I don't think this is necessary to push into -rc, as its not yet used
+> on ARM64 - GPIO support is not yet present in the DTS files, and the
+> Kconfig doesn't allow the driver to be built on ARM64.  Hence, please
+> queue for the next merge window as a low priority fix.
 
-As long as Greg merges the first patch we can merge the two
-others orthogonally I think.
-
-It's just Kconfig symbols, not things that break compile.
-
-(But I bet someone will come with automated warnings about
-unused symbols in the kernel...)
+Fair enough, queued for next. Thanks!
 
 Yours,
 Linus Walleij
