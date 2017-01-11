@@ -1,55 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: davinci: Remove gpio2regs function to
- accommodate multi instances
-Date: Wed, 11 Jan 2017 12:04:51 +0100
-Message-ID: <CACRpkdaWA0+kqeWvHDMwiVGGc0Ucywbx62OnKisuTKsShMbgnw@mail.gmail.com>
-References: <1483518389-6200-1-git-send-email-j-keerthy@ti.com> <1483518389-6200-2-git-send-email-j-keerthy@ti.com>
+Subject: Re: [PATCH v1 1/3] gpiolib: Switch to for_each_set_bit()
+Date: Wed, 11 Jan 2017 12:08:23 +0100
+Message-ID: <CACRpkdYpjk59zqtB970NNm+vG6i9pa5paELwQkT8=E3nuwdOcw@mail.gmail.com>
+References: <20170103170119.35950-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f175.google.com ([209.85.216.175]:36427 "EHLO
-        mail-qt0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937322AbdAKLEw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 06:04:52 -0500
-Received: by mail-qt0-f175.google.com with SMTP id k15so421496403qtg.3
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2017 03:04:52 -0800 (PST)
-In-Reply-To: <1483518389-6200-2-git-send-email-j-keerthy@ti.com>
+Received: from mail-qk0-f177.google.com ([209.85.220.177]:36589 "EHLO
+        mail-qk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752231AbdAKLIY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 06:08:24 -0500
+Received: by mail-qk0-f177.google.com with SMTP id 11so106090833qkl.3
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2017 03:08:23 -0800 (PST)
+In-Reply-To: <20170103170119.35950-1-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Wed, Jan 4, 2017 at 9:26 AM, Keerthy <j-keerthy@ti.com> wrote:
+On Tue, Jan 3, 2017 at 6:01 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-> gpio2regs is written making an assumption that driver supports only
-> one instance of gpio controller. Removing this and adding a generic
-> array so as to support multiple instances of gpio controllers.
+> The macro for_each_set_bit() effectively looks up to the next set bit in array
+> of bits.
 >
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> Instead of open coding that switch to for_each_set_bit() in
+> gpio_chip_set_multiple().
+>
+> While here, make gpio_chip_set_multiple() non-destructive against its
+> parameters. We are safe since all callers, i.e.
+> gpiod_set_array_value_complex(), handle that already.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> -               regs = gpio2regs(base);
-> +               regs = gpio_base + offset_array[i];
-
-I understand this.
-
-> -       struct davinci_gpio_regs __iomem *g = gpio2regs(hw);
-> +       struct davinci_gpio_controller *chips =
-> +                               (struct davinci_gpio_controller *)d->host_data;
-> +       struct davinci_gpio_regs __iomem *g = chips[hw / 32].regs;
-
-And this, if each instans has 32 GPIOs.
-
-> -               g = gpio2regs(0);
-> +               g = chips[0].regs;
-
-Also makes sense.
-
-> -               g = gpio2regs(gpio);
-> +               g = chips[bank / 2].regs;
-
-But what is this? I don't understand that /2 at all. Please insert a
-comment explaining it so I can figure it out. Are there two banks
-per instance?
+Irrestible clarification patch, applied with Mika's review tag.
+Thanks!
 
 Yours,
 Linus Walleij
