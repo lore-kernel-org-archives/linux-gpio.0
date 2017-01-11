@@ -1,37 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: Drop error prints on kzalloc() failure
-Date: Wed, 11 Jan 2017 14:30:50 +0100
-Message-ID: <CACRpkdbL4OdQX4odEME2=L3ZDc+13mQ-aCkEim6gzSpk_Gm8+A@mail.gmail.com>
-References: <20170105160755.29254-1-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] pinctrl: imx7d-pinctrl: Fix a typo
+Date: Wed, 11 Jan 2017 14:32:00 +0100
+Message-ID: <CACRpkdbh8RHa8gRY4+cED7pTYuEdpgFPdLCNKkqM9TSK6Rvjtw@mail.gmail.com>
+References: <1483664143-26648-1-git-send-email-festevam@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f182.google.com ([209.85.220.182]:36115 "EHLO
-        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966578AbdAKNav (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 08:30:51 -0500
-Received: by mail-qk0-f182.google.com with SMTP id 11so109659250qkl.3
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2017 05:30:50 -0800 (PST)
-In-Reply-To: <20170105160755.29254-1-bjorn.andersson@linaro.org>
+Received: from mail-qk0-f179.google.com ([209.85.220.179]:32974 "EHLO
+        mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935564AbdAKNcB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 08:32:01 -0500
+Received: by mail-qk0-f179.google.com with SMTP id s140so185603227qke.0
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2017 05:32:01 -0800 (PST)
+In-Reply-To: <1483664143-26648-1-git-send-email-festevam@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
 
-On Thu, Jan 5, 2017 at 5:07 PM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
+On Fri, Jan 6, 2017 at 1:55 AM, Fabio Estevam <festevam@gmail.com> wrote:
 
-> Upon failing kzalloc() will print an error message in the log, so
-> there's no need for additional printouts. Also standardizes the "!ptr"
-> vs "ptr == NULL" while I'm touching those lines.
+> From: Fabio Estevam <fabio.estevam@nxp.com>
 >
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Fix a typo in "Peripherals".
+>
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
 
-OK good cleanup. Patch applied.
-
-> Hope you don't find this too OCD-ish.
-
-We have the same condition ...
+Patch applied to the pinctrl tree.
 
 Yours,
 Linus Walleij
