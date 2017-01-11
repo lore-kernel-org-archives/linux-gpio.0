@@ -1,36 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 2/3] gpiolib: Update documentation of struct acpi_gpio_info
-Date: Wed, 11 Jan 2017 12:10:17 +0100
-Message-ID: <CACRpkdaS4jsiLr9+MM=x-Xro8Bbryec4f_6aNeLjypHnDMBbSg@mail.gmail.com>
-References: <20170103170119.35950-1-andriy.shevchenko@linux.intel.com> <20170103170119.35950-2-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 1/3] gpiolib: Switch to for_each_set_bit()
+Date: Wed, 11 Jan 2017 12:11:13 +0100
+Message-ID: <CACRpkdbBJZ-4O_H7kAp_QY+zP03nA+odL820EOZz-F=FKcLNLw@mail.gmail.com>
+References: <20170109140228.47613-1-andriy.shevchenko@linux.intel.com> <20170109140228.47613-2-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f181.google.com ([209.85.216.181]:35989 "EHLO
-        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752794AbdAKLKT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 06:10:19 -0500
-Received: by mail-qt0-f181.google.com with SMTP id k15so421608960qtg.3
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2017 03:10:18 -0800 (PST)
-In-Reply-To: <20170103170119.35950-2-andriy.shevchenko@linux.intel.com>
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:34074 "EHLO
+        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933835AbdAKLLP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 06:11:15 -0500
+Received: by mail-qk0-f173.google.com with SMTP id a20so205600928qkc.1
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2017 03:11:14 -0800 (PST)
+In-Reply-To: <20170109140228.47613-2-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Christophe RICARD <christophe.ricard@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Tue, Jan 3, 2017 at 6:01 PM, Andy Shevchenko
+On Mon, Jan 9, 2017 at 3:02 PM, Andy Shevchenko
 <andriy.shevchenko@linux.intel.com> wrote:
 
-> It seems the code had been changed, but description left untouched.
+> The macro for_each_set_bit() effectively looks up to the next set bit in array
+> of bits.
 >
-> Update description of the struct acpi_gpio_info and relative comments
-> accordingly.
+> Instead of open coding that switch to for_each_set_bit() in
+> gpio_chip_set_multiple().
 >
-> Fixes: commit 52044723cd27 ("ACPI / gpio: Add irq_type when a GPIO is used as an interrupt")
-> Cc: Christophe RICARD <christophe.ricard@gmail.com>
+> While here, make gpio_chip_set_multiple() non-destructive against its
+> parameters. We are safe since all callers, i.e.
+> gpiod_set_array_value_complex(), handle that already.
+>
+> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Patch applied with Mika's ACK.
+I hope v1 is just as fine. It looks the same.
 
 Yours,
 Linus Walleij
