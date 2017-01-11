@@ -1,50 +1,82 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH 1/3] gpio: davinci: Remove unwanted blank line
-Date: Wed, 11 Jan 2017 11:37:24 -0600
-Message-ID: <3ada0b60-01fb-93b9-e369-3a628ecf5fdc@ti.com>
-References: <1484110841-2391-1-git-send-email-j-keerthy@ti.com>
- <1484110841-2391-2-git-send-email-j-keerthy@ti.com>
+From: jacopo mondi <jacopo@jmondi.org>
+Subject: Re: [PATCH 0/3] Renesas RZ PFC and GPIO driver
+Date: Wed, 11 Jan 2017 18:51:35 +0100
+Message-ID: <3347aca7-5984-44dc-6b23-9eb1fa4712f5@jmondi.org>
+References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
+ <7332833.bE664ByKOm@avalon> <10eda4a0-55de-4716-b92f-17dcf599af34@jmondi.org>
+ <1928005.z8ulDpGmNF@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:33013 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1765150AbdAKRhd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 12:37:33 -0500
-In-Reply-To: <1484110841-2391-2-git-send-email-j-keerthy@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1928005.z8ulDpGmNF@avalon>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Chris Brandt <Chris.Brandt@renesas.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "magnus.damm@gmail.com" <magnus.damm@gmail.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>, linus.walleij@linaro.org, t-kristo@ti.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com
 
+Hi Laurent,
 
+On 11/01/2017 17:31, Laurent Pinchart wrote:
+> Hi Jacopo,
 
-On 01/10/2017 11:00 PM, Keerthy wrote:
-> Remove redundant blank line.
+[snip]
 
-i think it's better to drop this patch ;)
-
+>>
+>> I was wondering if that should not be be turned into something more
+>> similar to the pinctrl-single defined ABI. In that case it would look
+>> like this (please excuse the pseduo-dts syntax here)
+>>
+>>   	scif2_pins: serial2 {
+>> 		renesas,pin = <3, 2, MUX_MODE4, PIN_CONFIG_OPTIONS,
+>> 			       3, 0, MUX_MODE6, PIN_CONFIG_OPTIONS>
 >
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> ---
->  include/linux/platform_data/gpio-davinci.h | 1 -
->  1 file changed, 1 deletion(-)
+> This should just be "pin", not "renesas,pin".
 >
-> diff --git a/include/linux/platform_data/gpio-davinci.h b/include/linux/platform_data/gpio-davinci.h
-> index 44ca530..18127c4 100644
-> --- a/include/linux/platform_data/gpio-davinci.h
-> +++ b/include/linux/platform_data/gpio-davinci.h
-> @@ -26,7 +26,6 @@ struct davinci_gpio_platform_data {
->  	u32	gpio_unbanked;
->  };
+>> 	};
 >
-> -
->  struct davinci_gpio_controller {
->  	struct gpio_chip	chip;
->  	struct irq_domain	*irq_domain;
+> Yes, I believe that should be done, especially given that the datasheet for
+> the SoC is public. For other SoCs the current PFC driver model exposes the
+> information needed to configure pin muxing even if you can't access the
+> datasheet, which is an option that I'd hate losing.
 >
 
--- 
-regards,
--grygorii
+Just to point out that this proposed change won't affect the existing 
+R-Car devices, but would apply to RZ/A-like devices currently not 
+supported and which may appear in future (and according to Chris, to 
+some old SH ones which no one wants to touch ;P )
+
+I'm thinking about something like
+
+drivers/pinctrl/sh-pfc/ (which would be better re-named as rcar-pfc)
+drivers/pinctrl/rz-pfc/
+
+But that's a big change that may upset some people here :)
+
+>> I'm under the impression that pinctrl-single would almost do, if not for
+>> the write function bit, that for OMAP platform results in a write to a
+>> single register, while (for RZ/A at least) we have to spread it on a
+>> bunch of different registers.
+>
+> That's correct, but a pinctrl-single-like driver could be implemented
+> relatively easily without all the data tables. We might still need some data
+> if we want to validate DT entries though, for instance to store the valid pin
+> config and/or options for each pin.
+>
+
+A big difference from what pinctrl-single does and what the table-based 
+approach does is that it creates groups, pins and functions at run-time, 
+parsing the dts...
+There's indeed quite some code there for doing this, but it does not 
+perform any validation of what the dts describes.
+Maybe we can skip all that part (parsing and run-time generation of 
+groups, pins and function) using tables, and adopt a pin-oriented ABI 
+that would allow us to specify in the dts the function and the per-pin 
+configuration that would look more natural for this kind of devices.
+
+As a final note: maybe we need to decide what to do with this series, 
+people is spending time reviewing it, and I've just sent v2 out. If we 
+want to go in a different direction, we should stop here :)
+
+Thanks
+    j
