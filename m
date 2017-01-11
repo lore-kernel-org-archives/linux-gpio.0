@@ -1,29 +1,70 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/7] gpio: gpio-rz: GPIO driver for Renesas RZ series
-Date: Wed, 11 Jan 2017 16:50:35 +0100
-Message-ID: <CACRpkdZ=OOjbbqZm_+Z_6COtmWo9eiCpyHuP93dCTn5aAypkNA@mail.gmail.com>
-References: <1484128633-22683-1-git-send-email-jacopo+renesas@jmondi.org> <1484128633-22683-3-git-send-email-jacopo+renesas@jmondi.org>
+Subject: Re: [PATCH 2/2] gpio: davinci: Remove gpio2regs function to
+ accommodate multi instances
+Date: Wed, 11 Jan 2017 16:53:04 +0100
+Message-ID: <CACRpkdYzq0o3Y2BoccPVK4Ro1NWdspqcF12GO0c7wwhz3WPVoA@mail.gmail.com>
+References: <1483518389-6200-1-git-send-email-j-keerthy@ti.com>
+ <1483518389-6200-2-git-send-email-j-keerthy@ti.com> <CACRpkdaWA0+kqeWvHDMwiVGGc0Ucywbx62OnKisuTKsShMbgnw@mail.gmail.com>
+ <55d29408-2ccc-d6a1-8ef6-5418ba8df0b7@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1484128633-22683-3-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, chris.brandt@renesas.com, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <55d29408-2ccc-d6a1-8ef6-5418ba8df0b7@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jan 11, 2017 at 10:57 AM, Jacopo Mondi
-<jacopo+renesas@jmondi.org> wrote:
-
-> From: Magnus Damm <damm@opensource.se>
+On Wed, Jan 11, 2017 at 1:40 PM, Keerthy <j-keerthy@ti.com> wrote:
+> On Wednesday 11 January 2017 04:34 PM, Linus Walleij wrote:
+>> On Wed, Jan 4, 2017 at 9:26 AM, Keerthy <j-keerthy@ti.com> wrote:
+>>
+>>> gpio2regs is written making an assumption that driver supports only
+>>> one instance of gpio controller. Removing this and adding a generic
+>>> array so as to support multiple instances of gpio controllers.
+>>>
+>>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>>
+>>
+>>> -               regs = gpio2regs(base);
+>>> +               regs = gpio_base + offset_array[i];
+>>
+>>
+>> I understand this.
+>>
+>>> -       struct davinci_gpio_regs __iomem *g = gpio2regs(hw);
+>>> +       struct davinci_gpio_controller *chips =
+>>> +                               (struct davinci_gpio_controller
+>>> *)d->host_data;
+>>> +       struct davinci_gpio_regs __iomem *g = chips[hw / 32].regs;
+>>
+>>
+>> And this, if each instans has 32 GPIOs.
+>>
+>>> -               g = gpio2regs(0);
+>>> +               g = chips[0].regs;
+>>
+>>
+>> Also makes sense.
+>>
+>>> -               g = gpio2regs(gpio);
+>>> +               g = chips[bank / 2].regs;
+>>
+>>
+>> But what is this? I don't understand that /2 at all. Please insert a
+>> comment explaining it so I can figure it out. Are there two banks
+>> per instance?
 >
-> This commit combines Magnus' original driver and minor fixes to
-> forward-port it to a more recent kernel version (v4.10)
 >
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Yes! There are register sets for 32 GPIOs. 2 banks of 16 GPIOs are covered
+> by each set of registers hence /2. Shall i add a comment and send this patch
+> alone separately?
 
-A new version appeared while I was reviewing the old version.
-Oh well. The comments still apply.
+Yeah.
+
+I am currently confused by several patch sets for davinci in my inbox,
+can you rebase on my devel branch when I push it and resend
+*all* you have cooking for DaVinci?
 
 Yours,
 Linus Walleij
