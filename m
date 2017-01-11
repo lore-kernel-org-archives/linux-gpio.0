@@ -1,75 +1,64 @@
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH v2 0/7] Renesas RZ PFC and GPIO driver
-Date: Wed, 11 Jan 2017 10:57:06 +0100
-Message-ID: <1484128633-22683-1-git-send-email-jacopo+renesas@jmondi.org>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH v2 7/7] arm: dts: r7s72100-genmai: Add pinctrl for RSPI
+Date: Wed, 11 Jan 2017 10:57:13 +0100
+Message-ID: <1484128633-22683-8-git-send-email-jacopo+renesas@jmondi.org>
+References: <1484128633-22683-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:49825 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936200AbdAKJ6c (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 04:58:32 -0500
+In-Reply-To: <1484128633-22683-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, chris.brandt@renesas.com, linus.walleij@linaro.org
 Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
 
-Hello,
-   these patches are the result of a squash and forward porting of Magnus'
-PFC and GPIO driver from
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tree
-genmai-gpio-and-pfc branch to kernel v4.10
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The PFC and GPIO driver have been forward ported to v4.10-rc1 with minor
-fixes and applied on top of renesas-driver master branch.
+Add pinctrl for the existing rspi4 node on Genmai.
 
-As I cannot locally verify most of the peripherals functionalities enabled
-by the creation of PFC and GPIO driver for RZ SoC series, testing performed
-by patches original authors has to be trusted.
-
-Some possible fixes and functional expansion for the PFC driver will follow in
-an RFC series to be applied on top of this one.
-
-PATCH v2:
-whatever the future of this series will be, either we're going to drop it
-completely in favour of a new per-pin driver for the RZ series or not, I have
-closed review comments from Geert asking to break down dts and dtsi
-modifications in more patches (as it originally was)
-
-Thanks
-   j
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-
-v1 -> v2:
-    - split node addition in r7s72100.dtsi and r7s72100-genami.dts in 2 patches
-    - break down addition of peripheral nodes in  r7s72100-genami.dts in 4
-      patches
-    - drop GPIO aliases in .dtsi file
-
+v5:
+  - Rebased, kept pinctrl only (RSPI nodes have been split off and
+    integrated before)
+v4:
+  - No changes
+v3:
+  - No changes
+v2:
+  - Use generic "codec" instead of specific "wm8978" node name.
 ---
+ arch/arm/boot/dts/r7s72100-genmai.dts | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Geert Uytterhoeven (1):
-  arm: dts: r7s72100-genmai: Add pinctrl for RSPI
-
-Magnus Damm (5):
-  pinctrl: sh-pfc: Add r7s72100 PFC driver
-  gpio: gpio-rz: GPIO driver for Renesas RZ series
-  arm: dts: r7s72100: GPIO and PFC device nodes
-  arm: dts: r7s72100-genmai: SCIF2 PINCTRL configuration
-  arm: dts: r7s72100-genmai: LED1 and LED2 support
-
-Simon Horman (1):
-  arm: dts: r7s72100-genmai:Add ethernet PFC node
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   1 +
- arch/arm/boot/dts/r7s72100-genmai.dts              |  50 ++
- arch/arm/boot/dts/r7s72100.dtsi                    | 138 ++++++
- drivers/gpio/Kconfig                               |   6 +
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-rz.c                             | 212 +++++++++
- drivers/pinctrl/sh-pfc/Kconfig                     |   5 +
- drivers/pinctrl/sh-pfc/Makefile                    |   1 +
- drivers/pinctrl/sh-pfc/core.c                      |   6 +
- drivers/pinctrl/sh-pfc/pfc-r7s72100.c              | 529 +++++++++++++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |   9 +-
- 11 files changed, 955 insertions(+), 3 deletions(-)
- create mode 100644 drivers/gpio/gpio-rz.c
- create mode 100644 drivers/pinctrl/sh-pfc/pfc-r7s72100.c
-
+diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
+index d003be0..8c0ff9f 100644
+--- a/arch/arm/boot/dts/r7s72100-genmai.dts
++++ b/arch/arm/boot/dts/r7s72100-genmai.dts
+@@ -71,7 +71,7 @@
+ };
+ 
+ &pfc {
+-	pinctrl-0 = <&ethernet_pins &scif2_pins>;
++	pinctrl-0 = <&ethernet_pins &rspi4_pins &scif2_pins>;
+ 	pinctrl-names = "default";
+ 
+ 	ethernet_pins: ethernet {
+@@ -97,6 +97,12 @@
+ 		renesas,function = "ethernet";
+ 	};
+ 
++	rspi4_pins: spi4 {
++		renesas,groups = "rspi4_rspck_p4_0", "rspi4_ssl0_p4_1",
++				 "rspi4_mosi_p4_2", "rspi4_miso_p4_3";
++		renesas,function = "rspi4";
++	};
++
+ 	scif2_pins: serial2 {
+ 		renesas,groups = "scif2_txd_p3_0", "scif2_rxd_p3_2";
+ 		renesas,function = "scif2";
 -- 
 2.7.4
+
