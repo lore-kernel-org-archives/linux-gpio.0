@@ -1,59 +1,48 @@
-From: Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH] gpio: mvebu: fix warning when building on 64-bit
-Date: Tue, 10 Jan 2017 22:53:28 +0000
-Message-ID: <E1cR5IG-0008Gw-HV@rmk-PC.armlinux.org.uk>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [PATCH 0/3] Renesas RZ PFC and GPIO driver
+Date: Wed, 11 Jan 2017 00:46:31 +0000
+Message-ID: <SG2PR06MB1165993554BE4B9A6D9D3EBC8A660@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1923903.Gi7z59W6W3@avalon>
+ <SG2PR06MB1165EBCB06C5D473CBAC2F218A640@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <2671694.94z5NEauGX@avalon> <06e9c953-df81-08f1-a817-730301778e06@jmondi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:59588 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756079AbdAJWxm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Jan 2017 17:53:42 -0500
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <06e9c953-df81-08f1-a817-730301778e06@jmondi.org>
+Content-Language: en-US
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: jacopo mondi <jacopo@jmondi.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, "magnus.damm@gmail.com" <magnus.damm@gmail.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-Casting a pointer to an int is not portable, and provokes a compiler
-warning.  Cast to unsigned long instead to avoid the warning.
+Hi Jacopo,
 
-drivers/gpio/gpio-mvebu.c: In function 'mvebu_gpio_probe':
-drivers/gpio/gpio-mvebu.c:662:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-   soc_variant = (int) match->data;
-                 ^
+On Tuesday, January 10, 2017, Jacopo Mondi wrote:
+> So, I guess what direction to take depends on whether or not we're going
+> to see more hardware with a per-pin configuration that would benefit from
+> this new rz-pfc driver (it seems so) and if this justify splitting sh-pfc
+> in two, a group-based one for R-Car devices (and all devices there
+> already) and a new pin-based one.
 
-This will be needed when building gpio-mvebu for Armada 7k/8k ARM64
-SoCs.
+Well, since I'm the one with the "renesas.com" email address, I'll try to
+see if I can figure out if the R-Car PFC can be changed to something else f=
+or
+R-Car Gen4. Same goes for RZ/G. Sometimes the chip designers just keep doin=
+g
+the same thing over and over again because they don't get any feedback from
+the SW guys.
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
----
-Linus,
 
-I don't think this is necessary to push into -rc, as its not yet used
-on ARM64 - GPIO support is not yet present in the DTS files, and the
-Kconfig doesn't allow the driver to be built on ARM64.  Hence, please
-queue for the next merge window as a low priority fix.
+> Or maybe we can tie pin-based configuration in sh-pfc and it's me not
+> seeing how to do that.
 
-Thanks.
+At some point....we do need to leave the "sh-" name behind as I don't reall=
+y
+see much of a future for SH4 devices. Using something like pinctrl-renesas
+is probably a better name. Although, anyone who's watched the semiconductor
+business over the years knows that names never stay the same. (sigh)
 
- drivers/gpio/gpio-mvebu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index 1ed6132b993c..a649556ac3ca 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -659,7 +659,7 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
- 
- 	match = of_match_device(mvebu_gpio_of_match, &pdev->dev);
- 	if (match)
--		soc_variant = (int) match->data;
-+		soc_variant = (unsigned long) match->data;
- 	else
- 		soc_variant = MVEBU_GPIO_SOC_VARIANT_ORION;
- 
--- 
-2.7.4
-
+Chris
