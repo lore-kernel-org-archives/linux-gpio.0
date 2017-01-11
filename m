@@ -1,65 +1,64 @@
-From: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Subject: Re: [PATCH 2/5] clk: sunxi-ng: add support for V3s CCU
-Date: Thu, 12 Jan 2017 03:44:53 +0800
-Message-ID: <2714901484163893@web1g.yandex.ru>
-References: <20170103151629.19447-1-icenowy@aosc.xyz>
-	 <20170103151629.19447-3-icenowy@aosc.xyz>
-	 <20170110181006.yrd6moy2mctzoc4c@lukather> <2705031484163593@web1g.yandex.ru>
-Reply-To: icenowy-ymACFijhrKM@public.gmane.org
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [PATCH 0/3] Renesas RZ PFC and GPIO driver
+Date: Wed, 11 Jan 2017 20:17:30 +0000
+Message-ID: <SG2PR06MB1165A22C577C408E37C7FDB78A660@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
+ <7332833.bE664ByKOm@avalon> <10eda4a0-55de-4716-b92f-17dcf599af34@jmondi.org>
+ <1928005.z8ulDpGmNF@avalon> <3347aca7-5984-44dc-6b23-9eb1fa4712f5@jmondi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBCZLPFN5Q4OBBN4W3LBQKGQEQOM64TA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <2705031484163593-/w1NKm4lK9luio3avFS2gg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:46426 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751741AbdAKURf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 11 Jan 2017 15:17:35 -0500
+In-Reply-To: <3347aca7-5984-44dc-6b23-9eb1fa4712f5@jmondi.org>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: jacopo mondi <jacopo@jmondi.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, "magnus.damm@gmail.com" <magnus.damm@gmail.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+
+Hi Jacopo and Laurent,
+
+On Wednesday, January 11, 2017, jacopo mondi wrote:
+> A big difference from what pinctrl-single does and what the table-based
+> approach does is that it creates groups, pins and functions at run-time,
+> parsing the dts...
+
+See, this makes me think that this will chew up even more system memory.
+
+The thing about the RZ/A1 series is that it has internal RAM and we use
+that along with XIP_KERNEL in order to build systems that do not require
+external RAM.
+So in the end, even if we can get sh-pfc to functionally work for RZ/A1,
+it would be pretty sad if the device driver that uses the most system
+memory is one that is really only used at boot time just to change some
+pin configurations.
 
 
+> As a final note: maybe we need to decide what to do with this series,
+> people is spending time reviewing it, and I've just sent v2 out. If we
+> want to go in a different direction, we should stop here :)
 
-12.01.2017, 03:40, "Icenowy Zheng" <icenowy-ymACFijhrKM@public.gmane.org>:
-> 11.01.2017, 02:10, "Maxime Ripard" <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>:
->> =C2=A0On Tue, Jan 03, 2017 at 11:16:26PM +0800, Icenowy Zheng wrote:
->>> =C2=A0=C2=A0V3s has a similar but cut-down CCU to H3.
->>>
->>> =C2=A0=C2=A0Add support for it.
->>>
->>> =C2=A0=C2=A0Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
->>
->> =C2=A0It looks like there's nothing different but the clocks that you
->> =C2=A0register with the H3, please just use the H3 driver.
->
-> Nope.
->
-> It has a different PLL (PLL_ISP) at different address, and some
-> different muxes.
+Personally, for the RZ/A series, I don't see the sh-pfc driver as a long
+term solution. If people need something in the kernel today to general
+testing, that's one thing. But if someone starts laying out a board
+with any differences from the Renesas reference design, they might be
+in for a rude awaking when trying to put together a BSP for their board.
 
-Forgot to mention the missing of PLL_DE and related misses.
 
->
->> =C2=A0Thanks!
->> =C2=A0Maxime
->>
->> =C2=A0--
->> =C2=A0Maxime Ripard, Free Electrons
->> =C2=A0Embedded Linux and Kernel engineering
->> =C2=A0http://free-electrons.com
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+If people really want this sh-pcf based driver upstreamed, I will try
+to do some testing on my boards to make sure it at least does what it
+is supposed to do. (wait for V3 patch set???)
 
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+Even so, I still plan on mocking up a new driver with the ideas from
+this discussion (create a renesas-pfc.c) as a long term solution for
+the RZ/A series. Whether that new driver architecture is worth upstreaming
+or not, I guess we'll have to wait and see.
+
+Cheers
+
+Chris
