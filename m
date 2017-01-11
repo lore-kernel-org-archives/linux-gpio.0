@@ -1,70 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: davinci: Remove gpio2regs function to
- accommodate multi instances
-Date: Wed, 11 Jan 2017 16:53:04 +0100
-Message-ID: <CACRpkdYzq0o3Y2BoccPVK4Ro1NWdspqcF12GO0c7wwhz3WPVoA@mail.gmail.com>
-References: <1483518389-6200-1-git-send-email-j-keerthy@ti.com>
- <1483518389-6200-2-git-send-email-j-keerthy@ti.com> <CACRpkdaWA0+kqeWvHDMwiVGGc0Ucywbx62OnKisuTKsShMbgnw@mail.gmail.com>
- <55d29408-2ccc-d6a1-8ef6-5418ba8df0b7@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: Re: gpio: pcf857x: lockdep warning on v4.10-rc3
+Date: Wed, 11 Jan 2017 17:55:48 +0200
+Message-ID: <4d29c519-f537-df0f-1492-6e46f9d4a03f@ti.com>
+References: <48bef841-5267-fcdb-2398-095f6f7ae51e@ti.com>
+ <CACRpkdb0KUZabcgAqS1CzWnXt6fyA=CzE9ged1_Ed=+fZB+mqA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55d29408-2ccc-d6a1-8ef6-5418ba8df0b7@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:65072 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751600AbdAKPzy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 10:55:54 -0500
+In-Reply-To: <CACRpkdb0KUZabcgAqS1CzWnXt6fyA=CzE9ged1_Ed=+fZB+mqA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tony Lindgren <tony@atomide.com>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-omap <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Jan 11, 2017 at 1:40 PM, Keerthy <j-keerthy@ti.com> wrote:
-> On Wednesday 11 January 2017 04:34 PM, Linus Walleij wrote:
->> On Wed, Jan 4, 2017 at 9:26 AM, Keerthy <j-keerthy@ti.com> wrote:
+On 11/01/17 17:38, Linus Walleij wrote:
+> On Tue, Jan 10, 2017 at 1:18 PM, Roger Quadros <rogerq@ti.com> wrote:
+> 
+>> Hi Linus,
 >>
->>> gpio2regs is written making an assumption that driver supports only
->>> one instance of gpio controller. Removing this and adding a generic
->>> array so as to support multiple instances of gpio controllers.
->>>
->>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> I see the following lockdep warning on v4.10-rc3 on TI's dra7-evm.
 >>
->>
->>> -               regs = gpio2regs(base);
->>> +               regs = gpio_base + offset_array[i];
->>
->>
->> I understand this.
->>
->>> -       struct davinci_gpio_regs __iomem *g = gpio2regs(hw);
->>> +       struct davinci_gpio_controller *chips =
->>> +                               (struct davinci_gpio_controller
->>> *)d->host_data;
->>> +       struct davinci_gpio_regs __iomem *g = chips[hw / 32].regs;
->>
->>
->> And this, if each instans has 32 GPIOs.
->>
->>> -               g = gpio2regs(0);
->>> +               g = chips[0].regs;
->>
->>
->> Also makes sense.
->>
->>> -               g = gpio2regs(gpio);
->>> +               g = chips[bank / 2].regs;
->>
->>
->> But what is this? I don't understand that /2 at all. Please insert a
->> comment explaining it so I can figure it out. Are there two banks
->> per instance?
->
->
-> Yes! There are register sets for 32 GPIOs. 2 banks of 16 GPIOs are covered
-> by each set of registers hence /2. Shall i add a comment and send this patch
-> alone separately?
+>> reverting (d245b3f9bd3 "gpio: simplify adding threaded interrupts") seems to fix it.
+> 
+> I sent out a patch today:
+> "gpio: provide lockdep keys for nested/unnested irqchips"
+> 
+> could you test and see if it solves your problem?
+> 
 
-Yeah.
+Yes, it solves the problem for me. Thanks.
 
-I am currently confused by several patch sets for davinci in my inbox,
-can you rebase on my devel branch when I push it and resend
-*all* you have cooking for DaVinci?
-
-Yours,
-Linus Walleij
+cheers,
+-roger
