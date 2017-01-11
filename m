@@ -1,59 +1,54 @@
-From: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Subject: Re: Re: [PATCH 4/5] ARM: dts: sunxi: add dtsi file for
- V3s SoC
-Date: Wed, 11 Jan 2017 11:56:32 +0800
-Message-ID: <20170111065638.uW1SQ7Kq@smtp3m.mail.yandex.net>
-Reply-To: icenowy-ymACFijhrKM@public.gmane.org
+From: Keerthy <j-keerthy@ti.com>
+Subject: [PATCH 0/3] gpio: davinci: Redesign driver to accommodate ngpios in one gpio chip
+Date: Wed, 11 Jan 2017 10:30:38 +0530
+Message-ID: <1484110841-2391-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBCZLPFN5Q4OBB7WZ23BQKGQEEE2GXDI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:44564 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750708AbdAKFCO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 00:02:14 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, t-kristo@ti.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, grygorii.strashko@ti.com, j-keerthy@ti.com
 
+The Davinci GPIO driver is implemented to work with one monolithic
+Davinci GPIO platform device which may have up to Y(144) gpios.
+The Davinci GPIO driver instantiates number of GPIO chips with
+max 32 gpio pins per each during initialization and one IRQ domain.
+So, the current GPIO's  opjects structure is:
 
-2017=E5=B9=B41=E6=9C=8811=E6=97=A5 02:21=E4=BA=8E Maxime Ripard <maxime.rip=
-ard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Tue, Jan 03, 2017 at 11:16:28PM +0800, Icenowy Zheng wrote:=20
-> > + uart0_pins_a: uart0@0 {=20
-> > + pins =3D "PB8", "PB9";=20
-> > + function =3D "uart0";=20
-> > + bias-pull-up;=20
->
-> Why do you need a pullup here?=20
+<platform device> Davinci GPIO controller
+ |- <gpio0_chip0> ------|
+ ...                    |--- irq_domain (hwirq [0..143])
+ |- <gpio0_chipN> ------|
 
-I think TX needs one, but RX do not need.
+Current driver creates one chip for every 32 GPIOs in a controller.
+This was a limitation earlier now there is no need for that. Hence
+redesigning the driver to create one gpio chip for all the ngpio
+in the controller.
 
->
-> Looks good otherwise.=20
->
-> Thanks!=20
-> Maxime=20
->
-> --=20
-> Maxime Ripard, Free Electrons=20
-> Embedded Linux and Kernel engineering=20
-> http://free-electrons.com=20
->
-> --=20
-> You received this message because you are subscribed to the Google Groups=
- "linux-sunxi" group.=20
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org=20
-> For more options, visit https://groups.google.com/d/optout.=20
+|- <gpio0_chip0> ------|--- irq_domain (hwirq [0..143]).
 
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+The previous discussion on this can be found here:
+https://www.spinics.net/lists/linux-omap/msg132869.html
+
+The series is posted on top of coouple of clean up patches:
+
+https://lkml.org/lkml/2017/1/4/94
+https://patchwork.ozlabs.org/patch/710855/
+
+Keerthy (3):
+  gpio: davinci: Remove unwanted blank line
+  gpio: davinci: Redesign driver to accomodate ngpio in one gpio chip
+  gpio: davinci: Add support for multiple GPIO controllers
+
+ drivers/gpio/gpio-davinci.c                | 129 +++++++++++++++++------------
+ include/linux/platform_data/gpio-davinci.h |  13 ++-
+ 2 files changed, 86 insertions(+), 56 deletions(-)
+
+-- 
+1.9.1
+
