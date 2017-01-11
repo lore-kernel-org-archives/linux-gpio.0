@@ -1,35 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: pca953x: Add optional reset gpio control
-Date: Wed, 11 Jan 2017 16:36:53 +0100
-Message-ID: <CACRpkdbOOPOg48M7fqexFpA_xZ90C2Sa9Nh-asJs-jV4PNppDQ@mail.gmail.com>
-References: <1484076591-20834-1-git-send-email-steve_longerbeam@mentor.com> <1484076591-20834-2-git-send-email-steve_longerbeam@mentor.com>
+Subject: Re: gpio: pcf857x: lockdep warning on v4.10-rc3
+Date: Wed, 11 Jan 2017 16:38:30 +0100
+Message-ID: <CACRpkdb0KUZabcgAqS1CzWnXt6fyA=CzE9ged1_Ed=+fZB+mqA@mail.gmail.com>
+References: <48bef841-5267-fcdb-2398-095f6f7ae51e@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f174.google.com ([209.85.220.174]:35045 "EHLO
-        mail-qk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030449AbdAKPgy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 10:36:54 -0500
-Received: by mail-qk0-f174.google.com with SMTP id u25so596160364qki.2
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2017 07:36:54 -0800 (PST)
-In-Reply-To: <1484076591-20834-2-git-send-email-steve_longerbeam@mentor.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <48bef841-5267-fcdb-2398-095f6f7ae51e@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Roger Quadros <rogerq@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-omap <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Steve Longerbeam <slongerbeam@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Steve Longerbeam <steve_longerbeam@mentor.com>
 
-On Tue, Jan 10, 2017 at 8:29 PM, Steve Longerbeam <slongerbeam@gmail.com> wrote:
+On Tue, Jan 10, 2017 at 1:18 PM, Roger Quadros <rogerq@ti.com> wrote:
 
-> Add optional reset-gpios pin control. If present, de-assert the
-> specified reset gpio pin to bring the chip out of reset.
+> Hi Linus,
 >
-> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
+> I see the following lockdep warning on v4.10-rc3 on TI's dra7-evm.
+>
+> reverting (d245b3f9bd3 "gpio: simplify adding threaded interrupts") seems to fix it.
 
-v2 patch applied adding a few review tags.
+I sent out a patch today:
+"gpio: provide lockdep keys for nested/unnested irqchips"
+
+could you test and see if it solves your problem?
 
 Yours,
 Linus Walleij
