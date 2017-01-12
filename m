@@ -1,36 +1,47 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH 2/3] gpio: gpio-rz: GPIO driver for Renesas RZ series
-Date: Thu, 12 Jan 2017 19:45:22 +0000
-Message-ID: <SG2PR06MB1165FC63EBDDC982C816C9CC8A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
- <1483990318-26927-3-git-send-email-jacopo+renesas@jmondi.org>
- <CACRpkdbMVu1pe9fYf+DRsnm7Uy_S3T+TONs5qKYWXOLfLDJzwQ@mail.gmail.com>
- <a837aa4e-4f77-b29f-2032-c4005f984261@jmondi.org>
- <SG2PR06MB11655053AB845CD1BD8B61FE8A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <446d1be5-03f5-41ac-2b3e-8061a3b6ceec@jmondi.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] pinctrl: Initialize pinctrl_dev.node
+Date: Thu, 12 Jan 2017 20:13:39 +0000
+Message-ID: <492f05b7-5b41-16ab-5d8a-83801d617e9a@nvidia.com>
+References: <20170112160334.22943-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <446d1be5-03f5-41ac-2b3e-8061a3b6ceec@jmondi.org>
-Content-Language: en-US
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: jacopo mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170112160334.22943-1-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgSmFjb3BvLA0KDQpPbiBUaHVyc2RheSwgSmFudWFyeSAxMiwgMjAxNywgamFjb3BvIG1vbmRp
-IHdyb3RlOg0KPiBPaCEgVGhhdCdzIHdlaXJkIEkgZG9uJ3QgaGF2ZSB0aGF0IHN0YXRlbWVudCBp
-biBteSBtYW51YWwgKHB1YmxpYyB2ZXJzaW9uDQo+IFIwMVVIMDQwM0VKMDA2MCBSZXYuMC42MCkN
-Cg0KSWYgeW91IGdvIHRvIHd3dy5yZW5lc2FzLmNvbSBhbmQgc2VhcmNoIGZvciAiUlovQTFIIFVz
-ZXIgTWFudWFsIiwgeW91IHdpbGwNCnNlZSB0aGF0IGEgbmV3IHZlcnNpb24gMy4wIG1hbnVhbCB3
-YXMgcmVjZW50bHkgcG9zdGVkLiBUaGlzIG5ldyB2ZXJzaW9uIGNvbnRhaW5zDQptYW55IG5ldyBk
-ZXNjcmlwdGlvbnMgYW5kIHByZWNhdXRpb25zLiBJdCBhbHNvIG5vdyBpbmNsdWRlcyB0aGUgU0RI
-SSBjaGFwdGVyDQp3aGljaCBwcmV2aW91c2x5IHdhcyBhbHdheXMgb21pdHRlZCBiZWNhdXNlIG9m
-IGxlZ2FsIHJlYXNvbnMuDQoNClRoZXJlIGlzIGEgc2VwYXJhdGUgbWFudWFsIGZvciB0aGUgUlov
-QTFMLiBUaGUgcGVyaXBoZXJhbHMgYXJlIGFsbCB0aGUgc2FtZSwNCmJ1dCB0aGUgZnVuY3Rpb24g
-cGlub3V0cyBhcmUgZGlmZmVyZW50IGJlY2F1c2UgdGhlIHBhY2thZ2VzIGFyZSBzbWFsbGVyLiBI
-ZW5jZSwNCmFsbCB0aGUgZXhpc3RpbmcgdXBzdHJlYW0gZHJpdmVycyBmb3IgUlovQTFIIHdvcmsg
-ZmluZSBmb3IgUlovQTFNIGFuZCBSWi9BMUwNCndpdGhvdXQgbW9kaWZpY2F0aW9uLi4uZXhjZXB0
-IHRoZSBwaW5zIGNvbWVzIG91dCBvbiBkaWZmZXJlbnQgcG9ydHMuLi5hbmQNCnRoZSBzaC1wZmMg
-ZHJpdmVyIHdvbid0IHdvcmsgd2VsbCBpbiB0aGlzIHNpdHVhdGlvbi4NCg0KDQpDaHJpcw0K
+
+
+On 12/01/17 16:03, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The struct pinctrl_dev's node field is not properly set up, which means
+> the .prev and .next fields will be NULL. That's not something that the
+> linked list code can deal with, so extra care must be taken when using
+> these fields. An example of this is introduced in commit 3429fb3cda34
+> ("pinctrl: Fix panic when pinctrl devices with hogs are unregistered")
+> where list_del() is made conditional on the pinctrl device being part
+> of the pinctrl device list. This is to ensure that list_del() won't
+> crash upon encountering a NULL pointer in .prev and/or .next.
+> 
+> After initializing the list head there's no need to jump through these
+> extra hoops and list_del() will work unconditionally. This is because
+> the initialized list head points to itself and therefore the .prev and
+> .next fields can be properly dereferenced.
+> 
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+Thanks for catching this.
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
