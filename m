@@ -1,79 +1,34 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: Re: [PATCH v2 3/3] gpiolib: Convert fwnode_get_named_gpiod() to configure GPIO
-Date: Thu, 12 Jan 2017 08:27:42 +0100
-Message-ID: <1633853.HOlbG3UopE@ws-stein>
-References: <20170109140228.47613-1-andriy.shevchenko@linux.intel.com> <1484141740.2133.57.camel@linux.intel.com> <1484144097.2133.60.camel@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: amd: avoid maybe-uninitalized warning
+Date: Thu, 12 Jan 2017 08:49:52 +0100
+Message-ID: <CACRpkdZrhrMi4SGa8RCwTzcLQDumEQjpw+LftLNEaxxRAZu8Vw@mail.gmail.com>
+References: <20170111143712.510147-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:41389 "EHLO
-        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750755AbdALH1u (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 12 Jan 2017 02:27:50 -0500
-In-Reply-To: <1484144097.2133.60.camel@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170111143712.510147-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "Agrawal, Nitesh-kumar" <Nitesh-kumar.Agrawal@amd.com>, Pankaj Sen <Pankaj.Sen@amd.com>, "Shah, Nehal-bakulchandra" <Nehal-Bakulchandra.shah@amd.com>, Shyam-sundar S-k <Shyam-sundar.S-k@amd.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Wednesday 11 January 2017 16:14:57, Andy Shevchenko wrote:
-> On Wed, 2017-01-11 at 15:35 +0200, Andy Shevchenko wrote:
-> > On Wed, 2017-01-11 at 13:21 +0100, Linus Walleij wrote:
-> > > On Mon, Jan 9, 2017 at 3:02 PM, Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > 
-> > > This is overall fine. However I have another patch in the works from
-> > > Alexander Stein to pass down the label to the core properly, can you
-> > > look
-> > > at this patch too, so we don't have to mess around too much?
-> > > http://marc.info/?l=linux-gpio&m=148179211709228&w=2
-> > > 
-> > > Which patch should we base on which patch? Or can they be
-> > > combined into one?
-> > > 
-> > > That patch has been held back awaiting ACKs and already
-> > > has an ACK from Jacek so I would merge it first. Could you
-> > > rebase this patch on top of Alexander's patch?
-> > 
-> > At the first glance looks okay to just merge it. 
-> > Means I don't see it might affect functionality of what I'm trying to
-> > do.
-> > 
-> > So, please, go ahead and thanks for pointing out. I will prepare mine
-> > on
-> > top of it.
-> 
-> Alas, it doesn't apply clearly. gpio_keys_polled.c has been changed a
-> lot from that time. So, would you like to fix it yourself?
-> 
-> Since mine is applied clearly I may do other way around, rebase and fix
-> that patch on top of mine.
-> How does it sound?
+On Wed, Jan 11, 2017 at 3:36 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-Yeah, I noticed that gpio_keys_polled.c has changed meanwhile, so my patch has 
-to be modifed anyway. If your patch is applied somewhere I can rebase my 
-change on that and resubmit.
+> Since gpio_dev->hwbank_num is now a variable, the compiler cannot
+> figure out if pin_num is initialized at all:
+>
+> drivers/pinctrl/pinctrl-amd.c: In function 'amd_gpio_dbg_show':
+> drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>    for (; i < pin_num; i++) {
+>    ^~~
+> drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>
+> This adds a 'default' statement to make that case well-defined.
+>
+> Fixes: 3bfd44306c65 ("pinctrl: amd: Add support for additional GPIO")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Best regards,
-Alexander
--- 
-Dipl.-Inf. Alexander Stein
-SYS TEC electronic GmbH
-alexander.stein@systec-electronic.com
+Patch applied.
 
-Legal and Commercial Address:
-Am Windrad 2
-08468 Heinsdorfergrund
-Germany
-
-Office: +49 (0) 3765 38600-0
-Fax:    +49 (0) 3765 38600-4100
- 
-Managing Directors:
-	Director Technology/CEO: Dipl.-Phys. Siegmar Schmidt;
-	Director Commercial Affairs/COO: Dipl. Ing. (FH) Armin von Collrepp
-Commercial Registry:
-	Amtsgericht Chemnitz, HRB 28082; USt.-Id Nr. DE150534010
-
+Yours,
+Linus Walleij
