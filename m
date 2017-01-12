@@ -1,75 +1,70 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] pinctrl: core: Fix regression caused by delayed work for
- hogs
-Date: Thu, 12 Jan 2017 07:48:35 -0800
-Message-ID: <20170112154834.GD2630@atomide.com>
-References: <20170111221334.26194-1-tony@atomide.com>
- <CAMuHMdXGaDoBbNGkS8oYRiNUNbtUNand6qkNY-s4QNSt5Fj0ZQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] pinctrl: Initialize pinctrl_dev.node
+Date: Thu, 12 Jan 2017 17:03:34 +0100
+Message-ID: <20170112160334.22943-1-thierry.reding@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:56544 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750755AbdALPsj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 12 Jan 2017 10:48:39 -0500
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXGaDoBbNGkS8oYRiNUNbtUNand6qkNY-s4QNSt5Fj0ZQ@mail.gmail.com>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34310 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750805AbdALQDj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2017 11:03:39 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Gary Bisson <gary.bisson@boundarydevices.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>
 
-* Geert Uytterhoeven <geert@linux-m68k.org> [170112 00:44]:
-> Hi Tony,
-> 
-> On Wed, Jan 11, 2017 at 11:13 PM, Tony Lindgren <tony@atomide.com> wrote:
-> > Commit df61b366af26 ("pinctrl: core: Use delayed work for hogs") caused a
-> > regression at least with sh-pfc that is also a GPIO controller as
-> > noted by Geert Uytterhoeven <geert@linux-m68k.org>.
-> >
-> > As the original pinctrl_register() has issues calling pin controller
-> > driver functions early before the controller has finished registering,
-> > we can't just revert commit df61b366af26. That would break the drivers
-> > using GENERIC_PINCTRL_GROUPS or GENERIC_PINMUX_FUNCTIONS.
-> >
-> > So let's fix the issue with the following steps as a single patch:
-> >
-> > 1. Revert the late_init parts of commit df61b366af26.
-> >
-> >    The late_init clearly won't work and we have to just give up
-> >    on fixing pinctrl_register() for GENERIC_PINCTRL_GROUPS and
-> >    GENERIC_PINMUX_FUNCTIONS.
-> >
-> > 2. Split pinctrl_register() into two parts
-> >
-> >    By splitting pinctrl_register() into pinctrl_init_controller()
-> >    and pinctrl_create_and_start() we have better control over when
-> >    it's safe to call pinctrl_create().
-> >
-> > 3. Introduce a new pinctrl_register_and_init() function
-> >
-> >    As suggested by Linus Walleij <linus.walleij@linaro.org>, we
-> >    can just introduce a new function for the controllers that need
-> >    pinctrl_create() called later.
-> >
-> > 4. Convert the four known problem cases to use new function
-> >
-> >    Let's convert pinctrl-imx, pinctrl-single, sh-pfc and ti-iodelay
-> >    to use the new function to fix the issues. The rest of the drivers
-> >    can be converted later. Let's also update Documentation/pinctrl.txt
-> >    accordingly because of the known issues with pinctrl_register().
-> >
-> > Fixes: df61b366af26 ("pinctrl: core: Use delayed work for hogs")
-> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Cc: Gary Bisson <gary.bisson@boundarydevices.com>
-> > Signed-off-by: Tony Lindgren <tony@atomide.com>
-> 
-> Thanks, this fixes r8a7740/armadillo.
-> 
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Thierry Reding <treding@nvidia.com>
 
-OK thanks for testing, good to hear it works for you.
+The struct pinctrl_dev's node field is not properly set up, which means
+the .prev and .next fields will be NULL. That's not something that the
+linked list code can deal with, so extra care must be taken when using
+these fields. An example of this is introduced in commit 3429fb3cda34
+("pinctrl: Fix panic when pinctrl devices with hogs are unregistered")
+where list_del() is made conditional on the pinctrl device being part
+of the pinctrl device list. This is to ensure that list_del() won't
+crash upon encountering a NULL pointer in .prev and/or .next.
 
-Thanks,
+After initializing the list head there's no need to jump through these
+extra hoops and list_del() will work unconditionally. This is because
+the initialized list head points to itself and therefore the .prev and
+.next fields can be properly dereferenced.
 
-Tony
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/pinctrl/core.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 65c0ae0969dc..d878b6b9b32d 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -1983,6 +1983,7 @@ struct pinctrl_dev *pinctrl_register(struct pinctrl_desc *pctldesc,
+ 	INIT_RADIX_TREE(&pctldev->pin_function_tree, GFP_KERNEL);
+ #endif
+ 	INIT_LIST_HEAD(&pctldev->gpio_ranges);
++	INIT_LIST_HEAD(&pctldev->node);
+ 	INIT_DELAYED_WORK(&pctldev->late_init, pinctrl_late_init);
+ 	pctldev->dev = dev;
+ 	mutex_init(&pctldev->mutex);
+@@ -2047,7 +2048,6 @@ EXPORT_SYMBOL_GPL(pinctrl_register);
+ void pinctrl_unregister(struct pinctrl_dev *pctldev)
+ {
+ 	struct pinctrl_gpio_range *range, *n;
+-	struct pinctrl_dev *p, *p1;
+ 
+ 	if (pctldev == NULL)
+ 		return;
+@@ -2063,9 +2063,7 @@ void pinctrl_unregister(struct pinctrl_dev *pctldev)
+ 	mutex_lock(&pinctrldev_list_mutex);
+ 	mutex_lock(&pctldev->mutex);
+ 	/* TODO: check that no pinmuxes are still active? */
+-	list_for_each_entry_safe(p, p1, &pinctrldev_list, node)
+-		if (p == pctldev)
+-			list_del(&p->node);
++	list_del(&pctldev->node);
+ 	pinmux_generic_free_functions(pctldev);
+ 	pinctrl_generic_free_groups(pctldev);
+ 	/* Destroy descriptor tree */
+-- 
+2.11.0
+
