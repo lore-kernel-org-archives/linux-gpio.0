@@ -1,109 +1,232 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 2/5] clk: sunxi-ng: add support for V3s CCU
-Date: Thu, 12 Jan 2017 18:41:23 +0100
-Message-ID: <20170112174122.iqzrcyytfefqspwq@lukather>
-References: <20170112203149.VhtuR9dM@smtp3j.mail.yandex.net>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v2 1/1] of: Pass GPIO label down to gpiod_request when
+ using get_gpiod_from_child
+Date: Thu, 12 Jan 2017 10:17:42 -0800
+Message-ID: <20170112181742.GA7475@dtor-ws>
+References: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ooietzld5dnpkws3"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBQ7733BQKGQECUBY2AY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170112203149.VhtuR9dM-fU7thrOZ3Cs0PDqKvflMoHmW9unr2Ajn@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Cc: linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, "	linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "	linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "	linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "	linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+In-Reply-To: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
+On Thu, Jan 12, 2017 at 05:39:24PM +0100, Alexander Stein wrote:
+> Currently all users of fwnode_get_named_gpiod() have no way to specify a
+> label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
+> With this change a proper label is used.
+> Also adjust all users so they can pass a label, properly retrieved from
+> device tree properties.
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> ---
+> v2:
+> * Non-RFC
+> * This patch is rebased on gpio/for-next branch and cherry-picked commit
+> 2715bbe from https://bitbucket.org/andy-shev/linux.git
+> 
+>  drivers/gpio/devres.c                     |  5 +++--
+>  drivers/gpio/gpiolib.c                    |  5 +++--
+>  drivers/input/keyboard/gpio_keys.c        |  3 ++-
+>  drivers/input/keyboard/gpio_keys_polled.c |  3 ++-
 
---ooietzld5dnpkws3
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For input:
 
-On Fri, Jan 13, 2017 at 01:31:41AM +0800, Icenowy Zheng wrote:
->=20
-> 2017=E5=B9=B41=E6=9C=8813=E6=97=A5 01:19=E4=BA=8E Maxime Ripard <maxime.r=
-ipard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On Thu, Jan 12, 2017 at 03:44:53AM +0800, Icenowy Zheng wrote:=20
-> > >=20
-> > >=20
-> > > 12.01.2017, 03:40, "Icenowy Zheng" <icenowy-ymACFijhrKM@public.gmane.org>:=20
-> > > > 11.01.2017, 02:10, "Maxime Ripard" <maxime.ripard-wi1+55ScJUtKEb57/3fJTGGXanvQGlWp@public.gmane.org=
-m>:=20
-> > > >> =C2=A0On Tue, Jan 03, 2017 at 11:16:26PM +0800, Icenowy Zheng wrot=
-e:=20
-> > > >>> =C2=A0=C2=A0V3s has a similar but cut-down CCU to H3.=20
-> > > >>>=20
-> > > >>> =C2=A0=C2=A0Add support for it.=20
-> > > >>>=20
-> > > >>> =C2=A0=C2=A0Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>=20
-> > > >>=20
-> > > >> =C2=A0It looks like there's nothing different but the clocks that =
-you=20
-> > > >> =C2=A0register with the H3, please just use the H3 driver.=20
-> > > >=20
-> > > > Nope.=20
-> > > >=20
-> > > > It has a different PLL (PLL_ISP) at different address, and some=20
-> > > > different muxes.=20
-> > >=20
-> > > Forgot to mention the missing of PLL_DE and related misses.=20
-> >
-> > Those are not conflicting, it's just a slightly different set of=20
-> > clocks.=20
->=20
-> If saying so, we can have only one ccu driver, and make every ccu
-> register different set ;-)
->=20
-> V3s itself is a totally different SoC with H3.
->=20
-> The relationship of V3s and H3 can be farther than the relationship
-> of A33 and H3=F0=9F=98=83
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-A33 and H3 are an entirely different story. The H3 and A33 have
-conflicting clocks (ie same clocks with different parameters). This is
-not your case.
+>  drivers/leds/leds-gpio.c                  | 13 +++++++------
+>  drivers/video/fbdev/amba-clcd-nomadik.c   | 12 ++++++++----
+>  include/linux/gpio/consumer.h             | 12 ++++++++----
+>  7 files changed, 33 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
+> index 6d77b60..d196be7 100644
+> --- a/drivers/gpio/devres.c
+> +++ b/drivers/gpio/devres.c
+> @@ -140,7 +140,8 @@ EXPORT_SYMBOL(devm_gpiod_get_index);
+>  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+>  					    const char *con_id,
+>  					    struct fwnode_handle *child,
+> -					    enum gpiod_flags flags)
+> +					    enum gpiod_flags flags,
+> +					    const char *label)
+>  {
+>  	char prop_name[32]; /* 32 is max size of property name */
+>  	struct gpio_desc **dr;
+> @@ -160,7 +161,7 @@ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+>  			snprintf(prop_name, sizeof(prop_name), "%s",
+>  					    gpio_suffixes[i]);
+>  
+> -		desc = fwnode_get_named_gpiod(child, prop_name, flags);
+> +		desc = fwnode_get_named_gpiod(child, prop_name, flags, label);
+>  		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
+>  			break;
+>  	}
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 46a4334..59d3d96 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -3317,7 +3317,8 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
+>   */
+>  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+>  					 const char *propname,
+> -					 enum gpiod_flags dflags)
+> +					 enum gpiod_flags dflags,
+> +					 const char *label)
+>  {
+>  	struct gpio_desc *desc = ERR_PTR(-ENODEV);
+>  	unsigned long lflags = 0;
+> @@ -3348,7 +3349,7 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+>  	if (IS_ERR(desc))
+>  		return desc;
+>  
+> -	ret = gpiod_request(desc, NULL);
+> +	ret = gpiod_request(desc, label);
+>  	if (ret)
+>  		return ERR_PTR(ret);
+>  
+> diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+> index 9de4b87..2ec74d9 100644
+> --- a/drivers/input/keyboard/gpio_keys.c
+> +++ b/drivers/input/keyboard/gpio_keys.c
+> @@ -481,7 +481,8 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
+>  	spin_lock_init(&bdata->lock);
+>  
+>  	if (child) {
+> -		bdata->gpiod = devm_get_gpiod_from_child(dev, NULL, child, GPIOD_IN);
+> +		bdata->gpiod = devm_get_gpiod_from_child(dev, NULL, child,
+> +							 GPIOD_IN, desc);
+>  		if (IS_ERR(bdata->gpiod)) {
+>  			error = PTR_ERR(bdata->gpiod);
+>  			if (error == -ENOENT) {
+> diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
+> index fd7ab4d..5e35c56 100644
+> --- a/drivers/input/keyboard/gpio_keys_polled.c
+> +++ b/drivers/input/keyboard/gpio_keys_polled.c
+> @@ -305,7 +305,8 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
+>  
+>  			bdata->gpiod = devm_get_gpiod_from_child(dev, NULL,
+>  								 child,
+> -								 GPIOD_IN);
+> +								 GPIOD_IN,
+> +								 button->desc);
+>  			if (IS_ERR(bdata->gpiod)) {
+>  				error = PTR_ERR(bdata->gpiod);
+>  				if (error != -EPROBE_DEFER)
+> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+> index 00cc671..6c4825d 100644
+> --- a/drivers/leds/leds-gpio.c
+> +++ b/drivers/leds/leds-gpio.c
+> @@ -174,12 +174,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+>  		const char *state = NULL;
+>  		struct device_node *np = to_of_node(child);
+>  
+> -		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child, GPIOD_ASIS);
+> -		if (IS_ERR(led.gpiod)) {
+> -			fwnode_handle_put(child);
+> -			return ERR_CAST(led.gpiod);
+> -		}
+> -
+>  		ret = fwnode_property_read_string(child, "label", &led.name);
+>  		if (ret && IS_ENABLED(CONFIG_OF) && np)
+>  			led.name = np->name;
+> @@ -188,6 +182,13 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+>  			return ERR_PTR(-EINVAL);
+>  		}
+>  
+> +		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child,
+> +						      GPIOD_ASIS, led.name);
+> +		if (IS_ERR(led.gpiod)) {
+> +			fwnode_handle_put(child);
+> +			return ERR_CAST(led.gpiod);
+> +		}
+> +
+>  		fwnode_property_read_string(child, "linux,default-trigger",
+>  					    &led.default_trigger);
+>  
+> diff --git a/drivers/video/fbdev/amba-clcd-nomadik.c b/drivers/video/fbdev/amba-clcd-nomadik.c
+> index 2e800d7..9175ad9 100644
+> --- a/drivers/video/fbdev/amba-clcd-nomadik.c
+> +++ b/drivers/video/fbdev/amba-clcd-nomadik.c
+> @@ -185,22 +185,26 @@ static void tpg110_init(struct device *dev, struct device_node *np,
+>  	dev_info(dev, "TPG110 display init\n");
+>  
+>  	/* This asserts the GRESTB signal, putting the display into reset */
+> -	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode, GPIOD_OUT_HIGH);
+> +	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode,
+> +					   GPIOD_OUT_HIGH, "grestb");
+>  	if (IS_ERR(grestb)) {
+>  		dev_err(dev, "no GRESTB GPIO\n");
+>  		return;
+>  	}
+> -	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode, GPIOD_OUT_LOW);
+> +	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode,
+> +					 GPIOD_OUT_LOW, "scen");
+>  	if (IS_ERR(scen)) {
+>  		dev_err(dev, "no SCEN GPIO\n");
+>  		return;
+>  	}
+> -	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, GPIOD_OUT_LOW);
+> +	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, GPIOD_OUT_LOW,
+> +					"scl");
+>  	if (IS_ERR(scl)) {
+>  		dev_err(dev, "no SCL GPIO\n");
+>  		return;
+>  	}
+> -	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, GPIOD_OUT_LOW);
+> +	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, GPIOD_OUT_LOW,
+> +					"sda");
+>  	if (IS_ERR(sda)) {
+>  		dev_err(dev, "no SDA GPIO\n");
+>  		return;
+> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+> index 930d100..80bad7e 100644
+> --- a/include/linux/gpio/consumer.h
+> +++ b/include/linux/gpio/consumer.h
+> @@ -136,11 +136,13 @@ struct fwnode_handle;
+>  
+>  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+>  					 const char *propname,
+> -					 enum gpiod_flags dflags);
+> +					 enum gpiod_flags dflags,
+> +					 const char *label);
+>  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+>  					    const char *con_id,
+>  					    struct fwnode_handle *child,
+> -					    enum gpiod_flags flags);
+> +					    enum gpiod_flags flags,
+> +					    const char *label);
+>  #else /* CONFIG_GPIOLIB */
+>  
+>  static inline int gpiod_count(struct device *dev, const char *con_id)
+> @@ -416,7 +418,8 @@ struct fwnode_handle;
+>  static inline
+>  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+>  					 const char *propname,
+> -					 enum gpiod_flags dflags)
+> +					 enum gpiod_flags dflags,
+> +					 const char *label)
+>  {
+>  	return ERR_PTR(-ENOSYS);
+>  }
+> @@ -425,7 +428,8 @@ static inline
+>  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+>  					    const char *con_id,
+>  					    struct fwnode_handle *child,
+> -					    enum gpiod_flags flags)
+> +					    enum gpiod_flags flags,
+> +					    const char *label)
+>  {
+>  	return ERR_PTR(-ENOSYS);
+>  }
+> -- 
+> 2.10.2
+> 
 
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
-
---ooietzld5dnpkws3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYd7/CAAoJEBx+YmzsjxAgGKsQAIOUNUi+25hpeYhZ7qWqu7sH
-wDqIin/+WvYcyvYnCO8qvtsHzU8f83joDDvU2duNzwuQOewZAsTz9lhJJzP4pzgy
-n5iON29JACv2nXKvdMy2m6eT5DQDIXuIBsaA7oc/Ap2eqTXSGx5Gsck3N24CQ2TO
-D/0yut3zjCObgnApLi28yg5VQK5MdQYLvhvGgXcQbvv/ymALLJHXDTxTXunAxRi0
-/9fjUiCJopiXTGZQHQTepe6qoRveJvO480Bq9E0cIXd3De7flV7h+HrCx67xmHMk
-3ZqfoQHdqzy4lBQfvWVQjWeAQWFJLrlzBfN+cuM4FxPBODiK0vuEijWcTOgjKhXf
-dZnniwtpQ/k1mKvBeH2nEVMeq8RhupEW6AL9iDbqynDvTckD2XqBgU3GZc6t+Jpu
-au58LG7Ro0fCZ6HHzgxpO/zZja4FSifs0O2cImc7LmYU4p9h9hlNh24aoyjx0i1t
-ceDNQ5Q6L/MuFkm36N5/ssN3BZ4l5XmhIJWqka9erWa5T6fY6xCQl+yVaT1NzvQG
-OCCJg9tCv+g4X+vvxU0fJtUXDBIw3aRiDOop6dOj7YRF5vwpJqasSdZSCVyUUxWX
-7tbiWGBHXxqSkBXclrOnb9SbnO3EG6OK3T3QnQGV4qZ+bojVNFl6YaQcEZ24LPLK
-WZOUA08ycYuPV76e2uEv
-=PovE
------END PGP SIGNATURE-----
-
---ooietzld5dnpkws3--
+-- 
+Dmitry
