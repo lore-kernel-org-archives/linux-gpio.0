@@ -1,65 +1,45 @@
-From: Jacky Bai <ping.bai@nxp.com>
-Subject: RE: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
- for imx6sll
-Date: Thu, 12 Jan 2017 02:57:20 +0000
-Message-ID: <AM3PR04MB530A88C5C0E7C6AD2C59B9E87790@AM3PR04MB530.eurprd04.prod.outlook.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-6-git-send-email-ping.bai@nxp.com>
- <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
- <AM3PR04MB5304992095753B761E66A9A87640@AM3PR04MB530.eurprd04.prod.outlook.com>
- <CACRpkdYTpEHyzBY-mA4YUsj=xt46Pibka3-4VHwUXosfgbgp1Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/1] pinctrl: baytrail: Do not add all GPIOs to IRQ domain
+Date: Thu, 12 Jan 2017 08:12:47 +0100
+Message-ID: <CACRpkdaoLOC54RmxVhEG+WLdQEw7X4M=9nEmkeg81kvf+k0D5w@mail.gmail.com>
+References: <20170111134900.31026-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYTpEHyzBY-mA4YUsj=xt46Pibka3-4VHwUXosfgbgp1Q@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com" <jacky.baip@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:33525 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750723AbdALHMt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2017 02:12:49 -0500
+Received: by mail-qt0-f177.google.com with SMTP id v23so10223610qtb.0
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2017 23:12:48 -0800 (PST)
+In-Reply-To: <20170111134900.31026-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Robert R . Howell" <rhowell@uwyo.edu>
 
-PiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDA1LzEyXSBEb2N1bWVudDogZHQ6IGJpbmRpbmc6IGlt
-eDogdXBkYXRlIHBpbmN0cmwgZG9jDQo+IGZvciBpbXg2c2xsDQo+IA0KPiBPbiBNb24sIEphbiA5
-LCAyMDE3IGF0IDM6MzIgQU0sIEphY2t5IEJhaSA8cGluZy5iYWlAbnhwLmNvbT4gd3JvdGU6DQo+
-IA0KPiA+IEkgaGF2ZSBsb29rIGludG8gdGhlIGFib3ZlIGNvbW1pdCBvbiB1c2luZyBnZW5lcmlj
-IGJpbmRpbmcuIEJ1dCBJDQo+ID4gdGhpbmsgdGhlIGdlbmVyaWMgcGluY29uZiBpcyBub3QgdmVy
-eSBlYXN5IHRvIGFkZCBpbiBpbXggcGluY3RybCBEcml2ZXIuIGlteA0KPiBwaW5jdHJsIHVzZSBh
-IGRpZmZlcmVudCB3YXkgdG8gcGFyc2UgdGhlIHBpbiBjb25maWd1cmUuDQo+IA0KPiBPSyBhdGxl
-YXN0IEkgbmVlZCBhbiBpbmRpY2F0aW9uIGZyb20gb25lIG9mIHRoZSBpLk1YIG1haW50YWluZXJz
-IGhvdyB0aGV5DQo+IHdhbnQgdG8gcHJvY2VlZC4NCj4gDQo+ID4gRWFjaCBmc2wscGluIGVudHJ5
-ICBsb29rcyBsaWtlIDxQSU5fRlVOQ19JRCAgQ09ORklHPiBpbiBkdHMsIHRoZQ0KPiA+IENPTkZJ
-RyBpcyB0aGUgcGFkIHNldHRpbmcgdmFsdWUgbGlrZSBwdWxsLXVwLCBvcGVuLWRyYWluLCBkcml2
-ZSBzdHJlbmd0aCBldGMuDQo+IFRoZSBhYm92ZSBjb25maWcgYml0IGRlZmluaXRpb24gaXMgc3Bl
-Y2lmaWMgdG8gZWFjaCBTT0MgaW4gdGhlIFBBRCBDVEwgcmVnaXN0ZXIuDQo+ID4NCj4gPiBJZiB3
-ZSB3YW50IHNldCB0aGUgcGluIGNvbmZpZyB0byBlbmFibGUgaHlzdGVyZXNpcywgNDdLT2htIFB1
-bGwgVXAsDQo+ID4gNTBNaHogc3BlZWQsIDgwT2htIGRyaXZlciBzdHJlbmd0aCBhbmQgRmFzdCBT
-bGV3IFJhdGUsIHRoZW4gdGhlIENPTkZJRw0KPiB2YWx1ZSBzaG91bGQgYmUgMHgxNzA1OSggT1Jz
-IGNvcnJlc3BvbmRpbmcgYml0IGRlZmluaXRpb24pLg0KPiANCj4gSHlzdGVyZXNpcyBpcyBhbiBp
-bnB1dCBwcm9wZXJ0eSBhbmQgZG9lcyBub3QgbWFrZSBzZW5zZSBvbiBzb21ldGhpbmcgdGhhdA0K
-PiBuZWVkIGRyaXZlIHN0cmVuZ3RoIGFuZCBzbGV3IHJhdGUgY29uZmlndXJhdGlvbiB3aGljaCBh
-cmUgb3V0cHV0IHByb3BlcnRpZXMuDQo+IChJIGd1ZXNzIHlvdSBtZWFuIDgwbUEgZHJpdmUgc3Ry
-ZW5ndGguKQ0KPiANCg0KRm9yIHNvbWUgYmktZGlyZWN0aW9uIHBpbnMsIGxpa2UgU0QgREFUQSBw
-aW4sIHdlIG1heSBuZWVkIHRvIGVuYWJsZSB0aGUgaHlzdGVyZXNpcyBjb25maWd1cmF0aW9uLg0K
-DQo+IEFjdHVhbGx5IHN1Y2ggb3h5bW9yb25pYyBzZXR0aW5ncyBpcyBhIGdvb2QgcmVhc29uIHRv
-IG1pZ3JhdGUgdG8gZ2VuZXJpYw0KPiBiaW5kaW5ncyBiZWNhdXNlIHdoZW4geW91IGRlc2NyaWJl
-IHN0dWZmIHdpdGggZ2VuZXJpYyBzdHJpbmdzIHlvdSBzZWUgYmV0dGVyDQo+IHdoYXQgaXMgZ29p
-bmcgb24sIGFuZCB3ZSBjYW4gYWRkIHNhbml0eSBjaGVja3MgdG8gY2FzZXMgbGlrZSB0aGlzIGlu
-IHRoZSBnZW5lcmljDQo+IGNvZGUgd2hlcmUgaXQgd291bGQgaW5kZWVkIGJlIHZhbGlkIHRvIGFz
-ayB3aHkgdGhpcyBjb21iaW5hdGlvbiBvZiBzZXR0aW5ncyBpcw0KPiBiZWluZyBtYWRlLg0KPiAN
-Cg0KQW5vdGhlciB0aGluZyBpcyB0aGF0IHdlIGNhbiB1c2UgYSBwaW5zLXRvb2wgcHJvZ3JhbSBk
-ZXZlbG9wZWQgYnkgTlhQIHRvIGdlbmVyYXRlIHRoZSBwaW5jdHJsIGNvbmZpZ3VyYXRpb24gY29k
-ZSB0aGF0IGNhbg0KYmUgdXNlZCBkaXJlY3RseSBpbiBkdHMuIFRoaXMgdGlueSBwcm9ncmFtIGNh
-biBhdm9pZCBwaW4gZnVuY3Rpb24gY29uZmxpY3QuIEFzIG9uIGkuTVgsIHRoZXJlIGFyZSBzbyBt
-YXkgcGlucywgZWFjaCBwaW4gY2FuIGJlIHVzZWQNCmZvciB1cCA4ICBmdW5jdGlvbi4gQ29uZmln
-dXJpbmcgdGhlIHBpbnMgaXMgYSB0aW1lLWNvbnN1bWluZyB3b3JrLiAgVGhpcyB0b29scyBpcyB2
-ZXJ5IHVzZWZ1bCBmb3IgY3VzdG9tZXIgdG8gZ2VuZXJhdGUgdGhlIGR0cyBjb2RlLiAgDQoNClVz
-aW5nIGdlbmVyaWMgcGluY29uZiBpcyBhbm90aGVyIG9wdGlvbiwgYnV0IGl0IG1heSBuZWVkIG1v
-cmUgdGltZSB0byBhZGQgaXQgYW5kIG1vcmUgd29yayB0byBkby4gIEZvciBub3csIEkgdGhpbmsg
-d2UgY2FuIHN0aWxsIGtlZXAgdGhlIGxlZ2FjeSBtZXRob2Q/DQogDQo+ID4gVGhpcyB2YWx1ZSB3
-aWxsIGJlIHNldCBpbg0KPiA+IFBBRCBDVEwgcmVnaXN0ZXIgdG8gY29uZmlnIHRoZSBjb3JyZXNw
-b25kaW5nIHBpbi4NCj4gDQo+IFllcz8gVGhhdCBpcyBjb21tb24uIEl0IGxvb2tzIGxpa2UgdGhh
-dCBpbiBEVDoNCj4gDQo+IHsNCj4gICAgaW5wdXQtc2NobWl0dC1lbmFibGU7DQo+ICAgIGJpYXMt
-cHVsbC11cCA9IDw0NzAwMD47DQo+ICAgIHNsZXctcmF0ZSA9IDw1MDAwMDAwMD47DQo+ICAgIGRy
-aXZlLXN0cmVuZ3RoID0gPDgwMDAwPjsNCj4gfTsNCj4gDQo+IFlvdXJzLA0KPiBMaW51cyBXYWxs
-ZWlqDQo=
+On Wed, Jan 11, 2017 at 2:49 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+
+> When DIRECT_IRQ_EN is set, the pin is routed directly to the IO-APIC bypassing
+> the GPIO driver completely. However, the mask register is still used to
+> determine if the pin is supposed to generate IRQ or not.
+>
+> So with commit 3ae02c14d964 the IRQ core masks all IRQs (because of
+> handle_bad_irq()) the pin connected to the touchscreen gets masked as well and
+> hence no interrupts.
+>
+> To make this all work as expected we do not add those GPIOs to the IRQ domain
+> that can actually propagate interrupts.
+>
+> Fixes: 3ae02c14d964 ("pinctrl: intel: set default handler to be handle_bad_irq()")
+> Reported-by: Robert R. Howell <rhowell@uwyo.edu>
+> Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> In v3:
+
+Patch applied for fixes.
+
+Yours,
+Linus Walleij
