@@ -1,83 +1,56 @@
 From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH 2/2] gpio: davinci: Remove gpio2regs function to
- accommodate multi instances
-Date: Thu, 12 Jan 2017 07:22:19 +0530
-Message-ID: <2683ca92-e1c3-7b87-cd8c-bf6095b09ff9@ti.com>
-References: <1483518389-6200-1-git-send-email-j-keerthy@ti.com>
- <1483518389-6200-2-git-send-email-j-keerthy@ti.com>
- <CACRpkdaWA0+kqeWvHDMwiVGGc0Ucywbx62OnKisuTKsShMbgnw@mail.gmail.com>
- <55d29408-2ccc-d6a1-8ef6-5418ba8df0b7@ti.com>
- <CACRpkdYzq0o3Y2BoccPVK4Ro1NWdspqcF12GO0c7wwhz3WPVoA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] gpio: davinci: Remove unwanted blank line
+Date: Thu, 12 Jan 2017 07:23:32 +0530
+Message-ID: <4d65feda-c100-c576-ec4f-e9a072b72b88@ti.com>
+References: <1484110841-2391-1-git-send-email-j-keerthy@ti.com>
+ <1484110841-2391-2-git-send-email-j-keerthy@ti.com>
+ <3ada0b60-01fb-93b9-e369-3a628ecf5fdc@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYzq0o3Y2BoccPVK4Ro1NWdspqcF12GO0c7wwhz3WPVoA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:28235 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1762915AbdALBxi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Jan 2017 20:53:38 -0500
+In-Reply-To: <3ada0b60-01fb-93b9-e369-3a628ecf5fdc@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>, linus.walleij@linaro.org, t-kristo@ti.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com
 
 
 
-On Wednesday 11 January 2017 09:23 PM, Linus Walleij wrote:
-> On Wed, Jan 11, 2017 at 1:40 PM, Keerthy <j-keerthy@ti.com> wrote:
->> On Wednesday 11 January 2017 04:34 PM, Linus Walleij wrote:
->>> On Wed, Jan 4, 2017 at 9:26 AM, Keerthy <j-keerthy@ti.com> wrote:
->>>
->>>> gpio2regs is written making an assumption that driver supports only
->>>> one instance of gpio controller. Removing this and adding a generic
->>>> array so as to support multiple instances of gpio controllers.
->>>>
->>>> Signed-off-by: Keerthy <j-keerthy@ti.com>
->>>
->>>
->>>> -               regs = gpio2regs(base);
->>>> +               regs = gpio_base + offset_array[i];
->>>
->>>
->>> I understand this.
->>>
->>>> -       struct davinci_gpio_regs __iomem *g = gpio2regs(hw);
->>>> +       struct davinci_gpio_controller *chips =
->>>> +                               (struct davinci_gpio_controller
->>>> *)d->host_data;
->>>> +       struct davinci_gpio_regs __iomem *g = chips[hw / 32].regs;
->>>
->>>
->>> And this, if each instans has 32 GPIOs.
->>>
->>>> -               g = gpio2regs(0);
->>>> +               g = chips[0].regs;
->>>
->>>
->>> Also makes sense.
->>>
->>>> -               g = gpio2regs(gpio);
->>>> +               g = chips[bank / 2].regs;
->>>
->>>
->>> But what is this? I don't understand that /2 at all. Please insert a
->>> comment explaining it so I can figure it out. Are there two banks
->>> per instance?
+On Wednesday 11 January 2017 11:07 PM, Grygorii Strashko wrote:
+>
+>
+> On 01/10/2017 11:00 PM, Keerthy wrote:
+>> Remove redundant blank line.
+>
+> i think it's better to drop this patch ;)
+
+There were already too many things in the second patch so just did not 
+want to add more lines of code change :-P.
+
+>
 >>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> ---
+>>  include/linux/platform_data/gpio-davinci.h | 1 -
+>>  1 file changed, 1 deletion(-)
 >>
->> Yes! There are register sets for 32 GPIOs. 2 banks of 16 GPIOs are covered
->> by each set of registers hence /2. Shall i add a comment and send this patch
->> alone separately?
->
-> Yeah.
->
-> I am currently confused by several patch sets for davinci in my inbox,
-> can you rebase on my devel branch when I push it and resend
-> *all* you have cooking for DaVinci?
-
-Sure Linus i will do that.
-
-Thanks,
-Keerthy
-
->
-> Yours,
-> Linus Walleij
+>> diff --git a/include/linux/platform_data/gpio-davinci.h
+>> b/include/linux/platform_data/gpio-davinci.h
+>> index 44ca530..18127c4 100644
+>> --- a/include/linux/platform_data/gpio-davinci.h
+>> +++ b/include/linux/platform_data/gpio-davinci.h
+>> @@ -26,7 +26,6 @@ struct davinci_gpio_platform_data {
+>>      u32    gpio_unbanked;
+>>  };
+>>
+>> -
+>>  struct davinci_gpio_controller {
+>>      struct gpio_chip    chip;
+>>      struct irq_domain    *irq_domain;
+>>
 >
