@@ -1,45 +1,79 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/1] pinctrl: baytrail: Do not add all GPIOs to IRQ domain
-Date: Thu, 12 Jan 2017 08:12:47 +0100
-Message-ID: <CACRpkdaoLOC54RmxVhEG+WLdQEw7X4M=9nEmkeg81kvf+k0D5w@mail.gmail.com>
-References: <20170111134900.31026-1-andriy.shevchenko@linux.intel.com>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: Re: [PATCH v2 3/3] gpiolib: Convert fwnode_get_named_gpiod() to configure GPIO
+Date: Thu, 12 Jan 2017 08:27:42 +0100
+Message-ID: <1633853.HOlbG3UopE@ws-stein>
+References: <20170109140228.47613-1-andriy.shevchenko@linux.intel.com> <1484141740.2133.57.camel@linux.intel.com> <1484144097.2133.60.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f177.google.com ([209.85.216.177]:33525 "EHLO
-        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750723AbdALHMt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2017 02:12:49 -0500
-Received: by mail-qt0-f177.google.com with SMTP id v23so10223610qtb.0
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Jan 2017 23:12:48 -0800 (PST)
-In-Reply-To: <20170111134900.31026-1-andriy.shevchenko@linux.intel.com>
+Received: from webbox1416.server-home.net ([77.236.96.61]:41389 "EHLO
+        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750755AbdALH1u (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 12 Jan 2017 02:27:50 -0500
+In-Reply-To: <1484144097.2133.60.camel@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Robert R . Howell" <rhowell@uwyo.edu>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Wed, Jan 11, 2017 at 2:49 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Wednesday 11 January 2017 16:14:57, Andy Shevchenko wrote:
+> On Wed, 2017-01-11 at 15:35 +0200, Andy Shevchenko wrote:
+> > On Wed, 2017-01-11 at 13:21 +0100, Linus Walleij wrote:
+> > > On Mon, Jan 9, 2017 at 3:02 PM, Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > 
+> > > This is overall fine. However I have another patch in the works from
+> > > Alexander Stein to pass down the label to the core properly, can you
+> > > look
+> > > at this patch too, so we don't have to mess around too much?
+> > > http://marc.info/?l=linux-gpio&m=148179211709228&w=2
+> > > 
+> > > Which patch should we base on which patch? Or can they be
+> > > combined into one?
+> > > 
+> > > That patch has been held back awaiting ACKs and already
+> > > has an ACK from Jacek so I would merge it first. Could you
+> > > rebase this patch on top of Alexander's patch?
+> > 
+> > At the first glance looks okay to just merge it. 
+> > Means I don't see it might affect functionality of what I'm trying to
+> > do.
+> > 
+> > So, please, go ahead and thanks for pointing out. I will prepare mine
+> > on
+> > top of it.
+> 
+> Alas, it doesn't apply clearly. gpio_keys_polled.c has been changed a
+> lot from that time. So, would you like to fix it yourself?
+> 
+> Since mine is applied clearly I may do other way around, rebase and fix
+> that patch on top of mine.
+> How does it sound?
 
-> When DIRECT_IRQ_EN is set, the pin is routed directly to the IO-APIC bypassing
-> the GPIO driver completely. However, the mask register is still used to
-> determine if the pin is supposed to generate IRQ or not.
->
-> So with commit 3ae02c14d964 the IRQ core masks all IRQs (because of
-> handle_bad_irq()) the pin connected to the touchscreen gets masked as well and
-> hence no interrupts.
->
-> To make this all work as expected we do not add those GPIOs to the IRQ domain
-> that can actually propagate interrupts.
->
-> Fixes: 3ae02c14d964 ("pinctrl: intel: set default handler to be handle_bad_irq()")
-> Reported-by: Robert R. Howell <rhowell@uwyo.edu>
-> Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> In v3:
+Yeah, I noticed that gpio_keys_polled.c has changed meanwhile, so my patch has 
+to be modifed anyway. If your patch is applied somewhere I can rebase my 
+change on that and resubmit.
 
-Patch applied for fixes.
+Best regards,
+Alexander
+-- 
+Dipl.-Inf. Alexander Stein
+SYS TEC electronic GmbH
+alexander.stein@systec-electronic.com
 
-Yours,
-Linus Walleij
+Legal and Commercial Address:
+Am Windrad 2
+08468 Heinsdorfergrund
+Germany
+
+Office: +49 (0) 3765 38600-0
+Fax:    +49 (0) 3765 38600-4100
+ 
+Managing Directors:
+	Director Technology/CEO: Dipl.-Phys. Siegmar Schmidt;
+	Director Commercial Affairs/COO: Dipl. Ing. (FH) Armin von Collrepp
+Commercial Registry:
+	Amtsgericht Chemnitz, HRB 28082; USt.-Id Nr. DE150534010
+
