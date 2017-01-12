@@ -1,232 +1,173 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2 1/1] of: Pass GPIO label down to gpiod_request when
- using get_gpiod_from_child
-Date: Thu, 12 Jan 2017 10:17:42 -0800
-Message-ID: <20170112181742.GA7475@dtor-ws>
-References: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH 2/3] gpio: davinci: Redesign driver to accommodate ngpios
+ in one gpio chip
+Date: Thu, 12 Jan 2017 13:06:01 -0600
+Message-ID: <fd6a1bc4-bcb1-a2ed-4058-35514d114211@ti.com>
+References: <1484110841-2391-1-git-send-email-j-keerthy@ti.com>
+ <1484110841-2391-3-git-send-email-j-keerthy@ti.com>
+ <e2b903a2-24e2-43ef-ef08-d50c0748d046@ti.com>
+ <3a017847-abad-f215-30d9-764a0cb07041@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <3a017847-abad-f215-30d9-764a0cb07041@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>, linus.walleij@linaro.org, t-kristo@ti.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jan 12, 2017 at 05:39:24PM +0100, Alexander Stein wrote:
-> Currently all users of fwnode_get_named_gpiod() have no way to specify a
-> label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
-> With this change a proper label is used.
-> Also adjust all users so they can pass a label, properly retrieved from
-> device tree properties.
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
-> CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> ---
-> v2:
-> * Non-RFC
-> * This patch is rebased on gpio/for-next branch and cherry-picked commit
-> 2715bbe from https://bitbucket.org/andy-shev/linux.git
-> 
->  drivers/gpio/devres.c                     |  5 +++--
->  drivers/gpio/gpiolib.c                    |  5 +++--
->  drivers/input/keyboard/gpio_keys.c        |  3 ++-
->  drivers/input/keyboard/gpio_keys_polled.c |  3 ++-
 
-For input:
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+On 01/11/2017 08:00 PM, Keerthy wrote:
+>
+>
+> On Wednesday 11 January 2017 11:23 PM, Grygorii Strashko wrote:
+>>
+>>
+>> On 01/10/2017 11:00 PM, Keerthy wrote:
+>>> The Davinci GPIO driver is implemented to work with one monolithic
+>>> Davinci GPIO platform device which may have up to Y(144) gpios.
+>>> The Davinci GPIO driver instantiates number of GPIO chips with
+>>> max 32 gpio pins per each during initialization and one IRQ domain.
+>>> So, the current GPIO's  opjects structure is:
+>>>
+>>> <platform device> Davinci GPIO controller
+>>>  |- <gpio0_chip0> ------|
+>>>  ...                    |--- irq_domain (hwirq [0..143])
+>>>  |- <gpio0_chipN> ------|
+>>>
+>>> Current driver creates one chip for every 32 GPIOs in a controller.
+>>> This was a limitation earlier now there is no need for that. Hence
+>>> redesigning the driver to create one gpio chip for all the ngpio
+>>> in the controller.
+>>>
+>>> |- <gpio0_chip0> ------|--- irq_domain (hwirq [0..143]).
+>>>
+>>> The previous discussion on this can be found here:
+>>> https://www.spinics.net/lists/linux-omap/msg132869.html
+>>
+>> nice rework.
+>
+> Thanks!
+>
+>>
+>>>
+>>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>>> ---
+>>>
+>>> Boot tested on Davinci platform.
+>>>
+>>>  drivers/gpio/gpio-davinci.c                | 127
+>>> +++++++++++++++++------------
 
->  drivers/leds/leds-gpio.c                  | 13 +++++++------
->  drivers/video/fbdev/amba-clcd-nomadik.c   | 12 ++++++++----
->  include/linux/gpio/consumer.h             | 12 ++++++++----
->  7 files changed, 33 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
-> index 6d77b60..d196be7 100644
-> --- a/drivers/gpio/devres.c
-> +++ b/drivers/gpio/devres.c
-> @@ -140,7 +140,8 @@ EXPORT_SYMBOL(devm_gpiod_get_index);
->  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
->  					    const char *con_id,
->  					    struct fwnode_handle *child,
-> -					    enum gpiod_flags flags)
-> +					    enum gpiod_flags flags,
-> +					    const char *label)
->  {
->  	char prop_name[32]; /* 32 is max size of property name */
->  	struct gpio_desc **dr;
-> @@ -160,7 +161,7 @@ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
->  			snprintf(prop_name, sizeof(prop_name), "%s",
->  					    gpio_suffixes[i]);
->  
-> -		desc = fwnode_get_named_gpiod(child, prop_name, flags);
-> +		desc = fwnode_get_named_gpiod(child, prop_name, flags, label);
->  		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
->  			break;
->  	}
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 46a4334..59d3d96 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -3317,7 +3317,8 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
->   */
->  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
->  					 const char *propname,
-> -					 enum gpiod_flags dflags)
-> +					 enum gpiod_flags dflags,
-> +					 const char *label)
->  {
->  	struct gpio_desc *desc = ERR_PTR(-ENODEV);
->  	unsigned long lflags = 0;
-> @@ -3348,7 +3349,7 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
->  	if (IS_ERR(desc))
->  		return desc;
->  
-> -	ret = gpiod_request(desc, NULL);
-> +	ret = gpiod_request(desc, label);
->  	if (ret)
->  		return ERR_PTR(ret);
->  
-> diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
-> index 9de4b87..2ec74d9 100644
-> --- a/drivers/input/keyboard/gpio_keys.c
-> +++ b/drivers/input/keyboard/gpio_keys.c
-> @@ -481,7 +481,8 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
->  	spin_lock_init(&bdata->lock);
->  
->  	if (child) {
-> -		bdata->gpiod = devm_get_gpiod_from_child(dev, NULL, child, GPIOD_IN);
-> +		bdata->gpiod = devm_get_gpiod_from_child(dev, NULL, child,
-> +							 GPIOD_IN, desc);
->  		if (IS_ERR(bdata->gpiod)) {
->  			error = PTR_ERR(bdata->gpiod);
->  			if (error == -ENOENT) {
-> diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
-> index fd7ab4d..5e35c56 100644
-> --- a/drivers/input/keyboard/gpio_keys_polled.c
-> +++ b/drivers/input/keyboard/gpio_keys_polled.c
-> @@ -305,7 +305,8 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
->  
->  			bdata->gpiod = devm_get_gpiod_from_child(dev, NULL,
->  								 child,
-> -								 GPIOD_IN);
-> +								 GPIOD_IN,
-> +								 button->desc);
->  			if (IS_ERR(bdata->gpiod)) {
->  				error = PTR_ERR(bdata->gpiod);
->  				if (error != -EPROBE_DEFER)
-> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> index 00cc671..6c4825d 100644
-> --- a/drivers/leds/leds-gpio.c
-> +++ b/drivers/leds/leds-gpio.c
-> @@ -174,12 +174,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
->  		const char *state = NULL;
->  		struct device_node *np = to_of_node(child);
->  
-> -		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child, GPIOD_ASIS);
-> -		if (IS_ERR(led.gpiod)) {
-> -			fwnode_handle_put(child);
-> -			return ERR_CAST(led.gpiod);
-> -		}
-> -
->  		ret = fwnode_property_read_string(child, "label", &led.name);
->  		if (ret && IS_ENABLED(CONFIG_OF) && np)
->  			led.name = np->name;
-> @@ -188,6 +182,13 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
->  			return ERR_PTR(-EINVAL);
->  		}
->  
-> +		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child,
-> +						      GPIOD_ASIS, led.name);
-> +		if (IS_ERR(led.gpiod)) {
-> +			fwnode_handle_put(child);
-> +			return ERR_CAST(led.gpiod);
-> +		}
-> +
->  		fwnode_property_read_string(child, "linux,default-trigger",
->  					    &led.default_trigger);
->  
-> diff --git a/drivers/video/fbdev/amba-clcd-nomadik.c b/drivers/video/fbdev/amba-clcd-nomadik.c
-> index 2e800d7..9175ad9 100644
-> --- a/drivers/video/fbdev/amba-clcd-nomadik.c
-> +++ b/drivers/video/fbdev/amba-clcd-nomadik.c
-> @@ -185,22 +185,26 @@ static void tpg110_init(struct device *dev, struct device_node *np,
->  	dev_info(dev, "TPG110 display init\n");
->  
->  	/* This asserts the GRESTB signal, putting the display into reset */
-> -	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode, GPIOD_OUT_HIGH);
-> +	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode,
-> +					   GPIOD_OUT_HIGH, "grestb");
->  	if (IS_ERR(grestb)) {
->  		dev_err(dev, "no GRESTB GPIO\n");
->  		return;
->  	}
-> -	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode, GPIOD_OUT_LOW);
-> +	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode,
-> +					 GPIOD_OUT_LOW, "scen");
->  	if (IS_ERR(scen)) {
->  		dev_err(dev, "no SCEN GPIO\n");
->  		return;
->  	}
-> -	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, GPIOD_OUT_LOW);
-> +	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, GPIOD_OUT_LOW,
-> +					"scl");
->  	if (IS_ERR(scl)) {
->  		dev_err(dev, "no SCL GPIO\n");
->  		return;
->  	}
-> -	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, GPIOD_OUT_LOW);
-> +	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, GPIOD_OUT_LOW,
-> +					"sda");
->  	if (IS_ERR(sda)) {
->  		dev_err(dev, "no SDA GPIO\n");
->  		return;
-> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-> index 930d100..80bad7e 100644
-> --- a/include/linux/gpio/consumer.h
-> +++ b/include/linux/gpio/consumer.h
-> @@ -136,11 +136,13 @@ struct fwnode_handle;
->  
->  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
->  					 const char *propname,
-> -					 enum gpiod_flags dflags);
-> +					 enum gpiod_flags dflags,
-> +					 const char *label);
->  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
->  					    const char *con_id,
->  					    struct fwnode_handle *child,
-> -					    enum gpiod_flags flags);
-> +					    enum gpiod_flags flags,
-> +					    const char *label);
->  #else /* CONFIG_GPIOLIB */
->  
->  static inline int gpiod_count(struct device *dev, const char *con_id)
-> @@ -416,7 +418,8 @@ struct fwnode_handle;
->  static inline
->  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
->  					 const char *propname,
-> -					 enum gpiod_flags dflags)
-> +					 enum gpiod_flags dflags,
-> +					 const char *label)
->  {
->  	return ERR_PTR(-ENOSYS);
->  }
-> @@ -425,7 +428,8 @@ static inline
->  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
->  					    const char *con_id,
->  					    struct fwnode_handle *child,
-> -					    enum gpiod_flags flags)
-> +					    enum gpiod_flags flags,
-> +					    const char *label)
->  {
->  	return ERR_PTR(-ENOSYS);
->  }
-> -- 
-> 2.10.2
-> 
+[...]
+
+>>>
+>>>  #ifdef CONFIG_OF_GPIO
+>>> -        chips[i].chip.of_gpio_n_cells = 2;
+>>> -        chips[i].chip.of_xlate = davinci_gpio_of_xlate;
+>>> -        chips[i].chip.parent = dev;
+>>> -        chips[i].chip.of_node = dev->of_node;
+>>> +    chips->chip.of_gpio_n_cells = 2;
+>>> +    chips->chip.of_xlate = davinci_gpio_of_xlate;
+>>
+>> I think It's not necessary to have custom .xlate() and
+>> it can be removed, then gpiolib will assign default one
+>> of_gpio_simple_xlate().
+>
+> Okay. Can i do that as a separate patch?
+
+I think it's ok.
+
+>
+>>
+>>> +    chips->chip.parent = dev;
+>>> +    chips->chip.of_node = dev->of_node;
+>>>  #endif
+>>> -        spin_lock_init(&chips[i].lock);
+>>> -
+
+[...]
+
+>>>
+>>>      irq_set_chip_and_handler_name(irq, &gpio_irqchip,
+>>> handle_simple_irq,
+>>>                  "davinci_gpio");
+>>> @@ -459,6 +468,7 @@ static int davinci_gpio_irq_setup(struct
+>>> platform_device *pdev)
+>>>      struct irq_domain    *irq_domain = NULL;
+>>>      const struct of_device_id *match;
+>>>      struct irq_chip *irq_chip;
+>>> +    struct davinci_gpio_irq_data *irqdata[MAX_BANKED_IRQS];
+>>
+>> You declare irqdata as array here but it has not been used anywhere
+>> except for assignment. Could you remove this array and MAX_BANKED_IRQS
+>> define?
+>
+> irq_set_chained_handler_and_data(bank_irq, gpio_irq_handler,
+>                          &chips[gpio / 32]);
+>                          irqdata[bank]);
+>
+> That is hooked as data for each bank. As there is only one controller
+> now and the differentiating parameters per bank is the irqdata data
+> structure with the registers pointer and the bank number.
+> This structure makes it very easy in the irq handler to identify the
+> register sets that need to be modified and the bank irqs.
+
+That I understood, but why do you need array here?
+
+>
+>>
+>> Seems you can just use struct davinci_gpio_irq_data *irqdata;
+
+why can't you use (see below):
+	struct davinci_gpio_irq_data *irqdata;
+>>
+>>>      gpio_get_irq_chip_cb_t gpio_get_irq_chip;
+>>>
+>>>      /*
+>>> @@ -514,10 +524,8 @@ static int davinci_gpio_irq_setup(struct
+>>> platform_device *pdev)
+>>>       * IRQs, while the others use banked IRQs, would need some setup
+>>>       * tweaks to recognize hardware which can do that.
+>>>       */
+
+[...]
+
+>>>
+>>> @@ -567,8 +575,19 @@ static int davinci_gpio_irq_setup(struct
+>>> platform_device *pdev)
+>>>           * gpio irqs. Pass the irq bank's corresponding controller to
+>>>           * the chained irq handler.
+>>>           */
+>>> +        irqdata[bank] = devm_kzalloc(&pdev->dev,
+>>> +                         sizeof(struct
+>>> +                            davinci_gpio_irq_data),
+>>> +                         GFP_KERNEL);
+
+irqdata = devm_kzalloc(&pdev->dev,
+                         sizeof(struct
+                             davinci_gpio_irq_data),
+                          GFP_KERNEL);
+
+>>> +        if (!irqdata[bank])
+>>> +            return -ENOMEM;
+>>> +
+>>> +        irqdata[bank]->regs = g;
+>>> +        irqdata[bank]->bank_num = bank;
+>>> +        irqdata[bank]->chip = chips;
+>>> +
+>>>          irq_set_chained_handler_and_data(bank_irq, gpio_irq_handler,
+>>> -                         &chips[gpio / 32]);
+>>> +                         irqdata[bank]);
+
+          irq_set_chained_handler_and_data(bank_irq, gpio_irq_handler,
+                          irqdata);
+
+
+[...]
 
 -- 
-Dmitry
+regards,
+-grygorii
