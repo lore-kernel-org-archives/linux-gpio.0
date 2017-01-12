@@ -1,38 +1,75 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH 2/3] gpio: gpio-rz: GPIO driver for Renesas RZ series
-Date: Thu, 12 Jan 2017 14:39:13 +0000
-Message-ID: <SG2PR06MB11655053AB845CD1BD8B61FE8A790@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1483990318-26927-1-git-send-email-jacopo+renesas@jmondi.org>
- <1483990318-26927-3-git-send-email-jacopo+renesas@jmondi.org>
- <CACRpkdbMVu1pe9fYf+DRsnm7Uy_S3T+TONs5qKYWXOLfLDJzwQ@mail.gmail.com>
- <a837aa4e-4f77-b29f-2032-c4005f984261@jmondi.org>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] pinctrl: core: Fix regression caused by delayed work for
+ hogs
+Date: Thu, 12 Jan 2017 07:48:35 -0800
+Message-ID: <20170112154834.GD2630@atomide.com>
+References: <20170111221334.26194-1-tony@atomide.com>
+ <CAMuHMdXGaDoBbNGkS8oYRiNUNbtUNand6qkNY-s4QNSt5Fj0ZQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <a837aa4e-4f77-b29f-2032-c4005f984261@jmondi.org>
-Content-Language: en-US
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: jacopo mondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:56544 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750755AbdALPsj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 12 Jan 2017 10:48:39 -0500
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXGaDoBbNGkS8oYRiNUNbtUNand6qkNY-s4QNSt5Fj0ZQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Gary Bisson <gary.bisson@boundarydevices.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-SGkgSmFjb3BvLA0KDQpPbiBUaHVyc2RheSwgSmFudWFyeSAxMiwgMjAxNywgamFjb3BvIG1vbmRp
-IHdyb3RlOg0KPiBUbyByZWFkIHRoZSBwaW4gZGlyZWN0aW9uIEkgd291bGQgbmVlZCB0byBhZGQg
-b25lIG1vcmUgcmVnaXN0ZXIgdG8gdGhlDQo+ICJyZWciIHByb3BlcnR5IHJhbmdlIHByb3ZpZGVk
-IGluIHRoZSBEVFMuDQo+IFRoaXMgaXMgb2YgY291cnNlIGRvYWJsZSwgYnV0IEkgd291bGQgaGF2
-ZSB0d28gcXVlc3Rpb25zIGhlcmU6DQo+IC0gd2h5IGRpZCB5b3UgY2hvc2UgdG8gdXNlIFBNU1Ig
-cmVnaXN0ZXIgaW5zdGVhZCBvZiByZWFkaW5nL3dyaXRpbmcNCj4gZGlyZWN0bHkgdG8gUE0/IEFt
-IEkgbWlzc2luZyBzb21ldGhpbmc/DQoNCg0KSSBndWVzcyB5b3UgY2FuIHN0aWxsIHVzZSB0aGUg
-UE1TUiByZWdpc3RlciB0byBnZXQgdGhlIGN1cnJlbnQgZGlyZWN0aW9uDQpvZiB0aGUgSS9PIHBp
-bi4gQWNjb3JkaW5nIHRvIHRoZSBIVyBtYW51YWw6DQoNCiJXaGVuIHJlYWRpbmcsIHRoZSBoaWdo
-ZXIgMTYgYml0cyBhcmUgcmVhZCBhcyAwMDAwSC4gVGhlIGxvd2VyIDE2IGJpdHMNCiBhcmUgcmVh
-ZCBhcyB0aGUgdmFsdWUgb2YgdGhlIFBNbiByZWdpc3Rlci4iDQoNCg0KV2hpbGUgdGhlIFBNU1Ig
-cmVnaXN0ZXIgaXMgYSBjb29sIGlkZWEgb2YgaGF2aW5nIGEgc3BlY2lhbCByZWdpc3RlciB0aGF0
-DQpjYW4gY2hhbmdlIGEgc2luZ2xlIHBvcnQgcGluIGRpcmVjdGlvbiB3aXRob3V0IGRvaW5nIGEg
-cmVhZC1tb2RpZnktd3JpdGUNCmJ5IHRoZSBDUFUsIGl0IGRvZXNuJ3Qgc2VlbSB0byBiZSBhIHN0
-YW5kYXJkIG9wdGlvbiBpbiBSZW5lc2FzIFNvQ3MgKHdlbGwsDQpleGNlcHQgZm9yIHRoZSBvbGRl
-ciBORUMgVjg1MCBwYXJ0cyB3aGVyZSB0aGlzIFBGQyBIVyBjYW1lIGZyb20pLg0KU28gYSBtb3Jl
-IHRyYWRpdGlvbmFsIG1ldGhvZCBvZiBqdXN0IHVzaW5nIHRoZSBQbW4gcmVnaXN0ZXIgc2VlbXMg
-dG8gYmUNCm1vcmUgY29tcGF0aWJsZSBhY3Jvc3MgUmVuZXNhcyBTb0NzLg0KDQoNCkNocmlzDQoN
-Cg==
+* Geert Uytterhoeven <geert@linux-m68k.org> [170112 00:44]:
+> Hi Tony,
+> 
+> On Wed, Jan 11, 2017 at 11:13 PM, Tony Lindgren <tony@atomide.com> wrote:
+> > Commit df61b366af26 ("pinctrl: core: Use delayed work for hogs") caused a
+> > regression at least with sh-pfc that is also a GPIO controller as
+> > noted by Geert Uytterhoeven <geert@linux-m68k.org>.
+> >
+> > As the original pinctrl_register() has issues calling pin controller
+> > driver functions early before the controller has finished registering,
+> > we can't just revert commit df61b366af26. That would break the drivers
+> > using GENERIC_PINCTRL_GROUPS or GENERIC_PINMUX_FUNCTIONS.
+> >
+> > So let's fix the issue with the following steps as a single patch:
+> >
+> > 1. Revert the late_init parts of commit df61b366af26.
+> >
+> >    The late_init clearly won't work and we have to just give up
+> >    on fixing pinctrl_register() for GENERIC_PINCTRL_GROUPS and
+> >    GENERIC_PINMUX_FUNCTIONS.
+> >
+> > 2. Split pinctrl_register() into two parts
+> >
+> >    By splitting pinctrl_register() into pinctrl_init_controller()
+> >    and pinctrl_create_and_start() we have better control over when
+> >    it's safe to call pinctrl_create().
+> >
+> > 3. Introduce a new pinctrl_register_and_init() function
+> >
+> >    As suggested by Linus Walleij <linus.walleij@linaro.org>, we
+> >    can just introduce a new function for the controllers that need
+> >    pinctrl_create() called later.
+> >
+> > 4. Convert the four known problem cases to use new function
+> >
+> >    Let's convert pinctrl-imx, pinctrl-single, sh-pfc and ti-iodelay
+> >    to use the new function to fix the issues. The rest of the drivers
+> >    can be converted later. Let's also update Documentation/pinctrl.txt
+> >    accordingly because of the known issues with pinctrl_register().
+> >
+> > Fixes: df61b366af26 ("pinctrl: core: Use delayed work for hogs")
+> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > Cc: Gary Bisson <gary.bisson@boundarydevices.com>
+> > Signed-off-by: Tony Lindgren <tony@atomide.com>
+> 
+> Thanks, this fixes r8a7740/armadillo.
+> 
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+OK thanks for testing, good to hear it works for you.
+
+Thanks,
+
+Tony
